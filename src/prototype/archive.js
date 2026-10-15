@@ -3,6 +3,86 @@
   'use strict';
   const darkLordHistory =
     "He once crossed the provinces with a close company of adventurers, leaving victories and grieving villages behind. One day no one told them where to go next. He forged a peace in which rival peoples could trade; now he keeps it through levies, garrisons and captive labor. 'Freedom has a price,' he says.";
+  // Shared short definitions feed the optional quick reference; the third field
+  // is expanded only by the Keeper's existing "Show me the figures" path.
+  function conditionTopics(R) {
+    const percent = (value) => Math.round(value * 10000) / 100,
+      charge = R.chargedSkills,
+      heal = R.enemySupportHealing;
+    return [
+      [
+        'Slow',
+        'Move and recover skill cooldowns more slowly, including skills used while already slowed.',
+        'Heroes and companions recover cooldowns at ' +
+          percent(R.cooldownBalance.slowRecoveryMultiplier) +
+          '% of normal speed; enemies, captains and bosses at ' +
+          percent(R.cooldownBalance.enemySlowRecoveryMultiplier) +
+          '%. Allied movement is normally 65%, or ' +
+          percent(R.tacticalFoundation.rogueSlowMovementFactor) +
+          '% under stronger Rogue snares; ordinary enemy pursuit is 50%. The longest remaining Slow wins. Recovery returns to normal when Slow ends. Slow does not lengthen charge preparation, warnings or healing pulses, and does not prevent skills.',
+      ],
+      [
+        'Silence',
+        'Blocks special skills for enemies, you and companions inside the field; movement and ordinary attacks still work.',
+        'The Mage’s Silence Field stays where cast for ' +
+          R.heroTactics.mage.silence.duration +
+          '–' +
+          (R.heroTactics.mage.silence.duration + 4 * R.heroTactics.mage.silence.durationStep) +
+          ' seconds by rank. It suppresses new specials, support-heal activation and unfinished companion charged releases. Existing enemy warned specials wait rather than disappearing; projectiles, hazards, healing pulses and committed movement continue. It neither adds Slow nor freezes cooldown recovery. Leaving the field or its expiry ends Silence; damage immunity does not erase the field.',
+      ],
+      [
+        'Interrupted charges',
+        'HP damage can cancel an unfinished charged skill; brief retry recovery replaces its full cooldown.',
+        'Heroes and companions prepare charged skills for ' +
+          charge.holdSeconds +
+          ' seconds. HP actually lost during preparation adds up: interruption needs at least ' +
+          percent(charge.interrupt.hpFraction) +
+          '% of maximum HP, with a minimum of ' +
+          charge.interrupt.minimumHp +
+          ' HP. Immunity and zero HP loss contribute nothing; lethal damage cancels an unreleased action. A failed preparation spends no full skill cooldown and has ' +
+          charge.interrupt.recoverySeconds +
+          ' seconds of charged retry recovery. Damage after completed preparation cannot retroactively interrupt it. The Mage’s Spell Interrupt instead cancels one current enemy warned or aimed attack, leaving later queued attacks intact.',
+      ],
+      [
+        'Weaken and Fracture',
+        'Weaken lowers an enemy’s damage; Fracture increases the damage it takes.',
+        'Paladin weakening reduces the affected enemy’s outgoing damage for its actual duration. Mage Fracture is vulnerability, not Slow or Silence: the strongest active vulnerability applies once, helping hero and companion hits. Fracture never adds multiple percentages together. Charged Cataclysm gives a stronger but shorter burst window than the longer Skill 4 vulnerability.',
+      ],
+      [
+        'Taunt',
+        'Judgment draws ordinary enemy attacks toward the Paladin; scripted boss specials keep their targets.',
+        'Judgment and Grand Judgment redirect ordinary target choice only while the Paladin is alive, reachable and visible. Boss attention is capped at 2.5 seconds. Taunt does not remove warnings, rewrite boss phases, or bypass terrain and arena limits.',
+      ],
+      [
+        'Haste and Companion Rally',
+        'Haste speeds your movement; Rally speeds nearby companions’ movement and ordinary attacks, not their specials.',
+        'Ranger Skill 4 tap gives 25% hero movement haste. Its charged Companion Rally needs living nearby allies with line of sight; with none it spends no cooldown. Rally raises companion movement 15–19% and ordinary attack speed 8–12% by rank. It does not accelerate special preparation, special/healing cooldowns or grant a dash. Slow still reduces movement and recovery independently.',
+      ],
+      [
+        'Shields, wards and immunity',
+        'Shields and wards reduce damage; immunity blocks hits. Paladin protection is not invulnerability.',
+        'Armor applies first. Paladin Shield Stance and a party ward use only the stronger reduction, never both multiplied. Stance stops Skill 1 and reduces other outgoing damage to 60%; its cooldown starts when lowered or expired. Soldier survival guard grants actual immunity while active. Immunity blocks damage and on-hit Slow, but not solid terrain, or the area-based Silence restriction. No class’s Skill 8 grants immunity.',
+      ],
+      [
+        'Dust and displacement',
+        'Goblin dust blocks direct targeting; area attacks still work. Shoves move you without a lasting stun.',
+        'Dust cover protects the caster from selection and homing, not area damage. A shove obeys terrain collision. Thornfang’s forced scatter briefly overrides movement commands; ordinary shoves do not create a general stun. Ground warning shapes show the affected area, while their label follows the caster; a warning alone applies no damage or condition.',
+      ],
+      [
+        'Healing in battle',
+        'Healing restores living actors; it does not revive fallen companions. Some enemies can heal their allies too.',
+        'Hero skill healing is separate from Ranger support over time. Eligible ranged enemies and selected captains/bosses treat injured living allies first, with eligible leaders able to treat themselves. Base enemy support restores ' +
+          percent(heal.fraction) +
+          '% of the recipient’s maximum HP over ' +
+          heal.duration +
+          ' seconds, subject to existing encounter scaling, beginning at ' +
+          percent(heal.threshold) +
+          '% HP or less on a ' +
+          heal.cooldown +
+          's cooldown. Slow delays the next skill, not ongoing healing pulses. Siphon instead heals from HP actually taken; authored boss self-recovery remains separate.',
+      ],
+    ];
+  }
   function sections(game, { D, R }) {
     const number = (value) => Math.round(value * 100) / 100,
       percent = (value) => number(value * 100),
@@ -185,9 +265,9 @@
         [
           'Steel, wounds and armor',
           'Armor takes the edge off a blow. Even a well-armored fighter can be wounded; immunity is what stops the hit entirely. Your companions rely on their own armor and any bonuses your training passes to them.',
-          'Damage taken = max(3, incoming damage − armor × 0.35). Your armor: ' +
+          'Before shields and wards: max(3, incoming damage − armor × 0.35). Your armor: ' +
             number(game.armor()) +
-            ', including equipment and reforges.',
+            ', including equipment and reforges. Shield Stance and wards then use only the stronger reduction; immunity stops the hit.',
         ],
         [
           'Why a great volley loses force',
@@ -244,6 +324,11 @@
       ],
     });
     shelves.push({
+      title: 'Conditions and recovery',
+      intro: 'Choose an effect; ask for figures when you want the full rule.',
+      topics: conditionTopics(R),
+    });
+    shelves.push({
       title: 'Experience and discipline',
       intro: 'Level gains and training.',
       topics: [
@@ -291,29 +376,41 @@
         ],
       ],
     });
+    // Optional Keeper reference: one short tap/charge distinction per skill.
+    // The Adventure → Hero Skills menu is the primary quick reference.
     const skills = {
       paladin: {
-        4: 'You become briefly immune to damage.',
-        5: 'Holy power strikes nearby enemies.',
-        6: 'A melee strike with a short recovery.',
-        7: 'A stronger holy attack strikes nearby enemies.',
+        2: 'Tap Sundering Strike: hit and weaken one enemy. Charge Holy Cleave: weaken a frontal group.',
+        3: 'Tap Shield Stance: guard for 8s; basic attacks stop and other damage drops. Tap again to lower. Charge Shield Bash: push nearby enemies.',
+        4: 'Tap Judgment: strike and taunt one foe. Charge Grand Judgment: hit and taunt a group. Boss specials keep their own targets.',
+        5: 'Tap: holy area damage to 6 enemies. Charge Consecrated Wave: stronger holy damage and weaken up to 8.',
+        6: 'Tap Vanguard Rush: approach and strike. Charge Vanguard Impact: rush, then push nearby enemies.',
+        7: 'Tap: holy damage to 6 enemies. Charge Oath Strike: stronger holy damage and weaken up to 8.',
+        8: 'Tap Sanctuary Oath: heal 15% and protect nearby allies with a 20% ward. Charge Last Bastion: heal 20%, grant 30% ward and weaken enemies. No immunity.',
       },
       mage: {
-        4: 'Your barrier grants brief immunity to damage.',
-        5: 'A frost burst damages and slows nearby enemies.',
-        6: 'A magic projectile briefly slows its target.',
-        7: 'A stronger frost spell damages and slows nearby enemies.',
+        2: 'Tap Frost Bolt: damage and slow one foe for 2–2.2s. Charge Frost Burst: slow nearby enemies for 3.2–4.2s.',
+        3: 'Tap Spell Interrupt: cancel one warned attack. Charge Silence Field: block special skills for enemies, you and companions inside.',
+        4: 'Tap Arcane Fracture: damage and increase incoming damage to one foe. Charge Arcane Rupture: stronger vulnerability on a group; no stacking.',
+        5: 'Tap Force Pulse: knock back up to 6 enemies. Charge Force Wave: stronger push on up to 8. Neither slows.',
+        6: 'Tap: a slowing magic shot. Charge: stronger focused beam and longer slow.',
+        7: 'Tap Arcane Chain: strike up to 3 foes. Charge Chainstorm: stronger chain against up to 5. No slow.',
+        8: 'Tap Astral Detonation: targeted blast, up to 5 foes. Charge Arcane Cataclysm: stronger blast, up to 7, with brief 25–29% vulnerability. No immunity.',
       },
       ranger: {
-        4: 'A burst of speed helps you escape or reposition.',
-        5: 'Arrows strike enemies around you.',
-        6: 'A rapid shot also briefly hastens your movement.',
-        7: 'A piercing arrow follows your chosen foe.',
+        2: 'Tap Pinning Shot: two slowing arrows. Charge Pinning Volley: slow enemies along a line.',
+        3: 'Tap: heal yourself. Charge: heal you and wounded living companions. Neither revives the fallen.',
+        4: 'Tap Movement Haste: move 25% faster. Charge Companion Rally: nearby allies move 15–19% faster and use basic attacks 8–12% faster briefly.',
+        5: 'Tap: hit up to 6 nearby enemies. Charge Arrow Rain: fire stronger slowing arrows at up to 8.',
+        6: 'Tap Repelling Shot: push one enemy with an arrow. Charge Repelling Volley: three arrows and a stronger final push; no haste.',
+        7: 'Tap Piercing Arrow: one guard-piercing strike. Charge: stronger piercing strike plus slow.',
+        8: 'Tap Hunter’s Salvo: arrows at up to 3 foes. Charge Grand Hunt: two arrows each at up to 5. Extra arrow against a lone foe; no piercing.',
       },
     };
     shelves.push({
       title: 'Your skills',
-      intro: 'Effects first; current ranks and timing on request.',
+      intro:
+        'Quick effects here; select a skill, then ask for figures. Hero Skills is also in the Adventure menu.',
       topics: D.skills.map(([slot, title]) => {
         const rank = game.hero.skills[slot - 1] || 1,
           cooldown = (charged) =>
@@ -321,18 +418,49 @@
               ? game.skillCooldown(slot, charged)
               : R.balance.skills.cooldowns[slot],
           shape = R.chargedSkills.second[game.hero.class],
+          milestones = Math.floor(rank / 2),
+          labels = {
+            paladin: {
+              1: 'Sword Combo',
+              2: 'Sundering Strike',
+              3: 'Shield Stance / Shield Bash',
+              4: 'Judgment',
+              5: 'Holy Area / Consecrated Wave',
+              6: 'Vanguard Rush',
+              7: 'Holy Assault / Oath Strike',
+              8: 'Sanctuary Oath / Last Bastion',
+            },
+            mage: {
+              1: 'Arcane Combo',
+              2: 'Frost Bolt',
+              3: 'Spell Interrupt / Silence Field',
+              4: 'Arcane Fracture',
+              5: 'Force Pulse / Force Wave',
+              6: 'Magic Shot',
+              7: 'Arcane Chain / Chainstorm',
+              8: 'Astral Detonation / Arcane Cataclysm',
+            },
+            ranger: {
+              1: 'Bow Combo',
+              2: 'Pinning Shot',
+              3: 'Self-Heal / Party Heal',
+              4: 'Movement Haste / Rally',
+              5: 'Arrow Volley / Arrow Rain',
+              6: 'Repelling Shot / Volley',
+              7: 'Piercing Arrow',
+              8: 'Hunter’s Salvo / Grand Hunt',
+            },
+          },
           effects = {
             1: 'Three normal strikes on the same foe build a finishing splash. Changing foes or waiting too long breaks the sequence; charging delivers a stronger strike.',
             2:
               'Charge this attack to spread it through a ' +
               shape.shape +
               (shape.slow ? ' and slow the foes it hits.' : '.'),
-            3: 'Tap to heal yourself; charge to heal wounded living companions too. Neither restores the fallen.',
-            8: 'Strike nearby foes, restore some of your health and briefly become immune to damage.',
             ...skills[game.hero.class],
           };
         return [
-          'Skill ' + slot + ' · ' + title,
+          'Skill ' + slot + ' · ' + (labels[game.hero.class]?.[slot] || title),
           effects[slot],
           'Your ' +
             game.hero.class +
@@ -355,11 +483,13 @@
               ? '\nCharged ' +
                 shape.shape +
                 ': ' +
-                (shape.range ? 'reach ' + shape.range : 'radius ' + shape.radius) +
+                (shape.range
+                  ? 'reach ' + (shape.range + 5 * milestones)
+                  : 'radius ' + (shape.radius + 5 * milestones)) +
                 ' paces.' +
-                (shape.slow ? ' Slow lasts ' + shape.slow + ' seconds.' : '')
+                (shape.slow ? ' Slow lasts ' + (shape.slow + 0.25 * milestones) + ' seconds.' : '')
               : '') +
-            (slot <= 3
+            (slot >= 1 && slot <= 8
               ? '\nCharged recovery: ' +
                 number(cooldown(true)) +
                 ' seconds' +
@@ -478,7 +608,8 @@
         ...D.bosses.map((boss) => {
           const observed = allEnemies.filter((e) => e.type === 'boss' && e.family === boss.id),
             plans = R.attacks[boss.id] || [],
-            recovery = R.bossRecovery[boss.id];
+            recovery = R.bossRecovery[boss.id],
+            restorative = R.enemySupportHealing.bosses[boss.id];
           return [
             boss.name,
             boss.place +
@@ -486,6 +617,9 @@
               (boss.history || (boss.id === 'darklord' ? darkLordHistory : '')) +
               '\n\nPassive — ' +
               bossPassives[boss.id] +
+              (restorative
+                ? '\n\nSupport — ' + restorative + ': gradual healing of injured living allies.'
+                : '') +
               '\n\nAttacks: ' +
               plans
                 .map(
@@ -608,7 +742,13 @@
                         number(e.damage) +
                         (role === 'captain' && captainPassives[e.captainProfile]
                           ? '\nPassive — ' + captainPassives[e.captainProfile]
-                          : ''),
+                          : '') +
+                        ((e.captain || e.roomCaptain) &&
+                        R.enemySupportHealing.captains[e.captainProfile]
+                          ? '\nSupport — ' + R.enemySupportHealing.captains[e.captainProfile]
+                          : e.ranged && R.enemySupportHealing.species[e.species]
+                            ? '\nSupport — ' + R.enemySupportHealing.species[e.species]
+                            : ''),
                     );
                 }
                 const place =
@@ -650,7 +790,7 @@
       });
     return shelves;
   }
-  const api = { sections };
+  const api = { sections, conditionTopics };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeArchive = api;
 })(typeof window !== 'undefined' ? window : globalThis);

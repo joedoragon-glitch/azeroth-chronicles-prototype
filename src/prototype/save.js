@@ -19,6 +19,22 @@
         delete out.holdFire;
         out.projectiles = [];
         out.hazards = [];
+        // Temporary combat stances and wards do not survive save/import.
+        // Saving during Shield Stance ends it with its normal cooldown.
+        if ((out.hero.shieldStance || 0) > 0)
+          out.hero.cd[2] = Math.max(out.hero.cd[2], this.skillCooldown(3));
+        for (const unit of [out.hero, ...out.party]) {
+          delete unit.wardUntil;
+          delete unit.wardReduction;
+          // Charged Ranger Skill 4 is an in-combat rally, never a saved stat.
+          delete unit.rangerRallyUntil;
+          delete unit.rangerRallyZone;
+          delete unit.rangerRallyMovement;
+          delete unit.rangerRallyAttack;
+        }
+        delete out.hero.shieldStance;
+        delete out.hero.shieldRank;
+        delete out.hero.silenceField;
         this.clearEncounterUnits([out.hero, ...out.party]);
         out.party.forEach((u) => {
           delete u.path;
@@ -208,6 +224,30 @@
           s.hero.cd.some((v) => !Number.isFinite(v) || v < 0 || v > 60)
         )
           throw Error('Invalid cooldown');
+        // Strip transient fields from historical or interrupted exports.
+        // Existing learned ranks and charged cooldowns remain in v4.
+        if ((s.hero.shieldStance || 0) > 0)
+          s.hero.cd[2] = Math.max(
+            s.hero.cd[2],
+            R.balance.skills.cooldowns[3] *
+              (1 -
+                (R.resourceMode.manaEnabled
+                  ? 0
+                  : Math.min(5, s.hero.talents?.[1] || 0) *
+                    R.cooldownBalance.reductionPerTalentRank)),
+          );
+        delete s.hero.shieldStance;
+        delete s.hero.shieldRank;
+        delete s.hero.silenceField;
+        for (const unit of [s.hero, ...(Array.isArray(s.party) ? s.party : [])]) {
+          delete unit.wardUntil;
+          delete unit.wardReduction;
+          // Charged Ranger Skill 4 is an in-combat rally, never a saved stat.
+          delete unit.rangerRallyUntil;
+          delete unit.rangerRallyZone;
+          delete unit.rangerRallyMovement;
+          delete unit.rangerRallyAttack;
+        }
         if (!Number.isInteger(s.expeditionRank) || s.expeditionRank < 1 || s.expeditionRank > 6)
           throw Error('Invalid Expedition rank');
         if (

@@ -274,6 +274,7 @@
         skill = this.enemyHealProfile(e);
       if (
         !skill ||
+        this.mageSilenceActive(e) ||
         this.peace ||
         !e.aggro ||
         e.returning ||
@@ -2576,6 +2577,17 @@
       this._tacticalPartyTargets?.clear();
       this.clearTonic();
       this.hero.supportEffects = [];
+      this.hero.shieldStance = 0;
+      this.hero.shieldRank = 0;
+      delete this.hero.silenceField;
+      for (const u of [this.hero, ...this.s.party]) {
+        delete u.wardUntil;
+        delete u.wardReduction;
+        delete u.rangerRallyUntil;
+        delete u.rangerRallyZone;
+        delete u.rangerRallyMovement;
+        delete u.rangerRallyAttack;
+      }
       for (const u of this.s.party) u.supportEffects = [];
       const goldLost = this.applyDeathPenalty();
       this.s.statistics.deaths++;
@@ -3115,6 +3127,18 @@
       }
       const heroRecovery = this.cooldownRecoveryElapsed(h, dt);
       h.cd = h.cd.map((c) => Math.max(0, c - heroRecovery));
+      if ((h.shieldStance || 0) > 0) {
+        h.shieldStance = Math.max(0, h.shieldStance - dt);
+        if (h.shieldStance === 0) {
+          h.shieldRank = 0;
+          h.cd[2] = this.skillCooldown(3);
+        }
+      }
+      if (
+        h.silenceField &&
+        (h.silenceField.until <= this.s.time || h.silenceField.zone !== this.zoneId)
+      )
+        delete h.silenceField;
       for (const f of ['immune', 'haste', 'potionCd', 'slow']) h[f] = Math.max(0, h[f] - dt);
       if (h.rogueSlow > 0) {
         h.rogueSlow = Math.max(0, h.rogueSlow - dt);
@@ -4660,7 +4684,7 @@
             const destination = { x: unit.x + side * 100, y: unit.y };
             const landed = this.hitParty(
               unit,
-              e.damage * move.coefficient,
+              this.weakenedEnemyDamage(e) * move.coefficient,
               0,
               e.family === 'cindermaw' ? e.id : undefined,
             );
@@ -4700,7 +4724,8 @@
         }
         let landedAny = false;
         for (const victim of victims) {
-          if (!this.hitParty(victim, e.damage * move.coefficient)) continue;
+          if (!this.hitParty(victim, this.weakenedEnemyDamage(e) * move.coefficient, 0, e.id))
+            continue;
           landedAny = true;
           if (
             this.hero !== startingHero ||
@@ -4755,7 +4780,7 @@
         if (
           !this.hitParty(
             unit,
-            e.damage * move.coefficient,
+            this.weakenedEnemyDamage(e) * move.coefficient,
             0,
             e.family === 'cindermaw' ? e.id : undefined,
           )
@@ -5141,6 +5166,18 @@
           !this.updateVeraEscort(e, dt)
         )
           this.updateIdleWander(e, dt);
+        // Bosses can be provoked for ordinary attacks, but must preserve
+        // their scripted special-target choice and arena rules.
+        const scriptedBossTarget = target;
+        // Judgment provokes living targets without deleting boss telegraphs,
+        // attack phases or the encounter's existing leash restrictions.
+        if (
+          (e.tauntUntil || 0) > this.s.time &&
+          this.hero.hp > 0 &&
+          dist(e, this.hero) <= 620 &&
+          this.line(e, this.hero)
+        )
+          target = this.hero;
         if (e.guard && !e.ranged && this.hero.hp > 0) {
           const screenFor = z.enemies.find(
             (u) => u !== e && u.guard && u.pack === e.pack && u.ranged && u.hp > 0,
@@ -5194,7 +5231,7 @@
         }
         if (this.enemySupportHeal(e)) continue;
         // A short-lived rogue decision is distinct from normal aggro.
-        if (this.tacticalAutoRogue(e, target)) continue;
+        if (!this.mageSilenceActive(e) && this.tacticalAutoRogue(e, target)) continue;
         // A committed attack owns its warning/release clock. Regroup holds and
         // retreat decisions must not suspend it when the victim moves away.
         if (
@@ -5205,6 +5242,13 @@
           this.tacticalAdvanceRogueRegroup(e, target, dt)
         )
           continue;
+        if (e.telegraph && this.mageSilenceActive(e)) {
+          // Existing warned specials remain queued, but cannot resolve
+          // inside a Silence Field. Pausing the warning preserves boss
+          // phase/sequence integrity rather than erasing authored attacks.
+          e.noProgress = 0;
+          continue;
+        }
         if (e.telegraph) {
           if (e.telegraph.rogueMove && e.telegraph.mobileRogueCast) {
             // Cast preparation does not create an extra strike or freeze the
@@ -5299,7 +5343,7 @@
                 dy: Math.sin(angle),
                 speed: (e.shotSpeed || 260) * pace.projectileMultiplier,
                 life: 2.5 / pace.projectileMultiplier,
-                damage: e.damage * (e.hybrid ? 0.85 : 1),
+                damage: this.weakenedEnemyDamage(e) * (e.hybrid ? 0.85 : 1),
                 style,
                 slow: e.projectileSlow || 0,
                 manaDrain: R.manaBalance.rangedDrain[e.species] || 0,
@@ -5341,6 +5385,7 @@
         let opportunity = false;
         if (
           (e.captain || e.roomCaptain) &&
+          !this.mageSilenceActive(e) &&
           e.specialCd <= 0 &&
           visible &&
           d < (this.captainProfile(e)?.specialRange || 420) &&
@@ -5349,6 +5394,7 @@
           opportunity = true;
         } else if (
           e.type === 'boss' &&
+          !this.mageSilenceActive(e) &&
           e.cd <= 0 &&
           visible &&
           d < R.bossCadence.specialRange &&
@@ -5357,15 +5403,17 @@
           opportunity = true;
         } else if (
           e.type === 'boss' &&
+          !this.mageSilenceActive(e) &&
           e.cd <= 0 &&
           d < R.bossCadence.specialRange &&
           visible &&
           (!e.basicDue || d > 200) &&
-          this.startAttack(e, target)
+          this.startAttack(e, scriptedBossTarget)
         ) {
           opportunity = true;
         } else if (
           e.nightOnly &&
+          !this.mageSilenceActive(e) &&
           e.specialCd <= 0 &&
           visible &&
           d < (e.species === 'wraith' ? R.nightEnemyCombat.wraith.radius : 360) &&
@@ -5403,7 +5451,7 @@
                 (e.quotaOvertime > 0 ? 0.8 : 1),
             };
           } else {
-            if (this.hitParty(target, e.damage * this.snapshotPassiveOutgoingFactor(e)))
+            if (this.hitParty(target, this.weakenedEnemyDamage(e), 0, e.id))
               this.event('melee', {
                 actor: 'enemy',
                 source: e.id,

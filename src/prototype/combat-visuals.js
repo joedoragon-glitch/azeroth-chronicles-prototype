@@ -1022,7 +1022,12 @@
       ),
       push = (e, type, duration, priority) =>
         next.push({ ...e, type, life: duration, max: duration, priority });
+    const heroArt =
+      root.PrototypeHeroPresentation ||
+      (typeof require === 'function' ? require('./hero-presentation.js') : null);
+    heroArt?.queue(events, push);
     for (const e of events) {
+      if (heroArt?.owns(e)) continue;
       if (e.type === 'hit' && Number.isFinite(e.x) && !contacts.has(e.x + ':' + e.y))
         push(e, 'impact', 0.2, 1);
       else if (

@@ -40,10 +40,22 @@ if (timingRevision) {
       originalPlaytestRevision.files[file] || manifest.approvedOvernightCertificationRevision.files[file], file + ' retained pre-timing receipt');
   assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', timingRevision.ledger))).digest('hex'), timingRevision.ledgerSha256, 'exact combined charge/Slow source audit');
 }
+const heroRevision = manifest.authorizedHeroSkillsConsolidationRevision;
+if (heroRevision) {
+  assert.match(heroRevision.source, /hero gameplay and AV.*PR #308/);
+  assert.equal(heroRevision.previousAuditSha256, timingRevision.auditSha256);
+  assert.equal(heroRevision.previousActiveFrameBodySha256, timingRevision.activeFrameBodySha256);
+  for (const [file, expected] of Object.entries(heroRevision.previousFiles))
+    assert.equal(expected, timingRevision.files[file] || healingRevision.files[file] ||
+      passiveRevision.files[file] || originalPlaytestRevision.files[file] ||
+      manifest.approvedOvernightCertificationRevision.files[file], file + ' retained pre-hero receipt');
+  assert.deepEqual(heroRevision.introducedFiles.sort(), ['src/prototype/audio-hero.js', 'src/prototype/hero-presentation.js']);
+  assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', heroRevision.ledger))).digest('hex'), heroRevision.ledgerSha256, 'exact combined hero source ledger');
+}
 const playtestRevision = originalPlaytestRevision && {
   ...originalPlaytestRevision,
-  auditSha256: timingRevision?.auditSha256 || healingRevision?.auditSha256 || passiveRevision?.auditSha256 || originalPlaytestRevision.auditSha256,
-  files: { ...originalPlaytestRevision.files, ...passiveRevision?.files, ...healingRevision?.files, ...timingRevision?.files },
+  auditSha256: heroRevision?.auditSha256 || timingRevision?.auditSha256 || healingRevision?.auditSha256 || passiveRevision?.auditSha256 || originalPlaytestRevision.auditSha256,
+  files: { ...originalPlaytestRevision.files, ...passiveRevision?.files, ...healingRevision?.files, ...timingRevision?.files, ...heroRevision?.files },
 };
 if (playtestRevision) {
   assert.match(playtestRevision.source, /PR #308/);
@@ -397,7 +409,7 @@ const activeBody = frame.slice(
 );
 assert.equal(
   crypto.createHash('sha256').update(activeBody).digest('hex'),
-  timingRevision?.activeFrameBodySha256 || combinedRevision?.activeFrameBodySha256 || revision.activeFrameBodySha256,
+  heroRevision?.activeFrameBodySha256 || timingRevision?.activeFrameBodySha256 || combinedRevision?.activeFrameBodySha256 || revision.activeFrameBodySha256,
   'Exact original or explicitly authorized combined simulation/input/audio/effects/save/HUD callback body',
 );
 console.log(

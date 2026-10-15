@@ -4838,7 +4838,7 @@
     slowRecoveryMultiplier: 0.65,
     enemySlowRecoveryMultiplier: 0.85,
     // Charged attacks are repeatable without MP; preserve a meaningful burst/heal interval.
-    chargedSeconds: Object.freeze({ 1: 3, 2: 6, 3: 20 }),
+    chargedSeconds: Object.freeze({ 1: 3, 2: 6, 3: 20, 4: 20, 5: 18, 6: 12, 7: 25, 8: 40 }),
   });
   // When MP is dormant, Ash-beast ranged hits feed their ember core using real HP loss.
   const ashFeeding = Object.freeze({ healFraction: 0.15 });
@@ -4957,10 +4957,176 @@
     third: { effect: 'party-heal' },
     second: {
       paladin: { shape: 'cone', range: 185, halfAngle: 0.8, effect: 'holy-cleave' },
-      mage: { shape: 'circle', radius: 160, effect: 'frost-burst', slow: 4 },
+      mage: { shape: 'circle', radius: 160, effect: 'frost-burst', slow: 3.2 },
       ranger: { shape: 'line', range: 480, halfWidth: 55, effect: 'piercing-volley' },
     },
   };
+  // Secondary effects grow at even skill ranks. Damage continues to use
+  // the existing +15%-per-rank multiplier; no second damage multiplier.
+  const heroTactics = Object.freeze({
+    milestones: [2, 4, 6, 8],
+    paladin: {
+      weaken: { fraction: 0.12, step: 0.02, duration: 1.8, durationStep: 0.1 },
+      shield: { duration: 8, reduction: 0.65, reductionStep: 0.02, outgoing: 0.6 },
+      bash: {
+        reach: 115,
+        reachStep: 4,
+        halfAngle: 0.7,
+        push: 55,
+        pushStep: 5,
+        damage: 1.6,
+        eliteDamage: 0.5,
+      },
+      judgment: { range: 260, damage: 2.0, taunt: 3, tauntStep: 0.25 },
+      grandJudgment: {
+        range: 310,
+        radius: 160,
+        radiusStep: 5,
+        primaryDamage: 3.2,
+        splashDamage: 2.0,
+        taunt: 5,
+        tauntStep: 0.25,
+      },
+    },
+    mage: {
+      interrupt: { range: 460, rangeStep: 20, enemyRecovery: 1.1 },
+      silence: { radius: 165, radiusStep: 10, duration: 2, durationStep: 0.25 },
+      fracture: {
+        range: 480,
+        damage: 2.0,
+        fraction: 0.15,
+        fractionStep: 0.01,
+        duration: 4,
+        durationStep: 0.25,
+      },
+      rupture: {
+        range: 480,
+        radius: 160,
+        radiusStep: 5,
+        primaryDamage: 3.2,
+        splashDamage: 1.8,
+        fraction: 0.2,
+        fractionStep: 0.01,
+        duration: 5,
+        durationStep: 0.25,
+      },
+    },
+    ranger: {
+      pin: { slow: 1.25, slowStep: 0.25 },
+      volley: { slow: 1.5, slowStep: 0.25 },
+      // Charged Skill 4: simple nearby-companion rally, not a dash or dodge.
+      // Attack speed affects ordinary swings/shots only, not special cooldowns.
+      rally: {
+        radius: 350,
+        radiusStep: 10,
+        duration: 4,
+        durationStep: 0.25,
+        movementBonus: 0.15,
+        movementStep: 0.01,
+        attackSpeedBonus: 0.08,
+        attackSpeedStep: 0.01,
+      },
+    },
+  });
+  // Charged versions of advanced hero skills share the 0.65s input hold.
+  // They use the same trained rank and +15%-of-base damage growth as their
+  // normal versions; effects increase modestly at ranks 2, 4, 6 and 8.
+  // Skill 8 is no longer a shared area/heal/immunity template.
+  // These distinct class capstones build on existing mitigation, fracture,
+  // projectile, and threat mechanics; no new status types are introduced.
+  const classUltimates = Object.freeze({
+    paladin: {
+      normal: {
+        radius: 320,
+        maxTargets: 8,
+        damage: 3,
+        heal: 0.15,
+        wardReduction: 0.2,
+        wardDuration: 3.5,
+        wardStep: 0.25,
+      },
+      charged: {
+        radius: 420,
+        radiusStep: 10,
+        maxTargets: 10,
+        damage: 5.5,
+        heal: 0.2,
+        wardReduction: 0.3,
+        wardDuration: 5,
+        wardStep: 0.25,
+        weaken: true,
+      },
+    },
+    mage: {
+      normal: { radius: 210, maxTargets: 5, primaryDamage: 6, splashDamage: 3.5 },
+      charged: {
+        radius: 260,
+        radiusStep: 10,
+        maxTargets: 7,
+        primaryDamage: 9,
+        splashDamage: 5,
+        // Brief 25–29% burst window beats Skill 4's 20–24% fracture,
+        // but lasts only 2.5s; one nonstacking fracture applies.
+        fracture: 0.25,
+        fractureStep: 0.01,
+        fractureDuration: 2.5,
+      },
+      chain: {
+        radius: 300,
+        targets: 3,
+        primaryDamage: 6.5,
+        secondaryDamage: 4.5,
+        tertiaryDamage: 3,
+      },
+      chargedChain: {
+        radius: 380,
+        radiusStep: 10,
+        targets: 5,
+        primaryDamage: 9,
+        secondaryDamage: 6,
+        extraDamage: 4,
+      },
+    },
+    ranger: {
+      normal: { radius: 260, targets: 3, damagePerArrow: 5, isolatedArrows: 2 },
+      charged: {
+        radius: 320,
+        radiusStep: 10,
+        targets: 5,
+        arrowsPerTarget: 2,
+        isolatedArrows: 3,
+        damagePerArrow: 4,
+      },
+    },
+  });
+  // Area hit limits are intentional: no repeatable spell clears an
+  // unlimited pack. Ranks improve damage/reach, not target-count caps.
+  const heroAreaTargetCaps = Object.freeze({
+    5: { normal: 6, charged: 8 },
+    7: { paladinNormal: 6, paladinCharged: 8 },
+  });
+  const advancedCharges = Object.freeze({
+    5: {
+      paladin: { radius: 365, radiusStep: 10, damage: 3.2, weaken: true },
+      mage: { radius: 370, radiusStep: 10, damage: 3.0, push: 45, pushStep: 3 },
+      ranger: { radius: 370, radiusStep: 10, damage: 2.9, slow: 1.25, slowStep: 0.2 },
+    },
+    6: {
+      paladin: { radius: 120, radiusStep: 5, damage: 3.4, push: 35, pushStep: 4 },
+      mage: { damage: 3.0, slow: 2.5, slowStep: 0.25 },
+      ranger: { arrows: 3, damage: 4.2, push: 65, pushStep: 5 },
+    },
+    7: {
+      paladin: { radius: 500, radiusStep: 10, damage: 7.2, weaken: true },
+      mage: { radius: 380, radiusStep: 10, damage: 9, chain: true },
+      ranger: { damage: 12, slow: 1.5, slowStep: 0.25 },
+    },
+    8: {
+      paladin: { ...classUltimates.paladin.charged },
+      mage: { ...classUltimates.mage.charged },
+      ranger: { ...classUltimates.ranger.charged },
+    },
+  });
   const basicAttackCombo = {
     steps: 3,
     resetSeconds: 4,
@@ -5608,6 +5774,10 @@
     snapshotPassives,
     rangedEnemyCombat,
     chargedSkills,
+    heroTactics,
+    advancedCharges,
+    heroAreaTargetCaps,
+    classUltimates,
     basicAttackCombo,
     companionSkills,
     ordinaryMeleeScaling,

@@ -106,6 +106,10 @@ module.exports = function evidence(Audio, byKind = false) {
         calls.push([method, ...args]);
       };
     routes.push(kind);
+    // Preserve the old catalog/recipes as historical evidence. The explicitly
+    // replaced hero AV dispatcher is exercised by the combined hero suite;
+    // bypass only that additive owner here, leaving every legacy recipe guarded.
+    a.heroSkillEffect = () => false;
     a.effect(event);
     (recipesByKind[kind] ??= []).push(calls);
   }

@@ -404,9 +404,9 @@ const PrototypeData = {
   ],
   skills: [
     [1, 'Basic attack', 1, 0, 'start', 20],
-    [2, 'Second attack', 1, 40, 'thorn', 35],
-    [3, 'Self-Heal', 1, 75, 'mire', 45],
-    [4, 'Defense or mobility', 1, 160, 'mire', 60],
+    [2, 'Control attack', 1, 40, 'thorn', 35],
+    [3, 'Class tactic', 1, 75, 'mire', 45],
+    [4, 'Class technique', 1, 160, 'mire', 60],
     [5, 'Area attack', 1, 400, 'ridge', 80],
     [6, 'Frequent special', 1, 220, 'ridge', 50],
     [7, 'Advanced special', 1, 1000, 'warlord', 140],

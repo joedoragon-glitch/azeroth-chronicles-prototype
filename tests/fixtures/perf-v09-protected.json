@@ -722,5 +722,68 @@
     "ledgerSha256": "099a3b333b309705452e0a956cc69c187588a79473edcc75988db205b56f4340",
     "activeFrameBodySha256": "1831ce9ce3c518361bfcd53c00a55da51faa884c92ca9d6ed7d5ad9e4d22b086",
     "previousActiveFrameBodySha256": "47dc6a866cf32ff6e9ed3de77d7af858edb8595c21d221158084ee90f0c8cbdc"
+  },
+  "authorizedHeroSkillsConsolidationRevision": {
+    "source": "Owner-authorized complete hero gameplay and AV consolidation into current PR #308; includes latest status-learning reconciliation. Source-only; tests, builds and CI deferred.",
+    "sourceHeads": [
+      "06d174f0612b75b165f458e9fea1db60073ef5f5",
+      "3687c17b78c499d509454edf71bfb99dc202aa81"
+    ],
+    "previousCandidate": "7d0b9033e0cda2be1e82f62b6c090410f62caa04",
+    "previousFiles": {
+      "src/prototype/app.js": "9672fcf79184d6108edb61c68f48d159867d88b62359e2cfd01a3d1f6279df14",
+      "src/prototype/archive.js": "fe81975249cc2751e5f74c3c2b5825631afd0069c5e9ec82b5c10b0bd5ec974f",
+      "src/prototype/audio-effects.js": "38a80afa4e1ef0db6986861a809058072726ebdf8fe6a9b35c762025b0be4ba7",
+      "src/prototype/boss-combat.js": "c81606b9dda3c581479dc66ef131554771499888de372ae67ed3629e76f08a11",
+      "src/prototype/combat-visuals.js": "1a3ecdc22aac049e645386f67e4a1cb19be84e63d657a08ca097c9112aadb7fc",
+      "src/prototype/combat.js": "1904707f636a76169418e4ad993c6130d371bb4abeba86a4c983b6f79a5d90d5",
+      "src/prototype/data.js": "4157051826bb5afcf0ecf33a284e3364290867d173c2717135f60e25f09f50a6",
+      "src/prototype/engine.js": "ff89af400c6b67554959ee3b3cd5258fc9bf92919068a2a10772f210421a3daa",
+      "src/prototype/hero-combat.js": "7f8c09648025475f251d7809b1454010f4e05b4a94312db1095ee73e746a1db4",
+      "src/prototype/menus.js": "67edfc0bb873d2b438065a242cec5db21538c94a6414ae8384fb75559613b450",
+      "src/prototype/party.js": "5b5f22387fea6b0bbb9d9fe07d0791d1cf69801f2df6e634c3f9243d0ffa6c92",
+      "src/prototype/renderer.js": "819f0b8a75c99e3880e4b92870c155e87982bb596124b8e5df3b2b44cfaae737",
+      "src/prototype/rules.js": "efd349af303bd253346a525b9cbf79dbb0b61e2c0399db5e6e9cdf8a221d38da",
+      "src/prototype/save.js": "df49e4bfcde048a7b53597119c38c510dba5fb9fc0a88438ca53462166a69263",
+      "templates/game.html": "fe2d39f4d28dbc6257ebb734576b3609d9744afe11903d4cfaf270aebc291ad7"
+    },
+    "newlyGuardedPreviousFiles": {
+      "src/prototype/audio.js": "01bceea35f3c9ac01695660462c77199b651b4dd8553a7fe660b356f186aed8e",
+      "scripts/site-assets.cjs": "a6dbac0a0ac23c996a469516c435204733bb252925478951abdf2a4cc75ea2aa",
+      "tools/audio/index.html": "474e9042c6a58d8780a544a204e567c64890fd207c29aca9b558a3f04ae2f7e4"
+    },
+    "introducedFiles": [
+      "src/prototype/audio-hero.js",
+      "src/prototype/hero-presentation.js"
+    ],
+    "files": {
+      "src/prototype/app.js": "a9e4fd01db496ff2e5d97b1cba0ccb52a8c7402846e540a20dfced501fafa58a",
+      "src/prototype/archive.js": "43f69d5065dbb71204330b3face9527da39af500e830aababc5727c73d03dbce",
+      "src/prototype/audio-effects.js": "5d812d6f8b4afae70fa6f746856ed557b41946065a9aa9307b7b3f041df672f2",
+      "src/prototype/audio-hero.js": "c5015e14a9f57b523a33d26e80534d6a1f51725df41e9b90b9fa25351d6ad5c9",
+      "src/prototype/audio.js": "51efeef0df12585b03565e4598f67bfb31eeac30b420be428e0d2888c5ce520c",
+      "src/prototype/boss-combat.js": "db4081dc223ad23cebe5f36fc755ea40ce5ed1c06f32ea95db03da9c584db4cc",
+      "src/prototype/combat-visuals.js": "0fed144e6618d3775e7bcca27e2cc5a42a1a4e8f30f377095077e578a90c6c7f",
+      "src/prototype/combat.js": "c61f65325821bb89e78e6543cd5754308e6c93457a8434f05cbd08e4ccdb75e1",
+      "src/prototype/data.js": "1991ed3ef2149c034dfa9c8b2e67d210a7628f9562a219da7d55cfb6d9f157ca",
+      "src/prototype/engine.js": "1b24d3290861f02a1f5f874db28dce859d3ca4df9c0bd20da34ff6aab2eb2b9e",
+      "src/prototype/hero-combat.js": "fd2c17d3169baa2bae97d352cb638db84ef16879d267e3fab8598b186c7e97fc",
+      "src/prototype/hero-presentation.js": "e288edda8be91116f1e420d29c0f824a49dc5e4e177abb36836f89ec51b93f31",
+      "src/prototype/menus.js": "cad0b13c8c467ff8444467f4e450bc83bc89a1d13b815936b864a71883b5f89b",
+      "src/prototype/party.js": "7be2782239b8982085cc9126684debc5676fe3cc62e9eec2c7d034c94952b9a3",
+      "src/prototype/renderer.js": "6fa3c55a64d0faac5b445bd056a25b36c83e3a1168e6fd84245370e2552d4f9c",
+      "src/prototype/rules.js": "e487a2ce72269d73c88a7d59598ad5f8e33ca74ec7239820f6f9b0729c0752db",
+      "src/prototype/save.js": "39c24bd767e7ae95a889da5d4cee097b1e4a22a650e2169138b1134392111b5a",
+      "scripts/site-assets.cjs": "44a2c55029be16ca98da9f7868d85630c8d0f73423f10e0478ba2e04ace798a6",
+      "templates/game.html": "44fa65c927661e2dabc193a473cc0d69abc00b1e2ccf84f792429a23ee1b1fcd",
+      "tools/audio/index.html": "69fd07da765f98357231cc9d7422d67fdcaf114e57a051b64a66dbd0fe82e989"
+    },
+    "previousAuditSha256": "5eed2c81626659cdc085a5a4bcc360f74355e33bb7cd7ee3f701ee442c1304dd",
+    "previousCheckpointAuditSha256": "7aad5236884801e3da755f93b778ab9f04771e1f8fbe9d142cd72be906a541a8",
+    "auditSha256": "00dc6358ee224f22fef9984cc4a4dffa66270ad443214cbd52e44c61df2d84d0",
+    "ledger": "docs/HERO_SKILLS_CONSOLIDATION_20261015.md",
+    "ledgerSha256": "84fdec90baf5875c6122ec8ee253f0bbc3b597e8cfb73d454f0c5f351b2fdbce",
+    "previousActiveFrameBodySha256": "1831ce9ce3c518361bfcd53c00a55da51faa884c92ca9d6ed7d5ad9e4d22b086",
+    "activeFrameBodySha256": "625bf68a6a71393c55788cdfd44788b30a463efd49c965c3c25de48041d956cc"
   }
 }

@@ -131,6 +131,7 @@ function harness() {
     'audio-score',
     'audio-enemy',
     'audio-effects',
+    'audio-hero',
     'audio-recordings',
     'audio-production',
     'audio-environment',

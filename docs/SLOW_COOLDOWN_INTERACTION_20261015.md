@@ -1,3 +1,5 @@
+> Current consolidation note (15 October 2026): the complete hero and AV branches are now incorporated into PR #308; PR #305 remains excluded. Slow reduces movement **and skill cooldown recovery** at 65% allied / 85% enemy recovery. Historical movement-only or pending-#305 statements below describe earlier source snapshots. Silence, damage interruption and player-learning paths are reconciled in [the combined hero ledger](HERO_SKILLS_CONSOLIDATION_20261015.md) and [current conditions register](COMBAT_CONDITIONS_V09.md). No combined tests/builds/CI have run.
+
 > Incorporated into the existing PR #308 from audited/latest branch commit `752158bf7048c34d77b8b9db0f3de1477a668366`. The original source audit below is retained; [combined reconciliation](CHARGE_SLOW_CONSOLIDATION_20261015.md) records the pre-consumption final-frame fix, #306 healing/#307 passive timer coverage and #310 casting distinction. No tests/builds/CI ran for this integration. Closed #309 remains historical.
 
 # Timed Slow now reduces skill cooldown recovery — review candidate

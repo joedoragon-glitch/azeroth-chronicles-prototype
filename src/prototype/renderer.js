@@ -260,6 +260,11 @@
     let game = getGame(),
       visualFx = [],
       origin = null;
+    const heroArt =
+      root.PrototypeHeroPresentation ||
+      (typeof require === 'function' ? require('./hero-presentation.js') : null);
+    const motionPreference = root.matchMedia?.('(prefers-reduced-motion: reduce)');
+    const reducedMotion = () => !!motionPreference?.matches;
     const groundCache = PrototypeGroundCache ? new PrototypeGroundCache() : null;
     let cacheGround = true,
       optimized = false;
@@ -732,6 +737,8 @@
       return { q, ux: vx / len, uy: vy / len, px: -vy / len, py: vx / len };
     }
     function drawProjectile(p) {
+      if (p.delay > 0) return;
+      if (heroArt?.projectile(ctx, screen, p, game.hero.class, reducedMotion())) return;
       if (p.style !== 'cargo' && PrototypeEnemyVfxArt?.projectile(ctx, screen, p, game)) return;
       const { q, ux, uy, px, py } = projectileVector(p),
         style = p.style || 'magic',
@@ -1036,7 +1043,16 @@
       }
       ctx.restore();
     }
+    let visualScene = { game, zone: game.zoneId, deaths: game.s.statistics.deaths };
     function queueVisualFx(events) {
+      if (
+        visualScene.game !== game ||
+        visualScene.zone !== game.zoneId ||
+        visualScene.deaths !== game.s.statistics.deaths
+      ) {
+        visualFx = [];
+        visualScene = { game, zone: game.zoneId, deaths: game.s.statistics.deaths };
+      }
       visualFx = PrototypeCombatVisuals.queue(events, game, visualFx);
     }
     function updateVisualFx(dt) {
@@ -1047,8 +1063,17 @@
       for (const f of visualFx) {
         const a = Math.max(0, f.life / f.max),
           p = screen(f),
-          grow = 1 - a;
+          grow = reducedMotion() ? 0.5 : 1 - a;
         if (f.type === 'enemyVfx') continue;
+        if (f.type === 'heroSkill') {
+          heroArt?.draw(ctx, screen, f, {
+            reduced: reducedMotion(),
+            optimized,
+            width: canvas.width,
+            height: canvas.height,
+          });
+          continue;
+        }
         ctx.save();
         ctx.globalAlpha = a;
         if (f.type === 'ability') {
@@ -1377,7 +1402,7 @@
       }
       const guard = (q, r, cls = 'paladin') => {
         ctx.save();
-        const pulse = 0.65 + Math.sin(now() / 160) * 0.15;
+        const pulse = 0.65 + (reducedMotion() ? 0 : Math.sin(now() / 160)) * 0.15;
         ctx.globalAlpha = pulse;
         ctx.strokeStyle = cls === 'mage' ? '#b3dfff' : '#f6dda0';
         ctx.fillStyle = cls === 'mage' ? '#b3dfff18' : '#f6dda018';
@@ -1405,7 +1430,7 @@
         ctx.stroke();
         ctx.globalAlpha = 0.45;
         for (let j = 0; j < 3; j++) {
-          const an = now() / 550 + j * 2.09;
+          const an = (reducedMotion() ? 0 : now() / 550) + j * 2.09;
           ctx.fillStyle = mana ? '#b8ddff' : '#c1efc6';
           ctx.beginPath();
           ctx.arc(q.x + Math.cos(an) * r * 0.6, q.y - 7 + Math.sin(an) * 5, 1.8, 0, Math.PI * 2);
@@ -1415,7 +1440,51 @@
       };
       const h = game.hero,
         p = screen(h);
+      const ward = (unit, point, radius) => {
+        if ((unit.wardUntil || 0) <= game.s.time) return;
+        ctx.save();
+        ctx.strokeStyle = '#f5df9ecc';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(point.x, point.y - 8, radius, radius * 0.38, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      };
       if (h.immune > 0) guard(p, 29, h.class);
+      ward(h, p, 32);
+      if (h.class === 'paladin' && (h.shieldStance || 0) > 0) {
+        // Raised-shield silhouette cue, rendered over either the original
+        // procedural hero or its canon-faithful static sprite.
+        ctx.save();
+        ctx.strokeStyle = '#beddfb';
+        ctx.fillStyle = '#477bb4bb';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(p.x - 24, p.y - 32);
+        ctx.lineTo(p.x - 40, p.y - 26);
+        ctx.lineTo(p.x - 39, p.y - 6);
+        ctx.lineTo(p.x - 26, p.y + 1);
+        ctx.lineTo(p.x - 17, p.y - 13);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
+      if (
+        h.silenceField &&
+        h.silenceField.zone === game.zoneId &&
+        h.silenceField.until > game.s.time
+      ) {
+        const q = screen(h.silenceField);
+        ctx.save();
+        ctx.strokeStyle = '#bd9befaa';
+        ctx.fillStyle = '#9d72d013';
+        ctx.lineWidth = 2;
+        PrototypeCombatVisuals.circlePath(ctx, screen, h.silenceField, h.silenceField.radius);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
       if (h.haste > 0) {
         ctx.save();
         ctx.strokeStyle = '#d9f2ff99';
@@ -1435,6 +1504,16 @@
       for (const u of game.activeLivingParty()) {
         const q = screen(u);
         if (u.immune > 0) guard(q, 24);
+        ward(u, q, 27);
+        if (u.rangerRallyZone === game.zoneId && (u.rangerRallyUntil || 0) > game.s.time) {
+          ctx.save();
+          ctx.strokeStyle = '#b9e7a8bb';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.ellipse(q.x, q.y + 7, 26, 10, 0, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        }
         for (const effect of u.supportEffects || []) support(q, effect, 22);
       }
     }
@@ -1462,7 +1541,11 @@
     // while the player is holding an aimed skill; simulation owns the ranges.
     function targetGuidance() {
       const cast = chargePresentation(),
-        aimed = cast && (cast.slot === 1 || cast.slot === 2),
+        aimed =
+          cast &&
+          ([1, 2, 6, 7].includes(cast.slot) ||
+            (cast.slot === 4 && game.hero.class !== 'ranger') ||
+            (cast.slot === 8 && game.hero.class !== 'paladin')),
         selected = game.selectedHeroTarget();
       if (cast?.slot === 3) {
         const p = screen(game.hero);
@@ -1471,10 +1554,16 @@
         ctx.globalAlpha = 0.8;
         ctx.lineWidth = 2.2;
         ctx.beginPath();
-        ctx.moveTo(p.x - 5, p.y - 34);
-        ctx.lineTo(p.x + 5, p.y - 34);
-        ctx.moveTo(p.x, p.y - 39);
-        ctx.lineTo(p.x, p.y - 29);
+        if (game.hero.class === 'ranger') {
+          ctx.moveTo(p.x - 5, p.y - 34);
+          ctx.lineTo(p.x + 5, p.y - 34);
+          ctx.moveTo(p.x, p.y - 39);
+          ctx.lineTo(p.x, p.y - 29);
+        } else {
+          ctx.arc(p.x, p.y - 23, 12, 0, Math.PI * 2);
+          ctx.moveTo(p.x - 7, p.y - 23);
+          ctx.lineTo(p.x + 7, p.y - 23);
+        }
         ctx.stroke();
         ctx.restore();
         return;
@@ -2129,6 +2218,8 @@
       PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx);
       for (const p of game.s.projectiles) drawProjectile(p);
       drawVisualFx();
+      heroArt?.statuses(ctx, screen, game, canvas.width, canvas.height);
+      heroArt?.charge(ctx, screen, game.hero, chargePresentation(), reducedMotion());
       PrototypeCombatVisuals.enemySupportStatus?.(ctx, screen, game);
       PrototypeCombatVisuals.actorCues?.(ctx, screen, game);
       targetGuidance();

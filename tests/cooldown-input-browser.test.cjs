@@ -101,7 +101,7 @@ const server = http.createServer((req, res) => {
     let count = 0;
     for (const cls of ['paladin', 'mage', 'ranger'])
       for (let rank = 0; rank <= 5; rank++)
-        for (const slot of [1, 2, 3]) {
+        for (const slot of [1, 2, 3, 4, 5, 6, 7, 8]) {
           await page.evaluate(
             ({ cls, rank, slot }) => {
               const g = Prototype.game,
@@ -117,6 +117,11 @@ const server = http.createServer((req, res) => {
                 maxHp: 500,
               });
               h.skills = Array(8).fill(1);
+              h.shieldStance = 0;
+              h.shieldRank = 0;
+              delete h.silenceField;
+              g.clearPartyCharges();
+              g.s.party = cls === 'ranger' && slot === 4 ? [g.unit('soldier', 620, 900)] : [];
               h.talents = [0, rank, 0, 0];
               h.cd = Array(8).fill(0);
               h.cd[slot - 1] = 5;
@@ -159,7 +164,7 @@ const server = http.createServer((req, res) => {
           assert.equal(rows.length, 1, JSON.stringify({ cls, rank, slot, rows }));
           assert(rows[0].charged);
           assert.equal(rows[0].mp, 0);
-          const expected = [0, 3, 6, 20][slot] * (1 - 0.04 * rank);
+          const expected = [0, 3, 6, 20, 20, 18, 12, 25, 40][slot] * (1 - 0.04 * rank);
           assert(
             Math.abs(rows[0].cd - expected) < 1e-9,
             JSON.stringify({ cls, rank, slot, rows, expected }),

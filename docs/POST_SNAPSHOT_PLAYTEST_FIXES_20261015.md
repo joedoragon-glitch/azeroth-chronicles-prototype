@@ -79,7 +79,7 @@ The v4 save version and existing keys remain compatible. An optional bounded `ro
 
 Per-design handoffs: `crown-direwolf-riders.json`, `ogre-body-aesthetic.json`, `thornfang-scout-tracks.json`, `ambient-harmless-wander.json`, `thornfang-trail-witness.json`, and `lantern-wraith-light.json` in `tools/sprites/design-handoffs`. These preserve procedural owners, stable identity, revision references and future animation requirements. No generated raster replacement or owner acceptance of new aesthetics is implied.
 
-## Selected hero audiovisual addition — awaiting the hero skill handoff
+## Historical selected-AV checkpoint — dependency handoff now incorporated
 
 The owner selected `feature/hero-skill-av-20261015` at
 `3687c17b78c499d509454edf71bfb99dc202aa81` for this same PR #308 and said the
@@ -123,3 +123,25 @@ This documentation-only checkpoint does not change runtime/generated artifacts o
 source receipts. No tests, builds, browser sessions, CI, merge into main or
 deployment were initiated. Continue this same PR; do not create an AV PR or treat
 this dependency record as completed incorporation.
+
+## Hero gameplay and audiovisual overhaul incorporated
+
+The owner supplied the complete hero handoff and confirmed this remains the same
+combined update. Gameplay source `06d174f0612b75b165f458e9fea1db60073ef5f5` and
+AV source `3687c17b78c499d509454edf71bfb99dc202aa81` are incorporated by ancestry
+with every previously selected #308 workstream. The prior dependency-wait section
+is historical, superseded by this integration. [The combined hero source ledger](HERO_SKILLS_CONSOLIDATION_20261015.md)
+records all 48 forms, preserved gameplay/numbers, concise skill reference menus,
+file conflicts, shared charge/Slow/Silence/healing reconciliation, module/offline
+load paths, source-only regressions and the deferred single validation gate.
+PR #305 and independent hero passives remain excluded. One dev.64 package/cache
+identifier is used; canonical build regeneration is deferred. No tests, builds,
+browser sessions, GitHub Actions, main merge or deployment were initiated.
+
+The owner additionally requested complete, appropriately concise player learning:
+Combat conditions is accessible from Controls and Hero skills, while the Keeper's
+Conditions and recovery shelf reserves detailed live rules for its figures view.
+Slow recovery, Silence, interruptions, Weaken/Fracture, taunt, protection, Rally,
+dust/displacement and enemy healing are covered; eligible Archive healer profiles
+and developer condition documentation are reconciled. No extra compulsory NPC
+lecture or combat popup is introduced.

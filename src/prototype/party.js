@@ -5,6 +5,24 @@
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 
     class Party {
+      rangerRallyActive(u) {
+        return (
+          !!u &&
+          u.hp > 0 &&
+          u.active !== false &&
+          u.rangerRallyZone === this.zoneId &&
+          (u.rangerRallyUntil || 0) > this.s.time
+        );
+      }
+      companionRallyMoveSpeed(u, base) {
+        return (
+          this.companionMoveSpeed(base) *
+          (this.rangerRallyActive(u) ? 1 + Math.min(0.25, u.rangerRallyMovement || 0) : 1)
+        );
+      }
+      companionRallyAttackSpeed(u) {
+        return this.rangerRallyActive(u) ? 1 + Math.min(0.2, u.rangerRallyAttack || 0) : 1;
+      }
       companionAttackDamage(u) {
         return u.damage + this.hero.level * 2 + this.companionInheritedDamageBonus();
       }
@@ -133,6 +151,7 @@
           !target ||
           (u.skill2Cd || 0) > 0 ||
           !targets.length ||
+          this.mageSilenceActive(u) ||
           this._companionCharges?.has(u.id) ||
           !this.beginPartyCharge(u, 2)
         )
@@ -245,6 +264,7 @@
             u.hp > 0 &&
             !u.deathRollHeld &&
             !u.keeperHeld &&
+            !this.mageSilenceActive(u) &&
             !this._tacticalScatter?.has(u.id) &&
             !this.peace &&
             !this.s.recallActive;
@@ -272,7 +292,12 @@
         }
       }
       companionTrySkill(u, target) {
-        if (!target || (u.skillGlobalCd || 0) > 0 || this._companionCharges?.has(u.id))
+        if (
+          !target ||
+          (u.skillGlobalCd || 0) > 0 ||
+          this.mageSilenceActive(u) ||
+          this._companionCharges?.has(u.id)
+        )
           return false;
         const secondReady = this.companionSecondSkillUnlocked() && (u.skill2Cd || 0) <= 0,
           secondTargets = secondReady ? this.companionSecondSkillTargets(u, target) : [];
@@ -369,7 +394,7 @@
           this.s.challenge.gameOver
         )
           return false;
-        const rangers = this.availableRangers(type),
+        const rangers = this.availableRangers(type).filter((u) => !this.mageSilenceActive(u)),
           key = type === 'health' ? 'healCd' : 'manaCd';
         if (!rangers.length) {
           if (manual) {
@@ -776,7 +801,7 @@
       followPartyMember(u, living, dt) {
         const d = dist(u, this.hero),
           speed =
-            this.companionMoveSpeed(d > 650 ? 500 : d > 350 ? 390 : d > 200 ? 315 : 255) *
+            this.companionRallyMoveSpeed(u, d > 650 ? 500 : d > 350 ? 390 : d > 200 ? 315 : 255) *
             this.slowMovementFactor(u) *
             this.mireBogMovementFactor(u) *
             this.ashMovementFactor(u);
@@ -854,6 +879,7 @@
             context.engaged &&
             u.type === 'soldier' &&
             u.hp <= u.maxHp * 0.5 &&
+            !this.mageSilenceActive(u) &&
             (u.survivalCd || 0) <= 0
           ) {
             u.survivalCd = 14;
@@ -894,7 +920,12 @@
           const pending = this._companionCharges?.get(u.id);
           if (pending) {
             const observation = this.partyChargeState(u);
-            if (pending.unit !== u || !observation || observation.interrupted) {
+            if (
+              pending.unit !== u ||
+              !observation ||
+              observation.interrupted ||
+              this.mageSilenceActive(u)
+            ) {
               this._companionCharges.delete(u.id);
               this.clearPartyCharge(u);
               continue;
@@ -910,7 +941,7 @@
                 this.follow(
                   u,
                   b,
-                  this.companionMoveSpeed(230) *
+                  this.companionRallyMoveSpeed(u, 230) *
                     this.slowMovementFactor(u) *
                     this.mireBogMovementFactor(u) *
                     this.ashMovementFactor(u),
@@ -936,7 +967,7 @@
                 this.follow(
                   u,
                   b,
-                  this.companionMoveSpeed(230) *
+                  this.companionRallyMoveSpeed(u, 230) *
                     this.slowMovementFactor(u) *
                     this.mireBogMovementFactor(u) *
                     this.ashMovementFactor(u),
@@ -963,7 +994,7 @@
                 this.follow(
                   u,
                   n,
-                  this.companionMoveSpeed(230) *
+                  this.companionRallyMoveSpeed(u, 230) *
                     this.slowMovementFactor(u) *
                     this.mireBogMovementFactor(u) *
                     this.ashMovementFactor(u),
@@ -987,7 +1018,7 @@
               this.follow(
                 u,
                 deposit,
-                this.companionMoveSpeed(230) *
+                this.companionRallyMoveSpeed(u, 230) *
                   this.slowMovementFactor(u) *
                   this.mireBogMovementFactor(u) *
                   this.ashMovementFactor(u),
@@ -1086,7 +1117,7 @@
               this.follow(
                 u,
                 this.archerFallbackPoint(u, e, living),
-                this.companionMoveSpeed(270) *
+                this.companionRallyMoveSpeed(u, 270) *
                   this.slowMovementFactor(u) *
                   this.mireBogMovementFactor(u) *
                   this.ashMovementFactor(u),
@@ -1099,7 +1130,7 @@
               this.follow(
                 u,
                 this.archerCombatPoint(u, e, living),
-                this.companionMoveSpeed(260) *
+                this.companionRallyMoveSpeed(u, 260) *
                   this.slowMovementFactor(u) *
                   this.mireBogMovementFactor(u) *
                   this.ashMovementFactor(u),
@@ -1112,7 +1143,7 @@
               this.follow(
                 u,
                 anchor,
-                this.companionMoveSpeed(245) *
+                this.companionRallyMoveSpeed(u, 245) *
                   this.slowMovementFactor(u) *
                   this.mireBogMovementFactor(u) *
                   this.ashMovementFactor(u),
@@ -1123,7 +1154,7 @@
             }
             if (this.companionTrySkill(u, e)) continue;
             if (u.cd <= 0) {
-              u.cd = 0.85;
+              u.cd = 0.85 / this.companionRallyAttackSpeed(u);
               const shot = Math.max(1, d);
               this.s.projectiles.push({
                 id: 'projectile-' + this.s.nextId++,
@@ -1154,7 +1185,7 @@
             this.follow(
               u,
               e,
-              this.companionMoveSpeed(250) *
+              this.companionRallyMoveSpeed(u, 250) *
                 this.slowMovementFactor(u) *
                 this.mireBogMovementFactor(u) *
                 this.ashMovementFactor(u),
@@ -1162,7 +1193,7 @@
               this.line(u, e) ? 55 : 0,
             );
           else if (u.cd <= 0) {
-            u.cd = 0.85;
+            u.cd = 0.85 / this.companionRallyAttackSpeed(u);
             if (this.damage(e, this.companionAttackDamage(u), u.id))
               this.event('melee', {
                 actor: 'companion',

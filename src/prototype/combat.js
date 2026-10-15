@@ -246,6 +246,12 @@
         return count;
       }
 
+      weakenedEnemyDamage(e) {
+        return (
+          e.damage *
+          ((e.weakenUntil || 0) > this.s.time ? 1 - Math.min(0.8, e.weakenFraction || 0) : 1)
+        );
+      }
       tacticalHighestThreatTarget(e, fallback = this.hero) {
         const candidates = this.combatTargets().filter(
           (u) => u.hp > 0 && dist(e, u) <= (e.type === 'boss' ? 500 : 360) && this.line(e, u),
@@ -634,6 +640,11 @@
           equipment.remaining -= absorbed;
           amount -= absorbed;
         }
+        // Shield Stance sacrifices Paladin offense; Arcane Fracture increases
+        // actual damage from both the hero and companions, once per hit.
+        if (source === 'hero' && this.hero.class === 'paladin' && (this.hero.shieldStance || 0) > 0)
+          amount *= R.heroTactics.paladin.shield.outgoing;
+        if ((e.fractureUntil || 0) > this.s.time) amount *= 1 + (e.fractureFraction || 0);
         const actualDamage = Math.max(0, Math.min(e.hp, amount));
         const reflected =
           e.captainProfile === 'supply-crown' && e.captainReflect > 0 ? actualDamage * 0.3 : 0;
@@ -661,8 +672,27 @@
             : ['soldier', 'archer'].includes(u.type)
               ? this.companionArmor(u.type)
               : 5 + this.hero.level * 0.5;
-        const oldHp = u.hp,
-          mitigated = alreadyMitigated ? Math.max(0, amount) : Math.max(3, amount - armor * 0.35);
+        const oldHp = u.hp;
+        let mitigated = alreadyMitigated ? Math.max(0, amount) : Math.max(3, amount - armor * 0.35);
+        // Hero Shield Stance and the party ward share a mitigation layer:
+        // apply the STRONGER one, not both multiplicatively. Last Bastion
+        // still protects companions, while a tank cannot stack two defenses
+        // into near-immunity. Enemy weakening remains an offensive debuff.
+        let defensiveFactor = 1;
+        if (u === this.hero && u.class === 'paladin' && (u.shieldStance || 0) > 0) {
+          const shield = R.heroTactics.paladin.shield;
+          defensiveFactor = Math.min(
+            defensiveFactor,
+            1 -
+              Math.min(
+                0.9,
+                shield.reduction + Math.floor((u.shieldRank || 1) / 2) * shield.reductionStep,
+              ),
+          );
+        }
+        if ((u.wardUntil || 0) > this.s.time)
+          defensiveFactor = Math.min(defensiveFactor, 1 - Math.min(0.75, u.wardReduction || 0));
+        mitigated *= defensiveFactor;
         u.hp = Math.max(0, u.hp - mitigated);
         this.recordPartyChargeDamage(u, oldHp - u.hp);
         if (u === this.hero) this.recordDeveloperDamage('incoming', mitigated);
@@ -784,6 +814,22 @@
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
             continue;
           }
+          // Additive transient observation, after the existing stagger delay.
+          if (p.source === 'hero' && !p.heroFlightPresented) {
+            p.heroFlightPresented = true;
+            this.event('heroProjectileFlight', {
+              actor: 'hero',
+              class: hero.class,
+              slot: p.slot || 1,
+              x: p.x,
+              y: p.y,
+              target: p.target,
+              style: p.style,
+              charged: !!p.charged,
+              piercing: !!p.piercing,
+              effect: p.effect,
+            });
+          }
           const before = { x: p.x, y: p.y },
             d = dist(p, e),
             step = Math.min(p.speed * dt, d);
@@ -792,6 +838,20 @@
           p.x += p.dx * step;
           p.y += p.dy * step;
           if (!this.clearSegment(before, p, 0)) {
+            if (p.source === 'hero')
+              this.event('projectileImpact', {
+                actor: 'hero',
+                source: 'hero',
+                class: hero.class,
+                slot: p.slot || 1,
+                style: p.style,
+                effect: p.effect,
+                charged: !!p.charged,
+                x: before.x,
+                y: before.y,
+                landed: false,
+                blocked: true,
+              });
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
             continue;
           }
@@ -814,6 +874,7 @@
                   )
                 : null;
             const victim = guard || e;
+            const contactPoint = { x: victim.x, y: victim.y };
             if (guard) e.royalPrerogativeReadyAt = this.s.time + 18;
             const landed = this.damage(
               victim,
@@ -839,6 +900,8 @@
                 p.comboClass || this.hero.class,
               );
             if (landed && p.slow) this.applySlow(victim, p.slow);
+            if (landed && p.push && victim.hp > 0 && p.source === 'hero')
+              this.shieldPush(victim, p.push);
             this.event('projectileImpact', {
               actor: p.source === 'hero' ? 'hero' : 'companion',
               class: p.source === 'hero' ? this.hero.class : undefined,
@@ -847,10 +910,14 @@
               style: p.style || 'arrow',
               effect: p.effect,
               slot: p.slot,
-              x: victim.x,
-              y: victim.y,
+              x: contactPoint.x,
+              y: contactPoint.y,
               target: victim.id,
               charged: !!p.charged,
+              landed: !!landed,
+              piercing: !!p.piercing,
+              directionX: p.dx,
+              directionY: p.dy,
             });
             if (p.charged && (!p.rapid || p.chargedBurst))
               this.event('chargedImpact', {

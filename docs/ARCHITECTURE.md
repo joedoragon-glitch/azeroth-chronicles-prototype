@@ -33,7 +33,7 @@ The browser is the current desktop playtest target, especially Chromebook keyboa
 
 World, navigation, progression, save, shared combat, hero combat, boss combat, party, economy and rewards owners install method descriptors before Campaign is exported. Save also installs the existing static validate/restore/migrate APIs. The domain modules receive the Campaign constructor and explicit content/configuration dependencies; none imports engine.js or uses browser storage. They receive explicit content dependencies and have no browser dependency. This keeps the public Campaign API stable for saves, tests and existing callers. They do not introduce a second state store. Navigation's numerical rules are unchanged. `Campaign.classes`, `talentProfiles` and `talentMaxRanks` retain compatible references to rules balance tables. Legacy weapon/import maps are compatibility data, not duplicate live balance. Instructor skill ceilings derive from the authored curriculum. Existing combat/support tables remain in rules.js.
 
-`menus.js` receives `getGame`, Campaign/content, action/open/close services, Recall, map and finale callbacks. It keeps helpers private and exports ten catalog entry points. Delayed actions read `getGame()` at invocation so switching/reloading a campaign cannot leave a copied or stale state store. Shell input clearing, charge cancellation, Back selection and frame scheduling remain in app.js.
+`menus.js` receives `getGame`, Campaign/content, action/open/close services, Recall, map and finale callbacks. It keeps helpers private and exposes catalog entry points, including the concise Hero skills and Combat conditions references. Delayed actions read `getGame()` at invocation so switching/reloading a campaign cannot leave a copied or stale state store. Shell input clearing, charge cancellation, Back selection and frame scheduling remain in app.js.
 
 Rendering reads the campaign and holds only transient presentation state. Screen coordinates are logical CSS pixels. The browser shell sizes the physical canvas for device pixel ratio, capped at 2 on desktop and 1.5 on phone, with a three-million-pixel budget where the viewport permits it. Combat geometry remains in world coordinates. Existing zone initialization/migration stays in the world layer.
 
@@ -138,3 +138,23 @@ Ground materials reuse a screen-aligned isometric repeat at the current physical
 `ground-cache.js` owns one current outdoor floor picture, bounded to 64 MiB RGBA with a preferred 256-unit movement margin. `renderer.js` reuses it while retaining visible-tile counters and the existing dynamic layers. Zone, material readiness/revision, viewport, physical scale and exhausted camera margin rebuild it. Interiors release it and use their original floor path. Source art, campaign state and save keys are unchanged. See [GROUND_WINDOW_PERFORMANCE.md](GROUND_WINDOW_PERFORMANCE.md).
 
 Joel additionally authorizes a 256 MiB decoded sprite-cache ceiling for continued artwork production (previously 16 MiB). The shared format and tooling active-memory policy agree; lazy loading, two concurrent decodes, LRU/pinning and per-resource/package limits remain unchanged. This is separate from the 64 MiB floor-picture ceiling and is not an upfront allocation.
+
+## Consolidated hero skills and presentation · development source
+
+`hero-presentation.js` owns the stateless 48-form catalog, actual-projectile Canvas
+drawings, charge/status glyphs and bounded hero FX; `audio-hero.js` installs original
+hero foley on the existing audio facade/mixer/voice lifecycle. These modules do not
+authorize casts or modify gameplay. Shell charge feedback observes the same
+pause-aware active clock as pending companion preparation. `combat.js` counts
+actual final HP loss for transient charged interruption; `engine.js` resolves
+companion casts after all damage phases. Shared Slow recovery covers cooldowns
+without stretching preparations, warnings or ongoing healing.
+
+`archive.js:conditionTopics` owns shared short condition definitions and optional
+detailed live-rule explanations. `menus.js` exposes only each selected short
+explanation through Combat conditions; the Keeper's existing shelves/figures
+flow exposes the details. Controls and the Adventure/Barracks/teacher Hero skills
+paths link to that short reference. This is a read-only presentation query, not a
+new condition store or tutorial system. See
+`docs/HERO_SKILLS_CONSOLIDATION_20261015.md` for sources, conflicts, the one dev.64
+cache/version and unexecuted combined validation requirements.
