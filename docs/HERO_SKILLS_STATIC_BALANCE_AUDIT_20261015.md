@@ -1,6 +1,8 @@
 # Hero Skills — additional static balance audit
 15 October 2026 — owner-requested follow-up after complete class-specific Skills 2–8 redesign
 
+**Second owner-delegated follow-up (15 October 2026):** The later [damage-and-cooldown rotation audit](./HERO_SKILLS_COOLDOWN_ROTATION_DAMAGE_AUDIT_20261015.md) documents fixed 0.65s hold, source-derived attack coefficients, and preventive shortening of Paladin Weaken/Mage Frost Slow, plus bounded repeatable Skill 5 and Paladin Skill 7 area targets. The old Frost uptime and Weaken duration discussed lower in this report are now historical. The combined gameplay pass must still validate that *no fixed rotation* trivializes different bosses and enemy-group shapes.
+
 **Follow-up implementation (15 October 2026):** The owner delegated conservative tuning with the explicit goal of **not making the game too easy**. A1/A2 and the Paladin defense-overlap risk B3 have now received targeted source changes on the same development branch. This file **retains its original pre-change findings as historical evidence**; their old numbers below are not the current source values. The latest authoritative design and numbers are at [`HERO_CLASS_SKILLS_2_8_CONSOLIDATED_REVIEW_20261015.md`](./HERO_CLASS_SKILLS_2_8_CONSOLIDATED_REVIEW_20261015.md).
 
 - **A1 addressed in source:** Mage charged Skill 8 now applies +25–29% Fracture for only 2.5 seconds instead of +12–16% for 4.5 seconds. It still shares the nonstacking Fracture status with Skill 4. The tradeoff is deliberately short burst rather than longer control.
