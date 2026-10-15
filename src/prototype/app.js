@@ -310,9 +310,9 @@
       '.\n' +
       'Skills 1–8: ' +
       skillKeys +
-      '. Tap for normal; hold Skills 1–3' +
-      (game.hero.class === 'ranger' ? '' : ' or 4') +
-      ' until CHARGED, then release. ' +
+      '. Tap for normal; hold any skill' +
+      (game.hero.class === 'ranger' ? ' except Ranger Skill 4' : '') +
+      ' for 0.65s until CHARGED, then release. ' +
       (game.hero.class === 'paladin'
         ? 'Skill 3 raises a shield; tap again to lower it or hold for Shield Bash.'
         : game.hero.class === 'mage'
@@ -1645,14 +1645,17 @@
     ],
     icons = ['ATK', 'HIT', 'HEAL', 'GUARD', 'AREA', 'CAST', 'BURST', 'FINAL'],
     skillKeys = () => Array.from({ length: 8 }, (_, i) => input.key('skill' + (i + 1))),
-    chargeableSlots = new Set([1, 2, 3, 4]);
+    chargeableSlots = new Set([1, 2, 3, 4, 5, 6, 7, 8]);
   const canChargeSlot = (slot) => chargeableSlots.has(slot) &&
     (slot !== 4 || game.hero.class !== 'ranger');
   const skillLabel = (slot) => {
     const labels = {
-      paladin: { 2: 'Sundering Strike', 3: 'Shield Stance', 4: 'Judgment' },
-      mage: { 2: 'Frost Bolt', 3: 'Spell Interrupt', 4: 'Arcane Fracture' },
-      ranger: { 2: 'Pinning Shot', 3: 'Self-Heal', 4: 'Movement Haste' },
+      paladin: { 2: 'Sundering Strike', 3: 'Shield Stance', 4: 'Judgment',
+        5: 'Holy Area', 6: 'Vanguard Rush', 7: 'Holy Assault', 8: 'Final Special' },
+      mage: { 2: 'Frost Bolt', 3: 'Spell Interrupt', 4: 'Arcane Fracture',
+        5: 'Frost Burst', 6: 'Magic Shot', 7: 'Frost Assault', 8: 'Final Special' },
+      ranger: { 2: 'Pinning Shot', 3: 'Self-Heal', 4: 'Movement Haste',
+        5: 'Arrow Volley', 6: 'Hasty Shot', 7: 'Piercing Arrow', 8: 'Final Special' },
     };
     return labels[game.hero.class]?.[slot] || skillNames[slot - 1];
   };
@@ -1669,10 +1672,10 @@
     return (Math.ceil(Math.max(0, seconds) * 10) / 10).toFixed(1);
   }
   function chargedTargetRange(slot) {
-    return slot === 1 || slot === 2 || slot === 4 ? game.heroSkillRange(slot, true) : 0;
+    return [1, 2, 4, 6, 7, 8].includes(slot) ? game.heroSkillRange(slot, true) : 0;
   }
   function chargeTarget(slot, targetId = null) {
-    if (slot !== 1 && slot !== 2 && slot !== 4) return null;
+    if (![1, 2, 4, 6, 7, 8].includes(slot)) return null;
     const range = chargedTargetRange(slot),
       valid = game
         .zone()
@@ -1739,7 +1742,7 @@
     charge.started = performance.now();
     // Record which protected encounters were active at the instant charging began.
     charge.encountersAtStart = game.chargedEncounterSnapshot();
-    if (charge.slot === 1 || charge.slot === 2 || charge.slot === 4)
+    if ([1, 2, 4, 6, 7, 8].includes(charge.slot))
       charge.targetId = chargedPreviewTarget()?.id ?? null;
     return true;
   }
@@ -1804,7 +1807,7 @@
         targetId: charge.targetId ?? null,
         color,
       };
-    if ((charge.slot === 1 || charge.slot === 2 || charge.slot === 4) &&
+    if ([1, 2, 4, 6, 7, 8].includes(charge.slot) &&
         !chargeTarget(charge.slot, charge.targetId))
       return {
         slot: charge.slot,
@@ -1875,7 +1878,7 @@
       manaStatus('Need ' + cost + ' MP.');
       return;
     }
-    if (slot === 1 || slot === 2 || slot === 4) {
+    if ([1, 2, 4, 6, 7, 8].includes(slot)) {
       status('No target in range.');
       return;
     }
@@ -1929,14 +1932,14 @@
       return false;
     }
     // The charge is still released manually; only the aim is resolved now.
-    const releaseTarget = slot === 1 || slot === 2 || slot === 4
+    const releaseTarget = [1, 2, 4, 6, 7, 8].includes(slot)
       ? chargeTarget(slot, targetId) : null;
     charge = null;
     const cast =
       activePlay() &&
       game.cast(
         slot,
-        slot === 1 || slot === 2 || slot === 4 ? releaseTarget?.id : undefined,
+        [1, 2, 4, 6, 7, 8].includes(slot) ? releaseTarget?.id : undefined,
         true,
         encountersAtStart,
       );
