@@ -138,6 +138,9 @@ const PrototypeData = {
       region: 'vale',
       kind: 'field',
       name: 'Thornfang',
+      role: 'Former Crown wilderness scout and Greenwood patrol chief',
+      history:
+        'Thornfang learned Greenwood paths as a Crown wilderness scout. He now circles the estate approaches with Mira, the paid instructor who cannot leave without permission. His patrol returns to the den when a fight breaks off; the tracks he leaves through the woods are less secret than he thinks.',
       level: 2,
       captive: 'Mira the Village Instructor',
       service: 'Learn skill 2 and train skills 1 and 2 to rank 2',
@@ -159,6 +162,8 @@ const PrototypeData = {
       region: 'vale',
       kind: 'dungeon',
       name: 'Lifebinder',
+      history:
+        'The Lifebinder was one of the Dark Lord’s old companions. He binds the fallen into aware, enduring skeletons rather than bringing them back to life. Their work keeps the unfinished winter estate running; Borin was compelled to build and repair it.',
       level: 3,
       captive: 'Borin the Village Smith',
       service: 'Village weapon improvements and basic equipment crafting',
@@ -182,6 +187,9 @@ const PrototypeData = {
       region: 'march',
       kind: 'field',
       name: 'Mirejaw',
+      role: 'Wetland hydrology',
+      history:
+        'Mirejaw knows the wetland channels better than any mapmaker. The mud around his own territory slows pursuers and helps him recover, but the fisher villages still work their waters beyond his reach.',
       level: 5,
       captive: 'Sela the Frontier Instructor',
       service: 'Learn skills 3, 4 and 6 and train supported skills to rank 3',
@@ -203,6 +211,8 @@ const PrototypeData = {
       region: 'march',
       kind: 'dungeon',
       name: 'Drowned Keeper',
+      history:
+        'The Keeper was one of the Dark Lord’s old companions, a scholar and fishing enthusiast who tends the records at the Sunken Archive. His name comes from an older drowning; the later flooding of his shelves is a different event, and its cause is still unknown. Neri has the skills to protect the damaged books.',
       level: 6,
       captive: 'Neri the Alchemist',
       service: 'Ranger Heal training, Companion Vitality and talent reset',
