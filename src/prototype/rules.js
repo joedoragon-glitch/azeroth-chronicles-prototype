@@ -4823,32 +4823,32 @@
     threshold: 0.5,
     range: 350,
     species: Object.freeze({
-      wolf: 'Packbinding Howl',
+      wolf: 'Pack Recovery Howl',
       goblin: 'Scrap Poultice',
-      skeleton: 'Bone Binding',
-      wraith: 'Spectral Restoration',
-      stalker: 'Shadow Mending',
-      mireling: 'Bog Renewal',
-      reedbeast: 'Reed Sap',
+      skeleton: 'Bone Rebinding',
+      wraith: 'Echo Mending',
+      stalker: 'Shadow Respite',
+      mireling: 'Bog Balm',
+      reedbeast: 'Reed-Sap Dressing',
       archer: 'Field Dressing',
-      crownguard: 'Crown First Aid',
+      crownguard: 'Regimental First Aid',
       ashbeast: 'Ember Rekindling',
-      orc: 'Warband Dressing',
-      ogre: 'Stone Salve',
+      orc: 'Warband First Aid',
+      ogre: 'Stoneground Poultice',
     }),
     // Explicit PR #300 repertoire review, not generic captain/boss status.
     // Named ranged techniques and authored support expertise are intentional
     // exceptions to the ordinary mobs' strict e.ranged AI flag.
     captains: Object.freeze({
       'supply-vale': 'Reclamation Triage',     // Scornfang: tracking volley / zone control
-      'supply-march': 'Wetland Recuperation',   // Direjaw: water and mud projection
-      'supply-crown': 'Agrarian Restoration',  // Dreadmaw: distributed brood care
+      'supply-march': 'Sediment Rehydration',   // Direjaw: water and mud projection
+      'supply-crown': 'Husbandry Poultice',  // Dreadmaw: distributed brood care
     }),
     bosses: Object.freeze({
-      crypt: 'Continuity Binding',            // Lifebinder: bolts and estate warding
-      mire: 'Watershed Recovery',              // Mirejaw: hydrological ranged effects
-      archive: 'Restorative Annotation',       // Drowned Keeper: ranged water magic
-      ridge: 'Payroll Relief',                 // Ridge Tyrant: ranged cargo/archer command
+      crypt: 'Preservation Binding',            // Lifebinder: bolts and estate warding
+      mire: 'Siltwater Mending',              // Mirejaw: hydrological ranged effects
+      archive: 'Archive Preservation',       // Drowned Keeper: ranged water magic
+      ridge: 'Contracted Care',                 // Ridge Tyrant: ranged cargo/archer command
       abyss: 'Wingman Recovery',               // Veyrith: aerial battlefield support
     }),
   });
