@@ -113,13 +113,14 @@
             .map((s) => {
               const rank = getGame().hero.skills[s[0] - 1],
                 cost = getGame().skillTrainingCost(s[0], rank);
+              const card = professionSkillCard(s[0]);
               return action(
-                (rank ? 'Train ' : 'Learn ') + s[1] + ' · ' + cost + ' crowns',
+                (rank ? 'Train ' : 'Learn ') + card.name + ' · ' + cost + ' crowns',
                 () => {
                   rank ? getGame().upgrade(s[0], n.family) : getGame().learn(s[0], n.family);
                   teacher(n, back);
                 },
-                'Skill ' + s[0] + ' · Rank ' + rank + ' · Specialist cap ' + cap,
+                'Skill ' + s[0] + ' · ' + card.role + ' · Rank ' + rank + '/' + cap,
                 rank >= cap || getGame().hero.gold < cost,
               );
             }),
@@ -127,71 +128,79 @@
         back,
       );
     }
-    function professionSkillDetail(slot) {
-      const g = getGame(),
-        cls = g.hero.class,
-        descriptions = {
-          paladin: {
-            1: 'Sword combo · third hit cleaves nearby enemies',
-            2: 'Heavy melee strike',
-            3: 'Restore hero health',
-            4: 'Brief damage immunity',
-            5: 'Holy area attack',
-            6: 'Collision-safe rushing melee strike · closes the distance before hitting',
-            7: 'Powerful holy area attack',
-            8: 'Combat finisher · needs an enemy target · holy area burst, self-heal and brief immunity',
-          },
-          mage: {
-            1: 'Ranged magic combo · third hit emits an arcane wave',
-            2: 'Frost projectile · slows enemy',
-            3: 'Restore hero health',
-            4: 'Protective barrier · brief damage immunity',
-            5: 'Frost area burst · slows enemies',
-            6: 'Frequent magic projectile · short slow',
-            7: 'Powerful frost area spell · slows enemies',
-            8: 'Combat finisher · needs an enemy target · arcane area burst, self-heal and brief immunity',
-          },
-          ranger: {
-            1: 'Bow combo · third hit scatters additional arrows',
-            2: 'Double shot',
-            3: 'Restore hero health',
-            4: 'Temporary movement haste',
-            5: 'Radial arrow volley · fires at enemies within 350 units',
-            6: 'Rapid shot · temporary haste',
-            7: 'Armor-piercing shot · ignores enemy shield, guard and damage-reduction effects',
-            8: 'Combat finisher · needs an enemy target · arrow area burst, self-heal and brief immunity',
-          },
-        },
-        charged = {
-          paladin: {
-            1: 'Holy projectile with triple basic damage',
-            2: 'Holy cleave cone',
-            3: 'Heal hero and living active companions',
-          },
-          mage: {
-            1: 'Arcane beam with triple basic damage',
-            2: 'Frost explosion and slow',
-            3: 'Heal hero and living active companions',
-          },
-          ranger: {
-            1: 'Three rapid arrows with triple total basic damage',
-            2: 'Piercing arrow volley',
-            3: 'Heal hero and living active companions',
-          },
-        },
-        normalCd = Math.round(g.skillCooldown(slot) * 1000) / 1000;
-      return (
-        descriptions[cls][slot] +
-        ' · Normal cooldown ' +
-        normalCd +
-        's' +
-        (slot <= 3
-          ? ' · Charged: ' +
-            charged[cls][slot] +
-            ' · ' +
-            Math.round(g.skillCooldown(slot, true) * 1000) / 1000 +
-            's cooldown'
-          : '')
+    // One short, class-specific reference shared by the skill list and trainers.
+    // Rules/Campaign remain authoritative for ranks, cooldowns and availability.
+    // The Keeper's Archive is optional deeper reading, not required for basics.
+    const skillCards = {
+      paladin: [
+        ['Sword Combo', 'Basic attack / holy burst', 'Sword combo; third hit cleaves', 'Holy projectile: 3× basic damage'],
+        ['Sundering Strike', 'Weaken / frontal cleave', 'Hit one foe; weaken its damage', 'Holy Cleave: weaken a frontal group'],
+        ['Shield Stance', 'Defense / shield knockback', 'Raise shield: 65–73% protection for 8s', 'Shield Bash: strike and push a cone',
+          'No Skill 1 while raised; other damage ×0.6. Tap again to lower.'],
+        ['Judgment', 'Taunt / group taunt', 'Strike and draw one foe’s attention', 'Grand Judgment: splash + group taunt',
+          'Boss taunt affects basic attacks briefly; scripted specials remain.'],
+        ['Holy Area', 'Area hit / weakening wave', 'Holy damage to up to 6 foes', 'Consecrated Wave: up to 8 + weaken'],
+        ['Vanguard Rush', 'Approach / impact push', 'Rush to a foe and strike', 'Vanguard Impact: rush + short push wave'],
+        ['Holy Assault', 'Area hit / stronger weaken', 'Holy damage to up to 6 foes', 'Oath Strike: up to 8 + weaken'],
+        ['Sanctuary Oath', 'Party ward / Last Bastion', 'Holy area + 15% heal + 20% party ward',
+          'Last Bastion: bigger area + 20% heal + 30% ward + weaken',
+          'No immunity. Ward and Shield Stance use only the stronger reduction.'],
+      ],
+      mage: [
+        ['Arcane Combo', 'Magic combo / beam', 'Magic combo; third hit splashes', 'Arcane Beam: 3× basic damage'],
+        ['Frost Bolt', 'Single slow / frost burst', 'Frost hit; slow one foe for 2–2.2s', 'Frost Burst: area slow for 3.2–4.2s'],
+        ['Spell Interrupt', 'Interrupt / bilateral silence', 'Stop one warned or aimed attack', 'Silence Field: block nearby special skills',
+          'Silence affects you and companions too; basic attacks still work.'],
+        ['Arcane Fracture', 'Vulnerability / group rupture', 'Hit + 15–19% incoming damage to foe',
+          'Arcane Rupture: area hit + 20–24% vulnerability',
+          'Fracture never stacks; the stronger effect applies.'],
+        ['Force Pulse', 'Push / wider force wave', 'Force area damage + knockback, up to 6', 'Force Wave: wider push, up to 8'],
+        ['Magic Shot', 'Slowing shot / focused beam', 'Magic projectile + brief slow', 'Focused Beam: stronger shot + slow'],
+        ['Arcane Chain', 'Chain / wider chainstorm', 'Chain damage across up to 3 foes', 'Chainstorm: stronger chain, up to 5'],
+        ['Astral Detonation', 'Area burst / brief fracture', 'Blast up to 5 foes; primary hit strongest',
+          'Arcane Cataclysm: up to 7 + 25–29% vulnerability for 2.5s',
+          'No healing or immunity. Fracture is nonstacking.'],
+      ],
+      ranger: [
+        ['Bow Combo', 'Arrow combo / rapid triple', 'Arrow combo; third hit fans out', 'Rapid Triple Shot: 3× basic total'],
+        ['Pinning Shot', 'Two slowing arrows / line', 'Two arrows slow one foe', 'Pinning Volley: line hit + slow'],
+        ['Self-Heal', 'Personal / party healing', 'Heal yourself', 'Party Heal: you + wounded living allies',
+          'Cannot revive fallen companions.'],
+        ['Movement Haste', 'Personal speed / companion rally', 'Move 25% faster for 4–5.75s',
+          'Companion Rally: +15–19% move, +8–12% basic attack speed',
+          'Nearby living allies only; no dash or special-skill acceleration.'],
+        ['Arrow Volley', 'Area arrows / slowing rain', 'Hit up to 6 nearby foes', 'Arrow Rain: arrows at up to 8 + slow'],
+        ['Repelling Shot', 'Single push / repelling volley', 'Shoot one foe and push it back', 'Repelling Volley: 3 arrows + stronger push'],
+        ['Piercing Arrow', 'Pierce / slowing piercing burst', '10× Power piercing hit on one foe', '12× Power piercing hit + slow'],
+        ['Hunter’s Salvo', 'Multi-target / grand hunt', '5× Power arrow to up to 3 foes', 'Grand Hunt: two 4× Power arrows to up to 5',
+          'When isolated, fire 2 normal or 3 charged arrows at one foe. No piercing.'],
+      ],
+    };
+    function professionSkillCard(slot) {
+      const card = skillCards[getGame().hero.class]?.[slot - 1];
+      if (!card) return { name: 'Skill ' + slot, role: '', tap: '', charge: '', note: '' };
+      return {
+        name: card[0], role: card[1], tap: card[2],
+        charge: card[3], note: card[4] || '',
+      };
+    }
+    function skillDetail(slot, back) {
+      const g = getGame(), def = D.skills.find((entry) => entry[0] === slot);
+      if (!def || !g.skillRevealed(slot)) return;
+      const card = professionSkillCard(slot),
+        rank = g.hero.skills[slot - 1] || 0,
+        formatCd = (value) => (Math.round(value * 10) / 10).toFixed(1),
+        teacher = slot === 1 ? '' : g.boss(def[4]).captive,
+        learn = rank ? '' : '\\nLearn from ' + teacher + ' · ' +
+          g.skillTrainingCost(slot, 0) + ' crowns';
+      openMenu(
+        'Skill ' + slot + ' · ' + card.name,
+        'Rank ' + rank + (rank ? ' · same rank for tap and charge' : ' · not learned') +
+          '\\nTap · ' + formatCd(g.skillCooldown(slot)) + 's: ' + card.tap +
+          '\\nCharge · ' + formatCd(g.skillCooldown(slot, true)) + 's: ' + card.charge +
+          (card.note ? '\\n' + card.note : '') + learn,
+        [],
+        back,
       );
     }
     function skillBook(back = closeMenu) {
