@@ -26,12 +26,12 @@ previously uncovered named captains; Dreadmaw's existing passive documented as-i
 
 | Family | Name | Normal | TRUE | Counter |
 | --- | --- | --- | --- | --- |
-| Ridge Tyrant | Contractual Protection | 6% incoming reduction per owned living nearby Archer, max 18% | 10% each, max 30% | Defeat or distance the actual Archers |
+| Ridge Tyrant | Contractual Protection | 8% baseline reduction plus 5% per owned living nearby Archer, max 23% | 12% baseline plus 6% each, max 30% | Defeat or distance the actual Archers |
 | Garun | Self-Assembly | 18% reduction with core closed; regain 4% max HP when real exposure ends (18s cooldown) | 28%; regain 6% | Damage exposed core; exploit repair cooldown |
-| Ashen Warlord | Chain of Command | 5% incoming reduction per nearby owned Orc, max 15%; Orcs deal 15% extra damage | 8% each, max 24%; Orcs deal 25% extra | Eliminate owned Orcs or pull away |
-| Veyrith | Aerial Superiority | 22% damage reduction for 4s after a completed offensive aerial move | 32% for 4s | Dodge, break route, or pressure after cover ends; Go-Around is excluded |
-| Veyra | Regimental Cohesion | 20% incoming reduction during real Dress Ranks with a living nearby Crown guard | 30% | Defeat guards, or wait out actual formation |
-| Cindermaw | Emergency Provisioning | Below 70% HP, with nearby living Ash-beast: restore 1% own max HP/s (12% max total per fight); 3 wounded allies heal 0.8% each/s | 1.6% self HP/s (20% fight cap); 1.2% allies | Defeat or separate Ash beasts; no resurrection, cross-map effect, or Cinder-only free healing |
+| Ashen Warlord | Chain of Command | 10% baseline reduction plus 4% per nearby owned Orc, max 22%; Orcs deal 15% extra damage | 15% baseline plus 5% each, max 30%; Orcs deal 25% extra | Eliminate owned Orcs or pull away |
+| Veyrith | Aerial Superiority | 12% baseline damage reduction, rising to 22% for 4s after a completed offensive flight | 18% baseline, rising to 32% for 4s | Dodge, break route, or pressure after cover ends; Go-Around is excluded |
+| Veyra | Regimental Cohesion | 10% baseline reduction; 20% during real Dress Ranks with a living nearby Crown guard | 15% baseline; 30% during Dress Ranks | Defeat guards, or wait out actual formation |
+| Cindermaw | Emergency Provisioning | Below 70% HP: 0.5% own max HP/s alone, 1% with a nearby living Ash beast (12% max total per fight); 3 wounded allies heal 0.8% each/s | 0.8% alone, 1.6% with allies (20% fight cap); 1.2% allies | Defeat or separate Ash beasts to halve boss recovery; no resurrection or cross-map effect |
 | Dark Lord | Veteran's Instinct | Four actual HP-damaging hits within 4s enable 25% mitigation for 6s (12s internal cooldown) | 35% mitigation | Spread timing of attacks; fully shielded, invalid or immune hits never count |
 
 Dark Lord group encounters require at least two distinct attackers for the trigger;
@@ -41,8 +41,8 @@ by the established explicitly piercing hero damage, not by ordinary attacks.
 
 ## New captain passives
 
-- **Crag Tyrant — Hazard Pay.** If a living room guard is within 320 units,
-  Crag takes 15% less incoming damage. Eligible living Treasury guards near
+- **Crag Tyrant — Hazard Pay.** Crag always takes 12% less incoming damage,
+  increasing to 25% total reduction while a living room guard is within 320 units. Eligible living Treasury guards near
   an actively engaged Crag deal 20% more outgoing damage. No new personnel or
   alteration to Hostile Liquidation.
 - **Cinder Warlord — Escalating Enforcement.** Each real HP-damaging hit
