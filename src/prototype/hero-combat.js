@@ -114,19 +114,33 @@
         let hits = 0;
         if (hero.class === 'ranger') {
           const foes = this.huntTargets(target, radius, cfg.targets);
+          // The hunt stays a crowd skill. Against a truly isolated enemy it
+          // gains only one extra non-piercing arrow, still less efficient
+          // than Skill 7's specialized defense-piercing boss strike.
+          const arrowsPerTarget = foes.length === 1
+            ? cfg.isolatedArrows
+            : cfg.arrowsPerTarget || 1;
           foes.forEach((foe, index) => {
-            for (let n = 0; n < (cfg.arrowsPerTarget || 1); n++) {
+            for (let n = 0; n < arrowsPerTarget; n++) {
               this.launchHuntArrow(foe, power * cfg.damagePerArrow * scale,
                 charged, index * 0.04 + n * 0.1, receipt);
               hits++;
             }
           });
         } else {
-          const foes = this.zone().enemies
-            .filter((e) => e.hp > 0 && !e.neutral && !e.returning &&
-              dist(e, hero.class === 'paladin' ? hero : target) <= radius &&
-              this.line(hero, e))
-            .sort((a, b) => this.idOrder(a, b));
+          // Cap instant hit count to keep massive packs dangerous. Always
+          // prioritize the explicitly selected Mage target for primary damage.
+          const center = hero.class === 'paladin' ? hero : target;
+          const eligible = this.zone().enemies.filter((e) =>
+            e.hp > 0 && !e.neutral && !e.returning &&
+            dist(e, center) <= radius && this.line(hero, e));
+          const foes = (hero.class === 'mage'
+            ? [target, ...eligible
+              .filter((e) => e !== target)
+              .sort((a, b) => dist(a, center) - dist(b, center) || this.idOrder(a, b))]
+            : eligible.sort((a, b) =>
+              dist(a, hero) - dist(b, hero) || this.idOrder(a, b)))
+            .slice(0, cfg.maxTargets);
           for (const foe of foes) {
             const coefficient = hero.class === 'paladin' ? cfg.damage
               : foe === target ? cfg.primaryDamage : cfg.splashDamage;
