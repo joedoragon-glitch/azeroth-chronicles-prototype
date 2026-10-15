@@ -3,6 +3,14 @@
 
 **IMPORTANT:** Development changes only; user requested no new tests until multiple updates are consolidated. The exact branch is **not tested, certified, approved to merge, or deployed**. Do not import the older PR #305 source branch wholesale over PR #300: this implementation starts with PR #300's hero repair, worldbuilding, save and control changes.
 
+## Source-review handoff: current approved redesign
+
+**Implementation branch:** `feature/hero-skills-2-4-on-snapshot-20261015` (PR #300-based). The source changes through checkpoint `0a34bc91807ad48b484a7e2c9210a40b20825ca1` include all approved redesigns below. These commits are **development only**; the user's instruction remains to run **no tests** until the entire update set is combined. No merge, deployment, developer PR readiness toggle, or certification has been performed.
+
+**Last source-review fixes:** Paladin Skill 8 is target-free on both tap and charged input (including keyboard/touch hold and no enemy reticle); Ranger Skill 4 is target-free for both tap and charged companion rally; charged Ranger Skill 4 cannot retain stale previous-buff strength after its duration expires; Mage 7 chained damage, Mage 5 knockback and Ranger 6 impact knockback all use existing combat resolvers. Standard status cleanup for Ranger rally and Paladin ward was kept on death and save restoration.
+
+**Do not infer runtime success from source commits.** Combined QA must confirm all 24 class/skill combinations, their charged equivalents, arena mechanics (Normal/TRUE), rank steps 1–8, companion formations and target selection, damage against bosses and captains, UI/gesture accessibility, audio/VFX contracts and historical saves. Any inconsistency found there belongs in the consolidated PR before release.
+
 ## Latest approved implementation — supersedes intermediate notes below
 
 **15 October 2026 — director-authorized class balance revision.** The new owner decisions supersede any earlier statements below that Ranger Skill 4 is tap-only, that normal Skill 8 retains immunity, that Mage Skills 5 and 7 slow enemies, or that Ranger Skill 6 grants haste. Those descriptions are now historical; this section records the **current source design**. It remains UNTESTED and unmerged pending consolidated QA.
