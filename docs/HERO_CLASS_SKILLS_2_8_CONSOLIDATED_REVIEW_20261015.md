@@ -3,7 +3,7 @@
 
 **IMPORTANT:** Development changes only; user requested no new tests until multiple updates are consolidated. The exact branch is **not tested, certified, approved to merge, or deployed**. Do not import the older PR #305 source branch wholesale over PR #300: this implementation starts with PR #300's hero repair, worldbuilding, save and control changes.
 
-## Implemented for planned combined QA: Skills 2–4
+## Implemented for planned combined QA: Skills 2–8
 
 Existing Skills 1–2 retain **+15% of rank-1 damage per trained skill rank** for normal and charged actions. In addition, each even rank (2/4/6/8) advances the relevant status, reach or coverage without a second exponential damage multiplier. Skills remain capped at 8 under existing rescued teachers and costs; normal/charged use **one saved rank**.
 
@@ -18,20 +18,20 @@ Existing Skills 1–2 retain **+15% of rank-1 damage per trained skill rank** fo
 
 Secondary effect steps are at ranks **2, 4, 6, 8**. The stronger effects are bounded: Shield Stance always lasts at most 8s; Spell Interrupt always stops one current enemy action; mage silence lasts 2–3s and radius 165–205; paladin shield bash reach 115–131 and push 55–75 world units; Grand Judgment area radius 160–180; Arcane Rupture radius 160–180. Normal skills use the existing base slot cooldowns (Skill 3: 8s, Skill 4: 14s); charged Skills 3–4 use 20s base cooldowns, all subject to existing Cooldown Training. Paladin normal Skill 3 instead starts cooldown upon stance end/cancel.
 
-Existing effects untouched where not expressly approved: Ranger healing and haste, Skill 1 normal combo and charged projectiles, Mage Skill 2 frost identity, Paladin Skill 2 cone identity, Ranger Skill 2 line identity, class-specific Skill 5–8 abilities, Skill 8's currently shared healing/immunity (pending review), and all companion progression.
+Existing effects untouched where not expressly approved: Ranger healing and haste, Skill 1 normal combo and charged projectiles, Mage Skill 2 frost identity, Paladin Skill 2 cone identity, Ranger Skill 2 line identity, **all normal (tap) Skills 5–8 including Skill 8's existing healing/immunity**, and all companion progression. Newly added charged Skills 5–8 are described below; they do not automatically change their normal forms.
 
 ### Implementation internals awaiting combined QA
 
 - `hero-combat.js`: rank-milestone parameters, stance state, push, interrupt, silence, taunt, fracture, normal/charged dispatch.
-- `rules.js`: centralized tuning, including charged Skill 4 cooldown.
+- `rules.js`: centralized tuning, including charged Skill 4–8 cooldowns and advanced charged move parameters.
 - `combat.js`: reduction when shield raised, reduction to enemy output while weakened, vulnerability from hero/companion damage.
 - `engine.js`, `boss-combat.js`: enemy damage hooks, suppression of new enemy specials, taunt priority, stance expiration.
 - `party.js`: silence prevents allied special casts and Ranger support inside field; basic attacks proceed.
-- `app.js`: charged Skill 4 input only Paladin/Mage; Skill 4 Ranger remains instant and target-free. Tap/hold Skill 3 honors class differences.
-- `renderer.js`: procedural shield overlay and persistent silence radius, preserving existing sprite/procedural fallback.
-- `archive.js`, `data.js`: update class-specific skill descriptions and generic shared training labels.
+- `app.js`: charged Skill 4 input only Paladin/Mage; Skills 5–8 charge for all three classes. Ranger Skill 4 remains instant and target-free. Tap/hold Skill 3 honors class differences.
+- `renderer.js`: procedural shield overlay, persistent silence radius, charged aim guidance and Last Bastion ward, preserving existing sprite/procedural fallback.
+- `archive.js`, `data.js`: update class-specific skill descriptions for Skills 2–8 and generic shared training labels.
 
-**Deferred combined validation:** Skill 1 combos and charged targeting, three classes × 8 ranks × normal/charged Skills 2–4, battle against regular/captain/boss/TRUE foes, PvE leashes and walls, silence and taunt interplay, pause, reload/import of v4 saves, historical/succession campaigns, cross-device hold/release, audio/VFX, performance guards and current PR #300 integrated release tests. **No validation executed in this work item** as requested.
+**Deferred combined validation:** Skill 1 combos and charged targeting, three classes × 8 ranks × normal/charged Skills 2–8 (except Ranger charged Skill 4), battle against regular/captain/boss/TRUE foes, PvE leashes and walls, silence and taunt interplay, pause, reload/import of v4 saves, historical/succession campaigns, cross-device hold/release, audio/VFX, performance guards and current PR #300 integrated release tests. **No validation executed in this work item** as requested.
 
 ## Follow-up: charged Skills 5–8 implemented as provisional playable designs (not validated)
 
@@ -50,7 +50,7 @@ Input rule: Skills 1–3 and 5–8 charge for everyone; Skill 4 charges for Pala
 
 Source changes also include a visible Last Bastion ward and 5–8 charged-aim cues. Temporary shield, ward and silence state is cleared on save/import and death; ongoing original skill ranks/cooldowns remain in the version-4 save model.
 
-No tests, automated builds, device exercises, deployment or merges have been intentionally initiated in this implementation turn. Follow the owner's explicit request to validate **together** when combined feature branches are ready.
+No tests, automated builds, device exercises, deployment or merges have been intentionally initiated in this implementation work, per the owner's consolidated-QA instruction. This also means any errors that require executing the application remain unverified. Follow the owner's explicit request to validate **together** when combined feature branches are ready.
 
 ## Additional ordinary Skill 5–8 redesign ideas — NOT approved or implemented
 
@@ -64,6 +64,14 @@ No tests, automated builds, device exercises, deployment or merges have been int
 | **8** | **Last Bastion**: powerful defensive ultimate, protects allies for a defined interval and counters, **not guaranteed full immunity** | **Arcane Cataclysm**: risky high-damage area technique with clear telegraph/commitment; no free invulnerability | **Perfect Hunt**: high single-target/line precision burst with retreat or marked prey bonuses; no universal immunity |
 
 Each future proposed skill should be distinctive compared with Skills 1–4, should scale across ranks under the existing teacher system, and should not reintroduce universally shared invulnerability. Avoid unavoidable crowd control against bosses, infinite taunt chains, exploitably long silences or unbounded 8-rank geometry growth. Evaluate sustained DPS, solo survivability, companion survivability, ordinary-versus-TRUE bosses, and Normal/Nightmare in the **single coordinated final test pass**, not piecemeal tests now.
+
+## Static source-review follow-up (15 October 2026)
+
+The Mage Silence Field was reconciled with the existing enemy warning pipeline. Enemy specials **already being warned** now pause without consuming their warning timer while their caster remains inside the field; on expiration they resume the same scripted sequence. This prevents a queued boss/captain skill from resolving during silence without deleting authored boss phases. Enemy basic ranged aim, ordinary attacks and movement remain possible.
+
+Repository provenance: work intentionally continues on `feature/hero-skills-2-4-on-snapshot-20261015`, based on PR #300's `implementation/director-snapshot-20261013` rather than published `main`. PR #305 is an **earlier partial draft** started from main for rank-scaled Skill 2; **do not merge it directly over the snapshot**. A future combined PR should selectively carry this branch (plus any later approved work), reconcile overlapping files against the latest #300 branch and run **one consolidated validation matrix** only when instructed.
+
+Pending combined verification specifically includes combat-cast interruption, partial charged holds, paladin shield re-tap, Skill 6 rush geometry, projectile arrival timing, taunt vs special boss targeting, silence's interactions with independently scheduled specials, status reset on death/save, focus/touch controls, Sprite/Canvas visuals and PWA offline. The current source changes are **not certified**.
 
 ## Pending future decision: independent class passive skills
 
