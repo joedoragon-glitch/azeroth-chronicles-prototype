@@ -236,6 +236,10 @@
                   : R.ordinaryRangedScaling[i]?.damage || 1;
       let factor = region;
       if (e.form === 'ringleader') factor *= R.ringleaderScaling.damage;
+      // TRUE boss minions have a distinct 1.25 role budget; TRUE captains
+      // already use the Ringleader's 1.50 factor above.
+      if (e.trueSummon && e.trueSummonRole === 'minion')
+        factor *= R.trueBossSummons.minionScaling.damage;
       // Night-exclusive monster strength is separate from global nightPoints;
       // it is already baked into baseDamage for these spawned species.
       if (e.nightOnly) factor *= R.nightEnemyCombat[e.species]?.damage || 1;
