@@ -789,7 +789,7 @@
   "authorizedCombinedValidationRepairsRevision": {
     "source": "Owner-authorized combined validation repairs in PR #308, based on cb1607c3",
     "ledger": "docs/COMBINED_VALIDATION_REPAIRS_20261015.md",
-    "ledgerSha256": "c6e207b170a99e4bff903d4e117c5d41548183fe133ae95ff9b48c6425ba6c77",
+    "ledgerSha256": "f10bf8f092aa96732001be084dea1d6b104611870cb18a87d1ca2c42b1fd72ae",
     "previousFiles": {
       "src/prototype/combat.js": "c61f65325821bb89e78e6543cd5754308e6c93457a8434f05cbd08e4ccdb75e1",
       "src/prototype/audio-catalog.js": "48c14ae8bc0882fa4dd756187d29275e4d0fdcda3c026d90739cde6d374834ef",

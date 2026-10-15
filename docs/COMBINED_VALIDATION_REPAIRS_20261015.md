@@ -24,7 +24,9 @@ merging after successful preparation; the latest PR resume record tracks release
   the shipped desktop keys (1–5, Space, Shift, B) for queued charges. The old
   observer watched the retired ability renderer and sent unbound digits 6–8.
   Later assertions use Ranger for the party heal and include the new teacher
-  reference action, retaining the teacher's original Skill 1/2 scope.
+  reference action, retaining the teacher's original Skill 1/2 scope. The training
+  overview locator includes its explanatory button text, and the input audit
+  follows the nested Back path through Hero skills before the next shortcut.
 - Rendering-only test doubles include the new death/status observation context.
   Combat fixtures engage before measuring normalized HP and reset positions before
   testing cone selection; no production defense, damage or targeting is relaxed.
