@@ -22,36 +22,37 @@
           ).length;
       if (e.type === 'boss') {
         if (e.family === 'ridge')
-          return 1 - Math.min(p.ridge.maxArchers, owned('archer', p.ridge.radius)) *
+          return 1 - p.ridge.baseline[form] -
+            Math.min(p.ridge.maxArchers, owned('archer', p.ridge.radius)) *
             p.ridge.perArcher[form];
         if (e.family === 'mine' && !(e.open > 0))
           return 1 - p.mine.shellReduction[form];
         if (e.family === 'warlord')
-          return 1 - Math.min(p.warlord.maxOrcs, owned('orc', p.warlord.radius)) *
+          return 1 - p.warlord.baseline[form] -
+            Math.min(p.warlord.maxOrcs, owned('orc', p.warlord.radius)) *
             p.warlord.perOrc[form];
-        if (e.family === 'abyss' && e.passiveAerialUntil > this.s.time)
-          return 1 - p.abyss.reduction[form];
-        if (
-          e.family === 'citadel' &&
-          e.dressUntil > this.s.time &&
-          this.zone().enemies.some(
-            (u) => u !== e && u.hp > 0 && !u.neutral &&
-              u.species === 'crownguard' && near(u, p.citadel.radius),
-          )
-        )
-          return 1 - p.citadel.reduction[form];
+        if (e.family === 'abyss')
+          return 1 - (e.passiveAerialUntil > this.s.time
+            ? p.abyss.reduction[form] : p.abyss.baseline[form]);
+        if (e.family === 'citadel') {
+          const formed = e.dressUntil > this.s.time &&
+            this.zone().enemies.some(
+              (u) => u !== e && u.hp > 0 && !u.neutral &&
+                u.species === 'crownguard' && near(u, p.citadel.radius),
+            );
+          return 1 - (formed ? p.citadel.reduction[form] : p.citadel.baseline[form]);
+        }
         if (e.family === 'darklord' && e.passiveVeteranUntil > this.s.time)
           return 1 - p.darklord.reduction[form];
       }
-      if (
-        e.roomCaptain &&
-        e.captainProfile === 'supply-highlands' &&
-        this.zone().enemies.some(
-          (u) => u !== e && u.hp > 0 && u.roomGuard &&
-            near(u, p.captains['supply-highlands'].guardRadius),
-        )
-      )
-        return 1 - p.captains['supply-highlands'].selfReduction;
+      if (e.roomCaptain && e.captainProfile === 'supply-highlands') {
+        const cfg = p.captains['supply-highlands'],
+          hasGuard = this.zone().enemies.some(
+            (u) => u !== e && u.hp > 0 && u.roomGuard &&
+              near(u, cfg.guardRadius),
+          );
+        return 1 - cfg.baseline - (hasGuard ? cfg.selfReduction : 0);
+      }
       if (e.fieldCaptain && e.captainProfile === 'frontier-overseer' &&
           e.passiveViolationUntil > this.s.time)
         return 1 - Math.min(
@@ -137,12 +138,12 @@
           .filter((u) => u !== e && u.hp > 0 && !u.neutral &&
             u.species === 'ashbeast' && dist(u, e) <= cfg.radius)
           .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp);
-        if (!allies.length) continue;
         const form = e.form === 'true' ? 'true' : 'normal';
         if (e.hp < e.maxHp * cfg.threshold) {
           const budget = e.maxHp * cfg.bossHealCap[form] - (e.passiveRegenTotal || 0),
             heal = Math.max(0, Math.min(e.maxHp - e.hp,
-              e.maxHp * cfg.bossRegen[form] * dt, budget));
+              e.maxHp * (allies.length ? cfg.bossRegen[form] : cfg.soloRegen[form]) * dt,
+              budget));
           if (heal > 0) {
             e.hp += heal;
             e.passiveRegenTotal = (e.passiveRegenTotal || 0) + heal;
