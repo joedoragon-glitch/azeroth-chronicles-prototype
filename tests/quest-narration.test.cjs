@@ -62,6 +62,16 @@ for (let i = 0; i < prose.length; i++) {
     assert.equal(entry.text, polishedKeeps.get(number), 'Approved KEEP selection has its latest voice-polished wording');
 }
 assert(prose[29].text.includes('fortress gate'), 'Final approach is a significant event');
+for (const [quest, fact] of [
+  [4, 'Lifebinder'],
+  [16, 'Crag'],
+  [18, 'Stonecross'],
+  [23, 'Ashen Warlord'],
+  [29, 'Cindermaw'],
+]) assert(prose[quest - 1].text.includes(fact), 'Approved quest ' + quest + ' gains grounded new canon');
+assert(prose[3].text.includes('six signatures') && !/sixth companion/i.test(prose[3].text),
+  'quest clue does not prematurely reveal the sixth companion');
+assert(prose[28].text.includes('Levies'), 'Crown payoff includes the real cost of welfare');
 
 for (let i = 0; i < quests.length; i++) {
   const c = new Campaign('normal', 'paladin', () => 0.9);
