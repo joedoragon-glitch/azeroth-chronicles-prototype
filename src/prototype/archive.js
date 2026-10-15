@@ -268,6 +268,12 @@
         ['Crag Tyrant — Treasury captain', R.roomCaptains['supply-highlands'].history],
         ['Ashen Warlord — Frontier governor', D.bosses.find((b) => b.id === 'warlord').history],
         ['Cinder Warlord — Frontier inspector', R.roomCaptains['frontier-overseer'].history],
+        ...(game.s.throneClaimed
+          ? [[
+              'The sixth mark — remembered at the throne',
+              'The six-signature ledger in Greenwood and the Keeper’s record of the final external command pointed to one missing adventurer. At the defeated ruler’s throne the sixth mark answered to you: you were the missing sixth companion of his former party. Your present Paladin, Mage or Ranger training does not overwrite that past, award a new class, or demand another dungeon victory.',
+            ]]
+          : []),
         [
           'Companions from the Barracks',
           'Lifebinder and the Drowned Keeper were originally recruited from the Barracks, through the same institution that supplies today’s Soldiers and Rangers. They belonged to different companion classes the present hero has not discovered. Their history does not make them Soldiers or Rangers.',
