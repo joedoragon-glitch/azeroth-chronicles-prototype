@@ -41,6 +41,13 @@ certification. PR #308 remains the only candidate. Nothing is merged or deployed
   release after failure. This prevents the first obsolete Archive assertion from
   hiding the rest of the integrated audiovisual/browser results.
 
+- The new browser AV harness initializes its first campaign before constructing
+  the renderer and crops default-150% contact sheets for readable inspection.
+  Its exact callback also runs all 144 form/rank cases through native Canvas.
+  The legacy balance observer now has all sixteen normal/charged counters; the
+  current report exports them and rejects non-finite telemetry. These are test
+  setup/reporting repairs, without additional runtime or balance changes.
+
 ## Combined evidence and limits
 
 Canonical regeneration of dev.64 reproduced its generated tree exactly; formatting

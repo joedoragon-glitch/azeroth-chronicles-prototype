@@ -161,6 +161,7 @@ function trial({ cls, skill, party, family, form = 'normal', count, policy }) {
     died: !!g.s.statistics.deaths,
     seconds: round(seconds),
     damage: round(m.damage),
+    casts: m.casts,
     received: round(m.received),
     heroHp: round(g.hero.hp / g.hero.maxHp),
     alive: g.activeLivingParty().length,
@@ -193,6 +194,13 @@ if (require.main === module) {
       if (i % 10 === 0) console.log('completed', i, c.cls, c.family || c.count, c.policy);
       return r;
     });
+  for (const row of rows) {
+    assert.equal(row.casts.length, 16);
+    assert(
+      row.casts.every((n) => Number.isFinite(n) && n >= 0),
+      'finite normal/charged telemetry',
+    );
+  }
   for (const row of rows)
     for (const field of ['seconds', 'damage', 'received', 'heroHp', 'remaining'])
       assert(Number.isFinite(row[field]), row.cls + ' finite ' + field);

@@ -72,11 +72,12 @@ const server = http.createServer((req, res) => {
           canvas.height = 640;
           const sheet = document.createElement('canvas');
           sheet.id = 'hero-av-sheet';
-          sheet.width = 1200;
-          sheet.height = 960;
+          Object.assign(sheet.style, { position: 'fixed', zIndex: '99999', left: '0', top: '0' });
+          sheet.width = 1440;
+          sheet.height = 1440;
           document.body.append(sheet);
           const sc = sheet.getContext('2d');
-          let game;
+          let game = new C('normal', 'paladin', () => 0.9);
           const platform = { cameraZoom: 1.5, cameraAnchor: () => ({ x: 480, y: 340 }) };
           const renderer = PrototypeRenderer.create({
             canvas: { width: 960, height: 640 },
@@ -174,13 +175,13 @@ const server = http.createServer((req, res) => {
                     renderer.draw();
                     const col = ci * 2 + Number(charged),
                       row = slot - 1;
-                    sc.drawImage(canvas, col * 200, row * 120, 200, 120);
+                    sc.drawImage(canvas, 240, 130, 480, 360, col * 240, row * 180, 240, 180);
                     sc.fillStyle = '#fff';
                     sc.font = '12px sans-serif';
                     sc.fillText(
                       cls + ' ' + slot + (charged ? ' charged' : ' tap'),
-                      col * 200 + 4,
-                      row * 120 + 14,
+                      col * 240 + 4,
+                      row * 180 + 14,
                     );
                   }
                   results.push({

@@ -83,7 +83,7 @@ function meter(g, primary) {
     immuneTime: 0,
     hasteTime: 0,
     slowTime: 0,
-    casts: Array(11).fill(0),
+    casts: Array(16).fill(0),
     summons: 0,
     resets: 0,
     resetHpDelta: 0,
