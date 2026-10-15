@@ -1963,14 +1963,16 @@
       const domestic = /(?:^|[-_])(?:house|cottage|workshop|boathouse|smithy|forgehouse|watchhouse|hut|lodge|longhouse|dwelling)(?:$|[-_])/i;
       const fires = /(?:^|[-_])(?:cookfire|fireplace|campfire|hearth|brazier|ember-pit|forge|field-kitchen|torch|furnace)(?:$|[-_])/i;
       const lanterns = /(?:^|[-_])(?:lantern|grave-lamp)(?:$|[-_])/i;
+      const thermal = /^(?:geothermal-heat-intake|crown-glass-kiln|crown-ceramic-kiln|heat-distribution-post|heated-drying-shed|heated-washhouse|thermal-flue)$/;
       const nightNow = game.night();
       const nightSources = !nightNow ? [] : [
         ...z.props.flatMap((prop) => {
           const structure = String(prop.structure || '');
           const kind = domestic.test(structure) ? 'window'
             : lanterns.test(structure) ? 'lantern'
-              : fires.test(structure) ? /forge|field-kitchen/.test(structure) ? 'work-fire' : 'fire'
-                : null;
+              : thermal.test(structure) ? 'work-fire'
+                : fires.test(structure) ? /forge|field-kitchen/.test(structure) ? 'work-fire' : 'fire'
+                  : null;
           return kind ? [{ ...screen(prop), kind, id: prop.id }] : [];
         }),
         ...z.buildings.filter((b) => b.progress >= 4)
