@@ -8,6 +8,9 @@
   "preparedContracts": 74,
   "families": {
     "decoration": [
+      "direwolf-kennel",
+      "rider-tack-rack",
+      "rider-bunk",
       "torch",
       "estate-rug",
       "estate-hearth",
@@ -35,6 +38,13 @@
       "reed-nest",
       "shell-hoard",
       "drift-seat",
+      "silver-ore-face",
+      "copper-ore-face",
+      "copper-sort-samples",
+      "silver-refining-hearth",
+      "silver-sort-samples",
+      "silver-die-tray",
+      "sealed-crown-consignment",
       "highland-pay-station",
       "ore-sorting-bay",
       "mint-workbench",
@@ -68,6 +78,7 @@
       "citadel-ritual-array",
       "citadel-barracks-bay",
       "citadel-forge-bay",
+      "citadel-vanity-quarters",
       "citadel-boss-approach",
       "animal-pen",
       "drying-rack",
@@ -105,6 +116,12 @@
       "wet-grass",
       "bush",
       "marsh-bush",
+      "battlefield-poppies",
+      "pioneer-grasses",
+      "pioneer-brush",
+      "regrowth-birch",
+      "regrowth-willow",
+      "mossy-basalt",
       "wildflowers",
       "fruit-tree",
       "sapling",
@@ -128,6 +145,14 @@
       "black-rock",
       "crystal-cluster",
       "dead-shrub",
+      "roadside-lantern",
+      "geothermal-heat-intake",
+      "thermal-flue",
+      "crown-glass-kiln",
+      "crown-ceramic-kiln",
+      "heat-distribution-post",
+      "heated-drying-shed",
+      "heated-washhouse",
       "fumarole",
       "obsidian",
       "market",
@@ -137,6 +162,12 @@
       "barrel",
       "cart",
       "ration",
+      "hay-rick",
+      "furrow-plot",
+      "pasture-sheep",
+      "poultry-yard",
+      "feed-trough",
+      "farm-tool-rack",
       "garden",
       "watchpost",
       "barricade",
@@ -746,7 +777,6 @@
     "enemy:archer:ranged-guard",
     "enemy:ashbeast:guard",
     "enemy:ashbeast:ranged-guard",
-    "enemy:crownguard:guard",
     "enemy:crownguard:ranged-guard",
     "enemy:goblin:guard",
     "enemy:goblin:ranged-guard",
@@ -757,8 +787,7 @@
     "enemy:orc:guard",
     "enemy:reedbeast:hybrid-ranged-guard",
     "enemy:skeleton:guard",
-    "enemy:skeleton:ranged-guard",
-    "enemy:wolf:guard"
+    "enemy:skeleton:ranged-guard"
   ],
   "enemyObservations": [
     {
@@ -898,14 +927,6 @@
       "hybrid": false
     },
     {
-      "key": "enemy:crownguard:guard",
-      "species": "crownguard",
-      "captain": false,
-      "guard": true,
-      "ranged": false,
-      "hybrid": false
-    },
-    {
       "key": "enemy:crownguard:ranged",
       "species": "crownguard",
       "captain": false,
@@ -999,7 +1020,7 @@
       "captain": false,
       "guard": true,
       "ranged": true,
-      "hybrid": true
+      "hybrid": false
     },
     {
       "key": "enemy:ogre",
@@ -1136,23 +1157,15 @@
       "guard": false,
       "ranged": false,
       "hybrid": false
-    },
-    {
-      "key": "enemy:wolf:guard",
-      "species": "wolf",
-      "captain": false,
-      "guard": true,
-      "ranged": false,
-      "hybrid": false
     }
   ],
   "sources": {
-    "src/prototype/visuals.js": "00c99d41b612386f968bd8f66331e0cfd482f5b3a49f3ff65bdaa58e10bcb98c",
-    "src/prototype/world.js": "9891ec09a05f2d8b6f5b91ad997a1481922f7be3c4586f52d0470291924f76ff",
-    "src/prototype/rules.js": "811fad488ba06cd3926ef624ec3150e14b735331eb2f0abdc4a50e25bb1ba5c8",
-    "src/prototype/data.js": "ddea3dee91dd5661c578b89c5c1ba33d2b881850405d2c0818bc1cca43b4629a",
-    "src/prototype/sprites.js": "e983eaef98f589c5bd0f2dca095ba9383df1978e502499592d6c5504ee02d5a6",
-    "src/prototype/renderer.js": "6d2d236a4801083ff39293c367df48dc8bc9fc195e97befec65c471f2223f717"
+    "src/prototype/visuals.js": "054b7ef99ea50bc185e42d25a956101ff0d1e64ee7d436c4cafa864c0d54d94a",
+    "src/prototype/world.js": "2478e241979bcdc9ba13a6a27147eb2fe72fd107d001efb3c34401a47ebd960d",
+    "src/prototype/rules.js": "4e23cecf3f7b9d54c613d66fda4226b693a3bc6c8f957af99f98d625d71facca",
+    "src/prototype/data.js": "5b3b745d1d6e7c21accf6899f7597d6394587704e58f884fc10f0047fe21eb19",
+    "src/prototype/sprites.js": "9c50bc13067c29c5c0eb7833508d7cc73db0734c73653b7f8966a714ab571c79",
+    "src/prototype/renderer.js": "9fc80c07473d9131f007e4e3b79faa1ee3f397f77f586b6723ed0c7b5a0f201d"
   },
   "limits": "Deterministic normal/Nightmare world samples support source-case classification; every actual art job still requires its exact current state/reference. Future summon/night/seed additions are not inferred from these samples."
 }
