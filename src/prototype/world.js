@@ -169,8 +169,9 @@
               // destinations. Preserve the original district centroid.
               const routed = district.props.filter(
                 ([, , kind]) =>
-                  !/^(silver|copper)-(ore-face|sort-samples|refining-hearth|die-tray)$/.test(kind) &&
-                  kind !== 'sealed-crown-consignment',
+                  !/^(silver|copper)-(ore-face|sort-samples|refining-hearth|die-tray)$/.test(
+                    kind,
+                  ) && kind !== 'sealed-crown-consignment',
               );
               return {
                 id: district.id,
@@ -325,14 +326,16 @@
           this.supplyRoom(z.id) ||
           this.sideDungeon(z.id) ||
           z.strongholdCourtyardSpacingVersion === 1
-        ) return;
+        )
+          return;
         const before = this.s.zone;
         this.s.zone = z.id;
         try {
           for (const cfg of (R.creatureStrongholds || []).filter((c) => c.region === z.id)) {
             const center = this.creatureStrongholdCenter(z, cfg);
             if (!center) continue;
-            const locals = z.props.filter((p) => p.stronghold === cfg.id && p.decorative)
+            const locals = z.props
+              .filter((p) => p.stronghold === cfg.id && p.decorative)
               .sort((a, b) => String(a.id).localeCompare(String(b.id)));
             const fixed = [];
             const walls = z.props.filter((p) => p.stronghold === cfg.id && p.r > 0);
@@ -387,32 +390,36 @@
           this.supplyRoom(z.id) ||
           this.sideDungeon(z.id) ||
           z.landmarkRoadShoulderVersion === 1
-        ) return;
+        )
+          return;
         const previousZone = this.s.zone;
         this.s.zone = z.id;
         try {
-          for (const marker of z.npcs.filter((n) =>
-            n.kind === 'landmark' &&
-            !n.internalSite &&
-            !n.id.startsWith('bridge-') &&
-            !n.id.startsWith('crossing-') &&
-            !n.id.startsWith('thorn-trailhead-')
+          for (const marker of z.npcs.filter(
+            (n) =>
+              n.kind === 'landmark' &&
+              !n.internalSite &&
+              !n.id.startsWith('bridge-') &&
+              !n.id.startsWith('crossing-') &&
+              !n.id.startsWith('thorn-trailhead-'),
           )) {
             if (this.distanceToRoad(z, marker) >= 92) continue;
             const original = { x: marker.x, y: marker.y };
             let selected = null;
             for (const radius of [75, 100, 125, 155, 185]) {
               for (let j = 0; j < 24; j++) {
-                const angle = j * Math.PI / 12;
+                const angle = (j * Math.PI) / 12;
                 const p = {
                   x: original.x + Math.cos(angle) * radius,
                   y: original.y + Math.sin(angle) * radius,
                 };
-                if (this.blocked(p.x, p.y, z.id, 12, true) ||
-                    this.distanceToRoad(z, p) < 95 ||
-                    z.npcs.some((n) => n !== marker && dist(n, p) < 85) ||
-                    z.nodes.some((n) => dist(n, p) < 60) ||
-                    z.props.some((q) => q.roadBlocker && dist(q, p) < (q.r || 0) + 80))
+                if (
+                  this.blocked(p.x, p.y, z.id, 12, true) ||
+                  this.distanceToRoad(z, p) < 95 ||
+                  z.npcs.some((n) => n !== marker && dist(n, p) < 85) ||
+                  z.nodes.some((n) => dist(n, p) < 60) ||
+                  z.props.some((q) => q.roadBlocker && dist(q, p) < (q.r || 0) + 80)
+                )
                   continue;
                 selected = p;
                 break;
@@ -432,14 +439,19 @@
           this.supplyRoom(z.id) ||
           this.sideDungeon(z.id) ||
           z.townVisualClearanceVersion === 1
-        ) return;
+        )
+          return;
         const previousZone = this.s.zone;
         this.s.zone = z.id;
         try {
           const i = this.regionIndex(z.id);
           const centers = [D.towns[i], D.minors[i]].map(([x, y]) => ({ x, y }));
           const houses = z.props
-            .filter((p) => p.roadBlocker && /house|cottage|workshop|boathouse|smithy|forgehouse/.test(p.structure || ''))
+            .filter(
+              (p) =>
+                p.roadBlocker &&
+                /house|cottage|workshop|boathouse|smithy|forgehouse/.test(p.structure || ''),
+            )
             .sort((a, b) => String(a.id).localeCompare(String(b.id)));
           const fixed = [];
           const houseSet = new Set(houses);
@@ -458,12 +470,15 @@
               return false;
             if (z.nodes.some((n) => dist(n, point) < 110)) return false;
             if (z.buildings.some((b) => dist(b, point) < 235)) return false;
-            if (z.enemies.some((e) => e.hp > 0 && dist(e.home || e, point) < 195))
-              return false;
+            if (z.enemies.some((e) => e.hp > 0 && dist(e.home || e, point) < 195)) return false;
             const touching = (other) => {
-              if (other === house || other.roadTrace || other.structure === 'road-ruts') return false;
-              const solid = other.roadBlocker ||
-                /house|cottage|workshop|forge|boathouse|smithy|barracks|hall|tower|tent|palisade|shelter|watchpost|large-tree/.test(other.structure || '');
+              if (other === house || other.roadTrace || other.structure === 'road-ruts')
+                return false;
+              const solid =
+                other.roadBlocker ||
+                /house|cottage|workshop|forge|boathouse|smithy|barracks|hall|tower|tent|palisade|shelter|watchpost|large-tree/.test(
+                  other.structure || '',
+                );
               if (solid) {
                 // Compare actual projected centers. Two roofs can overlap on
                 // screen even when their world-space circles do not collide.
@@ -473,8 +488,7 @@
               }
               return dist(point, other) < (other.r || 0) + 65;
             };
-            return !fixed.some(touching) &&
-              !z.props.some((p) => !houseSet.has(p) && touching(p));
+            return !fixed.some(touching) && !z.props.some((p) => !houseSet.has(p) && touching(p));
           };
           // Prefer the town rear and lateral plots; do not squeeze another
           // building onto the main street simply because the anchor is legal.
@@ -485,14 +499,15 @@
               continue;
             }
             const center = centers.slice().sort((a, b) => dist(a, base) - dist(b, base))[0];
-            const outward = dist(base, center) > 5
-              ? Math.atan2(base.y - center.y, base.x - center.x)
-              : -Math.PI / 2;
+            const outward =
+              dist(base, center) > 5
+                ? Math.atan2(base.y - center.y, base.x - center.x)
+                : -Math.PI / 2;
             let found = null;
             for (const radius of [110, 180, 260, 350, 450, 570, 700, 840, 980]) {
               for (let j = 0; j < 32; j++) {
                 const fan = j === 0 ? 0 : Math.ceil(j / 2) * (j % 2 ? 1 : -1);
-                const angle = outward + fan * Math.PI / 16;
+                const angle = outward + (fan * Math.PI) / 16;
                 const point = {
                   x: base.x + Math.cos(angle) * radius,
                   y: base.y + Math.sin(angle) * radius,
@@ -1451,7 +1466,8 @@
           const sites = R.greenwoodRuralScenes || [];
           const [townX, townY] = D.towns[0],
             futureServices = Object.values(R.serviceOffsets || {}).map(([dx, dy]) => ({
-              x: townX + dx, y: townY + dy,
+              x: townX + dx,
+              y: townY + dy,
             }));
           const fits = (p) =>
             !this.blocked(p.x, p.y, z.id, 16) &&
@@ -1461,8 +1477,7 @@
             !z.nodes.some((n) => dist(n, p) < 90) &&
             !z.enemies.some((e) => e.hp > 0 && dist(e.home || e, p) < 135) &&
             !z.buildings.some((b) => dist(b, p) < 130) &&
-            !z.props.some((q) =>
-              dist(q, p) < (q.r || 0) + (q.roadBlocker ? 125 : 63));
+            !z.props.some((q) => dist(q, p) < (q.r || 0) + (q.roadBlocker ? 125 : 63));
           for (const [j, [x, y, structure, district]] of sites.entries()) {
             // Search a bounded neighborhood without moving established objects.
             let point = null;
@@ -1470,7 +1485,10 @@
               for (let k = 0; k < (radius ? 16 : 1); k++) {
                 const theta = (k * Math.PI) / 8,
                   p = { x: x + Math.cos(theta) * radius, y: y + Math.sin(theta) * radius };
-                if (fits(p)) { point = p; break; }
+                if (fits(p)) {
+                  point = p;
+                  break;
+                }
               }
               if (point) break;
             }
@@ -1538,9 +1556,12 @@
       // and practical heatworks around the two Crown lava channels. The heat
       // collectors sit on safe rock; no one moves through active lava.
       recoveryAndThermalLife(z) {
-        const plan = z.id === 'frontier'
-          ? R.frontierRecoveryScenes
-          : z.id === 'crown' ? R.crownThermalWorksScenes : null;
+        const plan =
+          z.id === 'frontier'
+            ? R.frontierRecoveryScenes
+            : z.id === 'crown'
+              ? R.crownThermalWorksScenes
+              : null;
         if (!plan || z.recoveryAndHeatVersion === 1) return;
         const oldZone = this.s.zone;
         this.s.zone = z.id;
@@ -1554,19 +1575,23 @@
             !z.nodes.some((n) => dist(n, p) < 95) &&
             !z.buildings.some((b) => dist(b, p) < 120) &&
             !z.enemies.some((e) => e.hp > 0 && dist(e.home || e, p) < 82) &&
-            !z.props.some((other) =>
-              dist(other, p) < (other.r || 0) + (other.roadBlocker ? 130 : 62));
+            !z.props.some(
+              (other) => dist(other, p) < (other.r || 0) + (other.roadBlocker ? 130 : 62),
+            );
           for (const [j, [x, y, structure, district]] of plan.entries()) {
             let point = null;
             for (const radius of [0, 55, 100, 145, 195, 250]) {
               const steps = radius ? 16 : 1;
               for (let k = 0; k < steps; k++) {
-                const theta = k * Math.PI / 8,
+                const theta = (k * Math.PI) / 8,
                   p = {
                     x: x + Math.cos(theta) * radius,
                     y: y + Math.sin(theta) * radius,
                   };
-                if (valid(p)) { point = p; break; }
+                if (valid(p)) {
+                  point = p;
+                  break;
+                }
               }
               if (point) break;
             }
@@ -1593,25 +1618,45 @@
       roadsideLanternLife(z) {
         // Reconcile older unpublished dev.51 saves to the existing 21
         // public lanterns; the redundant fifteen-lamp pass is retired.
-        if (z.props?.some((p) => p.roadLamp ||
-            String(p.id || '').startsWith('night-road-lamp-'))) {
-          z.props = z.props.filter((p) => !p.roadLamp &&
-            !String(p.id || '').startsWith('night-road-lamp-'));
+        if (z.props?.some((p) => p.roadLamp || String(p.id || '').startsWith('night-road-lamp-'))) {
+          z.props = z.props.filter(
+            (p) => !p.roadLamp && !String(p.id || '').startsWith('night-road-lamp-'),
+          );
           delete z.roadLampVersion;
         }
-        if (z.roadsideLanternVersion === 1 ||
-            dungeonIds.includes(z.id) || this.supplyRoom(z.id) || this.sideDungeon(z.id))
+        if (
+          z.roadsideLanternVersion === 1 ||
+          dungeonIds.includes(z.id) ||
+          this.supplyRoom(z.id) ||
+          this.sideDungeon(z.id)
+        )
           return;
         const i = this.regionIndex(z.id),
           town = D.towns[i],
           minor = D.minors[i],
-          special = {
-            vale: [[1190, 760]],
-            march: [[2120, 695], [1020, 530]],
-            highlands: [[1670, 1120], [2800, 700]],
-            frontier: [[1720, 1380], [2590, 1600], [2980, 2650]],
-            crown: [[2550, 900], [3030, 2310], [3210, 2830], [2600, 1370]],
-          }[z.id] || [],
+          special =
+            {
+              vale: [[1190, 760]],
+              march: [
+                [2120, 695],
+                [1020, 530],
+              ],
+              highlands: [
+                [1670, 1120],
+                [2800, 700],
+              ],
+              frontier: [
+                [1720, 1380],
+                [2590, 1600],
+                [2980, 2650],
+              ],
+              crown: [
+                [2550, 900],
+                [3030, 2310],
+                [3210, 2830],
+                [2600, 1370],
+              ],
+            }[z.id] || [],
           anchors = [town, minor, ...special],
           oldZone = this.s.zone;
         this.s.zone = z.id;
@@ -1621,23 +1666,27 @@
           const roads = z.roads?.flat() || [];
           for (const [x, y] of anchors) {
             if (!roads.length) break;
-            const center = roads.reduce((best, p) =>
-              !best || dist(p, { x, y }) < dist(best, { x, y }) ? p : best, null);
+            const center = roads.reduce(
+              (best, p) => (!best || dist(p, { x, y }) < dist(best, { x, y }) ? p : best),
+              null,
+            );
             if (!center || dist(center, { x, y }) > 600) continue;
             let found = null;
             for (const radius of [65, 83, 100]) {
               for (let k = 0; k < 16; k++) {
-                const a = k * Math.PI / 8,
-                  p = { x: center.x + Math.cos(a) * radius,
-                    y: center.y + Math.sin(a) * radius },
+                const a = (k * Math.PI) / 8,
+                  p = { x: center.x + Math.cos(a) * radius, y: center.y + Math.sin(a) * radius },
                   shoulder = this.distanceToRoad(z, p);
-                if (shoulder < 38 || shoulder > 105 ||
-                    this.blocked(p.x, p.y, z.id, 10, true) ||
-                    z.npcs.some((n) => dist(n, p) < 83) ||
-                    z.nodes.some((n) => dist(n, p) < 72) ||
-                    z.buildings.some((b) => dist(b, p) < 105) ||
-                    z.props.some((q) => dist(q, p) < (q.r || 0) + 62) ||
-                    z.enemies.some((e) => e.hp > 0 && dist(e.home || e, p) < 90))
+                if (
+                  shoulder < 38 ||
+                  shoulder > 105 ||
+                  this.blocked(p.x, p.y, z.id, 10, true) ||
+                  z.npcs.some((n) => dist(n, p) < 83) ||
+                  z.nodes.some((n) => dist(n, p) < 72) ||
+                  z.buildings.some((b) => dist(b, p) < 105) ||
+                  z.props.some((q) => dist(q, p) < (q.r || 0) + 62) ||
+                  z.enemies.some((e) => e.hp > 0 && dist(e.home || e, p) < 90)
+                )
                   continue;
                 found = p;
                 break;
@@ -1645,9 +1694,14 @@
               if (found) break;
             }
             if (!found) continue;
-            z.props.push({ id: 'public-lantern-' + z.id + '-' + index++,
-              ...found, structure: 'roadside-lantern', r: 0,
-              decorative: true, publicWorks: 'maintained-road-light' });
+            z.props.push({
+              id: 'public-lantern-' + z.id + '-' + index++,
+              ...found,
+              structure: 'roadside-lantern',
+              r: 0,
+              decorative: true,
+              publicWorks: 'maintained-road-light',
+            });
           }
           z.roadsideLanternVersion = 1;
         } finally {
@@ -2039,10 +2093,12 @@
         if (this.peace) return;
         const lineages = ['crownguard', 'goblin', 'orc', 'archer', 'ogre'];
         const label = (e) =>
-          'Crown ' + (e.crownAncestry === 'crownguard' ? 'shield' : e.crownAncestry) +
+          'Crown ' +
+          (e.crownAncestry === 'crownguard' ? 'shield' : e.crownAncestry) +
           (e.ranged ? ' marksman' : ' guard');
         if (z.id === 'citadel') {
-          const native = z.enemies.filter((e) => e.guard && e.form === 'normal' && !e.reinforcement)
+          const native = z.enemies
+            .filter((e) => e.guard && e.form === 'normal' && !e.reinforcement)
             .sort((a, b) => this.idOrder(a, b));
           for (const [j, e] of native.entries()) {
             if (e.species !== 'crownguard') continue;
@@ -2053,21 +2109,48 @@
           return;
         }
         const anchors = {
-          highlands: [[1050, 1360], [1850, 1160], [2950, 720]],
-          frontier: [[155, 615], [2600, 1650], [3000, 2700], [1700, 1250]],
-          crown: [[720, 900], [2580, 900], [3050, 2320], [3200, 2860]],
+          highlands: [
+            [1050, 1360],
+            [1850, 1160],
+            [2950, 720],
+          ],
+          frontier: [
+            [155, 615],
+            [2600, 1650],
+            [3000, 2700],
+            [1700, 1250],
+          ],
+          crown: [
+            [720, 900],
+            [2580, 900],
+            [3050, 2320],
+            [3200, 2860],
+          ],
         }[z.id];
         if (!anchors) return;
-        const distance = (e) => Math.min(...anchors.map(([x, y]) => Math.hypot(e.home?.x - x, e.home?.y - y)));
+        const distance = (e) =>
+          Math.min(...anchors.map(([x, y]) => Math.hypot(e.home?.x - x, e.home?.y - y)));
         // Existing Wolves nearest the Crown mint/convoy roads can be trained
         // mounts. Independent Wolf dens/strongholds and ordinary mountain
         // society are deliberately excluded; this creates no new population.
         if (z.id === 'highlands') {
-          const riders = z.enemies.filter((e) =>
-            e.species === 'wolf' && e.type === 'mob' && e.form === 'normal' &&
-            !e.guard && !e.summon && !e.mini && !e.nightOnly &&
-            !e.strongholdResident && !e.site && !e.neutral && distance(e) < 1100)
-            .sort((a, b) => distance(a) - distance(b) || this.idOrder(a, b)).slice(0, 4);
+          const riders = z.enemies
+            .filter(
+              (e) =>
+                e.species === 'wolf' &&
+                e.type === 'mob' &&
+                e.form === 'normal' &&
+                !e.guard &&
+                !e.summon &&
+                !e.mini &&
+                !e.nightOnly &&
+                !e.strongholdResident &&
+                !e.site &&
+                !e.neutral &&
+                distance(e) < 1100,
+            )
+            .sort((a, b) => distance(a) - distance(b) || this.idOrder(a, b))
+            .slice(0, 4);
           for (const [j, e] of riders.entries()) {
             e.mountedCrownRider = true;
             e.crownTroop = true;
@@ -2082,16 +2165,27 @@
           }
         }
         const quota = { highlands: 5, frontier: 10, crown: 12 }[z.id];
-        const soldiers = z.enemies.filter((e) =>
-          e.type === 'mob' && e.form === 'normal' && !e.summon &&
-          !e.captain && !e.roomCaptain && !e.fieldCaptain &&
-          !e.nightOnly && !e.neutral &&
-          // Crown soldier posts remain Crown even when assigned to a named
-          // redoubt. Do not turn local monster habitats into generic soldiery.
-          (z.id === 'crown' ? e.species === 'crownguard' :
-            !e.guard && !e.mini && !e.strongholdResident &&
-            ['crownguard', 'goblin', 'orc', 'archer', 'ogre'].includes(e.species)) &&
-          distance(e) < (z.id === 'crown' ? 1550 : 880))
+        const soldiers = z.enemies
+          .filter(
+            (e) =>
+              e.type === 'mob' &&
+              e.form === 'normal' &&
+              !e.summon &&
+              !e.captain &&
+              !e.roomCaptain &&
+              !e.fieldCaptain &&
+              !e.nightOnly &&
+              !e.neutral &&
+              // Crown soldier posts remain Crown even when assigned to a named
+              // redoubt. Do not turn local monster habitats into generic soldiery.
+              (z.id === 'crown'
+                ? e.species === 'crownguard'
+                : !e.guard &&
+                  !e.mini &&
+                  !e.strongholdResident &&
+                  ['crownguard', 'goblin', 'orc', 'archer', 'ogre'].includes(e.species)) &&
+              distance(e) < (z.id === 'crown' ? 1550 : 880),
+          )
           .sort((a, b) => distance(a) - distance(b) || this.idOrder(a, b))
           .slice(0, quota);
         for (const [j, e] of soldiers.entries()) {
@@ -2109,9 +2203,27 @@
       // Sparse state heraldry is decorative and avoids road obstructions.
       regimeHeraldry(z) {
         const anchors = {
-          highlands: [[1100, 1370], [1850, 1080], [3090, 590], [770, 1680]],
-          frontier: [[260, 650], [1720, 1200], [2570, 1600], [2940, 2570], [3130, 570]],
-          crown: [[735, 850], [2550, 850], [3030, 2290], [3250, 2850], [3300, 3110], [300, 1530]],
+          highlands: [
+            [1100, 1370],
+            [1850, 1080],
+            [3090, 590],
+            [770, 1680],
+          ],
+          frontier: [
+            [260, 650],
+            [1720, 1200],
+            [2570, 1600],
+            [2940, 2570],
+            [3130, 570],
+          ],
+          crown: [
+            [735, 850],
+            [2550, 850],
+            [3030, 2290],
+            [3250, 2850],
+            [3300, 3110],
+            [300, 1530],
+          ],
         }[z.id];
         if (!anchors || z.regimeHeraldryVersion === 1) return;
         const before = this.s.zone;
@@ -2123,24 +2235,33 @@
             let chosen = null;
             for (const radius of [0, 60, 105, 160, 215]) {
               for (let k = 0; k < (radius ? 12 : 1); k++) {
-                const angle = k * Math.PI / 6,
+                const angle = (k * Math.PI) / 6,
                   p = { x: x + Math.cos(angle) * radius, y: y + Math.sin(angle) * radius };
-                if (this.blocked(p.x, p.y, z.id, 12, true) || nearRoad(p) ||
-                    z.npcs.some((n) => Math.hypot(n.x - p.x, n.y - p.y) < 78) ||
-                    z.nodes.some((n) => Math.hypot(n.x - p.x, n.y - p.y) < 65) ||
-                    z.buildings.some((b) => Math.hypot(b.x - p.x, b.y - p.y) < 85) ||
-                    z.props.some((other) => Math.hypot(other.x - p.x, other.y - p.y) < (other.r || 0) + 60))
+                if (
+                  this.blocked(p.x, p.y, z.id, 12, true) ||
+                  nearRoad(p) ||
+                  z.npcs.some((n) => Math.hypot(n.x - p.x, n.y - p.y) < 78) ||
+                  z.nodes.some((n) => Math.hypot(n.x - p.x, n.y - p.y) < 65) ||
+                  z.buildings.some((b) => Math.hypot(b.x - p.x, b.y - p.y) < 85) ||
+                  z.props.some(
+                    (other) => Math.hypot(other.x - p.x, other.y - p.y) < (other.r || 0) + 60,
+                  )
+                )
                   continue;
                 chosen = p;
                 break;
               }
               if (chosen) break;
             }
-            if (chosen) z.props.push({
-              id: 'regime-banner-' + z.id + '-' + index,
-              ...chosen, r: 0, decorative: true, structure: 'crown-banner',
-              regimeHeraldry: true,
-            });
+            if (chosen)
+              z.props.push({
+                id: 'regime-banner-' + z.id + '-' + index,
+                ...chosen,
+                r: 0,
+                decorative: true,
+                structure: 'crown-banner',
+                regimeHeraldry: true,
+              });
           }
           z.regimeHeraldryVersion = 1;
         } finally {
@@ -2176,8 +2297,8 @@
           // geometry version. Refurbish ONLY surviving/recorded native Wolf
           // slots as mounted guards, never summon or revive replacement Wolves.
           if (z.id === 'mine' && !this.peace) {
-            const native = z.enemies.filter((e) =>
-              e.guard && e.form === 'normal' && !e.reinforcement)
+            const native = z.enemies
+              .filter((e) => e.guard && e.form === 'normal' && !e.reinforcement)
               .sort((a, b) => this.idOrder(a, b));
             for (const [j, e] of native.entries()) {
               const post = R.dungeonGuardFormations.mine[j];
@@ -2372,28 +2493,30 @@
                 livedInCount++;
               }
             }
-            const ring = cfg.defenseStyle === 'fort'
-              ? [
-                  // Raider redoubt: a real collision-bearing perimeter with
-                  // a single north gate wide enough for the existing squad.
-                  ...Array.from({ length: 7 }, (_, k) => [-150 + k * 50, -150])
-                    .filter(([x]) => x !== 0 && x !== 50),
-                  ...Array.from({ length: 7 }, (_, k) => [-150 + k * 50, 150]),
-                  ...Array.from({ length: 5 }, (_, k) => [-150, -100 + k * 50]),
-                  ...Array.from({ length: 5 }, (_, k) => [150, -100 + k * 50]),
-                ]
-              : [
-              [-145, -105],
-              [-70, -145],
-              [70, -145],
-              [145, -105],
-              [155, 20],
-              [115, 120],
-              [40, 155],
-              [-40, 155],
-              [-115, 120],
-              [-155, 20],
-            ];
+            const ring =
+              cfg.defenseStyle === 'fort'
+                ? [
+                    // Raider redoubt: a real collision-bearing perimeter with
+                    // a single north gate wide enough for the existing squad.
+                    ...Array.from({ length: 7 }, (_, k) => [-150 + k * 50, -150]).filter(
+                      ([x]) => x !== 0 && x !== 50,
+                    ),
+                    ...Array.from({ length: 7 }, (_, k) => [-150 + k * 50, 150]),
+                    ...Array.from({ length: 5 }, (_, k) => [-150, -100 + k * 50]),
+                    ...Array.from({ length: 5 }, (_, k) => [150, -100 + k * 50]),
+                  ]
+                : [
+                    [-145, -105],
+                    [-70, -145],
+                    [70, -145],
+                    [145, -105],
+                    [155, 20],
+                    [115, 120],
+                    [40, 155],
+                    [-40, 155],
+                    [-115, 120],
+                    [-155, 20],
+                  ];
             let wallCount = 0;
             for (const [j, [dx, dy]] of ring.entries()) {
               let p = { x: center.x + dx, y: center.y + dy };
@@ -2411,8 +2534,7 @@
                 stronghold: cfg.id,
                 strongholdDefenseStyle: cfg.defenseStyle || 'ruin',
                 fortCorner:
-                  cfg.defenseStyle === 'fort' &&
-                  (Math.abs(dx) === 150 && Math.abs(dy) === 150),
+                  cfg.defenseStyle === 'fort' && Math.abs(dx) === 150 && Math.abs(dy) === 150,
               });
               wallCount++;
             }
@@ -2444,7 +2566,7 @@
                   structure: cfg.wall || 'stockade',
                   stronghold: cfg.id,
                   strongholdDefenseStyle: cfg.defenseStyle || 'ruin',
-                  fortCorner: cfg.defenseStyle === 'fort' && (j % 2 === 0),
+                  fortCorner: cfg.defenseStyle === 'fort' && j % 2 === 0,
                 });
                 if (++wallCount >= 3) break;
               }
@@ -2465,8 +2587,9 @@
                 !roadNear(p, 70) &&
                 !z.npcs.some((n) => dist(n, p) < 72) &&
                 !z.nodes.some((n) => n.amount > 0 && dist(n, p) < 65) &&
-                !z.props.some((wall) => wall.stronghold === cfg.id &&
-                  wall.r > 0 && dist(wall, p) < wall.r + 31) &&
+                !z.props.some(
+                  (wall) => wall.stronghold === cfg.id && wall.r > 0 && dist(wall, p) < wall.r + 31,
+                ) &&
                 !resolved.some((other) => dist(other, p) < 88);
               if (!clear(item)) {
                 const old = { x: item.x, y: item.y };
@@ -2475,7 +2598,7 @@
                   ? [90, 110, 125, 65, 35]
                   : [120, 150, 180, 215, 245, 95, 65, 35]) {
                   for (let j = 0; j < 24; j++) {
-                    const angle = j * Math.PI / 12;
+                    const angle = (j * Math.PI) / 12;
                     const p = {
                       x: center.x + Math.cos(angle) * radius,
                       y: center.y + Math.sin(angle) * radius,

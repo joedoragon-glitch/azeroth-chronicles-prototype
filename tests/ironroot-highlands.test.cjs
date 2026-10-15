@@ -60,7 +60,11 @@ test('Treasury keeps Crag and Crown direwolf guards, mixed lodging and exact cac
   assert.equal(z.treasuryVersion, 5);
   const crag = z.enemies.find((e) => e.roomCaptain);
   assert.equal(crag.species, 'ridge');
-  assert(z.enemies.filter((e) => e.roomGuard && !e.roomCaptain).every((e) => e.species === 'wolf' && e.mountedCrownRider && e.gold === 0 && e.xp === 0));
+  assert(
+    z.enemies
+      .filter((e) => e.roomGuard && !e.roomCaptain)
+      .every((e) => e.species === 'wolf' && e.mountedCrownRider && e.gold === 0 && e.xp === 0),
+  );
   assert.equal(
     require('../src/prototype/sprites.js').candidateKeys({ ...crag, renderKind: 'enemy' })[0],
     'enemy:ridge:captain-guard',

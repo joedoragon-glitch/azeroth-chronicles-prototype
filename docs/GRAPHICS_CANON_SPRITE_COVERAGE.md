@@ -195,6 +195,37 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `claw-scrape` | PROCEDURAL — flat dragon-use ground trace |
 | `dragon-perch` | PROCEDURAL — Bastion aerie/roost structure |
 
+| `direwolf-kennel` | PROCEDURAL — military wolf housing and position-aware equipment |
+| `rider-tack-rack` | PROCEDURAL — hand-drawn tack and saddlery for Crown riders |
+| `rider-bunk` | PROCEDURAL — shared rider sleeping quarters |
+| `silver-ore-face` | PROCEDURAL — stone-integrated silver extraction |
+| `copper-ore-face` | PROCEDURAL — stone-integrated copper extraction |
+| `copper-sort-samples` | PROCEDURAL — mineral separation samples |
+| `silver-refining-hearth` | PROCEDURAL — active refining furnace and work detail |
+| `silver-sort-samples` | PROCEDURAL — silver sorting work surface |
+| `silver-die-tray` | PROCEDURAL — portrait Crown stamping tools |
+| `sealed-crown-consignment` | PROCEDURAL — guarded currency shipment scene |
+| `battlefield-poppies` | PROCEDURAL — pioneer red wildflowers on recovered old battlefield |
+| `pioneer-grasses` | PROCEDURAL — patchy plants on safe cooled ash |
+| `pioneer-brush` | PROCEDURAL — young sheltered Frontier scrub |
+| `regrowth-birch` | PROCEDURAL — young pale-trunk succession trees |
+| `regrowth-willow` | PROCEDURAL — young lowland recovery trees |
+| `mossy-basalt` | PROCEDURAL — stone-integrated moss on old basalt |
+| `roadside-lantern` | PROCEDURAL — nonblocking post with bounded night-only illumination |
+| `geothermal-heat-intake` | PROCEDURAL — insulated direct heat infrastructure off active lava |
+| `thermal-flue` | PROCEDURAL — safe industrial heat-conduit structure |
+| `crown-glass-kiln` | PROCEDURAL — hot glass-working structure |
+| `crown-ceramic-kiln` | PROCEDURAL — pottery kiln and contained heat |
+| `heat-distribution-post` | PROCEDURAL — Crown public works heat junction |
+| `heated-drying-shed` | PROCEDURAL — thermal clothes and material drying workplace |
+| `heated-washhouse` | PROCEDURAL — civic hot-water facility |
+| `hay-rick` | PROCEDURAL — small-scale woodland-country farm storage |
+| `furrow-plot` | PROCEDURAL — short seeded crop rows integrated with traversable ground |
+| `pasture-sheep` | PROCEDURAL — sparse livestock in country pasture |
+| `poultry-yard` | PROCEDURAL — smallhold poultry activity |
+| `feed-trough` | PROCEDURAL — livestock feeding structure |
+| `farm-tool-rack` | PROCEDURAL — country farm maintenance tools |
+
 ## `landmark()` coverage
 
 | Renderer case | Decision |
@@ -334,7 +365,7 @@ Legacy handler/containment/perch drawing keys remain available for compatibility
 | `sceneRole:fish-study` | PROCEDURAL — contextual overlay on current furniture; never erase it with a generic base sprite |
 | `sceneRole:coin-accounting` | PROCEDURAL — contextual overlay on current furniture; never erase it with a generic base sprite |
 
-The numbered scope is open. Newly authored bodies/states are discovered and reconciled before their generation. All 153 decoration cases, 15 settlement cases, landmark cases and workDetails roles must remain classified; automated source-case checks reject newly unclassified branches. Generic legacy `house`/`workshop`, default service fallbacks, summoned silhouettes and compatibility nodes remain procedural unless promoted through an exact documented current binding. Normal/TRUE/ringleader/guard/captain and Basic/Full/construction are not interchangeable.
+The numbered scope is open. Newly authored bodies/states are discovered and reconciled before their generation. All 188 decoration cases, 15 settlement cases, landmark cases and workDetails roles must remain classified; automated source-case checks reject newly unclassified branches. Generic legacy `house`/`workshop`, default service fallbacks, summoned silhouettes and compatibility nodes remain procedural unless promoted through an exact documented current binding. Normal/TRUE/ringleader/guard/captain and Basic/Full/construction are not interchangeable.
 
 ## Enemy state reconciliation
 

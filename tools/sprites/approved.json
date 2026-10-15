@@ -71,14 +71,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "crop": false,
         "trim": false,
@@ -114,16 +108,8 @@
                 "width": 580,
                 "height": 580,
                 "hash": "e99a65fdd8adf3ba3f89a156994f20da4082f405e7b0c97703dba28ccb65176f",
-                "rect": [
-                  2,
-                  2,
-                  576,
-                  576
-                ],
-                "pivot": [
-                  288,
-                  432
-                ],
+                "rect": [2, 2, 576, 576],
+                "pivot": [288, 432],
                 "durationMs": 800
               },
               {
@@ -131,16 +117,8 @@
                 "width": 580,
                 "height": 580,
                 "hash": "d9d7a7656246ef909c89dc24f73fdd304f42a6c73ae7a086c55157b8836f4084",
-                "rect": [
-                  2,
-                  2,
-                  576,
-                  576
-                ],
-                "pivot": [
-                  288,
-                  432
-                ],
+                "rect": [2, 2, 576, 576],
+                "pivot": [288, 432],
                 "durationMs": 800
               }
             ]
@@ -207,14 +185,8 @@
                 "tool": "sharp",
                 "version": "0.35.5",
                 "kernel": "nearest",
-                "from": [
-                  1254,
-                  1254
-                ],
-                "to": [
-                  576,
-                  576
-                ],
+                "from": [1254, 1254],
+                "to": [576, 576],
                 "rasterScale": 3,
                 "crop": false,
                 "trim": false,
@@ -296,14 +268,8 @@
                 "tool": "sharp",
                 "version": "0.35.5",
                 "kernel": "nearest",
-                "from": [
-                  1254,
-                  1254
-                ],
-                "to": [
-                  576,
-                  576
-                ],
+                "from": [1254, 1254],
+                "to": [576, 576],
                 "rasterScale": 3,
                 "crop": false,
                 "trim": false,
@@ -399,14 +365,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 1254,
@@ -456,16 +416,8 @@
                 "width": 580,
                 "height": 580,
                 "hash": "bc303733e6a11dc9b25132d9e8e56d7d86f8ef0d3da6f8d89c92ece25ba3028b",
-                "rect": [
-                  2,
-                  2,
-                  576,
-                  576
-                ],
-                "pivot": [
-                  288,
-                  432
-                ],
+                "rect": [2, 2, 576, 576],
+                "pivot": [288, 432],
                 "durationMs": 800
               },
               {
@@ -473,16 +425,8 @@
                 "width": 580,
                 "height": 580,
                 "hash": "8abcf369d3eab6e3d7d62541e666c1f239ed8188bf84110e7af48422fe731bbb",
-                "rect": [
-                  2,
-                  2,
-                  576,
-                  576
-                ],
-                "pivot": [
-                  288,
-                  432
-                ],
+                "rect": [2, 2, 576, 576],
+                "pivot": [288, 432],
                 "durationMs": 800
               }
             ]
@@ -549,14 +493,8 @@
                 "tool": "sharp",
                 "version": "0.35.5",
                 "kernel": "nearest",
-                "from": [
-                  1254,
-                  1254
-                ],
-                "to": [
-                  576,
-                  576
-                ],
+                "from": [1254, 1254],
+                "to": [576, 576],
                 "rasterScale": 3,
                 "normalization": {
                   "fullCanvasSize": 1254,
@@ -652,14 +590,8 @@
                 "tool": "sharp",
                 "version": "0.35.5",
                 "kernel": "nearest",
-                "from": [
-                  1254,
-                  1254
-                ],
-                "to": [
-                  576,
-                  576
-                ],
+                "from": [1254, 1254],
+                "to": [576, 576],
                 "rasterScale": 3,
                 "normalization": {
                   "fullCanvasSize": 1254,
@@ -769,14 +701,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          816,
-          816
-        ],
+        "from": [1254, 1254],
+        "to": [816, 816],
         "rasterScale": 4.25,
         "normalization": {
           "fullCanvasSize": 1254,
@@ -887,14 +813,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1318,
-          1318
-        ],
-        "to": [
-          192,
-          192
-        ],
+        "from": [1318, 1318],
+        "to": [192, 192],
         "crop": false,
         "trim": false,
         "colorConversion": false,
@@ -990,14 +910,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1318,
-          1318
-        ],
-        "to": [
-          192,
-          192
-        ],
+        "from": [1318, 1318],
+        "to": [192, 192],
         "crop": false,
         "trim": false,
         "colorConversion": false,
@@ -1093,14 +1007,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1318,
-          1318
-        ],
-        "to": [
-          192,
-          192
-        ],
+        "from": [1318, 1318],
+        "to": [192, 192],
         "crop": false,
         "trim": false,
         "colorConversion": false,
@@ -1196,14 +1104,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1318,
-          1318
-        ],
-        "to": [
-          192,
-          192
-        ],
+        "from": [1318, 1318],
+        "to": [192, 192],
         "crop": false,
         "trim": false,
         "colorConversion": false,
@@ -1299,14 +1201,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 1254,
@@ -1340,10 +1236,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "f1b1b8008157a434a9ba64d719a1189eb59246a17d120ee71487359229511c84"
     },
@@ -1417,14 +1310,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 1254,
@@ -1458,10 +1345,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "ff31e0ad5ed18ff9fc426bbfbf8684912f810cea58d24eaa58ea1caf16cb1149"
     },
@@ -1535,14 +1419,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          768,
-          768
-        ],
+        "from": [1254, 1254],
+        "to": [768, 768],
         "rasterScale": 4,
         "normalization": {
           "fullCanvasSize": 1254,
@@ -1576,10 +1454,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "76907cf4c9ecb33ed204925bb5379a2fc5290a4594b79a08fd229e2b3521f040"
     },
@@ -1653,14 +1528,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 1254,
@@ -1694,10 +1563,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "f0f827e26f9cf8b3d0fe7c8784074ed73aa3ac65943a04beedbb49bf8958d336"
     },
@@ -1771,14 +1637,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 1254,
@@ -1812,10 +1672,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "89c900b2d34c96781cfcbf6adf6b65fcb20ea3e54105144d3e1eeb4f1fcf08d1"
     },
@@ -1889,14 +1746,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 1083,
@@ -1930,10 +1781,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "bcbf13293dfeda0622209b09cd8f8fa6d82f9e9ef556f59fe31ad7bb8fbe088f"
     },
@@ -2007,14 +1855,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 1254,
@@ -2048,10 +1890,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "e4b76afc204bf6c6ab32d5b27f8724bab1b44785dd73df16b5da4375c16d8fef"
     },
@@ -2125,14 +1964,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          768,
-          768
-        ],
+        "from": [1254, 1254],
+        "to": [768, 768],
         "rasterScale": 4,
         "normalization": {
           "fullCanvasSize": 1254,
@@ -2166,10 +1999,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "03b33a59106f2f06d7ccc631e91aefbf24979a41deb6982330a222ab7b4b988b"
     },
@@ -2243,14 +2073,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          768,
-          768
-        ],
+        "from": [1254, 1254],
+        "to": [768, 768],
         "rasterScale": 4,
         "normalization": {
           "fullCanvasSize": 1254,
@@ -2284,10 +2108,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "e69104a8e4db20d089730c89f144818ae7d5694ad6256ea3764f72c4e67db1ff"
     },
@@ -2361,14 +2182,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 1254,
@@ -2402,10 +2217,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "467ccfb86255a551b1b0915beee60a30690d5a1789e5a49207f03b636f56e926"
     },
@@ -2479,14 +2291,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 1254,
@@ -2520,10 +2326,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "118fbe63dae6b52d36264e7daf4e059fc96b8ca44eec12f4866c72de25c00dbd"
     },
@@ -2597,14 +2400,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 1103,
@@ -2638,10 +2435,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "12d861bfbd8e444de15347b30c3a84dd202ca70356a72348fde03911e295470e"
     },
@@ -2715,14 +2509,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          768,
-          768
-        ],
+        "from": [1254, 1254],
+        "to": [768, 768],
         "rasterScale": 4,
         "normalization": {
           "fullCanvasSize": 1254,
@@ -2756,10 +2544,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "11f292f12c942d594578672c806d5762917f58b0ebd9fef240b1513f0d266659"
     },
@@ -2833,14 +2618,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 1254,
@@ -2874,10 +2653,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "65fd474dd3462b6c2ced3ea8164680f10e7ce547ceefb9feb783b14ed967bee6"
     },
@@ -2951,14 +2727,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 645,
@@ -2992,10 +2762,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "30ff5df7b21aafd0c6d5ecbc25b4f3ae53db3c621f976894661b1aea5eec03fc"
     },
@@ -3069,14 +2836,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 1254,
@@ -3110,10 +2871,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "0812beebd4d6cd157958b66d7db150a75a3cf788aed91be7fd8623d597d7b9b2"
     },
@@ -3187,14 +2945,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 1254,
@@ -3228,10 +2980,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "1a59626c1194c2cbc73973cd4949e6da6ae5e01f64dacf5dc26c530f213330bf"
     },
@@ -3305,14 +3054,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 1254,
@@ -3346,10 +3089,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "e39d03d38d285320391cd994edb8fa789c5f125dda26f8027a5c6737c207af25"
     },
@@ -3423,14 +3163,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 805,
@@ -3464,10 +3198,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "8fb97ece19a3d6710a65400279b1c9a62e0b58d5efe716d12535febb8ea70271"
     },
@@ -3541,14 +3272,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 1240,
@@ -3582,10 +3307,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "44977ce2beb6c690e25365f81c8b4f44025b45027f99b21cf98a336e199bd934"
     },
@@ -3659,14 +3381,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 1024,
@@ -3700,10 +3416,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "8918256a9324e1943a0945bfc710a47c751d81ba616095376969f5b366fadbd1"
     },
@@ -3777,14 +3490,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 1254,
@@ -3818,10 +3525,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "f9f92ed67e329fcb87de9115d88da706efcfbe5731caf8530c57b53f840884cf"
     },
@@ -3895,14 +3599,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1254,
-          1254
-        ],
-        "to": [
-          576,
-          576
-        ],
+        "from": [1254, 1254],
+        "to": [576, 576],
         "rasterScale": 3,
         "normalization": {
           "fullCanvasSize": 1254,
@@ -3936,10 +3634,7 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
-        "evidence": [
-          "lineage.json",
-          "review-scenes/comparison.json"
-        ]
+        "evidence": ["lineage.json", "review-scenes/comparison.json"]
       },
       "revision": "eb9c913e0e3c53e89007d2527339c15c0dc750187d743ac3d38ba02ea321b914"
     },
@@ -4013,14 +3708,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1536,
-          1536
-        ],
-        "to": [
-          192,
-          192
-        ],
+        "from": [1536, 1536],
+        "to": [192, 192],
         "crop": false,
         "trim": false,
         "colorConversion": false,
@@ -4108,14 +3797,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1664,
-          1664
-        ],
-        "to": [
-          192,
-          192
-        ],
+        "from": [1664, 1664],
+        "to": [192, 192],
         "crop": false,
         "trim": false,
         "colorConversion": false,
@@ -4203,14 +3886,8 @@
         "tool": "sharp",
         "version": "0.35.5",
         "kernel": "nearest",
-        "from": [
-          1472,
-          1472
-        ],
-        "to": [
-          192,
-          192
-        ],
+        "from": [1472, 1472],
+        "to": [192, 192],
         "crop": false,
         "trim": false,
         "colorConversion": false,
@@ -4301,14 +3978,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1254,
-            1254
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1254, 1254],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -4397,14 +4068,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1254,
-            1254
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1254, 1254],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -4437,16 +4102,8 @@
                   "width": 392,
                   "height": 196,
                   "hash": "2d981fb37361e0e4d4bab38b7a291fbaec3d2b8d5ec66cf5b69a29b08d76df36",
-                  "rect": [
-                    2,
-                    2,
-                    192,
-                    192
-                  ],
-                  "pivot": [
-                    96,
-                    144
-                  ],
+                  "rect": [2, 2, 192, 192],
+                  "pivot": [96, 144],
                   "durationMs": 800
                 },
                 {
@@ -4454,16 +4111,8 @@
                   "width": 392,
                   "height": 196,
                   "hash": "2d981fb37361e0e4d4bab38b7a291fbaec3d2b8d5ec66cf5b69a29b08d76df36",
-                  "rect": [
-                    198,
-                    2,
-                    192,
-                    192
-                  ],
-                  "pivot": [
-                    96,
-                    144
-                  ],
+                  "rect": [198, 2, 192, 192],
+                  "pivot": [96, 144],
                   "durationMs": 800
                 }
               ]
@@ -4530,14 +4179,8 @@
                   "tool": "sharp",
                   "version": "0.35.5",
                   "kernel": "nearest",
-                  "from": [
-                    1254,
-                    1254
-                  ],
-                  "to": [
-                    192,
-                    192
-                  ],
+                  "from": [1254, 1254],
+                  "to": [192, 192],
                   "crop": false,
                   "trim": false,
                   "colorConversion": false,
@@ -4585,14 +4228,8 @@
                   "tool": "sharp",
                   "version": "0.35.5",
                   "kernel": "nearest",
-                  "from": [
-                    1254,
-                    1254
-                  ],
-                  "to": [
-                    192,
-                    192
-                  ],
+                  "from": [1254, 1254],
+                  "to": [192, 192],
                   "crop": false,
                   "trim": false,
                   "colorConversion": false,
@@ -4687,14 +4324,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1350,
-            1350
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1350, 1350],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -4783,14 +4414,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1286,
-            1286
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1286, 1286],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -4883,14 +4508,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1648,
-            1648
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1648, 1648],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -4983,14 +4602,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1440,
-            1440
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1440, 1440],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -5083,14 +4696,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1398,
-            1398
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1398, 1398],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -5183,14 +4790,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1286,
-            1286
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1286, 1286],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -5283,14 +4884,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1545,
-            1545
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1545, 1545],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -5383,14 +4978,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1980,
-            1980
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1980, 1980],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -5483,14 +5072,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1809,
-            1809
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1809, 1809],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -5583,14 +5166,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1380,
-            1380
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1380, 1380],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -5683,14 +5260,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1610,
-            1610
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1610, 1610],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -5783,14 +5354,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1756,
-            1756
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1756, 1756],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -5883,14 +5448,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1904,
-            1904
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1904, 1904],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -5983,14 +5542,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1980,
-            1980
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1980, 1980],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -6083,14 +5636,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1909,
-            1909
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1909, 1909],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -6183,14 +5730,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1702,
-            1702
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1702, 1702],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -6283,14 +5824,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1981,
-            1981
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1981, 1981],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -6383,14 +5918,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1709,
-            1709
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1709, 1709],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -6483,14 +6012,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1734,
-            1734
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1734, 1734],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -6583,14 +6106,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1739,
-            1739
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1739, 1739],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -6683,14 +6200,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1981,
-            1981
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1981, 1981],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -6783,14 +6294,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1980,
-            1980
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1980, 1980],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -6883,14 +6388,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1536,
-            1536
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1536, 1536],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -6983,14 +6482,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1382,
-            1382
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1382, 1382],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -7083,14 +6576,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1382,
-            1382
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1382, 1382],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,
@@ -7183,14 +6670,8 @@
           "tool": "sharp",
           "version": "0.35.5",
           "kernel": "nearest",
-          "from": [
-            1318,
-            1318
-          ],
-          "to": [
-            192,
-            192
-          ],
+          "from": [1318, 1318],
+          "to": [192, 192],
           "crop": false,
           "trim": false,
           "colorConversion": false,

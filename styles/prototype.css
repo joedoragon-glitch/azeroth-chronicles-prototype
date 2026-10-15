@@ -806,9 +806,15 @@ body.menu-open #developer-summon {
   animation: crown-credits-roll 26s linear 1 both;
 }
 @keyframes crown-credits-roll {
-  from { transform: translateY(12%); }
-  to { transform: translateY(-12%); }
+  from {
+    transform: translateY(12%);
+  }
+  to {
+    transform: translateY(-12%);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  #modal[data-view='credits'] #modal-description { animation: none; }
+  #modal[data-view='credits'] #modal-description {
+    animation: none;
+  }
 }

@@ -36,12 +36,12 @@
     null, // 15
     {
       kind: 'narration',
-      text: "Crag kept the Treasury for Ridge Tyrant. Crown riders tended their direwolves beside the barracks. The account books also recorded who was allowed to leave.",
+      text: 'Crag kept the Treasury for Ridge Tyrant. Crown riders tended their direwolves beside the barracks. The account books also recorded who was allowed to leave.',
     }, // 16
     null, // 17
     {
       kind: 'narration',
-      text: "Silver and copper arrive separately at Stonecross. They leave as crowns stamped with the Dark Lord’s face, while armed guards count the sealed crates.",
+      text: 'Silver and copper arrive separately at Stonecross. They leave as crowns stamped with the Dark Lord’s face, while armed guards count the sealed crates.',
     }, // 18
     null, // 19
     {

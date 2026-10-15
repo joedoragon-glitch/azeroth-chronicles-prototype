@@ -443,9 +443,9 @@
         ? 'credits'
         : title === 'Adventure menu'
           ? 'adventure'
-        : title === 'Game and settings'
-          ? 'settings'
-          : 'default',
+          : title === 'Game and settings'
+            ? 'settings'
+            : 'default',
     );
     // Small interactions need a small dialog; longer service catalogs keep a readable width.
     const compact =
@@ -967,14 +967,18 @@
     if (!game.s.finalRestCompleted) return;
     profile.nightmareUnlocked = true;
     persistProfile();
-    const crownedClass = { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger' }[game.hero.class] || 'Hero';
+    const crownedClass =
+      { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger' }[game.hero.class] || 'Hero';
     const credits =
       'THE CROWN\n\n' +
-      'The ' + crownedClass + ' takes the throne.\n\n' +
+      'The ' +
+      crownedClass +
+      ' takes the throne.\n\n' +
       'THE FIVE REGIONS\n\n' +
       'Greenwood · Flooded Marches\nIronroot · Ashen Frontier · Dark Crown\n\n' +
       'THE FORMER GUARDIANS\n\n' +
-      Campaign.dungeonIds.map((id) => game.boss(id).name).join(' · ') + '\n\n' +
+      Campaign.dungeonIds.map((id) => game.boss(id).name).join(' · ') +
+      '\n\n' +
       'THE OLD WAR IS OVER\n\n' +
       'The creatures return to their homes.\n\n' +
       'So I Became the Dark Lord’s Problem\n\n' +
@@ -1042,7 +1046,8 @@
       if (file.size > 5 * 1024 * 1024) throw Error('too large');
       const data = JSON.parse(await file.text()),
         candidate = data.version === 2 ? Campaign.migrate(data) : Campaign.restore(data);
-      if (candidate.s.mode === 'developer' && !developerEnabled) throw Error('Developer import disabled');
+      if (candidate.s.mode === 'developer' && !developerEnabled)
+        throw Error('Developer import disabled');
       persistence.writeCandidate(candidate);
       game = candidate;
       started = true;
@@ -1071,8 +1076,11 @@
       )[0];
   }
   function appointmentMenu(n, group = null) {
-    if (!game.s.throneClaimed || !game.s.true[game.zoneId] ||
-        !Campaign.dungeonIds.includes(game.zoneId)) {
+    if (
+      !game.s.throneClaimed ||
+      !game.s.true[game.zoneId] ||
+      !Campaign.dungeonIds.includes(game.zoneId)
+    ) {
       status('Claim the throne and defeat this dungeon’s TRUE guardian first.');
       return;
     }
@@ -1083,38 +1091,55 @@
         specialist: 'Rescued specialists',
       },
       candidates = game.dungeonMasterCandidates(),
-      usedElsewhere = (id) => Object.entries(game.s.appointments || {}).some(
-        ([dungeon, appointed]) => dungeon !== game.zoneId && appointed === id,
-      ),
+      usedElsewhere = (id) =>
+        Object.entries(game.s.appointments || {}).some(
+          ([dungeon, appointed]) => dungeon !== game.zoneId && appointed === id,
+        ),
       description =
         (current ? 'Current master: ' + current.name : 'No appointed master') +
         '. Appointments are optional, peaceful and unique; defeated captains remain eligible.';
     if (!group) {
       openMenu('Appoint Dungeon Master', description, [
         ...Object.entries(groups).map(([id, label]) =>
-          action(label, () => appointmentMenu(n, id),
-            candidates.filter((choice) => choice.group === id).length + ' eligible'),
+          action(
+            label,
+            () => appointmentMenu(n, id),
+            candidates.filter((choice) => choice.group === id).length + ' eligible',
+          ),
         ),
-        ...(current ? [action('Leave this dungeon unappointed', () => {
-          if (game.appointDungeonMaster(game.zoneId, null)) closeMenu();
-        })] : []),
+        ...(current
+          ? [
+              action('Leave this dungeon unappointed', () => {
+                if (game.appointDungeonMaster(game.zoneId, null)) closeMenu();
+              }),
+            ]
+          : []),
         action('Decide later', closeMenu),
       ]);
       return;
     }
-    openMenu('Appoint Dungeon Master · ' + groups[group], description, [
-      ...candidates.filter((choice) => choice.group === group).map((choice) =>
-        action(
-          (current?.id === choice.id ? '✓ ' : '') + choice.name,
-          () => {
-            if (game.appointDungeonMaster(game.zoneId, choice.id)) closeMenu();
-          },
-          usedElsewhere(choice.id) ? 'Already appointed in another dungeon' : 'Permanent local resident; no new fight',
-          usedElsewhere(choice.id),
-        ),
-      ),
-      action('Back to appointment choices', () => appointmentMenu(n)),
-    ], () => appointmentMenu(n));
+    openMenu(
+      'Appoint Dungeon Master · ' + groups[group],
+      description,
+      [
+        ...candidates
+          .filter((choice) => choice.group === group)
+          .map((choice) =>
+            action(
+              (current?.id === choice.id ? '✓ ' : '') + choice.name,
+              () => {
+                if (game.appointDungeonMaster(game.zoneId, choice.id)) closeMenu();
+              },
+              usedElsewhere(choice.id)
+                ? 'Already appointed in another dungeon'
+                : 'Permanent local resident; no new fight',
+              usedElsewhere(choice.id),
+            ),
+          ),
+        action('Back to appointment choices', () => appointmentMenu(n)),
+      ],
+      () => appointmentMenu(n),
+    );
   }
   function interact() {
     const n = nearestNPC();
@@ -2496,24 +2521,24 @@
       : game.s.phase === 'awakening' && !game.s.throneClaimed
         ? 'DARK CROWN · Claim the Throne · Fortress courtyard, near (3250, 3090) · Map: Z'
         : liveFieldTrue
-        ? 'TRUE BOSS · ' +
-          liveFieldTrue.name +
-          ' is roaming ' +
-          game.definition().name +
-          (liveFieldTrue.family === 'thorn'
-            ? ' · Scout tracks / Orchard trail witness'
-            : ' · Map: Z')
-        : pendingField && !pendingField[1].active
           ? 'TRUE BOSS · ' +
-            game.boss(pendingField[0]).name +
-            ' TRUE emerging in ' +
-            Math.max(0, Math.ceil(pendingField[1].delay)) +
-            's'
-          : game.s.phase === 'awakening'
-            ? 'AWAKENING · Final objective · ' +
-              (5 - remaining.length) +
-              '/5 TRUE guardians defeated · Map: Z'
-            : regionalSpecialistObjective();
+            liveFieldTrue.name +
+            ' is roaming ' +
+            game.definition().name +
+            (liveFieldTrue.family === 'thorn'
+              ? ' · Scout tracks / Orchard trail witness'
+              : ' · Map: Z')
+          : pendingField && !pendingField[1].active
+            ? 'TRUE BOSS · ' +
+              game.boss(pendingField[0]).name +
+              ' TRUE emerging in ' +
+              Math.max(0, Math.ceil(pendingField[1].delay)) +
+              's'
+            : game.s.phase === 'awakening'
+              ? 'AWAKENING · Final objective · ' +
+                (5 - remaining.length) +
+                '/5 TRUE guardians defeated · Map: Z'
+              : regionalSpecialistObjective();
     $('objective').title = $('objective').textContent;
     const doctrine = game.squadDoctrineLabel(),
       squad = $('squad-button');

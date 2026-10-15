@@ -179,9 +179,9 @@
   // These are actor labels, never false ground-impact warnings.
   function royalTaxStatus(ctx, screen, game) {
     let drawn = 0;
-    for (const lord of game.zone().enemies.filter(
-      (e) => e.family === 'darklord' && e.type === 'boss' && e.hp > 0,
-    )) {
+    for (const lord of game
+      .zone()
+      .enemies.filter((e) => e.family === 'darklord' && e.type === 'boss' && e.hp > 0)) {
       const tax = lord.royalTaxation,
         active = tax && tax.expires > game.s.time && tax.marked?.length;
       if (active) {
@@ -399,7 +399,9 @@
       }
     }
     if (cue)
-      for (const e of game.zone().enemies.filter((e) => e.telegraph?.anonymousCast || e.telegraph?.mobileRogueCast)) {
+      for (const e of game
+        .zone()
+        .enemies.filter((e) => e.telegraph?.anonymousCast || e.telegraph?.mobileRogueCast)) {
         const a = e.telegraph,
           p = screen(e);
         const width = 70,
@@ -424,9 +426,16 @@
     // including separate rogue moves. It must NEVER obscure the cast itself:
     // attach a high-contrast progress bar to the actual boss, not the terrain.
     if (cue)
-      for (const e of game.zone().enemies.filter(
-        (e) => e.family === 'ridge' && e.ledgerOpen && !e.telegraph?.mobileRogueCast && visibleWarning(e) && e.hp > 0,
-      )) {
+      for (const e of game
+        .zone()
+        .enemies.filter(
+          (e) =>
+            e.family === 'ridge' &&
+            e.ledgerOpen &&
+            !e.telegraph?.mobileRogueCast &&
+            visibleWarning(e) &&
+            e.hp > 0,
+        )) {
         const a = e.telegraph,
           p = screen(e),
           w = 84,
@@ -449,7 +458,12 @@
       }
     for (const e of game
       .zone()
-      .enemies.filter((e) => visibleWarning(e) && !e.telegraph?.mobileRogueCast && !(e.family === 'ridge' && e.ledgerOpen))) {
+      .enemies.filter(
+        (e) =>
+          visibleWarning(e) &&
+          !e.telegraph?.mobileRogueCast &&
+          !(e.family === 'ridge' && e.ledgerOpen),
+      )) {
       const a = e.telegraph;
       const shapes = warningShapes(a, game.attackPatches(a));
       // Rogue warnings need an identity distinct from ordinary boss attacks:

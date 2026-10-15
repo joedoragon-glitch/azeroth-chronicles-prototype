@@ -119,7 +119,7 @@
   function bodyFacingSide(from, toward, previous = 1) {
     if (!from || !toward || !Number.isFinite(toward.x) || !Number.isFinite(toward.y))
       return previous;
-    const dx = (toward.x - from.x) - (toward.y - from.y);
+    const dx = toward.x - from.x - (toward.y - from.y);
     return Math.abs(dx) < 8 ? previous : dx < 0 ? -1 : 1;
   }
 
@@ -397,7 +397,8 @@
       const moved = Math.hypot(e.x - old.x, e.y - old.y) > 0.7;
       let target = null;
       if (e.renderKind === 'hero') {
-        target = game.selectedHeroTarget?.() ||
+        target =
+          game.selectedHeroTarget?.() ||
           (e.order?.type === 'attack'
             ? game.zone().enemies.find((u) => u.id === e.order.id && u.hp > 0)
             : null);
@@ -411,14 +412,14 @@
         if (!target && e.rangedAim) target = e.rangedAim;
         if (!target && e.aggro) {
           const combatants = [game.hero, ...game.s.party].filter((u) => u.hp > 0);
-          target = combatants.sort((a, b) =>
-            Math.hypot(a.x - e.x, a.y - e.y) - Math.hypot(b.x - e.x, b.y - e.y))[0];
+          target = combatants.sort(
+            (a, b) => Math.hypot(a.x - e.x, a.y - e.y) - Math.hypot(b.x - e.x, b.y - e.y),
+          )[0];
         }
       }
       if (!target && e.motion?.target) target = e.motion.target;
       if (!target && e.path?.length) target = e.path[0];
-      if (!target && moved)
-        target = { x: e.x + (e.x - old.x) * 4, y: e.y + (e.y - old.y) * 4 };
+      if (!target && moved) target = { x: e.x + (e.x - old.x) * 4, y: e.y + (e.y - old.y) * 4 };
       const side = bodyFacingSide(e, target, old.side);
       actorFacingMemory.set(owner, { x: e.x, y: e.y, side });
       return side;
@@ -446,7 +447,8 @@
             rescued,
             bodyOnly ? { silhouette: true } : undefined,
           )
-        ) return;
+        )
+          return;
         PrototypeVisuals.draw(target, e, q, game.regionIndex(), rescued);
       } finally {
         if (facing < 0) target.restore();
@@ -1701,8 +1703,10 @@
       const claimedLabels = [];
       const labelText = (e) => {
         if (e.renderKind === 'npc')
-          return e.presentation === 'mobile-captive' ? 'Mira · captive'
-            : e.presentation === 'mobile-forge' ? 'Vera · captive field engineer'
+          return e.presentation === 'mobile-captive'
+            ? 'Mira · captive'
+            : e.presentation === 'mobile-forge'
+              ? 'Vera · captive field engineer'
               : e.name || '';
         if (e.renderKind === 'building') return e.name || 'Barracks';
         if (e.renderKind === 'node') return 'Dark Lord Tribute';
@@ -1711,23 +1715,36 @@
         return '';
       };
       const labelPriority = (e) =>
-        e.renderKind === 'npc' ? 0 :
-        e.renderKind === 'enemy' && e.type === 'boss' ? 1 :
-        e.renderKind === 'ally' ? 2 :
-        e.renderKind === 'enemy' ? 3 :
-        e.renderKind === 'building' ? 4 : 5;
+        e.renderKind === 'npc'
+          ? 0
+          : e.renderKind === 'enemy' && e.type === 'boss'
+            ? 1
+            : e.renderKind === 'ally'
+              ? 2
+              : e.renderKind === 'enemy'
+                ? 3
+                : e.renderKind === 'building'
+                  ? 4
+                  : 5;
       for (const e of entities.slice().sort((a, b) => labelPriority(a) - labelPriority(b))) {
-        if (!['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) ||
-            !worldLabelVisible(e)) continue;
+        if (
+          !['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) ||
+          !worldLabelVisible(e)
+        )
+          continue;
         const name = labelText(e);
         if (!name) continue;
         const anchor = screen(e);
-        if (anchor.x < -40 || anchor.x > canvas.width + 40 ||
-            anchor.y < -100 || anchor.y > canvas.height + 100) continue;
+        if (
+          anchor.x < -40 ||
+          anchor.x > canvas.width + 40 ||
+          anchor.y < -100 ||
+          anchor.y > canvas.height + 100
+        )
+          continue;
         const w = Math.min(canvas.width - 20, Math.max(62, name.length * 6.7 + 10));
         const h = 17;
-        const baseY = e.renderKind === 'node' ? anchor.y - 25 :
-          anchor.y - spriteHeight(e) - 5;
+        const baseY = e.renderKind === 'node' ? anchor.y - 25 : anchor.y - spriteHeight(e) - 5;
         let slot = null;
         for (const dy of [0, -20, -40, -60, -80, 20, 40, 60, -100]) {
           for (const dx of [0, -42, 42, -84, 84]) {
@@ -1735,8 +1752,7 @@
             const y = baseY + dy;
             if (y < 18 || y > canvas.height - 8) continue;
             const box = { l: x - w / 2 - 3, r: x + w / 2 + 3, t: y - h, b: y + 3 };
-            if (claimedLabels.some((q) =>
-              box.l < q.r && box.r > q.l && box.t < q.b && box.b > q.t))
+            if (claimedLabels.some((q) => box.l < q.r && box.r > q.l && box.t < q.b && box.b > q.t))
               continue;
             slot = { x, y, width: w };
             claimedLabels.push(box);
@@ -1938,12 +1954,13 @@
           ctx.shadowColor = '#07140e';
           ctx.shadowBlur = 3;
           const slot = labelSlots.get(e);
-          if (slot) ctx.fillText(
-            e.name || (/^barracks/.test(e.id || '') ? 'Barracks' : 'Building'),
-            slot.x,
-            slot.y,
-            slot.width,
-          );
+          if (slot)
+            ctx.fillText(
+              e.name || (/^barracks/.test(e.id || '') ? 'Barracks' : 'Building'),
+              slot.x,
+              slot.y,
+              slot.width,
+            );
           ctx.shadowBlur = 0;
         }
         if (e.renderKind === 'node') {
@@ -1960,35 +1977,63 @@
       // occupied window light, services have sheltered lanterns, and existing
       // fires/forges illuminate their own work. All sources are presentational:
       // no generated actors, blockers, saved flags or combat visibility changes.
-      const domestic = /(?:^|[-_])(?:house|cottage|workshop|boathouse|smithy|forgehouse|watchhouse|hut|lodge|longhouse|dwelling)(?:$|[-_])/i;
-      const fires = /(?:^|[-_])(?:cookfire|fireplace|campfire|hearth|brazier|ember-pit|forge|field-kitchen|torch|furnace)(?:$|[-_])/i;
+      const domestic =
+        /(?:^|[-_])(?:house|cottage|workshop|boathouse|smithy|forgehouse|watchhouse|hut|lodge|longhouse|dwelling)(?:$|[-_])/i;
+      const fires =
+        /(?:^|[-_])(?:cookfire|fireplace|campfire|hearth|brazier|ember-pit|forge|field-kitchen|torch|furnace)(?:$|[-_])/i;
       const lanterns = /(?:^|[-_])(?:lantern|grave-lamp)(?:$|[-_])/i;
-      const thermal = /^(?:geothermal-heat-intake|crown-glass-kiln|crown-ceramic-kiln|heat-distribution-post|heated-drying-shed|heated-washhouse|thermal-flue)$/;
+      const thermal =
+        /^(?:geothermal-heat-intake|crown-glass-kiln|crown-ceramic-kiln|heat-distribution-post|heated-drying-shed|heated-washhouse|thermal-flue)$/;
       const nightNow = game.night();
-      const nightSources = !nightNow ? [] : [
-        ...z.props.flatMap((prop) => {
-          const structure = String(prop.structure || '');
-          const kind = domestic.test(structure) ? 'window'
-            : lanterns.test(structure) ? 'lantern'
-              : thermal.test(structure) ? 'work-fire'
-                : fires.test(structure) ? /forge|field-kitchen/.test(structure) ? 'work-fire' : 'fire'
-                  : null;
-          return kind ? [{ ...screen(prop), kind, id: prop.id }] : [];
-        }),
-        ...z.buildings.filter((b) => b.progress >= 4)
-          .map((b) => ({ ...screen(b), kind: 'window', id: b.id })),
-        ...game.visibleNPCs()
-          .filter((n) => ['rest', 'supplier', 'recruiter', 'quests', 'fountain',
-            'transport', 'smith', 'teacher', 'alchemist'].includes(n.kind) && !n.interactionOnly)
-          .map((n) => ({ ...screen(n), kind: 'lantern', id: n.id })),
-      ]
-        .filter((p) => p.x > -140 && p.x < canvas.width + 140 &&
-          p.y > -160 && p.y < canvas.height + 140)
-        .sort((a, b) => {
-          const da = (a.x - canvas.width / 2) ** 2 + (a.y - canvas.height / 2) ** 2;
-          const db = (b.x - canvas.width / 2) ** 2 + (b.y - canvas.height / 2) ** 2;
-          return da - db || String(a.id).localeCompare(String(b.id));
-        }).slice(0, 44);
+      const nightSources = !nightNow
+        ? []
+        : [
+            ...z.props.flatMap((prop) => {
+              const structure = String(prop.structure || '');
+              const kind = domestic.test(structure)
+                ? 'window'
+                : lanterns.test(structure)
+                  ? 'lantern'
+                  : thermal.test(structure)
+                    ? 'work-fire'
+                    : fires.test(structure)
+                      ? /forge|field-kitchen/.test(structure)
+                        ? 'work-fire'
+                        : 'fire'
+                      : null;
+              return kind ? [{ ...screen(prop), kind, id: prop.id }] : [];
+            }),
+            ...z.buildings
+              .filter((b) => b.progress >= 4)
+              .map((b) => ({ ...screen(b), kind: 'window', id: b.id })),
+            ...game
+              .visibleNPCs()
+              .filter(
+                (n) =>
+                  [
+                    'rest',
+                    'supplier',
+                    'recruiter',
+                    'quests',
+                    'fountain',
+                    'transport',
+                    'smith',
+                    'teacher',
+                    'alchemist',
+                  ].includes(n.kind) && !n.interactionOnly,
+              )
+              .map((n) => ({ ...screen(n), kind: 'lantern', id: n.id })),
+          ]
+            .filter(
+              (p) =>
+                p.x > -140 && p.x < canvas.width + 140 && p.y > -160 && p.y < canvas.height + 140,
+            )
+            .sort((a, b) => {
+              const da = (a.x - canvas.width / 2) ** 2 + (a.y - canvas.height / 2) ** 2;
+              const db = (b.x - canvas.width / 2) ** 2 + (b.y - canvas.height / 2) ** 2;
+              return da - db || String(a.id).localeCompare(String(b.id));
+            })
+            .slice(0, 44);
       PrototypeVisuals.atmosphere(ctx, canvas, i, {
         night: nightNow,
         peace: game.peace,
@@ -2082,7 +2127,15 @@
       }),
     };
   }
-  const api = { create, bodyFacingSide, drawAbyssFlightCues, drawCrownLoot, majorOccluder, occlusionPairs, optimizationClutter };
+  const api = {
+    create,
+    bodyFacingSide,
+    drawAbyssFlightCues,
+    drawCrownLoot,
+    majorOccluder,
+    occlusionPairs,
+    optimizationClutter,
+  };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeRenderer = api;
 })(typeof window !== 'undefined' ? window : globalThis);

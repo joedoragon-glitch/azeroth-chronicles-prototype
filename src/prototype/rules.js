@@ -913,8 +913,7 @@
         'Reedport fish and paper for the Keeper’s Archive travel along this Crown-maintained causeway. Lantern Wraiths help preserve records and take care with their lamps; the Archive’s flooding remains unexplained.',
     },
     highlands: {
-      ore:
-        'Separate silver and copper loads leave for Stonecross’s portrait-crown mint, then guarded wagons serve the Ashen Frontier and Dark Crown. Quarry stone remains a distinct trade.',
+      ore: 'Separate silver and copper loads leave for Stonecross’s portrait-crown mint, then guarded wagons serve the Ashen Frontier and Dark Crown. Quarry stone remains a distinct trade.',
     },
     frontier: {
       convoy:
@@ -1435,225 +1434,225 @@
   // historical save; new non-reward guardians append after slot 3.
   // Crown direwolf riders maintain mixed human-and-wolf posts and tack stores.
   const treasuryGuardFormations = {
-  "supply-vale": [
-    {
-      "x": 320,
-      "y": 340,
-      "role": "melee",
-      "group": "entry"
-    },
-    {
-      "x": 530,
-      "y": 360,
-      "role": "melee",
-      "group": "stores"
-    },
-    {
-      "x": 590,
-      "y": 655,
-      "role": "melee",
-      "group": "reserve"
-    },
-    {
-      "x": 745,
-      "y": 590,
-      "group": "command",
-      "name": "Thornfang captain",
-      "captain": true
-    },
-    {
-      "x": 305,
-      "y": 625,
-      "role": "ranged",
-      "group": "entry",
-      "name": "Greenwood lookout guardian"
-    },
-    {
-      "x": 675,
-      "y": 265,
-      "role": "melee",
-      "group": "stores",
-      "name": "Greenwood treasury guardian"
-    }
-  ],
-  "supply-march": [
-    {
-      "x": 320,
-      "y": 340,
-      "role": "melee",
-      "group": "entry"
-    },
-    {
-      "x": 530,
-      "y": 360,
-      "role": "melee",
-      "group": "stores"
-    },
-    {
-      "x": 590,
-      "y": 655,
-      "role": "melee",
-      "group": "reserve"
-    },
-    {
-      "x": 745,
-      "y": 590,
-      "group": "command",
-      "name": "Mirejaw captain",
-      "captain": true
-    },
-    {
-      "x": 300,
-      "y": 645,
-      "role": "ranged",
-      "group": "entry",
-      "name": "Marsh watch guardian"
-    },
-    {
-      "x": 690,
-      "y": 270,
-      "role": "melee",
-      "group": "stores",
-      "name": "Marsh treasury guardian"
-    }
-  ],
-  "supply-highlands": [
-    {
-      "x": 300,
-      "y": 330,
-      "role": "melee",
-      "group": "entry",
-      "name": "Crown direwolf lance rider",
-      "mountedCrownRider": true
-    },
-    {
-      "x": 530,
-      "y": 360,
-      "role": "ranged",
-      "group": "study",
-      "name": "Crown direwolf archer",
-      "mountedCrownRider": true
-    },
-    {
-      "x": 590,
-      "y": 655,
-      "role": "melee",
-      "group": "reserve",
-      "name": "Crown direwolf lance rider",
-      "mountedCrownRider": true
-    },
-    {
-      "x": 745,
-      "y": 590,
-      "group": "household",
-      "name": "Crag Tyrant",
-      "captain": true
-    },
-    {
-      "x": 580,
-      "y": 255,
-      "role": "ranged",
-      "group": "study",
-      "name": "Crown direwolf archer",
-      "mountedCrownRider": true
-    },
-    {
-      "x": 300,
-      "y": 690,
-      "role": "melee",
-      "group": "reserve",
-      "name": "Crown direwolf lance rider",
-      "mountedCrownRider": true
-    },
-    {
-      "x": 760,
-      "y": 770,
-      "role": "ranged",
-      "group": "household",
-      "name": "Crown direwolf archer",
-      "mountedCrownRider": true
-    }
-  ],
-  "supply-crown": [
-    {
-      "x": 330,
-      "y": 260,
-      "role": "melee",
-      "group": "roost",
-      "name": "Ash beast treasury guardian"
-    },
-    {
-      "x": 865,
-      "y": 390,
-      "role": "ranged",
-      "group": "hoard",
-      "name": "Ash beast cinder guardian"
-    },
-    {
-      "x": 300,
-      "y": 520,
-      "role": "melee",
-      "group": "ash-den",
-      "name": "Ash beast treasury guardian"
-    },
-    {
-      "x": 985,
-      "y": 980,
-      "group": "inner-vault",
-      "name": "Dreadmaw",
-      "captain": true
-    },
-    {
-      "x": 1020,
-      "y": 265,
-      "role": "ranged",
-      "group": "hoard",
-      "name": "Ash beast hoard sentry"
-    },
-    {
-      "x": 500,
-      "y": 570,
-      "role": "melee",
-      "group": "junction",
-      "name": "Ash beast levy guardian"
-    },
-    {
-      "x": 690,
-      "y": 700,
-      "role": "ranged",
-      "group": "distribution",
-      "name": "Ash beast distribution sentry"
-    },
-    {
-      "x": 265,
-      "y": 975,
-      "role": "melee",
-      "group": "agriculture",
-      "name": "Ash beast livestock guardian"
-    },
-    {
-      "x": 515,
-      "y": 1050,
-      "role": "ranged",
-      "group": "agriculture",
-      "name": "Ash beast granary sentry"
-    },
-    {
-      "x": 1135,
-      "y": 1160,
-      "role": "melee",
-      "group": "inner-vault",
-      "name": "Ash beast vault guardian"
-    },
-    {
-      "x": 770,
-      "y": 870,
-      "role": "ranged",
-      "group": "inner-vault",
-      "name": "Ash beast inner-vault sentry"
-    }
-  ]
-};
+    'supply-vale': [
+      {
+        x: 320,
+        y: 340,
+        role: 'melee',
+        group: 'entry',
+      },
+      {
+        x: 530,
+        y: 360,
+        role: 'melee',
+        group: 'stores',
+      },
+      {
+        x: 590,
+        y: 655,
+        role: 'melee',
+        group: 'reserve',
+      },
+      {
+        x: 745,
+        y: 590,
+        group: 'command',
+        name: 'Thornfang captain',
+        captain: true,
+      },
+      {
+        x: 305,
+        y: 625,
+        role: 'ranged',
+        group: 'entry',
+        name: 'Greenwood lookout guardian',
+      },
+      {
+        x: 675,
+        y: 265,
+        role: 'melee',
+        group: 'stores',
+        name: 'Greenwood treasury guardian',
+      },
+    ],
+    'supply-march': [
+      {
+        x: 320,
+        y: 340,
+        role: 'melee',
+        group: 'entry',
+      },
+      {
+        x: 530,
+        y: 360,
+        role: 'melee',
+        group: 'stores',
+      },
+      {
+        x: 590,
+        y: 655,
+        role: 'melee',
+        group: 'reserve',
+      },
+      {
+        x: 745,
+        y: 590,
+        group: 'command',
+        name: 'Mirejaw captain',
+        captain: true,
+      },
+      {
+        x: 300,
+        y: 645,
+        role: 'ranged',
+        group: 'entry',
+        name: 'Marsh watch guardian',
+      },
+      {
+        x: 690,
+        y: 270,
+        role: 'melee',
+        group: 'stores',
+        name: 'Marsh treasury guardian',
+      },
+    ],
+    'supply-highlands': [
+      {
+        x: 300,
+        y: 330,
+        role: 'melee',
+        group: 'entry',
+        name: 'Crown direwolf lance rider',
+        mountedCrownRider: true,
+      },
+      {
+        x: 530,
+        y: 360,
+        role: 'ranged',
+        group: 'study',
+        name: 'Crown direwolf archer',
+        mountedCrownRider: true,
+      },
+      {
+        x: 590,
+        y: 655,
+        role: 'melee',
+        group: 'reserve',
+        name: 'Crown direwolf lance rider',
+        mountedCrownRider: true,
+      },
+      {
+        x: 745,
+        y: 590,
+        group: 'household',
+        name: 'Crag Tyrant',
+        captain: true,
+      },
+      {
+        x: 580,
+        y: 255,
+        role: 'ranged',
+        group: 'study',
+        name: 'Crown direwolf archer',
+        mountedCrownRider: true,
+      },
+      {
+        x: 300,
+        y: 690,
+        role: 'melee',
+        group: 'reserve',
+        name: 'Crown direwolf lance rider',
+        mountedCrownRider: true,
+      },
+      {
+        x: 760,
+        y: 770,
+        role: 'ranged',
+        group: 'household',
+        name: 'Crown direwolf archer',
+        mountedCrownRider: true,
+      },
+    ],
+    'supply-crown': [
+      {
+        x: 330,
+        y: 260,
+        role: 'melee',
+        group: 'roost',
+        name: 'Ash beast treasury guardian',
+      },
+      {
+        x: 865,
+        y: 390,
+        role: 'ranged',
+        group: 'hoard',
+        name: 'Ash beast cinder guardian',
+      },
+      {
+        x: 300,
+        y: 520,
+        role: 'melee',
+        group: 'ash-den',
+        name: 'Ash beast treasury guardian',
+      },
+      {
+        x: 985,
+        y: 980,
+        group: 'inner-vault',
+        name: 'Dreadmaw',
+        captain: true,
+      },
+      {
+        x: 1020,
+        y: 265,
+        role: 'ranged',
+        group: 'hoard',
+        name: 'Ash beast hoard sentry',
+      },
+      {
+        x: 500,
+        y: 570,
+        role: 'melee',
+        group: 'junction',
+        name: 'Ash beast levy guardian',
+      },
+      {
+        x: 690,
+        y: 700,
+        role: 'ranged',
+        group: 'distribution',
+        name: 'Ash beast distribution sentry',
+      },
+      {
+        x: 265,
+        y: 975,
+        role: 'melee',
+        group: 'agriculture',
+        name: 'Ash beast livestock guardian',
+      },
+      {
+        x: 515,
+        y: 1050,
+        role: 'ranged',
+        group: 'agriculture',
+        name: 'Ash beast granary sentry',
+      },
+      {
+        x: 1135,
+        y: 1160,
+        role: 'melee',
+        group: 'inner-vault',
+        name: 'Ash beast vault guardian',
+      },
+      {
+        x: 770,
+        y: 870,
+        role: 'ranged',
+        group: 'inner-vault',
+        name: 'Ash beast inner-vault sentry',
+      },
+    ],
+  };
   const treasuryDecor = {
     'supply-vale': [
       [155, 690, 'thorn-bed', 28],

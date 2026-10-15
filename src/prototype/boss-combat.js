@@ -804,10 +804,11 @@
           const planned = [flank, crossing, { x: target.x, y: target.y }];
           let previous = e;
           const route = planned.map((point) => {
-            const next = this.clearSegment(previous, point, 15) &&
+            const next =
+              this.clearSegment(previous, point, 15) &&
               !this.blocked(point.x, point.y, this.zoneId, 15)
-              ? point
-              : { x: previous.x, y: previous.y };
+                ? point
+                : { x: previous.x, y: previous.y };
             previous = next;
             return next;
           });
@@ -1282,8 +1283,12 @@
             zone = this.zoneId,
             deaths = this.s.statistics.deaths;
           this.resolveArea(e, a);
-          if (this.hero !== hero || this.zoneId !== zone ||
-              this.s.statistics.deaths !== deaths || e.hp <= 0)
+          if (
+            this.hero !== hero ||
+            this.zoneId !== zone ||
+            this.s.statistics.deaths !== deaths ||
+            e.hp <= 0
+          )
             return;
           const side = (a.royalSidestepBaseAngle ?? a.angle) + Math.PI / 2,
             sign = a.royalSidestepDirection;
@@ -1295,11 +1300,12 @@
               e.y + Math.sin(side) * distance * sign,
             );
             const correctSide =
-              (goal.x - e.x) * Math.cos(side) * sign +
-              (goal.y - e.y) * Math.sin(side) * sign;
-            if (correctSide >= 30 &&
-                !this.blocked(goal.x, goal.y, this.zoneId, 15) &&
-                this.clearSegment(e, goal, 15)) {
+              (goal.x - e.x) * Math.cos(side) * sign + (goal.y - e.y) * Math.sin(side) * sign;
+            if (
+              correctSide >= 30 &&
+              !this.blocked(goal.x, goal.y, this.zoneId, 15) &&
+              this.clearSegment(e, goal, 15)
+            ) {
               e.motion = {
                 ...a,
                 target: goal,
@@ -1814,7 +1820,8 @@
           if (e.family === 'mine' && a.index !== 1 && e.telegraph?.index === 1)
             this.prepareMineWorksPreview(e);
           if (e.telegraph)
-            this.event('warning',
+            this.event(
+              'warning',
               e.telegraph.anonymousCast
                 ? { family: e.family, anonymousCast: true }
                 : { family: e.family },

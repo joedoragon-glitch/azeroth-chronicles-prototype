@@ -342,12 +342,11 @@
         ...D.bosses
           .filter((b) => b.kind === 'field')
           .map((b) => ({ id: 'field:' + b.id, name: b.name, group: 'field' })),
-        ...Object.entries(R.roomCaptains)
-          .map(([id, captain]) => ({
-            id: 'captain:' + id,
-            name: captain.name,
-            group: 'captain',
-          })),
+        ...Object.entries(R.roomCaptains).map(([id, captain]) => ({
+          id: 'captain:' + id,
+          name: captain.name,
+          group: 'captain',
+        })),
         ...D.bosses
           .filter((b) => b.captive && this.s.rescued[b.id])
           .map((b) => ({
@@ -364,7 +363,9 @@
     }
     syncDungeonMasterStation(z = this.s.zones[this.s.zone]) {
       if (!z || !dungeonIds.includes(z.id)) return;
-      z.npcs = z.npcs.filter((n) => !['dungeon-master-choice', 'dungeon-master-resident'].includes(n.id));
+      z.npcs = z.npcs.filter(
+        (n) => !['dungeon-master-choice', 'dungeon-master-resident'].includes(n.id),
+      );
       if (!this.s.throneClaimed || !this.s.true[z.id]) return;
       const previous = this.s.zone;
       this.s.zone = z.id;
@@ -400,18 +401,24 @@
         this.s.zone !== dungeonId ||
         !dungeonIds.includes(dungeonId) ||
         !this.s.true[dungeonId] ||
-        (candidateId !== null && !this.dungeonMasterCandidates().some((c) => c.id === candidateId)) ||
+        (candidateId !== null &&
+          !this.dungeonMasterCandidates().some((c) => c.id === candidateId)) ||
         (candidateId !== null &&
           Object.entries(this.s.appointments || {}).some(
             ([id, appointed]) => id !== dungeonId && appointed === candidateId,
           ))
-      ) return false;
+      )
+        return false;
       this.s.appointments = this.s.appointments || {};
       if (candidateId === null) delete this.s.appointments[dungeonId];
       else this.s.appointments[dungeonId] = candidateId;
       this.syncDungeonMasterStation();
       const chosen = this.dungeonMaster(dungeonId);
-      this.say(chosen ? chosen.name + ' now keeps the peaceful dungeon.' : 'The dungeon remains without an appointed master.');
+      this.say(
+        chosen
+          ? chosen.name + ' now keeps the peaceful dungeon.'
+          : 'The dungeon remains without an appointed master.',
+      );
       this.event('dungeonMaster', { dungeonId, candidateId });
       return true;
     }
@@ -707,7 +714,8 @@
       const slots = R.treasuryGuardFormations?.[z.id];
       if (!slots || this.peace) return;
       const region = this.regionIndex(z.id),
-        original = z.enemies.filter((e) => e.roomGuard && !e.reinforcement)
+        original = z.enemies
+          .filter((e) => e.roomGuard && !e.reinforcement)
           .sort((a, b) => this.idOrder(a, b));
       for (let j = 0; j < slots.length; j++) {
         const slot = slots[j];
@@ -716,15 +724,19 @@
           if (slot.captain) continue; // Historical captain may not be fabricated.
           const sp = D.species[region][0],
             p = this.safe(slot.x, slot.y, z.id);
-          e = this.makeEnemy({
-            species: sp[0],
-            name: slot.name || sp[1] + ' treasury guardian',
-            icon: sp[2],
-            level: region * 3 + 2,
-            hp: 65 + region * 105,
-            damage: 7 + region * 8,
-            gold: 0, xp: 0,
-          }, p);
+          e = this.makeEnemy(
+            {
+              species: sp[0],
+              name: slot.name || sp[1] + ' treasury guardian',
+              icon: sp[2],
+              level: region * 3 + 2,
+              hp: 65 + region * 105,
+              damage: 7 + region * 8,
+              gold: 0,
+              xp: 0,
+            },
+            p,
+          );
           e.guard = true;
           e.roomGuard = true;
           e.pack = z.id + '-' + (slot.group || 'guard-' + j);
@@ -1123,7 +1135,14 @@
       // Append only the newly approved gallery to existing Mine saves.
       if (z.id === 'mine' && z.dungeonVersion === targetVersion) {
         for (const [j, [x, y, structure, district, sceneRole]] of R.dungeonDecor.mine.entries()) {
-          if (!['geometric-gallery', 'kinetic-collection', 'art-object', 'mixed-rider-quarters'].includes(sceneRole))
+          if (
+            ![
+              'geometric-gallery',
+              'kinetic-collection',
+              'art-object',
+              'mixed-rider-quarters',
+            ].includes(sceneRole)
+          )
             continue;
           if (z.props.some((p) => p.id === 'decor-' + j)) continue;
           z.props.push({
@@ -1542,28 +1561,41 @@
       if (
         source === 'barracks' &&
         !this.zone().buildings.some(
-          (b) => b.id === site?.id && b.kind === 'barracks' &&
-            b.progress >= 4 && dist(b, this.hero) <= 115,
+          (b) =>
+            b.id === site?.id &&
+            b.kind === 'barracks' &&
+            b.progress >= 4 &&
+            dist(b, this.hero) <= 115,
         )
-      ) return false;
+      )
+        return false;
       if (!['refuge', 'fountain', 'barracks'].includes(source)) return false;
-      if (source === 'fountain' &&
+      if (
+        source === 'fountain' &&
         !this.zone().npcs.some(
           (n) => n === site && n.kind === 'fountain' && dist(n, this.hero) <= 115,
-        )) return false;
-      if (source === 'refuge' &&
+        )
+      )
+        return false;
+      if (
+        source === 'refuge' &&
         !this.zone().npcs.some(
-          (n) => n.id === site?.id && n.kind === 'rest' &&
+          (n) =>
+            n.id === site?.id &&
+            n.kind === 'rest' &&
             Math.min(dist(n, this.hero), dist(n.servicePoint || n, this.hero)) <= 115,
-        )) return false;
+        )
+      )
+        return false;
       this.clearTonic();
       this.hero.supportEffects = [];
       this.hero.hp = this.hero.maxHp;
       if (R.resourceMode.manaEnabled) this.hero.mp = this.hero.maxMp;
-      for (const u of this.activeParty()) if (u.hp > 0) {
-        u.hp = u.maxHp;
-        u.supportEffects = [];
-      }
+      for (const u of this.activeParty())
+        if (u.hp > 0) {
+          u.hp = u.maxHp;
+          u.supportEffects = [];
+        }
       this.s.finalRestCompleted = true;
       this.notice('THE JOURNEY IS COMPLETE · CREDITS', 7);
       this.say('At last, you can rest. The Crown is yours, and the war is over.');
@@ -2195,7 +2227,8 @@
           return this.enter(npc.family);
         case 'fountain':
           // Post-coronation Rest works even at a fountain consumed long ago.
-          if (this.peace) return this.completeFinalRest('fountain', npc) || this.s.finalRestCompleted;
+          if (this.peace)
+            return this.completeFinalRest('fountain', npc) || this.s.finalRestCompleted;
           if (this.refugeThreat()) {
             this.say('Cannot use the preparation fountain during nearby combat.');
             return false;
@@ -2608,8 +2641,7 @@
       this.checkClear();
       this.checkMinis();
       this.checkEnding();
-      if (e.type === 'boss' && dungeonIds.includes(this.s.zone))
-        this.syncDungeonMasterStation();
+      if (e.type === 'boss' && dungeonIds.includes(this.s.zone)) this.syncDungeonMasterStation();
     }
     fieldBossStreak(e) {
       if (
@@ -2784,7 +2816,11 @@
     checkEnding() {
       // Previously earned TRUE victories count; peace cannot start until
       // coronation occurs through the actual fortress throne interaction.
-      if (this.s.true.darklord && this.s.throneClaimed && dungeonIds.every((id) => this.s.true[id])) {
+      if (
+        this.s.true.darklord &&
+        this.s.throneClaimed &&
+        dungeonIds.every((id) => this.s.true[id])
+      ) {
         if (this.peace) return;
         this.s.phase = 'peace';
         this.s.endingAck = false;
@@ -3898,9 +3934,12 @@
         // One cast per existing Rogue window: Crown members alternate their
         // armored military doctrine with their own people's movement craft.
         // Their HP, hit strength and regular attack timers are untouched.
-        crownDoctrineSpecies = e.crownTroop && e.crownAncestry
-          ? (e.crownRogueTurn || 0) % 2 ? 'crownguard' : e.crownAncestry
-          : e.species,
+        crownDoctrineSpecies =
+          e.crownTroop && e.crownAncestry
+            ? (e.crownRogueTurn || 0) % 2
+              ? 'crownguard'
+              : e.crownAncestry
+            : e.species,
         basic =
           (e.type === 'boss' && profiles.bosses[e.family]) ||
           ((e.captain || e.roomCaptain) && profiles.captains[e.captainProfile]) ||
@@ -3933,10 +3972,15 @@
           !!signature &&
           wantsSignature &&
           (!['scatter', 'sweep'].includes(signature.effect) || closeTargets.length > 0),
-        profile = isSignature ? signature :
-          e.mountedCrownRider && crownDoctrineSpecies !== 'crownguard'
-            ? { ...basic, name: e.ranged ? 'Crown Direwolf Archer Dash' : 'Crown Direwolf Lance Dash',
-                style: 'dash', radius: 165 }
+        profile = isSignature
+          ? signature
+          : e.mountedCrownRider && crownDoctrineSpecies !== 'crownguard'
+            ? {
+                ...basic,
+                name: e.ranged ? 'Crown Direwolf Archer Dash' : 'Crown Direwolf Lance Dash',
+                style: 'dash',
+                radius: 165,
+              }
             : basic,
         target =
           isSignature && closeTargets.length
@@ -4011,8 +4055,7 @@
         style: effect || profile.style,
         signature: isSignature,
       });
-      if (e.crownTroop && e.crownAncestry)
-        e.crownRogueTurn = ((e.crownRogueTurn || 0) + 1) % 2;
+      if (e.crownTroop && e.crownAncestry) e.crownRogueTurn = ((e.crownRogueTurn || 0) + 1) % 2;
       return true;
     }
     // Field commanders rally native ordinary-monster spawn records; Ridge Tyrant
@@ -4386,7 +4429,8 @@
           move.effect !== 'scatter' &&
           move.effect !== 'sweep' &&
           (!target || target.hp <= 0 || dist(e, target) > move.radius || !this.line(e, target))
-        ) return;
+        )
+          return;
         // No stale cast-origin circles: live caster/target positions at release
         // determine coverage, facing, collision and true escape opportunities.
         const centered = move.effect === 'scatter' || move.effect === 'sweep';
@@ -4453,8 +4497,13 @@
           startingDeaths = this.s.statistics.deaths;
         if (move.style === 'dash' && dist(e, target) > 95) {
           const previous = { x: e.x, y: e.y };
-          this.move(e, target, e.mountedCrownRider ? 395 : 300,
-            e.mountedCrownRider ? 0.36 : 0.3, 85);
+          this.move(
+            e,
+            target,
+            e.mountedCrownRider ? 395 : 300,
+            e.mountedCrownRider ? 0.36 : 0.3,
+            85,
+          );
           this.tacticalRecordRogueReposition(e, previous, target);
         }
         if (!this.hitParty(target, e.damage * move.coefficient)) return;
@@ -4934,7 +4983,11 @@
             if (castTarget?.hp > 0 && this.line(e, castTarget)) {
               const gap = dist(e, castTarget),
                 rangedCast = !!e.ranged && !e.hybrid,
-                stop = rangedCast ? (e.mountedCrownRider ? 125 : Math.min(e.shotRange || 280, 205)) : 70,
+                stop = rangedCast
+                  ? e.mountedCrownRider
+                    ? 125
+                    : Math.min(e.shotRange || 280, 205)
+                  : 70,
                 pace =
                   (e.type === 'boss' ? 145 : 175) *
                   (e.mountedCrownRider ? 1.18 : 1) *

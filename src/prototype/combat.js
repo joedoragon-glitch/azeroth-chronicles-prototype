@@ -441,7 +441,12 @@
           if (Math.cos(angle - facing) < -0.5) e.secondWindCancelled = true;
           if (!piercing) amount *= R.bossRecovery.darklord.damageMultiplier;
         }
-        if (!piercing && e.owner && e.royalFormationUntil > this.s.time && e.species === 'crownguard')
+        if (
+          !piercing &&
+          e.owner &&
+          e.royalFormationUntil > this.s.time &&
+          e.species === 'crownguard'
+        )
           amount *= 0.8;
         if (!piercing && e.family === 'citadel' && e.open <= 0) amount *= 0.65;
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;

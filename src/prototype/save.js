@@ -272,13 +272,15 @@
         if (
           appointed.length > dungeonIds.length ||
           new Set(appointed.map(([, id]) => id)).size !== appointed.length ||
-          appointed.some(([id, candidate]) =>
-            !dungeonIds.includes(id) ||
-            !s.true[id] ||
-            !s.throneClaimed ||
-            !appointmentChoices.has(candidate)
+          appointed.some(
+            ([id, candidate]) =>
+              !dungeonIds.includes(id) ||
+              !s.true[id] ||
+              !s.throneClaimed ||
+              !appointmentChoices.has(candidate),
           )
-        ) throw Error('Invalid dungeon master selection');
+        )
+          throw Error('Invalid dungeon master selection');
         // Legacy v4 peaceful campaigns were already completed. Grandfather
         // them without forcing a new throne visit or replay of defeated bosses.
         if (s.throneClaimed === undefined) s.throneClaimed = s.phase === 'peace';
