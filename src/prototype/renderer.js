@@ -1457,6 +1457,16 @@
         const q = screen(u);
         if (u.immune > 0) guard(q, 24);
         ward(u, q, 27);
+        if (u.rangerRallyZone === game.zoneId &&
+            (u.rangerRallyUntil || 0) > game.s.time) {
+          ctx.save();
+          ctx.strokeStyle = '#b9e7a8bb';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.ellipse(q.x, q.y + 7, 26, 10, 0, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        }
         for (const effect of u.supportEffects || []) support(q, effect, 22);
       }
     }
