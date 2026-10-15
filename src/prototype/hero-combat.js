@@ -222,7 +222,8 @@
               hits++;
             } else if (deal(enemy, power * cfg.damage * scale, true)) {
               if (hero.class === 'paladin' && cfg.weaken) this.weakenEnemy(enemy, rank);
-              if (hero.class === 'mage') this.applySlow(enemy, cfg.slow + cfg.slowStep * steps);
+              if (hero.class === 'mage' && enemy.hp > 0)
+                this.shieldPush(enemy, cfg.push + cfg.pushStep * steps);
               hits++;
             }
           }
@@ -250,8 +251,8 @@
           } else {
             for (let j = 0; j < cfg.arrows; j++)
               launch(target, power * cfg.damage * scale / cfg.arrows, 'arrow',
-                { delay: j * 0.08, rapid: true, chargedBurst: j === cfg.arrows - 1 });
-            hero.haste = Math.max(hero.haste || 0, cfg.haste + cfg.hasteStep * steps);
+                { delay: j * 0.08, rapid: true, chargedBurst: j === cfg.arrows - 1,
+                  push: j === cfg.arrows - 1 ? cfg.push + cfg.pushStep * steps : 0 });
             this.event('charged', { actor: 'hero', class: 'ranger', slot,
               x: hero.x, y: hero.y, targetX: target.x, targetY: target.y });
           }
@@ -516,7 +517,8 @@
             targetId ??
             selected?.id ??
             (slot === 1 ? (this.basicComboTargetId ?? this.s.heroTarget) : null),
-          requiresTarget = [1, 2, 6, 7, 8].includes(slot) ||
+          requiresTarget = [1, 2, 6, 7].includes(slot) ||
+            (slot === 8 && this.hero.class !== 'paladin') ||
             (slot === 4 && this.hero.class !== 'ranger'),
           lockedOut = !targetId && selected && requiresTarget,
           target =
@@ -1012,6 +1014,8 @@
                 style: this.hero.class === 'ranger' ? 'arrow' : 'magic',
                 slot,
                 ...(this.hero.class === 'ranger' && slot === 7 ? { piercing: true } : {}),
+                ...(this.hero.class === 'ranger' && slot === 6
+                  ? { push: 45 + 5 * steps } : {}),
                 effect:
                   this.hero.class === 'mage' && slot === 2
                     ? 'frost'
@@ -1036,8 +1040,6 @@
                   : {}),
               });
             }
-            if (slot === 6 && this.hero.class === 'ranger')
-              this.hero.haste = Math.max(this.hero.haste, 2 + 0.15 * (rank - 1));
             this.event('projectileLaunch', {
               actor: 'hero',
               class: this.hero.class,
