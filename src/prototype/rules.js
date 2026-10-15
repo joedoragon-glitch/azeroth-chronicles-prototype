@@ -1695,6 +1695,10 @@
       [810, 650, 'weapon-rack', 0],
       [320, 320, 'trophy-rack', 0],
       [370, 780, 'crag-rest', 0],
+      // Direwolves and their paid riders occupy the same working household.
+      [245, 735, 'direwolf-kennel', 0],
+      [350, 720, 'rider-bunk', 0],
+      [620, 440, 'rider-tack-rack', 0],
     ],
     'supply-crown': [
       [320, 220, 'ashbeast-roost-scene', 0],
@@ -3882,6 +3886,10 @@
       [970, 1030, 'stone-seat', 'colossus-chamber', 'geometric-gallery'],
       [1300, 1270, 'game-table', 'colossus-chamber', 'kinetic-collection'],
       [1030, 1280, 'crystal', 'colossus-chamber', 'art-object'],
+      // Garun's work crews share their mine lodgings with the Crown wolf riders.
+      [575, 1000, 'direwolf-kennel', 'repair-forge'],
+      [455, 1050, 'rider-bunk', 'repair-forge'],
+      [320, 1100, 'rider-tack-rack', 'repair-forge'],
     ],
     abyss: [
       [300, 340, 'torch', 'rider-preparation'],
