@@ -1,7 +1,7 @@
 # Community Snapshot — boss and captain passive completion
 
 **Source baseline:** PR #300 exact source head `cbde536da1efb334a505ed95b7d0e904d67154e9`, since merged into `main` by the director's separate action.
-**Integration:** isolated draft PR #307, branch `feature/community-snapshot-passive-completion-20261015`, originally based on PR #300. Preserve it for the director's later consolidated PR; no merge or deployment was initiated here.
+**Integration:** isolated PR #307, branch `feature/community-snapshot-passive-completion-20261015`, originally based on PR #300, to be reviewed against `main` after PR #300's merge. No merge or deployment was initiated as part of this passive work.
 **Scope:** seven previously uncovered boss families with Normal/TRUE variants; two
 previously uncovered named captains; Dreadmaw's existing passive documented as-is.
 
@@ -74,4 +74,4 @@ by the established explicitly piercing hero damage, not by ordinary attacks.
 
 The focused `tests/snapshot-passive-completion.test.cjs` was executed in a local V8 JavaScript runtime against the retrieved branch source and passed. It includes Normal/TRUE verification, source/role and ownership boundaries, healing caps, death/reset, actual damage and world-tick integration, v4 save sanitation, and the 3-class × 2-mode × 2-form × solo/six-companion matrix. The same local runtime passed the existing `captain-mechanics-audit`, `dark-lord-veteran-kit`, `abyss-aviation-moves`, `snapshot-veyra-combat` and `boss-mechanics-armor` focused test sources. A read-only Archive smoke check displayed the passive text for all eleven bosses.
 
-No GitHub Actions, deployments, merges, or publication steps were initiated by this work. These local checks are useful source-level regression evidence, **not** complete native Node or browser certification. Formatting, packaging, all-suite Node tests, Chromium/WebKit, historical saves on real devices, and actual multi-companion encounter duration measurements remain for the director's consolidated PR. Keep the provisional potency settings reviewable; they may be tuned later without redesigning the encounter systems.
+No GitHub Actions, deployments, merges, or publication steps were initiated by this passive work. These local checks are useful source-level regression evidence, **not** complete native Node or browser certification. Formatting, packaging, all-suite Node tests, Chromium/WebKit, historical saves on real devices, and actual multi-companion encounter duration measurements remain as final merge-acceptance gates, to be run alongside the director's other updates. Keep the provisional potency settings reviewable; they may be tuned later without redesigning the encounter systems.
