@@ -2,7 +2,7 @@
 
 **Status:** implementation-complete *candidate*, not a certified release. One active **draft PR #300** / branch `implementation/director-snapshot-20261013`. Last implementation/version carrier commit at handoff start: `01f9d6ab5eabd16926d55792888a864edc57f909`. The final exact head is the GitHub PR head after this document/comment. **No merge, deployment, tag, release or community posting authorized.**
 
-**Build identity:** `0.9.1+snapshot.dev.50` in `package.json`, `package-lock.json`, `src/prototype/build-info.js`, and `sw.js`. Version identifies the isolated draft, **not a public build**. Main/Pages/PWA remain frozen at the published baseline.
+**Build identity:** `0.9.1+snapshot.dev.51` in `package.json`, `package-lock.json`, `src/prototype/build-info.js`, and `sw.js` (dev.50 remains the historical biome/governance milestone). Version identifies the isolated draft, **not a public build**. Main/Pages/PWA remain frozen at the published baseline.
 
 ## Authority and recovery
 
@@ -72,3 +72,18 @@ The late pre-audit corrections after this file's original authoring are **integr
 - **Economy boundary:** main-dungeon and new Treasury ordinary guards explicitly have no Crowns/XP; original *outdoor mini-site* defenders may retain their earlier small regional rewards. The Crown roster test distinguishes those legacy rewards instead of silently rewriting the wider economy. Confirm this scope with the director only if a global no-reward rule is later demanded.
 
 The full overnight exact-head CI/Chromium/WebKit/audio/performance/installed-PWA/save corpus and independent playable verification remain intentionally **unrun as a single certificate**. The conditional #294 renderer discrepancy and longstanding formatter gate must be addressed in that final certification chat. No deployment, merge, publication, or director visual acceptance has been claimed.
+
+## Final pre-audit roadside-light correction — dev.51 (15 October)
+
+The director's earlier request for **some real lamps along inhabited streets and managed roads**, in addition to warm window/fire/forge/service light, was not fully explicit in dev.50: night light selection derived from existing occupied sites but had no dedicated civilian roadside lamp posts. The last isolated implementation refinement closes that presentation gap on the **same draft PR** without a new obstacle, currency, quest or save schema.
+
+- Added versioned `regionalRoadLamps` to the actual five overworld regions, selecting reachable **road-adjacent** sites near existing major towns, hamlets and embarkation/government corridors. Nearby other objects, named NPCs, water/terrain barriers, enemy homes and building entrances are protected. Posts have `r:0`, are decorative, and never interrupt travel.
+- New hand-drawn `street-lantern` glass-and-post art uses the pre-existing **night-only lantern light classification**. Posts stay visibly unlit in daylight and receive the shared bounded amber light effect at night. Fireplaces, inhabited windows, other lanterns, industry and genuinely dark wilderness keep the already-approved balance.
+- Actual current Campaign modules were executed through an isolated in-memory JS evaluator: **Greenwood 2, Marches 3, Ironroot 2, Frontier 4, Dark Crown 4 = 15** road lamps. Every recorded lamp lies 60–175 world units from a road, no lamp is placed inside terrain collision, and positions/IDs remain unchanged after repeated reads. This is **bounded live-source evidence**, not Node-process/WebKit/visual/old-save-corpus certification.
+- New permanent regression: `tests/snapshot-road-lanterns.test.cjs` verifies road placement and restrained counts, idempotence, historical slain-monster preservation, and day/night source classification. It is authored and discoverable, **not yet run in the final exact-head complete suite**.
+- Four version carriers have advanced from dev.50 to `0.9.1+snapshot.dev.51`; this is still an isolated unpublished draft. Any later commit must be identified by **actual latest GitHub PR head**, not this handoff's original version.
+- Source reconciliation note: the attached Google Drive account's accessible native Google Sheets list did not contain an identifiable separate Community Snapshot planning sheet. The **explicit 45/45 selection record on PR #298**, ongoing **PR #300 director comments**, issue **#232** and the implementation/canon Markdown documents are the verified authoritative tracking sources for this pass. Do not infer there are additional checked spreadsheet rows without a specific resource.
+
+**Audit readiness:** The requested gameplay/worldbuilding code is at implementation threshold. The next stage is the director's one combined independent **exact-head** audit: formatter/protected pins, known older fixtures, Node suites, Chromium/WebKit, visuals, historical saves/TRUE/Rest, audio/PWA and conditional culling pixel parity with measured benefit. In particular, do **not** waive the earlier **15-file formatting** gate or **27,549 candidate pixels differing in Vale** while its independent baseline control matched. Literature and actual visual quality of the seven-mark/sixth-companion reveal, original cottage density, transport, mobile Rogue casts, Crown troop/rider silhouettes, inhabited nighttime and returning Frontier greenery require final player-facing inspection. An individual passing browser or source snippet does not certify the latest head.
+
+**No merge / deployment / tag / release / community posting authorized.**
