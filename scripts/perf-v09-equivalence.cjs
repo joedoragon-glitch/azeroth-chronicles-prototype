@@ -146,6 +146,10 @@ for (const mode of ['normal', 'nightmare'])
             c.safe(555 + i * 30, 530),
           );
           c.configureEnemy(e, i);
+          // Baseline equivalence specifically protects non-healer combat.
+          // Ranged ally restoration is the authorized new gameplay delta,
+          // verified by its dedicated enemy-support-healing regression suite.
+          e.ranged = false;
           c.zone().enemies.push(e);
           c.engage(e, true, false);
         }
