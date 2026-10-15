@@ -751,7 +751,7 @@
     treasuryInterior(z) {
       const room = this.supplyRoom(z.id),
         layout = room && R.treasuryDecor?.[room.id],
-        targetVersion = room?.id === 'supply-crown' ? 5 : room?.id === 'supply-highlands' ? 4 : 3;
+        targetVersion = room?.id === 'supply-crown' ? 5 : room?.id === 'supply-highlands' ? 5 : 3;
       if (!room || !layout || z.treasuryVersion === targetVersion) return;
       z.room = true;
       z.treasury = room.boss;
@@ -1115,7 +1115,7 @@
       // Append only the newly approved gallery to existing Mine saves.
       if (z.id === 'mine' && z.dungeonVersion === targetVersion) {
         for (const [j, [x, y, structure, district, sceneRole]] of R.dungeonDecor.mine.entries()) {
-          if (!['geometric-gallery', 'kinetic-collection', 'art-object'].includes(sceneRole))
+          if (!['geometric-gallery', 'kinetic-collection', 'art-object', 'mixed-rider-quarters'].includes(sceneRole))
             continue;
           if (z.props.some((p) => p.id === 'decor-' + j)) continue;
           z.props.push({
