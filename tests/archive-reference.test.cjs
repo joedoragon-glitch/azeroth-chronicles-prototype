@@ -29,7 +29,7 @@ for (const mode of ['normal', 'nightmare'])
       'Veyra — the common drill',
       'Whose peace?',
     ]) assert(institutions.topics.some(([name]) => name === topic), topic + ' available');
-    assert(!institutions.topics.some(([name]) => name.includes('sixth mark')),
+    assert(!institutions.topics.some(([name]) => name.includes('last mark')),
       'unclaimed throne cannot reveal the missing companion');
     assert.deepEqual(Object.keys(C.classes).sort(), ['mage', 'paladin', 'ranger']);
     assert.equal(C.rules.roomCaptains['supply-crown'].enduranceHp, 5000);
