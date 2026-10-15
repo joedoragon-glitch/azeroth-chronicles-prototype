@@ -109,11 +109,11 @@
       }
     },
     "prop:vale-cottage:vale": {
-      "src": "./assets/sprites/prop-vale-cottage-vale-d94098c0186d31ce1b16815a3092957b5e428e35117729a9f2ffd9d8ec79ff3a.png",
-      "width": 192,
-      "height": 192,
-      "hash": "d94098c0186d31ce1b16815a3092957b5e428e35117729a9f2ffd9d8ec79ff3a",
-      "revision": "3c35ef58fe76061f5fb4f017be965947afba71885b6897781d59b7253237cf15",
+      "src": "./assets/sprites/prop-vale-cottage-vale-21e8b38b7497f56b6c01f853f1100b16c78580703f546716db4e739432d68573.png",
+      "width": 816,
+      "height": 816,
+      "hash": "21e8b38b7497f56b6c01f853f1100b16c78580703f546716db4e739432d68573",
+      "revision": "9488050207a6be3c5a5ca364266d838d7937e0b68e91e31744ffef06da6951d3",
       "displayWidth": 192,
       "displayHeight": 192,
       "anchorX": 0.5,
