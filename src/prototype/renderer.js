@@ -1962,7 +1962,8 @@
       // no generated actors, blockers, saved flags or combat visibility changes.
       const domestic = /(?:^|[-_])(?:house|cottage|workshop|boathouse|smithy|forgehouse|watchhouse|hut|lodge|longhouse|dwelling)(?:$|[-_])/i;
       const fires = /(?:^|[-_])(?:cookfire|fireplace|campfire|hearth|warm-brazier|ember-pit|forge|field-kitchen|torch|lantern)(?:$|[-_])/i;
-      const nightSources = [
+      const nightNow = game.night();
+      const nightSources = !nightNow ? [] : [
         ...z.props.flatMap((prop) => {
           const structure = String(prop.structure || '');
           const kind = domestic.test(structure) ? 'window'
@@ -1985,7 +1986,7 @@
           return da - db || String(a.id).localeCompare(String(b.id));
         }).slice(0, 44);
       PrototypeVisuals.atmosphere(ctx, canvas, i, {
-        night: game.night(),
+        night: nightNow,
         peace: game.peace,
         dungeon,
         room,
