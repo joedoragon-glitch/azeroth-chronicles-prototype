@@ -5176,7 +5176,7 @@
                 (e.quotaOvertime > 0 ? 0.8 : 1),
             };
           } else {
-            if (this.hitParty(target, e.damage, 0, e.id))
+            if (this.hitParty(target, e.damage * this.snapshotPassiveOutgoingFactor(e)))
               this.event('melee', {
                 actor: 'enemy',
                 source: e.id,
