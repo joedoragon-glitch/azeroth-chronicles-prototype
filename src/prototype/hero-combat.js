@@ -195,7 +195,10 @@
           dist(enemy, center) <= range && this.line(hero, enemy);
         const foes = radius
           ? this.zone().enemies.filter((enemy) => eligible(enemy))
-            .sort((a, b) => dist(a, hero) - dist(b, hero) || this.idOrder(a, b))
+            .sort((a, b) =>
+              (slot === 7 && b === target ? 1 : 0) -
+              (slot === 7 && a === target ? 1 : 0) ||
+              dist(a, hero) - dist(b, hero) || this.idOrder(a, b))
             .slice(0, slot === 5 ? R.heroAreaTargetCaps[5].charged
               : slot === 7 && hero.class === 'paladin'
                 ? R.heroAreaTargetCaps[7].paladinCharged : Infinity)
