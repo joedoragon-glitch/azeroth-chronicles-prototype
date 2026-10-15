@@ -148,7 +148,7 @@
       ranger: {
         2: 'Pinning Shot fires two arrows and briefly slows the target; charged Pinning Volley pierces a line of enemies and slows those struck.',
         3: 'Tap to heal yourself; charge to heal wounded living companions too. Neither restores the fallen.',
-        4: 'Tap Movement Haste: hero moves 25% faster for 4–5.75s. Charge Companion Rally: nearby living active companions within 350–390 units gain 15–19% movement speed and 8–12% ordinary attack speed for 4–5s. No dash, invulnerability, or special cooldown acceleration.',
+        4: 'Tap Movement Haste: hero moves 25% faster for 4–5.75s. Charge Companion Rally: nearby living active companions within 350–390 units gain 15–19% movement speed and 8–12% ordinary attack speed for 4–5s. Requires at least one living active companion within range, otherwise the cast is unavailable without cooldown cost. No dash, invulnerability, or special cooldown acceleration.',
         5: 'Tap: arrows strike nearby enemies. Charge: Arrow Rain sends stronger arrows into a wider area and briefly slows each foe struck.',
         6: 'Tap Repelling Shot: ranged attack plus a 45–65-unit push on hit, without haste. Charge Repelling Volley: three rapid shots totaling 4.2× Power, with a final collision-safe push of 65–85 units. Neither changes movement or attack speed.',
         7: 'Tap: one targeted defense-piercing arrow. Charge: a stronger piercing shot also briefly slows its target.',
