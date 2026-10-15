@@ -686,6 +686,23 @@
             ctx.strokeRect(left - 0.5, cy - 0.5, w + 1, 4);
           }
         }
+      } else if (e.renderKind === 'ally') {
+        const preparing = game._companionCharges?.get(e.id);
+        if (preparing) {
+          const fraction = Math.max(
+            0,
+            Math.min(1, 1 - preparing.remaining / Campaign.rules.chargedSkills.holdSeconds),
+          );
+          const cy = y - 9;
+          ctx.fillStyle = '#07100ddd';
+          ctx.fillRect(left - 2, cy - 2, w + 4, 7);
+          ctx.fillStyle = '#36413b';
+          ctx.fillRect(left, cy, w, 3);
+          ctx.fillStyle = e.type === 'archer' ? '#cfe59a' : '#f6d77a';
+          ctx.fillRect(left, cy, w * fraction, 3);
+          ctx.fillStyle = '#ffffffaa';
+          ctx.fillRect(left, cy, w * fraction, 1);
+        }
       }
       ctx.fillStyle = '#0c1a19dd';
       ctx.fillRect(left - 2, y - 2, w + 4, 8);
