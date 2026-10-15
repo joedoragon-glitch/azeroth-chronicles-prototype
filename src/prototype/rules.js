@@ -4849,7 +4849,7 @@
     third: { effect: 'party-heal' },
     second: {
       paladin: { shape: 'cone', range: 185, halfAngle: 0.8, effect: 'holy-cleave' },
-      mage: { shape: 'circle', radius: 160, effect: 'frost-burst', slow: 4 },
+      mage: { shape: 'circle', radius: 160, effect: 'frost-burst', slow: 3.2 },
       ranger: { shape: 'line', range: 480, halfWidth: 55, effect: 'piercing-volley' },
     },
   };
@@ -4858,7 +4858,7 @@
   const heroTactics = Object.freeze({
     milestones: [2, 4, 6, 8],
     paladin: {
-      weaken: { fraction: 0.12, step: 0.02, duration: 3, durationStep: 0.25 },
+      weaken: { fraction: 0.12, step: 0.02, duration: 1.8, durationStep: 0.1 },
       shield: { duration: 8, reduction: 0.65, reductionStep: 0.02, outgoing: 0.6 },
       bash: { reach: 115, reachStep: 4, halfAngle: 0.7, push: 55, pushStep: 5, damage: 1.6, eliteDamage: 0.5 },
       judgment: { range: 260, damage: 2.0, taunt: 3, tauntStep: 0.25 },
