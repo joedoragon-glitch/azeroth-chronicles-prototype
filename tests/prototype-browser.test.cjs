@@ -59,7 +59,16 @@ await check('Optimization Mode reversible device preference and cache/audio/DPR 
 await check('Ironroot settlements, household and working captive render on '+tag,async()=>{await require('./helpers/ironroot-browser.cjs').verifyIronroot(page,results,tag,v.width===1280||v.width===375);assert.deepEqual(errors,[],'Ironroot renderer errors');});
 await check('Approved responsive UI CSS is pixel-equivalent at fixed presentation '+tag,async()=>{
  if(smoke)return;
- const baseline=require('./fixtures/presentation-20261009.json');
+ const baseline=structuredClone(require('./fixtures/presentation-20261009.json'));
+ // PR #300 dev.48 explicitly approved the narrow single-HP phone dock.
+ // Retain the original CSS fixture; apply only these three reviewed rules
+ // to its copied reference. Every other pixel and the negative control stay strict.
+ const approvedPhoneDock=[
+  ["body[data-experience='phone'] #hud {\n  left: max(8px, env(safe-area-inset-left));\n  right: auto;\n  width: min(310px, calc(100vw - 16px));","body[data-experience='phone'] #hud {\n  left: max(8px, env(safe-area-inset-left));\n  right: auto;\n  width: min(252px, calc(100vw - 16px));"],
+  ["body[data-experience='phone'] #hero-stats {\n  gap: 2px 7px;\n}","body[data-experience='phone'] #hero-stats {\n  grid-template-columns: minmax(0, 1fr);\n  gap: 2px;\n}"],
+  ["body[data-experience='phone'] #hud {\n    width: min(310px, 44vw);","body[data-experience='phone'] #hud {\n    width: min(252px, 44vw);"],
+ ];
+ for(const [before,after] of approvedPhoneDock){assert.equal(baseline.css.phone.split(before).length,2,'exact approved phone-dock reference rule');baseline.css.phone=baseline.css.phone.replace(before,after);}
  // Stop the entire frame loop, including its closed-over HUD refresh. Freezing
  // tick/draw alone leaves DOM writes racing the stylesheet replacement.
  await page.evaluate(async()=>{const p=Prototype;window.__layoutRestore={tick:p.game.tick,draw:p.renderer.draw,raf:window.requestAnimationFrame.bind(window)};p.game.tick=()=>{};p.renderer.draw=()=>{};window.requestAnimationFrame=callback=>{__layoutRestore.callback=callback;return 0;};p.updateHUD();await document.fonts.ready;await new Promise(resolve=>__layoutRestore.raf(()=>__layoutRestore.raf(resolve)));});
