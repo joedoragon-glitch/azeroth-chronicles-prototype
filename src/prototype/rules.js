@@ -4886,26 +4886,47 @@
   // Charged versions of advanced hero skills share the 0.65s input hold.
   // They use the same trained rank and +15%-of-base damage growth as their
   // normal versions; effects increase modestly at ranks 2, 4, 6 and 8.
+  // Skill 8 is no longer a shared area/heal/immunity template.
+  // These distinct class capstones build on existing mitigation, fracture,
+  // projectile, and threat mechanics; no new status types are introduced.
+  const classUltimates = Object.freeze({
+    paladin: {
+      normal: { radius: 320, damage: 3, heal: 0.15, wardReduction: 0.20, wardDuration: 3.5, wardStep: 0.25 },
+      charged: { radius: 420, radiusStep: 10, damage: 5.5, heal: 0.20,
+        wardReduction: 0.30, wardDuration: 5, wardStep: 0.25, weaken: true },
+    },
+    mage: {
+      normal: { radius: 210, primaryDamage: 6, splashDamage: 3.5 },
+      charged: { radius: 260, radiusStep: 10, primaryDamage: 9, splashDamage: 5,
+        fracture: 0.12, fractureStep: 0.01, fractureDuration: 4.5 },
+      chain: { radius: 300, targets: 3, primaryDamage: 6.5, secondaryDamage: 4.5, tertiaryDamage: 3 },
+      chargedChain: { radius: 380, radiusStep: 10, targets: 5, primaryDamage: 9, secondaryDamage: 6, extraDamage: 4 },
+    },
+    ranger: {
+      normal: { radius: 260, targets: 3, damagePerArrow: 5 },
+      charged: { radius: 320, radiusStep: 10, targets: 5, arrowsPerTarget: 2, damagePerArrow: 4 },
+    },
+  });
   const advancedCharges = Object.freeze({
     5: {
       paladin: { radius: 365, radiusStep: 10, damage: 3.2, weaken: true },
-      mage: { radius: 370, radiusStep: 10, damage: 3.0, slow: 5.5, slowStep: 0.25 },
+      mage: { radius: 370, radiusStep: 10, damage: 3.0, push: 45, pushStep: 3 },
       ranger: { radius: 370, radiusStep: 10, damage: 2.9, slow: 1.25, slowStep: 0.2 },
     },
     6: {
       paladin: { radius: 120, radiusStep: 5, damage: 3.4, push: 35, pushStep: 4 },
       mage: { damage: 3.0, slow: 2.5, slowStep: 0.25 },
-      ranger: { arrows: 3, damage: 3.3, haste: 3, hasteStep: 0.2 },
+      ranger: { arrows: 3, damage: 4.2, push: 65, pushStep: 5 },
     },
     7: {
       paladin: { radius: 500, radiusStep: 10, damage: 7.2, weaken: true },
-      mage: { radius: 500, radiusStep: 10, damage: 7.5, slow: 6, slowStep: 0.25 },
+      mage: { radius: 380, radiusStep: 10, damage: 9, chain: true },
       ranger: { damage: 12, slow: 1.5, slowStep: 0.25 },
     },
     8: {
-      paladin: { radius: 500, radiusStep: 10, damage: 8, heal: 0.25, wardReduction: 0.25, wardDuration: 4, wardStep: 0.25 },
-      mage: { radius: 500, radiusStep: 10, damage: 8, fracture: 0.12, fractureStep: 0.01, fractureDuration: 4.5 },
-      ranger: { damage: 15, haste: 4, hasteStep: 0.25, heal: 0.2 },
+      paladin: { ...classUltimates.paladin.charged },
+      mage: { ...classUltimates.mage.charged },
+      ranger: { ...classUltimates.ranger.charged },
     },
   });
   const basicAttackCombo = {
@@ -5553,6 +5574,7 @@
     chargedSkills,
     heroTactics,
     advancedCharges,
+    classUltimates,
     basicAttackCombo,
     companionSkills,
     ordinaryMeleeScaling,
