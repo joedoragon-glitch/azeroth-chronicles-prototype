@@ -2,7 +2,7 @@
 
 **Status:** implementation-complete *candidate*, not a certified release. One active **draft PR #300** / branch `implementation/director-snapshot-20261013`. Last implementation/version carrier commit at handoff start: `01f9d6ab5eabd16926d55792888a864edc57f909`. The final exact head is the GitHub PR head after this document/comment. **No merge, deployment, tag, release or community posting authorized.**
 
-**Build identity:** `0.9.1+snapshot.dev.49` in `package.json`, `package-lock.json`, `src/prototype/build-info.js`, and `sw.js`. Version identifies the isolated draft, **not a public build**. Main/Pages/PWA remain frozen at the published baseline.
+**Build identity:** `0.9.1+snapshot.dev.50` in `package.json`, `package-lock.json`, `src/prototype/build-info.js`, and `sw.js`. Version identifies the isolated draft, **not a public build**. Main/Pages/PWA remain frozen at the published baseline.
 
 ## Authority and recovery
 
@@ -30,6 +30,18 @@
 - Directional renderer's single mirror reconciled against duplicate per-sprite transformations. Focused matrices and test source authored; 360° turn sprite animation is **not** in scope. New guardian and night tests are automatically discovered by `tests/run.cjs`.
 - Historical passed CI receipts belong to **their earlier SHAs only**. Current head has substantial untested changes.
 
+## Director final biome/governance amendments — dev.50 (15 October 2026)
+
+This is additional implemented scope **after** dev.49's original freeze, on the same draft PR. The director asked for substantially less sterile environmental progression without erasing dark/volcanic biomes or the Dark Lord's oppressive government. The real-world analogue for red poppies and returning woodland is the **1916 World War I battle of Verdun**, *not* WWII. References: [Geoderma study of crater soil development](https://doi.org/10.1016/j.geoderma.2008.01.024), [USGS on plant succession in old lava](https://www.usgs.gov/news/volcano-watch-lava-flow-forest-primary-succession), [U.S. DOE on direct geothermal heating](https://www.energy.gov/hgeo/geothermal/geothermal-direct-use). These support ecological/thermal logic, not exact one-to-one fantasy species.
+
+- **Ashen Frontier vegetation:** `R.frontierRecoveryScenes` explicitly adds **50** nonblocking, deterministic authored details: **12** red battlefield-poppy clusters, **10** pioneer grass plots, **10** green shrubs, **9** young birches, **6** willow-like recovering trees and **3** mossy basalt details. These cluster in cooler old battle scars, Burned Hamlet approaches, recovered woods, lowlands and safe outskirts—not on the lava, ravine, streets, service sites or combat/quest approach. The scar, char, ash ground, military roads, ruins and population persist. The story reads as a recovering older battlefield, not permanent wasteland or full green farmland. Visual code implements all **six** distinct silhouettes.
+- **Dark Crown volcanic heatworks:** `R.crownThermalWorksScenes` adds **15** nonblocking works near existing hot channels: **two** insulated intakes, **two** glass kilns, **two** ceramic kilns, **three** flues, **three** heat-distribution points, **two** drying sheds, and **one** heated civic washhouse. All **seven** scene types have actual detailed procedural artwork. The arrangement suggests a practical insulating/geothermal network: building heat/winter comfort, washing, craft and industrial drying, **not** people walking on magma or medieval electric power. Existing impassable lava surfaces, crossing gaps, combat hitboxes, infrastructure/quest economics and save keys are unchanged. The works use the same bounded nighttime `work-fire` light classification and are not artificially lit by day.
+- **Narrative/political distinction:** The Dark Lord's regime maintains valuable roads, guarded transport, wages, heat, welfare services and war recovery while extracting levies and captive labor and enforcing political hierarchy. This nuance appears in the actual game data's Frontier and Dark Crown exploration prose; do not portray either paradise or universal hell. Previously approved Ministry of Interior/Welfare and the established distinct creature societies remain.
+- **Source owners:** `src/prototype/rules.js` scene data; `world.js` idempotent `recoveryAndThermalLife` generation; `visuals.js` illustration; `renderer.js` nighttime work light; `data.js` regional description; `tests/snapshot-frontier-regrowth-geothermal.test.cjs` new permanent regression. Original existing versioned scenery is not reauthored or duplicated. Four build carriers are synchronized at **`0.9.1+snapshot.dev.50`**.
+- **Observed bounded checks (NOT final certification):** Loaded the **current 19-module Campaign** and entered Frontier/Crown (also Vale/Highlands negative regions). **50/50 Frontier** and **15/15 Crown** records appeared with distinct immutable IDs, no blocked homes (terrain radius 17), no road shoulders within 56 world units, and identical positions after repeated region reads. Normal and Nightmare simulated historic v4 zone reconstitution preserving one dead mob, zero change to hero crowns/XP, no duplicate new scene rows. All **13** new procedure-draw families executed on a mock canvas with actual paint/stroke operations and no exceptions. Source parses. The new regression is **authored, not yet run through real Node CI**; screen-pixel aesthetics, frame rate, historical save corpus, night lighting and actual use/visual coherence remain final-audit responsibilities.
+
+**Important boundary:** This addition reopens the exact-head *implementation* hash only; the original combined overnight audit has STILL NOT RUN on dev.50. Do not treat prior dev.49 handoff or historical passing CI as certification of dev.50. Do not merge, deploy or alter main.
+
 ## Known evidence debt and exact final audit gate
 
 **Do not waive or silently mark successful:**
@@ -44,7 +56,7 @@
 
 ## Next-chat single instruction
 
-> Resume the final independent combined certification of draft PR #300 at its latest GitHub head. Read this handoff, the pre-certification ledger and latest PR comments; do not reimplement already integrated work. Resolve format/fixture/protected hash drift, run the complete exact-head Node/Chromium/WebKit/PWA/audio/old-save/visual-performance and independent playable audits (including newly added nights, Greenwood countryside, guardian density, Crown direwolf riders and actor facing). Preserve and report evidence truthfully. Leave PR draft; **do not merge or deploy** unless I separately authorize it.
+> Resume the final independent combined certification of draft PR #300 at its latest GitHub head. Read this handoff, the pre-certification ledger and latest PR comments; do not reimplement already integrated work. Resolve format/fixture/protected hash drift, run the complete exact-head Node/Chromium/WebKit/PWA/audio/old-save/visual-performance and independent playable audits (including night lighting, Greenwood countryside, Crown geothermal works, Frontier recovering vegetation/poppies, guardian density, Crown direwolf riders and actor facing). Preserve and report evidence truthfully. Leave PR draft; **do not merge or deploy** unless I separately authorize it.
 
 ## Implementation-freeze reconciliation: final focused source probes
 
