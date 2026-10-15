@@ -4873,6 +4873,14 @@
     ranger: {
       pin: { slow: 1.25, slowStep: 0.25 },
       volley: { slow: 1.5, slowStep: 0.25 },
+      // Charged Skill 4: simple nearby-companion rally, not a dash or dodge.
+      // Attack speed affects ordinary swings/shots only, not special cooldowns.
+      rally: {
+        radius: 350, radiusStep: 10,
+        duration: 4, durationStep: 0.25,
+        movementBonus: 0.15, movementStep: 0.01,
+        attackSpeedBonus: 0.08, attackSpeedStep: 0.01,
+      },
     },
   });
   // Charged versions of advanced hero skills share the 0.65s input hold.
