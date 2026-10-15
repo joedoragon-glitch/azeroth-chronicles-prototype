@@ -292,7 +292,8 @@
             targetId ??
             selected?.id ??
             (slot === 1 ? (this.basicComboTargetId ?? this.s.heroTarget) : null),
-          requiresTarget = [1, 2, 4, 6, 7, 8].includes(slot),
+          requiresTarget = [1, 2, 6, 7, 8].includes(slot) ||
+            (slot === 4 && this.hero.class !== 'ranger'),
           lockedOut = !targetId && selected && requiresTarget,
           target =
             targets.find((e) => e.id === preferredTargetId) ||
@@ -530,7 +531,7 @@
                 const elite = enemy.type === 'boss' || enemy.captain || enemy.roomCaptain;
                 if (this.damage(enemy, power * cfg.bash.damage * scale *
                   (elite ? cfg.bash.eliteDamage : 1), 'hero', { area: true, encountersAtStart })) {
-                  this.shieldPush(enemy, push);
+                  if (enemy.hp > 0) this.shieldPush(enemy, push);
                   hits++;
                 }
               }
