@@ -63,6 +63,13 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always() && steps.scope.outputs.docs_only != 'true'
         with:
+          name: hero-skills-chromium
+          retention-days: 3
+          path: test-results/hero-skills-chromium/
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.scope.outputs.docs_only != 'true'
+        with:
           name: pr-smoke-screenshots
           retention-days: 3
           path: test-results/
@@ -217,6 +224,13 @@ jobs:
           if (failed.length) { console.error('WebKit certification blocked by: ' + failed.join(', ')); process.exit(1); }
           NODE
           echo 'validated=true' >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
+        with:
+          name: hero-skills-webkit
+          retention-days: 3
+          path: test-results/hero-skills-webkit/
+          if-no-files-found: ignore
       - uses: actions/upload-artifact@v4
         if: always() && steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         with:

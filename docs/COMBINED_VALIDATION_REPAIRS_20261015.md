@@ -47,6 +47,8 @@ merging after successful preparation; the latest PR resume record tracks release
   release after failure. This prevents the first obsolete Archive assertion from
   hiding the rest of the integrated audiovisual/browser results. The three AV
   commands also collect their outcomes together and return failure if any fails.
+  Skill galleries have separate small artifacts for review; the full browser
+  evidence archive is retained even when it exceeds the download size limit.
 
 - The new browser AV harness initializes its first campaign before constructing
   the renderer and crops default-150% contact sheets for readable inspection.
