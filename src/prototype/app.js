@@ -310,7 +310,15 @@
       '.\n' +
       'Skills 1–8: ' +
       skillKeys +
-      '. Tap for normal; hold Skills 1–3 until CHARGED, then release. Skill 3 heals you; charged Skill 3 heals living companions too.\n' +
+      '. Tap for normal; hold Skills 1–3' +
+      (game.hero.class === 'ranger' ? '' : ' or 4') +
+      ' until CHARGED, then release. ' +
+      (game.hero.class === 'paladin'
+        ? 'Skill 3 raises a shield; tap again to lower it or hold for Shield Bash.'
+        : game.hero.class === 'mage'
+          ? 'Skill 3 interrupts an enemy cast; hold for a Silence Field that affects friend and foe.'
+          : 'Skill 3 heals you; charged Skill 3 heals living companions too.') +
+      '\n' +
       'Target ' +
       input.key('target') +
       ': tap to cycle, hold to lock. Aim: gold is clear, amber is too far, red is blocked. Dodge marked attacks.\n' +
