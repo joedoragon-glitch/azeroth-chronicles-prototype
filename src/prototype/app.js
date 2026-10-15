@@ -2624,8 +2624,6 @@
               ? 'BROKEN'
               : cast.state === 'charging'
                 ? Math.min(99, Math.round(cast.progress * 100)) + '%'
-              : cast.state === 'interrupted'
-                ? 'BROKEN'
                 : cast.state === 'need-mp'
                 ? 'NEED MP'
                 : cast.state === 'no-target'
