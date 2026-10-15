@@ -85,7 +85,7 @@ console.log('PASS twelve ranged species use individual identity and the Archer h
     ranged: false, hp: 100,
   });
   const ally = mob('goblin', { hp: 400 });
-  assert.equal(g.enemyHealProfile(leader), 'Reclamation Triage');
+  assert.equal(g.enemyHealProfile(leader), 'Salvage Surge');
   assert(g.enemySupportHeal(leader), 'Scornfang healer can act through authored ranged volley');
   assert(ally.supportHeal, 'wounded companion is healed before critically wounded captain');
   assert(!leader.supportHeal, 'captain does not take ally-priority healing');
@@ -102,7 +102,7 @@ console.log('PASS twelve ranged species use individual identity and the Archer h
     captain: true, roomCaptain: true, captainProfile: 'supply-crown', ranged: false, hp: 100,
   });
   const ally = mob('ashbeast', { hp: 300, owner: leader.id });
-  assert.equal(g.enemyHealProfile(leader), 'Agrarian Restoration');
+  assert.equal(g.enemyHealProfile(leader), 'Harvest Vigor');
   assert(g.enemySupportHeal(leader), 'Dreadmaw prioritizes his wounded brood');
   assert(ally.supportHeal && !leader.supportHeal);
 }
@@ -112,7 +112,7 @@ console.log('PASS twelve ranged species use individual identity and the Archer h
     captain: true, roomCaptain: true, captainProfile: 'supply-march', hp: 110,
   });
   const wounded = mob('mireling', { hp: 300 });
-  assert.equal(g.enemyHealProfile(direjaw), 'Wetland Recuperation');
+  assert.equal(g.enemyHealProfile(direjaw), 'Silt Pulse');
   assert(g.enemySupportHeal(direjaw), 'Direjaw heals the more wounded companion first');
   assert(wounded.supportHeal && !direjaw.supportHeal);
   direjaw.supportHealCd = 0;
