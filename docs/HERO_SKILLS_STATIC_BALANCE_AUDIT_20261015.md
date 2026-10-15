@@ -1,6 +1,18 @@
 # Hero Skills — additional static balance audit
 15 October 2026 — owner-requested follow-up after complete class-specific Skills 2–8 redesign
 
+**Follow-up implementation (15 October 2026):** The owner delegated conservative tuning with the explicit goal of **not making the game too easy**. A1/A2 and the Paladin defense-overlap risk B3 have now received targeted source changes on the same development branch. This file **retains its original pre-change findings as historical evidence**; their old numbers below are not the current source values. The latest authoritative design and numbers are at [`HERO_CLASS_SKILLS_2_8_CONSOLIDATED_REVIEW_20261015.md`](./HERO_CLASS_SKILLS_2_8_CONSOLIDATED_REVIEW_20261015.md).
+
+- **A1 addressed in source:** Mage charged Skill 8 now applies +25–29% Fracture for only 2.5 seconds instead of +12–16% for 4.5 seconds. It still shares the nonstacking Fracture status with Skill 4. The tradeoff is deliberately short burst rather than longer control.
+- **A2 addressed in source:** Ranger Skill 8 gets one extra **non-piercing** arrow only if exactly one eligible target is present: normal 10×Power total across two arrows / 24s, charged 12×Power across three / 40s. Skill 7 retains defense piercing, higher boss efficiency and faster cooldown. Multiple-target damage and target caps are unchanged.
+- **B3 overlap addressed in source:** Paladin Shield Stance and Skill 8 ward use **the stronger defensive mitigation only**, not a multiplication, while companions still receive ward effects. The per-skill rank progression and boss-special safeguards remain unchanged.
+- **Additional crowd safeguards:** Paladin instant Skill 8 area max 8 normal / 10 charged enemies, Mage instant Skill 8 max 5 normal / 7 charged. Mage primary selected target is always prioritized. Excess nearby enemies remain threats.
+- **Other issues B1/B2/C1/C3:** No blind tuning or new passives; keep for the **one combined QA pass**. C2 has gained instant AoE caps, but actual fight balance remains unverified.
+
+**No tests or builds were run for this follow-up.** No merge, deploy, or release is authorized. The original report below is frozen as a dated diagnostic snapshot and is no longer authoritative on the adjusted numeric values.
+
+---
+
 **Status: source review only; no gameplay tests, simulations, builds, runtime checks, source balance changes, merge, or deployment.** Preserve the request for one combined final QA pass after all feature work is consolidated. This is an assessment of the provisional `feature/hero-skills-2-4-on-snapshot-20261015` branch (based on PR #300), not a report on deployed gameplay. Numeric comparisons ignore enemy armor/guard, burst compression, interrupted shots, movement, and other encounter variables unless noted.
 
 **Source of truth:** `src/prototype/rules.js` (`heroTactics`, `classUltimates`, `advancedCharges`, `cooldownBalance`), `src/prototype/hero-combat.js` (`castHeroUltimate`, `castMageChain`, `castChargedAdvanced`, slots 1–8), `src/prototype/combat.js` (Fracture, weakening, target-shared burst compression and boss defense piercing), `src/prototype/engine.js` (cooldowns, targeting and enemy attack scheduling), `src/prototype/party.js` (Ranger support and Rally attack timers), and `src/prototype/progression.js` (starting and inherited bonuses).
