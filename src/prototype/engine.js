@@ -700,6 +700,54 @@
           }
         }
     }
+    // Add only genuinely missing posts. The first four legacy records always
+    // retain their IDs, wounds/deaths and captain slot, even on old v4 saves.
+    // Extra Treasury guards are security, not repeatable XP/Crown farming.
+    treasuryGuardPopulation(z) {
+      const slots = R.treasuryGuardFormations?.[z.id];
+      if (!slots || this.peace) return;
+      const region = this.regionIndex(z.id),
+        original = z.enemies.filter((e) => e.roomGuard && !e.reinforcement)
+          .sort((a, b) => this.idOrder(a, b));
+      for (let j = 0; j < slots.length; j++) {
+        const slot = slots[j];
+        let e = original[j];
+        if (!e) {
+          if (slot.captain) continue; // Historical captain may not be fabricated.
+          const sp = D.species[region][0],
+            p = this.safe(slot.x, slot.y, z.id);
+          e = this.makeEnemy({
+            species: sp[0],
+            name: slot.name || sp[1] + ' treasury guardian',
+            icon: sp[2],
+            level: region * 3 + 2,
+            hp: 65 + region * 105,
+            damage: 7 + region * 8,
+            gold: 0, xp: 0,
+          }, p);
+          e.guard = true;
+          e.roomGuard = true;
+          e.pack = z.id + '-' + (slot.group || 'guard-' + j);
+          e.forcedRole = slot.role || null;
+          e.mountedCrownRider = !!slot.mountedCrownRider;
+          this.configureEnemy(e, j);
+          z.enemies.push(e);
+          continue;
+        }
+        if (slot.captain) continue;
+        // The first four slots are original identities; do not change their
+        // native species, level, strength, death state or saved position.
+        e.mountedCrownRider = !!slot.mountedCrownRider;
+        if (slot.role) e.forcedRole = slot.role;
+        if (slot.name) e.name = slot.name;
+        e.pack = z.id + '-' + (slot.group || 'guard-' + j);
+        this.configureEnemy(e, j);
+        e.gold = 0;
+        e.xp = 0;
+      }
+      // Normal, dead and newly generated guardian records stay distinct.
+      // The existing guardian scaling pass handles only fresh recruits once.
+    }
     treasuryInterior(z) {
       const room = this.supplyRoom(z.id),
         layout = room && R.treasuryDecor?.[room.id],
@@ -1168,6 +1216,7 @@
           e.icon = g.sp[2];
           e.name = g.name;
           e.forcedRole = g.role;
+          e.mountedCrownRider = !!g.mountedCrownRider;
           e.pack = g.pack;
           e.home = { ...p };
           if (e.hp > 0 && !e.aggro) Object.assign(e, p);
@@ -1191,6 +1240,7 @@
             p,
           );
         e.guard = true;
+        e.mountedCrownRider = !!g.mountedCrownRider;
         e.pack = g.pack;
         if (g.role) e.forcedRole = g.role;
         this.configureEnemy(e, j);
@@ -3861,7 +3911,9 @@
           !!signature &&
           wantsSignature &&
           (!['scatter', 'sweep'].includes(signature.effect) || closeTargets.length > 0),
-        profile = isSignature ? signature : basic,
+        profile = isSignature ? signature : e.mountedCrownRider
+          ? { ...basic, name: e.ranged ? 'Crown Direwolf Archer Dash' : 'Crown Direwolf Lance Dash',
+              style: 'dash', radius: 165 } : basic,
         target =
           isSignature && closeTargets.length
             ? closeTargets.includes(threat)
@@ -4375,7 +4427,8 @@
           startingDeaths = this.s.statistics.deaths;
         if (move.style === 'dash' && dist(e, target) > 95) {
           const previous = { x: e.x, y: e.y };
-          this.move(e, target, 300, 0.3, 85);
+          this.move(e, target, e.mountedCrownRider ? 395 : 300,
+            e.mountedCrownRider ? 0.36 : 0.3, 85);
           this.tacticalRecordRogueReposition(e, previous, target);
         }
         if (!this.hitParty(target, e.damage * move.coefficient)) return;
@@ -4855,9 +4908,10 @@
             if (castTarget?.hp > 0 && this.line(e, castTarget)) {
               const gap = dist(e, castTarget),
                 rangedCast = !!e.ranged && !e.hybrid,
-                stop = rangedCast ? Math.min(e.shotRange || 280, 205) : 70,
+                stop = rangedCast ? (e.mountedCrownRider ? 125 : Math.min(e.shotRange || 280, 205)) : 70,
                 pace =
                   (e.type === 'boss' ? 145 : 175) *
+                  (e.mountedCrownRider ? 1.18 : 1) *
                   (e.form === 'ringleader' ? R.ringleaderScaling.pursuit : 1) *
                   (e.captainPhaseMove || 1) *
                   this.ownedSummonMovementFactor(e) *
@@ -5062,6 +5116,7 @@
             e,
             target,
             (e.type === 'boss' ? 145 : 175) *
+              (e.mountedCrownRider ? 1.18 : 1) *
               (e.form === 'ringleader' ? R.ringleaderScaling.pursuit : 1) *
               (e.captainPhaseMove || 1) *
               this.ownedSummonMovementFactor(e) *
@@ -5342,6 +5397,7 @@
             'nightBalanceVersion',
             'reinforcement',
             'awakenedGuard',
+            'mountedCrownRider',
             'trueSummon',
             'trueSummonRole',
           ])
