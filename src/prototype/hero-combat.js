@@ -384,9 +384,7 @@
         if (this.s.mode === 'developer' && slot === 1) return false;
         const i = slot - 1,
           rank = this.hero.skills[i],
-          isCharged = !!charged &&
-            ((slot >= 1 && slot <= 8) &&
-              (slot !== 4 || this.hero.class !== 'ranger'));
+          isCharged = !!charged && slot >= 1 && slot <= 8;
         if (
           this.s.challenge.pending ||
           this.s.challenge.gameOver ||
@@ -753,8 +751,31 @@
           }
         } else if (slot === 4) {
           if (this.hero.class === 'ranger') {
-            this.hero.haste = Math.min(6, 4 + 0.25 * (rank - 1));
-            this.event('spell', { actor: 'hero', class: 'ranger', slot: 4, x: this.hero.x, y: this.hero.y });
+            if (isCharged) {
+              const rally = R.heroTactics.ranger.rally,
+                radius = rally.radius + rally.radiusStep * steps,
+                until = this.s.time + rally.duration + rally.durationStep * steps,
+                movement = rally.movementBonus + rally.movementStep * steps,
+                attackSpeed = rally.attackSpeedBonus + rally.attackSpeedStep * steps;
+              let allies = 0;
+              for (const ally of this.activeLivingParty()) {
+                if (dist(ally, this.hero) > radius || !this.line(this.hero, ally)) continue;
+                ally.rangerRallyUntil = Math.max(ally.rangerRallyUntil || 0, until);
+                ally.rangerRallyZone = this.zoneId;
+                ally.rangerRallyMovement = Math.max(ally.rangerRallyMovement || 0, movement);
+                ally.rangerRallyAttack = Math.max(ally.rangerRallyAttack || 0, attackSpeed);
+                allies++;
+              }
+              this.event('chargedArea', {
+                actor: 'hero', class: 'ranger', slot: 4, effect: 'companion-rally',
+                shape: 'circle', x: this.hero.x, y: this.hero.y,
+                fromX: this.hero.x, fromY: this.hero.y,
+                radius, hits: allies,
+              });
+            } else {
+              this.hero.haste = Math.min(6, 4 + 0.25 * (rank - 1));
+              this.event('spell', { actor: 'hero', class: 'ranger', slot: 4, x: this.hero.x, y: this.hero.y });
+            }
           } else if (this.hero.class === 'paladin') {
             const cfg = R.heroTactics.paladin,
               advanced = isCharged ? cfg.grandJudgment : cfg.judgment,
