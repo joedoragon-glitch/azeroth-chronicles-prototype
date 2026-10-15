@@ -6,12 +6,13 @@ const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
 const Original = require('../tests/helpers/perf-ws2-baseline.cjs');
-module.exports = function reference(root) {
+module.exports = function reference(root, { originalOcclusion = true } = {}) {
   let source = fs.readFileSync(path.join(root, 'src/prototype/renderer.js'), 'utf8');
   const start = source.indexOf('  function occlusionPairs(');
   const end = source.indexOf('\n  function create(', start);
   assert(start > 0 && end > start);
-  source = source.slice(0, start) + Original.occlusionPairs.toString() + '\n' + source.slice(end);
+  if (originalOcclusion)
+    source = source.slice(0, start) + Original.occlusionPairs.toString() + '\n' + source.slice(end);
   const a = source.indexOf('      if (!game.isDungeon())\n        PrototypeVisuals.terrain(');
   const b = source.indexOf('      PrototypeCombatVisuals.ground(', a);
   assert(a > 0 && b > a);

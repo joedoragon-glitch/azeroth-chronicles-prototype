@@ -2005,7 +2005,16 @@
             ...z.props.flatMap((prop) => {
               const structure = String(prop.structure || '');
               const kind = nightLightKind(structure);
-              return kind ? [{ ...screen(prop), kind, id: prop.id }] : [];
+              return kind
+                ? [
+                    {
+                      ...screen(prop),
+                      kind,
+                      id: prop.id,
+                      ...(structure === 'roadside-lantern' ? { fixture: 'post' } : {}),
+                    },
+                  ]
+                : [];
             }),
             ...z.buildings
               .filter((b) => b.progress >= 4)

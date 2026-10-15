@@ -46,6 +46,8 @@ jobs:
       full_validation: ${{ steps.full.outcome == 'success' && steps.scope.outputs.docs_only != 'true' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Determine check scope
         id: scope
         run: node .github/scripts/check-scope.cjs
@@ -73,6 +75,8 @@ jobs:
       full_validation: ${{ steps.full.outputs.validated }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Reuse successful full browser validation
         if: needs.release-plan.outputs.reuse == 'true'
         env:
@@ -196,6 +200,8 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'

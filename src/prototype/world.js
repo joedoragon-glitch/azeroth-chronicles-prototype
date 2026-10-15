@@ -428,7 +428,7 @@
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
           this.sideDungeon(z.id) ||
-          z.landmarkRoadShoulderVersion === 2
+          z.landmarkRoadShoulderVersion === 3
         )
           return;
         const previousZone = this.s.zone;
@@ -442,39 +442,45 @@
               !n.id.startsWith('crossing-') &&
               !n.id.startsWith('thorn-trailhead-'),
           )) {
-            if (this.distanceToRoad(z, marker) >= 92) continue;
+            const water =
+              marker.id === 'mill-pond'
+                ? R.terrain[this.regionIndex(z.id)].find((t) => t.r && t.kind === 'water')
+                : null;
+            const onShore = (p) =>
+              !water || (dist(p, water) > water.r && dist(p, water) < water.r + 70);
+            if (this.distanceToRoad(z, marker) >= 92 && onShore(marker)) continue;
             const original = { x: marker.x, y: marker.y };
-            let selected = null;
-            for (const radius of [75, 100, 125, 155, 185]) {
-              for (let j = 0; j < 24; j++) {
-                const angle = (j * Math.PI) / 12;
-                const p = {
-                  x: original.x + Math.cos(angle) * radius,
-                  y: original.y + Math.sin(angle) * radius,
-                };
-                if (
-                  this.blocked(p.x, p.y, z.id, 12, true) ||
-                  this.distanceToRoad(z, p) < 95 ||
-                  (marker.id === 'mill-pond' &&
-                    (() => {
-                      const water = R.terrain[this.regionIndex(z.id)].find(
-                        (t) => t.r && t.kind === 'water',
-                      );
-                      return water && (dist(p, water) <= water.r || dist(p, water) >= water.r + 70);
-                    })()) ||
-                  z.npcs.some((n) => n !== marker && dist(n, p) < 85) ||
-                  z.nodes.some((n) => dist(n, p) < 60) ||
-                  z.props.some((q) => q.roadBlocker && dist(q, p) < (q.r || 0) + 80)
-                )
-                  continue;
-                selected = p;
-                break;
-              }
-              if (selected) break;
+            const candidates = [];
+            if (water) {
+              // Search the actual bank, not an expanding circle that can
+              // leave a pond marker hundreds of units from its water.
+              for (const radius of [water.r + 18, water.r + 32, water.r + 48, water.r + 64])
+                for (let j = 0; j < 72; j++)
+                  candidates.push({
+                    x: water.x + Math.cos((j * Math.PI) / 36) * radius,
+                    y: water.y + Math.sin((j * Math.PI) / 36) * radius,
+                  });
+              candidates.sort((a, b) => dist(a, original) - dist(b, original));
+            } else {
+              for (const radius of [75, 100, 125, 155, 185])
+                for (let j = 0; j < 24; j++)
+                  candidates.push({
+                    x: original.x + Math.cos((j * Math.PI) / 12) * radius,
+                    y: original.y + Math.sin((j * Math.PI) / 12) * radius,
+                  });
             }
+            const selected = candidates.find(
+              (p) =>
+                !this.blocked(p.x, p.y, z.id, 12, true) &&
+                this.distanceToRoad(z, p) >= 95 &&
+                onShore(p) &&
+                !z.npcs.some((n) => n !== marker && dist(n, p) < 85) &&
+                !z.nodes.some((n) => dist(n, p) < 60) &&
+                !z.props.some((q) => q.roadBlocker && dist(q, p) < (q.r || 0) + 80),
+            );
             if (selected) Object.assign(marker, selected);
           }
-          z.landmarkRoadShoulderVersion = 2;
+          z.landmarkRoadShoulderVersion = 3;
         } finally {
           this.s.zone = previousZone;
         }

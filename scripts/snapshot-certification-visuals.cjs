@@ -7,7 +7,10 @@ const assert = require('node:assert/strict');
 const pw = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = path.resolve(__dirname, '..');
 const engine = process.env.SNAPSHOT_VISUAL_ENGINE || 'chromium';
-const output = path.join(root, 'test-results/snapshot-visual-' + engine);
+const output = path.join(
+  root,
+  'test-results/snapshot-visual-' + engine + '-' + require('../package.json').version,
+);
 const server = http.createServer((req, res) => {
   const name = decodeURIComponent((req.url || '/').split('?')[0]);
   const file = path.resolve(root, name === '/' ? 'index.html' : name.slice(1));
@@ -148,7 +151,7 @@ const server = http.createServer((req, res) => {
                 c.enter(scene.zone);
                 c.s.clock = night ? 480 : 120;
                 p.platform.selectCameraZoom(zoom);
-                Object.assign(c.hero, { x: scene.x, y: scene.y, order: null });
+                Object.assign(c.hero, c.safe(scene.x, scene.y), { order: null });
                 if (scene.aim) {
                   const e = c.zone().enemies.find((e) => e.id === scene.aim);
                   e.rangedAim = { x: c.hero.x, y: c.hero.y, timer: 1 };

@@ -14,7 +14,7 @@ for (const region of Campaign.data.regions) {
     prop.roadBlocker && /house|cottage|workshop|boathouse|smithy|forgehouse/.test(prop.structure || ''));
   assert.equal(houses.length, 13, region.id + ': original town/hamlet houses preserved');
   assert.equal(zone.townVisualClearanceVersion, 2, 'town reflow migrates existing layout once');
-  assert.equal(zone.landmarkRoadShoulderVersion, 2, 'named marker reflow migrates once');
+  assert.equal(zone.landmarkRoadShoulderVersion, 3, 'named marker reflow migrates once');
   housesChecked += houses.length;
   inspectedRegions++;
   for (let i = 0; i < houses.length; i++) {

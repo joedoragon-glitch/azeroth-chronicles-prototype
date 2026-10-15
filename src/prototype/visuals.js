@@ -16441,7 +16441,7 @@
         const window = p.kind === 'window',
           fire = p.kind === 'fire' || p.kind === 'work-fire',
           radius = window ? 70 : p.kind === 'work-fire' ? 105 : fire ? 90 : 85,
-          y = p.y - (window ? 32 : fire ? 13 : 28),
+          y = p.y - (p.fixture === 'post' ? 46 : window ? 32 : fire ? 13 : 28),
           source = { x: p.x, y },
           tint = region === 1 ? '245,208,150' : region === 4 ? '247,194,147' : '255,207,132';
         glow(source, radius, window ? 0.27 : fire ? 0.3 : 0.25, tint);
@@ -16465,6 +16465,11 @@
             ctx.lineTo(x, p.y - 32);
           }
           ctx.stroke();
+        } else if (p.kind === 'lantern' && p.fixture === 'post') {
+          // Illuminate the glass already painted on the actual post. Do not
+          // manufacture a second floating service lantern beside it.
+          ctx.fillStyle = '#f4c57e';
+          ctx.fillRect(p.x - 5, p.y - 50, 10, 9);
         } else if (p.kind === 'lantern') {
           // A modest iron hook and glazed hanging lamp by the service stand.
           const x = p.x + 19,

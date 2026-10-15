@@ -63,7 +63,8 @@ const server = http.createServer((req, res) => {
     res.end('<!doctype html><title>Frozen full renderer benchmark</title>');
     return;
   }
-  const contentRoot = sharedContent.has(name) ? candidateRoot : roots[which];
+  const contentRoot =
+    sharedContent.has(name) || name.startsWith('assets/') ? candidateRoot : roots[which];
   const file = path.resolve(contentRoot, name);
   if (
     !file.startsWith(contentRoot + path.sep) ||
@@ -84,7 +85,7 @@ const server = http.createServer((req, res) => {
     }[path.extname(file)] || 'application/octet-stream',
   );
   if (which !== 'candidate' && name === 'src/prototype/renderer.js') {
-    res.end(reference(candidateRoot));
+    res.end(reference(candidateRoot, { originalOcclusion: false }));
     return;
   }
   fs.createReadStream(file).pipe(res);
@@ -226,9 +227,9 @@ function summarize(samples) {
       });
     }
     const report = {
-      baselineCommit: 'current content; c6ce1af original occlusion + #294 disabled',
+      baselineCommit: 'current content and current occlusion; only #294 viewport culling disabled',
       baselineRoot,
-      sharedContent: [...sharedContent],
+      sharedContent: [...sharedContent, 'assets/** (including manifests and originals)'],
       candidateRoot,
       engine,
       browserVersion: browser.version(),
@@ -240,7 +241,7 @@ function summarize(samples) {
       presentationTimeMs: 16000,
       baselineControlRoot: baselineRoot,
       scope:
-        'Current art on both sides; original occlusion and no viewport culling vs integrated candidate. Paired warmed frozen full renderer.draw plus full Canvas getImageData readback at 150% camera; no app/simulation/audio or physical-device FPS claim.',
+        'Current art on both sides; same occlusion and no viewport culling vs integrated candidate. Paired warmed frozen full renderer.draw plus full Canvas getImageData readback at 150% camera; no app/simulation/audio or physical-device FPS claim.',
       sourceHashes: Object.fromEntries(
         Object.entries(roots).map(([which, root]) => [
           which,
@@ -249,7 +250,7 @@ function summarize(samples) {
               name,
               hash(
                 name === 'renderer' && which !== 'candidate'
-                  ? reference(candidateRoot)
+                  ? reference(candidateRoot, { originalOcclusion: false })
                   : fs.readFileSync(
                       path.join(
                         sharedContent.has('src/prototype/' + name + '.js') ? candidateRoot : root,

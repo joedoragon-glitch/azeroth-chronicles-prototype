@@ -161,9 +161,11 @@ vm.runInContext(prepare + proof, sandbox);
     vm.runInContext('prepare(spec)', sandbox);
     const game = sandbox.window.__perfWs2.game;
     assert(game.s.zones.vale.props.some((p) => p.id === 'regional-handoff-999'));
-    assert(
-      !Object.entries(game.s.zones).some(([id, z]) => z.props.some((p) => isAddedScenery(p, id))),
-    );
+    for (const [id, z] of Object.entries(game.s.zones)) {
+      if (!(id in counts)) continue;
+      assert.equal(z.props.filter(p => isAddedScenery(p, id)).length, counts[id],
+        'same-content painter must retain every approved scenery identity');
+    }
     const first = await vm.runInContext('proof()', sandbox);
     for (let n = 0; n < 3; n++)
       assert.equal((await vm.runInContext('proof()', sandbox)).state, first.state);

@@ -36,6 +36,11 @@ assert.equal(night.radial, sources.length + 1,
   'the existing hero light and every inhabited night source has its own pool');
 assert.equal(night.lanternFrames, 1, 'only the service lantern creates a glazed lamp');
 assert(night.fills > day.fills, 'warm house windows and lantern fixtures are visible at night');
+const streetPost = probe(true, true, [{ id: 'real-post', x: 200, y: 140, kind: 'lantern', fixture: 'post' }]);
+assert.equal(streetPost.radial, 2, 'hero plus the real street fixture');
+assert.equal(streetPost.lanternFrames, 0, 'an existing post does not get a second floating hanging lamp');
+assert.equal(streetPost.fills - probe(true, true, []).fills, 2,
+  'one local glow and one fill inside existing glass, with no extra night-only structure');
 const wilderness = probe(true, true, []);
 assert.equal(wilderness.radial, 1, 'wild terrain stays dark except the hero visibility pool');
 assert.equal(wilderness.lanternFrames, 0, 'no invented lanterns in empty wilderness');

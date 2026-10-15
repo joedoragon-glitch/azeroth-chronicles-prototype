@@ -288,7 +288,7 @@
     "source": "PR #300 authorized overnight repair of e5893fbd45cf; no economy changes; complete provenance in docs/SNAPSHOT_CERTIFICATION_REPAIRS_20261015.md",
     "files": {
       "src/prototype/engine.js": "c2607beae1c95e4a206cde37b71dd7dc8874e0300d79a434c9b857c6d1e8cd31",
-      "src/prototype/world.js": "a9c6880898cb8555657750593271e9b4a65eec99a96a2201ac7051357b4e5581",
+      "src/prototype/world.js": "330ee56c7eb6ad464c6d15d9516b6b15c3edcb66e319e78df574cc7931443a3d",
       "src/prototype/navigation.js": "96d6d688d17b3474f770536de3006bd929d3ce25f6f9a2034246848c8b6beeee",
       "src/prototype/party.js": "ce4077278ef832d7e4eaf354081a2a07025c217f6395fad2ba4d5852160ad1b9",
       "src/prototype/combat.js": "e045cb47080a47c04aee914416b592ba327e24e7fcddec14210fbfca88077004",
@@ -318,9 +318,9 @@
       "src/prototype/enemy-vfx-events.js": "21d9e09838d4ca9621f147e43d8c791aaae3070ed644cb231c097a15abc43db4",
       "src/prototype/enemy-vfx.js": "67efb5a69b19da14b0c9850c4c5586670a10d138703125953c138089454b96d4",
       "src/prototype/enemy-vfx-art.js": "78effa26838842aaac21069ce427d41bec374b107c4b15a4b1626df5d39de81c",
-      "src/prototype/visuals.js": "054b7ef99ea50bc185e42d25a956101ff0d1e64ee7d436c4cafa864c0d54d94a",
+      "src/prototype/visuals.js": "630f9a93761b1085558f54afa10f7cfa61f81e043acdfd148a4484a97ef9525e",
       "src/prototype/sprites.js": "9c50bc13067c29c5c0eb7833508d7cc73db0734c73653b7f8966a714ab571c79",
-      "src/prototype/renderer.js": "61a82356c98dc00da85fbdbf222ee983a4e084c66736cd94019d4bfe522dc89d",
+      "src/prototype/renderer.js": "74526c7be987a3c2d90bc55bbbb276e0228217dd38bdc9dd0459b87266ba0757",
       "src/prototype/dreadmaw-combat.js": "ef40f2043c187b10ec80584ff66522e064fbcbbfc28a6f93e80d8bc42d23e61b",
       "src/prototype/enemy-presentation.js": "e35de45beb8a5e499f9f1d19ffb8f08827412cf266cad95fa89e5cef96d15440"
     },
@@ -331,7 +331,7 @@
       },
       "src/prototype/world.js": {
         "handoffSha256": "2478e241979bcdc9ba13a6a27147eb2fe72fd107d001efb3c34401a47ebd960d",
-        "candidateSha256": "a9c6880898cb8555657750593271e9b4a65eec99a96a2201ac7051357b4e5581"
+        "candidateSha256": "330ee56c7eb6ad464c6d15d9516b6b15c3edcb66e319e78df574cc7931443a3d"
       },
       "src/prototype/navigation.js": {
         "handoffSha256": "96d6d688d17b3474f770536de3006bd929d3ce25f6f9a2034246848c8b6beeee",
@@ -451,7 +451,7 @@
       },
       "src/prototype/visuals.js": {
         "handoffSha256": "054b7ef99ea50bc185e42d25a956101ff0d1e64ee7d436c4cafa864c0d54d94a",
-        "candidateSha256": "054b7ef99ea50bc185e42d25a956101ff0d1e64ee7d436c4cafa864c0d54d94a"
+        "candidateSha256": "630f9a93761b1085558f54afa10f7cfa61f81e043acdfd148a4484a97ef9525e"
       },
       "src/prototype/sprites.js": {
         "handoffSha256": "9c50bc13067c29c5c0eb7833508d7cc73db0734c73653b7f8966a714ab571c79",
@@ -459,7 +459,7 @@
       },
       "src/prototype/renderer.js": {
         "handoffSha256": "9fc80c07473d9131f007e4e3b79faa1ee3f397f77f586b6723ed0c7b5a0f201d",
-        "candidateSha256": "61a82356c98dc00da85fbdbf222ee983a4e084c66736cd94019d4bfe522dc89d"
+        "candidateSha256": "74526c7be987a3c2d90bc55bbbb276e0228217dd38bdc9dd0459b87266ba0757"
       },
       "src/prototype/dreadmaw-combat.js": {
         "handoffSha256": "ef40f2043c187b10ec80584ff66522e064fbcbbfc28a6f93e80d8bc42d23e61b",
@@ -469,6 +469,49 @@
         "handoffSha256": "e35de45beb8a5e499f9f1d19ffb8f08827412cf266cad95fa89e5cef96d15440",
         "candidateSha256": "e35de45beb8a5e499f9f1d19ffb8f08827412cf266cad95fa89e5cef96d15440"
       }
-    }
+    },
+    "history": [
+      {
+        "commit": "d8066c1f7556a5afe8b05bf4ddaf2a891c543dd2",
+        "files": {
+          "src/prototype/engine.js": "c2607beae1c95e4a206cde37b71dd7dc8874e0300d79a434c9b857c6d1e8cd31",
+          "src/prototype/world.js": "a9c6880898cb8555657750593271e9b4a65eec99a96a2201ac7051357b4e5581",
+          "src/prototype/navigation.js": "96d6d688d17b3474f770536de3006bd929d3ce25f6f9a2034246848c8b6beeee",
+          "src/prototype/party.js": "ce4077278ef832d7e4eaf354081a2a07025c217f6395fad2ba4d5852160ad1b9",
+          "src/prototype/combat.js": "e045cb47080a47c04aee914416b592ba327e24e7fcddec14210fbfca88077004",
+          "src/prototype/hero-combat.js": "7f8c09648025475f251d7809b1454010f4e05b4a94312db1095ee73e746a1db4",
+          "src/prototype/boss-combat.js": "5242b31c4ac9ceda28cb01d7427b3a02eeb512450fc2d091d6703c070702e05e",
+          "src/prototype/progression.js": "02628edce7fab38e3e141c6dff1a611a138a128f155146e98be71699bcee6550",
+          "src/prototype/economy.js": "081440c4f0167d3e4b1129f9e605a7b7177bf68fb83cb8a824aa309b52774fb5",
+          "src/prototype/rewards.js": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525",
+          "src/prototype/rules.js": "4e23cecf3f7b9d54c613d66fda4226b693a3bc6c8f957af99f98d625d71facca",
+          "src/prototype/data.js": "5b3b745d1d6e7c21accf6899f7597d6394587704e58f884fc10f0047fe21eb19",
+          "src/prototype/save.js": "09dd8747bd414348333466be9e15c4c76656e7d7d9af9d843b17963e2336be0a",
+          "src/prototype/input.js": "3b01e8b5df5b7b8fedc8deb24bba4f93f979ef111e2fa2fa55950891b58b5da5",
+          "src/prototype/platform.js": "60107014425663a4607a239ea68359b04d0f0cfbf0eca7e9dc2fcc1a1180710d",
+          "src/prototype/runtime.js": "953bbc9a92e9576e7ea6e7620cffe6d473c7d721cabb7878dbe04d23283dda43",
+          "src/prototype/app.js": "42aa84f088d41f659d14b2ff392bf88618af4dd6484e6bde50cac0ee0ea31185",
+          "src/prototype/persistence.js": "b45a7650771fe9de54f096c038800b9d683899591406c6aa45425951396caf09",
+          "styles/prototype.css": "4d23fa615054e0318a69166be1b3f405b330991cb084bea02eca3dd55a5873f1",
+          "styles/desktop.css": "95fcb8bdad9f22c32950a1f1c6c51b1f2f886fc89e33d59248d3aef415137dac",
+          "styles/phone.css": "edc7cbe9436fff8936c6e90fb31824898f3ec1168ef35b0dffe7c5e85300fe5c",
+          "templates/game.html": "fe2d39f4d28dbc6257ebb734576b3609d9744afe11903d4cfaf270aebc291ad7",
+          "assets/sprites/manifest.json": "4eb384d124c35727098b71d66dbea0dda5f0ab16c52c4d36b39af524274af10f",
+          "assets/materials/manifest.json": "c06e89ba4ed2058681ae3156eaac8f7eb577d1b5af61e272f40d316f855cad41",
+          "src/prototype/archive.js": "14757ab587b53c5017b6c5da934d37f7f0a7f9a6cb1d49298f19cc7211892d0e",
+          "src/prototype/menus.js": "67edfc0bb873d2b438065a242cec5db21538c94a6414ae8384fb75559613b450",
+          "src/prototype/cindermaw-combat.js": "b201d136dca2181733ad0c5c9fb99dd4345bac0c8b2dbe0a3c0c131fa385a945",
+          "src/prototype/combat-visuals.js": "51d444b94eacb83081431af90874dcd823caf97d7adf337f2f305e43da477c9d",
+          "src/prototype/enemy-vfx-events.js": "21d9e09838d4ca9621f147e43d8c791aaae3070ed644cb231c097a15abc43db4",
+          "src/prototype/enemy-vfx.js": "67efb5a69b19da14b0c9850c4c5586670a10d138703125953c138089454b96d4",
+          "src/prototype/enemy-vfx-art.js": "78effa26838842aaac21069ce427d41bec374b107c4b15a4b1626df5d39de81c",
+          "src/prototype/visuals.js": "054b7ef99ea50bc185e42d25a956101ff0d1e64ee7d436c4cafa864c0d54d94a",
+          "src/prototype/sprites.js": "9c50bc13067c29c5c0eb7833508d7cc73db0734c73653b7f8966a714ab571c79",
+          "src/prototype/renderer.js": "61a82356c98dc00da85fbdbf222ee983a4e084c66736cd94019d4bfe522dc89d",
+          "src/prototype/dreadmaw-combat.js": "ef40f2043c187b10ec80584ff66522e064fbcbbfc28a6f93e80d8bc42d23e61b",
+          "src/prototype/enemy-presentation.js": "e35de45beb8a5e499f9f1d19ffb8f08827412cf266cad95fa89e5cef96d15440"
+        }
+      }
+    ]
   }
 }
