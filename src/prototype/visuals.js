@@ -11690,6 +11690,35 @@
             4,
           );
         }
+        // Stronghold walls have deliberate local histories. A frontier fort
+        // retains solid matching defensive wood/stone; a disused keep exposes
+        // cracks and rubble; a swamp habitat is a woven animal enclosure.
+        // All dressing remains inside the existing wall footprint.
+        if (e.strongholdDefenseStyle === 'fort') {
+          rect(-28, -38, 56, 10, e.structure === 'stonewall' ? '#aeb6ab' : '#b59468');
+          for (const x of [-24, -10, 4, 18])
+            rect(x, -44, 11, 8, e.structure === 'stonewall' ? '#8c978e' : '#9c7951');
+          if (e.fortCorner) {
+            rect(-21, -59, 42, 30, e.structure === 'stonewall' ? '#778579' : '#886849');
+            poly([[-24, -59], [0, -75], [24, -59]], e.structure === 'stonewall' ? '#68776b' : '#634b37');
+            for (const x of [-12, 12]) rect(x - 4, -52, 8, 15, '#2b3830');
+            rect(-25, -28, 50, 8, '#514e43');
+          }
+        } else if (e.strongholdDefenseStyle === 'ruin') {
+          poly([[-27, -31], [-18, -45], [-8, -34], [2, -42], [11, -30], [21, -38], [28, -25]],
+            e.structure === 'stonewall' ? '#7b817a' : '#8d765b');
+          line([[-19, -26], [-13, -17], [-17, -8], [-4, 0]], '#494c45', 2.5);
+          line([[12, -30], [8, -15], [21, -4]], '#484a45', 2);
+          oval(-19, 13, 10, 4, '#716c60');
+          oval(20, 14, 9, 4, '#7f7b6c');
+        } else if (e.strongholdDefenseStyle === 'habitat') {
+          for (const x of [-21, -9, 3, 15, 24]) {
+            line([[x, -30], [x + 4, -43]], '#aa946d', 3);
+            line([[x, -25], [x - 7, -35]], '#819777', 2);
+          }
+          line([[-27, -14], [27, -11]], '#827154', 3);
+          oval(16, 12, 11, 3, '#58664c');
+        }
       } else if (e.structure === 'pillar') {
         rect(-13, -44, 26, 58, '#9ca49a');
         rect(-18, -48, 36, 8, '#bac0ad');
