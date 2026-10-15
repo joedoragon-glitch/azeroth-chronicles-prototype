@@ -1069,6 +1069,9 @@
           ctx.lineTo(p.x + 9 + grow * 4, p.y + 6);
           ctx.stroke();
         } else if (f.type === 'heal') {
+          if (f.actor === 'enemy' && f.resource !== 'mana') {
+            PrototypeCombatVisuals.enemySupportHeal(ctx, screen, f);
+          } else {
           const mana = f.resource === 'mana',
             c = mana ? '#9fcfff' : '#a9e7b0';
           ctx.strokeStyle = c;
@@ -1098,6 +1101,7 @@
               ctx.lineTo(x, y + 3);
               ctx.stroke();
             }
+          }
           }
         } else if (f.type === 'swing') {
           const t = screen({ x: f.targetX ?? f.x + 1, y: f.targetY ?? f.y }),
@@ -2074,6 +2078,7 @@
       PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx);
       for (const p of game.s.projectiles) drawProjectile(p);
       drawVisualFx();
+      PrototypeCombatVisuals.enemySupportStatus(ctx, screen, game);
       PrototypeCombatVisuals.ground(ctx, screen, game, 'cue', game.s.time);
       targetGuidance();
       drawNavigationRoute();
