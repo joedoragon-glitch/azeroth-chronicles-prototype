@@ -29,6 +29,24 @@
       }
       tacticalResolveRogueMove(e, move) {
         if (e.family !== 'abyss' || e.type !== 'boss') return originalRogueMove.call(this, e, move);
+        if (move.mobileRogueCast) {
+          const victim =
+            move.targetId === 'hero'
+              ? this.hero
+              : this.combatTargets().find((u) => u.id === move.targetId);
+          if (!victim || victim.hp <= 0 || !this.line(e, victim)) return;
+          if (!move.rogueSignature && dist(e, victim) > move.radius) return;
+          // High Yo-Yo begins from the caster's new real position; Wingover
+          // radiates from that position rather than the old warning center.
+          move.angle = Math.atan2(victim.y - e.y, victim.x - e.x);
+          if (move.rogueSignature && move.effect === 'scatter') {
+            move.x = e.x;
+            move.y = e.y;
+          } else {
+            move.x = victim.x;
+            move.y = victim.y;
+          }
+        }
         if (!move.rogueSignature && move.style === 'dash') {
           const target =
             move.targetId === 'hero'
