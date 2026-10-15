@@ -1956,27 +1956,34 @@
       for (const l of game.s.loot.filter((l) => l.zone === game.zoneId))
         drawCrownLoot(ctx, screen(l));
       finishPhase('entities');
-      const ambientLights = [
-        ...game
-          .visibleNPCs()
-          .filter((n) => ['rest', 'supplier', 'recruiter', 'quests', 'fountain'].includes(n.kind)),
-        ...z.buildings.filter((b) => b.progress >= 4),
-        ...z.props.filter((p) =>
-          [
-            'torch',
-            'warm-brazier',
-            'ember-pit',
-            'fumarole',
-            'house',
-            'workshop',
-            'market',
-          ].includes(p.structure),
-        ),
+      // Regional night life is not a blanket of torches. Real homes carry
+      // occupied window light, services have sheltered lanterns, and existing
+      // fires/forges illuminate their own work. All sources are presentational:
+      // no generated actors, blockers, saved flags or combat visibility changes.
+      const domestic = /(?:^|[-_])(?:house|cottage|workshop|boathouse|smithy|forgehouse|watchhouse|hut|lodge|longhouse|dwelling)(?:$|[-_])/i;
+      const fires = /(?:^|[-_])(?:cookfire|fireplace|campfire|hearth|warm-brazier|ember-pit|forge|field-kitchen|torch|lantern)(?:$|[-_])/i;
+      const nightSources = [
+        ...z.props.flatMap((prop) => {
+          const structure = String(prop.structure || '');
+          const kind = domestic.test(structure) ? 'window'
+            : fires.test(structure) ? /forge|field-kitchen/.test(structure) ? 'work-fire' : 'fire'
+              : null;
+          return kind ? [{ ...screen(prop), kind, id: prop.id }] : [];
+        }),
+        ...z.buildings.filter((b) => b.progress >= 4)
+          .map((b) => ({ ...screen(b), kind: 'window', id: b.id })),
+        ...game.visibleNPCs()
+          .filter((n) => ['rest', 'supplier', 'recruiter', 'quests', 'fountain',
+            'transport', 'smith', 'teacher', 'alchemist'].includes(n.kind) && !n.interactionOnly)
+          .map((n) => ({ ...screen(n), kind: 'lantern', id: n.id })),
       ]
-        .map(screen)
-        .filter(
-          (p) => p.x > -120 && p.x < canvas.width + 120 && p.y > -120 && p.y < canvas.height + 120,
-        );
+        .filter((p) => p.x > -140 && p.x < canvas.width + 140 &&
+          p.y > -160 && p.y < canvas.height + 140)
+        .sort((a, b) => {
+          const da = (a.x - canvas.width / 2) ** 2 + (a.y - canvas.height / 2) ** 2;
+          const db = (b.x - canvas.width / 2) ** 2 + (b.y - canvas.height / 2) ** 2;
+          return da - db || String(a.id).localeCompare(String(b.id));
+        }).slice(0, 44);
       PrototypeVisuals.atmosphere(ctx, canvas, i, {
         night: game.night(),
         peace: game.peace,
@@ -1984,7 +1991,7 @@
         room,
         optimized,
         hero: screen(game.hero),
-        lights: ambientLights,
+        lights: nightSources,
       });
       // Choking Ash is intentionally visible and remains fixed where cast.
       for (const e of z.enemies)
