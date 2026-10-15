@@ -181,9 +181,12 @@
         return target;
       }
       heroSkillRange(slot, charged = false) {
-        const second = charged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null;
+        const second = charged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null,
+          secondaryMilestones = Math.floor((this.hero.skills[slot - 1] || 1) / 2);
         return second
-          ? second.range || 480
+          ? second.range
+            ? second.range + secondaryMilestones * 5
+            : 480
           : this.hero.class === 'paladin' && slot < 3
             ? 120
             : slot === 1
@@ -207,8 +210,22 @@
           return false;
         }
         const scale = 1 + 0.15 * (rank - 1),
+          milestones = Math.floor(rank / 2),
+          // Charged Skill 2 preserves its every-rank damage growth while
+          // modestly expanding coverage and Mage Slow at ranks 2/4/6/8.
           chargedSecond =
-            isCharged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null,
+            isCharged && slot === 2
+              ? (() => {
+                  const base = R.chargedSkills.second?.[this.hero.class];
+                  return base && {
+                    ...base,
+                    ...(base.range ? { range: base.range + 5 * milestones } : {}),
+                    ...(base.radius ? { radius: base.radius + 5 * milestones } : {}),
+                    ...(base.halfWidth ? { halfWidth: base.halfWidth + 2 * milestones } : {}),
+                    ...(base.slow ? { slow: base.slow + 0.25 * milestones } : {}),
+                  };
+                })()
+              : null,
           range = this.heroSkillRange(slot, isCharged),
           selected = this.selectedHeroTarget(),
           targets = this.zone().enemies.filter(
