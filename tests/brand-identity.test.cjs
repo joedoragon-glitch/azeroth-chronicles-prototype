@@ -20,6 +20,11 @@ assert.equal(manifest.id, './', 'preserve installed PWA identity');
 assert.equal(manifest.start_url, './phone.html', 'preserve the installed launch route');
 assert.equal(manifest.scope, './', 'preserve installed PWA scope');
 assert(read('README.md').startsWith('# ' + title));
+const originalScore = JSON.parse(read('tools/audio/score-book.json'));
+assert.equal(originalScore.cues.title.title, title, 'title music uses current display name');
+assert.equal(originalScore.cues.title.role, 'title', 'title-score cue role unchanged');
+assert(originalScore.author.includes('Azeroth Chronicles'), 'original score provenance retained');
+assert(read('tools/audio/index.html').includes('<p class="eyebrow">' + title + '</p>'));
 assert(
   read('src/prototype/app.js').includes('So I Became the Dark Lord'),
   'installation must use the new name',
