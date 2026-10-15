@@ -58,7 +58,7 @@
         ],
         [
           'Enemies under pressure',
-          'A wounded or outmatched foe may use rogue tactics: withdraw toward allies, slow a pursuer, shove attackers away or rally defenders. Chase blindly and you may gather a larger fight. Ordinary foes still show their marked Rogue warning. Guardians, ringleaders, captains and bosses instead show a moving cast bar on the caster: reposition or use real cover before the strike resolves. Goblin dust breaks direct targeting, but area attacks can still reach the goblin.',
+          'A wounded or outmatched foe may use rogue tactics: withdraw toward allies, slow a pursuer, shove attackers away or rally defenders. Chase blindly and you may gather a larger fight. Ordinary foes still show their marked Rogue warning. Guardians, ringleaders, captains and bosses instead show a moving cast bar: use real cover, or break pursuit if they draw in more enemies. Goblin dust breaks direct targeting, but area attacks can still reach the goblin.',
           'Ordinary creatures, guardians and ringleaders can seek help below ' +
             percent(tactics.woundedThreshold) +
             '% HP. A foe at least ' +
@@ -268,6 +268,22 @@
         ['Crag Tyrant — Treasury captain', R.roomCaptains['supply-highlands'].history],
         ['Ashen Warlord — Frontier governor', D.bosses.find((b) => b.id === 'warlord').history],
         ['Cinder Warlord — Frontier inspector', R.roomCaptains['frontier-overseer'].history],
+        [
+          'Garun — the old roads',
+          'Garun built roads and defensible settlements before he chose the fitted stone body around his heart. The bridges still carry food and trade between the provinces. Dara gets paid for repairs inside the Mine, but cannot leave.',
+        ],
+        [
+          'Veyrith — the unfinished sky',
+          'Veyrith carried the Dark Lord in the old days. Abyss Bastion now has harness stations and a training ground, but the royal air fleet is unfinished. Veyrith wants enough patrols overhead that no enemy can surprise the roads below.',
+        ],
+        [
+          'Veyra — the common drill',
+          'Veyra taught Goblins, Ogres and Crown soldiers to hold one line, obey the same commands and care for their equipment. She and Garun both take craft seriously. Her disciplined Citadel could command the realm if the throne stood empty.',
+        ],
+        [
+          'Whose peace?',
+          'Reedport fish can reach inland markets, and Ironroot miners receive regular crowns. Those same guarded roads move levies and captive workers. The trade works. The people who keep it working do not all get to choose.',
+        ],
         ...(game.s.throneClaimed
           ? [[
               'The sixth mark — remembered at the throne',
