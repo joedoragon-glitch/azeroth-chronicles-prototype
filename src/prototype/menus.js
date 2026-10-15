@@ -104,6 +104,8 @@
         [
           ...expActions,
           ...supportActions,
+          action('Review hero skills', () => skillBook(() => teacher(n, back)),
+            'Short tap and charged effects · cooldowns'),
           ...D.skills
             .filter((s) =>
               getGame().hero.skills[s[0] - 1]
@@ -204,6 +206,29 @@
       );
     }
     function skillBook(back = closeMenu) {
+      const game = getGame(),
+        choices = D.skills.filter((s) => game.skillRevealed(s[0])).map((s) => {
+          const slot = s[0], card = professionSkillCard(slot),
+            rank = game.hero.skills[slot - 1] || 0;
+          return action(
+            'Skill ' + slot + ' · ' + card.name + ' · ' + (rank ? 'Rank ' + rank : 'Unlearned'),
+            () => skillDetail(slot, () => skillBook(back)),
+            card.role,
+          );
+        });
+      openMenu(
+        'Hero skills',
+        'Tap for normal · hold ' + Campaign.rules.chargedSkills.holdSeconds +
+          's for charged. Each form shares a rank and cooldown slot.',
+        [
+          ...choices,
+          action('Training and companions', () => skillTrainingOverview(() => skillBook(back)),
+            'Teacher ranks · companion skills'),
+        ],
+        back,
+      );
+    }
+    function skillTrainingOverview(back = closeMenu) {
       const rank = getGame().s.expeditionRank || 1,
         next = getGame().expeditionNextInstructor(rank),
         expDetail =
@@ -255,38 +280,12 @@
           true,
         );
       openMenu(
-        'Skills and teachers',
-        'Expedition Rank training is free. Hero skills and specialist companion-training skills use crowns; none require hero levels.',
+        'Training and companions',
+        'Rescued specialists teach skills and higher ranks. Skills use crowns; Expedition training is free.',
         [
           action('Expedition Skill · Rank ' + rank, () => {}, expDetail, true),
           ...support,
           companionLine,
-          ...D.skills
-            .filter((s) => getGame().skillRevealed(s[0]))
-            .map((s) =>
-              action(
-                'Skill ' + s[0] + ' ' + s[1] + ' · Rank ' + getGame().hero.skills[s[0] - 1],
-                () => {},
-                (s[0] === 1
-                  ? 'Always available · same-target combo: 100% → 110% → 120% + frontal AoE · resets on target switch or 4s gap'
-                  : s[0] === 2
-                    ? getGame().skillTrainingCost(s[0], 0) +
-                      ' crowns · ' +
-                      getGame().boss(s[4]).captive +
-                      ' · ' +
-                      D.regions.find((r) => r.id === getGame().boss(s[4]).region).name +
-                      ' · Rank 1 also teaches companion Holy Cleave and Piercing Volley'
-                    : getGame().skillTrainingCost(s[0], 0) +
-                      ' crowns · ' +
-                      getGame().boss(s[4]).captive +
-                      ' · ' +
-                      D.regions.find((r) => r.id === getGame().boss(s[4]).region).name) +
-                  (Campaign.rules.resourceMode.manaEnabled
-                    ? ''
-                    : ' · ' + professionSkillDetail(s[0])),
-                true,
-              ),
-            ),
         ],
         back,
       );
