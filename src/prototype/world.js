@@ -1890,7 +1890,7 @@
         return cfg.center ? { x: cfg.center[0], y: cfg.center[1] } : null;
       }
       creatureStrongholds(z) {
-        const strongholdVersion = { crown: 9, highlands: 8, frontier: 8 }[z.id] || 7;
+        const strongholdVersion = { crown: 10, highlands: 9, frontier: 9 }[z.id] || 8;
         if (
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
@@ -1989,7 +1989,17 @@
                 livedInCount++;
               }
             }
-            const ring = [
+            const ring = cfg.defenseStyle === 'fort'
+              ? [
+                  // Raider redoubt: a real collision-bearing perimeter with
+                  // a single north gate wide enough for the existing squad.
+                  ...Array.from({ length: 7 }, (_, k) => [-150 + k * 50, -150])
+                    .filter(([x]) => x !== 0 && x !== 50),
+                  ...Array.from({ length: 7 }, (_, k) => [-150 + k * 50, 150]),
+                  ...Array.from({ length: 5 }, (_, k) => [-150, -100 + k * 50]),
+                  ...Array.from({ length: 5 }, (_, k) => [150, -100 + k * 50]),
+                ]
+              : [
               [-145, -105],
               [-70, -145],
               [70, -145],
@@ -2017,7 +2027,9 @@
                 structure: cfg.wall || 'stockade',
                 stronghold: cfg.id,
                 strongholdDefenseStyle: cfg.defenseStyle || 'ruin',
-                fortCorner: (cfg.defenseStyle === 'fort' && [0, 3, 5, 8].includes(j)),
+                fortCorner:
+                  cfg.defenseStyle === 'fort' &&
+                  (Math.abs(dx) === 150 && Math.abs(dy) === 150),
               });
               wallCount++;
             }
@@ -2063,8 +2075,9 @@
               .sort((a, b) => String(a.id).localeCompare(String(b.id)));
             const resolved = [];
             for (const item of living) {
+              const maxLivingRadius = cfg.defenseStyle === 'fort' ? 135 : 255;
               const clear = (p) =>
-                dist(p, center) <= 151 &&
+                dist(p, center) <= maxLivingRadius &&
                 !this.blocked(p.x, p.y, z.id, 10, true) &&
                 !roadNear(p, 70) &&
                 !z.npcs.some((n) => dist(n, p) < 72) &&
@@ -2075,7 +2088,9 @@
               if (!clear(item)) {
                 const old = { x: item.x, y: item.y };
                 let destination = null;
-                for (const radius of [95, 125, 148, 75, 45, 15]) {
+                for (const radius of cfg.defenseStyle === 'fort'
+                  ? [90, 110, 125, 65, 35]
+                  : [120, 150, 180, 215, 245, 95, 65, 35]) {
                   for (let j = 0; j < 24; j++) {
                     const angle = j * Math.PI / 12;
                     const p = {
@@ -2090,7 +2105,12 @@
                   if (destination) break;
                 }
                 if (destination) Object.assign(item, destination);
-                else Object.assign(item, old);
+                else if (resolved.length >= 5) {
+                  // Avoid cramming a sixth/seventh nonfunctional prop on top
+                  // of established domestic scenes in an unsuitable corner.
+                  z.props.splice(z.props.indexOf(item), 1);
+                  continue;
+                } else Object.assign(item, old);
               }
               resolved.push(item);
             }
