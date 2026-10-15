@@ -36,7 +36,7 @@
     null, // 15
     {
       kind: 'narration',
-      text: "Crag kept the Treasury for Ridge Tyrant. The wolf guards had warm meals and regular wages. The account books also recorded who was allowed to leave.",
+      text: "Crag kept the Treasury for Ridge Tyrant. Crown riders tended their direwolves beside the barracks. The account books also recorded who was allowed to leave.",
     }, // 16
     null, // 17
     {
