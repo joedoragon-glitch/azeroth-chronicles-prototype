@@ -40,7 +40,12 @@
           const point = { x: e.x + direction.x * push * fraction, y: e.y + direction.y * push * fraction };
           if (this.clearSegment(e, point, 12) &&
               this.tacticalRogueLeashAllows(e, { ...point, hp: e.hp }, e.type === 'boss' ? (this.isDungeon() ? 1800 : 700) : 500)) {
+            const from = { x: e.x, y: e.y };
             this.move(e, point, push * 5, 0.25);
+            if (dist(from, e) > 0.5) this.event('heroDisplace', {
+              actor: 'hero', class: this.hero.class,
+              x: e.x, y: e.y, fromX: from.x, fromY: from.y, target: e.id,
+            });
             return true;
           }
         }
@@ -89,21 +94,26 @@
         const radius = cfg.radius + (cfg.radiusStep || 0) * steps;
         const enemies = this.huntTargets(target, radius, cfg.targets);
         let hits = 0;
+        const chain = [];
         enemies.forEach((enemy, index) => {
           const coefficient = index === 0 ? cfg.primaryDamage
             : index === 1 ? cfg.secondaryDamage
               : (cfg.tertiaryDamage || cfg.extraDamage);
           if (this.damage(enemy, power * coefficient * scale, 'hero',
-            { area: true, ...(receipt ? { encountersAtStart: receipt } : {}) })) hits++;
+            { area: true, ...(receipt ? { encountersAtStart: receipt } : {}) })) {
+            hits++;
+            chain.push({ x: enemy.x, y: enemy.y, target: enemy.id });
+          }
         });
         if (charged) this.event('chargedArea', {
           actor: 'hero', class: 'mage', slot: 7, effect: 'arcane-chainstorm',
           shape: 'circle', x: target.x, y: target.y,
-          fromX: this.hero.x, fromY: this.hero.y, radius, hits,
+          fromX: this.hero.x, fromY: this.hero.y, radius, hits, chain,
         });
         else this.event('spell', {
           actor: 'hero', class: 'mage', source: 'hero', slot: 7,
-          x: target.x, y: target.y, radius, target: target.id,
+          x: target.x, y: target.y, radius, target: target.id, chain,
+          fromX: this.hero.x, fromY: this.hero.y,
         });
         return true;
       }
@@ -586,6 +596,14 @@
         if (target && requiresTarget) this.s.heroTarget = selected?.id || target.id;
         if (dashTo) this.move(this.hero, dashTo, dist(this.hero, dashTo) + 1, 1);
         const power = this.power();
+        // Observation only: presentation never authorizes a cast or changes its resolver.
+        this.event('heroSkillCast', {
+          actor: 'hero', class: this.hero.class, slot, charged: isCharged,
+          x: this.hero.x, y: this.hero.y,
+          fromX: dashFrom?.x ?? this.hero.x, fromY: dashFrom?.y ?? this.hero.y,
+          target: target?.id, targetX: target?.x, targetY: target?.y,
+          rank,
+        });
         if (!isCharged && slot === 8)
           return this.castHeroUltimate(target, scale, steps, power);
         if (!isCharged && slot === 7 && this.hero.class === 'mage')
@@ -614,6 +632,7 @@
               speed: 1000,
               delay: 0,
               style: 'beam',
+              slot,
               charged: true,
               ...(encountersAtStart ? { encountersAtStart } : {}),
             });
@@ -643,6 +662,7 @@
                 speed: 620,
                 delay: j * 0.08,
                 style: 'arrow',
+                slot,
                 charged: true,
                 ...(encountersAtStart ? { encountersAtStart } : {}),
                 rapid: true,
@@ -674,6 +694,7 @@
               speed: 550,
               delay: 0,
               style: 'holy',
+              slot,
               charged: true,
               ...(encountersAtStart ? { encountersAtStart } : {}),
             });
@@ -965,6 +986,7 @@
         } else if (slot === 5 || (slot === 7 && this.hero.class === 'paladin')) {
           // Repeatable area attacks prioritize the chosen foe when relevant,
           // then the closest threats. Excess enemies remain dangerous.
+          const contacts = [];
           const areaLimit = slot === 5
             ? R.heroAreaTargetCaps[5].normal
             : R.heroAreaTargetCaps[7].paladinNormal;
@@ -982,6 +1004,7 @@
               'hero',
               { area: true },
             );
+            if (landed) contacts.push({ x: e.x, y: e.y, target: e.id });
             if (landed && this.hero.class === 'mage' && slot === 5 &&
                 e.hp > 0)
               this.shieldPush(e, 30 + steps * 3);
@@ -992,6 +1015,7 @@
             source: 'hero',
             slot,
             radius: slot === 5 ? 350 : 500,
+            contacts,
             x: this.hero.x,
             y: this.hero.y,
           });

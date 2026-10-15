@@ -612,6 +612,16 @@
             p.delay -= dt;
             continue;
           }
+          // Additive transient observation, after the existing stagger delay.
+          if (p.source === 'hero' && !p.heroFlightPresented) {
+            p.heroFlightPresented = true;
+            this.event('heroProjectileFlight', {
+              actor: 'hero', class: hero.class, slot: p.slot || 1,
+              x: p.x, y: p.y, target: p.target,
+              style: p.style, charged: !!p.charged,
+              piercing: !!p.piercing, effect: p.effect,
+            });
+          }
           if (p.source === 'enemy') {
             p.life -= dt;
             const before = { x: p.x, y: p.y };
@@ -738,6 +748,8 @@
               y: victim.y,
               target: victim.id,
               charged: !!p.charged,
+              landed: !!landed, piercing: !!p.piercing,
+              directionX: p.dx, directionY: p.dy,
             });
             if (p.charged && (!p.rapid || p.chargedBurst))
               this.event('chargedImpact', {
