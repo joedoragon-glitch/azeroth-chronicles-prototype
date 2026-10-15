@@ -5,6 +5,18 @@
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 
     class Party {
+      rangerRallyActive(u) {
+        return !!u && u.hp > 0 && u.active !== false &&
+          u.rangerRallyZone === this.zoneId &&
+          (u.rangerRallyUntil || 0) > this.s.time;
+      }
+      companionRallyMoveSpeed(u, base) {
+        return this.companionMoveSpeed(base) *
+          (this.rangerRallyActive(u) ? 1 + Math.min(0.25, u.rangerRallyMovement || 0) : 1);
+      }
+      companionRallyAttackSpeed(u) {
+        return this.rangerRallyActive(u) ? 1 + Math.min(0.2, u.rangerRallyAttack || 0) : 1;
+      }
       companionAttackDamage(u) {
         return u.damage + this.hero.level * 2 + this.companionInheritedDamageBonus();
       }
@@ -697,7 +709,7 @@
       followPartyMember(u, living, dt) {
         const d = dist(u, this.hero),
           speed =
-            this.companionMoveSpeed(d > 650 ? 500 : d > 350 ? 390 : d > 200 ? 315 : 255) *
+            this.companionRallyMoveSpeed(u, d > 650 ? 500 : d > 350 ? 390 : d > 200 ? 315 : 255) *
             (u.slow > 0 ? 0.65 : 1) *
             this.mireBogMovementFactor(u) *
             this.ashMovementFactor(u);
@@ -797,7 +809,7 @@
                 this.follow(
                   u,
                   b,
-                  this.companionMoveSpeed(230) *
+                  this.companionRallyMoveSpeed(u, 230) *
                     (u.slow > 0 ? 0.65 : 1) *
                     this.mireBogMovementFactor(u) *
                     this.ashMovementFactor(u),
@@ -823,7 +835,7 @@
                 this.follow(
                   u,
                   b,
-                  this.companionMoveSpeed(230) *
+                  this.companionRallyMoveSpeed(u, 230) *
                     (u.slow > 0 ? 0.65 : 1) *
                     this.mireBogMovementFactor(u) *
                     this.ashMovementFactor(u),
@@ -850,7 +862,7 @@
                 this.follow(
                   u,
                   n,
-                  this.companionMoveSpeed(230) *
+                  this.companionRallyMoveSpeed(u, 230) *
                     (u.slow > 0 ? 0.65 : 1) *
                     this.mireBogMovementFactor(u) *
                     this.ashMovementFactor(u),
@@ -874,7 +886,7 @@
               this.follow(
                 u,
                 deposit,
-                this.companionMoveSpeed(230) *
+                this.companionRallyMoveSpeed(u, 230) *
                   (u.slow > 0 ? 0.65 : 1) *
                   this.mireBogMovementFactor(u) *
                   this.ashMovementFactor(u),
@@ -973,7 +985,7 @@
               this.follow(
                 u,
                 this.archerFallbackPoint(u, e, living),
-                this.companionMoveSpeed(270) *
+                this.companionRallyMoveSpeed(u, 270) *
                   (u.slow > 0 ? 0.65 : 1) *
                   this.mireBogMovementFactor(u) *
                   this.ashMovementFactor(u),
@@ -986,7 +998,7 @@
               this.follow(
                 u,
                 this.archerCombatPoint(u, e, living),
-                this.companionMoveSpeed(260) *
+                this.companionRallyMoveSpeed(u, 260) *
                   (u.slow > 0 ? 0.65 : 1) *
                   this.mireBogMovementFactor(u) *
                   this.ashMovementFactor(u),
@@ -999,7 +1011,7 @@
               this.follow(
                 u,
                 anchor,
-                this.companionMoveSpeed(245) *
+                this.companionRallyMoveSpeed(u, 245) *
                   (u.slow > 0 ? 0.65 : 1) *
                   this.mireBogMovementFactor(u) *
                   this.ashMovementFactor(u),
@@ -1010,7 +1022,7 @@
             }
             if (this.companionTrySkill(u, e)) continue;
             if (u.cd <= 0) {
-              u.cd = 0.85;
+              u.cd = 0.85 / this.companionRallyAttackSpeed(u);
               const shot = Math.max(1, d);
               this.s.projectiles.push({
                 id: 'projectile-' + this.s.nextId++,
@@ -1041,7 +1053,7 @@
             this.follow(
               u,
               e,
-              this.companionMoveSpeed(250) *
+              this.companionRallyMoveSpeed(u, 250) *
                 (u.slow > 0 ? 0.65 : 1) *
                 this.mireBogMovementFactor(u) *
                 this.ashMovementFactor(u),
@@ -1049,7 +1061,7 @@
               this.line(u, e) ? 55 : 0,
             );
           else if (u.cd <= 0) {
-            u.cd = 0.85;
+            u.cd = 0.85 / this.companionRallyAttackSpeed(u);
             if (this.damage(e, this.companionAttackDamage(u), u.id))
               this.event('melee', {
                 actor: 'companion',
