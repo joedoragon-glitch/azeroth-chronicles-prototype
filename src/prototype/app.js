@@ -1718,8 +1718,10 @@
   }
   function startChargeClock() {
     if (!charge || charge.started !== null) return false;
-    if (!game.beginPartyCharge(game.hero, charge.slot)) return false;
-    charge.started = performance.now();
+    const start = performance.now();
+    if (!game.beginPartyCharge(game.hero, charge.slot, start + chargeSeconds() * 1000))
+      return false;
+    charge.started = start;
     // Record which protected encounters were active at the instant charging began.
     charge.encountersAtStart = game.chargedEncounterSnapshot();
     if (charge.slot === 1 || charge.slot === 2)
@@ -2618,8 +2620,10 @@
         : charging
           ? cast.state === 'waiting'
             ? 'WAIT ' + cooldownText(cast.cooldown)
-            : cast.state === 'charging'
-              ? Math.min(99, Math.round(cast.progress * 100)) + '%'
+            : cast.state === 'interrupted'
+              ? 'BROKEN'
+              : cast.state === 'charging'
+                ? Math.min(99, Math.round(cast.progress * 100)) + '%'
               : cast.state === 'interrupted'
                 ? 'BROKEN'
                 : cast.state === 'need-mp'
