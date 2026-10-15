@@ -2944,6 +2944,15 @@
           unit.deathRollHeld = false;
       }
       h.cd = h.cd.map((c) => Math.max(0, c - dt));
+      if ((h.shieldStance || 0) > 0) {
+        h.shieldStance = Math.max(0, h.shieldStance - dt);
+        if (h.shieldStance === 0) {
+          h.shieldRank = 0;
+          h.cd[2] = this.skillCooldown(3);
+        }
+      }
+      if (h.silenceField && (h.silenceField.until <= this.s.time ||
+          h.silenceField.zone !== this.zoneId)) delete h.silenceField;
       for (const f of ['immune', 'haste', 'potionCd', 'slow']) h[f] = Math.max(0, h[f] - dt);
       for (const u of this.s.party) {
         if (!u.keeperHeld) u.healCd = Math.max(0, (u.healCd || 0) - dt);
@@ -4475,7 +4484,7 @@
             const destination = { x: unit.x + side * 100, y: unit.y };
             const landed = this.hitParty(
               unit,
-              e.damage * move.coefficient,
+              this.weakenedEnemyDamage(e) * move.coefficient,
               0,
               e.family === 'cindermaw' ? e.id : undefined,
             );
@@ -4509,7 +4518,7 @@
           );
           this.tacticalRecordRogueReposition(e, previous, target);
         }
-        if (!this.hitParty(target, e.damage * move.coefficient)) return;
+        if (!this.hitParty(target, this.weakenedEnemyDamage(e) * move.coefficient)) return;
         if (
           this.hero !== startingHero ||
           this.zoneId !== startingZone ||
@@ -4564,7 +4573,7 @@
         if (
           !this.hitParty(
             unit,
-            e.damage * move.coefficient,
+            this.weakenedEnemyDamage(e) * move.coefficient,
             0,
             e.family === 'cindermaw' ? e.id : undefined,
           )
@@ -4920,6 +4929,11 @@
           !this.updateVeraEscort(e, dt)
         )
           this.updateIdleWander(e, dt);
+        // Judgment provokes living targets without deleting boss telegraphs,
+        // attack phases or the encounter's existing leash restrictions.
+        if ((e.tauntUntil || 0) > this.s.time && this.hero.hp > 0 &&
+            dist(e, this.hero) <= 620 && this.line(e, this.hero))
+          target = this.hero;
         if (e.guard && !e.ranged && this.hero.hp > 0) {
           const screenFor = z.enemies.find(
             (u) => u !== e && u.guard && u.pack === e.pack && u.ranged && u.hp > 0,
@@ -4972,7 +4986,7 @@
           continue;
         }
         // A short-lived rogue decision is distinct from normal aggro.
-        if (this.tacticalAutoRogue(e, target)) continue;
+        if (!this.mageSilenceActive(e) && this.tacticalAutoRogue(e, target)) continue;
         if (this.tacticalRogueRegroup(e) && this.tacticalAdvanceRogueRegroup(e, target, dt))
           continue;
         if (e.telegraph) {
@@ -5069,7 +5083,7 @@
                 dy: Math.sin(angle),
                 speed: (e.shotSpeed || 260) * pace.projectileMultiplier,
                 life: 2.5 / pace.projectileMultiplier,
-                damage: e.damage * (e.hybrid ? 0.85 : 1),
+                damage: this.weakenedEnemyDamage(e) * (e.hybrid ? 0.85 : 1),
                 style,
                 slow: e.projectileSlow || 0,
                 manaDrain: R.manaBalance.rangedDrain[e.species] || 0,
@@ -5111,6 +5125,7 @@
         let opportunity = false;
         if (
           (e.captain || e.roomCaptain) &&
+          !this.mageSilenceActive(e) &&
           e.specialCd <= 0 &&
           visible &&
           d < (this.captainProfile(e)?.specialRange || 420) &&
@@ -5119,6 +5134,7 @@
           opportunity = true;
         } else if (
           e.type === 'boss' &&
+          !this.mageSilenceActive(e) &&
           e.cd <= 0 &&
           visible &&
           d < R.bossCadence.specialRange &&
@@ -5127,6 +5143,7 @@
           opportunity = true;
         } else if (
           e.type === 'boss' &&
+          !this.mageSilenceActive(e) &&
           e.cd <= 0 &&
           d < R.bossCadence.specialRange &&
           visible &&
@@ -5136,6 +5153,7 @@
           opportunity = true;
         } else if (
           e.nightOnly &&
+          !this.mageSilenceActive(e) &&
           e.specialCd <= 0 &&
           visible &&
           d < (e.species === 'wraith' ? R.nightEnemyCombat.wraith.radius : 360) &&
@@ -5173,7 +5191,7 @@
                 (e.quotaOvertime > 0 ? 0.8 : 1),
             };
           } else {
-            if (this.hitParty(target, e.damage))
+            if (this.hitParty(target, this.weakenedEnemyDamage(e)))
               this.event('melee', {
                 actor: 'enemy',
                 source: e.id,
