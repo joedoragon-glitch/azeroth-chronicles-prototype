@@ -1533,6 +1533,60 @@
           this.s.zone = oldZone;
         }
       }
+      // Worldbuilding-only successor growth on Verdun-like old battle scars
+      // and practical heatworks around the two Crown lava channels. The heat
+      // collectors sit on safe rock; no one moves through active lava.
+      recoveryAndThermalLife(z) {
+        const plan = z.id === 'frontier'
+          ? R.frontierRecoveryScenes
+          : z.id === 'crown' ? R.crownThermalWorksScenes : null;
+        if (!plan || z.recoveryAndHeatVersion === 1) return;
+        const oldZone = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          z.props = z.props.filter((p) => !String(p.id || '').startsWith('recovery-heat-'));
+          const nearRoad = (p) => this.distanceToRoad(z, p) < 56;
+          const valid = (p) =>
+            !this.blocked(p.x, p.y, z.id, 17, true) &&
+            !nearRoad(p) &&
+            !z.npcs.some((n) => dist(n, p) < 120) &&
+            !z.nodes.some((n) => dist(n, p) < 95) &&
+            !z.buildings.some((b) => dist(b, p) < 120) &&
+            !z.enemies.some((e) => e.hp > 0 && dist(e.home || e, p) < 82) &&
+            !z.props.some((other) =>
+              dist(other, p) < (other.r || 0) + (other.roadBlocker ? 130 : 62));
+          for (const [j, [x, y, structure, district]] of plan.entries()) {
+            let point = null;
+            for (const radius of [0, 55, 100, 145, 195, 250]) {
+              const steps = radius ? 16 : 1;
+              for (let k = 0; k < steps; k++) {
+                const theta = k * Math.PI / 8,
+                  p = {
+                    x: x + Math.cos(theta) * radius,
+                    y: y + Math.sin(theta) * radius,
+                  };
+                if (valid(p)) { point = p; break; }
+              }
+              if (point) break;
+            }
+            // A skipped prop is safer than forcing a tree into lava, a road
+            // or a rescuer/boss interaction zone.
+            if (!point) continue;
+            z.props.push({
+              id: 'recovery-heat-' + z.id + '-' + j,
+              ...point,
+              r: 0,
+              decorative: true,
+              structure,
+              regionalRecovery: z.id === 'frontier' ? district : undefined,
+              thermalPurpose: z.id === 'crown' ? district : undefined,
+            });
+          }
+          z.recoveryAndHeatVersion = 1;
+        } finally {
+          this.s.zone = oldZone;
+        }
+      }
       frontierOccupationLayout(z) {
         if (z.id !== 'frontier' || z.frontierLayoutVersion === 4) return;
         const districts = R.frontierDistricts || [],
@@ -2124,6 +2178,7 @@
         this.ironrootLivelihood(z);
         this.crownMilitaryRoster(z);
         this.regimeHeraldry(z);
+        this.recoveryAndThermalLife(z);
       }
       spaceQuestBoard(z) {
         if (dungeonIds.includes(z.id) || z.boardPositionVersion === 2) return;
