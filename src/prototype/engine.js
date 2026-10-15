@@ -2062,6 +2062,12 @@
           }
           this.s.throneClaimed = true;
           const remaining = dungeonIds.filter((id) => !this.s.true[id]).length;
+          // The six-mark ledger and Keeper's last-command account resolve
+          // when the player claims the actual throne. Current class and
+          // prior TRUE-dungeon order do not change the lost companion fact.
+          this.say(
+            'Six marks are carved into the throne: the ruler, his five companions, and a sixth mark that fits your own hand. Memory returns. You were the missing sixth companion of his former party. The others did not forget you; you forgot them.',
+          );
           this.say(
             remaining
               ? 'You claim the crown. ' + remaining + ' old powers still hold their dungeons.'
