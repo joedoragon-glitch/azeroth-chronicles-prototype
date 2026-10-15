@@ -17,8 +17,11 @@
       weakenEnemy(e, rank) {
         const cfg = R.heroTactics.paladin.weaken,
           steps = this.tacticMilestones(rank);
-        e.weakenUntil = Math.max(e.weakenUntil || 0, this.s.time + cfg.duration + steps * cfg.durationStep);
-        e.weakenFraction = Math.max(e.weakenFraction || 0, cfg.fraction + steps * cfg.step);
+        const stillWeakened = (e.weakenUntil || 0) > this.s.time;
+        e.weakenUntil = Math.max(stillWeakened ? e.weakenUntil : 0,
+          this.s.time + cfg.duration + steps * cfg.durationStep);
+        e.weakenFraction = Math.max(stillWeakened ? e.weakenFraction || 0 : 0,
+          cfg.fraction + steps * cfg.step);
       }
       fractureEnemy(e, fraction, duration) {
         // One strongest fracture applies at a time. A weaker repeat never downgrades it.
