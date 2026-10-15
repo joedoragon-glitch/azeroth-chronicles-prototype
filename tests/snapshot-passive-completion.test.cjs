@@ -29,16 +29,16 @@ for (const form of ['normal', 'true']) {
   const key = form === 'true' ? 'true' : 'normal';
   {
     const { c, e } = arena('ridge', form);
-    near(c.snapshotBossIncomingFactor(e), 1, 'Ridge has no phantom contracts');
+    near(c.snapshotBossIncomingFactor(e), 1 - R.snapshotPassives.ridge.baseline[key], 'Ridge keeps base protection without phantom contracts');
     const guards = Array.from({ length: 3 }, () => add(c, e, 'archer'));
     near(c.snapshotBossIncomingFactor(e),
-      1 - 3 * R.snapshotPassives.ridge.perArcher[key], 'three actual hired archers');
+      1 - R.snapshotPassives.ridge.baseline[key] - 3 * R.snapshotPassives.ridge.perArcher[key], 'three actual hired archers');
     guards[0].hp = 0;
     near(c.snapshotBossIncomingFactor(e),
-      1 - 2 * R.snapshotPassives.ridge.perArcher[key], 'dead ally stops protection');
+      1 - R.snapshotPassives.ridge.baseline[key] - 2 * R.snapshotPassives.ridge.perArcher[key], 'dead ally stops protection');
     guards[1].owner = 'unrelated';
     near(c.snapshotBossIncomingFactor(e),
-      1 - R.snapshotPassives.ridge.perArcher[key], 'ownership isolation');
+      1 - R.snapshotPassives.ridge.baseline[key] - R.snapshotPassives.ridge.perArcher[key], 'ownership isolation');
   }
   {
     const { c, e } = arena('mine', form);
@@ -59,7 +59,7 @@ for (const form of ['normal', 'true']) {
     const { c, e } = arena('warlord', form);
     const orcs = [add(c, e, 'orc'), add(c, e, 'orc')];
     near(c.snapshotBossIncomingFactor(e),
-      1 - 2 * R.snapshotPassives.warlord.perOrc[key], 'real warband protects governor');
+      1 - R.snapshotPassives.warlord.baseline[key] - 2 * R.snapshotPassives.warlord.perOrc[key], 'real warband protects governor');
     near(c.snapshotPassiveOutgoingFactor(orcs[0]),
       1 + R.snapshotPassives.warlord.orcDamage[key], 'owned Orc attacks harder');
     orcs[0].owner = 'foreign';
@@ -67,33 +67,34 @@ for (const form of ['normal', 'true']) {
   }
   {
     const { c, e } = arena('abyss', form);
-    near(c.snapshotBossIncomingFactor(e), 1, 'no airborne invulnerability at baseline');
+    near(c.snapshotBossIncomingFactor(e), 1 - R.snapshotPassives.abyss.baseline[key], 'Aerial readiness protects from combat start');
     e.passiveAerialUntil = c.s.time + 4;
     near(c.snapshotBossIncomingFactor(e), 1 - R.snapshotPassives.abyss.reduction[key],
       'completed flight grants finite cover');
     e.passiveAerialUntil = c.s.time;
-    near(c.snapshotBossIncomingFactor(e), 1, 'flight cover expires');
+    near(c.snapshotBossIncomingFactor(e), 1 - R.snapshotPassives.abyss.baseline[key], 'flight cover expires to baseline');
   }
   {
     const { c, e } = arena('citadel', form);
     e.dressUntil = c.s.time + 5;
-    near(c.snapshotBossIncomingFactor(e), 1, 'no imaginary Crown defenders');
+    near(c.snapshotBossIncomingFactor(e), 1 - R.snapshotPassives.citadel.baseline[key], 'real baseline without imaginary Crown defenders');
     const guard = add(c, e, 'crownguard');
     near(c.snapshotBossIncomingFactor(e), 1 - R.snapshotPassives.citadel.reduction[key],
       'real living guard enables formation defense');
     guard.hp = 0;
-    near(c.snapshotBossIncomingFactor(e), 1, 'dead guard removes formation defense');
+    near(c.snapshotBossIncomingFactor(e), 1 - R.snapshotPassives.citadel.baseline[key], 'dead guard removes formation bonus');
   }
   {
     const { c, e } = arena('cindermaw', form);
     e.hp = e.maxHp * 0.5;
     const original = e.hp;
     c.snapshotPassiveRegen(1);
-    near(e.hp, original, 'no free recovery without active Ash beasts');
+    near(e.hp, original + e.maxHp * R.snapshotPassives.cindermaw.soloRegen[key], 'bounded emergency reserve works while isolated');
     const ally = add(c, e, 'ashbeast');
     ally.hp = ally.maxHp * 0.5;
     c.snapshotPassiveRegen(1);
-    near(e.hp, original + e.maxHp * R.snapshotPassives.cindermaw.bossRegen[key],
+    near(e.hp, original + e.maxHp * (R.snapshotPassives.cindermaw.soloRegen[key] +
+      R.snapshotPassives.cindermaw.bossRegen[key]),
       'owner gets meaningful capped support healing');
     near(ally.hp, ally.maxHp * (0.5 + R.snapshotPassives.cindermaw.allyRegen[key]),
       'living Ash ally gets support');
@@ -124,14 +125,14 @@ for (const form of ['normal', 'true']) {
   // defeat actual living guards rather than replacing the entire zone roster.
   for (const u of c.zone().enemies)
     if (u.roomGuard && !u.roomCaptain) u.hp = 0;
-  near(c.snapshotBossIncomingFactor(e), 1, 'Crag unprotected without a guard');
+  near(c.snapshotBossIncomingFactor(e), 1 - R.snapshotPassives.captains['supply-highlands'].baseline, 'Crag baseline without a guard');
   const guard = add(c, e, 'wolf', { roomGuard: true, summon: false });
   near(c.snapshotBossIncomingFactor(e),
-    1 - R.snapshotPassives.captains['supply-highlands'].selfReduction, 'Crag hiring protection');
+    1 - R.snapshotPassives.captains['supply-highlands'].baseline - R.snapshotPassives.captains['supply-highlands'].selfReduction, 'Crag hiring protection');
   near(c.snapshotPassiveOutgoingFactor(guard),
     1 + R.snapshotPassives.captains['supply-highlands'].guardDamage, 'hired soldier offense');
   guard.hp = 0;
-  near(c.snapshotBossIncomingFactor(e), 1, 'hired guard defeat removes protection');
+  near(c.snapshotBossIncomingFactor(e), 1 - R.snapshotPassives.captains['supply-highlands'].baseline, 'hired guard defeat removes earned protection');
 }
 {
   const c = new C('normal', 'paladin', () => 0.9);
