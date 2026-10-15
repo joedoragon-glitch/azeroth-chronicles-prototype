@@ -1072,35 +1072,35 @@
           if (f.actor === 'enemy' && f.resource !== 'mana') {
             PrototypeCombatVisuals.enemySupportHeal(ctx, screen, f);
           } else {
-          const mana = f.resource === 'mana',
-            c = mana ? '#9fcfff' : '#a9e7b0';
-          ctx.strokeStyle = c;
-          ctx.fillStyle = c;
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.ellipse(p.x, p.y + 7, 20 + grow * 13, 8 + grow * 4, 0, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.globalAlpha = a * 0.45;
-          ctx.beginPath();
-          ctx.ellipse(p.x, p.y + 7, 13 + grow * 8, 5 + grow * 2, 0, 0, Math.PI * 2);
-          ctx.stroke();
-          for (let j = 0; j < 5; j++) {
-            const angle = j * 1.26 + grow * 2.2,
-              x = p.x + Math.cos(angle) * (8 + j * 2),
-              y = p.y - 8 - grow * (12 + j * 3) + Math.sin(angle) * 3;
-            ctx.globalAlpha = a * 0.75;
+            const mana = f.resource === 'mana',
+              c = mana ? '#9fcfff' : '#a9e7b0';
+            ctx.strokeStyle = c;
+            ctx.fillStyle = c;
+            ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.arc(x, y, mana ? 1.8 : 2.1, 0, Math.PI * 2);
-            ctx.fill();
-            if (!mana && j < 3) {
-              ctx.lineWidth = 1;
+            ctx.ellipse(p.x, p.y + 7, 20 + grow * 13, 8 + grow * 4, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.globalAlpha = a * 0.45;
+            ctx.beginPath();
+            ctx.ellipse(p.x, p.y + 7, 13 + grow * 8, 5 + grow * 2, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            for (let j = 0; j < 5; j++) {
+              const angle = j * 1.26 + grow * 2.2,
+                x = p.x + Math.cos(angle) * (8 + j * 2),
+                y = p.y - 8 - grow * (12 + j * 3) + Math.sin(angle) * 3;
+              ctx.globalAlpha = a * 0.75;
               ctx.beginPath();
-              ctx.moveTo(x - 3, y);
-              ctx.lineTo(x + 3, y);
-              ctx.moveTo(x, y - 3);
-              ctx.lineTo(x, y + 3);
-              ctx.stroke();
-            }
+              ctx.arc(x, y, mana ? 1.8 : 2.1, 0, Math.PI * 2);
+              ctx.fill();
+              if (!mana && j < 3) {
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(x - 3, y);
+                ctx.lineTo(x + 3, y);
+                ctx.moveTo(x, y - 3);
+                ctx.lineTo(x, y + 3);
+                ctx.stroke();
+              }
           }
           }
         } else if (f.type === 'swing') {
