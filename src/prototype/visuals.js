@@ -10044,6 +10044,88 @@
             );
           }
           break;
+        case 'hay-rick':
+          // Straw under a simple tied thatch: harvested fields, not new buildings.
+          shade(35, 9, 0.13);
+          poly([[-29, 10], [-22, -7], [-7, -26], [12, -23], [29, -2], [32, 11]], '#b79754');
+          poly([[-21, -5], [-8, -26], [11, -22], [25, -4]], '#d3b96e');
+          for (const y of [-8, 1, 8])
+            line([[-22, y], [24, y + 2]], y === 1 ? '#8b724b' : '#e5cb82', 1.6);
+          for (const x of [-12, 2, 14])
+            line([[x, -14], [x + 6, 9]], '#a28a54', 1);
+          line([[-25, -5], [28, -3]], '#90754d', 2.5);
+          break;
+        case 'furrow-plot':
+          // A modest vegetable plot: short parallel rows with young green leaves.
+          shade(36, 10, 0.12);
+          poly([[-33, 10], [-18, -10], [24, -16], [35, 8]], '#695c3d');
+          for (const y of [-8, -1, 6]) {
+            line([[-19, y + 1], [25, y - 5]], '#a18451', 3.4);
+            for (const x of [-13, 0, 13]) {
+              oval(x, y - 3 - x * 0.09, 3.5, 2.5, '#6c9255');
+              line([[x, y], [x + 2, y - 5]], '#4f7749', 1.5);
+            }
+          }
+          break;
+        case 'pasture-sheep':
+          // Two real small livestock silhouettes; sheep are domestic, not mobs.
+          shade(38, 8, 0.11);
+          for (const [x, y, size] of [[-13, 2, 1], [18, -2, 0.78]]) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(size, size);
+            for (const dx of [-9, 8]) {
+              line([[dx, 4], [dx - 1, 13]], '#6a6254', 3.2);
+              oval(dx - 1, 13, 2.4, 1.5, '#524e47');
+            }
+            oval(-1, -3, 16, 11, '#d9d4bd');
+            for (const [dx, dy] of [[-12, -5], [-5, -11], [6, -9], [12, -3]]) 
+              oval(dx, dy, 5, 4, '#e8e2c9');
+            oval(17, -8, 7, 6, '#847a67');
+            poly([[13, -11], [11, -17], [18, -13]], '#a39b83');
+            oval(20, -9, 1.6, 1.5, '#252927');
+            ctx.restore();
+          }
+          break;
+        case 'poultry-yard':
+          // Scattered hens and feed make a tiny farmyard immediately legible.
+          for (const [x, y, scale] of [[-19, 4, 1], [11, 8, 0.86], [19, -10, 0.78]]) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+            oval(-2, 1, 9, 6, '#c6ab7f');
+            poly([[-9, -1], [-14, -10], [-9, -8], [-5, -4]], '#a98a60');
+            oval(6, -5, 4.5, 4.2, '#e2c9a1');
+            poly([[9, -4], [16, -2], [10, 1]], '#d6a85a');
+            poly([[4, -10], [6, -14], [9, -10]], '#ad5540');
+            oval(8, -6, 1.2, 1.2, '#31342a');
+            for (const dx of [-5, 2])
+              line([[dx, 5], [dx - 1, 11]], '#ac8150', 1.4);
+            ctx.restore();
+          }
+          for (const [x, y] of [[-5, -7], [1, 14], [-26, 13]])
+            oval(x, y, 2.3, 1.3, '#b7a16a');
+          break;
+        case 'feed-trough':
+          // Feeding and watering imply routine husbandry, not just a fence.
+          shade(31, 8, 0.1);
+          poly([[-29, -7], [28, -7], [22, 13], [-21, 13]], '#82654a');
+          poly([[-25, -9], [25, -9], [20, -3], [-20, -3]], '#b2986a');
+          rect(-21, -4, 42, 10, '#71826b');
+          for (const x of [-15, -4, 8, 17]) line([[x, -3], [x + 5, -9]], '#9cb081', 2);
+          for (const x of [-22, 18]) rect(x, 10, 5, 8, '#6e553d');
+          break;
+        case 'farm-tool-rack':
+          for (const x of [-24, 24])
+            line([[x, 14], [x, -29]], '#896a4c', 3.5);
+          line([[-27, -23], [27, -23]], '#ac8657', 4);
+          for (const x of [-16, 2, 17])
+            line([[x, -23], [x, 13]], '#b29a68', 2.4);
+          for (const dx of [-4, 0, 4])
+            line([[-16 + dx, -12], [-16 + dx, -22]], '#727a69', 1.8);
+          poly([[-2, 1], [5, -1], [8, 11], [-6, 11]], '#9eaca6');
+          line([[13, 14], [22, 14]], '#b0a886', 2);
+          break;
         case 'garden':
           for (const x of [-14, -7, 0, 7, 14]) {
             line(
