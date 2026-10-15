@@ -9497,6 +9497,53 @@
             oval(x, y, r, r * 0.65, '#5d7662');
           for (const x of [-5, 5]) glint(x, -4, '#b7c69d', 1);
           break;
+        case 'battlefield-poppies':
+          // Red corn poppies recolonize disturbed but cooled old battlefield soil.
+          oval(0, 10, 28, 8, '#586c4c');
+          for (const [x, y] of [[-19, -1], [-11, -10], [-1, 0], [7, -13], [17, -5], [23, 3], [-25, 5], [1, -19]]) {
+            line([[x, 9], [x, y]], '#547b4a', 1.8);
+            for (const dx of [-3.5, 3.5]) oval(x + dx, y - 2, 3.9, 3.2, '#c92e39');
+            oval(x, y - 5.5, 3.5, 3.5, '#e84a4b');
+            oval(x, y - 2, 1.6, 1.6, '#34352c');
+          }
+          break;
+        case 'pioneer-grasses':
+          oval(0, 9, 25, 7, '#566a4d');
+          for (const x of [-20, -15, -9, -2, 5, 12, 19]) {
+            line([[x, 9], [x + (x % 3) * 2 - 3, -11 - (x % 4) * 2]], '#7e9361', 2);
+            line([[x, 8], [x + 5, -1]], '#9baa70', 1.2);
+          }
+          break;
+        case 'pioneer-brush':
+          for (const [x, y, radius] of [[-15, 2, 11], [0, -8, 14], [17, 4, 11]])
+            oval(x, y, radius, 7, '#658355');
+          for (const x of [-16, 3, 17]) {
+            line([[x, 9], [x + 2, -13]], '#6b664d', 2);
+            oval(x + 2, -9, 6, 4, '#84966a');
+          }
+          break;
+        case 'regrowth-birch':
+          // Skinny pale-trunk pioneer tree; not a mature, uniform forest canopy.
+          line([[0, 14], [2, -53]], '#c8c5b1', 6);
+          for (const [y, offset] of [[-15, -22], [-31, 20], [-43, -14]])
+            line([[1, y], [offset, y - 15]], '#aaa89a', 3);
+          for (const [x, y, rx] of [[-17, -36, 15], [15, -45, 15], [0, -56, 18]])
+            oval(x, y, rx, 10, '#78945d');
+          for (const y of [-9, -24, -39]) line([[-1, y], [4, y - 2]], '#62675b', 1.3);
+          break;
+        case 'regrowth-willow':
+          line([[0, 15], [-1, -45]], '#8f836b', 7);
+          for (const [x, y, rx] of [[-18, -39, 18], [17, -39, 17], [0, -57, 20]])
+            oval(x, y, rx, 11, '#6f8865');
+          for (const x of [-25, -12, 1, 14, 26])
+            line([[x, -35], [x + (x < 0 ? -4 : 4), -7]], '#80996d', 1.7);
+          break;
+        case 'mossy-basalt':
+          poly([[-24, 9], [-21, -7], [-3, -18], [17, -12], [27, 8]], '#505451');
+          poly([[-21, -7], [-3, -18], [9, -3], [-24, 9]], '#747970');
+          for (const [x, y, rx] of [[-13, -7, 7], [3, -10, 6], [14, 1, 8]])
+            oval(x, y, rx, 3.1, '#658365');
+          break;
         case 'wildflowers':
           for (const [x, c] of [
             [-8, '#d8b47a'],
@@ -9858,6 +9905,67 @@
               1,
             );
           }
+          break;
+        case 'geothermal-heat-intake':
+          // Insulated channel intake over safe rock, not a mineable lava prop.
+          rect(-30, 4, 60, 14, '#55545a');
+          rect(-22, -11, 44, 18, '#777e7e');
+          for (const x of [-18, -7, 5, 16]) rect(x - 2, -9, 5, 10, '#c39f66');
+          rect(-8, -37, 16, 28, '#6b7277');
+          line([[-18, -18], [16, -18]], '#c0a470', 4);
+          glint(0, -15, '#eb9b52', 2.4);
+          break;
+        case 'thermal-flue':
+          rect(-26, 2, 52, 13, '#63646b');
+          rect(-23, -7, 46, 12, '#8b8e8a');
+          for (const x of [-19, -2, 16]) {
+            rect(x - 4, -17, 8, 11, '#7b7a73');
+            oval(x, -19, 4, 2.3, '#a9b2b4');
+          }
+          line([[-27, 7], [27, 7]], '#d1a26e', 3.5);
+          break;
+        case 'crown-glass-kiln':
+          rect(-31, -19, 62, 34, '#78757a');
+          poly([[-35, -20], [-19, -38], [21, -38], [35, -20]], '#6a6065');
+          rect(-18, -10, 36, 19, '#4f4145');
+          poly([[-15, 6], [-10, -6], [10, -6], [15, 6]], '#c97940');
+          line([[-12, -6], [12, -6]], '#f4c16f', 2.5);
+          rect(19, -46, 11, 27, '#767a7a');
+          for (const [x, y] of [[-25, 10], [23, 12]]) oval(x, y, 5, 3, '#b9c6ba');
+          break;
+        case 'crown-ceramic-kiln':
+          oval(0, 9, 31, 11, '#70665c');
+          poly([[-28, 8], [-23, -18], [-12, -32], [14, -32], [26, -16], [29, 7]], '#8e7770');
+          poly([[-19, 7], [-13, -15], [13, -15], [19, 7]], '#533e39');
+          poly([[-13, 5], [-6, -10], [6, -10], [14, 5]], '#bb7547');
+          for (const x of [-27, 27]) oval(x, 7, 5, 4, '#bba489');
+          glint(0, -2, '#efb76d', 2);
+          break;
+        case 'heat-distribution-post':
+          rect(-20, 7, 40, 9, '#777c7c');
+          for (const x of [-15, 15]) line([[x, 8], [x, -29]], '#8d9694', 4);
+          rect(-25, -33, 50, 9, '#6b7174');
+          for (const x of [-17, 0, 17]) rect(x - 4, -43, 8, 12, '#aa8861');
+          line([[-26, 11], [26, 11]], '#d4a56c', 2);
+          break;
+        case 'heated-drying-shed':
+          for (const x of [-27, 27]) line([[x, 14], [x, -27]], '#77675a', 4);
+          poly([[-33, -30], [-16, -44], [18, -44], [34, -30]], '#87847d');
+          line([[-30, -23], [30, -23]], '#b39e79', 3);
+          for (const x of [-19, -5, 9, 22]) {
+            line([[x, -23], [x, 8]], '#b99b74', 1.5);
+            rect(x - 5, -4, 10, 9, '#9b7959');
+          }
+          rect(-29, 11, 58, 5, '#66666b');
+          break;
+        case 'heated-washhouse':
+          rect(-29, -11, 58, 26, '#89817b');
+          oval(0, -6, 25, 12, '#a8c3bc');
+          oval(0, -7, 19, 7, '#5b898b');
+          for (const x of [-17, 17]) line([[x, 5], [x, -24]], '#847160', 3);
+          line([[-20, -25], [20, -25]], '#bca985', 3);
+          rect(-17, -23, 12, 11, '#d3c5ad');
+          rect(4, -23, 13, 11, '#9bb4ad');
           break;
         case 'fumarole':
           oval(0, 7, 13, 5, '#4d484f');
