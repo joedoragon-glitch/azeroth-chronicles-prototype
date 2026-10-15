@@ -730,6 +730,10 @@
           e.pack = z.id + '-' + (slot.group || 'guard-' + j);
           e.forcedRole = slot.role || null;
           e.mountedCrownRider = !!slot.mountedCrownRider;
+          if (e.mountedCrownRider) {
+            e.crownTroop = true;
+            e.crownAncestry = 'wolf';
+          }
           this.configureEnemy(e, j);
           z.enemies.push(e);
           continue;
@@ -738,6 +742,10 @@
         // The first four slots are original identities; do not change their
         // native species, level, strength, death state or saved position.
         e.mountedCrownRider = !!slot.mountedCrownRider;
+        if (e.mountedCrownRider) {
+          e.crownTroop = true;
+          e.crownAncestry = 'wolf';
+        }
         if (slot.role) e.forcedRole = slot.role;
         if (slot.name) e.name = slot.name;
         e.pack = z.id + '-' + (slot.group || 'guard-' + j);
@@ -1217,6 +1225,10 @@
           e.name = g.name;
           e.forcedRole = g.role;
           e.mountedCrownRider = !!g.mountedCrownRider;
+          if (e.mountedCrownRider) {
+            e.crownTroop = true;
+            e.crownAncestry = 'wolf';
+          }
           e.pack = g.pack;
           e.home = { ...p };
           if (e.hp > 0 && !e.aggro) Object.assign(e, p);
@@ -1241,6 +1253,10 @@
           );
         e.guard = true;
         e.mountedCrownRider = !!g.mountedCrownRider;
+        if (e.mountedCrownRider) {
+          e.crownTroop = true;
+          e.crownAncestry = 'wolf';
+        }
         e.pack = g.pack;
         if (g.role) e.forcedRole = g.role;
         this.configureEnemy(e, j);
@@ -3917,9 +3933,11 @@
           !!signature &&
           wantsSignature &&
           (!['scatter', 'sweep'].includes(signature.effect) || closeTargets.length > 0),
-        profile = isSignature ? signature : e.mountedCrownRider
-          ? { ...basic, name: e.ranged ? 'Crown Direwolf Archer Dash' : 'Crown Direwolf Lance Dash',
-              style: 'dash', radius: 165 } : basic,
+        profile = isSignature ? signature :
+          e.mountedCrownRider && crownDoctrineSpecies !== 'crownguard'
+            ? { ...basic, name: e.ranged ? 'Crown Direwolf Archer Dash' : 'Crown Direwolf Lance Dash',
+                style: 'dash', radius: 165 }
+            : basic,
         target =
           isSignature && closeTargets.length
             ? closeTargets.includes(threat)
