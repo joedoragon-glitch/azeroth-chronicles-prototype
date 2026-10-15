@@ -312,7 +312,9 @@
         resource: 'health', source: e.id, target: target.id, amount,
         skill, species: e.species, family: e.family,
       });
-      if (e.type === 'boss' || e.captain || e.roomCaptain)
+      // Named leaders and Ringleaders announce the skill; ordinary ranged
+      // healers retain the green recovery cue without flooding combat messages.
+      if (e.type === 'boss' || e.captain || e.roomCaptain || e.form === 'ringleader')
         this.say(e.name + ' uses ' + skill + ' on ' + target.name + '.');
       return true;
     }
