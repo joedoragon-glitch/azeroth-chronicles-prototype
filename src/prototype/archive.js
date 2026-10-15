@@ -153,7 +153,17 @@
             game.skillCooldown
               ? game.skillCooldown(slot, charged)
               : R.balance.skills.cooldowns[slot],
-          shape = R.chargedSkills.second[game.hero.class],
+          shapeBase = R.chargedSkills.second[game.hero.class],
+          milestones = Math.floor(rank / 2),
+          shape = {
+            ...shapeBase,
+            ...(shapeBase.range ? { range: shapeBase.range + 5 * milestones } : {}),
+            ...(shapeBase.radius ? { radius: shapeBase.radius + 5 * milestones } : {}),
+            ...(shapeBase.halfWidth
+              ? { halfWidth: shapeBase.halfWidth + 2 * milestones }
+              : {}),
+            ...(shapeBase.slow ? { slow: shapeBase.slow + 0.25 * milestones } : {}),
+          },
           effects = {
             1: 'Three normal strikes on the same foe build a finishing splash. Changing foes or waiting too long breaks the sequence; charging delivers a stronger strike.',
             2:
@@ -182,7 +192,7 @@
                 R.basicAttackCombo.resetSeconds +
                 ' seconds. Charged damage: ×' +
                 R.chargedSkills.basicDamageMultiplier +
-                ' before defenses.'
+                ' before defenses. Damage increases by 15% of its Rank-1 value with every skill rank.'
               : '') +
             (slot === 2
               ? '\nCharged ' +
@@ -190,7 +200,8 @@
                 ': ' +
                 (shape.range ? 'reach ' + shape.range : 'radius ' + shape.radius) +
                 ' paces.' +
-                (shape.slow ? ' Slow lasts ' + shape.slow + ' seconds.' : '')
+                (shape.slow ? ' Slow lasts ' + shape.slow + ' seconds.' : '') +
+                ' Damage improves with every rank; reach and control improve at ranks 2, 4, 6 and 8.'
               : '') +
             (slot <= 3
               ? '\nCharged recovery: ' +
