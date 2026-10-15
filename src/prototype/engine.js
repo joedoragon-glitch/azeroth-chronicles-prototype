@@ -2127,6 +2127,7 @@
               : dungeonIds.includes(zone)
                 ? { x: 160, y: 240 }
                 : { x: D.towns[i][0], y: D.towns[i][1] });
+      this.clearPartyCharges();
       this.tacticalClearThreat(); // Transient observations never survive zone travel.
       this.tacticalClearBurst();
       this.tacticalClearRogueRegroup();
@@ -2561,6 +2562,7 @@
     }
 
     die() {
+      this.clearPartyCharges();
       for (const z of Object.values(this.s.zones)) this.clearVeraRepairs(z);
       for (const z of Object.values(this.s.zones))
         z.props = z.props.filter((p) => !p.garunTemporary && !p.garunPreview);
@@ -3073,6 +3075,7 @@
         this.s.challenge?.gameOver
       )
         return;
+      this.advancePartyChargeClock(dt);
       dt = Math.min(dt, 0.1);
       this.s.time += dt;
       this.s.mercyTime = Math.max(0, (this.s.mercyTime || 0) - dt);
@@ -3110,16 +3113,18 @@
         )
           unit.deathRollHeld = false;
       }
-      h.cd = h.cd.map((c) => Math.max(0, c - dt));
+      const heroRecovery = this.cooldownRecoveryElapsed(h, dt);
+      h.cd = h.cd.map((c) => Math.max(0, c - heroRecovery));
       for (const f of ['immune', 'haste', 'potionCd', 'slow']) h[f] = Math.max(0, h[f] - dt);
       if (h.rogueSlow > 0) {
         h.rogueSlow = Math.max(0, h.rogueSlow - dt);
         if (!h.rogueSlow) delete h.rogueSlow;
       }
       for (const u of this.s.party) {
-        if (!u.keeperHeld) u.healCd = Math.max(0, (u.healCd || 0) - dt);
-        u.manaCd = Math.max(0, (u.manaCd || 0) - dt);
-        u.survivalCd = Math.max(0, (u.survivalCd || 0) - dt);
+        const recovery = this.cooldownRecoveryElapsed(u, dt);
+        if (!u.keeperHeld) u.healCd = Math.max(0, (u.healCd || 0) - recovery);
+        u.manaCd = Math.max(0, (u.manaCd || 0) - recovery);
+        u.survivalCd = Math.max(0, (u.survivalCd || 0) - recovery);
         u.immune = Math.max(0, (u.immune || 0) - dt);
       }
       this.syncCompanionLevelStats();
@@ -3220,6 +3225,15 @@
       this.updatePacks(dt);
       this.updateGuardianReinforcements(dt);
       this.updateTraps(dt);
+      if (
+        h !== this.hero ||
+        z !== this.zone() ||
+        this.s.challenge.pending ||
+        this.s.challenge.gameOver
+      )
+        return;
+      // Friendly preparation resolves only after every damage phase above.
+      this.resolveCompanionCharges();
       if (
         h !== this.hero ||
         z !== this.zone() ||
@@ -4863,13 +4877,31 @@
       const z = this.zone(),
         deaths = this.s.statistics.deaths;
       for (const e of [...z.enemies]) {
+        const recovery = this.cooldownRecoveryElapsed(e, dt, true);
+        // Read remaining Slow before consuming it, including the final partial
+        // frame. Apply readiness debt once even on scripted/early-continue paths.
+        if (e.hp > 0) {
+          const nextRogue = this._tacticalRogueNext?.get(e.id);
+          if (recovery < dt && nextRogue > this.s.time - dt)
+            this._tacticalRogueNext.set(e.id, this.slowCooldownReadyAt(e, nextRogue, dt, true));
+          if (recovery < dt)
+            for (const key of [
+              'royalPrerogativeReadyAt',
+              'passiveRepairReadyAt',
+              'passiveVeteranReadyAt',
+              'ledgerNextAt',
+              'ashNextAt',
+            ])
+              if (e[key] > this.s.time - dt) e[key] = this.slowCooldownReadyAt(e, e[key], dt, true);
+          if (e.slow > 0) e.slow = Math.max(0, e.slow - dt);
+        }
         // Advance existing restorative pulses even if a boss is holding a
         // board, scripted movement or other early-continuation state.
         if (e.hp > 0) {
           // Uninvolved actors must keep their original state shape and
           // deterministic non-healer simulation: don't create idle cooldown
           // fields for every monster during each ordinary combat tick.
-          if ((e.supportHealCd || 0) > 0) e.supportHealCd = Math.max(0, e.supportHealCd - dt);
+          if ((e.supportHealCd || 0) > 0) e.supportHealCd = Math.max(0, e.supportHealCd - recovery);
           if (e.supportHeal) this.advanceEnemySupportHeal(e, dt);
         } else if (e.supportHeal) delete e.supportHeal;
         if (e.hp <= 0) {
@@ -4924,7 +4956,7 @@
           this.disengage(e, dt);
           continue;
         }
-        e.slow = Math.max(0, (e.slow || 0) - dt);
+        e.slow = Math.max(0, e.slow || 0);
         if (!e.aggro && !e.eliteNightBonus) {
           const m = this.multipliers(),
             ratio = e.hp / e.maxHp;
@@ -4932,16 +4964,16 @@
           e.hp = e.maxHp * ratio;
           e.damage = e.baseDamage * m.damage;
         }
-        e.cd = Math.max(0, e.cd - dt);
-        e.specialCd = Math.max(0, (e.specialCd || 0) - dt);
-        e.summonCd = Math.max(0, (e.summonCd || 0) - dt);
+        e.cd = Math.max(0, e.cd - recovery);
+        e.specialCd = Math.max(0, (e.specialCd || 0) - recovery);
+        e.summonCd = Math.max(0, (e.summonCd || 0) - recovery);
         if (e.family === 'crypt' && e.type === 'boss') {
           e.anastylosis = Math.max(0, (e.anastylosis || 0) - dt);
-          e.anastylosisCd = Math.max(0, (e.anastylosisCd || 0) - dt);
+          e.anastylosisCd = Math.max(0, (e.anastylosisCd || 0) - recovery);
         }
         if (e.type === 'boss' && e.family === 'archive')
-          e.sabotageCd = Math.max(0, (e.sabotageCd || 0) - dt);
-        e.healCd = Math.max(0, (e.healCd || 0) - dt);
+          e.sabotageCd = Math.max(0, (e.sabotageCd || 0) - recovery);
+        e.healCd = Math.max(0, (e.healCd || 0) - recovery);
         e.pursuitBurst = Math.max(0, (e.pursuitBurst || 0) - dt);
         const openBefore = e.open || 0;
         e.open = Math.max(0, openBefore - dt);
@@ -4984,7 +5016,7 @@
         )
           for (const victim of this.combatTargets()) this.ashMovementFactor(victim);
         if (e.fieldCaptain && e.captainPhase && e.aggro && e.hp > 0) {
-          e.captainOvertimeCd = Math.max(0, (e.captainOvertimeCd ?? 12) - dt);
+          e.captainOvertimeCd = Math.max(0, (e.captainOvertimeCd ?? 12) - recovery);
           if (e.captainOvertimeCd === 0) {
             this.captainOvertimeRecruit(e);
             e.captainOvertimeCd = 12;
@@ -5048,7 +5080,7 @@
             continue;
           }
         }
-        const cinderAdvanced = this.updateCinderRegularState(e, dt);
+        const cinderAdvanced = this.updateCinderRegularState(e, dt, recovery);
         if (this.s.statistics.deaths !== deaths) return;
         if (cinderAdvanced) continue;
         if (this.updateCinderResponse(e, dt)) continue;

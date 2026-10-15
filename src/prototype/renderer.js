@@ -686,6 +686,20 @@
             ctx.strokeRect(left - 0.5, cy - 0.5, w + 1, 4);
           }
         }
+      } else if (e.renderKind === 'ally') {
+        const preparing = game._companionCharges?.get(e.id);
+        if (preparing) {
+          const fraction = Math.max(0, Math.min(1, game.partyChargeProgress(preparing.unit)));
+          const cy = y - 9;
+          ctx.fillStyle = '#07100ddd';
+          ctx.fillRect(left - 2, cy - 2, w + 4, 7);
+          ctx.fillStyle = '#36413b';
+          ctx.fillRect(left, cy, w, 3);
+          ctx.fillStyle = e.type === 'archer' ? '#cfe59a' : '#f6d77a';
+          ctx.fillRect(left, cy, w * fraction, 3);
+          ctx.fillStyle = '#ffffffaa';
+          ctx.fillRect(left, cy, w * fraction, 1);
+        }
       }
       ctx.fillStyle = '#0c1a19dd';
       ctx.fillRect(left - 2, y - 2, w + 4, 8);
@@ -1068,6 +1082,8 @@
           ctx.moveTo(p.x - 8 - grow * 5, p.y - 9);
           ctx.lineTo(p.x + 9 + grow * 4, p.y + 6);
           ctx.stroke();
+        } else if (f.type === 'chargeInterrupted') {
+          PrototypeCombatVisuals.chargeInterrupted?.(ctx, screen, f);
         } else if (f.type === 'heal') {
           if (f.actor === 'enemy' && f.resource !== 'mana') {
             PrototypeCombatVisuals.enemySupportHeal?.(ctx, screen, f);

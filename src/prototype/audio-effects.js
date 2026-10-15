@@ -303,6 +303,12 @@
           this.finaleUntil = now + 12;
           this.key = null;
         }
+        if (kind === 'chargeInterrupted') {
+          if (!this.allowSfx('chargeInterrupted', now, 0.08)) return;
+          this.sweep(74, 46, now, 0.12, 0.025, 'triangle');
+          this.noiseBurst(now, 0.045, 0.012, 'highpass', 1500, 0.6);
+          return;
+        }
         if (kind === 'footstep' && !this.allowSfx('footstep', now, 0.16)) return;
         if (this.playSoundEvent('effect.' + kind, e)) return;
         if (kind === 'heroSteelImpact') {

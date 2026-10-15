@@ -4833,6 +4833,10 @@
   const resourceMode = Object.freeze({ manaEnabled: false });
   const cooldownBalance = Object.freeze({
     reductionPerTalentRank: 0.04,
+    // Hostile slows hinder hero/companion casting more than sustained Mage frost
+    // hinders enemy skills; both use the same temporary recovery mechanic.
+    slowRecoveryMultiplier: 0.65,
+    enemySlowRecoveryMultiplier: 0.85,
     // Charged attacks are repeatable without MP; preserve a meaningful burst/heal interval.
     chargedSeconds: Object.freeze({ 1: 3, 2: 6, 3: 20 }),
   });
@@ -4945,6 +4949,9 @@
   const chargedSkills = {
     holdSeconds: 0.65,
     tapSeconds: 0.2,
+    // Accumulate actual post-mitigation HP loss only during the fixed hold.
+    // A strong hit or several small hits can interrupt, but grazing damage cannot.
+    interrupt: { hpFraction: 0.07, minimumHp: 6, recoverySeconds: 0.5 },
     basicDamageMultiplier: 3,
     manaFractions: { 1: 0.2, 2: 0.3, 3: 0.35 },
     third: { effect: 'party-heal' },

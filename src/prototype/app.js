@@ -31,6 +31,7 @@
     focused = true,
     paused = false,
     charge = null,
+    chargeClockGame = null,
     gateDismissed = false,
     criticalNotices = {
       game: null,
@@ -423,6 +424,7 @@
     $('stick').style.transform = '';
   }
   function clearInput() {
+    syncPartyChargeClock();
     if (typeof Sprint !== 'undefined') Sprint.release();
     cancelCharge();
     cancelTargetPress();
@@ -1717,9 +1719,34 @@
   function chargeHealNeeded() {
     return [game.hero, ...game.activeLivingParty()].some((u) => u.hp > 0 && u.hp < u.maxHp);
   }
+  // Active wall time is shared with companion casts. It is independent of the
+  // movement/AI dt cap, freezes in menus/background/pause, and never enters saves.
+  function syncPartyChargeClock() {
+    if (!game) return;
+    if (chargeClockGame !== game) {
+      chargeClockGame?.partyChargeNow();
+      chargeClockGame?.clearPartyCharges();
+      const owner = game;
+      let value = owner.partyChargeNow(),
+        stamp = performance.now(),
+        running = activePlay();
+      owner.setPartyChargeClock(() => {
+        const next = performance.now(),
+          active = game === owner && activePlay();
+        if (running && active) value += Math.max(0, next - stamp) / 1000;
+        stamp = next;
+        running = active;
+        return value;
+      });
+      chargeClockGame = owner;
+    }
+    game.partyChargeNow();
+  }
   function startChargeClock() {
     if (!charge || charge.started !== null) return false;
-    charge.started = performance.now();
+    syncPartyChargeClock();
+    if (!game.beginPartyCharge(game.hero, charge.slot)) return false;
+    charge.started = game.partyChargeState(game.hero).started;
     // Record which protected encounters were active at the instant charging began.
     charge.encountersAtStart = game.chargedEncounterSnapshot();
     if (charge.slot === 1 || charge.slot === 2)
@@ -1727,13 +1754,29 @@
     return true;
   }
   function syncChargeReady() {
-    if (!charge || charge.started !== null || !activePlay()) return false;
-    if (game.hero.cd[charge.slot - 1] <= 0) return startChargeClock();
+    syncPartyChargeClock();
+    if (!charge) return false;
+    if (
+      charge.unit !== game.hero ||
+      charge.zone !== game.zoneId ||
+      game.hero.hp <= 0 ||
+      game.hero.deathRollHeld ||
+      game.hero.keeperHeld ||
+      game._tacticalScatter?.has('hero') ||
+      (charge.started !== null && !game.partyChargeState(game.hero))
+    ) {
+      cancelCharge();
+      return false;
+    }
+    if (charge.started !== null || !activePlay()) return false;
+    if (game.hero.cd[charge.slot - 1] <= 0 && game.partyChargeRecovery(game.hero) <= 0)
+      return startChargeClock();
     return false;
   }
   function chargePresentation() {
     if (!charge) return null;
     syncChargeReady();
+    if (!charge) return null;
     const rank = game.hero.skills[charge.slot - 1],
       cost = game.skillManaCost(charge.slot, rank, true),
       enoughMana = game.hero.mp >= cost,
@@ -1743,6 +1786,20 @@
           : game.hero.class === 'ranger'
             ? '#cfe59a'
             : '#f6d77a';
+    if (charge.started !== null && game.partyChargeState(game.hero)?.interrupted)
+      return {
+        slot: charge.slot,
+        state: 'interrupted',
+        elapsed: Math.max(0, game.partyChargeNow() - charge.started),
+        progress: 0,
+        ready: false,
+        waiting: false,
+        cooldown: 0,
+        cost,
+        enoughMana,
+        targetId: charge.targetId ?? null,
+        color,
+      };
     if (charge.started === null)
       return {
         slot: charge.slot,
@@ -1751,13 +1808,13 @@
         progress: 0,
         ready: false,
         waiting: true,
-        cooldown: game.hero.cd[charge.slot - 1],
+        cooldown: Math.max(game.hero.cd[charge.slot - 1], game.partyChargeRecovery(game.hero)),
         cost,
         enoughMana,
         targetId: charge.targetId ?? null,
         color,
       };
-    const elapsed = Math.max(0, (performance.now() - charge.started) / 1000),
+    const elapsed = Math.max(0, game.partyChargeNow() - charge.started),
       progress = Math.min(1, elapsed / chargeSeconds());
     if (progress < 1)
       return {
@@ -1840,8 +1897,20 @@
     )
       return false;
     if (charge) cancelCharge();
+    syncPartyChargeClock();
     const queued = game.hero.cd[slot - 1] > 0;
-    charge = { slot, source, pointerId, queued, started: null, targetId: null };
+    charge = {
+      slot,
+      source,
+      pointerId,
+      queued,
+      started: null,
+      targetId: null,
+      campaign: game,
+      unit: game.hero,
+      zone: game.zoneId,
+      pressedAt: game.partyChargeNow(),
+    };
     if (!queued) startChargeClock();
     updateHUD();
     return true;
@@ -1881,20 +1950,30 @@
   function releaseCharge(slot, source) {
     if (!charge || charge.slot !== slot || charge.source !== source) return false;
     syncChargeReady();
+    if (!charge) return false;
     if (charge.started === null) {
-      const remaining = game.hero.cd[slot - 1];
-      charge = null;
+      const quickTap =
+          !charge.queued && game.partyChargeNow() - charge.pressedAt < chargeTapSeconds(),
+        remaining = Math.max(game.hero.cd[slot - 1], game.partyChargeRecovery(game.hero));
+      cancelCharge();
+      if (quickTap) {
+        const cast = activePlay() && game.cast(slot, undefined, false);
+        if (!cast && activePlay()) chargeFailureStatus(slot, false);
+        updateHUD();
+        return cast;
+      }
       status('Skill ' + slot + ' · ' + cooldownText(remaining) + 's.');
       updateHUD();
       return false;
     }
-    const held = (performance.now() - charge.started) / 1000,
+    const held = game.partyChargeNow() - charge.started,
+      interrupted = !!game.partyChargeState(game.hero)?.interrupted,
       wasQueued = charge.queued,
       targetId = charge.targetId,
       encountersAtStart = charge.encountersAtStart;
     if (held < chargeSeconds()) {
       const quickTap = !wasQueued && held < chargeTapSeconds();
-      charge = null;
+      cancelCharge();
       if (!quickTap) {
         updateHUD();
         return false;
@@ -1905,15 +1984,16 @@
       return cast;
     }
     const state = chargePresentation();
-    if (!state.ready) {
-      charge = null;
-      chargeStateStatus(state);
+    if (interrupted || !state?.ready) {
+      cancelCharge();
+      if (interrupted) status('Charged skill interrupted by damage.');
+      else chargeStateStatus(state);
       updateHUD();
       return false;
     }
     // The charge is still released manually; only the aim is resolved now.
     const releaseTarget = slot === 1 || slot === 2 ? chargeTarget(slot, targetId) : null;
-    charge = null;
+    cancelCharge();
     const cast =
       activePlay() &&
       game.cast(
@@ -1928,6 +2008,7 @@
   }
   function cancelCharge() {
     if (!charge) return;
+    charge.campaign.clearPartyCharge(charge.unit);
     charge = null;
     if (started) updateHUD();
   }
@@ -2482,6 +2563,9 @@
         ' · ' +
         activeRecovery.seconds.toFixed(1) +
         's</small>';
+    if (h.slow > 0)
+      heroMarkup +=
+        '<small class="restoring" aria-label="Slowed: movement and skill recovery reduced">Slow · movement + recovery ↓</small>';
     setMarkup('hero-stats', heroMarkup);
     if (statusUntil && performance.now() >= statusUntil) {
       $('status').textContent = '';
@@ -2585,8 +2669,8 @@
       const slot = i + 1,
         b = $('skill-' + slot),
         rank = h.skills[i],
-        charging = charge?.slot === slot,
-        cast = charging ? chargePresentation() : null;
+        cast = charge?.slot === slot ? chargePresentation() : null,
+        charging = !!cast;
       b.disabled = game.s.mode === 'developer' && slot === 1;
       b.classList.toggle('locked', !rank || b.disabled);
       b.classList.toggle('charging', charging);
@@ -2630,15 +2714,17 @@
         : charging
           ? cast.state === 'waiting'
             ? 'WAIT ' + cooldownText(cast.cooldown)
-            : cast.state === 'charging'
-              ? Math.min(99, Math.round(cast.progress * 100)) + '%'
-              : cast.state === 'need-mp'
-                ? 'NEED MP'
-                : cast.state === 'no-target'
-                  ? 'NO TARGET'
-                  : cast.state === 'no-heal'
-                    ? 'NO HEAL'
-                    : 'CHARGED'
+            : cast.state === 'interrupted'
+              ? 'BROKEN'
+              : cast.state === 'charging'
+                ? Math.min(99, Math.round(cast.progress * 100)) + '%'
+                : cast.state === 'need-mp'
+                  ? 'NEED MP'
+                  : cast.state === 'no-target'
+                    ? 'NO TARGET'
+                    : cast.state === 'no-heal'
+                      ? 'NO HEAL'
+                      : 'CHARGED'
           : !rank
             ? 'Locked'
             : h.cd[i] > 0
@@ -2690,6 +2776,7 @@
     updateCriticalNotice();
   }
   function frame(now) {
+    syncPartyChargeClock();
     if (document.hidden) {
       runtime.suspend();
       fps.suspend();
@@ -2743,6 +2830,17 @@
         };
       game.tick(dt, { x, y, speedFactor });
       syncChargeReady();
+      // A held charged skill must not secretly resume after a damaging hit.
+      // A genuine sub-0.2s tap is still an ordinary, immediate skill.
+      if (
+        charge &&
+        charge.started !== null &&
+        game.partyChargeState(game.hero)?.interrupted &&
+        game.partyChargeNow() - charge.started >= chargeTapSeconds()
+      ) {
+        cancelCharge();
+        status('Charged skill interrupted by damage.');
+      }
       if (
         game.s.mode !== 'developer' &&
         (x || y || was.order) &&
@@ -2772,6 +2870,8 @@
     renderer.update(frozen ? 0 : dt);
     for (const e of events) {
       audio.effect(e);
+      if (e.type === 'chargeInterrupted' && e.target === 'hero')
+        status('Charged skill interrupted.');
       if (e.type === 'actionFailed' && e.reason === 'crowns')
         status('Need ' + e.needed + ' crowns.');
     }

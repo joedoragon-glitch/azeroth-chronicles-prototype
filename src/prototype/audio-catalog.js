@@ -557,6 +557,7 @@
     'charged',
     'chargedArea',
     'chargedImpact',
+    'chargeInterrupted',
     'hurt',
     'hit',
     'basicComboFinisher',

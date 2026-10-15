@@ -30,10 +30,20 @@ if (healingRevision) {
       manifest.approvedOvernightCertificationRevision.files[file], file + ' retained pre-healing receipt');
   assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', healingRevision.ledger))).digest('hex'), healingRevision.ledgerSha256, 'exact healing consolidation ledger');
 }
+const timingRevision = manifest.authorizedChargeSlowConsolidationRevision;
+if (timingRevision) {
+  assert.match(timingRevision.source, /PR #310.*Slow.*PR #308/);
+  assert.deepEqual(Object.keys(timingRevision.newlyGuardedPreviousFiles).sort(), ['src/prototype/audio-catalog.js', 'src/prototype/audio-effects.js']);
+  assert.equal(timingRevision.previousAuditSha256, healingRevision.auditSha256);
+  for (const [file, expected] of Object.entries(timingRevision.previousFiles))
+    assert.equal(expected, healingRevision.files[file] || passiveRevision.files[file] ||
+      originalPlaytestRevision.files[file] || manifest.approvedOvernightCertificationRevision.files[file], file + ' retained pre-timing receipt');
+  assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', timingRevision.ledger))).digest('hex'), timingRevision.ledgerSha256, 'exact combined charge/Slow source audit');
+}
 const playtestRevision = originalPlaytestRevision && {
   ...originalPlaytestRevision,
-  auditSha256: healingRevision?.auditSha256 || passiveRevision?.auditSha256 || originalPlaytestRevision.auditSha256,
-  files: { ...originalPlaytestRevision.files, ...passiveRevision?.files, ...healingRevision?.files },
+  auditSha256: timingRevision?.auditSha256 || healingRevision?.auditSha256 || passiveRevision?.auditSha256 || originalPlaytestRevision.auditSha256,
+  files: { ...originalPlaytestRevision.files, ...passiveRevision?.files, ...healingRevision?.files, ...timingRevision?.files },
 };
 if (playtestRevision) {
   assert.match(playtestRevision.source, /PR #308/);
@@ -377,6 +387,8 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     file + ' is protected against baseline / reviewed rendering revision ' + manifest.baseline,
   );
 }
+if (timingRevision)
+  assert.equal(timingRevision.previousActiveFrameBodySha256, combinedRevision?.activeFrameBodySha256 || revision.activeFrameBodySha256, 'retained pre-timing frame receipt');
 const app = fs.readFileSync(path.resolve(__dirname, '../src/prototype/app.js'), 'utf8');
 const frame = app.slice(app.indexOf('  function frame(now)'));
 const activeBody = frame.slice(
@@ -385,8 +397,8 @@ const activeBody = frame.slice(
 );
 assert.equal(
   crypto.createHash('sha256').update(activeBody).digest('hex'),
-  combinedRevision?.activeFrameBodySha256 || revision.activeFrameBodySha256,
-  'Original simulation/input/audio/effects/save/HUD callback body remains byte-for-byte intact',
+  timingRevision?.activeFrameBodySha256 || combinedRevision?.activeFrameBodySha256 || revision.activeFrameBodySha256,
+  'Exact original or explicitly authorized combined simulation/input/audio/effects/save/HUD callback body',
 );
 console.log(
   'PASS ' +

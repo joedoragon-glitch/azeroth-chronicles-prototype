@@ -1,4 +1,4 @@
-# 15 October iPhone playtest audit — candidate dev.62, PR #308
+# 15 October iPhone playtest audit — candidate dev.63, PR #308
 
 This record covers every request visible in the playtest conversation, including the later witness clarification and Paladin sound report. PR #300 was explicitly authorized, merged at `d7c878b992b35b72e2df2f7f44afb1f16ac21ff8`, and its dev.57 Pages release was verified earlier in the session. The changes below are a separate candidate in [PR #308](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/308), branch `fix/highlands-mounted-ogre-art`. They are not merged or deployed. Leave the complete candidate for the owner's return; do not infer new merge authorization from #300.
 
@@ -13,6 +13,12 @@ The earlier dev.60 exact head `9290b9d80730ad2793158f41b6ff672ddc867046` passed 
 The owner also requested PR #306 (`c8d0ee2e7cb9a9986c60166a454efc0b44b1add8`) in this same update. The dev.62 candidate includes its eligible ranged-monster support healing, three captain/five boss restorative profiles, gradual recipient-relative healing/scaling, species-specific particles and healer links, ongoing status and transient v4 cleanup. See [the healing integration ledger](ENEMY_HEALING_CONSOLIDATION_20261015.md). Both source histories and all of #307 remain included.
 
 The render-hook conflict preserves both the healing indicator and #308 actor captions; warning floor shapes remain beneath actors/props. Historical source receipts are retained, with a separate exact combined-source receipt; the sprite-scope evidence is regenerated. Native focused healing, passive and Rogue regressions passed on the combined source. This is not full release certification. GitHub Actions remain prohibited, publication uses `[skip ci]`, and no merge or deployment is authorized.
+
+## Charged casting and Slow integration
+
+The owner added PR #310 (`695ac81d78a6788c00a7f75141370941392b0ae6`) and the latest saved Slow branch (`752158bf7048c34d77b8b9db0f3de1477a668366`, not the older closed #309 head). Both are incorporated with #306/#307 in this same dev.63 candidate. [Combined code-audit dispositions and deferred verification](CHARGE_SLOW_CONSOLIDATION_20261015.md) record the shared fixed preparation clock, post-damage release phase, actual-HP interruption/recovery and feedback, 65%/85% cooldown recovery, final-frame Slow fix and newly introduced healing/passive timers.
+
+**No tests, browser suites, builds, deployment checks or GitHub Actions were run for this batch, per the owner.** Regression source is adapted for the eventual single combined validation. Prior green evidence is historical and does not certify this expanded head. Version/cache metadata is synchronized directly; build regeneration is deferred.
 
 ## Feedback coverage
 

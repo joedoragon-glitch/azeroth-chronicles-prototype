@@ -981,6 +981,31 @@
       ctx.restore();
     }
   }
+  function chargeInterrupted(ctx, screen, f) {
+    const p = screen(f),
+      fade = Math.max(0, f.life / f.max);
+    ctx.save();
+    ctx.globalAlpha = fade * 0.85;
+    ctx.strokeStyle = '#efba91';
+    ctx.lineWidth = 2;
+    // Two broken arcs and a tiny crossed spark, never a covering rectangle.
+    for (const side of [-1, 1]) {
+      ctx.beginPath();
+      ctx.arc(
+        p.x + side * (1 - fade) * 9,
+        p.y - 20,
+        10,
+        side < 0 ? 1.9 : -1.2,
+        side < 0 ? 4.3 : 1.2,
+      );
+      ctx.stroke();
+    }
+    ctx.font = 'bold 10px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffe1c4';
+    ctx.fillText('Interrupted', p.x, p.y - 37 - (1 - fade) * 5);
+    ctx.restore();
+  }
   function queue(events, game, current = []) {
     const art =
       root.PrototypeEnemyVfxArt ||
@@ -1012,6 +1037,8 @@
         )
       )
         push(e, 'contact', 0.32, 1);
+      else if (e.type === 'chargeInterrupted' && (!e.zone || e.zone === game.zoneId))
+        push(e, 'chargeInterrupted', 0.45, 5);
       else if (e.type === 'hurt' && Number.isFinite(e.x)) push(e, 'hurt', 0.25, 2);
       else if (e.type === 'heal') {
         const target =
@@ -1272,6 +1299,7 @@
     actorCues,
     enemySupportHeal,
     enemySupportStatus,
+    chargeInterrupted,
     queue,
     contact,
     ability,

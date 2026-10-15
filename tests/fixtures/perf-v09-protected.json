@@ -680,5 +680,47 @@
     "auditSha256": "99fb7fa2c1a73d830281b6bb68257dd29949f786d4a27a429459ed01a40c3356",
     "ledger": "docs/ENEMY_HEALING_CONSOLIDATION_20261015.md",
     "ledgerSha256": "7862ab856c1ae6da29461f5633d6995096dba58b944f35b113dcc4aaab953143"
+  },
+  "authorizedChargeSlowConsolidationRevision": {
+    "source": "Owner-authorized PR #310 charged casting and latest Slow branch integration into PR #308; no tests, builds, browser checks or CI executed.",
+    "sourceHeads": [
+      "695ac81d78a6788c00a7f75141370941392b0ae6",
+      "752158bf7048c34d77b8b9db0f3de1477a668366"
+    ],
+    "previousCandidate": "bb65fdef4fb3de70a65478fb15a5f09c3ea5e3b3",
+    "previousFiles": {
+      "src/prototype/app.js": "2708c672f5cd76a6721fa416acfc0edd938c7e16c6092e3ae362815fe0755b8a",
+      "src/prototype/combat.js": "c644031964aa0f116e236df6e28d59372474ac5f7707afd9c4600652bc806b94",
+      "src/prototype/engine.js": "6cf66df5e4925a3ff661e45ba1c7039feacb6cf129aef93789c70b8fc81c997c",
+      "src/prototype/party.js": "f39fb6c7b0cb876fdd85339fca5c579bff53fe819c2ac3204d4d70a2ee925178",
+      "src/prototype/renderer.js": "da9d4bd3c615d82f5efe0ea5303dfd8d228413f39874a797e84a782cf9357f4a",
+      "src/prototype/rules.js": "83e308ea90c9e12f66ad04a376731f88827df7e258dc124caa9bd1207ef31a23",
+      "src/prototype/cindermaw-combat.js": "b201d136dca2181733ad0c5c9fb99dd4345bac0c8b2dbe0a3c0c131fa385a945",
+      "src/prototype/dreadmaw-combat.js": "ef40f2043c187b10ec80584ff66522e064fbcbbfc28a6f93e80d8bc42d23e61b",
+      "src/prototype/combat-visuals.js": "63f7f93c627f6b00378dd3ffbfa17eb7f7f9e33b0ecadbfef586d32fbded1318"
+    },
+    "files": {
+      "src/prototype/app.js": "9672fcf79184d6108edb61c68f48d159867d88b62359e2cfd01a3d1f6279df14",
+      "src/prototype/combat.js": "1904707f636a76169418e4ad993c6130d371bb4abeba86a4c983b6f79a5d90d5",
+      "src/prototype/engine.js": "ff89af400c6b67554959ee3b3cd5258fc9bf92919068a2a10772f210421a3daa",
+      "src/prototype/party.js": "5b5f22387fea6b0bbb9d9fe07d0791d1cf69801f2df6e634c3f9243d0ffa6c92",
+      "src/prototype/renderer.js": "819f0b8a75c99e3880e4b92870c155e87982bb596124b8e5df3b2b44cfaae737",
+      "src/prototype/rules.js": "efd349af303bd253346a525b9cbf79dbb0b61e2c0399db5e6e9cdf8a221d38da",
+      "src/prototype/cindermaw-combat.js": "b4cea3a71a26783747a1e9d36e69f52f11a130e8ba592a8e98ae1e85ded43b30",
+      "src/prototype/dreadmaw-combat.js": "2b241bea370acb73e2da5b2ed973d6af73b83fe1c5b5791a4c31f3c5dcfb6a50",
+      "src/prototype/combat-visuals.js": "1a3ecdc22aac049e645386f67e4a1cb19be84e63d657a08ca097c9112aadb7fc",
+      "src/prototype/audio-catalog.js": "48c14ae8bc0882fa4dd756187d29275e4d0fdcda3c026d90739cde6d374834ef",
+      "src/prototype/audio-effects.js": "38a80afa4e1ef0db6986861a809058072726ebdf8fe6a9b35c762025b0be4ba7"
+    },
+    "newlyGuardedPreviousFiles": {
+      "src/prototype/audio-catalog.js": "6ba5da234fd6604645356fc6cd038b1fe50ebee7351b6a3c6a8f32c52c284f2c",
+      "src/prototype/audio-effects.js": "eb5b047aa53480ae9c3ed580377835e7df8edca392b7420e91307cb4fe27b46e"
+    },
+    "previousAuditSha256": "99fb7fa2c1a73d830281b6bb68257dd29949f786d4a27a429459ed01a40c3356",
+    "auditSha256": "5eed2c81626659cdc085a5a4bcc360f74355e33bb7cd7ee3f701ee442c1304dd",
+    "ledger": "docs/CHARGE_SLOW_CONSOLIDATION_20261015.md",
+    "ledgerSha256": "099a3b333b309705452e0a956cc69c187588a79473edcc75988db205b56f4340",
+    "activeFrameBodySha256": "1831ce9ce3c518361bfcd53c00a55da51faa884c92ca9d6ed7d5ad9e4d22b086",
+    "previousActiveFrameBodySha256": "47dc6a866cf32ff6e9ed3de77d7af858edb8595c21d221158084ee90f0c8cbdc"
   }
 }

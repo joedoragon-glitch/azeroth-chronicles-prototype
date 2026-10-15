@@ -40,6 +40,102 @@
         );
       }
 
+      // One active-time clock for every friendly preparation. The shell injects
+      // a pause-aware monotonic clock; headless callers advance the same clock
+      // through tick(). No browser clock, actor field or timestamp is saved.
+      partyChargeNow() {
+        return this._partyChargeClock
+          ? this._partyChargeClock()
+          : (this._partyChargeTime ?? this.s.time);
+      }
+      setPartyChargeClock(clock) {
+        this._partyChargeClock = clock;
+      }
+      advancePartyChargeClock(seconds) {
+        if (!this._partyChargeClock && Number.isFinite(seconds) && seconds > 0)
+          this._partyChargeTime = this.partyChargeNow() + seconds;
+      }
+      partyChargeRecovery(unit) {
+        const remaining = Math.max(
+          0,
+          (this._partyChargeRecovery?.get(unit) || 0) - this.partyChargeNow(),
+        );
+        if (!remaining) this._partyChargeRecovery?.delete(unit);
+        return remaining;
+      }
+      partyChargeProgress(unit) {
+        const cast = this.partyChargeState(unit);
+        return cast
+          ? Math.min(
+              1,
+              Math.max(0, (this.partyChargeNow() - cast.started) / R.chargedSkills.holdSeconds),
+            )
+          : 0;
+      }
+      beginPartyCharge(unit, slot) {
+        if (!unit || unit.hp <= 0 || this.partyChargeRecovery(unit) > 0) return false;
+        if (!this._pendingPartyCharges) this._pendingPartyCharges = new Map();
+        const started = this.partyChargeNow();
+        this._pendingPartyCharges.set(unit, {
+          slot,
+          started,
+          readyAt: started + R.chargedSkills.holdSeconds,
+          zone: this.zoneId,
+          lostHp: 0,
+          interrupted: false,
+        });
+        return true;
+      }
+      partyChargeState(unit) {
+        return this._pendingPartyCharges?.get(unit) || null;
+      }
+      clearPartyCharge(unit) {
+        this._pendingPartyCharges?.delete(unit);
+        this._companionCharges?.delete(unit?.id);
+      }
+      clearPartyCharges() {
+        this._pendingPartyCharges?.clear();
+        this._companionCharges?.clear();
+        this._partyChargeRecovery?.clear();
+      }
+      recoverPartyCharge(unit) {
+        if (!this._partyChargeRecovery) this._partyChargeRecovery = new Map();
+        this._partyChargeRecovery.set(
+          unit,
+          this.partyChargeNow() + R.chargedSkills.interrupt.recoverySeconds,
+        );
+      }
+      recordPartyChargeDamage(unit, actualLostHp) {
+        const cast = this.partyChargeState(unit);
+        if (!cast || cast.interrupted || !(actualLostHp > 0)) return false;
+        // Completion wins an exact deadline tie for both actors. Damage after
+        // readiness cannot break preparation; death still clears an unreleased
+        // action before respawn/Developer immortality can revive the actor.
+        if (this.partyChargeNow() + 1e-9 >= cast.readyAt) {
+          if (unit.hp <= 0) this.clearPartyCharge(unit);
+          return false;
+        }
+        cast.lostHp += actualLostHp;
+        const rule = R.chargedSkills.interrupt,
+          threshold = Math.max(rule.minimumHp, (unit.maxHp || 1) * rule.hpFraction);
+        if (cast.lostHp < threshold && unit.hp > 0) return false;
+        cast.interrupted = true;
+        this.recoverPartyCharge(unit);
+        if (unit !== this.hero)
+          unit.skillGlobalCd = Math.max(unit.skillGlobalCd || 0, rule.recoverySeconds);
+        this.event('chargeInterrupted', {
+          zone: this.zoneId,
+          actor: unit === this.hero ? 'hero' : 'companion',
+          target: unit === this.hero ? 'hero' : unit.id,
+          slot: cast.slot,
+          damage: cast.lostHp,
+          threshold,
+          x: unit.x,
+          y: unit.y,
+        });
+        return true;
+      }
+
       // Shared tactical observations and authored damage/targeting safeguards.
       tacticalClearBurst(e = null) {
         if (!this._tacticalBurstWindow) return;
@@ -298,6 +394,28 @@
         return depleted && (pressured || cunning);
       }
 
+      // A timed Slow slows cooldown recovery without changing base cooldowns.
+      // Split a frame at Slow's expiry so cooldown timing stays frame-rate stable.
+      cooldownRecoveryElapsed(unit, dt, enemy = false) {
+        if (!Number.isFinite(dt) || dt <= 0) return 0;
+        const slow = Number.isFinite(unit?.slow) ? Math.max(0, unit.slow) : 0;
+        const multiplier = enemy
+          ? R.cooldownBalance.enemySlowRecoveryMultiplier
+          : R.cooldownBalance.slowRecoveryMultiplier;
+        return dt - Math.min(dt, slow) * (1 - multiplier);
+      }
+
+      // Absolute encounter-clock readiness deadlines need the same recovery
+      // adjustment as remaining-second timers, including when a deadline falls
+      // inside the current frame. Never extend an already-ready ability.
+      slowCooldownReadyAt(unit, readyAt, dt, enemy = false) {
+        if (!Number.isFinite(readyAt) || !Number.isFinite(dt) || dt <= 0) return readyAt;
+        const frameStart = this.s.time - dt;
+        if (readyAt <= frameStart) return readyAt;
+        const remaining = readyAt - frameStart;
+        return this.s.time + Math.max(0, remaining - this.cooldownRecoveryElapsed(unit, dt, enemy));
+      }
+
       // One contract for the shared timed Slow condition: living, vulnerable
       // targets only; repeat hits refresh duration but never shorten it.
       applySlow(unit, seconds) {
@@ -546,6 +664,7 @@
         const oldHp = u.hp,
           mitigated = alreadyMitigated ? Math.max(0, amount) : Math.max(3, amount - armor * 0.35);
         u.hp = Math.max(0, u.hp - mitigated);
+        this.recordPartyChargeDamage(u, oldHp - u.hp);
         if (u === this.hero) this.recordDeveloperDamage('incoming', mitigated);
         if (R.resourceMode.manaEnabled && u === this.hero && manaDrain > 0)
           this.drainMana(u, manaDrain);
