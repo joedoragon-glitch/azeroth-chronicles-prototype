@@ -1587,6 +1587,64 @@
           this.s.zone = oldZone;
         }
       }
+      // Sparse civil road lighting—working roads and settlement approaches,
+      // not a continuous line of torches through untouched wilderness.
+      roadsideLanternLife(z) {
+        if (z.roadsideLanternVersion === 1 ||
+            dungeonIds.includes(z.id) || this.supplyRoom(z.id) || this.sideDungeon(z.id))
+          return;
+        const i = this.regionIndex(z.id),
+          town = D.towns[i],
+          minor = D.minors[i],
+          special = {
+            vale: [[1190, 760]],
+            march: [[2120, 695], [1020, 530]],
+            highlands: [[1670, 1120], [2800, 700]],
+            frontier: [[1720, 1380], [2590, 1600], [2980, 2650]],
+            crown: [[2550, 900], [3030, 2310], [3210, 2830], [2600, 1370]],
+          }[z.id] || [],
+          anchors = [town, minor, ...special],
+          oldZone = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          z.props = z.props.filter((p) => !String(p.id || '').startsWith('public-lantern-'));
+          let index = 0;
+          const roads = z.roads?.flat() || [];
+          for (const [x, y] of anchors) {
+            if (!roads.length) break;
+            const center = roads.reduce((best, p) =>
+              !best || dist(p, { x, y }) < dist(best, { x, y }) ? p : best, null);
+            if (!center || dist(center, { x, y }) > 600) continue;
+            let found = null;
+            for (const radius of [65, 83, 100]) {
+              for (let k = 0; k < 16; k++) {
+                const a = k * Math.PI / 8,
+                  p = { x: center.x + Math.cos(a) * radius,
+                    y: center.y + Math.sin(a) * radius },
+                  shoulder = this.distanceToRoad(z, p);
+                if (shoulder < 38 || shoulder > 105 ||
+                    this.blocked(p.x, p.y, z.id, 10, true) ||
+                    z.npcs.some((n) => dist(n, p) < 83) ||
+                    z.nodes.some((n) => dist(n, p) < 72) ||
+                    z.buildings.some((b) => dist(b, p) < 105) ||
+                    z.props.some((q) => dist(q, p) < (q.r || 0) + 62) ||
+                    z.enemies.some((e) => e.hp > 0 && dist(e.home || e, p) < 90))
+                  continue;
+                found = p;
+                break;
+              }
+              if (found) break;
+            }
+            if (!found) continue;
+            z.props.push({ id: 'public-lantern-' + z.id + '-' + index++,
+              ...found, structure: 'roadside-lantern', r: 0,
+              decorative: true, publicWorks: 'maintained-road-light' });
+          }
+          z.roadsideLanternVersion = 1;
+        } finally {
+          this.s.zone = oldZone;
+        }
+      }
       frontierOccupationLayout(z) {
         if (z.id !== 'frontier' || z.frontierLayoutVersion === 4) return;
         const districts = R.frontierDistricts || [],
@@ -2179,6 +2237,7 @@
         this.crownMilitaryRoster(z);
         this.regimeHeraldry(z);
         this.recoveryAndThermalLife(z);
+        this.roadsideLanternLife(z);
       }
       spaceQuestBoard(z) {
         if (dungeonIds.includes(z.id) || z.boardPositionVersion === 2) return;
