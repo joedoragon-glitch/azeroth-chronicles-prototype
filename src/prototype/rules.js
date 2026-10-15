@@ -4772,7 +4772,7 @@
   const cooldownBalance = Object.freeze({
     reductionPerTalentRank: 0.04,
     // Charged attacks are repeatable without MP; preserve a meaningful burst/heal interval.
-    chargedSeconds: Object.freeze({ 1: 3, 2: 6, 3: 20, 4: 20 }),
+    chargedSeconds: Object.freeze({ 1: 3, 2: 6, 3: 20, 4: 20, 5: 18, 6: 12, 7: 25, 8: 40 }),
   });
   // When MP is dormant, Ash-beast ranged hits feed their ember core using real HP loss.
   const ashFeeding = Object.freeze({ healFraction: 0.15 });
@@ -4873,6 +4873,31 @@
     ranger: {
       pin: { slow: 1.25, slowStep: 0.25 },
       volley: { slow: 1.5, slowStep: 0.25 },
+    },
+  });
+  // Charged versions of advanced hero skills share the 0.65s input hold.
+  // They use the same trained rank and +15%-of-base damage growth as their
+  // normal versions; effects increase modestly at ranks 2, 4, 6 and 8.
+  const advancedCharges = Object.freeze({
+    5: {
+      paladin: { radius: 365, radiusStep: 10, damage: 3.2, weaken: true },
+      mage: { radius: 370, radiusStep: 10, damage: 3.0, slow: 5.5, slowStep: 0.25 },
+      ranger: { radius: 370, radiusStep: 10, damage: 2.9, slow: 1.25, slowStep: 0.2 },
+    },
+    6: {
+      paladin: { radius: 120, radiusStep: 5, damage: 2.4, push: 35, pushStep: 4 },
+      mage: { damage: 3.0, slow: 2.5, slowStep: 0.25 },
+      ranger: { arrows: 3, damage: 3.3, haste: 3, hasteStep: 0.2 },
+    },
+    7: {
+      paladin: { radius: 500, radiusStep: 10, damage: 7.2, weaken: true },
+      mage: { radius: 500, radiusStep: 10, damage: 7.5, slow: 6, slowStep: 0.25 },
+      ranger: { damage: 12, slow: 1.5, slowStep: 0.25 },
+    },
+    8: {
+      paladin: { radius: 500, radiusStep: 10, damage: 5.1, heal: 0.25, wardReduction: 0.25, wardDuration: 4, wardStep: 0.25 },
+      mage: { radius: 500, radiusStep: 10, damage: 5.5, fracture: 0.12, fractureStep: 0.01, fractureDuration: 4.5 },
+      ranger: { damage: 15, haste: 4, hasteStep: 0.25, heal: 0.2 },
     },
   });
   const basicAttackCombo = {
@@ -5519,6 +5544,7 @@
     rangedEnemyCombat,
     chargedSkills,
     heroTactics,
+    advancedCharges,
     basicAttackCombo,
     companionSkills,
     ordinaryMeleeScaling,
