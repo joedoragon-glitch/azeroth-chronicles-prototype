@@ -1958,11 +1958,15 @@
         }
         const quota = { highlands: 5, frontier: 10, crown: 12 }[z.id];
         const soldiers = z.enemies.filter((e) =>
-          e.type === 'mob' && e.form === 'normal' && !e.guard && !e.summon &&
-          !e.mini && !e.captain && !e.roomCaptain && !e.fieldCaptain &&
-          !e.nightOnly && !e.neutral && !e.strongholdResident &&
-          ['crownguard', 'goblin', 'orc', 'archer', 'ogre'].includes(e.species) &&
-          distance(e) < 880)
+          e.type === 'mob' && e.form === 'normal' && !e.summon &&
+          !e.captain && !e.roomCaptain && !e.fieldCaptain &&
+          !e.nightOnly && !e.neutral &&
+          // Crown soldier posts remain Crown even when assigned to a named
+          // redoubt. Do not turn local monster habitats into generic soldiery.
+          (z.id === 'crown' ? e.species === 'crownguard' :
+            !e.guard && !e.mini && !e.strongholdResident &&
+            ['crownguard', 'goblin', 'orc', 'archer', 'ogre'].includes(e.species)) &&
+          distance(e) < (z.id === 'crown' ? 1550 : 880))
           .sort((a, b) => distance(a) - distance(b) || this.idOrder(a, b))
           .slice(0, quota);
         for (const [j, e] of soldiers.entries()) {
