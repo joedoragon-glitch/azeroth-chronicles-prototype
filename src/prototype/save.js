@@ -26,6 +26,11 @@
         for (const unit of [out.hero, ...out.party]) {
           delete unit.wardUntil;
           delete unit.wardReduction;
+          // Charged Ranger Skill 4 is an in-combat rally, never a saved stat.
+          delete unit.rangerRallyUntil;
+          delete unit.rangerRallyZone;
+          delete unit.rangerRallyMovement;
+          delete unit.rangerRallyAttack;
         }
         delete out.hero.shieldStance;
         delete out.hero.shieldRank;
@@ -230,6 +235,11 @@
         for (const unit of [s.hero, ...(Array.isArray(s.party) ? s.party : [])]) {
           delete unit.wardUntil;
           delete unit.wardReduction;
+          // Charged Ranger Skill 4 is an in-combat rally, never a saved stat.
+          delete unit.rangerRallyUntil;
+          delete unit.rangerRallyZone;
+          delete unit.rangerRallyMovement;
+          delete unit.rangerRallyAttack;
         }
         if (!Number.isInteger(s.expeditionRank) || s.expeditionRank < 1 || s.expeditionRank > 6)
           throw Error('Invalid Expedition rank');
