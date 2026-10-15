@@ -4885,6 +4885,45 @@
     healUpgradeCost: 50,
     manaUpgradeCost: 40,
   };
+  // Enemy restorative support parallels the Archer's ten-second Heal without
+  // altering existing boss self-recovery, lifesteal or specialist attack slots.
+  // Profiles use authored species/family IDs, never presentation labels.
+  const enemySupportHealing = Object.freeze({
+    fraction: 0.05,
+    cooldown: rangerSupport.cooldown,
+    duration: rangerSupport.duration,
+    threshold: rangerSupport.healThreshold,
+    range: 350,
+    species: Object.freeze({
+      wolf: 'Packheart Howl',
+      goblin: 'Scrap Poultice',
+      skeleton: 'Bonebind',
+      wraith: 'Echo Mend',
+      stalker: 'Shadow Stitch',
+      mireling: 'Bog Balm',
+      reedbeast: 'Sapburst',
+      archer: 'Field Dressing',
+      crownguard: 'Crown Triage',
+      ashbeast: 'Emberheart',
+      orc: 'Warband Rally',
+      ogre: 'Stone Salve',
+    }),
+    // Named eligibility follows the canonical attack repertoire and expertise,
+    // not the generic boss/captain rank. Their authored ranged techniques and
+    // restorative roles do not require the ordinary mob e.ranged flag.
+    captains: Object.freeze({
+      'supply-vale': 'Salvage Surge', // Scornfang: tracking volley / zone control
+      'supply-march': 'Silt Pulse', // Direjaw: water and mud projection
+      'supply-crown': 'Grafting', // Dreadmaw: distributed brood care
+    }),
+    bosses: Object.freeze({
+      crypt: 'Reconstitution', // Lifebinder: bolts and estate warding
+      mire: 'Baseflow', // Mirejaw: hydrological ranged effects
+      archive: 'Rebinding', // Drowned Keeper: ranged water magic
+      ridge: 'Bailout', // Ridge Tyrant: ranged cargo/archer command
+      abyss: 'Wingman Rally', // Veyrith: aerial battlefield support
+    }),
+  });
   // Boss telegraphs stay readable, but idle gaps are short and basic attacks only interrupt sustained special pressure occasionally.
   const bossCadence = {
     specialRecoveryMultiplier: 0.25,
@@ -5584,6 +5623,7 @@
     idleWander,
     autoPotionThresholds,
     rangerSupport,
+    enemySupportHealing,
     movementBasicClasses,
     enemyProjectileMultiplier: 1.15,
     progression,

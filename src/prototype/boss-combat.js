@@ -331,6 +331,10 @@
         e.sequence = [];
         e.motion = null;
         e.rangedAim = null;
+        // Enemy support healing is encounter-transient, never an enduring
+        // restoration across leash resets, defeat, travel or save snapshots.
+        delete e.supportHeal;
+        delete e.supportHealCd;
         for (const key of [
           'board',
           'dressUntil',
@@ -382,6 +386,8 @@
       cancelEncounter(e) {
         this.clearCinderResponses(e);
         this.clearEncounterState(e);
+        for (const u of this.zone().enemies)
+          if (u.supportHeal?.source === e.id) delete u.supportHeal;
         if (e.family === 'citadel')
           for (const u of this.zone().enemies) if (u.dressPost?.owner === e.id) delete u.dressPost;
         this.s.projectiles = this.s.projectiles.filter((p) => p.sourceId !== e.id);

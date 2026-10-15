@@ -207,6 +207,170 @@
         ? { hp: 1.1 + 0.03 * n, damage: 1.15 + 0.02 * n }
         : { hp: 1, damage: 1 };
     }
+    // Authoritative enemy support healing. Only actual ranged ordinary roles,
+    // authored ranged-aligned captains and the explicitly selected bosses qualify.
+    enemyHealProfile(e) {
+      const cfg = R.enemySupportHealing;
+      if (!cfg || !e || e.neutral || e.hp <= 0) return null;
+      if (e.type === 'boss') return cfg.bosses[e.family] || null;
+      if (e.captain || e.roomCaptain) return cfg.captains[e.captainProfile] || null;
+      return e.ranged ? cfg.species[e.species] || null : null;
+    }
+    enemyHealMultiplier(e) {
+      // Mirror the damage *escalation layers* that apply to this actor, not
+      // individual attack coefficients or its absolute attack value.
+      // Population modifiers already included in baseDamage are deliberately
+      // reconstructed once for healing; e.damage/baseDamage contributes only
+      // the encounter's live/frozen nighttime or owner-inherited factor.
+      const i = Math.max(0, this.regionIndex()),
+        region =
+          e.type === 'boss' || e.nightOnly
+            ? 1
+            : e.awakenedGuard
+              ? R.awakenedGuardianScaling.damage
+              : e.summon && !e.developerSummon
+                ? R.summonScaling[i]?.damage || 1
+                : e.guard
+                  ? R.guardianScaling[i]?.damage || 1
+                  : e.fieldCaptain
+                    ? R.ordinaryMeleeScaling[i]?.damage || 1
+                    : // Ordinary ranged population scaling is deliberately
+                      // absent inside main boss dungeons and Treasury rooms.
+                      // Apply the same exclusion here, or support healing would
+                      // secretly gain a region multiplier that damage lacks.
+                      dungeonIds.includes(this.zoneId) || this.supplyRoom()
+                      ? 1
+                      : R.ordinaryRangedScaling[i]?.damage || 1;
+      let factor = region;
+      if (e.form === 'ringleader') factor *= R.ringleaderScaling.damage;
+      // TRUE boss minions have a distinct 1.25 role budget; TRUE captains
+      // already use the Ringleader's 1.50 factor above.
+      if (e.trueSummon && e.trueSummonRole === 'minion')
+        factor *= R.trueBossSummons.minionScaling.damage;
+      // Night-exclusive monster strength is separate from global nightPoints;
+      // it is already baked into baseDamage for these spawned species.
+      if (e.nightOnly) factor *= R.nightEnemyCombat[e.species]?.damage || 1;
+      if (e.type === 'boss' && e.form === 'true') {
+        const normalDamage = D.bosses.find((b) => b.id === e.family)?.damage;
+        if (normalDamage > 0) factor *= e.baseDamage / normalDamage;
+      }
+      const encounter = e.baseDamage > 0 ? e.damage / e.baseDamage : 1;
+      factor *= Number.isFinite(encounter) && encounter > 0 ? encounter : 1;
+      return Number.isFinite(factor) && factor > 0 ? factor : 1;
+    }
+    enemyHealTeammate(e, u) {
+      if (!u || u === e || u.hp <= 0 || u.neutral || u.returning || !u.aggro) return false;
+      if (e.pack && e.pack === u.pack) return true;
+      if (e.owner && (e.owner === u.id || e.owner === u.owner)) return true;
+      if (u.owner === e.id) return true;
+      if (e.roomCaptain && u.roomGuard) return true;
+      if (e.fieldCaptain && u.guard && this.zoneId === 'frontier') return true;
+      if (e.type === 'boss' && u.guard) return true;
+      if (e.guard && u.type === 'boss') return true;
+      return !e.pack && !u.pack && e.species === u.species;
+    }
+    enemySupportHeal(e) {
+      const cfg = R.enemySupportHealing,
+        skill = this.enemyHealProfile(e);
+      if (
+        !skill ||
+        this.peace ||
+        !e.aggro ||
+        e.returning ||
+        e.motion ||
+        e.telegraph ||
+        e.rangedAim ||
+        (e.supportHealCd || 0) > 0
+      )
+        return false;
+      const inReach = (u) =>
+          u.hp > 0 &&
+          u.hp < u.maxHp &&
+          !u.supportHeal &&
+          dist(e, u) <= cfg.range &&
+          (e === u || this.line(e, u)),
+        injured = this.zone()
+          .enemies.filter(
+            (u) => this.enemyHealTeammate(e, u) && inReach(u) && u.hp / u.maxHp <= cfg.threshold,
+          )
+          .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp || this.idOrder(a, b)),
+        // Do not add a duplicate self-restoration route to a boss that
+        // already has authored recovery, vitality siphon, or self-restoring mud.
+        // Those bosses can still use this skill to treat their living followers.
+        establishedBossRecovery =
+          e.type === 'boss' &&
+          (Boolean(R.bossRecovery[e.family]) ||
+            R.vitalitySiphon.bossFamilies.includes(e.family) ||
+            e.family === 'mire'),
+        selfAllowed =
+          (e.type === 'boss' && !establishedBossRecovery) ||
+          e.captain ||
+          e.roomCaptain ||
+          e.form === 'ringleader',
+        self = selfAllowed && inReach(e) && e.hp / e.maxHp <= cfg.threshold ? e : null,
+        target = injured[0] || self;
+      if (!target) return false;
+      const amount = Math.min(
+        target.maxHp - target.hp,
+        target.maxHp * cfg.fraction * this.enemyHealMultiplier(e),
+      );
+      if (!(amount > 0) || !Number.isFinite(amount)) return false;
+      target.supportHeal = {
+        source: e.id,
+        skill,
+        remaining: amount,
+        seconds: cfg.duration,
+      };
+      e.supportHealCd = cfg.cooldown;
+      e.noProgress = 0;
+      this.event('heal', {
+        x: target.x,
+        y: target.y,
+        fromX: e.x,
+        fromY: e.y,
+        actor: 'enemy',
+        resource: 'health',
+        source: e.id,
+        target: target.id,
+        amount,
+        skill,
+        species: e.species,
+        family: e.family,
+        form: e.form,
+        boss: e.type === 'boss',
+        captain: !!(e.captain || e.roomCaptain),
+        captainProfile: e.captainProfile,
+      });
+      // Named leaders and Ringleaders announce the skill; ordinary ranged
+      // healers retain the green recovery cue without flooding combat messages.
+      if (e.type === 'boss' || e.captain || e.roomCaptain || e.form === 'ringleader')
+        this.say(e.name + ' uses ' + skill + ' on ' + target.name + '.');
+      return true;
+    }
+    advanceEnemySupportHeal(e, dt) {
+      const h = e.supportHeal;
+      if (!h) return;
+      if (
+        this.peace ||
+        !e.aggro ||
+        e.returning ||
+        !Number.isFinite(h.seconds) ||
+        h.seconds <= 0 ||
+        !Number.isFinite(h.remaining) ||
+        h.remaining <= 0 ||
+        !Number.isFinite(e.hp) ||
+        e.hp <= 0
+      ) {
+        delete e.supportHeal;
+        return;
+      }
+      const step = Math.min(dt, h.seconds),
+        amount = Math.min(e.maxHp - e.hp, (h.remaining * step) / h.seconds);
+      if (amount > 0) e.hp = Math.min(e.maxHp, e.hp + amount);
+      h.remaining = Math.max(0, h.remaining - Math.max(0, amount));
+      h.seconds = Math.max(0, h.seconds - step);
+      if (h.seconds <= 0 || h.remaining <= 0 || e.hp >= e.maxHp) delete e.supportHeal;
+    }
     event(type, data = {}) {
       this.s.statistics.events.push({ time: Math.round(this.s.time), type, ...data });
       if (this.s.statistics.events.length > 400) this.s.statistics.events.shift();
@@ -4699,6 +4863,15 @@
       const z = this.zone(),
         deaths = this.s.statistics.deaths;
       for (const e of [...z.enemies]) {
+        // Advance existing restorative pulses even if a boss is holding a
+        // board, scripted movement or other early-continuation state.
+        if (e.hp > 0) {
+          // Uninvolved actors must keep their original state shape and
+          // deterministic non-healer simulation: don't create idle cooldown
+          // fields for every monster during each ordinary combat tick.
+          if ((e.supportHealCd || 0) > 0) e.supportHealCd = Math.max(0, e.supportHealCd - dt);
+          if (e.supportHeal) this.advanceEnemySupportHeal(e, dt);
+        } else if (e.supportHeal) delete e.supportHeal;
         if (e.hp <= 0) {
           if (e.respawn > 0 && !this.peace) {
             e.respawn -= dt;
@@ -4987,6 +5160,7 @@
           this.disengage(e, dt);
           continue;
         }
+        if (this.enemySupportHeal(e)) continue;
         // A short-lived rogue decision is distinct from normal aggro.
         if (this.tacticalAutoRogue(e, target)) continue;
         // A committed attack owns its warning/release clock. Regroup holds and
@@ -5308,6 +5482,8 @@
         e.rangedAim = null;
         e.hp = e.baseHp;
         e.maxHp = e.baseHp;
+        delete e.supportHeal;
+        e.supportHealCd = 0;
         e.damage = e.baseDamage;
         e.returning = 0;
         e.heroParticipated = false;

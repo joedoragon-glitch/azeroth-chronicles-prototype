@@ -19,10 +19,21 @@ if (passiveRevision) {
       manifest.approvedOvernightCertificationRevision.files[file], file + ' retained pre-consolidation receipt');
   assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', passiveRevision.ledger))).digest('hex'), passiveRevision.ledgerSha256, 'exact passive consolidation ledger');
 }
+const healingRevision = manifest.authorizedHealingConsolidationRevision;
+if (healingRevision) {
+  assert.match(healingRevision.source, /PR #306.*PR #308/);
+  assert.match(manifest.candidateEnemyHealing306Revision.source, /PR #306.*PR #300/);
+  assert.deepEqual(Object.keys(healingRevision.files).sort(), Object.keys(manifest.candidateEnemyHealing306Revision.files).sort());
+  assert.equal(healingRevision.previousAuditSha256, passiveRevision.auditSha256);
+  for (const [file, expected] of Object.entries(healingRevision.previousFiles))
+    assert.equal(expected, passiveRevision.files[file] || originalPlaytestRevision.files[file] ||
+      manifest.approvedOvernightCertificationRevision.files[file], file + ' retained pre-healing receipt');
+  assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', healingRevision.ledger))).digest('hex'), healingRevision.ledgerSha256, 'exact healing consolidation ledger');
+}
 const playtestRevision = originalPlaytestRevision && {
   ...originalPlaytestRevision,
-  auditSha256: passiveRevision?.auditSha256 || originalPlaytestRevision.auditSha256,
-  files: { ...originalPlaytestRevision.files, ...passiveRevision?.files },
+  auditSha256: healingRevision?.auditSha256 || passiveRevision?.auditSha256 || originalPlaytestRevision.auditSha256,
+  files: { ...originalPlaytestRevision.files, ...passiveRevision?.files, ...healingRevision?.files },
 };
 if (playtestRevision) {
   assert.match(playtestRevision.source, /PR #308/);

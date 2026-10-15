@@ -644,5 +644,41 @@
     "auditSha256": "690adf69f677cfa0db40a96ea55c6f9cad1a0da8acc6e47b2cd463b6af64dc49",
     "ledger": "docs/COMMUNITY_SNAPSHOT_PASSIVE_COMPLETION_20261015.md",
     "ledgerSha256": "40b2ef7f2b8dd34c96b5dedcc182fbd953e7e85049f032f60182b069ac3125df"
+  },
+  "candidateEnemyHealing306Revision": {
+    "source": "PR #306 enemy support healing after merged PR #300: authored ranged healers, transient state and localized recovery VFX; original historical source hashes retained.",
+    "files": {
+      "src/prototype/boss-combat.js": "ccd0449955f45cea563fa49ff4635648968b6b4be675711a0d95cc4277d24008",
+      "src/prototype/combat-visuals.js": "b1b0ad055817b4e13a56e23fc465ddc7b99c1521dc0bd6790331ee6ce2bfef4b",
+      "src/prototype/engine.js": "604ce9ce5b82d1a6f85b1c2f3614f87a540b21ca7f2e6d681deba403e9c855bb",
+      "src/prototype/renderer.js": "ba8b002e13ba1f3e80314a86f0c2348be99f0a89883171b9a96d375bc3c6a340",
+      "src/prototype/rules.js": "97e2c02a5d167d2e00ccceb950b633e4b948da3072214cb9d8aa56fbd9e4437f",
+      "src/prototype/save.js": "18973f51ae4587f8de8273906c7b1ad0aad130526a574e4bcafe2778750e7cbe"
+    }
+  },
+  "authorizedHealingConsolidationRevision": {
+    "source": "Owner-authorized PR #306 healing consolidation into PR #308 alongside #307 on 15 October 2026; full release validation deferred and no new GitHub Actions.",
+    "sourceHead": "c8d0ee2e7cb9a9986c60166a454efc0b44b1add8",
+    "previousCandidate": "8ce2ab193106638a7f3773fe5c7f06ab92e9c267",
+    "previousFiles": {
+      "src/prototype/boss-combat.js": "e514c6ceea300fe1f1c4daf36a4c1a241e2cbcc6acf58ad810a8a0c2c5666bef",
+      "src/prototype/combat-visuals.js": "f77774833143a585cc9d7a093fbe1b04bed3337e4ab7ac883d7fb5371489aad4",
+      "src/prototype/engine.js": "743d844d75d42a989a296c7f3f85a9729f6e13f79445ce5c059b564c88298d27",
+      "src/prototype/renderer.js": "fcd67847c8f881847d391724dfcb7ce8bd2fdca1b3d449d8c34efa579419bd1f",
+      "src/prototype/rules.js": "a20000a5293f85b477c92df8a32ab77f26616acc975a5a46e6278ead4a5a2bf2",
+      "src/prototype/save.js": "0dabefbc8662a6fec5b7b0de581c5da1d468f23d609f9831656e416fd24d508f"
+    },
+    "files": {
+      "src/prototype/boss-combat.js": "c81606b9dda3c581479dc66ef131554771499888de372ae67ed3629e76f08a11",
+      "src/prototype/combat-visuals.js": "63f7f93c627f6b00378dd3ffbfa17eb7f7f9e33b0ecadbfef586d32fbded1318",
+      "src/prototype/engine.js": "6cf66df5e4925a3ff661e45ba1c7039feacb6cf129aef93789c70b8fc81c997c",
+      "src/prototype/renderer.js": "da9d4bd3c615d82f5efe0ea5303dfd8d228413f39874a797e84a782cf9357f4a",
+      "src/prototype/rules.js": "83e308ea90c9e12f66ad04a376731f88827df7e258dc124caa9bd1207ef31a23",
+      "src/prototype/save.js": "df49e4bfcde048a7b53597119c38c510dba5fb9fc0a88438ca53462166a69263"
+    },
+    "previousAuditSha256": "690adf69f677cfa0db40a96ea55c6f9cad1a0da8acc6e47b2cd463b6af64dc49",
+    "auditSha256": "99fb7fa2c1a73d830281b6bb68257dd29949f786d4a27a429459ed01a40c3356",
+    "ledger": "docs/ENEMY_HEALING_CONSOLIDATION_20261015.md",
+    "ledgerSha256": "7862ab856c1ae6da29461f5633d6995096dba58b944f35b113dcc4aaab953143"
   }
 }

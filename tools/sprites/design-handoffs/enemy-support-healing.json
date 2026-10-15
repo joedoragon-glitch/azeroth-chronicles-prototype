@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "enemy-support-healing",
+  "name": "Species-authored enemy restorative support",
+  "nextAction": "Review and consolidate in PR #308; no raster generation requested.",
+  "context": {
+    "decisionDate": "2026-10-15",
+    "originConversation": null,
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/308",
+    "decisionSummary": "Owner requests the enemy-healing implementation from PR #306 in the same update as #307 and the iPhone playtest fixes."
+  },
+  "decisions": {
+    "proceduralDesignAcceptance": "Imported PR #306 authored recovery effects; no new aesthetic approval claimed.",
+    "spriteProductionAuthorization": "No raster production requested."
+  },
+  "reference": {
+    "sourceCommit": "c8d0ee2e7cb9a9986c60166a454efc0b44b1add8",
+    "ownerFilesAndBranches": [
+      "src/prototype/combat-visuals.js:enemySupportHeal",
+      "src/prototype/combat-visuals.js:enemySupportStatus",
+      "src/prototype/combat-visuals.js:queue",
+      "src/prototype/renderer.js:drawVisualFx"
+    ],
+    "exactEntityState": "Live eligible species/leader heal event uses source/target IDs, projected source/target coordinates, species/family/profile/form and remaining effect time. Ongoing status is limited to 32 live active recipients.",
+    "gameplayContextPaths": [
+      "tests/enemy-support-healing.test.cjs",
+      "docs/ENEMY_HEALING_CONSOLIDATION_20261015.md"
+    ],
+    "traitsToPreserve": [
+      "Small species/material-specific rising particles, brief healer-to-recipient link and ongoing progress indicator.",
+      "Preserve the imported bone/water/metal/aerial/growth/spectral/ember/military/earth distinctions and source/recipient anchors.",
+      "Healing status and cast captions coexist; warning floor geometry remains below actors and scenery.",
+      "No damage geometry, new sprite identity, resurrection, simulation or save mutation belongs to the visual owner.",
+      "Future animation must retain finite event lifetime and bounded ongoing indicators; no new full-screen effect."
+    ]
+  },
+  "scope": {
+    "proceduralOwnersAndReasons": [
+      "Existing recovery event, combat presentation and transient status owners; no separate sprite registry or simulation subsystem."
+    ]
+  }
+}
