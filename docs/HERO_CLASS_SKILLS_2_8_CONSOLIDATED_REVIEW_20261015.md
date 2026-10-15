@@ -17,7 +17,7 @@
 
 ### Ranger Skill 4 / 6 distinction
 
-- **Ranger Skill 4 tap (14s):** hero-only +25% movement haste for 4–5.75s (existing). **Charged (20s): Companion Rally**, no dash or target needed. Living active companions within 350–390 world units and line-of-sight at cast time gain **+15–19% movement speed** and **+8–12% ordinary attack speed** for **4–5s**, calculated from the shared Skill 4 rank (secondary increments at ranks 2/4/6/8). They receive no increased hero damage, immunity, special-skill casting speed or special cooldown reduction. Buff does not stack; its duration may refresh. Affected companions are marked with a subtle temporary ring. Combat/campaign save and defeat strip temporary rally fields; no version-4 save shape changes.
+- **Ranger Skill 4 tap (14s):** hero-only +25% movement haste for 4–5.75s (existing). **Charged (20s): Companion Rally**, no dash or target needed. Living active companions within 350–390 world units and line-of-sight at cast time gain **+15–19% movement speed** and **+8–12% ordinary attack speed** for **4–5s**, calculated from the shared Skill 4 rank (secondary increments at ranks 2/4/6/8). They receive no increased hero damage, immunity, special-skill casting speed or special cooldown reduction. If no living active companion is within the cast radius and line of sight, charged Ranger Skill 4 is unavailable, displays NO ALLIES, and consumes no cooldown. Buff does not stack; its duration may refresh. Affected companions are marked with a subtle temporary ring. Combat/campaign save and defeat strip temporary rally fields; no version-4 save shape changes.
 - **Ranger Skill 6 tap (4s): Repelling Shot**, still deals `(1.8×Power+20)×skillRankMultiplier` and now pushes a surviving target **45–65 world units** at arrow impact. **Charged (12s): Repelling Volley**, 3 rapid arrows totaling `4.2×Power×skillRankMultiplier`, the last applying a 65–85-unit collision-safe push. No haste on either version; this differentiates it from Ranger Skill 4 and Skill 2 slowing.
 
 ### Mage anti-overlap revisions
@@ -130,7 +130,7 @@ Pending combined verification specifically includes combat-cast interruption, pa
 1. A Mage Silence Field now freezes the countdown of **already warned specials** for actors inside the field, preventing the special from resolving while silenced without deleting the boss's phases, preexisting active projectiles, or hazards. Ordinary/basic attacks and movement remain valid.
 2. Mage Skill 3 Interrupt cancels **one current** warned/aimed attack. If the boss has subsequent authored queued warnings, the next warning is advanced and surfaced rather than discarding every step of a multi-part encounter. This includes preserving the Mine's special preview handoff when its next stage begins.
 3. The Paladin's Skill 2 weakening effect resets its stored strength once expired, so a new lower-ranked application does not erroneously inherit a previous stronger debuff. Active stronger effects still aren't downgraded.
-4. The earlier source pass included version-4 save cleanup for temporary Shield Stance, Silence Field and Last Bastion wards, explicit charged-8 self-heal vs tap immunity distinction, collision-aware knockback, taunt targeting and status/talent fields. All require final integrated verification.
+4. The earlier source pass included version-4 save cleanup for temporary Shield Stance, Silence Field and Last Bastion wards, earlier Skill 8 immunity distinction (now superseded: neither reworked form grants immunity), collision-aware knockback, taunt targeting and status/talent fields. All require final integrated verification.
 
 ### Explicit risks reserved for the one final combined QA
 
@@ -143,6 +143,10 @@ Pending combined verification specifically includes combat-cast interruption, pa
 - **Balance:** compare normal vs charged Skills 1–8 across classes and ranks 1–8, representative solo and mixed-party scenarios on Normal/Nightmare; confirm 20s/18s/12s/25s/40s cooldown proposals against battle rhythm, avoid permanently locked/warned bosses or control loops.
 
 **No tests or builds were executed for these changes**, per the user's explicit request to combine feature updates first. No merge, deployment, release, automatic QA trigger, or publication has been authorized. These source edits are development-only and should not be described as functioning on a real device until that combined pass.
+
+### Final source consistency addition: Ranger Rally availability
+
+The charged Ranger Skill 4 now checks for a **living active companion within the rank-scaled 350–390-unit radius and clear line of sight before spending the 20s base cooldown**. The hold UI marks the unavailable state as **NO ALLIES**. This prevents an empty companion-only ability from consuming its cooldown in a solo encounter. The normal hero-only Haste still activates without companions. Static source review only; no tests were run.
 
 ## Pending future decision: independent class passive skills
 
