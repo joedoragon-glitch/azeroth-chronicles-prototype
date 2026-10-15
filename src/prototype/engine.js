@@ -217,28 +217,35 @@
       return e.ranged ? cfg.species[e.species] || null : null;
     }
     enemyHealMultiplier(e) {
-      // Population scaling is stored inside baseDamage, whereas nighttime
-      // scaling is applied on engage. Never apply the same layer twice.
+      // Mirror the damage *escalation layers* that apply to this actor, not
+      // individual attack coefficients or its absolute attack value.
+      // Population modifiers already included in baseDamage are deliberately
+      // reconstructed once for healing; e.damage/baseDamage contributes only
+      // the encounter's live/frozen nighttime or owner-inherited factor.
       const i = Math.max(0, this.regionIndex()),
-        region = e.awakenedGuard
-          ? R.awakenedGuardianScaling.damage
-          : e.summon
-            ? R.summonScaling[i]?.damage
-            : e.guard
-              ? R.guardianScaling[i]?.damage
-              : R.ordinaryRangedScaling[i]?.damage;
-      let factor = region || 1;
+        region = e.type === 'boss' || e.nightOnly
+          ? 1
+          : e.awakenedGuard
+            ? R.awakenedGuardianScaling.damage
+            : e.summon && !e.developerSummon
+              ? R.summonScaling[i]?.damage || 1
+              : e.guard
+                ? R.guardianScaling[i]?.damage || 1
+                : e.fieldCaptain
+                  ? R.ordinaryMeleeScaling[i]?.damage || 1
+                  : R.ordinaryRangedScaling[i]?.damage || 1;
+      let factor = region;
       if (e.form === 'ringleader') factor *= R.ringleaderScaling.damage;
+      // Night-exclusive monster strength is separate from global nightPoints;
+      // it is already baked into baseDamage for these spawned species.
       if (e.nightOnly) factor *= R.nightEnemyCombat[e.species]?.damage || 1;
       if (e.type === 'boss' && e.form === 'true') {
-        const normal = D.bosses.find((b) => b.id === e.family)?.damage;
-        if (normal) factor *= e.baseDamage / normal;
+        const normalDamage = D.bosses.find((b) => b.id === e.family)?.damage;
+        if (normalDamage > 0) factor *= e.baseDamage / normalDamage;
       }
-      // Fixed encounter snapshots also cover Nightmare and inherited night
-      // scaling on owned summons. Guard against malformed imported values.
-      const night = e.baseDamage > 0 ? e.damage / e.baseDamage : 1;
-      factor *= Number.isFinite(night) && night > 0 ? night : 1;
-      return Number.isFinite(factor) ? Math.max(0, factor) : 1;
+      const encounter = e.baseDamage > 0 ? e.damage / e.baseDamage : 1;
+      factor *= Number.isFinite(encounter) && encounter > 0 ? encounter : 1;
+      return Number.isFinite(factor) && factor > 0 ? factor : 1;
     }
     enemyHealTeammate(e, u) {
       if (!u || u === e || u.hp <= 0 || u.neutral || u.returning || !u.aggro) return false;
@@ -4788,6 +4795,12 @@
       const z = this.zone(),
         deaths = this.s.statistics.deaths;
       for (const e of [...z.enemies]) {
+        // Advance existing restorative pulses even if a boss is holding a
+        // board, scripted movement or other early-continuation state.
+        if (e.hp > 0) {
+          e.supportHealCd = Math.max(0, (e.supportHealCd || 0) - dt);
+          this.advanceEnemySupportHeal(e, dt);
+        } else delete e.supportHeal;
         if (e.hp <= 0) {
           if (e.respawn > 0 && !this.peace) {
             e.respawn -= dt;
@@ -4858,8 +4871,6 @@
         if (e.type === 'boss' && e.family === 'archive')
           e.sabotageCd = Math.max(0, (e.sabotageCd || 0) - dt);
         e.healCd = Math.max(0, (e.healCd || 0) - dt);
-        e.supportHealCd = Math.max(0, (e.supportHealCd || 0) - dt);
-        this.advanceEnemySupportHeal(e, dt);
         e.pursuitBurst = Math.max(0, (e.pursuitBurst || 0) - dt);
         e.open = Math.max(0, (e.open || 0) - dt);
         e.captainGuard = Math.max(0, (e.captainGuard || 0) - dt);
