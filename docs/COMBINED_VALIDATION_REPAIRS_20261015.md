@@ -4,7 +4,8 @@ The owner authorized the single combined gate on 15 October 2026, beginning at
 `cb1607c3a149d3ae51e01ceef615f0eca1ffdf18`. Preserve the complete integration and
 historical receipts in `HERO_SKILLS_CONSOLIDATION_20261015.md` and the other ledgers.
 This addendum records repairs found by that gate, rather than repeating feature
-certification. PR #308 remains the only candidate. Nothing is merged or deployed.
+certification. PR #308 remains the only candidate. The owner subsequently authorized
+merging after successful preparation; the latest PR resume record tracks release status.
 
 ## Demonstrated repairs
 
@@ -19,6 +20,11 @@ certification. PR #308 remains the only candidate. Nothing is merged or deployed
   skills. Normal Ranger Skill 5 retains the authoritative instant-area contact
   contract, with cosmetic shafts. Teacher/skills checks follow the new short pages
   and their displayed one-decimal live cooldowns. No obsolete mechanic is restored.
+- Browser fixtures use the current hero-presentation owner for skill effects and
+  the shipped desktop keys (1–5, Space, Shift, B) for queued charges. The old
+  observer watched the retired ability renderer and sent unbound digits 6–8.
+  Later assertions use Ranger for the party heal and include the new teacher
+  reference action, retaining the teacher's original Skill 1/2 scope.
 - Rendering-only test doubles include the new death/status observation context.
   Combat fixtures engage before measuring normalized HP and reset positions before
   testing cone selection; no production defense, damage or targeting is relaxed.
@@ -39,11 +45,14 @@ certification. PR #308 remains the only candidate. Nothing is merged or deployed
   mandatory browser step to succeed and rejects any failed optional performance
   check. Continuing collection cannot set the validated output or authorize a
   release after failure. This prevents the first obsolete Archive assertion from
-  hiding the rest of the integrated audiovisual/browser results.
+  hiding the rest of the integrated audiovisual/browser results. The three AV
+  commands also collect their outcomes together and return failure if any fails.
 
 - The new browser AV harness initializes its first campaign before constructing
   the renderer and crops default-150% contact sheets for readable inspection.
-  Its exact callback also runs all 144 form/rank cases through native Canvas.
+  Its rendering callback also runs all 144 form/rank cases through native Canvas.
+  Hosted cases route actual cast/flight/contact receipts through the installed
+  Web Audio facade, with spacing for bounded voice cleanup.
   The legacy balance observer now has all sixteen normal/charged counters; the
   current report exports them and rejects non-finite telemetry. These are test
   setup/reporting repairs, without additional runtime or balance changes.
@@ -75,6 +84,6 @@ balance certification. No balance tuning is justified solely by these samples.
 Local browser downloads were truncated; hosted Chromium/WebKit gates supply the
 browser evidence. The latest PR #308 status records actual final results, exact
 head/tree and hosted run links. Physical iPhone/Chromebook acoustics, thumb comfort
-and subjective audiovisual quality remain human playtesting limits. Successful
-validation does not authorize main merge or deployment; separate approval remains
-required.
+and subjective audiovisual quality remain human playtesting limits. The owner
+authorized merge after successful preparation in the same session; all final
+checks and the exact-tree release certificate must pass before merging.

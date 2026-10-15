@@ -83,20 +83,22 @@ const server = http.createServer((req, res) => {
         return result;
       };
     });
+    // Exercise the shipped desktop bindings: slots 6–8 use Space, Shift and B.
+    const desktopKey = (slot) => [null, '1', '2', '3', '4', '5', 'Space', 'ShiftLeft', 'b'][slot];
     const press = async (slot) => {
       if (webkit)
         await page.locator('#skill-' + slot).evaluate((el) => {
           el.setPointerCapture = () => {};
           el.onpointerdown({ pointerType: 'touch', pointerId: 91, preventDefault() {} });
         });
-      else await page.keyboard.down(String(slot));
+      else await page.keyboard.down(desktopKey(slot));
     };
     const release = async (slot) => {
       if (webkit)
         await page
           .locator('#skill-' + slot)
           .evaluate((el) => el.onpointerup({ pointerType: 'touch', pointerId: 91 }));
-      else await page.keyboard.up(String(slot));
+      else await page.keyboard.up(desktopKey(slot));
     };
     let count = 0;
     for (const cls of ['paladin', 'mage', 'ranger'])
@@ -148,8 +150,9 @@ const server = http.createServer((req, res) => {
           await press(slot);
           const waiting = await page.evaluate(() => Prototype.chargePresentation());
           assert(
-            waiting.waiting && waiting.progress === 0,
-            'queued charge does not preload its hold',
+            waiting?.waiting && waiting.progress === 0,
+            'queued charge does not preload its hold: ' +
+              JSON.stringify({ cls, rank, slot, waiting }),
           );
           assert.equal(await page.evaluate(() => __cooldownCasts.length), 0);
           await page.evaluate((slot) => {

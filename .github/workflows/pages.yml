@@ -152,9 +152,11 @@ jobs:
           AUDIO_BROWSER_ENGINE: webkit
           BROWSER_ENGINE: webkit
         run: |
-          node tests/hero-skills-browser.test.cjs
-          node tests/audio-browser.test.cjs
-          node tests/audio-audition-browser.test.cjs
+          hero_av_status=0
+          node tests/hero-skills-browser.test.cjs || hero_av_status=1
+          node tests/audio-browser.test.cjs || hero_av_status=1
+          node tests/audio-audition-browser.test.cjs || hero_av_status=1
+          exit "$hero_av_status"
       - name: Verify WebKit enemy VFX catalog and pilot captures
         id: webkit_vfx
         continue-on-error: true

@@ -145,6 +145,11 @@ const server = http.createServer((req, res) => {
                     game.updateProjectiles(0.05);
                     events.push(...game.effects);
                   }
+                  // Audition the actual resolver receipts through the installed
+                  // Web Audio facade; bounded spacing permits voice cleanup.
+                  for (const receipt of events) Prototype.audio.effect(receipt);
+                  await new Promise((resolve) => setTimeout(resolve, 120));
+                  need(Prototype.audio.voices.size <= 64, 'shared audio voice ceiling');
                   renderer.update(10);
                   renderer.queue(events);
                   const before = JSON.stringify({
