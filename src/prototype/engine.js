@@ -2066,7 +2066,7 @@
           // when the player claims the actual throne. Current class and
           // prior TRUE-dungeon order do not change the lost companion fact.
           this.say(
-            'Six marks are carved into the throne: the ruler, his five companions, and a sixth mark that fits your own hand. Memory returns. You were the missing sixth companion of his former party. The others did not forget you; you forgot them.',
+            'Seven marks are carved into the throne: one for the ruler, six for his companions. The last companion’s mark fits your own hand. Memory returns. You were the missing sixth companion of his former party. The others did not forget you; you forgot them.',
           );
           this.say(
             remaining
