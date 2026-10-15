@@ -3872,6 +3872,13 @@
       e.telegraph = {
         rogueMove: true,
         rogueSignature: isSignature,
+        // Elite basic/signature Rogue actions show only a mobile actor cast,
+        // while ordinary non-guardian monsters keep their original footprint.
+        mobileRogueCast:
+          e.type === 'boss' ||
+          !!(e.captain || e.roomCaptain || e.fieldCaptain || e.guard) ||
+          tier === 'guardian' ||
+          tier === 'ringleader',
         anonymousCast: !!(isSignature && profile.anonymousCast),
         kind: profile.style === 'slab' ? 'line' : effect === 'sweep' ? 'cone' : 'circle',
         name: profile.name,
@@ -4287,6 +4294,29 @@
         move.targetId === 'hero'
           ? this.hero
           : this.combatTargets().find((u) => u !== this.hero && u.id === move.targetId);
+      if (move.mobileRogueCast) {
+        // No stale cast-origin circles: live caster/target positions at release
+        // determine coverage, facing, collision and true escape opportunities.
+        const centered = move.effect === 'scatter' || move.effect === 'sweep';
+        const bearing = target?.hp > 0 ? Math.atan2(target.y - e.y, target.x - e.x) : move.angle;
+        if (centered) {
+          move.x = e.x;
+          move.y = e.y;
+          move.fromX = e.x;
+          move.fromY = e.y;
+        } else if (target?.hp > 0) {
+          move.x = target.x;
+          move.y = target.y;
+        }
+        move.angle = bearing;
+        if (move.style === 'slab' && target?.hp > 0) {
+          const side = target.x >= e.x ? 1 : -1;
+          move.fromX = target.x - side * 60;
+          move.fromY = target.y;
+          move.x = target.x + side * 100;
+          move.y = target.y;
+        }
+      }
       if (!move.rogueSignature) {
         // The slab is a physical lane: dodging the originally marked target
         // must not cancel contact with other party members still inside it.
@@ -4354,7 +4384,7 @@
               };
             this.move(target, point, 220, 0.25);
           } else {
-            this.applySlow(target, move.slowSeconds || (move.style === 'snare' ? 1.65 : 0.95));
+            this.applySlow(target, move.slowSeconds || 2);
           }
         }
         if (move.blinds > 0) {
@@ -4416,7 +4446,7 @@
               y: unit.y + ((unit.y - e.y) / d) * push,
             };
           this.move(unit, point, 250, 0.36);
-        } else this.applySlow(unit, move.slowSeconds || 1);
+        } else this.applySlow(unit, move.slowSeconds || 2.4);
       }
       if (
         move.rallySeconds > 0 &&
@@ -4801,6 +4831,36 @@
         if (this.tacticalRogueRegroup(e) && this.tacticalAdvanceRogueRegroup(e, target, dt))
           continue;
         if (e.telegraph) {
+          if (e.telegraph.rogueMove && e.telegraph.mobileRogueCast) {
+            // Cast preparation does not create an extra strike or freeze the
+            // elite actor. Reuse ordinary collision-aware, leash-bounded travel.
+            const castTarget =
+              e.telegraph.targetId === 'hero'
+                ? this.hero
+                : this.combatTargets().find((u) => u.id === e.telegraph.targetId);
+            if (castTarget?.hp > 0 && this.line(e, castTarget)) {
+              const gap = dist(e, castTarget),
+                rangedCast = !!e.ranged && !e.hybrid,
+                stop = rangedCast ? Math.min(e.shotRange || 280, 205) : 70,
+                pace =
+                  (e.type === 'boss' ? 145 : 175) *
+                  (e.form === 'ringleader' ? R.ringleaderScaling.pursuit : 1) *
+                  (e.captainPhaseMove || 1) *
+                  this.ownedSummonMovementFactor(e) *
+                  (e.quotaOvertime > 0 ? 1.15 : 1) *
+                  (e.slow > 0 ? 0.5 : 1);
+              if (gap > stop + 8) {
+                this.follow(e, castTarget, pace, dt, stop);
+              } else if (rangedCast && gap < 110) {
+                const retreat = {
+                  x: e.x + ((e.x - castTarget.x) / Math.max(1, gap)) * 75,
+                  y: e.y + ((e.y - castTarget.y) / Math.max(1, gap)) * 75,
+                };
+                if (dist(retreat, e.home) < territory && this.clearSegment(e, retreat, 12))
+                  this.move(e, retreat, R.rangedEnemyCombat.retreatSpeed, dt);
+              }
+            }
+          }
           e.telegraph.timer -= dt;
           e.noProgress = 0;
           if (e.telegraph.timer <= 0) {
