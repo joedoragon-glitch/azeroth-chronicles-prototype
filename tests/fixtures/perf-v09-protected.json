@@ -606,7 +606,7 @@
   "authorizedPostReleasePlaytestRevision": {
     "source": "Owner-authorized 15 October iPhone playtest corrections in PR #308; merge approval remains separate.",
     "audit": "docs/POST_SNAPSHOT_PLAYTEST_FIXES_20261015.md",
-    "auditSha256": "f6e2f3e09fa314e734c0590c69700e75941cbedb2ba545a45d4a77b129f04172",
+    "auditSha256": "13a431d1794feeef95eea3415ef4433cb6921b63e0149133ab27a0670696a6b8",
     "files": {
       "src/prototype/app.js": "2708c672f5cd76a6721fa416acfc0edd938c7e16c6092e3ae362815fe0755b8a",
       "src/prototype/combat-visuals.js": "f77774833143a585cc9d7a093fbe1b04bed3337e4ab7ac883d7fb5371489aad4",
