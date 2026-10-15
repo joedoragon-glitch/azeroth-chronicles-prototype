@@ -309,7 +309,7 @@
       e.noProgress = 0;
       this.event('heal', {
         x: target.x, y: target.y, fromX: e.x, fromY: e.y,
-        resource: 'health', source: e.id, target: target.id, amount,
+        actor: 'enemy', resource: 'health', source: e.id, target: target.id, amount,
         skill, species: e.species, family: e.family,
       });
       // Named leaders and Ringleaders announce the skill; ordinary ranged
