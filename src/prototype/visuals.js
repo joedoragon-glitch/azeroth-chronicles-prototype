@@ -13295,6 +13295,42 @@
         default:
           humanoid('#919b81');
       }
+      if (e.crownTroop && !e.mountedCrownRider) {
+        // All ranks share a single Crown-issued steel, violet-and-oxblood
+        // livery. Helm silhouettes reveal the people inside the armor rather
+        // than painting Orcs, Ogres and Goblins as identical human soldiers.
+        const ancestry = e.crownAncestry || e.species;
+        const armor = '#9da9b0', cloth = '#54485f', wine = '#74434e';
+        if (ancestry === 'ogre') {
+          for (const x of [-23, 23]) oval(x, -19, 10, 12, armor);
+          poly([[-21, -38], [-16, -52], [0, -55], [17, -51], [21, -38]], '#767e8a');
+          for (const x of [-11, 11]) poly([[x - 3, -39], [x, -34], [x + 4, -39]], '#d9c49e');
+        } else if (ancestry === 'goblin') {
+          for (const side of [-1, 1]) {
+            poly([[side * 10, -39], [side * 24, -43], [side * 13, -31]], '#9ca77b');
+            poly([[side * 13, -38], [side * 20, -41], [side * 14, -35]], '#7d856e');
+          }
+          poly([[-12, -39], [-10, -50], [0, -53], [11, -48], [13, -39]], '#75828a');
+        } else if (ancestry === 'orc') {
+          poly([[-16, -38], [-11, -51], [0, -54], [12, -50], [17, -38]], '#727c85');
+          for (const x of [-8, 8]) poly([[x - 3, -31], [x, -38], [x + 3, -31]], '#e2d4b5');
+        } else {
+          poly([[-13, -39], [-9, -52], [0, -57], [10, -50], [13, -39]], '#75808b');
+        }
+        // Shoulder plates, cuirass and royal seal have identical color and
+        // location across the diverse units, even when their sizes differ.
+        for (const side of [-1, 1])
+          poly([[side * 10, -27], [side * 22, -26], [side * 23, -16], [side * 12, -13]], armor);
+        poly([[-13, -24], [13, -24], [11, -5], [-11, -5]], cloth);
+        poly([[-8, -23], [8, -23], [8, -9], [-8, -9]], '#808e9b');
+        poly([[0, -24], [6, -18], [0, -11], [-6, -18]], wine);
+        glint(0, -18, '#e8cf94', 2.5);
+        line([[-11, -5], [11, -5]], '#dfc997', 2);
+        if (e.ranged) {
+          line([[18, -36], [23, -16], [20, 4]], '#987c57', 4);
+          for (const y of [-32, -25, -18]) line([[21, y], [27, y - 6]], '#e1c695', 1.5);
+        } else shield(-20, -1, '#774a59');
+      }
       enemyFinish();
       captainFinish();
     }
