@@ -755,6 +755,10 @@
               e.guard = true;
               e.roomGuard = true;
               e.mountedCrownRider = !!slot.mountedCrownRider;
+              if (e.mountedCrownRider) {
+                e.crownTroop = true;
+                e.crownAncestry = 'wolf';
+              }
               e.pack = id + '-' + (slot.group || 'guard-' + j);
               if (slot.role) e.forcedRole = slot.role;
               if (captain) {
@@ -1972,6 +1976,12 @@
         for (const [j, e] of soldiers.entries()) {
           e.crownTroop = true;
           e.crownAncestry = e.species === 'crownguard' ? lineages[j % lineages.length] : e.species;
+          if (z.id === 'crown') {
+            // Existing open-capital troops had all defaulted to archery;
+            // half now screen the rest with shields without stat inflation.
+            e.forcedRole = j % 2 === 0 ? 'melee' : 'ranged';
+            this.configureEnemy(e, j);
+          }
           e.name = label(e);
         }
       }
@@ -2053,6 +2063,8 @@
               const post = R.dungeonGuardFormations.mine[j];
               if (!post?.mountedCrownRider || e.species !== 'wolf') continue;
               e.mountedCrownRider = true;
+              e.crownTroop = true;
+              e.crownAncestry = 'wolf';
               e.forcedRole = post.role;
               e.name = post.name;
               this.configureEnemy(e, j);
