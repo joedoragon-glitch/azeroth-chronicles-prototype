@@ -1101,7 +1101,7 @@
                 ctx.lineTo(x, y + 3);
                 ctx.stroke();
               }
-          }
+            }
           }
         } else if (f.type === 'swing') {
           const t = screen({ x: f.targetX ?? f.x + 1, y: f.targetY ?? f.y }),
