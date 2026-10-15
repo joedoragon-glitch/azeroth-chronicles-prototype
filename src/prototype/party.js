@@ -199,7 +199,7 @@
         return true;
       }
       companionTrySkill(u, target) {
-        if (!target || (u.skillGlobalCd || 0) > 0) return false;
+        if (!target || (u.skillGlobalCd || 0) > 0 || this.mageSilenceActive(u)) return false;
         const secondReady = this.companionSecondSkillUnlocked() && (u.skill2Cd || 0) <= 0,
           secondTargets = secondReady ? this.companionSecondSkillTargets(u, target) : [];
         if (
@@ -295,7 +295,7 @@
           this.s.challenge.gameOver
         )
           return false;
-        const rangers = this.availableRangers(type),
+        const rangers = this.availableRangers(type).filter((u) => !this.mageSilenceActive(u)),
           key = type === 'health' ? 'healCd' : 'manaCd';
         if (!rangers.length) {
           if (manual) {
@@ -763,6 +763,7 @@
             context.engaged &&
             u.type === 'soldier' &&
             u.hp <= u.maxHp * 0.5 &&
+            !this.mageSilenceActive(u) &&
             (u.survivalCd || 0) <= 0
           ) {
             u.survivalCd = 14;
