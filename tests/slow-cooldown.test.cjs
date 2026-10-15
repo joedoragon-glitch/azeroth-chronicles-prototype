@@ -80,6 +80,20 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
     close(e[key], start - 0.085, 'slowed monster ' + key);
   }
   close(g._tacticalRogueNext.get(e.id), before + 0.015, 'pending monster rogue cadence slows');
+  // Old logic skipped Slow whenever a deadline crossed this particular tick.
+  // A nearly-ready ability must remain unavailable if Slow still owes time.
+  e.slow = 3;
+  g._tacticalRogueNext.set(e.id, g.s.time + 0.09);
+  e.royalPrerogativeReadyAt = g.s.time + 0.09;
+  g.s.time += 0.1;
+  g.updateEnemies(0.1);
+  assert(g._tacticalRogueNext.get(e.id) > g.s.time, 'Rogue readiness does not skip a slow frame');
+  assert(e.royalPrerogativeReadyAt > g.s.time, 'Royal interception does not skip a slow frame');
+  const future = g._tacticalRogueNext.get(e.id);
+  e.slow = 0;
+  g.s.time += 0.1;
+  g.updateEnemies(0.1);
+  close(g._tacticalRogueNext.get(e.id), future, 'finished Slow adds no further rogue debt');
 }
 {
   const g = new Campaign('normal', 'mage', () => 0.9);

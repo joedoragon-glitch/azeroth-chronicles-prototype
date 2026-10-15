@@ -4742,15 +4742,24 @@
         }
         const recovery = this.cooldownRecoveryElapsed(e, dt, true);
         e.slow = Math.max(0, (e.slow || 0) - dt);
-        // Rogue manoeuvres use an encounter-clock deadline instead of a
-        // remaining-seconds cooldown. Delay only a pending cooldown, not casts.
-        const nextRogue = this._tacticalRogueNext?.get(e.id);
-        if (nextRogue > this.s.time && recovery < dt)
-          this._tacticalRogueNext.set(e.id, nextRogue + (dt - recovery));
-        // This projectile interception is a defensive ability with its own
-        // wall-clock readiness deadline, not a status-effect duration.
-        if (e.royalPrerogativeReadyAt > this.s.time && recovery < dt)
-          e.royalPrerogativeReadyAt += dt - recovery;
+        // Rogue moves and Royal Prerogative track absolute readiness. Compare
+        // against frame start, not frame end: a cooldown nearing zero must not
+        // escape Slow merely because its deadline crosses this frame.
+        if (recovery < dt) {
+          const nextRogue = this._tacticalRogueNext?.get(e.id);
+          if (nextRogue > this.s.time - dt)
+            this._tacticalRogueNext.set(
+              e.id,
+              this.slowCooldownReadyAt(e, nextRogue, dt, true),
+            );
+          if (e.royalPrerogativeReadyAt > this.s.time - dt)
+            e.royalPrerogativeReadyAt = this.slowCooldownReadyAt(
+              e,
+              e.royalPrerogativeReadyAt,
+              dt,
+              true,
+            );
+        }
         if (!e.aggro && !e.eliteNightBonus) {
           const m = this.multipliers(),
             ratio = e.hp / e.maxHp;

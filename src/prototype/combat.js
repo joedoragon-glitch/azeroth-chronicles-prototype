@@ -309,6 +309,17 @@
         return dt - Math.min(dt, slow) * (1 - multiplier);
       }
 
+      // Absolute encounter-clock readiness deadlines need the same recovery
+      // adjustment as remaining-second timers, including when a deadline falls
+      // inside the current frame. Never extend an already-ready ability.
+      slowCooldownReadyAt(unit, readyAt, dt, enemy = false) {
+        if (!Number.isFinite(readyAt) || !Number.isFinite(dt) || dt <= 0) return readyAt;
+        const frameStart = this.s.time - dt;
+        if (readyAt <= frameStart) return readyAt;
+        const remaining = readyAt - frameStart;
+        return this.s.time + Math.max(0, remaining - this.cooldownRecoveryElapsed(unit, dt, enemy));
+      }
+
       // One contract for the shared timed Slow condition: living, vulnerable
       // targets only; repeat hits refresh duration but never shorten it.
       applySlow(unit, seconds) {
