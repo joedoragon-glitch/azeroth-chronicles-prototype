@@ -3887,9 +3887,9 @@
       [1300, 1270, 'game-table', 'colossus-chamber', 'kinetic-collection'],
       [1030, 1280, 'crystal', 'colossus-chamber', 'art-object'],
       // Garun's work crews share their mine lodgings with the Crown wolf riders.
-      [575, 1000, 'direwolf-kennel', 'repair-forge'],
-      [455, 1050, 'rider-bunk', 'repair-forge'],
-      [320, 1100, 'rider-tack-rack', 'repair-forge'],
+      [575, 1000, 'direwolf-kennel', 'repair-forge', 'mixed-rider-quarters'],
+      [455, 1050, 'rider-bunk', 'repair-forge', 'mixed-rider-quarters'],
+      [320, 1100, 'rider-tack-rack', 'repair-forge', 'mixed-rider-quarters'],
     ],
     abyss: [
       [300, 340, 'torch', 'rider-preparation'],
