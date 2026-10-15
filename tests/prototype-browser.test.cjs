@@ -11,7 +11,8 @@ async function beginQuietNoticeProbe(page) {
   window.__quietNoticeProbe={state:c.s,tick:c.tick,effects:c.effects};
   c.s=structuredClone(c.snapshot());c.tick=()=>{};c.effects=[];
   c.zone().enemies=[];c.s.party=[];c.s.projectiles=[];c.s.hazards=[];
-  c.hero.order=null;Prototype.closeMenu();Prototype.updateHUD();
+  c.s.phase='adventure';c.s.challenge.pending=false;c.s.challenge.gameOver=false;
+  c.hero.hp=c.hero.maxHp;c.hero.order=null;Prototype.closeMenu();Prototype.updateHUD();
  });
 }
 async function endQuietNoticeProbe(page) {
