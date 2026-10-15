@@ -5,6 +5,154 @@
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     const originalRogueMove = Campaign.prototype.tacticalResolveRogueMove;
     class BossCombat {
+    // Each role is explicitly checked: species/name collisions cannot grant a trait.
+    snapshotBossIncomingFactor(e) {
+      if (!e || !e.aggro || e.hp <= 0 || e.returning) return 1;
+      const p = R.snapshotPassives,
+        form = e.form === 'true' ? 'true' : 'normal',
+        near = (u, radius) => dist(u, e) <= radius,
+        owned = (species, radius) =>
+          this.zone().enemies.filter(
+            (u) =>
+              u.hp > 0 &&
+              u.summon &&
+              u.owner === e.id &&
+              u.species === species &&
+              near(u, radius),
+          ).length;
+      if (e.type === 'boss') {
+        if (e.family === 'ridge')
+          return 1 - Math.min(p.ridge.maxArchers, owned('archer', p.ridge.radius)) *
+            p.ridge.perArcher[form];
+        if (e.family === 'mine' && !(e.open > 0))
+          return 1 - p.mine.shellReduction[form];
+        if (e.family === 'warlord')
+          return 1 - Math.min(p.warlord.maxOrcs, owned('orc', p.warlord.radius)) *
+            p.warlord.perOrc[form];
+        if (e.family === 'abyss' && e.passiveAerialUntil > this.s.time)
+          return 1 - p.abyss.reduction[form];
+        if (
+          e.family === 'citadel' &&
+          e.dressUntil > this.s.time &&
+          this.zone().enemies.some(
+            (u) => u !== e && u.hp > 0 && !u.neutral &&
+              u.species === 'crownguard' && near(u, p.citadel.radius),
+          )
+        )
+          return 1 - p.citadel.reduction[form];
+        if (e.family === 'darklord' && e.passiveVeteranUntil > this.s.time)
+          return 1 - p.darklord.reduction[form];
+      }
+      if (
+        e.roomCaptain &&
+        e.captainProfile === 'supply-highlands' &&
+        this.zone().enemies.some(
+          (u) => u !== e && u.hp > 0 && u.roomGuard &&
+            near(u, p.captains['supply-highlands'].guardRadius),
+        )
+      )
+        return 1 - p.captains['supply-highlands'].selfReduction;
+      if (e.fieldCaptain && e.captainProfile === 'frontier-overseer' &&
+          e.passiveViolationUntil > this.s.time)
+        return 1 - Math.min(
+          p.captains['frontier-overseer'].maxStacks,
+          e.passiveViolationStacks || 0,
+        ) * p.captains['frontier-overseer'].perHitReduction;
+      return 1;
+    }
+    snapshotPassiveOutgoingFactor(source) {
+      if (!source || source.hp <= 0 || !source.aggro || source.returning) return 1;
+      const p = R.snapshotPassives;
+      if (source.summon && source.species === 'orc') {
+        const owner = this.zone().enemies.find(
+          (e) => e.id === source.owner && e.type === 'boss' &&
+            e.family === 'warlord' && e.hp > 0 && e.aggro &&
+            dist(source, e) <= p.warlord.radius,
+        );
+        if (owner) return 1 + p.warlord.orcDamage[owner.form === 'true' ? 'true' : 'normal'];
+      }
+      if (source.roomGuard) {
+        const cfg = p.captains['supply-highlands'],
+          captain = this.zone().enemies.find(
+            (e) => e.roomCaptain && e.captainProfile === 'supply-highlands' &&
+              e.hp > 0 && e.aggro && dist(source, e) <= cfg.guardRadius,
+          );
+        if (captain) return 1 + cfg.guardDamage;
+      }
+      if (source.fieldCaptain && source.captainProfile === 'frontier-overseer' &&
+          source.passiveViolationUntil > this.s.time &&
+          (source.passiveViolationStacks || 0) >= p.captains['frontier-overseer'].maxStacks)
+        return 1 + p.captains['frontier-overseer'].maxStackDamage;
+      return 1;
+    }
+    snapshotPassiveRecordHit(e, actualDamage, source) {
+      if (!e || actualDamage <= 0 || e.hp <= 0 || !e.aggro || e.returning) return;
+      const now = this.s.time, p = R.snapshotPassives;
+      if (e.type === 'boss' && e.family === 'darklord') {
+        const cfg = p.darklord;
+        if (e.passiveVeteranUntil > now || e.passiveVeteranReadyAt > now) return;
+        const hits = (e.passiveVeteranHits || []).filter((h) => now - h.time <= cfg.window);
+        hits.push({ time: now, source });
+        e.passiveVeteranHits = hits;
+        const unique = new Set(hits.map((h) => h.source)).size;
+        if (hits.length >= cfg.triggerHits &&
+            (this.activeLivingParty().length === 0 || unique >= 2)) {
+          e.passiveVeteranUntil = now + cfg.duration;
+          e.passiveVeteranReadyAt = now + cfg.cooldown;
+          e.passiveVeteranHits = [];
+          this.say('The Dark Lord reads the party\u2019s attack pattern.');
+        }
+      }
+      if (e.fieldCaptain && e.captainProfile === 'frontier-overseer') {
+        const cfg = p.captains['frontier-overseer'],
+          active = (e.passiveViolationUntil || 0) > now;
+        e.passiveViolationStacks = Math.min(
+          cfg.maxStacks, (active ? e.passiveViolationStacks || 0 : 0) + 1,
+        );
+        e.passiveViolationUntil = now + cfg.duration;
+      }
+    }
+    snapshotPassiveCoreRelock(e) {
+      if (!e || e.type !== 'boss' || e.family !== 'mine' ||
+          !e.aggro || e.hp <= 0 || e.returning ||
+          (e.passiveRepairReadyAt || 0) > this.s.time) return;
+      const cfg = R.snapshotPassives.mine,
+        amount = Math.min(
+          e.maxHp - e.hp,
+          e.maxHp * cfg.repairFraction[e.form === 'true' ? 'true' : 'normal'],
+        );
+      if (amount <= 0) return;
+      e.hp += amount;
+      e.passiveRepairReadyAt = this.s.time + cfg.repairCooldown;
+      this.event('heal', { x: e.x, y: e.y, source: e.id, target: e.id,
+        resource: 'health', amount });
+    }
+    snapshotPassiveRegen(dt) {
+      if (this.peace || dt <= 0) return;
+      const cfg = R.snapshotPassives.cindermaw;
+      for (const e of this.zone().enemies) {
+        if (e.type !== 'boss' || e.family !== 'cindermaw' || e.hp <= 0 ||
+            !e.aggro || e.returning || e.neutral) continue;
+        const allies = this.zone().enemies
+          .filter((u) => u !== e && u.hp > 0 && !u.neutral &&
+            u.species === 'ashbeast' && dist(u, e) <= cfg.radius)
+          .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp);
+        if (!allies.length) continue;
+        const form = e.form === 'true' ? 'true' : 'normal';
+        if (e.hp < e.maxHp * cfg.threshold) {
+          const budget = e.maxHp * cfg.bossHealCap[form] - (e.passiveRegenTotal || 0),
+            heal = Math.max(0, Math.min(e.maxHp - e.hp,
+              e.maxHp * cfg.bossRegen[form] * dt, budget));
+          if (heal > 0) {
+            e.hp += heal;
+            e.passiveRegenTotal = (e.passiveRegenTotal || 0) + heal;
+          }
+        }
+        for (const ally of allies.slice(0, cfg.allyCap))
+          if (ally.hp < ally.maxHp)
+            ally.hp = Math.min(ally.maxHp, ally.hp + ally.maxHp * cfg.allyRegen[form] * dt);
+      }
+    }
       abyssFlightLegs(e, target, sign = 1) {
         const dx = target.x - e.x,
           dy = target.y - e.y,
@@ -128,6 +276,14 @@
           'strainHardeningUntil',
           'emergencyStabilizationUsed',
           'emergencyStabilizationUntil',
+          'passiveAerialUntil',
+          'passiveRepairReadyAt',
+          'passiveVeteranUntil',
+          'passiveVeteranReadyAt',
+          'passiveVeteranHits',
+          'passiveRegenTotal',
+          'passiveViolationUntil',
+          'passiveViolationStacks',
         ])
           delete e[key];
         if (e.quotaOvertime !== undefined) e.quotaOvertime = 0;
@@ -1769,6 +1925,11 @@
           a.life <= 0
         ) {
           const completedFlight = !a.flightPath?.length && dist(e, a.target) < 10;
+          // Aerial Superiority rewards a completed offensive flight, never Go-Around
+          // healing or a collision-aborted route.
+          if (e.type === 'boss' && e.family === 'abyss' && e.hp > 0 &&
+              completedFlight && a.flightPath && a.aerial !== 'go-around')
+            e.passiveAerialUntil = this.s.time + R.snapshotPassives.abyss.duration;
           if (a.aerial === 'high-yo-yo' && completedFlight) {
             const move = a.rogueAttack,
               victim =
