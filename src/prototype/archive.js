@@ -134,25 +134,25 @@
         5: 'Tap: a nearby holy area attack. Charge: Consecrated Wave reaches farther, hits harder, and weakens enemies for your defenders.',
         6: 'Tap: rush toward a visible foe and strike. Charge: Vanguard Impact rushes into a short holy shockwave, striking and pushing nearby enemies.',
         7: 'Tap: powerful holy area damage. Charge: Oath Strike extends the area and weakens enemies hit by its stronger strike.',
-        8: 'Tap: area damage, self-heal and short immunity (existing ultimate). Charge: Last Bastion creates a stronger holy area hit, self-heals and grants short damage-reduction wards to living active companions; it does not grant immunity.',
+        8: 'Tap Sanctuary Oath: holy area damage (3× Power) within 320 units, self-heal 15% max HP, grant the hero and nearby living companions 20% incoming damage reduction for 3.5s (longer with skill rank). Charge Last Bastion: 5.5× Power holy area damage within 420+ units, self-heal 20%, weaken struck enemies, and grant a 30% party ward for 5s+. Neither version grants immunity.',
       },
       mage: {
         2: 'Frost Bolt slows one target; charged Frost Burst damages and slows enemies around the target.',
         3: 'Spell Interrupt: cancel one enemy attack while it is warned or being aimed. Charged Silence Field blocks special skills for enemies, the Mage and companions within the field, but allows movement and basic attacks.',
         4: 'Arcane Fracture: damage one enemy and increase all incoming hero and companion damage. Charged Arcane Rupture hits a group and applies a stronger, non-stacking vulnerability.',
-        5: 'Tap: close-range frost burst and Slow. Charge: Winter Ring expands its area, increases damage and extends Slow.',
+        5: 'Tap Force Pulse: 2.3× Power area damage within 350 units and collision-safe knockback. Charge Force Wave: 3× Power damage within 370+ units and larger knockback. Neither version applies Slow.',
         6: 'Tap: a slowing magic projectile. Charge: a concentrated arcane beam deals more damage and lengthens Slow on one foe.',
-        7: 'Tap: advanced frost area spell. Charge: Sigil Storm delivers a stronger, broader icy area attack with longer Slow.',
-        8: 'Tap: area damage, self-heal and short immunity (existing ultimate). Charge: Arcane Cataclysm unleashes a much stronger area explosion and leaves surviving enemies vulnerable to party attacks; it does not heal or grant immunity.',
+        7: 'Tap Arcane Chain: strikes up to 3 targets around the selected enemy, dealing 6.5×/4.5×/3× Power in sequence. Charge Chainstorm: strikes up to 5 targets with 9×/6×/4× Power; no Slow or new status.',
+        8: 'Tap Astral Detonation: targeted area explosion within 210 units of the enemy; primary target takes 6× Power and other enemies 3.5×. Charge Arcane Cataclysm: radius 260+; primary 9× and splash 5× Power, plus 12–16% damage vulnerability for 4.5s. Neither version heals or grants immunity.',
       },
       ranger: {
         2: 'Pinning Shot fires two arrows and briefly slows the target; charged Pinning Volley pierces a line of enemies and slows those struck.',
         3: 'Tap to heal yourself; charge to heal wounded living companions too. Neither restores the fallen.',
-        4: 'A burst of speed helps you escape or reposition. This skill has no charged form.',
+        4: 'Tap Movement Haste: hero moves 25% faster for 4–5.75s. Charge Companion Rally: nearby living active companions within 350–390 units gain 15–19% movement speed and 8–12% ordinary attack speed for 4–5s. No dash, invulnerability, or special cooldown acceleration.',
         5: 'Tap: arrows strike nearby enemies. Charge: Arrow Rain sends stronger arrows into a wider area and briefly slows each foe struck.',
-        6: 'Tap: a quick shot with movement haste. Charge: Evasive Burst shoots three rapid arrows at one foe and extends movement haste.',
+        6: 'Tap Repelling Shot: ranged attack plus a 45–65-unit push on hit, without haste. Charge Repelling Volley: three rapid shots totaling 4.2× Power, with a final collision-safe push of 65–85 units. Neither changes movement or attack speed.',
         7: 'Tap: one targeted defense-piercing arrow. Charge: a stronger piercing shot also briefly slows its target.',
-        8: 'Tap: area damage, self-heal and short immunity (existing ultimate). Charge: Perfect Hunt fires a powerful defense-piercing shot at one foe, heals some HP and grants movement haste; it does not grant immunity.',
+        8: 'Tap Hunters Salvo: fires one 5× Power arrow at each of up to 3 enemies close to the selected target (radius 260). Charge Grand Hunt: fires two 4× Power arrows each at up to 5 enemies in radius 320–360 (maximum two arrows per enemy). No invulnerability, healing, or haste in either form.',
       },
     };
     shelves.push({
@@ -169,7 +169,7 @@
           labels = {
             paladin: { 2: 'Sundering Strike', 3: 'Shield Stance / Shield Bash', 4: 'Judgment' },
             mage: { 2: 'Frost Bolt', 3: 'Spell Interrupt / Silence Field', 4: 'Arcane Fracture' },
-            ranger: { 2: 'Pinning Shot', 3: 'Healing', 4: 'Movement Haste' },
+            ranger: { 2: 'Pinning Shot', 3: 'Healing', 4: 'Movement Haste / Rally' },
           },
           effects = {
             1: 'Three normal strikes on the same foe build a finishing splash. Changing foes or waiting too long breaks the sequence; charging delivers a stronger strike.',
@@ -207,7 +207,7 @@
                 ' paces.' +
                 (shape.slow ? ' Slow lasts ' + (shape.slow + 0.25 * milestones) + ' seconds.' : '')
               : '') +
-            (slot !== 4 || game.hero.class !== 'ranger'
+            (slot >= 1 && slot <= 8
               ? '\nCharged recovery: ' +
                 number(cooldown(true)) +
                 ' seconds' +
