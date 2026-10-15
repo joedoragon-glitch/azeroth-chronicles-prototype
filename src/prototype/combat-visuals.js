@@ -399,7 +399,7 @@
       }
     }
     if (cue)
-      for (const e of game.zone().enemies.filter((e) => e.telegraph?.anonymousCast)) {
+      for (const e of game.zone().enemies.filter((e) => e.telegraph?.anonymousCast || e.telegraph?.mobileRogueCast)) {
         const a = e.telegraph,
           p = screen(e);
         const width = 70,
@@ -417,7 +417,7 @@
         ctx.font = 'bold 11px system-ui';
         ctx.textAlign = 'center';
         ctx.fillStyle = '#fff1c7';
-        ctx.fillText('Preparing…', p.x, y - 5);
+        ctx.fillText(a.anonymousCast ? 'Preparing…' : 'ROGUE CAST', p.x, y - 5);
       }
     if (cue) royalTaxStatus(ctx, screen, game);
     // Ledger of Losses deliberately obscures Ridge's ground footprints,
@@ -425,7 +425,7 @@
     // attach a high-contrast progress bar to the actual boss, not the terrain.
     if (cue)
       for (const e of game.zone().enemies.filter(
-        (e) => e.family === 'ridge' && e.ledgerOpen && visibleWarning(e) && e.hp > 0,
+        (e) => e.family === 'ridge' && e.ledgerOpen && !e.telegraph?.mobileRogueCast && visibleWarning(e) && e.hp > 0,
       )) {
         const a = e.telegraph,
           p = screen(e),
@@ -449,7 +449,7 @@
       }
     for (const e of game
       .zone()
-      .enemies.filter((e) => visibleWarning(e) && !(e.family === 'ridge' && e.ledgerOpen))) {
+      .enemies.filter((e) => visibleWarning(e) && !e.telegraph?.mobileRogueCast && !(e.family === 'ridge' && e.ledgerOpen))) {
       const a = e.telegraph;
       const shapes = warningShapes(a, game.attackPatches(a));
       // Rogue warnings need an identity distinct from ordinary boss attacks:
