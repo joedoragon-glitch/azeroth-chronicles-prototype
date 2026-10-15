@@ -5,6 +5,22 @@
 
 **IMPORTANT:** Development changes only; user requested no new tests until multiple updates are consolidated. The exact branch is **not tested, certified, approved to merge, or deployed**. Do not import the older PR #305 source branch wholesale over PR #300: this implementation starts with PR #300's hero repair, worldbuilding, save and control changes.
 
+## Conservative balance adjustments — 15 October 2026 (owner delegated)
+
+Following the static balance audit, the owner authorized implementation using judgment **with an explicit priority not to make encounters too easy**. The following revisions are made in source on this development branch; they remain **untested** until the combined PR validation.
+
+| Existing mechanism | Previous provisional state | New restrained rule | Balance rationale |
+| --- | --- | --- | --- |
+| Mage charged Skill 8 Fracture | 12–16% extra incoming damage for 4.5s, weaker than Skill 4 | **25–29% for only 2.5s**, still one nonstacking Fracture | Creates a short group burst opportunity on a 40s charged cooldown; not a long debuff or new control status |
+| Ranger Skill 8 with exactly one eligible foe | Tap: one non-piercing 5×Power arrow; charged: two 4×Power arrows | Tap: **two** 5×Power arrows (10× total); charged: **three** 4×Power arrows (12× total). Against 2+ eligible foes preserve existing per-target shot counts and maximum target numbers | A worthwhile lone-enemy fallback, but Skill 7 remains more efficient against bosses with defense piercing and shorter 15s/25s cooldowns |
+| Paladin Shield Stance + Skill 8 ward | Separate post-armor reductions compounded (up to 81.1% before weaken) | **Only the stronger reduction** applies to the Paladin, never both multiplicatively; companion wards remain active | Keeps tanking and party protection without near-invulnerability; at rank 8 Shield remains 73%, before any weakening/armor |
+| Paladin Skill 8 instantaneous AoE | No number-of-enemies limit | Normal max **8**, charged max **10**, nearest visible reachable enemies | Prevents clearing arbitrarily large packs with one protected cast; no change to radius or per-enemy damage |
+| Mage Skill 8 instantaneous AoE | No number-of-enemies limit | Normal max **5**, charged max **7**; selected target always prioritized | Preserves burst specialization while retaining challenge from excess monsters |
+
+Everything else remains unchanged deliberately: Paladin Shield Stance's 8-second maximum duration, outgoing damage penalty, cooldown starting on end; elite/boss taunt cap and scripted specials; Mage Frost Bolt Slow, interruption and bilateral silence; Ranger Skill 4's modest companion rally; Ranger Skill 6/7's tradeoff of burst/control versus sustained attack efficiency; Ranger skill 3 healing; and existing eight-rank progression.
+
+**Final combined verification focus:** 1/2/5/8+ enemy group sizes, selected-target prioritization, all hits and actual projectile arrivals, normal and TRUE boss mitigation with pierced vs non-pierced Skill 7/8, Fracture when Skill 4 overlaps charged Skill 8, shield/ward/weakened incoming damage with real armor and hazards, older v4 saves, phone charged-input timing, and all authored scripted boss mechanics. Do not auto-tune further until that evidence exists. Independent class passives remain undecided and unimplemented.
+
 ## Source-review handoff: current approved redesign
 
 **Implementation branch:** `feature/hero-skills-2-4-on-snapshot-20261015` (PR #300-based). The source changes through checkpoint `0a34bc91807ad48b484a7e2c9210a40b20825ca1` include all approved redesigns below. These commits are **development only**; the user's instruction remains to run **no tests** until the entire update set is combined. No merge, deployment, developer PR readiness toggle, or certification has been performed.
@@ -34,9 +50,9 @@
 
 | Class | Normal tap, 24s cooldown | Charged, 40s cooldown |
 |---|---|---|
-| **Paladin** | **Sanctuary Oath:** `3×Power` holy damage within **320** radius of hero; **15% max-HP hero self-heal**; hero and living active companions inside the radius/line of sight receive a **20% incoming-damage ward for 3.5–4.5s** | **Last Bastion:** `5.5×Power` damage in **420–460** radius; hero self-heals **20% max HP**, enemies struck are **weakened** using the existing Paladin debuff, and nearby party receives **30% incoming-damage reduction for 5–6s** |
-| **Mage** | **Astral Detonation:** selected-target-centered explosion radius **210**; primary target receives `6×Power`; surrounding enemies receive `3.5×Power`; no healing or immunity | **Arcane Cataclysm:** selected-target-centered radius **260–300**, primary target `9×Power`, others `5×Power`; surviving struck enemies take **12–16% increased incoming hero/party damage** for **4.5s** (existing Fracture status, strongest nonstacking) |
-| **Ranger** | **Hunter's Salvo:** arrow projectiles hit up to **three distinct enemies** around the selected target (radius 260), **one `5×Power` arrow each** | **Grand Hunt:** real arrow projectiles to up to **five distinct visible enemies** within **320–360** around selected foe, **two `4×Power` arrows per enemy** (never more than two per target) |
+| **Paladin** | **Sanctuary Oath:** `3×Power` holy damage within **320** radius of hero, up to **8** enemies; **15% max-HP hero self-heal**; hero and living active companions inside the radius/line of sight receive a **20% incoming-damage ward for 3.5–4.5s** | **Last Bastion:** `5.5×Power` damage in **420–460** radius, up to **10** enemies; hero self-heals **20% max HP**, struck enemies are **weakened**, and nearby party receives **30% incoming-damage reduction for 5–6s**; Paladin ward and Shield Stance never compound |
+| **Mage** | **Astral Detonation:** selected-target-centered explosion radius **210**, maximum **5** targets; primary takes `6×Power` and the other enemies `3.5×Power`; no healing or immunity | **Arcane Cataclysm:** selected-target-centered radius **260–300**, maximum **7** targets; primary `9×Power`, others `5×Power`; surviving struck enemies receive a short **25–29% incoming-damage Fracture for 2.5s** (existing strongest nonstacking effect) |
+| **Ranger** | **Hunter's Salvo:** arrows to up to **three distinct foes** around the selected target (radius 260), one `5×Power` arrow each; **two arrows only when one eligible foe exists** | **Grand Hunt:** up to **five distinct visible foes** within **320–360**, two `4×Power` arrows each; **three arrows only when one eligible foe exists**, with no piercing |
 
 All listed damage uses the existing `1 + 0.15 × (rank - 1)` scalar for rank 1–8. No ult attack-speed or dash buff, no universal immunity, no invented damage-over-time status, no extra skill-tree investment. The Ranger favors many enemies; his elite single-target specialty remains Skill 7's defense-piercing arrow. Paladin protection is not permanent and cannot replace Shield Stance's eight-second cost or cooldown.
 
