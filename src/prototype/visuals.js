@@ -1661,6 +1661,60 @@
         );
       }
     }
+    // Crown military direwolf mount: the wolf is larger but still an animal,
+    // with a visible armored HUMAN rider. No independent summon is depicted.
+    function crownDirewolfRider(ranged = false) {
+      ctx.save();
+      ctx.scale(1.14, 1.14);
+      wolf('#65717c', true);
+      // Fur mane, armored cheek plate, leather reins and a working war saddle.
+      poly([[-25,-12],[-16,-26],[-4,-22],[10,-14]],'#77878e');
+      poly([[7,-21],[15,-27],[27,-20],[28,-7],[12,-9]],'#697c84');
+      line([[11,-14],[28,-11],[32,-5]],'#cfaa70',2.2);
+      poly([[14,-17],[30,-16],[34,-11],[17,-10]],'#adb4af');
+      for (const x of [-17,-5,9])
+        poly([[x,-16],[x+7,-21],[x+13,-16],[x+8,-8]],'#8c9699');
+      // Saddle straps continue below the body to avoid a floating rider.
+      poly([[-17,-21],[-13,-30],[7,-32],[16,-22],[5,-17],[-9,-17]],'#624c42');
+      line([[-15,-18],[-11,5]],'#d2b67f',2.5);
+      line([[13,-21],[17,4]],'#d2b67f',2.5);
+      for (const x of [-16,13]) {
+        oval(x,-6,3,4,'#c49d61');
+        line([[x-6,-2],[x+4,-2]],'#4b4b4a',1.5);
+      }
+      // Human legs remain on both flanks, armored boots in real stirrups.
+      poly([[-16,-31],[-22,-14],[-24,-8],[-17,-8],[-9,-23]],'#535b69');
+      poly([[11,-29],[17,-13],[20,-7],[12,-6],[4,-24]],'#596779');
+      line([[-25,-9],[-16,-9]],'#c7af7b',2);
+      line([[13,-7],[22,-8]],'#c7af7b',2);
+      // Riding torso, fitted silver breastplate and gold Crown insignia.
+      poly([[-13,-47],[-5,-56],[6,-55],[16,-46],[12,-27],[-12,-28]],'#3f5368');
+      poly([[-10,-46],[10,-47],[12,-34],[0,-28],[-11,-34]],'#adb9bd');
+      poly([[-5,-43],[0,-49],[5,-43],[2,-40],[-2,-40]],'#e3c779');
+      line([[-10,-36],[10,-36]],'#6f747d',2);
+      oval(0,-59,8,9,'#a7aeb6');
+      poly([[-10,-64],[-7,-71],[0,-75],[8,-70],[11,-62],[8,-57],[-8,-57]],'#596c7b');
+      poly([[-13,-61],[12,-62],[9,-57],[-9,-57]],'#d0bd8b');
+      line([[0,-73],[0,-79]],'#e2c374',2);
+      poly([[0,-79],[-5,-83],[0,-87],[5,-83]],'#ddba6e');
+      if (ranged) {
+        // Bow and blue fletching: unmistakably a mobile mounted archer.
+        line([[15,-45],[31,-54],[34,-31],[17,-21]],'#b99a67',2.8);
+        line([[31,-54],[38,-44],[34,-31]],'#e6d6b2',1.5);
+        line([[9,-40],[40,-42]],'#d5c9a2',2);
+        poly([[40,-42],[33,-46],[33,-38]],'#a4c2d3');
+        rect(-17,-42,8,23,'#705842');
+        for (const y of [-38,-32,-26]) line([[-15,y],[-22,y-6]],'#a6c3da',1.5);
+      } else {
+        // Blunted practice lance doubles as a real combat dash cue.
+        line([[16,-38],[36,-55],[51,-66]],'#ccb080',4);
+        poly([[48,-64],[61,-77],[56,-60],[50,-56]],'#adb9be');
+        line([[-21,-43],[-30,-33]],'#a6b4b8',3);
+        poly([[-34,-41],[-22,-44],[-17,-30],[-29,-28]],'#59748a');
+        poly([[-30,-39],[-25,-45],[-20,-39]],'#e2c371');
+      }
+      ctx.restore();
+    }
     function crocodile(c = '#71886a') {
       poly(
         [
@@ -6188,6 +6242,26 @@
     function decoration(kind) {
       const localWood = ['#806044', '#71654f', '#71695b', '#614f46', '#555563'][region];
       switch (kind) {
+        case 'direwolf-kennel':
+          poly([[-33,-7],[-18,-17],[28,-17],[34,-5],[28,15],[-26,15]],'#6b665b');
+          poly([[-26,-6],[-8,-13],[26,-8],[22,9],[-22,9]],'#82938c');
+          for (const x of [-21,0,20]) line([[x,-4],[x+5,10]],'#aab2a2',2);
+          oval(19,9,6,3,'#c1a573');
+          break;
+        case 'rider-tack-rack':
+          for(const x of [-24,24]) line([[x,12],[x,-34]],'#756048',4);
+          line([[-25,-29],[25,-29]],'#9f8156',4);
+          poly([[-18,-26],[-10,-39],[5,-40],[17,-26],[9,-15],[-10,-16]],'#694e40');
+          for(const x of [-15,0,14]) line([[x,-19],[x+5,12]],'#d4ba87',2);
+          oval(-20,7,6,6,'#b59b66');
+          oval(22,6,6,5,'#9a9d9b');
+          break;
+        case 'rider-bunk':
+          rect(-25,-10,50,25,'#665445');
+          rect(-21,-14,43,22,'#557080');
+          rect(-20,-13,13,13,'#c9b99a');
+          line([[-28,17],[28,17]],'#b39668',2);
+          break;
         case 'torch':
           line(
             [
@@ -12711,7 +12785,8 @@
           else sword(15, -9);
           break;
         case 'wolf':
-          wolf();
+          if (e.mountedCrownRider) crownDirewolfRider(!!e.ranged);
+          else wolf();
           break;
         case 'mireling':
           if (e.ranged) {
@@ -13347,6 +13422,7 @@
     ctx.restore();
   }
   function unscaledHeight(e) {
+    if (e.mountedCrownRider) return 99;
     if (e.type === 'boss') return 102;
     if (e.captain || e.roomCaptain) return 68;
     if (e.renderKind === 'building' && e.kind === 'barracks') return 88;
