@@ -6,6 +6,24 @@ const crypto = require('node:crypto');
 const manifest = require('./fixtures/perf-v09-protected.json');
 const revision = manifest.renderingRevision;
 const certificationRevision = manifest.approvedOvernightCertificationRevision;
+// Historical PR #300 receipts remain immutable. A later feature must declare
+// only the precise source files changed and pin their new byte-exact hashes;
+// no original baseline hash, app frame body, or simulation tolerance is erased.
+const healingRevision = manifest.candidateEnemyHealing306Revision;
+const healingHash = (file) => healingRevision?.files[file];
+if (healingRevision) {
+  assert.match(healingRevision.source, /PR #306.*PR #300/);
+  assert.deepEqual(Object.keys(healingRevision.files).sort(), [
+    'src/prototype/boss-combat.js',
+    'src/prototype/combat-visuals.js',
+    'src/prototype/engine.js',
+    'src/prototype/renderer.js',
+    'src/prototype/rules.js',
+    'src/prototype/save.js',
+  ].sort());
+  for (const hash of Object.values(healingRevision.files))
+    assert.match(hash, /^[a-f0-9]{64}$/);
+}
 if (certificationRevision) {
   assert.match(certificationRevision.source, /PR #300.*e5893fbd45cf/);
   const guarded = new Set(Object.keys(manifest.files));
@@ -16,7 +34,7 @@ if (certificationRevision) {
   for (const [file, receipt] of Object.entries(certificationRevision.provenance)) {
     assert.match(receipt.handoffSha256, /^[a-f0-9]{64}$/);
     assert.equal(receipt.candidateSha256, certificationRevision.files[file]);
-    assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), receipt.candidateSha256, file + ' exact final source receipt');
+    assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), healingHash(file) || receipt.candidateSha256, file + ' exact final source receipt');
   }
 }
 assert.deepEqual(Object.keys(revision.files).sort(), [
@@ -148,8 +166,8 @@ if (expansionRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
-      certificationRevision?.files[file] || chargedRetargetRevision?.files[file] ||
-    certificationRevision?.files[file] || combinedRevision?.files[file] ||
+      healingHash(file) || certificationRevision?.files[file] || chargedRetargetRevision?.files[file] ||
+    healingHash(file) || certificationRevision?.files[file] || combinedRevision?.files[file] ||
       veyraRevision?.files[file] || expected,
       file,
     );
@@ -171,7 +189,7 @@ if (agricultureRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
-      certificationRevision?.files[file] || combinedRevision?.files[file] ||
+      healingHash(file) || certificationRevision?.files[file] || combinedRevision?.files[file] ||
       veyraRevision?.files[file] || expansionRevision?.files[file] || expected,
       file,
     );
@@ -196,7 +214,7 @@ if (veraRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
-      certificationRevision?.files[file] || combinedRevision?.files[file] ||
+      healingHash(file) || certificationRevision?.files[file] || combinedRevision?.files[file] ||
       veyraRevision?.files[file] ||
         expansionRevision?.files[file] ||
         agricultureRevision?.files[file] ||
@@ -243,7 +261,7 @@ if (ministryRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
-      certificationRevision?.files[file] || combinedRevision?.files[file] ||
+      healingHash(file) || certificationRevision?.files[file] || combinedRevision?.files[file] ||
       veyraRevision?.files[file] ||
         expansionRevision?.files[file] ||
         agricultureRevision?.files[file] ||
@@ -267,7 +285,7 @@ if (institutionRevision) {
         .createHash('sha256')
         .update(fs.readFileSync(path.resolve(__dirname, '..', file)))
         .digest('hex'),
-      certificationRevision?.files[file] || combinedRevision?.files[file] ||
+      healingHash(file) || certificationRevision?.files[file] || combinedRevision?.files[file] ||
       veyraRevision?.files[file] ||
         expansionRevision?.files[file] ||
         agricultureRevision?.files[file] ||
@@ -309,9 +327,9 @@ for (const [file, expected] of Object.entries(manifest.files)) {
     .digest('hex');
   assert.equal(
     actual,
-    certificationRevision?.files[file] || combinedRevision?.files[file] ||
+    healingHash(file) || certificationRevision?.files[file] || combinedRevision?.files[file] ||
     joystickSnapshotReceipt?.files[file] ||
-      certificationRevision?.files[file] || combinedRevision?.files[file] ||
+      healingHash(file) || certificationRevision?.files[file] || combinedRevision?.files[file] ||
       veyraRevision?.files[file] ||
       expansionRevision?.files[file] ||
       agricultureRevision?.files[file] ||
