@@ -612,16 +612,6 @@
             p.delay -= dt;
             continue;
           }
-          // Additive transient observation, after the existing stagger delay.
-          if (p.source === 'hero' && !p.heroFlightPresented) {
-            p.heroFlightPresented = true;
-            this.event('heroProjectileFlight', {
-              actor: 'hero', class: hero.class, slot: p.slot || 1,
-              x: p.x, y: p.y, target: p.target,
-              style: p.style, charged: !!p.charged,
-              piercing: !!p.piercing, effect: p.effect,
-            });
-          }
           if (p.source === 'enemy') {
             p.life -= dt;
             const before = { x: p.x, y: p.y };
@@ -679,6 +669,16 @@
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
             continue;
           }
+          // Additive transient observation, after the existing stagger delay.
+          if (p.source === 'hero' && !p.heroFlightPresented) {
+            p.heroFlightPresented = true;
+            this.event('heroProjectileFlight', {
+              actor: 'hero', class: hero.class, slot: p.slot || 1,
+              x: p.x, y: p.y, target: p.target,
+              style: p.style, charged: !!p.charged,
+              piercing: !!p.piercing, effect: p.effect,
+            });
+          }
           const before = { x: p.x, y: p.y },
             d = dist(p, e),
             step = Math.min(p.speed * dt, d);
@@ -687,6 +687,11 @@
           p.x += p.dx * step;
           p.y += p.dy * step;
           if (!this.clearSegment(before, p, 0)) {
+            if (p.source === 'hero') this.event('projectileImpact', {
+              actor: 'hero', source: 'hero', class: hero.class, slot: p.slot || 1,
+              style: p.style, effect: p.effect, charged: !!p.charged,
+              x: before.x, y: before.y, landed: false, blocked: true,
+            });
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
             continue;
           }
@@ -709,6 +714,7 @@
                   )
                 : null;
             const victim = guard || e;
+            const contactPoint = { x: victim.x, y: victim.y };
             if (guard) e.royalPrerogativeReadyAt = this.s.time + 18;
             const landed = this.damage(
               victim,
@@ -744,8 +750,8 @@
               style: p.style || 'arrow',
               effect: p.effect,
               slot: p.slot,
-              x: victim.x,
-              y: victim.y,
+              x: contactPoint.x,
+              y: contactPoint.y,
               target: victim.id,
               charged: !!p.charged,
               landed: !!landed, piercing: !!p.piercing,

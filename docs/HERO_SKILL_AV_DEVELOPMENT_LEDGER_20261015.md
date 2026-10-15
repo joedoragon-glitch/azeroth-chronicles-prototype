@@ -18,12 +18,35 @@ are combined. Source inspection is not runtime validation.
    the current hero/shared combat, rules, shell, renderer, effects/audio/mixer,
    asset inventory, build template and CI trigger configuration. Existing Canvas
    effect queue and Web Audio voice/mixer lifecycle are the extension points.
-2. Presentation hooks: additive cast/chain/area-recipient metadata, real projectile
-   launch/impact identity, and actual displacement observation. Implementation in
-   progress; no tests executed.
+2. Recoverable GitHub checkpoint `d619c15bf96084407f6fdec419bde8d988822f52`:
+   additive cast, chain and area-contact receipts, delayed-flight observations,
+   missing charged Skill 1 slot identity and actual displacement metadata.
+3. Complete source implementation: 48 catalog forms; class-specific Canvas art,
+   real arrow/beam rendering, contact feedback, silence/status markers, charge
+   buildup/readiness/cancel, original procedural audio on existing buses/voices,
+   warning headroom, reduced-motion handling and shared queue limits.
+4. Offline graph and generated files mechanically updated as one development
+   change; version `0.9.1+snapshot.dev.57.av.1`. Build was NOT executed because it
+   includes validation. No tests, gameplay, CI, merges, PR or deployment initiated.
+5. Source review refinements: flight receipt after target validity; blocked-contact
+   feedback; pre-knockback impact coordinates; scene/death queue reset; per-skill
+   charge colors; duplicate heal audio suppression; original companion/enemy paths.
+6. Documentation complete: [48-form mapping and engine/asset contracts](HERO_SKILL_AV_IMPLEMENTATION_20261015.md),
+   [deferred combined verification](HERO_SKILL_AV_COMBINED_VERIFICATION_20261015.md)
+   and `tools/sprites/design-handoffs/hero-skills-av.json` procedural handoff.
 
-## Resume
+## Actual verification status
 
-Continue the dedicated hero presentation and audio owners, wire them into the
-existing queue/render/audio facade and offline script graph, document every skill
-mapping, then commit recoverable progress. Never describe this branch as tested.
+Read source/diffs and formatted the two new owner modules with pinned Prettier.
+No automated test, syntax-check command, format-check, build, gameplay/browser
+session, simulation, CI or deployment was run. Formatting does not establish
+runtime correctness or audiovisual quality. Remote commit/tree inspection is only
+confirmation that the source was saved, not gameplay validation.
+
+## Resume / consolidation
+
+Implementation is complete in source; next is the owner-authorized combined pass.
+Start from the latest active-skill implementation and merge this AV branch by
+ancestry, retaining newer mechanics and approved other workstreams. Exclude PR
+#305. Reconcile generated files once at the final version, then follow the linked
+verification plan when authorized. Do not mark release-ready or merge/deploy now.

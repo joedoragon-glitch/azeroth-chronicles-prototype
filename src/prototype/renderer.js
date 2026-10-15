@@ -260,6 +260,10 @@
     let game = getGame(),
       visualFx = [],
       origin = null;
+    const heroArt = root.PrototypeHeroPresentation ||
+      (typeof require === 'function' ? require('./hero-presentation.js') : null);
+    const motionPreference = root.matchMedia?.('(prefers-reduced-motion: reduce)');
+    const reducedMotion = () => !!motionPreference?.matches;
     const groundCache = PrototypeGroundCache ? new PrototypeGroundCache() : null;
     let cacheGround = true,
       optimized = false;
@@ -718,6 +722,8 @@
       return { q, ux: vx / len, uy: vy / len, px: -vy / len, py: vx / len };
     }
     function drawProjectile(p) {
+      if (p.delay > 0) return;
+      if (heroArt?.projectile(ctx, screen, p, game.hero.class, reducedMotion())) return;
       if (p.style !== 'cargo' && PrototypeEnemyVfxArt?.projectile(ctx, screen, p, game)) return;
       const { q, ux, uy, px, py } = projectileVector(p),
         style = p.style || 'magic',
@@ -1022,7 +1028,13 @@
       }
       ctx.restore();
     }
+    let visualScene = { game, zone: game.zoneId, deaths: game.s.statistics.deaths };
     function queueVisualFx(events) {
+      if (visualScene.game !== game || visualScene.zone !== game.zoneId ||
+          visualScene.deaths !== game.s.statistics.deaths) {
+        visualFx = [];
+        visualScene = { game, zone: game.zoneId, deaths: game.s.statistics.deaths };
+      }
       visualFx = PrototypeCombatVisuals.queue(events, game, visualFx);
     }
     function updateVisualFx(dt) {
@@ -1033,8 +1045,14 @@
       for (const f of visualFx) {
         const a = Math.max(0, f.life / f.max),
           p = screen(f),
-          grow = 1 - a;
+          grow = reducedMotion() ? 0.5 : 1 - a;
         if (f.type === 'enemyVfx') continue;
+        if (f.type === 'heroSkill') {
+          heroArt?.draw(ctx, screen, f, {
+            reduced: reducedMotion(), optimized, width: canvas.width, height: canvas.height,
+          });
+          continue;
+        }
         ctx.save();
         ctx.globalAlpha = a;
         if (f.type === 'ability') {
@@ -1357,7 +1375,7 @@
       }
       const guard = (q, r, cls = 'paladin') => {
         ctx.save();
-        const pulse = 0.65 + Math.sin(now() / 160) * 0.15;
+        const pulse = 0.65 + (reducedMotion() ? 0 : Math.sin(now() / 160)) * 0.15;
         ctx.globalAlpha = pulse;
         ctx.strokeStyle = cls === 'mage' ? '#b3dfff' : '#f6dda0';
         ctx.fillStyle = cls === 'mage' ? '#b3dfff18' : '#f6dda018';
@@ -1385,7 +1403,7 @@
         ctx.stroke();
         ctx.globalAlpha = 0.45;
         for (let j = 0; j < 3; j++) {
-          const an = now() / 550 + j * 2.09;
+          const an = (reducedMotion() ? 0 : now() / 550) + j * 2.09;
           ctx.fillStyle = mana ? '#b8ddff' : '#c1efc6';
           ctx.beginPath();
           ctx.arc(q.x + Math.cos(an) * r * 0.6, q.y - 7 + Math.sin(an) * 5, 1.8, 0, Math.PI * 2);
@@ -2134,6 +2152,8 @@
       PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx);
       for (const p of game.s.projectiles) drawProjectile(p);
       drawVisualFx();
+      heroArt?.statuses(ctx, screen, game, canvas.width, canvas.height);
+      heroArt?.charge(ctx, screen, game.hero, chargePresentation(), reducedMotion());
       PrototypeCombatVisuals.ground(ctx, screen, game, 'cue', game.s.time);
       targetGuidance();
       drawNavigationRoute();

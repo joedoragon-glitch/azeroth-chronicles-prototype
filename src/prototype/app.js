@@ -1769,12 +1769,9 @@
     const rank = game.hero.skills[charge.slot - 1],
       cost = game.skillManaCost(charge.slot, rank, true),
       enoughMana = game.hero.mp >= cost,
-      color =
-        game.hero.class === 'mage'
-          ? '#9fd8ff'
-          : game.hero.class === 'ranger'
-            ? '#cfe59a'
-            : '#f6d77a';
+      color = PrototypeHeroPresentation.profile({
+        class: game.hero.class, slot: charge.slot, charged: true,
+      })?.colors[0] || '#f6d77a';
     if (charge.started === null)
       return {
         slot: charge.slot,
@@ -1931,6 +1928,33 @@
       status('No living companions in Rally range.');
     }
   }
+  function chargeFeedback(stage) {
+    if (!charge || charge.started === null) return;
+    const receipt = {
+      type: 'heroCharge', actor: 'hero', class: game.hero.class,
+      slot: charge.slot, charged: true, stage,
+      x: game.hero.x, y: game.hero.y,
+    };
+    renderer.queue([receipt]);
+    audio.effect(receipt);
+  }
+  function observeChargeFeedback() {
+    if (!charge || charge.started === null) return;
+    const state = chargePresentation();
+    // Quiet taps do not trigger charging sounds. The input thresholds stay authoritative.
+    if (!charge.avBuildup && state.elapsed >= chargeTapSeconds()) {
+      charge.avBuildup = true;
+      chargeFeedback('build');
+    }
+    if (!charge.avRise && state.progress >= 0.7 && !state.ready) {
+      charge.avRise = true;
+      chargeFeedback('rise');
+    }
+    if (!charge.avReady && state.ready) {
+      charge.avReady = true;
+      chargeFeedback('ready');
+    }
+  }
   function releaseCharge(slot, source) {
     if (!charge || charge.slot !== slot || charge.source !== source) return false;
     syncChargeReady();
@@ -1947,6 +1971,7 @@
       encountersAtStart = charge.encountersAtStart;
     if (held < chargeSeconds()) {
       const quickTap = !wasQueued && held < chargeTapSeconds();
+      if (!quickTap) chargeFeedback('cancel');
       charge = null;
       if (!quickTap) {
         updateHUD();
@@ -1959,6 +1984,7 @@
     }
     const state = chargePresentation();
     if (!state.ready) {
+      chargeFeedback('cancel');
       charge = null;
       chargeStateStatus(state);
       updateHUD();
@@ -1966,6 +1992,8 @@
     }
     // The charge is still released manually; only the aim is resolved now.
     const releaseTarget = chargeNeedsTarget(slot) ? chargeTarget(slot, targetId) : null;
+    const failedRelease = { type: 'heroCharge', actor: 'hero', class: game.hero.class,
+      slot, charged: true, stage: 'cancel', x: game.hero.x, y: game.hero.y };
     charge = null;
     const cast =
       activePlay() &&
@@ -1975,12 +2003,17 @@
         true,
         encountersAtStart,
       );
-    if (!cast && activePlay()) chargeFailureStatus(slot, true);
+    if (!cast && activePlay()) {
+      renderer.queue([failedRelease]); audio.effect(failedRelease);
+      chargeFailureStatus(slot, true);
+    }
     updateHUD();
     return cast;
   }
   function cancelCharge() {
     if (!charge) return;
+    if (charge.started !== null &&
+        (performance.now() - charge.started) / 1000 >= chargeTapSeconds()) chargeFeedback('cancel');
     charge = null;
     if (started) updateHUD();
   }
@@ -2776,6 +2809,7 @@
         };
       game.tick(dt, { x, y, speedFactor });
       syncChargeReady();
+      observeChargeFeedback();
       if (
         game.s.mode !== 'developer' &&
         (x || y || was.order) &&

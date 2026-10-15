@@ -175,7 +175,7 @@
               ally.wardReduction = Math.max(stillActive ? ally.wardReduction || 0 : 0,
                 cfg.wardReduction);
             }
-            this.event('heal', {
+            this.event('heal', { skillPresentation: true,
               x: hero.x, y: hero.y, resource: 'health', target: 'hero',
             });
           }
@@ -878,7 +878,7 @@
               );
               for (const u of targets) {
                 u.hp = Math.min(u.maxHp, u.hp + amount);
-                this.event('heal', { x: u.x, y: u.y, resource: 'health',
+                this.event('heal', { skillPresentation: true, x: u.x, y: u.y, resource: 'health',
                   target: u === this.hero ? 'hero' : u.id });
               }
               this.event('chargedArea', {
@@ -890,7 +890,7 @@
               });
             } else {
               this.hero.hp = Math.min(this.hero.maxHp, this.hero.hp + amount);
-              this.event('heal', { x: this.hero.x, y: this.hero.y,
+              this.event('heal', { skillPresentation: true, x: this.hero.x, y: this.hero.y,
                 resource: 'health', target: 'hero' });
             }
           }

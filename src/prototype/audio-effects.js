@@ -91,6 +91,7 @@
       supportsType(type) {
         return (
           type === 'enemyVfx' ||
+          ['heroSkillCast', 'heroProjectileFlight', 'heroCharge', 'heroDisplace'].includes(type) ||
           contextualEffectTypes.has(type) ||
           Object.prototype.hasOwnProperty.call(eventNotes, type)
         );
@@ -246,6 +247,8 @@
         }
       }
       renderEffect(input) {
+        if (input?.type === 'heal' && input.skillPresentation) return;
+        if (input && typeof input === 'object' && this.heroSkillEffect?.(input)) return;
         if (!this.ctx || this.paused || this.settings.muted || this.ctx.state !== 'running') return;
         const e = typeof input === 'string' ? { type: input } : input || {},
           type = e.type,
