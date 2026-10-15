@@ -4846,9 +4846,9 @@
       orc: 'Warband First Aid',
       ogre: 'Stoneground Poultice',
     }),
-    // Explicit PR #300 repertoire review, not generic captain/boss status.
-    // Named ranged techniques and authored support expertise are intentional
-    // exceptions to the ordinary mobs' strict e.ranged AI flag.
+    // Named eligibility follows the canonical attack repertoire and expertise,
+    // not the generic boss/captain rank. Their authored ranged techniques and
+    // restorative roles do not require the ordinary mob e.ranged flag.
     captains: Object.freeze({
       'supply-vale': 'Reclamation Triage', // Scornfang: tracking volley / zone control
       'supply-march': 'Sediment Rehydration', // Direjaw: water and mud projection
