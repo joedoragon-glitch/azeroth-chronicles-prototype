@@ -1637,7 +1637,17 @@
     ],
     icons = ['ATK', 'HIT', 'HEAL', 'GUARD', 'AREA', 'CAST', 'BURST', 'FINAL'],
     skillKeys = () => Array.from({ length: 8 }, (_, i) => input.key('skill' + (i + 1))),
-    chargeableSlots = new Set([1, 2, 3]);
+    chargeableSlots = new Set([1, 2, 3, 4]);
+  const canChargeSlot = (slot) => chargeableSlots.has(slot) &&
+    (slot !== 4 || game.hero.class !== 'ranger');
+  const skillLabel = (slot) => {
+    const labels = {
+      paladin: { 2: 'Sundering Strike', 3: 'Shield Stance', 4: 'Judgment' },
+      mage: { 2: 'Frost Bolt', 3: 'Spell Interrupt', 4: 'Arcane Fracture' },
+      ranger: { 2: 'Pinning Shot', 3: 'Self-Heal', 4: 'Movement Haste' },
+    };
+    return labels[game.hero.class]?.[slot] || skillNames[slot - 1];
+  };
   function chargeSeconds() {
     return PrototypeRules.chargedSkills?.holdSeconds || 0.65;
   }
@@ -1651,10 +1661,10 @@
     return (Math.ceil(Math.max(0, seconds) * 10) / 10).toFixed(1);
   }
   function chargedTargetRange(slot) {
-    return slot === 1 || slot === 2 ? game.heroSkillRange(slot, true) : 0;
+    return slot === 1 || slot === 2 || slot === 4 ? game.heroSkillRange(slot, true) : 0;
   }
   function chargeTarget(slot, targetId = null) {
-    if (slot !== 1 && slot !== 2) return null;
+    if (slot !== 1 && slot !== 2 && slot !== 4) return null;
     const range = chargedTargetRange(slot),
       valid = game
         .zone()
@@ -1721,7 +1731,7 @@
     charge.started = performance.now();
     // Record which protected encounters were active at the instant charging began.
     charge.encountersAtStart = game.chargedEncounterSnapshot();
-    if (charge.slot === 1 || charge.slot === 2)
+    if (charge.slot === 1 || charge.slot === 2 || charge.slot === 4)
       charge.targetId = chargedPreviewTarget()?.id ?? null;
     return true;
   }
@@ -1786,7 +1796,8 @@
         targetId: charge.targetId ?? null,
         color,
       };
-    if ((charge.slot === 1 || charge.slot === 2) && !chargeTarget(charge.slot, charge.targetId))
+    if ((charge.slot === 1 || charge.slot === 2 || charge.slot === 4) &&
+        !chargeTarget(charge.slot, charge.targetId))
       return {
         slot: charge.slot,
         state: 'no-target',
@@ -1800,7 +1811,7 @@
         targetId: charge.targetId ?? null,
         color,
       };
-    if (charge.slot === 3 && !chargeHealNeeded())
+    if (charge.slot === 3 && game.hero.class === 'ranger' && !chargeHealNeeded())
       return {
         slot: charge.slot,
         state: 'no-heal',
@@ -1831,7 +1842,7 @@
   function beginCharge(slot, source, pointerId = null) {
     const rank = game.hero.skills[slot - 1];
     if (
-      !chargeableSlots.has(slot) ||
+      !canChargeSlot(slot) ||
       !activePlay() ||
       !rank ||
       game.peace ||
@@ -1856,13 +1867,12 @@
       manaStatus('Need ' + cost + ' MP.');
       return;
     }
-    if (slot === 1 || slot === 2) {
+    if (slot === 1 || slot === 2 || slot === 4) {
       status('No target in range.');
       return;
     }
-    if (slot === 3) {
-      status('No healing needed.');
-    }
+    if (slot === 3 && game.hero.class === 'ranger') status('No healing needed.');
+    if (slot === 3 && game.hero.class === 'mage') status('No casting enemy to interrupt.');
   }
   function chargeStateStatus(cast) {
     if (cast.state === 'need-mp') {
@@ -1911,13 +1921,14 @@
       return false;
     }
     // The charge is still released manually; only the aim is resolved now.
-    const releaseTarget = slot === 1 || slot === 2 ? chargeTarget(slot, targetId) : null;
+    const releaseTarget = slot === 1 || slot === 2 || slot === 4
+      ? chargeTarget(slot, targetId) : null;
     charge = null;
     const cast =
       activePlay() &&
       game.cast(
         slot,
-        slot === 1 || slot === 2 ? releaseTarget?.id : undefined,
+        slot === 1 || slot === 2 || slot === 4 ? releaseTarget?.id : undefined,
         true,
         encountersAtStart,
       );
@@ -1934,12 +1945,13 @@
     const slot = i + 1,
       b = document.createElement('button');
     b.id = 'skill-' + slot;
-    b.setAttribute('aria-label', 'Skill ' + slot + ' ' + skillNames[i]);
+    b.setAttribute('aria-label', 'Skill ' + slot + ' ' + skillLabel(slot));
     b.innerHTML = icons[i] + '<small>' + skillKeys()[i] + '</small>';
     if (chargeableSlots.has(slot)) {
       b.onclick = (e) => {
         e?.preventDefault?.();
-        if (e?.isTrusted && e.detail === 0 && activePlay()) game.cast(slot);
+        if (activePlay() && (!canChargeSlot(slot) || (e?.isTrusted && e.detail === 0)))
+          game.cast(slot);
       };
       b.onpointerdown = (e) => {
         if (e?.button > 0) return;
@@ -2089,7 +2101,7 @@
     else if (actionId.startsWith('skill')) {
       const slot = Number(actionId.slice(5));
       if (game.s.mode === 'developer' && slot === 1) return;
-      if (chargeableSlots.has(slot)) beginCharge(slot, 'keyboard');
+      if (canChargeSlot(slot)) beginCharge(slot, 'keyboard');
       else game.cast(slot);
     }
   });
@@ -2562,7 +2574,7 @@
       b.classList.toggle('charging', charging);
       b.classList.toggle('skill-ready', !!rank && h.cd[i] <= 0 && !charging);
       const revealed = game.skillRevealed(slot),
-        chargeTip = chargeableSlots.has(slot)
+        chargeTip = canChargeSlot(slot)
           ? ' · Tap under ' +
             chargeTapSeconds().toFixed(2) +
             's for normal · hold ' +
@@ -2573,7 +2585,7 @@
               : ' · charged cooldown ' + game.skillCooldown(slot, true).toFixed(1) + 's')
           : '';
       b.title =
-        (revealed ? skillNames[i] : 'Undiscovered skill') +
+        (revealed ? skillLabel(slot) : 'Undiscovered skill') +
         (b.disabled ? ' · Disabled in Developer Mode' : '') +
         (rank ? ' · Rank ' + rank : ' · Not learned') +
         chargeTip +
@@ -2589,12 +2601,16 @@
         'Skill ' +
           slot +
           ' ' +
-          (revealed ? skillNames[i] : 'Undiscovered') +
-          (chargeableSlots.has(slot)
+          (revealed ? skillLabel(slot) : 'Undiscovered') +
+          (canChargeSlot(slot)
             ? ' · tap for normal or hold to charge' +
               (manaEnabled ? ' · charged cost ' + chargedManaPercent(slot) + ' percent max MP' : '')
             : ''),
       );
+      if (b.firstChild?.nodeType === 3) b.firstChild.textContent =
+        ({ paladin: { 2: 'SUN', 3: 'SHLD', 4: 'JUDGE' },
+           mage: { 2: 'FROST', 3: 'STOP', 4: 'ARC' },
+           ranger: { 2: 'PIN', 3: 'HEAL', 4: 'HASTE' } })[h.class]?.[slot] || icons[i];
       b.querySelector('small').textContent = b.disabled
         ? 'OFF'
         : charging
@@ -2609,8 +2625,10 @@
                   : cast.state === 'no-heal'
                     ? 'NO HEAL'
                     : 'CHARGED'
-          : !rank
-            ? 'Locked'
+          : (slot === 3 && h.class === 'paladin' && h.shieldStance > 0)
+            ? 'SHIELD ' + cooldownText(h.shieldStance)
+            : !rank
+              ? 'Locked'
             : h.cd[i] > 0
               ? cooldownText(h.cd[i])
               : skillKeys()[i];
