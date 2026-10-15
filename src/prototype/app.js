@@ -914,6 +914,7 @@
       action('Map and travel routes', showMap),
       action('Quest journal', () => quests(false)),
       action('Inventory and support', inventory),
+      action('Hero skills', () => skillBook(openMain), 'Tap / charged effects and cooldowns'),
       action('Talents', () => talents(openMain)),
       ...(canBuild
         ? [
