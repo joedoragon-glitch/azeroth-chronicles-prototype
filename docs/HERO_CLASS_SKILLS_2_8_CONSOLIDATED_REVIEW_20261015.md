@@ -1,6 +1,8 @@
 # Hero class skills: implementation checkpoint and later review
 15 October 2026 · Isolated branch based on PR #300 `implementation/director-snapshot-20261013`
 
+**Additional balance review:** See [`HERO_SKILLS_STATIC_BALANCE_AUDIT_20261015.md`](./HERO_SKILLS_STATIC_BALANCE_AUDIT_20261015.md) for prioritized source-only findings on the Mage Skill 8 Fracture mismatch, Ranger solo-boss ultimate value, Paladin mitigation overlap, Ranger charged payoff, Mage survivability, and final combined QA decisions. No gameplay changes resulted from that audit.
+
 **IMPORTANT:** Development changes only; user requested no new tests until multiple updates are consolidated. The exact branch is **not tested, certified, approved to merge, or deployed**. Do not import the older PR #305 source branch wholesale over PR #300: this implementation starts with PR #300's hero repair, worldbuilding, save and control changes.
 
 ## Source-review handoff: current approved redesign
