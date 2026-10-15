@@ -14746,16 +14746,16 @@
       'rgba(166,146,196,.05)',
     ];
     const nightTints = [
-      'rgba(8,18,38,.64)',
-      'rgba(8,28,40,.61)',
-      'rgba(15,22,38,.62)',
-      'rgba(26,14,30,.62)',
-      'rgba(20,12,36,.66)',
+      'rgba(11,25,42,.48)', // Greenwood: moonlit blue-greens, not a blackout
+      'rgba(12,32,44,.48)', // Marches: wet blue reflections
+      'rgba(19,29,42,.50)', // Ironroot: cool altitude, warm occupied windows
+      'rgba(32,20,35,.52)', // Frontier: ash dusk with working checkpoints
+      'rgba(27,19,43,.54)', // Crown: rich night violet, still navigable
     ];
     if (night) {
       const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
       g.addColorStop(0, nightTints[region] || nightTints[0]);
-      g.addColorStop(1, peace ? 'rgba(22,31,49,.36)' : 'rgba(3,8,20,.72)');
+      g.addColorStop(1, peace ? 'rgba(22,31,49,.30)' : 'rgba(9,17,30,.58)');
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       // Warm pools around the hero and inhabited field structures make night readable without flattening the whole scene.
@@ -14769,15 +14769,62 @@
         ctx.fillStyle = q;
         ctx.fillRect(p.x - r, p.y - r, r * 2, r * 2);
       };
-      glow(hero, 145, peace ? 0.24 : 0.2, region === 4 ? '215,186,238' : '255,221,158');
-      for (const p of lights.slice(0, 12))
-        glow(
-          p,
-          88,
-          0.16,
-          region === 1 ? '180,226,211' : region === 4 ? '204,170,229' : '255,198,125',
-        );
+      glow(hero, 145, peace ? 0.22 : 0.18, region === 4 ? '215,191,231' : '235,221,184');
+      // Night sources are the current map's actual windows, services and fires.
+      // Keep the soft lit ground distinct from the lamp itself. Only a small
+      // radius for each source, with a larger effect at working kitchens/forges.
+      const renderedLights = lights.slice(0, 36);
+      for (const p of renderedLights) {
+        const window = p.kind === 'window',
+          fire = p.kind === 'fire' || p.kind === 'work-fire',
+          radius = window ? 70 : p.kind === 'work-fire' ? 105 : fire ? 90 : 85,
+          y = p.y - (window ? 32 : fire ? 13 : 28),
+          source = { x: p.x, y },
+          tint = region === 1 ? '245,208,150' :
+            region === 4 ? '247,194,147' : '255,207,132';
+        glow(source, radius, window ? 0.27 : fire ? 0.30 : 0.25, tint);
+      }
       ctx.globalCompositeOperation = 'source-over';
+      // Luminous windows and sheltered lantern glass are localized light
+      // sources, not new scenery obstacles. Fires already have drawn flames.
+      for (const p of renderedLights) {
+        if (p.kind === 'window') {
+          ctx.fillStyle = '#483d31';
+          ctx.fillRect(p.x - 15, p.y - 43, 10, 13);
+          ctx.fillRect(p.x + 6, p.y - 43, 10, 13);
+          ctx.fillStyle = '#f2cb81';
+          ctx.fillRect(p.x - 13, p.y - 41, 7, 9);
+          ctx.fillRect(p.x + 8, p.y - 41, 7, 9);
+          ctx.strokeStyle = '#8d6543';
+          ctx.lineWidth = 1.3;
+          ctx.beginPath();
+          for (const x of [p.x - 9, p.x + 12]) {
+            ctx.moveTo(x, p.y - 42);
+            ctx.lineTo(x, p.y - 32);
+          }
+          ctx.stroke();
+        } else if (p.kind === 'lantern') {
+          // A modest iron hook and glazed hanging lamp by the service stand.
+          const x = p.x + 19, y = p.y - 22;
+          ctx.strokeStyle = '#817c69';
+          ctx.lineWidth = 2.2;
+          ctx.beginPath();
+          ctx.moveTo(x - 7, y + 17);
+          ctx.lineTo(x - 7, y - 14);
+          ctx.lineTo(x + 1, y - 14);
+          ctx.lineTo(x + 1, y - 9);
+          ctx.stroke();
+          ctx.fillStyle = '#574b40';
+          ctx.fillRect(x - 6, y - 9, 14, 4);
+          ctx.fillStyle = '#f4c57e';
+          ctx.fillRect(x - 5, y - 5, 12, 12);
+          ctx.strokeStyle = '#635a4b';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(x - 5, y - 5, 12, 12);
+          ctx.fillStyle = '#7a6450';
+          ctx.fillRect(x - 6, y + 7, 14, 3);
+        }
+      }
     } else {
       ctx.fillStyle = dayTints[region] || dayTints[0];
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -14826,7 +14873,7 @@
       Math.max(canvas.width, canvas.height) * 0.72,
     );
     v.addColorStop(0, 'rgba(0,0,0,0)');
-    v.addColorStop(1, night ? 'rgba(0,0,0,.24)' : 'rgba(5,15,10,.12)');
+    v.addColorStop(1, night ? 'rgba(0,0,0,.15)' : 'rgba(5,15,10,.12)');
     ctx.fillStyle = v;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.restore();
