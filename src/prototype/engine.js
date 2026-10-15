@@ -4770,7 +4770,10 @@
           e.sabotageCd = Math.max(0, (e.sabotageCd || 0) - dt);
         e.healCd = Math.max(0, (e.healCd || 0) - dt);
         e.pursuitBurst = Math.max(0, (e.pursuitBurst || 0) - dt);
-        e.open = Math.max(0, (e.open || 0) - dt);
+        const openBefore = e.open || 0;
+        e.open = Math.max(0, openBefore - dt);
+        if (e.type === 'boss' && e.family === 'mine' && openBefore > 0 && e.open === 0)
+          this.snapshotPassiveCoreRelock(e);
         e.captainGuard = Math.max(0, (e.captainGuard || 0) - dt);
         if (e.captain || e.roomCaptain) {
           e.captainReflect = Math.max(0, (e.captainReflect || 0) - dt);
@@ -5194,7 +5197,7 @@
                 (e.quotaOvertime > 0 ? 0.8 : 1),
             };
           } else {
-            if (this.hitParty(target, e.damage))
+            if (this.hitParty(target, e.damage * this.snapshotPassiveOutgoingFactor(e)))
               this.event('melee', {
                 actor: 'enemy',
                 source: e.id,
@@ -5313,6 +5316,17 @@
         e.pursuitBurstUsed = false;
         e.frozen = false;
         e.frenzy = false;
+        for (const key of [
+          'passiveAerialUntil',
+          'passiveRepairReadyAt',
+          'passiveVeteranUntil',
+          'passiveVeteranReadyAt',
+          'passiveVeteranHits',
+          'passiveRegenTotal',
+          'passiveViolationUntil',
+          'passiveViolationStacks',
+        ])
+          delete e[key];
         e.captainPhase = false;
         e.captainPhaseMove = 1;
         e.captainAttackRate = 1;

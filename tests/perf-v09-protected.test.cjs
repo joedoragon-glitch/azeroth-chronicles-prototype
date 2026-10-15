@@ -5,7 +5,25 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const manifest = require('./fixtures/perf-v09-protected.json');
 const revision = manifest.renderingRevision;
-const playtestRevision = manifest.authorizedPostReleasePlaytestRevision;
+const originalPlaytestRevision = manifest.authorizedPostReleasePlaytestRevision;
+const passiveRevision = manifest.authorizedPassiveConsolidationRevision;
+if (passiveRevision) {
+  assert.match(passiveRevision.source, /PR #307.*PR #308/);
+  assert.deepEqual(Object.keys(passiveRevision.files).sort(), [
+    'src/prototype/archive.js', 'src/prototype/boss-combat.js',
+    'src/prototype/combat.js', 'src/prototype/engine.js', 'src/prototype/rules.js',
+  ]);
+  assert.equal(passiveRevision.previousAuditSha256, originalPlaytestRevision.auditSha256);
+  for (const [file, expected] of Object.entries(passiveRevision.previousFiles))
+    assert.equal(expected, originalPlaytestRevision.files[file] ||
+      manifest.approvedOvernightCertificationRevision.files[file], file + ' retained pre-consolidation receipt');
+  assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', passiveRevision.ledger))).digest('hex'), passiveRevision.ledgerSha256, 'exact passive consolidation ledger');
+}
+const playtestRevision = originalPlaytestRevision && {
+  ...originalPlaytestRevision,
+  auditSha256: passiveRevision?.auditSha256 || originalPlaytestRevision.auditSha256,
+  files: { ...originalPlaytestRevision.files, ...passiveRevision?.files },
+};
 if (playtestRevision) {
   assert.match(playtestRevision.source, /PR #308/);
   assert.equal(playtestRevision.audit, 'docs/POST_SNAPSHOT_PLAYTEST_FIXES_20261015.md');

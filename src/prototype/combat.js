@@ -461,6 +461,9 @@
           amount *= 0.8;
         if (!piercing && e.family === 'citadel' && e.open <= 0) amount *= 0.65;
         if (e.family === 'mine' && e.open > 0) amount *= 1.25;
+        // Individual passive defenses run before burst compression and remain
+        // bypassable by the existing explicit piercing contract.
+        if (!piercing) amount *= this.snapshotBossIncomingFactor(e);
         // All hero/companion damage sources use this same resolver. This
         // reduction is exclusive to active travel; it ends on arrival or abort.
         if (
@@ -518,6 +521,7 @@
           e.captainProfile === 'supply-crown' && e.captainReflect > 0 ? actualDamage * 0.3 : 0;
         e.hp = Math.max(0, e.hp - amount);
         this.recordMarchesDamage(e, actualDamage);
+        this.snapshotPassiveRecordHit(e, actualDamage, source);
         this.tacticalRecordHit(e, source, actualDamage);
         if (source === 'hero') this.recordDeveloperDamage('outgoing', actualDamage);
         this.effects.push({ type: 'hit', x: e.x, y: e.y, amount });
@@ -527,6 +531,12 @@
       }
       hitParty(u, amount, manaDrain = 0, rangedSourceId = null, alreadyMitigated = false) {
         if (this.peace || u.hp <= 0 || (u.immune || 0) > 0) return false;
+        // Real source IDs also cover melee now. Passive bonuses never apply to
+        // environment hazards, reflected damage, or unrelated named species.
+        const attacker = rangedSourceId
+          ? this.zone().enemies.find((e) => e.id === rangedSourceId)
+          : null;
+        if (!alreadyMitigated) amount *= this.snapshotPassiveOutgoingFactor(attacker);
         const armor =
           u === this.hero
             ? this.armor()
@@ -735,6 +745,7 @@
           }
         }
         this.rechargeOwnMud(dt);
+        this.snapshotPassiveRegen(dt);
         for (const a of [...this.s.hazards]) {
           if (a.family === 'mire' && a.index === 2 && a.kind === 'circle') {
             for (const u of this.combatTargets()) {

@@ -13,6 +13,171 @@
       tactics = R.tacticalFoundation,
       burst = tactics.burstCompression,
       shelves = [];
+    // Read-only passive reference derived from the combat rule table. This
+    // augments existing entries; it creates no new Archive shelf or save key.
+    const p = R.snapshotPassives,
+      g = R.greenwoodPassives,
+      m = R.marchesPassives,
+      pc = (x) => percent(x) + '%',
+      bossPassives = {
+        thorn:
+          'Rapid Deployment: Wolves move +' +
+          pc(g.rapidDeployment.normal - 1) +
+          ' (TRUE +' +
+          pc(g.rapidDeployment.true - 1) +
+          ').',
+        crypt:
+          'Structural Consolidation: reduction ' +
+          pc(1 - g.structuralConsolidation.normal) +
+          ' (TRUE ' +
+          pc(1 - g.structuralConsolidation.true) +
+          ').',
+        mire:
+          'Groundwater Recharge: heals ' +
+          pc(m.groundwaterRecharge.normal) +
+          ' max HP/s on own live mud (TRUE ' +
+          pc(m.groundwaterRecharge.true) +
+          ').',
+        archive:
+          'Emergency Stabilization: once below half HP, mitigation ' +
+          pc(m.emergencyStabilization.normal.reduction) +
+          ' for ' +
+          m.emergencyStabilization.normal.duration +
+          's (TRUE ' +
+          pc(m.emergencyStabilization.true.reduction) +
+          ' for ' +
+          m.emergencyStabilization.true.duration +
+          's).',
+        ridge:
+          'Contractual Protection: base mitigation ' +
+          pc(p.ridge.baseline.normal) +
+          ' + ' +
+          pc(p.ridge.perArcher.normal) +
+          ' per owned living Archer, max three (TRUE ' +
+          pc(p.ridge.baseline.true) +
+          ' + ' +
+          pc(p.ridge.perArcher.true) +
+          ' each).',
+        mine:
+          'Self-Assembly: core-closed mitigation ' +
+          pc(p.mine.shellReduction.normal) +
+          ' (TRUE ' +
+          pc(p.mine.shellReduction.true) +
+          '); core relock heals ' +
+          pc(p.mine.repairFraction.normal) +
+          ' max HP (TRUE ' +
+          pc(p.mine.repairFraction.true) +
+          '), ' +
+          p.mine.repairCooldown +
+          's cooldown.',
+        warlord:
+          'Chain of Command: base mitigation ' +
+          pc(p.warlord.baseline.normal) +
+          ' + ' +
+          pc(p.warlord.perOrc.normal) +
+          ' per nearby owned Orc; owned Orcs deal +' +
+          pc(p.warlord.orcDamage.normal) +
+          ' (TRUE ' +
+          pc(p.warlord.baseline.true) +
+          ' + ' +
+          pc(p.warlord.perOrc.true) +
+          ' per Orc, +' +
+          pc(p.warlord.orcDamage.true) +
+          ' Orc damage).',
+        abyss:
+          'Aerial Superiority: base mitigation ' +
+          pc(p.abyss.baseline.normal) +
+          '; after completed offensive flight ' +
+          pc(p.abyss.reduction.normal) +
+          ' for ' +
+          p.abyss.duration +
+          's (TRUE ' +
+          pc(p.abyss.baseline.true) +
+          ' / ' +
+          pc(p.abyss.reduction.true) +
+          ').',
+        citadel:
+          'Regimental Cohesion: base mitigation ' +
+          pc(p.citadel.baseline.normal) +
+          '; with active guarded Dress Ranks ' +
+          pc(p.citadel.reduction.normal) +
+          ' (TRUE ' +
+          pc(p.citadel.baseline.true) +
+          ' / ' +
+          pc(p.citadel.reduction.true) +
+          ').',
+        cindermaw:
+          'Emergency Provisioning: below ' +
+          pc(p.cindermaw.threshold) +
+          ' HP, self-regeneration ' +
+          pc(p.cindermaw.soloRegen.normal) +
+          ' max HP/s alone or ' +
+          pc(p.cindermaw.bossRegen.normal) +
+          '/s near Ash beasts, total cap ' +
+          pc(p.cindermaw.bossHealCap.normal) +
+          ' (TRUE ' +
+          pc(p.cindermaw.soloRegen.true) +
+          '/' +
+          pc(p.cindermaw.bossRegen.true) +
+          '/s, cap ' +
+          pc(p.cindermaw.bossHealCap.true) +
+          '); heals injured nearby Ash beasts.',
+        darklord:
+          "Veteran's Instinct: " +
+          p.darklord.triggerHits +
+          ' damaging hits within ' +
+          p.darklord.window +
+          's grant ' +
+          pc(p.darklord.reduction.normal) +
+          ' mitigation for ' +
+          p.darklord.duration +
+          's (TRUE ' +
+          pc(p.darklord.reduction.true) +
+          '); cooldown ' +
+          p.darklord.cooldown +
+          's.',
+      },
+      captainPassives = {
+        'supply-vale':
+          'Prolonged Exposure: regular Slow +' +
+          pc(g.prolongedExposure.normal - 1) +
+          ', phase +' +
+          pc(g.prolongedExposure.phase - 1) +
+          '.',
+        'supply-march':
+          'Strain Hardening: ' +
+          pc(m.strainHardening.perHit) +
+          ' mitigation per damaging hit, up to ' +
+          pc(m.strainHardening.perHit * m.strainHardening.maxStacks) +
+          ', refreshed for ' +
+          m.strainHardening.duration +
+          's.',
+        'supply-highlands':
+          'Hazard Pay: ' +
+          pc(p.captains['supply-highlands'].baseline) +
+          ' base protection plus ' +
+          pc(p.captains['supply-highlands'].selfReduction) +
+          ' with living nearby Treasury guards; guards deal +' +
+          pc(p.captains['supply-highlands'].guardDamage) +
+          '.',
+        'frontier-overseer':
+          'Escalating Enforcement: ' +
+          pc(p.captains['frontier-overseer'].perHitReduction) +
+          ' mitigation per real hit, max ' +
+          pc(
+            p.captains['frontier-overseer'].perHitReduction *
+              p.captains['frontier-overseer'].maxStacks,
+          ) +
+          '; full stacks deal +' +
+          pc(p.captains['frontier-overseer'].maxStackDamage) +
+          '.',
+        'supply-crown':
+          'Broodward: ' +
+          pc(R.roomCaptains['supply-crown'].summon.guardPerSummon) +
+          ' protection per living broodling, max ' +
+          pc(R.roomCaptains['supply-crown'].summon.guardCap) +
+          '.',
+      };
     shelves.push({
       title: 'Battle and protection',
       intro: 'Armor, openings and rogue tactics.',
@@ -319,6 +484,8 @@
             boss.place +
               '. ' +
               (boss.history || (boss.id === 'darklord' ? darkLordHistory : '')) +
+              '\n\nPassive — ' +
+              bossPassives[boss.id] +
               '\n\nAttacks: ' +
               plans
                 .map(
@@ -438,7 +605,10 @@
                         ' · HP ' +
                         number(e.maxHp) +
                         ' · damage ' +
-                        number(e.damage),
+                        number(e.damage) +
+                        (role === 'captain' && captainPassives[e.captainProfile]
+                          ? '\nPassive — ' + captainPassives[e.captainProfile]
+                          : ''),
                     );
                 }
                 const place =

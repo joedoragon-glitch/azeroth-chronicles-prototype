@@ -621,5 +621,28 @@
       "src/prototype/visuals.js": "f15dd92af7f9ca5a4005aad762c45bc16d6805085bbab3e7862dd2ad234c9241",
       "styles/phone.css": "f37d65d9d606cf50d9769bffbe26d7f88dc7bd12cadd63eca06328db3a9169d2"
     }
+  },
+  "authorizedPassiveConsolidationRevision": {
+    "source": "Owner-authorized PR #307 consolidation into PR #308 on 15 October 2026; full release validation deferred and GitHub Actions prohibited.",
+    "sourceHead": "8c452bc0515e05c9088bc304c2ae4d3be206d4f0",
+    "previousCandidate": "9290b9d80730ad2793158f41b6ff672ddc867046",
+    "previousFiles": {
+      "src/prototype/archive.js": "14757ab587b53c5017b6c5da934d37f7f0a7f9a6cb1d49298f19cc7211892d0e",
+      "src/prototype/boss-combat.js": "5242b31c4ac9ceda28cb01d7427b3a02eeb512450fc2d091d6703c070702e05e",
+      "src/prototype/combat.js": "c43274fe239ff613f9349e9cf98646902f64186a3f90f70486f3a10b9c9f2ba2",
+      "src/prototype/engine.js": "a071a9b818e7ec39d11a0c5827867650f485ad23874a89c61fe40acabe832618",
+      "src/prototype/rules.js": "f8d3c712dbb719efa86d773b3377c544297afb0973a9dc93ee24160b1ce0ccd0"
+    },
+    "files": {
+      "src/prototype/archive.js": "fe81975249cc2751e5f74c3c2b5825631afd0069c5e9ec82b5c10b0bd5ec974f",
+      "src/prototype/boss-combat.js": "e514c6ceea300fe1f1c4daf36a4c1a241e2cbcc6acf58ad810a8a0c2c5666bef",
+      "src/prototype/combat.js": "c644031964aa0f116e236df6e28d59372474ac5f7707afd9c4600652bc806b94",
+      "src/prototype/engine.js": "743d844d75d42a989a296c7f3f85a9729f6e13f79445ce5c059b564c88298d27",
+      "src/prototype/rules.js": "a20000a5293f85b477c92df8a32ab77f26616acc975a5a46e6278ead4a5a2bf2"
+    },
+    "previousAuditSha256": "13a431d1794feeef95eea3415ef4433cb6921b63e0149133ab27a0670696a6b8",
+    "auditSha256": "690adf69f677cfa0db40a96ea55c6f9cad1a0da8acc6e47b2cd463b6af64dc49",
+    "ledger": "docs/COMMUNITY_SNAPSHOT_PASSIVE_COMPLETION_20261015.md",
+    "ledgerSha256": "40b2ef7f2b8dd34c96b5dedcc182fbd953e7e85049f032f60182b069ac3125df"
   }
 }

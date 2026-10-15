@@ -1,6 +1,12 @@
-# 15 October iPhone playtest audit — candidate dev.60, PR #308
+# 15 October iPhone playtest audit — candidate dev.61, PR #308
 
 This record covers every request visible in the playtest conversation, including the later witness clarification and Paladin sound report. PR #300 was explicitly authorized, merged at `d7c878b992b35b72e2df2f7f44afb1f16ac21ff8`, and its dev.57 Pages release was verified earlier in the session. The changes below are a separate candidate in [PR #308](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/308), branch `fix/highlands-mounted-ogre-art`. They are not merged or deployed. Leave the complete candidate for the owner's return; do not infer new merge authorization from #300.
+
+## Consolidated passive update
+
+At the owner's 15 October request, PR #307 (`8c452bc0515e05c9088bc304c2ae4d3be206d4f0`) is incorporated into this same PR #308 candidate. Seven new boss passives, two new captain passives, and Archive descriptions for all eleven bosses/five captains are included alongside every playtest correction below. See [the passive ledger](COMMUNITY_SNAPSHOT_PASSIVE_COMPLETION_20261015.md) for tuning, counters and constraints. The source histories are retained together.
+
+The earlier dev.60 exact head `9290b9d80730ad2793158f41b6ff672ddc867046` passed automatic run [38723686236](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38723686236). That result certifies the earlier playtest-only candidate, not this expanded dev.61 update. The native focused passive regression passed on the combined source. Full release validation is deferred by the owner; this checkpoint is published with `[skip ci]`, without starting GitHub Actions. Nothing is merged or deployed.
 
 ## Feedback coverage
 
