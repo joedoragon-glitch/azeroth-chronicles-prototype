@@ -33,7 +33,26 @@ Existing effects untouched where not expressly approved: Ranger healing and hast
 
 **Deferred combined validation:** Skill 1 combos and charged targeting, three classes × 8 ranks × normal/charged Skills 2–4, battle against regular/captain/boss/TRUE foes, PvE leashes and walls, silence and taunt interplay, pause, reload/import of v4 saves, historical/succession campaigns, cross-device hold/release, audio/VFX, performance guards and current PR #300 integrated release tests. **No validation executed in this work item** as requested.
 
-## Proposal for later owner review ONLY: Skills 5–8
+## Follow-up: charged Skills 5–8 implemented as provisional playable designs (not validated)
+
+The owner approved **a distinct charged move in every Skill 5–8 slot for all three hero classes**, with **the same 0.65-second hold** already used by earlier charged skills. The ordinary tap actions, including existing Skill 8 healing/immunity, were **not redesigned**. Charged cooldowns are deliberately longer than tap cooldowns (provisional bases: Skill 5 18s, Skill 6 12s, Skill 7 25s, Skill 8 40s). Each form uses the same learned Skill Rank 1–8: standard +15%-of-rank-1 damage per rank and restrained secondary gains at ranks 2/4/6/8. Cooldown Training applies normally.
+
+| Slot | Paladin — charged | Mage — charged | Ranger — charged |
+| --- | --- | --- | --- |
+| **5** | **Consecrated Wave**: stronger, wider close holy AoE that also weakens foes | **Winter Ring**: wider and stronger frost AoE with longer Slow | **Arrow Rain**: stronger real arrow projectiles to foes in a wider area, each causing brief Slow |
+| **6** | **Vanguard Impact**: use the existing collision-checked approach, then a compact shockwave that pushes nearby foes | **Focused Arcane Beam**: a stronger concentrated beam projectile with longer Slow | **Evasive Burst**: three rapid focused arrows plus increased movement haste |
+| **7** | **Oath Strike**: higher-damage holy AoE with weakening against surviving foes | **Sigil Storm**: larger frost AoE with sustained Slow | **Charged Piercing Shot**: stronger single-target defense-piercing arrow with a short Slow |
+| **8** | **Last Bastion**: heavy area holy strike, self-heal and short 25% damage-reduction ward for living active party (not complete immunity) | **Arcane Cataclysm**: strong area blast with a short, nonstacking vulnerability to incoming hero/companion damage | **Perfect Hunt**: high-impact defense-piercing single-target arrow, some self-heal and movement haste |
+
+Normal skill behavior is untouched here; these are **charged extensions**, not authorization to replace all ordinary Skill 5–8 designs. At present these values and implementation choices are provisional pending the owner's class-kit review and one eventual consolidated balance/testing pass. In particular, avoid accidentally treating a charged Skill 8 cast as triggering its old normal immunity: only the existing **tap** Skill 8 continues to do that.
+
+Input rule: Skills 1–3 and 5–8 charge for everyone; Skill 4 charges for Paladin/Mage but Ranger Skill 4 is still an immediate tap-only haste ability. A tap under 0.20s casts normal, releasing an incomplete hold before 0.65s cancels, full hold then release casts charged. Normal/charged versions share a single cooldown slot. Skill 5 is target-free; Skills 6–8 retain ordinary target eligibility/line-of-sight and charge-target locking, with no silent retarget through walls. All new effects are expressed through existing projectile/charged-area/heal presentation contracts and retain procedural/sprite render fallback.
+
+Source changes also include a visible Last Bastion ward and 5–8 charged-aim cues. Temporary shield, ward and silence state is cleared on save/import and death; ongoing original skill ranks/cooldowns remain in the version-4 save model.
+
+No tests, automated builds, device exercises, deployment or merges have been intentionally initiated in this implementation turn. Follow the owner's explicit request to validate **together** when combined feature branches are ready.
+
+## Additional ordinary Skill 5–8 redesign ideas — NOT approved or implemented
 
 **Do not implement these ideas without a separate owner decision.** The current code shows substantial thematic overlap, particularly Skill 8. The following direction is a balance and role proposal rather than an approval.
 
