@@ -14,7 +14,7 @@ for (const mode of ['normal', 'nightmare']) {
     assert(game.enter('crown'));
     const throne = game.zone().npcs.find((n) => n.id === 'dark-crown-throne');
     assert(throne);
-    assert(!topics(game).some((name) => name.includes('sixth mark')),
+    assert(!topics(game).some((name) => name.includes('last mark')),
       cls + ' should not learn the reveal from the initial Archive');
     const initialClass = game.hero.class;
     const initialSkills = JSON.stringify(game.hero.skills);
@@ -27,7 +27,7 @@ for (const mode of ['normal', 'nightmare']) {
     assert(game.interact(throne), cls + ' can claim the throne');
     assert(game.messages.some((message) => message.includes('missing sixth companion')),
       'one concise explicit reveal occurs only after coronation');
-    assert(topics(game).some((name) => name.includes('sixth mark')),
+    assert(topics(game).some((name) => name.includes('last mark')),
       'the recovered identity is available from the read-only Archive');
     assert.equal(game.hero.class, initialClass);
     assert.equal(JSON.stringify(game.hero.skills), initialSkills);
