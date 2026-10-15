@@ -172,7 +172,9 @@
           }
           if (hero.class === 'paladin') {
             hero.hp = Math.min(hero.maxHp, hero.hp + hero.maxHp * cfg.heal);
-            const allies = [hero, ...this.activeLivingParty()];
+            const allies = [hero, ...this.activeLivingParty().filter(
+              (ally) => dist(ally, hero) <= radius && this.line(hero, ally),
+            )];
             for (const ally of allies) {
               ally.wardUntil = Math.max(ally.wardUntil || 0,
                 this.s.time + cfg.wardDuration + cfg.wardStep * steps);
