@@ -1,0 +1,194 @@
+'use strict';
+const assert = require('node:assert/strict');
+const Campaign = require('../src/prototype/engine');
+const R = Campaign.rules;
+
+function fixture(region = 'vale', mode = 'normal') {
+  const g = new Campaign(mode, 'paladin', () => 0.9);
+  g.s.zone = region;
+  g.s.mercyTime = 0;
+  Object.assign(g.hero, { x: 900, y: 900 });
+  const z = g.zone();
+  z.enemies = [];
+  g.line = () => true; // deterministic clear sight for targeting, not production geometry
+  let sequence = 0;
+  function mob(species, options = {}) {
+    const e = g.makeEnemy(
+      { species, name: species + ' test', level: 1, hp: 1000, damage: 10, gold: 0, xp: 0 },
+      { x: 980 + (sequence++ % 5) * 15, y: 900 },
+    );
+    Object.assign(e, { aggro: true, pack: 'healing-party', ...options });
+    z.enemies.push(e);
+    return e;
+  }
+  return { g, z, mob };
+}
+const near = (a, b, message) => assert(Math.abs(a - b) < 1e-8, message + ': ' + a + ' !== ' + b);
+
+assert.equal(R.enemySupportHealing.cooldown, R.rangerSupport.cooldown);
+assert.equal(R.enemySupportHealing.duration, R.rangerSupport.duration);
+assert.equal(R.enemySupportHealing.fraction, 0.05);
+assert.deepEqual(Object.keys(R.enemySupportHealing.captains).sort(), ['supply-crown', 'supply-vale']);
+for (const species of ['wolf', 'goblin', 'skeleton', 'wraith', 'stalker', 'mireling',
+  'reedbeast', 'archer', 'crownguard', 'ashbeast', 'orc', 'ogre']) {
+  const { g, mob } = fixture();
+  const healer = mob(species, { ranged: true });
+  const ally = mob(species, { hp: 400 });
+  assert(g.enemyHealProfile(healer), species + ' has an authored healing identity');
+  assert(g.enemySupportHeal(healer), species + ' heals a wounded companion');
+  near(ally.supportHeal.remaining, 50, species + ' 5% recovery at the base tier');
+  near(healer.supportHealCd, 10, species + ' ten-second cooldown');
+  assert(!g.enemySupportHeal(healer), species + ' cannot duplicate the cast');
+  g.advanceEnemySupportHeal(ally, 2);
+  near(ally.hp, 420, species + ' partial five-second heal');
+  g.advanceEnemySupportHeal(ally, 3);
+  near(ally.hp, 450, species + ' full heal');
+  assert(!ally.supportHeal, species + ' effect completes');
+}
+console.log('PASS twelve ranged species use individual identity and the Archer healing interval');
+
+{
+  const { g, mob } = fixture();
+  const healer = mob('goblin', { ranged: false });
+  mob('goblin', { hp: 400 });
+  assert.equal(g.enemyHealProfile(healer), null, 'melee does not inherit ranged healing');
+  assert(!g.enemySupportHeal(healer), 'ordinary melee has no support cast');
+}
+{
+  const { g, mob } = fixture();
+  const healer = mob('goblin', { ranged: true });
+  mob('goblin', { hp: 400, pack: 'unrelated' });
+  assert(!g.enemySupportHeal(healer), 'different engaged formation does not receive support');
+}
+{
+  const { g, mob } = fixture();
+  const healer = mob('goblin', { ranged: true });
+  mob('goblin', { hp: 0 });
+  assert(!g.enemySupportHeal(healer), 'never revive dead allies');
+}
+{
+  const { g, mob } = fixture();
+  const healer = mob('goblin', { ranged: true });
+  mob('goblin', { hp: 750 });
+  assert(!g.enemySupportHeal(healer), 'combat threshold is 50 percent');
+}
+{
+  const { g, mob } = fixture();
+  const leader = mob('goblin', {
+    captain: true, roomCaptain: true, captainProfile: 'supply-vale',
+    ranged: false, hp: 100,
+  });
+  const ally = mob('goblin', { hp: 400 });
+  assert.equal(g.enemyHealProfile(leader), 'Reclamation Triage');
+  assert(g.enemySupportHeal(leader), 'Scornfang healer can act through authored ranged volley');
+  assert(ally.supportHeal, 'wounded companion is healed before critically wounded captain');
+  assert(!leader.supportHeal, 'captain does not take ally-priority healing');
+  near(leader.supportHealCd, 10, 'captain has same per-actor cooldown');
+  leader.supportHealCd = 0;
+  delete ally.supportHeal;
+  ally.hp = ally.maxHp;
+  assert(g.enemySupportHeal(leader), 'captain can self-heal when no companion needs care');
+  assert(leader.supportHeal, 'self recovery is a real timed effect');
+}
+{
+  const { g, mob } = fixture('crown');
+  const leader = mob('ashbeast', {
+    captain: true, roomCaptain: true, captainProfile: 'supply-crown', ranged: false, hp: 100,
+  });
+  const ally = mob('ashbeast', { hp: 300, owner: leader.id });
+  assert.equal(g.enemyHealProfile(leader), 'Brood Provisioning');
+  assert(g.enemySupportHeal(leader), 'Dreadmaw prioritizes his wounded brood');
+  assert(ally.supportHeal && !leader.supportHeal);
+}
+console.log('PASS two authored ranged captains prioritize <50% allies before self');
+
+for (let i = 0; i < 5; i++) {
+  const region = ['vale', 'march', 'highlands', 'frontier', 'crown'][i];
+  const { g, mob } = fixture(region);
+  const ordinary = mob('goblin', { ranged: true });
+  const guardian = mob('goblin', { ranged: true, guard: true });
+  const summoned = mob('goblin', { ranged: true, summon: true });
+  near(g.enemyHealMultiplier(ordinary), R.ordinaryRangedScaling[i].damage, region + ' ordinary');
+  near(g.enemyHealMultiplier(guardian), R.guardianScaling[i].damage, region + ' guardian');
+  near(g.enemyHealMultiplier(summoned), R.summonScaling[i].damage, region + ' summoned');
+}
+{
+  const { g, mob } = fixture('crown');
+  const ringleader = mob('orc', { ranged: true, form: 'ringleader' });
+  near(g.enemyHealMultiplier(ringleader),
+    R.ordinaryRangedScaling[4].damage * R.ringleaderScaling.damage,
+    'Ringleader gets one 1.5x elite modifier');
+}
+{
+  const { g, mob } = fixture('vale');
+  g.s.clock = 400;
+  g.s.normal = { thorn: true, crypt: true, mire: true, archive: true, ridge: true };
+  const archer = mob('goblin', { ranged: true });
+  archer.damage *= g.multipliers().damage;
+  near(g.enemyHealMultiplier(archer), 1.25, 'night progress five increments');
+  const wraith = mob('wraith', { ranged: true, nightOnly: true });
+  wraith.damage *= g.multipliers().damage;
+  near(g.enemyHealMultiplier(wraith), 1.25 * R.nightEnemyCombat.wraith.damage,
+    'night-only Wraith scaling applied once');
+}
+{
+  const { g, mob } = fixture('vale', 'nightmare');
+  const archer = mob('goblin', { ranged: true });
+  archer.damage *= g.multipliers().damage;
+  near(g.enemyHealMultiplier(archer), 1.15, 'nightmare permanently inherits night scaling');
+}
+{
+  const { g, mob } = fixture();
+  const boss = g.bossEnemy(g.boss('crypt'), 'true', { x: 980, y: 900 });
+  boss.aggro = true;
+  near(g.enemyHealMultiplier(boss), 1.25, 'normal TRUE boss strength counted once');
+  assert(g.enemyHealProfile(boss), 'Lifebinder uses individually authored recovery');
+  const meleeBoss = g.bossEnemy(g.boss('thorn'), 'normal', { x: 990, y: 900 });
+  assert(!g.enemyHealProfile(meleeBoss), 'melee-only boss does not get generic skill');
+  const elite = mob('wraith', { ranged: true, summon: true, form: 'ringleader',
+    trueSummonRole: 'captain', owner: boss.id });
+  near(g.enemyHealMultiplier(elite), R.summonScaling[0].damage * 1.5,
+    'TRUE captain summons gain one elite multiplier, not two');
+}
+console.log('PASS region, night, progression, night-species, TRUE, and elite damage scaling');
+
+{
+  const { g, mob } = fixture();
+  const boss = g.bossEnemy(g.boss('crypt'), 'normal', { x: 980, y: 900 });
+  boss.aggro = true;
+  boss.hp = boss.maxHp * 0.25;
+  g.zone().enemies.push(boss);
+  const attendant = mob('skeleton', { hp: 250, owner: boss.id });
+  assert(g.enemySupportHeal(boss), 'eligible boss supports existing summon');
+  assert(attendant.supportHeal && !boss.supportHeal, 'ally before boss self');
+  boss.supportHealCd = 0;
+  delete attendant.supportHeal;
+  attendant.hp = attendant.maxHp;
+  boss.healCd = 8;
+  assert(g.enemySupportHeal(boss), 'boss may self-heal when allies no longer need it');
+  near(boss.healCd, 8, 'separate authored boss recovery cooldown survives');
+  near(boss.supportHealCd, 10, 'boss support cast consumes its own cooldown');
+}
+{
+  const { g, mob } = fixture();
+  const healer = mob('goblin', { ranged: true });
+  const ally = mob('goblin', { hp: 400 });
+  g.enemySupportHeal(healer);
+  const snapshot = g.snapshot();
+  for (const z of Object.values(snapshot.zones))
+    for (const e of z.enemies) {
+      assert(!('supportHeal' in e), 'v4 snapshots do not carry transient heal effects');
+      assert(!('supportHealCd' in e), 'v4 snapshots do not carry support cooldowns');
+    }
+  const restored = Campaign.restore(snapshot, () => 0.9);
+  assert(restored && restored.s.version === 4, 'save restores with unchanged version');
+  const copied = JSON.parse(JSON.stringify(snapshot));
+  copied.zones[copied.zone].enemies[0].supportHeal =
+    { seconds: 1e9, remaining: 1e9, source: 'malicious' };
+  copied.zones[copied.zone].enemies[0].supportHealCd = 1e9;
+  const repaired = Campaign.restore(copied, () => 0.9);
+  const enemy = repaired.zone().enemies[0];
+  assert(!enemy.supportHeal && !enemy.supportHealCd, 'import drops forged heal state');
+  assert(ally && healer, 'initial fixture remains unchanged');
+}
+console.log('PASS boss skill independence, support priority, and old v4 save compatibility');
