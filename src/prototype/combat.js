@@ -536,15 +536,19 @@
               : 5 + this.hero.level * 0.5;
         const oldHp = u.hp;
         let mitigated = alreadyMitigated ? Math.max(0, amount) : Math.max(3, amount - armor * 0.35);
+        // Hero Shield Stance and the party ward share a mitigation layer:
+        // apply the STRONGER one, not both multiplicatively. Last Bastion
+        // still protects companions, while a tank cannot stack two defenses
+        // into near-immunity. Enemy weakening remains an offensive debuff.
+        let defensiveFactor = 1;
         if (u === this.hero && u.class === 'paladin' && (u.shieldStance || 0) > 0) {
           const shield = R.heroTactics.paladin.shield;
-          mitigated *= 1 - Math.min(0.9,
-            shield.reduction + Math.floor((u.shieldRank || 1) / 2) * shield.reductionStep);
+          defensiveFactor = Math.min(defensiveFactor, 1 - Math.min(0.9,
+            shield.reduction + Math.floor((u.shieldRank || 1) / 2) * shield.reductionStep));
         }
-        // Last Bastion reduces real incoming damage for its nearby allies.
-        // Unlike the old Skill 8 immunity, the ward never makes them invulnerable.
         if ((u.wardUntil || 0) > this.s.time)
-          mitigated *= 1 - Math.min(0.75, u.wardReduction || 0);
+          defensiveFactor = Math.min(defensiveFactor, 1 - Math.min(0.75, u.wardReduction || 0));
+        mitigated *= defensiveFactor;
         u.hp = Math.max(0, u.hp - mitigated);
         if (u === this.hero) this.recordDeveloperDamage('incoming', mitigated);
         if (R.resourceMode.manaEnabled && u === this.hero && manaDrain > 0)
