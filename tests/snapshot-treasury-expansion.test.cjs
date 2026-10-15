@@ -12,7 +12,7 @@ for (const mode of ['normal', 'nightmare'])
       exit = z.npcs.find((n) => n.kind === 'exit');
     assert.equal(c.zoneSize(), size);
     assert.equal(z.treasuryVersion, 5);
-    assert.equal(z.enemies.filter((u) => u.roomGuard).length, 4, 'same native guard quota');
+    assert.equal(z.enemies.filter((u) => u.roomGuard).length, 11, 'expanded Treasury has ten sentries plus original captain');
     assert.equal(captain.baseHp, 5000);
     for (const id of [
       'agricultural-stores',
@@ -76,6 +76,7 @@ for (const state of ['living', 'wounded', 'dead', 'collected']) {
   ];
   z.enemies
     .filter((u) => u.roomGuard)
+    .slice(0, 4) // Displace historical posts only, not newly added sentries.
     .forEach((u, i) => {
       const [x, y] = oldPosts[i];
       Object.assign(u, { x, y, home: { x, y } });
@@ -123,7 +124,7 @@ for (const state of ['living', 'wounded', 'dead', 'collected']) {
   for (const n of visible) assert(r.route(r.hero, n).length);
 }
 console.log(
-  'PASS expanded shared Treasury: six class/mode full-size attack arenas, reachable stores/gallery/caches, same guards, five historical state migrations and idempotence',
+  'PASS expanded shared Treasury: six class/mode full-size attack arenas, reachable stores/gallery/caches, retained captain and guard IDs plus seven sentries, five historical state migrations and idempotence',
 );
 
 {
