@@ -5,6 +5,22 @@
 
 **IMPORTANT:** Development changes only; user requested no new tests until multiple updates are consolidated. The exact branch is **not tested, certified, approved to merge, or deployed**. Do not import the older PR #305 source branch wholesale over PR #300: this implementation starts with PR #300's hero repair, worldbuilding, save and control changes.
 
+## Damage and cooldown rotation design — 15 October 2026
+
+**New source-backed specification:** [`HERO_SKILLS_COOLDOWN_ROTATION_DAMAGE_AUDIT_20261015.md`](./HERO_SKILLS_COOLDOWN_ROTATION_DAMAGE_AUDIT_20261015.md) documents all **24 × normal/charged** damage coefficients, normal/charged cooldowns, source-only per-cooldown illustrations, and a plan to check scripted/fixed rotations against encounter-reactive play.
+
+**Owner objective:** preserve the same **0.65s charge hold** and keep combat driven by meaningful cooldown choices rather than adding cast time or opaque rotation penalties. A fixed repeatable rotation should not defeat every enemy composition, arena and Normal/TRUE boss regardless of player response.
+
+**Source modifications since the previous audit:**
+- Paladin's existing Skill 2/charged Skill 2, charged Skill 5/7/8 **Weaken** duration is now **1.8s at rank 1 rising to 2.2s at rank 8**, instead of 3–4s. Its outgoing-damage reduction still improves from **12% to 20%**. At maximum Cooldown Training the normal Skill 2 recovery is **2.4s**, so the same single skill cannot maintain a perfect uninterrupted weaken.
+- Mage normal Skill 2 Frost Bolt's existing **Slow** duration is now **2.0–2.2s** instead of 4–5s. Charged Frost Burst Slow is **3.2–4.2s** instead of 4–5s. Normal/charged cooldowns remain **3/6s**, max-training **2.4/4.8s**. Mage still specializes in movement control; boss specials are not erased by Slow.
+- Repeatable area **Skill 5** now affects at most **6 targets normal or 8 charged** for **each class**; the Paladin's repeatable area **Skill 7** has the same 6/8 limit. Eligible nearest enemies take priority, with the manually selected target prioritized for Paladin Skill 7.
+- **All damage coefficients, hold thresholds, normal/charged recovery timers, eight-rank damage factors, class passives (none implemented), Ranger Skill 4 Rally, and Skill 8 capstones remain otherwise unchanged.** Existing boss defense and target-shared burst compression are preserved.
+
+This is a **preventive source change**, not proof of balanced gameplay. Explicitly postpone tests, simulation, build, CI-release claims, merge and deploy until the owner's combined validation pass. Do not introduce global anti-rotation debuffs, extra charge thresholds, penalties for button order, or blanket new boss immunity.
+
+---
+
 ## Conservative balance adjustments — 15 October 2026 (owner delegated)
 
 Following the static balance audit, the owner authorized implementation using judgment **with an explicit priority not to make encounters too easy**. The following revisions are made in source on this development branch; they remain **untested** until the combined PR validation.
