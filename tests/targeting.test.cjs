@@ -26,9 +26,14 @@ function encounter() {
   assert.equal(game.cycleHeroTarget().id, b.id, 'second Q selects the next');
   assert.equal(game.selectedHeroTarget().id, b.id);
   const before = a.hp;
-  assert.equal(game.cast(1), false, 'a selected enemy outside skill range is not silently replaced');
+  assert.equal(game.cast(1), true, 'a selected enemy outside skill range queues an approach');
+  assert.equal(game.hero.order?.type, 'skill-approach');
+  assert.equal(game.hero.order.id, b.id);
+  const queued = game.hero.order;
+  assert.equal(game.castMovementBasic(), false, 'automatic movement basic preserves queued skill');
+  assert.equal(game.hero.order, queued);
   assert.equal(a.hp, before, 'closer foe is not accidentally attacked');
-  assert.equal(game.hero.cd[0], 0, 'failed attack consumes no cooldown');
+  assert.equal(game.hero.cd[0], 0, 'approach consumes no cooldown');
   assert.equal(game.cycleHeroTarget().id, a.id, 'Q wraps to the first target');
   assert.equal(game.cast(1), true);
   assert(a.hp < before, 'manual selection directs basic attacks');
@@ -40,14 +45,22 @@ function encounter() {
 {
   const { game, a, b } = encounter();
   game.s.heroTarget = b.id; // auto combat already favors the boss/farther foe
-  assert.equal(game.holdHeroTarget(() => true, b.id)?.id, b.id, 'long hold keeps current automatic combat target');
+  assert.equal(
+    game.holdHeroTarget(() => true, b.id)?.id,
+    b.id,
+    'long hold keeps current automatic combat target',
+  );
   assert.equal(game.manualHeroTargetLocked, true);
   const summon = game.makeEnemy(
     { species: 'goblin', name: 'New add', level: 1, hp: 5000, damage: 0, gold: 0, xp: 0 },
     { x: 530, y: 500 },
   );
   game.zone().enemies.push(summon);
-  assert.equal(game.selectedHeroTarget()?.id, b.id, 'nearby summon cannot replace auto-target-held lock');
+  assert.equal(
+    game.selectedHeroTarget()?.id,
+    b.id,
+    'nearby summon cannot replace auto-target-held lock',
+  );
   b.returning = 1;
   assert.equal(game.selectedHeroTarget(), null, 'disengaging a boss ends the encounter lock');
   assert.equal(game.s.heroTarget, null, 'stale squad target clears on boss disengage');
@@ -77,11 +90,19 @@ function encounter() {
   assert.equal(game.cycleHeroTarget((e) => e.id === b.id).id, b.id, 'screen filter narrows cycle');
   b.x = 1300;
   assert.equal(game.selectedHeroTarget(), null, 'long-distance separation releases a target');
-  assert.equal(game.cycleHeroTarget((e) => false), null, 'no visible enemies releases selection');
+  assert.equal(
+    game.cycleHeroTarget((e) => false),
+    null,
+    'no visible enemies releases selection',
+  );
   assert.equal(game.cycleHeroTarget((e) => e.id === a.id).id, a.id);
   game.enter('march');
   assert.equal(game.selectedHeroTarget(), null, 'changing zones releases stale selection');
-  assert.equal(game.snapshot().heroTarget, null, 'targeting is transient and does not alter save v4');
+  assert.equal(
+    game.snapshot().heroTarget,
+    null,
+    'targeting is transient and does not alter save v4',
+  );
 }
 {
   const { game, a, b } = encounter();
@@ -96,11 +117,21 @@ function encounter() {
     ),
   );
   game.zone().enemies.push(...summons);
-  Object.assign(game.hero, { x: 1250, y: 900 });
-  assert.equal(game.selectedHeroTarget()?.id, b.id, 'a target lock survives retreat and dodging out of range');
+  Object.assign(game.hero, game.safe(1250, 900));
+  assert(game.route(game.hero, b).length, 'distant-lock fixture has a real walkable approach');
+  assert.equal(
+    game.selectedHeroTarget()?.id,
+    b.id,
+    'a target lock survives retreat and dodging out of range',
+  );
   game.hero.cd[0] = 0;
-  assert.equal(game.cast(1), false, 'summons cannot steal the boss lock when it is beyond reach');
-  assert(summons.every((s) => s.hp === s.maxHp), 'no accidental hit against summons');
+  assert.equal(game.cast(1), true, 'a distant lock queues approach rather than hitting a summon');
+  assert.equal(game.hero.order?.id, b.id);
+  assert.equal(game.hero.cd[0], 0);
+  assert(
+    summons.every((s) => s.hp === s.maxHp),
+    'no accidental hit against summons',
+  );
   Object.assign(game.hero, { x: 600, y: 500 });
   assert.equal(game.cycleHeroTarget().id, summons[0].id, 'quick press moves to a new nearby foe');
   assert.equal(game.manualHeroTargetLocked, false, 'cycling releases the former lock');
@@ -108,11 +139,19 @@ function encounter() {
   summons[0].hp = 0;
   assert.equal(game.selectedHeroTarget(), null, 'death immediately releases a held target');
   assert.equal(game.manualHeroTargetLocked, false);
-  assert.equal(game.holdHeroTarget((e) => e.id === a.id)?.id, a.id, 'holding with no selection chooses nearest visible enemy');
+  assert.equal(
+    game.holdHeroTarget((e) => e.id === a.id)?.id,
+    a.id,
+    'holding with no selection chooses nearest visible enemy',
+  );
   game.enter('march');
   assert.equal(game.selectedHeroTarget(), null, 'target lock never persists across zone changes');
   assert.equal(game.manualHeroTargetLocked, false);
-  assert.equal(game.snapshot().heroTarget, null, 'target locks remain absent from saved campaign data');
+  assert.equal(
+    game.snapshot().heroTarget,
+    null,
+    'target locks remain absent from saved campaign data',
+  );
 }
 {
   // Boss priority is a strategic player choice, not nearest-enemy combat AI.
@@ -125,10 +164,21 @@ function encounter() {
   assert.equal(game.holdHeroTarget().id, boss.id, 'holding Target locks the chosen boss');
   assert.equal(game.manualHeroTargetLocked, true);
   const previousHp = pup.hp;
-  Object.assign(game.hero, { x: 1320, y: 500 });
+  Object.assign(game.hero, game.safe(1320, 500));
+  assert(game.route(game.hero, boss).length, 'boss-lock fixture has a real walkable approach');
   pup.x = 1350;
-  assert.equal(game.selectedHeroTarget()?.id, boss.id, 'dodging beyond 680 does not lose boss lock');
-  assert.equal(game.cast(1), false, 'the closer pup cannot steal a locked out-of-range attack');
+  assert.equal(
+    game.selectedHeroTarget()?.id,
+    boss.id,
+    'dodging beyond 680 does not lose boss lock',
+  );
+  assert.equal(
+    game.cast(1),
+    true,
+    'approach preserves the locked boss rather than selecting its pup',
+  );
+  assert.equal(game.hero.order?.id, boss.id);
+  assert.equal(game.hero.cd[0], 0);
   assert.equal(pup.hp, previousHp, 'out-of-range locked attack cannot hit summons instead');
   Object.assign(game.hero, { x: 520, y: 500 });
   game.hero.cd[0] = 0;
@@ -139,7 +189,11 @@ function encounter() {
   assert.equal(game.manualHeroTargetLocked, true);
   pup.x = 555;
   assert.equal(game.cycleHeroTarget((e) => e.id === pup.id)?.id, pup.id);
-  assert.equal(game.manualHeroTargetLocked, false, 'a deliberate tap to a new foe releases the lock');
+  assert.equal(
+    game.manualHeroTargetLocked,
+    false,
+    'a deliberate tap to a new foe releases the lock',
+  );
 }
 {
   const { game, a: boss } = encounter();
@@ -153,14 +207,22 @@ function encounter() {
   game.holdHeroTarget();
   boss.aggro = false;
   Object.assign(game.hero, { x: 2100, y: 500 });
-  assert.equal(game.selectedHeroTarget(), null, 'full disengagement clears an unreachable old lock');
+  assert.equal(
+    game.selectedHeroTarget(),
+    null,
+    'full disengagement clears an unreachable old lock',
+  );
 }
 {
   const { game, a } = encounter();
   game.cycleHeroTarget((e) => e.id === a.id);
   game.holdHeroTarget();
   game.enter('march');
-  assert.equal(game.selectedHeroTarget(), null, 'travel cannot carry a boss lock to another region');
+  assert.equal(
+    game.selectedHeroTarget(),
+    null,
+    'travel cannot carry a boss lock to another region',
+  );
   assert.equal(game.manualHeroTargetLocked, false);
   assert(!('manualHeroTargetLocked' in game.snapshot()), 'lock state is excluded from v4 saves');
 }
@@ -170,8 +232,14 @@ function encounter() {
   assert.equal(game.cycleHeroTarget((e) => e.id === a.id)?.id, a.id);
   assert.equal(game.holdHeroTarget()?.id, a.id);
   assert.equal(game.s.heroTarget, a.id);
-  assert.equal(game.cycleHeroTarget(() => false), null, 'quick press releases an offscreen lock');
+  assert.equal(
+    game.cycleHeroTarget(() => false),
+    null,
+    'quick press releases an offscreen lock',
+  );
   assert.equal(game.manualHeroTargetLocked, false);
   assert.equal(game.s.heroTarget, null, 'offscreen unlock also releases stale legacy focus');
 }
-console.log('PASS visible target cycling, manual attack priority, range refusal, fallback and boss/summon lock, disengagement and zone cleanup');
+console.log(
+  'PASS visible target cycling, manual attack priority, queued approach, fallback and boss/summon lock, disengagement and zone cleanup',
+);

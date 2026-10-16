@@ -41,7 +41,7 @@
       shieldPush(e, push) {
         // Respect solid terrain and the original boss arena. Never teleport or
         // override a scripted charge already in motion.
-        if (e.motion || e.returning || e.thornReturn) return false;
+        if (e.motion || this.attackResetProtected(e)) return false;
         const d = Math.max(1, dist(this.hero, e)),
           direction = { x: (e.x - this.hero.x) / d, y: (e.y - this.hero.y) / d };
         for (let fraction = 1; fraction >= 0.25; fraction -= 0.25) {
@@ -79,7 +79,7 @@
         const valid = (e) =>
           e.hp > 0 &&
           !e.neutral &&
-          !e.returning &&
+          !this.attackResetProtected(e) &&
           this.tacticalDirectTargetable(e) &&
           dist(e, this.hero) <= range &&
           this.line(this.hero, e) &&
@@ -132,7 +132,7 @@
                 enemy !== target &&
                 enemy.hp > 0 &&
                 !enemy.neutral &&
-                !enemy.returning &&
+                !this.attackResetProtected(enemy) &&
                 dist(enemy, target) <= radius &&
                 this.line(this.hero, enemy),
             )
@@ -225,7 +225,7 @@
             (e) =>
               e.hp > 0 &&
               !e.neutral &&
-              !e.returning &&
+              !this.attackResetProtected(e) &&
               dist(e, center) <= radius &&
               this.line(hero, e),
           );
@@ -331,7 +331,7 @@
         const eligible = (enemy, center = hero, range = radius) =>
           enemy.hp > 0 &&
           !enemy.neutral &&
-          !enemy.returning &&
+          !this.attackResetProtected(enemy) &&
           dist(enemy, center) <= range &&
           this.line(hero, enemy);
         const foes = radius
@@ -600,7 +600,7 @@
           !enemy ||
           enemy.hp <= 0 ||
           enemy.neutral ||
-          enemy.returning ||
+          this.attackResetProtected(enemy) ||
           !this.tacticalDirectTargetable(enemy) ||
           (this.manualHeroTargetLocked
             ? dist(enemy, this.hero) > 1400 && !enemy.aggro
@@ -626,7 +626,7 @@
               e.id === id &&
               e.hp > 0 &&
               !e.neutral &&
-              !e.returning &&
+              !this.attackResetProtected(e) &&
               this.tacticalDirectTargetable(e) &&
               dist(e, this.hero) <= 680 &&
               this.line(this.hero, e) &&
@@ -649,7 +649,7 @@
             (e) =>
               e.hp > 0 &&
               !e.neutral &&
-              !e.returning &&
+              !this.attackResetProtected(e) &&
               this.tacticalDirectTargetable(e) &&
               dist(e, this.hero) <= 680 &&
               this.line(this.hero, e) &&
@@ -671,6 +671,8 @@
         this.manualHeroTargetZone = this.zoneId;
         this.manualHeroTargetLocked = false; // A new manual choice releases an old lock.
         this.s.heroTarget = target.id;
+        if (this.hero.order?.type === 'skill-approach' && this.hero.order.id !== target.id)
+          this.hero.order = null;
         return target;
       }
       heroSkillRange(slot, charged = false) {
@@ -692,6 +694,12 @@
                 ? 400
                 : 450
               : 480;
+      }
+      castMovementBasic() {
+        // A released skill owns its approach. Passive covering fire must not
+        // replace the queued charged/ordinary command with Skill 1.
+        if (this.hero.order?.type === 'skill-approach') return false;
+        return this.cast(1);
       }
       cast(slot, targetId, charged = false, encountersAtStart = null) {
         if (this.s.mode === 'developer' && slot === 1) return false;
@@ -749,6 +757,7 @@
             (e) =>
               e.hp > 0 &&
               !e.neutral &&
+              !this.attackResetProtected(e) &&
               this.tacticalDirectTargetable(e) &&
               dist(e, this.hero) <= range &&
               this.line(this.hero, e),
@@ -761,7 +770,7 @@
             [1, 2, 6, 7].includes(slot) ||
             (slot === 8 && this.hero.class !== 'paladin') ||
             (slot === 4 && this.hero.class !== 'ranger'),
-          lockedOut = !targetId && selected && requiresTarget,
+          lockedOut = requiresTarget && (targetId != null || !!selected),
           target =
             targets.find((e) => e.id === preferredTargetId) ||
             (lockedOut
@@ -777,7 +786,7 @@
               e.id === preferredTargetId &&
               e.hp > 0 &&
               !e.neutral &&
-              !e.returning &&
+              !this.attackResetProtected(e) &&
               this.tacticalDirectTargetable(e),
           );
           if (
@@ -1092,7 +1101,7 @@
                   (e) =>
                     e.hp > 0 &&
                     !e.neutral &&
-                    !e.returning &&
+                    !this.attackResetProtected(e) &&
                     dist(e, this.hero) <= reach &&
                     Math.abs(delta(Math.atan2(e.y - this.hero.y, e.x - this.hero.x), angle)) <=
                       cfg.bash.halfAngle &&
@@ -1429,7 +1438,7 @@
               (e) =>
                 e.hp > 0 &&
                 !e.neutral &&
-                !e.returning &&
+                !this.attackResetProtected(e) &&
                 dist(e, this.hero) < (slot === 5 ? 350 : 500),
             )
             .sort(

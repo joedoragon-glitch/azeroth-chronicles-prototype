@@ -525,9 +525,18 @@ const activeBody = frame.slice(
   frame.indexOf('    const frameStart = performance.now();'),
   frame.indexOf('    if (!frozen) {\n      const draw = fps.shouldDraw'),
 );
+const retainedFrameHash = heroRevision?.activeFrameBodySha256 || timingRevision?.activeFrameBodySha256 || combinedRevision?.activeFrameBodySha256 || revision.activeFrameBodySha256;
+const approachRepair = manifest.authorizedPr313ApproachFrameRevision;
+if (approachRepair) {
+  assert.match(approachRepair.source, /Owner-authorized PR #313.*queued skill approaches/);
+  assert.equal(approachRepair.previousActiveFrameBodySha256, retainedFrameHash, 'original frame receipt retained');
+  assert.equal(activeBody.split('game.castMovementBasic();').length, 2, 'exactly one automatic-cast dispatch changed');
+  assert.equal(crypto.createHash('sha256').update(activeBody.replace('game.castMovementBasic();', 'game.cast(1);')).digest('hex'), retainedFrameHash,
+    'entire protected frame is byte-identical after normalizing the single authorized dispatch');
+}
 assert.equal(
   crypto.createHash('sha256').update(activeBody).digest('hex'),
-  heroRevision?.activeFrameBodySha256 || timingRevision?.activeFrameBodySha256 || combinedRevision?.activeFrameBodySha256 || revision.activeFrameBodySha256,
+  approachRepair?.activeFrameBodySha256 || retainedFrameHash,
   'Exact original or explicitly authorized combined simulation/input/audio/effects/save/HUD callback body',
 );
 console.log(

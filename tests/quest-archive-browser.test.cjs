@@ -56,6 +56,7 @@ const server = http.createServer((req, res) => {
       { width: 375, height: 800 },
       { width: 393, height: 852 },
       { width: 800, height: 375 },
+      { width: 844, height: 390 },
     ]) {
       const phone = viewport.width < 1000,
         tag = engine + '-' + viewport.width + 'x' + viewport.height,

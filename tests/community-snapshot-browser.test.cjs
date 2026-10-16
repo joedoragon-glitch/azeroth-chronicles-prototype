@@ -38,8 +38,12 @@ const inventory = JSON.parse(
     'utf8',
   ),
 );
-const pt312Presentation = JSON.parse(fs.readFileSync(
-  path.join(root, 'tools/community-snapshot/pt312-presentation-overlay.json'), 'utf8'));
+const pt312Presentation = JSON.parse(
+  fs.readFileSync(
+    path.join(root, 'tools/community-snapshot/pt312-presentation-overlay.json'),
+    'utf8',
+  ),
+);
 const pt312ChangedArt = new Set(pt312Presentation.records.map((r) => r.id));
 const pt312ArtById = new Map(pt312Presentation.records.map((r) => [r.id, r]));
 (async () => {
@@ -158,7 +162,8 @@ const pt312ArtById = new Map(pt312Presentation.records.map((r) => [r.id, r]));
               before = JSON.stringify(c.game.s);
             c.painter.draw();
             if (JSON.stringify(c.game.s) !== before) {
-              const old = JSON.parse(before), differences = [];
+              const old = JSON.parse(before),
+                differences = [];
               const compare = (a, b, path) => {
                 if (JSON.stringify(a) === JSON.stringify(b)) return;
                 if (a && b && typeof a === 'object' && typeof b === 'object')
@@ -226,41 +231,86 @@ const pt312ArtById = new Map(pt312Presentation.records.map((r) => [r.id, r]));
             // PT312 final composed geography, actual portals and occupied entries.
             // Each capture is a review artifact, never automatic aesthetic approval.
             const sites = [
-              [0, 'bridge-south'], [0, 'den-ruins'], [0, 'supply-entrance'], [0, 'rest'],
-              [1, 'bridge-lake'], [1, 'supply-entrance'],
-              [2, 'bridge-north'], [2, 'bridge-south'], [2, 'supply-entrance'], [2, 'ore'],
-              [3, 'checkpoint'], [4, 'fortress-gate'],
+              [0, 'bridge-south'],
+              [0, 'den-ruins'],
+              [0, 'supply-entrance'],
+              [0, 'rest'],
+              [1, 'bridge-lake'],
+              [1, 'supply-entrance'],
+              [2, 'bridge-north'],
+              [2, 'bridge-south'],
+              [2, 'supply-entrance'],
+              [2, 'ore'],
+              [3, 'checkpoint'],
+              [4, 'fortress-gate'],
             ];
             for (const [region, site] of sites) {
-              const result = await page.evaluate(({ region, site, zoom }) => {
-                const g = communityCapture.create(region, zoom, false), z = g.zone(),
-                  n = z.npcs.find((n) => n.id === site);
-                if (!n) throw Error('PT312 missing authored capture site: ' + site);
-                Object.assign(g.hero, g.safe(n.x + 35, n.y + 55));
-                g.s.party = [];
-                const prior = PrototypeVisuals.terrain;
-                let terrainPainted = false;
-                PrototypeVisuals.terrain = (...args) => { terrainPainted = true; return prior(...args); };
-                try {
-                  const metrics = communityCapture.draw();
-                  if (!terrainPainted) throw Error('PT312 composed terrain was not painted');
-                  return { metrics, site: { id: n.id, x: n.x, y: n.y },
-                    bridges: z.bridgeApproaches, roads: z.roads.length, footpaths: z.footpaths?.length || 0 };
-                } finally { PrototypeVisuals.terrain = prior; }
-              }, { region, site, zoom });
+              const result = await page.evaluate(
+                ({ region, site, zoom }) => {
+                  const g = communityCapture.create(region, zoom, false),
+                    z = g.zone(),
+                    n = z.npcs.find((n) => n.id === site);
+                  if (!n) throw Error('PT312 missing authored capture site: ' + site);
+                  Object.assign(g.hero, g.safe(n.x + 35, n.y + 55));
+                  g.s.party = [];
+                  const prior = PrototypeVisuals.terrain;
+                  let terrainPainted = false;
+                  PrototypeVisuals.terrain = (...args) => {
+                    terrainPainted = true;
+                    return prior(...args);
+                  };
+                  try {
+                    const metrics = communityCapture.draw();
+                    if (!terrainPainted) throw Error('PT312 composed terrain was not painted');
+                    return {
+                      metrics,
+                      site: { id: n.id, x: n.x, y: n.y },
+                      bridges: z.bridgeApproaches,
+                      roads: z.roads.length,
+                      footpaths: z.footpaths?.length || 0,
+                    };
+                  } finally {
+                    PrototypeVisuals.terrain = prior;
+                  }
+                },
+                { region, site, zoom },
+              );
               await capture(`pt312-${region}-${site}`, result);
             }
-            for (const id of ['crypt', 'archive', 'mine', 'abyss', 'citadel',
-              'supply-vale', 'supply-march', 'supply-highlands', 'supply-crown',
-              'side-vale-cellars', 'side-march-watchhouse', 'side-highlands-signal',
-              'side-frontier-shrine', 'side-crown-foundry']) {
-              const result = await page.evaluate(({ id, zoom }) => {
-                const g = communityCapture.create(0, zoom, false);
-                g.enter(id); g.s.party = [];
-                return { metrics: communityCapture.draw(), zone: id,
-                  guardians: g.zone().enemies.length, traps: g.traps().length,
-                  household: g.zone().props.filter((p) => p.sceneRole).map((p) => p.id) };
-              }, { id, zoom });
+            for (const id of [
+              'crypt',
+              'archive',
+              'mine',
+              'abyss',
+              'citadel',
+              'supply-vale',
+              'supply-march',
+              'supply-highlands',
+              'supply-crown',
+              'side-vale-cellars',
+              'side-march-watchhouse',
+              'side-highlands-signal',
+              'side-frontier-shrine',
+              'side-crown-foundry',
+            ]) {
+              const result = await page.evaluate(
+                ({ id, zoom }) => {
+                  const g = communityCapture.create(0, zoom, false);
+                  g.enter(id);
+                  g.s.party = [];
+                  return {
+                    metrics: communityCapture.draw(),
+                    zone: id,
+                    guardians: g.zone().enemies.length,
+                    traps: g.traps().length,
+                    household: g
+                      .zone()
+                      .props.filter((p) => p.sceneRole)
+                      .map((p) => p.id),
+                  };
+                },
+                { id, zoom },
+              );
               await capture('pt312-arrival-' + id, result);
             }
           }
@@ -284,15 +334,18 @@ const pt312ArtById = new Map(pt312Presentation.records.map((r) => [r.id, r]));
               (r) =>
                 r.nativeFixture &&
                 ((coreView &&
-                  (['upgrade'].includes(r.decision) || pt312ChangedArt.has(r.id) ||
+                  (['upgrade'].includes(r.decision) ||
+                    pt312ChangedArt.has(r.id) ||
                     r.category === 'pet' ||
                     width === 1280 ||
                     width === 375)) ||
                   (!coreView && representatives.includes(r.id))),
             )
             .flatMap((r) =>
-              [...(r.captureVariants || [{ name: 'canonical', entity: {} }]),
-                ...(pt312ArtById.get(r.id)?.additionalCaptureVariants || [])].map((v) => ({
+              [
+                ...(r.captureVariants || [{ name: 'canonical', entity: {} }]),
+                ...(pt312ArtById.get(r.id)?.additionalCaptureVariants || []),
+              ].map((v) => ({
                 ...r,
                 pt312Changed: pt312ChangedArt.has(r.id),
                 id: r.id + '-' + v.name,
@@ -300,7 +353,9 @@ const pt312ArtById = new Map(pt312Presentation.records.map((r) => [r.id, r]));
               })),
             )
             .flatMap((r) =>
-              (coreView && (width === 1280 || width === 375) && (r.decision === 'upgrade' || r.pt312Changed)
+              (coreView &&
+              (width === 1280 || width === 375) &&
+              (r.decision === 'upgrade' || r.pt312Changed)
                 ? [0, 500]
                 : [0]
               ).map((clock) => ({
@@ -365,7 +420,7 @@ const pt312ArtById = new Map(pt312Presentation.records.map((r) => [r.id, r]));
                 e.renderKind = kind;
                 if (kind === 'node') e.amount = 10;
                 if (e.kind === 'keeper') g.s.normal.archive = true;
-                z.enemies = kind === 'enemy' ? [e] : [];
+                z.enemies = spec.captain ? z.enemies : kind === 'enemy' ? [e] : [];
                 g.s.party = kind === 'ally' ? [e] : [];
                 z.props = kind === 'prop' ? [e] : [];
                 z.npcs = kind === 'npc' ? [e] : [];

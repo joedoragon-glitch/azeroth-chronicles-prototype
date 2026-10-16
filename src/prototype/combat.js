@@ -490,8 +490,7 @@
           e.neutral ||
           (!options?.area && !this.tacticalDirectTargetable(e)) ||
           this.peace ||
-          e.returning ||
-          e.thornReturn ||
+          this.attackResetProtected(e) ||
           !Number.isFinite(amount) ||
           amount <= 0
         )
@@ -511,12 +510,17 @@
             if (shot.target === e.id && shot.encountersAtStart === options.encountersAtStart)
               shot.cancelledChargedOpener = true;
           this.s.projectiles = this.s.projectiles.filter((shot) => !shot.cancelledChargedOpener);
+          // Deflecting an early charge still notices the attack. A roaming
+          // patrol must stop and fight instead of silently walking through it.
+          this.interruptPatrolReturn(e);
+          this.engage(e, true);
           // Deflect only this invalid charged hit. Preserve aggro, prior
           // damage, position, conditions and the ongoing encounter.
           this.say(e.name + ' deflects the pre-engagement charged attack.');
           return false;
         }
         e.mercyProvoked = true;
+        this.interruptPatrolReturn(e);
         this.engage(e, true);
         if (source === 'hero') e.heroParticipated = true;
         // Ash abrades eyes: attacks issued by a party member inside or recently

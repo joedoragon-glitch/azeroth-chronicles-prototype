@@ -241,7 +241,12 @@
   }
   // Floating cast information is separate from floor warnings, so danger
   // geometry can sit beneath every actor/prop without burying the cast clock.
-  function actorCues(ctx, screen, game) {
+  function actorCues(ctx, screen, game, heightFor = null) {
+    const cueHeight = (e) =>
+      Math.max(
+        e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 78 : 65,
+        (heightFor?.(e) || 0) + (e.form === 'true' && e.type === 'boss' ? 46 : 26),
+      );
     ctx.save();
     for (const e of game
       .zone()
@@ -251,7 +256,7 @@
       const width = 70,
         height = 8,
         x = p.x - width / 2,
-        y = p.y - 65;
+        y = p.y - (heightFor ? cueHeight(e) : 65);
       const fill = Math.max(0, Math.min(1, 1 - a.timer / a.total));
       ctx.fillStyle = '#1b233080';
       ctx.fillRect(x - 2, y - 2, width + 4, height + 4);
@@ -290,7 +295,7 @@
       const a = e.telegraph,
         p = screen(e),
         w = 84,
-        y = p.y - 82,
+        y = p.y - (heightFor ? cueHeight(e) : 82),
         total = Math.max(0.001, a.total || a.timer || 1),
         ready = Math.max(0, Math.min(1, 1 - a.timer / total));
       ctx.fillStyle = '#18212980';
@@ -350,13 +355,7 @@
       const w = Math.min(maxWidth, Math.max(...lines.map((t) => ctx.measureText(t).width)) + 16),
         h = 8 + lines.length * 15,
         left = Math.max(4, Math.min(viewWidth - w - 4, p.x - w / 2)),
-        top = Math.max(
-          4,
-          Math.min(
-            viewHeight - h - 4,
-            p.y - (e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 78 : 65) - h,
-          ),
-        );
+        top = Math.max(4, Math.min(viewHeight - h - 4, p.y - cueHeight(e) - h));
       ctx.fillStyle = a.rogueMove ? '#192a367a' : '#241d1a7a';
       ctx.fillRect(left, top, w, h);
       ctx.strokeStyle =

@@ -46,7 +46,7 @@ const server = http.createServer((req, res) => {
       [393, 852, true],
       [800, 375, true],
       [844, 390, true],
-    ]) {
+    ].filter((_, i) => !process.env.PERSONALIZATION_SMOKE || i === 0)) {
       page = await browser.newPage({
         viewport: { width, height },
         isMobile: phone,
@@ -193,6 +193,7 @@ const server = http.createServer((req, res) => {
         'Lord Noctis',
         'real persisted shell restores names',
       );
+      await require('./helpers/roaming-interception-browser.cjs').verifyRoamingInterception(page);
       await require('./helpers/maps-browser.cjs').verifyMaps(page, out, width + 'x' + height);
       if (width === 1280 || width === 375)
         await require('./helpers/true-aura-browser.cjs').verifyTrueAuras(

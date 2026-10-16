@@ -5,7 +5,45 @@
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     // Runtime-only broad phase and congestion clocks. Never persist crowd state.
     const crowds = new WeakMap();
+    const patrolResumes = new WeakMap();
     class Navigation {
+      roamingBoss(e) {
+        return this.thornPatroller(e) || this.cinderPatroller(e);
+      }
+      attackResetProtected(e) {
+        return !!(e.returning || e.thornReturn || e.cinderReturn) && !this.roamingBoss(e);
+      }
+      patrolResume(e) {
+        const state = patrolResumes.get(this)?.get(e.id);
+        return state?.zone === this.zoneId ? state : null;
+      }
+      capturePatrolResume(e) {
+        if (!this.roamingBoss(e)) return;
+        if (!patrolResumes.has(this)) patrolResumes.set(this, new Map());
+        patrolResumes.get(this).set(e.id, {
+          zone: this.zoneId,
+          point: { x: e.x, y: e.y },
+          leg: e.thornLeg ?? 1,
+          pause: e.thornPause || 0,
+          destination: e.cinderDestination ? { ...e.cinderDestination } : null,
+          stop: e.cinderStop ?? 0,
+          inspectionPause: e.cinderInspectionPause || 0,
+        });
+      }
+      releasePatrolResume(e) {
+        patrolResumes.get(this)?.delete(e.id);
+      }
+      clearPatrolResumes() {
+        patrolResumes.delete(this);
+      }
+      interruptPatrolReturn(e) {
+        if (!this.roamingBoss(e)) return;
+        e.returning = 0;
+        delete e.thornReturn;
+        delete e.cinderReturn;
+        e.path = [];
+        e.routeAge = 0;
+      }
       interactionDistance(place) {
         return Math.min(dist(place, this.hero), dist(place.servicePoint || place, this.hero));
       }

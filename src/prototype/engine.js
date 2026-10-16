@@ -2190,6 +2190,7 @@
       for (const oldZone of Object.values(this.s.zones))
         oldZone.props = oldZone.props.filter((p) => !p.garunTemporary && !p.garunPreview);
       this.s.zone = zone;
+      this.clearPatrolResumes();
       this.zone();
       this.syncDungeonMasterStation();
       this.s.recallActive = false;
@@ -2576,6 +2577,11 @@
     engage(e, forced = true, spreadPack = true) {
       if (e.aggro || e.neutral || e.returning || e.thornReturn || e.cinderReturn) return false;
       if ((this.s.mercyTime || 0) > 0 && !forced && !e.mercyProvoked) return false;
+      this.capturePatrolResume(e);
+      if (this.roamingBoss(e)) {
+        e.path = [];
+        e.routeAge = 0;
+      }
       e.aggro = true;
       if (this.thornPatroller(e)) e.thornFightAnchor = { x: e.x, y: e.y };
       if (this.cinderPatroller(e)) e.cinderFightAnchor = { x: e.x, y: e.y };
@@ -2623,6 +2629,7 @@
     }
 
     die(cause = null) {
+      this.clearPatrolResumes();
       this.clearPartyCharges();
       for (const z of Object.values(this.s.zones)) this.clearVeraRepairs(z);
       for (const z of Object.values(this.s.zones))
@@ -5673,6 +5680,7 @@
       this.updateVeraFieldwork(dt);
     }
     disengage(e, dt) {
+      const resume = this.patrolResume(e);
       if (!e.returning) {
         if (e.family === 'mine' && e.type === 'boss')
           this.zone().props = this.zone().props.filter((p) => !p.garunTemporary && !p.garunPreview);
@@ -5695,24 +5703,27 @@
           n = this.thornCaptive();
         const together =
           !n || !this.thornCaptiveFollowing() || dist(n, e) <= R.thornPatrol.waitForCaptive;
-        if (together) this.follow(e, e.home, R.thornPatrol.speed, dt, 0);
+        const goal = resume?.point || e.home;
+        if (together) this.follow(e, goal, R.thornPatrol.speed, dt, 0);
         if (dist(before, e) > 0) this.recordThornTracks(e, before);
-        if (dist(e, e.home) > 1e-7 || !together) return;
+        if (dist(e, goal) > 1e-7 || !together) return;
         e.returning = 0;
         delete e.thornReturn;
-        e.thornLeg = 1;
-        e.thornPause = R.thornPatrol.pause;
+        e.thornLeg = resume?.leg ?? 1;
+        e.thornPause = resume ? resume.pause : R.thornPatrol.pause;
       } else if (this.cinderPatroller(e)) {
         e.cinderReturn = true;
         e.aggro = false;
         const together = this.cinderEntourageTogether(e);
-        if (together) this.follow(e, e.home, R.cinderInspection.speed, dt, 0);
-        if (dist(e, e.home) > 1e-7 || !together) return;
+        const goal = resume?.point || e.home;
+        if (together) this.follow(e, goal, R.cinderInspection.speed, dt, 0);
+        if (dist(e, goal) > 1e-7 || !together) return;
         e.returning = 0;
         delete e.cinderReturn;
-        delete e.cinderDestination;
-        e.cinderStop = 0;
-        e.cinderInspectionPause = R.cinderInspection.pauseMin;
+        if (resume?.destination) e.cinderDestination = { ...resume.destination };
+        else delete e.cinderDestination;
+        e.cinderStop = resume?.stop ?? 0;
+        e.cinderInspectionPause = resume ? resume.inspectionPause : R.cinderInspection.pauseMin;
       } else if (e.veraEscort && this.zoneId === 'crown') {
         e.aggro = false;
         const minister =
@@ -5725,7 +5736,8 @@
         e.returning = 0;
       } else e.returning -= dt;
       if (e.returning <= 0) {
-        if (!(e.veraEscort && this.zoneId === 'crown' && this.veraHeld())) Object.assign(e, e.home);
+        if (!resume && !(e.veraEscort && this.zoneId === 'crown' && this.veraHeld()))
+          Object.assign(e, e.home);
         e.aggro = false;
         delete e.ashCloud;
         delete e.ashNextAt;
@@ -5804,6 +5816,7 @@
           e.trueEntourageSpawned = false;
           e.trueHalfSummonWave = false;
         }
+        this.releasePatrolResume(e);
       }
     }
 

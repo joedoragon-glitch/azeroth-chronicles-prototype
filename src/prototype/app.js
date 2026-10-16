@@ -1561,7 +1561,7 @@
       route = findRoute(place);
       go.disabled = !route;
       go.textContent = route ? 'Navigate · ' + place.name : 'No route · ' + place.name;
-      $('modal-actions').children.forEach((button, index) =>
+      Array.from($('modal-actions').children).forEach((button, index) =>
         button.classList.toggle('route-picked', destinations[index - 1] === place),
       );
       menuIndex = destinations.indexOf(place) + 1;
@@ -1747,6 +1747,7 @@
         (e) =>
           e.hp > 0 &&
           !e.neutral &&
+          !game.attackResetProtected(e) &&
           // Respect the targeting system's own acquisition rules; a
           // charged release must not impose a second arbitrary distance cap.
           game.tacticalDirectTargetable(e),
@@ -1789,7 +1790,7 @@
         (e) =>
           e.hp > 0 &&
           !e.neutral &&
-          !e.returning &&
+          !game.attackResetProtected(e) &&
           Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= 680 &&
           visibleHostile(e),
       );
@@ -2541,7 +2542,7 @@
           (e) =>
             e.hp > 0 &&
             !e.neutral &&
-            !e.returning &&
+            !game.attackResetProtected(e) &&
             (e.aggro || e.telegraph || e.rangedAim) &&
             nearReaders(e, 900),
         ) ||
@@ -3038,7 +3039,7 @@
         game.s.statistics.deaths === was.deaths &&
         Math.hypot(movingHero.x - was.x, movingHero.y - was.y) > 0.25
       )
-        game.cast(1);
+        game.castMovementBasic();
       if (
         game.hero === movingHero &&
         game.zoneId === was.zone &&

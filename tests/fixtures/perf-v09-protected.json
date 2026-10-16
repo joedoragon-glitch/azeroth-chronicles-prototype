@@ -1512,6 +1512,67 @@
       "previousFiles": {
         "src/prototype/renderer.js": "ccb47c898b88085fc5a6c429895dd2692ebe045933503a0e06987549d697cf17"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt continuation; owner-authorized validation repairs and named Rogue cast UI, validation in progress 2026-10-16",
+      "reason": "Retain historical receipts; exact current bytes for review. No test result is inferred from these hashes.",
+      "files": {
+        "docs/DECISIONS.md": "ea5198d92bda735ed6f9762f7a911e27d1c7bc6e4313eaf5013e17ad092b7641",
+        "docs/PR313_VALIDATION_20261016.md": "472372793cd9a3a64745695aab088b1edb5257addc599ed58c8adc196200da65",
+        "package-lock.json": "8ec15149d455ba5a166a40038a38405b967bcd45b27473d22a1e6fe0c70ebbfd",
+        "package.json": "3357e5fee659a648e24911969c8b8e33b3f3268c9f579ff0ca465dfd7f707f00",
+        "src/prototype/app.js": "5ce64b5aa2628ce8bab9e404db042305fb627bd8be656335ed046858ae628d56",
+        "src/prototype/build-info.js": "9804bf2238da015c124cdf9711a2af97148f2143ebb916c09d369b76390e78a7",
+        "src/prototype/combat-visuals.js": "3385401bc352b868651a4fc01854710d65a6cd2eff83c6057c2f112a1cb32bbb",
+        "src/prototype/combat.js": "249b2e6648ba8d982a94cc47cb732f91f785cf88b84adac9ce2816a3d0a2f535",
+        "src/prototype/engine.js": "2af861366bab4881c67c735a584683fe89217371c76cc30cd4d57f17584bd085",
+        "src/prototype/hero-combat.js": "fc5e94587a70661248ab63718eeddc4307bcefbbb838cf142f48d20a04c657a5",
+        "src/prototype/navigation.js": "36a08f1e2fa0a85bf1f0a7a758be8395a65cf6f68393afc9612c0dd5945b76de",
+        "src/prototype/renderer.js": "dc1157f40fef80969dbda96d31e41772a69e5875c8faf0635d36baaa4ded81fd",
+        "sw.js": "438b021ecdc6628329a28594109a819fed9748fe460ac0defdf0df53e5af93ce",
+        "tests/audio-browser.test.cjs": "814e03f9b2c64cbc97cd6513d94ba02767ac9be04585273bd95529ea2d291a15",
+        "tests/community-snapshot-browser.test.cjs": "dc5458f6764a27b8aa5e306ef34125a608154ae6dadf00e67f3d4c51ea48aa5a",
+        "tests/cooldown-input-browser.test.cjs": "9c03ecd6e484749ea2315396ee5fe9c9cf6e2261198db38ccca7ac05d91f569c",
+        "tests/hero-skills-browser.test.cjs": "064b880a32af8e6b4fb9fcc8eadd0b6701e392dcacbaedecf5cf920ff0c14923",
+        "tests/perf-v09-protected.test.cjs": "252df4d4ced9aca1c8d5ce9e52999cf2c6cb008535d5c846f72161587c639ca6",
+        "tests/personalization-browser.test.cjs": "72254426afac3398f6f801939795426eaf8932e519b9f5ee99e49ef0ebb63494",
+        "tests/quest-archive-browser.test.cjs": "40336e15681b43b4b3399ba39e5fb750808e664f63457fbbd971404e106228f3",
+        "tests/snapshot-thorn-patrol.test.cjs": "9f3412a29577703ec9cc514aad872de84d4f9f57e70c1aff32985eb6afef81b1",
+        "tests/targeting.test.cjs": "24e66772c0614bdae42775a417fc1e81d7accacef37a77bbf0318a3a86109781",
+        "tests/true-aura.test.cjs": "f6ab71aaacb4b2e5d679e9e915c7ae9776242432648075e8b8bebc37e5acdc58",
+        "tests/helpers/roaming-interception-browser.cjs": "1271655b68d1b175ef607735242e3a85e8d282990a8c50da29eba7e00c5b6f3d",
+        "tests/roaming-boss-interception.test.cjs": "541ff1c8fa24eeda32b54f5d5263fe7bfd02531e87c4c2e9efea14c7e0842a10",
+        "tools/sprites/design-handoffs/true-boss-radiance.json": "a32b1ca385a48c08c4e37210227278e0eef77f3029a1ee4a098dd6efc942626a",
+        "tools/sprites/references/2026-10-16-character-consistency/true-boss-radiance-native.png": "a7b2775c112449acc65849cdafcdae1674c1e96f69a4225618a04f614ab85fb1"
+      },
+      "previousFiles": {
+        "docs/DECISIONS.md": "c4e76f5d7118db7c96ad48e28fd8518e81c5686a769b637fd84affd651562164",
+        "docs/PR313_VALIDATION_20261016.md": "d7b3693b7b9f71ceb3825aa317d558b2979f8ed18be1d00fc4c9bf7178d27bb9",
+        "package-lock.json": "32f99c045eaae30145e75045f751740a51033e9891f11c8b2e0ce8a3d73fbbab",
+        "package.json": "aae3e1e16fd3fcdd297d0869740af98910debff881b05e1f1089c77385ed8429",
+        "src/prototype/app.js": "ac82782479b0c6c33ef992d942993d9e8dc310dc896e6c9960a99be3b8ebd98d",
+        "src/prototype/build-info.js": "048742e00af31b18c2418aff062258b0e78cb3f1d3c3a72e7ef82d85cc8041df",
+        "src/prototype/combat-visuals.js": "019b2d56bfc05f52ac2d81de8b82efcf5d072400d6898dd49c7dd0b0ef94c004",
+        "src/prototype/combat.js": "d5065174d05e7de1ccf9286273bad64f0cd0139bf19987d9e2f7a3c05050328d",
+        "src/prototype/engine.js": "f0e5896e0b4fe194e32c1a81b3fcfa26b16c9ef55d6528842b1862d0708cd8b7",
+        "src/prototype/navigation.js": "75707729b40835ac88b1022108f1a1356a45550fa40def6eaa18de42e4a56a64",
+        "src/prototype/renderer.js": "b1be9a9db7b9c4a929f377d3dbd761d7c3ab4bce6f9bf5ed5599c7a192b8b375",
+        "sw.js": "827093fb1bc81c7769aa79406528f6ca3fba22514bed303ea02aa224479d5880",
+        "tests/community-snapshot-browser.test.cjs": "94f8454ae0c5d29d87d569d893332d48d064c5dc72d7f83c86e703ea3a60de56",
+        "tests/personalization-browser.test.cjs": "ea019ba2a5adcd14cadee7ada14141905de32f45d062fc830a9042c1c8f3e1f2",
+        "tests/true-aura.test.cjs": "b9bd98a7099d3dd9a6ee22127477e531b24fe2d2c3a36abe63a45fd8cdb83c7e"
+      }
     }
-  ]
+  ],
+  "authorizedPr313ApproachFrameRevision": {
+    "source": "Owner-authorized PR #313 validation repair: automatic movement basics preserve queued skill approaches. No clock, timing, update order, audio, save or HUD change.",
+    "previousActiveFrameBodySha256": "625bf68a6a71393c55788cdfd44788b30a463efd49c965c3c25de48041d956cc",
+    "activeFrameBodySha256": "f5aac837eadbf1af87987a34f5b61dc873db7d3c91ea94ffd4e986ee88771b18",
+    "exactReplacement": {
+      "before": "game.cast(1);",
+      "after": "game.castMovementBasic();"
+    },
+    "reason": "Actual native input audit caught passive movement fire overwriting a released charged approach; admission belongs in hero-combat."
+  }
 }

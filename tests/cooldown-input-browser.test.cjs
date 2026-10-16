@@ -365,14 +365,19 @@ const server = http.createServer((req, res) => {
         if (scenario === 'locked-range') {
           const e = g.zone().enemies.find((enemy) => enemy.id === __retargetFoes.original);
           e.x = 850; // Out of charged Skill 1 range, still a live locked foe.
+          // Keep the nearer distractor off the actual approach lane: body
+          // blocking remains a separate, intentional combat constraint.
+          g.zone().enemies.find((enemy) => enemy.id === __retargetFoes.nearer).y = 950;
           g.manualHeroTargetId = e.id;
           g.manualHeroTargetZone = g.zoneId;
           g.manualHeroTargetLocked = true;
+          window.__approachTick = g.tick;
+          g.tick = () => {};
         }
       }, scenario);
       assert.equal(
         await page.evaluate(() => Prototype.chargePresentation()?.state),
-        scenario === 'original-valid' ? 'ready' : 'no-target',
+        scenario === 'no-target' ? 'no-target' : 'ready',
         scenario,
       );
       await release(1);
@@ -380,8 +385,44 @@ const server = http.createServer((req, res) => {
         casts: __cooldownCasts,
         cooldown: Prototype.game.hero.cd[0],
         originalId: __retargetFoes.original,
+        order: Prototype.game.hero.order,
       }));
-      if (scenario === 'original-valid') {
+      if (scenario === 'locked-range') {
+        assert.equal(outcome.order?.type, 'skill-approach', 'release approaches the selected foe');
+        assert.equal(outcome.cooldown, 0, 'approach does not spend a skill cooldown');
+        assert(outcome.casts.every((c) => c.targetId === outcome.originalId));
+        await page.evaluate(() => {
+          Prototype.game.tick = __approachTick;
+          delete window.__approachTick;
+        });
+        await page
+          .waitForFunction(() => __cooldownCasts.some((c) => c.cd > 0), null, {
+            timeout: 8000,
+          })
+          .catch(async (error) => {
+            throw Error(
+              error.message +
+                ' ' +
+                JSON.stringify(
+                  await page.evaluate(() => ({
+                    hero: Prototype.game.hero,
+                    foes: Prototype.game.zone().enemies,
+                    casts: __cooldownCasts,
+                    paused: Prototype.paused,
+                    modal: !document.querySelector('#modal').hidden,
+                  })),
+                ),
+            );
+          });
+        assert(
+          await page.evaluate(() =>
+            __cooldownCasts
+              .filter((c) => c.cd > 0)
+              .every((c) => c.targetId === __retargetFoes.original),
+          ),
+          'completed approach retains original locked foe',
+        );
+      } else if (scenario === 'original-valid') {
         assert.equal(outcome.casts.length, 1);
         assert.equal(outcome.casts[0].targetId, outcome.originalId);
       } else {

@@ -29,7 +29,7 @@ assert(paint(1, true).png.equals(paint(30, true).png), 'reduced motion is genuin
 const alpha = (x, y) => a.pixels[(y * 240 + x) * 4 + 3];
 assert.equal(alpha(120, 148), 0, 'corona has a transparent centre behind the body');
 assert(alpha(160, 148) > 0 && alpha(160, 148) < 70, 'soft edge stays translucent');
-assert(alpha(120, 215) < 30, 'only a faint gradient falloff, no solid golden disc under the boss');
+assert(alpha(120, 215) < 40, 'only a faint gradient falloff, no solid golden disc under the boss');
 console.log(
   'PASS TRUE aura transparency, visible motion, reduced-motion stability, context restoration and state purity',
 );

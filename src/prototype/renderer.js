@@ -740,7 +740,14 @@
         pulse = 0.5 + 0.5 * Math.sin(t * 3.1 + visualPhase(e));
       ctx.save();
       if (e.form === 'true') {
-        drawTrueAura(ctx, e, p, spriteHeight(e), t, reducedMotion());
+        if (e.type === 'boss') drawTrueAura(ctx, e, p, spriteHeight(e), t, reducedMotion());
+        else {
+          ctx.strokeStyle = '#f8dfa059';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.ellipse(p.x, p.y + 8, 26, 8, 0, 0, Math.PI * 2);
+          ctx.stroke();
+        }
       } else {
         ctx.globalAlpha = e.frenzy ? 0.65 : 0.4;
         ctx.strokeStyle = e.frenzy ? '#ef8b63' : '#d8b66f';
@@ -2415,7 +2422,7 @@
       heroArt?.statuses(ctx, screen, game, canvas.width, canvas.height);
       heroArt?.charge(ctx, screen, game.hero, chargePresentation(), reducedMotion());
       PrototypeCombatVisuals.enemySupportStatus?.(ctx, screen, game);
-      PrototypeCombatVisuals.actorCues?.(ctx, screen, game);
+      PrototypeCombatVisuals.actorCues?.(ctx, screen, game, spriteHeight);
       targetGuidance();
       drawNavigationRoute();
       if (isPaused()) {
