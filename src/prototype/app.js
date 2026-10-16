@@ -1713,10 +1713,17 @@
           (e) =>
             e.hp > 0 &&
             !e.neutral &&
-            game.tacticalDirectTargetable(e) &&
-            Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= range &&
-            game.line(game.hero, e),
-        );
+            // Respect the targeting system's own acquisition rules; a
+            // charged release must not impose a second arbitrary distance cap.
+            game.tacticalDirectTargetable(e),
+        ),
+      inRange = valid.filter(
+        (e) =>
+          Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= range &&
+          game.line(game.hero, e),
+      );
+    // A chosen target remains charged even outside attack range. The hero
+    // approaches only after release; charge preparation never moves him.
     // Keep the original charge aim while valid. Resolve a replacement if
     // that enemy dies, disappears, or becomes unreachable before release.
     const original =
@@ -1728,10 +1735,10 @@
     // Respect deliberate boss locks: a live locked boss that is out of
     // reach must not redirect the attack into a nearby summon.
     if (selected && game.manualHeroTargetLocked) return null;
-    const preferred = valid.find((e) => e.id === game.s.heroTarget);
+    const preferred = inRange.find((e) => e.id === game.s.heroTarget);
     return (
       preferred ||
-      valid.sort(
+      inRange.sort(
         (a, b) =>
           Math.hypot(a.x - game.hero.x, a.y - game.hero.y) -
           Math.hypot(b.x - game.hero.x, b.y - game.hero.y),

@@ -732,6 +732,9 @@
         if ((this.s.expeditionRank || 1) < 3) return false;
         const context = this.syncSquadDoctrine();
         if (!context.engaged) return false;
+        // An explicit combat-doctrine switch during an ongoing encounter is
+        // a new engagement order; Recall itself remains defensive until then.
+        this.s.recallActive = false;
         this.s.squadDoctrine = this.s.squadDoctrine === 'focus' ? 'guard' : 'focus';
         this.event('squadDoctrine', { mode: this.s.squadDoctrine, boss: context.boss });
         return true;
@@ -754,6 +757,7 @@
       recallParty() {
         this.s.recallActive = true;
         this.hero.order = null;
+        this._tacticalPartyTargets?.clear();
         for (const u of this.activeLivingParty()) {
           this.clearPartyCharge(u);
           u.order = null;
@@ -932,8 +936,8 @@
             u.immune = Math.max(u.immune || 0, 2.5);
             this.event('spell', { x: u.x, y: u.y, target: u.id, kind: 'soldierGuard' });
           }
-        if (this.s.recallActive && living.every((u) => dist(u, this.hero) < 165))
-          this.s.recallActive = false;
+        // Recall is a standing defensive order. Reaching formation never
+        // silently authorizes companions to re-enter the previous fight.
         const crowdTarget = (u, targets) =>
           targets
             .filter((e) => dist(u, e) < 620)
@@ -1093,7 +1097,50 @@
           }
           if (u.order) u.order = null;
           if (this.peace || this.s.recallActive) {
+            // Recall is a defensive escort posture: no target acquisition,
+            // pursuit or active skills. A nearby attacking enemy may be
+            // counterattacked from the companion's *current* position only.
             this.followPartyMember(u, living, dt);
+            if (this.s.recallActive && !this.peace && u.cd <= 0) {
+              const pet = u.type === 'pet' ? this.petDefinition(u) : null;
+              const reach = pet
+                ? pet.role === 'ranged' ? R.balance.companions.petBasicRange : 70
+                : u.type === 'archer' ? 185 : 65;
+              const pursuer = z.enemies
+                .filter((e) =>
+                  e.hp > 0 && e.aggro && !e.neutral && !e.returning &&
+                  dist(e, u) <= reach && dist(e, this.hero) <= 350 &&
+                  this.line(u, e),
+                )
+                .sort((a, b) => dist(a, u) - dist(b, u) || this.idOrder(a, b))[0];
+              if (pursuer) {
+                // Pet defensive basic keeps pet range and effects; never Soldier fallback.
+                if (u.type === 'pet') {
+                  this.petDefensiveCounter(u, pursuer);
+                  continue;
+                }
+                u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+                if (u.type === 'archer') {
+                  const d = Math.max(1, dist(u, pursuer));
+                  this.s.projectiles.push({
+                    id: 'projectile-' + this.s.nextId++,
+                    x: u.x,
+                    y: u.y,
+                    dx: (pursuer.x - u.x) / d,
+                    dy: (pursuer.y - u.y) / d,
+                    target: pursuer.id,
+                    damage: this.companionAttackDamage(u),
+                    source: u.id,
+                    speed: 450,
+                    style: 'arrow',
+                  });
+                } else if (this.damage(pursuer, this.companionAttackDamage(u), u.id))
+                  this.event('melee', {
+                    actor: 'companion', role: 'soldier', source: u.id,
+                    weapon: 'sword', x: pursuer.x, y: pursuer.y, target: pursuer.id,
+                  });
+              }
+            }
             continue;
           }
           let e = null;

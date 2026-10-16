@@ -1666,6 +1666,12 @@
       [560, 690, 'sleep-roll', 0],
       [745, 405, 'bone-pile', 0],
       [330, 460, 'game-table', 0],
+      // Scornfang is a Greenwood reclamation superintendent, not simply a
+      // Goblin living in Thornfang's spare den. Keep the existing comfort
+      // and salvage items while making his administrative work visible.
+      [805, 525, 'scribe-desk', 0, 'scornfang-reclamation-records'],
+      [585, 745, 'tool-rack', 0, 'scornfang-salvage-equipment'],
+      [480, 305, 'supply-stack', 0, 'scornfang-relocation-inventory'],
     ],
     'supply-march': [
       [165, 690, 'mire-pool', 0],
@@ -1712,6 +1718,11 @@
       [185, 1230, 'fish-rack', 18],
       [740, 440, 'fishing-net', 0],
       [680, 740, 'stolen-goods', 0],
+      // Dreadmaw's established regional agriculture and Treasury supply
+      // management are visible alongside Cindermaw's roost and inner vault.
+      [1090, 840, 'drying-rack', 0, 'dreadmaw-agriculture-processing'],
+      [1150, 650, 'feed-crate', 0, 'dreadmaw-animal-husbandry'],
+      [1050, 545, 'scribe-desk', 0, 'cindermaw-welfare-inventory'],
     ],
   }; // Creature strongholds are centers of ordinary-monster life and territorial power, not resource wrappers.
   // Named sites reuse existing map destinations; unmarked holds fill quiet territory without adding map clutter.
@@ -4498,10 +4509,12 @@
       office: 'Superintendent of Reclamation',
       history:
         'Thornfang’s Goblin disciple oversees local decommissioning, remediation, salvage and relocation. His office serves Greenwood’s estate works; it is not a new kingdom-wide ministry.',
-      enduranceHp: 260,
+      // Scornfang is the early-Treasury survivability exception; later
+      // captains receive reach/cadence tuning, not an unmeasured 50% HP boost.
+      enduranceHp: 390,
       visualScale: 1.16,
-      specialRange: 470,
-      specialCooldown: 4.2,
+      specialRange: 560,
+      specialCooldown: 3.25,
       phase: { threshold: 0.55, name: 'Corrective Action', kind: 'scramble' },
       attacks: [
         {
@@ -4520,7 +4533,7 @@
           coefficient: 0.75,
           persistent: true,
           slow: true,
-          radius: 100,
+          radius: 120,
           fixedRadius: true,
         },
         {
@@ -4530,7 +4543,7 @@
           recovery: 0.95,
           coefficient: 0.55,
           slow: true,
-          radius: 135,
+          radius: 165,
         },
         {
           name: 'Cradle-to-Grave Tracking',
@@ -4540,7 +4553,7 @@
           shotWarning: 0.45,
           shots: 4,
           shotSpeed: 400,
-          shotLife: 1.8,
+          shotLife: 2.1,
           recovery: 1.1,
           coefficient: 0.45,
         },
@@ -4555,7 +4568,7 @@
           recovery: 1.1,
           coefficient: 0.7,
           persistent: true,
-          radius: 52,
+          radius: 64,
         },
       ],
     },
@@ -4564,8 +4577,8 @@
       name: 'Direjaw',
       enduranceHp: 680,
       visualScale: 1.18,
-      specialRange: 437,
-      specialCooldown: 4.4,
+      specialRange: 490,
+      specialCooldown: 3.35,
       phase: { threshold: 0.55, name: 'Elastic Rebound', kind: 'molt' },
       attacks: [
         {
@@ -4609,8 +4622,8 @@
       species: 'ridge',
       enduranceHp: 1650,
       visualScale: 1.2,
-      specialRange: 482,
-      specialCooldown: 4.1,
+      specialRange: 535,
+      specialCooldown: 3.25,
       phase: { threshold: 0.55, name: 'Hostile Liquidation', kind: 'howl' },
       attacks: [
         {
@@ -4651,8 +4664,8 @@
         'Cindermaw’s devoted disciple administers crops, livestock, meat, dairy, poultry, fisheries and their distribution across all five Crown provinces. He co-manages the whole Treasury with the Interior ministry while retaining the guarded Inner Vault. Ridge Tyrant remains Master of Coin, and the Drowned Keeper remains the archivist.',
       enduranceHp: 5000,
       visualScale: 1.19,
-      specialRange: 493,
-      specialCooldown: 4.0,
+      specialRange: 545,
+      specialCooldown: 3.25,
       phase: { threshold: 0.45, name: 'Ash Carapace', kind: 'carapace' },
       summon: {
         name: 'Brood Call',
@@ -4786,8 +4799,8 @@
         'Cinder Warlord is the Ashen Warlord’s roaming inspector and regional middle manager, not the military governor. His patrol checks roads, work details and occupied settlements. Mandatory Overtime orders at most seven already-present nearby workers into the fight; it cannot create troops from an empty or cleared road. The province still has working markets and repair crews under a compulsory military bureaucracy.',
       enduranceHp: 3000,
       visualScale: 1.18,
-      specialRange: 493,
-      specialCooldown: 4.0,
+      specialRange: 545,
+      specialCooldown: 3.25,
       patrolSpeed: 82,
       inspectionPause: 2.4,
       patrol: [
@@ -4896,7 +4909,10 @@
     fraction: 0.05,
     cooldown: rangerSupport.cooldown,
     duration: rangerSupport.duration,
-    threshold: rangerSupport.healThreshold,
+    // Ranged troops should assist substantially wounded allies before they
+    // collapse, rather than waiting until half their HP has disappeared.
+    // Targeting still prefers the most injured eligible recipient.
+    threshold: 0.75,
     range: 350,
     species: Object.freeze({
       wolf: 'Packheart Howl',
@@ -5922,6 +5938,18 @@
   };
   const tacticalFoundation = Object.freeze({
     enabled: true,
+    // Boss records use their unique family ID as species, even where their
+    // established anatomy/history matches an ordinary monster species.
+    // Opt in only documented identities; don't call a dragon a wolf or turn
+    // the Dark Lord into a random soldier to fill out a move roster.
+    bossSpeciesRogue: Object.freeze({
+      thorn: 'wolf',
+      crypt: 'skeleton',
+      mine: 'ogre',
+      warlord: 'orc',
+      cindermaw: 'ashbeast',
+      citadel: 'crownguard',
+    }),
     heroLevelDisadvantageMinimum: 1,
     outlevelProtection: 3,
     simultaneousPressureSources: 2,

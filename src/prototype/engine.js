@@ -259,15 +259,10 @@
       return Number.isFinite(factor) && factor > 0 ? factor : 1;
     }
     enemyHealTeammate(e, u) {
-      if (!u || u === e || u.hp <= 0 || u.neutral || u.returning || !u.aggro) return false;
-      if (e.pack && e.pack === u.pack) return true;
-      if (e.owner && (e.owner === u.id || e.owner === u.owner)) return true;
-      if (u.owner === e.id) return true;
-      if (e.roomCaptain && u.roomGuard) return true;
-      if (e.fieldCaptain && u.guard && this.zoneId === 'frontier') return true;
-      if (e.type === 'boss' && u.guard) return true;
-      if (e.guard && u.type === 'boss') return true;
-      return !e.pack && !u.pack && e.species === u.species;
+      // The Dark Lord's faction is mechanically allied across species, packs,
+      // guard posts and commanders. Local range, LoS, health and hostile status
+      // are checked by the support cast itself, not by formation membership.
+      return !!(u && u !== e && u.hp > 0 && !u.neutral && !u.returning);
     }
     enemySupportHeal(e) {
       const cfg = R.enemySupportHealing,
@@ -346,6 +341,29 @@
       // healers retain the green recovery cue without flooding combat messages.
       if (e.type === 'boss' || e.captain || e.roomCaptain || e.form === 'ringleader')
         this.say(e.name + ' uses ' + skill + ' on ' + target.name + '.');
+      return true;
+    }
+    enemySupportApproach(e, dt) {
+      const cfg = R.enemySupportHealing;
+      if (
+        !cfg || !this.enemyHealProfile(e) || !e.aggro || e.returning ||
+        this.mageSilenceActive(e) || e.motion || e.rangedAim || e.telegraph ||
+        (e.supportHealCd || 0) > 0
+      ) return false;
+      const ally = this.zone().enemies
+        .filter((u) =>
+          this.enemyHealTeammate(e, u) &&
+          !u.supportHeal &&
+          u.hp / u.maxHp <= cfg.threshold &&
+          dist(e, u) > cfg.range &&
+          dist(e, u) <= cfg.range + 210,
+        )
+        .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp || this.idOrder(a, b))[0];
+      if (!ally || !this.route(e, ally).length) return false;
+      const before = { x: e.x, y: e.y };
+      this.follow(e, ally, 160 * this.slowMovementFactor(e), dt, cfg.range - 25);
+      if (dist(before, e) <= 0.1) return false;
+      e.noProgress = 0;
       return true;
     }
     advanceEnemySupportHeal(e, dt) {
@@ -940,7 +958,24 @@
       const room = this.supplyRoom(z.id),
         layout = room && R.treasuryDecor?.[room.id],
         targetVersion = room?.id === 'supply-crown' ? 5 : room?.id === 'supply-highlands' ? 5 : 3;
-      if (!room || !layout || z.treasuryVersion === targetVersion) return;
+      if (!room || !layout) return;
+      if (z.treasuryVersion === targetVersion) {
+        // Append only new nonblocking character-life details to historical
+        // saves. Never rebuild the Treasury or reset caches, guards or captain.
+        for (const [j, [x, y, structure, radius, sceneRole]] of layout.entries()) {
+          if (!sceneRole || z.props.some((p) => p.id === 'treasury-' + j)) continue;
+          z.props.push({
+            id: 'treasury-' + j,
+            ...this.safe(x, y, z.id),
+            r: radius || 0,
+            decorative: !radius,
+            structure,
+            treasuryBoss: room.boss,
+            sceneRole,
+          });
+        }
+        return;
+      }
       z.room = true;
       z.treasury = room.boss;
       z.props = z.props.filter(
@@ -1039,7 +1074,11 @@
       z.treasuryVersion = targetVersion;
     }
     upgradeCaptainEndurance(e, profile) {
-      if (!e || !profile?.enduranceHp || e.captainEnduranceVersion === 2) return;
+      if (!e || !profile?.enduranceHp) return;
+      // The new Greenwood health budget must migrate existing v2 captains,
+      // but should never repeatedly scale an already upgraded saved actor.
+      const version = e.captainProfile === 'supply-vale' ? 3 : 2;
+      if (e.captainEnduranceVersion === version) return;
       const previous = e.maxHp || e.baseHp || 1;
       const fraction = Math.max(0, Math.min(1, (e.hp || 0) / previous));
       const oldBase = e.baseHp || previous;
@@ -1057,7 +1096,7 @@
       e.captainGuard = 0;
       e.captainReflect = 0;
       e.captainOvertimeCd = 0;
-      e.captainEnduranceVersion = 2;
+      e.captainEnduranceVersion = version;
     }
     roomCaptainPopulation(z) {
       const profile = R.roomCaptains?.[z.id];
@@ -1074,7 +1113,9 @@
       captain.visualScale = profile.visualScale || 1.16;
       // Population reconciliation is also called during active simulation. The
       // agriculture selector's cooldown must survive these reads after setup.
-      if (z.id !== 'supply-crown' || captain.roomCaptainVersion !== 1)
+      // Setup normalization must not repeatedly truncate a live captain's
+      // special cooldown whenever zone() is read during simulation.
+      if (captain.roomCaptainVersion !== 1)
         captain.specialCd = Math.min(captain.specialCd ?? 1.25, 1.25);
       captain.roomCaptainVersion = 1;
       this.upgradeCaptainEndurance(captain, profile);
@@ -2561,6 +2602,14 @@
         for (const ally of this.zone().enemies)
           if (ally.pack && ally.pack === e.pack && ally.hp > 0 && !ally.aggro)
             this.engage(ally, false);
+      // Treasury guards' pack IDs describe formation posts, not independent
+      // allegiances. Assaulting a live guard alerts its captain across posts.
+      if (e.roomGuard && !e.roomCaptain && this.supplyRoom()) {
+        const captain = this.zone().enemies.find(
+          (u) => u.roomCaptain && u.hp > 0 && !u.neutral && !u.returning,
+        );
+        if (captain && !captain.aggro) this.engage(captain, true, false);
+      }
     }
 
     die() {
@@ -3181,6 +3230,36 @@
             clamp(input.speedFactor || 1, 1, 1.35);
         this.move(h, { x: h.x + (input.x / n) * speed, y: h.y + (input.y / n) * speed }, speed, dt);
       } else if (h.order) {
+        const pendingSkill = h.order.type === 'skill-approach' ? h.order : null;
+        if (pendingSkill) {
+          const target = z.enemies.find(
+            (e) => e.id === pendingSkill.id && e.hp > 0 && !e.neutral &&
+              !e.returning && this.tacticalDirectTargetable(e),
+          );
+          if (!target || pendingSkill.zone !== this.zoneId || h.hp <= 0) {
+            h.order = null;
+          } else {
+            const range = this.heroSkillRange(pendingSkill.slot, pendingSkill.charged);
+            if (dist(h, target) <= range && this.line(h, target)) {
+              // Cast through the ordinary resolver only after truly reaching
+              // the target, preserving all skill costs, interrupts and cooldowns.
+              h.order = null;
+              this.cast(pendingSkill.slot, target.id, pendingSkill.charged, pendingSkill.encountersAtStart);
+            } else {
+              const before = { x: h.x, y: h.y },
+                speed = (h.speed + this.heroTalentSpeedBonus()) *
+                  (h.haste > 0 ? 1.25 : 1) *
+                  this.slowMovementFactor(h) *
+                  this.mireBogMovementFactor(h) *
+                  this.ashMovementFactor(h);
+              this.follow(h, target, speed, dt, Math.max(0, range - 15));
+              if (dist(h, before) < 0.1) pendingSkill.stalled += dt;
+              else pendingSkill.stalled = 0;
+              // An unreachable foe never traps the player in an endless order.
+              if (pendingSkill.stalled >= 2 || !this.route(h, target).length) h.order = null;
+            }
+          }
+        } else {
         const target =
           h.order.type === 'attack'
             ? z.enemies.find((e) => e.id === h.order.id && this.tacticalDirectTargetable(e))
@@ -3207,6 +3286,7 @@
           else if (h.order.type === 'attack') this.cast(1, target.id);
           else h.order = null;
         } else h.order = null;
+        }
       }
       const formationDx = h.x - formationStart.x,
         formationDy = h.y - formationStart.y,
@@ -4164,15 +4244,25 @@
             ? (e.crownRogueTurn || 0) % 2
               ? 'crownguard'
               : e.crownAncestry
-            : e.species,
-        basic =
+            : e.type === 'boss'
+              ? cfg.bossSpeciesRogue?.[e.family] || e.species
+              : e.species,
+        namedBasic =
           (e.type === 'boss' && profiles.bosses[e.family]) ||
           ((e.captain || e.roomCaptain) && profiles.captains[e.captainProfile]) ||
-          (tier === 'guardian' && ranged && !e.crownTroop && profiles.rangedGuardian) ||
-          (ranged && (profiles.ranged[crownDoctrineSpecies] || profiles.rangedFallback)) ||
-          profiles.species[crownDoctrineSpecies] ||
-          profiles[tier] ||
-          profiles.ordinary,
+          null,
+        speciesBasic =
+          (ranged && profiles.ranged[crownDoctrineSpecies]) ||
+          profiles.species[crownDoctrineSpecies] || null,
+        basic =
+          namedBasic && speciesBasic
+            ? (e.rogueBasicTurn || 0) % 2 === 0 ? speciesBasic : namedBasic
+            : namedBasic ||
+              (tier === 'guardian' && ranged && !e.crownTroop && profiles.rangedGuardian) ||
+              speciesBasic ||
+              (ranged && profiles.rangedFallback) ||
+              profiles[tier] ||
+              profiles.ordinary,
         signature =
           (e.type === 'boss' && cfg.rogueSignatures.bosses[e.family]) ||
           ((e.captain || e.roomCaptain) && cfg.rogueSignatures.captains[e.captainProfile]) ||
@@ -4281,6 +4371,8 @@
         signature: isSignature,
       });
       if (e.crownTroop && e.crownAncestry) e.crownRogueTurn = ((e.crownRogueTurn || 0) + 1) % 2;
+      if (!isSignature && namedBasic && speciesBasic)
+        e.rogueBasicTurn = ((e.rogueBasicTurn || 0) + 1) % 2;
       return true;
     }
     // Field commanders rally native ordinary-monster spawn records; Ridge Tyrant
@@ -5243,6 +5335,7 @@
           continue;
         }
         if (this.enemySupportHeal(e)) continue;
+        if (this.enemySupportApproach(e, dt)) continue;
         // A short-lived rogue decision is distinct from normal aggro.
         if (!this.mageSilenceActive(e) && this.tacticalAutoRogue(e, target)) continue;
         // A committed attack owns its warning/release clock. Regroup holds and
@@ -5481,9 +5574,16 @@
           opportunity = true;
         }
         if (!opportunity && (d > range || !visible)) {
-          if (target === this.hero && visible && d > range && !e.pursuitBurstUsed) {
+          if (
+            target === this.hero && visible && d > range &&
+            this.s.time >= (e.pursuitBurstReadyAt || 0)
+          ) {
+            // A persistent kiter should not exhaust the monster's only
+            // pursuit answer for the entire encounter. Use bounded timed
+            // renewals instead of permanent super-speed or larger leashes.
             e.pursuitBurst = pursuitBurstSeconds;
             e.pursuitBurstUsed = true;
+            e.pursuitBurstReadyAt = this.s.time + (e.type === 'boss' ? 5.5 : 7);
           }
           this.follow(
             e,
@@ -5583,6 +5683,7 @@
         e.mercyProvoked = false;
         e.noProgress = 0;
         e.pursuitBurstUsed = false;
+        delete e.pursuitBurstReadyAt;
         e.frozen = false;
         e.frenzy = false;
         for (const key of [

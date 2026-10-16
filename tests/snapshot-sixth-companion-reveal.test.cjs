@@ -52,6 +52,6 @@ const currentCryptKinds = new Set(rules.dungeonDecor.crypt.map((r) => r[2]));
 for (const kind of originalCryptKinds) assert(currentCryptKinds.has(kind), kind + ' remains active');
 assert.equal(rules.supplyRooms.find((r) => r.id === 'supply-vale').count, 2,
   'no third Scornfang cache is permitted');
-assert.equal(rules.treasuryDecor['supply-vale'].length, 11,
-  'no manufactured retired-Crypt artwork was slipped into Treasury');
+assert.equal(rules.treasuryDecor['supply-vale'].length, 14,
+  'three actual reclamation-work props, not fictitious retired-Crypt artwork, join Treasury');
 console.log('PASS six class/mode throne reveal cases and negative Crypt-art provenance guard');
