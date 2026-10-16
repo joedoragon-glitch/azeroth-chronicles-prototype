@@ -5732,6 +5732,18 @@
   };
   const tacticalFoundation = Object.freeze({
     enabled: true,
+    // Boss records use their unique family ID as species, even where their
+    // established anatomy/history matches an ordinary monster species.
+    // Opt in only documented identities; don't call a dragon a wolf or turn
+    // the Dark Lord into a random soldier to fill out a move roster.
+    bossSpeciesRogue: Object.freeze({
+      thorn: 'wolf',
+      crypt: 'skeleton',
+      mine: 'ogre',
+      warlord: 'orc',
+      cindermaw: 'ashbeast',
+      citadel: 'crownguard',
+    }),
     heroLevelDisadvantageMinimum: 1,
     outlevelProtection: 3,
     simultaneousPressureSources: 2,
