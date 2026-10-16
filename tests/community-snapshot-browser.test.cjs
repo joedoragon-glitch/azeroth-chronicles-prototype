@@ -128,9 +128,9 @@ const inventory = JSON.parse(
               }
             throw Error('No actual clear pet presentation lane');
           };
-          window.communityCapture.create = (region, zoom, sprites) => {
+          window.communityCapture.create = (region, zoom, sprites, cls = 'paladin') => {
             const c = communityCapture;
-            c.game = new Campaign('normal', 'paladin', () => 0.9);
+            c.game = new Campaign('normal', cls, () => 0.9);
             c.game.enter(Campaign.data.regions[region].id);
             Object.assign(c.game.hero, c.game.safe(1100, 1100));
             c.painter = PrototypeRenderer.create({
@@ -255,7 +255,7 @@ const inventory = JSON.parse(
               ({ record, zoom }) => {
                 const c = communityCapture,
                   spec = record.nativeFixture;
-                const g = c.create(spec.region, zoom, false);
+                const g = c.create(spec.region, zoom, false, spec.entity?.class || 'paladin');
                 if (spec.captain?.startsWith('supply-')) g.enter(spec.captain);
                 g.s.clock = spec.clock;
                 const z = g.zone(),
@@ -284,6 +284,10 @@ const inventory = JSON.parse(
                 else if (spec.captain) {
                   e = z.enemies.find((e) => e.captainProfile === spec.captain);
                   if (!e) throw Error('missing authored captain ' + spec.captain);
+                } else if (spec.entity?.renderKind === 'ally') {
+                  e = g.unit(spec.entity.type, h.x + 70, h.y + 30);
+                } else if (spec.entity?.renderKind === 'hero') {
+                  e = g.hero;
                 } else
                   e = {
                     id: record.id,
@@ -297,8 +301,11 @@ const inventory = JSON.parse(
                 e.id = e.id || record.id;
                 const kind =
                   e.renderKind ||
+                  spec.entity?.renderKind ||
                   (spec.pet ? 'ally' : spec.boss || spec.enemy || spec.captain ? 'enemy' : 'prop');
                 e.renderKind = kind;
+                if (kind === 'node') e.amount = 10;
+                if (e.kind === 'keeper') g.s.normal.archive = true;
                 z.enemies = kind === 'enemy' ? [e] : [];
                 g.s.party = kind === 'ally' ? [e] : [];
                 z.props = kind === 'prop' ? [e] : [];
@@ -321,8 +328,23 @@ const inventory = JSON.parse(
                 let opaque = 0;
                 for (let i = 3; i < pixels.length; i += 4) if (pixels[i]) opaque++;
                 if (opaque < 10) throw Error('missing procedural body ' + record.id);
-                const metrics = c.draw(),
-                  p = c.painter.screen(e);
+                // A standalone body is insufficient: prove the production world
+                // painter actually admits and draws this particular staged actor.
+                let bodySeen = false,
+                  metrics;
+                const originalDraw = PrototypeVisuals.draw;
+                PrototypeVisuals.draw = function (context, actor, ...args) {
+                  if (actor.id === e.id) bodySeen = true;
+                  return originalDraw(context, actor, ...args);
+                };
+                try {
+                  metrics = c.draw();
+                } finally {
+                  PrototypeVisuals.draw = originalDraw;
+                }
+                if (!bodySeen)
+                  throw Error('staged body excluded from world painting: ' + record.id);
+                const p = c.painter.screen(e);
                 if (p.x < 0 || p.y < 0 || p.x > innerWidth || p.y > innerHeight)
                   throw Error('offscreen actor ' + record.id);
                 return { id: record.id, opaque, metrics };

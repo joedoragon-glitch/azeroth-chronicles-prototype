@@ -10748,7 +10748,7 @@
           "selector": "bossPet / family === 'thorn'",
           "startLine": 1751,
           "endLine": 2270,
-          "sha256": "51ce7986403afb081c709091ed3f0ab140c214b16c13f9f6a4522856de27c18b"
+          "sha256": "45a0a86fd5dec9f689c2841ab0642be6180ad2945282ec2dd827ec00c9fadd5a"
         }
       ],
       "nativeFixture": {
@@ -10777,7 +10777,7 @@
           "selector": "bossPet / family === 'crypt'",
           "startLine": 1751,
           "endLine": 2270,
-          "sha256": "51ce7986403afb081c709091ed3f0ab140c214b16c13f9f6a4522856de27c18b"
+          "sha256": "45a0a86fd5dec9f689c2841ab0642be6180ad2945282ec2dd827ec00c9fadd5a"
         }
       ],
       "nativeFixture": {
@@ -10806,7 +10806,7 @@
           "selector": "bossPet / family === 'mire'",
           "startLine": 1751,
           "endLine": 2270,
-          "sha256": "51ce7986403afb081c709091ed3f0ab140c214b16c13f9f6a4522856de27c18b"
+          "sha256": "45a0a86fd5dec9f689c2841ab0642be6180ad2945282ec2dd827ec00c9fadd5a"
         }
       ],
       "nativeFixture": {
@@ -10835,7 +10835,7 @@
           "selector": "bossPet / family === 'archive'",
           "startLine": 1751,
           "endLine": 2270,
-          "sha256": "51ce7986403afb081c709091ed3f0ab140c214b16c13f9f6a4522856de27c18b"
+          "sha256": "45a0a86fd5dec9f689c2841ab0642be6180ad2945282ec2dd827ec00c9fadd5a"
         }
       ],
       "nativeFixture": {
@@ -10864,7 +10864,7 @@
           "selector": "bossPet / family === 'ridge'",
           "startLine": 1751,
           "endLine": 2270,
-          "sha256": "51ce7986403afb081c709091ed3f0ab140c214b16c13f9f6a4522856de27c18b"
+          "sha256": "45a0a86fd5dec9f689c2841ab0642be6180ad2945282ec2dd827ec00c9fadd5a"
         }
       ],
       "nativeFixture": {
@@ -10893,7 +10893,7 @@
           "selector": "bossPet / family === 'mine'",
           "startLine": 1751,
           "endLine": 2270,
-          "sha256": "51ce7986403afb081c709091ed3f0ab140c214b16c13f9f6a4522856de27c18b"
+          "sha256": "45a0a86fd5dec9f689c2841ab0642be6180ad2945282ec2dd827ec00c9fadd5a"
         }
       ],
       "nativeFixture": {
@@ -10922,7 +10922,7 @@
           "selector": "bossPet / family === 'warlord'",
           "startLine": 1751,
           "endLine": 2270,
-          "sha256": "51ce7986403afb081c709091ed3f0ab140c214b16c13f9f6a4522856de27c18b"
+          "sha256": "45a0a86fd5dec9f689c2841ab0642be6180ad2945282ec2dd827ec00c9fadd5a"
         }
       ],
       "nativeFixture": {
@@ -10951,7 +10951,7 @@
           "selector": "bossPet / family === 'abyss'",
           "startLine": 1751,
           "endLine": 2270,
-          "sha256": "51ce7986403afb081c709091ed3f0ab140c214b16c13f9f6a4522856de27c18b"
+          "sha256": "45a0a86fd5dec9f689c2841ab0642be6180ad2945282ec2dd827ec00c9fadd5a"
         }
       ],
       "nativeFixture": {
@@ -10980,7 +10980,7 @@
           "selector": "bossPet / family === 'citadel'",
           "startLine": 1751,
           "endLine": 2270,
-          "sha256": "51ce7986403afb081c709091ed3f0ab140c214b16c13f9f6a4522856de27c18b"
+          "sha256": "45a0a86fd5dec9f689c2841ab0642be6180ad2945282ec2dd827ec00c9fadd5a"
         }
       ],
       "nativeFixture": {
@@ -11009,7 +11009,7 @@
           "selector": "bossPet / family === 'cindermaw'",
           "startLine": 1751,
           "endLine": 2270,
-          "sha256": "51ce7986403afb081c709091ed3f0ab140c214b16c13f9f6a4522856de27c18b"
+          "sha256": "45a0a86fd5dec9f689c2841ab0642be6180ad2945282ec2dd827ec00c9fadd5a"
         }
       ],
       "nativeFixture": {
@@ -11038,7 +11038,7 @@
           "selector": "bossPet / family === 'darklord'",
           "startLine": 1751,
           "endLine": 2270,
-          "sha256": "51ce7986403afb081c709091ed3f0ab140c214b16c13f9f6a4522856de27c18b"
+          "sha256": "45a0a86fd5dec9f689c2841ab0642be6180ad2945282ec2dd827ec00c9fadd5a"
         }
       ],
       "nativeFixture": {
@@ -12702,6 +12702,6 @@
       "detail density at deferred native size"
     ]
   },
-  "sourceSnapshotSha256": "b525f4bce76b98248ae5f47e08d9c41a77699a5b6dab748dc0a210964729c77c",
-  "sourceReferenceCommit": "06edf70470c507b5da5246fa27e3b779e64382f1"
+  "sourceSnapshotSha256": "52ef9f105a31d481c686e59a773fc219004e546ea5a657c288821f4fcc0cd721",
+  "sourceReferenceCommit": "754e72e9cb5819bb815fde97488d44275e870453"
 }

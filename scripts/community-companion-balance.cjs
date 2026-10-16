@@ -115,22 +115,42 @@ function trial(C, c) {
     // Retain this captain's native formation; its authored AI and mechanics run normally.
     targets = z.enemies.filter((e) => e === captain || (captain.pack && e.pack === captain.pack));
   } else {
-    const native = z.enemies.find((e) => e.type === 'mob' && !e.guard && !e.captain && !e.summon);
-    if (!native) throw Error('No native pack source for ' + c.region);
-    targets = Array.from({ length: Number(c.encounter.split('-')[1]) }, (_, i) =>
-      g.makeEnemy(
-        {
-          species: native.species,
-          name: 'Community native pack',
-          level: native.level,
-          hp: native.baseHp,
-          damage: native.baseDamage,
-          gold: 0,
-          xp: 0,
-        },
-        g.safe(native.home.x + (i % 4) * 36, native.home.y + Math.floor(i / 4) * 38),
-      ),
+    const natives = z.enemies.filter(
+      (e) =>
+        e.type === 'mob' &&
+        e.form === 'normal' &&
+        !e.guard &&
+        !e.captain &&
+        !e.summon &&
+        !e.veraEscort &&
+        !e.nightOnly &&
+        !e.mini &&
+        !e.strongholdResident,
     );
+    const blueprints = [
+      ...new Map(
+        natives.map((e) => [e.species + ':' + !!e.ranged + ':' + !!e.mountedCrownRider, e]),
+      ).values(),
+    ];
+    if (!blueprints.length) throw Error('No native pack source for ' + c.region);
+    const home = blueprints[0].home;
+    // Retain factory-authored role/weapon/mount fields, not only species and HP.
+    // A generic makeEnemy call would silently turn native ranged troops into melee.
+    targets = Array.from({ length: Number(c.encounter.split('-')[1]) }, (_, i) => {
+      const e = JSON.parse(JSON.stringify(blueprints[i % blueprints.length])),
+        p = g.safe(home.x + (i % 4) * 36, home.y + Math.floor(i / 4) * 38);
+      Object.assign(e, {
+        id: 'enemy-' + g.s.nextId++,
+        x: p.x,
+        y: p.y,
+        home: { ...p },
+        pack: 'community-audit-pack',
+        aggro: false,
+        gold: 0,
+        xp: 0,
+      });
+      return e;
+    });
   }
   z.enemies = targets;
   // Keep authored captives, workstations and boss entourage dependencies. Only
@@ -238,6 +258,14 @@ function trial(C, c) {
   }
   g.engage(targets[0]);
   g.manualHeroTargetId = targets[0].id;
+  const enemyOpening = targets.map((e) => ({
+    species: e.species,
+    level: e.level,
+    ranged: !!e.ranged,
+    mounted: !!e.mountedCrownRider,
+    hp: e.hp,
+    damage: e.damage,
+  }));
   for (
     let step = 0;
     step < 900 && !g.s.statistics.deaths && targets.some((e) => e.hp > 0);
@@ -310,6 +338,7 @@ function trial(C, c) {
     level,
     expeditionRank: g.s.expeditionRank,
     capStress: size === 6 && c.region !== 'crown',
+    enemyOpening,
     seconds,
     won: targets.every((e) => e.hp <= 0),
     heroDied: !!g.s.statistics.deaths,

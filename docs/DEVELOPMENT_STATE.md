@@ -2,7 +2,7 @@
 
 ## Current work · Community Snapshot, 16 October 2026
 
-**Source repairs awaiting final source audit:** the [failed audit](COMMUNITY_SNAPSHOT_EXECUTION_AUDIT_20261016.md) of `7581ed12d57e70e42bbaed6b8223bc8d4c709b22` is preserved. All seven findings have [authorized source corrections](COMMUNITY_SNAPSHOT_AUDIT_REPAIRS_20261016.md), with immutable artwork at `06edf70470c507b5da5246fa27e3b779e64382f1`; a new audit must precede execution authorization. No validation has run.
+**Follow-up source audit passes; validation awaits explicit owner authorization.** All seven [failed-audit](COMMUNITY_SNAPSHOT_EXECUTION_AUDIT_20261016.md) findings are addressed in source. [The second audit](COMMUNITY_SNAPSHOT_SOURCE_REAUDIT_20261016.md) identifies frozen runtime `754e72e9cb5819bb815fde97488d44275e870453`, final acceptance-fixture corrections, immutable design references and remaining uncertainty. The final audit checkpoint changes no runtime from that commit. No tests, build, browser, simulation, benchmark, CI, PR, merge or deployment has run in this phase. Use the feature branch's final handoff/head for authorization.
 
 PR #308 merged as `6bc27be31792b1c38147d61e98ceed6acf3e2560`. The next consolidated feature is on `feature/community-snapshot-post308-20261016`, with its recoverable checkpoints and honest untested status in [the implementation record](COMMUNITY_SNAPSHOT_IMPLEMENTATION_20261016.md). No new release, build, browser validation, test run, CI workflow or deployment has been initiated during this source phase. The owner must authorize [the combined final validation](COMMUNITY_SNAPSHOT_VALIDATION_20261016.md); older readiness/release notes below are retained history.
 

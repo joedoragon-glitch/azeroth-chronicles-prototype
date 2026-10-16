@@ -1,5 +1,7 @@
 # Community Snapshot execution audit — 16 October 2026
 
+Historical audit of `7581ed12d57e70e42bbaed6b8223bc8d4c709b22`; the [follow-up source audit](COMMUNITY_SNAPSHOT_SOURCE_REAUDIT_20261016.md) records corrections and the current source-readiness verdict. Original findings below are preserved.
+
 **Verdict: NOT READY FOR FINAL VALIDATION. Three high-priority and four medium-priority findings remain open.** The earlier source-ready label was premature and is withdrawn. This is a source audit of the implementation, not an independent runtime certification. The implementing agent performed this review; no separate reviewer or agent was used.
 
 Audited implementation: [`7581ed12d57e70e42bbaed6b8223bc8d4c709b22`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/7581ed12d57e70e42bbaed6b8223bc8d4c709b22), tree `4a1fcd15e3676b4be367719a2522f0d539cff3a8`, branch `feature/community-snapshot-post308-20261016`. Predecessor/main: merged PR #308, `6bc27be31792b1c38147d61e98ceed6acf3e2560`. GitHub reads during this audit confirmed these heads; the Actions query for the candidate returned zero runs. The audit checkpoint changes documentation only and does not repair the frozen implementation.

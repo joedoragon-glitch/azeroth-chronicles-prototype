@@ -27,7 +27,7 @@
     ]
   },
   "reference": {
-    "sourceCommit": "06edf70470c507b5da5246fa27e3b779e64382f1",
+    "sourceCommit": "754e72e9cb5819bb815fde97488d44275e870453",
     "ownerFilesAndBranches": [
       "src/prototype/visuals.js::bossPet",
       "src/prototype/rules.js::petCompanions",
@@ -49,7 +49,7 @@
     "assetSpecificDependencies": [
       {
         "path": "src/prototype/visuals.js",
-        "sha256": "b525f4bce76b98248ae5f47e08d9c41a77699a5b6dab748dc0a210964729c77c"
+        "sha256": "52ef9f105a31d481c686e59a773fc219004e546ea5a657c288821f4fcc0cd721"
       },
       {
         "path": "src/prototype/rules.js",
@@ -57,7 +57,17 @@
       }
     ],
     "preCommunityBaselineCommit": "6bc27be31792b1c38147d61e98ceed6acf3e2560",
-    "sourceEvidenceRecord": "tools/community-snapshot/procedural-art-inventory.json#pet:crypt"
+    "sourceEvidenceRecord": "tools/community-snapshot/procedural-art-inventory.json#pet:crypt",
+    "previousCandidateSourceCommit": "06edf70470c507b5da5246fa27e3b779e64382f1",
+    "sourceSlices": [
+      {
+        "path": "src/prototype/visuals.js",
+        "selector": "bossPet / family === 'crypt'",
+        "startLine": 1751,
+        "endLine": 2270,
+        "sha256": "45a0a86fd5dec9f689c2841ab0642be6180ad2945282ec2dd827ec00c9fadd5a"
+      }
+    ]
   },
   "scope": {
     "catalogIds": [],
