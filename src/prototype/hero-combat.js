@@ -841,8 +841,16 @@
         const cost = this.skillManaCost(slot, rank, isCharged);
         if (this.hero.mp < cost) return false;
         this.hero.mp -= cost;
-        // A committed offensive action explicitly releases Recall's defensive hold.
-        if (requiresTarget && target) this.s.recallActive = false;
+        // Recall holds until the player deliberately attacks, not only until
+        // they select a single target. Self-heal, guard and Ranger support
+        // skills remain defensive and do not reactivate companion pursuit.
+        const offensive =
+          (requiresTarget && !!target) ||
+          slot === 5 ||
+          (slot === 8 && this.hero.class === 'paladin') ||
+          (slot === 3 &&
+            (this.hero.class === 'mage' || (this.hero.class === 'paladin' && isCharged)));
+        if (offensive) this.s.recallActive = false;
         this.hero.cd[i] =
           slot === 3 && this.hero.class === 'paladin' && !isCharged
             ? 0
