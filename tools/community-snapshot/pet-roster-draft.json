@@ -1,0 +1,150 @@
+{
+  "schema": "azeroth-community-snapshot-pet-roster-draft-v1",
+  "status": "DESIGN_ONLY_UNTESTED_NOT_REGISTERED",
+  "sourceBossFile": "src/prototype/data.js",
+  "sourceVictory": "src/prototype/engine.js::victory(family,form)",
+  "unlockForm": "true",
+  "deployRule": "occupy an existing companion party slot; no bonus slots",
+  "noSummoning": true,
+  "notes": [
+    "This file is a preparatory mapping, not a runtime asset or authoritative balance table.",
+    "Boss IDs and canon attacks are mirrored for review only; avoid maintaining a second independent runtime boss registry.",
+    "No sprite generation. Render small friendly versions procedurally, preserving recognizability.",
+    "Every candidate attack needs simplified ally-safe area, duration, damage and status tuning by the implementing engineer.",
+    "Names, two-move sketches and roles are proposals; no combat code or unlock/recruit logic exists here."
+  ],
+  "entries": [
+    {
+      "bossId": "thorn",
+      "bossName": "Thornfang",
+      "region": "vale",
+      "petId": "pet:thorn",
+      "visualMotif": "small woodland wolf with Thornfang's distinctive vegetation/branch silhouette",
+      "roleIdea": "fast skirmisher",
+      "nonSummoningSourceMoves": [
+        "Dynamic Entry",
+        "Tripwire"
+      ]
+    },
+    {
+      "bossId": "crypt",
+      "bossName": "Lifebinder",
+      "region": "vale",
+      "petId": "pet:crypt",
+      "visualMotif": "small expressive skeleton/mortuary figure based on existing Lifebinder",
+      "roleIdea": "defensive caster",
+      "nonSummoningSourceMoves": [
+        "Stay Alive",
+        "Algor Mortis"
+      ]
+    },
+    {
+      "bossId": "mire",
+      "bossName": "Mirejaw",
+      "region": "march",
+      "petId": "pet:mire",
+      "visualMotif": "small rounded swamp predator with Mirejaw's established anatomy",
+      "roleIdea": "short-range control",
+      "nonSummoningSourceMoves": [
+        "Hydraulic Jump",
+        "Inundation"
+      ]
+    },
+    {
+      "bossId": "archive",
+      "bossName": "Drowned Keeper",
+      "region": "march",
+      "petId": "pet:archive",
+      "visualMotif": "small soaked scholar with the Keeper's exact canonical features",
+      "roleIdea": "ranged slowing utility",
+      "nonSummoningSourceMoves": [
+        "Water jets",
+        "Undertow"
+      ]
+    },
+    {
+      "bossId": "ridge",
+      "bossName": "Ridge Tyrant",
+      "region": "highlands",
+      "petId": "pet:ridge",
+      "visualMotif": "small but stocky Ridge Tyrant retaining identifiable weapon/face silhouette",
+      "roleIdea": "heavy bruiser",
+      "nonSummoningSourceMoves": [
+        "Coinage Blow",
+        "Rolling Cargo"
+      ]
+    },
+    {
+      "bossId": "mine",
+      "bossName": "Stone Colossus",
+      "region": "highlands",
+      "petId": "pet:mine",
+      "visualMotif": "tiny fitted-stone construct with prominent luminous heartstone, golden eyes",
+      "roleIdea": "durable close-range area pressure",
+      "nonSummoningSourceMoves": [
+        "Punching Shear",
+        "Dynamic Compaction"
+      ]
+    },
+    {
+      "bossId": "warlord",
+      "bossName": "Ashen Warlord",
+      "region": "frontier",
+      "petId": "pet:warlord",
+      "visualMotif": "miniature armored Warlord, exact recognizable equipment and ash-region coloring",
+      "roleIdea": "aggressive frontliner",
+      "nonSummoningSourceMoves": [
+        "Cleaving combo",
+        "Pursuit charge"
+      ]
+    },
+    {
+      "bossId": "abyss",
+      "bossName": "Abyss Dragon",
+      "region": "frontier",
+      "petId": "pet:abyss",
+      "visualMotif": "small friendly purple Veyrith dragon retaining his canonical dragon silhouette",
+      "roleIdea": "mobile ranged burst",
+      "nonSummoningSourceMoves": [
+        "Compressor Surge",
+        "Wake Vortex"
+      ]
+    },
+    {
+      "bossId": "citadel",
+      "bossName": "Veyra, Ash Sentinel",
+      "region": "crown",
+      "petId": "pet:citadel",
+      "visualMotif": "miniature disciplined Veyra preserving her uniform and marshal identity",
+      "roleIdea": "precise repositioning/control",
+      "nonSummoningSourceMoves": [
+        "Deep-Tissue Contouring",
+        "Fractional Resurfacing"
+      ]
+    },
+    {
+      "bossId": "cindermaw",
+      "bossName": "Cindermaw",
+      "region": "crown",
+      "petId": "pet:cindermaw",
+      "visualMotif": "small cute Cindermaw retaining the original Ash-beast features and fire motif",
+      "roleIdea": "defensive flame utility",
+      "nonSummoningSourceMoves": [
+        "Cordon Sanitaire",
+        "Parens Patriae"
+      ]
+    },
+    {
+      "bossId": "darklord",
+      "bossName": "Dark Lord",
+      "region": "crown",
+      "petId": "pet:darklord",
+      "visualMotif": "small chibi dark-armored lord with the existing crown and sword identity",
+      "roleIdea": "high-risk duelist",
+      "nonSummoningSourceMoves": [
+        "Veteran’s Repertoire",
+        "Pathfinder’s Gambit"
+      ]
+    }
+  ]
+}

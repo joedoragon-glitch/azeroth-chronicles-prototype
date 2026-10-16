@@ -1748,6 +1748,124 @@
         1,
       );
     }
+    function bossPet(family) {
+      const def = R.petCompanions[family];
+      if (!def) return; // Never turn an unknown pet into a humanoid.
+      shade(18,5,0.24);
+      const eyes = (x,y,gap=6) => {
+        for (const dx of [-gap,gap]) {
+          oval(x+dx,y,3.3,4.2,'#273b3b');
+          fillOval(x+dx-0.8,y-1.3,1.2,1.5,'#fff6da');
+        }
+      };
+      const paws = (c) => { for (const x of [-12,10]) oval(x,9,7,4,c); };
+      const smile = (x,y) => {
+        ctx.strokeStyle=ink;ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(x-3,y);
+        ctx.quadraticCurveTo(x,y+3,x+3,y);ctx.stroke();
+      };
+      if (family === 'thorn') {
+        // Puppy anatomy, leafy mantle and branching ears preserve Thornfang.
+        poly([[-14,-3],[-28,-12],[-24,1],[-13,4]],'#917a5b');
+        oval(-2,-2,18,12,'#a68e6e');paws('#bca27e');
+        oval(8,-18,17,16,'#b9a17c');
+        poly([[-6,-27],[-9,-42],[3,-32]],'#997c58');
+        poly([[14,-31],[26,-39],[22,-23]],'#997c58');
+        oval(13,-11,12,7,'#d9c7a0');eyes(10,-21,6);
+        oval(19,-13,3,2.5,'#3c3931');smile(13,-7);
+        for (const x of [-14,-6,2]) poly([[x,-9],[x-4,-19],[x+6,-13]],'#6f895a');
+        line([[-3,-33],[-5,-39],[-1,-42]],'#a8b37b',2);
+      } else if (family === 'mire') {
+        poly([[-12,0],[-30,-6],[-25,5],[-9,9]],'#698b67');
+        oval(-1,-1,20,12,'#80a077');paws('#9dbb8b');
+        oval(10,-15,20,14,'#8daa7f');
+        oval(17,-7,19,8,'#bdc897');eyes(11,-20,7);
+        line([[6,-5],[28,-5]],'#52684c',1.5);smile(20,-4);
+        for (const x of [-18,-9,0]) poly([[x,-9],[x+3,-18],[x+8,-10]],'#596f50');
+        for (const x of [13,25]) oval(x,-10,1,1,'#5e7755');
+      } else if (family === 'abyss') {
+        // Rounded wings, four limbs, belly plates, short horns and purple muzzle.
+        for (const side of [-1,1]) {
+          poly([[side*7,-10],[side*21,-34],[side*34,-21],[side*27,-4],[side*18,-12]],'#805d99');
+          line([[side*9,-10],[side*21,-30],[side*27,-8]],'#caa6c3',1.4);
+        }
+        line([[-7,6],[-24,17],[-29,9]],'#9070a5',6);
+        oval(0,-2,14,18,'#9977af');oval(1,2,9,11,'#ccb9b3');paws('#ad8bbd');
+        oval(5,-25,18,16,'#b18bc2');
+        poly([[-8,-36],[-7,-46],[0,-38]],bone);poly([[13,-38],[20,-45],[20,-33]],bone);
+        oval(12,-17,13,8,'#c6a4cc');eyes(6,-28,6);smile(15,-14);
+        for (const y of [-3,2,7]) line([[-5,y],[7,y]],'#ad969d',1);
+      } else if (family === 'cindermaw') {
+        // Cindermaw is a scorpion-like Ash beast, never a mammalian kitten.
+        line([[-8,7],[-25,12],[-31,-1],[-29,-23],[-20,-31]],'#ae7b62',6);
+        poly([[-23,-34],[-15,-40],[-17,-28]],bone);
+        for (const side of [-1,1]) {
+          for (const y of [-3,3,8]) line([[side*9,y],[side*23,y+2],[side*28,y+8]],'#ba8c72',2.5);
+          line([[side*10,-6],[side*24,-18]],'#c29170',4);
+          oval(side*26,-20,8,7,'#ce9c76');
+          poly([[side*27,-26],[side*33,-30],[side*32,-20]],'#e0b58b');
+        }
+        oval(0,0,17,11,'#a8725d');oval(4,-14,15,12,'#c29273');eyes(5,-17,5);smile(7,-9);
+        for (const x of [-7,0,7]) line([[x,-2],[x,6]],'#dfa67b',1.5);
+        poly([[0,-25],[3,-31],[7,-24]],'#b77956');
+      } else if (family === 'mine') {
+        // Fitted, weathered stone rather than a human wearing gray clothing.
+        for (const x of [-10,10]) {
+          oval(x,9,8,5,'#7c8f84');
+          poly([[x-7,4],[x-8,-8],[x+7,-8],[x+6,5]],'#92a497');
+          oval(x*1.9,-4,8,10,'#899d91');
+        }
+        poly([[-14,0],[-18,-18],[-9,-25],[12,-24],[17,-10],[13,2]],'#a3b5a4');
+        poly([[-14,-25],[-12,-42],[10,-44],[17,-32],[12,-23]],'#b2c1ac');
+        eyes(1,-32,6);
+        for (const x of [-5,7]) fillOval(x,-32,1.5,2,'#f0cf73');
+        poly([[-6,-13],[0,-21],[7,-13],[0,-4]],'#f1cb80');
+        line([[-12,-36],[-8,-32],[-10,-27]],'#758a7d',1.2);
+        line([[-11,-9],[-5,-6]],'#657f71',1.2);
+      } else {
+        const palette = {
+          crypt:['#756b85',bone], archive:['#547d84','#a8c0b6'],
+          ridge:['#a67f59','#b0b286'], warlord:['#9a655c','#a3af7d'],
+          citadel:['#718c99','#c3c9c7'], darklord:['#594664','#b2adb6'],
+        }[family];
+        if (!palette) return;
+        const [cloth,face] = palette;
+        // Short torso, big expressive head and tiny boots, with canonical equipment.
+        poly([[-12,-15],[-17,9],[17,9],[12,-15]],cloth);
+        paws('#6d6b66');oval(0,-7,11,13,cloth);
+        for (const side of [-1,1]) oval(side*13,-7,5,7,cloth);
+        oval(0,-27,16,15,face);eyes(0,-29,6);smile(0,-19);
+        line([[-10,0],[10,0]],'#c8ac74',2);
+        if (family === 'crypt') {
+          for (const x of [-6,0,6]) line([[x,-11],[x,-4]],bone,1.5);
+          oval(0,-23,1.8,2,'#6a6463');
+          line([[20,-33],[20,9]],'#ad9b7a',2.5);oval(20,-34,5,4,'#b4aec4');
+          oval(-17,-3,6,9,'#9b9590');
+        } else if (family === 'archive') {
+          poly([[-17,-32],[-10,-47],[11,-45],[18,-30],[4,-35]],'#547f85');
+          rect(-16,-7,14,11,'#a1b4aa');line([[-9,-7],[-9,4]],'#e1dcc0',1);
+          line([[21,-34],[21,10]],steel,2);poly([[16,-26],[21,-19],[26,-26]],steel);
+          oval(22,-35,3,3,gold);
+        } else if (family === 'ridge') {
+          for (const side of [-1,1]) poly([[side*10,-37],[side*19,-44],[side*14,-31]],bone);
+          line([[23,-25],[18,10]],'#a98b66',3);rect(15,-28,17,10,steel);
+          oval(-12,-6,6,6,'#c1a160');line([[-14,-6],[-10,-6]],'#e4cf8c',1);
+        } else {
+          poly([[-15,-30],[-12,-43],[0,-48],[13,-42],[16,-30]],family === 'darklord' ? '#666278' : steel);
+          if (family === 'warlord') {
+            for (const side of [-1,1]) poly([[side*13,-39],[side*24,-46],[side*19,-32]],bone);
+            line([[24,-27],[20,9]],'#a28560',3);poly([[23,-29],[33,-33],[34,-19],[22,-19]],steel);
+          } else {
+            poly([[-14,-41],[-17,-50],[-6,-46],[0,-53],[6,-46],[17,-50],[14,-41]],gold);
+            oval(-17,-1,6,9,family === 'citadel' ? '#5d7a83' : '#795b75');
+            if (family === 'citadel') {
+              line([[23,-29],[23,10]],'#b5a077',2.5);poly([[18,-28],[30,-29],[31,-19],[18,-19]],steel);
+            } else {
+              line([[21,7],[21,-23]],steel,3);line([[15,-8],[27,-8]],gold,2);
+            }
+          }
+        }
+      }
+    }
     function wolf(c = '#8c9998', large = false) {
       poly(
         [
@@ -14223,7 +14341,8 @@
       if (e.crowned) crownedHero(e.class || 'paladin');
     } else if (type === 'ally') {
       const role = allyBodyKind(e);
-      if (role === 'goblin-archer') goblinArcher();
+      if (e.type === 'pet') bossPet(e.petFamily);
+      else if (role === 'goblin-archer') goblinArcher();
       else human(role);
     } else if (e.type === 'boss' || e.captainProfile === 'supply-highlands') {
       shade(
@@ -15405,6 +15524,7 @@
     ctx.restore();
   }
   function unscaledHeight(e) {
+    if (e.type === 'pet') return 58;
     if (e.mountedCrownRider) return 99;
     if (e.type === 'boss') return 102;
     if (e.captain || e.roomCaptain) return 68;

@@ -784,7 +784,7 @@
     }
     function rosterLabel(u) {
       const i = getGame().s.party.indexOf(u) + 1;
-      return unitLabel(u.type) + ' #' + i;
+      return u.type === 'pet' ? getGame().petDefinition(u)?.name || 'Boss pet' : unitLabel(u.type) + ' #' + i;
     }
     function regionalSpecialistProgress() {
       const region = getGame().definition().id,
@@ -924,6 +924,37 @@
         back,
       );
     }
+    function barracksPetDetail(b, family, back) {
+      const game = getGame(), row = game.petCollection().find((r) => r.boss.id === family);
+      if (!row?.def) return back();
+      const { boss, def, unit, state } = row;
+      openMenu(def.name, 'Inspired by ' + boss.name + ' · ' + state + '. ' +
+        (def.role === 'ranged' ? 'Ranged support.' : 'Close-range support.'), [
+        action('First · ' + def.first.name, () => {},
+          'Automatic · ' + game.petSkillSummary(family, 1), true),
+        action('Charged · ' + def.second.name, () => {},
+          'Requires companion combat training · ' + game.petSkillSummary(family, 2), true),
+        action(state === 'Locked' ? 'Defeat TRUE ' + boss.name : !unit ? 'Recruit · FREE' :
+          state === 'Fallen' ? 'Recover through Barracks → Recovery' : state === 'Active' ? 'Rest in collection' : 'Add to group', () => {
+          const current = getGame().s.party.find((u) => u.type === 'pet' && u.petFamily === family);
+          if (!current) getGame().recruitPet(family,b.id);
+          else if (current.active !== false) getGame().restCompanion(current.id);
+          else getGame().activateCompanion(current.id,b.id);
+          barracksPetDetail(b,family,back);
+        }, !unit ? 'One permanent individual; uses an ordinary group slot.' : 'Health and recovery persist while resting.',
+        state === 'Locked' || state === 'Fallen' || game.refugeThreat() ||
+          (!unit && game.rosterCount() + game.queuedCompanions() >= 200) ||
+          (state === 'Resting' && game.activeParty().length >= game.barracksFieldCap(b))),
+      ], back);
+    }
+    function barracksPetMenu(b, back) {
+      const rows = getGame().petCollection(), returnHere = () => barracksPetMenu(b,back);
+      openMenu('Boss pet collection',
+        rows.filter((r) => r.state !== 'Locked').length + '/' + rows.length +
+        ' unlocked · TRUE victories, including past victories, unlock one unique pet each. Free to recruit; ordinary group slots and Barracks recovery apply. Pets do not work or summon.',
+        rows.map(({boss,def,state}) => action(def.name + ' · ' + state,
+          () => barracksPetDetail(b,boss.id,returnHere), boss.name)),back);
+    }
     function barracksRecruitmentMenu(b, back) {
       const queueName = b.queue > 0 ? unitLabel(b.queueType || 'soldier') : null;
       openMenu(
@@ -931,7 +962,7 @@
         (queueName
           ? 'Training ' + queueName + ' · ' + b.queue.toFixed(1) + 's remaining'
           : 'Recruit as many companions as you want') +
-          '. New recruits join the active group if this barracks can support another slot; otherwise they rest in reserve. Lifebinder and the Drowned Keeper once joined through the Barracks, as companion classes you have not discovered.',
+          '. New recruits join the active group if this barracks can support another slot; otherwise they rest in reserve. TRUE boss pets are in the Company collection.',
         [
           ...[
             ['soldier', 'Soldier'],
@@ -1050,6 +1081,7 @@
         'Company',
         'Recruit, recover and choose who travels with you.',
         [
+          action('Boss pet collection', () => barracksPetMenu(b, returnHere), 'Eleven TRUE bosses · permanent unlocks · existing group slots'),
           action(
             'Manage active group',
             () => barracksGroupMenu(b, returnHere),

@@ -1068,6 +1068,7 @@
       else if (e.type === 'swing')
         push(e, 'swing', e.combo === 3 ? 0.32 : e.combo ? 0.25 : 0.18, 2);
       else if (e.type === 'basicComboFinisher') push(e, e.type, 0.45, 4);
+      else if (e.type === 'petSkill') push(e, e.type, 0.4, 3);
       else if (e.type === 'chargedArea') push(e, e.type, 0.7, 5);
       else if (e.type === 'chargedImpact') push(e, e.type, 0.3, 3);
     }

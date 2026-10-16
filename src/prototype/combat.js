@@ -669,7 +669,7 @@
         const armor =
           u === this.hero
             ? this.armor()
-            : ['soldier', 'archer'].includes(u.type)
+            : ['soldier', 'archer', 'pet'].includes(u.type)
               ? this.companionArmor(u.type)
               : 5 + this.hero.level * 0.5;
         const oldHp = u.hp;
@@ -905,7 +905,7 @@
             this.event('projectileImpact', {
               actor: p.source === 'hero' ? 'hero' : 'companion',
               class: p.source === 'hero' ? this.hero.class : undefined,
-              role: p.source === 'hero' ? undefined : 'archer',
+              role: p.source === 'hero' ? undefined : p.style === 'pet' ? 'pet' : 'archer',
               source: p.source,
               style: p.style || 'arrow',
               effect: p.effect,

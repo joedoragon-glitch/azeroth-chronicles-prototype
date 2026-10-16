@@ -433,9 +433,19 @@
           finite(e.remaining, 0, 1000);
           finite(e.seconds, 0, 5);
         }
+        const petFamilies = new Set();
         for (const u of s.party) {
+          if (u.type === 'pet') {
+            if (!D.bosses.some((b) => b.id === u.petFamily) || !Object.hasOwn(R.petCompanions, u.petFamily) || !s.true[u.petFamily] || petFamilies.has(u.petFamily))
+              throw Error('Invalid or duplicate boss pet');
+            petFamilies.add(u.petFamily);
+            u.name = R.petCompanions[u.petFamily].name;
+            u.damage = R.balance.companions.petDamage;
+            u.order = null;
+            u.carry = 0;
+          } else if (u.petFamily !== undefined) throw Error('Pet identity on troop');
           if (
-            !['worker', 'soldier', 'archer'].includes(u.type) ||
+            !['worker', 'soldier', 'archer', 'pet'].includes(u.type) ||
             typeof u.id !== 'string' ||
             typeof u.active !== 'boolean'
           )
@@ -708,6 +718,8 @@
             finite(b.upgradeProgress, 0, 4);
             if (typeof b.full !== 'boolean' || typeof b.upgradePaid !== 'boolean')
               throw Error('Invalid barracks state');
+            if (b.queueType != null && !['soldier', 'archer'].includes(b.queueType))
+              throw Error('Invalid recruitment queue type');
             if (b.queue > 0) reservations++;
           }
           for (const n of z.npcs) {

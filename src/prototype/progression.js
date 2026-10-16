@@ -93,7 +93,7 @@
       }
       syncCompanionLevelStats() {
         for (const u of this.s.party) {
-          if (!['soldier', 'archer'].includes(u.type)) continue;
+          if (!['soldier', 'archer', 'pet'].includes(u.type)) continue;
           const next = this.companionMaxHp(u.type),
             gain = next - u.maxHp;
           u.maxHp = next;
