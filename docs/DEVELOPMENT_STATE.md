@@ -1,3 +1,5 @@
+> **16 October 2026 · authoritative current continuation:** [Draft PR #313](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/313) is the single implementation workstream for Community Snapshot A01–A07, all ten PR #311 fixes and Issue #312. Frozen runtime: `9dcb09167849865c6c838d16305ff76e872c7d58`. Read [PR313_INTEGRATED_SOURCE_AUDIT_20261016.md](PR313_INTEGRATED_SOURCE_AUDIT_20261016.md), the current PR resume comment and `tools/community-snapshot/pt312-presentation-overlay.json` before resuming. Source implementation/review is complete; tests, builds, browsers, CI, merge and deploy remain paused pending explicit owner authorization. Earlier branch/status entries below are historical and do not authorize a competing workstream or execution.
+
 # Current development state and v0.9 readiness
 
 ## Active combined source integration — 16 October 2026

@@ -4,8 +4,8 @@
   "canonicalIssue": 312,
   "status": "SOURCE ONLY, NOT TESTED",
   "baselineInventory": "tools/community-snapshot/procedural-art-inventory.json",
-  "sourceCommit": null,
-  "sourceCommitStatus": "Link to the immutable implementation checkpoint in the next provenance commit.",
+  "sourceCommit": "9dcb09167849865c6c838d16305ff76e872c7d58",
+  "sourceCommitStatus": "Immutable source checkpoint; captures and native review remain pending.",
   "direction": "Ogre-quality cohesive organic anatomy and material-appropriate contours; lean wolves, gaunt undead, sharp functional weapons and structured military props retain identity.",
   "records": [
     {
@@ -44,7 +44,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "draw / enemy species ashbeast"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-enemy-ashbeast.json"
     },
     {
       "id": "enemy:goblin",
@@ -82,7 +86,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "draw / enemy species goblin"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-enemy-goblin.json"
     },
     {
       "id": "enemy:orc",
@@ -120,7 +128,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "draw / enemy species orc"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-enemy-orc.json"
     },
     {
       "id": "enemy:crownguard",
@@ -158,7 +170,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "draw / enemy species crownguard"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-enemy-crownguard.json"
     },
     {
       "id": "enemy:summon",
@@ -190,7 +206,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "draw / enemy species summon"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-enemy-summon.json"
     },
     {
       "id": "boss:crypt",
@@ -216,7 +236,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "draw / boss family crypt"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-boss-crypt.json"
     },
     {
       "id": "boss:archive",
@@ -242,7 +266,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "draw / boss family archive"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-boss-archive.json"
     },
     {
       "id": "boss:ridge",
@@ -268,7 +296,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "draw / boss family ridge"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-boss-ridge.json"
     },
     {
       "id": "boss:mine",
@@ -294,7 +326,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "draw / boss family mine"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-boss-mine.json"
     },
     {
       "id": "boss:warlord",
@@ -320,7 +356,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "draw / boss family warlord"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-boss-warlord.json"
     },
     {
       "id": "boss:citadel",
@@ -346,7 +386,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "draw / boss family citadel"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-boss-citadel.json"
     },
     {
       "id": "boss:darklord",
@@ -372,7 +416,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "draw / boss family darklord"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-boss-darklord.json"
     },
     {
       "id": "structure:vale-cottage",
@@ -388,7 +436,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "settlementBuilding / case 'vale-cottage'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-structure-vale-cottage.json"
     },
     {
       "id": "structure:vale-workshop",
@@ -404,7 +456,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "settlementBuilding / case 'vale-workshop'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-structure-vale-workshop.json"
     },
     {
       "id": "structure:march-stilt-house",
@@ -420,7 +476,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "settlementBuilding / case 'march-stilt-house'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-structure-march-stilt-house.json"
     },
     {
       "id": "structure:march-boathouse",
@@ -436,7 +496,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "settlementBuilding / case 'march-boathouse'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-structure-march-boathouse.json"
     },
     {
       "id": "structure:highland-stone-house",
@@ -452,7 +516,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "settlementBuilding / case 'highland-stone-house'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-structure-highland-stone-house.json"
     },
     {
       "id": "structure:highland-smithy",
@@ -468,7 +536,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "settlementBuilding / case 'highland-smithy'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-structure-highland-smithy.json"
     },
     {
       "id": "structure:frontier-patched-house",
@@ -484,7 +556,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "settlementBuilding / case 'frontier-patched-house'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-structure-frontier-patched-house.json"
     },
     {
       "id": "structure:frontier-workshop",
@@ -500,7 +576,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "settlementBuilding / case 'frontier-workshop'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-structure-frontier-workshop.json"
     },
     {
       "id": "structure:crown-ash-house",
@@ -516,7 +596,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "settlementBuilding / case 'crown-ash-house'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-structure-crown-ash-house.json"
     },
     {
       "id": "structure:crown-forgehouse",
@@ -532,7 +616,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "settlementBuilding / case 'crown-forgehouse'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-structure-crown-forgehouse.json"
     },
     {
       "id": "decoration:direwolf-kennel",
@@ -549,7 +637,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'direwolf-kennel'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-direwolf-kennel.json"
     },
     {
       "id": "decoration:rider-tack-rack",
@@ -566,7 +658,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'rider-tack-rack'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-rider-tack-rack.json"
     },
     {
       "id": "decoration:rider-bunk",
@@ -583,7 +679,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'rider-bunk'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-rider-bunk.json"
     },
     {
       "id": "decoration:estate-rug",
@@ -600,7 +700,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'estate-rug'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-estate-rug.json"
     },
     {
       "id": "decoration:estate-lounge",
@@ -617,7 +721,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'estate-lounge'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-estate-lounge.json"
     },
     {
       "id": "decoration:coffin",
@@ -634,7 +742,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'coffin'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-coffin.json"
     },
     {
       "id": "decoration:crate",
@@ -651,7 +763,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'crate'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-crate.json"
     },
     {
       "id": "decoration:thorn-bed",
@@ -668,7 +784,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'thorn-bed'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-thorn-bed.json"
     },
     {
       "id": "decoration:root-table",
@@ -685,7 +805,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'root-table'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-root-table.json"
     },
     {
       "id": "decoration:mire-pool",
@@ -702,7 +826,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'mire-pool'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-mire-pool.json"
     },
     {
       "id": "decoration:fish-rack",
@@ -719,7 +847,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'fish-rack'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-fish-rack.json"
     },
     {
       "id": "decoration:reed-nest",
@@ -736,7 +868,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'reed-nest'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-reed-nest.json"
     },
     {
       "id": "decoration:drift-seat",
@@ -753,7 +889,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'drift-seat'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-drift-seat.json"
     },
     {
       "id": "decoration:ore-sorting-bay",
@@ -770,7 +910,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'ore-sorting-bay'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-ore-sorting-bay.json"
     },
     {
       "id": "decoration:caravan-loading-bay",
@@ -787,7 +931,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'caravan-loading-bay'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-caravan-loading-bay.json"
     },
     {
       "id": "decoration:ridge-supper",
@@ -804,7 +952,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'ridge-supper'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-ridge-supper.json"
     },
     {
       "id": "decoration:ridge-game-corner",
@@ -821,7 +973,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'ridge-game-corner'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-ridge-game-corner.json"
     },
     {
       "id": "decoration:ridge-study",
@@ -838,7 +994,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'ridge-study'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-ridge-study.json"
     },
     {
       "id": "decoration:ridge-bed",
@@ -855,7 +1015,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'ridge-bed'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-ridge-bed.json"
     },
     {
       "id": "decoration:crag-rest",
@@ -872,7 +1036,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'crag-rest'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-crag-rest.json"
     },
     {
       "id": "decoration:stone-seat",
@@ -889,7 +1057,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'stone-seat'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-stone-seat.json"
     },
     {
       "id": "decoration:animal-pen",
@@ -906,7 +1078,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'animal-pen'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-animal-pen.json"
     },
     {
       "id": "decoration:drying-rack",
@@ -923,7 +1099,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'drying-rack'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-drying-rack.json"
     },
     {
       "id": "decoration:lean-to",
@@ -940,7 +1120,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'lean-to'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-lean-to.json"
     },
     {
       "id": "decoration:sleep-roll",
@@ -957,7 +1141,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'sleep-roll'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-sleep-roll.json"
     },
     {
       "id": "decoration:stolen-goods",
@@ -974,7 +1162,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'stolen-goods'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-stolen-goods.json"
     },
     {
       "id": "decoration:grave-marker",
@@ -991,7 +1183,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'grave-marker'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-grave-marker.json"
     },
     {
       "id": "decoration:pup-nest",
@@ -1008,7 +1204,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'pup-nest'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-pup-nest.json"
     },
     {
       "id": "decoration:fishing-net",
@@ -1025,7 +1225,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'fishing-net'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-fishing-net.json"
     },
     {
       "id": "decoration:mud-nest",
@@ -1042,7 +1246,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'mud-nest'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-mud-nest.json"
     },
     {
       "id": "decoration:wallow",
@@ -1059,7 +1267,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'wallow'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-wallow.json"
     },
     {
       "id": "decoration:ore-cart",
@@ -1076,7 +1288,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'ore-cart'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-ore-cart.json"
     },
     {
       "id": "decoration:field-kitchen",
@@ -1093,7 +1309,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'field-kitchen'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-field-kitchen.json"
     },
     {
       "id": "decoration:supply-stack",
@@ -1110,7 +1330,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'supply-stack'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-supply-stack.json"
     },
     {
       "id": "decoration:command-tent",
@@ -1127,7 +1351,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'command-tent'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-command-tent.json"
     },
     {
       "id": "decoration:bunk",
@@ -1144,7 +1372,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'bunk'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-bunk.json"
     },
     {
       "id": "decoration:roost",
@@ -1161,7 +1393,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'roost'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-roost.json"
     },
     {
       "id": "decoration:hatchery",
@@ -1178,7 +1414,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'hatchery'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-hatchery.json"
     },
     {
       "id": "decoration:scribe-desk",
@@ -1195,7 +1435,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'scribe-desk'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-scribe-desk.json"
     },
     {
       "id": "decoration:scroll-stack",
@@ -1212,7 +1456,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'scroll-stack'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-scroll-stack.json"
     },
     {
       "id": "decoration:caretaker-table",
@@ -1229,7 +1477,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'caretaker-table'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-caretaker-table.json"
     },
     {
       "id": "decoration:grass",
@@ -1246,7 +1498,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'grass'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-grass.json"
     },
     {
       "id": "decoration:wet-grass",
@@ -1263,7 +1519,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'wet-grass'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-wet-grass.json"
     },
     {
       "id": "decoration:bush",
@@ -1280,7 +1540,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'bush'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-bush.json"
     },
     {
       "id": "decoration:marsh-bush",
@@ -1297,7 +1561,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'marsh-bush'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-marsh-bush.json"
     },
     {
       "id": "decoration:battlefield-poppies",
@@ -1314,7 +1582,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'battlefield-poppies'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-battlefield-poppies.json"
     },
     {
       "id": "decoration:pioneer-grasses",
@@ -1331,7 +1603,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'pioneer-grasses'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-pioneer-grasses.json"
     },
     {
       "id": "decoration:pioneer-brush",
@@ -1348,7 +1624,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'pioneer-brush'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-pioneer-brush.json"
     },
     {
       "id": "decoration:regrowth-birch",
@@ -1365,7 +1645,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'regrowth-birch'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-regrowth-birch.json"
     },
     {
       "id": "decoration:regrowth-willow",
@@ -1382,7 +1666,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'regrowth-willow'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-regrowth-willow.json"
     },
     {
       "id": "decoration:wildflowers",
@@ -1399,7 +1687,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'wildflowers'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-wildflowers.json"
     },
     {
       "id": "decoration:fruit-tree",
@@ -1416,7 +1708,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'fruit-tree'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-fruit-tree.json"
     },
     {
       "id": "decoration:sapling",
@@ -1433,7 +1729,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'sapling'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-sapling.json"
     },
     {
       "id": "decoration:stump",
@@ -1450,7 +1750,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'stump'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-stump.json"
     },
     {
       "id": "decoration:fallen-log",
@@ -1467,7 +1771,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'fallen-log'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-fallen-log.json"
     },
     {
       "id": "decoration:reeds",
@@ -1484,7 +1792,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'reeds'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-reeds.json"
     },
     {
       "id": "decoration:cattails",
@@ -1501,7 +1813,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'cattails'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-cattails.json"
     },
     {
       "id": "decoration:driftwood",
@@ -1518,7 +1834,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'driftwood'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-driftwood.json"
     },
     {
       "id": "decoration:mangrove",
@@ -1535,7 +1855,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'mangrove'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-mangrove.json"
     },
     {
       "id": "decoration:pine-sapling",
@@ -1552,7 +1876,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'pine-sapling'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-pine-sapling.json"
     },
     {
       "id": "decoration:alpine-scrub",
@@ -1569,7 +1897,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'alpine-scrub'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-alpine-scrub.json"
     },
     {
       "id": "decoration:heather",
@@ -1586,7 +1918,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'heather'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-heather.json"
     },
     {
       "id": "decoration:dead-tree",
@@ -1603,7 +1939,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'dead-tree'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-dead-tree.json"
     },
     {
       "id": "decoration:charred-stump",
@@ -1620,7 +1960,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'charred-stump'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-charred-stump.json"
     },
     {
       "id": "decoration:dry-scrub",
@@ -1637,7 +1981,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'dry-scrub'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-dry-scrub.json"
     },
     {
       "id": "decoration:burned-log",
@@ -1654,7 +2002,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'burned-log'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-burned-log.json"
     },
     {
       "id": "decoration:dead-shrub",
@@ -1671,7 +2023,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'dead-shrub'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-dead-shrub.json"
     },
     {
       "id": "decoration:heated-drying-shed",
@@ -1688,7 +2044,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'heated-drying-shed'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-heated-drying-shed.json"
     },
     {
       "id": "decoration:heated-washhouse",
@@ -1705,7 +2065,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'heated-washhouse'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-heated-washhouse.json"
     },
     {
       "id": "decoration:market",
@@ -1722,7 +2086,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'market'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-market.json"
     },
     {
       "id": "decoration:woodpile",
@@ -1739,7 +2107,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'woodpile'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-woodpile.json"
     },
     {
       "id": "decoration:laundry",
@@ -1756,7 +2128,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'laundry'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-laundry.json"
     },
     {
       "id": "decoration:well",
@@ -1773,7 +2149,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'well'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-well.json"
     },
     {
       "id": "decoration:barrel",
@@ -1790,7 +2170,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'barrel'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-barrel.json"
     },
     {
       "id": "decoration:cart",
@@ -1807,7 +2191,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'cart'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-cart.json"
     },
     {
       "id": "decoration:ration",
@@ -1824,7 +2212,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'ration'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-ration.json"
     },
     {
       "id": "decoration:hay-rick",
@@ -1841,7 +2233,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'hay-rick'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-hay-rick.json"
     },
     {
       "id": "decoration:furrow-plot",
@@ -1858,7 +2254,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'furrow-plot'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-furrow-plot.json"
     },
     {
       "id": "decoration:pasture-sheep",
@@ -1875,7 +2275,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'pasture-sheep'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-pasture-sheep.json"
     },
     {
       "id": "decoration:poultry-yard",
@@ -1892,7 +2296,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'poultry-yard'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-poultry-yard.json"
     },
     {
       "id": "decoration:feed-trough",
@@ -1909,7 +2317,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'feed-trough'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-feed-trough.json"
     },
     {
       "id": "decoration:garden",
@@ -1926,7 +2338,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'garden'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-garden.json"
     },
     {
       "id": "decoration:stacked-lumber",
@@ -1943,7 +2359,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'stacked-lumber'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-stacked-lumber.json"
     },
     {
       "id": "decoration:broken-cart",
@@ -1960,7 +2380,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'broken-cart'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-broken-cart.json"
     },
     {
       "id": "decoration:flight-harness-station",
@@ -1977,7 +2401,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'flight-harness-station'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-flight-harness-station.json"
     },
     {
       "id": "decoration:handler-station",
@@ -1994,7 +2422,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'handler-station'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-handler-station.json"
     },
     {
       "id": "decoration:feed-crate",
@@ -2011,7 +2443,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'feed-crate'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-feed-crate.json"
     },
     {
       "id": "decoration:egg-cradle",
@@ -2028,7 +2464,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'egg-cradle'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-egg-cradle.json"
     },
     {
       "id": "decoration:feeding-trough",
@@ -2045,7 +2485,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "decoration / case 'feeding-trough'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-decoration-feeding-trough.json"
     },
     {
       "id": "service:quests-vale",
@@ -2061,7 +2505,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / quests / regional palette 0"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-quests-vale.json"
     },
     {
       "id": "service:supplier-vale",
@@ -2077,7 +2525,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / supplier / regional palette 0"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-supplier-vale.json"
     },
     {
       "id": "service:recruiter-vale",
@@ -2093,7 +2545,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / recruiter / regional palette 0"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-recruiter-vale.json"
     },
     {
       "id": "service:rest-vale",
@@ -2109,7 +2565,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / rest / regional palette 0"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-rest-vale.json"
     },
     {
       "id": "service:quests-march",
@@ -2125,7 +2585,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / quests / regional palette 1"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-quests-march.json"
     },
     {
       "id": "service:supplier-march",
@@ -2141,7 +2605,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / supplier / regional palette 1"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-supplier-march.json"
     },
     {
       "id": "service:recruiter-march",
@@ -2157,7 +2625,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / recruiter / regional palette 1"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-recruiter-march.json"
     },
     {
       "id": "service:rest-march",
@@ -2173,7 +2645,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / rest / regional palette 1"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-rest-march.json"
     },
     {
       "id": "service:quests-highlands",
@@ -2189,7 +2665,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / quests / regional palette 2"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-quests-highlands.json"
     },
     {
       "id": "service:supplier-highlands",
@@ -2205,7 +2685,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / supplier / regional palette 2"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-supplier-highlands.json"
     },
     {
       "id": "service:recruiter-highlands",
@@ -2221,7 +2705,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / recruiter / regional palette 2"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-recruiter-highlands.json"
     },
     {
       "id": "service:rest-highlands",
@@ -2237,7 +2725,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / rest / regional palette 2"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-rest-highlands.json"
     },
     {
       "id": "service:quests-frontier",
@@ -2253,7 +2745,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / quests / regional palette 3"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-quests-frontier.json"
     },
     {
       "id": "service:supplier-frontier",
@@ -2269,7 +2765,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / supplier / regional palette 3"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-supplier-frontier.json"
     },
     {
       "id": "service:recruiter-frontier",
@@ -2285,7 +2785,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / recruiter / regional palette 3"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-recruiter-frontier.json"
     },
     {
       "id": "service:rest-frontier",
@@ -2301,7 +2805,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / rest / regional palette 3"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-rest-frontier.json"
     },
     {
       "id": "service:quests-crown",
@@ -2317,7 +2825,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / quests / regional palette 4"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-quests-crown.json"
     },
     {
       "id": "service:supplier-crown",
@@ -2333,7 +2845,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / supplier / regional palette 4"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-supplier-crown.json"
     },
     {
       "id": "service:recruiter-crown",
@@ -2349,7 +2865,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / recruiter / regional palette 4"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-recruiter-crown.json"
     },
     {
       "id": "service:rest-crown",
@@ -2365,7 +2885,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "building / rest / regional palette 4"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-service-rest-crown.json"
     },
     {
       "id": "shared:transport-wagon",
@@ -2382,7 +2906,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "transport-wagon"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-shared-transport-wagon.json"
     },
     {
       "id": "shared:transport-caravan",
@@ -2399,7 +2927,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "transport-caravan"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-shared-transport-caravan.json"
     },
     {
       "id": "shared:transport-ferry",
@@ -2416,7 +2948,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "transport-ferry"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-shared-transport-ferry.json"
     },
     {
       "id": "shared:terrain",
@@ -2426,7 +2962,11 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "terrain"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-shared-terrain.json"
     },
     {
       "id": "shared:roads",
@@ -2436,27 +2976,39 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "roads"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-shared-roads.json"
     },
     {
       "id": "shared:combat-warnings",
       "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
       "nativeFixture": null,
       "captureVariants": [],
-      "sourceOwner": "src/prototype/visuals.js",
-      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "sourceOwner": "src/prototype/combat-visuals.js",
+      "sourceSnapshotSha256": "8e8a1e507d6df1a2e37207db4a726307370943937101c436cb069d7cc6886dab",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "ground"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-shared-combat-warnings.json"
     },
     {
       "id": "shared:combat-effects",
       "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
       "nativeFixture": null,
       "captureVariants": [],
-      "sourceOwner": "src/prototype/visuals.js",
-      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "sourceOwner": "src/prototype/renderer.js",
+      "sourceSnapshotSha256": "27a715cfca9c6057a353e18a25a679cd5d00d9291177087278493843a2646e63",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "drawVisualFx / hero-presentation / enemy-vfx-art"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-shared-combat-effects.json"
     },
     {
       "id": "specialist:thorn",
@@ -2473,7 +3025,12 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "specialist / case 'thorn'",
+        "specialist / case 'thorn'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-specialist-thorn.json"
     },
     {
       "id": "specialist:crypt",
@@ -2490,7 +3047,12 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "specialist / case 'crypt'",
+        "specialist / case 'crypt'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-specialist-crypt.json"
     },
     {
       "id": "specialist:mire",
@@ -2507,7 +3069,12 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "specialist / case 'mire'",
+        "specialist / case 'mire'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-specialist-mire.json"
     },
     {
       "id": "specialist:archive",
@@ -2524,7 +3091,12 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "specialist / case 'archive'",
+        "specialist / case 'archive'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-specialist-archive.json"
     },
     {
       "id": "specialist:ridge",
@@ -2541,7 +3113,12 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "specialist / case 'ridge'",
+        "specialist / case 'ridge'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-specialist-ridge.json"
     },
     {
       "id": "specialist:mine",
@@ -2558,7 +3135,12 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "specialist / case 'mine'",
+        "specialist / case 'mine'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-specialist-mine.json"
     },
     {
       "id": "specialist:warlord",
@@ -2575,7 +3157,12 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "specialist / case 'warlord'",
+        "specialist / case 'warlord'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-specialist-warlord.json"
     },
     {
       "id": "specialist:abyss",
@@ -2592,7 +3179,12 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "specialist / case 'abyss'",
+        "specialist / case 'abyss'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-specialist-abyss.json"
     },
     {
       "id": "specialist:citadel",
@@ -2609,7 +3201,12 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "specialist / case 'citadel'",
+        "specialist / case 'citadel'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-specialist-citadel.json"
     },
     {
       "id": "specialist:cindermaw",
@@ -2626,7 +3223,12 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "specialist / case 'cindermaw'",
+        "specialist / case 'cindermaw'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-specialist-cindermaw.json"
     },
     {
       "id": "specialist:darklord",
@@ -2643,7 +3245,12 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "specialist / case 'darklord'",
+        "specialist / case 'darklord'"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-specialist-darklord.json"
     },
     {
       "id": "dispatch:pillar",
@@ -2659,7 +3266,20 @@
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "draw / pillar"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-dispatch-pillar.json",
+      "additionalCaptureVariants": [
+        {
+          "name": "occupied-household-alcove",
+          "entity": {
+            "householdPartition": "keep",
+            "sceneRole": "occupied-wall-alcove"
+          }
+        }
+      ]
     },
     {
       "id": "renderer-alias:keeper",
@@ -2678,10 +3298,14 @@
         }
       },
       "captureVariants": [],
-      "sourceOwner": "src/prototype/visuals.js",
-      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "sourceOwner": "src/prototype/renderer.js",
+      "sourceSnapshotSha256": "27a715cfca9c6057a353e18a25a679cd5d00d9291177087278493843a2646e63",
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "render / keeper alias and overlays"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-renderer-alias-keeper.json"
     },
     {
       "id": "renderer-alias:archive-record",
@@ -2699,16 +3323,317 @@
         }
       },
       "captureVariants": [],
+      "sourceOwner": "src/prototype/renderer.js",
+      "sourceSnapshotSha256": "27a715cfca9c6057a353e18a25a679cd5d00d9291177087278493843a2646e63",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only.",
+      "sourceSelectors": [
+        "render / archive-record alias and overlays"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-renderer-alias-archive-record.json"
+    },
+    {
+      "id": "environment:wild-tree-vale",
+      "reason": "Shared anatomy or rounded living-material dependency: review in the real loadout/rank/context while preserving accepted species, scale and equipment.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "id": "forest-audit-wild-tree-vale",
+          "icon": "🌲"
+        }
+      },
+      "captureVariants": [],
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain active sprites and immutable originals; procedural fallback only.",
       "sourceOwner": "src/prototype/visuals.js",
       "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "sourceSelectors": [
+        "wildProp / non-rock / region 0"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-environment-wild-tree-vale.json"
+    },
+    {
+      "id": "environment:wild-tree-march",
+      "reason": "Shared anatomy or rounded living-material dependency: review in the real loadout/rank/context while preserving accepted species, scale and equipment.",
+      "nativeFixture": {
+        "region": 1,
+        "entity": {
+          "renderKind": "prop",
+          "id": "forest-audit-wild-tree-march",
+          "icon": "🌲"
+        }
+      },
+      "captureVariants": [],
       "nativeReview": "PENDING; no browser or Canvas executed",
-      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+      "registeredAssetPolicy": "Retain active sprites and immutable originals; procedural fallback only.",
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "sourceSelectors": [
+        "wildProp / non-rock / region 1"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-environment-wild-tree-march.json"
+    },
+    {
+      "id": "environment:wild-tree-highlands",
+      "reason": "Shared anatomy or rounded living-material dependency: review in the real loadout/rank/context while preserving accepted species, scale and equipment.",
+      "nativeFixture": {
+        "region": 2,
+        "entity": {
+          "renderKind": "prop",
+          "id": "forest-audit-wild-tree-highlands",
+          "icon": "🌲"
+        }
+      },
+      "captureVariants": [],
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain active sprites and immutable originals; procedural fallback only.",
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "sourceSelectors": [
+        "wildProp / non-rock / region 2"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-environment-wild-tree-highlands.json"
+    },
+    {
+      "id": "environment:wild-tree-frontier",
+      "reason": "Shared anatomy or rounded living-material dependency: review in the real loadout/rank/context while preserving accepted species, scale and equipment.",
+      "nativeFixture": {
+        "region": 3,
+        "entity": {
+          "renderKind": "prop",
+          "id": "forest-audit-wild-tree-frontier",
+          "icon": "🌲"
+        }
+      },
+      "captureVariants": [],
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain active sprites and immutable originals; procedural fallback only.",
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "sourceSelectors": [
+        "wildProp / non-rock / region 3"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-environment-wild-tree-frontier.json"
+    },
+    {
+      "id": "shared:hero-paladin",
+      "reason": "Shared anatomy or rounded living-material dependency: review in the real loadout/rank/context while preserving accepted species, scale and equipment.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "hero",
+          "class": "paladin"
+        }
+      },
+      "captureVariants": [],
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain active sprites and immutable originals; procedural fallback only.",
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "sourceSelectors": [
+        "hero-paladin"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-shared-hero-paladin.json"
+    },
+    {
+      "id": "shared:hero-mage",
+      "reason": "Shared anatomy or rounded living-material dependency: review in the real loadout/rank/context while preserving accepted species, scale and equipment.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "hero",
+          "class": "mage"
+        }
+      },
+      "captureVariants": [],
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain active sprites and immutable originals; procedural fallback only.",
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "sourceSelectors": [
+        "hero-mage"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-shared-hero-mage.json"
+    },
+    {
+      "id": "shared:hero-ranger",
+      "reason": "Shared anatomy or rounded living-material dependency: review in the real loadout/rank/context while preserving accepted species, scale and equipment.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "hero",
+          "class": "ranger"
+        }
+      },
+      "captureVariants": [],
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain active sprites and immutable originals; procedural fallback only.",
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "sourceSelectors": [
+        "hero-ranger"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-shared-hero-ranger.json"
+    },
+    {
+      "id": "shared:ally-soldier",
+      "reason": "Shared anatomy or rounded living-material dependency: review in the real loadout/rank/context while preserving accepted species, scale and equipment.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "ally",
+          "type": "soldier"
+        }
+      },
+      "captureVariants": [],
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain active sprites and immutable originals; procedural fallback only.",
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "sourceSelectors": [
+        "ally-soldier"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-shared-ally-soldier.json"
+    },
+    {
+      "id": "shared:ally-archer",
+      "reason": "Shared anatomy or rounded living-material dependency: review in the real loadout/rank/context while preserving accepted species, scale and equipment.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "ally",
+          "type": "archer"
+        }
+      },
+      "captureVariants": [],
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain active sprites and immutable originals; procedural fallback only.",
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "sourceSelectors": [
+        "ally-archer"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-shared-ally-archer.json"
+    },
+    {
+      "id": "shared:working-captives",
+      "reason": "Shared anatomy or rounded living-material dependency: review in the real loadout/rank/context while preserving accepted species, scale and equipment.",
+      "nativeFixture": null,
+      "captureVariants": [],
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain active sprites and immutable originals; procedural fallback only.",
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "sourceSelectors": [
+        "working-captives"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-shared-working-captives.json"
+    },
+    {
+      "id": "shared:crowned-hero",
+      "reason": "Shared anatomy or rounded living-material dependency: review in the real loadout/rank/context while preserving accepted species, scale and equipment.",
+      "nativeFixture": null,
+      "captureVariants": [],
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain active sprites and immutable originals; procedural fallback only.",
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "sourceSelectors": [
+        "crowned-hero"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-shared-crowned-hero.json"
+    },
+    {
+      "id": "shared:captain-supply-vale",
+      "reason": "Shared anatomy or rounded living-material dependency: review in the real loadout/rank/context while preserving accepted species, scale and equipment.",
+      "nativeFixture": {
+        "region": 0,
+        "captain": "supply-vale",
+        "zone": "supply-vale"
+      },
+      "captureVariants": [],
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain active sprites and immutable originals; procedural fallback only.",
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "sourceSelectors": [
+        "captain-supply-vale"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-shared-captain-supply-vale.json"
+    },
+    {
+      "id": "shared:captain-supply-march",
+      "reason": "Shared anatomy or rounded living-material dependency: review in the real loadout/rank/context while preserving accepted species, scale and equipment.",
+      "nativeFixture": {
+        "region": 1,
+        "captain": "supply-march",
+        "zone": "supply-march"
+      },
+      "captureVariants": [],
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain active sprites and immutable originals; procedural fallback only.",
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "sourceSelectors": [
+        "captain-supply-march"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-shared-captain-supply-march.json"
+    },
+    {
+      "id": "shared:captain-supply-highlands",
+      "reason": "Shared anatomy or rounded living-material dependency: review in the real loadout/rank/context while preserving accepted species, scale and equipment.",
+      "nativeFixture": {
+        "region": 2,
+        "captain": "supply-highlands",
+        "zone": "supply-highlands"
+      },
+      "captureVariants": [],
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain active sprites and immutable originals; procedural fallback only.",
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "sourceSelectors": [
+        "captain-supply-highlands"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-shared-captain-supply-highlands.json"
+    },
+    {
+      "id": "shared:captain-supply-crown",
+      "reason": "Shared anatomy or rounded living-material dependency: review in the real loadout/rank/context while preserving accepted species, scale and equipment.",
+      "nativeFixture": {
+        "region": 4,
+        "captain": "supply-crown",
+        "zone": "supply-crown"
+      },
+      "captureVariants": [],
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain active sprites and immutable originals; procedural fallback only.",
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "sourceSelectors": [
+        "captain-supply-crown"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-shared-captain-supply-crown.json"
+    },
+    {
+      "id": "shared:captain-frontier-overseer",
+      "reason": "Shared anatomy or rounded living-material dependency: review in the real loadout/rank/context while preserving accepted species, scale and equipment.",
+      "nativeFixture": {
+        "region": 3,
+        "captain": "frontier-overseer"
+      },
+      "captureVariants": [],
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain active sprites and immutable originals; procedural fallback only.",
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "sourceSelectors": [
+        "captain-frontier-overseer"
+      ],
+      "handoff": "tools/sprites/design-handoffs/pt312-shared-captain-frontier-overseer.json"
     }
   ],
-  "additionalSharedDependencies": [
-    "human hero/party bodies",
-    "allied goblin archer body",
-    "anonymous service fallback humanoids"
-  ],
+  "additionalSharedDependencies": [],
   "evidence": "Existing 426 contracts and original handoffs remain immutable. Native captures and sound review are unexecuted."
 }

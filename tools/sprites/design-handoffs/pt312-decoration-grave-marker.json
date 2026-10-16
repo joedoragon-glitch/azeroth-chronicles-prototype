@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "pt312-decoration-grave-marker",
+  "name": "decoration:grave-marker",
+  "kind": "decoration",
+  "nextAction": "After explicit validation authorization, capture and review this exact procedural state in the native production renderer; retain every adverse result. No image acceptance is inferred from source.",
+  "context": {
+    "originConversation": "Chat URL unavailable; dated owner feedback retained in PR #313 / Issue #312.",
+    "decisionSummary": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity. Owner requests a broad Ogre-quality rounded/organic pass, preserving species and material identity.",
+    "decisionDate": "2026-10-16",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/313",
+    "contentDocuments": [
+      "docs/PR313_WORK_IMPLEMENTATION_20261016.md",
+      "docs/PR313_INTEGRATED_SOURCE_AUDIT_20261016.md"
+    ],
+    "locationAndLore": "Retain the original contract and lore in tools/community-snapshot/procedural-art-inventory.json; this record appends a candidate and does not replace accepted references."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner endorsed Ogre shape language as the reference direction; no individual native candidate review yet.",
+    "proceduralDesignAcceptance": "Implementation authorized. Appearance acceptance pending native review.",
+    "spriteProductionAuthorization": "This continuation authors procedural source only; no new sprite was generated or registered.",
+    "generatedAppearanceAcceptance": "No generated candidate or appearance acceptance.",
+    "pendingCorrections": [
+      "Native review, isolated reference and actual gameplay capture are paused by the owner."
+    ]
+  },
+  "reference": {
+    "sourceCommit": "9dcb09167849865c6c838d16305ff76e872c7d58",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js @ 9dcb09167849865c6c838d16305ff76e872c7d58"
+    ],
+    "exactEntityState": {
+      "contractId": "decoration:grave-marker",
+      "selectors": [
+        "decoration / case 'grave-marker'"
+      ],
+      "fixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "grave-marker",
+          "decorative": true
+        }
+      },
+      "variants": [],
+      "additionalVariants": []
+    },
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [
+      "tests/community-snapshot-browser.test.cjs",
+      "tools/community-snapshot/pt312-presentation-overlay.json"
+    ],
+    "traitsToPreserve": [
+      "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "Original species, silhouette/scale, palette, functional equipment and ground anchor.",
+      "Original collision, attack timing, active sprites and retained generator originals."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+        "sourceCommit": "9dcb09167849865c6c838d16305ff76e872c7d58"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "decoration:grave-marker"
+    ],
+    "reusedDesignIds": [
+      "decoration:grave-marker"
+    ],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js",
+        "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "existing behavior retained; no new frame assets",
+    "gameplayStates": [
+      "native normal/TRUE/rank or construction states where applicable",
+      "day/night and movement/standing where applicable"
+    ],
+    "directions": [
+      "existing supported directions"
+    ],
+    "pivotContract": "Retain original world foot anchor and logical scale.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

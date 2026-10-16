@@ -41,6 +41,7 @@ const inventory = JSON.parse(
 const pt312Presentation = JSON.parse(fs.readFileSync(
   path.join(root, 'tools/community-snapshot/pt312-presentation-overlay.json'), 'utf8'));
 const pt312ChangedArt = new Set(pt312Presentation.records.map((r) => r.id));
+const pt312ArtById = new Map(pt312Presentation.records.map((r) => [r.id, r]));
 (async () => {
   fs.mkdirSync(out, { recursive: true });
   await new Promise((r) => server.listen(0, '127.0.0.1', r));
@@ -279,7 +280,8 @@ const pt312ChangedArt = new Set(pt312Presentation.records.map((r) => r.id));
                   (!coreView && representatives.includes(r.id))),
             )
             .flatMap((r) =>
-              (r.captureVariants || [{ name: 'canonical', entity: {} }]).map((v) => ({
+              [...(r.captureVariants || [{ name: 'canonical', entity: {} }]),
+                ...(pt312ArtById.get(r.id)?.additionalCaptureVariants || [])].map((v) => ({
                 ...r,
                 pt312Changed: pt312ChangedArt.has(r.id),
                 id: r.id + '-' + v.name,

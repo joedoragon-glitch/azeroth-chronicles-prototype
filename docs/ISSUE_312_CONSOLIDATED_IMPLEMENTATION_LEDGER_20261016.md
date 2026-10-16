@@ -2,6 +2,14 @@
 
 **OPEN: implementation underway. Not tested, built, browser-validated, CI-certified, merged, deployed or released.** All 18 PT-001–PT-018 definitions and acceptance conditions remain authoritative in [Issue #312](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/312). This is a source integration record, not a claim that all 18 are fixed.
 
+## Current Work-mode result
+
+Source implementation and the comprehensive integrated source review are complete at runtime checkpoint `9dcb09167849865c6c838d16305ff76e872c7d58`, followed by documentation/acceptance provenance on the same draft PR #313. See [the full integrated audit](PR313_INTEGRATED_SOURCE_AUDIT_20261016.md) for all A01–A07 corrections, ten PR #311 fixes, eighteen PT dispositions, five-region review, source findings/repairs, current exact references and every remaining acceptance condition.
+
+The table below is the **historical intake**, not the current status. Every PT now has a source implementation/disposition in the integrated audit. PT-001's absent-refill diagnosis and PT-012's reported cast cancellation remain unconfirmed; the existing intended AI/commitment paths were preserved and actual-path acceptance was authored. Other changed behavior, native appearance, sound, old-save migration and performance remain unproven until the owner authorizes execution. Do not mark this issue complete based on the source verdict.
+
+No tests, syntax/format checks, build, browser, simulation, playback, benchmark, CI dispatch, merge or deployment occurred. Next is explicit owner authorization for combined validation; release authorization remains separate. All progress stays on PR #313.
+
 ## Recovery and current priorities
 
 - Source foundation: Community Snapshot `ca33acb14d92cbce12633eaab702318343dce509` + 10-issue PR #311, already combined at `f0e08ba7341a557dcb6ba9eb33d652a9e03dd339`.
@@ -9,7 +17,7 @@
 - Continue on `integration/community-snapshot-311-20261016`; source edits/checkpoints use `[skip ci]`. Retain originals, protected #308 hash history, save v4 and unmerged PR #311.
 - The owner explicitly prioritizes **one fully consolidated, properly source-audited implementation** over time-to-validation. Any subsequent overnight cycle, publication and release all require separate later decisions.
 
-## PT issue status and source responsibility
+## Initial intake disposition at `24a2d48` (historical)
 
 | PT ID | Current disposition | Unresolved work/evidence |
 | --- | --- | --- |
@@ -36,7 +44,7 @@
 
 All source additions remain **provisional**. No runtime, editor/formatter execution, build, browser, simulation, test, CI, performance check, or manual native visual/audio validation has been initiated. Prepared acceptance probes are not successful tests. Do not claim issue completion based on compiling or editing a line. Every new PT implementation needs traceable owner, source evidence, adversarial regression cases, dependencies and unresolved caveats. Preserve historical hashes: add exact provenance overlay for changed files, never delete or relax old assertions. Owner subsequently authorized **one DRAFT integration PR for Work-mode handoff** while testing stays prohibited. Since the PR event can launch Actions, keep `[skip ci]` on the latest commit, inspect actual Actions state after PR creation, and do not dispatch CI manually.
 
-## Next implementation passes (not an overnight-validation commitment)
+## Historical implementation plan (superseded by current integrated audit)
 
 1. Finish high-impact source mechanics PT-002, PT-007, PT-001 and remaining PT-012 behavior; independent source audit for preserving challenge, fair telegraphs and old saves.
 2. Ground PT-004/005/006/009/010/013/014 using current source's actual hydrology, roads, props, bridge layouts and sprite footprints. Edit related systems together, then audit all five regions.
