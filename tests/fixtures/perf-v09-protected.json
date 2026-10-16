@@ -1591,6 +1591,50 @@
         "sw.js": "438b021ecdc6628329a28594109a819fed9748fe460ac0defdf0df53e5af93ce",
         "tests/helpers/true-aura-browser.cjs": "1603596990cdef31b653b9131e9a3c57120cdf1faeff983515f4d79c170e5eb7"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt continuation; owner-authorized validation repairs and named Rogue cast UI, validation in progress 2026-10-16",
+      "reason": "Retain historical receipts; exact current bytes for review. No test result is inferred from these hashes.",
+      "files": {
+        "docs/PR313_VALIDATION_20261016.md": "fe64f71664828d3797b47f5ffcbf0c75ae043c870768e27e839dd75c1f5ee84b",
+        "tests/garun-scheduler-smoke.test.cjs": "ebbf80300af70481d8311a26561d71c016baca8f3fe694e9dbeaf60153acd8c8",
+        "tests/hero-skill-repairs.test.cjs": "206748ea256986165ad70fc39864fc3cadc17126ce09640425ffcfe684203098",
+        "tests/ironroot-highlands.test.cjs": "5a5141706d129be65af1bbd856ea9cc2d8ab0d90476eb802688aeff39ee78716"
+      },
+      "previousFiles": {
+        "docs/PR313_VALIDATION_20261016.md": "09344236d76b011efc8d2d28f3cfbabdbf2c72ee5a89d6d6ae0120194c768e03"
+      }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt continuation; owner-authorized validation repairs and named Rogue cast UI, validation in progress 2026-10-16",
+      "reason": "Retain historical receipts; exact current bytes for review. No test result is inferred from these hashes.",
+      "files": {
+        "docs/PR313_RESUME_20261016.md": "8e992a90181f1753435d603eb967bebfb2794b1cb2f95eb58fb660fde8e13ebb",
+        "docs/evidence/pr313-validation-recovery-20261016/baseline308-cache.json.gz": "b63d7e6dba99f0e445f6ec88bb261f2e891be0d65915bc25cfa5a987996a1cf8",
+        "docs/evidence/pr313-validation-recovery-20261016/candidate70-shard-0-partial.jsonl.gz": "e870cb4484b72f6e256ae60e0012d95fe6aabf157f741041fa83e27a9e67fe42",
+        "docs/evidence/pr313-validation-recovery-20261016/candidate70-shard-0.meta.json": "a6e874af00fed4a1cceca67bb5d64cafd5270cf4b6fa629ae7d12e8bb1b96df2",
+        "docs/evidence/pr313-validation-recovery-20261016/candidate70-shard-1-partial.jsonl.gz": "53a6e702a5abf9d92334e6f9e2d263d3aa3eb09b5f857bd6077c63634f75b3f1",
+        "docs/evidence/pr313-validation-recovery-20261016/candidate70-shard-1.meta.json": "48dabd12f83130d8381bea0dbcb3e3d4b9bc22d7d6e5980ce2973c774406fbda",
+        "docs/evidence/pr313-validation-recovery-20261016/candidate70-shard-2-partial.jsonl.gz": "df5d56187e7d57424017abfe6a331845e1343366156cf3987e6e9e2b7a95102f",
+        "docs/evidence/pr313-validation-recovery-20261016/candidate70-shard-2.meta.json": "b856c0fa0af73dd3c8db7e11a9ac32c61d36894cc7813c33d17ba76aba76d2ac",
+        "docs/evidence/pr313-validation-recovery-20261016/candidate70-shard-3-partial.jsonl.gz": "bfb0c22cacfeea50ad3f9356b8afd6f563256532b9e9282f97d604a41b7384e9",
+        "docs/evidence/pr313-validation-recovery-20261016/candidate70-shard-3.meta.json": "6e28127e0c3b8ab321c758ae6398ba3417209048faa10b0bef133e64d7e0d547",
+        "docs/evidence/pr313-validation-recovery-20261016/candidate70-shard-4-partial.jsonl.gz": "375636674ae35c817355d4dfc23ee11a28438e1261415c24974b047350b45d77",
+        "docs/evidence/pr313-validation-recovery-20261016/candidate70-shard-4.meta.json": "4958f63c0a779808141e87184f8e08fd9655253b59aff14f97892e5f45a93e49",
+        "docs/evidence/pr313-validation-recovery-20261016/candidate70-shard-5-partial.jsonl.gz": "4280b87c8756267dc630d007e10dd58f9d4369cf7244ab63c2ab66d29f2fc876",
+        "docs/evidence/pr313-validation-recovery-20261016/candidate70-shard-5.meta.json": "9615ed7db44c9499fd5eb4bef07b2cd1264c3592190d6b791f387cd942ffb764",
+        "docs/evidence/pr313-validation-recovery-20261016/candidate70-shard-6-partial.jsonl.gz": "58cf14c9875ae074a955d5e2b727531f5dcec4e61849d2ad8099f12fdb825a78",
+        "docs/evidence/pr313-validation-recovery-20261016/candidate70-shard-6.meta.json": "bffcf6eaf4e28814161c5a2c8f29b71251bedcc9303c26993ccb80e620388a8c",
+        "docs/evidence/pr313-validation-recovery-20261016/candidate70-shard-7-partial.jsonl.gz": "4e09d4e145b28b6b3942848fdc48ac19f03ba2ba3c9b6f257976bbfde3982ae3",
+        "docs/evidence/pr313-validation-recovery-20261016/candidate70-shard-7.meta.json": "191528dc0c30dae7e77241772ebe33bffc524e88681559cda91cd972ba919344",
+        "docs/evidence/pr313-validation-recovery-20261016/manifest.json": "bcc45130480f2edad51a73c0a54f0737e3ca0a1dbba0b859ea29fcabdc9b9879",
+        "docs/evidence/pr313-validation-recovery-20261016/pr313-balance-dev70-resume.cjs": "b19a4056465de1c8a5bd3e875feb03497da9d8fdad1aab678c0056281c40bbd8",
+        "docs/evidence/pr313-validation-recovery-20261016/pr313-balance-dev70.cjs": "aa9dca7d0aa004130aef359ab4595c6631942426c66f0c6f732f5ae157111fb0",
+        "docs/evidence/pr313-validation-recovery-20261016/retained-validation-logs.txt.gz": "085170d0107f06adf5d706cb06648485da1b838718ff3912bd0381ab78bf8970"
+      },
+      "previousFiles": {}
     }
   ],
   "authorizedPr313ApproachFrameRevision": {

@@ -1,0 +1,16 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const root='/tmp/pr313-validate70', baseline='/tmp/pr313-baseline308';
+const harness=path.join(root,'scripts/community-companion-balance.cjs');
+const {cases,trial}=require(harness),before=require(baseline+'/src/prototype/engine.js'),candidate=require(root+'/src/prototype/engine.js');
+const shard=Number(process.argv[2]),shards=8,out=process.argv[3],all=cases().filter((_,i)=>i%shards===shard),rows=[];
+if(fs.readFileSync(baseline+'/community-baseline-commit.txt','utf8').trim()!=='6bc27be31792b1c38147d61e98ceed6acf3e2560')throw Error('Wrong baseline');
+const sha=x=>crypto.createHash('sha256').update(fs.readFileSync(x)).digest('hex');
+const sources=dir=>Object.fromEntries(fs.readdirSync(dir+'/src/prototype').filter(n=>n.endsWith('.js')).map(n=>{const p='src/prototype/'+n;return[p,sha(dir+'/'+p)]}));
+const meta={baselineSha:'6bc27be31792b1c38147d61e98ceed6acf3e2560',candidateCommit:'ccb933b40a3fe0fa630f17a4f37288deb0ed7e04',candidateTree:'9dce2d4ed549bbd273e369273526f8fd42ba24d7',harnessSha256:sha(harness),observerSha256:sha(__filename),shard,shards,sources:{baseline:sources(baseline),candidate:sources(root)}};
+fs.mkdirSync(path.dirname(out),{recursive:true});fs.writeFileSync(out+'.jsonl','');fs.writeFileSync(out+'.meta.json',JSON.stringify(meta,null,2));
+const cacheData=JSON.parse(fs.readFileSync('/tmp/pr313-baseline-cache.json','utf8')); for(const [p,h] of Object.entries(cacheData.sources)){if(sha(baseline+'/'+p)!==h)throw Error('Baseline source changed '+p)}; const key=c=>JSON.stringify(Object.fromEntries(Object.entries(c).sort(([a],[b])=>a.localeCompare(b)))); const cache=new Map(cacheData.rows.map(r=>[key(r.configuration),r]));
+console.log('Started',all.length,'exact authored cases on immutable candidate',meta.candidateTree);
+const observe=(C,c,label)=>{try{return trial(C,c)}catch(error){const failure={observationFailed:true,error:{name:error.name,message:error.message,stack:error.stack}};fs.appendFileSync(out+'.errors.jsonl',JSON.stringify({label,configuration:c,...failure})+'\n');return failure}};
+for(const c of all){const row={configuration:c,baseline:c.party==='solo'||c.party.startsWith('troops')?(cache.get(key(c))?.baseline??observe(before,c,'baseline308')):null,baselineProvenance:cache.get(key(c))?.source??'computed against exact #308 during final study',candidate:observe(candidate,c,'candidate'),comparison:c.party==='solo'||c.party.startsWith('troops')?'matched identical configuration':'candidate-only; compare equal-slot troop rows, never nonexistent baseline pets'};rows.push(row);fs.appendFileSync(out+'.jsonl',JSON.stringify(row)+'\n');if(rows.length%25===0)console.log('Recorded',rows.length,'/',all.length);}
+fs.writeFileSync(out,JSON.stringify({...meta,limits:'Exact authored fixture/policy, streamed by a recovery observer against immutable exported candidate; scripted 90-second observation, not physical-device/human acceptance. All losses retained.',rows},(k,v)=>{if(typeof v==='number'&&!Number.isFinite(v))throw Error('Nonfinite '+k);return v},2)+'\n');console.log('Completed',rows.length,'observations');

@@ -64,10 +64,18 @@ console.log('PASS regional skill-6 teaching and historical-rank preservation');
   const foe = enemy(790, 500);
   game.zone().props.push({ x: 645, y: 500, r: 30 });
   const hp = foe.hp;
-  assert(!game.cast(6, foe.id), 'Walls stop rushing melee skill');
+  assert(game.cast(6, foe.id), 'A blocked targeted rush queues a legal walk around the wall');
+  assert.equal(game.hero.order?.type, 'skill-approach');
+  assert.equal(game.hero.order?.id, foe.id);
   assert.equal(game.hero.x, 500, 'Blocked rush does not move hero');
   assert.equal(foe.hp, hp, 'Blocked rush cannot hit through wall');
   assert.equal(game.hero.cd[5], 0, 'Blocked rush does not consume cooldown');
+  for (let i = 0; i < 400 && game.hero.cd[5] === 0; i++) {
+    const before = { x: game.hero.x, y: game.hero.y };
+    game.tick(0.05);
+    assert(game.clearSegment(before, game.hero), 'Approach never crosses the wall');
+  }
+  assert(game.hero.cd[5] > 0 && foe.hp < hp, 'Rush releases only after a legal approach');
 }
 console.log('PASS Paladin Skill 6 dash hit, trail and wall safety');
 
