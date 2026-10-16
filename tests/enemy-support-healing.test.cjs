@@ -84,8 +84,8 @@ console.log('PASS twelve ranged species use individual identity and the Archer h
 {
   const { g, mob } = fixture();
   const healer = mob('goblin', { ranged: true });
-  mob('goblin', { hp: 750 });
-  assert(!g.enemySupportHeal(healer), 'combat threshold is 50 percent');
+  mob('goblin', { hp: 900 });
+  assert(!g.enemySupportHeal(healer), 'support healing retains a 75-percent cutoff');
 }
 {
   const { g, mob } = fixture();
