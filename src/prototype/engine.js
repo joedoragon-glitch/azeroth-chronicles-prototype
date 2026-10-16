@@ -2258,7 +2258,7 @@
         j = i + direction;
       if (j < 0 || j >= D.regions.length) return false;
       const edge = direction === 1 ? D.regions[i].id : D.regions[j].id;
-      if (direction < 0 && !this.s.tickets[edge]) return false;
+      if (this.s.mode !== 'developer' && direction < 0 && !this.s.tickets[edge]) return false;
       const fare = this.travelFare(i, direction);
       if (this.hero.gold < fare) {
         this.say('Not enough crowns.');
@@ -2273,7 +2273,7 @@
       try {
         if (!this.enter(to, arrival)) throw Error('Invalid destination');
         this.payTravelFare(fare);
-        if (direction === 1) {
+        if (direction === 1 && this.s.mode !== 'developer') {
           delete this.s.recovery[edge];
           this.s.tickets[edge] = true;
           this.s.lastEdge = edge;
@@ -2290,7 +2290,9 @@
     }
     hubDestinations() {
       if (this.isDungeon() || this.zoneId !== 'crown') return [];
-      return D.regions.filter((r) => r.id !== this.zoneId && this.s.zones[r.id]);
+      return D.regions.filter((r) =>
+        r.id !== this.zoneId && (this.s.mode === 'developer' || this.s.zones[r.id]),
+      );
     }
     travelHub(regionId) {
       if (this.isDungeon() || this.zoneId !== 'crown') return false;

@@ -18,7 +18,13 @@
           if (e.actor === 'hero' && e.class === 'paladin') return 'heroSteelImpact';
           if (e.actor === 'companion' && e.role === 'soldier') return 'soldierSteelImpact';
           if (e.actor === 'enemy') {
-            if (e.boss || ['skeleton', 'orc', 'crownguard'].includes(e.species))
+            // Prioritize visible blade/metal equipment over a generic species
+            // thump. Ordinary Goblin and skeletal blades use steel on contact.
+            const weapon = String(e.weapon || '').toLowerCase();
+            if (/sword|blade|saber|dagger|axe|metal|steel/.test(weapon) ||
+                (weapon && /club|mace|hammer/.test(weapon) === false &&
+                  ['skeleton', 'goblin', 'orc', 'crownguard'].includes(e.species)) ||
+                ( !weapon && (e.boss || ['goblin', 'skeleton', 'orc', 'crownguard'].includes(e.species))))
               return 'enemyWeaponImpact';
             return 'creatureImpact';
           }
@@ -29,6 +35,7 @@
           return e.class === 'paladin' || e.actor === 'hero' ? 'swordSwing' : null;
         }
         if (type === 'projectileLaunch') {
+          if (e.style === 'cargo') return 'rollingCargoLaunch';
           if (e.beam) return 'arcaneBeamLaunch';
           if (e.special === 'triple-shot') return 'tripleShot';
           if (e.rapid && e.style === 'arrow') return 'rapidBow';
@@ -40,6 +47,7 @@
             : 'projectileLaunch';
         }
         if (type === 'projectileImpact') {
+          if (e.style === 'cargo') return 'rollingCargoImpact';
           if (e.style === 'beam') return 'arcaneBeamImpact';
           if (e.style === 'arrow') return 'arrowImpact';
           if (['axe', 'stone'].includes(e.style)) return 'heavyProjectileImpact';
@@ -253,7 +261,8 @@
         if (input?.type === 'enemyVfx') return this.enemyExpression(input);
         const previous = this.sourcePriority;
         const type = typeof input === 'string' ? input : input?.type;
-        this.sourcePriority = ['warning', 'death', 'gameOver'].includes(type) ? 3 : 1;
+        this.sourcePriority = ['warning', 'death', 'gameOver'].includes(type)
+          ? 3 : input?.style === 'cargo' ? 2 : 1;
         try {
           return this.renderEffect(input);
         } finally {
@@ -293,6 +302,8 @@
             'magicImpact',
             'heavyProjectileLaunch',
             'heavyProjectileImpact',
+            'rollingCargoLaunch',
+            'rollingCargoImpact',
             'organicProjectileLaunch',
             'organicProjectileImpact',
           ].includes(kind) &&
@@ -375,6 +386,19 @@
         }
         if (kind === 'arcaneBeamImpact') {
           this.beam(now, true);
+          return;
+        }
+        if (kind === 'rollingCargoLaunch') {
+          // Three staggered axle/chain knocks under the heavy wooden launch.
+          this.heavyProjectile(now, false);
+          for (let i = 0; i < 3; i++)
+            this.tone(55 + i * 5, now + i * 0.045, 0.075, 0.035, 'triangle', 'effects', 0.004);
+          return;
+        }
+        if (kind === 'rollingCargoImpact') {
+          this.heavyProjectile(now, true);
+          this.noiseBurst(now, 0.17, 0.075, 'bandpass', 430, 0.45);
+          this.tone(33, now, 0.22, 0.06, 'triangle', 'effects', 0.006);
           return;
         }
         if (kind === 'heavyProjectileLaunch') {

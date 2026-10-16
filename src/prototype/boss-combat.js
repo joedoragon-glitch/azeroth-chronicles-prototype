@@ -1590,6 +1590,10 @@
             species: 'cargo',
             style: 'cargo',
           });
+          this.event('projectileLaunch', {
+            actor: 'enemy', source: e.id, family: 'ridge',
+            species: 'cargo', style: 'cargo', x: e.x, y: e.y,
+          });
           return;
         }
         if (a.sabotage && e.family === 'archive') {

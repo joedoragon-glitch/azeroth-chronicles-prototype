@@ -1231,11 +1231,13 @@
           cost = game.travelFare(D.regions.indexOf(r), n.direction);
         openMenu(
           n.name,
-          'Fare ' +
-            cost +
-            (manaEnabled
-              ? ' crowns. Paid outbound travel includes free return. Health, mana and supplies are preserved.'
-              : ' crowns. Paid outbound travel includes free return. Health and supplies are preserved.'),
+          game.s.mode === 'developer'
+            ? 'FREE — Developer Mode. Travel has no fare or return-ticket requirement.'
+            : 'Fare ' +
+                cost +
+                (manaEnabled
+                  ? ' crowns. Paid outbound travel includes free return. Health, mana and supplies are preserved.'
+                  : ' crowns. Paid outbound travel includes free return. Health and supplies are preserved.'),
           [
             action('Travel to ' + target.name, () => {
               if (game.travel(n.direction)) closeMenu();

@@ -764,6 +764,11 @@
             p.y += p.dy * p.speed * dt;
             if (!this.clearSegment(before, p, 0)) {
               this.enemyVfxProjectileImpact?.(p, before);
+              if (p.style === 'cargo')
+                this.event('projectileImpact', {
+                  actor: 'enemy', source: p.sourceId || 'enemy', species: 'cargo',
+                  style: 'cargo', terrain: true, x: before.x, y: before.y,
+                });
               this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
               continue;
             }
