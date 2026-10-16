@@ -54,6 +54,41 @@ function mob(c, species, x, y, options = {}) {
   assert(c.cast(1, e.id), 'explicit attack is a new engagement order');
   assert.equal(c.s.recallActive, false);
 }
+// Community + #311 intersection: Recall uses pet-specific stationary basics,
+// not the Soldier fallback; no pet spell, charge or re-engagement is authorized.
+for (const family of ['crypt', 'thorn']) {
+  const c = game();
+  c.zone().enemies = [];
+  c.s.true[family] = true;
+  const pet = c.unit('pet', c.hero.x + 12, c.hero.y, family);
+  pet.active = true;
+  pet.cd = 0;
+  c.s.party = [pet];
+  c.recallParty();
+  const foe = mob(c, 'goblin', c.hero.x + 45, c.hero.y, { aggro: true, damage: 0 });
+  const originalEvents = c.event;
+  const events = [];
+  c.event = function (kind, payload) {
+    events.push({ kind, ...payload });
+    return originalEvents.call(this, kind, payload);
+  };
+  c.updateParty(0.05);
+  assert.equal(c.s.recallActive, true, 'pet defense does not re-engage');
+  assert.equal(pet.order, null, 'pet does not chase from Recall');
+  assert(pet.cd > 0, 'one basic defensive cooldown');
+  if (family === 'crypt') {
+    assert(c.s.projectiles.some((p) => p.source === pet.id &&
+      p.style === 'pet' && p.petFamily === family), 'ranged pet retains pet projectile');
+    assert(events.some((e) => e.kind === 'projectileLaunch' &&
+      e.role === 'pet' && e.source === pet.id));
+  } else {
+    assert(events.some((e) => e.kind === 'melee' &&
+      e.role === 'pet' && e.source === pet.id), 'melee pet retains pet identity');
+  }
+  assert(!events.some((e) => e.kind === 'heroSkillCast' ||
+    (e.kind === 'petSkill' && e.slot > 0)), 'no offensive skill during Recall');
+  assert(foe.hp > 0, 'pursuer is still a real combatant');
+}
 // #3: real dropped crowns and the mint share an explicit Dark Lord portrait;
 // the existing pixel raster suite remains the authoritative native-size proof.
 {

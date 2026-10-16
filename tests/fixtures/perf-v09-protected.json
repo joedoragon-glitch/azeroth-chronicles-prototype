@@ -145,7 +145,7 @@
     }
   },
   "approvedSnapshotAviationRevision": {
-    "source": "#298/#291 Loyal Air Marshal and seven real aviation moves, selective #254\u2192#283 with shared fatal boundary preservation",
+    "source": "#298/#291 Loyal Air Marshal and seven real aviation moves, selective #254→#283 with shared fatal boundary preservation",
     "files": {
       "src/prototype/boss-combat.js": "2ab3ba3e6306704a6dd61f905370017bed003e28d792050eadb92a2d05581339",
       "src/prototype/data.js": "a93a08064902df010013fd48fc9ed063bbfc2640698d4c05b895d7b996aa451b",
@@ -254,8 +254,8 @@
     }
   },
   "approvedChargedRetargetRevision": {
-    "source": "PR #295 \u2192 PR #300: manual charged-skill release with valid fallback targeting",
-    "scope": "Charged Skills 1\u20132 select a legal replacement only upon manual key/pointer release if their original aim dies or leaves valid range/line of sight. Preserve explicitly locked boss safety, charged opener receipts, no-target cooldown behavior, Skill 3 healing and snapshot worldbuilding modules; no deployment.",
+    "source": "PR #295 → PR #300: manual charged-skill release with valid fallback targeting",
+    "scope": "Charged Skills 1–2 select a legal replacement only upon manual key/pointer release if their original aim dies or leaves valid range/line of sight. Preserve explicitly locked boss safety, charged opener receipts, no-target cooldown behavior, Skill 3 healing and snapshot worldbuilding modules; no deployment.",
     "previousAppSha256": "c18f8c02cd93cfc69885b344ee184f7d0a5d8c369029bb8514ff91a340c52e0b",
     "files": {
       "src/prototype/app.js": "32bc59c1311d4e45bf2ed3d4980387ee260d8e9fba2c1c9839df369a4f5ebbc9"
@@ -876,7 +876,7 @@
     }
   },
   "authorizedCommunitySourceAuditRepairsRevision": {
-    "source": "Owner-authorized A01\u2013A07 source corrections after failed Community audit; NOT TESTED",
+    "source": "Owner-authorized A01–A07 source corrections after failed Community audit; NOT TESTED",
     "predecessorCommit": "7581ed12d57e70e42bbaed6b8223bc8d4c709b22",
     "ledger": "docs/COMMUNITY_SNAPSHOT_AUDIT_REPAIRS_20261016.md",
     "ledgerSha256": "413517c3d663b57d29b98e4d73765ad2b387187a728f364dc0a2918598bb00c3",
@@ -908,5 +908,35 @@
         "status": "Intermediate source repair; cover/fixture/provenance audit pending at that commit"
       }
     ]
+  },
+  "authorizedCommunity311IntegrationRevision": {
+    "source": "Owner-directed Community Snapshot + draft PR #311 source-only consolidated integration; NOT TESTED. Retains both original heads, 7 shared-owner hunk integrations and pet-specific Recall compatibility.",
+    "baselineCommunity": "ca33acb14d92cbce12633eaab702318343dce509",
+    "inboundHead": "b91347f863d68d6b7beca76e23f625ddd7ff1293",
+    "firstIntegratedCommit": "e513ea7fb9bfa21d5e102177bb3eedd3954e6cc4",
+    "files": {
+      "src/prototype/boss-combat.js": "ab7b6b0ad24be10b94e27f972d58c35d3b8dd9d200d3d804ab0153426ebecb6c",
+      "src/prototype/engine.js": "1b3ffb1bc651b90fc27ef5b775f714384ba1bdbe48706ab92b62b83080879bea",
+      "src/prototype/party.js": "ea607126bc7081ababba68ddda93ce1c1f3d24ce4c8843e8c8ad0bb0466a338b",
+      "src/prototype/renderer.js": "b77792b2ae5585d5ef01c8fe64d610ab6ce57ca2ef25dd7bd546607256f4b3d7",
+      "src/prototype/rules.js": "4f14130cfefceaa96b6048b59fd717ce842c8b4d2d85ae610208eac14ee138fa",
+      "src/prototype/save.js": "4d88088ed0eded4275067db21ea633768729f0771696c93215166d121bf7ad20",
+      "src/prototype/visuals.js": "d5cce1c575199b4fd3c6e9f0ca83055fbfbd51867158f21e17edfc4ac49f921b",
+      "src/prototype/party-pets.js": "a43c9bc968ed60e817defaf5d92140a45ee08d185ae62b60070c55f37088ac76",
+      "src/prototype/app.js": "36795dae28b53936e178ee18f14f20fa989d8ce5aa492a1fc8ecc31415702314",
+      "src/prototype/hero-combat.js": "3a78cdb3f2e8d9ec40a83d93c0dcd9180ecbfaf3f1857a811176a468dff8fc34",
+      "package.json": "761134a57106257643c1a32988edeba2cb1c435c3d82730ef4b23c2e2543f7c1",
+      "package-lock.json": "cfe69b3c809e0dd96e6160970e1cca7968aa489849ed81c79d3974979796d55e",
+      "docs/PRE_SNAPSHOT_TEN_ISSUES_IMPLEMENTATION_AUDIT_20261015.md": "b293f0d49c45341800c51d962b69a27abe61556d1db75fe2e250f429358f9b18",
+      "src/prototype/build-info.js": "efd267a8aa00d166bd79db231bf80392c7cabb1ae71ee13bf7a6214b28aa4ff8",
+      "sw.js": "6b7ca627ed852cedda264a6d872731eaa41d527271aea60260dbc8cc3798282e",
+      "tests/captain-review.test.cjs": "ddeedd38a356619702ef90a0b853249616c98c9463fe3c4d9baf57c344b86c8e",
+      "tests/enemy-support-healing.test.cjs": "f814b8f745221d8df683c0e65374af90874ba12e9b98d578d964ff53e531e076",
+      "tests/occlusion.test.cjs": "b1761423881501c5b160ab1987c4d4be56606a25cd9ef7843627f640de4646be",
+      "tests/perf-ws2-occlusion-browser.test.cjs": "569fa7fc6d1ad93949bd6fa97520a5089a6305b57aa0d4246d962926e4191fcd",
+      "tests/perf-ws2-occlusion.test.cjs": "afb2c7b5fdf61d29e89ecb2250e7ec13eaada69e34c3516b2eb4282df6cfedd5",
+      "tests/snapshot-sixth-companion-reveal.test.cjs": "242208f66787320e16eedc64b7e106d897d6b9139b336dc2a6412cee9f9471ca",
+      "tests/pre-snapshot-ten-issues.test.cjs": "ef28b9adc253cc3b84b9c447091f04b46ac7a347d2895a72ee2edd614c0551b8"
+    }
   }
 }

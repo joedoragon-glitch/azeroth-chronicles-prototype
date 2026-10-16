@@ -1,5 +1,7 @@
 # Community Snapshot implementation — 16 October 2026
 
+> **Later integration addendum (16 October 2026):** This document describes the Community-only checkpoint `ca33acb14d92cbce12633eaab702318343dce509`. Its historical source PASS remains valid for that commit; the active untested two-package integration is now on `integration/community-snapshot-311-20261016`. See [the combined source integration audit](COMMUNITY_SNAPSHOT_PR311_INTEGRATION_AUDIT_20261016.md). A third package is pending, so no validation authorization is requested yet.
+
 **Status: FOLLOW-UP SOURCE AUDIT PASSES — AWAITING OWNER VALIDATION AUTHORIZATION. UNBUILT, UNTESTED, NOT RELEASE-READY.** The [second source audit](COMMUNITY_SNAPSHOT_SOURCE_REAUDIT_20261016.md) addresses all seven findings from the [failed audit](COMMUNITY_SNAPSHOT_EXECUTION_AUDIT_20261016.md). Corrected runtime is frozen at `754e72e9cb5819bb815fde97488d44275e870453`; the final audit checkpoint adds reconciled references, this verdict and documented acceptance-fixture corrections without changing runtime. Validate the final branch head identified in the handoff, not the rejected original. No runtime correctness, final balance, native appearance, performance or offline result is claimed.
 
 Branch: `feature/community-snapshot-post308-20261016`.

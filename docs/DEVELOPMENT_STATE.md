@@ -1,6 +1,10 @@
 # Current development state and v0.9 readiness
 
-## Current work · Community Snapshot, 16 October 2026
+## Active combined source integration — 16 October 2026
+
+**Community Snapshot + PR #311 source-integrated, still entirely untested.** Branch `integration/community-snapshot-311-20261016`; first combined checkpoint `e513ea7fb9bfa21d5e102177bb3eedd3954e6cc4`. The independent Community checkpoint and draft #311 head remain recoverable. Source-level compatibility and the pet defensive Recall issue are documented in [the combined integration audit](COMMUNITY_SNAPSHOT_PR311_INTEGRATION_AUDIT_20261016.md). No tests, builds, browser sessions, simulations, CI, merge or deployment. A third update is being prepared; hold final consolidated validation until it is incorporated and the owner explicitly authorizes the single cycle.
+
+## Previous Community-only source audit · 16 October 2026
 
 **Follow-up source audit passes; validation awaits explicit owner authorization.** All seven [failed-audit](COMMUNITY_SNAPSHOT_EXECUTION_AUDIT_20261016.md) findings are addressed in source. [The second audit](COMMUNITY_SNAPSHOT_SOURCE_REAUDIT_20261016.md) identifies frozen runtime `754e72e9cb5819bb815fde97488d44275e870453`, final acceptance-fixture corrections, immutable design references and remaining uncertainty. The final audit checkpoint changes no runtime from that commit. No tests, build, browser, simulation, benchmark, CI, PR, merge or deployment has run in this phase. Use the feature branch's final handoff/head for authorization.
 
