@@ -5559,9 +5559,16 @@
           opportunity = true;
         }
         if (!opportunity && (d > range || !visible)) {
-          if (target === this.hero && visible && d > range && !e.pursuitBurstUsed) {
+          if (
+            target === this.hero && visible && d > range &&
+            this.s.time >= (e.pursuitBurstReadyAt || 0)
+          ) {
+            // A persistent kiter should not exhaust the monster's only
+            // pursuit answer for the entire encounter. Use bounded timed
+            // renewals instead of permanent super-speed or larger leashes.
             e.pursuitBurst = pursuitBurstSeconds;
             e.pursuitBurstUsed = true;
+            e.pursuitBurstReadyAt = this.s.time + (e.type === 'boss' ? 5.5 : 7);
           }
           this.follow(
             e,
