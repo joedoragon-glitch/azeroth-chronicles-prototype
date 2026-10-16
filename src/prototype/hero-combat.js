@@ -768,7 +768,36 @@
               ? null
               : targets.find((e) => slot === 1 && e.id === this.s.heroTarget) ||
                 targets.sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0]);
-        if (requiresTarget && !target) return false;
+        if (requiresTarget && !target) {
+          // A deliberate targeted skill is an approach-and-release order.
+          // Never consume mana or cooldown merely because the selected enemy
+          // is beyond reach; targeting itself still does not move the hero.
+          const wanted = this.zone().enemies.find(
+            (e) =>
+              e.id === preferredTargetId &&
+              e.hp > 0 &&
+              !e.neutral &&
+              !e.returning &&
+              this.tacticalDirectTargetable(e),
+          );
+          if (
+            wanted &&
+            this.hero.mp >= this.skillManaCost(slot, rank, isCharged) &&
+            this.route(this.hero, wanted).length
+          ) {
+            this.hero.order = {
+              type: 'skill-approach',
+              id: wanted.id,
+              zone: this.zoneId,
+              slot,
+              charged: isCharged,
+              encountersAtStart,
+              stalled: 0,
+            };
+            return true;
+          }
+          return false;
+        }
         // A rushing melee strike must be able to reach the foe without crossing terrain.
         const dashFrom =
           slot === 6 && this.hero.class === 'paladin' && dist(this.hero, target) > 120
@@ -812,6 +841,16 @@
         const cost = this.skillManaCost(slot, rank, isCharged);
         if (this.hero.mp < cost) return false;
         this.hero.mp -= cost;
+        // Recall holds until the player deliberately attacks, not only until
+        // they select a single target. Self-heal, guard and Ranger support
+        // skills remain defensive and do not reactivate companion pursuit.
+        const offensive =
+          (requiresTarget && !!target) ||
+          slot === 5 ||
+          (slot === 8 && this.hero.class === 'paladin') ||
+          (slot === 3 &&
+            (this.hero.class === 'mage' || (this.hero.class === 'paladin' && isCharged)));
+        if (offensive) this.s.recallActive = false;
         this.hero.cd[i] =
           slot === 3 && this.hero.class === 'paladin' && !isCharged
             ? 0
