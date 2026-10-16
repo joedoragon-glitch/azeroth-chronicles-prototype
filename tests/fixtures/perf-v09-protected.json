@@ -938,5 +938,21 @@
       "tests/snapshot-sixth-companion-reveal.test.cjs": "242208f66787320e16eedc64b7e106d897d6b9139b336dc2a6412cee9f9471ca",
       "tests/pre-snapshot-ten-issues.test.cjs": "ef28b9adc253cc3b84b9c447091f04b46ac7a347d2895a72ee2edd614c0551b8"
     }
+  },
+  "authorizedIssue312Stage1Revision": {
+    "source": "GitHub Issue #312 owner-authorized consolidated development: PT-018 transport, partial PT-003 and PT-012 audio, latest PR #311 self-contained handoff. SOURCE ONLY, NOT TESTED.",
+    "baseline": "f0e08ba7341a557dcb6ba9eb33d652a9e03dd339",
+    "stageCommit": "67e68758b5c27dc2fc441ddffce7927c4084b9d4",
+    "canonicalIssue": 312,
+    "updatedPR311Head": "b6217312beefb451b9521d3303565f4778973b30",
+    "files": {
+      "src/prototype/economy.js": "c0c7315204e755ff75eb38490bcb12ac7d883f626291d1b7994c72a225fa446b",
+      "src/prototype/engine.js": "ce1005cf2ebf424fc75d31232651b40aef00fe7694db681ae9ca41424be214fa",
+      "src/prototype/app.js": "e235f6903d95c547a19cc4f10b56c319d588bd8e497f0dc936930c8bb42ccf2b",
+      "src/prototype/audio-effects.js": "343193e3262e6225eeb4a774fe0efea3cd4f90202368812cadd18ba991e95b04",
+      "src/prototype/boss-combat.js": "430ad34066364366e7b614e54ba43c3b710ef1b925db55abeb64e056c3168220",
+      "src/prototype/combat.js": "0ac083c1f97b513bdc25030bb96e9d0b2f3cee39e3837b23e97de4e2c5c2d017",
+      "docs/PRE_SNAPSHOT_TEN_ISSUES_IMPLEMENTATION_AUDIT_20261015.md": "2a57368441f213f4d9cdc54f31dcce2ea90f7887875c28f16a00311bed2a3c62"
+    }
   }
 }
