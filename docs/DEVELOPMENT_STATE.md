@@ -2,6 +2,8 @@
 
 ## Current work · Community Snapshot, 16 October 2026
 
+**Audit blocked:** [owner-requested execution audit](COMMUNITY_SNAPSHOT_EXECUTION_AUDIT_20261016.md) of candidate `7581ed12d57e70e42bbaed6b8223bc8d4c709b22` records three high and four medium open findings. The earlier source-ready label is withdrawn. Source corrections and re-audit precede any request for validation authorization; no execution is authorized.
+
 PR #308 merged as `6bc27be31792b1c38147d61e98ceed6acf3e2560`. The next consolidated feature is on `feature/community-snapshot-post308-20261016`, with its recoverable checkpoints and honest untested status in [the implementation record](COMMUNITY_SNAPSHOT_IMPLEMENTATION_20261016.md). No new release, build, browser validation, test run, CI workflow or deployment has been initiated during this source phase. The owner must authorize [the combined final validation](COMMUNITY_SNAPSHOT_VALIDATION_20261016.md); older readiness/release notes below are retained history.
 
 ## v0.9.0 candidate preparation · 10 October 2026

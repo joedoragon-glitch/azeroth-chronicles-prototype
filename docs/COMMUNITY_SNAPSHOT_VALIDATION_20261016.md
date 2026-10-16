@@ -2,6 +2,8 @@
 
 **Not started. Owner authorization is required.** No tests, builds, browser runs, simulations, benchmarks, CI dispatches or deployments were run during implementation. Formatter write-only processing is not test evidence. Do not open a PR before validation is authorized: the existing PR trigger launches checks.
 
+**Prerequisite not met:** the [execution audit](COMMUNITY_SNAPSHOT_EXECUTION_AUDIT_20261016.md) records seven open source findings against `7581ed12d57e70e42bbaed6b8223bc8d4c709b22`. This checklist describes intended acceptance, not an implemented complete executable matrix. Correct the findings and re-audit before seeking execution authorization. In particular, the current new browser fixture saves galleries only, and the existing balance harness does not implement the mixed-pet/Nightmare/matched-predecessor study below.
+
 Source branch: `feature/community-snapshot-post308-20261016`. Exact checkpoint is the head linked in the implementation record and final handoff. Predecessor: merged #308 `6bc27be31792b1c38147d61e98ceed6acf3e2560`. Preserve one Community PR and release; no separate pet/art/companion/performance PRs.
 
 ## Authorized-cycle preparation, still pending

@@ -1,6 +1,6 @@
 # Community Snapshot implementation — 16 October 2026
 
-**Status: SOURCE-READY FOR OWNER-AUTHORIZED VALIDATION. UNBUILT, UNTESTED, NOT RELEASE-READY.** No runtime correctness, balance, native-size visual quality, performance or offline result is claimed.
+**Status: AUDIT BLOCKED — SOURCE CORRECTIONS REQUIRED. UNBUILT, UNTESTED, NOT RELEASE-READY.** The [execution audit](COMMUNITY_SNAPSHOT_EXECUTION_AUDIT_20261016.md) withdraws the earlier source-ready claim and records seven open findings against `7581ed12d57e70e42bbaed6b8223bc8d4c709b22`. No runtime correctness, balance, native-size visual quality, performance or offline result is claimed. The implementation descriptions below record existing source, not acceptance of its completeness.
 
 Branch: `feature/community-snapshot-post308-20261016`.
 Predecessor: PR #308 merged as `6bc27be31792b1c38147d61e98ceed6acf3e2560` (source `8aeb0fb3df63b21817e6e6be4c4e8f2f4376b7b1`). Preparation `13035bc0d804ac49f576ac4a2b6edd7d07c44e5f` added only the three handoff/audit/catalog files; they were brought onto merged main without importing older runtime code. First recoverable implementation checkpoint: `69f40cc45bab5132dea02ebfa3696fcf8099928b`. The current branch's next source-checkpoint commit contains the complete source candidate described here; obtain its exact SHA from the branch head/final handoff.
@@ -11,7 +11,7 @@ Predecessor: PR #308 merged as `6bc27be31792b1c38147d61e98ceed6acf3e2560` (sourc
 - **Permanent historical entitlement:** existing `s.true` owns unlocks, including old wins. First real TRUE defeat announces once. Any completed Barracks → Company → Boss pet collection exposes all eleven locked/recruitable/active/resting/fallen states and concise move details. Recruitment is a separate free atomic action; troops retain their queue.
 - **Existing lifecycle:** active/reserve caps, 200-unit reservations, unique recruited family, exact names, role-aware separate formation positions, common navigation/doctrine/charge interruption/cooldowns/Slow/Silence, shared level/Vitality/Expedition HP/damage/armor and Ranger care. Pets perform no labor or Archer-only support. Resting/fallen pets remain in the roster; recovery keeps family/individual ID and dismissal cannot generate free health. Pet armor is explicit in normal hits and Mirejaw held-roll calculation.
 - **Troop improvements:** at Expedition 4 a successful Soldier Power Strike grants a brief nonstacking self-ward; Rangers can cover their existing retreat with a ready Triple Shot whose first arrow applies brief Slow on contact. Existing base HP/damage, 8/12s cooldowns, immunity, Ranger care, charge/interruption and hero systems remain.
-- **Procedural audit/art:** 367 source cases, all 33 current illustrated identities preserved, targeted anatomy revisions across six creature families and shared wolf/crocodile/dragon boss bodies, nine regional structure families and ten repeated props. Eleven separate pet art candidates and design handoffs. Maps/collision/layout/encounters remain untouched. Native desktop/phone appearance is pending, not inferred from source.
+- **Procedural audit/art:** draft census with 367 records, all 33 current illustrated identities preserved, targeted anatomy revisions across six creature families and shared wolf/crocodile/dragon boss bodies, nine regional structure families and ten repeated props. Eleven separate pet art candidates and design handoffs. A02/A04/A07 identify incomplete individual review, capture preparation and provenance. Maps/collision/layout/encounters remain untouched. Native desktop/phone appearance is pending, not inferred from source.
 - **Safe performance:** identity-invalidated WeakMap reuses the exact presentation phase hash. No extra Canvas, retained pixel cache or saved store. Existing environment/loading/audio/PWA optimization work is retained. Current combat/AI cost hypotheses are documented, with no combat/AI performance optimization implemented.
 - **Information/compatibility:** existing collection/group/recovery menus, Keeper shelf/live figures and veteran teaching updated. v4 recognizes only entitled unique pets and explicit troop queues; missing historical detailed victory history is reconstructed from existing validated facts. Module graph and independent audio audition graph include pets.
 - **Deferred checks authored:** all-eleven lifecycle/skill/save/menu/charge cases, veteran protection/retreat cases and native pet/scene browser fixture. Existing domain ownership coverage extended. Both required Chromium/WebKit gates include the new browser fixture. No existing release check was removed; exact source receipts retain older provenance and add a closed Community overlay plus 26 frozen #308 files. These tests have NOT RUN.
@@ -42,7 +42,7 @@ Predecessor: PR #308 merged as `6bc27be31792b1c38147d61e98ceed6acf3e2560` (sourc
 | F11 comprehensive graphics | 367-case source census and per-design preservation/deferred review | Native-size case-by-case aesthetic acceptance |
 | F12 honest integration | No prohibited execution; checks added and final checklist prepared | Owner authorization, full exact-tree validation, separate release approval |
 
-No finding is marked runtime-verified by this source record.
+No finding is marked runtime-verified by this source record. The execution audit supersedes any implication that every source obligation in this table is resolved; see its preparation-finding crosswalk.
 
 ## Incoming issues register
 
@@ -50,8 +50,9 @@ No finding is marked runtime-verified by this source record.
 | --- | --- | --- |
 | CS-001 | Engineer source inspection during historical-pet work: validator accepted absent `s.victories`, later victories wrote into it | Rebuild the existing map from validated Normal/TRUE facts when absent; new history tests authored, not run |
 | CS-002 | Preparation F04: unknown queue type could silently create Soldier | Explicit train/save whitelist; absent historical queue retains Soldier compatibility; pet recruitment separate |
-| CS-003 | Pet adapter source review: a ranged pet could hold troop range beyond its shorter special reach | Pet approach range considers its two skill ranges while using existing ranged navigation helper; native/live result pending |
+| CS-003 | Pet adapter source review: a ranged pet could hold troop range beyond its shorter special reach | REOPENED by A01: outer range threshold changed, but helper can return the current out-of-range anchor and prevent all attacks. Source repair required before validation |
 | CS-004 | New module dependency review: independent audio audition page has an explicit script graph | Add pet owner there and to shared inventory; domain graph test extended, not run |
+| A01–A07 | Owner-requested execution audit of checkpoint `7581ed12d57e70e42bbaed6b8223bc8d4c709b22` | OPEN: three high and four medium findings; [evidence and required corrections](COMMUNITY_SNAPSHOT_EXECUTION_AUDIT_20261016.md). Audit checkpoint changes documentation only |
 | Owner-supplied new issues | No additional bugs supplied in this session | Keep incoming corrections within this branch and consolidated update |
 
 ## Exact non-execution and next action
@@ -60,4 +61,4 @@ No game code was executed; no test, build, syntax-check command, simulation, bro
 
 Package/lock version, generated entries/build-info and worker still represent #308. This is deliberate under the owner's no-build instruction. Source inventory and the audition graph are updated; version/regeneration must happen first inside the authorized cycle, before any playable/release-ready claim. No complete validation evidence transfers from #308.
 
-**Next action: obtain owner authorization for the one combined overnight validation cycle, including version/build regeneration, full existing gates, new pets/companion/visual checks, matched balance/performance, historical saves and PWA/offline. Fix demonstrated issues in this update and preserve exact final evidence. Then request separate merge/release authorization.**
+**Next action: correct A01–A07 in source and re-audit the corrected checkpoint. Do not initiate or request the overnight cycle for the current candidate. After source readiness is supported, obtain owner authorization for the combined validation cycle, then separate merge/release authorization after required evidence passes.**
