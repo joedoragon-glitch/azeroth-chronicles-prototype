@@ -958,7 +958,24 @@
       const room = this.supplyRoom(z.id),
         layout = room && R.treasuryDecor?.[room.id],
         targetVersion = room?.id === 'supply-crown' ? 5 : room?.id === 'supply-highlands' ? 5 : 3;
-      if (!room || !layout || z.treasuryVersion === targetVersion) return;
+      if (!room || !layout) return;
+      if (z.treasuryVersion === targetVersion) {
+        // Append only new nonblocking character-life details to historical
+        // saves. Never rebuild the Treasury or reset caches, guards or captain.
+        for (const [j, [x, y, structure, radius, sceneRole]] of layout.entries()) {
+          if (!sceneRole || z.props.some((p) => p.id === 'treasury-' + j)) continue;
+          z.props.push({
+            id: 'treasury-' + j,
+            ...this.safe(x, y, z.id),
+            r: radius || 0,
+            decorative: !radius,
+            structure,
+            treasuryBoss: room.boss,
+            sceneRole,
+          });
+        }
+        return;
+      }
       z.room = true;
       z.treasury = room.boss;
       z.props = z.props.filter(
