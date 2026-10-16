@@ -3168,6 +3168,36 @@
             clamp(input.speedFactor || 1, 1, 1.35);
         this.move(h, { x: h.x + (input.x / n) * speed, y: h.y + (input.y / n) * speed }, speed, dt);
       } else if (h.order) {
+        const pendingSkill = h.order.type === 'skill-approach' ? h.order : null;
+        if (pendingSkill) {
+          const target = z.enemies.find(
+            (e) => e.id === pendingSkill.id && e.hp > 0 && !e.neutral &&
+              !e.returning && this.tacticalDirectTargetable(e),
+          );
+          if (!target || pendingSkill.zone !== this.zoneId || h.hp <= 0) {
+            h.order = null;
+          } else {
+            const range = this.heroSkillRange(pendingSkill.slot, pendingSkill.charged);
+            if (dist(h, target) <= range && this.line(h, target)) {
+              // Cast through the ordinary resolver only after truly reaching
+              // the target, preserving all skill costs, interrupts and cooldowns.
+              h.order = null;
+              this.cast(pendingSkill.slot, target.id, pendingSkill.charged, pendingSkill.encountersAtStart);
+            } else {
+              const before = { x: h.x, y: h.y },
+                speed = (h.speed + this.heroTalentSpeedBonus()) *
+                  (h.haste > 0 ? 1.25 : 1) *
+                  this.slowMovementFactor(h) *
+                  this.mireBogMovementFactor(h) *
+                  this.ashMovementFactor(h);
+              this.follow(h, target, speed, dt, Math.max(0, range - 15));
+              if (dist(h, before) < 0.1) pendingSkill.stalled += dt;
+              else pendingSkill.stalled = 0;
+              // An unreachable foe never traps the player in an endless order.
+              if (pendingSkill.stalled >= 2 || !this.route(h, target).length) h.order = null;
+            }
+          }
+        } else {
         const target =
           h.order.type === 'attack'
             ? z.enemies.find((e) => e.id === h.order.id && this.tacticalDirectTargetable(e))
@@ -3194,6 +3224,7 @@
           else if (h.order.type === 'attack') this.cast(1, target.id);
           else h.order = null;
         } else h.order = null;
+        }
       }
       const formationDx = h.x - formationStart.x,
         formationDy = h.y - formationStart.y,
