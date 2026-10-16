@@ -13,11 +13,15 @@ for (const species of Object.keys(C.rules.enemyMeleeKits.species)) {
     ['wood', 'stone'].includes(equipment.material) ? 'enemyHeavyImpact' :
       ['spectral', 'ash', 'wet', 'bone'].includes(equipment.material) ? 'enemyElementImpact' : 'creatureImpact');
 }
+for (const species of ['skeleton', 'orc', 'archer', 'crownguard'])
+  assert.deepEqual(C.rules.enemyMeleeEquipment({ species, ranged: true }),
+    { weapon: 'bow stave', material: 'wood' }, 'visible bow is not an invented knife');
 {
   const g = new C('developer'); g.enter('highlands');
   const e = g.developerSummon('boss:ridge:normal');
   Object.assign(g.hero, g.safe(e.x + 110, e.y));
   g.effects = [];
+  e.ledgerOpen = true;
   g.startAttack(e, g.hero, 1);
   const warning = g.effects.find((f) => f.type === 'enemyVfx' && f.stage === 'windup');
   assert(warning?.audioOnly, 'Ledger keeps its original hidden spatial-warning rule');

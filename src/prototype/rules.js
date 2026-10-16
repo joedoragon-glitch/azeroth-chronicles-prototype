@@ -25,7 +25,7 @@
   const enemyMeleeKits = {
     species: {
       goblin: ['blade', 'steel'], skeleton: ['sword', 'steel'], orc: ['sword', 'steel'],
-      crownguard: ['sword', 'steel'], archer: ['knife', 'steel'], ogre: ['club', 'wood'],
+      crownguard: ['sword', 'steel'], archer: ['bow stave', 'wood'], ogre: ['club', 'wood'],
       wolf: ['fangs', 'claw'], mireling: ['jaws', 'wet'], reedbeast: ['claws', 'wet'],
       stalker: ['claws', 'claw'], ashbeast: ['claws', 'ash'], wraith: ['spectral touch', 'spectral'],
     },
@@ -38,7 +38,9 @@
   };
   function enemyMeleeEquipment(e) {
     const kit = (e.type === 'boss' || e.boss ? enemyMeleeKits.bosses[e.family] : null) ||
-      (e.mountedCrownRider ? ['lance', 'steel'] : enemyMeleeKits.species[e.species]) || ['body', 'claw'];
+      (e.mountedCrownRider ? ['lance', 'steel'] :
+        e.ranged && ['skeleton', 'orc', 'archer', 'crownguard'].includes(e.species)
+          ? ['bow stave', 'wood'] : enemyMeleeKits.species[e.species]) || ['body', 'claw'];
     return { weapon: kit[0], material: kit[1] };
   }
   const arenaPlacement = { step: 32, margin: 3, separation: 20, searchRadius: 800 };

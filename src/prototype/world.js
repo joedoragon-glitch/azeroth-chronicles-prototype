@@ -376,10 +376,8 @@
             const site = R.sites[i].find(([id, , , y]) => /bridge-|crossing-/.test(id) && y > lo && y < hi),
               y = site ? site[3] : (lo + hi) / 2,
               west = { x: x1 - 105, y }, east = { x: x2 + 105, y };
-            for (const path of z.roads || [])
-              for (const p of path)
-                if (p.x >= x1 - 60 && p.x <= x2 + 60 && p.y > lo + 20 && p.y < hi - 20)
-                  p.y = y;
+            // Keep previously validated route vertices intact. Join the named throat
+            // with new collision-routed spurs instead of bending an old diagonal into a bank.
             for (const [bank, sign] of [[west, -1], [east, 1]]) {
               const junction = this.nearestRoadPoint(z, bank, (p) => sign < 0 ? p.x < x1 - 60 : p.x > x2 + 60);
               if (junction && dist(junction, bank) > 15) {
@@ -400,7 +398,7 @@
           for (const n of entrances) {
             if (n.treasury && this.distanceToRoad(z, n) < 195) {
               const base = { x: n.x, y: n.y }, candidates = [];
-              for (const radius of [65, 105, 150, 205, 265, 325])
+              for (const radius of [65, 105, 150, 205, 265, 325, 405, 505, 605])
                 for (let k = 0; k < 24; k++) candidates.push({
                   x: base.x + Math.cos(k * Math.PI / 12) * radius,
                   y: base.y + Math.sin(k * Math.PI / 12) * radius,
@@ -492,6 +490,8 @@
           if (p) Object.assign(plant, p);
         }
         for (const [j, p] of candidates.entries()) {
+          // Leave room below v4's existing 400-prop ceiling for later authored state.
+          if (z.props.length >= 380) break;
           if (j % 2 || !valid(p)) continue;
           z.props.push({ id: 'pt312-bank-' + j, ...p, r: 0, decorative: true,
             structure: j % 4 ? 'reeds' : 'cattails', sceneRole: 'seasonal-wetland-bank' });
@@ -1757,6 +1757,7 @@
             !z.buildings.some((b) => dist(b, p) < 130) &&
             !z.props.some((q) => dist(q, p) < (q.r || 0) + (q.roadBlocker ? 125 : 63));
           for (const [j, [x, y, structure, district]] of sites.entries()) {
+            if (j >= 14 && z.props.length >= 380) break;
             // Search a bounded neighborhood without moving established objects.
             let point = null;
             for (const radius of [0, 45, 85, 135, 190, 245]) {

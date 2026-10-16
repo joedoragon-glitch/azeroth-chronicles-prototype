@@ -27,3 +27,14 @@ New world/audio acceptance and the expanded native browser fixture are authored 
 ## PT-011 broader material and anatomy pass
 
 The user clarified that this covers the whole procedural visual language. Shared humanoids now use sloped shoulders, a connected chest/waist and a draped hem, with softly joined legs. Goblin ears, Orc pauldrons, ash-beast pincers and Garun's fitted stone body receive selective silhouette work. Organic flora/nests, worn timber/cloth/furnishings and regional houses have distinct modest contour policies; functional weapons, fortification edges and mineral facets remain deliberate. Ferry, wagon and caravan loads receive direct contours. Original Ogre proportions and species-specific wolf/undead bodies remain references, not universal templates. The appended presentation overlay identifies affected designs and expands authored native captures. Per-design immutable checkpoint linkage is pending the next provenance save; no native appearance is accepted by this source record.
+
+## Integrated source review repairs
+
+- Retain existing bridge-route vertices; route fresh bank spurs to the named throat instead of mutating an old diagonal into water.
+- Sweep actor bins over the entire attempted step, so long movement cannot tunnel through an opponent outside the destination bin.
+- Preserve the original move/identity in WeakMap motion metadata for Rogue/aerial travel and hit cues; instantaneous Rogue displacement receives a movement cue only after actual displacement. All-busy warning queues reserve important identities by replacing an ordinary event.
+- Prepare the complete sixteen-tile Veyra court on connected floor, retaining two selected tiles each beat. If the full 112-unit tile court cannot fit, explicit 96/80/64 tile sizes are the confined-room fallback. The court is committed before its first warning; no tiles are silently discarded.
+- Visible bow-bearing melee variants use wooden stave contact rather than an invented knife. Enemy loadout metadata remains presentation-only.
+- New optional wetland plants and western garden additions leave headroom under the existing v4 400-prop ceiling. No save cap is raised.
+
+These are source findings and repairs, not failures discovered by execution. Additional automatic Thornfang AI and full-court acceptance cases are authored only. The final comprehensive audit and immutable design handoffs follow this code checkpoint.

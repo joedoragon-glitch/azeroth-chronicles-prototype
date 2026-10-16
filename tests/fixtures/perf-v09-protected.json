@@ -1028,6 +1028,35 @@
         "src/prototype/world.js": "330ee56c7eb6ad464c6d15d9516b6b15c3edcb66e319e78df574cc7931443a3d",
         "tests/pt312-early-integration.test.cjs": "9d8bc5a9ed1e4dd0ae815bb2b825c5434a8967f8f692b817527c2cc134303bcb"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "baseline": "3286ef24c204aa87b48165d41a114d7121a2a062",
+      "source": "PR #313 integrated source review repairs and durable handoff. SOURCE ONLY, NOT TESTED.",
+      "files": {
+        "docs/PR313_WORK_IMPLEMENTATION_20261016.md": "e7f39701f73ab5188320e836f762239c1cb248005c5c3194b77ab9ccc5c3d0d4",
+        "src/prototype/boss-combat.js": "0981b468fa4f5d54c5776196fa75c334b073cf9e77871bf775acf5f6f7dffdfa",
+        "src/prototype/enemy-vfx-art.js": "64d388f20c3b463175eb92372cb4d0e3326ff28405cc29de410ec7ae49df07cc",
+        "src/prototype/enemy-vfx-events.js": "52a2565fda6dae99ccabc4b31585d0543c6fbfb6a817b728485c2470d15cd716",
+        "src/prototype/navigation.js": "7c9f1937d6924a55e839e919080e3d2a5f90160f829eec42ff3df119f838155b",
+        "src/prototype/rules.js": "03b47098cb0e755fc431af6275f55a9aef9b754af7573ba38ee98157742b562d",
+        "src/prototype/world.js": "5c740cfe2852f235be002a9554e274a50f128172e81dfe7d493ae38f67ecb395",
+        "tests/pt312-audio-integration.test.cjs": "1288d68b881ebaf5fc120a138c4462e29b815dde513b52d4892cc9641c51e1bc",
+        "tests/pt312-combat-integration.test.cjs": "bc629e28e164f8de97ceccdfd5021de7a7ba6729a360c8891659269f10fa2aa2",
+        "tests/pt312-world-integration.test.cjs": "6f462243c88b79bead2203ec7ea59b1550afa8ac09e58594a68b7d9a795cbf2b"
+      },
+      "previousFiles": {
+        "docs/PR313_WORK_IMPLEMENTATION_20261016.md": "668da6000c77a3f1dc44995699720cccaa238df6f19cb02c2e7a92aa06920bca",
+        "src/prototype/boss-combat.js": "4eecf3e1ca33903131276fc44cfadeb1e8e4b7a6812f7f1b6a81b7f9981e0495",
+        "src/prototype/enemy-vfx-art.js": "5ade35292a63dbc7f6ad665e30f30168251205d399074f3b53e64c697ab66c68",
+        "src/prototype/enemy-vfx-events.js": "5c2e40de1986a33cbe0fd082c05ab1671b2a9990d3e8a92457f564c0030051e6",
+        "src/prototype/navigation.js": "e1c6ab182714cd915875ea78cdd2fe56cc65437bf7973d848264ee93f60c2bd1",
+        "src/prototype/rules.js": "ca507060e1248643bc327ae6130ce6fd7b86179df1d44cee54b5fdb621d57d5e",
+        "src/prototype/world.js": "ef1be752fee465f570fae611e952aaebeaf49488d0b5ffda2f66b6473ac398ee",
+        "tests/pt312-audio-integration.test.cjs": "93935d45002c88e3cf0d8d4cb2141d34af398f79e8c4abb63eb7a14c09b11bca",
+        "tests/pt312-combat-integration.test.cjs": "fa7a7236c8d9d7e27a16ffa463ba6c2d5ddb29fd7c106a1aa342f957763ea250",
+        "tests/pt312-world-integration.test.cjs": "026b6cbf6b703d76a8b627b1a73d187213f3046770c3f73130ab1bc7c4271f37"
+      }
     }
   ]
 }

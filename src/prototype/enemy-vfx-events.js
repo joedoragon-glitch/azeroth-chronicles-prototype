@@ -149,8 +149,10 @@
     // Deliberately bypass event(): combat statistics and v4 snapshots stay identical.
     if (game.effects.filter((f) => f.type === 'enemyVfx').length >= 120) {
       const important = ['boss', 'captain'].includes(visual.tier) || visual.presentation?.signature,
-        victim = game.effects.findIndex((f) => f.type === 'enemyVfx' &&
-          !['boss', 'captain'].includes(f.tier) && f.stage !== 'windup');
+        ordinary = (f) => f.type === 'enemyVfx' && !['boss', 'captain'].includes(f.tier) &&
+          !f.identity?.presentation?.signature,
+        background = game.effects.findIndex((f) => ordinary(f) && f.stage !== 'windup'),
+        victim = background >= 0 ? background : game.effects.findIndex(ordinary);
       if (!important || victim < 0) return null;
       game.effects.splice(victim, 1);
     }
@@ -291,7 +293,7 @@
       } finally {
         bindNew(this, e, a, shots, hazards);
         if (e.motion && s.context.epoch === s.epoch && !s.motions.has(e.motion))
-          s.motions.set(e.motion, { e, epoch: s.epoch, initialLife: e.motion.life });
+          s.motions.set(e.motion, { e, a, identity: V.describe(e, a), epoch: s.epoch, initialLife: e.motion.life });
         s.context = old;
       }
     });
@@ -313,15 +315,20 @@
       const a = e.motion,
         s = store(this),
         old = s.context;
-      if (a && !s.motions.has(a)) s.motions.set(a, { e, epoch: s.epoch, initialLife: a.life });
-      const from = { x: e.x, y: e.y };
-      if (a) s.context = { e, a, epoch: s.epoch };
+      if (a && !s.motions.has(a)) {
+        const attack = a.rogueAttack || a;
+        s.motions.set(a, { e, a: attack, identity: V.describe(e, attack), epoch: s.epoch, initialLife: a.life });
+      }
+      const metadata = a && s.motions.get(a), attack = metadata?.a || a,
+        from = { x: e.x, y: e.y };
+      if (a) s.context = { e, a: attack, identity: metadata?.identity, epoch: s.epoch };
       try {
         return original.call(this, e, dt);
       } finally {
         if (a && Math.hypot(e.x - from.x, e.y - from.y) > 1)
-          emit(this, e, a, 'travel', { x: e.x, y: e.y, movementCue: true });
-        if (a && !e.motion && !a.landing) emit(this, e, a, 'impact', { x: e.x, y: e.y });
+          emit(this, e, attack, 'travel', { x: e.x, y: e.y, movementCue: true }, metadata?.identity);
+        if (a && !e.motion && !a.landing)
+          emit(this, e, attack, 'impact', { x: e.x, y: e.y }, metadata?.identity);
         s.context = old;
       }
     });
@@ -346,8 +353,12 @@
       return result;
     });
     wrap('tacticalResolveRogueMove', function (original, [e, a]) {
+      const from = { x: e.x, y: e.y }, epoch = store(this).epoch;
       emit(this, e, a, 'impact');
-      return original.call(this, e, a);
+      const result = original.call(this, e, a);
+      if (store(this).epoch === epoch && Math.hypot(e.x - from.x, e.y - from.y) > 1)
+        emit(this, e, a, 'travel', { x: e.x, y: e.y, movementCue: true });
+      return result;
     });
     wrap('hitParty', function (original, args) {
       const u = args[0],

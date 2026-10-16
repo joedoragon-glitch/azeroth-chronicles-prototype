@@ -8,6 +8,7 @@ for (const region of C.data.regions) {
   g.enter(region.id);
   const z = g.zone(), i = g.regionIndex();
   assert.equal(z.environmentCoherenceVersion, 1);
+  assert(z.props.length <= 400, region.id + ' retains v4 prop budget');
   assert.equal(z.roadVersion, 17);
   for (const bridge of z.bridgeApproaches) {
     assert(g.clearSegment(bridge.west, bridge.east, 25), region.id + ' full usable crossing');

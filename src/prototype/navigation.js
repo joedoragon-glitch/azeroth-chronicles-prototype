@@ -71,7 +71,11 @@
       }
       actorStepAllowed(unit, point, relaxFriendly = false, frame = this.actorCrowd()) {
         if (!frame.members.has(unit)) return true;
-        for (const other of this.nearbyActors(point, frame)) {
+        const candidates = new Set(), steps = Math.max(1, Math.ceil(dist(unit, point) / R.actorSpacing.cellSize));
+        for (let j = 0; j <= steps; j++)
+          for (const other of this.nearbyActors({ x: unit.x + (point.x - unit.x) * j / steps,
+            y: unit.y + (point.y - unit.y) * j / steps }, frame)) candidates.add(other);
+        for (const other of candidates) {
           if (other === unit || other.hp <= 0) continue;
           const friendly = frame.hostile.has(unit) === frame.hostile.has(other);
           if (friendly && relaxFriendly) continue;

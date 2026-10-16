@@ -44,6 +44,16 @@ function add(g, point, species = 'goblin') {
   assert(!g.blocked(e.x, e.y), 'long scripted steps still obey terrain');
   assert(Number.isFinite(distance(e, before)));
 }
+// Long steps inspect the swept crowd cells, including actors far from the endpoint.
+{
+  const g = room(); g.zone().enemies = [];
+  const lane = [{ x: 150, y: 180 }, { x: 500, y: 180 }];
+  if (g.clearSegment(...lane)) {
+    Object.assign(g.hero, lane[0]);
+    const e = add(g, { x: 280, y: 180 });
+    assert(!g.actorStepAllowed(g.hero, lane[1]), 'no endpoint-only hostile tunnelling');
+  }
+}
 // PT-007: full-radius marks stay on connected floor and remain frozen after warning.
 for (const id of Object.keys(C.rules.treasuryArchitecture)) {
   const g = room(id), e = g.zone().enemies.find((u) => u.roomCaptain);
@@ -103,6 +113,29 @@ for (const form of ['normal', 'true']) {
   g.resolveAttack(e);
   assert.equal(g.bossOwnedSummons(e).length, g.bossSummonCap(e));
 }
+// PT-001 automatic Developer path after a killed pack: no forced attack index or resolver.
+for (const form of ['normal', 'true']) {
+  let seed = 312;
+  const g = new C('developer', 'paladin', () => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return seed / 4294967296;
+  });
+  Object.assign(g.hero, g.safe(850, 1450), { immune: 9999 });
+  const e = g.developerSummon('boss:thorn:' + form);
+  g.zone().enemies = [e];
+  Object.assign(g.hero, g.safe(e.x - 90, e.y), { immune: 9999 });
+  g.s.party = [];
+  g.summonBossAdds(e, C.rules.attacks.thorn[3]);
+  for (const pup of g.bossOwnedSummons(e)) pup.hp = 0;
+  let refilled = false;
+  for (let n = 0; n < 2400 && !refilled; n++) {
+    g.s.time += 0.05;
+    g.updateEnemies(0.05);
+    refilled = g.bossOwnedSummons(e).length > 0;
+  }
+  assert(refilled, form + ' actual Developer AI replenishes killed pups after recovery');
+  assert(e.aggro && !e.returning, 'the probe stayed in a live encounter');
+}
 // PT-012: a committed cargo shot releases at the snapshot even after range evasion.
 for (const form of ['normal', 'true']) {
   const g = room('supply-highlands'), e = g.bossEnemy(g.boss('ridge'), form, g.safe(600, 550));
@@ -119,5 +152,20 @@ for (const form of ['normal', 'true']) {
   assert(cargo, 'range change does not cancel committed cargo');
   assert(Math.abs(cargo.dx - (mark.x - e.x) / distance(mark, e)) < 1e-7,
     'cargo uses warned direction rather than guaranteed homing');
+}
+// PT-007 persistent court: sixteen full, connected tiles, not inaccessible wall cells.
+{
+  const g = room('citadel'), e = g.zone().enemies.find((u) => u.type === 'boss');
+  const a = g.buildBossAttack(e, 3, g.hero).first, sequence = [];
+  assert(g.prepareAttackSequence(e, a, sequence));
+  e.telegraph = a;
+  g.resolveAttack(e);
+  const cells = g.sentinelBoardCells(e);
+  assert.equal(cells.length, 16);
+  assert.equal(cells.filter((cell) => cell.selected).length, 2);
+  for (const cell of cells) {
+    assert(!g.blocked(cell.x, cell.y, g.zoneId, cell.size / Math.SQRT2));
+    assert(g.route(e, cell).length || distance(e, cell) < 1);
+  }
 }
 console.log('PASS PT312 combat acceptance');

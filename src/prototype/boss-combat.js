@@ -760,6 +760,20 @@
         }
         return [];
       }
+      sentinelBoardPlan(e) {
+        // Keep all sixteen tiles. A smaller court is the explicit confined-room
+        // fallback; validate the whole square's enclosing footprint before warning.
+        const points = this.connectedArenaPoints(e).sort((a, b) => dist(a, e.home || e) - dist(b, e.home || e));
+        for (const size of [112, 96, 80, 64])
+          for (const point of [e.home || e, ...points]) {
+            const radius = size * 2 * Math.SQRT2 + R.arenaPlacement.margin;
+            if (this.blocked(point.x, point.y, this.zoneId, radius) ||
+                !points.some((q) => dist(point, q) < R.arenaPlacement.step * 1.5 &&
+                  this.clearSegment(point, q))) continue;
+            return { x: point.x, y: point.y, size };
+          }
+        return null;
+      }
       sentinelBoardCells(e) {
         if (!e.board) return [];
         const pairs = [
@@ -1365,6 +1379,10 @@
         return points;
       }
       prepareGroundAttack(e, a, arena = null) {
+        if (a?.kind === 'checkerboard' && !a.boardPlan) {
+          a.boardPlan = this.sentinelBoardPlan(e);
+          if (!a.boardPlan) { a.arenaInvalid = true; return; }
+        }
         if (a?.kind === 'line' && a.count === 2 && !a.charge && !a.cargo && !a.arenaLines) {
           const connected = arena || this.connectedArenaPoints(e),
             width = R.combatGeometry.dualLineHalfWidth,
@@ -1746,8 +1764,9 @@
           return;
         }
         if (e.family === 'citadel' && a.kind === 'checkerboard') {
+          if (!a.boardPlan) return;
           if (!e.board)
-            e.board = { x: e.home.x, y: e.home.y, size: 112, beat: 0, phase: 'warn', timer: 1.45 };
+            e.board = { ...a.boardPlan, beat: 0, phase: 'warn', timer: 1.45 };
           return;
         }
         if (e.family === 'citadel' && a.kind === 'formation') {
