@@ -259,15 +259,10 @@
       return Number.isFinite(factor) && factor > 0 ? factor : 1;
     }
     enemyHealTeammate(e, u) {
-      if (!u || u === e || u.hp <= 0 || u.neutral || u.returning || !u.aggro) return false;
-      if (e.pack && e.pack === u.pack) return true;
-      if (e.owner && (e.owner === u.id || e.owner === u.owner)) return true;
-      if (u.owner === e.id) return true;
-      if (e.roomCaptain && u.roomGuard) return true;
-      if (e.fieldCaptain && u.guard && this.zoneId === 'frontier') return true;
-      if (e.type === 'boss' && u.guard) return true;
-      if (e.guard && u.type === 'boss') return true;
-      return !e.pack && !u.pack && e.species === u.species;
+      // The Dark Lord's faction is mechanically allied across species, packs,
+      // guard posts and commanders. Local range, LoS, health and hostile status
+      // are checked by the support cast itself, not by formation membership.
+      return !!(u && u !== e && u.hp > 0 && !u.neutral && !u.returning);
     }
     enemySupportHeal(e) {
       const cfg = R.enemySupportHealing,
@@ -346,6 +341,29 @@
       // healers retain the green recovery cue without flooding combat messages.
       if (e.type === 'boss' || e.captain || e.roomCaptain || e.form === 'ringleader')
         this.say(e.name + ' uses ' + skill + ' on ' + target.name + '.');
+      return true;
+    }
+    enemySupportApproach(e, dt) {
+      const cfg = R.enemySupportHealing;
+      if (
+        !cfg || !this.enemyHealProfile(e) || !e.aggro || e.returning ||
+        this.mageSilenceActive(e) || e.motion || e.rangedAim || e.telegraph ||
+        (e.supportHealCd || 0) > 0
+      ) return false;
+      const ally = this.zone().enemies
+        .filter((u) =>
+          this.enemyHealTeammate(e, u) &&
+          !u.supportHeal &&
+          u.hp / u.maxHp <= cfg.threshold &&
+          dist(e, u) > cfg.range &&
+          dist(e, u) <= cfg.range + 210,
+        )
+        .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp || this.idOrder(a, b))[0];
+      if (!ally || !this.route(e, ally).length) return false;
+      const before = { x: e.x, y: e.y };
+      this.follow(e, ally, 160 * this.slowMovementFactor(e), dt, cfg.range - 25);
+      if (dist(before, e) <= 0.1) return false;
+      e.noProgress = 0;
       return true;
     }
     advanceEnemySupportHeal(e, dt) {
@@ -2560,6 +2578,14 @@
         for (const ally of this.zone().enemies)
           if (ally.pack && ally.pack === e.pack && ally.hp > 0 && !ally.aggro)
             this.engage(ally, false);
+      // Treasury guards' pack IDs describe formation posts, not independent
+      // allegiances. Assaulting a live guard alerts its captain across posts.
+      if (e.roomGuard && !e.roomCaptain && this.supplyRoom()) {
+        const captain = this.zone().enemies.find(
+          (u) => u.roomCaptain && u.hp > 0 && !u.neutral && !u.returning,
+        );
+        if (captain && !captain.aggro) this.engage(captain, true, false);
+      }
     }
 
     die() {
@@ -4183,14 +4209,22 @@
               ? 'crownguard'
               : e.crownAncestry
             : e.species,
-        basic =
+        namedBasic =
           (e.type === 'boss' && profiles.bosses[e.family]) ||
           ((e.captain || e.roomCaptain) && profiles.captains[e.captainProfile]) ||
-          (tier === 'guardian' && ranged && !e.crownTroop && profiles.rangedGuardian) ||
-          (ranged && (profiles.ranged[crownDoctrineSpecies] || profiles.rangedFallback)) ||
-          profiles.species[crownDoctrineSpecies] ||
-          profiles[tier] ||
-          profiles.ordinary,
+          null,
+        speciesBasic =
+          (ranged && profiles.ranged[crownDoctrineSpecies]) ||
+          profiles.species[crownDoctrineSpecies] || null,
+        basic =
+          namedBasic && speciesBasic
+            ? (e.rogueBasicTurn || 0) % 2 === 0 ? speciesBasic : namedBasic
+            : namedBasic ||
+              (tier === 'guardian' && ranged && !e.crownTroop && profiles.rangedGuardian) ||
+              speciesBasic ||
+              (ranged && profiles.rangedFallback) ||
+              profiles[tier] ||
+              profiles.ordinary,
         signature =
           (e.type === 'boss' && cfg.rogueSignatures.bosses[e.family]) ||
           ((e.captain || e.roomCaptain) && cfg.rogueSignatures.captains[e.captainProfile]) ||
@@ -4299,6 +4333,8 @@
         signature: isSignature,
       });
       if (e.crownTroop && e.crownAncestry) e.crownRogueTurn = ((e.crownRogueTurn || 0) + 1) % 2;
+      if (!isSignature && namedBasic && speciesBasic)
+        e.rogueBasicTurn = ((e.rogueBasicTurn || 0) + 1) % 2;
       return true;
     }
     // Field commanders rally native ordinary-monster spawn records; Ridge Tyrant
@@ -5261,6 +5297,7 @@
           continue;
         }
         if (this.enemySupportHeal(e)) continue;
+        if (this.enemySupportApproach(e, dt)) continue;
         // A short-lived rogue decision is distinct from normal aggro.
         if (!this.mageSilenceActive(e) && this.tacticalAutoRogue(e, target)) continue;
         // A committed attack owns its warning/release clock. Regroup holds and
