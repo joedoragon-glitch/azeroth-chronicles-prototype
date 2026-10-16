@@ -241,6 +241,7 @@
         }
         const built = this.buildDreadAttack(e, target, chosen.i);
         if (!built) return false;
+        if (!this.prepareAttackSequence(e, built.first, built.sequence)) return false;
         e.lastCaptainAttack = chosen.i;
         e.sequence = built.sequence;
         e.telegraph = built.first;

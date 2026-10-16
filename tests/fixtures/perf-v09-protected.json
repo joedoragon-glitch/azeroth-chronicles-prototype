@@ -145,7 +145,7 @@
     }
   },
   "approvedSnapshotAviationRevision": {
-    "source": "#298/#291 Loyal Air Marshal and seven real aviation moves, selective #254→#283 with shared fatal boundary preservation",
+    "source": "#298/#291 Loyal Air Marshal and seven real aviation moves, selective #254\u2192#283 with shared fatal boundary preservation",
     "files": {
       "src/prototype/boss-combat.js": "2ab3ba3e6306704a6dd61f905370017bed003e28d792050eadb92a2d05581339",
       "src/prototype/data.js": "a93a08064902df010013fd48fc9ed063bbfc2640698d4c05b895d7b996aa451b",
@@ -254,8 +254,8 @@
     }
   },
   "approvedChargedRetargetRevision": {
-    "source": "PR #295 → PR #300: manual charged-skill release with valid fallback targeting",
-    "scope": "Charged Skills 1–2 select a legal replacement only upon manual key/pointer release if their original aim dies or leaves valid range/line of sight. Preserve explicitly locked boss safety, charged opener receipts, no-target cooldown behavior, Skill 3 healing and snapshot worldbuilding modules; no deployment.",
+    "source": "PR #295 \u2192 PR #300: manual charged-skill release with valid fallback targeting",
+    "scope": "Charged Skills 1\u20132 select a legal replacement only upon manual key/pointer release if their original aim dies or leaves valid range/line of sight. Preserve explicitly locked boss safety, charged opener receipts, no-target cooldown behavior, Skill 3 healing and snapshot worldbuilding modules; no deployment.",
     "previousAppSha256": "c18f8c02cd93cfc69885b344ee184f7d0a5d8c369029bb8514ff91a340c52e0b",
     "files": {
       "src/prototype/app.js": "32bc59c1311d4e45bf2ed3d4980387ee260d8e9fba2c1c9839df369a4f5ebbc9"
@@ -876,7 +876,7 @@
     }
   },
   "authorizedCommunitySourceAuditRepairsRevision": {
-    "source": "Owner-authorized A01–A07 source corrections after failed Community audit; NOT TESTED",
+    "source": "Owner-authorized A01\u2013A07 source corrections after failed Community audit; NOT TESTED",
     "predecessorCommit": "7581ed12d57e70e42bbaed6b8223bc8d4c709b22",
     "ledger": "docs/COMMUNITY_SNAPSHOT_AUDIT_REPAIRS_20261016.md",
     "ledgerSha256": "413517c3d663b57d29b98e4d73765ad2b387187a728f364dc0a2918598bb00c3",
@@ -956,5 +956,28 @@
       "tests/pt312-early-integration.test.cjs": "9d8bc5a9ed1e4dd0ae815bb2b825c5434a8967f8f692b817527c2cc134303bcb",
       "docs/ISSUE_312_CONSOLIDATED_IMPLEMENTATION_LEDGER_20261016.md": "6ee0161b8c34f825daa148886ebfc1700a7be4faf33885086483313177906496"
     }
-  }
+  },
+  "issue312WorkRevisions": [
+    {
+      "canonicalIssue": 312,
+      "baseline": "24a2d48ee28ed9b8fb515ad810ce930ff1620ea8",
+      "source": "PR #313 PT-002 crowd steering and PT-007 connected ground patterns; PT-001/PT-012 acceptance authoring. SOURCE ONLY, NOT TESTED.",
+      "files": {
+        "src/prototype/navigation.js": "fc9e9f8474312a80e539b7ad00050836a5edeefd2ac0a8546e10def5e482bf3e",
+        "src/prototype/engine.js": "9793f89bfe4aed7e83e8c98e8c224d042ec7a46831652fd8614925a5ff1bd841",
+        "src/prototype/boss-combat.js": "611faefbc5c46a1f9313da739162d9f2c46819f8cf938486c4b27e206d755c15",
+        "src/prototype/dreadmaw-combat.js": "746fb1cfa689cd96fdc032afbd7c6c81eb9a9171eed8c3cfae450fe58aae261d",
+        "src/prototype/rules.js": "62ea3575ceadf34a6a9cb82a2dab0ed8a71d0664e43f3d400840a39df3cb1b58",
+        "tests/pt312-combat-integration.test.cjs": "45233a576c6dec1121057dc95ca760d68f98b93598dc089ae32bcbea5225c690",
+        "docs/PR313_WORK_IMPLEMENTATION_20261016.md": "5b79fa761ccc1a1c116efd6498a2bb383e6cd4b09a6ecf9c60895965e9859bb7"
+      },
+      "previousFiles": {
+        "src/prototype/navigation.js": "4bac00164b5b3a2ec72ee756852132c0fef5663e9766e38b4276d6b490bd5fce",
+        "src/prototype/engine.js": "ce1005cf2ebf424fc75d31232651b40aef00fe7694db681ae9ca41424be214fa",
+        "src/prototype/boss-combat.js": "430ad34066364366e7b614e54ba43c3b710ef1b925db55abeb64e056c3168220",
+        "src/prototype/dreadmaw-combat.js": "2b241bea370acb73e2da5b2ed973d6af73b83fe1c5b5791a4c31f3c5dcfb6a50",
+        "src/prototype/rules.js": "4f14130cfefceaa96b6048b59fd717ce842c8b4d2d85ae610208eac14ee138fa"
+      }
+    }
+  ]
 }

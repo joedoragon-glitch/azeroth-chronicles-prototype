@@ -3332,6 +3332,7 @@
         this.s.challenge.gameOver
       )
         return;
+      this.separateActors(dt);
       this.updateProjectiles(dt);
       if (
         h !== this.hero ||
@@ -3731,12 +3732,15 @@
           });
       }
       if (plan.paired && e.captainProfile === 'supply-vale' && index === 4) {
+        this.prepareGroundAttack(e, a);
         const pads = this.attackPatches(a);
+        a.arenaPatches = pads.slice(0, 2).map(({ x, y, radius }) => ({ x, y, radius }));
         a.pairMarks = pads.slice(0, 2).map((p) => ({ x: p.x, y: p.y }));
         a.count = 2;
         a.sequence.push({
           ...a,
           sequence: [],
+          arenaPatches: pads.slice(2).map(({ x, y, radius }) => ({ x, y, radius })),
           pairMarks: pads.slice(2).map((p) => ({ x: p.x, y: p.y })),
           timer: plan.pairWarning,
           total: plan.pairWarning,
@@ -3744,11 +3748,13 @@
         });
       }
       if (plan.sequential && plan.kind === 'circle') {
+        this.prepareGroundAttack(e, a);
         const patches = this.attackPatches(a);
-        Object.assign(a, patches[0], { count: 1 });
+        Object.assign(a, patches[0], { count: 1, arenaPatches: [{ x: patches[0].x, y: patches[0].y, radius: patches[0].radius }] });
         a.sequence = patches.slice(1).map((p) => ({
           ...a,
           ...p,
+          arenaPatches: [{ x: p.x, y: p.y, radius: p.radius }],
           count: 1,
           timer: attackWarning * 0.72,
           total: attackWarning * 0.72,
@@ -3758,6 +3764,7 @@
       e.lastCaptainAttack = index;
       e.sequence = [...(a.sequence || [])];
       delete a.sequence;
+      if (!this.prepareAttackSequence(e, a, e.sequence)) return false;
       e.telegraph = a;
       e.specialCd =
         profile.specialCooldown *

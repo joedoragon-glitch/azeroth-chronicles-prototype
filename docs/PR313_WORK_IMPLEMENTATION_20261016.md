@@ -1,0 +1,12 @@
+# PR #313 continued implementation · 16 October 2026
+
+Source-only work from `24a2d48ee28ed9b8fb515ad810ce930ff1620ea8` on the existing integration branch. This is an implementation checkpoint, not a completed source audit or runtime certificate. No test, build, syntax/format check, browser, simulation or CI was executed.
+
+## Combat checkpoint
+
+- **PT-002:** navigation now gives live hostile/allied bodies local steering, bounded spatial bins, overlap separation and 0.35-second same-side congestion relief after 0.65 seconds stalled. Opposing bodies remain present; all displacement uses existing terrain/prop clearance. The hero, held victims, active casts and scripted motions are not moved by passive separation. Crowd bookkeeping lives outside v4 state in a WeakMap.
+- **PT-007:** circular ground patterns are projected onto floor connected to the caster, checking the complete radius against actual collision before warning. Distinct full-size marks are preferred. Confined rooms explicitly use separately warned sequential beats; radius reduction is the final confined-space fallback. Counts remain intact. Warning and damage share frozen `arenaPatches`; an impossible corrupt-room placement refuses commitment with an explicit diagnostic. Existing cone/line/charge/board/cordon geometry keeps its own owner and remains under final scope review.
+- **PT-001:** static trace found owned living summons, normal/TRUE caps, cooldown recovery, weighted depleted-pack eligibility and the native Developer spawn path already present. No forced refill or extra move was introduced without reproduction. The authored acceptance exercises zero-pack eligibility and refill resolution in both forms; eventual automatic selection and the player's observed state still need authorized reproduction.
+- **PT-012:** source trace confirms committed telegraphs advance independently of special range and preserve cargo coordinates. Existing bounded encounter leash and silence remain valid exceptions. Added unexecuted actual update-path coverage for range evasion and non-homing cargo. Heavy travel/mix and the broader cast matrix remain in progress.
+
+Authored `tests/pt312-combat-integration.test.cjs` is **UNEXECUTED**, as are all original Community and PR #311 suites. World, audio and presentation work remains open. A01–A07, all eleven pets and all ten PR #311 requirements remain mandatory final-audit inputs.

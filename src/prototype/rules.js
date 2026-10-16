@@ -9,6 +9,19 @@
     ringLife: 1.6,
     ringHalfWidth: 25,
   };
+  const actorSpacing = {
+    radius: 14,
+    heroRadius: 14,
+    largeRadius: 20,
+    bossRadius: 26,
+    mountedRadius: 23,
+    cellSize: 96,
+    tolerance: 0.75,
+    separationSpeed: 85,
+    congestionSeconds: 0.65,
+    relaxSeconds: 0.35,
+  };
+  const arenaPlacement = { step: 32, margin: 3, separation: 20, searchRadius: 800 };
   const attack = (kind, warning, recovery, extra = {}) => ({
     kind,
     warning,
@@ -6000,6 +6013,8 @@
     tacticalFoundation,
     balance,
     combatGeometry,
+    actorSpacing,
+    arenaPlacement,
     bossCadence,
     bossSummoning,
     bossBehavior,

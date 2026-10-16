@@ -970,11 +970,14 @@
           ];
         }
         if (a.paired && e.family === 'crypt' && index === 3) {
+          this.prepareGroundAttack(e, a);
           const pads = this.attackPatches(a);
+          a.arenaPatches = pads.slice(0, 2).map(({ x, y, radius }) => ({ x, y, radius }));
           a.groundworkMarks = pads.slice(0, 2).map((p) => ({ x: p.x, y: p.y }));
           a.count = 2;
           sequence.push({
             ...a,
+            arenaPatches: pads.slice(2).map(({ x, y, radius }) => ({ x, y, radius })),
             groundworkMarks: pads.slice(2).map((p) => ({ x: p.x, y: p.y })),
             timer: a.pairWarning,
             total: a.pairWarning,
@@ -982,9 +985,11 @@
           });
         }
         if (a.sequential && a.kind === 'circle' && e.family !== 'citadel') {
+          this.prepareGroundAttack(e, a);
           const patches = this.attackPatches(a);
-          Object.assign(a, patches[0], { count: 1 });
-          for (const p of patches.slice(1)) sequence.push({ ...a, ...p, count: 1 });
+          Object.assign(a, patches[0], { count: 1, arenaPatches: [patches[0]].map(({ x, y, radius }) => ({ x, y, radius })) });
+          for (const p of patches.slice(1)) sequence.push({ ...a, ...p, count: 1,
+            arenaPatches: [{ x: p.x, y: p.y, radius: p.radius }] });
         }
         if (e.family === 'abyss' && index === 2) {
           // Lazy Eight: opposite banks, each ending at its own separately warned impact.
@@ -1251,9 +1256,11 @@
         }
         if (e.family === 'archive' && plans[selected].sabotage) e.sabotageCd = 12;
         const built = this.buildBossAttack(e, selected, actualTarget, true);
+        if (!built.first) return false;
         e.attackIndex = (e.attackIndex || 0) + 1;
         e.lastAttackIndex = selected;
         e.sequence = [...built.sequence, ...this.bossComboSequence(e, selected, actualTarget)];
+        if (!this.prepareAttackSequence(e, built.first, e.sequence)) return false;
         e.telegraph = built.first;
         if (e.family === 'mine' && selected === 1) this.prepareMineWorksPreview(e);
         this.event(
@@ -1265,6 +1272,7 @@
         return true;
       }
       attackPatches(a) {
+        if (a.arenaPatches) return a.arenaPatches.map((p) => ({ ...a, ...p, count: 1 }));
         if (a.pairMarks && a.captainProfile === 'supply-vale' && a.index === 4)
           return a.pairMarks.map((p) => ({ ...a, ...p, radius: a.radius }));
         if (a.family === 'crypt' && a.index === 3 && !a.captainSkill) {
@@ -1333,6 +1341,86 @@
               ? 75 * R.bossCadence.areaRangeMultiplier
               : a.radius,
         }));
+      }
+      connectedArenaPoints(e) {
+        const cfg = R.arenaPlacement,
+          step = cfg.step,
+          points = [{ x: e.x, y: e.y }],
+          queue = [[0, 0]],
+          visited = new Set(['0:0']);
+        for (let i = 0; i < queue.length; i++) {
+          const [x, y] = queue[i],
+            from = { x: e.x + x * step, y: e.y + y * step };
+          for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+            const xx = x + dx, yy = y + dy, key = xx + ':' + yy;
+            if (visited.has(key) || Math.hypot(xx, yy) * step > cfg.searchRadius) continue;
+            visited.add(key);
+            const p = { x: e.x + xx * step, y: e.y + yy * step };
+            if (this.blocked(p.x, p.y, this.zoneId, 15) || !this.clearSegment(from, p, 15)) continue;
+            points.push(p);
+            queue.push([xx, yy]);
+          }
+        }
+        return points;
+      }
+      prepareGroundAttack(e, a, arena = null) {
+        if (!a || a.kind !== 'circle' || a.arenaPatches || a.selfDefense || a.bossHeal ||
+            a.rogueMove || a.cinderMechanic === 'protection' || a.cinderMechanic === 'transfer') return;
+        const cfg = R.arenaPlacement,
+          raw = this.attackPatches(a),
+          connected = arena || this.connectedArenaPoints(e),
+          placed = [];
+        let sequential = false;
+        for (const patch of raw) {
+          let radius = patch.radius, selected = null;
+          const reachable = (p) => connected.some((q) => dist(p, q) <= cfg.step * 1.5 &&
+            this.clearSegment(p, q, 15));
+          const candidates = [patch, ...connected.slice().sort((p, q) => dist(p, patch) - dist(q, patch))],
+            fits = (p, r) => !this.blocked(p.x, p.y, this.zoneId, r + cfg.margin),
+            spaced = (p, r) => placed.every((q) => dist(p, q) >= r + q.radius + cfg.separation);
+          selected = candidates.find((p) => fits(p, radius) && spaced(p, radius) &&
+            (p !== patch || reachable(p)));
+          if (!selected) {
+            // A confined arena uses fully warned sequential beats, never a stacked carpet.
+            sequential = true;
+            for (const scale of [1, 0.85, 0.65, 0.45, 0.25]) {
+              radius = Math.max(15, patch.radius * scale);
+              selected = candidates.find((p) => fits(p, radius) && (p !== patch || reachable(p)));
+              if (selected) break;
+            }
+          }
+          if (!selected) {
+            // A caster physically inside a corrupt/blocked room cannot author a legal warning.
+            // Refuse at commitment rather than display a strike that cannot exist.
+            a.arenaInvalid = true;
+            return;
+          }
+          placed.push({ x: selected.x, y: selected.y, radius });
+        }
+        a.arenaPatches = placed;
+        a.arenaSequential = sequential;
+        a.authoredPatchCount = raw.length;
+        if (placed.length === 1) Object.assign(a, placed[0]);
+      }
+      prepareAttackSequence(e, first, sequence) {
+        const pending = [first, ...sequence].some((a) => a?.kind === 'circle' &&
+            !a.arenaPatches && !a.selfDefense && !a.bossHeal && !a.rogueMove),
+          arena = pending ? this.connectedArenaPoints(e) : null, beats = [];
+        for (const a of [first, ...sequence]) {
+          this.prepareGroundAttack(e, a, arena);
+          if (a?.arenaInvalid) {
+            this.event('attackPlacementFailed', { source: e.id, family: e.family, index: a.index });
+            return false;
+          }
+          if (a?.arenaSequential && a.arenaPatches.length > 1) {
+            for (const p of a.arenaPatches)
+              beats.push({ ...a, ...p, count: 1, arenaPatches: [p],
+                timer: Math.max(0.7, a.timer), total: Math.max(0.7, a.total) });
+          } else beats.push(a);
+        }
+        Object.assign(first, beats.shift());
+        sequence.splice(0, sequence.length, ...beats);
+        return true;
       }
       prepareMineWorksPreview(e) {
         if (e.family !== 'mine' || e.telegraph?.index !== 1) return;

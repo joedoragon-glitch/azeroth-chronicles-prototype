@@ -4,6 +4,26 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const manifest = require('./fixtures/perf-v09-protected.json');
+// Append-only source-development receipts supersede only explicitly listed paths.
+// Historical receipt values below remain immutable and are checked for lineage.
+const workFiles = {};
+for (const batch of manifest.issue312WorkRevisions || []) {
+  assert.equal(batch.canonicalIssue, 312);
+  assert.match(batch.source, /PR #313.*SOURCE ONLY.*NOT TESTED/);
+  for (const [file, hash] of Object.entries(batch.files)) {
+    assert.match(hash, /^[a-f0-9]{64}$/);
+    if (workFiles[file]) assert.equal(batch.previousFiles[file], workFiles[file], file + ' append-only work lineage');
+    else if (batch.previousFiles[file]) {
+      const receipts = Object.values(manifest).filter((v) => v?.files).map((v) => v.files[file]);
+      receipts.push(manifest.authorizedCommunitySnapshotRevision?.untouchedFiles[file]);
+      assert(receipts.includes(batch.previousFiles[file]), file + ' exact pre-work receipt');
+    }
+    workFiles[file] = hash;
+  }
+}
+for (const [file, hash] of Object.entries(workFiles))
+  assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), hash,
+    file + ' exact current PR313 source receipt');
 const revision = manifest.renderingRevision;
 const originalPlaytestRevision = manifest.authorizedPostReleasePlaytestRevision;
 const passiveRevision = manifest.authorizedPassiveConsolidationRevision;
@@ -76,7 +96,7 @@ if (issue312Stage1) {
     'docs/ISSUE_312_CONSOLIDATED_IMPLEMENTATION_LEDGER_20261016.md',
   ].sort(), 'exact nine Stage-1 protected paths');
   for (const [file, hash] of Object.entries(issue312Stage1.files))
-    assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), hash,
+    assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), workFiles[file] || hash,
       file + ' exact Issue #312 Stage 1 authorized receipt');
 }
 const community311 = manifest.authorizedCommunity311IntegrationRevision;
@@ -100,7 +120,7 @@ if (community311) {
     'tests/snapshot-sixth-companion-reveal.test.cjs',
   ].sort());
   for (const [file, expected] of Object.entries(community311.files))
-    assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), issue312Stage1?.files[file] || expected,
+    assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), workFiles[file] || issue312Stage1?.files[file] || expected,
       file + ' exact Community + PR311 or Issue312 receipt');
 }
 const communityRevision = manifest.authorizedCommunitySnapshotRevision;
@@ -134,7 +154,7 @@ if (communityRevision) {
   for (const [file, hash] of Object.entries(communityRevision.previousFiles))
     if (prior[file]) assert.equal(hash, prior[file], file + ' retains the exact final #308 predecessor receipt');
   for (const [file, hash] of Object.entries(communityRevision.untouchedFiles))
-    assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), issue312Stage1?.files[file] || community311?.files[file] || hash, file + ' matches an exact authorized receipt');
+    assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), workFiles[file] || issue312Stage1?.files[file] || community311?.files[file] || hash, file + ' matches an exact authorized receipt');
 }
 const communityRepairs = manifest.authorizedCommunitySourceAuditRepairsRevision;
 if (communityRepairs) {
@@ -152,7 +172,7 @@ if (communityRepairs) {
 const playtestRevision = originalPlaytestRevision && {
   ...originalPlaytestRevision,
   auditSha256: heroRevision?.auditSha256 || timingRevision?.auditSha256 || healingRevision?.auditSha256 || passiveRevision?.auditSha256 || originalPlaytestRevision.auditSha256,
-  files: { ...originalPlaytestRevision.files, ...passiveRevision?.files, ...healingRevision?.files, ...timingRevision?.files, ...heroRevision?.files, ...validationRepairs?.files, ...communityRevision?.files, ...communityRepairs?.files, ...community311?.files, ...issue312Stage1?.files },
+  files: { ...originalPlaytestRevision.files, ...passiveRevision?.files, ...healingRevision?.files, ...timingRevision?.files, ...heroRevision?.files, ...validationRepairs?.files, ...communityRevision?.files, ...communityRepairs?.files, ...community311?.files, ...issue312Stage1?.files, ...workFiles },
 };
 if (playtestRevision) {
   assert.match(playtestRevision.source, /PR #308/);
@@ -174,6 +194,7 @@ if (certificationRevision) {
   for (const [name, value] of Object.entries(manifest))
     if (name !== 'approvedOvernightCertificationRevision' && value?.files)
       for (const file of Object.keys(value.files)) guarded.add(file);
+  for (const file of Object.keys(workFiles)) guarded.add(file);
   assert.deepEqual(Object.keys(certificationRevision.files).sort(), [...guarded].sort());
   for (const [file, receipt] of Object.entries(certificationRevision.provenance)) {
     assert.match(receipt.handoffSha256, /^[a-f0-9]{64}$/);
