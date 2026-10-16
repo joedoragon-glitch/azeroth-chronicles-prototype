@@ -115,6 +115,21 @@
           !classes[s.hero?.class]
         )
           throw Error('Invalid save');
+        const validateName = (value) => {
+          if (
+            value !== undefined &&
+            (typeof value !== 'string' ||
+              !value ||
+              Campaign.normalizeCharacterName(value) !== value)
+          )
+            throw Error('Invalid character name');
+        };
+        validateName(s.hero.customName);
+        validateName(s.hero.regnalName);
+        validateName(s.hero.customWeaponName);
+        validateName(s.hero.customArmorName);
+        if (s.hero.regnalName !== undefined && !s.throneClaimed)
+          throw Error('Dark Lord name before claiming the throne');
         if (s.talentBalanceVersion === undefined) {
           const rank = Array.isArray(s.hero?.talents) ? s.hero.talents[2] || 0 : 0,
             p = talentProfiles[s.hero.class],
@@ -450,6 +465,7 @@
         }
         const petFamilies = new Set();
         for (const u of s.party) {
+          validateName(u.customName);
           if (u.type === 'pet') {
             if (
               !D.bosses.some((b) => b.id === u.petFamily) ||

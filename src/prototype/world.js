@@ -284,7 +284,7 @@
       interiorCoherence(z) {
         const side = this.sideDungeon(z.id),
           room = this.supplyRoom(z.id);
-        if ((!side && !room && !dungeonIds.includes(z.id)) || z.interiorCoherenceVersion === 2)
+        if ((!side && !room && !dungeonIds.includes(z.id)) || z.interiorCoherenceVersion === 3)
           return;
         const previous = this.s.zone;
         this.s.zone = z.id;
@@ -311,10 +311,11 @@
               if (e.hp > 0 && !e.aggro && !e.returning) Object.assign(e, p);
             }
           }
-          // The repeated side-room first post and two Treasury entry posts were
+          // The Crypt/Archive receiving sentry, repeated side-room first post
+          // and two Treasury entry posts were
           // inside 260-unit immediate perception. Shift only those posts; keep
           // guard-to-captain alerts and the full guarded chambers beyond them.
-          if (side || ['supply-highlands', 'supply-crown'].includes(z.id)) {
+          if (side || ['crypt', 'archive', 'supply-highlands', 'supply-crown'].includes(z.id)) {
             const native = z.enemies
                 .filter(
                   (e) =>
@@ -326,7 +327,11 @@
                 )
                 .sort((a, b) => this.idOrder(a, b)),
               e = native[0],
-              post = side ? { x: 260, y: 390 } : R.treasuryGuardFormations[z.id][0];
+              post = side
+                ? { x: 260, y: 390 }
+                : ['crypt', 'archive'].includes(z.id)
+                  ? { x: 350, y: 450 }
+                  : R.treasuryGuardFormations[z.id][0];
             if (e) {
               const point = this.safe(post.x, post.y, z.id);
               e.home = { ...point };
@@ -367,7 +372,7 @@
               }
             }
           }
-          z.interiorCoherenceVersion = 2;
+          z.interiorCoherenceVersion = 3;
         } finally {
           this.s.zone = previous;
         }
@@ -400,7 +405,7 @@
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
           this.sideDungeon(z.id) ||
-          z.environmentCoherenceVersion === 1
+          z.environmentCoherenceVersion === 2
         )
           return;
         const previous = this.s.zone,
@@ -469,7 +474,9 @@
                 if (path.length > 1) z.roads.push(path);
               }
             }
-            if (this.clearSegment(west, east, 25)) z.roads.push([west, east]);
+            // Reserve the real terrain crossing before final street clearance.
+            // A misplaced house must be relocated, not suppress its own road.
+            if (this.clearSegment(west, east, 25, true)) z.roads.push([west, east]);
             z.bridgeApproaches.push({ id: site?.[0] || 'crossing-' + y, west, east });
           }
           const entrances = z.npcs.filter((n) => n.kind === 'dungeon' || n.sideDungeon),
@@ -551,7 +558,7 @@
           }
           if (z.id === 'march') this.marchBankEcology(z);
           // Stable metadata is a migration receipt, not a successful rendered-world review.
-          z.environmentCoherenceVersion = 1;
+          z.environmentCoherenceVersion = 2;
         } finally {
           this.s.zone = previous;
         }
@@ -1074,7 +1081,7 @@
           // stalls, carts, heaps, decorative houses and trees are visual
           // obstacles too. Keep every ID/scene role; move, do not erase.
           const affected = z.props
-            .filter((p) => !p.roadTrace && !p.roadBlocker)
+            .filter((p) => !p.roadTrace)
             .filter((p) => this.distanceToRoad(z, p) < this.roadSetback(p))
             .sort((a, b) => (b.r || 0) - (a.r || 0) || a.id.localeCompare(b.id));
           for (const prop of affected) moveOffRoad(prop, this.roadSetback(prop));

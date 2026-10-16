@@ -74,6 +74,77 @@
     ctx.restore();
   }
 
+  // Paint-only TRUE radiance. The hollow corona sits behind the body; its
+  // transparent centre leaves silhouettes, floors and attack warnings legible.
+  function drawTrueAura(ctx, e, p, height, time, reduced = false) {
+    const phase = reduced ? 0 : time * 0.36,
+      breath = reduced ? 0.5 : 0.5 + 0.5 * Math.sin(time * 1.3),
+      h = Math.max(54, Math.min(130, height)),
+      w = Math.max(34, h * 0.44),
+      cy = p.y - h * 0.42;
+    ctx.save();
+    ctx.translate(p.x, cy);
+    ctx.scale(w, h * 0.68);
+    const glow = ctx.createRadialGradient(0, 0, 0.18, 0, 0, 1.35);
+    glow.addColorStop(0, '#ffe8a600');
+    glow.addColorStop(0.36, '#ffe8a600');
+    glow.addColorStop(0.53, '#f3c66318');
+    glow.addColorStop(0.69, '#ffe3a023');
+    glow.addColorStop(0.83, '#d9993612');
+    glow.addColorStop(1, '#d9993600');
+    ctx.globalAlpha = 0.72 + breath * 0.18;
+    ctx.fillStyle = glow;
+    ctx.fillRect(-1.35, -1.35, 2.7, 2.7);
+    ctx.restore();
+    ctx.save();
+    ctx.lineCap = 'round';
+    const thread = ctx.createLinearGradient(0, p.y + 8, 0, p.y - h * 1.08);
+    thread.addColorStop(0, '#edb85100');
+    thread.addColorStop(0.22, '#edb85138');
+    thread.addColorStop(0.62, '#ffe8a75c');
+    thread.addColorStop(1, '#fff2cf00');
+    ctx.strokeStyle = thread;
+    ctx.lineWidth = 1.1;
+    for (let j = 0; j < 4; j++) {
+      const side = j % 2 ? 1 : -1,
+        sway = Math.sin(phase + j * 1.7) * 5,
+        spread = w * (0.72 + Math.floor(j / 2) * 0.2);
+      ctx.beginPath();
+      ctx.moveTo(p.x + side * spread, p.y + 5);
+      ctx.bezierCurveTo(
+        p.x + side * (spread + 9) + sway,
+        p.y - h * 0.3,
+        p.x + side * (spread - 8) - sway,
+        p.y - h * 0.68,
+        p.x + side * spread * 0.62,
+        p.y - h * (0.89 + j * 0.045),
+      );
+      ctx.stroke();
+    }
+    // Open, feather-light arcs rather than a solid golden landing disc.
+    for (let j = 0; j < 3; j++) {
+      ctx.strokeStyle = j === 1 ? '#fff0bd55' : '#e7b95635';
+      ctx.lineWidth = j === 1 ? 1 : 1.8;
+      const angle = phase + j * 2.1;
+      ctx.beginPath();
+      ctx.ellipse(p.x, p.y + 8, w + 5 + j * 3, 11 + j * 2, 0, angle, angle + 1.35);
+      ctx.stroke();
+    }
+    // A few slow rising motes frame the body, with no random or saved state.
+    for (let j = 0; j < 8; j++) {
+      const life = reduced ? (j + 0.5) / 8 : (time * 0.13 + j * 0.127) % 1,
+        side = j % 2 ? 1 : -1,
+        x = p.x + side * w * (0.75 + Math.sin(j * 2.4 + phase) * 0.15),
+        y = p.y + 2 - life * h * 1.12;
+      ctx.globalAlpha = Math.sin(life * Math.PI) * 0.62;
+      ctx.fillStyle = j % 3 ? '#f5d887' : '#fff2c9';
+      ctx.beginPath();
+      ctx.ellipse(x, y, 0.8, 1.7, side * 0.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
   // Veyrith's real world-coordinate movements deserve readable banking
   // streaks, not fake airborne hitboxes or an invented altitude simulation.
   // Cues are tied exclusively to active, existing flightPath/aerial motion.
@@ -669,19 +740,7 @@
         pulse = 0.5 + 0.5 * Math.sin(t * 3.1 + visualPhase(e));
       ctx.save();
       if (e.form === 'true') {
-        ctx.globalAlpha = 0.16 + pulse * 0.09;
-        ctx.fillStyle = '#f4d376';
-        ctx.beginPath();
-        ctx.ellipse(p.x, p.y + 8, 34 + pulse * 6, 12 + pulse * 2, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.globalAlpha = 0.55;
-        ctx.strokeStyle = '#f8dfa0';
-        ctx.lineWidth = 1.5;
-        for (const r of [30 + pulse * 5, 39 + pulse * 4]) {
-          ctx.beginPath();
-          ctx.ellipse(p.x, p.y + 8, r, r * 0.3, 0, 0, Math.PI * 2);
-          ctx.stroke();
-        }
+        drawTrueAura(ctx, e, p, spriteHeight(e), t, reducedMotion());
       } else {
         ctx.globalAlpha = e.frenzy ? 0.65 : 0.4;
         ctx.strokeStyle = e.frenzy ? '#ef8b63' : '#d8b66f';
@@ -1958,10 +2017,7 @@
         if (e.renderKind === 'building') return e.name || 'Barracks';
         if (e.renderKind === 'node') return 'Dark Lord Tribute';
         if (e.renderKind === 'enemy') return e.name || '';
-        if (e.renderKind === 'ally')
-          return e.type === 'pet'
-            ? game.petDefinition(e)?.name || 'Boss pet'
-            : e.type || e.name || '';
+        if (e.renderKind === 'ally') return game.companionDisplayName(e);
         return '';
       };
       const labelPriority = (e) =>
@@ -2138,9 +2194,7 @@
                     ' · Lv ' +
                     e.level
                 : e.renderKind === 'ally'
-                  ? e.type === 'pet'
-                    ? game.petDefinition(e)?.name || 'Boss pet'
-                    : e.type || e.name
+                  ? game.companionDisplayName(e)
                   : '';
             const slot = labelSlots.get(e);
             if (slot) {
@@ -2422,6 +2476,7 @@
     bodyFacingSide,
     drawAbyssFlightCues,
     drawCrownLoot,
+    drawTrueAura,
     majorOccluder,
     occlusionPairs,
     optimizationClutter,

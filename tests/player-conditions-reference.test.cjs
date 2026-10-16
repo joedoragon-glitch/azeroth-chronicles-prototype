@@ -54,7 +54,7 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
     opened.back();
   }
   opened.back();
-  assert.equal(opened.title, 'Hero skills', 'Back returns to the actual parent');
+  assert.equal(opened.title, 'Skill journal', 'Back returns to the actual parent');
   assert.deepEqual(g.snapshot(), before);
   assert.equal(JSON.stringify(g.effects), effects, 'learning never produces combat events');
 }

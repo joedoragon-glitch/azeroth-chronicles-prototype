@@ -6,6 +6,76 @@
     // Runtime-only broad phase and congestion clocks. Never persist crowd state.
     const crowds = new WeakMap();
     class Navigation {
+      interactionDistance(place) {
+        return Math.min(dist(place, this.hero), dist(place.servicePoint || place, this.hero));
+      }
+      mapDestinations() {
+        const zone = this.zone(),
+          region = this.definition(),
+          hidden = new Set([
+            'supplier',
+            'recruiter',
+            'quests',
+            'teacher',
+            'smith',
+            'alchemist',
+            'cage',
+            'bundle',
+          ]);
+        const places = this.visibleNPCs()
+          .filter((n) => !n.thornFootprint && (this.isDungeon() || !hidden.has(n.kind)))
+          .map((n) =>
+            n.kind === 'rest' && n.id === 'rest' ? { ...n, name: region.town, icon: '🏘️' } : n,
+          );
+        const bases = zone.buildings.map((b) => ({
+          ...b,
+          kind: 'barracks',
+          name: b.name || 'Barracks',
+          icon: b.progress < 4 ? '🏗️' : '🏕️',
+        }));
+        // Thornfang's authored tracking clues stay on the map; never turn his
+        // mobile patrol into an omniscient live destination.
+        const bosses = zone.enemies
+          .filter((e) => e.hp > 0 && e.type === 'boss' && !e.neutral && e.family !== 'thorn')
+          .map((e) => ({
+            ...e,
+            name: e.name || this.boss(e.family)?.name || 'Boss',
+            kind: 'boss',
+            icon: '⚔️',
+          }));
+        return [...places, ...bases, ...bosses]
+          .filter((n) => Number.isFinite(n.x) && Number.isFinite(n.y) && n.name)
+          .sort((a, b) => dist(a, this.hero) - dist(b, this.hero));
+      }
+      navigationTarget(place) {
+        if (!place || !Number.isFinite(place.x) || !Number.isFinite(place.y)) return null;
+        const size = this.zoneSize(),
+          anchor = place.servicePoint || place;
+        for (const [dx, dy] of [
+          [0, 0],
+          [0, 65],
+          [65, 0],
+          [-65, 0],
+          [0, -65],
+          [65, 65],
+          [-65, 65],
+          [65, -65],
+          [-65, -65],
+        ]) {
+          const point = { x: anchor.x + dx, y: anchor.y + dy };
+          if (
+            point.x < 0 ||
+            point.y < 0 ||
+            point.x > size ||
+            point.y > size ||
+            this.blocked(point.x, point.y)
+          )
+            continue;
+          const path = this.route(this.hero, point);
+          if (path.length) return { point, path };
+        }
+        return null;
+      }
       actorRadius(unit) {
         const cfg = R.actorSpacing;
         return unit === this.hero

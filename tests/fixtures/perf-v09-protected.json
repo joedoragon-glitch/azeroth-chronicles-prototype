@@ -1395,6 +1395,123 @@
         "src/prototype/narration.js": "1c9bee95d10e70cda9b6debc4bec8c07a486e3e4dadd3ac2d45c150c9f0c45e3"
       },
       "previousFiles": {}
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt continuation; owner-authorized validation repairs and named Rogue cast UI, validation in progress 2026-10-16",
+      "reason": "Retain historical receipts; exact current bytes for review. No test result is inferred from these hashes.",
+      "files": {
+        ".github/actions/check-game/action.yml": "d4ffab2bd4f7342f51f18c25a8af91d669b002aafb1849bbc3e175628fb66221",
+        ".github/workflows/pages.yml": "b6e0b4098558ebfd11df84fb349dc4babb4e539b2065bd6c669447ca33027702",
+        "docs/DECISIONS.md": "c4e76f5d7118db7c96ad48e28fd8518e81c5686a769b637fd84affd651562164",
+        "docs/GRAPHICS_CANON_SPRITE_PROMPTS.md": "6e7c945f23157a090d0c530440dd006f52a7d1eea55319c5a91db5ff95a73f6c",
+        "docs/PR313_VALIDATION_20261016.md": "2c2d2da01077fbbe165b9dde81de7dcf2008bcae6d8c9f3e4b8652aa6e612d4e",
+        "package-lock.json": "32f99c045eaae30145e75045f751740a51033e9891f11c8b2e0ce8a3d73fbbab",
+        "package.json": "aae3e1e16fd3fcdd297d0869740af98910debff881b05e1f1089c77385ed8429",
+        "src/prototype/app.js": "51f250ffa217302be420df0db3d47f70bd29eec1dceb983a0bbcb5dc37dc0f8a",
+        "src/prototype/build-info.js": "048742e00af31b18c2418aff062258b0e78cb3f1d3c3a72e7ef82d85cc8041df",
+        "src/prototype/combat.js": "d5065174d05e7de1ccf9286273bad64f0cd0139bf19987d9e2f7a3c05050328d",
+        "src/prototype/engine.js": "f0e5896e0b4fe194e32c1a81b3fcfa26b16c9ef55d6528842b1862d0708cd8b7",
+        "src/prototype/menus.js": "2e52cffd4f4d4ad1088599bfa9b05f2011fdc8f22c2eb3889e1d882d189fb89e",
+        "src/prototype/party.js": "c73ba9fc3bd7430e9c19b347ebbac5ac2e109d60471088ca9bdf707b3274ffdc",
+        "src/prototype/progression.js": "d8a03fe892b3e92608f7c23f35608709328a4719577a04d4b2a5c15857566d63",
+        "src/prototype/renderer.js": "ccb47c898b88085fc5a6c429895dd2692ebe045933503a0e06987549d697cf17",
+        "src/prototype/save.js": "fc1cc336265638976258a50614b951642ee268e1ece115723768f127aa242b5d",
+        "src/prototype/sprites.js": "42e164528b7b893a91dc90a384c0d488973f3f500e2ce8e4da9a80c252b49c17",
+        "src/prototype/visuals.js": "c704124e2ef89e66197334dd9edf1d2e30460fa984845ccb8c5d0aa1ad0f5f50",
+        "src/prototype/world.js": "589716f1dba015710a97847100638a65707d47c6db1b414706b62e8115a32a1f",
+        "styles/prototype.css": "792fccde59f6898b46db74e19f235bd69da91f3ad657e4807fea02509c436e5b",
+        "sw.js": "827093fb1bc81c7769aa79406528f6ca3fba22514bed303ea02aa224479d5880",
+        "tests/player-conditions-reference.test.cjs": "86652e71c4a5fbc85bbb87e32b1fd77dca8bb416db17070289fc8141243856fc",
+        "tests/prototype-browser.test.cjs": "b193246ed4d01aec230c6fe98e7c68e8e6c8cd7a3d3c8119a81e5b84fb52567b",
+        "tests/prototype-ui.test.cjs": "776f38f247ae1cf62493ecebc49a1c41a5e0d469162a057e082dd58d8cd56dad",
+        "tests/pt312-world-integration.test.cjs": "799ce7b46d945c91543ace3997b1d23f6b5e37c92019b35e5011f877f18a8875",
+        "tools/sprites/design-handoffs/pt312-boss-citadel.json": "fdc5864d1bfd073d62a4de90292e4e035559f84a050b30fb2943926efc9cac7c",
+        "tools/sprites/design-handoffs/pt312-specialist-archive.json": "4849dffd3b443eca6b5d9c21bd97615e687503769f909c23e996711720f08118",
+        "tools/sprites/design-handoffs/pt312-specialist-cindermaw.json": "5535b176d0bb34e8ff95e2e4d140870b96c498f4625dae3a57b3f552e3f5393f",
+        "tools/sprites/design-handoffs/pt312-specialist-mine.json": "b3b63a8f42fa44b0edfc70dec4b61e0b4910ba3369f6a88485ffa5321fa177e3",
+        "tools/sprites/design-handoffs/pt312-specialist-mire.json": "0824332603d0556b4fff4010857a53171e185e8ac01049884610e02729aaacda",
+        "tools/sprites/design-handoffs/pt312-specialist-thorn.json": "348ea82f33b4967026ab686a7f8923b9f225e1adc0d4cfd778771e0a52b352b7",
+        "tools/sprites/design-handoffs/pt312-specialist-warlord.json": "ba60c822fd2ce4b9384ec11668e144342ada22f2a466f0f049f2f040ede4dbcf",
+        "tests/boss-retreat-recovery.test.cjs": "7dfe12b1702e836cac64721cf753300f2c0ebd1e2d337324dd1d335e2fe257dc",
+        "tests/personalization-browser.test.cjs": "79a45bcc80f06d32b532e0dd9db9dc96bb80ff556e2065dc7e554d4fee523c31",
+        "tests/personalization.test.cjs": "83852349c9cf9ce695118535ab5fa5c0110993bb5b74ba2ffaf08d663cfda0b6",
+        "tests/true-aura.test.cjs": "b9bd98a7099d3dd9a6ee22127477e531b24fe2d2c3a36abe63a45fd8cdb83c7e",
+        "tools/sprites/references/2026-10-16-character-consistency/archive.png": "a35a764f5e7f252b2426cda07d96dfb5a1cf5bec4dfb24b3585ad36d6b9700e3",
+        "tools/sprites/references/2026-10-16-character-consistency/cindermaw.png": "5875a51874b7488b496b8a7e3468ba1d13159f89df98c6edb130189e07eda259",
+        "tools/sprites/references/2026-10-16-character-consistency/mine.png": "9b4470bea5daa1e4ad7fdd2d9a859c49a3b4565735539500ad0f2d1e47943d05",
+        "tools/sprites/references/2026-10-16-character-consistency/mire.png": "37def14b9a1f15c24b7752460d0c94b5a3ddb04f5ec8821bb3ef0c48bb03a995",
+        "tools/sprites/references/2026-10-16-character-consistency/thorn.png": "769acff0f5271fe3c62f2f15873a4fa36f72500dfead535437e59c4ea584f06e",
+        "tools/sprites/references/2026-10-16-character-consistency/veyra.png": "b6f9cc0ea631303689f576dec12fac50cc8a2fa5e52e0841565cec97fc0d01b3",
+        "tools/sprites/references/2026-10-16-character-consistency/warlord.png": "990d1211e7f2814b66641f0c456659571988ff27ac625b295fb1d9e8e76bbb39"
+      },
+      "previousFiles": {
+        "docs/PR313_VALIDATION_20261016.md": "2d06c124add178f26799cae868a22bb35de1bd76cd807d0637dba6998d97cdf7",
+        "package-lock.json": "15f0868774cdd386a5c27e36b68ecc7e448e83ca8a1145c1d8e304d5c828da99",
+        "package.json": "ef1be419a1c033c5a1c1fab984fc6f26669b3e25e5d276a86e8dd6b16aa44982",
+        "src/prototype/app.js": "2e87874df6c2627831d14f2c641d9af8e3f99df738279552ff84275e622ba69f",
+        "src/prototype/build-info.js": "5a51ee4cd786c36642d32648897f4a046878caec445945a875864c4f76254933",
+        "src/prototype/combat.js": "d3aaacd830f1e59cae23fa3a301f4ff7e3806e1c43361ab6a81e008084ef2f6d",
+        "src/prototype/engine.js": "7dd2816b89f092cc99e092f9f3117417f3119401984f55c042ecb83ad2233e65",
+        "src/prototype/party.js": "024f2a6c57290b15659e45f63a6fb58b8ac037bd4f253503fc36d91d110c3e06",
+        "src/prototype/renderer.js": "1a693b97966faf1edd4c2052a459b0e1216259f153d810135d1ab32d3e93f7cd",
+        "src/prototype/visuals.js": "7003e859e76e7327c856ac81d9eb66313fa51c18c81410a709f45721e1c5ffa3",
+        "src/prototype/world.js": "e90464ec9f34adf1eff2ca7aa53c30e2dfe02cfdcd8ce274503140add1497e1f",
+        "sw.js": "45acdb712a96291aa681de707dbf87dd24a1715fe3236006c497f68fc4861820",
+        "tests/pt312-world-integration.test.cjs": "ecb70b04afa56324ce02642b7c9c10bddbcfda3f0a71165d4f035cdc212c879b",
+        "tools/sprites/design-handoffs/pt312-boss-citadel.json": "bb0fbdef14ad3b5e6cdbbff6191e3441af959b009930b87a11da0936381a4f52",
+        "tools/sprites/design-handoffs/pt312-specialist-archive.json": "0d59e009fc51158abd3066117516c0498f376eacfb491ece948a438bf3945546",
+        "tools/sprites/design-handoffs/pt312-specialist-cindermaw.json": "e5dc8c84286f77d09e353693c0da2b64f4c44298fe7028c820d7d32df27876cd",
+        "tools/sprites/design-handoffs/pt312-specialist-mine.json": "7c382c131b8f8d575910fe0dcafac2481b66cd5b585657fed213571bc0333194",
+        "tools/sprites/design-handoffs/pt312-specialist-mire.json": "db317da8d8c30cd790f460f0e25cfe4f7d36fcce4f1da25083602ca4fa8d391e",
+        "tools/sprites/design-handoffs/pt312-specialist-thorn.json": "5f0bce545a585ece06dfe177e0f99caab7fe4d17fcbcec87ab6e99e18d66468f",
+        "tools/sprites/design-handoffs/pt312-specialist-warlord.json": "a6c08a7c3483feadc3f8d80ffda398267d1c2e66fec0dca5689ea7f996b95fd7"
+      }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt continuation; owner-authorized validation repairs and named Rogue cast UI, validation in progress 2026-10-16",
+      "reason": "Retain historical receipts; exact current bytes for review. No test result is inferred from these hashes.",
+      "files": {
+        "docs/PR313_VALIDATION_20261016.md": "0ae89d49e73d487c6be246d72a51b1c620f04c02860e0457605e05946a16fefd",
+        "src/prototype/app.js": "ac82782479b0c6c33ef992d942993d9e8dc310dc896e6c9960a99be3b8ebd98d",
+        "src/prototype/navigation.js": "75707729b40835ac88b1022108f1a1356a45550fa40def6eaa18de42e4a56a64",
+        "tests/helpers/maps-browser.cjs": "4b605b0233f4738f1f0c32f9df0be4a1119d45c5cee1dcd847aeb09862416c03",
+        "tests/helpers/true-aura-browser.cjs": "1603596990cdef31b653b9131e9a3c57120cdf1faeff983515f4d79c170e5eb7",
+        "tests/map-navigation.test.cjs": "9507bbc967485b59c62c48145f7bf73b9e3ac85812b70238a173a77f42af69c6",
+        "tests/personalization-browser.test.cjs": "ea019ba2a5adcd14cadee7ada14141905de32f45d062fc830a9042c1c8f3e1f2"
+      },
+      "previousFiles": {
+        "docs/PR313_VALIDATION_20261016.md": "2c2d2da01077fbbe165b9dde81de7dcf2008bcae6d8c9f3e4b8652aa6e612d4e",
+        "src/prototype/app.js": "51f250ffa217302be420df0db3d47f70bd29eec1dceb983a0bbcb5dc37dc0f8a",
+        "src/prototype/navigation.js": "31c8f708286bbea4e54137bafe0fddb88009492a584b96f614691e66326166db",
+        "tests/personalization-browser.test.cjs": "79a45bcc80f06d32b532e0dd9db9dc96bb80ff556e2065dc7e554d4fee523c31"
+      }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt continuation; owner-authorized validation repairs and named Rogue cast UI, validation in progress 2026-10-16",
+      "reason": "Retain historical receipts; exact current bytes for review. No test result is inferred from these hashes.",
+      "files": {
+        "docs/PR313_VALIDATION_20261016.md": "d7b3693b7b9f71ceb3825aa317d558b2979f8ed18be1d00fc4c9bf7178d27bb9",
+        "styles/prototype.css": "022e6ba9dd6f14348abf99a1299fe9c02b59cd3e95e84e8886a1065d1c42e910",
+        "tests/helpers/notice-browser.cjs": "2e3d817959c7aafb7ffae65daebede18f5d38554047e513a06ab4a8b527434c8"
+      },
+      "previousFiles": {
+        "docs/PR313_VALIDATION_20261016.md": "0ae89d49e73d487c6be246d72a51b1c620f04c02860e0457605e05946a16fefd",
+        "styles/prototype.css": "792fccde59f6898b46db74e19f235bd69da91f3ad657e4807fea02509c436e5b"
+      }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt continuation; owner-authorized validation repairs and named Rogue cast UI, validation in progress 2026-10-16",
+      "reason": "Retain historical receipts; exact current bytes for review. No test result is inferred from these hashes.",
+      "files": {
+        "src/prototype/renderer.js": "b1be9a9db7b9c4a929f377d3dbd761d7c3ab4bce6f9bf5ed5599c7a192b8b375"
+      },
+      "previousFiles": {
+        "src/prototype/renderer.js": "ccb47c898b88085fc5a6c429895dd2692ebe045933503a0e06987549d697cf17"
+      }
     }
   ]
 }

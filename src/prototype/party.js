@@ -3,8 +3,47 @@
   'use strict';
   function install(Campaign, { D, R }) {
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+    const normalizeCharacterName = (value) => {
+      if (typeof value !== 'string') return null;
+      const name = value.normalize('NFC').trim().replace(/\s+/gu, ' ');
+      return Array.from(name).length >= 1 &&
+        Array.from(name).length <= 24 &&
+        /^[\p{L}\p{N}][\p{L}\p{M}\p{N} .'’\-]*$/u.test(name)
+        ? name
+        : null;
+    };
+    Campaign.normalizeCharacterName = normalizeCharacterName;
 
     class Party {
+      heroDisplayName() {
+        return (
+          (this.s.throneClaimed && this.hero.regnalName) || this.hero.customName || this.hero.class
+        );
+      }
+      nameHero(value, regnal = false) {
+        const name = normalizeCharacterName(value),
+          key = regnal ? 'regnalName' : 'customName';
+        if (!name || this.hero[key] || (regnal && !this.s.throneClaimed)) return false;
+        this.hero[key] = name;
+        return true;
+      }
+      nameCompanion(id, value) {
+        const unit = this.s.party.find((u) => u.id === id),
+          name = normalizeCharacterName(value);
+        if (!unit || !name || unit.customName) return false;
+        unit.customName = name;
+        return true;
+      }
+      companionDisplayName(unit) {
+        if (unit.customName) return unit.customName;
+        if (!['soldier', 'archer', 'pet'].includes(unit.type))
+          return unit.name || unit.type || 'Companion';
+        return unit.type === 'pet'
+          ? this.petDefinition(unit)?.name || 'Boss pet'
+          : unit.type === 'archer'
+            ? 'Ranger'
+            : 'Soldier';
+      }
       rangerRallyActive(u) {
         return (
           !!u &&

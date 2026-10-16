@@ -234,6 +234,8 @@
     storyNavigate,
     chooseNewRun: (mode) => chooseClass(mode),
     status,
+    requestName,
+    openCharacter: characterMenu,
   });
 
   window.Prototype = {
@@ -532,6 +534,101 @@
     document.body.classList.remove('menu-open');
     clearInput();
   }
+  function appendNameField(initialValue = '') {
+    const label = document.createElement('label'),
+      field = document.createElement('input');
+    label.className = 'character-name-field';
+    label.textContent = 'Optional name · up to 24 characters';
+    field.id = 'character-name';
+    field.type = 'text';
+    field.maxLength = 24;
+    field.autocomplete = 'off';
+    field.value = initialValue;
+    field.placeholder = 'Leave blank to decide later';
+    label.append(field);
+    $('modal-actions').prepend(label);
+    return field;
+  }
+  function requestName({
+    title,
+    description,
+    onSubmit,
+    onSkip,
+    onDone,
+    initialValue = '',
+    permanent = true,
+  }) {
+    let field;
+    const submit = () => {
+      if (!field.value.trim()) return onSkip();
+      const name = Campaign.normalizeCharacterName(field.value);
+      if (!name) {
+        $('modal-description').textContent =
+          'Use 1–24 letters, numbers, spaces, apostrophes, periods or hyphens.';
+        field.focus();
+        return;
+      }
+      const edit = () =>
+        requestName({
+          title,
+          description,
+          onSubmit,
+          onSkip,
+          onDone,
+          permanent,
+          initialValue: name,
+        });
+      openMenu(
+        'Keep this name?',
+        name +
+          (permanent
+            ? '\n\nThis name can be chosen only once.'
+            : '\n\nThis changes only the equipment’s name.'),
+        [
+          action('Confirm · ' + name, () => {
+            if (!onSubmit(name)) return onDone();
+            save();
+            updateHUD();
+            onDone();
+          }),
+          action('Edit name', edit),
+          action('Decide later', onSkip),
+        ],
+        edit,
+      );
+    };
+    openMenu(
+      title,
+      description,
+      [action('Continue', submit), action('Skip for now', onSkip)],
+      onSkip,
+    );
+    field = appendNameField(initialValue);
+    field.onkeydown = (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
+        submit();
+      }
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        event.stopPropagation();
+        onSkip();
+      }
+    };
+    field.focus({ preventScroll: true });
+  }
+  function nameHeroMenu(regnal = false, back = characterMenu) {
+    requestName({
+      title: regnal ? 'Choose your Dark Lord name' : 'Name your hero',
+      description: regnal
+        ? 'The crown is yours. Take a new name for your reign, or decide later from Character.'
+        : 'Choose your hero’s permanent name, or decide later from Character.',
+      onSubmit: (name) => game.nameHero(name, regnal),
+      onSkip: back,
+      onDone: back,
+    });
+  }
   // A touch outside the dialog dismisses it and cannot activate the world or
   // a HUD control beneath it. Intro, successor and game-over choices are mandatory.
   let outsidePointerId = null;
@@ -624,10 +721,11 @@
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
-  function start(mode, heroClass, succession) {
+  function start(mode, heroClass, succession, heroName = null) {
     if (mode === 'developer' && !developerEnabled) return;
     if (mode === 'nightmare' && !profile.nightmareUnlocked) return;
     game = new Campaign(mode, heroClass, Math.random, { succession });
+    if (heroName) game.nameHero(heroName);
     started = true;
     if (typeof Sprint !== 'undefined') Sprint.reset();
     paused = false;
@@ -659,13 +757,20 @@
         action(
           c.icon + ' ' + id,
           () => {
+            const rawName = $('character-name')?.value || '',
+              heroName = rawName.trim() ? Campaign.normalizeCharacterName(rawName) : null;
+            if (rawName.trim() && !heroName) {
+              $('modal-description').textContent =
+                'Use 1–24 letters, numbers, spaces, apostrophes, periods or hyphens.';
+              return;
+            }
             const exists = persistence.exists(mode);
             if (
               exists &&
               !confirm('Replace the existing ' + mode + ' run? Export it first to keep it.')
             )
               return;
-            start(mode, id, succession);
+            start(mode, id, succession, heroName);
           },
           id === 'paladin'
             ? 'Melee, healing and brief immunity'
@@ -676,6 +781,7 @@
       ),
       () => chooseClass(mode),
     );
+    appendNameField();
   }
   function awakeningChecklist() {
     return Campaign.dungeonIds.map((id) => {
@@ -732,7 +838,8 @@
     const h = game.hero;
     openMenu(
       'Character',
-      h.class +
+      (h.customName || h.regnalName ? game.heroDisplayName() + ' · ' : '') +
+        h.class +
         ' · Level ' +
         h.level +
         '\nXP ' +
@@ -741,7 +848,19 @@
         game.xpRequired(h.level) +
         '\nHero progression only. Troops, resources and construction are managed at town Captains or your barracks.',
       [
-        action('Hero skills', () => skillBook(characterMenu)),
+        ...(!h.customName
+          ? [action('Name your hero', () => nameHeroMenu(false), 'Optional · choose once')]
+          : []),
+        ...(game.s.throneClaimed && !h.regnalName
+          ? [
+              action(
+                'Choose your Dark Lord name',
+                () => nameHeroMenu(true),
+                'A separate permanent name for your reign',
+              ),
+            ]
+          : []),
+        action('Skill journal', () => skillBook(characterMenu)),
         action('Talents', () => talents(characterMenu)),
       ],
       openMain,
@@ -919,7 +1038,7 @@
       action('Map and travel routes', showMap),
       action('Quest journal', () => quests(false)),
       action('Inventory and support', inventory),
-      action('Hero skills', () => skillBook(openMain), 'Tap / charged effects and cooldowns'),
+      action('Skill journal', () => skillBook(openMain), 'Tap / charged effects and cooldowns'),
       action('Talents', () => talents(openMain)),
       ...(canBuild
         ? [
@@ -984,8 +1103,9 @@
       { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger' }[game.hero.class] || 'Hero';
     const credits =
       'THE CROWN\n\n' +
-      'The ' +
-      crownedClass +
+      (game.hero.regnalName || game.hero.customName
+        ? game.heroDisplayName()
+        : 'The ' + crownedClass) +
       ' takes the throne.\n\n' +
       'THE FIVE REGIONS\n\n' +
       'Greenwood · Flooded Marches\nIronroot · Ashen Frontier · Dark Crown\n\n' +
@@ -1081,12 +1201,8 @@
       ...game.visibleResourceNodes(),
       ...game.zone().buildings.map((b) => ({ ...b, kind: 'barracks', name: b.name || 'Barracks' })),
     ]
-      .filter((n) => Math.hypot(n.x - game.hero.x, n.y - game.hero.y) < 115)
-      .sort(
-        (a, b) =>
-          Math.hypot(a.x - game.hero.x, a.y - game.hero.y) -
-          Math.hypot(b.x - game.hero.x, b.y - game.hero.y),
-      )[0];
+      .filter((n) => game.interactionDistance(n) < 115)
+      .sort((a, b) => game.interactionDistance(a) - game.interactionDistance(b))[0];
   }
   function appointmentMenu(n, group = null) {
     if (
@@ -1197,6 +1313,7 @@
       }
       save();
       updateHUD();
+      if (success && n.kind === 'throne' && !game.hero.regnalName) nameHeroMenu(true, closeMenu);
       return;
     }
     if (n.kind === 'appointment') appointmentMenu(n);
@@ -1293,34 +1410,7 @@
       status('Destination unavailable.');
       return;
     }
-    const size = game.zoneSize();
-    const offsets = [
-      [0, 0],
-      [0, 65],
-      [65, 0],
-      [-65, 0],
-      [0, -65],
-      [65, 65],
-      [-65, 65],
-      [65, -65],
-      [-65, -65],
-    ];
-    let choice = null;
-    for (const [dx, dy] of offsets) {
-      const target = { x: destination.x + dx, y: destination.y + dy };
-      if (
-        target.x < 0 ||
-        target.y < 0 ||
-        target.x > size ||
-        target.y > size ||
-        game.blocked(target.x, target.y)
-      )
-        continue;
-      if (game.route(game.hero, target).length) {
-        choice = target;
-        break;
-      }
-    }
+    const choice = game.navigationTarget(destination)?.point;
     if (!choice) {
       status('No walkable path. Move closer and try again.');
       return;
@@ -1338,45 +1428,7 @@
     const room = game.supplyRoom();
     const side = game.sideDungeon();
     const region = game.definition();
-    const hiddenServices = new Set([
-      'supplier',
-      'recruiter',
-      'quests',
-      'teacher',
-      'smith',
-      'alchemist',
-      'cage',
-      'bundle',
-    ]);
-    const places = game
-      .visibleNPCs()
-      .filter((n) => !n.thornFootprint && (game.isDungeon() || !hiddenServices.has(n.kind)))
-      .map((n) =>
-        n.kind === 'rest' && n.id === 'rest'
-          ? { ...n, name: region.town, icon: '🏘️' }
-          : n,
-      );
-    const bases = zone.buildings.map((b) => ({
-      ...b,
-      kind: 'barracks',
-      name: b.name || 'Barracks',
-      icon: b.progress < 4 ? '🏗️' : '🏕️',
-    }));
-    const bosses = zone.enemies
-      .filter((e) => e.hp > 0 && e.type === 'boss' && !e.neutral && e.family !== 'thorn')
-      .map((e) => ({
-        ...e,
-        name: e.name || game.boss(e.family)?.name || 'Boss',
-        kind: 'boss',
-        icon: '⚔️',
-      }));
-    const destinations = [...places, ...bases, ...bosses]
-      .filter((n) => Number.isFinite(n.x) && Number.isFinite(n.y) && n.name)
-      .sort(
-        (a, b) =>
-          Math.hypot(a.x - game.hero.x, a.y - game.hero.y) -
-          Math.hypot(b.x - game.hero.x, b.y - game.hero.y),
-      );
+    const destinations = game.mapDestinations();
 
     let selected = null;
     let route = null;
@@ -1402,7 +1454,7 @@
         true,
       ),
       ...destinations.map((place) =>
-        action((place.icon || '•') + ' ' + place.name, () => choose(place)),
+        action((place.icon || '•') + ' ' + place.name, () => choose(place), place.kind === 'transport' ? 'Walk to the travel service; choose your journey there.' : place.kind === 'dungeon' || place.sideDungeon ? 'Walk to the entrance, then interact to enter.' : ''),
       ),
     ];
     openMenu((room?.name || side?.name || region.name) + ' map', '', choices, back);
@@ -1420,31 +1472,7 @@
     const sy = (y) => (y / size) * map.height;
 
     function findRoute(place) {
-      const offsets = [
-        [0, 0],
-        [0, 70],
-        [70, 0],
-        [0, -70],
-        [-70, 0],
-        [70, 70],
-        [-70, 70],
-        [70, -70],
-        [-70, -70],
-      ];
-      for (const [dx, dy] of offsets) {
-        const point = { x: place.x + dx, y: place.y + dy };
-        if (
-          point.x < 0 ||
-          point.y < 0 ||
-          point.x > size ||
-          point.y > size ||
-          game.blocked(point.x, point.y)
-        )
-          continue;
-        const path = game.route(game.hero, point);
-        if (path.length) return { point, path };
-      }
-      return null;
+      return game.navigationTarget(place);
     }
 
     function drawMap() {
@@ -1466,10 +1494,16 @@
       }
       for (let x = 0; x < size; x += 60)
         for (let y = 0; y < size; y += 60)
-          if (game.blocked(x, y, game.zoneId, 0)) {
+          if (game.blocked(x, y, game.zoneId, 0, true)) {
             ctx.fillStyle = game.isDungeon() ? '#78807d' : '#355d72';
             ctx.fillRect(sx(x), sy(y), sx(60) + 1, sy(60) + 1);
           }
+      ctx.fillStyle = game.isDungeon() ? '#59615d' : '#77715a';
+      for (const prop of zone.props.filter(p => !p.decorative && p.r > 0)) {
+        ctx.beginPath();
+        ctx.ellipse(sx(prop.x), sy(prop.y), Math.max(1,sx(prop.r)), Math.max(1,sy(prop.r)), 0, 0, Math.PI*2);
+        ctx.fill();
+      }
       ctx.strokeStyle = '#d9c898';
       ctx.lineWidth = 2.5;
       for (const road of zone.roads || []) {
@@ -2667,7 +2701,7 @@
       '<div class="hero-title"><span>' +
       Campaign.classes[h.class].icon +
       ' ' +
-      h.class +
+      game.heroDisplayName() +
       '</span><small>LEVEL ' +
       h.level +
       '</small></div><div class="resource-line health"><span>HP ' +

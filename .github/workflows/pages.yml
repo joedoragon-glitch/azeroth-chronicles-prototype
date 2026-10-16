@@ -150,7 +150,9 @@ jobs:
         if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         env:
           BROWSER_ENGINE: webkit
-        run: node tests/community-snapshot-browser.test.cjs
+        run: |
+          node tests/personalization-browser.test.cjs
+          node tests/community-snapshot-browser.test.cjs
       - name: Audit integrated rogue warnings and effects in WebKit
         id: webkit_rogue
         continue-on-error: true

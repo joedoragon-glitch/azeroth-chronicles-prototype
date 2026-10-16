@@ -3921,6 +3921,109 @@
         style.cape,
       );
       humanoid(style.cloth, skin, 1);
+      // Joel's named women wear regional kirtles/gowns, with their own work layers.
+      // Both captive and rescued scenes share this specialist painter.
+      const women = {
+        thorn: { inset: '#ddd3b4', hem: 17 }, // Mira: green village kirtle.
+        mire: { inset: '#b8d1c5', hem: 19 }, // Sela: hooded teal travelling gown.
+        archive: { inset: '#e0d7bd', hem: 18 }, // Neri: blue gown and linen apron.
+        mine: { inset: '#b7b4a1', hem: 17 }, // Dara: wool work dress beneath leather.
+        warlord: { inset: '#c9a58e', hem: 18 }, // Lyss: red overdress with armored shoulders.
+        cindermaw: { inset: '#cdb78d', hem: 19 }, // Vera: warm work gown beneath her smith's apron.
+      }[e.family];
+      if (women) {
+        const hem = women.hem;
+        ctx.fillStyle = style.cloth;
+        ctx.strokeStyle = ink;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(-9, -16);
+        ctx.quadraticCurveTo(-8, -6, -10, -1);
+        ctx.bezierCurveTo(-12, 4, -hem + 2, 8, -hem, 13);
+        ctx.quadraticCurveTo(0, 18, hem, 13);
+        ctx.bezierCurveTo(hem - 2, 8, 12, 4, 10, -1);
+        ctx.quadraticCurveTo(8, -6, 9, -16);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        softPoly(
+          [
+            [-4, -3],
+            [-10, 13],
+            [0, 15],
+            [10, 13],
+            [4, -3],
+          ],
+          women.inset,
+          1.8,
+        );
+        line(
+          [
+            [-8, -6],
+            [8, -6],
+          ],
+          '#69543e',
+          2.4,
+        );
+        oval(0, -6, 2, 2, style.trim);
+        for (const side of [-1, 1]) {
+          line(
+            [
+              [side * 10, -15],
+              [side * 15, -4],
+            ],
+            style.cloth,
+            6,
+          );
+          line(
+            [
+              [side * 12, -12],
+              [side * 15, -6],
+            ],
+            women.inset,
+            1.4,
+          );
+          line(
+            [
+              [side * 10, 4],
+              [side * 13, 11],
+            ],
+            style.cape,
+            1.2,
+          );
+        }
+        line(
+          [
+            [-hem + 2, 12],
+            [0, 15],
+            [hem - 2, 12],
+          ],
+          style.trim,
+          1.1,
+        );
+        if (e.family === 'archive') {
+          softPoly(
+            [
+              [-6, -14],
+              [6, -14],
+              [5, -4],
+              [10, 10],
+              [-10, 10],
+              [-5, -4],
+            ],
+            '#e0d7bd',
+            1.4,
+          );
+          line(
+            [
+              [-7, -3],
+              [7, -3],
+            ],
+            '#8a8066',
+            1.1,
+          );
+        }
+      }
       // Each service has its own headgear and a large, readable hand-held tool.
       switch (e.family) {
         case 'thorn':
@@ -4568,6 +4671,51 @@
             2,
           );
           break;
+      }
+      if (women) {
+        // Hair is dressed for work: tied braids and fitted coifs, not loose forge hazards.
+        const pale = ['archive', 'mine', 'cindermaw'].includes(e.family);
+        if (pale) {
+          softPoly(
+            [
+              [-11, -34],
+              [-9, -43],
+              [-2, -47],
+              [8, -45],
+              [12, -37],
+              [8, -34],
+              [5, -40],
+              [-5, -40],
+              [-8, -33],
+            ],
+            e.family === 'mine' ? '#b8bcae' : '#e0d7bc',
+            2,
+          );
+          line(
+            [
+              [-7, -41],
+              [5, -43],
+              [9, -38],
+            ],
+            style.trim,
+            1.2,
+          );
+        }
+        const side = e.family === 'warlord' ? -1 : 1;
+        for (const [y, width] of [
+          [-29, 3],
+          [-24, 3],
+          [-19, 2.5],
+        ])
+          oval(side * 9, y, width, 3.2, style.hair);
+        line(
+          [
+            [side * 7, -17],
+            [side * 11, -17],
+          ],
+          style.trim,
+          1.8,
+        );
       }
       eye(-4, -28, '#433e34');
       eye(3, -28, '#433e34');
@@ -16042,7 +16190,115 @@
           break;
         case 'citadel':
           humanoid('#697c82', steel, 1.45);
-          rect(-12, -50, 24, 25, '#8a9c9e');
+          // Marshal Veyra: an adult woman in imposing, carefully fitted plate.
+          // Her open helmet and pinned braid keep her identity visible at native size.
+          softPoly(
+            [
+              [-13, -48],
+              [-8, -53],
+              [8, -53],
+              [13, -48],
+              [12, -27],
+              [7, -23],
+              [-7, -23],
+              [-12, -27],
+            ],
+            '#8a9c9e',
+            2,
+          );
+          oval(0, -36, 8.5, 10.5, '#d5ad94');
+          softPoly(
+            [
+              [-8, -45],
+              [0, -49],
+              [9, -45],
+              [8, -40],
+              [3, -43],
+              [-7, -40],
+            ],
+            '#e0d4bc',
+            2,
+          );
+          for (const [x, y] of [
+            [11, -34],
+            [12, -29],
+            [12, -24],
+            [11, -19],
+          ])
+            oval(x, y, 3, 3.4, '#d1c2a6');
+          line(
+            [
+              [9, -18],
+              [13, -18],
+            ],
+            gold,
+            1.8,
+          );
+          line(
+            [
+              [-5, -37],
+              [-2, -37],
+            ],
+            '#354347',
+            1.5,
+          );
+          line(
+            [
+              [2, -37],
+              [5, -37],
+            ],
+            '#354347',
+            1.5,
+          );
+          line(
+            [
+              [-2, -30],
+              [2, -30],
+            ],
+            '#956b62',
+            1.2,
+          );
+          softPoly(
+            [
+              [-12, -4],
+              [-20, 12],
+              [0, 17],
+              [20, 12],
+              [12, -4],
+            ],
+            '#435e69',
+            2.5,
+          );
+          for (const side of [-1, 1]) {
+            softPoly(
+              [
+                [side * 10, -5],
+                [side * 16, -1],
+                [side * 19, 10],
+                [side * 11, 12],
+                [side * 7, 2],
+              ],
+              '#8b9fa1',
+              1.4,
+            );
+            line(
+              [
+                [side * 12, 0],
+                [side * 15, 9],
+              ],
+              '#c6cbc0',
+              1.1,
+            );
+          }
+          line(
+            [
+              [-11, -6],
+              [0, -4],
+              [11, -6],
+            ],
+            gold,
+            2,
+          );
           poly(
             [
               [-16, -49],
@@ -16055,7 +16311,15 @@
             ],
             gold,
           );
-          rect(-8, -39, 16, 3, '#f1c580');
+          line(
+            [
+              [-12, -46],
+              [0, -49],
+              [12, -46],
+            ],
+            '#f1c580',
+            2.2,
+          );
           shield(-24, -1, '#526970');
           line(
             [
@@ -16918,33 +17182,20 @@
       oval(0, -56, 5, 5, '#ead6a0');
     }
     if (e.form === 'true') {
-      ctx.save();
-      ctx.globalAlpha = 0.48;
-      ctx.strokeStyle = e.type === 'boss' ? '#fff0a6' : '#e5c876';
-      ctx.lineWidth = e.type === 'boss' ? 3 : 2;
-      for (const r of e.type === 'boss' ? [30, 40, 50] : [23, 30]) {
-        ctx.beginPath();
-        ctx.ellipse(0, 11, r, r * 0.28, 0, 0, Math.PI * 2);
-        ctx.stroke();
+      // Boss radiance is owned by renderer.entityAura, behind the body. Keep
+      // the authored gilded crest here, without a second opaque gold wash.
+      if (e.type !== 'boss') {
+        ctx.save();
+        ctx.globalAlpha = 0.32;
+        ctx.strokeStyle = '#e5c876';
+        ctx.lineWidth = 1.5;
+        for (const r of [23, 30]) {
+          ctx.beginPath();
+          ctx.ellipse(0, 11, r, r * 0.28, 0, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        ctx.restore();
       }
-      if (e.type === 'boss') {
-        ctx.globalAlpha = 0.18;
-        ctx.fillStyle = '#f1c75e';
-        ctx.beginPath();
-        ctx.ellipse(0, -11, 34, 52, 0, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.restore();
-      line(
-        [
-          [-19, 18],
-          [-8, 23],
-          [9, 23],
-          [21, 17],
-        ],
-        '#e2c36f',
-        e.type === 'boss' ? 3 : 2,
-      );
       for (const x of [-17, 17])
         poly(
           [

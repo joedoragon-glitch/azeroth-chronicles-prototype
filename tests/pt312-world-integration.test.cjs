@@ -7,7 +7,7 @@ for (const region of C.data.regions) {
   const g = new C('normal', 'paladin', () => 0.73);
   g.enter(region.id);
   const z = g.zone(), i = g.regionIndex();
-  assert.equal(z.environmentCoherenceVersion, 1);
+  assert.equal(z.environmentCoherenceVersion, 2);
   assert(z.props.length <= 400, region.id + ' retains v4 prop budget');
   assert.equal(z.roadVersion, 17);
   for (const bridge of z.bridgeApproaches) {

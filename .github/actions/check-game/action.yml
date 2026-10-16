@@ -110,7 +110,9 @@ runs:
       id: community_browser
       continue-on-error: true
       shell: bash
-      run: node tests/community-snapshot-browser.test.cjs
+      run: |
+        node tests/personalization-browser.test.cjs
+        node tests/community-snapshot-browser.test.cjs
     - name: Verify original-master actor idles and combat
       id: sprite_browser
       continue-on-error: true

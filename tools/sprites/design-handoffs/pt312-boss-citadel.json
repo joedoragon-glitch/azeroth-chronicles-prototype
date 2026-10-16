@@ -125,5 +125,24 @@
     "rollbackRevision": null,
     "releaseCommit": null,
     "releaseEvidence": null
-  }
+  },
+  "ownerRevisions": [
+    {
+      "date": "2026-10-16",
+      "request": "Owner confirms the martial boss is a woman; existing lore identifies Marshal Veyra, Ash Sentinel. Air Marshal Veyrith remains a distinct character.",
+      "traitsToPreserve": [
+        "open-faced crested helmet",
+        "visible female face and pinned pale braid",
+        "fitted plated surcoat",
+        "massive shoulder armour",
+        "shield, polearm, gold crest and chest diamond",
+        "normal and TRUE forms retain threat and scale"
+      ],
+      "authorization": "Source design and validation authorized; no generated image acceptance claimed.",
+      "referenceKind": "Procedural normal/TRUE captures; native scene audit remains separately recorded",
+      "sourceSnapshotSha256": "c704124e2ef89e66197334dd9edf1d2e30460fa984845ccb8c5d0aa1ad0f5f50",
+      "isolatedReferencePath": "tools/sprites/references/2026-10-16-character-consistency/veyra.png",
+      "isolatedReferenceSha256": "b6f9cc0ea631303689f576dec12fac50cc8a2fa5e52e0841565cec97fc0d01b3"
+    }
+  ]
 }

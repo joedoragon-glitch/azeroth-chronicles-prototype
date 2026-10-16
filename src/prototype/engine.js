@@ -2622,7 +2622,7 @@
       }
     }
 
-    die() {
+    die(cause = null) {
       this.clearPartyCharges();
       for (const z of Object.values(this.s.zones)) this.clearVeraRepairs(z);
       for (const z of Object.values(this.s.zones))
@@ -2654,7 +2654,7 @@
       this.s.streak = { key: null, count: 0 };
       this.s.projectiles = [];
       this.s.hazards = [];
-      this.event('death', { goldLost });
+      this.event('death', { goldLost, ...(cause ? { cause } : {}) });
       if (goldLost) this.say('Defeat penalty: lost ' + goldLost + ' crowns.');
       if (this.s.lastEdge) this.s.recovery[this.s.lastEdge] = true;
       for (const z of Object.values(this.s.zones))
@@ -2707,6 +2707,12 @@
         this.arriveRefuge(refuge);
         this.say('Returned to your refuge. Learning and rescue progress are safe.');
       }
+      this.notice(
+        'Defeated · Recovered at ' + (chosen ? 'your barracks' : 'your refuge'),
+        6,
+        (goldLost ? goldLost + ' crowns lost. ' : '') + 'Your progress is safe.',
+        'warning',
+      );
     }
     successor(heroClass) {
       if (
@@ -2722,6 +2728,8 @@
         fresh[key] = clone(old[key]);
       fresh.tonicStock = this.preparationTonicStock();
       for (const key of [
+        'customWeaponName',
+        'customArmorName',
         'legacyWeaponPower',
         'legacyWeaponName',
         'legacyPotions',
