@@ -20,3 +20,12 @@ Build and JavaScript syntax pass: 204 campaign assets, 14 historical assets. Ful
 Pinned Playwright browser download returns invalid/truncated archives locally. An existing Chromium 153 binary is available for local native checks; hosted pinned Chromium/WebKit gates remain required. No physical-device or human listening certificate is claimed.
 
 No merge or release has occurred. Next: finish failure triage, native state-mutation repair, sprite canon reconciliation, matched balance and all full hosted gates. All original source/provenance receipts and accepted sprite bytes remain retained.
+
+## Director adjustments during validation
+
+- Rogue actor cast bars now display the actual committed skill name, with viewport clamping for long names; concealed anonymous Broodscreen preparation retains its established hidden identity. The existing native Rogue browser fixture now checks the actual name and viewport bounds rather than the retired generic label.
+- Greenwood quest-5 Chronicle now states that Thornfang and his wolf packs patrol the approaches to the Dark Lord's unfinished estate, replacing the obsolete suggestion that the wolves disregard his ownership. Source checked against Thornfang's Crown wilderness-scout/K9 and estate-patrol history in data.js. No quest identity, trigger or reward changed.
+- Native body fixtures now finalize factory legacy migrations before asserting draw purity; the diagnostic retains exact field diffs if rendering mutates initialized state. Garun's browser construction pilot uses a legal interior vantage that admits actual previewed support sites under the new full-footprint marks; the original location legitimately admits none.
+- Legacy tests now exercise the named branch of the approved alternating species/named Rogue basic policy, expect the approved Scornfang 120 radius, and accept reconstruction of missing historical victory maps while retaining invalid equipment/pending rejection. TRUE pet save fixtures now carry the established Awakening phase for a defeated TRUE Dark Lord.
+- Jet displacement retains terrain and trap safety while bypassing ordinary body avoidance as forced movement. Diagnostic attack-placement failures have an explicit silent audio disposition.
+- Cooldown audit telemetry now counts actual gradual support-heal HP ticks; the support start's announced budget is not actual healing. The prior instant-heal observer falsely reported an accounting gap.

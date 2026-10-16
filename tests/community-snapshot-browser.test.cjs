@@ -157,7 +157,18 @@ const pt312ArtById = new Map(pt312Presentation.records.map((r) => [r.id, r]));
             const c = communityCapture,
               before = JSON.stringify(c.game.s);
             c.painter.draw();
-            if (JSON.stringify(c.game.s) !== before) throw Error('renderer mutates campaign');
+            if (JSON.stringify(c.game.s) !== before) {
+              const old = JSON.parse(before), differences = [];
+              const compare = (a, b, path) => {
+                if (JSON.stringify(a) === JSON.stringify(b)) return;
+                if (a && b && typeof a === 'object' && typeof b === 'object')
+                  for (const key of new Set([...Object.keys(a), ...Object.keys(b)]))
+                    compare(a[key], b[key], path + '.' + key);
+                else differences.push({ path, before: a, after: b });
+              };
+              compare(old, c.game.s, 'state');
+              throw Error('renderer mutates campaign: ' + JSON.stringify(differences.slice(0, 8)));
+            }
             const pixels = c.ctx.getImageData(0, 0, canvas.width, canvas.height).data;
             if (!pixels.some((v, i) => i % 4 !== 3 && v > 0)) throw Error('empty world');
             if (c.painter.metrics().transientEffects > 40) throw Error('unbounded effects');
@@ -360,6 +371,8 @@ const pt312ArtById = new Map(pt312Presentation.records.map((r) => [r.id, r]));
                 z.npcs = kind === 'npc' ? [e] : [];
                 z.nodes = kind === 'node' ? [e] : [];
                 z.buildings = kind === 'building' ? [e] : [];
+                // Finalize lazy legacy migrations on the freshly staged factories.
+                g.zone();
                 // Alpha on a separate transparent body canvas prevents the terrain from
                 // satisfying the actor's visibility oracle. This is coverage, not beauty.
                 const probe = document.createElement('canvas');

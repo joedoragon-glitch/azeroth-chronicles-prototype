@@ -263,7 +263,15 @@
       ctx.font = 'bold 11px system-ui';
       ctx.textAlign = 'center';
       ctx.fillStyle = '#fff1c7';
-      ctx.fillText(a.anonymousCast ? 'Preparing…' : 'ROGUE CAST', p.x, y - 5);
+      const label = a.anonymousCast ? 'Preparing…' : a.name,
+        transform = ctx.getTransform?.(),
+        scale = Math.abs(transform?.a || 1),
+        left = (4 - (transform?.e || 0)) / scale,
+        right = ((ctx.canvas?.width || 1280) - 4 - (transform?.e || 0)) / scale,
+        maxWidth = Math.max(24, Math.min(240, right - left)),
+        textWidth = Math.min(ctx.measureText(label).width, maxWidth),
+        labelX = Math.max(left + textWidth / 2, Math.min(right - textWidth / 2, p.x));
+      ctx.fillText(label, labelX, y - 5, maxWidth);
     }
     royalTaxStatus(ctx, screen, game);
     // Ledger of Losses deliberately obscures Ridge's ground footprints,

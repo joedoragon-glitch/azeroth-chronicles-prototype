@@ -35,7 +35,7 @@ for (const [zone, hp, name] of cases) {
   assert(Math.abs(old.hp / old.maxHp - 0.37) < 1e-8, name + ' migration retains HP fraction');
 }
 assert.equal(profiles['supply-vale'].phase.threshold, 0.55);
-assert.equal(profiles['supply-vale'].attacks[1].radius, 100);
+assert.equal(profiles['supply-vale'].attacks[1].radius, 120);
 assert.equal(profiles['supply-march'].attacks[0].warning, 0);
 assert.equal(profiles['supply-march'].attacks[1].angleDegrees, 196);
 assert.equal(profiles['supply-march'].attacks[2].count, 4);

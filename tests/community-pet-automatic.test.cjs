@@ -15,6 +15,7 @@ function scene(family, distance) {
   g.s.companionCombatTraining = 2;
   Object.assign(g.hero, g.safe(1500, 1500), { order: null });
   g.s.normal[family] = g.s.true[family] = true;
+  if (family === 'darklord') g.s.phase = 'awakening';
   const u = g.unit('pet', g.hero.x, g.hero.y, family);
   g.s.party = [u];
   let origin;

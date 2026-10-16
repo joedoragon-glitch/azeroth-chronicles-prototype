@@ -1,0 +1,285 @@
+[
+  {
+    "key": "hero:paladin",
+    "old": "4fab05495891ab0599302be747092bb603aa10f658f550d967dd07cfce5293f5",
+    "current": "215d33cd501196d3fc420f6e045b75d6f9881fd8ff65fddd50e61728674d39af",
+    "output": "107657c65e250199632eb716d2d2bcd534670864705438a49f5682d6f0e0c787",
+    "originalApproval": {
+      "status": "approved",
+      "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+      "kind": "engineer-authorized",
+      "userAppearanceAcceptance": false,
+      "nativeScale": true,
+      "scope": "Engineer native appearance/grounding review of all six device profiles in day/night and retained idle frame pair; identity, root and 800ms timing retained. Browser/combat/release checks are separate pending gates.",
+      "evidence": [
+        "review-scenes/comparison.json",
+        "review-scenes/all-native-crops.png",
+        "native-review-v1/idle-native-pair.png"
+      ]
+    },
+    "decision": "Retain accepted sprite bytes; current procedural anatomy/material softening preserves identity, silhouette, equipment and anchors. Engineer inspected before/current procedural and accepted original side by side; no new user image approval."
+  },
+  {
+    "key": "enemy:goblin",
+    "old": "aaae81634188dec92335c2937ebbff673f5cd456580ac3730c9395c63cd70f19",
+    "current": "6984e418967a94aed83f9a12471ecae4a52da901d300600b6f7d75d18732ffcc",
+    "output": "977965160458746599c43cfcc84d7c2b5ba8d6cd4ada9be645fde7f017fc7fc5",
+    "originalApproval": {
+      "status": "approved",
+      "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+      "kind": "engineer-authorized",
+      "userAppearanceAcceptance": false,
+      "nativeScale": true,
+      "scope": "Engineer native appearance/grounding review of all six device profiles in day/night and retained idle frame pair; identity, root and 800ms timing retained. Browser/combat/release checks are separate pending gates.",
+      "evidence": [
+        "review-scenes/comparison.json",
+        "review-scenes/all-native-crops.png",
+        "native-review-v1/idle-native-pair.png"
+      ]
+    },
+    "decision": "Retain accepted sprite bytes; current procedural anatomy/material softening preserves identity, silhouette, equipment and anchors. Engineer inspected before/current procedural and accepted original side by side; no new user image approval."
+  },
+  {
+    "key": "prop:vale-cottage:vale",
+    "old": "f33f2a6032756f75be031a7dea4c3832b1f08d123b0d20b5b9122b9acadd459e",
+    "current": "e7753efda53d3caa414c31dd78208e34606b60c0ff71e8b8b0707a1c7fc41365",
+    "output": "21e8b38b7497f56b6c01f853f1100b16c78580703f546716db4e739432d68573",
+    "originalApproval": {
+      "status": "approved",
+      "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/300",
+      "kind": "engineer-authorized",
+      "userAppearanceAcceptance": false,
+      "nativeScale": true,
+      "scope": "Selective implementation of the director-requested original-master 150% cottage adaptation; existing approved cottage design, grounding and static identity retained. Final physical device and director appearance review remain open.",
+      "evidence": [
+        "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/blob/813ecab1f539316257aa400f4f0ab6368ea17d11/tools/sprites/batches/2026-10-09-150-adaptation/prop-vale-cottage-vale/original-export-v1/review-scenes/comparison.json",
+        "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/blob/813ecab1f539316257aa400f4f0ab6368ea17d11/tools/sprites/batches/2026-10-09-150-adaptation/prop-vale-cottage-vale/original-export-v1/lineage.json"
+      ]
+    },
+    "decision": "Retain accepted sprite bytes; current procedural anatomy/material softening preserves identity, silhouette, equipment and anchors. Engineer inspected before/current procedural and accepted original side by side; no new user image approval."
+  },
+  {
+    "key": "hero:mage",
+    "old": "52f7662e1696f381bcfdefe2006d3e3441e70aad57ebf697c66904202257c7c0",
+    "current": "89129c7b6aff49cde48cd102b581aa46ace8f54244f22a447a5d3711aeeec557",
+    "output": "467c8bdef58eb0741115fbf15c01e1b42a2e6a1e199bf6d028f1f188d82b53e9",
+    "originalApproval": {
+      "status": "approved",
+      "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+      "kind": "engineer-authorized-faithful-translation",
+      "date": "2026-10-08",
+      "userAppearanceAcceptance": false,
+      "checks": [
+        "current exact equipment/palette reference",
+        "organic anatomy/material contours",
+        "native grounding",
+        "all specified desktop/phone day/night scenes"
+      ],
+      "notes": "Joel authorized generation, testing, implementation and publication in this chat. This records engineer review, not separate user acceptance of this generated candidate. Static presentation avoids mixing a new design with stale frames."
+    },
+    "decision": "Retain accepted sprite bytes; current procedural anatomy/material softening preserves identity, silhouette, equipment and anchors. Engineer inspected before/current procedural and accepted original side by side; no new user image approval."
+  },
+  {
+    "key": "hero:ranger",
+    "old": "b89bc6fff5df3a1165a778f0ff1c0028b3b3424a01d7b92e07ae15f9d252c164",
+    "current": "67a53f4491172bf04e9a52a924a87656db2aad8a469c6e4475019c2ea491995f",
+    "output": "338fb3907f1b657ab7527d7e72a6b7f8df40aa9b85072e3b98acd58b65a455d7",
+    "originalApproval": {
+      "status": "approved",
+      "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+      "kind": "engineer-authorized-faithful-translation",
+      "date": "2026-10-08",
+      "userAppearanceAcceptance": false,
+      "checks": [
+        "current exact equipment/palette reference",
+        "organic anatomy/material contours",
+        "native grounding",
+        "all specified desktop/phone day/night scenes"
+      ],
+      "notes": "Joel authorized generation, testing, implementation and publication in this chat. This records engineer review, not separate user acceptance of this generated candidate. Static presentation avoids mixing a new design with stale frames."
+    },
+    "decision": "Retain accepted sprite bytes; current procedural anatomy/material softening preserves identity, silhouette, equipment and anchors. Engineer inspected before/current procedural and accepted original side by side; no new user image approval."
+  },
+  {
+    "key": "ally:soldier",
+    "old": "38c1c26e432e92d4c4132731aa78f5d220be66accf9f8dc51e40196f9349dc71",
+    "current": "18d775ad395b65c22f92c08a7815a27269dbe9c44d6ac330c3b4d7b6ad551fcc",
+    "output": "ab89b9cdec45f3f1a509fa700ff56bb6295fc6892218796c33c9854ad5deb25b",
+    "originalApproval": {
+      "status": "approved",
+      "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+      "kind": "engineer-authorized-faithful-translation",
+      "date": "2026-10-08",
+      "userAppearanceAcceptance": false,
+      "checks": [
+        "current exact equipment/palette reference",
+        "organic anatomy/material contours",
+        "native grounding",
+        "all specified desktop/phone day/night scenes"
+      ],
+      "notes": "Joel authorized generation, testing, implementation and publication in this chat. This records engineer review, not separate user acceptance of this generated candidate. Static presentation avoids mixing a new design with stale frames."
+    },
+    "decision": "Retain accepted sprite bytes; current procedural anatomy/material softening preserves identity, silhouette, equipment and anchors. Engineer inspected before/current procedural and accepted original side by side; no new user image approval."
+  },
+  {
+    "key": "ally:archer",
+    "old": "3b955cae0108bd184c7153755fe5cb7b8a8c3314fdfd5cf6bfb3d4118666cb9c",
+    "current": "65afcb8d9717741d6e75845c0006114751c3dc6713d296fa3e630f6c46fa5535",
+    "output": "f0179672464cd896cfa06a19ec6a928db6b202a10785e65b290032178612bb4c",
+    "originalApproval": {
+      "status": "approved",
+      "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+      "kind": "engineer-authorized-faithful-translation",
+      "date": "2026-10-08",
+      "userAppearanceAcceptance": false,
+      "checks": [
+        "current exact equipment/palette reference",
+        "organic anatomy/material contours",
+        "native grounding",
+        "all specified desktop/phone day/night scenes"
+      ],
+      "notes": "Joel authorized generation, testing, implementation and publication in this chat. This records engineer review, not separate user acceptance of this generated candidate. Static presentation avoids mixing a new design with stale frames."
+    },
+    "decision": "Retain accepted sprite bytes; current procedural anatomy/material softening preserves identity, silhouette, equipment and anchors. Engineer inspected before/current procedural and accepted original side by side; no new user image approval."
+  },
+  {
+    "key": "prop:sapling:vale",
+    "old": "f441733e33b7cdc3d2a1ce180c7b1c95875d385310a472979e9fd13cdac0a83f",
+    "current": "87e7e5d30a9d1367369819398b322847eda15b1538cb574f191dd32d10905ff9",
+    "output": "eb5116c58f33e510c8956e4c34d8e710a588b4ec281e8c964b99abfb4ef15de8",
+    "originalApproval": {
+      "status": "approved",
+      "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+      "kind": "engineer-authorized",
+      "userAppearanceAcceptance": false,
+      "nativeScale": true,
+      "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
+      "evidence": [
+        "lineage.json",
+        "review-scenes/comparison.json"
+      ]
+    },
+    "decision": "Retain accepted sprite bytes; current procedural anatomy/material softening preserves identity, silhouette, equipment and anchors. Engineer inspected before/current procedural and accepted original side by side; no new user image approval."
+  },
+  {
+    "key": "prop:stump:vale",
+    "old": "69bad8ffbf7976c77714fdb11609dbdae75201a99ff4fc6105dbb1c12e6062c8",
+    "current": "e3532f2b53f50b32af0ae66af1cd28cca91ea4f6d62e5a05501a50fae6192b30",
+    "output": "8c294182e436974d3e651c692fa409a0b7461bb29a977892dc890715f44c8316",
+    "originalApproval": {
+      "status": "approved",
+      "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+      "kind": "engineer-authorized",
+      "userAppearanceAcceptance": false,
+      "nativeScale": true,
+      "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
+      "evidence": [
+        "lineage.json",
+        "review-scenes/comparison.json"
+      ]
+    },
+    "decision": "Retain accepted sprite bytes; current procedural anatomy/material softening preserves identity, silhouette, equipment and anchors. Engineer inspected before/current procedural and accepted original side by side; no new user image approval."
+  },
+  {
+    "key": "prop:mangrove:march",
+    "old": "2c843181942287fdd6b431d824b377292bfcb3d82f127b9bbee2a86d2fa4f653",
+    "current": "b05c30c3e404722d10c7860f40649c2788d59fa55ecd85c6347ec7c0dbc62311",
+    "output": "66470852c98453954d944e12f08eb9717bb700e5e306b67e2aa0a6f8e3db74f6",
+    "originalApproval": {
+      "status": "approved",
+      "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+      "kind": "engineer-authorized",
+      "userAppearanceAcceptance": false,
+      "nativeScale": true,
+      "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
+      "evidence": [
+        "lineage.json",
+        "review-scenes/comparison.json"
+      ]
+    },
+    "decision": "Retain accepted sprite bytes; current procedural anatomy/material softening preserves identity, silhouette, equipment and anchors. Engineer inspected before/current procedural and accepted original side by side; no new user image approval."
+  },
+  {
+    "key": "prop:pine-sapling:highlands",
+    "old": "9bed05c38755d5f6c35b97f656f154bcbfe3dd20ab9e20797ee6281249cebf84",
+    "current": "dfabee8670b0ca575acdf4492f46652eff27b0aacdd62330b2be3b622bce3c58",
+    "output": "7460dfe2bd989d15ba3d8328515ee9871d6dc8c070c89b6cabdaf100ef585394",
+    "originalApproval": {
+      "status": "approved",
+      "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+      "kind": "engineer-authorized",
+      "userAppearanceAcceptance": false,
+      "nativeScale": true,
+      "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
+      "evidence": [
+        "lineage.json",
+        "review-scenes/comparison.json"
+      ]
+    },
+    "decision": "Retain accepted sprite bytes; current procedural anatomy/material softening preserves identity, silhouette, equipment and anchors. Engineer inspected before/current procedural and accepted original side by side; no new user image approval."
+  },
+  {
+    "key": "prop:dead-tree:frontier",
+    "old": "ef76f4781c740a4b255d425051bdf418dac501a47068293895853c537c4f50b9",
+    "current": "b755dca833450ee8c3c403d64dcdbf91ec5ec2c5652dbfa54fff4b56e3c16a4d",
+    "output": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a",
+    "originalApproval": {
+      "status": "approved",
+      "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+      "kind": "engineer-authorized",
+      "userAppearanceAcceptance": false,
+      "nativeScale": true,
+      "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
+      "evidence": [
+        "lineage.json",
+        "review-scenes/comparison.json"
+      ]
+    },
+    "decision": "Retain accepted sprite bytes; current procedural anatomy/material softening preserves identity, silhouette, equipment and anchors. Engineer inspected before/current procedural and accepted original side by side; no new user image approval."
+  },
+  {
+    "key": "prop:charred-stump:frontier",
+    "old": "1dcb590b97d9125ea9dfaaa177568b71cb51cf9990f9a29567c7e63dc5a9bcf5",
+    "current": "2f135b9c3694ece6ecb1d76d84257dee8f76c02bda9eae29be870347c7398f51",
+    "output": "38f73cbd6054f7b7abf089f2843ff68e0e1da5222d7331cf83a4d2ff9c716cd3",
+    "originalApproval": {
+      "status": "approved",
+      "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+      "kind": "engineer-authorized",
+      "userAppearanceAcceptance": false,
+      "nativeScale": true,
+      "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
+      "evidence": [
+        "lineage.json",
+        "review-scenes/comparison.json"
+      ]
+    },
+    "decision": "Retain accepted sprite bytes; current procedural anatomy/material softening preserves identity, silhouette, equipment and anchors. Engineer inspected before/current procedural and accepted original side by side; no new user image approval."
+  },
+  {
+    "key": "prop:ore-sorting-bay:highlands",
+    "old": "c28036d00341b79e4fa515db3a941e3af469e24190dd6537cd3df09de506d531",
+    "current": "8405a08060800df8a8b7ae30c965283e512270fd302d3217065b59a97ae8cc7b",
+    "output": "68526686bb7fc6528740e51dfe60c72a86d6200f4b71eadfb36a0eab6dc61b9f",
+    "originalApproval": {
+      "status": "approved",
+      "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+      "reviewer": "Codex engineer under current explicit implementation/publication authorization",
+      "appearance": "Faithful static body reviewed at native size in eight desktop/phone day/night contexts. Not a claim of separate Joel image acceptance."
+    },
+    "decision": "Retain accepted sprite bytes; current procedural anatomy/material softening preserves identity, silhouette, equipment and anchors. Engineer inspected before/current procedural and accepted original side by side; no new user image approval."
+  },
+  {
+    "key": "prop:caravan-loading-bay:highlands",
+    "old": "c5ea904ea96fc90c36f371d1b9bf24aa17dd987494cfdf7ceb726acb3bf2f51c",
+    "current": "19956b8bf4f19d48cb995a79273caa848e635f6aaa030da1a302630c7a241084",
+    "output": "1302399f4bf539674742f3e074b4d8c94df75bd2865c2029450b5816c85b92d6",
+    "originalApproval": {
+      "status": "approved",
+      "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/125",
+      "reviewer": "Codex engineer under current explicit implementation/publication authorization",
+      "appearance": "Faithful static body reviewed at native size in eight desktop/phone day/night contexts. Not a claim of separate Joel image acceptance."
+    },
+    "decision": "Retain accepted sprite bytes; current procedural anatomy/material softening preserves identity, silhouette, equipment and anchors. Engineer inspected before/current procedural and accepted original side by side; no new user image approval."
+  }
+]

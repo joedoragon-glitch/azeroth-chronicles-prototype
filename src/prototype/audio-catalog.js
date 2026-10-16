@@ -567,6 +567,7 @@
     'companionChargeStart',
     // UI/save bookkeeping has no separate sound cue.
     'actionFailed',
+    'attackPlacementFailed', // Diagnostic only; no attack was committed.
     'archiveKnowledge',
     // Rogue decisions are visually telegraphed; the existing warning cue owns
     // their audio so crowd encounters do not stack extra alert sounds.

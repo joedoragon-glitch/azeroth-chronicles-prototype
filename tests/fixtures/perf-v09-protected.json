@@ -1345,6 +1345,56 @@
         "tests/enemy-audio.test.cjs": "5c434d93151cb319ba68d14314e5ec40e40511c521af181d45df9c2cf8603562",
         "tests/pt312-combat-integration.test.cjs": "bc629e28e164f8de97ceccdfd5021de7a7ba6729a360c8891659269f10fa2aa2"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt continuation; owner-authorized validation repairs and named Rogue cast UI, validation in progress 2026-10-16",
+      "reason": "Retain historical receipts; exact current bytes for review. No test result is inferred from these hashes.",
+      "files": {
+        "assets/sprites/manifest.json": "5f18115da6203bf289eccb9ee0ff50cc91c04f93e09a6cd80cc733510ea1d384",
+        "src/prototype/audio-catalog.js": "578defdb2ebc564b96120e533804398a5cf0615e7bc79036af67a9130f1bce16",
+        "src/prototype/audio-effects.js": "efa67a5a950bd58588d178ffa87a0ffa51de3fb07edb3c5dfee17140ca073d85",
+        "src/prototype/combat-visuals.js": "019b2d56bfc05f52ac2d81de8b82efcf5d072400d6898dd49c7dd0b0ef94c004",
+        "src/prototype/engine.js": "7dd2816b89f092cc99e092f9f3117417f3119401984f55c042ecb83ad2233e65",
+        "src/prototype/navigation.js": "31c8f708286bbea4e54137bafe0fddb88009492a584b96f614691e66326166db",
+        "tests/audit-regressions.test.cjs": "34b736331fc4f6c98591d5ec6ac0835af932760bc256286fa0a998958466a44c",
+        "tests/captain-review.test.cjs": "40c013cb6fceaf4fdf37e63c105528ddf07f1b958c1ac4a0eeff39ea83d6adeb",
+        "tests/community-pet-automatic.test.cjs": "6c94d216a9a7329dc9896abf7b46a629eb47dac4312b5bd2644f3086cf89aada",
+        "tests/community-snapshot-browser.test.cjs": "94f8454ae0c5d29d87d569d893332d48d064c5dc72d7f83c86e703ea3a60de56",
+        "tests/helpers/snapshot-garun-browser.cjs": "7343795f53ad2253393a9fad5525b4a316e33002fa106861f59dfdd216fd807c",
+        "tests/rogue-browser.test.cjs": "822ba1e9031e1c8892a4dcbca535b50e22bd6d4fc47f03b76bdd6620d04ef118",
+        "tests/snapshot-mobile-rogue-casts.test.cjs": "a8e0976ac49043f8464073933f31c7e0a1c38c11cf1c3c45f69dd7c45b41bb6d",
+        "tools/sprites/approved.json": "081ff226ac818f1d78367c47dcc7e9871286b67d32bc6b81d630c81b0eade757"
+      },
+      "previousFiles": {
+        "src/prototype/audio-effects.js": "e2ea1d9dd61367d75030a14e02b1a5dae1713d151c9053659f3052fbad2c7ab5",
+        "src/prototype/combat-visuals.js": "5c7ddbb5e5aed3c520bcd212ddf2526da918f60179fdd8e844d91b02cfd53b96",
+        "src/prototype/engine.js": "cf4f24e08a0c87d772dfb61ed6f1abc784a21b876f821340e080a93e7c2d4732",
+        "src/prototype/navigation.js": "2a73172638eaf55b14152c869eac545476a648f89345a24b8226fd1afc99bd7e",
+        "tests/community-snapshot-browser.test.cjs": "0f8cb60018795f36a29541629fd146f4a6aab404f66e631c34fc3dd887b33d5e"
+      }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt continuation; owner-authorized validation repairs and named Rogue cast UI, validation in progress 2026-10-16",
+      "reason": "Retain historical receipts; exact current bytes for review. No test result is inferred from these hashes.",
+      "files": {
+        "scripts/cooldown-balance-audit.cjs": "f3447a82bf0071cd4e06740f32225ae58e24c3d0a2f37d8dfbfeea7f9f83f84b",
+        "tools/sprites/approved.json": "445b4cda0fbd293396b5e7076fad7affbdee0e015d1432fd6bc07e52d13586cf"
+      },
+      "previousFiles": {
+        "tools/sprites/approved.json": "081ff226ac818f1d78367c47dcc7e9871286b67d32bc6b81d630c81b0eade757"
+      }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt continuation; owner-authorized validation repairs and named Rogue cast UI, validation in progress 2026-10-16",
+      "reason": "Retain historical receipts; exact current bytes for review. No test result is inferred from these hashes.",
+      "files": {
+        "docs/PR313_VALIDATION_20261016.md": "2d06c124add178f26799cae868a22bb35de1bd76cd807d0637dba6998d97cdf7",
+        "src/prototype/narration.js": "1c9bee95d10e70cda9b6debc4bec8c07a486e3e4dadd3ac2d45c150c9f0c45e3"
+      },
+      "previousFiles": {}
     }
   ]
 }

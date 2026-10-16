@@ -97,6 +97,7 @@
             'rogueMove',
             'rogueSupport',
             'actionFailed',
+            'attackPlacementFailed',
             'archiveKnowledge',
           ].includes(type)
         )

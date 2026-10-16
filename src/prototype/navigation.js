@@ -413,7 +413,7 @@
         }
         return [];
       }
-      move(entity, target, speed, dt, stop = 0) {
+      move(entity, target, speed, dt, stop = 0, forced = false) {
         const d = dist(entity, target);
         if (d <= stop) return true;
         const step = Math.min(d - stop, speed * dt),
@@ -424,7 +424,7 @@
           relaxed = congestion.until > this.s.time,
           legal = (p) =>
             this.clearSegment(entity, p) &&
-            (entity.motion || this.actorStepAllowed(entity, p, relaxed, frame));
+            (forced || entity.motion || this.actorStepAllowed(entity, p, relaxed, frame));
         if (legal({ x: nx, y: ny })) {
           entity.x = nx;
           entity.y = ny;

@@ -6197,7 +6197,7 @@
         )
       )
         return false;
-      return this.move(unit, landing, 260, 0.35);
+      return this.move(unit, landing, 260, 0.35, 0, true);
     }
     updateTraps(dt) {
       const hero = this.hero,

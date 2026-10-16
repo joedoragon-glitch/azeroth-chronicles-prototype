@@ -37,7 +37,7 @@ async function verifyGarunWorks(page, results, tag, capture = false) {
     const e = c.zone().enemies.find((e) => e.type === 'boss' && e.family === 'mine');
     c.zone().enemies = [e];
     c.hero.hp = c.hero.maxHp = 100000;
-    Object.assign(c.hero, c.safe(910, 1100));
+    Object.assign(c.hero, c.safe(1290, 1200));
     c.startAttack(e, c.hero, 1);
     CanvasRenderingContext2D.prototype.fillText = function (text, ...args) {
       __garunBrowser.text.push(String(text));

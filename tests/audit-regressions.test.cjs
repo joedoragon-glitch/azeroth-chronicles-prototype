@@ -6,8 +6,8 @@ const kill=(c,e)=>{e.heroParticipated=true;e.hp=0;c.kill(e);};
 function test(name,fn){try{fn();passed++;console.log('PASS '+name);}catch(e){process.exitCode=1;console.error('FAIL '+name+' '+e.stack);}}
 test('F01 normal-normal-TRUE cycle uses the five-second remote transition and leaves one normal field boss',()=>{const c=fresh(),e=boss(c);c.zone().enemies=[e];kill(c,e);c.updateEnemies(121);kill(c,e);c.updateElites(4.9);assert(!c.zone().enemies.some(x=>x.form==='true'&&x.hp>0));c.updateElites(.2);const t=c.zone().enemies.find(x=>x.form==='true'&&x.hp>0);assert(t);kill(c,t);c.updateEnemies(121);assert.equal(c.zone().enemies.filter(x=>x.hp>0&&!x.summon).length,1);});
 test('F02 sealed boss resets and no attack shape damages through terrain',()=>{const c=fresh(),e=boss(c);c.s.party=[];c.zone().enemies=[e];Object.assign(e,{x:1100,y:1000,home:{x:1100,y:1000}});Object.assign(c.hero,{x:1300,y:1000});c.zone().props.push({x:1100,y:930,r:45},{x:1100,y:1070,r:45},{x:1030,y:1000,r:45});c.engage(e);const hp=c.hero.hp;for(const kind of ['circle','line','cone','sector'])c.resolveArea(e,{kind,x:1300,y:1000,fromX:1100,fromY:1000,angle:0,radius:400,coefficient:1});assert.equal(c.hero.hp,hp);const original=c.follow;c.follow=()=>false;for(let i=0;i<140;i++)c.updateEnemies(.1);c.follow=original;assert(c.s.statistics.events.some(x=>x.type==='reset'));assert(!e.aggro);});
-test('F03 TRUE crypt volleys stagger and family follow-ups retain full warnings',()=>{for(const [id,index]of [['crypt',1],['archive',1],['mine',1],['abyss',0]]){const c=fresh();c.enter(id);const e=c.bossEnemy(c.boss(id),'true',{x:1050,y:1100});c.zone().enemies=[e];Object.assign(c.hero,{x:1200,y:1100});e.attackIndex=0;c.startAttack(e,c.hero,index);if(id==='crypt'){c.resolveAttack(e);assert.deepEqual(c.s.projectiles.map(x=>x.delay),[0,.28,.56]);assert.equal(c.s.hazards.length,0);}else{assert(e.sequence.length);assert(e.sequence.every(a=>a.timer>=1.5));if(id==='abyss')assert(e.sequence.some(a=>a.kind==='circle'&&a.persistent));}}});
-test('F04 rejects fractional equipment and missing Nightmare victory records before restore',()=>{const c=fresh('mage','nightmare');for(const mutate of [s=>s.hero.weapon=.5,s=>delete s.victories,s=>delete s.pending]){const s=c.snapshot();mutate(s);assert.throws(()=>C.restore(s));}C.restore(c.snapshot());});
+test('F03 TRUE crypt volleys stagger and family follow-ups retain full warnings',()=>{for(const [id,index]of [['crypt',1],['archive',1],['mine',1],['abyss',0]]){const c=fresh();c.enter(id);const e=c.bossEnemy(c.boss(id),'true',c.zone().enemies.find(u=>u.type==='boss').home);c.zone().enemies=[e];Object.assign(c.hero,c.safe(e.x+150,e.y));e.attackIndex=0;assert(c.startAttack(e,c.hero,index));if(id==='crypt'){c.resolveAttack(e);assert.deepEqual(c.s.projectiles.map(x=>x.delay),[0,.28,.56]);assert.equal(c.s.hazards.length,0);}else{assert(e.sequence.length);assert(e.sequence.every(a=>a.timer>=1.5));if(id==='abyss')assert(e.sequence.some(a=>a.kind==='circle'&&a.persistent));}}});
+test('F04 rejects fractional equipment and missing pending records; historical victory maps reconstruct',()=>{const c=fresh('mage','nightmare');for(const mutate of [s=>s.hero.weapon=.5,s=>delete s.pending]){const s=c.snapshot();mutate(s);assert.throws(()=>C.restore(s));}const historical=c.snapshot();delete historical.victories;assert.deepEqual(C.restore(historical).s.victories,{});C.restore(c.snapshot());});
 test('F06 class skills retain frost, arrows, dedicated haste and class-specific ultimates',()=>{
  for(const cls of ['mage','ranger','paladin']){
   const c=fresh(cls),e=c.makeEnemy({name:'fixture',species:'goblin',level:1,hp:10000,damage:1,gold:0,xp:0},{x:350,y:350});
@@ -462,7 +462,7 @@ test('F64 all five captains have a basic move plus an individually authored rogu
   e.roomCaptain=true;e.captainProfile=id;e.aggro=true;c.zone().enemies=[e];c.s.party=[];c.line=()=>true;
   Object.assign(c.hero,{x:1500,y:1700,hp:100000,maxHp:100000});
   c.tacticalRogueOutnumbered=()=>false;
-  assert(c.tacticalRogueMove(e,c.hero),id+' basic move exists');
+  e.rogueBasicTurn=1;assert(c.tacticalRogueMove(e,c.hero),id+' named basic move exists alongside species basic');
   assert.equal(e.telegraph.name,basics[id].name);
   assert(!e.telegraph.rogueSignature);
   e.telegraph=null;c.tacticalRogueOutnumbered=()=>true;
@@ -483,7 +483,7 @@ test('F65 every normal and TRUE boss has both rogue choices without altering bos
   c.zone().enemies=[e];c.s.party=[];e.aggro=true;c.line=()=>true;
   Object.assign(c.hero,{x:1500,y:1700,hp:100000,maxHp:100000});
   c.tacticalRogueOutnumbered=()=>false;
-  assert(c.tacticalRogueMove(e,c.hero),def.id+' basic choice');
+  e.rogueBasicTurn=1;assert(c.tacticalRogueMove(e,c.hero),def.id+' named basic choice alongside species basic');
   assert.equal(e.telegraph.name,basics[def.id].name);
   assert(!e.telegraph.rogueSignature);
   e.telegraph=null;c.tacticalRogueOutnumbered=()=>true;
@@ -590,7 +590,7 @@ test('F72 close-range boss signatures are not wasted against distant backline pr
  const c=fresh(),e=c.bossEnemy(c.boss('thorn'),'normal',{x:1400,y:1700});
  c.zone().enemies=[e];c.s.party=[];e.aggro=true;c.line=()=>true;
  c.tacticalRogueOutnumbered=()=>true;
- Object.assign(c.hero,{x:1770,y:1700,hp:10000,maxHp:10000});
+ Object.assign(c.hero,{x:1770,y:1700,hp:10000,maxHp:10000});e.rogueBasicTurn=1;
  assert(c.tacticalRogueMove(e,c.hero));
  assert.equal(e.telegraph.name,'Break Contact','a distant lone target receives basic ranged disruption');
  assert(!e.telegraph.rogueSignature,'no point-blank howl against an empty nearby area');
