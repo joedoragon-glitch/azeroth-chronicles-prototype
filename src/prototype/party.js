@@ -724,6 +724,7 @@
       recallParty() {
         this.s.recallActive = true;
         this.hero.order = null;
+        this._tacticalPartyTargets?.clear();
         for (const u of this.activeLivingParty()) {
           this.clearPartyCharge(u);
           u.order = null;
@@ -886,8 +887,8 @@
             u.immune = Math.max(u.immune || 0, 2.5);
             this.event('spell', { x: u.x, y: u.y, target: u.id, kind: 'soldierGuard' });
           }
-        if (this.s.recallActive && living.every((u) => dist(u, this.hero) < 165))
-          this.s.recallActive = false;
+        // Recall is a standing defensive order. Reaching formation never
+        // silently authorizes companions to re-enter the previous fight.
         const crowdTarget = (u, targets) =>
           targets
             .filter((e) => dist(u, e) < 620)
