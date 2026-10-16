@@ -53,10 +53,26 @@
         this.say(u.name + (u.active ? ' joins your group.' : ' waits in reserve.'));
         return true;
       }
-      petSkillSummary(family, slot) {
+      petSkillSummary(family, slot, detailed = false) {
         const def = this.petSkillDefinition({ petFamily: family }, slot);
         if (!def) return '';
+        const shape = def.shape === 'target' ? 'single target' : def.shape;
+        const geometry = shape + ' · ' + def.range + ' reach';
+        const detail = !detailed
+          ? ''
+          : (def.shape === 'circle'
+              ? ' · ' + def.radius + '-radius splash around the aimed enemy'
+              : def.shape === 'cone'
+                ? ' · ' +
+                  Math.round((def.halfAngle * 360) / Math.PI) +
+                  '° fan from the pet toward the aimed enemy'
+                : def.shape === 'line'
+                  ? ' · ' + def.halfWidth * 2 + '-wide strip from the pet through the aimed enemy'
+                  : ' · hits the aimed enemy only') +
+            ' · clear line required; aim stays locked during the second skill’s 0.65s interruptible hold';
         return (
+          geometry +
+          ' · ' +
           def.multiplier +
           '× companion attack · up to ' +
           (def.cap || 1) +
@@ -70,6 +86,7 @@
           (def.ward
             ? ' · self-ward ' + Math.round(def.ward * 100) + '% for ' + def.duration + 's'
             : '') +
+          detail +
           '.'
         );
       }
@@ -83,6 +100,9 @@
           !def ||
           !target ||
           target.hp <= 0 ||
+          target.neutral ||
+          target.returning ||
+          !this.tacticalDirectTargetable(target) ||
           dist(u, target) > def.range ||
           !this.line(u, target)
         )
@@ -92,15 +112,8 @@
           angle = Math.atan2(dy, dx);
         const end = { x: u.x + Math.cos(angle) * def.range, y: u.y + Math.sin(angle) * def.range };
         const candidates = this.zone().enemies.filter((e) => {
-          if (
-            e.hp <= 0 ||
-            e.neutral ||
-            e.returning ||
-            !this.tacticalDirectTargetable(e) ||
-            !this.line(u, e)
-          )
-            return false;
-          if (def.shape === 'target') return e === target;
+          if (e.hp <= 0 || e.neutral || e.returning || !this.line(u, e)) return false;
+          if (def.shape === 'target') return e === target && this.tacticalDirectTargetable(e);
           if (def.shape === 'circle') return dist(e, target) <= def.radius;
           if (dist(u, e) > def.range) return false;
           if (def.shape === 'cone')
@@ -180,7 +193,10 @@
           fromY: u.y,
           color: pet.color,
           shape: def.shape,
-          radius: def.radius || 25,
+          radius: def.radius || 0,
+          range: def.range,
+          halfWidth: def.halfWidth || 0,
+          halfAngle: def.halfAngle || 0,
           slot,
           hits,
         });
@@ -194,6 +210,28 @@
         });
         return true;
       }
+      petCombatPoint(u, target, living, reach) {
+        const cfg = R.balance.companions,
+          anchor = this.partyFollowPoint(u, living),
+          anchorRange = dist(anchor, target),
+          preferred = Math.min(cfg.petPreferredRange, reach - 2 * cfg.petFollowStop);
+        // The destination plus follow's stopping tolerance must remain inside reach.
+        if (
+          anchorRange >= cfg.petRetreatRange + cfg.petFollowStop &&
+          anchorRange <= reach - cfg.petFollowStop &&
+          this.line(anchor, target)
+        )
+          return anchor;
+        // If the enemy occupies the formation anchor, retreat along the pet's
+        // own side; a coincident anchor cannot supply a direction vector.
+        const direction =
+            anchorRange > 0 ? anchor : dist(u, target) > 0 ? u : { x: target.x + 1, y: target.y },
+          dx = direction.x - target.x,
+          dy = direction.y - target.y,
+          n = Math.hypot(dx, dy) || 1,
+          p = { x: target.x + (dx / n) * preferred, y: target.y + (dy / n) * preferred };
+        return this.blocked(p.x, p.y) ? this.safe(p.x, p.y) : p;
+      }
       updatePetCombat(u, target, living, dt) {
         const def = this.petDefinition(u);
         if (!def) {
@@ -201,6 +239,7 @@
           return;
         }
         const ranged = def.role === 'ranged',
+          cfg = R.balance.companions,
           d = dist(u, target),
           visible = this.line(u, target);
         const speed =
@@ -208,21 +247,31 @@
           this.slowMovementFactor(u) *
           this.mireBogMovementFactor(u) *
           this.ashMovementFactor(u);
-        if (ranged && d < 150) {
-          this.follow(u, this.archerFallbackPoint(u, target, living), speed, dt, 35);
-          return;
-        }
-        if (d > (ranged ? Math.min(280, def.first.range, def.second.range) : 70) || !visible) {
-          // Reuse the navigation owner and existing ranged positioning policy.
+        if (ranged && d < cfg.petRetreatRange) {
+          const reach = Math.min(cfg.petBasicRange, def.first.range, def.second.range);
           this.follow(
             u,
-            ranged ? this.archerCombatPoint(u, target, living) : target,
+            this.petCombatPoint(u, target, living, reach),
             speed,
             dt,
-            ranged ? 35 : visible ? 55 : 0,
+            cfg.petFollowStop,
           );
           return;
         }
+        const reach = ranged ? Math.min(cfg.petBasicRange, def.first.range, def.second.range) : 70;
+        if (d > reach || !visible) {
+          // Pet-specific destination; shared navigation still owns collision and movement.
+          this.follow(
+            u,
+            ranged ? this.petCombatPoint(u, target, living, reach) : target,
+            speed,
+            dt,
+            ranged ? cfg.petFollowStop : visible ? 55 : 0,
+          );
+        }
+        // A shorter second skill must not suppress an otherwise usable first/basic.
+        const attackDistance = dist(u, target);
+        if (attackDistance > (ranged ? cfg.petBasicRange : 70) || !this.line(u, target)) return;
         if (this.companionTrySkill(u, target)) return;
         if (u.cd > 0) return;
         u.cd = R.balance.companions.petBasicInterval / this.companionRallyAttackSpeed(u);
@@ -231,8 +280,8 @@
             id: 'projectile-' + this.s.nextId++,
             x: u.x,
             y: u.y,
-            dx: (target.x - u.x) / Math.max(1, d),
-            dy: (target.y - u.y) / Math.max(1, d),
+            dx: (target.x - u.x) / Math.max(1, attackDistance),
+            dy: (target.y - u.y) / Math.max(1, attackDistance),
             target: target.id,
             damage: this.companionAttackDamage(u),
             source: u.id,

@@ -874,5 +874,25 @@
       "assets/sprites/manifest.json": "4eb384d124c35727098b71d66dbea0dda5f0ab16c52c4d36b39af524274af10f",
       "assets/materials/manifest.json": "c06e89ba4ed2058681ae3156eaac8f7eb577d1b5af61e272f40d316f855cad41"
     }
+  },
+  "authorizedCommunitySourceAuditRepairsRevision": {
+    "source": "Owner-authorized A01\u2013A07 source corrections after failed Community audit; NOT TESTED",
+    "predecessorCommit": "7581ed12d57e70e42bbaed6b8223bc8d4c709b22",
+    "ledger": "docs/COMMUNITY_SNAPSHOT_AUDIT_REPAIRS_20261016.md",
+    "ledgerSha256": "b9d9c16c9cd625df45ee3ed25046b5ea6d6c2f35dcbbe5112995a77e16d0ff17",
+    "previousFiles": {
+      "src/prototype/archive.js": "d487c0a9020f88d935e87e2d88a5fb1f6a090f083864e38e929b34779776a75c",
+      "src/prototype/party-pets.js": "afd8d4d3296604437c50838dd0a56bfbac7da154711e33c45b903fe050b8f6c1",
+      "src/prototype/renderer.js": "f983d9a0c91d52e9251e46f550441bbb330627feceb7748c6cc4763564abfe72",
+      "src/prototype/rules.js": "4f928167ab3b6441aeb855b44ca17aa73f632fb4576385408b3509c38b310ecb",
+      "src/prototype/visuals.js": "22ffabe235b5a4eb1cc4b7b22dfc257f67ebf1f746e53c8abac1b5fa394adaf1"
+    },
+    "files": {
+      "src/prototype/archive.js": "89b822ec7c8af3996ef64c4f759e802ffacca8337dd65f2b64be276c3224a38b",
+      "src/prototype/party-pets.js": "b8612149c35e338ea5b7e7e7ea68f3b4ace2026f6b5e7533cc876f7772510a15",
+      "src/prototype/renderer.js": "bfc3b325513cec53c317699667bfaa1ae2e1ebce4d4138c27e832bdfe35c9695",
+      "src/prototype/rules.js": "9939dabf9f50250bb4b0c1f52c1d05eeb151e55abba783510c3c4315652ae3b1",
+      "src/prototype/visuals.js": "b525f4bce76b98248ae5f47e08d9c41a77699a5b6dab748dc0a210964729c77c"
+    }
   }
 }

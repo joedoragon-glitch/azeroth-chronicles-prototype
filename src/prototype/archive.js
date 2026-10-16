@@ -529,11 +529,11 @@
             'A miniature companion inspired by ' + boss.name + '.',
             def.first.name +
               ': ' +
-              game.petSkillSummary(boss.id, 1) +
+              game.petSkillSummary(boss.id, 1, true) +
               '\n' +
               def.second.name +
               ': ' +
-              game.petSkillSummary(boss.id, 2),
+              game.petSkillSummary(boss.id, 2, true),
           ]),
         [
           'Shared lessons and equipment',

@@ -121,23 +121,31 @@ for (const boss of Campaign.data.bosses) {
   assert.equal(e.hp, afterInterrupt);
   assert(!g.partyChargeState(u));
 }
-{
-  const g = arena();
+for (const { id: family } of Campaign.data.bosses) {
+  const g = arena(family);
   g.s.party = [];
-  delete g.s.true.thorn;
-  assert(!g.recruitPet('thorn', 'pet-base'), 'Normal wins do not unlock a pet');
+  delete g.s.true[family];
+  assert(!g.recruitPet(family, 'pet-base'), 'Normal wins do not unlock a pet');
   assert(!g.train('pet-base', 'pet'), 'troop queue cannot silently create a Soldier');
-  const e = g.bossEnemy(g.boss('thorn'), 'true', { x: 580, y: 500 });
+  const e = g.bossEnemy(g.boss(family), 'true', { x: 580, y: 500 });
   g.zone().enemies = [e];
   e.hp = 0;
   g.kill(e);
-  assert(g.petUnlocked('thorn'));
+  assert(g.petUnlocked(family));
   assert.equal(g.notices.filter((n) => JSON.stringify(n).includes('BOSS PET UNLOCKED')).length, 1);
-  const again = g.bossEnemy(g.boss('thorn'), 'true', { x: 580, y: 500 });
+  const again = g.bossEnemy(g.boss(family), 'true', { x: 580, y: 500 });
   g.zone().enemies.push(again);
   again.hp = 0;
   g.kill(again);
   assert.equal(g.notices.filter((n) => JSON.stringify(n).includes('BOSS PET UNLOCKED')).length, 1);
+  const dev = new Campaign('developer', 'paladin', () => 0.9);
+  dev.enter(g.boss(family).region);
+  const summoned = dev.developerSummon('boss:' + family + ':true');
+  assert(summoned, family + ' authentic developer spawn');
+  summoned.hp = 0;
+  dev.kill(summoned);
+  assert(!dev.petUnlocked(family));
+  assert(!dev.notices.some((n) => JSON.stringify(n).includes('BOSS PET UNLOCKED')));
 }
 {
   const g = arena(),

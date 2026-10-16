@@ -92,10 +92,20 @@ if (communityRevision) {
   for (const [file, hash] of Object.entries(communityRevision.untouchedFiles))
     assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), hash, file + ' stays unchanged from merged #308');
 }
+const communityRepairs = manifest.authorizedCommunitySourceAuditRepairsRevision;
+if (communityRepairs) {
+  assert.equal(communityRepairs.predecessorCommit, '7581ed12d57e70e42bbaed6b8223bc8d4c709b22');
+  assert.match(communityRepairs.source, /Owner-authorized A01–A07.*NOT TESTED/);
+  assert.deepEqual(Object.keys(communityRepairs.files).sort(), ['src/prototype/archive.js', 'src/prototype/party-pets.js', 'src/prototype/renderer.js', 'src/prototype/rules.js', 'src/prototype/visuals.js']);
+  assert.deepEqual(Object.keys(communityRepairs.previousFiles).sort(), Object.keys(communityRepairs.files).sort());
+  for (const [file, hash] of Object.entries(communityRepairs.previousFiles))
+    assert.equal(hash, communityRevision.files[file], file + ' preserves initial Community source receipt');
+  assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', communityRepairs.ledger))).digest('hex'), communityRepairs.ledgerSha256, 'exact owner-authorized source audit repair ledger');
+}
 const playtestRevision = originalPlaytestRevision && {
   ...originalPlaytestRevision,
   auditSha256: heroRevision?.auditSha256 || timingRevision?.auditSha256 || healingRevision?.auditSha256 || passiveRevision?.auditSha256 || originalPlaytestRevision.auditSha256,
-  files: { ...originalPlaytestRevision.files, ...passiveRevision?.files, ...healingRevision?.files, ...timingRevision?.files, ...heroRevision?.files, ...validationRepairs?.files, ...communityRevision?.files },
+  files: { ...originalPlaytestRevision.files, ...passiveRevision?.files, ...healingRevision?.files, ...timingRevision?.files, ...heroRevision?.files, ...validationRepairs?.files, ...communityRevision?.files, ...communityRepairs?.files },
 };
 if (playtestRevision) {
   assert.match(playtestRevision.source, /PR #308/);

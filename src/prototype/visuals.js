@@ -10154,7 +10154,30 @@
             [7, 7],
           ].entries()) {
             const motion = ambientAnimalPose(e, index, e.ambientTime);
-            oval(x + motion.x, y + motion.y, 7, 4, '#8c8062');
+            ctx.save();
+            ctx.translate(x + motion.x, y + motion.y);
+            ctx.scale(motion.facing, 1);
+            for (const dx of [-4, 4])
+              line(
+                [
+                  [dx, 2],
+                  [dx, 6],
+                ],
+                '#615b47',
+                1.5,
+              );
+            oval(0, 0, 7, 4, '#8c8062');
+            oval(6, -3, 3.5, 3, '#a0916d');
+            poly(
+              [
+                [4, -5],
+                [5, -9],
+                [7, -5],
+              ],
+              '#9a8b68',
+            );
+            eye(7, -4, ink);
+            ctx.restore();
           }
           break;
         case 'drying-rack':
@@ -10471,7 +10494,30 @@
             [8, 4],
           ].entries()) {
             const motion = ambientAnimalPose(e, index, e.ambientTime);
-            oval(x + motion.x, y + motion.y, 5, 3, '#8c775d');
+            ctx.save();
+            ctx.translate(x + motion.x, y + motion.y);
+            ctx.scale(motion.facing, 1);
+            oval(0, 0, 5, 3, '#8c775d');
+            oval(4, -2, 3.5, 3, '#a28c6c');
+            poly(
+              [
+                [2, -4],
+                [2, -7],
+                [5, -4],
+              ],
+              '#8c775d',
+            );
+            oval(6, -1, 2.5, 1.5, '#b49b7a');
+            line(
+              [
+                [3, -2],
+                [5, -2],
+              ],
+              ink,
+              0.8,
+            );
+            oval(0, 2, 3, 1, '#b49b7a');
+            ctx.restore();
           }
           break;
         case 'fishing-net':
@@ -12795,7 +12841,8 @@
         case 'wagon-wheel':
           oval(0, 0, 15, 15, '#5a5147');
           oval(0, 0, 11, 11, '#8a684c');
-          for (let a = 0; a < Math.PI; a += Math.PI / 4)
+          oval(0, 0, 9, 9, '#534b3f');
+          for (let a = 0; a < Math.PI * 2; a += Math.PI / 4)
             line(
               [
                 [Math.cos(a) * 2, Math.sin(a) * 2],
@@ -12804,6 +12851,8 @@
               '#c09968',
               2,
             );
+          oval(0, 0, 3, 3, '#c09968');
+          oval(0, 0, 1.2, 1.2, steel);
           break;
         case 'charred-foundation':
           ctx.save();

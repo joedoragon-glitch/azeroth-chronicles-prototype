@@ -701,13 +701,36 @@
       } else if (e.renderKind === 'ally') {
         const preparing = game._companionCharges?.get(e.id);
         if (preparing) {
+          if (e.type === 'pet') {
+            const target = game.zone().enemies.find((u) => u.id === preparing.targetId),
+              def = game.petSkillDefinition(e, 2);
+            if (target && def) {
+              ctx.save();
+              ctx.globalAlpha = 0.35;
+              drawPetSkillGeometry({
+                ...def,
+                x: target.x,
+                y: target.y,
+                fromX: e.x,
+                fromY: e.y,
+                color: game.petDefinition(e).color,
+                slot: 2,
+              });
+              ctx.restore();
+            }
+          }
           const fraction = Math.max(0, Math.min(1, game.partyChargeProgress(preparing.unit)));
           const cy = y - 9;
           ctx.fillStyle = '#07100ddd';
           ctx.fillRect(left - 2, cy - 2, w + 4, 7);
           ctx.fillStyle = '#36413b';
           ctx.fillRect(left, cy, w, 3);
-          ctx.fillStyle = e.type === 'archer' ? '#cfe59a' : '#f6d77a';
+          ctx.fillStyle =
+            e.type === 'pet'
+              ? game.petDefinition(e)?.color || '#b9d6bd'
+              : e.type === 'archer'
+                ? '#cfe59a'
+                : '#f6d77a';
           ctx.fillRect(left, cy, w * fraction, 3);
           ctx.fillStyle = '#ffffffaa';
           ctx.fillRect(left, cy, w * fraction, 1);
@@ -1080,6 +1103,57 @@
       for (const f of visualFx) f.life -= dt;
       visualFx = visualFx.filter((f) => f.life > 0);
     }
+    function drawPetSkillGeometry(f) {
+      const from = { x: f.fromX, y: f.fromY },
+        angle = Math.atan2(f.y - from.y, f.x - from.x),
+        point = (distance, a = angle) => ({
+          x: from.x + Math.cos(a) * distance,
+          y: from.y + Math.sin(a) * distance,
+        }),
+        path = (points, close = true) => {
+          ctx.beginPath();
+          points.forEach((v, i) => {
+            const p = screen(v);
+            if (i) ctx.lineTo(p.x, p.y);
+            else ctx.moveTo(p.x, p.y);
+          });
+          if (close) ctx.closePath();
+          ctx.stroke();
+        };
+      ctx.strokeStyle = f.color || '#b9d6bd';
+      ctx.lineWidth = f.slot === 2 ? 2 : 1.5;
+      if (f.shape === 'circle') {
+        path(
+          Array.from({ length: 24 }, (_, i) => ({
+            x: f.x + Math.cos((i * Math.PI) / 12) * f.radius,
+            y: f.y + Math.sin((i * Math.PI) / 12) * f.radius,
+          })),
+        );
+      } else if (f.shape === 'cone') {
+        path([
+          from,
+          ...Array.from({ length: 17 }, (_, i) =>
+            point(f.range, angle - f.halfAngle + (i * f.halfAngle) / 8),
+          ),
+        ]);
+      } else if (f.shape === 'line') {
+        const end = point(f.range),
+          sx = -Math.sin(angle) * f.halfWidth,
+          sy = Math.cos(angle) * f.halfWidth;
+        path([
+          { x: from.x + sx, y: from.y + sy },
+          { x: end.x + sx, y: end.y + sy },
+          { x: end.x - sx, y: end.y - sy },
+          { x: from.x - sx, y: from.y - sy },
+        ]);
+      } else {
+        path([from, { x: f.x, y: f.y }], false);
+        const p = screen(f);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y - 8, f.slot === 2 ? 7 : 4, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
     function drawVisualFx() {
       for (const f of visualFx) {
         const a = Math.max(0, f.life / f.max),
@@ -1098,26 +1172,7 @@
         ctx.save();
         ctx.globalAlpha = a;
         if (f.type === 'petSkill') {
-          const from = screen({ x: f.fromX, y: f.fromY });
-          ctx.strokeStyle = f.color || '#b9d6bd';
-          ctx.lineWidth = f.slot === 2 ? 2 : 1.5;
-          if (f.shape === 'line' || f.shape === 'target') {
-            ctx.beginPath();
-            ctx.moveTo(from.x, from.y - 10);
-            ctx.lineTo(p.x, p.y - 8);
-            ctx.stroke();
-          }
-          ctx.beginPath();
-          ctx.ellipse(
-            p.x,
-            p.y,
-            (f.slot === 2 ? 22 : 12) * (0.8 + grow * 0.2),
-            f.slot === 2 ? 9 : 5,
-            0,
-            0,
-            Math.PI * 2,
-          );
-          ctx.stroke();
+          drawPetSkillGeometry(f);
         } else if (f.type === 'ability') {
           PrototypeCombatVisuals.ability(ctx, screen, f);
         } else if (f.type === 'contact') {
