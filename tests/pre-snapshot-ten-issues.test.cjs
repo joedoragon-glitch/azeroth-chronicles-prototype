@@ -106,6 +106,11 @@ function mob(c, species, x, y, options = {}) {
   for (const id of ['supply-vale', 'supply-march', 'supply-highlands', 'supply-crown'])
     assert(R.roomCaptains[id].specialRange >= 490);
 }
+// Bosses with a lore-supported ordinary species counterpart receive their
+// inherited basic too; unique creatures never receive a fabricated species ID.
+assert.equal(R.tacticalFoundation.bossSpeciesRogue.mine, 'ogre');
+assert.equal(R.tacticalFoundation.bossSpeciesRogue.crypt, 'skeleton');
+assert.equal(R.tacticalFoundation.bossSpeciesRogue.abyss, undefined);
 // #9: Scornfang can choose a Goblin basic trick *and* his own captain trick,
 // without reclassifying a signature as a forced combo.
 {
