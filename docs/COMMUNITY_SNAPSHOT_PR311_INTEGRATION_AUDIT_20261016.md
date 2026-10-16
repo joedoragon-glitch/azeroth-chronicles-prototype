@@ -34,6 +34,10 @@ Nonoverlapping PR #311 files (targeting, build/version carriers, supporting test
 
 **IN-03 / generated-version boundary:** PR #311 carries manually revised package/lock, `build-info.js` and `sw.js` for an untested `0.9.1+snapshot.dev.66` draft. This is NOT proof that current generated HTML, worker asset sets or the new Community pet graph are synchronized. The authorized validation cycle must select one final candidate version after all packages are integrated and perform a real full regeneration, source/load-order audit, cache upgrade and PWA checks. Until then, this integration branch is not deployable.
 
+## Final read-only incoming-hunk preservation review
+
+Compared the source of the integrated checkpoint against the exact 40 incoming PR #311 runtime hunks. **39 of 40 new-block contexts match byte-for-byte**. The only intentionally nonidentical block is `party.js` hunk 4 (defensive Recall): its original Soldier and Archer counterattack branches, near-pursuer filter, nonchasing follow and persistent Recall remain; an additional pet-specific branch and range are inserted before the original Soldier/Archer basic dispatch to prevent new boss pets from incorrectly using Soldier behavior. No runtime or browser validation was performed. This inspection does not certify that the combined game executes successfully.
+
 ## Retained acceptance / not executed
 
 - Skill approach and charge release, input cancellation, target death and Recall persistent defensive command across Soldier/Archer/ranged pets/melee pets; direct and offensive area casts deliberately resume engagement, defensive ones do not.
