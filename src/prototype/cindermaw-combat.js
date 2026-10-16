@@ -629,7 +629,14 @@
           p = R.attacks.cindermaw[5],
           owner = this.zone().enemies.find((e) => e.id === order.owner),
           state = owner?.cinderDelegation;
-        if (!alive(owner) || !owner.aggro || !state || u.slow > 0) {
+        if (
+          !alive(owner) ||
+          !owner.aggro ||
+          !state ||
+          u.slow > 0 ||
+          (order.phase === 'warning' &&
+            (!u.telegraph?.cinderDelegate || u.telegraph.cinderOwner !== order.owner))
+        ) {
           if (owner) this.stopCinderDelegation(owner);
           else delete u.cinderDelegate;
           return true;

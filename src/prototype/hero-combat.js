@@ -770,7 +770,19 @@
             [1, 2, 6, 7].includes(slot) ||
             (slot === 8 && this.hero.class !== 'paladin') ||
             (slot === 4 && this.hero.class !== 'ranger'),
-          lockedOut = requiresTarget && (targetId != null || !!selected),
+          // Preserve a valid distant selection, while a target made ineligible
+          // by Blinding Dust still permits the established automatic fallback.
+          lockedOut =
+            requiresTarget &&
+            (!!selected ||
+              this.zone().enemies.some(
+                (e) =>
+                  e.id === targetId &&
+                  e.hp > 0 &&
+                  !e.neutral &&
+                  !this.attackResetProtected(e) &&
+                  this.tacticalDirectTargetable(e),
+              )),
           target =
             targets.find((e) => e.id === preferredTargetId) ||
             (lockedOut

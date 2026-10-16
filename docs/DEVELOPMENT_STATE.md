@@ -2,6 +2,11 @@
 
 # Current development state and v0.9 readiness
 
+
+## PR #313 authorized integrated audit · 16 October 2026
+
+The owner has explicitly authorized all tests, workflow repairs and merge after proper audit. Earlier source-only/approval restrictions below are historical. Work continues in the existing PR #313; no separate PR #311 merge. The current validation ledger is [PR313_VALIDATION_20261016.md](PR313_VALIDATION_20261016.md). The source includes the owner's personalization, specialist/boss identity, learned-only journal, aura, map/lore/readability and roaming-interception corrections. Full regression, browser, balance and native art/audio evidence is being completed; this paragraph does not certify release or claim merge.
+
 ## Active combined source integration — 16 October 2026
 
 **Community Snapshot + PR #311 source-integrated, still entirely untested.** Branch `integration/community-snapshot-311-20261016`; first combined checkpoint `e513ea7fb9bfa21d5e102177bb3eedd3954e6cc4`. The independent Community checkpoint and draft #311 head remain recoverable. Source-level compatibility and the pet defensive Recall issue are documented in [the combined integration audit](COMMUNITY_SNAPSHOT_PR311_INTEGRATION_AUDIT_20261016.md). No tests, builds, browser sessions, simulations, CI, merge or deployment. Issue #312's full 18-item handoff is now available. Work must implement its still-open PT items in this **same** branch and draft PR, earn a new complete source audit, and obtain the owner's explicit permission before the single validation cycle. See [Work handoff](WORK_MODE_SINGLE_PR_HANDOFF_20261016.md).

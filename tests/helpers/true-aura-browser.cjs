@@ -23,7 +23,9 @@ async function verifyTrueAuras(page, out, tag) {
         g.s.party = [];
         const p = g.safe(1100, 1050);
         Object.assign(g.hero, p);
-        const e = g.bossEnemy(b, 'true', g.safe(p.x + 130, p.y - 30));
+        // Keep the full aura/body in the portrait camera as well as desktop.
+        const offset = innerWidth < 500 ? { x: 40, y: 40 } : { x: 130, y: -30 };
+        const e = g.bossEnemy(b, 'true', g.safe(p.x + offset.x, p.y + offset.y));
         z.enemies = [e];
         g.engage(e, true, false);
         g.startAttack(e, g.hero, 0);

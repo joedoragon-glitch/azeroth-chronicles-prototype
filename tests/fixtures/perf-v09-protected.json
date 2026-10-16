@@ -1563,6 +1563,34 @@
         "tests/personalization-browser.test.cjs": "ea019ba2a5adcd14cadee7ada14141905de32f45d062fc830a9042c1c8f3e1f2",
         "tests/true-aura.test.cjs": "b9bd98a7099d3dd9a6ee22127477e531b24fe2d2c3a36abe63a45fd8cdb83c7e"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt continuation; owner-authorized validation repairs and named Rogue cast UI, validation in progress 2026-10-16",
+      "reason": "Retain historical receipts; exact current bytes for review. No test result is inferred from these hashes.",
+      "files": {
+        "docs/DEVELOPMENT_STATE.md": "b9d9dc847db5499b1c768f7154f4eb4e35b0423aa68535db60fec1a8a7cf670a",
+        "docs/PR313_VALIDATION_20261016.md": "09344236d76b011efc8d2d28f3cfbabdbf2c72ee5a89d6d6ae0120194c768e03",
+        "package-lock.json": "8896f1c2a649c846cd67322c7cdc538eb6c47823d7ff1597163da5eb20b5aa22",
+        "package.json": "791928a97a9a34518adbbc82625f652334c9622a41c8673ca566ef0942b2c63e",
+        "src/prototype/build-info.js": "a03fe4a36abf823494622d41566d56ee60a2cfbe6113fe63e33fcc01671382a5",
+        "src/prototype/cindermaw-combat.js": "58234a123f49216875124ae4f4b37f6eed844810e3c2db5aee4ff20ffdc9499b",
+        "src/prototype/hero-combat.js": "d530981c47d22923495e314c8b3d5d683c9719e2a612ab9647cce472e5b694b7",
+        "sw.js": "a9f3f34f7fcb926cd48cc3c6cd363ed070a71488e2b57c4f6de59b358b9b0bf9",
+        "tests/cindermaw-ministry.test.cjs": "712281c88ce2430db3e520bd30a2ed20ea351b3c32e0353734f432363e38b0b6",
+        "tests/helpers/true-aura-browser.cjs": "4a0c829e0ef6f773a1d4d3f786b05c1473965f8f50b074fc0acbcabd778f4e18"
+      },
+      "previousFiles": {
+        "docs/DEVELOPMENT_STATE.md": "71c96c5f354ec9dd6bc9f3eec56ee8a71f0598a7c391bf7715ac66c4da9d7ff1",
+        "docs/PR313_VALIDATION_20261016.md": "472372793cd9a3a64745695aab088b1edb5257addc599ed58c8adc196200da65",
+        "package-lock.json": "8ec15149d455ba5a166a40038a38405b967bcd45b27473d22a1e6fe0c70ebbfd",
+        "package.json": "3357e5fee659a648e24911969c8b8e33b3f3268c9f579ff0ca465dfd7f707f00",
+        "src/prototype/build-info.js": "9804bf2238da015c124cdf9711a2af97148f2143ebb916c09d369b76390e78a7",
+        "src/prototype/cindermaw-combat.js": "9557735194b7ab74b207b229906e0cccf8eab81ca02d8f4d6d6ae9eb01684387",
+        "src/prototype/hero-combat.js": "fc5e94587a70661248ab63718eeddc4307bcefbbb838cf142f48d20a04c657a5",
+        "sw.js": "438b021ecdc6628329a28594109a819fed9748fe460ac0defdf0df53e5af93ce",
+        "tests/helpers/true-aura-browser.cjs": "1603596990cdef31b653b9131e9a3c57120cdf1faeff983515f4d79c170e5eb7"
+      }
     }
   ],
   "authorizedPr313ApproachFrameRevision": {
