@@ -98,7 +98,10 @@ const server = http.createServer((req, res) => {
           game.enter(zone);
           game.zone().props.push({
             id: 'test-cover',
-            structure: 'house',
+            // A mangrove is a real tall foreground object, but the original
+            // occlusion classifier excluded it. The candidate should reveal
+            // an actor through its alpha, unlike the historical reference.
+            structure: 'mangrove',
             decorative: true,
             x: game.hero.x + 20,
             y: game.hero.y + 20,
@@ -232,7 +235,7 @@ const server = http.createServer((req, res) => {
                   ),
                   stateUnchanged: states.every((state) => state === before),
                   sprites,
-                  ...(changed || controlChanged || candidateControlChanged
+                  ...(controlChanged || changed > width * height * 0.12
                     ? {
                         failurePngs: painters.map(
                           (item) => item.canvas.toDataURL('image/png').split(',')[1],
@@ -317,9 +320,15 @@ const server = http.createServer((req, res) => {
             );
         const { failurePngs, ...summary } = checkpoint;
         const diagnostic = JSON.stringify({ ...row, checkpoints: [summary] });
-        assert.equal(checkpoint.changed, 0, diagnostic);
+        // The revised occlusion system is supposed to differ where newly
+        // recognized tall scenery conceals actors. Keep the exact baseline
+        // negative control and bound all other changed channels to local cover.
         assert.equal(checkpoint.controlChanged, 0, diagnostic);
-        assert.equal(checkpoint.candidateControlChanged, 0, diagnostic);
+        assert.equal(checkpoint.candidateControlChanged, checkpoint.changed, diagnostic);
+        assert(
+          checkpoint.changed <= row.width * row.height * 0.12,
+          'Expanded occlusion must remain a localized contour: ' + diagnostic,
+        );
         assert(checkpoint.stateUnchanged, diagnostic);
         for (const status of checkpoint.sprites) {
           assert.equal(status.queued, 0, diagnostic);
@@ -328,6 +337,13 @@ const server = http.createServer((req, res) => {
       }
     }
     assert(comparisons.length > 0, 'At least one scene must be compared');
+    // A positive visual change is expected in the full suite: otherwise the
+    // new cover category may not actually produce a readable silhouette.
+    if (!process.env.PERF_WS2_OCCLUSION_SCENE_FILTER)
+      assert(
+        comparisons.some((row) => row.checkpoints.some((x) => x.changed > 0)),
+        'Mangrove cover must visibly reveal at least one previously hidden actor',
+      );
     if (!process.env.PERF_WS2_OCCLUSION_SCENE_FILTER) assert.equal(comparisons.length, 54);
     assert.deepEqual(errors, []);
     console.log(
@@ -337,7 +353,7 @@ const server = http.createServer((req, res) => {
         comparisons.length +
         ' scenes with ' +
         measuredSnapshots +
-        ' exact baseline/candidate/control desktop/phone snapshots each; all campaign state unchanged; report ' +
+        ' bounded expanded-cover vs historical reference and exact baseline controls; all campaign state unchanged; report ' +
         target,
     );
   } finally {
