@@ -12,15 +12,16 @@ for (const mode of ['normal', 'nightmare']) {
   for (const cls of ['paladin', 'mage', 'ranger']) {
     const game = new Campaign(mode, cls, () => 0.9);
     assert(game.enter('crown'));
-    const throne = game.zone().npcs.find((n) => n.id === 'dark-crown-throne');
-    assert(throne);
+    assert(!game.zone().npcs.some((n) => n.kind === 'throne'));
     assert(!topics(game).some((name) => name.includes('last mark')),
       cls + ' should not learn the reveal from the initial Archive');
     const initialClass = game.hero.class;
     const initialSkills = JSON.stringify(game.hero.skills);
     game.s.true.darklord = true;
     game.s.normal.darklord = true;
-    game.s.phase = 'awakening';
+    game.awaken();
+    const throne = game.zone().npcs.find((n) => n.id === 'dark-crown-throne');
+    assert(throne);
     for (const enemy of game.zone().enemies)
       if (enemy.family === 'darklord') enemy.hp = 0;
     Object.assign(game.hero, { x: throne.x + 20, y: throne.y });

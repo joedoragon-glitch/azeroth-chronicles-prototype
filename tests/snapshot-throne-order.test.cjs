@@ -7,13 +7,25 @@ for (const mode of ['normal', 'nightmare']) {
     const c = new C(mode, cls, () => 0.9);
     assert(c.enter('crown'));
     const gate = c.zone().npcs.find((n) => n.id === 'fortress-gate');
-    const throne = c.zone().npcs.find((n) => n.id === 'dark-crown-throne');
-    assert(gate && throne, 'throne is an actual persistent fortress-world NPC');
+    assert(gate, 'fortress gate remains available');
+    assert(!c.zone().npcs.some((n) => n.kind === 'throne'), 'no ending action before TRUE victory');
+    const staleThrone = { id: 'dark-crown-throne', kind: 'throne', x: 3250, y: 3090 };
+    assert.equal(c.interact(staleThrone), false, 'stale references cannot claim before victory');
+    c.zone().npcs.push(staleThrone);
+    const restoredEarly = C.restore(c.snapshot());
+    assert(!restoredEarly.zone().npcs.some((n) => n.kind === 'throne'),
+      'historical cached throne is removed on restore');
+    c.s.normal.darklord = true;
+    c.refreshNPCs();
+    assert(!c.zone().npcs.some((n) => n.kind === 'throne'), 'normal victory does not expose coronation');
+    c.s.true.darklord = true;
+    c.awaken();
+    c.refreshNPCs();
+    const thrones = c.zone().npcs.filter((n) => n.id === 'dark-crown-throne');
+    assert.equal(thrones.length, 1, 'TRUE victory creates exactly one throne interaction');
+    const throne = thrones[0];
     assert(!c.blocked(throne.x, throne.y, 'crown'), 'the throne is not inside an obstacle');
     assert(c.route(gate, throne).length > 0, 'the throne is reachable from the gate');
-    assert.equal(c.interact(throne), false, 'cannot claim while the ruler lives');
-    c.s.normal.darklord = c.s.true.darklord = true;
-    c.s.phase = 'awakening';
     for (const id of C.dungeonIds) {
       c.s.normal[id] = true;
       c.s.true[id] = true;

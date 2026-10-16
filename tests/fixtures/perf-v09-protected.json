@@ -1917,6 +1917,32 @@
         "tests/community-snapshot-browser.test.cjs": "64d013799e03360c930bdb481004663b09af93039104b9ff7f4fade381839fff",
         "tests/enemy-support-healing.test.cjs": "f814b8f745221d8df683c0e65374af90874ba12e9b98d578d964ff53e531e076"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt lineage; owner-requested TRUE-victory throne visibility repair and pure enemy-faction lookup. Actual validation results recorded separately.",
+      "reason": "Hide coronation spoilers in fresh and cached v4 worlds until TRUE victory; preserve encounter gates and avoid world maintenance inside faction checks.",
+      "files": {
+        "docs/PR313_THRONE_GATE_20261016.md": "6c00eab8d223cb833685997987ccd9e48611f23fc5de79aaf0cf494072d08643",
+        "package-lock.json": "f938ec0862d8d048d77c797fd3a69eaf338187ea31b3adebe15ada759a336cbd",
+        "package.json": "ac2017bc291994000f4eaa9419f492c452230b184eb235aac4b83d6e4e10014d",
+        "src/prototype/build-info.js": "7a92c96b596fcb74f7aff4a5c25ee38aed3da1d95f08b3151ef3136e7a558040",
+        "src/prototype/engine.js": "f8836a998d9d1b3d8fea2baa6e94a9e0daa4f4bb6471bdb5a9e34ba2cb5cc5ad",
+        "sw.js": "78dc9f964c529ff1a0e69e5d9802c0f173fbc138232e3eef2da4119c70391e34",
+        "tests/enemy-support-healing.test.cjs": "6679ed61e2edf95c54291eb7afc8cb5672f6c407177bf2177e3bccf1f9e946fc",
+        "tests/helpers/enemy-heal-browser.cjs": "c793917dbea3f29cee1e375de2aca3c29baab5c8c871ecd740f61f8ca844dc44",
+        "tests/snapshot-sixth-companion-reveal.test.cjs": "c0f3ccad294d0dae75b753d87e81658122fc9f61fea42162facc9b497ef9c01a",
+        "tests/snapshot-throne-order.test.cjs": "dce4fa2263d62d9c7043ba31981ed434218116e7d9d1381d0c09a7b5bb7b5f2b"
+      },
+      "previousFiles": {
+        "package-lock.json": "3a9143a6ebb5666c61e43cd844af6db346ea6adbbf45d195bc8957639f840412",
+        "package.json": "9c1a8a3d4ff9d556d5a7b981f5d3a20cb701f08b4c1cbe023be6fae952a4f128",
+        "src/prototype/build-info.js": "af9c61900ee7cca09747d721a6f102fdb0965cb12aa731ea2f44505e7c934b7c",
+        "src/prototype/engine.js": "d2c0eede86e704948156b24b8dd8928963e0ced02bae1d4b2a5d2c8d94da6791",
+        "sw.js": "500b403cb97b89d6b551faba03e5afc2c173e6de7b12cf3efd503264e6dfe42a",
+        "tests/enemy-support-healing.test.cjs": "625645cd13d52928f8afa9b09c16e054548ef6f2cdf3b2a19c19a2412af9ff32",
+        "tests/helpers/enemy-heal-browser.cjs": "61c5a67f5a2688b473a695fbb98d49a717a7e6bc5adf00c38421e76fecc12b31"
+      }
     }
   ],
   "authorizedPr313ApproachFrameRevision": {

@@ -268,7 +268,7 @@
         !u.neutral &&
         u !== this.hero &&
         !this.s.party.includes(u) &&
-        this.zone().enemies.includes(u)
+        this.s.zones[this.zoneId]?.enemies.includes(u)
       );
     }
     enemyHealTeammate(e, u) {
@@ -1740,9 +1740,15 @@
           [x, y] = D.towns[i];
         z.npcs = z.npcs.filter(
           (n) =>
-            !['teacher', 'smith', 'alchemist'].includes(n.kind) && !n.id.startsWith('service-'),
+            !['teacher', 'smith', 'alchemist'].includes(n.kind) &&
+            !n.id.startsWith('service-') &&
+            (n.id !== 'dark-crown-throne' || (id === 'crown' && this.s.true.darklord)),
         );
-        if (id === 'crown' && !z.npcs.some((n) => n.id === 'dark-crown-throne')) {
+        if (
+          id === 'crown' &&
+          this.s.true.darklord &&
+          !z.npcs.some((n) => n.id === 'dark-crown-throne')
+        ) {
           // The actual fortress courtyard, not Veyra's Citadel. Idempotent
           // for fresh worlds and historical v4 restores with cached regions.
           const point = this.safe(3250, 3090, id);
@@ -3078,6 +3084,7 @@
       this.say(
         'The Dark Lord has fallen. His throne stands empty, but the realm is not yet yours.',
       );
+      this.refreshNPCs();
       this.notice('DARK CROWN · Claim the Throne in the fortress courtyard', 6.5);
       this.event('awakening', { level: this.s.awakeningLevel });
       this.checkEnding();

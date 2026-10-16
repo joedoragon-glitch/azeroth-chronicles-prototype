@@ -25,6 +25,16 @@ function fixture(region = 'vale', mode = 'normal') {
 }
 const near = (a, b, message) => assert(Math.abs(a - b) < 1e-8, message + ': ' + a + ' !== ' + b);
 
+{
+  const { g, mob } = fixture();
+  const healer = mob('ogre', { ranged: true });
+  const recipient = mob('ogre', { hp: 400 });
+  g.zone = () => { throw new Error('faction checks must not run world maintenance'); };
+  assert(g.enemyHealTeammate(healer, recipient));
+  delete g.s.zones[g.zoneId];
+  assert.equal(g.enemyHealTeammate(healer, recipient), false, 'missing current roster fails closed');
+}
+
 assert.equal(R.enemySupportHealing.cooldown, R.rangerSupport.cooldown);
 assert.equal(R.enemySupportHealing.duration, R.rangerSupport.duration);
 assert.equal(R.enemySupportHealing.fraction, 0.05);

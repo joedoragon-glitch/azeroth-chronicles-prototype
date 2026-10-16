@@ -4,6 +4,18 @@ const path = require('node:path');
 
 exports.verifyEnemyHealing = async function (page, out, tag) {
   try {
+    await page.evaluate(() => {
+      const c = new Campaign('normal', 'paladin', () => 0.9);
+      c.enter('crown');
+      const hasThrone = () => c.zone().npcs.some((n) => n.id === 'dark-crown-throne');
+      if (hasThrone()) throw Error('Premature throne interaction exposes ending');
+      c.s.normal.darklord = true;
+      c.refreshNPCs();
+      if (hasThrone()) throw Error('Normal victory must not expose coronation');
+      c.s.true.darklord = true;
+      c.awaken();
+      if (!hasThrone()) throw Error('TRUE victory must expose physical coronation');
+    });
     const result = await page.evaluate(() => {
       const g = new Campaign('normal', 'mage', () => 0.9);
       g.s.zone = 'highlands';
