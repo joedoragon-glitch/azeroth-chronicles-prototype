@@ -353,6 +353,10 @@
           'anastylosis',
           'anastylosisCd',
           'quotaTarget',
+          // Recent Rogue-basic selection and anti-kite pursuit are encounter
+          // decisions, not persistent enemy identity or save fields.
+          'rogueBasicTurn',
+          'pursuitBurstReadyAt',
           'strainHardeningStacks',
           'strainHardeningUntil',
           'emergencyStabilizationUsed',
