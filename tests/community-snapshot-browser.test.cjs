@@ -450,7 +450,12 @@ const pt312ArtById = new Map(pt312Presentation.records.map((r) => [r.id, r]));
                   metrics;
                 const originalDraw = PrototypeVisuals.draw;
                 PrototypeVisuals.draw = function (context, actor, ...args) {
-                  if (actor.id === e.id) bodySeen = true;
+                  if (actor.id === e.id) {
+                    bodySeen = true;
+                    if (record.id.startsWith('renderer-alias:archive-record-') &&
+                        (actor.renderKind !== 'prop' || actor.structure !== 'scroll-stack' || !actor.decorative))
+                      throw Error('Archive record entered the wild-prop fallback instead of its scroll-stack body');
+                  }
                   return originalDraw(context, actor, ...args);
                 };
                 try {

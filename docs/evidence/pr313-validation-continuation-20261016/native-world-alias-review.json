@@ -1,0 +1,1152 @@
+{
+  "scope": "Implementing-agent inspection of actual native Canvas captures; no independent human or physical-device certification. Full current-head Chromium/WebKit and qualitative balance judgment remain required.",
+  "sourceWorldCommit": "b676981cbf047144d82e9efc247f56c1a14c5808",
+  "sourceAliasVersion": "0.9.1+snapshot.dev.72",
+  "runtimeSourceSha256": {
+    "src/prototype/world.js": "73c1d580baae1c874ab59b433ecdcbc66cf12869d22af82b8ce6e8175dc5f180",
+    "src/prototype/renderer.js": "0b34acad9fd22062a2f96b148895fe734fb5e2c039f38e8ac39eb76b89354690",
+    "src/prototype/visuals.js": "c704124e2ef89e66197334dd9edf1d2e30460fa984845ccb8c5d0aa1ad0f5f50"
+  },
+  "reviewedImages": [
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region0-goblin-road-fort-clock0.png",
+      "sha256": "18b3b12f381fba7c57a4f45555650c3066654dbd56785b8885c8463011b61202",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region0-goblin-road-fort-clock500.png",
+      "sha256": "01377613bd9978474761aa4843aa77cd204963765fc69679cdbb88439bb6dd9b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region0-skeleton-watch-clock0.png",
+      "sha256": "bc6e594786bd06be23dafa547ca6614b2790414f63f74d3afe0235d2ef58753f",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region0-skeleton-watch-clock500.png",
+      "sha256": "f95171e458f48013add2aee739bd283a31407677cf17741c8618e65f5eb02457",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region0-town-clock0.png",
+      "sha256": "743881e90ef18159d847f71707ff7477c6d4c68138ac60df81862b49ab404be9",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region0-town-clock500.png",
+      "sha256": "e4a067ced8722fd53c03613822cf1f223e7610c09ffb9db82130eaa9331db4fa",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region1-lantern-wraith-hold-clock0.png",
+      "sha256": "e688da2240ec759516716c9ec35e96974846417927a99bd437e00ffb96364b3c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region1-lantern-wraith-hold-clock500.png",
+      "sha256": "9fdba330c561e78ae3be8dd33dd47cc64a413cdc6a987470019da95f222bda2f",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region1-mire-nest-hold-clock0.png",
+      "sha256": "75ab207f4362b61a74f72851c891442316456f11af45577400b3349e3e124c24",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region1-mire-nest-hold-clock500.png",
+      "sha256": "c7ed4a9b2cdd7f34f5ddc9e9b853120de3be895b742a7c3f4a042abcb9261ceb",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region1-reedbeast-wallow-hold-clock0.png",
+      "sha256": "fb684949859ce7b3b7efdfa017c523c4ac772359ae2f06b97cb5b4f4ba04c23e",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region1-reedbeast-wallow-hold-clock500.png",
+      "sha256": "3a7b104b8bb33fc9d41c6557ca3e82c8c8943d4ffa6546a8dd82369c8b9a90a4",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region1-town-clock0.png",
+      "sha256": "77750c2bd45a204d94f48ffb979c5b038b439d506773f51f35d864c05bf1f414",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region1-town-clock500.png",
+      "sha256": "02e458e3517eebb00669fcf3c4988be42bf7e712a16cbeed190dbaf6f9f50cbe",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region2-ogre-hearth-fort-clock0.png",
+      "sha256": "79c9560ca7f47c238f30a8211ab0cc0725d1043ccf4cea9676a5d81541179687",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region2-ogre-hearth-fort-clock500.png",
+      "sha256": "64f3c82e96c916ab2dd1285a31b436b4f9ba1cd1f206c4db85615d6eaf93474e",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region2-town-clock0.png",
+      "sha256": "c330e73e3f20fbdf6420ddd67d618b75e5a720b411af9eb72e0f82aca0e7afbf",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region2-town-clock500.png",
+      "sha256": "579ae34c4d71eb24e986373bb274c1a1a32ba36aef7301893f762acd6a53007d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region2-wolf-packhold-clock0.png",
+      "sha256": "4f28e08ba1a7d2d7154358474751a8a5e0dd31fce823d6c8a98a134310180fd9",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region2-wolf-packhold-clock500.png",
+      "sha256": "d566f4a38a3a5b10f6938a137e2df429644fa03ed7c298c2d34a0eb42c7c65a8",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region3-orc-road-fort-clock0.png",
+      "sha256": "b4442e59b1e0c9cfc3b1e9cb425ae96d4e1e16a7168b9b144090057e2d206824",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region3-orc-road-fort-clock500.png",
+      "sha256": "99c864c0f55a166f03bc47876020c7979b568dd338f5b64d52f65932b57a9435",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region3-raider-drill-redoubt-clock0.png",
+      "sha256": "bba76c500e258a974dd90e7713a9e3dae7052caa5c90655cd82326e43eeaed19",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Continuous palisade perimeter, four towers, northern gate and drill defenders retain fort identity. Foreground tower naturally covers lower hero; helmet and soft contour remain visible. Gate/exit traversal separately passes the courtyard suite."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region3-raider-drill-redoubt-clock500.png",
+      "sha256": "180ce807058c3a0816252c97ddadafa08cb6f1f7c65cecffc6243f0109babde0",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Continuous palisade perimeter, four towers, northern gate and drill defenders retain fort identity. Foreground tower naturally covers lower hero; helmet and soft contour remain visible. Gate/exit traversal separately passes the courtyard suite."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region3-stalker-cinder-hold-clock0.png",
+      "sha256": "60e7299dc00e2254f84897ded138341cd640d375a9a1a2b4bfae6369b34056ba",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region3-stalker-cinder-hold-clock500.png",
+      "sha256": "05d3308ec42d863872afecfe62d1c85cfb93a1f103bc8c56717cdba0d8676f29",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region3-town-clock0.png",
+      "sha256": "80d1f6134c2edcabf390a3727cdfab0216117891f10d2b8442945d224044a507",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region3-town-clock500.png",
+      "sha256": "9c3ef8dce091caf82bab6b9aa16e356ba283c50f67dcda7c32d07489780de3f4",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region4-ashbeast-roost-hold-clock0.png",
+      "sha256": "000e89b6071fd01a861d50fc5cd6771a2bed25d2e0fb99a3e84f8f540f53d9f7",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region4-ashbeast-roost-hold-clock500.png",
+      "sha256": "53a3e6cbb9bc51f2120790770665ad327f49f81e2486d923b3930180fee4b5e1",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region4-crown-field-barracks-hold-clock0.png",
+      "sha256": "a13cb7efec6a50c550691cc98eb77f24bca0100ba00b4f5d3e085e02cad428b1",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region4-crown-field-barracks-hold-clock500.png",
+      "sha256": "09107bb3861a62e14639b0750e58f886c4017215b1ee20657edcdaed12e46505",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region4-crown-toll-redoubt-clock0.png",
+      "sha256": "36c4ead653e882003ba0f181cd0581e264558e8e5df677408c9a671e01bc1328",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region4-crown-toll-redoubt-clock500.png",
+      "sha256": "735681cac08f1b772c99b3cd5a88d22c10177d1ccbbd9b27ceb8e29c907b0177",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region4-town-clock0.png",
+      "sha256": "21e0f348ffc622c3907e5a0ac5319e4fc49753e673cf29e64813355c239d8434",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/1280x800-region4-town-clock500.png",
+      "sha256": "44dca1a6c6d4f57717c71bf6ceaa5be150f8e367332d61f8d86ff05fc51f55e6",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region0-goblin-road-fort-clock0.png",
+      "sha256": "0d57b975ee6d44f977ff90637f9911ffad9d5539e9c528d6c0b31f3dc0ec7172",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region0-goblin-road-fort-clock500.png",
+      "sha256": "f844f7d67fbebd5238620739cc002e669d023f023cea8751566716c514075396",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region0-skeleton-watch-clock0.png",
+      "sha256": "3cedf3b9f83bfcae4bb159ec9107e5ecb8e0636952038b5a348f27e9ef119c84",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region0-skeleton-watch-clock500.png",
+      "sha256": "00dcb6c27d9ffe95d2111573b9f64542f58e7b36f33fe62afd6b4c59ee49fa96",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region0-town-clock0.png",
+      "sha256": "576240670b8a64b4a5ea209bf274e6a1d65997014e9728cf78b9449e67db116a",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region0-town-clock500.png",
+      "sha256": "27c2c7284b6ddd056ab2c13a9c17eef516f01c6db9ab1281f0acbcebf677efcb",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region1-lantern-wraith-hold-clock0.png",
+      "sha256": "8ed0056168bb799af29f00d7f70e91b4fbda090993c388672efb2334533fb79d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region1-lantern-wraith-hold-clock500.png",
+      "sha256": "4d37d3d1cd58f51e1d92d27e7d3e8969f8eafabf3ec88f1c60c25c7ad551d9dc",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region1-mire-nest-hold-clock0.png",
+      "sha256": "e3bc30e75631e861760366322b617162ccb5cbcda3229ce2eae04cd4e7ce8df6",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region1-mire-nest-hold-clock500.png",
+      "sha256": "3e94a30bff6b0dc4f344fef21601b3cff6545ceefd9860c7055f8c4895485882",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region1-reedbeast-wallow-hold-clock0.png",
+      "sha256": "d16408a7a818f98013dbab9aef20130254aa26684d10d07356bcae04589059ef",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region1-reedbeast-wallow-hold-clock500.png",
+      "sha256": "7df042a30d3d9480f9dc247f3dd0374d0c2c77d01fb00378f7a20269e6a1acc8",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region1-town-clock0.png",
+      "sha256": "84b6b28cdbc6b615000a84cb649bd82a1a5d7f46bebed23d1a4487b729df2cd5",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region1-town-clock500.png",
+      "sha256": "291cdc1305c7e1521e1e89a9990e2a8fdd3f5461bbb5bb65e60a3cd33d1f43ad",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region2-ogre-hearth-fort-clock0.png",
+      "sha256": "6b7270b72c7ff3fd7e35f33e129d1b38ff20979bbe2f07e34617cf383d68539e",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region2-ogre-hearth-fort-clock500.png",
+      "sha256": "99c0674221c19c518579c71f615eb0ec945e50dd36a83c9b9005cd947089b656",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region2-town-clock0.png",
+      "sha256": "62af3d24b605d4bae9dd243c15dac4aaacea3e782d244bdd331b5f56bedb3c36",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region2-town-clock500.png",
+      "sha256": "9a05651798e159db90d1a546955b8df429020280dd0a56c1e48ccb15592d39e1",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region2-wolf-packhold-clock0.png",
+      "sha256": "c51fe009fb24b156d0b05b8edea79609c2b27644311c675dbb8b35899438c982",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region2-wolf-packhold-clock500.png",
+      "sha256": "18ccce727ec886348cc8a5cb8d784b68d9940ab6de2a7ab03f3ba2fc4d106d78",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region3-orc-road-fort-clock0.png",
+      "sha256": "55c4e34d76f7d7c8f2b3fe64737636956304d51a31712d139230677533c0f949",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region3-orc-road-fort-clock500.png",
+      "sha256": "c5ee1a13be1b421a4b514f7a036842ff9427d63c24842c69fcb4eae7b9ec8abc",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region3-raider-drill-redoubt-clock0.png",
+      "sha256": "52700ac7d1691aa663d31ffe92a3debb56015b33821b39e86e8560f604ee3cd2",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Continuous palisade perimeter, four towers, northern gate and drill defenders retain fort identity. Foreground tower naturally covers lower hero; helmet and soft contour remain visible. Gate/exit traversal separately passes the courtyard suite."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region3-raider-drill-redoubt-clock500.png",
+      "sha256": "0ff2aa8be146bc0d0f58c4a4efa64ff0fa9414a4af06769785ec98c342c1d8ac",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Continuous palisade perimeter, four towers, northern gate and drill defenders retain fort identity. Foreground tower naturally covers lower hero; helmet and soft contour remain visible. Gate/exit traversal separately passes the courtyard suite."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region3-stalker-cinder-hold-clock0.png",
+      "sha256": "f3f8e17c0ca69da959baab66a7f14afa184cff5542f14cc6605e0c45e55b6265",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region3-stalker-cinder-hold-clock500.png",
+      "sha256": "589a3edbae2aa9a599d519acad51573b1260ab78527add7f8aeb8a0a80a27d39",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region3-town-clock0.png",
+      "sha256": "bc2fe1aa3ca040d71c28a7e28493ad52f3c3c8cf2b30954b2b774dde3b4e9af0",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region3-town-clock500.png",
+      "sha256": "33eed44a6d01614c1a0aabb90c15e3c869ef40f021a2dc9864a264fb94fd36fd",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region4-ashbeast-roost-hold-clock0.png",
+      "sha256": "6f3ef236f363cf188f9b65cd6b436ee6cf85d80cf51f88b4dd4c6abfb62781b2",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region4-ashbeast-roost-hold-clock500.png",
+      "sha256": "7e7187500345b6c6d95f88a968359c8e8006918bfd24d6269c404dd82361f2d7",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region4-crown-field-barracks-hold-clock0.png",
+      "sha256": "2e0bad0582b7088420c03123fb5633048c7ea75dfa9def9154deb3e9bbbf2ce8",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region4-crown-field-barracks-hold-clock500.png",
+      "sha256": "d61a8ff047dfa1b759fba1bc66526efe08ee49a08e686b62e914b9163ce89fcb",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region4-crown-toll-redoubt-clock0.png",
+      "sha256": "f108850acddd686e11ec0eeee8aca32847482a424c6faba7cc73bd764e2b6502",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region4-crown-toll-redoubt-clock500.png",
+      "sha256": "bee3660bb4a057985f4eaaa936e71c4b43746119626b97e5eb081a2aad24d5af",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region4-town-clock0.png",
+      "sha256": "a2ac9e41eb9305bac5c5264a9fefcfd89e4fd27c125618b996c1d46d5c897077",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/375x800-region4-town-clock500.png",
+      "sha256": "1411266b0ab3f7f01936a062d32ba6ceb00b966265b29f4d6f07df9f179e7aed",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region0-goblin-road-fort-clock0.png",
+      "sha256": "3f030b2ecaa67cd2f204ee747448fe198efe9228e08831ebdee89c41711161db",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region0-goblin-road-fort-clock500.png",
+      "sha256": "3585c15f25639de932d7362e3fc618342204c8776cc4a2c2a4e92f8a3c50c841",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region0-skeleton-watch-clock0.png",
+      "sha256": "fe691e06e0fa11f66364b85af7ed924b39b283f0e5c7311fbd3d9382d2b93a5e",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region0-skeleton-watch-clock500.png",
+      "sha256": "99df44639c5b35718e5a1c965cce83ba52d926e29e6fea6567929fc88f1298f3",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region0-town-clock0.png",
+      "sha256": "5965aa2f0b34abf10c662f842ab17581fa068365b9e6089a4f38af388cb9a20c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region0-town-clock500.png",
+      "sha256": "391fc56916e405990963eea515c8fdc7afb9dfbeb3f0130ba1a952baf2f3de8e",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region1-lantern-wraith-hold-clock0.png",
+      "sha256": "91dd91656dfa4ae19229e3d97fa6e525c7661c931e99cf3ff1f9b9c8c966ecc1",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region1-lantern-wraith-hold-clock500.png",
+      "sha256": "5327be53457174e11d069a3c0dfbf37ff074ca2f7285355d1369211a951a0a65",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region1-mire-nest-hold-clock0.png",
+      "sha256": "277833d83cc74e5e5190881d956ce380eed7813d724fda6331792c9d25bb6d4f",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region1-mire-nest-hold-clock500.png",
+      "sha256": "091dd35464400b859ff06ad8c881fa8921a47bca481cf1b2429070925b552075",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region1-reedbeast-wallow-hold-clock0.png",
+      "sha256": "806b79af2468b28d04032e37fd0f21096216ea46dadcc2027ec7b1d2ec81099c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region1-reedbeast-wallow-hold-clock500.png",
+      "sha256": "ef6e3e590fd031e4f6967014eed2e99ddef461b0b41ba944069ebf52c3e99fba",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region1-town-clock0.png",
+      "sha256": "169a9b2df2053eb000b597f191353d748913607cfdbbb8723b950ddee8b6ea4c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region1-town-clock500.png",
+      "sha256": "83557c30d00578eb926dd06fdd7713e4a3552b1fc876bacb42c6cf50723874f4",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region2-ogre-hearth-fort-clock0.png",
+      "sha256": "36c546a12fa2e639fc4133d7fd0c0d65a7d0c1a9a050995b57f66cc03e795a25",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region2-ogre-hearth-fort-clock500.png",
+      "sha256": "54d5d7a494892beaf98cb82b34ec7f14919cf3957cee236ac17bffa628684bbb",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region2-town-clock0.png",
+      "sha256": "b52d14f2e9977e8e28007a15aab2ddec7873778c2dc91b7bd677bbc77cda5405",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region2-town-clock500.png",
+      "sha256": "fcd32adb25ff74580e3ea2cf7efa9a27d76520831d58da4c20c3c86ea26f926d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region2-wolf-packhold-clock0.png",
+      "sha256": "8c1863d4837664c3bb2aaa1dcdf9743e300ff4f9b75f6716d00e0897193a6742",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region2-wolf-packhold-clock500.png",
+      "sha256": "2adf74b8a14e1ac3b4bd7e68122965b4df51e296f7f2700d54f72104f5420726",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region3-orc-road-fort-clock0.png",
+      "sha256": "b5d87311c5e1597b11276a87d1b94f92f763353641decd4ed3eae9f67ef018a4",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region3-orc-road-fort-clock500.png",
+      "sha256": "aed3cef3a5adf83b37a941a7108289018ee21c4859e2c9c21d57a23e641c0911",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region3-raider-drill-redoubt-clock0.png",
+      "sha256": "2ee22de2795416542bd9c75a8a77c6d0487fb2b85e8cef5a005081f396cbaeef",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Continuous palisade perimeter, four towers, northern gate and drill defenders retain fort identity. Foreground tower naturally covers lower hero; helmet and soft contour remain visible. Gate/exit traversal separately passes the courtyard suite."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region3-raider-drill-redoubt-clock500.png",
+      "sha256": "fc3ddbd977d9efccd80020e54f102554bc8eacda76b7c38ffe95d97319764426",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Continuous palisade perimeter, four towers, northern gate and drill defenders retain fort identity. Foreground tower naturally covers lower hero; helmet and soft contour remain visible. Gate/exit traversal separately passes the courtyard suite."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region3-stalker-cinder-hold-clock0.png",
+      "sha256": "7cfad0a61fd7b8b62acfcc85dbee810ddee10dfb19e1158ae659200ad4b8ae36",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region3-stalker-cinder-hold-clock500.png",
+      "sha256": "f957a27c652ce16420e7f5350abd8c88cfe125177a033a48409d489ab27d6479",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region3-town-clock0.png",
+      "sha256": "0819b82f13f83583b70e33e833901ae7c4e600017beface4b2ed2a492cc10800",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region3-town-clock500.png",
+      "sha256": "4dc0b763e5051e1d21ab82f5eb65d0966d7519cecee65b18894b0f19b97ec352",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region4-ashbeast-roost-hold-clock0.png",
+      "sha256": "5df0dd8b6fd0ad096ea5396792132a0b1b3cb7901f701e8380f0501c920cb2ed",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region4-ashbeast-roost-hold-clock500.png",
+      "sha256": "7d7e1b7b63481781f35e882e20746f60e66298701f1e0c79b0a291512f32d49a",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region4-crown-field-barracks-hold-clock0.png",
+      "sha256": "f065fbc6a375ceda39aa61a7d089cd4dbdfe1ce9d856377eea6367775fbca6fe",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region4-crown-field-barracks-hold-clock500.png",
+      "sha256": "29a2b45becc4f740bd2da5bf0d343b85b0142103770b2f0b3ff22a98effa8977",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region4-crown-toll-redoubt-clock0.png",
+      "sha256": "c3b43aa946c95ea2431eb3e62b0e16eb3a1fde3389a910eb6fb56a72c685fc94",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region4-crown-toll-redoubt-clock500.png",
+      "sha256": "0743f2d09d9798b87950f7ce6b46d7e11dd1b4e92d81b7c081d67626872e613a",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region4-town-clock0.png",
+      "sha256": "90bad9211104a8e2fe4e668db400d160924d48f8a184e5ef2aec3374f51c7c22",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/393x852-region4-town-clock500.png",
+      "sha256": "c0ae84b91f96769e4612ca0039fabdeecc22ab1c0aa14cf45afe3c201e8a6496",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region0-goblin-road-fort-clock0.png",
+      "sha256": "f39d973efe42f617ba600927bf7894bdfc9b80518b99905933c17e16ded6cccf",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region0-goblin-road-fort-clock500.png",
+      "sha256": "41163eeed76738f75bc70f4f3dc971e8dfa7073f583076ba402f24d9bec8172b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region0-skeleton-watch-clock0.png",
+      "sha256": "8ed13b3df62771c78ac178da5ed84bae3ae4bd8238a74bb1e5f66a3b2c5b206c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region0-skeleton-watch-clock500.png",
+      "sha256": "dcb15bf84da03d8c8064d14b519c3dee32562a95d9f4c1c024d75d8ffc88f78b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region0-town-clock0.png",
+      "sha256": "d36661b8d009a8db72e60726ef540b97bdd227a9427dcad4694dd552fce86bad",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region0-town-clock500.png",
+      "sha256": "db28e46f0326e1a9361132d61f01cf7f6d47bfdf4c55128d01575e28fcb7cc25",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region1-lantern-wraith-hold-clock0.png",
+      "sha256": "b43eca3f59f48856ab4992a9c8ed75e646140a24d014ef32137f2c09fac4955e",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region1-lantern-wraith-hold-clock500.png",
+      "sha256": "c217c691be7ce2cfeb106be92730dd3fbf49d8c2d232cff91395ef816c624f92",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region1-mire-nest-hold-clock0.png",
+      "sha256": "32014f1638be14334afef78d666266c0ac7efa619285c2ad4e19e1e9fdbfef3e",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region1-mire-nest-hold-clock500.png",
+      "sha256": "c1ef516c51cf81a473c240a7c36a8ee341f79a563bd1cd732cb1d9a4d8ce248b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region1-reedbeast-wallow-hold-clock0.png",
+      "sha256": "fd0acc9fdfe9cace71ca5b5d0652a2e7a81993ac17fc487629650000d95b1a16",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region1-reedbeast-wallow-hold-clock500.png",
+      "sha256": "5a0dcb510572d2d5a1cca707a72198b250aa9386d95436d72277811b6b1c09c0",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region1-town-clock0.png",
+      "sha256": "cf3281613750b0299a676a1913211f893341e1fa187de04b1dc73625bd0a2d9c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region1-town-clock500.png",
+      "sha256": "44b2b270e273f1182a20e1cc2109d782ad2e18eed217e84d90caa1180b687cb3",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region2-ogre-hearth-fort-clock0.png",
+      "sha256": "c19abd424691afc4b32629335ef5beac00134b2a53a72deef32242caab6bac63",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region2-ogre-hearth-fort-clock500.png",
+      "sha256": "a6198fc6e2e5d2d6cc388d9fad9bc0155673a7936b57eccabf350ba4540383aa",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region2-town-clock0.png",
+      "sha256": "a5f6f713ebd2f2fe1082f1c48b1c3e7de486b87cc4cf2a8da5f0e0ebbda7aaa2",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region2-town-clock500.png",
+      "sha256": "cfab0682a3cb529efd0f26facf6b8d41b96518dd137a16c581dbcec983be0986",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region2-wolf-packhold-clock0.png",
+      "sha256": "d6247a207fdeb7a237ad68f6266f0bedf4b57b3158f2b8fd6b3b9eebe7eb221e",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region2-wolf-packhold-clock500.png",
+      "sha256": "f799e1128aa7e2483bf007e18a21a741a116066a4a7eaa55a952c20d751610d1",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region3-orc-road-fort-clock0.png",
+      "sha256": "4ab345949da2741c84ba4748f82fefa05e9fccac4ffa76dbe3de33e54240bb4b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region3-orc-road-fort-clock500.png",
+      "sha256": "57c0a6ce4c1497e02c8b4dbba52c1e3c5e48fc982f28e4d0fa10ea1b00b283f8",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region3-raider-drill-redoubt-clock0.png",
+      "sha256": "9fd205107071c7e7fdf475db556d3afa82714115e44a259ded30b4007276d577",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Continuous palisade perimeter, four towers, northern gate and drill defenders retain fort identity. Foreground tower naturally covers lower hero; helmet and soft contour remain visible. Gate/exit traversal separately passes the courtyard suite."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region3-raider-drill-redoubt-clock500.png",
+      "sha256": "e93b6ad3ccaeb450498f892a6731f5204c6bbfcedd6f77b8a7d2488e843b2f39",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Continuous palisade perimeter, four towers, northern gate and drill defenders retain fort identity. Foreground tower naturally covers lower hero; helmet and soft contour remain visible. Gate/exit traversal separately passes the courtyard suite."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region3-stalker-cinder-hold-clock0.png",
+      "sha256": "10a05feb13e911511fe002f4a3026ea34f47b30b26b19f7faeb2b1e3e7d96a4b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region3-stalker-cinder-hold-clock500.png",
+      "sha256": "0b8425ad86ca03bcbd1e35e6f0f4f155ec6f152395e4b184f71a8607122bdde8",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region3-town-clock0.png",
+      "sha256": "7a510c3980f0b5a735c79db457a55f2bb174657cd92e15a49dcab1ca6ea53e17",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region3-town-clock500.png",
+      "sha256": "0e95381aeb2a0cd2c21225f0a920c9aa80d6a224bc996ad12448a4d21f892998",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region4-ashbeast-roost-hold-clock0.png",
+      "sha256": "5d524cdea44cd632cac8ba3afa9e7a8cc23bf14b4d9ddecf75800cb9ed023c3b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region4-ashbeast-roost-hold-clock500.png",
+      "sha256": "66632d0330a08b72593f7ea21e2e3262b29620d5d79857b42bce5763079a0ff8",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region4-crown-field-barracks-hold-clock0.png",
+      "sha256": "cb39ee59e8ca897c208edabafe27ab6646e6655ce7094b3a1265bdd0b11eab52",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region4-crown-field-barracks-hold-clock500.png",
+      "sha256": "29a7f60ecceebb2f45e721ffe8dfe4b6cb7d2dcdf5520b768acd1a938ceba26b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region4-crown-toll-redoubt-clock0.png",
+      "sha256": "f716b21b38e5d2df7c9816f7b3906e29f28f5a30d4b0650b9312fbe1d81c34d6",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region4-crown-toll-redoubt-clock500.png",
+      "sha256": "f34c62cfe5566db1c61c9a6dd10dbd81fc2c158890a0a46126ac946b68acb5d2",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region4-town-clock0.png",
+      "sha256": "5c2a741aef122c2ffa9f7a1b818d17c5c320eaa0e54087e4469ccac4847794eb",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/800x375-region4-town-clock500.png",
+      "sha256": "688a209eb1d0f76a7c0a95319fd6435480a48ce0c34fdbc0d040b683208054a8",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region0-goblin-road-fort-clock0.png",
+      "sha256": "ff11f3706e86cf906b2ca793e7b5fc8cbb866857667cae09a0e3a6dfd807d57b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region0-goblin-road-fort-clock500.png",
+      "sha256": "d51446bc1b3d840b5db89483c1a181a5ff8b4805d50140954cd21e7d6c06fa16",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region0-skeleton-watch-clock0.png",
+      "sha256": "d74ee083d5798fcfc3c119b1d7869e0311bca7c03cbca277ce05b25763c0a45b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region0-skeleton-watch-clock500.png",
+      "sha256": "4e54fd5f69b85b7a6ec51faa109f2f76a3ebc1d8fb4eb1626f225d03d731f0c9",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region0-town-clock0.png",
+      "sha256": "bceb17ccccd1dfbe1ed48d9064abacc84113a0643f6d5fa2d97592eacca08e1d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region0-town-clock500.png",
+      "sha256": "da80232bdfed9e3702b11ae4e2c6441bb79a4cf8110c5f3243f1c08ea224d46d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region1-lantern-wraith-hold-clock0.png",
+      "sha256": "7757f84c3bd765e6bd7d73f9403ff58ad0ed12fd2b1db63e255948394904d148",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region1-lantern-wraith-hold-clock500.png",
+      "sha256": "bde5eafe9f90caa782792d710b673461476ead6a466d9e4dc4c3492d63678a1d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region1-mire-nest-hold-clock0.png",
+      "sha256": "af0f8cab87180295564607f25e7a7990157882c9444b925ce195ebd7390a722d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region1-mire-nest-hold-clock500.png",
+      "sha256": "a14bb19db0397942262a24102aee65c072f176461c0085a4e4cb3629bccc8f8b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region1-reedbeast-wallow-hold-clock0.png",
+      "sha256": "7a3a0c5d4acb0ec40af010b528d632fc07c4556fd418b92ef4a9affe80f482f2",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region1-reedbeast-wallow-hold-clock500.png",
+      "sha256": "d1abea3d7c1d9f57e189a4668bc9372308d2c5cee3bcb645ba8555b6a11a5c39",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region1-town-clock0.png",
+      "sha256": "07a62a09fe831537b9d23d5ebc62a2f18835f3d36dda60311595506dbb1ea443",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region1-town-clock500.png",
+      "sha256": "01ce5c9cf9cbcea7b98e85a3c8c28d30cc8e0cefee4a99f4ef45cf7622548d74",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region2-ogre-hearth-fort-clock0.png",
+      "sha256": "d2bcb937ea066197bb3c2db2a344ae63e4b239b8c00ed802c5ed01b673db6778",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region2-ogre-hearth-fort-clock500.png",
+      "sha256": "3c2e84f978050a388ac005f966446810dfacf32b152aed9549181d17a261dc5c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region2-town-clock0.png",
+      "sha256": "433fc611e9fabafa4740844b3f5bb417e278c28234f7aed3a81d0c45d013c135",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region2-town-clock500.png",
+      "sha256": "321ebb9d036069ae452b3b89a244b14c294b8c52bd96b6699fff13c4fa43700f",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region2-wolf-packhold-clock0.png",
+      "sha256": "f2db2803cad92ef704f1161340a176ad186750a3b1a7cae18c42715c1f34e831",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region2-wolf-packhold-clock500.png",
+      "sha256": "3a6bbeae48e6413a5d3fe91767055702b4de21745158c0980d3152500b769464",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region3-orc-road-fort-clock0.png",
+      "sha256": "2943e80bf5d2f6221f5f7c3c568838fd9675ca43b8b8cea9b1c27c54cf9a6662",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region3-orc-road-fort-clock500.png",
+      "sha256": "34d2112710dcf1c19d7b5ed21603c286e96233e8f47f880685e8887af1e44ecc",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region3-raider-drill-redoubt-clock0.png",
+      "sha256": "f9e314e113f04079cf99b31d439605a21ad259c9302abae7d1ca70ab5bff73fe",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Continuous palisade perimeter, four towers, northern gate and drill defenders retain fort identity. Foreground tower naturally covers lower hero; helmet and soft contour remain visible. Gate/exit traversal separately passes the courtyard suite."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region3-raider-drill-redoubt-clock500.png",
+      "sha256": "570a7bb4abf344ff47701ad520d9ec65175d5f1fc33dbcf69402eecd78fffb4d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Continuous palisade perimeter, four towers, northern gate and drill defenders retain fort identity. Foreground tower naturally covers lower hero; helmet and soft contour remain visible. Gate/exit traversal separately passes the courtyard suite."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region3-stalker-cinder-hold-clock0.png",
+      "sha256": "545f0ec9461e73e670b47ed87fa983cd07142d58c09b9c7e12bb6caba0535f34",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region3-stalker-cinder-hold-clock500.png",
+      "sha256": "0818028a463d7a64d9c8bc4b8877fb88a49d55246e7be8daf59d7e3f489a9c61",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region3-town-clock0.png",
+      "sha256": "cad810271c66e9149e7d08b49788573809b1a5c699cb6d4183dfb640b5f7f9ca",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region3-town-clock500.png",
+      "sha256": "f7d82123778093299f8536337117a2167975cdd3e059d7cb111e1554b24665be",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region4-ashbeast-roost-hold-clock0.png",
+      "sha256": "e43e9aeaa27c8c52181eeea3091c67e4a2d298dc6e8c29a7c47dc455d17dde6b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region4-ashbeast-roost-hold-clock500.png",
+      "sha256": "e01c4a766b2f4bc546a276a4ab8d00a70ce9cb8501de1ff0f46a680ccd25d850",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region4-crown-field-barracks-hold-clock0.png",
+      "sha256": "244fa9c64c29d6f05277f74be1fbef013bc745906d2076da05d32894c107c5af",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region4-crown-field-barracks-hold-clock500.png",
+      "sha256": "588d57c2549f67c01253dafce084f95e2908019cace4abd580038c4b3a78765c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region4-crown-toll-redoubt-clock0.png",
+      "sha256": "25719ccd91f362cbd2bfc0576e316c9aa241d7f5947853a681aef875c57fcb90",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region4-crown-toll-redoubt-clock500.png",
+      "sha256": "6284c734da21b021257348b288bc05cae37a75a6a50933ea2ac78d6939690fd5",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored hold retains its regional ruins/palisades, residents and distinct everyday objects; roads and exits remain visually separated. Night tint preserves silhouettes. Resident packs are live authored populations, not duplicate scenery."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region4-town-clock0.png",
+      "sha256": "8d68c55879170234db7dedaaf717c341a0e078f3ba860178d6d3214719ffaa94",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/world71-review/844x390-region4-town-clock500.png",
+      "sha256": "8b8565c4d1495e4f1fe2479f4f6a1a3c524e8a03dd5a6abc4c1fa5b3348eb467",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Authored service frontage, houses and paths are separated and readable; regional roofs/materials and night windows/lights retain identity. Initial hero/party spawn overlap is not scenery crowding."
+    },
+    {
+      "capture": "test-results/pr313-validation/archive-alias72-review/1280x800-scroll-stack-clock0.png",
+      "sha256": "f8096bd4e4d4249b95fc2dc977749efe1d3dcb34cc545f8a148addec9787dbfd",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Correct scroll-stack silhouette and rolled-paper ends at native size; tree fallback is absent in daylight and night. Label/body proximity comes from the controlled alias probe."
+    },
+    {
+      "capture": "test-results/pr313-validation/archive-alias72-review/1280x800-scroll-stack-clock500.png",
+      "sha256": "4b768d1348ccded41733cde64749c3d969faee6f72598f158c99e35b414127f7",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Correct scroll-stack silhouette and rolled-paper ends at native size; tree fallback is absent in daylight and night. Label/body proximity comes from the controlled alias probe."
+    },
+    {
+      "capture": "test-results/pr313-validation/archive-alias72-review/375x800-scroll-stack-clock0.png",
+      "sha256": "4a68ed8a922c4cce14ef2722dce9bc787251f2fb91a6915a062510fc4b1d6437",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Correct scroll-stack silhouette and rolled-paper ends at native size; tree fallback is absent in daylight and night. Label/body proximity comes from the controlled alias probe."
+    },
+    {
+      "capture": "test-results/pr313-validation/archive-alias72-review/375x800-scroll-stack-clock500.png",
+      "sha256": "c8ad85f3341567f0805c34ccf1d65d35d83da2e4af79828c18d3540ebbf0ee07",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Correct scroll-stack silhouette and rolled-paper ends at native size; tree fallback is absent in daylight and night. Label/body proximity comes from the controlled alias probe."
+    },
+    {
+      "capture": "test-results/pr313-validation/archive-alias72-review/393x852-scroll-stack-clock0.png",
+      "sha256": "90738e66c15da40631ad4c48148b8621ccc166d38bd49ba2655dc10a9b705755",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Correct scroll-stack silhouette and rolled-paper ends at native size; tree fallback is absent in daylight and night. Label/body proximity comes from the controlled alias probe."
+    },
+    {
+      "capture": "test-results/pr313-validation/archive-alias72-review/393x852-scroll-stack-clock500.png",
+      "sha256": "310ad0a439729811d4219f57d51beae7069eb271efb3f4346f0da497f1c3a69f",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Correct scroll-stack silhouette and rolled-paper ends at native size; tree fallback is absent in daylight and night. Label/body proximity comes from the controlled alias probe."
+    },
+    {
+      "capture": "test-results/pr313-validation/archive-alias72-review/800x375-scroll-stack-clock0.png",
+      "sha256": "e77f3ca43db7bafd8af485b067e4737ed70fc98c786677c68bad57c3dab3a616",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Correct scroll-stack silhouette and rolled-paper ends at native size; tree fallback is absent in daylight and night. Label/body proximity comes from the controlled alias probe."
+    },
+    {
+      "capture": "test-results/pr313-validation/archive-alias72-review/800x375-scroll-stack-clock500.png",
+      "sha256": "833739111484e104c1886bb78727b6466b649c2ff98f45eeb4fbd5e934894bc6",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Correct scroll-stack silhouette and rolled-paper ends at native size; tree fallback is absent in daylight and night. Label/body proximity comes from the controlled alias probe."
+    },
+    {
+      "capture": "test-results/pr313-validation/archive-alias72-review/844x390-scroll-stack-clock0.png",
+      "sha256": "1d5ea56968b66551ae0356c0f90c209c35125e1ba9cb0734ebb158ce1c955dbb",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Correct scroll-stack silhouette and rolled-paper ends at native size; tree fallback is absent in daylight and night. Label/body proximity comes from the controlled alias probe."
+    },
+    {
+      "capture": "test-results/pr313-validation/archive-alias72-review/844x390-scroll-stack-clock500.png",
+      "sha256": "bee91c20157e4c3c141dbb7075cd28ccbce9a922226ef3ce08ddb6974c5d1de2",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Correct scroll-stack silhouette and rolled-paper ends at native size; tree fallback is absent in daylight and night. Label/body proximity comes from the controlled alias probe."
+    }
+  ]
+}

@@ -2108,7 +2108,13 @@
         if (!e.interactionOnly)
           sprite(
             e.kind === 'archive-record'
-              ? { ...e, renderKind: 'prop', structure: 'scroll-stack', sceneRole: 'dry-stacks' }
+              ? {
+                  ...e,
+                  renderKind: 'prop',
+                  structure: 'scroll-stack',
+                  decorative: true,
+                  sceneRole: 'dry-stacks',
+                }
               : e.kind === 'keeper'
                 ? { ...e, renderKind: 'enemy', type: 'boss', family: 'archive', form: 'normal' }
                 : e,

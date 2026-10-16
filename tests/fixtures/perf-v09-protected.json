@@ -1736,6 +1736,53 @@
         "docs/PR313_RESUME_20261016.md": "ff7318bd62786c973de1883ef002b8c844a7b97a18454be027ebf35755a4f1f8",
         "docs/PR313_VALIDATION_20261016.md": "3770f3ab17aeda723cadf4a8442258b3077cc4b864b425843f337c90eb8c11e0"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt continuation; owner-authorized validation repairs and named Rogue cast UI, validation in progress 2026-10-16",
+      "reason": "Retain historical receipts; exact current bytes for review. No test result is inferred from these hashes.",
+      "files": {
+        ".github/workflows/community-balance.yml": "65310963ed7ff4633f3a29af3359efbd84eff71f8f5182bd720ae62487406dc2",
+        "docs/PR313_RESUME_20261016.md": "205ec128b325175066cb567e1eb7edc20691162fefe744e993a55be3c4ad2215",
+        "docs/PR313_VALIDATION_20261016.md": "1838cd6d77421742655903490c13a0635b4b95bc8d604ac94c7b5df9daade334",
+        "docs/evidence/SPRITE_SCOPE_RECONCILIATION.json": "550bfb25ce50b6482021bcac501e529e29ca1a15c0a3f6d6d8e6718fd6036b66",
+        "docs/evidence/pr313-validation-continuation-20261016/visual-dispositions-partial.json": "f60f6ddd34b7da262c332d1cff7fda67744494b21e4a06754dd5e5d4b69e7ac7",
+        "package-lock.json": "4e71bfbfc347c420885a9fb6ccb4dd390ca9f6c914135aded272945202af2c7b",
+        "package.json": "f470ad82057fdf477be6ed1907042559f72e7a831bb9a49e2befe6f3308f8b26",
+        "src/prototype/build-info.js": "e416ea66a160fad0ad9d0ccc0592525ffafb16cc2e0dc715e4699c8469598251",
+        "src/prototype/renderer.js": "0b34acad9fd22062a2f96b148895fe734fb5e2c039f38e8ac39eb76b89354690",
+        "sw.js": "26c7e3dbd17b304972044f1ef62d0e019d5338d61525545a3309ce21a6df1613",
+        "tests/community-snapshot-browser.test.cjs": "64d013799e03360c930bdb481004663b09af93039104b9ff7f4fade381839fff",
+        ".github/workflows/community-balance-provenance.yml": "b10f4197829fdf2ec6d7f1c5e5aaf3b3dcb346c137b1baf7197393357ea78142",
+        "scripts/community-balance-provenance.cjs": "5826f66527de5d190fff6438122c38703f9100e87b49d250cda073cd4fee9a94"
+      },
+      "previousFiles": {
+        ".github/workflows/community-balance.yml": "d48888d8d9bfe1d3c2ce1c59b3a6d053a330f99e08bfa080c6a749a5d419e492",
+        "docs/PR313_RESUME_20261016.md": "a76cd4ca5ef2c4fa0b452dcaeab4f298961d4e1d68e317263eeb5bfc58604937",
+        "docs/PR313_VALIDATION_20261016.md": "649b59d9ac9d2e45d093a60252aa892280d2106954785f350cd6b4f1dc3bb607",
+        "docs/evidence/SPRITE_SCOPE_RECONCILIATION.json": "d35b6a9ff00a3ce27fe5dab4343d80264aede7e541f0facadfdac4f47a348582",
+        "docs/evidence/pr313-validation-continuation-20261016/visual-dispositions-partial.json": "903afa26ca2c4573ad7a1660ecf54645d4e3a67a080963dea574f33b2546c9d7",
+        "package-lock.json": "6bac2c8cbd396fef97ac2b3866da960639ceebccd5d741f603b4a8d01d3f0752",
+        "package.json": "e8e18d39e86d74bcf837c78379a2a78e938102d29ecbb8f50b5eafea1513eb4d",
+        "src/prototype/build-info.js": "7bc294ad83a26adeea4ca959ba84938d9c94a02074f3c8e29d94d6d4754f8f86",
+        "src/prototype/renderer.js": "dc1157f40fef80969dbda96d31e41772a69e5875c8faf0635d36baaa4ded81fd",
+        "sw.js": "c4a2d0a0d55487bb98f8e4f761d7468f55e81a8c42502c843d20e6f6348e96ba",
+        "tests/community-snapshot-browser.test.cjs": "dc5458f6764a27b8aa5e306ef34125a608154ae6dadf00e67f3d4c51ea48aa5a"
+      }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt continuation; owner-authorized validation repairs and named Rogue cast UI, validation in progress 2026-10-16",
+      "reason": "Retain historical receipts; exact current bytes for review. No test result is inferred from these hashes.",
+      "files": {
+        "docs/PR313_RESUME_20261016.md": "c5ffdac49ba47fc469ac27016361c7951bbf38c92b791aed5c72e144a4d22a5c",
+        "docs/PR313_VALIDATION_20261016.md": "7a440dd814fae91cfb1695fc02f8349e8e654c014fbf31c2512db4a381e0dd29",
+        "docs/evidence/pr313-validation-continuation-20261016/native-world-alias-review.json": "fa8512baa4ef1e42e61564ca91731e03d4a09089ca5c71240480b65afe3ecd18"
+      },
+      "previousFiles": {
+        "docs/PR313_RESUME_20261016.md": "205ec128b325175066cb567e1eb7edc20691162fefe744e993a55be3c4ad2215",
+        "docs/PR313_VALIDATION_20261016.md": "1838cd6d77421742655903490c13a0635b4b95bc8d604ac94c7b5df9daade334"
+      }
     }
   ],
   "authorizedPr313ApproachFrameRevision": {

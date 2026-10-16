@@ -1,6 +1,7 @@
 name: Community Snapshot balance study
 on:
   pull_request:
+    types: [opened, reopened]
     branches: [main]
   workflow_dispatch:
 permissions:
