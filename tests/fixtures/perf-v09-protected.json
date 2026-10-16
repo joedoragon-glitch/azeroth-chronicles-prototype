@@ -1721,6 +1721,21 @@
         "docs/PR313_RESUME_20261016.md": "8e992a90181f1753435d603eb967bebfb2794b1cb2f95eb58fb660fde8e13ebb",
         "docs/PR313_VALIDATION_20261016.md": "5d9f65da035cd1e367527627cf6f2e826dabeb0b7e4aa895fda7a0fe2e7f9c66"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt continuation; owner-authorized validation repairs and named Rogue cast UI, validation in progress 2026-10-16",
+      "reason": "Retain historical receipts; exact current bytes for review. No test result is inferred from these hashes.",
+      "files": {
+        "docs/PR313_RESUME_20261016.md": "a76cd4ca5ef2c4fa0b452dcaeab4f298961d4e1d68e317263eeb5bfc58604937",
+        "docs/PR313_VALIDATION_20261016.md": "649b59d9ac9d2e45d093a60252aa892280d2106954785f350cd6b4f1dc3bb607",
+        ".github/workflows/community-balance.yml": "d48888d8d9bfe1d3c2ce1c59b3a6d053a330f99e08bfa080c6a749a5d419e492",
+        "scripts/community-companion-observe.cjs": "bc1974b543eabe95cadc5caedcbdf81861c2d11c98da743461242816e8cdf06b"
+      },
+      "previousFiles": {
+        "docs/PR313_RESUME_20261016.md": "ff7318bd62786c973de1883ef002b8c844a7b97a18454be027ebf35755a4f1f8",
+        "docs/PR313_VALIDATION_20261016.md": "3770f3ab17aeda723cadf4a8442258b3077cc4b864b425843f337c90eb8c11e0"
+      }
     }
   ],
   "authorizedPr313ApproachFrameRevision": {
