@@ -702,6 +702,9 @@
         if ((this.s.expeditionRank || 1) < 3) return false;
         const context = this.syncSquadDoctrine();
         if (!context.engaged) return false;
+        // An explicit combat-doctrine switch during an ongoing encounter is
+        // a new engagement order; Recall itself remains defensive until then.
+        this.s.recallActive = false;
         this.s.squadDoctrine = this.s.squadDoctrine === 'focus' ? 'guard' : 'focus';
         this.event('squadDoctrine', { mode: this.s.squadDoctrine, boss: context.boss });
         return true;
