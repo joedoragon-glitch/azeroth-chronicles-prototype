@@ -146,13 +146,14 @@
       return ['rest', 'supplier', 'recruiter', 'mini', 'dungeon', 'exit'].includes(e.kind);
     if (e.renderKind !== 'prop') return false;
     const structure = String(e.structure || '');
-    if (/(?:^|-)(?:sapling|stump|shrub|grass|flowers|log|post|barrel|crate)(?:-|$)/.test(structure))
+    // Ground decals and genuinely low clutter never conceal an actor. Use the
+    // actual object alpha in drawOcclusionOutlines for the final cover check.
+    if (/(?:^|[-_])(?:sapling|stump|shrub|grass|flowers|petals|furrows|rune|road|path|floor|ash|poppies|puddle)(?:[-_]|$)/i.test(structure))
       return false;
     return (
-      /(?:^|-)(?:house|cottage|workshop|smithy|hut|lodge|hall|tower|watchhouse|watchpost|keep|fort|fortress|gatehouse|barracks|chapel|command-tent|tree|wall|stonewall|stockade|palisade)(?:-|$)/.test(
-        structure,
-      ) ||
-      (['🌲', '🌳', '🪨'].includes(e.icon) && Number(e.r) >= 18)
+      /(?:^|[-_])(?:house|cottage|workshop|smithy|hut|lodge|hall|tower|watchhouse|watchpost|keep|fort|fortress|gatehouse|barracks|chapel|tent|tree|mangrove|wall|stonewall|stockade|palisade|rock|boulder|cliff|pillar|statue|shrine|roost|hatchery|forge|furnace|kiln|kennel|gate|arch|ruin|shelf|wardrobe|large|canopy|wagon|cart|stall|screen|supply-stack|weapon-rack)(?:[-_]|$)/i.test(structure) ||
+      (Number(e.r) >= 16 && !/(?:^|[-_])(?:barrel|crate|post|log)(?:[-_]|$)/.test(structure)) ||
+      (['🌲', '🌳', '🪨'].includes(e.icon) && Number(e.r) >= 14)
     );
   }
 
@@ -209,11 +210,15 @@
           dy = q.y - p.y;
         // Broad phase only. The actual artwork's alpha is intersected below,
         // preventing a contour from appearing across empty sprite padding.
-        if (dy < 0) continue;
         if (obstacle.height === undefined) obstacle.height = height(entity);
-        if (dy > Math.max(100, obstacle.height + 44) || Math.abs(q.x - p.x) > 155) continue;
+        // Broad phase must accommodate tall/wide artwork and overlapping cover,
+        // rather than an invariant 155px strip that misses large structures.
+        const reach = Math.max(155, obstacle.height * 1.3, Number(entity.r || 0) * 2 + 55);
+        if (dy < -Math.max(35, obstacle.height * 0.3) ||
+            dy > Math.max(120, obstacle.height + 75) ||
+            Math.abs(q.x - p.x) > reach) continue;
         front.push({ entity, position: q });
-        if (front.length === 8) break;
+        if (front.length === 16) break;
       }
       if (front.length) pairs.push({ actor, position: p, front });
     }
@@ -224,7 +229,7 @@
           (a.actor.renderKind === 'hero' ? 0 : a.actor.renderKind === 'ally' ? 1 : 2) -
           (b.actor.renderKind === 'hero' ? 0 : b.actor.renderKind === 'ally' ? 1 : 2),
       )
-      .slice(0, 12);
+      .slice(0, 24);
   }
 
   function create({
