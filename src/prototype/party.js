@@ -72,6 +72,14 @@
         if (u.type === 'soldier') {
           if (dist(u, target) > 80 || !this.line(u, target)) return false;
           if (!this.damage(target, base * cfg.multiplier, u.id)) return false;
+          const veteran = R.companionSkills.veteran;
+          if (
+            (this.s.expeditionRank || 1) >= veteran.expeditionRank &&
+            ((u.wardUntil || 0) <= this.s.time || (u.wardReduction || 0) <= veteran.soldierWard)
+          ) {
+            u.wardUntil = this.s.time + veteran.soldierWardSeconds;
+            u.wardReduction = veteran.soldierWard;
+          }
           u.skill1Cd = cfg.cooldown;
           u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
           u.cd = Math.max(u.cd, 0.4);
@@ -125,6 +133,11 @@
             style: 'arrow',
             rapid: true,
             companionSkill: 'triple-shot',
+            ...(j === 0 &&
+            (this.s.expeditionRank || 1) >= R.companionSkills.veteran.expeditionRank &&
+            dist(u, target) < R.companionSkills.veteran.coveringRange
+              ? { slow: R.companionSkills.veteran.coveringSlow }
+              : {}),
           });
         this.event('projectileLaunch', {
           actor: 'companion',
@@ -318,7 +331,11 @@
       unit(type, x, y, petFamily = null) {
         const pet = type === 'pet' ? this.petDefinition(petFamily) : null;
         if (type === 'pet' && !pet) throw Error('Unknown boss pet');
-        const base = { soldier: [120, 12, '⚔️'], archer: [105, 15, '🏹'], pet: [112, R.balance.companions.petDamage, '🐾'] }[type];
+        const base = {
+          soldier: [120, 12, '⚔️'],
+          archer: [105, 15, '🏹'],
+          pet: [112, R.balance.companions.petDamage, '🐾'],
+        }[type];
         if (!base) throw Error('Unknown companion type');
         const maxHp = this.companionMaxHp(type);
         return {
@@ -446,8 +463,8 @@
                 : target.type === 'pet'
                   ? this.petDefinition(target).name
                   : target.type === 'archer'
-                  ? 'a Ranger'
-                  : 'a Soldier') +
+                    ? 'a Ranger'
+                    : 'a Soldier') +
               ' · restoring ' +
               amount +
               ' HP over five seconds.',
@@ -754,7 +771,10 @@
           const i = Math.max(0, pets.indexOf(u));
           const side = i % 2 ? 1 : -1;
           const row = Math.floor(i / 2);
-          return [side * (130 + row * 35), this.petDefinition(u)?.role === 'ranged' ? -95 - row * 35 : 25 + row * 35];
+          return [
+            side * (130 + row * 35),
+            this.petDefinition(u)?.role === 'ranged' ? -95 - row * 35 : 25 + row * 35,
+          ];
         }
         const rangedHero = this.hero.class === 'mage' || this.hero.class === 'ranger',
           same = living.filter((v) => v.type === u.type && !v.order),
@@ -831,7 +851,12 @@
       soldierScreenTarget(u, targets, living, claimed) {
         const protectedUnits = [
             this.hero,
-            ...living.filter((v) => (v.type === 'archer' || (v.type === 'pet' && this.petDefinition(v)?.role === 'ranged')) && !v.order),
+            ...living.filter(
+              (v) =>
+                (v.type === 'archer' ||
+                  (v.type === 'pet' && this.petDefinition(v)?.role === 'ranged')) &&
+                !v.order,
+            ),
           ],
           pressure = (e) => Math.min(...protectedUnits.map((p) => dist(e, p))),
           band = (e) => (pressure(e) < 150 ? 0 : pressure(e) < 280 ? 1 : 2);
@@ -1140,6 +1165,14 @@
               visible = this.line(u, e),
               anchor = this.partyFollowPoint(u, living);
             if (d < 150) {
+              // Veteran Rangers can cover a retreat with their existing Triple Shot.
+              // Still move this frame; never trade the fallback for standing fire.
+              if (
+                (this.s.expeditionRank || 1) >= R.companionSkills.veteran.expeditionRank &&
+                (u.skillGlobalCd || 0) <= 0 &&
+                !this.mageSilenceActive(u)
+              )
+                this.companionUseFirstSkill(u, e);
               this.follow(
                 u,
                 this.archerFallbackPoint(u, e, living),

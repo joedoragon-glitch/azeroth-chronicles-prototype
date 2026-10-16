@@ -95,7 +95,8 @@
     const kind = e.renderKind;
     // Authored crowned class outfits have procedural detail not present in base sprites.
     if (kind === 'hero') return e.crowned ? [] : ['hero:' + clean(e.class)];
-    if (kind === 'ally') return e.type === 'pet' ? [] : ['ally:' + clean(e.class || e.type || 'worker')];
+    if (kind === 'ally')
+      return e.type === 'pet' ? [] : ['ally:' + clean(e.class || e.type || 'worker')];
     if (kind === 'enemy') {
       // New authored multiracial armor and mounted-direwolf silhouettes are
       // procedural: the old generic guard/Wolf sprites cannot depict them.

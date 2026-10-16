@@ -372,13 +372,20 @@
         origin = null;
       }
     }
+    const phaseMemory = new WeakMap();
     function visualPhase(e) {
+      const owner = e.spriteIdentity || e;
+      const key = String(e.id || e.name || e.species || e.family || e.type || 'azeroth');
+      const previous = phaseMemory.get(owner);
+      if (previous?.key === key) return previous.phase;
       let h = 2166136261 >>> 0;
-      for (const ch of String(e.id || e.name || e.species || e.family || e.type || 'azeroth')) {
+      for (const ch of key) {
         h ^= ch.charCodeAt(0);
         h = Math.imul(h, 16777619);
       }
-      return (h % 628) / 100;
+      const phase = (h % 628) / 100;
+      phaseMemory.set(owner, { key, phase });
+      return phase;
     }
     function visualPosition(e, p) {
       const actor =
@@ -753,10 +760,17 @@
       ctx.lineJoin = 'round';
       if (style === 'pet') {
         ctx.fillStyle = game.petDefinition(p.petFamily)?.color || '#bdd5d1';
-        ctx.beginPath(); ctx.ellipse(q.x,q.y,5,4,0,0,Math.PI*2); ctx.fill();
-        ctx.strokeStyle = '#e6eece'; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(q.x-ux*10,q.y-uy*10);ctx.lineTo(q.x,q.y);ctx.stroke();
-        ctx.restore(); return;
+        ctx.beginPath();
+        ctx.ellipse(q.x, q.y, 5, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#e6eece';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(q.x - ux * 10, q.y - uy * 10);
+        ctx.lineTo(q.x, q.y);
+        ctx.stroke();
+        ctx.restore();
+        return;
       }
       if (style === 'cargo') {
         ctx.translate(q.x, q.y);
@@ -1084,14 +1098,25 @@
         ctx.save();
         ctx.globalAlpha = a;
         if (f.type === 'petSkill') {
-          const from = screen({x:f.fromX,y:f.fromY});
+          const from = screen({ x: f.fromX, y: f.fromY });
           ctx.strokeStyle = f.color || '#b9d6bd';
           ctx.lineWidth = f.slot === 2 ? 2 : 1.5;
           if (f.shape === 'line' || f.shape === 'target') {
-            ctx.beginPath(); ctx.moveTo(from.x,from.y-10); ctx.lineTo(p.x,p.y-8); ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(from.x, from.y - 10);
+            ctx.lineTo(p.x, p.y - 8);
+            ctx.stroke();
           }
           ctx.beginPath();
-          ctx.ellipse(p.x,p.y, (f.slot === 2 ? 22 : 12) * (0.8+grow*0.2), f.slot === 2 ? 9 : 5, 0,0,Math.PI*2);
+          ctx.ellipse(
+            p.x,
+            p.y,
+            (f.slot === 2 ? 22 : 12) * (0.8 + grow * 0.2),
+            f.slot === 2 ? 9 : 5,
+            0,
+            0,
+            Math.PI * 2,
+          );
           ctx.stroke();
         } else if (f.type === 'ability') {
           PrototypeCombatVisuals.ability(ctx, screen, f);
@@ -1853,7 +1878,10 @@
         if (e.renderKind === 'building') return e.name || 'Barracks';
         if (e.renderKind === 'node') return 'Dark Lord Tribute';
         if (e.renderKind === 'enemy') return e.name || '';
-        if (e.renderKind === 'ally') return e.type === 'pet' ? game.petDefinition(e)?.name || 'Boss pet' : e.type || e.name || '';
+        if (e.renderKind === 'ally')
+          return e.type === 'pet'
+            ? game.petDefinition(e)?.name || 'Boss pet'
+            : e.type || e.name || '';
         return '';
       };
       const labelPriority = (e) =>
@@ -2024,7 +2052,9 @@
                     ' · Lv ' +
                     e.level
                 : e.renderKind === 'ally'
-                  ? (e.type === 'pet' ? game.petDefinition(e)?.name || 'Boss pet' : e.type || e.name)
+                  ? e.type === 'pet'
+                    ? game.petDefinition(e)?.name || 'Boss pet'
+                    : e.type || e.name
                   : '';
             const slot = labelSlots.get(e);
             if (slot) ctx.fillText(label, slot.x, slot.y, slot.width);

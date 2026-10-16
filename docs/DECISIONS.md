@@ -133,3 +133,11 @@ The author explicitly approves **the current combat mechanics** for the two hist
 - **Stone Colossus Wall Rush:** keep the existing **three-second** exposed-core state whenever the warned charge ends, regardless of contact with walls or historical pillars. The original marked-pillar condition was never wired into the attack; unused old pillar coordinates do not justify recreating arena obstacles. Preserve the v0.8.137 blocked-charge motion fix and all existing damage/geometry behavior.
 
 The discrepancy and historical test evidence remain in [issue #214](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/214). These are **description corrections**, not fresh combat design or rebalance. Future changes to effective recovery should update corresponding numerical text and regression tests.
+
+## Community Snapshot after #308 · 15–16 October 2026
+
+Owner authorizes a consolidated procedural-art pass, late-game troop improvements, eleven TRUE-boss pets, incoming bug fixes and safe presentation work. No tests/build/browser/CI/PR/deployment until separate final validation authorization. Combat/AI performance is assessment-only. This supersedes earlier workflow requirements to run focused tests during implementation, but preserves every release gate.
+
+Pet ownership derives permanently from existing `s.true`. One individual per canonical boss, free admission through any completed Barracks, standard active slots/reserve and recovery; resting/fallen pets stay in the roster and cannot be dismissed for fresh health. Historical winners need no replay. No summoning, labor, extra party slots or enemy-AI reuse. The existing level, Companion Vitality and Expedition inheritance formulas now also apply to this explicit pet type, superseding the older troop-only scope above without changing prior troop bonuses.
+
+Implementation choices are provisional until final validation: Expedition-4 Power Strike self-protection and retreating Triple Shot Slow; ally-sized, capped pet kits; individually authored procedural miniatures; selective aesthetics within an exhaustive source census. Current enemy AI, hero kits/AV, reward/progression, maps and PWA contracts remain. See the Community implementation, art, balance, performance and validation records; source inspection is not runtime evidence.

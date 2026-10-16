@@ -2764,7 +2764,13 @@
         const b = this.boss(e.family);
         const petWasUnlocked = this.petUnlocked(e.family);
         const firstVictory = this.victory(e.family, e.form);
-        if (e.form === 'true' && !petWasUnlocked && !e.summon && !e.developerSpawn && this.petDefinition(e.family)) {
+        if (
+          e.form === 'true' &&
+          !petWasUnlocked &&
+          !e.summon &&
+          !e.developerSummon &&
+          this.petDefinition(e.family)
+        ) {
           const pet = this.petDefinition(e.family);
           this.say(pet.name + ' unlocked permanently · meet your boss pet at any Barracks.');
           this.notice('BOSS PET UNLOCKED · ' + pet.name, 6);
@@ -6163,7 +6169,8 @@
   DreadmawCombat.install(Campaign, { R });
   const Party = typeof PrototypeParty !== 'undefined' ? PrototypeParty : require('./party.js');
   Party.install(Campaign, { D, R });
-  const PartyPets = typeof PrototypePartyPets !== 'undefined' ? PrototypePartyPets : require('./party-pets.js');
+  const PartyPets =
+    typeof PrototypePartyPets !== 'undefined' ? PrototypePartyPets : require('./party-pets.js');
   PartyPets.install(Campaign, { D, R });
   const Economy =
     typeof PrototypeEconomy !== 'undefined' ? PrototypeEconomy : require('./economy.js');

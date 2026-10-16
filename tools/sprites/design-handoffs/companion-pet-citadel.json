@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-candidate-unreviewed",
+  "designId": "companion-pet-citadel",
+  "name": "Veyra, Ash Sentinel miniature",
+  "kind": "companion",
+  "nextAction": "Native-size desktop/phone visual review after explicit validation authorization; no sprites requested.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Owner authorized all eleven procedural TRUE-boss pets, 15 October 2026. No screenshot or visual acceptance claimed.",
+    "decisionDate": "2026-10-15",
+    "repositoryIssueOrPR": null,
+    "contentDocuments": [
+      "docs/COMMUNITY_SNAPSHOT_IMPLEMENTATION_20261016.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": "Implementation authorized by owner; draft tuning reviewed against troop rules.",
+    "proceduralDesignAcceptance": "NOT REVIEWED at native size",
+    "spriteProductionAuthorization": "EXCLUDED by owner for this update",
+    "generatedAppearanceAcceptance": "No generated image",
+    "pendingCorrections": [
+      "Native-size visual quality/fidelity pending"
+    ]
+  },
+  "reference": {
+    "sourceCommit": "6bc27be31792b1c38147d61e98ceed6acf3e2560",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::bossPet",
+      "src/prototype/rules.js::petCompanions",
+      "feature/community-snapshot-post308-20261016"
+    ],
+    "exactEntityState": {
+      "renderKind": "ally",
+      "type": "pet",
+      "petFamily": "citadel"
+    },
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [],
+    "traitsToPreserve": [
+      "miniature disciplined Veyra preserving her uniform and marshal identity",
+      "large expressive eyes, short body, grounded feet",
+      "canonical anatomy, material and equipment"
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [
+      "ally type pet / petFamily citadel"
+    ],
+    "requiredVisibleAssets": [],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "visuals.js; owner expressly requires procedural miniatures"
+    ]
+  },
+  "animationRequirements": {
+    "status": "procedural only",
+    "gameplayStates": [
+      "idle",
+      "move",
+      "attack",
+      "charge"
+    ],
+    "directions": [],
+    "pivotContract": "same companion ground anchor; no combat geometry adaptation",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

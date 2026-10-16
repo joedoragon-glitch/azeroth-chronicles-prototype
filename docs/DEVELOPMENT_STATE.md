@@ -1,5 +1,9 @@
 # Current development state and v0.9 readiness
 
+## Current work · Community Snapshot, 16 October 2026
+
+PR #308 merged as `6bc27be31792b1c38147d61e98ceed6acf3e2560`. The next consolidated feature is on `feature/community-snapshot-post308-20261016`, with its recoverable checkpoints and honest untested status in [the implementation record](COMMUNITY_SNAPSHOT_IMPLEMENTATION_20261016.md). No new release, build, browser validation, test run, CI workflow or deployment has been initiated during this source phase. The owner must authorize [the combined final validation](COMMUNITY_SNAPSHOT_VALIDATION_20261016.md); older readiness/release notes below are retained history.
+
 ## v0.9.0 candidate preparation · 10 October 2026
 
 **Candidate only; not published or accepted.** This addendum supersedes the old active-work labels below. The earlier snapshot is retained as dated history.

@@ -562,6 +562,7 @@
     'hit',
     'basicComboFinisher',
     'companionSkill',
+    'petSkill', // Visual metadata; the corresponding spell/melee event owns audio.
     // Preparation is visible; concrete release and interruption own the sound.
     'companionChargeStart',
     // UI/save bookkeeping has no separate sound cue.

@@ -503,14 +503,38 @@
       title: 'Companions and field bases',
       intro: 'Shared bonuses, Ranger care and TRUE boss pets.',
       topics: [
-        ['TRUE boss pets',
+        [
+          'Veteran troop techniques',
+          'Expedition Rank 4 improves existing troop skills: Soldiers protect themselves after a successful Power Strike; Rangers cover a close retreat with Triple Shot.',
+          'Power Strike grants a self-only ' +
+            percent(R.companionSkills.veteran.soldierWard) +
+            '% ward for ' +
+            R.companionSkills.veteran.soldierWardSeconds +
+            ' seconds; it never stacks with a stronger Paladin ward. Soldier emergency immunity remains 2.5 seconds below half health, with 14-second recovery. A Ranger may launch its ready Triple Shot before falling back from an enemy within ' +
+            R.companionSkills.veteran.coveringRange +
+            ' units; only the first arrow applies ' +
+            R.companionSkills.veteran.coveringSlow +
+            ' second of Slow on a real hit. Normal cooldown, Silence, line of sight and terrain still apply. Heal and Mana Recovery, charged second attacks and their interruption rules are unchanged.',
+        ],
+        [
+          'TRUE boss pets',
           'Each TRUE boss victory permanently unlocks a miniature companion in Barracks → Company → Boss pet collection. Past TRUE victories count. Each pet replaces a normal companion slot; no pet summons or performs labor.',
-          'Recruitment is free, with one individual per boss. Resting and fallen pets remain in your company, retaining their health. Treat or recover them with the normal Barracks services; there is no free dismissal-and-recruit heal. Pets inherit hero-level health, Companion Vitality and Expedition bonuses like troops. Their second skill uses the same charge, interruption, Slow and Silence rules. No new party capacity is granted.'],
-        ...game.petCollection().filter((row) => row.state !== 'Locked').map(({boss,def,state}) => [
-          def.name + ' · ' + state, 'A miniature companion inspired by ' + boss.name + '.',
-          def.first.name + ': ' + game.petSkillSummary(boss.id,1) + '\n' +
-          def.second.name + ': ' + game.petSkillSummary(boss.id,2)
-        ]),
+          'Recruitment is free, with one individual per boss. Resting and fallen pets remain in your company, retaining their health. Treat or recover them with the normal Barracks services; there is no free dismissal-and-recruit heal. Pets inherit hero-level health, Companion Vitality and Expedition bonuses like troops. Their second skill uses the same charge, interruption, Slow and Silence rules. No new party capacity is granted.',
+        ],
+        ...game
+          .petCollection()
+          .filter((row) => row.state !== 'Locked')
+          .map(({ boss, def, state }) => [
+            def.name + ' · ' + state,
+            'A miniature companion inspired by ' + boss.name + '.',
+            def.first.name +
+              ': ' +
+              game.petSkillSummary(boss.id, 1) +
+              '\n' +
+              def.second.name +
+              ': ' +
+              game.petSkillSummary(boss.id, 2),
+          ]),
         [
           'Shared lessons and equipment',
           'Shared Training passes your discipline bonuses to companions. Shared Strength passes other health and damage bonuses, plus armor and reforges. Each lesson passes more of its own bonuses as its rank rises.',

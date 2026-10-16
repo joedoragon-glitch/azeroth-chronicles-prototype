@@ -292,7 +292,18 @@
           for (const [id, v] of Object.entries(s[field]))
             if (!ids.has(id) || v !== true) throw Error('Invalid boss identity');
         }
-        for (const [key, v] of Object.entries(s.victories || {}))
+        // Some historical v4 exports retain the authoritative facts but omit
+        // the detailed victory map. Rebuild only that existing field so later
+        // victories remain writable and old rewards are not announced again.
+        if (s.victories === undefined)
+          s.victories = Object.fromEntries(
+            ['normal', 'true'].flatMap((form) =>
+              Object.keys(s[form]).map((id) => [id + ':' + form, true]),
+            ),
+          );
+        if (!s.victories || typeof s.victories !== 'object' || Array.isArray(s.victories))
+          throw Error('Invalid victory history');
+        for (const [key, v] of Object.entries(s.victories))
           if (
             !/^(.*):(normal|true)$/.test(key) ||
             !ids.has(key.split(':')[0]) ||
@@ -436,7 +447,12 @@
         const petFamilies = new Set();
         for (const u of s.party) {
           if (u.type === 'pet') {
-            if (!D.bosses.some((b) => b.id === u.petFamily) || !Object.hasOwn(R.petCompanions, u.petFamily) || !s.true[u.petFamily] || petFamilies.has(u.petFamily))
+            if (
+              !D.bosses.some((b) => b.id === u.petFamily) ||
+              !Object.hasOwn(R.petCompanions, u.petFamily) ||
+              !s.true[u.petFamily] ||
+              petFamilies.has(u.petFamily)
+            )
               throw Error('Invalid or duplicate boss pet');
             petFamilies.add(u.petFamily);
             u.name = R.petCompanions[u.petFamily].name;

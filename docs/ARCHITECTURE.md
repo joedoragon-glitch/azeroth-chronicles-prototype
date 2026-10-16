@@ -158,3 +158,7 @@ paths link to that short reference. This is a read-only presentation query, not 
 new condition store or tutorial system. See
 `docs/HERO_SKILLS_CONSOLIDATION_20261015.md` for sources, conflicts, the one dev.64
 cache/version and unexecuted combined validation requirements.
+
+## Community Snapshot pet specialization (source candidate, untested)
+
+`party-pets.js` installs the narrow `pet` companion specialization alongside `party.js`; it does not own another roster or import engine/browser state. `rules.petCompanions` keys are vetted against `data.bosses`; live coefficients stay in rules. `s.true` remains permanent entitlement, `s.party` remains the sole recruited roster, and `petFamily` preserves individual identity through the existing v4 lifecycle. Common progression/armor, active/reserve caps, Ranger healing, targeting doctrine, navigation and delayed interrupted charge completion remain the shared owners. Menus and the existing Keeper shelf expose collection and skill details. Pet-only art is explicit in visuals; sprite lookup intentionally returns no sprite key. New script registration feeds the generated PWA graph; build/validation is deferred by owner instruction.

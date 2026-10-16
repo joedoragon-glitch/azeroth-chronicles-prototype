@@ -1889,7 +1889,7 @@
                   this.weakenedEnemyDamage(e) * a.coefficient -
                     (u === this.hero
                       ? this.armor()
-                      : ['soldier', 'archer'].includes(u.type)
+                      : ['soldier', 'archer', 'pet'].includes(u.type)
                         ? this.companionArmor(u.type)
                         : 5 + this.hero.level * 0.5) *
                       0.35,

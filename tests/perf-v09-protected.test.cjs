@@ -59,10 +59,43 @@ if (validationRepairs) {
     assert.equal(hash, heroRevision.files[file] || timingRevision.files[file], file + ' retained original combined source');
   assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', validationRepairs.ledger))).digest('hex'), validationRepairs.ledgerSha256);
 }
+const communityRevision = manifest.authorizedCommunitySnapshotRevision;
+if (communityRevision) {
+  assert.equal(communityRevision.baseline, '6bc27be31792b1c38147d61e98ceed6acf3e2560');
+  assert.match(communityRevision.source, /Community Snapshot.*PR #308.*NOT TESTED/);
+  assert.deepEqual(Object.keys(communityRevision.files).sort(), [
+  "scripts/site-assets.cjs",
+  "src/prototype/archive.js",
+  "src/prototype/audio-catalog.js",
+  "src/prototype/audio-effects.js",
+  "src/prototype/boss-combat.js",
+  "src/prototype/combat-visuals.js",
+  "src/prototype/combat.js",
+  "src/prototype/engine.js",
+  "src/prototype/menus.js",
+  "src/prototype/party-pets.js",
+  "src/prototype/party.js",
+  "src/prototype/progression.js",
+  "src/prototype/renderer.js",
+  "src/prototype/rules.js",
+  "src/prototype/save.js",
+  "src/prototype/sprites.js",
+  "src/prototype/visuals.js",
+  "tools/audio/index.html"
+]);
+  assert.deepEqual(Object.keys(communityRevision.files).sort(), Object.keys(communityRevision.previousFiles).sort());
+  assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', communityRevision.ledger))).digest('hex'), communityRevision.ledgerSha256, 'exact authorized Community source ledger');
+  const prior = { ...manifest.approvedOvernightCertificationRevision.files, ...originalPlaytestRevision.files,
+    ...passiveRevision?.files, ...healingRevision?.files, ...timingRevision?.files, ...heroRevision?.files, ...validationRepairs?.files };
+  for (const [file, hash] of Object.entries(communityRevision.previousFiles))
+    if (prior[file]) assert.equal(hash, prior[file], file + ' retains the exact final #308 predecessor receipt');
+  for (const [file, hash] of Object.entries(communityRevision.untouchedFiles))
+    assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), hash, file + ' stays unchanged from merged #308');
+}
 const playtestRevision = originalPlaytestRevision && {
   ...originalPlaytestRevision,
   auditSha256: heroRevision?.auditSha256 || timingRevision?.auditSha256 || healingRevision?.auditSha256 || passiveRevision?.auditSha256 || originalPlaytestRevision.auditSha256,
-  files: { ...originalPlaytestRevision.files, ...passiveRevision?.files, ...healingRevision?.files, ...timingRevision?.files, ...heroRevision?.files, ...validationRepairs?.files },
+  files: { ...originalPlaytestRevision.files, ...passiveRevision?.files, ...healingRevision?.files, ...timingRevision?.files, ...heroRevision?.files, ...validationRepairs?.files, ...communityRevision?.files },
 };
 if (playtestRevision) {
   assert.match(playtestRevision.source, /PR #308/);

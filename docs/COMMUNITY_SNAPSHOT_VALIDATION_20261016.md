@@ -1,0 +1,41 @@
+# One consolidated Community Snapshot validation cycle
+
+**Not started. Owner authorization is required.** No tests, builds, browser runs, simulations, benchmarks, CI dispatches or deployments were run during implementation. Formatter write-only processing is not test evidence. Do not open a PR before validation is authorized: the existing PR trigger launches checks.
+
+Source branch: `feature/community-snapshot-post308-20261016`. Exact checkpoint is the head linked in the implementation record and final handoff. Predecessor: merged #308 `6bc27be31792b1c38147d61e98ceed6acf3e2560`. Preserve one Community PR and release; no separate pet/art/companion/performance PRs.
+
+## Authorized-cycle preparation, still pending
+
+1. Read remote main/head and this ledger; preserve local work. Reconcile any newer main changes without reverting #308. Install locked tools with scripts disabled if needed. Keep source checkpoints before long runs.
+2. Set package and package-lock version together to the chosen Community candidate version (proposed `0.9.2+community.dev.1`). Run the existing build **only after authorization**, generating index/prototype/phone entries, build-info and service worker from the current source asset inventory. Verify the new pet owner is in all graphs, worker and independent audio audition page. Generated outputs presently still represent #308 and are deliberately not deployable as this feature.
+3. Preserve all existing source/hash receipts. The added exact Community overlay records the actual allowed source delta and 26 frozen files; it is not a waiver of existing checks. If an authorized repair changes source, update an explicit dated receipt rather than removing an assertion. Review any stale historical source-string/menu oracle against the approved behavior; do not silently relax correctness expectations.
+4. Run build/generated inventory, formatting, registered sprite/material/audio/scope checks and all Node suites once on the consolidated candidate. New `community-pets` and `community-veteran-companions` cases are automatically discovered; domain-owner coverage now includes pets. Retain every failure. Fix inside this same branch and rerun affected evidence, without restarting an unchanged complete matrix unnecessarily.
+
+## Feature behavior and historical saves
+
+- For each of all eleven canonical TRUE families: first real TRUE victory unlocks and announces once; Normal/captain/summoned/developer/repeated victories cannot add an entitlement or duplicate notice. Historical `s.true` works with missing detailed victory records, without replay or retroactive Crown charge. Missing victory map is reconstructed only from validated existing facts.
+- Collection states locked/recruitable/active/resting/fallen, exact names and first/second move figures; both Basic and Full Barracks, Expedition 1 successors, rank caps, peace/postgame and TRUE Dark Lord access. Existing troop training remains queued; pet admission is atomic, free and separate.
+- One individual/family; no duplicate with concurrent queue/cap pressure. Existing 200-roster reservation limit and active caps include pets. Full active group sends a recruit to reserve; deployment refuses overflow. Six mixed pets have distinct formation targets, and pet ranged members are deliberate screening targets.
+- No manual labor, Archer-only healing/mana activation or unknown-type Soldier/humanoid fallback. Existing Ranger care can heal a living pet; resting/fallen states retain wounds/identity. Existing treatment and paid recovery work; dismissal cannot refresh pet health or erase entitlement. Stable IDs survive recovery.
+- v4 snapshot/restore/export/import, raw historical exports, empty/partial/complete TRUE records, Normal/Nightmare/Succession, original backups and old keys. Reject unknown families, borrowed pet fields on troops, duplicates and invalid numbers/queue types. No phantom charges, wards, Rally or hazards after load/zone exit/death/reserve changes.
+- Both pet skills for each family: actual damage/contact, target caps, geometry/line/terrain, basic projectile flight, target death, range loss and neutral/returning actors. Shared 0.65s hold, cumulative actual-HP interruption, lethal cancellation, immunity, 0.5s recovery without full skill cooldown, Silence and partial-frame Slow. No summons, persistent areas or bonus party slots. Check ward nonstacking and self-heal semantics.
+- Review all twelve preparation findings against results; source changes alone do not close them as verified.
+
+## Companion and pet balance
+
+Use matched pre-#308-complete baseline and candidate configurations from `COMMUNITY_SNAPSHOT_BALANCE_20261016.md`. Highlands/Frontier/Crown, all hero classes, Normal/Nightmare, ordinary packs/captains/Normal+TRUE bosses; troop-only and mixed/six-pet parties, low/high training and equipment. Log actual deaths/survival, effective damage/casts, interruption and support availability, movement downtime and encounter duration. Verify no hero replacement, boss trivialization or mandatory pet superiority. Ranger covering fire must retain retreat movement; Soldier self-ward must not change emergency immunity. Any functional tuning stays in existing rules and allies; combat/AI performance remains assessment-only.
+
+## Desktop/phone and visual acceptance
+
+- Run the full existing Chromium/WebKit matrix, hero 48-form/three-entry AV checks, audio playback/audition, gestures, quests/Archive, sprite/fallback/occlusion and native snapshot capture gates. No previous #308 success certifies this new tree.
+- New `community-snapshot-browser.test.cjs` is wired as an additional required check for both engines. It covers five native viewport sizes, both motion preferences, 100/150/175% camera, five regions/day-night and procedural/illustrated modes, plus eleven-pet galleries. Run and inspect the screenshots; nonempty pixels alone are not appearance approval.
+- Inspect every changed art case named in the art report, with ordinary/ranged/rank/TRUE variants, mounted wolves, all entrances/service states, labels/foot anchors, night light and bodies mixed with illustrated assets. Review all 367 inventory dispositions at actual gameplay size; source decisions remain revisable.
+- Phone 375×800, 393×852, 800×375 and 844×390; desktop 1280×800 plus current Chromebook matrix. Menu collection rows, drilldown/back, touch scroll, full-party labels and occlusion. Physical iPhone/Chromebook comfort and acoustics remain separate honest limits.
+
+## Performance, offline and integration
+
+Retain prior exact same-current-art painter comparisons and independent baseline controls. Pair phase-memoized and nonmemoized source, including identity changes/scene churn; capture full-frame p95/p99, draw+readback, active cadence and retained cache bytes separately. Report unfavorable/uncertain results. New art adds draw work; do not claim that the tiny hash memo offsets it without evidence. Keep terrain/road/floor/material caches, load queues, resource errors, decode/memory ceilings, pause/reduced motion and FPS modes covered.
+
+Upgrade installed #308 cache to the actual candidate; verify all three entries, core graph, offline reopen, cache retirement, current and historical saves, explicit phone mode, reset/import/export and asset failure fallback. No save keys change. Ensure pets work offline without a missing module.
+
+Push the regenerated exact candidate, then open the single Community PR after authorization and let existing required CI run. Preserve exact source/tree/version and run links. Fix within this update; final green evidence must apply to the final source/tree. Stop before merge/deployment and request separate release authorization. Do not dispatch the deployment workflow on a feature branch as a substitute for PR checks.
