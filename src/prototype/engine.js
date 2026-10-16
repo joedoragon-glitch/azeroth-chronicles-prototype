@@ -1074,7 +1074,11 @@
       z.treasuryVersion = targetVersion;
     }
     upgradeCaptainEndurance(e, profile) {
-      if (!e || !profile?.enduranceHp || e.captainEnduranceVersion === 2) return;
+      if (!e || !profile?.enduranceHp) return;
+      // The new Greenwood health budget must migrate existing v2 captains,
+      // but should never repeatedly scale an already upgraded saved actor.
+      const version = e.captainProfile === 'supply-vale' ? 3 : 2;
+      if (e.captainEnduranceVersion === version) return;
       const previous = e.maxHp || e.baseHp || 1;
       const fraction = Math.max(0, Math.min(1, (e.hp || 0) / previous));
       const oldBase = e.baseHp || previous;
@@ -1092,7 +1096,7 @@
       e.captainGuard = 0;
       e.captainReflect = 0;
       e.captainOvertimeCd = 0;
-      e.captainEnduranceVersion = 2;
+      e.captainEnduranceVersion = version;
     }
     roomCaptainPopulation(z) {
       const profile = R.roomCaptains?.[z.id];
