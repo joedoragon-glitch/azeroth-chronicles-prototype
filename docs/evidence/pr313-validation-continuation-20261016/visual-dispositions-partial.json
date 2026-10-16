@@ -1,0 +1,2952 @@
+{
+  "scope": "Same implementing agent visual review, not independent human/device acceptance. Native body probes are coverage staging; river placement is not an authored spawn. Capture source has the final visual-owner bytes; complete final CI remains required.",
+  "reviewedImages": [
+    {
+      "sheet": 1,
+      "cell": 1,
+      "file": "1280x800-no-preference-1.5-art-boss-abyss-normal-clock0.png",
+      "mtime": 1792138651.197972,
+      "sha256": "85d115c1f56a784a692d33c8d682c6eba87b95d08dbe3f1c055f00f438941e9c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 2,
+      "file": "1280x800-no-preference-1.5-art-boss-abyss-normal-clock500.png",
+      "mtime": 1792138652.0979366,
+      "sha256": "342ac50ab076bde5ea779cf95a5a677b9febfd6d2fffd0dcadb1dcb16b96742f",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 3,
+      "file": "1280x800-no-preference-1.5-art-boss-abyss-true-clock0.png",
+      "mtime": 1792138653.0378947,
+      "sha256": "f3b0d074f304696cc12a8f8954ce80520706fa45744a74db3d66522da44f7e20",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 4,
+      "file": "1280x800-no-preference-1.5-art-boss-abyss-true-clock500.png",
+      "mtime": 1792138653.9858527,
+      "sha256": "c050f49afc5f54f32b826de95e8435efea1d63c7f51dce6687e36ea214e27aa9",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 5,
+      "file": "1280x800-no-preference-1.5-art-boss-archive-normal-clock0.png",
+      "mtime": 1792138636.3066113,
+      "sha256": "c6a6fa6540892cd0a8d32a62427080e91627badb43c00fcffb8ed0be0fff45a0",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 6,
+      "file": "1280x800-no-preference-1.5-art-boss-archive-normal-clock500.png",
+      "mtime": 1792138637.1465738,
+      "sha256": "530eb2408eed1f4dd1e4e401ca90ec18ef5080700fdc4fa0d89d44baf28582e2",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 7,
+      "file": "1280x800-no-preference-1.5-art-boss-archive-true-clock0.png",
+      "mtime": 1792138638.0185351,
+      "sha256": "c2e35a7a6cc125b4449f8724911a3c6431c3483d0c140446084ea8f9d6c8da8a",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 8,
+      "file": "1280x800-no-preference-1.5-art-boss-archive-true-clock500.png",
+      "mtime": 1792138638.9504938,
+      "sha256": "8735165584887f74bf2a88a1103b86017bfdfeae2f9359952ee2d943d65b7f7e",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 9,
+      "file": "1280x800-no-preference-1.5-art-boss-cindermaw-normal-clock0.png",
+      "mtime": 1792138658.2296724,
+      "sha256": "2783de41c6dda2473752ee2d9ea8b2886c98921e283425fea73211edbd5e9bf2",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 10,
+      "file": "1280x800-no-preference-1.5-art-boss-cindermaw-true-clock0.png",
+      "mtime": 1792138659.1056361,
+      "sha256": "8506ebf7819500e1433ac2a2e1ac37e33d227e467ef800676c2237cf3962b2a3",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 11,
+      "file": "1280x800-no-preference-1.5-art-boss-citadel-normal-clock0.png",
+      "mtime": 1792138654.8538141,
+      "sha256": "013ed541216a02263ea42320dfeeb4ecc6755c3cd14679e675906baec73abbfd",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 12,
+      "file": "1280x800-no-preference-1.5-art-boss-citadel-normal-clock500.png",
+      "mtime": 1792138655.721777,
+      "sha256": "a54c5afce1a018ce400094af33ef32e2f91390c470d8fd5218712f8f3eb89931",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 13,
+      "file": "1280x800-no-preference-1.5-art-boss-citadel-true-clock0.png",
+      "mtime": 1792138656.6017404,
+      "sha256": "c2d1cfc8acb7fe56d5f90a6c82bb49eccdd9e97d2f17fae21f73445880aae9b2",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 14,
+      "file": "1280x800-no-preference-1.5-art-boss-citadel-true-clock500.png",
+      "mtime": 1792138657.3377097,
+      "sha256": "ba3e9c58689b1f7e3c01b70f79ac0ee001efa3c4a9e0899ac45ae2541196ce40",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 15,
+      "file": "1280x800-no-preference-1.5-art-boss-crypt-normal-clock0.png",
+      "mtime": 1792138623.7991667,
+      "sha256": "74f4b933fbc3777d817adbb900a2dfce1f749dc7fdbd36bd99f424e523c76216",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 16,
+      "file": "1280x800-no-preference-1.5-art-boss-crypt-normal-clock500.png",
+      "mtime": 1792138625.279101,
+      "sha256": "4a06e592f9db40d5fd49c09fba766fc86fc59850e7d7e137d1a8c92516c21cd0",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 17,
+      "file": "1280x800-no-preference-1.5-art-boss-crypt-true-clock0.png",
+      "mtime": 1792138626.3110552,
+      "sha256": "70de90b2baa3fbfb4f4cc6b86647088a90799018c5c21f03285faa0b47e92033",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 18,
+      "file": "1280x800-no-preference-1.5-art-boss-crypt-true-clock500.png",
+      "mtime": 1792138627.283012,
+      "sha256": "4555995be2c3042f76229ee323191f135ce8a91246d6478261bcac5e47dd7367",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 19,
+      "file": "1280x800-no-preference-1.5-art-boss-darklord-normal-clock0.png",
+      "mtime": 1792138659.9935992,
+      "sha256": "057e996fadfeb3c95b54d92bc0500defe778a93bfec85cb31bb05de9dc581d93",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 20,
+      "file": "1280x800-no-preference-1.5-art-boss-darklord-normal-clock500.png",
+      "mtime": 1792138660.7495675,
+      "sha256": "6b26a1b4dedd0df3d83bd5d2057b2ee865631e84642f6d6d01afe29d6587fc10",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 21,
+      "file": "1280x800-no-preference-1.5-art-boss-darklord-true-clock0.png",
+      "mtime": 1792138661.7375262,
+      "sha256": "8f0654b1856c0580031e1731d7e98de30e01f344491fc6210364e8647c62dae7",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 22,
+      "file": "1280x800-no-preference-1.5-art-boss-darklord-true-clock500.png",
+      "mtime": 1792138662.5014923,
+      "sha256": "758f0dd946a16512471b293735fa3ff557a00c5a1d3e6efce978af4faeb546cb",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 23,
+      "file": "1280x800-no-preference-1.5-art-boss-mine-normal-clock0.png",
+      "mtime": 1792138643.6902833,
+      "sha256": "cfacba6db8c6d5a1a0aef76402afae8739190ba5d6b863a5db3319eae19c5209",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 1,
+      "cell": 24,
+      "file": "1280x800-no-preference-1.5-art-boss-mine-normal-clock500.png",
+      "mtime": 1792138644.6142423,
+      "sha256": "fb11e4d8c645f4959b56f2d4ec9dcb4a09b4a3b5c756f87e36be41e0b77db902",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Normal/TRUE boss bodies and day/night pairs: distinct family silhouettes and weapons; Veyra face/braid/surcoat visible; shared hollow aura now leaves bodies legible and labels above crowns."
+    },
+    {
+      "sheet": 2,
+      "cell": 1,
+      "file": "1280x800-no-preference-1.5-art-boss-mine-true-clock0.png",
+      "mtime": 1792138645.5741997,
+      "sha256": "931621208f50c2b8f28d0659e6898ca2b3ed6a9bdea3b7637bff4158d0cc7054",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 2,
+      "file": "1280x800-no-preference-1.5-art-boss-mine-true-clock500.png",
+      "mtime": 1792138646.490159,
+      "sha256": "6efc2a47ceb5a6e39b89f66d377ed1535560e333406423f1b552fff2d4ce26c9",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 3,
+      "file": "1280x800-no-preference-1.5-art-boss-mire-normal-clock0.png",
+      "mtime": 1792138631.6348186,
+      "sha256": "c89a1f199f8f6b9018c3e6de81d42a13d50690abe478e5cab8e74182f453035c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 4,
+      "file": "1280x800-no-preference-1.5-art-boss-mire-normal-clock500.png",
+      "mtime": 1792138633.6347299,
+      "sha256": "d9c56d9e80381108085df49943dfac4f1b0a2ab31b3618275fd63a2400644dd7",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 5,
+      "file": "1280x800-no-preference-1.5-art-boss-mire-true-clock0.png",
+      "mtime": 1792138634.578688,
+      "sha256": "74a460e1e77aac2388c4da30cf80baf3dee61bb3159433e80ea17076af89d089",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 6,
+      "file": "1280x800-no-preference-1.5-art-boss-mire-true-clock500.png",
+      "mtime": 1792138635.3586533,
+      "sha256": "eebf3ed5a5df2474c34f36f3706a2f0554fac7cd5207cf1c4161d8dcc3d15e00",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 7,
+      "file": "1280x800-no-preference-1.5-art-boss-ridge-normal-clock0.png",
+      "mtime": 1792138639.9904475,
+      "sha256": "1f9fc77d7b280e373955eb1907ee205a6017fe60321f51263667156bd2489f33",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 8,
+      "file": "1280x800-no-preference-1.5-art-boss-ridge-normal-clock500.png",
+      "mtime": 1792138640.9024072,
+      "sha256": "6c555e0d7475df1c266e9a9fdbc8e95c91a31a264af1a1b117ac192d2dc5ab52",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 9,
+      "file": "1280x800-no-preference-1.5-art-boss-ridge-true-clock0.png",
+      "mtime": 1792138641.8223662,
+      "sha256": "910046eee7e4a2c37253b03257bfed2c95224bb86e10e79fc1b7d3ad28a1d4bf",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 10,
+      "file": "1280x800-no-preference-1.5-art-boss-ridge-true-clock500.png",
+      "mtime": 1792138642.754325,
+      "sha256": "c5c4d0969b98eb8f69bfe0bdb1827f1910729aac979da49922c1784e37f9f70a",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 11,
+      "file": "1280x800-no-preference-1.5-art-boss-thorn-normal-clock0.png",
+      "mtime": 1792138619.89534,
+      "sha256": "e6087c743297a12f5a5eb8fbe4d16e866021292d078626e1c1d217b0b9c6d23e",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 12,
+      "file": "1280x800-no-preference-1.5-art-boss-thorn-normal-clock500.png",
+      "mtime": 1792138620.8512976,
+      "sha256": "4adca89ff0f9856883a6f5a79515bc9cb8d6956654488e8919b0de20d273c03d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 13,
+      "file": "1280x800-no-preference-1.5-art-boss-thorn-true-clock0.png",
+      "mtime": 1792138621.8032553,
+      "sha256": "e721fd636301b7f90bc1718ac15dc4529ae3e7fa1160f9a6dc11d52c6ca11a90",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 14,
+      "file": "1280x800-no-preference-1.5-art-boss-thorn-true-clock500.png",
+      "mtime": 1792138622.7952113,
+      "sha256": "112fc895b9cb04f5e6fafcacedfb2ca1c9e435d56fdd1bc92e425e21a43b38f5",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 15,
+      "file": "1280x800-no-preference-1.5-art-boss-warlord-normal-clock0.png",
+      "mtime": 1792138647.4461179,
+      "sha256": "597abaa944e83aedc9fcb894e743de7531549de3ed7c085ac620d8ca5007bcc5",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 16,
+      "file": "1280x800-no-preference-1.5-art-boss-warlord-normal-clock500.png",
+      "mtime": 1792138648.3820815,
+      "sha256": "ef57fab400238f59c9e01658903fcfb6734495bf2f28d8fa0331a578df86885c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 17,
+      "file": "1280x800-no-preference-1.5-art-boss-warlord-true-clock0.png",
+      "mtime": 1792138649.3140454,
+      "sha256": "0c358bd34f03ec1297e5d2f8eaca30a25b5d68bb4a5720e358718c5ad82bd0bc",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 18,
+      "file": "1280x800-no-preference-1.5-art-boss-warlord-true-clock500.png",
+      "mtime": 1792138650.2140105,
+      "sha256": "966673922069e7b729a410a36c94917ac585fee38fde0971ee2e6c993c771056",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 19,
+      "file": "1280x800-no-preference-1.5-art-decoration-animal-pen-canonical-clock0.png",
+      "mtime": 1792138821.4065046,
+      "sha256": "181d20cdbb733f1e6ec9e93147b4f9edb89a86d90532b52eb26c73cb69546d7d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 20,
+      "file": "1280x800-no-preference-1.5-art-decoration-animal-pen-canonical-clock500.png",
+      "mtime": 1792138835.4618921,
+      "sha256": "059fe90c9425d79eb0ecc93fbcd7c81add2276376cef969d3d60521f22e2ac69",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 21,
+      "file": "1280x800-no-preference-1.5-art-decoration-armor-canonical-clock0.png",
+      "mtime": 1792138707.831497,
+      "sha256": "7f9d82b259667db5ca7daf9cdc3c96200bc9be752dcddaf9df2611a9c85b747c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 22,
+      "file": "1280x800-no-preference-1.5-art-decoration-ashbeast-roost-scene-canonical-clock0.png",
+      "mtime": 1792138765.8329415,
+      "sha256": "d1b42aa44459d93d355586c7f59621dc286ce4d94e4b347de2f118c8b0824cdf",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 23,
+      "file": "1280x800-no-preference-1.5-art-decoration-banner-canonical-clock0.png",
+      "mtime": 1792138699.5638611,
+      "sha256": "579d1a05155baa34e934b0c681320a3ef2e880ba138578dce8b8808be1c9a5e0",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 2,
+      "cell": 24,
+      "file": "1280x800-no-preference-1.5-art-decoration-bones-canonical-clock0.png",
+      "mtime": 1792138697.9119332,
+      "sha256": "47e05b46ed06ab070c8d02d9e0dbf53d5f102b5761a27cf741a9d5a8a254831d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Remaining boss forms and scenic aliases: wolf muzzle/haunch and crocodile snout readable; stone golem intentionally fitted angular anatomy; sparse scenic animal/rest objects retained."
+    },
+    {
+      "sheet": 3,
+      "cell": 1,
+      "file": "1280x800-no-preference-1.5-art-decoration-bones-canonical-clock500.png",
+      "mtime": 1792138698.763896,
+      "sha256": "598351ef40b5c966ef6ce5e59eb986e816a4f7b32fc5f27cc01ef9765081b15b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 2,
+      "file": "1280x800-no-preference-1.5-art-decoration-boss-chest-canonical-clock0.png",
+      "mtime": 1792138714.5951982,
+      "sha256": "37692e8fac24b362e573f203531e419918fb0ac59ea272b9cce91c12321dacd7",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 3,
+      "file": "1280x800-no-preference-1.5-art-decoration-caravan-loading-bay-canonical-clock0.png",
+      "mtime": 1792138732.546406,
+      "sha256": "2e44fbe55fd8ed0530f77cf1eb3db0178d181f5cccdbfc1519e4d5e212187892",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 4,
+      "file": "1280x800-no-preference-1.5-art-decoration-caravan-loading-bay-canonical-clock500.png",
+      "mtime": 1792138733.3303714,
+      "sha256": "47d4959b8a5dcfb01269cda8907e67cfeeaf5f73071fa0b25f7cee84880058fa",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 5,
+      "file": "1280x800-no-preference-1.5-art-decoration-chain-canonical-clock0.png",
+      "mtime": 1792138706.262285,
+      "sha256": "b54a1731a6cc1b9a1ec51f72440f42fd9615a9c0ec98b109d6543eca44148ee0",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 6,
+      "file": "1280x800-no-preference-1.5-art-decoration-cindermaw-ash-den-canonical-clock0.png",
+      "mtime": 1792138772.4446518,
+      "sha256": "5edc84262e333938dbc5aa4a562cda05c8cbb7724d37c8d541363ae1d0c192f7",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 7,
+      "file": "1280x800-no-preference-1.5-art-decoration-cindermaw-hoard-scene-canonical-clock0.png",
+      "mtime": 1792138768.9728038,
+      "sha256": "f2e205d235cc3d38997d6881a13090eee5953a6f9f3261841e385453ff3eccd6",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 8,
+      "file": "1280x800-no-preference-1.5-art-decoration-citadel-barracks-bay-canonical-clock0.png",
+      "mtime": 1792138798.9674861,
+      "sha256": "6f1e974c1115aa8112cbe57c21b379b235d827b925ad7082a35f8a0e4d503ab5",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 9,
+      "file": "1280x800-no-preference-1.5-art-decoration-citadel-boss-approach-canonical-clock0.png",
+      "mtime": 1792138814.5668035,
+      "sha256": "91bbdd144c547d2b13abc60d4f89a003a592a5e101679ac5c965ab8b22828964",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 10,
+      "file": "1280x800-no-preference-1.5-art-decoration-citadel-command-canonical-clock0.png",
+      "mtime": 1792138790.6358523,
+      "sha256": "515081c958b55a494f4268dee078d1adf42de5e10b20edb5f681b58e7142f1db",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 11,
+      "file": "1280x800-no-preference-1.5-art-decoration-citadel-forge-bay-canonical-clock0.png",
+      "mtime": 1792138807.9310927,
+      "sha256": "5cc853e2c07e3056a4b69756b39ae1aa02f0d73a6d6a69df2b2ad89ae9e923f3",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 12,
+      "file": "1280x800-no-preference-1.5-art-decoration-citadel-muster-canonical-clock0.png",
+      "mtime": 1792138788.3159542,
+      "sha256": "90ef040e6d90749886b478c315fa6bf812ee8834fd5e99f77ecb9a8d5e0e44bb",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 13,
+      "file": "1280x800-no-preference-1.5-art-decoration-citadel-ritual-array-canonical-clock0.png",
+      "mtime": 1792138794.2916915,
+      "sha256": "dc8575bef6d8bac347f0540225a742db4ab1b72b2ee9bce15e460d09f7904c95",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 14,
+      "file": "1280x800-no-preference-1.5-art-decoration-citadel-vanity-quarters-canonical-clock0.png",
+      "mtime": 1792138812.282904,
+      "sha256": "12db418d95403cf73c9e4b18eda954f2745fcaaa66a5d8e745dd41be23466a90",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 15,
+      "file": "1280x800-no-preference-1.5-art-decoration-coffin-canonical-clock0.png",
+      "mtime": 1792138696.2400062,
+      "sha256": "ead6b1a0f0d5625d8f7fcfe2663180e6363137520027fca811ca907d8a23773c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 16,
+      "file": "1280x800-no-preference-1.5-art-decoration-coffin-canonical-clock500.png",
+      "mtime": 1792138697.0879693,
+      "sha256": "9d5dcc69a39716e5b9db672467f202c0d51dbeb78a40381e5956b3275cf844d3",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 17,
+      "file": "1280x800-no-preference-1.5-art-decoration-copper-ore-face-canonical-clock0.png",
+      "mtime": 1792138724.674753,
+      "sha256": "d75973e16f0ea495c03a3fba9e72c8d992b8d5e24bfda9b2e2ad245ef6864cb3",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 18,
+      "file": "1280x800-no-preference-1.5-art-decoration-copper-sort-samples-canonical-clock0.png",
+      "mtime": 1792138725.5027165,
+      "sha256": "11a4e7e1f3ca9d23f4167554879176e66316b4ec89ddce269fc1dd9305be1d13",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 19,
+      "file": "1280x800-no-preference-1.5-art-decoration-crag-rest-canonical-clock0.png",
+      "mtime": 1792138742.9259496,
+      "sha256": "bd0924f84df4e061c245654d1eb71c03a5fb88af6415ce6cb35c063b348e2672",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 20,
+      "file": "1280x800-no-preference-1.5-art-decoration-crag-rest-canonical-clock500.png",
+      "mtime": 1792138743.849909,
+      "sha256": "e700d616fe4dc03ece400316ac62a80cc334204cd08cf146f84cb8ce2c149576",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 21,
+      "file": "1280x800-no-preference-1.5-art-decoration-crate-canonical-clock0.png",
+      "mtime": 1792138703.0237093,
+      "sha256": "9014be62645303c14fd292e4c33cad5e75ba681b10f749ce2b56b6b6430e9c05",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 22,
+      "file": "1280x800-no-preference-1.5-art-decoration-crate-canonical-clock500.png",
+      "mtime": 1792138703.8516726,
+      "sha256": "a8efc27c948fddacd78bdf1402dbd69670e99deb124f7cdecf97e70b8a83d6c6",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 23,
+      "file": "1280x800-no-preference-1.5-art-decoration-crown-banner-canonical-clock0.png",
+      "mtime": 1792138753.1414998,
+      "sha256": "c3aab053236efd5d2685a8240cea4e7f2ca8a3554dc899d40f6dd12af0ba93f7",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 3,
+      "cell": 24,
+      "file": "1280x800-no-preference-1.5-art-decoration-crown-command-post-canonical-clock0.png",
+      "mtime": 1792138761.2411437,
+      "sha256": "0845c075809ac94674d674eea3b84061d0954ce63d244289909d5487e8e1508c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Workshop, roost, military and household props: bracing, poles, trays and distinct basalt/wood/metal palettes readable; low scenic detail appropriate to scale."
+    },
+    {
+      "sheet": 4,
+      "cell": 1,
+      "file": "1280x800-no-preference-1.5-art-decoration-crown-fortress-checkpoint-canonical-clock0.png",
+      "mtime": 1792138784.8201082,
+      "sha256": "eba283370474285dce78300a697d324c4bb501b12c991a1cbe8530f5cd1374d0",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 2,
+      "file": "1280x800-no-preference-1.5-art-decoration-crown-levy-yard-canonical-clock0.png",
+      "mtime": 1792138755.7133868,
+      "sha256": "c8067a81b4efaf56e6c8540dc56c37016e08e1262d2f0012f66e55cf8ea8fa27",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 3,
+      "file": "1280x800-no-preference-1.5-art-decoration-crown-logistics-bay-canonical-clock0.png",
+      "mtime": 1792138783.024187,
+      "sha256": "7edec66e958b9b3d6cca9534573c8476eee4362acdb506f7c913824a297efb74",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 4,
+      "file": "1280x800-no-preference-1.5-art-decoration-crystal-canonical-clock0.png",
+      "mtime": 1792138705.4682612,
+      "sha256": "86cfda042236f4abe1bd1d3f4d995fa324f4c8ad105667b918761029e2b738cd",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 5,
+      "file": "1280x800-no-preference-1.5-art-decoration-dark-brazier-canonical-clock0.png",
+      "mtime": 1792138748.8936868,
+      "sha256": "f9cb60d712c2b305bb431d5f29f8ca397dce75acddb38b6566a0b42a793874bc",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 6,
+      "file": "1280x800-no-preference-1.5-art-decoration-dark-throne-canonical-clock0.png",
+      "mtime": 1792138749.7896473,
+      "sha256": "92f168c938c47335129f6b0640a56056b68b1de0914a4ed9f96b3967bc2c5089",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 7,
+      "file": "1280x800-no-preference-1.5-art-decoration-direwolf-kennel-canonical-clock0.png",
+      "mtime": 1792138686.112461,
+      "sha256": "85f4a904a2fb51e338180b3f8cb88afc33756a902fa21bc843b5f2d75911c1f7",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 8,
+      "file": "1280x800-no-preference-1.5-art-decoration-direwolf-kennel-canonical-clock500.png",
+      "mtime": 1792138686.9004266,
+      "sha256": "bf0b942d04abb10f102c81b95668d2980648250fad119a6cda435a7ad300aa1d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 9,
+      "file": "1280x800-no-preference-1.5-art-decoration-dreadmaw-vault-post-canonical-clock0.png",
+      "mtime": 1792138774.8645453,
+      "sha256": "4798a1301b9e04525634523d6d897904ff4214845dcf390c94b17e571c5b2b89",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 10,
+      "file": "1280x800-no-preference-1.5-art-decoration-drift-seat-canonical-clock0.png",
+      "mtime": 1792138722.1508644,
+      "sha256": "4384b64fc614c8c4d3e099d66ed86df62e3837b225b49e792c238345ffdf1e9d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 11,
+      "file": "1280x800-no-preference-1.5-art-decoration-drift-seat-canonical-clock500.png",
+      "mtime": 1792138723.0508246,
+      "sha256": "3139f3f0ae3e62e21d80cfb181701cdd59479975d3a648f8bb5db9131fc5917d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 12,
+      "file": "1280x800-no-preference-1.5-art-decoration-drying-rack-canonical-clock0.png",
+      "mtime": 1792138843.6055405,
+      "sha256": "0bbb66d00cea269d7203a0829da4987fe7cee2fe6e39b6989cbebd7ba616bf82",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 13,
+      "file": "1280x800-no-preference-1.5-art-decoration-drying-rack-canonical-clock500.png",
+      "mtime": 1792138851.533198,
+      "sha256": "1a7b1648c7d184786752c094a26eea8e74c7e04119d1dd4e0dc5046347c4be32",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 14,
+      "file": "1280x800-no-preference-1.5-art-decoration-ember-canonical-clock0.png",
+      "mtime": 1792138707.0555313,
+      "sha256": "e3b655893f3ffa47871817ea48e556f94d0952e813d828eec867fb1b2ea46f37",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 15,
+      "file": "1280x800-no-preference-1.5-art-decoration-estate-hearth-canonical-clock0.png",
+      "mtime": 1792138693.4601285,
+      "sha256": "57281a56d5f8976a20feb0c2d9dc92525e3c2e1ec6a6ece450a0e179cc66e177",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 16,
+      "file": "1280x800-no-preference-1.5-art-decoration-estate-lounge-canonical-clock0.png",
+      "mtime": 1792138694.3840878,
+      "sha256": "dc2ddb0bf29b79bf802a783213eb17ec4d857c585d646179a6d20c6abb17e8e3",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 17,
+      "file": "1280x800-no-preference-1.5-art-decoration-estate-lounge-canonical-clock500.png",
+      "mtime": 1792138695.1520538,
+      "sha256": "7adfc55638c2f21334c296b294c44c175c3ff284bfb29f3ecde0399f08329d27",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 18,
+      "file": "1280x800-no-preference-1.5-art-decoration-estate-rug-canonical-clock0.png",
+      "mtime": 1792138691.7402043,
+      "sha256": "fc2310106c6833d91f0253748537d499a0a632affec8767cf369994bfe420210",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 19,
+      "file": "1280x800-no-preference-1.5-art-decoration-estate-rug-canonical-clock500.png",
+      "mtime": 1792138692.5761676,
+      "sha256": "d701f676f12bbd322876a4fd061d4e70c722e88ac445b91fa23afca4e7ba6b11",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 20,
+      "file": "1280x800-no-preference-1.5-art-decoration-fang-trophy-canonical-clock0.png",
+      "mtime": 1792138710.211392,
+      "sha256": "b323127a27ecf46127c81627a49da5ccb7c1234d9fc6f144ec27986cd4318439",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 21,
+      "file": "1280x800-no-preference-1.5-art-decoration-fish-rack-canonical-clock0.png",
+      "mtime": 1792138717.2790794,
+      "sha256": "5e51757ccfc2d68f3c306d81d66d2670c5ef42cb5115f2009b4eb3f460667c4d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 22,
+      "file": "1280x800-no-preference-1.5-art-decoration-fish-rack-canonical-clock500.png",
+      "mtime": 1792138718.079044,
+      "sha256": "fdb566b621a0519c20a096605c5166ad7676fd8f71943be87ce548e22040b7d4",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 23,
+      "file": "1280x800-no-preference-1.5-art-decoration-highland-pay-station-canonical-clock0.png",
+      "mtime": 1792138729.4345431,
+      "sha256": "ef52d641404003d4a224a73eeed4d7ac976e4fa76d2471c82f33a24b25bac6ba",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 4,
+      "cell": 24,
+      "file": "1280x800-no-preference-1.5-art-decoration-mine-collapse-canonical-clock0.png",
+      "mtime": 1792138735.7182662,
+      "sha256": "0f774e3d80c7781b8aaddfa9f1470bc28d099203a73beacf9b7d00d139a48ee8",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Fortress furniture, sleeping kit, fire, fish rack and mining debris: purpose, footing and palette recognizable; sparse nests/rugs are intentional floor detail."
+    },
+    {
+      "sheet": 5,
+      "cell": 1,
+      "file": "1280x800-no-preference-1.5-art-decoration-mine-old-markings-canonical-clock0.png",
+      "mtime": 1792138734.882303,
+      "sha256": "316cd8942519b1344014e14e07de0fe1efa53b80258b597c2a361e4164e7a447",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 2,
+      "file": "1280x800-no-preference-1.5-art-decoration-mine-supports-canonical-clock0.png",
+      "mtime": 1792138734.1183367,
+      "sha256": "992211e8d84a6a6131bef0e97d01bb06231cc90ea0257a9f48e9a2d2991ac8fa",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 3,
+      "file": "1280x800-no-preference-1.5-art-decoration-mint-workbench-canonical-clock0.png",
+      "mtime": 1792138731.7664404,
+      "sha256": "35af6b2e5828ffcee2256c75b73eeaca2b4ffbcc4bef17aa38bf4b8454e08b42",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 4,
+      "file": "1280x800-no-preference-1.5-art-decoration-mire-pool-canonical-clock0.png",
+      "mtime": 1792138715.4431605,
+      "sha256": "8f98ad4a5e99937d64cad8d7c7788e056288a18441a08a850323fb47857baf50",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 5,
+      "file": "1280x800-no-preference-1.5-art-decoration-mire-pool-canonical-clock500.png",
+      "mtime": 1792138716.3751194,
+      "sha256": "1269661495ef26bb2b9868a80e04f32a4dc8273597f81cb62c39b03c5d4af359",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 6,
+      "file": "1280x800-no-preference-1.5-art-decoration-ore-sorting-bay-canonical-clock0.png",
+      "mtime": 1792138730.2185087,
+      "sha256": "03fe03e71c2b91d72ecf80741d345176b5beb3704a1c6213d286fa751745f085",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 7,
+      "file": "1280x800-no-preference-1.5-art-decoration-ore-sorting-bay-canonical-clock500.png",
+      "mtime": 1792138731.002474,
+      "sha256": "831d4fd9219cd06f38349d6f17997b27278cf3417acfb663fa4cb62443924c2b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 8,
+      "file": "1280x800-no-preference-1.5-art-decoration-rail-canonical-clock0.png",
+      "mtime": 1792138704.6676366,
+      "sha256": "457c2f07dabb4949632a980b6983b62a015ddff678f2db4e2b4c50d334398811",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 9,
+      "file": "1280x800-no-preference-1.5-art-decoration-reed-nest-canonical-clock0.png",
+      "mtime": 1792138719.5749779,
+      "sha256": "04bd081017c286e5e7d9813706fae480937e967f6a4ae69f4bd3242cb2a4a90a",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 10,
+      "file": "1280x800-no-preference-1.5-art-decoration-reed-nest-canonical-clock500.png",
+      "mtime": 1792138720.4989371,
+      "sha256": "8576b0696e2fc8bbb7b4c20d164c2d080fc391d957bd05a385456870d952eb16",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 11,
+      "file": "1280x800-no-preference-1.5-art-decoration-rider-bunk-canonical-clock0.png",
+      "mtime": 1792138689.376309,
+      "sha256": "ef36a172c3cbcda718a4a3cbc467db73f20376572f3f300c50e563bca68a5edd",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 12,
+      "file": "1280x800-no-preference-1.5-art-decoration-rider-bunk-canonical-clock500.png",
+      "mtime": 1792138690.1442747,
+      "sha256": "783e07627da86f7b2dc7e0e2153439aaa268d6bcf534ee664c9c559aaac8120d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 13,
+      "file": "1280x800-no-preference-1.5-art-decoration-rider-tack-rack-canonical-clock0.png",
+      "mtime": 1792138687.7123892,
+      "sha256": "9e52c4f65aa631f56b7ad054e0a6b2b72353be9711426e0884b85ea1656384d1",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 14,
+      "file": "1280x800-no-preference-1.5-art-decoration-rider-tack-rack-canonical-clock500.png",
+      "mtime": 1792138688.5763476,
+      "sha256": "8cb88434cc5b47757dd96d72b0afe1100ee020e79b449bb710fb7c52bfb3591d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 15,
+      "file": "1280x800-no-preference-1.5-art-decoration-ridge-bed-canonical-clock0.png",
+      "mtime": 1792138741.2180247,
+      "sha256": "f6c87b50b7c1f8fc1f0cba05e670ef31a38dad964cff63f7f2803a45055507de",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 16,
+      "file": "1280x800-no-preference-1.5-art-decoration-ridge-bed-canonical-clock500.png",
+      "mtime": 1792138742.0339887,
+      "sha256": "bf02f68f348937bef986eee337f44a604bda89d261a0b0762441f48a1bcadd30",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 17,
+      "file": "1280x800-no-preference-1.5-art-decoration-ridge-game-corner-canonical-clock0.png",
+      "mtime": 1792138738.066163,
+      "sha256": "b346a55b7e22c253665209c1e282d04905c26dd0566b34ff01eea9f8d708286c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 18,
+      "file": "1280x800-no-preference-1.5-art-decoration-ridge-game-corner-canonical-clock500.png",
+      "mtime": 1792138738.82213,
+      "sha256": "7152f398b90e6c8b5cfc05decfddf1003e8348f3c72e8140dbabca19f5be1a37",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 19,
+      "file": "1280x800-no-preference-1.5-art-decoration-ridge-hearth-canonical-clock0.png",
+      "mtime": 1792138744.6578734,
+      "sha256": "2815506c0aa8b0cf880d829a486ed1cb93dc3ee39f3a89fdc9dd5a0fce4cb5ff",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 20,
+      "file": "1280x800-no-preference-1.5-art-decoration-ridge-study-canonical-clock0.png",
+      "mtime": 1792138739.5860963,
+      "sha256": "b66f62c1f4668cb7e6860a32ab93e57666a6be5385d08a5b50e4e16fa9894fbd",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 21,
+      "file": "1280x800-no-preference-1.5-art-decoration-ridge-study-canonical-clock500.png",
+      "mtime": 1792138740.3900611,
+      "sha256": "d3e16c5becf7a644c71f4fa6be1f1a36b0b49e7b9d66a3f6e72a92a374173c99",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 22,
+      "file": "1280x800-no-preference-1.5-art-decoration-ridge-supper-canonical-clock0.png",
+      "mtime": 1792138736.4902325,
+      "sha256": "0feae2737fef28b48cc00851ed5630dec07c4376d2f6da491aaed9713afc45fd",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 23,
+      "file": "1280x800-no-preference-1.5-art-decoration-ridge-supper-canonical-clock500.png",
+      "mtime": 1792138737.2741978,
+      "sha256": "563c2df034f1139505a604550266ac316bf07635dc31b3defcceb075fa3de7bb",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 5,
+      "cell": 24,
+      "file": "1280x800-no-preference-1.5-art-decoration-root-table-canonical-clock0.png",
+      "mtime": 1792138711.091353,
+      "sha256": "4dc9e09373773b211154d6e3d08df8519d6588831457727319991fe1b39d92d6",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mine marks/supports, mint, ores, bedding, tack and Ridge furnishings: clear functional silhouettes and small material accents; night samples retain readable shapes."
+    },
+    {
+      "sheet": 6,
+      "cell": 1,
+      "file": "1280x800-no-preference-1.5-art-decoration-root-table-canonical-clock500.png",
+      "mtime": 1792138711.903317,
+      "sha256": "1c5784eae5f67283828083c915bced5cff194e0a29f30078c63e4ae1a1fc67e7",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 2,
+      "file": "1280x800-no-preference-1.5-art-decoration-rune-canonical-clock0.png",
+      "mtime": 1792138702.1557474,
+      "sha256": "82870340e04592fe990bd276f8080f33033a91a36706311ee4cf53cffa843ffc",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 3,
+      "file": "1280x800-no-preference-1.5-art-decoration-sealed-crown-consignment-canonical-clock0.png",
+      "mtime": 1792138728.666577,
+      "sha256": "516467828338ce3aba3690c590c9996b130d06783fb2bedc0569debb2d60a55d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 4,
+      "file": "1280x800-no-preference-1.5-art-decoration-shelf-canonical-clock0.png",
+      "mtime": 1792138700.3838253,
+      "sha256": "207968ff4951bc5d01b55112faccb9a1a44f65fc194ee2aaae77d998d84e1801",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 5,
+      "file": "1280x800-no-preference-1.5-art-decoration-shell-hoard-canonical-clock0.png",
+      "mtime": 1792138721.3229008,
+      "sha256": "9c45a35a51dd434826ac5e08992ee12ad3d1e5ba10811105f7894bf3eabed694",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 6,
+      "file": "1280x800-no-preference-1.5-art-decoration-silver-die-tray-canonical-clock0.png",
+      "mtime": 1792138727.8906112,
+      "sha256": "36a649fe60c729fda09eebab2f10d83e6e6a699241dbb30cecf0adc82f91a4ca",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 7,
+      "file": "1280x800-no-preference-1.5-art-decoration-silver-ore-face-canonical-clock0.png",
+      "mtime": 1792138723.8547893,
+      "sha256": "11eb146b8f874f1053eb006b1096b290b7a267a3b62cfb4ac44e47826cde1006",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 8,
+      "file": "1280x800-no-preference-1.5-art-decoration-silver-refining-hearth-canonical-clock0.png",
+      "mtime": 1792138726.33068,
+      "sha256": "4226c77fe87242210c26d24319a94c70ae66c3587ab56b7ac66383245bd97e23",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 9,
+      "file": "1280x800-no-preference-1.5-art-decoration-silver-sort-samples-canonical-clock0.png",
+      "mtime": 1792138727.1146455,
+      "sha256": "148c3ee35cd2f862648ffb6d6aec5ff85fcf8742e049b1ddadeb1510a43de21a",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 10,
+      "file": "1280x800-no-preference-1.5-art-decoration-stone-seat-canonical-clock0.png",
+      "mtime": 1792138746.3258,
+      "sha256": "bb2f53fb8c332bd572c27f457fda22c00bb4bb8aa346253dfa361a35803d2492",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 11,
+      "file": "1280x800-no-preference-1.5-art-decoration-stone-seat-canonical-clock500.png",
+      "mtime": 1792138747.1737626,
+      "sha256": "f0fb50f62d963374e7c7f2d20648626721f6c383f4943d5554a8815e9716bd4a",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 12,
+      "file": "1280x800-no-preference-1.5-art-decoration-thorn-bed-canonical-clock0.png",
+      "mtime": 1792138708.647461,
+      "sha256": "08bc26f9c5667569bcd672237122ce3719b4e28d283d6a86adee115d54f62aa4",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 13,
+      "file": "1280x800-no-preference-1.5-art-decoration-thorn-bed-canonical-clock500.png",
+      "mtime": 1792138709.4274263,
+      "sha256": "bb4252bbc425ab4f4bb751209c7d392d0afbd0ebca916b6d8e464cb0bc595a67",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 14,
+      "file": "1280x800-no-preference-1.5-art-decoration-torch-canonical-clock0.png",
+      "mtime": 1792138690.9602387,
+      "sha256": "3d0315651d99c572855279868127277c19951741fb314261c27ecdd23bbfbc0c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 15,
+      "file": "1280x800-no-preference-1.5-art-decoration-treasure-hoard-canonical-clock0.png",
+      "mtime": 1792138713.6552396,
+      "sha256": "50e0b9ec46675a52c74084d0580f62760a5b1e80fe83b38a6fc28a704ee7df2f",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 16,
+      "file": "1280x800-no-preference-1.5-art-decoration-trophy-rack-canonical-clock0.png",
+      "mtime": 1792138748.0297248,
+      "sha256": "af4322dd8b1779b8ef8bc7912b8eb857475b49203b101dbeb18750c7343e92de",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 17,
+      "file": "1280x800-no-preference-1.5-art-decoration-war-table-canonical-clock0.png",
+      "mtime": 1792138751.2095847,
+      "sha256": "3846a69fe9a5836846388007f2f241d68a388c336c1d0be85a54bafe48c8dc08",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 18,
+      "file": "1280x800-no-preference-1.5-art-decoration-warm-brazier-canonical-clock0.png",
+      "mtime": 1792138712.763279,
+      "sha256": "785f0cd31bc1dc6e3e8dc1998a52ec3294da26a1fb66a09e1636d1ec6aba9578",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 19,
+      "file": "1280x800-no-preference-1.5-art-decoration-water-canonical-clock0.png",
+      "mtime": 1792138701.2877855,
+      "sha256": "2a117b2442015da491c15674d9befd5bfc1ec26c7533dd0b43fba5831c273401",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 20,
+      "file": "1280x800-no-preference-1.5-art-decoration-weapon-rack-canonical-clock0.png",
+      "mtime": 1792138745.4978364,
+      "sha256": "5577d6150c89262a01268d38a6ec8620970605d12fe36157809dc811dd913fa5",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 21,
+      "file": "1280x800-no-preference-1.5-art-enemy-archer-guardian-clock0.png",
+      "mtime": 1792138583.9729357,
+      "sha256": "cb3573bafea38dcb065979128c157eb391b415b97e1e5c6ce4f444636db9eb1b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 22,
+      "file": "1280x800-no-preference-1.5-art-enemy-archer-ordinary-clock0.png",
+      "mtime": 1792138582.4050055,
+      "sha256": "31a32fbe4be652db96e58a454b04578f0e699d3625de303774f0e1863e3ad3ba",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 23,
+      "file": "1280x800-no-preference-1.5-art-enemy-archer-ranged-clock0.png",
+      "mtime": 1792138583.1609716,
+      "sha256": "36a5fed4d9cb2be23d26f878cc5421c94b36eb4ed7ad0f5b6929a90942a2ab51",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 6,
+      "cell": 24,
+      "file": "1280x800-no-preference-1.5-art-enemy-archer-ringleader-clock0.png",
+      "mtime": 1792138584.8488967,
+      "sha256": "df72c3d6d7ba83e839e90a1a66099f11792a19958aa8ceceac511c6b62e5c4f4",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Silver work, seats, trophy/weapon racks and archer ranks: material and weapon distinctions retained; intentionally sparse flat water/rune motifs remain floor decoration."
+    },
+    {
+      "sheet": 7,
+      "cell": 1,
+      "file": "1280x800-no-preference-1.5-art-enemy-ashbeast-guardian-clock0.png",
+      "mtime": 1792138569.7815661,
+      "sha256": "89c69522f5b9b1d899a5f09cbdf557a0e1f3808f25e7e1b058bbf080eb093a20",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 2,
+      "file": "1280x800-no-preference-1.5-art-enemy-ashbeast-guardian-clock500.png",
+      "mtime": 1792138570.5455325,
+      "sha256": "309c8e01dad78e77f72b008c5d0abdd8dd8afdda2f95d151d3a2e7f3ddfc61af",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 3,
+      "file": "1280x800-no-preference-1.5-art-enemy-ashbeast-ordinary-clock0.png",
+      "mtime": 1792138566.689703,
+      "sha256": "eb850e3d7aa25e733028807f90a5e9a064e66e3d96c261d629b974fc5ae5267a",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 4,
+      "file": "1280x800-no-preference-1.5-art-enemy-ashbeast-ordinary-clock500.png",
+      "mtime": 1792138567.4656687,
+      "sha256": "af632b5e3e84e9e1cd5032954c6425e2e67853863bcdfa0bdbc7a1740d99d22d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 5,
+      "file": "1280x800-no-preference-1.5-art-enemy-ashbeast-ranged-clock0.png",
+      "mtime": 1792138568.245634,
+      "sha256": "367dab3f228c98155a3699e848f5b34e85f1ae2dac327bb261923ea36d09a010",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 6,
+      "file": "1280x800-no-preference-1.5-art-enemy-ashbeast-ranged-clock500.png",
+      "mtime": 1792138569.0335994,
+      "sha256": "5b1e8a9d0472be255ff111fb26b42ca3238f263787945a81e106ec5a9c72892d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 7,
+      "file": "1280x800-no-preference-1.5-art-enemy-ashbeast-ringleader-clock0.png",
+      "mtime": 1792138571.3454971,
+      "sha256": "440c297fd0a086074f7cc8b39c9bcf82c84cd2be625bd01faa69d78adf6919ef",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 8,
+      "file": "1280x800-no-preference-1.5-art-enemy-ashbeast-ringleader-clock500.png",
+      "mtime": 1792138572.109463,
+      "sha256": "cf36bfa9986686df7d1659d064206eb7f74a884d992a8e7b2256b9b2bc06b639",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 9,
+      "file": "1280x800-no-preference-1.5-art-enemy-crownguard-guardian-clock0.png",
+      "mtime": 1792138596.180393,
+      "sha256": "fbd5fdc08768429d26e85ef27eac1d73c24c40605ae43b95228be031f7912e38",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 10,
+      "file": "1280x800-no-preference-1.5-art-enemy-crownguard-guardian-clock500.png",
+      "mtime": 1792138597.0123558,
+      "sha256": "254ac98d6e42f7b66d0fd7f59587e6cea59ac03a9e2dfc637f69b96cc1db87d4",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 11,
+      "file": "1280x800-no-preference-1.5-art-enemy-crownguard-ordinary-clock0.png",
+      "mtime": 1792138592.968536,
+      "sha256": "6d4c1b30fe83eea4282acec227c983111c2da03e05e4771dbe398be57900115b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 12,
+      "file": "1280x800-no-preference-1.5-art-enemy-crownguard-ordinary-clock500.png",
+      "mtime": 1792138593.7725,
+      "sha256": "61603faedb895d487c6c7757e3d15019b80e40b7448b69dde520800c67aa628a",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 13,
+      "file": "1280x800-no-preference-1.5-art-enemy-crownguard-ranged-clock0.png",
+      "mtime": 1792138594.6204624,
+      "sha256": "ef6967ee92d53d7dd0d7bf3cba3ea5906ee6320a60d279c8eb04d4a3845ca7b2",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 14,
+      "file": "1280x800-no-preference-1.5-art-enemy-crownguard-ranged-clock500.png",
+      "mtime": 1792138595.3964279,
+      "sha256": "de72e18f0918103a42973a2857473b0925bca20739ab7c08aba32afaf93e86fc",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 15,
+      "file": "1280x800-no-preference-1.5-art-enemy-crownguard-ringleader-clock0.png",
+      "mtime": 1792138597.7923212,
+      "sha256": "fdddabea911df2c0e13eda08a32085c3bff90eac18fc117d75fa970dff6783ea",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 16,
+      "file": "1280x800-no-preference-1.5-art-enemy-crownguard-ringleader-clock500.png",
+      "mtime": 1792138598.5882857,
+      "sha256": "644c93254109f2665ecb8bb3e87666d5f04563d7b827b792c79e1197bc8f5f36",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 17,
+      "file": "1280x800-no-preference-1.5-art-enemy-goblin-guardian-clock0.png",
+      "mtime": 1792138576.149283,
+      "sha256": "6cbaa4423d02e2754585b6ca05f1903e4b7f6db39c942c70b046c961dfcc0354",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 18,
+      "file": "1280x800-no-preference-1.5-art-enemy-goblin-guardian-clock500.png",
+      "mtime": 1792138576.9292483,
+      "sha256": "f26855ccc15153459569851fe999451115d9676bbe9d15ef8ce628d9dcade606",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 19,
+      "file": "1280x800-no-preference-1.5-art-enemy-goblin-ordinary-clock0.png",
+      "mtime": 1792138572.8974278,
+      "sha256": "362a8e549b9d3ac3fc213752d6873ad61fec4395d58f2d0d44de0042a212166d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 20,
+      "file": "1280x800-no-preference-1.5-art-enemy-goblin-ordinary-clock500.png",
+      "mtime": 1792138573.701392,
+      "sha256": "20db77cedc8f3ea745d72aeeb56b0bfca157f7b38455c3ed5e3d93b0148d7367",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 21,
+      "file": "1280x800-no-preference-1.5-art-enemy-goblin-ranged-clock0.png",
+      "mtime": 1792138574.4933565,
+      "sha256": "4394c92d117b742e17f1694fd7e9612dc05335cf2893c47fdc4ef2baad93e21d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 22,
+      "file": "1280x800-no-preference-1.5-art-enemy-goblin-ranged-clock500.png",
+      "mtime": 1792138575.2733216,
+      "sha256": "9446d7d4918074dc212c85926ec8068dc33c8330f6393d4855820072cb6aec2b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 23,
+      "file": "1280x800-no-preference-1.5-art-enemy-goblin-ringleader-clock0.png",
+      "mtime": 1792138577.7212133,
+      "sha256": "b55bf7a7a9849422cc4b80d71d85a7a13f19b75f32f8f639de03149672a93b76",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 7,
+      "cell": 24,
+      "file": "1280x800-no-preference-1.5-art-enemy-goblin-ringleader-clock500.png",
+      "mtime": 1792138578.497179,
+      "sha256": "8b25403ffa2d4c356c21cd529d1b1ccd4aefef9b6492e84850efa027711bae4a",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 1,
+      "file": "1280x800-no-preference-1.5-art-enemy-mireling-guardian-clock0.png",
+      "mtime": 1792138557.0621321,
+      "sha256": "3bef38b2036c6e13be82b375728f5a64730b96174fd67b2449ba5b23c1e5afe0",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 2,
+      "file": "1280x800-no-preference-1.5-art-enemy-mireling-guardian-clock500.png",
+      "mtime": 1792138557.8620963,
+      "sha256": "af89f47a050453d23281935186f36a2c8b5138ed7288c6727d0c7ff5dc0c3b45",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 3,
+      "file": "1280x800-no-preference-1.5-art-enemy-mireling-ordinary-clock0.png",
+      "mtime": 1792138553.390296,
+      "sha256": "ebf779ecfb1db71837e12566546168e5062729f1c43810b4a59866239ee0ec89",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 4,
+      "file": "1280x800-no-preference-1.5-art-enemy-mireling-ordinary-clock500.png",
+      "mtime": 1792138554.3262541,
+      "sha256": "35706852b0e37cd848c4b018afd5e977aee1db3ccf17cec12842577507f1c6ab",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 5,
+      "file": "1280x800-no-preference-1.5-art-enemy-mireling-ranged-clock0.png",
+      "mtime": 1792138555.3262095,
+      "sha256": "799d80c42239fbfac201f68ba9b0912546cde4e5a6bb3c5e6cc81a37ff0ded35",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 6,
+      "file": "1280x800-no-preference-1.5-art-enemy-mireling-ranged-clock500.png",
+      "mtime": 1792138556.278167,
+      "sha256": "e95263a9774f671183c297114990698104bdf72a4e0902ca6628a39b76aa979b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 7,
+      "file": "1280x800-no-preference-1.5-art-enemy-mireling-ringleader-clock0.png",
+      "mtime": 1792138558.8620517,
+      "sha256": "bd9e9f05b20dda64c65ddfd0bf38f1146ea81be78aa982782a9d342e8bea21fa",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 8,
+      "file": "1280x800-no-preference-1.5-art-enemy-mireling-ringleader-clock500.png",
+      "mtime": 1792138559.7140138,
+      "sha256": "3ebe634f159118a9db06a2543d66405bdbefd28cbd4a4986859c8a8ecc8fbaaa",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 9,
+      "file": "1280x800-no-preference-1.5-art-enemy-ogre-guardian-clock0.png",
+      "mtime": 1792138580.8370752,
+      "sha256": "a8d3f7d95293cf3c7e87ee9e16c20c685ffbd234d9fa9c6c65e4ce4e79018d51",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 10,
+      "file": "1280x800-no-preference-1.5-art-enemy-ogre-ordinary-clock0.png",
+      "mtime": 1792138579.2971437,
+      "sha256": "d3430ef755a4505d5db4cc561ac93c2992faa7a0f2d189537d57e550e179d96d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 11,
+      "file": "1280x800-no-preference-1.5-art-enemy-ogre-ranged-clock0.png",
+      "mtime": 1792138580.0451105,
+      "sha256": "9bb7440604b2342a81fe0a7d7fb972512f00ec7570883df7024ea7294e1146fc",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 12,
+      "file": "1280x800-no-preference-1.5-art-enemy-ogre-ringleader-clock0.png",
+      "mtime": 1792138581.6130407,
+      "sha256": "dcbc229ebf16c98f404c2cfd18bfd09b4cdff58d33b7c434b3c89983f7806692",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 13,
+      "file": "1280x800-no-preference-1.5-art-enemy-orc-guardian-clock0.png",
+      "mtime": 1792138589.4286935,
+      "sha256": "97141afd7dab8536b4d16f2cedd2b929b9ae6a8b3442f171ef00053289f7abc5",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 14,
+      "file": "1280x800-no-preference-1.5-art-enemy-orc-guardian-clock500.png",
+      "mtime": 1792138590.3006546,
+      "sha256": "1d9ce0ab027e666cef86c233618d06ba2092a51be24e56a0aeb9798fcb4d5846",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 15,
+      "file": "1280x800-no-preference-1.5-art-enemy-orc-ordinary-clock0.png",
+      "mtime": 1792138585.7408574,
+      "sha256": "e27de01da8e603c8251b8e4faa4e008e93261b8cda61fe6b0e8d1f5ef9557791",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 16,
+      "file": "1280x800-no-preference-1.5-art-enemy-orc-ordinary-clock500.png",
+      "mtime": 1792138586.8008103,
+      "sha256": "f9d7d0eed8cc144204b7f9009e0742a3c06aabf51fb89378dbb290d51b4bd7f4",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 17,
+      "file": "1280x800-no-preference-1.5-art-enemy-orc-ranged-clock0.png",
+      "mtime": 1792138587.728769,
+      "sha256": "10bf57b0f249ea0d1b0fe337568d9ecb6f8c97fae4634b08379202d9df723c04",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 18,
+      "file": "1280x800-no-preference-1.5-art-enemy-orc-ranged-clock500.png",
+      "mtime": 1792138588.6207294,
+      "sha256": "6c8a5a96beb6f3935fa6c7a90d5f1a6dc822d7e5af4894d941cf2a6b465ff16a",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 19,
+      "file": "1280x800-no-preference-1.5-art-enemy-orc-ringleader-clock0.png",
+      "mtime": 1792138591.2006147,
+      "sha256": "bc035c4fc3dac189cfa88f639a82de07110ab6ce915be0b27cc58da4796b15cf",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 20,
+      "file": "1280x800-no-preference-1.5-art-enemy-orc-ringleader-clock500.png",
+      "mtime": 1792138592.0965748,
+      "sha256": "182a0fcfed24a1a8ebb3cca1c8cf191eaabdb997ff8036d19f256ab686959609",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 21,
+      "file": "1280x800-no-preference-1.5-art-enemy-reedbeast-guardian-clock0.png",
+      "mtime": 1792138563.5458436,
+      "sha256": "83f803562a659f08ed303dccb80d2baa944aab14429e7c0f6c3d00b7af84a580",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 22,
+      "file": "1280x800-no-preference-1.5-art-enemy-reedbeast-guardian-clock500.png",
+      "mtime": 1792138564.3458078,
+      "sha256": "d5dab4201701cb775616608c32fe3325f789e57193a122d2a2f300d237fdea26",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 23,
+      "file": "1280x800-no-preference-1.5-art-enemy-reedbeast-ordinary-clock0.png",
+      "mtime": 1792138560.4899795,
+      "sha256": "5fd322eaad7c834a23586c4754c0fdeb369a7cf05bf20ada39313d019e9734da",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 8,
+      "cell": 24,
+      "file": "1280x800-no-preference-1.5-art-enemy-reedbeast-ordinary-clock500.png",
+      "mtime": 1792138561.2739449,
+      "sha256": "594312a5decd8fff4dfcbd8c6136a1a3b8b22be9cbe4b354e22fb54b49261298",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 1,
+      "file": "1280x800-no-preference-1.5-art-enemy-reedbeast-ranged-clock0.png",
+      "mtime": 1792138562.0299113,
+      "sha256": "e5c14996358a64b517c3e0bc2a135401bdf7c72267c8b177ec3ece4db4fb4aac",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 2,
+      "file": "1280x800-no-preference-1.5-art-enemy-reedbeast-ranged-clock500.png",
+      "mtime": 1792138562.7938771,
+      "sha256": "8ed430342e78a51c14e1c9e380a0b42c4bed511a480c38c70ad05e96ee325384",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 3,
+      "file": "1280x800-no-preference-1.5-art-enemy-reedbeast-ringleader-clock0.png",
+      "mtime": 1792138565.1137736,
+      "sha256": "0cf7ad4eaec5368e3d640373cd908d13e74978fb00ca7bee79f84624c789a9b4",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 4,
+      "file": "1280x800-no-preference-1.5-art-enemy-reedbeast-ringleader-clock500.png",
+      "mtime": 1792138565.8137422,
+      "sha256": "9b326b8829c420e1d4f95f0295744077cb7b67a2a30758568460b6ffda8eb3fd",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 5,
+      "file": "1280x800-no-preference-1.5-art-enemy-skeleton-guardian-clock0.png",
+      "mtime": 1792138540.5428698,
+      "sha256": "0b837e825dcd4562b8dcd96b315465bc19e6b58eedb61127e0801435aab9568f",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 6,
+      "file": "1280x800-no-preference-1.5-art-enemy-skeleton-guardian-clock500.png",
+      "mtime": 1792138541.294836,
+      "sha256": "3eaa03deca4e32618926e7e6b944754a919652b4b0118a5e591c2cec53837645",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 7,
+      "file": "1280x800-no-preference-1.5-art-enemy-skeleton-ordinary-clock0.png",
+      "mtime": 1792138536.7630382,
+      "sha256": "a915f74630b441406950be8f1a4d5d2929776fb17781987f09894f661272270e",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 8,
+      "file": "1280x800-no-preference-1.5-art-enemy-skeleton-ordinary-clock500.png",
+      "mtime": 1792138538.0869796,
+      "sha256": "6ff79ad608194625b70392044e0e27be065eef3ccb162b008c7771e6e211d8c1",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 9,
+      "file": "1280x800-no-preference-1.5-art-enemy-skeleton-ranged-clock0.png",
+      "mtime": 1792138538.9909394,
+      "sha256": "a06bb1fe3e6322419d4e63192cc863c379b87cf7f7250a696f499eecd5208aac",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 10,
+      "file": "1280x800-no-preference-1.5-art-enemy-skeleton-ranged-clock500.png",
+      "mtime": 1792138539.7669046,
+      "sha256": "9effbe99599ce7154e918c3047267db2e0ae3c4a0828439aff1b582a309a640b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 11,
+      "file": "1280x800-no-preference-1.5-art-enemy-skeleton-ringleader-clock0.png",
+      "mtime": 1792138542.1067998,
+      "sha256": "60392b0b8ded62ae68fa6a69bfe0cc4189f38e5cb5d18a3999e9c849968ae659",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 12,
+      "file": "1280x800-no-preference-1.5-art-enemy-skeleton-ringleader-clock500.png",
+      "mtime": 1792138542.9187634,
+      "sha256": "cb3bc224bbec777f51310db7b3d22cc5b521a4da91b00f3c1b0fca875bf41459",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 13,
+      "file": "1280x800-no-preference-1.5-art-enemy-stalker-guardian-clock0.png",
+      "mtime": 1792138609.7197912,
+      "sha256": "3b0e5585bfeaf43ad691889b2c31d60388ac9f58acfb360c20d3dbec64704696",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 14,
+      "file": "1280x800-no-preference-1.5-art-enemy-stalker-guardian-clock500.png",
+      "mtime": 1792138610.691748,
+      "sha256": "7122ffa3eb8267a6db93610dbb686b1d94f93663f9d5c8d543828be0884581e8",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 15,
+      "file": "1280x800-no-preference-1.5-art-enemy-stalker-ordinary-clock0.png",
+      "mtime": 1792138607.7998762,
+      "sha256": "6e6ec2b3d2aa68802c8dbfed3e1fc93b1b47347125cfa7e0c6d3e3f2cdd31e88",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 16,
+      "file": "1280x800-no-preference-1.5-art-enemy-stalker-ordinary-clock500.png",
+      "mtime": 1792138608.7678332,
+      "sha256": "c40d3f2cbf810cc1c070113c471c604d078e3fb4c674d8594e69b354018abf2d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 17,
+      "file": "1280x800-no-preference-1.5-art-enemy-stalker-ringleader-clock0.png",
+      "mtime": 1792138611.6997032,
+      "sha256": "ab46a4b7d3e60645ba8d9ac4caa31fa8a90a7ee2800a99e1e8c84046e70d5792",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 18,
+      "file": "1280x800-no-preference-1.5-art-enemy-stalker-ringleader-clock500.png",
+      "mtime": 1792138612.6676605,
+      "sha256": "912dcf56e16baf750e003861ab43d0251a7b53a4649ff4ca9a00687de794302a",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 19,
+      "file": "1280x800-no-preference-1.5-art-enemy-summon-guardian-clock0.png",
+      "mtime": 1792138615.8035212,
+      "sha256": "2da3e7288676134e1094f9b1c232b2331747c17d09f9731bc65a353ed13c3bbb",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 20,
+      "file": "1280x800-no-preference-1.5-art-enemy-summon-guardian-clock500.png",
+      "mtime": 1792138616.7874775,
+      "sha256": "a9611146501abc13c11a53dfd07330be946ed1d7600dc5f0f344481fd205cc80",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 21,
+      "file": "1280x800-no-preference-1.5-art-enemy-summon-ordinary-clock0.png",
+      "mtime": 1792138613.9036055,
+      "sha256": "e20d1945ddb15be657bfec4517d1fa0d9fe24405e998a7abb3b0725b9c8448b9",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 22,
+      "file": "1280x800-no-preference-1.5-art-enemy-summon-ordinary-clock500.png",
+      "mtime": 1792138614.8515635,
+      "sha256": "12cfda3b9175955473564dc71f3d810533b8322ba597f1d52a32c858e518d706",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 23,
+      "file": "1280x800-no-preference-1.5-art-enemy-summon-ringleader-clock0.png",
+      "mtime": 1792138617.7634344,
+      "sha256": "1b5b1d845513f621a0c2d76fedb6969944ccc4dd241e8039e197eb2edc236ff0",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 9,
+      "cell": 24,
+      "file": "1280x800-no-preference-1.5-art-enemy-summon-ringleader-clock500.png",
+      "mtime": 1792138618.6993928,
+      "sha256": "d0a71b5ab045e13d2603efef79af0e7f9b32a12471448d706e5060e112cdf2e2",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Species anatomy, ordinary/guardian/ranged/ringleader identity and weapon/crown distinctions remain readable at captured scale; paired night captures preserve silhouettes."
+    },
+    {
+      "sheet": 10,
+      "cell": 1,
+      "file": "1280x800-no-preference-1.5-art-enemy-wolf-guardian-clock0.png",
+      "mtime": 1792138545.326656,
+      "sha256": "b2e64dae23656d54874585c2eeb45fc690c1ccf74111b1ce19f18217dcd6f4fc",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 2,
+      "file": "1280x800-no-preference-1.5-art-enemy-wolf-guardian-clock500.png",
+      "mtime": 1792138546.0786226,
+      "sha256": "d45d88b587fa268c7fa5e89e82022f81a32202cf81c5c56fe63a62820910d0bb",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 3,
+      "file": "1280x800-no-preference-1.5-art-enemy-wolf-mounted-bow-clock0.png",
+      "mtime": 1792138551.1383965,
+      "sha256": "2699d7acb3f7850a93489e8d1049522dab427a2c63541639443e8e66c187077a",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 4,
+      "file": "1280x800-no-preference-1.5-art-enemy-wolf-mounted-bow-clock500.png",
+      "mtime": 1792138552.138352,
+      "sha256": "d33a2efa4c96fe2a58dd7f6d4e0e23831a925a0eed95460cdc83a029cac9ce08",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 5,
+      "file": "1280x800-no-preference-1.5-art-enemy-wolf-mounted-lance-clock0.png",
+      "mtime": 1792138548.9224958,
+      "sha256": "6f062e0b21cfa72bd2e2a30996382d0f85aca8ce59fba83b82791a9dd567cf20",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 6,
+      "file": "1280x800-no-preference-1.5-art-enemy-wolf-mounted-lance-clock500.png",
+      "mtime": 1792138550.1784396,
+      "sha256": "24ae6c726b61745f9b38891642209122530b84a7a1042e24da69327e3e0c80cc",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 7,
+      "file": "1280x800-no-preference-1.5-art-enemy-wolf-ordinary-clock0.png",
+      "mtime": 1792138543.7307272,
+      "sha256": "f7f776ed0126d3348df4a60c455650e15e1ef8fe076b1b5d196242008271f4b9",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 8,
+      "file": "1280x800-no-preference-1.5-art-enemy-wolf-ordinary-clock500.png",
+      "mtime": 1792138544.5306916,
+      "sha256": "42e5cca3b3ebf168d63ef2e310567dec2dbb2d613c96e76db3402c4ca728207c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 9,
+      "file": "1280x800-no-preference-1.5-art-enemy-wolf-ringleader-clock0.png",
+      "mtime": 1792138547.0225806,
+      "sha256": "afa9609940bafb3629e091eabb88a21915d76c30874c675d2686fc90ec65dc00",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 10,
+      "file": "1280x800-no-preference-1.5-art-enemy-wolf-ringleader-clock500.png",
+      "mtime": 1792138547.9585388,
+      "sha256": "9b67ac7ca2af728797ffeab28bfc5edc5f495d6bcb64fa48d3a59fc07de978aa",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 11,
+      "file": "1280x800-no-preference-1.5-art-enemy-wraith-guardian-clock0.png",
+      "mtime": 1792138603.6480608,
+      "sha256": "e979a5474ee2d2cf59ee54d81e25abc436a5d07119948f031f893d511cec6c4f",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 12,
+      "file": "1280x800-no-preference-1.5-art-enemy-wraith-guardian-clock500.png",
+      "mtime": 1792138604.6120179,
+      "sha256": "94ade57962bb78ba79ee5f0f0090da31b2e76b300f874cfe093bf83c2bdcd658",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 13,
+      "file": "1280x800-no-preference-1.5-art-enemy-wraith-ordinary-clock0.png",
+      "mtime": 1792138599.6042407,
+      "sha256": "57281121862772fe8608255ef36934e82932de407dcf5fa41b5524461e13cfbd",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 14,
+      "file": "1280x800-no-preference-1.5-art-enemy-wraith-ordinary-clock500.png",
+      "mtime": 1792138600.448203,
+      "sha256": "8d76d6897d4089a79263a64d1b98bd18dfcc422d18ebf0ef36bf7667dc885fc1",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 15,
+      "file": "1280x800-no-preference-1.5-art-enemy-wraith-ranged-clock0.png",
+      "mtime": 1792138601.4481585,
+      "sha256": "3417bcecf4aae349c5b8ebf84b8902350e97aba4d3e789aec494975ecbd0d5c7",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 16,
+      "file": "1280x800-no-preference-1.5-art-enemy-wraith-ranged-clock500.png",
+      "mtime": 1792138602.6801038,
+      "sha256": "0c3df711c898c122bf098e6aa29703935330abb918780c56a3f0df8a1baac7ab",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 17,
+      "file": "1280x800-no-preference-1.5-art-enemy-wraith-ringleader-clock0.png",
+      "mtime": 1792138605.5919743,
+      "sha256": "2c7d633d67ddef6bb3c22524d2513a6717d7dfc2acf51681a1a4ef831c5140ca",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 18,
+      "file": "1280x800-no-preference-1.5-art-enemy-wraith-ringleader-clock500.png",
+      "mtime": 1792138606.571931,
+      "sha256": "a8818cd5ba929ba3747d77bddbfd7f12e1e1b4e0abffbbc4d0cb352bda570658",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 19,
+      "file": "1280x800-no-preference-1.5-art-structure-crown-ash-house-canonical-clock0.png",
+      "mtime": 1792138681.764652,
+      "sha256": "824b913ec09db17d6c26bb09becaa3881a1853b0e769bd8d0b1be1d805dbac91",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 20,
+      "file": "1280x800-no-preference-1.5-art-structure-crown-ash-house-canonical-clock500.png",
+      "mtime": 1792138682.6806118,
+      "sha256": "4866425ce4b214603772a43df51f354950e90611aae3be1320fc800eaacd26dc",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 21,
+      "file": "1280x800-no-preference-1.5-art-structure-crown-forgehouse-canonical-clock0.png",
+      "mtime": 1792138683.5525737,
+      "sha256": "53e8743de963214fb267faab4675606b950c706c710c8b678d7d3afc4addca58",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 22,
+      "file": "1280x800-no-preference-1.5-art-structure-crown-forgehouse-canonical-clock500.png",
+      "mtime": 1792138684.3085403,
+      "sha256": "b321ce2a7bd1d56676c97ca575c8af579357914fbb101c37d5bb971ee45b93fd",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 23,
+      "file": "1280x800-no-preference-1.5-art-structure-crown-wall-canonical-clock0.png",
+      "mtime": 1792138685.3164961,
+      "sha256": "05fa2f6dd3aa3905b406d7a6b772daed9eb7aa322f199dcb1dbd54a7ea93883b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 10,
+      "cell": 24,
+      "file": "1280x800-no-preference-1.5-art-structure-frontier-palisade-canonical-clock0.png",
+      "mtime": 1792138680.8726912,
+      "sha256": "4edd8ced7167756b720caa55ad9c60aa52485c75937d509f44aa18c710b1a35f",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 11,
+      "cell": 1,
+      "file": "1280x800-no-preference-1.5-art-structure-frontier-patched-house-canonical-clock0.png",
+      "mtime": 1792138677.0968566,
+      "sha256": "b99702b0914e980e343c137720189c05d8778a22021ea11126b6a09f1fc78dd2",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 11,
+      "cell": 2,
+      "file": "1280x800-no-preference-1.5-art-structure-frontier-patched-house-canonical-clock500.png",
+      "mtime": 1792138678.044815,
+      "sha256": "5921675905524ebfee02f6f3680f8e0e518da8daacdaa4ef1030e8ac682ac688",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 11,
+      "cell": 3,
+      "file": "1280x800-no-preference-1.5-art-structure-frontier-workshop-canonical-clock0.png",
+      "mtime": 1792138678.9967735,
+      "sha256": "58d0216c3901f36fcbfd2e01ffb9932dba30b0dc6d00026bd111436360f1499f",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 11,
+      "cell": 4,
+      "file": "1280x800-no-preference-1.5-art-structure-frontier-workshop-canonical-clock500.png",
+      "mtime": 1792138679.924733,
+      "sha256": "7f1c3d2962aa56770fa803e1f7d3e1008209d40b1ef6e459277dc919ecf14486",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 11,
+      "cell": 5,
+      "file": "1280x800-no-preference-1.5-art-structure-highland-smithy-canonical-clock0.png",
+      "mtime": 1792138674.1729844,
+      "sha256": "c8d5c0fcbfaef15709010517ba84715b042146b0da2d6418f4cf101e2cb60d53",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 11,
+      "cell": 6,
+      "file": "1280x800-no-preference-1.5-art-structure-highland-smithy-canonical-clock500.png",
+      "mtime": 1792138675.1249428,
+      "sha256": "729f5c09d0e35a270d2149b03f0807b4a7f2cce464625061e373fa09400104e3",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 11,
+      "cell": 7,
+      "file": "1280x800-no-preference-1.5-art-structure-highland-stone-house-canonical-clock0.png",
+      "mtime": 1792138672.2770672,
+      "sha256": "1095a3692f255fe0a417ac8a5246389ce83e954845f282f818a6fffb7669a4c7",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 11,
+      "cell": 8,
+      "file": "1280x800-no-preference-1.5-art-structure-highland-stone-house-canonical-clock500.png",
+      "mtime": 1792138673.2170262,
+      "sha256": "858b8aa24cd81441b489ea7824cda0595437fe4525035ce13d79a247ac2f2d7c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 11,
+      "cell": 9,
+      "file": "1280x800-no-preference-1.5-art-structure-highland-wall-canonical-clock0.png",
+      "mtime": 1792138676.1049,
+      "sha256": "70ebe25769f0b907e82205dbd6fcfd53a39af77b973bf025abd803a62bf8c511",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 11,
+      "cell": 10,
+      "file": "1280x800-no-preference-1.5-art-structure-march-boardwalk-canonical-clock0.png",
+      "mtime": 1792138671.2451124,
+      "sha256": "0cc80ff990cafcf8ca1a8d1b80c7f70326309a0e7a452782569145d1f05121ba",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 11,
+      "cell": 11,
+      "file": "1280x800-no-preference-1.5-art-structure-march-boathouse-canonical-clock0.png",
+      "mtime": 1792138669.501188,
+      "sha256": "cf7f43b54e505051b702ed2e4144424cb0bb284e28733c0e05b590c05d7c2b26",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 11,
+      "cell": 12,
+      "file": "1280x800-no-preference-1.5-art-structure-march-boathouse-canonical-clock500.png",
+      "mtime": 1792138670.3611507,
+      "sha256": "f5f7dbcb3fead87ece6ded20b68c3ada66f9590873690489a80b15f1d9792bf1",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 11,
+      "cell": 13,
+      "file": "1280x800-no-preference-1.5-art-structure-march-stilt-house-canonical-clock0.png",
+      "mtime": 1792138667.697266,
+      "sha256": "ab9baaad5eb8e6063311d6f6abf55cde844eba8d8fff673122cd36bb2ef98b72",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 11,
+      "cell": 14,
+      "file": "1280x800-no-preference-1.5-art-structure-march-stilt-house-canonical-clock500.png",
+      "mtime": 1792138668.5892274,
+      "sha256": "eed4ec36d2d7d499ce6c9ff17541dccfb5af7a0f5409b47a56a71e06c0462ca9",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 11,
+      "cell": 15,
+      "file": "1280x800-no-preference-1.5-art-structure-vale-cottage-canonical-clock0.png",
+      "mtime": 1792138663.573445,
+      "sha256": "c6685f679f21a0fd81d56fbc36dd430576671a68db2d7020fb9c19d37b337bd7",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 11,
+      "cell": 16,
+      "file": "1280x800-no-preference-1.5-art-structure-vale-cottage-canonical-clock500.png",
+      "mtime": 1792138664.4334078,
+      "sha256": "aee1c4f3a41c521c377eba7238226631f4d9f3a267c35f67aeb25b87af5c53ce",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 11,
+      "cell": 17,
+      "file": "1280x800-no-preference-1.5-art-structure-vale-fence-canonical-clock0.png",
+      "mtime": 1792138666.8293037,
+      "sha256": "2c0e97b4489757c7ab656f0921380830bbd2bbde5c7c1b62a333dda0d3b9c645",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 11,
+      "cell": 18,
+      "file": "1280x800-no-preference-1.5-art-structure-vale-workshop-canonical-clock0.png",
+      "mtime": 1792138665.233373,
+      "sha256": "6cfbe6a315d018413e1f7065aec785085b0754c5d197e6757e1d904cc8e1528e",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 11,
+      "cell": 19,
+      "file": "1280x800-no-preference-1.5-art-structure-vale-workshop-canonical-clock500.png",
+      "mtime": 1792138666.045338,
+      "sha256": "eb82ced1110a645d50a908dd55bb2cedc5a5ac256745db074b964ac4989c834c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Mounted bow/lance riders, wolves and lantern-bearing wraiths retain distinct silhouettes; regional building materials, supports and lit windows remain legible in paired day/night views. Coverage fixtures, not authored spawn locations."
+    },
+    {
+      "sheet": 1,
+      "cell": 1,
+      "file": "1280x800-no-preference-1.5-art-decoration-bone-pile-canonical-clock0.png",
+      "sha256": "fb462f5a8ae7ba5d0d960cba91077155aefb0c553342351041dbf00aec91162a",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 2,
+      "file": "1280x800-no-preference-1.5-art-decoration-command-tent-canonical-clock0.png",
+      "sha256": "712cec35967fe8a526e7c5357a8e9905d49a7198fac7387d0cd1162665945bf6",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 3,
+      "file": "1280x800-no-preference-1.5-art-decoration-cookfire-canonical-clock0.png",
+      "sha256": "f943ca266c982d80afa1a5b4bc81c1895bfb5a20ab67f8bd34f21c8c2647e4e8",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 4,
+      "file": "1280x800-no-preference-1.5-art-decoration-field-kitchen-canonical-clock0.png",
+      "sha256": "e121595861431c2314df64935c48bb74e4b6d8b6975a9f3b080a5ae798916226",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 5,
+      "file": "1280x800-no-preference-1.5-art-decoration-field-kitchen-canonical-clock500.png",
+      "sha256": "c8664847d1d305564a27aea2769752ed9436d90726db2b2c440de22f01dbe08d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 6,
+      "file": "1280x800-no-preference-1.5-art-decoration-fishing-net-canonical-clock0.png",
+      "sha256": "3ce6aa7fb27b75bd860ec4333a4f506c71647cfc1586eea7aee980635626d89c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 7,
+      "file": "1280x800-no-preference-1.5-art-decoration-fishing-net-canonical-clock500.png",
+      "sha256": "197c46e2e370e5a3283917caddedd450051553b574d0134f0a685b2ca657baac",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 8,
+      "file": "1280x800-no-preference-1.5-art-decoration-game-table-canonical-clock0.png",
+      "sha256": "cde03a05a0f79f45396f5dfcbbdba364a1792e2a6c505698d8d5d14e63035bd2",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 9,
+      "file": "1280x800-no-preference-1.5-art-decoration-grave-marker-canonical-clock0.png",
+      "sha256": "9a7815517c914a167737768a6a2dec09d5f3169009e1d682169f13c36a148fd6",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 10,
+      "file": "1280x800-no-preference-1.5-art-decoration-grave-marker-canonical-clock500.png",
+      "sha256": "f25874d8b074038084bafa75bdee72a77d66bec29a86ca2f7fd5dfaf9db4b99d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 11,
+      "file": "1280x800-no-preference-1.5-art-decoration-lean-to-canonical-clock0.png",
+      "sha256": "843015739cbf90b5de82444f34069da40022cadc13bb145b78fc80a06d1ca2b3",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 12,
+      "file": "1280x800-no-preference-1.5-art-decoration-lean-to-canonical-clock500.png",
+      "sha256": "43eee8bcd0947dba3435b4a978857d6c39305b0b822d2089129d8f5a7ac02a1c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 13,
+      "file": "1280x800-no-preference-1.5-art-decoration-mud-nest-canonical-clock0.png",
+      "sha256": "c9622a5e86e3440d7a31a15aab43bb5fbfd0e579311979af27f410a638f830e8",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 14,
+      "file": "1280x800-no-preference-1.5-art-decoration-mud-nest-canonical-clock500.png",
+      "sha256": "329a217069832b7989bb56c632cb4ea19787300f7d66273565eccead9a640309",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 15,
+      "file": "1280x800-no-preference-1.5-art-decoration-ore-cart-canonical-clock0.png",
+      "sha256": "24861a83e014db4bc9f5ba75df095175c648be2f4746821870a0a4c56da4f187",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 16,
+      "file": "1280x800-no-preference-1.5-art-decoration-ore-cart-canonical-clock500.png",
+      "sha256": "a7748a21b5bbdc2da749ef5adebf421ad6fcfc7129af745e105710bdce864653",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 17,
+      "file": "1280x800-no-preference-1.5-art-decoration-ore-crane-canonical-clock0.png",
+      "sha256": "7de006368bf1a68fe3af55cc21ad8f2fd785d0b3136b548ba5c5a2402f9be3c8",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 18,
+      "file": "1280x800-no-preference-1.5-art-decoration-pup-nest-canonical-clock0.png",
+      "sha256": "e265f739252cac2830241f9117065d97c2b5694268d686e5b2230dadb59570ba",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 19,
+      "file": "1280x800-no-preference-1.5-art-decoration-pup-nest-canonical-clock500.png",
+      "sha256": "8c97577f76417963b54169353305ae731fc229685c57ca532b68438f2b0414d6",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 20,
+      "file": "1280x800-no-preference-1.5-art-decoration-sleep-roll-canonical-clock0.png",
+      "sha256": "df6acda3dbd5aaedce058af6f16c9a8d32855bca1fd899d2bbea7da9d2a0abd6",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 21,
+      "file": "1280x800-no-preference-1.5-art-decoration-sleep-roll-canonical-clock500.png",
+      "sha256": "05605622cfdc6071e5e586b2ca2ba23ce1a16add2c168c04338ad044b82b5a84",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 22,
+      "file": "1280x800-no-preference-1.5-art-decoration-stolen-goods-canonical-clock0.png",
+      "sha256": "b76af8e8ae104565ad67b54472c9739fddc7d1cd3a6847f262bf758dfa3cd48b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 23,
+      "file": "1280x800-no-preference-1.5-art-decoration-stolen-goods-canonical-clock500.png",
+      "sha256": "30d4ecd0f0a12b64ce8e14584b4614a451964caec7df8457f9271982ea81fa31",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 1,
+      "cell": 24,
+      "file": "1280x800-no-preference-1.5-art-decoration-stone-marker-canonical-clock0.png",
+      "sha256": "8277a8daf3b448aef6fdaefdd466c13d9e00bb84c6252d9a2f630f5399633da2",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 2,
+      "cell": 1,
+      "file": "1280x800-no-preference-1.5-art-decoration-supply-stack-canonical-clock0.png",
+      "sha256": "49b8177f657248bce3fbc068979b113b4ae339356b2d6b1962f271cd52c8d0e1",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 2,
+      "cell": 2,
+      "file": "1280x800-no-preference-1.5-art-decoration-supply-stack-canonical-clock500.png",
+      "sha256": "642c697d377c704fef61024d7551226feafe957ac09568316cdee51b2f4178c0",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 2,
+      "cell": 3,
+      "file": "1280x800-no-preference-1.5-art-decoration-tax-post-canonical-clock0.png",
+      "sha256": "c393e0e96785a15639a9b97cb491c9102bfb0e40d3ac27193efc3a2203dcfb1e",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 2,
+      "cell": 4,
+      "file": "1280x800-no-preference-1.5-art-decoration-tool-rack-canonical-clock0.png",
+      "sha256": "ac2a29af8742fb36eed2e95fa66e0d3a7432b3bd5279c38cea32fa7075a92e2e",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 2,
+      "cell": 5,
+      "file": "1280x800-no-preference-1.5-art-decoration-training-dummy-canonical-clock0.png",
+      "sha256": "7c703323f57f666441444faaca1820cfe1c64e29715e0a84c0890c50c1a62190",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 2,
+      "cell": 6,
+      "file": "1280x800-no-preference-1.5-art-decoration-wallow-canonical-clock0.png",
+      "sha256": "c807584e07854c5408b236c530b3baf87583fb5e84b2fda6c8b0be9c23d26464",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 2,
+      "cell": 7,
+      "file": "1280x800-no-preference-1.5-art-decoration-wallow-canonical-clock500.png",
+      "sha256": "aa90a438b7d5dfa85af361be72eecc52b667edc83e302e40d4d209551351d300",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed native centre crops: wood supports, cooking/fire light, net strands, bone/stone forms, nest/bedding and equipment silhouettes retain intended purpose in day/night. River-centred probes are isolated design staging."
+    },
+    {
+      "sheet": 2,
+      "cell": 8,
+      "file": "1280x800-no-preference-1.5-region0-clock0-procedural.png",
+      "sha256": "7dd4e06222b8f45b67a043dcf28a43060a54e8d0d344dcce9c7dae88829a9758",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 2,
+      "cell": 9,
+      "file": "1280x800-no-preference-1.5-region0-clock0-sprites.png",
+      "sha256": "62073889f45b5455445f8559ed6c2dae0956de9c870cd7940fce0b996a29a9c7",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 2,
+      "cell": 10,
+      "file": "1280x800-no-preference-1.5-region0-clock500-procedural.png",
+      "sha256": "5e656c279842a1bd6259075e5d057c7879a4066e549d1f586a57c85c896d9a62",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 2,
+      "cell": 11,
+      "file": "1280x800-no-preference-1.5-region0-clock500-sprites.png",
+      "sha256": "7b16b2b6b47fc79244d27bab62b33184f95c78a563d53b7b944178b1ba33ceaa",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 2,
+      "cell": 12,
+      "file": "1280x800-no-preference-1.5-region1-clock0-procedural.png",
+      "sha256": "50de88144a6914e74109e8f68ba765644c88dd86bf1ec79e86c583bd8554d585",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 2,
+      "cell": 13,
+      "file": "1280x800-no-preference-1.5-region1-clock0-sprites.png",
+      "sha256": "62d5670620277857a306ce04fbb60261b7f07695ce3abab8b97dca49d68cf715",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 2,
+      "cell": 14,
+      "file": "1280x800-no-preference-1.5-region1-clock500-procedural.png",
+      "sha256": "5976d88eb7206aa4846970c386cc6e588754978727719efbd214ca0ef3be5182",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 2,
+      "cell": 15,
+      "file": "1280x800-no-preference-1.5-region1-clock500-sprites.png",
+      "sha256": "ac78d9aff68cb91186d53ef96a56e34e36c88271f36fbc74e3da01f98926ae4b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 2,
+      "cell": 16,
+      "file": "1280x800-no-preference-1.5-region2-clock0-procedural.png",
+      "sha256": "6aaa903c5da1f96b35aba8cd780cbd78a7f24391e8163d34fa9d1d5310cda4a2",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 2,
+      "cell": 17,
+      "file": "1280x800-no-preference-1.5-region2-clock0-sprites.png",
+      "sha256": "b4d12ccc2fdcf3f688fe30ba190e14003792bb1b45dd582aeb9f0adb8ee16a5b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 2,
+      "cell": 18,
+      "file": "1280x800-no-preference-1.5-region2-clock500-procedural.png",
+      "sha256": "cc65b7ba17ba6c396611a071d02cddb198bfdd623e6942f78079d2e4eb1e13a2",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 2,
+      "cell": 19,
+      "file": "1280x800-no-preference-1.5-region2-clock500-sprites.png",
+      "sha256": "ff9b0ee3da4b741f425f9138824510f8e9b58db976bb063be8891b1e2c4825e2",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 2,
+      "cell": 20,
+      "file": "1280x800-no-preference-1.5-region3-clock0-procedural.png",
+      "sha256": "d7fb96fbcf415c1d1877dfe18b734a4b646809727ad912a4ec805470e4091232",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 2,
+      "cell": 21,
+      "file": "1280x800-no-preference-1.5-region3-clock0-sprites.png",
+      "sha256": "efda1b8159af3d23f631730914a2adfb8218035f40c3780bc2f018f3a5e2addb",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 2,
+      "cell": 22,
+      "file": "1280x800-no-preference-1.5-region3-clock500-procedural.png",
+      "sha256": "61ca78a7652c590e87ca4029b0d1596afc613260f80b3ffb68f53e5dcf87bbaf",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 2,
+      "cell": 23,
+      "file": "1280x800-no-preference-1.5-region3-clock500-sprites.png",
+      "sha256": "2170f3f94ed553f967d87fe550b50f0c6e11187896a41f7138a4125c3a73b845",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 2,
+      "cell": 24,
+      "file": "1280x800-no-preference-1.5-region4-clock0-procedural.png",
+      "sha256": "1a743f1e2361a7fc79609fbec731c8cbb07c4ac283080d2726b9fd4eb9a1f021",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 1,
+      "file": "1280x800-no-preference-1.5-region4-clock0-sprites.png",
+      "sha256": "f41ae1d593d72e296bbab9c42a806d05f69821ae39a646d5cac06c22925b9053",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 2,
+      "file": "1280x800-no-preference-1.5-region4-clock500-procedural.png",
+      "sha256": "58ac61245ecd81f7c50ac63e7938187b742c12ac2b1b1e909ddf58b19d020c70",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 3,
+      "file": "1280x800-no-preference-1.5-region4-clock500-sprites.png",
+      "sha256": "d53def5fa6680c073691c8f7eba7196bff08c5e40efd4151beeeada1303585f0",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 4,
+      "file": "1280x800-pt312-0-bridge-south.png",
+      "sha256": "7a1456884103987923e6240c66491622637c53ac50e26642bbc035e59034518f",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 5,
+      "file": "1280x800-pt312-0-den-ruins.png",
+      "sha256": "09f5a5769703e7ab6ccb53d5ecdfcb6c5a1b3d1d6e41f6df7b490943363b1b3e",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 6,
+      "file": "1280x800-pt312-0-rest.png",
+      "sha256": "dc7339643b4203389917343bd8aa043d1a0a9794d3f821b9509cc800b42cf9ce",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 7,
+      "file": "1280x800-pt312-0-supply-entrance.png",
+      "sha256": "6d4b7a27c7d14f0652af2e1f375ee0d4de6626dd2e5ea72f0edc6a6a6f356cb6",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 8,
+      "file": "1280x800-pt312-1-bridge-lake.png",
+      "sha256": "3e289ef0cb9f1e0f3e0e376ce6da0620aa2988b4426d0b09d3b8f4aae5233060",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 9,
+      "file": "1280x800-pt312-1-supply-entrance.png",
+      "sha256": "b0a86938bd62317357dafa9d93f22cd7f4a9eeb05c51c44ee2c4579359cc83bc",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 10,
+      "file": "1280x800-pt312-2-bridge-north.png",
+      "sha256": "a8525deb4bdd7fa1c945505c278d80dc0b75e947f796bf73ab0c712184158107",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 11,
+      "file": "1280x800-pt312-2-bridge-south.png",
+      "sha256": "0a44d2b63f02674277079b3cbf8ea790686a9ff68c39caa989d9d47b25241e3b",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 12,
+      "file": "1280x800-pt312-2-ore.png",
+      "sha256": "52f7df072de1419a72eaa9a5ef19fdd95f885cabd9bc4459a8e75d2bc221dd25",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 13,
+      "file": "1280x800-pt312-2-supply-entrance.png",
+      "sha256": "117b58a89e9b2a8139ef0c3bb43d874f61759ab884d68307dee9ed30df44e2b9",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 14,
+      "file": "1280x800-pt312-3-checkpoint.png",
+      "sha256": "b3bfd59d56680dec5ce3b029640627e4dde1dcefd4ce39f3b0ce30382f7103b7",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 15,
+      "file": "1280x800-pt312-4-fortress-gate.png",
+      "sha256": "6e6a729404d03516c522b9ae013409ff61ffee68509d0f23325ccb8f93af28b9",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 16,
+      "file": "1280x800-pt312-arrival-abyss.png",
+      "sha256": "7db9ceaf80e2bfde73d6ba6c203fc8161947491497e48879c5feaf3aa6ed6d79",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 17,
+      "file": "1280x800-pt312-arrival-archive.png",
+      "sha256": "ebcfe1647f7ce83a77319931da6800c50d8c8e45acb0074906e7f8b21333634d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 18,
+      "file": "1280x800-pt312-arrival-citadel.png",
+      "sha256": "34ff551fdd404a0ddf19804140f28876596f0d5ca0d5870a0eb0933fd41982f0",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 19,
+      "file": "1280x800-pt312-arrival-crypt.png",
+      "sha256": "bc9b2b2ab5ce084ec7dd297643dcc54bba27b26c72439121c8849362b0b1379d",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 20,
+      "file": "1280x800-pt312-arrival-mine.png",
+      "sha256": "e8630d75cc97ddcc1bb8b5ddec5b8acfb8bd78bb01a2d7573c352c9b59b98277",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 21,
+      "file": "1280x800-pt312-arrival-side-crown-foundry.png",
+      "sha256": "db5b70ad74a2383ec0f400f3b981561e2f9f37d1b0e2013e6b724aa9818252f5",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 22,
+      "file": "1280x800-pt312-arrival-side-frontier-shrine.png",
+      "sha256": "0a7dba41a0938437e25dbeb33b5825829f7ef527570da65e3378c0d8385b994f",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 23,
+      "file": "1280x800-pt312-arrival-side-highlands-signal.png",
+      "sha256": "551ce62f4f3b93bee5253a3b5922f299ff4a98fcea6e4787fe21f10ee1c128fd",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 3,
+      "cell": 24,
+      "file": "1280x800-pt312-arrival-side-march-watchhouse.png",
+      "sha256": "fa00156015c54e2ce730e121aa0aa9acf3ecf5b62c79712eb3336df29aa40746",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 4,
+      "cell": 1,
+      "file": "1280x800-pt312-arrival-side-vale-cellars.png",
+      "sha256": "0b7c22724cf5e3a6f15154aae6f1efe5dcb0a6b00756773e55625df6899d2059",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 4,
+      "cell": 2,
+      "file": "1280x800-pt312-arrival-supply-crown.png",
+      "sha256": "dce810131f31f5ea236c7b1e4e638e1dd2d4f75aa4183e19d1a703068f7076d1",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 4,
+      "cell": 3,
+      "file": "1280x800-pt312-arrival-supply-highlands.png",
+      "sha256": "4da8457bdeb6969035f62e4b55c57d00a31db3d176f8c8c8dccfaf7ba895b42c",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 4,
+      "cell": 4,
+      "file": "1280x800-pt312-arrival-supply-march.png",
+      "sha256": "4c3195c1d541864fb4a8865270f19445963eb946a0749b50fdebfc4ec27dac86",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    },
+    {
+      "sheet": 4,
+      "cell": 5,
+      "file": "1280x800-pt312-arrival-supply-vale.png",
+      "sha256": "b0e30f5c18f6b80315d6f2c8627e615f0b0e77216bb75c16155170b7b110c3b7",
+      "disposition": "accept at captured gameplay scale",
+      "reviewNote": "Reviewed full regional day/night views with procedural/registered rendering, clear crossing/door frontage and room receiving posts. Deliberate all-pet review clusters are synthetic coverage, not authored crowd placement."
+    }
+  ]
+}

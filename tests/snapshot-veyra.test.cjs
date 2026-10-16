@@ -42,6 +42,26 @@ const copy=Campaign.restore(saved);
 const restored=copy.zone().enemies.find(e => e.family === 'citadel' && e.type === 'boss');
 assert.equal(restored.board.beat,3,'v4 restoration retains validated paused board');
 assert.equal(restored.board.timer,0.55);
+// Every authorized confined-room tile size preserves a validated relocated
+// court. Invalid geometry is discarded without altering the live board.
+for (const size of [112,96,80,64]) {
+  const anchor=game.connectedArenaPoints(boss).find(p=>!game.blocked(p.x,p.y,'citadel',size*2*Math.SQRT2+Campaign.rules.arenaPlacement.margin));
+  if (!anchor) {
+    assert(!game.sentinelValidBoard(boss,{...boss.board,size},'citadel'),
+      'a permitted tile size still needs a legal complete footprint');
+    continue;
+  }
+  boss.board={...boss.board,...anchor,size};
+  const roundTrip=Campaign.restore(game.snapshot());
+  assert.equal(roundTrip.zone().enemies.find(e=>e.family==='citadel'&&e.type==='boss').board.size,size);
+}
+const validBoard={...boss.board};
+for (const malformed of [{size:63},{size:113},{beat:8},{timer:0},{x:-1000},{y:Infinity}]) {
+  boss.board={...validBoard,...malformed};
+  assert(!game.snapshot().zones.citadel.enemies.find(e=>e.family==='citadel'&&e.type==='boss').board,
+    'invalid court geometry/beat never survives serialization');
+}
+boss.board=validBoard;
 copy.enter('crown');
 assert(!restored.board,'travel cancels court effect');
 const reset=Campaign.restore(saved);

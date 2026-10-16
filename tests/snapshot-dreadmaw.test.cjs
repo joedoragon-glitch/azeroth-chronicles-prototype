@@ -7,7 +7,7 @@ const sha = (s) => crypto.createHash('sha256').update(s).digest('hex');
 // Reconstruct the protected original with only the documented director changes
 // reversed. Any other rule mutation still fails the original SHA assertion.
 const protectedRules = JSON.parse(JSON.stringify(C.rules.tacticalFoundation));
-for (const change of [...(rogue.approvedRuleChanges?.changes || []), ...(rogue.authorizedPlaytestChanges?.changes || [])]) {
+for (const change of [...(rogue.approvedRuleChanges?.changes || []), ...(rogue.authorizedPlaytestChanges?.changes || []), ...(rogue.authorizedPr311SpeciesChanges?.changes || [])]) {
   let owner = protectedRules;
   for (const key of change.path.slice(0, -1)) owner = owner[key];
   const key = change.path.at(-1);

@@ -109,7 +109,7 @@ for (const ranged of [false, true]) {
   let fills = 0, strokes = 0;
   const canvas = {
     save() {}, restore() {}, translate() {}, scale() {}, beginPath() {}, closePath() {},
-    moveTo() {}, lineTo() {}, ellipse() {}, arc() {},
+    moveTo() {}, lineTo() {}, bezierCurveTo() {}, quadraticCurveTo() {}, ellipse() {}, arc() {},
     fill() { fills++; }, stroke() { strokes++; },
   };
   Visuals.draw(canvas, { id: 'crown-rider', renderKind: 'enemy', type: 'mob',

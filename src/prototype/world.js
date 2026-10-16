@@ -540,22 +540,6 @@
           // Final clearance runs AFTER new routes, using painted-roof setbacks.
           delete z.streetClearanceVersion;
           this.clearStreetCorridors(z);
-          z.footpaths = [];
-          if (z.id === 'vale') {
-            const houses = z.props.filter(
-              (p) =>
-                /vale-cottage/.test(p.structure || '') &&
-                dist(p, { x: D.towns[0][0], y: D.towns[0][1] }) < 650,
-            );
-            for (const house of houses) {
-              const near = this.nearestRoadPoint(z, house);
-              if (!near || dist(near, house) < 155) continue;
-              const angle = Math.atan2(near.y - house.y, near.x - house.x),
-                door = { x: house.x + Math.cos(angle) * 100, y: house.y + Math.sin(angle) * 100 },
-                path = this.route(near, door);
-              if (path.length) z.footpaths.push([near, ...path]);
-            }
-          }
           if (z.id === 'march') this.marchBankEcology(z);
           // Stable metadata is a migration receipt, not a successful rendered-world review.
           z.environmentCoherenceVersion = 2;
@@ -682,7 +666,7 @@
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
           this.sideDungeon(z.id) ||
-          z.strongholdCourtyardSpacingVersion === 2
+          z.strongholdCourtyardSpacingVersion === 3
         )
           return;
         const before = this.s.zone;
@@ -775,7 +759,7 @@
               placed.push(enemy.home);
             }
           }
-          z.strongholdCourtyardSpacingVersion = 2;
+          z.strongholdCourtyardSpacingVersion = 3;
         } finally {
           this.s.zone = before;
         }
@@ -785,7 +769,7 @@
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
           this.sideDungeon(z.id) ||
-          z.landmarkRoadShoulderVersion === 3
+          z.landmarkRoadShoulderVersion === 4
         )
           return;
         const previousZone = this.s.zone;
@@ -837,7 +821,7 @@
             );
             if (selected) Object.assign(marker, selected);
           }
-          z.landmarkRoadShoulderVersion = 3;
+          z.landmarkRoadShoulderVersion = 4;
         } finally {
           this.s.zone = previousZone;
         }
@@ -847,7 +831,7 @@
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
           this.sideDungeon(z.id) ||
-          z.townVisualClearanceVersion === 2
+          z.townVisualClearanceVersion === 3
         )
           return;
         const previousZone = this.s.zone;
@@ -932,7 +916,24 @@
             if (found) Object.assign(house, found);
             fixed.push(house);
           }
-          z.townVisualClearanceVersion = 2;
+          // Paths terminate at the final door frontage, after roof reflow.
+          z.footpaths = [];
+          if (z.id === 'vale') {
+            const houses = z.props.filter(
+              (p) =>
+                /vale-cottage/.test(p.structure || '') &&
+                dist(p, { x: D.towns[0][0], y: D.towns[0][1] }) < 650,
+            );
+            for (const house of houses) {
+              const near = this.nearestRoadPoint(z, house);
+              if (!near || dist(near, house) < 155) continue;
+              const angle = Math.atan2(near.y - house.y, near.x - house.x),
+                door = { x: house.x + Math.cos(angle) * 100, y: house.y + Math.sin(angle) * 100 },
+                path = this.route(near, door);
+              if (path.length) z.footpaths.push([near, ...path]);
+            }
+          }
+          z.townVisualClearanceVersion = 3;
         } finally {
           this.s.zone = previousZone;
         }
@@ -1099,11 +1100,13 @@
           }
           this.authoredPlaces(z);
           this.clearStreetCorridors(z);
-          this.clearNamedRoadMarkers(z);
-          this.townVisualClearance(z);
-          this.strongholdCourtyardClearance(z);
           this.regionalTravelSafety(z);
           this.environmentCoherence(z);
+          this.clearNamedRoadMarkers(z);
+          this.townVisualClearance(z);
+          // Environment coherence adds bridge approaches and clears their roads.
+          // Space the lived-in courtyard after those final scenic relocations.
+          this.strongholdCourtyardClearance(z);
           this.interiorCoherence(z);
           return z;
         }
@@ -1501,11 +1504,11 @@
         this.migrateThornPatrol(z);
         this.migrateCinderInspection(z);
         this.clearStreetCorridors(z);
+        this.regionalTravelSafety(z);
+        this.environmentCoherence(z);
         this.clearNamedRoadMarkers(z);
         this.townVisualClearance(z);
         this.strongholdCourtyardClearance(z);
-        this.regionalTravelSafety(z);
-        this.environmentCoherence(z);
         this.interiorCoherence(z);
         this.refreshNPCs();
         if (this.peace) this.makeHabitat(z);

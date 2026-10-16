@@ -130,7 +130,7 @@ function rasterScene({ actorKind = 'hero', structure = 'house', foreground = tru
       }
       ctx.restore();
     },
-    floor() {}, terrain() {}, roads() {}, bridges() {}, atmosphere() {},
+    floor() {}, terrain() {}, roads() {}, footpaths() {}, bridges() {}, atmosphere() {},
   };
   const painter = Renderer.create({
     canvas: surface,

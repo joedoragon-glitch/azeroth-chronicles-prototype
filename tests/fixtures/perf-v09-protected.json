@@ -1635,6 +1635,92 @@
         "docs/evidence/pr313-validation-recovery-20261016/retained-validation-logs.txt.gz": "085170d0107f06adf5d706cb06648485da1b838718ff3912bd0381ab78bf8970"
       },
       "previousFiles": {}
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt continuation; owner-authorized validation repairs and named Rogue cast UI, validation in progress 2026-10-16",
+      "reason": "Retain historical receipts; exact current bytes for review. No test result is inferred from these hashes.",
+      "files": {
+        "docs/PR313_VALIDATION_20261016.md": "75d9b32a9f21edc9350be6291ad92b7feed831e522f84b7ce645f993108db2c1",
+        "tests/fixtures/snapshot-dread-rogue.json": "af8a29d080da2f56e1f1e979ab74ea6a4568fe0c51514448444704a18b8525eb",
+        "tests/local-sites.test.cjs": "b0e35dcc2978058d8601fa91a1feb3871fca3b872efa00f18146d48ec01599c6",
+        "tests/migration.test.cjs": "726254116872aa61e96e3e26857b576a769ad495cc3cdd25a7e75921a2b31d14",
+        "tests/notice-presentation.test.cjs": "a9cae0bb8dc6406da30304881cfa2d6d9903522933aaade824153f1247462539",
+        "tests/occlusion.test.cjs": "075c7544b975fc2b26d9ed282ca9427059175d12d6c2de608c001cbce9abc649",
+        "tests/roads.test.cjs": "4c0966b670f9d4fdb5020aec605135d7ec71baddae6fc3592ea9b1498db7edf9",
+        "tests/rogue-cast-continuity.test.cjs": "58a52ece6575e70f4b9724059f47fe55a9dff1f3051f8b352a3716fb14b4074a",
+        "tests/rogue-integration.test.cjs": "a01954bc9000d918405916bb5c53188c253e05972b37d6abab632967f01c170d",
+        "tests/snapshot-dreadmaw.test.cjs": "092186d6c57dbb5899e072d87d71aa32f8b238b45fe4cd3023e3281dd61bbce1",
+        "tests/snapshot-encounter-lifecycle.test.cjs": "7c9c9037e06179a29134199e9fff5b8791ae527a0c69fe20f5f887b8fb25e9e8",
+        "tests/snapshot-frontier-regrowth-geothermal.test.cjs": "19e76fbed5215b5f0177c74fa96e23f3a09a29f2a053b0cf5e8a6076fbf316ff",
+        "tests/snapshot-guardian-density-direwolf-riders.test.cjs": "8731183677786fe15a427e464fae97b0ec3c31ffc54ef0789ee4c7cd74da13f7",
+        "tests/town-street-audit.test.cjs": "1c62fc45ebbc8a201057cd4504cb0124be610f3888b13582eea6739357002dcb",
+        "tests/world-aesthetic.test.cjs": "4fecdd84978efe961d0f530e43b5c4631a09ef198c102d36e34030a24bbfb814",
+        "docs/evidence/pr313-validation-continuation-20261016/observer-duplicate-retained.json": "a0abcbe673e305dd8d91911c2f102b2ed8b0d17323cc14d11c7d29a301b252a1",
+        "docs/evidence/pr313-validation-continuation-20261016/visual-dispositions-partial.json": "903afa26ca2c4573ad7a1660ecf54645d4e3a67a080963dea574f33b2546c9d7"
+      },
+      "previousFiles": {
+        "docs/PR313_VALIDATION_20261016.md": "fe64f71664828d3797b47f5ffcbf0c75ae043c870768e27e839dd75c1f5ee84b",
+        "tests/roads.test.cjs": "e63783d46a2f2a6f0e7b2a653f98d5edb50285ea2c35559ef45f0f2e402e3618"
+      }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt continuation; owner-authorized validation repairs and named Rogue cast UI, validation in progress 2026-10-16",
+      "reason": "Retain historical receipts; exact current bytes for review. No test result is inferred from these hashes.",
+      "files": {
+        "docs/PR313_VALIDATION_20261016.md": "5d9f65da035cd1e367527627cf6f2e826dabeb0b7e4aa895fda7a0fe2e7f9c66",
+        "docs/evidence/SPRITE_SCOPE_RECONCILIATION.json": "d35b6a9ff00a3ce27fe5dab4343d80264aede7e541f0facadfdac4f47a348582",
+        "package-lock.json": "6bac2c8cbd396fef97ac2b3866da960639ceebccd5d741f603b4a8d01d3f0752",
+        "package.json": "e8e18d39e86d74bcf837c78379a2a78e938102d29ecbb8f50b5eafea1513eb4d",
+        "src/prototype/boss-combat.js": "337a2bb740dd2b9290013a148e3d877ff69bec0bdef284fb19e4e5ca237fa484",
+        "src/prototype/build-info.js": "7bc294ad83a26adeea4ca959ba84938d9c94a02074f3c8e29d94d6d4754f8f86",
+        "src/prototype/save.js": "2d0492e2bd37ad8dcedfb3748cbac4d54b6c7874fcb50a6dde896b18149c9455",
+        "src/prototype/world.js": "73c1d580baae1c874ab59b433ecdcbc66cf12869d22af82b8ce6e8175dc5f180",
+        "sw.js": "c4a2d0a0d55487bb98f8e4f761d7468f55e81a8c42502c843d20e6f6348e96ba",
+        "tests/fixtures/sprite-reference-paladin.png": "5de49ddc2840bc9dd7cd93efd67c2cc24bc6fb8634325e1feda63f14c5581623",
+        "tests/snapshot-encounter-lifecycle.test.cjs": "3d57690d7a9f1b4c4be00e3b71bfeb0f74da5942122a922ea973a5f1fba00c66",
+        "tests/snapshot-town-visual-clearance.test.cjs": "6ff7799df4b741750a67a42047afb3400db7040602f0f9147ef2c3da9b7a1a3e",
+        "tests/snapshot-transport-hud-preaudit.test.cjs": "23e7a1aa495dd6f99f0cd5d035b0df6f5b1801f194dec4ceb2f5e31be30b95f3",
+        "tests/snapshot-veyra-combat.test.cjs": "a78777afa8cb0d78de3772b25979c20cc58dd7fc4a7ee9bf832c7ce35f8f2ea0",
+        "tests/snapshot-veyra.test.cjs": "581c6b37159d19ad62973f6a289c8a20164e730e1afe4414ff8ca559b650f4bc",
+        "tests/transport-departure-canon.test.cjs": "398be7f49856886d92e4bc8fd1e3bc8e26f3378c98fa94ce198eef89565cec74",
+        "docs/evidence/pr313-validation-continuation-20261016/baseline308-expanded-cache.json.gz": "64c60156fc8584b6be996f0190af81ba7706f4ffbd29795539925f72d0d007eb",
+        "docs/evidence/pr313-validation-continuation-20261016/dev70-preservation.json": "c1ce40f6c9126e2be83844eea8a1c588a10ac4a705e249ecf32799b15f872a35",
+        "docs/evidence/pr313-validation-continuation-20261016/pr313-dev70-balance-0.json.jsonl.gz": "5dc2b8087d6d37a377dc52dfbc7f75ae051a5848e6f44ae1d230fe737b2d2124",
+        "docs/evidence/pr313-validation-continuation-20261016/pr313-dev70-balance-1.json.jsonl.gz": "cc82a48a55bb35449cd9a52fded042b8e774c17f912fa969199c0330fb04c8cc",
+        "docs/evidence/pr313-validation-continuation-20261016/pr313-dev70-balance-2.json.jsonl.gz": "01f8f312ab419324d25fb45892a4c7f9ae6765675bfac6328cad494f27b5a107",
+        "docs/evidence/pr313-validation-continuation-20261016/pr313-dev70-balance-3.json.jsonl.gz": "a4e042f81f23afaa61393e5b14f044bf8f3ab86844aaca380a0b7c14365b8737",
+        "docs/evidence/pr313-validation-continuation-20261016/pr313-dev70-balance-4.json.jsonl.gz": "96123999d07a867fd4b74d1ab9c5a7a877ae4492daafa04eb3ebd9eff43ee490",
+        "docs/evidence/pr313-validation-continuation-20261016/pr313-dev70-balance-5.json.jsonl.gz": "ff064d6ddb41bcfdfe010009046301c00b6fd544e114003a78186c449d1203a5",
+        "docs/evidence/pr313-validation-continuation-20261016/pr313-dev70-balance-6.json.jsonl.gz": "866debbc55b097eafa8e1288d8bd6fabb5ae3263b0029d9d4f7acc3bd21e9b38",
+        "docs/evidence/pr313-validation-continuation-20261016/pr313-dev70-balance-7.json.jsonl.gz": "af285c70ccd867d8d210bdcdab263d0b56e4ea6143817a1b433782261863ec0e",
+        "tests/fixtures/pr313-old-scenery-layouts.json": "dc32232b2644882c1df388a1f2e6c9881feea8a9681b7a851f92432a4a9c54b9"
+      },
+      "previousFiles": {
+        "docs/PR313_VALIDATION_20261016.md": "75d9b32a9f21edc9350be6291ad92b7feed831e522f84b7ce645f993108db2c1",
+        "package-lock.json": "8896f1c2a649c846cd67322c7cdc538eb6c47823d7ff1597163da5eb20b5aa22",
+        "package.json": "791928a97a9a34518adbbc82625f652334c9622a41c8673ca566ef0942b2c63e",
+        "src/prototype/boss-combat.js": "74eb48bc261cfbd92e8370e0f9c52b1cfb83497271b6702538052d688809d3f0",
+        "src/prototype/build-info.js": "a03fe4a36abf823494622d41566d56ee60a2cfbe6113fe63e33fcc01671382a5",
+        "src/prototype/save.js": "fc1cc336265638976258a50614b951642ee268e1ece115723768f127aa242b5d",
+        "src/prototype/world.js": "589716f1dba015710a97847100638a65707d47c6db1b414706b62e8115a32a1f",
+        "sw.js": "a9f3f34f7fcb926cd48cc3c6cd363ed070a71488e2b57c4f6de59b358b9b0bf9",
+        "tests/snapshot-encounter-lifecycle.test.cjs": "7c9c9037e06179a29134199e9fff5b8791ae527a0c69fe20f5f887b8fb25e9e8"
+      }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt continuation; owner-authorized validation repairs and named Rogue cast UI, validation in progress 2026-10-16",
+      "reason": "Retain historical receipts; exact current bytes for review. No test result is inferred from these hashes.",
+      "files": {
+        "docs/PR313_RESUME_20261016.md": "ff7318bd62786c973de1883ef002b8c844a7b97a18454be027ebf35755a4f1f8",
+        "docs/PR313_VALIDATION_20261016.md": "3770f3ab17aeda723cadf4a8442258b3077cc4b864b425843f337c90eb8c11e0"
+      },
+      "previousFiles": {
+        "docs/PR313_RESUME_20261016.md": "8e992a90181f1753435d603eb967bebfb2794b1cb2f95eb58fb660fde8e13ebb",
+        "docs/PR313_VALIDATION_20261016.md": "5d9f65da035cd1e367527627cf6f2e826dabeb0b7e4aa895fda7a0fe2e7f9c66"
+      }
     }
   ],
   "authorizedPr313ApproachFrameRevision": {

@@ -33,9 +33,11 @@ for (const cls of ['paladin', 'mage', 'ranger'])
         before.map((p) => ({ ...p, name: built.first.name })),
       );
       assert(before.every((p) => p.radius === 72));
-      const unrelated = { ...built.first, family: 'cindermaw' };
+      // Committed arenaPatches deliberately survive display/metadata changes.
+      // Probe family dispatch with a fresh, unsnapshotted ordinary radius.
+      const unrelated = { ...built.first, family: 'cindermaw', arenaPatches: undefined, radius: 123 };
       assert(
-        c.attackPatches(unrelated).some((p) => p.radius !== 72),
+        c.attackPatches(unrelated).every((p) => p.radius === 75 * C.rules.bossCadence.areaRangeMultiplier),
         'another family cannot inherit Groundwork geometry',
       );
       for (const action of ['disengage', 'travel', 'death', 'snapshot', 'restore']) {
@@ -138,7 +140,7 @@ for (const zone of [
     restored.startCaptainAttack(clean, restored.hero);
     assert.equal(clean.specialCd, C.rules.roomCaptains['supply-highlands'].specialCooldown * 0.75);
     assert(
-      !restored.effects.some((f) => f.type === 'enemyVfx' && f.stage === 'windup'),
+      !restored.effects.some((f) => f.type === 'enemyVfx' && f.stage === 'windup' && !f.audioOnly),
       'anonymous cast does not expose VFX identity',
     );
   }

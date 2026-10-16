@@ -1,0 +1,26 @@
+{
+  "status": "HISTORICAL INCOMPLETE dev70; superseded by dev71 scenery order and court-save repairs. Not a final balance result.",
+  "candidateCounts": {
+    "pr313-dev70-balance-4.json.jsonl": 436,
+    "pr313-dev70-balance-7.json.jsonl": 355,
+    "pr313-dev70-balance-2.json.jsonl": 272,
+    "pr313-dev70-balance-5.json.jsonl": 499,
+    "pr313-dev70-balance-3.json.jsonl": 354,
+    "pr313-dev70-balance-1.json.jsonl": 635,
+    "pr313-dev70-balance-0.json.jsonl": 361,
+    "pr313-dev70-balance-6.json.jsonl": 258
+  },
+  "candidateTotal": 3170,
+  "expandedExactBaselineObservations": 2336,
+  "files": {
+    "pr313-dev70-balance-0.json.jsonl.gz": "5dc2b8087d6d37a377dc52dfbc7f75ae051a5848e6f44ae1d230fe737b2d2124",
+    "pr313-dev70-balance-2.json.jsonl.gz": "01f8f312ab419324d25fb45892a4c7f9ae6765675bfac6328cad494f27b5a107",
+    "pr313-dev70-balance-4.json.jsonl.gz": "96123999d07a867fd4b74d1ab9c5a7a877ae4492daafa04eb3ebd9eff43ee490",
+    "pr313-dev70-balance-3.json.jsonl.gz": "a4e042f81f23afaa61393e5b14f044bf8f3ab86844aaca380a0b7c14365b8737",
+    "baseline308-expanded-cache.json.gz": "64c60156fc8584b6be996f0190af81ba7706f4ffbd29795539925f72d0d007eb",
+    "pr313-dev70-balance-1.json.jsonl.gz": "cc82a48a55bb35449cd9a52fded042b8e774c17f912fa969199c0330fb04c8cc",
+    "pr313-dev70-balance-6.json.jsonl.gz": "866debbc55b097eafa8e1288d8bd6fabb5ae3263b0029d9d4f7acc3bd21e9b38",
+    "pr313-dev70-balance-5.json.jsonl.gz": "ff064d6ddb41bcfdfe010009046301c00b6fd544e114003a78186c449d1203a5",
+    "pr313-dev70-balance-7.json.jsonl.gz": "af285c70ccd867d8d210bdcdab263d0b56e4ea6143817a1b433782261863ec0e"
+  }
+}

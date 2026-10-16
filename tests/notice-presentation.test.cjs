@@ -37,6 +37,8 @@ const game = {
   zone: () => ({ enemies: game.enemies }),
   enemies: [],
   activeLivingParty: () => [],
+  attackResetProtected: require('../src/prototype/engine.js').prototype.attackResetProtected,
+  roamingBoss: () => false,
 };
 const context = {
   game,
@@ -111,6 +113,12 @@ assert.deepEqual(visible(), ['narration']);
 game.enemies = [{ ...threat, x: 2000 }];
 update();
 assert.deepEqual(visible(), ['narration'], 'distant unrelated combat cannot starve reading');
+game.enemies = [{ ...threat, returning: true }];
+update();
+assert.deepEqual(visible(), ['narration'], 'protected stationary reset cannot starve reading');
+game.roamingBoss = () => true;
+update();
+assert.equal(host.children.length, 0, 'a returning roaming boss remains a real threat');
 context.game = { ...game, notices: [], s: { ...game.s }, zone: () => ({ enemies: [] }) };
 update();
 assert.equal(host.children.length, 0, 'new campaign discards old transient notices');

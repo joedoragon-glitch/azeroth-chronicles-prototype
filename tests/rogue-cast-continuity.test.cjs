@@ -173,6 +173,7 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
       floor() {},
       terrain() {},
       roads() {},
+      footpaths() {},
       bridges() {},
       atmosphere() {},
       draw(_ctx, ent) {

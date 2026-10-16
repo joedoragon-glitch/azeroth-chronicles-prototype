@@ -800,6 +800,31 @@
           selected: active.includes(i),
         }));
       }
+      sentinelValidBoard(e, board, zone = this.zoneId) {
+        return !!(
+          zone === 'citadel' &&
+          e.type === 'boss' &&
+          e.family === 'citadel' &&
+          e.hp > 0 &&
+          board &&
+          Number.isFinite(board.x) &&
+          Number.isFinite(board.y) &&
+          [112, 96, 80, 64].includes(board.size) &&
+          Number.isFinite(board.timer) &&
+          board.timer > 0 &&
+          board.timer <= 1.9 &&
+          Number.isInteger(board.beat) &&
+          board.beat >= 0 &&
+          board.beat < 8 &&
+          ['warn', 'rest'].includes(board.phase) &&
+          !this.blocked(
+            board.x,
+            board.y,
+            zone,
+            board.size * 2 * Math.SQRT2 + R.arenaPlacement.margin,
+          )
+        );
+      }
       sentinelUpdateBoard(e, dt) {
         if (!e.board || e.hp <= 0 || !e.aggro || this.peace) return;
         const b = e.board;

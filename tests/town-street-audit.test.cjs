@@ -14,20 +14,35 @@ for (const region of Campaign.data.regions) {
   const town = { x: Campaign.data.towns[i][0], y: Campaign.data.towns[i][1] };
   const hamlet = { x: Campaign.data.minors[i][0], y: Campaign.data.minors[i][1] };
   assert.equal(zone.settlementLayoutVersion, 4, region.id + ' new parcel plan');
-  assert.equal(zone.roadVersion, 16, region.id + ' connected roads');
+  assert.equal(zone.roadVersion, 17, region.id + ' connected roads');
   assert.equal(zone.streetClearanceVersion, 3, region.id + ' full street audit');
   assert(zone.roads.length >= 4, region.id + ' real road links');
 
-  const junctions = [town];
+  // Bridges can connect earlier spurs from either end. Validate the completed
+  // geometric network, including segment-interior joins, independently of order.
+  const touches = (point, path) => path.some((p, j) => j &&
+    game.distanceToSegment(point, path[j - 1], p) < 1);
+  const connected = new Set(zone.roads.map((road, j) => touches(town, road) ? j : -1)
+    .filter(j => j >= 0));
+  for (let grew = true; grew;) {
+    grew = false;
+    zone.roads.forEach((road, j) => {
+      if (connected.has(j)) return;
+      if ([...connected].some(k => road.some(p => touches(p, zone.roads[k])) ||
+          zone.roads[k].some(p => touches(p, road)))) {
+        connected.add(j);
+        grew = true;
+      }
+    });
+  }
+  assert.equal(connected.size, zone.roads.length,
+    region.id + ' every road belongs to the town-connected network');
   for (const road of zone.roads) {
     assert(road.length > 1, region.id + ' has no empty streets');
-    assert(junctions.some((point) => distance(point, road[0]) < 1),
-      region.id + ' road must join the connected network: ' + JSON.stringify(road[0]));
     for (let j = 1; j < road.length; j++) {
       assert(game.clearSegment(road[j - 1], road[j], 15),
         region.id + ' road crosses collision geometry');
     }
-    junctions.push(...road);
     routes++;
   }
   assert(zone.roads.some((road) => distance(road.at(-1), hamlet) < 2),
@@ -111,7 +126,7 @@ for (const region of Campaign.data.regions) {
   const restored = Campaign.restore(migrated);
   const restoredZone = restored.zone();
   assert.equal(restored.hero.gold, originalGold, region.id + ' save currency');
-  assert.equal(restoredZone.roadVersion, 16);
+  assert.equal(restoredZone.roadVersion, 17);
   assert.equal(restoredZone.settlementLayoutVersion, 4);
   assert.equal(restoredZone.streetClearanceVersion, 3);
   const oldCart = restoredZone.props.find((p) => p.id === 'historical-cart-' + region.id);

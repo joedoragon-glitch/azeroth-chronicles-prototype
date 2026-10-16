@@ -141,10 +141,14 @@ test('Every elite signature affects multiple marked pursuers and keeps normal ca
     const a = e.telegraph;
     assert(a.rogueSignature);
     resolveThroughAI(c, e, a);
+    // Match the live hero-then-party frame order: freezing the other victims
+    // while exhausting one scatter lets their new solid bodies pin that victim.
+    for (let n = 0; n < 7; n++)
+      for (const u of units)
+        if (c.tacticalScatterState(u)) c.tacticalAdvanceScatter(u, 0.1);
     units.forEach((u, i) => {
       assert(u.hp < initial[i].hp, a.name + ' actually affects marked pursuer ' + i);
       if (['scatter', 'sweep'].includes(a.effect)) {
-        if (c.tacticalScatterState(u)) for (let n = 0; n < 7; n++) c.tacticalAdvanceScatter(u, 0.1);
         assert(Math.hypot(u.x - initial[i].x, u.y - initial[i].y) > 1, a.name + ' scatters');
       } else assert(u.slow > 0, a.name + ' obstructs pursuit');
     });
