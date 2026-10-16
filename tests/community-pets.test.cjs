@@ -47,6 +47,11 @@ function advance(g, dt) {
   g.resolveCompanionCharges();
 }
 assert.equal(Campaign.data.bosses.length, 11);
+for (const family of ['not-a-boss', 'constructor', '__proto__']) {
+  const g = arena();
+  assert.equal(g.petDefinition(family), null);
+  assert.throws(() => g.unit('pet', 500, 500, family));
+}
 for (const boss of Campaign.data.bosses) {
   const family = boss.id,
     g = arena(family),
@@ -201,6 +206,24 @@ for (const { id: family } of Campaign.data.bosses) {
   assert.equal(g.s.party.length, 1);
 }
 const audio = new Audio();
+{
+  const g = arena(),
+    b = g.zone().buildings[0];
+  g.s.party = Array.from({ length: 199 }, () => ({
+    ...g.unit('soldier', 500, 500),
+    active: false,
+  }));
+  b.queue = 1;
+  b.queueType = 'archer';
+  assert(!g.recruitPet('thorn', b.id), 'troop reservation prevents a 201st roster admission');
+  b.queue = 0;
+  b.queueType = null;
+  assert(g.recruitPet('thorn', b.id));
+  assert.equal(g.rosterCount(), 200);
+  g.s.normal.crypt = g.s.true.crypt = true;
+  assert(!g.recruitPet('crypt', b.id), 'pet admission respects the shared roster ceiling');
+  assert.equal(Campaign.restore(g.snapshot()).s.party.length, 200);
+}
 assert(audio.supportsType('petSkill'));
 assert.equal(audio.soundKind({ type: 'petSkill' }), null);
 console.log(

@@ -1,61 +1,62 @@
 {
   "schemaVersion": 1,
-  "status": "procedural-design",
+  "status": "procedural-candidate-unreviewed",
   "designId": "crown-direwolf-riders",
   "name": "Crown direwolf lance rider and mounted archer",
   "kind": "enemy",
-  "nextAction": "Review the correction in its PR; merge only on owner instruction. Browser/device evidence remains with automatic CI.",
+  "nextAction": "Review Community candidate at native desktop/phone size after owner validation authorization. Earlier evidence is historical only; no sprites requested.",
   "context": {
     "originConversation": null,
     "decisionSummary": "15 October: Joel reports enormous lance and ranged riders on undersized Highland direwolves. Correct both variants together; no conversation URL available.",
     "decisionDate": "2026-10-15",
     "repositoryIssueOrPR": null,
-    "contentDocuments": [],
+    "contentDocuments": [
+      "docs/COMMUNITY_SNAPSHOT_ART_AUDIT_20261016.md"
+    ],
     "locationAndLore": "Highlands patrols, Colossus Mine guards and Ironroot Treasury mounted guards share this procedural body."
   },
   "decisions": {
     "conceptAcceptance": "Existing Crown human direwolf cavalry from #300 retained.",
-    "proceduralDesignAcceptance": "Owner reported proportion defect; corrected candidate awaits visual feedback.",
+    "proceduralDesignAcceptance": "Community source correction authorized, native appearance NOT REVIEWED. Shared wolf body gains curved trunk/haunches/hocks/paws. The #308 mounted rider-to-wolf scale, tack, lance/bow and ground anchor remain protected.",
     "spriteProductionAuthorization": "No new raster generation requested.",
     "generatedAppearanceAcceptance": "No generated raster.",
-    "pendingCorrections": []
+    "pendingCorrections": [
+      "Capture both facings/variants and native-size context after authorization"
+    ]
   },
   "reference": {
-    "sourceCommit": "d7c878b992b35b72e2df2f7f44afb1f16ac21ff8",
+    "sourceCommit": "06edf70470c507b5da5246fa27e3b779e64382f1",
     "ownerFilesAndBranches": [
-      "src/prototype/visuals.js:crownDirewolfRider",
-      "fix/highlands-mounted-ogre-art"
+      "src/prototype/visuals.js",
+      "feature/community-snapshot-post308-20261016"
     ],
     "exactEntityState": "species wolf; mountedCrownRider true; ranged false/true; renderKind enemy",
-    "isolatedReferencePath": "tools/sprites/design-handoffs/references/crown-direwolf/after.png",
-    "isolatedReferenceHash": "155ea801dfa79a55e3989b6710a514719ccda2e4f2b42bd932720eb33d29cf17",
-    "gameplayContextPaths": [
-      "tools/sprites/design-handoffs/references/crown-direwolf/desktop-lance-100.jpg",
-      "tools/sprites/design-handoffs/references/crown-direwolf/desktop-lance-150.jpg",
-      "tools/sprites/design-handoffs/references/crown-direwolf/desktop-archer-100.jpg",
-      "tools/sprites/design-handoffs/references/crown-direwolf/desktop-archer-150.jpg",
-      "tools/sprites/design-handoffs/references/crown-direwolf/phone-lance-100.jpg",
-      "tools/sprites/design-handoffs/references/crown-direwolf/phone-lance-150.jpg",
-      "tools/sprites/design-handoffs/references/crown-direwolf/phone-archer-100.jpg",
-      "tools/sprites/design-handoffs/references/crown-direwolf/phone-archer-150.jpg"
-    ],
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [],
     "traitsToPreserve": [
       "Human armored rider; gold Crown insignia; blue livery; armored grey direwolf; saddle/reins/stirrups; lance and bow loadouts"
     ],
     "assetSpecificDependencies": [
-      "Shared mounted renderer only; wild wolves and Wolf boss remain unchanged."
-    ]
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "b525f4bce76b98248ae5f47e08d9c41a77699a5b6dab748dc0a210964729c77c"
+      }
+    ],
+    "preCommunityBaselineCommit": "6bc27be31792b1c38147d61e98ceed6acf3e2560"
   },
   "scope": {
     "catalogIds": [],
     "verifiedRuntimeKeys": [],
     "requiredVisibleAssets": [],
-    "reusedDesignIds": [],
+    "reusedDesignIds": [
+      "community-enemy-wolf"
+    ],
     "variantRequirements": [
       "Lance and archer share 0.72 seated human scale; mount/tack 1.22 around paws; saddle and stirrups align."
     ],
     "proceduralOwnersAndReasons": [
-      "visuals.js: existing canvas body correction; no registered image exists."
+      "visuals.js; Shared wolf body gains curved trunk/haunches/hocks/paws. The #308 mounted rider-to-wolf scale, tack, lance/bow and ground anchor remain protected."
     ]
   },
   "animationRequirements": {
@@ -74,5 +75,54 @@
     "rollbackRevision": "d7c878b992b35b72e2df2f7f44afb1f16ac21ff8",
     "releaseCommit": null,
     "releaseEvidence": null
+  },
+  "preCommunityHistory": {
+    "reference": {
+      "sourceCommit": "d7c878b992b35b72e2df2f7f44afb1f16ac21ff8",
+      "ownerFilesAndBranches": [
+        "src/prototype/visuals.js:crownDirewolfRider",
+        "fix/highlands-mounted-ogre-art"
+      ],
+      "exactEntityState": "species wolf; mountedCrownRider true; ranged false/true; renderKind enemy",
+      "isolatedReferencePath": "tools/sprites/design-handoffs/references/crown-direwolf/after.png",
+      "isolatedReferenceHash": "155ea801dfa79a55e3989b6710a514719ccda2e4f2b42bd932720eb33d29cf17",
+      "gameplayContextPaths": [
+        "tools/sprites/design-handoffs/references/crown-direwolf/desktop-lance-100.jpg",
+        "tools/sprites/design-handoffs/references/crown-direwolf/desktop-lance-150.jpg",
+        "tools/sprites/design-handoffs/references/crown-direwolf/desktop-archer-100.jpg",
+        "tools/sprites/design-handoffs/references/crown-direwolf/desktop-archer-150.jpg",
+        "tools/sprites/design-handoffs/references/crown-direwolf/phone-lance-100.jpg",
+        "tools/sprites/design-handoffs/references/crown-direwolf/phone-lance-150.jpg",
+        "tools/sprites/design-handoffs/references/crown-direwolf/phone-archer-100.jpg",
+        "tools/sprites/design-handoffs/references/crown-direwolf/phone-archer-150.jpg"
+      ],
+      "traitsToPreserve": [
+        "Human armored rider; gold Crown insignia; blue livery; armored grey direwolf; saddle/reins/stirrups; lance and bow loadouts"
+      ],
+      "assetSpecificDependencies": [
+        "Shared mounted renderer only; wild wolves and Wolf boss remain unchanged."
+      ]
+    },
+    "nextAction": "Review the correction in its PR; merge only on owner instruction. Browser/device evidence remains with automatic CI.",
+    "decisions": {
+      "conceptAcceptance": "Existing Crown human direwolf cavalry from #300 retained.",
+      "proceduralDesignAcceptance": "Owner reported proportion defect; corrected candidate awaits visual feedback.",
+      "spriteProductionAuthorization": "No new raster generation requested.",
+      "generatedAppearanceAcceptance": "No generated raster.",
+      "pendingCorrections": []
+    },
+    "scope": {
+      "catalogIds": [],
+      "verifiedRuntimeKeys": [],
+      "requiredVisibleAssets": [],
+      "reusedDesignIds": [],
+      "variantRequirements": [
+        "Lance and archer share 0.72 seated human scale; mount/tack 1.22 around paws; saddle and stirrups align."
+      ],
+      "proceduralOwnersAndReasons": [
+        "visuals.js: existing canvas body correction; no registered image exists."
+      ]
+    },
+    "limits": "Historical source/appearance evidence applies to that revision, not this Community candidate."
   }
 }

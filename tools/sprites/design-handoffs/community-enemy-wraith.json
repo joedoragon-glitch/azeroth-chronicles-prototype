@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-candidate-unreviewed",
+  "designId": "community-enemy-wraith",
+  "name": "wraith — Community procedural revision",
+  "kind": "enemy",
+  "nextAction": "After owner validation authorization, capture and review the exact native fixture in both device modes. No sprite production or release authorized.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Community Snapshot owner authorized case-by-case procedural improvements preserving identity and gameplay geometry; follow-up instruction authorizes source-audit corrections.",
+    "decisionDate": "2026-10-15",
+    "repositoryIssueOrPR": null,
+    "contentDocuments": [
+      "docs/COMMUNITY_SNAPSHOT_ART_AUDIT_20261016.md",
+      "docs/COMMUNITY_SNAPSHOT_AUDIT_REPAIRS_20261016.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": "Source implementation authorized; not appearance acceptance.",
+    "proceduralDesignAcceptance": "Native appearance NOT REVIEWED",
+    "spriteProductionAuthorization": "Excluded for Community Snapshot",
+    "generatedAppearanceAcceptance": "No generated raster",
+    "pendingCorrections": [
+      "Desktop/phone native-size aesthetic acceptance after authorization"
+    ]
+  },
+  "reference": {
+    "sourceCommit": "06edf70470c507b5da5246fa27e3b779e64382f1",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::draw / enemy species wraith",
+      "feature/community-snapshot-post308-20261016"
+    ],
+    "exactEntityState": {
+      "region": 0,
+      "enemy": "wraith"
+    },
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [],
+    "traitsToPreserve": [
+      "Curved cloak hem, rim and lantern bail replace a flat spectral triangle; preserve local lantern light and cold palette.",
+      "Original identity, silhouette, regional purpose and foot/depth anchor",
+      "Existing sprites, fallback and all gameplay geometry"
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "b525f4bce76b98248ae5f47e08d9c41a77699a5b6dab748dc0a210964729c77c"
+      }
+    ],
+    "preCommunityBaselineCommit": "6bc27be31792b1c38147d61e98ceed6acf3e2560",
+    "sourceSlices": [
+      {
+        "path": "src/prototype/visuals.js",
+        "selector": "draw / enemy species wraith",
+        "startLine": 16435,
+        "endLine": 16679,
+        "sha256": "167a0ec6a9fbb05904ad9592cde2ac8ab5b4a5b73adf22aabaff3780964d5707"
+      }
+    ],
+    "captureVariants": [
+      {
+        "name": "ordinary",
+        "entity": {
+          "ranged": false
+        }
+      },
+      {
+        "name": "ranged",
+        "entity": {
+          "ranged": true
+        }
+      },
+      {
+        "name": "guardian",
+        "entity": {
+          "guard": true
+        }
+      },
+      {
+        "name": "ringleader",
+        "entity": {
+          "form": "ringleader"
+        }
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "ordinary",
+      "ranged",
+      "guardian",
+      "ringleader"
+    ],
+    "proceduralOwnersAndReasons": [
+      "visuals.js; source-only procedural improvement, no new raster"
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing procedural presentation retained",
+    "gameplayStates": [
+      "idle",
+      "move",
+      "ordinary/ranged/TRUE/rank where authored"
+    ],
+    "directions": [],
+    "pivotContract": "Existing ground/depth anchor and collision unchanged; no new animation assets",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

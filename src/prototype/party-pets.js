@@ -115,9 +115,9 @@
           if (e.hp <= 0 || e.neutral || e.returning || !this.line(u, e)) return false;
           if (def.shape === 'target') return e === target && this.tacticalDirectTargetable(e);
           if (def.shape === 'circle') return dist(e, target) <= def.radius;
-          if (dist(u, e) > def.range) return false;
           if (def.shape === 'cone')
             return (
+              dist(u, e) <= def.range &&
               Math.abs(
                 Math.atan2(
                   Math.sin(Math.atan2(e.y - u.y, e.x - u.x) - angle),
@@ -228,9 +228,17 @@
             anchorRange > 0 ? anchor : dist(u, target) > 0 ? u : { x: target.x + 1, y: target.y },
           dx = direction.x - target.x,
           dy = direction.y - target.y,
-          n = Math.hypot(dx, dy) || 1,
-          p = { x: target.x + (dx / n) * preferred, y: target.y + (dy / n) * preferred };
-        return this.blocked(p.x, p.y) ? this.safe(p.x, p.y) : p;
+          angle = Math.atan2(dy, dx);
+        // A destination on our side of a wall may be in range but have no firing
+        // line. Choose a legal point around the aim; navigation owns the route.
+        for (const turn of [0, 1, -1, 2, -2, 3, -3, 4]) {
+          const a = angle + (turn * Math.PI) / 4,
+            p = { x: target.x + Math.cos(a) * preferred, y: target.y + Math.sin(a) * preferred };
+          if (!this.blocked(p.x, p.y) && this.line(p, target)) return p;
+        }
+        // Confined rooms may have no comfortable firing band. Approach rather
+        // than parking forever; legal close-range attacks are still allowed.
+        return this.safe(target.x, target.y);
       }
       updatePetCombat(u, target, living, dt) {
         const def = this.petDefinition(u);
@@ -256,14 +264,21 @@
             dt,
             cfg.petFollowStop,
           );
-          return;
-        }
-        const reach = ranged ? Math.min(cfg.petBasicRange, def.first.range, def.second.range) : 70;
-        if (d > reach || !visible) {
+        } else if (
+          d > (ranged ? Math.min(cfg.petBasicRange, def.first.range, def.second.range) : 70) ||
+          !visible
+        ) {
           // Pet-specific destination; shared navigation still owns collision and movement.
           this.follow(
             u,
-            ranged ? this.petCombatPoint(u, target, living, reach) : target,
+            ranged
+              ? this.petCombatPoint(
+                  u,
+                  target,
+                  living,
+                  Math.min(cfg.petBasicRange, def.first.range, def.second.range),
+                )
+              : target,
             speed,
             dt,
             ranged ? cfg.petFollowStop : visible ? 55 : 0,

@@ -12,7 +12,8 @@
     "decisionDate": "2026-10-15",
     "repositoryIssueOrPR": null,
     "contentDocuments": [
-      "docs/COMMUNITY_SNAPSHOT_IMPLEMENTATION_20261016.md"
+      "docs/COMMUNITY_SNAPSHOT_IMPLEMENTATION_20261016.md",
+      "docs/COMMUNITY_SNAPSHOT_AUDIT_REPAIRS_20261016.md"
     ],
     "locationAndLore": null
   },
@@ -26,7 +27,7 @@
     ]
   },
   "reference": {
-    "sourceCommit": "6bc27be31792b1c38147d61e98ceed6acf3e2560",
+    "sourceCommit": "06edf70470c507b5da5246fa27e3b779e64382f1",
     "ownerFilesAndBranches": [
       "src/prototype/visuals.js::bossPet",
       "src/prototype/rules.js::petCompanions",
@@ -45,7 +46,18 @@
       "large expressive eyes, short body, grounded feet",
       "canonical anatomy, material and equipment"
     ],
-    "assetSpecificDependencies": []
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "b525f4bce76b98248ae5f47e08d9c41a77699a5b6dab748dc0a210964729c77c"
+      },
+      {
+        "path": "src/prototype/rules.js",
+        "sha256": "9939dabf9f50250bb4b0c1f52c1d05eeb151e55abba783510c3c4315652ae3b1"
+      }
+    ],
+    "preCommunityBaselineCommit": "6bc27be31792b1c38147d61e98ceed6acf3e2560",
+    "sourceEvidenceRecord": "tools/community-snapshot/procedural-art-inventory.json#pet:darklord"
   },
   "scope": {
     "catalogIds": [],

@@ -519,7 +519,7 @@
         [
           'TRUE boss pets',
           'Each TRUE boss victory permanently unlocks a miniature companion in Barracks → Company → Boss pet collection. Past TRUE victories count. Each pet replaces a normal companion slot; no pet summons or performs labor.',
-          'Recruitment is free, with one individual per boss. Resting and fallen pets remain in your company, retaining their health. Treat or recover them with the normal Barracks services; there is no free dismissal-and-recruit heal. Pets inherit hero-level health, Companion Vitality and Expedition bonuses like troops. Their second skill uses the same charge, interruption, Slow and Silence rules. No new party capacity is granted.',
+          'Recruitment is free, with one individual per boss. Resting and fallen pets remain in your company, retaining their health. Treat or recover them with the normal Barracks services; there is no free dismissal-and-recruit heal. Pets inherit hero-level health, Companion Vitality and Expedition bonuses like troops. Ranged pets keep their distance when space permits and can attack while repositioning. Attacks need a clear line. Their second skill uses the same charge, interruption, Slow and Silence rules. No new party capacity is granted.',
         ],
         ...game
           .petCollection()

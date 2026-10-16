@@ -95,6 +95,9 @@ if (communityRevision) {
 const communityRepairs = manifest.authorizedCommunitySourceAuditRepairsRevision;
 if (communityRepairs) {
   assert.equal(communityRepairs.predecessorCommit, '7581ed12d57e70e42bbaed6b8223bc8d4c709b22');
+  assert.equal(communityRepairs.checkpointHistory[0].commit, '06edf70470c507b5da5246fa27e3b779e64382f1');
+  for (const file of ['src/prototype/renderer.js', 'src/prototype/rules.js'])
+    assert.equal(communityRepairs.files[file], communityRepairs.checkpointHistory[0].files[file], file + ' preserves first repair art/rules/presentation receipt');
   assert.match(communityRepairs.source, /Owner-authorized A01–A07.*NOT TESTED/);
   assert.deepEqual(Object.keys(communityRepairs.files).sort(), ['src/prototype/archive.js', 'src/prototype/party-pets.js', 'src/prototype/renderer.js', 'src/prototype/rules.js', 'src/prototype/visuals.js']);
   assert.deepEqual(Object.keys(communityRepairs.previousFiles).sort(), Object.keys(communityRepairs.files).sort());

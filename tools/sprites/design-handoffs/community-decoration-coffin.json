@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-candidate-unreviewed",
+  "designId": "community-decoration-coffin",
+  "name": "coffin — Community procedural revision",
+  "kind": "decoration",
+  "nextAction": "After owner validation authorization, capture and review the exact native fixture in both device modes. No sprite production or release authorized.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Community Snapshot owner authorized case-by-case procedural improvements preserving identity and gameplay geometry; follow-up instruction authorizes source-audit corrections.",
+    "decisionDate": "2026-10-15",
+    "repositoryIssueOrPR": null,
+    "contentDocuments": [
+      "docs/COMMUNITY_SNAPSHOT_ART_AUDIT_20261016.md",
+      "docs/COMMUNITY_SNAPSHOT_AUDIT_REPAIRS_20261016.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": "Source implementation authorized; not appearance acceptance.",
+    "proceduralDesignAcceptance": "Native appearance NOT REVIEWED",
+    "spriteProductionAuthorization": "Excluded for Community Snapshot",
+    "generatedAppearanceAcceptance": "No generated raster",
+    "pendingCorrections": [
+      "Desktop/phone native-size aesthetic acceptance after authorization"
+    ]
+  },
+  "reference": {
+    "sourceCommit": "06edf70470c507b5da5246fa27e3b779e64382f1",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::decoration / case 'coffin'",
+      "feature/community-snapshot-post308-20261016"
+    ],
+    "exactEntityState": {
+      "region": 0,
+      "entity": {
+        "renderKind": "prop",
+        "structure": "coffin",
+        "decorative": true
+      }
+    },
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [],
+    "traitsToPreserve": [
+      "Tapered lid had no thickness; the new side face and inset rim distinguish a constructed coffin from a flat marker.",
+      "Original identity, silhouette, regional purpose and foot/depth anchor",
+      "Existing sprites, fallback and all gameplay geometry"
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "b525f4bce76b98248ae5f47e08d9c41a77699a5b6dab748dc0a210964729c77c"
+      }
+    ],
+    "preCommunityBaselineCommit": "6bc27be31792b1c38147d61e98ceed6acf3e2560",
+    "sourceSlices": [
+      {
+        "path": "src/prototype/visuals.js",
+        "selector": "decoration / case 'coffin'",
+        "startLine": 7966,
+        "endLine": 8016,
+        "sha256": "5670741641ef57f12dafd163211dd0aff8d5a6c079a0d12fd668b91025d5e3ab"
+      }
+    ],
+    "captureVariants": [
+      {
+        "name": "canonical",
+        "entity": {}
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "authored states"
+    ],
+    "proceduralOwnersAndReasons": [
+      "visuals.js; source-only procedural improvement, no new raster"
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing procedural presentation retained",
+    "gameplayStates": [
+      "idle",
+      "move",
+      "ordinary/ranged/TRUE/rank where authored"
+    ],
+    "directions": [],
+    "pivotContract": "Existing ground/depth anchor and collision unchanged; no new animation assets",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

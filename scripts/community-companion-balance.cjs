@@ -40,8 +40,12 @@ function cases() {
                 'field-true',
                 'dungeon-normal',
                 'dungeon-true',
-              ])
+                'final-normal',
+                'final-true',
+              ]) {
+                if (encounter.startsWith('final') && region !== 'crown') continue;
                 out.push({ cls, mode, region, investment, seed, party, encounter });
+              }
   return out;
 }
 function trial(C, c) {
@@ -75,19 +79,36 @@ function trial(C, c) {
   g.s.expeditionRank = Math.max([4, 5, 6][regionIndex], size === 6 ? 6 : size === 4 ? 4 : 1);
   const boss = C.data.bosses.find(
     (b) =>
-      b.region === c.region && b.kind === (c.encounter.startsWith('dungeon') ? 'dungeon' : 'field'),
+      b.region === c.region &&
+      b.kind ===
+        (c.encounter.startsWith('final')
+          ? 'final'
+          : c.encounter.startsWith('dungeon')
+            ? 'dungeon'
+            : 'field'),
   );
-  g.enter(c.encounter.startsWith('dungeon') ? boss.id : c.region);
+  g.enter(
+    c.encounter === 'captain' && c.region !== 'frontier'
+      ? 'supply-' + c.region
+      : c.encounter.startsWith('dungeon')
+        ? boss.id
+        : c.region,
+  );
   const z = g.zone();
   let targets;
   if (c.encounter.includes('normal') || c.encounter.includes('true')) {
     const original = z.enemies.find((e) => e.type === 'boss' && e.family === boss.id);
+    if (!original && boss.kind === 'dungeon')
+      throw Error('Missing authored dungeon boss ' + boss.id);
     const form = c.encounter.endsWith('true') ? 'true' : 'normal';
     if (form === 'true') {
       g.s.phase = 'awakening';
       g.s.awakeningLevel = level + 2;
     }
-    targets = [g.bossEnemy(boss, form, original?.home || g.safe(1400, 1400))];
+    targets = [
+      g.bossEnemy(boss, form, original?.home || g.safe(...C.data.fields[regionIndex + 2])),
+    ];
+    if (boss.id === 'cindermaw') targets.push(...z.enemies.filter((e) => e.veraEscort));
   } else if (c.encounter === 'captain') {
     const captain = z.enemies.find((e) => e.captain || e.roomCaptain);
     if (!captain) throw Error('No authored captain for ' + c.region);
@@ -112,13 +133,19 @@ function trial(C, c) {
     );
   }
   z.enemies = targets;
-  z.npcs = [];
+  // Keep authored captives, workstations and boss entourage dependencies. Only
+  // refuge services are removed to avoid automatic town healing in this trial.
+  z.npcs = z.npcs.filter((n) => !['rest', 'supplier', 'recruiter', 'quests'].includes(n.kind));
   z.buildings = [];
   z.nodes = [];
   g.s.quests = {};
   g.s.mercyTime = 0;
   Object.assign(h, g.safe(targets[0].x - (c.cls === 'paladin' ? 85 : 190), targets[0].y));
-  const families = C.data.bosses.map((b) => b.id),
+  // The Sovereign unlocks AFTER TRUE Dark Lord, so it cannot take part in that
+  // first-victory fight. It remains covered in postgame-return pack/boss trials.
+  const families = C.data.bosses
+      .filter((b) => !(c.encounter.startsWith('final') && b.id === 'darklord'))
+      .map((b) => b.id),
     offset = c.party.startsWith('pets') ? Number(c.party.split('-')[1]) : c.seed % families.length;
   g.s.party = Array.from({ length: size }, (_, i) => {
     const isPet = c.party.startsWith('pets') || (c.party.startsWith('mixed') && i >= 2);
@@ -209,6 +236,8 @@ function trial(C, c) {
       return result;
     };
   }
+  g.engage(targets[0]);
+  g.manualHeroTargetId = targets[0].id;
   for (
     let step = 0;
     step < 900 && !g.s.statistics.deaths && targets.some((e) => e.hp > 0);
@@ -287,7 +316,14 @@ function trial(C, c) {
     heroDamage,
     heroHp: h.hp / h.maxHp,
     remaining: targets.reduce((sum, e) => sum + Math.max(0, e.hp), 0),
-    units: units.map((u) => ({ ...telemetry.get(u.id), hp: u.hp, survived: u.hp > 0 })),
+    units: units.map((u) => ({
+      ...telemetry.get(u.id),
+      hp: u.hp,
+      survived: u.hp > 0,
+      healRecovery: u.healCd || 0,
+      manaRecovery: u.manaCd || 0,
+      survivalRecovery: u.survivalCd || 0,
+    })),
   };
 }
 function sources(dir) {
@@ -301,6 +337,11 @@ function sources(dir) {
       'rules',
       'progression',
       'boss-combat',
+      'cindermaw-combat',
+      'dreadmaw-combat',
+      'navigation',
+      'world',
+      'data',
     ].flatMap((name) => {
       const file = 'src/prototype/' + name + '.js',
         full = path.join(dir, file);
@@ -348,6 +389,10 @@ if (require.main === module) {
     JSON.stringify(
       {
         baselineSha,
+        harnessSha256: crypto
+          .createHash('sha256')
+          .update(fs.readFileSync(__filename))
+          .digest('hex'),
         shard,
         shards,
         sources: { baseline: sources(baselineRoot), candidate: sources(root) },
@@ -355,7 +400,11 @@ if (require.main === module) {
           'Seeded 90-second scripted encounters; no human or physical-device acceptance. Deaths/failures retained; no invented balance pass threshold. Enemy combat/AI unchanged. High early-region cap rows are explicit stress fixtures. Moving-without-cast is observed motion, not a claim that every moving frame is wasted.',
         rows,
       },
-      null,
+      (key, value) => {
+        if (typeof value === 'number' && !Number.isFinite(value))
+          throw Error('Nonfinite balance telemetry: ' + key);
+        return value;
+      },
       2,
     ) + '\n',
   );

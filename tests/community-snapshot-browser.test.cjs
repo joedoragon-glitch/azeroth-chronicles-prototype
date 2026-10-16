@@ -82,20 +82,51 @@ const inventory = JSON.parse(
           // Keep the real shell paused; controlled scenes use the production painter and menus.
           const canvas = document.createElement('canvas');
           canvas.id = 'community-canvas';
-          canvas.width = width;
-          canvas.height = height;
+          // Reuse the shell's actual device/pixel-budget decision, not a second DPR policy.
+          const ratio = document.querySelector('#world').width / width;
+          canvas.width = Math.round(width * ratio);
+          canvas.height = Math.round(height * ratio);
           Object.assign(canvas.style, {
             position: 'fixed',
             inset: '0',
             zIndex: '999999',
             background: '#20332e',
+            width: width + 'px',
+            height: height + 'px',
           });
           document.body.append(canvas);
           window.communityCapture = {
             canvas,
             ctx: canvas.getContext('2d'),
+            width,
+            height,
+            ratio,
             game: null,
             painter: null,
+          };
+          communityCapture.ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+          for (const family of ['not-a-boss', 'constructor', '__proto__']) {
+            const empty = document.createElement('canvas');
+            empty.width = 200;
+            empty.height = 200;
+            const context = empty.getContext('2d');
+            PrototypeVisuals.draw(
+              context,
+              { renderKind: 'ally', type: 'pet', petFamily: family },
+              { x: 100, y: 100 },
+              0,
+            );
+            if (context.getImageData(0, 0, 200, 200).data.some((v) => v !== 0))
+              throw Error('unknown pet draws a fallback body: ' + family);
+          }
+          communityCapture.openLane = (g) => {
+            for (const x of [400, 900, 1600, 2200])
+              for (const y of [400, 900, 1600, 2200]) {
+                const a = { x, y },
+                  b = { x: x + 300, y };
+                if (!g.blocked(a.x, a.y) && !g.blocked(b.x, b.y) && g.line(a, b)) return a;
+              }
+            throw Error('No actual clear pet presentation lane');
           };
           window.communityCapture.create = (region, zoom, sprites) => {
             const c = communityCapture;
@@ -123,10 +154,15 @@ const inventory = JSON.parse(
               before = JSON.stringify(c.game.s);
             c.painter.draw();
             if (JSON.stringify(c.game.s) !== before) throw Error('renderer mutates campaign');
-            const pixels = c.ctx.getImageData(0, 0, width, height).data;
+            const pixels = c.ctx.getImageData(0, 0, canvas.width, canvas.height).data;
             if (!pixels.some((v, i) => i % 4 !== 3 && v > 0)) throw Error('empty world');
             if (c.painter.metrics().transientEffects > 40) throw Error('unbounded effects');
-            return c.painter.metrics();
+            return {
+              ...c.painter.metrics(),
+              pixelRatio: c.ratio,
+              backingWidth: c.canvas.width,
+              backingHeight: c.canvas.height,
+            };
           };
         },
         { width, height },
@@ -171,28 +207,66 @@ const inventory = JSON.parse(
                 );
               }
           }
-          // All reviewed body contracts on desktop and portrait at default view; every
-          // changed contract on the complete viewport/motion/zoom matrix. Shared world
-          // painters keep their existing interior/terrain capture gates.
-          const records = inventory.records.filter(
-            (r) =>
-              r.nativeFixture &&
-              (['upgrade', 'new-pet'].includes(r.decision) ||
-                r.category === 'pet' ||
-                ((width === 1280 || width === 375) && motion === 'no-preference' && zoom === 1.5)),
-          );
+          // Complete body inventory at desktop/portrait default view; every changed
+          // body at all five native viewports. Representatives cover the extended
+          // motion/zoom cross-product, avoiding thousands of redundant body captures.
+          // Pet facing/skill and regional matrices below/above remain comprehensive.
+          const coreView = motion === 'no-preference' && zoom === 1.5;
+          const representatives = [
+            'enemy:wolf',
+            'enemy:reedbeast',
+            'enemy:wraith',
+            'boss:abyss',
+            'structure:march-stilt-house',
+            'decoration:well',
+            'decoration:fishing-net',
+            'entrance:crypt',
+          ];
+          const records = inventory.records
+            .filter(
+              (r) =>
+                r.nativeFixture &&
+                ((coreView &&
+                  (['upgrade'].includes(r.decision) ||
+                    r.category === 'pet' ||
+                    width === 1280 ||
+                    width === 375)) ||
+                  (!coreView && representatives.includes(r.id))),
+            )
+            .flatMap((r) =>
+              (r.captureVariants || [{ name: 'canonical', entity: {} }]).map((v) => ({
+                ...r,
+                id: r.id + '-' + v.name,
+                nativeFixture: { ...r.nativeFixture, overrideEntity: v.entity },
+              })),
+            )
+            .flatMap((r) =>
+              (coreView && (width === 1280 || width === 375) && r.decision === 'upgrade'
+                ? [0, 500]
+                : [0]
+              ).map((clock) => ({
+                ...r,
+                id: r.id + '-clock' + clock,
+                nativeFixture: { ...r.nativeFixture, clock },
+              })),
+            );
           for (const r of records) {
             const result = await page.evaluate(
               ({ record, zoom }) => {
                 const c = communityCapture,
                   spec = record.nativeFixture;
-                const g = c.create(spec.region, zoom, false),
-                  z = g.zone(),
+                const g = c.create(spec.region, zoom, false);
+                if (spec.captain?.startsWith('supply-')) g.enter(spec.captain);
+                g.s.clock = spec.clock;
+                const z = g.zone(),
                   h = g.hero;
                 let e;
                 if (spec.boss) {
                   const b = g.boss(spec.boss);
-                  e = g.bossEnemy(b, 'true', { x: h.x + 70, y: h.y + 30 });
+                  e = g.bossEnemy(b, spec.overrideEntity?.form || 'true', {
+                    x: h.x + 70,
+                    y: h.y + 30,
+                  });
                 } else if (spec.enemy)
                   e = g.makeEnemy(
                     {
@@ -218,6 +292,7 @@ const inventory = JSON.parse(
                     y: h.y + 30,
                     ...spec.entity,
                   };
+                Object.assign(e, spec.overrideEntity);
                 if (spec.captain) Object.assign(h, g.safe(e.x - 70, e.y - 30));
                 e.id = e.id || record.id;
                 const kind =
@@ -268,7 +343,7 @@ const inventory = JSON.parse(
                     ctx = c.ctx;
                   ctx.clearRect(0, 0, c.canvas.width, c.canvas.height);
                   ctx.save();
-                  ctx.translate(c.canvas.width / 2, c.canvas.height / 2);
+                  ctx.translate(c.width / 2, c.height / 2);
                   ctx.scale(zoom * facing, zoom);
                   PrototypeVisuals.draw(
                     ctx,
@@ -307,7 +382,9 @@ const inventory = JSON.parse(
                   z.nodes = [];
                   g.s.expeditionRank = 6;
                   g.s.companionCombatTraining = 2;
-                  const u = g.unit('pet', h.x + 30, h.y + 20, family);
+                  const lane = c.openLane(g);
+                  Object.assign(h, g.safe(lane.x - 30, lane.y - 20));
+                  const u = g.unit('pet', lane.x, lane.y, family);
                   g.s.party = [u];
                   const ranged = g.petDefinition(u).role === 'ranged';
                   const target = g.makeEnemy(
@@ -334,6 +411,11 @@ const inventory = JSON.parse(
                   // Saturate with real pet release metadata to exercise the bounded queue.
                   if (events.length) {
                     c.painter.queue(Array.from({ length: 80 }, () => ({ ...events[0] })));
+                    c.draw();
+                    // Capacity pressure is an assertion fixture, not the image
+                    // used for native skill appearance review.
+                    c.painter.update(1);
+                    c.painter.queue(g.effects);
                     c.draw();
                   }
                   return { family, phase, shape: g.petSkillDefinition(u, 2).shape, metrics };
@@ -388,7 +470,9 @@ const inventory = JSON.parse(
       });
       await page.getByRole('button', { name: /^Company/ }).click();
       await page.getByRole('button', { name: /^Boss pet collection/ }).click();
-      for (const family of ['thorn', 'darklord']) {
+      for (const family of inventory.records
+        .filter((r) => r.category === 'pet')
+        .map((r) => r.family)) {
         const name = await page.evaluate((f) => communityMenuGame.petDefinition(f).name, family);
         await page.getByRole('button', { name: new RegExp('^' + name + ' · Recruitable') }).click();
         assert(
@@ -406,6 +490,7 @@ const inventory = JSON.parse(
           );
         });
         assert(fits, 'collection detail fits native viewport');
+        await page.getByRole('button', { name: /^Rest in collection/ }).click();
         await page.locator('#close-button').click();
       }
       await page.evaluate(() => {

@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-candidate-unreviewed",
+  "designId": "community-structure-highland-stone-house",
+  "name": "highland-stone-house — Community procedural revision",
+  "kind": "structure",
+  "nextAction": "After owner validation authorization, capture and review the exact native fixture in both device modes. No sprite production or release authorized.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Community Snapshot owner authorized case-by-case procedural improvements preserving identity and gameplay geometry; follow-up instruction authorizes source-audit corrections.",
+    "decisionDate": "2026-10-15",
+    "repositoryIssueOrPR": null,
+    "contentDocuments": [
+      "docs/COMMUNITY_SNAPSHOT_ART_AUDIT_20261016.md",
+      "docs/COMMUNITY_SNAPSHOT_AUDIT_REPAIRS_20261016.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": "Source implementation authorized; not appearance acceptance.",
+    "proceduralDesignAcceptance": "Native appearance NOT REVIEWED",
+    "spriteProductionAuthorization": "Excluded for Community Snapshot",
+    "generatedAppearanceAcceptance": "No generated raster",
+    "pendingCorrections": [
+      "Desktop/phone native-size aesthetic acceptance after authorization"
+    ]
+  },
+  "reference": {
+    "sourceCommit": "06edf70470c507b5da5246fa27e3b779e64382f1",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::settlementBuilding / case 'highland-stone-house'",
+      "feature/community-snapshot-post308-20261016"
+    ],
+    "exactEntityState": {
+      "region": 2,
+      "entity": {
+        "renderKind": "prop",
+        "structure": "highland-stone-house"
+      }
+    },
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [],
+    "traitsToPreserve": [
+      "Stone courses gain staggered joints, slate lines and lintel/threshold; retain heavy mountain masonry and doorway.",
+      "Original identity, silhouette, regional purpose and foot/depth anchor",
+      "Existing sprites, fallback and all gameplay geometry"
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "b525f4bce76b98248ae5f47e08d9c41a77699a5b6dab748dc0a210964729c77c"
+      }
+    ],
+    "preCommunityBaselineCommit": "6bc27be31792b1c38147d61e98ceed6acf3e2560",
+    "sourceSlices": [
+      {
+        "path": "src/prototype/visuals.js",
+        "selector": "settlementBuilding / case 'highland-stone-house'",
+        "startLine": 7210,
+        "endLine": 7284,
+        "sha256": "176730a86fc267e79e18fc4e67a7f5b5d1aae1b3d28b30b964353d107b80585f"
+      }
+    ],
+    "captureVariants": [
+      {
+        "name": "canonical",
+        "entity": {}
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "authored states"
+    ],
+    "proceduralOwnersAndReasons": [
+      "visuals.js; source-only procedural improvement, no new raster"
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing procedural presentation retained",
+    "gameplayStates": [
+      "idle",
+      "move",
+      "ordinary/ranged/TRUE/rank where authored"
+    ],
+    "directions": [],
+    "pivotContract": "Existing ground/depth anchor and collision unchanged; no new animation assets",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

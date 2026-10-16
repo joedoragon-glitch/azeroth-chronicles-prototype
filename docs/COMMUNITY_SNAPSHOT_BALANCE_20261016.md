@@ -45,3 +45,28 @@ Pet attacks use 1–3 target caps; first multipliers 1.4–2.8 versus troop firs
 ## Required final observations
 
 Compare pre-update troops to candidate troops at matched hero levels, training and gear across Highlands, Frontier and Crown, all classes, Normal/Nightmare, two/four/six units, ordinary 1/3/5/8/12 packs, captains and Normal/TRUE bosses. Log survival time/deaths, effective damage/casts, interrupted charges, healing/immune/ward uptime, pursuit/retreat downtime, targets and encounter duration. Test mixed pet/troop and six-pet parties; ensure control stacking does not trivialize bosses and pets do not dominate both troops' roles. Include low-investment and well-trained parties. Keep the hero necessary. Do not retune enemy AI, navigation or global combat timing to make the results look better.
+
+## Authored matched study after source audit A03 — NOT RUN
+
+`scripts/community-companion-balance.cjs` now implements this separate study. The unchanged earlier hero matrix remains required. The new runner loads the exact merged #308 engine and candidate engine into the same fixture/policy, with separate source hashes. It does not emulate old troop behavior with a candidate feature flag.
+
+| Dimension | Authored configurations |
+| --- | --- |
+| Hero/difficulty | Paladin, Mage, Ranger; Normal and Nightmare |
+| Region/level | Highlands 9, Frontier 12, Crown 16 — explicit comparison fixtures, not a claim these are every player's levels |
+| Investment | Low: no disciplines/inheritance/Vitality, prior equipment tier, learned regional skills at Rank 1. Trained: seven discipline ranks, region's equipment tier, three Vitality ranks, regional Shared Training/Strength ceilings and region-teacher skill ceiling. No inaccessible Skills 7/8 are granted in earlier regions. |
+| Party | Solo control; two/four/six alternating troops; four/six mixed troops and pets; three distinct six-pet cohorts spanning all eleven families |
+| Encounters | Native species packs of 1/3/5/8/12; actual supply-room captains in Highlands/Crown and field overseer in Frontier; regular/TRUE field and dungeon bosses; regular/TRUE Dark Lord in Crown |
+| Seeds/policy | 113 and 271; same responsive scripted rotation and warning reaction in both versions; 0.1s production ticks, up to 90 seconds |
+
+This defines 6,912 candidate observations and 3,072 matched #308 observations before sharding. Pet rows are candidate-only; compare them with troop rows at equal slot count and configuration, never with nonexistent #308 pets. Earlier-region six-unit parties are explicitly labelled capacity stress, since normal regional training does not yet grant six slots. Earlier-region return visits with later pets are controlled postgame/entitlement cases. The Pocket Sovereign is excluded from both Dark Lord fights: that pet cannot legitimately precede its own TRUE unlock.
+
+The runner records per-unit effective damage, HP received, positive healing at the healing owners, first/second casts, charge starts/interruption, death time/survival, immunity/ward availability, movement distance, moving-without-cast time, target samples and final support cooldowns. It retains encounter loss/timeouts, hero contribution and remaining HP. Movement is an observation, not an automatic diagnosis of wasted frames; protection availability is not a fabricated estimate of damage prevented. Hero death can end observation before every companion's independent survival limit.
+
+Captains retain their authored formations. Cindermaw retains designated native escorts and captive/forge dependencies; boss geometry and summoned actors remain production-owned. Background population/reinforcement loops and reward EXP are disabled identically in the isolated study, matching the earlier study's boundary. This does not substitute for the unchanged full native boss/mechanic and natural-campaign gates. Results must be interpreted before tuning: do not approve balance from finite telemetry alone or quietly discard failed cases.
+
+After authorization, export the exact #308 tree into an isolated directory and write `git rev-parse 6bc27be31792b1c38147d61e98ceed6acf3e2560` into its `community-baseline-commit.txt`. The runner refuses a different receipt. Run `COMMUNITY_BALANCE_SHARD=0/8 node scripts/community-companion-balance.cjs <baseline-directory> <shard-output.json>` and the other seven shard indices, retaining all output and actual source hashes. These are future commands, not executed work. Merge the observations by full configuration key; review matched troop differences, equal-slot pet tradeoffs, and all surviving failures before any release decision.
+
+## Pet positioning correction
+
+Ranged pets prefer a comfortable firing band, with a stopping margin inside their shorter special's reach. A covered formation anchor is not a firing destination: the pet specialization selects a legal point around the target, then calls unchanged navigation for the route. If confined terrain prevents that preferred spacing, the pet can still use an otherwise legal attack while repositioning. This is a narrowly necessary pet function, not a combat/AI performance optimization. Existing Soldier/Archer positioning and every shared charge/cooldown/Slow rule remain unchanged.

@@ -1749,8 +1749,8 @@
       );
     }
     function bossPet(family) {
-      const def = R.petCompanions[family];
-      if (!def) return; // Never turn an unknown pet into a humanoid.
+      const known = Object.hasOwn(R.petCompanions, family);
+      if (!known) return; // Inherited object keys are not pet families either.
       shade(18, 5, 0.24);
       const eyes = (x, y, gap = 6) => {
         for (const dx of [-gap, gap]) {

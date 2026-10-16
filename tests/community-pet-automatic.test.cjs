@@ -17,7 +17,27 @@ function scene(family, distance) {
   g.s.normal[family] = g.s.true[family] = true;
   const u = g.unit('pet', g.hero.x, g.hero.y, family);
   g.s.party = [u];
-  Object.assign(u, g.partyFollowPoint(u));
+  let origin;
+  for (const x of [400, 900, 1600, 2200]) {
+    for (const y of [400, 900, 1600, 2200]) {
+      if (g.blocked(x, y)) continue;
+      Object.assign(g.hero, { x, y });
+      const anchor = g.partyFollowPoint(u);
+      if (
+        [0, 80, 150, 230, 305, 410].every(
+          (dx) =>
+            !g.blocked(anchor.x + dx, anchor.y) &&
+            g.line(anchor, { x: anchor.x + dx, y: anchor.y }),
+        )
+      ) {
+        origin = anchor;
+        break;
+      }
+    }
+    if (origin) break;
+  }
+  assert(origin, 'fixture needs an actual unobstructed firing lane');
+  Object.assign(u, origin);
   const ranged = g.petDefinition(u).role === 'ranged';
   const e = g.makeEnemy(
     {
@@ -127,6 +147,50 @@ for (const family of ['crypt', 'archive', 'abyss', 'citadel']) {
   ticks(g, 5);
   assert(events.some((e) => e.type === 'petSkill' && e.source === u.id));
 }
+// Real authored wall/door geometry, separate from the blocked-line unit contract.
+{
+  const { g, u, events } = scene('citadel');
+  g.enter('mine');
+  const z = g.zone();
+  z.enemies = [];
+  z.props = [];
+  z.npcs = [];
+  z.buildings = [];
+  let pair;
+  for (const wall of C.rules.dungeonArchitecture.mine.partitions) {
+    for (let x = wall.x1 + 20; x < wall.x2 - 20; x += 30) {
+      const a = { x, y: wall.y1 - 55 },
+        b = { x, y: wall.y2 + 55 };
+      if (!g.blocked(a.x, a.y) && !g.blocked(b.x, b.y) && !g.line(a, b)) {
+        pair = [a, b];
+        break;
+      }
+    }
+    if (pair) break;
+  }
+  assert(pair, 'actual Mine partition separates two legal actor positions');
+  Object.assign(u, pair[0]);
+  Object.assign(g.hero, g.safe(u.x - 40, u.y));
+  const e = g.makeEnemy(
+    { species: 'goblin', level: 1, hp: 100000, damage: 0, xp: 0, gold: 0 },
+    pair[1],
+  );
+  z.enemies = [e];
+  g.engage(e);
+  u.skill1Cd = 30;
+  events.length = 0;
+  ticks(g, 0.05);
+  assert(
+    !events.some((e) => e.type === 'petSkill' || e.type === 'projectileLaunch'),
+    'wall blocks initial fire',
+  );
+  ticks(g, 12);
+  assert(
+    events.some((e) => e.type === 'petSkill' && e.slot === 2),
+    'shared routing reaches a legal firing line',
+  );
+  assert(!g.blocked(u.x, u.y), 'pet never crosses solid wall geometry');
+}
 // The existing damage contract allows area collateral under dust cover but never
 // permits that covered actor to become the direct aim. Exercise all area shapes.
 for (const [family, slot] of [
@@ -148,6 +212,24 @@ for (const [family, slot] of [
   assert(g.usePetSkill(u, e, slot));
   assert(collateral.hp < before);
 }
+// A line is a full strip, like existing Piercing Volley, not a strip clipped by
+// an extra circular radius at its far corners. The displayed outline matches it.
+{
+  const { g, u, e } = scene('citadel'),
+    def = g.petSkillDefinition(u, 1);
+  Object.assign(e, { x: u.x + def.range - 1, y: u.y });
+  const corner = g.makeEnemy(
+    { species: 'goblin', level: 1, hp: 10000, damage: 0, xp: 0, gold: 0 },
+    { x: e.x, y: u.y + def.halfWidth - 1 },
+  );
+  g.zone().enemies.push(corner);
+  g.engage(corner);
+  assert(Math.hypot(corner.x - u.x, corner.y - u.y) > def.range);
+  assert(
+    g.petSkillTargets(u, e, 1).includes(corner),
+    'strip end corner remains inside the actual line',
+  );
+}
 for (const { id: family } of C.data.bosses) {
   for (const transition of ['save', 'zone', 'reserve', 'silence', 'aim-death', 'range-loss']) {
     const { g, u, e, events } = scene(family);
@@ -157,9 +239,12 @@ for (const { id: family } of C.data.bosses) {
     const count = () => events.filter((e) => e.type === 'petSkill' && e.slot === 2).length;
     const before = count();
     if (transition === 'save') {
+      u.wardUntil = g.s.time + 10;
+      u.wardReduction = 0.25;
       const restored = C.restore(g.snapshot());
       assert(!restored.partyChargeState(restored.s.party[0]));
       assert(!restored._companionCharges?.size);
+      assert(!restored.s.party[0].wardUntil && !restored.s.party[0].wardReduction);
       continue;
     }
     if (transition === 'zone') g.enter('march');
@@ -173,6 +258,15 @@ for (const { id: family } of C.data.bosses) {
     assert(!g.partyChargeState(u));
     assert.equal(u.skill2Cd, 0, 'failed release does not consume the full cooldown');
   }
+  const { g, u } = scene(family);
+  u.cd = u.skill1Cd = u.skill2Cd = u.skillGlobalCd = 10;
+  assert(g.applySlow(u, 0.03));
+  ticks(g, 0.05);
+  const expected = 10 - (0.05 - 0.03 * (1 - C.rules.cooldownBalance.slowRecoveryMultiplier));
+  for (const field of ['cd', 'skill1Cd', 'skill2Cd', 'skillGlobalCd'])
+    assert(Math.abs(u[field] - expected) < 1e-8, family + ' shares partial-frame Slow on ' + field);
+  u.immune = 1;
+  assert(!g.applySlow(u, 1), 'existing immunity blocks pet Slow');
 }
 console.log(
   'PASS authored Community automatic pet range, basic, charge transition and area contracts',

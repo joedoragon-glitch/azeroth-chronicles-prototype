@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-candidate-unreviewed",
+  "designId": "community-decoration-dock-post",
+  "name": "dock-post — Community procedural revision",
+  "kind": "decoration",
+  "nextAction": "After owner validation authorization, capture and review the exact native fixture in both device modes. No sprite production or release authorized.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Community Snapshot owner authorized case-by-case procedural improvements preserving identity and gameplay geometry; follow-up instruction authorizes source-audit corrections.",
+    "decisionDate": "2026-10-15",
+    "repositoryIssueOrPR": null,
+    "contentDocuments": [
+      "docs/COMMUNITY_SNAPSHOT_ART_AUDIT_20261016.md",
+      "docs/COMMUNITY_SNAPSHOT_AUDIT_REPAIRS_20261016.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": "Source implementation authorized; not appearance acceptance.",
+    "proceduralDesignAcceptance": "Native appearance NOT REVIEWED",
+    "spriteProductionAuthorization": "Excluded for Community Snapshot",
+    "generatedAppearanceAcceptance": "No generated raster",
+    "pendingCorrections": [
+      "Desktop/phone native-size aesthetic acceptance after authorization"
+    ]
+  },
+  "reference": {
+    "sourceCommit": "06edf70470c507b5da5246fa27e3b779e64382f1",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::decoration / case 'dock-post'",
+      "feature/community-snapshot-post308-20261016"
+    ],
+    "exactEntityState": {
+      "region": 0,
+      "entity": {
+        "renderKind": "prop",
+        "structure": "dock-post",
+        "decorative": true
+      }
+    },
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [],
+    "traitsToPreserve": [
+      "Bare pole gains wrapped rope turns, end grain and a bark seam; keep a narrow mooring silhouette.",
+      "Original identity, silhouette, regional purpose and foot/depth anchor",
+      "Existing sprites, fallback and all gameplay geometry"
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "b525f4bce76b98248ae5f47e08d9c41a77699a5b6dab748dc0a210964729c77c"
+      }
+    ],
+    "preCommunityBaselineCommit": "6bc27be31792b1c38147d61e98ceed6acf3e2560",
+    "sourceSlices": [
+      {
+        "path": "src/prototype/visuals.js",
+        "selector": "decoration / case 'dock-post'",
+        "startLine": 11590,
+        "endLine": 11620,
+        "sha256": "be04ba183d38369e7147c1e453a0077bbe70d46529a285b8241825f1becf37cc"
+      }
+    ],
+    "captureVariants": [
+      {
+        "name": "canonical",
+        "entity": {}
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "authored states"
+    ],
+    "proceduralOwnersAndReasons": [
+      "visuals.js; source-only procedural improvement, no new raster"
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing procedural presentation retained",
+    "gameplayStates": [
+      "idle",
+      "move",
+      "ordinary/ranged/TRUE/rank where authored"
+    ],
+    "directions": [],
+    "pivotContract": "Existing ground/depth anchor and collision unchanged; no new animation assets",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}
