@@ -4231,7 +4231,9 @@
             ? (e.crownRogueTurn || 0) % 2
               ? 'crownguard'
               : e.crownAncestry
-            : e.species,
+            : e.type === 'boss'
+              ? cfg.bossSpeciesRogue?.[e.family] || e.species
+              : e.species,
         namedBasic =
           (e.type === 'boss' && profiles.bosses[e.family]) ||
           ((e.captain || e.roomCaptain) && profiles.captains[e.captainProfile]) ||
