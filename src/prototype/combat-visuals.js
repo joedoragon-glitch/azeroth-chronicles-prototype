@@ -247,17 +247,61 @@
         e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 78 : 65,
         (heightFor?.(e) || 0) + (e.form === 'true' && e.type === 'boss' ? 46 : 26),
       );
+    // Read the real presentation obstacle once per cue pass. Headless Canvas
+    // callers have no DOM; their full viewport remains available.
+    const hudRect = ctx.canvas?.ownerDocument?.getElementById?.('hud')?.getBoundingClientRect?.(),
+      canvasRect = ctx.canvas?.getBoundingClientRect?.();
     ctx.save();
     for (const e of game
       .zone()
       .enemies.filter((e) => e.telegraph?.anonymousCast || e.telegraph?.mobileRogueCast)) {
       const a = e.telegraph,
         p = screen(e);
+      const transform = ctx.getTransform?.(),
+        scaleX = Math.abs(transform?.a || 1),
+        scaleY = Math.abs(transform?.d || 1),
+        left = (4 - (transform?.e || 0)) / scaleX,
+        right = ((ctx.canvas?.width || 1280) - 4 - (transform?.e || 0)) / scaleX,
+        top = (4 - (transform?.f || 0)) / scaleY,
+        bottom = ((ctx.canvas?.height || 800) - 4 - (transform?.f || 0)) / scaleY;
+      ctx.font = 'bold 11px system-ui';
+      const label = a.anonymousCast ? 'Preparing…' : a.name,
+        maxWidth = Math.max(24, Math.min(240, right - left)),
+        textWidth = Math.min(ctx.measureText(label).width, maxWidth),
+        halfWidth = Math.max(37, textWidth / 2);
+      let center = Math.max(left + halfWidth, Math.min(right - halfWidth, p.x));
       const width = 70,
-        height = 8,
-        x = p.x - width / 2,
-        y = p.y - (heightFor ? cueHeight(e) : 65);
-      const fill = Math.max(0, Math.min(1, 1 - a.timer / a.total));
+        height = 8;
+      // Keep the complete label and progress border inside the backing canvas
+      // even when tall artwork reaches above a landscape phone viewport.
+      let y = Math.max(
+        top + 44,
+        Math.min(bottom - height - 2, p.y - (heightFor ? cueHeight(e) : 65)),
+      );
+      if (hudRect?.width && canvasRect?.width) {
+        const ratioX = ctx.canvas.width / canvasRect.width,
+          ratioY = ctx.canvas.height / canvasRect.height,
+          hud = {
+            left: ((hudRect.left - canvasRect.left) * ratioX - (transform?.e || 0)) / scaleX,
+            right: ((hudRect.right - canvasRect.left) * ratioX - (transform?.e || 0)) / scaleX,
+            top: ((hudRect.top - canvasRect.top) * ratioY - (transform?.f || 0)) / scaleY,
+            bottom: ((hudRect.bottom - canvasRect.top) * ratioY - (transform?.f || 0)) / scaleY,
+          };
+        if (
+          center - halfWidth < hud.right &&
+          center + halfWidth > hud.left &&
+          y - 17 < hud.bottom &&
+          y + height + 2 > hud.top
+        ) {
+          if (right - hud.right >= halfWidth * 2 + 8)
+            center = Math.max(center, hud.right + halfWidth + 8);
+          else if (hud.left - left >= halfWidth * 2 + 8)
+            center = Math.min(center, hud.left - halfWidth - 8);
+          else y = Math.min(bottom - height - 2, Math.max(y, hud.bottom + 18));
+        }
+      }
+      const x = center - width / 2,
+        fill = Math.max(0, Math.min(1, 1 - a.timer / a.total));
       ctx.fillStyle = '#1b233080';
       ctx.fillRect(x - 2, y - 2, width + 4, height + 4);
       ctx.fillStyle = '#e5b963';
@@ -268,14 +312,7 @@
       ctx.font = 'bold 11px system-ui';
       ctx.textAlign = 'center';
       ctx.fillStyle = '#fff1c7';
-      const label = a.anonymousCast ? 'Preparing…' : a.name,
-        transform = ctx.getTransform?.(),
-        scale = Math.abs(transform?.a || 1),
-        left = (4 - (transform?.e || 0)) / scale,
-        right = ((ctx.canvas?.width || 1280) - 4 - (transform?.e || 0)) / scale,
-        maxWidth = Math.max(24, Math.min(240, right - left)),
-        textWidth = Math.min(ctx.measureText(label).width, maxWidth),
-        labelX = Math.max(left + textWidth / 2, Math.min(right - textWidth / 2, p.x));
+      const labelX = Math.max(left + textWidth / 2, Math.min(right - textWidth / 2, center));
       ctx.fillText(label, labelX, y - 5, maxWidth);
     }
     royalTaxStatus(ctx, screen, game);

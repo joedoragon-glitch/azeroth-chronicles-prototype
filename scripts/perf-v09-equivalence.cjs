@@ -15,15 +15,11 @@ const simulationRoot = process.env.COMBINED_SIMULATION_ROOT
   ? path.resolve(process.env.COMBINED_SIMULATION_ROOT)
   : baseline;
 if (process.env.COMBINED_SIMULATION_ROOT) {
-  const guarded =
-    require('../tests/fixtures/perf-v09-protected.json').authorizedHeroSkillsConsolidationRevision;
-  for (const file of [
-    'src/prototype/combat.js',
-    'src/prototype/engine.js',
-    'src/prototype/hero-combat.js',
-    'src/prototype/party.js',
-    'src/prototype/rules.js',
-  ])
+  const receipts = require('../tests/fixtures/perf-v09-protected.json'),
+    guarded =
+      receipts.authorizedPr313PresentationValidationRevision ||
+      receipts.authorizedHeroSkillsConsolidationRevision;
+  for (const file of Object.keys(guarded.files))
     assert.equal(
       crypto
         .createHash('sha256')
@@ -65,6 +61,12 @@ const simulation = (c) => {
   const copy = live(c);
   for (const state of [copy.s, copy.snapshot]) {
     state.zones = { citadel: state.zones.citadel };
+    // The authorized interior migration adds this marker even to the isolated
+    // combat room. Assert its exact value; retain all geometry and actors.
+    if ('interiorCoherenceVersion' in state.zones.citadel) {
+      assert.equal(state.zones.citadel.interiorCoherenceVersion, 3);
+      delete state.zones.citadel.interiorCoherenceVersion;
+    }
     // Explicitly approved snapshot-only defaults and the one authored Veyra
     // quarters prop; each is checked before normalization. All combat state,
     // actual actors/events, hero skills and numerical fields remain exact.
@@ -137,7 +139,8 @@ const intentionallyChangedSkill = (cls, slot) =>
 const evidence = {
   baseline: 'c6ce1af236bddd7ca881903499c4cf5de175f9e2',
   simulationBaseline: process.env.COMBINED_SIMULATION_ROOT
-    ? 'cb1607c3a149d3ae51e01ceef615f0eca1ffdf18'
+    ? require('../tests/fixtures/perf-v09-protected.json')
+        .authorizedPr313PresentationValidationRevision.baseline
     : 'c6ce1af236bddd7ca881903499c4cf5de175f9e2',
   scope:
     'Original simulation on unchanged generic Citadel encounter; persistent historical contracts; original occlusion/no-culling reference versus candidate with every current content identity in every region. Authored mechanics have dedicated suites.',

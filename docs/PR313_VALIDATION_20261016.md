@@ -146,3 +146,28 @@ The original full-study workflow now runs on PR open/reopen or manual request; s
 
 
 Native follow-up dispositions: all 180 actual authored world captures and all 10 repaired Archive alias captures were inspected, across five native profiles and daylight/night. Exact image/source hashes and specific layout/occlusion limits are retained in `docs/evidence/pr313-validation-continuation-20261016/native-world-alias-review.json`. The Raider fort deliberately retains its continuous foreground perimeter and soft hero contour; roads/gate exits remain separately tested. This completes the local current-world/alias appearance pass; final hosted native matrix and 426-entry evidence reconciliation remain required. Local dev.72 build, formatting, source/canon, 24 protected hashes, CI scope and architecture checks pass.
+
+
+### Browser repair continuation, dev.73
+
+The complete dev.72 CI report is retained at run 38882017922. Four blockers recovered: old combined simulation equivalence versus deliberately changed body avoidance/audio/world; CSS comparison missing authorized Chronicle/name-title presentation overlays; actual landscape cast-label clipping; and a differential cover fixture accidentally sharing the new classifier. Initial failures remain in the workflow logs.
+
+Cast-label/progress viewport clamping changes only `combat-visuals.js`; exact before/after block retained in `tests/fixtures/pr313-cast-viewport-repair.json`. Focused Chromium passes 1280×800, 375×800, 393×852 and 844×390 day/night at native DPR. Full expanded-cover differential passes 54 scenes / two snapshots with original classifier plus original pair scan, positive visual changes, bounded reveal, zero campaign mutations and exact baseline negative control. CSS/current presentation and immutable dev.72 simulation references are under verification; no final green claim.
+
+Completed balance summary from original run 38879597582 is retained at `docs/evidence/pr313-validation-continuation-20261016/completed-balance-summary.json`. All 6,912 candidates valid; 3,072 matched baseline observations include one original #308 exception. Outcome reversals include 131 baseline losses becoming wins and 116 wins becoming losses; review is continuing by encounter, class, investment, deaths, timeouts and pet family. No balance retuning has occurred.
+
+The exact desktop CSS comparison now passes after the two authorized overlays. Native visual inspection added explicit HUD/nameplate non-overlap assertions for cast labels; these new assertions exposed a further landscape overlap and remain under repair. Downstream full browser execution also reached a movement fixture using a 150 ms fixed wait; event-based input confirmation is being diagnosed. No final full-browser pass is claimed. The repaired simulation differential passes 2,880 paired frames, six saves and 40 exact images.
+
+
+### Final local continuation disposition
+
+Named Rogue labels and progress bars now clamp to the actual backing canvas and avoid the real HUD bounds, keeping the skill separate from the boss nameplate. Actual native landscape screenshots were inspected; full labels and underlying actor bodies remain visible. The historical exact drawing block is retained for source-provenance reversal. Twenty imported gameplay owners remain byte-identical to the completed study.
+
+`balance-qualitative-review.json` records the bounded no-retune judgment. All 116 baseline-win/candidate-loss configurations remain in compressed adverse rows; 106 are hero deaths and 10 living timeouts. Three diagnostic-only observational traces explain ongoing/reset/healing or replenished-native interactions without replacing the original outcomes or changing policy/AI. `visual-reconciliation-426.json` explicitly maps 413 direct body records and 13 shared owners to retained evidence and preserves staged-body versus actual-world limits.
+
+Publication is blocked: automatic approval review rejected the push to the existing PR branch as lacking sufficiently explicit payload/destination authorization. Verification confirmed the repository/branch from PR #313, no unrelated paths and no private-key/GitHub credential signatures in the payload; the second push was still rejected. No API workaround was attempted. The GitHub PR is unchanged and unmerged. The final exact-source hosted gates remain required after explicit approval of this payload and destination. Five principal movement profiles pass event-based input verification; the optional 980×1740 local serverless Chromium locator timeout is retained, not waived or described as a full browser pass.
+
+
+### Owner-directed pre-CI recovery checkpoint — 16 October 2026
+
+The local dev.73 implementation at 6a0e26b was recovered intact after two interrupted chats. The owner now explicitly defers long testing, hosted CI and merge. This continuation makes no runtime/test changes: it preserves the existing repairs and evidence on PR #313 with a documentation checkpoint marked `[skip ci]`. Quick syntax checks for the six changed JavaScript owners/tests and whitespace checks are the only execution checks in this recovery; no build, gameplay test, browser, simulation or workflow is started. Prior focused pass claims above retain their original source/scope. Full final validation remains incomplete, including the retained optional 980×1740 locator timeout. No merge or deployment occurs.

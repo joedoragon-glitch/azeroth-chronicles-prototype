@@ -72,6 +72,10 @@ const server = http.createServer((req, res) => {
     await page.addScriptTag({
       content: (
         source.slice(0, start) +
+        // Freeze the original cover classifier too. Reusing the candidate's
+        // classifier would teach the control about new scenery and hide defects.
+        Baseline.majorOccluder.toString() +
+        '\n' +
         Baseline.occlusionPairs.toString() +
         '\n' +
         source.slice(end)

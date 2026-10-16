@@ -1783,6 +1783,75 @@
         "docs/PR313_RESUME_20261016.md": "205ec128b325175066cb567e1eb7edc20691162fefe744e993a55be3c4ad2215",
         "docs/PR313_VALIDATION_20261016.md": "1838cd6d77421742655903490c13a0635b4b95bc8d604ac94c7b5df9daade334"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt continuation; authorized dev.73 browser repair, scoped execution results recorded separately.",
+      "reason": "Exact current repair bytes; retain all prior source receipts and failures. No final readiness inferred.",
+      "files": {
+        ".github/actions/check-game/action.yml": "873a4e61555af691fce229a04810c8a0250134768c195dd4b1e1e011f6fe9fb2",
+        "docs/PR313_RESUME_20261016.md": "1fb7e4cdbbda187c59405d45f49e896ba410c5cafd5f1c2f3c76279ec789aaa3",
+        "docs/PR313_VALIDATION_20261016.md": "eabd4ca58c81e6b76488736ecc3453d0cad36dc138823c4c4b681f64aa16bf0c",
+        "docs/evidence/pr313-validation-continuation-20261016/completed-balance-summary.json": "9d0c022277582df5f23338e91038ecc12c21e6be1b16d0ae3e8b58571da072c4",
+        "package-lock.json": "af7dd5775fcc3830c81dbc9b19f03fc31c1e7cbb2541f6d49ac052f021b668ea",
+        "package.json": "779a9016f18ae49a14693edaa1de1b4324473fbc3a006e9e0b7c5133ed6b3827",
+        "scripts/community-balance-provenance.cjs": "9bec1dcf7a951b471d836fcf5a8a0a144c04c4865f8e2d1e235a7208c0266fb8",
+        "scripts/perf-v09-equivalence.cjs": "ad9e3a440e9caefa5d2356552d9ae20cd543e05d8d083d32e36fe389b9491fe8",
+        "src/prototype/build-info.js": "9229cc3f319f487da6e5d1af813594996eaa214d0661a9f559615f313c0c4bcf",
+        "src/prototype/combat-visuals.js": "3aa824d42236f9525df02fc23658e67175377fe09d62c6cce44a5e0e05f50166",
+        "sw.js": "9bc41d16325bf7ae87ab7a478484f2cec3dd4d9265821c0e8d8071a5d5d2d9b6",
+        "tests/fixtures/pr313-cast-viewport-repair.json": "b9632afdf0583ad0ee1e6def2bd0dfaa741d8ef84949752ea5fb55d04c5ee82a",
+        "tests/perf-ws2-occlusion-browser.test.cjs": "14092bcec5fc7074e28afbc6d0fda3378195c8fe89ac0adc1e6a5d3493d3762a",
+        "tests/prototype-browser.test.cjs": "6b70a2e4f402c1e09d1f836cff02541fa473d94874e88a08c48c6193bcfd944b",
+        "tests/rogue-browser.test.cjs": "b1e496daadb50b9e4a667c06ad98462d61e6c0d3db39040f4946262ff583b456"
+      },
+      "previousFiles": {
+        ".github/actions/check-game/action.yml": "d4ffab2bd4f7342f51f18c25a8af91d669b002aafb1849bbc3e175628fb66221",
+        "docs/PR313_RESUME_20261016.md": "c5ffdac49ba47fc469ac27016361c7951bbf38c92b791aed5c72e144a4d22a5c",
+        "docs/PR313_VALIDATION_20261016.md": "7a440dd814fae91cfb1695fc02f8349e8e654c014fbf31c2512db4a381e0dd29",
+        "package-lock.json": "4e71bfbfc347c420885a9fb6ccb4dd390ca9f6c914135aded272945202af2c7b",
+        "package.json": "f470ad82057fdf477be6ed1907042559f72e7a831bb9a49e2befe6f3308f8b26",
+        "scripts/community-balance-provenance.cjs": "5826f66527de5d190fff6438122c38703f9100e87b49d250cda073cd4fee9a94",
+        "src/prototype/build-info.js": "e416ea66a160fad0ad9d0ccc0592525ffafb16cc2e0dc715e4699c8469598251",
+        "src/prototype/combat-visuals.js": "3385401bc352b868651a4fc01854710d65a6cd2eff83c6057c2f112a1cb32bbb",
+        "sw.js": "26c7e3dbd17b304972044f1ef62d0e019d5338d61525545a3309ce21a6df1613",
+        "tests/prototype-browser.test.cjs": "b193246ed4d01aec230c6fe98e7c68e8e6c8cd7a3d3c8119a81e5b84fb52567b",
+        "tests/rogue-browser.test.cjs": "822ba1e9031e1c8892a4dcbca535b50e22bd6d4fc47f03b76bdd6620d04ef118"
+      }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical source-receipt continuation. Final local browser repair and bounded audit results are recorded separately; hosted release certification remains incomplete.",
+      "reason": "Preserve exact local repair, reviewed captures and complete balance/426-contract reconciliation; remote publication blocked by automatic approval review.",
+      "files": {
+        "docs/PR313_RESUME_20261016.md": "a4a7d87a22e2e5903eb5c5ab03e212407c8575b9d23b81708e6005185517c9db",
+        "docs/PR313_VALIDATION_20261016.md": "0152e118769a54be5e5acd8aa3512d4c1b23560c2df5004e90c12245a4dccc0a",
+        "docs/evidence/pr313-validation-continuation-20261016/balance-adverse-matched-rows.jsonl.gz": "f896601778c3fc0d19f27b401bb80fafd720dc3799f4e7f4fa8d7f6234ec8b99",
+        "docs/evidence/pr313-validation-continuation-20261016/balance-qualitative-review.json": "26b7ce70a3ff5a5d4aa34ff4e1d0f53e53033dffcb027ae479b1693315f5f9c1",
+        "docs/evidence/pr313-validation-continuation-20261016/balance-timeout-diagnostic-traces.json": "edaf2b8ea726938f0df2ff6015bdc5cfec5d2767602c5747e67b08c0dbcbac8e",
+        "docs/evidence/pr313-validation-continuation-20261016/cast-viewport73-844x390-day.png": "854e6a95609c8e9d9828584b79ebc099a97c2ee6a1a87cf6506cb26b002621d6",
+        "docs/evidence/pr313-validation-continuation-20261016/cast-viewport73-844x390-night.png": "2b9f7ed58e6ca0ab5e74492c15ed790bd4741142c4220cedf7a40c35291b415f",
+        "docs/evidence/pr313-validation-continuation-20261016/local-repair-capture-review.json": "1d17f4e7d11e3c118f7851261522f4ffa49bd5c5fc983c79792f47895ffdf974",
+        "docs/evidence/pr313-validation-continuation-20261016/pr313-architecture.log.gz": "6cb8c6d3d5642be08f26b38ae7b6052a22fc317167dc4c258d450b7bb3e5aeae",
+        "docs/evidence/pr313-validation-continuation-20261016/pr313-equivalence73.log.gz": "b1b6e25d56c0b801ea68b2161c505fd594027336cc9938d09dea37ca8d81e5e8",
+        "docs/evidence/pr313-validation-continuation-20261016/pr313-movement-focused.log.gz": "149b47fb2fbc1d17a2a70b16d92bbab331b94cb439e76d7011eb9050d87d6822",
+        "docs/evidence/pr313-validation-continuation-20261016/pr313-occlusion-fixed.log.gz": "a61385e5a0a65d3afffb68090e173069e5cf8ccd7d9bc925d4534c546b86969b",
+        "docs/evidence/pr313-validation-continuation-20261016/pr313-prototype-fixed2.log.gz": "94da8d0138e6f73ca9f778dfc6ae9115ec56930d8580721bba1646213570e4dc",
+        "docs/evidence/pr313-validation-continuation-20261016/pr313-rogue-final4.log.gz": "91ce7d370677dc7a6f3e810b5435cd60147141be7b77b2e41ade83744d81d4f1",
+        "docs/evidence/pr313-validation-continuation-20261016/pr313-rogue-final6.log.gz": "41c9fa85b12b48b8a8f7caef6c0b39b09d58c1e3afbdf8b991e65258f3001632",
+        "docs/evidence/pr313-validation-continuation-20261016/pr313-rogue-node.log.gz": "fbf3de6543cb19c1235aad6c602ff3aeac86586ed63d2592256dbdd49c924dad",
+        "docs/evidence/pr313-validation-continuation-20261016/visual-reconciliation-426.json": "050b9be53828f4107bf8dc0e163242ed8c4c099f2869e48aea6196a699b8eee1",
+        "src/prototype/combat-visuals.js": "2a4c1631483c9f92c263b470939de772fadb9b3236a7b93234505ed0649d1bac",
+        "tests/fixtures/pr313-cast-viewport-repair.json": "b01b6c3d9ad84f434e1a1a44bfea8786ccd0834e8dec411a54ae2200c755e6da",
+        "tests/rogue-browser.test.cjs": "27654ab686430516b6b36dbf6e5612bb256dbaa4a50cb66e02a0b1a58d7c3612"
+      },
+      "previousFiles": {
+        "docs/PR313_RESUME_20261016.md": "1fb7e4cdbbda187c59405d45f49e896ba410c5cafd5f1c2f3c76279ec789aaa3",
+        "docs/PR313_VALIDATION_20261016.md": "eabd4ca58c81e6b76488736ecc3453d0cad36dc138823c4c4b681f64aa16bf0c",
+        "src/prototype/combat-visuals.js": "3aa824d42236f9525df02fc23658e67175377fe09d62c6cce44a5e0e05f50166",
+        "tests/fixtures/pr313-cast-viewport-repair.json": "b9632afdf0583ad0ee1e6def2bd0dfaa741d8ef84949752ea5fb55d04c5ee82a",
+        "tests/rogue-browser.test.cjs": "b1e496daadb50b9e4a667c06ad98462d61e6c0d3db39040f4946262ff583b456"
+      }
     }
   ],
   "authorizedPr313ApproachFrameRevision": {
@@ -1794,5 +1863,31 @@
       "after": "game.castMovementBasic();"
     },
     "reason": "Actual native input audit caught passive movement fire overwriting a released charged approach; admission belongs in hero-combat."
+  },
+  "authorizedPr313PresentationValidationRevision": {
+    "source": "PR #313 owner-authorized audit repairs; freeze dev.72 integrated gameplay for the final presentation-only repair. Historical cb160 receipt remains preserved; body avoidance/audio/world changes are intentionally authored and validated by full mechanics, historical-save and exact #308 matched balance gates.",
+    "baseline": "9d302c41d991f523bada4c4f24ea68fd45ce03dc",
+    "files": {
+      "src/prototype/boss-combat.js": "337a2bb740dd2b9290013a148e3d877ff69bec0bdef284fb19e4e5ca237fa484",
+      "src/prototype/cindermaw-combat.js": "58234a123f49216875124ae4f4b37f6eed844810e3c2db5aee4ff20ffdc9499b",
+      "src/prototype/combat.js": "249b2e6648ba8d982a94cc47cb732f91f785cf88b84adac9ce2816a3d0a2f535",
+      "src/prototype/data.js": "1991ed3ef2149c034dfa9c8b2e67d210a7628f9562a219da7d55cfb6d9f157ca",
+      "src/prototype/dreadmaw-combat.js": "59588bcd5ed861fefe1365a10fe60e9e76421f84ef08d39d32f737d1522a1e51",
+      "src/prototype/economy.js": "c0c7315204e755ff75eb38490bcb12ac7d883f626291d1b7994c72a225fa446b",
+      "src/prototype/enemy-presentation.js": "1b314e16cc86ba0dd8341f359dc1586df29f941ef45a84300df55b72630cb42f",
+      "src/prototype/enemy-vfx-events.js": "1c44b05aedab0672ecb5ff74687f34730d63a7c4fcd19355353259d483d868ac",
+      "src/prototype/enemy-vfx.js": "67efb5a69b19da14b0c9850c4c5586670a10d138703125953c138089454b96d4",
+      "src/prototype/engine.js": "2af861366bab4881c67c735a584683fe89217371c76cc30cd4d57f17584bd085",
+      "src/prototype/hero-combat.js": "d530981c47d22923495e314c8b3d5d683c9719e2a612ab9647cce472e5b694b7",
+      "src/prototype/narration.js": "1c9bee95d10e70cda9b6debc4bec8c07a486e3e4dadd3ac2d45c150c9f0c45e3",
+      "src/prototype/navigation.js": "36a08f1e2fa0a85bf1f0a7a758be8395a65cf6f68393afc9612c0dd5945b76de",
+      "src/prototype/party-pets.js": "bf03f5500b12e5cea01fa1aa0afc6fabb453b70e482f46d128045860f64f6c5f",
+      "src/prototype/party.js": "c73ba9fc3bd7430e9c19b347ebbac5ac2e109d60471088ca9bdf707b3274ffdc",
+      "src/prototype/progression.js": "d8a03fe892b3e92608f7c23f35608709328a4719577a04d4b2a5c15857566d63",
+      "src/prototype/rewards.js": "e17d494d03f59089b6c1749882e32fc22b88c036fef1221b45a5656c6a92e525",
+      "src/prototype/rules.js": "915a309d5f28d3678a06f66b6112ff254e5f66f74fa44b7b4df983e8d89e291c",
+      "src/prototype/save.js": "2d0492e2bd37ad8dcedfb3748cbac4d54b6c7874fcb50a6dde896b18149c9455",
+      "src/prototype/world.js": "73c1d580baae1c874ab59b433ecdcbc66cf12869d22af82b8ce6e8175dc5f180"
+    }
   }
 }

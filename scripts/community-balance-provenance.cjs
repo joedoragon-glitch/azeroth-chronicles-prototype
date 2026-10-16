@@ -1,6 +1,6 @@
 'use strict';
 // Reuse observations only when every executable balance input is identical.
-// The only permitted differences are the drawing-only Archive alias and build label.
+// The only permitted differences are the drawing-only Archive alias, exact cast-label clamp and build label.
 const fs = require('node:fs'),
   path = require('node:path'),
   crypto = require('node:crypto'),
@@ -50,7 +50,8 @@ function verifyInputs(meta) {
     .map((p) => path.relative(root, p))
     .sort();
   assert(
-    !loaded.includes('src/prototype/renderer.js') &&
+    !loaded.includes('src/prototype/combat-visuals.js') &&
+      !loaded.includes('src/prototype/renderer.js') &&
       !loaded.includes('src/prototype/build-info.js'),
     'drawing/build exceptions must not enter the executable engine dependency graph',
   );
@@ -60,7 +61,11 @@ function verifyInputs(meta) {
       meta.sources.candidate[p],
       p + ' exact executable balance input',
     );
-  const allowed = new Set(['src/prototype/renderer.js', 'src/prototype/build-info.js']),
+  const allowed = new Set([
+      'src/prototype/renderer.js',
+      'src/prototype/combat-visuals.js',
+      'src/prototype/build-info.js',
+    ]),
     changed = [];
   const current = fs
     .readdirSync(path.join(root, 'src/prototype'))
@@ -89,9 +94,17 @@ function verifyInputs(meta) {
     meta.sources.candidate['src/prototype/renderer.js'],
     'renderer differs only by the exact reviewed Archive alias flag',
   );
+  const castRepair = require('../tests/fixtures/pr313-cast-viewport-repair.json');
+  const cues = fs.readFileSync(path.join(root, castRepair.file), 'utf8');
+  assert.equal(cues.split(castRepair.after).length, 2, 'exact reviewed viewport drawing block');
+  assert.equal(
+    hash(cues.replace(castRepair.after, castRepair.before)),
+    meta.sources.candidate[castRepair.file],
+    'all other cast drawing bytes unchanged',
+  );
   const build = fs.readFileSync(path.join(root, 'src/prototype/build-info.js'), 'utf8');
   assert.equal(
-    hash(build.replace('0.9.1+snapshot.dev.72', '0.9.1+snapshot.dev.71')),
+    hash(build.replace('0.9.1+snapshot.dev.73', '0.9.1+snapshot.dev.71')),
     meta.sources.candidate['src/prototype/build-info.js'],
     'only the generated build label changed',
   );

@@ -97,7 +97,7 @@ const server = http.createServer((req, res) => {
             ctx.fillText = function (value, x, y, ...rest) {
               const label = String(value);
               if (label === cast.name || label === 'Preparing…' ||
-                  label.includes('SIGNATURE') || label.includes('Withdrawal')) {
+                  label.includes('SIGNATURE') || label.includes('Withdrawal') || label.includes('Ashen Warlord')) {
                 const transform = this.getTransform(),
                   width = Math.min(this.measureText(value).width, rest[0] || Infinity);
                 labels.push({
@@ -141,11 +141,16 @@ const server = http.createServer((req, res) => {
           const before = capture();
           // Move the actual enemy and advance its real warning fraction. The
           // bar must move with it instead of staying at an old ground marker.
-          e.x += 65;
+          e.x += 140;
           cast.timer = cast.total * 0.5;
           const moved = capture();
           return {
             before, moved, width: canvas.width, height: canvas.height,
+            hud: (() => {
+              const r = document.querySelector('#hud').getBoundingClientRect(),
+                ratio = canvas.width / innerWidth;
+              return {left:r.left*ratio, right:r.right*ratio, top:r.top*ratio, bottom:r.bottom*ratio};
+            })(),
             name: cast.name,
             mobile: cast.mobileRogueCast,
             signature: cast.rogueSignature,
@@ -161,6 +166,10 @@ const server = http.createServer((req, res) => {
           assert.equal(label.length, 1, 'one readable actor-anchored Rogue cast label');
           assert.equal(stage.bars.length, 1, 'one real 70x8 progress border');
           assert(!stage.labels.some((x) => x.text.includes('SIGNATURE') || x.text === 'ROGUE CAST'), 'generic cast and separate spatial signature captions retired');
+          const overlaps = (a,b) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+          assert(!overlaps(label[0],probe.hud), 'named cast remains readable beside the actual HUD: '+JSON.stringify({label:label[0],hud:probe.hud}));
+          for (const nameplate of stage.labels.filter(x => x.text !== probe.name && x.text.includes('Ashen Warlord')))
+            assert(!overlaps(label[0],nameplate), 'cast name stays separate from boss nameplate');
           const halfLabel = (label[0].right - label[0].left) / 2,
             expectedCenter = Math.max(4 + halfLabel, Math.min(probe.width - 4 - halfLabel, stage.bars[0].center));
           assert(Math.abs((label[0].left + label[0].right) / 2 - expectedCenter) < 2,
