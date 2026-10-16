@@ -97,8 +97,12 @@
           this.lastEnemyDuck = now;
           this.duck();
         }
-        if (important && e.dangerous && ['release', 'travel', 'phase'].includes(e.stage) &&
-            now - (this.lastEnemyDuck ?? -Infinity) > 0.22) {
+        if (
+          important &&
+          e.dangerous &&
+          ['release', 'travel', 'phase'].includes(e.stage) &&
+          now - (this.lastEnemyDuck ?? -Infinity) > 0.22
+        ) {
           this.lastEnemyDuck = now;
           this.duck(e.stage === 'travel' ? 0.3 : 0.24);
         }
@@ -114,9 +118,18 @@
             accent: d.accent,
           };
           if (d.cargo && ['windup', 'release', 'travel', 'impact', 'miss'].includes(e.stage)) {
-            this.renderEffect({ ...details, type: { windup: 'cargoWindup', release: 'projectileLaunch',
-              travel: 'cargoTravel', impact: 'projectileImpact', miss: 'cargoMiss' }[e.stage],
-              style: 'cargo', presentationHandled: false });
+            this.renderEffect({
+              ...details,
+              type: {
+                windup: 'cargoWindup',
+                release: 'projectileLaunch',
+                travel: 'cargoTravel',
+                impact: 'projectileImpact',
+                miss: 'cargoMiss',
+              }[e.stage],
+              style: 'cargo',
+              presentationHandled: false,
+            });
             return;
           }
           if (this.playSoundEvent('effect.' + d.key, details)) {

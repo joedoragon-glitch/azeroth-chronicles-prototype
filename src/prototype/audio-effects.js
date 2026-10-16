@@ -19,9 +19,17 @@
           if (e.actor === 'hero' && e.class === 'paladin') return 'heroSteelImpact';
           if (e.actor === 'companion' && e.role === 'soldier') return 'soldierSteelImpact';
           if (e.actor === 'enemy') {
-            const kit = R.enemyMeleeEquipment(e), weapon = String(e.weapon || kit.weapon).toLowerCase(),
-              material = e.material || (/steel|sword|blade|saber|dagger|axe|lance/.test(weapon) ? 'steel' :
-                /stone/.test(weapon) ? 'stone' : /club|wood/.test(weapon) ? 'wood' : kit.material);
+            const kit = R.enemyMeleeEquipment(e),
+              weapon = String(e.weapon || kit.weapon).toLowerCase(),
+              material =
+                e.material ||
+                (/steel|sword|blade|saber|dagger|axe|lance/.test(weapon)
+                  ? 'steel'
+                  : /stone/.test(weapon)
+                    ? 'stone'
+                    : /club|wood/.test(weapon)
+                      ? 'wood'
+                      : kit.material);
             if (material === 'steel') return 'enemyWeaponImpact';
             if (material === 'wood' || material === 'stone') return 'enemyHeavyImpact';
             if (['spectral', 'ash', 'wet', 'bone'].includes(material)) return 'enemyElementImpact';
@@ -31,7 +39,8 @@
         }
         if (type === 'swing') {
           if (e.companionSkill === 'power-strike') return null;
-          if (e.actor === 'enemy') return e.material === 'steel' ? 'enemySteelSwing' : 'enemyBodySwing';
+          if (e.actor === 'enemy')
+            return e.material === 'steel' ? 'enemySteelSwing' : 'enemyBodySwing';
           return e.class === 'paladin' || e.actor === 'hero' ? 'swordSwing' : null;
         }
         if (type === 'projectileLaunch') {
@@ -105,7 +114,8 @@
         return (
           type === 'enemyVfx' ||
           ['heroSkillCast', 'heroProjectileFlight', 'heroCharge', 'heroDisplace'].includes(type) ||
-          ['cargoTravel', 'cargoMiss', 'cargoWindup'].includes(type) || contextualEffectTypes.has(type) ||
+          ['cargoTravel', 'cargoMiss', 'cargoWindup'].includes(type) ||
+          contextualEffectTypes.has(type) ||
           Object.prototype.hasOwnProperty.call(eventNotes, type)
         );
       }
@@ -265,7 +275,10 @@
         const previous = this.sourcePriority;
         const type = typeof input === 'string' ? input : input?.type;
         this.sourcePriority = ['warning', 'death', 'gameOver'].includes(type)
-          ? 3 : input?.style === 'cargo' ? 2 : 1;
+          ? 3
+          : input?.style === 'cargo'
+            ? 2
+            : 1;
         try {
           return this.renderEffect(input);
         } finally {
@@ -399,21 +412,49 @@
           return;
         }
         if (kind === 'enemySteelSwing' || kind === 'enemyBodySwing') {
-          this.noiseBurst(now, 0.07, 0.025, 'bandpass', kind === 'enemySteelSwing' ? 2100 : 580, 0.7);
+          this.noiseBurst(
+            now,
+            0.07,
+            0.025,
+            'bandpass',
+            kind === 'enemySteelSwing' ? 2100 : 580,
+            0.7,
+          );
           return;
         }
         if (kind === 'enemyHeavyImpact') {
           this.noiseBurst(now, 0.11, 0.055, 'lowpass', e.material === 'stone' ? 680 : 420, 0.8);
-          this.tone(e.material === 'stone' ? 34 : 42, now, 0.12, 0.045, 'triangle', 'effects', 0.004);
+          this.tone(
+            e.material === 'stone' ? 34 : 42,
+            now,
+            0.12,
+            0.045,
+            'triangle',
+            'effects',
+            0.004,
+          );
           return;
         }
         if (kind === 'enemyElementImpact') {
           if (e.material === 'wet') this.organicProjectile(now, true);
           else if (e.material === 'bone') this.noiseBurst(now, 0.07, 0.05, 'bandpass', 2350, 0.8);
           else {
-            this.sweep(e.material === 'spectral' ? 76 : 46, e.material === 'spectral' ? 59 : 32,
-              now, 0.13, 0.034, 'sine');
-            this.noiseBurst(now, 0.07, 0.025, 'bandpass', e.material === 'spectral' ? 1500 : 1000, 0.7);
+            this.sweep(
+              e.material === 'spectral' ? 76 : 46,
+              e.material === 'spectral' ? 59 : 32,
+              now,
+              0.13,
+              0.034,
+              'sine',
+            );
+            this.noiseBurst(
+              now,
+              0.07,
+              0.025,
+              'bandpass',
+              e.material === 'spectral' ? 1500 : 1000,
+              0.7,
+            );
           }
           return;
         }

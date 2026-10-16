@@ -5,29 +5,109 @@
   // Ogre-quality craft across the existing catalog: organic contours and worn
   // material joins, with deliberate mineral, weapon and fortification edges retained.
   const organicContours = new Set([
-    'grass', 'wet-grass', 'bush', 'marsh-bush', 'wildflowers', 'fruit-tree', 'sapling',
-    'reeds', 'cattails', 'mangrove', 'pine-sapling', 'alpine-scrub', 'heather',
-    'dry-scrub', 'dead-shrub', 'pioneer-grasses', 'pioneer-brush', 'regrowth-birch',
-    'regrowth-willow', 'battlefield-poppies', 'pup-nest', 'reed-nest', 'mud-nest',
-    'animal-pen', 'pasture-sheep', 'poultry-yard', 'hay-rick', 'garden', 'furrow-plot',
-    'mire-pool', 'wallow', 'roost', 'hatchery', 'egg-cradle',
+    'grass',
+    'wet-grass',
+    'bush',
+    'marsh-bush',
+    'wildflowers',
+    'fruit-tree',
+    'sapling',
+    'reeds',
+    'cattails',
+    'mangrove',
+    'pine-sapling',
+    'alpine-scrub',
+    'heather',
+    'dry-scrub',
+    'dead-shrub',
+    'pioneer-grasses',
+    'pioneer-brush',
+    'regrowth-birch',
+    'regrowth-willow',
+    'battlefield-poppies',
+    'pup-nest',
+    'reed-nest',
+    'mud-nest',
+    'animal-pen',
+    'pasture-sheep',
+    'poultry-yard',
+    'hay-rick',
+    'garden',
+    'furrow-plot',
+    'mire-pool',
+    'wallow',
+    'roost',
+    'hatchery',
+    'egg-cradle',
   ]);
   const wornContours = new Set([
-    'stump', 'fallen-log', 'driftwood', 'dead-tree', 'charred-stump', 'burned-log',
-    'woodpile', 'stacked-lumber', 'crate', 'barrel', 'cart', 'broken-cart', 'ore-cart',
-    'well', 'coffin', 'grave-marker', 'root-table', 'drift-seat', 'stone-seat',
-    'sleep-roll', 'bunk', 'rider-bunk', 'ridge-bed', 'thorn-bed', 'crag-rest',
-    'estate-rug', 'estate-lounge', 'ridge-supper', 'ridge-game-corner', 'ridge-study',
-    'laundry', 'ration', 'stolen-goods', 'supply-stack', 'feed-crate', 'feed-trough',
-    'feeding-trough', 'fish-rack', 'fishing-net', 'drying-rack', 'lean-to', 'market',
-    'field-kitchen', 'command-tent', 'scribe-desk', 'scroll-stack', 'caretaker-table',
-    'direwolf-kennel', 'rider-tack-rack', 'caravan-loading-bay', 'ore-sorting-bay',
-    'heated-drying-shed', 'heated-washhouse', 'handler-station', 'flight-harness-station',
+    'stump',
+    'fallen-log',
+    'driftwood',
+    'dead-tree',
+    'charred-stump',
+    'burned-log',
+    'woodpile',
+    'stacked-lumber',
+    'crate',
+    'barrel',
+    'cart',
+    'broken-cart',
+    'ore-cart',
+    'well',
+    'coffin',
+    'grave-marker',
+    'root-table',
+    'drift-seat',
+    'stone-seat',
+    'sleep-roll',
+    'bunk',
+    'rider-bunk',
+    'ridge-bed',
+    'thorn-bed',
+    'crag-rest',
+    'estate-rug',
+    'estate-lounge',
+    'ridge-supper',
+    'ridge-game-corner',
+    'ridge-study',
+    'laundry',
+    'ration',
+    'stolen-goods',
+    'supply-stack',
+    'feed-crate',
+    'feed-trough',
+    'feeding-trough',
+    'fish-rack',
+    'fishing-net',
+    'drying-rack',
+    'lean-to',
+    'market',
+    'field-kitchen',
+    'command-tent',
+    'scribe-desk',
+    'scroll-stack',
+    'caretaker-table',
+    'direwolf-kennel',
+    'rider-tack-rack',
+    'caravan-loading-bay',
+    'ore-sorting-bay',
+    'heated-drying-shed',
+    'heated-washhouse',
+    'handler-station',
+    'flight-harness-station',
   ]);
   const buildingContours = new Set([
-    'vale-cottage', 'vale-workshop', 'march-stilt-house', 'march-boathouse',
-    'highland-stone-house', 'highland-smithy', 'frontier-patched-house',
-    'frontier-workshop', 'crown-ash-house', 'crown-forgehouse',
+    'vale-cottage',
+    'vale-workshop',
+    'march-stilt-house',
+    'march-boathouse',
+    'highland-stone-house',
+    'highland-smithy',
+    'frontier-patched-house',
+    'frontier-workshop',
+    'crown-ash-house',
+    'crown-forgehouse',
   ]);
   function contourRadius(e) {
     if (organicContours.has(e.structure)) return 3.5;
@@ -131,6 +211,7 @@
     };
   }
   function draw(ctx, e, p, region = 0, rescued = false) {
+    if (e.type === 'pet' && !Object.hasOwn(R.petCompanions, e.petFamily)) return;
     if (e.kind === 'landmark' && e.id?.startsWith('bridge-')) return; // The full deck is drawn in world space.
     ctx.save();
     ctx.translate(p.x, p.y);
@@ -149,16 +230,23 @@
     const materialRoundness = contourRadius(e);
     const tracePoly = (v, radius = 0) => {
       ctx.beginPath();
-      if (!radius) v.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+      if (!radius) v.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
       else {
         for (let j = 0; j < v.length; j++) {
-          const p = v[j], before = v[(j + v.length - 1) % v.length], after = v[(j + 1) % v.length],
+          const p = v[j],
+            before = v[(j + v.length - 1) % v.length],
+            after = v[(j + 1) % v.length],
             d1 = Math.hypot(before[0] - p[0], before[1] - p[1]),
-            d2 = Math.hypot(after[0] - p[0], after[1] - p[1]), r = Math.min(radius, d1 * 0.3, d2 * 0.3),
-            entry = [p[0] + (before[0] - p[0]) / Math.max(1, d1) * r,
-              p[1] + (before[1] - p[1]) / Math.max(1, d1) * r],
-            exit = [p[0] + (after[0] - p[0]) / Math.max(1, d2) * r,
-              p[1] + (after[1] - p[1]) / Math.max(1, d2) * r];
+            d2 = Math.hypot(after[0] - p[0], after[1] - p[1]),
+            r = Math.min(radius, d1 * 0.3, d2 * 0.3),
+            entry = [
+              p[0] + ((before[0] - p[0]) / Math.max(1, d1)) * r,
+              p[1] + ((before[1] - p[1]) / Math.max(1, d1)) * r,
+            ],
+            exit = [
+              p[0] + ((after[0] - p[0]) / Math.max(1, d2)) * r,
+              p[1] + ((after[1] - p[1]) / Math.max(1, d2)) * r,
+            ];
           j ? ctx.lineTo(...entry) : ctx.moveTo(...entry);
           ctx.quadraticCurveTo(...p, ...exit);
         }
@@ -182,12 +270,24 @@
       ctx.restore();
     };
     const softPoly = (vertices, color, radius = 3) => {
-      ctx.fillStyle = color; ctx.strokeStyle = ink; ctx.lineWidth = 1.2;
+      ctx.fillStyle = color;
+      ctx.strokeStyle = ink;
+      ctx.lineWidth = 1.2;
       tracePoly(vertices, radius);
-      ctx.fill(); ctx.stroke();
+      ctx.fill();
+      ctx.stroke();
     };
     const softRect = (x, y, w, h, color, radius = 3) =>
-      softPoly([[x, y], [x + w, y], [x + w, y + h], [x, y + h]], color, radius);
+      softPoly(
+        [
+          [x, y],
+          [x + w, y],
+          [x + w, y + h],
+          [x, y + h],
+        ],
+        color,
+        radius,
+      );
     const rect = (x, y, w, h, c) =>
       poly(
         [
@@ -1535,13 +1635,18 @@
         0.08,
       );
       // Sloped shoulders, connected chest/waist and a draped hem replace a rigid trapezoid.
-      ctx.fillStyle = color; ctx.strokeStyle = ink; ctx.lineWidth = 1.2;
-      ctx.beginPath(); ctx.moveTo(-11 * bulk, 5);
+      ctx.fillStyle = color;
+      ctx.strokeStyle = ink;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(-11 * bulk, 5);
       ctx.bezierCurveTo(-12 * bulk, -3, -12 * bulk, -12, -9 * bulk, -17);
       ctx.quadraticCurveTo(0, -22, 9 * bulk, -17);
       ctx.bezierCurveTo(12 * bulk, -12, 12 * bulk, -3, 11 * bulk, 5);
       ctx.quadraticCurveTo(0, 8, -11 * bulk, 5);
-      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
       fillPoly(
         [
           [-12 * bulk, 5],
@@ -14507,23 +14612,51 @@
       } else if (e.structure === 'pillar') {
         if (e.householdPartition) {
           // Worn masonry and a low return wall describe an alcove, not another temple colonnade.
-          softPoly([[-23, 11], [-22, -18], [-8, -28], [14, -23], [22, -6], [22, 14]], '#8a8f7f', 5);
-          softPoly([[-20, -18], [-8, -28], [14, -23], [7, -12]], '#a7ae97', 4);
-          line([[-12, -12], [-10, 6], [9, 10]], '#626c60', 1.5);
-          oval(0, 14, 26, 5, '#777d69');
-        } else {
-        rect(-13, -44, 26, 58, '#9ca49a');
-        rect(-18, -48, 36, 8, '#bac0ad');
-        rect(-18, 10, 36, 8, '#8a9488');
-        for (const x of [-7, 0, 7])
+          softPoly(
+            [
+              [-23, 11],
+              [-22, -18],
+              [-8, -28],
+              [14, -23],
+              [22, -6],
+              [22, 14],
+            ],
+            '#8a8f7f',
+            5,
+          );
+          softPoly(
+            [
+              [-20, -18],
+              [-8, -28],
+              [14, -23],
+              [7, -12],
+            ],
+            '#a7ae97',
+            4,
+          );
           line(
             [
-              [x, -39],
-              [x, 6],
+              [-12, -12],
+              [-10, 6],
+              [9, 10],
             ],
-            '#747f75',
-            1,
+            '#626c60',
+            1.5,
           );
+          oval(0, 14, 26, 5, '#777d69');
+        } else {
+          rect(-13, -44, 26, 58, '#9ca49a');
+          rect(-18, -48, 36, 8, '#bac0ad');
+          rect(-18, 10, 36, 8, '#8a9488');
+          for (const x of [-7, 0, 7])
+            line(
+              [
+                [x, -39],
+                [x, 6],
+              ],
+              '#747f75',
+              1,
+            );
         }
       } else if (e.icon === '🪨') {
         poly(
@@ -17313,7 +17446,8 @@
         bank = water ? (region === 1 ? '#677561' : '#64725a') : lava ? '#54413e' : '#726c5d';
       const ribbon = (inset, color, material = null) => {
         if (!banks) return rect(x1 + inset, x2 - inset, y1, y2, color, material);
-        const left = [], right = [];
+        const left = [],
+          right = [];
         for (let y = y1; y <= y2; y = Math.min(y2, y + 12)) {
           const [lo, hi] = banks(y);
           left.push({ x: lo + inset, y });
@@ -17325,8 +17459,11 @@
       // Collision and the continuous curved bank use the same authored function.
       ribbon(-8, bank);
       ribbon(0, water ? '#285d70' : lava ? '#672f28' : cliff ? '#494b43' : '#222729');
-      ribbon(7, water ? '#397783' : lava ? '#b44e2c' : cliff ? '#616357' : '#30363a',
-        water ? null : lava ? 'terrain:lava:crust' : 'terrain:rock:cliff-ravine');
+      ribbon(
+        7,
+        water ? '#397783' : lava ? '#b44e2c' : cliff ? '#616357' : '#30363a',
+        water ? null : lava ? 'terrain:lava:crust' : 'terrain:rock:cliff-ravine',
+      );
       for (let y = y1; y < y2; y += 58) {
         const end = Math.min(y2, y + 58),
           seed = Math.imul(Math.floor(y / 58) + region * 17, 73856093) >>> 0,
@@ -17405,8 +17542,12 @@
           const end = Math.min(y2, y + 24),
             lo = banks ? banks(y)[side] : [x1, x2][side],
             hi = banks ? banks(end)[side] : [x1, x2][side];
-          line({ x: lo, y }, { x: hi, y: end },
-            water ? '#aec6a888' : lava ? '#d6956866' : '#ada88c99', 1.5);
+          line(
+            { x: lo, y },
+            { x: hi, y: end },
+            water ? '#aec6a888' : lava ? '#d6956866' : '#ada88c99',
+            1.5,
+          );
         }
       }
     };
@@ -17459,20 +17600,31 @@
     const b = R.barriers[region];
     strip(b.kind, ...b.bounds, (y) => R.channelBanks(region, y));
     if (region === 1) {
-      const left = [], right = [];
+      const left = [],
+        right = [];
       for (let x = 0; x <= 1230; x += 15) {
         const { y, width } = R.drainageBanks(x);
-        left.push({ x, y: y - width }); right.push({ x, y: y + width });
+        left.push({ x, y: y - width });
+        right.push({ x, y: y + width });
       }
       poly([...left, ...right.reverse()], '#61785b88');
-      poly([...left.map((p) => ({ x: p.x, y: p.y + 12 })),
-        ...right.slice().reverse().map((p) => ({ x: p.x, y: p.y - 12 }))], '#47736a99');
+      poly(
+        [
+          ...left.map((p) => ({ x: p.x, y: p.y + 12 })),
+          ...right
+            .slice()
+            .reverse()
+            .map((p) => ({ x: p.x, y: p.y - 12 })),
+        ],
+        '#47736a99',
+      );
     }
     if (region === 2) {
       // Snowmelt is visible within the existing mountain ravine, not a separate rectangular pond.
       for (let y = 0; y < size; y += 38) {
         if (b.gaps.some(([lo, hi]) => y >= lo - 20 && y <= hi + 20)) continue;
-        const a = R.channelBanks(region, y), q = R.channelBanks(region, y + 38);
+        const a = R.channelBanks(region, y),
+          q = R.channelBanks(region, y + 38);
         line({ x: (a[0] + a[1]) / 2, y }, { x: (q[0] + q[1]) / 2, y: y + 38 }, '#43757b', 3);
       }
     }
@@ -18060,15 +18212,23 @@
     ctx.lineJoin = 'round';
     for (const path of paths || [])
       for (let j = 1; j < path.length; j++) {
-        const a = path[j - 1], b = path[j], d = Math.hypot(b.x - a.x, b.y - a.y);
+        const a = path[j - 1],
+          b = path[j],
+          d = Math.hypot(b.x - a.x, b.y - a.y);
         if (!d) continue;
-        const nx = -(b.y - a.y) / d * 9, ny = (b.x - a.x) / d * 9,
-          points = [{ x: a.x + nx, y: a.y + ny }, { x: b.x + nx, y: b.y + ny },
-            { x: b.x - nx, y: b.y - ny }, { x: a.x - nx, y: a.y - ny }].map(screen);
+        const nx = (-(b.y - a.y) / d) * 9,
+          ny = ((b.x - a.x) / d) * 9,
+          points = [
+            { x: a.x + nx, y: a.y + ny },
+            { x: b.x + nx, y: b.y + ny },
+            { x: b.x - nx, y: b.y - ny },
+            { x: a.x - nx, y: a.y - ny },
+          ].map(screen);
         ctx.fillStyle = '#8f805568';
         ctx.beginPath();
-        points.forEach((p, k) => k ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
-        ctx.closePath(); ctx.fill();
+        points.forEach((p, k) => (k ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
+        ctx.closePath();
+        ctx.fill();
       }
     ctx.restore();
   }

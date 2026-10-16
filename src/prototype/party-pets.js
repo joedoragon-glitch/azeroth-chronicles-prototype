@@ -244,35 +244,58 @@
       // or casting an active skill. Keep pet art/audio distinct from troops.
       petDefensiveCounter(u, target) {
         const def = this.petDefinition(u);
-        if (!def || !target || target.hp <= 0 || u.hp <= 0 ||
-            u.active === false || (u.cd || 0) > 0) return false;
+        if (!def || !target || target.hp <= 0 || u.hp <= 0 || u.active === false || (u.cd || 0) > 0)
+          return false;
         const ranged = def.role === 'ranged';
         const distance = dist(u, target);
-        if (distance > (ranged ? R.balance.companions.petBasicRange : 70) ||
-            !this.line(u, target)) return false;
+        if (distance > (ranged ? R.balance.companions.petBasicRange : 70) || !this.line(u, target))
+          return false;
         u.cd = R.balance.companions.petBasicInterval / this.companionRallyAttackSpeed(u);
         if (ranged) {
           this.s.projectiles.push({
-            id: 'projectile-' + this.s.nextId++, x: u.x, y: u.y,
+            id: 'projectile-' + this.s.nextId++,
+            x: u.x,
+            y: u.y,
             dx: (target.x - u.x) / Math.max(1, distance),
             dy: (target.y - u.y) / Math.max(1, distance),
-            target: target.id, damage: this.companionAttackDamage(u),
-            source: u.id, speed: 450, style: 'pet', petFamily: u.petFamily,
+            target: target.id,
+            damage: this.companionAttackDamage(u),
+            source: u.id,
+            speed: 450,
+            style: 'pet',
+            petFamily: u.petFamily,
           });
           this.event('projectileLaunch', {
-            actor: 'companion', role: 'pet', source: u.id, style: 'magic',
-            x: u.x, y: u.y, target: target.id,
+            actor: 'companion',
+            role: 'pet',
+            source: u.id,
+            style: 'magic',
+            x: u.x,
+            y: u.y,
+            target: target.id,
           });
         } else if (this.damage(target, this.companionAttackDamage(u), u.id)) {
           this.event('melee', {
-            actor: 'companion', role: 'pet', source: u.id,
-            x: target.x, y: target.y, target: target.id,
+            actor: 'companion',
+            role: 'pet',
+            source: u.id,
+            x: target.x,
+            y: target.y,
+            target: target.id,
           });
           this.event('petSkill', {
-            source: u.id, petFamily: u.petFamily, skill: 'basic',
-            x: target.x, y: target.y, fromX: u.x, fromY: u.y,
-            color: def.color, shape: 'target', radius: 15,
-            slot: 0, hits: 1,
+            source: u.id,
+            petFamily: u.petFamily,
+            skill: 'basic',
+            x: target.x,
+            y: target.y,
+            fromX: u.x,
+            fromY: u.y,
+            color: def.color,
+            shape: 'target',
+            radius: 15,
+            slot: 0,
+            hits: 1,
           });
         }
         return true;

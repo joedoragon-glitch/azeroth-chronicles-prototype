@@ -21,10 +21,16 @@
       actorCrowd() {
         const zone = this.s.zones[this.zoneId];
         let frame = crowds.get(this);
-        if (frame?.zone === zone && frame.at === this.s.time &&
-            frame.enemyList === zone?.enemies && frame.enemyCount === zone?.enemies.length &&
-            frame.partyList === this.s.party && frame.partyCount === this.s.party.length &&
-            frame.hero === this.hero) return frame;
+        if (
+          frame?.zone === zone &&
+          frame.at === this.s.time &&
+          frame.enemyList === zone?.enemies &&
+          frame.enemyCount === zone?.enemies.length &&
+          frame.partyList === this.s.party &&
+          frame.partyCount === this.s.party.length &&
+          frame.hero === this.hero
+        )
+          return frame;
         const enemies = (zone?.enemies || []).filter((u) => u.hp > 0 && !u.neutral),
           allies = [this.hero, ...this.activeLivingParty()].filter((u) => u.hp > 0),
           bodies = [...allies, ...enemies];
@@ -71,10 +77,17 @@
       }
       actorStepAllowed(unit, point, relaxFriendly = false, frame = this.actorCrowd()) {
         if (!frame.members.has(unit)) return true;
-        const candidates = new Set(), steps = Math.max(1, Math.ceil(dist(unit, point) / R.actorSpacing.cellSize));
+        const candidates = new Set(),
+          steps = Math.max(1, Math.ceil(dist(unit, point) / R.actorSpacing.cellSize));
         for (let j = 0; j <= steps; j++)
-          for (const other of this.nearbyActors({ x: unit.x + (point.x - unit.x) * j / steps,
-            y: unit.y + (point.y - unit.y) * j / steps }, frame)) candidates.add(other);
+          for (const other of this.nearbyActors(
+            {
+              x: unit.x + ((point.x - unit.x) * j) / steps,
+              y: unit.y + ((point.y - unit.y) * j) / steps,
+            },
+            frame,
+          ))
+            candidates.add(other);
         for (const other of candidates) {
           if (other === unit || other.hp <= 0) continue;
           const friendly = frame.hostile.has(unit) === frame.hostile.has(other);
@@ -98,9 +111,18 @@
           cfg = R.actorSpacing;
         for (const unit of frame.bodies) {
           // Fixed warning origins, held victims and scripted motion remain authoritative.
-          if (unit === this.hero || unit.hp <= 0 || unit.telegraph || unit.motion ||
-              unit.keeperHeld || unit.deathRollHeld || this.partyChargeState(unit)) continue;
-          let dx = 0, dy = 0;
+          if (
+            unit === this.hero ||
+            unit.hp <= 0 ||
+            unit.telegraph ||
+            unit.motion ||
+            unit.keeperHeld ||
+            unit.deathRollHeld ||
+            this.partyChargeState(unit)
+          )
+            continue;
+          let dx = 0,
+            dy = 0;
           for (const other of this.nearbyActors(unit, frame)) {
             if (other === unit || other.hp <= 0) continue;
             const gap = this.actorRadius(unit) + this.actorRadius(other),
@@ -118,13 +140,17 @@
           const length = Math.hypot(dx, dy);
           if (!length) continue;
           const amount = Math.min(length, cfg.separationSpeed * dt),
-            point = { x: unit.x + dx / length * amount, y: unit.y + dy / length * amount };
+            point = { x: unit.x + (dx / length) * amount, y: unit.y + (dy / length) * amount };
           const angle = Math.atan2(dy, dx);
-          for (const p of [point, ...[0.7, -0.7, 1.35, -1.35].map((offset) => ({
-            x: unit.x + Math.cos(angle + offset) * amount,
-            y: unit.y + Math.sin(angle + offset) * amount,
-          }))]) {
-            if (!this.clearSegment(unit, p) || !this.actorStepAllowed(unit, p, false, frame)) continue;
+          for (const p of [
+            point,
+            ...[0.7, -0.7, 1.35, -1.35].map((offset) => ({
+              x: unit.x + Math.cos(angle + offset) * amount,
+              y: unit.y + Math.sin(angle + offset) * amount,
+            })),
+          ]) {
+            if (!this.clearSegment(unit, p) || !this.actorStepAllowed(unit, p, false, frame))
+              continue;
             Object.assign(unit, p);
             this.indexActor(unit, frame);
             break;
@@ -200,8 +226,11 @@
             bounds: [, , c, e],
             gaps,
           } = R.barriers[i];
-          if (y > c - radius && y < e + radius &&
-              !gaps.some(([l, h]) => y > l + radius && y < h - radius)) {
+          if (
+            y > c - radius &&
+            y < e + radius &&
+            !gaps.some(([l, h]) => y > l + radius && y < h - radius)
+          ) {
             for (let at = y - radius; at <= y + radius + 0.01; at += Math.max(1, radius / 2)) {
               const [a, b] = R.channelBanks(i, at);
               if (x > a - radius && x < b + radius) return true;
@@ -393,8 +422,9 @@
         const frame = this.actorCrowd(),
           congestion = frame.congestion.get(entity) || { blocked: 0, until: 0 },
           relaxed = congestion.until > this.s.time,
-          legal = (p) => this.clearSegment(entity, p) &&
-            this.actorStepAllowed(entity, p, relaxed, frame);
+          legal = (p) =>
+            this.clearSegment(entity, p) &&
+            (entity.motion || this.actorStepAllowed(entity, p, relaxed, frame));
         if (legal({ x: nx, y: ny })) {
           entity.x = nx;
           entity.y = ny;
@@ -416,8 +446,10 @@
           const angle = Math.atan2(target.y - entity.y, target.x - entity.x);
           // Local side steps form distinct approach slots without replanning terrain routes.
           for (const offset of [0.55, -0.55, 1.05, -1.05]) {
-            const p = { x: entity.x + Math.cos(angle + offset) * step,
-              y: entity.y + Math.sin(angle + offset) * step };
+            const p = {
+              x: entity.x + Math.cos(angle + offset) * step,
+              y: entity.y + Math.sin(angle + offset) * step,
+            };
             if (!legal(p)) continue;
             Object.assign(entity, p);
             moved = true;

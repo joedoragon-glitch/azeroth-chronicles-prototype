@@ -346,17 +346,25 @@
     enemySupportApproach(e, dt) {
       const cfg = R.enemySupportHealing;
       if (
-        !cfg || !this.enemyHealProfile(e) || !e.aggro || e.returning ||
-        this.mageSilenceActive(e) || e.motion || e.rangedAim || e.telegraph ||
+        !cfg ||
+        !this.enemyHealProfile(e) ||
+        !e.aggro ||
+        e.returning ||
+        this.mageSilenceActive(e) ||
+        e.motion ||
+        e.rangedAim ||
+        e.telegraph ||
         (e.supportHealCd || 0) > 0
-      ) return false;
-      const ally = this.zone().enemies
-        .filter((u) =>
-          this.enemyHealTeammate(e, u) &&
-          !u.supportHeal &&
-          u.hp / u.maxHp <= cfg.threshold &&
-          dist(e, u) > cfg.range &&
-          dist(e, u) <= cfg.range + 210,
+      )
+        return false;
+      const ally = this.zone()
+        .enemies.filter(
+          (u) =>
+            this.enemyHealTeammate(e, u) &&
+            !u.supportHeal &&
+            u.hp / u.maxHp <= cfg.threshold &&
+            dist(e, u) > cfg.range &&
+            dist(e, u) <= cfg.range + 210,
         )
         .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp || this.idOrder(a, b))[0];
       if (!ally || !this.route(e, ally).length) return false;
@@ -2290,8 +2298,8 @@
     }
     hubDestinations() {
       if (this.isDungeon() || this.zoneId !== 'crown') return [];
-      return D.regions.filter((r) =>
-        r.id !== this.zoneId && (this.s.mode === 'developer' || this.s.zones[r.id]),
+      return D.regions.filter(
+        (r) => r.id !== this.zoneId && (this.s.mode === 'developer' || this.s.zones[r.id]),
       );
     }
     travelHub(regionId) {
@@ -3235,8 +3243,12 @@
         const pendingSkill = h.order.type === 'skill-approach' ? h.order : null;
         if (pendingSkill) {
           const target = z.enemies.find(
-            (e) => e.id === pendingSkill.id && e.hp > 0 && !e.neutral &&
-              !e.returning && this.tacticalDirectTargetable(e),
+            (e) =>
+              e.id === pendingSkill.id &&
+              e.hp > 0 &&
+              !e.neutral &&
+              !e.returning &&
+              this.tacticalDirectTargetable(e),
           );
           if (!target || pendingSkill.zone !== this.zoneId || h.hp <= 0) {
             h.order = null;
@@ -3246,10 +3258,16 @@
               // Cast through the ordinary resolver only after truly reaching
               // the target, preserving all skill costs, interrupts and cooldowns.
               h.order = null;
-              this.cast(pendingSkill.slot, target.id, pendingSkill.charged, pendingSkill.encountersAtStart);
+              this.cast(
+                pendingSkill.slot,
+                target.id,
+                pendingSkill.charged,
+                pendingSkill.encountersAtStart,
+              );
             } else {
               const before = { x: h.x, y: h.y },
-                speed = (h.speed + this.heroTalentSpeedBonus()) *
+                speed =
+                  (h.speed + this.heroTalentSpeedBonus()) *
                   (h.haste > 0 ? 1.25 : 1) *
                   this.slowMovementFactor(h) *
                   this.mireBogMovementFactor(h) *
@@ -3262,32 +3280,33 @@
             }
           }
         } else {
-        const target =
-          h.order.type === 'attack'
-            ? z.enemies.find((e) => e.id === h.order.id && this.tacticalDirectTargetable(e))
-            : h.order;
-        if (
-          target &&
-          !target.neutral &&
-          (h.order.type !== 'attack' || (target.hp > 0 && this.tacticalDirectTargetable(target)))
-        ) {
+          const target =
+            h.order.type === 'attack'
+              ? z.enemies.find((e) => e.id === h.order.id && this.tacticalDirectTargetable(e))
+              : h.order;
           if (
-            dist(h, target) > (h.order.type === 'attack' ? (h.class === 'paladin' ? 105 : 350) : 25)
-          )
-            this.follow(
-              h,
-              target,
-              (h.speed + this.heroTalentSpeedBonus()) *
-                (h.haste > 0 ? 1.25 : 1) *
-                this.slowMovementFactor(h) *
-                this.mireBogMovementFactor(h) *
-                this.ashMovementFactor(h),
-              dt,
-              20,
-            );
-          else if (h.order.type === 'attack') this.cast(1, target.id);
-          else h.order = null;
-        } else h.order = null;
+            target &&
+            !target.neutral &&
+            (h.order.type !== 'attack' || (target.hp > 0 && this.tacticalDirectTargetable(target)))
+          ) {
+            if (
+              dist(h, target) >
+              (h.order.type === 'attack' ? (h.class === 'paladin' ? 105 : 350) : 25)
+            )
+              this.follow(
+                h,
+                target,
+                (h.speed + this.heroTalentSpeedBonus()) *
+                  (h.haste > 0 ? 1.25 : 1) *
+                  this.slowMovementFactor(h) *
+                  this.mireBogMovementFactor(h) *
+                  this.ashMovementFactor(h),
+                dt,
+                20,
+              );
+            else if (h.order.type === 'attack') this.cast(1, target.id);
+            else h.order = null;
+          } else h.order = null;
         }
       }
       const formationDx = h.x - formationStart.x,
@@ -3750,7 +3769,10 @@
       if (plan.sequential && plan.kind === 'circle') {
         this.prepareGroundAttack(e, a);
         const patches = this.attackPatches(a);
-        Object.assign(a, patches[0], { count: 1, arenaPatches: [{ x: patches[0].x, y: patches[0].y, radius: patches[0].radius }] });
+        Object.assign(a, patches[0], {
+          count: 1,
+          arenaPatches: [{ x: patches[0].x, y: patches[0].y, radius: patches[0].radius }],
+        });
         a.sequence = patches.slice(1).map((p) => ({
           ...a,
           ...p,
@@ -4263,10 +4285,13 @@
           null,
         speciesBasic =
           (ranged && profiles.ranged[crownDoctrineSpecies]) ||
-          profiles.species[crownDoctrineSpecies] || null,
+          profiles.species[crownDoctrineSpecies] ||
+          null,
         basic =
           namedBasic && speciesBasic
-            ? (e.rogueBasicTurn || 0) % 2 === 0 ? speciesBasic : namedBasic
+            ? (e.rogueBasicTurn || 0) % 2 === 0
+              ? speciesBasic
+              : namedBasic
             : namedBasic ||
               (tier === 'guardian' && ranged && !e.crownTroop && profiles.rangedGuardian) ||
               speciesBasic ||
@@ -5211,8 +5236,12 @@
               const landed = this.hitParty(victim, roll.totalDamage / 3, 0, e.id, true);
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
-              if (landed) this.enemyVfxResolvedContact?.(e, roll, victim,
-                { ...R.attacks.mire[0], kind: 'cone', index: 0 });
+              if (landed)
+                this.enemyVfxResolvedContact?.(e, roll, victim, {
+                  ...R.attacks.mire[0],
+                  kind: 'cone',
+                  index: 0,
+                });
             }
             if (roll.life <= 0 || victim.hp <= 0) {
               victim.deathRollHeld = false;
@@ -5570,8 +5599,16 @@
             };
           } else {
             const equipment = R.enemyMeleeEquipment(e);
-            this.event('swing', { actor: 'enemy', source: e.id, species: e.species,
-              family: e.family, boss: e.type === 'boss', ...equipment, x: e.x, y: e.y });
+            this.event('swing', {
+              actor: 'enemy',
+              source: e.id,
+              species: e.species,
+              family: e.family,
+              boss: e.type === 'boss',
+              ...equipment,
+              x: e.x,
+              y: e.y,
+            });
             if (this.hitParty(target, this.weakenedEnemyDamage(e), 0, e.id))
               this.event('melee', {
                 actor: 'enemy',
@@ -5591,7 +5628,9 @@
         }
         if (!opportunity && (d > range || !visible)) {
           if (
-            target === this.hero && visible && d > range &&
+            target === this.hero &&
+            visible &&
+            d > range &&
             this.s.time >= (e.pursuitBurstReadyAt || 0)
           ) {
             // A persistent kiter should not exhaust the monster's only

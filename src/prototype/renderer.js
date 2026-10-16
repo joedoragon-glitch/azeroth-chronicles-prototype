@@ -158,10 +158,16 @@
     const structure = String(e.structure || '');
     // Ground decals and genuinely low clutter never conceal an actor. Use the
     // actual object alpha in drawOcclusionOutlines for the final cover check.
-    if (/(?:^|[-_])(?:sapling|stump|shrub|grass|flowers|petals|furrows|rune|road|path|floor|ash|poppies|puddle)(?:[-_]|$)/i.test(structure))
+    if (
+      /(?:^|[-_])(?:sapling|stump|shrub|grass|flowers|petals|furrows|rune|road|path|floor|ash|poppies|puddle)(?:[-_]|$)/i.test(
+        structure,
+      )
+    )
       return false;
     return (
-      /(?:^|[-_])(?:house|cottage|workshop|smithy|hut|lodge|hall|tower|watchhouse|watchpost|keep|fort|fortress|gatehouse|barracks|chapel|tent|tree|mangrove|wall|stonewall|stockade|palisade|rock|boulder|cliff|pillar|statue|shrine|roost|hatchery|forge|furnace|kiln|kennel|gate|arch|ruin|shelf|wardrobe|large|canopy|wagon|cart|stall|screen|supply-stack|weapon-rack)(?:[-_]|$)/i.test(structure) ||
+      /(?:^|[-_])(?:house|cottage|workshop|smithy|hut|lodge|hall|tower|watchhouse|watchpost|keep|fort|fortress|gatehouse|barracks|chapel|tent|tree|mangrove|wall|stonewall|stockade|palisade|rock|boulder|cliff|pillar|statue|shrine|roost|hatchery|forge|furnace|kiln|kennel|gate|arch|ruin|shelf|wardrobe|large|canopy|wagon|cart|stall|screen|supply-stack|weapon-rack)(?:[-_]|$)/i.test(
+        structure,
+      ) ||
       (Number(e.r) >= 16 && !/(?:^|[-_])(?:barrel|crate|post|log)(?:[-_]|$)/.test(structure)) ||
       (['🌲', '🌳', '🪨'].includes(e.icon) && Number(e.r) >= 14)
     );
@@ -224,9 +230,12 @@
         // Broad phase must accommodate tall/wide artwork and overlapping cover,
         // rather than an invariant 155px strip that misses large structures.
         const reach = Math.max(155, obstacle.height * 1.3, Number(entity.r || 0) * 2 + 55);
-        if (dy < -Math.max(35, obstacle.height * 0.3) ||
-            dy > Math.max(120, obstacle.height + 75) ||
-            Math.abs(q.x - p.x) > reach) continue;
+        if (
+          dy < -Math.max(35, obstacle.height * 0.3) ||
+          dy > Math.max(120, obstacle.height + 75) ||
+          Math.abs(q.x - p.x) > reach
+        )
+          continue;
         front.push({ entity, position: q });
         if (front.length === 16) break;
       }
@@ -1962,13 +1971,13 @@
             ? 1
             : e.renderKind === 'enemy' && (e.captain || e.roomCaptain)
               ? 1.5
-            : e.renderKind === 'ally'
-              ? 2
-              : e.renderKind === 'enemy'
-                ? 3
-                : e.renderKind === 'building'
-                  ? 4
-                  : 5;
+              : e.renderKind === 'ally'
+                ? 2
+                : e.renderKind === 'enemy'
+                  ? 3
+                  : e.renderKind === 'building'
+                    ? 4
+                    : 5;
       for (const e of entities.slice().sort((a, b) => labelPriority(a) - labelPriority(b))) {
         if (
           !['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) ||
@@ -2104,13 +2113,13 @@
               ? '#ffe08a'
               : e.type === 'boss'
                 ? '#ead58c'
-              : isCaptain
-                ? '#d9b981'
-                : e.form === 'ringleader'
-                  ? '#d7bd9b'
-                : e.renderKind === 'enemy'
-                  ? '#f8cebd'
-                  : '#dcebcf';
+                : isCaptain
+                  ? '#d9b981'
+                  : e.form === 'ringleader'
+                    ? '#d7bd9b'
+                    : e.renderKind === 'enemy'
+                      ? '#f8cebd'
+                      : '#dcebcf';
             ctx.shadowColor = '#091510';
             ctx.shadowBlur = isTrueBoss ? 5 : isCaptain ? 4 : 3;
             const label =

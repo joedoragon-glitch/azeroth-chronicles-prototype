@@ -763,13 +763,19 @@
       sentinelBoardPlan(e) {
         // Keep all sixteen tiles. A smaller court is the explicit confined-room
         // fallback; validate the whole square's enclosing footprint before warning.
-        const points = this.connectedArenaPoints(e).sort((a, b) => dist(a, e.home || e) - dist(b, e.home || e));
+        const points = this.connectedArenaPoints(e).sort(
+          (a, b) => dist(a, e.home || e) - dist(b, e.home || e),
+        );
         for (const size of [112, 96, 80, 64])
           for (const point of [e.home || e, ...points]) {
             const radius = size * 2 * Math.SQRT2 + R.arenaPlacement.margin;
-            if (this.blocked(point.x, point.y, this.zoneId, radius) ||
-                !points.some((q) => dist(point, q) < R.arenaPlacement.step * 1.5 &&
-                  this.clearSegment(point, q))) continue;
+            if (
+              this.blocked(point.x, point.y, this.zoneId, radius) ||
+              !points.some(
+                (q) => dist(point, q) < R.arenaPlacement.step * 1.5 && this.clearSegment(point, q),
+              )
+            )
+              continue;
             return { x: point.x, y: point.y, size };
           }
         return null;
@@ -822,8 +828,12 @@
               this.s.challenge.gameOver
             )
               return;
-            if (landed) this.enemyVfxResolvedContact?.(e, b, u,
-              { ...R.attacks.citadel[3], kind: 'checkerboard', index: 3 });
+            if (landed)
+              this.enemyVfxResolvedContact?.(e, b, u, {
+                ...R.attacks.citadel[3],
+                kind: 'checkerboard',
+                index: 3,
+              });
           }
         } else {
           b.phase = 'warn';
@@ -1003,9 +1013,17 @@
         if (a.sequential && a.kind === 'circle' && e.family !== 'citadel') {
           this.prepareGroundAttack(e, a);
           const patches = this.attackPatches(a);
-          Object.assign(a, patches[0], { count: 1, arenaPatches: [patches[0]].map(({ x, y, radius }) => ({ x, y, radius })) });
-          for (const p of patches.slice(1)) sequence.push({ ...a, ...p, count: 1,
-            arenaPatches: [{ x: p.x, y: p.y, radius: p.radius }] });
+          Object.assign(a, patches[0], {
+            count: 1,
+            arenaPatches: [patches[0]].map(({ x, y, radius }) => ({ x, y, radius })),
+          });
+          for (const p of patches.slice(1))
+            sequence.push({
+              ...a,
+              ...p,
+              count: 1,
+              arenaPatches: [{ x: p.x, y: p.y, radius: p.radius }],
+            });
         }
         if (e.family === 'abyss' && index === 2) {
           // Lazy Eight: opposite banks, each ending at its own separately warned impact.
@@ -1368,12 +1386,20 @@
         for (let i = 0; i < queue.length; i++) {
           const [x, y] = queue[i],
             from = { x: e.x + x * step, y: e.y + y * step };
-          for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
-            const xx = x + dx, yy = y + dy, key = xx + ':' + yy;
+          for (const [dx, dy] of [
+            [1, 0],
+            [-1, 0],
+            [0, 1],
+            [0, -1],
+          ]) {
+            const xx = x + dx,
+              yy = y + dy,
+              key = xx + ':' + yy;
             if (visited.has(key) || Math.hypot(xx, yy) * step > cfg.searchRadius) continue;
             visited.add(key);
             const p = { x: e.x + xx * step, y: e.y + yy * step };
-            if (this.blocked(p.x, p.y, this.zoneId, 15) || !this.clearSegment(from, p, 15)) continue;
+            if (this.blocked(p.x, p.y, this.zoneId, 15) || !this.clearSegment(from, p, 15))
+              continue;
             points.push(p);
             queue.push([xx, yy]);
           }
@@ -1383,59 +1409,101 @@
       prepareGroundAttack(e, a, arena = null) {
         if (a?.kind === 'checkerboard' && !a.boardPlan) {
           a.boardPlan = this.sentinelBoardPlan(e);
-          if (!a.boardPlan) { a.arenaInvalid = true; return; }
+          if (!a.boardPlan) {
+            a.arenaInvalid = true;
+            return;
+          }
         }
         if (a?.kind === 'line' && a.count === 2 && !a.charge && !a.cargo && !a.arenaLines) {
           const connected = arena || this.connectedArenaPoints(e),
             width = R.combatGeometry.dualLineHalfWidth,
             length = Math.max(60, Math.hypot(a.x - a.fromX, a.y - a.fromY)),
-            side = { x: -Math.sin(a.angle), y: Math.cos(a.angle) }, lines = [];
+            side = { x: -Math.sin(a.angle), y: Math.cos(a.angle) },
+            lines = [];
           for (const offset of [-85, 85]) {
             const ideal = { x: a.fromX + side.x * offset, y: a.fromY + side.y * offset },
-              candidates = [ideal, ...connected.filter((p) => dist(p, e) < 220)
-                .sort((p, q) => dist(p, ideal) - dist(q, ideal))];
+              candidates = [
+                ideal,
+                ...connected
+                  .filter((p) => dist(p, e) < 220)
+                  .sort((p, q) => dist(p, ideal) - dist(q, ideal)),
+              ];
             let chosen = null;
             for (const requireSpacing of [true, false]) {
               for (const from of candidates) {
-                if (this.blocked(from.x, from.y, this.zoneId, width + 3) ||
-                    !connected.some((p) => dist(p, from) < R.arenaPlacement.step * 1.5 && this.clearSegment(p, from))) continue;
+                if (
+                  this.blocked(from.x, from.y, this.zoneId, width + 3) ||
+                  !connected.some(
+                    (p) =>
+                      dist(p, from) < R.arenaPlacement.step * 1.5 && this.clearSegment(p, from),
+                  )
+                )
+                  continue;
                 let to = from;
                 for (let n = 8; n <= length; n += 8) {
-                  const p = { x: from.x + Math.cos(a.angle) * n, y: from.y + Math.sin(a.angle) * n };
+                  const p = {
+                    x: from.x + Math.cos(a.angle) * n,
+                    y: from.y + Math.sin(a.angle) * n,
+                  };
                   if (!this.clearSegment(to, p, width + 3)) break;
                   to = p;
                 }
                 if (dist(from, to) < Math.min(48, length * 0.5)) continue;
-                if (requireSpacing && lines.some((line) =>
-                    this.distanceToSegment(from, { x: line.fromX, y: line.fromY }, line) < width * 2 + 18 ||
-                    this.distanceToSegment(to, { x: line.fromX, y: line.fromY }, line) < width * 2 + 18)) continue;
+                if (
+                  requireSpacing &&
+                  lines.some(
+                    (line) =>
+                      this.distanceToSegment(from, { x: line.fromX, y: line.fromY }, line) <
+                        width * 2 + 18 ||
+                      this.distanceToSegment(to, { x: line.fromX, y: line.fromY }, line) <
+                        width * 2 + 18,
+                  )
+                )
+                  continue;
                 chosen = { fromX: from.x, fromY: from.y, x: to.x, y: to.y, halfWidth: width };
                 if (!requireSpacing) a.arenaSequential = true;
                 break;
               }
               if (chosen) break;
             }
-            if (!chosen) { a.arenaInvalid = true; return; }
+            if (!chosen) {
+              a.arenaInvalid = true;
+              return;
+            }
             lines.push(chosen);
           }
           a.arenaLines = lines;
         }
-        if (!a || a.kind !== 'circle' || a.arenaPatches || a.selfDefense || a.bossHeal ||
-            a.rogueMove || a.cinderMechanic === 'protection' || a.cinderMechanic === 'transfer') return;
+        if (
+          !a ||
+          a.kind !== 'circle' ||
+          a.arenaPatches ||
+          a.selfDefense ||
+          a.bossHeal ||
+          a.rogueMove ||
+          a.cinderMechanic === 'protection' ||
+          a.cinderMechanic === 'transfer'
+        )
+          return;
         const cfg = R.arenaPlacement,
           raw = this.attackPatches(a),
           connected = arena || this.connectedArenaPoints(e),
           placed = [];
         let sequential = false;
         for (const patch of raw) {
-          let radius = patch.radius, selected = null;
-          const reachable = (p) => connected.some((q) => dist(p, q) <= cfg.step * 1.5 &&
-            this.clearSegment(p, q, 15));
-          const candidates = [patch, ...connected.slice().sort((p, q) => dist(p, patch) - dist(q, patch))],
+          let radius = patch.radius,
+            selected = null;
+          const reachable = (p) =>
+            connected.some((q) => dist(p, q) <= cfg.step * 1.5 && this.clearSegment(p, q, 15));
+          const candidates = [
+              patch,
+              ...connected.slice().sort((p, q) => dist(p, patch) - dist(q, patch)),
+            ],
             fits = (p, r) => !this.blocked(p.x, p.y, this.zoneId, r + cfg.margin),
             spaced = (p, r) => placed.every((q) => dist(p, q) >= r + q.radius + cfg.separation);
-          selected = candidates.find((p) => fits(p, radius) && spaced(p, radius) &&
-            (p !== patch || reachable(p)));
+          selected = candidates.find(
+            (p) => fits(p, radius) && spaced(p, radius) && (p !== patch || reachable(p)),
+          );
           if (!selected) {
             // A confined arena uses fully warned sequential beats, never a stacked carpet.
             sequential = true;
@@ -1459,10 +1527,17 @@
         if (placed.length === 1) Object.assign(a, placed[0]);
       }
       prepareAttackSequence(e, first, sequence) {
-        const pending = [first, ...sequence].some((a) => (a?.kind === 'circle' ||
-            (a?.kind === 'line' && a.count === 2 && !a.charge && !a.cargo && !a.arenaLines)) &&
-            !a.arenaPatches && !a.selfDefense && !a.bossHeal && !a.rogueMove),
-          arena = pending ? this.connectedArenaPoints(e) : null, beats = [];
+        const pending = [first, ...sequence].some(
+            (a) =>
+              (a?.kind === 'circle' ||
+                (a?.kind === 'line' && a.count === 2 && !a.charge && !a.cargo && !a.arenaLines)) &&
+              !a.arenaPatches &&
+              !a.selfDefense &&
+              !a.bossHeal &&
+              !a.rogueMove,
+          ),
+          arena = pending ? this.connectedArenaPoints(e) : null,
+          beats = [];
         for (const a of [first, ...sequence]) {
           this.prepareGroundAttack(e, a, arena);
           if (a?.arenaInvalid) {
@@ -1471,12 +1546,24 @@
           }
           if (a?.arenaSequential && a.arenaLines?.length > 1) {
             for (const line of a.arenaLines)
-              beats.push({ ...a, ...line, count: 1, arenaLines: [line],
-                timer: Math.max(0.7, a.timer), total: Math.max(0.7, a.total) });
+              beats.push({
+                ...a,
+                ...line,
+                count: 1,
+                arenaLines: [line],
+                timer: Math.max(0.7, a.timer),
+                total: Math.max(0.7, a.total),
+              });
           } else if (a?.arenaSequential && a.arenaPatches?.length > 1) {
             for (const p of a.arenaPatches)
-              beats.push({ ...a, ...p, count: 1, arenaPatches: [p],
-                timer: Math.max(0.7, a.timer), total: Math.max(0.7, a.total) });
+              beats.push({
+                ...a,
+                ...p,
+                count: 1,
+                arenaPatches: [p],
+                timer: Math.max(0.7, a.timer),
+                total: Math.max(0.7, a.total),
+              });
           } else beats.push(a);
         }
         Object.assign(first, beats.shift());
@@ -1740,8 +1827,13 @@
             style: 'cargo',
           });
           this.event('projectileLaunch', {
-            actor: 'enemy', source: e.id, family: 'ridge',
-            species: 'cargo', style: 'cargo', x: e.x, y: e.y,
+            actor: 'enemy',
+            source: e.id,
+            family: 'ridge',
+            species: 'cargo',
+            style: 'cargo',
+            x: e.x,
+            y: e.y,
           });
           return;
         }
@@ -1767,8 +1859,7 @@
         }
         if (e.family === 'citadel' && a.kind === 'checkerboard') {
           if (!a.boardPlan) return;
-          if (!e.board)
-            e.board = { ...a.boardPlan, beat: 0, phase: 'warn', timer: 1.45 };
+          if (!e.board) e.board = { ...a.boardPlan, beat: 0, phase: 'warn', timer: 1.45 };
           return;
         }
         if (e.family === 'citadel' && a.kind === 'formation') {
@@ -1982,36 +2073,39 @@
           patches = this.attackPatches(a),
           hits = (u) =>
             a.arenaLines
-              ? a.arenaLines.some((line) => this.distanceToSegment(u,
-                  { x: line.fromX, y: line.fromY }, line) < line.halfWidth)
+              ? a.arenaLines.some(
+                  (line) =>
+                    this.distanceToSegment(u, { x: line.fromX, y: line.fromY }, line) <
+                    line.halfWidth,
+                )
               : a.kind === 'line'
-              ? a.count === 2
-                ? [-85, 85].some(
-                    (o) =>
-                      this.distanceToSegment(
-                        u,
-                        {
-                          x: a.fromX + Math.cos(a.angle + Math.PI / 2) * o,
-                          y: a.fromY + Math.sin(a.angle + Math.PI / 2) * o,
-                        },
-                        {
-                          x: a.x + Math.cos(a.angle + Math.PI / 2) * o,
-                          y: a.y + Math.sin(a.angle + Math.PI / 2) * o,
-                        },
-                      ) < R.combatGeometry.dualLineHalfWidth,
-                  )
-                : this.distanceToSegment(u, { x: a.fromX, y: a.fromY }, a) <
-                  R.combatGeometry.lineHalfWidth
-              : ['cone', 'sector'].includes(a.kind)
-                ? dist(u, a) < a.radius &&
-                  (a.angleDegrees === 360 ||
-                    Math.cos(Math.atan2(u.y - a.y, u.x - a.x) - a.angle) >
-                      (a.angleDegrees
-                        ? Math.cos((a.angleDegrees * Math.PI) / 360)
-                        : a.kind === 'sector'
-                          ? Math.cos(0.65)
-                          : Math.cos(1.1)))
-                : patches.some((p) => dist(u, p) < p.radius);
+                ? a.count === 2
+                  ? [-85, 85].some(
+                      (o) =>
+                        this.distanceToSegment(
+                          u,
+                          {
+                            x: a.fromX + Math.cos(a.angle + Math.PI / 2) * o,
+                            y: a.fromY + Math.sin(a.angle + Math.PI / 2) * o,
+                          },
+                          {
+                            x: a.x + Math.cos(a.angle + Math.PI / 2) * o,
+                            y: a.y + Math.sin(a.angle + Math.PI / 2) * o,
+                          },
+                        ) < R.combatGeometry.dualLineHalfWidth,
+                    )
+                  : this.distanceToSegment(u, { x: a.fromX, y: a.fromY }, a) <
+                    R.combatGeometry.lineHalfWidth
+                : ['cone', 'sector'].includes(a.kind)
+                  ? dist(u, a) < a.radius &&
+                    (a.angleDegrees === 360 ||
+                      Math.cos(Math.atan2(u.y - a.y, u.x - a.x) - a.angle) >
+                        (a.angleDegrees
+                          ? Math.cos((a.angleDegrees * Math.PI) / 360)
+                          : a.kind === 'sector'
+                            ? Math.cos(0.65)
+                            : Math.cos(1.1)))
+                  : patches.some((p) => dist(u, p) < p.radius);
         const anchorVictim =
           e.type === 'boss' && e.family === 'archive' && a.index === 0
             ? party

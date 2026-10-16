@@ -96,6 +96,8 @@ for (const form of ['normal', 'true']) {
   g.zone().enemies = [e];
   Object.assign(g.hero, g.safe(e.x + 90, e.y));
   g.engage(e, true, false);
+  // TRUE engagement creates its authored opening pack. This probe starts depleted.
+  for (const pup of g.bossOwnedSummons(e)) pup.hp = 0;
   e.summonCd = 0;
   e.lastAttackIndex = 0;
   assert.equal(C.rules.attacks.thorn.length, 4, 'no invented extra core skill');

@@ -1709,20 +1709,16 @@
   function chargeTarget(slot, targetId = null) {
     if (!chargeNeedsTarget(slot)) return null;
     const range = chargedTargetRange(slot),
-      valid = game
-        .zone()
-        .enemies.filter(
-          (e) =>
-            e.hp > 0 &&
-            !e.neutral &&
-            // Respect the targeting system's own acquisition rules; a
-            // charged release must not impose a second arbitrary distance cap.
-            game.tacticalDirectTargetable(e),
-        ),
-      inRange = valid.filter(
+      valid = game.zone().enemies.filter(
         (e) =>
-          Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= range &&
-          game.line(game.hero, e),
+          e.hp > 0 &&
+          !e.neutral &&
+          // Respect the targeting system's own acquisition rules; a
+          // charged release must not impose a second arbitrary distance cap.
+          game.tacticalDirectTargetable(e),
+      ),
+      inRange = valid.filter(
+        (e) => Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= range && game.line(game.hero, e),
       );
     // A chosen target remains charged even outside attack range. The hero
     // approaches only after release; charge preparation never moves him.

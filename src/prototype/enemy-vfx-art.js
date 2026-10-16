@@ -769,7 +769,8 @@
     }
     for (const e of game.zone().enemies)
       if (e.hp > 0 && !e.returning && e.motion) {
-        const a = e.motion, m = game.enemyVfxMotion?.(a),
+        const a = e.motion,
+          m = game.enemyVfxMotion?.(a),
           id = m?.identity || V.describe(e, a.rogueAttack || a);
         if (!id || !enabled(game, id, 'travel')) continue;
         const f = { x: e.x, y: e.y, geometry: a, identity: id, life: 1, max: 1 };

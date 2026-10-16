@@ -24,23 +24,40 @@
   // Canonical visible melee loadouts, shared by real strike metadata and expression.
   const enemyMeleeKits = {
     species: {
-      goblin: ['blade', 'steel'], skeleton: ['sword', 'steel'], orc: ['sword', 'steel'],
-      crownguard: ['sword', 'steel'], archer: ['bow stave', 'wood'], ogre: ['club', 'wood'],
-      wolf: ['fangs', 'claw'], mireling: ['jaws', 'wet'], reedbeast: ['claws', 'wet'],
-      stalker: ['claws', 'claw'], ashbeast: ['claws', 'ash'], wraith: ['spectral touch', 'spectral'],
+      goblin: ['blade', 'steel'],
+      skeleton: ['sword', 'steel'],
+      orc: ['sword', 'steel'],
+      crownguard: ['sword', 'steel'],
+      archer: ['bow stave', 'wood'],
+      ogre: ['club', 'wood'],
+      wolf: ['fangs', 'claw'],
+      mireling: ['jaws', 'wet'],
+      reedbeast: ['claws', 'wet'],
+      stalker: ['claws', 'claw'],
+      ashbeast: ['claws', 'ash'],
+      wraith: ['spectral touch', 'spectral'],
     },
     bosses: {
-      thorn: ['fangs', 'claw'], crypt: ['bone polearm', 'bone'], mire: ['jaws', 'wet'],
-      archive: ['steel hook', 'steel'], ridge: ['stone hammer', 'stone'],
-      mine: ['stone fists', 'stone'], warlord: ['axe', 'steel'], abyss: ['talons', 'ash'],
-      citadel: ['poleaxe', 'steel'], cindermaw: ['claws', 'ash'], darklord: ['sword', 'steel'],
+      thorn: ['fangs', 'claw'],
+      crypt: ['bone polearm', 'bone'],
+      mire: ['jaws', 'wet'],
+      archive: ['steel hook', 'steel'],
+      ridge: ['stone hammer', 'stone'],
+      mine: ['stone fists', 'stone'],
+      warlord: ['axe', 'steel'],
+      abyss: ['talons', 'ash'],
+      citadel: ['poleaxe', 'steel'],
+      cindermaw: ['claws', 'ash'],
+      darklord: ['sword', 'steel'],
     },
   };
   function enemyMeleeEquipment(e) {
     const kit = (e.type === 'boss' || e.boss ? enemyMeleeKits.bosses[e.family] : null) ||
-      (e.mountedCrownRider ? ['lance', 'steel'] :
-        e.ranged && ['skeleton', 'orc', 'archer', 'crownguard'].includes(e.species)
-          ? ['bow stave', 'wood'] : enemyMeleeKits.species[e.species]) || ['body', 'claw'];
+      (e.mountedCrownRider
+        ? ['lance', 'steel']
+        : e.ranged && ['skeleton', 'orc', 'archer', 'crownguard'].includes(e.species)
+          ? ['bow stave', 'wood']
+          : enemyMeleeKits.species[e.species]) || ['body', 'claw'];
     return { weapon: kit[0], material: kit[1] };
   }
   const arenaPlacement = { step: 32, margin: 3, separation: 20, searchRadius: 800 };
@@ -2313,31 +2330,43 @@
     { bend: 18, width: 0.09 },
   ];
   function channelBanks(region, y) {
-    const barrier = barriers[region], [x1, x2] = barrier.bounds,
+    const barrier = barriers[region],
+      [x1, x2] = barrier.bounds,
       cfg = channelProfiles[region];
-    const nearestGap = Math.min(...barrier.gaps.map(([lo, hi]) => y < lo ? lo - y : y > hi ? y - hi : 0)),
+    const nearestGap = Math.min(
+        ...barrier.gaps.map(([lo, hi]) => (y < lo ? lo - y : y > hi ? y - hi : 0)),
+      ),
       blend = Math.max(0, Math.min(1, (nearestGap - 45) / 135)),
       soft = blend * blend * (3 - 2 * blend),
       offset = (Math.sin(y / 193 + region) + Math.sin(y / 79) * 0.22) * cfg.bend * soft,
-      half = (x2 - x1) / 2 * (1 + Math.sin(y / 137 + region * 0.7) * cfg.width * soft),
+      half = ((x2 - x1) / 2) * (1 + Math.sin(y / 137 + region * 0.7) * cfg.width * soft),
       center = (x1 + x2) / 2 + offset,
       edge = Math.max(0, Math.min(y - barrier.bounds[2], barrier.bounds[3] - y)),
-      cap = cfg.endCap && edge < cfg.endCap
-        ? Math.sqrt(Math.max(0, 1 - Math.pow(1 - edge / cfg.endCap, 2))) : 1;
+      cap =
+        cfg.endCap && edge < cfg.endCap
+          ? Math.sqrt(Math.max(0, 1 - Math.pow(1 - edge / cfg.endCap, 2)))
+          : 1;
     return [center - half * cap, center + half * cap];
   }
   // A shallow, walkable drainage channel feeds the deeper Causeway basin.
   // Muddy margins and reeds describe seasonal wet ground rather than a new strategic wall.
   const wetlandDrainage = [
-    [0, 1545, 40], [190, 1510, 48], [380, 1540, 58], [570, 1580, 44],
-    [790, 1555, 52], [990, 1590, 65], [1230, 1585, 75],
+    [0, 1545, 40],
+    [190, 1510, 48],
+    [380, 1540, 58],
+    [570, 1580, 44],
+    [790, 1555, 52],
+    [990, 1590, 65],
+    [1230, 1585, 75],
   ];
   function drainageBanks(x) {
     let j = wetlandDrainage.findIndex((p) => p[0] >= x);
     if (j < 0) return { y: wetlandDrainage.at(-1)[1], width: wetlandDrainage.at(-1)[2] };
     if (j <= 0) return { y: wetlandDrainage[0][1], width: wetlandDrainage[0][2] };
-    const a = wetlandDrainage[j - 1], b = wetlandDrainage[j],
-      t = Math.max(0, Math.min(1, (x - a[0]) / (b[0] - a[0]))), blend = t * t * (3 - 2 * t);
+    const a = wetlandDrainage[j - 1],
+      b = wetlandDrainage[j],
+      t = Math.max(0, Math.min(1, (x - a[0]) / (b[0] - a[0]))),
+      blend = t * t * (3 - 2 * t);
     return { y: a[1] + (b[1] - a[1]) * blend, width: a[2] + (b[2] - a[2]) * blend };
   }
   const terrain = [

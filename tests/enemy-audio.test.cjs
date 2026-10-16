@@ -45,9 +45,16 @@ for (const b of C.data.bosses)
         assert(Object.isFrozen(f.identity.presentation));
       }
       assert(events.some((x) => x.stage === 'release'));
-      assert(events.filter((x) => x.stage === 'impact' && !x.contact).every((x) =>
-        P.route(x).mode === 'silent' || ['enemyGroundImpact', 'rollingCargoImpact'].includes(P.route(x).key)),
-        'ground payoff has a distinct route and never impersonates victim contact');
+      assert(
+        events
+          .filter((x) => x.stage === 'impact' && !x.contact)
+          .every(
+            (x) =>
+              P.route(x).mode === 'silent' ||
+              ['enemyGroundImpact', 'rollingCargoImpact'].includes(P.route(x).key),
+          ),
+        'ground payoff has a distinct route and never impersonates victim contact',
+      );
       const { a, calls } = listener();
       for (const f of c.effects) a.effect(f);
       assert.equal(
@@ -581,9 +588,14 @@ for (const action of ['melee', 'circle']) {
     }
     const events = c.effects.filter((f) => f.type === 'enemyVfx');
     if (cast.mobileRogueCast || cast.anonymousCast) {
-      assert(!events.some((f) => f.stage === 'windup' && !f.audioOnly), 'cast bars do not emit a spatial windup');
-      assert(events.some((f) => f.stage === 'windup' && f.audioOnly && P.route(f).key === 'enemyWindup'),
-        'actual cast preparation retains material-specific audio without a spatial reveal');
+      assert(
+        !events.some((f) => f.stage === 'windup' && !f.audioOnly),
+        'cast bars do not emit a spatial windup',
+      );
+      assert(
+        events.some((f) => f.stage === 'windup' && f.audioOnly && P.route(f).key === 'enemyWindup'),
+        'actual cast preparation retains material-specific audio without a spatial reveal',
+      );
       assert(
         c.effects.some((f) => f.type === 'warning'),
         'mobile casts retain the existing audible warning',
@@ -665,7 +677,10 @@ for (const actor of [
   } else if (move.mobileRogueCast) {
     assert(windup?.audioOnly, 'mobile cast bars have audio without spatial windup');
     const warning = c.effects.find((f) => f.type === 'warning');
-    assert(warning && warning.presentationHandled, 'shared cast-bar cue owns the audible warning exactly once');
+    assert(
+      warning && warning.presentationHandled,
+      'shared cast-bar cue owns the audible warning exactly once',
+    );
     const mobile = listener();
     mobile.a.effect(windup);
     mobile.a.effect(warning);

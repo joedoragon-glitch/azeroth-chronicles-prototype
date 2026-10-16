@@ -83,7 +83,16 @@
     'cover',
     'withdraw',
   ]);
-  const stages = new Set(['windup', 'release', 'travel', 'impact', 'miss', 'linger', 'spawn', 'phase']);
+  const stages = new Set([
+    'windup',
+    'release',
+    'travel',
+    'impact',
+    'miss',
+    'linger',
+    'spawn',
+    'phase',
+  ]);
   const bases = [...Object.values(species), ...Object.values(families), ...Object.values(captains)];
   const materials = new Set([...bases.map((b) => b[0]), ...Object.values(styles), 'wood']);
   const personalities = new Set(bases.map((b) => b[1]));
@@ -163,12 +172,21 @@
       phase: 'enemyPhase',
     };
     if (!keys[stage]) return null;
-    const cargoKeys = { windup: 'rollingCargoWindup', release: 'rollingCargoLaunch',
-      travel: 'rollingCargoTravel', impact: 'rollingCargoImpact', miss: 'rollingCargoMiss' };
+    const cargoKeys = {
+      windup: 'rollingCargoWindup',
+      release: 'rollingCargoLaunch',
+      travel: 'rollingCargoTravel',
+      impact: 'rollingCargoImpact',
+      miss: 'rollingCargoMiss',
+    };
     return Object.freeze({
       mode: 'shared',
-      key: p.cargo && cargoKeys[stage] ? cargoKeys[stage] :
-        stage === 'impact' && !event.contact ? 'enemyGroundImpact' : keys[stage],
+      key:
+        p.cargo && cargoKeys[stage]
+          ? cargoKeys[stage]
+          : stage === 'impact' && !event.contact
+            ? 'enemyGroundImpact'
+            : keys[stage],
       ...p,
       reason:
         'Authored material/action family plus creature personality; important casts add a restrained motif.',

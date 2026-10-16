@@ -1104,13 +1104,22 @@
             if (this.s.recallActive && !this.peace && u.cd <= 0) {
               const pet = u.type === 'pet' ? this.petDefinition(u) : null;
               const reach = pet
-                ? pet.role === 'ranged' ? R.balance.companions.petBasicRange : 70
-                : u.type === 'archer' ? 185 : 65;
+                ? pet.role === 'ranged'
+                  ? R.balance.companions.petBasicRange
+                  : 70
+                : u.type === 'archer'
+                  ? 185
+                  : 65;
               const pursuer = z.enemies
-                .filter((e) =>
-                  e.hp > 0 && e.aggro && !e.neutral && !e.returning &&
-                  dist(e, u) <= reach && dist(e, this.hero) <= 350 &&
-                  this.line(u, e),
+                .filter(
+                  (e) =>
+                    e.hp > 0 &&
+                    e.aggro &&
+                    !e.neutral &&
+                    !e.returning &&
+                    dist(e, u) <= reach &&
+                    dist(e, this.hero) <= 350 &&
+                    this.line(u, e),
                 )
                 .sort((a, b) => dist(a, u) - dist(b, u) || this.idOrder(a, b))[0];
               if (pursuer) {
@@ -1136,8 +1145,13 @@
                   });
                 } else if (this.damage(pursuer, this.companionAttackDamage(u), u.id))
                   this.event('melee', {
-                    actor: 'companion', role: 'soldier', source: u.id,
-                    weapon: 'sword', x: pursuer.x, y: pursuer.y, target: pursuer.id,
+                    actor: 'companion',
+                    role: 'soldier',
+                    source: u.id,
+                    weapon: 'sword',
+                    x: pursuer.x,
+                    y: pursuer.y,
+                    target: pursuer.id,
                   });
               }
             }

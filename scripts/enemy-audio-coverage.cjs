@@ -14,7 +14,9 @@ function audit() {
     if (r.presentation.accent)
       assert(E.motifs[r.presentation.accent], 'Missing important accent: ' + r.id);
     for (const variant of ['normal', 'true'])
-      for (const stage of [...new Set([...r.stages, 'travel', ...(r.presentation.cargo ? ['miss'] : [])])]) {
+      for (const stage of [
+        ...new Set([...r.stages, 'travel', ...(r.presentation.cargo ? ['miss'] : [])]),
+      ]) {
         const event = {
           skillId: r.id,
           identity: { id: r.id, presentation: r.presentation },
@@ -38,8 +40,12 @@ function audit() {
           decision: d.mode,
           key: d.key || null,
           reason: d.reason,
-          trigger: stage === 'travel' ? 'Actual movement only; no stationary/per-frame synthetic cue' :
-            stage === 'miss' ? 'Cargo lifetime ends without contact' : 'Actual ' + stage + ' bridge event',
+          trigger:
+            stage === 'travel'
+              ? 'Actual movement only; no stationary/per-frame synthetic cue'
+              : stage === 'miss'
+                ? 'Cargo lifetime ends without contact'
+                : 'Actual ' + stage + ' bridge event',
         });
       }
   }
