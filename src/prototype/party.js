@@ -1047,7 +1047,42 @@
           }
           if (u.order) u.order = null;
           if (this.peace || this.s.recallActive) {
+            // Recall is a defensive escort posture: no target acquisition,
+            // pursuit or active skills. A nearby attacking enemy may be
+            // counterattacked from the companion's *current* position only.
             this.followPartyMember(u, living, dt);
+            if (this.s.recallActive && !this.peace && u.cd <= 0) {
+              const reach = u.type === 'archer' ? 185 : 65;
+              const pursuer = z.enemies
+                .filter((e) =>
+                  e.hp > 0 && e.aggro && !e.neutral && !e.returning &&
+                  dist(e, u) <= reach && dist(e, this.hero) <= 350 &&
+                  this.line(u, e),
+                )
+                .sort((a, b) => dist(a, u) - dist(b, u) || this.idOrder(a, b))[0];
+              if (pursuer) {
+                u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+                if (u.type === 'archer') {
+                  const d = Math.max(1, dist(u, pursuer));
+                  this.s.projectiles.push({
+                    id: 'projectile-' + this.s.nextId++,
+                    x: u.x,
+                    y: u.y,
+                    dx: (pursuer.x - u.x) / d,
+                    dy: (pursuer.y - u.y) / d,
+                    target: pursuer.id,
+                    damage: this.companionAttackDamage(u),
+                    source: u.id,
+                    speed: 450,
+                    style: 'arrow',
+                  });
+                } else if (this.damage(pursuer, this.companionAttackDamage(u), u.id))
+                  this.event('melee', {
+                    actor: 'companion', role: 'soldier', source: u.id,
+                    weapon: 'sword', x: pursuer.x, y: pursuer.y, target: pursuer.id,
+                  });
+              }
+            }
             continue;
           }
           let e = null;
