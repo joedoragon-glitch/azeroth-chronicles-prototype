@@ -1713,8 +1713,9 @@
           (e) =>
             e.hp > 0 &&
             !e.neutral &&
-            game.tacticalDirectTargetable(e) &&
-            Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= 1400,
+            // Respect the targeting system's own acquisition rules; a
+            // charged release must not impose a second arbitrary distance cap.
+            game.tacticalDirectTargetable(e),
         ),
       inRange = valid.filter(
         (e) =>
