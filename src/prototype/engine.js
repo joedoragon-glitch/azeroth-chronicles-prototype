@@ -5668,6 +5668,7 @@
         e.mercyProvoked = false;
         e.noProgress = 0;
         e.pursuitBurstUsed = false;
+        delete e.pursuitBurstReadyAt;
         e.frozen = false;
         e.frenzy = false;
         for (const key of [
