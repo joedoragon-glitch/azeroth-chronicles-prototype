@@ -1666,6 +1666,12 @@
       [560, 690, 'sleep-roll', 0],
       [745, 405, 'bone-pile', 0],
       [330, 460, 'game-table', 0],
+      // Scornfang is a Greenwood reclamation superintendent, not simply a
+      // Goblin living in Thornfang's spare den. Keep the existing comfort
+      // and salvage items while making his administrative work visible.
+      [805, 525, 'scribe-desk', 0, 'scornfang-reclamation-records'],
+      [585, 745, 'tool-rack', 0, 'scornfang-salvage-equipment'],
+      [480, 305, 'supply-stack', 0, 'scornfang-relocation-inventory'],
     ],
     'supply-march': [
       [165, 690, 'mire-pool', 0],
@@ -1712,6 +1718,11 @@
       [185, 1230, 'fish-rack', 18],
       [740, 440, 'fishing-net', 0],
       [680, 740, 'stolen-goods', 0],
+      // Dreadmaw's established regional agriculture and Treasury supply
+      // management are visible alongside Cindermaw's roost and inner vault.
+      [1090, 840, 'drying-rack', 0, 'dreadmaw-agriculture-processing'],
+      [1150, 650, 'feed-crate', 0, 'dreadmaw-animal-husbandry'],
+      [1050, 545, 'scribe-desk', 0, 'cindermaw-welfare-inventory'],
     ],
   }; // Creature strongholds are centers of ordinary-monster life and territorial power, not resource wrappers.
   // Named sites reuse existing map destinations; unmarked holds fill quiet territory without adding map clutter.
