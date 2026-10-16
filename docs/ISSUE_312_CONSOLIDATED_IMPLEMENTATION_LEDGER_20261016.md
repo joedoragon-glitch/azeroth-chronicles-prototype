@@ -34,7 +34,7 @@
 
 ## Source-audit discipline
 
-All source additions remain **provisional**. No runtime, editor/formatter execution, build, browser, simulation, test, CI, performance check, or manual native visual/audio validation has been initiated. Prepared acceptance probes are not successful tests. Do not claim issue completion based on compiling or editing a line. Every new PT implementation needs traceable owner, source evidence, adversarial regression cases, dependencies and unresolved caveats. Preserve historical hashes: add exact provenance overlay for changed files, never delete or relax old assertions. Do not open a PR until it will not accidentally start CI.
+All source additions remain **provisional**. No runtime, editor/formatter execution, build, browser, simulation, test, CI, performance check, or manual native visual/audio validation has been initiated. Prepared acceptance probes are not successful tests. Do not claim issue completion based on compiling or editing a line. Every new PT implementation needs traceable owner, source evidence, adversarial regression cases, dependencies and unresolved caveats. Preserve historical hashes: add exact provenance overlay for changed files, never delete or relax old assertions. Owner subsequently authorized **one DRAFT integration PR for Work-mode handoff** while testing stays prohibited. Since the PR event can launch Actions, keep `[skip ci]` on the latest commit, inspect actual Actions state after PR creation, and do not dispatch CI manually.
 
 ## Next implementation passes (not an overnight-validation commitment)
 

@@ -67,6 +67,14 @@ if (issue312Stage1) {
   assert.equal(issue312Stage1.canonicalIssue, 312);
   assert.equal(issue312Stage1.baseline, 'f0e08ba7341a557dcb6ba9eb33d652a9e03dd339');
   assert.match(issue312Stage1.source, /Issue #312.*NOT TESTED/);
+  assert.deepEqual(Object.keys(issue312Stage1.files).sort(), [
+    'src/prototype/economy.js','src/prototype/engine.js','src/prototype/app.js',
+    'src/prototype/audio-effects.js','src/prototype/boss-combat.js',
+    'src/prototype/combat.js',
+    'docs/PRE_SNAPSHOT_TEN_ISSUES_IMPLEMENTATION_AUDIT_20261015.md',
+    'tests/pt312-early-integration.test.cjs',
+    'docs/ISSUE_312_CONSOLIDATED_IMPLEMENTATION_LEDGER_20261016.md',
+  ].sort(), 'exact nine Stage-1 protected paths');
   for (const [file, hash] of Object.entries(issue312Stage1.files))
     assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), hash,
       file + ' exact Issue #312 Stage 1 authorized receipt');

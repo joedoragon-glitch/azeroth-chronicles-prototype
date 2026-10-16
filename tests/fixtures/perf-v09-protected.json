@@ -952,7 +952,9 @@
       "src/prototype/audio-effects.js": "343193e3262e6225eeb4a774fe0efea3cd4f90202368812cadd18ba991e95b04",
       "src/prototype/boss-combat.js": "430ad34066364366e7b614e54ba43c3b710ef1b925db55abeb64e056c3168220",
       "src/prototype/combat.js": "0ac083c1f97b513bdc25030bb96e9d0b2f3cee39e3837b23e97de4e2c5c2d017",
-      "docs/PRE_SNAPSHOT_TEN_ISSUES_IMPLEMENTATION_AUDIT_20261015.md": "2a57368441f213f4d9cdc54f31dcce2ea90f7887875c28f16a00311bed2a3c62"
+      "docs/PRE_SNAPSHOT_TEN_ISSUES_IMPLEMENTATION_AUDIT_20261015.md": "2a57368441f213f4d9cdc54f31dcce2ea90f7887875c28f16a00311bed2a3c62",
+      "tests/pt312-early-integration.test.cjs": "9d8bc5a9ed1e4dd0ae815bb2b825c5434a8967f8f692b817527c2cc134303bcb",
+      "docs/ISSUE_312_CONSOLIDATED_IMPLEMENTATION_LEDGER_20261016.md": "6ee0161b8c34f825daa148886ebfc1700a7be4faf33885086483313177906496"
     }
   }
 }

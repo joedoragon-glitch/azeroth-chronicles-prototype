@@ -1,10 +1,10 @@
 # One consolidated Community Snapshot validation cycle
 
-**Not started. Owner authorization is required.** No tests, builds, browser runs, simulations, benchmarks, CI dispatches or deployments were run during implementation. Formatter write-only processing is not test evidence. Do not open a PR before validation is authorized: the existing PR trigger launches checks.
+**Not started. Owner authorization is required.** No tests, builds, browser runs, simulations, benchmarks, CI dispatches or deployments were run during implementation. Formatter write-only processing is not test evidence. A later owner instruction expressly authorizes opening **one draft integration PR for Work-mode handoff** before validation; the existing PR trigger can launch checks, so use a latest-commit `[skip ci]` instruction and inspect Actions run metadata. No manual dispatch or validation execution is authorized.
 
 **Source prerequisite:** the [failed execution audit](COMMUNITY_SNAPSHOT_EXECUTION_AUDIT_20261016.md) applies to `7581ed12d57e70e42bbaed6b8223bc8d4c709b22`. Its [authorized corrections](COMMUNITY_SNAPSHOT_AUDIT_REPAIRS_20261016.md) now include automatic pet cases, a separate matched balance runner, targeted saved native scenes, live charge/impact geometry and reconciled art provenance. The [follow-up source audit passes](COMMUNITY_SNAPSHOT_SOURCE_REAUDIT_20261016.md) for source readiness; explicit owner execution authorization is still required. Authored coverage is not a successful result; this checklist also retains manual/native acceptance obligations.
 
-Active combined source branch: `integration/community-snapshot-311-20261016` (Community checkpoint `ca33acb14d92cbce12633eaab702318343dce509` plus unmerged draft PR #311 head `b91347f863d68d6b7beca76e23f625ddd7ff1293`). See [integration audit](COMMUNITY_SNAPSHOT_PR311_INTEGRATION_AUDIT_20261016.md) for cross-feature corrections and exact SHA-256 overlay. The original Community branch and draft PR remain recovery points. Predecessor: merged #308 `6bc27be31792b1c38147d61e98ceed6acf3e2560`. Preserve one Community PR and release; no separate pet/art/companion/performance PRs.
+Active combined source branch: `integration/community-snapshot-311-20261016` (Community checkpoint `ca33acb14d92cbce12633eaab702318343dce509` plus unmerged draft PR #311 head `b91347f863d68d6b7beca76e23f625ddd7ff1293`). See [integration audit](COMMUNITY_SNAPSHOT_PR311_INTEGRATION_AUDIT_20261016.md) for cross-feature corrections and exact SHA-256 overlay. The original Community branch, draft PR and exact Issue #312 are recovery points. See [the current Work handoff](WORK_MODE_SINGLE_PR_HANDOFF_20261016.md), not only older Community-only readiness text. Predecessor: merged #308 `6bc27be31792b1c38147d61e98ceed6acf3e2560`. Preserve one Community PR and release; no separate pet/art/companion/performance PRs.
 
 ## Authorized-cycle preparation, still pending
 
@@ -42,7 +42,7 @@ Retain prior exact same-current-art painter comparisons and independent baseline
 
 Upgrade installed #308 cache to the actual candidate; verify all three entries, core graph, offline reopen, cache retirement, current and historical saves, explicit phone mode, reset/import/export and asset failure fallback. No save keys change. Ensure pets work offline without a missing module.
 
-Push the regenerated exact candidate, then open the single Community PR after authorization and let existing required CI run. Preserve exact source/tree/version and run links. Fix within this update; final green evidence must apply to the final source/tree. Stop before merge/deployment and request separate release authorization. Do not dispatch the deployment workflow on a feature branch as a substitute for PR checks.
+The single draft PR is opened *now* strictly for Work handoff with CI skip. After explicit later validation authorization, push the regenerated exact candidate to that same PR and let existing required CI run. Preserve exact source/tree/version and run links. Fix within this update; final green evidence must apply to the final source/tree. Stop before merge/deployment and request separate release authorization. Do not dispatch the deployment workflow on a feature branch as a substitute for PR checks.
 
 ## Ten-issue PR #311 and cross-feature acceptance (reserved, NOT RUN)
 

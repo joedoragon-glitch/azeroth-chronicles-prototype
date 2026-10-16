@@ -2,7 +2,7 @@
 
 ## Active combined source integration — 16 October 2026
 
-**Community Snapshot + PR #311 source-integrated, still entirely untested.** Branch `integration/community-snapshot-311-20261016`; first combined checkpoint `e513ea7fb9bfa21d5e102177bb3eedd3954e6cc4`. The independent Community checkpoint and draft #311 head remain recoverable. Source-level compatibility and the pet defensive Recall issue are documented in [the combined integration audit](COMMUNITY_SNAPSHOT_PR311_INTEGRATION_AUDIT_20261016.md). No tests, builds, browser sessions, simulations, CI, merge or deployment. A third update is being prepared; hold final consolidated validation until it is incorporated and the owner explicitly authorizes the single cycle.
+**Community Snapshot + PR #311 source-integrated, still entirely untested.** Branch `integration/community-snapshot-311-20261016`; first combined checkpoint `e513ea7fb9bfa21d5e102177bb3eedd3954e6cc4`. The independent Community checkpoint and draft #311 head remain recoverable. Source-level compatibility and the pet defensive Recall issue are documented in [the combined integration audit](COMMUNITY_SNAPSHOT_PR311_INTEGRATION_AUDIT_20261016.md). No tests, builds, browser sessions, simulations, CI, merge or deployment. Issue #312's full 18-item handoff is now available. Work must implement its still-open PT items in this **same** branch and draft PR, earn a new complete source audit, and obtain the owner's explicit permission before the single validation cycle. See [Work handoff](WORK_MODE_SINGLE_PR_HANDOFF_20261016.md).
 
 ## Previous Community-only source audit · 16 October 2026
 
