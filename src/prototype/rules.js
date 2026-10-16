@@ -4909,7 +4909,10 @@
     fraction: 0.05,
     cooldown: rangerSupport.cooldown,
     duration: rangerSupport.duration,
-    threshold: rangerSupport.healThreshold,
+    // Ranged troops should assist substantially wounded allies before they
+    // collapse, rather than waiting until half their HP has disappeared.
+    // Targeting still prefers the most injured eligible recipient.
+    threshold: 0.75,
     range: 350,
     species: Object.freeze({
       wolf: 'Packheart Howl',
