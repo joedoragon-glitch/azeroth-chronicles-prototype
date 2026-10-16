@@ -71,8 +71,9 @@ console.log('PASS twelve ranged species use individual identity and the Archer h
 {
   const { g, mob } = fixture();
   const healer = mob('goblin', { ranged: true });
-  mob('goblin', { hp: 400, pack: 'unrelated' });
-  assert(!g.enemySupportHeal(healer), 'different engaged formation does not receive support');
+  const unrelated = mob('wolf', { hp: 400, pack: 'unrelated' });
+  assert(g.enemySupportHeal(healer), 'hostile factions provide aid across species and formation posts');
+  assert(unrelated.supportHeal, 'cross-species recipient is actually healing');
 }
 {
   const { g, mob } = fixture();
