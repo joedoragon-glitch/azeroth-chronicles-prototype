@@ -56,7 +56,12 @@ for (const region of C.data.regions) {
 // PT-016/017: selective migration retains every native guardian/trap and side resident.
 for (const id of [...C.dungeonIds, ...R.supplyRooms.map((r) => r.id), ...R.sideDungeons.map((r) => r.id)]) {
   const g = new C(); g.enter(id);
-  const z = g.zone(), raw = g.snapshot(),
+  const z = g.zone();
+  if (!['citadel', 'abyss'].includes(id))
+    assert(!z.enemies.some((e) => e.hp > 0 && !e.neutral &&
+      Math.hypot(e.x - g.hero.x, e.y - g.hero.y) < 260 && g.line(e, g.hero)),
+      id + ' no automatic immediate melee pile-on; fortified Abyss/Citadel intentionally retain two sentries');
+  const raw = g.snapshot(),
     ids = z.enemies.map((e) => e.id), trapCount = g.traps().length;
   delete raw.zones[id].interiorCoherenceVersion;
   const restored = C.restore(raw);

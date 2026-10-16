@@ -1553,8 +1553,8 @@
     ],
     'supply-highlands': [
       {
-        x: 300,
-        y: 330,
+        x: 325,
+        y: 350,
         role: 'melee',
         group: 'entry',
         name: 'Crown direwolf lance rider',
@@ -1610,8 +1610,8 @@
     ],
     'supply-crown': [
       {
-        x: 330,
-        y: 260,
+        x: 350,
+        y: 300,
         role: 'melee',
         group: 'roost',
         name: 'Ash beast treasury guardian',
@@ -3160,7 +3160,7 @@
   const dungeonGuardFormations = {
     mine: [
       {
-        x: 410,
+        x: 450,
         y: 280,
         group: 'receiving',
         species: 'wolf',

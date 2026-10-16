@@ -1084,6 +1084,23 @@
         "tests/pt312-world-integration.test.cjs": "6f462243c88b79bead2203ec7ea59b1550afa8ac09e58594a68b7d9a795cbf2b",
         "src/prototype/cindermaw-combat.js": "b4cea3a71a26783747a1e9d36e69f52f11a130e8ba592a8e98ae1e85ded43b30"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "baseline": "36da70c1f735f278555dc635716d4a6b6af6daf4",
+      "source": "PR #313 integrated source review repairs and durable handoff. SOURCE ONLY, NOT TESTED.",
+      "files": {
+        "docs/PR313_WORK_IMPLEMENTATION_20261016.md": "88d9a25015f2d89c6c4f55934ef1063df904c7418a2b5cffefcfcc5638ee7704",
+        "src/prototype/rules.js": "280359039f60fdef5e613d90341883ceabebbb5d4acf9532a2985666e87c9a27",
+        "src/prototype/world.js": "1a04a4f83c26827dec91a10d00d76887ce09b2cb02cfc102449ca758e7b3e7b0",
+        "tests/pt312-world-integration.test.cjs": "ecb70b04afa56324ce02642b7c9c10bddbcfda3f0a71165d4f035cdc212c879b"
+      },
+      "previousFiles": {
+        "docs/PR313_WORK_IMPLEMENTATION_20261016.md": "9922912762e0780a13e91b34b386442e2549b53afa3a94b35a0e079302323685",
+        "src/prototype/rules.js": "24ddd25e15c93acf667881d6bee6279cf9e34e00435d01b6a1a63d97cd71dfc4",
+        "src/prototype/world.js": "5c740cfe2852f235be002a9554e274a50f128172e81dfe7d493ae38f67ecb395",
+        "tests/pt312-world-integration.test.cjs": "902432df9f40d9aeb687daf2838fb69775c8a2fcbc1fb575b2562e4d9ccf5f5f"
+      }
     }
   ]
 }

@@ -283,12 +283,12 @@
       }
       interiorCoherence(z) {
         const side = this.sideDungeon(z.id), room = this.supplyRoom(z.id);
-        if ((!side && !room && !dungeonIds.includes(z.id)) || z.interiorCoherenceVersion === 1) return;
+        if ((!side && !room && !dungeonIds.includes(z.id)) || z.interiorCoherenceVersion === 2) return;
         const previous = this.s.zone;
         this.s.zone = z.id;
         try {
-          // No blanket enlargement or immunity: only the Mine's receiving posts and
-          // Citadel's entry-watch grouping need source changes after the arrival review.
+          // No blanket enlargement or immunity: receiving posts, a Citadel entry
+          // watch and the few posts inside immediate perception need staging.
           if (z.id === 'mine' || z.id === 'citadel') {
             const count = z.id === 'mine' ? 3 : 2,
               native = z.enemies.filter((e) => e.guard && !e.reinforcement && !e.summon &&
@@ -298,6 +298,19 @@
               e.home = { ...p };
               e.pack = z.id + '-' + post.group;
               if (e.hp > 0 && !e.aggro && !e.returning) Object.assign(e, p);
+            }
+          }
+          // The repeated side-room first post and two Treasury entry posts were
+          // inside 260-unit immediate perception. Shift only those posts; keep
+          // guard-to-captain alerts and the full guarded chambers beyond them.
+          if (side || ['supply-highlands', 'supply-crown'].includes(z.id)) {
+            const native = z.enemies.filter((e) => e.type !== 'boss' && !e.roomCaptain &&
+              !e.summon && !e.reinforcement && e.form === 'normal').sort((a, b) => this.idOrder(a, b)),
+              e = native[0], post = side ? { x: 260, y: 390 } : R.treasuryGuardFormations[z.id][0];
+            if (e) {
+              const point = this.safe(post.x, post.y, z.id);
+              e.home = { ...point };
+              if (e.hp > 0 && !e.aggro && !e.returning) Object.assign(e, point);
             }
           }
           if (side) {
@@ -321,7 +334,7 @@
               }
             }
           }
-          z.interiorCoherenceVersion = 1;
+          z.interiorCoherenceVersion = 2;
         } finally { this.s.zone = previous; }
       }
       nearestRoadPoint(z, point, predicate = () => true) {
