@@ -1852,6 +1852,19 @@
         "tests/fixtures/pr313-cast-viewport-repair.json": "b9632afdf0583ad0ee1e6def2bd0dfaa741d8ef84949752ea5fb55d04c5ee82a",
         "tests/rogue-browser.test.cjs": "b1e496daadb50b9e4a667c06ad98462d61e6c0d3db39040f4946262ff583b456"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt continuation; cautionary pre-CI audit of checkpoint 76a760b. Quick integrity checks are recorded separately; long validation remains paused.",
+      "reason": "The owner-directed pause checkpoint appended documentation without advancing these two protected receipts. Reconcile documentation only; preserve every historical receipt and all runtime/test bytes.",
+      "files": {
+        "docs/PR313_RESUME_20261016.md": "1f265ca66e503a4246c14c782bae8c56b7e7a853075ec4b5732e6e1e79be3749",
+        "docs/PR313_VALIDATION_20261016.md": "1c6d5da56734665868066344c15041bcad8389073dc4e5e117da36215baa600e"
+      },
+      "previousFiles": {
+        "docs/PR313_RESUME_20261016.md": "a4a7d87a22e2e5903eb5c5ab03e212407c8575b9d23b81708e6005185517c9db",
+        "docs/PR313_VALIDATION_20261016.md": "0152e118769a54be5e5acd8aa3512d4c1b23560c2df5004e90c12245a4dccc0a"
+      }
     }
   ],
   "authorizedPr313ApproachFrameRevision": {
