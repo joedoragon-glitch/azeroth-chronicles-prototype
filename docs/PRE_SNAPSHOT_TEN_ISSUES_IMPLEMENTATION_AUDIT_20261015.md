@@ -28,7 +28,7 @@ This is a **source-review audit**, not a release certificate. In particular, tex
 2. **Cooldown ownership bug:** `roomCaptainPopulation()` could cap active non-Crown captains' `specialCd` to 1.25 seconds on zone reads. The cap is now first-initialization only. This means the tuned shared cooldown genuinely persists.
 3. **Recall timing trap:** formation arrival previously removed the defensive order, undoing Recall. That unconditional release was removed; small-area defensive counterattacks don't issue chase commands.
 4. **Artificial ally filters:** the enemy-heal test previously *required* refusal for a different formation. This contradiction of the faction rule was corrected in the test fixture.
-5. **Historical occlusion benchmark trap:** `perf-ws2-occlusion.test.cjs` used strict parity with an intentionally narrower model. It has been rewritten as a coverage/priority contract without deleting the historical helper. **The old standalone WebKit/Chromium exact-pixel baseline comparator and full-renderer performance script are still historical parity instruments**. Do not treat their expected differences as unforeseen regressions. Before testing, replace their release-gate usage with prospective coverage + bounded-performance tests, while preserving their old logs as evidence. Disabling occlusion correctness or dropping performance gates is not acceptable.
+5. **Historical occlusion benchmark trap:** `perf-ws2-occlusion.test.cjs` used strict parity with an intentionally narrower model. It has been rewritten as a coverage/priority contract without deleting the historical helper. The **standalone WebKit/Chromium browser comparator** (`tests/perf-ws2-occlusion-browser.test.cjs`) now requires exact old-vs-old negative controls, bounded/localized new-vs-old mask differences, positive new visual cover in the full scene matrix, and unchanged simulation state; intended differences no longer generate failure PNG floods. The separate **full-renderer benchmark** (`scripts/perf-ws2-renderer-performance.cjs`) already supplies both sides with the *current* occlusion algorithm and tests an independent optimization, so its byte-identical image controls remain valid and are retained. Both prospective checks are authored but **unexecuted**. Do not drop the perf/browser gates, or mistake historical baseline logs for current evidence.
 6. **Legacy test updates staged, NOT run:** `captain-review`, `enemy-support-healing`, `occlusion` and `snapshot-sixth-companion-reveal` fixtures reflect intentional updates. Their pass status is unknown. No existing baseline log is proof for this branch.
 7. **No data-format expansion:** campaign save version stays v4. Pending skill approaches and encounter readiness are transient; Treasury lore additions use stable `treasury-N` IDs and keep collectible IDs/prices/loot unchanged.
 8. **No distribution architecture reversal:** multi-file GitHub Pages/PWA remains the primary product. No new sprite assets, forbidden portable-only assumptions, deploy, tag or release.
@@ -47,9 +47,9 @@ This is a **source-review audit**, not a release certificate. In particular, tex
 
 ## Explicit acceptance state
 
-**Source changes staged:** yes, for all ten topics.  
+**Source changes staged:** yes, for all ten topics, plus retrospective source-review corrections to Recall semantics, transient Rogue cleanup and the browser occlusion test oracle.  
 **Independent implementation audit:** source comparison and regression-fixture review only.  
-**Full tests / build / browser / performance / CI:** **not executed**, by request.  
+**Full tests / build / browser / performance / CI:** **not executed**, by request. The authored future test oracle is still provisional until a real browser demonstrates nonzero new-cover pixels and bounded render cost.  
 **Gameplay, art, balance, migration and QA certified:** **no**.  
 **Merge, deployment and publication:** **not authorized**.
 
