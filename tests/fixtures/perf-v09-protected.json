@@ -1865,6 +1865,17 @@
         "docs/PR313_RESUME_20261016.md": "a4a7d87a22e2e5903eb5c5ab03e212407c8575b9d23b81708e6005185517c9db",
         "docs/PR313_VALIDATION_20261016.md": "0152e118769a54be5e5acd8aa3512d4c1b23560c2df5004e90c12245a4dccc0a"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt lineage; owner-resumed final validation fixture repair on 16 October 2026. Actual scoped results are recorded separately.",
+      "reason": "Browser targeting fixtures still expected rejection/retargeting when a selected living foe moves out of range. Match the approved queued approach, keep exact target/no early damage/no early cooldown checks, and use an actually dead original target for release retargeting. Freeze only ambient hostile AI in that charge fixture. No runtime changes.",
+      "files": {
+        "tests/prototype-browser.test.cjs": "fd2dda2d3bccf0866d07c7d312b856c907720c24614f0023d109abbc9ae43e2d"
+      },
+      "previousFiles": {
+        "tests/prototype-browser.test.cjs": "6b70a2e4f402c1e09d1f836cff02541fa473d94874e88a08c48c6193bcfd944b"
+      }
     }
   ],
   "authorizedPr313ApproachFrameRevision": {

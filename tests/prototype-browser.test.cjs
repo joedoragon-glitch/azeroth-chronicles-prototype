@@ -255,10 +255,13 @@ await check('Target button and E cycle actual hero combat without unintended fal
  assert.equal(await page.evaluate(()=>Prototype.game.selectedHeroTarget()?.name),'Target far','E cycles to another foe');
  // Restore original distance so the next cast remains out of range.
  await page.evaluate(x=>{Prototype.game.hero.x=x;},movingStart);
- const outcome=await page.evaluate(()=>{const c=Prototype.game,near=c.zone().enemies[0],before=near.hp;c.hero.cd[0]=0;return {cast:c.cast(1),before,after:near.hp,cd:c.hero.cd[0]};});
- assert.equal(outcome.cast,false,'selected out-of-range foe prevents automatic swap');
+ const outcome=await page.evaluate(()=>{const c=Prototype.game,[near,far]=c.zone().enemies,before=near.hp,farBefore=far.hp;c.hero.cd[0]=0;return {cast:c.cast(1),before,after:near.hp,farBefore,farAfter:far.hp,cd:c.hero.cd[0],order:structuredClone(c.hero.order),farId:far.id};});
+ assert.equal(outcome.cast,true,'selected out-of-range foe queues the approved skill approach');
+ assert.equal(outcome.order?.type,'skill-approach','out-of-range attack queues movement instead of casting immediately');
+ assert.equal(outcome.order.id,outcome.farId,'queued skill retains the explicitly selected far foe');
  assert.equal(outcome.after,outcome.before,'nearer enemy was not hit instead');
- assert.equal(outcome.cd,0,'failed locked attack spends no cooldown');
+ assert.equal(outcome.farAfter,outcome.farBefore,'queued approach deals no early damage');
+ assert.equal(outcome.cd,0,'queued approach spends no cooldown before reaching range');
  await page.keyboard.press('e');
  assert.equal(await page.evaluate(()=>Prototype.game.selectedHeroTarget()?.name),'Target near');
  await page.keyboard.down('e');
@@ -604,6 +607,7 @@ await check('Paladin, Mage and Ranger Skill 1 charge readiness is identical and 
 });
 await check('Skill 2 and party-heal charge states are target-stable and honest '+tag,async()=>{
  const saved=await page.evaluate(()=>Prototype.game.snapshot());
+ await page.evaluate(()=>{window.__skill2ChargeAuditAI=Prototype.game.updateEnemies;Prototype.game.updateEnemies=()=>{};});
  await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');c.zone().props=[];c.s.party=[];c.s.mercyTime=0;Object.assign(c.hero,{class:'mage',x:600,y:900,mp:100,maxMp:100,power:22,weapon:0,legacyWeaponPower:0,legacyEquipped:false,talents:[0,0,0,0],order:null});c.hero.skills[1]=1;c.hero.skills[2]=1;c.hero.cd[1]=.35;c.hero.cd[2]=0;const a=c.makeEnemy({species:'goblin',name:'Locked target',level:1,hp:10000,damage:0,gold:0,xp:0},{x:720,y:900}),b=c.makeEnemy({species:'goblin',name:'Closer later',level:1,hp:10000,damage:0,gold:0,xp:0},{x:820,y:900});c.zone().enemies=[a,b];c.s.heroTarget=a.id;});
  // Observe the short queued state in the same browser turn as pointer-down.
  // A slow runner can otherwise advance the 0.35s cooldown before polling begins.
@@ -620,9 +624,10 @@ await check('Skill 2 and party-heal charge states are target-stable and honest '
  await page.evaluate(()=>{const c=Prototype.game,a=c.zone().enemies[0],b=c.zone().enemies[1];c.effects=[];c.hero.cd[1]=0;c.hero.mp=100;a.hp=a.maxHp;b.hp=b.maxHp;Object.assign(a,{x:720,y:900});Object.assign(b,{x:625,y:900});c.s.heroTarget=a.id;});
  await page.locator('#skill-2').evaluate(el=>{el.setPointerCapture=()=>{};el.onpointerdown({pointerType:'touch',pointerId:303,preventDefault(){}});});
  await page.waitForFunction(()=>Prototype.chargePresentation()?.state==='charging');
- // Lost original aim must redirect on manual release while a second foe is valid.
+ // A dead original aim must redirect on manual release while a second foe is valid.
+ // Moving a living target out of range preserves the approved queued approach.
  const secondAim=await page.evaluate(()=>Prototype.chargePresentation().targetId);
- const replacement=await page.evaluate(id=>{const c=Prototype.game,e=c.zone().enemies.find(e=>e.id===id);e.x=1300;e.y=1300;return c.zone().enemies.find(other=>other.id!==id).id;},secondAim);
+ const replacement=await page.evaluate(id=>{const c=Prototype.game,e=c.zone().enemies.find(e=>e.id===id);e.hp=0;return c.zone().enemies.find(other=>other.id!==id).id;},secondAim);
  await page.waitForFunction(()=>document.querySelector('#skill-2 small')?.textContent==='CHARGED',{timeout:1800});
  await page.locator('#skill-2').evaluate(el=>el.onpointerup({pointerType:'touch',pointerId:303}));
  const redirected=await page.evaluate(()=>[...Prototype.game.s.statistics.events].reverse().find(e=>e.type==='chargedArea'&&e.slot===2));
@@ -653,7 +658,7 @@ await check('Skill 2 and party-heal charge states are target-stable and honest '
  await page.locator('#skill-3').evaluate(el=>{el.setPointerCapture=()=>{};el.onpointerdown({pointerType:'touch',pointerId:305,preventDefault(){}});});
  await page.waitForFunction(()=>document.querySelector('#skill-3 small')?.textContent==='NO HEAL',{timeout:1800});
  const beforeHeal=await page.evaluate(()=>({mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[2]}));await page.locator('#skill-3').evaluate(el=>el.onpointerup({pointerType:'touch',pointerId:305}));const afterHeal=await page.evaluate(()=>({mp:Prototype.game.hero.mp,cd:Prototype.game.hero.cd[2]}));assert.deepEqual(afterHeal,beforeHeal,'NO HEAL release spends neither MP nor cooldown');
- await page.evaluate(state=>{Prototype.game.s=state;},saved);
+ await page.evaluate(state=>{Prototype.game.updateEnemies=__skill2ChargeAuditAI;delete window.__skill2ChargeAuditAI;Prototype.game.s=state;},saved);
 });
 await check('Ranger sustain thresholds and direct commands '+tag,async()=>{
  if(!(await page.evaluate(()=>PrototypeRules.resourceMode.manaEnabled))){
