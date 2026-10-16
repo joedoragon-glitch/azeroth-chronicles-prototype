@@ -38,3 +38,5 @@ The user clarified that this covers the whole procedural visual language. Shared
 - New optional wetland plants and western garden additions leave headroom under the existing v4 400-prop ceiling. No save cap is raised.
 
 These are source findings and repairs, not failures discovered by execution. Additional automatic Thornfang AI and full-court acceptance cases are authored only. The final comprehensive audit and immutable design handoffs follow this code checkpoint.
+
+Further joined review: the March basin now tapers both ends with shared collision/paint geometry. Confirmed Mirejaw roll, Veyra court, Cinder cordon and Dreadmaw vapor/closure contacts explicitly identify the actual persistent owner, rather than inheriting a simultaneous unrelated telegraph. No hit timing or damage changed. These source repairs have authored, unexecuted acceptance additions.

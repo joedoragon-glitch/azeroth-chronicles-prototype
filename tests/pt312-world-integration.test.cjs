@@ -36,6 +36,14 @@ for (const region of C.data.regions) {
   restored.zone();
   assert.equal(JSON.stringify(restored.snapshot()), once, 'migration is idempotent');
 }
+// PT-009: the basin has rounded ends rather than a flat, full-width rectangular cap.
+{
+  const basin = R.barriers[1];
+  for (const y of [basin.bounds[2] + 5, basin.bounds[3] - 5]) {
+    const [lo, hi] = R.channelBanks(1, y);
+    assert(hi - lo < 200, 'rounded wet-basin end');
+  }
+}
 // PT-013: the Highlands ravine cannot be bypassed around either map-edge endpoint.
 {
   const g = new C(); g.enter('highlands');

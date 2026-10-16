@@ -2307,7 +2307,7 @@
   // Bridge throats retain their established position and full deck width.
   const channelProfiles = [
     { bend: 25, width: 0.12 },
-    { bend: 68, width: 0.16 },
+    { bend: 68, width: 0.16, endCap: 150 },
     { bend: 28, width: 0.12 },
     { bend: 23, width: 0.1 },
     { bend: 18, width: 0.09 },
@@ -2320,8 +2320,11 @@
       soft = blend * blend * (3 - 2 * blend),
       offset = (Math.sin(y / 193 + region) + Math.sin(y / 79) * 0.22) * cfg.bend * soft,
       half = (x2 - x1) / 2 * (1 + Math.sin(y / 137 + region * 0.7) * cfg.width * soft),
-      center = (x1 + x2) / 2 + offset;
-    return [center - half, center + half];
+      center = (x1 + x2) / 2 + offset,
+      edge = Math.max(0, Math.min(y - barrier.bounds[2], barrier.bounds[3] - y)),
+      cap = cfg.endCap && edge < cfg.endCap
+        ? Math.sqrt(Math.max(0, 1 - Math.pow(1 - edge / cfg.endCap, 2))) : 1;
+    return [center - half * cap, center + half * cap];
   }
   // A shallow, walkable drainage channel feeds the deeper Causeway basin.
   // Muddy margins and reeds describe seasonal wet ground rather than a new strategic wall.

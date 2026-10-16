@@ -480,6 +480,14 @@
     proto.enemyVfxMotion = function (m) {
       return store(this).motions.get(m) || null;
     };
+    // Custom persistent owners keep their own geometry/timing. Confirmed contact
+    // is observed explicitly rather than guessed from an unrelated current cast.
+    proto.enemyVfxResolvedContact = function (e, attack, unit, identityPlan = attack) {
+      const normalized = identityPlan.index == null && Number.isInteger(identityPlan.skill)
+        ? { ...identityPlan, index: identityPlan.skill, captainSkill: true } : identityPlan;
+      return emit(this, e, { ...attack }, 'impact',
+        { x: unit.x, y: unit.y, target: unit === this.hero ? 'hero' : unit.id }, V.describe(e, normalized));
+    };
     proto.enemyVfxHazardImpact = function (h, u) {
       const m = this.enemyVfxHazard(h);
       if (m && m.epoch === store(this).epoch)

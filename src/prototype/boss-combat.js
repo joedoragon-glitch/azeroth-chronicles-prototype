@@ -814,7 +814,7 @@
               )
             )
               continue;
-            this.hitParty(u, this.weakenedEnemyDamage(e), 0, e.id);
+            const landed = this.hitParty(u, this.weakenedEnemyDamage(e), 0, e.id);
             if (
               this.hero !== hero ||
               this.zoneId !== zone ||
@@ -822,6 +822,8 @@
               this.s.challenge.gameOver
             )
               return;
+            if (landed) this.enemyVfxResolvedContact?.(e, b, u,
+              { ...R.attacks.citadel[3], kind: 'checkerboard', index: 3 });
           }
         } else {
           b.phase = 'warn';

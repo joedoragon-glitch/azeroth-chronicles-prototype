@@ -46,4 +46,19 @@ for (const species of ['skeleton', 'orc', 'archer', 'crownguard'])
   assert.equal(frozen.arenaPatches[0].x, 100, 'visual payoff keeps actual warned coordinates');
   assert(Object.isFrozen(frozen.arenaPatches[0]));
 }
+// Custom persistent hits retain the actual skill identity on each confirmed tick.
+{
+  const g = new C(); g.enter('supply-crown');
+  const e = g.zone().enemies.find((u) => u.roomCaptain);
+  const vapor = { kind: 'circle', skill: 6, x: e.x, y: e.y, radius: 54 };
+  g.effects = [];
+  g.enemyVfxResolvedContact(e, vapor, g.hero);
+  g.enemyVfxResolvedContact(e, vapor, g.hero);
+  const impacts = g.effects.filter((f) => f.stage === 'impact');
+  assert.equal(impacts.length, 2, 'persistent future ticks are not permanently deduplicated');
+  for (const f of impacts) {
+    assert.equal(f.identity.id, 'captain/supply-crown/6');
+    assert.equal(P.route(f).key, 'enemyImpact');
+  }
+}
 console.log('PASS PT312 audio/event acceptance');

@@ -1057,6 +1057,33 @@
         "tests/pt312-combat-integration.test.cjs": "fa7a7236c8d9d7e27a16ffa463ba6c2d5ddb29fd7c106a1aa342f957763ea250",
         "tests/pt312-world-integration.test.cjs": "026b6cbf6b703d76a8b627b1a73d187213f3046770c3f73130ab1bc7c4271f37"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "baseline": "ae17b1306252dbf8230de01c2107220d9bc8dfef",
+      "source": "PR #313 integrated source review repairs and durable handoff. SOURCE ONLY, NOT TESTED.",
+      "files": {
+        "docs/PR313_WORK_IMPLEMENTATION_20261016.md": "9922912762e0780a13e91b34b386442e2549b53afa3a94b35a0e079302323685",
+        "src/prototype/boss-combat.js": "7f74662dca4cd2baeeb9f1a3b327eba2bdbfad56b3b555351871ea5f96d813bd",
+        "src/prototype/cindermaw-combat.js": "c934a92954ec7d443329acf35d5a22dd592e24f4ac9664d9579e07a5ce383483",
+        "src/prototype/dreadmaw-combat.js": "59588bcd5ed861fefe1365a10fe60e9e76421f84ef08d39d32f737d1522a1e51",
+        "src/prototype/enemy-vfx-events.js": "4be24213b16e06b0f7c05c8054de0af21d84e9cb5cbd48d188fe2a5a900590ca",
+        "src/prototype/engine.js": "7d9940bd00bb107847c20240627fd90c2e18bac7d866572c549103fbd7784f32",
+        "src/prototype/rules.js": "24ddd25e15c93acf667881d6bee6279cf9e34e00435d01b6a1a63d97cd71dfc4",
+        "tests/pt312-audio-integration.test.cjs": "b74c54c8566108b1825db5a274b2f5de191319ebf159e51c7a5b5f6252f6803e",
+        "tests/pt312-world-integration.test.cjs": "902432df9f40d9aeb687daf2838fb69775c8a2fcbc1fb575b2562e4d9ccf5f5f"
+      },
+      "previousFiles": {
+        "docs/PR313_WORK_IMPLEMENTATION_20261016.md": "e7f39701f73ab5188320e836f762239c1cb248005c5c3194b77ab9ccc5c3d0d4",
+        "src/prototype/boss-combat.js": "0981b468fa4f5d54c5776196fa75c334b073cf9e77871bf775acf5f6f7dffdfa",
+        "src/prototype/dreadmaw-combat.js": "746fb1cfa689cd96fdc032afbd7c6c81eb9a9171eed8c3cfae450fe58aae261d",
+        "src/prototype/enemy-vfx-events.js": "52a2565fda6dae99ccabc4b31585d0543c6fbfb6a817b728485c2470d15cd716",
+        "src/prototype/engine.js": "8f9f00bc3a23887d0e27511bedcc4084be4f8f4a07069a8476c5a2f521adc8af",
+        "src/prototype/rules.js": "03b47098cb0e755fc431af6275f55a9aef9b754af7573ba38ee98157742b562d",
+        "tests/pt312-audio-integration.test.cjs": "1288d68b881ebaf5fc120a138c4462e29b815dde513b52d4892cc9641c51e1bc",
+        "tests/pt312-world-integration.test.cjs": "6f462243c88b79bead2203ec7ea59b1550afa8ac09e58594a68b7d9a795cbf2b",
+        "src/prototype/cindermaw-combat.js": "b4cea3a71a26783747a1e9d36e69f52f11a130e8ba592a8e98ae1e85ded43b30"
+      }
     }
   ]
 }

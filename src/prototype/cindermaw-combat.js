@@ -470,7 +470,11 @@
           return result;
         cast.reactions++;
         cast.last[source] = this.s.time;
-        this.hitParty(attacker, owner.damage * p.retaliationCoefficient, 0, owner.id);
+        const hero = this.hero, zone = this.zoneId, deaths = this.s.statistics.deaths,
+          landed = this.hitParty(attacker, owner.damage * p.retaliationCoefficient, 0, owner.id);
+        if (landed && !interrupted(this, hero, zone, deaths))
+          this.enemyVfxResolvedContact?.(owner, cast, attacker,
+            { ...p, index: 2, kind: 'circle', selfDefense: false });
         return result;
       }
       resolveAttack(e) {
@@ -755,8 +759,9 @@
           if (!contact || (!final && (c.burns[key] ?? -Infinity) + p.tickInterval > this.s.time))
             continue;
           c.burns[key] = this.s.time;
-          this.hitParty(unit, e.damage * (final ? p.blastCoefficient : p.coefficient), 0, e.id);
+          const landed = this.hitParty(unit, e.damage * (final ? p.blastCoefficient : p.coefficient), 0, e.id);
           if (interrupted(this, hero, zone, deaths) || !alive(e)) return false;
+          if (landed) this.enemyVfxResolvedContact?.(e, c, unit);
         }
         if (c.life <= 0) delete e.cinderCordon;
         return true;

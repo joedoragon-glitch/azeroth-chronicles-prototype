@@ -5208,9 +5208,11 @@
               const hero = this.hero,
                 zone = this.zoneId,
                 deaths = this.s.statistics.deaths;
-              this.hitParty(victim, roll.totalDamage / 3, 0, e.id, true);
+              const landed = this.hitParty(victim, roll.totalDamage / 3, 0, e.id, true);
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
+              if (landed) this.enemyVfxResolvedContact?.(e, roll, victim,
+                { ...R.attacks.mire[0], kind: 'cone', index: 0 });
             }
             if (roll.life <= 0 || victim.hp <= 0) {
               victim.deathRollHeld = false;
