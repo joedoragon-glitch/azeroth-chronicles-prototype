@@ -1113,7 +1113,9 @@
       captain.visualScale = profile.visualScale || 1.16;
       // Population reconciliation is also called during active simulation. The
       // agriculture selector's cooldown must survive these reads after setup.
-      if (z.id !== 'supply-crown' || captain.roomCaptainVersion !== 1)
+      // Setup normalization must not repeatedly truncate a live captain's
+      // special cooldown whenever zone() is read during simulation.
+      if (captain.roomCaptainVersion !== 1)
         captain.specialCd = Math.min(captain.specialCd ?? 1.25, 1.25);
       captain.roomCaptainVersion = 1;
       this.upgradeCaptainEndurance(captain, profile);
