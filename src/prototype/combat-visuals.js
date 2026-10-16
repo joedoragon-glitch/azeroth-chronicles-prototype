@@ -64,6 +64,8 @@
   }
   function warningShapes(a, patches) {
     if (a.kind === 'summon' || a.selfDefense) return [];
+    if (a.arenaLines) return a.arenaLines.map((line) =>
+      capsulePoints({ x: line.fromX, y: line.fromY }, line, line.halfWidth));
     if (a.dreadMechanic === 'closure') return dreadClosureShapes(a);
     if (a.cinderMechanic === 'cordon' && Number.isFinite(a.gapAngle))
       return [cordonPoints({ ...a, radius: a.initialRadius })];

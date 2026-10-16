@@ -21,6 +21,26 @@
     congestionSeconds: 0.65,
     relaxSeconds: 0.35,
   };
+  // Canonical visible melee loadouts, shared by real strike metadata and expression.
+  const enemyMeleeKits = {
+    species: {
+      goblin: ['blade', 'steel'], skeleton: ['sword', 'steel'], orc: ['sword', 'steel'],
+      crownguard: ['sword', 'steel'], archer: ['knife', 'steel'], ogre: ['club', 'wood'],
+      wolf: ['fangs', 'claw'], mireling: ['jaws', 'wet'], reedbeast: ['claws', 'wet'],
+      stalker: ['claws', 'claw'], ashbeast: ['claws', 'ash'], wraith: ['spectral touch', 'spectral'],
+    },
+    bosses: {
+      thorn: ['fangs', 'claw'], crypt: ['bone polearm', 'bone'], mire: ['jaws', 'wet'],
+      archive: ['steel hook', 'steel'], ridge: ['stone hammer', 'stone'],
+      mine: ['stone fists', 'stone'], warlord: ['axe', 'steel'], abyss: ['talons', 'ash'],
+      citadel: ['poleaxe', 'steel'], cindermaw: ['claws', 'ash'], darklord: ['sword', 'steel'],
+    },
+  };
+  function enemyMeleeEquipment(e) {
+    const kit = (e.type === 'boss' || e.boss ? enemyMeleeKits.bosses[e.family] : null) ||
+      (e.mountedCrownRider ? ['lance', 'steel'] : enemyMeleeKits.species[e.species]) || ['body', 'claw'];
+    return { weapon: kit[0], material: kit[1] };
+  }
   const arenaPlacement = { step: 32, margin: 3, separation: 20, searchRadius: 800 };
   const attack = (kind, warning, recovery, extra = {}) => ({
     kind,
@@ -2007,6 +2027,8 @@
         [815, 565, 'warm-brazier'],
         [360, 835, 'crate'],
         [700, 830, 'game-table'],
+        [175, 730, 'sleep-roll'],
+        [835, 780, 'sleep-roll'],
       ],
       walls: [
         [470, 180, 28],
@@ -2046,6 +2068,7 @@
         [820, 560, 'sleep-roll'],
         [330, 835, 'bone-pile'],
         [720, 825, 'reed-nest'],
+        [175, 745, 'mud-nest'],
       ],
       walls: [
         [455, 180, 28],
@@ -2078,12 +2101,14 @@
         [455, 225, 'stone-seat'],
         [690, 210, 'trophy-rack'],
         [835, 235, 'tool-rack'],
-        [210, 550, 'sleep-roll'],
+        [210, 550, 'ridge-bed'],
         [390, 555, 'game-table'],
         [640, 535, 'ore-cart'],
         [825, 565, 'bone-pile'],
         [335, 835, 'stone-marker'],
         [720, 825, 'supply-stack'],
+        [170, 755, 'sleep-roll'],
+        [835, 735, 'ration'],
       ],
       walls: [
         [430, 180, 30],
@@ -2122,6 +2147,8 @@
         [825, 565, 'command-tent'],
         [335, 835, 'supply-stack'],
         [720, 825, 'cookfire'],
+        [170, 755, 'bunk'],
+        [835, 760, 'bunk'],
       ],
       walls: [
         [445, 180, 30],
@@ -2160,6 +2187,8 @@
         [825, 565, 'bone-pile'],
         [335, 835, 'training-dummy'],
         [720, 825, 'crown-banner'],
+        [170, 745, 'bunk'],
+        [835, 765, 'bunk'],
       ],
       walls: [
         [450, 180, 30],
@@ -2249,7 +2278,7 @@
     { kind: 'water', bounds: [1120, 1690, 1450, 2070], gaps: [[1710, 1850]] },
     {
       kind: 'ravine',
-      bounds: [1250, 1350, 120, 2400],
+      bounds: [1250, 1350, 0, 3400],
       gaps: [
         [860, 1100],
         [1770, 1980],
@@ -2272,6 +2301,40 @@
       ],
     },
   ];
+  // Shared bank geometry: collision and painting read this exact function.
+  // Bridge throats retain their established position and full deck width.
+  const channelProfiles = [
+    { bend: 25, width: 0.12 },
+    { bend: 68, width: 0.16 },
+    { bend: 28, width: 0.12 },
+    { bend: 23, width: 0.1 },
+    { bend: 18, width: 0.09 },
+  ];
+  function channelBanks(region, y) {
+    const barrier = barriers[region], [x1, x2] = barrier.bounds,
+      cfg = channelProfiles[region];
+    const nearestGap = Math.min(...barrier.gaps.map(([lo, hi]) => y < lo ? lo - y : y > hi ? y - hi : 0)),
+      blend = Math.max(0, Math.min(1, (nearestGap - 45) / 135)),
+      soft = blend * blend * (3 - 2 * blend),
+      offset = (Math.sin(y / 193 + region) + Math.sin(y / 79) * 0.22) * cfg.bend * soft,
+      half = (x2 - x1) / 2 * (1 + Math.sin(y / 137 + region * 0.7) * cfg.width * soft),
+      center = (x1 + x2) / 2 + offset;
+    return [center - half, center + half];
+  }
+  // A shallow, walkable drainage channel feeds the deeper Causeway basin.
+  // Muddy margins and reeds describe seasonal wet ground rather than a new strategic wall.
+  const wetlandDrainage = [
+    [0, 1545, 40], [190, 1510, 48], [380, 1540, 58], [570, 1580, 44],
+    [790, 1555, 52], [990, 1590, 65], [1230, 1585, 75],
+  ];
+  function drainageBanks(x) {
+    let j = wetlandDrainage.findIndex((p) => p[0] >= x);
+    if (j < 0) return { y: wetlandDrainage.at(-1)[1], width: wetlandDrainage.at(-1)[2] };
+    if (j <= 0) return { y: wetlandDrainage[0][1], width: wetlandDrainage[0][2] };
+    const a = wetlandDrainage[j - 1], b = wetlandDrainage[j],
+      t = Math.max(0, Math.min(1, (x - a[0]) / (b[0] - a[0]))), blend = t * t * (3 - 2 * t);
+    return { y: a[1] + (b[1] - a[1]) * blend, width: a[2] + (b[2] - a[2]) * blend };
+  }
   const terrain = [
     [
       { kind: 'water', x: 630, y: 1320, r: 125 },
@@ -2605,6 +2668,10 @@
     [1125, 1155, 'farm-tool-rack', 'hamlet-kitchen-plots'],
     [1350, 815, 'hay-rick', 'eastern-pasture'],
     [1450, 935, 'pasture-sheep', 'eastern-pasture'],
+    [115, 470, 'garden', 'western-millhaven-kitchen-plots'],
+    [170, 600, 'sapling', 'western-millhaven-home-orchard'],
+    [330, 595, 'sapling', 'western-millhaven-home-orchard'],
+    [400, 550, 'farm-tool-rack', 'western-millhaven-kitchen-plots'],
   ];
   const dungeonWalls = {
     crypt: [
@@ -3088,8 +3155,8 @@
   const dungeonGuardFormations = {
     mine: [
       {
-        x: 290,
-        y: 350,
+        x: 410,
+        y: 280,
         group: 'receiving',
         species: 'wolf',
         role: 'melee',
@@ -3097,8 +3164,8 @@
         name: 'Crown direwolf lance rider',
       },
       {
-        x: 490,
-        y: 370,
+        x: 525,
+        y: 330,
         group: 'receiving',
         species: 'wolf',
         role: 'ranged',
@@ -3106,9 +3173,9 @@
         name: 'Crown direwolf archer',
       },
       {
-        x: 420,
-        y: 490,
-        group: 'receiving',
+        x: 580,
+        y: 500,
+        group: 'new-workings',
         species: 'ogre',
       },
       {
@@ -3441,13 +3508,13 @@
         x: 230,
         y: 300,
         role: 'melee',
-        group: 'muster',
+        group: 'entry-watch',
       },
       {
         x: 390,
         y: 300,
         role: 'ranged',
-        group: 'muster',
+        group: 'entry-watch',
       },
       {
         x: 540,
@@ -6014,6 +6081,8 @@
     balance,
     combatGeometry,
     actorSpacing,
+    enemyMeleeKits,
+    enemyMeleeEquipment,
     arenaPlacement,
     bossCadence,
     bossSummoning,
@@ -6151,6 +6220,10 @@
     sites,
     quests,
     barriers,
+    channelProfiles,
+    channelBanks,
+    wetlandDrainage,
+    drainageBanks,
     terrain,
     landforms,
     harbors,

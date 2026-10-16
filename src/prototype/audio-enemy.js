@@ -38,6 +38,7 @@
   });
   const textures = Object.freeze({
     steel: [1800, 52, 36],
+    wood: [640, 48, 31],
     claw: [950, 44, 33],
     bone: [2400, 67, 49],
     stone: [480, 38, 28],
@@ -86,16 +87,23 @@
         this.enemyAudioSeen.add(e);
         const now = this.ctx.currentTime,
           warning = e.stage === 'windup' && e.dangerous,
+          important = ['boss', 'captain'].includes(e.tier) || d.signature,
           gap = e.stage === 'windup' ? 0.035 : e.stage === 'spawn' ? 0.09 : 0.045;
         if (!this.allowSfx('enemy:' + d.key + ':' + d.material, now, gap)) return;
         if (warning) {
           // Keep the critical warning priority/duck/throttle shared with legacy warnings.
           if (now - this.lastWarning < 0.35) return;
           this.lastWarning = now;
+          this.lastEnemyDuck = now;
           this.duck();
         }
+        if (important && e.dangerous && ['release', 'travel', 'phase'].includes(e.stage) &&
+            now - (this.lastEnemyDuck ?? -Infinity) > 0.22) {
+          this.lastEnemyDuck = now;
+          this.duck(e.stage === 'travel' ? 0.3 : 0.24);
+        }
         const previous = this.sourcePriority;
-        this.sourcePriority = warning ? 3 : 1;
+        this.sourcePriority = warning ? 3 : important ? 2 : 1;
         try {
           const details = {
             ...e,
@@ -105,11 +113,17 @@
             action: d.action,
             accent: d.accent,
           };
+          if (d.cargo && ['windup', 'release', 'travel', 'impact', 'miss'].includes(e.stage)) {
+            this.renderEffect({ ...details, type: { windup: 'cargoWindup', release: 'projectileLaunch',
+              travel: 'cargoTravel', impact: 'projectileImpact', miss: 'cargoMiss' }[e.stage],
+              style: 'cargo', presentationHandled: false });
+            return;
+          }
           if (this.playSoundEvent('effect.' + d.key, details)) {
             this.enemyAccent(now, d, e.stage, e.variant);
             return;
           }
-          this.enemyMaterial(now, d, e.stage, warning, e.variant);
+          this.enemyMaterial(now, { ...d, contact: e.contact }, e.stage, warning, e.variant);
         } finally {
           this.sourcePriority = previous;
         }
@@ -118,10 +132,15 @@
         const [hz, high, low] = textures[d.material] || textures.claw;
         const impact = stage === 'impact',
           release = stage === 'release',
+          movement = stage === 'travel',
+          miss = stage === 'miss',
           phase = stage === 'phase',
           spawn = stage === 'spawn';
         const weight = variant === 'true' ? 1.08 : 1;
-        if (stage === 'windup') {
+        if (movement || miss) {
+          this.noiseBurst(now, movement ? 0.12 : 0.075, 0.025, 'bandpass', hz, 0.7);
+          if (movement) this.sweep(high + 5, low, now, 0.14, 0.024, 'triangle');
+        } else if (stage === 'windup') {
           // Two short pitched pulses remain readable on phone speakers. Non-damage
           // summon casting uses a rising material rustle without the danger motif.
           if (warning) {
@@ -133,7 +152,7 @@
           this.noiseBurst(
             now,
             impact ? 0.1 : spawn ? 0.065 : 0.11,
-            impact ? 0.058 : phase ? 0.04 : 0.035,
+            impact ? (d.contact ? 0.058 : 0.033) : phase ? 0.04 : 0.035,
             'bandpass',
             hz,
             0.8,

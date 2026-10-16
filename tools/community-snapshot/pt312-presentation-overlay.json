@@ -1,0 +1,2714 @@
+{
+  "schemaVersion": 1,
+  "canonicalPR": 313,
+  "canonicalIssue": 312,
+  "status": "SOURCE ONLY, NOT TESTED",
+  "baselineInventory": "tools/community-snapshot/procedural-art-inventory.json",
+  "sourceCommit": null,
+  "sourceCommitStatus": "Link to the immutable implementation checkpoint in the next provenance commit.",
+  "direction": "Ogre-quality cohesive organic anatomy and material-appropriate contours; lean wolves, gaunt undead, sharp functional weapons and structured military props retain identity.",
+  "records": [
+    {
+      "id": "enemy:ashbeast",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": {
+        "region": 0,
+        "enemy": "ashbeast"
+      },
+      "captureVariants": [
+        {
+          "name": "ordinary",
+          "entity": {
+            "ranged": false
+          }
+        },
+        {
+          "name": "ranged",
+          "entity": {
+            "ranged": true
+          }
+        },
+        {
+          "name": "guardian",
+          "entity": {
+            "guard": true
+          }
+        },
+        {
+          "name": "ringleader",
+          "entity": {
+            "form": "ringleader"
+          }
+        }
+      ],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "enemy:goblin",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": {
+        "region": 0,
+        "enemy": "goblin"
+      },
+      "captureVariants": [
+        {
+          "name": "ordinary",
+          "entity": {
+            "ranged": false
+          }
+        },
+        {
+          "name": "ranged",
+          "entity": {
+            "ranged": true
+          }
+        },
+        {
+          "name": "guardian",
+          "entity": {
+            "guard": true
+          }
+        },
+        {
+          "name": "ringleader",
+          "entity": {
+            "form": "ringleader"
+          }
+        }
+      ],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "enemy:orc",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": {
+        "region": 0,
+        "enemy": "orc"
+      },
+      "captureVariants": [
+        {
+          "name": "ordinary",
+          "entity": {
+            "ranged": false
+          }
+        },
+        {
+          "name": "ranged",
+          "entity": {
+            "ranged": true
+          }
+        },
+        {
+          "name": "guardian",
+          "entity": {
+            "guard": true
+          }
+        },
+        {
+          "name": "ringleader",
+          "entity": {
+            "form": "ringleader"
+          }
+        }
+      ],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "enemy:crownguard",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": {
+        "region": 0,
+        "enemy": "crownguard"
+      },
+      "captureVariants": [
+        {
+          "name": "ordinary",
+          "entity": {
+            "ranged": false
+          }
+        },
+        {
+          "name": "ranged",
+          "entity": {
+            "ranged": true
+          }
+        },
+        {
+          "name": "guardian",
+          "entity": {
+            "guard": true
+          }
+        },
+        {
+          "name": "ringleader",
+          "entity": {
+            "form": "ringleader"
+          }
+        }
+      ],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "enemy:summon",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": {
+        "region": 0,
+        "enemy": "summon"
+      },
+      "captureVariants": [
+        {
+          "name": "ordinary",
+          "entity": {
+            "ranged": false
+          }
+        },
+        {
+          "name": "guardian",
+          "entity": {
+            "guard": true
+          }
+        },
+        {
+          "name": "ringleader",
+          "entity": {
+            "form": "ringleader"
+          }
+        }
+      ],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "boss:crypt",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": {
+        "region": 0,
+        "boss": "crypt"
+      },
+      "captureVariants": [
+        {
+          "name": "normal",
+          "entity": {
+            "form": "normal"
+          }
+        },
+        {
+          "name": "true",
+          "entity": {
+            "form": "true"
+          }
+        }
+      ],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "boss:archive",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": {
+        "region": 1,
+        "boss": "archive"
+      },
+      "captureVariants": [
+        {
+          "name": "normal",
+          "entity": {
+            "form": "normal"
+          }
+        },
+        {
+          "name": "true",
+          "entity": {
+            "form": "true"
+          }
+        }
+      ],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "boss:ridge",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": {
+        "region": 2,
+        "boss": "ridge"
+      },
+      "captureVariants": [
+        {
+          "name": "normal",
+          "entity": {
+            "form": "normal"
+          }
+        },
+        {
+          "name": "true",
+          "entity": {
+            "form": "true"
+          }
+        }
+      ],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "boss:mine",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": {
+        "region": 2,
+        "boss": "mine"
+      },
+      "captureVariants": [
+        {
+          "name": "normal",
+          "entity": {
+            "form": "normal"
+          }
+        },
+        {
+          "name": "true",
+          "entity": {
+            "form": "true"
+          }
+        }
+      ],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "boss:warlord",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": {
+        "region": 3,
+        "boss": "warlord"
+      },
+      "captureVariants": [
+        {
+          "name": "normal",
+          "entity": {
+            "form": "normal"
+          }
+        },
+        {
+          "name": "true",
+          "entity": {
+            "form": "true"
+          }
+        }
+      ],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "boss:citadel",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": {
+        "region": 4,
+        "boss": "citadel"
+      },
+      "captureVariants": [
+        {
+          "name": "normal",
+          "entity": {
+            "form": "normal"
+          }
+        },
+        {
+          "name": "true",
+          "entity": {
+            "form": "true"
+          }
+        }
+      ],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "boss:darklord",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": {
+        "region": 4,
+        "boss": "darklord"
+      },
+      "captureVariants": [
+        {
+          "name": "normal",
+          "entity": {
+            "form": "normal"
+          }
+        },
+        {
+          "name": "true",
+          "entity": {
+            "form": "true"
+          }
+        }
+      ],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "structure:vale-cottage",
+      "reason": "Settlement contour: ease roof/wall joins, retain regional roof, footprint, door and material vocabulary.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "vale-cottage"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "structure:vale-workshop",
+      "reason": "Settlement contour: ease roof/wall joins, retain regional roof, footprint, door and material vocabulary.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "vale-workshop"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "structure:march-stilt-house",
+      "reason": "Settlement contour: ease roof/wall joins, retain regional roof, footprint, door and material vocabulary.",
+      "nativeFixture": {
+        "region": 1,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "march-stilt-house"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "structure:march-boathouse",
+      "reason": "Settlement contour: ease roof/wall joins, retain regional roof, footprint, door and material vocabulary.",
+      "nativeFixture": {
+        "region": 1,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "march-boathouse"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "structure:highland-stone-house",
+      "reason": "Settlement contour: ease roof/wall joins, retain regional roof, footprint, door and material vocabulary.",
+      "nativeFixture": {
+        "region": 2,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "highland-stone-house"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "structure:highland-smithy",
+      "reason": "Settlement contour: ease roof/wall joins, retain regional roof, footprint, door and material vocabulary.",
+      "nativeFixture": {
+        "region": 2,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "highland-smithy"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "structure:frontier-patched-house",
+      "reason": "Settlement contour: ease roof/wall joins, retain regional roof, footprint, door and material vocabulary.",
+      "nativeFixture": {
+        "region": 3,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "frontier-patched-house"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "structure:frontier-workshop",
+      "reason": "Settlement contour: ease roof/wall joins, retain regional roof, footprint, door and material vocabulary.",
+      "nativeFixture": {
+        "region": 3,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "frontier-workshop"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "structure:crown-ash-house",
+      "reason": "Settlement contour: ease roof/wall joins, retain regional roof, footprint, door and material vocabulary.",
+      "nativeFixture": {
+        "region": 4,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "crown-ash-house"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "structure:crown-forgehouse",
+      "reason": "Settlement contour: ease roof/wall joins, retain regional roof, footprint, door and material vocabulary.",
+      "nativeFixture": {
+        "region": 4,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "crown-forgehouse"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:direwolf-kennel",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "direwolf-kennel",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:rider-tack-rack",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "rider-tack-rack",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:rider-bunk",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "rider-bunk",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:estate-rug",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "estate-rug",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:estate-lounge",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "estate-lounge",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:coffin",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "coffin",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:crate",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "crate",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:thorn-bed",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "thorn-bed",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:root-table",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "root-table",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:mire-pool",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "mire-pool",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:fish-rack",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "fish-rack",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:reed-nest",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "reed-nest",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:drift-seat",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "drift-seat",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:ore-sorting-bay",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "ore-sorting-bay",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:caravan-loading-bay",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "caravan-loading-bay",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:ridge-supper",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "ridge-supper",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:ridge-game-corner",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "ridge-game-corner",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:ridge-study",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "ridge-study",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:ridge-bed",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "ridge-bed",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:crag-rest",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "crag-rest",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:stone-seat",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "stone-seat",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:animal-pen",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "animal-pen",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:drying-rack",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "drying-rack",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:lean-to",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "lean-to",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:sleep-roll",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "sleep-roll",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:stolen-goods",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "stolen-goods",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:grave-marker",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "grave-marker",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:pup-nest",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "pup-nest",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:fishing-net",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "fishing-net",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:mud-nest",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "mud-nest",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:wallow",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "wallow",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:ore-cart",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "ore-cart",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:field-kitchen",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "field-kitchen",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:supply-stack",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "supply-stack",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:command-tent",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "command-tent",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:bunk",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "bunk",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:roost",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "roost",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:hatchery",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "hatchery",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:scribe-desk",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "scribe-desk",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:scroll-stack",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "scroll-stack",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:caretaker-table",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "caretaker-table",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:grass",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "grass",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:wet-grass",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "wet-grass",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:bush",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "bush",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:marsh-bush",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "marsh-bush",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:battlefield-poppies",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "battlefield-poppies",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:pioneer-grasses",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "pioneer-grasses",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:pioneer-brush",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "pioneer-brush",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:regrowth-birch",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "regrowth-birch",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:regrowth-willow",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "regrowth-willow",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:wildflowers",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "wildflowers",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:fruit-tree",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "fruit-tree",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:sapling",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "sapling",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:stump",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "stump",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:fallen-log",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "fallen-log",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:reeds",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "reeds",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:cattails",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "cattails",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:driftwood",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "driftwood",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:mangrove",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "mangrove",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:pine-sapling",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "pine-sapling",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:alpine-scrub",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "alpine-scrub",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:heather",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "heather",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:dead-tree",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "dead-tree",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:charred-stump",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "charred-stump",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:dry-scrub",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "dry-scrub",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:burned-log",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "burned-log",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:dead-shrub",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "dead-shrub",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:heated-drying-shed",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "heated-drying-shed",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:heated-washhouse",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "heated-washhouse",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:market",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "market",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:woodpile",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "woodpile",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:laundry",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "laundry",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:well",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "well",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:barrel",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "barrel",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:cart",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "cart",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:ration",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "ration",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:hay-rick",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "hay-rick",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:furrow-plot",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "furrow-plot",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:pasture-sheep",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "pasture-sheep",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:poultry-yard",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "poultry-yard",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:feed-trough",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "feed-trough",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:garden",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "garden",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:stacked-lumber",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "stacked-lumber",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:broken-cart",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "broken-cart",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:flight-harness-station",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "flight-harness-station",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:handler-station",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "handler-station",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:feed-crate",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "feed-crate",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:egg-cradle",
+      "reason": "Organic contour: rounded living growth, nests or soil edges; retain local species and seeded placement.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "egg-cradle",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "decoration:feeding-trough",
+      "reason": "Worn material contour: soften timber, cloth or furniture joins while retaining working surfaces, load and identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "feeding-trough",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:quests-vale",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "quests"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:supplier-vale",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "supplier"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:recruiter-vale",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "recruiter"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:rest-vale",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "rest"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:quests-march",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 1,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "quests"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:supplier-march",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 1,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "supplier"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:recruiter-march",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 1,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "recruiter"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:rest-march",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 1,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "rest"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:quests-highlands",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 2,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "quests"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:supplier-highlands",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 2,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "supplier"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:recruiter-highlands",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 2,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "recruiter"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:rest-highlands",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 2,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "rest"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:quests-frontier",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 3,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "quests"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:supplier-frontier",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 3,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "supplier"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:recruiter-frontier",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 3,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "recruiter"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:rest-frontier",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 3,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "rest"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:quests-crown",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 4,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "quests"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:supplier-crown",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 4,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "supplier"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:recruiter-crown",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 4,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "recruiter"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "service:rest-crown",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 4,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "rest"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "shared:transport-wagon",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "transport",
+          "icon": "🛒"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "shared:transport-caravan",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "transport",
+          "icon": "🐫"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "shared:transport-ferry",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "transport",
+          "icon": "⛵"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "shared:terrain",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": null,
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "shared:roads",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": null,
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "shared:combat-warnings",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": null,
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "shared:combat-effects",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": null,
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "specialist:thorn",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "teacher",
+          "family": "thorn"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "specialist:crypt",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "smith",
+          "family": "crypt"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "specialist:mire",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "teacher",
+          "family": "mire"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "specialist:archive",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "alchemist",
+          "family": "archive"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "specialist:ridge",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "teacher",
+          "family": "ridge"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "specialist:mine",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "smith",
+          "family": "mine"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "specialist:warlord",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "teacher",
+          "family": "warlord"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "specialist:abyss",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "teacher",
+          "family": "abyss"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "specialist:citadel",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "teacher",
+          "family": "citadel"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "specialist:cindermaw",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "smith",
+          "family": "cindermaw"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "specialist:darklord",
+      "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "smith",
+          "family": "darklord"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "dispatch:pillar",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "prop",
+          "structure": "pillar"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "renderer-alias:keeper",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": {
+        "region": 1,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "keeper"
+        },
+        "probeEntity": {
+          "renderKind": "enemy",
+          "type": "boss",
+          "family": "archive",
+          "form": "normal"
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    },
+    {
+      "id": "renderer-alias:archive-record",
+      "reason": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+      "nativeFixture": {
+        "region": 1,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "archive-record"
+        },
+        "probeEntity": {
+          "renderKind": "prop",
+          "structure": "scroll-stack",
+          "decorative": true
+        }
+      },
+      "captureVariants": [],
+      "sourceOwner": "src/prototype/visuals.js",
+      "sourceSnapshotSha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+      "nativeReview": "PENDING; no browser or Canvas executed",
+      "registeredAssetPolicy": "Retain existing active sprites and immutable originals; this pass changes procedural fallback only."
+    }
+  ],
+  "additionalSharedDependencies": [
+    "human hero/party bodies",
+    "allied goblin archer body",
+    "anonymous service fallback humanoids"
+  ],
+  "evidence": "Existing 426 contracts and original handoffs remain immutable. Native captures and sound review are unexecuted."
+}

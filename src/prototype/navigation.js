@@ -86,12 +86,16 @@
         return true;
       }
       separateActors(dt) {
+        // Scripted charges/repositions use their own authoritative movement owner.
+        // Refresh their broad-phase positions before passive overlap recovery.
+        const prior = crowds.get(this);
+        if (prior) prior.at = -Infinity;
         const frame = this.actorCrowd(),
           cfg = R.actorSpacing;
         for (const unit of frame.bodies) {
           // Fixed warning origins, held victims and scripted motion remain authoritative.
           if (unit === this.hero || unit.hp <= 0 || unit.telegraph || unit.motion ||
-              unit.keeperHeld || unit.deathRollHeld || unit.petCharge || unit.charge) continue;
+              unit.keeperHeld || unit.deathRollHeld || this.partyChargeState(unit)) continue;
           let dx = 0, dy = 0;
           for (const other of this.nearbyActors(unit, frame)) {
             if (other === unit || other.hp <= 0) continue;
@@ -189,17 +193,16 @@
         } else if (side) {
         } else {
           const {
-            bounds: [a, b, c, e],
+            bounds: [, , c, e],
             gaps,
           } = R.barriers[i];
-          if (
-            x > a - radius &&
-            x < b + radius &&
-            y > c - radius &&
-            y < e + radius &&
-            !gaps.some(([l, h]) => y > l + radius && y < h - radius)
-          )
-            return true;
+          if (y > c - radius && y < e + radius &&
+              !gaps.some(([l, h]) => y > l + radius && y < h - radius)) {
+            for (let at = y - radius; at <= y + radius + 0.01; at += Math.max(1, radius / 2)) {
+              const [a, b] = R.channelBanks(i, at);
+              if (x > a - radius && x < b + radius) return true;
+            }
+          }
         }
         if (!dungeon && !room && !side)
           for (const p of R.terrain[i])
@@ -417,7 +420,8 @@
             break;
           }
         }
-        congestion.blocked = moved ? 0 : congestion.blocked + dt;
+        const advanced = d - dist(entity, target) > Math.min(0.5, step * 0.2);
+        congestion.blocked = advanced ? 0 : congestion.blocked + dt;
         if (congestion.blocked >= R.actorSpacing.congestionSeconds) {
           // Only same-side bodies relax, and only for this bounded interval.
           congestion.until = this.s.time + R.actorSpacing.relaxSeconds;

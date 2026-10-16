@@ -2,6 +2,41 @@
 (function (root) {
   'use strict';
   const R = typeof PrototypeRules !== 'undefined' ? PrototypeRules : require('./rules.js');
+  // Ogre-quality craft across the existing catalog: organic contours and worn
+  // material joins, with deliberate mineral, weapon and fortification edges retained.
+  const organicContours = new Set([
+    'grass', 'wet-grass', 'bush', 'marsh-bush', 'wildflowers', 'fruit-tree', 'sapling',
+    'reeds', 'cattails', 'mangrove', 'pine-sapling', 'alpine-scrub', 'heather',
+    'dry-scrub', 'dead-shrub', 'pioneer-grasses', 'pioneer-brush', 'regrowth-birch',
+    'regrowth-willow', 'battlefield-poppies', 'pup-nest', 'reed-nest', 'mud-nest',
+    'animal-pen', 'pasture-sheep', 'poultry-yard', 'hay-rick', 'garden', 'furrow-plot',
+    'mire-pool', 'wallow', 'roost', 'hatchery', 'egg-cradle',
+  ]);
+  const wornContours = new Set([
+    'stump', 'fallen-log', 'driftwood', 'dead-tree', 'charred-stump', 'burned-log',
+    'woodpile', 'stacked-lumber', 'crate', 'barrel', 'cart', 'broken-cart', 'ore-cart',
+    'well', 'coffin', 'grave-marker', 'root-table', 'drift-seat', 'stone-seat',
+    'sleep-roll', 'bunk', 'rider-bunk', 'ridge-bed', 'thorn-bed', 'crag-rest',
+    'estate-rug', 'estate-lounge', 'ridge-supper', 'ridge-game-corner', 'ridge-study',
+    'laundry', 'ration', 'stolen-goods', 'supply-stack', 'feed-crate', 'feed-trough',
+    'feeding-trough', 'fish-rack', 'fishing-net', 'drying-rack', 'lean-to', 'market',
+    'field-kitchen', 'command-tent', 'scribe-desk', 'scroll-stack', 'caretaker-table',
+    'direwolf-kennel', 'rider-tack-rack', 'caravan-loading-bay', 'ore-sorting-bay',
+    'heated-drying-shed', 'heated-washhouse', 'handler-station', 'flight-harness-station',
+  ]);
+  const buildingContours = new Set([
+    'vale-cottage', 'vale-workshop', 'march-stilt-house', 'march-boathouse',
+    'highland-stone-house', 'highland-smithy', 'frontier-patched-house',
+    'frontier-workshop', 'crown-ash-house', 'crown-forgehouse',
+  ]);
+  function contourRadius(e) {
+    if (organicContours.has(e.structure)) return 3.5;
+    if (wornContours.has(e.structure)) return 2.8;
+    if (buildingContours.has(e.structure)) return 2.2;
+    if (!e.structure && e.renderKind === 'prop' && /🌲|🌳/.test(e.icon || '')) return 2.5;
+    if (['rest', 'minor', 'supplier', 'recruiter', 'quests'].includes(e.kind)) return 2.2;
+    return 0;
+  }
   function allyBodyKind(e) {
     return e?.type === 'archer' ? 'goblin-archer' : e?.class || e?.type || 'worker';
   }
@@ -111,13 +146,30 @@
       steel = '#9eafb6',
       gold = '#d3b46c',
       skin = '#dfb18b';
+    const materialRoundness = contourRadius(e);
+    const tracePoly = (v, radius = 0) => {
+      ctx.beginPath();
+      if (!radius) v.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+      else {
+        for (let j = 0; j < v.length; j++) {
+          const p = v[j], before = v[(j + v.length - 1) % v.length], after = v[(j + 1) % v.length],
+            d1 = Math.hypot(before[0] - p[0], before[1] - p[1]),
+            d2 = Math.hypot(after[0] - p[0], after[1] - p[1]), r = Math.min(radius, d1 * 0.3, d2 * 0.3),
+            entry = [p[0] + (before[0] - p[0]) / Math.max(1, d1) * r,
+              p[1] + (before[1] - p[1]) / Math.max(1, d1) * r],
+            exit = [p[0] + (after[0] - p[0]) / Math.max(1, d2) * r,
+              p[1] + (after[1] - p[1]) / Math.max(1, d2) * r];
+          j ? ctx.lineTo(...entry) : ctx.moveTo(...entry);
+          ctx.quadraticCurveTo(...p, ...exit);
+        }
+      }
+      ctx.closePath();
+    };
     const poly = (v, c) => {
       ctx.fillStyle = c;
       ctx.strokeStyle = ink;
       ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      v.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
-      ctx.closePath();
+      tracePoly(v, materialRoundness);
       ctx.fill();
       ctx.stroke();
     };
@@ -125,12 +177,17 @@
       ctx.save();
       ctx.globalAlpha = a;
       ctx.fillStyle = c;
-      ctx.beginPath();
-      v.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
-      ctx.closePath();
+      tracePoly(v, materialRoundness);
       ctx.fill();
       ctx.restore();
     };
+    const softPoly = (vertices, color, radius = 3) => {
+      ctx.fillStyle = color; ctx.strokeStyle = ink; ctx.lineWidth = 1.2;
+      tracePoly(vertices, radius);
+      ctx.fill(); ctx.stroke();
+    };
+    const softRect = (x, y, w, h, color, radius = 3) =>
+      softPoly([[x, y], [x + w, y], [x + w, y + h], [x, y + h]], color, radius);
     const rect = (x, y, w, h, c) =>
       poly(
         [
@@ -1455,8 +1512,8 @@
       );
     }
     function humanoid(color, head = skin, bulk = 1) {
-      rect(-9 * bulk, 2, 7 * bulk, 13, '#39423e');
-      rect(2 * bulk, 2, 7 * bulk, 13, '#39423e');
+      softRect(-9 * bulk, 2, 7 * bulk, 13, '#39423e', 2.5);
+      softRect(2 * bulk, 2, 7 * bulk, 13, '#39423e', 2.5);
       fillPoly(
         [
           [-9 * bulk, 7],
@@ -1477,15 +1534,14 @@
         '#dbe3d0',
         0.08,
       );
-      poly(
-        [
-          [-12 * bulk, 5],
-          [-10 * bulk, -18],
-          [10 * bulk, -18],
-          [12 * bulk, 5],
-        ],
-        color,
-      );
+      // Sloped shoulders, connected chest/waist and a draped hem replace a rigid trapezoid.
+      ctx.fillStyle = color; ctx.strokeStyle = ink; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(-11 * bulk, 5);
+      ctx.bezierCurveTo(-12 * bulk, -3, -12 * bulk, -12, -9 * bulk, -17);
+      ctx.quadraticCurveTo(0, -22, 9 * bulk, -17);
+      ctx.bezierCurveTo(12 * bulk, -12, 12 * bulk, -3, 11 * bulk, 5);
+      ctx.quadraticCurveTo(0, 8, -11 * bulk, 5);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
       fillPoly(
         [
           [-12 * bulk, 5],
@@ -14449,6 +14505,13 @@
           oval(16, 12, 11, 3, '#58664c');
         }
       } else if (e.structure === 'pillar') {
+        if (e.householdPartition) {
+          // Worn masonry and a low return wall describe an alcove, not another temple colonnade.
+          softPoly([[-23, 11], [-22, -18], [-8, -28], [14, -23], [22, -6], [22, 14]], '#8a8f7f', 5);
+          softPoly([[-20, -18], [-8, -28], [14, -23], [7, -12]], '#a7ae97', 4);
+          line([[-12, -12], [-10, 6], [9, 10]], '#626c60', 1.5);
+          oval(0, 14, 26, 5, '#777d69');
+        } else {
         rect(-13, -44, 26, 58, '#9ca49a');
         rect(-18, -48, 36, 8, '#bac0ad');
         rect(-18, 10, 36, 8, '#8a9488');
@@ -14461,6 +14524,7 @@
             '#747f75',
             1,
           );
+        }
       } else if (e.icon === '🪨') {
         poly(
           [
@@ -14920,7 +14984,7 @@
             marsh ? '#689da0' : '#88b7bd',
             2,
           );
-        poly(
+        softPoly(
           [
             [-51, -4],
             [47, -6],
@@ -14929,7 +14993,7 @@
           ],
           marsh ? '#604a38' : '#53606a',
         );
-        poly(
+        softPoly(
           [
             [-52, -5],
             [47, -7],
@@ -14938,7 +15002,7 @@
           ],
           marsh ? '#af9368' : '#9b9784',
         );
-        poly(
+        softPoly(
           [
             [-38, 10],
             [35, 8],
@@ -15110,7 +15174,7 @@
           '#d0ae79',
         );
         for (const x of [-30, 17]) {
-          rect(x, -28, 15, 24, x < 0 ? '#76543f' : '#826047');
+          softRect(x, -28, 15, 24, x < 0 ? '#76543f' : '#826047');
           line(
             [
               [x + 7, -26],
@@ -15189,7 +15253,7 @@
           }
           oval(x, 16, 3, 3, '#d9c497');
         }
-        poly(
+        softPoly(
           [
             [-49, -18],
             [27, -19],
@@ -15198,7 +15262,7 @@
           ],
           '#78553b',
         );
-        poly(
+        softPoly(
           [
             [-46, -16],
             [25, -17],
@@ -15226,7 +15290,7 @@
           );
         rect(-44, -22, 13, 17, '#936a47');
         oval(-38, -20, 7, 7, '#c9a679');
-        poly(
+        softPoly(
           [
             [-53, -20],
             [-43, -41],
@@ -15237,7 +15301,7 @@
           ],
           '#c1a97d',
         );
-        poly(
+        softPoly(
           [
             [-48, -21],
             [-39, -38],
@@ -15677,9 +15741,9 @@
           rect(-13, -14, 26, 7, '#696b61');
           break;
         case 'mine':
-          rect(-18, 0, 14, 20, '#77847f');
-          rect(5, 0, 14, 20, '#77847f');
-          poly(
+          softRect(-18, 0, 14, 20, '#77847f');
+          softRect(5, 0, 14, 20, '#77847f');
+          softPoly(
             [
               [-22, 5],
               [-25, -24],
@@ -15690,10 +15754,10 @@
             ],
             '#929b8c',
           );
-          rect(-11, -50, 23, 21, '#a3ae9e');
-          rect(-8, -41, 5, 3, '#e0c785');
-          rect(5, -41, 5, 3, '#e0c785');
-          poly(
+          softRect(-11, -50, 23, 21, '#a3ae9e');
+          softRect(-8, -41, 5, 3, '#e0c785');
+          softRect(5, -41, 5, 3, '#e0c785');
+          softPoly(
             [
               [-7, -19],
               [0, -27],
@@ -15702,7 +15766,7 @@
             ],
             '#edc282',
           );
-          poly(
+          softPoly(
             [
               [-25, -22],
               [-39, -15],
@@ -15711,7 +15775,7 @@
             ],
             '#7b8a82',
           );
-          poly(
+          softPoly(
             [
               [24, -22],
               [38, -14],
@@ -16108,6 +16172,7 @@
               claw = ranged ? '#b78d80' : '#c0a080',
               tail = ranged ? '#aa7a69' : '#bd936b';
             oval(0, 0, 20, 10, body);
+            oval(5, -3, 12, 5, ranged ? '#a47a70' : '#bd9476');
             for (const side of [-1, 1]) {
               for (const y of [-4, 2, 8])
                 line(
@@ -16127,7 +16192,7 @@
                 claw,
                 4,
               );
-              poly(
+              softPoly(
                 [
                   [side * 23, -19],
                   [side * 34, -25],
@@ -16177,7 +16242,7 @@
           break;
         case 'goblin':
           humanoid('#89745a', '#9ba574', 0.8);
-          poly(
+          softPoly(
             [
               [-6, -29],
               [-18, -36],
@@ -16185,7 +16250,7 @@
             ],
             '#9ba574',
           );
-          poly(
+          softPoly(
             [
               [6, -29],
               [18, -36],
@@ -16224,7 +16289,7 @@
         case 'orc':
           if (e.ranged) {
             humanoid('#765e4f', '#89936c', 1.15);
-            poly(
+            softPoly(
               [
                 [-10, -14],
                 [-16, -22],
@@ -16232,7 +16297,7 @@
               ],
               '#7b6a5d',
             );
-            poly(
+            softPoly(
               [
                 [9, -14],
                 [14, -20],
@@ -16283,7 +16348,7 @@
             );
           } else {
             humanoid('#846e56', '#89936c', 1.15);
-            poly(
+            softPoly(
               [
                 [-10, -14],
                 [-15, -22],
@@ -16291,7 +16356,7 @@
               ],
               steel,
             );
-            poly(
+            softPoly(
               [
                 [10, -14],
                 [15, -22],
@@ -17224,7 +17289,7 @@
       const p = screen(q);
       return p.x > -150 && p.x < bounds.width + 150 && p.y > -150 && p.y < bounds.height + 150;
     };
-    const strip = (kind, x1, x2, y1, y2) => {
+    const strip = (kind, x1, x2, y1, y2, banks = null) => {
       if (y2 <= y1) return;
       // Skip channels fully outside the viewport before expanding their paths.
       if (
@@ -17246,23 +17311,29 @@
         cliff = kind === 'cliff',
         width = x2 - x1,
         bank = water ? (region === 1 ? '#677561' : '#64725a') : lava ? '#54413e' : '#726c5d';
-      // The continuous rim identifies the exact simulation edge; all broken faces lie inside it.
-      rect(x1 - 8, x2 + 8, y1, y2, bank);
-      rect(x1, x2, y1, y2, water ? '#285d70' : lava ? '#672f28' : cliff ? '#494b43' : '#222729');
-      rect(
-        x1 + 7,
-        x2 - 7,
-        y1 + 3,
-        y2 - 3,
-        water ? '#397783' : lava ? '#b44e2c' : cliff ? '#616357' : '#30363a',
-        water ? null : lava ? 'terrain:lava:crust' : 'terrain:rock:cliff-ravine',
-      );
+      const ribbon = (inset, color, material = null) => {
+        if (!banks) return rect(x1 + inset, x2 - inset, y1, y2, color, material);
+        const left = [], right = [];
+        for (let y = y1; y <= y2; y = Math.min(y2, y + 12)) {
+          const [lo, hi] = banks(y);
+          left.push({ x: lo + inset, y });
+          right.push({ x: hi - inset, y });
+          if (y === y2) break;
+        }
+        poly([...left, ...right.reverse()], color, material);
+      };
+      // Collision and the continuous curved bank use the same authored function.
+      ribbon(-8, bank);
+      ribbon(0, water ? '#285d70' : lava ? '#672f28' : cliff ? '#494b43' : '#222729');
+      ribbon(7, water ? '#397783' : lava ? '#b44e2c' : cliff ? '#616357' : '#30363a',
+        water ? null : lava ? 'terrain:lava:crust' : 'terrain:rock:cliff-ravine');
       for (let y = y1; y < y2; y += 58) {
         const end = Math.min(y2, y + 58),
           seed = Math.imul(Math.floor(y / 58) + region * 17, 73856093) >>> 0,
           tooth = 8 + (seed % 12);
         for (const side of [-1, 1]) {
-          const edge = side < 0 ? x1 : x2,
+          const local = banks ? banks(y) : [x1, x2],
+            edge = side < 0 ? local[0] : local[1],
             inside = edge - side * Math.min(tooth, width * 0.25),
             mid = y + (end - y) * (0.3 + (seed % 4) * 0.1);
           poly(
@@ -17289,13 +17360,15 @@
         }
       }
       for (let y = y1 + 24; y < y2 - 8; y += water ? 62 : 48) {
-        const q = { x: (x1 + x2) / 2, y };
+        const [localX1, localX2] = banks ? banks(y) : [x1, x2],
+          localWidth = localX2 - localX1,
+          q = { x: (localX1 + localX2) / 2, y };
         if (!visible(q)) continue;
         const phase = Math.sin(time * (water ? 0.9 : 1.3) + y * 0.035),
           seed = Math.abs(Math.floor(y * 13 + region * 47));
         if (water) {
-          const x = x1 + width * (0.28 + (seed % 4) * 0.1),
-            span = Math.min(55, width * 0.38);
+          const x = localX1 + localWidth * (0.28 + (seed % 4) * 0.1),
+            span = Math.min(55, localWidth * 0.38);
           line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
           line(
             { x: x + span * 0.15, y: y + 12 },
@@ -17304,7 +17377,7 @@
             0.8,
           );
         } else if (lava) {
-          const mid = x1 + width * (0.4 + (seed % 3) * 0.08);
+          const mid = localX1 + localWidth * (0.4 + (seed % 3) * 0.08);
           line({ x: mid - 10, y }, { x: mid + 8, y: y + 11 + phase * 3 }, '#ffd076', 2);
           line({ x: mid + 8, y: y + 11 + phase * 3 }, { x: mid - 4, y: y + 27 }, '#ed963f', 1.5);
           poly(
@@ -17327,13 +17400,15 @@
           );
         }
       }
-      for (const x of [x1, x2])
-        line(
-          { x, y: y1 },
-          { x, y: y2 },
-          water ? '#aec6a888' : lava ? '#d6956866' : '#ada88c99',
-          1.5,
-        );
+      for (const side of [0, 1]) {
+        for (let y = y1; y < y2; y += 24) {
+          const end = Math.min(y2, y + 24),
+            lo = banks ? banks(y)[side] : [x1, x2][side],
+            hi = banks ? banks(end)[side] : [x1, x2][side];
+          line({ x: lo, y }, { x: hi, y: end },
+            water ? '#aec6a888' : lava ? '#d6956866' : '#ada88c99', 1.5);
+        }
+      }
     };
     ctx.save();
     ctx.lineJoin = 'round';
@@ -17382,7 +17457,25 @@
       }
     ctx.restore();
     const b = R.barriers[region];
-    strip(b.kind, ...b.bounds);
+    strip(b.kind, ...b.bounds, (y) => R.channelBanks(region, y));
+    if (region === 1) {
+      const left = [], right = [];
+      for (let x = 0; x <= 1230; x += 15) {
+        const { y, width } = R.drainageBanks(x);
+        left.push({ x, y: y - width }); right.push({ x, y: y + width });
+      }
+      poly([...left, ...right.reverse()], '#61785b88');
+      poly([...left.map((p) => ({ x: p.x, y: p.y + 12 })),
+        ...right.slice().reverse().map((p) => ({ x: p.x, y: p.y - 12 }))], '#47736a99');
+    }
+    if (region === 2) {
+      // Snowmelt is visible within the existing mountain ravine, not a separate rectangular pond.
+      for (let y = 0; y < size; y += 38) {
+        if (b.gaps.some(([lo, hi]) => y >= lo - 20 && y <= hi + 20)) continue;
+        const a = R.channelBanks(region, y), q = R.channelBanks(region, y + 38);
+        line({ x: (a[0] + a[1]) / 2, y }, { x: (q[0] + q[1]) / 2, y: y + 38 }, '#43757b', 3);
+      }
+    }
     const harbor = R.harbors?.[['vale', 'march', 'highlands', 'frontier', 'crown'][region]];
     if (harbor) {
       const w = harbor.water,
@@ -17962,6 +18055,23 @@
     }
     return commands;
   }
+  function footpaths(ctx, paths, screen) {
+    ctx.save();
+    ctx.lineJoin = 'round';
+    for (const path of paths || [])
+      for (let j = 1; j < path.length; j++) {
+        const a = path[j - 1], b = path[j], d = Math.hypot(b.x - a.x, b.y - a.y);
+        if (!d) continue;
+        const nx = -(b.y - a.y) / d * 9, ny = (b.x - a.x) / d * 9,
+          points = [{ x: a.x + nx, y: a.y + ny }, { x: b.x + nx, y: b.y + ny },
+            { x: b.x - nx, y: b.y - ny }, { x: a.x - nx, y: a.y - ny }].map(screen);
+        ctx.fillStyle = '#8f805568';
+        ctx.beginPath();
+        points.forEach((p, k) => k ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
+        ctx.closePath(); ctx.fill();
+      }
+    ctx.restore();
+  }
   function roads(ctx, paths, screen, region = 0, materials = null, viewport = null) {
     const barrier = R.barriers[region];
     let commands;
@@ -18198,6 +18308,7 @@
     dungeonEdges,
     dungeonArchitecture,
     roads,
+    footpaths,
     terrain,
     bridges,
     atmosphere,
@@ -18206,6 +18317,7 @@
     barracksVisualState,
     featureScale,
     assetSafeScale,
+    contourRadius,
     ambientAnimalPose,
   };
   if (typeof module !== 'undefined') module.exports = root.PrototypeVisuals;

@@ -45,7 +45,9 @@ for (const b of C.data.bosses)
         assert(Object.isFrozen(f.identity.presentation));
       }
       assert(events.some((x) => x.stage === 'release'));
-      assert(events.filter((x) => x.stage === 'impact').every((x) => P.route(x).mode === 'silent'));
+      assert(events.filter((x) => x.stage === 'impact' && !x.contact).every((x) =>
+        P.route(x).mode === 'silent' || ['enemyGroundImpact', 'rollingCargoImpact'].includes(P.route(x).key)),
+        'ground payoff has a distinct route and never impersonates victim contact');
       const { a, calls } = listener();
       for (const f of c.effects) a.effect(f);
       assert.equal(
@@ -64,7 +66,7 @@ for (const b of C.data.bosses)
         'audio annotation stays out of save statistics',
       );
     }
-// Confirmed victim contact sounds; footprint-only expression stays silent.
+// Confirmed victim contact and audible ground payoff remain distinct.
 {
   const c = fresh(),
     e = c.bossEnemy(c.boss('thorn'), 'normal', { x: 1400, y: 1700 });
@@ -579,7 +581,9 @@ for (const action of ['melee', 'circle']) {
     }
     const events = c.effects.filter((f) => f.type === 'enemyVfx');
     if (cast.mobileRogueCast || cast.anonymousCast) {
-      assert(!events.some((f) => f.stage === 'windup'), 'cast bars do not emit a spatial windup');
+      assert(!events.some((f) => f.stage === 'windup' && !f.audioOnly), 'cast bars do not emit a spatial windup');
+      assert(events.some((f) => f.stage === 'windup' && f.audioOnly && P.route(f).key === 'enemyWindup'),
+        'actual cast preparation retains material-specific audio without a spatial reveal');
       assert(
         c.effects.some((f) => f.type === 'warning'),
         'mobile casts retain the existing audible warning',
@@ -648,20 +652,22 @@ for (const actor of [
   const windup = c.effects.find((f) => f.stage === 'windup'),
     births = c.effects.filter((f) => f.stage === 'spawn');
   if (actor.family === 'cindermaw') {
-    assert.equal(windup, undefined, 'anonymous preparation has no spatial VFX windup');
+    assert(windup?.audioOnly, 'anonymous preparation has audio without spatial VFX');
     const warning = c.effects.find((f) => f.type === 'warning' && f.anonymousCast);
     assert(
-      warning && !warning.presentationHandled && !warning.name,
+      warning && warning.presentationHandled && !warning.name,
       'legacy anonymous audio warning remains audible',
     );
     const anonymous = listener();
+    anonymous.a.effect(windup);
     anonymous.a.effect(warning);
     assert(anonymous.calls.length > 0, 'anonymous preparation retains real audible anticipation');
   } else if (move.mobileRogueCast) {
-    assert.equal(windup, undefined, 'mobile cast bars have no spatial windup');
+    assert(windup?.audioOnly, 'mobile cast bars have audio without spatial windup');
     const warning = c.effects.find((f) => f.type === 'warning');
-    assert(warning && !warning.presentationHandled, 'cast-bar warning remains audible');
+    assert(warning && warning.presentationHandled, 'shared cast-bar cue owns the audible warning exactly once');
     const mobile = listener();
+    mobile.a.effect(windup);
     mobile.a.effect(warning);
     assert(
       mobile.calls.some((x) => x[0] === 'duck'),

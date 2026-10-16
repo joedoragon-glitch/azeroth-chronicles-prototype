@@ -304,6 +304,7 @@
   }
   function valid(game, f) {
     return (
+      !f.audioOnly &&
       f.zone === game.zoneId &&
       f.epoch === (game.enemyVfxEpoch?.() || 0) &&
       game.hero.hp > 0 &&

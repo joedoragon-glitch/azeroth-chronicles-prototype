@@ -763,11 +763,19 @@
             p.x += p.dx * p.speed * dt;
             p.y += p.dy * p.speed * dt;
             if (!this.clearSegment(before, p, 0)) {
-              this.enemyVfxProjectileImpact?.(p, before);
+              // Report the actual first obstruction, rather than the previous frame's origin.
+              const steps = Math.max(1, Math.ceil(dist(before, p) / 4));
+              let contact = before;
+              for (let j = 1; j <= steps; j++) {
+                const point = { x: before.x + (p.x - before.x) * j / steps,
+                  y: before.y + (p.y - before.y) * j / steps };
+                if (this.blocked(point.x, point.y, this.zoneId, 0)) { contact = point; break; }
+              }
+              this.enemyVfxProjectileImpact?.(p, { ...contact, terrain: true });
               if (p.style === 'cargo')
                 this.event('projectileImpact', {
                   actor: 'enemy', source: p.sourceId || 'enemy', species: 'cargo',
-                  style: 'cargo', terrain: true, x: before.x, y: before.y,
+                  style: 'cargo', terrain: true, x: contact.x, y: contact.y,
                 });
               this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
               continue;

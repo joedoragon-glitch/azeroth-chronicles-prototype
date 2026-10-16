@@ -14,7 +14,7 @@ function audit() {
     if (r.presentation.accent)
       assert(E.motifs[r.presentation.accent], 'Missing important accent: ' + r.id);
     for (const variant of ['normal', 'true'])
-      for (const stage of r.stages) {
+      for (const stage of [...new Set([...r.stages, 'travel', ...(r.presentation.cargo ? ['miss'] : [])])]) {
         const event = {
           skillId: r.id,
           identity: { id: r.id, presentation: r.presentation },
@@ -23,6 +23,7 @@ function audit() {
           target: stage === 'spawn' ? 'actual-unit' : undefined,
           contact: stage === 'impact',
           dangerous: r.kind !== 'summon',
+          movementCue: stage === 'travel',
         };
         const d = P.route(event);
         assert(d, 'Unrouted skill/stage: ' + r.id + '/' + stage);
@@ -37,6 +38,8 @@ function audit() {
           decision: d.mode,
           key: d.key || null,
           reason: d.reason,
+          trigger: stage === 'travel' ? 'Actual movement only; no stationary/per-frame synthetic cue' :
+            stage === 'miss' ? 'Cargo lifetime ends without contact' : 'Actual ' + stage + ' bridge event',
         });
       }
   }
@@ -44,7 +47,7 @@ function audit() {
 }
 function markdown(r) {
   return (
-    '# Enemy audio/VFX coverage (generated from live rules)\n\nAll variants share the stable VFX ID. Travel/linger are deliberately silent; impact audio additionally requires real contact.\n\n| ID | Stage | Material / personality | Decision | Sound key | Accent |\n| --- | --- | --- | --- | --- | --- |\n' +
+    '# Enemy audio/VFX coverage (generated from live rules)\n\nAll variants share the stable VFX ID. Movement cues require actual displacement; linger is silent. Ground payoff, successful contact and cargo misses have separate routes. Route coverage is not proof of event emission or audible acceptance.\n\n| ID | Stage | Material / personality | Decision | Sound key | Accent |\n| --- | --- | --- | --- | --- | --- |\n' +
     r.rows
       .filter((x) => x.variant === 'normal')
       .map(

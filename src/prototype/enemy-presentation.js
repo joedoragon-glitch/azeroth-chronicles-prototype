@@ -1,6 +1,7 @@
 /* Shared expression profiles, derived from actual attacks. No mechanics or skill-name catalog. */
 (function (root) {
   'use strict';
+  const R = typeof module !== 'undefined' ? require('./rules.js') : root.PrototypeRules;
   const species = Object.freeze({
     wolf: ['claw', 'wolf'],
     goblin: ['dust', 'goblin'],
@@ -42,6 +43,7 @@
     spit: 'wet',
     spectral: 'spectral',
     cinder: 'ash',
+    cargo: 'wood',
     holy: 'holy',
     magic: 'arcane',
   });
@@ -81,9 +83,9 @@
     'cover',
     'withdraw',
   ]);
-  const stages = new Set(['windup', 'release', 'travel', 'impact', 'linger', 'spawn', 'phase']);
+  const stages = new Set(['windup', 'release', 'travel', 'impact', 'miss', 'linger', 'spawn', 'phase']);
   const bases = [...Object.values(species), ...Object.values(families), ...Object.values(captains)];
-  const materials = new Set([...bases.map((b) => b[0]), ...Object.values(styles)]);
+  const materials = new Set([...bases.map((b) => b[0]), ...Object.values(styles), 'wood']);
   const personalities = new Set(bases.map((b) => b[1]));
   const accents = new Set([
     ...Object.keys(species),
@@ -101,6 +103,8 @@
     let material =
       styles[a.projectileStyle || (a.kind === 'projectile' ? a.style : null)] || base[0];
     if (a.kind === 'volley') material = styles[e.projectileStyle || 'arrow'];
+    if (a.kind === 'melee') material = R.enemyMeleeEquipment(e).material;
+    if (a.cargo || a.style === 'cargo') material = 'wood';
     if (e.family === 'thorn' && (a.charge || a.landing || a.kind === 'cone')) material = 'claw';
     if (e.captainProfile === 'supply-vale' && a.index === 1) material = 'root';
     if (e.captainProfile === 'supply-vale' && a.charge) material = 'claw';
@@ -115,6 +119,7 @@
       accent,
       signature: !!a.rogueSignature,
       summon: a.kind === 'summon',
+      cargo: !!a.cargo || a.style === 'cargo',
     });
   }
   function route(event) {
@@ -137,12 +142,12 @@
         reason:
           'Basic contact retains its existing legacy melee classification; the visual bridge must not duplicate it.',
       });
-    if (stage === 'travel' || stage === 'linger')
+    if (stage === 'linger' || (stage === 'travel' && !event.movementCue))
       return Object.freeze({
         mode: 'silent',
         reason: 'Motion and persistent beds reuse the release; no per-frame sound.',
       });
-    if (stage === 'impact' && (p.summon || !event.contact))
+    if (stage === 'impact' && p.summon)
       return Object.freeze({
         mode: 'silent',
         reason: 'No confirmed contact; summon/cast and ground expression do not imply a hit.',
@@ -152,13 +157,18 @@
       windup: 'enemyWindup',
       release: 'enemyRelease',
       impact: 'enemyImpact',
+      miss: 'enemyMiss',
+      travel: 'enemyMovement',
       spawn: 'enemySpawn',
       phase: 'enemyPhase',
     };
     if (!keys[stage]) return null;
+    const cargoKeys = { windup: 'rollingCargoWindup', release: 'rollingCargoLaunch',
+      travel: 'rollingCargoTravel', impact: 'rollingCargoImpact', miss: 'rollingCargoMiss' };
     return Object.freeze({
       mode: 'shared',
-      key: keys[stage],
+      key: p.cargo && cargoKeys[stage] ? cargoKeys[stage] :
+        stage === 'impact' && !event.contact ? 'enemyGroundImpact' : keys[stage],
       ...p,
       reason:
         'Authored material/action family plus creature personality; important casts add a restrained motif.',

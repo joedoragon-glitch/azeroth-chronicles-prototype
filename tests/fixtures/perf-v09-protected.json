@@ -145,7 +145,7 @@
     }
   },
   "approvedSnapshotAviationRevision": {
-    "source": "#298/#291 Loyal Air Marshal and seven real aviation moves, selective #254\u2192#283 with shared fatal boundary preservation",
+    "source": "#298/#291 Loyal Air Marshal and seven real aviation moves, selective #254→#283 with shared fatal boundary preservation",
     "files": {
       "src/prototype/boss-combat.js": "2ab3ba3e6306704a6dd61f905370017bed003e28d792050eadb92a2d05581339",
       "src/prototype/data.js": "a93a08064902df010013fd48fc9ed063bbfc2640698d4c05b895d7b996aa451b",
@@ -254,8 +254,8 @@
     }
   },
   "approvedChargedRetargetRevision": {
-    "source": "PR #295 \u2192 PR #300: manual charged-skill release with valid fallback targeting",
-    "scope": "Charged Skills 1\u20132 select a legal replacement only upon manual key/pointer release if their original aim dies or leaves valid range/line of sight. Preserve explicitly locked boss safety, charged opener receipts, no-target cooldown behavior, Skill 3 healing and snapshot worldbuilding modules; no deployment.",
+    "source": "PR #295 → PR #300: manual charged-skill release with valid fallback targeting",
+    "scope": "Charged Skills 1–2 select a legal replacement only upon manual key/pointer release if their original aim dies or leaves valid range/line of sight. Preserve explicitly locked boss safety, charged opener receipts, no-target cooldown behavior, Skill 3 healing and snapshot worldbuilding modules; no deployment.",
     "previousAppSha256": "c18f8c02cd93cfc69885b344ee184f7d0a5d8c369029bb8514ff91a340c52e0b",
     "files": {
       "src/prototype/app.js": "32bc59c1311d4e45bf2ed3d4980387ee260d8e9fba2c1c9839df369a4f5ebbc9"
@@ -876,7 +876,7 @@
     }
   },
   "authorizedCommunitySourceAuditRepairsRevision": {
-    "source": "Owner-authorized A01\u2013A07 source corrections after failed Community audit; NOT TESTED",
+    "source": "Owner-authorized A01–A07 source corrections after failed Community audit; NOT TESTED",
     "predecessorCommit": "7581ed12d57e70e42bbaed6b8223bc8d4c709b22",
     "ledger": "docs/COMMUNITY_SNAPSHOT_AUDIT_REPAIRS_20261016.md",
     "ledgerSha256": "413517c3d663b57d29b98e4d73765ad2b387187a728f364dc0a2918598bb00c3",
@@ -977,6 +977,56 @@
         "src/prototype/boss-combat.js": "430ad34066364366e7b614e54ba43c3b710ef1b925db55abeb64e056c3168220",
         "src/prototype/dreadmaw-combat.js": "2b241bea370acb73e2da5b2ed973d6af73b83fe1c5b5791a4c31f3c5dcfb6a50",
         "src/prototype/rules.js": "4f14130cfefceaa96b6048b59fd717ce842c8b4d2d85ae610208eac14ee138fa"
+      }
+    },
+    {
+      "canonicalIssue": 312,
+      "baseline": "88fad6fe543459c2d6e4b21558d85d1101eb51bc",
+      "source": "PR #313 joined world, enemy audio and broader procedural presentation implementation checkpoint. SOURCE ONLY, NOT TESTED.",
+      "files": {
+        "docs/PR313_WORK_IMPLEMENTATION_20261016.md": "668da6000c77a3f1dc44995699720cccaa238df6f19cb02c2e7a92aa06920bca",
+        "scripts/enemy-audio-coverage.cjs": "bf0b5647e8268f6b12b5a0ea9c55982af590822e5f4093868390a4e3bd8f277a",
+        "src/prototype/audio-effects.js": "8c214fddfb05c76dc149d7e10ccc5060a01b3ee7ce70b96b0acda7eb8eed1628",
+        "src/prototype/audio-enemy.js": "ea34a9cbac53e938dc7bff3327c51b96648a6234b14d6e6e3c3a8c8dc4a3821b",
+        "src/prototype/audio-runtime.js": "b72c9b4b6071ca82f56bdbe79ea776900b349d852234efa6bb26757d7d4ea8f2",
+        "src/prototype/boss-combat.js": "4eecf3e1ca33903131276fc44cfadeb1e8e4b7a6812f7f1b6a81b7f9981e0495",
+        "src/prototype/combat-visuals.js": "8e8a1e507d6df1a2e37207db4a726307370943937101c436cb069d7cc6886dab",
+        "src/prototype/combat.js": "795f786cd4d6c54bbd10ad0f7f523482c6c4d034ac80ddb683eed702f865fb4c",
+        "src/prototype/enemy-presentation.js": "a5344a21461ea5d91962bc2b16f5b094a1f4df8a96efa4590793bd0d3d96579b",
+        "src/prototype/enemy-vfx-art.js": "5ade35292a63dbc7f6ad665e30f30168251205d399074f3b53e64c697ab66c68",
+        "src/prototype/enemy-vfx-events.js": "5c2e40de1986a33cbe0fd082c05ab1671b2a9990d3e8a92457f564c0030051e6",
+        "src/prototype/engine.js": "8f9f00bc3a23887d0e27511bedcc4084be4f8f4a07069a8476c5a2f521adc8af",
+        "src/prototype/navigation.js": "e1c6ab182714cd915875ea78cdd2fe56cc65437bf7973d848264ee93f60c2bd1",
+        "src/prototype/renderer.js": "27a715cfca9c6057a353e18a25a679cd5d00d9291177087278493843a2646e63",
+        "src/prototype/rules.js": "ca507060e1248643bc327ae6130ce6fd7b86179df1d44cee54b5fdb621d57d5e",
+        "src/prototype/visuals.js": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+        "src/prototype/world.js": "ef1be752fee465f570fae611e952aaebeaf49488d0b5ffda2f66b6473ac398ee",
+        "tests/community-snapshot-browser.test.cjs": "a271fee6e9713ab5a6845ff531b1f2aaa1552953d51f4066c1d0783ac18d9f04",
+        "tests/enemy-audio.test.cjs": "5c434d93151cb319ba68d14314e5ec40e40511c521af181d45df9c2cf8603562",
+        "tests/pt312-audio-integration.test.cjs": "93935d45002c88e3cf0d8d4cb2141d34af398f79e8c4abb63eb7a14c09b11bca",
+        "tests/pt312-combat-integration.test.cjs": "fa7a7236c8d9d7e27a16ffa463ba6c2d5ddb29fd7c106a1aa342f957763ea250",
+        "tests/pt312-early-integration.test.cjs": "88c1e76541345faf254b45994578c548563294bc690741e8631ce4d94bb9a768",
+        "tests/pt312-world-integration.test.cjs": "026b6cbf6b703d76a8b627b1a73d187213f3046770c3f73130ab1bc7c4271f37",
+        "tests/roads.test.cjs": "e63783d46a2f2a6f0e7b2a653f98d5edb50285ea2c35559ef45f0f2e402e3618",
+        "tools/community-snapshot/pt312-presentation-overlay.json": "a60a829b23a03413d462257ae6ba04717da3043ebf3861b69758e6798d1e5d66"
+      },
+      "previousFiles": {
+        "docs/PR313_WORK_IMPLEMENTATION_20261016.md": "5b79fa761ccc1a1c116efd6498a2bb383e6cd4b09a6ecf9c60895965e9859bb7",
+        "src/prototype/boss-combat.js": "611faefbc5c46a1f9313da739162d9f2c46819f8cf938486c4b27e206d755c15",
+        "src/prototype/engine.js": "9793f89bfe4aed7e83e8c98e8c224d042ec7a46831652fd8614925a5ff1bd841",
+        "src/prototype/navigation.js": "fc9e9f8474312a80e539b7ad00050836a5edeefd2ac0a8546e10def5e482bf3e",
+        "src/prototype/rules.js": "62ea3575ceadf34a6a9cb82a2dab0ed8a71d0664e43f3d400840a39df3cb1b58",
+        "tests/pt312-combat-integration.test.cjs": "45233a576c6dec1121057dc95ca760d68f98b93598dc089ae32bcbea5225c690",
+        "src/prototype/audio-effects.js": "343193e3262e6225eeb4a774fe0efea3cd4f90202368812cadd18ba991e95b04",
+        "src/prototype/combat-visuals.js": "9e749dac0a5ac21274627828162324b26cf633f5b5c060aade5b76dc2648c930",
+        "src/prototype/combat.js": "0ac083c1f97b513bdc25030bb96e9d0b2f3cee39e3837b23e97de4e2c5c2d017",
+        "src/prototype/enemy-presentation.js": "e35de45beb8a5e499f9f1d19ffb8f08827412cf266cad95fa89e5cef96d15440",
+        "src/prototype/enemy-vfx-art.js": "78effa26838842aaac21069ce427d41bec374b107c4b15a4b1626df5d39de81c",
+        "src/prototype/enemy-vfx-events.js": "21d9e09838d4ca9621f147e43d8c791aaae3070ed644cb231c097a15abc43db4",
+        "src/prototype/renderer.js": "b77792b2ae5585d5ef01c8fe64d610ab6ce57ca2ef25dd7bd546607256f4b3d7",
+        "src/prototype/visuals.js": "d5cce1c575199b4fd3c6e9f0ca83055fbfbd51867158f21e17edfc4ac49f921b",
+        "src/prototype/world.js": "330ee56c7eb6ad464c6d15d9516b6b15c3edcb66e319e78df574cc7931443a3d",
+        "tests/pt312-early-integration.test.cjs": "9d8bc5a9ed1e4dd0ae815bb2b825c5434a8967f8f692b817527c2cc134303bcb"
       }
     }
   ]

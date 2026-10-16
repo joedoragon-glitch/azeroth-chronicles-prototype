@@ -3761,10 +3761,11 @@
           name: plan.name + ' follow-up',
         }));
       }
-      e.lastCaptainAttack = index;
-      e.sequence = [...(a.sequence || [])];
+      const sequence = [...(a.sequence || [])];
       delete a.sequence;
-      if (!this.prepareAttackSequence(e, a, e.sequence)) return false;
+      if (!this.prepareAttackSequence(e, a, sequence)) return false;
+      e.lastCaptainAttack = index;
+      e.sequence = sequence;
       e.telegraph = a;
       e.specialCd =
         profile.specialCooldown *
@@ -5566,6 +5567,9 @@
                 (e.quotaOvertime > 0 ? 0.8 : 1),
             };
           } else {
+            const equipment = R.enemyMeleeEquipment(e);
+            this.event('swing', { actor: 'enemy', source: e.id, species: e.species,
+              family: e.family, boss: e.type === 'boss', ...equipment, x: e.x, y: e.y });
             if (this.hitParty(target, this.weakenedEnemyDamage(e), 0, e.id))
               this.event('melee', {
                 actor: 'enemy',
@@ -5573,6 +5577,7 @@
                 species: e.species,
                 family: e.family,
                 boss: e.type === 'boss',
+                ...equipment,
                 x: target.x,
                 y: target.y,
                 target: target === this.hero ? 'hero' : target.id,

@@ -1257,10 +1257,11 @@
         if (e.family === 'archive' && plans[selected].sabotage) e.sabotageCd = 12;
         const built = this.buildBossAttack(e, selected, actualTarget, true);
         if (!built.first) return false;
+        const sequence = [...built.sequence, ...this.bossComboSequence(e, selected, actualTarget)];
+        if (!this.prepareAttackSequence(e, built.first, sequence)) return false;
         e.attackIndex = (e.attackIndex || 0) + 1;
         e.lastAttackIndex = selected;
-        e.sequence = [...built.sequence, ...this.bossComboSequence(e, selected, actualTarget)];
-        if (!this.prepareAttackSequence(e, built.first, e.sequence)) return false;
+        e.sequence = sequence;
         e.telegraph = built.first;
         if (e.family === 'mine' && selected === 1) this.prepareMineWorksPreview(e);
         this.event(
@@ -1364,6 +1365,41 @@
         return points;
       }
       prepareGroundAttack(e, a, arena = null) {
+        if (a?.kind === 'line' && a.count === 2 && !a.charge && !a.cargo && !a.arenaLines) {
+          const connected = arena || this.connectedArenaPoints(e),
+            width = R.combatGeometry.dualLineHalfWidth,
+            length = Math.max(60, Math.hypot(a.x - a.fromX, a.y - a.fromY)),
+            side = { x: -Math.sin(a.angle), y: Math.cos(a.angle) }, lines = [];
+          for (const offset of [-85, 85]) {
+            const ideal = { x: a.fromX + side.x * offset, y: a.fromY + side.y * offset },
+              candidates = [ideal, ...connected.filter((p) => dist(p, e) < 220)
+                .sort((p, q) => dist(p, ideal) - dist(q, ideal))];
+            let chosen = null;
+            for (const requireSpacing of [true, false]) {
+              for (const from of candidates) {
+                if (this.blocked(from.x, from.y, this.zoneId, width + 3) ||
+                    !connected.some((p) => dist(p, from) < R.arenaPlacement.step * 1.5 && this.clearSegment(p, from))) continue;
+                let to = from;
+                for (let n = 8; n <= length; n += 8) {
+                  const p = { x: from.x + Math.cos(a.angle) * n, y: from.y + Math.sin(a.angle) * n };
+                  if (!this.clearSegment(to, p, width + 3)) break;
+                  to = p;
+                }
+                if (dist(from, to) < Math.min(48, length * 0.5)) continue;
+                if (requireSpacing && lines.some((line) =>
+                    this.distanceToSegment(from, { x: line.fromX, y: line.fromY }, line) < width * 2 + 18 ||
+                    this.distanceToSegment(to, { x: line.fromX, y: line.fromY }, line) < width * 2 + 18)) continue;
+                chosen = { fromX: from.x, fromY: from.y, x: to.x, y: to.y, halfWidth: width };
+                if (!requireSpacing) a.arenaSequential = true;
+                break;
+              }
+              if (chosen) break;
+            }
+            if (!chosen) { a.arenaInvalid = true; return; }
+            lines.push(chosen);
+          }
+          a.arenaLines = lines;
+        }
         if (!a || a.kind !== 'circle' || a.arenaPatches || a.selfDefense || a.bossHeal ||
             a.rogueMove || a.cinderMechanic === 'protection' || a.cinderMechanic === 'transfer') return;
         const cfg = R.arenaPlacement,
@@ -1403,7 +1439,8 @@
         if (placed.length === 1) Object.assign(a, placed[0]);
       }
       prepareAttackSequence(e, first, sequence) {
-        const pending = [first, ...sequence].some((a) => a?.kind === 'circle' &&
+        const pending = [first, ...sequence].some((a) => (a?.kind === 'circle' ||
+            (a?.kind === 'line' && a.count === 2 && !a.charge && !a.cargo && !a.arenaLines)) &&
             !a.arenaPatches && !a.selfDefense && !a.bossHeal && !a.rogueMove),
           arena = pending ? this.connectedArenaPoints(e) : null, beats = [];
         for (const a of [first, ...sequence]) {
@@ -1412,7 +1449,11 @@
             this.event('attackPlacementFailed', { source: e.id, family: e.family, index: a.index });
             return false;
           }
-          if (a?.arenaSequential && a.arenaPatches.length > 1) {
+          if (a?.arenaSequential && a.arenaLines?.length > 1) {
+            for (const line of a.arenaLines)
+              beats.push({ ...a, ...line, count: 1, arenaLines: [line],
+                timer: Math.max(0.7, a.timer), total: Math.max(0.7, a.total) });
+          } else if (a?.arenaSequential && a.arenaPatches?.length > 1) {
             for (const p of a.arenaPatches)
               beats.push({ ...a, ...p, count: 1, arenaPatches: [p],
                 timer: Math.max(0.7, a.timer), total: Math.max(0.7, a.total) });
@@ -1919,7 +1960,10 @@
         const party = this.combatTargets(),
           patches = this.attackPatches(a),
           hits = (u) =>
-            a.kind === 'line'
+            a.arenaLines
+              ? a.arenaLines.some((line) => this.distanceToSegment(u,
+                  { x: line.fromX, y: line.fromY }, line) < line.halfWidth)
+              : a.kind === 'line'
               ? a.count === 2
                 ? [-85, 85].some(
                     (o) =>

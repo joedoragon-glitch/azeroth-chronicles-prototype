@@ -1872,6 +1872,7 @@
       if (!game.isDungeon())
         PrototypeVisuals.terrain(ctx, screen, i, size, optimized ? null : PrototypeMaterials);
       PrototypeVisuals.roads(ctx, z.roads || [], screen, i, optimized ? null : PrototypeMaterials);
+      PrototypeVisuals.footpaths(ctx, z.footpaths || [], screen);
       if (!game.isDungeon())
         PrototypeVisuals.bridges(ctx, screen, i, optimized ? null : PrototypeMaterials);
       PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000);
@@ -1959,6 +1960,8 @@
           ? 0
           : e.renderKind === 'enemy' && e.type === 'boss'
             ? 1
+            : e.renderKind === 'enemy' && (e.captain || e.roomCaptain)
+              ? 1.5
             : e.renderKind === 'ally'
               ? 2
               : e.renderKind === 'enemy'
@@ -2099,8 +2102,12 @@
                 : '10px system-ui';
             ctx.fillStyle = isTrueBoss
               ? '#ffe08a'
+              : e.type === 'boss'
+                ? '#ead58c'
               : isCaptain
-                ? '#f0d79b'
+                ? '#d9b981'
+                : e.form === 'ringleader'
+                  ? '#d7bd9b'
                 : e.renderKind === 'enemy'
                   ? '#f8cebd'
                   : '#dcebcf';
@@ -2127,7 +2134,14 @@
                     : e.type || e.name
                   : '';
             const slot = labelSlots.get(e);
-            if (slot) ctx.fillText(label, slot.x, slot.y, slot.width);
+            if (slot) {
+              if (e.renderKind === 'enemy' && (e.type === 'boss' || isCaptain)) {
+                ctx.fillStyle = e.type === 'boss' ? '#302915c9' : '#382b20b8';
+                ctx.fillRect(slot.x - slot.width / 2 - 3, slot.y - 12, slot.width + 6, 16);
+                ctx.fillStyle = e.type === 'boss' ? '#ead58c' : '#d9b981';
+              }
+              ctx.fillText(label, slot.x, slot.y, slot.width);
+            }
             if (isTrueBoss) {
               const w = ctx.measureText('TRUE').width + 12,
                 y = p.y - spriteHeight(e) - 25;

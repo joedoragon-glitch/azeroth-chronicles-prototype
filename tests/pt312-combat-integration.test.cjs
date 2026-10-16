@@ -68,6 +68,17 @@ for (const id of Object.keys(C.rules.treasuryArchitecture)) {
     }
   }
 }
+// Dual-line patterns use the same frozen corridor geometry in warnings and damage.
+{
+  const g = room('supply-highlands'), e = g.zone().enemies.find((u) => u.roomCaptain),
+    a = { kind: 'line', count: 2, angle: 0, fromX: e.x, fromY: e.y,
+      x: e.x + 300, y: e.y, timer: 1.5, total: 1.5 }, sequence = [];
+  assert(g.prepareAttackSequence(e, a, sequence));
+  const lines = [a, ...sequence].flatMap((beat) => beat.arenaLines);
+  assert.equal(lines.length, 2, 'both authored corridors survive confined-room placement');
+  for (const line of lines)
+    assert(g.clearSegment({ x: line.fromX, y: line.fromY }, line, line.halfWidth + 3));
+}
 // PT-001: existing four-skill kit, owned-pup accounting and genuine refill resolution.
 for (const form of ['normal', 'true']) {
   const g = room('supply-vale', 'developer');

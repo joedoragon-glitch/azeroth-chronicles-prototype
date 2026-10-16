@@ -40,7 +40,7 @@ for (const mode of ['normal', 'nightmare']) {
 {
   const a = new Audio();
   assert.equal(a.soundKind({ type: 'melee', actor: 'enemy', species: 'goblin' }), 'enemyWeaponImpact');
-  assert.equal(a.soundKind({ type: 'melee', actor: 'enemy', species: 'goblin', weapon: 'club' }), 'creatureImpact');
+  assert.equal(a.soundKind({ type: 'melee', actor: 'enemy', species: 'goblin', weapon: 'club' }), 'enemyHeavyImpact');
   assert.equal(a.soundKind({ type: 'melee', actor: 'enemy', species: 'skeleton' }), 'enemyWeaponImpact');
   assert.equal(a.soundKind({ type: 'melee', actor: 'enemy', species: 'wolf' }), 'creatureImpact');
   assert.equal(a.soundKind({ type: 'projectileLaunch', actor: 'enemy', style: 'cargo' }), 'rollingCargoLaunch');
