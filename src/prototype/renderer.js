@@ -1298,7 +1298,19 @@
           PrototypeCombatVisuals.chargeInterrupted?.(ctx, screen, f);
         } else if (f.type === 'heal') {
           if (f.actor === 'enemy' && f.resource !== 'mana') {
-            PrototypeCombatVisuals.enemySupportHeal?.(ctx, screen, f);
+            const recipient = game
+              .zone()
+              .enemies.find((u) => u.id === f.target && game.enemyHealingActor?.(u));
+            if (recipient) {
+              const caster = game.zone().enemies.find((u) => u.id === f.source);
+              PrototypeCombatVisuals.enemySupportHeal?.(ctx, screen, {
+                ...f,
+                x: recipient.x,
+                y: recipient.y,
+                fromX: caster?.x ?? f.fromX,
+                fromY: caster?.y ?? f.fromY,
+              });
+            }
           } else {
             const mana = f.resource === 'mana',
               c = mana ? '#9fcfff' : '#a9e7b0';

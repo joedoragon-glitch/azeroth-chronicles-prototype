@@ -4,6 +4,12 @@ on:
     types: [opened, reopened]
     branches: [main]
   workflow_dispatch:
+  push:
+    branches: [integration/community-snapshot-311-20261016]
+    paths:
+      - src/prototype/engine.js
+      - scripts/community-companion-observe.cjs
+      - docs/evidence/pr313-validation-continuation-20261016/baseline308-complete-cache.json.gz
 permissions:
   contents: read
 concurrency:
@@ -11,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   observe:
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.number == 313
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event.pull_request.number == 313
     runs-on: ubuntu-latest
     timeout-minutes: 60
     strategy:
@@ -42,7 +48,7 @@ jobs:
           path: test-results/community-balance/
           if-no-files-found: error
   summary:
-    if: always() && (github.event_name == 'workflow_dispatch' || github.event.pull_request.number == 313)
+    if: always() && (github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event.pull_request.number == 313)
     needs: observe
     runs-on: ubuntu-latest
     steps:

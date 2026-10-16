@@ -1004,6 +1004,7 @@
       const support = u.supportHeal;
       if (
         !support ||
+        !game.enemyHealingActor?.(u) ||
         u.hp <= 0 ||
         !u.aggro ||
         !Number.isFinite(support.seconds) ||
@@ -1095,11 +1096,14 @@
       else if (e.type === 'hurt' && Number.isFinite(e.x)) push(e, 'hurt', 0.25, 2);
       else if (e.type === 'heal') {
         const target =
-          e.target === 'hero'
-            ? game.hero
-            : e.actor === 'enemy'
-              ? game.zone()?.enemies.find((u) => u.id === e.target)
+          e.actor === 'enemy'
+            ? game.zone()?.enemies.find((u) => u.id === e.target && game.enemyHealingActor?.(u))
+            : e.target === 'hero'
+              ? game.hero
               : game.s.party.find((u) => u.id === e.target);
+        // Hostile recovery never borrows the player's location when its
+        // recipient has died, departed, or cannot be resolved.
+        if (e.actor === 'enemy' && !target) continue;
         push(
           {
             ...e,

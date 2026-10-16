@@ -85,6 +85,7 @@ const pt312ArtById = new Map(pt312Presentation.records.map((r) => [r.id, r]));
           window.PrototypePartyPets &&
           window.Prototype,
       );
+      await require('./helpers/enemy-heal-browser.cjs').verifyEnemyHealing(page, out, engine + '-' + width + 'x' + height);
       await page.evaluate(
         ({ width, height }) => {
           // Keep the real shell paused; controlled scenes use the production painter and menus.

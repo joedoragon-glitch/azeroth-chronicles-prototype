@@ -1,6 +1,7 @@
 'use strict';
 // Reuse observations only when every executable balance input is identical.
-// The only permitted differences are the drawing-only Archive alias, exact cast-label clamp and build label.
+// Legacy observations retain their exact historical drawing exceptions.
+// A fresh study must match every current runtime file with no drawing exception.
 const fs = require('node:fs'),
   path = require('node:path'),
   crypto = require('node:crypto'),
@@ -8,10 +9,25 @@ const fs = require('node:fs'),
   cp = require('node:child_process'),
   assert = require('node:assert/strict');
 const root = path.resolve(__dirname, '..');
-const observedCommit = 'b676981cbf047144d82e9efc247f56c1a14c5808';
-const observedTree = 'f808fe4c73822ef77c5eba20b9f95687c070245c';
+const fresh = !!process.env.COMMUNITY_OBSERVED_COMMIT;
+const observedCommit =
+  process.env.COMMUNITY_OBSERVED_COMMIT || 'b676981cbf047144d82e9efc247f56c1a14c5808';
+assert.match(observedCommit, /^[a-f0-9]{40}$/);
+if (fresh) assert.match(process.env.COMMUNITY_OBSERVED_RUN || '', /^\d+$/);
+const observedTree = fresh
+  ? cp
+      .execFileSync('git', ['rev-parse', observedCommit + '^{tree}'], {
+        cwd: root,
+        encoding: 'utf8',
+      })
+      .trim()
+  : 'f808fe4c73822ef77c5eba20b9f95687c070245c';
 const observedRun =
-  'https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38879597582';
+  'https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/' +
+  (fresh ? process.env.COMMUNITY_OBSERVED_RUN : '38879597582');
+const seedFile =
+  'docs/evidence/pr313-validation-continuation-20261016/' +
+  (fresh ? 'baseline308-complete-cache.json.gz' : 'baseline308-expanded-cache.json.gz');
 const hash = (b) => crypto.createHash('sha256').update(b).digest('hex');
 const key = (c) =>
   JSON.stringify(Object.fromEntries(Object.entries(c).sort(([a], [b]) => a.localeCompare(b))));
@@ -34,14 +50,7 @@ function verifyInputs(meta) {
   );
   assert.equal(
     meta.seedSha256,
-    hash(
-      fs.readFileSync(
-        path.join(
-          root,
-          'docs/evidence/pr313-validation-continuation-20261016/baseline308-expanded-cache.json.gz',
-        ),
-      ),
-    ),
+    hash(fs.readFileSync(path.join(root, seedFile))),
     'baseline evidence cannot change',
   );
   require(path.join(root, 'src/prototype/engine.js'));
@@ -77,6 +86,28 @@ function verifyInputs(meta) {
     Object.keys(meta.sources.candidate).sort(),
     'no unreviewed runtime owner added or removed',
   );
+  if (fresh) {
+    for (const p of current) {
+      assert.equal(
+        hash(fs.readFileSync(path.join(root, p))),
+        meta.sources.candidate[p],
+        p + ' must match the freshly observed runtime exactly',
+      );
+      assert.equal(
+        hash(cp.execFileSync('git', ['show', observedCommit + ':' + p], { cwd: root })),
+        meta.sources.candidate[p],
+        p + ' must belong to the actual observed commit',
+      );
+    }
+    const seed = JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(root, seedFile))));
+    assert.equal(meta.seededBaselines, 3072, 'reuse every completed unchanged baseline');
+    assert.deepEqual(meta.sources.baseline, seed.sources, 'unchanged exact baseline source');
+    return {
+      loadedEngineOwners: loaded,
+      exactEngineHashes: Object.fromEntries(loaded.map((p) => [p, meta.sources.candidate[p]])),
+      changedPresentationOwners: [],
+    };
+  }
   for (const p of current)
     if (hash(fs.readFileSync(path.join(root, p))) !== meta.sources.candidate[p]) {
       assert(allowed.has(p), 'unobserved runtime change requires a fresh study: ' + p);
@@ -115,6 +146,14 @@ function verifyInputs(meta) {
   };
 }
 function verify(input, out) {
+  const baselineCache = fresh
+    ? new Map(
+        JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(root, seedFile)))).rows.map((r) => [
+          key(r.configuration),
+          r.baseline,
+        ]),
+      )
+    : null;
   const walk = (d) =>
     fs
       .readdirSync(d, { withFileTypes: true })
@@ -163,7 +202,15 @@ function verify(input, out) {
       const needsBaseline =
         r.configuration.party === 'solo' || r.configuration.party.startsWith('troops');
       assert.equal(!!r.baseline, needsBaseline);
-      if (needsBaseline) matched++;
+      if (needsBaseline) {
+        matched++;
+        if (fresh)
+          assert.deepEqual(
+            r.baseline,
+            baselineCache.get(k),
+            'completed baseline observation must remain unchanged',
+          );
+      }
     }
   }
   assert.equal(seen.size, 6912);
@@ -178,7 +225,9 @@ function verify(input, out) {
     .execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' })
     .trim();
   const result = {
-    status: 'unchanged executable balance inputs; original observations retained without replay',
+    status: fresh
+      ? 'fresh candidate observations complete; exact current runtime and unchanged retained baselines verified'
+      : 'unchanged executable balance inputs; original observations retained without replay',
     observedCommit,
     observedTree,
     observedRun,

@@ -258,17 +258,31 @@
       factor *= Number.isFinite(encounter) && encounter > 0 ? encounter : 1;
       return Number.isFinite(factor) && factor > 0 ? factor : 1;
     }
+    enemyHealingActor(u) {
+      // "Enemy" is relative to the player, never relative to the healer.
+      // Player actors remain ineligible even if a malformed roster contains them.
+      return !!(
+        u &&
+        (u.type === 'mob' || u.type === 'boss') &&
+        u.hp > 0 &&
+        !u.neutral &&
+        u !== this.hero &&
+        !this.s.party.includes(u) &&
+        this.zone().enemies.includes(u)
+      );
+    }
     enemyHealTeammate(e, u) {
       // The Dark Lord's faction is mechanically allied across species, packs,
       // guard posts and commanders. Local range, LoS, health and hostile status
       // are checked by the support cast itself, not by formation membership.
-      return !!(u && u !== e && u.hp > 0 && !u.neutral && !u.returning);
+      return !!(this.enemyHealingActor(e) && this.enemyHealingActor(u) && u !== e && !u.returning);
     }
     enemySupportHeal(e) {
       const cfg = R.enemySupportHealing,
         skill = this.enemyHealProfile(e);
       if (
         !skill ||
+        !this.enemyHealingActor(e) ||
         this.mageSilenceActive(e) ||
         this.peace ||
         !e.aggro ||
@@ -348,6 +362,7 @@
       if (
         !cfg ||
         !this.enemyHealProfile(e) ||
+        !this.enemyHealingActor(e) ||
         !e.aggro ||
         e.returning ||
         this.mageSilenceActive(e) ||
@@ -379,6 +394,7 @@
       if (!h) return;
       if (
         this.peace ||
+        !this.enemyHealingActor(e) ||
         !e.aggro ||
         e.returning ||
         !Number.isFinite(h.seconds) ||

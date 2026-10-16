@@ -49,7 +49,7 @@ function observe(baseline, shard, count, out) {
     throw Error('Wrong baseline receipt');
   const seedPath = path.join(
     root,
-    'docs/evidence/pr313-validation-continuation-20261016/baseline308-expanded-cache.json.gz',
+    'docs/evidence/pr313-validation-continuation-20261016/baseline308-complete-cache.json.gz',
   );
   const seed = JSON.parse(zlib.gunzipSync(fs.readFileSync(seedPath)));
   const baselineSources = sourceHashes(baseline),

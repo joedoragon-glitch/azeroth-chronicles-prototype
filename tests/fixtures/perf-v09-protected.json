@@ -1876,6 +1876,47 @@
       "previousFiles": {
         "tests/prototype-browser.test.cjs": "6b70a2e4f402c1e09d1f836cff02541fa473d94874e88a08c48c6193bcfd944b"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 SOURCE ONLY / NOT TESTED historical receipt lineage; owner-requested enemy-healing faction and recipient-presentation repair. Actual scoped and hosted results are recorded separately.",
+      "reason": "Require explicit monster-side eligibility even in malformed rosters; follow the real heal recipient and prohibit player VFX fallback. Dev.74 receives fresh observations with every prior baseline retained; no authored balance tuning.",
+      "files": {
+        ".github/scripts/select-community-study.cjs": "48466ba0fc2c578ccb886a3db148e503447a6ee2617b027677d9dbeba5f1067d",
+        ".github/workflows/community-balance-provenance.yml": "df764d546b69229dbd615761f2a18e7660b5fd22ad7572d48f3b6f6429e22001",
+        ".github/workflows/community-balance.yml": "4405ea494dbe0a2cada4264742b9e1615717dcbbbbd3090a2802c711053db26c",
+        "docs/PR313_ENEMY_HEALING_20261016.md": "b0f2fe50a4d4741139cf0ad6c45cd0dc87a60deaa58e12af47f37624e6845cae",
+        "docs/evidence/pr313-validation-continuation-20261016/baseline308-complete-cache.json.gz": "1cb16557260ce7e94177a18a17068822d6c12a47cc21eb552df238bf36ba56f8",
+        "package-lock.json": "3a9143a6ebb5666c61e43cd844af6db346ea6adbbf45d195bc8957639f840412",
+        "package.json": "9c1a8a3d4ff9d556d5a7b981f5d3a20cb701f08b4c1cbe023be6fae952a4f128",
+        "scripts/community-balance-provenance.cjs": "81c284f12e37093c1150029433f4427745824da46e8a685d832bddd21e03e356",
+        "scripts/community-companion-observe.cjs": "6761bb8c6da3ca60bc10bf10c93bd568083f227793ccb9aba9edd2f6d62fccaa",
+        "src/prototype/build-info.js": "af9c61900ee7cca09747d721a6f102fdb0965cb12aa731ea2f44505e7c934b7c",
+        "src/prototype/combat-visuals.js": "0a852e9e2b8114a778c4e0ad8c1126ed22cf029041d027f5b37d8116e31cc4d0",
+        "src/prototype/engine.js": "d2c0eede86e704948156b24b8dd8928963e0ced02bae1d4b2a5d2c8d94da6791",
+        "src/prototype/renderer.js": "78ebe529a89b8b32199eb6158385a5b484c0eb432c0122a7889fb2c00899b1c9",
+        "sw.js": "500b403cb97b89d6b551faba03e5afc2c173e6de7b12cf3efd503264e6dfe42a",
+        "tests/community-fresh-provenance.test.cjs": "b1cc7331c92b50cafad362f76af90607e5fa6871c0448981df63cd161541caf9",
+        "tests/community-snapshot-browser.test.cjs": "b5d8a1adf73294c0a8fed693bdad73ad3db7b5d73a7d4d7edff1b4d0e268c586",
+        "tests/community-study-selection.test.cjs": "911a219e9c5668749cc09fd799a9c7c3c7759fc4b96d99c3201e10079b175c96",
+        "tests/enemy-support-healing.test.cjs": "625645cd13d52928f8afa9b09c16e054548ef6f2cdf3b2a19c19a2412af9ff32",
+        "tests/helpers/enemy-heal-browser.cjs": "61c5a67f5a2688b473a695fbb98d49a717a7e6bc5adf00c38421e76fecc12b31"
+      },
+      "previousFiles": {
+        ".github/workflows/community-balance-provenance.yml": "b10f4197829fdf2ec6d7f1c5e5aaf3b3dcb346c137b1baf7197393357ea78142",
+        ".github/workflows/community-balance.yml": "65310963ed7ff4633f3a29af3359efbd84eff71f8f5182bd720ae62487406dc2",
+        "package-lock.json": "af7dd5775fcc3830c81dbc9b19f03fc31c1e7cbb2541f6d49ac052f021b668ea",
+        "package.json": "779a9016f18ae49a14693edaa1de1b4324473fbc3a006e9e0b7c5133ed6b3827",
+        "scripts/community-balance-provenance.cjs": "9bec1dcf7a951b471d836fcf5a8a0a144c04c4865f8e2d1e235a7208c0266fb8",
+        "scripts/community-companion-observe.cjs": "bc1974b543eabe95cadc5caedcbdf81861c2d11c98da743461242816e8cdf06b",
+        "src/prototype/build-info.js": "9229cc3f319f487da6e5d1af813594996eaa214d0661a9f559615f313c0c4bcf",
+        "src/prototype/combat-visuals.js": "2a4c1631483c9f92c263b470939de772fadb9b3236a7b93234505ed0649d1bac",
+        "src/prototype/engine.js": "2af861366bab4881c67c735a584683fe89217371c76cc30cd4d57f17584bd085",
+        "src/prototype/renderer.js": "0b34acad9fd22062a2f96b148895fe734fb5e2c039f38e8ac39eb76b89354690",
+        "sw.js": "9bc41d16325bf7ae87ab7a478484f2cec3dd4d9265821c0e8d8071a5d5d2d9b6",
+        "tests/community-snapshot-browser.test.cjs": "64d013799e03360c930bdb481004663b09af93039104b9ff7f4fade381839fff",
+        "tests/enemy-support-healing.test.cjs": "f814b8f745221d8df683c0e65374af90874ba12e9b98d578d964ff53e531e076"
+      }
     }
   ],
   "authorizedPr313ApproachFrameRevision": {
