@@ -240,6 +240,45 @@ function encounter() {
   assert.equal(game.manualHeroTargetLocked, false);
   assert.equal(game.s.heroTarget, null, 'offscreen unlock also releases stale legacy focus');
 }
+
+// Movement basics are passive covering fire, never approach/Recall commands.
+for (const heroClass of ['paladin', 'mage', 'ranger']) {
+  const { game, b } = encounter();
+  game.hero.class = heroClass;
+  game.hero.skills[0] = 1;
+  game.hero.mp = game.hero.maxMp;
+  game.zone().enemies = [b];
+  b.x = game.hero.x + game.heroSkillRange(1) + 40;
+  game.manualHeroTargetId = b.id;
+  game.manualHeroTargetZone = game.zoneId;
+  game.s.heroTarget = b.id;
+  game.recallParty();
+  assert.equal(game.castMovementBasic(), false, 'a retained distant target cannot restart pursuit after Recall');
+  assert.equal(game.hero.order, null);
+  const retreat = { type: 'move', x: 400, y: 500 };
+  game.hero.order = retreat;
+  const hp = b.hp, mp = game.hero.mp;
+  assert.equal(game.castMovementBasic(), false, heroClass + ' distant auto target cannot queue pursuit');
+  assert.equal(game.hero.order, retreat, 'auto fire preserves the retreat destination');
+  assert.equal(game.s.recallActive, true, 'out-of-range auto fire preserves Recall');
+  assert.equal(game.hero.cd[0], 0);
+  assert.equal(game.hero.mp, mp);
+  assert.equal(b.hp, hp);
+  b.x = game.hero.x + Math.min(80, game.heroSkillRange(1) - 1);
+  assert.equal(game.castMovementBasic(), true, heroClass + ' still fires at a reachable target');
+  assert.equal(game.hero.order, retreat, 'in-range auto fire cannot replace movement');
+  assert.equal(game.s.recallActive, true, 'in-range auto fire cannot release companions from Recall');
+  assert.equal(game.selectedHeroTarget().id, b.id, 'Recall and auto fire preserve explicit target identity');
+  game.hero.cd[0] = 0;
+  assert.equal(game.cast(1), true, 'a deliberate attack remains possible');
+  assert.equal(game.s.recallActive, false, 'only the deliberate attack resumes squad engagement');
+  game.hero.cd[0] = 0;
+  b.x = game.hero.x + game.heroSkillRange(1) + 40;
+  assert.equal(game.cast(1), true, 'deliberate out-of-range Skill 1 still queues its approved approach');
+  assert.equal(game.hero.order?.type, 'skill-approach');
+  assert.equal(game.hero.order.id, b.id);
+}
+
 console.log(
   'PASS visible target cycling, manual attack priority, queued approach, fallback and boss/summon lock, disengagement and zone cleanup',
 );
