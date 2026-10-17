@@ -53,6 +53,7 @@ const root = path.resolve(__dirname, '..'),
       page.on('pageerror', (e) => errors.push(e.message));
       await page.goto('http://127.0.0.1:' + server.address().port + '/' + entry);
       assert.equal(await page.evaluate(() => Prototype.audio.ctx), null);
+      await require('./helpers/language-browser.cjs').selectEnglish(page);
       await page.locator('#modal-actions button').first().click();
       await page.locator('#modal-actions button').first().click();
       await page.waitForFunction(() => Prototype.audio.ctx?.state === 'running');

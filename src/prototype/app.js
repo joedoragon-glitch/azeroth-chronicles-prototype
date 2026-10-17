@@ -17,137 +17,341 @@
   // Presentation-only community localization; campaign IDs and names never change.
   const languageKey = 'azeroth-display-language-v1';
   let language = 'en';
-  try { language = localStorage.getItem(languageKey) === 'es' ? 'es' : 'en'; } catch (_) {}
+  try {
+    language = localStorage.getItem(languageKey) === 'es' ? 'es' : 'en';
+  } catch (_) {}
   document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
   const spanishText = {
-  "Choose your language": "Elige tu idioma",
-  "Adventure menu": "Menú de aventura",
-  "Game and settings": "Juego y ajustes",
-  "Challenge condition": "Tipo de desafío",
-  "Standard death and refuge recovery": "Muerte normal y recuperación en refugio",
-  "Succession challenge": "Desafío de sucesión",
-  "Controls": "Controles",
-  "Combat conditions": "Estados de combate",
-  "Customize keyboard": "Personalizar teclado",
-  "Touch and mouse options": "Opciones táctiles y de ratón",
-  "Screen and performance": "Pantalla y rendimiento",
-  "Sound settings": "Ajustes de sonido",
-  "Save and game management": "Guardar y gestionar partidas",
-  "Save run": "Guardar partida",
-  "Export save": "Exportar partida",
-  "Import save": "Importar partida",
-  "Export playtest report": "Exportar informe",
-  "New Normal game": "Nueva partida normal",
-  "New game in Nightmare Mode": "Nueva partida en modo Nightmare",
-  "Load other mode run": "Cargar partida de otro modo",
-  "New Developer Mode run": "Nueva partida de desarrollo",
-  "Install on phone": "Instalar en el teléfono",
-  "Install game": "Instalar juego",
-  "Check for game update": "Buscar actualización",
-  "Install available game update": "Instalar actualización",
-  "Map and travel routes": "Mapa y rutas de viaje",
-  "Quest journal": "Diario de misiones",
-  "Story journal": "Guía de la historia",
-  "Local quests": "Misiones de la región",
-  "Inventory and support": "Inventario y apoyo",
-  "Inventory": "Inventario",
-  "Skill journal": "Diario de habilidades",
-  "Talents": "Talentos",
-  "Training": "Entrenamiento",
-  "Character": "Personaje",
-  "Company": "Compañía",
-  "Recruitment": "Reclutamiento",
-  "Local objectives": "Objetivos locales",
-  "Party": "Grupo",
-  "Map": "Mapa",
-  "Back": "Volver",
-  "Continue": "Continuar",
-  "Confirm": "Confirmar",
-  "Cancel": "Cancelar",
-  "Close": "Cerrar",
-  "Move": "Mover",
-  "Target": "Objetivo",
-  "Interact": "Interactuar",
-  "Menu": "Menú",
-  "Recall squad": "Reagrupar escuadra",
-  "Squad": "Escuadra",
-  "Heal": "Curar",
-  "Skills": "Habilidades",
-  "Skip for now": "Ahora no",
-  "Edit name": "Editar nombre",
-  "Decide later": "Decidir después",
-  "Keep this name?": "¿Conservar este nombre?",
-  "Name your hero": "Ponle nombre a tu héroe",
-  "Choose your Dark Lord name": "Elige tu nombre de Dark Lord",
-  "Melee, healing and brief immunity": "Combate cercano, curación e inmunidad breve",
-  "Ranged magic, frost control and protective barriers": "Magia a distancia, hielo y barreras protectoras",
-  "Ranged bow, healing and mobility": "Arco a distancia, curación y movilidad",
-  "The Crown · Credits": "La Corona · Créditos",
-  "Continue in the peaceful world": "Seguir en el mundo en paz",
-  "New game · Normal Mode": "Nueva partida · modo normal",
-  "New game · Nightmare Mode": "Nueva partida · modo Nightmare",
-  "Export completed run": "Exportar partida completada",
-  "ACTIVE": "ACTIVA",
-  "Complete": "Completada",
-  "Resolved by peace": "Resuelta por la paz",
-  "Tutorial": "Tutorial",
-  "New Normal adventure": "Nueva aventura normal",
-  "New Nightmare adventure": "Nueva aventura Nightmare",
-  "Awakening complete": "Despertar completado",
-  "Awakening · Final objective": "Despertar · objetivo final",
-  "Campaign complete · Nightmare unlocked": "Campaña completada · Nightmare desbloqueado",
-  "Return death recovery to refuge": "Volver al refugio al morir",
-  "Set death recovery point": "Establecer punto de reaparición",
-  "Rest here · Complete the journey": "Descansar aquí · completar el viaje",
-  "Recruitment — Expedition 2 required": "Reclutamiento: requiere Expedición 2",
-  "Town recruitment limit reached": "Se alcanzó el límite de reclutas",
-  "Further recruiting requires a barracks.": "Para reclutar más necesitas un cuartel.",
-  "Rescue Mira and train Expedition to Rank 2": "Rescata a Mira y mejora Expedición al rango 2",
-  "Power Training": "Entrenamiento de poder",
-  "Mana Training": "Entrenamiento de maná",
-  "Cooldown Training": "Entrenamiento de recuperación",
-  "Health Training": "Entrenamiento de salud",
-  "Movement Training": "Entrenamiento de movimiento",
-  "Rank": "rango",
-  "FREE": "GRATIS",
-  "crowns": "coronas",
-  "LEVEL": "NIVEL",
-  "All local quests are already ACTIVE. Rewards are automatically delivered as soon as their objectives are completed.": "Todas las misiones locales están activas. Las recompensas se entregan al cumplir los objetivos.",
-  "All quests begin active automatically. Rewards are delivered immediately on completion; no return trip is required.": "Todas las misiones se activan automáticamente. Recibes las recompensas al completarlas; no hace falta regresar.",
-  "Backups, reports and run management.": "Copias de seguridad, informes y gestión de partidas.",
-  "Unlocked by the peaceful ending": "Se desbloquea con el final pacífico",
-  "Tap / charged effects and cooldowns": "Efectos normales y cargados; tiempos de recuperación",
-  "Charged skill interrupted by damage.": "El daño interrumpió la habilidad cargada.",
-  "Charged skill interrupted.": "Habilidad cargada interrumpida.",
-  "Already up to date.": "Ya tienes la versión más reciente.",
-  "Update unavailable. Your saved run is safe.": "No se pudo actualizar. Tu partida está a salvo.",
-  "Game installed. Open it from your home screen.": "Juego instalado. Ábrelo desde la pantalla de inicio.",
-  "Rescue specialists, rebuild your strength and continue the campaign. Map: Z.": "Rescata especialistas, recupera fuerzas y continúa la campaña. Mapa: Z.",
-  "PEACE · Journey complete. Explore the creatures’ new homes.": "PAZ · Viaje completado. Explora los nuevos hogares de las criaturas.",
-  "PEACE · Rest at a refuge, preparation fountain or completed Barracks.": "PAZ · Descansa en un refugio, una fuente de preparación o un cuartel terminado.",
-  "DARK CROWN · Claim the Throne · Fortress courtyard, near (3250, 3090) · Map: Z": "DARK CROWN · Reclama el trono en el patio de la fortaleza, cerca de (3250, 3090) · Mapa: Z",
-  "Find and defeat the TRUE Dark Lord": "Encuentra y derrota al TRUE Dark Lord",
-  "Specialists rescued · Defeat the Dark Lord": "Especialistas rescatados · Derrota al Dark Lord",
-  "Dungeon exit": "Salida de la mazmorra",
-  "Regional transport": "Transporte regional",
-  "Mira · ask the Orchard trail witness": "Mira · habla con el testigo del camino del huerto",
-  "Complete · field base established": "Completada · base de campo construida",
-  "Complete · reward delivered": "Completada · recompensa entregada",
-  "Construction in progress · keep one companion assigned until complete": "Construcción en curso · deja un compañero asignado hasta terminar",
-  "Open Adventure menu while in the field → Establish Basic Barracks · first one FREE": "Abre el menú de aventura en el campo → Establecer cuartel básico · el primero es GRATIS",
-  "shore observed": "costa observada",
-  "observe Lantern shore after dark": "observa Lantern shore de noche",
-  "FIELD BASE · Build your first Barracks — FREE · Open Menu/Esc while in the field → Establish Basic Barracks. It gives companions a nearby recovery base.": "BASE DE CAMPO · Construye tu primer cuartel GRATIS · Abre Menú/Esc en el campo → Establecer cuartel básico. Tus compañeros podrán recuperarse allí.",
-  "Establish Basic Barracks": "Establecer cuartel básico",
-  "TRUE defeated": "TRUE derrotado",
-  "TRUE awakened — return and challenge it": "TRUE despertó: regresa para enfrentarlo",
-  "Normal boss still alive — defeat it to awaken TRUE": "El jefe normal sigue vivo: derrótalo para despertar TRUE",
-  "Use 1–24 letters, numbers, spaces, apostrophes, periods or hyphens.": "Usa de 1 a 24 letras, números, espacios, apóstrofos, puntos o guiones.",
-  "The Dark Lord rules the land. To keep heroes from becoming strong enough to challenge him, his forces have captured the specialists who teach skills, forge equipment and prepare adventurers. Free them, rebuild your strength and confront his rule.\n\nSuccession is optional. Each fallen class is lost for this run; after three class deaths the run ends.": "El Dark Lord gobierna estas tierras y mantiene cautivos a los especialistas que enseñan habilidades, forjan equipo y preparan aventureros. Rescátalos, recupera fuerzas y desafía su dominio.\n\nSucesión es opcional: cada clase que cae se pierde durante esta partida. Si mueren las tres, la partida termina.",
-  "Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.": "Elige al héroe que iniciará la resistencia. Comienzas con una habilidad; rescatar especialistas desbloquea el entrenamiento y equipo necesarios para enfrentar al Dark Lord."
-};
-  const questTranslations = [["A Teacher Taken","Una maestra cautiva","Defeat Thornfang; free Mira","Derrota a Thornfang y rescata a Mira."],["Roads Under Threat","Caminos bajo amenaza","Defeat 5 outdoor enemies in Greenwood Vale","Derrota a 5 enemigos al aire libre en Greenwood Vale."],["Stolen Stores","Suministros robados","Recover 2 caches from Thornfang's Treasury","Recupera 2 escondites del tesoro de Thornfang."],["An Unfinished Retreat","Un retiro inconcluso","Defeat Lifebinder; free Borin","Derrota a Lifebinder y rescata a Borin."],["Keeping Trade Open","Mantener el comercio abierto","Visit Mill bridge and wagon stand","Visita el puente del molino y la parada del carromato."],["Who Owns the Woods?","¿De quién son estos bosques?","Discover any 3 Greenwood Vale sites","Descubre 3 lugares de Greenwood Vale."],["The Island Prisoner","La prisionera de la isla","Defeat Mirejaw; free Sela","Derrota a Mirejaw y rescata a Sela."],["Unsafe Crossings","Cruces peligrosos","Defeat 6 outdoor enemies in Flooded Marches","Derrota a 6 enemigos al aire libre en Flooded Marches."],["Records at Risk","Registros en peligro","Defeat Drowned Keeper; free Neri","Derrota a Drowned Keeper y rescata a Neri."],["Hidden Provisions","Provisiones ocultas","Recover 3 caches from Mirejaw's Treasury","Recupera 3 escondites del tesoro de Mirejaw."],["Shadows After Sundown","Sombras después del anochecer","Visit Lantern shore at night; defeat 2 wraiths","Visita Lantern shore de noche y derrota a 2 wraiths."],["Beyond the Main Road","Más allá del camino principal","Discover any 3 Flooded Marches sites","Descubre 3 lugares de Flooded Marches."],["The Tyrant's Grip","El dominio del tirano","Defeat Ridge Tyrant; free Orin","Derrota a Ridge Tyrant y rescata a Orin."],["Quarry Workers at Risk","Trabajadores de la cantera en peligro","Defeat 7 outdoor enemies in Ironroot Highlands","Derrota a 7 enemigos al aire libre en Ironroot Highlands."],["An Unwilling Hand","Una mano obligada","Defeat Stone Colossus; free Dara","Derrota a Stone Colossus y rescata a Dara."],["The Master's Reserve","La reserva del amo","Recover 3 caches from Ridge Tyrant's Treasury","Recupera 3 escondites del tesoro de Ridge Tyrant."],["Whose Mountain?","¿De quién es esta montaña?","Discover any 3 Ironroot Highlands sites","Descubre 3 lugares de Ironroot Highlands."],["Follow the Crowns","Sigue las coronas","Visit Stonecross ore vein and caravan stand","Visita la veta de mineral de Stonecross y la parada de caravanas."],["Captive at the Front","Cautiva en el frente","Defeat Ashen Warlord; free Lyss","Derrota a Ashen Warlord y rescata a Lyss."],["An Army Needs Supplies","Un ejército necesita suministros","Visit convoy, guarded ravine bridge and checkpoint","Visita el convoy, el puente del barranco vigilado y el puesto de control."],["Wings of War","Alas de guerra","Defeat Abyss Dragon; free Eren","Derrota a Abyss Dragon y rescata a Eren."],["Roads Still Contested","Caminos todavía disputados","Defeat 8 outdoor enemies in Ashen Frontier","Derrota a 8 enemigos al aire libre en Ashen Frontier."],["Rebuilding Under Guard","Reconstrucción bajo vigilancia","Discover any 3 Ashen Frontier sites","Descubre 3 lugares de Ashen Frontier."],["A Different Kind of Flight","Otra clase de vuelo","Visit civilian dragon landing behind Emberwatch","Visita el embarcadero civil de dragones detrás de Emberwatch."],["The Last Lesson","La última lección","Defeat Ash Sentinel; free Tovan","Derrota a Ash Sentinel y rescata a Tovan."],["Hostile Ground","Terreno hostil","Defeat 8 outdoor enemies in Dark Crown","Derrota a 8 enemigos al aire libre en Dark Crown."],["A Smith in Chains","Una herrera encadenada","Defeat Cindermaw; free Vera","Derrota a Cindermaw y rescata a Vera."],["Dreadmaw's Duty","El deber de Dreadmaw","Recover 3 caches from Cindermaw's Treasury","Recupera 3 escondites del tesoro de Cindermaw."],["The Machinery of Rule","La maquinaria del poder","Discover any 3 Dark Crown sites","Descubre 3 lugares de Dark Crown."],["Ready for the Dark Lord","Listo para el Dark Lord","Free Tovan and Vera; reach fortress gate","Rescata a Tovan y Vera, y llega a la puerta de la fortaleza."]];
-  for (const [englishTitle, spanishTitle, englishObjective, spanishObjective] of questTranslations) {
+    'Choose your language': 'Elige tu idioma',
+    'Adventure menu': 'Menú de aventura',
+    'Game and settings': 'Juego y ajustes',
+    'Challenge condition': 'Tipo de desafío',
+    'Standard death and refuge recovery': 'Muerte normal y recuperación en refugio',
+    'Succession challenge': 'Desafío de sucesión',
+    Controls: 'Controles',
+    'Combat conditions': 'Estados de combate',
+    'Customize keyboard': 'Personalizar teclado',
+    'Touch and mouse options': 'Opciones táctiles y de ratón',
+    'Screen and performance': 'Pantalla y rendimiento',
+    'Sound settings': 'Ajustes de sonido',
+    'Save and game management': 'Guardar y gestionar partidas',
+    'Save run': 'Guardar partida',
+    'Export save': 'Exportar partida',
+    'Import save': 'Importar partida',
+    'Export playtest report': 'Exportar informe',
+    'New Normal game': 'Nueva partida normal',
+    'New game in Nightmare Mode': 'Nueva partida en modo Nightmare',
+    'Load other mode run': 'Cargar partida de otro modo',
+    'New Developer Mode run': 'Nueva partida de desarrollo',
+    'Install on phone': 'Instalar en el teléfono',
+    'Install game': 'Instalar juego',
+    'Check for game update': 'Buscar actualización',
+    'Install available game update': 'Instalar actualización',
+    'Map and travel routes': 'Mapa y rutas de viaje',
+    'Quest journal': 'Diario de misiones',
+    'Story journal': 'Guía de la historia',
+    'Local quests': 'Misiones de la región',
+    'Inventory and support': 'Inventario y apoyo',
+    Inventory: 'Inventario',
+    'Skill journal': 'Diario de habilidades',
+    Talents: 'Talentos',
+    Training: 'Entrenamiento',
+    Character: 'Personaje',
+    Company: 'Compañía',
+    Recruitment: 'Reclutamiento',
+    'Local objectives': 'Objetivos locales',
+    Party: 'Grupo',
+    Map: 'Mapa',
+    Back: 'Volver',
+    Continue: 'Continuar',
+    Confirm: 'Confirmar',
+    Cancel: 'Cancelar',
+    Close: 'Cerrar',
+    Move: 'Mover',
+    Target: 'Objetivo',
+    Interact: 'Interactuar',
+    Menu: 'Menú',
+    'Recall squad': 'Reagrupar escuadra',
+    Squad: 'Escuadra',
+    Heal: 'Curar',
+    Skills: 'Habilidades',
+    'Skip for now': 'Ahora no',
+    'Edit name': 'Editar nombre',
+    'Decide later': 'Decidir después',
+    'Keep this name?': '¿Conservar este nombre?',
+    'Name your hero': 'Ponle nombre a tu héroe',
+    'Choose your Dark Lord name': 'Elige tu nombre de Dark Lord',
+    'Melee, healing and brief immunity': 'Combate cercano, curación e inmunidad breve',
+    'Ranged magic, frost control and protective barriers':
+      'Magia a distancia, hielo y barreras protectoras',
+    'Ranged bow, healing and mobility': 'Arco a distancia, curación y movilidad',
+    'The Crown · Credits': 'La Corona · Créditos',
+    'Continue in the peaceful world': 'Seguir en el mundo en paz',
+    'New game · Normal Mode': 'Nueva partida · modo normal',
+    'New game · Nightmare Mode': 'Nueva partida · modo Nightmare',
+    'Export completed run': 'Exportar partida completada',
+    ACTIVE: 'ACTIVA',
+    Complete: 'Completada',
+    'Resolved by peace': 'Resuelta por la paz',
+    Tutorial: 'Tutorial',
+    'New Normal adventure': 'Nueva aventura normal',
+    'New Nightmare adventure': 'Nueva aventura Nightmare',
+    'Awakening complete': 'Despertar completado',
+    'Awakening · Final objective': 'Despertar · objetivo final',
+    'Campaign complete · Nightmare unlocked': 'Campaña completada · Nightmare desbloqueado',
+    'Return death recovery to refuge': 'Volver al refugio al morir',
+    'Set death recovery point': 'Establecer punto de reaparición',
+    'Rest here · Complete the journey': 'Descansar aquí · completar el viaje',
+    'Recruitment — Expedition 2 required': 'Reclutamiento: requiere Expedición 2',
+    'Town recruitment limit reached': 'Se alcanzó el límite de reclutas',
+    'Further recruiting requires a barracks.': 'Para reclutar más necesitas un cuartel.',
+    'Rescue Mira and train Expedition to Rank 2': 'Rescata a Mira y mejora Expedición al rango 2',
+    'Power Training': 'Entrenamiento de poder',
+    'Mana Training': 'Entrenamiento de maná',
+    'Cooldown Training': 'Entrenamiento de recuperación',
+    'Health Training': 'Entrenamiento de salud',
+    'Movement Training': 'Entrenamiento de movimiento',
+    Rank: 'rango',
+    FREE: 'GRATIS',
+    crowns: 'coronas',
+    LEVEL: 'NIVEL',
+    'All local quests are already ACTIVE. Rewards are automatically delivered as soon as their objectives are completed.':
+      'Todas las misiones locales están activas. Las recompensas se entregan al cumplir los objetivos.',
+    'All quests begin active automatically. Rewards are delivered immediately on completion; no return trip is required.':
+      'Todas las misiones se activan automáticamente. Recibes las recompensas al completarlas; no hace falta regresar.',
+    'Backups, reports and run management.': 'Copias de seguridad, informes y gestión de partidas.',
+    'Unlocked by the peaceful ending': 'Se desbloquea con el final pacífico',
+    'Tap / charged effects and cooldowns': 'Efectos normales y cargados; tiempos de recuperación',
+    'Charged skill interrupted by damage.': 'El daño interrumpió la habilidad cargada.',
+    'Charged skill interrupted.': 'Habilidad cargada interrumpida.',
+    'Already up to date.': 'Ya tienes la versión más reciente.',
+    'Update unavailable. Your saved run is safe.':
+      'No se pudo actualizar. Tu partida está a salvo.',
+    'Game installed. Open it from your home screen.':
+      'Juego instalado. Ábrelo desde la pantalla de inicio.',
+    'Rescue specialists, rebuild your strength and continue the campaign. Map: Z.':
+      'Rescata especialistas, recupera fuerzas y continúa la campaña. Mapa: Z.',
+    'PEACE · Journey complete. Explore the creatures’ new homes.':
+      'PAZ · Viaje completado. Explora los nuevos hogares de las criaturas.',
+    'PEACE · Rest at a refuge, preparation fountain or completed Barracks.':
+      'PAZ · Descansa en un refugio, una fuente de preparación o un cuartel terminado.',
+    'DARK CROWN · Claim the Throne · Fortress courtyard, near (3250, 3090) · Map: Z':
+      'DARK CROWN · Reclama el trono en el patio de la fortaleza, cerca de (3250, 3090) · Mapa: Z',
+    'Find and defeat the TRUE Dark Lord': 'Encuentra y derrota al TRUE Dark Lord',
+    'Specialists rescued · Defeat the Dark Lord': 'Especialistas rescatados · Derrota al Dark Lord',
+    'Dungeon exit': 'Salida de la mazmorra',
+    'Regional transport': 'Transporte regional',
+    'Mira · ask the Orchard trail witness': 'Mira · habla con el testigo del camino del huerto',
+    'Complete · field base established': 'Completada · base de campo construida',
+    'Complete · reward delivered': 'Completada · recompensa entregada',
+    'Construction in progress · keep one companion assigned until complete':
+      'Construcción en curso · deja un compañero asignado hasta terminar',
+    'Open Adventure menu while in the field → Establish Basic Barracks · first one FREE':
+      'Abre el menú de aventura en el campo → Establecer cuartel básico · el primero es GRATIS',
+    'shore observed': 'costa observada',
+    'observe Lantern shore after dark': 'observa Lantern shore de noche',
+    'FIELD BASE · Build your first Barracks — FREE · Open Menu/Esc while in the field → Establish Basic Barracks. It gives companions a nearby recovery base.':
+      'BASE DE CAMPO · Construye tu primer cuartel GRATIS · Abre Menú/Esc en el campo → Establecer cuartel básico. Tus compañeros podrán recuperarse allí.',
+    'Establish Basic Barracks': 'Establecer cuartel básico',
+    'TRUE defeated': 'TRUE derrotado',
+    'TRUE awakened — return and challenge it': 'TRUE despertó: regresa para enfrentarlo',
+    'Normal boss still alive — defeat it to awaken TRUE':
+      'El jefe normal sigue vivo: derrótalo para despertar TRUE',
+    'Use 1–24 letters, numbers, spaces, apostrophes, periods or hyphens.':
+      'Usa de 1 a 24 letras, números, espacios, apóstrofos, puntos o guiones.',
+    'The Dark Lord rules the land. To keep heroes from becoming strong enough to challenge him, his forces have captured the specialists who teach skills, forge equipment and prepare adventurers. Free them, rebuild your strength and confront his rule.\n\nSuccession is optional. Each fallen class is lost for this run; after three class deaths the run ends.':
+      'El Dark Lord gobierna estas tierras y mantiene cautivos a los especialistas que enseñan habilidades, forjan equipo y preparan aventureros. Rescátalos, recupera fuerzas y desafía su dominio.\n\nSucesión es opcional: cada clase que cae se pierde durante esta partida. Si mueren las tres, la partida termina.',
+    'Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.':
+      'Elige al héroe que iniciará la resistencia. Comienzas con una habilidad; rescatar especialistas desbloquea el entrenamiento y equipo necesarios para enfrentar al Dark Lord.',
+  };
+  const questTranslations = [
+    [
+      'A Teacher Taken',
+      'Una maestra cautiva',
+      'Defeat Thornfang; free Mira',
+      'Derrota a Thornfang y rescata a Mira.',
+    ],
+    [
+      'Roads Under Threat',
+      'Caminos bajo amenaza',
+      'Defeat 5 outdoor enemies in Greenwood Vale',
+      'Derrota a 5 enemigos al aire libre en Greenwood Vale.',
+    ],
+    [
+      'Stolen Stores',
+      'Suministros robados',
+      "Recover 2 caches from Thornfang's Treasury",
+      'Recupera 2 escondites del tesoro de Thornfang.',
+    ],
+    [
+      'An Unfinished Retreat',
+      'Un retiro inconcluso',
+      'Defeat Lifebinder; free Borin',
+      'Derrota a Lifebinder y rescata a Borin.',
+    ],
+    [
+      'Keeping Trade Open',
+      'Mantener el comercio abierto',
+      'Visit Mill bridge and wagon stand',
+      'Visita el puente del molino y la parada del carromato.',
+    ],
+    [
+      'Who Owns the Woods?',
+      '¿De quién son estos bosques?',
+      'Discover any 3 Greenwood Vale sites',
+      'Descubre 3 lugares de Greenwood Vale.',
+    ],
+    [
+      'The Island Prisoner',
+      'La prisionera de la isla',
+      'Defeat Mirejaw; free Sela',
+      'Derrota a Mirejaw y rescata a Sela.',
+    ],
+    [
+      'Unsafe Crossings',
+      'Cruces peligrosos',
+      'Defeat 6 outdoor enemies in Flooded Marches',
+      'Derrota a 6 enemigos al aire libre en Flooded Marches.',
+    ],
+    [
+      'Records at Risk',
+      'Registros en peligro',
+      'Defeat Drowned Keeper; free Neri',
+      'Derrota a Drowned Keeper y rescata a Neri.',
+    ],
+    [
+      'Hidden Provisions',
+      'Provisiones ocultas',
+      "Recover 3 caches from Mirejaw's Treasury",
+      'Recupera 3 escondites del tesoro de Mirejaw.',
+    ],
+    [
+      'Shadows After Sundown',
+      'Sombras después del anochecer',
+      'Visit Lantern shore at night; defeat 2 wraiths',
+      'Visita Lantern shore de noche y derrota a 2 wraiths.',
+    ],
+    [
+      'Beyond the Main Road',
+      'Más allá del camino principal',
+      'Discover any 3 Flooded Marches sites',
+      'Descubre 3 lugares de Flooded Marches.',
+    ],
+    [
+      "The Tyrant's Grip",
+      'El dominio del tirano',
+      'Defeat Ridge Tyrant; free Orin',
+      'Derrota a Ridge Tyrant y rescata a Orin.',
+    ],
+    [
+      'Quarry Workers at Risk',
+      'Trabajadores de la cantera en peligro',
+      'Defeat 7 outdoor enemies in Ironroot Highlands',
+      'Derrota a 7 enemigos al aire libre en Ironroot Highlands.',
+    ],
+    [
+      'An Unwilling Hand',
+      'Una mano obligada',
+      'Defeat Stone Colossus; free Dara',
+      'Derrota a Stone Colossus y rescata a Dara.',
+    ],
+    [
+      "The Master's Reserve",
+      'La reserva del amo',
+      "Recover 3 caches from Ridge Tyrant's Treasury",
+      'Recupera 3 escondites del tesoro de Ridge Tyrant.',
+    ],
+    [
+      'Whose Mountain?',
+      '¿De quién es esta montaña?',
+      'Discover any 3 Ironroot Highlands sites',
+      'Descubre 3 lugares de Ironroot Highlands.',
+    ],
+    [
+      'Follow the Crowns',
+      'Sigue las coronas',
+      'Visit Stonecross ore vein and caravan stand',
+      'Visita la veta de mineral de Stonecross y la parada de caravanas.',
+    ],
+    [
+      'Captive at the Front',
+      'Cautiva en el frente',
+      'Defeat Ashen Warlord; free Lyss',
+      'Derrota a Ashen Warlord y rescata a Lyss.',
+    ],
+    [
+      'An Army Needs Supplies',
+      'Un ejército necesita suministros',
+      'Visit convoy, guarded ravine bridge and checkpoint',
+      'Visita el convoy, el puente del barranco vigilado y el puesto de control.',
+    ],
+    [
+      'Wings of War',
+      'Alas de guerra',
+      'Defeat Abyss Dragon; free Eren',
+      'Derrota a Abyss Dragon y rescata a Eren.',
+    ],
+    [
+      'Roads Still Contested',
+      'Caminos todavía disputados',
+      'Defeat 8 outdoor enemies in Ashen Frontier',
+      'Derrota a 8 enemigos al aire libre en Ashen Frontier.',
+    ],
+    [
+      'Rebuilding Under Guard',
+      'Reconstrucción bajo vigilancia',
+      'Discover any 3 Ashen Frontier sites',
+      'Descubre 3 lugares de Ashen Frontier.',
+    ],
+    [
+      'A Different Kind of Flight',
+      'Otra clase de vuelo',
+      'Visit civilian dragon landing behind Emberwatch',
+      'Visita el embarcadero civil de dragones detrás de Emberwatch.',
+    ],
+    [
+      'The Last Lesson',
+      'La última lección',
+      'Defeat Ash Sentinel; free Tovan',
+      'Derrota a Ash Sentinel y rescata a Tovan.',
+    ],
+    [
+      'Hostile Ground',
+      'Terreno hostil',
+      'Defeat 8 outdoor enemies in Dark Crown',
+      'Derrota a 8 enemigos al aire libre en Dark Crown.',
+    ],
+    [
+      'A Smith in Chains',
+      'Una herrera encadenada',
+      'Defeat Cindermaw; free Vera',
+      'Derrota a Cindermaw y rescata a Vera.',
+    ],
+    [
+      "Dreadmaw's Duty",
+      'El deber de Dreadmaw',
+      "Recover 3 caches from Cindermaw's Treasury",
+      'Recupera 3 escondites del tesoro de Cindermaw.',
+    ],
+    [
+      'The Machinery of Rule',
+      'La maquinaria del poder',
+      'Discover any 3 Dark Crown sites',
+      'Descubre 3 lugares de Dark Crown.',
+    ],
+    [
+      'Ready for the Dark Lord',
+      'Listo para el Dark Lord',
+      'Free Tovan and Vera; reach fortress gate',
+      'Rescata a Tovan y Vera, y llega a la puerta de la fortaleza.',
+    ],
+  ];
+  for (const [
+    englishTitle,
+    spanishTitle,
+    englishObjective,
+    spanishObjective,
+  ] of questTranslations) {
     spanishText[englishTitle] = spanishTitle;
     spanishText[englishObjective] = spanishObjective;
   }
@@ -159,28 +363,45 @@
     if (/^Recruit (Soldier|Ranger) · \d+ crowns/.test(piece))
       return piece.replace('Recruit ', 'Reclutar ').replace('crowns', 'coronas');
     if (/^Recover fallen companion/.test(piece))
-      return piece.replace('Recover fallen companion', 'Recuperar compañero caído').replace('crowns', 'coronas');
+      return piece
+        .replace('Recover fallen companion', 'Recuperar compañero caído')
+        .replace('crowns', 'coronas');
     if (/^Establish Basic Barracks/.test(piece))
-      return piece.replace('Establish Basic Barracks', 'Establecer cuartel básico').replace('crowns', 'coronas').replace('FREE', 'GRATIS');
+      return piece
+        .replace('Establish Basic Barracks', 'Establecer cuartel básico')
+        .replace('crowns', 'coronas')
+        .replace('FREE', 'GRATIS');
     if (/^Need \d+ crowns/.test(piece))
       return piece.replace('Need ', 'Necesitas ').replace('crowns', 'coronas');
     if (/^(\d+) crowns \/ (\d+) XP/.test(piece)) return piece.replace('crowns', 'coronas');
     if (/^\d+\/\d+ (supplies recovered|outdoor enemies|places discovered)/.test(piece))
-      return piece.replace('supplies recovered', 'suministros recuperados')
+      return piece
+        .replace('supplies recovered', 'suministros recuperados')
         .replace('outdoor enemies', 'enemigos al aire libre')
         .replace('places discovered', 'lugares descubiertos')
         .replace('explore naturally', 'explora el mundo');
     if (/^\d+\/\d+ night wraiths/.test(piece))
-      return piece.replace('night wraiths', 'wraiths nocturnos')
+      return piece
+        .replace('night wraiths', 'wraiths nocturnos')
         .replace('shore observed', 'costa observada')
         .replace('observe Lantern shore after dark', 'observa Lantern shore de noche');
     if (/^Navigate · /.test(piece)) return piece.replace('Navigate · ', 'Ir a · ');
     if (/^Return to /.test(piece)) return piece.replace('Return to ', 'Regresar a ');
-    if (/^Awakening · /.test(piece)) return piece.replace('Awakening', 'Despertar').replace('defeated', 'derrotados');
-    if (/^Specialists rescued · /.test(piece)) return piece.replace('Specialists rescued', 'Especialistas rescatados').replace('Next:', 'Siguiente:');
-    if (/^.* specialists \d+\/\d+/.test(piece)) return piece.replace('specialists', 'especialistas').replace('rescued', 'rescatados');
-    if (/^Rescue /.test(piece)) return piece.replace('Rescue ', 'Rescata a ').replace(' from ', ' de ').replace(' in ', ' en ');
-    if (/^New (Normal|Nightmare|Developer) adventure/.test(piece)) return piece.replace('New ', 'Nueva aventura ');
+    if (/^Awakening · /.test(piece))
+      return piece.replace('Awakening', 'Despertar').replace('defeated', 'derrotados');
+    if (/^Specialists rescued · /.test(piece))
+      return piece
+        .replace('Specialists rescued', 'Especialistas rescatados')
+        .replace('Next:', 'Siguiente:');
+    if (/^.* specialists \d+\/\d+/.test(piece))
+      return piece.replace('specialists', 'especialistas').replace('rescued', 'rescatados');
+    if (/^Rescue /.test(piece))
+      return piece
+        .replace('Rescue ', 'Rescata a ')
+        .replace(' from ', ' de ')
+        .replace(' in ', ' en ');
+    if (/^New (Normal|Nightmare|Developer) adventure/.test(piece))
+      return piece.replace('New ', 'Nueva aventura ');
     return piece;
   }
   function tr(value) {
@@ -191,9 +412,12 @@
   function setLanguage(value) {
     language = value === 'es' ? 'es' : 'en';
     document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
-    try { localStorage.setItem(languageKey, language); } catch (_) {}
+    try {
+      localStorage.setItem(languageKey, language);
+    } catch (_) {}
     $('menu-button').firstChild.textContent = language === 'es' ? '☰ Menú ' : '☰ Menu ';
-    $('talent-button').firstChild.textContent = language === 'es' ? 'Entrenamiento · ' : 'Training · ';
+    $('talent-button').firstChild.textContent =
+      language === 'es' ? 'Entrenamiento · ' : 'Training · ';
     $('recall-button').firstChild.textContent = language === 'es' ? 'Reagrupar ' : 'Recall squad ';
     $('target-button').firstChild.textContent = language === 'es' ? 'Objetivo ' : 'Target ';
     $('skills').setAttribute('aria-label', language === 'es' ? 'Habilidades' : 'Skills');
@@ -539,18 +763,30 @@
     openMenu(
       'Controls',
       language === 'es'
-        ? 'Moverse: ' + ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('/') +
-          '; teléfono: palanca táctil. Interactuar: ' + input.key('confirm') +
-          '.\nHabilidades: ' + skillKeys + '. Toca para usar; mantén 0,65 s hasta CHARGED y suelta. ' +
-          (game.hero.class === 'paladin'
-            ? 'Habilidad 3: escudo. Toca para bajarlo o mantén pulsado para Shield Bash.'
-            : game.hero.class === 'mage'
-              ? 'Habilidad 3: interrumpir hechizos. Mantén pulsado para Silence Field.'
-              : 'Habilidad 3: curación. Cargada también cura a compañeros vivos.') +
-          '\nObjetivo: ' + input.key('target') + ', toca para cambiar y mantén para fijar. Dorado: a tiro; ámbar: lejos; rojo: bloqueado. Esquiva ataques marcados.' +
-          '\nReagrupar: ' + input.key('recall') +
-          '. Mapa: ' + input.key('map') + '. Misiones: ' + input.key('quests') +
-          '. Menú: Esc. En menús, usa flechas, ' + input.key('confirm') + '/Enter para confirmar y Esc para volver.'
+        ? 'Moverse: ' +
+            ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('/') +
+            '; teléfono: palanca táctil. Interactuar: ' +
+            input.key('confirm') +
+            '.\nHabilidades: ' +
+            skillKeys +
+            '. Toca para usar; mantén 0,65 s hasta CHARGED y suelta. ' +
+            (game.hero.class === 'paladin'
+              ? 'Habilidad 3: escudo. Toca para bajarlo o mantén pulsado para Shield Bash.'
+              : game.hero.class === 'mage'
+                ? 'Habilidad 3: interrumpir hechizos. Mantén pulsado para Silence Field.'
+                : 'Habilidad 3: curación. Cargada también cura a compañeros vivos.') +
+            '\nObjetivo: ' +
+            input.key('target') +
+            ', toca para cambiar y mantén para fijar. Dorado: a tiro; ámbar: lejos; rojo: bloqueado. Esquiva ataques marcados.' +
+            '\nReagrupar: ' +
+            input.key('recall') +
+            '. Mapa: ' +
+            input.key('map') +
+            '. Misiones: ' +
+            input.key('quests') +
+            '. Menú: Esc. En menús, usa flechas, ' +
+            input.key('confirm') +
+            '/Enter para confirmar y Esc para volver.'
         : description,
       [
         action('Combat conditions', () => combatConditions(() => help(back))),
@@ -763,8 +999,9 @@
       if (!field.value.trim()) return onSkip();
       const name = Campaign.normalizeCharacterName(field.value);
       if (!name) {
-        $('modal-description').textContent =
-          tr('Use 1–24 letters, numbers, spaces, apostrophes, periods or hyphens.');
+        $('modal-description').textContent = tr(
+          'Use 1–24 letters, numbers, spaces, apostrophes, periods or hyphens.',
+        );
         field.focus();
         return;
       }
@@ -935,26 +1172,38 @@
     updateHUD();
   }
   function chooseLanguage(mode) {
-    openMenu('Choose your language', 'English / Español', [
-      action('English' + (language === 'en' ? ' ✓' : ''), () => {
-        setLanguage('en');
-        chooseClass(mode);
-      }),
-      action('Español' + (language === 'es' ? ' ✓' : ''), () => {
-        setLanguage('es');
-        chooseClass(mode);
-      }),
-    ], () => started ? openMain() : chooseClass(mode));
+    openMenu(
+      'Choose your language',
+      'English / Español',
+      [
+        action('English' + (language === 'en' ? ' ✓' : ''), () => {
+          setLanguage('en');
+          chooseClass(mode);
+        }),
+        action('Español' + (language === 'es' ? ' ✓' : ''), () => {
+          setLanguage('es');
+          chooseClass(mode);
+        }),
+      ],
+      () => (started ? openMain() : chooseClass(mode)),
+    );
   }
   function languageMenu(back = systemMenu) {
-    openMenu('Choose your language', 'English / Español', [
-      action('English' + (language === 'en' ? ' ✓' : ''), () => {
-        setLanguage('en'); back();
-      }),
-      action('Español' + (language === 'es' ? ' ✓' : ''), () => {
-        setLanguage('es'); back();
-      }),
-    ], back);
+    openMenu(
+      'Choose your language',
+      'English / Español',
+      [
+        action('English' + (language === 'en' ? ' ✓' : ''), () => {
+          setLanguage('en');
+          back();
+        }),
+        action('Español' + (language === 'es' ? ' ✓' : ''), () => {
+          setLanguage('es');
+          back();
+        }),
+      ],
+      back,
+    );
   }
   function chooseClass(mode, succession) {
     if (mode === 'developer' && !developerEnabled) return;
@@ -977,19 +1226,28 @@
       'Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.',
       Object.entries(Campaign.classes).map(([id, c]) =>
         action(
-          c.icon + ' ' + (language === 'es' ? ({paladin:'Paladín',mage:'Mago',ranger:'Explorador'}[id] || id) : id),
+          c.icon +
+            ' ' +
+            (language === 'es'
+              ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador' }[id] || id
+              : id),
           () => {
             const rawName = $('character-name')?.value || '',
               heroName = rawName.trim() ? Campaign.normalizeCharacterName(rawName) : null;
             if (rawName.trim() && !heroName) {
-              $('modal-description').textContent =
-                tr('Use 1–24 letters, numbers, spaces, apostrophes, periods or hyphens.');
+              $('modal-description').textContent = tr(
+                'Use 1–24 letters, numbers, spaces, apostrophes, periods or hyphens.',
+              );
               return;
             }
             const exists = persistence.exists(mode);
             if (
               exists &&
-              !confirm(language === 'es' ? '¿Reemplazar la partida ' + mode + '? Expórtala antes si quieres conservarla.' : 'Replace the existing ' + mode + ' run? Export it first to keep it.')
+              !confirm(
+                language === 'es'
+                  ? '¿Reemplazar la partida ' + mode + '? Expórtala antes si quieres conservarla.'
+                  : 'Replace the existing ' + mode + ' run? Export it first to keep it.',
+              )
             )
               return;
             start(mode, id, succession, heroName);
@@ -1247,7 +1505,9 @@
         action('Controls', () => help(systemMenu)),
         action('Sound settings', () => soundMenu(systemMenu)),
         action('Save and game management', saveMenu),
-        action('Language · ' + (language === 'es' ? 'Español' : 'English'), () => languageMenu(systemMenu)),
+        action('Language · ' + (language === 'es' ? 'Español' : 'English'), () =>
+          languageMenu(systemMenu),
+        ),
       ],
       openMain,
     );
@@ -2926,7 +3186,8 @@
       Campaign.classes[h.class].icon +
       ' ' +
       game.heroDisplayName() +
-      '</span><small>' + (language === 'es' ? 'NIVEL ' : 'LEVEL ') +
+      '</span><small>' +
+      (language === 'es' ? 'NIVEL ' : 'LEVEL ') +
       h.level +
       '</small></div><div class="resource-line health"><span>HP ' +
       Math.ceil(h.hp) +
@@ -3053,8 +3314,8 @@
                 '/5 TRUE guardians defeated · Map: Z'
               : regionalSpecialistObjective();
 
-  // The HUD objective is generated by the engine; keep proper names and
-  // quest state untouched, but localize the shared dynamic guidance.
+    // The HUD objective is generated by the engine; keep proper names and
+    // quest state untouched, but localize the shared dynamic guidance.
     $('objective').textContent = tr($('objective').textContent);
     $('objective').title = $('objective').textContent;
     const doctrine = game.squadDoctrineLabel(),
@@ -3152,13 +3413,22 @@
     $('order-button').textContent = tr('Confirm');
     $('desktop-hints').textContent =
       ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('') +
-      ' · ' + tr('Move') + '   ' +
+      ' · ' +
+      tr('Move') +
+      '   ' +
       input.key('target') +
-      ' · ' + tr('Target') + '   ' +
+      ' · ' +
+      tr('Target') +
+      '   ' +
       input.key('confirm') +
-      ' · ' + tr('Interact') + '   ' +
+      ' · ' +
+      tr('Interact') +
+      '   ' +
       input.key('map') +
-      ' · ' + tr('Map') + '   Esc · ' + tr('Menu');
+      ' · ' +
+      tr('Map') +
+      '   Esc · ' +
+      tr('Menu');
     $('talent-button').querySelector('small').textContent = input.key('training');
     if ($('squad-button').querySelector('small'))
       $('squad-button').querySelector('small').textContent = input.key('doctrine');

@@ -29,6 +29,7 @@ async function capture(base, directory, engine = 'webkit') {
         errors = [];
       page.on('pageerror', (e) => errors.push(e.message));
       await page.goto(base + (phone ? 'phone.html' : 'index.html'));
+      await require('../tests/helpers/language-browser.cjs').selectEnglish(page);
       await page.keyboard.press('f');
       await page.keyboard.press('f');
       await page.waitForFunction(() => document.querySelector('#modal').hidden);

@@ -71,6 +71,7 @@ fs.mkdirSync(out, { recursive: true });
           (viewport.width === 375 ? 'phone' : 'desktop'),
       );
       await page.waitForFunction(() => !!window.Prototype);
+      await require('./helpers/language-browser.cjs').selectEnglish(page);
       await page.keyboard.press('f');
       await page.keyboard.press('f');
       await page.waitForFunction(() => document.querySelector('#modal').hidden);

@@ -71,6 +71,7 @@ const snapshot = () => ({
     const page = await context.newPage();
     await page.goto(url);
     await page.waitForFunction(() => window.Prototype);
+    await require('./helpers/language-browser.cjs').selectEnglish(page);
     await page.keyboard.press('s');
     await page.keyboard.press('f');
     await page.keyboard.press('f');

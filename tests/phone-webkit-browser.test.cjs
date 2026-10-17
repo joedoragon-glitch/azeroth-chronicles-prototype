@@ -14,6 +14,7 @@ const server=http.createServer((req,res)=>{
  for(const size of [{width:375,height:800},{width:393,height:852},{width:800,height:375},{width:844,height:390}]){
  const page=await browser.newPage({viewport:size,hasTouch:true,isMobile:true}),errors=[];activePage=page;page.on('pageerror',e=>errors.push(e.message));
  await page.goto('http://127.0.0.1:'+server.address().port+'/phone.html');await page.waitForFunction(()=>!!window.Prototype);
+ await require('./helpers/language-browser.cjs').selectEnglish(page);
  await page.keyboard.press('f');await page.keyboard.press('f');await page.waitForFunction(()=>document.querySelector('#modal').hidden);
  await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');c.zone().enemies=[];c.zone().props=[];c.s.party=[];Object.assign(c.hero,{x:600,y:900,order:null});Prototype.updateHUD();});
  const hud=await page.locator('#hud').boundingBox(),skills=await page.locator('#skills').boundingBox();
