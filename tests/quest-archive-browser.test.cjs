@@ -68,6 +68,7 @@ const server = http.createServer((req, res) => {
           (phone ? 'phone.html' : 'index.html'),
       );
       await page.waitForFunction(() => !!window.Prototype);
+      await require('./helpers/language-browser.cjs').selectEnglish(page);
       await page.keyboard.press('f');
       await page.keyboard.press('f');
       await page.waitForFunction(() => document.querySelector('#modal').hidden);

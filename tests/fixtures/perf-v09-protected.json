@@ -1943,6 +1943,54 @@
         "tests/enemy-support-healing.test.cjs": "625645cd13d52928f8afa9b09c16e054548ef6f2cdf3b2a19c19a2412af9ff32",
         "tests/helpers/enemy-heal-browser.cjs": "61c5a67f5a2688b473a695fbb98d49a717a7e6bc5adf00c38421e76fecc12b31"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "baseline": "9f69e5209e37207935281118208efe1005ec567a",
+      "source": "PR #313 release follow-up preserves PR #315 language choice: explicit English browser startup, localization formatting and cache version metadata. Owner authorized blocker repair on 16 October 2026. SOURCE ONLY, NOT TESTED.",
+      "files": {
+        "package-lock.json": "056604a80a50bec7202cda7d1e3be78a8fde80daf66f7111933ca87342ef2099",
+        "package.json": "52b24bfed8405565d1b047ded04315044f9f1dcf11a494792aca9ff3b467f2cf",
+        "src/prototype/app.js": "b0fc3d2940b1716a27c43f98422ede37e72cc5da68bc88cc2ba658c69dc45ca2",
+        "src/prototype/build-info.js": "73cf0474f80a4448201af7fec913bd9407d37da12f9b45ea06421eb34841ee22",
+        "sw.js": "3fa5507a8dcb1291851b07d811785e6eee238c15734321269b92b337bac9f70d",
+        "tests/audio-browser.test.cjs": "6f68d41574e0493559327a227cce366e6b8ecb11211e7b0995176246d14d7399",
+        "tests/cooldown-input-browser.test.cjs": "1f1ff5c5a1f545526be3518d0c1bf844857e92d565832804a17cc8f344835b4c",
+        "tests/hero-skills-browser.test.cjs": "1334726877d7b7246b3bb4b3561a621255a6790740a868dad48a5da935a69ca1",
+        "tests/personalization-browser.test.cjs": "8fb795c5666d2ba5d62a5353b61d578d90761ff3b8f7c69b6b5a6fb14434d217",
+        "tests/prototype-browser.test.cjs": "e61fdb37055ecc35e5897844722baab108600191a540962451d495dfab5e9d96",
+        "tests/quest-archive-browser.test.cjs": "34db4627d609cba08ced6e7ed459dfc342e427dfc4a5e6d7cc1eb8fed0b62165",
+        "tests/rogue-browser.test.cjs": "bebf8125718d34536a6f14a9182f602b3b491aa36b0e24ab15b87fd0858f0602"
+      },
+      "previousFiles": {
+        "package-lock.json": "f938ec0862d8d048d77c797fd3a69eaf338187ea31b3adebe15ada759a336cbd",
+        "package.json": "ac2017bc291994000f4eaa9419f492c452230b184eb235aac4b83d6e4e10014d",
+        "src/prototype/app.js": "5ce64b5aa2628ce8bab9e404db042305fb627bd8be656335ed046858ae628d56",
+        "src/prototype/build-info.js": "7a92c96b596fcb74f7aff4a5c25ee38aed3da1d95f08b3151ef3136e7a558040",
+        "sw.js": "78dc9f964c529ff1a0e69e5d9802c0f173fbc138232e3eef2da4119c70391e34",
+        "tests/audio-browser.test.cjs": "814e03f9b2c64cbc97cd6513d94ba02767ac9be04585273bd95529ea2d291a15",
+        "tests/cooldown-input-browser.test.cjs": "9c03ecd6e484749ea2315396ee5fe9c9cf6e2261198db38ccca7ac05d91f569c",
+        "tests/hero-skills-browser.test.cjs": "064b880a32af8e6b4fb9fcc8eadd0b6701e392dcacbaedecf5cf920ff0c14923",
+        "tests/personalization-browser.test.cjs": "72254426afac3398f6f801939795426eaf8932e519b9f5ee99e49ef0ebb63494",
+        "tests/prototype-browser.test.cjs": "fd2dda2d3bccf0866d07c7d312b856c907720c24614f0023d109abbc9ae43e2d",
+        "tests/quest-archive-browser.test.cjs": "40336e15681b43b4b3399ba39e5fb750808e664f63457fbbd971404e106228f3",
+        "tests/rogue-browser.test.cjs": "27654ab686430516b6b36dbf6e5612bb256dbaa4a50cb66e02a0b1a58d7c3612"
+      },
+      "inboundMainFiles": {
+        "package-lock.json": "f938ec0862d8d048d77c797fd3a69eaf338187ea31b3adebe15ada759a336cbd",
+        "package.json": "ac2017bc291994000f4eaa9419f492c452230b184eb235aac4b83d6e4e10014d",
+        "src/prototype/app.js": "90927c2d2a8beef0fa187cc30ef5705bab46a8c48f42f8cb3575a0fc3ee546d5",
+        "src/prototype/build-info.js": "7a92c96b596fcb74f7aff4a5c25ee38aed3da1d95f08b3151ef3136e7a558040",
+        "sw.js": "78dc9f964c529ff1a0e69e5d9802c0f173fbc138232e3eef2da4119c70391e34",
+        "tests/audio-browser.test.cjs": "814e03f9b2c64cbc97cd6513d94ba02767ac9be04585273bd95529ea2d291a15",
+        "tests/cooldown-input-browser.test.cjs": "9c03ecd6e484749ea2315396ee5fe9c9cf6e2261198db38ccca7ac05d91f569c",
+        "tests/hero-skills-browser.test.cjs": "064b880a32af8e6b4fb9fcc8eadd0b6701e392dcacbaedecf5cf920ff0c14923",
+        "tests/personalization-browser.test.cjs": "72254426afac3398f6f801939795426eaf8932e519b9f5ee99e49ef0ebb63494",
+        "tests/prototype-browser.test.cjs": "fd2dda2d3bccf0866d07c7d312b856c907720c24614f0023d109abbc9ae43e2d",
+        "tests/quest-archive-browser.test.cjs": "40336e15681b43b4b3399ba39e5fb750808e664f63457fbbd971404e106228f3",
+        "tests/rogue-browser.test.cjs": "27654ab686430516b6b36dbf6e5612bb256dbaa4a50cb66e02a0b1a58d7c3612"
+      },
+      "scope": "Append-only receipt for reviewed localization and startup-fixture integration; no changed gameplay, simulation, assertions or release gates. Build/syntax only; no test reruns."
     }
   ],
   "authorizedPr313ApproachFrameRevision": {

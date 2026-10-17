@@ -57,6 +57,7 @@ const server = http.createServer((req, res) => {
       await page.goto(
         'http://127.0.0.1:' + server.address().port + '/' + (phone ? 'phone.html' : 'index.html'),
       );
+      await require('./helpers/language-browser.cjs').selectEnglish(page);
       await page
         .getByRole('button', { name: 'Standard death and refuge recovery', exact: true })
         .click();

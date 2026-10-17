@@ -55,6 +55,7 @@ const server = http.createServer((req, res) => {
       const errors = [];
       page.on('pageerror', (e) => errors.push(e.message));
       await page.goto('http://127.0.0.1:' + server.address().port + '/' + entry);
+      await require('./helpers/language-browser.cjs').selectEnglish(page);
       await page.locator('#modal-actions button').first().click();
       await page.locator('#modal-actions button').first().click();
       await page.waitForFunction(() => Prototype.audio.ctx?.state === 'running');
