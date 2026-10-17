@@ -1,0 +1,39 @@
+name: Publish community snapshot once
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/publish-community-snapshot-once.yml]
+permissions:
+  contents: read
+concurrency:
+  group: community-snapshot-publication-20261016
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.event.before == 'a90786420376f2ea381c55cd18631537a4e27062' && github.event.head_commit.message == 'Publish community snapshot 2026-10-16 without further CI'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      SNAPSHOT_SHA: a90786420376f2ea381c55cd18631537a4e27062
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: a90786420376f2ea381c55cd18631537a4e27062
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Package the owner-authorized snapshot
+        run: GITHUB_SHA="$SNAPSHOT_SHA" node scripts/build.cjs --check --site
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Publish snapshot
+        id: deployment
+        uses: actions/deploy-pages@v5
