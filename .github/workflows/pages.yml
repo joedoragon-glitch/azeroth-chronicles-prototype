@@ -15,6 +15,8 @@ concurrency:
 
 jobs:
   release-plan:
+    # One-time owner-authorized publication of the exact Skill 1 correction.
+    if: github.event_name != 'push' || github.event.before != 'ee25e05ee9066d23c92b8ca729849d64cc7e14b8'
     runs-on: ubuntu-latest
     permissions:
       contents: read
