@@ -1991,6 +1991,29 @@
         "tests/rogue-browser.test.cjs": "27654ab686430516b6b36dbf6e5612bb256dbaa4a50cb66e02a0b1a58d7c3612"
       },
       "scope": "Append-only receipt for reviewed localization and startup-fixture integration; no changed gameplay, simulation, assertions or release gates. Build/syntax only; no test reruns."
+    },
+    {
+      "canonicalIssue": 312,
+      "baseline": "bf0f6e42a1ff798be171ae60169ac31809543a83",
+      "source": "PR #313 community snapshot follow-up: owner-reported Skill 1 movement fire cannot pursue or release Recall; explicit presses retain approach. SOURCE ONLY, NOT TESTED.",
+      "files": {
+        "docs/DECISIONS.md": "e1817c26b4f354b49b2305cfad70b0b4e603b92bb0a6078a874b5f7a02c21240",
+        "package-lock.json": "33e8c66f67c9db9acd44f39b2c557c89faad81b51ebb151948638283d4bc3d91",
+        "package.json": "448005171830cc4601b7ef6d6e7c85966e08cf2c9948477db96fbf4aa16fe954",
+        "src/prototype/build-info.js": "8cf3d9ac02e7820b683d83a9f759d9f3aa825b85e21bff20d00f454b4b2e4603",
+        "src/prototype/hero-combat.js": "338ecd4edab7f97f03652f0909f90187e833194d885ce70dac7ababa47242071",
+        "sw.js": "89227ce60773d4e2af5051b9e78c3e67f695579b2e5f92951c73967776685147",
+        "tests/targeting.test.cjs": "b18938dc02bb282d1791923cfb88cb653809e3a1ec34ede5a9f11b831722a5de"
+      },
+      "previousFiles": {
+        "docs/DECISIONS.md": "ea5198d92bda735ed6f9762f7a911e27d1c7bc6e4313eaf5013e17ad092b7641",
+        "package-lock.json": "056604a80a50bec7202cda7d1e3be78a8fde80daf66f7111933ca87342ef2099",
+        "package.json": "52b24bfed8405565d1b047ded04315044f9f1dcf11a494792aca9ff3b467f2cf",
+        "src/prototype/build-info.js": "73cf0474f80a4448201af7fec913bd9407d37da12f9b45ea06421eb34841ee22",
+        "src/prototype/hero-combat.js": "d530981c47d22923495e314c8b3d5d683c9719e2a612ab9647cce472e5b694b7",
+        "sw.js": "3fa5507a8dcb1291851b07d811785e6eee238c15734321269b92b337bac9f70d",
+        "tests/targeting.test.cjs": "24e66772c0614bdae42775a417fc1e81d7accacef37a77bbf0318a3a86109781"
+      }
     }
   ],
   "authorizedPr313ApproachFrameRevision": {

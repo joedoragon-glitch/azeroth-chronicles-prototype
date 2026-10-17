@@ -699,9 +699,9 @@
         // A released skill owns its approach. Passive covering fire must not
         // replace the queued charged/ordinary command with Skill 1.
         if (this.hero.order?.type === 'skill-approach') return false;
-        return this.cast(1);
+        return this.cast(1, null, false, null, true);
       }
-      cast(slot, targetId, charged = false, encountersAtStart = null) {
+      cast(slot, targetId, charged = false, encountersAtStart = null, automatic = false) {
         if (this.s.mode === 'developer' && slot === 1) return false;
         const i = slot - 1,
           rank = this.hero.skills[i],
@@ -790,6 +790,9 @@
               : targets.find((e) => slot === 1 && e.id === this.s.heroTarget) ||
                 targets.sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0]);
         if (requiresTarget && !target) {
+          // Covering fire during movement never authorizes pursuit, even when
+          // an old selected/combo target remains valid beyond attack range.
+          if (automatic) return false;
           // A deliberate targeted skill is an approach-and-release order.
           // Never consume mana or cooldown merely because the selected enemy
           // is beyond reach; targeting itself still does not move the hero.
@@ -871,7 +874,8 @@
           (slot === 8 && this.hero.class === 'paladin') ||
           (slot === 3 &&
             (this.hero.class === 'mage' || (this.hero.class === 'paladin' && isCharged)));
-        if (offensive) this.s.recallActive = false;
+        // Passive covering fire is not a new squad engagement order.
+        if (offensive && !automatic) this.s.recallActive = false;
         this.hero.cd[i] =
           slot === 3 && this.hero.class === 'paladin' && !isCharged
             ? 0
