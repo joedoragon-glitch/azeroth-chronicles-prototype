@@ -41,9 +41,9 @@ runs:
         git fetch --depth=1 origin c6ce1af236bddd7ca881903499c4cf5de175f9e2
         mkdir -p "$RUNNER_TEMP/perf-v09-baseline"
         git archive c6ce1af236bddd7ca881903499c4cf5de175f9e2 | tar -x -C "$RUNNER_TEMP/perf-v09-baseline"
-        git fetch --depth=1 origin cb1607c3a149d3ae51e01ceef615f0eca1ffdf18
+        git fetch --depth=1 origin 9d302c41d991f523bada4c4f24ea68fd45ce03dc
         mkdir -p "$RUNNER_TEMP/combined-simulation-baseline"
-        git archive cb1607c3a149d3ae51e01ceef615f0eca1ffdf18 | tar -x -C "$RUNNER_TEMP/combined-simulation-baseline"
+        git archive 9d302c41d991f523bada4c4f24ea68fd45ce03dc | tar -x -C "$RUNNER_TEMP/combined-simulation-baseline"
         COMBINED_SIMULATION_ROOT="$RUNNER_TEMP/combined-simulation-baseline" node --expose-gc scripts/perf-v09-equivalence.cjs "$RUNNER_TEMP/perf-v09-baseline"
     - name: Reproduce cooldown balance evidence summary
       id: cooldown_summary
@@ -106,6 +106,13 @@ runs:
         node tests/audio-browser.test.cjs || hero_av_status=1
         node tests/audio-audition-browser.test.cjs || hero_av_status=1
         exit "$hero_av_status"
+    - name: Verify Community Snapshot pets and native procedural scenes
+      id: community_browser
+      continue-on-error: true
+      shell: bash
+      run: |
+        node tests/personalization-browser.test.cjs
+        node tests/community-snapshot-browser.test.cjs
     - name: Verify original-master actor idles and combat
       id: sprite_browser
       continue-on-error: true

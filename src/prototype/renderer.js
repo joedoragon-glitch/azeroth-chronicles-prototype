@@ -41,16 +41,26 @@
     ctx.lineTo(-4, 2);
     ctx.closePath();
     ctx.fill();
-    // Three familiar crown points over the profile, not a regional insignia.
+    // The ruler's own tall pointed helm and broad three-tipped crown,
+    // miniaturized from the actual Dark Lord silhouette, not generic royalty.
+    ctx.fillStyle = '#596274';
+    ctx.beginPath();
+    ctx.moveTo(-5, -3);
+    ctx.lineTo(-4, -6);
+    ctx.lineTo(0, -8);
+    ctx.lineTo(4, -5);
+    ctx.lineTo(5, -3);
+    ctx.closePath();
+    ctx.fill();
     ctx.fillStyle = '#4e646e';
     ctx.beginPath();
-    ctx.moveTo(-5, -4);
-    ctx.lineTo(-7, -8);
-    ctx.lineTo(-2, -6);
-    ctx.lineTo(0, -9);
-    ctx.lineTo(3, -6);
-    ctx.lineTo(6, -8);
-    ctx.lineTo(5, -4);
+    ctx.moveTo(-5.5, -4);
+    ctx.lineTo(-8, -8.6);
+    ctx.lineTo(-3, -6.2);
+    ctx.lineTo(0, -9.5);
+    ctx.lineTo(3, -6.2);
+    ctx.lineTo(7.8, -8.6);
+    ctx.lineTo(5.8, -4);
     ctx.closePath();
     ctx.fill();
     ctx.strokeStyle = '#e3e9e7';
@@ -61,6 +71,77 @@
     ctx.stroke();
     ctx.fillStyle = '#e3e9e7';
     ctx.fillRect(1, -2, 1.2, 1.2);
+    ctx.restore();
+  }
+
+  // Paint-only TRUE radiance. The hollow corona sits behind the body; its
+  // transparent centre leaves silhouettes, floors and attack warnings legible.
+  function drawTrueAura(ctx, e, p, height, time, reduced = false) {
+    const phase = reduced ? 0 : time * 0.36,
+      breath = reduced ? 0.5 : 0.5 + 0.5 * Math.sin(time * 1.3),
+      h = Math.max(54, Math.min(130, height)),
+      w = Math.max(34, h * 0.44),
+      cy = p.y - h * 0.42;
+    ctx.save();
+    ctx.translate(p.x, cy);
+    ctx.scale(w, h * 0.68);
+    const glow = ctx.createRadialGradient(0, 0, 0.18, 0, 0, 1.35);
+    glow.addColorStop(0, '#ffe8a600');
+    glow.addColorStop(0.36, '#ffe8a600');
+    glow.addColorStop(0.53, '#f3c66318');
+    glow.addColorStop(0.69, '#ffe3a023');
+    glow.addColorStop(0.83, '#d9993612');
+    glow.addColorStop(1, '#d9993600');
+    ctx.globalAlpha = 0.72 + breath * 0.18;
+    ctx.fillStyle = glow;
+    ctx.fillRect(-1.35, -1.35, 2.7, 2.7);
+    ctx.restore();
+    ctx.save();
+    ctx.lineCap = 'round';
+    const thread = ctx.createLinearGradient(0, p.y + 8, 0, p.y - h * 1.08);
+    thread.addColorStop(0, '#edb85100');
+    thread.addColorStop(0.22, '#edb85138');
+    thread.addColorStop(0.62, '#ffe8a75c');
+    thread.addColorStop(1, '#fff2cf00');
+    ctx.strokeStyle = thread;
+    ctx.lineWidth = 1.1;
+    for (let j = 0; j < 4; j++) {
+      const side = j % 2 ? 1 : -1,
+        sway = Math.sin(phase + j * 1.7) * 5,
+        spread = w * (0.72 + Math.floor(j / 2) * 0.2);
+      ctx.beginPath();
+      ctx.moveTo(p.x + side * spread, p.y + 5);
+      ctx.bezierCurveTo(
+        p.x + side * (spread + 9) + sway,
+        p.y - h * 0.3,
+        p.x + side * (spread - 8) - sway,
+        p.y - h * 0.68,
+        p.x + side * spread * 0.62,
+        p.y - h * (0.89 + j * 0.045),
+      );
+      ctx.stroke();
+    }
+    // Open, feather-light arcs rather than a solid golden landing disc.
+    for (let j = 0; j < 3; j++) {
+      ctx.strokeStyle = j === 1 ? '#fff0bd55' : '#e7b95635';
+      ctx.lineWidth = j === 1 ? 1 : 1.8;
+      const angle = phase + j * 2.1;
+      ctx.beginPath();
+      ctx.ellipse(p.x, p.y + 8, w + 5 + j * 3, 11 + j * 2, 0, angle, angle + 1.35);
+      ctx.stroke();
+    }
+    // A few slow rising motes frame the body, with no random or saved state.
+    for (let j = 0; j < 8; j++) {
+      const life = reduced ? (j + 0.5) / 8 : (time * 0.13 + j * 0.127) % 1,
+        side = j % 2 ? 1 : -1,
+        x = p.x + side * w * (0.75 + Math.sin(j * 2.4 + phase) * 0.15),
+        y = p.y + 2 - life * h * 1.12;
+      ctx.globalAlpha = Math.sin(life * Math.PI) * 0.62;
+      ctx.fillStyle = j % 3 ? '#f5d887' : '#fff2c9';
+      ctx.beginPath();
+      ctx.ellipse(x, y, 0.8, 1.7, side * 0.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
     ctx.restore();
   }
 
@@ -146,13 +227,20 @@
       return ['rest', 'supplier', 'recruiter', 'mini', 'dungeon', 'exit'].includes(e.kind);
     if (e.renderKind !== 'prop') return false;
     const structure = String(e.structure || '');
-    if (/(?:^|-)(?:sapling|stump|shrub|grass|flowers|log|post|barrel|crate)(?:-|$)/.test(structure))
+    // Ground decals and genuinely low clutter never conceal an actor. Use the
+    // actual object alpha in drawOcclusionOutlines for the final cover check.
+    if (
+      /(?:^|[-_])(?:sapling|stump|shrub|grass|flowers|petals|furrows|rune|road|path|floor|ash|poppies|puddle)(?:[-_]|$)/i.test(
+        structure,
+      )
+    )
       return false;
     return (
-      /(?:^|-)(?:house|cottage|workshop|smithy|hut|lodge|hall|tower|watchhouse|watchpost|keep|fort|fortress|gatehouse|barracks|chapel|command-tent|tree|wall|stonewall|stockade|palisade)(?:-|$)/.test(
+      /(?:^|[-_])(?:house|cottage|workshop|smithy|hut|lodge|hall|tower|watchhouse|watchpost|keep|fort|fortress|gatehouse|barracks|chapel|tent|tree|mangrove|wall|stonewall|stockade|palisade|rock|boulder|cliff|pillar|statue|shrine|roost|hatchery|forge|furnace|kiln|kennel|gate|arch|ruin|shelf|wardrobe|large|canopy|wagon|cart|stall|screen|supply-stack|weapon-rack)(?:[-_]|$)/i.test(
         structure,
       ) ||
-      (['🌲', '🌳', '🪨'].includes(e.icon) && Number(e.r) >= 18)
+      (Number(e.r) >= 16 && !/(?:^|[-_])(?:barrel|crate|post|log)(?:[-_]|$)/.test(structure)) ||
+      (['🌲', '🌳', '🪨'].includes(e.icon) && Number(e.r) >= 14)
     );
   }
 
@@ -209,11 +297,18 @@
           dy = q.y - p.y;
         // Broad phase only. The actual artwork's alpha is intersected below,
         // preventing a contour from appearing across empty sprite padding.
-        if (dy < 0) continue;
         if (obstacle.height === undefined) obstacle.height = height(entity);
-        if (dy > Math.max(100, obstacle.height + 44) || Math.abs(q.x - p.x) > 155) continue;
+        // Broad phase must accommodate tall/wide artwork and overlapping cover,
+        // rather than an invariant 155px strip that misses large structures.
+        const reach = Math.max(155, obstacle.height * 1.3, Number(entity.r || 0) * 2 + 55);
+        if (
+          dy < -Math.max(35, obstacle.height * 0.3) ||
+          dy > Math.max(120, obstacle.height + 75) ||
+          Math.abs(q.x - p.x) > reach
+        )
+          continue;
         front.push({ entity, position: q });
-        if (front.length === 8) break;
+        if (front.length === 16) break;
       }
       if (front.length) pairs.push({ actor, position: p, front });
     }
@@ -224,7 +319,7 @@
           (a.actor.renderKind === 'hero' ? 0 : a.actor.renderKind === 'ally' ? 1 : 2) -
           (b.actor.renderKind === 'hero' ? 0 : b.actor.renderKind === 'ally' ? 1 : 2),
       )
-      .slice(0, 12);
+      .slice(0, 24);
   }
 
   function create({
@@ -372,13 +467,20 @@
         origin = null;
       }
     }
+    const phaseMemory = new WeakMap();
     function visualPhase(e) {
+      const owner = e.spriteIdentity || e;
+      const key = String(e.id || e.name || e.species || e.family || e.type || 'azeroth');
+      const previous = phaseMemory.get(owner);
+      if (previous?.key === key) return previous.phase;
       let h = 2166136261 >>> 0;
-      for (const ch of String(e.id || e.name || e.species || e.family || e.type || 'azeroth')) {
+      for (const ch of key) {
         h ^= ch.charCodeAt(0);
         h = Math.imul(h, 16777619);
       }
-      return (h % 628) / 100;
+      const phase = (h % 628) / 100;
+      phaseMemory.set(owner, { key, phase });
+      return phase;
     }
     function visualPosition(e, p) {
       const actor =
@@ -638,17 +740,12 @@
         pulse = 0.5 + 0.5 * Math.sin(t * 3.1 + visualPhase(e));
       ctx.save();
       if (e.form === 'true') {
-        ctx.globalAlpha = 0.16 + pulse * 0.09;
-        ctx.fillStyle = '#f4d376';
-        ctx.beginPath();
-        ctx.ellipse(p.x, p.y + 8, 34 + pulse * 6, 12 + pulse * 2, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.globalAlpha = 0.55;
-        ctx.strokeStyle = '#f8dfa0';
-        ctx.lineWidth = 1.5;
-        for (const r of [30 + pulse * 5, 39 + pulse * 4]) {
+        if (e.type === 'boss') drawTrueAura(ctx, e, p, spriteHeight(e), t, reducedMotion());
+        else {
+          ctx.strokeStyle = '#f8dfa059';
+          ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.ellipse(p.x, p.y + 8, r, r * 0.3, 0, 0, Math.PI * 2);
+          ctx.ellipse(p.x, p.y + 8, 26, 8, 0, 0, Math.PI * 2);
           ctx.stroke();
         }
       } else {
@@ -694,13 +791,36 @@
       } else if (e.renderKind === 'ally') {
         const preparing = game._companionCharges?.get(e.id);
         if (preparing) {
+          if (e.type === 'pet') {
+            const target = game.zone().enemies.find((u) => u.id === preparing.targetId),
+              def = game.petSkillDefinition(e, 2);
+            if (target && def) {
+              ctx.save();
+              ctx.globalAlpha = 0.35;
+              drawPetSkillGeometry({
+                ...def,
+                x: target.x,
+                y: target.y,
+                fromX: e.x,
+                fromY: e.y,
+                color: game.petDefinition(e).color,
+                slot: 2,
+              });
+              ctx.restore();
+            }
+          }
           const fraction = Math.max(0, Math.min(1, game.partyChargeProgress(preparing.unit)));
           const cy = y - 9;
           ctx.fillStyle = '#07100ddd';
           ctx.fillRect(left - 2, cy - 2, w + 4, 7);
           ctx.fillStyle = '#36413b';
           ctx.fillRect(left, cy, w, 3);
-          ctx.fillStyle = e.type === 'archer' ? '#cfe59a' : '#f6d77a';
+          ctx.fillStyle =
+            e.type === 'pet'
+              ? game.petDefinition(e)?.color || '#b9d6bd'
+              : e.type === 'archer'
+                ? '#cfe59a'
+                : '#f6d77a';
           ctx.fillRect(left, cy, w * fraction, 3);
           ctx.fillStyle = '#ffffffaa';
           ctx.fillRect(left, cy, w * fraction, 1);
@@ -751,6 +871,20 @@
       }
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
+      if (style === 'pet') {
+        ctx.fillStyle = game.petDefinition(p.petFamily)?.color || '#bdd5d1';
+        ctx.beginPath();
+        ctx.ellipse(q.x, q.y, 5, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#e6eece';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(q.x - ux * 10, q.y - uy * 10);
+        ctx.lineTo(q.x, q.y);
+        ctx.stroke();
+        ctx.restore();
+        return;
+      }
       if (style === 'cargo') {
         ctx.translate(q.x, q.y);
         ctx.rotate(Math.atan2(uy, ux));
@@ -1059,6 +1193,57 @@
       for (const f of visualFx) f.life -= dt;
       visualFx = visualFx.filter((f) => f.life > 0);
     }
+    function drawPetSkillGeometry(f) {
+      const from = { x: f.fromX, y: f.fromY },
+        angle = Math.atan2(f.y - from.y, f.x - from.x),
+        point = (distance, a = angle) => ({
+          x: from.x + Math.cos(a) * distance,
+          y: from.y + Math.sin(a) * distance,
+        }),
+        path = (points, close = true) => {
+          ctx.beginPath();
+          points.forEach((v, i) => {
+            const p = screen(v);
+            if (i) ctx.lineTo(p.x, p.y);
+            else ctx.moveTo(p.x, p.y);
+          });
+          if (close) ctx.closePath();
+          ctx.stroke();
+        };
+      ctx.strokeStyle = f.color || '#b9d6bd';
+      ctx.lineWidth = f.slot === 2 ? 2 : 1.5;
+      if (f.shape === 'circle') {
+        path(
+          Array.from({ length: 24 }, (_, i) => ({
+            x: f.x + Math.cos((i * Math.PI) / 12) * f.radius,
+            y: f.y + Math.sin((i * Math.PI) / 12) * f.radius,
+          })),
+        );
+      } else if (f.shape === 'cone') {
+        path([
+          from,
+          ...Array.from({ length: 17 }, (_, i) =>
+            point(f.range, angle - f.halfAngle + (i * f.halfAngle) / 8),
+          ),
+        ]);
+      } else if (f.shape === 'line') {
+        const end = point(f.range),
+          sx = -Math.sin(angle) * f.halfWidth,
+          sy = Math.cos(angle) * f.halfWidth;
+        path([
+          { x: from.x + sx, y: from.y + sy },
+          { x: end.x + sx, y: end.y + sy },
+          { x: end.x - sx, y: end.y - sy },
+          { x: from.x - sx, y: from.y - sy },
+        ]);
+      } else {
+        path([from, { x: f.x, y: f.y }], false);
+        const p = screen(f);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y - 8, f.slot === 2 ? 7 : 4, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
     function drawVisualFx() {
       for (const f of visualFx) {
         const a = Math.max(0, f.life / f.max),
@@ -1076,7 +1261,9 @@
         }
         ctx.save();
         ctx.globalAlpha = a;
-        if (f.type === 'ability') {
+        if (f.type === 'petSkill') {
+          drawPetSkillGeometry(f);
+        } else if (f.type === 'ability') {
           PrototypeCombatVisuals.ability(ctx, screen, f);
         } else if (f.type === 'contact') {
           PrototypeCombatVisuals.contact(ctx, screen, f);
@@ -1111,7 +1298,19 @@
           PrototypeCombatVisuals.chargeInterrupted?.(ctx, screen, f);
         } else if (f.type === 'heal') {
           if (f.actor === 'enemy' && f.resource !== 'mana') {
-            PrototypeCombatVisuals.enemySupportHeal?.(ctx, screen, f);
+            const recipient = game
+              .zone()
+              .enemies.find((u) => u.id === f.target && game.enemyHealingActor?.(u));
+            if (recipient) {
+              const caster = game.zone().enemies.find((u) => u.id === f.source);
+              PrototypeCombatVisuals.enemySupportHeal?.(ctx, screen, {
+                ...f,
+                x: recipient.x,
+                y: recipient.y,
+                fromX: caster?.x ?? f.fromX,
+                fromY: caster?.y ?? f.fromY,
+              });
+            }
           } else {
             const mana = f.resource === 'mana',
               c = mana ? '#9fcfff' : '#a9e7b0';
@@ -1760,6 +1959,7 @@
       if (!game.isDungeon())
         PrototypeVisuals.terrain(ctx, screen, i, size, optimized ? null : PrototypeMaterials);
       PrototypeVisuals.roads(ctx, z.roads || [], screen, i, optimized ? null : PrototypeMaterials);
+      PrototypeVisuals.footpaths(ctx, z.footpaths || [], screen);
       if (!game.isDungeon())
         PrototypeVisuals.bridges(ctx, screen, i, optimized ? null : PrototypeMaterials);
       PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000);
@@ -1836,7 +2036,7 @@
         if (e.renderKind === 'building') return e.name || 'Barracks';
         if (e.renderKind === 'node') return 'Dark Lord Tribute';
         if (e.renderKind === 'enemy') return e.name || '';
-        if (e.renderKind === 'ally') return e.type || e.name || '';
+        if (e.renderKind === 'ally') return game.companionDisplayName(e);
         return '';
       };
       const labelPriority = (e) =>
@@ -1844,13 +2044,15 @@
           ? 0
           : e.renderKind === 'enemy' && e.type === 'boss'
             ? 1
-            : e.renderKind === 'ally'
-              ? 2
-              : e.renderKind === 'enemy'
-                ? 3
-                : e.renderKind === 'building'
-                  ? 4
-                  : 5;
+            : e.renderKind === 'enemy' && (e.captain || e.roomCaptain)
+              ? 1.5
+              : e.renderKind === 'ally'
+                ? 2
+                : e.renderKind === 'enemy'
+                  ? 3
+                  : e.renderKind === 'building'
+                    ? 4
+                    : 5;
       for (const e of entities.slice().sort((a, b) => labelPriority(a) - labelPriority(b))) {
         if (
           !['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) ||
@@ -1918,7 +2120,13 @@
         if (!e.interactionOnly)
           sprite(
             e.kind === 'archive-record'
-              ? { ...e, renderKind: 'prop', structure: 'scroll-stack', sceneRole: 'dry-stacks' }
+              ? {
+                  ...e,
+                  renderKind: 'prop',
+                  structure: 'scroll-stack',
+                  decorative: true,
+                  sceneRole: 'dry-stacks',
+                }
               : e.kind === 'keeper'
                 ? { ...e, renderKind: 'enemy', type: 'boss', family: 'archive', form: 'normal' }
                 : e,
@@ -1984,11 +2192,15 @@
                 : '10px system-ui';
             ctx.fillStyle = isTrueBoss
               ? '#ffe08a'
-              : isCaptain
-                ? '#f0d79b'
-                : e.renderKind === 'enemy'
-                  ? '#f8cebd'
-                  : '#dcebcf';
+              : e.type === 'boss'
+                ? '#ead58c'
+                : isCaptain
+                  ? '#d9b981'
+                  : e.form === 'ringleader'
+                    ? '#d7bd9b'
+                    : e.renderKind === 'enemy'
+                      ? '#f8cebd'
+                      : '#dcebcf';
             ctx.shadowColor = '#091510';
             ctx.shadowBlur = isTrueBoss ? 5 : isCaptain ? 4 : 3;
             const label =
@@ -2007,10 +2219,17 @@
                     ' · Lv ' +
                     e.level
                 : e.renderKind === 'ally'
-                  ? e.type || e.name
+                  ? game.companionDisplayName(e)
                   : '';
             const slot = labelSlots.get(e);
-            if (slot) ctx.fillText(label, slot.x, slot.y, slot.width);
+            if (slot) {
+              if (e.renderKind === 'enemy' && (e.type === 'boss' || isCaptain)) {
+                ctx.fillStyle = e.type === 'boss' ? '#302915c9' : '#382b20b8';
+                ctx.fillRect(slot.x - slot.width / 2 - 3, slot.y - 12, slot.width + 6, 16);
+                ctx.fillStyle = e.type === 'boss' ? '#ead58c' : '#d9b981';
+              }
+              ctx.fillText(label, slot.x, slot.y, slot.width);
+            }
             if (isTrueBoss) {
               const w = ctx.measureText('TRUE').width + 12,
                 y = p.y - spriteHeight(e) - 25;
@@ -2221,7 +2440,7 @@
       heroArt?.statuses(ctx, screen, game, canvas.width, canvas.height);
       heroArt?.charge(ctx, screen, game.hero, chargePresentation(), reducedMotion());
       PrototypeCombatVisuals.enemySupportStatus?.(ctx, screen, game);
-      PrototypeCombatVisuals.actorCues?.(ctx, screen, game);
+      PrototypeCombatVisuals.actorCues?.(ctx, screen, game, spriteHeight);
       targetGuidance();
       drawNavigationRoute();
       if (isPaused()) {
@@ -2282,6 +2501,7 @@
     bodyFacingSide,
     drawAbyssFlightCues,
     drawCrownLoot,
+    drawTrueAura,
     majorOccluder,
     occlusionPairs,
     optimizationClutter,

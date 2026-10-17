@@ -135,5 +135,6 @@ assert.equal(t.rogueMoves.rangedFallback.slowSeconds, 2);
 assert.equal(t.rogueMoves.ranged.goblin.blinds, 1.65, 'Blinding Dust cover is separate and locked');
 const visual = fs.readFileSync(path.join(__dirname, '../src/prototype/combat-visuals.js'), 'utf8');
 assert(visual.includes('!e.telegraph?.mobileRogueCast'), 'Rogue cast removes terrain telegraphs');
-assert(visual.includes('ROGUE CAST'), 'actor progress bar remains visible');
+assert(visual.includes("a.anonymousCast ? 'Preparing…' : a.name"), 'actor cast bar names the real skill while anonymous preparation stays concealed');
+assert(!visual.includes("'ROGUE CAST'"), 'generic Rogue cast label is removed');
 console.log('PASS Rogue cast tier, mobile warning, contact Slow and avoidance regression');

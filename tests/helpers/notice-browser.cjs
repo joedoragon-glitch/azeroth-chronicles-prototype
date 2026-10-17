@@ -91,6 +91,40 @@ async function verifyNoticeStrip(page, out, tag, phone, viewport) {
     await page.waitForFunction(() => !document.querySelector('#message .notice-card'), null, {
       timeout: 7000,
     });
+    await page.evaluate(() => {
+      Prototype.game.notice(
+        'Trail witness',
+        5,
+        'Last sighting: temporary den, heading for Goblin territory. Mira is with him.',
+        'narration',
+      );
+      Prototype.updateHUD();
+    });
+    await page.waitForFunction(() =>
+      document.querySelector('#message .notice-narration .notice-detail'),
+    );
+    const detail = await page.locator('#message .notice-detail').evaluate((el) => ({
+      color: getComputedStyle(el).color,
+      size: parseFloat(getComputedStyle(el).fontSize),
+      opacity: getComputedStyle(el).opacity,
+      overflow: el.scrollWidth > el.clientWidth + 1,
+    }));
+    const rgb = detail.color
+      .match(/[\d.]+/g)
+      .slice(0, 3)
+      .map(Number);
+    const luminance = (values) =>
+      values
+        .map((v) => v / 255)
+        .map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4))
+        .reduce((sum, v, i) => sum + v * [0.2126, 0.7152, 0.0722][i], 0);
+    // Against the lighter end of the actual opaque Chronicle gradient.
+    const contrast = (luminance(rgb) + 0.05) / (luminance([0x35, 0x2d, 0x23]) + 0.05);
+    assert(contrast >= 4.5, 'Chronicle detail has readable text contrast');
+    assert(detail.size >= 12, 'phone detail is not reduced to nine-pixel text');
+    assert.equal(detail.opacity, '1');
+    assert(!detail.overflow, 'trail report wraps inside the card');
+    await page.screenshot({ path: path.join(out, 'chronicle-detail-' + tag + '.png') });
   } finally {
     await page.evaluate(() => {
       const c = Prototype.game;

@@ -1,4 +1,21 @@
+> **16 October 2026 · authoritative current continuation:** [Draft PR #313](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/313) is the single implementation workstream for Community Snapshot A01–A07, all ten PR #311 fixes and Issue #312. Frozen runtime: `9dcb09167849865c6c838d16305ff76e872c7d58`. Read [PR313_INTEGRATED_SOURCE_AUDIT_20261016.md](PR313_INTEGRATED_SOURCE_AUDIT_20261016.md), the current PR resume comment and `tools/community-snapshot/pt312-presentation-overlay.json` before resuming. Source implementation/review is complete; tests, builds, browsers, CI, merge and deploy remain paused pending explicit owner authorization. Earlier branch/status entries below are historical and do not authorize a competing workstream or execution.
+
 # Current development state and v0.9 readiness
+
+
+## PR #313 authorized integrated audit · 16 October 2026
+
+The owner has explicitly authorized all tests, workflow repairs and merge after proper audit. Earlier source-only/approval restrictions below are historical. Work continues in the existing PR #313; no separate PR #311 merge. The current validation ledger is [PR313_VALIDATION_20261016.md](PR313_VALIDATION_20261016.md). The source includes the owner's personalization, specialist/boss identity, learned-only journal, aura, map/lore/readability and roaming-interception corrections. Full regression, browser, balance and native art/audio evidence is being completed; this paragraph does not certify release or claim merge.
+
+## Active combined source integration — 16 October 2026
+
+**Community Snapshot + PR #311 source-integrated, still entirely untested.** Branch `integration/community-snapshot-311-20261016`; first combined checkpoint `e513ea7fb9bfa21d5e102177bb3eedd3954e6cc4`. The independent Community checkpoint and draft #311 head remain recoverable. Source-level compatibility and the pet defensive Recall issue are documented in [the combined integration audit](COMMUNITY_SNAPSHOT_PR311_INTEGRATION_AUDIT_20261016.md). No tests, builds, browser sessions, simulations, CI, merge or deployment. Issue #312's full 18-item handoff is now available. Work must implement its still-open PT items in this **same** branch and draft PR, earn a new complete source audit, and obtain the owner's explicit permission before the single validation cycle. See [Work handoff](WORK_MODE_SINGLE_PR_HANDOFF_20261016.md).
+
+## Previous Community-only source audit · 16 October 2026
+
+**Follow-up source audit passes; validation awaits explicit owner authorization.** All seven [failed-audit](COMMUNITY_SNAPSHOT_EXECUTION_AUDIT_20261016.md) findings are addressed in source. [The second audit](COMMUNITY_SNAPSHOT_SOURCE_REAUDIT_20261016.md) identifies frozen runtime `754e72e9cb5819bb815fde97488d44275e870453`, final acceptance-fixture corrections, immutable design references and remaining uncertainty. The final audit checkpoint changes no runtime from that commit. No tests, build, browser, simulation, benchmark, CI, PR, merge or deployment has run in this phase. Use the feature branch's final handoff/head for authorization.
+
+PR #308 merged as `6bc27be31792b1c38147d61e98ceed6acf3e2560`. The next consolidated feature is on `feature/community-snapshot-post308-20261016`, with its recoverable checkpoints and honest untested status in [the implementation record](COMMUNITY_SNAPSHOT_IMPLEMENTATION_20261016.md). No new release, build, browser validation, test run, CI workflow or deployment has been initiated during this source phase. The owner must authorize [the combined final validation](COMMUNITY_SNAPSHOT_VALIDATION_20261016.md); older readiness/release notes below are retained history.
 
 ## v0.9.0 candidate preparation · 10 October 2026
 

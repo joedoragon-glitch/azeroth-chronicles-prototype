@@ -14,6 +14,8 @@
     storyNavigate = () => {},
     chooseNewRun = () => {},
     status = () => {},
+    requestName = () => {},
+    openCharacter = null,
   }) {
     function expeditionSupportActions(n, refresh) {
       return Object.entries(Campaign.rules.expeditionSupportSkills).flatMap(([id, def]) => {
@@ -105,7 +107,7 @@
           ...expActions,
           ...supportActions,
           action(
-            'Review hero skills',
+            'Open skill journal',
             () => skillBook(() => teacher(n, back)),
             'Short tap and charged effects · cooldowns',
           ),
@@ -311,7 +313,7 @@
     function skillDetail(slot, back) {
       const g = getGame(),
         def = D.skills.find((entry) => entry[0] === slot);
-      if (!def || !g.skillRevealed(slot)) return;
+      if (!def || !(g.hero.skills[slot - 1] > 0)) return;
       const card = professionSkillCard(slot),
         rank = g.hero.skills[slot - 1] || 0,
         formatCd = (value) => (Math.round(value * 10) / 10).toFixed(1),
@@ -368,7 +370,7 @@
     function skillBook(back = closeMenu) {
       const game = getGame(),
         choices = D.skills
-          .filter((s) => game.skillRevealed(s[0]))
+          .filter((s) => game.hero.skills[s[0] - 1] > 0)
           .map((s) => {
             const slot = s[0],
               card = professionSkillCard(slot),
@@ -380,8 +382,8 @@
             );
           });
       openMenu(
-        'Hero skills',
-        'Tap for normal · hold ' +
+        'Skill journal',
+        'Notes on skills you already know. Visit an instructor to learn or train. Tap for normal · hold ' +
           Campaign.rules.chargedSkills.holdSeconds +
           's for charged. Damage can interrupt preparation. One rank, one cooldown slot; damaging skills gain +15% base damage per rank.',
         [
@@ -447,7 +449,7 @@
           'Companion combat skills · ' + (companionAdvanced ? 'Advanced' : 'Core'),
           () => {},
           companionAdvanced
-            ? 'Soldier: Power Strike (8s) + Holy Cleave (12s) · Archer: Triple Shot (8s) + Piercing Volley (12s)'
+            ? 'Soldier: Power Strike (8s) + Holy Cleave (12s) · Ranger: Triple Shot (8s) + Piercing Volley (12s). Expedition 4 adds strike protection and covering Slow.'
             : 'Soldier: Power Strike · Archer: Triple Shot · Learn hero Skill 2 Rank 1 to unlock Holy Cleave and Piercing Volley',
           true,
         );
@@ -693,6 +695,28 @@
             : ''),
         [
           ...supportActions,
+          ...['weapon', 'armor'].map((slot) =>
+            action(
+              'Name ' + slot,
+              () =>
+                requestName({
+                  title: 'Name your ' + slot,
+                  description:
+                    'Give your equipped ' +
+                    slot +
+                    ' a personal name. Its upgrades and statistics stay the same.',
+                  initialValue:
+                    getGame().hero[slot === 'weapon' ? 'customWeaponName' : 'customArmorName'] ||
+                    '',
+                  permanent: false,
+                  onSubmit: (name) => getGame().nameEquipment(n.family, slot, name),
+                  onSkip: () => smith(n, back),
+                  onDone: () => smith(n, back),
+                }),
+              getGame().hero[slot === 'weapon' ? 'customWeaponName' : 'customArmorName'] ||
+                'Optional · cosmetic · free',
+            ),
+          ),
           action(
             weaponOwned
               ? 'Weapon tier ' + tier + ' · ' + (currentWeapon === tier ? 'OWNED' : 'SURPASSED')
@@ -784,7 +808,10 @@
     }
     function rosterLabel(u) {
       const i = getGame().s.party.indexOf(u) + 1;
-      return unitLabel(u.type) + ' #' + i;
+      if (u.customName) return u.customName;
+      return u.type === 'pet'
+        ? getGame().petDefinition(u)?.name || 'Boss pet'
+        : unitLabel(u.type) + ' #' + i;
     }
     function regionalSpecialistProgress() {
       const region = getGame().definition().id,
@@ -924,6 +951,93 @@
         back,
       );
     }
+    function barracksPetDetail(b, family, back) {
+      const game = getGame(),
+        row = game.petCollection().find((r) => r.boss.id === family);
+      if (!row?.def) return back();
+      const { boss, def, unit, state } = row;
+      openMenu(
+        unit?.customName || def.name,
+        'Inspired by ' +
+          boss.name +
+          ' · ' +
+          state +
+          '. ' +
+          (def.role === 'ranged' ? 'Ranged support.' : 'Close-range support.'),
+        [
+          ...(unit
+            ? [
+                action(
+                  unit.customName ? 'Name chosen · ' + unit.customName : 'Name this pet',
+                  () => nameCompanion(unit.id, () => barracksPetDetail(b, family, back)),
+                  unit.customName ? def.name : 'Optional · choose once, or leave it for later',
+                  !!unit.customName,
+                ),
+              ]
+            : []),
+          action(
+            'First · ' + def.first.name,
+            () => {},
+            'Automatic · ' + game.petSkillSummary(family, 1),
+            true,
+          ),
+          action(
+            'Charged · ' + def.second.name,
+            () => {},
+            'Requires companion combat training · ' + game.petSkillSummary(family, 2),
+            true,
+          ),
+          action(
+            state === 'Locked'
+              ? 'Defeat TRUE ' + boss.name
+              : !unit
+                ? 'Recruit · FREE'
+                : state === 'Fallen'
+                  ? 'Recover through Barracks → Recovery'
+                  : state === 'Active'
+                    ? 'Rest in collection'
+                    : 'Add to group',
+            () => {
+              const current = getGame().s.party.find(
+                (u) => u.type === 'pet' && u.petFamily === family,
+              );
+              if (!current) getGame().recruitPet(family, b.id);
+              else if (current.active !== false) getGame().restCompanion(current.id);
+              else getGame().activateCompanion(current.id, b.id);
+              barracksPetDetail(b, family, back);
+            },
+            !unit
+              ? 'One permanent individual; uses an ordinary group slot.'
+              : 'Health and recovery persist while resting.',
+            state === 'Locked' ||
+              state === 'Fallen' ||
+              game.refugeThreat() ||
+              (!unit && game.rosterCount() + game.queuedCompanions() >= 200) ||
+              (state === 'Resting' && game.activeParty().length >= game.barracksFieldCap(b)),
+          ),
+        ],
+        back,
+      );
+    }
+    function barracksPetMenu(b, back) {
+      const rows = getGame().petCollection(),
+        returnHere = () => barracksPetMenu(b, back);
+      openMenu(
+        'Boss pet collection',
+        rows.filter((r) => r.state !== 'Locked').length +
+          '/' +
+          rows.length +
+          ' unlocked · TRUE victories, including past victories, unlock one unique pet each. Free to recruit; ordinary group slots and Barracks recovery apply. Pets do not work or summon.',
+        rows.map(({ boss, def, state, unit }) =>
+          action(
+            (unit?.customName || def.name) + ' · ' + state,
+            () => barracksPetDetail(b, boss.id, returnHere),
+            boss.name,
+          ),
+        ),
+        back,
+      );
+    }
     function barracksRecruitmentMenu(b, back) {
       const queueName = b.queue > 0 ? unitLabel(b.queueType || 'soldier') : null;
       openMenu(
@@ -931,7 +1045,7 @@
         (queueName
           ? 'Training ' + queueName + ' · ' + b.queue.toFixed(1) + 's remaining'
           : 'Recruit as many companions as you want') +
-          '. New recruits join the active group if this barracks can support another slot; otherwise they rest in reserve. Lifebinder and the Drowned Keeper once joined through the Barracks, as companion classes you have not discovered.',
+          '. New recruits join the active group if this barracks can support another slot; otherwise they rest in reserve. TRUE boss pets are in the Company collection.',
         [
           ...[
             ['soldier', 'Soldier'],
@@ -1040,6 +1154,38 @@
         back,
       );
     }
+    function nameCompanion(id, back) {
+      const unit = getGame().s.party.find((u) => u.id === id);
+      if (!unit || unit.customName) return back();
+      requestName({
+        title: 'Name your companion',
+        description:
+          getGame().companionDisplayName(unit) +
+          ' · Choose a permanent name, or skip and return later.',
+        onSubmit: (name) => getGame().nameCompanion(id, name),
+        onSkip: back,
+        onDone: back,
+      });
+    }
+    function barracksNamesMenu(b, back) {
+      const returnHere = () => barracksNamesMenu(b, back);
+      openMenu(
+        'Name companions',
+        'Every employed companion and pet can receive a name once. Skipping keeps that choice available, including for resting and fallen companions.',
+        getGame().s.party.length
+          ? getGame().s.party.map((u) =>
+              action(
+                rosterLabel(u),
+                () => nameCompanion(u.id, returnHere),
+                (u.type === 'pet' ? getGame().petDefinition(u).name : unitLabel(u.type)) +
+                  (u.customName ? ' · Permanent name chosen' : ' · Name available'),
+                !!u.customName,
+              ),
+            )
+          : [action('No companions employed', () => {}, '', true)],
+        back,
+      );
+    }
     function barracksCompanyMenu(b, back) {
       const returnHere = () => barracksCompanyMenu(b, back),
         rank = getGame().s.expeditionRank || 1,
@@ -1051,9 +1197,19 @@
         'Recruit, recover and choose who travels with you.',
         [
           action(
+            'Boss pet collection',
+            () => barracksPetMenu(b, returnHere),
+            'Eleven TRUE bosses · permanent unlocks · existing group slots',
+          ),
+          action(
             'Manage active group',
             () => barracksGroupMenu(b, returnHere),
             'With you ' + active + '/' + cap + ' · employed ' + getGame().rosterCount(),
+          ),
+          action(
+            'Name companions',
+            () => barracksNamesMenu(b, returnHere),
+            'Optional, permanent names · all troops and pets',
           ),
           rank >= 2
             ? action(
@@ -1255,7 +1411,11 @@
               ]
             : []),
           exp,
-          action('Hero skills', () => skillBook(returnHere), 'Tap / charged effects and cooldowns'),
+          action(
+            'Skill journal',
+            () => skillBook(returnHere),
+            'Tap / charged effects and cooldowns',
+          ),
           ...(tonic ? [tonic] : []),
           ...respawnActions,
           action(
@@ -1337,7 +1497,11 @@
             : 'Local death loss drops to 5%, including regional dungeons.'),
         [
           exp,
-          action('Hero skills', () => skillBook(returnHere), 'Tap / charged effects and cooldowns'),
+          action(
+            'Skill journal',
+            () => skillBook(returnHere),
+            'Tap / charged effects and cooldowns',
+          ),
           ...(tonic ? [tonic] : []),
           ...respawnActions,
           action(
@@ -1367,7 +1531,9 @@
         heal = getGame().rangerSupportAmount('health'),
         mana = getGame().rangerSupportAmount('mana'),
         hero = getGame().hero,
-        equipped = hero.legacyEquipped ? hero.legacyWeaponName : 'tier ' + hero.weapon;
+        equipped =
+          (hero.customWeaponName ? hero.customWeaponName + ' · ' : '') +
+          (hero.legacyEquipped ? hero.legacyWeaponName : 'tier ' + hero.weapon);
       openMenu(
         'Inventory',
         'Crowns ' +
@@ -1378,6 +1544,8 @@
           getGame().hero.armorTier +
           '\nEquipped weapon: ' +
           equipped +
+          '\nEquipped armor: ' +
+          (hero.customArmorName || 'tier ' + hero.armorTier) +
           ' · Weapon reforge: ' +
           (hero.reforges['weapon:' + hero.weapon]
             ? hero.legacyEquipped
@@ -1406,6 +1574,15 @@
               (Campaign.rules.resourceMode.manaEnabled ? ' and Mana Recovery.' : '.')) +
           '\nChoose equipment below when available.',
         [
+          ...(openCharacter
+            ? [
+                action(
+                  'Character and identity',
+                  openCharacter,
+                  'Hero name · Dark Lord name after claiming the throne',
+                ),
+              ]
+            : []),
           ...Object.keys(Campaign.legacyWeapons)
             .filter((name) => getGame().s.legacyInventory?.includes(name))
             .map((name) =>

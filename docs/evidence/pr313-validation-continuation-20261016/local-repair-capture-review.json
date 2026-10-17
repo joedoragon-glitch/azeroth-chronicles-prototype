@@ -1,0 +1,36 @@
+{
+  "scope": "Implementing-agent review only; no human/physical-device certification. Full hosted acceptance remains blocked by push approval.",
+  "captures": [
+    {
+      "file": "docs/evidence/pr313-validation-continuation-20261016/cast-viewport73-844x390-day.png",
+      "sha256": "854e6a95609c8e9d9828584b79ebc099a97c2ee6a1a87cf6506cb26b002621d6",
+      "disposition": "inspected native landscape skill text, boss name, HUD and progress bar; no overlap in this captured context"
+    },
+    {
+      "file": "docs/evidence/pr313-validation-continuation-20261016/cast-viewport73-844x390-night.png",
+      "sha256": "2b9f7ed58e6ca0ab5e74492c15ed790bd4741142c4220cedf7a40c35291b415f",
+      "disposition": "inspected native landscape skill text, boss name, HUD and progress bar; no overlap in this captured context"
+    }
+  ],
+  "currentCueSha256": "2a4c1631483c9f92c263b470939de772fadb9b3236a7b93234505ed0649d1bac",
+  "passes": [
+    "four viewport Chromium cast / DPR / day-night with HUD and nameplate separation",
+    "54-scene original classifier/pair-scan differential with exact controls",
+    "2,880 paired frames / six saves / 40 exact images before final DOM-only bounds addition; gameplay owners unchanged",
+    "Rogue geometry/continuity/integration and architecture checks",
+    "desktop exact CSS comparison plus geometry negative control",
+    "event-based movement on desktop and four supported phone profiles"
+  ],
+  "retainedFailures": [
+    "original dev.72 hosted run 38882017922",
+    "unfrozen obsolete cb160 comparison versus authored gameplay changes",
+    "initial downstream fixed-150-ms input wait",
+    "additional local 980x1740 bounding-box timeout; full matrix remains uncertified",
+    "intermediate landscape HUD overlap exposed by new assertions"
+  ],
+  "remaining": [
+    "exact-source full hosted game/browser/provenance workflows after publication approval",
+    "expected-head merge and deployment after successful gates"
+  ],
+  "finalLocalChecks": "build, format, full generated/source/sprite/material/audio coverage, 24 protected hashes and complete eight-part balance-input provenance pass; this does not certify a complete native release matrix."
+}

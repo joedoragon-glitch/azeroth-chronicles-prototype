@@ -95,7 +95,8 @@
     const kind = e.renderKind;
     // Authored crowned class outfits have procedural detail not present in base sprites.
     if (kind === 'hero') return e.crowned ? [] : ['hero:' + clean(e.class)];
-    if (kind === 'ally') return ['ally:' + clean(e.class || e.type || 'worker')];
+    if (kind === 'ally')
+      return e.type === 'pet' ? [] : ['ally:' + clean(e.class || e.type || 'worker')];
     if (kind === 'enemy') {
       // New authored multiracial armor and mounted-direwolf silhouettes are
       // procedural: the old generic guard/Wolf sprites cannot depict them.
@@ -522,33 +523,20 @@
       ctx.stroke();
     }
     if (e.form === 'true') {
-      ctx.save();
-      ctx.globalAlpha = 0.48;
-      ctx.strokeStyle = e.type === 'boss' ? '#fff0a6' : '#e5c876';
-      ctx.lineWidth = (e.type === 'boss' ? 3 : 2) * fxScale;
-      for (const r of e.type === 'boss' ? [30, 40, 50] : [23, 30]) {
-        ctx.beginPath();
-        ctx.ellipse(0, 11 * fxScale, r * fxScale, r * 0.28 * fxScale, 0, 0, Math.PI * 2);
-        ctx.stroke();
+      // Shared renderer owns the translucent boss aura for raster and
+      // procedural bodies alike. This overlay retains only authored regalia.
+      if (e.type !== 'boss') {
+        ctx.save();
+        ctx.globalAlpha = 0.32;
+        ctx.strokeStyle = '#e5c876';
+        ctx.lineWidth = 1.5 * fxScale;
+        for (const r of [23, 30]) {
+          ctx.beginPath();
+          ctx.ellipse(0, 11 * fxScale, r * fxScale, r * 0.28 * fxScale, 0, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        ctx.restore();
       }
-      if (e.type === 'boss') {
-        ctx.globalAlpha = 0.18;
-        ctx.fillStyle = '#f1c75e';
-        ctx.beginPath();
-        ctx.ellipse(0, -11 * fxScale, 34 * fxScale, 52 * fxScale, 0, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.restore();
-      line(
-        [
-          [-19, 18],
-          [-8, 23],
-          [9, 23],
-          [21, 17],
-        ],
-        '#e2c36f',
-        e.type === 'boss' ? 3 : 2,
-      );
       for (const x of [-17, 17])
         poly(
           [

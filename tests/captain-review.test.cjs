@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
 const profiles = Campaign.rules.roomCaptains;
 const cases = [
-  ['supply-vale', 260, 'Scornfang'],
+  ['supply-vale', 390, 'Scornfang'],
   ['supply-march', 680, 'Direjaw'],
   ['supply-highlands', 1650, 'Crag Tyrant'],
   ['supply-crown', 5000, 'Dreadmaw'],
@@ -15,7 +15,7 @@ for (const [zone, hp, name] of cases) {
   const e = c.zone().enemies.find((x) => x.name === name);
   assert(e, name + ' must exist');
   assert.equal(e.baseHp, hp, name + ' authored HP');
-  assert.equal(e.captainEnduranceVersion, 2, name + ' migration marker');
+  assert.equal(e.captainEnduranceVersion, zone === 'supply-vale' ? 3 : 2, name + ' migration marker');
   e.hp = e.maxHp * 0.37;
   const restored = Campaign.restore(c.snapshot(), () => 0.7);
   const again = restored.zone().enemies.find((x) => x.id === e.id);
@@ -35,7 +35,7 @@ for (const [zone, hp, name] of cases) {
   assert(Math.abs(old.hp / old.maxHp - 0.37) < 1e-8, name + ' migration retains HP fraction');
 }
 assert.equal(profiles['supply-vale'].phase.threshold, 0.55);
-assert.equal(profiles['supply-vale'].attacks[1].radius, 100);
+assert.equal(profiles['supply-vale'].attacks[1].radius, 120);
 assert.equal(profiles['supply-march'].attacks[0].warning, 0);
 assert.equal(profiles['supply-march'].attacks[1].angleDegrees, 196);
 assert.equal(profiles['supply-march'].attacks[2].count, 4);

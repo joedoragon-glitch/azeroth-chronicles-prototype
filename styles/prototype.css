@@ -531,6 +531,11 @@ textarea,
   font-weight: 400;
   color: #4c3a1b;
 }
+#message .notice-card.notice-narration .notice-detail {
+  color: #dce5e0;
+  font-size: 1em;
+  font-weight: 500;
+}
 
 /* Compact adventure interface: slate, brass and restrained contrast. */
 :root {
@@ -817,4 +822,30 @@ body.menu-open #developer-summon {
   #modal[data-view='credits'] #modal-description {
     animation: none;
   }
+}
+
+.character-name-field {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0.3rem 0 0.7rem;
+  color: #e4d9bf;
+  font-size: 0.9rem;
+}
+.character-name-field input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 0.7rem;
+  border: 1px solid #a18c61;
+  border-radius: 0.4rem;
+  background: #16231f;
+  color: #fff2d3;
+  font: inherit;
+  font-size: 16px;
+}
+#hero-stats .hero-title > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

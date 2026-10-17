@@ -17,7 +17,7 @@
     }, // 5
     {
       kind: 'narration',
-      text: 'On paper, Greenwood belongs to the Dark Lord. The wolves seem to have missed that announcement.',
+      text: 'Thornfang and his wolf packs patrol the approaches to the Dark Lord’s unfinished estate. Greenwood’s woodland paths are watched.',
     }, // 6
     null, // 7
     null, // 8

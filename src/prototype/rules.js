@@ -9,6 +9,58 @@
     ringLife: 1.6,
     ringHalfWidth: 25,
   };
+  const actorSpacing = {
+    radius: 14,
+    heroRadius: 14,
+    largeRadius: 20,
+    bossRadius: 26,
+    mountedRadius: 23,
+    cellSize: 96,
+    tolerance: 0.75,
+    separationSpeed: 85,
+    congestionSeconds: 0.65,
+    relaxSeconds: 0.35,
+  };
+  // Canonical visible melee loadouts, shared by real strike metadata and expression.
+  const enemyMeleeKits = {
+    species: {
+      goblin: ['blade', 'steel'],
+      skeleton: ['sword', 'steel'],
+      orc: ['sword', 'steel'],
+      crownguard: ['sword', 'steel'],
+      archer: ['bow stave', 'wood'],
+      ogre: ['club', 'wood'],
+      wolf: ['fangs', 'claw'],
+      mireling: ['jaws', 'wet'],
+      reedbeast: ['claws', 'wet'],
+      stalker: ['claws', 'claw'],
+      ashbeast: ['claws', 'ash'],
+      wraith: ['spectral touch', 'spectral'],
+    },
+    bosses: {
+      thorn: ['fangs', 'claw'],
+      crypt: ['bone polearm', 'bone'],
+      mire: ['jaws', 'wet'],
+      archive: ['steel hook', 'steel'],
+      ridge: ['stone hammer', 'stone'],
+      mine: ['stone fists', 'stone'],
+      warlord: ['axe', 'steel'],
+      abyss: ['talons', 'ash'],
+      citadel: ['poleaxe', 'steel'],
+      cindermaw: ['claws', 'ash'],
+      darklord: ['sword', 'steel'],
+    },
+  };
+  function enemyMeleeEquipment(e) {
+    const kit = (e.type === 'boss' || e.boss ? enemyMeleeKits.bosses[e.family] : null) ||
+      (e.mountedCrownRider
+        ? ['lance', 'steel']
+        : e.ranged && ['skeleton', 'orc', 'archer', 'crownguard'].includes(e.species)
+          ? ['bow stave', 'wood']
+          : enemyMeleeKits.species[e.species]) || ['body', 'claw'];
+    return { weapon: kit[0], material: kit[1] };
+  }
+  const arenaPlacement = { step: 32, margin: 3, separation: 20, searchRadius: 800 };
   const attack = (kind, warning, recovery, extra = {}) => ({
     kind,
     warning,
@@ -1518,8 +1570,8 @@
     ],
     'supply-highlands': [
       {
-        x: 300,
-        y: 330,
+        x: 325,
+        y: 350,
         role: 'melee',
         group: 'entry',
         name: 'Crown direwolf lance rider',
@@ -1575,8 +1627,8 @@
     ],
     'supply-crown': [
       {
-        x: 330,
-        y: 260,
+        x: 350,
+        y: 300,
         role: 'melee',
         group: 'roost',
         name: 'Ash beast treasury guardian',
@@ -1666,6 +1718,12 @@
       [560, 690, 'sleep-roll', 0],
       [745, 405, 'bone-pile', 0],
       [330, 460, 'game-table', 0],
+      // Scornfang is a Greenwood reclamation superintendent, not simply a
+      // Goblin living in Thornfang's spare den. Keep the existing comfort
+      // and salvage items while making his administrative work visible.
+      [805, 525, 'scribe-desk', 0, 'scornfang-reclamation-records'],
+      [585, 745, 'tool-rack', 0, 'scornfang-salvage-equipment'],
+      [480, 305, 'supply-stack', 0, 'scornfang-relocation-inventory'],
     ],
     'supply-march': [
       [165, 690, 'mire-pool', 0],
@@ -1712,6 +1770,11 @@
       [185, 1230, 'fish-rack', 18],
       [740, 440, 'fishing-net', 0],
       [680, 740, 'stolen-goods', 0],
+      // Dreadmaw's established regional agriculture and Treasury supply
+      // management are visible alongside Cindermaw's roost and inner vault.
+      [1090, 840, 'drying-rack', 0, 'dreadmaw-agriculture-processing'],
+      [1150, 650, 'feed-crate', 0, 'dreadmaw-animal-husbandry'],
+      [1050, 545, 'scribe-desk', 0, 'cindermaw-welfare-inventory'],
     ],
   }; // Creature strongholds are centers of ordinary-monster life and territorial power, not resource wrappers.
   // Named sites reuse existing map destinations; unmarked holds fill quiet territory without adding map clutter.
@@ -1983,6 +2046,8 @@
         [815, 565, 'warm-brazier'],
         [360, 835, 'crate'],
         [700, 830, 'game-table'],
+        [175, 730, 'sleep-roll'],
+        [835, 780, 'sleep-roll'],
       ],
       walls: [
         [470, 180, 28],
@@ -2022,6 +2087,7 @@
         [820, 560, 'sleep-roll'],
         [330, 835, 'bone-pile'],
         [720, 825, 'reed-nest'],
+        [175, 745, 'mud-nest'],
       ],
       walls: [
         [455, 180, 28],
@@ -2054,12 +2120,14 @@
         [455, 225, 'stone-seat'],
         [690, 210, 'trophy-rack'],
         [835, 235, 'tool-rack'],
-        [210, 550, 'sleep-roll'],
+        [210, 550, 'ridge-bed'],
         [390, 555, 'game-table'],
         [640, 535, 'ore-cart'],
         [825, 565, 'bone-pile'],
         [335, 835, 'stone-marker'],
         [720, 825, 'supply-stack'],
+        [170, 755, 'sleep-roll'],
+        [835, 735, 'ration'],
       ],
       walls: [
         [430, 180, 30],
@@ -2098,6 +2166,8 @@
         [825, 565, 'command-tent'],
         [335, 835, 'supply-stack'],
         [720, 825, 'cookfire'],
+        [170, 755, 'bunk'],
+        [835, 760, 'bunk'],
       ],
       walls: [
         [445, 180, 30],
@@ -2136,6 +2206,8 @@
         [825, 565, 'bone-pile'],
         [335, 835, 'training-dummy'],
         [720, 825, 'crown-banner'],
+        [170, 745, 'bunk'],
+        [835, 765, 'bunk'],
       ],
       walls: [
         [450, 180, 30],
@@ -2225,7 +2297,7 @@
     { kind: 'water', bounds: [1120, 1690, 1450, 2070], gaps: [[1710, 1850]] },
     {
       kind: 'ravine',
-      bounds: [1250, 1350, 120, 2400],
+      bounds: [1250, 1350, 0, 3400],
       gaps: [
         [860, 1100],
         [1770, 1980],
@@ -2248,6 +2320,55 @@
       ],
     },
   ];
+  // Shared bank geometry: collision and painting read this exact function.
+  // Bridge throats retain their established position and full deck width.
+  const channelProfiles = [
+    { bend: 25, width: 0.12 },
+    { bend: 68, width: 0.16, endCap: 150 },
+    { bend: 28, width: 0.12 },
+    { bend: 23, width: 0.1 },
+    { bend: 18, width: 0.09 },
+  ];
+  function channelBanks(region, y) {
+    const barrier = barriers[region],
+      [x1, x2] = barrier.bounds,
+      cfg = channelProfiles[region];
+    const nearestGap = Math.min(
+        ...barrier.gaps.map(([lo, hi]) => (y < lo ? lo - y : y > hi ? y - hi : 0)),
+      ),
+      blend = Math.max(0, Math.min(1, (nearestGap - 45) / 135)),
+      soft = blend * blend * (3 - 2 * blend),
+      offset = (Math.sin(y / 193 + region) + Math.sin(y / 79) * 0.22) * cfg.bend * soft,
+      half = ((x2 - x1) / 2) * (1 + Math.sin(y / 137 + region * 0.7) * cfg.width * soft),
+      center = (x1 + x2) / 2 + offset,
+      edge = Math.max(0, Math.min(y - barrier.bounds[2], barrier.bounds[3] - y)),
+      cap =
+        cfg.endCap && edge < cfg.endCap
+          ? Math.sqrt(Math.max(0, 1 - Math.pow(1 - edge / cfg.endCap, 2)))
+          : 1;
+    return [center - half * cap, center + half * cap];
+  }
+  // A shallow, walkable drainage channel feeds the deeper Causeway basin.
+  // Muddy margins and reeds describe seasonal wet ground rather than a new strategic wall.
+  const wetlandDrainage = [
+    [0, 1545, 40],
+    [190, 1510, 48],
+    [380, 1540, 58],
+    [570, 1580, 44],
+    [790, 1555, 52],
+    [990, 1590, 65],
+    [1230, 1585, 75],
+  ];
+  function drainageBanks(x) {
+    let j = wetlandDrainage.findIndex((p) => p[0] >= x);
+    if (j < 0) return { y: wetlandDrainage.at(-1)[1], width: wetlandDrainage.at(-1)[2] };
+    if (j <= 0) return { y: wetlandDrainage[0][1], width: wetlandDrainage[0][2] };
+    const a = wetlandDrainage[j - 1],
+      b = wetlandDrainage[j],
+      t = Math.max(0, Math.min(1, (x - a[0]) / (b[0] - a[0]))),
+      blend = t * t * (3 - 2 * t);
+    return { y: a[1] + (b[1] - a[1]) * blend, width: a[2] + (b[2] - a[2]) * blend };
+  }
   const terrain = [
     [
       { kind: 'water', x: 630, y: 1320, r: 125 },
@@ -2581,6 +2702,10 @@
     [1125, 1155, 'farm-tool-rack', 'hamlet-kitchen-plots'],
     [1350, 815, 'hay-rick', 'eastern-pasture'],
     [1450, 935, 'pasture-sheep', 'eastern-pasture'],
+    [115, 470, 'garden', 'western-millhaven-kitchen-plots'],
+    [170, 600, 'sapling', 'western-millhaven-home-orchard'],
+    [330, 595, 'sapling', 'western-millhaven-home-orchard'],
+    [400, 550, 'farm-tool-rack', 'western-millhaven-kitchen-plots'],
   ];
   const dungeonWalls = {
     crypt: [
@@ -3064,8 +3189,8 @@
   const dungeonGuardFormations = {
     mine: [
       {
-        x: 290,
-        y: 350,
+        x: 450,
+        y: 280,
         group: 'receiving',
         species: 'wolf',
         role: 'melee',
@@ -3073,8 +3198,8 @@
         name: 'Crown direwolf lance rider',
       },
       {
-        x: 490,
-        y: 370,
+        x: 525,
+        y: 330,
         group: 'receiving',
         species: 'wolf',
         role: 'ranged',
@@ -3082,9 +3207,9 @@
         name: 'Crown direwolf archer',
       },
       {
-        x: 420,
-        y: 490,
-        group: 'receiving',
+        x: 580,
+        y: 500,
+        group: 'new-workings',
         species: 'ogre',
       },
       {
@@ -3417,13 +3542,13 @@
         x: 230,
         y: 300,
         role: 'melee',
-        group: 'muster',
+        group: 'entry-watch',
       },
       {
         x: 390,
         y: 300,
         role: 'ranged',
-        group: 'muster',
+        group: 'entry-watch',
       },
       {
         x: 540,
@@ -4498,10 +4623,12 @@
       office: 'Superintendent of Reclamation',
       history:
         'Thornfang’s Goblin disciple oversees local decommissioning, remediation, salvage and relocation. His office serves Greenwood’s estate works; it is not a new kingdom-wide ministry.',
-      enduranceHp: 260,
+      // Scornfang is the early-Treasury survivability exception; later
+      // captains receive reach/cadence tuning, not an unmeasured 50% HP boost.
+      enduranceHp: 390,
       visualScale: 1.16,
-      specialRange: 470,
-      specialCooldown: 4.2,
+      specialRange: 560,
+      specialCooldown: 3.25,
       phase: { threshold: 0.55, name: 'Corrective Action', kind: 'scramble' },
       attacks: [
         {
@@ -4520,7 +4647,7 @@
           coefficient: 0.75,
           persistent: true,
           slow: true,
-          radius: 100,
+          radius: 120,
           fixedRadius: true,
         },
         {
@@ -4530,7 +4657,7 @@
           recovery: 0.95,
           coefficient: 0.55,
           slow: true,
-          radius: 135,
+          radius: 165,
         },
         {
           name: 'Cradle-to-Grave Tracking',
@@ -4540,7 +4667,7 @@
           shotWarning: 0.45,
           shots: 4,
           shotSpeed: 400,
-          shotLife: 1.8,
+          shotLife: 2.1,
           recovery: 1.1,
           coefficient: 0.45,
         },
@@ -4555,7 +4682,7 @@
           recovery: 1.1,
           coefficient: 0.7,
           persistent: true,
-          radius: 52,
+          radius: 64,
         },
       ],
     },
@@ -4564,8 +4691,8 @@
       name: 'Direjaw',
       enduranceHp: 680,
       visualScale: 1.18,
-      specialRange: 437,
-      specialCooldown: 4.4,
+      specialRange: 490,
+      specialCooldown: 3.35,
       phase: { threshold: 0.55, name: 'Elastic Rebound', kind: 'molt' },
       attacks: [
         {
@@ -4609,8 +4736,8 @@
       species: 'ridge',
       enduranceHp: 1650,
       visualScale: 1.2,
-      specialRange: 482,
-      specialCooldown: 4.1,
+      specialRange: 535,
+      specialCooldown: 3.25,
       phase: { threshold: 0.55, name: 'Hostile Liquidation', kind: 'howl' },
       attacks: [
         {
@@ -4651,8 +4778,8 @@
         'Cindermaw’s devoted disciple administers crops, livestock, meat, dairy, poultry, fisheries and their distribution across all five Crown provinces. He co-manages the whole Treasury with the Interior ministry while retaining the guarded Inner Vault. Ridge Tyrant remains Master of Coin, and the Drowned Keeper remains the archivist.',
       enduranceHp: 5000,
       visualScale: 1.19,
-      specialRange: 493,
-      specialCooldown: 4.0,
+      specialRange: 545,
+      specialCooldown: 3.25,
       phase: { threshold: 0.45, name: 'Ash Carapace', kind: 'carapace' },
       summon: {
         name: 'Brood Call',
@@ -4786,8 +4913,8 @@
         'Cinder Warlord is the Ashen Warlord’s roaming inspector and regional middle manager, not the military governor. His patrol checks roads, work details and occupied settlements. Mandatory Overtime orders at most seven already-present nearby workers into the fight; it cannot create troops from an empty or cleared road. The province still has working markets and repair crews under a compulsory military bureaucracy.',
       enduranceHp: 3000,
       visualScale: 1.18,
-      specialRange: 493,
-      specialCooldown: 4.0,
+      specialRange: 545,
+      specialCooldown: 3.25,
       patrolSpeed: 82,
       inspectionPause: 2.4,
       patrol: [
@@ -4896,7 +5023,10 @@
     fraction: 0.05,
     cooldown: rangerSupport.cooldown,
     duration: rangerSupport.duration,
-    threshold: rangerSupport.healThreshold,
+    // Ranged troops should assist substantially wounded allies before they
+    // collapse, rather than waiting until half their HP has disappeared.
+    // Targeting still prefers the most injured eligible recipient.
+    threshold: 0.75,
     range: 350,
     species: Object.freeze({
       wolf: 'Packheart Howl',
@@ -5138,8 +5268,206 @@
       ranger: { range: 260, halfAngle: 0.5, effect: 'arrow-fan' },
     },
   };
+  // Ally-sized interpretations; never call enemy boss AI or summon controllers.
+  const petCompanions = {
+    thorn: {
+      name: 'Thornpup',
+      role: 'melee',
+      color: '#8c9c65',
+      first: { name: 'Dynamic Entry', shape: 'target', range: 90, multiplier: 2.4 },
+      second: {
+        name: 'Tripwire',
+        shape: 'circle',
+        range: 120,
+        radius: 95,
+        multiplier: 1.3,
+        cap: 3,
+        slow: 1.5,
+      },
+    },
+    crypt: {
+      name: 'Little Lifebinder',
+      role: 'ranged',
+      color: '#bbafce',
+      first: { name: 'Stay Alive', shape: 'target', range: 280, multiplier: 1.6, heal: 0.04 },
+      second: {
+        name: 'Algor Mortis',
+        shape: 'circle',
+        range: 280,
+        radius: 85,
+        multiplier: 1.2,
+        cap: 3,
+        slow: 1.5,
+      },
+    },
+    mire: {
+      name: 'Mireling',
+      role: 'melee',
+      color: '#85a77a',
+      first: { name: 'Hydraulic Hop', shape: 'target', range: 100, multiplier: 2.2, slow: 1 },
+      second: {
+        name: 'Little Inundation',
+        shape: 'circle',
+        range: 120,
+        radius: 115,
+        multiplier: 1.4,
+        cap: 3,
+      },
+    },
+    archive: {
+      name: 'Pocket Keeper',
+      role: 'ranged',
+      color: '#75b3b9',
+      first: { name: 'Water Jet', shape: 'target', range: 280, multiplier: 2.1 },
+      second: {
+        name: 'Undertow',
+        shape: 'line',
+        range: 300,
+        halfWidth: 35,
+        multiplier: 1.3,
+        cap: 3,
+        slow: 1.5,
+      },
+    },
+    ridge: {
+      name: 'Little Treasurer',
+      role: 'melee',
+      color: '#cfaf65',
+      first: { name: 'Coinage Bonk', shape: 'target', range: 90, multiplier: 2.8 },
+      second: {
+        name: 'Rolling Cargo',
+        shape: 'line',
+        range: 200,
+        halfWidth: 40,
+        multiplier: 1.7,
+        cap: 3,
+      },
+    },
+    mine: {
+      name: 'Pebble Colossus',
+      role: 'melee',
+      color: '#a2bdb2',
+      first: {
+        name: 'Punching Shear',
+        shape: 'target',
+        range: 90,
+        multiplier: 2.0,
+        ward: 0.15,
+        duration: 2,
+      },
+      second: {
+        name: 'Tiny Compaction',
+        shape: 'circle',
+        range: 100,
+        radius: 110,
+        multiplier: 1.5,
+        cap: 3,
+        slow: 1,
+      },
+    },
+    warlord: {
+      name: 'Ash Cadet',
+      role: 'melee',
+      color: '#cd9473',
+      first: {
+        name: 'Cleaving Combo',
+        shape: 'cone',
+        range: 105,
+        halfAngle: 0.7,
+        multiplier: 1.8,
+        cap: 2,
+      },
+      second: {
+        name: 'Pursuit Sweep',
+        shape: 'cone',
+        range: 170,
+        halfAngle: 0.65,
+        multiplier: 1.8,
+        cap: 3,
+      },
+    },
+    abyss: {
+      name: 'Veyrith Whelp',
+      role: 'ranged',
+      color: '#b692d0',
+      first: { name: 'Compressor Puff', shape: 'target', range: 280, multiplier: 2.3 },
+      second: {
+        name: 'Wake Vortex',
+        shape: 'circle',
+        range: 260,
+        radius: 95,
+        multiplier: 1.4,
+        cap: 3,
+        slow: 1,
+      },
+    },
+    citadel: {
+      name: 'Little Marshal',
+      role: 'ranged',
+      color: '#a8bacc',
+      first: {
+        name: 'Precise Contouring',
+        shape: 'line',
+        range: 280,
+        halfWidth: 25,
+        multiplier: 1.7,
+        cap: 2,
+      },
+      second: {
+        name: 'Fractional Resurfacing',
+        shape: 'cone',
+        range: 260,
+        halfAngle: 0.45,
+        multiplier: 1.6,
+        cap: 3,
+        slow: 1,
+      },
+    },
+    cindermaw: {
+      name: 'Cinder Cub',
+      role: 'melee',
+      color: '#dc9d6e',
+      first: {
+        name: 'Little Cordon',
+        shape: 'circle',
+        range: 100,
+        radius: 90,
+        multiplier: 1.4,
+        cap: 3,
+      },
+      second: {
+        name: 'Parens Patriae',
+        shape: 'target',
+        range: 110,
+        multiplier: 2,
+        ward: 0.25,
+        duration: 3,
+      },
+    },
+    darklord: {
+      name: 'Pocket Sovereign',
+      role: 'melee',
+      color: '#ac99c6',
+      first: { name: 'Veteran’s Repertoire', shape: 'target', range: 100, multiplier: 2.6 },
+      second: {
+        name: 'Pathfinder’s Gambit',
+        shape: 'line',
+        range: 210,
+        halfWidth: 30,
+        multiplier: 2.0,
+        cap: 2,
+      },
+    },
+  };
   const companionSkills = {
     globalCooldown: 1.5,
+    veteran: {
+      expeditionRank: 4,
+      soldierWard: 0.2,
+      soldierWardSeconds: 2,
+      coveringRange: 150,
+      coveringSlow: 1,
+    },
     first: {
       cooldown: 8,
       multiplier: 3,
@@ -5225,8 +5553,16 @@
       reforgeBonus: { weapon: 5, armor: 3 },
     },
     companions: {
-      hp: { soldier: 120, archer: 105 },
-      armor: { soldier: 8, archer: 5 },
+      hp: { soldier: 120, archer: 105, pet: 112 },
+      armor: { soldier: 8, archer: 5, pet: 6 },
+      petDamage: 13,
+      petFirstCooldown: 8,
+      petSecondCooldown: 12,
+      petBasicInterval: 0.95,
+      petBasicRange: 280,
+      petRetreatRange: 150,
+      petPreferredRange: 250,
+      petFollowStop: 20,
       hpPerLevel: 12,
       vitalityPerRank: 0.1,
       vitalityCost: 200,
@@ -5716,6 +6052,18 @@
   };
   const tacticalFoundation = Object.freeze({
     enabled: true,
+    // Boss records use their unique family ID as species, even where their
+    // established anatomy/history matches an ordinary monster species.
+    // Opt in only documented identities; don't call a dragon a wolf or turn
+    // the Dark Lord into a random soldier to fill out a move roster.
+    bossSpeciesRogue: Object.freeze({
+      thorn: 'wolf',
+      crypt: 'skeleton',
+      mine: 'ogre',
+      warlord: 'orc',
+      cindermaw: 'ashbeast',
+      citadel: 'crownguard',
+    }),
     heroLevelDisadvantageMinimum: 1,
     outlevelProtection: 3,
     simultaneousPressureSources: 2,
@@ -5766,6 +6114,10 @@
     tacticalFoundation,
     balance,
     combatGeometry,
+    actorSpacing,
+    enemyMeleeKits,
+    enemyMeleeEquipment,
+    arenaPlacement,
     bossCadence,
     bossSummoning,
     bossBehavior,
@@ -5780,6 +6132,7 @@
     classUltimates,
     basicAttackCombo,
     companionSkills,
+    petCompanions,
     ordinaryMeleeScaling,
     ordinaryRangedScaling,
     guardianLegacyScaling,
@@ -5901,6 +6254,10 @@
     sites,
     quests,
     barriers,
+    channelProfiles,
+    channelBanks,
+    wetlandDrainage,
+    drainageBanks,
     terrain,
     landforms,
     harbors,

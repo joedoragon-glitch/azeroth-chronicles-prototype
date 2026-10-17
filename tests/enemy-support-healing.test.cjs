@@ -25,6 +25,16 @@ function fixture(region = 'vale', mode = 'normal') {
 }
 const near = (a, b, message) => assert(Math.abs(a - b) < 1e-8, message + ': ' + a + ' !== ' + b);
 
+{
+  const { g, mob } = fixture();
+  const healer = mob('ogre', { ranged: true });
+  const recipient = mob('ogre', { hp: 400 });
+  g.zone = () => { throw new Error('faction checks must not run world maintenance'); };
+  assert(g.enemyHealTeammate(healer, recipient));
+  delete g.s.zones[g.zoneId];
+  assert.equal(g.enemyHealTeammate(healer, recipient), false, 'missing current roster fails closed');
+}
+
 assert.equal(R.enemySupportHealing.cooldown, R.rangerSupport.cooldown);
 assert.equal(R.enemySupportHealing.duration, R.rangerSupport.duration);
 assert.equal(R.enemySupportHealing.fraction, 0.05);
@@ -53,6 +63,39 @@ for (const species of ['wolf', 'goblin', 'skeleton', 'wraith', 'stalker', 'mirel
 }
 console.log('PASS twelve ranged species use individual identity and the Archer healing interval');
 
+// Enemy support must ignore injured player actors even when they are closer
+// and much more wounded than the intended hostile recipient.
+for (const species of Object.keys(R.enemySupportHealing.species)) {
+  const { g, mob } = fixture();
+  g.hero.hp = g.hero.maxHp * 0.1;
+  g.s.party = [
+    g.unit('soldier', 981, 900),
+    g.unit('archer', 982, 900),
+    ...Object.keys(R.petCompanions).map(family => g.unit('pet', 983, 900, family)),
+  ];
+  for (const u of g.s.party) u.hp = u.maxHp * 0.1;
+  const playerHp = [g.hero, ...g.s.party].map(u => u.hp);
+  const healer = mob(species, { ranged: true });
+  const recipient = mob('ogre', { hp: 400 });
+  for (const u of [g.hero, ...g.s.party]) {
+    assert.equal(g.enemyHealTeammate(healer, u), false, 'player actors are never healer allies');
+    assert.equal(g.enemyHealTeammate(u, recipient), false, 'player actors are never hostile healers');
+  }
+  // Prove faction exclusion is explicit, rather than trusting the collection's
+  // name: even a malformed roster containing player actors cannot heal them.
+  g.zone().enemies.push(g.hero, ...g.s.party);
+  assert(g.enemySupportHeal(healer), species + ' starts real hostile support');
+  const event = g.effects.find(e => e.type === 'heal' && e.actor === 'enemy');
+  assert.equal(event.target, recipient.id, species + ' targets only the hostile roster');
+  g.advanceEnemySupportHeal(recipient, R.enemySupportHealing.duration);
+  assert(recipient.hp > 400, species + ' actually restores hostile HP');
+  assert.deepEqual([g.hero, ...g.s.party].map(u => u.hp), playerHp,
+    species + ' never restores hero, troops or any boss pet HP');
+  assert([g.hero, ...g.s.party].every(u => !u.supportHeal),
+    species + ' never attaches enemy regeneration to player actors');
+}
+console.log('PASS hostile healing excludes wounded hero, both troop types and all eleven pets');
+
 {
   const { g, mob } = fixture();
   const healer = mob('goblin', { ranged: false });
@@ -71,8 +114,9 @@ console.log('PASS twelve ranged species use individual identity and the Archer h
 {
   const { g, mob } = fixture();
   const healer = mob('goblin', { ranged: true });
-  mob('goblin', { hp: 400, pack: 'unrelated' });
-  assert(!g.enemySupportHeal(healer), 'different engaged formation does not receive support');
+  const unrelated = mob('wolf', { hp: 400, pack: 'unrelated' });
+  assert(g.enemySupportHeal(healer), 'hostile factions provide aid across species and formation posts');
+  assert(unrelated.supportHeal, 'cross-species recipient is actually healing');
 }
 {
   const { g, mob } = fixture();
@@ -83,8 +127,8 @@ console.log('PASS twelve ranged species use individual identity and the Archer h
 {
   const { g, mob } = fixture();
   const healer = mob('goblin', { ranged: true });
-  mob('goblin', { hp: 750 });
-  assert(!g.enemySupportHeal(healer), 'combat threshold is 50 percent');
+  mob('goblin', { hp: 900 });
+  assert(!g.enemySupportHeal(healer), 'support healing retains a 75-percent cutoff');
 }
 {
   const { g, mob } = fixture();
@@ -283,9 +327,9 @@ console.log('PASS boss skill independence, support priority, and old v4 save com
   const Visuals = require('../src/prototype/visuals');
   const { g, mob } = fixture();
   const healer = mob('goblin', { ranged: true });
-  mob('goblin', { hp: 400 });
+  const recipient = mob('goblin', { hp: 400 });
   assert(g.enemySupportHeal(healer));
-  const canvas = createCanvas(844, 390), order = [];
+  const canvas = createCanvas(844, 390), order = [], heals = [];
   const renderer = Renderer.create({
     canvas, ctx: canvas.getContext('2d'), getGame: () => g,
     platform: { cameraZoom: 1.5, cameraAnchor: () => ({ x: 422, y: 195 }) },
@@ -293,7 +337,7 @@ console.log('PASS boss skill independence, support priority, and old v4 save com
     PrototypeCombatVisuals: {
       ...FX,
       ground(...args) { order.push(args[3]); return FX.ground(...args); },
-      enemySupportHeal(...args) { order.push('heal-event'); return FX.enemySupportHeal(...args); },
+      enemySupportHeal(...args) { order.push('heal-event'); heals.push(args[2]); return FX.enemySupportHeal(...args); },
       enemySupportStatus(...args) { order.push('heal-status'); return FX.enemySupportStatus(...args); },
       actorCues(...args) { order.push('captions'); return FX.actorCues(...args); },
     },
@@ -309,5 +353,35 @@ console.log('PASS boss skill independence, support priority, and old v4 save com
   assert(order.indexOf('heal-status') < order.indexOf('captions'));
   assert(!order.includes('cue'), 'healing does not restore old floor warnings above actors');
   assert.equal(JSON.stringify(g.snapshot()), before, 'healing rendering stays save-pure');
+  // Leave the hero standing at the recipient's old spot, as in the reported
+  // overlap. The burst must follow its actual enemy, not imply a hero heal.
+  Object.assign(g.hero, { x: recipient.x, y: recipient.y });
+  recipient.x += 80;
+  healer.y += 35;
+  renderer.draw();
+  assert.equal(heals.at(-1).x, recipient.x, 'heal burst follows moving enemy recipient');
+  assert.equal(heals.at(-1).y, recipient.y);
+  assert.equal(heals.at(-1).fromY, healer.y, 'heal link follows its actual caster');
+  for (const state of ['dead', 'neutral', 'removed']) {
+    recipient.hp = state === 'dead' ? 0 : 400;
+    recipient.neutral = state === 'neutral';
+    if (state === 'removed') g.zone().enemies = [healer];
+    heals.length = 0;
+    renderer.draw();
+    assert.equal(heals.length, 0, state + ' enemy cannot leave a recovery burst on the hero');
+  }
+  const soldier = g.unit('soldier', 900, 900);
+  g.s.party = [soldier];
+  g.zone().enemies.push(g.hero, soldier);
+  for (const target of ['hero', soldier.id, 'missing-enemy']) {
+    const queued = FX.queue([{type:'heal',actor:'enemy',target,resource:'health'}], g);
+    assert(!queued.some(f => f.type === 'heal'), 'enemy heal never falls back to hero coordinates');
+  }
+  const heroHp = g.hero.hp;
+  g.hero.aggro = true;
+  g.hero.supportHeal = {seconds:5,remaining:1000};
+  g.advanceEnemySupportHeal(g.hero, 1);
+  assert.equal(g.hero.hp, heroHp, 'forged hostile healing cannot advance on a player actor');
+  assert(!g.hero.supportHeal, 'invalid player-side hostile regeneration is discarded');
 }
 console.log('PASS combined phone healing particles/status, warning layering and save-pure rendering');

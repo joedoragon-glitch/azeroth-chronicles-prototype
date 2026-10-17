@@ -41,7 +41,7 @@
       shieldPush(e, push) {
         // Respect solid terrain and the original boss arena. Never teleport or
         // override a scripted charge already in motion.
-        if (e.motion || e.returning || e.thornReturn) return false;
+        if (e.motion || this.attackResetProtected(e)) return false;
         const d = Math.max(1, dist(this.hero, e)),
           direction = { x: (e.x - this.hero.x) / d, y: (e.y - this.hero.y) / d };
         for (let fraction = 1; fraction >= 0.25; fraction -= 0.25) {
@@ -79,7 +79,7 @@
         const valid = (e) =>
           e.hp > 0 &&
           !e.neutral &&
-          !e.returning &&
+          !this.attackResetProtected(e) &&
           this.tacticalDirectTargetable(e) &&
           dist(e, this.hero) <= range &&
           this.line(this.hero, e) &&
@@ -132,7 +132,7 @@
                 enemy !== target &&
                 enemy.hp > 0 &&
                 !enemy.neutral &&
-                !enemy.returning &&
+                !this.attackResetProtected(enemy) &&
                 dist(enemy, target) <= radius &&
                 this.line(this.hero, enemy),
             )
@@ -225,7 +225,7 @@
             (e) =>
               e.hp > 0 &&
               !e.neutral &&
-              !e.returning &&
+              !this.attackResetProtected(e) &&
               dist(e, center) <= radius &&
               this.line(hero, e),
           );
@@ -331,7 +331,7 @@
         const eligible = (enemy, center = hero, range = radius) =>
           enemy.hp > 0 &&
           !enemy.neutral &&
-          !enemy.returning &&
+          !this.attackResetProtected(enemy) &&
           dist(enemy, center) <= range &&
           this.line(hero, enemy);
         const foes = radius
@@ -600,7 +600,7 @@
           !enemy ||
           enemy.hp <= 0 ||
           enemy.neutral ||
-          enemy.returning ||
+          this.attackResetProtected(enemy) ||
           !this.tacticalDirectTargetable(enemy) ||
           (this.manualHeroTargetLocked
             ? dist(enemy, this.hero) > 1400 && !enemy.aggro
@@ -626,7 +626,7 @@
               e.id === id &&
               e.hp > 0 &&
               !e.neutral &&
-              !e.returning &&
+              !this.attackResetProtected(e) &&
               this.tacticalDirectTargetable(e) &&
               dist(e, this.hero) <= 680 &&
               this.line(this.hero, e) &&
@@ -649,7 +649,7 @@
             (e) =>
               e.hp > 0 &&
               !e.neutral &&
-              !e.returning &&
+              !this.attackResetProtected(e) &&
               this.tacticalDirectTargetable(e) &&
               dist(e, this.hero) <= 680 &&
               this.line(this.hero, e) &&
@@ -671,6 +671,8 @@
         this.manualHeroTargetZone = this.zoneId;
         this.manualHeroTargetLocked = false; // A new manual choice releases an old lock.
         this.s.heroTarget = target.id;
+        if (this.hero.order?.type === 'skill-approach' && this.hero.order.id !== target.id)
+          this.hero.order = null;
         return target;
       }
       heroSkillRange(slot, charged = false) {
@@ -692,6 +694,12 @@
                 ? 400
                 : 450
               : 480;
+      }
+      castMovementBasic() {
+        // A released skill owns its approach. Passive covering fire must not
+        // replace the queued charged/ordinary command with Skill 1.
+        if (this.hero.order?.type === 'skill-approach') return false;
+        return this.cast(1);
       }
       cast(slot, targetId, charged = false, encountersAtStart = null) {
         if (this.s.mode === 'developer' && slot === 1) return false;
@@ -749,6 +757,7 @@
             (e) =>
               e.hp > 0 &&
               !e.neutral &&
+              !this.attackResetProtected(e) &&
               this.tacticalDirectTargetable(e) &&
               dist(e, this.hero) <= range &&
               this.line(this.hero, e),
@@ -761,14 +770,55 @@
             [1, 2, 6, 7].includes(slot) ||
             (slot === 8 && this.hero.class !== 'paladin') ||
             (slot === 4 && this.hero.class !== 'ranger'),
-          lockedOut = !targetId && selected && requiresTarget,
+          // Preserve a valid distant selection, while a target made ineligible
+          // by Blinding Dust still permits the established automatic fallback.
+          lockedOut =
+            requiresTarget &&
+            (!!selected ||
+              this.zone().enemies.some(
+                (e) =>
+                  e.id === targetId &&
+                  e.hp > 0 &&
+                  !e.neutral &&
+                  !this.attackResetProtected(e) &&
+                  this.tacticalDirectTargetable(e),
+              )),
           target =
             targets.find((e) => e.id === preferredTargetId) ||
             (lockedOut
               ? null
               : targets.find((e) => slot === 1 && e.id === this.s.heroTarget) ||
                 targets.sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0]);
-        if (requiresTarget && !target) return false;
+        if (requiresTarget && !target) {
+          // A deliberate targeted skill is an approach-and-release order.
+          // Never consume mana or cooldown merely because the selected enemy
+          // is beyond reach; targeting itself still does not move the hero.
+          const wanted = this.zone().enemies.find(
+            (e) =>
+              e.id === preferredTargetId &&
+              e.hp > 0 &&
+              !e.neutral &&
+              !this.attackResetProtected(e) &&
+              this.tacticalDirectTargetable(e),
+          );
+          if (
+            wanted &&
+            this.hero.mp >= this.skillManaCost(slot, rank, isCharged) &&
+            this.route(this.hero, wanted).length
+          ) {
+            this.hero.order = {
+              type: 'skill-approach',
+              id: wanted.id,
+              zone: this.zoneId,
+              slot,
+              charged: isCharged,
+              encountersAtStart,
+              stalled: 0,
+            };
+            return true;
+          }
+          return false;
+        }
         // A rushing melee strike must be able to reach the foe without crossing terrain.
         const dashFrom =
           slot === 6 && this.hero.class === 'paladin' && dist(this.hero, target) > 120
@@ -812,6 +862,16 @@
         const cost = this.skillManaCost(slot, rank, isCharged);
         if (this.hero.mp < cost) return false;
         this.hero.mp -= cost;
+        // Recall holds until the player deliberately attacks, not only until
+        // they select a single target. Self-heal, guard and Ranger support
+        // skills remain defensive and do not reactivate companion pursuit.
+        const offensive =
+          (requiresTarget && !!target) ||
+          slot === 5 ||
+          (slot === 8 && this.hero.class === 'paladin') ||
+          (slot === 3 &&
+            (this.hero.class === 'mage' || (this.hero.class === 'paladin' && isCharged)));
+        if (offensive) this.s.recallActive = false;
         this.hero.cd[i] =
           slot === 3 && this.hero.class === 'paladin' && !isCharged
             ? 0
@@ -1053,7 +1113,7 @@
                   (e) =>
                     e.hp > 0 &&
                     !e.neutral &&
-                    !e.returning &&
+                    !this.attackResetProtected(e) &&
                     dist(e, this.hero) <= reach &&
                     Math.abs(delta(Math.atan2(e.y - this.hero.y, e.x - this.hero.x), angle)) <=
                       cfg.bash.halfAngle &&
@@ -1390,7 +1450,7 @@
               (e) =>
                 e.hp > 0 &&
                 !e.neutral &&
-                !e.returning &&
+                !this.attackResetProtected(e) &&
                 dist(e, this.hero) < (slot === 5 ? 350 : 500),
             )
             .sort(

@@ -24,7 +24,7 @@ for (const [name, icon, region, minimumFills] of cases) {
     save() {}, restore() {}, translate() {}, scale() {},
     beginPath() { calls.paths++; }, moveTo() {}, lineTo() {}, closePath() {},
     fill() { calls.fills++; }, stroke() { calls.strokes++; },
-    ellipse() {}, arc() {},
+    ellipse() {}, arc() {}, bezierCurveTo() {}, quadraticCurveTo() {},
   };
   Visuals.draw(ctx, npc, { x: 140, y: 160 }, region);
   assert(calls.fills >= minimumFills, name + ' should render a layered vehicle silhouette');

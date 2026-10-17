@@ -30,11 +30,11 @@ for (const structure of ['highland-wall', 'crown-wall', 'highland-smithy', 'watc
   assert(majorOccluder(obj('prop', 0, 0, { structure, decorative: true })), structure);
 }
 for (const structure of ['rock-cluster', 'mangrove']) {
-  assert(!majorOccluder(obj('prop', 0, 0, { structure, decorative: true })), 'small clutter: ' + structure);
+  assert(majorOccluder(obj('prop', 0, 0, { structure, decorative: true })), 'substantial natural cover: ' + structure);
 }
 assert(majorOccluder(obj('building', 0, 0, { kind: 'barracks' })));
 assert(majorOccluder(obj('npc', 0, 0, { kind: 'supplier' })), 'service building counts as cover');
-for (const structure of ['sapling', 'pine-sapling', 'grass', 'stump', 'fallen-log', 'barrel', 'market']) {
+for (const structure of ['sapling', 'pine-sapling', 'grass', 'stump', 'barrel', 'market']) {
   assert(!majorOccluder(obj('prop', 0, 0, { structure, decorative: true })), structure);
 }
 assert(!majorOccluder(obj('npc', 0, 0, { kind: 'quests' })), 'quest board is not cover');
@@ -130,7 +130,7 @@ function rasterScene({ actorKind = 'hero', structure = 'house', foreground = tru
       }
       ctx.restore();
     },
-    floor() {}, terrain() {}, roads() {}, bridges() {}, atmosphere() {},
+    floor() {}, terrain() {}, roads() {}, footpaths() {}, bridges() {}, atmosphere() {},
   };
   const painter = Renderer.create({
     canvas: surface,

@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "pt312-specialist-warlord",
+  "name": "specialist:warlord",
+  "kind": "specialist",
+  "nextAction": "Review current revision in native desktop/phone scenes; retain original reference and this owner revision for future sprite adaptation.",
+  "context": {
+    "originConversation": "Chat URL unavailable; dated owner feedback retained in PR #313 / Issue #312.",
+    "decisionSummary": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity. Owner requests a broad Ogre-quality rounded/organic pass, preserving species and material identity.",
+    "decisionDate": "2026-10-16",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/313",
+    "contentDocuments": [
+      "docs/PR313_WORK_IMPLEMENTATION_20261016.md",
+      "docs/PR313_INTEGRATED_SOURCE_AUDIT_20261016.md"
+    ],
+    "locationAndLore": "Retain the original contract and lore in tools/community-snapshot/procedural-art-inventory.json; this record appends a candidate and does not replace accepted references."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner endorsed Ogre shape language as the reference direction; no individual native candidate review yet.",
+    "proceduralDesignAcceptance": "Implementation authorized. Appearance acceptance pending native review.",
+    "spriteProductionAuthorization": "This continuation authors procedural source only; no new sprite was generated or registered.",
+    "generatedAppearanceAcceptance": "No generated candidate or appearance acceptance.",
+    "pendingCorrections": [
+      "Native review, isolated reference and actual gameplay capture are paused by the owner."
+    ]
+  },
+  "reference": {
+    "sourceCommit": "9dcb09167849865c6c838d16305ff76e872c7d58",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js @ 9dcb09167849865c6c838d16305ff76e872c7d58"
+    ],
+    "exactEntityState": {
+      "contractId": "specialist:warlord",
+      "selectors": [
+        "specialist / case 'warlord'",
+        "specialist / case 'warlord'"
+      ],
+      "fixture": {
+        "region": 0,
+        "entity": {
+          "renderKind": "npc",
+          "kind": "teacher",
+          "family": "warlord"
+        }
+      },
+      "variants": [],
+      "additionalVariants": []
+    },
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [
+      "tests/community-snapshot-browser.test.cjs",
+      "tools/community-snapshot/pt312-presentation-overlay.json"
+    ],
+    "traitsToPreserve": [
+      "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity.",
+      "Original species, silhouette/scale, palette, functional equipment and ground anchor.",
+      "Original collision, attack timing, active sprites and retained generator originals."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+        "sourceCommit": "9dcb09167849865c6c838d16305ff76e872c7d58"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "specialist:warlord"
+    ],
+    "reusedDesignIds": [
+      "specialist:warlord"
+    ],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js",
+        "reason": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "existing behavior retained; no new frame assets",
+    "gameplayStates": [
+      "native normal/TRUE/rank or construction states where applicable",
+      "day/night and movement/standing where applicable"
+    ],
+    "directions": [
+      "existing supported directions"
+    ],
+    "pivotContract": "Retain original world foot anchor and logical scale.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  },
+  "ownerRevisions": [
+    {
+      "date": "2026-10-16",
+      "request": "Owner identifies Lyss as a woman and requests profession-appropriate medieval women’s clothing. Chat URL unavailable.",
+      "authorization": "Implement and audit on PR #313, then merge when all gates pass. No new generated image acceptance is claimed.",
+      "traitsToPreserve": "Muted red-brown medieval overdress under practical shoulder armour, dark braid and helmet, gold teaching sash. Keep the banner-headed staff.",
+      "states": [
+        "rescued specialist",
+        "captive; shared named body and existing work presentation"
+      ],
+      "sourceParent": "fc445f77aa0d4b475961aa766b9d3f64aed882eb",
+      "owner": "src/prototype/visuals.js / specialist",
+      "isolatedReferencePath": "tools/sprites/references/2026-10-16-character-consistency/warlord.png",
+      "isolatedReferenceSha256": "990d1211e7f2814b66641f0c456659571988ff27ac625b295fb1d9e8e76bbb39",
+      "referenceKind": "CPU Canvas procedural capture; native browser review tracked separately in PR validation ledger",
+      "spritePolicy": "No new raster registration; preserve existing accepted originals. Future sprites must use this revised named body in all states.",
+      "sourceSnapshotSha256": "c704124e2ef89e66197334dd9edf1d2e30460fa984845ccb8c5d0aa1ad0f5f50"
+    }
+  ]
+}

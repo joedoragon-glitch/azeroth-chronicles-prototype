@@ -562,10 +562,12 @@
     'hit',
     'basicComboFinisher',
     'companionSkill',
+    'petSkill', // Visual metadata; the corresponding spell/melee event owns audio.
     // Preparation is visible; concrete release and interruption own the sound.
     'companionChargeStart',
     // UI/save bookkeeping has no separate sound cue.
     'actionFailed',
+    'attackPlacementFailed', // Diagnostic only; no attack was committed.
     'archiveKnowledge',
     // Rogue decisions are visually telegraphed; the existing warning cue owns
     // their audio so crowd encounters do not stack extra alert sounds.

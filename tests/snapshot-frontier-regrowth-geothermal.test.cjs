@@ -6,8 +6,10 @@ const Campaign = require('../src/prototype/engine.js');
 const Visuals = require('../src/prototype/visuals.js');
 
 const plans = {
-  frontier: { target: 50, kind: 'regionalRecovery', types: 6 },
-  crown: { target: 15, kind: 'thermalPurpose', types: 7 },
+  // The safe-placement owner deliberately skips the burned-hamlet willow (10)
+  // during initial world construction. Settled v4 geometry admits it on migration.
+  frontier: { target: 49, authored: 50, migrated: 50, skipped: [10], kind: 'regionalRecovery', types: 6 },
+  crown: { target: 15, authored: 15, migrated: 15, skipped: [], kind: 'thermalPurpose', types: 7 },
 };
 for (const mode of ['normal', 'nightmare']) {
   for (const [region, goal] of Object.entries(plans)) {
@@ -15,6 +17,10 @@ for (const mode of ['normal', 'nightmare']) {
     game.enter(region);
     const zone = game.zone(),
       additions = zone.props.filter((p) => p.id.startsWith('recovery-heat-'));
+    const authored = region === 'frontier' ? Campaign.rules.frontierRecoveryScenes : Campaign.rules.crownThermalWorksScenes;
+    assert.equal(authored.length, goal.authored, 'the complete authored plan is retained');
+    assert.deepEqual(authored.flatMap((_, j) => additions.some(p => p.id === 'recovery-heat-' + region + '-' + j) ? [] : [j]), goal.skipped,
+      'only the specifically reviewed unsafe initial placement may be skipped');
     assert.equal(additions.length, goal.target, region + ': authored world scenes all placed');
     assert.equal(additions.filter((p) => p[goal.kind]).length, goal.target);
     assert.equal(new Set(additions.map((p) => p.structure)).size, goal.types);
@@ -40,7 +46,7 @@ for (const mode of ['normal', 'nightmare']) {
     copy.enter(region);
     const upgraded = copy.zone();
     assert.equal(upgraded.props.filter((p) => p.id.startsWith('recovery-heat-')).length,
-      goal.target, 'v4 migration fills scene dressing exactly once');
+      goal.migrated, 'v4 migration fills scene dressing exactly once');
     assert.equal(upgraded.enemies.find((e) => e.id === dead?.id)?.hp, dead?.hp,
       'historical kills are not resurrected');
     assert.equal(copy.hero.gold, game.hero.gold, 'heatworks do not mint new money');
@@ -71,7 +77,7 @@ for (const [, , structure] of [...frontier, ...heat]) {
   let fills = 0, strokes = 0;
   const brush = {
     save() {}, restore() {}, translate() {}, scale() {}, beginPath() {},
-    moveTo() {}, lineTo() {}, closePath() {}, ellipse() {}, arc() {},
+    moveTo() {}, lineTo() {}, bezierCurveTo() {}, quadraticCurveTo() {}, closePath() {}, ellipse() {}, arc() {},
     fill() { fills++; }, stroke() { strokes++; },
   };
   Visuals.draw(brush, { id: structure, renderKind: 'prop', structure,
@@ -83,4 +89,4 @@ const renderer = fs.readFileSync(path.join(__dirname,
 assert(renderer.includes('thermal.test(structure)') &&
   /const nightSources = !nightNow\s*\? \[\]/.test(renderer),
   'heatworks share bounded night-only work lighting without daytime glows');
-console.log('PASS regrowth (50), Crown thermal works (15), safe routes, artwork, old saves and night-only lighting');
+console.log('PASS 50 authored regrowth scenes (49 safe initial / 50 migrated), Crown thermal works (15), safe routes, artwork, old saves and night-only lighting');

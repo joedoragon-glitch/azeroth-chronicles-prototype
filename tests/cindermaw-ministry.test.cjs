@@ -12,7 +12,9 @@ function scene(mode = 'normal', form = 'normal', cls = 'mage', succession = fals
   const e = c.bossEnemy(
     c.boss('cindermaw'),
     form,
-    roost ? { x: 2200, y: 1750 } : c.safe(900, 1100),
+    // The shared mechanical arena must admit all four delegation approaches;
+    // the former east approach now correctly intersects Greenwood's river.
+    roost ? { x: 2200, y: 1750 } : c.safe(600, 900),
   );
   c.zone().enemies = [e];
   c.hero.hp = c.hero.maxHp = 1e6;
@@ -221,6 +223,22 @@ for (const mode of ['normal', 'nightmare'])
       c.s.time += 0.05;
       c.updateEnemies(0.05);
       assert(!e.cinderDelegation, 'real Slow disrupts remaining commands and finish');
+      assert(troops.every((u) => !u.cinderDelegate));
+      // A real Mage interrupt clears a delegate's warning before its next
+      // update; the abandoned order must cancel rather than read a null timer.
+      cast(c, e, 5);
+      const first = troops.find((u) => u.id === e.cinderDelegation.members[0]);
+      first.slow = 0;
+      Object.assign(first, first.cinderDelegate.point);
+      c.updateCinderDelegate(first, 0.05);
+      assert(first.telegraph?.cinderDelegate);
+      Object.assign(c.hero, c.safe(first.x + 25, first.y));
+      c.hero.skills[2] = 1;
+      c.hero.cd[2] = 0;
+      assert(c.cast(3), 'Mage releases the actual interrupt');
+      assert.equal(first.telegraph, null);
+      assert.doesNotThrow(() => c.updateCinderDelegate(first, 0.05));
+      assert(!e.cinderDelegation, 'lost warning cancels the delegated sequence');
       assert(troops.every((u) => !u.cinderDelegate));
     }
     // Mutual Aid remains separate staff with existing Normal/TRUE caps.

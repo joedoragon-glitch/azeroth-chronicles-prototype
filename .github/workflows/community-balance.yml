@@ -1,0 +1,75 @@
+name: Community Snapshot balance study
+on:
+  pull_request:
+    types: [opened, reopened]
+    branches: [main]
+  workflow_dispatch:
+  push:
+    branches: [integration/community-snapshot-311-20261016]
+    paths:
+      - src/prototype/engine.js
+      - scripts/community-companion-observe.cjs
+      - docs/evidence/pr313-validation-continuation-20261016/baseline308-complete-cache.json.gz
+permissions:
+  contents: read
+concurrency:
+  group: community-balance-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  observe:
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event.pull_request.number == 313
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Restore exact untouched baseline source
+        shell: bash
+        run: |
+          git fetch --depth=1 origin 6bc27be31792b1c38147d61e98ceed6acf3e2560
+          mkdir -p "$RUNNER_TEMP/community-baseline"
+          git archive 6bc27be31792b1c38147d61e98ceed6acf3e2560 src/prototype | tar -x -C "$RUNNER_TEMP/community-baseline"
+          echo 6bc27be31792b1c38147d61e98ceed6acf3e2560 > "$RUNNER_TEMP/community-baseline/community-baseline-commit.txt"
+      - name: Observe unchanged authored cases and retain every outcome
+        run: node scripts/community-companion-observe.cjs observe "$RUNNER_TEMP/community-baseline" ${{ matrix.shard }} 8 test-results/community-balance
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: community-balance-shard-${{ matrix.shard }}
+          retention-days: 90
+          path: test-results/community-balance/
+          if-no-files-found: error
+  summary:
+    if: always() && (github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event.pull_request.number == 313)
+    needs: observe
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: community-balance-shard-*
+          path: test-results/balance-partitions
+      - name: Account for every configuration and expose unfavorable outcomes
+        run: |
+          node scripts/community-companion-observe.cjs summarize test-results/balance-partitions test-results/community-balance-summary
+          cat test-results/community-balance-summary/summary.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: community-balance-summary
+          retention-days: 90
+          path: test-results/community-balance-summary/
+          if-no-files-found: error

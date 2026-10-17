@@ -8,6 +8,18 @@
     const clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
       dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     class Progression {
+      nameEquipment(family, slot, value) {
+        const name = Campaign.normalizeCharacterName(value);
+        if (
+          !['weapon', 'armor'].includes(slot) ||
+          !name ||
+          !this.s.rescued[family] ||
+          R.balance.equipment.tiers[family] === undefined
+        )
+          return false;
+        this.hero[slot === 'weapon' ? 'customWeaponName' : 'customArmorName'] = name;
+        return true;
+      }
       talentProfile() {
         return talentProfiles[this.hero.class];
       }
@@ -93,7 +105,7 @@
       }
       syncCompanionLevelStats() {
         for (const u of this.s.party) {
-          if (!['soldier', 'archer'].includes(u.type)) continue;
+          if (!['soldier', 'archer', 'pet'].includes(u.type)) continue;
           const next = this.companionMaxHp(u.type),
             gain = next - u.maxHp;
           u.maxHp = next;

@@ -102,8 +102,8 @@ const server = http.createServer((req, res) => {
                 for (const charged of [false, true]) {
                   game = new C('normal', cls, () => 0.9);
                   Object.assign(game.hero, {
-                    x: 1100,
-                    y: 1100,
+                    x: 600,
+                    y: 900,
                     hp: 50,
                     skills: Array(8).fill(rank),
                     cd: Array(8).fill(0),
@@ -126,10 +126,10 @@ const server = http.createServer((req, res) => {
                       gold: 0,
                       xp: 0,
                     },
-                    { x: 1170, y: 1100 },
+                    { x: 670, y: 900 },
                   );
                   z.enemies = [e];
-                  game.s.party = [game.unit('soldier', 1080, 1130)];
+                  game.s.party = [game.unit('soldier', 580, 930)];
                   game.s.companionCombatTraining = 2;
                   if (cls === 'mage' && slot === 3 && !charged)
                     e.rangedAim = { remaining: 0.4, max: 0.4, targetId: 'hero' };
@@ -139,6 +139,18 @@ const server = http.createServer((req, res) => {
                   );
                   const events = [...game.effects],
                     cast = events.find((x) => x.type === 'heroSkillCast');
+                  need(
+                    !!cast,
+                    'missing actual cast receipt: ' +
+                      JSON.stringify({
+                        cls,
+                        slot,
+                        charged,
+                        rank,
+                        order: game.hero.order,
+                        events: events.map((x) => x.type),
+                      }),
+                  );
                   need(!!art.profile(cast), 'profile');
                   for (let i = 0; i < 12; i++) {
                     game.effects = [];

@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-candidate-unreviewed",
+  "designId": "companion-pet-darklord",
+  "name": "Dark Lord miniature",
+  "kind": "companion",
+  "nextAction": "Native-size desktop/phone visual review after explicit validation authorization; no sprites requested.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Owner authorized all eleven procedural TRUE-boss pets, 15 October 2026. No screenshot or visual acceptance claimed.",
+    "decisionDate": "2026-10-15",
+    "repositoryIssueOrPR": null,
+    "contentDocuments": [
+      "docs/COMMUNITY_SNAPSHOT_IMPLEMENTATION_20261016.md",
+      "docs/COMMUNITY_SNAPSHOT_AUDIT_REPAIRS_20261016.md"
+    ],
+    "locationAndLore": null
+  },
+  "decisions": {
+    "conceptAcceptance": "Implementation authorized by owner; draft tuning reviewed against troop rules.",
+    "proceduralDesignAcceptance": "NOT REVIEWED at native size",
+    "spriteProductionAuthorization": "EXCLUDED by owner for this update",
+    "generatedAppearanceAcceptance": "No generated image",
+    "pendingCorrections": [
+      "Native-size visual quality/fidelity pending"
+    ]
+  },
+  "reference": {
+    "sourceCommit": "754e72e9cb5819bb815fde97488d44275e870453",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::bossPet",
+      "src/prototype/rules.js::petCompanions",
+      "feature/community-snapshot-post308-20261016"
+    ],
+    "exactEntityState": {
+      "renderKind": "ally",
+      "type": "pet",
+      "petFamily": "darklord"
+    },
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [],
+    "traitsToPreserve": [
+      "small chibi dark-armored lord with the existing crown and sword identity",
+      "large expressive eyes, short body, grounded feet",
+      "canonical anatomy, material and equipment"
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "52ef9f105a31d481c686e59a773fc219004e546ea5a657c288821f4fcc0cd721"
+      },
+      {
+        "path": "src/prototype/rules.js",
+        "sha256": "9939dabf9f50250bb4b0c1f52c1d05eeb151e55abba783510c3c4315652ae3b1"
+      }
+    ],
+    "preCommunityBaselineCommit": "6bc27be31792b1c38147d61e98ceed6acf3e2560",
+    "sourceEvidenceRecord": "tools/community-snapshot/procedural-art-inventory.json#pet:darklord",
+    "previousCandidateSourceCommit": "06edf70470c507b5da5246fa27e3b779e64382f1",
+    "sourceSlices": [
+      {
+        "path": "src/prototype/visuals.js",
+        "selector": "bossPet / family === 'darklord'",
+        "startLine": 1751,
+        "endLine": 2270,
+        "sha256": "45a0a86fd5dec9f689c2841ab0642be6180ad2945282ec2dd827ec00c9fadd5a"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [
+      "ally type pet / petFamily darklord"
+    ],
+    "requiredVisibleAssets": [],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "visuals.js; owner expressly requires procedural miniatures"
+    ]
+  },
+  "animationRequirements": {
+    "status": "procedural only",
+    "gameplayStates": [
+      "idle",
+      "move",
+      "attack",
+      "charge"
+    ],
+    "directions": [],
+    "pivotContract": "same companion ground anchor; no combat geometry adaptation",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

@@ -3,8 +3,47 @@
   'use strict';
   function install(Campaign, { D, R }) {
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+    const normalizeCharacterName = (value) => {
+      if (typeof value !== 'string') return null;
+      const name = value.normalize('NFC').trim().replace(/\s+/gu, ' ');
+      return Array.from(name).length >= 1 &&
+        Array.from(name).length <= 24 &&
+        /^[\p{L}\p{N}][\p{L}\p{M}\p{N} .'’\-]*$/u.test(name)
+        ? name
+        : null;
+    };
+    Campaign.normalizeCharacterName = normalizeCharacterName;
 
     class Party {
+      heroDisplayName() {
+        return (
+          (this.s.throneClaimed && this.hero.regnalName) || this.hero.customName || this.hero.class
+        );
+      }
+      nameHero(value, regnal = false) {
+        const name = normalizeCharacterName(value),
+          key = regnal ? 'regnalName' : 'customName';
+        if (!name || this.hero[key] || (regnal && !this.s.throneClaimed)) return false;
+        this.hero[key] = name;
+        return true;
+      }
+      nameCompanion(id, value) {
+        const unit = this.s.party.find((u) => u.id === id),
+          name = normalizeCharacterName(value);
+        if (!unit || !name || unit.customName) return false;
+        unit.customName = name;
+        return true;
+      }
+      companionDisplayName(unit) {
+        if (unit.customName) return unit.customName;
+        if (!['soldier', 'archer', 'pet'].includes(unit.type))
+          return unit.name || unit.type || 'Companion';
+        return unit.type === 'pet'
+          ? this.petDefinition(unit)?.name || 'Boss pet'
+          : unit.type === 'archer'
+            ? 'Ranger'
+            : 'Soldier';
+      }
       rangerRallyActive(u) {
         return (
           !!u &&
@@ -30,6 +69,7 @@
         return (this.s.companionCombatTraining || 1) >= 2;
       }
       companionSecondSkillTargets(u, target) {
+        if (u.type === 'pet') return this.petSkillTargets(u, target, 2);
         const def = R.companionSkills?.second?.[u.type];
         if (!def || !target) return [];
         const angle = Math.atan2(target.y - u.y, target.x - u.x),
@@ -62,6 +102,8 @@
           .sort((a, b) => this.idOrder(a, b));
       }
       companionUseFirstSkill(u, target) {
+        if (u.type === 'pet') return this.usePetSkill(u, target, 1);
+        if (!['soldier', 'archer'].includes(u.type)) return false;
         const cfg = R.companionSkills?.first,
           def = cfg?.[u.type];
         if (!cfg || !def || !target || (u.skill1Cd || 0) > 0) return false;
@@ -69,6 +111,14 @@
         if (u.type === 'soldier') {
           if (dist(u, target) > 80 || !this.line(u, target)) return false;
           if (!this.damage(target, base * cfg.multiplier, u.id)) return false;
+          const veteran = R.companionSkills.veteran;
+          if (
+            (this.s.expeditionRank || 1) >= veteran.expeditionRank &&
+            ((u.wardUntil || 0) <= this.s.time || (u.wardReduction || 0) <= veteran.soldierWard)
+          ) {
+            u.wardUntil = this.s.time + veteran.soldierWardSeconds;
+            u.wardReduction = veteran.soldierWard;
+          }
           u.skill1Cd = cfg.cooldown;
           u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
           u.cd = Math.max(u.cd, 0.4);
@@ -122,6 +172,11 @@
             style: 'arrow',
             rapid: true,
             companionSkill: 'triple-shot',
+            ...(j === 0 &&
+            (this.s.expeditionRank || 1) >= R.companionSkills.veteran.expeditionRank &&
+            dist(u, target) < R.companionSkills.veteran.coveringRange
+              ? { slow: R.companionSkills.veteran.coveringSlow }
+              : {}),
           });
         this.event('projectileLaunch', {
           actor: 'companion',
@@ -147,7 +202,7 @@
       companionUseSecondSkill(u, target, targets = this.companionSecondSkillTargets(u, target)) {
         if (
           !this.companionSecondSkillUnlocked() ||
-          !R.companionSkills.second?.[u.type] ||
+          !(u.type === 'pet' ? this.petDefinition(u) : R.companionSkills.second?.[u.type]) ||
           !target ||
           (u.skill2Cd || 0) > 0 ||
           !targets.length ||
@@ -179,6 +234,7 @@
         target,
         targets = this.companionSecondSkillTargets(u, target),
       ) {
+        if (u.type === 'pet') return this.usePetSkill(u, target, 2, targets);
         const cfg = R.companionSkills?.second,
           def = cfg?.[u.type];
         if (
@@ -311,13 +367,20 @@
         if (secondReady && this.companionUseSecondSkill(u, target, secondTargets)) return true;
         return false;
       }
-      unit(type, x, y) {
-        const base = { soldier: [120, 12, '⚔️'], archer: [105, 15, '🏹'] }[type];
+      unit(type, x, y, petFamily = null) {
+        const pet = type === 'pet' ? this.petDefinition(petFamily) : null;
+        if (type === 'pet' && !pet) throw Error('Unknown boss pet');
+        const base = {
+          soldier: [120, 12, '⚔️'],
+          archer: [105, 15, '🏹'],
+          pet: [112, R.balance.companions.petDamage, '🐾'],
+        }[type];
         if (!base) throw Error('Unknown companion type');
         const maxHp = this.companionMaxHp(type);
         return {
           id: 'ally-' + this.s.nextId++,
           type,
+          ...(pet ? { petFamily, name: pet.name } : {}),
           x,
           y,
           hp: maxHp,
@@ -436,9 +499,11 @@
             'Ranger casts Heal on ' +
               (target === this.hero
                 ? 'the hero'
-                : target.type === 'archer'
-                  ? 'a Ranger'
-                  : 'a Soldier') +
+                : target.type === 'pet'
+                  ? this.petDefinition(target).name
+                  : target.type === 'archer'
+                    ? 'a Ranger'
+                    : 'a Soldier') +
               ' · restoring ' +
               amount +
               ' HP over five seconds.',
@@ -559,7 +624,7 @@
         if (!dead || !this.spend(this.companionRecoveryCost())) return false;
         const id = dead.id,
           active = dead.active !== false,
-          u = this.unit(dead.type, this.hero.x + 40, this.hero.y);
+          u = this.unit(dead.type, this.hero.x + 40, this.hero.y, dead.petFamily);
         this.clearPartyCharge(dead);
         this._partyChargeRecovery?.delete(dead);
         this.tacticalClearScatter(dead);
@@ -619,6 +684,10 @@
       dismissCompanion(id) {
         const i = this.s.party.findIndex((u) => u.id === id && u.active === false);
         if (i < 0) return false;
+        if (this.s.party[i].type === 'pet') {
+          this.say('Boss pets stay in your collection. Rest them or recover them at a Barracks.');
+          return false;
+        }
         this.s.party.splice(i, 1);
         return true;
       }
@@ -702,6 +771,9 @@
         if ((this.s.expeditionRank || 1) < 3) return false;
         const context = this.syncSquadDoctrine();
         if (!context.engaged) return false;
+        // An explicit combat-doctrine switch during an ongoing encounter is
+        // a new engagement order; Recall itself remains defensive until then.
+        this.s.recallActive = false;
         this.s.squadDoctrine = this.s.squadDoctrine === 'focus' ? 'guard' : 'focus';
         this.event('squadDoctrine', { mode: this.s.squadDoctrine, boss: context.boss });
         return true;
@@ -724,6 +796,7 @@
       recallParty() {
         this.s.recallActive = true;
         this.hero.order = null;
+        this._tacticalPartyTargets?.clear();
         for (const u of this.activeLivingParty()) {
           this.clearPartyCharge(u);
           u.order = null;
@@ -735,6 +808,17 @@
         return true;
       }
       partyFormationOffset(u, living = this.activeLivingParty()) {
+        if (u.type === 'pet') {
+          // Mixed pets have their own six distinct ring positions, outside troop lanes.
+          const pets = living.filter((v) => v.type === 'pet' && !v.order);
+          const i = Math.max(0, pets.indexOf(u));
+          const side = i % 2 ? 1 : -1;
+          const row = Math.floor(i / 2);
+          return [
+            side * (130 + row * 35),
+            this.petDefinition(u)?.role === 'ranged' ? -95 - row * 35 : 25 + row * 35,
+          ];
+        }
         const rangedHero = this.hero.class === 'mage' || this.hero.class === 'ranger',
           same = living.filter((v) => v.type === u.type && !v.order),
           index = Math.max(
@@ -810,7 +894,12 @@
       soldierScreenTarget(u, targets, living, claimed) {
         const protectedUnits = [
             this.hero,
-            ...living.filter((v) => v.type === 'archer' && !v.order),
+            ...living.filter(
+              (v) =>
+                (v.type === 'archer' ||
+                  (v.type === 'pet' && this.petDefinition(v)?.role === 'ranged')) &&
+                !v.order,
+            ),
           ],
           pressure = (e) => Math.min(...protectedUnits.map((p) => dist(e, p))),
           band = (e) => (pressure(e) < 150 ? 0 : pressure(e) < 280 ? 1 : 2);
@@ -886,8 +975,8 @@
             u.immune = Math.max(u.immune || 0, 2.5);
             this.event('spell', { x: u.x, y: u.y, target: u.id, kind: 'soldierGuard' });
           }
-        if (this.s.recallActive && living.every((u) => dist(u, this.hero) < 165))
-          this.s.recallActive = false;
+        // Recall is a standing defensive order. Reaching formation never
+        // silently authorizes companions to re-enter the previous fight.
         const crowdTarget = (u, targets) =>
           targets
             .filter((e) => dist(u, e) < 620)
@@ -934,6 +1023,7 @@
             // Waiting here prevents another skill or basic during preparation.
             continue;
           }
+          if (u.type === 'pet') u.order = null; // Pets never perform troop labor.
           if (u.order?.type === 'build') {
             const b = z.buildings.find((b) => b.id === u.order.id);
             if (b && b.progress < 4) {
@@ -1046,7 +1136,64 @@
           }
           if (u.order) u.order = null;
           if (this.peace || this.s.recallActive) {
+            // Recall is a defensive escort posture: no target acquisition,
+            // pursuit or active skills. A nearby attacking enemy may be
+            // counterattacked from the companion's *current* position only.
             this.followPartyMember(u, living, dt);
+            if (this.s.recallActive && !this.peace && u.cd <= 0) {
+              const pet = u.type === 'pet' ? this.petDefinition(u) : null;
+              const reach = pet
+                ? pet.role === 'ranged'
+                  ? R.balance.companions.petBasicRange
+                  : 70
+                : u.type === 'archer'
+                  ? 185
+                  : 65;
+              const pursuer = z.enemies
+                .filter(
+                  (e) =>
+                    e.hp > 0 &&
+                    e.aggro &&
+                    !e.neutral &&
+                    !e.returning &&
+                    dist(e, u) <= reach &&
+                    dist(e, this.hero) <= 350 &&
+                    this.line(u, e),
+                )
+                .sort((a, b) => dist(a, u) - dist(b, u) || this.idOrder(a, b))[0];
+              if (pursuer) {
+                // Pet defensive basic keeps pet range and effects; never Soldier fallback.
+                if (u.type === 'pet') {
+                  this.petDefensiveCounter(u, pursuer);
+                  continue;
+                }
+                u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+                if (u.type === 'archer') {
+                  const d = Math.max(1, dist(u, pursuer));
+                  this.s.projectiles.push({
+                    id: 'projectile-' + this.s.nextId++,
+                    x: u.x,
+                    y: u.y,
+                    dx: (pursuer.x - u.x) / d,
+                    dy: (pursuer.y - u.y) / d,
+                    target: pursuer.id,
+                    damage: this.companionAttackDamage(u),
+                    source: u.id,
+                    speed: 450,
+                    style: 'arrow',
+                  });
+                } else if (this.damage(pursuer, this.companionAttackDamage(u), u.id))
+                  this.event('melee', {
+                    actor: 'companion',
+                    role: 'soldier',
+                    source: u.id,
+                    weapon: 'sword',
+                    x: pursuer.x,
+                    y: pursuer.y,
+                    target: pursuer.id,
+                  });
+              }
+            }
             continue;
           }
           let e = null;
@@ -1109,11 +1256,23 @@
           }
           claimed.add(e.id);
           this._tacticalPartyTargets.set(u.id, e.id);
+          if (u.type === 'pet') {
+            this.updatePetCombat(u, e, living, dt);
+            continue;
+          }
           if (u.type === 'archer') {
             const d = dist(u, e),
               visible = this.line(u, e),
               anchor = this.partyFollowPoint(u, living);
             if (d < 150) {
+              // Veteran Rangers can cover a retreat with their existing Triple Shot.
+              // Still move this frame; never trade the fallback for standing fire.
+              if (
+                (this.s.expeditionRank || 1) >= R.companionSkills.veteran.expeditionRank &&
+                (u.skillGlobalCd || 0) <= 0 &&
+                !this.mageSilenceActive(u)
+              )
+                this.companionUseFirstSkill(u, e);
               this.follow(
                 u,
                 this.archerFallbackPoint(u, e, living),
@@ -1180,6 +1339,7 @@
             }
             continue;
           }
+          if (u.type !== 'soldier') continue;
           if (this.line(u, e) && dist(u, e) <= 185 && this.companionTrySkill(u, e)) continue;
           if (dist(u, e) > 65 || !this.line(u, e))
             this.follow(
@@ -1211,7 +1371,7 @@
             b.queue = Math.max(0, b.queue - dt);
             if (b.queue === 0) {
               const p = this.safe(b.x + 50, b.y + 50),
-                type = ['soldier', 'archer'].includes(b.queueType) ? b.queueType : 'soldier',
+                type = b.queueType == null ? 'soldier' : b.queueType,
                 u = this.unit(type, p.x, p.y);
               u.active = this.activeParty().length < this.barracksFieldCap(b);
               this.s.party.push(u);

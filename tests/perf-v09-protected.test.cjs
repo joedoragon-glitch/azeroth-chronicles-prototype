@@ -4,6 +4,26 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const manifest = require('./fixtures/perf-v09-protected.json');
+// Append-only source-development receipts supersede only explicitly listed paths.
+// Historical receipt values below remain immutable and are checked for lineage.
+const workFiles = {};
+for (const batch of manifest.issue312WorkRevisions || []) {
+  assert.equal(batch.canonicalIssue, 312);
+  assert.match(batch.source, /PR #313.*SOURCE ONLY.*NOT TESTED/);
+  for (const [file, hash] of Object.entries(batch.files)) {
+    assert.match(hash, /^[a-f0-9]{64}$/);
+    if (workFiles[file]) assert.equal(batch.previousFiles[file], workFiles[file], file + ' append-only work lineage');
+    else if (batch.previousFiles[file]) {
+      const receipts = Object.values(manifest).filter((v) => v?.files).map((v) => v.files[file]);
+      receipts.push(manifest.authorizedCommunitySnapshotRevision?.untouchedFiles[file]);
+      assert(receipts.includes(batch.previousFiles[file]), file + ' exact pre-work receipt');
+    }
+    workFiles[file] = hash;
+  }
+}
+for (const [file, hash] of Object.entries(workFiles))
+  assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), hash,
+    file + ' exact current PR313 source receipt');
 const revision = manifest.renderingRevision;
 const originalPlaytestRevision = manifest.authorizedPostReleasePlaytestRevision;
 const passiveRevision = manifest.authorizedPassiveConsolidationRevision;
@@ -59,10 +79,100 @@ if (validationRepairs) {
     assert.equal(hash, heroRevision.files[file] || timingRevision.files[file], file + ' retained original combined source');
   assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', validationRepairs.ledger))).digest('hex'), validationRepairs.ledgerSha256);
 }
+// The new combined work is a separate exact-source authorization layer.
+// Historical SHA-256 receipts remain immutable; only paths listed here
+// may supersede their predecessor hash, with full SHA-256 equality below.
+const issue312Stage1 = manifest.authorizedIssue312Stage1Revision;
+if (issue312Stage1) {
+  assert.equal(issue312Stage1.canonicalIssue, 312);
+  assert.equal(issue312Stage1.baseline, 'f0e08ba7341a557dcb6ba9eb33d652a9e03dd339');
+  assert.match(issue312Stage1.source, /Issue #312.*NOT TESTED/);
+  assert.deepEqual(Object.keys(issue312Stage1.files).sort(), [
+    'src/prototype/economy.js','src/prototype/engine.js','src/prototype/app.js',
+    'src/prototype/audio-effects.js','src/prototype/boss-combat.js',
+    'src/prototype/combat.js',
+    'docs/PRE_SNAPSHOT_TEN_ISSUES_IMPLEMENTATION_AUDIT_20261015.md',
+    'tests/pt312-early-integration.test.cjs',
+    'docs/ISSUE_312_CONSOLIDATED_IMPLEMENTATION_LEDGER_20261016.md',
+  ].sort(), 'exact nine Stage-1 protected paths');
+  for (const [file, hash] of Object.entries(issue312Stage1.files))
+    assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), workFiles[file] || hash,
+      file + ' exact Issue #312 Stage 1 authorized receipt');
+}
+const community311 = manifest.authorizedCommunity311IntegrationRevision;
+if (community311) {
+  assert.equal(community311.baselineCommunity, 'ca33acb14d92cbce12633eaab702318343dce509');
+  assert.equal(community311.inboundHead, 'b91347f863d68d6b7beca76e23f625ddd7ff1293');
+  assert.match(community311.source, /PR #311.*NOT TESTED/);
+  assert.deepEqual(Object.keys(community311.files).sort(), [
+    'docs/PRE_SNAPSHOT_TEN_ISSUES_IMPLEMENTATION_AUDIT_20261015.md',
+    'package-lock.json', 'package.json', 'src/prototype/app.js',
+    'src/prototype/boss-combat.js', 'src/prototype/build-info.js',
+    'src/prototype/engine.js', 'src/prototype/hero-combat.js',
+    'src/prototype/party-pets.js', 'src/prototype/party.js',
+    'src/prototype/renderer.js', 'src/prototype/rules.js',
+    'src/prototype/save.js', 'src/prototype/visuals.js', 'sw.js',
+    'tests/captain-review.test.cjs',
+    'tests/enemy-support-healing.test.cjs', 'tests/occlusion.test.cjs',
+    'tests/perf-ws2-occlusion-browser.test.cjs',
+    'tests/perf-ws2-occlusion.test.cjs',
+    'tests/pre-snapshot-ten-issues.test.cjs',
+    'tests/snapshot-sixth-companion-reveal.test.cjs',
+  ].sort());
+  for (const [file, expected] of Object.entries(community311.files))
+    assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), workFiles[file] || issue312Stage1?.files[file] || expected,
+      file + ' exact Community + PR311 or Issue312 receipt');
+}
+const communityRevision = manifest.authorizedCommunitySnapshotRevision;
+if (communityRevision) {
+  assert.equal(communityRevision.baseline, '6bc27be31792b1c38147d61e98ceed6acf3e2560');
+  assert.match(communityRevision.source, /Community Snapshot.*PR #308.*NOT TESTED/);
+  assert.deepEqual(Object.keys(communityRevision.files).sort(), [
+  "scripts/site-assets.cjs",
+  "src/prototype/archive.js",
+  "src/prototype/audio-catalog.js",
+  "src/prototype/audio-effects.js",
+  "src/prototype/boss-combat.js",
+  "src/prototype/combat-visuals.js",
+  "src/prototype/combat.js",
+  "src/prototype/engine.js",
+  "src/prototype/menus.js",
+  "src/prototype/party-pets.js",
+  "src/prototype/party.js",
+  "src/prototype/progression.js",
+  "src/prototype/renderer.js",
+  "src/prototype/rules.js",
+  "src/prototype/save.js",
+  "src/prototype/sprites.js",
+  "src/prototype/visuals.js",
+  "tools/audio/index.html"
+]);
+  assert.deepEqual(Object.keys(communityRevision.files).sort(), Object.keys(communityRevision.previousFiles).sort());
+  assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', communityRevision.ledger))).digest('hex'), communityRevision.ledgerSha256, 'exact authorized Community source ledger');
+  const prior = { ...manifest.approvedOvernightCertificationRevision.files, ...originalPlaytestRevision.files,
+    ...passiveRevision?.files, ...healingRevision?.files, ...timingRevision?.files, ...heroRevision?.files, ...validationRepairs?.files };
+  for (const [file, hash] of Object.entries(communityRevision.previousFiles))
+    if (prior[file]) assert.equal(hash, prior[file], file + ' retains the exact final #308 predecessor receipt');
+  for (const [file, hash] of Object.entries(communityRevision.untouchedFiles))
+    assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', file))).digest('hex'), workFiles[file] || issue312Stage1?.files[file] || community311?.files[file] || hash, file + ' matches an exact authorized receipt');
+}
+const communityRepairs = manifest.authorizedCommunitySourceAuditRepairsRevision;
+if (communityRepairs) {
+  assert.equal(communityRepairs.predecessorCommit, '7581ed12d57e70e42bbaed6b8223bc8d4c709b22');
+  assert.equal(communityRepairs.checkpointHistory[0].commit, '06edf70470c507b5da5246fa27e3b779e64382f1');
+  for (const file of ['src/prototype/renderer.js', 'src/prototype/rules.js'])
+    assert.equal(communityRepairs.files[file], communityRepairs.checkpointHistory[0].files[file], file + ' preserves first repair art/rules/presentation receipt');
+  assert.match(communityRepairs.source, /Owner-authorized A01–A07.*NOT TESTED/);
+  assert.deepEqual(Object.keys(communityRepairs.files).sort(), ['src/prototype/archive.js', 'src/prototype/party-pets.js', 'src/prototype/renderer.js', 'src/prototype/rules.js', 'src/prototype/visuals.js']);
+  assert.deepEqual(Object.keys(communityRepairs.previousFiles).sort(), Object.keys(communityRepairs.files).sort());
+  for (const [file, hash] of Object.entries(communityRepairs.previousFiles))
+    assert.equal(hash, communityRevision.files[file], file + ' preserves initial Community source receipt');
+  assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.resolve(__dirname, '..', communityRepairs.ledger))).digest('hex'), communityRepairs.ledgerSha256, 'exact owner-authorized source audit repair ledger');
+}
 const playtestRevision = originalPlaytestRevision && {
   ...originalPlaytestRevision,
   auditSha256: heroRevision?.auditSha256 || timingRevision?.auditSha256 || healingRevision?.auditSha256 || passiveRevision?.auditSha256 || originalPlaytestRevision.auditSha256,
-  files: { ...originalPlaytestRevision.files, ...passiveRevision?.files, ...healingRevision?.files, ...timingRevision?.files, ...heroRevision?.files, ...validationRepairs?.files },
+  files: { ...originalPlaytestRevision.files, ...passiveRevision?.files, ...healingRevision?.files, ...timingRevision?.files, ...heroRevision?.files, ...validationRepairs?.files, ...communityRevision?.files, ...communityRepairs?.files, ...community311?.files, ...issue312Stage1?.files, ...workFiles },
 };
 if (playtestRevision) {
   assert.match(playtestRevision.source, /PR #308/);
@@ -84,6 +194,7 @@ if (certificationRevision) {
   for (const [name, value] of Object.entries(manifest))
     if (name !== 'approvedOvernightCertificationRevision' && value?.files)
       for (const file of Object.keys(value.files)) guarded.add(file);
+  for (const file of Object.keys(workFiles)) guarded.add(file);
   assert.deepEqual(Object.keys(certificationRevision.files).sort(), [...guarded].sort());
   for (const [file, receipt] of Object.entries(certificationRevision.provenance)) {
     assert.match(receipt.handoffSha256, /^[a-f0-9]{64}$/);
@@ -414,9 +525,18 @@ const activeBody = frame.slice(
   frame.indexOf('    const frameStart = performance.now();'),
   frame.indexOf('    if (!frozen) {\n      const draw = fps.shouldDraw'),
 );
+const retainedFrameHash = heroRevision?.activeFrameBodySha256 || timingRevision?.activeFrameBodySha256 || combinedRevision?.activeFrameBodySha256 || revision.activeFrameBodySha256;
+const approachRepair = manifest.authorizedPr313ApproachFrameRevision;
+if (approachRepair) {
+  assert.match(approachRepair.source, /Owner-authorized PR #313.*queued skill approaches/);
+  assert.equal(approachRepair.previousActiveFrameBodySha256, retainedFrameHash, 'original frame receipt retained');
+  assert.equal(activeBody.split('game.castMovementBasic();').length, 2, 'exactly one automatic-cast dispatch changed');
+  assert.equal(crypto.createHash('sha256').update(activeBody.replace('game.castMovementBasic();', 'game.cast(1);')).digest('hex'), retainedFrameHash,
+    'entire protected frame is byte-identical after normalizing the single authorized dispatch');
+}
 assert.equal(
   crypto.createHash('sha256').update(activeBody).digest('hex'),
-  heroRevision?.activeFrameBodySha256 || timingRevision?.activeFrameBodySha256 || combinedRevision?.activeFrameBodySha256 || revision.activeFrameBodySha256,
+  approachRepair?.activeFrameBodySha256 || retainedFrameHash,
   'Exact original or explicitly authorized combined simulation/input/audio/effects/save/HUD callback body',
 );
 console.log(

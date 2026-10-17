@@ -36,6 +36,13 @@
     'effect',
     'style',
     'kind',
+    'cargo',
+    'family',
+    'index',
+    'captainSkill',
+    'captainProfile',
+    'captainSpread',
+    'captainRadiusMultiplier',
     'cinderMechanic',
     'cinderDelegate',
     'gapAngle',
@@ -64,21 +71,33 @@
     return s;
   }
   function geometry(a) {
-    return Object.freeze(
-      Object.fromEntries(
-        geometryFields
-          .filter((k) => ['string', 'boolean'].includes(typeof a[k]) || Number.isFinite(a[k]))
-          .map((k) => [k, a[k]]),
-      ),
+    const value = Object.fromEntries(
+      geometryFields
+        .filter((k) => ['string', 'boolean'].includes(typeof a[k]) || Number.isFinite(a[k]))
+        .map((k) => [k, a[k]]),
     );
+    for (const name of ['arenaPatches', 'arenaLines', 'groundworkMarks', 'pairMarks'])
+      if (Array.isArray(a[name]))
+        value[name] = Object.freeze(
+          a[name]
+            .slice(0, 16)
+            .map((p) =>
+              Object.freeze(
+                Object.fromEntries(
+                  ['x', 'y', 'radius', 'fromX', 'fromY', 'halfWidth']
+                    .filter((k) => Number.isFinite(p[k]))
+                    .map((k) => [k, p[k]]),
+                ),
+              ),
+            ),
+        );
+    return Object.freeze(value);
   }
   function emit(game, e, a, stage, point = null, identity = null) {
     if (game.enemyVfxEnabled === false || !e || e.hp <= 0) return null;
-    if (
+    const hiddenWindup =
       stage === 'windup' &&
-      (a.anonymousCast || a.mobileRogueCast || (e.family === 'ridge' && e.ledgerOpen))
-    )
-      return null;
+      (a.anonymousCast || a.mobileRogueCast || (e.family === 'ridge' && e.ledgerOpen));
     if (stage === 'impact' && a.selfDefense) return null;
     const visual =
       identity ||
@@ -96,7 +115,13 @@
     const s = store(game);
     if (s.context && s.context.epoch !== s.epoch) return null;
     const seen = s.seen.get(a) || new Set(),
-      key = e.id + ':' + stage + ':' + (point?.target || '');
+      key =
+        e.id +
+        ':' +
+        stage +
+        ':' +
+        (point?.target || '') +
+        (point?.pulse == null ? '' : ':' + point.pulse);
     if (seen.has(key)) return null;
     const x =
         point?.x ??
@@ -126,6 +151,8 @@
       variant: visual.variant,
       style: a.style || e.projectileStyle,
       stage,
+      audioOnly: !!hiddenWindup || stage === 'travel' || stage === 'miss',
+      movementCue: !!point?.movementCue,
       contact: stage === 'impact' && !!(point?.target || point?.contact),
       dangerous:
         ['windup', 'release', 'travel', 'impact', 'linger'].includes(stage) &&
@@ -138,7 +165,17 @@
       duration: durations[stage] || 0.38,
     });
     // Deliberately bypass event(): combat statistics and v4 snapshots stay identical.
-    if (game.effects.filter((f) => f.type === 'enemyVfx').length >= 120) return null;
+    if (game.effects.filter((f) => f.type === 'enemyVfx').length >= 120) {
+      const important = ['boss', 'captain'].includes(visual.tier) || visual.presentation?.signature,
+        ordinary = (f) =>
+          f.type === 'enemyVfx' &&
+          !['boss', 'captain'].includes(f.tier) &&
+          !f.identity?.presentation?.signature,
+        background = game.effects.findIndex((f) => ordinary(f) && f.stage !== 'windup'),
+        victim = background >= 0 ? background : game.effects.findIndex(ordinary);
+      if (!important || victim < 0) return null;
+      game.effects.splice(victim, 1);
+    }
     seen.add(key);
     s.seen.set(a, seen);
     game.effects.push(event);
@@ -276,7 +313,13 @@
       } finally {
         bindNew(this, e, a, shots, hazards);
         if (e.motion && s.context.epoch === s.epoch && !s.motions.has(e.motion))
-          s.motions.set(e.motion, { e, epoch: s.epoch, initialLife: e.motion.life });
+          s.motions.set(e.motion, {
+            e,
+            a,
+            identity: V.describe(e, a),
+            epoch: s.epoch,
+            initialLife: e.motion.life,
+          });
         s.context = old;
       }
     });
@@ -298,18 +341,74 @@
       const a = e.motion,
         s = store(this),
         old = s.context;
-      if (a && !s.motions.has(a)) s.motions.set(a, { e, epoch: s.epoch, initialLife: a.life });
-      if (a) s.context = { e, a, epoch: s.epoch };
+      if (a && !s.motions.has(a)) {
+        const attack = a.rogueAttack || a;
+        s.motions.set(a, {
+          e,
+          a: attack,
+          identity: V.describe(e, attack),
+          epoch: s.epoch,
+          initialLife: a.life,
+        });
+      }
+      const metadata = a && s.motions.get(a),
+        attack = metadata?.a || a,
+        from = { x: e.x, y: e.y };
+      if (a) s.context = { e, a: attack, identity: metadata?.identity, epoch: s.epoch };
       try {
         return original.call(this, e, dt);
       } finally {
-        if (a && !e.motion && !a.landing) emit(this, e, a, 'impact', { x: e.x, y: e.y });
+        if (a && Math.hypot(e.x - from.x, e.y - from.y) > 1)
+          emit(
+            this,
+            e,
+            attack,
+            'travel',
+            { x: e.x, y: e.y, movementCue: true },
+            metadata?.identity,
+          );
+        if (a && !e.motion && !a.landing)
+          emit(this, e, attack, 'impact', { x: e.x, y: e.y }, metadata?.identity);
         s.context = old;
       }
     });
+    wrap('updateProjectiles', function (original, args) {
+      const s = store(this),
+        epoch = s.epoch,
+        zone = this.zoneId,
+        cargo = this.s.projectiles.filter((p) => p.source === 'enemy' && p.style === 'cargo');
+      const result = original.apply(this, args);
+      if (s.epoch !== epoch || this.zoneId !== zone) return result;
+      for (const p of cargo) {
+        const m = s.projectiles.get(p);
+        if (!m || m.epoch !== epoch) continue;
+        if (this.s.projectiles.includes(p)) {
+          if ((m.nextTravel || 0) <= this.s.time) {
+            m.nextTravel = this.s.time + 0.25;
+            m.travelPulse = (m.travelPulse || 0) + 1;
+            emit(
+              this,
+              m.e,
+              p,
+              'travel',
+              { x: p.x, y: p.y, movementCue: true, pulse: m.travelPulse },
+              m.identity,
+            );
+          }
+        } else if (!m.contacted && !this.peace) {
+          emit(this, m.e, p, 'miss', { x: p.x, y: p.y }, m.identity);
+        }
+      }
+      return result;
+    });
     wrap('tacticalResolveRogueMove', function (original, [e, a]) {
+      const from = { x: e.x, y: e.y },
+        epoch = store(this).epoch;
       emit(this, e, a, 'impact');
-      return original.call(this, e, a);
+      const result = original.call(this, e, a);
+      if (store(this).epoch === epoch && Math.hypot(e.x - from.x, e.y - from.y) > 1)
+        emit(this, e, a, 'travel', { x: e.x, y: e.y, movementCue: true });
+      return result;
     });
     wrap('hitParty', function (original, args) {
       const u = args[0],
@@ -431,6 +530,22 @@
     proto.enemyVfxMotion = function (m) {
       return store(this).motions.get(m) || null;
     };
+    // Custom persistent owners keep their own geometry/timing. Confirmed contact
+    // is observed explicitly rather than guessed from an unrelated current cast.
+    proto.enemyVfxResolvedContact = function (e, attack, unit, identityPlan = attack) {
+      const normalized =
+        identityPlan.index == null && Number.isInteger(identityPlan.skill)
+          ? { ...identityPlan, index: identityPlan.skill, captainSkill: true }
+          : identityPlan;
+      return emit(
+        this,
+        e,
+        { ...attack },
+        'impact',
+        { x: unit.x, y: unit.y, target: unit === this.hero ? 'hero' : unit.id },
+        V.describe(e, normalized),
+      );
+    };
     proto.enemyVfxHazardImpact = function (h, u) {
       const m = this.enemyVfxHazard(h);
       if (m && m.epoch === store(this).epoch)
@@ -446,6 +561,7 @@
     proto.enemyVfxProjectileImpact = function (p, point) {
       const m = this.enemyVfxProjectile(p);
       if (m && m.epoch === store(this).epoch) {
+        m.contacted = true;
         const f = emit(this, m.e, p, 'impact', { ...point, contact: true }, m.identity);
         if (f) store(this).lastProjectileContact = { sourceId: p.sourceId, x: point.x, y: point.y };
       }

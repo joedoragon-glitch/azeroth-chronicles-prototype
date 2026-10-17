@@ -55,9 +55,11 @@ for (const cls of ['paladin', 'mage', 'ranger'])
       e.telegraph = { timer: 99 };
       c.s.projectiles = [{ sourceId: e.id }];
       c.s.hazards = [{ sourceId: e.id }];
+      const activeSnapshot = c.snapshot(), interruptedLeg = e.thornLeg;
       Object.assign(c.hero, { x: 300, y: 350 });
       frame(c, e, n);
-      assert(e.thornReturn);
+      assert(!e.aggro && !e.returning, 'ordinary reset resumes from interception point');
+      assert.equal(e.thornLeg, interruptedLeg, 'original patrol destination survives reset');
       assert(!e.telegraph);
       assert.equal(c.s.projectiles.length, 0);
       assert.equal(c.s.hazards.length, 0);
@@ -66,7 +68,7 @@ for (const cls of ['paladin', 'mage', 'ranger'])
       assert.equal(JSON.stringify(c.s), raw, 'snapshot cannot change live actors');
       assert.equal(snap.zones.vale.enemies[0].x, e.x);
       assert.equal(snap.zones.vale.npcs.find((n) => n.id === 'cage-thorn').x, n.x);
-      c = C.restore(snap, () => seed);
+      c = C.restore(activeSnapshot, () => seed);
       e = c.zone().enemies.find((e) => e.family === 'thorn');
       n = c.thornCaptive();
       assert(e.thornReturn);

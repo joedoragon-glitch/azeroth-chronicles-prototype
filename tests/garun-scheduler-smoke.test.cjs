@@ -58,10 +58,11 @@ for (const mode of ['normal', 'nightmare']) {
   // telegraph its actual reserved support positions before any wall appears.
   const combo = new C(mode, 'paladin', () => 0);
   assert(combo.enter('mine'));
+  combo.s.party = [];
   const colossus = combo.zone().enemies.find((e) => e.family === 'mine' && e.type === 'boss');
   combo.zone().enemies = [colossus];
   combo.hero.hp = combo.hero.maxHp = 1000000;
-  Object.assign(combo.hero, combo.safe(910, 1100, 'mine'));
+  Object.assign(combo.hero, combo.safe(1290, 1200, 'mine'));
   colossus.aggro = true;
   colossus.hp = colossus.maxHp * 0.4;
   combo.random = () => 0;

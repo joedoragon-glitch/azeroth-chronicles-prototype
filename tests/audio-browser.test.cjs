@@ -210,12 +210,13 @@ const root = path.resolve(__dirname, '..'),
             a.buses[key].connect(a.buses.master);
           a.setMixProfile(phone ? 'phone' : 'reference');
           a.applySettings();
+          const recordingId =
+              stage === 'windup' ? 'sfx-critical-warning' : 'sfx-' + material + '-' + stage,
+            hasRecording = !!manifest.assets[recordingId];
           if (warm) {
             a.configureRecordings(manifest, { baseUrl: new URL('./', location.href).href });
             const store = await a.assetsForRecordings();
-            await store.load(
-              stage === 'windup' ? 'sfx-critical-warning' : 'sfx-' + material + '-' + stage,
-            );
+            if (hasRecording) await store.load(recordingId);
           } else a.playSoundEvent = () => false;
           // Freeze cosmetic noise for reproducible cross-engine level comparisons.
           const noiseBurst = a.noiseBurst;
@@ -239,7 +240,7 @@ const root = path.resolve(__dirname, '..'),
             accent,
             summon: false,
           };
-          a.effect({
+          const expression = {
             type: 'enemyVfx',
             skillId: 'boss/darklord/0',
             identity: { id: 'boss/darklord/0', presentation: p },
@@ -248,9 +249,13 @@ const root = path.resolve(__dirname, '..'),
             variant,
             dangerous: true,
             target: stage === 'spawn' ? 'born-unit' : undefined,
-          });
-          if (warm && ![...a.voices].some((v) => v.recorded))
+          };
+          const decision = a.enemySoundDecision(expression);
+          a.effect(expression);
+          if (warm && hasRecording && ![...a.voices].some((v) => v.recorded))
             throw Error('Warm enemy recording did not dispatch');
+          if (warm && !hasRecording && [...a.voices].some((v) => v.recorded))
+            throw Error('Unrecorded material borrowed an unrelated recording');
           const pcm = (await context.startRendering()).getChannelData(0);
           let peak = 0,
             square = 0;
@@ -266,6 +271,7 @@ const root = path.resolve(__dirname, '..'),
           const value = {
             material,
             stage,
+            route: decision?.key,
             warm,
             peak,
             rms: Math.sqrt(square / pcm.length),
@@ -321,7 +327,11 @@ const root = path.resolve(__dirname, '..'),
           });
         }
         const missed = await render('steel', 'impact', false);
-        if (missed.peak !== 0) throw Error('Fake impact on miss');
+        const contact = await render('steel', 'impact', true);
+        if (missed.route !== 'enemyGroundImpact' || !(missed.rms > 0 && missed.rms < contact.rms))
+          throw Error('Ground payoff must remain quieter and distinct from victim contact');
+        const cleanMiss = await render('steel', 'miss', false);
+        if (cleanMiss.route !== 'enemyMiss') throw Error('Miss borrowed a victim-contact route');
         const a = Prototype.audio;
         for (let i = 0; i < 200; i++) {
           const identity = PrototypeEnemyVfx.describe(
@@ -368,7 +378,7 @@ const root = path.resolve(__dirname, '..'),
         ),
       );
       assert.equal(enemyAudio.files, 30);
-      assert.equal(enemyAudio.materials, 12);
+      assert.equal(enemyAudio.materials, 13);
       // Real rendering proves audio output, not musical polish or actual iPhone speaker comfort.
       assert.deepEqual(errors, []);
       console.log(

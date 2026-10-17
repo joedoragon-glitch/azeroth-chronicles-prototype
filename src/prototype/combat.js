@@ -490,8 +490,7 @@
           e.neutral ||
           (!options?.area && !this.tacticalDirectTargetable(e)) ||
           this.peace ||
-          e.returning ||
-          e.thornReturn ||
+          this.attackResetProtected(e) ||
           !Number.isFinite(amount) ||
           amount <= 0
         )
@@ -511,12 +510,17 @@
             if (shot.target === e.id && shot.encountersAtStart === options.encountersAtStart)
               shot.cancelledChargedOpener = true;
           this.s.projectiles = this.s.projectiles.filter((shot) => !shot.cancelledChargedOpener);
+          // Deflecting an early charge still notices the attack. A roaming
+          // patrol must stop and fight instead of silently walking through it.
+          this.interruptPatrolReturn(e);
+          this.engage(e, true);
           // Deflect only this invalid charged hit. Preserve aggro, prior
           // damage, position, conditions and the ongoing encounter.
           this.say(e.name + ' deflects the pre-engagement charged attack.');
           return false;
         }
         e.mercyProvoked = true;
+        this.interruptPatrolReturn(e);
         this.engage(e, true);
         if (source === 'hero') e.heroParticipated = true;
         // Ash abrades eyes: attacks issued by a party member inside or recently
@@ -669,7 +673,7 @@
         const armor =
           u === this.hero
             ? this.armor()
-            : ['soldier', 'archer'].includes(u.type)
+            : ['soldier', 'archer', 'pet'].includes(u.type)
               ? this.companionArmor(u.type)
               : 5 + this.hero.level * 0.5;
         const oldHp = u.hp;
@@ -736,7 +740,8 @@
         if (u.hp === 0) {
           u.slow = 0;
           this.tacticalClearScatter(u);
-          if (u === this.hero) this.die();
+          if (u === this.hero)
+            this.die({ source: rangedSourceId, damage: mitigated, hpBefore: oldHp });
         }
         return true;
       }
@@ -763,7 +768,30 @@
             p.x += p.dx * p.speed * dt;
             p.y += p.dy * p.speed * dt;
             if (!this.clearSegment(before, p, 0)) {
-              this.enemyVfxProjectileImpact?.(p, before);
+              // Report the actual first obstruction, rather than the previous frame's origin.
+              const steps = Math.max(1, Math.ceil(dist(before, p) / 4));
+              let contact = before;
+              for (let j = 1; j <= steps; j++) {
+                const point = {
+                  x: before.x + ((p.x - before.x) * j) / steps,
+                  y: before.y + ((p.y - before.y) * j) / steps,
+                };
+                if (this.blocked(point.x, point.y, this.zoneId, 0)) {
+                  contact = point;
+                  break;
+                }
+              }
+              this.enemyVfxProjectileImpact?.(p, { ...contact, terrain: true });
+              if (p.style === 'cargo')
+                this.event('projectileImpact', {
+                  actor: 'enemy',
+                  source: p.sourceId || 'enemy',
+                  species: 'cargo',
+                  style: 'cargo',
+                  terrain: true,
+                  x: contact.x,
+                  y: contact.y,
+                });
               this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
               continue;
             }
@@ -905,7 +933,7 @@
             this.event('projectileImpact', {
               actor: p.source === 'hero' ? 'hero' : 'companion',
               class: p.source === 'hero' ? this.hero.class : undefined,
-              role: p.source === 'hero' ? undefined : 'archer',
+              role: p.source === 'hero' ? undefined : p.style === 'pet' ? 'pet' : 'archer',
               source: p.source,
               style: p.style || 'arrow',
               effect: p.effect,

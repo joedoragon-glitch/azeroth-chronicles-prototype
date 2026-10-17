@@ -1,6 +1,7 @@
 /* Audio owner: effects. Keep campaign rules outside this module. */
 (function (root) {
   'use strict';
+  const R = typeof module !== 'undefined' ? require('./rules.js') : root.PrototypeRules;
   function install(Audio, catalog) {
     const { eventNotes, contextualEffectTypes } = catalog;
     class Owner {
@@ -18,17 +19,32 @@
           if (e.actor === 'hero' && e.class === 'paladin') return 'heroSteelImpact';
           if (e.actor === 'companion' && e.role === 'soldier') return 'soldierSteelImpact';
           if (e.actor === 'enemy') {
-            if (e.boss || ['skeleton', 'orc', 'crownguard'].includes(e.species))
-              return 'enemyWeaponImpact';
+            const kit = R.enemyMeleeEquipment(e),
+              weapon = String(e.weapon || kit.weapon).toLowerCase(),
+              material =
+                e.material ||
+                (/steel|sword|blade|saber|dagger|axe|lance/.test(weapon)
+                  ? 'steel'
+                  : /stone/.test(weapon)
+                    ? 'stone'
+                    : /club|wood/.test(weapon)
+                      ? 'wood'
+                      : kit.material);
+            if (material === 'steel') return 'enemyWeaponImpact';
+            if (material === 'wood' || material === 'stone') return 'enemyHeavyImpact';
+            if (['spectral', 'ash', 'wet', 'bone'].includes(material)) return 'enemyElementImpact';
             return 'creatureImpact';
           }
           return 'meleeImpact';
         }
         if (type === 'swing') {
           if (e.companionSkill === 'power-strike') return null;
+          if (e.actor === 'enemy')
+            return e.material === 'steel' ? 'enemySteelSwing' : 'enemyBodySwing';
           return e.class === 'paladin' || e.actor === 'hero' ? 'swordSwing' : null;
         }
         if (type === 'projectileLaunch') {
+          if (e.style === 'cargo') return 'rollingCargoLaunch';
           if (e.beam) return 'arcaneBeamLaunch';
           if (e.special === 'triple-shot') return 'tripleShot';
           if (e.rapid && e.style === 'arrow') return 'rapidBow';
@@ -39,7 +55,11 @@
             ? 'magicLaunch'
             : 'projectileLaunch';
         }
+        if (type === 'cargoTravel') return 'rollingCargoTravel';
+        if (type === 'cargoMiss') return 'rollingCargoMiss';
+        if (type === 'cargoWindup') return 'rollingCargoWindup';
         if (type === 'projectileImpact') {
+          if (e.style === 'cargo') return 'rollingCargoImpact';
           if (e.style === 'beam') return 'arcaneBeamImpact';
           if (e.style === 'arrow') return 'arrowImpact';
           if (['axe', 'stone'].includes(e.style)) return 'heavyProjectileImpact';
@@ -70,12 +90,14 @@
         if (
           [
             'companionSkill',
+            'petSkill',
             'companionChargeStart',
             'hit',
             'rogueRegroup',
             'rogueMove',
             'rogueSupport',
             'actionFailed',
+            'attackPlacementFailed',
             'archiveKnowledge',
           ].includes(type)
         )
@@ -93,6 +115,7 @@
         return (
           type === 'enemyVfx' ||
           ['heroSkillCast', 'heroProjectileFlight', 'heroCharge', 'heroDisplace'].includes(type) ||
+          ['cargoTravel', 'cargoMiss', 'cargoWindup'].includes(type) ||
           contextualEffectTypes.has(type) ||
           Object.prototype.hasOwnProperty.call(eventNotes, type)
         );
@@ -252,7 +275,11 @@
         if (input?.type === 'enemyVfx') return this.enemyExpression(input);
         const previous = this.sourcePriority;
         const type = typeof input === 'string' ? input : input?.type;
-        this.sourcePriority = ['warning', 'death', 'gameOver'].includes(type) ? 3 : 1;
+        this.sourcePriority = ['warning', 'death', 'gameOver'].includes(type)
+          ? 3
+          : input?.style === 'cargo'
+            ? 2
+            : 1;
         try {
           return this.renderEffect(input);
         } finally {
@@ -268,6 +295,7 @@
           kind = this.soundKind(e),
           now = this.ctx.currentTime;
         if (!kind) return;
+        if (e.style === 'cargo' && type === 'projectileLaunch' && !e.stage) this.duck(0.4);
         const actorKey =
             e.actor === 'hero'
               ? ':hero'
@@ -283,6 +311,10 @@
             'heroSteelImpact',
             'soldierSteelImpact',
             'enemyWeaponImpact',
+            'enemyHeavyImpact',
+            'enemyElementImpact',
+            'enemySteelSwing',
+            'enemyBodySwing',
             'creatureImpact',
             'meleeImpact',
             'bodyHit',
@@ -292,6 +324,10 @@
             'magicImpact',
             'heavyProjectileLaunch',
             'heavyProjectileImpact',
+            'rollingCargoLaunch',
+            'rollingCargoImpact',
+            'rollingCargoTravel',
+            'rollingCargoMiss',
             'organicProjectileLaunch',
             'organicProjectileImpact',
           ].includes(kind) &&
@@ -374,6 +410,81 @@
         }
         if (kind === 'arcaneBeamImpact') {
           this.beam(now, true);
+          return;
+        }
+        if (kind === 'enemySteelSwing' || kind === 'enemyBodySwing') {
+          this.noiseBurst(
+            now,
+            0.07,
+            0.025,
+            'bandpass',
+            kind === 'enemySteelSwing' ? 2100 : 580,
+            0.7,
+          );
+          return;
+        }
+        if (kind === 'enemyHeavyImpact') {
+          this.noiseBurst(now, 0.11, 0.055, 'lowpass', e.material === 'stone' ? 680 : 420, 0.8);
+          this.tone(
+            e.material === 'stone' ? 34 : 42,
+            now,
+            0.12,
+            0.045,
+            'triangle',
+            'effects',
+            0.004,
+          );
+          return;
+        }
+        if (kind === 'enemyElementImpact') {
+          if (e.material === 'wet') this.organicProjectile(now, true);
+          else if (e.material === 'bone') this.noiseBurst(now, 0.07, 0.05, 'bandpass', 2350, 0.8);
+          else {
+            this.sweep(
+              e.material === 'spectral' ? 76 : 46,
+              e.material === 'spectral' ? 59 : 32,
+              now,
+              0.13,
+              0.034,
+              'sine',
+            );
+            this.noiseBurst(
+              now,
+              0.07,
+              0.025,
+              'bandpass',
+              e.material === 'spectral' ? 1500 : 1000,
+              0.7,
+            );
+          }
+          return;
+        }
+        if (kind === 'rollingCargoWindup') {
+          this.noiseBurst(now, 0.12, 0.025, 'bandpass', 1700, 1.1);
+          this.sweep(39, 49, now, 0.18, 0.026, 'triangle');
+          return;
+        }
+        if (kind === 'rollingCargoTravel') {
+          for (let i = 0; i < 2; i++)
+            this.noiseBurst(now + i * 0.045, 0.055, 0.022, 'bandpass', 1200 + i * 450, 1.1);
+          this.tone(55, now, 0.08, 0.018, 'triangle', 'effects', 0.003);
+          return;
+        }
+        if (kind === 'rollingCargoMiss') {
+          this.noiseBurst(now, 0.12, 0.028, 'bandpass', 800, 0.7);
+          return;
+        }
+        if (kind === 'rollingCargoLaunch') {
+          // Three staggered axle/chain knocks under the heavy wooden launch.
+          this.heavyProjectile(now, false);
+          for (let i = 0; i < 3; i++)
+            this.tone(55 + i * 5, now + i * 0.045, 0.075, 0.035, 'triangle', 'effects', 0.004);
+          return;
+        }
+        if (kind === 'rollingCargoImpact') {
+          this.heavyProjectile(now, true);
+          this.noiseBurst(now, 0.17, 0.075, 'bandpass', 430, 0.45);
+          this.tone(33, now, 0.22, 0.06, 'triangle', 'effects', 0.006);
           return;
         }
         if (kind === 'heavyProjectileLaunch') {

@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "true-boss-radiance",
+  "name": "TRUE boss radiance",
+  "kind": "procedural-combat-overlay",
+  "nextAction": "Retain the shared procedural effect; review final native Chromium/WebKit artefacts on PR #313. Never bake this animation into a body sprite.",
+  "context": {
+    "originConversation": "Chat URL unavailable; 16 October 2026 owner instruction recorded on PR #313.",
+    "decisionSummary": "Owner rejects the old flat golden spot and authorizes a translucent, attractive TRUE boss aura.",
+    "decisionDate": "2026-10-16",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/313",
+    "contentDocuments": [
+      "docs/PR313_VALIDATION_20261016.md",
+      "docs/GRAPHICS_CANON_SPRITE_PROMPTS.md"
+    ],
+    "locationAndLore": "All eleven TRUE boss families; shared effect behind the real body, leaving warnings legible."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner explicitly requests gold transparency and aesthetic improvement.",
+    "proceduralDesignAcceptance": "Implementation and audit authorized; engineer native review performed, no separate owner appearance approval claimed.",
+    "spriteProductionAuthorization": "No raster production requested for this dynamic overlay.",
+    "generatedAppearanceAcceptance": "No generated image.",
+    "pendingCorrections": [
+      "Final exact-candidate browser/performance certification remains required."
+    ]
+  },
+  "reference": {
+    "sourceCommit": null,
+    "ownerFilesAndBranches": [
+      "src/prototype/renderer.js / drawTrueAura + entityAura",
+      "src/prototype/visuals.js / TRUE regalia",
+      "src/prototype/sprites.js / overlay"
+    ],
+    "exactEntityState": {
+      "renderKind": "enemy",
+      "type": "boss",
+      "family": "citadel",
+      "form": "true",
+      "scenario": "real native TRUE canister warning and entourage"
+    },
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [
+      "tools/sprites/references/2026-10-16-character-consistency/true-boss-radiance-native.png"
+    ],
+    "traitsToPreserve": [
+      "hollow translucent gold corona",
+      "fine tapering light threads",
+      "three open ground wisps",
+      "eight slow rising motes",
+      "fully still reduced-motion pose",
+      "body regalia and attack geometry retained"
+    ],
+    "assetSpecificDependencies": [
+      "Actual body label height drives the effect and caption spacing."
+    ],
+    "sourceCommitStatus": "Working candidate after d8479982738af9cda26666b7f1d706771bebbc2a; exact owner bytes pinned below, publication trace in this record history.",
+    "sourceSha256": {
+      "src/prototype/renderer.js": "dc1157f40fef80969dbda96d31e41772a69e5875c8faf0635d36baaa4ded81fd",
+      "src/prototype/visuals.js": "c704124e2ef89e66197334dd9edf1d2e30460fa984845ccb8c5d0aa1ad0f5f50",
+      "src/prototype/sprites.js": "42e164528b7b893a91dc90a384c0d488973f3f500e2ce8e4da9a80c252b49c17"
+    },
+    "gameplayContextSha256": "a7b2775c112449acc65849cdafcdae1674c1e96f69a4225618a04f614ab85fb1"
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "Shared procedural overlay only"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "renderer.js owns time/transparency and paints behind the body; sprites and fallback share it."
+    ]
+  },
+  "animationRequirements": {
+    "status": "procedural-owned",
+    "gameplayStates": [
+      "TRUE, alive, visible",
+      "pause freezes existing presentation clock",
+      "reduced motion uses still pose"
+    ],
+    "directions": [],
+    "pivotContract": "Body foot anchor; no gameplay geometry or extra simulation state.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

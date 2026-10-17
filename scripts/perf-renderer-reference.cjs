@@ -13,6 +13,20 @@ module.exports = function reference(root, { originalOcclusion = true } = {}) {
   assert(start > 0 && end > start);
   if (originalOcclusion)
     source = source.slice(0, start) + Original.occlusionPairs.toString() + '\n' + source.slice(end);
+  // Same current art/state: compare the exact #308 pure phase function with
+  // the Community weak memo. Pixel/state assertions remain byte-exact.
+  const phaseStart = source.indexOf('    const phaseMemory = new WeakMap();');
+  const phaseEnd = source.indexOf('    function visualPosition(', phaseStart);
+  assert(phaseStart > 0 && phaseEnd > phaseStart, 'explicit Community phase source boundary');
+  const originalPhase = function visualPhase(e) {
+    let h = 2166136261 >>> 0;
+    for (const ch of String(e.id || e.name || e.species || e.family || e.type || 'azeroth')) {
+      h ^= ch.charCodeAt(0);
+      h = Math.imul(h, 16777619);
+    }
+    return (h % 628) / 100;
+  };
+  source = source.slice(0, phaseStart) + originalPhase.toString() + '\n' + source.slice(phaseEnd);
   const a = source.indexOf('      if (!game.isDungeon())\n        PrototypeVisuals.terrain(');
   const b = source.indexOf('      PrototypeCombatVisuals.ground(', a);
   assert(a > 0 && b > a);

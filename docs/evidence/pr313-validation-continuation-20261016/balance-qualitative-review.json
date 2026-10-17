@@ -1,0 +1,1405 @@
+{
+  "status": "qualitative review complete for unchanged observed gameplay; no numerical or AI retune recommended by this bounded study",
+  "originalRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38879597582",
+  "candidateCommit": "b676981cbf047144d82e9efc247f56c1a14c5808",
+  "baselineCommit": "6bc27be31792b1c38147d61e98ceed6acf3e2560",
+  "counts": {
+    "candidateConfigurations": 6912,
+    "matchedBaselines": 3072,
+    "baselineExceptions": 1,
+    "candidateExceptions": 0,
+    "lostBaselineWins": 116,
+    "gainedBaselineWins": 131,
+    "adverseHeroDeaths": 106,
+    "adverseLivingTimeouts": 10
+  },
+  "groups": [
+    {
+      "party": "solo",
+      "candidate": {
+        "n": 768,
+        "valid": 768,
+        "wins": 276,
+        "heroDeaths": 490,
+        "timeouts": 3,
+        "meanSeconds": 11.237760416666696,
+        "meanHeroDamageFraction": 1,
+        "meanPartySurvivalFraction": null
+      },
+      "baseline": {
+        "n": 768,
+        "valid": 767,
+        "wins": 260,
+        "heroDeaths": 503,
+        "timeouts": 4,
+        "meanSeconds": 11.101955671447215,
+        "meanHeroDamageFraction": 1,
+        "meanPartySurvivalFraction": null
+      }
+    },
+    {
+      "party": "troops-2",
+      "candidate": {
+        "n": 768,
+        "valid": 768,
+        "wins": 391,
+        "heroDeaths": 376,
+        "timeouts": 1,
+        "meanSeconds": 13.151562500000004,
+        "meanHeroDamageFraction": 0.7990161659763935,
+        "meanPartySurvivalFraction": 0.7630208333333334
+      },
+      "baseline": {
+        "n": 768,
+        "valid": 768,
+        "wins": 395,
+        "heroDeaths": 367,
+        "timeouts": 6,
+        "meanSeconds": 14.27565104166669,
+        "meanHeroDamageFraction": 0.8061426536934492,
+        "meanPartySurvivalFraction": 0.693359375
+      }
+    },
+    {
+      "party": "troops-4",
+      "candidate": {
+        "n": 768,
+        "valid": 768,
+        "wins": 466,
+        "heroDeaths": 295,
+        "timeouts": 7,
+        "meanSeconds": 15.010286458333347,
+        "meanHeroDamageFraction": 0.6841695953758289,
+        "meanPartySurvivalFraction": 0.7919921875
+      },
+      "baseline": {
+        "n": 768,
+        "valid": 768,
+        "wins": 466,
+        "heroDeaths": 298,
+        "timeouts": 4,
+        "meanSeconds": 14.465885416666707,
+        "meanHeroDamageFraction": 0.6826664892753963,
+        "meanPartySurvivalFraction": 0.75
+      }
+    },
+    {
+      "party": "troops-6",
+      "candidate": {
+        "n": 768,
+        "valid": 768,
+        "wins": 519,
+        "heroDeaths": 240,
+        "timeouts": 9,
+        "meanSeconds": 16.09817708333336,
+        "meanHeroDamageFraction": 0.6176362338917486,
+        "meanPartySurvivalFraction": 0.8166232638888892
+      },
+      "baseline": {
+        "n": 768,
+        "valid": 768,
+        "wins": 516,
+        "heroDeaths": 248,
+        "timeouts": 4,
+        "meanSeconds": 14.919791666666713,
+        "meanHeroDamageFraction": 0.6045570041492646,
+        "meanPartySurvivalFraction": 0.7953559027777781
+      }
+    },
+    {
+      "party": "mixed-4",
+      "candidate": {
+        "n": 768,
+        "valid": 768,
+        "wins": 454,
+        "heroDeaths": 310,
+        "timeouts": 4,
+        "meanSeconds": 14.655338541666708,
+        "meanHeroDamageFraction": 0.7058800918419051,
+        "meanPartySurvivalFraction": 0.72265625
+      },
+      "baseline": null
+    },
+    {
+      "party": "mixed-6",
+      "candidate": {
+        "n": 768,
+        "valid": 768,
+        "wins": 506,
+        "heroDeaths": 257,
+        "timeouts": 5,
+        "meanSeconds": 15.366666666666715,
+        "meanHeroDamageFraction": 0.6236742317621692,
+        "meanPartySurvivalFraction": 0.7762586805555559
+      },
+      "baseline": null
+    },
+    {
+      "party": "pets-0",
+      "candidate": {
+        "n": 768,
+        "valid": 768,
+        "wins": 486,
+        "heroDeaths": 277,
+        "timeouts": 5,
+        "meanSeconds": 14.921484375000027,
+        "meanHeroDamageFraction": 0.6448032772674698,
+        "meanPartySurvivalFraction": 0.7358940972222218
+      },
+      "baseline": null
+    },
+    {
+      "party": "pets-4",
+      "candidate": {
+        "n": 768,
+        "valid": 768,
+        "wins": 484,
+        "heroDeaths": 281,
+        "timeouts": 3,
+        "meanSeconds": 14.753515625000055,
+        "meanHeroDamageFraction": 0.6337488089554894,
+        "meanPartySurvivalFraction": 0.750868055555555
+      },
+      "baseline": null
+    },
+    {
+      "party": "pets-8",
+      "candidate": {
+        "n": 768,
+        "valid": 768,
+        "wins": 478,
+        "heroDeaths": 286,
+        "timeouts": 4,
+        "meanSeconds": 13.853645833333376,
+        "meanHeroDamageFraction": 0.647396801639002,
+        "meanPartySurvivalFraction": 0.7699652777777776
+      },
+      "baseline": null
+    }
+  ],
+  "adverseByRegionEncounter": {
+    "highlands/field-true": 11,
+    "frontier/pack-8": 4,
+    "frontier/captain": 5,
+    "crown/captain": 5,
+    "frontier/pack-3": 3,
+    "crown/field-true": 4,
+    "crown/final-true": 4,
+    "highlands/captain": 7,
+    "crown/pack-8": 2,
+    "frontier/field-normal": 13,
+    "crown/field-normal": 10,
+    "highlands/dungeon-normal": 6,
+    "frontier/pack-5": 7,
+    "frontier/pack-1": 5,
+    "frontier/pack-12": 9,
+    "highlands/field-normal": 5,
+    "frontier/dungeon-normal": 8,
+    "highlands/pack-8": 2,
+    "highlands/pack-12": 2,
+    "crown/final-normal": 2,
+    "crown/pack-12": 2
+  },
+  "adverseConfigurations": [
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-4",
+      "encounter": "field-true"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-6",
+      "encounter": "pack-8"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-2",
+      "encounter": "captain"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-4",
+      "encounter": "pack-8"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-6",
+      "encounter": "captain"
+    },
+    {
+      "cls": "paladin",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "trained",
+      "seed": 271,
+      "party": "solo",
+      "encounter": "pack-8"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "highlands",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-4",
+      "encounter": "field-true"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 113,
+      "party": "solo",
+      "encounter": "pack-3"
+    },
+    {
+      "cls": "ranger",
+      "mode": "normal",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-2",
+      "encounter": "captain"
+    },
+    {
+      "cls": "ranger",
+      "mode": "normal",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-4",
+      "encounter": "captain"
+    },
+    {
+      "cls": "ranger",
+      "mode": "nightmare",
+      "region": "highlands",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-4",
+      "encounter": "field-true"
+    },
+    {
+      "cls": "ranger",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-4",
+      "encounter": "pack-8"
+    },
+    {
+      "cls": "ranger",
+      "mode": "nightmare",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-6",
+      "encounter": "captain"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 271,
+      "party": "solo",
+      "encounter": "pack-3"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-4",
+      "encounter": "field-true"
+    },
+    {
+      "cls": "paladin",
+      "mode": "nightmare",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-4",
+      "encounter": "final-true"
+    },
+    {
+      "cls": "paladin",
+      "mode": "nightmare",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-6",
+      "encounter": "field-true"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-6",
+      "encounter": "captain"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-4",
+      "encounter": "final-true"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 271,
+      "party": "solo",
+      "encounter": "pack-3"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "crown",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-4",
+      "encounter": "pack-8"
+    },
+    {
+      "cls": "ranger",
+      "mode": "normal",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-4",
+      "encounter": "field-true"
+    },
+    {
+      "cls": "ranger",
+      "mode": "nightmare",
+      "region": "highlands",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-2",
+      "encounter": "captain"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-2",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 113,
+      "party": "solo",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "paladin",
+      "mode": "nightmare",
+      "region": "highlands",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-6",
+      "encounter": "dungeon-normal"
+    },
+    {
+      "cls": "paladin",
+      "mode": "nightmare",
+      "region": "highlands",
+      "investment": "trained",
+      "seed": 271,
+      "party": "solo",
+      "encounter": "dungeon-normal"
+    },
+    {
+      "cls": "paladin",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-4",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "paladin",
+      "mode": "nightmare",
+      "region": "crown",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "paladin",
+      "mode": "nightmare",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 113,
+      "party": "solo",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "paladin",
+      "mode": "nightmare",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-2",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-2",
+      "encounter": "pack-5"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-4",
+      "encounter": "pack-5"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-2",
+      "encounter": "pack-5"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-4",
+      "encounter": "pack-1"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-6",
+      "encounter": "pack-12"
+    },
+    {
+      "cls": "ranger",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "low",
+      "seed": 113,
+      "party": "solo",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "ranger",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-4",
+      "encounter": "dungeon-normal"
+    },
+    {
+      "cls": "ranger",
+      "mode": "normal",
+      "region": "crown",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-4",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "ranger",
+      "mode": "nightmare",
+      "region": "highlands",
+      "investment": "low",
+      "seed": 113,
+      "party": "solo",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "ranger",
+      "mode": "nightmare",
+      "region": "crown",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-2",
+      "encounter": "pack-8"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-4",
+      "encounter": "field-true"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-2",
+      "encounter": "field-true"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-4",
+      "encounter": "captain"
+    },
+    {
+      "cls": "paladin",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-2",
+      "encounter": "captain"
+    },
+    {
+      "cls": "paladin",
+      "mode": "nightmare",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-4",
+      "encounter": "final-true"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "field-true"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "field-true"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-2",
+      "encounter": "captain"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "crown",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-4",
+      "encounter": "pack-8"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-4",
+      "encounter": "final-true"
+    },
+    {
+      "cls": "ranger",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "field-true"
+    },
+    {
+      "cls": "ranger",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-2",
+      "encounter": "field-true"
+    },
+    {
+      "cls": "ranger",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-2",
+      "encounter": "captain"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-2",
+      "encounter": "pack-8"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-2",
+      "encounter": "field-true"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-4",
+      "encounter": "captain"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "captain"
+    },
+    {
+      "cls": "ranger",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-6",
+      "encounter": "field-true"
+    },
+    {
+      "cls": "ranger",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "captain"
+    },
+    {
+      "cls": "ranger",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-2",
+      "encounter": "field-true"
+    },
+    {
+      "cls": "ranger",
+      "mode": "nightmare",
+      "region": "highlands",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-2",
+      "encounter": "captain"
+    },
+    {
+      "cls": "ranger",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 113,
+      "party": "solo",
+      "encounter": "captain"
+    },
+    {
+      "cls": "ranger",
+      "mode": "nightmare",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "captain"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "trained",
+      "seed": 113,
+      "party": "solo",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "paladin",
+      "mode": "nightmare",
+      "region": "highlands",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-2",
+      "encounter": "pack-12"
+    },
+    {
+      "cls": "paladin",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "paladin",
+      "mode": "nightmare",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-6",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-2",
+      "encounter": "dungeon-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-2",
+      "encounter": "dungeon-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 271,
+      "party": "solo",
+      "encounter": "pack-1"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "crown",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-2",
+      "encounter": "final-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "crown",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "final-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-2",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "highlands",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-2",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-2",
+      "encounter": "dungeon-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-6",
+      "encounter": "pack-12"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-2",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "crown",
+      "investment": "trained",
+      "seed": 271,
+      "party": "solo",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "ranger",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-2",
+      "encounter": "dungeon-normal"
+    },
+    {
+      "cls": "ranger",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-6",
+      "encounter": "pack-12"
+    },
+    {
+      "cls": "ranger",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "pack-5"
+    },
+    {
+      "cls": "ranger",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 271,
+      "party": "solo",
+      "encounter": "pack-1"
+    },
+    {
+      "cls": "ranger",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "paladin",
+      "mode": "nightmare",
+      "region": "highlands",
+      "investment": "trained",
+      "seed": 113,
+      "party": "solo",
+      "encounter": "dungeon-normal"
+    },
+    {
+      "cls": "paladin",
+      "mode": "nightmare",
+      "region": "highlands",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-2",
+      "encounter": "pack-12"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-4",
+      "encounter": "dungeon-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-4",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-2",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-2",
+      "encounter": "pack-12"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "crown",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "pack-12"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-2",
+      "encounter": "pack-5"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-4",
+      "encounter": "pack-1"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-4",
+      "encounter": "dungeon-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "pack-12"
+    },
+    {
+      "cls": "ranger",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-4",
+      "encounter": "dungeon-normal"
+    },
+    {
+      "cls": "ranger",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "pack-12"
+    },
+    {
+      "cls": "ranger",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-4",
+      "encounter": "dungeon-normal"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-6",
+      "encounter": "pack-5"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-4",
+      "encounter": "pack-5"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "trained",
+      "seed": 113,
+      "party": "solo",
+      "encounter": "pack-12"
+    },
+    {
+      "cls": "paladin",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-6",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "paladin",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "dungeon-normal"
+    },
+    {
+      "cls": "paladin",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "trained",
+      "seed": 113,
+      "party": "troops-6",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "highlands",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-2",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 113,
+      "party": "solo",
+      "encounter": "pack-1"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "frontier",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "pack-12"
+    },
+    {
+      "cls": "mage",
+      "mode": "normal",
+      "region": "crown",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-6",
+      "encounter": "pack-12"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "low",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "dungeon-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-4",
+      "encounter": "field-normal"
+    },
+    {
+      "cls": "mage",
+      "mode": "nightmare",
+      "region": "frontier",
+      "investment": "trained",
+      "seed": 271,
+      "party": "troops-6",
+      "encounter": "pack-12"
+    },
+    {
+      "cls": "ranger",
+      "mode": "nightmare",
+      "region": "highlands",
+      "investment": "low",
+      "seed": 113,
+      "party": "troops-2",
+      "encounter": "field-normal"
+    }
+  ],
+  "familyEvidence": [
+    {
+      "family": "mine",
+      "appearances": 2328,
+      "survived": 1597,
+      "damage": 923437.6563823685,
+      "received": 370314.9014307165,
+      "healing": 12692.107499999953,
+      "first": 2609,
+      "second": 2012,
+      "interrupted": 924,
+      "wardSeconds": 5346.200000000016,
+      "immuneSeconds": 0
+    },
+    {
+      "family": "warlord",
+      "appearances": 1560,
+      "survived": 1032,
+      "damage": 644206.0583079158,
+      "received": 252807.96537766152,
+      "healing": 4702.7999999999865,
+      "first": 1853,
+      "second": 1392,
+      "interrupted": 369,
+      "wardSeconds": 680.5999999999984,
+      "immuneSeconds": 0
+    },
+    {
+      "family": "abyss",
+      "appearances": 1152,
+      "survived": 993,
+      "damage": 714355.7744240361,
+      "received": 109612.69712858656,
+      "healing": 928.7999999999985,
+      "first": 1954,
+      "second": 1278,
+      "interrupted": 183,
+      "wardSeconds": 468.5999999999993,
+      "immuneSeconds": 0
+    },
+    {
+      "family": "citadel",
+      "appearances": 1920,
+      "survived": 1696,
+      "damage": 1110610.282012536,
+      "received": 176282.0608865377,
+      "healing": 1535.9999999999989,
+      "first": 3108,
+      "second": 2062,
+      "interrupted": 259,
+      "wardSeconds": 807.4999999999976,
+      "immuneSeconds": 0
+    },
+    {
+      "family": "thorn",
+      "appearances": 1896,
+      "survived": 1335,
+      "damage": 718459.9678351593,
+      "received": 279430.7342850936,
+      "healing": 2799.5999999999963,
+      "first": 2149,
+      "second": 1672,
+      "interrupted": 490,
+      "wardSeconds": 734.0999999999977,
+      "immuneSeconds": 0
+    },
+    {
+      "family": "crypt",
+      "appearances": 1896,
+      "survived": 1679,
+      "damage": 996580.2684896343,
+      "received": 177586.77081234552,
+      "healing": 15723.809340000029,
+      "first": 3100,
+      "second": 2107,
+      "interrupted": 290,
+      "wardSeconds": 732.0999999999979,
+      "immuneSeconds": 0
+    },
+    {
+      "family": "mire",
+      "appearances": 1536,
+      "survived": 1020,
+      "damage": 606906.447408579,
+      "received": 240496.4270064623,
+      "healing": 0,
+      "first": 1730,
+      "second": 1327,
+      "interrupted": 616,
+      "wardSeconds": 607.0999999999985,
+      "immuneSeconds": 0
+    },
+    {
+      "family": "archive",
+      "appearances": 864,
+      "survived": 726,
+      "damage": 569403.5366631222,
+      "received": 94426.68658336742,
+      "healing": 181.19999999999936,
+      "first": 1541,
+      "second": 993,
+      "interrupted": 132,
+      "wardSeconds": 435.0999999999991,
+      "immuneSeconds": 0
+    },
+    {
+      "family": "ridge",
+      "appearances": 1584,
+      "survived": 1080,
+      "damage": 687114.9451193506,
+      "received": 241906.2085246433,
+      "healing": 646.7999999999984,
+      "first": 1929,
+      "second": 1412,
+      "interrupted": 393,
+      "wardSeconds": 685.7999999999982,
+      "immuneSeconds": 0
+    },
+    {
+      "family": "cindermaw",
+      "appearances": 2256,
+      "survived": 1615,
+      "damage": 874871.7520784613,
+      "received": 344445.3262458628,
+      "healing": 12530.427159999961,
+      "first": 2934,
+      "second": 1758,
+      "interrupted": 504,
+      "wardSeconds": 5436.700000000037,
+      "immuneSeconds": 0
+    },
+    {
+      "family": "darklord",
+      "appearances": 1440,
+      "survived": 978,
+      "damage": 534049.781747349,
+      "received": 220707.04076625797,
+      "healing": 3742.7999999999943,
+      "first": 1626,
+      "second": 1200,
+      "interrupted": 387,
+      "wardSeconds": 489.29999999999916,
+      "immuneSeconds": 0
+    }
+  ],
+  "judgment": [
+    "Matched outcomes remain close in aggregate: solo +16 wins (one failed baseline excluded), two troops -4, four troops unchanged, six troops +3. Retain all 116 adverse reversals; aggregate similarity does not negate individual deaths.",
+    "Mixed parties and all three six-pet family rotations do not universally exceed six troops. Mean hero damage share remains approximately 62\u201371% in these party configurations; the hero still contributes most actual damage. These observations do not establish a universal optimal roster.",
+    "All eleven pet families used both kits and experienced actual interruptions; support/ward output and survival differ. No recorded permanent immunity appears in the family summaries. This complements the dedicated pet behavior regressions, rather than replacing them.",
+    "The worst matched 20-case strata lose four wins: trained Normal Highlands Paladin/four troops and low-investment Nightmare Frontier Mage/two troops. These are small deterministic strata, not estimated player win probabilities; no broad numeric retune follows from them.",
+    "Of the 116 lost baseline wins, 106 end in hero death and 10 are living timeouts. Three suspicious timeout configurations were replayed solely with an observational subclass for diagnosis; these do not replace or augment the original 6,912 result set.",
+    "Crown trained Nightmare Paladin/six troops: the scripted policy repeatedly orders attacks against a returning native Ashbeast while the hero stays at full health. This exposes the scripted targeting policy/encounter-reset interaction and cannot be interpreted as a pure damage deficit. The original timeout is retained.",
+    "Frontier low Nightmare Ranger/solo: native encounter population adds a captain during the observation; targets move and HP changes through the time cap. Highlands low Normal Ranger/six troops: Ridge continues authored attack/retreat/healing phases with five troops alive. These traces show ongoing encounters rather than a universal motion/cast deadlock.",
+    "The fixed observation policy, two seeds, artificial encounter setups, six-unit cap-stress rows and 90-second cap constrain inference. No human playability, physical-device comfort or listening certification is claimed."
+  ],
+  "releaseDisposition": "Balance review supports retaining current tuning. Release remains blocked by final exact-source hosted browser/game gates and publication approval; do not claim merged or ready solely from this review."
+}

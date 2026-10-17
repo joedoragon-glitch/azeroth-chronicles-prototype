@@ -45,6 +45,10 @@ Joel clarified that procedural primitives can create accidental anatomy and bloc
 
 ## A. Heroes and companions
 
+## TRUE boss radiance — owner correction, 16 October 2026
+
+TRUE radiance is a translucent, hollow gold corona behind the body, fine tapering light threads, open ground wisps and eight slow motes. Reduced motion freezes every component. The old filled gold body ellipse and duplicate boss floor rings are superseded in both procedural and registered-sprite rendering. Retain authored body regalia, class/family silhouettes and TRUE size. Never bake this animated aura into a body sprite. `renderer.drawTrueAura` owns the shared effect; no hitbox, damage or timing changes. Native scene review is required and tracked in PR #313.
+
 ### 001 — Hero — Paladin
 
 **Canonical cues:** Compact humanoid hero. Muted blue-gray armored body; steel helmet, chest plate and shoulder plates; blue shield on screen-left; sword on screen-right; brown cape; gold vertical chest mark with short crossbar and gold shield accent. Narrow stance.
@@ -87,6 +91,8 @@ Joel clarified that procedural primitives can create accidental anatomy and bloc
 
 ### 006 — Mira — Greenwood instructor
 
+**Owner correction, 16 October 2026:** Mira is a woman. Olive-green medieval kirtle with a cream centre panel, dark green cape, brown braid and pale trim. Keep the pale leaf-headed staff and tan satchel. Captive and rescued states share this same revised body. The original prompt below is retained as history; the linked `pt312-specialist-thorn.json` owner revision and reference govern the revised clothing.
+
 **Canonical cues:** Humanoid specialist. Olive-green cloth, dark green cape, brown hair/head covering with pale-gold trim. Tall staff on screen-right topped by a pale green diamond/leaf-like head. Rectangular pale tan item or satchel on screen-left. Teacher trim lines on torso. Screen-left olive shoulder wrap with a pale stitched edge; the existing tan rectangular item remains partly visible beneath it.
 
 **Image-generation prompt:**
@@ -103,6 +109,8 @@ Joel clarified that procedural primitives can create accidental anatomy and bloc
 
 ### 008 — Sela — Marches instructor
 
+**Owner correction, 16 October 2026:** Sela is a woman. Teal medieval travelling gown, pointed dark hood, pale front panel and dark braid. Keep the orb-headed staff and diagonal strap. Captive and rescued states share this same revised body. The original prompt below is retained as history; the linked `pt312-specialist-mire.json` owner revision and reference govern the revised clothing.
+
 **Canonical cues:** Humanoid specialist. Teal cloth, dark teal cape, dark hair. Pointed hood/hat shape in cape color with pale trim. Tall staff on screen-right topped by a round teal orb/disc. Broad pale-teal screen-left shoulder wrap, diagonal pale strap and a short teal front panel below the belt.
 
 **Image-generation prompt:**
@@ -110,6 +118,8 @@ Joel clarified that procedural primitives can create accidental anatomy and bloc
 > Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Sela — Marches instructor. Humanoid specialist. Teal cloth, dark teal cape, dark hair. Pointed hood/hat shape in cape color with pale trim. Tall staff on screen-right topped by a round teal orb/disc. Broad pale-teal screen-left shoulder wrap, diagonal pale strap and a short teal front panel below the belt. Treat all listed furnishings or equipment as attached parts of this one asset. Preserve the current screen-left/screen-right arrangement. Do not add occupants, new symbols, additional equipment, surrounding scenery or effects.
 
 ### 009 — Neri — alchemist
+
+**Owner correction, 16 October 2026:** Neri is a woman. Slate blue medieval gown, linen work apron, coif and brown braid. Keep her bottles, restoration equipment and screen-right flask. Captive and rescued states share this same revised body. The original prompt below is retained as history; the linked `pt312-specialist-archive.json` owner revision and reference govern the revised clothing.
 
 **Canonical cues:** Humanoid specialist. Slate blue-gray cloth, dark blue-gray cape, brown hair under a flat dark headband/cap. Rectangular brown satchel/item on screen-left. Blue-green flask on screen-right with small pale trim/metal neck. Two small colored alchemy vials on torso. Pale gray-green work apron with a dark horizontal upper seam and three small colored vials in lower apron loops, in addition to the two round torso accents.
 
@@ -127,6 +137,8 @@ Joel clarified that procedural primitives can create accidental anatomy and bloc
 
 ### 011 — Dara — Highland smith
 
+**Owner correction, 16 October 2026:** Dara is a woman. Dark work dress, substantial leather smith apron, pale protective coif and brown braid. Keep the hammer and equipment repair tools. Captive and rescued states share this same revised body. The original prompt below is retained as history; the linked `pt312-specialist-mine.json` owner revision and reference govern the revised clothing.
+
 **Canonical cues:** Humanoid specialist. Gray-olive cloth and dark gray-green cape. Dark apron/chest block with brown inset. Pale steel headband/helmet strip. Long-handled smith hammer on screen-right with steel rectangular head. Angular pale-gray screen-left shoulder guard and a broad segmented lower apron pocket with two pale dividers.
 
 **Image-generation prompt:**
@@ -134,6 +146,8 @@ Joel clarified that procedural primitives can create accidental anatomy and bloc
 > Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Dara — Highland smith. Humanoid specialist. Gray-olive cloth and dark gray-green cape. Dark apron/chest block with brown inset. Pale steel headband/helmet strip. Long-handled smith hammer on screen-right with steel rectangular head. Angular pale-gray screen-left shoulder guard and a broad segmented lower apron pocket with two pale dividers. Treat all listed furnishings or equipment as attached parts of this one asset. Preserve the current screen-left/screen-right arrangement. Do not add occupants, new symbols, additional equipment, surrounding scenery or effects.
 
 ### 012 — Lyss — advanced instructor
+
+**Owner correction, 16 October 2026:** Lyss is a woman. Muted red-brown medieval overdress under practical shoulder armour, dark braid and helmet, gold teaching sash. Keep the banner-headed staff. Captive and rescued states share this same revised body. The original prompt below is retained as history; the linked `pt312-specialist-warlord.json` owner revision and reference govern the revised clothing.
 
 **Canonical cues:** Humanoid specialist. Muted red-brown cloth, dark burgundy cape, dark hair. Dark angular helmet/cap. Steel shoulder plates. Tall staff/pole on screen-right topped by a pale-gold diamond/banner-like head. Diagonal gold-tan teaching sash and two uneven red-brown split coat tails that expose the middle of the lower body.
 
@@ -150,6 +164,8 @@ Joel clarified that procedural primitives can create accidental anatomy and bloc
 > Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Eren — runewright. Humanoid specialist. Muted violet-gray cloth, dark purple cape, gray-violet hair/head shape. Dark angular cap/hood. Brown-violet rectangular satchel/item on screen-left. Tall staff on screen-right with a large purple diamond-shaped head and pale inner line. Asymmetric violet work apron with a pale diagonal seam and a flat pale-purple diamond inset; pale side seam at screen-right. Treat all listed furnishings or equipment as attached parts of this one asset. Preserve the current screen-left/screen-right arrangement. Do not add occupants, new symbols, additional equipment, surrounding scenery or effects.
 
 ### 014 — Vera — master smith
+
+**Owner correction, 16 October 2026:** Vera is a woman. Warm brown work gown, heavy leather smith apron, pale coif and pale braid. Keep her long-handled hammer, steel shoulder protection and mobile forge context. Captive and rescued states share this same revised body. The original prompt below is retained as history; the linked `pt312-specialist-cindermaw.json` owner revision and reference govern the revised clothing.
 
 **Canonical cues:** Humanoid specialist. Warm brown/tan cloth, dark brown-gray cape, pale blond/white hair. Heavy brown apron/chest block with tan inset and pale trim. Long-handled hammer on screen-right with a broad pale steel rectangular head. Broad pale-metal screen-left shoulder guard, asymmetric dark leather screen-right apron panel and one pale lower apron seam.
 
@@ -397,11 +413,11 @@ Joel clarified that procedural primitives can create accidental anatomy and bloc
 
 ### 044 — Ash Sentinel
 
-**Canonical cues:** Very large armored humanoid. Blue-gray/steel body, oversized rectangular helmet/head, gold crown-like crenellated ridge, thin gold visor band, blue-gray shield on screen-left, long polearm on screen-right with broad steel blade, orange-gold diamond chest core.
+**Canonical cues:** Marshal Veyra is an adult woman in very large blue-gray/steel armor, with broad armored shoulders, a fitted waist, layered plated surcoat, an open-faced helmet, visible face and pinned pale braid. Preserve the gold crown-like crenellated helmet ridge, blue-gray shield on screen-left, long polearm on screen-right with broad steel blade, and orange-gold diamond chest core. Her immaculate military equipment reflects her exacting standards of grooming and craftsmanship.
 
 **Image-generation prompt:**
 
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Ash Sentinel exactly as described. Preserve massive armored proportions, gold crown ridge, left shield, right polearm and orange-gold chest diamond. No cape, wings, full gold armor, flame aura or new symbols.
+> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Ash Sentinel exactly as described. Preserve Marshal Veyra’s identity as an adult woman, imposing armored shoulders, fitted practical plate, layered plated surcoat, open-faced helmet, pinned pale braid, gold crown ridge, left shield, right polearm and orange-gold chest diamond. No cape, wings, full gold armor, flame aura or new symbols.
 
 ### 045 — Dark Lord
 
@@ -1452,6 +1468,8 @@ These entries were added only after the second full-renderer audit. They close s
 
 ### 171 — Closed cage — Mira
 
+**Owner correction, 16 October 2026:** Mira is a woman. Olive-green medieval kirtle with a cream centre panel, dark green cape, brown braid and pale trim. Keep the pale leaf-headed staff and tan satchel. Captive and rescued states share this same revised body. The original prompt below is retained as history; the linked `pt312-specialist-thorn.json` owner revision and reference govern the revised clothing.
+
 **Canonical cues:** Closed captive state: brown rectangular cage frame, dark interior, exactly five pale vertical bars, one horizontal crossbar and small gold lower-center lock. Behind the bars is the same current specialist body: Humanoid specialist. Olive-green cloth, dark green cape, brown hair/head covering with pale-gold trim. Tall staff on screen-right topped by a pale green diamond/leaf-like head. Rectangular pale tan item or satchel on screen-left. Teacher trim lines on torso. Screen-left olive shoulder wrap with a pale stitched edge; the existing tan rectangular item remains partly visible beneath it.
 
 **Image-generation prompt:**
@@ -1464,6 +1482,8 @@ These entries were added only after the second full-renderer audit. They close s
 
 ### 173 — Closed cage — Sela
 
+**Owner correction, 16 October 2026:** Sela is a woman. Teal medieval travelling gown, pointed dark hood, pale front panel and dark braid. Keep the orb-headed staff and diagonal strap. Captive and rescued states share this same revised body. The original prompt below is retained as history; the linked `pt312-specialist-mire.json` owner revision and reference govern the revised clothing.
+
 **Canonical cues:** Closed captive state: brown rectangular cage frame, dark interior, exactly five pale vertical bars, one horizontal crossbar and small gold lower-center lock. Behind the bars is the same current specialist body: Humanoid specialist. Teal cloth, dark teal cape, dark hair. Pointed hood/hat shape in cape color with pale trim. Tall staff on screen-right topped by a round teal orb/disc. Broad pale-teal screen-left shoulder wrap, diagonal pale strap and a short teal front panel below the belt.
 
 **Image-generation prompt:**
@@ -1471,6 +1491,8 @@ These entries were added only after the second full-renderer audit. They close s
 > Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Closed cage — Sela. Closed captive state: brown rectangular cage frame, dark interior, exactly five pale vertical bars, one horizontal crossbar and small gold lower-center lock. Behind the bars is the same current specialist body: Humanoid specialist. Teal cloth, dark teal cape, dark hair. Pointed hood/hat shape in cape color with pale trim. Tall staff on screen-right topped by a round teal orb/disc. Broad pale-teal screen-left shoulder wrap, diagonal pale strap and a short teal front panel below the belt. Treat all listed furnishings or equipment as attached parts of this one asset. Preserve the current screen-left/screen-right arrangement. Do not add occupants, new symbols, additional equipment, surrounding scenery or effects.
 
 ### 174 — Closed cage — Neri
+
+**Owner correction, 16 October 2026:** Neri is a woman. Slate blue medieval gown, linen work apron, coif and brown braid. Keep her bottles, restoration equipment and screen-right flask. Captive and rescued states share this same revised body. The original prompt below is retained as history; the linked `pt312-specialist-archive.json` owner revision and reference govern the revised clothing.
 
 **Production decision:** KEEP PROCEDURAL — DO NOT GENERATE A SPRITE. The old barred-cage proposal is superseded for current Neri. Current captive rendering is a secured workstation, not a cage. Retain this ID for history; use the dedicated current-state decision at the end of this catalog and do not generate obsolete cage art.
 
@@ -1484,9 +1506,13 @@ These entries were added only after the second full-renderer audit. They close s
 
 ### 176 — Closed cage — Dara
 
+**Owner correction, 16 October 2026:** Dara is a woman. Dark work dress, substantial leather smith apron, pale protective coif and brown braid. Keep the hammer and equipment repair tools. Captive and rescued states share this same revised body. The original prompt below is retained as history; the linked `pt312-specialist-mine.json` owner revision and reference govern the revised clothing.
+
 **Production decision:** KEEP PROCEDURAL — DO NOT GENERATE A SPRITE. The old barred-cage proposal is superseded for current Dara. Current captive rendering is a secured workstation, not a cage. Retain this ID for history; use the dedicated current-state decision at the end of this catalog and do not generate obsolete cage art.
 
 ### 177 — Closed cage — Lyss
+
+**Owner correction, 16 October 2026:** Lyss is a woman. Muted red-brown medieval overdress under practical shoulder armour, dark braid and helmet, gold teaching sash. Keep the banner-headed staff. Captive and rescued states share this same revised body. The original prompt below is retained as history; the linked `pt312-specialist-warlord.json` owner revision and reference govern the revised clothing.
 
 **Canonical cues:** Closed captive state: brown rectangular cage frame, dark interior, exactly five pale vertical bars, one horizontal crossbar and small gold lower-center lock. Behind the bars is the same current specialist body: Humanoid specialist. Muted red-brown cloth, dark burgundy cape, dark hair. Dark angular helmet/cap. Steel shoulder plates. Tall staff/pole on screen-right topped by a pale-gold diamond/banner-like head. Diagonal gold-tan teaching sash and two uneven red-brown split coat tails that expose the middle of the lower body.
 
@@ -1503,6 +1529,8 @@ These entries were added only after the second full-renderer audit. They close s
 > Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render exactly one Closed cage — Eren. Closed captive state: brown rectangular cage frame, dark interior, exactly five pale vertical bars, one horizontal crossbar and small gold lower-center lock. Behind the bars is the same current specialist body: Humanoid specialist. Muted violet-gray cloth, dark purple cape, gray-violet hair/head shape. Dark angular cap/hood. Brown-violet rectangular satchel/item on screen-left. Tall staff on screen-right with a large purple diamond-shaped head and pale inner line. Asymmetric violet work apron with a pale diagonal seam and a flat pale-purple diamond inset; pale side seam at screen-right. Treat all listed furnishings or equipment as attached parts of this one asset. Preserve the current screen-left/screen-right arrangement. Do not add occupants, new symbols, additional equipment, surrounding scenery or effects.
 
 ### 179 — Closed cage — Vera
+
+**Owner correction, 16 October 2026:** Vera is a woman. Warm brown work gown, heavy leather smith apron, pale coif and pale braid. Keep her long-handled hammer, steel shoulder protection and mobile forge context. Captive and rescued states share this same revised body. The original prompt below is retained as history; the linked `pt312-specialist-cindermaw.json` owner revision and reference govern the revised clothing.
 
 **Canonical cues:** Closed captive state: brown rectangular cage frame, dark interior, exactly five pale vertical bars, one horizontal crossbar and small gold lower-center lock. Behind the bars is the same current specialist body: Humanoid specialist. Warm brown/tan cloth, dark brown-gray cape, pale blond/white hair. Heavy brown apron/chest block with tan inset and pale trim. Long-handled hammer on screen-right with a broad pale steel rectangular head. Broad pale-metal screen-left shoulder guard, asymmetric dark leather screen-right apron panel and one pale lower apron seam.
 
@@ -2142,11 +2170,15 @@ These entries were reconciled from current production code and authored placemen
 
 ### 252 — Neri secured restoration workstation
 
+**Owner correction, 16 October 2026:** Neri is a woman. Slate blue medieval gown, linen work apron, coif and brown braid. Keep her bottles, restoration equipment and screen-right flask. Captive and rescued states share this same revised body. The original prompt below is retained as history; the linked `pt312-specialist-archive.json` owner revision and reference govern the revised clothing.
+
 **Canonical cues:** Neri beside a writing/restoration desk with alchemy materials and small secured lock; she disappears from this captive state after rescue.
 
 **Production decision:** KEEP PROCEDURAL — DO NOT GENERATE A SPRITE. Current rescue-state composition must preserve specialist disappearance, workstation furniture and the exact secured presentation. The existing runtime rejects generic cage substitution. The separately cataloged rescued specialist body remains eligible. A later isolated-component conversion can be added after its exact state/binding is designed; do not generate a permanently occupied workstation.
 
 ### 253 — Dara secured equipment-repair workstation
+
+**Owner correction, 16 October 2026:** Dara is a woman. Dark work dress, substantial leather smith apron, pale protective coif and brown braid. Keep the hammer and equipment repair tools. Captive and rescued states share this same revised body. The original prompt below is retained as history; the linked `pt312-specialist-mine.json` owner revision and reference govern the revised clothing.
 
 **Canonical cues:** Dara at the wide repair bench with cart/metal parts, hammer and small restraint; she disappears from this captive state after rescue.
 

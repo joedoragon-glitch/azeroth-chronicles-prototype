@@ -27,6 +27,8 @@
         return R.balance.economy.preparationTonicCost;
       }
       travelFare(regionIndex, direction = 1) {
+        // The developer sandbox must not require farming or paying for travel.
+        if (this.s.mode === 'developer') return 0;
         const edge = D.regions[regionIndex].id;
         return direction === 1 && !this.s.recovery[edge] ? D.regions[regionIndex].fare : 0;
       }

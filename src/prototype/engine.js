@@ -258,22 +258,31 @@
       factor *= Number.isFinite(encounter) && encounter > 0 ? encounter : 1;
       return Number.isFinite(factor) && factor > 0 ? factor : 1;
     }
+    enemyHealingActor(u) {
+      // "Enemy" is relative to the player, never relative to the healer.
+      // Player actors remain ineligible even if a malformed roster contains them.
+      return !!(
+        u &&
+        (u.type === 'mob' || u.type === 'boss') &&
+        u.hp > 0 &&
+        !u.neutral &&
+        u !== this.hero &&
+        !this.s.party.includes(u) &&
+        this.s.zones[this.zoneId]?.enemies.includes(u)
+      );
+    }
     enemyHealTeammate(e, u) {
-      if (!u || u === e || u.hp <= 0 || u.neutral || u.returning || !u.aggro) return false;
-      if (e.pack && e.pack === u.pack) return true;
-      if (e.owner && (e.owner === u.id || e.owner === u.owner)) return true;
-      if (u.owner === e.id) return true;
-      if (e.roomCaptain && u.roomGuard) return true;
-      if (e.fieldCaptain && u.guard && this.zoneId === 'frontier') return true;
-      if (e.type === 'boss' && u.guard) return true;
-      if (e.guard && u.type === 'boss') return true;
-      return !e.pack && !u.pack && e.species === u.species;
+      // The Dark Lord's faction is mechanically allied across species, packs,
+      // guard posts and commanders. Local range, LoS, health and hostile status
+      // are checked by the support cast itself, not by formation membership.
+      return !!(this.enemyHealingActor(e) && this.enemyHealingActor(u) && u !== e && !u.returning);
     }
     enemySupportHeal(e) {
       const cfg = R.enemySupportHealing,
         skill = this.enemyHealProfile(e);
       if (
         !skill ||
+        !this.enemyHealingActor(e) ||
         this.mageSilenceActive(e) ||
         this.peace ||
         !e.aggro ||
@@ -348,11 +357,44 @@
         this.say(e.name + ' uses ' + skill + ' on ' + target.name + '.');
       return true;
     }
+    enemySupportApproach(e, dt) {
+      const cfg = R.enemySupportHealing;
+      if (
+        !cfg ||
+        !this.enemyHealProfile(e) ||
+        !this.enemyHealingActor(e) ||
+        !e.aggro ||
+        e.returning ||
+        this.mageSilenceActive(e) ||
+        e.motion ||
+        e.rangedAim ||
+        e.telegraph ||
+        (e.supportHealCd || 0) > 0
+      )
+        return false;
+      const ally = this.zone()
+        .enemies.filter(
+          (u) =>
+            this.enemyHealTeammate(e, u) &&
+            !u.supportHeal &&
+            u.hp / u.maxHp <= cfg.threshold &&
+            dist(e, u) > cfg.range &&
+            dist(e, u) <= cfg.range + 210,
+        )
+        .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp || this.idOrder(a, b))[0];
+      if (!ally || !this.route(e, ally).length) return false;
+      const before = { x: e.x, y: e.y };
+      this.follow(e, ally, 160 * this.slowMovementFactor(e), dt, cfg.range - 25);
+      if (dist(before, e) <= 0.1) return false;
+      e.noProgress = 0;
+      return true;
+    }
     advanceEnemySupportHeal(e, dt) {
       const h = e.supportHeal;
       if (!h) return;
       if (
         this.peace ||
+        !this.enemyHealingActor(e) ||
         !e.aggro ||
         e.returning ||
         !Number.isFinite(h.seconds) ||
@@ -940,7 +982,24 @@
       const room = this.supplyRoom(z.id),
         layout = room && R.treasuryDecor?.[room.id],
         targetVersion = room?.id === 'supply-crown' ? 5 : room?.id === 'supply-highlands' ? 5 : 3;
-      if (!room || !layout || z.treasuryVersion === targetVersion) return;
+      if (!room || !layout) return;
+      if (z.treasuryVersion === targetVersion) {
+        // Append only new nonblocking character-life details to historical
+        // saves. Never rebuild the Treasury or reset caches, guards or captain.
+        for (const [j, [x, y, structure, radius, sceneRole]] of layout.entries()) {
+          if (!sceneRole || z.props.some((p) => p.id === 'treasury-' + j)) continue;
+          z.props.push({
+            id: 'treasury-' + j,
+            ...this.safe(x, y, z.id),
+            r: radius || 0,
+            decorative: !radius,
+            structure,
+            treasuryBoss: room.boss,
+            sceneRole,
+          });
+        }
+        return;
+      }
       z.room = true;
       z.treasury = room.boss;
       z.props = z.props.filter(
@@ -1039,7 +1098,11 @@
       z.treasuryVersion = targetVersion;
     }
     upgradeCaptainEndurance(e, profile) {
-      if (!e || !profile?.enduranceHp || e.captainEnduranceVersion === 2) return;
+      if (!e || !profile?.enduranceHp) return;
+      // The new Greenwood health budget must migrate existing v2 captains,
+      // but should never repeatedly scale an already upgraded saved actor.
+      const version = e.captainProfile === 'supply-vale' ? 3 : 2;
+      if (e.captainEnduranceVersion === version) return;
       const previous = e.maxHp || e.baseHp || 1;
       const fraction = Math.max(0, Math.min(1, (e.hp || 0) / previous));
       const oldBase = e.baseHp || previous;
@@ -1057,7 +1120,7 @@
       e.captainGuard = 0;
       e.captainReflect = 0;
       e.captainOvertimeCd = 0;
-      e.captainEnduranceVersion = 2;
+      e.captainEnduranceVersion = version;
     }
     roomCaptainPopulation(z) {
       const profile = R.roomCaptains?.[z.id];
@@ -1074,7 +1137,9 @@
       captain.visualScale = profile.visualScale || 1.16;
       // Population reconciliation is also called during active simulation. The
       // agriculture selector's cooldown must survive these reads after setup.
-      if (z.id !== 'supply-crown' || captain.roomCaptainVersion !== 1)
+      // Setup normalization must not repeatedly truncate a live captain's
+      // special cooldown whenever zone() is read during simulation.
+      if (captain.roomCaptainVersion !== 1)
         captain.specialCd = Math.min(captain.specialCd ?? 1.25, 1.25);
       captain.roomCaptainVersion = 1;
       this.upgradeCaptainEndurance(captain, profile);
@@ -1675,9 +1740,15 @@
           [x, y] = D.towns[i];
         z.npcs = z.npcs.filter(
           (n) =>
-            !['teacher', 'smith', 'alchemist'].includes(n.kind) && !n.id.startsWith('service-'),
+            !['teacher', 'smith', 'alchemist'].includes(n.kind) &&
+            !n.id.startsWith('service-') &&
+            (n.id !== 'dark-crown-throne' || (id === 'crown' && this.s.true.darklord)),
         );
-        if (id === 'crown' && !z.npcs.some((n) => n.id === 'dark-crown-throne')) {
+        if (
+          id === 'crown' &&
+          this.s.true.darklord &&
+          !z.npcs.some((n) => n.id === 'dark-crown-throne')
+        ) {
           // The actual fortress courtyard, not Veyra's Citadel. Idempotent
           // for fresh worlds and historical v4 restores with cached regions.
           const point = this.safe(3250, 3090, id);
@@ -2028,6 +2099,7 @@
       return true;
     }
     train(id, type = 'soldier') {
+      if (!['soldier', 'archer'].includes(type)) return false;
       const b = this.zone().buildings.find((b) => b.id === id),
         price = this.barracksRecruitPrice(type);
       if ((this.s.expeditionRank || 1) < 2) {
@@ -2140,6 +2212,7 @@
       for (const oldZone of Object.values(this.s.zones))
         oldZone.props = oldZone.props.filter((p) => !p.garunTemporary && !p.garunPreview);
       this.s.zone = zone;
+      this.clearPatrolResumes();
       this.zone();
       this.syncDungeonMasterStation();
       this.s.recallActive = false;
@@ -2216,7 +2289,7 @@
         j = i + direction;
       if (j < 0 || j >= D.regions.length) return false;
       const edge = direction === 1 ? D.regions[i].id : D.regions[j].id;
-      if (direction < 0 && !this.s.tickets[edge]) return false;
+      if (this.s.mode !== 'developer' && direction < 0 && !this.s.tickets[edge]) return false;
       const fare = this.travelFare(i, direction);
       if (this.hero.gold < fare) {
         this.say('Not enough crowns.');
@@ -2231,7 +2304,7 @@
       try {
         if (!this.enter(to, arrival)) throw Error('Invalid destination');
         this.payTravelFare(fare);
-        if (direction === 1) {
+        if (direction === 1 && this.s.mode !== 'developer') {
           delete this.s.recovery[edge];
           this.s.tickets[edge] = true;
           this.s.lastEdge = edge;
@@ -2248,7 +2321,9 @@
     }
     hubDestinations() {
       if (this.isDungeon() || this.zoneId !== 'crown') return [];
-      return D.regions.filter((r) => r.id !== this.zoneId && this.s.zones[r.id]);
+      return D.regions.filter(
+        (r) => r.id !== this.zoneId && (this.s.mode === 'developer' || this.s.zones[r.id]),
+      );
     }
     travelHub(regionId) {
       if (this.isDungeon() || this.zoneId !== 'crown') return false;
@@ -2524,6 +2599,11 @@
     engage(e, forced = true, spreadPack = true) {
       if (e.aggro || e.neutral || e.returning || e.thornReturn || e.cinderReturn) return false;
       if ((this.s.mercyTime || 0) > 0 && !forced && !e.mercyProvoked) return false;
+      this.capturePatrolResume(e);
+      if (this.roamingBoss(e)) {
+        e.path = [];
+        e.routeAge = 0;
+      }
       e.aggro = true;
       if (this.thornPatroller(e)) e.thornFightAnchor = { x: e.x, y: e.y };
       if (this.cinderPatroller(e)) e.cinderFightAnchor = { x: e.x, y: e.y };
@@ -2560,9 +2640,18 @@
         for (const ally of this.zone().enemies)
           if (ally.pack && ally.pack === e.pack && ally.hp > 0 && !ally.aggro)
             this.engage(ally, false);
+      // Treasury guards' pack IDs describe formation posts, not independent
+      // allegiances. Assaulting a live guard alerts its captain across posts.
+      if (e.roomGuard && !e.roomCaptain && this.supplyRoom()) {
+        const captain = this.zone().enemies.find(
+          (u) => u.roomCaptain && u.hp > 0 && !u.neutral && !u.returning,
+        );
+        if (captain && !captain.aggro) this.engage(captain, true, false);
+      }
     }
 
-    die() {
+    die(cause = null) {
+      this.clearPatrolResumes();
       this.clearPartyCharges();
       for (const z of Object.values(this.s.zones)) this.clearVeraRepairs(z);
       for (const z of Object.values(this.s.zones))
@@ -2594,7 +2683,7 @@
       this.s.streak = { key: null, count: 0 };
       this.s.projectiles = [];
       this.s.hazards = [];
-      this.event('death', { goldLost });
+      this.event('death', { goldLost, ...(cause ? { cause } : {}) });
       if (goldLost) this.say('Defeat penalty: lost ' + goldLost + ' crowns.');
       if (this.s.lastEdge) this.s.recovery[this.s.lastEdge] = true;
       for (const z of Object.values(this.s.zones))
@@ -2647,6 +2736,12 @@
         this.arriveRefuge(refuge);
         this.say('Returned to your refuge. Learning and rescue progress are safe.');
       }
+      this.notice(
+        'Defeated · Recovered at ' + (chosen ? 'your barracks' : 'your refuge'),
+        6,
+        (goldLost ? goldLost + ' crowns lost. ' : '') + 'Your progress is safe.',
+        'warning',
+      );
     }
     successor(heroClass) {
       if (
@@ -2662,6 +2757,8 @@
         fresh[key] = clone(old[key]);
       fresh.tonicStock = this.preparationTonicStock();
       for (const key of [
+        'customWeaponName',
+        'customArmorName',
         'legacyWeaponPower',
         'legacyWeaponName',
         'legacyPotions',
@@ -2761,7 +2858,19 @@
         });
       if (e.type === 'boss') {
         const b = this.boss(e.family);
+        const petWasUnlocked = this.petUnlocked(e.family);
         const firstVictory = this.victory(e.family, e.form);
+        if (
+          e.form === 'true' &&
+          !petWasUnlocked &&
+          !e.summon &&
+          !e.developerSummon &&
+          this.petDefinition(e.family)
+        ) {
+          const pet = this.petDefinition(e.family);
+          this.say(pet.name + ' unlocked permanently · meet your boss pet at any Barracks.');
+          this.notice('BOSS PET UNLOCKED · ' + pet.name, 6);
+        }
         this.s.statistics.bossSeconds[e.family + ':' + e.form] = Math.round(
           this.s.time - (e.fightStart || this.s.time),
         );
@@ -2975,6 +3084,7 @@
       this.say(
         'The Dark Lord has fallen. His throne stands empty, but the realm is not yet yours.',
       );
+      this.refreshNPCs();
       this.notice('DARK CROWN · Claim the Throne in the fortress courtyard', 6.5);
       this.event('awakening', { level: this.s.awakeningLevel });
       this.checkEnding();
@@ -3168,32 +3278,74 @@
             clamp(input.speedFactor || 1, 1, 1.35);
         this.move(h, { x: h.x + (input.x / n) * speed, y: h.y + (input.y / n) * speed }, speed, dt);
       } else if (h.order) {
-        const target =
-          h.order.type === 'attack'
-            ? z.enemies.find((e) => e.id === h.order.id && this.tacticalDirectTargetable(e))
-            : h.order;
-        if (
-          target &&
-          !target.neutral &&
-          (h.order.type !== 'attack' || (target.hp > 0 && this.tacticalDirectTargetable(target)))
-        ) {
+        const pendingSkill = h.order.type === 'skill-approach' ? h.order : null;
+        if (pendingSkill) {
+          const target = z.enemies.find(
+            (e) =>
+              e.id === pendingSkill.id &&
+              e.hp > 0 &&
+              !e.neutral &&
+              !e.returning &&
+              this.tacticalDirectTargetable(e),
+          );
+          if (!target || pendingSkill.zone !== this.zoneId || h.hp <= 0) {
+            h.order = null;
+          } else {
+            const range = this.heroSkillRange(pendingSkill.slot, pendingSkill.charged);
+            if (dist(h, target) <= range && this.line(h, target)) {
+              // Cast through the ordinary resolver only after truly reaching
+              // the target, preserving all skill costs, interrupts and cooldowns.
+              h.order = null;
+              this.cast(
+                pendingSkill.slot,
+                target.id,
+                pendingSkill.charged,
+                pendingSkill.encountersAtStart,
+              );
+            } else {
+              const before = { x: h.x, y: h.y },
+                speed =
+                  (h.speed + this.heroTalentSpeedBonus()) *
+                  (h.haste > 0 ? 1.25 : 1) *
+                  this.slowMovementFactor(h) *
+                  this.mireBogMovementFactor(h) *
+                  this.ashMovementFactor(h);
+              this.follow(h, target, speed, dt, Math.max(0, range - 15));
+              if (dist(h, before) < 0.1) pendingSkill.stalled += dt;
+              else pendingSkill.stalled = 0;
+              // An unreachable foe never traps the player in an endless order.
+              if (pendingSkill.stalled >= 2 || !this.route(h, target).length) h.order = null;
+            }
+          }
+        } else {
+          const target =
+            h.order.type === 'attack'
+              ? z.enemies.find((e) => e.id === h.order.id && this.tacticalDirectTargetable(e))
+              : h.order;
           if (
-            dist(h, target) > (h.order.type === 'attack' ? (h.class === 'paladin' ? 105 : 350) : 25)
-          )
-            this.follow(
-              h,
-              target,
-              (h.speed + this.heroTalentSpeedBonus()) *
-                (h.haste > 0 ? 1.25 : 1) *
-                this.slowMovementFactor(h) *
-                this.mireBogMovementFactor(h) *
-                this.ashMovementFactor(h),
-              dt,
-              20,
-            );
-          else if (h.order.type === 'attack') this.cast(1, target.id);
-          else h.order = null;
-        } else h.order = null;
+            target &&
+            !target.neutral &&
+            (h.order.type !== 'attack' || (target.hp > 0 && this.tacticalDirectTargetable(target)))
+          ) {
+            if (
+              dist(h, target) >
+              (h.order.type === 'attack' ? (h.class === 'paladin' ? 105 : 350) : 25)
+            )
+              this.follow(
+                h,
+                target,
+                (h.speed + this.heroTalentSpeedBonus()) *
+                  (h.haste > 0 ? 1.25 : 1) *
+                  this.slowMovementFactor(h) *
+                  this.mireBogMovementFactor(h) *
+                  this.ashMovementFactor(h),
+                dt,
+                20,
+              );
+            else if (h.order.type === 'attack') this.cast(1, target.id);
+            else h.order = null;
+          } else h.order = null;
+        }
       }
       const formationDx = h.x - formationStart.x,
         formationDy = h.y - formationStart.y,
@@ -3237,6 +3389,7 @@
         this.s.challenge.gameOver
       )
         return;
+      this.separateActors(dt);
       this.updateProjectiles(dt);
       if (
         h !== this.hero ||
@@ -3636,12 +3789,15 @@
           });
       }
       if (plan.paired && e.captainProfile === 'supply-vale' && index === 4) {
+        this.prepareGroundAttack(e, a);
         const pads = this.attackPatches(a);
+        a.arenaPatches = pads.slice(0, 2).map(({ x, y, radius }) => ({ x, y, radius }));
         a.pairMarks = pads.slice(0, 2).map((p) => ({ x: p.x, y: p.y }));
         a.count = 2;
         a.sequence.push({
           ...a,
           sequence: [],
+          arenaPatches: pads.slice(2).map(({ x, y, radius }) => ({ x, y, radius })),
           pairMarks: pads.slice(2).map((p) => ({ x: p.x, y: p.y })),
           timer: plan.pairWarning,
           total: plan.pairWarning,
@@ -3649,20 +3805,27 @@
         });
       }
       if (plan.sequential && plan.kind === 'circle') {
+        this.prepareGroundAttack(e, a);
         const patches = this.attackPatches(a);
-        Object.assign(a, patches[0], { count: 1 });
+        Object.assign(a, patches[0], {
+          count: 1,
+          arenaPatches: [{ x: patches[0].x, y: patches[0].y, radius: patches[0].radius }],
+        });
         a.sequence = patches.slice(1).map((p) => ({
           ...a,
           ...p,
+          arenaPatches: [{ x: p.x, y: p.y, radius: p.radius }],
           count: 1,
           timer: attackWarning * 0.72,
           total: attackWarning * 0.72,
           name: plan.name + ' follow-up',
         }));
       }
-      e.lastCaptainAttack = index;
-      e.sequence = [...(a.sequence || [])];
+      const sequence = [...(a.sequence || [])];
       delete a.sequence;
+      if (!this.prepareAttackSequence(e, a, sequence)) return false;
+      e.lastCaptainAttack = index;
+      e.sequence = sequence;
       e.telegraph = a;
       e.specialCd =
         profile.specialCooldown *
@@ -4151,15 +4314,28 @@
             ? (e.crownRogueTurn || 0) % 2
               ? 'crownguard'
               : e.crownAncestry
-            : e.species,
-        basic =
+            : e.type === 'boss'
+              ? cfg.bossSpeciesRogue?.[e.family] || e.species
+              : e.species,
+        namedBasic =
           (e.type === 'boss' && profiles.bosses[e.family]) ||
           ((e.captain || e.roomCaptain) && profiles.captains[e.captainProfile]) ||
-          (tier === 'guardian' && ranged && !e.crownTroop && profiles.rangedGuardian) ||
-          (ranged && (profiles.ranged[crownDoctrineSpecies] || profiles.rangedFallback)) ||
+          null,
+        speciesBasic =
+          (ranged && profiles.ranged[crownDoctrineSpecies]) ||
           profiles.species[crownDoctrineSpecies] ||
-          profiles[tier] ||
-          profiles.ordinary,
+          null,
+        basic =
+          namedBasic && speciesBasic
+            ? (e.rogueBasicTurn || 0) % 2 === 0
+              ? speciesBasic
+              : namedBasic
+            : namedBasic ||
+              (tier === 'guardian' && ranged && !e.crownTroop && profiles.rangedGuardian) ||
+              speciesBasic ||
+              (ranged && profiles.rangedFallback) ||
+              profiles[tier] ||
+              profiles.ordinary,
         signature =
           (e.type === 'boss' && cfg.rogueSignatures.bosses[e.family]) ||
           ((e.captain || e.roomCaptain) && cfg.rogueSignatures.captains[e.captainProfile]) ||
@@ -4268,6 +4444,8 @@
         signature: isSignature,
       });
       if (e.crownTroop && e.crownAncestry) e.crownRogueTurn = ((e.crownRogueTurn || 0) + 1) % 2;
+      if (!isSignature && namedBasic && speciesBasic)
+        e.rogueBasicTurn = ((e.rogueBasicTurn || 0) + 1) % 2;
       return true;
     }
     // Field commanders rally native ordinary-monster spawn records; Ridge Tyrant
@@ -5093,9 +5271,15 @@
               const hero = this.hero,
                 zone = this.zoneId,
                 deaths = this.s.statistics.deaths;
-              this.hitParty(victim, roll.totalDamage / 3, 0, e.id, true);
+              const landed = this.hitParty(victim, roll.totalDamage / 3, 0, e.id, true);
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
+              if (landed)
+                this.enemyVfxResolvedContact?.(e, roll, victim, {
+                  ...R.attacks.mire[0],
+                  kind: 'cone',
+                  index: 0,
+                });
             }
             if (roll.life <= 0 || victim.hp <= 0) {
               victim.deathRollHeld = false;
@@ -5230,6 +5414,7 @@
           continue;
         }
         if (this.enemySupportHeal(e)) continue;
+        if (this.enemySupportApproach(e, dt)) continue;
         // A short-lived rogue decision is distinct from normal aggro.
         if (!this.mageSilenceActive(e) && this.tacticalAutoRogue(e, target)) continue;
         // A committed attack owns its warning/release clock. Regroup holds and
@@ -5451,6 +5636,17 @@
                 (e.quotaOvertime > 0 ? 0.8 : 1),
             };
           } else {
+            const equipment = R.enemyMeleeEquipment(e);
+            this.event('swing', {
+              actor: 'enemy',
+              source: e.id,
+              species: e.species,
+              family: e.family,
+              boss: e.type === 'boss',
+              ...equipment,
+              x: e.x,
+              y: e.y,
+            });
             if (this.hitParty(target, this.weakenedEnemyDamage(e), 0, e.id))
               this.event('melee', {
                 actor: 'enemy',
@@ -5458,6 +5654,7 @@
                 species: e.species,
                 family: e.family,
                 boss: e.type === 'boss',
+                ...equipment,
                 x: target.x,
                 y: target.y,
                 target: target === this.hero ? 'hero' : target.id,
@@ -5468,9 +5665,18 @@
           opportunity = true;
         }
         if (!opportunity && (d > range || !visible)) {
-          if (target === this.hero && visible && d > range && !e.pursuitBurstUsed) {
+          if (
+            target === this.hero &&
+            visible &&
+            d > range &&
+            this.s.time >= (e.pursuitBurstReadyAt || 0)
+          ) {
+            // A persistent kiter should not exhaust the monster's only
+            // pursuit answer for the entire encounter. Use bounded timed
+            // renewals instead of permanent super-speed or larger leashes.
             e.pursuitBurst = pursuitBurstSeconds;
             e.pursuitBurstUsed = true;
+            e.pursuitBurstReadyAt = this.s.time + (e.type === 'boss' ? 5.5 : 7);
           }
           this.follow(
             e,
@@ -5497,6 +5703,7 @@
       this.updateVeraFieldwork(dt);
     }
     disengage(e, dt) {
+      const resume = this.patrolResume(e);
       if (!e.returning) {
         if (e.family === 'mine' && e.type === 'boss')
           this.zone().props = this.zone().props.filter((p) => !p.garunTemporary && !p.garunPreview);
@@ -5519,24 +5726,27 @@
           n = this.thornCaptive();
         const together =
           !n || !this.thornCaptiveFollowing() || dist(n, e) <= R.thornPatrol.waitForCaptive;
-        if (together) this.follow(e, e.home, R.thornPatrol.speed, dt, 0);
+        const goal = resume?.point || e.home;
+        if (together) this.follow(e, goal, R.thornPatrol.speed, dt, 0);
         if (dist(before, e) > 0) this.recordThornTracks(e, before);
-        if (dist(e, e.home) > 1e-7 || !together) return;
+        if (dist(e, goal) > 1e-7 || !together) return;
         e.returning = 0;
         delete e.thornReturn;
-        e.thornLeg = 1;
-        e.thornPause = R.thornPatrol.pause;
+        e.thornLeg = resume?.leg ?? 1;
+        e.thornPause = resume ? resume.pause : R.thornPatrol.pause;
       } else if (this.cinderPatroller(e)) {
         e.cinderReturn = true;
         e.aggro = false;
         const together = this.cinderEntourageTogether(e);
-        if (together) this.follow(e, e.home, R.cinderInspection.speed, dt, 0);
-        if (dist(e, e.home) > 1e-7 || !together) return;
+        const goal = resume?.point || e.home;
+        if (together) this.follow(e, goal, R.cinderInspection.speed, dt, 0);
+        if (dist(e, goal) > 1e-7 || !together) return;
         e.returning = 0;
         delete e.cinderReturn;
-        delete e.cinderDestination;
-        e.cinderStop = 0;
-        e.cinderInspectionPause = R.cinderInspection.pauseMin;
+        if (resume?.destination) e.cinderDestination = { ...resume.destination };
+        else delete e.cinderDestination;
+        e.cinderStop = resume?.stop ?? 0;
+        e.cinderInspectionPause = resume ? resume.inspectionPause : R.cinderInspection.pauseMin;
       } else if (e.veraEscort && this.zoneId === 'crown') {
         e.aggro = false;
         const minister =
@@ -5549,7 +5759,8 @@
         e.returning = 0;
       } else e.returning -= dt;
       if (e.returning <= 0) {
-        if (!(e.veraEscort && this.zoneId === 'crown' && this.veraHeld())) Object.assign(e, e.home);
+        if (!resume && !(e.veraEscort && this.zoneId === 'crown' && this.veraHeld()))
+          Object.assign(e, e.home);
         e.aggro = false;
         delete e.ashCloud;
         delete e.ashNextAt;
@@ -5570,6 +5781,7 @@
         e.mercyProvoked = false;
         e.noProgress = 0;
         e.pursuitBurstUsed = false;
+        delete e.pursuitBurstReadyAt;
         e.frozen = false;
         e.frenzy = false;
         for (const key of [
@@ -5627,6 +5839,7 @@
           e.trueEntourageSpawned = false;
           e.trueHalfSummonWave = false;
         }
+        this.releasePatrolResume(e);
       }
     }
 
@@ -6028,7 +6241,7 @@
         )
       )
         return false;
-      return this.move(unit, landing, 260, 0.35);
+      return this.move(unit, landing, 260, 0.35, 0, true);
     }
     updateTraps(dt) {
       const hero = this.hero,
@@ -6156,6 +6369,9 @@
   DreadmawCombat.install(Campaign, { R });
   const Party = typeof PrototypeParty !== 'undefined' ? PrototypeParty : require('./party.js');
   Party.install(Campaign, { D, R });
+  const PartyPets =
+    typeof PrototypePartyPets !== 'undefined' ? PrototypePartyPets : require('./party-pets.js');
+  PartyPets.install(Campaign, { D, R });
   const Economy =
     typeof PrototypeEconomy !== 'undefined' ? PrototypeEconomy : require('./economy.js');
   Economy.install(Campaign, { D, R, dungeonIds });

@@ -1,0 +1,50 @@
+name: Community balance input provenance
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.number == 313
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Select a hosted study with the exact current executable inputs
+        id: study
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          COMMUNITY_BRANCH: integration/community-snapshot-311-20261016
+        run: node .github/scripts/select-community-study.cjs
+      - name: Require the selected complete observation workflow to pass
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run watch ${{ steps.study.outputs.run_id }} --repo joedoragon-glitch/azeroth-chronicles-prototype --interval 30 --exit-status
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ steps.study.outputs.run_id }}
+          pattern: community-balance-*
+          path: test-results/original-balance
+      - name: Verify all executable inputs and every original configuration
+        env:
+          COMMUNITY_OBSERVED_COMMIT: ${{ steps.study.outputs.commit }}
+          COMMUNITY_OBSERVED_RUN: ${{ steps.study.outputs.run_id }}
+        run: |
+          node scripts/community-balance-provenance.cjs test-results/original-balance test-results/balance-provenance
+          echo 'Fresh 6,912-case candidate study verified against this exact runtime; all 3,072 unchanged baseline observations retained, including the original exception.' >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: community-balance-input-provenance
+          retention-days: 90
+          path: test-results/balance-provenance/
+          if-no-files-found: error

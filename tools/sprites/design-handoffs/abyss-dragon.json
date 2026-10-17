@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "templateOnly": false,
-  "status": "procedural-design",
+  "status": "procedural-candidate-unreviewed",
   "designId": "abyss-dragon",
   "name": "Abyss Dragon — Veyrith",
   "kind": "boss",
-  "nextAction": "Dev.17 full aviation/source browser gate passed; preserve existing purple personal-mount design. Continue the combined snapshot; no new sprites or physical-device/director appearance acceptance.",
+  "nextAction": "Review Community candidate at native desktop/phone size after owner validation authorization. Earlier evidence is historical only; no sprites requested.",
   "context": {
     "originConversation": null,
     "decisionSummary": "Latest #298/#291 locks Veyrith, Loyal Air Marshal: proud, disciplined and loyal; organized aerial patrols and military superiority secure lasting peace. Selective #254→#283 real aviation implementation retained.",
@@ -13,23 +13,25 @@
     "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/243",
     "contentDocuments": [
       "docs/ABYSS_AIR_SUPERIORITY_CANON.md",
-      "docs/DIRECTOR_WORLD_BUILDING_SNAPSHOT_CANON_LOCK_20261012.md"
+      "docs/DIRECTOR_WORLD_BUILDING_SNAPSHOT_CANON_LOCK_20261012.md",
+      "docs/COMMUNITY_SNAPSHOT_ART_AUDIT_20261016.md"
     ],
     "locationAndLore": "Dark Lord’s purple personal mount and Loyal Air Marshal; existing Abyss Bastion royal aerie/hatchery/unfinished launch platform. Royal air program remains incomplete."
   },
   "decisions": {
     "conceptAcceptance": "Owner-approved latest #298 11B supersedes older pathfinder/extraction/safety-permit psychology.",
-    "proceduralDesignAcceptance": "Existing procedural Abyss Dragon appearance must be retained; no new appearance proposal or approval.",
+    "proceduralDesignAcceptance": "Community source correction authorized, native appearance NOT REVIEWED. Scalloped wing membranes, finger ribs, belly and cheek planes refine existing purple dragon anatomy. Aviation behaviour and personal-mount silhouette remain protected.",
     "spriteProductionAuthorization": "Excluded",
     "generatedAppearanceAcceptance": null,
-    "pendingCorrections": []
+    "pendingCorrections": [
+      "Capture both facings/variants and native-size context after authorization"
+    ]
   },
   "reference": {
-    "sourceCommit": "8c259a511466c35a78b5523f2fa1f338e05c881a parent; exact dependencies identify this WIP",
+    "sourceCommit": "754e72e9cb5819bb815fde97488d44275e870453",
     "ownerFilesAndBranches": [
       "src/prototype/visuals.js",
-      "src/prototype/rules.js",
-      "src/prototype/data.js"
+      "feature/community-snapshot-post308-20261016"
     ],
     "exactEntityState": {
       "zone": "abyss",
@@ -44,14 +46,7 @@
     },
     "isolatedReferencePath": null,
     "isolatedReferenceHash": null,
-    "gameplayContextPaths": [
-      "tools/sprites/design-handoffs/references/aviation/warning-1280.png",
-      "tools/sprites/design-handoffs/references/aviation/warning-375.png",
-      "tools/sprites/design-handoffs/references/aviation/flight-375.png",
-      "tools/sprites/design-handoffs/references/aviation/flight-1280.png",
-      "tools/sprites/design-handoffs/references/aviation/browser-warning-375.png",
-      "tools/sprites/design-handoffs/references/aviation/browser-flight-375.png"
-    ],
+    "gameplayContextPaths": [],
     "traitsToPreserve": [
       "Existing approved purple-dragon silhouette and size",
       "Same family abyss, Eren, personal mount and unfinished royal air force",
@@ -62,32 +57,23 @@
     "assetSpecificDependencies": [
       {
         "path": "src/prototype/visuals.js",
-        "sha256": "b59d315de8fa35625b364a3feb87c76f93076031fd670824d77cda1682a085b9"
-      },
-      {
-        "path": "src/prototype/boss-combat.js",
-        "sha256": "2ab3ba3e6306704a6dd61f905370017bed003e28d792050eadb92a2d05581339"
-      },
-      {
-        "path": "src/prototype/data.js",
-        "sha256": "a93a08064902df010013fd48fc9ed063bbfc2640698d4c05b895d7b996aa451b"
-      },
-      {
-        "path": "src/prototype/rules.js",
-        "sha256": "1959002cfdf3948cce14dc1dc6190539995643816d51539832280bed35e00d55"
+        "sha256": "52ef9f105a31d481c686e59a773fc219004e546ea5a657c288821f4fcc0cd721"
       }
-    ]
+    ],
+    "preCommunityBaselineCommit": "6bc27be31792b1c38147d61e98ceed6acf3e2560",
+    "previousCandidateSourceCommit": "06edf70470c507b5da5246fa27e3b779e64382f1"
   },
   "scope": {
     "catalogIds": [],
     "verifiedRuntimeKeys": [],
     "requiredVisibleAssets": [],
     "reusedDesignIds": [
-      "Existing Abyss Dragon normal/TRUE procedural depiction"
+      "Existing Abyss Dragon normal/TRUE procedural depiction",
+      "community-boss-abyss"
     ],
     "variantRequirements": [],
     "proceduralOwnersAndReasons": [
-      "Current visuals.js and combat-visuals.js remain authoritative; no render changes requested."
+      "visuals.js; Scalloped wing membranes, finger ribs, belly and cheek planes refine existing purple dragon anatomy. Aviation behaviour and personal-mount silhouette remain protected."
     ]
   },
   "animationRequirements": {
@@ -111,40 +97,118 @@
     "releaseCommit": null,
     "releaseEvidence": null
   },
-  "outputs": [
-    {
-      "path": "tools/sprites/design-handoffs/references/aviation/warning-1280.png",
-      "sha256": "381168991e93140863f76b761d2676f333dfba30f525524bccc6be96fc97b562"
+  "preCommunityHistory": {
+    "reference": {
+      "sourceCommit": "8c259a511466c35a78b5523f2fa1f338e05c881a parent; exact dependencies identify this WIP",
+      "ownerFilesAndBranches": [
+        "src/prototype/visuals.js",
+        "src/prototype/rules.js",
+        "src/prototype/data.js"
+      ],
+      "exactEntityState": {
+        "zone": "abyss",
+        "family": "abyss",
+        "type": "boss",
+        "forms": [
+          "normal",
+          "true"
+        ],
+        "publicName": "Abyss Dragon",
+        "proposedPersonalName": "Veyrith"
+      },
+      "isolatedReferencePath": null,
+      "isolatedReferenceHash": null,
+      "gameplayContextPaths": [
+        "tools/sprites/design-handoffs/references/aviation/warning-1280.png",
+        "tools/sprites/design-handoffs/references/aviation/warning-375.png",
+        "tools/sprites/design-handoffs/references/aviation/flight-375.png",
+        "tools/sprites/design-handoffs/references/aviation/flight-1280.png",
+        "tools/sprites/design-handoffs/references/aviation/browser-warning-375.png",
+        "tools/sprites/design-handoffs/references/aviation/browser-flight-375.png"
+      ],
+      "traitsToPreserve": [
+        "Existing approved purple-dragon silhouette and size",
+        "Same family abyss, Eren, personal mount and unfinished royal air force",
+        "Four regular slots, two separate rogue techniques, Go-Around",
+        "Collision-aware visible flights and individually warned landing circles",
+        "Existing Ash-beast summons,3Normal/6TRUE cap"
+      ],
+      "assetSpecificDependencies": [
+        {
+          "path": "src/prototype/visuals.js",
+          "sha256": "b59d315de8fa35625b364a3feb87c76f93076031fd670824d77cda1682a085b9"
+        },
+        {
+          "path": "src/prototype/boss-combat.js",
+          "sha256": "2ab3ba3e6306704a6dd61f905370017bed003e28d792050eadb92a2d05581339"
+        },
+        {
+          "path": "src/prototype/data.js",
+          "sha256": "a93a08064902df010013fd48fc9ed063bbfc2640698d4c05b895d7b996aa451b"
+        },
+        {
+          "path": "src/prototype/rules.js",
+          "sha256": "1959002cfdf3948cce14dc1dc6190539995643816d51539832280bed35e00d55"
+        }
+      ]
     },
-    {
-      "path": "tools/sprites/design-handoffs/references/aviation/warning-375.png",
-      "sha256": "5a30fd9707f51059a2d0ee11dc16206f50537e641800e52f36112a80a14c051f"
+    "nextAction": "Dev.17 full aviation/source browser gate passed; preserve existing purple personal-mount design. Continue the combined snapshot; no new sprites or physical-device/director appearance acceptance.",
+    "decisions": {
+      "conceptAcceptance": "Owner-approved latest #298 11B supersedes older pathfinder/extraction/safety-permit psychology.",
+      "proceduralDesignAcceptance": "Existing procedural Abyss Dragon appearance must be retained; no new appearance proposal or approval.",
+      "spriteProductionAuthorization": "Excluded",
+      "generatedAppearanceAcceptance": null,
+      "pendingCorrections": []
     },
-    {
-      "path": "tools/sprites/design-handoffs/references/aviation/flight-375.png",
-      "sha256": "78db0eeb3773d420789eadae297117a117584d5cf6d6e0731df86c6a5d11af60"
+    "scope": {
+      "catalogIds": [],
+      "verifiedRuntimeKeys": [],
+      "requiredVisibleAssets": [],
+      "reusedDesignIds": [
+        "Existing Abyss Dragon normal/TRUE procedural depiction"
+      ],
+      "variantRequirements": [],
+      "proceduralOwnersAndReasons": [
+        "Current visuals.js and combat-visuals.js remain authoritative; no render changes requested."
+      ]
     },
-    {
-      "path": "tools/sprites/design-handoffs/references/aviation/flight-1280.png",
-      "sha256": "1c9147b916f6580c8729fd8105913af818f766075a0871ce2985d1cad900d43f"
+    "limits": "Historical source/appearance evidence applies to that revision, not this Community candidate.",
+    "browserEvidence": {
+      "sourceCommit": "7cdd7104bafe87059f41f6c6e164b09cfa0eccbd",
+      "sourceTree": "5408e6862c74cf671a6c4c387b9f2ab73f706273",
+      "runId": 38496624150,
+      "artifactId": 11863934884,
+      "profile": "actual WebKit375x800 phone presentation; controlled high-health/immune fixture, not physical device or full campaign acceptance",
+      "inspected": true,
+      "files": [
+        {
+          "path": "tools/sprites/design-handoffs/references/aviation/browser-warning-375.png",
+          "sha256": "a4b08bb7119a5efc77c4a6b3a1d7e7fb1c24ba6155db41bac8fe750d2ec33ed5"
+        },
+        {
+          "path": "tools/sprites/design-handoffs/references/aviation/browser-flight-375.png",
+          "sha256": "77a9f6ac5b228191197cbdb518d16a69c80ef08e686490a6bd93200956f7ac70"
+        }
+      ],
+      "limits": "Readable anonymous/LazyEight warnings and real movements. Cindermaw arrival fixture shows dense garrison/arrival labels; assess with upcoming ministerial patrol and final playable review. No director appearance acceptance."
     },
-    {
-      "path": "tools/sprites/design-handoffs/references/aviation/browser-warning-375.png",
-      "sha256": "a4b08bb7119a5efc77c4a6b3a1d7e7fb1c24ba6155db41bac8fe750d2ec33ed5"
-    },
-    {
-      "path": "tools/sprites/design-handoffs/references/aviation/browser-flight-375.png",
-      "sha256": "77a9f6ac5b228191197cbdb518d16a69c80ef08e686490a6bd93200956f7ac70"
-    }
-  ],
-  "browserEvidence": {
-    "sourceCommit": "7cdd7104bafe87059f41f6c6e164b09cfa0eccbd",
-    "sourceTree": "5408e6862c74cf671a6c4c387b9f2ab73f706273",
-    "runId": 38496624150,
-    "artifactId": 11863934884,
-    "profile": "actual WebKit375x800 phone presentation; controlled high-health/immune fixture, not physical device or full campaign acceptance",
-    "inspected": true,
-    "files": [
+    "outputs": [
+      {
+        "path": "tools/sprites/design-handoffs/references/aviation/warning-1280.png",
+        "sha256": "381168991e93140863f76b761d2676f333dfba30f525524bccc6be96fc97b562"
+      },
+      {
+        "path": "tools/sprites/design-handoffs/references/aviation/warning-375.png",
+        "sha256": "5a30fd9707f51059a2d0ee11dc16206f50537e641800e52f36112a80a14c051f"
+      },
+      {
+        "path": "tools/sprites/design-handoffs/references/aviation/flight-375.png",
+        "sha256": "78db0eeb3773d420789eadae297117a117584d5cf6d6e0731df86c6a5d11af60"
+      },
+      {
+        "path": "tools/sprites/design-handoffs/references/aviation/flight-1280.png",
+        "sha256": "1c9147b916f6580c8729fd8105913af818f766075a0871ce2985d1cad900d43f"
+      },
       {
         "path": "tools/sprites/design-handoffs/references/aviation/browser-warning-375.png",
         "sha256": "a4b08bb7119a5efc77c4a6b3a1d7e7fb1c24ba6155db41bac8fe750d2ec33ed5"
@@ -153,7 +217,6 @@
         "path": "tools/sprites/design-handoffs/references/aviation/browser-flight-375.png",
         "sha256": "77a9f6ac5b228191197cbdb518d16a69c80ef08e686490a6bd93200956f7ac70"
       }
-    ],
-    "limits": "Readable anonymous/LazyEight warnings and real movements. Cindermaw arrival fixture shows dense garrison/arrival labels; assess with upcoming ministerial patrol and final playable review. No director appearance acceptance."
+    ]
   }
 }

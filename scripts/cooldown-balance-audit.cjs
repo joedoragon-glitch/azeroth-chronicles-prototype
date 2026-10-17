@@ -97,6 +97,7 @@ function meter(g, primary) {
     summon = g.summonBossAdds,
     disengage = g.disengage,
     engage = g.engage,
+    advanceSupportHeal = g.advanceEnemySupportHeal,
     updateEnemies = g.updateEnemies;
   // Observe the resolver's actual post-compression HP damage. A hit may first
   // normalize a disengaged enemy; net HP delta is not an accurate damage meter.
@@ -111,6 +112,12 @@ function meter(g, primary) {
     const hp = e.hp;
     const result = engage.call(this, e, ...args);
     if (e === primary) m.normalizationHpDelta += e.hp - hp;
+    return result;
+  };
+  g.advanceEnemySupportHeal = function (e, ...args) {
+    const before = e.hp,
+      result = advanceSupportHeal.call(this, e, ...args);
+    if (e === primary) m.recovery += Math.max(0, e.hp - before);
     return result;
   };
   g.updateEnemies = function (...args) {
@@ -137,7 +144,9 @@ function meter(g, primary) {
       m.allSiphon += details.amount;
       if (details.source === primary?.id) m.siphon += details.amount;
     }
-    if (type === 'heal' && details.target === primary?.id) m.recovery += details.amount || 0;
+    // A support-heal start announces its budget; only its actual ticks restore HP.
+    if (type === 'heal' && details.target === primary?.id && !details.skill)
+      m.recovery += details.amount || 0;
     return event.call(this, type, details);
   };
   g.cast = function (slot, target, charged = false) {

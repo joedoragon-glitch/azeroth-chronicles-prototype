@@ -470,7 +470,19 @@
           return result;
         cast.reactions++;
         cast.last[source] = this.s.time;
-        this.hitParty(attacker, owner.damage * p.retaliationCoefficient, 0, owner.id);
+        const landed = this.hitParty(
+          attacker,
+          owner.damage * p.retaliationCoefficient,
+          0,
+          owner.id,
+        );
+        if (landed && !interrupted(this, hero, zone, deaths))
+          this.enemyVfxResolvedContact?.(owner, cast, attacker, {
+            ...p,
+            index: 2,
+            kind: 'circle',
+            selfDefense: false,
+          });
         return result;
       }
       resolveAttack(e) {
@@ -617,7 +629,14 @@
           p = R.attacks.cindermaw[5],
           owner = this.zone().enemies.find((e) => e.id === order.owner),
           state = owner?.cinderDelegation;
-        if (!alive(owner) || !owner.aggro || !state || u.slow > 0) {
+        if (
+          !alive(owner) ||
+          !owner.aggro ||
+          !state ||
+          u.slow > 0 ||
+          (order.phase === 'warning' &&
+            (!u.telegraph?.cinderDelegate || u.telegraph.cinderOwner !== order.owner))
+        ) {
           if (owner) this.stopCinderDelegation(owner);
           else delete u.cinderDelegate;
           return true;
@@ -755,8 +774,14 @@
           if (!contact || (!final && (c.burns[key] ?? -Infinity) + p.tickInterval > this.s.time))
             continue;
           c.burns[key] = this.s.time;
-          this.hitParty(unit, e.damage * (final ? p.blastCoefficient : p.coefficient), 0, e.id);
+          const landed = this.hitParty(
+            unit,
+            e.damage * (final ? p.blastCoefficient : p.coefficient),
+            0,
+            e.id,
+          );
           if (interrupted(this, hero, zone, deaths) || !alive(e)) return false;
+          if (landed) this.enemyVfxResolvedContact?.(e, c, unit);
         }
         if (c.life <= 0) delete e.cinderCordon;
         return true;

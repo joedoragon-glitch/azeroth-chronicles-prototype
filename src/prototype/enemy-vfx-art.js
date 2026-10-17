@@ -304,6 +304,7 @@
   }
   function valid(game, f) {
     return (
+      !f.audioOnly &&
       f.zone === game.zoneId &&
       f.epoch === (game.enemyVfxEpoch?.() || 0) &&
       game.hero.hp > 0 &&
@@ -769,10 +770,10 @@
     for (const e of game.zone().enemies)
       if (e.hp > 0 && !e.returning && e.motion) {
         const a = e.motion,
-          id = V.describe(e, a);
+          m = game.enemyVfxMotion?.(a),
+          id = m?.identity || V.describe(e, a.rogueAttack || a);
         if (!id || !enabled(game, id, 'travel')) continue;
         const f = { x: e.x, y: e.y, geometry: a, identity: id, life: 1, max: 1 };
-        const m = game.enemyVfxMotion?.(a);
         if (m && m.epoch !== game.enemyVfxEpoch()) continue;
         if (!stageAsset(ctx, screen, f, 'travel', Math.max(0, (m?.initialLife ?? a.life) - a.life)))
           local(ctx, screen, f, { ...recipe(id, a, e), action: 'rush' }, 0.5, 'travel');

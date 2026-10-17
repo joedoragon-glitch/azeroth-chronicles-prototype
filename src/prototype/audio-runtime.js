@@ -43,7 +43,7 @@
       }
       duck(seconds = 0.55) {
         if (!this.ctx) return;
-        this.duckUntil = this.ctx.currentTime + seconds;
+        this.duckUntil = Math.max(this.duckUntil || 0, this.ctx.currentTime + seconds);
         this.applySettings();
       }
       async unlock() {

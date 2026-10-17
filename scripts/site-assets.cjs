@@ -15,6 +15,7 @@ const scripts = [
     'cindermaw-combat',
     'dreadmaw-combat',
     'party',
+    'party-pets',
     'economy',
     'narration',
     'rewards',

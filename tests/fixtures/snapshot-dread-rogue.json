@@ -343,5 +343,24 @@
         "after": 0.4
       }
     ]
+  },
+  "authorizedPr311SpeciesChanges": {
+    "source": "PR #311 issue 9 approved species/named Rogue repertoire; docs/PRE_SNAPSHOT_TEN_ISSUES_IMPLEMENTATION_AUDIT_20261015.md. Reverse only the explicit new mapping before checking the immutable original rule hash.",
+    "changes": [
+      {
+        "path": [
+          "bossSpeciesRogue"
+        ],
+        "added": true,
+        "after": {
+          "thorn": "wolf",
+          "crypt": "skeleton",
+          "mine": "ogre",
+          "warlord": "orc",
+          "cindermaw": "ashbeast",
+          "citadel": "crownguard"
+        }
+      }
+    ]
   }
 }

@@ -64,6 +64,10 @@
   }
   function warningShapes(a, patches) {
     if (a.kind === 'summon' || a.selfDefense) return [];
+    if (a.arenaLines)
+      return a.arenaLines.map((line) =>
+        capsulePoints({ x: line.fromX, y: line.fromY }, line, line.halfWidth),
+      );
     if (a.dreadMechanic === 'closure') return dreadClosureShapes(a);
     if (a.cinderMechanic === 'cordon' && Number.isFinite(a.gapAngle))
       return [cordonPoints({ ...a, radius: a.initialRadius })];
@@ -237,18 +241,67 @@
   }
   // Floating cast information is separate from floor warnings, so danger
   // geometry can sit beneath every actor/prop without burying the cast clock.
-  function actorCues(ctx, screen, game) {
+  function actorCues(ctx, screen, game, heightFor = null) {
+    const cueHeight = (e) =>
+      Math.max(
+        e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 78 : 65,
+        (heightFor?.(e) || 0) + (e.form === 'true' && e.type === 'boss' ? 46 : 26),
+      );
+    // Read the real presentation obstacle once per cue pass. Headless Canvas
+    // callers have no DOM; their full viewport remains available.
+    const hudRect = ctx.canvas?.ownerDocument?.getElementById?.('hud')?.getBoundingClientRect?.(),
+      canvasRect = ctx.canvas?.getBoundingClientRect?.();
     ctx.save();
     for (const e of game
       .zone()
       .enemies.filter((e) => e.telegraph?.anonymousCast || e.telegraph?.mobileRogueCast)) {
       const a = e.telegraph,
         p = screen(e);
+      const transform = ctx.getTransform?.(),
+        scaleX = Math.abs(transform?.a || 1),
+        scaleY = Math.abs(transform?.d || 1),
+        left = (4 - (transform?.e || 0)) / scaleX,
+        right = ((ctx.canvas?.width || 1280) - 4 - (transform?.e || 0)) / scaleX,
+        top = (4 - (transform?.f || 0)) / scaleY,
+        bottom = ((ctx.canvas?.height || 800) - 4 - (transform?.f || 0)) / scaleY;
+      ctx.font = 'bold 11px system-ui';
+      const label = a.anonymousCast ? 'Preparing…' : a.name,
+        maxWidth = Math.max(24, Math.min(240, right - left)),
+        textWidth = Math.min(ctx.measureText(label).width, maxWidth),
+        halfWidth = Math.max(37, textWidth / 2);
+      let center = Math.max(left + halfWidth, Math.min(right - halfWidth, p.x));
       const width = 70,
-        height = 8,
-        x = p.x - width / 2,
-        y = p.y - 65;
-      const fill = Math.max(0, Math.min(1, 1 - a.timer / a.total));
+        height = 8;
+      // Keep the complete label and progress border inside the backing canvas
+      // even when tall artwork reaches above a landscape phone viewport.
+      let y = Math.max(
+        top + 44,
+        Math.min(bottom - height - 2, p.y - (heightFor ? cueHeight(e) : 65)),
+      );
+      if (hudRect?.width && canvasRect?.width) {
+        const ratioX = ctx.canvas.width / canvasRect.width,
+          ratioY = ctx.canvas.height / canvasRect.height,
+          hud = {
+            left: ((hudRect.left - canvasRect.left) * ratioX - (transform?.e || 0)) / scaleX,
+            right: ((hudRect.right - canvasRect.left) * ratioX - (transform?.e || 0)) / scaleX,
+            top: ((hudRect.top - canvasRect.top) * ratioY - (transform?.f || 0)) / scaleY,
+            bottom: ((hudRect.bottom - canvasRect.top) * ratioY - (transform?.f || 0)) / scaleY,
+          };
+        if (
+          center - halfWidth < hud.right &&
+          center + halfWidth > hud.left &&
+          y - 17 < hud.bottom &&
+          y + height + 2 > hud.top
+        ) {
+          if (right - hud.right >= halfWidth * 2 + 8)
+            center = Math.max(center, hud.right + halfWidth + 8);
+          else if (hud.left - left >= halfWidth * 2 + 8)
+            center = Math.min(center, hud.left - halfWidth - 8);
+          else y = Math.min(bottom - height - 2, Math.max(y, hud.bottom + 18));
+        }
+      }
+      const x = center - width / 2,
+        fill = Math.max(0, Math.min(1, 1 - a.timer / a.total));
       ctx.fillStyle = '#1b233080';
       ctx.fillRect(x - 2, y - 2, width + 4, height + 4);
       ctx.fillStyle = '#e5b963';
@@ -259,7 +312,8 @@
       ctx.font = 'bold 11px system-ui';
       ctx.textAlign = 'center';
       ctx.fillStyle = '#fff1c7';
-      ctx.fillText(a.anonymousCast ? 'Preparing…' : 'ROGUE CAST', p.x, y - 5);
+      const labelX = Math.max(left + textWidth / 2, Math.min(right - textWidth / 2, center));
+      ctx.fillText(label, labelX, y - 5, maxWidth);
     }
     royalTaxStatus(ctx, screen, game);
     // Ledger of Losses deliberately obscures Ridge's ground footprints,
@@ -278,7 +332,7 @@
       const a = e.telegraph,
         p = screen(e),
         w = 84,
-        y = p.y - 82,
+        y = p.y - (heightFor ? cueHeight(e) : 82),
         total = Math.max(0.001, a.total || a.timer || 1),
         ready = Math.max(0, Math.min(1, 1 - a.timer / total));
       ctx.fillStyle = '#18212980';
@@ -338,13 +392,7 @@
       const w = Math.min(maxWidth, Math.max(...lines.map((t) => ctx.measureText(t).width)) + 16),
         h = 8 + lines.length * 15,
         left = Math.max(4, Math.min(viewWidth - w - 4, p.x - w / 2)),
-        top = Math.max(
-          4,
-          Math.min(
-            viewHeight - h - 4,
-            p.y - (e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 78 : 65) - h,
-          ),
-        );
+        top = Math.max(4, Math.min(viewHeight - h - 4, p.y - cueHeight(e) - h));
       ctx.fillStyle = a.rogueMove ? '#192a367a' : '#241d1a7a';
       ctx.fillRect(left, top, w, h);
       ctx.strokeStyle =
@@ -956,6 +1004,7 @@
       const support = u.supportHeal;
       if (
         !support ||
+        !game.enemyHealingActor?.(u) ||
         u.hp <= 0 ||
         !u.aggro ||
         !Number.isFinite(support.seconds) ||
@@ -1047,11 +1096,14 @@
       else if (e.type === 'hurt' && Number.isFinite(e.x)) push(e, 'hurt', 0.25, 2);
       else if (e.type === 'heal') {
         const target =
-          e.target === 'hero'
-            ? game.hero
-            : e.actor === 'enemy'
-              ? game.zone()?.enemies.find((u) => u.id === e.target)
+          e.actor === 'enemy'
+            ? game.zone()?.enemies.find((u) => u.id === e.target && game.enemyHealingActor?.(u))
+            : e.target === 'hero'
+              ? game.hero
               : game.s.party.find((u) => u.id === e.target);
+        // Hostile recovery never borrows the player's location when its
+        // recipient has died, departed, or cannot be resolved.
+        if (e.actor === 'enemy' && !target) continue;
         push(
           {
             ...e,
@@ -1068,6 +1120,7 @@
       else if (e.type === 'swing')
         push(e, 'swing', e.combo === 3 ? 0.32 : e.combo ? 0.25 : 0.18, 2);
       else if (e.type === 'basicComboFinisher') push(e, e.type, 0.45, 4);
+      else if (e.type === 'petSkill') push(e, e.type, 0.4, 3);
       else if (e.type === 'chargedArea') push(e, e.type, 0.7, 5);
       else if (e.type === 'chargedImpact') push(e, e.type, 0.3, 3);
     }

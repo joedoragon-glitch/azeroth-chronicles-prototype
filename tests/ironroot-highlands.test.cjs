@@ -40,11 +40,22 @@ test('Ironroot production scenes leave homes, habitats, service spacing and road
         assert(c.distanceToSegment(p, road[i - 1], road[i]) >= 65);
   }
   const original = JSON.stringify(life);
+  c.zone();
+  assert.equal(
+    JSON.stringify(z.props.filter((p) => p.ironrootDistrict)),
+    original,
+    'normal current-version access preserves the completed world layout',
+  );
+  // Final environment/street clearance may have moved an authored scene.
+  // A forced old-version migration revalidates against those settled roads.
+  delete z.ironrootLifeVersion;
+  c.ironrootLivelihood(z);
+  const settled = JSON.stringify(z.props.filter((p) => p.ironrootDistrict));
   delete z.ironrootLifeVersion;
   c.ironrootLivelihood(z);
   assert.equal(
     JSON.stringify(z.props.filter((p) => p.ironrootDistrict)),
-    original,
+    settled,
     'repeated migration is deterministic',
   );
   for (const id of ['ore', 'bridge-north', 'ogre-hearth'])

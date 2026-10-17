@@ -241,6 +241,7 @@
         }
         const built = this.buildDreadAttack(e, target, chosen.i);
         if (!built) return false;
+        if (!this.prepareAttackSequence(e, built.first, built.sequence)) return false;
         e.lastCaptainAttack = chosen.i;
         e.sequence = built.sequence;
         e.telegraph = built.first;
@@ -408,6 +409,7 @@
             if (u.hp <= 0 || !inside || !this.line(v, u)) continue;
             const hit = this.hitParty(u, e.damage * v.coefficient, 0, e.id);
             if (interrupted(this, hero, zone, deaths)) return true;
+            if (hit) this.enemyVfxResolvedContact?.(e, v, u);
             if (hit && v.slow) this.applySlow(u, v.slowDuration);
           }
         }
@@ -435,16 +437,18 @@
                 !this.line(ring, u)
               )
                 continue;
-              this.hitParty(u, e.damage * ring.coefficient, 0, e.id);
+              const landed = this.hitParty(u, e.damage * ring.coefficient, 0, e.id);
               if (interrupted(this, hero, zone, deaths)) return true;
+              if (landed) this.enemyVfxResolvedContact?.(e, ring, u);
             }
           }
           if (ring.age >= ring.duration) {
             delete e.dreadClosure;
             for (const u of this.combatTargets()) {
               if (u.hp <= 0 || d(u, ring) > ring.finalBlastRadius || !this.line(ring, u)) continue;
-              this.hitParty(u, e.damage * ring.finalCoefficient, 0, e.id);
+              const landed = this.hitParty(u, e.damage * ring.finalCoefficient, 0, e.id);
               if (interrupted(this, hero, zone, deaths)) return true;
+              if (landed) this.enemyVfxResolvedContact?.(e, ring, u);
             }
           }
         }

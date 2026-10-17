@@ -6,7 +6,9 @@ c.enter('citadel');
 assert.equal(c.sentinelPatternPath(c.zone().enemies.find(e => e.family === 'citadel')).length, 5);
 const boss = c.zone().enemies.find(e => e.family === 'citadel');
 boss.aggro = true;
-boss.telegraph = c.buildBossAttack(boss, 3, c.hero).first;
+const opening = c.buildBossAttack(boss, 3, c.hero);
+assert(c.prepareAttackSequence(boss, opening.first, opening.sequence));
+boss.telegraph = opening.first;
 c.resolveAttack(boss);
 assert.equal(c.sentinelBoardCells(boss).length, 16);
 assert.equal(c.sentinelBoardCells(boss).filter(cell => cell.selected).length, 2);
@@ -48,7 +50,7 @@ assert.equal(charge.opening, 0);
 assert.equal(c.buildBossAttack(boss, 0, c.hero).first.opening, 0);
 assert.deepEqual(charge.path, c.buildBossAttack(boss, 2, { x: c.hero.x + 80, y: c.hero.y }).first.path);
 // Each marked square has its own safe alternative, and the warning precedes impact.
-boss.board = { x: boss.home.x, y: boss.home.y, size: 112, beat: 0, phase: 'warn', timer: 1.45 };
+boss.board = { ...c.sentinelBoardPlan(boss), beat: 0, phase: 'warn', timer: 1.45 };
 c.s.party = [];
 c.hero.maxHp = c.hero.hp = 100000;
 c.hero.immune = 0;
@@ -83,7 +85,7 @@ assert.equal(boss.board.beat, frozenBeat, 'board stops when Veyra dies');
 const exitCase = new C();
 exitCase.enter('citadel');
 const exitBoss = exitCase.zone().enemies.find(e => e.family === 'citadel');
-exitBoss.board = { x: exitBoss.home.x, y: exitBoss.home.y, size: 112,
+exitBoss.board = { ...exitCase.sentinelBoardPlan(exitBoss),
   beat: 3, phase: 'warn', timer: 0.9 };
 exitBoss.dressUntil = exitCase.s.time + 5;
 const reloaded = C.restore(exitCase.snapshot());

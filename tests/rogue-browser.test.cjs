@@ -96,10 +96,10 @@ const server = http.createServer((req, res) => {
               originalFill = ctx.fillRect;
             ctx.fillText = function (value, x, y, ...rest) {
               const label = String(value);
-              if (label === 'ROGUE CAST' || label === 'Preparing…' ||
-                  label.includes('SIGNATURE') || label.includes('Withdrawal')) {
+              if (label === cast.name || label === 'Preparing…' ||
+                  label.includes('SIGNATURE') || label.includes('Withdrawal') || label.includes('Ashen Warlord')) {
                 const transform = this.getTransform(),
-                  width = this.measureText(value).width;
+                  width = Math.min(this.measureText(value).width, rest[0] || Infinity);
                 labels.push({
                   text: label,
                   left: transform.a * (x - width / 2) + transform.e,
@@ -141,11 +141,16 @@ const server = http.createServer((req, res) => {
           const before = capture();
           // Move the actual enemy and advance its real warning fraction. The
           // bar must move with it instead of staying at an old ground marker.
-          e.x += 65;
+          e.x += 140;
           cast.timer = cast.total * 0.5;
           const moved = capture();
           return {
             before, moved, width: canvas.width, height: canvas.height,
+            hud: (() => {
+              const r = document.querySelector('#hud').getBoundingClientRect(),
+                ratio = canvas.width / innerWidth;
+              return {left:r.left*ratio, right:r.right*ratio, top:r.top*ratio, bottom:r.bottom*ratio};
+            })(),
             name: cast.name,
             mobile: cast.mobileRogueCast,
             signature: cast.rogueSignature,
@@ -157,13 +162,18 @@ const server = http.createServer((req, res) => {
         assert(probe.mobile && probe.signature, 'Warlord signature uses actor-only mobile cast');
         assert.equal(probe.remaining, probe.total * 0.5, 'cast retains authored warning duration');
         for (const stage of [probe.before, probe.moved]) {
-          const label = stage.labels.filter((x) => x.text === 'ROGUE CAST');
+          const label = stage.labels.filter((x) => x.text === probe.name);
           assert.equal(label.length, 1, 'one readable actor-anchored Rogue cast label');
           assert.equal(stage.bars.length, 1, 'one real 70x8 progress border');
-          assert(!stage.labels.some((x) => x.text.includes('SIGNATURE') ||
-                  x.text.includes('Withdrawal')), 'old spatial signature caption retired');
-          assert(Math.abs((label[0].left + label[0].right) / 2 - stage.bars[0].center) < 2,
-            'cast label centered over current actor bar');
+          assert(!stage.labels.some((x) => x.text.includes('SIGNATURE') || x.text === 'ROGUE CAST'), 'generic cast and separate spatial signature captions retired');
+          const overlaps = (a,b) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+          assert(!overlaps(label[0],probe.hud), 'named cast remains readable beside the actual HUD: '+JSON.stringify({label:label[0],hud:probe.hud}));
+          for (const nameplate of stage.labels.filter(x => x.text !== probe.name && x.text.includes('Ashen Warlord')))
+            assert(!overlaps(label[0],nameplate), 'cast name stays separate from boss nameplate');
+          const halfLabel = (label[0].right - label[0].left) / 2,
+            expectedCenter = Math.max(4 + halfLabel, Math.min(probe.width - 4 - halfLabel, stage.bars[0].center));
+          assert(Math.abs((label[0].left + label[0].right) / 2 - expectedCenter) < 2,
+            'named cast follows the actor and clamps only at the viewport edge');
           for (const item of [label[0], stage.bars[0]]) {
             assert((item.left === undefined || item.left >= 0) &&
               (item.right === undefined || item.right <= probe.width) &&

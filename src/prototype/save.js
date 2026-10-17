@@ -16,6 +16,9 @@
         out.squadEngagement = null;
         out.squadBoss = false;
         out.heroTarget = null;
+        // A queued skill approach is a live tactical instruction, not a
+        // persistent path or permission to cast after a save/import.
+        if (out.hero.order?.type === 'skill-approach') out.hero.order = null;
         delete out.holdFire;
         out.projectiles = [];
         out.hazards = [];
@@ -58,22 +61,16 @@
             if (e.family === 'cindermaw' && e.type === 'boss' && (e.aggro || e.returning))
               e.cinderReturn = true;
             // Copy only the validated board beat: no live attack/motion receipts.
-            const board =
-              e.family === 'citadel' &&
-              e.hp > 0 &&
-              e.board &&
-              Number.isFinite(e.board.timer) &&
-              e.board.timer > 0 &&
-              e.board.timer <= 1.9 &&
-              Number.isInteger(e.board.beat) &&
-              e.board.beat >= 0 &&
-              e.board.beat < 8 &&
-              ['warn', 'rest'].includes(e.board.phase) &&
-              e.board.size === 112 &&
-              e.board.x === e.home.x &&
-              e.board.y === e.home.y
-                ? { ...e.board }
-                : null;
+            const board = this.sentinelValidBoard(e, e.board, z.id)
+              ? {
+                  x: e.board.x,
+                  y: e.board.y,
+                  size: e.board.size,
+                  beat: e.board.beat,
+                  phase: e.board.phase,
+                  timer: e.board.timer,
+                }
+              : null;
             this.clearEncounterState(e, [out.hero, ...out.party]);
             if (board && out.phase !== 'peace') e.board = board;
             e.telegraph = null;
@@ -112,6 +109,21 @@
           !classes[s.hero?.class]
         )
           throw Error('Invalid save');
+        const validateName = (value) => {
+          if (
+            value !== undefined &&
+            (typeof value !== 'string' ||
+              !value ||
+              Campaign.normalizeCharacterName(value) !== value)
+          )
+            throw Error('Invalid character name');
+        };
+        validateName(s.hero.customName);
+        validateName(s.hero.regnalName);
+        validateName(s.hero.customWeaponName);
+        validateName(s.hero.customArmorName);
+        if (s.hero.regnalName !== undefined && !s.throneClaimed)
+          throw Error('Dark Lord name before claiming the throne');
         if (s.talentBalanceVersion === undefined) {
           const rank = Array.isArray(s.hero?.talents) ? s.hero.talents[2] || 0 : 0,
             p = talentProfiles[s.hero.class],
@@ -226,6 +238,7 @@
           throw Error('Invalid cooldown');
         // Strip transient fields from historical or interrupted exports.
         // Existing learned ranks and charged cooldowns remain in v4.
+        if (s.hero.order?.type === 'skill-approach') s.hero.order = null;
         if ((s.hero.shieldStance || 0) > 0)
           s.hero.cd[2] = Math.max(
             s.hero.cd[2],
@@ -292,7 +305,18 @@
           for (const [id, v] of Object.entries(s[field]))
             if (!ids.has(id) || v !== true) throw Error('Invalid boss identity');
         }
-        for (const [key, v] of Object.entries(s.victories || {}))
+        // Some historical v4 exports retain the authoritative facts but omit
+        // the detailed victory map. Rebuild only that existing field so later
+        // victories remain writable and old rewards are not announced again.
+        if (s.victories === undefined)
+          s.victories = Object.fromEntries(
+            ['normal', 'true'].flatMap((form) =>
+              Object.keys(s[form]).map((id) => [id + ':' + form, true]),
+            ),
+          );
+        if (!s.victories || typeof s.victories !== 'object' || Array.isArray(s.victories))
+          throw Error('Invalid victory history');
+        for (const [key, v] of Object.entries(s.victories))
           if (
             !/^(.*):(normal|true)$/.test(key) ||
             !ids.has(key.split(':')[0]) ||
@@ -433,9 +457,25 @@
           finite(e.remaining, 0, 1000);
           finite(e.seconds, 0, 5);
         }
+        const petFamilies = new Set();
         for (const u of s.party) {
+          validateName(u.customName);
+          if (u.type === 'pet') {
+            if (
+              !D.bosses.some((b) => b.id === u.petFamily) ||
+              !Object.hasOwn(R.petCompanions, u.petFamily) ||
+              !s.true[u.petFamily] ||
+              petFamilies.has(u.petFamily)
+            )
+              throw Error('Invalid or duplicate boss pet');
+            petFamilies.add(u.petFamily);
+            u.name = R.petCompanions[u.petFamily].name;
+            u.damage = R.balance.companions.petDamage;
+            u.order = null;
+            u.carry = 0;
+          } else if (u.petFamily !== undefined) throw Error('Pet identity on troop');
           if (
-            !['worker', 'soldier', 'archer'].includes(u.type) ||
+            !['worker', 'soldier', 'archer', 'pet'].includes(u.type) ||
             typeof u.id !== 'string' ||
             typeof u.active !== 'boolean'
           )
@@ -708,6 +748,8 @@
             finite(b.upgradeProgress, 0, 4);
             if (typeof b.full !== 'boolean' || typeof b.upgradePaid !== 'boolean')
               throw Error('Invalid barracks state');
+            if (b.queueType != null && !['soldier', 'archer'].includes(b.queueType))
+              throw Error('Invalid recruitment queue type');
             if (b.queue > 0) reservations++;
           }
           for (const n of z.npcs) {
@@ -815,22 +857,16 @@
               e.thornReturn = true;
             if (e.family === 'cindermaw' && e.type === 'boss' && (e.aggro || e.returning))
               e.cinderReturn = true;
-            const board =
-              e.family === 'citadel' &&
-              e.hp > 0 &&
-              e.board &&
-              Number.isFinite(e.board.timer) &&
-              e.board.timer > 0 &&
-              e.board.timer <= 1.9 &&
-              Number.isInteger(e.board.beat) &&
-              e.board.beat >= 0 &&
-              e.board.beat < 8 &&
-              ['warn', 'rest'].includes(e.board.phase) &&
-              e.board.size === 112 &&
-              e.board.x === e.home.x &&
-              e.board.y === e.home.y
-                ? { ...e.board }
-                : null;
+            const board = c.sentinelValidBoard(e, e.board, z.id)
+              ? {
+                  x: e.board.x,
+                  y: e.board.y,
+                  size: e.board.size,
+                  beat: e.board.beat,
+                  phase: e.board.phase,
+                  timer: e.board.timer,
+                }
+              : null;
             c.clearEncounterState(e);
             if (board && s.phase !== 'peace') e.board = board;
             e.aggro = false;

@@ -45,7 +45,15 @@ for (const file of frozenGraph.campaign)
 assert.equal(typeof frozenContext.Campaign.prototype.updateCinderRegularState, 'function');
 assert.equal(typeof frozenContext.Campaign.prototype.updateVeraFieldwork, 'function');
 const ownedMethods = new Set();
-for (const owner of ['combat', 'hero-combat', 'boss-combat', 'party', 'economy', 'rewards']) {
+for (const owner of [
+  'combat',
+  'hero-combat',
+  'boss-combat',
+  'party',
+  'party-pets',
+  'economy',
+  'rewards',
+]) {
   assert(inventory.core.includes('src/prototype/' + owner + '.js'));
   class Probe {}
   require('../src/prototype/' + owner + '.js').install(Probe, {

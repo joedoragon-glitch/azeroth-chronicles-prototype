@@ -3,7 +3,268 @@
   'use strict';
   function install(Campaign, D, R, dungeonIds) {
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+    // Runtime-only broad phase and congestion clocks. Never persist crowd state.
+    const crowds = new WeakMap();
+    const patrolResumes = new WeakMap();
     class Navigation {
+      roamingBoss(e) {
+        return this.thornPatroller(e) || this.cinderPatroller(e);
+      }
+      attackResetProtected(e) {
+        return !!(e.returning || e.thornReturn || e.cinderReturn) && !this.roamingBoss(e);
+      }
+      patrolResume(e) {
+        const state = patrolResumes.get(this)?.get(e.id);
+        return state?.zone === this.zoneId ? state : null;
+      }
+      capturePatrolResume(e) {
+        if (!this.roamingBoss(e)) return;
+        if (!patrolResumes.has(this)) patrolResumes.set(this, new Map());
+        patrolResumes.get(this).set(e.id, {
+          zone: this.zoneId,
+          point: { x: e.x, y: e.y },
+          leg: e.thornLeg ?? 1,
+          pause: e.thornPause || 0,
+          destination: e.cinderDestination ? { ...e.cinderDestination } : null,
+          stop: e.cinderStop ?? 0,
+          inspectionPause: e.cinderInspectionPause || 0,
+        });
+      }
+      releasePatrolResume(e) {
+        patrolResumes.get(this)?.delete(e.id);
+      }
+      clearPatrolResumes() {
+        patrolResumes.delete(this);
+      }
+      interruptPatrolReturn(e) {
+        if (!this.roamingBoss(e)) return;
+        e.returning = 0;
+        delete e.thornReturn;
+        delete e.cinderReturn;
+        e.path = [];
+        e.routeAge = 0;
+      }
+      interactionDistance(place) {
+        return Math.min(dist(place, this.hero), dist(place.servicePoint || place, this.hero));
+      }
+      mapDestinations() {
+        const zone = this.zone(),
+          region = this.definition(),
+          hidden = new Set([
+            'supplier',
+            'recruiter',
+            'quests',
+            'teacher',
+            'smith',
+            'alchemist',
+            'cage',
+            'bundle',
+          ]);
+        const places = this.visibleNPCs()
+          .filter((n) => !n.thornFootprint && (this.isDungeon() || !hidden.has(n.kind)))
+          .map((n) =>
+            n.kind === 'rest' && n.id === 'rest' ? { ...n, name: region.town, icon: '🏘️' } : n,
+          );
+        const bases = zone.buildings.map((b) => ({
+          ...b,
+          kind: 'barracks',
+          name: b.name || 'Barracks',
+          icon: b.progress < 4 ? '🏗️' : '🏕️',
+        }));
+        // Thornfang's authored tracking clues stay on the map; never turn his
+        // mobile patrol into an omniscient live destination.
+        const bosses = zone.enemies
+          .filter((e) => e.hp > 0 && e.type === 'boss' && !e.neutral && e.family !== 'thorn')
+          .map((e) => ({
+            ...e,
+            name: e.name || this.boss(e.family)?.name || 'Boss',
+            kind: 'boss',
+            icon: '⚔️',
+          }));
+        return [...places, ...bases, ...bosses]
+          .filter((n) => Number.isFinite(n.x) && Number.isFinite(n.y) && n.name)
+          .sort((a, b) => dist(a, this.hero) - dist(b, this.hero));
+      }
+      navigationTarget(place) {
+        if (!place || !Number.isFinite(place.x) || !Number.isFinite(place.y)) return null;
+        const size = this.zoneSize(),
+          anchor = place.servicePoint || place;
+        for (const [dx, dy] of [
+          [0, 0],
+          [0, 65],
+          [65, 0],
+          [-65, 0],
+          [0, -65],
+          [65, 65],
+          [-65, 65],
+          [65, -65],
+          [-65, -65],
+        ]) {
+          const point = { x: anchor.x + dx, y: anchor.y + dy };
+          if (
+            point.x < 0 ||
+            point.y < 0 ||
+            point.x > size ||
+            point.y > size ||
+            this.blocked(point.x, point.y)
+          )
+            continue;
+          const path = this.route(this.hero, point);
+          if (path.length) return { point, path };
+        }
+        return null;
+      }
+      actorRadius(unit) {
+        const cfg = R.actorSpacing;
+        return unit === this.hero
+          ? cfg.heroRadius
+          : unit.type === 'boss'
+            ? cfg.bossRadius
+            : unit.mountedCrownRider
+              ? cfg.mountedRadius
+              : unit.captain || unit.roomCaptain || unit.species === 'ogre'
+                ? cfg.largeRadius
+                : cfg.radius;
+      }
+      actorCrowd() {
+        const zone = this.s.zones[this.zoneId];
+        let frame = crowds.get(this);
+        if (
+          frame?.zone === zone &&
+          frame.at === this.s.time &&
+          frame.enemyList === zone?.enemies &&
+          frame.enemyCount === zone?.enemies.length &&
+          frame.partyList === this.s.party &&
+          frame.partyCount === this.s.party.length &&
+          frame.hero === this.hero
+        )
+          return frame;
+        const enemies = (zone?.enemies || []).filter((u) => u.hp > 0 && !u.neutral),
+          allies = [this.hero, ...this.activeLivingParty()].filter((u) => u.hp > 0),
+          bodies = [...allies, ...enemies];
+        frame = {
+          zone,
+          hero: this.hero,
+          enemyList: zone?.enemies,
+          enemyCount: zone?.enemies.length,
+          partyList: this.s.party,
+          partyCount: this.s.party.length,
+          at: this.s.time,
+          bodies,
+          hostile: new Set(enemies),
+          members: new Set(bodies),
+          bins: new Map(),
+          cells: new Map(),
+          congestion: frame?.zone === zone ? frame.congestion : new WeakMap(),
+        };
+        crowds.set(this, frame);
+        for (const unit of bodies) this.indexActor(unit, frame);
+        return frame;
+      }
+      indexActor(unit, frame = this.actorCrowd()) {
+        if (!frame.members.has(unit)) return;
+        const size = R.actorSpacing.cellSize,
+          key = Math.floor(unit.x / size) + ':' + Math.floor(unit.y / size),
+          old = frame.cells.get(unit);
+        if (old === key) return;
+        if (old) frame.bins.get(old)?.delete(unit);
+        if (!frame.bins.has(key)) frame.bins.set(key, new Set());
+        frame.bins.get(key).add(unit);
+        frame.cells.set(unit, key);
+      }
+      nearbyActors(point, frame = this.actorCrowd()) {
+        const size = R.actorSpacing.cellSize,
+          x = Math.floor(point.x / size),
+          y = Math.floor(point.y / size),
+          out = [];
+        for (let dx = -1; dx <= 1; dx++)
+          for (let dy = -1; dy <= 1; dy++)
+            for (const unit of frame.bins.get(x + dx + ':' + (y + dy)) || [])
+              if (unit.hp > 0) out.push(unit);
+        return out;
+      }
+      actorStepAllowed(unit, point, relaxFriendly = false, frame = this.actorCrowd()) {
+        if (!frame.members.has(unit)) return true;
+        const candidates = new Set(),
+          steps = Math.max(1, Math.ceil(dist(unit, point) / R.actorSpacing.cellSize));
+        for (let j = 0; j <= steps; j++)
+          for (const other of this.nearbyActors(
+            {
+              x: unit.x + ((point.x - unit.x) * j) / steps,
+              y: unit.y + ((point.y - unit.y) * j) / steps,
+            },
+            frame,
+          ))
+            candidates.add(other);
+        for (const other of candidates) {
+          if (other === unit || other.hp <= 0) continue;
+          const friendly = frame.hostile.has(unit) === frame.hostile.has(other);
+          if (friendly && relaxFriendly) continue;
+          const gap = this.actorRadius(unit) + this.actorRadius(other),
+            before = dist(unit, other),
+            after = dist(point, other);
+          // An already overlapped actor can leave, never deepen the stack.
+          if (after < gap && after < Math.min(gap, before) - 0.01) return false;
+          if (before >= gap && this.distanceToSegment(other, unit, point) < gap - 0.01)
+            return false;
+        }
+        return true;
+      }
+      separateActors(dt) {
+        // Scripted charges/repositions use their own authoritative movement owner.
+        // Refresh their broad-phase positions before passive overlap recovery.
+        const prior = crowds.get(this);
+        if (prior) prior.at = -Infinity;
+        const frame = this.actorCrowd(),
+          cfg = R.actorSpacing;
+        for (const unit of frame.bodies) {
+          // Fixed warning origins, held victims and scripted motion remain authoritative.
+          if (
+            unit === this.hero ||
+            unit.hp <= 0 ||
+            unit.telegraph ||
+            unit.motion ||
+            unit.keeperHeld ||
+            unit.deathRollHeld ||
+            this.partyChargeState(unit)
+          )
+            continue;
+          let dx = 0,
+            dy = 0;
+          for (const other of this.nearbyActors(unit, frame)) {
+            if (other === unit || other.hp <= 0) continue;
+            const gap = this.actorRadius(unit) + this.actorRadius(other),
+              distance = dist(unit, other),
+              overlap = gap - distance;
+            if (overlap <= cfg.tolerance) continue;
+            // Stable opposite directions also separate exact coincident spawns.
+            const sign = String(unit.id).localeCompare(String(other.id || 'hero')) < 0 ? -1 : 1,
+              ux = distance > 0.01 ? (unit.x - other.x) / distance : sign,
+              uy = distance > 0.01 ? (unit.y - other.y) / distance : sign * 0.5,
+              weight = unit.type === 'boss' && other.type !== 'boss' ? 0.25 : 1;
+            dx += ux * overlap * weight;
+            dy += uy * overlap * weight;
+          }
+          const length = Math.hypot(dx, dy);
+          if (!length) continue;
+          const amount = Math.min(length, cfg.separationSpeed * dt),
+            point = { x: unit.x + (dx / length) * amount, y: unit.y + (dy / length) * amount };
+          const angle = Math.atan2(dy, dx);
+          for (const p of [
+            point,
+            ...[0.7, -0.7, 1.35, -1.35].map((offset) => ({
+              x: unit.x + Math.cos(angle + offset) * amount,
+              y: unit.y + Math.sin(angle + offset) * amount,
+            })),
+          ]) {
+            if (!this.clearSegment(unit, p) || !this.actorStepAllowed(unit, p, false, frame))
+              continue;
+            Object.assign(unit, p);
+            this.indexActor(unit, frame);
+            break;
+          }
+        }
+      }
       blocked(x, y, zone = this.s.zone, radius = 15, terrainOnly = false) {
         const i = this.regionIndex(zone),
           room = this.supplyRoom(zone),
@@ -70,17 +331,19 @@
         } else if (side) {
         } else {
           const {
-            bounds: [a, b, c, e],
+            bounds: [, , c, e],
             gaps,
           } = R.barriers[i];
           if (
-            x > a - radius &&
-            x < b + radius &&
             y > c - radius &&
             y < e + radius &&
             !gaps.some(([l, h]) => y > l + radius && y < h - radius)
-          )
-            return true;
+          ) {
+            for (let at = y - radius; at <= y + radius + 0.01; at += Math.max(1, radius / 2)) {
+              const [a, b] = R.channelBanks(i, at);
+              if (x > a - radius && x < b + radius) return true;
+            }
+          }
         }
         if (!dungeon && !room && !side)
           for (const p of R.terrain[i])
@@ -258,26 +521,58 @@
         }
         return [];
       }
-      move(entity, target, speed, dt, stop = 0) {
+      move(entity, target, speed, dt, stop = 0, forced = false) {
         const d = dist(entity, target);
         if (d <= stop) return true;
         const step = Math.min(d - stop, speed * dt),
           nx = entity.x + ((target.x - entity.x) / d) * step,
           ny = entity.y + ((target.y - entity.y) / d) * step;
-        if (this.clearSegment(entity, { x: nx, y: ny })) {
+        const frame = this.actorCrowd(),
+          congestion = frame.congestion.get(entity) || { blocked: 0, until: 0 },
+          relaxed = congestion.until > this.s.time,
+          legal = (p) =>
+            this.clearSegment(entity, p) &&
+            (forced || entity.motion || this.actorStepAllowed(entity, p, relaxed, frame));
+        if (legal({ x: nx, y: ny })) {
           entity.x = nx;
           entity.y = ny;
+          congestion.blocked = 0;
+          frame.congestion.set(entity, congestion);
+          this.indexActor(entity, frame);
           return true;
         }
         let moved = false;
-        if (this.clearSegment(entity, { x: nx, y: entity.y })) {
+        if (legal({ x: nx, y: entity.y })) {
           entity.x = nx;
           moved = true;
         }
-        if (this.clearSegment(entity, { x: entity.x, y: ny })) {
+        if (legal({ x: entity.x, y: ny })) {
           entity.y = ny;
           moved = true;
         }
+        if (!moved && frame.members.has(entity)) {
+          const angle = Math.atan2(target.y - entity.y, target.x - entity.x);
+          // Local side steps form distinct approach slots without replanning terrain routes.
+          for (const offset of [0.55, -0.55, 1.05, -1.05]) {
+            const p = {
+              x: entity.x + Math.cos(angle + offset) * step,
+              y: entity.y + Math.sin(angle + offset) * step,
+            };
+            if (!legal(p)) continue;
+            Object.assign(entity, p);
+            moved = true;
+            break;
+          }
+        }
+        const advanced = d - dist(entity, target) > Math.min(0.5, step * 0.2);
+        congestion.blocked = advanced ? 0 : congestion.blocked + dt;
+        if (congestion.blocked >= R.actorSpacing.congestionSeconds) {
+          // Only same-side bodies relax, and only for this bounded interval.
+          congestion.until = this.s.time + R.actorSpacing.relaxSeconds;
+          congestion.blocked = 0;
+        }
+        frame.congestion.set(entity, congestion);
+        this.indexActor(entity, frame);
         return moved;
       }
       thornPatroller(e) {
