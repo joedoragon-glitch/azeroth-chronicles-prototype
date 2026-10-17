@@ -15,8 +15,6 @@ concurrency:
 
 jobs:
   release-plan:
-    # One-time owner-authorized publication; no new validation is claimed.
-    if: github.event_name != 'push' || github.event.before != 'a90786420376f2ea381c55cd18631537a4e27062'
     runs-on: ubuntu-latest
     permissions:
       contents: read
