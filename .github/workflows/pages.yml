@@ -15,8 +15,6 @@ concurrency:
 
 jobs:
   release-plan:
-    # One-time owner-authorized text-only publication without test jobs.
-    if: github.event_name != 'push' || github.event.before != '88ee2304afcad5abde1b851686502bfbdd066779'
     runs-on: ubuntu-latest
     permissions:
       contents: read
