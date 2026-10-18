@@ -1,0 +1,36 @@
+name: Publish character text correction once
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/publish-community-snapshot-once.yml]
+permissions:
+  contents: read
+jobs:
+  publish:
+    if: github.event.before == '88ee2304afcad5abde1b851686502bfbdd066779' && github.event.head_commit.message == 'Publish spoiler-free character description 2026-10-18'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      SNAPSHOT_SHA: 88ee2304afcad5abde1b851686502bfbdd066779
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 88ee2304afcad5abde1b851686502bfbdd066779
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Package the authorized text correction
+        run: GITHUB_SHA="$SNAPSHOT_SHA" node scripts/build.cjs --check --site
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - name: Publish correction
+        id: deployment
+        uses: actions/deploy-pages@v5
