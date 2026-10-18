@@ -1579,7 +1579,7 @@
                 action(
                   'Character and identity',
                   openCharacter,
-                  'Hero name · Dark Lord name after claiming the throne',
+                  'View character details and edit your name',
                 ),
               ]
             : []),

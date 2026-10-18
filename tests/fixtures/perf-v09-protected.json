@@ -2014,6 +2014,25 @@
         "sw.js": "3fa5507a8dcb1291851b07d811785e6eee238c15734321269b92b337bac9f70d",
         "tests/targeting.test.cjs": "24e66772c0614bdae42775a417fc1e81d7accacef37a77bbf0318a3a86109781"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "baseline": "c274f5ee0d08f00fa28a4a2beb4c5a54a926b36e",
+      "source": "PR #313 snapshot text follow-up: owner-authorized spoiler-free Character and identity description only, plus cache metadata. SOURCE ONLY, NOT TESTED.",
+      "files": {
+        "package-lock.json": "10ac64379062739c7185e5b70e0b5cb291f137b2b3eaa10bb3a37b3e0bb346d6",
+        "package.json": "d37d17b2e5c959a44efe21c0dc175a7b871c3e00032bd730c194f26802302bbd",
+        "src/prototype/build-info.js": "a3a5ea292a18f0f6512a7b80102e208d3bf40e6a788fa56ae7d6bcc0797ac8e7",
+        "src/prototype/menus.js": "7150d3d04ddd04fa528357ab85d47057ac9696977bff2649df4c189d66cda2ea",
+        "sw.js": "0ee6e4e5582fb93d305bdebb7d910fa68e8faba35c7e28d007d61540b6576a4b"
+      },
+      "previousFiles": {
+        "package-lock.json": "33e8c66f67c9db9acd44f39b2c557c89faad81b51ebb151948638283d4bc3d91",
+        "package.json": "448005171830cc4601b7ef6d6e7c85966e08cf2c9948477db96fbf4aa16fe954",
+        "src/prototype/build-info.js": "8cf3d9ac02e7820b683d83a9f759d9f3aa825b85e21bff20d00f454b4b2e4603",
+        "src/prototype/menus.js": "2e52cffd4f4d4ad1088599bfa9b05f2011fdc8f22c2eb3889e1d882d189fb89e",
+        "sw.js": "89227ce60773d4e2af5051b9e78c3e67f695579b2e5f92951c73967776685147"
+      }
     }
   ],
   "authorizedPr313ApproachFrameRevision": {
