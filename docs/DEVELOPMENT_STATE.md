@@ -1,12 +1,12 @@
 # Current development state — 19 October 2026
 
-**Community Snapshot published. Feature development is on break.** The authorized closeout is documentation reconciliation and preservation. No gameplay implementation, whole-game regression pass, visual polish, merge or deployment is authorized by this page.
+**Community Snapshot dev.79 remains published.** The owner resumed only the three Frontier visual repairs from issue #320 on 19 October 2026. Local candidate dev.80 implements those repairs; see [the focused implementation/review record](FRONTIER_VISUAL_POLISH_20261019.md). The owner subsequently directed inclusion in a combined update, with one shared testing process; [integration handoff](FRONTIER_UPDATE_INTEGRATION_20261019.md). The complete branch and portable Git bundle are prepared for integration. The owner explicitly approved pushing and then merging the prepared visuals; the earlier staging blocker is superseded. Carry existing evidence into the normal update workflow rather than repeating a separate preflight cycle. The owner subsequently explicitly authorized merging this completed visual batch; normal update checks/publication remain workflow-gated. Broader feature work is outside this scope.
 
 ## Source and publication
 
 | Item | Recorded state |
 | --- | --- |
-| Runtime version | `0.9.1+snapshot.dev.79` in package, lockfile and generated build info |
+| Published runtime / local candidate | Published `0.9.1+snapshot.dev.79`; local package/lockfile/generated candidate `0.9.1+snapshot.dev.80` (not released) |
 | Historical documentation-audit main | `57453c4651366a6debbcae454c70af3115e8ac2e` |
 | Last published gameplay source | `23d951092ea5dff806c460c62ca71eeced574f5c`, merged manual Developer Mode Skill 1 fix and documentation closeout #319 |
 | Publication evidence | [Packaging-only run 39312326936](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39312326936); exact public build/copy reads recorded in the [release handoff](COMMUNITY_SNAPSHOT_RELEASE_HANDOFF_20261016.md) |
@@ -20,7 +20,7 @@ The dev.79 publisher packaged the exact merge `23d951092ea5dff806c460c62ca71eece
 
 The repository-wide [documentation audit](DOCUMENTATION_AUDIT_20261019.md) and [per-file index](DOCUMENTATION_INDEX.md) complete the current housekeeping scope on #319. The owner authorized merging #319 with the narrow Developer Mode fix; both documentation and dev.79 are now published. The audit report itself retains the facts and limits of its earlier documentation-only checkpoint.
 
-After the owner returns, the first quality phase is a **full independent whole-game audit / regression pass**, followed by a calm visual loving pass. These are future phases, not unfinished release checks to run now. Co-op modernization, selective adoption of old sprites and outreach are also deferred. There is no deadline, automation or automatic restart. A quiet forum is not QA evidence; community silence does not validate gameplay, and no forum response is required to take the break.
+The broader future quality plan remains a **full independent whole-game audit / regression pass**, followed by a calm visual loving pass. The later owner-directed narrow Frontier exception is recorded above. These are future phases, not unfinished release checks to run now. Co-op modernization, selective adoption of old sprites and outreach are also deferred. There is no deadline, automation or automatic restart. A quiet forum is not QA evidence; community silence does not validate gameplay, and no forum response is required to take the break.
 
 Future visual notes are retained in [the unified reconciliation ledger](NEXT_UPDATE_RECONCILIATION_20261018.md): Frontier captain/boss-species resemblance, stronger creature anatomy and identity, terrain-appropriate ranged uniforms, and optional poppies/red flowers. They are not break blockers.
 

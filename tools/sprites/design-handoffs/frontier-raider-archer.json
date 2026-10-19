@@ -1,0 +1,351 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "frontier-raider-archer",
+  "name": "Frontier Raider Archer",
+  "kind": "enemy",
+  "nextAction": "Owner authorized merging the visual update on 19 October 2026. Use the combined candidate and the normal shared release checks; retain exact-source receipts and archived local source provenance. No new sprite generation.",
+  "context": {
+    "originConversation": "Chat URL unavailable. On 19 October 2026 the owner rejected the prior Crown marksman preview as two uniforms/equipment sets and requested a substantial lightly equipped guerrilla/irregular redesign. Screenshot identified the Crown marksman.",
+    "decisionSummary": "Owner-directed guerrilla marksman redesign: one soft hood, dust scarf, cloth field tunic and half-cloak, leather bracer, one back quiver with three arrows and one recurve bow. No helmet, plate cuirass, pauldrons or second equipment pass. Crown affiliation is a small cloth armband; leaders have sewn rank marks. Follow-up: owner said the redesign was a lot better, but requested removal of the decorative line between the feet, which looked like a rope.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/320",
+    "contentDocuments": [
+      "docs/FRONTIER_VISUAL_POLISH_20261019.md"
+    ],
+    "locationAndLore": "Ashen Frontier occupation/inspection hierarchy; preserve existing Crown allegiance and role distinctions."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner authorized the issue #320 repair scope.",
+    "proceduralDesignAcceptance": "Owner responded positively to the guerrilla redesign and requested removal of the foot-connecting line. That specific correction is now implemented and visually checked; no additional appearance acceptance is claimed.",
+    "spriteProductionAuthorization": "Procedural changes only. No new sprite generated or registered.",
+    "generatedAppearanceAcceptance": "Not applicable: no generated image.",
+    "pendingCorrections": [
+      "Owner appearance review and final coordinated release validation remain pending."
+    ]
+  },
+  "reference": {
+    "sourceCommit": "eddc15f02fb1e229fd3e5137c1f8ec970203fdc3",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js @ eddc15f02fb1e229fd3e5137c1f8ec970203fdc3"
+    ],
+    "exactEntityState": {
+      "selectors": [
+        "draw / enemy species archer / region === 3 / frontierRaider"
+      ],
+      "fixture": {
+        "region": 3,
+        "species": "archer",
+        "renderKind": "enemy"
+      },
+      "variants": [
+        {
+          "name": "ordinary",
+          "entity": {}
+        },
+        {
+          "name": "guardian",
+          "entity": {
+            "guard": true
+          }
+        },
+        {
+          "name": "officer",
+          "entity": {
+            "form": "ringleader"
+          }
+        },
+        {
+          "name": "Crown marksman",
+          "entity": {
+            "crownTroop": true
+          }
+        }
+      ]
+    },
+    "isolatedReferencePath": "docs/evidence/frontier-marksman-20261019/feet-corrected-body-11.webp",
+    "isolatedReferenceHash": "4cde7a7ceab892d42654e97935f9f12a7a0893d3e5590220c21e8efeda0adcdb",
+    "gameplayContextPaths": [
+      "docs/evidence/frontier-marksman-20261019/after-marksman-1280-day.webp",
+      "docs/evidence/frontier-marksman-20261019/after-marksman-375-night.webp",
+      "docs/evidence/frontier-marksman-20261019/after-raider-redoubt-375-day.webp"
+    ],
+    "traitsToPreserve": [
+      "Owner-directed guerrilla marksman redesign: one soft hood, dust scarf, cloth field tunic and half-cloak, leather bracer, one back quiver with three arrows and one recurve bow. No helmet, plate cuirass, pauldrons or second equipment pass. Crown affiliation is a small cloth armband; leaders have sewn rank marks.",
+      "Actual Frontier allegiance/species, original foot anchor, label heights, all combat/save/attack timing and existing facing."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "822b2ad448b6e7f81058301e4c06cfb2018f65d3d3eb02e838531a05f72cf6a0",
+        "sourceCommit": "eddc15f02fb1e229fd3e5137c1f8ec970203fdc3"
+      }
+    ],
+    "variantReferencePaths": [
+      {
+        "variant": "Raider",
+        "path": "docs/evidence/frontier-marksman-20261019/feet-corrected-body-8.webp",
+        "sha256": "d436ffff3aca7e4f914cbbd3da6a811ad9d730cb4b7b452282b8c8ff0dd5a8fd"
+      },
+      {
+        "variant": "guardian",
+        "path": "docs/evidence/frontier-marksman-20261019/feet-corrected-body-9.webp",
+        "sha256": "d604e3f0a3a8407126b3286318340dbdf8420b04ff711151db9de06ca9817865"
+      },
+      {
+        "variant": "officer",
+        "path": "docs/evidence/frontier-marksman-20261019/feet-corrected-body-10.webp",
+        "sha256": "1e2a82176d8cd18dd59b5c77bede5dc23ecc68e25de14cdcd28047a8bdd73351"
+      },
+      {
+        "variant": "Crown marksman",
+        "path": "docs/evidence/frontier-marksman-20261019/feet-corrected-body-11.webp",
+        "sha256": "4cde7a7ceab892d42654e97935f9f12a7a0893d3e5590220c21e8efeda0adcdb"
+      }
+    ],
+    "archivedSourcePath": "tools/visual-review/source-baselines/04c066f88bcfb470e530d55fb16a2d53d6978a22.js"
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "enemy archer in Frontier (procedural)"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      {
+        "name": "ordinary",
+        "entity": {}
+      },
+      {
+        "name": "guardian",
+        "entity": {
+          "guard": true
+        }
+      },
+      {
+        "name": "officer",
+        "entity": {
+          "form": "ringleader"
+        }
+      },
+      {
+        "name": "Crown marksman",
+        "entity": {
+          "crownTroop": true
+        }
+      }
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::frontierRaider",
+        "reason": "Own the entire single irregular loadout; generic enemy/rank quivers and Crown armor are bypassed only for Frontier archer bodies."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing motion/facing retained; no new clips or sprites.",
+    "gameplayStates": [
+      "standing",
+      "combat cue/nameplate overlays",
+      "normal/TRUE and rank forms as applicable",
+      "day/night"
+    ],
+    "directions": [
+      "existing renderer facing in both directions"
+    ],
+    "pivotContract": "Retain existing foot anchor and logical scales. No hitbox or timing change.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  },
+  "priorProceduralRevisions": [
+    {
+      "context": {
+        "originConversation": "Chat URL unavailable. Owner requested implementation of the three requirements recorded in issue #320 on 19 October 2026.",
+        "decisionSummary": "Frontier Raider Archer: ash-brown hood, charcoal cloak, leather panels, dull iron and rust-red bindings; bow and quiver retained.",
+        "decisionDate": "2026-10-19",
+        "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/320",
+        "contentDocuments": [
+          "docs/FRONTIER_VISUAL_POLISH_20261019.md"
+        ],
+        "locationAndLore": "Ashen Frontier occupation/inspection hierarchy; preserve existing Crown allegiance and role distinctions."
+      },
+      "decisions": {
+        "conceptAcceptance": "Owner authorized the issue #320 repair scope.",
+        "proceduralDesignAcceptance": "Implemented and reviewed by the implementing agent at native size. Owner has not reviewed this candidate.",
+        "spriteProductionAuthorization": "Procedural changes only. No new sprite generated or registered.",
+        "generatedAppearanceAcceptance": "Not applicable: no generated image.",
+        "pendingCorrections": [
+          "Owner appearance review and final coordinated release validation pending."
+        ]
+      },
+      "reference": {
+        "sourceCommit": "c8a281d8cdd0ea7b352c44b399516e70aed4e313",
+        "ownerFilesAndBranches": [
+          "src/prototype/visuals.js @ c8a281d8cdd0ea7b352c44b399516e70aed4e313"
+        ],
+        "exactEntityState": {
+          "selectors": [
+            "draw / enemy species archer / region === 3 / frontierRaider"
+          ],
+          "fixture": {
+            "region": 3,
+            "species": "archer",
+            "renderKind": "enemy"
+          },
+          "variants": [
+            {
+              "name": "ordinary",
+              "entity": {}
+            },
+            {
+              "name": "guardian",
+              "entity": {
+                "guard": true
+              }
+            },
+            {
+              "name": "officer",
+              "entity": {
+                "form": "ringleader"
+              }
+            },
+            {
+              "name": "Crown marksman",
+              "entity": {
+                "crownTroop": true
+              }
+            }
+          ]
+        },
+        "isolatedReferencePath": "docs/evidence/frontier-polish-20261019/after-body-8.webp",
+        "isolatedReferenceHash": "ca444b4cfc6e44b35f27f242bf0fdf2fcacf472e0f14ba295eb92a05c89663a5",
+        "gameplayContextPaths": [
+          "docs/evidence/frontier-polish-20261019/after-raider-redoubt-1280-day.webp",
+          "docs/evidence/frontier-polish-20261019/after-raider-redoubt-375-night.webp"
+        ],
+        "traitsToPreserve": [
+          "Frontier Raider Archer: ash-brown hood, charcoal cloak, leather panels, dull iron and rust-red bindings; bow and quiver retained.",
+          "Original foot anchor, logical size, label height, existing motion/facing, attack cues and combat geometry."
+        ],
+        "assetSpecificDependencies": [
+          {
+            "path": "src/prototype/visuals.js",
+            "sha256": "43eee7ac746c5ee55d56886f4f6e8a027fb91e4896ec976b908111f4c5b0c66c",
+            "sourceCommit": "c8a281d8cdd0ea7b352c44b399516e70aed4e313"
+          }
+        ]
+      }
+    },
+    {
+      "context": {
+        "originConversation": "Chat URL unavailable. On 19 October 2026 the owner rejected the prior Crown marksman preview as two uniforms/equipment sets and requested a substantial lightly equipped guerrilla/irregular redesign. Screenshot identified the Crown marksman.",
+        "decisionSummary": "Owner-directed guerrilla marksman redesign: one soft hood, dust scarf, cloth field tunic and half-cloak, leather bracer, one back quiver with three arrows and one recurve bow. No helmet, plate cuirass, pauldrons or second equipment pass. Crown affiliation is a small cloth armband; leaders have sewn rank marks.",
+        "decisionDate": "2026-10-19",
+        "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/320",
+        "contentDocuments": [
+          "docs/FRONTIER_VISUAL_POLISH_20261019.md"
+        ],
+        "locationAndLore": "Ashen Frontier occupation/inspection hierarchy; preserve existing Crown allegiance and role distinctions."
+      },
+      "decisions": {
+        "conceptAcceptance": "Owner authorized the issue #320 repair scope.",
+        "proceduralDesignAcceptance": "Owner explicitly rejected the previous candidate. The requested new design is implemented and inspected at native desktop/phone scale by the implementing agent; owner acceptance of this revised appearance remains unclaimed.",
+        "spriteProductionAuthorization": "Procedural changes only. No new sprite generated or registered.",
+        "generatedAppearanceAcceptance": "Not applicable: no generated image.",
+        "pendingCorrections": [
+          "Owner appearance review and final coordinated release validation remain pending."
+        ]
+      },
+      "reference": {
+        "sourceCommit": "0703dfaa986047889cc0028830f13c3a7a1deda9",
+        "ownerFilesAndBranches": [
+          "src/prototype/visuals.js @ 0703dfaa986047889cc0028830f13c3a7a1deda9"
+        ],
+        "exactEntityState": {
+          "selectors": [
+            "draw / enemy species archer / region === 3 / frontierRaider"
+          ],
+          "fixture": {
+            "region": 3,
+            "species": "archer",
+            "renderKind": "enemy"
+          },
+          "variants": [
+            {
+              "name": "ordinary",
+              "entity": {}
+            },
+            {
+              "name": "guardian",
+              "entity": {
+                "guard": true
+              }
+            },
+            {
+              "name": "officer",
+              "entity": {
+                "form": "ringleader"
+              }
+            },
+            {
+              "name": "Crown marksman",
+              "entity": {
+                "crownTroop": true
+              }
+            }
+          ]
+        },
+        "isolatedReferencePath": "docs/evidence/frontier-marksman-20261019/after-body-11.webp",
+        "isolatedReferenceHash": "ebb554f4eb9a7fafd1abb7e0216ae6d23b1eb678d0e6d0baf233785e240f2e64",
+        "gameplayContextPaths": [
+          "docs/evidence/frontier-marksman-20261019/after-marksman-1280-day.webp",
+          "docs/evidence/frontier-marksman-20261019/after-marksman-375-night.webp",
+          "docs/evidence/frontier-marksman-20261019/after-raider-redoubt-375-day.webp"
+        ],
+        "traitsToPreserve": [
+          "Owner-directed guerrilla marksman redesign: one soft hood, dust scarf, cloth field tunic and half-cloak, leather bracer, one back quiver with three arrows and one recurve bow. No helmet, plate cuirass, pauldrons or second equipment pass. Crown affiliation is a small cloth armband; leaders have sewn rank marks.",
+          "Actual Frontier allegiance/species, original foot anchor, label heights, all combat/save/attack timing and existing facing."
+        ],
+        "assetSpecificDependencies": [
+          {
+            "path": "src/prototype/visuals.js",
+            "sha256": "421c57878779da69750e1d8b22f346cc545c0520e2768c44e1c9b7dc1ccb9a57",
+            "sourceCommit": "0703dfaa986047889cc0028830f13c3a7a1deda9"
+          }
+        ],
+        "variantReferencePaths": [
+          {
+            "variant": "Raider",
+            "path": "docs/evidence/frontier-marksman-20261019/after-body-8.webp",
+            "sha256": "47dcab41366d9df6f4310b1e5db001358cfed537b3d13789fc33d22607db4c56"
+          },
+          {
+            "variant": "guardian",
+            "path": "docs/evidence/frontier-marksman-20261019/after-body-9.webp",
+            "sha256": "d555a9e32b96d8567e789646e59dba1780d348cb1ba3c53fe9cb65587a9f5b91"
+          },
+          {
+            "variant": "officer",
+            "path": "docs/evidence/frontier-marksman-20261019/after-body-10.webp",
+            "sha256": "b7f482ea7dd0cf134395818cee2b76a7028340b9e312389c761e19080a26f372"
+          },
+          {
+            "variant": "Crown marksman",
+            "path": "docs/evidence/frontier-marksman-20261019/after-body-11.webp",
+            "sha256": "ebb554f4eb9a7fafd1abb7e0216ae6d23b1eb678d0e6d0baf233785e240f2e64"
+          }
+        ]
+      }
+    }
+  ]
+}

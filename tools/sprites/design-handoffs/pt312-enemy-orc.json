@@ -4,31 +4,30 @@
   "designId": "pt312-enemy-orc",
   "name": "enemy:orc",
   "kind": "enemy",
-  "nextAction": "After explicit validation authorization, capture and review this exact procedural state in the native production renderer; retain every adverse result. No image acceptance is inferred from source.",
+  "nextAction": "Owner authorized merging the visual update on 19 October 2026. Use the combined candidate and the normal shared release checks; retain exact-source receipts and archived local source provenance. No new sprite generation.",
   "context": {
-    "originConversation": "Chat URL unavailable; dated owner feedback retained in PR #313 / Issue #312.",
-    "decisionSummary": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry. Owner requests a broad Ogre-quality rounded/organic pass, preserving species and material identity.",
-    "decisionDate": "2026-10-16",
-    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/313",
+    "originConversation": "Chat URL unavailable. Owner requested implementation of the three requirements recorded in issue #320 on 19 October 2026.",
+    "decisionSummary": "Orc lineage: ordinary melee, axe thrower, guardian, officer and Crown Orc.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/320",
     "contentDocuments": [
-      "docs/PR313_WORK_IMPLEMENTATION_20261016.md",
-      "docs/PR313_INTEGRATED_SOURCE_AUDIT_20261016.md"
+      "docs/FRONTIER_VISUAL_POLISH_20261019.md"
     ],
-    "locationAndLore": "Retain the original contract and lore in tools/community-snapshot/procedural-art-inventory.json; this record appends a candidate and does not replace accepted references."
+    "locationAndLore": "Ashen Frontier occupation/inspection hierarchy; preserve existing Crown allegiance and role distinctions."
   },
   "decisions": {
-    "conceptAcceptance": "Owner endorsed Ogre shape language as the reference direction; no individual native candidate review yet.",
-    "proceduralDesignAcceptance": "Implementation authorized. Appearance acceptance pending native review.",
-    "spriteProductionAuthorization": "This continuation authors procedural source only; no new sprite was generated or registered.",
-    "generatedAppearanceAcceptance": "No generated candidate or appearance acceptance.",
+    "conceptAcceptance": "Owner authorized the issue #320 repair scope.",
+    "proceduralDesignAcceptance": "Implemented and reviewed by the implementing agent at native size. Owner has not reviewed this candidate.",
+    "spriteProductionAuthorization": "Procedural changes only. No new sprite generated or registered.",
+    "generatedAppearanceAcceptance": "Not applicable: no generated image.",
     "pendingCorrections": [
-      "Native review, isolated reference and actual gameplay capture are paused by the owner."
+      "Owner appearance review and final coordinated release validation pending."
     ]
   },
   "reference": {
-    "sourceCommit": "9dcb09167849865c6c838d16305ff76e872c7d58",
+    "sourceCommit": "c8a281d8cdd0ea7b352c44b399516e70aed4e313",
     "ownerFilesAndBranches": [
-      "src/prototype/visuals.js @ 9dcb09167849865c6c838d16305ff76e872c7d58"
+      "src/prototype/visuals.js @ c8a281d8cdd0ea7b352c44b399516e70aed4e313"
     ],
     "exactEntityState": {
       "contractId": "enemy:orc",
@@ -67,24 +66,24 @@
       ],
       "additionalVariants": []
     },
-    "isolatedReferencePath": null,
-    "isolatedReferenceHash": null,
+    "isolatedReferencePath": "docs/evidence/frontier-polish-20261019/after-body-0.webp",
+    "isolatedReferenceHash": "0de862d43c4fdb59a297791cd3a310d1e8c95dab25a4d704b17c85aadb9650bf",
     "gameplayContextPaths": [
-      "tests/community-snapshot-browser.test.cjs",
-      "tools/community-snapshot/pt312-presentation-overlay.json"
+      "docs/evidence/frontier-polish-20261019/after-lineage-1280-day.webp",
+      "docs/evidence/frontier-polish-20261019/after-lineage-375-night.webp"
     ],
     "traitsToPreserve": [
-      "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
-      "Original species, silhouette/scale, palette, functional equipment and ground anchor.",
-      "Original collision, attack timing, active sprites and retained generator originals."
+      "Orc lineage: ordinary melee, axe thrower, guardian, officer and Crown Orc.",
+      "Original foot anchor, logical size, label height, existing motion/facing, attack cues and combat geometry."
     ],
     "assetSpecificDependencies": [
       {
         "path": "src/prototype/visuals.js",
-        "sha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
-        "sourceCommit": "9dcb09167849865c6c838d16305ff76e872c7d58"
+        "sha256": "43eee7ac746c5ee55d56886f4f6e8a027fb91e4896ec976b908111f4c5b0c66c",
+        "sourceCommit": "c8a281d8cdd0ea7b352c44b399516e70aed4e313"
       }
-    ]
+    ],
+    "archivedSourcePath": "tools/visual-review/source-baselines/7e3df5ebc82ded3b19b05934865a8499d14f7904.js"
   },
   "scope": {
     "catalogIds": [],
@@ -129,15 +128,17 @@
     ]
   },
   "animationRequirements": {
-    "status": "existing behavior retained; no new frame assets",
+    "status": "Existing motion/facing retained; no new clips or sprites.",
     "gameplayStates": [
-      "native normal/TRUE/rank or construction states where applicable",
-      "day/night and movement/standing where applicable"
+      "standing",
+      "combat cue/nameplate overlays",
+      "normal/TRUE and rank forms as applicable",
+      "day/night"
     ],
     "directions": [
-      "existing supported directions"
+      "existing renderer facing in both directions"
     ],
-    "pivotContract": "Retain original world foot anchor and logical scale.",
+    "pivotContract": "Retain existing foot anchor and logical scales. No hitbox or timing change.",
     "staticFallbackKey": null,
     "linkedFrameJobs": []
   },
@@ -149,5 +150,90 @@
     "rollbackRevision": null,
     "releaseCommit": null,
     "releaseEvidence": null
-  }
+  },
+  "priorProceduralRevisions": [
+    {
+      "context": {
+        "originConversation": "Chat URL unavailable; dated owner feedback retained in PR #313 / Issue #312.",
+        "decisionSummary": "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry. Owner requests a broad Ogre-quality rounded/organic pass, preserving species and material identity.",
+        "decisionDate": "2026-10-16",
+        "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/313",
+        "contentDocuments": [
+          "docs/PR313_WORK_IMPLEMENTATION_20261016.md",
+          "docs/PR313_INTEGRATED_SOURCE_AUDIT_20261016.md"
+        ],
+        "locationAndLore": "Retain the original contract and lore in tools/community-snapshot/procedural-art-inventory.json; this record appends a candidate and does not replace accepted references."
+      },
+      "decisions": {
+        "conceptAcceptance": "Owner endorsed Ogre shape language as the reference direction; no individual native candidate review yet.",
+        "proceduralDesignAcceptance": "Implementation authorized. Appearance acceptance pending native review.",
+        "spriteProductionAuthorization": "This continuation authors procedural source only; no new sprite was generated or registered.",
+        "generatedAppearanceAcceptance": "No generated candidate or appearance acceptance.",
+        "pendingCorrections": [
+          "Native review, isolated reference and actual gameplay capture are paused by the owner."
+        ]
+      },
+      "reference": {
+        "sourceCommit": "9dcb09167849865c6c838d16305ff76e872c7d58",
+        "ownerFilesAndBranches": [
+          "src/prototype/visuals.js @ 9dcb09167849865c6c838d16305ff76e872c7d58"
+        ],
+        "exactEntityState": {
+          "contractId": "enemy:orc",
+          "selectors": [
+            "draw / enemy species orc"
+          ],
+          "fixture": {
+            "region": 0,
+            "enemy": "orc"
+          },
+          "variants": [
+            {
+              "name": "ordinary",
+              "entity": {
+                "ranged": false
+              }
+            },
+            {
+              "name": "ranged",
+              "entity": {
+                "ranged": true
+              }
+            },
+            {
+              "name": "guardian",
+              "entity": {
+                "guard": true
+              }
+            },
+            {
+              "name": "ringleader",
+              "entity": {
+                "form": "ringleader"
+              }
+            }
+          ],
+          "additionalVariants": []
+        },
+        "isolatedReferencePath": null,
+        "isolatedReferenceHash": null,
+        "gameplayContextPaths": [
+          "tests/community-snapshot-browser.test.cjs",
+          "tools/community-snapshot/pt312-presentation-overlay.json"
+        ],
+        "traitsToPreserve": [
+          "Direct PT-011 contour or PT-007/008/009/013/017 presentation dependency; retain authored identity and authoritative geometry.",
+          "Original species, silhouette/scale, palette, functional equipment and ground anchor.",
+          "Original collision, attack timing, active sprites and retained generator originals."
+        ],
+        "assetSpecificDependencies": [
+          {
+            "path": "src/prototype/visuals.js",
+            "sha256": "10cd9c3f0e462576ce9dcb067c8596bad576837ab3556e4918f4aac5821f4949",
+            "sourceCommit": "9dcb09167849865c6c838d16305ff76e872c7d58"
+          }
+        ]
+      }
+    }
+  ]
 }
