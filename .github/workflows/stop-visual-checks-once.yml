@@ -1,0 +1,27 @@
+name: Stop owner-cancelled visual checks
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/stop-visual-checks-once.yml]
+permissions:
+  contents: read
+  actions: write
+jobs:
+  cancel-requested-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Cancel only the visual-update checks and this control commit's normal checks
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: joedoragon-glitch/azeroth-chronicles-prototype
+        shell: bash
+        run: |
+          gh api --method POST "repos/$GH_REPO/actions/runs/39320006130/cancel" || true
+          for attempt in 1 2 3 4 5 6; do
+            ids=$(gh api "repos/$GH_REPO/actions/workflows/pages.yml/runs?per_page=30" --jq ".workflow_runs[] | select(.head_sha == \"$GITHUB_SHA\" and .status != \"completed\") | .id")
+            for id in $ids; do
+              gh api --method POST "repos/$GH_REPO/actions/runs/$id/cancel" || true
+            done
+            sleep 5
+          done
