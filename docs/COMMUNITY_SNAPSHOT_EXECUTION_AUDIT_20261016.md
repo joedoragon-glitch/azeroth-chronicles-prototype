@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Community Snapshot execution audit — 16 October 2026
 
 Historical audit of `7581ed12d57e70e42bbaed6b8223bc8d4c709b22`; the [follow-up source audit](COMMUNITY_SNAPSHOT_SOURCE_REAUDIT_20261016.md) records corrections and the current source-readiness verdict. Original findings below are preserved.

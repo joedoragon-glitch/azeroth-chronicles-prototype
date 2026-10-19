@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Sprite workflow audit · 9 October 2026
 
 Historical audit and fixes. The production sequence below records the pilot stage; it is not an instruction to repeat completed Paladin/Goblin work. Use the current [original-master policy](SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md) and latest batch-specific handoff in [#160](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160). Preserve completed work remotely before long validation; a prepared, reviewed, integrated or deployed status must match the committed evidence.

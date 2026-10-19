@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Combat and party housekeeping — prepared v0.8.88
 
 Joel narrowed this pass to the tangled combat and party responsibilities, then explicitly requested separate ownership for hero profession skills and boss-related attacks. Storage-denial handling, malformed imports and long-session stress boundaries are deferred. The baseline is the reconciled regional release, commit `6a20a291fc0547e372f699e597f1151d08ec6bb8` (v0.8.87). The earlier regional branches and the other chat's checkout are untouched.

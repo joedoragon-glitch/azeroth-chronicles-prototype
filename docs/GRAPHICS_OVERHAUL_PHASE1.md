@@ -1,5 +1,7 @@
 # Graphics overhaul — canonical sprite production contract
 
+> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+
 ## Governing rule
 
 The current production procedural visuals are **canon**.
@@ -134,11 +136,13 @@ Review, in order:
 5. same dominant and secondary color relationships;
 6. same species/class/building identity;
 7. no invented lore-bearing details;
-8. improved readability or material finish at 1280×800, 375×812 and 320×568.
+8. improved readability or material finish at the supported desktop and phone profiles, including 1280×800 and 375×800 or landscape rotation. 320×568 is historical and no longer a release target.
 
 If the new sprite is attractive but fails those checks, it is rejected.
 
-## Phase 2 restart
+## Historical Phase 2 restart
+
+The following sequence records the old pilot stage, already followed by accepted pilot releases. It must not restart those completed assets. Production is currently paused; future scope comes from [the unified reconciliation](NEXT_UPDATE_RECONCILIATION_20261018.md).
 
 The previous Paladin canary is not automatically restored. It predates this stricter canon rule and must be judged against the current procedural Paladin like any new candidate.
 

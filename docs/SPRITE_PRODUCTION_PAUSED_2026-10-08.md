@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Historical interruption checkpoints
 
 Joel resumed full production on 8 October 2026. The pauses below are retained historical records; the current context owns the next action. Both original remote branches remain unchanged.

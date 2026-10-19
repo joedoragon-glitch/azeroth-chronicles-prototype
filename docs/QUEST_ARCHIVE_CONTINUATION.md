@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Quest and Archive continuation — 9 October 2026
 
 Source conversation: https://chatgpt.com/share/6ac91036-0034-83ea-95a3-af377063619b

@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Cooldown-only combat · continuation handover
 
 **Functional integration and measured balance audit are complete.** [PR #183](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/183) is merged and deployed as v0.8.119 at `48e2c0e2550c2735fcd45864f5d7aa75b85f9156`. [Release run 37978681773](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/37978681773) passed main regressions, desktop/phone browsers, mobile WebKit, assets, deployment, exact published SHA, live smoke and Keeper Archive. Always inspect current GitHub/main/CI before new work; the SHA above is the audited functional release, not a promise that main never advances.

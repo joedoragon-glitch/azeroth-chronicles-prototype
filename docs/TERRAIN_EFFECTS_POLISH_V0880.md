@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Terrain and effects polish — v0.8.80
 
 This pass extends the procedural canon housekeeping to terrain and effects. It preserves routes, collision, entity placement, save schema, progression, damage, mana costs, cooldowns and rewards. No raster assets or sprite keys are added.

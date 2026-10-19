@@ -1,5 +1,7 @@
 # Recorded playback, mixing and audition · v0.8.89
 
+> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+
 **The production score and game menu sound are activated in v0.8.90. See [AUDIO_SOUND_PASS.md](AUDIO_SOUND_PASS.md). The implementation contracts below remain current; statements about an empty registry and unchanged menu behavior describe the preceding engineering phase.**
 
 Joel authorized the next engineering phase after the v0.8.88 audio housekeeping. The multi-file Web Audio stack is retained. This release makes recordings and contextual production practical without composing or activating a replacement soundtrack. Warm fantasy remains the broad direction; existing regional canon and all eleven boss identities must guide the later creative pilot.

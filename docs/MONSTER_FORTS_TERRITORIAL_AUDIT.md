@@ -1,3 +1,5 @@
+> **Reference boundary — 19 October 2026:** Design/ownership rules below remain reference material where consistent with current source and later director decisions. Version numbers, asset counts, historical verification and next-stage instructions describe their own checkpoints. Development is paused; use [current state](DEVELOPMENT_STATE.md) and [the documentation index](DOCUMENTATION_INDEX.md) before any new work.
+
 # Territorial Monster Forts — integrated placement audit
 
 ## Decision and boundary · 9 October 2026

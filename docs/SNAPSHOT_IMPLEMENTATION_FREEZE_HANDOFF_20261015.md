@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Community Snapshot — implementation-freeze handoff (15 October 2026)
 
 **Status:** implementation-complete *candidate*, not a certified release. One active **draft PR #300** / branch `implementation/director-snapshot-20261013`. Last implementation/version carrier commit at handoff start: `01f9d6ab5eabd16926d55792888a864edc57f909`. The final exact head is the GitHub PR head after this document/comment. **No merge, deployment, tag, release or community posting authorized.**

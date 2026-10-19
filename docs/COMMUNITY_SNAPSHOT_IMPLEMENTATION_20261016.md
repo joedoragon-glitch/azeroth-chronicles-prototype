@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Community Snapshot implementation — 16 October 2026
 
 > **Later integration addendum (16 October 2026):** This document describes the Community-only checkpoint `ca33acb14d92cbce12633eaab702318343dce509`. Its historical source PASS remains valid for that commit; the active untested two-package integration is now on `integration/community-snapshot-311-20261016`. See [the combined source integration audit](COMMUNITY_SNAPSHOT_PR311_INTEGRATION_AUDIT_20261016.md). A third package is pending, so no validation authorization is requested yet.

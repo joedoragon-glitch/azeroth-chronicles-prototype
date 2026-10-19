@@ -1,3 +1,5 @@
+> **Reference boundary — 19 October 2026:** Design/ownership rules below remain reference material where consistent with current source and later director decisions. Version numbers, asset counts, historical verification and next-stage instructions describe their own checkpoints. Development is paused; use [current state](DEVELOPMENT_STATE.md) and [the documentation index](DOCUMENTATION_INDEX.md) before any new work.
+
 # v0.9 monster-attack housekeeping — authoritative audit handoff
 
 **Status:** read-only registry and regression foundation integrated via [PR #216](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/216); historical draft [#212](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/212) was closed as superseded. The author has settled MA-01/MA-02 without changing the underlying attacks. This is **not** a certification that all skills are correct.  

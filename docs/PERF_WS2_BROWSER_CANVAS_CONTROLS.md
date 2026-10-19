@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # WebKit occlusion comparison fixture controls
 
 The original one-frame differential fixture failed on WebKit 26.5 with six changed channels (maximum channel delta 29) in Vale, desktop 1280x800, zoom 1. Full game state remained unchanged. Production sources were not edited during this investigation. The existing frozen 16000ms presentation clock was effective; a missing clock freeze was not the cause.

@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # v0.7.0 mechanics audit implementation
 
 This release implements the 23 findings from the October 4 v0.6.2 audit. The original audit remains the baseline; this document records the resulting behavior and checks. It does not claim that automated checks establish human combat comfort, a balanced full campaign, or pleasant audio on every device.

@@ -1,5 +1,7 @@
 # World proportion, edge-space and encounter-density guardrails
 
+> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+
 Status: **authorized layout and sprite-production policy; geometry changes pending measured audit**. Added 9 October 2026 from Joel's instructions. This is not a claim that world bounds or individual placements have already been changed or tested.
 
 ## Scope and intent

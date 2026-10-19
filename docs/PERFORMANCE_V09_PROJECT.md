@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # v0.9 performance optimization project
 
 Performance optimization project authorized 2026-10-10. Shared baseline: main v0.8.137 `c6ce1af236bddd7ca881903499c4cf5de175f9e2`, tree `0857ea83ad3acd1d2e8f2f33eb4fce4ff590e99d`. Separate from art #160/#217 and beta release #213; no v0.9 publication.

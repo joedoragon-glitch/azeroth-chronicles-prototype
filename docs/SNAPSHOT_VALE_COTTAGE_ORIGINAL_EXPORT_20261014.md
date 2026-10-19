@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Greenwood cottage — retained original-master 150% adaptation, PR #300
 
 **Source:** paused [PR #217](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/217), exact head `813ecab1f539316257aa400f4f0ab6368ea17d11`; this PR's old active `prop:vale-cottage:vale` revision was `3c35ef58fe76061f5fb4f017be965947afba71885b6897781d59b7253237cf15`.

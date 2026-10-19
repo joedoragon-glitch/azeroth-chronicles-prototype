@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Community Snapshot performance scope
 
 Status: SOURCE ASSESSMENT ONLY. No current-version performance measurement or combat/AI profiling has run because the owner prohibited execution until final authorization. No FPS, memory reduction or load-time gain is claimed.

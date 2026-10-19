@@ -1,5 +1,7 @@
 # Environmental sound · v0.8.93
 
+> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+
 Environmental playback is independent of the soundtrack. `audio-environment.js` owns one active loop, at most one outgoing loop, scene selection, load cancellation and gain changes. Music/form changes do not restart the environmental transport. Scene observation never changes gameplay, weather, collisions, saves or progression.
 
 ## Creative direction
@@ -47,6 +49,6 @@ Bounds are illustrative for a new file. Registration marks the replacement as im
 
 Rapid scene changes cancel stale starts; a departing bed fades out even while the next file loads. Active and outgoing buffers use the shared pinned 32 MiB decoded LRU cache, source limits and cleanup. Pause freezes the context and resumes the same active loop. Catalog replacement stops old sources and reloads the same scene; invalid replacement leaves playback untouched. Failed loads use the original synthesized background without retrying every frame. Environmental diagnostics are separate from music errors in `recordingStatus()`.
 
-The 14 beds add approximately 3.9 MiB, bringing 97 registered files to 23.9 MiB, below the 32 MiB encoded budget. Decoding stays lazy. All registered files join the versioned offline cache. Desktop and phone use the same environmental owner; the phone profile reduces ambience and retains mono compatibility. The listening room can audition individual beds and full contextual scenes without loading app/persistence or touching campaign saves. Replaying an audition replaces its previous recording instead of stacking loops.
+The 14 beds contributed approximately 3.9 MiB in the original release. The current full manifest has 127 registered assets (83 music, 14 ambience, 30 effects), approximately 24.5 MiB of source files, below the 32 MiB encoded budget. Decoding stays lazy. All registered files join the versioned offline cache. Desktop and phone use the same environmental owner; the phone profile reduces ambience and retains mono compatibility. The listening room can audition individual beds and full contextual scenes without loading app/persistence or touching campaign saves. Replaying an audition replaces its previous recording instead of stacking loops.
 
 Release follows `AUDIO_AUTHORING.md`: bump version, regenerate entries/service worker, run catalog/format/build checks, regression tests and desktop/phone audio/offline browser checks before publishing.

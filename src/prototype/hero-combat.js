@@ -702,7 +702,7 @@
         return this.cast(1, null, false, null, true);
       }
       cast(slot, targetId, charged = false, encountersAtStart = null, automatic = false) {
-        if (this.s.mode === 'developer' && slot === 1) return false;
+        if (this.s.mode === 'developer' && slot === 1 && automatic) return false;
         const i = slot - 1,
           rank = this.hero.skills[i],
           isCharged = !!charged && slot >= 1 && slot <= 8;

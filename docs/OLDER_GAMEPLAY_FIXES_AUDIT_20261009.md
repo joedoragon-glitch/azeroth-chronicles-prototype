@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Older gameplay-fix reconciliation — 9 October 2026
 
 Baseline: `main` at `ed85b1b2ca620f1d12ce1c6a9a089d72cc9274ee` (v0.8.131). This is an audit of retained behavior and current implementation, **not** a merge of historical branches. The shipped product is the multi-file GitHub Pages/PWA Campaign, with reversible legacy MP save state. Version v0.8.132 contains only the targeted repairs and regression isolation below.

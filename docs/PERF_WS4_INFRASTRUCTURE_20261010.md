@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # v0.9 performance · infrastructure workstream
 
 Baseline: `c6ce1af236bddd7ca881903499c4cf5de175f9e2`; branch: `perf/v09-infrastructure-20261010`. The root integration owns generated `sw.js`, package version and final release checks. Runtime ownership is limited to `templates/service-worker.js`; `audio-assets.js` and `persistence.js` were inspected and retained byte for byte.

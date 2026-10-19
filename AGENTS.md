@@ -1,5 +1,8 @@
 # Project working rules
 
+- Before recovering or starting work, read `docs/DEVELOPMENT_STATE.md` and `docs/DOCUMENTATION_INDEX.md`. The October snapshot is published and feature development is on break. Draft PR #319 is the single future workstream; old PR #296 policy is historical. Recovery desk: https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297. The user does not need to reconstruct prior chats.
+- Current break closeout is documentation/housekeeping only. Whole-game regression, visual polish, co-op modernization, old sprite adoption and outreach are deferred until the owner resumes them. Preserve branches, original artwork and evidence; forum silence is not QA evidence. A source checkpoint never implies merge/deployment authority.
+
 - The multi-file Campaign application is canonical. Never require a self-contained HTML release or impose obsolete single-file limits.
 - Read `docs/ARCHITECTURE.md`, `docs/DEVELOPMENT_STATE.md` and relevant gameplay decisions before changing a subsystem. Preserve unfinished authored maps and the procedural sprite canon.
 - New visible content and lore follow `docs/DESIGN_TO_SPRITE_WORKFLOW.md`: retain the accepted procedural design, approval scope and per-design handoff so a later sprite request in any chat can resume from that canon. Reconcile assets for characters, hero classes, monsters, companions, NPCs, locations and objects; preserve stable IDs and record replacement/animation requirements. The implementing agent owns these records and technical work.

@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 > Current consolidation note (15 October 2026): the complete hero and AV branches are now incorporated into PR #308; PR #305 remains excluded. Slow reduces movement **and skill cooldown recovery** at 65% allied / 85% enemy recovery. Historical movement-only or pending-#305 statements below describe earlier source snapshots. Silence, damage interruption and player-learning paths are reconciled in [the combined hero ledger](HERO_SKILLS_CONSOLIDATION_20261015.md) and [current conditions register](COMBAT_CONDITIONS_V09.md). No combined tests/builds/CI have run.
 
 # Hero class skills: implementation checkpoint and later review

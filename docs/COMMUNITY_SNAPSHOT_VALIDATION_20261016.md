@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # One consolidated Community Snapshot validation cycle
 
 **Not started. Owner authorization is required.** No tests, builds, browser runs, simulations, benchmarks, CI dispatches or deployments were run during implementation. Formatter write-only processing is not test evidence. A later owner instruction expressly authorizes opening **one draft integration PR for Work-mode handoff** before validation; the existing PR trigger can launch checks, so use a latest-commit `[skip ci]` instruction and inspect Actions run metadata. No manual dispatch or validation execution is authorized.

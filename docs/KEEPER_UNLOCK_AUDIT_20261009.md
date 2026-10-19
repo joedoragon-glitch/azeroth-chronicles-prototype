@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Drowned Keeper interaction audit — 9 October 2026
 
 Baseline: main `05e069f2`, v0.8.126. The released implementation comes from PR #185; closed draft #172 must not be merged again.

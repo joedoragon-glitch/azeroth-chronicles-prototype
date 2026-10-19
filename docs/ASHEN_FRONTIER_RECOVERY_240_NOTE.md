@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Ashen Frontier: Burned Hamlet domestic recovery (draft #240)
 
 Owner decision, 12 October 2026: Frontier troops already visibly communicate Crown affiliation; leave their existing uniforms, names, species and ranks intact. Burned Hamlet should become a normal and comfortable village gradually, **without erasing its remaining ruins**.

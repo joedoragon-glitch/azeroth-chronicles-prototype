@@ -1,5 +1,7 @@
 # Abyss Bastion: the Dark Lord's air-superiority project
 
+> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+
 Joel's 8 October 2026 decision supersedes the earlier unresolved dragon politics and generic containment interpretation.
 
 The Dark Lord already rules the land and wants to rule the air above it. He chose the purple Abyss Dragon because it matches his preferred clothing colors. The dragon belongs to him and is his personal flying mount: his dragon equivalent of Air Force One. He enjoys flying and has already flown on it.

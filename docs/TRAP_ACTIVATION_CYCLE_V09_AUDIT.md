@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Trap activation-cycle design audit — v0.9 transition
 
 **Audit outcome: RETAIN the once-per-trap, per-unit, per-activation contact limit for v0.9.** It is an explicit historical combat contract, not an accidental obsolete guard. This is a risk assessment, not approval of new trap damage or timing. Revisit only through playtest evidence and a separate, class/party/difficulty balance decision.

@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Mechanics audit — v0.8.1, 4 October 2026
 
 This audit compares the current prototype with the twelve expansion design documents in **Azeroth Chronicles Expansion Design October 2026** and the later author decisions recorded in the repository. It concentrates on executable rules and persistent state. The original documents explicitly leave numerical tuning and human playtesting open; later author changes to ringleader health, pursuit, enemy rewards, and controls supersede their initial values.

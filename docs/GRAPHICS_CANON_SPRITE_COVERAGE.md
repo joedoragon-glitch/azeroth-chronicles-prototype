@@ -1,3 +1,5 @@
+> **Historical specification — 19 October 2026:** This catalog/plan records an earlier source census or requirement. It is not a present production queue or proof of current coverage. Later decisions and [current reconciliation](NEXT_UPDATE_RECONCILIATION_20261018.md) govern future scope; development is paused. Preserve stable IDs and provenance.
+
 # Phase 2A — Canon sprite coverage audit
 
 ## Purpose

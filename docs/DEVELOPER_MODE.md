@@ -1,5 +1,7 @@
 # Developer Mode · testing-only combat laboratory
 
+> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+
 Open the development URL with `?developer=1`, for example,
 `/index.html?developer=1` or `/phone.html?developer=1`.
 
@@ -16,8 +18,10 @@ Normal/Nightmare campaign. v4 save compatibility is retained.
 
 - Fatal damage immediately refills hero HP without triggering death statistics,
   succession or penalties. Nonfatal damage and enemy AI remain real.
-- Skill 1 is disabled in engine and UI, including movement auto-attack and
-  charged/keyboard/touch activation. Other skills remain available.
+- Skill 1 is available manually with keyboard, mouse and touch, including its
+  normal tap and charged form. Movement auto-attack remains disabled in both
+  the shell and engine; moving does not spend its cooldown or attack a target.
+  Other skills remain available.
 - The damage monitor shows the last three hits taken and dealt (newest first),
   and separate five-second rolling incoming/outgoing DPS, updated in real time.
   Only hero-sourced outgoing hits count, not companions. Telemetry is transient

@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Item, equipment and inheritance integrity — pre-v0.9 fix pass
 
 **Patch baseline:** v0.8.136 (branch `fix/pre-v09-item-equipment-integrity`).

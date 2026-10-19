@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Quest interiors and controls — v0.8.2
 
 The old "Recover 3 crates from the orchard" text was misleading. The three pickups existed, but two were scattered to other Vale landmarks. This update uses the orchard building as an actual entrance. The same one-outdoor, two-indoor structure applies to all four three-pickup quests: Vale orchard watchtower, Marches stranded wagon hold, Highlands quarry storehouse, and Crown foundry storeroom. Frontier has an escort quest and no three-crate objective.

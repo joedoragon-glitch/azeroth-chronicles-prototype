@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Community Snapshot viewport-rendering optimization
 
 **Status:** Integrated source candidate for draft PR #300; not a release or a measured hardware FPS claim. Original implementation and exact-head full-CI pass: [PR #294](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/294), commit `e3a406194ba1c293695de46070df0744233cb168`.

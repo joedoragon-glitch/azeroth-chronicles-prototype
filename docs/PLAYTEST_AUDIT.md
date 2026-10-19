@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Prototype audit — 4 October 2026
 
 The expanded v0.6 prototype implements five regions, ten settlements, five dungeons, ten four-attack boss families, ten captive specialists, thirty quests, paid skill learning/upgrades, equipment tiers, supplies, companion commands and spending, finite gathering, construction, terrain/bridges/transport, anti-kiting resets, night scaling, saved ringleader/TRUE rules, the awakened dungeon finale, sparse peaceful habitats, Nightmare, Succession, original location and combat music, peaceful arrangements, ambience, effects, save validation and local playtest exports.

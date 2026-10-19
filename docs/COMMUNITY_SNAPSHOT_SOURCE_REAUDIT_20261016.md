@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Community Snapshot — follow-up source audit
 
 **Verdict: PASS FOR SOURCE READINESS. All seven findings are addressed in source. No known source-readiness blocker remains from this review.** This is permission to request validation authorization, not runtime, aesthetic, balance, performance or release approval. No validation execution is authorized by this verdict.

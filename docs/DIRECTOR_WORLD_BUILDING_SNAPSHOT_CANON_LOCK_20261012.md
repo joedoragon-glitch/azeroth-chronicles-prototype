@@ -1,5 +1,7 @@
 # So I Became the Dark Lord's Problem — director-approved worldbuilding and snapshot canon lock
 
+> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+
 **Decision date:** 12 October 2026  
 **Authority:** Author's completed 45-question director ballot, including custom rulings and explicitly approved final review.  
 **Status:** **DIRECTORIAL CANON APPROVED; DOCUMENTATION ONLY.** This document is not a source patch, gameplay implementation, QA certificate, merge instruction, Pages deployment, or snapshot publication approval.  

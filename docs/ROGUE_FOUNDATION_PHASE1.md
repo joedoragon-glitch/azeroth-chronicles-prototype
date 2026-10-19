@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Rogue behavior and tiered survivability — preparation phase
 
 > Historical preparation snapshot, superseded by the shipped [phase-two behavior](ROGUE_AI_PHASE2.md) and [integration audit](ROGUE_PR146_INTEGRATION_AUDIT.md). Statements below that AI is inactive or phase two is outstanding describe that earlier phase, not current production. Preserve the record; do not rebuild or disable the live rogue system from these instructions. New work follows [mechanic development](MECHANIC_DEVELOPMENT.md).

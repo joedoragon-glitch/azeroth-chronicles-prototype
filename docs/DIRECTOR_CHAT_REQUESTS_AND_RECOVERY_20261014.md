@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # PR #300 — Director requests from the 14 October pre-certification audit chat
 
 **Status:** authoritative **conversation handoff / acceptance checklist**, not a replacement for the locked canon in PR #298. Recorded on the existing draft PR #300, branch `implementation/director-snapshot-20261013`. The explicit purpose is that UI streaming loss, chat limits, or client–server sync errors **must not erase or silently demote director requests**. Check this file and the latest PR conversation before resuming; update it as requirements are implemented. Preserve every applicable request even if the chat disappears.

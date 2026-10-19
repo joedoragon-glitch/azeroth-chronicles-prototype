@@ -9,7 +9,7 @@ assert.equal(normal.developerSummon('boss:thorn:normal'), null);
 assert.equal(normal.developerSummonOptions().length, 0);
 
 const dev = new Campaign('developer', 'paladin', () => 0.5);
-assert.equal(dev.cast(1), false, 'Skill 1 is disabled');
+assert.equal(dev.castMovementBasic(), false, 'movement auto-attack is disabled');
 assert.deepEqual(dev.developerSummonOptions().filter((x) => x.kind === 'boss').map((x) => x.form).slice(0, 2), ['normal', 'true']);
 assert(dev.developerSummonOptions().some((x) => x.id === 'captain:supply-vale'));
 assert(!dev.developerSummonOptions().some((x) => x.id === 'captain:frontier-overseer'));
@@ -92,4 +92,24 @@ persistence.save(dev, profile);
 assert.equal(profile.activeMode, 'normal');
 assert(persistence.exists('developer'));
 assert(!persistence.exists('normal'));
-console.log('PASS Developer Mode isolation, immortality, disabled Skill 1, hostile regional summons and combat telemetry');
+for (const heroClass of ['paladin', 'mage', 'ranger']) {
+  for (const charged of [false, true]) {
+    const game = new Campaign('developer', heroClass, () => 0.5);
+    game.zone().props = [];
+    game.s.mercyTime = 0;
+    Object.assign(game.hero, { x: 500, y: 500 });
+    const enemy = game.makeEnemy(
+      { species: 'goblin', name: 'Manual attack target', level: 1, hp: 10000, damage: 0, gold: 0, xp: 0 },
+      { x: 550, y: 500 },
+    );
+    game.zone().enemies = [enemy];
+    assert.equal(game.castMovementBasic(), false, heroClass + ': automatic basic refused');
+    assert.equal(game.cast(1, enemy.id, charged, null, true), false, 'automatic intent cannot bypass the guard');
+    assert.equal(game.hero.cd[0], 0, 'refused auto-attack consumes no cooldown');
+    assert.equal(enemy.hp, enemy.maxHp, 'refused auto-attack deals no damage');
+    assert.equal(game.cast(1, enemy.id, charged), true, heroClass + ': manual Skill 1 works');
+    assert(game.hero.cd[0] > 0, 'manual attack retains its normal cooldown');
+    assert(enemy.hp < enemy.maxHp || game.s.projectiles.length > 0, 'manual attack damages or launches a real projectile');
+  }
+}
+console.log('PASS Developer Mode isolation, immortality, manual Skill 1, disabled movement auto-attack, hostile regional summons and combat telemetry');

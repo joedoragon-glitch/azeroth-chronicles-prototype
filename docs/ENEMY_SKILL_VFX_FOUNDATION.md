@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Enemy skill VFX · foundation and independent audit gate
 
 **Implementation update — v0.8.113:** The production work described below is implemented by PRs #161/#162. Read [ENEMY_SKILL_VFX_AUDIT.md](ENEMY_SKILL_VFX_AUDIT.md) for completed coverage and current evidence. The remaining text records the original foundation/production contract and its baseline findings.

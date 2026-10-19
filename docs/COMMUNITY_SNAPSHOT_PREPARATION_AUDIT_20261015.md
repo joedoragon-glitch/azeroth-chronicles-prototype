@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Community Snapshot — independent source/handoff audit, 15 October 2026
 
 **Status: SOURCE-ONLY AUDIT — NOT IMPLEMENTED OR TESTED.** Scope: assess the preparation commit `b7c8cc8f3a0f7f79e9e8209d19ab49f90937fc5a` and the exact PR #308 candidate `70cc701f41c41e0eec6c3c17dfb85eb0363ad49c`. This is an adversarial review of the preparation, not an assertion that visual, balance, lifecycle or device acceptance has been performed.

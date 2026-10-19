@@ -1,3 +1,5 @@
+> **Deferred reference — 19 October 2026:** No implementation, balancing or test execution is scheduled by this document. Sprint is unavailable; current E/Target and Q/Recall bindings supersede historical reserved-Q notes. Resume only within a later owner-authorized task; see [current state](DEVELOPMENT_STATE.md).
+
 # Dormant sprint
 
 Sprint was developed but is deliberately not currently implemented as an available gameplay feature. `src/sprint.js` contains `const SPRINT_ENABLED = false;`. Q remains reserved, the stamina display and touch control remain hidden, and no menu, URL, save flag or unlock enables it.

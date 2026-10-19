@@ -1,3 +1,5 @@
+> **Historical specification — 19 October 2026:** This catalog/plan records an earlier source census or requirement. It is not a present production queue or proof of current coverage. Later decisions and [current reconciliation](NEXT_UPDATE_RECONCILIATION_20261018.md) govern future scope; development is paused. Preserve stable IDs and provenance.
+
 # Current scope supersession
 
 The historical Phase 2A audit below describes the original 231-entry checkpoint. The current audit is SPRITE_SCOPE_RECONCILIATION.md: 296 decisions, 280 GENERATE, 0 ALIAS, 16 PROCEDURAL. Current Full camps, Crown ranged/guard bodies and regional additions have their own entries; three obsolete closed cages are no longer generation tasks. The inventory is open. Historical totals and conclusions below are not current production instructions.

@@ -1,3 +1,5 @@
+> **Reference boundary — 19 October 2026:** Design/ownership rules below remain reference material where consistent with current source and later director decisions. Version numbers, asset counts, historical verification and next-stage instructions describe their own checkpoints. Development is paused; use [current state](DEVELOPMENT_STATE.md) and [the documentation index](DOCUMENTATION_INDEX.md) before any new work.
+
 # Economy and EXP housekeeping — prepared v0.8.89
 
 Joel authorized an audit followed by implementation. This pass separates economics and rewards while preserving today's balance. It builds on main `7109b34` (audio foundation) and the rebased combat/party split `c6c57b5`. The untouched comparison checkout is that combined commit, before economic edits. Regional source branches remain intact. Joel subsequently lifted the initial publication pause and explicitly authorized proceeding through publication. Release uses the existing GitHub checks and exact deployed-commit verification.

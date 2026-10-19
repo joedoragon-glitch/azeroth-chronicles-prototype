@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Community snapshot implementation and verification ledger — 13 October 2026
 
 **Engineering checkpoint, not canon and not a release candidate.** Canon remains [PR #298](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/298) / [unchanged local record](DIRECTOR_WORLD_BUILDING_SNAPSHOT_CANON_LOCK_20261012.md). The director’s current resumption handoff authorizes isolated implementation/testing/commits and tracker updates. It supersedes historical pauses; it does not authorize main changes, merges, deployment or publication.

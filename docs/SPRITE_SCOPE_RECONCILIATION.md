@@ -1,3 +1,7 @@
+> **Historical specification — 19 October 2026:** This catalog/plan records an earlier source census or requirement. It is not a present production queue or proof of current coverage. Later decisions and [current reconciliation](NEXT_UPDATE_RECONCILIATION_20261018.md) govern future scope; development is paused. Preserve stable IDs and provenance.
+
+> **2026-10-18 status:** The following 8-October 296-decision census is a historical scope checkpoint and not the production requirement for the published `0.9.1+snapshot.dev.78` game. For current 33 manifest identities and the post-snapshot #217 reconciliation, see [NEXT_UPDATE_RECONCILIATION_20261018.md](NEXT_UPDATE_RECONCILIATION_20261018.md). Future quantities/retired assets require a fresh current-world audit before generation.
+
 # Current sprite scope reconciliation · 8 October 2026
 
 Joel accepted the first pilot design direction, with a specific Goblin face correction, and requested the complete current scope before further generation or runtime implementation. This audit is based on latest v0.8.90 main `e2529b0f6db9737ecb62af48c0c2a87693e8647a` after preserving the concurrent audio release. Visual/map sources are byte-identical to the original v0.8.89 audit baseline `231d898988752f1594614a360bda8bb3cc87c1f1`; the procedural drawings and current authored map states are authoritative.

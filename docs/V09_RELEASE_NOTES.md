@@ -1,39 +1,26 @@
-# Azeroth Chronicles v0.9.0 beta — release candidate
+# So I Became the Dark Lord's Problem — October 2026 Community Snapshot
 
-**Not published. Acceptance and release approval are pending.** This is a prepared release candidate, not a declaration that the checklist is complete. [Issue #213](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/213) owns current evidence and the go/no-go decision.
+**Published runtime: `0.9.1+snapshot.dev.78`. Development is on break.** The former unpublished v0.9.0 candidate notice is preserved in [documentation history](PRE_BREAK_DOCUMENTATION_HISTORY_20261019.md). It no longer describes release status.
 
-## Included in the candidate
+## Published scope
 
-- Five-region single-player campaign in the multi-file installable web app, with distinct desktop keyboard/trackpad and phone touch presentation.
-- Integrated road infrastructure, restored independent transport departure scenes, regional dungeon work and quest/specialist progression updates.
-- Combat-condition corrections; persistent equipment selection; hero-only preparation-tonic effects; and boss charges ending correctly when blocked by a wall.
-- Cooldown-based combat, companion training and recovery, and Standard/optional Succession progression with compatible v4 save keys and retained v2 backup import.
-- Auto / 30 / 60 FPS rendering preference. Auto begins at 30, can promote to 60 with headroom and reduces rendering frequency under sustained slowdown. Simulation, input and audio retain their existing update path.
-- Scoped rendering, audio and offline-cache optimizations. Component measurements do not establish a universal whole-game FPS or battery improvement.
-- Corrected Thornfang Pounce and Stone Colossus Wall Rush descriptions. Pounce retains 0.375 seconds of normal recovery after a hit or miss; Wall Rush retains three seconds of core exposure after the charge ends. No new pillar requirement, vulnerability state or balance change.
+- Five-region offline-capable single-player RPG with desktop/Chromebook keyboard and mouse controls and a dedicated phone touch layout.
+- Standard and optional Succession campaigns, Normal/Nightmare saves, specialist rescues, revised boss/captain encounters and authored worldbuilding.
+- Eight class-specific hero skills with tap/charged forms, cooldown-only combat, companion support, eleven pet families and concise skill/condition references.
+- Auto/30/60 rendering, camera selection, optional Optimization Mode and contextual soundtrack/effects. These do not establish universal device FPS or listening comfort.
+- Minimal English/Spanish presentation selection; this is partial localization, not a complete campaign translation.
+- Latest narrow fixes: movement auto-attacks respect fleeing/Recall (dev.77), and Character and identity uses spoiler-free descriptive copy (dev.78).
 
-## Saves and known limitations
+Existing Pages URLs and installed-app identity remain stable. [Play in a browser](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/) or [open the phone entry](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html). Export saves before clearing browser data or changing devices. The existing v4 schema and legacy v2 import remain; no cloud save service or playable co-op exists.
 
-Campaigns remain local to each browser/device. Export before clearing browser data or moving to another device. There is no cloud save service or playable co-op. Sprite production continues; paused #217 is not included.
+## Publication and validation are separate
 
-Joel reports that his ongoing saves have survived major updates throughout development without corruption or needing to restart. Existing automated migration/PWA checks also provide technical evidence. A copied genuine historical player export/import round trip has not yet been independently validated.
+The latest published gameplay source is `88ee2304afcad5abde1b851686502bfbdd066779` (#318). Successful [publisher 39108092903](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39108092903) and exact public build/copy reads are recorded in [the release handoff](COMMUNITY_SNAPSHOT_RELEASE_HANDOFF_20261016.md). Its temporary publisher head differs from the explicit packaged gameplay source.
 
-Full natural campaign and late-game acceptance are incomplete. Browser emulation and bounded action pilots do not certify physical input comfort, installed offline behavior, sustained device memory/temperature/performance, or a complete player journey. Those are outstanding acceptance checks, not reported proof of broken gameplay.
+PR #308 has consolidated full validation evidence. #313 was merged under the owner's release instruction with focused/WebKit evidence and incomplete broader work. Dev.76–78 shipped under explicit no-CI/no-test instructions. Fresh full gameplay/balance certification and complete native-device/human aesthetic acceptance are not claimed. Those historical limits are retained; they are not current break-blocking homework.
 
-## Publication gate
+## Break boundary and recovery
 
-Before merging/publishing this candidate:
+Documentation audit and PR consolidation are recorded in [current state](DEVELOPMENT_STATE.md) and [the audit](DOCUMENTATION_AUDIT_20261019.md). Draft [#319](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/319) is the single future workstream and remains unmerged. Whole-game independent regression, visual polish, co-op modernization, old sprite adoption and outreach wait for the owner to return. Forum silence is not validation.
 
-1. Confirm the final source includes the accepted #227 correction and no unrelated work. Reconcile with current main and record exact head/tree.
-2. Resolve remaining acceptance in #213 through evidence or an explicit author-approved beta scope/risk decision. Neither positive automation nor this document silently waives open criteria.
-3. Pass the final candidate's formatting, generated/asset, full Node, Chromium, WebKit, historical-save/PWA and packaging gates. Prior v0.8.138 success alone cannot certify this version/cache change.
-4. Obtain the release order for this tested candidate. Merge once, use the existing deployment workflow and only its normal identical-tree certificate reuse.
-5. Verify exact live `build.txt`, build-info/cache version and all production smoke gates. Record actual release commit and workflow links. Create a release tag only at the verified commit if requested as part of publication.
-
-At preparation, last independently verified production was **v0.8.138**, commit `6c2381b34ce63fb935936a4e69ec404996f7765a`, [main run 38091031125](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38091031125), backed by full identical-tree [run 38087706102](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/38087706102). Candidate validation is recorded in its PR; v0.9 publication evidence does not exist yet.
-
-## Rollback reference
-
-Known verified recovery source: v0.8.138 `6c2381b34ce63fb935936a4e69ec404996f7765a`. Earlier recovery: v0.8.137 `c6ce1af236bddd7ca881903499c4cf5de175f9e2`.
-
-If needed, prepare a forward corrective release from an accepted stable source with a fresh unique package/cache version. Validate save compatibility using copies, preserve all player exports/legacy originals, pass normal release checks and verify the published SHA. Do not clear player storage or rely on an old cache appearing automatically. No rollback is executed by these notes.
+No rollback is performed or recommended solely because certification was limited. If an actual defect later needs a corrective release, preserve saves and original backups, choose a source supported by evidence for that defect, use a fresh cache/version, pass applicable checks, obtain release authorization and verify publication. Old v0.8.x rollback references remain historical and must not automatically replace the much newer snapshot.

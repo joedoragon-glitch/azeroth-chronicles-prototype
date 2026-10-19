@@ -1,3 +1,7 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
+> **CURRENT SPRITE PRODUCTION BOUNDARY — 18 October 2026:** This is an October 8–10 production journal, NOT authority to resume that old production batch. The released Community Snapshot is `0.9.1+snapshot.dev.78`; current `assets/sprites/manifest.json` has 33 active identities (version 8), while the held #217 batch has 20 prepared source records, of which eight keys are already active (only one output byte/hash-identical) and twelve keys require fresh current-world usage and identity review. The historical 296-decision roster is NOT the active requirement after the many changes in the game. See [NEXT_UPDATE_RECONCILIATION_20261018.md](NEXT_UPDATE_RECONCILIATION_20261018.md) before any generated/replaced assets. Preserve all original artwork; no production or merging is authorized during the break.
+
 # Sprite production checkpoint · 8 October 2026
 
 ## Structure proportion implementation checkpoint · 9 October 2026

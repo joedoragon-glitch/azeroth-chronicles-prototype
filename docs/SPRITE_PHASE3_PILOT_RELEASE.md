@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 > Historical pilot preparation record. The Paladin/Goblin idles and Vale/Highlands roads below were subsequently merged and published through #193 (v0.8.127, a996688ea8cbf9a878e05b31cb5fc6bd104e8729; successful release run 38005221077). Earlier zero-deployed counts are checkpoint history. Continue remaining work under #160 and [current development state](DEVELOPMENT_STATE.md).
 
 # Phase 3 saved pilot integration · v0.8.115

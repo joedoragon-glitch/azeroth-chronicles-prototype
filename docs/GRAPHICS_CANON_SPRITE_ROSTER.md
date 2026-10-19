@@ -1,3 +1,5 @@
+> **Historical specification — 19 October 2026:** This catalog/plan records an earlier source census or requirement. It is not a present production queue or proof of current coverage. Later decisions and [current reconciliation](NEXT_UPDATE_RECONCILIATION_20261018.md) govern future scope; development is paused. Preserve stable IDs and provenance.
+
 # Phase 2A — canonical sprite production roster
 
 > **Superseded after full renderer audit.** This file records the initial 110-item planning roster only. Do not use it for image generation. The authoritative production source is `docs/GRAPHICS_CANON_SPRITE_PROMPTS.md`, audited in `docs/GRAPHICS_CANON_SPRITE_PROMPT_AUDIT.md`. The current reconciled catalog contains 296 numbered decisions: 280 GENERATE, 0 ALIAS, and 16 KEEP PROCEDURAL. See SPRITE_SCOPE_RECONCILIATION.md.

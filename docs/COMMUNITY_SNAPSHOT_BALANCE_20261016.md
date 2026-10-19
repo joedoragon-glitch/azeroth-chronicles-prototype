@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Companion and pet tuning rationale — source candidate
 
 No simulations, death observations, benchmarks, browser play or balance tests have run. Values below are provisional engineering choices anchored to current #308 rules, not measured final balance. The final overnight cycle must retain adverse observations and may revise these values within the approved scope.

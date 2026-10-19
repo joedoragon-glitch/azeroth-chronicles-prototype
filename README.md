@@ -1,14 +1,16 @@
 # So I Became the Dark Lord's Problem
 
+**Community Snapshot — October 2026 · `0.9.1+snapshot.dev.78`.** Published; feature development is on break. [Current state](docs/DEVELOPMENT_STATE.md) records release evidence and the pause boundary. [Documentation index](docs/DOCUMENTATION_INDEX.md) distinguishes current guides from historical records.
+
 An offline-capable RPG across five regions, ten settlements and five main dungeons. Rescue the specialists, build your expedition, and challenge the Dark Lord. The regime's currency is **crowns**.
 
-The canonical game is the multi-file GitHub Pages/PWA application. It uses JavaScript, Canvas 2D and Web Audio; there is no game backend. The campaign engine is shared, while desktop and phone have separate presentation rules. Map reviews and sprite production can continue on this foundation.
+The canonical game is the multi-file GitHub Pages/PWA application. It uses JavaScript, Canvas 2D and Web Audio; there is no game backend. The campaign engine is shared, while desktop and phone have separate presentation rules. Future development uses this foundation when the owner resumes it.
 
-Existing GitHub Pages links and installed-app identity remain unchanged. Current implementation progress and verification are recorded in [the snapshot implementation ledger](docs/SNAPSHOT_IMPLEMENTATION_20261013.md).
+Existing GitHub Pages links and installed-app identity remain unchanged. Current release state and next-update work are indexed in [the post-snapshot reconciliation](docs/NEXT_UPDATE_RECONCILIATION_20261018.md). The older [implementation ledger](docs/SNAPSHOT_IMPLEMENTATION_20261013.md) remains historical evidence.
 
 ## Release status
 
-This project is in the **v0.9.1 beta maintenance line**. A v0.9.1 maintenance revision adds the opt-in Optimization Mode and improves keyboard/menu ergonomics; a merged PR alone does not establish deployment. [Release notes and remaining acceptance](docs/V09_RELEASE_NOTES.md) distinguish implemented features, verified evidence and open checks; [Current development state](docs/DEVELOPMENT_STATE.md) records the production baseline and release workflow. The version in an exported playtest report identifies the build actually running on your device. A merged PR is not proof of publication or completed human playtesting.
+This project is in the **v0.9.1 beta maintenance line**. The published snapshot includes Optimization Mode, revised hero skills, pets, worldbuilding and later limited hotfixes. Publication and gameplay certification have separate evidence. [Release notes and evidence limits](docs/V09_RELEASE_NOTES.md) distinguish implemented features, verified evidence and open checks; [Current development state](docs/DEVELOPMENT_STATE.md) records the production baseline and release workflow. The version in an exported playtest report identifies the build actually running on your device. A merged PR is not proof of publication or completed human playtesting.
 
 ## Play
 
@@ -17,7 +19,7 @@ This project is in the **v0.9.1 beta maintenance line**. A v0.9.1 maintenance re
 
 Automatic selection uses pointer capabilities, including a mouse/trackpad on a touchscreen Chromebook. Resizing a desktop window does not turn it into a phone screen. **Game and settings → Screen and performance** offers the reversible, device-local **Optimization Mode · Off / On** for weaker computers, alongside camera selection, Auto/30/60 FPS and local performance measurements. Optimization Mode reduces optional illustrated terrain, ambient audio, decorative scenery and Canvas backing resolution without changing campaign saves or combat telegraphs; actual hardware gains must be measured. Both entries use the same on-device saves. Camera framing defaults to the selected 150%; that menu also offers original 100% and 175%, remembered separately for desktop and phone. Supported phone viewports start at 375 × 800 CSS pixels (or landscape rotation); smaller layouts are no longer release targets.
 
-Choose a Standard run or the optional Succession challenge, then Paladin, Mage or Ranger. Normal and Nightmare have independent saves. Nightmare unlocks after the peaceful ending. Updates preserve local campaigns and adopt the tested published build automatically; a manual update check is also available in settings.
+Choose a Standard run or the optional Succession challenge, then Paladin, Mage or Ranger. Normal and Nightmare have independent saves. Nightmare unlocks after the peaceful ending. Updates preserve local campaigns and adopt the published build automatically; a manual update check is also available in settings.
 
 ## Contextual soundtrack
 
@@ -52,13 +54,13 @@ Menus, HUD buttons and skills accept mouse clicks and touch taps on every screen
 
 **Controls → Touch and mouse options** selects the phone's default two-thumb layout (movement left, skills right) or the alternate left-hand layout. Touch tap-to-move is enabled by default alongside the joystick and can be disabled. Taps use existing collision/pathfinding; manual keyboard or joystick movement immediately takes over. Opening menus, pausing or losing focus cancels travel. Taps move the hero only and do not issue squad orders or automatically interact with services.
 
-Mouse click-to-move is off by default and can be enabled separately. With it off, left-clicking the world commands Ranger Heal. The Heal button and its rebindable keyboard shortcut work in either mode. Sprint remains unavailable; Q now defaults to Target, and all keys remain rebindable.
+Mouse click-to-move is off by default and can be enabled separately. With it off, left-clicking the world commands Ranger Heal. The Heal button and its rebindable keyboard shortcut work in either mode. Sprint remains unavailable. E defaults to Target; Q is an alias for the default Recall binding. Bindings are customizable.
 
-For concise skill information, open **Adventure → Hero skills**, or review skills at any completed Basic/Full Barracks or rescued teacher. Select a revealed skill for its **Tap / Charge effects, current cooldowns and next training source**, without long rule descriptions on the HUD. The Keeper’s shelves offer optional additional figures. This reference matches the redesigned Skills 1–8; it is part of the untested development branch.
+For concise skill information, open **Adventure → Hero skills**, or review skills at any completed Basic/Full Barracks or rescued teacher. Select a revealed skill for its **Tap / Charge effects, current cooldowns and next training source**, without long rule descriptions on the HUD. The Keeper’s shelves offer optional additional figures. This reference matches the redesigned Skills 1–8 in the published snapshot.
 
 Ranger Skill 3 normally heals the hero; its charged form heals the hero and living active companions. Paladin Skill 3 instead raises a defensive shield or delivers charged Shield Bash; Mage Skill 3 interrupts a warned attack or creates charged bilateral Silence Field. Paladin/Mage Skill 4 has a charged attack; Ranger Skill 4 taps for hero movement haste and charges into a short movement and basic-attack-speed buff for nearby active companions; the charged cast stays unavailable without a living companion in range and does not consume a cooldown in that case. Active Rangers provide automatic and manually commanded Heal (hero or wounded living active companion). Fallen companions need separate recovery at a Captain or barracks. Death removes 20% of positive carried crowns, rounded up, without debt.
 
-The former shared Skill 8 (area damage, large self-heal and damage immunity) has been retired in the **development branch**, replaced with class-specific tap/charged ultimates: Paladin's Sanctuary Oath / Last Bastion grants bounded party protection, Mage's Astral Detonation / Arcane Cataclysm emphasizes area damage, and Ranger's Hunter's Salvo / Grand Hunt distributes actual arrows over multiple foes. Neither form grants total immunity. Paladin Skill 8 wards do not multiply with Shield Stance: only the stronger defensive reduction applies to the hero. Mage Cataclysm uses a brief stronger nonstacking Fracture, and instant Paladin/Mage ultimates have target-count caps. Ranger's ultimate adds just one non-piercing arrow when truly facing only one target, preserving Skill 7's superior single-boss role. Mage Skill 2 retains frost Slow; Mage Skill 5 uses existing collision-safe knockback, and Mage Skill 7 chains arcane damage. Ranger Skill 6 uses repelling arrows rather than haste, so Skill 4 owns speed support. Additional cooldown-first balance changes in this development branch shorten the repeatable Paladin Weakening and Mage Frost Slow windows so the same control attack cannot guarantee permanent suppression by itself. Repeatable Skill 5 area damage is limited to 6 normal / 8 charged targets across classes, as is Paladin Skill 7; excess foes remain dangerous. All damage coefficients, cooldown durations and the universal 0.65-second hold are preserved. The full calculation and rotation rationale is recorded in [the skill damage and cooldown audit](docs/HERO_SKILLS_COOLDOWN_ROTATION_DAMAGE_AUDIT_20261015.md). These changes are **unmerged and untested** and require the later combined QA pass.
+The former shared Skill 8 (area damage, large self-heal and damage immunity) has been retired in the published snapshot, replaced with class-specific tap/charged ultimates: Paladin's Sanctuary Oath / Last Bastion grants bounded party protection, Mage's Astral Detonation / Arcane Cataclysm emphasizes area damage, and Ranger's Hunter's Salvo / Grand Hunt distributes actual arrows over multiple foes. Neither form grants total immunity. Paladin Skill 8 wards do not multiply with Shield Stance: only the stronger defensive reduction applies to the hero. Mage Cataclysm uses a brief stronger nonstacking Fracture, and instant Paladin/Mage ultimates have target-count caps. Ranger's ultimate adds just one non-piercing arrow when truly facing only one target, preserving Skill 7's superior single-boss role. Mage Skill 2 retains frost Slow; Mage Skill 5 uses existing collision-safe knockback, and Mage Skill 7 chains arcane damage. Ranger Skill 6 uses repelling arrows rather than haste, so Skill 4 owns speed support. The consolidated cooldown-first balance changes shorten the repeatable Paladin Weakening and Mage Frost Slow windows so the same control attack cannot guarantee permanent suppression by itself. Repeatable Skill 5 area damage is limited to 6 normal / 8 charged targets across classes, as is Paladin Skill 7; excess foes remain dangerous. The universal charge hold is 0.65 seconds; current coefficients and cooldowns are owned by `rules.js`. The full calculation and rotation rationale is recorded in [the skill damage and cooldown audit](docs/HERO_SKILLS_COOLDOWN_ROTATION_DAMAGE_AUDIT_20261015.md). The hero consolidation shipped through PR #308. Later snapshot additions and hotfixes have their own bounded evidence; a fresh whole-game audit is deferred until after the break.
 
 ## Cooldown-only combat (reversible)
 
@@ -115,7 +117,8 @@ For a new gameplay system, use the [mechanic development workflow](docs/MECHANIC
 
 - [Architecture and module boundaries](docs/ARCHITECTURE.md)
 - [Current work and sequencing](docs/DEVELOPMENT_STATE.md)
-- [Current backlog audit and recovery evidence](docs/BACKLOG_HOUSEKEEPING_20261010.md)
+- [Documentation inventory and audit](docs/DOCUMENTATION_AUDIT_20261019.md)
+- [Historical 10 October backlog audit](docs/BACKLOG_HOUSEKEEPING_20261010.md)
 - [Archived development notes](docs/DEVELOPMENT_HISTORY_THROUGH_V08133.md)
 - [Historical v0.8.84 engineering audit](docs/HOUSEKEEPING_AUDIT.md)
 - [Historical v0.8.81 housekeeping](docs/HOUSEKEEPING_V0881.md)
@@ -135,16 +138,13 @@ Adventure also provides **Inventory and support**, **Talents**, and eligible fie
 
 ## Artwork and known limits
 
-Registered artwork is active: the audited baseline has 33 sprite identities and seven ground/road materials, with procedural fallback for missing/unavailable artwork. Original-master adaptation and the broader missing catalog continue under issue #160; developer tooling is documented in [SPRITE_PREPARATION.md](docs/SPRITE_PREPARATION.md) and [SPRITE_RESOLUTION_HOUSEKEEPING.md](docs/SPRITE_RESOLUTION_HOUSEKEEPING.md). The old production pause is historical.
+Registered artwork is active: the audited baseline has 33 sprite identities and seven ground/road materials, with procedural fallback for missing/unavailable artwork. Original-master adaptation and the broader missing catalog are deferred, with issue #160 retained as history and draft PR #319 as the unified future workstream; developer tooling is documented in [SPRITE_PREPARATION.md](docs/SPRITE_PREPARATION.md) and [SPRITE_RESOLUTION_HOUSEKEEPING.md](docs/SPRITE_RESOLUTION_HOUSEKEEPING.md). Older production journals describe their own checkpoints; the current project break takes precedence.
 
 Saves stay on the browser/device; there is no cloud synchronization or playable co-op. Native Android/iOS packages are not current distribution targets. Browser tests do not certify physical-device comfort, every map's artistic completion or a full human campaign playthrough. See the [current limitations and v0.9 acceptance work](docs/DEVELOPMENT_STATE.md).
 
-### Consolidated combat reference (development candidate)
+### Consolidated combat reference (published snapshot)
 
-The complete hero gameplay and audiovisual branches are incorporated into the
-single PR #308 update alongside enemy healing, boss passives, charged interruption,
-Slow/cooldown recovery and phone fixes. This candidate remains untested and
-undeployed; see [the integration ledger](docs/HERO_SKILLS_CONSOLIDATION_20261015.md).
+The hero gameplay and audiovisual changes, enemy healing, boss passives, charged interruption, Slow/cooldown recovery and phone fixes were consolidated, validated and published through merged PR #308. Later Community Snapshot content and narrow post-release fixes have separate evidence and known test waivers; see [the release handoff](docs/COMMUNITY_SNAPSHOT_RELEASE_HANDOFF_20261016.md) and historical [integration ledger](docs/HERO_SKILLS_CONSOLIDATION_20261015.md).
 Find concise explanations at **Hero skills → Combat conditions** (Adventure,
 Barracks or teacher Review), or **Controls → Combat conditions**. The Drowned
 Keeper's **Conditions and recovery** shelf reserves detailed rules and current

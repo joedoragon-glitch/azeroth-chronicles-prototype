@@ -2484,14 +2484,7 @@
   }
   function beginCharge(slot, source, pointerId = null) {
     const rank = game.hero.skills[slot - 1];
-    if (
-      !canChargeSlot(slot) ||
-      !activePlay() ||
-      !rank ||
-      game.peace ||
-      (game.s.mode === 'developer' && slot === 1)
-    )
-      return false;
+    if (!canChargeSlot(slot) || !activePlay() || !rank || game.peace) return false;
     if (charge) cancelCharge();
     syncPartyChargeClock();
     const queued = game.hero.cd[slot - 1] > 0;
@@ -2829,7 +2822,6 @@
     else if (actionId === 'quests') quests(false);
     else if (actionId.startsWith('skill')) {
       const slot = Number(actionId.slice(5));
-      if (game.s.mode === 'developer' && slot === 1) return;
       if (canChargeSlot(slot)) beginCharge(slot, 'keyboard');
       else game.cast(slot);
     }
@@ -3335,7 +3327,7 @@
         rank = h.skills[i],
         cast = charge?.slot === slot ? chargePresentation() : null,
         charging = !!cast;
-      b.disabled = game.s.mode === 'developer' && slot === 1;
+      b.disabled = false;
       b.classList.toggle('locked', !rank || b.disabled);
       b.classList.toggle('charging', charging);
       b.classList.toggle('skill-ready', !!rank && h.cd[i] <= 0 && !charging);

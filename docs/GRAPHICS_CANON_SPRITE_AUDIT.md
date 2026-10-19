@@ -1,3 +1,5 @@
+> **Historical specification — 19 October 2026:** This catalog/plan records an earlier source census or requirement. It is not a present production queue or proof of current coverage. Later decisions and [current reconciliation](NEXT_UPDATE_RECONCILIATION_20261018.md) govern future scope; development is paused. Preserve stable IDs and provenance.
+
 # Canon sprite-conversion audit
 
 > Historical conversion assessment. For current drawings and the v0.8.79 procedural revision, use `GRAPHICS_PROCEDURAL_POLISH_V0879.md`, `GRAPHICS_CANON_SPRITE_PROMPT_AUDIT.md` and the production prompt catalog. The allied Archer now uses a goblin scout body; main and side entrances, specialist clothing, services and selected furniture have since been polished.
