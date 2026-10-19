@@ -6,7 +6,7 @@ An offline-capable RPG across five regions, ten settlements and five main dungeo
 
 The canonical game is the multi-file GitHub Pages/PWA application. It uses JavaScript, Canvas 2D and Web Audio; there is no game backend. The campaign engine is shared, while desktop and phone have separate presentation rules. Map reviews and sprite production can continue on this foundation.
 
-Existing GitHub Pages links and installed-app identity remain unchanged. Current implementation progress and verification are recorded in [the snapshot implementation ledger](docs/SNAPSHOT_IMPLEMENTATION_20261013.md).
+Existing GitHub Pages links and installed-app identity remain unchanged. Current release state and next-update work are indexed in [the post-snapshot reconciliation](docs/NEXT_UPDATE_RECONCILIATION_20261018.md). The older [implementation ledger](docs/SNAPSHOT_IMPLEMENTATION_20261013.md) remains historical evidence.
 
 ## Release status
 
@@ -141,12 +141,9 @@ Registered artwork is active: the audited baseline has 33 sprite identities and 
 
 Saves stay on the browser/device; there is no cloud synchronization or playable co-op. Native Android/iOS packages are not current distribution targets. Browser tests do not certify physical-device comfort, every map's artistic completion or a full human campaign playthrough. See the [current limitations and v0.9 acceptance work](docs/DEVELOPMENT_STATE.md).
 
-### Consolidated combat reference (development candidate)
+### Consolidated combat reference (published snapshot)
 
-The complete hero gameplay and audiovisual branches are incorporated into the
-single PR #308 update alongside enemy healing, boss passives, charged interruption,
-Slow/cooldown recovery and phone fixes. This candidate remains untested and
-undeployed; see [the integration ledger](docs/HERO_SKILLS_CONSOLIDATION_20261015.md).
+The hero gameplay and audiovisual changes, enemy healing, boss passives, charged interruption, Slow/cooldown recovery and phone fixes were consolidated, validated and published through merged PR #308. Later Community Snapshot content and narrow post-release fixes have separate evidence and known test waivers; see [the release handoff](docs/COMMUNITY_SNAPSHOT_RELEASE_HANDOFF_20261016.md) and historical [integration ledger](docs/HERO_SKILLS_CONSOLIDATION_20261015.md).
 Find concise explanations at **Hero skills → Combat conditions** (Adventure,
 Barracks or teacher Review), or **Controls → Combat conditions**. The Drowned
 Keeper's **Conditions and recovery** shelf reserves detailed rules and current

@@ -12,9 +12,9 @@ The browser is the current desktop playtest target, especially Chromebook keyboa
 | `world.js` | Region generation, settlements, authored sites, interiors, occupation layouts and world migrations |
 | `navigation.js` | Collision, line of sight, routing, movement and following |
 | `engine.js` | Authoritative Campaign state, simulation clock, enemy AI, encounter population, death/succession and quest orchestration |
-| `hero-combat.js` | Paladin, Mage and Ranger skills and basic combos; hero skill mana costs |
+| `hero-combat.js` | Paladin, Mage and Ranger cooldown-based skills, charged forms and basic combos (legacy mana logic remains dormant) |
 | `boss-combat.js` | Boss attack selection/sequences, geometry/resolution/motion and summons; reused captain/night attack primitives |
-| `combat.js` | Shared targets, damage, mana drain, segment geometry, projectiles and hazards |
+| `combat.js` | Shared targeting, actual HP damage, status, segment geometry, projectiles and hazards (historical mana drain logic is dormant) |
 | `party.js` | Companion roster, recruitment/recovery, labor orders, formations/doctrine/Recall, automatic specials and Ranger support |
 | `progression.js` | EXP thresholds/level growth, discipline ranks/resets, instructor curricula, Expedition training, equipment and companion inheritance |
 | `economy.js` | Crown transactions, quoted purchase/training/service prices, fares and death penalties |
@@ -141,7 +141,7 @@ Ground materials reuse a screen-aligned isometric repeat at the current physical
 
 Joel additionally authorizes a 256 MiB decoded sprite-cache ceiling for continued artwork production (previously 16 MiB). The shared format and tooling active-memory policy agree; lazy loading, two concurrent decodes, LRU/pinning and per-resource/package limits remain unchanged. This is separate from the 64 MiB floor-picture ceiling and is not an upfront allocation.
 
-## Consolidated hero skills and presentation · development source
+## Consolidated hero skills and presentation · released in PR #308
 
 `hero-presentation.js` owns the stateless 48-form catalog, actual-projectile Canvas
 drawings, charge/status glyphs and bounded hero FX; `audio-hero.js` installs original
@@ -158,11 +158,10 @@ explanation through Combat conditions; the Keeper's existing shelves/figures
 flow exposes the details. Controls and the Adventure/Barracks/teacher Hero skills
 paths link to that short reference. This is a read-only presentation query, not a
 new condition store or tutorial system. See
-`docs/HERO_SKILLS_CONSOLIDATION_20261015.md` for sources, conflicts, the one dev.64
-cache/version and unexecuted combined validation requirements.
+`docs/HERO_SKILLS_CONSOLIDATION_20261015.md` for historical sources and conflict resolution; the consolidated dev.65 PR #308 passed its full validation and published. Subsequent Community Snapshot and no-CI hotfix evidence is separately bounded in `docs/COMMUNITY_SNAPSHOT_RELEASE_HANDOFF_20261016.md`.
 
-## Community Snapshot pet specialization (source candidate, untested)
+## Community Snapshot pet specialization (merged through PR #313)
 
-`party-pets.js` installs the narrow `pet` companion specialization alongside `party.js`; it does not own another roster or import engine/browser state. `rules.petCompanions` keys are vetted against `data.bosses`; live coefficients stay in rules. `s.true` remains permanent entitlement, `s.party` remains the sole recruited roster, and `petFamily` preserves individual identity through the existing v4 lifecycle. Common progression/armor, active/reserve caps, Ranger healing, targeting doctrine, navigation and delayed interrupted charge completion remain the shared owners. Menus and the existing Keeper shelf expose collection and skill details. Pet-only art is explicit in visuals; sprite lookup intentionally returns no sprite key. New script registration feeds the generated PWA graph; build/validation is deferred by owner instruction.
+`party-pets.js` installs the narrow `pet` companion specialization alongside `party.js`; it does not own another roster or import engine/browser state. `rules.petCompanions` keys are vetted against `data.bosses`; live coefficients stay in rules. `s.true` remains permanent entitlement, `s.party` remains the sole recruited roster, and `petFamily` preserves individual identity through the existing v4 lifecycle. Common progression/armor, active/reserve caps, Ranger healing, targeting doctrine, navigation and delayed interrupted charge completion remain the shared owners. Menus and the existing Keeper shelf expose collection and skill details. Pet-only art is explicit in visuals; sprite lookup intentionally returns no sprite key. The script is registered in the deployed PWA graph. PR #313 completed focused/WebKit evidence and merged under the owner's release instruction; later limited updates did not undergo full fresh gameplay certification.
 
 Source-audit repairs keep the pet's preferred firing destination inside its usable band, account for follow stopping tolerance and require a clear firing line. This destination policy belongs to the new allied specialization; navigation still owns routes/collision. Pet area collateral follows the existing shared damage/direct-target distinction. Release events carry the authored shape dimensions; renderer charge previews and impacts project those dimensions without writing to simulation state. Concise menu shape/range text and fuller Keeper explanations read the same definitions. No enemy AI, scheduling or targeting optimization is introduced.
