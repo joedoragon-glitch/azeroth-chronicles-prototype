@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Exact source-history bytes retained because connected GitHub API staging uses one atomic commit. Local commit IDs are provenance, not claims of GitHub commit availability.",
+  "entries": [
+    {
+      "gitBlobSHA": "04c066f88bcfb470e530d55fb16a2d53d6978a22",
+      "sha256": "822b2ad448b6e7f81058301e4c06cfb2018f65d3d3eb02e838531a05f72cf6a0",
+      "path": "tools/visual-review/source-baselines/04c066f88bcfb470e530d55fb16a2d53d6978a22.js",
+      "localCommits": [
+        "2214065c718c600c1ae4b3b4f282f75a28ede289",
+        "86da9424991985c860af17b4241e1aa98015a4c4",
+        "d0b6ab8134cb9e2fc57469ec932ed3c83e69d078",
+        "0a1030b0771670752ae3b6a454daf423787881b7",
+        "eddc15f02fb1e229fd3e5137c1f8ec970203fdc3"
+      ]
+    },
+    {
+      "gitBlobSHA": "d6b4fc423acec19345e76e950079ba12eb7236ee",
+      "sha256": "421c57878779da69750e1d8b22f346cc545c0520e2768c44e1c9b7dc1ccb9a57",
+      "path": "tools/visual-review/source-baselines/d6b4fc423acec19345e76e950079ba12eb7236ee.js",
+      "localCommits": [
+        "a471c60d6b99624ee6f523a757d1a1738a59e1ec",
+        "0703dfaa986047889cc0028830f13c3a7a1deda9"
+      ]
+    },
+    {
+      "gitBlobSHA": "7e3df5ebc82ded3b19b05934865a8499d14f7904",
+      "sha256": "43eee7ac746c5ee55d56886f4f6e8a027fb91e4896ec976b908111f4c5b0c66c",
+      "path": "tools/visual-review/source-baselines/7e3df5ebc82ded3b19b05934865a8499d14f7904.js",
+      "localCommits": [
+        "626bd58b750ac3d46c314058e446e7f48c0f78ca",
+        "87f2918f494b0e471d27a09a31211ee20e908684",
+        "c8a281d8cdd0ea7b352c44b399516e70aed4e313"
+      ]
+    }
+  ]
+}

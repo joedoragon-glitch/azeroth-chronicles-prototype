@@ -4,6 +4,7 @@
 
 | Need | Maintained entrypoint |
 | --- | --- |
+| Issue #320 visuals: combine into another PR, reuse test evidence | [Integration handoff](FRONTIER_UPDATE_INTEGRATION_20261019.md), [visual review](FRONTIER_VISUAL_POLISH_20261019.md) |
 | What is published, what is paused, what happens next | [Current development state](DEVELOPMENT_STATE.md) |
 | Play and controls | [README](../README.md), [Spanish controls](../CONTROLES.md) |
 | Published scope and actual test limits | [Release notes](V09_RELEASE_NOTES.md), [dated release evidence](COMMUNITY_SNAPSHOT_RELEASE_HANDOFF_20261016.md) |

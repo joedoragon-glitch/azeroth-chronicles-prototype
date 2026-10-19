@@ -1,0 +1,1054 @@
+{
+  "browser": "134.0.6998.35",
+  "baseline": "626bd58b",
+  "deviceScaleFactor": 1,
+  "notes": [
+    "Comparison baseline 626bd58b is the prior local visual candidate rejected for duplicate marksman equipment.",
+    "Marksman camp and Raider redoubt retain authored spawns and props.",
+    "Before overrides only visuals.js; shell is unreleased candidate dev.80.",
+    "Chromium desktop/phone emulation at DPR 1, 150%; night clock 450.",
+    "Lossless WebP evidence; no physical-device or WebKit certificate."
+  ],
+  "captures": [
+    {
+      "file": "before-marksman-1280-day.webp",
+      "scene": "marksman",
+      "night": false,
+      "zoom": 1.5,
+      "experience": "desktop",
+      "actors": [
+        {
+          "id": "enemy-80",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 523,
+            "y": 271.9999999999999
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-81",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 426.7269190235694,
+            "y": 256.94787107497075
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-82",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 560.9239197003438,
+            "y": 234.63836325690227
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-83",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 469.80167304638775,
+            "y": 293.59804070748896
+          },
+          "sprite": null
+        }
+      ]
+    },
+    {
+      "file": "before-marksman-1280-night.webp",
+      "scene": "marksman",
+      "night": true,
+      "zoom": 1.5,
+      "experience": "desktop",
+      "actors": [
+        {
+          "id": "enemy-80",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 523,
+            "y": 271.9999999999999
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-81",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 426.7269190235694,
+            "y": 256.94787107497075
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-82",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 560.9239197003438,
+            "y": 234.63836325690227
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-83",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 469.80167304638775,
+            "y": 293.59804070748896
+          },
+          "sprite": null
+        }
+      ]
+    },
+    {
+      "file": "before-raider-redoubt-1280-day.webp",
+      "scene": "raider-redoubt",
+      "night": false,
+      "zoom": 1.5,
+      "experience": "desktop",
+      "actors": [
+        {
+          "id": "enemy-58",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 523.0000000000001,
+            "y": 272.00000000000006
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-59",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 688.3000000000002,
+            "y": 269.9750000000002
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-64",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 773.8000000000002,
+            "y": 324.65000000000026
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-65",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 682.6000000000003,
+            "y": 373.25000000000006
+          },
+          "sprite": null
+        }
+      ]
+    },
+    {
+      "file": "before-raider-redoubt-1280-night.webp",
+      "scene": "raider-redoubt",
+      "night": true,
+      "zoom": 1.5,
+      "experience": "desktop",
+      "actors": [
+        {
+          "id": "enemy-58",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 523.0000000000001,
+            "y": 272.00000000000006
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-59",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 688.3000000000002,
+            "y": 269.9750000000002
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-64",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 773.8000000000002,
+            "y": 324.65000000000026
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-65",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 682.6000000000003,
+            "y": 373.25000000000006
+          },
+          "sprite": null
+        }
+      ]
+    },
+    {
+      "file": "after-marksman-1280-day.webp",
+      "scene": "marksman",
+      "night": false,
+      "zoom": 1.5,
+      "experience": "desktop",
+      "actors": [
+        {
+          "id": "enemy-80",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 523,
+            "y": 271.9999999999999
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-81",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 426.7269190235694,
+            "y": 256.94787107497075
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-82",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 560.9239197003438,
+            "y": 234.63836325690227
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-83",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 469.80167304638775,
+            "y": 293.59804070748896
+          },
+          "sprite": null
+        }
+      ]
+    },
+    {
+      "file": "after-marksman-1280-night.webp",
+      "scene": "marksman",
+      "night": true,
+      "zoom": 1.5,
+      "experience": "desktop",
+      "actors": [
+        {
+          "id": "enemy-80",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 523,
+            "y": 271.9999999999999
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-81",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 426.7269190235694,
+            "y": 256.94787107497075
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-82",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 560.9239197003438,
+            "y": 234.63836325690227
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-83",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 469.80167304638775,
+            "y": 293.59804070748896
+          },
+          "sprite": null
+        }
+      ]
+    },
+    {
+      "file": "after-raider-redoubt-1280-day.webp",
+      "scene": "raider-redoubt",
+      "night": false,
+      "zoom": 1.5,
+      "experience": "desktop",
+      "actors": [
+        {
+          "id": "enemy-58",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 523.0000000000001,
+            "y": 272.00000000000006
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-59",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 688.3000000000002,
+            "y": 269.9750000000002
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-64",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 773.8000000000002,
+            "y": 324.65000000000026
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-65",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 682.6000000000003,
+            "y": 373.25000000000006
+          },
+          "sprite": null
+        }
+      ]
+    },
+    {
+      "file": "after-raider-redoubt-1280-night.webp",
+      "scene": "raider-redoubt",
+      "night": true,
+      "zoom": 1.5,
+      "experience": "desktop",
+      "actors": [
+        {
+          "id": "enemy-58",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 523.0000000000001,
+            "y": 272.00000000000006
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-59",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 688.3000000000002,
+            "y": 269.9750000000002
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-64",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 773.8000000000002,
+            "y": 324.65000000000026
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-65",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 682.6000000000003,
+            "y": 373.25000000000006
+          },
+          "sprite": null
+        }
+      ]
+    },
+    {
+      "file": "before-marksman-375-day.webp",
+      "scene": "marksman",
+      "night": false,
+      "zoom": 1.5,
+      "experience": "phone",
+      "actors": [
+        {
+          "id": "enemy-80",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 187.5,
+            "y": 255
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-81",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 91.22691902356934,
+            "y": 239.94787107497086
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-82",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 225.42391970034384,
+            "y": 217.63836325690238
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-83",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 134.30167304638772,
+            "y": 276.5980407074891
+          },
+          "sprite": null
+        }
+      ]
+    },
+    {
+      "file": "before-marksman-375-night.webp",
+      "scene": "marksman",
+      "night": true,
+      "zoom": 1.5,
+      "experience": "phone",
+      "actors": [
+        {
+          "id": "enemy-80",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 187.5,
+            "y": 255
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-81",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 91.22691902356934,
+            "y": 239.94787107497086
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-82",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 225.42391970034384,
+            "y": 217.63836325690238
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-83",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 134.30167304638772,
+            "y": 276.5980407074891
+          },
+          "sprite": null
+        }
+      ]
+    },
+    {
+      "file": "before-raider-redoubt-375-day.webp",
+      "scene": "raider-redoubt",
+      "night": false,
+      "zoom": 1.5,
+      "experience": "phone",
+      "actors": [
+        {
+          "id": "enemy-58",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 187.5,
+            "y": 255
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-59",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 352.80000000000007,
+            "y": 252.97500000000014
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-64",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 438.30000000000007,
+            "y": 307.6500000000002
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-65",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 347.10000000000014,
+            "y": 356.25
+          },
+          "sprite": null
+        }
+      ]
+    },
+    {
+      "file": "before-raider-redoubt-375-night.webp",
+      "scene": "raider-redoubt",
+      "night": true,
+      "zoom": 1.5,
+      "experience": "phone",
+      "actors": [
+        {
+          "id": "enemy-58",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 187.5,
+            "y": 255
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-59",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 352.80000000000007,
+            "y": 252.97500000000014
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-64",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 438.30000000000007,
+            "y": 307.6500000000002
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-65",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 347.10000000000014,
+            "y": 356.25
+          },
+          "sprite": null
+        }
+      ]
+    },
+    {
+      "file": "after-marksman-375-day.webp",
+      "scene": "marksman",
+      "night": false,
+      "zoom": 1.5,
+      "experience": "phone",
+      "actors": [
+        {
+          "id": "enemy-80",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 187.5,
+            "y": 255
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-81",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 91.22691902356934,
+            "y": 239.94787107497086
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-82",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 225.42391970034384,
+            "y": 217.63836325690238
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-83",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 134.30167304638772,
+            "y": 276.5980407074891
+          },
+          "sprite": null
+        }
+      ]
+    },
+    {
+      "file": "after-marksman-375-night.webp",
+      "scene": "marksman",
+      "night": true,
+      "zoom": 1.5,
+      "experience": "phone",
+      "actors": [
+        {
+          "id": "enemy-80",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 187.5,
+            "y": 255
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-81",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 91.22691902356934,
+            "y": 239.94787107497086
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-82",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 225.42391970034384,
+            "y": 217.63836325690238
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-83",
+          "name": "Crown archer marksman",
+          "species": "archer",
+          "crownTroop": true,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 134.30167304638772,
+            "y": 276.5980407074891
+          },
+          "sprite": null
+        }
+      ]
+    },
+    {
+      "file": "after-raider-redoubt-375-day.webp",
+      "scene": "raider-redoubt",
+      "night": false,
+      "zoom": 1.5,
+      "experience": "phone",
+      "actors": [
+        {
+          "id": "enemy-58",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 187.5,
+            "y": 255
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-59",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 352.80000000000007,
+            "y": 252.97500000000014
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-64",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 438.30000000000007,
+            "y": 307.6500000000002
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-65",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 347.10000000000014,
+            "y": 356.25
+          },
+          "sprite": null
+        }
+      ]
+    },
+    {
+      "file": "after-raider-redoubt-375-night.webp",
+      "scene": "raider-redoubt",
+      "night": true,
+      "zoom": 1.5,
+      "experience": "phone",
+      "actors": [
+        {
+          "id": "enemy-58",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 187.5,
+            "y": 255
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-59",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 352.80000000000007,
+            "y": 252.97500000000014
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-64",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 438.30000000000007,
+            "y": 307.6500000000002
+          },
+          "sprite": null
+        },
+        {
+          "id": "enemy-65",
+          "name": "Raider archer",
+          "species": "archer",
+          "crownTroop": false,
+          "form": "normal",
+          "ranged": true,
+          "guard": false,
+          "screen": {
+            "x": 347.10000000000014,
+            "y": 356.25
+          },
+          "sprite": null
+        }
+      ]
+    }
+  ]
+}

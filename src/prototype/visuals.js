@@ -742,48 +742,10 @@
           // Species detail and loadout are kept together in ogreBody.
           break;
         case 'orc':
-          for (const x of [-4, 4])
-            poly(
-              [
-                [x, -23],
-                [x + (x < 0 ? -3 : 3), -18],
-                [x, -17],
-              ],
-              bone,
-            );
-          rect(-11, -10, 22, 5, e.ranged ? '#6c493f' : '#5d5549');
-          fillPoly(
-            [
-              [-11, -10],
-              [0, -10],
-              [0, -5],
-              [-11, -5],
-            ],
-            '#2b302b',
-            0.2,
-          );
-          line(
-            [
-              [-8, -15],
-              [8, -4],
-            ],
-            e.ranged ? '#c38a62' : '#a28c65',
-            e.ranged ? 3 : 2,
-          );
-          for (const x of [-8, 8]) glint(x, -18, e.ranged ? '#e2a168' : '#d8c28d', 1);
-          if (e.ranged) {
-            rect(-16, -5, 7, 10, '#775344');
-            line(
-              [
-                [-13, -10],
-                [11, 4],
-              ],
-              '#8c604a',
-              2,
-            );
-          }
+          // Anatomy, clothing and equipment are one layered species drawing.
           break;
         case 'archer':
+          if (region === 3) break; // frontierRaider owns the single quiver.
           line(
             [
               [-14, -28],
@@ -964,60 +926,10 @@
           );
           break;
         case 'orc':
-          // Occupation officers use warlord-style authority marks rather than a universal monster crown.
-          poly(
-            [
-              [-14, -18],
-              [-24, -22],
-              [-21, -8],
-              [-11, -7],
-            ],
-            '#85877d',
-          );
-          poly(
-            [
-              [14, -18],
-              [24, -22],
-              [21, -8],
-              [11, -7],
-            ],
-            '#74776f',
-          );
-          line(
-            [
-              [-11, -14],
-              [10, 1],
-            ],
-            '#9b5d52',
-            4,
-          );
-          line(
-            [
-              [24, -32],
-              [24, 9],
-            ],
-            '#8e704f',
-            3,
-          );
-          poly(
-            [
-              [26, -30],
-              [41, -25],
-              [26, -18],
-            ],
-            '#9a5c54',
-          );
-          for (const y of [-6, 0, 6])
-            line(
-              [
-                [-4, y],
-                [6, y + 1],
-              ],
-              '#d3bb7f',
-              1.5,
-            );
+          // The shared Orc body owns the officer's armor and open-faced crest.
           break;
         case 'archer':
+          if (region === 3) break; // Rank is sewn into the field uniform.
           // Raider-archer leaders stay recognizably archers but gain a command hood crest, sash and marked quiver.
           poly(
             [
@@ -1183,59 +1095,7 @@
           for (const x of [-18, 18]) glint(x, -12, '#d29ab5', 1.5);
           break;
         case 'warlord':
-          // Orc disciple: Warlord-style red authority marks, shoulder plates and tally-board trophies.
-          poly(
-            [
-              [-15, -17],
-              [-23, -21],
-              [-20, -10],
-              [-12, -8],
-            ],
-            '#8f8f82',
-          );
-          poly(
-            [
-              [12, -18],
-              [22, -22],
-              [23, -10],
-              [14, -8],
-            ],
-            '#777b73',
-          );
-          line(
-            [
-              [-9, -13],
-              [10, -2],
-            ],
-            '#9b5d52',
-            4,
-          );
-          rect(14, -5, 13, 16, '#806548');
-          for (const y of [-1, 4, 9])
-            line(
-              [
-                [16, y],
-                [24, y],
-              ],
-              '#d7c69c',
-              1,
-            );
-          line(
-            [
-              [23, -30],
-              [23, 7],
-            ],
-            '#8e704f',
-            2,
-          );
-          poly(
-            [
-              [24, -29],
-              [37, -25],
-              [24, -17],
-            ],
-            '#9a5c54',
-          );
+          // Cinder's imitation kit and inspection ledger are integrated in orcBody.
           break;
       }
       ctx.save();
@@ -1418,24 +1278,7 @@
           );
           break;
         case 'warlord':
-          poly(
-            [
-              [-18, -17],
-              [-30, -25],
-              [-28, 10],
-              [-15, 7],
-            ],
-            '#74484b',
-          );
-          for (const x of [-7, 0, 7]) oval(x, -11, 2, 2, '#d2bd8b');
-          line(
-            [
-              [30, -37],
-              [30, 8],
-            ],
-            '#cfb77e',
-            2,
-          );
+          // Complete Warlord kit is drawn with the shared Orc anatomy.
           break;
         case 'abyss':
           for (const side of [-1, 1]) {
@@ -1702,6 +1545,650 @@
         ],
         '#b59563',
         1,
+      );
+    }
+    // Orc lineage: broad brow, low ears, heavy muzzle, paired lower tusks,
+    // thick neck and articulated limbs. Rank changes kit, never species.
+    function orcBody(rank) {
+      const governor = rank === 'governor',
+        inspector = rank === 'inspector',
+        officer = governor || inspector || e.form === 'ringleader',
+        crown = !!e.crownTroop,
+        hide = governor ? '#89936a' : inspector ? '#9ca477' : '#929b70',
+        shadow = '#687651',
+        light = '#b5bd8c',
+        cloth = crown ? '#54485f' : officer ? '#79504a' : e.ranged ? '#77604e' : '#746656',
+        metal = crown ? '#9da9b0' : governor ? '#a5afb0' : '#888e88';
+      const shape = (color, trace) => {
+        ctx.fillStyle = color;
+        ctx.strokeStyle = ink;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        trace();
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      };
+      // The governor's long mantle and his admirer’s shorter, carefully copied one.
+      if (officer)
+        shape(governor ? '#603b3d' : '#81514a', () => {
+          ctx.moveTo(-15, -23);
+          ctx.quadraticCurveTo(-25, -12, governor ? -25 : -21, 12);
+          ctx.quadraticCurveTo(-10, 16, 0, 10);
+          ctx.quadraticCurveTo(11, 16, governor ? 25 : 21, 12);
+          ctx.quadraticCurveTo(25, -12, 14, -23);
+        });
+      // Bent knees, greaves and splayed, weight-bearing boots.
+      for (const side of [-1, 1]) {
+        line(
+          [
+            [side * 7, 0],
+            [side * 9, 7],
+            [side * 10, 13],
+          ],
+          '#4a4c40',
+          8,
+        );
+        oval(side * 11, 13, 7, 3.7, '#4e4235');
+        softRect(side * 9 - 3, 4, 6, 6, officer ? metal : '#655747', 2);
+        line(
+          [
+            [side * 9 - 2, 6],
+            [side * 9 + 2, 6],
+          ],
+          '#b49b76',
+          1,
+        );
+      }
+      shape(cloth, () => {
+        ctx.moveTo(-14, -22);
+        ctx.bezierCurveTo(-19, -15, -16, -3, -13, 4);
+        ctx.quadraticCurveTo(0, 9, 13, 4);
+        ctx.bezierCurveTo(17, -6, 18, -16, 13, -22);
+        ctx.quadraticCurveTo(0, -28, -14, -22);
+      });
+      fillOval(5, -11, 9, 13, '#c6ae87', 0.13);
+      // Deltoids connect to elbows and exposed knuckles; no floating stick arms.
+      for (const side of [-1, 1]) {
+        shape(side < 0 ? shadow : hide, () => {
+          ctx.moveTo(side * 12, -23);
+          ctx.bezierCurveTo(side * 21, -25, side * 24, -18, side * 22, -12);
+          ctx.quadraticCurveTo(side * 27, -5, side * 23, 1);
+          ctx.quadraticCurveTo(side * 18, 4, side * 16, -2);
+          ctx.quadraticCurveTo(side * 17, -8, side * 15, -12);
+          ctx.quadraticCurveTo(side * 10, -18, side * 12, -23);
+        });
+        softRect(side < 0 ? -24 : 17, -9, 7, 6, '#58483b', 2);
+        line(
+          [
+            [side * 19, -7],
+            [side * 23, -6],
+          ],
+          '#b1a082',
+          1.3,
+        );
+        line(
+          [
+            [side * 19, 0],
+            [side * 23, 0],
+          ],
+          shadow,
+          1,
+        );
+        // Curved iron shoulder cups, with hard rivets and hammered rims.
+        shape(side < 0 ? metal : '#727e77', () => {
+          ctx.moveTo(side * 10, -22);
+          ctx.quadraticCurveTo(side * 19, -30, side * 25, -21);
+          ctx.lineTo(side * 23, -15);
+          ctx.quadraticCurveTo(side * 16, -15, side * 11, -18);
+        });
+        line(
+          [
+            [side * 13, -21],
+            [side * 19, -24],
+            [side * 23, -21],
+          ],
+          '#b9bca5',
+          1.4,
+        );
+        fillOval(side * 21, -18, 1.2, 1.2, '#dbc397');
+        if (officer) {
+          // Conspicuous paired horn fittings tie captain and boss together.
+          shape(bone, () => {
+            ctx.moveTo(side * 20, -26);
+            ctx.quadraticCurveTo(side * 28, -26, side * 29, -34);
+            ctx.quadraticCurveTo(side * 31, -22, side * 23, -21);
+          });
+        }
+      }
+      if (governor || e.guard || crown) softRect(-10, -20, 20, 19, '#687471', 4);
+      else softRect(-9, -17, 18, 16, '#5e5141', 3);
+      line(
+        [
+          [-10, -19],
+          [9, -4],
+        ],
+        officer ? '#b07660' : '#a58b62',
+        officer ? 4 : 3,
+      );
+      softRect(-13, 0, 26, 4, '#493e33', 1.5);
+      softRect(-2, 0, 5, 4, '#bd9f66', 1);
+      for (const x of officer ? [-6, 0, 6] : [0]) fillOval(x, -12, 1.5, 1.5, '#dac28e');
+      if (crown) {
+        softRect(-7, -19, 14, 14, metal, 2);
+        poly(
+          [
+            [0, -19],
+            [5, -14],
+            [0, -8],
+            [-5, -14],
+          ],
+          '#74434e',
+        );
+        fillOval(0, -14, 1.6, 1.6, '#e8cf94');
+        for (const side of [-1, 1]) softRect(side * 11 - 3, 3, 6, 7, '#74434e', 1.5);
+      }
+      // Thick neck and ears sit behind a single continuous head and jaw contour.
+      oval(0, -23, 7, 6, shadow);
+      for (const side of [-1, 1]) {
+        shape(hide, () => {
+          ctx.moveTo(side * 9, -35);
+          ctx.quadraticCurveTo(side * 15, -39, side * 19, -36);
+          ctx.quadraticCurveTo(side * 17, -29, side * 10, -29);
+        });
+        line(
+          [
+            [side * 12, -32],
+            [side * 16, -35],
+          ],
+          '#697555',
+          1.5,
+        );
+      }
+      shape(hide, () => {
+        ctx.moveTo(-11, -36);
+        ctx.bezierCurveTo(-10, -46, 8, -46, 12, -36);
+        ctx.bezierCurveTo(15, -30, 14, -22, 8, -19);
+        ctx.quadraticCurveTo(0, -16, -8, -20);
+        ctx.bezierCurveTo(-14, -22, -15, -31, -11, -36);
+      });
+      fillOval(-4, -34, 5, 7, light, 0.33);
+      // Low hairline, receding at the temples; face stays open even in TRUE form.
+      shape('#383c31', () => {
+        ctx.moveTo(-11, -36);
+        ctx.quadraticCurveTo(-12, -47, 1, -46);
+        ctx.quadraticCurveTo(12, -45, 12, -36);
+        ctx.lineTo(7, -39);
+        ctx.quadraticCurveTo(0, -42, -7, -39);
+      });
+      if (officer || crown) {
+        line(
+          [
+            [-9, -40],
+            [0, -42],
+            [9, -40],
+          ],
+          governor ? '#c3ab77' : '#a6aaa0',
+          2.5,
+        );
+        if (governor) softRect(-3, -47, 6, 6, '#c2a472', 1.5);
+      }
+      // High-contrast sockets, amber eyes and a heavy, angled brow.
+      for (const side of [-1, 1]) {
+        oval(side * 5.5, -33, 3.3, 2.2, '#30372b');
+        fillOval(side * 5.5, -32.8, 1.8, 1.2, '#e2c27b');
+        fillOval(side * 5.5 + 0.6, -32.7, 0.7, 1.1, '#1f2820');
+        line(
+          [
+            [side * 9, -36],
+            [side * 3, inspector ? -35.5 : -34.5],
+          ],
+          shadow,
+          2.7,
+        );
+      }
+      oval(0, -28, 4, 3.2, '#9aa173');
+      for (const x of [-2, 2]) fillOval(x, -27, 0.8, 0.6, '#4f5c3e');
+      oval(0, -23, 9.5, 4.3, '#a6ac7c');
+      line(
+        [
+          [-7, -23],
+          [0, inspector ? -22 : -23.7],
+          [7, -23],
+        ],
+        '#46503a',
+        1.5,
+      );
+      for (const side of [-1, 1])
+        shape(bone, () => {
+          ctx.moveTo(side * 5, -21);
+          ctx.quadraticCurveTo(side * 9, -23, side * 8, -29);
+          ctx.quadraticCurveTo(side * 5, -27, side * 4, -22);
+        });
+      if (governor)
+        line(
+          [
+            [9, -37],
+            [7, -30],
+          ],
+          '#d0b28b',
+          1.3,
+        );
+      else if (inspector) {
+        // Smaller copied cheek stripe, cocked brow and the officious ledger.
+        line(
+          [
+            [10, -31],
+            [10, -27],
+          ],
+          '#965c4a',
+          2,
+        );
+        softRect(-29, -5, 13, 17, '#71513a', 1.8);
+        softRect(-27, -3, 9, 13, '#c3af83', 1);
+        for (const y of [0, 4, 8])
+          line(
+            [
+              [-25, y],
+              [-20, y],
+            ],
+            '#6c5b42',
+            1,
+          );
+        oval(-22, -6, 2, 1.4, '#b0aaa0');
+      }
+      // Real equipment retains deliberate cutting edges and the existing role.
+      if (governor || inspector || e.ranged) {
+        const x = inspector ? 27 : 28;
+        line(
+          [
+            [x, -29],
+            [x - 6, 15],
+          ],
+          '#8f704f',
+          3.5,
+        );
+        poly(
+          [
+            [x - 1, -29],
+            [x + 12, -35],
+            [x + 14, -19],
+            [x - 3, -20],
+          ],
+          metal,
+        );
+        line(
+          [
+            [x + 12, -33],
+            [x + 14, -21],
+          ],
+          '#d6d8c6',
+          1.6,
+        );
+        if (e.ranged && !officer) {
+          softRect(-21, -4, 8, 12, '#6e493b', 2);
+          line(
+            [
+              [-19, -12],
+              [-14, -3],
+            ],
+            '#a68258',
+            3,
+          );
+          poly(
+            [
+              [-20, -14],
+              [-12, -17],
+              [-12, -9],
+            ],
+            metal,
+          );
+        }
+      } else {
+        sword(21, -5);
+        if (crown) shield(-22, -1, '#74434e');
+      }
+    }
+    function frontierRaider() {
+      // One complete irregular marksman, not a hooded archer under a second
+      // Crown soldier. All Frontier variants share one bow and one back quiver.
+      const officer = e.form === 'ringleader',
+        coat = e.guard ? '#746b5c' : '#8c7860',
+        clothShadow = '#5b5144',
+        leather = '#6e503a',
+        face = '#c3a086';
+      const shape = (color, trace) => {
+        ctx.fillStyle = color;
+        ctx.strokeStyle = ink;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        trace();
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      };
+      // Short, loose half-cloak; the bow arm remains free.
+      shape('#605447', () => {
+        ctx.moveTo(-8, -24);
+        ctx.bezierCurveTo(-18, -24, -18, -4, -22, 7);
+        ctx.quadraticCurveTo(-15, 11, -7, 4);
+        ctx.lineTo(-3, -19);
+      });
+      // The only quiver sits behind the left shoulder, with three arrows.
+      for (const [x, top] of [
+        [-19, -34],
+        [-15, -38],
+        [-11, -33],
+      ]) {
+        line(
+          [
+            [x, top],
+            [-17, -10],
+          ],
+          '#b99c72',
+          1.4,
+        );
+        line(
+          [
+            [x - 2, top + 2],
+            [x, top + 5],
+            [x + 2, top + 3],
+          ],
+          '#d9c9ac',
+          1.5,
+        );
+      }
+      softPoly(
+        [
+          [-21, -20],
+          [-13, -18],
+          [-15, 4],
+          [-21, 3],
+        ],
+        leather,
+        2,
+      );
+      line(
+        [
+          [-21, -18],
+          [-13, -17],
+        ],
+        '#b49164',
+        1.6,
+      );
+      // Trouser knees and worn soft boots give a mobile, planted stance.
+      line(
+        [
+          [-6, 1],
+          [-8, 8],
+          [-11, 14],
+        ],
+        '#555449',
+        6,
+      );
+      line(
+        [
+          [5, 1],
+          [7, 8],
+          [10, 13],
+        ],
+        '#626053',
+        6,
+      );
+      oval(-11, 14, 5, 2.5, '#4a3e32');
+      oval(11, 14, 5, 2.5, '#4a3e32');
+      shape(coat, () => {
+        ctx.moveTo(-8, -22);
+        ctx.quadraticCurveTo(1, -25, 9, -20);
+        ctx.quadraticCurveTo(11, -10, 10, 5);
+        ctx.quadraticCurveTo(1, 9, -11, 5);
+        ctx.quadraticCurveTo(-10, -6, -12, -16);
+        ctx.quadraticCurveTo(-13, -20, -8, -22);
+      });
+      line(
+        [
+          [-4, -18],
+          [-3, -4],
+          [-5, 4],
+        ],
+        '#a08b70',
+        1.2,
+      );
+      line(
+        [
+          [5, -14],
+          [7, -5],
+        ],
+        clothShadow,
+        1.2,
+      );
+      // Sleeves fold at the elbows, with bare hands at the string and grip.
+      line(
+        [
+          [-9, -18],
+          [-13, -10],
+          [-4, -12],
+        ],
+        ink,
+        6.5,
+      );
+      line(
+        [
+          [-9, -18],
+          [-13, -10],
+          [-4, -12],
+        ],
+        coat,
+        4.5,
+      );
+      line(
+        [
+          [8, -18],
+          [13, -13],
+          [19, -12],
+        ],
+        ink,
+        6.5,
+      );
+      line(
+        [
+          [8, -18],
+          [13, -13],
+          [19, -12],
+        ],
+        coat,
+        4.5,
+      );
+      softRect(11, -15, 5, 4, leather, 1.5); // A leather bracer, not a pauldron.
+      line(
+        [
+          [-10, -20],
+          [7, -2],
+        ],
+        leather,
+        2.2,
+      ); // Single quiver strap.
+      line(
+        [
+          [-10, 0],
+          [9, 0],
+        ],
+        '#b29a70',
+        2,
+      );
+      softRect(6, 1, 6, 6, '#6c533e', 2); // One small field pouch.
+      line(
+        [
+          [7, 3],
+          [11, 3],
+        ],
+        '#aa8b60',
+        1,
+      );
+      // A soft hood follows the skull, without an iron helmet above it.
+      shape('#756653', () => {
+        ctx.moveTo(-11, -25);
+        ctx.bezierCurveTo(-13, -34, -10, -43, -3, -45);
+        ctx.quadraticCurveTo(8, -46, 12, -35);
+        ctx.lineTo(12, -25);
+        ctx.lineTo(6, -29);
+        ctx.lineTo(-6, -29);
+      });
+      line(
+        [
+          [-9, -33],
+          [-5, -40],
+          [3, -42],
+          [9, -35],
+        ],
+        '#a38f73',
+        1.5,
+      );
+      // Angular adult jaw, brow and stubble, framed by cloth rather than plates.
+      softPoly(
+        [
+          [-7, -34],
+          [-3, -37],
+          [5, -36],
+          [8, -31],
+          [6, -23],
+          [1, -20],
+          [-5, -23],
+          [-8, -28],
+        ],
+        face,
+        3,
+      );
+      line(
+        [
+          [-6, -34],
+          [-3, -35],
+          [5, -34],
+          [7, -30],
+        ],
+        '#514434',
+        1.5,
+      );
+      line(
+        [
+          [-5, -31],
+          [-2, -30],
+        ],
+        '#534b3e',
+        1.3,
+      );
+      line(
+        [
+          [2, -30],
+          [5, -31],
+        ],
+        '#534b3e',
+        1.3,
+      );
+      fillOval(-3, -29, 0.8, 1, '#292e27');
+      fillOval(4, -29, 0.8, 1, '#292e27');
+      line(
+        [
+          [1, -29],
+          [0, -26],
+          [2, -26],
+        ],
+        '#9a7b64',
+        0.9,
+      );
+      line(
+        [
+          [-2, -23],
+          [3, -23],
+        ],
+        '#776550',
+        1.2,
+      );
+      line(
+        [
+          [-4, -22],
+          [1, -20.5],
+          [5, -23],
+        ],
+        '#8a7961',
+        1.4,
+      );
+      // Dust scarf rests below the chin. Faction/rank is a cloth detail only.
+      softPoly(
+        [
+          [-9, -23],
+          [-4, -20],
+          [5, -21],
+          [9, -24],
+          [8, -18],
+          [0, -17],
+          [-8, -19],
+        ],
+        '#a08a6d',
+        2,
+      );
+      if (e.crownTroop)
+        line(
+          [
+            [-11, -17],
+            [-14, -12],
+          ],
+          '#89554e',
+          2.5,
+        );
+      if (officer) {
+        for (const y of [-18, -15])
+          line(
+            [
+              [-9, y],
+              [-5, y + 1],
+            ],
+            '#c5aa7b',
+            1.4,
+          );
+      }
+      // One working recurve bow, its single string and one nocked arrow.
+      ctx.strokeStyle = '#bd9c68';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(20, -35);
+      ctx.bezierCurveTo(19, -30, 29, -24, 29, -12);
+      ctx.bezierCurveTo(29, 0, 20, 6, 20, 11);
+      ctx.stroke();
+      line(
+        [
+          [20, -35],
+          [3, -12],
+          [20, 11],
+        ],
+        '#d9c7a3',
+        1,
+      );
+      line(
+        [
+          [2, -12],
+          [33, -12],
+        ],
+        '#cbb286',
+        1.1,
+      );
+      poly(
+        [
+          [33, -13.5],
+          [36, -12],
+          [33, -10.5],
+        ],
+        '#a4aaa1',
+      );
+      oval(20, -12, 3, 2.6, face);
+      oval(2, -12, 2.7, 2.1, face);
+      line(
+        [
+          [19, -10],
+          [22, -10],
+        ],
+        '#8b6b50',
+        0.8,
       );
     }
     // One organic species body for melee, thrower and guard variants.
@@ -4998,43 +5485,7 @@
           );
           break;
         case 'warlord':
-          poly(
-            [
-              [-14, -19],
-              [-23, -22],
-              [-21, -12],
-              [-13, -10],
-            ],
-            '#b1b9a7',
-          );
-          poly(
-            [
-              [12, -20],
-              [21, -21],
-              [24, -11],
-              [14, -10],
-            ],
-            '#919e95',
-          );
-          line(
-            [
-              [-6, -40],
-              [0, -43],
-              [8, -38],
-            ],
-            '#d0d7bd',
-            1.5,
-          );
-          line(
-            [
-              [29, -28],
-              [38, -33],
-              [40, -20],
-            ],
-            '#d8dfcc',
-            2,
-          );
-          for (const x of [-6, 0, 6]) oval(x, -8, 1.2, 1.2, gold);
+          // Complete Warlord kit is drawn with the shared Orc anatomy.
           break;
         case 'cindermaw':
           for (const [x, y] of [
@@ -16075,59 +16526,7 @@
           );
           break;
         case 'warlord':
-          humanoid('#7c5450', '#859464', 1.35);
-          poly(
-            [
-              [-13, -24],
-              [-15, -39],
-              [0, -47],
-              [15, -38],
-              [13, -24],
-            ],
-            steel,
-          );
-          poly(
-            [
-              [-13, -37],
-              [-23, -45],
-              [-19, -32],
-            ],
-            bone,
-          );
-          poly(
-            [
-              [13, -37],
-              [23, -45],
-              [19, -32],
-            ],
-            bone,
-          );
-          rect(-10, -18, 20, 17, '#665c59');
-          line(
-            [
-              [28, -29],
-              [22, 20],
-            ],
-            '#95764e',
-            4,
-          );
-          poly(
-            [
-              [26, -30],
-              [40, -39],
-              [43, -17],
-              [25, -19],
-            ],
-            steel,
-          );
-          poly(
-            [
-              [-13, -18],
-              [-25, 18],
-              [-9, 12],
-            ],
-            '#a1614e',
-          );
+          orcBody('governor');
           break;
         case 'cindermaw':
           oval(0, -2, 27, 14, '#9a6657');
@@ -16681,88 +17080,11 @@
           ogreBody(!!e.ranged);
           break;
         case 'archer':
-          human('archer');
+          if (region === 3) frontierRaider();
+          else human('archer');
           break;
         case 'orc':
-          if (e.ranged) {
-            humanoid('#765e4f', '#89936c', 1.15);
-            softPoly(
-              [
-                [-10, -14],
-                [-16, -22],
-                [-4, -18],
-              ],
-              '#7b6a5d',
-            );
-            softPoly(
-              [
-                [9, -14],
-                [14, -20],
-                [4, -18],
-              ],
-              '#8a7463',
-            );
-            line(
-              [
-                [-11, -15],
-                [10, -1],
-              ],
-              '#b07855',
-              4,
-            );
-            rect(-17, -5, 8, 11, '#704b3e');
-            line(
-              [
-                [16, -28],
-                [25, -8],
-              ],
-              '#79573f',
-              3,
-            );
-            poly(
-              [
-                [19, -29],
-                [30, -34],
-                [27, -23],
-              ],
-              steel,
-            );
-            line(
-              [
-                [11, -20],
-                [19, -1],
-              ],
-              '#79573f',
-              3,
-            );
-            poly(
-              [
-                [14, -22],
-                [25, -27],
-                [22, -16],
-              ],
-              steel,
-            );
-          } else {
-            humanoid('#846e56', '#89936c', 1.15);
-            softPoly(
-              [
-                [-10, -14],
-                [-15, -22],
-                [-3, -18],
-              ],
-              steel,
-            );
-            softPoly(
-              [
-                [10, -14],
-                [15, -22],
-                [3, -18],
-              ],
-              steel,
-            );
-            sword(17, -6);
-          }
+          orcBody(e.captainProfile === 'frontier-overseer' ? 'inspector' : 'soldier');
           break;
         case 'crownguard':
           {
@@ -17005,7 +17327,12 @@
         default:
           humanoid('#919b81');
       }
-      if (e.crownTroop && !e.mountedCrownRider) {
+      if (
+        e.crownTroop &&
+        !e.mountedCrownRider &&
+        e.species !== 'orc' &&
+        !(e.species === 'archer' && region === 3)
+      ) {
         // All ranks share a single Crown-issued steel, violet-and-oxblood
         // livery. Helm silhouettes reveal the people inside the armor rather
         // than painting Orcs, Ogres and Goblins as identical human soldiers.
@@ -17263,7 +17590,12 @@
         for (const x of [-19, 19]) glint(x, -21, '#ff9f6b', 2);
       }
     }
-    if (type === 'hero' || type === 'ally' || type === 'enemy') {
+    // This decorative foot stroke crosses the irregular archer's spread boots
+    // and reads as a rope tying them together. Keep his two feet separate.
+    if (
+      (type === 'hero' || type === 'ally' || type === 'enemy') &&
+      !(type === 'enemy' && e.species === 'archer' && region === 3)
+    ) {
       line(
         [
           [-8, 13],
