@@ -2049,6 +2049,30 @@
         "docs/DEVELOPMENT_STATE.md": "b3e511a792f4ee52adaffbb96b4dc3e940e0aeb1152e2d49642a938b85c93e43"
       },
       "baselineDiscrepancy": "The incoming PR #319 page already differed from its latest frozen receipt because an 18-Oct status notice had been prepended. That observed SHA is recorded separately; the earlier expected SHA is not rewritten."
+    },
+    {
+      "canonicalIssue": 312,
+      "owningPullRequest": 319,
+      "source": "PR #313 historical receipt maintenance; PR #319 owner-requested Developer Mode manual Skill 1 fix, SOURCE ONLY, NOT TESTED by full certification. Focused checks are recorded in the PR.",
+      "reason": "Enable manual normal/charged Skill 1 while developer automatic movement attacks remain blocked. Advance only the 0.9.1 build identifier to dev.79; preserve all prior exact-source receipts.",
+      "files": {
+        "docs/DEVELOPMENT_STATE.md": "8ec016fa26afbbca7d2147e6bd3c3cdfa6774d371f97ae4a8e467d9d282d2f51",
+        "package-lock.json": "822d6784792943519d6e931fd0d15f135cf5db0ada3fd177c8c4184cbf3332d3",
+        "package.json": "1712ebbcf9f2542367fe38097a2c16b346e7f2a59696dcb34d4c3c75389e2b00",
+        "src/prototype/app.js": "d2eecc6d2a6df8b62d04124cae3413599041cd26f496e1872247625e216dbba9",
+        "src/prototype/build-info.js": "04cf55ccab91d0f8c38452d8eb563905c95f63d956bbff373f79902ed5ddbe4e",
+        "src/prototype/hero-combat.js": "a6856ed32472a024e279691f4ea71b3f32d79888876e4a7f2fd5232b1caacebc",
+        "sw.js": "2de22d56ea6e485cbcb3b8e9d7ef3ae06835d6c2ed8c06705c8e384fa66e49ff"
+      },
+      "previousFiles": {
+        "docs/DEVELOPMENT_STATE.md": "8137de6dc8304225d33d81f0ef907f6c47c50e0cac86cc7617873169119443d9",
+        "package-lock.json": "10ac64379062739c7185e5b70e0b5cb291f137b2b3eaa10bb3a37b3e0bb346d6",
+        "package.json": "d37d17b2e5c959a44efe21c0dc175a7b871c3e00032bd730c194f26802302bbd",
+        "src/prototype/app.js": "b0fc3d2940b1716a27c43f98422ede37e72cc5da68bc88cc2ba658c69dc45ca2",
+        "src/prototype/build-info.js": "a3a5ea292a18f0f6512a7b80102e208d3bf40e6a788fa56ae7d6bcc0797ac8e7",
+        "src/prototype/hero-combat.js": "338ecd4edab7f97f03652f0909f90187e833194d885ce70dac7ababa47242071",
+        "sw.js": "0ee6e4e5582fb93d305bdebb7d910fa68e8faba35c7e28d007d61540b6576a4b"
+      }
     }
   ],
   "authorizedPr313ApproachFrameRevision": {

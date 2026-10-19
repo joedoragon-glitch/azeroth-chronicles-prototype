@@ -78,3 +78,9 @@ The repository-wide documentation pass is **complete on draft #319**, with [per-
 3. Co-op modernization and selective old sprite adoption stay deferred under this same future PR; recheck actual need and current source before implementation. Later outreach may use a better audience, including an AI game-development Reddit space, only if the owner requests it. No messages/posts or outreach are authorized now.
 
 The forum release remains a public milestone and playable calling card. Quiet feedback is neither QA infrastructure nor validation, and waiting on it is not a condition of taking the break. No automatic restart, scheduled follow-up or deadline exists.
+
+## Owner direction — 0.9.1 refinement and narrow immediate fix
+
+Remain on the 0.9.1 release line for successive post-break repairs/refinements of existing content; do not advance to 0.9.2 without a separate owner decision. The owner intends a complete from-the-beginning run with screenshots/notes, probably using Developer Mode for inspection. Co-op/new-content implementation remains deferred.
+
+Immediate exception requested 19 October: enable manual normal/charged Skill 1 in Developer Mode on keyboard/mouse/touch while retaining the movement-auto-attack block. Candidate dev.79 stays in this same PR; no merge or publication is inferred.

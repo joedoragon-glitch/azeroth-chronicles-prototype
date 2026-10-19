@@ -24,6 +24,12 @@ After the owner returns, the first quality phase is a **full independent whole-g
 
 Future visual notes are retained in [the unified reconciliation ledger](NEXT_UPDATE_RECONCILIATION_20261018.md): Frontier captain/boss-species resemblance, stronger creature anatomy and identity, terrain-appropriate ranged uniforms, and optional poppies/red flowers. They are not break blockers.
 
+## Narrow owner-authorized exception — Developer Mode Skill 1
+
+The owner requested this repair before the break: manual Skill 1 (tap and charged, keyboard/mouse/touch) must work in Developer Mode; movement auto-attack stays disabled. Candidate `0.9.1+snapshot.dev.79` is staged on #319, not published. This does not resume other deferred work or grant merge/deployment authority.
+
+**Release-line policy:** stay on **0.9.1** through the owner's post-break series of existing-content repairs and refinement. Individual build identifiers may advance; 0.9.2 requires a separate owner decision. The planned complete playthrough will collect screenshots/notes of problems; Developer Mode supports inspection but does not certify normal-mode difficulty or death consequences. No new-content phase is authorized by this plan.
+
 ## Current playable contracts
 
 - Canonical multi-file GitHub Pages/PWA, shared Campaign engine, separate desktop and phone presentation, browser/device-local saves. No multiplayer transport or playable Host/Join mode.
