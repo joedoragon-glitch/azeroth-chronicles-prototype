@@ -1,3 +1,5 @@
+> **Current architecture note — 18 October 2026:** The playable `0.9.1+snapshot.dev.78` Community Snapshot includes cooldown-only hero combat, eight per-class skills and charged forms, pet specialization alongside companions, and current five-region/throne systems. Some dated module descriptions below (including references to active hero mana costs and untested Community Snapshot pets) describe earlier development states; verify current code before making changes. Co-op #198 is an isolated `0.8.128` historical prototype, NOT active gameplay. See [NEXT_UPDATE_RECONCILIATION_20261018.md](NEXT_UPDATE_RECONCILIATION_20261018.md) for the reconciled post-snapshot state and remaining work. Historical technical evidence is retained as written.
+
 # Runtime architecture
 
 The browser is the current desktop playtest target, especially Chromebook keyboard/trackpad use. The phone target is an installable PWA with dedicated touch presentation. They share campaign logic and content, rather than keeping two copies of the game. A future desktop executable or native phone wrapper can host those same boundaries; no wrapper or engine migration is part of this housekeeping pass.

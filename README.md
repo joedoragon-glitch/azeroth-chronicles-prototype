@@ -1,3 +1,5 @@
+> **Current project state (18 October 2026):** The October Community Snapshot is published at `0.9.1+snapshot.dev.78`; active feature development is paused. Historical candidate and planning notes below may describe earlier versions. See [current next-update reconciliation](docs/NEXT_UPDATE_RECONCILIATION_20261018.md) for the exact current `main`, retired/registered sprite audit, isolated co-op status, documentation supersessions and future combined PR. This notice changes no gameplay or release authority.
+
 # So I Became the Dark Lord's Problem
 
 An offline-capable RPG across five regions, ten settlements and five main dungeons. Rescue the specialists, build your expedition, and challenge the Dark Lord. The regime's currency is **crowns**.
