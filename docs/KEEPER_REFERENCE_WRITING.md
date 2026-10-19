@@ -1,5 +1,7 @@
 # Keeper reference: reading and optimization
 
+> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+
 Keep established regional/boss history and the ledger-gated admission about Neri. Do not add lore or quest-completion narration.
 
 Answers start with practical advice. Exact formulas, ranks, timers and boss figures require **Show me the figures**; Back returns to the short answer. Every delayed action rechecks the active campaign and Keeper availability.
@@ -10,4 +12,4 @@ Answers start with practical advice. Exact formulas, ranks, timers and boss figu
 
 Keep XP/training, companion inheritance and Ranger care explanations. Remove basic targeting and quest instructions, repeated purchase/construction costs, party capacity and tonic inventory from the Archive; their own service menus carry those facts. Regional lore no longer carries reward-budget appendices. The former economy shelf is now **The provinces**.
 
-Remove decorative introductions, vague skill promises and internal terms such as “shared burst account.” Keep exact numerical detail available for players who request it, including fractional percentages. Preserve MP-restoration descriptions, saved cooperation/evidence, combat, rewards and all other menus.
+Remove decorative introductions, vague skill promises and internal terms such as “shared burst account.” Keep exact numerical detail available for players who request it, including fractional percentages. Keep legacy MP data and reversible logic, but hide MP-restoration advice in the active cooldown-only game. Preserve saved cooperation/evidence, combat, rewards and other menus within their actual current contracts.

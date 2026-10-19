@@ -1,5 +1,7 @@
 # Camera and sprite targets · 9 October 2026
 
+> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+
 Joel chose 150% camera framing for desktop and supported phones. This is the default, with optional original 100% and 175% settings. World units, speeds, collision, targeting and attack ranges retain their existing values. Supported phone viewports begin at 375×800 CSS pixels, with rotation; narrow desktop windows retain desktop presentation.
 
 ## Actual viewing size

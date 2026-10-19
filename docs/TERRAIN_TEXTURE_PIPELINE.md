@@ -1,3 +1,5 @@
+> **Reference boundary — 19 October 2026:** Design/ownership rules below remain reference material where consistent with current source and later director decisions. Version numbers, asset counts, historical verification and next-stage instructions describe their own checkpoints. Development is paused; use [current state](DEVELOPMENT_STATE.md) and [the documentation index](DOCUMENTATION_INDEX.md) before any new work.
+
 # Terrain texture pipeline · v0.8.94
 
 The dedicated opaque-material path precedes terrain image production. This pass adds no active terrain images. All 28 current candidates retain stable T001–T028 IDs and exact resource keys in `tools/sprites/terrain-specifications.json`.

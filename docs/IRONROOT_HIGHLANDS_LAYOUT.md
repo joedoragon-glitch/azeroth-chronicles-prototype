@@ -1,3 +1,5 @@
+> **Reference boundary — 19 October 2026:** Design/ownership rules below remain reference material where consistent with current source and later director decisions. Version numbers, asset counts, historical verification and next-stage instructions describe their own checkpoints. Development is paused; use [current state](DEVELOPMENT_STATE.md) and [the documentation index](DOCUMENTATION_INDEX.md) before any new work.
+
 # Ironroot Highlands livelihood and mine pass
 
 Ironroot remains a mountain province with pine forest, homes, wild Wolf territory and Ogre households. Small production scenes connect its mineral wealth to the Dark Lord's crowns. The Ridge Tyrant serves as the competent Master of Coin; paid work and usable roads support his political argument without making the narrator endorse it.

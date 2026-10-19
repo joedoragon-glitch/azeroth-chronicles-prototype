@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Procedural canon polish — v0.8.79
 
 This pass prepares the existing procedural art for later major changes and sprite production. It strengthens the identity of selected static drawings in `src/prototype/visuals.js`. It does not change world layout, collision, entity positions, interaction radii, saves, progression, prices or combat rules.

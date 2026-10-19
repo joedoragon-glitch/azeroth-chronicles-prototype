@@ -1,5 +1,7 @@
 # Combat conditions and secondary effects · current consolidated source
 
+> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+
 **Scope:** player skills, companion specials/support, ordinary and ranged monsters,
 night threats, ringleaders, captains, normal/TRUE bosses, traps, hazards and tactical
 AI. This is a **register of existing mechanics**, not approval for new crowd-control
@@ -7,15 +9,17 @@ skills or a combat rebalance. The runtime contract comes from `rules.js` and the
 actual owners; skill names, descriptions, sounds and visual cues do not grant effects.
 
 The supported GitHub Pages/PWA game is multi-file. The version-4 save model and
-existing procedural/sprite graphics remain canonical. Continue the v0.9 stabilization
-release gate rather than reopening content or balance.
+existing procedural/sprite graphics remain canonical. Development is paused under
+[current state](DEVELOPMENT_STATE.md); no new stabilization or testing cycle starts here.
 
 ## Current update and where players learn it · 15 October 2026
 
 PR #308 now includes the complete hero Skills 1–8 and audiovisual sources, Slow
 cooldown recovery, charged damage interruption, enemy healing and boss passives.
-This is source documentation, **not a tested or deployed release**. No tests,
-builds, browser sessions or CI are authorized yet. The historical v0.9 findings
+The #308 consolidation was subsequently validated, merged and published. Later
+Community Snapshot additions and limited hotfixes have separate evidence in the
+[release handoff](COMMUNITY_SNAPSHOT_RELEASE_HANDOFF_20261016.md). This register
+does not certify a fresh whole-game audit. The historical v0.9 findings
 below retain their original context; the current table supersedes older hero
 immunity, Haste and missing-Silence statements.
 

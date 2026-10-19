@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Ground rendering performance · v0.8.124
 
 Joel reports that earlier releases ran smoothly and the updated game became choppy. His Chromebook capture shows 6 FPS at 150% framing; sampled frame work alone does not account for all elapsed time. The task is to recover performance while preserving the current art and gameplay.

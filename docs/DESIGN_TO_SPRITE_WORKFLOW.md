@@ -1,5 +1,7 @@
 # Conversation → procedural design → sprites
 
+> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+
 Joel's 8 October 2026 instruction makes sprite delivery part of the content workflow. It applies to new hero classes, characters, monsters, companions, NPCs, structures, scenery, terrain and visible objects introduced by locations or lore. The procedural design establishes the intended visual canon. Joel permits natural anatomy and material-appropriate contours when procedural primitives produced accidental blocky forms; preserve identity and function rather than literal polygon artifacts. Once Joel accepts that design and requests sprites, continue from its accepted reference in the originating chat or another chat; do not restart the design from a name or an old catalog prompt.
 
 This is an agent workflow. Joel can give feedback and request the next stage in ordinary conversation. The agent owns records, catalog updates, reference capture, processing, checks, implementation and publication within the authorized task. A request for procedural design alone does not silently authorize generating or activating final sprites. Existing authorization to produce sprites does not need another technical permission round.

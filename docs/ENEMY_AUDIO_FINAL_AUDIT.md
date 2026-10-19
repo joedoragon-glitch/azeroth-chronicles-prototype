@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Final enemy audio/VFX synchronization audit · v0.8.117
 
 Baseline: main `cdc8286ca499af1de4de53ffa3014bb89203cdab`, retaining merged audio #164, rogue #146 and VFX #162. Concurrent main through `d045620` (rogue recovery #176, ergonomic HUD #165, its distinct offline cache and VFX quality #180) is preserved; the audit release advances to v0.8.117. The audit changes presentation metadata, sound levels and authoring tools only. No damage, collision, target selection, cooldown, movement, AI, balance, warning geometry or v4 save code changes.

@@ -1,3 +1,5 @@
+> **Deferred reference — 19 October 2026:** No implementation, balancing or test execution is scheduled by this document. Sprint is unavailable; current E/Target and Q/Recall bindings supersede historical reserved-Q notes. Resume only within a later owner-authorized task; see [current state](DEVELOPMENT_STATE.md).
+
 # Deferred boss/captain duration audit — 9 October 2026
 
 **Status: findings retained, NOT a request to increase HP, damage, or compression.** The player explicitly asked for the unusually short encounter times to be preserved for objective balancing later. Keep this report separate from the burst-compression reassignment and automatic companion targeting work. Neither encounter mechanics nor tuning should be changed solely to satisfy this report.

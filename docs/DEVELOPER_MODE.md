@@ -1,5 +1,7 @@
 # Developer Mode · testing-only combat laboratory
 
+> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+
 Open the development URL with `?developer=1`, for example,
 `/index.html?developer=1` or `/phone.html?developer=1`.
 

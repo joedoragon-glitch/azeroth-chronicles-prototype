@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Enemy attack audio / VFX synchronization · v0.8.112
 
 The shared bridge is `enemy-vfx-events.js`. Gameplay emits no audio and audio drives no gameplay. `enemy-vfx.js` alone owns stable skill IDs; `enemy-presentation.js` derives a material, action, creature/faction personality and optional important-cast accent from actual attack fields and actors. There is no parallel audio skill-name catalog and no display-name parsing.

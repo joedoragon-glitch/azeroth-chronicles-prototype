@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # First snapshot checkpoint self-audit — 13 October 2026
 
 **Recovery notice:** This is the dated audit of the completed first title/scenery batch. Its final “next step” is historical. The current leading implementation branch and exact head, later foundation/regional/patrol/engineering/aviation packages, actual current gates and next action are recorded in [PR #300](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/300) and [the implementation ledger](SNAPSHOT_IMPLEMENTATION_20261013.md). Do not replay first-batch work or encounter foundations from this older audit. It remains evidence for its stated original tree only.

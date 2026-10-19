@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Audio foundation and production sequence
 
 **Current status:** the technical playback/mixer/audition phase is now implemented in v0.8.89; see [AUDIO_PLAYBACK.md](AUDIO_PLAYBACK.md). The remainder of this document records the v0.8.88 housekeeping baseline and its original gap assessment. Production recordings and soundtrack changes remain deferred to the contextual pilot.

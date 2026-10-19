@@ -1,3 +1,5 @@
+> **Reference boundary — 19 October 2026:** Design/ownership rules below remain reference material where consistent with current source and later director decisions. Version numbers, asset counts, historical verification and next-stage instructions describe their own checkpoints. Development is paused; use [current state](DEVELOPMENT_STATE.md) and [the documentation index](DOCUMENTATION_INDEX.md) before any new work.
+
 # Sprite production preparation
 
 This document retains historical implementation snapshots. Earlier pause statements, pilot counts, memory limits and default-density examples are not current production instructions. Use [the original-master policy](SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md), [the design-to-sprite workflow](DESIGN_TO_SPRITE_WORKFLOW.md) and the latest batch-specific status in [#160](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160). Do not restart completed pilots or regenerate retained originals. A batch-specific pause remains in force until that batch is resumed.

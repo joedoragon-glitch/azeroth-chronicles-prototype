@@ -1,5 +1,7 @@
 # Adding a mechanic without restarting the project
 
+> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+
 Use the existing feature PR/issue as the work record. No separate approval ceremony or report is required for each implementation step; follow the user's scope and merge/deployment authorization.
 
 1. **Start from the live contract.** Check current main, open overlapping work, architecture and the latest relevant decisions. Note the intended player behavior, owning modules and what must stay compatible in a few lines. Historical foundation documents are evidence, not unfinished assignments. Implement the smallest complete player-visible behavior first, then expand within the authorized scope.

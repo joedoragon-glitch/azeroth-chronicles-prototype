@@ -1,10 +1,12 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 > Current canon correction v0.8.86: Abyss Bastion prepares the Dark Lord’s air-superiority project around his purple personal mount. Earlier containment descriptions below are historical and superseded; see `ABYSS_AIR_SUPERIORITY_CANON.md`.
 
 > Historical project narrative through v0.8.80. For current setup and boundaries, read the root README and docs/ARCHITECTURE.md.
 
 # Azeroth Chronicles — expanded prototype v0.8.80
 
-Terrain and effects polish v0.8.80 corrects projected danger areas and charge corridors, restores visible main-dungeon walls, clarifies recovery recipients and normal abilities, and strengthens natural ground, roads, water, ravines and lava. Critical combat cues retain night contrast. Terrain/effects remain procedural; collision and balance values are unchanged. See [the terrain and effects scope](docs/TERRAIN_EFFECTS_POLISH_V0880.md).
+Terrain and effects polish v0.8.80 corrects projected danger areas and charge corridors, restores visible main-dungeon walls, clarifies recovery recipients and normal abilities, and strengthens natural ground, roads, water, ravines and lava. Critical combat cues retain night contrast. Terrain/effects remain procedural; collision and balance values are unchanged. See [the terrain and effects scope](TERRAIN_EFFECTS_POLISH_V0880.md).
 
 Currency update v0.8.78 names the game's currency **crowns**, the official currency of the Dark Lord's regime. Every region uses crowns for trade, services, travel and rewards; recovered tribute returns those same crowns to the resistance economy. Existing balances, prices and rewards are unchanged.
 

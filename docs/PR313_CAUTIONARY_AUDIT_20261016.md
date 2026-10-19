@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # PR #313 cautionary pre-CI audit — 16 October 2026
 
 Verdict: suitable to enter the deferred CI and long-testing phase after the small receipt repair below. This is a bounded readiness audit, not release certification. Audited checkpoint: `76a760bdbd126c514c3b5807566618897edff4bd`; runtime remains `0.9.1+snapshot.dev.73`.

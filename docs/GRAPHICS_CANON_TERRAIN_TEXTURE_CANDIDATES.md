@@ -1,3 +1,5 @@
+> **Historical specification — 19 October 2026:** This catalog/plan records an earlier source census or requirement. It is not a present production queue or proof of current coverage. Later decisions and [current reconciliation](NEXT_UPDATE_RECONCILIATION_20261018.md) govern future scope; development is paused. Preserve stable IDs and provenance.
+
 # Terrain texture candidate catalog · 8 October 2026
 
 Joel asked to include terrain in the sprite reconciliation. These 28 material candidates extend the art scope separately from the 280 isolated body-sprite jobs. They are generation candidates after their current reference and terrain processing contract are prepared. Their resource keys are planned asset identities, not supported entries in the existing actor sprite resolver. Nothing is activated by this catalog.

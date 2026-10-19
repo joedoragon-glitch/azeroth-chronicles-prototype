@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # v0.9 performance candidate: combined review
 
 This performance project starts from main v0.8.137, commit `c6ce1af236bddd7ca881903499c4cf5de175f9e2`. Candidate build is `0.8.138-perf.1`; it does not publish v0.9 or include the separate art PR #217. Ownership, dependencies and the protected-gameplay rule were established before edits in [the project contract](PERFORMANCE_V09_PROJECT.md) and [issue #218](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/218).

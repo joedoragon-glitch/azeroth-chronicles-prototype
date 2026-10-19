@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Sprite resolution housekeeping · 150%
 
 Historical preparation snapshot: the pause and next-pilot instructions below describe this earlier release, not the current batch. The later memory-policy update supersedes the old limit. For new work, follow [the original-master policy](SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md) and the latest batch-specific status in [#160](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160); do not replay completed pilots or override a current batch pause.

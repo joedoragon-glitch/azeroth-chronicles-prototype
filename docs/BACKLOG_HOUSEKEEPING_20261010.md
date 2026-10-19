@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Backlog reconciliation and preservation audit - 10 October 2026
 
 Scope: screenshot tasks 4 (GitHub backlog) and 5 (documentation/project state), authorized after a read-only assessment. No runtime, art, gameplay, save, balance, build-version or workflow change is part of this maintenance diff.

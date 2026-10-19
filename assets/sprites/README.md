@@ -25,4 +25,4 @@ Safety rule: special enemy variants do not fall back to an ordinary species spri
 
 Do not bake in ground shadows, health bars, target rings, attack warnings, TRUE/ringleader effects, text, UI, floor patches or other transient effects. The game renders those separately.
 
-See `docs/GRAPHICS_OVERHAUL_PHASE1.md` for the authoritative production contract and `docs/GRAPHICS_CANON_SPRITE_AUDIT.md` for the conversion-priority audit.
+Current manifest: 33 approved identities; production is paused. Use the [design workflow](../../docs/DESIGN_TO_SPRITE_WORKFLOW.md), [original-master export policy](../../docs/SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md) and [current reconciliation](../../docs/NEXT_UPDATE_RECONCILIATION_20261018.md). Earlier conversion-priority audits and prompt counts are historical; they do not authorize generation or installation.

@@ -2033,6 +2033,22 @@
         "src/prototype/menus.js": "2e52cffd4f4d4ad1088599bfa9b05f2011fdc8f22c2eb3889e1d882d189fb89e",
         "sw.js": "89227ce60773d4e2af5051b9e78c3e67f695579b2e5f92951c73967776685147"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "owningPullRequest": 319,
+      "source": "PR #313 historical receipt maintenance; PR #319 documentation reconciliation, SOURCE ONLY, NOT TESTED. This is current-status prose maintenance, not resumed Issue #312 implementation.",
+      "reason": "The existing receipt format pins the maintained development-state page as well as frozen ledgers. Preserve every old receipt and supersede only this current-status page after the owner-requested break-closeout audit. No executable, balance, generated, asset or save hash changes.",
+      "files": {
+        "docs/DEVELOPMENT_STATE.md": "8137de6dc8304225d33d81f0ef907f6c47c50e0cac86cc7617873169119443d9"
+      },
+      "previousFiles": {
+        "docs/DEVELOPMENT_STATE.md": "b9d9dc847db5499b1c768f7154f4eb4e35b0423aa68535db60fec1a8a7cf670a"
+      },
+      "baselineObservedFiles": {
+        "docs/DEVELOPMENT_STATE.md": "b3e511a792f4ee52adaffbb96b4dc3e940e0aeb1152e2d49642a938b85c93e43"
+      },
+      "baselineDiscrepancy": "The incoming PR #319 page already differed from its latest frozen receipt because an 18-Oct status notice had been prepended. That observed SHA is recorded separately; the earlier expected SHA is not rewritten."
     }
   ],
   "authorizedPr313ApproachFrameRevision": {

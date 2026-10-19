@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # Monster strongholds: pre-certification spatial and architectural review (14–15 October 2026)
 
 **Active draft work:** PR #300, `implementation/director-snapshot-20261013`. This is a focused structural/authoring pass, **not** the later combined Node/browser/AV/old-save/independent playable certification. No merge, release or deployment.

@@ -1,3 +1,5 @@
+> **Historical record — 19 October 2026:** Candidate status, approvals, failures and next actions below apply to their dated checkpoints. They do not direct a new chat to resume or re-merge old work. The published snapshot is `0.9.1+snapshot.dev.78`; development is paused, with [current state](DEVELOPMENT_STATE.md) and draft #319 governing recovery. Original evidence remains below.
+
 # PR #300 — pre-certification worldbuilding implementation quality audit
 
 **Audit basis:** 14 October 2026 director canon PR #298 plus later explicit Dark Lord, Rogue, city-layout and quest/Archive directives; active single PR #300 branch `implementation/director-snapshot-20261013`. Review of actual game owners (`data/rules/world/engine/boss-combat/renderer/visuals/archive/narration`), the implementation ledger, user-reviewed quest PRs #168/#184/#188 and Keeper reference PR #185/#205. This is a **targeted source and focused engine audit**, not a peer review, final comprehensive regression, historical-save certification, browser/phone aesthetic acceptance or authorization to publish. The branch can advance after this report; recheck its head before final certification.

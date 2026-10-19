@@ -1,3 +1,5 @@
+> **Historical specification — 19 October 2026:** This catalog/plan records an earlier source census or requirement. It is not a present production queue or proof of current coverage. Later decisions and [current reconciliation](NEXT_UPDATE_RECONCILIATION_20261018.md) govern future scope; development is paused. Preserve stable IDs and provenance.
+
 > **2026-10-18 status:** The following 8-October 296-decision census is a historical scope checkpoint and not the production requirement for the published `0.9.1+snapshot.dev.78` game. For current 33 manifest identities and the post-snapshot #217 reconciliation, see [NEXT_UPDATE_RECONCILIATION_20261018.md](NEXT_UPDATE_RECONCILIATION_20261018.md). Future quantities/retired assets require a fresh current-world audit before generation.
 
 # Current sprite scope reconciliation · 8 October 2026
