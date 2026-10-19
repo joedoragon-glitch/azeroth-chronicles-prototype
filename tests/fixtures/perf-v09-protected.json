@@ -2073,6 +2073,18 @@
         "src/prototype/hero-combat.js": "338ecd4edab7f97f03652f0909f90187e833194d885ce70dac7ababa47242071",
         "sw.js": "0ee6e4e5582fb93d305bdebb7d910fa68e8faba35c7e28d007d61540b6576a4b"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "owningPullRequest": 319,
+      "source": "PR #313 historical receipt maintenance; PR #319 authorized dev.79 publication status, SOURCE ONLY, NOT TESTED again. Owner explicitly requested no further testing.",
+      "reason": "Record the completed publication in the maintained status page. Preserve all earlier receipts and runtime hashes.",
+      "files": {
+        "docs/DEVELOPMENT_STATE.md": "fde2b4bcd28169e1847b62d6e21492cb94ba9842dc1ed84fe3afc1896a229cfb"
+      },
+      "previousFiles": {
+        "docs/DEVELOPMENT_STATE.md": "8ec016fa26afbbca7d2147e6bd3c3cdfa6774d371f97ae4a8e467d9d282d2f51"
+      }
     }
   ],
   "authorizedPr313ApproachFrameRevision": {

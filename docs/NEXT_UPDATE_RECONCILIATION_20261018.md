@@ -84,3 +84,7 @@ The forum release remains a public milestone and playable calling card. Quiet fe
 Remain on the 0.9.1 release line for successive post-break repairs/refinements of existing content; do not advance to 0.9.2 without a separate owner decision. The owner intends a complete from-the-beginning run with screenshots/notes, probably using Developer Mode for inspection. Co-op/new-content implementation remains deferred.
 
 Immediate exception requested 19 October: enable manual normal/charged Skill 1 in Developer Mode on keyboard/mouse/touch while retaining the movement-auto-attack block. Candidate dev.79 stays in this same PR; no merge or publication is inferred.
+
+## Dev.79 publication closeout — 19 October 2026
+
+The owner explicitly approved #319 merge/publication with no further testing. Merge `23d951092ea5dff806c460c62ca71eeced574f5c` and packaging-only run [39312326936](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39312326936) published manual Developer Mode Skill 1 and the documentation closeout. Movement auto-attack remains disabled. Earlier draft/no-merge/candidate-only statements in this dated reconciliation are historical. Preserve the existing branch, old source branches and deferred notes; no new feature work or automatic restart follows from this publication.

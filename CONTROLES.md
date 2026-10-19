@@ -1,6 +1,6 @@
 # Controles · Community Snapshot, octubre de 2026
 
-Guía del juego publicado `0.9.1+snapshot.dev.78`: [navegador](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/) y [teléfono](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html). El desarrollo está en pausa; esta guía no autoriza cambios ni nuevas pruebas.
+Guía del juego publicado `0.9.1+snapshot.dev.79`: [navegador](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/) y [teléfono](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html). El desarrollo está en pausa; esta guía no autoriza cambios ni nuevas pruebas.
 
 | Acción | Teclado por defecto |
 | --- | --- |

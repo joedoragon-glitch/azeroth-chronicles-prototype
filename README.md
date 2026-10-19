@@ -1,6 +1,6 @@
 # So I Became the Dark Lord's Problem
 
-**Community Snapshot — October 2026 · `0.9.1+snapshot.dev.78`.** Published; feature development is on break. [Current state](docs/DEVELOPMENT_STATE.md) records release evidence and the pause boundary. [Documentation index](docs/DOCUMENTATION_INDEX.md) distinguishes current guides from historical records.
+**Community Snapshot — October 2026 · `0.9.1+snapshot.dev.79`.** Published; feature development is on break. [Current state](docs/DEVELOPMENT_STATE.md) records release evidence and the pause boundary. [Documentation index](docs/DOCUMENTATION_INDEX.md) distinguishes current guides from historical records.
 
 An offline-capable RPG across five regions, ten settlements and five main dungeons. Rescue the specialists, build your expedition, and challenge the Dark Lord. The regime's currency is **crowns**.
 
