@@ -8,4 +8,4 @@ Twelve full native pixel comparisons match the immutable accepted preview exactl
 
 Build/generated syntax, registered sprite integrity and changed-source formatting are the focused release checks. No whole-game/browser matrix or hosted testing. Publication uses the existing owner-authorized package-only process, exact live verification, then normal workflow restoration.
 
-Publication pending in the implementation PR; owner live appearance/play follows.
+Published in PR [#345](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/345), merge `a28c5e045801d41f87145671aa10c96462ea5e71`. Package-only run 39446114151 succeeded; all 24 checked live files match. Normal workflow restored and temporary publisher removed. Receipt: `docs/evidence/VEYRA_IVORY_DEV111_PUBLICATION_20261020.json`. Owner live appearance/play follows.

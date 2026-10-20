@@ -1,3 +1,5 @@
+**Published dev.111:** The approved right-hand correction is now live through PR #345. See `docs/VEYRA_IVORY_20261020.md`. The frozen candidate JSON and preview-generation script below retain historical preparation status; the current design handoff and release receipt own implementation status.
+
 **Approved and implementing — 20 October, 11:03 EDT:** Joel approved the corrected right-hand design. The historical preview instructions below do not describe current release status. Implementation/evidence: `docs/VEYRA_IVORY_20261020.md`; `tools/visual-review/veyra-approved-dev111/`.
 
 # Veyra ivory parade: armored arm and skirt correction — 20 October 2026

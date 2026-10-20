@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "status": "procedural-design-accepted",
+  "status": "integrated",
   "designId": "marshal-veyra-face-armor-options-20261020",
   "name": "Marshal Veyra approved ivory parade armor",
   "kind": "boss",
-  "nextAction": "Publish the owner-approved normal/TRUE correction; retain native references for a later separately requested raster stage.",
+  "nextAction": "Owner live appearance/play feedback; preserve the approved references for any later explicitly requested raster work.",
   "context": {
     "originConversation": "Conversation URL unavailable; owner request dated 20 October 2026.",
     "decisionSummary": "Joel selected ivory B, requested a compact armored arm and continuous skirt with short tassets, then approved the corrected right-hand preview on 20 October 2026 at 11:03 EDT: \u201cthis will be good enough \u2026 you can go ahead.\u201d",
@@ -14,7 +14,8 @@
       "tools/visual-review/veyra-ivory-correction-20261020/README.md"
     ],
     "locationAndLore": "Veyra, Ash Sentinel; Crown Citadel marshal and former cosmetologist.",
-    "ownerSelection": "Corrected ivory parade B approved for implementation and publication."
+    "ownerSelection": "Corrected ivory parade B approved for implementation and publication.",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/345"
   },
   "decisions": {
     "conceptAcceptance": "Ivory parade B selected.",
@@ -24,7 +25,7 @@
     "pendingCorrections": []
   },
   "reference": {
-    "sourceCommit": "1944f7a56ed1f8cc205a51c33979e5d629561d2a",
+    "sourceCommit": "a28c5e045801d41f87145671aa10c96462ea5e71",
     "ownerFilesAndBranches": [
       "src/prototype/visuals.js::marshalVeyra",
       "fix/veyra-ivory-dev111"
@@ -61,8 +62,8 @@
     }
   },
   "production": {
-    "releaseCommit": null,
-    "releaseEvidence": null,
+    "releaseCommit": "a28c5e045801d41f87145671aa10c96462ea5e71",
+    "releaseEvidence": "docs/evidence/VEYRA_IVORY_DEV111_PUBLICATION_20261020.json",
     "rollbackRevision": "Published dev.110 appearance, source commit 3a76a9e532f03f2e9f9656a2fadacea7f07743ca"
   },
   "previousPreviews": [
