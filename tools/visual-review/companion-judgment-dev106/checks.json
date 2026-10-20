@@ -1,0 +1,41 @@
+{
+  "checks": [
+    "isolated Soldier/Archer and melee/ranged pets retreat toward support",
+    "supported hero commitment continues combat",
+    "local allies improve confidence",
+    "distant/labor/wall-separated units excluded from support",
+    "wounded units retreat",
+    "isolated pair avoids boss duel",
+    "stable regroup/rejoin hysteresis",
+    "cover basics without offensive skill or pursuit",
+    "Recall/rest/recovery/travel clear runtime judgments",
+    "snapshot/restore contains no new skill or panic state",
+    "existing squad BOSS/ADDS priority",
+    "dev.105 gathering and travel-collision regressions"
+  ],
+  "scope": "Focused native simulation; live survival-rate tuning and target-device performance remain owner play checks.",
+  "recallChecks": [
+    "one press returns all companions for Mage/Ranger/Paladin",
+    "Soldier/Archer/pet job and cast cancellation",
+    "repeated presses preserve route",
+    "manual hero offense and doctrine do not interrupt unfinished return",
+    "all members reach compact arrival range",
+    "post-arrival defensive hold and deliberate release",
+    "Recall persists through snapshot/reload",
+    "50% incoming reduction only during return",
+    "wards use stronger defense, not multiplication",
+    "hero/non-party escort excluded",
+    "missing old boolean defaults false; malformed value rejected",
+    "Recall preserves the hero movement destination"
+  ],
+  "build": "pass",
+  "generatedSource": "pass",
+  "changedFormatting": "pass",
+  "regressions": [
+    "targeting: new deliberate attack releases Recall after completed return",
+    "squad BOSS/ADDS selection and unsupported-add hold",
+    "dev.105 gathering round trip and update persistence",
+    "travel collision",
+    "dev.104-105 layout/save/door evidence"
+  ]
+}

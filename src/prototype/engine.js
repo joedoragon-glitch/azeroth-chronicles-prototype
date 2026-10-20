@@ -2265,6 +2265,7 @@
       const q = this.safe(landing.x, landing.y);
       Object.assign(this.hero, q);
       for (const u of this.activeParty()) {
+        this.clearCompanionJudgment(u);
         Object.assign(u, this.safe(q.x + 40, q.y + 30));
         u.order = null;
         u.path = [];

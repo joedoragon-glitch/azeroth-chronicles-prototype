@@ -5640,13 +5640,37 @@
   });
   // Boss telegraphs stay readable, but idle gaps are short and basic attacks only interrupt sustained special pressure occasionally.
   // Sustained loss of fighting room is distinct from idle attack recovery.
+  const companionRecall = { arrivalRadius: 100, formationRadius: 55, retreatDamageMultiplier: 0.5 };
+  const companionJudgment = {
+    assessSeconds: 0.4,
+    supportRadius: 260,
+    threatRadius: 260,
+    nearThreatRadius: 260,
+    heroWeight: 2.5,
+    bossWeight: 3.5,
+    captainWeight: 2,
+    ringleaderWeight: 1.35,
+    minimumAllyWeight: 0.5,
+    overwhelmRatio: 1.6,
+    safeRatio: 1.15,
+    minimumEnemyForce: 2,
+    woundedFraction: 0.4,
+    woundedThreatForce: 1.5,
+    maxAdvanceFromHero: 280,
+    heroCommittedRange: 165,
+    regroupSeconds: 1.4,
+    arrivalRadius: 45,
+    retreatSpeed: 260,
+    anchorDangerCost: 140,
+    escapeDelay: 0.65,
+    escapeSeconds: 1.5,
+  };
   const gatheringTravel = {
     gridStep: 40,
     enemyMargin: 35,
     replanSeconds: 2,
     noticeSeconds: 10,
     defenseSeconds: 8,
-    recallArrival: 190,
   };
   const fieldBossMobility = {
     sampleSeconds: 0.5,
@@ -6789,6 +6813,8 @@
     arenaPlacement,
     fieldBossMobility,
     gatheringTravel,
+    companionJudgment,
+    companionRecall,
     bossCadence: {
       ...bossCadence,
       specialRange: bossCadence.specialRange * balance.enemySpecialReachMultiplier,

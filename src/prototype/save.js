@@ -10,6 +10,7 @@
       dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     const gatheringOrder = (u, s) => {
       if (
+        s.recallActive ||
         !['soldier', 'archer'].includes(u.type) ||
         u.active === false ||
         !['gather', 'deposit'].includes(u.order?.type)
@@ -28,7 +29,7 @@
     class Save {
       snapshot() {
         const out = clone(this.s);
-        out.recallActive = false;
+        out.recallActive = !!this.s.recallActive;
         out.squadDoctrine = this.squadDefaultDoctrine();
         out.squadEngagement = null;
         out.squadBoss = false;
@@ -126,6 +127,8 @@
           !classes[s.hero?.class]
         )
           throw Error('Invalid save');
+        if (s.recallActive === undefined) s.recallActive = false;
+        if (typeof s.recallActive !== 'boolean') throw Error('Invalid Recall order');
         const validateName = (value) => {
           if (
             value !== undefined &&

@@ -4,6 +4,7 @@
 
 | Need | Maintained entrypoint |
 | --- | --- |
+| Companion local support, safe engagement and regrouping | [Dev.106 behavior](COMPANION_JUDGMENT_20261020.md) |
 | Frontier aesthetic audit, confined field bosses, defensive resource trips | [Dev.105 scope](FRONTIER_AESTHETICS_BOSS_GATHER_20261020.md) |
 | Approved Frontier relocation and Abyss expansion, dev.104 | [Implementation and save migration](FRONTIER_ABYSS_LAYOUT_20261020.md) |
 | Veyra ivory B selection and arm/skirt correction preview | [Current correction](../tools/visual-review/veyra-ivory-correction-20261020/README.md) |
