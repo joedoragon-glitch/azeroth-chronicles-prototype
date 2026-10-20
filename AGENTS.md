@@ -1,6 +1,8 @@
 # Project working rules
 
-- **Candidate dev.100 — mounted movement and existing-roster skills:** 30% mounted walking advantage across movement modes; repair stale advanced-training flag when hero Skill 2 is learned, preserve existing roster/cooldowns. Focused checks only; package-only publication. [Scope](docs/MOUNTED_ROSTER_SKILLS_20261020.md).
+- **Published dev.100 — mounted movement and roster skill repair:** PR #334 / `82622dc002b96f2fa4a6c9744542d76a80387bfe`; package-only run 39396497512 succeeded; exact live files match. Mounted walking 30% faster than equivalent foot movement. Existing pets/troops use current rules without rest/rehire; stale core-only training repaired when hero Skill 2 is learned. 39 restored-roster cases and focused movement/combat checks passed; no broad CI/browser matrix. Normal workflow restored; temporary publisher removed. [Receipt](docs/evidence/MOUNTED_ROSTER_DEV100_PUBLICATION_20261020.json). Owner live play next; no automatic further work.
+
+- **Historical candidate dev.100 — mounted movement and existing-roster skills:** 30% mounted walking advantage across movement modes; repair stale advanced-training flag when hero Skill 2 is learned, preserve existing roster/cooldowns. Focused checks only; package-only publication. [Scope](docs/MOUNTED_ROSTER_SKILLS_20261020.md).
 
 - Published dev.99: PR #333 / bfc9497c3b7059b3ca172bc256c99637367f0210; package-only run 39394946739 succeeded and exact live files match. Full Keeper Archive/ledger copy audit: own first-person account, authoring leakage removed, readable labels; established lore, live figures and evidence/throne gates preserved. 72 text states and 144 numerical figures blocks checked; focused checks only, no broad CI. Normal workflow restored; temporary publisher removed. Receipt: docs/evidence/KEEPER_ARCHIVE_DEV99_PUBLICATION_20261020.json. Owner reading/play next; no automatic further work.
 

@@ -1,5 +1,7 @@
 # Mounted movement and existing-roster skills — 20 October 2026
 
+Published in [PR #334](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/334), merge `82622dc002b96f2fa4a6c9744542d76a80387bfe`. Package-only [run 39396497512](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39396497512) succeeded; all ten public file checks match the prepared release. Normal workflow restored; temporary publisher removed. [Receipt](evidence/MOUNTED_ROSTER_DEV100_PUBLICATION_20261020.json). Owner live play next; no automatic further work.
+
 Prepared dev.100 on published dev.99. Joel requested faster Highlands wolf riders and asked whether updating the game makes existing pets and companions receive current skills, or requires rest/rehiring.
 
 ## Behavior

@@ -1,0 +1,106 @@
+{
+  "version": "0.9.1+snapshot.dev.100",
+  "date": "2026-10-20",
+  "pullRequest": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/334",
+  "publishedCommit": "82622dc002b96f2fa4a6c9744542d76a80387bfe",
+  "preparedTree": "ddc9a3ef5b5ae22aba17912e5af1c68301dee615",
+  "publicationRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39396497512",
+  "conclusion": "success",
+  "jobs": [
+    "publish: package/deploy committed files only"
+  ],
+  "focusedChecks": [
+    "mounted movement: 16 paired actual Highlands displacement scenes and save identity",
+    "night-tempo and pursuit-burst focused checks",
+    "39 restored-roster cases: all eleven pets, soldier and archer, with absent/core/advanced historical flags",
+    "automatic skill release/contact after restoration; retained IDs, names, health and cooldowns; live unlock, untrained gates and invalid flag rejection",
+    "Lifebinder automatic first, activation gates and real Mira teaching/charged second",
+    "all-pet automatic combat, range, line of sight, charge transitions and area contracts",
+    "build/generated syntax, changed-file formatting and diff check"
+  ],
+  "broadCI": false,
+  "browserMatrix": false,
+  "verifiedAt": "2026-10-20T08:52:57.149154+00:00",
+  "liveVerification": [
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "7934ea9bf8868287e34939e5c3ebf27a0d3230676e7057d30e3e86c6df0d7ac8"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 296,
+      "sha256": "e371fe3235a338822a5e5e9ae7cb041bd4bdc970c5a9dba86cb28e1336579713"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 248712,
+      "sha256": "c634c7527fc889453433ec1ae304ae295eb6024ce8d5a64902df23896fd30d8d"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "match": true,
+      "bytes": 176692,
+      "sha256": "153a0517d112752db8e22a889d7f2821efb3b880479996512a2f38c0f2e0f9f9"
+    },
+    {
+      "path": "src/prototype/party.js",
+      "match": true,
+      "bytes": 52407,
+      "sha256": "17929913e6d4910789c8f32e673cf17adae32d973d387eb259c2696711149cda"
+    },
+    {
+      "path": "src/prototype/save.js",
+      "match": true,
+      "bytes": 46946,
+      "sha256": "86abb2f225e060a02e4f256daac3851864c5cf43048b323c76c149983bf709ad"
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "match": true,
+      "bytes": 72341,
+      "sha256": "8311b4e8d972386aae9edb3692c92363275b1a4eb3c40974f3deaada76c49f50"
+    },
+    {
+      "path": "src/prototype/app.js",
+      "match": true,
+      "bytes": 133795,
+      "sha256": "65bd0752380ef46ddcf96df2977f9b89a32c5020c3dd295924ed033a47964e0f"
+    },
+    {
+      "path": "src/prototype/archive.js",
+      "match": true,
+      "bytes": 53962,
+      "sha256": "70a0388857ae6b5f6cfc3538ec88f5a2daa2a93f714cb933a956d71708c51b58"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20550,
+      "sha256": "8979ec20d8bbb672a7dbfc28471d8485a487c9ec4c2bfaa3a74ccc6f10c99063"
+    }
+  ],
+  "changes": [
+    "1.30 mounted movement factor shared by pursuit, patrol, formation movement, support approach, retreat and Rogue travel",
+    "promote stale core-only companion training after validating learned hero Skill 2",
+    "shared live/menu unlock uses actual learned hero Skill 2 as well as retained earned training"
+  ],
+  "preserved": [
+    "existing roster IDs, names, wounds, active status and saved cooldowns",
+    "untrained second skill gate",
+    "v4 save schema and keys",
+    "attack/projectile timings and damage",
+    "map geometry, FPS/travel improvements and character art"
+  ],
+  "limits": [
+    "No user save was provided; stale flag is a reproduced possible cause, not a diagnosis of this player save.",
+    "Owner live play remains the device/gameplay check."
+  ],
+  "workflowCleanup": {
+    "normalPagesRestored": true,
+    "temporaryPublisherRemoved": true
+  }
+}
