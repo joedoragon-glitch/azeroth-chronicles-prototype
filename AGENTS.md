@@ -1,6 +1,8 @@
 # Project working rules
 
-- **Current companion movement follow-up — dev.95:** Joel confirmed FPS improved and requested hero/companion passage outside combat, retaining collision during combat. Narrow navigation change preserves hostile/terrain collision, artwork and dev.94 rendering. Continue the quick publication/manual owner-testing workflow; no broad CI. [Scope](docs/TRAVEL_COMPANION_COLLISION_20261020.md).
+- Published dev.95 companion travel fix: PR #329 / merge 43b033334cb3a4b151c82709e05bb988e6da67e0; packaging-only run 39384765061 succeeded, exact live source verified. Out-of-combat hero/companion passage; combat collision preserved. Dev.94 FPS source unchanged; owner reports FPS improvement. Normal workflow restored; no broad CI. Receipt: docs/evidence/TRAVEL_COMPANION_DEV95_PUBLICATION_20261020.json. Owner play is next; no automatic further work.
+
+- **Historical candidate companion movement follow-up — dev.95:** Joel confirmed FPS improved and requested hero/companion passage outside combat, retaining collision during combat. Narrow navigation change preserves hostile/terrain collision, artwork and dev.94 rendering. Continue the quick publication/manual owner-testing workflow; no broad CI. [Scope](docs/TRAVEL_COMPANION_COLLISION_20261020.md).
 
 - Published dev.94 FPS follow-up: PR #328 / merge cec45fbd705faecec410a8cffe78738354037c9b, packaging-only run 39383012533 succeeded; exact live source verified. Normal release workflow restored. No additional tests or broad CI. Owner will test actual Chromebook FPS; no further automatic work. Receipt: docs/evidence/ADAPTIVE_RESOLUTION_DEV94_PUBLICATION_20261020.json.
 

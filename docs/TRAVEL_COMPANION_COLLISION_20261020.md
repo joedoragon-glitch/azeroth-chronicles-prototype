@@ -1,5 +1,7 @@
 # Companion collision during travel — 20 October 2026
 
+**Published:** dev.95 via #329, merge `43b033334cb3a4b151c82709e05bb988e6da67e0`, packaging-only run `39384765061`. Exact live files verified; normal workflow restored. [Receipt](evidence/TRAVEL_COMPANION_DEV95_PUBLICATION_20261020.json). Owner live play remains next.
+
 Joel reports improved FPS on live dev.94 and requests free movement through companions outside combat while preserving companion collision as combat friction. Dev.95 implements this narrow follow-up on published dev.94 (`33eda049623463fe436bad6c12c04f85be66b1af`). The existing quick publication/manual-play workflow continues; no broad CI or full-game testing is requested.
 
 `navigation.js` records the existing `manaCombatActive()` encounter state once per crowd frame. Outside that state, swept body tests permit hero/active-companion passage in either direction, including active pets through the shared party roster. Passive separation also stops pushing a travel companion away from the hero. Companion/companion spacing, hostile body blocking, terrain collision, scripted motion and all combat collision/congestion rules retain their existing paths. No new combat timer, save field, rendering work or frame-loop subsystem is introduced. Normal crowd-frame refreshes restore collision as combat starts and release it when the existing encounter state ends.

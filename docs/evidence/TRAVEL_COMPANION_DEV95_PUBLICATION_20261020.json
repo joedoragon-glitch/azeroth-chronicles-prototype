@@ -1,0 +1,59 @@
+{
+  "version": "0.9.1+snapshot.dev.95",
+  "date": "2026-10-20",
+  "pullRequest": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/329",
+  "publishedCommit": "43b033334cb3a4b151c82709e05bb988e6da67e0",
+  "publicationRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39384765061",
+  "conclusion": "success",
+  "jobs": [
+    "publish: package/deploy only"
+  ],
+  "focusedChecks": [
+    "travel-party-collision.test.cjs",
+    "build and asset/generated-source checks",
+    "changed-file formatting"
+  ],
+  "broadCI": false,
+  "browserGameplayChecks": false,
+  "liveVerification": [
+    {
+      "path": "build.txt",
+      "sha256": "a2b8ffbdb7f8ce95d66f472ba487dfc9e020268df3de0c62148dfa4377cb9083",
+      "commit": "43b033334cb3a4b151c82709e05bb988e6da67e0",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "sha256": "3512bc932783c3b4df6b2b030ffe5c4108f8e928fd12d61b9d21970126087c16",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/navigation.js",
+      "sha256": "4f20feda4bf5fc0e4a1d4dfb4235fa867ff2a14b87eff642ef73bdd5144d82df",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/app.js",
+      "sha256": "65bd0752380ef46ddcf96df2977f9b89a32c5020c3dd295924ed033a47964e0f",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/runtime.js",
+      "sha256": "210a1821b48294ff978a43096efe26f74671b916ddfdfe36adbf98ad24fe8c1b",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "sha256": "b00881fcdf9ff68d20bed63789289ec522460461c5d62d611701297e9a736262",
+      "matches": true
+    },
+    {
+      "path": "sw.js",
+      "sha256": "713e7d673de3aa22067af809a62ab08e8b4f92339700f7359c31c61def8af943",
+      "matches": true
+    }
+  ],
+  "scope": "Hero/companion passage outside the existing combat-active state, including passive separation. Existing combat blocking, terrain/enemy collision and dev.94 performance preserved.",
+  "ownerVerification": "Owner reports FPS improved on dev.94; companion travel behavior awaits owner live play.",
+  "workflowCleanup": "Normal pages.yml restored byte-for-byte; temporary dev.95 publisher removed. No additional runtime changes."
+}
