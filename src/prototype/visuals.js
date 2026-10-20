@@ -3251,6 +3251,68 @@
       }
       ctx.restore();
     }
+    function treasuryMoneyBag() {
+      // The tied neck stays at the existing hand; the pouch hangs below it.
+      shaped('#927453', () => {
+        ctx.moveTo(-3, 0);
+        ctx.bezierCurveTo(-4, 3, -9, 4, -8, 8);
+        ctx.quadraticCurveTo(-7, 12, 0, 12);
+        ctx.quadraticCurveTo(8, 12, 8, 7);
+        ctx.quadraticCurveTo(7, 3, 3, 0);
+        ctx.lineTo(4, -4);
+        ctx.quadraticCurveTo(0, -2, -4, -4);
+        ctx.closePath();
+      });
+      shaped(
+        '#b39770',
+        () => {
+          ctx.moveTo(-2, 2);
+          ctx.quadraticCurveTo(-6, 5, -5, 9);
+          ctx.quadraticCurveTo(-3, 11, 0, 10);
+          ctx.quadraticCurveTo(-2, 6, -2, 2);
+        },
+        0.5,
+      );
+      line(
+        [
+          [-3, 1],
+          [3, 1],
+        ],
+        '#5b4938',
+        1.4,
+      );
+      line(
+        [
+          [3, 1],
+          [5, 3],
+          [4, 5],
+        ],
+        '#d0bb94',
+        0.8,
+      );
+      // A silver Crown stamp, not a gold coin or a currency letter.
+      poly(
+        [
+          [-4, 4],
+          [-2, 5],
+          [0, 2.5],
+          [2, 5],
+          [4, 4],
+          [3, 8],
+          [-3, 8],
+        ],
+        '#cbd4d6',
+      );
+      line(
+        [
+          [-3, 8],
+          [3, 8],
+        ],
+        '#f0f3ed',
+        1,
+      );
+    }
+
     function treasuryHammer() {
       line(
         [
@@ -3328,6 +3390,7 @@
 
     function mountainBody() {
       humanoid('#846c52', '#acaa7d', 1.55, false);
+      craftAt(-23, -1, 1, treasuryMoneyBag);
       grip(-23, -1, '#a5a678');
       // Muscular neck, cheek planes and curved horn roots belong to this mountain people.
       oval(0, -22, 10, 7, '#92966d');
@@ -5143,16 +5206,8 @@
         softRect(-9, -13, 18, 11, '#7c775d', 2);
         craftAt(1.75, 2, 0.75, treasuryHammer);
         grip(19, -1, skinColor);
-        oval(-17, -3, 5, 5, '#ccb36c');
-        oval(-17, -3, 3, 3, '#e1c988');
-        line(
-          [
-            [-19, -3],
-            [-15, -3],
-          ],
-          '#9e8c55',
-          0.7,
-        );
+        craftAt(-16, -1, 0.85, treasuryMoneyBag);
+        grip(-16, -1, skinColor);
       } else if (family === 'warlord') {
         for (const side of [-1, 1]) {
           softPoly(

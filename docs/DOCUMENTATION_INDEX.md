@@ -12,13 +12,15 @@
 
 - [Approved procedural gallery selections — dev.117](PROCEDURAL_SELECTIONS_20261020.md): seven numbered owner choices, native selection audit and release.
 
+- [Treasurer money bag — dev.118](TREASURER_MONEYBAG_20261020.md): shared silver-Crown pouch at unchanged grips.
+
 ## Start here
 
 Current entrypoints below supersede dated checkpoint prose above. The per-file hash table is the frozen 19 October audit inventory; its hashes are historical, not checksums of today’s updated documents.
 
 | Need | Maintained entrypoint |
-| Resume sprite work, current procedural selections and accepted character corrections | [20 October sprite restart](SPRITE_RESTART_20261020.md) |
 | --- | --- |
+| Resume sprite work, current procedural selections and accepted character corrections | [20 October sprite restart](SPRITE_RESTART_20261020.md) |
 | Companion behavior audit findings (all three repaired in dev.110) | [Audit](COMPANION_BEHAVIOR_AUDIT_20261020.md), [implemented repairs](CROWN_COMPANIONS_20261020.md) |
 | Fort defenses, enemy cover fire, Expedition IV audit and Work for passage | [Dev.109 scope](FORTS_RANGER_PASSAGE_20261020.md) |
 | Emberwatch composition, river continuity/banks, natural poppies, pools and grain silo | [Dev.108 native visual audit](FRONTIER_TOWN_RIVER_20261020.md) |

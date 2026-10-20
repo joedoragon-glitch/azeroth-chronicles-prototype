@@ -4,7 +4,7 @@
   "designId": "approved-art-boss-ridge",
   "name": "Ridge Tyrant — normal / TRUE",
   "kind": "boss",
-  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "nextAction": "Publish the requested silver-Crown money bag correction as dev.118; preserve the original arms, hammer, face, body and prior art history.",
   "context": {
     "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
     "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Give the horned mountain humanoid brows, nose, jaw and hands; integrate the payroll kit and weighty hammer.",
@@ -197,5 +197,24 @@
     "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
     "requestedCorrection": "Owner clarified that the translucent crown is a shared floating TRUE-form indicator for every boss. All eleven TRUE bosses now use the same design above their anatomy/headgear. Dark Lord retains his personal normal crown beneath it. TRUE boss label/culling headroom accommodates the overhead indicator; normal designs, scale and combat remain unchanged.",
     "finalResultApprovalDate": "2026-10-19"
+  },
+  "latestMoneyBagCorrection": {
+    "date": "2026-10-20",
+    "ownerRequest": "Money bag with the Crown emblem instead of a gold coin, for pet and boss. Crowns are silver.",
+    "appearanceScope": "Treasurer carries a tied leather money bag stamped with a silver Crown emblem in the existing left-hand grip, replacing the gold coin/empty hand. Preserve the exact Treasury hammer, arm positions, face and body. Same bag design at pet scale and on normal/TRUE boss. Owner requested this correction on 20 October 2026; prior coin-hand deferral is superseded.",
+    "approval": "Owner-requested correction; no separate acceptance of an unseen revision is claimed.",
+    "decisionRecord": "docs/TREASURER_MONEYBAG_20261020.md",
+    "preview": "tools/visual-review/treasurer-moneybag-dev118/comparison.png",
+    "audit": "tools/visual-review/treasurer-moneybag-dev118/audit.json",
+    "sourceSha256": "8f08f418f8c3140ca82bea8da13df317262de0e7d4eab00801f857c134d18f69",
+    "release": "Prepared dev.118; publication pending."
+  },
+  "currentHandoff": {
+    "date": "2026-10-20",
+    "guide": "docs/SPRITE_RESTART_20261020.md",
+    "decisionIndex": "tools/sprites/current-design-decisions.json",
+    "instruction": "Treasurer carries a tied leather money bag stamped with a silver Crown emblem in the existing left-hand grip, replacing the gold coin/empty hand. Preserve the exact Treasury hammer, arm positions, face and body. Same bag design at pet scale and on normal/TRUE boss. Owner requested this correction on 20 October 2026; prior coin-hand deferral is superseded.",
+    "sourceFile": "src/prototype/visuals.js",
+    "sourceSha256": "8f08f418f8c3140ca82bea8da13df317262de0e7d4eab00801f857c134d18f69"
   }
 }

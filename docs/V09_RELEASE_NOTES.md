@@ -8,7 +8,7 @@ Improved adaptive performance/caches and crowd recovery; safer companion support
 
 Latest publication: PR [#351](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/351), merge `f291edaea04aebfaf6076b7697d5b9751f5bb5f6`, package-only run `39511519262`; [32 exact live files verified](evidence/PROCEDURAL_SELECTIONS_DEV117_PUBLICATION_20261020.json). Per-change focused checks, receipts and limits are indexed in [current state](DEVELOPMENT_STATE.md). Existing saves remain compatible. This is publication evidence, not a new universal hardware-FPS or whole-game playtest certificate.
 
-Current art decisions and the revision-first sprite queue: [restart handoff](SPRITE_RESTART_20261020.md). Treasurer coin hand stays deferred. No automatic new production follows this closeout.
+Current art decisions and the revision-first sprite queue: [restart handoff](SPRITE_RESTART_20261020.md). The later owner-requested Treasurer money bag correction is tracked separately in [its release record](TREASURER_MONEYBAG_20261020.md). No automatic new production follows this closeout.
 
 ## Earlier snapshot scope
 
