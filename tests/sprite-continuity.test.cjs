@@ -43,7 +43,7 @@ const root = path.resolve(__dirname, '..');
     pipeline.currentDesignFor('boss:citadel').decision.traits.includes('continuous violet skirt'),
     true,
   );
-  assert.match(pipeline.currentDesignFor('pet:ridge').decision.traits, /explicitly deferred/);
+  assert.match(pipeline.currentDesignFor('pet:ridge').decision.traits, /silver Crown emblem/);
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'azeroth-continuity-'));
   try {
     const checkpoint = await pipeline.generationRequest('hero:mage', path.join(temp, 'mage'));

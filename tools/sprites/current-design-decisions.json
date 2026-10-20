@@ -176,8 +176,11 @@
       ]
     },
     "pet:ridge": {
-      "traits": "Little Treasurer carries exact boss Treasury hammer at existing grip. Arms/body/face/pose unchanged. Coin hand in pet AND boss explicitly deferred; do not correct it in this pass.",
-      "decisionDocuments": ["docs/PET_VISUAL_IDENTITY_20261020.md"],
+      "traits": "Treasurer carries a tied leather money bag stamped with a silver Crown emblem in the existing left-hand grip, replacing the gold coin/empty hand. Preserve the exact Treasury hammer, arm positions, face and body. Same bag design at pet scale and on normal/TRUE boss. Owner requested this correction on 20 October 2026; prior coin-hand deferral is superseded.",
+      "decisionDocuments": [
+        "docs/PET_VISUAL_IDENTITY_20261020.md",
+        "docs/TREASURER_MONEYBAG_20261020.md"
+      ],
       "handoffs": [
         "tools/sprites/design-handoffs/approved-art-pet-ridge.json",
         "tools/sprites/design-handoffs/companion-pet-ridge.json"
@@ -200,6 +203,11 @@
         "tools/sprites/design-handoffs/approved-art-captive-thorn.json",
         "tools/sprites/design-handoffs/approved-art-appointed-specialist-thorn.json"
       ]
+    },
+    "boss:ridge": {
+      "traits": "Treasurer carries a tied leather money bag stamped with a silver Crown emblem in the existing left-hand grip, replacing the gold coin/empty hand. Preserve the exact Treasury hammer, arm positions, face and body. Same bag design at pet scale and on normal/TRUE boss. Owner requested this correction on 20 October 2026; prior coin-hand deferral is superseded.",
+      "decisionDocuments": ["docs/TREASURER_MONEYBAG_20261020.md"],
+      "handoffs": ["tools/sprites/design-handoffs/approved-art-boss-ridge.json"]
     }
   }
 }

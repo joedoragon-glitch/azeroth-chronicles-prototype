@@ -1,0 +1,111 @@
+{
+  "baseline": "3c0a2b13ce6fa48981d99158623012bea35252c1",
+  "changedTreasurerCases": 9,
+  "unchangedOtherPetAndBossCases": 90,
+  "onlyLeftHandItemChanged": true,
+  "bossArmBodyAndHammerSourceUnchanged": true,
+  "sharedPetBodyArmsUnchanged": true,
+  "statePure": true,
+  "sourceSha256": "8f08f418f8c3140ca82bea8da13df317262de0e7d4eab00801f857c134d18f69",
+  "differences": [
+    {
+      "type": "pet",
+      "form": "pet",
+      "scale": 1,
+      "bounds": {
+        "x1": 301,
+        "y1": 391,
+        "x2": 316,
+        "y2": 409
+      }
+    },
+    {
+      "type": "pet",
+      "form": "pet",
+      "scale": 1.5,
+      "bounds": {
+        "x1": 289,
+        "y1": 387,
+        "x2": 311,
+        "y2": 414
+      }
+    },
+    {
+      "type": "pet",
+      "form": "pet",
+      "scale": 3.8,
+      "bounds": {
+        "x1": 236,
+        "y1": 367,
+        "x2": 291,
+        "y2": 436
+      }
+    },
+    {
+      "type": "boss",
+      "form": "normal",
+      "scale": 1,
+      "bounds": {
+        "x1": 283,
+        "y1": 392,
+        "x2": 306,
+        "y2": 414
+      }
+    },
+    {
+      "type": "boss",
+      "form": "normal",
+      "scale": 1.5,
+      "bounds": {
+        "x1": 263,
+        "y1": 389,
+        "x2": 295,
+        "y2": 422
+      }
+    },
+    {
+      "type": "boss",
+      "form": "normal",
+      "scale": 3.8,
+      "bounds": {
+        "x1": 168,
+        "y1": 372,
+        "x2": 249,
+        "y2": 457
+      }
+    },
+    {
+      "type": "boss",
+      "form": "true",
+      "scale": 1,
+      "bounds": {
+        "x1": 277,
+        "y1": 391,
+        "x2": 302,
+        "y2": 417
+      }
+    },
+    {
+      "type": "boss",
+      "form": "true",
+      "scale": 1.5,
+      "bounds": {
+        "x1": 254,
+        "y1": 387,
+        "x2": 291,
+        "y2": 425
+      }
+    },
+    {
+      "type": "boss",
+      "form": "true",
+      "scale": 3.8,
+      "bounds": {
+        "x1": 146,
+        "y1": 368,
+        "x2": 239,
+        "y2": 465
+      }
+    }
+  ]
+}
