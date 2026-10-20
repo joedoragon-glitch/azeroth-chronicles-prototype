@@ -1,5 +1,7 @@
 # Project working rules
 
+- Latest owner continuation (20 October, 01:29 EDT): quick dev.92 Mage hairstyle correction, no tests, using the direct merge/publication workflow. Younger swept silver fringe and side ponytail fitted below/behind existing headgear in normal/crowned appearances. Withdrawn quality-of-life idea excluded. Preserve dev.91 presentation choices and dev.90 performance work. See docs/MAGE_HAIR_QUICKFIX_20261020.md.
+
 - Current release: dev.91 character correction is merged in PR #325 (58714cf407de9397ebb8ba0343a4ded508865d75) and published by packaging-only run 39373388652. Procedural Paladin/Mage/Soldier; raster Ranger/companion Archer retained; sly Goblin slinger. Exact live source verified. No tests/browser checks/CI; all dev.90 performance changes retained. Normal workflow restored and temporary dev.91 publisher removed. See docs/PROCEDURAL_CHARACTER_QUICKFIX_20261020.md. No automatic further work.
 
 - Latest owner request (20 October, 01:05 EDT): dev.91 visual quick fix ASAP, no tests, directly to merge/publish. Use procedural Paladin, Mage and companion Soldier; retain raster hero Ranger and companion Archer. Goblin slinger should have a sly plotting expression. Preserve dev.90 performance/Frontier work and original art; see docs/PROCEDURAL_CHARACTER_QUICKFIX_20261020.md. One-time packaging-only publisher; restore normal workflow afterward.

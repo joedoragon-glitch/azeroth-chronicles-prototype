@@ -1536,17 +1536,51 @@
     }
     function mageHead(crowned = false) {
       face(0, -29, skin, 0.94, false, 'bright');
-      // Silver bob with a long side lock, visibly different from the specialists.
-      coiffure('bob', '#c7d2db');
+      // Swept silver fringe and a high side ponytail, shared by normal and
+      // crowned appearances. Layered ends keep the silhouette light and young.
+      shaped('#bccbd7', () => {
+        // Root stays below/behind the hat brim; the tail clears its right edge.
+        ctx.moveTo(10, -32);
+        ctx.bezierCurveTo(20, -37, 29, -32, 26, -24);
+        ctx.quadraticCurveTo(24, -16, 16, -12);
+        ctx.lineTo(19, -23);
+        ctx.quadraticCurveTo(13, -17, 13, -18);
+        ctx.quadraticCurveTo(18, -27, 10, -32);
+      });
       line(
         [
-          [7, -31],
-          [9, -24],
-          [8, -18],
+          [15, -32],
+          [22, -29],
+          [22, -24],
+          [18, -18],
         ],
-        '#e7e8dd',
-        2.5,
+        '#e9eff1',
+        1.5,
       );
+      shaped('#d0dce5', () => {
+        ctx.moveTo(-9, -36);
+        ctx.quadraticCurveTo(-1, -43, 9, -36);
+        ctx.lineTo(10, -24);
+        ctx.lineTo(6, -20);
+        ctx.lineTo(6, -32);
+        ctx.quadraticCurveTo(1, -29, -4, -29);
+        ctx.lineTo(-1, -33);
+        ctx.quadraticCurveTo(-5, -30, -8, -28);
+        ctx.lineTo(-7, -21);
+        ctx.lineTo(-11, -25);
+        ctx.closePath();
+      });
+      line(
+        [
+          [-7, -34],
+          [-2, -36],
+          [4, -35],
+          [0, -32],
+        ],
+        '#f0f4f3',
+        1.2,
+      );
+      softRect(16, -32, 4, 3, '#8e74b1', 1);
       shaped('#526d9b', () => {
         ctx.moveTo(-11, -36);
         ctx.quadraticCurveTo(-5, -47, -2, -56);

@@ -1,5 +1,7 @@
 # Current development state — 20 October 2026
 
+**01:29 EDT — dev.92 quick continuation:** Joel requested younger Mage hair fitted to existing headgear, across normal/crowned appearances, with no tests. Shared swept silver fringe and side ponytail; withdrawn quality-of-life idea excluded. [Focused record](MAGE_HAIR_QUICKFIX_20261020.md). Direct merge/publication pending.
+
 **Published dev.91 — character correction:** [PR #325](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/325) merged as `58714cf407de9397ebb8ba0343a4ded508865d75`, published by packaging-only run `39373388652`. Paladin/Mage/companion Soldier use current procedural designs; Ranger/companion Archer keep raster sprites; Goblin slinger has a sly expression. All dev.90 performance/Frontier work remains. Exact live source verified; no tests/browser checks/CI. Normal release wiring restored. [Focused record](PROCEDURAL_CHARACTER_QUICKFIX_20261020.md), [receipt](evidence/CHARACTER_DEV91_PUBLICATION_20261020.json).
 
 **01:05 EDT — dev.91 quick fix authorized for direct merge:** Joel requested procedural Paladin/Mage/companion Soldier, retained raster Ranger/companion Archer, and a sly Goblin slinger face. No tests; direct merge/publication. Dev.90 performance and Frontier improvements are preserved. [Focused change record](PROCEDURAL_CHARACTER_QUICKFIX_20261020.md). Publication pending.
