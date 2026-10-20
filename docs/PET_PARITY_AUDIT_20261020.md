@@ -1,4 +1,6 @@
-# Approved pet parity implementation — dev.113
+# Published pet parity implementation — dev.113
+
+Published through PR #347 / `33f92576e644c7e293e16912b4abcd634703ae5a`; package-only run 39499111241 succeeded, and all 31 exact live files match at 2026-10-20 21:18:30 UTC. Normal workflow restored; temporary publisher removed. Receipt: `docs/evidence/PET_PARITY_DEV113_PUBLICATION_20261020.json`.
 
 Joel accepted the audited assessment and plan on 20 October (“Okay, perfect… I agree. Good.”). This supplies the requested final approval for the three behavior repairs plus common basic cadence and hero-class formations; publish after the combined audit. No pet nerfs or individual family stat/skill buffs are included. Sovereign progression identity remains for a later decision.
 
@@ -7,7 +9,7 @@ Joel accepted the audited assessment and plan on 20 October (“Okay, perfect…
 - The three reviewed behavior repairs remain included: full authored melee skill reach, supported ranged firing destinations, and clearing stale rejected-route state on regroup arrival.
 - Approved candidate checks pass: 189 growth/inheritance/commands/skills/combat/positioning cases; 171 legal mixed-role six-pet layouts, 33 actual formation arrivals, mixed troop/pet lane separation and 22 normal/defensive cadence cases. The 161 melee-reach gates, 13-role regroup regression, automatic pet range/charge/real dungeon wall tests, pet lifecycle/contact healing, veteran troop, doctrine, judgment and Recall checks also pass on the combined candidate.
 - Independent source/result audit confirms identical individual pet skill definitions and unchanged HP/armor/hit growth, inheritance, healing and target commands. Soldier/Ranger combat results are unchanged. All eleven pets improve stationary, clustered and scripted-moving damage in these runs; stationary single-target output rises by 10.6 DPS in this 30-second fixture (about 14–17%, including discrete cooldown/skill timing). This is not an encounter win-rate or a universal damage guarantee.
-- Build and generated asset/syntax/sprite/material/audio integrity checks pass. Changed-source formatting passes; whole-repository formatting retains only the pre-existing unrelated approved-art JSON warning. Package-only publication is next; no broad CI/device matrix.
+- Build and generated asset/syntax/sprite/material/audio integrity checks pass. Changed-source formatting passes; whole-repository formatting retains only the pre-existing unrelated approved-art JSON warning. Package-only publication completed; no broad CI/device matrix.
 
 The original assessment below is a **frozen pre-approval record**, not the current implementation status. `before.json` is dev.112; `findings.json` is the first three-repair candidate; `approved.json` records the additionally approved cadence/formations. Use `PET_AUDIT_OUTPUT=tools/pet-parity-audit-20261020/approved.json` for the current-source audit to preserve the old evidence. Baseline mode reloads the original companion balance settings as well as both party owners.
 

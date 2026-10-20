@@ -1,3 +1,5 @@
+- [Pet parity — dev.113](PET_PARITY_AUDIT_20261020.md): approved shared cadence/formations, three behavior repairs, individual assessments and verified publication.
+
 - [Approved Veyra ivory armor — dev.111](VEYRA_IVORY_20261020.md): owner-approved corrected arm and skirt; normal/TRUE exact-preview verification.
 
 - [Crown planning, companion safety and arc landing — dev.110](CROWN_COMPANIONS_20261020.md): native day/night/save/access audits, three companion repairs and one-impact arc expiry.
