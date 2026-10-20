@@ -1,5 +1,7 @@
 # Night victories, ringleaders and Rogue cadence — 20 October 2026
 
+**Published:** dev.96 through #330, merge `a8d179ec2b8daac95bafebd0997ebe52ec912926`, package-only run `39387681053`. Exact live source verified; normal release workflow restored. [Receipt](evidence/NIGHT_ROGUE_HEALING_DEV96_PUBLICATION_20261020.json). Candidate publication instructions below are completed. Owner play remains next.
+
 Owner-directed dev.96 update, based on live dev.95 (`b03f1ed6f2ac0925d5c8eedd72c2186b9d6c2632`).
 
 - Normal/Developer night escalation now derives from the existing normal + TRUE victory facts, excluding the Dark Lord as before. TRUE field victories and pre-Awakening dungeon TRUE victories count immediately, including those in existing saves. Repeat defeats and late-Awakening facts cannot double-count. The twenty eligible form victories reach 1.70× night HP / 1.55× night damage using the existing formula. Nightmare and peace behavior are preserved. Pet rewards remain intact.

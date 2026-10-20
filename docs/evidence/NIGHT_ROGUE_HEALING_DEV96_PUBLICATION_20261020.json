@@ -1,0 +1,93 @@
+{
+  "version": "0.9.1+snapshot.dev.96",
+  "date": "2026-10-20",
+  "pullRequest": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/330",
+  "publishedCommit": "a8d179ec2b8daac95bafebd0997ebe52ec912926",
+  "preparedTree": "06435901871981303a073a9322594491c5a00962",
+  "publicationRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39387681053",
+  "conclusion": "success",
+  "jobs": [
+    "publish: package/deploy committed files only"
+  ],
+  "focusedChecks": [
+    "night/pet/save/repeat-Rogue AI",
+    "burst-compression",
+    "Rogue integration (16 cases)",
+    "Rogue cast continuity",
+    "Slow/cooldowns",
+    "enemy-support healing",
+    "enemy-area healing",
+    "Archive references",
+    "build, generated-source/assets and changed-runtime formatting"
+  ],
+  "broadCI": false,
+  "browserMatrix": false,
+  "liveVerification": [
+    {
+      "path": "build.txt",
+      "sha256": "cfe21c144921991575f933b36ece0116153c7b5dfe2c805eb98b5ab4d6c09f91",
+      "commit": "a8d179ec2b8daac95bafebd0997ebe52ec912926",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "sha256": "2dba2af8def2b4b2c2373813eb370b1f2d01ea44efc2a5d4d37e6080505380d8",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "sha256": "da708338ebb21720f5a2a7ed4ac399c71c872ed932152bbee1484022bbc6eae3",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "sha256": "4cc481209a62dd6bd5ea1ce894c0c8e960b6d6ab088d79ee7007cd6142703dff",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/archive.js",
+      "sha256": "97a4c0e4ebb484779afa16500571ca93a37a8735103bc208111122a7a6348b93",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/app.js",
+      "sha256": "65bd0752380ef46ddcf96df2977f9b89a32c5020c3dd295924ed033a47964e0f",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/runtime.js",
+      "sha256": "210a1821b48294ff978a43096efe26f74671b916ddfdfe36adbf98ad24fe8c1b",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/navigation.js",
+      "sha256": "4f20feda4bf5fc0e4a1d4dfb4235fa867ff2a14b87eff642ef73bdd5144d82df",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "sha256": "b00881fcdf9ff68d20bed63789289ec522460461c5d62d611701297e9a736262",
+      "matches": true
+    },
+    {
+      "path": "sw.js",
+      "sha256": "db9d5161dd0efba99aa00d79915e7fa2ba02f4b5c60dc6a9833fc9c99e4e1257",
+      "matches": true
+    }
+  ],
+  "changes": [
+    "Normal/Developer counts non-final normal and TRUE victory facts (20 maximum); prior TRUE victories included",
+    "Ringleader burst curve equals captain: knee .145 / tail .240",
+    "Rogue reuse 6 to 3 seconds and isolated response repeatable while eligible",
+    "Area support healing in existing 350-unit range: same per-target amount, 5-second duration, 10-second cooldown and eligibility"
+  ],
+  "preserved": [
+    "dev.94 adaptive FPS source",
+    "dev.95 travel-collision source",
+    "all artwork",
+    "v4 save schema",
+    "ordinary/captain/boss base HP and damage"
+  ],
+  "limits": "Actual balance, subjective difficulty and physical-device performance remain for owner live play. No whole-game validation is claimed.",
+  "workflowCleanup": "Normal pages.yml restored byte-for-byte; temporary dev.96 publisher removed. No runtime changes in closeout."
+}

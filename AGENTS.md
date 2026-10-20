@@ -1,6 +1,8 @@
 # Project working rules
 
-- **Current dev.96 balance update:** Owner directs previously missed TRUE victories into Normal night escalation, ringleader/captain burst-defense parity twice-as-frequent Rogue reuse and area support healing on the same cooldown. Prepared with focused checks; preserve dev.94 FPS, dev.95 travel and artwork. No broad CI. [Scope and evidence](docs/NIGHT_RINGLEADER_ROGUE_20261020.md).
+- Published dev.96 combined balance update: PR #330 / a8d179ec2b8daac95bafebd0997ebe52ec912926; packaging-only run 39387681053 succeeded, exact live files verified. TRUE night counts, captain-tier ringleader compression, 3s repeatable Rogue reuse, area support healing with unchanged 10s cooldown. Focused checks only; FPS/travel/art preserved. Normal workflow restored. Receipt: docs/evidence/NIGHT_ROGUE_HEALING_DEV96_PUBLICATION_20261020.json. Owner play next; no further automatic work.
+
+- **Historical candidate dev.96 balance update:** Owner directs previously missed TRUE victories into Normal night escalation, ringleader/captain burst-defense parity twice-as-frequent Rogue reuse and area support healing on the same cooldown. Prepared with focused checks; preserve dev.94 FPS, dev.95 travel and artwork. No broad CI. [Scope and evidence](docs/NIGHT_RINGLEADER_ROGUE_20261020.md).
 
 - Published dev.95 companion travel fix: PR #329 / merge 43b033334cb3a4b151c82709e05bb988e6da67e0; packaging-only run 39384765061 succeeded, exact live source verified. Out-of-combat hero/companion passage; combat collision preserved. Dev.94 FPS source unchanged; owner reports FPS improvement. Normal workflow restored; no broad CI. Receipt: docs/evidence/TRAVEL_COMPANION_DEV95_PUBLICATION_20261020.json. Owner play is next; no automatic further work.
 
