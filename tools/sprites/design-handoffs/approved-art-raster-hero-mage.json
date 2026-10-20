@@ -4,7 +4,7 @@
   "designId": "approved-art-raster-hero-mage",
   "name": "Active sprite — Hero / Mage",
   "kind": "active-sprite",
-  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "nextAction": "Publish owner-requested dev.91 correction; retain original art and existing performance improvements. No tests requested.",
   "context": {
     "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
     "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Retain this accepted raster revision for the procedural pass. If an image edit is later selected, adjust only broad robe folds and staff-hand separation from its preserved original and update dependent frames together.",
@@ -145,6 +145,20 @@
     "beforeSourceCommit": "e6ea987aded7b441bdedf51e1fc29b38b1ed2f02",
     "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
     "requestedCorrection": "Updated the relevant shared character identity, face/hair, rigid helmet, held tool, quiver or camp/riding composition under the latest owner correction. Carries through indexed loadouts, captive and appointed states. Gameplay geometry and protected raster pixels remain intact.",
-    "finalResultApprovalDate": "2026-10-19"
+    "finalResultApprovalDate": "2026-10-19",
+    "latestOwnerQuickfix": {
+      "date": "2026-10-20",
+      "ownerRequest": "ASAP, no tests, directly to merge. Paladin/Mage and companion soldier return to current procedural art. Hero Ranger and companion Archer retain sprites. Goblin slinger should look sly/up to something, not happy.",
+      "decisionRecord": "docs/PROCEDURAL_CHARACTER_QUICKFIX_20261020.md",
+      "branch": "fix/procedural-heroes-dev91",
+      "sourceSha256": {
+        "src/prototype/sprites.js": "e28cbe6142c2014e813e59b7eddc1f1e9aba945b62475414fee897c9cfd3aa34",
+        "src/prototype/visuals.js": "d38aa4ccfc8f8e8935f0c464fbea4c49a8247ce3b75cbbeba6bba9323280bb5d"
+      },
+      "appearanceAcceptance": "Owner requested implementation of this correction; no separate acceptance of an unseen revision is claimed.",
+      "status": "dev.91 direct merge/publication authorized; publication pending.",
+      "runtimeKey": "hero:mage",
+      "implementation": "Renderer selects current authored procedural body, height and silhouette for this identity and its tiers. Raster registration, original images, clips and rollback history remain retained. Catalog identity is unchanged."
+    }
   }
 }
