@@ -16,6 +16,7 @@
       previous = now;
       samples.push({ workMs, preRenderMs, renderMs, intervalMs });
       if (samples.length > 180) samples.shift();
+      return { workMs, preRenderMs, renderMs, intervalMs };
     }
     function report(render = {}, experience = 'desktop') {
       const work = samples.map((s) => s.workMs).sort((a, b) => a - b),
@@ -177,7 +178,95 @@
       suspend: reset,
     };
   }
-  const api = { create, createFrameRate, fpsPreferenceKey };
+  // Adapt only the backing-store density. CSS coordinates, camera, input and
+  // simulation remain independent of this device-local presentation policy.
+  const resolutionPreferenceKey = 'azeroth-render-resolution-v1';
+  function createResolution(storage) {
+    let preference = 'auto';
+    try {
+      if (storage?.getItem(resolutionPreferenceKey) === 'native') preference = 'native';
+    } catch (_) {}
+    let maximum = 1,
+      ratio = 1,
+      samples = [],
+      checkAt = null,
+      changedAt = null,
+      changes = 0;
+    function suspend() {
+      samples = [];
+      checkAt = null;
+    }
+    return {
+      get preference() {
+        return preference;
+      },
+      get ratio() {
+        return ratio;
+      },
+      configure(value) {
+        if (!Number.isFinite(value) || value <= 0 || value === maximum) return;
+        maximum = ratio = value;
+        suspend();
+      },
+      select(value) {
+        if (!['auto', 'native'].includes(value)) return false;
+        preference = value;
+        ratio = maximum;
+        changedAt = null;
+        suspend();
+        try {
+          storage?.setItem(resolutionPreferenceKey, value);
+        } catch (_) {}
+        return true;
+      },
+      observe(now, renderMs, target) {
+        if (
+          preference !== 'auto' ||
+          !Number.isFinite(now) ||
+          !Number.isFinite(renderMs) ||
+          renderMs < 0 ||
+          ![30, 60].includes(target)
+        )
+          return false;
+        if (samples.length && now <= samples.at(-1).now) suspend();
+        samples.push({ now, renderMs });
+        while (samples.length > 120 || now - samples[0].now > 4000) samples.shift();
+        if (checkAt === null) checkAt = now;
+        if (now - checkAt < 3000 || samples.length < 16 || now - samples[0].now < 1200)
+          return false;
+        checkAt = now;
+        const costs = samples.map((s) => s.renderMs).sort((a, b) => a - b),
+          cost = costs[Math.floor((costs.length - 1) * 0.8)],
+          budget = 1000 / target,
+          minimum = Math.min(0.75, maximum);
+        let next = ratio;
+        if (cost > budget * 1.1 && ratio > minimum) {
+          next = Math.max(
+            minimum,
+            Math.min(ratio - 0.125, Math.floor(ratio * Math.sqrt((budget * 0.8) / cost) * 8) / 8),
+          );
+        } else if (ratio < maximum && (changedAt === null || now - changedAt >= 12000)) {
+          const sharper = Math.min(maximum, ratio + 0.125);
+          if (cost * (sharper / ratio) ** 2 < budget * 0.7) next = sharper;
+        }
+        if (next === ratio) return false;
+        ratio = next;
+        changedAt = now;
+        changes++;
+        suspend();
+        return true;
+      },
+      suspend,
+      status: () => ({ preference, ratio, maximum, changes }),
+    };
+  }
+  const api = {
+    create,
+    createFrameRate,
+    fpsPreferenceKey,
+    createResolution,
+    resolutionPreferenceKey,
+  };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeRuntime = api;
 })(typeof window !== 'undefined' ? window : globalThis);
