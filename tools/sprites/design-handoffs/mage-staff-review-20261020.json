@@ -4,7 +4,7 @@
   "designId": "mage-staff-review-20261020",
   "name": "Mage staff options",
   "kind": "preview",
-  "nextAction": "Publish accepted dev.103 art through package-only workflow; owner live play follows. Preserve accepted preview and original arms/grips.",
+  "nextAction": "Owner live play and appearance feedback. Preserve these accepted drawings and original arm/grip positions for future sprite work.",
   "context": {
     "originConversation": "Conversation URL unavailable; owner instruction dated 20 October 2026.",
     "decisionSummary": "Preview first; fix doubled lips without altering expressions or adding shading. Review Mage/Mira staves.",
@@ -18,7 +18,8 @@
       "mageStaff": "A Moon setting",
       "miraStaff": "C Amber ring",
       "armConstraint": "No changes to original arms, hands or grips"
-    }
+    },
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/337"
   },
   "decisions": {
     "conceptAcceptance": "Owner requested previews.",
@@ -42,11 +43,12 @@
       "Live face, selected hair and existing clothing"
     ],
     "implementationSourceSha256": "e1ac73093eed9756e62243785f0becf6446a4b9207db499567ec45005d918a10",
-    "implementationScope": "docs/APPROVED_LIPS_STAFFS_20261020.md"
+    "implementationScope": "docs/APPROVED_LIPS_STAFFS_20261020.md",
+    "implementationSourceCommit": "6e227772d6263a336ff275e498edbcea27ca791f"
   },
   "production": {
-    "releaseCommit": null,
-    "releaseEvidence": null,
+    "releaseCommit": "1944f7a56ed1f8cc205a51c33979e5d629561d2a",
+    "releaseEvidence": "docs/evidence/LIPS_STAFFS_DEV103_PUBLICATION_20261020.json",
     "rollbackRevision": "Live dev.102 is unchanged"
   }
 }

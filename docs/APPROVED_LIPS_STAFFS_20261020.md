@@ -1,5 +1,8 @@
 # Approved shaped lips and staff-only update — 20 October 2026
 
+**Published dev.103 — approved lips and staffs:** PR #337 / `1944f7a56ed1f8cc205a51c33979e5d629561d2a`; package-only run 39407044593 succeeded and all 15 live checks match. Shaped lips retain expressions; Mage Moon setting A and Mira Amber ring C, with original arms/hands/grips. Sixteen accepted-preview draws match exactly. Normal workflow restored; temporary publisher removed. Frontier/Abyss remain audit/proposals, Veyra face/armor remains preview-only. [Receipt](evidence/LIPS_STAFFS_DEV103_PUBLICATION_20261020.json).
+
+
 Dev.103 implements Joel’s selections: revised shaped upper/lower lips; Moon setting (A) for the Mage in regular/crowned outfits; Amber ring (C, called “ember ring” in dictation) for Mira. The exact current arms, hands and grips stay at their original positions. The shaft stays at x=18. Other NPC staffs are unchanged.
 
 The original mouth stroke is skipped for the eight affected female identities and replaced by tapered upper and lower lip contours around the original expression, with one fine seam. Lyss retains her raised right corner/half-smile. The broad pink-line candidate and the extended-arm staff candidates were explicitly rejected and remain historical, unselected previews. No new face shading is added; the crowned Mage’s scarf remains over her mouth.

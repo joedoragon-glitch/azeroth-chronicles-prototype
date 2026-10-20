@@ -1,6 +1,11 @@
 # Current development state — 20 October 2026
 
-**Candidate dev.103 — approved lips and staffs:** Joel accepted revised shaped lips, Mage Moon setting (A) and Mira Amber ring (C). Exact original arms/hands/grips and x=18 shaft axis retained. Sixteen draws match accepted preview pixels; focused build/format only. Map work is audit/proposal only, no runtime layout changes. [Scope](APPROVED_LIPS_STAFFS_20261020.md).
+**Current owner review:** Marshal Veyra eye/armor options A blue steel, B ivory parade, C dark field: `tools/visual-review/veyra-options-20261020/README.md`. Proper eyes, accepted lips and original spear/shield stance; normal/TRUE views. These remain preview-only; no selection yet. Frontier/Abyss audits and proposals are retained separately.
+
+**Published dev.103 — approved lips and staffs:** PR #337 / `1944f7a56ed1f8cc205a51c33979e5d629561d2a`; package-only run 39407044593 succeeded and all 15 live checks match. Shaped lips retain expressions; Mage Moon setting A and Mira Amber ring C, with original arms/hands/grips. Sixteen accepted-preview draws match exactly. Normal workflow restored; temporary publisher removed. Frontier/Abyss remain audit/proposals, Veyra face/armor remains preview-only. [Receipt](evidence/LIPS_STAFFS_DEV103_PUBLICATION_20261020.json).
+
+
+**Historical candidate dev.103 — approved lips and staffs:** Joel accepted revised shaped lips, Mage Moon setting (A) and Mira Amber ring (C). Exact original arms/hands/grips and x=18 shaft axis retained. Sixteen draws match accepted preview pixels; focused build/format only. Map work is audit/proposal only, no runtime layout changes. [Scope](APPROVED_LIPS_STAFFS_20261020.md).
 
 
 **Audits/previews prepared, not applied:** Frontier census confirms only 4/187 structural props in bottom quarter; proposal relocates 65 props, preserves all 204 natural props and adds 13 connected spurs. Abyss has 38 decorative props/zero solid props; narrow 80–110 gates are the physical bottlenecks. Proposal: 1500→1650 shell, 160–180 gates and side furnishings; all 27 static routes pass in original/proposed layouts, no live AI-stall claim. Scope/evidence: `tools/visual-review/frontier-bastion-audit-20261020/README.md`. Revised mouth/staff previews remain unselected; no runtime edits, build, CI or deployment.

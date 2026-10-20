@@ -4,6 +4,7 @@
 
 | Need | Maintained entrypoint |
 | --- | --- |
+| Veyra prettier eyes and refined armor options (unselected) | [Marshal preview](../tools/visual-review/veyra-options-20261020/README.md) |
 | Approved shaped lips and staff-only selections (dev.103) | [Art update scope](APPROVED_LIPS_STAFFS_20261020.md) |
 | Frontier redistribution / dragon dungeon circulation audit and proposals | [20 October spatial audit](../tools/visual-review/frontier-bastion-audit-20261020/README.md) |
 | Revised shaped-lip and staff-only previews (no arm changes; unselected) | [Preview record](../tools/visual-review/mouth-staff-preview-20261020/README.md) |
