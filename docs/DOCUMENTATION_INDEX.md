@@ -4,6 +4,7 @@
 
 | Need | Maintained entrypoint |
 | --- | --- |
+| Companion blocking while traveling | [Dev.95 movement fix](TRAVEL_COMPANION_COLLISION_20261020.md) |
 | Current 7-FPS report / adaptive pixel density | [Dev.94 candidate and bounded evidence](ADAPTIVE_RESOLUTION_20261020.md) |
 | Chromebook idle FPS / inhabited Frontier correction | [Focused candidate, received Chromebook reports and verification limits](CHROMEBOOK_PERFORMANCE_20261019.md) |
 | Approved all-513 procedural pass and before/after evidence | [Implementation handoff](APPROVED_ART_PASS_20261019.md) |

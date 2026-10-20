@@ -1,5 +1,7 @@
 # Current development state — 20 October 2026
 
+**Current companion movement follow-up — dev.95:** Joel confirmed FPS improved and requested hero/companion passage outside combat, retaining collision during combat. Narrow navigation change preserves hostile/terrain collision, artwork and dev.94 rendering. Continue the quick publication/manual owner-testing workflow; no broad CI. [Scope](TRAVEL_COMPANION_COLLISION_20261020.md).
+
 **Published dev.94 — adaptive rendering resolution:** [PR #328](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/328) merged as `cec45fbd705faecec410a8cffe78738354037c9b`; packaging-only [run 39383012533](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39383012533) succeeded. Live build, app/runtime, renderer, engine, visuals and service worker match the prepared files. Auto/Maximum world sharpness is live; selected artwork and gameplay source are preserved. No additional tests or broad CI ran. Normal release workflow restored and temporary publisher removed. Joel will test; actual Chromebook FPS remains unresolved. [Receipt](evidence/ADAPTIVE_RESOLUTION_DEV94_PUBLICATION_20261020.json). No automatic further work.
 
 **Owner publication authorization — 20 October, 02:51 EDT:** Joel approved putting the prepared dev.94 adaptive-resolution change in the game and will test it himself. Merge and publish the exact prepared runtime using packaging only, with no additional tests or broad CI. Restore the normal workflow after publication; retain the Maximum sharpness option.
