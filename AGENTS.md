@@ -1,5 +1,7 @@
 # Project working rules
 
+- **Current dev.97 night-tempo update:** Owner revised the nighttime movement/basic attack-rate boost to 10%, rising with the same boss counter to 25%. Focused checks passed; healing/Rogue cooldowns, warnings, FPS/travel/art preserved. No broad CI. [Scope](docs/NIGHT_TEMPO_20261020.md).
+
 - Published dev.96 combined balance update: PR #330 / a8d179ec2b8daac95bafebd0997ebe52ec912926; packaging-only run 39387681053 succeeded, exact live files verified. TRUE night counts, captain-tier ringleader compression, 3s repeatable Rogue reuse, area support healing with unchanged 10s cooldown. Focused checks only; FPS/travel/art preserved. Normal workflow restored. Receipt: docs/evidence/NIGHT_ROGUE_HEALING_DEV96_PUBLICATION_20261020.json. Owner play next; no further automatic work.
 
 - **Historical candidate dev.96 balance update:** Owner directs previously missed TRUE victories into Normal night escalation, ringleader/captain burst-defense parity twice-as-frequent Rogue reuse and area support healing on the same cooldown. Prepared with focused checks; preserve dev.94 FPS, dev.95 travel and artwork. No broad CI. [Scope and evidence](docs/NIGHT_RINGLEADER_ROGUE_20261020.md).

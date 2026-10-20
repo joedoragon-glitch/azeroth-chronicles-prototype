@@ -207,6 +207,11 @@
         ? { hp: 1.1 + 0.03 * n, damage: 1.15 + 0.02 * n }
         : { hp: 1, damage: 1 };
     }
+    nightTempo() {
+      if (!this.night() || this.peace) return 1;
+      const cfg = R.balance.nightTempo;
+      return 1 + Math.min(cfg.maxBonus, cfg.baseBonus + cfg.perVictoryBonus * this.nightPoints());
+    }
     // Authoritative enemy support healing. Only actual ranged ordinary roles,
     // authored ranged-aligned captains and the explicitly selected bosses qualify.
     enemyHealProfile(e) {
@@ -386,7 +391,13 @@
         .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp || this.idOrder(a, b))[0];
       if (!ally || !this.route(e, ally).length) return false;
       const before = { x: e.x, y: e.y };
-      this.follow(e, ally, 160 * this.slowMovementFactor(e), dt, cfg.range - 25);
+      this.follow(
+        e,
+        ally,
+        160 * this.slowMovementFactor(e) * this.nightTempo(),
+        dt,
+        cfg.range - 25,
+      );
       if (dist(before, e) <= 0.1) return false;
       e.noProgress = 0;
       return true;
@@ -4198,7 +4209,7 @@
             x: e.x + ((e.x - target.x) / d) * 145,
             y: e.y + ((e.y - target.y) / d) * 145,
           };
-        this.move(e, away, (e.type === 'boss' ? 145 : 175) * 1.5, dt, 0);
+        this.move(e, away, (e.type === 'boss' ? 145 : 175) * 1.5 * this.nightTempo(), dt, 0);
         state.stalled = dist(before, e) > Math.max(0.1, dt * 10) ? 0 : state.stalled + dt;
         e.noProgress = 0;
         if (dist(target, e) > 480 || state.fleeRemaining <= 0 || state.stalled > 1.8) {
@@ -4224,7 +4235,13 @@
         }
         if (dist(e, state.destination) > 65) {
           const before = { x: e.x, y: e.y };
-          this.follow(e, state.destination, (e.type === 'boss' ? 145 : 175) * 1.5, dt, 55);
+          this.follow(
+            e,
+            state.destination,
+            (e.type === 'boss' ? 145 : 175) * 1.5 * this.nightTempo(),
+            dt,
+            55,
+          );
           state.stalled = dist(before, e) > Math.max(0.1, dt * 10) ? 0 : state.stalled + dt;
           if (state.stalled >= 2.5) {
             this._tacticalRegroups.set(e.id, {
@@ -5073,7 +5090,8 @@
     }
     updateEnemies(dt) {
       const z = this.zone(),
-        deaths = this.s.statistics.deaths;
+        deaths = this.s.statistics.deaths,
+        nightTempo = this.nightTempo();
       for (const e of [...z.enemies]) {
         const recovery = this.cooldownRecoveryElapsed(e, dt, true);
         // Read remaining Slow before consuming it, including the final partial
@@ -5454,7 +5472,8 @@
                   (e.captainPhaseMove || 1) *
                   this.ownedSummonMovementFactor(e) *
                   (e.quotaOvertime > 0 ? 1.15 : 1) *
-                  (e.slow > 0 ? 0.5 : 1);
+                  (e.slow > 0 ? 0.5 : 1) *
+                  nightTempo;
               if (gap > stop + 8) {
                 this.follow(e, castTarget, pace, dt, stop);
               } else if (rangedCast) {
@@ -5469,7 +5488,7 @@
                     y: e.y + ((e.y - castTarget.y) / Math.max(1, gap)) * step,
                   };
                   if (dist(retreat, e.home) < territory && this.clearSegment(e, retreat, 12))
-                    this.move(e, retreat, R.rangedEnemyCombat.retreatSpeed, dt);
+                    this.move(e, retreat, R.rangedEnemyCombat.retreatSpeed * nightTempo, dt);
                 }
               }
             }
@@ -5544,7 +5563,14 @@
               });
             }
             e.rangedAim = null;
-            e.cd = pace.cooldown * (e.frenzy ? R.ringleaderScaling.frenzyCooldown : 1);
+            const cooldown = pace.cooldown * (e.frenzy ? R.ringleaderScaling.frenzyCooldown : 1),
+              aimTime = a.total ?? pace.aimTime;
+            // Keep the visible aiming warning intact. Shorten recovery enough
+            // to apply the rate bonus to the complete aim-and-shot cycle.
+            e.cd =
+              nightTempo === 1
+                ? cooldown
+                : Math.max(0, (cooldown + aimTime) / nightTempo - aimTime);
           }
           e.noProgress = 0;
           continue;
@@ -5610,7 +5636,8 @@
             speed =
               R.rangedEnemyCombat.retreatSpeed *
               (e.form === 'ringleader' ? R.rangedEnemyCombat.ringleaderRetreatMultiplier : 1) *
-              (e.slow > 0 ? 0.5 : 1);
+              (e.slow > 0 ? 0.5 : 1) *
+              nightTempo;
           if (dist(away, e.home) < territory && this.clearSegment(e, away)) {
             this.move(e, away, speed, dt);
             opportunity = true;
@@ -5618,19 +5645,22 @@
         }
         if (!opportunity && d <= range && e.cd <= 0 && this.line(e, target)) {
           e.cd =
-            (e.type === 'boss' ? R.bossCadence.basicCooldown : 1.4) *
-            (e.frenzy ? R.ringleaderScaling.frenzyCooldown : 1) *
-            (e.captainAttackRate || 1) *
-            (e.quotaOvertime > 0 ? 0.75 : 1);
+            ((e.type === 'boss' ? R.bossCadence.basicCooldown : 1.4) *
+              (e.frenzy ? R.ringleaderScaling.frenzyCooldown : 1) *
+              (e.captainAttackRate || 1) *
+              (e.quotaOvertime > 0 ? 0.75 : 1)) /
+            nightTempo;
           if (ranged) {
+            const aimTime =
+              R.rangedEnemyCombat.aimTime *
+              (e.frenzy ? R.ringleaderScaling.frenzyAim : 1) *
+              (e.captainAttackRate || 1) *
+              (e.quotaOvertime > 0 ? 0.8 : 1);
             e.rangedAim = {
               x: target.x,
               y: target.y,
-              timer:
-                R.rangedEnemyCombat.aimTime *
-                (e.frenzy ? R.ringleaderScaling.frenzyAim : 1) *
-                (e.captainAttackRate || 1) *
-                (e.quotaOvertime > 0 ? 0.8 : 1),
+              timer: aimTime,
+              total: aimTime,
             };
           } else {
             const equipment = R.enemyMeleeEquipment(e);
@@ -5686,7 +5716,8 @@
               (e.captainPursuit > 0 ? 1.2 : 1) *
               (e.quotaOvertime > 0 ? 1.15 : 1) *
               (e.slow > 0 ? 0.5 : 1) *
-              (e.pursuitBurst > 0 ? pursuitBurstMultiplier : 1),
+              (e.pursuitBurst > 0 ? pursuitBurstMultiplier : 1) *
+              nightTempo,
             dt,
             visible ? range - 8 : 0,
           );
