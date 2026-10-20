@@ -1,4 +1,11 @@
 /* Phone gameplay keeps the world visible and combat within thumb reach. */
+body[data-experience='phone'] #update-button {
+  width: min(105px, calc(100vw - 276px - env(safe-area-inset-left) - env(safe-area-inset-right)));
+  padding: 5px;
+  min-height: 44px;
+  font-size: 11px;
+  text-align: center;
+}
 body[data-experience='phone'] #hud {
   left: max(8px, env(safe-area-inset-left));
   right: max(8px, env(safe-area-inset-right));

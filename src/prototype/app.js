@@ -482,7 +482,7 @@
     appUpdateCheck = null,
     appUpdateBusy = false,
     appLastUpdateCheck = -Infinity;
-  const hadServiceWorkerController = !!navigator.serviceWorker?.controller;
+  let hadServiceWorkerController = !!navigator.serviceWorker?.controller;
   function refreshUpdateNotice() {
     appUpdateReady = !!appRegistration?.waiting;
     const button = $('update-button');
@@ -509,6 +509,7 @@
   }
   async function updateApp() {
     if (!appRegistration || appUpdateBusy || appReloadRequested) return;
+    let activationPause = null;
     appUpdateBusy = true;
     refreshUpdateNotice();
     try {
@@ -540,6 +541,7 @@
         });
       if (appRegistration.waiting) {
         if (started && !save()) return;
+        activationPause = paused;
         paused = true;
         clearInput();
         audio.setPaused(true);
@@ -553,6 +555,11 @@
         );
       }
     } catch (_) {
+      if (activationPause !== null) {
+        appReloadRequested = false;
+        paused = activationPause;
+        audio.setPaused(paused || !focused || document.hidden);
+      }
       status('Update unavailable. Your saved run is safe.');
     } finally {
       appUpdateBusy = false;
@@ -3017,6 +3024,7 @@
     last = performance.now();
     checkAppUpdate().catch(() => {});
   });
+  addEventListener('online', () => checkAppUpdate(true).catch(() => {}));
   document.addEventListener('visibilitychange', () => {
     clearInput();
     last = performance.now();
@@ -3698,15 +3706,16 @@
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (appControllerReloaded) return;
-        appControllerReloaded = true;
         if (hadServiceWorkerController) {
           appReloadRequested = false;
+          appControllerReloaded = true;
           if (started) save();
           location.reload();
-        }
+        } else hadServiceWorkerController = true;
       });
       navigator.serviceWorker
-        .register('./sw.js')
+        .getRegistration('./')
+        .then((reg) => reg || navigator.serviceWorker.register('./sw.js'))
         .then((reg) => {
           appRegistration = reg;
           function check() {

@@ -2,7 +2,7 @@
 
 Baseline: published `0.9.1+snapshot.dev.111`, source tree `aa3843a22741fd14a304a642fba073ad78223b0f`.
 
-Joel requested a complete review of optimization settings and visual caches, then clarified that the outcome should be a robust system for reasonable devices. Candidate `0.9.1+snapshot.dev.112` repairs the confirmed issues below. Publication and the update-notice checks are pending in this preparation checkpoint.
+Joel requested a complete review of optimization settings and visual caches, then clarified that the outcome should be a robust system for reasonable devices. Candidate `0.9.1+snapshot.dev.112` repairs the confirmed issues below. Optimization and update-notice checks are complete; package-only publication is pending.
 
 ## Inventory
 
@@ -71,9 +71,11 @@ Reproductions: [Node/controller evidence](../tools/performance-audit-20261020/ch
 - A warm ground cache still blits a large surface. More cache capacity does not eliminate that cost. Prior copy/bitmap/viewport experiments did not establish reliable gains; none were enabled.
 - Roads, animated water/terrain, scenery, characters, dungeon floors and cover silhouettes still require drawing. The sprite cache avoids decoding; it does not cache every procedural draw as a final image. Static-scene caching needs animation, clipping and quality validation before adoption.
 - 30 FPS caps rendering only. Simulation/audio observation still follow animation callbacks, including high-refresh displays. Changing simulation cadence requires timing/AI equivalence work and is not slipped into a graphics preference.
-- Five generated outdoor zones produce approximately 384 KB per save. Snapshot/serialization alone costs roughly 9–12 ms locally, excluding browser storage latency. Timer and event saves can coincide; dirty-state/coalescing work should preserve all explicit/lifecycle saves. This is an occasional-hitch opportunity, not evidence of the sustained-render bottleneck.
+- Five generated outdoor zones produce approximately 384 KB per save. Snapshot/serialization costs 7.92 ms median / 8.45 ms p95 locally, excluding browser storage latency. Timer and event saves can coincide; dirty-state/coalescing work should preserve all explicit/lifecycle saves. This is an occasional-hitch opportunity, not evidence of the sustained-render bottleneck.
 - Optimization Mode defaults Off and Maximum is a deliberate user override. The three-million-pixel ceiling is softened by a minimum ratio of 1 at very large CSS viewports. Auto handles sustained pressure; neither setting guarantees a minimum FPS on every device.
 - All visual cache ceilings are independent. Actual combined residency is more useful than adding theoretical caps; lowering the 256 MiB sprite ceiling blindly could cause decode churn even though this entire manifest estimates only ~44 MiB.
 - Volume/mute reduces gain; it does not remove every audio graph/observer task. Optimization Mode actually stops environmental sources. Audio has its own bounded cache and voice limits.
 
 Actual-device Chromebook/phone play remains the final performance check. No universal hardware/FPS guarantee follows from the local checks, and no whole-game stress suite or broad browser matrix was run.
+
+Build/generated syntax, sprite/material/audio inventory integrity, focused controller/cache/offline, Highland roster/mine fixtures and crowd escape checks passed. Whole-repository formatting reports the pre-existing unchanged `tools/sprites/approved.json`; all changed code/test/style files pass scoped formatting. Original artwork metadata was left intact.

@@ -176,8 +176,11 @@ test('Mine production, historic cuts and repair forge have trap-free connected r
   c.blocked = blocked;
   for (const target of targets) {
     const actor = { x: 160, y: 240 };
-    for (let n = 0; n < 1000 && Math.hypot(actor.x - target.x, actor.y - target.y) > 20; n++)
+    for (let n = 0; n < 1000 && Math.hypot(actor.x - target.x, actor.y - target.y) > 20; n++) {
+      // Route retry clocks and per-tick planning budgets use simulation time.
+      c.s.time += 0.1;
       c.follow(actor, target, 300, 0.1, 18);
+    }
     assert(
       Math.hypot(actor.x - target.x, actor.y - target.y) <= 20,
       'actual follow traverses the mine',

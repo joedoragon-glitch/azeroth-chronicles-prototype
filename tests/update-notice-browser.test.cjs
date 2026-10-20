@@ -8,11 +8,16 @@ const assert = require('node:assert/strict'),
   { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = path.resolve(__dirname, '..'),
   version = require('../package.json').version;
-let generation = 'a';
+let generation = 'a',
+  failUpdateCheck = false;
 const cacheName = () => 'azeroth-app-v' + version + '-notice-' + generation;
 const server = http.createServer((req, res) => {
   const relative = new URL(req.url, 'http://localhost').pathname,
     file = path.resolve(root, '.' + (relative === '/' ? '/index.html' : relative));
+  if (relative === '/sw.js' && failUpdateCheck) {
+    res.writeHead(503);
+    return res.end('offline update fixture');
+  }
   if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) {
     res.writeHead(404);
     return res.end();
@@ -51,6 +56,7 @@ const server = http.createServer((req, res) => {
     const url = 'http://127.0.0.1:' + server.address().port;
     for (const phone of [false, true]) {
       generation = 'a';
+      failUpdateCheck = false;
       const context = await browser.newContext({
           viewport: phone ? { width: 375, height: 800 } : { width: 1280, height: 800 },
           isMobile: phone,
@@ -106,12 +112,14 @@ const server = http.createServer((req, res) => {
       assert(layout.inside && layout.separate && layout.height >= 40, 'notice fits beside HUD');
       if (process.env.UPDATE_NOTICE_EVIDENCE_DIR) {
         fs.mkdirSync(process.env.UPDATE_NOTICE_EVIDENCE_DIR, { recursive: true });
-        await page.screenshot({
-          path: path.join(
-            process.env.UPDATE_NOTICE_EVIDENCE_DIR,
-            phone ? 'update-phone.png' : 'update-desktop.png',
-          ),
-        });
+        await require('sharp')(await page.screenshot())
+          .webp({ quality: 88 })
+          .toFile(
+            path.join(
+              process.env.UPDATE_NOTICE_EVIDENCE_DIR,
+              phone ? 'update-phone.webp' : 'update-desktop.webp',
+            ),
+          );
       }
       await page.locator('#menu-button').click();
       const label = phone ? 'Instalar actualización' : 'Install available game update';
@@ -134,6 +142,26 @@ const server = http.createServer((req, res) => {
         'settings retain direct update action',
       );
       await page.evaluate(() => Prototype.closeMenu());
+      await page.evaluate(() => {
+        const write = Storage.prototype.setItem;
+        window.failUpdateSave = true;
+        Storage.prototype.setItem = function (key, value) {
+          if (window.failUpdateSave && key.startsWith('azeroth-v4-'))
+            throw Error('storage unavailable');
+          return write.call(this, key, value);
+        };
+      });
+      await page.locator('#update-button').click();
+      assert(
+        await page.evaluate(
+          async () => !!(await navigator.serviceWorker.getRegistration()).waiting,
+        ),
+        'failed save prevents activation',
+      );
+      assert(!(await page.evaluate(() => Prototype.paused)), 'failed install leaves play unpaused');
+      await page.evaluate(() => {
+        window.failUpdateSave = false;
+      });
       // Ready installation must not need a successful network check.
       await context.setOffline(true);
       const loaded = page.waitForEvent('domcontentloaded');
@@ -146,6 +174,50 @@ const server = http.createServer((req, res) => {
       assert(!cachesAfter.includes('azeroth-app-v' + version + '-notice-a'));
       await page.reload();
       await page.waitForFunction(() => window.Prototype?.game.hero.gold === 42424);
+      failUpdateCheck = true;
+      await page.locator('#menu-button').click();
+      await page
+        .locator('#modal-actions')
+        .getByRole('button', { name: phone ? 'Juego y ajustes' : 'Game and settings', exact: true })
+        .click();
+      await page
+        .locator('#modal-actions')
+        .getByRole('button', {
+          name: phone ? 'Buscar actualización' : 'Check for game update',
+          exact: true,
+        })
+        .click();
+      await page
+        .waitForFunction(
+          () =>
+            document
+              .getElementById('status')
+              .textContent.includes(
+                document.documentElement.lang === 'es-419'
+                  ? 'No se pudo actualizar'
+                  : 'Update unavailable',
+              ),
+          null,
+          { timeout: 5000 },
+        )
+        .catch(async () => {
+          throw Error(
+            'Failed-update status: ' +
+              (await page.evaluate(() =>
+                JSON.stringify({
+                  text: document.getElementById('status').textContent,
+                  paused: Prototype.paused,
+                  ready: !document.getElementById('update-button').hidden,
+                  language: document.documentElement.lang,
+                }),
+              )),
+          );
+        });
+      await page.evaluate(() => Prototype.closeMenu());
+      assert(
+        !(await page.evaluate(() => Prototype.paused)),
+        'failed network check does not freeze play',
+      );
       assert.deepEqual(errors, []);
       console.log(
         'PASS ready notice, localized layout/menu access, waiting activation, offline install, save retention and offline reload: ' +

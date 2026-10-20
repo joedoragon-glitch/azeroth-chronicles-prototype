@@ -236,7 +236,7 @@ const entry = (n) => ({
         URL,
         fetch: network,
         console,
-        caches: { open: async () => store },
+        caches: { open: async () => store, keys: async () => [] },
         self: {
           registration: { scope },
           addEventListener: (name, fn) => (handlers[name] = fn),
