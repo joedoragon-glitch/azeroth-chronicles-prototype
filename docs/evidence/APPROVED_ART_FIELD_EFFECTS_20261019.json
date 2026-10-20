@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-19",
+  "version": "0.9.1+snapshot.dev.88",
+  "sourceSHA256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d",
+  "scope": "Three supplemental field attacks only: settlement peace intentionally blocks most casts in the lighting/facing frames. Each hero performs one manual basic attack outside the settlement, exercising actual animation/effects/audio; no whole-game suite.",
+  "frames": [
+    {
+      "class": "paladin",
+      "night": false,
+      "facing": "right",
+      "castAccepted": true,
+      "scene": "Open Vale field: one manual basic attack per hero class with animation, effects and audio",
+      "device": "desktop",
+      "audio": {
+        "state": "running",
+        "cue": "vale",
+        "night": false,
+        "voices": 12
+      },
+      "image": "field-effect-desktop-paladin-day-right.png"
+    },
+    {
+      "class": "mage",
+      "night": false,
+      "facing": "right",
+      "castAccepted": true,
+      "scene": "Open Vale field: one manual basic attack per hero class with animation, effects and audio",
+      "device": "desktop",
+      "audio": {
+        "state": "running",
+        "cue": "vale",
+        "night": false,
+        "voices": 14
+      },
+      "image": "field-effect-desktop-mage-day-right.png"
+    },
+    {
+      "class": "ranger",
+      "night": false,
+      "facing": "right",
+      "castAccepted": true,
+      "scene": "Open Vale field: one manual basic attack per hero class with animation, effects and audio",
+      "device": "desktop",
+      "audio": {
+        "state": "running",
+        "cue": "vale",
+        "night": false,
+        "voices": 9
+      },
+      "image": "field-effect-desktop-ranger-day-right.png"
+    }
+  ],
+  "uncaughtErrors": []
+}

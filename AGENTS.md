@@ -1,5 +1,7 @@
 # Project working rules
 
+- Final state: the completed dev.88 art pass is merged in #323 and published (run 39358577620). The explicitly waived broad test suites were not run. Bounded startup/visual/audio results are in docs/evidence/APPROVED_ART_PUBLICATION_20261019.json. Temporary publication wiring is removed and normal release workflow restored. No additional testing, release or gameplay work follows automatically.
+
 - Latest owner instruction (19 October, 22:06 EDT): the entire completed dev.88 visual pass is approved for merge and publication. Do not run whole-game suites/CI for this release; desktop/phone crash-only startup is recorded. Publish first, then one bounded visual/audio integration check. Restore normal release wiring after the one-time publisher. This supersedes earlier local-only release limits for this specific pass.
 
 - Later owner instruction: all 513 assessed visual entries are approved for implementation, with protected art retained and a before/after catalog. Continue the bounded art pass under `docs/APPROVED_ART_PASS_20261019.md`; it supersedes older visual-pause text below. Preserve the merged Frontier work. No new release authority or broad regression pass follows from this approval.

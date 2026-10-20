@@ -72757,7 +72757,7 @@
     "Nine selected in-game scenes were captured before/after in desktop and phone browser layouts at 150%, including one Crown night scene. These bounded visual checks do not certify a complete campaign, every lighting/crowd combination, or a physical phone.",
     "All 33 registered sprite images, both retained idle frame pairs, seven textures, their original sources, display anchors and timing remain unchanged. Comparison metadata now references the refined procedural fallbacks; prior registry revisions remain in history.",
     "Combat-warning geometry is protected. The effects card remains a representative context review; this pass does not claim new artwork or a frame-by-frame audit for every VFX identity.",
-    "Earlier publication block is historical. Joel explicitly authorized merge and publication on 19 October 2026; this approval supersedes the prior local-only boundary.",
+    "Earlier publication block is historical. Joel explicitly authorized merge and publication on 19 October 2026; PR #323 is merged and dev.88 is published. This supersedes the prior local-only boundary.",
     "Joel approved the entire completed design set on 19 October 2026, including the final corrected states. This is owner design acceptance, not a full gameplay certificate.",
     "Joel approved the entire completed design set on 19 October 2026, including the final corrected states. This is owner design acceptance, not a full gameplay certificate."
   ],
@@ -72852,14 +72852,14 @@
     }
   },
   "implementation": {
-    "status": "Final design set owner-approved; merge and publication authorized",
+    "status": "Owner-approved completed visual pass merged and published",
     "branch": "polish/approved-whole-game-art",
     "baseCommit": "1e154954d55b3eb7212cd37aad0e5ad8e1971c98",
     "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
     "visualSourceSHA256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d",
     "version": "0.9.1+snapshot.dev.88",
     "camera": 1.5,
-    "releaseStatus": "Merge and publication in progress under explicit owner authorization; final publication evidence is recorded in docs/APPROVED_ART_PASS_20261019.md.",
+    "releaseStatus": "Published dev.88 through PR #323; package-only run 39358577620 succeeded. Normal release wiring restored in closeout; no broad test suites ran.",
     "checks": {
       "entries": 513,
       "fixtures": 606,
@@ -72876,7 +72876,10 @@
     },
     "correctedReviewEntries": 38,
     "latestReviewChangedEntries": 11,
-    "previousReviewedEvidenceCommit": "778fb6a7"
+    "previousReviewedEvidenceCommit": "778fb6a7",
+    "publishedCommit": "523ddcee09c34455776d876e1e7d6fcd738bb745",
+    "publicationRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39358577620",
+    "publicationEvidence": "docs/evidence/APPROVED_ART_PUBLICATION_20261019.json"
   },
   "implementationHistory": [
     {

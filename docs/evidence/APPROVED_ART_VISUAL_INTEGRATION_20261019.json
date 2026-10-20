@@ -1,0 +1,132 @@
+{
+  "date": "2026-10-19",
+  "version": "0.9.1+snapshot.dev.88",
+  "sourceSHA256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d",
+  "scope": "One bounded local rendering/audio integration check of the exact published source, after publication. Six desktop and two phone representative frames; no whole-game suite, stress test or campaign replay.",
+  "frames": [
+    {
+      "class": "paladin",
+      "night": false,
+      "facing": "right",
+      "castAccepted": false,
+      "scene": "Crown settlement with available creature actors; settlement peace can intentionally block attacks.",
+      "device": "desktop",
+      "audio": {
+        "state": "running",
+        "cue": "crown",
+        "night": false,
+        "voices": 6
+      },
+      "image": "desktop-paladin-day-right.png"
+    },
+    {
+      "class": "paladin",
+      "night": true,
+      "facing": "left",
+      "castAccepted": true,
+      "scene": "Crown settlement with available creature actors; settlement peace can intentionally block attacks.",
+      "device": "desktop",
+      "audio": {
+        "state": "running",
+        "cue": "crown",
+        "night": true,
+        "voices": 13
+      },
+      "image": "desktop-paladin-night-left.png"
+    },
+    {
+      "class": "mage",
+      "night": false,
+      "facing": "right",
+      "castAccepted": false,
+      "scene": "Crown settlement with available creature actors; settlement peace can intentionally block attacks.",
+      "device": "desktop",
+      "audio": {
+        "state": "running",
+        "cue": "crown",
+        "night": false,
+        "voices": 9
+      },
+      "image": "desktop-mage-day-right.png"
+    },
+    {
+      "class": "mage",
+      "night": true,
+      "facing": "left",
+      "castAccepted": false,
+      "scene": "Crown settlement with available creature actors; settlement peace can intentionally block attacks.",
+      "device": "desktop",
+      "audio": {
+        "state": "running",
+        "cue": "crown",
+        "night": true,
+        "voices": 13
+      },
+      "image": "desktop-mage-night-left.png"
+    },
+    {
+      "class": "ranger",
+      "night": false,
+      "facing": "right",
+      "castAccepted": false,
+      "scene": "Crown settlement with available creature actors; settlement peace can intentionally block attacks.",
+      "device": "desktop",
+      "audio": {
+        "state": "running",
+        "cue": "crown",
+        "night": false,
+        "voices": 5
+      },
+      "image": "desktop-ranger-day-right.png"
+    },
+    {
+      "class": "ranger",
+      "night": true,
+      "facing": "left",
+      "castAccepted": false,
+      "scene": "Crown settlement with available creature actors; settlement peace can intentionally block attacks.",
+      "device": "desktop",
+      "audio": {
+        "state": "running",
+        "cue": "crown",
+        "night": true,
+        "voices": 7
+      },
+      "image": "desktop-ranger-night-left.png"
+    },
+    {
+      "class": "mage",
+      "night": false,
+      "facing": "right",
+      "castAccepted": false,
+      "scene": "Crown settlement with available creature actors; settlement peace can intentionally block attacks.",
+      "device": "phone",
+      "audio": {
+        "state": "running",
+        "cue": "crown",
+        "night": false,
+        "voices": 11
+      },
+      "image": "phone-mage-day-right.png"
+    },
+    {
+      "class": "mage",
+      "night": true,
+      "facing": "left",
+      "castAccepted": false,
+      "scene": "Crown settlement with available creature actors; settlement peace can intentionally block attacks.",
+      "device": "phone",
+      "audio": {
+        "state": "running",
+        "cue": "crown",
+        "night": true,
+        "voices": 14
+      },
+      "image": "phone-mage-night-left.png"
+    }
+  ],
+  "uncaughtErrors": [],
+  "effectsFollowup": "APPROVED_ART_FIELD_EFFECTS_20261019.json confirms one successful manual field attack for each hero class.",
+  "visualInspection": "Day/night captures and the three field-attack captures visually inspected. No new clipping, mirrored-anchor or lighting failure observed in these representative scenes.",
+  "limits": "Representative smoke coverage only; no all-assets/all-clips audit, physical-device test or subjective audio listening/balance certificate."
+}

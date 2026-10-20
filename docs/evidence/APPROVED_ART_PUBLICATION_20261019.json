@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-19",
+  "version": "0.9.1+snapshot.dev.88",
+  "pullRequest": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/323",
+  "publishedCommit": "523ddcee09c34455776d876e1e7d6fcd738bb745",
+  "publicationRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39358577620",
+  "publicationConclusion": "success",
+  "jobs": [
+    "publish: packages committed files and deploys Pages only"
+  ],
+  "testSuitesRunForRelease": false,
+  "fullGameRegressionRun": false,
+  "publicBuildTXT": "523ddcee09c34455776d876e1e7d6fcd738bb745",
+  "publicVisualSourceSHA256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d",
+  "publicBrowser": "Desktop new Mage adventure started, moved left/right and opened menus; phone entry resumed the same adventure with touch controls. No game-page error observed; browser-extension metadata warnings excluded.",
+  "focusedIntegration": [
+    "APPROVED_ART_VISUAL_INTEGRATION_20261019.json",
+    "APPROVED_ART_FIELD_EFFECTS_20261019.json"
+  ],
+  "startup": "APPROVED_ART_MERGE_STARTUP_20261019.json",
+  "fixtureSetupNotes": "Two temporary check scripts needed fixture corrections (hero cooldown field name; developer-mode state cannot be assigned without its initialization). Neither was a production game crash or required runtime edits. Completed focused cases were not rerun after passing.",
+  "workflowCleanup": "Restore pages.yml byte-for-byte from the pre-release main baseline and remove the one-time publisher. Cleanup commit skips CI and does not change the published runtime."
+}
