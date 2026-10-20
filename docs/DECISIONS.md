@@ -183,3 +183,7 @@ Pet first skills require no learning. Companion charged second skills already un
 Owner rejects the long blue snowmelt centerline in the reported ravine, then asks to retain the snowmelt idea if drawn properly. Replace the uniform line with a shallow variable-width stream, wet bed, small pools, exposed stones and subtle ripples inside the unchanged channel; retain rocks, banks, crossings and collision geometry.
 
 All pets must visibly announce skill use. Reuse the related bosses' action/material vocabulary at pet scale for both first and charged second skills; visible launch/name cues, charge cues, family-colored ranged trails and truthful contact effects. Keep on-hit effects tied to real hits, existing geometry, reduced-motion/optimization modes and the bounded effect queue.
+
+## Keeper-authored Archive voice · 20 October 2026
+
+The Keeper collected and authored the Archive. Self-history, old-company memories, the Lantern Wraiths' relationship, council records and discoveries he recorded use his first-person voice. Separate Archive prose from shared encounter briefs so development clarification cannot appear as lore. Remove authoring directives, implementation/version-change language, raw internal labels and reward/progression disclaimers from narrative. Preserve legitimate player skill instructions, live numerical figures, established lore and the existing evidence/throne revelation gates. Ledger entries are first-person signed records. No gameplay changes. [Audit](KEEPER_ARCHIVE_COPY_AUDIT_20261020.md).

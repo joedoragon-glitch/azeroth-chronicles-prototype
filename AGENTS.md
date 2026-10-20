@@ -1,5 +1,7 @@
 # Project working rules
 
+- **Current dev.99 Keeper Archive copy audit:** Full Archive/ledger audit removes authoring leakage, rewrites Keeper self-history and relationships in his own voice, keeps rules-derived figures and evidence/throne gates. Focused text/menu checks only; no broad CI. [Scope](docs/KEEPER_ARCHIVE_COPY_AUDIT_20261020.md).
+
 - Published dev.98: PR #332 / 958cca69d8de96ccf91240323f13260c1f4e8960; package-only run 39393295596 succeeded and exact live files match. Neri visible; friendly ranged shots dodgeable; pet activation/training checked and menus clarified; all 22 pet skills show boss-derived effects and name cues; proper ravine snowmelt stream. Focused checks only, no broad CI. Normal workflow restored; temporary publisher removed. Receipt: docs/evidence/DEV98_NERI_PROJECTILES_PETS_SNOWMELT_20261020.json. Owner play next; no automatic further work.
 
 - **Historical candidate dev.98 Neri/projectile/pet update:** Owner requests full-body rescued Neri, dodgeable friendly ranged/single-target attacks, pet activation/training review, repair of the shown ravine snowmelt, and recognizable boss-derived pet skill effects. Neri moved into square; fixed projectile flight/contact effects; pet training menu clarified; all 22 pet skills have release/contact effects and name cues; snowmelt redrawn as a shallow stream. Focused validation; preserve FPS/travel/night/character art/save. Package-only publication. [Scope](docs/NERI_PROJECTILE_PET_20261020.md).

@@ -1,8 +1,48 @@
 /* Optional, read-only Archive reference. Figures come from live rules and Campaign queries. */
 (function (root) {
   'use strict';
-  const darkLordHistory =
-    "He once crossed the provinces with a close company of adventurers, leaving victories and grieving villages behind. One day no one told them where to go next. He forged a peace in which rival peoples could trade; now he keeps it through levies, garrisons and captive labor. 'Freedom has a price,' he says.";
+  // Archive prose belongs to the Keeper; shared encounter briefs are not dialogue.
+  const keeperHistories = {
+    thorn:
+      "Thornfang learned Greenwood's paths as a Crown wilderness scout. His professional K9 training covers canine handling, recall, scent-work and pack welfare. Now he patrols the approaches to the winter estate with Mira, a paid instructor who is forbidden to leave. His patrol returns to the den when a fight breaks off. The tracks through the woods reveal more of his movements than he would like.",
+    crypt:
+      'The Lifebinder and I traveled with the Dark Lord long before these garrisons were built. His fields are Mortuary Science and Thanatology, and Architectural Conservation and Adaptive Reuse. His bindings do not restore the fallen to life: he makes them into aware, enduring skeletons. Together those arts keep the unfinished winter estate running. Borin builds and repairs there under compulsion.',
+    mire: 'Mirejaw knows the wetland channels better than my maps can show. His own mud slows pursuers and helps his wounds close. The fishing villages still work the waters beyond his reach; not every boat on the Marches answers to him.',
+    archive:
+      "I traveled in the Dark Lord's old company before I settled among these shelves. I am a scholar, a councillor, and, when my duties permit, a fisherman. They call me the Drowned Keeper because I drowned long ago. That happened before the flood now threatening my books; its cause remains unknown to me. Neri has the skill to preserve the damaged records.",
+    ridge:
+      'Ridge Tyrant is a skilled economist. As Master of Coin, he argues that regular wages, maintained roads and circulating crowns vindicate the ruler who provides them. His hired ridge archers guard the payroll and mineral caravans. Their contracts can carry them beyond the Frontier. I keep his accounts among the council records; the figures explain his confidence, though they do not settle every objection to his rule.',
+    mine: "I knew Garun the Firstborn as the Ogre Bastion of our old company and as the architect of roads, strongholds and settlements suited to the many peoples who live here. During one expedition he held a collapsing mountain gate long enough to save us. He chose the fitted stone body around his luminous heartstone: the angular shell, golden eyes and diamond core are his own design. He still serves on the council, though he would rather inspect a bridge than sit through another meeting about a building assignment. At Colossus Mine, Ogre wardens and Crown riders on armored direwolves provide security. The riders' bunks and the wolves' kennels occupy the same working quarters. Ridge Tyrant, his captain and the crews handle the accounts, currency and routine production. Garun is comfortably paid but must meet the Mine's costs. He spends his spare crowns on charming junk, clever useless machines, striking geometric objects and stark architectural experiments. Dara receives fair payment for repairs and unusual commissions, and can negotiate freedom within the Mine, but Garun still controls whether the smith may leave. He regards the Mine as his workshop, refuge, gallery and a manageable post. He trusts our old friend. If that friend fell, Garun's roads, strongholds and labor force would give him considerable power. I would expect him to shelter people by directing where they may safely go; whether they wished to remain within those protected corridors is another question.",
+    warlord:
+      'The Ashen Warlord governs the occupied Frontier and commands its Orc warbands. His guarded caravans, repaired crossings and provisioned checkpoints keep Emberwatch and the military road functioning. The patrols also demand obedience from the people rebuilding Burned Hamlet. He guards the approach to the unfinished air works at Abyss Bastion. Cinder Warlord inspects the roads on his behalf. My reports describe better trade and safer passage alongside levies, captive labor and military rule.',
+    abyss:
+      'I remember Veyrith carrying the Dark Lord on our travels. He remains a proud, disciplined and loyal purple dragon, convinced that aerial patrols and military superiority can secure peace. The hatchery, harness stations and unfinished launch platform at Abyss Bastion are preparations for a royal air force. The fleet he wants does not yet exist.',
+    citadel:
+      'Marshal Veyra joined our company as a coastal road warden, cosmetologist and regimental drillmaster. She taught Goblins, Ogres, Humans and other irregular fighters to hold a common line, follow shared drills and care for their uniforms and equipment. She has exacting opinions on grooming, architecture and military equipment. Functional work, she insists, should also be beautiful. She and Garun are good friends; I have heard enough of their discussions of workmanship and proportion to fill a small volume. Veyra serves the Dark Lord loyally and dreads politics. She doubts that she could govern better than he does. Yet her officers and garrisons could place the five provinces under her command if his throne stood empty. I suspect her answer to disorder would resemble a barracks writ large.',
+    cindermaw:
+      'The Dark Lord personally elevated Cindermaw for his skill in organizing Ash beasts and administering territory. Crownwatch, Ash Refuge, the Ruined Foundry and the roads and supply network fall under his ministry. The Crown provides food, shelter and safer travel while making residents dependent on its services. Cindermaw and Dreadmaw co-manage the whole Treasury; Dreadmaw guards the Inner Vault. Vera is paid for her work as Master Smith, but remains a captive. Payment does not give her the right to depart.',
+    darklord:
+      "I crossed the provinces in his company, through victories that left more than one village grieving. Then came the day when no further command told us where to go. He forged a peace in which rival peoples could trade. He now maintains it through levies, garrisons and captive labor. 'Freedom has a price,' he says. I have preserved that phrase with the rest of our records.",
+  };
+  const keeperOffices = {
+    'supply-crown':
+      "Cindermaw's devoted disciple administers crops, livestock, meat, dairy, poultry, fisheries and their distribution across all five Crown provinces. He co-manages the whole Treasury with the Interior ministry and guards its Inner Vault. Ridge Tyrant oversees coin and accounts. I keep the records. The Lantern Wraiths have grown fond of Dreadmaw, and he returns their affection.",
+    'supply-vale':
+      "Scornfang is Thornfang's Goblin disciple and Greenwood's Superintendent of Reclamation. He oversees decommissioning, remediation, salvage and relocation for the estate works. His authority belongs to that local office. The materials he recovers find their way into the estate's construction accounts.",
+    'supply-highlands':
+      "Crag Tyrant is a horned humanoid mountain tyrant like his mentor, Ridge Tyrant. He guards the Treasury household, paid accounts, coin stores and its three separate caches. Crown riders on armored direwolves form his household security, with bunks, wolf bedding and saddle racks in their shared quarters. Wild Highland wolves keep their own dens. Crag regards steady wages and guarded shipments as sufficient reason for strict control. He answers to the Master of Coin; the mint and the province's government lie beyond his household duties.",
+    'frontier-overseer':
+      "Cinder Warlord inspects the Frontier on the Ashen Warlord's behalf. He visits roads, work details and occupied settlements, enforcing orders while markets and repair crews continue their work. His Mandatory Overtime can press up to seven nearby workers into a fight. Without workers present, there is no one for him to order forward.",
+  };
+  const keeperProvinces = {
+    vale: "My Greenwood records begin with Millhaven, Orchard Hamlet and the working mill: woodland and farmland, with settled communities along the roads. The Forest Crypt is becoming the Dark Lord's unfinished winter estate under the Lifebinder's care. He was one of my old companions. His bindings give the fallen an enduring awareness rather than life; some skeletons still keep their own names and allegiances.",
+    highlands:
+      "The Dark Lord seized Ironroot's silver-bearing and copper-bearing mountains long ago. I receive the Master of Coin's accounts for the separate ore workings, wages, escorted shipments and Stonecross mint. The mint strikes crowns bearing the Dark Lord's portrait. Quarry Outpost also cuts building stone. In Stonecross people trade and raise families; some welcome regular payday, while others resent the Crown's ownership of the mountains. Wolves hunt the wild valleys. Ogres cook, work stone and play at their own hearths.",
+    frontier:
+      "My Frontier reports describe an old battlefield becoming inhabited country again. Red poppies bloom in disturbed ground. Grass and young pale-trunk trees spread over cool ash and abandoned blast scars, while ruins remain beside gardens and repair works. The ravine and the old battle sites still bear their wounds. Emberwatch and Burned Hamlet recover under the Dark Lord's military governor. Repaired crossings, patrols and provisions bring safety and trade; inspections, levies and captive labor remain compulsory. The Ruined Shrine barracks, forts, the night Stalkers' hold and the guarded road to Abyss Bastion are part of the same occupation.",
+    crown:
+      "I keep the council records for a kingdom whose services and coercion are closely bound. Crownwatch houses workers and maintains roads and guarded transport. The Citadel, Cindermaw's ministry and the barracks enforce its hierarchy. Beside the lava channels, secure exchangers and insulated flues carry volcanic heat to glass and ceramic kilns, drying rooms, public washing and winter rooms. The ruined foundry, crystal shelf and fortress roads serve paid workers as well as compulsory labor, levies, captive specialists and military rule. The war's end allowed much to recover. Those who live here do not all enjoy that recovery on the same terms.",
+  };
   // Shared short definitions feed the optional quick reference; the third field
   // is expanded only by the Keeper's existing "Show me the figures" path.
   function conditionTopics(R) {
@@ -28,7 +68,7 @@
           R.heroTactics.mage.silence.duration +
           '–' +
           (R.heroTactics.mage.silence.duration + 4 * R.heroTactics.mage.silence.durationStep) +
-          ' seconds by rank. It suppresses new specials, support-heal activation and unfinished companion charged releases. Existing enemy warned specials wait rather than disappearing; projectiles, hazards, healing pulses and committed movement continue. It neither adds Slow nor freezes cooldown recovery. Leaving the field or its expiry ends Silence; damage immunity does not erase the field.',
+          ' seconds by rank. It suppresses new specials, support-heal activation and unfinished companion charged releases. The warnings remain visible: enemy specials already being prepared wait rather than disappearing; projectiles, hazards, healing pulses and committed movement continue. It neither adds Slow nor freezes cooldown recovery. Leaving the field or its expiry ends Silence; damage immunity does not erase the field.',
       ],
       [
         'Interrupted charges',
@@ -75,11 +115,11 @@
           percent(heal.fraction) +
           '% of the recipient’s maximum HP over ' +
           heal.duration +
-          ' seconds, subject to existing encounter scaling, beginning at ' +
+          ' seconds, with their strength varying by encounter, beginning at ' +
           percent(heal.threshold) +
           '% HP or less on a ' +
           heal.cooldown +
-          's cooldown. Slow delays the next skill, not ongoing healing pulses. Siphon instead heals from HP actually taken; authored boss self-recovery remains separate.',
+          's cooldown. Slow delays the next skill, not ongoing healing pulses. Siphon instead heals from HP actually taken; each leader’s own recovery techniques work separately.',
       ],
     ];
   }
@@ -133,7 +173,7 @@
           pc(p.ridge.baseline.normal) +
           ' + ' +
           pc(p.ridge.perArcher.normal) +
-          ' per owned living Archer, max three (TRUE ' +
+          ' per living Archer under his command, max three (TRUE ' +
           pc(p.ridge.baseline.true) +
           ' + ' +
           pc(p.ridge.perArcher.true) +
@@ -155,7 +195,7 @@
           pc(p.warlord.baseline.normal) +
           ' + ' +
           pc(p.warlord.perOrc.normal) +
-          ' per nearby owned Orc; owned Orcs deal +' +
+          ' per nearby Orc under his command; those Orcs deal +' +
           pc(p.warlord.orcDamage.normal) +
           ' (TRUE ' +
           pc(p.warlord.baseline.true) +
@@ -315,7 +355,7 @@
             ' or more levels above you do not use rogue tactics.\n\n' +
             'At your level, summoning bosses and captains need at most ' +
             tactics.summonSupportThreshold +
-            ' living owned summon and a summon still waiting to recover. Thornfang, Ashen Warlord, Dark Lord and Dreadmaw can also act cunningly under that same summon condition.\n\n' +
+            ' living summoned ally, with the next summoning not yet ready. Thornfang, Ashen Warlord, Dark Lord and Dreadmaw can also act cunningly under that same summon condition.\n\n' +
             'A retreat seeks reachable allies within ' +
             tactics.awarenessRadius +
             ' paces; one ally is enough. Continued pursuit can lead to another local retreat and more allies. The foe takes half damage while preparing to withdraw, withdrawing or making a tactical escape; that protection ends when it settles or abandons the retreat.\n\n' +
@@ -505,7 +545,7 @@
       topics: [
         [
           'Veteran troop techniques',
-          'Expedition Rank 4 improves existing troop skills: Soldiers protect themselves after a successful Power Strike; Rangers cover a close retreat with Triple Shot.',
+          'At Expedition Rank 4, troop training deepens: Soldiers protect themselves after a successful Power Strike; Rangers cover a close retreat with Triple Shot.',
           'Power Strike grants a self-only ' +
             percent(R.companionSkills.veteran.soldierWard) +
             '% ward for ' +
@@ -514,12 +554,12 @@
             R.companionSkills.veteran.coveringRange +
             ' units; only the first arrow applies ' +
             R.companionSkills.veteran.coveringSlow +
-            ' second of Slow on a real hit. Normal cooldown, Silence, line of sight and terrain still apply. Heal and Mana Recovery, charged second attacks and their interruption rules are unchanged.',
+            ' second of Slow on a real hit. Normal cooldown, Silence, line of sight and terrain still apply. Ranger care and charged second attacks have their own recovery and interruption rules.',
         ],
         [
           'TRUE boss pets',
-          'Each TRUE boss victory permanently unlocks a miniature companion in Barracks → Company → Boss pet collection. Past TRUE victories count. Each pet replaces a normal companion slot; no pet summons or performs labor.',
-          'Recruitment is free, with one individual per boss. Resting and fallen pets remain in your company, retaining their health. Treat or recover them with the normal Barracks services; there is no free dismissal-and-recruit heal. Pets inherit hero-level health, Companion Vitality and Expedition bonuses like troops. Ranged pets keep their distance when space permits and can attack while repositioning. Attacks need a clear line. Their second skill uses the same charge, interruption, Slow and Silence rules. No new party capacity is granted.',
+          'Each TRUE boss victory permanently unlocks a miniature companion in Barracks → Company → Boss pet collection. Each pet replaces a normal companion slot; no pet summons or performs labor.',
+          'Recruitment is free, with one individual per boss. Resting and fallen pets remain in your company, retaining their health. Treat or recover them with the normal Barracks services; recruiting the same pet again cannot replace treatment. Pets inherit hero-level health, Companion Vitality and Expedition bonuses like troops. Ranged pets keep their distance when space permits and can attack while repositioning. Attacks need a clear line. Their first skill needs no further lessons. Learning your second hero skill from Mira in Millhaven also unlocks their charged second skill. Charge preparation, interruption, Slow and Silence affect them as they affect other companions. Pets share your company’s field limit.',
         ],
         ...game
           .petCollection()
@@ -586,26 +626,27 @@
     });
     shelves.push({
       title: 'The Crown and its institutions',
-      intro: 'Ministries, former companions and the people living under Crown Peace.',
+      intro:
+        'My records of the ministries, my former companions and the people living under Crown Peace.',
       topics: [
-        ['Cindermaw — Interior and Welfare', D.bosses.find((b) => b.id === 'cindermaw').history],
-        ['Dreadmaw — Agriculture', R.roomCaptains['supply-crown'].history],
-        ['Scornfang — Reclamation', R.roomCaptains['supply-vale'].history],
-        ['Ridge Tyrant — Master of Coin', D.bosses.find((b) => b.id === 'ridge').history],
-        ['Crag Tyrant — Treasury captain', R.roomCaptains['supply-highlands'].history],
-        ['Ashen Warlord — Frontier governor', D.bosses.find((b) => b.id === 'warlord').history],
-        ['Cinder Warlord — Frontier inspector', R.roomCaptains['frontier-overseer'].history],
+        ['Cindermaw — Interior and Welfare', keeperHistories.cindermaw],
+        ['Dreadmaw — Agriculture', keeperOffices['supply-crown']],
+        ['Scornfang — Reclamation', keeperOffices['supply-vale']],
+        ['Ridge Tyrant — Master of Coin', keeperHistories.ridge],
+        ['Crag Tyrant — Treasury captain', keeperOffices['supply-highlands']],
+        ['Ashen Warlord — Frontier governor', keeperHistories.warlord],
+        ['Cinder Warlord — Frontier inspector', keeperOffices['frontier-overseer']],
         [
           'Garun — the old roads',
-          'Garun built roads and defensible settlements before he chose the fitted stone body around his heart. The bridges still carry food and trade between the provinces. Dara gets paid for repairs inside the Mine, but cannot leave.',
+          'I remember Garun planning roads and defensible settlements before he chose the fitted stone body around his heart. His bridges still carry food and trade between the provinces. Dara is paid for repairs inside the Mine, but Garun retains the power to refuse departure.',
         ],
         [
           'Veyrith — the unfinished sky',
-          'Veyrith carried the Dark Lord in the old days. Abyss Bastion now has harness stations and a training ground, but the royal air fleet is unfinished. Veyrith wants enough patrols overhead that no enemy can surprise the roads below.',
+          'I remember Veyrith carrying the Dark Lord on our journeys. Abyss Bastion now has harness stations and a training ground, but the royal air fleet is unfinished. He wants enough patrols overhead that no enemy can surprise the roads below.',
         ],
         [
           'Veyra — the common drill',
-          'Veyra taught Goblins, Ogres and Crown soldiers to hold one line, obey the same commands and care for their equipment. She and Garun both take craft seriously. Her disciplined Citadel could command the realm if the throne stood empty.',
+          'I watched Veyra teach Goblins, Ogres and Crown soldiers to hold one line, obey the same commands and care for their equipment. She and Garun both take craft seriously. Her disciplined Citadel could command the provinces if the throne stood empty.',
         ],
         [
           'Whose peace?',
@@ -615,23 +656,24 @@
           ? [
               [
                 'The last mark — remembered at the throne',
-                'The six-signature ledger in Greenwood and the Keeper’s record of the final external command pointed to one missing adventurer. At the defeated ruler’s throne the last of seven marks answered to you: you were the missing sixth companion of his former party. Your present Paladin, Mage or Ranger training does not overwrite that past, award a new class, or demand another dungeon victory.',
+                'The Greenwood ledger held six signatures. I recorded the last command our company received from outside. Both records left one adventurer unaccounted for. At the throne, the last of seven marks answered you: you were our missing sixth companion.',
               ],
             ]
           : []),
         [
           'Companions from the Barracks',
-          'Lifebinder and the Drowned Keeper were originally recruited from the Barracks, through the same institution that supplies today’s Soldiers and Rangers. They belonged to different companion classes the present hero has not discovered. Their history does not make them Soldiers or Rangers.',
+          'The Lifebinder and I were recruited from the Barracks too. Our disciplines belonged to different companion classes from the Soldiers and Rangers who enlist there today. You have not yet studied those disciplines.',
         ],
         [
           'The Lantern Wraiths’ migration',
-          'The Lantern Wraiths left Ironroot when mining and mint production became intolerable. They now study in the Keeper’s Archive and help him; he cautions them to mind their lanterns. They resent the flooding, whose cause remains unknown. Cindermaw and Dreadmaw have grown fond of the Wraiths, and the feeling is mutual. They socialize when their different duties permit.',
+          'The Lantern Wraiths left Ironroot when mining and mint production became intolerable. They now study in my Archive and help me with the records. I remind them to mind their lanterns. They resent the flooding; its cause remains unknown. Cindermaw and Dreadmaw have grown fond of them, and the feeling is mutual. They visit one another when their duties permit.',
         ],
       ],
     });
     shelves.push({
       title: 'Adversaries and their attacks',
-      intro: 'Boss histories, attacks and creature statistics.',
+      intro:
+        'My accounts of the great adversaries, their attacks and the creatures you have encountered.',
       topics: [
         [
           'The TRUE adversaries',
@@ -646,7 +688,7 @@
             boss.name,
             boss.place +
               '. ' +
-              (boss.history || (boss.id === 'darklord' ? darkLordHistory : '')) +
+              (keeperHistories[boss.id] || '') +
               '\n\nPassive — ' +
               bossPassives[boss.id] +
               (restorative
@@ -658,7 +700,19 @@
                   (a, i) =>
                     (boss.attacks[i]?.split(':')[0] || 'Attack ' + (i + 1)) +
                     (a.species
-                      ? ' — calls ' + a.species
+                      ? ' — calls ' +
+                        (boss.id === 'archive' && a.species === 'wraith'
+                          ? 'drowned echoes'
+                          : {
+                              wolf: 'wolves',
+                              crownguard: 'Crown soldiers',
+                              mireling: 'mirelings',
+                              wraith: 'Wraiths',
+                              archer: 'archers',
+                              ogre: 'Ogre wardens',
+                              orc: 'Orc guards',
+                              ashbeast: 'Ash beasts',
+                            }[a.species] || 'reinforcements')
                       : a.persistent
                         ? ' — leaves danger on the ground'
                         : a.slow
@@ -679,7 +733,19 @@
                   (a, i) =>
                     (boss.attacks[i]?.split(':')[0] || 'Attack ' + (i + 1)) +
                     ': ' +
-                    a.kind +
+                    ({
+                      cone: 'frontal arc',
+                      circle: 'circular area',
+                      line: 'straight lane',
+                      summon: 'reinforcements',
+                      volley: 'projectile volley',
+                      ring: 'expanding ring',
+                      canister: 'scattered canisters',
+                      formation: 'defensive formation',
+                      'pattern-charge': 'linked charge lanes',
+                      checkerboard: 'alternating marked ground',
+                      sector: 'sweeping arc',
+                    }[a.kind] || 'marked area') +
                     '; warning ' +
                     a.warning +
                     's; damage ×' +
@@ -798,21 +864,21 @@
     });
     shelves.push({
       title: 'The provinces',
-      intro: 'The five provinces and their histories.',
+      intro: 'My notes on the five provinces.',
       topics: D.regions.map((region) => [
         region.name,
-        game.s.keeperEvidence
-          ? region.exploration
-          : region.exploration.replace(
-              'and councillor who proposed capturing the specialists',
-              'and councillor',
-            ),
+        region.id === 'march'
+          ? 'Reedport and Fisher Camp live by fishing, while Mirejaw, Reed Beasts and night Wraiths keep their own territories. I tend the records here and serve on the council; I fish when my duties permit. My old drowning gave me my name. The flood threatening these shelves came later, and I do not yet know its cause. Neri’s craft can preserve the damaged books; the volumes and restoration supplies outside show how much work remains.' +
+            (game.s.keeperEvidence
+              ? ' You have read my seal: I proposed capturing the specialists, and I traded another captive for Neri’s skill.'
+              : '')
+          : keeperProvinces[region.id],
       ]),
     });
     if (game.s.keeperEvidence)
       shelves.push({
         title: 'The orders among the shelves',
-        intro: 'His part in the capture.',
+        intro: 'My part in the capture.',
         topics: [
           [
             'A prisoner for the Archive',
