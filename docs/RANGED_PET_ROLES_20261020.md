@@ -1,4 +1,6 @@
-# Individual pet roles — dev.114
+# Published individual pet roles — dev.114
+
+Published through PR #348 / `b8d4cd0e5fdb44ea79b116086cff65e19b1a4491`; package-only run 39501901578 succeeded, all 31 exact live files match at 2026-10-20 21:38:49 UTC. Normal workflow restored and temporary publisher removed. Receipt: `docs/evidence/PET_ROLES_DEV114_PUBLICATION_20261020.json`. No remaining approval for this update; existing pets receive current definitions automatically.
 
 Joel approved the individual ranged-pet recommendations after the live dev.113 assessment: stronger useful Lifebinder healing, better Keeper area/control payoff, higher Whelp burst and a modest Marshal damage increase. Audit before merge/publication; no nerfs or Archer changes. Joel subsequently authorized straightforward, evidence-backed changes for the other seven pets in this same update, and required every pet to have a real individual specialty. He clarified that Sovereign is an ordinary peer with no extra power for being a late/Dark Lord unlock.
 
@@ -65,6 +67,6 @@ The high-HP fixture never reaches the finisher threshold; Sovereign's new bonus 
 
 Final combined source audit passes: all prior numerical pet skill fields are unchanged or increased, shared balance/charged skills/troop/healing rules are identical to dev.113, and base stats, growth, inheritance, formation and command-contract evidence is unchanged. Archer/Soldier measured results are identical; no pet has a measured damage regression. Sovereign's ordinary healthy-target multipliers are unchanged. Functional specialties are visible in all eleven collection/detail entries and independently exercised by healing, area/Slow, ward and finisher tests.
 
-New support/melee-role tests and existing pet lifecycle, activation, automatic dungeon routing, 132 VFX frames, 171 mixed layouts/33 arrivals/22 cadence cases, 161 melee gates, 13-role regroup, veteran, doctrine, judgment, Recall and menu suites pass. Build and generated asset/syntax/sprite/material/audio integrity checks pass. Changed-source formatting passes; only the pre-existing unchanged `tools/sprites/approved.json` whole-format warning remains. No broad CI/device matrix or new appearance assets. Package-only merge/publication next.
+New support/melee-role tests and existing pet lifecycle, activation, automatic dungeon routing, 132 VFX frames, 171 mixed layouts/33 arrivals/22 cadence cases, 161 melee gates, 13-role regroup, veteran, doctrine, judgment, Recall and menu suites pass. Build and generated asset/syntax/sprite/material/audio integrity checks pass. Changed-source formatting passes; only the pre-existing unchanged `tools/sprites/approved.json` whole-format warning remains. No broad CI/device matrix or new appearance assets. Package-only merge/publication completed.
 
 Current matrix: `tools/pet-parity-audit-20261020/pets-dev114.json`; the earlier `ranged-dev114.json` is the intermediate four-pet checkpoint, preserved for traceability.

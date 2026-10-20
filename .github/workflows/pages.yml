@@ -1,7 +1,7 @@
 name: Test and deploy app
 on:
   push:
-    branches: [owner-pet-roles-dev114-hold]
+    branches: [main]
   pull_request:
     branches: [main, perf/v09-integration-20261010]
   workflow_dispatch:

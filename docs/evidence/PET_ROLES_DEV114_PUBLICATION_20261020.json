@@ -1,0 +1,213 @@
+{
+  "verified_at": "2026-10-20T21:38:49.473911+00:00",
+  "merge": "b8d4cd0e5fdb44ea79b116086cff65e19b1a4491",
+  "files": [
+    {
+      "path": "index.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "phone.html",
+      "match": true,
+      "bytes": 5490,
+      "sha256": "6d6fe5990cccba9b450925b101e959acd1de0f04735bfb920147dc89db783eb8"
+    },
+    {
+      "path": "prototype.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "70c679be05644050a8ea9672cd88f136f5613d17e27f207de903b6f10a1ca078"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 296,
+      "sha256": "ae5839f83c531becf25ec890a3b3afa39c5fc3a79e5ec5933a37f39808ce0d15"
+    },
+    {
+      "path": "src/prototype/archive.js",
+      "match": true,
+      "bytes": 54988,
+      "sha256": "d35b92523b7dfa4be414cb38441b15f2ea2e76b400a87280f3d7a4178dee032d"
+    },
+    {
+      "path": "src/prototype/boss-combat.js",
+      "match": true,
+      "bytes": 99293,
+      "sha256": "9dd2e97e2a271d2809b769dd153da8f915a628b751c0b4cb9a0607b3d93ac908"
+    },
+    {
+      "path": "src/prototype/combat-visuals.js",
+      "match": true,
+      "bytes": 51139,
+      "sha256": "6e64734dcf425c51b73fca7c65122362a4ddba419a6c069845ce3cb005408034"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 251943,
+      "sha256": "7f959151daf730af84f28eb1fd8b5dcb34ddbcba5303fc1451c6a696b97211d6"
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "match": true,
+      "bytes": 100974,
+      "sha256": "0aa3c774264e24b10c6bd6073b19acf0315220880c8be3a380aaa0c7956448ac"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "match": true,
+      "bytes": 210323,
+      "sha256": "20cda6f6585dc0fe58af4ee904ea1edbf3f411ef462a68aba473e75410b25e60"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "match": true,
+      "bytes": 489587,
+      "sha256": "e61c4c52b623be5beb3d1d4416b0fa69d19db0c924c9a6dcb2ef52714b4fa641"
+    },
+    {
+      "path": "src/prototype/app.js",
+      "match": true,
+      "bytes": 135741,
+      "sha256": "93a6cbcb6015ceda6f606476bc6ebda9a3bc850d00b3904818207730356f7067"
+    },
+    {
+      "path": "src/prototype/party.js",
+      "match": true,
+      "bytes": 68774,
+      "sha256": "fee55550c5d615ad68b74c1e5820511e060b9667f418d8548cc9dd27214d4aa6"
+    },
+    {
+      "path": "src/prototype/party-pets.js",
+      "match": true,
+      "bytes": 19172,
+      "sha256": "6f97ffe5f4af3e93017e21088b719448dc997916cb1e35daebfe0a51ea7827b2"
+    },
+    {
+      "path": "src/prototype/save.js",
+      "match": true,
+      "bytes": 47941,
+      "sha256": "ccb8e9787bad096c96c25e8cc45ae744f7015c89c03afaae9605a18e085765b4"
+    },
+    {
+      "path": "src/prototype/world.js",
+      "match": true,
+      "bytes": 184958,
+      "sha256": "7512c6826afbb040b7afb1a8a5df02907c3fa8cadfc730e49f1351bea02c2ea3"
+    },
+    {
+      "path": "src/prototype/navigation.js",
+      "match": true,
+      "bytes": 46155,
+      "sha256": "954c80ec334b61fe3919dfb6f081d72cb1e5078d971ef8cfa6dab59f1b6fe45e"
+    },
+    {
+      "path": "src/prototype/combat.js",
+      "match": true,
+      "bytes": 48641,
+      "sha256": "ae8c36339c4828eb6770ee3882e5804628847c955045dcc6b2917be6ce635dd5"
+    },
+    {
+      "path": "src/prototype/hero-combat.js",
+      "match": true,
+      "bytes": 62011,
+      "sha256": "bd1e499aeec1694c4d86be7b2ce1e9b0fd60fd688bd873303458cb7aec902531"
+    },
+    {
+      "path": "src/prototype/fortifications.js",
+      "match": true,
+      "bytes": 9981,
+      "sha256": "5f669aa0e6295df09208d04464a40a551d5b696ff6a0f1dd6f8d48917734dce9"
+    },
+    {
+      "path": "src/prototype/economy.js",
+      "match": true,
+      "bytes": 4728,
+      "sha256": "1b1e6c45db20a50f136b8bec6a9423d45fe47b3ce56bc842a724edf9b3fc588f"
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "match": true,
+      "bytes": 74008,
+      "sha256": "893e8cafc3444b14ab44ea0c18a800758bd987f26ede13620b8ad920bad5a3e0"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20703,
+      "sha256": "89850ac29bab9d002b2c514bfd1afb49bf57f6214b38ab2e6cb5942ae66244b0"
+    },
+    {
+      "path": "assets/sprites/manifest.json",
+      "match": true,
+      "bytes": 18798,
+      "sha256": "ca34058374aea87794536c01b3c7f4b8883ee5eb7b85e63c29192c954efce3b5"
+    },
+    {
+      "path": "src/prototype/runtime.js",
+      "match": true,
+      "bytes": 10039,
+      "sha256": "08b8f7ee023e5a94e75b3f2cc4867e984829f40597fbefd6b201c4a56a711dc2"
+    },
+    {
+      "path": "src/prototype/materials.js",
+      "match": true,
+      "bytes": 13515,
+      "sha256": "14565836a362b367bf054989938ab9be3074551e276077ffbd77fd7b02fd6cc8"
+    },
+    {
+      "path": "src/prototype/ground-cache.js",
+      "match": true,
+      "bytes": 3611,
+      "sha256": "37aa9447ddc05a9e580decd18b53f7d5ce701420e1ec8637ede882b1a6e3fdb2"
+    },
+    {
+      "path": "styles/prototype.css",
+      "match": true,
+      "bytes": 17348,
+      "sha256": "1499d5e8ff3bd5c9c3320c25c4d2c9f856df5b8daf40a63456751b112024669a"
+    },
+    {
+      "path": "styles/desktop.css",
+      "match": true,
+      "bytes": 4989,
+      "sha256": "8b15cbc481b4bbde93841c0ae126a563d142a9b02d7a1b29017808380a2fa3be"
+    },
+    {
+      "path": "styles/phone.css",
+      "match": true,
+      "bytes": 17362,
+      "sha256": "5a3aecb56d17c2a391ec5795261100c89ea465281efab8da6e160dd0626e1f29"
+    }
+  ],
+  "version": "0.9.1+snapshot.dev.114",
+  "pr": 348,
+  "package_only_run": 39501901578,
+  "candidate_tree": "5b4c2edbd8dfa37afb9b4e7f8accf1b3bc90f959",
+  "limits": "Scoped functional/balance/source/build checks and exact live-file identity; no full-campaign win-rate or physical-device FPS claim.",
+  "checks": {
+    "combined_actual_tick_cases": 189,
+    "new_support_and_melee_role_tests": "pass: contact healing, recipient safety, wards, interruption, area caps, Slow, ordinary-peer finisher and saves",
+    "specialty_menu_checks": "all eleven collection/detail entries",
+    "vfx_frames": 132,
+    "mixed_layouts": 171,
+    "formation_arrivals": 33,
+    "cadence_cases": 22,
+    "reach_gate_cases": 161,
+    "regroup_roles": 13,
+    "existing_pet_AI_veteran_menu_suites": "pass",
+    "source_and_result_review": "pass: no prior numeric reductions, no shared-stat/cooldown/troop changes, no measured pet damage regressions",
+    "build_and_integrity": "pass",
+    "changed_format": "pass",
+    "whole_format": "Pre-existing unchanged tools/sprites/approved.json warning"
+  }
+}
