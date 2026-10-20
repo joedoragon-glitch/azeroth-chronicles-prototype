@@ -36,7 +36,7 @@ New transient pursuit receipts use weak collections, not saved AI fields. Existi
 
 ## Fixed arc landing
 
-The arrow's height previously reached zero at its aim point while the simulation continued travelling through its remaining lifetime. Arcing enemy shots now have a fixed landing distance and matching flight lifetime. The last movement step is clipped to the remaining flight time. A dodged arc produces one ground impact and is removed there: no homing, floor sliding, overshoot or bounce. Existing hit and obstacle contact remain terminal. Friendly projectiles and enemy straight shots retain their existing behavior. Normal and long-final-tick reproductions, actual dodge/hit and fort/low-cover checks pass; native flight/landed captures and coordinates are retained.
+The arrow's height previously reached zero at its aim point while the simulation continued travelling through its remaining lifetime. Arcing enemy shots now have a fixed landing distance and matching flight lifetime. The last movement step is clipped to the remaining flight time. A dodged arc produces one ground impact and is removed there: no homing, floor sliding, overshoot or bounce. Existing hit and obstacle contact remain terminal. Friendly projectiles and enemy straight shots retain their existing behavior. At Joel’s subsequent request, garrison-launched projectiles travel 30% faster, matching the range bonus. Their lifetime shortens to retain the same landing point and special-shot footprint; low-cover shots outside forts keep their original speed. Normal/long-final-tick and speed/non-stacking/footprint reproductions, actual dodge/hit and fort/low-cover checks pass; native flight/landed captures and coordinates are retained.
 
 ## Validation and boundaries
 

@@ -6419,6 +6419,7 @@
     fortifications: {
       incomingMultiplier: 0.6,
       rangeMultiplier: 1.3,
+      projectileSpeedMultiplier: 1.3,
       compoundHalfSize: 190,
       interiorZones: ['abyss', 'citadel', 'side-highlands-signal'],
       outdoorAreas: [

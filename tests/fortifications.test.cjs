@@ -272,3 +272,50 @@ for (const dt of [0.02, 2]) {
 console.log(
   'PASS fixed landing point, dodge, short/long ticks, one ground impact and no continued arc flight',
 );
+
+// Fort launch speed improves accuracy without extending special-shot footprints.
+{
+  const { g, e } = fixture();
+  const p = {
+    source: 'enemy',
+    sourceId: e.id,
+    x: e.x,
+    y: e.y,
+    dx: 1,
+    dy: 0,
+    speed: 280,
+    life: 2.8,
+    damage: 30,
+    style: 'arrow',
+  };
+  g.prepareFortProjectile(p, e, g.hero);
+  assert.equal(p.speed, 364);
+  const time = p.life;
+  assert(Math.abs(time - 340 / 280 / 1.3) < 1e-8, '30% faster fixed flight');
+  g.prepareFortProjectile(p, e, g.hero);
+  assert.equal(p.speed, 364);
+  assert.equal(p.life, time, 'no stacked boost');
+  const special = {
+    source: 'enemy',
+    sourceId: e.id,
+    x: e.x,
+    y: e.y,
+    dx: 1,
+    dy: 0,
+    speed: 280,
+    life: 2.8,
+    damage: 30,
+  };
+  g.prepareFortProjectile(special, e);
+  assert(Math.abs(special.fortDistance - 784) < 1e-8);
+  assert(Math.abs(special.life * special.speed - 784) < 1e-8, 'same special footprint');
+  const ordinary = { ...special, speed: 280, life: 2.8 };
+  delete ordinary.fortBaseSpeed;
+  delete ordinary.fortBaseLife;
+  e.x = 3250;
+  g.prepareFortProjectile(ordinary, e);
+  assert.equal(ordinary.speed, 280, 'outside-fort speed unchanged');
+}
+console.log(
+  'PASS fort-only 30% projectile speed, fixed footprint/lifetime and idempotent launch preparation',
+);

@@ -58,7 +58,7 @@
     "assetSpecificDependencies": [],
     "workingTreeSourceHashes": {
       "src/prototype/visuals.js": "c8c98b5b389d3be2c270683051e19e1583e49a85376182cd2afdc03a43a3ef3c",
-      "src/prototype/rules.js": "d32370ed52812946cfe1850edc8db0d15b8d320147e1addcfdc36e724e2c47db",
+      "src/prototype/rules.js": "247e3241a2bab25ef07caf34f133acfa9aae04f3126662b18a6a8525272dc837",
       "src/prototype/world.js": "ef87866358d195c050c86354c5c27a4bfd6c7580116c1b6d8cb5bebf62724f3a"
     },
     "referenceNote": "The native field view is the reference for this integrated terrain/industrial arrangement; no separate generated body."
