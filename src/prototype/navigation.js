@@ -551,7 +551,7 @@
           }
         }
       }
-      blocked(x, y, zone = this.s.zone, radius = 15, terrainOnly = false) {
+      blocked(x, y, zone = this.s.zone, radius = 15, terrainOnly = false, fort = null) {
         const i = this.regionIndex(zone),
           room = this.supplyRoom(zone),
           side = this.sideDungeon(zone),
@@ -574,6 +574,7 @@
             });
             if (!inside) return true;
             for (const w of architecture.partitions || []) {
+              if (fort?.partitions.has(w.id)) continue;
               const hit =
                 x > w.x1 - radius && x < w.x2 + radius && y > w.y1 - radius && y < w.y2 + radius;
               if (!hit) continue;
@@ -597,6 +598,7 @@
             });
             if (!inside) return true;
             for (const w of architecture.partitions || []) {
+              if (fort?.partitions.has(w.id)) continue;
               const hit =
                 x > w.x1 - radius && x < w.x2 + radius && y > w.y1 - radius && y < w.y2 + radius;
               if (!hit) continue;
@@ -665,7 +667,12 @@
         const z = this.s.zones[zone];
         return (
           (!terrainOnly &&
-            z?.props.some((p) => !p.decorative && Math.hypot(x - p.x, y - p.y) < p.r + radius)) ||
+            z?.props.some(
+              (p) =>
+                !p.decorative &&
+                !fort?.props.has(p.id) &&
+                Math.hypot(x - p.x, y - p.y) < p.r + radius,
+            )) ||
           false
         );
       }

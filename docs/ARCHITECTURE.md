@@ -8,6 +8,7 @@ The browser is the current desktop playtest target, especially Chromebook keyboa
 | --- | --- |
 | `data.js` / `rules.js` | Approved content and authoritative live balance (`rules.balance`), combat/support and authored geometry tables |
 | `world.js` | Region generation, settlements, authored sites, interiors, occupation layouts and world migrations |
+| `fortifications.js` | Authored defended footprints, position-derived enemy bonuses and enemy-only wall/low-cover shot permissions; transient geometry cache |
 | `navigation.js` | Collision, line of sight, routing, movement and following |
 | `engine.js` | Authoritative Campaign state, simulation clock, enemy AI, encounter population, death/succession and quest orchestration |
 | `hero-combat.js` | Paladin, Mage and Ranger cooldown-based skills, charged forms and basic combos (legacy mana logic remains dormant) |

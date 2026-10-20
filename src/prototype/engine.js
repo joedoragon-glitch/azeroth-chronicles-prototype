@@ -2320,14 +2320,16 @@
       }
       return true;
     }
-    travel(direction) {
+    travel(direction, options = null) {
       if (this.isDungeon() || ![1, -1].includes(direction)) return false;
       const i = this.regionIndex(),
         j = i + direction;
       if (j < 0 || j >= D.regions.length) return false;
       const edge = direction === 1 ? D.regions[i].id : D.regions[j].id;
       if (this.s.mode !== 'developer' && direction < 0 && !this.s.tickets[edge]) return false;
-      const fare = this.travelFare(i, direction);
+      const work = options?.workPassage ? this.passageWorkQuote(direction) : null;
+      if (options?.workPassage && !work) return false;
+      const fare = work ? work.payment : this.travelFare(i, direction);
       if (this.hero.gold < fare) {
         this.say('Not enough crowns.');
         return false;
@@ -2347,6 +2349,14 @@
           this.s.lastEdge = edge;
         }
         this.event('travel', { from: before.zone, to: this.s.zone });
+        if (work)
+          this.say(
+            'You help load and secure the crew’s supplies, working off ' +
+              work.work +
+              ' crowns of the fare. ' +
+              work.payment +
+              ' crowns paid; return passage is included.',
+          );
         return true;
       } catch (_) {
         this.s = before;
@@ -5450,8 +5460,12 @@
           !e.aggro &&
           // Reject distant targets before tracing through every intervening
           // obstacle. The same range and visibility rules still gate aggro.
-          dist(e, target) < R.balance.enemyAcquisitionRange * R.balance.enemyTargetingMultiplier &&
-          this.line(e, target) &&
+          dist(e, target) <
+            Math.max(
+              R.balance.enemyAcquisitionRange * R.balance.enemyTargetingMultiplier,
+              this.enemyRanged(e) && this.enemyFort(e) ? this.enemyRangedRange(e) : 0,
+            ) &&
+          this.enemyRangedLine(e, target) &&
           (!this.isDungeon() &&
           dist(target, { x: D.towns[this.regionIndex()][0], y: D.towns[this.regionIndex()][1] }) <
             170
@@ -5608,9 +5622,9 @@
             const a = e.rangedAim,
               angle = Math.atan2(a.y - e.y, a.x - e.x),
               pace = R.rangedEnemyCombat;
-            if (this.line(e, a)) {
+            if (this.enemyRangedLine(e, a)) {
               const style = e.projectileStyle || 'arrow';
-              this.s.projectiles.push({
+              const shot = {
                 id: 'projectile-' + this.s.nextId++,
                 x: e.x,
                 y: e.y,
@@ -5625,7 +5639,9 @@
                 source: 'enemy',
                 sourceId: e.id,
                 species: e.species,
-              });
+              };
+              this.prepareFortProjectile(shot, e, a);
+              this.s.projectiles.push(shot);
               this.event('projectileLaunch', {
                 actor: 'enemy',
                 source: e.id,
@@ -5660,10 +5676,11 @@
           ranged =
             (e.ranged ?? ['archer', 'crownguard'].includes(e.species)) &&
             !(e.hybrid && d <= hybridMeleeRange),
-          range = ranged ? (e.shotRange || 280) * R.balance.enemyTargetingMultiplier : 65,
+          range = ranged ? this.enemyRangedRange(e) : 65,
           retreatRange = ranged && !e.hybrid ? range * R.rangedEnemyCombat.retreatFraction : 0,
           before = { x: e.x, y: e.y },
-          visible = this.line(e, target);
+          visible = this.line(e, target),
+          firingLine = ranged ? this.enemyRangedLine(e, target) : visible;
         let opportunity = false;
         if (
           (e.captain || e.roomCaptain) &&
@@ -5721,7 +5738,7 @@
             opportunity = true;
           }
         }
-        if (!opportunity && d <= range && e.cd <= 0 && this.line(e, target)) {
+        if (!opportunity && d <= range && e.cd <= 0 && firingLine) {
           e.cd =
             ((e.type === 'boss' ? R.bossCadence.basicCooldown : 1.4) *
               (e.frenzy ? R.ringleaderScaling.frenzyCooldown : 1) *
@@ -5769,7 +5786,7 @@
           e.basicDue = false;
           opportunity = true;
         }
-        if (!opportunity && (d > range || !visible)) {
+        if (!opportunity && (d > range || !firingLine)) {
           if (
             target === this.hero &&
             visible &&
@@ -6441,6 +6458,11 @@
   const Navigation =
     typeof PrototypeNavigation !== 'undefined' ? PrototypeNavigation : require('./navigation.js');
   Navigation.install(Campaign, D, R, dungeonIds);
+  const Fortifications =
+    typeof PrototypeFortifications !== 'undefined'
+      ? PrototypeFortifications
+      : require('./fortifications.js');
+  Fortifications.install(Campaign, { R });
   const Progression =
     typeof PrototypeProgression !== 'undefined'
       ? PrototypeProgression
