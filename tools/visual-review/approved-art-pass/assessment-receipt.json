@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-19",
+  "camera": 1.5,
+  "entries": 513,
+  "originalContracts": 426,
+  "uniqueIds": 513,
+  "uniqueImages": 605,
+  "previewReferences": 621,
+  "allEntriesHaveImageAndPlan": true,
+  "verdicts": {
+    "rebuild": 66,
+    "refine": 399,
+    "retain": 47,
+    "context": 1
+  },
+  "reportChecks": {
+    "search": true,
+    "decisionPersistenceAndExport": true,
+    "imageEnlargement": true,
+    "oneAtATimeNavigation": true,
+    "phoneHorizontalOverflow": false,
+    "scriptErrors": 0
+  },
+  "gameTestsRun": false,
+  "runtimeEdited": false,
+  "sourceHashes": {
+    "src/prototype/visuals.js": "822b2ad448b6e7f81058301e4c06cfb2018f65d3d3eb02e838531a05f72cf6a0",
+    "src/prototype/renderer.js": "78ebe529a89b8b32199eb6158385a5b484c0eb432c0122a7889fb2c00899b1c9",
+    "assets/sprites/manifest.json": "5f18115da6203bf289eccb9ee0ff50cc91c04f93e09a6cd80cc733510ea1d384"
+  }
+}

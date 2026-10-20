@@ -1,0 +1,47 @@
+{
+  "scope": "Comparison metadata only; textures, originals, opacity, spans and rollback history retained.",
+  "receipts": [
+    {
+      "key": "terrain:ground:vale",
+      "priorRevision": "8745ab9dad2252b3fc17a6717d54e9b376fa489fc8d2ccb9fe3cadca249bc74f",
+      "revision": "b8bbf9f365d240dad6bb42ac87b2e3fdc96b639fd0366fcfe8b87bf6f5166556",
+      "outputHash": "a1fa0f5fb4fb2f203147fa8ebce4c4a1703dd7161890e69df4592e0e1d6f4334"
+    },
+    {
+      "key": "terrain:ground:march",
+      "priorRevision": "583f60ce6e4bab3b4ed6f22680eab2a7dfd32a40e4b5b18e7efd8efab11e0648",
+      "revision": "dd5826a20283d1dd38157ef69dcff8017d89bfcc120c59bcf8179d2fd16cdb90",
+      "outputHash": "b1782a435760ed6bce0e5b1b5ad87ae8709ac22ae21c880e0b6a70bf13712276"
+    },
+    {
+      "key": "terrain:ground:highlands",
+      "priorRevision": "c825d85ca3f87c8b7d91fb3fb1e4465c7ed4e8af24e2a80e76c0c3904a519f07",
+      "revision": "e5748ee4dde27452f02f4ed40da717fd1c8d7fce4fdfc88c1b3e45cf9fbb0104",
+      "outputHash": "e108c18f0c95bcd577a0cf6a802a33847162af9276d3336be5d9f3b9abbae09d"
+    },
+    {
+      "key": "terrain:ground:frontier",
+      "priorRevision": "c9a09db6aed83db02cb784200c9fa1cb9cbfc5e6608a313a5388dcd8d509fe82",
+      "revision": "75b4324a6eab58666e1150da6e88e9ced01eecddf2f2beac3f27aaab144ee776",
+      "outputHash": "bf8577c52fb47274c71ce2e8c73c98c66a2515d5b62a89120156e5749c3a4ba7"
+    },
+    {
+      "key": "terrain:ground:crown",
+      "priorRevision": "bff0c54cfe529928e3d0b9f552e28fb23393d21ae647b7510ca63d8d7b9134f8",
+      "revision": "a121d57534feac0a5ccd9413ac084caff6f4a2a8b9daa92d3ad18b5954fee5f7",
+      "outputHash": "7985f36f485ad35a0b55907cbb099bd4656695f5b4377373bdeba23f727eb3b2"
+    },
+    {
+      "key": "terrain:road:vale",
+      "priorRevision": "cff0219382ae8e530213e01e9564e51d461685f081c13861938d8edeb9cb3445",
+      "revision": "e040c561cb96f113632c1ade4480465b68215cb6fd1433ef8cd56e6c36d75b96",
+      "outputHash": "e655205174d24f1f359916071fd764584953e3acaba4451f9d158e304fc87134"
+    },
+    {
+      "key": "terrain:road:highlands",
+      "priorRevision": "13c98eed9c5be3ddf092032a628aac30d2b414bdfb587c41ac0247ef99625082",
+      "revision": "4142695562a1f799c3f47abba3f48a2e0f1f57fd0b67256fae2e5ae6fb44d205",
+      "outputHash": "15ad70f49d7ba8593468ebd9cd1dca34b9df8fc70975f8b757d0686bc0881f22"
+    }
+  ]
+}

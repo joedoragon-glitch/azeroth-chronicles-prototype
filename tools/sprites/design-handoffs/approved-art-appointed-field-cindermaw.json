@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-appointed-field-cindermaw",
+  "name": "Appointed Cindermaw",
+  "kind": "appointed-character",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Reuse Cindermaw's refined peaceful body and recognizable face/equipment, retaining masterId field:cindermaw. Add only a modest appointment clasp or mantle appropriate to that body; no hostile controller or new actor.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::dungeon-master",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "Current appointed appearance",
+        "mode": "procedural",
+        "entity": {
+          "id": "appointed:field:cindermaw",
+          "name": "Cindermaw",
+          "x": 600,
+          "y": 600,
+          "renderKind": "npc",
+          "kind": "dungeon-master",
+          "masterId": "field:cindermaw",
+          "masterGroup": "field",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/after/appointed_field_cindermaw--Current_appointed_appearance.webp",
+    "isolatedReferenceHash": "c153605c6b3a1d4de994b9e80eaafa014c6ed47353e3c4f284c7752615479930",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "The selected resident is visibly the person or creature the player appointed.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/appointed_field_cindermaw--Current_appointed_appearance.webp",
+        "beforeSHA256": "1a562aebf0e2bc82c6152d02d1c607fc5280f550f4b41197fc7643bdae9e945c",
+        "after": "tools/visual-review/approved-art-pass/after/appointed_field_cindermaw--Current_appointed_appearance.webp",
+        "afterSHA256": "c153605c6b3a1d4de994b9e80eaafa014c6ed47353e3c4f284c7752615479930",
+        "label": "Current appointed appearance"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "appointed:field:cindermaw"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::dungeon-master",
+        "reason": "Reuse Cindermaw's refined peaceful body and recognizable face/equipment, retaining masterId field:cindermaw. Add only a modest appointment clasp or mantle appropriate to that body; no hostile controller or new actor."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "Current appointed appearance"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 498,
+    "assessmentId": "appointed:field:cindermaw",
+    "disposition": "rebuild",
+    "implementationStatus": "Implemented",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": "Updated the dependent shared anatomy, antler trophies, quiver, hat/spear or nonroyal TRUE form to match the six corrections requested by Joel. Existing role and geometry are retained.",
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-shared-working-captives",
+  "name": "Working Captives",
+  "kind": "shared",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Refine each specialist body and its actual station together; preserve Mira patrol, Dara repairs and Vera mobile forge identities.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md.",
+    "subsequentOwnerReview": "Joel requested distinct hero identities, rigid helmets, real quivers, varied NPC hair and expression, believable spear/staff/hammer/anchor, separated barracks desk, character-specific dungeon masters, Cinder Warlord mace and coherent profile direwolf riders across every loadout and tier. Revised drawings propagate through shared, crowned, captive, pet, appointed and fallback states where applicable. No acceptance of unseen revisions is claimed."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::working-captives",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "dispatch:repair-workstation — shared child reference",
+        "mode": "linked-context",
+        "entity": {
+          "id": "dispatch:repair-workstation",
+          "name": "repair-workstation",
+          "x": 600,
+          "y": 600,
+          "renderKind": "npc",
+          "kind": "cage",
+          "family": "mine",
+          "workstation": "equipment-repair",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "dispatch:mobile-forge — shared child reference",
+        "mode": "linked-context",
+        "entity": {
+          "id": "dispatch:mobile-forge",
+          "name": "mobile-forge",
+          "x": 600,
+          "y": 600,
+          "renderKind": "npc",
+          "kind": "cage",
+          "family": "cindermaw",
+          "presentation": "mobile-forge",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "dispatch:mobile-captive — shared child reference",
+        "mode": "linked-context",
+        "entity": {
+          "id": "dispatch:mobile-captive",
+          "name": "mobile-captive",
+          "x": 600,
+          "y": 600,
+          "renderKind": "npc",
+          "kind": "cage",
+          "family": "cindermaw",
+          "presentation": "mobile-captive",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/after/dispatch_repair-workstation--Current_body.webp",
+    "isolatedReferenceHash": "36158a864915a16faa5edbae5797501bb496f44eb24d98493819e6d8751b2ae8",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "A professional remains recognizable across all work and rescue states.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/dispatch_repair-workstation--Current_body.webp",
+        "beforeSHA256": "c6ad51dedbeb524a5ed43b5d04eb17db83acfe45b23d3aa8826bc04412360ae7",
+        "after": "tools/visual-review/approved-art-pass/after/dispatch_repair-workstation--Current_body.webp",
+        "afterSHA256": "36158a864915a16faa5edbae5797501bb496f44eb24d98493819e6d8751b2ae8",
+        "label": "dispatch:repair-workstation — shared child reference"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/dispatch_mobile-forge--Current_body.webp",
+        "beforeSHA256": "d7dd3b5b8e0ec9c8103c5a539453c2d65701a3142641f04ca6693ed5fe81bb29",
+        "after": "tools/visual-review/approved-art-pass/after/dispatch_mobile-forge--Current_body.webp",
+        "afterSHA256": "1be706bdc76f97a68ef599a08599930e50e850e3b18b626b843cea99903539c8",
+        "label": "dispatch:mobile-forge — shared child reference"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/dispatch_mobile-captive--Current_body.webp",
+        "beforeSHA256": "60d4acf61b69771d7f853d52105a15be29f0e51f9fe84bae94b9e4990176add2",
+        "after": "tools/visual-review/approved-art-pass/after/dispatch_mobile-captive--Current_body.webp",
+        "afterSHA256": "404a9a8a3f7b2c0ef4fad8c705577b89706c3003ff486cf9e7c1ca182b6960aa",
+        "label": "dispatch:mobile-captive — shared child reference"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "shared:working-captives"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::working-captives",
+        "reason": "Refine each specialist body and its actual station together; preserve Mira patrol, Dara repairs and Vera mobile forge identities."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "dispatch:repair-workstation — shared child reference",
+      "dispatch:mobile-forge — shared child reference",
+      "dispatch:mobile-captive — shared child reference"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 333,
+    "assessmentId": "shared:working-captives",
+    "disposition": "refine",
+    "implementationStatus": "Implemented",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": "Updated the relevant shared character identity, face/hair, rigid helmet, held tool, quiver or camp/riding composition under the latest owner correction. Carries through indexed loadouts, captive and appointed states. Gameplay geometry and protected raster pixels remain intact.",
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}

@@ -4,7 +4,7 @@
   "designId": "pt312-structure-frontier-workshop",
   "name": "structure:frontier-workshop",
   "kind": "structure",
-  "nextAction": "After explicit validation authorization, capture and review this exact procedural state in the native production renderer; retain every adverse result. No image acceptance is inferred from source.",
+  "nextAction": "Continue from tools/sprites/design-handoffs/approved-art-structure-frontier-workshop.json. The later all-plans instruction authorized and completed this procedural pass; preserve this record as historical evidence.",
   "context": {
     "originConversation": "Chat URL unavailable; dated owner feedback retained in PR #313 / Issue #312.",
     "decisionSummary": "Settlement contour: ease roof/wall joins, retain regional roof, footprint, door and material vocabulary. Owner requests a broad Ogre-quality rounded/organic pass, preserving species and material identity.",
@@ -102,5 +102,13 @@
     "rollbackRevision": null,
     "releaseCommit": null,
     "releaseEvidence": null
-  }
+  },
+  "latestProceduralReview": {
+    "date": "2026-10-19",
+    "handoff": "tools/sprites/design-handoffs/approved-art-structure-frontier-workshop.json",
+    "sourceCommit": "8acd14de52359febdb40a1d588d2c4c62b4fabf7",
+    "resultAppearanceAccepted": false,
+    "historicalEvidencePreserved": true
+  },
+  "historicalNextAction": "After explicit validation authorization, capture and review this exact procedural state in the native production renderer; retain every adverse result. No image acceptance is inferred from source."
 }

@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-19",
+  "camera": 1.5,
+  "entries": 513,
+  "originalBeforeImagesPreserved": 605,
+  "beforeReferences": 621,
+  "afterReferences": 621,
+  "changedTargets": 465,
+  "protectedPrimariesIdentical": 46,
+  "effectsContextRetained": 1,
+  "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+  "sourceSHA256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d",
+  "candidateVersion": "0.9.1+snapshot.dev.88",
+  "nativeBrowserCaptures": 36,
+  "checks": {
+    "entries": 513,
+    "fixtures": 606,
+    "changedTargets": 465,
+    "protectedPrimaries": 46,
+    "ownerRequestedRetentionOverrides": 1,
+    "readOnly": true,
+    "balancedCanvas": true,
+    "featureScalePreserved": true,
+    "normalLabelHeightsPreserved": true,
+    "trueBossLabelHeadroom": 11,
+    "nativeCaptures": 36,
+    "sourceSHA256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+  },
+  "commandsPassed": [
+    "npm run build",
+    "npm run format:check",
+    "npm run check",
+    "node tests/sprite-scope.test.cjs",
+    "node --expose-gc tools/visual-review/check-approved-art.cjs",
+    "node tools/visual-review/verify-approved-art-review.cjs"
+  ],
+  "fullGameRegressionRun": false,
+  "releaseStatus": "Merge and publication in progress under explicit owner authorization; final publication evidence is recorded in docs/APPROVED_ART_PASS_20261019.md.",
+  "correctionGroups": {
+    "enemy:ashbeast": "Tail root is now occluded behind the rear carapace; segmented sting arches above the body while preserving the front-facing eyes and claws.",
+    "enemy:archer": "A single open leather back quiver carries visible shafts and feathered nocks; duplicate sticks and exposed arrowhead-like forms are removed.",
+    "boss:thorn": "Replaced the back-growing branches with antler trophies lashed into cut sockets on a browband, with a suspended fang. Retained the woodland mantle and wolf anatomy.",
+    "boss:crypt": "Replaced the royal crown with a fitted dark cloth tricorn, including the miniature; TRUE form retains radiance without a crown overlay.",
+    "boss:mire": "Restored a fierce boss silhouette with tall sharp staggered spines, an angular brow, slit eye, open dark mouth and larger interlocking teeth.",
+    "boss:citadel": "Replaced the shovel-shaped weapon with a long pointed ridged spear and an actual shaft grip; fitted military headgear replaces the crown-shaped ornament."
+  },
+  "ownerReviewedOtherEntries": true,
+  "nativeAfterRefresh": 18,
+  "latestCorrections": {
+    "true-regalia": "Owner clarified that the translucent crown is a shared floating TRUE-form indicator for every boss. All eleven TRUE bosses now use the same design above their anatomy/headgear. Dark Lord retains his personal normal crown beneath it. TRUE boss label/culling headroom accommodates the overhead indicator; normal designs, scale and combat remain unchanged."
+  },
+  "latestCorrectedEntries": 11,
+  "previousCorrectionRoundEntryCount": 38,
+  "ownerRequestedRetentionOverrides": {
+    "specialist:darklord": {
+      "date": "2026-10-19",
+      "requestedBy": "Joel",
+      "reason": "Owner explicitly requested a proper visual overhaul of the previously retained unassigned Dark Lord-family smith, keeping him as a humorous reusable character with a real trade tool."
+    }
+  },
+  "trueBossLabelHeadroom": {
+    "normal": 102,
+    "TRUE": 140,
+    "purpose": "Health/name plates and culling clear the shared overhead crown; no collision changes"
+  },
+  "finalOwnerApproval": {
+    "date": "2026-10-19",
+    "approvedBy": "Joel",
+    "scope": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown.",
+    "mergeAuthorized": true,
+    "publicationAuthorized": true,
+    "validationScope": "Owner requested merge/publication after a crash-only startup check, followed by one bounded visual/audio integration check. No whole-game regression or repeated exhaustive checks."
+  },
+  "mergePreparation": {
+    "startupReceipt": "docs/evidence/APPROVED_ART_MERGE_STARTUP_20261019.json",
+    "testSuitesRunThisPhase": false,
+    "fullGameRegressionRun": false,
+    "publication": "One-time package/deploy job only; normal release workflow restored after publication.",
+    "followup": "One bounded live visual/audio integration check after publication."
+  }
+}

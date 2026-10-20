@@ -1,5 +1,10 @@
 # Project working rules
 
+- Latest owner instruction (19 October, 22:06 EDT): the entire completed dev.88 visual pass is approved for merge and publication. Do not run whole-game suites/CI for this release; desktop/phone crash-only startup is recorded. Publish first, then one bounded visual/audio integration check. Restore normal release wiring after the one-time publisher. This supersedes earlier local-only release limits for this specific pass.
+
+- Later owner instruction: all 513 assessed visual entries are approved for implementation, with protected art retained and a before/after catalog. Continue the bounded art pass under `docs/APPROVED_ART_PASS_20261019.md`; it supersedes older visual-pause text below. Preserve the merged Frontier work. No new release authority or broad regression pass follows from this approval.
+
+
 - Before recovering or starting work, read `docs/DEVELOPMENT_STATE.md` and `docs/DOCUMENTATION_INDEX.md`. The October dev.79 snapshot is published. The owner resumed only issue #320 Frontier visual repairs; dev.80 is prepared for the combined update under `docs/FRONTIER_UPDATE_INTEGRATION_20261019.md`; carry forward the test ledger and reserve one shared final validation cycle. PR #319 is merged; old PR #296 policy is historical. Recovery desk: https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297. The user does not need to reconstruct prior chats.
 - Broader development stays paused beyond the explicit issue #320 visual-repair exception. Whole-game regression, other visual polish, co-op modernization, old sprite adoption and outreach remain deferred. Preserve branches, original artwork and evidence; forum silence is not QA evidence. A source checkpoint never implies merge/deployment authority.
 

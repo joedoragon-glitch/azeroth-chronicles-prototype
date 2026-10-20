@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-boss-abyss",
+  "name": "Veyrith / Abyss Dragon — normal / TRUE",
+  "kind": "boss",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Connect neck/torso/haunches, build wing-finger joints and taut membranes, refine muzzle and clawed feet.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md.",
+    "subsequentOwnerReview": "Owner clarified that the translucent crown is a shared floating TRUE-form indicator for every boss. All eleven TRUE bosses now use the same design above their anatomy/headgear. Dark Lord retains his personal normal crown beneath it. TRUE boss label/culling headroom accommodates the overhead indicator; normal designs, scale and combat remain unchanged."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::draw / boss family abyss",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "Current body",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-95",
+          "family": "abyss",
+          "species": "abyss",
+          "name": "Abyss Dragon",
+          "icon": "💀",
+          "form": "normal",
+          "type": "boss",
+          "level": 12,
+          "baseHp": 5800,
+          "baseDamage": 54,
+          "hp": 5800,
+          "maxHp": 5800,
+          "damage": 54,
+          "gold": 480,
+          "xp": 725,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1
+        },
+        "region": 3,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "TRUE form",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-95",
+          "family": "abyss",
+          "species": "abyss",
+          "name": "Abyss Dragon",
+          "icon": "💀",
+          "form": "true",
+          "type": "boss",
+          "level": 12,
+          "baseHp": 5800,
+          "baseDamage": 54,
+          "hp": 5800,
+          "maxHp": 5800,
+          "damage": 54,
+          "gold": 480,
+          "xp": 725,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1
+        },
+        "region": 3,
+        "scale": 1.5,
+        "displayDPR": 2
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/after/boss_abyss--Current_body.webp",
+    "isolatedReferenceHash": "1b3ab09cc9c6293ac97848c58f08f69fad90210449060c70fa02f4cfd07fd569",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "A powerful living dragon with controlled sharp horns and claws.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/boss_abyss--Current_body.webp",
+        "beforeSHA256": "688a5d24c6f6b26cb7340cf9ee7cfa50c487d79b6a8f089c4c9c09f0ff8aea29",
+        "after": "tools/visual-review/approved-art-pass/after/boss_abyss--Current_body.webp",
+        "afterSHA256": "1b3ab09cc9c6293ac97848c58f08f69fad90210449060c70fa02f4cfd07fd569",
+        "label": "Current body"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/boss_abyss--TRUE_form.webp",
+        "beforeSHA256": "d7f652f86ef01d1cf968a572cb22ef5b7ed7f8680c9c5c60c14585d4f5fb5644",
+        "after": "tools/visual-review/approved-art-pass/after/boss_abyss--TRUE_form.webp",
+        "afterSHA256": "e9cf3aac83cb2045f4d5ba83a91f3719a188a9e0f48da07a392d55f312155a4f",
+        "label": "TRUE form"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "boss:abyss"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      {
+        "state": "TRUE form",
+        "plan": "Preserve the normal species anatomy and authored TRUE cues; keep the upgraded face, limbs and weapons readable beneath regalia."
+      }
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::draw / boss family abyss",
+        "reason": "Connect neck/torso/haunches, build wing-finger joints and taut membranes, refine muzzle and clawed feet."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "Current body",
+      "TRUE form"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 21,
+    "assessmentId": "boss:abyss",
+    "disposition": "rebuild",
+    "implementationStatus": "Implemented",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": "Owner clarified that the translucent crown is a shared floating TRUE-form indicator for every boss. All eleven TRUE bosses now use the same design above their anatomy/headgear. Dark Lord retains his personal normal crown beneath it. TRUE boss label/culling headroom accommodates the overhead indicator; normal designs, scale and combat remain unchanged.",
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}

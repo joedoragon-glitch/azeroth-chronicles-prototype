@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-raster-enemy-goblin",
+  "name": "Active sprite — Enemy / Goblin",
+  "kind": "active-sprite",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Retain this accepted raster revision for the procedural pass. If an image edit is later selected, adjust only hand-to-weapon connection and ear highlights from its preserved original and update dependent frames together.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md.",
+    "subsequentOwnerReview": "Joel requested distinct hero identities, rigid helmets, real quivers, varied NPC hair and expression, believable spear/staff/hammer/anchor, separated barracks desk, character-specific dungeon masters, Cinder Warlord mace and coherent profile direwolf riders across every loadout and tier. Revised drawings propagate through shared, crowned, captive, pet, appointed and fallback states where applicable. No acceptance of unseen revisions is claimed."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "assets/sprites/manifest.json",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "Current active image",
+        "mode": "sprite",
+        "entity": {
+          "id": "sprite-reference-goblin",
+          "name": "enemy:goblin",
+          "x": 600,
+          "y": 600,
+          "renderKind": "enemy",
+          "type": "goblin",
+          "species": "goblin",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "Procedural fallback",
+        "mode": "procedural",
+        "entity": {
+          "id": "sprite-reference-goblin",
+          "name": "enemy:goblin",
+          "x": 600,
+          "y": 600,
+          "renderKind": "enemy",
+          "type": "goblin",
+          "species": "goblin",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "idle frame 1",
+        "mode": "sprite",
+        "entity": {
+          "id": "sprite-reference-goblin",
+          "name": "enemy:goblin",
+          "x": 600,
+          "y": 600,
+          "renderKind": "enemy",
+          "type": "goblin",
+          "species": "goblin",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "idle frame 2",
+        "mode": "sprite",
+        "entity": {
+          "id": "sprite-reference-goblin",
+          "name": "enemy:goblin",
+          "x": 600,
+          "y": 600,
+          "renderKind": "enemy",
+          "type": "goblin",
+          "species": "goblin",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/images/raster_enemy_goblin--Current_active_image.webp",
+    "isolatedReferenceHash": "8f14f88b8b52b40107296b1d77c9bb9e1a53cdfb5fc993ba3d3701bd99b85259",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "Existing high-quality art stays intact while the procedural world catches up.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/raster_enemy_goblin--Current_active_image.webp",
+        "beforeSHA256": "8f14f88b8b52b40107296b1d77c9bb9e1a53cdfb5fc993ba3d3701bd99b85259",
+        "after": "tools/visual-review/approved-art-pass/images/raster_enemy_goblin--Current_active_image.webp",
+        "afterSHA256": "8f14f88b8b52b40107296b1d77c9bb9e1a53cdfb5fc993ba3d3701bd99b85259",
+        "label": "Current active image"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/raster_enemy_goblin--Procedural_fallback.webp",
+        "beforeSHA256": "d785487e8c1a90a48cd859cb29bd437cb603ee7a5d9a6e0de30525d4a2eea4cc",
+        "after": "tools/visual-review/approved-art-pass/after/raster_enemy_goblin--Procedural_fallback.webp",
+        "afterSHA256": "5b4b40cfc082aaced4bbb37ae4664d3a41d4e9c9d734ece92eb20357512c07f8",
+        "label": "Procedural fallback"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/raster_enemy_goblin--idle_frame_1.webp",
+        "beforeSHA256": "f680dc015dfa3ac82984c4935a5f7360a9171b071d2c117740e626cc9a0eceab",
+        "after": "tools/visual-review/approved-art-pass/images/raster_enemy_goblin--idle_frame_1.webp",
+        "afterSHA256": "f680dc015dfa3ac82984c4935a5f7360a9171b071d2c117740e626cc9a0eceab",
+        "label": "idle frame 1"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/raster_enemy_goblin--idle_frame_2.webp",
+        "beforeSHA256": "78db0913d8fd30848b7a0d7e43f86f04d35cc156389fde850e2fda734cba20d9",
+        "after": "tools/visual-review/approved-art-pass/images/raster_enemy_goblin--idle_frame_2.webp",
+        "afterSHA256": "78db0913d8fd30848b7a0d7e43f86f04d35cc156389fde850e2fda734cba20d9",
+        "label": "idle frame 2"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [
+      "016"
+    ],
+    "verifiedRuntimeKeys": [
+      "enemy:goblin"
+    ],
+    "requiredVisibleAssets": [
+      "raster:enemy:goblin"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "assets/sprites/manifest.json",
+        "reason": "Retain this accepted raster revision for the procedural pass. If an image edit is later selected, adjust only hand-to-weapon connection and ear highlights from its preserved original and update dependent frames together."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "Current active image",
+      "Procedural fallback",
+      "idle frame 1",
+      "idle frame 2"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": "enemy:goblin",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 455,
+    "assessmentId": "raster:enemy:goblin",
+    "disposition": "retain",
+    "implementationStatus": "Protected",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "e6ea987aded7b441bdedf51e1fc29b38b1ed2f02",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": "Updated the relevant shared character identity, face/hair, rigid helmet, held tool, quiver or camp/riding composition under the latest owner correction. Carries through indexed loadouts, captive and appointed states. Gameplay geometry and protected raster pixels remain intact.",
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}

@@ -1,0 +1,424 @@
+{
+  "camera": 1.5,
+  "scope": "Nine bounded visual contexts on desktop and phone, before and after; not a gameplay regression pass.",
+  "afterSourceSHA256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d",
+  "captures": [
+    {
+      "file": "before-vale-town-1280.png",
+      "stage": "before",
+      "scene": "vale-town",
+      "zoom": 1.5,
+      "retainedCompletedCapture": true
+    },
+    {
+      "file": "before-march-mire-1280.png",
+      "stage": "before",
+      "scene": "march-mire",
+      "zoom": 1.5,
+      "retainedCompletedCapture": true
+    },
+    {
+      "file": "before-highlands-town-1280.png",
+      "stage": "before",
+      "scene": "highlands-town",
+      "zoom": 1.5,
+      "retainedCompletedCapture": true
+    },
+    {
+      "file": "before-frontier-orcs-1280.png",
+      "stage": "before",
+      "scene": "frontier-orcs",
+      "zoom": 1.5,
+      "retainedCompletedCapture": true
+    },
+    {
+      "file": "before-crown-lineages-1280.png",
+      "stage": "before",
+      "scene": "crown-lineages",
+      "zoom": 1.5,
+      "retainedCompletedCapture": true
+    },
+    {
+      "file": "before-captive-forge-1280.png",
+      "stage": "before",
+      "scene": "captive-forge",
+      "zoom": 1.5,
+      "retainedCompletedCapture": true
+    },
+    {
+      "file": "before-royal-mage-1280.png",
+      "stage": "before",
+      "scene": "royal-mage",
+      "zoom": 1.5,
+      "retainedCompletedCapture": true
+    },
+    {
+      "file": "before-royal-ranger-1280.png",
+      "stage": "before",
+      "scene": "royal-ranger",
+      "zoom": 1.5,
+      "retainedCompletedCapture": true
+    },
+    {
+      "file": "before-crown-night-1280.png",
+      "stage": "before",
+      "scene": "crown-night",
+      "zoom": 1.5,
+      "retainedCompletedCapture": true
+    },
+    {
+      "file": "before-vale-town-375.png",
+      "stage": "before",
+      "scene": "vale-town",
+      "region": "vale",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "phone",
+      "target": {
+        "id": "supplier",
+        "kind": "supplier"
+      }
+    },
+    {
+      "file": "before-march-mire-375.png",
+      "stage": "before",
+      "scene": "march-mire",
+      "region": "march",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "phone",
+      "target": {
+        "id": "enemy-76",
+        "family": "mire"
+      }
+    },
+    {
+      "file": "before-highlands-town-375.png",
+      "stage": "before",
+      "scene": "highlands-town",
+      "region": "highlands",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "phone",
+      "target": {
+        "id": "supplier",
+        "kind": "supplier"
+      }
+    },
+    {
+      "file": "before-frontier-orcs-375.png",
+      "stage": "before",
+      "scene": "frontier-orcs",
+      "region": "frontier",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "phone",
+      "target": {
+        "id": "enemy-93",
+        "family": null
+      }
+    },
+    {
+      "file": "before-crown-lineages-375.png",
+      "stage": "before",
+      "scene": "crown-lineages",
+      "region": "crown",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "phone",
+      "target": {
+        "id": "enemy-64",
+        "family": null
+      }
+    },
+    {
+      "file": "before-captive-forge-375.png",
+      "stage": "before",
+      "scene": "captive-forge",
+      "region": "crown",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "phone",
+      "target": {
+        "id": "cage-cindermaw",
+        "kind": "cage",
+        "family": "cindermaw"
+      }
+    },
+    {
+      "file": "before-royal-mage-375.png",
+      "stage": "before",
+      "scene": "royal-mage",
+      "region": "crown",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "phone",
+      "target": {
+        "id": "supplier",
+        "kind": "supplier"
+      }
+    },
+    {
+      "file": "before-royal-ranger-375.png",
+      "stage": "before",
+      "scene": "royal-ranger",
+      "region": "crown",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "phone",
+      "target": {
+        "id": "supplier",
+        "kind": "supplier"
+      }
+    },
+    {
+      "file": "before-crown-night-375.png",
+      "stage": "before",
+      "scene": "crown-night",
+      "region": "crown",
+      "zoom": 1.5,
+      "night": true,
+      "experience": "phone",
+      "target": {
+        "id": "supplier",
+        "kind": "supplier"
+      }
+    },
+    {
+      "file": "after-vale-town-1280.png",
+      "stage": "after",
+      "scene": "vale-town",
+      "region": "vale",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "desktop",
+      "target": {
+        "id": "supplier",
+        "kind": "supplier"
+      }
+    },
+    {
+      "file": "after-march-mire-1280.png",
+      "stage": "after",
+      "scene": "march-mire",
+      "region": "march",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "desktop",
+      "target": {
+        "id": "enemy-76",
+        "family": "mire"
+      }
+    },
+    {
+      "file": "after-highlands-town-1280.png",
+      "stage": "after",
+      "scene": "highlands-town",
+      "region": "highlands",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "desktop",
+      "target": {
+        "id": "supplier",
+        "kind": "supplier"
+      }
+    },
+    {
+      "file": "after-frontier-orcs-1280.png",
+      "stage": "after",
+      "scene": "frontier-orcs",
+      "region": "frontier",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "desktop",
+      "target": {
+        "id": "enemy-93",
+        "family": null
+      }
+    },
+    {
+      "file": "after-crown-lineages-1280.png",
+      "stage": "after",
+      "scene": "crown-lineages",
+      "region": "crown",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "desktop",
+      "target": {
+        "id": "enemy-64",
+        "family": null
+      }
+    },
+    {
+      "file": "after-captive-forge-1280.png",
+      "stage": "after",
+      "scene": "captive-forge",
+      "region": "crown",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "desktop",
+      "target": {
+        "id": "cage-cindermaw",
+        "kind": "cage",
+        "family": "cindermaw"
+      }
+    },
+    {
+      "file": "after-royal-mage-1280.png",
+      "stage": "after",
+      "scene": "royal-mage",
+      "region": "crown",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "desktop",
+      "target": {
+        "id": "supplier",
+        "kind": "supplier"
+      }
+    },
+    {
+      "file": "after-royal-ranger-1280.png",
+      "stage": "after",
+      "scene": "royal-ranger",
+      "region": "crown",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "desktop",
+      "target": {
+        "id": "supplier",
+        "kind": "supplier"
+      }
+    },
+    {
+      "file": "after-crown-night-1280.png",
+      "stage": "after",
+      "scene": "crown-night",
+      "region": "crown",
+      "zoom": 1.5,
+      "night": true,
+      "experience": "desktop",
+      "target": {
+        "id": "supplier",
+        "kind": "supplier"
+      }
+    },
+    {
+      "file": "after-vale-town-375.png",
+      "stage": "after",
+      "scene": "vale-town",
+      "region": "vale",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "phone",
+      "target": {
+        "id": "supplier",
+        "kind": "supplier"
+      }
+    },
+    {
+      "file": "after-march-mire-375.png",
+      "stage": "after",
+      "scene": "march-mire",
+      "region": "march",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "phone",
+      "target": {
+        "id": "enemy-76",
+        "family": "mire"
+      }
+    },
+    {
+      "file": "after-highlands-town-375.png",
+      "stage": "after",
+      "scene": "highlands-town",
+      "region": "highlands",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "phone",
+      "target": {
+        "id": "supplier",
+        "kind": "supplier"
+      }
+    },
+    {
+      "file": "after-frontier-orcs-375.png",
+      "stage": "after",
+      "scene": "frontier-orcs",
+      "region": "frontier",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "phone",
+      "target": {
+        "id": "enemy-93",
+        "family": null
+      }
+    },
+    {
+      "file": "after-crown-lineages-375.png",
+      "stage": "after",
+      "scene": "crown-lineages",
+      "region": "crown",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "phone",
+      "target": {
+        "id": "enemy-64",
+        "family": null
+      }
+    },
+    {
+      "file": "after-captive-forge-375.png",
+      "stage": "after",
+      "scene": "captive-forge",
+      "region": "crown",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "phone",
+      "target": {
+        "id": "cage-cindermaw",
+        "kind": "cage",
+        "family": "cindermaw"
+      }
+    },
+    {
+      "file": "after-royal-mage-375.png",
+      "stage": "after",
+      "scene": "royal-mage",
+      "region": "crown",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "phone",
+      "target": {
+        "id": "supplier",
+        "kind": "supplier"
+      }
+    },
+    {
+      "file": "after-royal-ranger-375.png",
+      "stage": "after",
+      "scene": "royal-ranger",
+      "region": "crown",
+      "zoom": 1.5,
+      "night": false,
+      "experience": "phone",
+      "target": {
+        "id": "supplier",
+        "kind": "supplier"
+      }
+    },
+    {
+      "file": "after-crown-night-375.png",
+      "stage": "after",
+      "scene": "crown-night",
+      "region": "crown",
+      "zoom": 1.5,
+      "night": true,
+      "experience": "phone",
+      "target": {
+        "id": "supplier",
+        "kind": "supplier"
+      }
+    }
+  ]
+}

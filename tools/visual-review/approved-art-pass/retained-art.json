@@ -1,0 +1,269 @@
+{
+  "scope": "Metadata-only comparison refresh; every registered image, source, clip and placement retained.",
+  "receipts": [
+    {
+      "key": "hero:paladin",
+      "priorRevision": "756206556e309077e0562aa744d33d0181a60551719f987632e81e78fa997371",
+      "revision": "797d167e882ee283a7264ba20cb3f7a8bc96e1a24ca1c1f703a5f1dd44639220",
+      "priorCanonHash": "215d33cd501196d3fc420f6e045b75d6f9881fd8ff65fddd50e61728674d39af",
+      "canonHash": "d4d1722ebb6a6c90ab4ab34a4444b4f4a2bbd7b69d0906f351d394d56262a655",
+      "outputHash": "107657c65e250199632eb716d2d2bcd534670864705438a49f5682d6f0e0c787"
+    },
+    {
+      "key": "enemy:goblin",
+      "priorRevision": "0bd2ca3cd12663a72b5ff6a3907e0b7db0bc8460e6d176d663ea665408ecbb4f",
+      "revision": "535fc1b8b7a7b2169e8e1548ed4c18b85ed03fde8f933ccbaa2f44d8a57a9fb3",
+      "priorCanonHash": "6984e418967a94aed83f9a12471ecae4a52da901d300600b6f7d75d18732ffcc",
+      "canonHash": "8b50a117dd81d499f4cbebb368dba9fe03295b9726109519fb0dfe01e13f4dd0",
+      "outputHash": "977965160458746599c43cfcc84d7c2b5ba8d6cd4ada9be645fde7f017fc7fc5"
+    },
+    {
+      "key": "prop:vale-cottage:vale",
+      "priorRevision": "bd2bddda8532f4e4938e4d189e1847f31c358179afa252ac293f460071a63541",
+      "revision": "fbe84420634d262175aa6f33c3ba6615aef421a0093421540da4c06d3ab44d92",
+      "priorCanonHash": "e7753efda53d3caa414c31dd78208e34606b60c0ff71e8b8b0707a1c7fc41365",
+      "canonHash": "b11ff36581fa31204e70d868378391577f80e067d68e06232fd3c7bc263d9031",
+      "outputHash": "21e8b38b7497f56b6c01f853f1100b16c78580703f546716db4e739432d68573"
+    },
+    {
+      "key": "hero:mage",
+      "priorRevision": "d8cb65001ce1beaa921360624ba0bb7532ef3c528a2e6367de2b1eedd1bf6677",
+      "revision": "92e0c94e17fbac6709fc01f78c2a768956e09362b4abf44636c91f500c6ccb0b",
+      "priorCanonHash": "89129c7b6aff49cde48cd102b581aa46ace8f54244f22a447a5d3711aeeec557",
+      "canonHash": "047b4f4e998901d2b84398bc186f714cf09c088ce02d731fefc73d093675c360",
+      "outputHash": "467c8bdef58eb0741115fbf15c01e1b42a2e6a1e199bf6d028f1f188d82b53e9"
+    },
+    {
+      "key": "hero:ranger",
+      "priorRevision": "fd931ab2bc19034183feff10427e5be86a509cf441e4f5f9faa36a752d88034a",
+      "revision": "06a5b43c94f5e0d6a6271d88b285cd17a91b5c4016adfe7d4f39555504741e30",
+      "priorCanonHash": "67a53f4491172bf04e9a52a924a87656db2aad8a469c6e4475019c2ea491995f",
+      "canonHash": "8171c85c8d8afe7660d32a68ec26371b97d7604ac3ea4d3c325d6a8e7766533d",
+      "outputHash": "338fb3907f1b657ab7527d7e72a6b7f8df40aa9b85072e3b98acd58b65a455d7"
+    },
+    {
+      "key": "ally:soldier",
+      "priorRevision": "c39deaac48e86444a6602a603c26be378aafc2011364dacd59fe5c0888db6f53",
+      "revision": "f930dbfbfa65844c943b3d1c0bcf4b7f6917394ef5f45d3f5dbdeea60c2e0aca",
+      "priorCanonHash": "18d775ad395b65c22f92c08a7815a27269dbe9c44d6ac330c3b4d7b6ad551fcc",
+      "canonHash": "358cbc42192c135af88bf3fde047217e2a2586614f186f9061d07ccbc933345e",
+      "outputHash": "ab89b9cdec45f3f1a509fa700ff56bb6295fc6892218796c33c9854ad5deb25b"
+    },
+    {
+      "key": "ally:archer",
+      "priorRevision": "c44fa83c7d62e4966d33337c2bb7068b13b22aabfa215085a2457e5c0e0742bf",
+      "revision": "f561230c4ad1d5d5a91ba86e686ad1d4b77cca2bfe78faf1afc1d4a48788eaff",
+      "priorCanonHash": "65afcb8d9717741d6e75845c0006114751c3dc6713d296fa3e630f6c46fa5535",
+      "canonHash": "2cc11c785b9e4630ab83d1654c744c634bba2545de3980ec23f13c53c3ff7d32",
+      "outputHash": "f0179672464cd896cfa06a19ec6a928db6b202a10785e65b290032178612bb4c"
+    },
+    {
+      "key": "prop:bush:vale",
+      "priorRevision": "f1b1b8008157a434a9ba64d719a1189eb59246a17d120ee71487359229511c84",
+      "revision": "acc0ed71baafe0a89632ff734270a34da62294c867aec231365a59f40562e108",
+      "priorCanonHash": "e131df531ec37a17a39fdabac720d23939d04a3e4fcb4525f51a405a15b0d0f0",
+      "canonHash": "d7eec5a8831e9e5920fea962838193d7d1aafd881689bae44a5dec1294250416",
+      "outputHash": "adf638d1bde016d432a2147dd69f1e34aefd982015f3e8f8f173c1eb9e4644ae"
+    },
+    {
+      "key": "prop:wildflowers:vale",
+      "priorRevision": "ff31e0ad5ed18ff9fc426bbfbf8684912f810cea58d24eaa58ea1caf16cb1149",
+      "revision": "c0af461f2f8e36aaeb8c6f52d1ef74115ceac8b4bebca897fbcae25080b85215",
+      "priorCanonHash": "20469b6935a3445c0137df72d9ad37e926ae29dbef67307b7df29a8565c347e0",
+      "canonHash": "de37c144a21aebf5e8300cabcabccbe7f25136b2317efcd89e7d02847c3dc631",
+      "outputHash": "9a23c90223c33de4f3cea73796c5d6044a034712280bab304c4aaf73b07afea9"
+    },
+    {
+      "key": "prop:sapling:vale",
+      "priorRevision": "3928fc9f6a35d711d4e518e7742d28ac7a86daf4fd5900ffb18b927b5087ad7c",
+      "revision": "eebed49094fd8f7dada747a26206018e6ac8b8a67343efbae7c9e19990f7b6ae",
+      "priorCanonHash": "87e7e5d30a9d1367369819398b322847eda15b1538cb574f191dd32d10905ff9",
+      "canonHash": "ad47ceef8163dcedcb2b108451c4281dda4699481a7a7448c2610f63bd8952e2",
+      "outputHash": "eb5116c58f33e510c8956e4c34d8e710a588b4ec281e8c964b99abfb4ef15de8"
+    },
+    {
+      "key": "prop:stump:vale",
+      "priorRevision": "600664b371cc79f769c131e4808d3ccb6304e7b686c68fb7ee58ce200c917242",
+      "revision": "d7d12a6dde541b040b3ff0b4030732331c088d17c2e428e4b2a258563d71ea13",
+      "priorCanonHash": "e3532f2b53f50b32af0ae66af1cd28cca91ea4f6d62e5a05501a50fae6192b30",
+      "canonHash": "ce59b2c536436ca622f02a707bd0631c9ac64069aabc3d0722065dbe14410513",
+      "outputHash": "8c294182e436974d3e651c692fa409a0b7461bb29a977892dc890715f44c8316"
+    },
+    {
+      "key": "prop:fallen-log:vale",
+      "priorRevision": "89c900b2d34c96781cfcbf6adf6b65fcb20ea3e54105144d3e1eeb4f1fcf08d1",
+      "revision": "d483a6e9335d20d39ad01554d31ad52f05b81f7531bda2abf96f62c9d1f782e2",
+      "priorCanonHash": "c6fb381227b5089a97f8621d2c76e794d8bdee0ae1ddd33b9a0f24bce87d9d4e",
+      "canonHash": "8c64e1b0261974d3856d0d29f4fd4f0173ac933e6f2d777e358e52b73eaa16f0",
+      "outputHash": "110884d6f0c468007212ca60a365796759bf5440a733b469040b14eb2f5d7094"
+    },
+    {
+      "key": "prop:cattails:march",
+      "priorRevision": "bcbf13293dfeda0622209b09cd8f8fa6d82f9e9ef556f59fe31ad7bb8fbe088f",
+      "revision": "e5386cbc94c6eb514108d7c80f1a161517761001f03c076665cbbde64794e916",
+      "priorCanonHash": "db78e87356b18374f89dd4a15b05ce2b92226c81858ff7d5f09209ffd72b96db",
+      "canonHash": "83741aeef368f25fdb58c7c62810642c627bbe891a0b707979233c8f95a6595b",
+      "outputHash": "527bd4994a724d6fa114f83c0d1f1ca5c8826fee94e76e8e287118e0733f0631"
+    },
+    {
+      "key": "prop:driftwood:march",
+      "priorRevision": "e4b76afc204bf6c6ab32d5b27f8724bab1b44785dd73df16b5da4375c16d8fef",
+      "revision": "cbe113c43154edd7fb5ef8241a7cad7f1015dd47e62ad8d7784bd981dd8f6c63",
+      "priorCanonHash": "c57bf2d3be69214b9e2a67282d455447fdbac9eb03addabf25c415a288942919",
+      "canonHash": "10ccfd23a0c704f51de73be2ce00031e059efec7b102e25acb695a642cedc936",
+      "outputHash": "ba6bb436ab4095736bf08cd5951b06de660bebc14775c9908ed7f4c1d0cc572c"
+    },
+    {
+      "key": "prop:mangrove:march",
+      "priorRevision": "1a6b2f39b9539289873cc210cbdf3796d731a2b8ae9e7b034d11f113f7b691f1",
+      "revision": "7508932e03fd8e07f35fb673dc140e382008da5e26966c4a92a558edd100cd50",
+      "priorCanonHash": "b05c30c3e404722d10c7860f40649c2788d59fa55ecd85c6347ec7c0dbc62311",
+      "canonHash": "771a8908d6c9003b94ac8095351429a709cd5deab49f43b4243f00a3a3985bb0",
+      "outputHash": "66470852c98453954d944e12f08eb9717bb700e5e306b67e2aa0a6f8e3db74f6"
+    },
+    {
+      "key": "prop:pine-sapling:highlands",
+      "priorRevision": "59ee014de44933ad2dbf920484dd50604caa3f6040f6a74da40193db2e418a10",
+      "revision": "f50ba8a47c728f250ad27228394ca7f51da922e1f26a3f0102df45bfec8336c9",
+      "priorCanonHash": "dfabee8670b0ca575acdf4492f46652eff27b0aacdd62330b2be3b622bce3c58",
+      "canonHash": "2a8a1645790cd0f83a1c3bbb3c6f5c89a7d0549e0083e78fe1c025e67458e85a",
+      "outputHash": "7460dfe2bd989d15ba3d8328515ee9871d6dc8c070c89b6cabdaf100ef585394"
+    },
+    {
+      "key": "prop:alpine-scrub:highlands",
+      "priorRevision": "467ccfb86255a551b1b0915beee60a30690d5a1789e5a49207f03b636f56e926",
+      "revision": "6d1353582f4d84d1d3baecac1ccd8ecaae179bc0287a0f347d022da714405019",
+      "priorCanonHash": "3afa98283abe7c630c06c523a914f815c79c47dce84d54023a44afa7413b56c6",
+      "canonHash": "405afc5e1471315d0fa4eb62a41a2beb7a8d808c9cc386dae179727a96dbdfc2",
+      "outputHash": "642fe1147d40ee5857e5623e98db6ba6e36230f7f720a681fad3662087fce2af"
+    },
+    {
+      "key": "prop:marsh-bush:march",
+      "priorRevision": "118fbe63dae6b52d36264e7daf4e059fc96b8ca44eec12f4866c72de25c00dbd",
+      "revision": "103abdf77ef0ff90a35dec9e6c1aee1418099227f03547616dfefb22580a3f77",
+      "priorCanonHash": "8c2cc3be36786671b7cee7e019277a6dc76ca0f7f143487def86b05a1f204ac0",
+      "canonHash": "4a856d273901c109f696820c4d840cabaf620219917cedf7c673c962b44df17d",
+      "outputHash": "61da77246ff31080bd7a4b04d44ed6cc68993e7fd6e5e0b8ac36a33ec8623cbd"
+    },
+    {
+      "key": "prop:rock-cluster:highlands",
+      "priorRevision": "12d861bfbd8e444de15347b30c3a84dd202ca70356a72348fde03911e295470e",
+      "revision": "14e4a6006ae994000d212a7fa4a393a6090b2ef7fc3da606a6fe53c5b6e02277",
+      "priorCanonHash": "c1ef5cc43b16eea3802fe76688b1b82375a5d81269896dcb26dff9566f151188",
+      "canonHash": "9378fc6298b37d3025f6b97ba41e955ff0be3599a6aadf3bbc9dfdf73518e615",
+      "outputHash": "7234ba4b67bc2843e827f5cd782cefadb46f33da2f9cd979ca52d350c982a41d"
+    },
+    {
+      "key": "prop:dead-tree:frontier",
+      "priorRevision": "f0c1abb97ad32c9a20334d8b224a7fc723e17cc8617373b964da99a8611c676e",
+      "revision": "3bb454fe2e93b4fca19aea0e58965193c5065d7627c925e1eff9a1321588bfd5",
+      "priorCanonHash": "b755dca833450ee8c3c403d64dcdbf91ec5ec2c5652dbfa54fff4b56e3c16a4d",
+      "canonHash": "1749cf0206d86bc9cb4c963571e537bb71a5e6320975c7890d32651eb6b5956a",
+      "outputHash": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a"
+    },
+    {
+      "key": "prop:charred-stump:frontier",
+      "priorRevision": "8583ae283d103f98fe11938ded71801f3dc66111cbfc4fb120e350d7bb3e9566",
+      "revision": "47517f7c44da9272534a3481bda1ac54ff6af76b6212bf63c891bfcdb4c8ddf2",
+      "priorCanonHash": "2f135b9c3694ece6ecb1d76d84257dee8f76c02bda9eae29be870347c7398f51",
+      "canonHash": "f355a2204ba24ea76d97415f7f07ffe42fb862f816d535bdcfe8a716018df3a9",
+      "outputHash": "38f73cbd6054f7b7abf089f2843ff68e0e1da5222d7331cf83a4d2ff9c716cd3"
+    },
+    {
+      "key": "prop:dry-scrub:frontier",
+      "priorRevision": "30ff5df7b21aafd0c6d5ecbc25b4f3ae53db3c621f976894661b1aea5eec03fc",
+      "revision": "57e33407f92b92630642ecf6a098dbc5fff370c095b18a76b17bde2271820d31",
+      "priorCanonHash": "4870fe689b4525d55b54339bacde50075279950d99fb4279eb8112472e4447a0",
+      "canonHash": "5f15dcc61612acab7b1409c65a00391a7ce1e9b22ece8f2053991c68ff43a7c1",
+      "outputHash": "fa5a8422a5cad726a6c703210f03ba72d3d1934530d3c9567c08b9a0f260c1de"
+    },
+    {
+      "key": "prop:burned-log:frontier",
+      "priorRevision": "0812beebd4d6cd157958b66d7db150a75a3cf788aed91be7fd8623d597d7b9b2",
+      "revision": "1204ad918c4edde86b5c0eb0b9d2958984413dc941b28421d592a678a27801da",
+      "priorCanonHash": "9cc9359e8e103501fdb3afe6d2d609da63f1d3c919170d559383a21f5790854a",
+      "canonHash": "7105774d05f43378c4c1f5ce29c457b6e9be8b54c230618662c09f9ed5aded95",
+      "outputHash": "b37ecaaedd9800883d383038e9e8e2d36edb36487979d1f2ac38abe8211b158e"
+    },
+    {
+      "key": "prop:black-rock:crown",
+      "priorRevision": "1a59626c1194c2cbc73973cd4949e6da6ae5e01f64dacf5dc26c530f213330bf",
+      "revision": "dffd582c3cb1f6e58fe8b6e97df1d2c9cbdd6323ff4a1450ef199857ab7ad8cf",
+      "priorCanonHash": "75a5fbb523b703bcc70f78b3798265e3f30cf47459b6ca55ae9e16d7a4bb4b52",
+      "canonHash": "7d90d836e6435b8ee3cb5bc74076dd1819a014d5611ab75636be66c28f9481b6",
+      "outputHash": "2f7cde535488261055e586386f02bf91e29aa784a4fa2b3e90ea2c9d3c3b53ef"
+    },
+    {
+      "key": "prop:crystal-cluster:crown",
+      "priorRevision": "e39d03d38d285320391cd994edb8fa789c5f125dda26f8027a5c6737c207af25",
+      "revision": "ea18dd041809f1138552ba20fecb3ee0a22dcc4218ffe8b812df820e43e96d0e",
+      "priorCanonHash": "f24c2dfcdd98c181a9902a121990f766f0bacdbf72f6e636da992d4b655d72f7",
+      "canonHash": "c33b9065daa8b1a8a71a0c71c0c9ddd6dad338f939a23a88e44f483df4766ed9",
+      "outputHash": "c05fbeab6b899c0f12d96508b38f81c6a31c01ab33a91430d6483df6315efc98"
+    },
+    {
+      "key": "prop:dead-shrub:crown",
+      "priorRevision": "8fb97ece19a3d6710a65400279b1c9a62e0b58d5efe716d12535febb8ea70271",
+      "revision": "042d8f08cda1f17e65ec356b4f6edf4877dbfba775327bfefe1de55f7974ffc2",
+      "priorCanonHash": "c07e5a74279bc29367714d02407844be0f11c7e87c195aef61bc5d18afc1f551",
+      "canonHash": "14dc568db5c8dea26cee858b4b3f22e5132d249dfb42467fc5818a63ba6afffb",
+      "outputHash": "818f60932ca7f058edd75068205ff54c5ab66781874fa07f16db95a146916b0c"
+    },
+    {
+      "key": "prop:obsidian:crown",
+      "priorRevision": "44977ce2beb6c690e25365f81c8b4f44025b45027f99b21cf98a336e199bd934",
+      "revision": "463a34de7acd3b985e1f1b514ba3861f8240a7b01240f905b987f64b9ccd39cb",
+      "priorCanonHash": "d8db4ac8390ca15f9a1916fecf224871699574a95395b84eb4d9e159d08cfba7",
+      "canonHash": "afcabd99a3641848e97164be50f995b96787108b901f981f0e4666a69b465061",
+      "outputHash": "a4b24f34c911615389eb24ce0e061f09e6db4ecb168ccda842523e853b9305bb"
+    },
+    {
+      "key": "prop:heather:highlands",
+      "priorRevision": "8918256a9324e1943a0945bfc710a47c751d81ba616095376969f5b366fadbd1",
+      "revision": "5dc4d8f9c63c50804a74cfe4627c5a9888acbfd9c682511d1a377ae2ba0f09e7",
+      "priorCanonHash": "0e130dc7b30dd195a74f0fddf991bb12f609370ab68cca81e407e74c27499636",
+      "canonHash": "7fd4298bb0b9a3319ad47d971b4a105a5c08f159a841a87d7216367be9986d38",
+      "outputHash": "7e19331a634e148d39c097478172618f9adf9f2c4326aceb28bab81009142baa"
+    },
+    {
+      "key": "prop:rock:vale",
+      "priorRevision": "f9f92ed67e329fcb87de9115d88da706efcfbe5731caf8530c57b53f840884cf",
+      "revision": "360b44ff0b681e1cbbc82df5ff20bf1b0470cc6bc6f49aba0a287f5add7b6be2",
+      "priorCanonHash": "69dc7b2d4cfe9a034b54e72ba65c77a27cb6e93540562f1a572dac415c4830f6",
+      "canonHash": "5e623d59bb1ed2a3bf9109cdffb27dd98b6266a83caeec6977d00ee1c5c83e59",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc"
+    },
+    {
+      "key": "prop:rock:highlands",
+      "priorRevision": "eb9c913e0e3c53e89007d2527339c15c0dc750187d743ac3d38ba02ea321b914",
+      "revision": "439ab6b44a553b198804ba3690adeb12763897cd692c900791294666964d524b",
+      "priorCanonHash": "88d6254b1cdcbb46671c8cd332578bbc900dbd6e24cc07aa9e70b813ac728b48",
+      "canonHash": "191576a0f7c637647ca032f5c7892fb89b17d5e393e5ad419b97f12a9cf00609",
+      "outputHash": "70b3689cb118b72a6f6de43f5d4f03f422eb89bb13477c0cd502db551122f5dc"
+    },
+    {
+      "key": "prop:mint-workbench:highlands",
+      "priorRevision": "a3db347d4eb40224dba8ed89eb66bed04952df81139d2f9e06cb4b9d91a51da5",
+      "revision": "d59a49ddacd715d4d19b86762e291240b2239954ea22a96f6bada56398081d19",
+      "priorCanonHash": "9a1665a5bc4defd637a741f9e56fa81a53d8596c74de396e2c151e34404f31e8",
+      "canonHash": "268c776f466046c5704dddd7d2696b631d3f199fb1095c3e29cf151e7002d166",
+      "outputHash": "f7a19742e227b760b732badfda2be3d512c0e49dc7511c7143b3bafeaeb13013"
+    },
+    {
+      "key": "prop:ore-sorting-bay:highlands",
+      "priorRevision": "b276ac831243b41da9ce8ea63bf464d1cb80aca93949b2052cd315ad938491b7",
+      "revision": "8aed1335bec0acedcfa7e977ced9e4175b950edb2de30a40a89c2df7f2776e18",
+      "priorCanonHash": "8405a08060800df8a8b7ae30c965283e512270fd302d3217065b59a97ae8cc7b",
+      "canonHash": "10d3b2834917d4c9dc7b8ff9539e2ea1af7f3359f96a63b2119cc0b92133d168",
+      "outputHash": "68526686bb7fc6528740e51dfe60c72a86d6200f4b71eadfb36a0eab6dc61b9f"
+    },
+    {
+      "key": "prop:caravan-loading-bay:highlands",
+      "priorRevision": "8dd83ae8d5dbbf3c1d56106e9e46ec8462a21f68d8d5211e066b1c98fdeb3858",
+      "revision": "3678cb143649a2d539efc2f6aac7b292e384b931bc3bb6376d5c82ea2a22ec5d",
+      "priorCanonHash": "19956b8bf4f19d48cb995a79273caa848e635f6aaa030da1a302630c7a241084",
+      "canonHash": "a23641641e0b7aa5c3f333f2835989f79738ed2dfaa170430e4195dde2b55892",
+      "outputHash": "1302399f4bf539674742f3e074b4d8c94df75bd2865c2029450b5816c85b92d6"
+    }
+  ]
+}

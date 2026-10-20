@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-boss-crypt",
+  "name": "Lifebinder — normal / TRUE",
+  "kind": "boss",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Build gaunt connected skeleton joints, fitted ceremonial cloth, real hands and a physically supported crown/staff.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md.",
+    "subsequentOwnerReview": "Owner clarified that the translucent crown is a shared floating TRUE-form indicator for every boss. All eleven TRUE bosses now use the same design above their anatomy/headgear. Dark Lord retains his personal normal crown beneath it. TRUE boss label/culling headroom accommodates the overhead indicator; normal designs, scale and combat remain unchanged."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::draw / boss family crypt",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "Current body",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-50",
+          "family": "crypt",
+          "species": "crypt",
+          "name": "Lifebinder",
+          "icon": "💀",
+          "form": "normal",
+          "type": "boss",
+          "level": 3,
+          "baseHp": 650,
+          "baseDamage": 16,
+          "hp": 650,
+          "maxHp": 650,
+          "damage": 16,
+          "gold": 65,
+          "xp": 55,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "TRUE form",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-50",
+          "family": "crypt",
+          "species": "crypt",
+          "name": "Lifebinder",
+          "icon": "💀",
+          "form": "true",
+          "type": "boss",
+          "level": 3,
+          "baseHp": 650,
+          "baseDamage": 16,
+          "hp": 650,
+          "maxHp": 650,
+          "damage": 16,
+          "gold": 65,
+          "xp": 55,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/after/boss_crypt--Current_body.webp",
+    "isolatedReferenceHash": "d34cea268debf5fc8f1e54605ec87af7aa6be895a7a07ad2812538cf61b53137",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "The old companion's identity gains adult character and crafted clothing.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/boss_crypt--Current_body.webp",
+        "beforeSHA256": "63ca9e2382aa7d56e3165d22a29e2f0735da8c2c7d5adcbecdbf005cefbea1e2",
+        "after": "tools/visual-review/approved-art-pass/after/boss_crypt--Current_body.webp",
+        "afterSHA256": "d34cea268debf5fc8f1e54605ec87af7aa6be895a7a07ad2812538cf61b53137",
+        "label": "Current body"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/boss_crypt--TRUE_form.webp",
+        "beforeSHA256": "7d4005af579e1773ca6f1faef3cba13b7b459534f904126dcef8a3d3b8e2aa6b",
+        "after": "tools/visual-review/approved-art-pass/after/boss_crypt--TRUE_form.webp",
+        "afterSHA256": "0e27c8383984103e63ba7f20ecf8d4a026c1cee7481bca3400faa605293644ee",
+        "label": "TRUE form"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "boss:crypt"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      {
+        "state": "TRUE form",
+        "plan": "Preserve the normal species anatomy and authored TRUE cues; keep the upgraded face, limbs and weapons readable beneath regalia."
+      }
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::draw / boss family crypt",
+        "reason": "Build gaunt connected skeleton joints, fitted ceremonial cloth, real hands and a physically supported crown/staff."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "Current body",
+      "TRUE form"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 15,
+    "assessmentId": "boss:crypt",
+    "disposition": "rebuild",
+    "implementationStatus": "Implemented",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": "Owner clarified that the translucent crown is a shared floating TRUE-form indicator for every boss. All eleven TRUE bosses now use the same design above their anatomy/headgear. Dark Lord retains his personal normal crown beneath it. TRUE boss label/culling headroom accommodates the overhead indicator; normal designs, scale and combat remain unchanged.",
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}

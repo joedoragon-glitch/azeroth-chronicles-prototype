@@ -1,0 +1,308 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-enemy-ogre",
+  "name": "Ogre",
+  "kind": "enemy",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Keep this as the craft reference; refine tusk separation, knuckles, elbow compression and cloth folds selectively.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::draw / enemy species ogre",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "Current body",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-42",
+          "family": null,
+          "species": "ogre",
+          "name": "ogre",
+          "icon": "👿",
+          "form": "normal",
+          "type": "mob",
+          "level": 1,
+          "baseHp": 100,
+          "baseDamage": 0,
+          "hp": 100,
+          "maxHp": 100,
+          "damage": 0,
+          "gold": 0,
+          "xp": 0,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "ranged",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-42",
+          "family": null,
+          "species": "ogre",
+          "name": "ogre",
+          "icon": "👿",
+          "form": "normal",
+          "type": "mob",
+          "level": 1,
+          "baseHp": 100,
+          "baseDamage": 0,
+          "hp": 100,
+          "maxHp": 100,
+          "damage": 0,
+          "gold": 0,
+          "xp": 0,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1,
+          "ranged": true
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "guardian",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-42",
+          "family": null,
+          "species": "ogre",
+          "name": "ogre",
+          "icon": "👿",
+          "form": "normal",
+          "type": "mob",
+          "level": 1,
+          "baseHp": 100,
+          "baseDamage": 0,
+          "hp": 100,
+          "maxHp": 100,
+          "damage": 0,
+          "gold": 0,
+          "xp": 0,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1,
+          "guard": true
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "ringleader",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-42",
+          "family": null,
+          "species": "ogre",
+          "name": "ogre",
+          "icon": "👿",
+          "form": "ringleader",
+          "type": "mob",
+          "level": 1,
+          "baseHp": 100,
+          "baseDamage": 0,
+          "hp": 100,
+          "maxHp": 100,
+          "damage": 0,
+          "gold": 0,
+          "xp": 0,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/after/enemy_ogre--Current_body.webp",
+    "isolatedReferenceHash": "acd95bfc0a9c44df5b8ec04f1f6622948c0a9e021d2062f10dcb9e280226af95",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "Better finish without losing the successful heavy anatomy.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/enemy_ogre--Current_body.webp",
+        "beforeSHA256": "808650ffd13f33d3993342bab0f2cd2924a974457cc3441a866f7fa921d78942",
+        "after": "tools/visual-review/approved-art-pass/after/enemy_ogre--Current_body.webp",
+        "afterSHA256": "acd95bfc0a9c44df5b8ec04f1f6622948c0a9e021d2062f10dcb9e280226af95",
+        "label": "Current body"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/enemy_ogre--ranged.webp",
+        "beforeSHA256": "33be68a26918cbcdc6b58dcaa8dff4b46ab27641bce3fc36af6563d448ed7371",
+        "after": "tools/visual-review/approved-art-pass/after/enemy_ogre--ranged.webp",
+        "afterSHA256": "37d0366ebb97ea5195375f679a2fa2e50635d162f1c9db9b4802d206b42fa902",
+        "label": "ranged"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/enemy_ogre--guardian.webp",
+        "beforeSHA256": "874bc4f599373108e783c7eda4c8ae202f68015649bcc2560bc2b8ad1c20a3ad",
+        "after": "tools/visual-review/approved-art-pass/after/enemy_ogre--guardian.webp",
+        "afterSHA256": "57df90703124a7df9c0d26c718868c14dd07b4021f54232b9b983f3445ce8337",
+        "label": "guardian"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/enemy_ogre--ringleader.webp",
+        "beforeSHA256": "2d86ce3e7542cddf71c3aab64c9a14cf69c6bd700473804a4b5a7745754459dc",
+        "after": "tools/visual-review/approved-art-pass/after/enemy_ogre--ringleader.webp",
+        "afterSHA256": "092ebb7a380cf1952e786bb722ccc1e8b964fd0b31e390d27eab7cd45337117f",
+        "label": "ringleader"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "enemy:ogre"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      {
+        "state": "ranged",
+        "plan": "Keep the actual projectile equipment and one coherent loadout; refine shoulder, hand and carrying straps with the base body."
+      },
+      {
+        "state": "guardian",
+        "plan": "Fit the guard equipment to the same anatomy; keep the face clear and the guarding role distinct."
+      },
+      {
+        "state": "ringleader",
+        "plan": "Preserve authored elite/military rank language; integrate rank details into the clothing instead of concealing the improved face."
+      }
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::draw / enemy species ogre",
+        "reason": "Keep this as the craft reference; refine tusk separation, knuckles, elbow compression and cloth folds selectively."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "Current body",
+      "ranged",
+      "guardian",
+      "ringleader"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 7,
+    "assessmentId": "enemy:ogre",
+    "disposition": "refine",
+    "implementationStatus": "Implemented",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": null,
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}

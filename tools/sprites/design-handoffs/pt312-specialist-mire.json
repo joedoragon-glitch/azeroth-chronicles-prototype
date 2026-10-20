@@ -4,7 +4,7 @@
   "designId": "pt312-specialist-mire",
   "name": "specialist:mire",
   "kind": "specialist",
-  "nextAction": "Review current revision in native desktop/phone scenes; retain original reference and this owner revision for future sprite adaptation.",
+  "nextAction": "Continue from tools/sprites/design-handoffs/approved-art-specialist-mire.json. The later all-plans instruction authorized and completed this procedural pass; preserve this record as historical evidence.",
   "context": {
     "originConversation": "Chat URL unavailable; dated owner feedback retained in PR #313 / Issue #312.",
     "decisionSummary": "Shared humanoid/service contour dependency; retain occupation, equipment and regional identity. Owner requests a broad Ogre-quality rounded/organic pass, preserving species and material identity.",
@@ -123,5 +123,13 @@
       "spritePolicy": "No new raster registration; preserve existing accepted originals. Future sprites must use this revised named body in all states.",
       "sourceSnapshotSha256": "c704124e2ef89e66197334dd9edf1d2e30460fa984845ccb8c5d0aa1ad0f5f50"
     }
-  ]
+  ],
+  "latestProceduralReview": {
+    "date": "2026-10-19",
+    "handoff": "tools/sprites/design-handoffs/approved-art-specialist-mire.json",
+    "sourceCommit": "8acd14de52359febdb40a1d588d2c4c62b4fabf7",
+    "resultAppearanceAccepted": false,
+    "historicalEvidencePreserved": true
+  },
+  "historicalNextAction": "Review current revision in native desktop/phone scenes; retain original reference and this owner revision for future sprite adaptation."
 }

@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-shared-crowned-hero",
+  "name": "Crowned Hero",
+  "kind": "shared",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Refine each crowned class separately, integrating crown, cloak and armor into its existing class equipment.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md.",
+    "subsequentOwnerReview": "Joel requested distinct hero identities, rigid helmets, real quivers, varied NPC hair and expression, believable spear/staff/hammer/anchor, separated barracks desk, character-specific dungeon masters, Cinder Warlord mace and coherent profile direwolf riders across every loadout and tier. Revised drawings propagate through shared, crowned, captive, pet, appointed and fallback states where applicable. No acceptance of unseen revisions is claimed."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::crowned-hero",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "crowned:paladin — shared child reference",
+        "mode": "linked-context",
+        "entity": {
+          "id": "crowned:paladin",
+          "name": "paladin",
+          "x": 600,
+          "y": 600,
+          "renderKind": "hero",
+          "class": "paladin",
+          "crowned": true,
+          "visualScale": 1
+        },
+        "region": 4,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "crowned:mage — shared child reference",
+        "mode": "linked-context",
+        "entity": {
+          "id": "crowned:mage",
+          "name": "mage",
+          "x": 600,
+          "y": 600,
+          "renderKind": "hero",
+          "class": "mage",
+          "crowned": true,
+          "visualScale": 1
+        },
+        "region": 4,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "crowned:ranger — shared child reference",
+        "mode": "linked-context",
+        "entity": {
+          "id": "crowned:ranger",
+          "name": "ranger",
+          "x": 600,
+          "y": 600,
+          "renderKind": "hero",
+          "class": "ranger",
+          "crowned": true,
+          "visualScale": 1
+        },
+        "region": 4,
+        "scale": 1.5,
+        "displayDPR": 2
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/after/crowned_paladin--Current_body.webp",
+    "isolatedReferenceHash": "c9e7d589bd2d1fc2f7047b93df1ec20b9b19a7b146299744278697eb18a9bf52",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "Coronation looks like tailored royal gear rather than another costume layer.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/crowned_paladin--Current_body.webp",
+        "beforeSHA256": "ef4c980d87fde228302dc68af2ee7c32e9a023f4836cc808118d5cbaa4b6b2d0",
+        "after": "tools/visual-review/approved-art-pass/after/crowned_paladin--Current_body.webp",
+        "afterSHA256": "c9e7d589bd2d1fc2f7047b93df1ec20b9b19a7b146299744278697eb18a9bf52",
+        "label": "crowned:paladin — shared child reference"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/crowned_mage--Current_body.webp",
+        "beforeSHA256": "454e53871289600bb97ba41bb94199c1b2cba52ded3950ef357104bbaf33c3fb",
+        "after": "tools/visual-review/approved-art-pass/after/crowned_mage--Current_body.webp",
+        "afterSHA256": "806e3ed71acbae54a3ce6ea1526e383cd5a761efbc038e008ea269056c6005af",
+        "label": "crowned:mage — shared child reference"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/crowned_ranger--Current_body.webp",
+        "beforeSHA256": "a12062bd1c450914cbcb81af1036e64e35466017288c51b2b768add8a72d678f",
+        "after": "tools/visual-review/approved-art-pass/after/crowned_ranger--Current_body.webp",
+        "afterSHA256": "862302c4cffe439a025577400c17fcc6eb49d6e0dbfec2ca67f1fa3ef2e915d5",
+        "label": "crowned:ranger — shared child reference"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "shared:crowned-hero"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::crowned-hero",
+        "reason": "Refine each crowned class separately, integrating crown, cloak and armor into its existing class equipment."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "crowned:paladin — shared child reference",
+      "crowned:mage — shared child reference",
+      "crowned:ranger — shared child reference"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 334,
+    "assessmentId": "shared:crowned-hero",
+    "disposition": "refine",
+    "implementationStatus": "Implemented",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": "Updated the relevant shared character identity, face/hair, rigid helmet, held tool, quiver or camp/riding composition under the latest owner correction. Carries through indexed loadouts, captive and appointed states. Gameplay geometry and protected raster pixels remain intact.",
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}

@@ -4,6 +4,7 @@
 
 | Need | Maintained entrypoint |
 | --- | --- |
+| Approved all-513 procedural pass and before/after evidence | [Implementation handoff](APPROVED_ART_PASS_20261019.md) |
 | Issue #320 visuals: combine into another PR, reuse test evidence | [Integration handoff](FRONTIER_UPDATE_INTEGRATION_20261019.md), [visual review](FRONTIER_VISUAL_POLISH_20261019.md) |
 | What is published, what is paused, what happens next | [Current development state](DEVELOPMENT_STATE.md) |
 | Play and controls | [README](../README.md), [Spanish controls](../CONTROLES.md) |

@@ -1,0 +1,14 @@
+{
+  "entries": 513,
+  "fixtures": 606,
+  "changedTargets": 465,
+  "protectedPrimaries": 46,
+  "ownerRequestedRetentionOverrides": 1,
+  "readOnly": true,
+  "balancedCanvas": true,
+  "featureScalePreserved": true,
+  "normalLabelHeightsPreserved": true,
+  "trueBossLabelHeadroom": 11,
+  "nativeCaptures": 36,
+  "sourceSHA256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+}

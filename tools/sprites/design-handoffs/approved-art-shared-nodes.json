@@ -1,0 +1,223 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-shared-nodes",
+  "name": "Nodes",
+  "kind": "shared",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Apply each child node's material plan once and keep pickup size, amount and icon recognition intact.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md.",
+    "subsequentOwnerReview": "Joel requested additional corrections to natural trees/logs, mangrove roots, objects on hard surfaces, geothermal machinery, split firewood and laundry. The related shared states are corrected; no independent acceptance of unseen corrected results is presumed."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::nodes",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "node:tribute — shared child reference",
+        "mode": "linked-context",
+        "entity": {
+          "id": "node:tribute",
+          "name": "tribute",
+          "x": 600,
+          "y": 600,
+          "renderKind": "node",
+          "icon": "🪙",
+          "amount": 10,
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "node:wood — shared child reference",
+        "mode": "linked-context",
+        "entity": {
+          "id": "node:wood",
+          "name": "wood",
+          "x": 600,
+          "y": 600,
+          "renderKind": "node",
+          "icon": "🪵",
+          "amount": 10,
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "node:basket — shared child reference",
+        "mode": "linked-context",
+        "entity": {
+          "id": "node:basket",
+          "name": "basket",
+          "x": 600,
+          "y": 600,
+          "renderKind": "node",
+          "icon": "🧺",
+          "amount": 10,
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "node:crystal — shared child reference",
+        "mode": "linked-context",
+        "entity": {
+          "id": "node:crystal",
+          "name": "crystal",
+          "x": 600,
+          "y": 600,
+          "renderKind": "node",
+          "icon": "💎",
+          "amount": 10,
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "node:ore — shared child reference",
+        "mode": "linked-context",
+        "entity": {
+          "id": "node:ore",
+          "name": "ore",
+          "x": 600,
+          "y": 600,
+          "renderKind": "node",
+          "icon": "⛏️",
+          "amount": 10,
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/after/node_tribute--Current_body.webp",
+    "isolatedReferenceHash": "873231062ae900bccc92df362db02ae6008db015618b0b49106f7bd48d98e4e0",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "Resources gain detail without ambiguity.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/node_tribute--Current_body.webp",
+        "beforeSHA256": "55c2af4946c748db0b6d2cdabce1e1eaebb8b6e8985282eccdb1899b3045010e",
+        "after": "tools/visual-review/approved-art-pass/after/node_tribute--Current_body.webp",
+        "afterSHA256": "873231062ae900bccc92df362db02ae6008db015618b0b49106f7bd48d98e4e0",
+        "label": "node:tribute — shared child reference"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/node_wood--Current_body.webp",
+        "beforeSHA256": "b7351a471b91b270244ba54bbaa50b0ef053cdb5bfc673da53eae2f28f65203c",
+        "after": "tools/visual-review/approved-art-pass/after/node_wood--Current_body.webp",
+        "afterSHA256": "2820e6779acfce73b790abf221a00de17eed85b937c0f9dbb2819dbf43f7f494",
+        "label": "node:wood — shared child reference"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/node_basket--Current_body.webp",
+        "beforeSHA256": "219c22a267c34888cafafbc8b636c09e22307501bf6428f2b270db37aebc586f",
+        "after": "tools/visual-review/approved-art-pass/after/node_basket--Current_body.webp",
+        "afterSHA256": "c311e0b70bd038462052d0843537d9f9c6599f99a5c6f5e9c8850fb71007525b",
+        "label": "node:basket — shared child reference"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/node_crystal--Current_body.webp",
+        "beforeSHA256": "f5d0fdd1361b8de6bd3740103af6bb3967aa873246d7c92051e4d2e6f471c6cd",
+        "after": "tools/visual-review/approved-art-pass/after/node_crystal--Current_body.webp",
+        "afterSHA256": "9640ea1f614081aaf06239171fc08655c258602354d412a33295165ee42e51a0",
+        "label": "node:crystal — shared child reference"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/node_ore--Current_body.webp",
+        "beforeSHA256": "69f0b970161d8abe1ff47175e20dc5c9e5c2e78724bcd91be2dbf15526444bf7",
+        "after": "tools/visual-review/approved-art-pass/after/node_ore--Current_body.webp",
+        "afterSHA256": "d914213c2a31f4d077668d30dcedf894353d747e79a453ee32e327bc99737c6c",
+        "label": "node:ore — shared child reference"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "shared:nodes"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::nodes",
+        "reason": "Apply each child node's material plan once and keep pickup size, amount and icon recognition intact."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "node:tribute — shared child reference",
+      "node:wood — shared child reference",
+      "node:basket — shared child reference",
+      "node:crystal — shared child reference",
+      "node:ore — shared child reference"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 341,
+    "assessmentId": "shared:nodes",
+    "disposition": "refine",
+    "implementationStatus": "Implemented",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": "Updated the relevant natural wood, tabletop/container support or dependent composition to follow the subsequent owner correction. Existing role, region, gameplay geometry and protected raster pixels remain intact.",
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}

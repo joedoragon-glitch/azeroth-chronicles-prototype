@@ -1,0 +1,153 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-specialist-darklord",
+  "name": "Unassigned Dark Lord-family smith fallback",
+  "kind": "specialist",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Keep it tracked as a fallback; apply the shared smith anatomy only if this path remains needed, and create no new NPC.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md.",
+    "subsequentOwnerReview": "Joel requested distinct hero identities, rigid helmets, real quivers, varied NPC hair and expression, believable spear/staff/hammer/anchor, separated barracks desk, character-specific dungeon masters, Cinder Warlord mace and coherent profile direwolf riders across every loadout and tier. Revised drawings propagate through shared, crowned, captive, pet, appointed and fallback states where applicable. No acceptance of unseen revisions is claimed."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": [],
+    "laterOwnerRetentionOverride": {
+      "date": "2026-10-19",
+      "requestedBy": "Joel",
+      "reason": "Owner explicitly requested a proper visual overhaul of the previously retained unassigned Dark Lord-family smith, keeping him as a humorous reusable character with a real trade tool."
+    }
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::specialist / case 'darklord'",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "Current body",
+        "mode": "procedural",
+        "entity": {
+          "id": "specialist:darklord",
+          "name": "darklord",
+          "x": 600,
+          "y": 600,
+          "renderKind": "npc",
+          "kind": "smith",
+          "family": "darklord",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "Rescued / service appearance",
+        "mode": "procedural",
+        "entity": {
+          "id": "specialist:darklord",
+          "name": "darklord",
+          "x": 600,
+          "y": 600,
+          "renderKind": "npc",
+          "kind": "smith",
+          "family": "darklord",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/after/specialist_darklord--Current_body.webp",
+    "isolatedReferenceHash": "21e87f8fafb314d71b527617bfb008b0fa32cb4ac9e3692888a4ce3b2bb2c36c",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "No unnecessary new content or misleading live-asset claim.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/specialist_darklord--Current_body.webp",
+        "beforeSHA256": "fcef86226e8d2093e834c03910d932f30c4d1de9f5d6234720b86759caa59909",
+        "after": "tools/visual-review/approved-art-pass/after/specialist_darklord--Current_body.webp",
+        "afterSHA256": "21e87f8fafb314d71b527617bfb008b0fa32cb4ac9e3692888a4ce3b2bb2c36c",
+        "label": "Current body"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/specialist_darklord--Rescued___service_appearance.webp",
+        "beforeSHA256": "fcef86226e8d2093e834c03910d932f30c4d1de9f5d6234720b86759caa59909",
+        "after": "tools/visual-review/approved-art-pass/after/specialist_darklord--Rescued___service_appearance.webp",
+        "afterSHA256": "21e87f8fafb314d71b527617bfb008b0fa32cb4ac9e3692888a4ce3b2bb2c36c",
+        "label": "Rescued / service appearance"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "specialist:darklord"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::specialist / case 'darklord'",
+        "reason": "Keep it tracked as a fallback; apply the shared smith anatomy only if this path remains needed, and create no new NPC."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "Current body",
+      "Rescued / service appearance"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 376,
+    "assessmentId": "specialist:darklord",
+    "disposition": "retain",
+    "implementationStatus": "Protected",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": "Retains the unassigned smith as a usable humorous character: fluffy pale curls, curled moustache, monocle, apron and real heavy smith hammer.",
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}

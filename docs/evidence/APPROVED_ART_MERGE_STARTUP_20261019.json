@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-19",
+  "candidate": "0.9.1+snapshot.dev.88",
+  "visualSourceSHA256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d",
+  "scope": "One quick desktop/phone startup and rendered frame only, as requested. No test suites, gameplay regression or CI run.",
+  "results": [
+    {
+      "entry": "index.html",
+      "width": 1280,
+      "hasHero": true,
+      "canvasReady": true,
+      "experience": "desktop",
+      "uncaughtErrors": []
+    },
+    {
+      "entry": "phone.html",
+      "width": 375,
+      "hasHero": true,
+      "canvasReady": true,
+      "experience": "phone",
+      "uncaughtErrors": []
+    }
+  ]
+}

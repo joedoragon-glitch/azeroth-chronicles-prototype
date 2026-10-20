@@ -1,0 +1,308 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-enemy-ashbeast",
+  "name": "Ashbeast",
+  "kind": "enemy",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Segment the shell and tail, connect jointed legs, curve the pincer bases and give claws real gripping volume.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::draw / enemy species ashbeast",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "Current body",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-40",
+          "family": null,
+          "species": "ashbeast",
+          "name": "ashbeast",
+          "icon": "👿",
+          "form": "normal",
+          "type": "mob",
+          "level": 1,
+          "baseHp": 100,
+          "baseDamage": 0,
+          "hp": 100,
+          "maxHp": 100,
+          "damage": 0,
+          "gold": 0,
+          "xp": 0,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "ranged",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-40",
+          "family": null,
+          "species": "ashbeast",
+          "name": "ashbeast",
+          "icon": "👿",
+          "form": "normal",
+          "type": "mob",
+          "level": 1,
+          "baseHp": 100,
+          "baseDamage": 0,
+          "hp": 100,
+          "maxHp": 100,
+          "damage": 0,
+          "gold": 0,
+          "xp": 0,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1,
+          "ranged": true
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "guardian",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-40",
+          "family": null,
+          "species": "ashbeast",
+          "name": "ashbeast",
+          "icon": "👿",
+          "form": "normal",
+          "type": "mob",
+          "level": 1,
+          "baseHp": 100,
+          "baseDamage": 0,
+          "hp": 100,
+          "maxHp": 100,
+          "damage": 0,
+          "gold": 0,
+          "xp": 0,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1,
+          "guard": true
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "ringleader",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-40",
+          "family": null,
+          "species": "ashbeast",
+          "name": "ashbeast",
+          "icon": "👿",
+          "form": "ringleader",
+          "type": "mob",
+          "level": 1,
+          "baseHp": 100,
+          "baseDamage": 0,
+          "hp": 100,
+          "maxHp": 100,
+          "damage": 0,
+          "gold": 0,
+          "xp": 0,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/after/enemy_ashbeast--Current_body.webp",
+    "isolatedReferenceHash": "17d1b23d24b354a4fe874d30c23650a041f8f91f4e1472a30966525ee103aa7d",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "A coherent scorpion-like Ash-beast with distinct anatomy.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/enemy_ashbeast--Current_body.webp",
+        "beforeSHA256": "981d699588f13d606e8febd1005873ce9a989bd20fc90118e9642d6b68778b52",
+        "after": "tools/visual-review/approved-art-pass/after/enemy_ashbeast--Current_body.webp",
+        "afterSHA256": "17d1b23d24b354a4fe874d30c23650a041f8f91f4e1472a30966525ee103aa7d",
+        "label": "Current body"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/enemy_ashbeast--ranged.webp",
+        "beforeSHA256": "c9eedf59066fa5ffaba916a308126a4824410192aa201a3806a211d895a68b0a",
+        "after": "tools/visual-review/approved-art-pass/after/enemy_ashbeast--ranged.webp",
+        "afterSHA256": "dc391cd7b47030ddd3e934d228276c0e0060cf3a7d3660bc443df1a2d2debc40",
+        "label": "ranged"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/enemy_ashbeast--guardian.webp",
+        "beforeSHA256": "4118993d23ed692d6e30d9f0e4e529b6e02aec6cd055d85d1a1053765e43129b",
+        "after": "tools/visual-review/approved-art-pass/after/enemy_ashbeast--guardian.webp",
+        "afterSHA256": "983321f4f8cb1b5dd3c03179f06c28a7e6c029706aa99f712c06a3643534d799",
+        "label": "guardian"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/enemy_ashbeast--ringleader.webp",
+        "beforeSHA256": "bbe988a33caac3ac76268a05d202f6db5fb3b5c978c9df7af0684f713fb6c9f6",
+        "after": "tools/visual-review/approved-art-pass/after/enemy_ashbeast--ringleader.webp",
+        "afterSHA256": "70f4b05a247091def8492d9c83be47949c8e9998098c09c74ddae9868f69aa78",
+        "label": "ringleader"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "enemy:ashbeast"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      {
+        "state": "ranged",
+        "plan": "Keep the actual projectile equipment and one coherent loadout; refine shoulder, hand and carrying straps with the base body."
+      },
+      {
+        "state": "guardian",
+        "plan": "Fit the guard equipment to the same anatomy; keep the face clear and the guarding role distinct."
+      },
+      {
+        "state": "ringleader",
+        "plan": "Preserve authored elite/military rank language; integrate rank details into the clothing instead of concealing the improved face."
+      }
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::draw / enemy species ashbeast",
+        "reason": "Segment the shell and tail, connect jointed legs, curve the pincer bases and give claws real gripping volume."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "Current body",
+      "ranged",
+      "guardian",
+      "ringleader"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 5,
+    "assessmentId": "enemy:ashbeast",
+    "disposition": "rebuild",
+    "implementationStatus": "Implemented",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": "Tail root is now occluded behind the rear carapace; segmented sting arches above the body while preserving the front-facing eyes and claws.",
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}
