@@ -195,6 +195,9 @@
       (e?.renderKind === 'ally' && (e.class || e.type) === 'soldier')
     )
       return null;
+    // Owner-selected Greenwood cottage uses the current procedural design.
+    // Preserve its registered master for the comparison gallery and rollback.
+    if (e?.renderKind === 'prop' && e.structure === 'vale-cottage') return null;
     // Military officers have a distinct procedural finish, not the generic monster crown.
     if (e?.form === 'ringleader' && ['orc', 'archer', 'crownguard'].includes(e.species))
       return null;
