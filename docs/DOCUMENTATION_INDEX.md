@@ -1,3 +1,5 @@
+- [Approved Veyra ivory armor — dev.111](VEYRA_IVORY_20261020.md): owner-approved corrected arm and skirt; normal/TRUE exact-preview verification.
+
 - [Crown planning, companion safety and arc landing — dev.110](CROWN_COMPANIONS_20261020.md): native day/night/save/access audits, three companion repairs and one-impact arc expiry.
 
 # Documentation index — 19 October 2026

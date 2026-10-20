@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "exactApprovedPixelCases": 12,
+  "normalAndTrue": true,
+  "scales": [
+    1,
+    1.5,
+    3.8
+  ],
+  "nativeSceneStatePure": true,
+  "sourceSha256": "e61c4c52b623be5beb3d1d4416b0fa69d19db0c924c9a6dcb2ef52714b4fa641"
+}
