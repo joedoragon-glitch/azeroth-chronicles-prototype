@@ -9,7 +9,7 @@
     "originConversation": null,
     "decisionSummary": "Joel requested replacing the cut-river-looking feature with a sensible water formation; irregular rain-fed pools retain the dry crossing.",
     "decisionDate": "2026-10-20",
-    "repositoryIssueOrPR": null,
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/342",
     "contentDocuments": [
       "docs/FRONTIER_TOWN_RIVER_20261020.md"
     ],
@@ -23,7 +23,7 @@
     "pendingCorrections": []
   },
   "reference": {
-    "sourceCommit": null,
+    "sourceCommit": "33d002de795e7b1439808c00b786a6d9f1aacfe0",
     "ownerFilesAndBranches": [
       "src/prototype/visuals.js",
       "src/prototype/rules.js",
@@ -84,7 +84,7 @@
     "activeContentRevision": null,
     "expectedReplacementRevision": null,
     "rollbackRevision": null,
-    "releaseCommit": null,
-    "releaseEvidence": null
+    "releaseCommit": "33d002de795e7b1439808c00b786a6d9f1aacfe0",
+    "releaseEvidence": "docs/evidence/FRONTIER_DEV108_PUBLICATION_20261020.json"
   }
 }

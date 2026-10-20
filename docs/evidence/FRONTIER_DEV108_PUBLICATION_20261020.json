@@ -1,0 +1,124 @@
+{
+  "verified_at": "2026-10-20T12:59:07.833091+00:00",
+  "merge": "33d002de795e7b1439808c00b786a6d9f1aacfe0",
+  "files": [
+    {
+      "path": "index.html",
+      "match": true,
+      "bytes": 5315,
+      "sha256": "a3f042d98d0512f4f3d67c940ea1539e39009b5f1f7266ecaebde919341ab641"
+    },
+    {
+      "path": "phone.html",
+      "match": true,
+      "bytes": 5316,
+      "sha256": "8c81fbab873ebe789919285e73e2f61d82b038d89a46c916be03d5013e83061e"
+    },
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "145c91b76a1e6ead3d694b94222e0c39260c81ee56662572357d10cbade8fdd2"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 296,
+      "sha256": "96b4f8fb848f39e20269419e55eb0c42f4816e0c2f78a9637036cb55a2cbf0a4"
+    },
+    {
+      "path": "src/prototype/archive.js",
+      "match": true,
+      "bytes": 54118,
+      "sha256": "96d9ac878ae4e0a02ff72f7115e397ea5482763e14ecc7d8b7e6494b558733fd"
+    },
+    {
+      "path": "src/prototype/boss-combat.js",
+      "match": true,
+      "bytes": 99293,
+      "sha256": "9dd2e97e2a271d2809b769dd153da8f915a628b751c0b4cb9a0607b3d93ac908"
+    },
+    {
+      "path": "src/prototype/combat-visuals.js",
+      "match": true,
+      "bytes": 51139,
+      "sha256": "6e64734dcf425c51b73fca7c65122362a4ddba419a6c069845ce3cb005408034"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 251154,
+      "sha256": "413da57f1a3545c7f780c41c769d8e7b5eb5626c4b7ee7831daf663bb782499a"
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "match": true,
+      "bytes": 99267,
+      "sha256": "98a7d21f954444db7f57694dcf43900529c01ac5a5ba8d5099170ab72ab4d997"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "match": true,
+      "bytes": 204043,
+      "sha256": "1fd45ec407cec5d81234fb14993410fb62f6aa84b80ac236132429018d337588"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "match": true,
+      "bytes": 477009,
+      "sha256": "14a9889f7cc08eeba1628c148ad1b1ce146a06375ff1730824bfeb3e67d210f0"
+    },
+    {
+      "path": "src/prototype/app.js",
+      "match": true,
+      "bytes": 133919,
+      "sha256": "574dfafa4781623c49f22a5573dbc195994c006e93133b32599b1408b20655a7"
+    },
+    {
+      "path": "src/prototype/party.js",
+      "match": true,
+      "bytes": 66919,
+      "sha256": "682029b5d4a8a77a7b3da92a6043ffb20ad20bc2bce03e381a10700a9617297a"
+    },
+    {
+      "path": "src/prototype/save.js",
+      "match": true,
+      "bytes": 47903,
+      "sha256": "f4f95b6de6d895237bc294ab2b50d94df7e9ffe49161cf1bbf7656dff2de00a9"
+    },
+    {
+      "path": "src/prototype/world.js",
+      "match": true,
+      "bytes": 174581,
+      "sha256": "75a98fabefacd6a50a21060961d952a5a1e7d6bff779f8035676a8c89b2c3526"
+    },
+    {
+      "path": "src/prototype/navigation.js",
+      "match": true,
+      "bytes": 43752,
+      "sha256": "6b1e3f2867de831c0a97a7e6ee18c8e72bf9762bb1d8df03f532016b94030193"
+    },
+    {
+      "path": "src/prototype/combat.js",
+      "match": true,
+      "bytes": 47286,
+      "sha256": "a1b184104b1ecca88378fe68de7e8d3731f3b784ac68cc9eab198791c9e1d063"
+    },
+    {
+      "path": "src/prototype/hero-combat.js",
+      "match": true,
+      "bytes": 62011,
+      "sha256": "bd1e499aeec1694c4d86be7b2ce1e9b0fd60fd688bd873303458cb7aec902531"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20550,
+      "sha256": "b6e243e772b88be670719bca5d4ce4463a9ecd3afbefcead44a65932101c2670"
+    }
+  ],
+  "pr": 342,
+  "run": 39426391907,
+  "conclusion": "success",
+  "limits": "Focused native/headless checks; no whole-game or device matrix."
+}
