@@ -1,6 +1,7 @@
 {
+  "shaftRevision": "Straight vertical x=26; right grip x=25; no angled neck.",
   "status": "Staff options only, no staff selected. Twin-braid candidate dev.93 held for combined release.",
-  "shaft": "\n      // Contoured dark haft, silver inlay, wrapped grip and metal ferrule.\n      line([[18,14],[18,-25],[22,-33],[26,-36]], '#53627d', 4.1);\n      line([[17.4,11],[17.4,-24],[21.2,-31]], '#bbcbd5', .95);\n      for (const y of [-22,-19,-16]) line([[16.4,y],[19.6,y-1]], '#a791c2',1.15);\n      softRect(15.7,-6,4.6,12,'#48576b',1);\n      for(const y of [-4,0,4]) line([[16,y],[20,y-1]], '#d2bd83',1.1);\n      softRect(16,10,4,4,'#b5c4cc',.8);\n      softRect(22,-36,7,3,'#c4ad76',.7);\n",
+  "shaft": "\n      // Straight vertical haft aligned beneath the head, with a fitted forearm.\n      line([[15,-3],[24,-2]], ink, 5.4);\n      line([[15,-3],[24,-2]], skin, 3.4);\n      line([[26,14],[26,-36]], '#53627d', 4.1);\n      line([[25.4,11],[25.4,-34]], '#bbcbd5', .95);\n      for (const y of [-22,-19,-16]) line([[24.4,y],[27.6,y-1]], '#a791c2',1.15);\n      softRect(23.7,-6,4.6,12,'#48576b',1);\n      for(const y of [-4,0,4]) line([[24,y],[28,y-1]], '#d2bd83',1.1);\n      softRect(24,10,4,4,'#b5c4cc',.8);\n      softRect(22.5,-36,7,3,'#c4ad76',.7);\n",
   "options": [
     {
       "id": "A",
@@ -27,5 +28,7 @@
       "head": "\n      shaped('#aabed0',()=>{\n        ctx.moveTo(24,-38);ctx.quadraticCurveTo(16,-38,13,-50);\n        ctx.lineTo(20,-46);ctx.lineTo(18,-51);ctx.lineTo(25,-46);ctx.lineTo(26,-38);\n      });\n      shaped('#bcd1db',()=>{\n        ctx.moveTo(28,-38);ctx.quadraticCurveTo(36,-38,39,-50);\n        ctx.lineTo(32,-46);ctx.lineTo(34,-51);ctx.lineTo(27,-46);ctx.lineTo(26,-38);\n      });\n      line([[16,-47],[21,-41],[24,-40]],'#edf0df',.95);\n      line([[36,-47],[31,-41],[28,-40]],'#edf0df',.95);\n      poly([[26,-50],[30,-44],[26,-37],[22,-44]],'#6f9fce');\n      poly([[26,-50],[26,-38],[22,-44]],'#c0dded');\n      softRect(23,-36,6,3,'#d0b985',.6);\n"
     }
   ],
-  "comparisonLibraryFileId": "libfile_fb8a6809a9848191b0f797e154c0cc00"
+  "comparisonLibraryFileId": "libfile_fb8a6809a9848191b0f797e154c0cc00",
+  "ownerCorrection": "The staff shaft must be straight, with no sideways bend. The user clarified staff, not hair. Twin braids remain selected.",
+  "gripX": 25
 }
