@@ -208,6 +208,10 @@
           state = { zone: this.zoneId, next: 0, regrouping: false, safeSince: null };
           companionJudgments.set(u, state);
         }
+        // Arrival completes the rejected pursuit. Do not let its stale route
+        // flag prevent a fresh safety assessment forever at the regroup point.
+        if (state.regrouping && state.point && dist(u, state.point) <= cfg.arrivalRadius)
+          this.clearCompanionTravel(u);
         if (
           this.s.time >= state.next ||
           state.target !== target.id ||

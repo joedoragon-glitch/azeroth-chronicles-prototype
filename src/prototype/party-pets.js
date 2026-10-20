@@ -278,7 +278,12 @@
         for (const turn of [0, 1, -1, 2, -2, 3, -3, 4]) {
           const a = angle + (turn * Math.PI) / 4,
             p = { x: target.x + Math.cos(a) * preferred, y: target.y + Math.sin(a) * preferred };
-          if (!this.blocked(p.x, p.y) && this.line(p, target)) return p;
+          if (
+            !this.blocked(p.x, p.y) &&
+            this.line(p, target) &&
+            this.companionSupportDistance(u, p) <= R.companionJudgment.maxAdvanceFromHero
+          )
+            return p;
         }
         // Confined rooms may have no comfortable firing band. Approach rather
         // than parking forever; legal close-range attacks are still allowed.
@@ -354,6 +359,9 @@
           cfg = R.balance.companions,
           d = dist(u, target),
           visible = this.line(u, target);
+        // Like Soldiers, melee pets can start a legal skill before closing to
+        // basic-attack distance. Each skill still owns its range/line checks.
+        if (!ranged && visible && this.companionTrySkill(u, target)) return;
         const speed =
           this.companionRallyMoveSpeed(u, 255) *
           this.slowMovementFactor(u) *

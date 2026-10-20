@@ -1,0 +1,1814 @@
+{
+  "baseline": "dev.112",
+  "stats": [
+    {
+      "name": "soldier",
+      "level": 1,
+      "hp": 120,
+      "armor": 8,
+      "hit": 14,
+      "basicDps": 16.47
+    },
+    {
+      "name": "soldier",
+      "level": 10,
+      "hp": 228,
+      "armor": 8,
+      "hit": 32,
+      "basicDps": 37.65
+    },
+    {
+      "name": "soldier",
+      "level": 20,
+      "hp": 348,
+      "armor": 8,
+      "hit": 52,
+      "basicDps": 61.18
+    },
+    {
+      "name": "soldier",
+      "level": 30,
+      "hp": 468,
+      "armor": 8,
+      "hit": 72,
+      "basicDps": 84.71
+    },
+    {
+      "name": "archer",
+      "level": 1,
+      "hp": 105,
+      "armor": 5,
+      "hit": 17,
+      "basicDps": 20
+    },
+    {
+      "name": "archer",
+      "level": 10,
+      "hp": 213,
+      "armor": 5,
+      "hit": 35,
+      "basicDps": 41.18
+    },
+    {
+      "name": "archer",
+      "level": 20,
+      "hp": 333,
+      "armor": 5,
+      "hit": 55,
+      "basicDps": 64.71
+    },
+    {
+      "name": "archer",
+      "level": 30,
+      "hp": 453,
+      "armor": 5,
+      "hit": 75,
+      "basicDps": 88.24
+    },
+    {
+      "name": "thorn",
+      "level": 1,
+      "hp": 112,
+      "armor": 6,
+      "hit": 15,
+      "basicDps": 15.79
+    },
+    {
+      "name": "thorn",
+      "level": 10,
+      "hp": 220,
+      "armor": 6,
+      "hit": 33,
+      "basicDps": 34.74
+    },
+    {
+      "name": "thorn",
+      "level": 20,
+      "hp": 340,
+      "armor": 6,
+      "hit": 53,
+      "basicDps": 55.79
+    },
+    {
+      "name": "thorn",
+      "level": 30,
+      "hp": 460,
+      "armor": 6,
+      "hit": 73,
+      "basicDps": 76.84
+    },
+    {
+      "name": "crypt",
+      "level": 1,
+      "hp": 112,
+      "armor": 6,
+      "hit": 15,
+      "basicDps": 15.79
+    },
+    {
+      "name": "crypt",
+      "level": 10,
+      "hp": 220,
+      "armor": 6,
+      "hit": 33,
+      "basicDps": 34.74
+    },
+    {
+      "name": "crypt",
+      "level": 20,
+      "hp": 340,
+      "armor": 6,
+      "hit": 53,
+      "basicDps": 55.79
+    },
+    {
+      "name": "crypt",
+      "level": 30,
+      "hp": 460,
+      "armor": 6,
+      "hit": 73,
+      "basicDps": 76.84
+    },
+    {
+      "name": "mire",
+      "level": 1,
+      "hp": 112,
+      "armor": 6,
+      "hit": 15,
+      "basicDps": 15.79
+    },
+    {
+      "name": "mire",
+      "level": 10,
+      "hp": 220,
+      "armor": 6,
+      "hit": 33,
+      "basicDps": 34.74
+    },
+    {
+      "name": "mire",
+      "level": 20,
+      "hp": 340,
+      "armor": 6,
+      "hit": 53,
+      "basicDps": 55.79
+    },
+    {
+      "name": "mire",
+      "level": 30,
+      "hp": 460,
+      "armor": 6,
+      "hit": 73,
+      "basicDps": 76.84
+    },
+    {
+      "name": "archive",
+      "level": 1,
+      "hp": 112,
+      "armor": 6,
+      "hit": 15,
+      "basicDps": 15.79
+    },
+    {
+      "name": "archive",
+      "level": 10,
+      "hp": 220,
+      "armor": 6,
+      "hit": 33,
+      "basicDps": 34.74
+    },
+    {
+      "name": "archive",
+      "level": 20,
+      "hp": 340,
+      "armor": 6,
+      "hit": 53,
+      "basicDps": 55.79
+    },
+    {
+      "name": "archive",
+      "level": 30,
+      "hp": 460,
+      "armor": 6,
+      "hit": 73,
+      "basicDps": 76.84
+    },
+    {
+      "name": "ridge",
+      "level": 1,
+      "hp": 112,
+      "armor": 6,
+      "hit": 15,
+      "basicDps": 15.79
+    },
+    {
+      "name": "ridge",
+      "level": 10,
+      "hp": 220,
+      "armor": 6,
+      "hit": 33,
+      "basicDps": 34.74
+    },
+    {
+      "name": "ridge",
+      "level": 20,
+      "hp": 340,
+      "armor": 6,
+      "hit": 53,
+      "basicDps": 55.79
+    },
+    {
+      "name": "ridge",
+      "level": 30,
+      "hp": 460,
+      "armor": 6,
+      "hit": 73,
+      "basicDps": 76.84
+    },
+    {
+      "name": "mine",
+      "level": 1,
+      "hp": 112,
+      "armor": 6,
+      "hit": 15,
+      "basicDps": 15.79
+    },
+    {
+      "name": "mine",
+      "level": 10,
+      "hp": 220,
+      "armor": 6,
+      "hit": 33,
+      "basicDps": 34.74
+    },
+    {
+      "name": "mine",
+      "level": 20,
+      "hp": 340,
+      "armor": 6,
+      "hit": 53,
+      "basicDps": 55.79
+    },
+    {
+      "name": "mine",
+      "level": 30,
+      "hp": 460,
+      "armor": 6,
+      "hit": 73,
+      "basicDps": 76.84
+    },
+    {
+      "name": "warlord",
+      "level": 1,
+      "hp": 112,
+      "armor": 6,
+      "hit": 15,
+      "basicDps": 15.79
+    },
+    {
+      "name": "warlord",
+      "level": 10,
+      "hp": 220,
+      "armor": 6,
+      "hit": 33,
+      "basicDps": 34.74
+    },
+    {
+      "name": "warlord",
+      "level": 20,
+      "hp": 340,
+      "armor": 6,
+      "hit": 53,
+      "basicDps": 55.79
+    },
+    {
+      "name": "warlord",
+      "level": 30,
+      "hp": 460,
+      "armor": 6,
+      "hit": 73,
+      "basicDps": 76.84
+    },
+    {
+      "name": "abyss",
+      "level": 1,
+      "hp": 112,
+      "armor": 6,
+      "hit": 15,
+      "basicDps": 15.79
+    },
+    {
+      "name": "abyss",
+      "level": 10,
+      "hp": 220,
+      "armor": 6,
+      "hit": 33,
+      "basicDps": 34.74
+    },
+    {
+      "name": "abyss",
+      "level": 20,
+      "hp": 340,
+      "armor": 6,
+      "hit": 53,
+      "basicDps": 55.79
+    },
+    {
+      "name": "abyss",
+      "level": 30,
+      "hp": 460,
+      "armor": 6,
+      "hit": 73,
+      "basicDps": 76.84
+    },
+    {
+      "name": "citadel",
+      "level": 1,
+      "hp": 112,
+      "armor": 6,
+      "hit": 15,
+      "basicDps": 15.79
+    },
+    {
+      "name": "citadel",
+      "level": 10,
+      "hp": 220,
+      "armor": 6,
+      "hit": 33,
+      "basicDps": 34.74
+    },
+    {
+      "name": "citadel",
+      "level": 20,
+      "hp": 340,
+      "armor": 6,
+      "hit": 53,
+      "basicDps": 55.79
+    },
+    {
+      "name": "citadel",
+      "level": 30,
+      "hp": 460,
+      "armor": 6,
+      "hit": 73,
+      "basicDps": 76.84
+    },
+    {
+      "name": "cindermaw",
+      "level": 1,
+      "hp": 112,
+      "armor": 6,
+      "hit": 15,
+      "basicDps": 15.79
+    },
+    {
+      "name": "cindermaw",
+      "level": 10,
+      "hp": 220,
+      "armor": 6,
+      "hit": 33,
+      "basicDps": 34.74
+    },
+    {
+      "name": "cindermaw",
+      "level": 20,
+      "hp": 340,
+      "armor": 6,
+      "hit": 53,
+      "basicDps": 55.79
+    },
+    {
+      "name": "cindermaw",
+      "level": 30,
+      "hp": 460,
+      "armor": 6,
+      "hit": 73,
+      "basicDps": 76.84
+    },
+    {
+      "name": "darklord",
+      "level": 1,
+      "hp": 112,
+      "armor": 6,
+      "hit": 15,
+      "basicDps": 15.79
+    },
+    {
+      "name": "darklord",
+      "level": 10,
+      "hp": 220,
+      "armor": 6,
+      "hit": 33,
+      "basicDps": 34.74
+    },
+    {
+      "name": "darklord",
+      "level": 20,
+      "hp": 340,
+      "armor": 6,
+      "hit": 53,
+      "basicDps": 55.79
+    },
+    {
+      "name": "darklord",
+      "level": 30,
+      "hp": 460,
+      "armor": 6,
+      "hit": 73,
+      "basicDps": 76.84
+    }
+  ],
+  "inheritance": [
+    {
+      "name": "soldier",
+      "heroClass": "paladin",
+      "bonusHp": 116,
+      "bonusHit": 114,
+      "bonusArmor": 31,
+      "bonusSpeed": 76
+    },
+    {
+      "name": "archer",
+      "heroClass": "paladin",
+      "bonusHp": 116,
+      "bonusHit": 114,
+      "bonusArmor": 31,
+      "bonusSpeed": 76
+    },
+    {
+      "name": "thorn",
+      "heroClass": "paladin",
+      "bonusHp": 116,
+      "bonusHit": 114,
+      "bonusArmor": 31,
+      "bonusSpeed": 76
+    },
+    {
+      "name": "crypt",
+      "heroClass": "paladin",
+      "bonusHp": 116,
+      "bonusHit": 114,
+      "bonusArmor": 31,
+      "bonusSpeed": 76
+    },
+    {
+      "name": "mire",
+      "heroClass": "paladin",
+      "bonusHp": 116,
+      "bonusHit": 114,
+      "bonusArmor": 31,
+      "bonusSpeed": 76
+    },
+    {
+      "name": "archive",
+      "heroClass": "paladin",
+      "bonusHp": 116,
+      "bonusHit": 114,
+      "bonusArmor": 31,
+      "bonusSpeed": 76
+    },
+    {
+      "name": "ridge",
+      "heroClass": "paladin",
+      "bonusHp": 116,
+      "bonusHit": 114,
+      "bonusArmor": 31,
+      "bonusSpeed": 76
+    },
+    {
+      "name": "mine",
+      "heroClass": "paladin",
+      "bonusHp": 116,
+      "bonusHit": 114,
+      "bonusArmor": 31,
+      "bonusSpeed": 76
+    },
+    {
+      "name": "warlord",
+      "heroClass": "paladin",
+      "bonusHp": 116,
+      "bonusHit": 114,
+      "bonusArmor": 31,
+      "bonusSpeed": 76
+    },
+    {
+      "name": "abyss",
+      "heroClass": "paladin",
+      "bonusHp": 116,
+      "bonusHit": 114,
+      "bonusArmor": 31,
+      "bonusSpeed": 76
+    },
+    {
+      "name": "citadel",
+      "heroClass": "paladin",
+      "bonusHp": 116,
+      "bonusHit": 114,
+      "bonusArmor": 31,
+      "bonusSpeed": 76
+    },
+    {
+      "name": "cindermaw",
+      "heroClass": "paladin",
+      "bonusHp": 116,
+      "bonusHit": 114,
+      "bonusArmor": 31,
+      "bonusSpeed": 76
+    },
+    {
+      "name": "darklord",
+      "heroClass": "paladin",
+      "bonusHp": 116,
+      "bonusHit": 114,
+      "bonusArmor": 31,
+      "bonusSpeed": 76
+    },
+    {
+      "name": "soldier",
+      "heroClass": "mage",
+      "bonusHp": 104,
+      "bonusHit": 122,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "archer",
+      "heroClass": "mage",
+      "bonusHp": 104,
+      "bonusHit": 122,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "thorn",
+      "heroClass": "mage",
+      "bonusHp": 104,
+      "bonusHit": 122,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "crypt",
+      "heroClass": "mage",
+      "bonusHp": 104,
+      "bonusHit": 122,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "mire",
+      "heroClass": "mage",
+      "bonusHp": 104,
+      "bonusHit": 122,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "archive",
+      "heroClass": "mage",
+      "bonusHp": 104,
+      "bonusHit": 122,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "ridge",
+      "heroClass": "mage",
+      "bonusHp": 104,
+      "bonusHit": 122,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "mine",
+      "heroClass": "mage",
+      "bonusHp": 104,
+      "bonusHit": 122,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "warlord",
+      "heroClass": "mage",
+      "bonusHp": 104,
+      "bonusHit": 122,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "abyss",
+      "heroClass": "mage",
+      "bonusHp": 104,
+      "bonusHit": 122,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "citadel",
+      "heroClass": "mage",
+      "bonusHp": 104,
+      "bonusHit": 122,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "cindermaw",
+      "heroClass": "mage",
+      "bonusHp": 104,
+      "bonusHit": 122,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "darklord",
+      "heroClass": "mage",
+      "bonusHp": 104,
+      "bonusHit": 122,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "soldier",
+      "heroClass": "ranger",
+      "bonusHp": 108,
+      "bonusHit": 118,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "archer",
+      "heroClass": "ranger",
+      "bonusHp": 108,
+      "bonusHit": 118,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "thorn",
+      "heroClass": "ranger",
+      "bonusHp": 108,
+      "bonusHit": 118,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "crypt",
+      "heroClass": "ranger",
+      "bonusHp": 108,
+      "bonusHit": 118,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "mire",
+      "heroClass": "ranger",
+      "bonusHp": 108,
+      "bonusHit": 118,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "archive",
+      "heroClass": "ranger",
+      "bonusHp": 108,
+      "bonusHit": 118,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "ridge",
+      "heroClass": "ranger",
+      "bonusHp": 108,
+      "bonusHit": 118,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "mine",
+      "heroClass": "ranger",
+      "bonusHp": 108,
+      "bonusHit": 118,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "warlord",
+      "heroClass": "ranger",
+      "bonusHp": 108,
+      "bonusHit": 118,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "abyss",
+      "heroClass": "ranger",
+      "bonusHp": 108,
+      "bonusHit": 118,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "citadel",
+      "heroClass": "ranger",
+      "bonusHp": 108,
+      "bonusHit": 118,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "cindermaw",
+      "heroClass": "ranger",
+      "bonusHp": 108,
+      "bonusHit": 118,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    },
+    {
+      "name": "darklord",
+      "heroClass": "ranger",
+      "bonusHp": 108,
+      "bonusHit": 118,
+      "bonusArmor": 31,
+      "bonusSpeed": 82
+    }
+  ],
+  "formations": [
+    {
+      "name": "soldier",
+      "heroClass": "paladin",
+      "offset": [
+        -42,
+        -20
+      ]
+    },
+    {
+      "name": "archer",
+      "heroClass": "paladin",
+      "offset": [
+        -65,
+        -115
+      ]
+    },
+    {
+      "name": "thorn",
+      "heroClass": "paladin",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "crypt",
+      "heroClass": "paladin",
+      "offset": [
+        -130,
+        -95
+      ]
+    },
+    {
+      "name": "mire",
+      "heroClass": "paladin",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "archive",
+      "heroClass": "paladin",
+      "offset": [
+        -130,
+        -95
+      ]
+    },
+    {
+      "name": "ridge",
+      "heroClass": "paladin",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "mine",
+      "heroClass": "paladin",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "warlord",
+      "heroClass": "paladin",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "abyss",
+      "heroClass": "paladin",
+      "offset": [
+        -130,
+        -95
+      ]
+    },
+    {
+      "name": "citadel",
+      "heroClass": "paladin",
+      "offset": [
+        -130,
+        -95
+      ]
+    },
+    {
+      "name": "cindermaw",
+      "heroClass": "paladin",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "darklord",
+      "heroClass": "paladin",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "soldier",
+      "heroClass": "mage",
+      "offset": [
+        0,
+        95
+      ]
+    },
+    {
+      "name": "archer",
+      "heroClass": "mage",
+      "offset": [
+        -34,
+        -24
+      ]
+    },
+    {
+      "name": "thorn",
+      "heroClass": "mage",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "crypt",
+      "heroClass": "mage",
+      "offset": [
+        -130,
+        -95
+      ]
+    },
+    {
+      "name": "mire",
+      "heroClass": "mage",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "archive",
+      "heroClass": "mage",
+      "offset": [
+        -130,
+        -95
+      ]
+    },
+    {
+      "name": "ridge",
+      "heroClass": "mage",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "mine",
+      "heroClass": "mage",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "warlord",
+      "heroClass": "mage",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "abyss",
+      "heroClass": "mage",
+      "offset": [
+        -130,
+        -95
+      ]
+    },
+    {
+      "name": "citadel",
+      "heroClass": "mage",
+      "offset": [
+        -130,
+        -95
+      ]
+    },
+    {
+      "name": "cindermaw",
+      "heroClass": "mage",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "darklord",
+      "heroClass": "mage",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "soldier",
+      "heroClass": "ranger",
+      "offset": [
+        0,
+        95
+      ]
+    },
+    {
+      "name": "archer",
+      "heroClass": "ranger",
+      "offset": [
+        -34,
+        -24
+      ]
+    },
+    {
+      "name": "thorn",
+      "heroClass": "ranger",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "crypt",
+      "heroClass": "ranger",
+      "offset": [
+        -130,
+        -95
+      ]
+    },
+    {
+      "name": "mire",
+      "heroClass": "ranger",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "archive",
+      "heroClass": "ranger",
+      "offset": [
+        -130,
+        -95
+      ]
+    },
+    {
+      "name": "ridge",
+      "heroClass": "ranger",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "mine",
+      "heroClass": "ranger",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "warlord",
+      "heroClass": "ranger",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "abyss",
+      "heroClass": "ranger",
+      "offset": [
+        -130,
+        -95
+      ]
+    },
+    {
+      "name": "citadel",
+      "heroClass": "ranger",
+      "offset": [
+        -130,
+        -95
+      ]
+    },
+    {
+      "name": "cindermaw",
+      "heroClass": "ranger",
+      "offset": [
+        -130,
+        25
+      ]
+    },
+    {
+      "name": "darklord",
+      "heroClass": "ranger",
+      "offset": [
+        -130,
+        25
+      ]
+    }
+  ],
+  "combat": [
+    {
+      "name": "soldier",
+      "mode": "single",
+      "deliveredDps": 89.44,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "soldier",
+      "mode": "cluster",
+      "deliveredDps": 146.64,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "soldier",
+      "mode": "moving",
+      "deliveredDps": 87.71,
+      "first": 4,
+      "second": 3,
+      "moved": 2316.97
+    },
+    {
+      "name": "archer",
+      "mode": "single",
+      "deliveredDps": 93.87,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "archer",
+      "mode": "cluster",
+      "deliveredDps": 159.87,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "archer",
+      "mode": "moving",
+      "deliveredDps": 27.87,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "thorn",
+      "mode": "single",
+      "deliveredDps": 71.55,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "thorn",
+      "mode": "cluster",
+      "deliveredDps": 85.33,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "thorn",
+      "mode": "moving",
+      "deliveredDps": 71.55,
+      "first": 4,
+      "second": 3,
+      "moved": 2261.27
+    },
+    {
+      "name": "crypt",
+      "mode": "single",
+      "deliveredDps": 63.6,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "crypt",
+      "mode": "cluster",
+      "deliveredDps": 76.32,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "crypt",
+      "mode": "moving",
+      "deliveredDps": 18.02,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "mire",
+      "mode": "single",
+      "deliveredDps": 70.67,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "mire",
+      "mode": "cluster",
+      "deliveredDps": 85.51,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "mire",
+      "mode": "moving",
+      "deliveredDps": 70.67,
+      "first": 4,
+      "second": 3,
+      "moved": 2261.27
+    },
+    {
+      "name": "archive",
+      "mode": "single",
+      "deliveredDps": 67.66,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "archive",
+      "mode": "cluster",
+      "deliveredDps": 81.44,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "archive",
+      "mode": "moving",
+      "deliveredDps": 19.43,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "ridge",
+      "mode": "single",
+      "deliveredDps": 76.5,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "ridge",
+      "mode": "cluster",
+      "deliveredDps": 94.52,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "ridge",
+      "mode": "moving",
+      "deliveredDps": 76.5,
+      "first": 4,
+      "second": 3,
+      "moved": 2184.9
+    },
+    {
+      "name": "mine",
+      "mode": "single",
+      "deliveredDps": 69.78,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "mine",
+      "mode": "cluster",
+      "deliveredDps": 85.68,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "mine",
+      "mode": "moving",
+      "deliveredDps": 67.13,
+      "first": 4,
+      "second": 2,
+      "moved": 2476.11
+    },
+    {
+      "name": "warlord",
+      "mode": "single",
+      "deliveredDps": 69.96,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "warlord",
+      "mode": "cluster",
+      "deliveredDps": 101.76,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "warlord",
+      "mode": "moving",
+      "deliveredDps": 69.96,
+      "first": 4,
+      "second": 3,
+      "moved": 2274.02
+    },
+    {
+      "name": "abyss",
+      "mode": "single",
+      "deliveredDps": 69.61,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "abyss",
+      "mode": "cluster",
+      "deliveredDps": 84.45,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "abyss",
+      "mode": "moving",
+      "deliveredDps": 20.32,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "citadel",
+      "mode": "single",
+      "deliveredDps": 66.43,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "citadel",
+      "mode": "cluster",
+      "deliveredDps": 95.4,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "citadel",
+      "mode": "moving",
+      "deliveredDps": 29.33,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "cindermaw",
+      "mode": "single",
+      "deliveredDps": 68.19,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "cindermaw",
+      "mode": "cluster",
+      "deliveredDps": 87.98,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "cindermaw",
+      "mode": "moving",
+      "deliveredDps": 64.66,
+      "first": 4,
+      "second": 2,
+      "moved": 2476.11
+    },
+    {
+      "name": "darklord",
+      "mode": "single",
+      "deliveredDps": 76.67,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "darklord",
+      "mode": "cluster",
+      "deliveredDps": 87.27,
+      "first": 4,
+      "second": 3,
+      "moved": 0
+    },
+    {
+      "name": "darklord",
+      "mode": "moving",
+      "deliveredDps": 76.67,
+      "first": 4,
+      "second": 3,
+      "moved": 2184.9
+    }
+  ],
+  "reach": [
+    {
+      "name": "thorn",
+      "slot": 1,
+      "distance": 89,
+      "activates": false
+    },
+    {
+      "name": "thorn",
+      "slot": 2,
+      "distance": 119,
+      "activates": false
+    },
+    {
+      "name": "mire",
+      "slot": 1,
+      "distance": 99,
+      "activates": false
+    },
+    {
+      "name": "mire",
+      "slot": 2,
+      "distance": 119,
+      "activates": false
+    },
+    {
+      "name": "ridge",
+      "slot": 1,
+      "distance": 89,
+      "activates": false
+    },
+    {
+      "name": "ridge",
+      "slot": 2,
+      "distance": 199,
+      "activates": false
+    },
+    {
+      "name": "mine",
+      "slot": 1,
+      "distance": 89,
+      "activates": false
+    },
+    {
+      "name": "mine",
+      "slot": 2,
+      "distance": 99,
+      "activates": false
+    },
+    {
+      "name": "warlord",
+      "slot": 1,
+      "distance": 104,
+      "activates": false
+    },
+    {
+      "name": "warlord",
+      "slot": 2,
+      "distance": 169,
+      "activates": false
+    },
+    {
+      "name": "cindermaw",
+      "slot": 1,
+      "distance": 99,
+      "activates": false
+    },
+    {
+      "name": "cindermaw",
+      "slot": 2,
+      "distance": 109,
+      "activates": false
+    },
+    {
+      "name": "darklord",
+      "slot": 1,
+      "distance": 99,
+      "activates": false
+    },
+    {
+      "name": "darklord",
+      "slot": 2,
+      "distance": 209,
+      "activates": false
+    }
+  ],
+  "contracts": [
+    {
+      "name": "thorn",
+      "heroClass": "paladin",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "thorn",
+      "heroClass": "mage",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "thorn",
+      "heroClass": "ranger",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "crypt",
+      "heroClass": "paladin",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "crypt",
+      "heroClass": "mage",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "crypt",
+      "heroClass": "ranger",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "mire",
+      "heroClass": "paladin",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "mire",
+      "heroClass": "mage",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "mire",
+      "heroClass": "ranger",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "archive",
+      "heroClass": "paladin",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "archive",
+      "heroClass": "mage",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "archive",
+      "heroClass": "ranger",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "ridge",
+      "heroClass": "paladin",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "ridge",
+      "heroClass": "mage",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "ridge",
+      "heroClass": "ranger",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "mine",
+      "heroClass": "paladin",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "mine",
+      "heroClass": "mage",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "mine",
+      "heroClass": "ranger",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "warlord",
+      "heroClass": "paladin",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "warlord",
+      "heroClass": "mage",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "warlord",
+      "heroClass": "ranger",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "abyss",
+      "heroClass": "paladin",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "abyss",
+      "heroClass": "mage",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "abyss",
+      "heroClass": "ranger",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "citadel",
+      "heroClass": "paladin",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "citadel",
+      "heroClass": "mage",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "citadel",
+      "heroClass": "ranger",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "cindermaw",
+      "heroClass": "paladin",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "cindermaw",
+      "heroClass": "mage",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "cindermaw",
+      "heroClass": "ranger",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "darklord",
+      "heroClass": "paladin",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "darklord",
+      "heroClass": "mage",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    },
+    {
+      "name": "darklord",
+      "heroClass": "ranger",
+      "focus": true,
+      "bossAdds": true,
+      "criticalRetreat": true,
+      "supportRoute": true,
+      "recall": true,
+      "armorAndRetreatMitigation": true,
+      "restoredSkills": true
+    }
+  ]
+}
