@@ -4,7 +4,7 @@
   "designId": "approved-art-structure-vale-cottage",
   "name": "Vale Cottage",
   "kind": "structure",
-  "nextAction": "Publish owner-selected current procedural Greenwood cottage in dev.116. Retain the registered master for comparison and rollback.",
+  "nextAction": "Published owner-selected procedural Greenwood cottage in dev.116. Preserve accepted appearance and retained registered master for rollback.",
   "context": {
     "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
     "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Refine timber posts, infill, door recess and roof thickness in the procedural fallback; preserve the accepted raster cottage.",
@@ -126,6 +126,6 @@
     "approval": "Current procedural cottage selected by owner.",
     "reference": "tools/visual-review/greenwood-cottage-comparison/comparacion-casas.png on review/greenwood-cottage-comparison",
     "implementation": "src/prototype/sprites.js::definitionFor; procedural body, height and silhouette share existing fallback policy.",
-    "release": "Approved dev.116; package-only publication next."
+    "release": "Published PR #350 / 2a43ce846381ddfb94527f8f65b5f35fdd661f63; package-only run 39508128744; 32 exact live files match."
   }
 }
