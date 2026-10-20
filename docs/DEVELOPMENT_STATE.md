@@ -1,5 +1,9 @@
 # Current development state — 20 October 2026
 
+**Owner publication authorization — 20 October, 02:51 EDT:** Joel approved putting the prepared dev.94 adaptive-resolution change in the game and will test it himself. Merge and publish the exact prepared runtime using packaging only, with no additional tests or broad CI. Restore the normal workflow after publication; retain the Maximum sharpness option.
+
+**Current FPS follow-up:** Joel resumed performance work with the dev.92 7-FPS report. Candidate dev.94 adds adaptive world pixel density (Auto/Maximum); bounded local rendering checks show lower draw cost, with actual Chromebook FPS unresolved. Based on published dev.93; no art/staff/gameplay changes. Not merged or deployed; no broad CI. [Scope and evidence](ADAPTIVE_RESOLUTION_20261020.md).
+
 **Published dev.93 — selected twin braids:** [PR #327](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/327) merged as `9c2e1f2bc7be1570502a8d2b389f534d91a9166a`; packaging-only [run 39381650071](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39381650071) succeeded. Selected C silver twin braids apply to regular/crowned Mage. Both staff drawings, headgear/scarf, dev.91 identities and dev.90 performance are unchanged. Staff redesign is deferred. Exact public files verified; no tests/browser checks. Normal workflow restored and temporary publisher removed. [Receipt](evidence/MAGE_DEV93_PUBLICATION_20261020.json).
 
 **Latest owner direction — hairstyle-only dev.93:** Staff redesign deferred; keep both live staff drawings unchanged. Publish accepted C / twin braids for regular/crowned Mage through the authorized packaging-only release, with no tests. The earlier staff-choice hold is superseded. Headgear/scarf, dev.91 identities and dev.90 performance are retained.

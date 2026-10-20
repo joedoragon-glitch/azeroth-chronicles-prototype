@@ -617,6 +617,7 @@
     worldLabelVisible = renderer.labelVisible;
   const runtime = PrototypeRuntime.create();
   const fps = PrototypeRuntime.createFrameRate(localStorage);
+  const renderResolution = PrototypeRuntime.createResolution(localStorage);
 
   const {
     teacher,
@@ -657,6 +658,7 @@
     renderer,
     platform,
     runtime,
+    renderResolution,
     fps,
     input,
     save,
@@ -686,7 +688,7 @@
         ? Math.max(0.8, Math.min(1, innerWidth / referenceWidth, innerHeight / referenceHeight))
         : 1;
     document.body.style.setProperty?.('--phone-ui-fit', phoneUiFit.toFixed(3));
-    const ratio = optimizationMode
+    const maximumRatio = optimizationMode
       ? 1
       : Math.max(
           1,
@@ -696,6 +698,8 @@
             Math.sqrt(3000000 / (innerWidth * innerHeight)),
           ),
         );
+    renderResolution.configure(maximumRatio);
+    const ratio = renderResolution.ratio;
     canvas.width = Math.round(innerWidth * ratio);
     canvas.height = Math.round(innerHeight * ratio);
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -1367,6 +1371,7 @@
                 ...runtime.report(renderer.metrics(), platform.mode),
                 frameRatePreference: fps.preference,
                 frameRateTarget: fps.target,
+                renderResolution: renderResolution.status(),
                 optimizationMode: optimizationMode ? 'on' : 'off',
                 devicePixelRatio: window.devicePixelRatio || 1,
                 backingPixelRatio: canvas.width / Math.max(1, viewport.width),
@@ -1424,6 +1429,9 @@
         ' · current target ' +
         fps.target +
         ' FPS. Rendering only; gameplay stays unchanged.\n\n' +
+        'World sharpness: ' +
+        (renderResolution.preference === 'auto' ? 'Auto' : 'Maximum') +
+        '. Auto lowers pixel density in slow scenes and recovers it when rendering has room. Menus and controls stay sharp.\n\n' +
         runtime.describe(renderer.metrics()),
       [
         action('Automatic screen', () => {
@@ -1474,6 +1482,18 @@
           action('Frame rate · ' + label + (fps.preference === value ? ' ✓' : ''), () => {
             fps.select(value);
             runtime.reset();
+            platformMenu(back);
+          }),
+        ),
+        ...[
+          ['auto', 'World sharpness · Auto (favor FPS)'],
+          ['native', 'World sharpness · Maximum'],
+        ].map(([value, label]) =>
+          action(label + (renderResolution.preference === value ? ' ✓' : ''), () => {
+            renderResolution.select(value);
+            resize();
+            runtime.reset();
+            fps.suspend();
             platformMenu(back);
           }),
         ),
@@ -2973,6 +2993,7 @@
     clearInput();
     last = performance.now();
     if (document.hidden) {
+      renderResolution.suspend();
       save();
       audio.setPaused(true);
     }
@@ -3454,6 +3475,7 @@
   function frame(now) {
     syncPartyChargeClock();
     if (document.hidden) {
+      renderResolution.suspend();
       runtime.suspend();
       fps.suspend();
       last = now;
@@ -3591,9 +3613,18 @@
     }
     if (!frozen) {
       const draw = fps.shouldDraw(now);
-      if (draw) runtime.record(now, frameStart, () => renderer.draw());
+      if (draw) {
+        const sample = runtime.record(now, frameStart, () => renderer.draw());
+        if (renderResolution.observe(now, sample.renderMs, fps.target)) {
+          resize();
+          renderer.draw();
+          runtime.reset();
+          fps.suspend();
+        }
+      }
       fps.observe(now, performance.now() - frameStart, draw);
     } else {
+      renderResolution.suspend();
       fps.suspend();
       runtime.suspend();
       if (runtime.shouldDrawIdle(now)) renderer.draw();

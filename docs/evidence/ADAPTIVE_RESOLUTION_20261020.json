@@ -1,0 +1,194 @@
+{
+  "limits": "Headless software Chromium frozen-frame draw+readback; these are not Chromebook FPS.",
+  "cases": [
+    {
+      "phone": false,
+      "zone": "vale",
+      "times": {
+        "maximum": [
+          136.30000000447035,
+          149.39999999850988,
+          108.30000000447035,
+          101.5
+        ],
+        "auto": [
+          63.599999994039536,
+          70.60000000149012,
+          71.39999999850988,
+          53.099999994039536
+        ]
+      },
+      "backing": {
+        "maximum": {
+          "width": 2403,
+          "height": 1248,
+          "ratio": 1.5021044203152742
+        },
+        "auto": {
+          "width": 1200,
+          "height": 623,
+          "ratio": 0.75
+        }
+      },
+      "cache": {
+        "maximum": {
+          "bytes": 38925000,
+          "budget": 67108864,
+          "builds": 7,
+          "hits": 13,
+          "margin": 256
+        },
+        "auto": {
+          "bytes": 9704448,
+          "budget": 67108864,
+          "builds": 8,
+          "hits": 14,
+          "margin": 256
+        }
+      },
+      "stateAndInputPreserved": true,
+      "errors": [],
+      "medianMs": {
+        "maximum": 122.30000000447035,
+        "auto": 67.09999999776483
+      },
+      "reductionPercent": 45.1
+    },
+    {
+      "phone": false,
+      "zone": "frontier",
+      "times": {
+        "maximum": [
+          129.80000000447035,
+          127.60000000149012,
+          120.10000000149012,
+          124.60000000149012
+        ],
+        "auto": [
+          76.89999999850988,
+          72.60000000149012,
+          70.89999999850988,
+          73.5
+        ]
+      },
+      "backing": {
+        "maximum": {
+          "width": 2403,
+          "height": 1248,
+          "ratio": 1.5021044203152742
+        },
+        "auto": {
+          "width": 1200,
+          "height": 623,
+          "ratio": 0.75
+        }
+      },
+      "cache": {
+        "maximum": {
+          "bytes": 38925000,
+          "budget": 67108864,
+          "builds": 14,
+          "hits": 31,
+          "margin": 256
+        },
+        "auto": {
+          "bytes": 9704448,
+          "budget": 67108864,
+          "builds": 15,
+          "hits": 32,
+          "margin": 256
+        }
+      },
+      "stateAndInputPreserved": true,
+      "errors": [],
+      "medianMs": {
+        "maximum": 126.10000000149012,
+        "auto": 73.05000000074506
+      },
+      "reductionPercent": 42.1
+    },
+    {
+      "phone": true,
+      "zone": "vale",
+      "times": {
+        "maximum": [
+          43.899999998509884,
+          46.899999998509884,
+          41.80000000447035,
+          49.20000000298023
+        ],
+        "auto": [
+          31,
+          32.600000001490116,
+          31.30000000447035,
+          33.69999999552965
+        ]
+      },
+      "backing": {
+        "maximum": {
+          "width": 590,
+          "height": 1278,
+          "ratio": 1.5
+        },
+        "auto": {
+          "width": 295,
+          "height": 639,
+          "ratio": 0.75
+        }
+      },
+      "cache": {
+        "maximum": {
+          "bytes": 20283792,
+          "budget": 67108864,
+          "builds": 6,
+          "hits": 13,
+          "margin": 256
+        },
+        "auto": {
+          "bytes": 5070948,
+          "budget": 67108864,
+          "builds": 7,
+          "hits": 14,
+          "margin": 256
+        }
+      },
+      "stateAndInputPreserved": true,
+      "errors": [],
+      "medianMs": {
+        "maximum": 45.399999998509884,
+        "auto": 31.950000002980232
+      },
+      "reductionPercent": 29.6
+    }
+  ],
+  "activeIntegration": {
+    "resolution": {
+      "preference": "auto",
+      "ratio": 0.75,
+      "maximum": 1.5021044203152742,
+      "changes": 2
+    },
+    "sample": {
+      "experience": "desktop",
+      "sampleFrames": 27,
+      "fps": 13,
+      "workP95Ms": 49.8,
+      "workP99Ms": 50.4,
+      "preRenderP95Ms": 0.9,
+      "renderP95Ms": 49.5,
+      "sampledWindowMs": 2017,
+      "render": {}
+    },
+    "backing": {
+      "width": 1200,
+      "height": 623
+    },
+    "errors": []
+  },
+  "baseline": "27119fe947fe234dc43e0e0f7b3878c3a2d8964f",
+  "version": "0.9.1+snapshot.dev.94",
+  "sourceHashes": {
+    "src/prototype/app.js": "65bd0752380ef46ddcf96df2977f9b89a32c5020c3dd295924ed033a47964e0f",
+    "src/prototype/runtime.js": "210a1821b48294ff978a43096efe26f74671b916ddfdfe36adbf98ad24fe8c1b"
+  }
+}

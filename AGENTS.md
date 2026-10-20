@@ -1,5 +1,9 @@
 # Project working rules
 
+- **Owner publication authorization — 20 October, 02:51 EDT:** Joel approved putting the prepared dev.94 adaptive-resolution change in the game and will test it himself. Merge and publish the exact prepared runtime using packaging only, with no additional tests or broad CI. Restore the normal workflow after publication; retain the Maximum sharpness option.
+
+- Current owner task (20 October): improve FPS from the received dev.92 7-FPS report. Dev.94 adaptive world resolution candidate and bounded evidence: docs/ADAPTIVE_RESOLUTION_20261020.md. Dev.93 is published. Preserve selected braids/staff and gameplay. Candidate is not merged/deployed; actual Chromebook FPS is unresolved. No broad CI or further release is implied.
+
 - Current release: dev.93 selected C / twin braids is merged in PR #327 (9c2e1f2bc7be1570502a8d2b389f534d91a9166a) and published by packaging-only run 39381650071. Both Mage staff drawings are unchanged; staff work deferred. Exact public files verified; no tests/browser checks. Normal workflow restored, temporary publisher removed. All dev.90 performance and dev.91 identities retained. See docs/MAGE_HAIR_QUICKFIX_20261020.md. No automatic further work.
 
 - Latest steering (20 October): owner deferred all staff changes and authorized publishing only selected Mage hair C / twin braids. Leave the live dev.92 staff unchanged in both appearances. Complete dev.93 direct merge/publication with no tests; preserve existing headgear, identities and performance. Staff previews are unselected historical references. Restore normal workflow after packaging-only publication.
