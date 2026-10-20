@@ -1,7 +1,7 @@
 name: Test and deploy app
 on:
   push:
-    branches: [owner-neri-projectiles-dev98-disabled]
+    branches: [main]
   pull_request:
     branches: [main, perf/v09-integration-20261010]
   workflow_dispatch:

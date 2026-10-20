@@ -1,0 +1,156 @@
+{
+  "version": "0.9.1+snapshot.dev.98",
+  "date": "2026-10-20",
+  "pullRequest": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/332",
+  "publishedCommit": "958cca69d8de96ccf91240323f13260c1f4e8960",
+  "preparedTree": "8cec24d705c6403ca78e674c3168c8e8e7209139",
+  "publicationRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39393295596",
+  "conclusion": "success",
+  "jobs": [
+    "publish: package/deploy committed files only"
+  ],
+  "focusedChecks": [
+    "Neri fresh rescue/restore/identity/stable refresh and actual full-body rendering",
+    "five regions / 65 houses: town clearance",
+    "friendly projectile actual hero/Archer casts, fixed direction, hit/dodge/expiry, on-hit effects, terrain, dead target, large-frame beam and area preservation",
+    "54 charged opener/encounter scenarios",
+    "hero skill repairs and consolidation, player condition reference",
+    "all-eleven pet lifecycle and autonomous range/basic/charge/transition/area checks",
+    "Lifebinder automatic untrained first, full/wounded HP, 4% healing after contact, miss, activation gates, actual Mira learning and charged second",
+    "all 22 pet skills / 132 rendered release/impact/charge frames in normal and reduced/optimized modes, ranged trails, canvas state, bounded queue and read-only presentation",
+    "real renderer integration with actual Lifebinder release/impact events",
+    "ravine before/after terrain rendering",
+    "build, generated source/assets, changed-file formatting and diff check"
+  ],
+  "broadCI": false,
+  "browserMatrix": false,
+  "verifiedAt": "2026-10-20T08:27:10.276924+00:00",
+  "liveVerification": [
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "1d909b8168d00554cde852256730142609d0805b7cb182de7c5a2ece014e71d0"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 295,
+      "sha256": "049a7d5cee89323fd9aff025e865dece428c4c307d9a1bdfbade7ad327b76b6d"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "match": true,
+      "bytes": 176656,
+      "sha256": "aadf7b587bb9f40b98ad33c04fed08425fec0a9b3cd8ea42371fe4e39f4e7bca"
+    },
+    {
+      "path": "src/prototype/combat.js",
+      "match": true,
+      "bytes": 47070,
+      "sha256": "9104d944709d65a88130c5976d39e57153c58d08d8bcf2e53a68cbdcb1aafd0a"
+    },
+    {
+      "path": "src/prototype/hero-combat.js",
+      "match": true,
+      "bytes": 62082,
+      "sha256": "d7bc55bed2f057334c1bcc4333c5a9406fb27e7d0e78f4cbca09940e92a846c1"
+    },
+    {
+      "path": "src/prototype/party-pets.js",
+      "match": true,
+      "bytes": 17217,
+      "sha256": "a4cbeb2b29b4f2a8124d45b4110675f76f83fff5aaab6fc700f15d5888bcf216"
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "match": true,
+      "bytes": 72320,
+      "sha256": "9ace059691130bf871457c4d8726f1eb502354d15ab745b95b1c472fbbff4f23"
+    },
+    {
+      "path": "src/prototype/archive.js",
+      "match": true,
+      "bytes": 42447,
+      "sha256": "055f8a8f7f8038bdaced8779fe17a5a724b681af1aa40aedd3f17cab0dd9e57b"
+    },
+    {
+      "path": "src/prototype/progression.js",
+      "match": true,
+      "bytes": 23539,
+      "sha256": "fa26ab74278d23dc84557a2084117ccc3dc08198aa6554a788f015fd5d6511d5"
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "match": true,
+      "bytes": 97864,
+      "sha256": "30d5c1181c1282b3deebcd0745a504f1106347a2a1ba9420acf1639fe4c0f74d"
+    },
+    {
+      "path": "src/prototype/combat-visuals.js",
+      "match": true,
+      "bytes": 50702,
+      "sha256": "28487d03a38f0f981a9d0dd2aa4813f1d62900ca65beee36a319053f6f16b8f9"
+    },
+    {
+      "path": "src/prototype/enemy-vfx-art.js",
+      "match": true,
+      "bytes": 36698,
+      "sha256": "912f545e495f5386a81bcca220c6f6e723932f6bf9e0903f81a291686d8e2cad"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "match": true,
+      "bytes": 460717,
+      "sha256": "47e231a2ef0f8802bf200a5960bef6bbf3569952873c696f1c3e0415493f64ab"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 248103,
+      "sha256": "d8f30dde596fb80be292a3f0f659b3f2b7fbfb1b72b84c8a984a1126835cf6b0"
+    },
+    {
+      "path": "src/prototype/app.js",
+      "match": true,
+      "bytes": 133795,
+      "sha256": "65bd0752380ef46ddcf96df2977f9b89a32c5020c3dd295924ed033a47964e0f"
+    },
+    {
+      "path": "src/prototype/runtime.js",
+      "match": true,
+      "bytes": 9135,
+      "sha256": "210a1821b48294ff978a43096efe26f74671b916ddfdfe36adbf98ad24fe8c1b"
+    },
+    {
+      "path": "src/prototype/navigation.js",
+      "match": true,
+      "bytes": 31225,
+      "sha256": "4f20feda4bf5fc0e4a1d4dfb4235fa867ff2a14b87eff642ef73bdd5144d82df"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20549,
+      "sha256": "a56f6a0847068e76c3e2ed33f698ac84919a5bf7c23689da80d60fe35e0ec107"
+    }
+  ],
+  "changes": [
+    "Neri stands openly in Reedport square; existing saves refresh automatically",
+    "Friendly shots retain launch direction and require physical contact; misses expire and keep cast cooldowns",
+    "Normal Interrupt, Fracture, Judgment and ranged single-target pet skills become dodgeable; effects require contact",
+    "Pet menus identify Mira/hero Skill 2 unlock and current training status; first needs no learning",
+    "All 22 pet skills gain boss-derived material effects, name/release cues, soft charge cues and truthful impacts within existing effect cap",
+    "Snowmelt blue centerline replaced with meandering shallow stream, wet bed, pools, wet stones and separate ripples inside unchanged banks"
+  ],
+  "preserved": [
+    "dev.94 FPS app/runtime source",
+    "dev.95 companion travel source",
+    "dev.97 night tempo and dev.96 balance",
+    "character/structure drawings",
+    "existing damage/cooldown/range values except requested physical hit requirement",
+    "v4 save schema, ravine collision and bridge routes"
+  ],
+  "limits": "Owner live play remains for subjective visuals, difficulty, moving-target pacing and physical-device performance. No whole-game/browser validation claimed.",
+  "workflowCleanup": "Normal pages.yml restored byte-for-byte; temporary dev.98 publisher removed. No runtime changes in closeout."
+}
