@@ -634,13 +634,15 @@
         if (!dungeon && !room && !side)
           for (const p of R.terrain[i])
             if (
-              p.r
-                ? Math.hypot(x - p.x, y - p.y) < p.r + radius
-                : x > p.x1 - radius &&
-                  x < p.x2 + radius &&
-                  y > p.y1 - radius &&
-                  y < p.y2 + radius &&
-                  !(p.gaps || []).some(([l, h]) => y > l + radius && y < h - radius)
+              p.kind === 'rain-pools'
+                ? R.rainPoolBlocked(p.pools, x, y, radius)
+                : p.r
+                  ? Math.hypot(x - p.x, y - p.y) < p.r + radius
+                  : x > p.x1 - radius &&
+                    x < p.x2 + radius &&
+                    y > p.y1 - radius &&
+                    y < p.y2 + radius &&
+                    !(p.gaps || []).some(([l, h]) => y > l + radius && y < h - radius)
             )
               return true;
         if (!dungeon && !room && !side) {

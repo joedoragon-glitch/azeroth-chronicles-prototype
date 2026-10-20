@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "frontier-poppy-patches",
+  "name": "Frontier natural poppy patches",
+  "kind": "flora",
+  "nextAction": "Owner appearance/play feedback; retain these procedural references for any later explicitly requested sprite work.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel rejected the repeated triangular flower stamp and requested more poppies in natural varied groups.",
+    "decisionDate": "2026-10-20",
+    "repositoryIssueOrPR": null,
+    "contentDocuments": [
+      "docs/FRONTIER_TOWN_RIVER_20261020.md"
+    ],
+    "locationAndLore": "Ashen Frontier; regional recovery, civilian livelihoods and military supply. Conversation URL unavailable."
+  },
+  "decisions": {
+    "conceptAcceptance": "Joel rejected the repeated triangular flower stamp and requested more poppies in natural varied groups.",
+    "proceduralDesignAcceptance": "Implementation requested; this new exact appearance has not received separate owner review.",
+    "spriteProductionAuthorization": "No new raster sprite production requested in this task.",
+    "generatedAppearanceAcceptance": "No generated raster artwork.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": null,
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js",
+      "src/prototype/rules.js",
+      "src/prototype/world.js",
+      "fix/emberwatch-river-dev108"
+    ],
+    "exactEntityState": {
+      "renderKind": "prop",
+      "structure": "battlefield-poppies",
+      "decorative": true
+    },
+    "isolatedReferencePath": "tools/visual-review/emberwatch-river-dev108/poppy-reference.png",
+    "isolatedReferenceHash": "9f938e261a5c01ab5e73edb1246456ac8c302a3dce7315ffc0e164305bc44ba6",
+    "gameplayContextPaths": [
+      "tools/visual-review/emberwatch-river-dev108/after-town.webp",
+      "tools/visual-review/emberwatch-river-dev108/after-south-bridge.webp"
+    ],
+    "traitsToPreserve": [
+      "Red corn poppies with dark centers, curved stems and small leaves",
+      "loose stems, verge ribbons, crescents and broken patches",
+      "stable seed variation",
+      "no triangular mat."
+    ],
+    "assetSpecificDependencies": [],
+    "workingTreeSourceHashes": {
+      "src/prototype/visuals.js": "14a9889f7cc08eeba1628c148ad1b1ce146a06375ff1730824bfeb3e67d210f0",
+      "src/prototype/rules.js": "1fd45ec407cec5d81234fb14993410fb62f6aa84b80ac236132429018d337588",
+      "src/prototype/world.js": "75a98fabefacd6a50a21060961d952a5a1e7d6bff779f8035676a8c89b2c3526"
+    }
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [
+      "battlefield-poppies"
+    ],
+    "requiredVisibleAssets": [
+      "Frontier natural poppy patches"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "World/rules own stable placement and collision; visuals/renderer own native canvas appearance. Pool shore geometry remains procedural so collision and surface agree."
+    ]
+  },
+  "animationRequirements": {
+    "status": "procedural",
+    "gameplayStates": [
+      "day",
+      "night"
+    ],
+    "directions": [],
+    "pivotContract": "Existing foot anchor and world projection; retain logical collision geometry.",
+    "staticFallbackKey": "battlefield-poppies",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

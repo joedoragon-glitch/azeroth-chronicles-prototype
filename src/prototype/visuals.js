@@ -10857,6 +10857,136 @@
     }
     function craftedDecoration(kind) {
       switch (kind) {
+        case 'frontier-grain-silo': {
+          // A working provincial granary: curved masonry, weathered tin roof,
+          // iron hoops, a loading hatch, access ladder and filled grain sacks.
+          oval(0, 20, 80, 27, '#242a2755');
+          oval(0, 10, 77, 27, '#777c6a');
+          oval(0, 5, 74, 26, '#b0ad91');
+          const body = ctx.createLinearGradient(-58, 0, 58, 0);
+          body.addColorStop(0, '#8b8a70');
+          body.addColorStop(0.35, '#d0c4a0');
+          body.addColorStop(0.7, '#b9ae8a');
+          body.addColorStop(1, '#777b68');
+          shaped(body, () => {
+            ctx.moveTo(-58, 4);
+            ctx.lineTo(-58, -98);
+            ctx.bezierCurveTo(-35, -116, 35, -116, 58, -98);
+            ctx.lineTo(58, 4);
+            ctx.bezierCurveTo(34, 24, -34, 24, -58, 4);
+            ctx.closePath();
+          });
+          for (const y of [-76, -43, -9]) {
+            ctx.strokeStyle = '#667368';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(-57, y);
+            ctx.bezierCurveTo(-32, y + 15, 32, y + 15, 57, y);
+            ctx.stroke();
+            for (const x of [-43, 43]) oval(x, y + 5, 1.3, 1.3, '#c2c1a4');
+          }
+          for (const x of [-36, -13, 14, 37])
+            line(
+              [
+                [x, -88],
+                [x, 4],
+              ],
+              '#8d937755',
+              1,
+            );
+          shaped('#576b6a', () => {
+            ctx.moveTo(-66, -98);
+            ctx.quadraticCurveTo(-44, -117, 0, -133);
+            ctx.quadraticCurveTo(43, -117, 66, -98);
+            ctx.quadraticCurveTo(0, -74, -66, -98);
+          });
+          for (const x of [-48, -24, 0, 24, 48])
+            line(
+              [
+                [0, -132],
+                [x, -94 - Math.abs(x) * 0.08],
+              ],
+              '#89968a',
+              1.3,
+            );
+          oval(0, -132, 7, 3, '#aeb19a');
+          line(
+            [
+              [-65, -98],
+              [-42, -88],
+              [0, -84],
+              [42, -88],
+              [65, -98],
+            ],
+            '#b6bba4',
+            2,
+          );
+          softRect(-15, -24, 30, 42, '#72715b', 3);
+          softRect(-11, -20, 22, 35, '#343f36', 2);
+          boards(-9, -17, 18, 30, '#8d7957', true);
+          line(
+            [
+              [-9, -3],
+              [10, -3],
+            ],
+            '#bca878',
+            2,
+          );
+          oval(6, -4, 1.6, 1.6, '#363c32');
+          for (const x of [43, 54])
+            line(
+              [
+                [x, -91],
+                [x, 8],
+              ],
+              '#53645d',
+              2.7,
+            );
+          for (let y = -85; y < 5; y += 10)
+            line(
+              [
+                [43, y],
+                [54, y],
+              ],
+              '#a3aa91',
+              1.5,
+            );
+          for (const [x, y] of [
+            [-44, 12],
+            [-60, 10],
+            [49, 19],
+          ]) {
+            shaped('#b4a071', () => {
+              ctx.moveTo(x - 9, y + 1);
+              ctx.quadraticCurveTo(x - 12, y - 10, x - 5, y - 15);
+              ctx.lineTo(x + 4, y - 15);
+              ctx.quadraticCurveTo(x + 12, y - 7, x + 9, y + 3);
+              ctx.quadraticCurveTo(x, y + 8, x - 9, y + 1);
+            });
+            line(
+              [
+                [x - 4, y - 14],
+                [x + 4, y - 14],
+              ],
+              '#756e50',
+              1.5,
+            );
+            line(
+              [
+                [x, y - 9],
+                [x - 2, y - 2],
+                [x + 2, y + 2],
+              ],
+              '#d6c28c',
+              0.8,
+            );
+          }
+          ctx.fillStyle = '#5b614d';
+          ctx.font = 'bold 9px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('GRAIN', 0, -48);
+          break;
+        }
         case 'frontier-civic-fountain':
           // A broad carved basin on two low steps, with a bronze lily and clear falling water.
           oval(0, 17, 55, 19, '#292c2b55');
@@ -12672,30 +12802,69 @@
               1.2,
             );
           break;
-        case 'battlefield-poppies':
-          // Red corn poppies recolonize disturbed but cooled old battlefield soil.
-          oval(0, 10, 28, 8, '#586c4c');
-          for (const [x, y] of [
-            [-19, -1],
-            [-11, -10],
-            [-1, 0],
-            [7, -13],
-            [17, -5],
-            [23, 3],
-            [-25, 5],
-            [1, -19],
-          ]) {
-            ctx.strokeStyle = '#547b4a';
-            ctx.lineWidth = 1.8;
-            ctx.beginPath();
-            ctx.moveTo(x, 9);
-            ctx.quadraticCurveTo(x + ((x % 3) - 1) * 1.2, (y + 9) / 2, x, y);
-            ctx.stroke();
-            for (const dx of [-3.5, 3.5]) oval(x + dx, y - 2, 3.9, 3.2, '#c92e39');
-            oval(x, y - 5.5, 3.5, 3.5, '#e84a4b');
-            oval(x, y - 2, 1.6, 1.6, '#34352c');
+        case 'battlefield-poppies': {
+          ctx.save();
+          const patchScale = e.poppyScale || 1;
+          ctx.scale(patchScale, patchScale);
+          // Stable, irregular patches: loose stems, crescents and narrow verges.
+          // Coordinates choose variety without animation or per-frame randomness.
+          let seed =
+            (Math.imul(Math.round(e.x || 7), 73856093) ^
+              Math.imul(Math.round(e.y || 11), 19349663)) >>>
+            0;
+          const random = () => {
+              seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+              return seed / 4294967296;
+            },
+            form = e.poppyForm ?? seed % 4,
+            count = [3, 5, 7, 9][form],
+            stems = [];
+          for (let j = 0; j < count; j++) {
+            const t = j / Math.max(1, count - 1),
+              x =
+                form === 1
+                  ? -31 + t * 64 + (random() - 0.5) * 10
+                  : form === 2
+                    ? Math.cos(t * Math.PI * 1.2 + 0.1) * 27 + (random() - 0.5) * 7
+                    : form === 3
+                      ? (j % 2 ? 16 : -20) + (random() - 0.5) * 22
+                      : (random() - 0.5) * 46,
+              base =
+                (random() - 0.5) * 10 +
+                7 +
+                (form === 2 ? Math.sin(t * Math.PI * 1.2 + 0.1) * 5 : 0),
+              height = 9 + random() * 17,
+              lean = (random() - 0.5) * 7;
+            stems.push({ x, base, height, lean, size: 1.7 + random() * 1.25, tone: random() });
           }
+          for (const stem of stems.sort((a, b) => a.base - b.base)) {
+            const { x, base, height, lean, size, tone } = stem,
+              y = base - height;
+            oval(x, base + 1, 6 + size * 1.5, 2.2, '#64794b44');
+            ctx.strokeStyle = '#607c4b';
+            ctx.lineWidth = 1.15;
+            ctx.beginPath();
+            ctx.moveTo(x, base);
+            ctx.quadraticCurveTo(x + lean * 0.3, base - height * 0.55, x + lean, y);
+            ctx.stroke();
+            line(
+              [
+                [x, base - 4],
+                [x - 3, base - 7],
+                [x - 1, base - 6],
+              ],
+              '#71854f',
+              0.8,
+            );
+            const red = tone < 0.3 ? '#b93038' : tone < 0.7 ? '#cf3d40' : '#df5148';
+            oval(x + lean - size * 0.7, y, size, size * 0.75, red);
+            oval(x + lean + size * 0.7, y - 0.4, size, size * 0.9, red);
+            oval(x + lean, y - size * 0.8, size * 0.9, size * 0.8, '#e45a4b');
+            oval(x + lean, y + 0.2, 0.9, 0.85, '#34382d');
+          }
+          ctx.restore();
           break;
+        }
         case 'pioneer-grasses':
           grassTuft(-11, 9, false, true);
           craftAt(12, 3, 0.7, () => grassTuft(0, 9, false));
@@ -16563,6 +16732,7 @@
     frontierTreeShoots(ctx, e, p, region);
   }
   function unscaledHeight(e) {
+    if (e.structure === 'frontier-grain-silo') return 165;
     if (e.structure === 'frontier-civic-fountain') return 110;
     if (e.type === 'pet') return 58;
     if (e.mountedCrownRider) return 99;
@@ -17273,6 +17443,77 @@
     for (const p of R.terrain[region]) {
       const kind = p.kind || 'cliff';
       if (kind === 'fountain') continue; // Depth-sorted civic masonry is painted as a prop.
+      if (kind === 'grain-silo') {
+        // Compacted loading apron is walkable; the smaller silo body blocks.
+        poly(
+          [
+            { x: p.x - 130, y: p.y - 70 },
+            { x: p.x + 100, y: p.y - 95 },
+            { x: p.x + 130, y: p.y + 50 },
+            { x: p.x + 40, y: p.y + 140 },
+            { x: p.x - 110, y: p.y + 100 },
+          ],
+          '#91836a55',
+        );
+        continue;
+      }
+      if (kind === 'rain-pools') {
+        for (const pool of p.pools) {
+          const rim = pool.points.map((q) => ({
+            x: pool.x + (q.x - pool.x) * 1.075,
+            y: pool.y + (q.y - pool.y) * 1.035,
+          }));
+          poly(rim, '#767663');
+          poly(pool.points, '#426d71');
+          poly(
+            pool.points.map((q) => ({
+              x: pool.x + (q.x - pool.x) * 0.81,
+              y: pool.y + (q.y - pool.y) * 0.87,
+            })),
+            '#355c65',
+          );
+          for (const j of [2, 9, 18, 25]) {
+            const q = pool.points[j],
+              side = q.x < pool.x ? -1 : 1,
+              x = q.x + side * 6,
+              y = q.y;
+            poly(
+              [
+                { x: x - 8, y: y - 4 },
+                { x: x + 3, y: y - 9 },
+                { x: x + 10, y: y + 1 },
+                { x: x - 1, y: y + 7 },
+              ],
+              '#898b76',
+            );
+            line({ x: x - 5, y: y - 3 }, { x: x + 2, y: y - 5 }, '#b1b09a', 1);
+          }
+          for (const j of [5, 21]) {
+            const q = pool.points[j],
+              foot = screen({ x: q.x + (j === 5 ? 10 : -12), y: q.y });
+            for (let n = 0; n < 4; n++) {
+              ctx.strokeStyle = n % 2 ? '#7e9470' : '#657f5b';
+              ctx.lineWidth = 1.1;
+              ctx.beginPath();
+              ctx.moveTo(foot.x + n * 3, foot.y + 2);
+              ctx.quadraticCurveTo(
+                foot.x + n * 4 - 2,
+                foot.y - 9,
+                foot.x + n * 4 - 4,
+                foot.y - 14 - (n % 3) * 4,
+              );
+              ctx.stroke();
+            }
+          }
+          for (const offset of [-0.35, 0.15, 0.48]) {
+            const y = pool.y + pool.ry * offset,
+              x = pool.x - 13 + Math.sin(time * 0.7 + offset) * 3;
+            line({ x, y }, { x: x + 23, y: y + 3 }, '#a4c2b688', 1);
+          }
+        }
+        continue;
+      }
+
       if (p.r) {
         if (viewport) {
           const q = screen(p),

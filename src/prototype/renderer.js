@@ -1972,6 +1972,22 @@
       if (authoredFloor) {
         PrototypeVisuals.dungeonFloorPath(ctx, screen, game.zoneId, size);
         ctx.clip();
+      } else if (!dungeon && !room && game.zoneId === 'frontier') {
+        // Edge tiles straddle their anchors. Clip them to the same map boundary
+        // as the channel, so a final half-tile cannot cap its open mouth.
+        ctx.beginPath();
+        for (const [j, q] of [
+          { x: 0, y: 0 },
+          { x: size, y: 0 },
+          { x: size, y: size },
+          { x: 0, y: size },
+        ].entries()) {
+          const p = screen(q);
+          if (j) ctx.lineTo(p.x, p.y);
+          else ctx.moveTo(p.x, p.y);
+        }
+        ctx.closePath();
+        ctx.clip();
       }
       const bounds = tileBounds(size);
       const paintFloor = (target, o, width, height) => {
@@ -2101,13 +2117,14 @@
       if (!game.isDungeon() && !game.supplyRoom?.(game.zoneId) && !game.sideDungeon?.(game.zoneId))
         add(
           (Campaign.rules.terrain[game.regionIndex()] || [])
-            .filter((p) => p.kind === 'fountain')
+            .filter((p) => ['fountain', 'grain-silo'].includes(p.kind))
             .map((p) => ({
-              id: 'frontier-civic-fountain',
+              id: p.kind === 'grain-silo' ? 'frontier-grain-silo' : 'frontier-civic-fountain',
               x: p.x,
               y: p.y,
               r: p.r,
-              structure: 'frontier-civic-fountain',
+              structure:
+                p.kind === 'grain-silo' ? 'frontier-grain-silo' : 'frontier-civic-fountain',
               decorative: true,
             })),
           'prop',

@@ -1,0 +1,1392 @@
+{
+  "version": "dev.108",
+  "originalProps": 391,
+  "finalProps": 409,
+  "movedProps": 115,
+  "addedPoppyPatches": 18,
+  "footpaths": 20,
+  "enemyCount": 58,
+  "originalIdsPreserved": true,
+  "moves": [
+    {
+      "id": "forest-0-0",
+      "structure": "🌳",
+      "before": [
+        626.3523138347365,
+        1300
+      ],
+      "after": [
+        170,
+        1850
+      ]
+    },
+    {
+      "id": "forest-0-4",
+      "structure": "🌳",
+      "before": [
+        522.1515635914336,
+        1286.229707746696
+      ],
+      "after": [
+        301.5405845398161,
+        1964.459415460184
+      ]
+    },
+    {
+      "id": "forest-0-6",
+      "structure": "🌳",
+      "before": [
+        575.3337959575563,
+        1391.7570496251612
+      ],
+      "after": [
+        793.7056274847714,
+        2057.7056274847714
+      ]
+    },
+    {
+      "id": "forest-0-7",
+      "structure": "🌳",
+      "before": [
+        552.9588737563286,
+        1209.4251739808813
+      ],
+      "after": [
+        782.7792455435709,
+        1865.425421036992
+      ]
+    },
+    {
+      "id": "forest-0-8",
+      "structure": "🌳",
+      "before": [
+        702.0604275794481,
+        1337.2723044344698
+      ],
+      "after": [
+        935.1559762323784,
+        2071.7310878027088
+      ]
+    },
+    {
+      "id": "forest-0-10",
+      "structure": "🌳",
+      "before": [
+        651.1842666070164,
+        1190.622195189174
+      ],
+      "after": [
+        245.5745789630079,
+        2086.220754456429
+      ]
+    },
+    {
+      "id": "forest-0-17",
+      "structure": "🌳",
+      "before": [
+        444.23074110970504,
+        1306.441547975745
+      ],
+      "after": [
+        311.11698217428386,
+        2254.2983158520315
+      ]
+    },
+    {
+      "id": "forest-0-19",
+      "structure": "🌳",
+      "before": [
+        592.3982670339707,
+        1464.394485884553
+      ],
+      "after": [
+        607,
+        2242
+      ]
+    },
+    {
+      "id": "forest-0-22",
+      "structure": "🌳",
+      "before": [
+        454.8913759481209,
+        1400.9628011981167
+      ],
+      "after": [
+        719.1949702904731,
+        2327.163859753386
+      ]
+    },
+    {
+      "id": "forest-0-24",
+      "structure": "🌳",
+      "before": [
+        691.7130652580631,
+        1460.051527448969
+      ],
+      "after": [
+        691.7130652580631,
+        1550.051527448969
+      ]
+    },
+    {
+      "id": "forest-0-26",
+      "structure": "🌳",
+      "before": [
+        774.1576778128925,
+        1219.5347353550844
+      ],
+      "after": [
+        123.36038969321072,
+        2351.639610306789
+      ]
+    },
+    {
+      "id": "forest-0-28",
+      "structure": "🌳",
+      "before": [
+        532.6630213363812,
+        1112.7860458251344
+      ],
+      "after": [
+        538.7237368890237,
+        2358.6622633692873
+      ]
+    },
+    {
+      "id": "forest-0-29",
+      "structure": "🌳",
+      "before": [
+        779.1764728047119,
+        1394.1701322898325
+      ],
+      "after": [
+        779.1764728047119,
+        1349.1701322898325
+      ]
+    },
+    {
+      "id": "forest-0-31",
+      "structure": "🌳",
+      "before": [
+        713.1243289750337,
+        1124.0656764757134
+      ],
+      "after": [
+        817,
+        2509
+      ]
+    },
+    {
+      "id": "forest-0-33",
+      "structure": "🌳",
+      "before": [
+        429.4602209567229,
+        1167.924409743329
+      ],
+      "after": [
+        1044,
+        2588
+      ]
+    },
+    {
+      "id": "forest-0-34",
+      "structure": "🌳",
+      "before": [
+        818.1513673054326,
+        1281.9266049277694
+      ],
+      "after": [
+        152.77924554357097,
+        2548.5745789630078
+      ]
+    },
+    {
+      "id": "forest-0-38",
+      "structure": "🌳",
+      "before": [
+        369.7461574808847,
+        1278.660125881237
+      ],
+      "after": [
+        566.7056274847714,
+        2619.7056274847714
+      ]
+    },
+    {
+      "id": "forest-0-40",
+      "structure": "🌳",
+      "before": [
+        557.5503162846956,
+        1533.3410044387197
+      ],
+      "after": [
+        599.1248952477034,
+        1550.5617588951486
+      ]
+    },
+    {
+      "id": "forest-0-43",
+      "structure": "🌳",
+      "before": [
+        381.3168686718171,
+        1412.2245727956554
+      ],
+      "after": [
+        800,
+        2623
+      ]
+    },
+    {
+      "id": "aesthetic-hamlet-8",
+      "structure": "garden",
+      "before": [
+        1105.4259901816981,
+        942.6240420390161
+      ],
+      "after": [
+        865.8972235831473,
+        613.7979189163431
+      ]
+    },
+    {
+      "id": "aesthetic-nature-13",
+      "structure": "burned-log",
+      "before": [
+        135,
+        193
+      ],
+      "after": [
+        71.36038969321072,
+        256.6396103067893
+      ]
+    },
+    {
+      "id": "aesthetic-nature-14",
+      "structure": "burned-log",
+      "before": [
+        157,
+        967
+      ],
+      "after": [
+        61.54058453981603,
+        691.5405845398161
+      ]
+    },
+    {
+      "id": "aesthetic-nature-15",
+      "structure": "dead-tree",
+      "before": [
+        185,
+        1155
+      ],
+      "after": [
+        312.27922061357856,
+        1282.2792206135784
+      ]
+    },
+    {
+      "id": "aesthetic-nature-16",
+      "structure": "burned-log",
+      "before": [
+        215,
+        1469
+      ],
+      "after": [
+        107.49701756740532,
+        1562.236842332295
+      ]
+    },
+    {
+      "id": "aesthetic-nature-24",
+      "structure": "dead-tree",
+      "before": [
+        402,
+        961
+      ],
+      "after": [
+        571.7056274847714,
+        1130.7056274847714
+      ]
+    },
+    {
+      "id": "aesthetic-nature-25",
+      "structure": "ash-patch",
+      "before": [
+        431,
+        1181
+      ],
+      "after": [
+        357.60561588359747,
+        1195.5990506969656
+      ]
+    },
+    {
+      "id": "aesthetic-nature-26",
+      "structure": "ash-patch",
+      "before": [
+        379,
+        1456
+      ],
+      "after": [
+        379,
+        1366
+      ]
+    },
+    {
+      "id": "aesthetic-nature-27",
+      "structure": "dead-tree",
+      "before": [
+        378,
+        1719
+      ],
+      "after": [
+        282.5405845398161,
+        1814.459415460184
+      ]
+    },
+    {
+      "id": "aesthetic-nature-34",
+      "structure": "burned-log",
+      "before": [
+        690,
+        167
+      ],
+      "after": [
+        626.3603896932108,
+        230.63961030678928
+      ]
+    },
+    {
+      "id": "aesthetic-nature-35",
+      "structure": "burned-log",
+      "before": [
+        667,
+        1155
+      ],
+      "after": [
+        635.1801948466053,
+        1186.8198051533946
+      ]
+    },
+    {
+      "id": "aesthetic-nature-36",
+      "structure": "ash-patch",
+      "before": [
+        714,
+        1478
+      ],
+      "after": [
+        780.2613140662528,
+        1592.9689630794103
+      ]
+    },
+    {
+      "id": "aesthetic-nature-44",
+      "structure": "burned-log",
+      "before": [
+        950,
+        415
+      ],
+      "after": [
+        1018.8830178257161,
+        581.2983158520316
+      ]
+    },
+    {
+      "id": "aesthetic-nature-46",
+      "structure": "ash-patch",
+      "before": [
+        872,
+        928
+      ],
+      "after": [
+        788.8508420739842,
+        962.4415089128581
+      ]
+    },
+    {
+      "id": "aesthetic-nature-47",
+      "structure": "burned-log",
+      "before": [
+        911,
+        1460
+      ],
+      "after": [
+        847.3603896932108,
+        1523.6396103067893
+      ]
+    },
+    {
+      "id": "aesthetic-nature-48",
+      "structure": "burned-log",
+      "before": [
+        917,
+        1696
+      ],
+      "after": [
+        867.9594403901763,
+        1622.6056158835975
+      ]
+    },
+    {
+      "id": "aesthetic-nature-53",
+      "structure": "ash-patch",
+      "before": [
+        1191,
+        151
+      ],
+      "after": [
+        1191,
+        61
+      ]
+    },
+    {
+      "id": "aesthetic-nature-61",
+      "structure": "burned-log",
+      "before": [
+        1389,
+        2232
+      ],
+      "after": [
+        1270,
+        2232
+      ]
+    },
+    {
+      "id": "aesthetic-nature-68",
+      "structure": "dead-tree",
+      "before": [
+        1543.2110599312753,
+        1867.8319741697364
+      ],
+      "after": [
+        1692.3741917251764,
+        1867.8319741697364
+      ]
+    },
+    {
+      "id": "aesthetic-nature-73",
+      "structure": "burned-log",
+      "before": [
+        1623,
+        3210
+      ],
+      "after": [
+        1659.3924901961493,
+        3210
+      ]
+    },
+    {
+      "id": "aesthetic-nature-75",
+      "structure": "ash-patch",
+      "before": [
+        1954,
+        917
+      ],
+      "after": [
+        2089,
+        917
+      ]
+    },
+    {
+      "id": "aesthetic-bank-101",
+      "structure": "dead-tree",
+      "before": [
+        1362,
+        95
+      ],
+      "after": [
+        1254.9439313267271,
+        95
+      ]
+    },
+    {
+      "id": "aesthetic-bank-102",
+      "structure": "dry-scrub",
+      "before": [
+        1548,
+        132
+      ],
+      "after": [
+        1583.5923697528372,
+        132
+      ]
+    },
+    {
+      "id": "aesthetic-bank-103",
+      "structure": "dead-tree",
+      "before": [
+        1353.3102204934366,
+        346.6908135567535
+      ],
+      "after": [
+        1248.3241838049942,
+        429.8399714827693
+      ]
+    },
+    {
+      "id": "aesthetic-bank-105",
+      "structure": "dead-tree",
+      "before": [
+        1362,
+        1273
+      ],
+      "after": [
+        1304.1597134133792,
+        1273
+      ]
+    },
+    {
+      "id": "aesthetic-bank-106",
+      "structure": "dry-scrub",
+      "before": [
+        1362,
+        1542
+      ],
+      "after": [
+        1296.2368666151553,
+        1542
+      ]
+    },
+    {
+      "id": "aesthetic-bank-107",
+      "structure": "dead-tree",
+      "before": [
+        1548,
+        1528
+      ],
+      "after": [
+        1632.949889391881,
+        1528
+      ]
+    },
+    {
+      "id": "aesthetic-bank-108",
+      "structure": "dry-scrub",
+      "before": [
+        1362,
+        1797
+      ],
+      "after": [
+        1339.9430272578531,
+        1828.8198051533946
+      ]
+    },
+    {
+      "id": "aesthetic-bank-109",
+      "structure": "dead-tree",
+      "before": [
+        1548,
+        1834
+      ],
+      "after": [
+        1644.9814014584765,
+        1834
+      ]
+    },
+    {
+      "id": "aesthetic-bank-110",
+      "structure": "dry-scrub",
+      "before": [
+        1362,
+        2386
+      ],
+      "after": [
+        1319.732625165796,
+        2386
+      ]
+    },
+    {
+      "id": "aesthetic-bank-111",
+      "structure": "dead-tree",
+      "before": [
+        1548,
+        2372
+      ],
+      "after": [
+        1654.413014121714,
+        2372
+      ]
+    },
+    {
+      "id": "aesthetic-bank-112",
+      "structure": "dry-scrub",
+      "before": [
+        1362,
+        2692
+      ],
+      "after": [
+        1299.2734973311744,
+        2692
+      ]
+    },
+    {
+      "id": "aesthetic-bank-113",
+      "structure": "dead-tree",
+      "before": [
+        1548,
+        2678
+      ],
+      "after": [
+        1633.7944529101633,
+        2678
+      ]
+    },
+    {
+      "id": "aesthetic-bank-114",
+      "structure": "dry-scrub",
+      "before": [
+        1362,
+        2947
+      ],
+      "after": [
+        1310.9378279006332,
+        2947
+      ]
+    },
+    {
+      "id": "aesthetic-bank-115",
+      "structure": "dead-tree",
+      "before": [
+        1548,
+        2933
+      ],
+      "after": [
+        1627.7984428884606,
+        2933
+      ]
+    },
+    {
+      "id": "world-life-civilian-2",
+      "structure": "garden",
+      "before": [
+        1080,
+        850
+      ],
+      "after": [
+        1052.220754456429,
+        891.5745789630079
+      ]
+    },
+    {
+      "id": "stronghold-stalker-cinder-hold-prop-1",
+      "structure": "bone-pile",
+      "before": [
+        1585,
+        2050
+      ],
+      "after": [
+        1775,
+        2050
+      ]
+    },
+    {
+      "id": "frontier-layout-burned-hamlet-recovery-9",
+      "structure": "ash-patch",
+      "before": [
+        1125.5252398148448,
+        917.6426869707491
+      ],
+      "after": [
+        779.0704151231122,
+        877.4609265724148
+      ]
+    },
+    {
+      "id": "frontier-layout-route-north-ravine-works-53",
+      "structure": "road-patch",
+      "before": [
+        1320,
+        760
+      ],
+      "after": [
+        1103.7016841479683,
+        828.8830178257161
+      ]
+    },
+    {
+      "id": "recovery-heat-frontier-0",
+      "structure": "battlefield-poppies",
+      "before": [
+        475,
+        970
+      ],
+      "after": [
+        621.6248348629217,
+        724.6559454000087
+      ]
+    },
+    {
+      "id": "recovery-heat-frontier-1",
+      "structure": "pioneer-grasses",
+      "before": [
+        486.1091270347399,
+        1038.89087296526
+      ],
+      "after": [
+        517.9289321881346,
+        1070.7106781186546
+      ]
+    },
+    {
+      "id": "recovery-heat-frontier-2",
+      "structure": "regrowth-birch",
+      "before": [
+        753.9625322141366,
+        1034.510902307062
+      ],
+      "after": [
+        798.9625322141366,
+        1034.510902307062
+      ]
+    },
+    {
+      "id": "recovery-heat-frontier-4",
+      "structure": "battlefield-poppies",
+      "before": [
+        814.4785689433371,
+        1180.0650098523965
+      ],
+      "after": [
+        780.037060030479,
+        1263.2141677784123
+      ]
+    },
+    {
+      "id": "recovery-heat-frontier-6",
+      "structure": "regrowth-birch",
+      "before": [
+        917.6120467488713,
+        1371.731656763491
+      ],
+      "after": [
+        792.8883098598476,
+        1320.0693933942039
+      ]
+    },
+    {
+      "id": "recovery-heat-frontier-7",
+      "structure": "battlefield-poppies",
+      "before": [
+        1201.9536674918768,
+        1403.6852850741584
+      ],
+      "after": [
+        1336.9536674918768,
+        1403.6852850741584
+      ]
+    },
+    {
+      "id": "recovery-heat-frontier-8",
+      "structure": "pioneer-brush",
+      "before": [
+        1230,
+        1490
+      ],
+      "after": [
+        1320,
+        1490
+      ]
+    },
+    {
+      "id": "recovery-heat-frontier-12",
+      "structure": "battlefield-poppies",
+      "before": [
+        1509.1866257118793,
+        1438.9524112199201
+      ],
+      "after": [
+        1567.4728006375083,
+        1438.9524112199201
+      ]
+    },
+    {
+      "id": "recovery-heat-frontier-13",
+      "structure": "regrowth-birch",
+      "before": [
+        995,
+        1740
+      ],
+      "after": [
+        1090.459415460184,
+        1835.459415460184
+      ]
+    },
+    {
+      "id": "recovery-heat-frontier-14",
+      "structure": "pioneer-brush",
+      "before": [
+        975.1527053057257,
+        1714.9072028252667
+      ],
+      "after": [
+        957.9319508492966,
+        1628.3326238622587
+      ]
+    },
+    {
+      "id": "recovery-heat-frontier-17",
+      "structure": "regrowth-willow",
+      "before": [
+        1377.6120467488713,
+        2041.731656763491
+      ],
+      "after": [
+        1218.425421036992,
+        2058.95241121992
+      ]
+    },
+    {
+      "id": "recovery-heat-frontier-27",
+      "structure": "pioneer-brush",
+      "before": [
+        1358.9524112199201,
+        2800.813374288121
+      ],
+      "after": [
+        1246.5599123447805,
+        2800.813374288121
+      ]
+    },
+    {
+      "id": "recovery-heat-frontier-28",
+      "structure": "pioneer-grasses",
+      "before": [
+        1520,
+        2995
+      ],
+      "after": [
+        1578.514998351438,
+        2995
+      ]
+    },
+    {
+      "id": "settlement-major-0",
+      "structure": "frontier-patched-house",
+      "before": [
+        104.84656918120162,
+        299.81101012509697
+      ],
+      "after": [
+        210,
+        205
+      ]
+    },
+    {
+      "id": "settlement-major-1",
+      "structure": "frontier-patched-house",
+      "before": [
+        316.59800745097573,
+        141.92096736840858
+      ],
+      "after": [
+        745,
+        170
+      ]
+    },
+    {
+      "id": "settlement-major-2",
+      "structure": "frontier-workshop",
+      "before": [
+        616.0963995207921,
+        140.12446770495032
+      ],
+      "after": [
+        850,
+        770
+      ]
+    },
+    {
+      "id": "settlement-major-3",
+      "structure": "frontier-patched-house",
+      "before": [
+        833.6463006037573,
+        157.9361708496138
+      ],
+      "after": [
+        1160,
+        190
+      ]
+    },
+    {
+      "id": "settlement-major-4",
+      "structure": "frontier-patched-house",
+      "before": [
+        345.7524658352057,
+        730.9854599783259
+      ],
+      "after": [
+        165,
+        1050
+      ]
+    },
+    {
+      "id": "settlement-major-5",
+      "structure": "frontier-patched-house",
+      "before": [
+        387.1663642220086,
+        1034.2109543449417
+      ],
+      "after": [
+        620,
+        1320
+      ]
+    },
+    {
+      "id": "settlement-major-6",
+      "structure": "frontier-workshop",
+      "before": [
+        89.82705047137554,
+        889.5839059021125
+      ],
+      "after": [
+        975,
+        1180
+      ]
+    },
+    {
+      "id": "settlement-major-7",
+      "structure": "frontier-patched-house",
+      "before": [
+        315.45005268046816,
+        1171.0853329351937
+      ],
+      "after": [
+        232.22075445642903,
+        1581.574578963008
+      ]
+    },
+    {
+      "id": "settlement-major-8",
+      "structure": "frontier-palisade",
+      "before": [
+        150,
+        745
+      ],
+      "after": [
+        160,
+        1230
+      ]
+    },
+    {
+      "id": "settlement-minor-1",
+      "structure": "frontier-patched-house",
+      "before": [
+        1596.4072186025505,
+        967.7132592425224
+      ],
+      "after": [
+        1940,
+        930
+      ]
+    },
+    {
+      "id": "settlement-minor-5",
+      "structure": "frontier-palisade",
+      "before": [
+        1550,
+        1220
+      ],
+      "after": [
+        1165,
+        1420
+      ]
+    },
+    {
+      "id": "aesthetic-town-0",
+      "structure": "market",
+      "before": [
+        285,
+        485
+      ],
+      "after": [
+        650,
+        835
+      ]
+    },
+    {
+      "id": "aesthetic-town-1",
+      "structure": "woodpile",
+      "before": [
+        650,
+        385
+      ],
+      "after": [
+        1180,
+        835
+      ]
+    },
+    {
+      "id": "aesthetic-town-2",
+      "structure": "laundry",
+      "before": [
+        275,
+        685
+      ],
+      "after": [
+        270,
+        1000
+      ]
+    },
+    {
+      "id": "aesthetic-town-3",
+      "structure": "well",
+      "before": [
+        560,
+        705
+      ],
+      "after": [
+        170,
+        925
+      ]
+    },
+    {
+      "id": "aesthetic-town-4",
+      "structure": "barrel",
+      "before": [
+        719.3032039778946,
+        442.4081894137029
+      ],
+      "after": [
+        810,
+        1140
+      ]
+    },
+    {
+      "id": "aesthetic-town-5",
+      "structure": "cart",
+      "before": [
+        225,
+        520
+      ],
+      "after": [
+        1100,
+        995
+      ]
+    },
+    {
+      "id": "aesthetic-town-6",
+      "structure": "crate",
+      "before": [
+        460,
+        750
+      ],
+      "after": [
+        1110,
+        1260
+      ]
+    },
+    {
+      "id": "aesthetic-town-7",
+      "structure": "ration",
+      "before": [
+        415,
+        315
+      ],
+      "after": [
+        785,
+        580
+      ]
+    },
+    {
+      "id": "aesthetic-hamlet-9",
+      "structure": "woodpile",
+      "before": [
+        1403.3531429703867,
+        1023.4666621830081
+      ],
+      "after": [
+        1190,
+        1330
+      ]
+    },
+    {
+      "id": "aesthetic-hamlet-11",
+      "structure": "well",
+      "before": [
+        1408.3531429703867,
+        1163.466662183008
+      ],
+      "after": [
+        905,
+        1230
+      ]
+    },
+    {
+      "id": "aesthetic-hamlet-12",
+      "structure": "laundry",
+      "before": [
+        1300,
+        1195
+      ],
+      "after": [
+        976.3603896932107,
+        1326.3603896932107
+      ]
+    },
+    {
+      "id": "aesthetic-town-116",
+      "structure": "barricade",
+      "before": [
+        150,
+        515
+      ],
+      "after": [
+        215,
+        1175
+      ]
+    },
+    {
+      "id": "world-life-civilian-0",
+      "structure": "market",
+      "before": [
+        350,
+        650
+      ],
+      "after": [
+        900,
+        980
+      ]
+    },
+    {
+      "id": "world-life-civilian-1",
+      "structure": "field-kitchen",
+      "before": [
+        543.4707456286975,
+        672.4574470397557
+      ],
+      "after": [
+        710,
+        1100
+      ]
+    },
+    {
+      "id": "frontier-layout-emberwatch-livelihood-0",
+      "structure": "market",
+      "before": [
+        211.77035297151724,
+        964.6006673128918
+      ],
+      "after": [
+        260,
+        1390
+      ]
+    },
+    {
+      "id": "frontier-layout-emberwatch-livelihood-1",
+      "structure": "field-kitchen",
+      "before": [
+        209.43130692839955,
+        1056.656828660101
+      ],
+      "after": [
+        385,
+        1540
+      ]
+    },
+    {
+      "id": "frontier-layout-emberwatch-livelihood-2",
+      "structure": "supply-stack",
+      "before": [
+        467.6286813787283,
+        791.5894648668361
+      ],
+      "after": [
+        850,
+        1420
+      ]
+    },
+    {
+      "id": "frontier-layout-emberwatch-livelihood-3",
+      "structure": "woodpile",
+      "before": [
+        165.25126265847084,
+        1064.7487373415292
+      ],
+      "after": [
+        960,
+        1530
+      ]
+    },
+    {
+      "id": "frontier-layout-emberwatch-livelihood-4",
+      "structure": "cart",
+      "before": [
+        354.74873734152914,
+        1104.7487373415292
+      ],
+      "after": [
+        1180,
+        1510
+      ]
+    },
+    {
+      "id": "frontier-layout-emberwatch-livelihood-5",
+      "structure": "watchpost",
+      "before": [
+        451.2788585777148,
+        1089.6724054629735
+      ],
+      "after": [
+        1220,
+        1180
+      ]
+    },
+    {
+      "id": "frontier-layout-emberwatch-livelihood-7",
+      "structure": "road-patch",
+      "before": [
+        305.5025253169416,
+        865.5025253169417
+      ],
+      "after": [
+        1109.4415089128581,
+        1366.8508420739843
+      ]
+    },
+    {
+      "id": "frontier-layout-roadworks-yard-17",
+      "structure": "cart",
+      "before": [
+        904.7487373415291,
+        229.74873734152916
+      ],
+      "after": [
+        1035,
+        620
+      ]
+    },
+    {
+      "id": "frontier-layout-roadworks-yard-18",
+      "structure": "tool-rack",
+      "before": [
+        912.5655013140762,
+        273.87108134060804
+      ],
+      "after": [
+        1190,
+        725
+      ]
+    },
+    {
+      "id": "frontier-layout-roadworks-yard-20",
+      "structure": "supply-stack",
+      "before": [
+        880,
+        350
+      ],
+      "after": [
+        1220,
+        690
+      ]
+    },
+    {
+      "id": "frontier-layout-roadworks-yard-21",
+      "structure": "barricade",
+      "before": [
+        1015,
+        390
+      ],
+      "after": [
+        270,
+        1120
+      ]
+    },
+    {
+      "id": "frontier-layout-roadworks-yard-22",
+      "structure": "watchpost",
+      "before": [
+        1009.7844528191126,
+        288.58137624372625
+      ],
+      "after": [
+        1100.8170850179147,
+        434.44150891285807
+      ]
+    },
+    {
+      "id": "frontier-layout-roadworks-yard-24",
+      "structure": "road-ruts",
+      "before": [
+        964.6891108675446,
+        277.5
+      ],
+      "after": [
+        1170,
+        1050
+      ]
+    },
+    {
+      "id": "frontier-layout-route-north-ravine-works-52",
+      "structure": "stacked-lumber",
+      "before": [
+        1361.704660651643,
+        859.9011906845304
+      ],
+      "after": [
+        1115,
+        915
+      ]
+    },
+    {
+      "id": "frontier-layout-route-north-ravine-works-54",
+      "structure": "barricade",
+      "before": [
+        1397.2836140246613,
+        853.5194970290473
+      ],
+      "after": [
+        1650,
+        880
+      ]
+    },
+    {
+      "id": "regional-handoff-0",
+      "structure": "garden",
+      "before": [
+        1270,
+        1240
+      ],
+      "after": [
+        770,
+        1280
+      ]
+    },
+    {
+      "id": "regional-handoff-1",
+      "structure": "laundry",
+      "before": [
+        1301.418070123307,
+        1142.5974851452365
+      ],
+      "after": [
+        1161.8198051533946,
+        1541.8198051533946
+      ]
+    },
+    {
+      "id": "regime-banner-frontier-0",
+      "structure": "crown-banner",
+      "before": [
+        420,
+        650
+      ],
+      "after": [
+        355,
+        835
+      ]
+    },
+    {
+      "id": "public-lantern-frontier-0",
+      "structure": "roadside-lantern",
+      "before": [
+        450,
+        583
+      ],
+      "after": [
+        475,
+        570
+      ]
+    }
+  ]
+}

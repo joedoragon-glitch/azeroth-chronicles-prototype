@@ -212,6 +212,270 @@
           this.s.zone = oldZone;
         }
       }
+      frontierTownServices(z) {
+        const cfg = R.frontierSceneLayout;
+        if (z.id !== 'frontier' || z.frontierSceneVersion !== cfg.version) return;
+        for (const [id, xy] of Object.entries(z.frontierTownPlacements || cfg.npcs)) {
+          const n = z.npcs.find((n) => n.id === id);
+          if (n) Object.assign(n, { x: xy[0], y: xy[1] });
+        }
+      }
+      frontierSceneComposition(z) {
+        const cfg = R.frontierSceneLayout;
+        if (z.id !== 'frontier' || z.frontierSceneVersion === cfg.version) return;
+        const oldZone = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          const at = (xy) => ({ x: xy[0], y: xy[1] }),
+            nature = new Set(R.frontierEdgeLayout.nature),
+            natural = (p) => nature.has(p.structure) || /^forest-/.test(p.id || ''),
+            planned = new Set(Object.keys(cfg.props)),
+            moving = z.props.filter((p) => planned.has(p.id)),
+            clearPlot = (q, p, margin = 35) =>
+              !this.blocked(q.x, q.y, z.id, Math.max(15, p.r || 0), true) &&
+              !z.buildings.some((b) => dist(q, b) < 160 + (p.r || 0)) &&
+              (!(p.r > 0) ||
+                oldZone !== z.id ||
+                ![this.hero, ...this.activeLivingParty()].some((u) => dist(q, u) < p.r + 45)) &&
+              !z.nodes.some((n) => dist(q, n) < 65 + (p.r || 0)) &&
+              !z.enemies.some(
+                (e) =>
+                  e.hp > 0 &&
+                  (dist(q, e.home || e) < 85 + (p.r || 0) || dist(q, e) < 65 + (p.r || 0)),
+              ) &&
+              !z.props.some(
+                (n) => n !== p && !natural(n) && dist(q, n) < (p.r || 0) + (n.r || 0) + margin,
+              ),
+            choose = (raw, p, extra = () => true) => {
+              for (const radius of [0, 45, 90, 135, 180, 240, 300])
+                for (let j = 0; j < (radius ? 16 : 1); j++) {
+                  const q = {
+                    x: raw.x + Math.cos((j * Math.PI) / 8) * radius,
+                    y: raw.y + Math.sin((j * Math.PI) / 8) * radius,
+                  };
+                  if (clearPlot(q, p) && extra(q)) return q;
+                }
+              return null;
+            };
+          // Preserve stable records and player constructions; fixed plots replace
+          // independent radial searches that broke the original scene groups.
+          z.props = z.props.filter((p) => !planned.has(p.id));
+          for (const p of moving.sort((a, b) => (b.r || 0) - (a.r || 0))) {
+            const q = choose(at(cfg.props[p.id]), p);
+            if (q) Object.assign(p, q);
+            z.props.push(p);
+          }
+          // Trim only the old northwest street fragments. Keep all regional
+          // roads beyond the town boundary and reconnect each exact exit.
+          const outside = [],
+            gates = [];
+          for (const road of z.roads) {
+            let part = [];
+            const flush = () => {
+              if (part.length > 1) outside.push(part);
+              part = [];
+            };
+            for (let j = 1; j < road.length; j++) {
+              const a = road[j - 1],
+                b = road[j],
+                cuts = [0, 1];
+              if (b.x !== a.x) cuts.push((1170 - a.x) / (b.x - a.x));
+              if (b.y !== a.y) cuts.push((1500 - a.y) / (b.y - a.y));
+              const ts = [...new Set(cuts.filter((t) => t >= 0 && t <= 1))].sort((a, b) => a - b);
+              const point = (t) => ({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+              for (let k = 1; k < ts.length; k++) {
+                const mid = point((ts[k - 1] + ts[k]) / 2),
+                  p = point(ts[k - 1]),
+                  q = point(ts[k]);
+                if (mid.x <= 1170 && mid.y <= 1500) {
+                  flush();
+                  continue;
+                }
+                if (!part.length) part.push(p);
+                part.push(q);
+                for (const p of [point(ts[k - 1]), q])
+                  if (
+                    (Math.abs(p.x - 1170) < 0.001 && p.y <= 1500) ||
+                    (Math.abs(p.y - 1500) < 0.001 && p.x <= 1170)
+                  )
+                    gates.push(p);
+              }
+            }
+            flush();
+          }
+          z.roads = [
+            ...outside,
+            ...cfg.streets.map((r) => r.map(at)),
+            [
+              { x: 450, y: 1450 },
+              { x: 450, y: 1690 },
+              { x: 260, y: 1690 },
+            ],
+          ];
+          for (const gate of gates) {
+            const near = this.nearestRoadPoint({ roads: cfg.streets.map((r) => r.map(at)) }, gate);
+            if (near && dist(near, gate) > 0.1) z.roads.push([near, gate]);
+          }
+          const shoreMargin = (p) =>
+            /house|workshop|watchpost|well/.test(p.structure || '')
+              ? 160
+              : /tree|willow|birch/.test(p.structure || '') || /^forest-/.test(p.id || '')
+                ? 105
+                : /grass|scrub|poppies|ash-patch|garden/.test(p.structure || '')
+                  ? 45
+                  : 95;
+          // Preserve the ravine as open space. Fort walls have an intentional
+          // defensive relationship with it; loose domestic/work props do not.
+          for (const p of z.props) {
+            if (p.stronghold && /wall|gate/.test(p.structure || '')) continue;
+            const [lo, hi] = R.channelBanks(3, p.y),
+              margin = shoreMargin(p);
+            if (p.x <= lo - margin || p.x >= hi + margin) continue;
+            const side = p.x < (lo + hi) / 2 ? -1 : 1,
+              raw = { x: (side < 0 ? lo : hi) + side * (margin + 35), y: p.y };
+            const q = choose(raw, p, (q) => {
+              const [l, r] = R.channelBanks(3, q.y);
+              return (
+                (q.x < l - margin || q.x > r + margin) &&
+                this.distanceToRoad(z, q) > Math.max(45, (p.r || 0) + 55)
+              );
+            });
+            if (q) Object.assign(p, q);
+          }
+          const shoreClear = (q, p) => {
+              const [l, r] = R.channelBanks(3, q.y),
+                m = shoreMargin(p);
+              return q.x < l - m || q.x > r + m;
+            },
+            projectedClash = (q, b) =>
+              Math.abs((q.x - q.y - b.x + b.y) * 0.76) < 80 &&
+              Math.abs((q.x + q.y - b.x - b.y) * 0.27) < 85;
+          // Replant only nature conflicting with the new town streets/plots.
+          // Outside this local clearing and river margins the old forest stays.
+          for (const p of z.props.filter(natural)) {
+            if (p.x > 1300 || p.y > 1740) continue;
+            const roadClear = /tree|willow|birch/.test(p.structure || '') || p.r > 0 ? 100 : 50,
+              needs =
+                this.distanceToRoad(z, p) < roadClear ||
+                moving.some((b) => !natural(b) && dist(p, b) < (b.r || 0) + 90) ||
+                Object.values(cfg.npcs).some((xy) => dist(p, at(xy)) < 90);
+            if (!needs) continue;
+            const raw = { x: p.x, y: p.y },
+              q = choose(
+                raw,
+                p,
+                (q) =>
+                  this.distanceToRoad(z, q) > roadClear &&
+                  !moving.some((b) => dist(q, b) < (b.r || 0) + 100) &&
+                  !Object.values(cfg.npcs).some((xy) => dist(q, at(xy)) < 100),
+              );
+            if (q) Object.assign(p, q);
+          }
+          z.frontierTownPlacements = {};
+          // The original burned-forest cluster now falls inside the expanded
+          // residential streets. Keep its trees as a woodland beyond town,
+          // rather than scattering nineteen trunks among doors and front paths.
+          let treeIndex = 0;
+          for (const p of z.props.filter(
+            (p) => /^forest-0-/.test(p.id || '') && p.x < 1300 && p.y < 1740,
+          )) {
+            const j = treeIndex++,
+              raw = {
+                x: 170 + (j % 5) * 210 + (j % 3) * 17,
+                y: 1850 + Math.floor(j / 5) * 200 + (j % 4) * 19,
+              },
+              q = choose(
+                raw,
+                p,
+                (q) =>
+                  this.distanceToRoad(z, q) > 105 &&
+                  shoreClear(q, p) &&
+                  !z.props.some((n) => n !== p && natural(n) && dist(n, q) < 115),
+              );
+            if (q) Object.assign(p, q);
+          }
+          for (const [id, xy] of Object.entries(cfg.npcs)) {
+            const raw = at(xy),
+              q = choose(
+                raw,
+                { r: 0 },
+                (q) => !z.props.some((p) => !p.decorative && dist(p, q) < (p.r || 0) + 45),
+              );
+            const target = q || this.safe(raw.x, raw.y, z.id);
+            z.frontierTownPlacements[id] = [target.x, target.y];
+          }
+          z.frontierSceneVersion = cfg.version;
+          this.frontierTownServices(z);
+          z.footpaths ||= [];
+          const doors = [
+            ...moving.filter((p) => /house|workshop|well|market/.test(p.structure || '')),
+            ...z.npcs.filter((n) => Object.hasOwn(cfg.npcs, n.id) && !n.id.startsWith('service-')),
+          ];
+          // All fronts face the camera: +x,+y puts their paths beyond the door,
+          // rather than drawing an approach under the roof at the back.
+          for (const p of doors) {
+            const door = this.safe(p.x + 40, p.y + 40, z.id),
+              near = this.nearestRoadPoint(z, door);
+            if (!near || dist(near, door) < 15) continue;
+            const route = this.route(near, door);
+            if (route.length) z.footpaths.push([near, ...route]);
+          }
+          const hamlet = z.npcs.find((n) => n.id === 'minor');
+          if (hamlet) {
+            const near = this.nearestRoadPoint(z, hamlet.servicePoint || hamlet),
+              door = this.safe(hamlet.x + 45, hamlet.y + 45, z.id);
+            const route = near && this.route(near, door);
+            if (route?.length) z.footpaths.push([near, ...route]);
+          }
+          // Thin only conflicts with the final footpaths, too: a newly added
+          // doorstep path must not disappear beneath a retained tree or log.
+          const walking = { roads: [...z.roads, ...z.footpaths] };
+          for (const p of z.props.filter(natural)) {
+            const nearby = doors.filter(
+              (n) => /house|workshop|well/.test(n.structure || '') || n.kind === 'rest',
+            );
+            if (
+              (p.x > 1300 || p.y > 1740 || this.distanceToRoad(walking, p) > 65) &&
+              !nearby.some((n) => projectedClash(p, n))
+            )
+              continue;
+            const q = choose(
+              p,
+              p,
+              (q) =>
+                this.distanceToRoad(walking, q) > 75 &&
+                shoreClear(q, p) &&
+                !nearby.some((n) => projectedClash(q, n)) &&
+                !doors.some((n) => dist(n, q) < 110) &&
+                !z.props.some((n) => n !== p && natural(n) && dist(n, q) < 85),
+            );
+            if (q) Object.assign(p, q);
+          }
+          for (const [j, row] of cfg.poppies.entries()) {
+            const [x, y, form] = row,
+              p = {
+                id: 'frontier-poppy-' + j,
+                r: 0,
+                decorative: true,
+                structure: 'battlefield-poppies',
+                poppyForm: form,
+                poppyScale: 0.68 + form * 0.1,
+              },
+              q = choose(
+                { x, y },
+                p,
+                (q) =>
+                  this.distanceToRoad(z, q) > 42 &&
+                  !z.npcs.some((n) => dist(n, q) < 95) &&
+                  !z.props.some((n) => dist(n, q) < (n.r || 0) + 65) &&
+                  !this.blocked(q.x, q.y, z.id, 15),
+              );
+            if (q) z.props.push({ ...p, ...q });
+          }
+        } finally {
+          this.s.zone = oldZone;
+        }
+      }
       settlementLayout(z) {
         if (
           dungeonIds.includes(z.id) ||
@@ -1314,6 +1578,7 @@
           this.strongholdCourtyardClearance(z);
           this.interiorCoherence(z);
           this.frontierEdgeRedistribution(z);
+          this.frontierSceneComposition(z);
           return z;
         }
         const i = this.regionIndex(),
@@ -1728,6 +1993,7 @@
         if (this.peace) this.makeHabitat(z);
         this.syncDungeonMasterStation(z);
         this.frontierEdgeRedistribution(z);
+        this.frontierSceneComposition(z);
         return z;
       }
       regionalDestinations(z) {
