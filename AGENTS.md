@@ -1,6 +1,6 @@
 # Project working rules
 
-- Latest bounded task: owner reports 7 FPS while idle on Chromebook and below 15 with Optimization Mode on. Dev.89 candidate `perf/chromebook-dev88` prepares renderer/cache optimizations and occupied Frontier building repairs; see docs/CHROMEBOOK_PERFORMANCE_20261019.md. Actual-device FPS is unresolved. Preserve the candidate and request the existing playtest report from the slow location; no broad regression/CI or new release follows automatically.
+- Latest bounded task: owner Chromebook reports from dev.88 are received and inspected (Crown 22 FPS / Frontier 15 FPS, both night, Optimization Mode off). Draft PR #324 now prepares dev.90: existing rendering/cache fixes and occupied Frontier repairs, plus rejecting out-of-range idle aggro before line-of-sight tracing and bounded pre-render/render reporting. Two focused paired simulation fixtures preserve exact state/events; local startup has no game exceptions. Actual-device candidate FPS remains unresolved. See docs/CHROMEBOOK_PERFORMANCE_20261019.md; do not request the same reports again, run broad regression/CI, announce a fix or release automatically.
 
 - Final state: the completed dev.88 art pass is merged in #323 and published (run 39358577620). The explicitly waived broad test suites were not run. Bounded startup/visual/audio results are in docs/evidence/APPROVED_ART_PUBLICATION_20261019.json. Temporary publication wiring is removed and normal release workflow restored. No additional testing, release or gameplay work follows automatically.
 

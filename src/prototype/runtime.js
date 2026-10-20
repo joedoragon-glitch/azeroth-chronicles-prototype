@@ -6,15 +6,21 @@
       previous = null,
       idleAt = -Infinity;
     function record(now, start, draw) {
+      const renderStart = clock();
       draw();
-      const workMs = Math.max(0, clock() - start),
+      const end = clock(),
+        workMs = Math.max(0, end - start),
+        preRenderMs = Math.max(0, renderStart - start),
+        renderMs = Math.max(0, end - renderStart),
         intervalMs = previous === null ? 0 : now - previous;
       previous = now;
-      samples.push({ workMs, intervalMs });
+      samples.push({ workMs, preRenderMs, renderMs, intervalMs });
       if (samples.length > 180) samples.shift();
     }
     function report(render = {}, experience = 'desktop') {
       const work = samples.map((s) => s.workMs).sort((a, b) => a - b),
+        preRender = samples.map((s) => s.preRenderMs).sort((a, b) => a - b),
+        renderWork = samples.map((s) => s.renderMs).sort((a, b) => a - b),
         intervals = samples.map((s) => s.intervalMs).filter((n) => n > 0 && n < 1000),
         mean = intervals.reduce((a, b) => a + b, 0) / (intervals.length || 1);
       return {
@@ -23,6 +29,10 @@
         fps: mean ? Math.round(1000 / mean) : 0,
         workP95Ms: Math.round((work[Math.floor((work.length - 1) * 0.95)] || 0) * 100) / 100,
         workP99Ms: Math.round((work[Math.floor((work.length - 1) * 0.99)] || 0) * 100) / 100,
+        preRenderP95Ms:
+          Math.round((preRender[Math.floor((preRender.length - 1) * 0.95)] || 0) * 100) / 100,
+        renderP95Ms:
+          Math.round((renderWork[Math.floor((renderWork.length - 1) * 0.95)] || 0) * 100) / 100,
         sampledWindowMs: Math.round(intervals.reduce((sum, ms) => sum + ms, 0)),
         render: { ...render },
       };

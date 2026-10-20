@@ -5371,8 +5371,10 @@
         }
         if (
           !e.aggro &&
-          this.line(e, target) &&
+          // Reject distant targets before tracing through every intervening
+          // obstacle. The same range and visibility rules still gate aggro.
           dist(e, target) < 260 &&
+          this.line(e, target) &&
           (!this.isDungeon() &&
           dist(target, { x: D.towns[this.regionIndex()][0], y: D.towns[this.regionIndex()][1] }) <
             170

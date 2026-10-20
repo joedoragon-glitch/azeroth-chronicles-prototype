@@ -1,8 +1,25 @@
 # Chromebook performance and inhabited Frontier — 19 October 2026
 
-Candidate `0.9.1+snapshot.dev.89` on `perf/chromebook-dev88` is prepared, not released. Published gameplay remains dev.88. Joel reported about **7 FPS while idle with full graphics**, and **below 15 FPS with Optimization Mode enabled**. Announcing the visual update waits on acceptable actual-device play. This report does not claim that the Chromebook problem is fixed.
+Candidate `0.9.1+snapshot.dev.90` on `perf/chromebook-dev88` is prepared, not released. Published gameplay remains dev.88. Joel reported about **7 FPS while idle with full graphics**, and **below 15 FPS with Optimization Mode enabled**. Announcing the visual update waits on acceptable actual-device play. This report does not claim that the Chromebook problem is fixed.
 
 The focused CPU sample identifies hidden-character contour compositing (`drawOcclusionOutlines` → `drawImage`) as a substantial local rendering cost. Small character masks now use bounded 256×256 surfaces in place of 384×384; bosses, captains, mounted riders, unknown bodies and registered resources exceeding conservative bounds retain the original buffers. Source dimensions, pivots and all declared animation-frame pivots gate compact registered masks. The two lazy four-surface pools are bounded at approximately 3.25 MiB combined (versus 2.25 MiB for the previous single full pool); the small-only case uses 1 MiB. Normal-mode drawing is unchanged in eight frozen desktop/phone comparisons. Optimization Mode uses integer offsets for the faint occlusion contour to avoid subpixel resampling; artwork, silhouettes, facing, body animation and combat cues stay intact.
+
+## Owner Chromebook reports and remaining frame work — 20 October UTC
+
+The two provided exports are from published dev.88. They capture **22 FPS in Crown** (39.5 ms p95 frame work) and **15 FPS in Frontier** (54.7 ms p95), both at night with Optimization Mode explicitly off. These are different sampling windows from the earlier ~7 FPS report, and do not measure the candidate or the earlier optimized-mode comparison. Both use a 2403×1248 backing canvas at 175% camera zoom. Ground cache is warm, floor tiles painted is zero, sprite/material queues are empty, and the audio reports contain no pending recording work. These samples point to ongoing local frame work rather than a cold download. They do not isolate CPU/GPU cost or prove audio can never contribute. Renderer phase and whole-frame percentiles use different rolling windows and cannot simply be added/subtracted to attribute a bottleneck.
+
+Source inspection and the earlier CPU stack revealed an avoidable simulation cost: every unengaged enemy traced line of sight to its target before testing the 260-unit engagement range. Dev.90 evaluates the same distance condition first. It does not reduce AI frequency, change range, skip in-range visibility, change collision geometry or alter simulation time.
+
+A bounded comparison ran 90 paired normal-mode night ticks in each of two deterministic fixtures near the reported Crown/Frontier positions, interleaving original and candidate ticks and excluding the first five timings. Full state, effects and messages remained exactly equal. Frontier retained eight engaged enemies. These are local Node simulation timings, not the owner's full save or Chromebook FPS:
+
+| Scene | Original median tick | Candidate median tick | Line-of-sight calls, original → candidate | Collision probes, original → candidate |
+| --- | ---: | ---: | ---: | ---: |
+| Crown | 25.78 ms | 10.83 ms | 5,850 → 0 | 364,011 → 123,022 |
+| Frontier | 31.09 ms | 13.57 ms | 5,527 → 282 | 1,035,135 → 845,805 |
+
+Dev.90 also adds bounded `preRenderP95Ms` and `renderP95Ms` to the existing exported report using the same 180 drawn-frame window. Pre-render includes shell, audio, simulation and HUD work; it is not a simulation-only measurement. A fake-clock check verified cost separation, bounded samples, pause and reset. One local Chromium startup rendered both night scenes at the reported viewport/DPR/zoom without game exceptions, with running audio and populated new metrics. Headless software rendering remained slow and is retained as crash/instrumentation evidence, not a performance pass. No quality/resolution reduction was introduced in this follow-up.
+
+Sanitized [report analysis](evidence/chromebook-frontier-20261019/owner-report-analysis.json), [paired simulation comparison](evidence/chromebook-frontier-20261019/visibility-range-comparison.json) and [local startup](evidence/chromebook-frontier-20261019/dev90-startup.json) preserve these limits. Raw campaign/progression exports are not published. The prior dev.89 rendering/cache/Frontier evidence below remains unchanged and applies to those unchanged paths.
 
 ## Bounded measurements
 
@@ -27,12 +44,12 @@ The candidate keeps complete offline installation and reuses a recording from an
 
 The diagonal front brace, window-covering patch and roof plank patches read as boarded abandonment. Houses, workshops and the rest building now keep clear openings and repaired masonry. The shared Frontier roof uses aligned replacement tiles, including related service variants. Frontier remains inhabited and recovering from warfare. [Before](evidence/chromebook-frontier-20261019/frontier-before.png) and [after](evidence/chromebook-frontier-20261019/frontier-after.png) show the actual renderer in the same controlled scene. Per-design handoffs record the owner’s later direction; prior dev.88 references remain historical.
 
-## Checks and next input
+## Checks and remaining device verification
 
 Generated build/syntax, 16 offline/cache checks, occlusion classification/painted masks, eight normal pixel comparisons and targeted formatting passed. Two representative paired renderer comparisons per graphics mode and one Frontier before/after review were completed. No full-game suite, stress loop, CI, merge or deployment ran for this candidate. Completed unchanged checks are not a reason to start another regression cycle.
 
 The optimized contour differs only in its faint edge treatment in the representative comparison (2,548 changed channels, maximum delta 22); zero normal-mode channels changed. These samples do not certify every asset/clip, physical phone, GPU backend or actual Chromebook FPS.
 
-**Next:** inspect an exported playtest report from Joel’s Chromebook in the actual slow idle spot (Adventure/Menu → Game and settings → Save and game management → Export playtest report). It contains frame-work/phase timings, visible-object counts, backing resolution and graphics preferences needed to identify the remaining device bottleneck. Do not claim that the reported 7 FPS is fixed or announce the update before actual-device verification.
+**Next:** the requested dev.88 reports have been received and inspected. Draft PR #324 now contains the dev.90 follow-up and preserves the Frontier correction. Actual-device FPS with the candidate remains unmeasured; do not announce the reported ~7 FPS problem as fixed. This checkpoint does not merge or deploy another release, request the same reports again, or reopen completed unchanged checks.
 
 Detailed bounded evidence: [summary](evidence/chromebook-frontier-20261019/summary.json).
