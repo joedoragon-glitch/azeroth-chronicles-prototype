@@ -9,7 +9,7 @@
     "originConversation": "Conversation URL unavailable; Joel instruction dated 20 October 2026.",
     "decisionSummary": "Joel approved the paired Mage bow candidate and requested lipstick for the Mage, female specialists and Marshal Veyra.",
     "decisionDate": "2026-10-20",
-    "repositoryIssueOrPR": null,
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/336",
     "contentDocuments": [
       "docs/BOWS_LIPSTICK_20261020.md"
     ],
@@ -23,7 +23,7 @@
     "pendingCorrections": []
   },
   "reference": {
-    "sourceCommit": "9eab6e25fdc85055436884c2945f2964ad8dfe05 (rollback baseline; updated source retained in release)",
+    "sourceCommit": "bb76c168c9a9b55bed82da3e2beaab32776fd0fa",
     "ownerFilesAndBranches": [
       "src/prototype/visuals.js::specialist",
       "polish/bows-lipstick-dev102"
@@ -39,10 +39,7 @@
     },
     "isolatedReferencePath": "tools/visual-review/bows-lipstick-dev102/specialist-mire.webp",
     "isolatedReferenceHash": "cea2797a9a01e7a0a8e4f8de2b24fa1840210dc66abc5e7a5c3e63f4f4b33266",
-    "gameplayContextPaths": [
-      "tools/visual-review/bows-lipstick-dev102/character-review.png",
-      "tools/visual-review/bows-lipstick-dev102/captive-review.png"
-    ],
+    "gameplayContextPaths": [],
     "traitsToPreserve": [
       "Existing face, hair, clothing, equipment and proportions",
       "Small rose/berry lips",
@@ -53,6 +50,10 @@
         "path": "src/prototype/visuals.js",
         "sha256": "cea434a2dd69ca3cb18e42e7441b5c9b0d82aac945ac73e94d21332880470824"
       }
+    ],
+    "detailReviewPaths": [
+      "tools/visual-review/bows-lipstick-dev102/character-review.png",
+      "tools/visual-review/bows-lipstick-dev102/captive-review.png"
     ]
   },
   "scope": {
@@ -92,7 +93,7 @@
     "activeContentRevision": null,
     "expectedReplacementRevision": null,
     "rollbackRevision": "Published dev.101 / 3fccc550e4bca3e356a8b152915bb842682508ef",
-    "releaseCommit": null,
-    "releaseEvidence": null
+    "releaseCommit": "84047541c7acec3b53fe14c895ac49ac5a184d27",
+    "releaseEvidence": "docs/evidence/BOWS_LIPSTICK_DEV102_PUBLICATION_20261020.json"
   }
 }

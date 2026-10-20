@@ -1,0 +1,104 @@
+{
+  "verified_at": "2026-10-20T09:45:55.984028+00:00",
+  "merge": "84047541c7acec3b53fe14c895ac49ac5a184d27",
+  "files": [
+    {
+      "path": "index.html",
+      "match": true,
+      "bytes": 5315,
+      "sha256": "a3f042d98d0512f4f3d67c940ea1539e39009b5f1f7266ecaebde919341ab641"
+    },
+    {
+      "path": "phone.html",
+      "match": true,
+      "bytes": 5316,
+      "sha256": "8c81fbab873ebe789919285e73e2f61d82b038d89a46c916be03d5013e83061e"
+    },
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "49f38813d0f55cfc9c1007db37d0f6e85905333a752fd31b3329f28feaf99e95"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 296,
+      "sha256": "284b5fd6839babc46d23dd717bb937af95cfbc31f892e1cc7331c112d8599c93"
+    },
+    {
+      "path": "src/prototype/archive.js",
+      "match": true,
+      "bytes": 54118,
+      "sha256": "96d9ac878ae4e0a02ff72f7115e397ea5482763e14ecc7d8b7e6494b558733fd"
+    },
+    {
+      "path": "src/prototype/boss-combat.js",
+      "match": true,
+      "bytes": 93534,
+      "sha256": "9173fe80181bb30128dc389d8b1df9df29b427c6016f5f3828629aac2a9adfc9"
+    },
+    {
+      "path": "src/prototype/combat-visuals.js",
+      "match": true,
+      "bytes": 51139,
+      "sha256": "6e64734dcf425c51b73fca7c65122362a4ddba419a6c069845ce3cb005408034"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 250066,
+      "sha256": "53ad7f074d974ef33ff6440855d2be2b5729c748271c3973ceb2163709f96a50"
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "match": true,
+      "bytes": 98548,
+      "sha256": "6086ed9a99d0a742f8850f573c3f5ff2573b3b6d7c6c24cb68824f118d46b39d"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "match": true,
+      "bytes": 179602,
+      "sha256": "8bde71f67ae67119d4bddd9f31c01dcb610a2cfa732d75605cb38439cf2aae0b"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "match": true,
+      "bytes": 466743,
+      "sha256": "cea434a2dd69ca3cb18e42e7441b5c9b0d82aac945ac73e94d21332880470824"
+    },
+    {
+      "path": "src/prototype/app.js",
+      "match": true,
+      "bytes": 133795,
+      "sha256": "65bd0752380ef46ddcf96df2977f9b89a32c5020c3dd295924ed033a47964e0f"
+    },
+    {
+      "path": "src/prototype/party.js",
+      "match": true,
+      "bytes": 52407,
+      "sha256": "17929913e6d4910789c8f32e673cf17adae32d973d387eb259c2696711149cda"
+    },
+    {
+      "path": "src/prototype/save.js",
+      "match": true,
+      "bytes": 46946,
+      "sha256": "86abb2f225e060a02e4f256daac3851864c5cf43048b323c76c149983bf709ad"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20550,
+      "sha256": "a4c60801fda56f3494cd262444983c2bc7372a27ceb462d2b810931c0039b9f6"
+    }
+  ],
+  "version": "0.9.1+snapshot.dev.102",
+  "pull_request": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/336",
+  "candidate_commit": "bb76c168c9a9b55bed82da3e2beaab32776fd0fa",
+  "package_only_run": 39402833461,
+  "run_conclusion": "success",
+  "validation": "Focused canvas/build/format only; no broad tests or hosted test CI.",
+  "normal_workflow_restored": true,
+  "temporary_publisher_removed": true
+}

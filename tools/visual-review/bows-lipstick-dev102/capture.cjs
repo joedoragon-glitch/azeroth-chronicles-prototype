@@ -83,3 +83,31 @@ for (let i = 2; i < 8; i++) {
   vc.fillText(name + ' · captive', (i - 2) * 180 + 90, 270);
 }
 fs.writeFileSync(__dirname + '/captive-review.png', variants.toBuffer('image/png'));
+// Actual renderer context: authored rescued Neri service position in Reedport.
+const C = require(root + '/src/prototype/engine'),
+  FX = require(root + '/src/prototype/combat-visuals'),
+  Renderer = require(root + '/src/prototype/renderer'),
+  assert = require('node:assert/strict');
+const g = new C('developer', 'mage', () => 0.9);
+g.enter('march');
+g.s.rescued.archive = true;
+g.refreshNPCs();
+g.s.clock = 120;
+const neri = g.zone().npcs.find((n) => n.id === 'service-archive');
+Object.assign(g.hero, { x: neri.x + 65, y: neri.y + 35 });
+const scene = createCanvas(1000, 650),
+  before = JSON.stringify(g.s);
+Renderer.create({
+  canvas: scene,
+  ctx: scene.getContext('2d'),
+  getGame: () => g,
+  platform: { cameraZoom: 1.5, cameraAnchor: () => ({ x: 420, y: 320 }) },
+  Campaign: C,
+  PrototypeVisuals: V,
+  PrototypeCombatVisuals: FX,
+  now: () => 16000,
+  chargePresentation: () => null,
+  isPaused: () => false,
+}).draw();
+assert.equal(JSON.stringify(g.s), before, 'render is read only');
+fs.writeFileSync(__dirname + '/mage-neri-town.png', scene.toBuffer('image/png'));

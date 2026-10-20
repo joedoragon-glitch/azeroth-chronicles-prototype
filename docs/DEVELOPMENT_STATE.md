@@ -1,6 +1,9 @@
 # Current development state — 20 October 2026
 
-**Candidate dev.102 — approved Mage bows and requested lipstick:** Shared normal/crowned bows; rose lips for Mage, Mira, Sela, Neri, Dara, Lyss and Vera, berry lips for Marshal Veyra. Crowned scarf retained. Focused native canvas/build checks only; package-only publication. [Scope](BOWS_LIPSTICK_20261020.md).
+**Published dev.102 — Mage bows and lipstick:** PR #336 / `84047541c7acec3b53fe14c895ac49ac5a184d27`; package-only run 39402833461 succeeded; all 15 exact live checks match. Approved violet bows on regular/crowned Mage. Lipstick for Mage, Mira, Sela, Neri, Dara, Lyss, Vera and Marshal Veyra (normal/TRUE); shared captive/rescued/appointed appearances. Crowned Mage scarf retained. Focused build/native canvas checks only; no broad CI. Normal workflow restored; temporary publisher removed. [Receipt](evidence/BOWS_LIPSTICK_DEV102_PUBLICATION_20261020.json). Owner live play/appearance feedback next; no automatic further work.
+
+
+**Historical candidate dev.102 — approved Mage bows and requested lipstick:** Shared normal/crowned bows; rose lips for Mage, Mira, Sela, Neri, Dara, Lyss and Vera, berry lips for Marshal Veyra. Crowned scarf retained. Focused native canvas/build checks only; package-only publication. [Scope](BOWS_LIPSTICK_20261020.md).
 
 
 **Published dev.101 — Frontier scenery and enemy combat:** PR #335 / `3fccc550e4bca3e356a8b152915bb842682508ef`; package-only run 39400269827 succeeded, all 13 live file checks match. Channel reaches map edges; civic fountain; burned-tree shoots. Enemy special reach +20%, acquisition/ranged targeting +10%; earlier regrouping and idle healer triage. Focused checks/native canvas only; no broad CI/browser matrix. Mage bows are preview-only and runtime head is unchanged; owner selection pending. Normal workflow restored; temporary publisher removed. [Receipt](evidence/FRONTIER_REACH_REGROUP_DEV101_PUBLICATION_20261020.json). Owner live play/preview feedback next; no automatic further work.
