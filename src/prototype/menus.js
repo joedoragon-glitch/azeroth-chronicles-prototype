@@ -468,7 +468,7 @@
       if (!getGame().keeperReadLedger()) return;
       openMenu(
         'The Keeper’s ledger',
-        'The Keeper’s seal marks a proposal to capture the land’s specialists. A later entry trades another captive for Neri: her craft was needed to save the soaked records.',
+        '“I propose that we take the land’s specialists into our custody.\n\nLater entry: I have traded another captive for Neri. Her craft is needed to save the soaked records.”\n\n— Drowned Keeper',
         [action('Close the ledger', back)],
         back,
       );

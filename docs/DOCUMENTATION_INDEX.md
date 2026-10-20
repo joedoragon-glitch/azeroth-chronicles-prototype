@@ -4,6 +4,7 @@
 
 | Need | Maintained entrypoint |
 | --- | --- |
+| Keeper Archive authoring leakage and first-person voice | [Dev.99 full text audit](KEEPER_ARCHIVE_COPY_AUDIT_20261020.md) |
 | Neri visibility, dodgeable friendly attacks and pet skill activation/training | [Dev.98 focused scope](NERI_PROJECTILE_PET_20261020.md) |
 | Night movement and attack tempo | [Dev.97 owner-revised 10–25% scaling](NIGHT_TEMPO_20261020.md) |
 | Night counter, ringleader defense and Rogue reuse | [Dev.96 balance scope](NIGHT_RINGLEADER_ROGUE_20261020.md) |
