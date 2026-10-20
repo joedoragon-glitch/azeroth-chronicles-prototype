@@ -1,38 +1,33 @@
 {
   "schemaVersion": 1,
-  "status": "procedural-design",
+  "status": "procedural-design-accepted",
   "designId": "marshal-veyra-face-armor-options-20261020",
-  "name": "Marshal Veyra face and armor options",
-  "kind": "boss-preview",
-  "nextAction": "Joel reviews the corrected ivory B arm/skirt preview before implementation.",
+  "name": "Marshal Veyra approved ivory parade armor",
+  "kind": "boss",
+  "nextAction": "Publish the owner-approved normal/TRUE correction; retain native references for a later separately requested raster stage.",
   "context": {
     "originConversation": "Conversation URL unavailable; owner request dated 20 October 2026.",
-    "decisionSummary": "Defined prettier eyes and improved armor appropriate to Veyra\u2019s aesthetic care; show options first.",
+    "decisionSummary": "Joel selected ivory B, requested a compact armored arm and continuous skirt with short tassets, then approved the corrected right-hand preview on 20 October 2026 at 11:03 EDT: \u201cthis will be good enough \u2026 you can go ahead.\u201d",
     "decisionDate": "2026-10-20",
     "contentDocuments": [
-      "tools/visual-review/veyra-options-20261020/README.md",
-      "docs/APPROVED_LIPS_STAFFS_20261020.md",
+      "docs/VEYRA_IVORY_20261020.md",
       "tools/visual-review/veyra-ivory-correction-20261020/README.md"
     ],
     "locationAndLore": "Veyra, Ash Sentinel; Crown Citadel marshal and former cosmetologist.",
-    "ownerSelection": "Ivory parade B selected on 20 October; compact armored arm and skirt/tasset corrections requested before implementation."
+    "ownerSelection": "Corrected ivory parade B approved for implementation and publication."
   },
   "decisions": {
-    "conceptAcceptance": "Owner requested options.",
-    "proceduralDesignAcceptance": "Ivory parade direction selected; revised arm/skirt appearance pending review.",
+    "conceptAcceptance": "Ivory parade B selected.",
+    "proceduralDesignAcceptance": "Corrected right-hand arm/skirt appearance approved 20 October 2026, 11:03 EDT.",
     "spriteProductionAuthorization": "No raster generation requested.",
     "generatedAppearanceAcceptance": "Not applicable.",
-    "pendingCorrections": [
-      "Review compact plate-covered arm and inward spear",
-      "Review continuous skirt with overlaid short tassets"
-    ]
+    "pendingCorrections": []
   },
   "reference": {
     "sourceCommit": "1944f7a56ed1f8cc205a51c33979e5d629561d2a",
     "ownerFilesAndBranches": [
-      "src/prototype/visuals.js::boss/citadel (read only)",
-      "tools/visual-review/veyra-options-20261020/preview.cjs",
-      "tools/visual-review/veyra-ivory-correction-20261020/preview.cjs"
+      "src/prototype/visuals.js::marshalVeyra",
+      "fix/veyra-ivory-dev111"
     ],
     "exactEntityState": {
       "renderKind": "enemy",
@@ -55,12 +50,20 @@
       "Original spear/shield stance and boss geometry",
       "Shared TRUE crown/halo and all mechanics"
     ],
-    "exactCandidatesPath": "tools/visual-review/veyra-ivory-correction-20261020/candidate.json"
+    "exactCandidatesPath": "tools/visual-review/veyra-ivory-correction-20261020/candidate.json",
+    "gameplayContextPaths": [
+      "tools/visual-review/veyra-approved-dev111/citadel-native.webp"
+    ],
+    "integratedReferencePath": "tools/visual-review/veyra-approved-dev111/approved-normal-true.png",
+    "integratedReferenceHash": "a9cc58a56f4755170d3b19efc1eecbf0306f342c2f44ceef1f2214d1a4e0f4d4",
+    "workingTreeSourceHashes": {
+      "src/prototype/visuals.js": "e61c4c52b623be5beb3d1d4416b0fa69d19db0c924c9a6dcb2ef52714b4fa641"
+    }
   },
   "production": {
     "releaseCommit": null,
     "releaseEvidence": null,
-    "rollbackRevision": "Live dev.103 Veyra remains unchanged"
+    "rollbackRevision": "Published dev.110 appearance, source commit 3a76a9e532f03f2e9f9656a2fadacea7f07743ca"
   },
   "previousPreviews": [
     {

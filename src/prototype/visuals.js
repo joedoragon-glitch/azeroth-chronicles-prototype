@@ -939,7 +939,7 @@
       ctx.stroke();
       ctx.restore();
     }
-    function bossPolish(family) {
+    function bossPolish(family, completeArmor = false) {
       switch (family) {
         case 'thorn':
           for (const side of [-1, 1]) {
@@ -1142,6 +1142,7 @@
             );
           break;
         case 'citadel':
+          if (completeArmor) break;
           for (const y of [-21, -12, -3])
             line(
               [
@@ -1699,6 +1700,353 @@
       }
       ctx.restore();
     }
+
+    function marshalVeyra() {
+      const option = 'B';
+      const p = {
+        plate: '#dbd9c9',
+        light: '#f3edda',
+        shade: '#929e9c',
+        cloth: '#685974',
+        trim: '#ccac69',
+        iris: '#5f829d',
+      };
+      // Heavy fitted plate and practical coat tails, with the same spear/shield poses.
+      humanoid(p.shade, steel, 1.45, false);
+      // Static skirt: a single continuous cloth body, with short hanging tassets.
+      for (const side of [-1, 1]) {
+        oval(side * 10, 14.5, 5.5, 2.3, p.shade);
+        line(
+          [
+            [side * 7, 14.5],
+            [side * 12, 14.5],
+          ],
+          p.light,
+          0.8,
+        );
+      }
+      shaped(p.cloth, () => {
+        ctx.moveTo(-11, -3);
+        ctx.lineTo(11, -3);
+        ctx.bezierCurveTo(12, 2, 17, 8, 19, 12);
+        ctx.quadraticCurveTo(0, 19, -19, 12);
+        ctx.bezierCurveTo(-17, 8, -12, 2, -11, -3);
+      });
+      for (const side of [-1, 1]) {
+        line(
+          [
+            [side * 6, 4],
+            [side * 8, 12],
+          ],
+          '#51465f',
+          0.8,
+        );
+      }
+      ctx.strokeStyle = p.trim;
+      ctx.lineWidth = 0.85;
+      ctx.beginPath();
+      ctx.moveTo(-17, 12);
+      ctx.quadraticCurveTo(0, 17, 17, 12);
+      ctx.stroke();
+      for (const side of [-1, 1]) {
+        shaped(p.plate, () => {
+          ctx.moveTo(side * 13, -1);
+          ctx.quadraticCurveTo(side * 9, -2, side * 6, 0);
+          ctx.lineTo(side * 5, 7);
+          ctx.quadraticCurveTo(side * 9, 11, side * 15, 9);
+          ctx.lineTo(side * 16, 5);
+        });
+        line(
+          [
+            [side * 13, 1],
+            [side * 13, 6],
+            [side * 9, 8],
+          ],
+          p.trim,
+          0.9,
+        );
+        line(
+          [
+            [side * 7, 1],
+            [side * 7, 5],
+          ],
+          p.light,
+          0.9,
+        );
+      }
+      shaped(p.plate, () => {
+        ctx.moveTo(-4, 0);
+        ctx.lineTo(4, 0);
+        ctx.lineTo(5, 5);
+        ctx.quadraticCurveTo(0, 10, -5, 5);
+      });
+      line(
+        [
+          [-3, 4],
+          [0, 7],
+          [3, 4],
+        ],
+        p.trim,
+        0.9,
+      );
+      shaped(p.plate, () => {
+        ctx.moveTo(-17, -23);
+        ctx.quadraticCurveTo(-9, -29, 0, -24);
+        ctx.quadraticCurveTo(9, -29, 17, -23);
+        ctx.lineTo(15, -10);
+        ctx.quadraticCurveTo(8, -3, 0, -4);
+        ctx.quadraticCurveTo(-8, -3, -15, -10);
+      });
+      shaped(p.light, () => {
+        ctx.moveTo(-11, -22);
+        ctx.quadraticCurveTo(0, -26, 11, -22);
+        ctx.lineTo(8, -17);
+        ctx.quadraticCurveTo(0, -20, -8, -17);
+      });
+      line(
+        [
+          [0, -20],
+          [0, -6],
+        ],
+        p.light,
+        1.1,
+      );
+      line(
+        [
+          [-13, -10],
+          [-7, -6],
+          [0, -5],
+          [7, -6],
+          [13, -10],
+        ],
+        p.trim,
+        1.3,
+      );
+      softRect(-10, -3, 20, 3.8, '#574a43', 0.8);
+      softRect(-2, -3, 4, 4, p.trim, 0.5);
+      for (const side of [-1, 1]) {
+        shaped(p.plate, () => {
+          ctx.moveTo(side * 13, -24);
+          ctx.quadraticCurveTo(side * 23, -28, side * 29, -20);
+          ctx.quadraticCurveTo(side * 31, -16, side * 25, -12);
+          ctx.lineTo(side * 16, -16);
+        });
+        line(
+          [
+            [side * 15, -23],
+            [side * 22, -23],
+            [side * 27, -19],
+          ],
+          p.trim,
+          1.3,
+        );
+        line(
+          [
+            [side * 17, -18],
+            [side * 23, -16],
+          ],
+          p.light,
+          0.9,
+        );
+        fillOval(side * 22, -21, 0.8, 0.8, p.light);
+      }
+      // The helmet masks the generic base head; no second face or mouth underneath.
+      shaped(p.shade, () => {
+        ctx.moveTo(-13, -47);
+        ctx.quadraticCurveTo(-10, -55, 0, -55);
+        ctx.quadraticCurveTo(10, -55, 13, -47);
+        ctx.lineTo(12, -25);
+        ctx.quadraticCurveTo(0, -18, -12, -25);
+      });
+      oval(0, -36, 8.5, 10.5, '#d5ad94');
+      shaped('#dfcfb3', () => {
+        ctx.moveTo(-8, -44);
+        ctx.quadraticCurveTo(-4, -50, 5, -47);
+        ctx.quadraticCurveTo(10, -46, 9, -39);
+        ctx.lineTo(6, -41);
+        ctx.quadraticCurveTo(2, -46, -3, -42);
+        ctx.lineTo(-8, -41);
+      });
+      shaped('#c8b79b', () => {
+        ctx.moveTo(7, -44);
+        ctx.quadraticCurveTo(12, -42, 10, -33);
+        ctx.lineTo(8, -31);
+        ctx.lineTo(8, -38);
+        ctx.lineTo(4, -41);
+      });
+      // Almond eyes: visible whites and irises, fine lids, and arched brows.
+      for (const side of [-1, 1]) {
+        const ex = side * 3.45,
+          ey = -37;
+        ctx.fillStyle = '#f3e7d8';
+        ctx.beginPath();
+        ctx.moveTo(ex - 2.05, ey);
+        ctx.quadraticCurveTo(ex, ey - 2.15, ex + 2.05, ey);
+        ctx.quadraticCurveTo(ex, ey + 1.7, ex - 2.05, ey);
+        ctx.fill();
+        fillOval(ex, ey, 0.95, 1.3, p.iris);
+        fillOval(ex, ey + 0.1, 0.43, 1.0, '#2c343b');
+        fillOval(ex - 0.25, ey - 0.5, 0.27, 0.35, '#fff6e4');
+        ctx.strokeStyle = '#50433e';
+        ctx.lineWidth = 0.65;
+        ctx.beginPath();
+        ctx.moveTo(ex - 2.1, ey);
+        ctx.quadraticCurveTo(ex, ey - 2.15, ex + 2.1, ey);
+        ctx.stroke();
+        line(
+          [
+            [ex - side * 2, -40],
+            [ex - side * 0.2, -40.8],
+            [ex + side * 1.8, -40.3],
+          ],
+          '#8a765d',
+          0.75,
+        );
+      }
+      line(
+        [
+          [0, -36],
+          [-0.5, -33.3],
+          [0.8, -33.3],
+        ],
+        '#ae7f68',
+        0.6,
+      );
+      expressionLips(-0.25, -35, false, false, '#a94058');
+      for (const side of [-1, 1]) {
+        shaped(p.plate, () => {
+          ctx.moveTo(side * 10, -45);
+          ctx.lineTo(side * 13, -43);
+          ctx.lineTo(side * 12, -27);
+          ctx.lineTo(side * 8, -24);
+          ctx.lineTo(side * 9, -29);
+          ctx.lineTo(side * 10, -33);
+        });
+        line(
+          [
+            [side * 11, -42],
+            [side * 11, -29],
+            [side * 9, -27],
+          ],
+          p.trim,
+          0.9,
+        );
+      }
+      shaped(p.plate, () => {
+        ctx.moveTo(-13, -48);
+        ctx.quadraticCurveTo(0, -58, 13, -48);
+        ctx.lineTo(11, -46);
+        ctx.quadraticCurveTo(0, -52, -11, -46);
+      });
+      line(
+        [
+          [-11, -48],
+          [0, -53],
+          [11, -48],
+        ],
+        p.trim,
+        1.2,
+      );
+      if (option === 'B') {
+        shaped(p.trim, () => {
+          ctx.moveTo(-3, -52);
+          ctx.quadraticCurveTo(0, -58, 3, -52);
+          ctx.lineTo(2, -50);
+          ctx.lineTo(-2, -50);
+        });
+        oval(0, -52, 1, 1.7, '#856b96');
+      }
+      shield(-24, -1, p.shade);
+      marshalSpear(23);
+      shaped(p.trim, () => {
+        ctx.moveTo(0, -21);
+        ctx.quadraticCurveTo(5, -17, 4, -14);
+        ctx.lineTo(0, -10);
+        ctx.lineTo(-4, -14);
+        ctx.quadraticCurveTo(-5, -17, 0, -21);
+      });
+      fillOval(0, -16, 1.5, 2, option === 'B' ? '#83749c' : '#719ca5');
+      // Upper-arm plate, elbow cop, vambrace, cuff and articulated gauntlet.
+      shaped(p.shade, () => {
+        ctx.moveTo(16, -21);
+        ctx.lineTo(23, -19);
+        ctx.quadraticCurveTo(26, -14, 24, -8);
+        ctx.lineTo(18, -8);
+        ctx.quadraticCurveTo(17, -13, 16, -21);
+      });
+      shaped(p.plate, () => {
+        ctx.moveTo(18, -19);
+        ctx.lineTo(23, -17);
+        ctx.lineTo(23, -10);
+        ctx.lineTo(19, -10);
+        ctx.quadraticCurveTo(18, -14, 18, -19);
+      });
+      line(
+        [
+          [20, -18],
+          [21, -12],
+        ],
+        p.light,
+        1,
+      );
+      oval(22, -8.5, 4.8, 3.5, p.plate);
+      line(
+        [
+          [19, -9],
+          [23, -10],
+          [25, -8],
+        ],
+        p.trim,
+        0.85,
+      );
+      shaped(p.plate, () => {
+        ctx.moveTo(18.5, -7);
+        ctx.lineTo(25, -7);
+        ctx.lineTo(26, -1);
+        ctx.quadraticCurveTo(23, 2, 19.5, -0.5);
+        ctx.lineTo(18.5, -7);
+      });
+      line(
+        [
+          [20, -6],
+          [21, -1],
+        ],
+        p.light,
+        1.1,
+      );
+      line(
+        [
+          [19.5, -2],
+          [25, -2],
+        ],
+        p.trim,
+        0.9,
+      );
+      shaped(p.light, () => {
+        ctx.moveTo(21, -2);
+        ctx.quadraticCurveTo(23, -4, 25, -1.8);
+        ctx.lineTo(25.7, 1.7);
+        ctx.quadraticCurveTo(23, 3.6, 20.8, 1.5);
+        ctx.lineTo(21, -2);
+      });
+      line(
+        [
+          [21.5, 0],
+          [24.5, 0],
+        ],
+        p.shade,
+        0.65,
+      );
+      line(
+        [
+          [21.5, 1.4],
+          [24.4, 1.4],
+        ],
+        p.shade,
+        0.6,
+      );
+    }
+
     function mageHead(crowned = false) {
       face(0, -29, skin, 0.94, false, 'bright', '#bd587d');
       // Owner-selected option C: silver twin front braids and approved violet bows.
@@ -16436,177 +16784,7 @@
           scorpionBody(true);
           break;
         case 'citadel':
-          humanoid('#697c82', steel, 1.45, false);
-          // Marshal Veyra: an adult woman in imposing, carefully fitted plate.
-          // Her open helmet and cropped swept hair keep her identity visible at native size.
-          softPoly(
-            [
-              [-13, -48],
-              [-8, -53],
-              [8, -53],
-              [13, -48],
-              [12, -27],
-              [7, -23],
-              [-7, -23],
-              [-12, -27],
-            ],
-            '#8a9c9e',
-            2,
-          );
-          oval(0, -36, 8.5, 10.5, '#d5ad94');
-          softPoly(
-            [
-              [-8, -45],
-              [0, -49],
-              [9, -45],
-              [8, -40],
-              [3, -43],
-              [-7, -40],
-            ],
-            '#e0d4bc',
-            2,
-          );
-          softPoly(
-            [
-              [7, -43],
-              [12, -40],
-              [10, -33],
-              [8, -31],
-              [8, -38],
-              [3, -40],
-            ],
-            '#d1c2a6',
-            1,
-          );
-          line(
-            [
-              [9, -40],
-              [10, -36],
-            ],
-            '#f0e2c5',
-            0.8,
-          );
-          line(
-            [
-              [-5, -37],
-              [-2, -37],
-            ],
-            '#354347',
-            1.5,
-          );
-          line(
-            [
-              [2, -37],
-              [5, -37],
-            ],
-            '#354347',
-            1.5,
-          );
-          expressionLips(-0.25, -35, false, false, '#a94058');
-          softPoly(
-            [
-              [-12, -4],
-              [-20, 12],
-              [0, 17],
-              [20, 12],
-              [12, -4],
-            ],
-            '#435e69',
-            2.5,
-          );
-          for (const side of [-1, 1]) {
-            softPoly(
-              [
-                [side * 10, -5],
-                [side * 16, -1],
-                [side * 19, 10],
-                [side * 11, 12],
-                [side * 7, 2],
-              ],
-              '#8b9fa1',
-              1.4,
-            );
-            line(
-              [
-                [side * 12, 0],
-                [side * 15, 9],
-              ],
-              '#c6cbc0',
-              1.1,
-            );
-          }
-          line(
-            [
-              [-11, -6],
-              [0, -4],
-              [11, -6],
-            ],
-            gold,
-            2,
-          );
-          shaped('#8b9fa3', () => {
-            ctx.moveTo(-13, -48);
-            ctx.quadraticCurveTo(0, -58, 13, -48);
-            ctx.lineTo(11, -46);
-            ctx.quadraticCurveTo(0, -52, -11, -46);
-          });
-          line(
-            [
-              [-11, -48],
-              [0, -53],
-              [11, -48],
-            ],
-            '#c5cbbf',
-            1.1,
-          );
-          shield(-24, -1, '#526970');
-          marshalSpear();
-          poly(
-            [
-              [-7, -16],
-              [0, -23],
-              [7, -16],
-              [0, -8],
-            ],
-            '#e8ae70',
-          );
-          line(
-            [
-              [16, -13],
-              [23, -5],
-              [29, -2],
-            ],
-            '#879da2',
-            4,
-          );
-          grip(29, -2, '#a7b7b2');
-
-          line(
-            [
-              [-8, -16],
-              [-7, -7],
-              [0, -4],
-            ],
-            '#b3c7bf',
-            1,
-          );
-          line(
-            [
-              [7, -15],
-              [7, -6],
-            ],
-            '#4d6e70',
-            1.1,
-          );
-          for (const y of [-33, -28, -23])
-            line(
-              [
-                [10, y],
-                [13, y + 1],
-              ],
-              '#a79d85',
-              0.7,
-            );
+          marshalVeyra();
           break;
         case 'darklord':
           crownedHero('paladin', true);
@@ -16639,10 +16817,19 @@
         default:
           humanoid('#897773');
       }
+      if (e.family === 'citadel') bossPolish(e.family, true);
       if (
-        !['thorn', 'mire', 'crypt', 'archive', 'ridge', 'abyss', 'cindermaw', 'darklord'].includes(
-          e.family,
-        ) &&
+        ![
+          'thorn',
+          'mire',
+          'crypt',
+          'archive',
+          'ridge',
+          'abyss',
+          'cindermaw',
+          'darklord',
+          'citadel',
+        ].includes(e.family) &&
         e.captainProfile !== 'supply-highlands'
       ) {
         bossFinish(e.family);

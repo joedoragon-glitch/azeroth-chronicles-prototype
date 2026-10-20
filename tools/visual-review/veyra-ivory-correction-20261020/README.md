@@ -1,3 +1,5 @@
+**Approved and implementing — 20 October, 11:03 EDT:** Joel approved the corrected right-hand design. The historical preview instructions below do not describe current release status. Implementation/evidence: `docs/VEYRA_IVORY_20261020.md`; `tools/visual-review/veyra-approved-dev111/`.
+
 # Veyra ivory parade: armored arm and skirt correction — 20 October 2026
 
 Joel selected option B / ivory parade armor, but requested a preview correction before implementation. He rejected the thin reaching arm: the weapon should come to a natural arm, and the arm should look fully armored. He also requested a visible skirt with plates on top, instead of awkward paired leg-like panels, with a properly static pose.
