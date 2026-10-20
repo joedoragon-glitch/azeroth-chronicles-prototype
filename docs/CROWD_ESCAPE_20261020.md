@@ -19,3 +19,5 @@ Automatic movement shares at most four full route-planning calls per simulation 
 - Changed-source formatting, build and generated-artifact consistency before package-only publication.
 
 These are focused headless behavior/call-count checks. They establish bounded work and actual escape outcomes, not a measured Chromebook FPS guarantee or a full campaign/browser regression. Joel will test live crowded fights. Veyra ivory armor remains preview-only and is outside this change.
+
+Published in PR #341 / `d54466352828c587164fe576d8cccf44fdba98da`; package-only run 39421254758 succeeded, with all 19 exact public files verified. Normal workflow restored. Receipt: `docs/evidence/CROWD_ESCAPE_DEV107_PUBLICATION_20261020.json`.
