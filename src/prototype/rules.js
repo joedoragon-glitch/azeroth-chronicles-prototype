@@ -547,6 +547,108 @@
     ],
   ];
   // Settlements use a deliberate ring: buildings define streets while the center stays readable for NPCs and labels.
+  // Authored Emberwatch plots; final migration runs after generic scenery passes.
+  const frontierSceneLayout = {
+    props: {
+      'settlement-major-0': [210, 205],
+      'settlement-major-1': [745, 170],
+      'settlement-major-2': [850, 770],
+      'settlement-major-3': [1070, 190],
+      'settlement-major-4': [165, 1050],
+      'settlement-major-5': [620, 1320],
+      'settlement-major-6': [975, 1180],
+      'settlement-major-8': [160, 1230],
+      'aesthetic-town-0': [650, 835],
+      'aesthetic-town-1': [1180, 835],
+      'aesthetic-town-2': [270, 1000],
+      'aesthetic-town-3': [170, 925],
+      'aesthetic-town-4': [810, 1140],
+      'aesthetic-town-5': [1100, 995],
+      'aesthetic-town-6': [1110, 1260],
+      'aesthetic-town-7': [785, 580],
+      'aesthetic-town-116': [215, 1175],
+      'world-life-civilian-0': [900, 980],
+      'world-life-civilian-1': [710, 1100],
+      'frontier-layout-emberwatch-livelihood-0': [260, 1390],
+      'frontier-layout-emberwatch-livelihood-1': [385, 1540],
+      'frontier-layout-emberwatch-livelihood-2': [850, 1420],
+      'frontier-layout-emberwatch-livelihood-3': [960, 1530],
+      'frontier-layout-emberwatch-livelihood-4': [1090, 1510],
+      'frontier-layout-emberwatch-livelihood-5': [1220, 1180],
+      'frontier-layout-emberwatch-livelihood-7': [1075, 1450],
+      'frontier-layout-roadworks-yard-17': [1080, 620],
+      'frontier-layout-roadworks-yard-18': [1145, 725],
+      'frontier-layout-roadworks-yard-20': [1220, 690],
+      'frontier-layout-roadworks-yard-21': [270, 1120],
+      'frontier-layout-roadworks-yard-22': [1230, 400],
+      'frontier-layout-roadworks-yard-24': [1170, 1050],
+      'regime-banner-frontier-0': [355, 835],
+      'public-lantern-frontier-0': [475, 570],
+      'settlement-minor-1': [1940, 930],
+      'settlement-minor-5': [1120, 1420],
+      'aesthetic-hamlet-9': [1190, 1330],
+      'aesthetic-hamlet-11': [905, 1230],
+      'aesthetic-hamlet-12': [1040, 1390],
+      'regional-handoff-0': [1010, 1280],
+      'regional-handoff-1': [1130, 1510],
+      'frontier-layout-route-north-ravine-works-52': [1160, 915],
+      'frontier-layout-route-north-ravine-works-54': [1650, 880],
+      'settlement-major-7': [215, 1540],
+    },
+    npcs: {
+      rest: [200, 720],
+      supplier: [720, 420],
+      recruiter: [385, 650],
+      board: [550, 420],
+      return: [190, 460],
+      minor: [1100, 1100],
+      'service-warlord': [490, 300],
+      'service-abyss': [870, 320],
+    },
+    streets: [
+      [
+        [155, 500],
+        [1170, 500],
+      ],
+      [
+        [450, 350],
+        [450, 1450],
+      ],
+      [
+        [155, 350],
+        [1170, 350],
+      ],
+      [
+        [1170, 350],
+        [1170, 1450],
+      ],
+      [
+        [155, 1450],
+        [1170, 1450],
+      ],
+    ],
+    version: 1,
+    poppies: [
+      [250, 270, 0],
+      [750, 310, 1],
+      [130, 770, 2],
+      [550, 1450, 3],
+      [1050, 1580, 0],
+      [830, 1160, 1],
+      [330, 1900, 2],
+      [920, 2120, 0],
+      [1000, 2450, 1],
+      [1160, 3200, 3],
+      [1760, 2900, 2],
+      [1960, 1080, 0],
+      [1820, 1650, 1],
+      [2260, 1870, 3],
+      [2400, 2500, 0],
+      [3030, 2180, 2],
+      [3020, 1230, 1],
+      [3130, 3050, 3],
+    ],
+  };
   const settlementLayouts = {
     major: [
       [-250, -145, 'house'],
@@ -2377,6 +2479,42 @@
       blend = t * t * (3 - 2 * t);
     return { y: a[1] + (b[1] - a[1]) * blend, width: a[2] + (b[2] - a[2]) * blend };
   }
+  // Rain-fed basins retain the old dry crossing, with shared irregular shores.
+  const frontierRainPools = [
+    { x: 2790, y: 2005, rx: 70, ry: 155, phase: 0.7 },
+    { x: 2790, y: 2435, rx: 70, ry: 115, phase: 2.4 },
+  ].map((p) => ({
+    ...p,
+    points: Array.from({ length: 32 }, (_, n) => {
+      const a = (n * Math.PI) / 16,
+        r = 0.87 + 0.065 * Math.sin(3 * a + p.phase) + 0.045 * Math.cos(5 * a - p.phase);
+      return { x: p.x + Math.cos(a) * p.rx * r, y: p.y + Math.sin(a) * p.ry * r };
+    }),
+  }));
+  function rainPoolBlocked(pools, x, y, radius = 0) {
+    for (const p of pools) {
+      if (
+        x < p.x - p.rx - radius ||
+        x > p.x + p.rx + radius ||
+        y < p.y - p.ry - radius ||
+        y > p.y + p.ry + radius
+      )
+        continue;
+      let inside = false;
+      for (let j = 0, k = p.points.length - 1; j < p.points.length; k = j++) {
+        const a = p.points[k],
+          b = p.points[j],
+          dx = b.x - a.x,
+          dy = b.y - a.y,
+          t = Math.max(0, Math.min(1, ((x - a.x) * dx + (y - a.y) * dy) / (dx * dx + dy * dy)));
+        if (Math.hypot(x - a.x - t * dx, y - a.y - t * dy) < radius) return true;
+        if (a.y > y !== b.y > y && x < ((b.x - a.x) * (y - a.y)) / (b.y - a.y) + a.x)
+          inside = !inside;
+      }
+      if (inside) return true;
+    }
+    return false;
+  }
   const terrain = [
     [
       { kind: 'water', x: 630, y: 1320, r: 125 },
@@ -2393,8 +2531,8 @@
     ],
     [
       { kind: 'fountain', x: 1775, y: 1120, r: 46 },
-      { kind: 'ravine', x1: 2720, x2: 2860, y1: 1850, y2: 2550, gaps: [[2160, 2320]] },
-      { kind: 'rock', x: 850, y: 2850, r: 145 },
+      { kind: 'rain-pools', pools: frontierRainPools },
+      { kind: 'grain-silo', x: 850, y: 2850, r: 70 },
     ],
     [
       { kind: 'lava', x1: 2110, x2: 2190, y1: 2000, y2: 2940, gaps: [[2260, 2520]] },
@@ -6939,6 +7077,9 @@
     },
     fieldBossCenters,
     occupationAnchors,
+    frontierSceneLayout,
+    frontierRainPools,
+    rainPoolBlocked,
     settlementLayouts,
     serviceOffsets,
     natureThemes,

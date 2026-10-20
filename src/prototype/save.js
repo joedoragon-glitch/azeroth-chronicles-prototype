@@ -594,7 +594,7 @@
               }
             }
           }
-          if (!Array.isArray(z.props) || z.props.length > 400) throw Error('Invalid zone assets');
+          if (!Array.isArray(z.props) || z.props.length > 512) throw Error('Invalid zone assets');
           for (const f of ['nodes', 'buildings'])
             if (!Array.isArray(z[f]) || z[f].length > 300) throw Error('Invalid zone assets');
           if (!z.packTimers || typeof z.packTimers !== 'object') throw Error('Invalid pack timers');

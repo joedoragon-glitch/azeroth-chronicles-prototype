@@ -1806,6 +1806,7 @@
             });
           }
         }
+        this.frontierTownServices(z);
       }
     }
     clearTonic() {
