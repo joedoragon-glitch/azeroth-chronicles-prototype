@@ -1536,51 +1536,63 @@
     }
     function mageHead(crowned = false) {
       face(0, -29, skin, 0.94, false, 'bright');
-      // Swept silver fringe and a high side ponytail, shared by normal and
-      // crowned appearances. Layered ends keep the silhouette light and young.
-      shaped('#bccbd7', () => {
-        // Root stays below/behind the hat brim; the tail clears its right edge.
-        ctx.moveTo(10, -32);
-        ctx.bezierCurveTo(20, -37, 29, -32, 26, -24);
-        ctx.quadraticCurveTo(24, -16, 16, -12);
-        ctx.lineTo(19, -23);
-        ctx.quadraticCurveTo(13, -17, 13, -18);
-        ctx.quadraticCurveTo(18, -27, 10, -32);
+      // Owner-selected option C: silver twin front braids and violet ties.
+      // The shared head keeps these visible below normal/crowned headgear.
+
+      shaped('#c2d2df', () => {
+        ctx.moveTo(-10, -36);
+        ctx.lineTo(-12, -24);
+        ctx.lineTo(-8, -20);
+        ctx.lineTo(-6, -34);
+        ctx.lineTo(7, -34);
+        ctx.lineTo(8, -20);
+        ctx.lineTo(12, -24);
+        ctx.lineTo(10, -36);
+        ctx.closePath();
       });
-      line(
-        [
-          [15, -32],
-          [22, -29],
-          [22, -24],
-          [18, -18],
-        ],
-        '#e9eff1',
-        1.5,
-      );
-      shaped('#d0dce5', () => {
+      for (const side of [-1, 1]) {
+        for (let y = -24; y <= -10; y += 3.7) {
+          oval(side * 10, y, 2.5, 2.7, '#b9cbd8');
+          line(
+            [
+              [side * 10 - 1.8, y - 1.4],
+              [side * 10 + 1.8, y + 1.2],
+            ],
+            '#f0f5f5',
+            1,
+          );
+        }
+        softRect(side * 10 - 2, -7.5, 4, 2.5, '#967bb6', 0.7);
+        shaped('#dce7ed', () => {
+          ctx.moveTo(side * 10 - 2, -5);
+          ctx.lineTo(side * 10 - 2.7, -0.5);
+          ctx.lineTo(side * 10 + 2.7, -2);
+          ctx.lineTo(side * 10 + 2, -5);
+          ctx.closePath();
+        });
+      }
+
+      shaped('#d7e2e9', () => {
         ctx.moveTo(-9, -36);
-        ctx.quadraticCurveTo(-1, -43, 9, -36);
-        ctx.lineTo(10, -24);
-        ctx.lineTo(6, -20);
-        ctx.lineTo(6, -32);
-        ctx.quadraticCurveTo(1, -29, -4, -29);
+        ctx.quadraticCurveTo(-1, -40, 9, -36);
+        ctx.lineTo(8, -29);
+        ctx.lineTo(4, -32);
+        ctx.quadraticCurveTo(0, -28, -4, -28);
         ctx.lineTo(-1, -33);
-        ctx.quadraticCurveTo(-5, -30, -8, -28);
-        ctx.lineTo(-7, -21);
-        ctx.lineTo(-11, -25);
+        ctx.quadraticCurveTo(-6, -30, -9, -29);
         ctx.closePath();
       });
       line(
         [
           [-7, -34],
-          [-2, -36],
-          [4, -35],
-          [0, -32],
+          [-1, -36],
+          [5, -35],
+          [1, -32],
         ],
-        '#f0f4f3',
-        1.2,
+        '#f3f6f4',
+        1.1,
       );
-      softRect(16, -32, 4, 3, '#8e74b1', 1);
+
       shaped('#526d9b', () => {
         ctx.moveTo(-11, -36);
         ctx.quadraticCurveTo(-5, -47, -2, -56);

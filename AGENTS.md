@@ -1,5 +1,9 @@
 # Project working rules
 
+- Latest steering (20 October, 02:23 EDT): owner selected Mage hair C / twin braids, then requested staff options and will choose one. Dev.93 braid candidate is prepared, unmerged/unpublished. Four procedural staff previews with the selected braids are in tools/visual-review/mage-staff-options-20261020. Hold merge/publication for staff selection so both ship together. No tests requested; published game remains dev.92.
+
+- Latest owner selection (20 October, 02:21 EDT): C / Twin braids from regular-and-crowned Mage comparison, replacing rejected dev.92 ponytail. Apply exact accepted procedural option in dev.93 using the existing quick no-test direct merge/publication process. Preserve headgear/scarf, dev.91 identities and dev.90 performance. Canon and comparison: docs/MAGE_HAIR_QUICKFIX_20261020.md. Temporary packaging-only publisher must be removed and normal workflow restored afterward.
+
 - Current release: dev.92 Mage hairstyle correction merged in PR #326 (657df95348a21e4f396872dd1b2cbc4c775e3f79) and published by packaging-only run 39375505253. Shared youthful silver fringe/side ponytail fits below/behind normal/crowned headgear; existing crown/scarf retained. No tests/browser review; withdrawn QoL idea excluded. Exact live source verified; dev.91 identities and dev.90 performance retained. Normal workflow restored and temporary publisher removed. See docs/MAGE_HAIR_QUICKFIX_20261020.md. No automatic further work.
 
 - Latest owner continuation (20 October, 01:29 EDT): quick dev.92 Mage hairstyle correction, no tests, using the direct merge/publication workflow. Younger swept silver fringe and side ponytail fitted below/behind existing headgear in normal/crowned appearances. Withdrawn quality-of-life idea excluded. Preserve dev.91 presentation choices and dev.90 performance work. See docs/MAGE_HAIR_QUICKFIX_20261020.md.

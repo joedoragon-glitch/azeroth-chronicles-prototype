@@ -4,7 +4,7 @@
   "designId": "approved-art-shared-hero-mage",
   "name": "Hero Mage",
   "kind": "shared",
-  "nextAction": "Released dev.92 hair correction. Preserve headgear/identities/performance changes and originals; no automatic further work.",
+  "nextAction": "Publish selected option C in dev.93 using the authorized no-test process; preserve other characters, original rasters and performance fixes.",
   "context": {
     "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
     "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Shape the hat crown/brim, robe folds, hands and staff fittings while preserving the blue scholarly silhouette.",
@@ -146,6 +146,21 @@
       "pullRequest": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/326",
       "publishedCommit": "657df95348a21e4f396872dd1b2cbc4c775e3f79",
       "releaseEvidence": "docs/evidence/MAGE_DEV92_PUBLICATION_20261020.json"
+    },
+    "selectedMageHairstyle": {
+      "date": "2026-10-20",
+      "time": "02:21 America/New_York",
+      "ownerSelection": "C",
+      "optionName": "Twin braids",
+      "appearanceAcceptance": "Owner explicitly selected C from the comparison showing regular and crowned Mage. This accepts that procedural design, not a new generated raster.",
+      "implementation": "Exact option C drawing: silver twin front braids with violet ties and swept fringe; shared mageHead preserves existing hat, crown and purple scarf.",
+      "comparisonPath": "tools/visual-review/mage-hair-options-20261020/approved-comparison.png",
+      "comparisonSha256": "03870b1168308e57c6d5313bd8934c16159726e14af2b0036216fa12496854e6",
+      "comparisonLibraryFileId": "libfile_1371d933436c8191917efa696fc15e68",
+      "optionSource": "tools/visual-review/mage-hair-options-20261020/options.json",
+      "sourceSha256": "b00881fcdf9ff68d20bed63789289ec522460461c5d62d611701297e9a736262",
+      "decisionRecord": "docs/MAGE_HAIR_QUICKFIX_20261020.md",
+      "status": "dev.93 selected correction; merge/publication pending, no tests."
     }
   }
 }
