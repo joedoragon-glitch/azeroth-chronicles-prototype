@@ -150,6 +150,7 @@
           partyList: this.s.party,
           partyCount: this.s.party.length,
           at: this.s.time,
+          combatActive: this.manaCombatActive(),
           bodies,
           hostile: new Set(enemies),
           members: new Set(bodies),
@@ -199,7 +200,13 @@
         for (const other of candidates) {
           if (other === unit || other.hp <= 0) continue;
           const friendly = frame.hostile.has(unit) === frame.hostile.has(other);
-          if (friendly && relaxFriendly) continue;
+          // Travel should not snag the hero on their own companions. Keep
+          // normal body blocking throughout the existing combat-active state.
+          if (
+            friendly &&
+            (relaxFriendly || (!frame.combatActive && (unit === this.hero || other === this.hero)))
+          )
+            continue;
           const gap = this.actorRadius(unit) + this.actorRadius(other),
             before = dist(unit, other),
             after = dist(point, other);
@@ -233,6 +240,7 @@
             dy = 0;
           for (const other of this.nearbyActors(unit, frame)) {
             if (other === unit || other.hp <= 0) continue;
+            if (other === this.hero && !frame.combatActive && !frame.hostile.has(unit)) continue;
             const gap = this.actorRadius(unit) + this.actorRadius(other),
               distance = dist(unit, other),
               overlap = gap - distance;
