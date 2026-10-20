@@ -12,4 +12,4 @@ The focused audit passes 90 unchanged pixel comparisons (eight other pets and al
 
 Joel approved the shown corrections: “I like the pet corrections. You can proceed with them.” He noticed the Treasurer’s coin hand in both miniature and boss and explicitly left it unchanged for this pass.
 
-Status: approved, audited candidate; merge and package-only publication next. Previous art and baseline commit remain recoverable; each affected design handoff records this correction separately from historical approvals.
+Published in PR [#349](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/349), merge `ba15208bd109386152e8d41753e436d74ddbbe5b`. Package-only run 39506834456 succeeded; all 31 exact live files match at 2026-10-20 22:17:50 UTC. Normal workflow restored and temporary publisher removed. Receipt: `docs/evidence/PET_VISUAL_DEV115_PUBLICATION_20261020.json`. Updated [forum pet lineup](../tools/visual-review/pet-identity-dev115/mascotas-del-juego.png) uses the current exact drawings. Previous art and baseline commit remain recoverable; each affected design handoff records this correction separately from historical approvals.

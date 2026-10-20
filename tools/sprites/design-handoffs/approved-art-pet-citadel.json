@@ -4,7 +4,7 @@
   "designId": "approved-art-pet-citadel",
   "name": "Marshal Veyra / Ash Sentinel miniature companion",
   "kind": "pet",
-  "nextAction": "Publish the owner-approved, audited dev.115 correction using package-only workflow; preserve the Treasurer coin hand for a later pass.",
+  "nextAction": "Published owner-approved dev.115 correction. Preserve accepted appearance; Treasurer/boss coin hand remains deferred.",
   "context": {
     "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
     "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Refine helmet fit, tiny braid/face, hands and ceremonial armor joints.",
@@ -147,7 +147,7 @@
     "comparisonSha256": "98f3ac4604f31e4adae89aa27008d573d6f6beff6fc5b660973a534528340e2b",
     "nativeScene": "tools/visual-review/pet-identity-dev115/native-valley.png",
     "checks": "tools/visual-review/pet-identity-dev115/checks.json",
-    "release": "Approved dev.115 candidate; merge/publication next.",
+    "release": "Published PR #349 / ba15208bd109386152e8d41753e436d74ddbbe5b; package-only run 39506834456; 31 exact live files verified.",
     "explicitDeferral": "Treasurer and boss coin hand remain unchanged in this pass."
   }
 }
