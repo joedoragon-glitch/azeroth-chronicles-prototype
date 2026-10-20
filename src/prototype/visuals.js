@@ -1298,6 +1298,34 @@
       ctx.fill();
       ctx.stroke();
     }
+    // A small colored lip silhouette stays readable at the native camera scale.
+    // Explicit callers select it; generic faces and male specialists keep their own mouths.
+    function lipstick(x, y, color = '#b85372', smile = 0) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(x - 2.9, y);
+      ctx.quadraticCurveTo(x - 1.4, y - 1.2, x, y - 0.35 + smile);
+      ctx.quadraticCurveTo(x + 1.4, y - 1.2, x + 2.9, y);
+      ctx.quadraticCurveTo(x, y + 2.3 + smile, x - 2.9, y);
+      ctx.fill();
+      line(
+        [
+          [x - 2.2, y + 0.15],
+          [x, y + 0.65 + smile * 0.5],
+          [x + 2.2, y + 0.15],
+        ],
+        '#763749',
+        0.45,
+      );
+      line(
+        [
+          [x - 0.9, y + 1.1 + smile * 0.5],
+          [x + 0.8, y + 1.1 + smile * 0.5],
+        ],
+        '#e99aa4',
+        0.5,
+      );
+    }
     function face(x, y, color = skin, bulk = 1, aged = false, mood = 'steady') {
       oval(x, y, 8 * bulk, 9, color);
       fillOval(x - 2 * bulk, y - 3, 4 * bulk, 4, '#fff1d5', 0.17);
@@ -1580,7 +1608,8 @@
     }
     function mageHead(crowned = false) {
       face(0, -29, skin, 0.94, false, 'bright');
-      // Owner-selected option C: silver twin front braids and violet ties.
+      lipstick(0, -24, '#bd587d', 0.7);
+      // Owner-selected option C: silver twin front braids and approved violet bows.
       // The shared head keeps these visible below normal/crowned headgear.
 
       shaped('#c2d2df', () => {
@@ -1606,7 +1635,36 @@
             1,
           );
         }
-        softRect(side * 10 - 2, -7.5, 4, 2.5, '#967bb6', 0.7);
+        for (const direction of [-1, 1]) {
+          shaped(direction < 0 ? '#8870ac' : '#ac8bca', () => {
+            ctx.moveTo(side * 10, -6.3);
+            ctx.bezierCurveTo(
+              side * 10 + direction * 7,
+              -13,
+              side * 10 + direction * 7,
+              -3,
+              side * 10,
+              -6.3,
+            );
+          });
+          line(
+            [
+              [side * 10 + direction, -6.4],
+              [side * 10 + direction * 4, -7.5],
+            ],
+            '#ddc2eb',
+            0.55,
+          );
+          shaped('#a38ac3', () => {
+            ctx.moveTo(side * 10 + direction * 0.8, -5.8);
+            ctx.lineTo(side * 10 + direction * 3, -1.1);
+            ctx.lineTo(side * 10 + direction * 1.4, -1.7);
+            ctx.lineTo(side * 10 + direction * 0.6, -0.5);
+            ctx.lineTo(side * 10 - direction * 0.3, -5.6);
+          });
+        }
+        oval(side * 10, -6.3, 1.45, 1.6, '#79588f');
+        oval(side * 10 - 0.3, -6.8, 0.55, 0.6, '#d9b9e8');
         shaped('#dce7ed', () => {
           ctx.moveTo(side * 10 - 2, -5);
           ctx.lineTo(side * 10 - 2.7, -0.5);
@@ -6789,6 +6847,7 @@
         darklord: 'amused',
       }[e.family];
       face(0, -29, skin, 1, ['ridge', 'citadel', 'crypt'].includes(e.family), mood);
+      if (women) lipstick(0, -24, '#b75c70', mood === 'wry' ? 0 : 0.7);
       const hair = {
         thorn: 'curls',
         crypt: 'short',
@@ -16011,14 +16070,7 @@
             '#354347',
             1.5,
           );
-          line(
-            [
-              [-2, -30],
-              [2, -30],
-            ],
-            '#956b62',
-            1.2,
-          );
+          lipstick(0, -30, '#a94058');
           softPoly(
             [
               [-12, -4],

@@ -4,6 +4,7 @@
 
 | Need | Maintained entrypoint |
 | --- | --- |
+| Approved Mage bows, female lipstick and Marshal Veyra | [Dev.102 scope](BOWS_LIPSTICK_20261020.md) |
 | Frontier channel/fountain/regrowth, enemy special reach and regroup healing | [Dev.101 scope](FRONTIER_REACH_REGROUP_20261020.md) |
 | Mounted riders and updating skills on existing pets/companions | [Dev.100 scope](MOUNTED_ROSTER_SKILLS_20261020.md) |
 | Keeper Archive authoring leakage and first-person voice | [Dev.99 full text audit](KEEPER_ARCHIVE_COPY_AUDIT_20261020.md) |
