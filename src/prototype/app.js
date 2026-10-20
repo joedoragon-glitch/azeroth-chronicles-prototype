@@ -633,6 +633,7 @@
     partyMenu,
     talents,
     quests,
+    transport,
   } = PrototypeMenus.create({
     getGame: () => game,
     Campaign,
@@ -1845,25 +1846,7 @@
           ),
         );
       } else {
-        const i = game.regionIndex(),
-          r = D.regions[i],
-          target = D.regions[i + n.direction],
-          cost = game.travelFare(D.regions.indexOf(r), n.direction);
-        openMenu(
-          n.name,
-          game.s.mode === 'developer'
-            ? 'FREE — Developer Mode. Travel has no fare or return-ticket requirement.'
-            : 'Fare ' +
-                cost +
-                (manaEnabled
-                  ? ' crowns. Paid outbound travel includes free return. Health, mana and supplies are preserved.'
-                  : ' crowns. Paid outbound travel includes free return. Health and supplies are preserved.'),
-          [
-            action('Travel to ' + target.name, () => {
-              if (game.travel(n.direction)) closeMenu();
-            }),
-          ],
-        );
+        transport(n);
       }
     }
   }

@@ -35,6 +35,23 @@
       payTravelFare(amount) {
         this.hero.gold -= amount;
       }
+      passageWorkQuote(direction = 1) {
+        if (this.isDungeon() || direction !== 1 || this.s.mode === 'developer') return null;
+        const i = this.regionIndex(),
+          region = D.regions[i];
+        if (!D.regions[i + 1]) return null;
+        const fare = this.travelFare(i, direction),
+          bosses = D.bosses.filter((b) => b.region === region.id && b.captive);
+        if (
+          fare <= 0 ||
+          this.hero.gold >= fare ||
+          !bosses.length ||
+          !bosses.every((b) => this.s.rescued[b.id])
+        )
+          return null;
+        const payment = Math.max(0, this.hero.gold);
+        return { fare, payment, work: fare - payment };
+      }
       deathPenaltyFraction(zone = this.s.zone) {
         if (this.s.challenge?.succession) return 0;
         const region = D.regions[this.regionIndex(zone)]?.id;

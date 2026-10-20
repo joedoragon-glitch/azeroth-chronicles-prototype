@@ -73,7 +73,7 @@ function casesBetween(a,b){
  return [...s.matchAll(/case '([^']+)'/g)].map(m=>m[1]);
 }
 for(const kind of casesBetween('function decoration(kind)','function landmark()'))assert(promptCoverage.includes('| `'+kind+'` |'),'coverage audit classifies decoration '+kind);
-for(const kind of casesBetween('function landmark()','const type = e.renderKind'))assert(promptCoverage.includes('| `'+kind+'` |'),'coverage audit classifies landmark '+kind);
+for(const kind of casesBetween('function landmark()','function craftedWork(role)'))assert(promptCoverage.includes('| `'+kind+'` |'),'coverage audit classifies landmark '+kind);
 for(const kind of casesBetween('function settlementBuilding(kind)','function decoration(kind)'))assert(promptCoverage.includes('| `'+kind+'` |'),'coverage audit classifies settlement structure '+kind);
 
 
@@ -89,13 +89,15 @@ assert.deepEqual(Sprites.candidateKeys({renderKind:'building',progress:4,full:fa
 
 assert(Sprites.installManifest({version:2,sprites:{
  'hero:paladin':{src:'./assets/sprites/paladin.webp',displayWidth:84,displayHeight:108,anchorX:.5,anchorY:.88,labelHeight:96},
+ 'hero:ranger':{src:'./assets/sprites/ranger.webp',displayWidth:84,displayHeight:108,anchorX:.5,anchorY:.88,labelHeight:96},
  'enemy:goblin':{src:'./assets/sprites/goblin.webp',displayWidth:64,displayHeight:72}
 }}));
-assert.equal(Sprites.definitionFor({renderKind:'hero',class:'paladin'}).key,'hero:paladin');
+assert.equal(Sprites.definitionFor({renderKind:'hero',class:'paladin'}),null,'owner-selected Paladin stays procedural');
+assert.equal(Sprites.definitionFor({renderKind:'hero',class:'ranger'}).key,'hero:ranger');
 assert.equal(Sprites.definitionFor({renderKind:'enemy',species:'goblin'}).key,'enemy:goblin');
 assert.equal(Sprites.definitionFor({renderKind:'enemy',species:'goblin',ranged:true}),null,'ranged variant must not silently use melee sprite');
 assert.equal(Sprites.definitionFor({renderKind:'enemy',species:'goblin',captain:true}),null,'captain must remain procedural until captain art exists');
-assert.equal(Sprites.height({renderKind:'hero',class:'paladin'},0,false,54),96);
+assert.equal(Sprites.height({renderKind:'hero',class:'ranger'},0,false,54),96);
 assert.equal(Sprites.height({renderKind:'enemy',species:'goblin'},0,false,54),72*.88);
 assert.equal(Sprites.height({renderKind:'enemy',species:'wolf'},0,false,54),54);
 assert.equal(Sprites.entityScale({visualScale:1.18},{scale:1}),1.18);
@@ -105,19 +107,21 @@ console.log('PASS Static sprite registry preserves exact variants, anchors, scal
 // A failed/missing image returns false, and the actual renderer reaches its procedural owner.
 (async()=>{
  const vm=require('node:vm'),fixtures=require('./helpers/sprite-fixtures.cjs');
- const scope={console,Image:class{set src(src){queueMicrotask(()=>{if(src.endsWith('test-fixture-b.png'))this.onerror();else{this.width=this.naturalWidth=2;this.height=this.naturalHeight=2;this.onload();}})}},fetch:async()=>new Response(JSON.stringify(fixtures.manifest())),Response};
+ const fixtureManifest=fixtures.manifest();fixtureManifest.sprites['hero:ranger']=fixtureManifest.sprites['hero:paladin'];fixtureManifest.sprites['ally:archer']=fixtureManifest.sprites['ally:soldier'];
+ const scope={console,Image:class{set src(src){queueMicrotask(()=>{if(src.endsWith('test-fixture-b.png'))this.onerror();else{this.width=this.naturalWidth=2;this.height=this.naturalHeight=2;this.onload();}})}},fetch:async()=>new Response(JSON.stringify(fixtureManifest)),Response};
  vm.createContext(scope);vm.runInContext(fs.readFileSync(path.join(__dirname,'../src/prototype/sprite-format.js'),'utf8'),scope);vm.runInContext(fs.readFileSync(path.join(__dirname,'../src/prototype/sprites.js'),'utf8'),scope);
- const sprites=scope.PrototypeSprites;await sprites.preload(undefined,Object.keys(fixtures.manifest().sprites));assert.equal(sprites.status().loaded,1);assert.equal(sprites.status().failed,1);
+ const sprites=scope.PrototypeSprites;await sprites.preload(undefined,Object.keys(fixtureManifest.sprites));assert.equal(sprites.status().loaded,1);assert.equal(sprites.status().failed,1);
  const drawn=[],ctx=new Proxy({measureText:t=>({width:String(t).length*6}),createLinearGradient:()=>({addColorStop(){}}),createRadialGradient:()=>({addColorStop(){}})},{get:(o,k)=>k in o?o[k]:(...args)=>{if(k==='drawImage')drawn.push(args)}});
- assert(sprites.draw(ctx,{renderKind:'hero',class:'paladin'},{x:100,y:100}));
+ assert.equal(sprites.draw(ctx,{renderKind:'hero',class:'paladin'},{x:100,y:100}),false,'owner-selected Paladin body stays procedural even when an image is cached');
+ assert(sprites.draw(ctx,{renderKind:'hero',class:'ranger'},{x:100,y:100}));
  assert.deepEqual(drawn[0].slice(1),[84,65,32,40],'default/explicit anchors and dimensions apply at drawing');
- assert.equal(sprites.draw(ctx,{renderKind:'ally',type:'soldier'},{x:100,y:100}),false,'failed image stays procedural');
+ assert.equal(sprites.draw(ctx,{renderKind:'ally',type:'archer'},{x:100,y:100}),false,'failed image stays procedural');
  assert.equal(sprites.draw(ctx,{renderKind:'enemy',species:'goblin',ranged:true},{x:100,y:100}),false,'absent exact variant stays procedural');
- const C=require('../src/prototype/engine'),Renderer=require('../src/prototype/renderer'),c=new C('normal','paladin',()=>.9);
+ const C=require('../src/prototype/engine'),Renderer=require('../src/prototype/renderer'),c=new C('normal','ranger',()=>.9);
  c.zone().props=[];c.zone().enemies=[];c.zone().npcs=[];c.zone().nodes=[];c.zone().buildings=[];
- c.s.party=[c.unit('soldier',c.hero.x+25,c.hero.y)];const procedural=[];
+ c.s.party=[c.unit('archer',c.hero.x+25,c.hero.y)];const procedural=[];
  Renderer.create({getGame:()=>c,canvas:{width:375,height:812},ctx,platform:{cameraAnchor:()=>({x:190,y:400})},Campaign:C,PrototypeVisuals:{...Visuals,draw(_ctx,e){procedural.push(e.id||e.class)}},PrototypeCombatVisuals:require('../src/prototype/combat-visuals'),PrototypeSprites:sprites,now:()=>16000,chargePresentation:()=>null,isPaused:()=>false}).draw();
  assert(procedural.includes(c.s.party[0].id),'renderer actually calls procedural draw for failed asset');
- assert(!procedural.includes('paladin'),'loaded exact hero is drawn by sprite layer');
+ assert(!procedural.includes('ranger'),'loaded exact hero is drawn by sprite layer');
  console.log('PASS loaded, failed and absent image paths exercise actual renderer fallback and anchored drawing');
 })().catch(e=>{console.error(e);process.exitCode=1});

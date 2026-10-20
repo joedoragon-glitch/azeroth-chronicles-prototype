@@ -17,6 +17,48 @@
     requestName = () => {},
     openCharacter = null,
   }) {
+    function transport(n) {
+      const game = getGame(),
+        i = game.regionIndex(),
+        target = D.regions[i + n.direction];
+      if (!target) return;
+      const cost = game.travelFare(i, n.direction),
+        work = game.passageWorkQuote(n.direction);
+      const actions = [
+        action(
+          'Travel to ' + target.name,
+          () => {
+            if (getGame().travel(n.direction)) closeMenu();
+          },
+          cost + ' crowns',
+          game.hero.gold < cost,
+        ),
+      ];
+      if (work)
+        actions.push(
+          action(
+            'Work for passage · pay ' + work.payment + ' crowns',
+            () => {
+              if (getGame().travel(n.direction, { workPassage: true })) closeMenu();
+            },
+            'Help the crew cover the missing ' +
+              work.work +
+              ' crowns. Includes free return; no companions or resource deposits needed.',
+          ),
+        );
+      openMenu(
+        n.name,
+        game.s.mode === 'developer'
+          ? 'FREE — Developer Mode. Travel has no fare or return-ticket requirement.'
+          : 'Fare ' +
+              cost +
+              ' crowns. Outbound travel includes free return. Health and supplies are preserved.' +
+              (work
+                ? ' Both local specialists are rescued: the crew will accept help with their supplies for the fare shortfall.'
+                : ''),
+        actions,
+      );
+    }
     function expeditionSupportActions(n, refresh) {
       return Object.entries(Campaign.rules.expeditionSupportSkills).flatMap(([id, def]) => {
         const cap = def.trainers?.[n.family] || 0;
@@ -449,7 +491,7 @@
           'Companion combat skills · ' + (companionAdvanced ? 'Advanced' : 'Core'),
           () => {},
           companionAdvanced
-            ? 'Soldier: Power Strike (8s) + Holy Cleave (12s) · Ranger: Triple Shot (8s) + Piercing Volley (12s). Expedition 4 adds strike protection and covering Slow.'
+            ? 'Soldier: Power Strike (8s) + Holy Cleave (12s) · Ranger: Triple Shot (8s) + Piercing Volley (12s). Expedition 4: Soldier Power Strike grants 20% self-protection for 2s; Ranger Triple Shot’s first arrow Slows for 1s if fired within 150 units and it hits. Rangers use it while falling back when ready.'
             : 'Soldier: Power Strike · Archer: Triple Shot · Learn hero Skill 2 Rank 1 to unlock Holy Cleave and Piercing Volley',
           true,
         );
@@ -1902,6 +1944,7 @@
       );
     }
     return {
+      transport,
       teacher,
       skillBook,
       combatConditions,

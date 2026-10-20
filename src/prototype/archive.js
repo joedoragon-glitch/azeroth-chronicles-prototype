@@ -51,6 +51,15 @@
       heal = R.enemySupportHealing;
     return [
       [
+        'Fortified enemies and covering fire',
+        'Enemies sheltered inside a defended fort take ' +
+          percent(1 - R.balance.fortifications.incomingMultiplier) +
+          '% less damage. Ranged garrisons gain ' +
+          percent(R.balance.fortifications.rangeMultiplier - 1) +
+          '% reach and fire over their own walls. The shield beside an enemy’s health bar marks fort protection; leaving the defended area ends it.',
+        'Enemy ranged shots can arc over low fences, carts, supplies, logs and interior screens. Tall obstacles, cliffs, room boundaries and unrelated fort walls remain solid. Fort protection applies to ordinary troops, officers and bosses inside the area; explicit piercing attacks bypass it. Aiming warnings and dodgeable flight remain. Hero and companion shots still use their normal obstruction rules.',
+      ],
+      [
         'Slow',
         'Move and recover skill cooldowns more slowly, including skills used while already slowed.',
         'Heroes and companions recover cooldowns at ' +

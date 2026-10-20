@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "fortified-enemy-wall-fire",
+  "name": "Fortified enemy wall fire and defense cue",
+  "kind": "effect",
+  "nextAction": "Owner live play and appearance feedback; retain procedural flight reference if later art work is requested.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel requested fort benefits and arrows visibly firing over own walls, like Age of Empires; extended low-cover fire to enemies only throughout fields and interiors.",
+    "decisionDate": "2026-10-20",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/343",
+    "contentDocuments": [
+      "docs/FORTS_RANGER_PASSAGE_20261020.md"
+    ],
+    "locationAndLore": "Existing regional forts and fortified interiors. Conversation URL unavailable."
+  },
+  "decisions": {
+    "conceptAcceptance": "Requested 20 October; owner confirmed fort bonuses apply to the wall-firing garrison.",
+    "proceduralDesignAcceptance": "Faithful implementation requested; exact native preview not separately accepted.",
+    "spriteProductionAuthorization": "No raster effect generation requested.",
+    "generatedAppearanceAcceptance": "No generated raster artwork.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "4263c6a6ee8be9c72fe2740f2f88b8c7ef35042f",
+    "ownerFilesAndBranches": [
+      "src/prototype/renderer.js",
+      "src/prototype/fortifications.js",
+      "fix/fort-defenses-dev109"
+    ],
+    "exactEntityState": {
+      "source": "enemy",
+      "style": "arrow",
+      "fortId": "raider-drill-redoubt",
+      "flightStages": [
+        0,
+        0.25,
+        0.5,
+        0.75,
+        0.94
+      ]
+    },
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [
+      "tools/visual-review/fortifications-dev109/wall-fire-sequence.webp",
+      "tools/visual-review/fortifications-dev109/crypt-screen-sequence.webp"
+    ],
+    "traitsToPreserve": [
+      "Original native arrow/material art",
+      "Rising and descending arc above own walls",
+      "Arrow tip follows curve slope",
+      "Small ground shadow",
+      "Shield marker at protected enemy health plate"
+    ],
+    "assetSpecificDependencies": [],
+    "workingTreeSourceHashes": {
+      "src/prototype/renderer.js": "dc2b47a16870bbe479a0b5a1381b7bc3c8eb522b9668b0c69aa8df74a504896e",
+      "src/prototype/fortifications.js": "62694da064d369bf1b39b1fdfb8624c2163d448acb6261ef4f2ab72ce468caf3"
+    }
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [
+      "enemy-projectile:rangedArc"
+    ],
+    "requiredVisibleAssets": [
+      "Existing enemy projectile art",
+      "Fort protection shield"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "Rules and fortifications own authoritative permissions and bonuses; renderer only projects arrow height and shield cue. Keep trajectories procedural so current aim/dodge timing and world geometry remain authoritative."
+    ]
+  },
+  "animationRequirements": {
+    "status": "procedural",
+    "gameplayStates": [
+      "launch",
+      "rising",
+      "over-wall",
+      "descending",
+      "contact"
+    ],
+    "directions": [],
+    "pivotContract": "Existing native world projection; elevated projectile center, same logical ground path.",
+    "staticFallbackKey": "Existing native enemy projectile",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

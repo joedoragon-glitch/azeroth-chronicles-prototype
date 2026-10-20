@@ -379,3 +379,12 @@ Military ringleaders (Orc, Raider Archer and Crown soldier) remain entirely proc
 ## 15 October 2026 — post-snapshot appearance corrections
 
 The existing Crown direwolf lance and archer bodies share corrected seated-human/mount proportions; they remain procedural and do not substitute the wild Wolf sprite. See `tools/sprites/design-handoffs/crown-direwolf-riders.json`. Ogre entries 021/032/258/259 now resume from the rounded anatomical correction in `tools/sprites/design-handoffs/ogre-body-aesthetic.json`, retaining their loadouts and uniform overlays. Before/after isolated references and actual renderer desktop/phone 100/150% scenes are retained. These candidate corrections are not yet published or director appearance-approved.
+
+## 20 October native Frontier additions
+
+These later requested procedural designs supplement the historical census without creating new raster-production authorization or renumbering its catalog.
+
+| Family | Current classification |
+| --- | --- |
+| `frontier-grain-silo` | PROCEDURAL — requested grain storage structure; dev.108 native reference and scope in `tools/sprites/design-handoffs/frontier-grain-silo.json`. Exact appearance awaits owner feedback. |
+| `frontier-civic-fountain` | PROCEDURAL — dev.101 native civic water feature; shared terrain body/collision and depth-sorted drawing. No new raster production requested. See `FRONTIER_REACH_REGROUP_20261020.md`. |

@@ -83,6 +83,7 @@
               : 1;
       }
       companionCoverAttack(u, e) {
+        if (this.companionCoveringShot(u, e)) return true;
         if (
           !e ||
           e.hp <= 0 ||
@@ -221,6 +222,18 @@
             : null;
         }
         if (!state.regrouping) return false;
+        // Defensive Triple Shot is an existing veteran technique. Take the
+        // shot before moving out of its close range, then keep withdrawing.
+        const pursuer = (state.enemies || [])
+          .filter(
+            (e) =>
+              e.hp > 0 &&
+              e.aggro &&
+              !e.returning &&
+              dist(u, e) < R.companionSkills.veteran.coveringRange,
+          )
+          .sort((a, b) => dist(u, a) - dist(u, b))[0];
+        this.companionCoveringShot(u, pursuer);
         const point = state.point || this.partyFollowPoint(u, living),
           before = { x: u.x, y: u.y };
         if (dist(u, point) > cfg.arrivalRadius) {
@@ -504,6 +517,23 @@
           targetId: target.id,
         });
         return true;
+      }
+      companionCoveringShot(u, target) {
+        if (
+          u.type !== 'archer' ||
+          !target ||
+          target.hp <= 0 ||
+          target.neutral ||
+          target.returning ||
+          (this.s.expeditionRank || 1) < R.companionSkills.veteran.expeditionRank ||
+          dist(u, target) >= R.companionSkills.veteran.coveringRange ||
+          (u.skillGlobalCd || 0) > 0 ||
+          this.mageSilenceActive(u) ||
+          this._companionCharges?.has(u.id) ||
+          !this.tacticalDirectTargetable(target)
+        )
+          return false;
+        return this.companionUseFirstSkill(u, target);
       }
       // The second companion skill is charged, not an instantaneous AoE.
       // The actor keeps the aim for 0.65s and releases only after surviving damage.
@@ -1638,12 +1668,7 @@
             if (d < 150) {
               // Veteran Rangers can cover a retreat with their existing Triple Shot.
               // Still move this frame; never trade the fallback for standing fire.
-              if (
-                (this.s.expeditionRank || 1) >= R.companionSkills.veteran.expeditionRank &&
-                (u.skillGlobalCd || 0) <= 0 &&
-                !this.mageSilenceActive(u)
-              )
-                this.companionUseFirstSkill(u, e);
+              this.companionCoveringShot(u, e);
               this.follow(
                 u,
                 this.archerFallbackPoint(u, e, living),

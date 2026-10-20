@@ -910,6 +910,23 @@
           ctx.fillRect(left, cy, w * fraction, 1);
         }
       }
+      if (e.renderKind === 'enemy' && game.enemyFort(e)) {
+        ctx.save();
+        ctx.translate(left - 10, y + 1);
+        ctx.fillStyle = '#9dbfcb';
+        ctx.strokeStyle = '#e6eddc';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(-4, -5);
+        ctx.lineTo(4, -5);
+        ctx.lineTo(4, 0);
+        ctx.quadraticCurveTo(3, 4, 0, 6);
+        ctx.quadraticCurveTo(-3, 4, -4, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
       ctx.fillStyle = '#0c1a19dd';
       ctx.fillRect(left - 2, y - 2, w + 4, 8);
       ctx.fillStyle = '#5a645b';
@@ -930,11 +947,11 @@
         );
       }
     }
-    function projectileVector(p) {
+    function projectileVector(p, project = screen) {
       const dx = Number.isFinite(p.dx) ? p.dx : 1,
         dy = Number.isFinite(p.dy) ? p.dy : 0,
-        q = screen(p),
-        tail = screen({ x: p.x - dx * 24, y: p.y - dy * 24 }),
+        q = project(p),
+        tail = project({ x: p.x - dx * 24, y: p.y - dy * 24 }),
         vx = q.x - tail.x,
         vy = q.y - tail.y,
         len = Math.hypot(vx, vy) || 1;
@@ -942,9 +959,28 @@
     }
     function drawProjectile(p) {
       if (p.delay > 0) return;
-      if (heroArt?.projectile(ctx, screen, p, game.hero.class, reducedMotion())) return;
-      if (p.style !== 'cargo' && PrototypeEnemyVfxArt?.projectile(ctx, screen, p, game)) return;
-      const { q, ux, uy, px, py } = projectileVector(p),
+      const lift = game.fortProjectileLift(p);
+      if (lift > 0) {
+        const q = screen(p);
+        ctx.save();
+        ctx.fillStyle = '#07100e66';
+        ctx.beginPath();
+        ctx.ellipse(q.x, q.y, 4, 1.7, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+      const project = p.rangedArc
+        ? (point) => {
+            const q = screen(point);
+            return { ...q, y: q.y - game.fortProjectileLift({ ...p, x: point.x, y: point.y }) };
+          }
+        : screen;
+      drawProjectileBody(p, project);
+    }
+    function drawProjectileBody(p, project) {
+      if (heroArt?.projectile(ctx, project, p, game.hero.class, reducedMotion())) return;
+      if (p.style !== 'cargo' && PrototypeEnemyVfxArt?.projectile(ctx, project, p, game)) return;
+      const { q, ux, uy, px, py } = projectileVector(p, project),
         style = p.style || 'magic',
         combo = p.combo || 0;
       ctx.save();
@@ -1018,7 +1054,7 @@
         ctx.globalAlpha = 1;
       }
       if (style === 'beam') {
-        const o = screen({ x: p.originX ?? p.x, y: p.originY ?? p.y });
+        const o = project({ x: p.originX ?? p.x, y: p.originY ?? p.y });
         ctx.strokeStyle = '#9fd8ff';
         ctx.globalAlpha = 0.22;
         ctx.lineWidth = 14;

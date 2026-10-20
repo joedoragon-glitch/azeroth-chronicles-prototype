@@ -254,7 +254,14 @@
       }
       tacticalHighestThreatTarget(e, fallback = this.hero) {
         const candidates = this.combatTargets().filter(
-          (u) => u.hp > 0 && dist(e, u) <= (e.type === 'boss' ? 500 : 360) && this.line(e, u),
+          (u) =>
+            u.hp > 0 &&
+            dist(e, u) <=
+              Math.max(
+                e.type === 'boss' ? 500 : 360,
+                this.enemyRanged(e) && this.enemyFort(e) ? this.enemyRangedRange(e) : 0,
+              ) &&
+            this.enemyRangedLine(e, u),
         );
         const ledger = this.tacticalThreatSnapshot(e);
         for (const record of ledger) {
@@ -528,6 +535,7 @@
         if (this.ashMovementFactor(origin) < 1 && this.random() < 0.35) return false;
         // Piercing bypasses defensive mitigation, not terrain, range or Ash misses.
         const piercing = source === 'hero' && options?.piercing === true;
+        if (!piercing && this.enemyFort(e)) amount *= R.balance.fortifications.incomingMultiplier;
         if (!piercing && e.roomCaptain && e.captainGuard > 0) amount *= 0.7;
         if (!piercing && e.roomCaptain) {
           const profile = this.captainProfile(e),
@@ -766,11 +774,20 @@
             continue;
           }
           if (p.source === 'enemy') {
+            if (!p.fortChecked) {
+              p.fortChecked = true;
+              if (!p.fortId)
+                this.prepareFortProjectile(
+                  p,
+                  this.zone().enemies.find((e) => e.id === p.sourceId),
+                );
+            }
+            const fort = this.projectileFort(p);
             p.life -= dt;
             const before = { x: p.x, y: p.y };
             p.x += p.dx * p.speed * dt;
             p.y += p.dy * p.speed * dt;
-            if (!this.clearSegment(before, p, 0)) {
+            if (!(fort ? this.fortShotClear(before, p, fort) : this.clearSegment(before, p, 0))) {
               // Report the actual first obstruction, rather than the previous frame's origin.
               const steps = Math.max(1, Math.ceil(dist(before, p) / 4));
               let contact = before;
@@ -779,7 +796,11 @@
                   x: before.x + ((p.x - before.x) * j) / steps,
                   y: before.y + ((p.y - before.y) * j) / steps,
                 };
-                if (this.blocked(point.x, point.y, this.zoneId, 0)) {
+                if (
+                  fort
+                    ? this.fortShotBlocked(point, fort)
+                    : this.blocked(point.x, point.y, this.zoneId, 0)
+                ) {
                   contact = point;
                   break;
                 }
@@ -829,7 +850,7 @@
               });
               p.life = 0;
             }
-            if (p.life <= 0 || !this.line(before, p) || this.peace)
+            if (p.life <= 0 || (!fort && !this.line(before, p)) || this.peace)
               this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
             if (this.hero !== hero || this.s.challenge.pending || this.s.challenge.gameOver) return;
             continue;

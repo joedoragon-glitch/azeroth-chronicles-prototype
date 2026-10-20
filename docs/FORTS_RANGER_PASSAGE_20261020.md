@@ -1,0 +1,36 @@
+# Fort defenses, veteran Ranger audit and passage recovery — dev.109
+
+Joel requested defended-area range and damage reduction, garrison shots visibly passing above their own walls, then enemy-only ranged fire over reasonable obstacles throughout the game, particularly interiors. He also requested an audit of Expedition IV strike protection/covering Slow. His level-17 solo Mage screenshot showed 57 crowns against the Frontier's 180-crown onward fare, both specialists rescued and depleted income sources; he approved working off the fare shortfall.
+
+## Result
+
+- Enemies physically inside defended areas take 40% less incoming damage. Ranged units gain 30% range on top of ordinary targeting reach. These are position-derived benefits, end immediately on leaving, and never accumulate as permanent stats. The established explicit piercing bypass remains valid.
+- Coverage: thirteen regional creature holds, five field-boss compounds, three Crown command/final-fortress parcels, Old Signal Keep, Abyss Bastion and Citadel of Ashes. Stronghold centers follow existing stable wall indices; field compounds follow their current migrated mini coordinates. Interior protection follows authored walkable rooms, never void. Unfortified ruins, Treasury rooms and ordinary houses do not acquire a universal fort buff merely by being indoors.
+- Garrison basic aiming/acquisition, launch and actual projectile collision share an own-fort wall allowance. Friendly shots and all physical movement keep their original collision. Other forts' walls, tall props, cliffs, water and room boundaries still block fire. Interior fort walls can be fired over, but room void is never traversable by shots.
+- All enemy ranged units can fire over authored low fences/barricades, crates/supplies, carts, logs and stumps. Low crypt/archive screens and the Treasury roost shelf have the same exception. Doors, thresholds, mining bulkheads, tall pillars, trees and buildings remain solid outside their own fortified area. Decorative nonblocking furniture already allowed shots; this adds the missing allowance for solid low cover.
+- Launch permissions belong to that shot and zone. A shot launched outside a fort cannot acquire its rights by entering; a legally launched arrow can finish after its shooter leaves. Future range/defense immediately reflect the unit's new position. Projectiles remain transient on save/load/travel.
+- Native arrows follow an elevated curve with their tips aligned to its slope, a restrained ground shadow and descending contact. A small shield by the enemy health plate marks fort protection. No wall, arm, body, boss warning, skill radius or aim-duration artwork is replaced. Geometry, damage, timing and fixed-direction dodge behavior remain authoritative; the height is presentation, not a second 3D simulation.
+
+## Expedition IV audit
+
+The existing Soldier Power Strike correctly grants a self-only 20% ward for two seconds after a successful strike. It preserves a stronger ward and shares the existing mitigation layer. The Ranger's ready Triple Shot is an eight-second skill: when fired within 150 units, only its first arrow applies one second of Slow on real contact. Misses do not Slow. Rank, skill/global recovery, Silence, sight and charge restrictions apply.
+
+The newer cautious-regroup behavior could return before the Ranger's older close fallback branch. Regrouping now attempts the same ready covering shot against a close pursuing enemy before moving away; withdrawal continues that frame. Basic covering fire is retained during recovery. Recall still cancels combat and returns defensively; gathering priorities remain. Existing living/restored Rangers use current rules without resting, replacing or rehiring them. The training menu now states which troop receives which benefit and the exact conditions.
+
+## Work for passage
+
+At a paid onward transport, after both of that region's captive specialists are rescued, an unaffordable fare offers **Work for passage**. It spends the player's current crowns and abstracts helping the crew to settle the exact shortfall; it completes the normal travel transaction and grants the usual return ticket. For the reported Frontier case: pay 57, work off 123, arrive in Dark Crown.
+
+No spendable gold, EXP, debt, resource node, companion, daily counter, interest or new persistent unlock is introduced. There is no real-time chore or clock skip. Rescue progress makes it available in existing v4 saves; there is no one-use limit that could recreate the trap after a later return/death. Affordable fares, free returns, recovery waivers, developer travel and other prices remain. Destination failure restores coins, progress and tickets atomically. Newly completed unrelated quest rewards still pay normally; this feature does not suppress legitimate income.
+
+## Evidence and limits
+
+`tests/fortifications.test.cjs` covers every defended regional/compound/interior catalog, actual AI aiming/release, real wall-crossing damage and dodge, low-cover contact in fields/interiors, fort-only DR/range, exit, piercing, source/zone/death/save permissions and unchanged movement/friendly obstruction. `tests/community-veteran-companions.test.cjs` adds actual hit/miss Slow, regroup firing/movement, refusal conditions, ward expiry and restored-roster checks. `tests/passage-work.test.cjs` covers all four routes across both modes/three classes at zero/low crowns, rescue gates, no party/depleted resources, UI, saves, normal fares/free return/recovery and failure rollback.
+
+`tools/visual-review/fortifications-dev109/` retains five native flight stages, combined trajectory, a crypt-screen context, numerical flight heights and the state-pure renderer check. Combined views display several positions of one trajectory for inspection; the game fires the normal number of arrows. Character designs, the live Frontier layout and preview-only Veyra correction are untouched. Focused checks and package/build validation will be recorded at publication; no whole-game, browser/device matrix or actual-device FPS claim is implied.
+
+Packaging exposed a pre-existing sprite coverage assertion that scanned beyond the landmark function into contextual work drawings (such as loose pages). Its endpoint now stops at `craftedWork`, matching the actual landmark boundary; no art or production registry changes were made. The isolated packaging check is rerun for this correction.
+
+The same old sprite fixture also expected the now-deliberately procedural Paladin to render as a raster. Its valid loaded-image path now uses the retained raster Ranger; its failed-image path uses the Archer, and it explicitly checks the Paladin remains procedural. Production art, registries and sprite-loader behavior are unchanged. The source coverage supplement records the existing native silo/fountain families.
+
+Final focused checks all pass: the feature checks above, existing economy/targeting/Recall/judgment/gathering/friendly-projectile/crowd/map-navigation/menu checks, isolated asset packaging, current sprite scope, build/generated consistency, changed-source formatting and diff whitespace. Complete ledger: `tools/visual-review/fortifications-dev109/checks.json`. PR #343 prepares package-only publication; no broad CI or browser/device matrix.
