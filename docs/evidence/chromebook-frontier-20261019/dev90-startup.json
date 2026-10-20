@@ -1,0 +1,122 @@
+{
+  "scope": "One local Chromium startup with two two-second night scenes at reported CSS viewport/DPR/zoom, no throttling. Crash/instrumentation check; synthetic session, not target-device FPS.",
+  "results": [
+    {
+      "region": "crown",
+      "night": true,
+      "version": "0.9.1+snapshot.dev.90",
+      "performance": {
+        "experience": "desktop",
+        "sampleFrames": 11,
+        "fps": 4,
+        "workP95Ms": 236.6,
+        "workP99Ms": 236.6,
+        "preRenderP95Ms": 58.3,
+        "renderP95Ms": 136.2,
+        "sampledWindowMs": 2267,
+        "render": {
+          "tileCandidates": 624,
+          "tilesDrawn": 322,
+          "entitiesConsidered": 381,
+          "entitiesDrawn": 68,
+          "floorTilesPainted": 0,
+          "outlineMasks": 10,
+          "outlineMaskPixels": 655360,
+          "cameraZoom": 1.75,
+          "optimizationMode": "off",
+          "transientEffects": 0,
+          "enemyVfxEffects": 0,
+          "groundCache": {
+            "bytes": 38925000,
+            "budget": 67108864,
+            "builds": 6,
+            "hits": 13,
+            "margin": 256
+          },
+          "phases": {
+            "sampledFrames": 1,
+            "sampleEvery": 12,
+            "floor": {
+              "p95Ms": 10.9,
+              "p99Ms": 10.9
+            },
+            "terrain": {
+              "p95Ms": 4.2,
+              "p99Ms": 4.2
+            },
+            "entities": {
+              "p95Ms": 4.3,
+              "p99Ms": 4.3
+            },
+            "effects": {
+              "p95Ms": 35.7,
+              "p99Ms": 35.7
+            }
+          }
+        }
+      },
+      "backingWidth": 2403,
+      "backingHeight": 1248,
+      "audioState": "running"
+    },
+    {
+      "region": "frontier",
+      "night": true,
+      "version": "0.9.1+snapshot.dev.90",
+      "performance": {
+        "experience": "desktop",
+        "sampleFrames": 11,
+        "fps": 7,
+        "workP95Ms": 156.2,
+        "workP99Ms": 156.2,
+        "preRenderP95Ms": 25.9,
+        "renderP95Ms": 121.3,
+        "sampledWindowMs": 1317,
+        "render": {
+          "tileCandidates": 361,
+          "tilesDrawn": 229,
+          "entitiesConsidered": 470,
+          "entitiesDrawn": 55,
+          "floorTilesPainted": 0,
+          "outlineMasks": 9,
+          "outlineMaskPixels": 589824,
+          "cameraZoom": 1.75,
+          "optimizationMode": "off",
+          "transientEffects": 10,
+          "enemyVfxEffects": 5,
+          "groundCache": {
+            "bytes": 38925000,
+            "budget": 67108864,
+            "builds": 8,
+            "hits": 23,
+            "margin": 256
+          },
+          "phases": {
+            "sampledFrames": 2,
+            "sampleEvery": 12,
+            "floor": {
+              "p95Ms": 10.9,
+              "p99Ms": 10.9
+            },
+            "terrain": {
+              "p95Ms": 3.9,
+              "p99Ms": 3.9
+            },
+            "entities": {
+              "p95Ms": 3.9,
+              "p99Ms": 3.9
+            },
+            "effects": {
+              "p95Ms": 35.7,
+              "p99Ms": 35.7
+            }
+          }
+        }
+      },
+      "backingWidth": 2403,
+      "backingHeight": 1248,
+      "audioState": "running"
+    }
+  ],
+  "errors": []
+}

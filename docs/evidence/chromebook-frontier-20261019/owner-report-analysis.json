@@ -1,0 +1,165 @@
+{
+  "scope": "Sanitized technical measurements from two owner-provided dev.88 Chromebook exports. No raw hero, statistics, events, progression or personal files included. These are different windows from the earlier reported ~7 FPS idle result.",
+  "samples": [
+    {
+      "sample": 1,
+      "version": "0.9.1+snapshot.dev.88",
+      "region": "crown",
+      "night": true,
+      "performance": {
+        "experience": "desktop",
+        "sampleFrames": 180,
+        "fps": 22,
+        "workP95Ms": 39.5,
+        "workP99Ms": 49.9,
+        "sampledWindowMs": 8025,
+        "render": {
+          "tileCandidates": 624,
+          "tilesDrawn": 322,
+          "entitiesConsidered": 372,
+          "entitiesDrawn": 74,
+          "floorTilesPainted": 0,
+          "cameraZoom": 1.75,
+          "optimizationMode": "off",
+          "transientEffects": 0,
+          "enemyVfxEffects": 0,
+          "groundCache": {
+            "bytes": 38925000,
+            "budget": 67108864,
+            "builds": 21,
+            "hits": 1228,
+            "margin": 256
+          },
+          "phases": {
+            "sampledFrames": 64,
+            "sampleEvery": 12,
+            "floor": {
+              "p95Ms": 0.7,
+              "p99Ms": 0.7
+            },
+            "terrain": {
+              "p95Ms": 5.5,
+              "p99Ms": 6.3
+            },
+            "entities": {
+              "p95Ms": 8.6,
+              "p99Ms": 9.8
+            },
+            "effects": {
+              "p95Ms": 8.5,
+              "p99Ms": 11.2
+            }
+          }
+        },
+        "frameRatePreference": "auto",
+        "frameRateTarget": 30,
+        "optimizationMode": "off",
+        "devicePixelRatio": 1.600000023841858,
+        "backingPixelRatio": 1.501875,
+        "backingWidth": 2403,
+        "backingHeight": 1248
+      },
+      "sprites": {
+        "loaded": 7,
+        "loading": 0,
+        "queued": 0,
+        "failed": 0,
+        "decodedBytes": 9326720
+      },
+      "materials": {
+        "queued": 0,
+        "decoding": 0,
+        "failures": 0
+      }
+    },
+    {
+      "sample": 2,
+      "version": "0.9.1+snapshot.dev.88",
+      "region": "frontier",
+      "night": true,
+      "performance": {
+        "experience": "desktop",
+        "sampleFrames": 180,
+        "fps": 15,
+        "workP95Ms": 54.7,
+        "workP99Ms": 77.7,
+        "sampledWindowMs": 11775,
+        "render": {
+          "tileCandidates": 361,
+          "tilesDrawn": 229,
+          "entitiesConsidered": 469,
+          "entitiesDrawn": 57,
+          "floorTilesPainted": 0,
+          "cameraZoom": 1.75,
+          "optimizationMode": "off",
+          "transientEffects": 2,
+          "enemyVfxEffects": 2,
+          "groundCache": {
+            "bytes": 38925000,
+            "budget": 67108864,
+            "builds": 44,
+            "hits": 2192,
+            "margin": 256
+          },
+          "phases": {
+            "sampledFrames": 64,
+            "sampleEvery": 12,
+            "floor": {
+              "p95Ms": 0.6,
+              "p99Ms": 3.6
+            },
+            "terrain": {
+              "p95Ms": 4,
+              "p99Ms": 5.5
+            },
+            "entities": {
+              "p95Ms": 8.1,
+              "p99Ms": 11.1
+            },
+            "effects": {
+              "p95Ms": 11.8,
+              "p99Ms": 13.9
+            }
+          }
+        },
+        "frameRatePreference": "auto",
+        "frameRateTarget": 30,
+        "optimizationMode": "off",
+        "devicePixelRatio": 1.600000023841858,
+        "backingPixelRatio": 1.501875,
+        "backingWidth": 2403,
+        "backingHeight": 1248
+      },
+      "sprites": {
+        "loaded": 10,
+        "loading": 0,
+        "queued": 0,
+        "failed": 0,
+        "decodedBytes": 14340224
+      },
+      "materials": {
+        "queued": 0,
+        "decoding": 0,
+        "failures": 0
+      }
+    }
+  ],
+  "interpretation": [
+    "Both supplied exports explicitly record Optimization Mode off. They do not capture the previously reported below-15 FPS optimized-mode comparison.",
+    "The backing canvas is 2403 x 1248 (2,998,944 pixels), with DPR 1.6 and backing ratio ~1.502 at 175% camera.",
+    "Warm ground-cache hits, zero floor tiles painted and zero pending sprite/material work show these samples are not a cold asset-loading window.",
+    "Audio reports have zero pending recordings, three voices and no reported recording errors. This does not certify all audio behavior.",
+    "Frame and renderer-phase percentiles have different rolling windows; summing phase percentiles cannot attribute all frame work.",
+    "Inspection found idle enemy aggro traces line of sight before rejecting targets beyond the unchanged 260-unit range. Dev.90 checks that same range first.",
+    "New bounded preRenderP95Ms and renderP95Ms report costs from the same 180 drawn-frame window. Pre-render includes shell/audio/simulation/HUD and does not mean simulation alone.",
+    "Neither the local paired simulation timings nor the local Chromium startup check establishes actual Chromebook FPS after the candidate."
+  ],
+  "sourceSha256": {
+    "src/prototype/engine.js": "9886d0651cf83dc7c9be05af71c5740a78fa9216f71bc5e58501bb591b0a9454",
+    "src/prototype/runtime.js": "6f2dde188f9a2245ca578b5b14a6be0936f740ffe511f5050fb65ff0158fac55",
+    "src/prototype/renderer.js": "bd1a36badcdd115ab386aae643e1a8f6bd51132bc84ed36d7682ec7d98b3146d",
+    "src/prototype/visuals.js": "0e71187f9d1e8036b67df93aa08ee06627984e1e35242d2acd7ab87df124d3a0"
+  },
+  "candidate": "0.9.1+snapshot.dev.90",
+  "status": "Draft PR #324; not merged or published; actual target-device result unresolved."
+}

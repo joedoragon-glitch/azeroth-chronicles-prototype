@@ -7266,15 +7266,22 @@
             );
       }
       if (r === 3) {
-        boards(-19, top + 13, 18, 11, '#a68d6b');
-        line(
-          [
-            [-17, top + 15],
-            [-4, top + 22],
-          ],
-          '#6c6858',
-          1,
-        );
+        // Replaced roof tiles show ongoing repair without boarding the roof.
+        for (const [x, z] of [
+          [-16, top + 14],
+          [-3, top + 14],
+          [-10, top + 21],
+        ]) {
+          softRect(x, z, 11, 5, '#a38c73', 0.7);
+          line(
+            [
+              [x, z + 5],
+              [x + 11, z + 5],
+            ],
+            '#62584e',
+            0.65,
+          );
+        }
       }
       ctx.restore();
       line(
@@ -7397,9 +7404,28 @@
         );
       }
       if (r === 3) {
-        timber([-24, -14], [-10, 10], 3, '#b29870');
-        softRect(16, -17, 10, 7, '#b19e7b', 1);
-        fillOval(13, -23, 9, 4, '#514d46', 0.2);
+        // Occupied postwar homes: clear doorways and windows, repaired masonry.
+        softRect(-25, 4, 12, 6, '#ad9b82', 1);
+        line(
+          [
+            [-24, 7],
+            [-14, 7],
+          ],
+          '#88745e',
+          0.7,
+        );
+        line(
+          [
+            [-19, 4],
+            [-19, 7],
+          ],
+          '#88745e',
+          0.7,
+        );
+        if (!workshop) {
+          softRect(11, -1, 14, 2, '#b7a081', 0.6);
+          craftAt(18, 4, 0.22, () => rimBowl(0, 0, 8, '#8c674c', '#c39a70'));
+        }
       }
       if (r === 4) {
         for (const x of [-26, 26]) {

@@ -1,0 +1,262 @@
+{
+  "cpuSlowdown": 4,
+  "limits": "Headless virtual CPU sample, not a measurement of Joel’s Chromebook; two 3.5-second scenes, no regression suite.",
+  "results": [
+    {
+      "region": "vale",
+      "performance": {
+        "experience": "desktop",
+        "sampleFrames": 12,
+        "fps": 2,
+        "workP95Ms": 277.1,
+        "workP99Ms": 277.1,
+        "sampledWindowMs": 4016,
+        "render": {
+          "tileCandidates": 342,
+          "tilesDrawn": 225,
+          "entitiesConsidered": 264,
+          "entitiesDrawn": 99,
+          "floorTilesPainted": 0,
+          "outlineMasks": 7,
+          "outlineMaskPixels": 458752,
+          "cameraZoom": 1.5,
+          "optimizationMode": "off",
+          "transientEffects": 0,
+          "enemyVfxEffects": 0,
+          "groundCache": {
+            "bytes": 13111296,
+            "budget": 67108864,
+            "builds": 3,
+            "hits": 16,
+            "margin": 256
+          },
+          "phases": {
+            "sampledFrames": 1,
+            "sampleEvery": 12,
+            "floor": {
+              "p95Ms": 1.1,
+              "p99Ms": 1.1
+            },
+            "terrain": {
+              "p95Ms": 16.1,
+              "p99Ms": 16.1
+            },
+            "entities": {
+              "p95Ms": 56.3,
+              "p99Ms": 56.3
+            },
+            "effects": {
+              "p95Ms": 118.3,
+              "p99Ms": 118.3
+            }
+          }
+        }
+      },
+      "audio": "running",
+      "top": [
+        {
+          "name": "(program)",
+          "chain": [
+            "(program)@:-1",
+            "(root)@:-1"
+          ],
+          "self": 1412
+        },
+        {
+          "name": "drawImage",
+          "chain": [
+            "drawImage@:-1",
+            "drawOcclusionOutlines@renderer.js:646",
+            "render@renderer.js:1927",
+            "draw@renderer.js:447",
+            "<anonymous>@app.js:3593",
+            "record@runtime.js:7",
+            "frame@app.js:3453",
+            "(root)@:-1"
+          ],
+          "self": 762
+        },
+        {
+          "name": "blocked",
+          "chain": [
+            "blocked@navigation.js:267",
+            "line@navigation.js:393",
+            "updateEnemies@engine.js:5078",
+            "<anonymous>@enemy-vfx-events.js:480",
+            "value@enemy-vfx-events.js:202",
+            "tick@engine.js:3191",
+            "frame@app.js:3453",
+            "(root)@:-1"
+          ],
+          "self": 66
+        },
+        {
+          "name": "render",
+          "chain": [
+            "render@renderer.js:1927",
+            "draw@renderer.js:447",
+            "<anonymous>@app.js:3593",
+            "record@runtime.js:7",
+            "frame@app.js:3453",
+            "(root)@:-1"
+          ],
+          "self": 42
+        },
+        {
+          "name": "(garbage collector)",
+          "chain": [
+            "(garbage collector)@:-1",
+            "(root)@:-1"
+          ],
+          "self": 29
+        },
+        {
+          "name": "blocked",
+          "chain": [
+            "blocked@navigation.js:267",
+            "clearSegment@navigation.js:402",
+            "route@navigation.js:417",
+            "follow@navigation.js:760",
+            "updateThornPatrol@navigation.js:709",
+            "updateEnemies@engine.js:5078",
+            "<anonymous>@enemy-vfx-events.js:480",
+            "value@enemy-vfx-events.js:202"
+          ],
+          "self": 24
+        },
+        {
+          "name": "",
+          "chain": [
+            "<anonymous>@navigation.js:379",
+            "blocked@navigation.js:267",
+            "line@navigation.js:393",
+            "updateEnemies@engine.js:5078",
+            "<anonymous>@enemy-vfx-events.js:480",
+            "value@enemy-vfx-events.js:202",
+            "tick@engine.js:3191",
+            "frame@app.js:3453"
+          ],
+          "self": 22
+        },
+        {
+          "name": "roads",
+          "chain": [
+            "roads@visuals.js:17494",
+            "render@renderer.js:1927",
+            "draw@renderer.js:447",
+            "<anonymous>@app.js:3593",
+            "record@runtime.js:7",
+            "frame@app.js:3453",
+            "(root)@:-1"
+          ],
+          "self": 20
+        },
+        {
+          "name": "",
+          "chain": [
+            "<anonymous>@navigation.js:379",
+            "blocked@navigation.js:267",
+            "clearSegment@navigation.js:402",
+            "route@navigation.js:417",
+            "follow@navigation.js:760",
+            "updateThornPatrol@navigation.js:709",
+            "updateEnemies@engine.js:5078",
+            "<anonymous>@enemy-vfx-events.js:480"
+          ],
+          "self": 19
+        },
+        {
+          "name": "line",
+          "chain": [
+            "line@navigation.js:393",
+            "updateEnemies@engine.js:5078",
+            "<anonymous>@enemy-vfx-events.js:480",
+            "value@enemy-vfx-events.js:202",
+            "tick@engine.js:3191",
+            "frame@app.js:3453",
+            "(root)@:-1"
+          ],
+          "self": 18
+        },
+        {
+          "name": "paint",
+          "chain": [
+            "paint@materials.js:282",
+            "roads@visuals.js:17494",
+            "render@renderer.js:1927",
+            "draw@renderer.js:447",
+            "<anonymous>@app.js:3593",
+            "record@runtime.js:7",
+            "frame@app.js:3453",
+            "(root)@:-1"
+          ],
+          "self": 14
+        },
+        {
+          "name": "updateEnemies",
+          "chain": [
+            "updateEnemies@engine.js:5078",
+            "<anonymous>@enemy-vfx-events.js:480",
+            "value@enemy-vfx-events.js:202",
+            "tick@engine.js:3191",
+            "frame@app.js:3453",
+            "(root)@:-1"
+          ],
+          "self": 13
+        },
+        {
+          "name": "drawOcclusionOutlines",
+          "chain": [
+            "drawOcclusionOutlines@renderer.js:646",
+            "render@renderer.js:1927",
+            "draw@renderer.js:447",
+            "<anonymous>@app.js:3593",
+            "record@runtime.js:7",
+            "frame@app.js:3453",
+            "(root)@:-1"
+          ],
+          "self": 12
+        },
+        {
+          "name": "add",
+          "chain": [
+            "add@renderer.js:2025",
+            "render@renderer.js:1927",
+            "draw@renderer.js:447",
+            "<anonymous>@app.js:3593",
+            "record@runtime.js:7",
+            "frame@app.js:3453",
+            "(root)@:-1"
+          ],
+          "self": 9
+        },
+        {
+          "name": "draw",
+          "chain": [
+            "draw@renderer.js:447",
+            "<anonymous>@app.js:3593",
+            "record@runtime.js:7",
+            "frame@app.js:3453",
+            "(root)@:-1"
+          ],
+          "self": 8
+        },
+        {
+          "name": "draw",
+          "chain": [
+            "draw@visuals.js:212",
+            "sprite@renderer.js:556",
+            "render@renderer.js:1927",
+            "draw@renderer.js:447",
+            "<anonymous>@app.js:3593",
+            "record@runtime.js:7",
+            "frame@app.js:3453",
+            "(root)@:-1"
+          ],
+          "self": 8
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

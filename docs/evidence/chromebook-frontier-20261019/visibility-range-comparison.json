@@ -1,0 +1,48 @@
+{
+  "scope": "Two deterministic normal-mode night fixtures near reported positions, 90 interleaved paired ticks each, excluding first five timings; local Node CPU timings are not Chromebook FPS. Exact state, effects and messages comparison.",
+  "results": [
+    {
+      "region": "crown",
+      "ticks": 90,
+      "stateEventsMessagesEqual": true,
+      "original": {
+        "calls": {
+          "line": 5850,
+          "blocked": 364011
+        },
+        "medianTickMs": 25.778810999999678
+      },
+      "candidate": {
+        "calls": {
+          "line": 0,
+          "blocked": 123022
+        },
+        "medianTickMs": 10.833694999999807
+      },
+      "engaged": 0
+    },
+    {
+      "region": "frontier",
+      "ticks": 90,
+      "stateEventsMessagesEqual": true,
+      "original": {
+        "calls": {
+          "line": 5527,
+          "blocked": 1035135
+        },
+        "medianTickMs": 31.091253999999935
+      },
+      "candidate": {
+        "calls": {
+          "line": 282,
+          "blocked": 845805
+        },
+        "medianTickMs": 13.57107299999916
+      },
+      "engaged": 8
+    }
+  ],
+  "baselineLocalCommit": "d08944e4",
+  "baselineEngineSha256": "f8836a998d9d1b3d8fea2baa6e94a9e0daa4f4bb6471bdb5a9e34ba2cb5cc5ad",
+  "candidateEngineSha256": "9886d0651cf83dc7c9be05af71c5740a78fa9216f71bc5e58501bb591b0a9454"
+}

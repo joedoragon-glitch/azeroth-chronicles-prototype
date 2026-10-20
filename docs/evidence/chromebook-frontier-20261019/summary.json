@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-19",
+  "version": "0.9.1+snapshot.dev.89",
+  "status": "Prepared candidate; not merged or published. Real Chromebook performance remains unresolved.",
+  "ownerReport": {
+    "fullGraphics": "About 7 FPS even standing still",
+    "optimizationModeOn": "Still below 15 FPS"
+  },
+  "publishedBaseline": "b91d8a5c83b74930241065dea71c6ce10a8dfe43",
+  "sourceHashes": {
+    "src/prototype/renderer.js": "bd1a36badcdd115ab386aae643e1a8f6bd51132bc84ed36d7682ec7d98b3146d",
+    "src/prototype/visuals.js": "0e71187f9d1e8036b67df93aa08ee06627984e1e35242d2acd7ab87df124d3a0",
+    "templates/service-worker.js": "63f28e96c438000cd478c643751993cb279e1ff642f4ac08def7c9a7ed0da83f"
+  },
+  "pairedLocalRenderer": {
+    "normal": [
+      {
+        "scene": "vale",
+        "originalMedianMS": 80.3,
+        "candidateMedianMS": 62.5,
+        "reductionPercent": 22.2
+      },
+      {
+        "scene": "frontier",
+        "originalMedianMS": 138,
+        "candidateMedianMS": 92.1,
+        "reductionPercent": 33.3
+      }
+    ],
+    "optimized": [
+      {
+        "scene": "vale",
+        "originalMedianMS": 71,
+        "candidateMedianMS": 39.1,
+        "reductionPercent": 44.9
+      },
+      {
+        "scene": "frontier",
+        "originalMedianMS": 125.3,
+        "candidateMedianMS": 74.5,
+        "reductionPercent": 40.5
+      }
+    ]
+  },
+  "limits": "Two frozen software/headless desktop scenes, three interleaved full/candidate draws each, forced readback. These are rendering comparisons, not actual Chromebook FPS or a full-game performance certificate. CPU-slowdown profiles are diagnostic and are not hardware measurements.",
+  "normalPixelComparisons": "Eight desktop/phone normal/crowned day/night cases: zero changed channels. Covers representative actors and scenes, not every clip or custom replacement.",
+  "optimizedAppearance": "Integer contour offsets simplify only the faint hidden-actor outline in Optimization Mode. Representative Frontier comparison changes 2548 channels, maximum difference 22. Sprite art and combat warning geometry are preserved.",
+  "offline": {
+    "fullPackageBytes": 29922671,
+    "audioBytes": 25840909,
+    "policy": "All offline assets remain installed. Reuse recordings only when old/current manifests agree on both local source URL and SHA256, and a successful cached response exists; otherwise fetch. Shell/code always refresh. The first install still downloads assets. This is an update-transfer optimization, not a fix for 7 FPS."
+  },
+  "checks": [
+    "Build/generated entries and syntax passed",
+    "16 focused offline/cache checks passed",
+    "Occlusion classification and painted-mask checks passed",
+    "Targeted formatter check passed",
+    "Eight normal pixel comparisons passed",
+    "Two Frontier before/after review frames inspected"
+  ],
+  "noFullGameSuite": true,
+  "noCI": true,
+  "remaining": "Export a playtest report from the actual Chromebook in the slow idle location to distinguish CPU/render work from frame pacing/backing-resolution/GPU limits. Do not announce the FPS problem as fixed."
+}
