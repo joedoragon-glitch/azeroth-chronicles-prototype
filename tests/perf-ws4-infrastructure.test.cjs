@@ -23,12 +23,37 @@ async function responseValue(response) {
 async function compareScenario(options, exercise) {
   const before = worker({ ...options, baseline: true }),
     after = worker(options);
+  // Hash-based recording reuse (dev.90) changed installation ordering/cache
+  // reads; explicit update acceptance changes activation. Preserve the exact
+  // historical routing oracle after installation. Current install behavior is
+  // separately covered by service-worker.test.cjs, including failed installs.
+  for (const w of [before, after]) {
+    const emit = w.emit;
+    w.emit = async (name, ...args) => {
+      try {
+        return await emit(name, ...args);
+      } finally {
+        if (name === 'install') {
+          w.installBoundary = w.trace.length;
+          w.installWork = { ...w.state };
+        }
+      }
+    };
+  }
   const a = await exercise(before),
     b = await exercise(after);
   assert.deepEqual(b, a);
-  assert.deepEqual(after.trace, before.trace, 'network/cache request order and URLs are preserved');
+  assert.deepEqual(
+    after.trace.slice(after.installBoundary || 0),
+    before.trace.slice(before.installBoundary || 0),
+    'post-install routing preserves exact network/cache request order and URLs',
+  );
   for (const key of ['network', 'opens', 'skipped', 'claimed'])
-    assert.equal(after.state[key], before.state[key], key);
+    assert.equal(
+      after.state[key] - (after.installWork?.[key] || 0),
+      before.state[key] - (before.installWork?.[key] || 0),
+      key,
+    );
 }
 (async () => {
   for (const scope of [

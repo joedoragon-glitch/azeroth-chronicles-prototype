@@ -1,0 +1,154 @@
+{
+  "baseline": "dev.111 / aa3843a22741fd14a304a642fba073ad78223b0f",
+  "limits": "Synthetic active-frame traces and local Node timings; no Chromebook or physical-phone FPS claim.",
+  "controllers": [
+    {
+      "name": "severe",
+      "hz": 1,
+      "renderMs": 80,
+      "preRenderMs": 4,
+      "before": {
+        "preference": "auto",
+        "ratio": 1.5,
+        "maximum": 1.5,
+        "changes": 0
+      },
+      "after": {
+        "preference": "auto",
+        "ratio": 0.75,
+        "maximum": 1.5,
+        "changes": 1
+      }
+    },
+    {
+      "name": "severe",
+      "hz": 3,
+      "renderMs": 80,
+      "preRenderMs": 4,
+      "before": {
+        "preference": "auto",
+        "ratio": 1.5,
+        "maximum": 1.5,
+        "changes": 0
+      },
+      "after": {
+        "preference": "auto",
+        "ratio": 0.75,
+        "maximum": 1.5,
+        "changes": 1
+      }
+    },
+    {
+      "name": "reported-style-render-pressure",
+      "hz": 7,
+      "renderMs": 77.1,
+      "preRenderMs": 7.8,
+      "before": {
+        "preference": "auto",
+        "ratio": 0.75,
+        "maximum": 1.5,
+        "changes": 2
+      },
+      "after": {
+        "preference": "auto",
+        "ratio": 0.75,
+        "maximum": 1.5,
+        "changes": 1
+      }
+    },
+    {
+      "name": "mixed-frame-pressure",
+      "hz": 25,
+      "renderMs": 28,
+      "preRenderMs": 12,
+      "before": {
+        "preference": "auto",
+        "ratio": 1.5,
+        "maximum": 1.5,
+        "changes": 0
+      },
+      "after": {
+        "preference": "auto",
+        "ratio": 0.75,
+        "maximum": 1.5,
+        "changes": 3
+      }
+    },
+    {
+      "name": "CPU-pressure",
+      "hz": 20,
+      "renderMs": 4,
+      "preRenderMs": 40,
+      "before": {
+        "preference": "auto",
+        "ratio": 1.5,
+        "maximum": 1.5,
+        "changes": 0
+      },
+      "after": {
+        "preference": "auto",
+        "ratio": 1.5,
+        "maximum": 1.5,
+        "changes": 0
+      }
+    }
+  ],
+  "simulation": [
+    {
+      "zone": "frontier",
+      "condition": "paired deterministic idle town, night, no hired party",
+      "ticks": 60,
+      "before": {
+        "medianMs": 9.44365700000003,
+        "p95Ms": 11.673730999999862
+      },
+      "after": {
+        "medianMs": 5.2005129999997735,
+        "p95Ms": 6.5763230000002295
+      },
+      "calls": {
+        "blocked": 199,
+        "line": 0,
+        "route": 0,
+        "clearSegment": 4
+      },
+      "fullStateAndEffectsEqual": true,
+      "changedHomesEligibilityAndOrderEqual": true
+    },
+    {
+      "zone": "crown",
+      "condition": "paired deterministic idle town, night, no hired party",
+      "ticks": 60,
+      "before": {
+        "medianMs": 11.716771000000335,
+        "p95Ms": 16.562238000000434
+      },
+      "after": {
+        "medianMs": 6.658325000000332,
+        "p95Ms": 10.269689000000653
+      },
+      "calls": {
+        "blocked": 12137,
+        "line": 0,
+        "route": 1,
+        "clearSegment": 887
+      },
+      "fullStateAndEffectsEqual": true,
+      "changedHomesEligibilityAndOrderEqual": true
+    }
+  ],
+  "spriteInventory": {
+    "resources": 37,
+    "allResourceDecodedEstimate": 46384384,
+    "budget": 268435456
+  },
+  "save": {
+    "fixture": "five generated outdoor regions, no player data",
+    "runs": 12,
+    "medianMs": 7.915071999999782,
+    "p95Ms": 8.452094000000216,
+    "writesPerSave": 2,
+    "meanSerializedBytesPerSave": 384389,
+    "limitation": "Map-backed storage stub; excludes browser localStorage write latency."
+  }
+}

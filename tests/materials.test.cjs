@@ -236,7 +236,7 @@ const entry = (n) => ({
         URL,
         fetch: network,
         console,
-        caches: { open: async () => store },
+        caches: { open: async () => store, keys: async () => [] },
         self: {
           registration: { scope },
           addEventListener: (name, fn) => (handlers[name] = fn),
@@ -269,7 +269,7 @@ const entry = (n) => ({
     };
     const ready = offline(false);
     await ready.install();
-    assert.equal(ready.skipped(), 1);
+    assert.equal(ready.skipped(), 0, 'complete cache waits for player update acceptance');
     assert.deepEqual(await ready.read(), fs.readFileSync(path.join(checkout, materialFile)));
     const missing = offline(true);
     await assert.rejects(missing.install(), /missing/);

@@ -58,6 +58,15 @@ const manifest = { version: 1, materials: { [key]: entry } };
   draws[1].onload();
   assert(await restored, 'normal decode works after repeated transitions');
   assert(layer.cache.size > 0);
+  assert(layer.bytes > 0);
+  layer.setOptimizationMode(true);
+  assert.equal(
+    layer.cache.size,
+    0,
+    'entering procedural mode releases previously decoded textures',
+  );
+  assert.equal(layer.bytes, 0);
+  assert.equal(layer.projectedBytes, 0);
 
   const decorative = { decorative: true, r: 0, structure: 'wildflowers' };
   assert.equal(Renderer.optimizationClutter(decorative), true);
@@ -81,8 +90,17 @@ const manifest = { version: 1, materials: { [key]: entry } };
   assert.equal(sound.voices.size, 0, 'optimized mode never synthesizes fallback ambient bursts');
   assert.equal(sound.playSoundEvent('ambience.birds'), false, 'no environmental recording request');
   sound.cue = { id: 'vale' };
-  sound.sceneDetails({ region: 'vale', interior: 'outdoors', situation: 'exploration', engaged: 0 });
-  assert.equal(sound.nextSceneDetail, undefined, 'optimized mode never schedules environmental detail');
+  sound.sceneDetails({
+    region: 'vale',
+    interior: 'outdoors',
+    situation: 'exploration',
+    engaged: 0,
+  });
+  assert.equal(
+    sound.nextSceneDetail,
+    undefined,
+    'optimized mode never schedules environmental detail',
+  );
   sound.cue = null;
   sound.tone(60, 1, 0.1, 0.02, 'sine', 'effects');
   assert.equal(sound.voices.size, 1, 'combat/effects bus remains available');
@@ -92,7 +110,9 @@ const manifest = { version: 1, materials: { [key]: entry } };
   assert.equal(sound.setOptimizationMode(false), true);
   assert.equal(sound.optimizationMode, false);
   sound.dispose();
-  console.log('PASS Optimization Mode materials, stale requests, reversible decoding, guarded scenery and audio sources');
+  console.log(
+    'PASS Optimization Mode materials, stale requests, reversible decoding, guarded scenery and audio sources',
+  );
 })().catch((error) => {
   console.error(error);
   process.exitCode = 1;

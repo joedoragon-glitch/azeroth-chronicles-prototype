@@ -22,12 +22,13 @@
       const work = samples.map((s) => s.workMs).sort((a, b) => a - b),
         preRender = samples.map((s) => s.preRenderMs).sort((a, b) => a - b),
         renderWork = samples.map((s) => s.renderMs).sort((a, b) => a - b),
-        intervals = samples.map((s) => s.intervalMs).filter((n) => n > 0 && n < 1000),
-        mean = intervals.reduce((a, b) => a + b, 0) / (intervals.length || 1);
+        intervals = samples.map((s) => s.intervalMs).filter((n) => n > 0),
+        mean = intervals.reduce((a, b) => a + b, 0) / (intervals.length || 1),
+        frameRate = mean ? 1000 / mean : 0;
       return {
         experience,
         sampleFrames: samples.length,
-        fps: mean ? Math.round(1000 / mean) : 0,
+        fps: frameRate < 10 ? Math.round(frameRate * 10) / 10 : Math.round(frameRate),
         workP95Ms: Math.round((work[Math.floor((work.length - 1) * 0.95)] || 0) * 100) / 100,
         workP99Ms: Math.round((work[Math.floor((work.length - 1) * 0.99)] || 0) * 100) / 100,
         preRenderP95Ms:
@@ -219,25 +220,38 @@
         } catch (_) {}
         return true;
       },
-      observe(now, renderMs, target) {
+      observe(now, renderMs, target, preRenderMs = 0) {
         if (
           preference !== 'auto' ||
           !Number.isFinite(now) ||
           !Number.isFinite(renderMs) ||
           renderMs < 0 ||
+          !Number.isFinite(preRenderMs) ||
+          preRenderMs < 0 ||
           ![30, 60].includes(target)
         )
           return false;
         if (samples.length && now <= samples.at(-1).now) suspend();
-        samples.push({ now, renderMs });
-        while (samples.length > 120 || now - samples[0].now > 4000) samples.shift();
+        samples.push({ now, renderMs, preRenderMs });
+        // Keep two active frames even at extreme slowdown. Requiring sixteen
+        // frames inside four seconds made recovery impossible below four FPS.
+        // Pauses explicitly suspend; a single loading spike cannot dominate
+        // the lower of two observations or a populated 80th percentile.
+        while (samples.length > 120 || (samples.length > 2 && now - samples[0].now > 4000))
+          samples.shift();
         if (checkAt === null) checkAt = now;
-        if (now - checkAt < 3000 || samples.length < 16 || now - samples[0].now < 1200)
-          return false;
+        if (now - checkAt < 3000 || samples.length < 2 || now - samples[0].now < 1200) return false;
         checkAt = now;
         const costs = samples.map((s) => s.renderMs).sort((a, b) => a - b),
+          preRenderCosts = samples.map((s) => s.preRenderMs).sort((a, b) => a - b),
           cost = costs[Math.floor((costs.length - 1) * 0.8)],
-          budget = 1000 / target,
+          frameBudget = 1000 / target,
+          // Reserve observed shell/simulation time without blurring a scene
+          // whose renderer is already cheap during a CPU-only slowdown.
+          budget = Math.max(
+            frameBudget * 0.35,
+            frameBudget - preRenderCosts[Math.floor((preRenderCosts.length - 1) * 0.8)],
+          ),
           minimum = Math.min(0.75, maximum);
         let next = ratio;
         if (cost > budget * 1.1 && ratio > minimum) {

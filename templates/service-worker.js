@@ -1,4 +1,4 @@
-/* Bump CACHE_VERSION when app assets change. Tester builds activate immediately. */
+/* Bump CACHE_VERSION when app assets change. Ready updates wait for the player. */
 const CACHE_VERSION = {{CACHE_VERSION}};
 {{SPRITE_FORMAT}}
 const CACHE_PREFIX = 'azeroth-app-';
@@ -76,7 +76,8 @@ self.addEventListener('install', event => {
         await cache.addAll(downloads);
         const sprites = await spriteAssetURLs(cache);
         if (sprites.length) await cache.addAll(sprites.map(url => new Request(url, { cache: 'reload' })));
-        await self.skipWaiting();
+        // The first install activates normally. An update waits until the
+        // player saves and chooses Install from the visible in-game notice.
     })());
 });
 self.addEventListener('activate', event => {

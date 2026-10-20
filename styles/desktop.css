@@ -1,4 +1,8 @@
 /* Keyboard-first browser presentation, including touch-capable Chromebooks. */
+body[data-experience='desktop'] #update-button {
+  right: 234px;
+  top: 10px;
+}
 body[data-experience='desktop'] #hud {
   right: 12px;
   top: 12px;

@@ -1,0 +1,1280 @@
+{
+  "limits": "Three frozen scenes, headless software Chromium draw+forced readback. Timings are local draw costs, not physical-device FPS.",
+  "cases": [
+    {
+      "phone": false,
+      "zone": "frontier",
+      "cases": [
+        {
+          "optimized": false,
+          "times": {
+            "maximum": [
+              154.70000000298023,
+              155.09999999403954,
+              174.8999999910593
+            ],
+            "adaptive": [
+              109.40000000596046,
+              83.70000000298023,
+              92.20000000298023
+            ]
+          },
+          "stats": {
+            "maximum": {
+              "backing": [
+                2403,
+                1248
+              ],
+              "resolution": {
+                "preference": "native",
+                "ratio": 1.5021044203152742,
+                "maximum": 1.5021044203152742,
+                "changes": 4
+              },
+              "tileCandidates": 529,
+              "tilesDrawn": 312,
+              "entitiesConsidered": 491,
+              "entitiesDrawn": 109,
+              "floorTilesPainted": 0,
+              "outlineMasks": 12,
+              "outlineMaskPixels": 868352,
+              "cameraZoom": 1.75,
+              "optimizationMode": "off",
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 38925000,
+                "budget": 67108864,
+                "builds": 9,
+                "hits": 18,
+                "margin": 256
+              },
+              "outlineBuffers": {
+                "surfaces": 8,
+                "bytes": 3407872
+              },
+              "phases": {
+                "sampledFrames": 2,
+                "sampleEvery": 12,
+                "floor": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "terrain": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "entities": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "effects": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                }
+              },
+              "materials": {
+                "optimizationMode": false,
+                "definitions": 7,
+                "decodedBytes": 1835008,
+                "reservedBytes": 0,
+                "decodedBudget": 2097152,
+                "decoded": 7,
+                "projectedBytes": 2907992,
+                "projectedBudget": 8388608,
+                "projectedRepeats": 2,
+                "queued": 0,
+                "decoding": 0,
+                "failures": 0,
+                "peakDecodedBytes": 1835008,
+                "peakConcurrent": 2,
+                "evictions": 0,
+                "staleLoads": 0,
+                "draws": 0,
+                "projectedBuilds": 3,
+                "projectedEvictions": 0
+              },
+              "sprites": {
+                "manifestVersion": 8,
+                "definitions": 33,
+                "loaded": 36,
+                "loading": 0,
+                "queued": 0,
+                "failed": 0,
+                "decodedBytes": 45057280,
+                "reservedBytes": 0,
+                "maxDecodedBytes": 268435456,
+                "maxConcurrentDecodes": 2,
+                "clockMs": 0,
+                "evictions": 0,
+                "staleLoads": 0,
+                "invalidPresentation": 0,
+                "budgetSkips": 0,
+                "peakDecodedBytes": 45057280,
+                "peakReservedBytes": 45057280,
+                "peakConcurrent": 2
+              }
+            },
+            "adaptive": {
+              "backing": [
+                1200,
+                623
+              ],
+              "resolution": {
+                "preference": "auto",
+                "ratio": 0.75,
+                "maximum": 1.5021044203152742,
+                "changes": 4
+              },
+              "tileCandidates": 529,
+              "tilesDrawn": 312,
+              "entitiesConsidered": 491,
+              "entitiesDrawn": 109,
+              "floorTilesPainted": 0,
+              "outlineMasks": 12,
+              "outlineMaskPixels": 868352,
+              "cameraZoom": 1.75,
+              "optimizationMode": "off",
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 9704448,
+                "budget": 67108864,
+                "builds": 8,
+                "hits": 17,
+                "margin": 256
+              },
+              "outlineBuffers": {
+                "surfaces": 8,
+                "bytes": 3407872
+              },
+              "phases": {
+                "sampledFrames": 2,
+                "sampleEvery": 12,
+                "floor": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "terrain": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "entities": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "effects": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                }
+              },
+              "materials": {
+                "optimizationMode": false,
+                "definitions": 7,
+                "decodedBytes": 1835008,
+                "reservedBytes": 0,
+                "decodedBudget": 2097152,
+                "decoded": 7,
+                "projectedBytes": 2907992,
+                "projectedBudget": 8388608,
+                "projectedRepeats": 2,
+                "queued": 0,
+                "decoding": 0,
+                "failures": 0,
+                "peakDecodedBytes": 1835008,
+                "peakConcurrent": 2,
+                "evictions": 0,
+                "staleLoads": 0,
+                "draws": 0,
+                "projectedBuilds": 3,
+                "projectedEvictions": 0
+              },
+              "sprites": {
+                "manifestVersion": 8,
+                "definitions": 33,
+                "loaded": 36,
+                "loading": 0,
+                "queued": 0,
+                "failed": 0,
+                "decodedBytes": 45057280,
+                "reservedBytes": 0,
+                "maxDecodedBytes": 268435456,
+                "maxConcurrentDecodes": 2,
+                "clockMs": 0,
+                "evictions": 0,
+                "staleLoads": 0,
+                "invalidPresentation": 0,
+                "budgetSkips": 0,
+                "peakDecodedBytes": 45057280,
+                "peakReservedBytes": 45057280,
+                "peakConcurrent": 2
+              }
+            }
+          },
+          "stateAndInputPreserved": true,
+          "smallMovementReused": true
+        },
+        {
+          "optimized": true,
+          "times": {
+            "maximum": [
+              149,
+              137,
+              139.70000000298023
+            ],
+            "adaptive": [
+              59.1000000089407,
+              67,
+              59
+            ]
+          },
+          "stats": {
+            "maximum": {
+              "backing": [
+                2403,
+                1248
+              ],
+              "resolution": {
+                "preference": "native",
+                "ratio": 1.5021044203152742,
+                "maximum": 1.5021044203152742,
+                "changes": 8
+              },
+              "tileCandidates": 529,
+              "tilesDrawn": 312,
+              "entitiesConsidered": 491,
+              "entitiesDrawn": 109,
+              "floorTilesPainted": 0,
+              "outlineMasks": 12,
+              "outlineMaskPixels": 868352,
+              "cameraZoom": 1.75,
+              "optimizationMode": "on",
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 38925000,
+                "budget": 67108864,
+                "builds": 14,
+                "hits": 30,
+                "margin": 256
+              },
+              "outlineBuffers": {
+                "surfaces": 8,
+                "bytes": 3407872
+              },
+              "phases": {
+                "sampledFrames": 1,
+                "sampleEvery": 12,
+                "floor": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "terrain": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "entities": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "effects": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                }
+              },
+              "materials": {
+                "optimizationMode": true,
+                "definitions": 7,
+                "decodedBytes": 0,
+                "reservedBytes": 0,
+                "decodedBudget": 2097152,
+                "decoded": 0,
+                "projectedBytes": 0,
+                "projectedBudget": 8388608,
+                "projectedRepeats": 0,
+                "queued": 0,
+                "decoding": 0,
+                "failures": 0,
+                "peakDecodedBytes": 1835008,
+                "peakConcurrent": 2,
+                "evictions": 0,
+                "staleLoads": 0,
+                "draws": 0,
+                "projectedBuilds": 3,
+                "projectedEvictions": 0
+              },
+              "sprites": {
+                "manifestVersion": 8,
+                "definitions": 33,
+                "loaded": 36,
+                "loading": 0,
+                "queued": 0,
+                "failed": 0,
+                "decodedBytes": 45057280,
+                "reservedBytes": 0,
+                "maxDecodedBytes": 268435456,
+                "maxConcurrentDecodes": 2,
+                "clockMs": 0,
+                "evictions": 0,
+                "staleLoads": 0,
+                "invalidPresentation": 0,
+                "budgetSkips": 0,
+                "peakDecodedBytes": 45057280,
+                "peakReservedBytes": 45057280,
+                "peakConcurrent": 2
+              }
+            },
+            "adaptive": {
+              "backing": [
+                1200,
+                623
+              ],
+              "resolution": {
+                "preference": "auto",
+                "ratio": 0.75,
+                "maximum": 1.5021044203152742,
+                "changes": 8
+              },
+              "tileCandidates": 529,
+              "tilesDrawn": 312,
+              "entitiesConsidered": 491,
+              "entitiesDrawn": 109,
+              "floorTilesPainted": 0,
+              "outlineMasks": 12,
+              "outlineMaskPixels": 868352,
+              "cameraZoom": 1.75,
+              "optimizationMode": "on",
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 9704448,
+                "budget": 67108864,
+                "builds": 13,
+                "hits": 29,
+                "margin": 256
+              },
+              "outlineBuffers": {
+                "surfaces": 8,
+                "bytes": 3407872
+              },
+              "phases": {
+                "sampledFrames": 1,
+                "sampleEvery": 12,
+                "floor": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "terrain": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "entities": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "effects": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                }
+              },
+              "materials": {
+                "optimizationMode": true,
+                "definitions": 7,
+                "decodedBytes": 0,
+                "reservedBytes": 0,
+                "decodedBudget": 2097152,
+                "decoded": 0,
+                "projectedBytes": 0,
+                "projectedBudget": 8388608,
+                "projectedRepeats": 0,
+                "queued": 0,
+                "decoding": 0,
+                "failures": 0,
+                "peakDecodedBytes": 1835008,
+                "peakConcurrent": 2,
+                "evictions": 0,
+                "staleLoads": 0,
+                "draws": 0,
+                "projectedBuilds": 3,
+                "projectedEvictions": 0
+              },
+              "sprites": {
+                "manifestVersion": 8,
+                "definitions": 33,
+                "loaded": 36,
+                "loading": 0,
+                "queued": 0,
+                "failed": 0,
+                "decodedBytes": 45057280,
+                "reservedBytes": 0,
+                "maxDecodedBytes": 268435456,
+                "maxConcurrentDecodes": 2,
+                "clockMs": 0,
+                "evictions": 0,
+                "staleLoads": 0,
+                "invalidPresentation": 0,
+                "budgetSkips": 0,
+                "peakDecodedBytes": 45057280,
+                "peakReservedBytes": 45057280,
+                "peakConcurrent": 2
+              }
+            }
+          },
+          "stateAndInputPreserved": true,
+          "smallMovementReused": true
+        }
+      ],
+      "errors": []
+    },
+    {
+      "phone": false,
+      "zone": "crown",
+      "cases": [
+        {
+          "optimized": false,
+          "times": {
+            "maximum": [
+              124.09999999403954,
+              126.40000000596046,
+              110.09999999403954
+            ],
+            "adaptive": [
+              63.5,
+              63.29999999701977,
+              64.09999999403954
+            ]
+          },
+          "stats": {
+            "maximum": {
+              "backing": [
+                2403,
+                1248
+              ],
+              "resolution": {
+                "preference": "native",
+                "ratio": 1.5021044203152742,
+                "maximum": 1.5021044203152742,
+                "changes": 12
+              },
+              "tileCandidates": 529,
+              "tilesDrawn": 312,
+              "entitiesConsidered": 389,
+              "entitiesDrawn": 62,
+              "floorTilesPainted": 0,
+              "outlineMasks": 5,
+              "outlineMaskPixels": 327680,
+              "cameraZoom": 1.75,
+              "optimizationMode": "off",
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 38925000,
+                "budget": 67108864,
+                "builds": 20,
+                "hits": 43,
+                "margin": 256
+              },
+              "outlineBuffers": {
+                "surfaces": 8,
+                "bytes": 3407872
+              },
+              "phases": {
+                "sampledFrames": 1,
+                "sampleEvery": 12,
+                "floor": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "terrain": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "entities": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "effects": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                }
+              },
+              "materials": {
+                "optimizationMode": false,
+                "definitions": 7,
+                "decodedBytes": 1835008,
+                "reservedBytes": 0,
+                "decodedBudget": 2097152,
+                "decoded": 7,
+                "projectedBytes": 2907992,
+                "projectedBudget": 8388608,
+                "projectedRepeats": 2,
+                "queued": 0,
+                "decoding": 0,
+                "failures": 0,
+                "peakDecodedBytes": 1835008,
+                "peakConcurrent": 2,
+                "evictions": 0,
+                "staleLoads": 0,
+                "draws": 0,
+                "projectedBuilds": 5,
+                "projectedEvictions": 0
+              },
+              "sprites": {
+                "manifestVersion": 8,
+                "definitions": 33,
+                "loaded": 36,
+                "loading": 0,
+                "queued": 0,
+                "failed": 0,
+                "decodedBytes": 45057280,
+                "reservedBytes": 0,
+                "maxDecodedBytes": 268435456,
+                "maxConcurrentDecodes": 2,
+                "clockMs": 0,
+                "evictions": 0,
+                "staleLoads": 0,
+                "invalidPresentation": 0,
+                "budgetSkips": 0,
+                "peakDecodedBytes": 45057280,
+                "peakReservedBytes": 45057280,
+                "peakConcurrent": 2
+              }
+            },
+            "adaptive": {
+              "backing": [
+                1200,
+                623
+              ],
+              "resolution": {
+                "preference": "auto",
+                "ratio": 0.75,
+                "maximum": 1.5021044203152742,
+                "changes": 12
+              },
+              "tileCandidates": 529,
+              "tilesDrawn": 312,
+              "entitiesConsidered": 389,
+              "entitiesDrawn": 62,
+              "floorTilesPainted": 0,
+              "outlineMasks": 5,
+              "outlineMaskPixels": 327680,
+              "cameraZoom": 1.75,
+              "optimizationMode": "off",
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 9704448,
+                "budget": 67108864,
+                "builds": 19,
+                "hits": 42,
+                "margin": 256
+              },
+              "outlineBuffers": {
+                "surfaces": 8,
+                "bytes": 3407872
+              },
+              "phases": {
+                "sampledFrames": 1,
+                "sampleEvery": 12,
+                "floor": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "terrain": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "entities": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "effects": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                }
+              },
+              "materials": {
+                "optimizationMode": false,
+                "definitions": 7,
+                "decodedBytes": 1835008,
+                "reservedBytes": 0,
+                "decodedBudget": 2097152,
+                "decoded": 7,
+                "projectedBytes": 2907992,
+                "projectedBudget": 8388608,
+                "projectedRepeats": 2,
+                "queued": 0,
+                "decoding": 0,
+                "failures": 0,
+                "peakDecodedBytes": 1835008,
+                "peakConcurrent": 2,
+                "evictions": 0,
+                "staleLoads": 0,
+                "draws": 0,
+                "projectedBuilds": 5,
+                "projectedEvictions": 0
+              },
+              "sprites": {
+                "manifestVersion": 8,
+                "definitions": 33,
+                "loaded": 36,
+                "loading": 0,
+                "queued": 0,
+                "failed": 0,
+                "decodedBytes": 45057280,
+                "reservedBytes": 0,
+                "maxDecodedBytes": 268435456,
+                "maxConcurrentDecodes": 2,
+                "clockMs": 0,
+                "evictions": 0,
+                "staleLoads": 0,
+                "invalidPresentation": 0,
+                "budgetSkips": 0,
+                "peakDecodedBytes": 45057280,
+                "peakReservedBytes": 45057280,
+                "peakConcurrent": 2
+              }
+            }
+          },
+          "stateAndInputPreserved": true,
+          "smallMovementReused": true
+        },
+        {
+          "optimized": true,
+          "times": {
+            "maximum": [
+              96.1000000089407,
+              102,
+              100.09999999403954
+            ],
+            "adaptive": [
+              50.3999999910593,
+              43.099999994039536,
+              46
+            ]
+          },
+          "stats": {
+            "maximum": {
+              "backing": [
+                2403,
+                1248
+              ],
+              "resolution": {
+                "preference": "native",
+                "ratio": 1.5021044203152742,
+                "maximum": 1.5021044203152742,
+                "changes": 16
+              },
+              "tileCandidates": 529,
+              "tilesDrawn": 312,
+              "entitiesConsidered": 389,
+              "entitiesDrawn": 61,
+              "floorTilesPainted": 0,
+              "outlineMasks": 5,
+              "outlineMaskPixels": 327680,
+              "cameraZoom": 1.75,
+              "optimizationMode": "on",
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 38925000,
+                "budget": 67108864,
+                "builds": 25,
+                "hits": 55,
+                "margin": 256
+              },
+              "outlineBuffers": {
+                "surfaces": 8,
+                "bytes": 3407872
+              },
+              "phases": {
+                "sampledFrames": 1,
+                "sampleEvery": 12,
+                "floor": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "terrain": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "entities": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "effects": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                }
+              },
+              "materials": {
+                "optimizationMode": true,
+                "definitions": 7,
+                "decodedBytes": 0,
+                "reservedBytes": 0,
+                "decodedBudget": 2097152,
+                "decoded": 0,
+                "projectedBytes": 0,
+                "projectedBudget": 8388608,
+                "projectedRepeats": 0,
+                "queued": 0,
+                "decoding": 0,
+                "failures": 0,
+                "peakDecodedBytes": 1835008,
+                "peakConcurrent": 2,
+                "evictions": 0,
+                "staleLoads": 0,
+                "draws": 0,
+                "projectedBuilds": 5,
+                "projectedEvictions": 0
+              },
+              "sprites": {
+                "manifestVersion": 8,
+                "definitions": 33,
+                "loaded": 36,
+                "loading": 0,
+                "queued": 0,
+                "failed": 0,
+                "decodedBytes": 45057280,
+                "reservedBytes": 0,
+                "maxDecodedBytes": 268435456,
+                "maxConcurrentDecodes": 2,
+                "clockMs": 0,
+                "evictions": 0,
+                "staleLoads": 0,
+                "invalidPresentation": 0,
+                "budgetSkips": 0,
+                "peakDecodedBytes": 45057280,
+                "peakReservedBytes": 45057280,
+                "peakConcurrent": 2
+              }
+            },
+            "adaptive": {
+              "backing": [
+                1200,
+                623
+              ],
+              "resolution": {
+                "preference": "auto",
+                "ratio": 0.75,
+                "maximum": 1.5021044203152742,
+                "changes": 16
+              },
+              "tileCandidates": 529,
+              "tilesDrawn": 312,
+              "entitiesConsidered": 389,
+              "entitiesDrawn": 61,
+              "floorTilesPainted": 0,
+              "outlineMasks": 5,
+              "outlineMaskPixels": 327680,
+              "cameraZoom": 1.75,
+              "optimizationMode": "on",
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 9704448,
+                "budget": 67108864,
+                "builds": 24,
+                "hits": 54,
+                "margin": 256
+              },
+              "outlineBuffers": {
+                "surfaces": 8,
+                "bytes": 3407872
+              },
+              "phases": {
+                "sampledFrames": 1,
+                "sampleEvery": 12,
+                "floor": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "terrain": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "entities": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "effects": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                }
+              },
+              "materials": {
+                "optimizationMode": true,
+                "definitions": 7,
+                "decodedBytes": 0,
+                "reservedBytes": 0,
+                "decodedBudget": 2097152,
+                "decoded": 0,
+                "projectedBytes": 0,
+                "projectedBudget": 8388608,
+                "projectedRepeats": 0,
+                "queued": 0,
+                "decoding": 0,
+                "failures": 0,
+                "peakDecodedBytes": 1835008,
+                "peakConcurrent": 2,
+                "evictions": 0,
+                "staleLoads": 0,
+                "draws": 0,
+                "projectedBuilds": 5,
+                "projectedEvictions": 0
+              },
+              "sprites": {
+                "manifestVersion": 8,
+                "definitions": 33,
+                "loaded": 36,
+                "loading": 0,
+                "queued": 0,
+                "failed": 0,
+                "decodedBytes": 45057280,
+                "reservedBytes": 0,
+                "maxDecodedBytes": 268435456,
+                "maxConcurrentDecodes": 2,
+                "clockMs": 0,
+                "evictions": 0,
+                "staleLoads": 0,
+                "invalidPresentation": 0,
+                "budgetSkips": 0,
+                "peakDecodedBytes": 45057280,
+                "peakReservedBytes": 45057280,
+                "peakConcurrent": 2
+              }
+            }
+          },
+          "stateAndInputPreserved": true,
+          "smallMovementReused": true
+        }
+      ],
+      "errors": []
+    },
+    {
+      "phone": true,
+      "zone": "citadel",
+      "cases": [
+        {
+          "optimized": false,
+          "times": {
+            "maximum": [
+              55,
+              65.20000000298023,
+              58
+            ],
+            "adaptive": [
+              42.20000000298023,
+              57.70000000298023,
+              45.900000005960464
+            ]
+          },
+          "stats": {
+            "maximum": {
+              "backing": [
+                590,
+                1278
+              ],
+              "resolution": {
+                "preference": "native",
+                "ratio": 1.5,
+                "maximum": 1.5,
+                "changes": 4
+              },
+              "tileCandidates": 289,
+              "tilesDrawn": 123,
+              "entitiesConsidered": 47,
+              "entitiesDrawn": 31,
+              "floorTilesPainted": 123,
+              "outlineMasks": 6,
+              "outlineMaskPixels": 393216,
+              "cameraZoom": 1.75,
+              "optimizationMode": "off",
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 0,
+                "budget": 67108864,
+                "builds": 3,
+                "hits": 1,
+                "margin": 0
+              },
+              "outlineBuffers": {
+                "surfaces": 4,
+                "bytes": 1048576
+              },
+              "phases": {
+                "sampledFrames": 1,
+                "sampleEvery": 12,
+                "floor": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "terrain": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "entities": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "effects": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                }
+              },
+              "materials": {
+                "optimizationMode": false,
+                "definitions": 7,
+                "decodedBytes": 1835008,
+                "reservedBytes": 0,
+                "decodedBudget": 2097152,
+                "decoded": 7,
+                "projectedBytes": 0,
+                "projectedBudget": 8388608,
+                "projectedRepeats": 0,
+                "queued": 0,
+                "decoding": 0,
+                "failures": 0,
+                "peakDecodedBytes": 1835008,
+                "peakConcurrent": 2,
+                "evictions": 0,
+                "staleLoads": 0,
+                "draws": 0,
+                "projectedBuilds": 1,
+                "projectedEvictions": 0
+              },
+              "sprites": {
+                "manifestVersion": 8,
+                "definitions": 33,
+                "loaded": 36,
+                "loading": 0,
+                "queued": 0,
+                "failed": 0,
+                "decodedBytes": 45057280,
+                "reservedBytes": 0,
+                "maxDecodedBytes": 268435456,
+                "maxConcurrentDecodes": 2,
+                "clockMs": 0,
+                "evictions": 0,
+                "staleLoads": 0,
+                "invalidPresentation": 0,
+                "budgetSkips": 0,
+                "peakDecodedBytes": 45057280,
+                "peakReservedBytes": 45057280,
+                "peakConcurrent": 2
+              }
+            },
+            "adaptive": {
+              "backing": [
+                295,
+                639
+              ],
+              "resolution": {
+                "preference": "auto",
+                "ratio": 0.75,
+                "maximum": 1.5,
+                "changes": 4
+              },
+              "tileCandidates": 289,
+              "tilesDrawn": 123,
+              "entitiesConsidered": 47,
+              "entitiesDrawn": 31,
+              "floorTilesPainted": 123,
+              "outlineMasks": 6,
+              "outlineMaskPixels": 393216,
+              "cameraZoom": 1.75,
+              "optimizationMode": "off",
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 0,
+                "budget": 67108864,
+                "builds": 3,
+                "hits": 1,
+                "margin": 0
+              },
+              "outlineBuffers": {
+                "surfaces": 4,
+                "bytes": 1048576
+              },
+              "phases": {
+                "sampledFrames": 1,
+                "sampleEvery": 12,
+                "floor": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "terrain": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "entities": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "effects": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                }
+              },
+              "materials": {
+                "optimizationMode": false,
+                "definitions": 7,
+                "decodedBytes": 1835008,
+                "reservedBytes": 0,
+                "decodedBudget": 2097152,
+                "decoded": 7,
+                "projectedBytes": 0,
+                "projectedBudget": 8388608,
+                "projectedRepeats": 0,
+                "queued": 0,
+                "decoding": 0,
+                "failures": 0,
+                "peakDecodedBytes": 1835008,
+                "peakConcurrent": 2,
+                "evictions": 0,
+                "staleLoads": 0,
+                "draws": 0,
+                "projectedBuilds": 1,
+                "projectedEvictions": 0
+              },
+              "sprites": {
+                "manifestVersion": 8,
+                "definitions": 33,
+                "loaded": 36,
+                "loading": 0,
+                "queued": 0,
+                "failed": 0,
+                "decodedBytes": 45057280,
+                "reservedBytes": 0,
+                "maxDecodedBytes": 268435456,
+                "maxConcurrentDecodes": 2,
+                "clockMs": 0,
+                "evictions": 0,
+                "staleLoads": 0,
+                "invalidPresentation": 0,
+                "budgetSkips": 0,
+                "peakDecodedBytes": 45057280,
+                "peakReservedBytes": 45057280,
+                "peakConcurrent": 2
+              }
+            }
+          },
+          "stateAndInputPreserved": true,
+          "smallMovementReused": false
+        },
+        {
+          "optimized": true,
+          "times": {
+            "maximum": [
+              45.5,
+              54.900000005960464,
+              59.20000000298023
+            ],
+            "adaptive": [
+              31.799999997019768,
+              34.1000000089407,
+              29.099999994039536
+            ]
+          },
+          "stats": {
+            "maximum": {
+              "backing": [
+                590,
+                1278
+              ],
+              "resolution": {
+                "preference": "native",
+                "ratio": 1.5,
+                "maximum": 1.5,
+                "changes": 8
+              },
+              "tileCandidates": 289,
+              "tilesDrawn": 123,
+              "entitiesConsidered": 47,
+              "entitiesDrawn": 31,
+              "floorTilesPainted": 123,
+              "outlineMasks": 6,
+              "outlineMaskPixels": 393216,
+              "cameraZoom": 1.75,
+              "optimizationMode": "on",
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 0,
+                "budget": 67108864,
+                "builds": 3,
+                "hits": 1,
+                "margin": 0
+              },
+              "outlineBuffers": {
+                "surfaces": 4,
+                "bytes": 1048576
+              },
+              "phases": {
+                "sampledFrames": 1,
+                "sampleEvery": 12,
+                "floor": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "terrain": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "entities": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "effects": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                }
+              },
+              "materials": {
+                "optimizationMode": true,
+                "definitions": 7,
+                "decodedBytes": 0,
+                "reservedBytes": 0,
+                "decodedBudget": 2097152,
+                "decoded": 0,
+                "projectedBytes": 0,
+                "projectedBudget": 8388608,
+                "projectedRepeats": 0,
+                "queued": 0,
+                "decoding": 0,
+                "failures": 0,
+                "peakDecodedBytes": 1835008,
+                "peakConcurrent": 2,
+                "evictions": 0,
+                "staleLoads": 0,
+                "draws": 0,
+                "projectedBuilds": 1,
+                "projectedEvictions": 0
+              },
+              "sprites": {
+                "manifestVersion": 8,
+                "definitions": 33,
+                "loaded": 36,
+                "loading": 0,
+                "queued": 0,
+                "failed": 0,
+                "decodedBytes": 45057280,
+                "reservedBytes": 0,
+                "maxDecodedBytes": 268435456,
+                "maxConcurrentDecodes": 2,
+                "clockMs": 0,
+                "evictions": 0,
+                "staleLoads": 0,
+                "invalidPresentation": 0,
+                "budgetSkips": 0,
+                "peakDecodedBytes": 45057280,
+                "peakReservedBytes": 45057280,
+                "peakConcurrent": 2
+              }
+            },
+            "adaptive": {
+              "backing": [
+                295,
+                639
+              ],
+              "resolution": {
+                "preference": "auto",
+                "ratio": 0.75,
+                "maximum": 1.5,
+                "changes": 8
+              },
+              "tileCandidates": 289,
+              "tilesDrawn": 123,
+              "entitiesConsidered": 47,
+              "entitiesDrawn": 31,
+              "floorTilesPainted": 123,
+              "outlineMasks": 6,
+              "outlineMaskPixels": 393216,
+              "cameraZoom": 1.75,
+              "optimizationMode": "on",
+              "transientEffects": 0,
+              "enemyVfxEffects": 0,
+              "groundCache": {
+                "bytes": 0,
+                "budget": 67108864,
+                "builds": 3,
+                "hits": 1,
+                "margin": 0
+              },
+              "outlineBuffers": {
+                "surfaces": 4,
+                "bytes": 1048576
+              },
+              "phases": {
+                "sampledFrames": 1,
+                "sampleEvery": 12,
+                "floor": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "terrain": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "entities": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                },
+                "effects": {
+                  "p95Ms": 0,
+                  "p99Ms": 0
+                }
+              },
+              "materials": {
+                "optimizationMode": true,
+                "definitions": 7,
+                "decodedBytes": 0,
+                "reservedBytes": 0,
+                "decodedBudget": 2097152,
+                "decoded": 0,
+                "projectedBytes": 0,
+                "projectedBudget": 8388608,
+                "projectedRepeats": 0,
+                "queued": 0,
+                "decoding": 0,
+                "failures": 0,
+                "peakDecodedBytes": 1835008,
+                "peakConcurrent": 2,
+                "evictions": 0,
+                "staleLoads": 0,
+                "draws": 0,
+                "projectedBuilds": 1,
+                "projectedEvictions": 0
+              },
+              "sprites": {
+                "manifestVersion": 8,
+                "definitions": 33,
+                "loaded": 36,
+                "loading": 0,
+                "queued": 0,
+                "failed": 0,
+                "decodedBytes": 45057280,
+                "reservedBytes": 0,
+                "maxDecodedBytes": 268435456,
+                "maxConcurrentDecodes": 2,
+                "clockMs": 0,
+                "evictions": 0,
+                "staleLoads": 0,
+                "invalidPresentation": 0,
+                "budgetSkips": 0,
+                "peakDecodedBytes": 45057280,
+                "peakReservedBytes": 45057280,
+                "peakConcurrent": 2
+              }
+            }
+          },
+          "stateAndInputPreserved": true,
+          "smallMovementReused": false
+        }
+      ],
+      "errors": []
+    }
+  ]
+}
