@@ -1,0 +1,3755 @@
+{
+  "props": [
+    {
+      "id": "forest-0-0",
+      "x": 824.2441287279576,
+      "y": 1100,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-0-4",
+      "x": 728.379438504119,
+      "y": 1086.229707746696,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-0-6",
+      "x": 777.3070922809518,
+      "y": 1191.7570496251612,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-0-7",
+      "x": 756.7221638558224,
+      "y": 1009.4251739808813,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-0-8",
+      "x": 893.8955933730922,
+      "y": 1137.2723044344698,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-0-10",
+      "x": 847.0895252784551,
+      "y": 990.6221951891738,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-0-17",
+      "x": 603.8756941470581,
+      "y": 1121.7845615809122,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-0-19",
+      "x": 793.006405671253,
+      "y": 1264.394485884553,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-0-22",
+      "x": 666.5000658722713,
+      "y": 1200.9628011981167,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-0-26",
+      "x": 960.2250635878611,
+      "y": 1019.5347353550845,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-0-29",
+      "x": 964.8423549803349,
+      "y": 1194.1701322898325,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-0-31",
+      "x": 904.074382657031,
+      "y": 924.0656764757134,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-0-34",
+      "x": 1000.699257920998,
+      "y": 1081.9266049277694,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-0-40",
+      "x": 760.9462909819199,
+      "y": 1333.3410044387197,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-1-0",
+      "x": 1875.298221281347,
+      "y": 1600,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-1-4",
+      "x": 1775.2655010477763,
+      "y": 1583.4756492960353,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-1-6",
+      "x": 1826.320444119254,
+      "y": 1710.1084595501934,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-1-7",
+      "x": 1804.8405188060756,
+      "y": 1491.3102087770574,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-1-9",
+      "x": 1748.0702063341987,
+      "y": 1652.5939213937665,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-1-10",
+      "x": 1899.1368959427357,
+      "y": 1468.7466342270086,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-1-19",
+      "x": 1842.7023363526118,
+      "y": 1797.2733830614636,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-1-20",
+      "x": 1746.2130287354773,
+      "y": 1444.5356522194259,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-1-22",
+      "x": 1710.695720910196,
+      "y": 1721.1553614377399,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-1-23",
+      "x": 1888.0659414781003,
+      "y": 1388.491341417685,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-1-24",
+      "x": 1938.0445426477406,
+      "y": 1792.0618329387626,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-1-25",
+      "x": 1677.8813433749538,
+      "y": 1531.361817732522,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-1-28",
+      "x": 1785.3565004829259,
+      "y": 1375.3432549901613,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-1-30",
+      "x": 1658.9408210226097,
+      "y": 1662.953233243088,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-1-35",
+      "x": 1705.2429637168746,
+      "y": 1795.5976436404505,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-1-39",
+      "x": 2029.1107786984599,
+      "y": 1430.076630534014,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-1-40",
+      "x": 1809.2483036333078,
+      "y": 1880.0092053264636,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-1-44",
+      "x": 1932.9632524497342,
+      "y": 1320.2760882836835,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-2-18",
+      "x": 2467.1493618200343,
+      "y": 1013.6071501887013,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-2-25",
+      "x": 2321.5760289881796,
+      "y": 970.5763455648273,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "forest-2-34",
+      "x": 2548.342929767694,
+      "y": 1035.5412839422154,
+      "r": 24,
+      "icon": "🪨"
+    },
+    {
+      "id": "settlement-major-0",
+      "x": 88.58399791606595,
+      "y": 275.3623789502332,
+      "r": 32,
+      "structure": "crown-ash-house",
+      "roadBlocker": true
+    },
+    {
+      "id": "settlement-major-1",
+      "x": 258.96782308863607,
+      "y": 235.07158520229046,
+      "r": 32,
+      "structure": "crown-ash-house",
+      "roadBlocker": true
+    },
+    {
+      "id": "settlement-major-2",
+      "x": 914.9469288479795,
+      "y": 132.2646506623168,
+      "r": 32,
+      "structure": "crown-forgehouse",
+      "roadBlocker": true
+    },
+    {
+      "id": "settlement-major-3",
+      "x": 1229.3932310077578,
+      "y": 279.3302193656599,
+      "r": 32,
+      "structure": "crown-ash-house",
+      "roadBlocker": true
+    },
+    {
+      "id": "settlement-major-4",
+      "x": 429.8187538962386,
+      "y": 1359.179798550022,
+      "r": 32,
+      "structure": "crown-ash-house",
+      "roadBlocker": true
+    },
+    {
+      "id": "settlement-major-5",
+      "x": 664.6064466140089,
+      "y": 1643.601696749011,
+      "r": 32,
+      "structure": "crown-ash-house",
+      "roadBlocker": true
+    },
+    {
+      "id": "settlement-major-6",
+      "x": 389.9968978937435,
+      "y": 1511.3857967691392,
+      "r": 32,
+      "structure": "crown-forgehouse",
+      "roadBlocker": true
+    },
+    {
+      "id": "settlement-major-7",
+      "x": 662.0049529575798,
+      "y": 1356.375136049343,
+      "r": 32,
+      "structure": "crown-ash-house",
+      "roadBlocker": true
+    },
+    {
+      "id": "settlement-major-8",
+      "x": 80,
+      "y": 845,
+      "r": 32,
+      "structure": "crown-wall",
+      "roadBlocker": true
+    },
+    {
+      "id": "settlement-minor-0",
+      "x": 657.9680602213139,
+      "y": 1900,
+      "r": 32,
+      "structure": "crown-ash-house",
+      "roadBlocker": true
+    },
+    {
+      "id": "settlement-minor-1",
+      "x": 1554.5222172850677,
+      "y": 1618.736775425555,
+      "r": 32,
+      "structure": "crown-ash-house",
+      "roadBlocker": true
+    },
+    {
+      "id": "settlement-minor-2",
+      "x": 954.0605724100169,
+      "y": 2336.711072252737,
+      "r": 32,
+      "structure": "crown-ash-house",
+      "roadBlocker": true
+    },
+    {
+      "id": "settlement-minor-3",
+      "x": 1649.7332093376835,
+      "y": 1974.7966045738522,
+      "r": 32,
+      "structure": "crown-forgehouse",
+      "roadBlocker": true
+    },
+    {
+      "id": "settlement-minor-4",
+      "x": 1001.0906385920019,
+      "y": 2642.0399334411063,
+      "r": 32,
+      "structure": "crown-ash-house",
+      "roadBlocker": true
+    },
+    {
+      "id": "settlement-minor-5",
+      "x": 1500,
+      "y": 2020,
+      "r": 32,
+      "structure": "crown-wall",
+      "roadBlocker": true
+    },
+    {
+      "id": "mini-wall-field-cindermaw-3",
+      "x": 2346.321419119363,
+      "y": 1436.71155373026,
+      "r": 27,
+      "structure": "stonewall",
+      "mini": "field-cindermaw",
+      "icon": "🪨"
+    },
+    {
+      "id": "mini-wall-field-cindermaw-4",
+      "x": 2340,
+      "y": 1560,
+      "r": 27,
+      "structure": "stonewall",
+      "mini": "field-cindermaw",
+      "icon": "🪨"
+    },
+    {
+      "id": "mini-wall-field-cindermaw-7",
+      "x": 2010,
+      "y": 1750,
+      "r": 27,
+      "structure": "stonewall",
+      "mini": "field-cindermaw",
+      "icon": "🪨"
+    },
+    {
+      "id": "mini-wall-field-cindermaw-8",
+      "x": 2010,
+      "y": 1870,
+      "r": 27,
+      "structure": "stonewall",
+      "mini": "field-cindermaw",
+      "icon": "🪨"
+    },
+    {
+      "id": "mini-wall-field-cindermaw-9",
+      "x": 2010,
+      "y": 1940,
+      "r": 27,
+      "structure": "stonewall",
+      "mini": "field-cindermaw",
+      "icon": "🪨"
+    },
+    {
+      "id": "mini-wall-field-cindermaw-10",
+      "x": 2080,
+      "y": 1940,
+      "r": 27,
+      "structure": "stonewall",
+      "mini": "field-cindermaw",
+      "icon": "🪨"
+    },
+    {
+      "id": "mini-wall-field-cindermaw-11",
+      "x": 2150,
+      "y": 1940,
+      "r": 27,
+      "structure": "stonewall",
+      "mini": "field-cindermaw",
+      "icon": "🪨"
+    },
+    {
+      "id": "mini-wall-field-cindermaw-12",
+      "x": 2270,
+      "y": 1940,
+      "r": 27,
+      "structure": "stonewall",
+      "mini": "field-cindermaw",
+      "icon": "🪨"
+    },
+    {
+      "id": "mini-wall-field-cindermaw-13",
+      "x": 2340,
+      "y": 1940,
+      "r": 27,
+      "structure": "stonewall",
+      "mini": "field-cindermaw",
+      "icon": "🪨"
+    },
+    {
+      "id": "mini-wall-field-cindermaw-15",
+      "x": 2709.3984380170673,
+      "y": 1889.6121847905217,
+      "r": 27,
+      "structure": "stonewall",
+      "mini": "field-cindermaw",
+      "icon": "🪨"
+    },
+    {
+      "id": "mini-wall-field-cindermaw-17",
+      "x": 2456.023983545021,
+      "y": 1462.5460254372958,
+      "r": 27,
+      "structure": "stonewall",
+      "mini": "field-cindermaw",
+      "icon": "🪨"
+    },
+    {
+      "id": "side-entrance-side-crown-foundry-0",
+      "x": 1914.376177962955,
+      "y": 2661.6043118091375,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "side-entrance-side-crown-foundry-1",
+      "x": 1851.6219965686412,
+      "y": 2767.985295964876,
+      "r": 0,
+      "decorative": true,
+      "structure": "ember-pit"
+    },
+    {
+      "id": "side-entrance-side-crown-foundry-2",
+      "x": 1796.4897790738312,
+      "y": 2610.44366894913,
+      "r": 0,
+      "decorative": true,
+      "structure": "supply-stack"
+    },
+    {
+      "id": "treasury-approach-0",
+      "x": 2560.0221579412364,
+      "y": 1527.3665195169926,
+      "r": 0,
+      "decorative": true,
+      "structure": "roost"
+    },
+    {
+      "id": "treasury-approach-1",
+      "x": 2486.8299448466723,
+      "y": 1636.9844310216338,
+      "r": 0,
+      "decorative": true,
+      "structure": "ember-pit"
+    },
+    {
+      "id": "treasury-approach-2",
+      "x": 2408.1301610038136,
+      "y": 1529.9513612967896,
+      "r": 0,
+      "decorative": true,
+      "structure": "bone-pile"
+    },
+    {
+      "id": "aesthetic-town-0",
+      "x": 185,
+      "y": 585,
+      "r": 0,
+      "decorative": true,
+      "structure": "market"
+    },
+    {
+      "id": "aesthetic-town-1",
+      "x": 550,
+      "y": 485,
+      "r": 0,
+      "decorative": true,
+      "structure": "woodpile"
+    },
+    {
+      "id": "aesthetic-town-2",
+      "x": 220,
+      "y": 785,
+      "r": 0,
+      "decorative": true,
+      "structure": "laundry"
+    },
+    {
+      "id": "aesthetic-town-3",
+      "x": 505,
+      "y": 805,
+      "r": 0,
+      "decorative": true,
+      "structure": "well"
+    },
+    {
+      "id": "aesthetic-town-4",
+      "x": 619.3032039778946,
+      "y": 542.408189413703,
+      "r": 0,
+      "decorative": true,
+      "structure": "barrel"
+    },
+    {
+      "id": "aesthetic-town-5",
+      "x": 125,
+      "y": 620,
+      "r": 0,
+      "decorative": true,
+      "structure": "cart"
+    },
+    {
+      "id": "aesthetic-town-6",
+      "x": 348.35314297038656,
+      "y": 893.4666621830081,
+      "r": 0,
+      "decorative": true,
+      "structure": "crate"
+    },
+    {
+      "id": "aesthetic-town-7",
+      "x": 315,
+      "y": 415,
+      "r": 0,
+      "decorative": true,
+      "structure": "ration"
+    },
+    {
+      "id": "aesthetic-hamlet-8",
+      "x": 1055.4259901816981,
+      "y": 1742.6240420390163,
+      "r": 0,
+      "decorative": true,
+      "structure": "garden"
+    },
+    {
+      "id": "aesthetic-hamlet-9",
+      "x": 1445,
+      "y": 1780,
+      "r": 0,
+      "decorative": true,
+      "structure": "woodpile"
+    },
+    {
+      "id": "aesthetic-hamlet-10",
+      "x": 1125,
+      "y": 1920,
+      "r": 0,
+      "decorative": true,
+      "structure": "barrel"
+    },
+    {
+      "id": "aesthetic-hamlet-11",
+      "x": 1313.4314575050762,
+      "y": 1976.5685424949238,
+      "r": 0,
+      "decorative": true,
+      "structure": "well"
+    },
+    {
+      "id": "aesthetic-hamlet-12",
+      "x": 1250,
+      "y": 1995,
+      "r": 0,
+      "decorative": true,
+      "structure": "laundry"
+    },
+    {
+      "id": "aesthetic-nature-13",
+      "x": 125,
+      "y": 153,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-14",
+      "x": 148,
+      "y": 1685,
+      "r": 0,
+      "decorative": true,
+      "structure": "ash-patch"
+    },
+    {
+      "id": "aesthetic-nature-15",
+      "x": 152,
+      "y": 1970,
+      "r": 0,
+      "decorative": true,
+      "structure": "ash-patch"
+    },
+    {
+      "id": "aesthetic-nature-16",
+      "x": 157,
+      "y": 2189,
+      "r": 0,
+      "decorative": true,
+      "structure": "ash-patch"
+    },
+    {
+      "id": "aesthetic-nature-17",
+      "x": 170,
+      "y": 2461,
+      "r": 0,
+      "decorative": true,
+      "structure": "dead-shrub"
+    },
+    {
+      "id": "aesthetic-nature-18",
+      "x": 171,
+      "y": 2693,
+      "r": 0,
+      "decorative": true,
+      "structure": "crystal-cluster"
+    },
+    {
+      "id": "aesthetic-nature-19",
+      "x": 220,
+      "y": 2974,
+      "r": 0,
+      "decorative": true,
+      "structure": "dead-shrub"
+    },
+    {
+      "id": "aesthetic-nature-20",
+      "x": 214,
+      "y": 3210,
+      "r": 0,
+      "decorative": true,
+      "structure": "crystal-cluster"
+    },
+    {
+      "id": "aesthetic-nature-21",
+      "x": 125,
+      "y": 3468,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-22",
+      "x": 418,
+      "y": 1180,
+      "r": 0,
+      "decorative": true,
+      "structure": "obsidian"
+    },
+    {
+      "id": "aesthetic-nature-23",
+      "x": 451,
+      "y": 1426,
+      "r": 0,
+      "decorative": true,
+      "structure": "obsidian"
+    },
+    {
+      "id": "aesthetic-nature-24",
+      "x": 403,
+      "y": 1720,
+      "r": 0,
+      "decorative": true,
+      "structure": "fumarole"
+    },
+    {
+      "id": "aesthetic-nature-25",
+      "x": 467,
+      "y": 1895,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-26",
+      "x": 415,
+      "y": 2150,
+      "r": 0,
+      "decorative": true,
+      "structure": "ash-patch"
+    },
+    {
+      "id": "aesthetic-nature-27",
+      "x": 376,
+      "y": 2461,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-28",
+      "x": 420,
+      "y": 2672,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-29",
+      "x": 465,
+      "y": 2955,
+      "r": 0,
+      "decorative": true,
+      "structure": "dead-shrub"
+    },
+    {
+      "id": "aesthetic-nature-30",
+      "x": 435,
+      "y": 3166,
+      "r": 0,
+      "decorative": true,
+      "structure": "fumarole"
+    },
+    {
+      "id": "aesthetic-nature-31",
+      "x": 419,
+      "y": 3460,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-32",
+      "x": 685,
+      "y": 151,
+      "r": 0,
+      "decorative": true,
+      "structure": "fumarole"
+    },
+    {
+      "id": "aesthetic-nature-33",
+      "x": 626,
+      "y": 1177,
+      "r": 0,
+      "decorative": true,
+      "structure": "dead-shrub"
+    },
+    {
+      "id": "aesthetic-nature-34",
+      "x": 699,
+      "y": 1459,
+      "r": 0,
+      "decorative": true,
+      "structure": "obsidian"
+    },
+    {
+      "id": "aesthetic-nature-35",
+      "x": 650,
+      "y": 1721,
+      "r": 0,
+      "decorative": true,
+      "structure": "dead-shrub"
+    },
+    {
+      "id": "aesthetic-nature-36",
+      "x": 641,
+      "y": 2159,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-37",
+      "x": 715,
+      "y": 2418,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-38",
+      "x": 698,
+      "y": 2655,
+      "r": 0,
+      "decorative": true,
+      "structure": "dead-shrub"
+    },
+    {
+      "id": "aesthetic-nature-39",
+      "x": 719,
+      "y": 2960,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-40",
+      "x": 668,
+      "y": 3196,
+      "r": 0,
+      "decorative": true,
+      "structure": "fumarole"
+    },
+    {
+      "id": "aesthetic-nature-41",
+      "x": 703,
+      "y": 3429,
+      "r": 0,
+      "decorative": true,
+      "structure": "obsidian"
+    },
+    {
+      "id": "aesthetic-nature-42",
+      "x": 964,
+      "y": 188,
+      "r": 0,
+      "decorative": true,
+      "structure": "ash-patch"
+    },
+    {
+      "id": "aesthetic-nature-43",
+      "x": 870,
+      "y": 437,
+      "r": 0,
+      "decorative": true,
+      "structure": "dead-shrub"
+    },
+    {
+      "id": "aesthetic-nature-44",
+      "x": 892,
+      "y": 697,
+      "r": 0,
+      "decorative": true,
+      "structure": "crystal-cluster"
+    },
+    {
+      "id": "aesthetic-nature-45",
+      "x": 874,
+      "y": 931,
+      "r": 0,
+      "decorative": true,
+      "structure": "obsidian"
+    },
+    {
+      "id": "aesthetic-nature-46",
+      "x": 934,
+      "y": 1164,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-47",
+      "x": 939,
+      "y": 1406,
+      "r": 0,
+      "decorative": true,
+      "structure": "fumarole"
+    },
+    {
+      "id": "aesthetic-nature-48",
+      "x": 938,
+      "y": 2205,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-49",
+      "x": 895,
+      "y": 2437,
+      "r": 0,
+      "decorative": true,
+      "structure": "ash-patch"
+    },
+    {
+      "id": "aesthetic-nature-50",
+      "x": 924,
+      "y": 2653,
+      "r": 0,
+      "decorative": true,
+      "structure": "obsidian"
+    },
+    {
+      "id": "aesthetic-nature-51",
+      "x": 937,
+      "y": 3146,
+      "r": 0,
+      "decorative": true,
+      "structure": "ash-patch"
+    },
+    {
+      "id": "aesthetic-nature-52",
+      "x": 927,
+      "y": 3452,
+      "r": 0,
+      "decorative": true,
+      "structure": "crystal-cluster"
+    },
+    {
+      "id": "aesthetic-nature-53",
+      "x": 1185,
+      "y": 163,
+      "r": 0,
+      "decorative": true,
+      "structure": "fumarole"
+    },
+    {
+      "id": "aesthetic-nature-54",
+      "x": 1155,
+      "y": 465,
+      "r": 0,
+      "decorative": true,
+      "structure": "ash-patch"
+    },
+    {
+      "id": "aesthetic-nature-55",
+      "x": 1142.1723035811224,
+      "y": 882.4254403443175,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-56",
+      "x": 1170,
+      "y": 2686,
+      "r": 0,
+      "decorative": true,
+      "structure": "dead-shrub"
+    },
+    {
+      "id": "aesthetic-nature-57",
+      "x": 1165,
+      "y": 3163,
+      "r": 0,
+      "decorative": true,
+      "structure": "ash-patch"
+    },
+    {
+      "id": "aesthetic-nature-58",
+      "x": 1200,
+      "y": 3414,
+      "r": 0,
+      "decorative": true,
+      "structure": "dead-shrub"
+    },
+    {
+      "id": "aesthetic-nature-59",
+      "x": 1432,
+      "y": 233,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-60",
+      "x": 1456,
+      "y": 440,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-61",
+      "x": 1456,
+      "y": 704,
+      "r": 0,
+      "decorative": true,
+      "structure": "fumarole"
+    },
+    {
+      "id": "aesthetic-nature-62",
+      "x": 1430,
+      "y": 1206,
+      "r": 0,
+      "decorative": true,
+      "structure": "crystal-cluster"
+    },
+    {
+      "id": "aesthetic-nature-63",
+      "x": 1412,
+      "y": 1472,
+      "r": 0,
+      "decorative": true,
+      "structure": "dead-shrub"
+    },
+    {
+      "id": "aesthetic-nature-64",
+      "x": 1445,
+      "y": 2190,
+      "r": 0,
+      "decorative": true,
+      "structure": "dead-shrub"
+    },
+    {
+      "id": "aesthetic-nature-65",
+      "x": 1403,
+      "y": 2973,
+      "r": 0,
+      "decorative": true,
+      "structure": "dead-shrub"
+    },
+    {
+      "id": "aesthetic-nature-66",
+      "x": 1451,
+      "y": 3176,
+      "r": 0,
+      "decorative": true,
+      "structure": "ash-patch"
+    },
+    {
+      "id": "aesthetic-nature-67",
+      "x": 1370,
+      "y": 3457,
+      "r": 0,
+      "decorative": true,
+      "structure": "fumarole"
+    },
+    {
+      "id": "aesthetic-nature-68",
+      "x": 1693,
+      "y": 175,
+      "r": 0,
+      "decorative": true,
+      "structure": "ash-patch"
+    },
+    {
+      "id": "aesthetic-nature-69",
+      "x": 1664,
+      "y": 700,
+      "r": 0,
+      "decorative": true,
+      "structure": "crystal-cluster"
+    },
+    {
+      "id": "aesthetic-nature-70",
+      "x": 1685,
+      "y": 975,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-71",
+      "x": 1644,
+      "y": 1223,
+      "r": 0,
+      "decorative": true,
+      "structure": "obsidian"
+    },
+    {
+      "id": "aesthetic-nature-72",
+      "x": 1679,
+      "y": 1456,
+      "r": 0,
+      "decorative": true,
+      "structure": "fumarole"
+    },
+    {
+      "id": "aesthetic-nature-73",
+      "x": 1684,
+      "y": 1655,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-74",
+      "x": 1641,
+      "y": 1903,
+      "r": 0,
+      "decorative": true,
+      "structure": "crystal-cluster"
+    },
+    {
+      "id": "aesthetic-nature-75",
+      "x": 1629,
+      "y": 2218,
+      "r": 0,
+      "decorative": true,
+      "structure": "crystal-cluster"
+    },
+    {
+      "id": "aesthetic-nature-76",
+      "x": 1907,
+      "y": 199,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-77",
+      "x": 1890,
+      "y": 417,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-78",
+      "x": 1928,
+      "y": 733,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-79",
+      "x": 1963,
+      "y": 978,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-80",
+      "x": 1960,
+      "y": 1166,
+      "r": 0,
+      "decorative": true,
+      "structure": "fumarole"
+    },
+    {
+      "id": "aesthetic-nature-81",
+      "x": 1931,
+      "y": 1469,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-82",
+      "x": 1875,
+      "y": 1973,
+      "r": 0,
+      "decorative": true,
+      "structure": "ash-patch"
+    },
+    {
+      "id": "aesthetic-nature-83",
+      "x": 1916,
+      "y": 2173,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-84",
+      "x": 1946,
+      "y": 2445,
+      "r": 0,
+      "decorative": true,
+      "structure": "crystal-cluster"
+    },
+    {
+      "id": "aesthetic-nature-85",
+      "x": 1918,
+      "y": 2952,
+      "r": 0,
+      "decorative": true,
+      "structure": "crystal-cluster"
+    },
+    {
+      "id": "aesthetic-nature-86",
+      "x": 1900,
+      "y": 3456,
+      "r": 0,
+      "decorative": true,
+      "structure": "obsidian"
+    },
+    {
+      "id": "aesthetic-nature-87",
+      "x": 2162,
+      "y": 231,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-88",
+      "x": 2125,
+      "y": 431,
+      "r": 0,
+      "decorative": true,
+      "structure": "crystal-cluster"
+    },
+    {
+      "id": "aesthetic-nature-89",
+      "x": 2125,
+      "y": 723,
+      "r": 0,
+      "decorative": true,
+      "structure": "crystal-cluster"
+    },
+    {
+      "id": "aesthetic-nature-90",
+      "x": 2200,
+      "y": 2476,
+      "r": 0,
+      "decorative": true,
+      "structure": "dead-shrub"
+    },
+    {
+      "id": "aesthetic-nature-91",
+      "x": 2215,
+      "y": 2972,
+      "r": 0,
+      "decorative": true,
+      "structure": "obsidian"
+    },
+    {
+      "id": "aesthetic-nature-92",
+      "x": 2172,
+      "y": 3181,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-93",
+      "x": 2210,
+      "y": 3411,
+      "r": 0,
+      "decorative": true,
+      "structure": "dead-shrub"
+    },
+    {
+      "id": "aesthetic-nature-94",
+      "x": 2467,
+      "y": 231,
+      "r": 0,
+      "decorative": true,
+      "structure": "obsidian"
+    },
+    {
+      "id": "aesthetic-nature-95",
+      "x": 2378,
+      "y": 410,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-96",
+      "x": 2408,
+      "y": 731,
+      "r": 0,
+      "decorative": true,
+      "structure": "obsidian"
+    },
+    {
+      "id": "aesthetic-nature-97",
+      "x": 2428,
+      "y": 976,
+      "r": 0,
+      "decorative": true,
+      "structure": "fumarole"
+    },
+    {
+      "id": "aesthetic-nature-98",
+      "x": 2409,
+      "y": 1402,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-99",
+      "x": 2454,
+      "y": 2148,
+      "r": 0,
+      "decorative": true,
+      "structure": "obsidian"
+    },
+    {
+      "id": "aesthetic-nature-100",
+      "x": 2463,
+      "y": 2446,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-nature-101",
+      "x": 2408,
+      "y": 2672,
+      "r": 0,
+      "decorative": true,
+      "structure": "ash-patch"
+    },
+    {
+      "id": "aesthetic-nature-102",
+      "x": 2395,
+      "y": 2965,
+      "r": 0,
+      "decorative": true,
+      "structure": "fumarole"
+    },
+    {
+      "id": "aesthetic-bank-103",
+      "x": 1262,
+      "y": 395,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-bank-104",
+      "x": 1448,
+      "y": 432,
+      "r": 0,
+      "decorative": true,
+      "structure": "crystal-cluster"
+    },
+    {
+      "id": "aesthetic-bank-105",
+      "x": 1448,
+      "y": 627,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-bank-106",
+      "x": 1448,
+      "y": 1449,
+      "r": 0,
+      "decorative": true,
+      "structure": "crystal-cluster"
+    },
+    {
+      "id": "aesthetic-bank-107",
+      "x": 1262,
+      "y": 1904,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-bank-108",
+      "x": 1448,
+      "y": 1890,
+      "r": 0,
+      "decorative": true,
+      "structure": "crystal-cluster"
+    },
+    {
+      "id": "aesthetic-bank-109",
+      "x": 1262,
+      "y": 2085,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock"
+    },
+    {
+      "id": "aesthetic-town-110",
+      "x": 50,
+      "y": 615,
+      "r": 0,
+      "decorative": true,
+      "structure": "banner"
+    },
+    {
+      "id": "world-life-civilian-0",
+      "x": 300,
+      "y": 760,
+      "r": 0,
+      "decorative": true,
+      "structure": "market"
+    },
+    {
+      "id": "world-life-civilian-1",
+      "x": 473.22340805285074,
+      "y": 788.9300958486123,
+      "r": 0,
+      "decorative": true,
+      "structure": "forge"
+    },
+    {
+      "id": "world-life-civilian-2",
+      "x": 900,
+      "y": 1430,
+      "r": 0,
+      "decorative": true,
+      "structure": "garden"
+    },
+    {
+      "id": "world-life-civilian-3",
+      "x": 1080,
+      "y": 1540,
+      "r": 0,
+      "decorative": true,
+      "structure": "field-kitchen"
+    },
+    {
+      "id": "world-life-civilian-4",
+      "x": 910,
+      "y": 1630,
+      "r": 0,
+      "decorative": true,
+      "structure": "laundry"
+    },
+    {
+      "id": "world-life-habitat-6",
+      "x": 1825,
+      "y": 3330,
+      "r": 0,
+      "decorative": true,
+      "structure": "bone-pile"
+    },
+    {
+      "id": "world-life-habitat-7",
+      "x": 1880,
+      "y": 3335,
+      "r": 0,
+      "decorative": true,
+      "structure": "ember-pit"
+    },
+    {
+      "id": "world-life-habitat-8",
+      "x": 1775,
+      "y": 3365,
+      "r": 0,
+      "decorative": true,
+      "structure": "sleep-roll"
+    },
+    {
+      "id": "world-life-habitat-9",
+      "x": 1948.9777747886721,
+      "y": 3302.7645713530756,
+      "r": 0,
+      "decorative": true,
+      "structure": "obsidian"
+    },
+    {
+      "id": "world-life-habitat-20",
+      "x": 3085,
+      "y": 3110,
+      "r": 0,
+      "decorative": true,
+      "structure": "dark-throne"
+    },
+    {
+      "id": "world-life-habitat-21",
+      "x": 3180,
+      "y": 3060,
+      "r": 0,
+      "decorative": true,
+      "structure": "dark-brazier"
+    },
+    {
+      "id": "world-life-habitat-22",
+      "x": 3300,
+      "y": 3060,
+      "r": 0,
+      "decorative": true,
+      "structure": "war-table"
+    },
+    {
+      "id": "world-life-habitat-23",
+      "x": 3410,
+      "y": 3115,
+      "r": 0,
+      "decorative": true,
+      "structure": "weapon-rack"
+    },
+    {
+      "id": "world-life-habitat-24",
+      "x": 3080,
+      "y": 3245,
+      "r": 0,
+      "decorative": true,
+      "structure": "bunk"
+    },
+    {
+      "id": "world-life-habitat-25",
+      "x": 3175,
+      "y": 3330,
+      "r": 0,
+      "decorative": true,
+      "structure": "supply-stack"
+    },
+    {
+      "id": "world-life-habitat-26",
+      "x": 3305,
+      "y": 3330,
+      "r": 0,
+      "decorative": true,
+      "structure": "forge"
+    },
+    {
+      "id": "world-life-habitat-27",
+      "x": 3415,
+      "y": 3245,
+      "r": 0,
+      "decorative": true,
+      "structure": "crown-banner"
+    },
+    {
+      "id": "world-life-field-28",
+      "x": 2005.130878821691,
+      "y": 1627.465962003915,
+      "r": 0,
+      "decorative": true,
+      "structure": "roost"
+    },
+    {
+      "id": "world-life-field-29",
+      "x": 2294.064142517699,
+      "y": 1604.8971046810361,
+      "r": 0,
+      "decorative": true,
+      "structure": "bone-pile"
+    },
+    {
+      "id": "world-life-field-30",
+      "x": 2035,
+      "y": 1795,
+      "r": 0,
+      "decorative": true,
+      "structure": "sleep-roll"
+    },
+    {
+      "id": "world-life-field-31",
+      "x": 2130,
+      "y": 1875,
+      "r": 0,
+      "decorative": true,
+      "structure": "treasure-hoard"
+    },
+    {
+      "id": "world-life-field-32",
+      "x": 2207.139641451408,
+      "y": 1945.245185454949,
+      "r": 0,
+      "decorative": true,
+      "structure": "roost"
+    },
+    {
+      "id": "world-life-field-33",
+      "x": 2413.189502661715,
+      "y": 1808.9955995441223,
+      "r": 0,
+      "decorative": true,
+      "structure": "bone-pile"
+    },
+    {
+      "id": "stronghold-ashbeast-roost-hold-prop-0",
+      "x": 1378.1144106324973,
+      "y": 3224.4021235782793,
+      "r": 0,
+      "decorative": true,
+      "structure": "roost",
+      "stronghold": "ashbeast-roost-hold",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-ashbeast-roost-hold-prop-1",
+      "x": 1700,
+      "y": 3260,
+      "r": 0,
+      "decorative": true,
+      "structure": "bone-pile",
+      "stronghold": "ashbeast-roost-hold",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-ashbeast-roost-hold-prop-3",
+      "x": 1549.2181871006899,
+      "y": 3344.572335870732,
+      "r": 0,
+      "decorative": true,
+      "structure": "obsidian",
+      "stronghold": "ashbeast-roost-hold",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-ashbeast-roost-hold-prop-4",
+      "x": 1735.884572681199,
+      "y": 3350,
+      "r": 0,
+      "decorative": true,
+      "structure": "sleep-roll",
+      "stronghold": "ashbeast-roost-hold",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-ashbeast-roost-hold-prop-5",
+      "x": 1451.6276539439407,
+      "y": 3497.081070487582,
+      "r": 0,
+      "decorative": true,
+      "structure": "roost",
+      "stronghold": "ashbeast-roost-hold",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-ashbeast-roost-hold-prop-6",
+      "x": 1393.8045381863458,
+      "y": 3367.5,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock",
+      "stronghold": "ashbeast-roost-hold",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-ashbeast-roost-hold-wall-0",
+      "x": 1435,
+      "y": 3155,
+      "r": 26,
+      "structure": "stonewall",
+      "stronghold": "ashbeast-roost-hold",
+      "strongholdDefenseStyle": "ruin",
+      "fortCorner": false
+    },
+    {
+      "id": "stronghold-ashbeast-roost-hold-wall-1",
+      "x": 1510,
+      "y": 3115,
+      "r": 26,
+      "structure": "stonewall",
+      "stronghold": "ashbeast-roost-hold",
+      "strongholdDefenseStyle": "ruin",
+      "fortCorner": false
+    },
+    {
+      "id": "stronghold-ashbeast-roost-hold-wall-7",
+      "x": 1540,
+      "y": 3415,
+      "r": 26,
+      "structure": "stonewall",
+      "stronghold": "ashbeast-roost-hold",
+      "strongholdDefenseStyle": "ruin",
+      "fortCorner": false
+    },
+    {
+      "id": "stronghold-ashbeast-roost-hold-wall-8",
+      "x": 1465,
+      "y": 3380,
+      "r": 26,
+      "structure": "stonewall",
+      "stronghold": "ashbeast-roost-hold",
+      "strongholdDefenseStyle": "ruin",
+      "fortCorner": false
+    },
+    {
+      "id": "stronghold-ashbeast-roost-hold-wall-9",
+      "x": 1425,
+      "y": 3280,
+      "r": 26,
+      "structure": "stonewall",
+      "stronghold": "ashbeast-roost-hold",
+      "strongholdDefenseStyle": "ruin",
+      "fortCorner": false
+    },
+    {
+      "id": "stronghold-crown-field-barracks-hold-prop-0",
+      "x": 2803.3515280061074,
+      "y": 1199.466233388494,
+      "r": 0,
+      "decorative": true,
+      "structure": "command-tent",
+      "stronghold": "crown-field-barracks-hold",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-crown-field-barracks-hold-prop-1",
+      "x": 3090,
+      "y": 1180,
+      "r": 0,
+      "decorative": true,
+      "structure": "field-kitchen",
+      "stronghold": "crown-field-barracks-hold",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-crown-field-barracks-hold-prop-2",
+      "x": 2968.9417145876973,
+      "y": 1295.9110991546881,
+      "r": 0,
+      "decorative": true,
+      "structure": "weapon-rack",
+      "stronghold": "crown-field-barracks-hold",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-crown-field-barracks-hold-prop-3",
+      "x": 2915.427664129268,
+      "y": 1149.2181871006899,
+      "r": 0,
+      "decorative": true,
+      "structure": "bunk",
+      "stronghold": "crown-field-barracks-hold",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-crown-field-barracks-hold-prop-4",
+      "x": 3142.8941916244326,
+      "y": 1097.5,
+      "r": 0,
+      "decorative": true,
+      "structure": "supply-stack",
+      "stronghold": "crown-field-barracks-hold",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-crown-field-barracks-hold-prop-5",
+      "x": 3250,
+      "y": 1180,
+      "r": 0,
+      "decorative": true,
+      "structure": "training-dummy",
+      "stronghold": "crown-field-barracks-hold",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-crown-field-barracks-hold-prop-6",
+      "x": 3186.195461813654,
+      "y": 1287.5,
+      "r": 0,
+      "decorative": true,
+      "structure": "war-table",
+      "stronghold": "crown-field-barracks-hold",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-crown-field-barracks-hold-prop-7",
+      "x": 3107.5,
+      "y": 1366.1954618136542,
+      "r": 0,
+      "decorative": true,
+      "structure": "forge",
+      "stronghold": "crown-field-barracks-hold",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-crown-field-barracks-hold-wall-4",
+      "x": 3155,
+      "y": 1200,
+      "r": 26,
+      "structure": "stonewall",
+      "stronghold": "crown-field-barracks-hold",
+      "strongholdDefenseStyle": "ruin",
+      "fortCorner": false
+    },
+    {
+      "id": "stronghold-crown-field-barracks-hold-wall-5",
+      "x": 3115,
+      "y": 1300,
+      "r": 26,
+      "structure": "stonewall",
+      "stronghold": "crown-field-barracks-hold",
+      "strongholdDefenseStyle": "ruin",
+      "fortCorner": false
+    },
+    {
+      "id": "stronghold-crown-field-barracks-hold-wall-6",
+      "x": 3040,
+      "y": 1335,
+      "r": 26,
+      "structure": "stonewall",
+      "stronghold": "crown-field-barracks-hold",
+      "strongholdDefenseStyle": "ruin",
+      "fortCorner": false
+    },
+    {
+      "id": "stronghold-crown-toll-redoubt-prop-0",
+      "x": 3265,
+      "y": 1770,
+      "r": 0,
+      "decorative": true,
+      "structure": "command-tent",
+      "stronghold": "crown-toll-redoubt",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-crown-toll-redoubt-prop-1",
+      "x": 3490,
+      "y": 1820,
+      "r": 0,
+      "decorative": true,
+      "structure": "weapon-rack",
+      "stronghold": "crown-toll-redoubt",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-crown-toll-redoubt-prop-2",
+      "x": 3415,
+      "y": 1897.9422863405994,
+      "r": 0,
+      "decorative": true,
+      "structure": "bunk",
+      "stronghold": "crown-toll-redoubt",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-crown-toll-redoubt-prop-3",
+      "x": 3370,
+      "y": 1700,
+      "r": 0,
+      "decorative": true,
+      "structure": "supply-stack",
+      "stronghold": "crown-toll-redoubt",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-crown-toll-redoubt-prop-4",
+      "x": 3312.1491151282116,
+      "y": 1888.943999880708,
+      "r": 0,
+      "decorative": true,
+      "structure": "war-table",
+      "stronghold": "crown-toll-redoubt",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-crown-toll-redoubt-prop-5",
+      "x": 3477.5,
+      "y": 2006.1954618136542,
+      "r": 0,
+      "decorative": true,
+      "structure": "training-dummy",
+      "stronghold": "crown-toll-redoubt",
+      "strongholdDefenseStyle": "ruin"
+    },
+    {
+      "id": "stronghold-crown-toll-redoubt-wall-0",
+      "x": 3225,
+      "y": 1715,
+      "r": 26,
+      "structure": "stonewall",
+      "stronghold": "crown-toll-redoubt",
+      "strongholdDefenseStyle": "ruin",
+      "fortCorner": false
+    },
+    {
+      "id": "stronghold-crown-toll-redoubt-wall-1",
+      "x": 3300,
+      "y": 1675,
+      "r": 26,
+      "structure": "stonewall",
+      "stronghold": "crown-toll-redoubt",
+      "strongholdDefenseStyle": "ruin",
+      "fortCorner": false
+    },
+    {
+      "id": "stronghold-crown-toll-redoubt-wall-2",
+      "x": 3440,
+      "y": 1675,
+      "r": 26,
+      "structure": "stonewall",
+      "stronghold": "crown-toll-redoubt",
+      "strongholdDefenseStyle": "ruin",
+      "fortCorner": false
+    },
+    {
+      "id": "stronghold-crown-toll-redoubt-wall-5",
+      "x": 3485,
+      "y": 1940,
+      "r": 26,
+      "structure": "stonewall",
+      "stronghold": "crown-toll-redoubt",
+      "strongholdDefenseStyle": "ruin",
+      "fortCorner": false
+    },
+    {
+      "id": "stronghold-crown-toll-redoubt-wall-6",
+      "x": 3410,
+      "y": 1975,
+      "r": 26,
+      "structure": "stonewall",
+      "stronghold": "crown-toll-redoubt",
+      "strongholdDefenseStyle": "ruin",
+      "fortCorner": false
+    },
+    {
+      "id": "stronghold-crown-toll-redoubt-wall-7",
+      "x": 3330,
+      "y": 1975,
+      "r": 26,
+      "structure": "stonewall",
+      "stronghold": "crown-toll-redoubt",
+      "strongholdDefenseStyle": "ruin",
+      "fortCorner": false
+    },
+    {
+      "id": "stronghold-crown-toll-redoubt-wall-8",
+      "x": 3255,
+      "y": 1940,
+      "r": 26,
+      "structure": "stonewall",
+      "stronghold": "crown-toll-redoubt",
+      "strongholdDefenseStyle": "ruin",
+      "fortCorner": false
+    },
+    {
+      "id": "stronghold-crown-toll-redoubt-wall-9",
+      "x": 3215,
+      "y": 1840,
+      "r": 26,
+      "structure": "stonewall",
+      "stronghold": "crown-toll-redoubt",
+      "strongholdDefenseStyle": "ruin",
+      "fortCorner": false
+    },
+    {
+      "id": "crown-layout-labor-quarter-0",
+      "x": 281.1832168426824,
+      "y": 856.9017084081884,
+      "r": 32,
+      "decorative": false,
+      "structure": "crown-ash-house",
+      "crownDistrict": "labor-quarter"
+    },
+    {
+      "id": "crown-layout-labor-quarter-1",
+      "x": 976.6619836951579,
+      "y": 871.9020356648064,
+      "r": 32,
+      "decorative": false,
+      "structure": "crown-forgehouse",
+      "crownDistrict": "labor-quarter"
+    },
+    {
+      "id": "crown-layout-labor-quarter-2",
+      "x": 793.9423846424405,
+      "y": 970.3918993687407,
+      "r": 0,
+      "decorative": true,
+      "structure": "crown-levy-yard",
+      "crownDistrict": "labor-quarter"
+    },
+    {
+      "id": "crown-layout-labor-quarter-3",
+      "x": 909.7487373415291,
+      "y": 1029.7487373415292,
+      "r": 0,
+      "decorative": true,
+      "structure": "bunk",
+      "crownDistrict": "labor-quarter"
+    },
+    {
+      "id": "crown-layout-labor-quarter-4",
+      "x": 889.9847749858209,
+      "y": 863.7059676361653,
+      "r": 0,
+      "decorative": true,
+      "structure": "tax-post",
+      "crownDistrict": "labor-quarter"
+    },
+    {
+      "id": "crown-layout-citadel-command-5",
+      "x": 2360.466948441729,
+      "y": 700.0463214747954,
+      "r": 26,
+      "decorative": false,
+      "structure": "crown-wall",
+      "crownDistrict": "citadel-command"
+    },
+    {
+      "id": "crown-layout-citadel-command-6",
+      "x": 2619.2990702074785,
+      "y": 792.4025709794025,
+      "r": 0,
+      "decorative": true,
+      "structure": "crown-command-post",
+      "crownDistrict": "citadel-command"
+    },
+    {
+      "id": "crown-layout-citadel-command-7",
+      "x": 2595,
+      "y": 1020,
+      "r": 0,
+      "decorative": true,
+      "structure": "war-table",
+      "crownDistrict": "citadel-command"
+    },
+    {
+      "id": "crown-layout-cindermaw-domain-8",
+      "x": 2697.639790407742,
+      "y": 1823.1340822403113,
+      "r": 0,
+      "decorative": true,
+      "structure": "ashbeast-roost-scene",
+      "crownDistrict": "cindermaw-domain"
+    },
+    {
+      "id": "crown-layout-cindermaw-domain-9",
+      "x": 2649.310494076907,
+      "y": 2023.6816031424053,
+      "r": 0,
+      "decorative": true,
+      "structure": "sleep-roll",
+      "crownDistrict": "cindermaw-domain"
+    },
+    {
+      "id": "crown-layout-cindermaw-domain-10",
+      "x": 2720,
+      "y": 1960,
+      "r": 0,
+      "decorative": true,
+      "structure": "warm-brazier",
+      "crownDistrict": "cindermaw-domain"
+    },
+    {
+      "id": "crown-layout-fortress-logistics-11",
+      "x": 3035,
+      "y": 2295,
+      "r": 0,
+      "decorative": true,
+      "structure": "crown-logistics-bay",
+      "crownDistrict": "fortress-logistics"
+    },
+    {
+      "id": "crown-layout-fortress-logistics-12",
+      "x": 2895,
+      "y": 2410,
+      "r": 0,
+      "decorative": true,
+      "structure": "bunk",
+      "crownDistrict": "fortress-logistics"
+    },
+    {
+      "id": "crown-layout-fortress-logistics-13",
+      "x": 3035,
+      "y": 2440,
+      "r": 0,
+      "decorative": true,
+      "structure": "war-table",
+      "crownDistrict": "fortress-logistics"
+    },
+    {
+      "id": "crown-layout-fortress-approach-14",
+      "x": 3035,
+      "y": 2770,
+      "r": 26,
+      "decorative": false,
+      "structure": "crown-wall",
+      "crownDistrict": "fortress-approach"
+    },
+    {
+      "id": "crown-layout-fortress-approach-15",
+      "x": 3127.13663979426,
+      "y": 2879.891928430829,
+      "r": 0,
+      "decorative": true,
+      "structure": "crown-fortress-checkpoint",
+      "crownDistrict": "fortress-approach"
+    },
+    {
+      "id": "crown-layout-route-frontier-return-16",
+      "x": 451.2585146312367,
+      "y": 206.04985948133535,
+      "r": 0,
+      "decorative": true,
+      "structure": "watchpost",
+      "crownDistrict": "route-frontier-return"
+    },
+    {
+      "id": "crown-layout-route-frontier-return-17",
+      "x": 776.4917008588617,
+      "y": 228.8968317202113,
+      "r": 0,
+      "decorative": true,
+      "structure": "crown-banner",
+      "crownDistrict": "route-frontier-return"
+    },
+    {
+      "id": "crown-layout-route-frontier-return-18",
+      "x": 656.5400111356456,
+      "y": 401.1075125276013,
+      "r": 0,
+      "decorative": true,
+      "structure": "supply-stack",
+      "crownDistrict": "route-frontier-return"
+    },
+    {
+      "id": "crown-layout-route-levy-road-19",
+      "x": 278.8965266019116,
+      "y": 1563.137515783288,
+      "r": 0,
+      "decorative": true,
+      "structure": "cart",
+      "crownDistrict": "route-levy-road"
+    },
+    {
+      "id": "crown-layout-route-levy-road-20",
+      "x": 245,
+      "y": 1665,
+      "r": 0,
+      "decorative": true,
+      "structure": "tax-post",
+      "crownDistrict": "route-levy-road"
+    },
+    {
+      "id": "crown-layout-route-military-gate-22",
+      "x": 3480.1214385750286,
+      "y": 1122.1780364651972,
+      "r": 0,
+      "decorative": true,
+      "structure": "crown-banner",
+      "crownDistrict": "route-military-gate"
+    },
+    {
+      "id": "crown-layout-route-military-gate-24",
+      "x": 3389.9422212287964,
+      "y": 1193.2226968432792,
+      "r": 0,
+      "decorative": true,
+      "structure": "watchpost",
+      "crownDistrict": "route-military-gate"
+    },
+    {
+      "id": "crown-layout-route-ash-track-25",
+      "x": 1543.8874250656543,
+      "y": 3590.3542465592222,
+      "r": 0,
+      "decorative": true,
+      "structure": "black-rock",
+      "crownDistrict": "route-ash-track"
+    },
+    {
+      "id": "crown-layout-route-fortress-service-28",
+      "x": 3501.3713784761585,
+      "y": 2390.8314225286845,
+      "r": 0,
+      "decorative": true,
+      "structure": "crown-banner",
+      "crownDistrict": "route-fortress-service"
+    },
+    {
+      "id": "crown-layout-route-fortress-service-29",
+      "x": 3550,
+      "y": 2570,
+      "r": 0,
+      "decorative": true,
+      "structure": "dark-brazier",
+      "crownDistrict": "route-fortress-service"
+    },
+    {
+      "id": "crown-layout-route-fortress-service-30",
+      "x": 3515.3079607993573,
+      "y": 2644.7450922088015,
+      "r": 0,
+      "decorative": true,
+      "structure": "command-tent",
+      "crownDistrict": "route-fortress-service"
+    },
+    {
+      "id": "regime-banner-crown-0",
+      "x": 873.5640646055101,
+      "y": 769.9999999999999,
+      "r": 0,
+      "decorative": true,
+      "structure": "crown-banner",
+      "regimeHeraldry": true
+    },
+    {
+      "id": "regime-banner-crown-1",
+      "x": 2520,
+      "y": 798.0384757729337,
+      "r": 0,
+      "decorative": true,
+      "structure": "crown-banner",
+      "regimeHeraldry": true
+    },
+    {
+      "id": "regime-banner-crown-2",
+      "x": 2978.0384757729335,
+      "y": 2320,
+      "r": 0,
+      "decorative": true,
+      "structure": "crown-banner",
+      "regimeHeraldry": true
+    },
+    {
+      "id": "regime-banner-crown-3",
+      "x": 3310,
+      "y": 2850,
+      "r": 0,
+      "decorative": true,
+      "structure": "crown-banner",
+      "regimeHeraldry": true
+    },
+    {
+      "id": "regime-banner-crown-4",
+      "x": 3351.9615242270665,
+      "y": 3140,
+      "r": 0,
+      "decorative": true,
+      "structure": "crown-banner",
+      "regimeHeraldry": true
+    },
+    {
+      "id": "regime-banner-crown-5",
+      "x": 300,
+      "y": 1530,
+      "r": 0,
+      "decorative": true,
+      "structure": "crown-banner",
+      "regimeHeraldry": true
+    },
+    {
+      "id": "recovery-heat-crown-0",
+      "x": 2770,
+      "y": 710,
+      "r": 0,
+      "decorative": true,
+      "structure": "geothermal-heat-intake",
+      "thermalPurpose": "eastern-lava-intake"
+    },
+    {
+      "id": "recovery-heat-crown-1",
+      "x": 3000,
+      "y": 790,
+      "r": 0,
+      "decorative": true,
+      "structure": "crown-glass-kiln",
+      "thermalPurpose": "eastern-glassworks"
+    },
+    {
+      "id": "recovery-heat-crown-2",
+      "x": 2731.1091270347397,
+      "y": 1263.89087296526,
+      "r": 0,
+      "decorative": true,
+      "structure": "thermal-flue",
+      "thermalPurpose": "eastern-heat-network"
+    },
+    {
+      "id": "recovery-heat-crown-3",
+      "x": 2984.5109023070618,
+      "y": 1403.9625322141367,
+      "r": 0,
+      "decorative": true,
+      "structure": "crown-ceramic-kiln",
+      "thermalPurpose": "eastern-heat-network"
+    },
+    {
+      "id": "recovery-heat-crown-4",
+      "x": 2690,
+      "y": 1350,
+      "r": 0,
+      "decorative": true,
+      "structure": "heat-distribution-post",
+      "thermalPurpose": "crown-work-heat"
+    },
+    {
+      "id": "recovery-heat-crown-5",
+      "x": 2600,
+      "y": 1460,
+      "r": 0,
+      "decorative": true,
+      "structure": "heated-drying-shed",
+      "thermalPurpose": "crown-work-heat"
+    },
+    {
+      "id": "recovery-heat-crown-6",
+      "x": 2040,
+      "y": 2130,
+      "r": 0,
+      "decorative": true,
+      "structure": "geothermal-heat-intake",
+      "thermalPurpose": "western-lava-intake"
+    },
+    {
+      "id": "recovery-heat-crown-7",
+      "x": 2290,
+      "y": 2130,
+      "r": 0,
+      "decorative": true,
+      "structure": "crown-glass-kiln",
+      "thermalPurpose": "western-workyard"
+    },
+    {
+      "id": "recovery-heat-crown-8",
+      "x": 2055,
+      "y": 2570,
+      "r": 0,
+      "decorative": true,
+      "structure": "thermal-flue",
+      "thermalPurpose": "western-service-heat"
+    },
+    {
+      "id": "recovery-heat-crown-9",
+      "x": 2300,
+      "y": 2650,
+      "r": 0,
+      "decorative": true,
+      "structure": "heated-drying-shed",
+      "thermalPurpose": "western-service-heat"
+    },
+    {
+      "id": "recovery-heat-crown-10",
+      "x": 1990,
+      "y": 2800,
+      "r": 0,
+      "decorative": true,
+      "structure": "crown-ceramic-kiln",
+      "thermalPurpose": "western-workyard"
+    },
+    {
+      "id": "recovery-heat-crown-11",
+      "x": 2420,
+      "y": 2800,
+      "r": 0,
+      "decorative": true,
+      "structure": "heat-distribution-post",
+      "thermalPurpose": "fortress-supply"
+    },
+    {
+      "id": "recovery-heat-crown-12",
+      "x": 2450.1657906762307,
+      "y": 2055.3027685812713,
+      "r": 0,
+      "decorative": true,
+      "structure": "heat-distribution-post",
+      "thermalPurpose": "ash-refuge-supply"
+    },
+    {
+      "id": "recovery-heat-crown-13",
+      "x": 2741.7543285006673,
+      "y": 2162.128768150524,
+      "r": 0,
+      "decorative": true,
+      "structure": "heated-washhouse",
+      "thermalPurpose": "public-works"
+    },
+    {
+      "id": "recovery-heat-crown-14",
+      "x": 2710,
+      "y": 2120,
+      "r": 0,
+      "decorative": true,
+      "structure": "thermal-flue",
+      "thermalPurpose": "public-works"
+    },
+    {
+      "id": "public-lantern-crown-0",
+      "x": 408.68986283848346,
+      "y": 658.6898628384835,
+      "structure": "roadside-lantern",
+      "r": 0,
+      "decorative": true,
+      "publicWorks": "maintained-road-light"
+    },
+    {
+      "id": "public-lantern-crown-1",
+      "x": 1147.8001926721658,
+      "y": 1667.8289011086251,
+      "structure": "roadside-lantern",
+      "r": 0,
+      "decorative": true,
+      "publicWorks": "maintained-road-light"
+    },
+    {
+      "id": "public-lantern-crown-2",
+      "x": 2751.4503421449945,
+      "y": 968.5425866999254,
+      "structure": "roadside-lantern",
+      "r": 0,
+      "decorative": true,
+      "publicWorks": "maintained-road-light"
+    },
+    {
+      "id": "public-lantern-crown-3",
+      "x": 3292.838493349622,
+      "y": 2390.2674038573027,
+      "structure": "roadside-lantern",
+      "r": 0,
+      "decorative": true,
+      "publicWorks": "maintained-road-light"
+    },
+    {
+      "id": "public-lantern-crown-4",
+      "x": 3316.454959736748,
+      "y": 2928.5816049794244,
+      "structure": "roadside-lantern",
+      "r": 0,
+      "decorative": true,
+      "publicWorks": "maintained-road-light"
+    },
+    {
+      "id": "public-lantern-crown-5",
+      "x": 2644.9140537931908,
+      "y": 1721.9264522130677,
+      "structure": "roadside-lantern",
+      "r": 0,
+      "decorative": true,
+      "publicWorks": "maintained-road-light"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "supplier",
+      "name": "Crownwatch Supplies",
+      "kind": "supplier",
+      "x": 509.2296877806479,
+      "y": 482.3084916403907,
+      "icon": "🛒"
+    },
+    {
+      "id": "recruiter",
+      "name": "Crownwatch Captain",
+      "kind": "recruiter",
+      "x": 225,
+      "y": 690,
+      "icon": "👥"
+    },
+    {
+      "id": "board",
+      "name": "Crownwatch Quest board",
+      "kind": "quests",
+      "x": 602.9150817782261,
+      "y": 728.3709462659994,
+      "icon": "📜"
+    },
+    {
+      "id": "rest",
+      "name": "Crownwatch Refuge",
+      "kind": "rest",
+      "x": 137.496318216405,
+      "y": 543.0598100774454,
+      "icon": "🏠",
+      "servicePoint": {
+        "x": 350,
+        "y": 600
+      }
+    },
+    {
+      "id": "minor",
+      "name": "Ash Refuge",
+      "kind": "rest",
+      "x": 1462.503681783595,
+      "y": 1743.0598100774455,
+      "icon": "🏡",
+      "servicePoint": {
+        "x": 1250,
+        "y": 1800
+      }
+    },
+    {
+      "id": "entrance",
+      "name": "Citadel of Ashes",
+      "kind": "dungeon",
+      "family": "citadel",
+      "x": 2400,
+      "y": 1100,
+      "icon": "🏛️"
+    },
+    {
+      "id": "cage-cindermaw",
+      "name": "Vera the Master Smith",
+      "kind": "cage",
+      "family": "cindermaw",
+      "x": 2290,
+      "y": 1830,
+      "icon": "🔒",
+      "presentation": "mobile-forge",
+      "workKind": "smith",
+      "context": "Vera is the paid but captive chief field engineer. Her guarded mobile forge travels on Cindermaw’s ministerial inspections. She repairs nearby Ash-beast defensive equipment, but cannot leave until freed.",
+      "escortGuardIds": [
+        "enemy-50",
+        "enemy-49"
+      ]
+    },
+    {
+      "id": "crown-travel-frontier-return",
+      "name": "Crown dragon platform",
+      "kind": "transport",
+      "hub": true,
+      "crownTravelHub": true,
+      "routeId": "frontier-return",
+      "x": 620,
+      "y": 220,
+      "icon": "🐉",
+      "interactionOnly": false
+    },
+    {
+      "id": "crown-travel-levy-road",
+      "name": "Crown levy caravan",
+      "kind": "transport",
+      "hub": true,
+      "crownTravelHub": true,
+      "routeId": "levy-road",
+      "x": 180,
+      "y": 1600,
+      "icon": "🐎",
+      "interactionOnly": true
+    },
+    {
+      "id": "crown-travel-military-gate",
+      "name": "Crown military transit",
+      "kind": "transport",
+      "hub": true,
+      "crownTravelHub": true,
+      "routeId": "military-gate",
+      "x": 3570,
+      "y": 980,
+      "icon": "🚩",
+      "interactionOnly": true
+    },
+    {
+      "id": "crown-travel-fortress-service",
+      "name": "Crown fortress convoy",
+      "kind": "transport",
+      "hub": true,
+      "crownTravelHub": true,
+      "routeId": "fortress-service",
+      "x": 3570,
+      "y": 2480,
+      "icon": "📦",
+      "interactionOnly": true
+    },
+    {
+      "id": "bridge-north",
+      "name": "Lava ridge bridge",
+      "kind": "landmark",
+      "x": 1350,
+      "y": 1000,
+      "icon": "🪵"
+    },
+    {
+      "id": "bridge-south",
+      "name": "Southern stone crossing",
+      "kind": "landmark",
+      "x": 1350,
+      "y": 2400,
+      "icon": "🪵"
+    },
+    {
+      "id": "foundry",
+      "name": "Ruined Foundry",
+      "kind": "dungeon",
+      "x": 1850,
+      "y": 2700,
+      "icon": "🏚️",
+      "family": "side-crown-foundry",
+      "sideDungeon": true
+    },
+    {
+      "id": "shelf",
+      "name": "Crystal shelf",
+      "kind": "landmark",
+      "x": 1250,
+      "y": 2505,
+      "icon": "🏚️"
+    },
+    {
+      "id": "siege",
+      "name": "Siege camp",
+      "kind": "landmark",
+      "x": 2700,
+      "y": 2250,
+      "icon": "🏕️"
+    },
+    {
+      "id": "fortress-gate",
+      "name": "Dark fortress gate",
+      "kind": "landmark",
+      "x": 3060,
+      "y": 3040,
+      "icon": "🏚️"
+    },
+    {
+      "id": "crown-barracks",
+      "name": "Crown field barracks",
+      "kind": "landmark",
+      "x": 3000,
+      "y": 1180,
+      "icon": "🏚️"
+    },
+    {
+      "id": "mini-field-cindermaw",
+      "name": "Cindermaw's roosting compound",
+      "kind": "mini",
+      "mini": "field-cindermaw",
+      "x": 2070,
+      "y": 1740,
+      "icon": "🏚️"
+    },
+    {
+      "x": 2439.0380592228744,
+      "y": 1519.0380592228744,
+      "id": "supply-entrance",
+      "name": "Cindermaw's Treasury",
+      "kind": "dungeon",
+      "family": "supply-crown",
+      "treasury": true,
+      "treasuryBoss": "cindermaw",
+      "icon": "🗝️"
+    },
+    {
+      "id": "service-citadel",
+      "name": "Tovan the Final Instructor",
+      "kind": "teacher",
+      "family": "citadel",
+      "x": 195,
+      "y": 450,
+      "icon": "🧙"
+    },
+    {
+      "id": "service-cindermaw",
+      "name": "Vera the Master Smith",
+      "kind": "smith",
+      "family": "cindermaw",
+      "x": 425,
+      "y": 425,
+      "icon": "⚒️"
+    }
+  ],
+  "roads": [
+    [
+      {
+        "x": 350,
+        "y": 600
+      },
+      {
+        "x": 325,
+        "y": 575
+      },
+      {
+        "x": 525,
+        "y": 575
+      },
+      {
+        "x": 525,
+        "y": 625
+      },
+      {
+        "x": 1225,
+        "y": 625
+      },
+      {
+        "x": 1225,
+        "y": 1775
+      },
+      {
+        "x": 1250,
+        "y": 1800
+      }
+    ],
+    [
+      {
+        "x": 350,
+        "y": 600
+      },
+      {
+        "x": 325,
+        "y": 575
+      },
+      {
+        "x": 525,
+        "y": 575
+      },
+      {
+        "x": 525,
+        "y": 625
+      },
+      {
+        "x": 1275,
+        "y": 625
+      },
+      {
+        "x": 1275,
+        "y": 875
+      },
+      {
+        "x": 2175,
+        "y": 875
+      },
+      {
+        "x": 2175,
+        "y": 1725
+      },
+      {
+        "x": 2200,
+        "y": 1750
+      }
+    ],
+    [
+      {
+        "x": 525,
+        "y": 575
+      },
+      {
+        "x": 525,
+        "y": 625
+      },
+      {
+        "x": 775,
+        "y": 625
+      },
+      {
+        "x": 775,
+        "y": 375
+      },
+      {
+        "x": 725,
+        "y": 375
+      },
+      {
+        "x": 725,
+        "y": 325
+      },
+      {
+        "x": 675,
+        "y": 325
+      },
+      {
+        "x": 675,
+        "y": 275
+      },
+      {
+        "x": 625,
+        "y": 275
+      },
+      {
+        "x": 625,
+        "y": 225
+      },
+      {
+        "x": 620,
+        "y": 220
+      }
+    ],
+    [
+      {
+        "x": 350,
+        "y": 600
+      },
+      {
+        "x": 325,
+        "y": 575
+      },
+      {
+        "x": 525,
+        "y": 575
+      },
+      {
+        "x": 525,
+        "y": 625
+      },
+      {
+        "x": 775,
+        "y": 625
+      },
+      {
+        "x": 775,
+        "y": 875
+      },
+      {
+        "x": 725,
+        "y": 875
+      },
+      {
+        "x": 725,
+        "y": 925
+      },
+      {
+        "x": 625,
+        "y": 925
+      },
+      {
+        "x": 625,
+        "y": 1025
+      },
+      {
+        "x": 525,
+        "y": 1025
+      },
+      {
+        "x": 525,
+        "y": 1075
+      },
+      {
+        "x": 175,
+        "y": 1075
+      },
+      {
+        "x": 175,
+        "y": 1575
+      },
+      {
+        "x": 180,
+        "y": 1600
+      }
+    ],
+    [
+      {
+        "x": 2175,
+        "y": 875
+      },
+      {
+        "x": 2825,
+        "y": 875
+      },
+      {
+        "x": 2825,
+        "y": 1025
+      },
+      {
+        "x": 3575,
+        "y": 1025
+      },
+      {
+        "x": 3575,
+        "y": 975
+      },
+      {
+        "x": 3570,
+        "y": 980
+      }
+    ],
+    [
+      {
+        "x": 1250,
+        "y": 1800
+      },
+      {
+        "x": 1225,
+        "y": 1775
+      },
+      {
+        "x": 1175,
+        "y": 1775
+      },
+      {
+        "x": 1175,
+        "y": 1825
+      },
+      {
+        "x": 875,
+        "y": 1825
+      },
+      {
+        "x": 875,
+        "y": 2025
+      },
+      {
+        "x": 925,
+        "y": 2025
+      },
+      {
+        "x": 925,
+        "y": 2075
+      },
+      {
+        "x": 975,
+        "y": 2075
+      },
+      {
+        "x": 975,
+        "y": 2125
+      },
+      {
+        "x": 1125,
+        "y": 2125
+      },
+      {
+        "x": 1125,
+        "y": 2175
+      },
+      {
+        "x": 1175,
+        "y": 2175
+      },
+      {
+        "x": 1175,
+        "y": 2225
+      },
+      {
+        "x": 1275,
+        "y": 2225
+      },
+      {
+        "x": 1275,
+        "y": 2325
+      },
+      {
+        "x": 1625,
+        "y": 2325
+      },
+      {
+        "x": 1625,
+        "y": 3575
+      },
+      {
+        "x": 1650,
+        "y": 3580
+      }
+    ],
+    [
+      {
+        "x": 3575,
+        "y": 1025
+      },
+      {
+        "x": 3575,
+        "y": 2475
+      },
+      {
+        "x": 3570,
+        "y": 2480
+      }
+    ],
+    [
+      {
+        "x": 2200,
+        "y": 1750
+      },
+      {
+        "x": 2175,
+        "y": 1725
+      },
+      {
+        "x": 2525,
+        "y": 1725
+      },
+      {
+        "x": 2525,
+        "y": 2075
+      },
+      {
+        "x": 2544.4365081389597,
+        "y": 2094.4365081389597
+      }
+    ],
+    [
+      {
+        "x": 3570,
+        "y": 2480
+      },
+      {
+        "x": 3575,
+        "y": 2475
+      },
+      {
+        "x": 3225,
+        "y": 2475
+      },
+      {
+        "x": 3225,
+        "y": 2875
+      },
+      {
+        "x": 3208.1325271462856,
+        "y": 2877.344676074667
+      }
+    ],
+    [
+      {
+        "x": 3225,
+        "y": 2475
+      },
+      {
+        "x": 3175,
+        "y": 2475
+      },
+      {
+        "x": 3175,
+        "y": 2375
+      },
+      {
+        "x": 3178.022873941267,
+        "y": 2391.6534860248285
+      }
+    ],
+    [
+      {
+        "x": 3208.1325271462856,
+        "y": 2877.344676074667
+      },
+      {
+        "x": 3225,
+        "y": 2875
+      },
+      {
+        "x": 3225,
+        "y": 2975
+      },
+      {
+        "x": 3221.6903284699765,
+        "y": 2981.8290521222816
+      }
+    ],
+    [
+      {
+        "x": 1225,
+        "y": 1000
+      },
+      {
+        "x": 1225,
+        "y": 975
+      },
+      {
+        "x": 1175,
+        "y": 975
+      },
+      {
+        "x": 1195,
+        "y": 1000
+      }
+    ],
+    [
+      {
+        "x": 1515,
+        "y": 875
+      },
+      {
+        "x": 1525,
+        "y": 875
+      },
+      {
+        "x": 1525,
+        "y": 975
+      },
+      {
+        "x": 1515,
+        "y": 1000
+      }
+    ],
+    [
+      {
+        "x": 1195,
+        "y": 1000
+      },
+      {
+        "x": 1515,
+        "y": 1000
+      }
+    ],
+    [
+      {
+        "x": 1195,
+        "y": 2225
+      },
+      {
+        "x": 1175,
+        "y": 2225
+      },
+      {
+        "x": 1175,
+        "y": 2375
+      },
+      {
+        "x": 1195,
+        "y": 2400
+      }
+    ],
+    [
+      {
+        "x": 1515,
+        "y": 2325
+      },
+      {
+        "x": 1525,
+        "y": 2325
+      },
+      {
+        "x": 1525,
+        "y": 2375
+      },
+      {
+        "x": 1515,
+        "y": 2400
+      }
+    ],
+    [
+      {
+        "x": 1195,
+        "y": 2400
+      },
+      {
+        "x": 1515,
+        "y": 2400
+      }
+    ],
+    [
+      {
+        "x": 2175,
+        "y": 1100
+      },
+      {
+        "x": 2175,
+        "y": 1075
+      },
+      {
+        "x": 2275,
+        "y": 1075
+      },
+      {
+        "x": 2255,
+        "y": 1100
+      }
+    ],
+    [
+      {
+        "x": 1625,
+        "y": 2700
+      },
+      {
+        "x": 1625,
+        "y": 2675
+      },
+      {
+        "x": 1725,
+        "y": 2675
+      },
+      {
+        "x": 1705,
+        "y": 2700
+      }
+    ]
+  ],
+  "footpaths": [],
+  "enemies": [
+    {
+      "id": "enemy-36",
+      "x": 1935,
+      "y": 2700,
+      "home": {
+        "x": 1935,
+        "y": 2700
+      }
+    },
+    {
+      "id": "enemy-37",
+      "x": 1910.1040764008565,
+      "y": 2760.1040764008567,
+      "home": {
+        "x": 1910.1040764008565,
+        "y": 2760.1040764008567
+      }
+    },
+    {
+      "id": "enemy-38",
+      "x": 1850,
+      "y": 2820,
+      "home": {
+        "x": 1850,
+        "y": 2820
+      }
+    },
+    {
+      "id": "enemy-39",
+      "x": 1765.1471862576143,
+      "y": 2784.8528137423855,
+      "home": {
+        "x": 1765.1471862576143,
+        "y": 2784.8528137423855
+      }
+    },
+    {
+      "id": "enemy-40",
+      "x": 1695,
+      "y": 2700,
+      "home": {
+        "x": 1695,
+        "y": 2700
+      }
+    },
+    {
+      "id": "enemy-41",
+      "x": 2010,
+      "y": 1650,
+      "home": {
+        "x": 2010,
+        "y": 1650
+      }
+    },
+    {
+      "id": "enemy-42",
+      "x": 2270,
+      "y": 1750,
+      "home": {
+        "x": 2270,
+        "y": 1750
+      }
+    },
+    {
+      "id": "enemy-43",
+      "x": 2249.4974746830585,
+      "y": 1799.4974746830583,
+      "home": {
+        "x": 2249.4974746830585,
+        "y": 1799.4974746830583
+      }
+    },
+    {
+      "id": "enemy-44",
+      "x": 2175,
+      "y": 1500,
+      "home": {
+        "x": 2175,
+        "y": 1500
+      }
+    },
+    {
+      "id": "enemy-45",
+      "x": 2350,
+      "y": 1890,
+      "home": {
+        "x": 2350,
+        "y": 1890
+      }
+    },
+    {
+      "id": "enemy-46",
+      "x": 2785,
+      "y": 2250,
+      "home": {
+        "x": 2785,
+        "y": 2250
+      }
+    },
+    {
+      "id": "enemy-47",
+      "x": 2760.1040764008567,
+      "y": 2310.1040764008567,
+      "home": {
+        "x": 2760.1040764008567,
+        "y": 2310.1040764008567
+      }
+    },
+    {
+      "id": "enemy-48",
+      "x": 2700,
+      "y": 2370,
+      "home": {
+        "x": 2700,
+        "y": 2370
+      }
+    },
+    {
+      "id": "enemy-49",
+      "x": 2615.1471862576145,
+      "y": 2334.8528137423855,
+      "home": {
+        "x": 2615.1471862576145,
+        "y": 2334.8528137423855
+      }
+    },
+    {
+      "id": "enemy-50",
+      "x": 2545,
+      "y": 2250,
+      "home": {
+        "x": 2545,
+        "y": 2250
+      }
+    },
+    {
+      "id": "enemy-51",
+      "x": 2380,
+      "y": 1790,
+      "home": {
+        "x": 2380,
+        "y": 1790
+      }
+    },
+    {
+      "id": "enemy-52",
+      "x": 2230,
+      "y": 1960,
+      "home": {
+        "x": 2230,
+        "y": 1960
+      }
+    },
+    {
+      "id": "enemy-53",
+      "x": 2110,
+      "y": 1910,
+      "home": {
+        "x": 2110,
+        "y": 1910
+      }
+    },
+    {
+      "id": "enemy-54",
+      "x": 2300,
+      "y": 1740,
+      "home": {
+        "x": 2300,
+        "y": 1740
+      }
+    },
+    {
+      "id": "enemy-55",
+      "x": 2270,
+      "y": 1820,
+      "home": {
+        "x": 2270,
+        "y": 1820
+      }
+    },
+    {
+      "id": "enemy-56",
+      "x": 3085,
+      "y": 1180,
+      "home": {
+        "x": 3085,
+        "y": 1180
+      }
+    },
+    {
+      "id": "enemy-57",
+      "x": 3060.1040764008567,
+      "y": 1240.1040764008565,
+      "home": {
+        "x": 3060.1040764008567,
+        "y": 1240.1040764008565
+      }
+    },
+    {
+      "id": "enemy-58",
+      "x": 3000,
+      "y": 1300,
+      "home": {
+        "x": 3000,
+        "y": 1300
+      }
+    },
+    {
+      "id": "enemy-59",
+      "x": 2896.0769515458674,
+      "y": 1120,
+      "home": {
+        "x": 2896.0769515458674,
+        "y": 1120
+      }
+    },
+    {
+      "id": "enemy-60",
+      "x": 2865.766062413412,
+      "y": 1102.5,
+      "home": {
+        "x": 2865.766062413412,
+        "y": 1102.5
+      }
+    },
+    {
+      "id": "enemy-61",
+      "x": 2080,
+      "y": 1810,
+      "home": {
+        "x": 2080,
+        "y": 1810
+      }
+    },
+    {
+      "id": "enemy-62",
+      "x": 2100,
+      "y": 1660,
+      "home": {
+        "x": 2100,
+        "y": 1660
+      }
+    },
+    {
+      "id": "enemy-63",
+      "x": 2883.7867965644036,
+      "y": 1138.7867965644036,
+      "home": {
+        "x": 2883.7867965644036,
+        "y": 1138.7867965644036
+      }
+    },
+    {
+      "id": "enemy-64",
+      "x": 2975,
+      "y": 1085,
+      "home": {
+        "x": 2975,
+        "y": 1085
+      }
+    },
+    {
+      "id": "enemy-65",
+      "x": 3080,
+      "y": 1115,
+      "home": {
+        "x": 3080,
+        "y": 1115
+      }
+    },
+    {
+      "id": "enemy-66",
+      "x": 1485,
+      "y": 3240,
+      "home": {
+        "x": 1485,
+        "y": 3240
+      }
+    },
+    {
+      "id": "enemy-67",
+      "x": 1555,
+      "y": 3165,
+      "home": {
+        "x": 1555,
+        "y": 3165
+      }
+    },
+    {
+      "id": "enemy-68",
+      "x": 1660,
+      "y": 3195,
+      "home": {
+        "x": 1660,
+        "y": 3195
+      }
+    },
+    {
+      "id": "enemy-69",
+      "x": 1680,
+      "y": 3295,
+      "home": {
+        "x": 1680,
+        "y": 3295
+      }
+    },
+    {
+      "id": "enemy-70",
+      "x": 1600.3910728344792,
+      "y": 414.14944252575293,
+      "home": {
+        "x": 1600.3910728344792,
+        "y": 414.14944252575293
+      }
+    },
+    {
+      "id": "enemy-71",
+      "x": 3100,
+      "y": 1215,
+      "home": {
+        "x": 3100,
+        "y": 1215
+      }
+    },
+    {
+      "id": "enemy-72",
+      "x": 3275,
+      "y": 1800,
+      "home": {
+        "x": 3275,
+        "y": 1800
+      }
+    },
+    {
+      "id": "enemy-73",
+      "x": 3345,
+      "y": 1725,
+      "home": {
+        "x": 3345,
+        "y": 1725
+      }
+    },
+    {
+      "id": "enemy-74",
+      "x": 3450,
+      "y": 1755,
+      "home": {
+        "x": 3450,
+        "y": 1755
+      }
+    },
+    {
+      "id": "enemy-75",
+      "x": 2980.3910728344795,
+      "y": 2184.149442525753,
+      "home": {
+        "x": 2980.3910728344795,
+        "y": 2184.149442525753
+      }
+    },
+    {
+      "id": "enemy-76",
+      "x": 1075,
+      "y": 1320,
+      "home": {
+        "x": 1075,
+        "y": 1320
+      }
+    },
+    {
+      "id": "enemy-77",
+      "x": 1014.1920892679362,
+      "y": 1343.6421602998928,
+      "home": {
+        "x": 1014.1920892679362,
+        "y": 1343.6421602998928
+      }
+    },
+    {
+      "id": "enemy-78",
+      "x": 1045.507820653572,
+      "y": 1257.2412244252002,
+      "home": {
+        "x": 1045.507820653572,
+        "y": 1257.2412244252002
+      }
+    },
+    {
+      "id": "enemy-79",
+      "x": 1078.331648245966,
+      "y": 1369.996847328082,
+      "home": {
+        "x": 1078.331648245966,
+        "y": 1369.996847328082
+      }
+    },
+    {
+      "id": "enemy-80",
+      "x": 950.3910728344794,
+      "y": 1304.1494425257529,
+      "home": {
+        "x": 950.3910728344794,
+        "y": 1304.1494425257529
+      }
+    },
+    {
+      "id": "enemy-81",
+      "x": 1235,
+      "y": 3300,
+      "home": {
+        "x": 1235,
+        "y": 3300
+      }
+    },
+    {
+      "id": "enemy-82",
+      "x": 1174.1920892679361,
+      "y": 3323.642160299893,
+      "home": {
+        "x": 1174.1920892679361,
+        "y": 3323.642160299893
+      }
+    },
+    {
+      "id": "enemy-83",
+      "x": 1205.507820653572,
+      "y": 3237.2412244252,
+      "home": {
+        "x": 1205.507820653572,
+        "y": 3237.2412244252
+      }
+    },
+    {
+      "id": "enemy-84",
+      "x": 1238.331648245966,
+      "y": 3349.996847328082,
+      "home": {
+        "x": 1238.331648245966,
+        "y": 3349.996847328082
+      }
+    },
+    {
+      "id": "enemy-85",
+      "x": 1110.3910728344792,
+      "y": 3284.149442525753,
+      "home": {
+        "x": 1110.3910728344792,
+        "y": 3284.149442525753
+      }
+    },
+    {
+      "id": "enemy-86",
+      "x": 1115,
+      "y": 2900,
+      "home": {
+        "x": 1115,
+        "y": 2900
+      }
+    },
+    {
+      "id": "enemy-87",
+      "x": 1054.1920892679361,
+      "y": 2923.642160299893,
+      "home": {
+        "x": 1054.1920892679361,
+        "y": 2923.642160299893
+      }
+    },
+    {
+      "id": "enemy-88",
+      "x": 1085.507820653572,
+      "y": 2837.2412244252,
+      "home": {
+        "x": 1085.507820653572,
+        "y": 2837.2412244252
+      }
+    },
+    {
+      "id": "enemy-89",
+      "x": 1118.331648245966,
+      "y": 2949.996847328082,
+      "home": {
+        "x": 1118.331648245966,
+        "y": 2949.996847328082
+      }
+    },
+    {
+      "id": "enemy-90",
+      "x": 990.3910728344794,
+      "y": 2884.149442525753,
+      "home": {
+        "x": 990.3910728344794,
+        "y": 2884.149442525753
+      }
+    },
+    {
+      "id": "enemy-91",
+      "x": 2085,
+      "y": 3140,
+      "home": {
+        "x": 2085,
+        "y": 3140
+      }
+    },
+    {
+      "id": "enemy-92",
+      "x": 2054.1920892679364,
+      "y": 3163.642160299893,
+      "home": {
+        "x": 2054.1920892679364,
+        "y": 3163.642160299893
+      }
+    },
+    {
+      "id": "enemy-93",
+      "x": 2055.507820653572,
+      "y": 3077.2412244252,
+      "home": {
+        "x": 2055.507820653572,
+        "y": 3077.2412244252
+      }
+    },
+    {
+      "id": "enemy-94",
+      "x": 2088.331648245966,
+      "y": 3189.996847328082,
+      "home": {
+        "x": 2088.331648245966,
+        "y": 3189.996847328082
+      }
+    },
+    {
+      "id": "enemy-95",
+      "x": 2050.391072834479,
+      "y": 3124.149442525753,
+      "home": {
+        "x": 2050.391072834479,
+        "y": 3124.149442525753
+      }
+    },
+    {
+      "id": "enemy-96",
+      "x": 3415,
+      "y": 780,
+      "home": {
+        "x": 3415,
+        "y": 780
+      }
+    },
+    {
+      "id": "enemy-97",
+      "x": 3354.1920892679364,
+      "y": 803.6421602998928,
+      "home": {
+        "x": 3354.1920892679364,
+        "y": 803.6421602998928
+      }
+    },
+    {
+      "id": "enemy-98",
+      "x": 3385.507820653572,
+      "y": 717.2412244252002,
+      "home": {
+        "x": 3385.507820653572,
+        "y": 717.2412244252002
+      }
+    },
+    {
+      "id": "enemy-99",
+      "x": 3418.331648245966,
+      "y": 829.9968473280819,
+      "home": {
+        "x": 3418.331648245966,
+        "y": 829.9968473280819
+      }
+    },
+    {
+      "id": "enemy-100",
+      "x": 2200,
+      "y": 1750,
+      "home": {
+        "x": 2200,
+        "y": 1750
+      }
+    },
+    {
+      "id": "enemy-101",
+      "x": 3250,
+      "y": 3200,
+      "home": {
+        "x": 3250,
+        "y": 3200
+      }
+    }
+  ],
+  "buildings": []
+}

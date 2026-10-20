@@ -1807,6 +1807,7 @@
           }
         }
         this.frontierTownServices(z);
+        this.crownTownServices(z);
       }
     }
     clearTonic() {
@@ -5460,11 +5461,7 @@
           !e.aggro &&
           // Reject distant targets before tracing through every intervening
           // obstacle. The same range and visibility rules still gate aggro.
-          dist(e, target) <
-            Math.max(
-              R.balance.enemyAcquisitionRange * R.balance.enemyTargetingMultiplier,
-              this.enemyRanged(e) && this.enemyFort(e) ? this.enemyRangedRange(e) : 0,
-            ) &&
+          dist(e, target) < this.enemyAcquisitionRange(e) &&
           this.enemyRangedLine(e, target) &&
           (!this.isDungeon() &&
           dist(target, { x: D.towns[this.regionIndex()][0], y: D.towns[this.regionIndex()][1] }) <

@@ -476,6 +476,226 @@
           this.s.zone = oldZone;
         }
       }
+      crownTownServices(z) {
+        if (z.id !== 'crown' || z.crownSceneVersion !== R.crownSceneLayout.version) return;
+        for (const [id, xy] of Object.entries(z.crownTownPlacements || R.crownSceneLayout.npcs)) {
+          const n = z.npcs.find((n) => n.id === id);
+          if (n) Object.assign(n, { x: xy[0], y: xy[1] });
+        }
+      }
+      crownSceneComposition(z) {
+        const cfg = R.crownSceneLayout;
+        if (z.id !== 'crown' || z.crownSceneVersion === cfg.version) return;
+        const oldZone = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          // An old player construction at the newly extended channel gets a
+          // retained masonry deck. New construction still obeys lava collision.
+          z.crownInheritedDecks = (z.buildings || [])
+            .filter((b) => {
+              const [lo, hi] = R.channelBanks(4, b.y);
+              return (b.y < 300 || b.y > 2810) && b.x > lo - 90 && b.x < hi + 90;
+            })
+            .map((b) => ({
+              x1: Math.min(1200, b.x - 115),
+              x2: Math.max(1510, b.x + 115),
+              y1: b.y - 120,
+              y2: b.y + 120,
+            }));
+          const at = (xy) => ({ x: xy[0], y: xy[1] }),
+            natural = (p) => /^forest-|^aesthetic-nature-|^aesthetic-bank-/.test(p.id || ''),
+            planned = new Set(Object.keys(cfg.props)),
+            moving = z.props.filter((p) => planned.has(p.id)),
+            clear = (q, p) =>
+              q.x > 60 &&
+              q.y > 60 &&
+              q.x < 3740 &&
+              q.y < 3740 &&
+              !this.blocked(q.x, q.y, z.id, Math.max(15, p.r || 0), true) &&
+              !z.buildings.some((b) => dist(q, b) < 160 + (p.r || 0)) &&
+              !z.nodes.some((n) => dist(q, n) < 65 + (p.r || 0)) &&
+              (!(p.r > 0) ||
+                oldZone !== z.id ||
+                ![this.hero, ...this.activeLivingParty()].some((u) => dist(q, u) < p.r + 45)) &&
+              !z.enemies.some(
+                (e) =>
+                  e.hp > 0 &&
+                  (dist(q, e.home || e) < 85 + (p.r || 0) || dist(q, e) < 65 + (p.r || 0)),
+              ) &&
+              !z.props.some(
+                (n) => n !== p && !natural(n) && dist(q, n) < (p.r || 0) + (n.r || 0) + 40,
+              ),
+            choose = (raw, p, extra = () => true) => {
+              for (const radius of [0, 45, 90, 135, 180, 240, 300])
+                for (let j = 0; j < (radius ? 16 : 1); j++) {
+                  const q = {
+                    x: raw.x + Math.cos((j * Math.PI) / 8) * radius,
+                    y: raw.y + Math.sin((j * Math.PI) / 8) * radius,
+                  };
+                  if (clear(q, p) && extra(q)) return q;
+                }
+              return null;
+            };
+          z.props = z.props.filter((p) => !planned.has(p.id));
+          for (const p of moving.sort((a, b) => (b.r || 0) - (a.r || 0))) {
+            const q = choose(at(cfg.props[p.id]), p);
+            if (q) Object.assign(p, q);
+            z.props.push(p);
+          }
+          const outside = [],
+            gates = [];
+          for (const road of z.roads) {
+            let part = [];
+            const flush = () => {
+              if (part.length > 1) outside.push(part);
+              part = [];
+            };
+            for (let j = 1; j < road.length; j++) {
+              const a = road[j - 1],
+                b = road[j],
+                cuts = [0, 1];
+              if (b.x !== a.x) cuts.push((1150 - a.x) / (b.x - a.x));
+              if (b.y !== a.y) cuts.push((1600 - a.y) / (b.y - a.y));
+              const ts = [...new Set(cuts.filter((t) => t >= 0 && t <= 1))].sort((a, b) => a - b);
+              const point = (t) => ({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+              for (let k = 1; k < ts.length; k++) {
+                const mid = point((ts[k - 1] + ts[k]) / 2),
+                  p = point(ts[k - 1]),
+                  q = point(ts[k]);
+                if (mid.x <= 1150 && mid.y <= 1600) {
+                  flush();
+                  continue;
+                }
+                if (!part.length) part.push(p);
+                part.push(q);
+                for (const p of [point(ts[k - 1]), q])
+                  if (
+                    (Math.abs(p.x - 1150) < 0.001 && p.y <= 1600) ||
+                    (Math.abs(p.y - 1600) < 0.001 && p.x <= 1150)
+                  )
+                    gates.push(p);
+              }
+            }
+            flush();
+          }
+          z.roads = [...outside, ...cfg.streets.map((r) => r.map(at))];
+          for (const gate of gates) {
+            const near = this.nearestRoadPoint({ roads: cfg.streets.map((r) => r.map(at)) }, gate);
+            if (near && dist(near, gate) > 0.1) z.roads.push([near, gate]);
+          }
+          const shoreMargin = (p) =>
+              /house|watchpost|well|laundry|woodpile|market/.test(p.structure || '')
+                ? 170
+                : natural(p)
+                  ? 80
+                  : 105,
+            shoreClear = (q, p) => {
+              const [lo, hi] = R.channelBanks(4, q.y),
+                m = shoreMargin(p);
+              return q.x < lo - m || q.x > hi + m;
+            };
+          for (const p of z.props) {
+            if (p.stronghold || /mini-wall-/.test(p.id || '')) continue;
+            if (shoreClear(p, p)) continue;
+            const [lo, hi] = R.channelBanks(4, p.y),
+              side = p.x < (lo + hi) / 2 ? -1 : 1,
+              q = choose(
+                { x: (side < 0 ? lo : hi) + side * (shoreMargin(p) + 40), y: p.y },
+                p,
+                (q) =>
+                  shoreClear(q, p) && this.distanceToRoad(z, q) > Math.max(55, (p.r || 0) + 45),
+              );
+            if (q) Object.assign(p, q);
+          }
+          let woodland = 0;
+          for (const p of z.props.filter((p) => /^forest-0-/.test(p.id || ''))) {
+            const j = woodland++,
+              raw = { x: 160 + (j % 3) * 130, y: 1880 + Math.floor(j / 3) * 290 };
+            const q = choose(
+              raw,
+              p,
+              (q) =>
+                q.x < 440 &&
+                this.distanceToRoad(z, q) > 85 &&
+                !moving.some((n) => dist(q, n) < (n.r || 0) + 110) &&
+                !z.props.some((n) => n !== p && natural(n) && dist(n, q) < 85),
+            );
+            if (q) Object.assign(p, q);
+          }
+          // Repair only scenery newly submerged by the channel extension,
+          // before restore's generic invalid-prop filter can discard its ID.
+          for (const p of z.props) {
+            if (!this.blocked(p.x, p.y, z.id, p.r || 0, true)) continue;
+            const q = choose(p, p);
+            if (q) Object.assign(p, q);
+          }
+          z.crownTownPlacements = {};
+          for (const [id, xy] of Object.entries(cfg.npcs)) {
+            const raw = at(xy),
+              q = choose(raw, { r: 0 }, (q) => shoreClear(q, { structure: 'house' }));
+            const target = q || this.safe(raw.x, raw.y, z.id);
+            z.crownTownPlacements[id] = [target.x, target.y];
+          }
+          for (const [id, xy] of Object.entries(cfg.nodes)) {
+            const n = z.nodes.find((n) => n.id === id);
+            if (!n) continue;
+            const q = choose(at(xy), { r: 0 }, (q) => shoreClear(q, { structure: 'crate' }));
+            if (q) Object.assign(n, q);
+          }
+          z.crownSceneVersion = cfg.version;
+          this.crownTownServices(z);
+          // Keep service use points and all original identities; connect the
+          // visible front (+x,+y), not the back wall, to a public street.
+          z.footpaths = [];
+          const doors = [
+            ...moving.filter((p) =>
+              /house|well|market|yard|kiln|shed|washhouse/.test(p.structure || ''),
+            ),
+            ...z.npcs.filter(
+              (n) =>
+                Object.hasOwn(cfg.npcs, n.id) || /entrance|foundry|siege|fortress-gate/.test(n.id),
+            ),
+            ...z.nodes,
+          ];
+          const walking = () => ({ roads: [...z.roads, ...z.footpaths] });
+          // Only conflicting natural dressing moves. Retain the surrounding
+          // volcanic landscape; no new trees, houses or generic edge filler.
+          for (const p of z.props.filter(natural)) {
+            if (p.x > 1180 || p.y > 3250) continue;
+            if (this.distanceToRoad(walking(), p) > 75 && !doors.some((n) => dist(p, n) < 115))
+              continue;
+            const q = choose(
+              p,
+              p,
+              (q) =>
+                shoreClear(q, p) &&
+                this.distanceToRoad(walking(), q) > 85 &&
+                !doors.some((n) => dist(q, n) < 125) &&
+                !z.props.some((n) => n !== p && natural(n) && dist(n, q) < 85),
+            );
+            if (q) Object.assign(p, q);
+          }
+          for (const p of doors) {
+            const door = this.safe(p.x + 45, p.y + 45, z.id),
+              near = this.nearestRoadPoint(z, door);
+            if (!near || dist(near, door) < 15) continue;
+            const route = this.route(near, door);
+            if (route.length) z.footpaths.push([near, ...route]);
+          }
+          // Connect both heat-work courts to the existing regional roads.
+          for (const q of [
+            { x: 2290, y: 2350 },
+            { x: 2710, y: 1100 },
+            { x: 1850, y: 3320 },
+          ]) {
+            const near = this.nearestRoadPoint(z, q),
+              route = near && this.route(near, q);
+            if (route?.length) z.footpaths.push([near, ...route]);
+          }
+        } finally {
+          this.s.zone = oldZone;
+        }
+      }
       settlementLayout(z) {
         if (
           dungeonIds.includes(z.id) ||
@@ -1579,6 +1799,7 @@
           this.interiorCoherence(z);
           this.frontierEdgeRedistribution(z);
           this.frontierSceneComposition(z);
+          this.crownSceneComposition(z);
           return z;
         }
         const i = this.regionIndex(),
@@ -1994,6 +2215,7 @@
         this.syncDungeonMasterStation(z);
         this.frontierEdgeRedistribution(z);
         this.frontierSceneComposition(z);
+        this.crownSceneComposition(z);
         return z;
       }
       regionalDestinations(z) {

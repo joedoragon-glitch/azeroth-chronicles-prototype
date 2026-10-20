@@ -1,0 +1,1253 @@
+{
+  "passed": true,
+  "originalProps": 291,
+  "currentProps": 291,
+  "movedProps": 103,
+  "connectedFronts": 24,
+  "footpaths": 44,
+  "enemiesPreserved": 66,
+  "interiors": [
+    {
+      "id": "citadel",
+      "props": 8,
+      "solidProps": 0,
+      "approaches": 36
+    },
+    {
+      "id": "supply-crown",
+      "props": 15,
+      "solidProps": 3,
+      "approaches": 15
+    },
+    {
+      "id": "side-crown-foundry",
+      "props": 20,
+      "solidProps": 7,
+      "approaches": 15
+    }
+  ],
+  "moved": [
+    {
+      "id": "forest-0-0",
+      "from": [
+        824.2441287279576,
+        1100
+      ],
+      "to": [
+        160,
+        1880
+      ]
+    },
+    {
+      "id": "forest-0-4",
+      "from": [
+        728.379438504119,
+        1086.229707746696
+      ],
+      "to": [
+        290,
+        1880
+      ]
+    },
+    {
+      "id": "forest-0-6",
+      "from": [
+        777.3070922809518,
+        1191.7570496251612
+      ],
+      "to": [
+        378.4254210369921,
+        1897.220754456429
+      ]
+    },
+    {
+      "id": "forest-0-7",
+      "from": [
+        756.7221638558224,
+        1009.4251739808813
+      ],
+      "to": [
+        250,
+        2170
+      ]
+    },
+    {
+      "id": "forest-0-8",
+      "from": [
+        893.8955933730922,
+        1137.2723044344698
+      ],
+      "to": [
+        353.6396103067893,
+        2233.639610306789
+      ]
+    },
+    {
+      "id": "forest-0-10",
+      "from": [
+        847.0895252784551,
+        990.6221951891738
+      ],
+      "to": [
+        324.54058453981605,
+        2074.540584539816
+      ]
+    },
+    {
+      "id": "forest-0-17",
+      "from": [
+        603.8756941470581,
+        1121.7845615809122
+      ],
+      "to": [
+        194.44150891285807,
+        2543.149157926016
+      ]
+    },
+    {
+      "id": "forest-0-19",
+      "from": [
+        793.006405671253,
+        1264.394485884553
+      ],
+      "to": [
+        290,
+        2460
+      ]
+    },
+    {
+      "id": "forest-0-22",
+      "from": [
+        666.5000658722713,
+        1200.9628011981167
+      ],
+      "to": [
+        368.33773663071287,
+        2584.7237368890237
+      ]
+    },
+    {
+      "id": "forest-0-26",
+      "from": [
+        960.2250635878611,
+        1019.5347353550845
+      ],
+      "to": [
+        191.81980515339464,
+        2781.8198051533946
+      ]
+    },
+    {
+      "id": "forest-0-29",
+      "from": [
+        964.8423549803349,
+        1194.1701322898325
+      ],
+      "to": [
+        290,
+        2750
+      ]
+    },
+    {
+      "id": "forest-0-31",
+      "from": [
+        904.074382657031,
+        924.0656764757134
+      ],
+      "to": [
+        402.77924554357094,
+        2791.5745789630078
+      ]
+    },
+    {
+      "id": "forest-0-34",
+      "from": [
+        1000.699257920998,
+        1081.9266049277694
+      ],
+      "to": [
+        160,
+        3040
+      ]
+    },
+    {
+      "id": "forest-0-40",
+      "from": [
+        760.9462909819199,
+        1333.3410044387197
+      ],
+      "to": [
+        290,
+        3040
+      ]
+    },
+    {
+      "id": "settlement-major-0",
+      "structure": "crown-ash-house",
+      "from": [
+        88.58399791606595,
+        275.3623789502332
+      ],
+      "to": [
+        180,
+        230
+      ]
+    },
+    {
+      "id": "settlement-major-1",
+      "structure": "crown-ash-house",
+      "from": [
+        258.96782308863607,
+        235.07158520229046
+      ],
+      "to": [
+        400,
+        100
+      ]
+    },
+    {
+      "id": "settlement-major-2",
+      "structure": "crown-forgehouse",
+      "from": [
+        914.9469288479795,
+        132.2646506623168
+      ],
+      "to": [
+        1040,
+        230
+      ]
+    },
+    {
+      "id": "settlement-major-3",
+      "structure": "crown-ash-house",
+      "from": [
+        1229.3932310077578,
+        279.3302193656599
+      ],
+      "to": [
+        1040,
+        550
+      ]
+    },
+    {
+      "id": "settlement-major-4",
+      "structure": "crown-ash-house",
+      "from": [
+        429.8187538962386,
+        1359.179798550022
+      ],
+      "to": [
+        180,
+        1000
+      ]
+    },
+    {
+      "id": "settlement-major-5",
+      "structure": "crown-ash-house",
+      "from": [
+        664.6064466140089,
+        1643.601696749011
+      ],
+      "to": [
+        600,
+        1400
+      ]
+    },
+    {
+      "id": "settlement-major-6",
+      "structure": "crown-forgehouse",
+      "from": [
+        389.9968978937435,
+        1511.3857967691392
+      ],
+      "to": [
+        1040,
+        1490
+      ]
+    },
+    {
+      "id": "settlement-major-7",
+      "structure": "crown-ash-house",
+      "from": [
+        662.0049529575798,
+        1356.375136049343
+      ],
+      "to": [
+        1040,
+        1000
+      ]
+    },
+    {
+      "id": "settlement-major-8",
+      "structure": "crown-wall",
+      "from": [
+        80,
+        845
+      ],
+      "to": [
+        120,
+        360
+      ]
+    },
+    {
+      "id": "settlement-minor-0",
+      "structure": "crown-ash-house",
+      "from": [
+        657.9680602213139,
+        1900
+      ],
+      "to": [
+        740,
+        1870
+      ]
+    },
+    {
+      "id": "settlement-minor-1",
+      "structure": "crown-ash-house",
+      "from": [
+        1554.5222172850677,
+        1618.736775425555
+      ],
+      "to": [
+        1020,
+        2140
+      ]
+    },
+    {
+      "id": "settlement-minor-2",
+      "structure": "crown-ash-house",
+      "from": [
+        954.0605724100169,
+        2336.711072252737
+      ],
+      "to": [
+        740,
+        2460
+      ]
+    },
+    {
+      "id": "settlement-minor-3",
+      "structure": "crown-forgehouse",
+      "from": [
+        1649.7332093376835,
+        1974.7966045738522
+      ],
+      "to": [
+        968.3377366307129,
+        3024.7237368890237
+      ]
+    },
+    {
+      "id": "settlement-minor-4",
+      "structure": "crown-ash-house",
+      "from": [
+        1001.0906385920019,
+        2642.0399334411063
+      ],
+      "to": [
+        1020,
+        2460
+      ]
+    },
+    {
+      "id": "settlement-minor-5",
+      "structure": "crown-wall",
+      "from": [
+        1500,
+        2020
+      ],
+      "to": [
+        680,
+        2040
+      ]
+    },
+    {
+      "id": "aesthetic-town-0",
+      "structure": "market",
+      "from": [
+        185,
+        585
+      ],
+      "to": [
+        180,
+        710
+      ]
+    },
+    {
+      "id": "aesthetic-town-1",
+      "structure": "woodpile",
+      "from": [
+        550,
+        485
+      ],
+      "to": [
+        976.3603896932107,
+        1196.3603896932107
+      ]
+    },
+    {
+      "id": "aesthetic-town-2",
+      "structure": "laundry",
+      "from": [
+        220,
+        785
+      ],
+      "to": [
+        170,
+        1140
+      ]
+    },
+    {
+      "id": "aesthetic-town-3",
+      "structure": "well",
+      "from": [
+        505,
+        805
+      ],
+      "to": [
+        460,
+        920
+      ]
+    },
+    {
+      "id": "aesthetic-town-4",
+      "structure": "barrel",
+      "from": [
+        619.3032039778946,
+        542.408189413703
+      ],
+      "to": [
+        320,
+        610
+      ]
+    },
+    {
+      "id": "aesthetic-town-5",
+      "structure": "cart",
+      "from": [
+        125,
+        620
+      ],
+      "to": [
+        180,
+        810
+      ]
+    },
+    {
+      "id": "aesthetic-town-6",
+      "structure": "crate",
+      "from": [
+        348.35314297038656,
+        893.4666621830081
+      ],
+      "to": [
+        320,
+        840
+      ]
+    },
+    {
+      "id": "aesthetic-town-7",
+      "structure": "ration",
+      "from": [
+        315,
+        415
+      ],
+      "to": [
+        250,
+        900
+      ]
+    },
+    {
+      "id": "aesthetic-hamlet-8",
+      "structure": "garden",
+      "from": [
+        1055.4259901816981,
+        1742.6240420390163
+      ],
+      "to": [
+        650,
+        1820
+      ]
+    },
+    {
+      "id": "aesthetic-hamlet-9",
+      "structure": "woodpile",
+      "from": [
+        1445,
+        1780
+      ],
+      "to": [
+        1090,
+        3040
+      ]
+    },
+    {
+      "id": "aesthetic-hamlet-10",
+      "structure": "barrel",
+      "from": [
+        1125,
+        1920
+      ],
+      "to": [
+        960,
+        2010
+      ]
+    },
+    {
+      "id": "aesthetic-hamlet-11",
+      "structure": "well",
+      "from": [
+        1313.4314575050762,
+        1976.5685424949238
+      ],
+      "to": [
+        760,
+        2140
+      ]
+    },
+    {
+      "id": "aesthetic-hamlet-12",
+      "structure": "laundry",
+      "from": [
+        1250,
+        1995
+      ],
+      "to": [
+        640,
+        2250
+      ]
+    },
+    {
+      "id": "aesthetic-nature-13",
+      "structure": "black-rock",
+      "from": [
+        125,
+        153
+      ],
+      "to": [
+        80,
+        153
+      ]
+    },
+    {
+      "id": "aesthetic-nature-22",
+      "structure": "obsidian",
+      "from": [
+        418,
+        1180
+      ],
+      "to": [
+        293.2762631109763,
+        1128.337736630713
+      ]
+    },
+    {
+      "id": "aesthetic-nature-23",
+      "structure": "obsidian",
+      "from": [
+        451,
+        1426
+      ],
+      "to": [
+        485.44150891285807,
+        1509.1491579260157
+      ]
+    },
+    {
+      "id": "aesthetic-nature-25",
+      "structure": "black-rock",
+      "from": [
+        467,
+        1895
+      ],
+      "to": [
+        602,
+        1895
+      ]
+    },
+    {
+      "id": "aesthetic-nature-29",
+      "structure": "dead-shrub",
+      "from": [
+        465,
+        2955
+      ],
+      "to": [
+        401.3603896932107,
+        3018.639610306789
+      ]
+    },
+    {
+      "id": "aesthetic-nature-33",
+      "structure": "dead-shrub",
+      "from": [
+        626,
+        1177
+      ],
+      "to": [
+        750.7237368890237,
+        1125.3377366307127
+      ]
+    },
+    {
+      "id": "aesthetic-nature-37",
+      "structure": "black-rock",
+      "from": [
+        715,
+        2418
+      ],
+      "to": [
+        619.5405845398161,
+        2513.459415460184
+      ]
+    },
+    {
+      "id": "aesthetic-nature-38",
+      "structure": "dead-shrub",
+      "from": [
+        698,
+        2655
+      ],
+      "to": [
+        680.7792455435709,
+        2613.4254210369922
+      ]
+    },
+    {
+      "id": "aesthetic-nature-42",
+      "structure": "ash-patch",
+      "from": [
+        964,
+        188
+      ],
+      "to": [
+        932.1801948466053,
+        156.18019484660536
+      ]
+    },
+    {
+      "id": "aesthetic-nature-44",
+      "structure": "crystal-cluster",
+      "from": [
+        892,
+        697
+      ],
+      "to": [
+        933.5745789630079,
+        679.7792455435709
+      ]
+    },
+    {
+      "id": "aesthetic-nature-45",
+      "structure": "obsidian",
+      "from": [
+        874,
+        931
+      ],
+      "to": [
+        937.6396103067892,
+        867.3603896932107
+      ]
+    },
+    {
+      "id": "aesthetic-nature-46",
+      "structure": "black-rock",
+      "from": [
+        934,
+        1164
+      ],
+      "to": [
+        934,
+        1119
+      ]
+    },
+    {
+      "id": "aesthetic-nature-48",
+      "structure": "black-rock",
+      "from": [
+        938,
+        2205
+      ],
+      "to": [
+        1029.8440237676216,
+        1983.2689121972912
+      ]
+    },
+    {
+      "id": "aesthetic-nature-50",
+      "structure": "obsidian",
+      "from": [
+        924,
+        2653
+      ],
+      "to": [
+        799.2762631109763,
+        2601.3377366307127
+      ]
+    },
+    {
+      "id": "aesthetic-nature-51",
+      "structure": "ash-patch",
+      "from": [
+        937,
+        3146
+      ],
+      "to": [
+        978.5745789630079,
+        3163.220754456429
+      ]
+    },
+    {
+      "id": "aesthetic-nature-56",
+      "structure": "dead-shrub",
+      "from": [
+        1170,
+        2686
+      ],
+      "to": [
+        1204.4415089128581,
+        2769.149157926016
+      ]
+    },
+    {
+      "id": "aesthetic-nature-59",
+      "structure": "black-rock",
+      "from": [
+        1432,
+        233
+      ],
+      "to": [
+        1510.0764078069906,
+        233
+      ]
+    },
+    {
+      "id": "aesthetic-nature-60",
+      "structure": "black-rock",
+      "from": [
+        1456,
+        440
+      ],
+      "to": [
+        1543.240230907111,
+        481.5745789630079
+      ]
+    },
+    {
+      "id": "aesthetic-nature-61",
+      "structure": "fumarole",
+      "from": [
+        1456,
+        704
+      ],
+      "to": [
+        1550.6168316838005,
+        704
+      ]
+    },
+    {
+      "id": "aesthetic-nature-62",
+      "structure": "crystal-cluster",
+      "from": [
+        1430,
+        1206
+      ],
+      "to": [
+        1529.7065554784476,
+        1206
+      ]
+    },
+    {
+      "id": "aesthetic-nature-63",
+      "structure": "dead-shrub",
+      "from": [
+        1412,
+        1472
+      ],
+      "to": [
+        1518.7246837687132,
+        1472
+      ]
+    },
+    {
+      "id": "aesthetic-nature-64",
+      "structure": "dead-shrub",
+      "from": [
+        1445,
+        2190
+      ],
+      "to": [
+        1530.7319514253425,
+        2190
+      ]
+    },
+    {
+      "id": "aesthetic-nature-65",
+      "structure": "dead-shrub",
+      "from": [
+        1403,
+        2973
+      ],
+      "to": [
+        1536.2924257600903,
+        2973
+      ]
+    },
+    {
+      "id": "aesthetic-nature-66",
+      "structure": "ash-patch",
+      "from": [
+        1451,
+        3176
+      ],
+      "to": [
+        1554.0656675502441,
+        3041
+      ]
+    },
+    {
+      "id": "aesthetic-nature-67",
+      "structure": "fumarole",
+      "from": [
+        1370,
+        3457
+      ],
+      "to": [
+        1563.5497285167603,
+        3488.8198051533946
+      ]
+    },
+    {
+      "id": "aesthetic-bank-103",
+      "structure": "black-rock",
+      "from": [
+        1262,
+        395
+      ],
+      "to": [
+        1174.7791748363368,
+        395
+      ]
+    },
+    {
+      "id": "aesthetic-bank-104",
+      "structure": "crystal-cluster",
+      "from": [
+        1448,
+        432
+      ],
+      "to": [
+        1524.7082087613348,
+        477
+      ]
+    },
+    {
+      "id": "aesthetic-bank-105",
+      "structure": "black-rock",
+      "from": [
+        1448,
+        627
+      ],
+      "to": [
+        1553.1453498251803,
+        627
+      ]
+    },
+    {
+      "id": "aesthetic-bank-106",
+      "structure": "crystal-cluster",
+      "from": [
+        1448,
+        1449
+      ],
+      "to": [
+        1515.9705797427468,
+        1449
+      ]
+    },
+    {
+      "id": "aesthetic-bank-107",
+      "structure": "black-rock",
+      "from": [
+        1262,
+        1904
+      ],
+      "to": [
+        1198.0788144594194,
+        1904
+      ]
+    },
+    {
+      "id": "aesthetic-bank-108",
+      "structure": "crystal-cluster",
+      "from": [
+        1448,
+        1890
+      ],
+      "to": [
+        1539.4004800397402,
+        1890
+      ]
+    },
+    {
+      "id": "aesthetic-bank-109",
+      "structure": "black-rock",
+      "from": [
+        1262,
+        2085
+      ],
+      "to": [
+        1201.4919866748921,
+        2085
+      ]
+    },
+    {
+      "id": "aesthetic-town-110",
+      "structure": "banner",
+      "from": [
+        50,
+        615
+      ],
+      "to": [
+        171.81980515339464,
+        411.8198051533946
+      ]
+    },
+    {
+      "id": "world-life-civilian-0",
+      "structure": "market",
+      "from": [
+        300,
+        760
+      ],
+      "to": [
+        290,
+        700
+      ]
+    },
+    {
+      "id": "world-life-civilian-1",
+      "structure": "forge",
+      "from": [
+        473.22340805285074,
+        788.9300958486123
+      ],
+      "to": [
+        1040,
+        1140
+      ]
+    },
+    {
+      "id": "world-life-civilian-2",
+      "structure": "garden",
+      "from": [
+        900,
+        1430
+      ],
+      "to": [
+        180,
+        1560
+      ]
+    },
+    {
+      "id": "world-life-civilian-3",
+      "structure": "field-kitchen",
+      "from": [
+        1080,
+        1540
+      ],
+      "to": [
+        650,
+        1570
+      ]
+    },
+    {
+      "id": "world-life-civilian-4",
+      "structure": "laundry",
+      "from": [
+        910,
+        1630
+      ],
+      "to": [
+        790,
+        1560
+      ]
+    },
+    {
+      "id": "stronghold-ashbeast-roost-hold-prop-0",
+      "structure": "roost",
+      "from": [
+        1378.1144106324973,
+        3224.4021235782793
+      ],
+      "to": [
+        1294.9652527064816,
+        3189.9606146654214
+      ]
+    },
+    {
+      "id": "stronghold-ashbeast-roost-hold-prop-6",
+      "structure": "black-rock",
+      "from": [
+        1393.8045381863458,
+        3367.5
+      ],
+      "to": [
+        1489.2639536465297,
+        3462.959415460184
+      ]
+    },
+    {
+      "id": "stronghold-ashbeast-roost-hold-wall-0",
+      "structure": "stonewall",
+      "from": [
+        1435,
+        3155
+      ],
+      "to": [
+        1268.7016841479683,
+        3086.1169821742837
+      ]
+    },
+    {
+      "id": "stronghold-ashbeast-roost-hold-wall-9",
+      "structure": "stonewall",
+      "from": [
+        1425,
+        3280
+      ],
+      "to": [
+        1637.1320343559642,
+        3492.132034355964
+      ]
+    },
+    {
+      "id": "crown-layout-labor-quarter-0",
+      "structure": "crown-ash-house",
+      "from": [
+        281.1832168426824,
+        856.9017084081884
+      ],
+      "to": [
+        180,
+        550
+      ]
+    },
+    {
+      "id": "crown-layout-labor-quarter-1",
+      "structure": "crown-forgehouse",
+      "from": [
+        976.6619836951579,
+        871.9020356648064
+      ],
+      "to": [
+        180,
+        1400
+      ]
+    },
+    {
+      "id": "crown-layout-labor-quarter-2",
+      "structure": "crown-levy-yard",
+      "from": [
+        793.9423846424405,
+        970.3918993687407
+      ],
+      "to": [
+        640,
+        1320
+      ]
+    },
+    {
+      "id": "crown-layout-labor-quarter-3",
+      "structure": "bunk",
+      "from": [
+        909.7487373415291,
+        1029.7487373415292
+      ],
+      "to": [
+        730,
+        1320
+      ]
+    },
+    {
+      "id": "crown-layout-labor-quarter-4",
+      "structure": "tax-post",
+      "from": [
+        889.9847749858209,
+        863.7059676361653
+      ],
+      "to": [
+        690,
+        1120
+      ]
+    },
+    {
+      "id": "crown-layout-route-frontier-return-16",
+      "structure": "watchpost",
+      "from": [
+        451.2585146312367,
+        206.04985948133535
+      ],
+      "to": [
+        820,
+        150
+      ]
+    },
+    {
+      "id": "crown-layout-route-frontier-return-17",
+      "structure": "crown-banner",
+      "from": [
+        776.4917008588617,
+        228.8968317202113
+      ],
+      "to": [
+        540,
+        150
+      ]
+    },
+    {
+      "id": "crown-layout-route-frontier-return-18",
+      "structure": "supply-stack",
+      "from": [
+        656.5400111356456,
+        401.1075125276013
+      ],
+      "to": [
+        740,
+        310
+      ]
+    },
+    {
+      "id": "regime-banner-crown-0",
+      "structure": "crown-banner",
+      "from": [
+        873.5640646055101,
+        769.9999999999999
+      ],
+      "to": [
+        720,
+        620
+      ]
+    },
+    {
+      "id": "recovery-heat-crown-6",
+      "structure": "geothermal-heat-intake",
+      "from": [
+        2040,
+        2130
+      ],
+      "to": [
+        2030,
+        2120
+      ]
+    },
+    {
+      "id": "recovery-heat-crown-7",
+      "structure": "crown-glass-kiln",
+      "from": [
+        2290,
+        2130
+      ],
+      "to": [
+        2290,
+        2120
+      ]
+    },
+    {
+      "id": "recovery-heat-crown-8",
+      "structure": "thermal-flue",
+      "from": [
+        2055,
+        2570
+      ],
+      "to": [
+        2030,
+        2640
+      ]
+    },
+    {
+      "id": "recovery-heat-crown-9",
+      "structure": "heated-drying-shed",
+      "from": [
+        2300,
+        2650
+      ],
+      "to": [
+        2330,
+        2780
+      ]
+    },
+    {
+      "id": "recovery-heat-crown-11",
+      "structure": "heat-distribution-post",
+      "from": [
+        2420,
+        2800
+      ],
+      "to": [
+        2350,
+        2920
+      ]
+    },
+    {
+      "id": "recovery-heat-crown-12",
+      "structure": "heat-distribution-post",
+      "from": [
+        2450.1657906762307,
+        2055.3027685812713
+      ],
+      "to": [
+        2510,
+        2450
+      ]
+    },
+    {
+      "id": "recovery-heat-crown-13",
+      "structure": "heated-washhouse",
+      "from": [
+        2741.7543285006673,
+        2162.128768150524
+      ],
+      "to": [
+        2700,
+        2720
+      ]
+    },
+    {
+      "id": "recovery-heat-crown-14",
+      "structure": "thermal-flue",
+      "from": [
+        2710,
+        2120
+      ],
+      "to": [
+        2580,
+        2720
+      ]
+    },
+    {
+      "id": "public-lantern-crown-0",
+      "structure": "roadside-lantern",
+      "from": [
+        408.68986283848346,
+        658.6898628384835
+      ],
+      "to": [
+        500,
+        700
+      ]
+    },
+    {
+      "id": "public-lantern-crown-1",
+      "structure": "roadside-lantern",
+      "from": [
+        1147.8001926721658,
+        1667.8289011086251
+      ],
+      "to": [
+        900,
+        1980
+      ]
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "crown-orrery",
+  "name": "Crown survey orrery",
+  "kind": "structure",
+  "nextAction": "Owner live appearance/play feedback; retain references for any separately requested raster work.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel requested coherent Crown planning, appropriate industrial surroundings and replacement of the unexplained circle, plus a shared tower overhaul. On 20 October he authorized audit, repairs, merge and publication without further confirmation.",
+    "decisionDate": "2026-10-20",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/344",
+    "contentDocuments": [
+      "docs/CROWN_COMPANIONS_20261020.md"
+    ],
+    "locationAndLore": "Dark Crown and shared regional watchposts. Existing purple masonry and thermal glass/ceramic industry; no map retheming."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner requested this overhaul and authorized implementation.",
+    "proceduralDesignAcceptance": "Implementation authorized; this exact new appearance has not received separate owner review.",
+    "spriteProductionAuthorization": "No new raster production requested.",
+    "generatedAppearanceAcceptance": "No generated raster artwork.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "working dev110 candidate",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js",
+      "src/prototype/rules.js",
+      "src/prototype/world.js",
+      "fix/crown-scene-dev110"
+    ],
+    "exactEntityState": {
+      "renderKind": "prop",
+      "structure": "crown-orrery",
+      "decorative": true,
+      "r": 70
+    },
+    "isolatedReferencePath": "tools/visual-review/crown-companions-dev110/after-crown-orrery.png",
+    "isolatedReferenceHash": "df53733b2193542fd75116f1c0b3c266bb9d521e6411fa6ea61ff1565ae2c645",
+    "gameplayContextPaths": [
+      "tools/visual-review/crown-companions-dev110/after-orrery.webp"
+    ],
+    "traitsToPreserve": [
+      "Bronze astronomical rings and purple central globe",
+      "Stepped Crown masonry base and gilded crown plaque",
+      "Original obsidian-circle location; smaller blocking body and walkable paved apron"
+    ],
+    "assetSpecificDependencies": [],
+    "workingTreeSourceHashes": {
+      "src/prototype/visuals.js": "c8c98b5b389d3be2c270683051e19e1583e49a85376182cd2afdc03a43a3ef3c",
+      "src/prototype/rules.js": "247e3241a2bab25ef07caf34f133acfa9aae04f3126662b18a6a8525272dc837",
+      "src/prototype/world.js": "ef87866358d195c050c86354c5c27a4bfd6c7580116c1b6d8cb5bebf62724f3a"
+    }
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [
+      "crown-orrery"
+    ],
+    "requiredVisibleAssets": [
+      "Crown survey orrery"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "Rules own geometry and collision; native visuals own depth-sorted structures and shared terrain masonry. No new raster registration."
+    ]
+  },
+  "animationRequirements": {
+    "status": "procedural",
+    "gameplayStates": [
+      "day",
+      "night"
+    ],
+    "directions": [],
+    "pivotContract": "Existing foot anchor and world projection; retain logical collision geometry.",
+    "staticFallbackKey": "crown-orrery",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

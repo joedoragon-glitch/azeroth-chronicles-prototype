@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "origin": [
+    3000,
+    950
+  ],
+  "landing": [
+    3340.0000000000055,
+    950
+  ],
+  "distance": 340,
+  "projectilesRemaining": 0,
+  "heroDamage": 0
+}

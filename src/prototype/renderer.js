@@ -2008,7 +2008,7 @@
       if (authoredFloor) {
         PrototypeVisuals.dungeonFloorPath(ctx, screen, game.zoneId, size);
         ctx.clip();
-      } else if (!dungeon && !room && game.zoneId === 'frontier') {
+      } else if (!dungeon && !room && ['frontier', 'crown'].includes(game.zoneId)) {
         // Edge tiles straddle their anchors. Clip them to the same map boundary
         // as the channel, so a final half-tile cannot cap its open mouth.
         ctx.beginPath();
@@ -2094,7 +2094,15 @@
       // Optional #294 viewport integration is disabled: exact art parity was
       // restored, but paired controls did not establish a reliable speed gain.
       if (!game.isDungeon())
-        PrototypeVisuals.terrain(ctx, screen, i, size, optimized ? null : PrototypeMaterials);
+        PrototypeVisuals.terrain(
+          ctx,
+          screen,
+          i,
+          size,
+          optimized ? null : PrototypeMaterials,
+          null,
+          z.crownInheritedDecks || [],
+        );
       PrototypeVisuals.roads(ctx, z.roads || [], screen, i, optimized ? null : PrototypeMaterials);
       PrototypeVisuals.footpaths(ctx, z.footpaths || [], screen);
       if (!game.isDungeon())
@@ -2153,14 +2161,23 @@
       if (!game.isDungeon() && !game.supplyRoom?.(game.zoneId) && !game.sideDungeon?.(game.zoneId))
         add(
           (Campaign.rules.terrain[game.regionIndex()] || [])
-            .filter((p) => ['fountain', 'grain-silo'].includes(p.kind))
+            .filter((p) => ['fountain', 'grain-silo', 'orrery'].includes(p.kind))
             .map((p) => ({
-              id: p.kind === 'grain-silo' ? 'frontier-grain-silo' : 'frontier-civic-fountain',
+              id:
+                p.kind === 'orrery'
+                  ? 'crown-orrery'
+                  : p.kind === 'grain-silo'
+                    ? 'frontier-grain-silo'
+                    : 'frontier-civic-fountain',
               x: p.x,
               y: p.y,
               r: p.r,
               structure:
-                p.kind === 'grain-silo' ? 'frontier-grain-silo' : 'frontier-civic-fountain',
+                p.kind === 'orrery'
+                  ? 'crown-orrery'
+                  : p.kind === 'grain-silo'
+                    ? 'frontier-grain-silo'
+                    : 'frontier-civic-fountain',
               decorative: true,
             })),
           'prop',

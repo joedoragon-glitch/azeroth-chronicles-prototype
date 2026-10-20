@@ -936,8 +936,8 @@
       "version": 2,
       "key": "hero:mage",
       "catalogId": "002",
-      "canonHash": "167cddae0903d4178d633307e8d8477707620202172f043595ec0b72e1edfb60",
-      "canonSnapshotHash": "b9c0c475c400631ae17678a5c3502a8ff54f0ead3cd78acf6ea710b981609b78",
+      "canonHash": "7a0fdda079dcfb0c5ac68dc851ee07e0ecbadaafcf8bfac54787378b4c48be65",
+      "canonSnapshotHash": "7af4fe27e2b9bc0a283c20680bce4a73c1d8ea22f07123beeb4555612cb85d09",
       "catalogHash": "0a652a52c1f42ee5d7f59d9082dbe6003cbcdc4136dab8471ac5f382df263b5a",
       "source": {
         "file": "e3a36670eb4dd2823b37f7eea85e4e52922023864ac81f691a19d33761ec5708.png",
@@ -1034,13 +1034,15 @@
         "notes": "Joel authorized generation, testing, implementation and publication in this chat. This records engineer review, not separate user acceptance of this generated candidate. Static presentation avoids mixing a new design with stale frames.",
         "canonRetention": {
           "date": "2026-10-20",
-          "authority": "Owner requested role-specific helmets, female silver-haired mage, restored royal identities, varied NPC hair/expression, real tools and anchor, camp-table separation and coherent profile direwolf riders across all variants. Existing protected raster decisions remain in effect.",
-          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
-          "decisionRecord": "docs/APPROVED_ART_PASS_20261019.md",
-          "comparisonIndex": "tools/visual-review/approved-art-pass/asset-assessment.json",
-          "priorRevision": "92e0c94e17fbac6709fc01f78c2a768956e09362b4abf44636c91f500c6ccb0b",
-          "priorCanonHash": "047b4f4e998901d2b84398bc186f714cf09c088ce02d731fefc73d093675c360",
-          "currentCanonHash": "a40ad0bf735282d9ca652a68ff104e1cbed1d930666894e2cb611a998efd75fd",
+          "authority": "Retain existing published dev.109 image appearance under owner-authorized Crown update; no new raster acceptance.",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/344",
+          "decisionRecord": "docs/CROWN_COMPANIONS_20261020.md",
+          "comparisonIndex": "tools/visual-review/crown-companions-dev110/retained-art.json",
+          "priorRevision": "ea525905492680754229177988923cf548a11153735563deed4917c390e21280",
+          "priorCanonHash": "167cddae0903d4178d633307e8d8477707620202172f043595ec0b72e1edfb60",
+          "currentCanonHash": "7a0fdda079dcfb0c5ac68dc851ee07e0ecbadaafcf8bfac54787378b4c48be65",
+          "publishedDev109ReferenceHash": "c2f286a88b60d6829617de07ec09abec0e4278ac17cef18b55ffbb8d5068e683",
+          "currentReferenceHash": "c2f286a88b60d6829617de07ec09abec0e4278ac17cef18b55ffbb8d5068e683",
           "outputHash": "467c8bdef58eb0741115fbf15c01e1b42a2e6a1e199bf6d028f1f188d82b53e9",
           "sourceHash": "e3a36670eb4dd2823b37f7eea85e4e52922023864ac81f691a19d33761ec5708",
           "geometryAndPresentationUnchanged": true,
@@ -1070,7 +1072,7 @@
           "priorCanonHash": "dcc810a491a54f8acafc12cb5666aa62a0c546d9c500deb7273a9ff5d1c1b33c"
         }
       },
-      "revision": "ea525905492680754229177988923cf548a11153735563deed4917c390e21280",
+      "revision": "874a2a8f982f253d286a6da667f6324786badd1f3e16c28d98677ae9f2fbb5e6",
       "canonReconciliations": [
         {
           "date": "2026-10-16",
@@ -3285,8 +3287,8 @@
       "version": 2,
       "key": "prop:dead-tree:frontier",
       "catalogId": "287",
-      "canonHash": "fa9cfa3d50c685879024f1591ce02509dfd9229201965038611ef617a237b23c",
-      "canonSnapshotHash": "b70b0abfcbf0f5e3ef36ec855368e8eab709aa3c53166838fa319d7d673614b8",
+      "canonHash": "525e19f68ea65f0c3592c079dbaa32115a8cc4f491e04d4b85a7682522def3e4",
+      "canonSnapshotHash": "7af4fe27e2b9bc0a283c20680bce4a73c1d8ea22f07123beeb4555612cb85d09",
       "catalogHash": "6a5361fbea1ea2dbf770a7f884ed8ba0866f78fb77cf4bd39878062798685318",
       "source": {
         "file": "3d24bde37cb029409aaf01bf319c9329d47e14161fc651a39775f13f5e60bdd9.png",
@@ -3397,14 +3399,16 @@
           "review-scenes/comparison.json"
         ],
         "canonRetention": {
-          "date": "2026-10-19",
-          "authority": "Owner requested corrections to natural wood, roots and supported objects while retaining accepted keep/protect raster decisions. Current changes affect the procedural reference only.",
-          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
-          "decisionRecord": "docs/APPROVED_ART_PASS_20261019.md",
-          "comparisonIndex": "tools/visual-review/approved-art-pass/asset-assessment.json",
-          "priorRevision": "3bb454fe2e93b4fca19aea0e58965193c5065d7627c925e1eff9a1321588bfd5",
-          "priorCanonHash": "1749cf0206d86bc9cb4c963571e537bb71a5e6320975c7890d32651eb6b5956a",
-          "currentCanonHash": "fa9cfa3d50c685879024f1591ce02509dfd9229201965038611ef617a237b23c",
+          "date": "2026-10-20",
+          "authority": "Retain existing published dev.109 image appearance under owner-authorized Crown update; no new raster acceptance.",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/344",
+          "decisionRecord": "docs/CROWN_COMPANIONS_20261020.md",
+          "comparisonIndex": "tools/visual-review/crown-companions-dev110/retained-art.json",
+          "priorRevision": "776b80bb59222a191ddcf5640ab3092e4c1caa3357b1ab5469294aa5aee2c50d",
+          "priorCanonHash": "fa9cfa3d50c685879024f1591ce02509dfd9229201965038611ef617a237b23c",
+          "currentCanonHash": "525e19f68ea65f0c3592c079dbaa32115a8cc4f491e04d4b85a7682522def3e4",
+          "publishedDev109ReferenceHash": "0b150f643ebdb0c3082789bbf1fc303148b06d4cbe7fbb5684abedaa7ed4f152",
+          "currentReferenceHash": "0b150f643ebdb0c3082789bbf1fc303148b06d4cbe7fbb5684abedaa7ed4f152",
           "outputHash": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a",
           "sourceHash": "3d24bde37cb029409aaf01bf319c9329d47e14161fc651a39775f13f5e60bdd9",
           "geometryAndPresentationUnchanged": true,
@@ -3427,7 +3431,7 @@
           }
         ]
       },
-      "revision": "776b80bb59222a191ddcf5640ab3092e4c1caa3357b1ab5469294aa5aee2c50d",
+      "revision": "7af803a821217b4f1d5ada98f960feed264530a42f0993511befc49729b22c8a",
       "canonReconciliations": [
         {
           "date": "2026-10-16",
@@ -12934,6 +12938,163 @@
             "decision": "Existing accepted illustration retained; current fallback contour changes reviewed without replacing art."
           }
         ]
+      },
+      "776b80bb59222a191ddcf5640ab3092e4c1caa3357b1ab5469294aa5aee2c50d": {
+        "version": 2,
+        "key": "prop:dead-tree:frontier",
+        "catalogId": "287",
+        "canonHash": "fa9cfa3d50c685879024f1591ce02509dfd9229201965038611ef617a237b23c",
+        "canonSnapshotHash": "b70b0abfcbf0f5e3ef36ec855368e8eab709aa3c53166838fa319d7d673614b8",
+        "catalogHash": "6a5361fbea1ea2dbf770a7f884ed8ba0866f78fb77cf4bd39878062798685318",
+        "source": {
+          "file": "3d24bde37cb029409aaf01bf319c9329d47e14161fc651a39775f13f5e60bdd9.png",
+          "format": "png",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 156712,
+          "decodedBytes": 6290064,
+          "hash": "3d24bde37cb029409aaf01bf319c9329d47e14161fc651a39775f13f5e60bdd9",
+          "pixelHash": "be748db0c40bd002df43b56c515e7d8fb349edf4d773af2c442347b68d5eed77",
+          "bounds": {
+            "x1": 105,
+            "y1": 69,
+            "x2": 1215,
+            "y2": 1092
+          },
+          "padding": 38,
+          "transparentPixels": 1530772,
+          "visiblePixels": 41744,
+          "lowAlphaPixels": 4065,
+          "materialBounds": {
+            "x1": 464,
+            "y1": 596,
+            "x2": 801,
+            "y2": 1019
+          }
+        },
+        "output": {
+          "file": "prop-dead-tree-frontier-5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a.png",
+          "format": "png",
+          "width": 768,
+          "height": 768,
+          "bytes": 27378,
+          "decodedBytes": 2359296,
+          "hash": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a",
+          "pixelHash": "826bf3065db45f5d63801321bc63713054260ddf1285326639d0e776c7af9dee",
+          "bounds": {
+            "x1": 305,
+            "y1": 314,
+            "x2": 592,
+            "y2": 633
+          },
+          "padding": 134,
+          "transparentPixels": 583074,
+          "visiblePixels": 6750,
+          "lowAlphaPixels": 655,
+          "materialBounds": {
+            "x1": 306,
+            "y1": 462,
+            "x2": 441,
+            "y2": 631
+          }
+        },
+        "runtime": {
+          "displayWidth": 192,
+          "displayHeight": 192,
+          "anchorX": 0.5,
+          "anchorY": 0.75,
+          "labelHeight": 64
+        },
+        "processing": {
+          "tool": "sharp",
+          "version": "0.35.5",
+          "kernel": "nearest",
+          "from": [
+            1254,
+            1254
+          ],
+          "to": [
+            768,
+            768
+          ],
+          "rasterScale": 4,
+          "normalization": {
+            "fullCanvasSize": 1254,
+            "padding": {
+              "left": 327,
+              "right": 328,
+              "top": 552,
+              "bottom": 103
+            },
+            "virtualWidth": 1909,
+            "virtualHeight": 1909,
+            "input": "untouched-original",
+            "samplingPasses": 1,
+            "intermediatePixelsUsed": false
+          },
+          "crop": false,
+          "trim": false,
+          "colorConversion": false,
+          "translation": {
+            "x": -3,
+            "y": 0,
+            "rasterX": -12,
+            "rasterY": 0,
+            "visiblePixelsDiscarded": 0
+          }
+        },
+        "review": {
+          "status": "approved",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+          "kind": "engineer-authorized",
+          "userAppearanceAcceptance": false,
+          "nativeScale": true,
+          "scope": "All six native 150% device profiles day/night reviewed. Accepted species/material identity and placement retained; four trees use approved 1.30 presentation scale. Browser combat and release gates remain separate.",
+          "evidence": [
+            "lineage.json",
+            "review-scenes/comparison.json"
+          ],
+          "canonRetention": {
+            "date": "2026-10-19",
+            "authority": "Owner requested corrections to natural wood, roots and supported objects while retaining accepted keep/protect raster decisions. Current changes affect the procedural reference only.",
+            "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+            "decisionRecord": "docs/APPROVED_ART_PASS_20261019.md",
+            "comparisonIndex": "tools/visual-review/approved-art-pass/asset-assessment.json",
+            "priorRevision": "3bb454fe2e93b4fca19aea0e58965193c5065d7627c925e1eff9a1321588bfd5",
+            "priorCanonHash": "1749cf0206d86bc9cb4c963571e537bb71a5e6320975c7890d32651eb6b5956a",
+            "currentCanonHash": "fa9cfa3d50c685879024f1591ce02509dfd9229201965038611ef617a237b23c",
+            "outputHash": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a",
+            "sourceHash": "3d24bde37cb029409aaf01bf319c9329d47e14161fc651a39775f13f5e60bdd9",
+            "geometryAndPresentationUnchanged": true,
+            "newGeneratedAppearanceAccepted": false
+          },
+          "canonRetentionHistory": [
+            {
+              "date": "2026-10-19",
+              "authority": "Owner approved all reviewed keep/protect plans; earlier image appearance approval is carried forward unchanged.",
+              "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+              "decisionRecord": "docs/APPROVED_ART_PASS_20261019.md",
+              "comparisonIndex": "tools/visual-review/approved-art-pass/assessment.json",
+              "priorRevision": "f0c1abb97ad32c9a20334d8b224a7fc723e17cc8617373b964da99a8611c676e",
+              "priorCanonHash": "b755dca833450ee8c3c403d64dcdbf91ec5ec2c5652dbfa54fff4b56e3c16a4d",
+              "currentCanonHash": "1749cf0206d86bc9cb4c963571e537bb71a5e6320975c7890d32651eb6b5956a",
+              "outputHash": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a",
+              "sourceHash": "3d24bde37cb029409aaf01bf319c9329d47e14161fc651a39775f13f5e60bdd9",
+              "geometryAndPresentationUnchanged": true,
+              "newGeneratedAppearanceAccepted": false
+            }
+          ]
+        },
+        "revision": "776b80bb59222a191ddcf5640ab3092e4c1caa3357b1ab5469294aa5aee2c50d",
+        "canonReconciliations": [
+          {
+            "date": "2026-10-16",
+            "pr": 313,
+            "previousCanonHash": "ef76f4781c740a4b255d425051bdf418dac501a47068293895853c537c4f50b9",
+            "evidence": "docs/PR313_SPRITE_CANON_RECONCILIATION_20261016.json",
+            "decision": "Existing accepted illustration retained; current fallback contour changes reviewed without replacing art."
+          }
+        ]
       }
     },
     "prop:charred-stump:frontier": {
@@ -16737,6 +16898,155 @@
           }
         },
         "revision": "0c0ff3e717f7c728191f693bbc5351803399765a7ec819f679abb00bca6e49f3",
+        "canonReconciliations": [
+          {
+            "date": "2026-10-16",
+            "pr": 313,
+            "previousCanonHash": "52f7662e1696f381bcfdefe2006d3e3441e70aad57ebf697c66904202257c7c0",
+            "evidence": "docs/PR313_SPRITE_CANON_RECONCILIATION_20261016.json",
+            "decision": "Existing accepted illustration retained; current fallback contour changes reviewed without replacing art."
+          }
+        ]
+      },
+      "ea525905492680754229177988923cf548a11153735563deed4917c390e21280": {
+        "version": 2,
+        "key": "hero:mage",
+        "catalogId": "002",
+        "canonHash": "167cddae0903d4178d633307e8d8477707620202172f043595ec0b72e1edfb60",
+        "canonSnapshotHash": "b9c0c475c400631ae17678a5c3502a8ff54f0ead3cd78acf6ea710b981609b78",
+        "catalogHash": "0a652a52c1f42ee5d7f59d9082dbe6003cbcdc4136dab8471ac5f382df263b5a",
+        "source": {
+          "file": "e3a36670eb4dd2823b37f7eea85e4e52922023864ac81f691a19d33761ec5708.png",
+          "format": "png",
+          "width": 1318,
+          "height": 1318,
+          "bytes": 261202,
+          "decodedBytes": 6948496,
+          "hash": "e3a36670eb4dd2823b37f7eea85e4e52922023864ac81f691a19d33761ec5708",
+          "pixelHash": "7fb78fde43e54accd6ee0a535db04db786f9c2121274aca6978a9e604b35d8c1",
+          "bounds": {
+            "x1": 71,
+            "y1": 79,
+            "x2": 1257,
+            "y2": 1259
+          },
+          "padding": 58,
+          "transparentPixels": 1652053,
+          "visiblePixels": 85071,
+          "lowAlphaPixels": 7266,
+          "materialBounds": {
+            "x1": 534,
+            "y1": 619,
+            "x2": 807,
+            "y2": 1058
+          }
+        },
+        "output": {
+          "file": "hero-mage-467c8bdef58eb0741115fbf15c01e1b42a2e6a1e199bf6d028f1f188d82b53e9.png",
+          "format": "png",
+          "width": 192,
+          "height": 192,
+          "bytes": 6812,
+          "decodedBytes": 147456,
+          "hash": "467c8bdef58eb0741115fbf15c01e1b42a2e6a1e199bf6d028f1f188d82b53e9",
+          "pixelHash": "9e14032f0fccf159736e69d0c77164c2f968dcfd64267b6018e85bdfb17b5bd2",
+          "bounds": {
+            "x1": 19,
+            "y1": 45,
+            "x2": 165,
+            "y2": 183
+          },
+          "padding": 8,
+          "transparentPixels": 35048,
+          "visiblePixels": 1816,
+          "lowAlphaPixels": 172,
+          "materialBounds": {
+            "x1": 78,
+            "y1": 97,
+            "x2": 117,
+            "y2": 159
+          }
+        },
+        "runtime": {
+          "displayWidth": 192,
+          "displayHeight": 192,
+          "anchorX": 0.5,
+          "anchorY": 0.75,
+          "labelHeight": 64
+        },
+        "processing": {
+          "tool": "sharp",
+          "version": "0.35.5",
+          "kernel": "nearest",
+          "from": [
+            1318,
+            1318
+          ],
+          "to": [
+            192,
+            192
+          ],
+          "crop": false,
+          "trim": false,
+          "colorConversion": false,
+          "translation": {
+            "x": 0,
+            "y": 6,
+            "visiblePixelsDiscarded": 0
+          }
+        },
+        "review": {
+          "status": "approved",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+          "kind": "engineer-authorized-faithful-translation",
+          "date": "2026-10-08",
+          "userAppearanceAcceptance": false,
+          "checks": [
+            "current exact equipment/palette reference",
+            "organic anatomy/material contours",
+            "native grounding",
+            "all specified desktop/phone day/night scenes"
+          ],
+          "notes": "Joel authorized generation, testing, implementation and publication in this chat. This records engineer review, not separate user acceptance of this generated candidate. Static presentation avoids mixing a new design with stale frames.",
+          "canonRetention": {
+            "date": "2026-10-20",
+            "authority": "Owner requested role-specific helmets, female silver-haired mage, restored royal identities, varied NPC hair/expression, real tools and anchor, camp-table separation and coherent profile direwolf riders across all variants. Existing protected raster decisions remain in effect.",
+            "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+            "decisionRecord": "docs/APPROVED_ART_PASS_20261019.md",
+            "comparisonIndex": "tools/visual-review/approved-art-pass/asset-assessment.json",
+            "priorRevision": "92e0c94e17fbac6709fc01f78c2a768956e09362b4abf44636c91f500c6ccb0b",
+            "priorCanonHash": "047b4f4e998901d2b84398bc186f714cf09c088ce02d731fefc73d093675c360",
+            "currentCanonHash": "a40ad0bf735282d9ca652a68ff104e1cbed1d930666894e2cb611a998efd75fd",
+            "outputHash": "467c8bdef58eb0741115fbf15c01e1b42a2e6a1e199bf6d028f1f188d82b53e9",
+            "sourceHash": "e3a36670eb4dd2823b37f7eea85e4e52922023864ac81f691a19d33761ec5708",
+            "geometryAndPresentationUnchanged": true,
+            "newGeneratedAppearanceAccepted": false
+          },
+          "canonRetentionHistory": [
+            {
+              "date": "2026-10-19",
+              "authority": "Owner approved all reviewed keep/protect plans; earlier image appearance approval is carried forward unchanged.",
+              "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+              "decisionRecord": "docs/APPROVED_ART_PASS_20261019.md",
+              "comparisonIndex": "tools/visual-review/approved-art-pass/assessment.json",
+              "priorRevision": "d8cb65001ce1beaa921360624ba0bb7532ef3c528a2e6367de2b1eedd1bf6677",
+              "priorCanonHash": "89129c7b6aff49cde48cd102b581aa46ace8f54244f22a447a5d3711aeeec557",
+              "currentCanonHash": "047b4f4e998901d2b84398bc186f714cf09c088ce02d731fefc73d093675c360",
+              "outputHash": "467c8bdef58eb0741115fbf15c01e1b42a2e6a1e199bf6d028f1f188d82b53e9",
+              "sourceHash": "e3a36670eb4dd2823b37f7eea85e4e52922023864ac81f691a19d33761ec5708",
+              "geometryAndPresentationUnchanged": true,
+              "newGeneratedAppearanceAccepted": false
+            }
+          ],
+          "currentProceduralPreference": {
+            "date": "2026-10-20",
+            "decisionRecord": "docs/MAGE_HAIR_QUICKFIX_20261020.md",
+            "note": "Owner explicitly chose option C twin braids from regular/crowned procedural comparison. Legacy raster remains inactive and its pixels unchanged; no new generated raster approval claimed.",
+            "priorRevision": "0c0ff3e717f7c728191f693bbc5351803399765a7ec819f679abb00bca6e49f3",
+            "priorCanonHash": "dcc810a491a54f8acafc12cb5666aa62a0c546d9c500deb7273a9ff5d1c1b33c"
+          }
+        },
+        "revision": "ea525905492680754229177988923cf548a11153735563deed4917c390e21280",
         "canonReconciliations": [
           {
             "date": "2026-10-16",

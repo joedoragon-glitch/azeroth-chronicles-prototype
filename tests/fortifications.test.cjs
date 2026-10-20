@@ -232,3 +232,90 @@ for (const id of ['crypt', 'archive', 'supply-crown']) {
 console.log(
   'PASS enemy-only low props/screens in fields, dungeons and other interiors; friendly sight and movement preserved',
 );
+// A dodged arc lands once at its original aim point, even on a long final tick.
+for (const dt of [0.02, 2]) {
+  const { g, e } = fixture();
+  const target = { x: 3340, y: 950 },
+    d = Math.hypot(target.x - e.x, target.y - e.y);
+  const p = {
+    source: 'enemy',
+    sourceId: e.id,
+    x: e.x,
+    y: e.y,
+    dx: (target.x - e.x) / d,
+    dy: (target.y - e.y) / d,
+    speed: 280,
+    life: 2.8,
+    damage: 30,
+    style: 'arrow',
+  };
+  g.prepareFortProjectile(p, e, target);
+  assert.equal(p.fortDistance, d);
+  assert(Math.abs(p.life - d / p.speed) < 1e-8, 'arc life ends at fixed target');
+  g.hero.y += 100;
+  const hp = g.hero.hp,
+    impacts = [];
+  g.enemyVfxProjectileImpact = (shot, point) => impacts.push(point);
+  g.s.projectiles = [p];
+  for (let i = 0; i < 200 && g.s.projectiles.length; i++) g.updateProjectiles(dt);
+  assert.equal(g.hero.hp, hp, 'dodged shot does not home');
+  assert.equal(g.s.projectiles.length, 0);
+  assert(Math.hypot(p.x - target.x, p.y - target.y) < 1e-6, 'no ground overshoot');
+  assert(g.fortProjectileLift(p) < 1e-6, 'flight reaches ground at removal');
+  assert.equal(impacts.length, 1, 'one terminal ground impact');
+  assert(impacts[0].terrain);
+  const landed = { x: p.x, y: p.y };
+  g.updateProjectiles(1);
+  assert.deepEqual({ x: p.x, y: p.y }, landed, 'cannot bounce or continue');
+  assert.equal(impacts.length, 1);
+}
+console.log(
+  'PASS fixed landing point, dodge, short/long ticks, one ground impact and no continued arc flight',
+);
+
+// Fort launch speed improves accuracy without extending special-shot footprints.
+{
+  const { g, e } = fixture();
+  const p = {
+    source: 'enemy',
+    sourceId: e.id,
+    x: e.x,
+    y: e.y,
+    dx: 1,
+    dy: 0,
+    speed: 280,
+    life: 2.8,
+    damage: 30,
+    style: 'arrow',
+  };
+  g.prepareFortProjectile(p, e, g.hero);
+  assert.equal(p.speed, 364);
+  const time = p.life;
+  assert(Math.abs(time - 340 / 280 / 1.3) < 1e-8, '30% faster fixed flight');
+  g.prepareFortProjectile(p, e, g.hero);
+  assert.equal(p.speed, 364);
+  assert.equal(p.life, time, 'no stacked boost');
+  const special = {
+    source: 'enemy',
+    sourceId: e.id,
+    x: e.x,
+    y: e.y,
+    dx: 1,
+    dy: 0,
+    speed: 280,
+    life: 2.8,
+    damage: 30,
+  };
+  g.prepareFortProjectile(special, e);
+  assert(Math.abs(special.fortDistance - 784) < 1e-8);
+  assert(Math.abs(special.life * special.speed - 784) < 1e-8, 'same special footprint');
+  const ordinary = { ...special, speed: 280, life: 2.8 };
+  delete ordinary.fortBaseSpeed;
+  delete ordinary.fortBaseLife;
+  e.x = 3250;
+  g.prepareFortProjectile(ordinary, e);
+  assert.equal(ordinary.speed, 280, 'outside-fort speed unchanged');
+}
+console.log(
+  'PASS fort-only 30% projectile speed, fixed footprint/lifetime and idempotent launch preparation',
+);

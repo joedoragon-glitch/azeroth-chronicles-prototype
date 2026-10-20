@@ -142,6 +142,12 @@
           (this.enemyFort(e) ? R.balance.fortifications.rangeMultiplier : 1)
         );
       }
+      enemyAcquisitionRange(e) {
+        return Math.max(
+          R.balance.enemyAcquisitionRange * R.balance.enemyTargetingMultiplier,
+          this.enemyRanged(e) && this.enemyFort(e) ? this.enemyRangedRange(e) : 0,
+        );
+      }
       enemyRangedLine(e, target) {
         return this.enemyRanged(e)
           ? this.fortShotClear(e, target, this.enemyShotCover(this.enemyFort(e)))
@@ -196,16 +202,22 @@
         if (fort) p.fortId = fort.id;
         p.fortFromX = p.x;
         p.fortFromY = p.y;
-        if (fort) p.life = Math.max(p.life || 0, this.enemyRangedRange(enemy) / p.speed + 0.1);
-        const end = target || {
-          x: p.x + (p.dx || 0) * p.speed * p.life,
-          y: p.y + (p.dy || 0) * p.speed * p.life,
-        };
+        p.fortBaseSpeed ??= p.speed;
+        p.fortBaseLife ??= p.life || 0;
+        const baseLife = fort
+            ? Math.max(p.fortBaseLife, this.enemyRangedRange(enemy) / p.fortBaseSpeed + 0.1)
+            : p.fortBaseLife,
+          span = p.fortBaseSpeed * baseLife;
+        p.speed = p.fortBaseSpeed * (fort ? R.balance.fortifications.projectileSpeedMultiplier : 1);
+        // Speed up the same flight, preserving special-shot footprints and
+        // warning reach rather than extending their range a second time.
+        p.life = span / p.speed;
+        const end = target || { x: p.x + (p.dx || 0) * span, y: p.y + (p.dy || 0) * span };
         p.rangedArc = !!fort || !this.line(p, end);
-        p.fortDistance = Math.max(
-          80,
-          target ? Math.hypot(target.x - p.x, target.y - p.y) : p.speed * p.life,
-        );
+        p.fortDistance = Math.max(1, target ? Math.hypot(target.x - p.x, target.y - p.y) : span);
+        // An arc has one fixed landing point. A dodged shot ends there rather
+        // than skating along the floor for the remainder of its range budget.
+        if (p.rangedArc) p.life = Math.min(p.life, p.fortDistance / p.speed);
       }
       projectileFort(p) {
         return p.source === 'enemy' && p.fortZone === this.zoneId

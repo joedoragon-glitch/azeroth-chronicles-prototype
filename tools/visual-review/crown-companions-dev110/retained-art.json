@@ -1,0 +1,22 @@
+{
+  "compared": 33,
+  "scope": "Registered references pixel-identical to dev109; every raster/source/placement unchanged. Two previously stale canonical receipts refreshed.",
+  "receipts": [
+    {
+      "key": "hero:mage",
+      "priorRevision": "ea525905492680754229177988923cf548a11153735563deed4917c390e21280",
+      "revision": "874a2a8f982f253d286a6da667f6324786badd1f3e16c28d98677ae9f2fbb5e6",
+      "oldHash": "c2f286a88b60d6829617de07ec09abec0e4278ac17cef18b55ffbb8d5068e683",
+      "newHash": "c2f286a88b60d6829617de07ec09abec0e4278ac17cef18b55ffbb8d5068e683",
+      "outputHash": "467c8bdef58eb0741115fbf15c01e1b42a2e6a1e199bf6d028f1f188d82b53e9"
+    },
+    {
+      "key": "prop:dead-tree:frontier",
+      "priorRevision": "776b80bb59222a191ddcf5640ab3092e4c1caa3357b1ab5469294aa5aee2c50d",
+      "revision": "7af803a821217b4f1d5ada98f960feed264530a42f0993511befc49729b22c8a",
+      "oldHash": "0b150f643ebdb0c3082789bbf1fc303148b06d4cbe7fbb5684abedaa7ed4f152",
+      "newHash": "0b150f643ebdb0c3082789bbf1fc303148b06d4cbe7fbb5684abedaa7ed4f152",
+      "outputHash": "5de33820384b046fb68caed3bc71a70aff9d8f9e8f2801ef69dc4275c848814a"
+    }
+  ]
+}

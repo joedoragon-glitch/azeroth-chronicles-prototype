@@ -1295,6 +1295,129 @@
       ],
     },
   ];
+  // Final authored civic composition runs after generic settlement/road dressing.
+  const crownSceneLayout = {
+    version: 1,
+    props: {
+      'settlement-major-0': [180, 230],
+      'settlement-major-1': [400, 100],
+      'settlement-major-2': [1040, 230],
+      'settlement-major-3': [1040, 550],
+      'settlement-major-4': [180, 1000],
+      'settlement-major-5': [600, 1400],
+      'settlement-major-6': [1040, 1400],
+      'settlement-major-7': [1040, 1000],
+      'settlement-major-8': [120, 360],
+      'crown-layout-labor-quarter-0': [180, 550],
+      'crown-layout-labor-quarter-1': [180, 1400],
+      'crown-layout-labor-quarter-2': [640, 1320],
+      'crown-layout-labor-quarter-3': [730, 1320],
+      'crown-layout-labor-quarter-4': [690, 1120],
+      'aesthetic-town-0': [180, 710],
+      'world-life-civilian-0': [290, 700],
+      'aesthetic-town-1': [1040, 1260],
+      'aesthetic-town-2': [170, 1140],
+      'aesthetic-town-3': [460, 920],
+      'aesthetic-town-4': [320, 610],
+      'aesthetic-town-5': [180, 810],
+      'aesthetic-town-6': [320, 840],
+      'aesthetic-town-7': [250, 900],
+      'aesthetic-town-110': [140, 380],
+      'world-life-civilian-1': [1040, 1140],
+      'world-life-civilian-2': [180, 1560],
+      'world-life-civilian-3': [650, 1570],
+      'world-life-civilian-4': [790, 1560],
+      'crown-layout-route-frontier-return-16': [820, 150],
+      'crown-layout-route-frontier-return-17': [540, 150],
+      'crown-layout-route-frontier-return-18': [740, 310],
+      'regime-banner-crown-0': [720, 620],
+      'settlement-minor-0': [740, 1870],
+      'settlement-minor-1': [1020, 2140],
+      'settlement-minor-2': [740, 2460],
+      'settlement-minor-3': [1020, 2900],
+      'settlement-minor-4': [1020, 2460],
+      'settlement-minor-5': [680, 2040],
+      'aesthetic-hamlet-8': [650, 1820],
+      'aesthetic-hamlet-9': [1090, 2950],
+      'aesthetic-hamlet-10': [960, 2010],
+      'aesthetic-hamlet-11': [760, 2140],
+      'aesthetic-hamlet-12': [640, 2250],
+      'recovery-heat-crown-6': [2030, 2120],
+      'recovery-heat-crown-7': [2290, 2120],
+      'recovery-heat-crown-8': [2030, 2640],
+      'recovery-heat-crown-9': [2330, 2780],
+      'recovery-heat-crown-10': [1990, 2800],
+      'recovery-heat-crown-11': [2350, 2920],
+      'recovery-heat-crown-12': [2510, 2450],
+      'recovery-heat-crown-13': [2700, 2720],
+      'recovery-heat-crown-14': [2580, 2720],
+      'public-lantern-crown-0': [500, 700],
+      'public-lantern-crown-1': [900, 1980],
+    },
+    npcs: {
+      supplier: [600, 950],
+      recruiter: [600, 1100],
+      board: [600, 750],
+      rest: [600, 550],
+      'service-citadel': [460, 520],
+      'service-cindermaw': [740, 520],
+      minor: [1030, 1840],
+      shelf: [1080, 2580],
+    },
+    nodes: {
+      'tribute-crown-crystal-shipment': [1130, 2620],
+      'tribute-crown-southern-levy': [1600, 2560],
+    },
+    streets: [
+      [
+        [180, 380],
+        [1040, 380],
+      ],
+      [
+        [180, 780],
+        [1130, 780],
+      ],
+      [
+        [180, 1220],
+        [1130, 1220],
+      ],
+      [
+        [400, 180],
+        [400, 1600],
+      ],
+      [
+        [840, 180],
+        [840, 1800],
+      ],
+      [
+        [620, 220],
+        [620, 380],
+      ],
+      [
+        [180, 1600],
+        [500, 1600],
+        [500, 3100],
+        [900, 3100],
+        [900, 2800],
+      ],
+      [
+        [500, 1800],
+        [1100, 1800],
+      ],
+      [
+        [500, 2300],
+        [1260, 2300],
+      ],
+      [
+        [900, 1800],
+        [900, 2800],
+      ],
+      [
+        [500, 2700],
+        [1100, 2700],
+      ],
+    ],
+  };
   const crownDistricts = [
     {
       id: 'labor-quarter',
@@ -2423,7 +2546,7 @@
     },
     {
       kind: 'lava',
-      bounds: [1300, 1410, 300, 2810],
+      bounds: [1300, 1410, 0, 3800],
       gaps: [
         [850, 1150],
         [2260, 2510],
@@ -2535,9 +2658,25 @@
       { kind: 'grain-silo', x: 850, y: 2850, r: 70 },
     ],
     [
-      { kind: 'lava', x1: 2110, x2: 2190, y1: 2000, y2: 2940, gaps: [[2260, 2520]] },
-      { kind: 'lava', x1: 2850, x2: 2950, y1: 450, y2: 1500, gaps: [[980, 1160]] },
-      { kind: 'obsidian', x: 1850, y: 3150, r: 165 },
+      {
+        kind: 'lava',
+        industrial: true,
+        x1: 2110,
+        x2: 2190,
+        y1: 2000,
+        y2: 2940,
+        gaps: [[2260, 2520]],
+      },
+      {
+        kind: 'lava',
+        industrial: true,
+        x1: 2850,
+        x2: 2950,
+        y1: 450,
+        y2: 1500,
+        gaps: [[980, 1160]],
+      },
+      { kind: 'orrery', x: 1850, y: 3150, r: 70 },
     ],
   ];
   const landforms = [
@@ -3633,7 +3772,7 @@
       ],
     },
     citadel: {
-      version: 1,
+      version: 2,
       walkable: [
         {
           id: 'outer-muster',
@@ -3672,7 +3811,7 @@
           y1: 560,
           y2: 610,
           axis: 'x',
-          gaps: [[495, 585]],
+          gaps: [[470, 610]],
         },
         {
           id: 'command-crosswall',
@@ -3682,8 +3821,8 @@
           y2: 745,
           axis: 'x',
           gaps: [
-            [690, 770],
-            [860, 940],
+            [675, 795],
+            [835, 965],
           ],
         },
         {
@@ -3694,8 +3833,8 @@
           y2: 760,
           axis: 'y',
           gaps: [
-            [300, 410],
-            [570, 680],
+            [280, 430],
+            [550, 710],
           ],
         },
         {
@@ -3705,10 +3844,7 @@
           y1: 810,
           y2: 855,
           axis: 'x',
-          gaps: [
-            [1010, 1100],
-            [1140, 1200],
-          ],
+          gaps: [[990, 1200]],
         },
       ],
     },
@@ -5800,6 +5936,7 @@
     safeRatio: 1.15,
     minimumEnemyForce: 2,
     woundedFraction: 0.4,
+    criticalFraction: 0.2,
     woundedThreatForce: 1.5,
     maxAdvanceFromHero: 280,
     heroCommittedRange: 165,
@@ -6282,6 +6419,7 @@
     fortifications: {
       incomingMultiplier: 0.6,
       rangeMultiplier: 1.3,
+      projectileSpeedMultiplier: 1.3,
       compoundHalfSize: 190,
       interiorZones: ['abyss', 'citadel', 'side-highlands-signal'],
       outdoorAreas: [
@@ -7141,6 +7279,7 @@
     frontierRoutes,
     frontierDistricts,
     crownRoutes,
+    crownSceneLayout,
     crownDistricts,
     teachers,
     expeditionSupportSkills,
