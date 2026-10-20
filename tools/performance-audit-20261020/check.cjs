@@ -7,13 +7,14 @@ const fs = require('node:fs'),
   cp = require('node:child_process'),
   assert = require('node:assert/strict'),
   root = path.resolve(__dirname, '../..'),
+  baselineRef = process.env.PERF_AUDIT_BASELINE || '706b3f92920ac3b048d7296aa915493223ca49ea',
   Runtime = require('../../src/prototype/runtime'),
   C = require('../../src/prototype/engine'),
   Format = require('../../src/prototype/sprite-format'),
   Persistence = require('../../src/prototype/persistence');
 const baseline = { exports: {} };
 vm.runInNewContext(
-  cp.execFileSync('git', ['show', '0a8df9d:src/prototype/runtime.js'], {
+  cp.execFileSync('git', ['show', baselineRef + ':src/prototype/runtime.js'], {
     cwd: root,
     encoding: 'utf8',
   }),
@@ -29,7 +30,7 @@ const report = {
 const BaselineOwner = function () {},
   baselineWorld = vm.runInThisContext(
     '(function(module){' +
-      cp.execFileSync('git', ['show', '0a8df9d:src/prototype/world.js'], {
+      cp.execFileSync('git', ['show', baselineRef + ':src/prototype/world.js'], {
         cwd: root,
         encoding: 'utf8',
       }) +

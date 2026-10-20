@@ -36,9 +36,7 @@ const server = http.createServer((req, res) => {
   try {
     await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
     browser = await chromium.launch({
-      executablePath:
-        process.env.CHROMIUM_EXECUTABLE ||
-        '/root/.cache/ms-playwright/chromium_headless_shell-1161/chrome-linux/headless_shell',
+      executablePath: process.env.CHROMIUM_EXECUTABLE,
       args: ['--no-sandbox', '--disable-dev-shm-usage'],
     });
     for (const phone of [false, true]) {

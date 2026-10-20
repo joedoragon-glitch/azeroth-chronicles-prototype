@@ -1,0 +1,195 @@
+{
+  "verified_at": "2026-10-20T15:53:16.344803+00:00",
+  "merge": "bbb3aa930093da066ad1dec9117eeee94b7ac828",
+  "files": [
+    {
+      "path": "index.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "phone.html",
+      "match": true,
+      "bytes": 5490,
+      "sha256": "6d6fe5990cccba9b450925b101e959acd1de0f04735bfb920147dc89db783eb8"
+    },
+    {
+      "path": "prototype.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "15118b4f24a15dfd45ea9df4037597bec67e0d889be49fc644a778c824a516b8"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 296,
+      "sha256": "308c7bb5816cfb6f011f605f31972e4ef01343156a820c2f48441ff1c63eaf14"
+    },
+    {
+      "path": "src/prototype/archive.js",
+      "match": true,
+      "bytes": 54988,
+      "sha256": "d35b92523b7dfa4be414cb38441b15f2ea2e76b400a87280f3d7a4178dee032d"
+    },
+    {
+      "path": "src/prototype/boss-combat.js",
+      "match": true,
+      "bytes": 99293,
+      "sha256": "9dd2e97e2a271d2809b769dd153da8f915a628b751c0b4cb9a0607b3d93ac908"
+    },
+    {
+      "path": "src/prototype/combat-visuals.js",
+      "match": true,
+      "bytes": 51139,
+      "sha256": "6e64734dcf425c51b73fca7c65122362a4ddba419a6c069845ce3cb005408034"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 251943,
+      "sha256": "7f959151daf730af84f28eb1fd8b5dcb34ddbcba5303fc1451c6a696b97211d6"
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "match": true,
+      "bytes": 100974,
+      "sha256": "0aa3c774264e24b10c6bd6073b19acf0315220880c8be3a380aaa0c7956448ac"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "match": true,
+      "bytes": 209118,
+      "sha256": "247e3241a2bab25ef07caf34f133acfa9aae04f3126662b18a6a8525272dc837"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "match": true,
+      "bytes": 489587,
+      "sha256": "e61c4c52b623be5beb3d1d4416b0fa69d19db0c924c9a6dcb2ef52714b4fa641"
+    },
+    {
+      "path": "src/prototype/app.js",
+      "match": true,
+      "bytes": 135741,
+      "sha256": "93a6cbcb6015ceda6f606476bc6ebda9a3bc850d00b3904818207730356f7067"
+    },
+    {
+      "path": "src/prototype/party.js",
+      "match": true,
+      "bytes": 68202,
+      "sha256": "3d898d2ef2841544f372c0a6aa41b366c7bfa0d75b3f893b3a1250967c58e713"
+    },
+    {
+      "path": "src/prototype/save.js",
+      "match": true,
+      "bytes": 47941,
+      "sha256": "ccb8e9787bad096c96c25e8cc45ae744f7015c89c03afaae9605a18e085765b4"
+    },
+    {
+      "path": "src/prototype/world.js",
+      "match": true,
+      "bytes": 184958,
+      "sha256": "7512c6826afbb040b7afb1a8a5df02907c3fa8cadfc730e49f1351bea02c2ea3"
+    },
+    {
+      "path": "src/prototype/navigation.js",
+      "match": true,
+      "bytes": 46155,
+      "sha256": "954c80ec334b61fe3919dfb6f081d72cb1e5078d971ef8cfa6dab59f1b6fe45e"
+    },
+    {
+      "path": "src/prototype/combat.js",
+      "match": true,
+      "bytes": 48641,
+      "sha256": "ae8c36339c4828eb6770ee3882e5804628847c955045dcc6b2917be6ce635dd5"
+    },
+    {
+      "path": "src/prototype/hero-combat.js",
+      "match": true,
+      "bytes": 62011,
+      "sha256": "bd1e499aeec1694c4d86be7b2ce1e9b0fd60fd688bd873303458cb7aec902531"
+    },
+    {
+      "path": "src/prototype/fortifications.js",
+      "match": true,
+      "bytes": 9981,
+      "sha256": "5f669aa0e6295df09208d04464a40a551d5b696ff6a0f1dd6f8d48917734dce9"
+    },
+    {
+      "path": "src/prototype/economy.js",
+      "match": true,
+      "bytes": 4728,
+      "sha256": "1b1e6c45db20a50f136b8bec6a9423d45fe47b3ce56bc842a724edf9b3fc588f"
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "match": true,
+      "bytes": 73955,
+      "sha256": "55502b58cbcfce2c415e7a833fe3b31be2260600a34637859a6b924830725fd4"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20703,
+      "sha256": "9ccbe03cb6de41e5686539b5d5c8d4f363626f35c789e0dc77a88825a2859c1d"
+    },
+    {
+      "path": "assets/sprites/manifest.json",
+      "match": true,
+      "bytes": 18798,
+      "sha256": "ca34058374aea87794536c01b3c7f4b8883ee5eb7b85e63c29192c954efce3b5"
+    },
+    {
+      "path": "src/prototype/runtime.js",
+      "match": true,
+      "bytes": 10039,
+      "sha256": "08b8f7ee023e5a94e75b3f2cc4867e984829f40597fbefd6b201c4a56a711dc2"
+    },
+    {
+      "path": "src/prototype/materials.js",
+      "match": true,
+      "bytes": 13515,
+      "sha256": "14565836a362b367bf054989938ab9be3074551e276077ffbd77fd7b02fd6cc8"
+    },
+    {
+      "path": "src/prototype/ground-cache.js",
+      "match": true,
+      "bytes": 3611,
+      "sha256": "37aa9447ddc05a9e580decd18b53f7d5ce701420e1ec8637ede882b1a6e3fdb2"
+    },
+    {
+      "path": "styles/prototype.css",
+      "match": true,
+      "bytes": 17348,
+      "sha256": "1499d5e8ff3bd5c9c3320c25c4d2c9f856df5b8daf40a63456751b112024669a"
+    },
+    {
+      "path": "styles/desktop.css",
+      "match": true,
+      "bytes": 4989,
+      "sha256": "8b15cbc481b4bbde93841c0ae126a563d142a9b02d7a1b29017808380a2fa3be"
+    },
+    {
+      "path": "styles/phone.css",
+      "match": true,
+      "bytes": 17362,
+      "sha256": "5a3aecb56d17c2a391ec5795261100c89ea465281efab8da6e160dd0626e1f29"
+    }
+  ],
+  "version": "0.9.1+snapshot.dev.112",
+  "pr": 346,
+  "source_head": "77aa64f2c65426f80cb35e872364c26ecd313104",
+  "source_tree": "c086157c1395c000ba6362ab033c0219fa339487",
+  "publication_run": 39452193213,
+  "publication_url": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39452193213",
+  "normal_workflow_restored": true,
+  "validation_scope": "Focused local checks and package-only deployment; no broad CI or full-game/browser matrix.",
+  "device_fps_claim": false
+}

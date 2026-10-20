@@ -1,6 +1,6 @@
 # Visible game updates — 20 October 2026
 
-Included with candidate `0.9.1+snapshot.dev.112`, after the optimization audit. Joel requested notice inside the game and an easier route to install, independent of the forum.
+Published in `0.9.1+snapshot.dev.112` through PR #346 after the optimization audit. [Exact-live receipt](evidence/OPTIMIZATION_DEV112_PUBLICATION_20261020.json). Joel requested notice inside the game and an easier route to install, independent of the forum.
 
 When a complete update is waiting, a persistent amber **Update available** button appears beside the HUD, and the menu button gains an amber border. The same Install action appears at the top of the adventure menu and remains in Game and settings. English/Spanish and desktop/phone use the existing language/layout system. The button is absent when there is no waiting update.
 

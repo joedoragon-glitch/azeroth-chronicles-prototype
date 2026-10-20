@@ -2,7 +2,7 @@
 
 Baseline: published `0.9.1+snapshot.dev.111`, source tree `aa3843a22741fd14a304a642fba073ad78223b0f`.
 
-Joel requested a complete review of optimization settings and visual caches, then clarified that the outcome should be a robust system for reasonable devices. Candidate `0.9.1+snapshot.dev.112` repairs the confirmed issues below. Optimization and update-notice checks are complete; package-only publication is pending.
+Joel requested a complete review of optimization settings and visual caches, then clarified that the outcome should be a robust system for reasonable devices. Candidate `0.9.1+snapshot.dev.112` repairs the confirmed issues below. Published through PR #346 / `bbb3aa930093da066ad1dec9117eeee94b7ac828`; package-only run 39452193213 succeeded. All 30 exact live files match the tested candidate. Normal release wiring is restored. [Publication receipt](evidence/OPTIMIZATION_DEV112_PUBLICATION_20261020.json).
 
 ## Inventory
 
@@ -79,3 +79,5 @@ Reproductions: [Node/controller evidence](../tools/performance-audit-20261020/ch
 Actual-device Chromebook/phone play remains the final performance check. No universal hardware/FPS guarantee follows from the local checks, and no whole-game stress suite or broad browser matrix was run.
 
 Build/generated syntax, sprite/material/audio inventory integrity, focused controller/cache/offline, Highland roster/mine fixtures and crowd escape checks passed. Whole-repository formatting reports the pre-existing unchanged `tools/sprites/approved.json`; all changed code/test/style files pass scoped formatting. Original artwork metadata was left intact.
+
+The reproducible Node harness reads the published baseline commit `706b3f92920ac3b048d7296aa915493223ca49ea` (fetch its history if using a shallow checkout). The original local measurement used the identical tree `aa3843a22741fd14a304a642fba073ad78223b0f`; `PERF_AUDIT_BASELINE` can select a local alias. Browser checks use the installed Playwright browser, or `CHROMIUM_EXECUTABLE` for a custom executable. These portability corrections do not change measured runtime code or recorded timings.
