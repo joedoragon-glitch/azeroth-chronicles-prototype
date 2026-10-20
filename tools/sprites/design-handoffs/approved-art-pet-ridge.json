@@ -4,7 +4,7 @@
   "designId": "approved-art-pet-ridge",
   "name": "Ridge Tyrant miniature companion",
   "kind": "pet",
-  "nextAction": "Published owner-approved dev.115 correction. Preserve accepted appearance; Treasurer/boss coin hand remains deferred.",
+  "nextAction": "End-of-day handoff saved. On the next sprite request, read currentHandoff and docs/SPRITE_RESTART_20261020.md first; review/revise existing sprites against current procedural canon before new catalog work. Preserve originals; no automatic generation.",
   "context": {
     "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
     "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Refine horn roots, gripping hands, miniature hammer depth and fitted vest.",
@@ -148,5 +148,33 @@
     "checks": "tools/visual-review/pet-identity-dev115/checks.json",
     "release": "Published PR #349 / ba15208bd109386152e8d41753e436d74ddbbe5b; package-only run 39506834456; 31 exact live files verified.",
     "explicitDeferral": "Treasurer and boss coin hand remain unchanged in this pass."
+  },
+  "currentHandoff": {
+    "date": "2026-10-20",
+    "baseline": "0.9.1+snapshot.dev.117",
+    "guide": "docs/SPRITE_RESTART_20261020.md",
+    "decisionIndex": "tools/sprites/current-design-decisions.json",
+    "sourceCommit": "0c4db7c2e4133892c6c32fd48a2c32a3bfefedc5",
+    "sourceFile": "src/prototype/visuals.js",
+    "sourceSha256": "2b129ca6d73109d874335ce9ff5e1e2b514b91393a3300e3a04d96292516a977",
+    "scope": "Current summary supersedes conflicting historical next-action/appearance prose only. Old references, approvals and hashes remain immutable historical evidence. No new generated image or generation authorization.",
+    "assets": [
+      {
+        "key": "pet:ridge",
+        "traits": "Little Treasurer carries exact boss Treasury hammer at existing grip. Arms/body/face/pose unchanged. Coin hand in pet AND boss explicitly deferred; do not correct it in this pass.",
+        "decisionDocuments": [
+          "docs/PET_VISUAL_IDENTITY_20261020.md"
+        ],
+        "handoffs": [
+          "tools/sprites/design-handoffs/approved-art-pet-ridge.json",
+          "tools/sprites/design-handoffs/companion-pet-ridge.json"
+        ]
+      }
+    ],
+    "petSystemDocuments": [
+      "docs/PET_PARITY_AUDIT_20261020.md",
+      "docs/RANGED_PET_ROLES_20261020.md",
+      "docs/PET_VISUAL_IDENTITY_20261020.md"
+    ]
   }
 }

@@ -1,6 +1,6 @@
 # Fresh original-master exports for the 150% camera
 
-> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+> **Current-use boundary — 20 October 2026:** Read [current state](DEVELOPMENT_STATE.md) and [the sprite restart guide](SPRITE_RESTART_20261020.md). Review/revise existing sprites against current procedural canon before new catalog work. Prior dated authorizations remain scoped to their recorded jobs; no new generation starts from this closeout.
 
 Joel selected 150% camera framing and resumed sprite production on 9 October 2026. His subsequent clarification requires fresh exports from original generated artwork, followed by native-size review and implementation. This policy applies to adaptation of existing sprites and to the remaining authorized sprite production. Read it with [CAMERA_SPRITE_TARGETS.md](CAMERA_SPRITE_TARGETS.md), [DESIGN_TO_SPRITE_WORKFLOW.md](DESIGN_TO_SPRITE_WORKFLOW.md) and the current production journal.
 

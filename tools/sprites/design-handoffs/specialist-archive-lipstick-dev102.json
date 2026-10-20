@@ -4,7 +4,7 @@
   "designId": "specialist-archive-lipstick-dev102",
   "name": "Neri",
   "kind": "specialist",
-  "nextAction": "Owner live play and appearance feedback after authorized dev.102 publication; preserve this reference for a later explicit sprite request.",
+  "nextAction": "End-of-day handoff saved. On the next sprite request, read currentHandoff and docs/SPRITE_RESTART_20261020.md first; review/revise existing sprites against current procedural canon before new catalog work. Preserve originals; no automatic generation.",
   "context": {
     "originConversation": "Conversation URL unavailable; Joel instruction dated 20 October 2026.",
     "decisionSummary": "Joel approved the paired Mage bow candidate and requested lipstick for the Mage, female specialists and Marshal Veyra.",
@@ -103,5 +103,16 @@
     "mouthHandoff": "mouth-expression-correction-20261020.json",
     "staffHandoff": null,
     "note": "The dev.102 lip overlay is historical. Joel approved the shaped-mouth correction; old references retained as rollback."
+  },
+  "currentHandoff": {
+    "date": "2026-10-20",
+    "baseline": "0.9.1+snapshot.dev.117",
+    "guide": "docs/SPRITE_RESTART_20261020.md",
+    "decisionIndex": "tools/sprites/current-design-decisions.json",
+    "sourceCommit": "0c4db7c2e4133892c6c32fd48a2c32a3bfefedc5",
+    "sourceFile": "src/prototype/visuals.js",
+    "sourceSha256": "2b129ca6d73109d874335ce9ff5e1e2b514b91393a3300e3a04d96292516a977",
+    "scope": "Current summary supersedes conflicting historical next-action/appearance prose only. Old references, approvals and hashes remain immutable historical evidence. No new generated image or generation authorization.",
+    "instruction": "Use current procedural drawing and the linked restart guide; preserve accepted shaped lips/expressions, latest pet identity/skills and current shared structures as applicable. Historical previews do not override later releases."
   }
 }

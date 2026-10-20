@@ -1,3 +1,5 @@
+> **Resolved in published dev.110:** All three findings below were patched, audited and published in PR #344. See [the implementation and checks](CROWN_COMPANIONS_20261020.md) and [publication receipt](evidence/CROWN_COMPANIONS_DEV110_PUBLICATION_20261020.json). The dev.109 reproductions below remain historical evidence; they are not currently unpatched tasks.
+
 # Companion behavior audit — published dev.109
 
 Joel requested a brief group announcement covering recent published changes, plus a companion-NPC audit to establish whether they still seek unsafe fights. This is an audit of the currently published runtime (`896d543cdad718c9ec5b3f2dffb4c3124d17a90a`, main closeout `0bb248c52fbeda094ff76f93d4f8f72e28469c79`), with no gameplay changes or deployment. **Result: not a clean pass.** Existing safeguards work in the covered normal cases, but three independently reproduced gaps remain.

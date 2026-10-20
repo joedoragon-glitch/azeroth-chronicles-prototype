@@ -1,3 +1,5 @@
+**End-of-day closeout — 20 October 2026:** Live runtime is `0.9.1+snapshot.dev.117` (PR #351; verified 32-file publication receipt). All today’s requested implementations are published. No automatic work continues. Next sprite work reviews/revises existing registrations against current procedural canon first; read [the restart guide](SPRITE_RESTART_20261020.md). Treasurer coin hand remains explicitly deferred; other unselected gallery choices await later review. Earlier dated “pending”, “preview-only” and pause statements below describe their own checkpoints and are superseded by later publications.
+
 **Published dev.117 — seven approved procedural selections:** PR #351 / `f291edaea04aebfaf6076b7697d5b9751f5bb5f6`; package-only run 39511519262 succeeded; all 32 exact live files match. #09 wildflowers, #14 cattails, #19 alpine scrub, #21 heather, #23 mint workbench, #24 ore sorting bay and #25 caravan loading bay now use current procedural art. All seven native authored props verified; 26 other registrations unchanged, state pure. Normal workflow restored; receipt `evidence/PROCEDURAL_SELECTIONS_DEV117_PUBLICATION_20261020.json`. Remaining gallery choices await owner selection; no other automatic art work.
 
 **Published dev.116 — procedural Greenwood cottage:** PR #350 / `2a43ce846381ddfb94527f8f65b5f35fdd661f63`; package-only run 39508128744 succeeded; all 32 exact live files match. Six procedural/zero raster cottages in native check; sprite fallback/build/inventory pass. Original sprite preserved. Normal workflow restored; receipt `evidence/PROCEDURAL_COTTAGE_DEV116_PUBLICATION_20261020.json`. All-sprite gallery remains review-only; no other asset selections changed.
@@ -138,17 +140,18 @@
 
 | Item | Recorded state |
 | --- | --- |
-| Published runtime | `0.9.1+snapshot.dev.92`; merge `657df95348a21e4f396872dd1b2cbc4c775e3f79`, package-only publication run `39375505253` |
+| Published runtime | `0.9.1+snapshot.dev.117`; merge `f291edaea04aebfaf6076b7697d5b9751f5bb5f6`, package-only publication run `39511519262` |
+| Latest publication evidence | [Verified dev.117 receipt](evidence/PROCEDURAL_SELECTIONS_DEV117_PUBLICATION_20261020.json); all 32 exact live files match |
 | Historical documentation-audit main | `57453c4651366a6debbcae454c70af3115e8ac2e` |
-| Last published gameplay source | `23d951092ea5dff806c460c62ca71eeced574f5c`, merged manual Developer Mode Skill 1 fix and documentation closeout #319 |
-| Publication evidence | [Packaging-only run 39312326936](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39312326936); exact public build/copy reads recorded in the [release handoff](COMMUNITY_SNAPSHOT_RELEASE_HANDOFF_20261016.md) |
+| Historical dev.79 gameplay source | `23d951092ea5dff806c460c62ca71eeced574f5c`, merged manual Developer Mode Skill 1 fix and documentation closeout #319 |
+| Historical dev.79 publication evidence | [Packaging-only run 39312326936](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39312326936); exact public build/copy reads recorded in the [release handoff](COMMUNITY_SNAPSHOT_RELEASE_HANDOFF_20261016.md) |
 | Completed closeout / manual fix | [Merged #319](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/319); retained reconciliation ledger owns deferred notes |
 
 The dev.79 publisher packaged the exact merge `23d951092ea5dff806c460c62ca71eeced574f5c` after the owner explicitly authorized merge/publication with no further testing on 19 October 2026. Packaging and successful Pages publication are release evidence, not a new gameplay certificate. The temporary publisher is removed after publication; the normal workflow is restored.
 
 #300, #308, #313, #315–#318 and #319 are merged. Earlier instructions to resume or merge #300/#308/#313 are historical. The 42 previously open old PRs were closed without merging on 18 October EDT; their source branches remain preserved. #217 (sprites), #198 (isolated co-op) and #296 (process policy) are indexed under #319; closure does not mean their code shipped or their useful ideas were cancelled.
 
-## Break closeout and future work
+## Historical 19 October break closeout and broader future work
 
 The repository-wide [documentation audit](DOCUMENTATION_AUDIT_20261019.md) and [per-file index](DOCUMENTATION_INDEX.md) complete the current housekeeping scope on #319. The owner authorized merging #319 with the narrow Developer Mode fix; both documentation and dev.79 are now published. The audit report itself retains the facts and limits of its earlier documentation-only checkpoint.
 
@@ -168,7 +171,7 @@ The owner requested this repair before the break: manual Skill 1 (tap and charge
 - Five-region campaign; Standard/Succession and Normal/Nightmare; eight class-specific skills with tap/charged forms, cooldown-only combat, companions and eleven pet families. Legacy MP fields remain recovery data behind the dormant mana flag.
 - v4 save schema and existing keys remain compatible; preserve original legacy v2 backups. Crowns are the player-facing currency; internal `gold` remains compatible.
 - Default camera 150%, optional 100%/175%; supported phone size begins at 375×800 CSS pixels or rotation. Narrow desktop windows remain desktop.
-- Current manifests: 33 approved sprite identities, seven materials, 127 registered audio assets (83 music, 14 ambience, 30 effects). The 296-entry old prompt catalog and 426 renderer-contract census are historical inventories, not unique required sprite counts.
+- Current manifests: 33 retained approved sprite identities (22 currently selected raster, 11 selected procedural), seven materials, 127 registered audio assets (83 music, 14 ambience, 30 effects). The 296-entry old prompt catalog and 426 renderer-contract census are historical inventories, not unique required sprite counts.
 
 ## Evidence limits and normal future workflow
 

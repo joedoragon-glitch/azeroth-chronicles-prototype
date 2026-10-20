@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-20",
+  "scope": "Documentation and developer-only sprite continuity; no generation, runtime edits, registration changes or deployment.",
+  "baseline": {
+    "runtime": "0.9.1+snapshot.dev.117",
+    "main": "0c4db7c2e4133892c6c32fd48a2c32a3bfefedc5",
+    "tree": "769990203137fc0c9d2cf4fad09e0d4ee81a9d20",
+    "publicationReceipt": "docs/evidence/PROCEDURAL_SELECTIONS_DEV117_PUBLICATION_20261020.json",
+    "liveBuildRead": "f291edaea04aebfaf6076b7697d5b9751f5bb5f6"
+  },
+  "findingsFixed": [
+    "README and release summary still named dev.79; development table named dev.92. Current release is now explicit and old checkpoints remain historical.",
+    "Production guidance and historical pause instructions lacked a current precedence boundary. Added revision-first restart guide and current decision overlay.",
+    "Asset lookup treated retained registrations as selected artwork; now reports actual production resolver selection separately.",
+    "Request prompt/replacement guidance ignored newer handoffs; now includes current design instructions and hashed handoffs. Decision changes get distinct request identity without rewriting historical candidate canon.",
+    "Procedural-selected request footprint used obsolete raster bounds; now measures the fresh procedural reference.",
+    "Companion audit still said unpatched; added published dev.110 resolution link.",
+    "Legacy pipeline test required a removed Goblin ground marking and current-Paladin equality from a historical fixture. Baseline failure independently reproduced; uses actual camp ground separation and preserves historical transport fixture instead."
+  ],
+  "inventory": {
+    "registeredBaseKeys": 33,
+    "selectedRaster": 22,
+    "selectedProcedural": 11,
+    "registeredVariantBanks": 0,
+    "retainedIdleClips": 2,
+    "retainedClipFrames": 4,
+    "reconciledHandoffs": 86,
+    "preparedContracts": 74,
+    "uniqueImages": 36,
+    "packagedResources": 37
+  },
+  "checks": {
+    "currentContinuityTest": "PASS: 33 resolver dispositions, current links/hashes and exact Mage prompt/reference/body/native context checkpoint; immutable capture and protected production files unchanged.",
+    "productionRegistry": "PASS: current sprite-pipeline check, 33 registrations, 36 unique images / 37 packaged resources; 256 MiB residency policy.",
+    "historicalHandoffProvenance": "PASS: reference, decisions, production, reviewEvidence and existing latest-decision/correction fields unchanged in all affected handoffs.",
+    "protectedFiles": {
+      "src/prototype/visuals.js": "2b129ca6d73109d874335ce9ff5e1e2b514b91393a3300e3a04d96292516a977",
+      "src/prototype/sprites.js": "7a9925e4e12aa567178b444d60673a8da2d9199757b14e15726c52b391858fbf",
+      "assets/sprites/manifest.json": "ca34058374aea87794536c01b3c7f4b8883ee5eb7b85e63c29192c954efce3b5",
+      "tools/sprites/approved.json": "49f5851872c14c2f33d91f811c5c67f4e13c254afd38784bbe611dec2a8aa7cc",
+      "package.json": "11bfb3fb6ced3f263627688ea531a4b99dccb162df8ec97feeb750b942614eb6",
+      "package-lock.json": "27abab670b8b99b79d7f2a8365beb2f5417fa34fa037fe52cc2218060ae29137",
+      "sw.js": "26cf03c3f73ee6c024f43776dc1ba08e8f3e3479afaa88c9f6de205bc1fe699a",
+      ".github/workflows/pages.yml": "b6e0b4098558ebfd11df84fb349dc4babb4e539b2065bd6c669447ca33027702"
+    },
+    "format": "PASS: changed pipeline/continuity source and decision overlay; final changed test check pending.",
+    "pipelineRegression": "Running focused sprite-pipeline.test.cjs after repairing the independently reproduced historical assertion."
+  },
+  "remaining": [
+    "Treasurer/boss coin hand explicitly deferred by owner.",
+    "Unselected gallery alternatives await later owner review; no blanket replacement approval.",
+    "Broader playthrough/co-op/old batch work remains deferred; no automatic production restart."
+  ],
+  "evidenceLimits": "Focused source/tooling checks and existing publication receipts, not new hardware FPS or complete gameplay/aesthetic certification."
+}

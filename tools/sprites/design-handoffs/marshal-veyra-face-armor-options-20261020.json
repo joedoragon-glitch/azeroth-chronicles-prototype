@@ -4,10 +4,10 @@
   "designId": "marshal-veyra-face-armor-options-20261020",
   "name": "Marshal Veyra approved ivory parade armor",
   "kind": "boss",
-  "nextAction": "Owner live appearance/play feedback; preserve the approved references for any later explicitly requested raster work.",
+  "nextAction": "End-of-day handoff saved. On the next sprite request, read currentHandoff and docs/SPRITE_RESTART_20261020.md first; review/revise existing sprites against current procedural canon before new catalog work. Preserve originals; no automatic generation.",
   "context": {
     "originConversation": "Conversation URL unavailable; owner request dated 20 October 2026.",
-    "decisionSummary": "Joel selected ivory B, requested a compact armored arm and continuous skirt with short tassets, then approved the corrected right-hand preview on 20 October 2026 at 11:03 EDT: \u201cthis will be good enough \u2026 you can go ahead.\u201d",
+    "decisionSummary": "Joel selected ivory B, requested a compact armored arm and continuous skirt with short tassets, then approved the corrected right-hand preview on 20 October 2026 at 11:03 EDT: “this will be good enough … you can go ahead.”",
     "decisionDate": "2026-10-20",
     "contentDocuments": [
       "docs/VEYRA_IVORY_20261020.md",
@@ -99,5 +99,28 @@
         ]
       }
     }
-  ]
+  ],
+  "currentHandoff": {
+    "date": "2026-10-20",
+    "baseline": "0.9.1+snapshot.dev.117",
+    "guide": "docs/SPRITE_RESTART_20261020.md",
+    "decisionIndex": "tools/sprites/current-design-decisions.json",
+    "sourceCommit": "0c4db7c2e4133892c6c32fd48a2c32a3bfefedc5",
+    "sourceFile": "src/prototype/visuals.js",
+    "sourceSha256": "2b129ca6d73109d874335ce9ff5e1e2b514b91393a3300e3a04d96292516a977",
+    "scope": "Current summary supersedes conflicting historical next-action/appearance prose only. Old references, approvals and hashes remain immutable historical evidence. No new generated image or generation authorization.",
+    "assets": [
+      {
+        "key": "boss:citadel",
+        "traits": "Marshal Veyra: selected ivory/gold parade armor, blonde crop, blue almond eyes and shaped lips; compact armored spear arm/inward spear; continuous violet skirt with short ivory plates over it. Preserve normal/TRUE identity and existing TRUE crown/halo/glints; rejected extended arm and leg-like skirt divisions must not return.",
+        "decisionDocuments": [
+          "docs/VEYRA_IVORY_20261020.md"
+        ],
+        "handoffs": [
+          "tools/sprites/design-handoffs/approved-art-boss-citadel.json",
+          "tools/sprites/design-handoffs/marshal-veyra-face-armor-options-20261020.json"
+        ]
+      }
+    ]
+  }
 }

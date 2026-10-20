@@ -2,6 +2,8 @@
 
 <!-- SPRITE_TOTALS {"entries":296,"generate":280,"alias":0,"procedural":16} -->
 
+> **20 October restart:** Stable IDs and totals below are retained historical catalog inventory, not authority to generate 280 new images. Read [the restart guide](SPRITE_RESTART_20261020.md) and resolve `currentDesign` through `sprite:asset` / `sprite:request`. Current accepted procedural designs and later owner corrections supersede conflicting per-entry prose; review/revise existing registrations first. No generation is started by the end-of-day closeout.
+
 ## Purpose
 
 **Audit status: COMPLETE.** This document has been checked back against the current production renderer and rules after the initial 110-entry draft, including a second pass over every top-level render branch. Entries marked **KEEP PROCEDURAL** are intentionally not image-generation tasks.

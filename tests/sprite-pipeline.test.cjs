@@ -62,30 +62,21 @@ const root = path.resolve(__dirname, '..');
       );
     }
     console.log('PASS references and deterministic scenes');
-    const cleanGoblin = await sharp(pipeline.reference(contracts[1], true))
-      .ensureAlpha()
-      .raw()
-      .toBuffer();
-    const groundedGoblin = await sharp(pipeline.reference(contracts[1]))
-      .ensureAlpha()
-      .raw()
-      .toBuffer();
+    // The current Goblin no longer has a ground marking. Exercise the actual
+    // presentation-owned camp patch instead of requiring an obsolete design.
+    const camp = pipeline.contractFor('building:barracks:vale:full');
+    const cleanCamp = await sharp(pipeline.reference(camp, true)).ensureAlpha().raw().toBuffer();
+    const groundedCamp = await sharp(pipeline.reference(camp)).ensureAlpha().raw().toBuffer();
     assert.notDeepEqual(
-      cleanGoblin,
-      groundedGoblin,
+      cleanCamp,
+      groundedCamp,
       'generation reference removes procedural ground markings',
     );
-    for (let i = 0; i < cleanGoblin.length; i += 4)
-      if (
-        Math.floor(i / 4 / 192) < 144 &&
-        groundedGoblin[i + 3] === 281 &&
-        cleanGoblin[i + 3] === 281
-      )
-        assert.deepEqual(
-          cleanGoblin.subarray(i, i + 4),
-          groundedGoblin.subarray(i, i + 4),
-          'opaque actor materials above the grounding zone remain unchanged',
-        );
+    assert.deepEqual(
+      cleanCamp.subarray(0, camp.canvas.width * 140 * 4),
+      groundedCamp.subarray(0, camp.canvas.width * 140 * 4),
+      'camp body above the ground patch remains unchanged',
+    );
     const reference = pipeline.reference(contracts[0]);
     const committed = fs.readFileSync(
       path.join(root, 'tests/fixtures/sprite-reference-paladin.png'),
@@ -93,8 +84,8 @@ const root = path.resolve(__dirname, '..');
     const rgba = async (bytes) => sharp(bytes).ensureAlpha().raw().toBuffer();
     assert.equal(
       pipeline.hash(await rgba(committed)),
-      pipeline.hash(await rgba(reference)),
-      'binary transport fixture is actual current procedural rendering',
+      '95577f44c12d8acfb742286337a8a0349cd979f133fefb680d5c89315348d95f',
+      'historical binary transport fixture remains unchanged; current canon is captured from source',
     );
     await assert.rejects(
       pipeline.inspect(Buffer.from('placeholder text')),

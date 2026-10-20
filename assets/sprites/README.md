@@ -1,3 +1,5 @@
+> **20 October runtime selection:** 33 registrations are retained, but 11 selected identities use procedural art and 22 use raster. Presence in `manifest.json` does not prove selection. Follow [the current restart guide](../../docs/SPRITE_RESTART_20261020.md) before replacement; keep originals and rollback history.
+
 # So I Became the Dark Lord's Problem canonical static sprites
 
 This directory holds approved static raster sprites for the GitHub Pages/PWA game.

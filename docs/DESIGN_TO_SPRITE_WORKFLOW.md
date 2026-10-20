@@ -1,6 +1,6 @@
 # Conversation → procedural design → sprites
 
-> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+> **Current-use boundary — 20 October 2026:** Read [current state](DEVELOPMENT_STATE.md) and [the sprite restart guide](SPRITE_RESTART_20261020.md). Review/revise existing sprites against current procedural canon before new catalog work. Prior dated authorizations remain scoped to their recorded jobs; no new generation starts from this closeout.
 
 Joel's 8 October 2026 instruction makes sprite delivery part of the content workflow. It applies to new hero classes, characters, monsters, companions, NPCs, structures, scenery, terrain and visible objects introduced by locations or lore. The procedural design establishes the intended visual canon. Joel permits natural anatomy and material-appropriate contours when procedural primitives produced accidental blocky forms; preserve identity and function rather than literal polygon artifacts. Once Joel accepts that design and requests sprites, continue from its accepted reference in the originating chat or another chat; do not restart the design from a name or an old catalog prompt.
 
@@ -14,7 +14,7 @@ Record the actual request and approval scope in plain language, with a chat link
 
 The handoff must distinguish concept acceptance, procedural-design acceptance, permission to produce sprites, generated-image acceptance and release status. Approval of a procedural design establishes what the sprite must faithfully translate; it does not claim that an unseen generated image was accepted. Carry forward actual corrections and approval wording without introducing a new creative gate when the task already authorizes faithful implementation. The original pilot remains in `tools/sprites/pilots/2026-10-08`; the approved playful Goblin correction and release records are in `tools/sprites/pilots/2026-10-08-refined`.
 
-## Current 150% production and interruption recovery
+## 150% source policy and interruption recovery
 
 Joel resumed autonomous adaptation, remaining sprite/texture generation, implementation, verification and publication on 9 October 2026. Earlier pauses are historical. Follow [SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md](SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md): fresh exports from untouched generator outputs of accepted revisions, never enlarged 100% runtime exports. Audit older padded/resized intermediates; where they discarded detail, rebuild directly from the original with the required placement metadata. Review each result in actual 150% game scenes and simplify or regenerate if its detail still reads poorly. Preserve all originals and checkpoints. Read `SPRITE_WORKFLOW_AUDIT.md` and `SPRITE_RESOLUTION_HOUSEKEEPING.md` before new production. Use `sprite:request` to capture validated exact prompt/reference/context evidence after reconciling the actual accepted handoff; inspect and attach retained accepted originals for edits. This planning capture does not establish creative acceptance or grant generation permission. Retain exact tool request/result IDs and source attachments; never invent missing historical provenance.
 
@@ -55,6 +55,10 @@ Inspect and edit the retained source with the image-generation tool, carrying fo
 Update affected animation frames and variants together. If they cannot be made consistent in this revision, release the new static fallback with the stale dependent presentation omitted. Do not mix an edited body with obsolete frames. Atlas attachment resets the final review so the assembled animation receives an actual visual check.
 
 Use `sprite:replace <candidate.json> <expected-active-revision>`; a stale lease rejects the edit rather than overwriting another chat's work. The registry retains the former source, output, review and presentation. Use `sprite:rollback <key> <target-revision> <expected-active-revision>` to restore it; restoring a removed registration uses the explicit lease `absent`. Old sources remain available. Rebuild/version, validate the registry and offline resources, run relevant device checks, publish and verify the deployed build. Record the resulting revision and release reference in the same change. The agent owns this sequence.
+
+## Current decision overlay
+
+`tools/sprites/current-design-decisions.json` records later owner corrections and links to current handoffs. `sprite:asset` reports `currentDesign` and the production resolver’s selected representation separately from retained registration/revision. `sprite:request` embeds the overlay and asset-specific handoff hashes, adds current trait instructions after historical catalog prose, and renders its procedural reference from current source. Decision/handoff changes produce a distinct immutable request path. This planning metadata does not alter candidate canon hashes, restore a procedural-disabled raster, authorize generation or grant appearance acceptance. Keep the overlay and affected handoffs current whenever a visible design or owner choice changes.
 
 ## Start a later chat
 

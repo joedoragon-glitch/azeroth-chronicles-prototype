@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-20",
+  "runtimeBaseline": "0.9.1+snapshot.dev.117",
+  "sourceCommit": "0c4db7c2e4133892c6c32fd48a2c32a3bfefedc5",
+  "guide": "docs/SPRITE_RESTART_20261020.md",
+  "priority": "Review and revise existing registered sprites against current accepted procedural designs before expanding the catalog. This closeout does not start generation.",
+  "precedence": "Later recorded owner corrections and current procedural source supersede conflicting old catalog prose and historical reference images. Preserve historical provenance; do not infer unseen raster acceptance.",
+  "globalInstructions": [
+    "Capture references from current source at request time; do not reuse historical procedural screenshots as current canon.",
+    "Do not extend arms or move grips to fit staffs/weapons. Preserve shaped lips and original expressions, including Lyss half-smile; no duplicate mouth or broad pink stripe.",
+    "Keep current Frontier/Crown structures, regrowth, water treatments and shared watchpost overhaul; review current native contexts instead of obsolete town layouts.",
+    "Preserve original masters, registrations, animation/frame sources and rollback history. Update affected dependent presentation together or omit stale clips explicitly.",
+    "No new raster generation, replacement, runtime selection change or publication is authorized by this documentation closeout. Honor any subsequent explicit sprite request within its scope."
+  ],
+  "contextDocuments": [
+    "docs/SPRITE_RESTART_20261020.md",
+    "docs/PROCEDURAL_SELECTIONS_20261020.md",
+    "docs/PROCEDURAL_COTTAGE_20261020.md",
+    "docs/PET_VISUAL_IDENTITY_20261020.md",
+    "docs/VEYRA_IVORY_20261020.md",
+    "docs/APPROVED_LIPS_STAFFS_20261020.md",
+    "docs/FRONTIER_TOWN_RIVER_20261020.md",
+    "docs/CROWN_COMPANIONS_20261020.md"
+  ],
+  "assets": {
+    "hero:mage": {
+      "traits": "Silver twin front braids (option C), violet bows, original hat and crowned headgear/scarf; shaped lips where visible; Moon setting staff (A). Preserve original arms, hands, grips and shaft axis; no extended limbs. Side ponytail and broad pink mouth stripe are superseded.",
+      "decisionDocuments": [
+        "docs/MAGE_HAIR_QUICKFIX_20261020.md",
+        "docs/BOWS_LIPSTICK_20261020.md",
+        "docs/APPROVED_LIPS_STAFFS_20261020.md"
+      ],
+      "handoffs": [
+        "tools/sprites/design-handoffs/approved-art-raster-hero-mage.json",
+        "tools/sprites/design-handoffs/approved-art-shared-hero-mage.json",
+        "tools/sprites/design-handoffs/approved-art-crowned-mage.json",
+        "tools/sprites/design-handoffs/mage-staff-review-20261020.json"
+      ],
+      "selectedRepresentation": "procedural"
+    },
+    "hero:paladin": {
+      "traits": "Current distinct authored Paladin identity and crowned equipment; retained raster and idle frames are historical comparison/rollback, not the selected body.",
+      "decisionDocuments": ["docs/PROCEDURAL_CHARACTER_QUICKFIX_20261020.md"],
+      "handoffs": [
+        "tools/sprites/design-handoffs/approved-art-raster-hero-paladin.json",
+        "tools/sprites/design-handoffs/approved-art-shared-hero-paladin.json"
+      ],
+      "selectedRepresentation": "procedural"
+    },
+    "ally:soldier": {
+      "traits": "Current procedural Soldier identity across every tier/loadout; do not restore generic retained raster or flatten military variants.",
+      "decisionDocuments": ["docs/PROCEDURAL_CHARACTER_QUICKFIX_20261020.md"],
+      "handoffs": [
+        "tools/sprites/design-handoffs/approved-art-raster-ally-soldier.json",
+        "tools/sprites/design-handoffs/approved-art-shared-ally-soldier.json"
+      ],
+      "selectedRepresentation": "procedural"
+    },
+    "hero:ranger": {
+      "traits": "Owner explicitly retained this raster identity. Review against current procedural canon before proposing any replacement; no new procedural switch approved.",
+      "decisionDocuments": ["docs/PROCEDURAL_CHARACTER_QUICKFIX_20261020.md"],
+      "handoffs": ["tools/sprites/design-handoffs/approved-art-raster-hero-ranger.json"],
+      "selectedRepresentation": "raster"
+    },
+    "ally:archer": {
+      "traits": "Owner explicitly retained this raster identity. Review against current procedural canon before proposing any replacement; no new procedural switch approved.",
+      "decisionDocuments": ["docs/PROCEDURAL_CHARACTER_QUICKFIX_20261020.md"],
+      "handoffs": ["tools/sprites/design-handoffs/approved-art-raster-ally-archer.json"],
+      "selectedRepresentation": "raster"
+    },
+    "enemy:goblin": {
+      "traits": "Retain accepted melee Goblin playful asymmetrical half-smile, small tooth and organic ears. Ranged slinger is a distinct sly/plotting procedural expression; do not copy slinger expression or equipment onto melee Goblin.",
+      "decisionDocuments": ["docs/PROCEDURAL_CHARACTER_QUICKFIX_20261020.md"],
+      "handoffs": ["tools/sprites/design-handoffs/approved-art-raster-enemy-goblin.json"],
+      "selectedRepresentation": "raster"
+    },
+    "prop:vale-cottage:vale": {
+      "traits": "Use current procedural cottage design and proportions, selected over the retained raster. Retained raster is comparison/rollback source, not the visual target.",
+      "decisionDocuments": ["docs/PROCEDURAL_COTTAGE_20261020.md"],
+      "handoffs": [
+        "tools/sprites/design-handoffs/approved-art-raster-prop-vale-cottage-vale.json",
+        "tools/sprites/design-handoffs/approved-art-structure-vale-cottage.json"
+      ],
+      "selectedRepresentation": "procedural"
+    },
+    "prop:wildflowers:vale": {
+      "traits": "Owner selected current procedural gallery #09, including its silhouette, composition and proportions. Retained raster is comparison/rollback source; do not use it to undo that choice.",
+      "decisionDocuments": ["docs/PROCEDURAL_SELECTIONS_20261020.md"],
+      "handoffs": [
+        "tools/sprites/design-handoffs/approved-art-raster-prop-wildflowers-vale.json",
+        "tools/sprites/design-handoffs/approved-art-decoration-wildflowers.json"
+      ],
+      "selectedRepresentation": "procedural"
+    },
+    "prop:cattails:march": {
+      "traits": "Owner selected current procedural gallery #14, including its silhouette, composition and proportions. Retained raster is comparison/rollback source; do not use it to undo that choice.",
+      "decisionDocuments": ["docs/PROCEDURAL_SELECTIONS_20261020.md"],
+      "handoffs": [
+        "tools/sprites/design-handoffs/approved-art-raster-prop-cattails-march.json",
+        "tools/sprites/design-handoffs/approved-art-decoration-cattails.json"
+      ],
+      "selectedRepresentation": "procedural"
+    },
+    "prop:alpine-scrub:highlands": {
+      "traits": "Owner selected current procedural gallery #19, including its silhouette, composition and proportions. Retained raster is comparison/rollback source; do not use it to undo that choice.",
+      "decisionDocuments": ["docs/PROCEDURAL_SELECTIONS_20261020.md"],
+      "handoffs": [
+        "tools/sprites/design-handoffs/approved-art-raster-prop-alpine-scrub-highlands.json",
+        "tools/sprites/design-handoffs/approved-art-decoration-alpine-scrub.json"
+      ],
+      "selectedRepresentation": "procedural"
+    },
+    "prop:heather:highlands": {
+      "traits": "Owner selected current procedural gallery #21, including its silhouette, composition and proportions. Retained raster is comparison/rollback source; do not use it to undo that choice.",
+      "decisionDocuments": ["docs/PROCEDURAL_SELECTIONS_20261020.md"],
+      "handoffs": [
+        "tools/sprites/design-handoffs/approved-art-raster-prop-heather-highlands.json",
+        "tools/sprites/design-handoffs/approved-art-decoration-heather.json"
+      ],
+      "selectedRepresentation": "procedural"
+    },
+    "prop:mint-workbench:highlands": {
+      "traits": "Owner selected current procedural gallery #23, including its silhouette, composition and proportions. Retained raster is comparison/rollback source; do not use it to undo that choice.",
+      "decisionDocuments": ["docs/PROCEDURAL_SELECTIONS_20261020.md"],
+      "handoffs": [
+        "tools/sprites/design-handoffs/approved-art-raster-prop-mint-workbench-highlands.json",
+        "tools/sprites/design-handoffs/approved-art-decoration-mint-workbench.json"
+      ],
+      "selectedRepresentation": "procedural"
+    },
+    "prop:ore-sorting-bay:highlands": {
+      "traits": "Owner selected current procedural gallery #24, including its silhouette, composition and proportions. Retained raster is comparison/rollback source; do not use it to undo that choice.",
+      "decisionDocuments": ["docs/PROCEDURAL_SELECTIONS_20261020.md"],
+      "handoffs": [
+        "tools/sprites/design-handoffs/approved-art-raster-prop-ore-sorting-bay-highlands.json",
+        "tools/sprites/design-handoffs/approved-art-decoration-ore-sorting-bay.json"
+      ],
+      "selectedRepresentation": "procedural"
+    },
+    "prop:caravan-loading-bay:highlands": {
+      "traits": "Owner selected current procedural gallery #25, including its silhouette, composition and proportions. Retained raster is comparison/rollback source; do not use it to undo that choice.",
+      "decisionDocuments": ["docs/PROCEDURAL_SELECTIONS_20261020.md"],
+      "handoffs": [
+        "tools/sprites/design-handoffs/approved-art-raster-prop-caravan-loading-bay-highlands.json",
+        "tools/sprites/design-handoffs/approved-art-decoration-caravan-loading-bay.json"
+      ],
+      "selectedRepresentation": "procedural"
+    },
+    "prop:dead-tree:frontier": {
+      "traits": "Current procedural fallback includes signs of recovery/new shoots. Registered raster remains selected; any future replacement must reconcile regrowth with the current procedural design, without claiming an unselected gallery switch.",
+      "decisionDocuments": [
+        "docs/FRONTIER_REACH_REGROUP_20261020.md",
+        "docs/FRONTIER_TOWN_RIVER_20261020.md"
+      ],
+      "handoffs": [
+        "tools/sprites/design-handoffs/approved-art-decoration-dead-tree.json",
+        "tools/sprites/design-handoffs/frontier-burned-tree-shoots-20261020.json"
+      ],
+      "selectedRepresentation": "raster"
+    },
+    "boss:citadel": {
+      "traits": "Marshal Veyra: selected ivory/gold parade armor, blonde crop, blue almond eyes and shaped lips; compact armored spear arm/inward spear; continuous violet skirt with short ivory plates over it. Preserve normal/TRUE identity and existing TRUE crown/halo/glints; rejected extended arm and leg-like skirt divisions must not return.",
+      "decisionDocuments": ["docs/VEYRA_IVORY_20261020.md"],
+      "handoffs": [
+        "tools/sprites/design-handoffs/approved-art-boss-citadel.json",
+        "tools/sprites/design-handoffs/marshal-veyra-face-armor-options-20261020.json"
+      ]
+    },
+    "pet:citadel": {
+      "traits": "Little Marshal uses current ivory Veyra palette, blonde crop, almond eyes/lips, compact armored spear arm, shield and continuous violet skirt/short tassets, at pet proportions.",
+      "decisionDocuments": ["docs/PET_VISUAL_IDENTITY_20261020.md"],
+      "handoffs": [
+        "tools/sprites/design-handoffs/approved-art-pet-citadel.json",
+        "tools/sprites/design-handoffs/companion-pet-citadel.json"
+      ]
+    },
+    "pet:ridge": {
+      "traits": "Little Treasurer carries exact boss Treasury hammer at existing grip. Arms/body/face/pose unchanged. Coin hand in pet AND boss explicitly deferred; do not correct it in this pass.",
+      "decisionDocuments": ["docs/PET_VISUAL_IDENTITY_20261020.md"],
+      "handoffs": [
+        "tools/sprites/design-handoffs/approved-art-pet-ridge.json",
+        "tools/sprites/design-handoffs/companion-pet-ridge.json"
+      ]
+    },
+    "pet:warlord": {
+      "traits": "Ash Cadet carries exact boss governor axe at existing grip. Arms/body/face/pose unchanged; do not extend an arm to accommodate the weapon.",
+      "decisionDocuments": ["docs/PET_VISUAL_IDENTITY_20261020.md"],
+      "handoffs": [
+        "tools/sprites/design-handoffs/approved-art-pet-warlord.json",
+        "tools/sprites/design-handoffs/companion-pet-warlord.json"
+      ]
+    },
+    "specialist:thorn": {
+      "traits": "Mira uses Amber ring staff (C, dictated ember ring), original arms/hands/grip and staff shaft axis; shaped lips, one mouth, expression preserved. Shared captive/rescued/appointed versions must agree.",
+      "decisionDocuments": ["docs/APPROVED_LIPS_STAFFS_20261020.md"],
+      "handoffs": [
+        "tools/sprites/design-handoffs/mira-staff-review-20261020.json",
+        "tools/sprites/design-handoffs/approved-art-specialist-thorn.json",
+        "tools/sprites/design-handoffs/approved-art-captive-thorn.json",
+        "tools/sprites/design-handoffs/approved-art-appointed-specialist-thorn.json"
+      ]
+    }
+  }
+}

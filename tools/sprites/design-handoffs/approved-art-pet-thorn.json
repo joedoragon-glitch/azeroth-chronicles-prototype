@@ -4,7 +4,7 @@
   "designId": "approved-art-pet-thorn",
   "name": "Thornfang miniature companion",
   "kind": "pet",
-  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "nextAction": "End-of-day handoff saved. On the next sprite request, read currentHandoff and docs/SPRITE_RESTART_20261020.md first; review/revise existing sprites against current procedural canon before new catalog work. Preserve originals; no automatic generation.",
   "context": {
     "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
     "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Soften cheek and paw connections, shape folded fur and integrate the small woodland mantle.",
@@ -134,5 +134,21 @@
     "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
     "requestedCorrection": "Updated the dependent shared anatomy, antler trophies, quiver, hat/spear or nonroyal TRUE form to match the six corrections requested by Joel. Existing role and geometry are retained.",
     "finalResultApprovalDate": "2026-10-19"
+  },
+  "currentHandoff": {
+    "date": "2026-10-20",
+    "baseline": "0.9.1+snapshot.dev.117",
+    "guide": "docs/SPRITE_RESTART_20261020.md",
+    "decisionIndex": "tools/sprites/current-design-decisions.json",
+    "sourceCommit": "0c4db7c2e4133892c6c32fd48a2c32a3bfefedc5",
+    "sourceFile": "src/prototype/visuals.js",
+    "sourceSha256": "2b129ca6d73109d874335ce9ff5e1e2b514b91393a3300e3a04d96292516a977",
+    "scope": "Current summary supersedes conflicting historical next-action/appearance prose only. Old references, approvals and hashes remain immutable historical evidence. No new generated image or generation authorization.",
+    "instruction": "Use current procedural drawing and the linked restart guide; preserve accepted shaped lips/expressions, latest pet identity/skills and current shared structures as applicable. Historical previews do not override later releases.",
+    "petSystemDocuments": [
+      "docs/PET_PARITY_AUDIT_20261020.md",
+      "docs/RANGED_PET_ROLES_20261020.md",
+      "docs/PET_VISUAL_IDENTITY_20261020.md"
+    ]
   }
 }

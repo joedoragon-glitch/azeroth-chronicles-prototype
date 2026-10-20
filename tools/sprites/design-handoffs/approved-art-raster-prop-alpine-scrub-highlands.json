@@ -4,7 +4,7 @@
   "designId": "approved-art-raster-prop-alpine-scrub-highlands",
   "name": "Active sprite — Prop / Alpine Scrub / Highlands",
   "kind": "active-sprite",
-  "nextAction": "Published owner-selected procedural representation in dev.117. Preserve current appearance and retained registered master for rollback.",
+  "nextAction": "End-of-day handoff saved. On the next sprite request, read currentHandoff and docs/SPRITE_RESTART_20261020.md first; review/revise existing sprites against current procedural canon before new catalog work. Preserve originals; no automatic generation.",
   "context": {
     "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
     "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Retain this accepted raster revision for the procedural pass. If an image edit is later selected, adjust only a few readable woody stems from its preserved original and update dependent frames together.",
@@ -160,5 +160,29 @@
     "scope": "These seven selected props only. Other selections remain unchanged.",
     "approval": "Explicit procedural preference from owner-provided numbered comparison screenshots.",
     "release": "Published PR #351 / f291edaea04aebfaf6076b7697d5b9751f5bb5f6; package-only run 39511519262; 32 exact live files match."
+  },
+  "currentHandoff": {
+    "date": "2026-10-20",
+    "baseline": "0.9.1+snapshot.dev.117",
+    "guide": "docs/SPRITE_RESTART_20261020.md",
+    "decisionIndex": "tools/sprites/current-design-decisions.json",
+    "sourceCommit": "0c4db7c2e4133892c6c32fd48a2c32a3bfefedc5",
+    "sourceFile": "src/prototype/visuals.js",
+    "sourceSha256": "2b129ca6d73109d874335ce9ff5e1e2b514b91393a3300e3a04d96292516a977",
+    "scope": "Current summary supersedes conflicting historical next-action/appearance prose only. Old references, approvals and hashes remain immutable historical evidence. No new generated image or generation authorization.",
+    "assets": [
+      {
+        "key": "prop:alpine-scrub:highlands",
+        "traits": "Owner selected current procedural gallery #19, including its silhouette, composition and proportions. Retained raster is comparison/rollback source; do not use it to undo that choice.",
+        "decisionDocuments": [
+          "docs/PROCEDURAL_SELECTIONS_20261020.md"
+        ],
+        "handoffs": [
+          "tools/sprites/design-handoffs/approved-art-raster-prop-alpine-scrub-highlands.json",
+          "tools/sprites/design-handoffs/approved-art-decoration-alpine-scrub.json"
+        ],
+        "selectedRepresentation": "procedural"
+      }
+    ]
   }
 }

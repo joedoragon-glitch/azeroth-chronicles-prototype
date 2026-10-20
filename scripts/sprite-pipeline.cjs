@@ -146,6 +146,7 @@ function contracts(requestedKey = null) {
           ),
         ]),
       );
+      result.currentDesign = currentDesignFor(spec.key, result);
       return result;
     });
 }
@@ -153,6 +154,43 @@ function contractFor(key) {
   const contract = contracts(key).find((item) => item.key === key);
   fail(contract, 'No prepared contract for exact key: ' + key);
   return contract;
+}
+function currentDesignFor(key, contract = null) {
+  const file = 'tools/sprites/current-design-decisions.json';
+  const bytes = fs.readFileSync(path.join(root, file));
+  const current = JSON.parse(bytes);
+  const decision = current.assets[key] || null;
+  // This is a decision overlay, not another registry or a generation authorization.
+  // Actual selection comes from the production resolver, including procedural guards.
+  const manifest = json(registryFiles[1]);
+  Sprites.installManifest(manifest);
+  const registered = manifest.sprites[key];
+  const selected = contract
+    ? Sprites.definitionFor(contract.entity, contract.region)?.key === key
+      ? 'raster'
+      : 'procedural'
+    : null;
+  if (registered && selected && decision?.selectedRepresentation)
+    fail(
+      selected === decision.selectedRepresentation,
+      'Reconcile current design selection: ' + key,
+    );
+  return {
+    file,
+    hash: hash(bytes),
+    guide: current.guide,
+    priority: current.priority,
+    precedence: current.precedence,
+    instructions: current.globalInstructions,
+    contextDocuments: current.contextDocuments,
+    registered: Boolean(registered),
+    selectedRepresentation: selected,
+    decision,
+    handoffs: (decision?.handoffs || []).map((file) => ({
+      file,
+      hash: hash(fs.readFileSync(safeFile(root, file))),
+    })),
+  };
 }
 function asset(query) {
   fail(typeof query === 'string' && query.trim(), 'Provide a sprite key, catalog ID or name');
@@ -186,13 +224,14 @@ function asset(query) {
         output: current ? 'assets/sprites/' + current.output.file : null,
         presentation: current?.presentation || null,
         review: current?.review || null,
+        currentDesign: currentDesignFor(key, binding),
         history: Object.entries(registry.history?.[key] || {}).map(([revision, record]) => ({
           revision,
           source: 'tools/sprites/sources/' + record.source.file,
           output: 'assets/sprites/' + record.output.file,
         })),
         nextAction: current
-          ? 'Edit retained source, prepare/review affected frames and replace with activeRevision lease'
+          ? 'Review existing sprite against currentDesign first; retained registration is not proof of runtime selection. Revise only within the requested scope, preserving source and dependent frames.'
           : binding
             ? 'Resume accepted design handoff and prepare this exact key'
             : 'Reconcile an exact contract before preparation',
@@ -1281,13 +1320,20 @@ async function showroom(recordFile) {
 async function generationRequest(key, destination) {
   Transactions.assertClean(root, 'sprites');
   const contract = contractFor(key),
+    currentDesign = currentDesignFor(key, contract),
     text = fs.readFileSync(path.join(root, 'docs/GRAPHICS_CANON_SPRITE_PROMPTS.md'), 'utf8'),
     organic = text.match(/## Intended design[^\n]*\n\n([^\n]+)/)?.[1],
     active = json(registryFiles[0]).assets[key],
     referenceBytes = reference(contract, true),
     measured = await inspect(referenceBytes),
-    bounds = active?.output.materialBounds || measured.materialBounds,
-    scale = active?.processing?.rasterScale ?? 1,
+    bounds =
+      currentDesign.selectedRepresentation === 'raster'
+        ? active?.output.materialBounds || measured.materialBounds
+        : measured.materialBounds,
+    scale =
+      currentDesign.selectedRepresentation === 'raster'
+        ? (active?.processing?.rasterScale ?? 1)
+        : 1,
     body = {
       width: ((bounds.x2 - bounds.x1 + 1) / scale) * specs.policy.reviewCameraZoom,
       height: ((bounds.y2 - bounds.y1 + 1) / scale) * specs.policy.reviewCameraZoom,
@@ -1308,6 +1354,9 @@ async function generationRequest(key, destination) {
     '\n\n' +
     organic +
     goblin +
+    '\n\nLatest recorded design decisions (supersede conflicting historical catalog prose):\n' +
+    currentDesign.instructions.join('\n') +
+    (currentDesign.decision ? '\n' + currentDesign.decision.traits : '') +
     '\n\nViewing contract: 150% camera. The visible body is approximately ' +
     Math.round(body.width) +
     ' × ' +
@@ -1322,6 +1371,7 @@ async function generationRequest(key, destination) {
     canonHash: contract.canonHash,
     sourceSnapshotHash: contract.canonSnapshotHash,
     authorization: 'Planning capture only; does not authorize generation, approval or publication',
+    currentDesign,
     prompt,
     promptHash: hash(Buffer.from(prompt)),
     reference: {
@@ -1347,7 +1397,7 @@ async function generationRequest(key, destination) {
             (e.sources || []).map((s) => ({ ...s, file: 'tools/sprites/sources/' + s.file })),
           ),
           instruction:
-            'Retain accepted appearance and reprocess affected frames/variants together; procedural polygons are identity references, not anatomy requirements',
+            'Reconcile retained artwork with currentDesign and the freshly captured procedural reference first. A retained registration may be superseded at runtime. Preserve originals and reprocess affected frames/variants together; procedural polygons are identity references, not anatomy requirements',
         }
       : null,
   };
@@ -1364,6 +1414,8 @@ async function generationRequest(key, destination) {
               JSON.stringify({
                 prompt: request.promptHash,
                 canon: request.canonHash,
+                decisions: currentDesign.hash,
+                handoffs: currentDesign.handoffs,
                 revision: request.replacement?.expectedRevision,
               }),
             ),
@@ -1520,6 +1572,7 @@ module.exports = {
   catalog,
   contracts,
   contractFor,
+  currentDesignFor,
   asset,
   inspect,
   reference,

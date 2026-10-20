@@ -6,28 +6,31 @@
 
 - [Crown planning, companion safety and arc landing — dev.110](CROWN_COMPANIONS_20261020.md): native day/night/save/access audits, three companion repairs and one-impact arc expiry.
 
-# Documentation index — 19 October 2026
+# Documentation index — 20 October 2026
 
-- [Pet visual identity correction — prepared dev.115](PET_VISUAL_IDENTITY_20261020.md): Veyra miniature and exact boss weapons; comparison and native scene.
+- [Pet visual identity correction — published dev.115](PET_VISUAL_IDENTITY_20261020.md): Veyra miniature and exact boss weapons; comparison and native scene.
 
 - [Approved procedural gallery selections — dev.117](PROCEDURAL_SELECTIONS_20261020.md): seven numbered owner choices, native selection audit and release.
 
 ## Start here
 
+Current entrypoints below supersede dated checkpoint prose above. The per-file hash table is the frozen 19 October audit inventory; its hashes are historical, not checksums of today’s updated documents.
+
 | Need | Maintained entrypoint |
+| Resume sprite work, current procedural selections and accepted character corrections | [20 October sprite restart](SPRITE_RESTART_20261020.md) |
 | --- | --- |
-| Companion behavior audit: remaining critical-wound, detour and fort-range gaps | [20 October audit](COMPANION_BEHAVIOR_AUDIT_20261020.md) |
+| Companion behavior audit findings (all three repaired in dev.110) | [Audit](COMPANION_BEHAVIOR_AUDIT_20261020.md), [implemented repairs](CROWN_COMPANIONS_20261020.md) |
 | Fort defenses, enemy cover fire, Expedition IV audit and Work for passage | [Dev.109 scope](FORTS_RANGER_PASSAGE_20261020.md) |
 | Emberwatch composition, river continuity/banks, natural poppies, pools and grain silo | [Dev.108 native visual audit](FRONTIER_TOWN_RIVER_20261020.md) |
 | Mixed-crowd escape and bounded pathfinding | [Dev.107 movement safeguard](CROWD_ESCAPE_20261020.md) |
 | Companion local support, safe engagement and regrouping | [Dev.106 behavior](COMPANION_JUDGMENT_20261020.md) |
 | Frontier aesthetic audit, confined field bosses, defensive resource trips | [Dev.105 scope](FRONTIER_AESTHETICS_BOSS_GATHER_20261020.md) |
 | Approved Frontier relocation and Abyss expansion, dev.104 | [Implementation and save migration](FRONTIER_ABYSS_LAYOUT_20261020.md) |
-| Veyra ivory B selection and arm/skirt correction preview | [Current correction](../tools/visual-review/veyra-ivory-correction-20261020/README.md) |
-| Original Veyra eye/armor options (B selected; corrections pending) | [Marshal preview](../tools/visual-review/veyra-options-20261020/README.md) |
+| Veyra approved ivory armor and corrected arm/skirt, published dev.111 | [Accepted implementation](VEYRA_IVORY_20261020.md) |
+| Historical Veyra options (corrected B subsequently accepted and published) | [Marshal preview](../tools/visual-review/veyra-options-20261020/README.md) |
 | Approved shaped lips and staff-only selections (dev.103) | [Art update scope](APPROVED_LIPS_STAFFS_20261020.md) |
 | Frontier redistribution / dragon dungeon circulation audit and proposals | [20 October spatial audit](../tools/visual-review/frontier-bastion-audit-20261020/README.md) |
-| Revised shaped-lip and staff-only previews (no arm changes; unselected) | [Preview record](../tools/visual-review/mouth-staff-preview-20261020/README.md) |
+| Historical shaped-lip/staff previews (selected results published dev.103) | [Preview record](../tools/visual-review/mouth-staff-preview-20261020/README.md) |
 | Approved Mage bows, female lipstick and Marshal Veyra | [Dev.102 scope](BOWS_LIPSTICK_20261020.md) |
 | Frontier channel/fountain/regrowth, enemy special reach and regroup healing | [Dev.101 scope](FRONTIER_REACH_REGROUP_20261020.md) |
 | Mounted riders and updating skills on existing pets/companions | [Dev.100 scope](MOUNTED_ROSTER_SKILLS_20261020.md) |

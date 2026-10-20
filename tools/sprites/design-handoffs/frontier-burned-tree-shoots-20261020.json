@@ -4,7 +4,7 @@
   "designId": "frontier-burned-tree-shoots-20261020",
   "name": "Frontier burned trees with fresh shoots",
   "kind": "flora",
-  "nextAction": "Owner live play and appearance feedback after this authorized update. Preserve these procedural references for any later explicit sprite request.",
+  "nextAction": "End-of-day handoff saved. On the next sprite request, read currentHandoff and docs/SPRITE_RESTART_20261020.md first; review/revise existing sprites against current procedural canon before new catalog work. Preserve originals; no automatic generation.",
   "context": {
     "originConversation": "Conversation URL unavailable; owner screenshot requests dated 20 October 2026.",
     "decisionSummary": "Dev.101 follows published dev.100. Joel supplied three Frontier screenshots and requested map-edge channel continuity, replacement of the detached dark strip with a polished civic fountain, and new leaves on burned trees. He then requested longer enemy specials with matching warnings/effects, slightly greater targeting distance to balance all ranged party members, earlier recognition of losing fights, and healing for wounded enemies arriving to regroup. A fourth screenshot requests a preview of paired violet bows on the Mage's braids; that preview is unselected and is not applied to the runtime.",
@@ -98,5 +98,30 @@
     "rollbackRevision": null,
     "releaseCommit": "3fccc550e4bca3e356a8b152915bb842682508ef",
     "releaseEvidence": "docs/evidence/FRONTIER_REACH_REGROUP_DEV101_PUBLICATION_20261020.json"
+  },
+  "currentHandoff": {
+    "date": "2026-10-20",
+    "baseline": "0.9.1+snapshot.dev.117",
+    "guide": "docs/SPRITE_RESTART_20261020.md",
+    "decisionIndex": "tools/sprites/current-design-decisions.json",
+    "sourceCommit": "0c4db7c2e4133892c6c32fd48a2c32a3bfefedc5",
+    "sourceFile": "src/prototype/visuals.js",
+    "sourceSha256": "2b129ca6d73109d874335ce9ff5e1e2b514b91393a3300e3a04d96292516a977",
+    "scope": "Current summary supersedes conflicting historical next-action/appearance prose only. Old references, approvals and hashes remain immutable historical evidence. No new generated image or generation authorization.",
+    "assets": [
+      {
+        "key": "prop:dead-tree:frontier",
+        "traits": "Current procedural fallback includes signs of recovery/new shoots. Registered raster remains selected; any future replacement must reconcile regrowth with the current procedural design, without claiming an unselected gallery switch.",
+        "decisionDocuments": [
+          "docs/FRONTIER_REACH_REGROUP_20261020.md",
+          "docs/FRONTIER_TOWN_RIVER_20261020.md"
+        ],
+        "handoffs": [
+          "tools/sprites/design-handoffs/approved-art-decoration-dead-tree.json",
+          "tools/sprites/design-handoffs/frontier-burned-tree-shoots-20261020.json"
+        ],
+        "selectedRepresentation": "raster"
+      }
+    ]
   }
 }

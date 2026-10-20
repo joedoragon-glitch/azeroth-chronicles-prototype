@@ -4,7 +4,7 @@
   "designId": "approved-art-decoration-watchpost",
   "name": "Shared supported watchpost",
   "kind": "decoration",
-  "nextAction": "Owner live appearance/play feedback; retain references for any separately requested raster work.",
+  "nextAction": "End-of-day handoff saved. On the next sprite request, read currentHandoff and docs/SPRITE_RESTART_20261020.md first; review/revise existing sprites against current procedural canon before new catalog work. Preserve originals; no automatic generation.",
   "context": {
     "originConversation": null,
     "decisionSummary": "Joel requested coherent Crown planning, appropriate industrial surroundings and replacement of the unexplained circle, plus a shared tower overhaul. On 20 October he authorized audit, repairs, merge and publication without further confirmation.",
@@ -90,5 +90,16 @@
     "rollbackRevision": null,
     "releaseCommit": "3a76a9e532f03f2e9f9656a2fadacea7f07743ca",
     "releaseEvidence": "docs/evidence/CROWN_COMPANIONS_DEV110_PUBLICATION_20261020.json"
+  },
+  "currentHandoff": {
+    "date": "2026-10-20",
+    "baseline": "0.9.1+snapshot.dev.117",
+    "guide": "docs/SPRITE_RESTART_20261020.md",
+    "decisionIndex": "tools/sprites/current-design-decisions.json",
+    "sourceCommit": "0c4db7c2e4133892c6c32fd48a2c32a3bfefedc5",
+    "sourceFile": "src/prototype/visuals.js",
+    "sourceSha256": "2b129ca6d73109d874335ce9ff5e1e2b514b91393a3300e3a04d96292516a977",
+    "scope": "Current summary supersedes conflicting historical next-action/appearance prose only. Old references, approvals and hashes remain immutable historical evidence. No new generated image or generation authorization.",
+    "instruction": "Use current procedural drawing and the linked restart guide; preserve accepted shaped lips/expressions, latest pet identity/skills and current shared structures as applicable. Historical previews do not override later releases."
   }
 }

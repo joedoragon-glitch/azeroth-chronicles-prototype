@@ -1,12 +1,12 @@
 # So I Became the Dark Lord's Problem
 
-**Community Snapshot — October 2026 · `0.9.1+snapshot.dev.79`.** Published; feature development is on break. [Current state](docs/DEVELOPMENT_STATE.md) records release evidence and the pause boundary. [Documentation index](docs/DOCUMENTATION_INDEX.md) distinguishes current guides from historical records.
+**Community Snapshot — October 2026 · `0.9.1+snapshot.dev.117`.** Published; today’s work is complete. [Current state](docs/DEVELOPMENT_STATE.md) records release evidence and the next-work boundary. [Documentation index](docs/DOCUMENTATION_INDEX.md) distinguishes current guides from historical records.
 
 An offline-capable RPG across five regions, ten settlements and five main dungeons. Rescue the specialists, build your expedition, and challenge the Dark Lord. The regime's currency is **crowns**.
 
 The canonical game is the multi-file GitHub Pages/PWA application. It uses JavaScript, Canvas 2D and Web Audio; there is no game backend. The campaign engine is shared, while desktop and phone have separate presentation rules. Future development uses this foundation when the owner resumes it.
 
-Existing GitHub Pages links and installed-app identity remain unchanged. Current release state and next-update work are indexed in [the post-snapshot reconciliation](docs/NEXT_UPDATE_RECONCILIATION_20261018.md). The older [implementation ledger](docs/SNAPSHOT_IMPLEMENTATION_20261013.md) remains historical evidence.
+Existing GitHub Pages links and installed-app identity remain unchanged. Current release state and next-work notes are in [current development state](docs/DEVELOPMENT_STATE.md); [the sprite restart guide](docs/SPRITE_RESTART_20261020.md) preserves current art decisions. The [post-snapshot reconciliation](docs/NEXT_UPDATE_RECONCILIATION_20261018.md) retains older deferred branches. The older [implementation ledger](docs/SNAPSHOT_IMPLEMENTATION_20261013.md) remains historical evidence.
 
 ## Release status
 
@@ -19,7 +19,7 @@ This project is in the **v0.9.1 beta maintenance line**. The published snapshot 
 
 Automatic selection uses pointer capabilities, including a mouse/trackpad on a touchscreen Chromebook. Resizing a desktop window does not turn it into a phone screen. **Game and settings → Screen and performance** offers the reversible, device-local **Optimization Mode · Off / On** for weaker computers, alongside camera selection, Auto/30/60 FPS and local performance measurements. Optimization Mode reduces optional illustrated terrain, ambient audio, decorative scenery and Canvas backing resolution without changing campaign saves or combat telegraphs; actual hardware gains must be measured. Both entries use the same on-device saves. Camera framing defaults to the selected 150%; that menu also offers original 100% and 175%, remembered separately for desktop and phone. Supported phone viewports start at 375 × 800 CSS pixels (or landscape rotation); smaller layouts are no longer release targets.
 
-Choose a Standard run or the optional Succession challenge, then Paladin, Mage or Ranger. Normal and Nightmare have independent saves. Nightmare unlocks after the peaceful ending. Updates preserve local campaigns and adopt the published build automatically; a manual update check is also available in settings.
+Choose a Standard run or the optional Succession challenge, then Paladin, Mage or Ranger. Normal and Nightmare have independent saves. Nightmare unlocks after the peaceful ending. Updates preserve local campaigns and adopt the published build automatically; an update-available notice and a direct settings action make updates easier to find. A manual update check is also available in settings.
 
 ## Contextual soundtrack
 

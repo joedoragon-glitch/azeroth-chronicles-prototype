@@ -4,7 +4,7 @@
   "designId": "approved-art-crowned-mage",
   "name": "Crowned Mage",
   "kind": "crowned-player",
-  "nextAction": "Publish selected option C in dev.93 using the authorized no-test process; preserve other characters, original rasters and performance fixes.",
+  "nextAction": "End-of-day handoff saved. On the next sprite request, read currentHandoff and docs/SPRITE_RESTART_20261020.md first; review/revise existing sprites against current procedural canon before new catalog work. Preserve originals; no automatic generation.",
   "context": {
     "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
     "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Reshape the hat/crown fit, lower or flare the collar around the face, drape embroidered violet stoles and refine staff hands.",
@@ -116,7 +116,7 @@
     "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
     "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
     "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
-    "resultReviewStatus": "Final completed design set approved by Joel \u00b7 19 October 2026",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
     "requestedCorrection": "Restores the original blue-robed masked mage identity, purple mouth scarf and silver hair, with the crown fixed around the pointed mage hat.",
     "finalResultApprovalDate": "2026-10-19",
     "latestMageHairCorrection": {
@@ -146,5 +146,33 @@
       "decisionRecord": "docs/MAGE_HAIR_QUICKFIX_20261020.md",
       "status": "Released dev.93 in PR #327, merge 9c2e1f2bc7be1570502a8d2b389f534d91a9166a; packaging-only run 39381650071. Staff unchanged; no tests. Exact public files verified."
     }
+  },
+  "currentHandoff": {
+    "date": "2026-10-20",
+    "baseline": "0.9.1+snapshot.dev.117",
+    "guide": "docs/SPRITE_RESTART_20261020.md",
+    "decisionIndex": "tools/sprites/current-design-decisions.json",
+    "sourceCommit": "0c4db7c2e4133892c6c32fd48a2c32a3bfefedc5",
+    "sourceFile": "src/prototype/visuals.js",
+    "sourceSha256": "2b129ca6d73109d874335ce9ff5e1e2b514b91393a3300e3a04d96292516a977",
+    "scope": "Current summary supersedes conflicting historical next-action/appearance prose only. Old references, approvals and hashes remain immutable historical evidence. No new generated image or generation authorization.",
+    "assets": [
+      {
+        "key": "hero:mage",
+        "traits": "Silver twin front braids (option C), violet bows, original hat and crowned headgear/scarf; shaped lips where visible; Moon setting staff (A). Preserve original arms, hands, grips and shaft axis; no extended limbs. Side ponytail and broad pink mouth stripe are superseded.",
+        "decisionDocuments": [
+          "docs/MAGE_HAIR_QUICKFIX_20261020.md",
+          "docs/BOWS_LIPSTICK_20261020.md",
+          "docs/APPROVED_LIPS_STAFFS_20261020.md"
+        ],
+        "handoffs": [
+          "tools/sprites/design-handoffs/approved-art-raster-hero-mage.json",
+          "tools/sprites/design-handoffs/approved-art-shared-hero-mage.json",
+          "tools/sprites/design-handoffs/approved-art-crowned-mage.json",
+          "tools/sprites/design-handoffs/mage-staff-review-20261020.json"
+        ],
+        "selectedRepresentation": "procedural"
+      }
+    ]
   }
 }

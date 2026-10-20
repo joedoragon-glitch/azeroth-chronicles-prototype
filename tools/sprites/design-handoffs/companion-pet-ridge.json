@@ -5,7 +5,7 @@
   "designId": "companion-pet-ridge",
   "name": "Ridge Tyrant miniature",
   "kind": "companion",
-  "nextAction": "Native-size desktop/phone visual review after explicit validation authorization; no sprites requested.",
+  "nextAction": "End-of-day handoff saved. On the next sprite request, read currentHandoff and docs/SPRITE_RESTART_20261020.md first; review/revise existing sprites against current procedural canon before new catalog work. Preserve originals; no automatic generation.",
   "context": {
     "originConversation": null,
     "decisionSummary": "Owner authorized all eleven procedural TRUE-boss pets, 15 October 2026. No screenshot or visual acceptance claimed.",
@@ -102,5 +102,33 @@
     "rollbackRevision": null,
     "releaseCommit": null,
     "releaseEvidence": null
+  },
+  "currentHandoff": {
+    "date": "2026-10-20",
+    "baseline": "0.9.1+snapshot.dev.117",
+    "guide": "docs/SPRITE_RESTART_20261020.md",
+    "decisionIndex": "tools/sprites/current-design-decisions.json",
+    "sourceCommit": "0c4db7c2e4133892c6c32fd48a2c32a3bfefedc5",
+    "sourceFile": "src/prototype/visuals.js",
+    "sourceSha256": "2b129ca6d73109d874335ce9ff5e1e2b514b91393a3300e3a04d96292516a977",
+    "scope": "Current summary supersedes conflicting historical next-action/appearance prose only. Old references, approvals and hashes remain immutable historical evidence. No new generated image or generation authorization.",
+    "assets": [
+      {
+        "key": "pet:ridge",
+        "traits": "Little Treasurer carries exact boss Treasury hammer at existing grip. Arms/body/face/pose unchanged. Coin hand in pet AND boss explicitly deferred; do not correct it in this pass.",
+        "decisionDocuments": [
+          "docs/PET_VISUAL_IDENTITY_20261020.md"
+        ],
+        "handoffs": [
+          "tools/sprites/design-handoffs/approved-art-pet-ridge.json",
+          "tools/sprites/design-handoffs/companion-pet-ridge.json"
+        ]
+      }
+    ],
+    "petSystemDocuments": [
+      "docs/PET_PARITY_AUDIT_20261020.md",
+      "docs/RANGED_PET_ROLES_20261020.md",
+      "docs/PET_VISUAL_IDENTITY_20261020.md"
+    ]
   }
 }
