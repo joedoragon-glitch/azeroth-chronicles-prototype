@@ -24,7 +24,7 @@ Review branch `audit/pet-parity-dev112`, based on published dev.112 / tree `268e
 
 Pets enter the same doctrine, danger/support judgment, critical-wound retreat, path support constraints and Recall code before their separate combat routine. Their ordinary formation offsets return before the hero-class-aware troop formations, so pet slots do not change between Paladin/Mage/Ranger. Ranged pets are explicitly among the units Soldiers screen.
 
-Soldiers additionally have a low-health 2.5-second immunity with a 14-second cooldown; Expedition IV gives Power Strike a 20%/2-second ward. Rangers have veteran covering shots and consumable party healing. Pets instead have family skills; only Little Lifebinder, Pebble Colossus and Cinder Cub have direct self-sustain/ward effects. Skill multipliers, area caps, range, movement and actual activation must be compared case by case.
+Soldiers additionally have a low-health 2.5-second immunity with a 14-second cooldown; Expedition IV gives Power Strike a 20%/2-second ward. Rangers have veteran covering shots and cooldown-based party healing. Pets instead have family skills; only Little Lifebinder, Pebble Colossus and Cinder Cub have direct self-sustain/ward effects. The first pet skill needs no training; the second uses shared Combat Training II or learning hero Skill 2 from rescued Mira. Skills read current definitions, without resting or re-hiring.
 
 ## Individual assessment and plan — unchanged balance
 
@@ -58,7 +58,7 @@ Pet formations remain class-blind: their early-return slots do not adapt to Pala
 
 ## Audit evidence and limitations
 
-`tools/pet-parity-audit-20261020/check.cjs` records 177 growth, inheritance, command/save/safety, combat and reach cases in `before.json`/`findings.json`; the two reports differ only where the prepared repairs apply. The baseline uses published dev.112 pet behavior. To reproduce the baseline from a clone containing that commit:
+`tools/pet-parity-audit-20261020/check.cjs` records 189 growth, inheritance, command/save/safety/healing, combat, reach and close-target positioning cases in `before.json`/`findings.json`. Both party owners load from dev.112 for the baseline. The two reports have exactly equal stats, inheritance, formations, ordinary combat damage/cast totals and command contracts. Melee moving-target travel differs slightly because skills can start earlier; the reach/close-target positioning reproductions improve. To reproduce the baseline from a clone containing that commit:
 
 ```sh
 PET_AUDIT_BASELINE=1 PET_AUDIT_OUTPUT=tools/pet-parity-audit-20261020/before.json node tools/pet-parity-audit-20261020/check.cjs
@@ -67,4 +67,6 @@ node tools/pet-parity-audit-20261020/check.cjs
 
 `PET_AUDIT_BASELINE_REF` can select an equivalent local checkpoint; recorded local baseline used `487d6f7`, with the same dev.112 pet source. Core numerical/command results do not depend on this override. These fixtures do not certify all maps, family win rates or optimal balance. Low incoming damage is intentional so survival effects are assessed from actual activation/mitigation tests and source contracts, not invented survival statistics.
 
-Focused verification completed so far: existing pet lifecycle, activation/contact healing, 132 visual effect frames, automatic ranges/charges/real Mine wall routing, squad doctrine, judgment and one-press Recall checks; new 161-case melee reach/gate regression and 13-role stale-regroup regression pass. Final integrated recheck, build and integrity/format audit pending before handoff.
+Final verification passed: existing pet lifecycle, activation/contact healing, 132 visual effect frames, automatic ranges/charges/real Mine wall routing, squad doctrine, judgment, one-press Recall and veteran troop checks; new 161-case melee reach/gate regression and 13-role stale-regroup regression. The latter two regressions also fail against the original source as expected. The numerical/behavior matrix passes all 189 prepared cases; 14/14 melee reach failures and 12/12 unsupported close-target positions/second-skill failures are repaired. Reviewed the actual source diff: no rule, stat, timing, damage, progression, appearance or formation changes.
+
+Build, generated syntax/asset integrity and sprite/material/audio scope checks pass. Changed-source formatting passes. Whole-repository formatting retains only its pre-existing unrelated `tools/sprites/approved.json` warning; that approved-art metadata was not changed. The final audit corrected an early description of Ranger healing (cooldown-based, not a consumable), and repaired a test fixture's relocated enemy home before using its close-target damage evidence. No broad campaign/device matrix or merge/publication was run. Main remains `e0ce4a90451f88699dfbb2e93af08411cf808235` / live dev.112.

@@ -1046,6 +1046,80 @@
       ]
     }
   ],
+  "positioning": [
+    {
+      "name": "crypt",
+      "heroClass": "paladin",
+      "supportedPoint": false,
+      "secondActivates": false
+    },
+    {
+      "name": "crypt",
+      "heroClass": "mage",
+      "supportedPoint": false,
+      "secondActivates": false
+    },
+    {
+      "name": "crypt",
+      "heroClass": "ranger",
+      "supportedPoint": false,
+      "secondActivates": false
+    },
+    {
+      "name": "archive",
+      "heroClass": "paladin",
+      "supportedPoint": false,
+      "secondActivates": false
+    },
+    {
+      "name": "archive",
+      "heroClass": "mage",
+      "supportedPoint": false,
+      "secondActivates": false
+    },
+    {
+      "name": "archive",
+      "heroClass": "ranger",
+      "supportedPoint": false,
+      "secondActivates": false
+    },
+    {
+      "name": "abyss",
+      "heroClass": "paladin",
+      "supportedPoint": false,
+      "secondActivates": false
+    },
+    {
+      "name": "abyss",
+      "heroClass": "mage",
+      "supportedPoint": false,
+      "secondActivates": false
+    },
+    {
+      "name": "abyss",
+      "heroClass": "ranger",
+      "supportedPoint": false,
+      "secondActivates": false
+    },
+    {
+      "name": "citadel",
+      "heroClass": "paladin",
+      "supportedPoint": false,
+      "secondActivates": false
+    },
+    {
+      "name": "citadel",
+      "heroClass": "mage",
+      "supportedPoint": false,
+      "secondActivates": false
+    },
+    {
+      "name": "citadel",
+      "heroClass": "ranger",
+      "supportedPoint": false,
+      "secondActivates": false
+    }
+  ],
   "combat": [
     {
       "name": "soldier",
@@ -1456,7 +1530,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "thorn",
@@ -1467,7 +1542,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "thorn",
@@ -1478,7 +1554,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "crypt",
@@ -1489,7 +1566,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "crypt",
@@ -1500,7 +1578,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "crypt",
@@ -1511,7 +1590,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "mire",
@@ -1522,7 +1602,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "mire",
@@ -1533,7 +1614,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "mire",
@@ -1544,7 +1626,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "archive",
@@ -1555,7 +1638,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "archive",
@@ -1566,7 +1650,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "archive",
@@ -1577,7 +1662,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "ridge",
@@ -1588,7 +1674,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "ridge",
@@ -1599,7 +1686,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "ridge",
@@ -1610,7 +1698,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "mine",
@@ -1621,7 +1710,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "mine",
@@ -1632,7 +1722,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "mine",
@@ -1643,7 +1734,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "warlord",
@@ -1654,7 +1746,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "warlord",
@@ -1665,7 +1758,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "warlord",
@@ -1676,7 +1770,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "abyss",
@@ -1687,7 +1782,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "abyss",
@@ -1698,7 +1794,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "abyss",
@@ -1709,7 +1806,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "citadel",
@@ -1720,7 +1818,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "citadel",
@@ -1731,7 +1830,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "citadel",
@@ -1742,7 +1842,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "cindermaw",
@@ -1753,7 +1854,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "cindermaw",
@@ -1764,7 +1866,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "cindermaw",
@@ -1775,7 +1878,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "darklord",
@@ -1786,7 +1890,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "darklord",
@@ -1797,7 +1902,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     },
     {
       "name": "darklord",
@@ -1808,7 +1914,8 @@
       "supportRoute": true,
       "recall": true,
       "armorAndRetreatMitigation": true,
-      "restoredSkills": true
+      "restoredSkills": true,
+      "rangerHealing": true
     }
   ]
 }

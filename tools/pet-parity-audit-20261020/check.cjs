@@ -7,21 +7,22 @@ const C = require('../../src/prototype/engine');
 if (process.env.PET_AUDIT_BASELINE) {
   const cp = require('node:child_process'),
     vm = require('node:vm');
-  const source = cp.execFileSync(
-    'git',
-    [
-      'show',
-      (process.env.PET_AUDIT_BASELINE_REF || 'e0ce4a90451f88699dfbb2e93af08411cf808235') +
-        ':src/prototype/party-pets.js',
-    ],
-    {
-      cwd: __dirname,
-      encoding: 'utf8',
-    },
-  );
-  const module = { exports: {} };
-  vm.runInNewContext(source, { module });
-  module.exports.install(C, { D: C.data, R: C.rules });
+  for (const owner of ['party', 'party-pets']) {
+    const source = cp.execFileSync(
+      'git',
+      [
+        'show',
+        (process.env.PET_AUDIT_BASELINE_REF || 'e0ce4a90451f88699dfbb2e93af08411cf808235') +
+          ':src/prototype/' +
+          owner +
+          '.js',
+      ],
+      { cwd: __dirname, encoding: 'utf8' },
+    );
+    const module = { exports: {} };
+    vm.runInNewContext(source, { module });
+    module.exports.install(C, { D: C.data, R: C.rules });
+  }
 }
 const families = C.data.bosses.map((b) => b.id);
 const names = ['soldier', 'archer', ...families];
@@ -31,6 +32,7 @@ const report = {
   stats: [],
   inheritance: [],
   formations: [],
+  positioning: [],
   combat: [],
   reach: [],
   contracts: [],
@@ -281,6 +283,14 @@ for (const name of families)
     assert.equal(pet.petFamily, name);
     assert.equal(pet.damage, C.rules.balance.companions.petDamage);
     assert(restored.companionSecondSkillUnlocked());
+    const ranger = g.unit('archer', g.hero.x, g.hero.y);
+    g.s.party.push(ranger);
+    u.hp = u.maxHp * 0.25;
+    const wounded = u.hp;
+    g.autoRangerSupport();
+    assert(g.hasSupportEffect(u, 'health'), name + ' receives automatic Ranger healing');
+    g.updateRangerSupport(1);
+    assert(u.hp > wounded);
     report.contracts.push({
       name,
       heroClass,
@@ -291,8 +301,36 @@ for (const name of families)
       recall: true,
       armorAndRetreatMitigation: true,
       restoredSkills: true,
+      rangerHealing: true,
     });
   }
+for (const name of families.filter((f) => C.rules.petCompanions[f].role === 'ranged')) {
+  for (const heroClass of ['paladin', 'mage', 'ranger']) {
+    const { g, u, e, events } = scene(name, heroClass);
+    Object.assign(g.hero, { x: 400, y: 400 });
+    g.formationHeading = { x: 0, y: 1 };
+    Object.assign(u, g.partyFollowPoint(u));
+    Object.assign(e, { x: u.x, y: u.y });
+    e.home = { x: e.x, y: e.y };
+    const reach = Math.min(
+      C.rules.balance.companions.petBasicRange,
+      g.petDefinition(u).first.range,
+      g.petDefinition(u).second.range,
+    );
+    const point = g.petCombatPoint(u, e, [u], reach);
+    const supportedPoint =
+      g.companionSupportDistance(u, point) <= C.rules.companionJudgment.maxAdvanceFromHero;
+    ticks(g, 6);
+    const secondActivates = events.some(
+      (v) => v.type === 'petSkill' && v.stage === 'release' && v.slot === 2,
+    );
+    if (!process.env.PET_AUDIT_BASELINE) {
+      assert(supportedPoint);
+      assert(secondActivates, name + ' close-target positioning does not suppress second');
+    }
+    report.positioning.push({ name, heroClass, supportedPoint, secondActivates });
+  }
+}
 fs.writeFileSync(
   process.env.PET_AUDIT_OUTPUT || __dirname + '/findings.json',
   JSON.stringify(report, null, 2) + '\n',
@@ -304,7 +342,8 @@ console.log(
       report.inheritance.length +
       report.combat.length +
       report.reach.length +
-      report.contracts.length,
+      report.contracts.length +
+      report.positioning.length,
     meleeReachPasses: report.reach.filter((r) => r.activates).length,
     contracts: report.contracts.length,
   }),
