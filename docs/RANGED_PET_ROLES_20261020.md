@@ -25,7 +25,7 @@ The same 189-case actual-tick fixture as dev.113 passes. Values below are delive
 
 At level 20 without inheritance a successful Lifebinder hit can restore 34 HP to itself and 34 to one ally, versus 13.6 self-only previously. It heals at most one ally per contact, never scales from the recipient's large HP pool, clamps overheal and excludes dead/resting/out-of-range/blocked allies. Missed shots give neither heal. This trades raw damage for support; upgraded Archer Heal remains a stronger flexible single-recipient heal (150 HP/10 seconds, without needing projectile contact).
 
-Prepared focused tests cover real contact/miss/dead/resting source, recipient priority, range/line/death/reserve, full-pet ally healing, overheal, hero-pool independence, existing saves and expanded charged damage/Slow/event geometry. Initial existing pet lifecycle/activation/132 VFX frames/automatic range and dungeon-wall checks pass. Final combined integrity/source audit pending.
+Focused tests pass for real contact/miss/dead/resting source, recipient priority, range/line/death/reserve, full-pet ally healing, overheal, hero-pool independence, existing saves and expanded charged damage/Slow/event geometry. Existing pet lifecycle/activation/132 VFX frames/automatic range and dungeon-wall checks pass on the final combined candidate.
 
 Evidence: `tools/pet-parity-audit-20261020/approved.json` (dev.113) and `ranged-dev114.json` (candidate). Reproduce current audit with `PET_AUDIT_OUTPUT=tools/pet-parity-audit-20261020/ranged-dev114.json node tools/pet-parity-audit-20261020/check.cjs`.
 
@@ -63,4 +63,8 @@ Same controlled level-20 actual-tick fixture, dev.113→dev.114, single / six-ta
 
 The high-HP fixture never reaches the finisher threshold; Sovereign's new bonus is independently tested below/above/exactly at 35%, using actual damage and its original cooldown. It is not counted as a fictitious extra DPS gain here. Wards are checked through actual incoming damage, expiration, strongest-layer Recall/Paladin interaction and charge interruption, not inferred survival statistics. Ash Cadet slightly exceeds Soldier cluster output here, as expected for its cleave specialty; Soldier retains its defensive tools.
 
-Final combined source, integrity and release checks pending. Current matrix: `tools/pet-parity-audit-20261020/pets-dev114.json`; the earlier `ranged-dev114.json` is the intermediate four-pet checkpoint, preserved for traceability.
+Final combined source audit passes: all prior numerical pet skill fields are unchanged or increased, shared balance/charged skills/troop/healing rules are identical to dev.113, and base stats, growth, inheritance, formation and command-contract evidence is unchanged. Archer/Soldier measured results are identical; no pet has a measured damage regression. Sovereign's ordinary healthy-target multipliers are unchanged. Functional specialties are visible in all eleven collection/detail entries and independently exercised by healing, area/Slow, ward and finisher tests.
+
+New support/melee-role tests and existing pet lifecycle, activation, automatic dungeon routing, 132 VFX frames, 171 mixed layouts/33 arrivals/22 cadence cases, 161 melee gates, 13-role regroup, veteran, doctrine, judgment, Recall and menu suites pass. Build and generated asset/syntax/sprite/material/audio integrity checks pass. Changed-source formatting passes; only the pre-existing unchanged `tools/sprites/approved.json` whole-format warning remains. No broad CI/device matrix or new appearance assets. Package-only merge/publication next.
+
+Current matrix: `tools/pet-parity-audit-20261020/pets-dev114.json`; the earlier `ranged-dev114.json` is the intermediate four-pet checkpoint, preserved for traceability.
