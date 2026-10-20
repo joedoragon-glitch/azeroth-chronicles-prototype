@@ -9,7 +9,7 @@
     "originConversation": null,
     "decisionSummary": "Joel requested fort benefits and arrows visibly firing over own walls, like Age of Empires; extended low-cover fire to enemies only throughout fields and interiors.",
     "decisionDate": "2026-10-20",
-    "repositoryIssueOrPR": null,
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/343",
     "contentDocuments": [
       "docs/FORTS_RANGER_PASSAGE_20261020.md"
     ],
@@ -23,7 +23,7 @@
     "pendingCorrections": []
   },
   "reference": {
-    "sourceCommit": null,
+    "sourceCommit": "4263c6a6ee8be9c72fe2740f2f88b8c7ef35042f",
     "ownerFilesAndBranches": [
       "src/prototype/renderer.js",
       "src/prototype/fortifications.js",

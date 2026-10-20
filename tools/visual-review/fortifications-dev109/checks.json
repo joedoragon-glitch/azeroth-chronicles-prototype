@@ -1,0 +1,34 @@
+{
+  "version": "0.9.1+snapshot.dev.109",
+  "scope": "Focused local behavior/native rendering; package-only release; no whole-game or browser/device matrix",
+  "passed": [
+    "tests/fortifications.test.cjs",
+    "tests/community-veteran-companions.test.cjs",
+    "tests/passage-work.test.cjs",
+    "tests/economy.test.cjs",
+    "tests/targeting.test.cjs",
+    "tests/crowd-escape.test.cjs",
+    "tests/map-navigation.test.cjs",
+    "tests/menus.test.cjs",
+    "tests/friendly-projectile-dodging.test.cjs",
+    "tools/visual-review/companion-judgment-dev106/recall-check.cjs",
+    "tools/visual-review/companion-judgment-dev106/check.cjs",
+    "tools/visual-review/field-boss-gather-dev105/gather-check.cjs",
+    "tools/visual-review/fortifications-dev109/review.cjs",
+    "npm run build",
+    "node scripts/build.cjs --check",
+    "changed-source Prettier",
+    "git diff --check",
+    "tests/asset-packaging.test.cjs",
+    "node scripts/sprite-scope-audit.cjs --check"
+  ],
+  "pending": [
+    "publication and exact-live verification"
+  ],
+  "limits": [
+    "No full campaign or device matrix",
+    "No actual-device FPS certificate",
+    "Veyra remains unapproved preview-only"
+  ],
+  "sourceCheckpoint": "4263c6a6ee8be9c72fe2740f2f88b8c7ef35042f"
+}
