@@ -1,0 +1,125 @@
+{
+  "verified_at": "2026-10-20T11:48:26.284548+00:00",
+  "merge": "e5ec2c3803c2cd9f37343164601be09b655fc28f",
+  "files": [
+    {
+      "path": "index.html",
+      "match": true,
+      "bytes": 5315,
+      "sha256": "a3f042d98d0512f4f3d67c940ea1539e39009b5f1f7266ecaebde919341ab641"
+    },
+    {
+      "path": "phone.html",
+      "match": true,
+      "bytes": 5316,
+      "sha256": "8c81fbab873ebe789919285e73e2f61d82b038d89a46c916be03d5013e83061e"
+    },
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "2aad84878e3c10766a47140be0f37dfe83c1fa1bb38003c189c150d9830b01b9"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 296,
+      "sha256": "0d848f8b9058fc7e9ccc54b087c6871b0dc423d74b5374d8f02944a981ac7fa3"
+    },
+    {
+      "path": "src/prototype/archive.js",
+      "match": true,
+      "bytes": 54118,
+      "sha256": "96d9ac878ae4e0a02ff72f7115e397ea5482763e14ecc7d8b7e6494b558733fd"
+    },
+    {
+      "path": "src/prototype/boss-combat.js",
+      "match": true,
+      "bytes": 99293,
+      "sha256": "9dd2e97e2a271d2809b769dd153da8f915a628b751c0b4cb9a0607b3d93ac908"
+    },
+    {
+      "path": "src/prototype/combat-visuals.js",
+      "match": true,
+      "bytes": 51139,
+      "sha256": "6e64734dcf425c51b73fca7c65122362a4ddba419a6c069845ce3cb005408034"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 251149,
+      "sha256": "1841c358637032d0ec1a784a1d7a7eda5fc90053a0f8672a0b84cd6256aaee09"
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "match": true,
+      "bytes": 98548,
+      "sha256": "6086ed9a99d0a742f8850f573c3f5ff2573b3b6d7c6c24cb68824f118d46b39d"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "match": true,
+      "bytes": 199210,
+      "sha256": "f1e1ffd0bec0ec799772aaae532c5d06ec6ff5e321ff5947ec581bf652ee1197"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "match": true,
+      "bytes": 468835,
+      "sha256": "e1ac73093eed9756e62243785f0becf6446a4b9207db499567ec45005d918a10"
+    },
+    {
+      "path": "src/prototype/app.js",
+      "match": true,
+      "bytes": 133795,
+      "sha256": "65bd0752380ef46ddcf96df2977f9b89a32c5020c3dd295924ed033a47964e0f"
+    },
+    {
+      "path": "src/prototype/party.js",
+      "match": true,
+      "bytes": 66919,
+      "sha256": "682029b5d4a8a77a7b3da92a6043ffb20ad20bc2bce03e381a10700a9617297a"
+    },
+    {
+      "path": "src/prototype/save.js",
+      "match": true,
+      "bytes": 47903,
+      "sha256": "6cc2359595721b7c11ffa157594bd472541fc415d83e90846caff0c150a3cdef"
+    },
+    {
+      "path": "src/prototype/world.js",
+      "match": true,
+      "bytes": 162623,
+      "sha256": "b28c21339bb6b0a3563bebc2c8e1d0dfb2d5a4940a0c7e02053a35e9efb89979"
+    },
+    {
+      "path": "src/prototype/navigation.js",
+      "match": true,
+      "bytes": 39811,
+      "sha256": "d04e55245d51c3dd62c5485f0f4d19d5fe36fa01339ba41f9f7a8b46da69e870"
+    },
+    {
+      "path": "src/prototype/combat.js",
+      "match": true,
+      "bytes": 47286,
+      "sha256": "a1b184104b1ecca88378fe68de7e8d3731f3b784ac68cc9eab198791c9e1d063"
+    },
+    {
+      "path": "src/prototype/hero-combat.js",
+      "match": true,
+      "bytes": 62011,
+      "sha256": "bd1e499aeec1694c4d86be7b2ce1e9b0fd60fd688bd873303458cb7aec902531"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20550,
+      "sha256": "632058027de5fd39eb2d87ed30d706baaf57686702cafc54d4b272f6e8dd407f"
+    }
+  ],
+  "version": "0.9.1+snapshot.dev.106",
+  "pr": 340,
+  "run": 39417464715,
+  "workflow": "package-only",
+  "normal_workflow_restored": true
+}

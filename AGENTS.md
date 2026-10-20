@@ -1,5 +1,7 @@
 # Project working rules
 
+**Published dev.106 — companion judgment and one-press Recall:** PR #340 / `e5ec2c3803c2cd9f37343164601be09b655fc28f`; package-only run 39417464715 succeeded; all 19 exact live files match. Companions assess support/threats and regroup; Recall finishes through hero attacks, returns to compact formation, preserves movement, survives reload and grants 50% retreat defense until arrival. Focused checks/build passed, normal workflow restored. [Receipt](docs/evidence/COMPANION_RECALL_DEV106_PUBLICATION_20261020.json). Owner play/tuning next. Veyra correction remains preview-only, pending review; no additional automatic work.
+
 **Dev.106 scope expanded — one-press Recall:** Joel clarified durable cancellation/return with retreat protection. Recall now finishes through hero attacks, avoids route resets on repeated presses, gathers a compact formation and persists through reload. Returning companions get non-stacking 50% damage reduction until arrival. Focused behavior/Recall checks passed; final build/publication next. Companion judgment remains included; Veyra remains preview-only.
 
 **Prepared dev.106 — companion judgment:** Joel requested awareness of nearby ally positions and enemy force, with regrouping instead of isolated reckless charges and no new Rogue skills. Focused behavior/doctrine/gather/travel checks passed; build/format and package-only publication next. [Scope](docs/COMPANION_JUDGMENT_20261020.md). Veyra remains preview-only.
