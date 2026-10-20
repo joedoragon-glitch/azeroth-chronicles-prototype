@@ -1298,35 +1298,62 @@
       ctx.fill();
       ctx.stroke();
     }
-    // A small colored lip silhouette stays readable at the native camera scale.
-    // Explicit callers select it; generic faces and male specialists keep their own mouths.
-    function lipstick(x, y, color = '#b85372', smile = 0) {
-      ctx.fillStyle = color;
+    function expressionLips(x, y, warm, wry, tone) {
+      // A tapered upper lip with a cupid's bow and a rounded lower lip.
+      // Both follow the existing expression curve; the old mouth is not painted.
+      const point = (t) => {
+        const inv = 1 - t,
+          ax = x - 2.5,
+          ay = y + 5,
+          bx = x + 0.5,
+          by = y + (warm ? 8 : wry ? 5.8 : 5),
+          cx = x + 3,
+          cy = y + (wry ? 3.6 : 5);
+        const dx = 2 * inv * (bx - ax) + 2 * t * (cx - bx),
+          dy = 2 * inv * (by - ay) + 2 * t * (cy - by),
+          len = Math.hypot(dx, dy);
+        return {
+          x: inv * inv * ax + 2 * inv * t * bx + t * t * cx,
+          y: inv * inv * ay + 2 * inv * t * by + t * t * cy,
+          nx: -dy / len,
+          ny: dx / len,
+        };
+      };
+      const trace = (side) => {
+        ctx.beginPath();
+        for (let j = 0; j <= 24; j++) {
+          const t = j / 24,
+            p = point(t),
+            taper = Math.pow(Math.sin(Math.PI * t), 0.8),
+            width =
+              side < 0
+                ? taper * (0.9 - 0.45 * Math.exp(-Math.pow((t - 0.5) / 0.12, 2)))
+                : taper * 0.9;
+          const xx = p.x + p.nx * width * side,
+            yy = p.y + p.ny * width * side;
+          j ? ctx.lineTo(xx, yy) : ctx.moveTo(xx, yy);
+        }
+        for (let j = 24; j >= 0; j--) {
+          const p = point(j / 24);
+          ctx.lineTo(p.x, p.y);
+        }
+        ctx.closePath();
+        ctx.fill();
+      };
+      ctx.fillStyle = tone;
+      trace(-1);
+      trace(1);
+      ctx.strokeStyle = '#7c3c4d';
+      ctx.lineWidth = 0.34;
       ctx.beginPath();
-      ctx.moveTo(x - 2.9, y);
-      ctx.quadraticCurveTo(x - 1.4, y - 1.2, x, y - 0.35 + smile);
-      ctx.quadraticCurveTo(x + 1.4, y - 1.2, x + 2.9, y);
-      ctx.quadraticCurveTo(x, y + 2.3 + smile, x - 2.9, y);
-      ctx.fill();
-      line(
-        [
-          [x - 2.2, y + 0.15],
-          [x, y + 0.65 + smile * 0.5],
-          [x + 2.2, y + 0.15],
-        ],
-        '#763749',
-        0.45,
-      );
-      line(
-        [
-          [x - 0.9, y + 1.1 + smile * 0.5],
-          [x + 0.8, y + 1.1 + smile * 0.5],
-        ],
-        '#e99aa4',
-        0.5,
-      );
+      for (let j = 0; j <= 24; j++) {
+        const p = point(j / 24);
+        j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
+      }
+      ctx.stroke();
     }
-    function face(x, y, color = skin, bulk = 1, aged = false, mood = 'steady') {
+
+    function face(x, y, color = skin, bulk = 1, aged = false, mood = 'steady', lipColor = null) {
       oval(x, y, 8 * bulk, 9, color);
       fillOval(x - 2 * bulk, y - 3, 4 * bulk, 4, '#fff1d5', 0.17);
       const warm = ['warm', 'bright', 'amused', 'gentle'].includes(mood),
@@ -1377,12 +1404,15 @@
         '#a67960',
         0.8,
       );
-      ctx.strokeStyle = '#825a50';
-      ctx.lineWidth = 0.9;
-      ctx.beginPath();
-      ctx.moveTo(x - 2.5, y + 5);
-      ctx.quadraticCurveTo(x + 0.5, y + (warm ? 8 : wry ? 5.8 : 5), x + 3, y + (wry ? 3.6 : 5));
-      ctx.stroke();
+      if (lipColor) expressionLips(x, y, warm, wry, lipColor);
+      else {
+        ctx.strokeStyle = '#825a50';
+        ctx.lineWidth = 0.9;
+        ctx.beginPath();
+        ctx.moveTo(x - 2.5, y + 5);
+        ctx.quadraticCurveTo(x + 0.5, y + (warm ? 8 : wry ? 5.8 : 5), x + 3, y + (wry ? 3.6 : 5));
+        ctx.stroke();
+      }
       if (warm)
         for (const side of [-1, 1]) fillOval(x + side * 5, y + 3, 1.8, 1.1, '#d88f86', 0.23);
     }
@@ -1606,9 +1636,71 @@
         );
       }
     }
+    // Owner-selected Moon setting for the Mage; Amber ring for Mira.
+    // Staff axis and all existing arms/hands/grip calls stay unchanged.
+    function acceptedStaff(woodland = false) {
+      ctx.save();
+      ctx.translate(-7, 0);
+      const shaft = woodland ? '#806348' : '#596983';
+      shaped(shaft, () => {
+        ctx.moveTo(23.4, 14);
+        ctx.lineTo(23, -34);
+        ctx.lineTo(27, -34);
+        ctx.lineTo(26.6, 14);
+      });
+      softRect(22, -36, 6, 4, woodland ? '#c9b57d' : '#c6b482', 0.6);
+      softRect(23, 11, 4, 4, '#b6bdbe', 0.7);
+      softRect(22.3, -8, 5.4, 14, woodland ? '#574b3a' : '#51465f', 1);
+      for (const y of [-5, -1, 3])
+        line(
+          [
+            [22.6, y],
+            [27.4, y - 1],
+          ],
+          '#c9b57d',
+          0.8,
+        );
+      if (woodland) {
+        ctx.strokeStyle = ink;
+        ctx.lineWidth = 4.6;
+        ctx.beginPath();
+        ctx.ellipse(25, -45, 8, 10, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.strokeStyle = '#c9b57d';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+        line(
+          [
+            [25, -54],
+            [25, -50],
+          ],
+          '#c9b57d',
+          1.5,
+        );
+        oval(25, -45, 3.7, 5.4, '#d0a163');
+      } else {
+        shaped('#c4d1d7', () => {
+          ctx.moveTo(29, -55);
+          ctx.bezierCurveTo(11, -55, 12, -33, 27, -33);
+          ctx.lineTo(28, -37);
+          ctx.bezierCurveTo(18, -38, 19, -48, 29, -51);
+        });
+        oval(28, -44, 4, 5.3, '#b18bd0');
+        line(
+          [
+            [25, -37],
+            [26, -39],
+            [30, -39],
+            [31, -37],
+          ],
+          '#c6b482',
+          1.4,
+        );
+      }
+      ctx.restore();
+    }
     function mageHead(crowned = false) {
-      face(0, -29, skin, 0.94, false, 'bright');
-      lipstick(0, -24, '#bd587d', 0.7);
+      face(0, -29, skin, 0.94, false, 'bright', '#bd587d');
       // Owner-selected option C: silver twin front braids and approved violet bows.
       // The shared head keeps these visible below normal/crowned headgear.
 
@@ -5602,17 +5694,7 @@
             1,
           );
         mageHead();
-        line(
-          [
-            [18, -36],
-            [18, 14],
-          ],
-          '#ad8e61',
-          3,
-        );
-        oval(18, -39, 5, 6, '#a5d1d5');
-        fillOval(16, -41, 2, 2, '#eaf7e3');
-        softRect(15, -29, 6, 4, '#c9b17c', 1);
+        acceptedStaff();
         grip(17, -2);
         poly(
           [
@@ -5907,16 +5989,7 @@
           '#3d405a',
           1.5,
         );
-        line(
-          [
-            [18, -36],
-            [18, 14],
-          ],
-          '#9c805b',
-          3,
-        );
-        oval(18, -38, 5, 6, '#b3d6dd');
-        fillOval(17, -40, 2, 2, '#eff9e8');
+        acceptedStaff();
         grip(17, -1);
         mageHead(true);
       } else if (role === 'ranger') {
@@ -6277,23 +6350,7 @@
             style.trim,
             2,
           );
-          line(
-            [
-              [18, -36],
-              [18, 16],
-            ],
-            '#9f845e',
-            3,
-          );
-          poly(
-            [
-              [10, -37],
-              [18, -43],
-              [26, -37],
-              [18, -32],
-            ],
-            '#b6c894',
-          );
+          acceptedStaff(true);
           rect(-17, -10, 11, 17, '#b6a17a');
           break;
         case 'crypt':
@@ -6846,8 +6903,15 @@
         cindermaw: 'amused',
         darklord: 'amused',
       }[e.family];
-      face(0, -29, skin, 1, ['ridge', 'citadel', 'crypt'].includes(e.family), mood);
-      if (women) lipstick(0, -24, '#b75c70', mood === 'wry' ? 0 : 0.7);
+      face(
+        0,
+        -29,
+        skin,
+        1,
+        ['ridge', 'citadel', 'crypt'].includes(e.family),
+        mood,
+        women ? '#b75c70' : null,
+      );
       const hair = {
         thorn: 'curls',
         crypt: 'short',
@@ -16070,7 +16134,7 @@
             '#354347',
             1.5,
           );
-          lipstick(0, -30, '#a94058');
+          expressionLips(-0.25, -35, false, false, '#a94058');
           softPoly(
             [
               [-12, -4],

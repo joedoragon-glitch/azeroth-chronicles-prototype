@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "status": "integrated",
+  "designId": "mira-staff-review-20261020",
+  "name": "Mira instructor staff options",
+  "kind": "preview",
+  "nextAction": "Publish accepted dev.103 art through package-only workflow; owner live play follows. Preserve accepted preview and original arms/grips.",
+  "context": {
+    "originConversation": "Conversation URL unavailable; owner instruction dated 20 October 2026.",
+    "decisionSummary": "Preview first; fix doubled lips without altering expressions or adding shading. Review Mage/Mira staves.",
+    "decisionDate": "2026-10-20",
+    "contentDocuments": [
+      "tools/visual-review/mouth-staff-preview-20261020/README.md"
+    ],
+    "subsequentOwnerReview": "Broad pink mouth stroke explicitly rejected; maintain real lip shape and Lyss half-smile. Extended arms explicitly rejected; staff only, original arm/hand/grip and x=18 shaft axis.",
+    "ownerSelection": {
+      "mouth": "Revised shaped upper/lower lips",
+      "mageStaff": "A Moon setting",
+      "miraStaff": "C Amber ring",
+      "armConstraint": "No changes to original arms, hands or grips"
+    }
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner requested previews.",
+    "proceduralDesignAcceptance": "Joel approved the revised shaped lips, Mage Moon setting (A), Mira Amber ring (C) on 20 October 2026.",
+    "spriteProductionAuthorization": "None; procedural preview only.",
+    "generatedAppearanceAcceptance": "Not applicable.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "fe6cf08adcae239903fc95726b31f4a92ec4b6aa",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js (read only)",
+      "tools/visual-review/mouth-staff-preview-20261020/preview.cjs",
+      "preview/mouths-staves-frontier-20261020"
+    ],
+    "isolatedReferencePath": "tools/visual-review/mouth-staff-preview-20261020/mira-staff-preview.png",
+    "isolatedReferenceHash": "1a196441ab809a2b247e810c6513016fa2dc885544e97472922d2c5b3746f8fc",
+    "traitsToPreserve": [
+      "Exact original arms, hands and grips",
+      "Original shaft axis x=18",
+      "Live face, selected hair and existing clothing"
+    ],
+    "implementationSourceSha256": "e1ac73093eed9756e62243785f0becf6446a4b9207db499567ec45005d918a10",
+    "implementationScope": "docs/APPROVED_LIPS_STAFFS_20261020.md"
+  },
+  "production": {
+    "releaseCommit": null,
+    "releaseEvidence": null,
+    "rollbackRevision": "Live dev.102 is unchanged"
+  }
+}

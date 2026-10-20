@@ -95,5 +95,11 @@
     "rollbackRevision": "Published dev.101 / 3fccc550e4bca3e356a8b152915bb842682508ef",
     "releaseCommit": "84047541c7acec3b53fe14c895ac49ac5a184d27",
     "releaseEvidence": "docs/evidence/BOWS_LIPSTICK_DEV102_PUBLICATION_20261020.json"
+  },
+  "subsequentRevision": {
+    "version": "dev.103",
+    "mouthHandoff": "mouth-expression-correction-20261020.json",
+    "staffHandoff": null,
+    "note": "The dev.102 lip overlay is historical. Joel approved the shaped-mouth correction; old references retained as rollback."
   }
 }
