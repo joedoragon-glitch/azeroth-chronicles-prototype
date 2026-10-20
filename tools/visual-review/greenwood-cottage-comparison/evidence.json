@@ -1,0 +1,30 @@
+{
+  "entity": {
+    "id": "settlement-major-0",
+    "x": 638.3349036215527,
+    "y": 90.27364994077685,
+    "r": 32,
+    "structure": "vale-cottage",
+    "roadBlocker": true,
+    "renderKind": "prop",
+    "visualScale": 1.4
+  },
+  "region": 0,
+  "registeredKey": "prop:vale-cottage:vale",
+  "entry": {
+    "src": "./assets/sprites/prop-vale-cottage-vale-21e8b38b7497f56b6c01f853f1100b16c78580703f546716db4e739432d68573.png",
+    "width": 816,
+    "height": 816,
+    "hash": "21e8b38b7497f56b6c01f853f1100b16c78580703f546716db4e739432d68573",
+    "revision": "fbe84420634d262175aa6f33c3ba6615aef421a0093421540da4c06d3ab44d92",
+    "displayWidth": 192,
+    "displayHeight": 192,
+    "anchorX": 0.5,
+    "anchorY": 0.75,
+    "labelHeight": 64
+  },
+  "proceduralSourceSha256": "2b129ca6d73109d874335ce9ff5e1e2b514b91393a3300e3a04d96292516a977",
+  "sameCameraScale": true,
+  "renderStatePure": true,
+  "gameplayChanges": false
+}
