@@ -5025,7 +5025,7 @@
     duration: rangerSupport.duration,
     // Ranged troops should assist substantially wounded allies before they
     // collapse, rather than waiting until half their HP has disappeared.
-    // Targeting still prefers the most injured eligible recipient.
+    // One area cast treats every eligible recipient in the existing range.
     threshold: 0.75,
     range: 350,
     species: Object.freeze({
@@ -6074,7 +6074,7 @@
     cunningEnemies: ['thorn', 'warlord', 'supply-crown', 'darklord'],
     supportRadius: 195,
     presenceRadius: 540,
-    moveCooldownSeconds: 6,
+    moveCooldownSeconds: 3,
     // Rogue disruption must create an escape edge even against baseline sprint.
     // Durations remain authored per move; ordinary non-Rogue Slow stays unchanged.
     rogueSlowMovementFactor: 0.4,
@@ -6091,13 +6091,12 @@
       hardCap: false,
       windowSeconds: 2,
       openingMultiplier: 1.6,
-      // Doubled ordinary/guardian protection, then inherited stronger-role curves:
-      // ringleader takes the prior captain profile, captain the prior TRUE boss,
-      // and TRUE bosses share normal-boss compression.
+      // Ringleaders share captain protection. TRUE bosses retain normal-boss
+      // compression; ordinary and guardian curves stay unchanged.
       tiers: Object.freeze({
         ordinary: { knee: 0.675, tail: 0.875 },
         guardian: { knee: 0.475, tail: 0.625 },
-        ringleader: { knee: 0.25, tail: 0.375 },
+        ringleader: { knee: 0.145, tail: 0.24 },
         captain: { knee: 0.145, tail: 0.24 },
         boss: { knee: 0.18, tail: 0.275 },
         trueBoss: { knee: 0.18, tail: 0.275 },

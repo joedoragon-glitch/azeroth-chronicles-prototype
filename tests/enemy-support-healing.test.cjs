@@ -139,10 +139,11 @@ console.log('PASS hostile healing excludes wounded hero, both troop types and al
   const ally = mob('goblin', { hp: 400 });
   assert.equal(g.enemyHealProfile(leader), 'Salvage Surge');
   assert(g.enemySupportHeal(leader), 'Scornfang healer can act through authored ranged volley');
-  assert(ally.supportHeal, 'wounded companion is healed before critically wounded captain');
-  assert(!leader.supportHeal, 'captain does not take ally-priority healing');
+  assert(ally.supportHeal, 'area heal includes the wounded companion');
+  assert(leader.supportHeal, 'area heal also includes an eligible wounded captain');
   near(leader.supportHealCd, 10, 'captain has same per-actor cooldown');
   leader.supportHealCd = 0;
+  delete leader.supportHeal;
   delete ally.supportHeal;
   ally.hp = ally.maxHp;
   assert(g.enemySupportHeal(leader), 'captain can self-heal when no companion needs care');
@@ -156,7 +157,7 @@ console.log('PASS hostile healing excludes wounded hero, both troop types and al
   const ally = mob('ashbeast', { hp: 300, owner: leader.id });
   assert.equal(g.enemyHealProfile(leader), 'Grafting');
   assert(g.enemySupportHeal(leader), 'Dreadmaw prioritizes his wounded brood');
-  assert(ally.supportHeal && !leader.supportHeal);
+  assert(ally.supportHeal && leader.supportHeal);
 }
 {
   const { g, mob } = fixture('march');
@@ -166,8 +167,9 @@ console.log('PASS hostile healing excludes wounded hero, both troop types and al
   const wounded = mob('mireling', { hp: 300 });
   assert.equal(g.enemyHealProfile(direjaw), 'Silt Pulse');
   assert(g.enemySupportHeal(direjaw), 'Direjaw heals the more wounded companion first');
-  assert(wounded.supportHeal && !direjaw.supportHeal);
+  assert(wounded.supportHeal && direjaw.supportHeal);
   direjaw.supportHealCd = 0;
+  delete direjaw.supportHeal;
   delete wounded.supportHeal;
   wounded.hp = wounded.maxHp;
   assert(g.enemySupportHeal(direjaw), 'Direjaw may treat his own wounds');
@@ -187,7 +189,7 @@ for (const profile of ['supply-highlands', 'frontier-overseer']) {
   assert(g.enemySupportHeal(dreadmaw), 'Dreadmaw can use agricultural self-treatment');
   assert(dreadmaw.supportHeal, 'Dreadmaw really heals himself, not just broodmates');
 }
-console.log('PASS three authored hybrid/ranged captains prioritize <50% allies before self');
+console.log('PASS three authored hybrid/ranged captains heal nearby allies and eligible self together');
 
 for (let i = 0; i < 5; i++) {
   const region = ['vale', 'march', 'highlands', 'frontier', 'crown'][i];

@@ -46,18 +46,18 @@ The full CI/device matrix remains the release gate. Tests and runtime behavior s
 
 ## v0.8.108 — Current stronger compression by inherited enemy roles
 
-After the initial v0.8.105 values shown above, the user requested stronger compression throughout the roster, followed by a **specific redistribution** of the already-strengthened curves. This is the authoritative current balance table, overriding the initial calibration above.
+After the initial v0.8.105 values shown above, the user requested stronger compression throughout the roster, followed by a **specific redistribution** of the already-strengthened curves. The current table below includes the later 20 October ringleader/captain parity decision, overriding the historical initial calibration above.
 
 | Enemy tier | Knee fraction of max HP | Logarithmic tail fraction | Source of stronger tuning |
 | --- | ---: | ---: | --- |
 | Ordinary | 0.675 | 0.875 | Original ordinary curve, both parameters halved |
 | Guardian | 0.475 | 0.625 | Original guardian curve, both parameters halved |
-| Ringleader | 0.250 | 0.375 | Previously strengthened captain curve |
+| Ringleader | 0.145 | 0.240 | Current captain curve, per 20 October direction |
 | Captain | 0.145 | 0.240 | Previously strengthened TRUE-boss curve |
 | Normal boss | 0.180 | 0.275 | Previously strengthened normal-boss curve |
 | TRUE boss | 0.180 | 0.275 | Exactly the normal-boss curve |
 
-*Captains deliberately have the strongest compression*, even stronger than TRUE bosses. TRUE bosses still differ through HP, summons, phases and attacks; only the burst defense is identical to normal bosses. The two-second rolling window, exposed-opening multiplier (1.6), shared hero/companion damage path, and no-hard-cap rule are unchanged. No companion targeting, boss abilities, encounter counts or world layouts are modified.
+*Captains and ringleaders deliberately share the strongest compression*, even stronger than TRUE bosses. TRUE bosses still differ through HP, summons, phases and attacks; only the burst defense is identical to normal bosses. The two-second rolling window, exposed-opening multiplier (1.6), shared hero/companion damage path, and no-hard-cap rule are unchanged. No companion targeting, boss abilities, encounter counts or world layouts are modified.
 
 ## Outbound geography restoration · 9 October 2026
 

@@ -71,7 +71,7 @@
       [
         'Healing in battle',
         'Healing restores living actors; it does not revive fallen companions. Some enemies can heal their allies too.',
-        'Hero skill healing is separate from Ranger support over time. Eligible ranged enemies and selected captains/bosses treat injured living allies first, with eligible leaders able to treat themselves. Base enemy support restores ' +
+        'Hero skill healing is separate from Ranger support over time. Eligible ranged enemies and selected captains/bosses treat injured living allies in an area, with eligible leaders included. Base enemy support restores ' +
           percent(heal.fraction) +
           '% of the recipient’s maximum HP over ' +
           heal.duration +

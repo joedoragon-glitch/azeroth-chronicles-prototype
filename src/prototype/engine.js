@@ -199,7 +199,7 @@
         ).length;
       return this.s.mode === 'nightmare'
         ? count(this.s.victories)
-        : Math.min(15, count(this.s.normal) + count(this.s.late));
+        : count(this.s.normal) + count(this.s.true);
     }
     multipliers() {
       const n = this.nightPoints();
@@ -299,11 +299,9 @@
           !u.supportHeal &&
           dist(e, u) <= cfg.range &&
           (e === u || this.line(e, u)),
-        injured = this.zone()
-          .enemies.filter(
-            (u) => this.enemyHealTeammate(e, u) && inReach(u) && u.hp / u.maxHp <= cfg.threshold,
-          )
-          .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp || this.idOrder(a, b)),
+        injured = this.zone().enemies.filter(
+          (u) => this.enemyHealTeammate(e, u) && inReach(u) && u.hp / u.maxHp <= cfg.threshold,
+        ),
         // Do not add a duplicate self-restoration route to a boss that
         // already has authored recovery, vitality siphon, or self-restoring mud.
         // Those bosses can still use this skill to treat their living followers.
@@ -318,43 +316,47 @@
           e.roomCaptain ||
           e.form === 'ringleader',
         self = selfAllowed && inReach(e) && e.hp / e.maxHp <= cfg.threshold ? e : null,
-        target = injured[0] || self;
-      if (!target) return false;
-      const amount = Math.min(
-        target.maxHp - target.hp,
-        target.maxHp * cfg.fraction * this.enemyHealMultiplier(e),
-      );
-      if (!(amount > 0) || !Number.isFinite(amount)) return false;
-      target.supportHeal = {
-        source: e.id,
-        skill,
-        remaining: amount,
-        seconds: cfg.duration,
-      };
+        targets = self ? [...injured, self] : injured;
+      if (!targets.length) return false;
+      const multiplier = this.enemyHealMultiplier(e);
+      let healed = 0;
+      for (const target of targets) {
+        const amount = Math.min(target.maxHp - target.hp, target.maxHp * cfg.fraction * multiplier);
+        if (!(amount > 0) || !Number.isFinite(amount)) continue;
+        target.supportHeal = {
+          source: e.id,
+          skill,
+          remaining: amount,
+          seconds: cfg.duration,
+        };
+        healed++;
+        this.event('heal', {
+          x: target.x,
+          y: target.y,
+          fromX: e.x,
+          fromY: e.y,
+          actor: 'enemy',
+          resource: 'health',
+          source: e.id,
+          target: target.id,
+          amount,
+          skill,
+          species: e.species,
+          family: e.family,
+          form: e.form,
+          boss: e.type === 'boss',
+          captain: !!(e.captain || e.roomCaptain),
+          captainProfile: e.captainProfile,
+        });
+      }
+      if (!healed) return false;
+      // One area cast spends one unchanged cooldown, regardless of recipients.
       e.supportHealCd = cfg.cooldown;
       e.noProgress = 0;
-      this.event('heal', {
-        x: target.x,
-        y: target.y,
-        fromX: e.x,
-        fromY: e.y,
-        actor: 'enemy',
-        resource: 'health',
-        source: e.id,
-        target: target.id,
-        amount,
-        skill,
-        species: e.species,
-        family: e.family,
-        form: e.form,
-        boss: e.type === 'boss',
-        captain: !!(e.captain || e.roomCaptain),
-        captainProfile: e.captainProfile,
-      });
       // Named leaders and Ringleaders announce the skill; ordinary ranged
       // healers retain the green recovery cue without flooding combat messages.
       if (e.type === 'boss' || e.captain || e.roomCaptain || e.form === 'ringleader')
-        this.say(e.name + ' uses ' + skill + ' on ' + target.name + '.');
+        this.say(e.name + ' uses ' + skill + ' in an area.');
       return true;
     }
     enemySupportApproach(e, dt) {
@@ -3898,13 +3900,11 @@
       this.clearCinderResponses(e);
       if (e) {
         this._tacticalRegroups?.delete(e.id);
-        this._tacticalRegroupUsed?.delete(e.id);
         this._tacticalRogueNext?.delete(e.id);
         this._tacticalVisitedAllies?.delete(e.id);
         this._tacticalWoundedUsed?.delete(e.id);
       } else {
         this._tacticalRegroups?.clear();
-        this._tacticalRegroupUsed?.clear();
         this._tacticalRogueNext?.clear();
         this._tacticalVisitedAllies?.clear();
         this._tacticalWoundedUsed?.clear();
@@ -4158,8 +4158,6 @@
         if (this.tacticalSeekRogueSupport(e, totalPressure)) return true;
         this.tacticalStopRogueRegroup(e);
         if (this.tacticalRogueMove(e, target, !!state.anchor)) {
-          if (!this._tacticalRegroupUsed) this._tacticalRegroupUsed = new Set();
-          this._tacticalRegroupUsed.add(e.id); // Prevent lone move spam.
           if (state.anchor) {
             this._tacticalRegroups.set(e.id, {
               phase: 'anchored',
@@ -4175,8 +4173,6 @@
         // defender cannot use its rogue maneuver, normal combat continues:
         // repeatedly fleeing home would make prepared ranged victories impossible.
         if (e.type === 'boss' || e.captain || e.roomCaptain) {
-          if (!this._tacticalRegroupUsed) this._tacticalRegroupUsed = new Set();
-          this._tacticalRegroupUsed.add(e.id);
           return false;
         }
         // Isolated ordinary enemies may refuse the fight and flee quickly.
@@ -5052,7 +5048,6 @@
         e.motion ||
         e.rangedAim ||
         this.tacticalRogueRegroup(e) ||
-        (!newWound && this._tacticalRegroupUsed?.has(e.id)) ||
         (!newWound && (this._tacticalRogueNext?.get(e.id) || 0) > this.s.time) ||
         (!newWound && Number.isFinite(e.fightStart) && this.s.time - e.fightStart < 1.1)
       )

@@ -157,3 +157,13 @@ The director requires roaming bosses to react to valid attacks even when the hit
 ## 16 October 2026 · movement basic attacks respect retreat and Recall
 
 Skill 1 fired automatically while moving is covering fire only: it may hit an eligible in-range target, but cannot create a skill-approach order, replace the player's retreat destination or cancel the companions' Recall posture. Keeping a selected target does not authorize pursuit. Deliberate skill presses retain the existing approach-and-release behavior and deliberate offensive attacks may resume companion engagement. No damage, range, cooldown or targeting-selection tuning changes.
+
+## TRUE night victories, ringleader protection and repeatable Rogue responses · 20 October 2026
+
+Joel explicitly directs Normal mode to count every first non-final normal and TRUE boss victory, including TRUE field bosses and dungeon TRUE bosses defeated before Awakening. This offsets the pet-unlock incentive to hunt TRUE bosses. Use existing normal/TRUE victory facts; never count repeat kills or duplicate late-Awakening records. Remove Normal's fifteen-point ceiling: ten non-final bosses × two forms yield twenty points and the unchanged formula reaches +70% HP / +55% damage at night. Nightmare counting and the Dark Lord exclusion are preserved; peace still removes the bonus. Existing saves contribute their previously recorded TRUE victories automatically.
+
+Ringleaders now receive the current captain burst curve exactly: knee 0.145 and tail 0.240, superseding their historical 0.250/0.375 curve. Their HP, damage, frenzy, rewards and identities are unchanged. Captains, bosses, ordinary monsters and guardians retain their current curves. The two-second shared window, openings and no-hard-cap rule remain.
+
+Rogue reuse delay is three seconds instead of six when existing eligibility conditions apply. Replace the isolated-enemy once-per-encounter veto with the existing reuse gate, allowing repeat responses to persistent disadvantage. Preserve thinking time, cast warnings, movement/projectile speeds, recovery, threat/pressure requirements, fresh-wound exception, retreat/support logic, Slow's cooldown penalty and encounter cleanup. No general ordinary-monster HP or damage increase is authorized in this batch.
+
+Joel adds area-of-effect enemy support healing to this same update, preserving the current cooldown. Apply the existing per-recipient heal amount/duration/scaling to all eligible recipients inside the existing 350-unit caster-centered range, with one ten-second cooldown. Preserve line of sight, 75% health eligibility, faction restrictions, non-stacking effects and leader self-heal eligibility; authored boss recovery remains separate.
