@@ -150,12 +150,17 @@
           nearby = enemies
             .filter((e) => dist(e, u) <= cfg.nearThreatRadius)
             .reduce((sum, e) => sum + this.companionEnemyWeight(e), 0),
-          wounded = u.hp / u.maxHp <= cfg.woundedFraction && nearby >= cfg.woundedThreatForce,
+          wounded =
+            (u.hp / u.maxHp <= cfg.criticalFraction && nearby >= 1) ||
+            (u.hp / u.maxHp <= cfg.woundedFraction && nearby >= cfg.woundedThreatForce),
           ranged =
             u.type === 'archer' || (u.type === 'pet' && this.petDefinition(u)?.role === 'ranged'),
           unsupported =
-            dist(target, this.hero) - (ranged ? this.companionCombatReach(u) : 55) >
-              cfg.maxAdvanceFromHero && dist(u, target) > this.companionCombatReach(u),
+            this.companionSupportDistance(u, u) > cfg.maxAdvanceFromHero ||
+            this.companionPursuitDetour(u) ||
+            (dist(target, this.hero) - (ranged ? this.companionCombatReach(u) : 55) >
+              cfg.maxAdvanceFromHero &&
+              dist(u, target) > this.companionCombatReach(u)),
           overwhelmed = danger >= cfg.minimumEnemyForce && danger > support * cfg.overwhelmRatio,
           heroCommitted =
             dist(this.hero, target) <= cfg.heroCommittedRange &&
@@ -203,7 +208,11 @@
           state = { zone: this.zoneId, next: 0, regrouping: false, safeSince: null };
           companionJudgments.set(u, state);
         }
-        if (this.s.time >= state.next || state.target !== target.id) {
+        if (
+          this.s.time >= state.next ||
+          state.target !== target.id ||
+          (!state.regrouping && this.companionPursuitDetour(u))
+        ) {
           const assessment = this.companionSafetyAssessment(u, target, living);
           state.next = this.s.time + cfg.assessSeconds;
           state.target = target.id;

@@ -13743,21 +13743,220 @@
           }
           break;
         case 'watchpost':
-          for (const x of [-22, 22]) timber([x, 15], [x, -41], 5);
-          timber([-21, 13], [20, -23], 3);
-          boards(-27, -24, 54, 6, '#9a7c53', true);
+          // A compact four-foot tower: continuous ladder, load-bearing braces,
+          // guarded platform and a small roof, all within the old footprint.
+          fillOval(0, 15, 36, 11, '#171b1b', 0.25);
+          for (const [x, y] of [
+            [-24, 9],
+            [18, 15],
+            [-13, -3],
+            [29, 2],
+          ]) {
+            softPoly(
+              [
+                [x - 5, y - 2],
+                [x + 4, y - 4],
+                [x + 7, y + 1],
+                [x - 3, y + 4],
+              ],
+              '#77786d',
+              1,
+            );
+            timber([x, y - 1], [x, -40 + (y - 9)], 5);
+          }
+          timber([-23, 7], [18, -29], 3);
+          timber([-23, -28], [18, 12], 3);
+          timber([19, 11], [29, -43], 3);
           softPoly(
             [
-              [-30, -39],
-              [0, -55],
-              [30, -39],
-              [25, -34],
-              [-26, -34],
+              [-31, -34],
+              [11, -43],
+              [36, -33],
+              [-7, -22],
             ],
-            '#866e50',
+            '#5c4c37',
+            1.5,
+          );
+          for (let j = 0; j < 6; j++)
+            timber([-27 + j * 7, -33 - j * 1.3], [-5 + j * 7, -25 - j * 1.3], 2);
+          for (const [x, y] of [
+            [-28, -35],
+            [10, -44],
+            [32, -35],
+            [-6, -24],
+          ])
+            timber([x, y], [x, y - 12], 3);
+          timber([-28, -47], [10, -56], 3);
+          timber([10, -56], [32, -47], 3);
+          timber([-28, -47], [-6, -36], 3);
+          timber([-6, -36], [32, -47], 3);
+          // Ladder rails run from the ground to the platform's access corner.
+          timber([3, 16], [-2, -24], 2.6);
+          timber([14, 13], [9, -27], 2.6);
+          for (let j = 0; j < 8; j++)
+            timber([3 - j * 0.65, 13 - j * 4.5], [14 - j * 0.65, 10 - j * 4.5], 1.8);
+          for (const [x, y] of [
+            [-28, -47],
+            [10, -56],
+            [32, -47],
+            [-6, -36],
+          ])
+            timber([x, y], [x, y - 15], 2.8);
+          softPoly(
+            [
+              [-34, -61],
+              [5, -76],
+              [38, -60],
+              [0, -48],
+            ],
+            '#695b49',
             1.3,
           );
-          for (const y of [-12, -4, 4, 12]) timber([9, y], [21, y], 2);
+          softPoly(
+            [
+              [-34, -61],
+              [0, -48],
+              [0, -44],
+              [-34, -57],
+            ],
+            '#8d7957',
+            1,
+          );
+          softPoly(
+            [
+              [0, -48],
+              [38, -60],
+              [38, -56],
+              [0, -44],
+            ],
+            '#4e4538',
+            1,
+          );
+          timber([5, -76], [0, -48], 1.3);
+          break;
+        case 'crown-orrery':
+          fillOval(0, 14, 74, 24, '#171522', 0.24);
+          softPoly(
+            [
+              [-66, 0],
+              [0, -22],
+              [66, 0],
+              [0, 24],
+            ],
+            '#92869b',
+            2,
+          );
+          softPoly(
+            [
+              [-66, 0],
+              [0, 24],
+              [0, 32],
+              [-66, 8],
+            ],
+            '#51495f',
+            1.2,
+          );
+          softPoly(
+            [
+              [0, 24],
+              [66, 0],
+              [66, 8],
+              [0, 32],
+            ],
+            '#393646',
+            1.2,
+          );
+          softPoly(
+            [
+              [-49, -7],
+              [0, -23],
+              [49, -7],
+              [0, 10],
+            ],
+            '#b4a6b2',
+            1.5,
+          );
+          softPoly(
+            [
+              [-24, -10],
+              [-24, -53],
+              [0, -63],
+              [25, -53],
+              [25, -10],
+              [0, -1],
+            ],
+            '#65576e',
+            2,
+          );
+          softPoly(
+            [
+              [0, -63],
+              [25, -53],
+              [25, -10],
+              [0, -1],
+            ],
+            '#453e53',
+            1.2,
+          );
+          for (const x of [-17, 17])
+            line(
+              [
+                [x, -14],
+                [x, -49],
+              ],
+              '#c1a168',
+              2,
+            );
+          rect(-9, -36, 18, 17, '#393543');
+          poly(
+            [
+              [-6, -30],
+              [-4, -35],
+              [0, -32],
+              [4, -35],
+              [6, -30],
+              [5, -26],
+              [-5, -26],
+            ],
+            '#d3b574',
+          );
+          fillOval(0, -61, 34, 10, '#c1a168', 1);
+          // Bronze astronomical rings, with a single clear silhouette.
+          for (const [rx, ry, angle] of [
+            [47, 24, -0.55],
+            [25, 48, 0.35],
+            [47, 42, 0.2],
+          ]) {
+            ctx.save();
+            ctx.translate(0, -102);
+            ctx.rotate(angle);
+            ctx.strokeStyle = '#58452e';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.strokeStyle = '#c9ac71';
+            ctx.lineWidth = 2.6;
+            ctx.stroke();
+            ctx.restore();
+          }
+          fillOval(0, -102, 14, 14, '#6a597f', 1);
+          fillOval(-4, -107, 7, 6, '#b4a3c6', 0.8);
+          line(
+            [
+              [-22, -57],
+              [23, -146],
+            ],
+            '#d7b777',
+            3,
+          );
+          fillOval(24, -148, 4, 4, '#f2d99d', 1);
+          for (const [x, y] of [
+            [-43, -115],
+            [39, -83],
+            [-11, -146],
+          ])
+            fillOval(x, y, 3, 3, '#e4ca8c', 1);
           break;
         case 'barricade':
         case 'replacement-stakes':
@@ -16732,6 +16931,8 @@
     frontierTreeShoots(ctx, e, p, region);
   }
   function unscaledHeight(e) {
+    if (e.structure === 'crown-orrery') return 165;
+    if (e.structure === 'watchpost') return 95;
     if (e.structure === 'frontier-grain-silo') return 165;
     if (e.structure === 'frontier-civic-fountain') return 110;
     if (e.type === 'pet') return 58;
@@ -17440,8 +17641,24 @@
         ctx.fill();
       }
     }
+    if (region === 4) {
+      rect(430, 810, 430, 720, '#9b8ba044');
+      rect(450, 790, 450, 700, '#71647d');
+      for (let x = 450; x <= 790; x += 40) line({ x, y: 450 }, { x, y: 700 }, '#b7a4b644', 1);
+      for (let y = 450; y <= 700; y += 40) line({ x: 450, y }, { x: 790, y }, '#b7a4b644', 1);
+      for (const y of [450, 700]) line({ x: 450, y }, { x: 790, y }, '#b5a081', 2);
+    }
     for (const p of R.terrain[region]) {
       const kind = p.kind || 'cliff';
+      if (kind === 'orrery') {
+        rect(p.x - 150, p.x + 150, p.y - 140, p.y + 160, '#81768b88');
+        rect(p.x - 130, p.x + 130, p.y - 120, p.y + 140, '#5e566c');
+        for (let d = -120; d <= 120; d += 40) {
+          line({ x: p.x + d, y: p.y - 120 }, { x: p.x + d, y: p.y + 140 }, '#b2a5b333', 1);
+          line({ x: p.x - 130, y: p.y + d }, { x: p.x + 130, y: p.y + d }, '#b2a5b333', 1);
+        }
+        continue;
+      }
       if (kind === 'fountain') continue; // Depth-sorted civic masonry is painted as a prop.
       if (kind === 'grain-silo') {
         // Compacted loading apron is walkable; the smaller silo body blocks.
@@ -17576,12 +17793,31 @@
               1.3,
             );
       } else {
+        const segment = (lo, hi) => {
+          if (p.industrial) {
+            // Contained heat raceways: a masonry end wall on every closed
+            // segment, protected dry work aprons and regular exchanger ties.
+            rect(p.x1 - 95, p.x2 + 95, lo - 45, hi + 45, '#74697955');
+            rect(p.x1 - 17, p.x2 + 17, lo - 18, hi + 18, '#302d36');
+            rect(p.x1 - 11, p.x2 + 11, lo - 12, hi + 12, '#8d7b7d');
+          }
+          strip(kind, p.x1, p.x2, lo, hi);
+          if (p.industrial) {
+            for (const x of [p.x1 - 8, p.x2 + 8]) {
+              line({ x, y: lo - 8 }, { x, y: hi + 8 }, '#b7a199', 3);
+              for (let y = lo + 20; y < hi; y += 65)
+                line({ x: x - 6, y }, { x: x + 6, y }, '#413943', 3);
+            }
+            for (const y of [lo - 8, hi + 8])
+              line({ x: p.x1 - 9, y }, { x: p.x2 + 9, y }, '#c1a18b', 4);
+          }
+        };
         let at = p.y1;
         for (const [lo, hi] of p.gaps || []) {
-          strip(kind, p.x1, p.x2, at, lo);
+          segment(at, lo);
           at = hi;
         }
-        strip(kind, p.x1, p.x2, at, p.y2);
+        segment(at, p.y2);
       }
     }
     ctx.restore();

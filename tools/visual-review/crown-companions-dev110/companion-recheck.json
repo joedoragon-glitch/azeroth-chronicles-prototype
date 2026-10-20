@@ -1,0 +1,171 @@
+{
+  "version": "0.9.1+snapshot.dev.110",
+  "sourceCommit": "working dev110 candidate",
+  "scope": "Focused headless behavior audit; no runtime changes, full-campaign simulation or device/survival-rate claim",
+  "passed": [
+    {
+      "behavior": "No autonomous hunting of idle mobs",
+      "cases": 12
+    }
+  ],
+  "findings": [
+    {
+      "id": "critical-single-foe",
+      "severity": "high",
+      "observed": false,
+      "cases": [
+        {
+          "heroClass": "paladin",
+          "companion": "soldier",
+          "healthFraction": 0.1,
+          "assessmentUnsafe": true,
+          "danger": 1,
+          "support": 0.55,
+          "attackedBeforeEnemyRecovery": true,
+          "maximumProgressTowardHero": 261.4312789993423,
+          "deathAtSeconds": 1.5
+        },
+        {
+          "heroClass": "paladin",
+          "companion": "pet:thorn",
+          "healthFraction": 0.1,
+          "assessmentUnsafe": true,
+          "danger": 1,
+          "support": 0.55,
+          "attackedBeforeEnemyRecovery": true,
+          "maximumProgressTowardHero": 174.15593645806507,
+          "deathAtSeconds": 1
+        },
+        {
+          "heroClass": "mage",
+          "companion": "soldier",
+          "healthFraction": 0.1,
+          "assessmentUnsafe": true,
+          "danger": 1,
+          "support": 0.55,
+          "attackedBeforeEnemyRecovery": true,
+          "maximumProgressTowardHero": 256.1366839538342,
+          "deathAtSeconds": 1.8
+        },
+        {
+          "heroClass": "mage",
+          "companion": "pet:thorn",
+          "healthFraction": 0.1,
+          "assessmentUnsafe": true,
+          "danger": 1,
+          "support": 0.55,
+          "attackedBeforeEnemyRecovery": true,
+          "maximumProgressTowardHero": 174.15593645806507,
+          "deathAtSeconds": 1
+        },
+        {
+          "heroClass": "ranger",
+          "companion": "soldier",
+          "healthFraction": 0.1,
+          "assessmentUnsafe": true,
+          "danger": 1,
+          "support": 0.55,
+          "attackedBeforeEnemyRecovery": true,
+          "maximumProgressTowardHero": 256.1366839538342,
+          "deathAtSeconds": 1.8
+        },
+        {
+          "heroClass": "ranger",
+          "companion": "pet:thorn",
+          "healthFraction": 0.1,
+          "assessmentUnsafe": true,
+          "danger": 1,
+          "support": 0.55,
+          "attackedBeforeEnemyRecovery": true,
+          "maximumProgressTowardHero": 174.15593645806507,
+          "deathAtSeconds": 1
+        }
+      ],
+      "cause": "woundedThreatForce is 1.5 while a regular enemy weighs 1; minimumEnemyForce is 2. A target already within basic reach also bypasses unsupported pursuit."
+    },
+    {
+      "id": "long-detour-support",
+      "severity": "high",
+      "observed": false,
+      "cases": [
+        {
+          "companion": "soldier",
+          "targetDistanceFromHero": 300,
+          "authoredAdvanceSetting": 280,
+          "maximumCompanionDistance": 50,
+          "offensiveStepsOutsideLimit": 0,
+          "route": [
+            {
+              "x": 620,
+              "y": 2140
+            },
+            {
+              "x": 700,
+              "y": 2140
+            },
+            {
+              "x": 800,
+              "y": 1600
+            }
+          ]
+        },
+        {
+          "companion": "pet:thorn",
+          "targetDistanceFromHero": 300,
+          "authoredAdvanceSetting": 280,
+          "maximumCompanionDistance": 0,
+          "offensiveStepsOutsideLimit": 0,
+          "route": [
+            {
+              "x": 620,
+              "y": 2140
+            },
+            {
+              "x": 700,
+              "y": 2140
+            },
+            {
+              "x": 800,
+              "y": 1600
+            }
+          ]
+        }
+      ],
+      "cause": "Unsupported checks target-to-hero distance (minus attack reach), not the companion’s own distance or physical pursuit route. Ordinary attack routes do not use the hostile-avoidance option used by gathering/regrouping."
+    },
+    {
+      "id": "fort-range-routing",
+      "severity": "high",
+      "observed": false,
+      "case": {
+        "enemyPosition": {
+          "x": 2955,
+          "y": 930
+        },
+        "route": [
+          {
+            "x": 3305,
+            "y": 920
+          },
+          {
+            "x": 3305,
+            "y": 940
+          }
+        ],
+        "routeClearByPlanner": false,
+        "routeDistanceFromEnemy": 350,
+        "routeAvoidanceRadius": 435.40000000000003,
+        "enemyActualRange": 400.40000000000003,
+        "enemyBecameAggressive": true,
+        "enemyAimedAtGatherer": true
+      },
+      "cause": "Resource/regroup route threat radius retains ordinary acquisition plus 35 (321), while garrison acquisition/shot range is now 400.4. A route 350 units away is accepted and the real enemy AI acquires and aims at its gathering troop."
+    }
+  ],
+  "observation": {
+    "currentSupport": 4.5,
+    "currentDanger": 1,
+    "unsafe": false,
+    "note": "Existing numeric support is local to the companion; no prediction of support at the destination. This is a tuning limitation, not counted as a third independently reproduced failure."
+  }
+}

@@ -142,6 +142,12 @@
           (this.enemyFort(e) ? R.balance.fortifications.rangeMultiplier : 1)
         );
       }
+      enemyAcquisitionRange(e) {
+        return Math.max(
+          R.balance.enemyAcquisitionRange * R.balance.enemyTargetingMultiplier,
+          this.enemyRanged(e) && this.enemyFort(e) ? this.enemyRangedRange(e) : 0,
+        );
+      }
       enemyRangedLine(e, target) {
         return this.enemyRanged(e)
           ? this.fortShotClear(e, target, this.enemyShotCover(this.enemyFort(e)))

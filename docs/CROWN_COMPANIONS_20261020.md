@@ -1,0 +1,9 @@
+# Dark Crown and companion safety — 20 October 2026
+
+Work in progress for dev.110. Joel authorized implementation, auditing, repairs and merge/publication without another confirmation. The forum announcement may follow publication.
+
+Crownwatch receives an authored street/plot composition, connected front paths and a civic court. Ash Refuge homes and domestic props move away from the lava. Conflicting town rock dressing is reused along the western/southern outskirts. The main lava channel reaches both map boundaries with existing crossings preserved. Detached heat channels receive masonry containment and dry work aprons, using the established glass/ceramic/thermal industry. The unexplained obsidian circle becomes a bronze Crown orrery on a smaller masonry base in a southern civic terrace. Shared watchposts receive four supported feet, braces, guarded platforms, continuous ladders and compact roofs. Citadel gate throats widen without moving enemies or progress.
+
+Companion repairs address all three reproductions in `COMPANION_BEHAVIOR_AUDIT_20261020.md`: critical health triggers withdrawal against one foe; offensive routes are checked against the player and actual nearby healthy combat support; gathering/regroup route envelopes use actual acquisition/ranged reach, including fort bonuses. No new skill or saved AI state. Recall and resource jobs retain their priority. Retreat still allows existing defensive cover attacks while moving; this does not guarantee survival at 10% health.
+
+Current checkpoint: original reproductions no longer exhibit the three defects; prior local-support regression caught and repaired. Native before/after captures retained. Final visual/access/save audit, focused regression checks, build and publication remain pending. Exact character appearance approvals are not inferred: Veyra's unapproved correction stays aside. Map retheming and new raster production are outside this pass.

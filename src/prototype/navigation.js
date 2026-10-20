@@ -9,7 +9,8 @@
       terrainTrips = new WeakMap();
     const patrolResumes = new WeakMap();
     const companionTrips = new WeakMap(),
-      laborThreatFrames = new WeakMap();
+      laborThreatFrames = new WeakMap(),
+      unsupportedPursuits = new WeakSet();
     class Navigation {
       observeCrowdFrame(intervalMs, active = true) {
         const zone = this.s.zones[this.zoneId],
@@ -67,13 +68,11 @@
                 x: e.x,
                 y: e.y,
                 r:
-                  (e.type === 'boss'
-                    ? Math.max(
-                        R.bossCadence.specialRange,
-                        R.balance.enemyAcquisitionRange * R.balance.enemyTargetingMultiplier,
-                      )
-                    : R.balance.enemyAcquisitionRange * R.balance.enemyTargetingMultiplier) +
-                  cfg.enemyMargin,
+                  Math.max(
+                    this.enemyAcquisitionRange(e),
+                    this.enemyRanged(e) ? this.enemyRangedRange(e) : 0,
+                    e.type === 'boss' ? R.bossCadence.specialRange : 0,
+                  ) + cfg.enemyMargin,
               }));
         laborThreatFrames.set(this, { zone: z, time: this.s.time, enemies: z.enemies, threats });
         return threats;
@@ -214,15 +213,58 @@
       }
       clearCompanionTravel(u) {
         companionTrips.delete(u);
+        unsupportedPursuits.delete(u);
         u.path = [];
         u.routeAge = 0;
+      }
+      companionPursuitAnchors(u) {
+        return [
+          this.hero,
+          ...this.activeLivingParty().filter(
+            (ally) =>
+              ally !== u &&
+              !ally.order &&
+              ally.hp / ally.maxHp > R.companionJudgment.woundedFraction &&
+              dist(ally, u) <= R.companionJudgment.supportRadius &&
+              this.clearSegment(ally, u),
+          ),
+        ];
+      }
+      companionSupportDistance(u, p, anchors = this.companionPursuitAnchors(u)) {
+        return Math.min(...anchors.map((a) => dist(p, a)));
+      }
+      companionPursuitDetour(u) {
+        return unsupportedPursuits.has(u);
+      }
+      companionPursuitRouteAllowed(u, path, stop = 0) {
+        const max = R.companionJudgment.maxAdvanceFromHero,
+          anchors = this.companionPursuitAnchors(u);
+        return path.every((p, j) => {
+          if (j < path.length - 1) return this.companionSupportDistance(u, p, anchors) <= max;
+          const from = path[j - 1] || u,
+            d = Math.max(1, dist(from, p)),
+            reach = Math.min(stop, d),
+            end = { x: p.x + ((from.x - p.x) * reach) / d, y: p.y + ((from.y - p.y) * reach) / d };
+          return this.companionSupportDistance(u, end, anchors) <= max;
+        });
       }
       followCompanion(u, target, speed, dt, stop, avoidHostiles = false) {
         if (dist(u, target) <= stop) return true;
         const gathering = this.gatheringUnit(u),
           cautious = gathering || avoidHostiles,
+          pursuing =
+            !gathering &&
+            !this.s.recallActive &&
+            !this.companionRetreating(u) &&
+            this._tacticalPartyTargets?.has(u.id),
           threats = cautious ? this.gatheringThreats() : [];
+        if (!pursuing) unsupportedPursuits.delete(u);
         if (this.companionTravelClear(u, target, threats)) {
+          if (pursuing && !this.companionPursuitRouteAllowed(u, [target], stop)) {
+            unsupportedPursuits.add(u);
+            u.path = [{ x: target.x, y: target.y }];
+            return false;
+          }
           companionTrips.delete(u);
           u.path = [];
           return this.move(u, target, speed, dt, stop);
@@ -264,6 +306,11 @@
           }
           return false;
         }
+        if (pursuing && !this.companionPursuitRouteAllowed(u, trip.path, stop)) {
+          unsupportedPursuits.add(u);
+          return false;
+        }
+        unsupportedPursuits.delete(u);
         const moved = this.move(u, trip.path[0], speed, dt);
         if (dist(u, trip.path[0]) < 1) trip.path.shift();
         return moved;
