@@ -1257,27 +1257,35 @@
     function face(x, y, color = skin, bulk = 1, aged = false, mood = 'steady') {
       oval(x, y, 8 * bulk, 9, color);
       fillOval(x - 2 * bulk, y - 3, 4 * bulk, 4, '#fff1d5', 0.17);
-      const warm = ['warm', 'bright', 'amused', 'gentle'].includes(mood);
+      const warm = ['warm', 'bright', 'amused', 'gentle'].includes(mood),
+        sly = mood === 'sly',
+        wry = mood === 'wry' || sly;
       for (const side of [-1, 1]) {
         line(
           [
-            [x + side * 2.5 * bulk, y - (warm ? 3.4 : mood === 'wry' ? (side < 0 ? 4 : 2.5) : 2)],
-            [
-              x + side * 5 * bulk,
-              y - (mood === 'stern' ? 4 : mood === 'wry' ? (side < 0 ? 5 : 3) : 3),
-            ],
+            [x + side * 2.5 * bulk, y - (warm ? 3.4 : wry ? (side < 0 ? 4 : 2.5) : 2)],
+            [x + side * 5 * bulk, y - (mood === 'stern' ? 4 : wry ? (side < 0 ? 5 : 3) : 3)],
           ],
           '#51483c',
           warm ? 0.8 : 1.2,
         );
         oval(
-          x + side * 3.2 * bulk,
+          x + side * 3.2 * bulk + (sly ? 0.6 : 0),
           y - 0.5,
           warm ? 1.1 : 0.85,
-          mood === 'bright' ? 1.7 : 1.1,
+          sly ? 0.65 : mood === 'bright' ? 1.7 : 1.1,
           '#293a35',
         );
         if (warm) fillOval(x + side * 3.2 * bulk - 0.2, y - 1, 0.35, 0.45, '#f9f1d7');
+        if (sly)
+          line(
+            [
+              [x + side * 3.2 * bulk - 1.4, y - 1.3],
+              [x + side * 3.2 * bulk + 1.5, y - 0.9],
+            ],
+            '#51483c',
+            0.8,
+          );
         if (aged)
           line(
             [
@@ -1301,12 +1309,7 @@
       ctx.lineWidth = 0.9;
       ctx.beginPath();
       ctx.moveTo(x - 2.5, y + 5);
-      ctx.quadraticCurveTo(
-        x + 0.5,
-        y + (warm ? 8 : mood === 'wry' ? 5.8 : 5),
-        x + 3,
-        y + (mood === 'wry' ? 3.6 : 5),
-      );
+      ctx.quadraticCurveTo(x + 0.5, y + (warm ? 8 : wry ? 5.8 : 5), x + 3, y + (wry ? 3.6 : 5));
       ctx.stroke();
       if (warm)
         for (const side of [-1, 1]) fillOval(x + side * 5, y + 3, 1.8, 1.1, '#d88f86', 0.23);
@@ -2078,7 +2081,16 @@
           1.3,
         );
       }
-      face(0, -29, hide, 0.85, false, friendly ? 'wry' : crown ? 'stern' : 'amused');
+      // Slingers use a half-lidded side glance, uneven brows and one-corner
+      // smirk instead of the round-eyed, blushing smile of cheerful NPCs.
+      face(
+        0,
+        -29,
+        hide,
+        0.85,
+        false,
+        ranged && !friendly ? 'sly' : friendly ? 'wry' : crown ? 'stern' : 'amused',
+      );
       shaped('#b8bd87', () => {
         ctx.moveTo(-1, -29);
         ctx.lineTo(-1.5, -27);

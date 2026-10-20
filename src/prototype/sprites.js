@@ -187,6 +187,14 @@
     return true;
   }
   function definitionFor(e, region = 0, rescued = false) {
+    // Owner-selected procedural faces, hair and armor supersede these three
+    // raster bodies, including every soldier tier. Keep stable catalog keys,
+    // registrations and their clips intact for recovery; Ranger/Archer stay raster.
+    if (
+      (e?.renderKind === 'hero' && ['paladin', 'mage'].includes(e.class)) ||
+      (e?.renderKind === 'ally' && (e.class || e.type) === 'soldier')
+    )
+      return null;
     // Military officers have a distinct procedural finish, not the generic monster crown.
     if (e?.form === 'ringleader' && ['orc', 'archer', 'crownguard'].includes(e.species))
       return null;
