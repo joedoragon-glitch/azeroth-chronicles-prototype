@@ -1,7 +1,7 @@
 name: Test and deploy app
 on:
   push:
-    branches: [main]
+    branches: [owner-crowd-dev107-disabled]
   pull_request:
     branches: [main, perf/v09-integration-20261010]
   workflow_dispatch:

@@ -3354,7 +3354,7 @@
               if (dist(h, before) < 0.1) pendingSkill.stalled += dt;
               else pendingSkill.stalled = 0;
               // An unreachable foe never traps the player in an endless order.
-              if (pendingSkill.stalled >= 2 || !this.route(h, target).length) h.order = null;
+              if (pendingSkill.stalled >= 2) h.order = null;
             }
           }
         } else {

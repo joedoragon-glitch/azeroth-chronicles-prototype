@@ -5,10 +5,51 @@
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     // Runtime-only broad phase and congestion clocks. Never persist crowd state.
     const crowds = new WeakMap();
+    const crowdPressure = new WeakMap(),
+      terrainTrips = new WeakMap();
     const patrolResumes = new WeakMap();
     const companionTrips = new WeakMap(),
       laborThreatFrames = new WeakMap();
     class Navigation {
+      observeCrowdFrame(intervalMs, active = true) {
+        const zone = this.s.zones[this.zoneId],
+          cfg = R.actorSpacing;
+        // Ignore background/resume gaps and intentional pauses. Cadence is only
+        // an urgency signal: low FPS alone never disables body collision.
+        if (!active || !Number.isFinite(intervalMs) || intervalMs <= 0 || intervalMs > 1000) {
+          crowdPressure.delete(this);
+          return;
+        }
+        let pressure = crowdPressure.get(this);
+        if (pressure?.zone !== zone) pressure = { zone, slow: 0, until: 0 };
+        pressure.slow =
+          intervalMs >= cfg.slowFrameMs
+            ? pressure.slow + Math.min(intervalMs / 1000, 0.1)
+            : Math.max(0, pressure.slow - intervalMs / 1000);
+        if (pressure.slow >= cfg.slowFrameSeconds) {
+          pressure.slow = cfg.slowFrameSeconds;
+          pressure.until = this.s.time + cfg.escapeSeconds;
+        }
+        crowdPressure.set(this, pressure);
+      }
+      crowdUnderPressure() {
+        const pressure = crowdPressure.get(this);
+        return pressure?.zone === this.s.zones[this.zoneId] && pressure.until > this.s.time;
+      }
+      crowdEscaping(unit, frame = this.actorCrowd()) {
+        return (frame.congestion.get(unit)?.until || 0) > this.s.time;
+      }
+      reserveMovementPlan(unit) {
+        const frame = this.actorCrowd(),
+          limit = R.actorSpacing.movementPlansPerTick;
+        // Leave one slot for the player's approach order. Deferred actors keep
+        // following a valid cached route, or wait until the next simulation tick.
+        if (frame.plans >= limit || (unit !== this.hero && frame.otherPlans >= limit - 1))
+          return false;
+        frame.plans++;
+        if (unit !== this.hero) frame.otherPlans++;
+        return true;
+      }
       gatheringUnit(u) {
         return u?.order?.type === 'gather' || u?.order?.type === 'deposit';
       }
@@ -199,7 +240,6 @@
             target: { x: target.x, y: target.y },
             age: 0,
             path: [],
-            stalled: 0,
           };
           companionTrips.set(u, trip);
         }
@@ -209,10 +249,12 @@
           trip.age = 0;
         }
         if (trip.age <= 0) {
-          trip.path = this.companionRoute(u, target, cautious);
-          trip.age = R.gatheringTravel.replanSeconds;
-          trip.target = { x: target.x, y: target.y };
-          u.path = trip.path;
+          if (this.reserveMovementPlan(u)) {
+            trip.path = this.companionRoute(u, target, cautious);
+            trip.age = R.gatheringTravel.replanSeconds;
+            trip.target = { x: target.x, y: target.y };
+            u.path = trip.path;
+          } else if (!trip.path.length) return false;
         }
         while (trip.path.length && dist(u, trip.path[0]) < 1) trip.path.shift();
         if (!trip.path.length) {
@@ -224,11 +266,6 @@
         }
         const moved = this.move(u, trip.path[0], speed, dt);
         if (dist(u, trip.path[0]) < 1) trip.path.shift();
-        trip.stalled = moved ? 0 : trip.stalled + dt;
-        if (trip.stalled >= R.actorSpacing.congestionSeconds) {
-          trip.age = 0;
-          trip.stalled = 0;
-        }
         return moved;
       }
       roamingBoss(e) {
@@ -353,10 +390,11 @@
                 ? cfg.largeRadius
                 : cfg.radius;
       }
-      actorCrowd() {
+      actorCrowd(refresh = false) {
         const zone = this.s.zones[this.zoneId];
         let frame = crowds.get(this);
         if (
+          !refresh &&
           frame?.zone === zone &&
           frame.at === this.s.time &&
           frame.enemyList === zone?.enemies &&
@@ -368,7 +406,8 @@
           return frame;
         const enemies = (zone?.enemies || []).filter((u) => u.hp > 0 && !u.neutral),
           allies = [this.hero, ...this.activeLivingParty()].filter((u) => u.hp > 0),
-          bodies = [...allies, ...enemies];
+          bodies = [...allies, ...enemies],
+          previousBodies = frame?.bodies || [];
         frame = {
           zone,
           hero: this.hero,
@@ -384,8 +423,12 @@
           bins: new Map(),
           cells: new Map(),
           congestion: frame?.zone === zone ? frame.congestion : new WeakMap(),
+          plans: frame?.zone === zone && frame.at === this.s.time ? frame.plans : 0,
+          otherPlans: frame?.zone === zone && frame.at === this.s.time ? frame.otherPlans : 0,
         };
         crowds.set(this, frame);
+        for (const unit of previousBodies)
+          if (!frame.members.has(unit)) frame.congestion.delete(unit);
         for (const unit of bodies) this.indexActor(unit, frame);
         return frame;
       }
@@ -418,6 +461,7 @@
         )
           return false;
         if (!frame.members.has(unit)) return true;
+        if (this.crowdEscaping(unit, frame)) return true;
         const candidates = new Set(),
           steps = Math.max(1, Math.ceil(dist(unit, point) / R.actorSpacing.cellSize));
         for (let j = 0; j <= steps; j++)
@@ -431,6 +475,8 @@
             candidates.add(other);
         for (const other of candidates) {
           if (other === unit || other.hp <= 0) continue;
+          // A brief, symmetric passage lets either side leave a real jam.
+          if (this.crowdEscaping(other, frame)) continue;
           const friendly = frame.hostile.has(unit) === frame.hostile.has(other);
           // Travel should not snag the hero on their own companions. Keep
           // normal body blocking throughout the existing combat-active state.
@@ -452,9 +498,7 @@
       separateActors(dt) {
         // Scripted charges/repositions use their own authoritative movement owner.
         // Refresh their broad-phase positions before passive overlap recovery.
-        const prior = crowds.get(this);
-        if (prior) prior.at = -Infinity;
-        const frame = this.actorCrowd(),
+        const frame = this.actorCrowd(true),
           cfg = R.actorSpacing;
         for (const unit of frame.bodies) {
           // Fixed warning origins, held victims and scripted motion remain authoritative.
@@ -465,6 +509,7 @@
             unit.motion ||
             unit.keeperHeld ||
             unit.deathRollHeld ||
+            this.crowdEscaping(unit, frame) ||
             this.partyChargeState(unit)
           )
             continue;
@@ -472,6 +517,7 @@
             dy = 0;
           for (const other of this.nearbyActors(unit, frame)) {
             if (other === unit || other.hp <= 0) continue;
+            if (this.crowdEscaping(other, frame)) continue;
             if (other === this.hero && !frame.combatActive && !frame.hostile.has(unit)) continue;
             const gap = this.actorRadius(unit) + this.actorRadius(other),
               distance = dist(unit, other),
@@ -768,11 +814,25 @@
           nx = entity.x + ((target.x - entity.x) / d) * step,
           ny = entity.y + ((target.y - entity.y) / d) * step;
         const frame = this.actorCrowd(),
-          congestion = frame.congestion.get(entity) || { blocked: 0, until: 0 },
-          relaxed = congestion.until > this.s.time,
-          legal = (p) =>
-            this.clearSegment(entity, p) &&
-            (forced || entity.motion || this.actorStepAllowed(entity, p, relaxed, frame));
+          cfg = R.actorSpacing,
+          congestion = frame.congestion.get(entity) || { blocked: 0, until: 0 };
+        if (this.s.time - (congestion.at ?? this.s.time) > 0.25) congestion.blocked = 0;
+        const elapsed = congestion.at === this.s.time ? 0 : Math.min(dt, 0.1),
+          relaxed = (congestion.friendlyUntil || 0) > this.s.time;
+        congestion.at = this.s.time;
+        let crowdBlocked = false;
+        const legal = (p) => {
+          if (!this.clearSegment(entity, p)) return false;
+          if (forced || entity.motion) return true;
+          if (
+            this.gatheringUnit(entity) &&
+            !this.companionTravelClear(entity, p, this.gatheringThreats())
+          )
+            return false;
+          if (this.actorStepAllowed(entity, p, relaxed, frame)) return true;
+          crowdBlocked = true;
+          return false;
+        };
         if (legal({ x: nx, y: ny })) {
           entity.x = nx;
           entity.y = ny;
@@ -805,10 +865,16 @@
           }
         }
         const advanced = d - dist(entity, target) > Math.min(0.5, step * 0.2);
-        congestion.blocked = advanced ? 0 : congestion.blocked + dt;
-        if (congestion.blocked >= R.actorSpacing.congestionSeconds) {
-          // Only same-side bodies relax, and only for this bounded interval.
-          congestion.until = this.s.time + R.actorSpacing.relaxSeconds;
+        congestion.blocked = !advanced && crowdBlocked ? congestion.blocked + elapsed : 0;
+        if (congestion.blocked >= cfg.congestionSeconds)
+          congestion.friendlyUntil = this.s.time + cfg.relaxSeconds;
+        const escapeAfter = this.crowdUnderPressure()
+          ? cfg.pressureBlockedSeconds
+          : cfg.escapeBlockedSeconds;
+        if (congestion.blocked >= escapeAfter) {
+          // Terrain was clear but bodies prevented progress. Permit temporary
+          // overlap, including opposing bodies/bosses; never teleport or replan.
+          congestion.until = this.s.time + cfg.escapeSeconds;
           congestion.blocked = 0;
         }
         frame.congestion.set(entity, congestion);
@@ -1007,15 +1073,22 @@
           return this.move(entity, target, speed, dt, stop);
         }
         entity.routeAge = (entity.routeAge || 0) - dt;
-        if (!entity.path?.length || entity.routeAge <= 0) {
-          entity.path = this.route(entity, target);
-          entity.routeAge = 1.3;
+        const trip = terrainTrips.get(entity),
+          zone = this.s.zones[this.zoneId];
+        if (!trip || trip.zone !== zone || dist(trip.target, target) > 80 || entity.routeAge <= 0) {
+          if (!trip || trip.zone !== zone || dist(trip.target, target) > 80) entity.path = [];
+          if (this.reserveMovementPlan(entity)) {
+            entity.path = this.route(entity, target);
+            entity.routeAge = R.actorSpacing.routeRetrySeconds;
+            terrainTrips.set(entity, { zone, target: { x: target.x, y: target.y } });
+          }
         }
         while (entity.path?.length && dist(entity, entity.path[0]) < 1) entity.path.shift();
         if (!entity.path?.length) return false;
         const moved = this.move(entity, entity.path[0], speed, dt);
         if (dist(entity, entity.path[0]) < 1) entity.path.shift();
-        if (!moved) entity.routeAge = 0;
+        // A body-blocked step cannot be repaired by rebuilding a terrain-only
+        // route. Retain the retry clock even for an empty/unreachable route.
         return moved;
       }
     }
