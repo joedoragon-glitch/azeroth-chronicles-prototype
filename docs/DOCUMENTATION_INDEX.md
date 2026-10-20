@@ -4,6 +4,7 @@
 
 | Need | Maintained entrypoint |
 | --- | --- |
+| Companion behavior audit: remaining critical-wound, detour and fort-range gaps | [20 October audit](COMPANION_BEHAVIOR_AUDIT_20261020.md) |
 | Fort defenses, enemy cover fire, Expedition IV audit and Work for passage | [Dev.109 scope](FORTS_RANGER_PASSAGE_20261020.md) |
 | Emberwatch composition, river continuity/banks, natural poppies, pools and grain silo | [Dev.108 native visual audit](FRONTIER_TOWN_RIVER_20261020.md) |
 | Mixed-crowd escape and bounded pathfinding | [Dev.107 movement safeguard](CROWD_ESCAPE_20261020.md) |
