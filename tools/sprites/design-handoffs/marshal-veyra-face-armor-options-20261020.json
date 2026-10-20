@@ -4,31 +4,35 @@
   "designId": "marshal-veyra-face-armor-options-20261020",
   "name": "Marshal Veyra face and armor options",
   "kind": "boss-preview",
-  "nextAction": "Joel selects/corrects an option; do not apply the unselected previews.",
+  "nextAction": "Joel reviews the corrected ivory B arm/skirt preview before implementation.",
   "context": {
     "originConversation": "Conversation URL unavailable; owner request dated 20 October 2026.",
     "decisionSummary": "Defined prettier eyes and improved armor appropriate to Veyra\u2019s aesthetic care; show options first.",
     "decisionDate": "2026-10-20",
     "contentDocuments": [
       "tools/visual-review/veyra-options-20261020/README.md",
-      "docs/APPROVED_LIPS_STAFFS_20261020.md"
+      "docs/APPROVED_LIPS_STAFFS_20261020.md",
+      "tools/visual-review/veyra-ivory-correction-20261020/README.md"
     ],
-    "locationAndLore": "Veyra, Ash Sentinel; Crown Citadel marshal and former cosmetologist."
+    "locationAndLore": "Veyra, Ash Sentinel; Crown Citadel marshal and former cosmetologist.",
+    "ownerSelection": "Ivory parade B selected on 20 October; compact armored arm and skirt/tasset corrections requested before implementation."
   },
   "decisions": {
     "conceptAcceptance": "Owner requested options.",
-    "proceduralDesignAcceptance": "Pending owner selection; none of A/B/C is accepted.",
+    "proceduralDesignAcceptance": "Ivory parade direction selected; revised arm/skirt appearance pending review.",
     "spriteProductionAuthorization": "No raster generation requested.",
     "generatedAppearanceAcceptance": "Not applicable.",
     "pendingCorrections": [
-      "Owner selection/feedback"
+      "Review compact plate-covered arm and inward spear",
+      "Review continuous skirt with overlaid short tassets"
     ]
   },
   "reference": {
     "sourceCommit": "1944f7a56ed1f8cc205a51c33979e5d629561d2a",
     "ownerFilesAndBranches": [
       "src/prototype/visuals.js::boss/citadel (read only)",
-      "tools/visual-review/veyra-options-20261020/preview.cjs"
+      "tools/visual-review/veyra-options-20261020/preview.cjs",
+      "tools/visual-review/veyra-ivory-correction-20261020/preview.cjs"
     ],
     "exactEntityState": {
       "renderKind": "enemy",
@@ -41,20 +45,55 @@
       "region": 4,
       "nativeCameraZoom": 1.5
     },
-    "isolatedReferencePath": "tools/visual-review/veyra-options-20261020/veyra-options.png",
-    "isolatedReferenceHash": "8b932e8ee6f0053b334db096623474016ffd5ac2ea8e7a800d80617f8d68de7a",
-    "nativeScaleReferencePath": "tools/visual-review/veyra-options-20261020/veyra-native-150.png",
-    "nativeScaleReferenceHash": "1604a57bb632fbf7f5919242b92a7ca9fcdec0acbf5080c4b7a8c620dcfe680b",
+    "isolatedReferencePath": "tools/visual-review/veyra-ivory-correction-20261020/ivory-correction.png",
+    "isolatedReferenceHash": "291e8c6dc570632075b06b8c45a061190523a31370e3eb8305f672c0b243acdc",
+    "nativeScaleReferencePath": "tools/visual-review/veyra-ivory-correction-20261020/ivory-correction.png",
+    "nativeScaleReferenceHash": "291e8c6dc570632075b06b8c45a061190523a31370e3eb8305f672c0b243acdc",
     "traitsToPreserve": [
       "Cropped blonde hair and adult female identity",
       "Accepted shaped lips",
       "Original spear/shield stance and boss geometry",
       "Shared TRUE crown/halo and all mechanics"
-    ]
+    ],
+    "exactCandidatesPath": "tools/visual-review/veyra-ivory-correction-20261020/candidate.json"
   },
   "production": {
     "releaseCommit": null,
     "releaseEvidence": null,
     "rollbackRevision": "Live dev.103 Veyra remains unchanged"
-  }
+  },
+  "previousPreviews": [
+    {
+      "status": "B selected in principle; arm/skirt correction requested",
+      "reference": {
+        "sourceCommit": "1944f7a56ed1f8cc205a51c33979e5d629561d2a",
+        "ownerFilesAndBranches": [
+          "src/prototype/visuals.js::boss/citadel (read only)",
+          "tools/visual-review/veyra-options-20261020/preview.cjs",
+          "tools/visual-review/veyra-ivory-correction-20261020/preview.cjs"
+        ],
+        "exactEntityState": {
+          "renderKind": "enemy",
+          "type": "boss",
+          "family": "citadel",
+          "forms": [
+            "normal",
+            "true"
+          ],
+          "region": 4,
+          "nativeCameraZoom": 1.5
+        },
+        "isolatedReferencePath": "tools/visual-review/veyra-options-20261020/veyra-options.png",
+        "isolatedReferenceHash": "8b932e8ee6f0053b334db096623474016ffd5ac2ea8e7a800d80617f8d68de7a",
+        "nativeScaleReferencePath": "tools/visual-review/veyra-options-20261020/veyra-native-150.png",
+        "nativeScaleReferenceHash": "1604a57bb632fbf7f5919242b92a7ca9fcdec0acbf5080c4b7a8c620dcfe680b",
+        "traitsToPreserve": [
+          "Cropped blonde hair and adult female identity",
+          "Accepted shaped lips",
+          "Original spear/shield stance and boss geometry",
+          "Shared TRUE crown/halo and all mechanics"
+        ]
+      }
+    }
+  ]
 }
