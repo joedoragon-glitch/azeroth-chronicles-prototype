@@ -43,13 +43,21 @@
       "sw.js": "26cf03c3f73ee6c024f43776dc1ba08e8f3e3479afaa88c9f6de205bc1fe699a",
       ".github/workflows/pages.yml": "b6e0b4098558ebfd11df84fb349dc4babb4e539b2065bd6c669447ca33027702"
     },
-    "format": "PASS: changed pipeline/continuity source and decision overlay; final changed test check pending.",
-    "pipelineRegression": "Running focused sprite-pipeline.test.cjs after repairing the independently reproduced historical assertion."
+    "format": "PASS: changed developer source, tests and decision overlay; git diff --check.",
+    "pipelineRegression": "PASS: tests/sprite-pipeline.test.cjs \u2014 74 current contracts, deterministic scene/reference capture, input/budget checks, immutable processing, replacement leases, retained revisions, rollback/removal, atlas provenance, unrelated-source/catalog additions and isolated publication.",
+    "documentationLinks": "PASS: local Markdown links in updated guides and 20 asset-specific decision document/handoff paths resolve."
   },
   "remaining": [
     "Treasurer/boss coin hand explicitly deferred by owner.",
     "Unselected gallery alternatives await later owner review; no blanket replacement approval.",
     "Broader playthrough/co-op/old batch work remains deferred; no automatic production restart."
   ],
-  "evidenceLimits": "Focused source/tooling checks and existing publication receipts, not new hardware FPS or complete gameplay/aesthetic certification."
+  "evidenceLimits": "Focused source/tooling checks and existing publication receipts, not new hardware FPS or complete gameplay/aesthetic certification.",
+  "completedAtUTC": "2026-10-20T23:22:34.337581+00:00",
+  "recoveryCheckpoint": {
+    "branch": "docs/sprite-continuity-20261020",
+    "commit": "ba0fe02c9303b658c861f37da61c282358468b98",
+    "tree": "5959f6f61bb147d3477d62198bc66e39c7c7612b"
+  },
+  "publication": "Documentation/developer-only closeout; save to main with expected-head lease and [skip ci], keeping normal game workflow and deployed dev.117 unchanged."
 }
