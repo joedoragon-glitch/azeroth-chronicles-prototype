@@ -1,3 +1,16 @@
+# Approved pet parity implementation — dev.113
+
+Joel accepted the audited assessment and plan on 20 October (“Okay, perfect… I agree. Good.”). This supplies the requested final approval for the three behavior repairs plus common basic cadence and hero-class formations; publish after the combined audit. No pet nerfs or individual family stat/skill buffs are included. Sovereign progression identity remains for a later decision.
+
+- Basic interval is now 0.85 seconds for all pets, including defensive/Recall counters. Existing Ranger rally still applies.
+- Melee pets stand ahead of Mage/Ranger heroes and flank slightly behind Paladins; ranged pets stand closer behind ranged heroes and farther behind Paladins. Mixed pet slots remain distinct, troop offsets stay unchanged, and all six legal pet slots fit inside the existing 280-unit support boundary.
+- The three reviewed behavior repairs remain included: full authored melee skill reach, supported ranged firing destinations, and clearing stale rejected-route state on regroup arrival.
+- Initial approved candidate checks: 189 growth/inheritance/commands/skills/combat/positioning cases; 171 legal mixed-role six-pet layouts, 33 actual formation arrivals, mixed troop/pet lane separation and 22 normal/defensive cadence cases pass. Final source/integrity/release checks pending.
+
+The original assessment below is a **frozen pre-approval record**, not the current implementation status. `before.json` is dev.112; `findings.json` is the first three-repair candidate; `approved.json` records the additionally approved cadence/formations. Use `PET_AUDIT_OUTPUT=tools/pet-parity-audit-20261020/approved.json` for the current-source audit to preserve the old evidence. Baseline mode reloads the original companion balance settings as well as both party owners.
+
+---
+
 # Pet parity audit — 20 October 2026
 
 Review branch `audit/pet-parity-dev112`, based on published dev.112 / tree `268e940a46466b6f20b0a6e8fa72ace9e9a197d8`. Joel allows straightforward repairs but requires final approval before merging/publication and before **any pet nerf**. Prepared dev.113 is not live. No balance values or pet identities have changed.

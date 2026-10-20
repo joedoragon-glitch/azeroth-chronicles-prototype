@@ -7,18 +7,21 @@ const C = require('../../src/prototype/engine');
 if (process.env.PET_AUDIT_BASELINE) {
   const cp = require('node:child_process'),
     vm = require('node:vm');
+  const ref = process.env.PET_AUDIT_BASELINE_REF || 'e0ce4a90451f88699dfbb2e93af08411cf808235';
+  const originalRules = { exports: {} };
+  vm.runInNewContext(
+    cp.execFileSync('git', ['show', ref + ':src/prototype/rules.js'], {
+      cwd: __dirname,
+      encoding: 'utf8',
+    }),
+    { module: originalRules },
+  );
+  C.rules.balance.companions = originalRules.exports.balance.companions;
   for (const owner of ['party', 'party-pets']) {
-    const source = cp.execFileSync(
-      'git',
-      [
-        'show',
-        (process.env.PET_AUDIT_BASELINE_REF || 'e0ce4a90451f88699dfbb2e93af08411cf808235') +
-          ':src/prototype/' +
-          owner +
-          '.js',
-      ],
-      { cwd: __dirname, encoding: 'utf8' },
-    );
+    const source = cp.execFileSync('git', ['show', ref + ':src/prototype/' + owner + '.js'], {
+      cwd: __dirname,
+      encoding: 'utf8',
+    });
     const module = { exports: {} };
     vm.runInNewContext(source, { module });
     module.exports.install(C, { D: C.data, R: C.rules });

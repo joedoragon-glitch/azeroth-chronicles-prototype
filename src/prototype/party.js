@@ -1201,19 +1201,23 @@
         return true;
       }
       partyFormationOffset(u, living = this.activeLivingParty()) {
+        const rangedHero = this.hero.class === 'mage' || this.hero.class === 'ranger';
         if (u.type === 'pet') {
-          // Mixed pets have their own six distinct ring positions, outside troop lanes.
+          // Keep distinct mixed-pet lanes: melee pets screen a ranged hero and
+          // flank behind a Paladin; ranged pets remain behind either hero role.
           const pets = living.filter((v) => v.type === 'pet' && !v.order);
           const i = Math.max(0, pets.indexOf(u));
           const side = i % 2 ? 1 : -1;
-          const row = Math.floor(i / 2);
+          const row = Math.floor(i / 2),
+            cfg = R.balance.companions.petFormation,
+            role = this.petDefinition(u)?.role === 'ranged' ? 'ranged' : 'melee',
+            forward = (rangedHero ? cfg.rangedHero : cfg.meleeHero)[role];
           return [
-            side * (130 + row * 35),
-            this.petDefinition(u)?.role === 'ranged' ? -95 - row * 35 : 25 + row * 35,
+            side * (cfg.side + row * cfg.sidePerRow),
+            forward + Math.sign(forward) * row * cfg.forwardPerRow,
           ];
         }
-        const rangedHero = this.hero.class === 'mage' || this.hero.class === 'ranger',
-          same = living.filter((v) => v.type === u.type && !v.order),
+        const same = living.filter((v) => v.type === u.type && !v.order),
           index = Math.max(
             0,
             same.findIndex((v) => v.id === u.id),
