@@ -1,0 +1,56 @@
+{
+  "fieldBossForms": 10,
+  "fieldBossConfinementSeconds": 2.5,
+  "fieldBossPursuitStallSeconds": 3,
+  "fieldBossProtectedReturnSeconds": 1,
+  "bossChecks": [
+    "normal and TRUE for all five field bosses",
+    "real terrain cage to collision-safe open ground",
+    "Cindermaw captive and existing escorts; dead escort stays dead",
+    "open-arena warnings and stationary melee remain active",
+    "cancel/save/travel clear transient return state"
+  ],
+  "gatherChecks": [
+    "actual Frontier collision route",
+    "physical detour outside enemy awareness including local crowd movement",
+    "guarded destination waits without dropping job",
+    "nearby combat does not hijack gathering",
+    "verified Soldier and Archer self-defense without pursuit",
+    "delivery chooses reachable walking route",
+    "Recall cancels job, regroups, resumes ordinary behavior",
+    "complete harvest/deposit loop",
+    "gather/deposit intent and carry survive snapshot/restore"
+  ],
+  "frontierSampleRoute": {
+    "oldLength": 2614.9143821270054,
+    "newLength": 2476.858966981638,
+    "localSearchMsOld": [
+      219,
+      202,
+      165
+    ],
+    "localSearchMsNew": [
+      127,
+      96,
+      90
+    ],
+    "note": "One local sample; not target-device FPS evidence."
+  },
+  "aestheticAudit": {
+    "plotsReviewed": 13,
+    "movedAssets": 65,
+    "naturalPropsPreserved": 204,
+    "inspectionCorrections": 2,
+    "roadSpursTotal": 14
+  },
+  "existingFocusedChecks": [
+    "travel-party-collision",
+    "map-navigation",
+    "squad-boss-priority",
+    "snapshot-thorn-patrol: 18 seeded circuits"
+  ],
+  "build": "pass",
+  "generatedSource": "pass",
+  "changedSourceFormatting": "pass",
+  "scope": "Focused native simulation/rendering only; no whole-game or browser matrix."
+}

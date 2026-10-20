@@ -37,7 +37,11 @@
       }
       frontierEdgeRedistribution(z) {
         const cfg = R.frontierEdgeLayout;
-        if (z.id !== 'frontier' || z.frontierEdgeVersion === cfg.version) return;
+        if (z.id !== 'frontier') return;
+        if (z.frontierEdgeVersion === cfg.version) {
+          this.frontierEdgeFinish(z);
+          return;
+        }
         const oldZone = this.s.zone,
           originalProps = z.props,
           nature = new Set(cfg.nature),
@@ -143,6 +147,67 @@
           z.frontierEdgeVersion = cfg.version;
         } finally {
           z.props = originalProps;
+          this.blocked = blocked;
+          this.s.zone = oldZone;
+        }
+        this.frontierEdgeFinish(z);
+      }
+      frontierEdgeFinish(z) {
+        const cfg = R.frontierEdgeLayout.finish;
+        if (z.frontierVisualVersion === cfg.version) return;
+        const oldZone = this.s.zone,
+          blocked = this.blocked;
+        this.s.zone = z.id;
+        try {
+          for (const row of cfg.moves) {
+            const p = z.props.find((p) => p.id === row.id && p.structure === row.structure);
+            if (!p) continue;
+            let chosen;
+            for (const radius of [0, 35, 70, 105, 140, 180]) {
+              for (let j = 0; j < (radius ? 24 : 1); j++) {
+                const q = {
+                  x: row.to[0] + Math.cos((j * Math.PI) / 12) * radius,
+                  y: row.to[1] + Math.sin((j * Math.PI) / 12) * radius,
+                };
+                if (
+                  this.blocked(q.x, q.y, z.id, 26) ||
+                  z.props.some((n) => n !== p && dist(n, q) < 65 + (n.r || 0)) ||
+                  z.buildings.some((n) => dist(n, q) < 120) ||
+                  z.nodes.some((n) => dist(n, q) < 85) ||
+                  z.npcs.some((n) => dist(n, q) < 100) ||
+                  z.enemies.some((n) => n.hp > 0 && dist(n, q) < 70)
+                )
+                  continue;
+                if (
+                  z.roads.some((road) =>
+                    road.slice(1).some((b, i) => this.distanceToSegment(q, road[i], b) < 75),
+                  )
+                )
+                  continue;
+                chosen = q;
+                break;
+              }
+              if (chosen) break;
+            }
+            if (chosen) Object.assign(p, chosen);
+          }
+          this.blocked = function (x, y, zone, radius = 15, terrainOnly = false) {
+            return blocked.call(this, x, y, zone, Math.max(30, radius), terrainOnly);
+          };
+          const goal = { x: cfg.approach[0], y: cfg.approach[1] },
+            starts = z.roads
+              .flat()
+              .filter((p) => !this.blocked(p.x, p.y, z.id, 30))
+              .sort((a, b) => dist(a, goal) - dist(b, goal));
+          for (const start of starts.slice(0, 8)) {
+            const road = this.route(start, goal, { road: true });
+            if (road.length) {
+              z.roads.push(road);
+              break;
+            }
+          }
+          z.frontierVisualVersion = cfg.version;
+        } finally {
           this.blocked = blocked;
           this.s.zone = oldZone;
         }

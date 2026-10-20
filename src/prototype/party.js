@@ -13,8 +13,76 @@
         : null;
     };
     Campaign.normalizeCharacterName = normalizeCharacterName;
+    const laborAttacks = new WeakMap(),
+      depositTrips = new WeakMap();
 
     class Party {
+      clearGatheringIntent(u) {
+        laborAttacks.delete(u);
+        depositTrips.delete(u);
+        this.clearCompanionTravel(u);
+      }
+      noteGatheringAttack(u, e) {
+        if (this.gatheringUnit(u) && e?.hp > 0)
+          laborAttacks.set(u, {
+            zone: this.zoneId,
+            id: e.id,
+            until: this.s.time + R.gatheringTravel.defenseSeconds,
+          });
+      }
+      gatheringCounterattack(u) {
+        const receipt = laborAttacks.get(u);
+        if (
+          !receipt ||
+          receipt.zone !== this.zoneId ||
+          receipt.until <= this.s.time ||
+          this.peace ||
+          u.cd > 0
+        )
+          return;
+        const e = this.zone().enemies.find(
+            (e) => e.id === receipt.id && e.hp > 0 && !e.neutral && !e.returning,
+          ),
+          reach = u.type === 'archer' ? 185 : 65;
+        if (!e || dist(e, u) > reach || !this.line(u, e) || !this.tacticalDirectTargetable(e))
+          return;
+        u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+        if (u.type === 'archer') {
+          const d = Math.max(1, dist(u, e));
+          this.s.projectiles.push({
+            id: 'projectile-' + this.s.nextId++,
+            x: u.x,
+            y: u.y,
+            dx: (e.x - u.x) / d,
+            dy: (e.y - u.y) / d,
+            target: e.id,
+            damage: this.companionAttackDamage(u),
+            source: u.id,
+            speed: 450,
+            style: 'arrow',
+          });
+        } else if (this.damage(e, this.companionAttackDamage(u), u.id))
+          this.event('melee', {
+            actor: 'companion',
+            role: 'soldier',
+            source: u.id,
+            weapon: 'sword',
+            x: e.x,
+            y: e.y,
+            target: e.id,
+          });
+      }
+      gatheringRouteLength(u, target) {
+        const path = this.companionRoute(u, target, true);
+        if (!path.length) return Infinity;
+        let length = 0,
+          from = u;
+        for (const p of path) {
+          length += dist(from, p);
+          from = p;
+        }
+        return length;
+      }
       heroDisplayName() {
         return (
           (this.s.throneClaimed && this.hero.regnalName) || this.hero.customName || this.hero.class
@@ -429,7 +497,34 @@
               : z?.buildings.filter((b) => b.progress >= 4 && b.full) || []),
             { x: D.towns[i][0], y: D.towns[i][1] },
           ];
-        return sites.sort((a, b) => dist(a, u) - dist(b, u))[0];
+        if (!this.gatheringUnit(u) || this.isDungeon())
+          return sites.sort((a, b) => dist(a, u) - dist(b, u))[0];
+        const cached = depositTrips.get(u);
+        if (
+          cached?.zone === this.zoneId &&
+          cached.until > this.s.time &&
+          (!cached.site || sites.some((p) => p.x === cached.site.x && p.y === cached.site.y))
+        )
+          return cached.site;
+        let site = null,
+          best = Infinity;
+        const seen = new Set();
+        for (const candidate of sites.sort((a, b) => dist(a, u) - dist(b, u))) {
+          const key = candidate.x + ':' + candidate.y;
+          if (seen.has(key) || dist(candidate, u) >= best) continue;
+          seen.add(key);
+          const length = this.gatheringRouteLength(u, candidate);
+          if (length < best) {
+            site = candidate;
+            best = length;
+          }
+        }
+        depositTrips.set(u, {
+          zone: this.zoneId,
+          until: this.s.time + R.gatheringTravel.replanSeconds,
+          site,
+        });
+        return site;
       }
       availableRangers(type) {
         const key = type === 'health' ? 'healCd' : 'manaCd';
@@ -794,10 +889,15 @@
         };
       }
       recallParty() {
+        const gathering = this.activeLivingParty().filter((u) => this.gatheringUnit(u));
+        this._gatherRecallResume = gathering.length
+          ? { zone: this.zoneId, ids: gathering.map((u) => u.id) }
+          : null;
         this.s.recallActive = true;
         this.hero.order = null;
         this._tacticalPartyTargets?.clear();
         for (const u of this.activeLivingParty()) {
+          this.clearGatheringIntent(u);
           this.clearPartyCharge(u);
           u.order = null;
           u.path = [];
@@ -949,6 +1049,18 @@
           living = this.activeLivingParty(),
           context = this.syncSquadDoctrine(),
           claimed = new Set();
+        const returningLabor = this._gatherRecallResume;
+        if (returningLabor && (!this.s.recallActive || returningLabor.zone !== this.zoneId))
+          this._gatherRecallResume = null;
+        else if (
+          returningLabor &&
+          living
+            .filter((u) => returningLabor.ids.includes(u.id))
+            .every((u) => dist(u, this.hero) <= R.gatheringTravel.recallArrival)
+        ) {
+          this.s.recallActive = false;
+          this._gatherRecallResume = null;
+        }
         // Pending casts cannot survive removal, a zone change, death or benching.
         for (const [id, cast] of this._companionCharges || []) {
           if (
@@ -1078,6 +1190,7 @@
             continue;
           }
           if (u.order?.type === 'gather') {
+            this.gatheringCounterattack(u);
             const n = z.nodes.find((n) => n.id === u.order.id);
             if (n && n.amount > 0 && (!n.mini || this.peace || this.miniCleared(n.mini))) {
               if (dist(u, n) > 60)
@@ -1103,7 +1216,9 @@
             continue;
           }
           if (u.order?.type === 'deposit') {
+            this.gatheringCounterattack(u);
             const deposit = this.depositSite(u);
+            if (!deposit) continue;
             if (dist(u, deposit) > 130)
               this.follow(
                 u,
@@ -1123,14 +1238,22 @@
                 ),
                 next =
                   current ||
-                  z.nodes.find(
-                    (n) =>
-                      u.order.group &&
-                      n.resourceGroup === u.order.group &&
-                      n.amount > 0 &&
-                      this.tributeKnown(n),
-                  );
+                  z.nodes
+                    .filter(
+                      (n) =>
+                        u.order.group &&
+                        n.resourceGroup === u.order.group &&
+                        n.amount > 0 &&
+                        this.tributeKnown(n) &&
+                        (!n.mini || this.peace || this.miniCleared(n.mini)),
+                    )
+                    .map((n) => ({ node: n, length: this.gatheringRouteLength(u, n) }))
+                    .sort((a, b) => a.length - b.length || dist(a.node, u) - dist(b.node, u))[0]
+                    ?.node;
               u.order = next ? { type: 'gather', id: next.id, group: next.resourceGroup } : null;
+              depositTrips.delete(u);
+              this.clearCompanionTravel(u);
+              if (!next) this.clearGatheringIntent(u);
             }
             continue;
           }

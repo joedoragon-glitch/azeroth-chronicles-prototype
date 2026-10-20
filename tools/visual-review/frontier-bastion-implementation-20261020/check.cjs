@@ -20,7 +20,7 @@ const moved = f.props.filter((p) => {
   return q && (p.x !== q.x || p.y !== q.y);
 });
 assert.equal(moved.length, 65);
-assert.equal(f.roads.length - of.roads.length, 13);
+assert.equal(f.roads.length - of.roads.length, 14);
 for (const road of f.roads.slice(of.roads.length))
   for (let i = 1; i < road.length; i++)
     assert(g.clearSegment(road[i - 1], road[i], 25), 'New road remains open');
@@ -48,7 +48,7 @@ for (const [x, y] of R.dungeonTraps.abyss)
 // Migrate the actual pre-change save. Deliberately retain wounds, a dead guard,
 // depleted resource, earned currency, dropped loot and an inactive companion.
 const legacy = clone(old);
-legacy.gold = 1234;
+legacy.hero.gold = 1234;
 legacy.zones.abyss.enemies[0].hp = 0;
 legacy.zones.abyss.enemies[1].hp = 17;
 legacy.zones.frontier.nodes[0].amount = 0;
@@ -59,7 +59,7 @@ const before = clone(legacy),
   rf = restored.s.zones.frontier;
 assert.equal(ra.enemies[0].hp, 0);
 assert.equal(ra.enemies[1].hp, 17);
-assert.equal(restored.s.gold, 1234);
+assert.equal(restored.hero.gold, 1234);
 assert.equal(rf.nodes[0].amount, 0);
 assert.equal(ra.props.length, 38);
 assert.equal(ra.enemies.length, 27);
@@ -140,7 +140,7 @@ const evidence = {
     props: f.props.length,
     moved: moved.length,
     natureUnchanged: f.props.filter(nature).length,
-    newRoadSpurs: 13,
+    newRoadSpurs: 14,
     bottomQuarterStructures: f.props.filter((p) => !nature(p) && p.y >= 2550).length,
   },
   abyss: {

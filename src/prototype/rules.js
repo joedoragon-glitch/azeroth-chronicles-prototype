@@ -2755,6 +2755,22 @@
   // Approved authored layout; independent of the global scenery/road regeneration versions.
   const frontierEdgeLayout = {
     version: 1,
+    finish: {
+      version: 1,
+      moves: [
+        {
+          id: 'frontier-layout-route-inspection-spur-55',
+          structure: 'watchpost',
+          to: [2870, 1250],
+        },
+        {
+          id: 'frontier-layout-route-inspection-spur-56',
+          structure: 'war-table',
+          to: [3030, 1230],
+        },
+      ],
+      approach: [3000, 1350],
+    },
     nature: [
       'dead-tree',
       'burned-log',
@@ -5623,6 +5639,31 @@
     }),
   });
   // Boss telegraphs stay readable, but idle gaps are short and basic attacks only interrupt sustained special pressure occasionally.
+  // Sustained loss of fighting room is distinct from idle attack recovery.
+  const gatheringTravel = {
+    gridStep: 40,
+    enemyMargin: 35,
+    replanSeconds: 2,
+    noticeSeconds: 10,
+    defenseSeconds: 8,
+    recallArrival: 190,
+  };
+  const fieldBossMobility = {
+    sampleSeconds: 0.5,
+    directions: 12,
+    roomRadius: 140,
+    bodyRadius: 26,
+    minimumDirections: 4,
+    recoveryDirections: 6,
+    confinedSeconds: 2.5,
+    stallSeconds: 3,
+    minimumProgress: 8,
+    meleeRange: 75,
+    returnSeconds: 1,
+    recoveryRings: [0, 90, 180, 270, 360, 450],
+    serviceClearance: 180,
+    landingClearance: 75,
+  };
   const bossCadence = {
     specialRecoveryMultiplier: 0.25,
     basicCooldown: 0.75,
@@ -6746,6 +6787,8 @@
     enemyMeleeKits,
     enemyMeleeEquipment,
     arenaPlacement,
+    fieldBossMobility,
+    gatheringTravel,
     bossCadence: {
       ...bossCadence,
       specialRange: bossCadence.specialRange * balance.enemySpecialReachMultiplier,
