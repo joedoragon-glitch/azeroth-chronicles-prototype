@@ -51,8 +51,8 @@ for (const dodge of [false, true]) {
   assert.equal(u.hp > u.maxHp * 0.5, !dodge, 'miss gives no self heal');
   if (!dodge)
     assert(
-      Math.abs(u.hp - u.maxHp * 0.54) < 1e-8,
-      'successful Stay Alive heals exactly 4% maximum HP',
+      Math.abs(u.hp - u.maxHp * 0.6) < 1e-8,
+      'successful Stay Alive heals exactly 10% maximum HP',
     );
 }
 {

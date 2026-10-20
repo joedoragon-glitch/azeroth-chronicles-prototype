@@ -1005,7 +1005,8 @@
           ' · ' +
           state +
           '. ' +
-          (def.role === 'ranged' ? 'Ranged support.' : 'Close-range support.'),
+          (def.role === 'ranged' ? 'Ranged support. ' : 'Close-range support. ') +
+          def.specialty,
         [
           ...(unit
             ? [
@@ -1078,7 +1079,7 @@
           action(
             (unit?.customName || def.name) + ' · ' + state,
             () => barracksPetDetail(b, boss.id, returnHere),
-            boss.name,
+            boss.name + ' · ' + def.specialty,
           ),
         ),
         back,
