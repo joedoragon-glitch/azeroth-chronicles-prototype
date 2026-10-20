@@ -34,3 +34,7 @@ Packaging exposed a pre-existing sprite coverage assertion that scanned beyond t
 The same old sprite fixture also expected the now-deliberately procedural Paladin to render as a raster. Its valid loaded-image path now uses the retained raster Ranger; its failed-image path uses the Archer, and it explicitly checks the Paladin remains procedural. Production art, registries and sprite-loader behavior are unchanged. The source coverage supplement records the existing native silo/fountain families.
 
 Final focused checks all pass: the feature checks above, existing economy/targeting/Recall/judgment/gathering/friendly-projectile/crowd/map-navigation/menu checks, isolated asset packaging, current sprite scope, build/generated consistency, changed-source formatting and diff whitespace. Complete ledger: `tools/visual-review/fortifications-dev109/checks.json`. PR #343 prepares package-only publication; no broad CI or browser/device matrix.
+
+## Publication
+
+PR #343 merged as `896d543cdad718c9ec5b3f2dffb4c3124d17a90a`. Package-only run 39430720594 succeeded; all 23 exact live entry/runtime/build/worker files match the prepared candidate. Normal workflow restored and temporary publisher removed. Receipt: `docs/evidence/FORTS_RANGER_PASSAGE_DEV109_PUBLICATION_20261020.json`. Owner live play/tuning follows; exact Veyra correction remains unapproved preview-only.

@@ -23,7 +23,7 @@
     "pendingCorrections": []
   },
   "reference": {
-    "sourceCommit": "4263c6a6ee8be9c72fe2740f2f88b8c7ef35042f",
+    "sourceCommit": "896d543cdad718c9ec5b3f2dffb4c3124d17a90a",
     "ownerFilesAndBranches": [
       "src/prototype/renderer.js",
       "src/prototype/fortifications.js",
@@ -95,7 +95,7 @@
     "activeContentRevision": null,
     "expectedReplacementRevision": null,
     "rollbackRevision": null,
-    "releaseCommit": null,
-    "releaseEvidence": null
+    "releaseCommit": "896d543cdad718c9ec5b3f2dffb4c3124d17a90a",
+    "releaseEvidence": "docs/evidence/FORTS_RANGER_PASSAGE_DEV109_PUBLICATION_20261020.json"
   }
 }

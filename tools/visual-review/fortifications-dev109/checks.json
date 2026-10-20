@@ -22,13 +22,19 @@
     "tests/asset-packaging.test.cjs",
     "node scripts/sprite-scope-audit.cjs --check"
   ],
-  "pending": [
-    "publication and exact-live verification"
-  ],
+  "pending": [],
   "limits": [
     "No full campaign or device matrix",
     "No actual-device FPS certificate",
     "Veyra remains unapproved preview-only"
   ],
-  "sourceCheckpoint": "4263c6a6ee8be9c72fe2740f2f88b8c7ef35042f"
+  "sourceCheckpoint": "4263c6a6ee8be9c72fe2740f2f88b8c7ef35042f",
+  "publication": {
+    "merge": "896d543cdad718c9ec5b3f2dffb4c3124d17a90a",
+    "pr": 343,
+    "run": 39430720594,
+    "status": "success",
+    "liveFilesMatched": 23,
+    "receipt": "docs/evidence/FORTS_RANGER_PASSAGE_DEV109_PUBLICATION_20261020.json"
+  }
 }
