@@ -1,5 +1,7 @@
 # Rendering FPS follow-up — 20 October 2026
 
+**Published:** dev.94 merged through #328 and published by packaging-only run 39383012533. Exact live files match the prepared runtime. No additional tests or broad CI; normal release workflow restored. [Publication receipt](evidence/ADAPTIVE_RESOLUTION_DEV94_PUBLICATION_20261020.json). Owner testing remains the next step. Candidate-only statements below describe the earlier preparation checkpoint.
+
 Candidate `0.9.1+snapshot.dev.94`, based on main `27119fe947fe234dc43e0e0f7b3878c3a2d8964f` (published dev.93). Joel explicitly resumed FPS improvement after supplying the dev.92 report. No new artwork, staff edits, gameplay/balance changes, broad validation cycle, merge or deployment is part of this candidate.
 
 ## Received device evidence

@@ -1,8 +1,10 @@
 # Project working rules
 
+- Published dev.94 FPS follow-up: PR #328 / merge cec45fbd705faecec410a8cffe78738354037c9b, packaging-only run 39383012533 succeeded; exact live source verified. Normal release workflow restored. No additional tests or broad CI. Owner will test actual Chromebook FPS; no further automatic work. Receipt: docs/evidence/ADAPTIVE_RESOLUTION_DEV94_PUBLICATION_20261020.json.
+
 - **Owner publication authorization — 20 October, 02:51 EDT:** Joel approved putting the prepared dev.94 adaptive-resolution change in the game and will test it himself. Merge and publish the exact prepared runtime using packaging only, with no additional tests or broad CI. Restore the normal workflow after publication; retain the Maximum sharpness option.
 
-- Current owner task (20 October): improve FPS from the received dev.92 7-FPS report. Dev.94 adaptive world resolution candidate and bounded evidence: docs/ADAPTIVE_RESOLUTION_20261020.md. Dev.93 is published. Preserve selected braids/staff and gameplay. Candidate is not merged/deployed; actual Chromebook FPS is unresolved. No broad CI or further release is implied.
+- Historical candidate task (20 October, now published): improve FPS from the received dev.92 7-FPS report. Dev.94 adaptive world resolution candidate and bounded evidence: docs/ADAPTIVE_RESOLUTION_20261020.md. Dev.93 is published. Preserve selected braids/staff and gameplay. Candidate is not merged/deployed; actual Chromebook FPS is unresolved. No broad CI or further release is implied.
 
 - Current release: dev.93 selected C / twin braids is merged in PR #327 (9c2e1f2bc7be1570502a8d2b389f534d91a9166a) and published by packaging-only run 39381650071. Both Mage staff drawings are unchanged; staff work deferred. Exact public files verified; no tests/browser checks. Normal workflow restored, temporary publisher removed. All dev.90 performance and dev.91 identities retained. See docs/MAGE_HAIR_QUICKFIX_20261020.md. No automatic further work.
 

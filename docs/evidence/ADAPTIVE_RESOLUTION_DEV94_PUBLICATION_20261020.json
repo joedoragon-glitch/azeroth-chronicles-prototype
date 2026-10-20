@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-20",
+  "version": "0.9.1+snapshot.dev.94",
+  "pullRequest": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/328",
+  "publishedCommit": "cec45fbd705faecec410a8cffe78738354037c9b",
+  "publicationRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39383012533",
+  "publicationConclusion": "success",
+  "jobs": [
+    "publish: package committed files and deploy Pages only"
+  ],
+  "additionalTestsRun": false,
+  "broadCI": false,
+  "browserGameplayChecksRun": false,
+  "liveVerification": [
+    {
+      "path": "build.txt",
+      "sha256": "7708b30acf89c472e4cdee6aba26c2a802cc0634b1847d442a4db8c395533f1d",
+      "commit": "cec45fbd705faecec410a8cffe78738354037c9b",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "sha256": "d797a11c4efc48aed25214aec033e81ffcdf7d4ffd510d644353cf4a50826342",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/app.js",
+      "sha256": "65bd0752380ef46ddcf96df2977f9b89a32c5020c3dd295924ed033a47964e0f",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/runtime.js",
+      "sha256": "210a1821b48294ff978a43096efe26f74671b916ddfdfe36adbf98ad24fe8c1b",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "sha256": "b00881fcdf9ff68d20bed63789289ec522460461c5d62d611701297e9a736262",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "sha256": "9886d0651cf83dc7c9be05af71c5740a78fa9216f71bc5e58501bb591b0a9454",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "sha256": "bd1a36badcdd115ab386aae643e1a8f6bd51132bc84ed36d7682ec7d98b3146d",
+      "matches": true
+    },
+    {
+      "path": "sw.js",
+      "sha256": "54966663ac57bc0bea32f87593883f29f46afa8eb62b830f9ee6f4f6b8315558",
+      "matches": true
+    }
+  ],
+  "actualChromebookFPS": "Owner will test; unresolved. Local timings are not physical-device FPS.",
+  "workflowCleanup": "Normal pages.yml restored byte-for-byte from main 27119fe; one-time dev.94 publisher removed. No runtime changes in closeout."
+}
