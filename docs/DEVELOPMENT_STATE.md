@@ -1,5 +1,7 @@
 # Current development state — 20 October 2026
 
+**Latest preview corrections:** Joel rejected the broad pink mouth-line proposal and the staff previews with extended arms. New previews use shaped upper/lower lips with the original expression and no underlying old mouth; staffs change only equipment at original x=18, retaining exact arms/hands/grips and live faces. All unselected, no runtime edits. Frontier/Abyss audit continues.
+
 **Active preview/audit — 20 October:** Joel reported doubled lips and requested single-mouth coloring along original expressions (especially Lyss), with preview before any character changes or shading; Mage/Mira staff options reopened. Unselected VM-only previews: `tools/visual-review/mouth-staff-preview-20261020/README.md`. No runtime edits or publication. Also audit Frontier central clutter/underused edges with roads and unchanged nature, then modest Abyss Bastion expansion/obstruction relief. Preserve live dev.102 until the relevant scope is ready; character art awaits owner review.
 
 

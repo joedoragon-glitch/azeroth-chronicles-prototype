@@ -11,7 +11,8 @@
     "decisionDate": "2026-10-20",
     "contentDocuments": [
       "tools/visual-review/mouth-staff-preview-20261020/README.md"
-    ]
+    ],
+    "subsequentOwnerReview": "Broad pink mouth stroke explicitly rejected; maintain real lip shape and Lyss half-smile. Extended arms explicitly rejected; staff only, original arm/hand/grip and x=18 shaft axis."
   },
   "decisions": {
     "conceptAcceptance": "Owner requested previews.",
@@ -30,11 +31,11 @@
       "preview/mouths-staves-frontier-20261020"
     ],
     "isolatedReferencePath": "tools/visual-review/mouth-staff-preview-20261020/mouths-preview.png",
-    "isolatedReferenceHash": "3e6d58d26e5ced62adcb12b7256feabeda213bd1a889f9b663d454e1abc4a36f",
+    "isolatedReferenceHash": "68a93c3a8d730b543905ff174e97dbb05b34af7a9686cf4363a1a972c74d7e30",
     "traitsToPreserve": [
-      "Exact original smile curves",
-      "Lyss raised right corner",
-      "One flat colored stroke; no gloss or extra face shading"
+      "Shaped upper/lower lips following original expression; no underlying second mouth",
+      "Lyss raised corner",
+      "No new face shading"
     ]
   },
   "production": {

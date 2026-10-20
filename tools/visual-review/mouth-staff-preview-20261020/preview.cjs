@@ -19,6 +19,9 @@ function patch(source, before, after) {
   return source.replace(before, after);
 }
 let proposed = live;
+const mouthHelper =
+  "\n    function expressionLips(x, y, warm, wry, tone) {\n      // A tapered upper lip with a cupid's bow and a rounded lower lip.\n      // Both follow the existing expression curve; the old mouth is not painted.\n      const point = (t) => {\n        const inv = 1-t, ax=x-2.5, ay=y+5, bx=x+0.5,\n          by=y+(warm?8:wry?5.8:5), cx=x+3, cy=y+(wry?3.6:5);\n        const dx=2*inv*(bx-ax)+2*t*(cx-bx),dy=2*inv*(by-ay)+2*t*(cy-by),len=Math.hypot(dx,dy);\n        return {x:inv*inv*ax+2*inv*t*bx+t*t*cx,y:inv*inv*ay+2*inv*t*by+t*t*cy,nx:-dy/len,ny:dx/len};\n      };\n      const trace = (side) => {\n        ctx.beginPath();\n        for(let j=0;j<=24;j++) {\n          const t=j/24,p=point(t),taper=Math.pow(Math.sin(Math.PI*t),0.8),\n            width=side<0?taper*(0.9-0.45*Math.exp(-Math.pow((t-0.5)/0.12,2))):taper*0.9;\n          const xx=p.x+p.nx*width*side,yy=p.y+p.ny*width*side;\n          j?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);\n        }\n        for(let j=24;j>=0;j--){const p=point(j/24);ctx.lineTo(p.x,p.y);}\n        ctx.closePath();ctx.fill();\n      };\n      ctx.fillStyle=tone;trace(-1);trace(1);\n      ctx.strokeStyle='#7c3c4d';ctx.lineWidth=0.34;ctx.beginPath();\n      for(let j=0;j<=24;j++){const p=point(j/24);j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);}\n      ctx.stroke();\n    }\n";
+proposed = patch(proposed, '    function face(', mouthHelper + '\n    function face(');
 proposed = patch(
   proposed,
   "function face(x, y, color = skin, bulk = 1, aged = false, mood = 'steady')",
@@ -26,8 +29,8 @@ proposed = patch(
 );
 proposed = patch(
   proposed,
-  "ctx.strokeStyle = '#825a50';\n      ctx.lineWidth = 0.9;",
-  "ctx.strokeStyle = lipColor || '#825a50';\n      ctx.lineWidth = lipColor ? 1.65 : 0.9;",
+  "      ctx.strokeStyle = '#825a50';\n      ctx.lineWidth = 0.9;\n      ctx.beginPath();\n      ctx.moveTo(x - 2.5, y + 5);\n      ctx.quadraticCurveTo(x + 0.5, y + (warm ? 8 : wry ? 5.8 : 5), x + 3, y + (wry ? 3.6 : 5));\n      ctx.stroke();",
+  "      if (lipColor) expressionLips(x, y, warm, wry, lipColor);\n      else {\n      ctx.strokeStyle = '#825a50';\n      ctx.lineWidth = 0.9;\n      ctx.beginPath();\n      ctx.moveTo(x - 2.5, y + 5);\n      ctx.quadraticCurveTo(x + 0.5, y + (warm ? 8 : wry ? 5.8 : 5), x + 3, y + (wry ? 3.6 : 5));\n      ctx.stroke();\n      }",
 );
 proposed = patch(
   proposed,
@@ -42,13 +45,12 @@ proposed = patch(
 proposed = patch(
   proposed,
   "lipstick(0, -30, '#a94058');",
-  "line([[-2, -30], [2, -30]], '#a94058', 1.65);",
+  "expressionLips(-0.25, -35, false, false, '#a94058');",
 );
-// Preview geometry only: one colored stroke uses the ORIGINAL mouth curve verbatim.
-// No lip overlay, second contour, gloss, new face shading or expression change.
 const mouthPatches = patches.slice();
 const staffHelpers = `
     function previewStaff(option, woodland = false) {
+      ctx.save();ctx.translate(-7,0); // Original staff axis x=18; arms/hands never move.
       const shaft = woodland ? '#806348' : '#596983';
       shaped(shaft, () => {
         ctx.moveTo(23.4,14);ctx.lineTo(23,-34);ctx.lineTo(27,-34);ctx.lineTo(26.6,14);
@@ -82,32 +84,31 @@ const staffHelpers = `
         line([[25,-54],[25,-50]],woodland?'#c9b57d':'#c4d1d7',1.5);
         oval(25,-45,3.7,5.4,woodland?'#d0a163':'#8a9dca');
       }
-      if (!woodland) {
-        line([[14,-6],[24,-4]],ink,5.3);
-        line([[14,-6],[24,-4]],skin,3.3);
-        grip(24,-4);
-      }
+      ctx.restore();
     }
 `;
 function staffVersion(option) {
-  let s = proposed.replace('    function mageHead(', staffHelpers + '\n    function mageHead(');
+  let s = live.replace('    function mageHead(', staffHelpers + '\n    function mageHead(');
   let start = s.indexOf('        line(', s.indexOf('        mageHead();')),
     end = s.indexOf('        poly(', start);
-  s = s.slice(0, start) + `        previewStaff('${option}');\n` + s.slice(end);
+  s =
+    s.slice(0, start) +
+    `        previewStaff('${option}');\n        grip(17, -2);\n` +
+    s.slice(end);
   const crowned = s.indexOf('        mageHead(true);');
   start = s.lastIndexOf('        line(\n          [\n            [18, -36]', crowned);
   if (start < 0) throw Error('Crowned staff anchor');
-  s = s.slice(0, start) + `        previewStaff('${option}');\n` + s.slice(crowned);
+  s =
+    s.slice(0, start) +
+    `        previewStaff('${option}');\n        grip(17, -1);\n` +
+    s.slice(crowned);
   const specialist = s.indexOf('    function specialist(e)'),
     thorn = s.indexOf("case 'thorn':", specialist);
   start = s.indexOf('          line(\n            [\n              [18, -36]', thorn);
   end = s.indexOf('          rect(-17, -10', start);
   if (start < 0 || end < 0) throw Error('Mira staff anchor');
   s = s.slice(0, start) + `          previewStaff('${option}', true);\n` + s.slice(end);
-  return s.replace(
-    'const hand = teacher ? { x: 19, y: -8 }',
-    "const hand = teacher ? (e.family === 'thorn' ? { x: 24, y: -4 } : { x: 19, y: -8 })",
-  );
+  return s;
 }
 function load(source) {
   const c = { PrototypeRules: require(root + '/src/prototype/rules') };
@@ -146,9 +147,9 @@ background(
   1040,
   1500,
   'Mouth correction · PREVIEW ONLY',
-  'Flat rose color follows each original expression. No extra mouth, highlight or face shading.',
+  'Shaped upper and lower lips follow the original expression; old mouth removed. No face shading.',
 );
-const columns = ['Original expression', 'Released dev.102', 'Proposed · single colored mouth'];
+const columns = ['Original expression', 'Released dev.102', 'Revised · shaped lips'];
 columns.forEach((name, j) => {
   lc.fillStyle = j === 2 ? '#bddcb2' : '#eee5d3';
   lc.font = '16px sans-serif';
@@ -192,7 +193,7 @@ function staffSheet(mira = false) {
     w,
     h,
     mira ? 'Mira instructor staff · PREVIEW ONLY' : 'Mage staff options · PREVIEW ONLY',
-    'Straight shafts, fitted hand grips, compact heads. Existing hair, clothing and body retained.',
+    'STAFF ONLY: original arm, hand, grip, face, hair and body. Staff axis stays exactly where it is now.',
   );
   const names = mira
     ? ['Current', 'A · Leaf crest', 'B · Carved crook', 'C · Amber ring']
@@ -252,8 +253,10 @@ fs.writeFileSync(
       mouthPatches,
       staffHelpers,
       staffChoices: ['A', 'B', 'C'],
+      staffConstraint:
+        'Staff-only changes. Use original x=18 axis; preserve all original arm and grip code. Staff views use LIVE dev.102 faces, independent of the mouth proposal.',
       mouthRule:
-        'Replace existing mouth stroke with a colored stroke along the exact same curve. Lyss retains raised right corner. No new shading. Crowned Mage scarf retained.',
+        'Shaped upper and lower lips replace the original mouth, preserving its expression curve and Lyss’s raised corner. The broad-line preview was explicitly rejected. No new face shading; crowned scarf retained.',
     },
     null,
     2,
