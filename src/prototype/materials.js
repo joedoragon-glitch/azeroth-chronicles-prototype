@@ -84,6 +84,10 @@
       this.clearProjected();
       if (next) {
         this.pins.clear();
+        // Procedural mode has no consumers for decoded optional textures.
+        // Drop them as well as projected patterns; normal mode decodes lazily.
+        this.cache.clear();
+        this.bytes = 0;
         // Deferred work should never run after enabling procedural terrain.
         for (const job of this.queue.splice(0)) {
           this.pending.delete(job.id);

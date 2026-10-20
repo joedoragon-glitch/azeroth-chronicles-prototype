@@ -96,7 +96,7 @@ async function offlineContract(checkout) {
   assert.equal(old.size, 1);
   missing = false;
   await install();
-  assert.equal(skipped, 1);
+  assert.equal(skipped, 0, 'complete cache waits for player update acceptance');
   offline = true;
   const before = fetches;
   for (const rel of [

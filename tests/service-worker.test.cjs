@@ -125,7 +125,7 @@ async function test(name, fn) {
   await test('App asset edits use the current versioned offline cache', async () => {
     assert(currentCache.includes('v' + require('../package.json').version));
   });
-  await test('Precache uses the project subpath, includes every offline asset and activates the newest tester build', async () => {
+  await test('Precache uses the project subpath, includes every offline asset and waits for update acceptance', async () => {
     const w = fresh();
     await w.emit('install');
     assert.equal(w.cache.size, inventory.core.length + 1);
@@ -139,7 +139,7 @@ async function test(name, fn) {
     assert(w.cache.has(w.scope + 'src/prototype/combat-visuals.js'));
     assert(w.cache.has(w.scope + 'src/prototype/sprites.js'));
     assert(w.cache.has(w.scope + 'assets/sprites/manifest.json'));
-    assert.equal(w.state.skipped, 1);
+    assert.equal(w.state.skipped, 0);
   });
   await test('Frame/variant-only resources survive offline and missing atlas rejects install', async () => {
     const manifest = fixtures.animatedManifest(),
@@ -270,14 +270,14 @@ async function test(name, fn) {
     });
     assert.equal(response.status, 503);
   });
-  await test('Tester updates auto-activate while the explicit SKIP_WAITING compatibility message still works', async () => {
+  await test('Updates wait for the explicit SKIP_WAITING installation message', async () => {
     const w = fresh();
     await w.emit('install');
-    assert.equal(w.state.skipped, 1);
+    assert.equal(w.state.skipped, 0);
     await w.emit('message', { data: { type: 'ignored' } });
-    assert.equal(w.state.skipped, 1);
+    assert.equal(w.state.skipped, 0);
     await w.emit('message', { data: { type: 'SKIP_WAITING' } });
-    assert.equal(w.state.skipped, 2);
+    assert.equal(w.state.skipped, 1);
   });
   await test('Phone app install metadata and prototype install flow are present', async () => {
     const manifest = JSON.parse(
@@ -298,7 +298,8 @@ async function test(name, fn) {
     assert(app.includes('hadServiceWorkerController'));
     assert(/if\s*\(hadServiceWorkerController\)\s*\{\s*appReloadRequested\s*=\s*false/.test(app));
     assert(!/hadServiceWorkerController\s*\|\|\s*appReloadRequested/.test(app));
-    assert(/reg\.update\(\)\.catch/.test(app));
+    assert(app.includes('checkAppUpdate(true).catch'));
+    assert(app.includes("$('update-button').onclick = updateApp"));
   });
   for (const populated of [false, true])
     await test(
@@ -388,7 +389,7 @@ async function test(name, fn) {
     const w = fresh({ malformed: true });
     await w.emit('install');
     assert.equal(w.cache.size, inventory.core.length + 1);
-    assert.equal(w.state.skipped, 1);
+    assert.equal(w.state.skipped, 0);
   });
   console.log(`\n${passed} offline checks passed.`);
 })();

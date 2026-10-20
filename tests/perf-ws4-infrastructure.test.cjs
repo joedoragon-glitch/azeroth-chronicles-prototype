@@ -27,7 +27,9 @@ async function compareScenario(options, exercise) {
     b = await exercise(after);
   assert.deepEqual(b, a);
   assert.deepEqual(after.trace, before.trace, 'network/cache request order and URLs are preserved');
-  for (const key of ['network', 'opens', 'skipped', 'claimed'])
+  // Activation now waits for the player's visible Install action. Routing and
+  // cache work still compare against the immutable historical baseline.
+  for (const key of ['network', 'opens', 'claimed'])
     assert.equal(after.state[key], before.state[key], key);
 }
 (async () => {

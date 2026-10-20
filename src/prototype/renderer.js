@@ -2664,6 +2664,10 @@
         transientEffects: visualFx.length,
         enemyVfxEffects: visualFx.filter((f) => f.type === 'enemyVfx').length,
         groundCache: groundCache?.status() || null,
+        outlineBuffers: {
+          surfaces: outlineLayers.size * 4,
+          bytes: [...outlineLayers.keys()].reduce((sum, size) => sum + size * size * 4 * 4, 0),
+        },
         phases: phaseReport(),
       }),
     };

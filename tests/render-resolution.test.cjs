@@ -53,6 +53,41 @@ const sample = Runtime.create(() => clock).record(0, 0, () => {
 });
 assert.equal(sample.preRenderMs, 8);
 assert.equal(sample.renderMs, 77);
+// Sparse active observations must still permit recovery. Two slow active
+// frames remain evidence even when they are more than four seconds apart.
+for (const hz of [0.2, 0.5, 1, 2, 3, 7, 30, 60]) {
+  const severe = Runtime.createResolution();
+  severe.configure(1.5);
+  for (let i = 0; i <= Math.ceil(hz * 30); i++) severe.observe((i * 1000) / hz, 80, 30);
+  assert.equal(severe.ratio, 0.75, 'sustained ' + hz + ' FPS still lowers density');
+}
+const mixed = Runtime.createResolution();
+mixed.configure(1.5);
+for (let i = 0; i <= 200; i++) mixed.observe(i * 40, 28, 30, 12);
+assert(mixed.ratio < 1.5, 'mixed frame work reserves time outside the renderer');
+const cpu = Runtime.createResolution();
+cpu.configure(1.5);
+for (let i = 0; i <= 200; i++) cpu.observe(i * 50, 4, 30, 40);
+assert.equal(cpu.ratio, 1.5, 'CPU-only pressure does not needlessly blur a cheap renderer');
+for (const hz of [0.2, 1, 3, 30, 60]) {
+  const spike = Runtime.createResolution();
+  spike.configure(1.5);
+  for (let i = 0; i <= Math.ceil(hz * 15); i++)
+    spike.observe((i * 1000) / hz, i === 1 ? 600 : 4, 30, i === 1 ? 300 : 2);
+  assert.equal(spike.ratio, 1.5, 'one loading spike is not sustained pressure at ' + hz + ' Hz');
+}
+let slowClock = 0;
+const slowReport = Runtime.create(() => slowClock);
+for (let i = 0; i < 5; i++) {
+  slowClock = i * 1200;
+  slowReport.record(slowClock, slowClock, () => (slowClock += 1000));
+}
+assert.equal(slowReport.report().sampledWindowMs, 4800, 'active stalls remain in FPS evidence');
+assert.equal(slowReport.report().fps, 0.8);
+slowReport.suspend();
+slowClock = 100000;
+slowReport.record(slowClock, slowClock, () => {});
+assert.equal(slowReport.report().sampledWindowMs, 4800, 'suspended time is excluded');
 console.log(
-  'PASS adaptive pixel density: slow-render trace, bounds, pause, recovery, quality opt-out and timing isolation',
+  'PASS adaptive density: sparse slowdown, mixed/CPU budgets, spike rejection, stalls, pause and persistence',
 );

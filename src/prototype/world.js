@@ -3,6 +3,10 @@
   'use strict';
   const roadPlans = new Map();
   function install(Campaign, { D, R, dungeonIds, classes }) {
+    // Roster lookups are frequent during AI/render observation. Homes are
+    // normally fixed; reuse their geometric distance, never the mutable roster
+    // eligibility/order/roles. Reassignment of a home invalidates immediately.
+    const crownPostDistances = new WeakMap();
     const clone = (x) => JSON.parse(JSON.stringify(x)),
       clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
       dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y),
@@ -3262,8 +3266,16 @@
           ],
         }[z.id];
         if (!anchors) return;
-        const distance = (e) =>
-          Math.min(...anchors.map(([x, y]) => Math.hypot(e.home?.x - x, e.home?.y - y)));
+        const distance = (e) => {
+          const x = e.home?.x,
+            y = e.home?.y,
+            previous = crownPostDistances.get(e);
+          if (previous?.zone === z.id && previous.x === x && previous.y === y)
+            return previous.distance;
+          const value = Math.min(...anchors.map(([px, py]) => Math.hypot(x - px, y - py)));
+          crownPostDistances.set(e, { zone: z.id, x, y, distance: value });
+          return value;
+        };
         // Existing Wolves nearest the Crown mint/convoy roads can be trained
         // mounts. Independent Wolf dens/strongholds and ordinary mountain
         // society are deliberately excluded; this creates no new population.

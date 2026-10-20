@@ -47,6 +47,11 @@
     'Install game': 'Instalar juego',
     'Check for game update': 'Buscar actualización',
     'Install available game update': 'Instalar actualización',
+    'Update available': 'Actualización disponible',
+    'Open game menu': 'Abrir menú del juego',
+    'Checking for a game update…': 'Buscando una actualización…',
+    'Downloading the game update… You can keep playing.':
+      'Descargando la actualización… Puedes seguir jugando.',
     'Map and travel routes': 'Mapa y rutas de viaje',
     'Quest journal': 'Diario de misiones',
     'Story journal': 'Guía de la historia',
@@ -416,6 +421,7 @@
       localStorage.setItem(languageKey, language);
     } catch (_) {}
     $('menu-button').firstChild.textContent = language === 'es' ? '☰ Menú ' : '☰ Menu ';
+    refreshUpdateNotice();
     $('talent-button').firstChild.textContent =
       language === 'es' ? 'Entrenamiento · ' : 'Training · ';
     $('recall-button').firstChild.textContent = language === 'es' ? 'Reagrupar ' : 'Recall squad ';
@@ -472,17 +478,46 @@
     appUpdateReady = false,
     appReloadRequested = false,
     installPrompt = null,
-    appControllerReloaded = false;
+    appControllerReloaded = false,
+    appUpdateCheck = null,
+    appUpdateBusy = false,
+    appLastUpdateCheck = -Infinity;
   const hadServiceWorkerController = !!navigator.serviceWorker?.controller;
+  function refreshUpdateNotice() {
+    appUpdateReady = !!appRegistration?.waiting;
+    const button = $('update-button');
+    button.hidden = !appUpdateReady;
+    button.textContent = tr('Update available');
+    button.setAttribute('aria-label', tr('Install available game update'));
+    button.disabled = appUpdateBusy || appReloadRequested;
+    $('menu-button').classList.toggle('update-ready', appUpdateReady);
+    $('menu-button').setAttribute(
+      'aria-label',
+      tr('Open game menu') + (appUpdateReady ? ' · ' + tr('Update available') : ''),
+    );
+  }
+  function checkAppUpdate(force = false) {
+    if (!appRegistration) return Promise.resolve();
+    if (appUpdateCheck) return appUpdateCheck;
+    if (!force && Date.now() - appLastUpdateCheck < 300000) return Promise.resolve();
+    appLastUpdateCheck = Date.now();
+    appUpdateCheck = appRegistration.update().finally(() => {
+      appUpdateCheck = null;
+      refreshUpdateNotice();
+    });
+    return appUpdateCheck;
+  }
   async function updateApp() {
-    if (!appRegistration) return;
-    if (!save()) return;
-    paused = true;
-    clearInput();
-    audio.setPaused(true);
-    status('Checking for a game update…');
+    if (!appRegistration || appUpdateBusy || appReloadRequested) return;
+    appUpdateBusy = true;
+    refreshUpdateNotice();
     try {
-      await appRegistration.update();
+      // A fully cached waiting update can install even while offline. Never
+      // put a network refresh ahead of that ready update.
+      if (!appRegistration.waiting) {
+        status('Checking for a game update…');
+        await checkAppUpdate(true);
+      }
       const worker = appRegistration.installing;
       if (worker && worker.state !== 'installed' && worker.state !== 'activated')
         await new Promise((resolve) => {
@@ -504,19 +539,27 @@
           check();
         });
       if (appRegistration.waiting) {
+        if (started && !save()) return;
+        paused = true;
+        clearInput();
+        audio.setPaused(true);
         appReloadRequested = true;
         appRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
       } else {
-        paused = false;
-        audio.setPaused(false);
-        status('Already up to date.');
+        status(
+          appRegistration.installing
+            ? 'Downloading the game update… You can keep playing.'
+            : 'Already up to date.',
+        );
       }
     } catch (_) {
-      paused = false;
-      audio.setPaused(false);
       status('Update unavailable. Your saved run is safe.');
+    } finally {
+      appUpdateBusy = false;
+      refreshUpdateNotice();
     }
   }
+  $('update-button').onclick = updateApp;
   function runningAsApp() {
     return (
       (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
@@ -1539,6 +1582,7 @@
       cost = game.barracksBuildCost(),
       costLabel = cost ? cost + ' crowns' : 'FREE';
     openMenu('Adventure menu', '', [
+      ...(appUpdateReady ? [action('Install available game update', updateApp)] : []),
       action('Map and travel routes', showMap),
       action('Quest journal', () => quests(false)),
       action('Inventory and support', inventory),
@@ -2971,6 +3015,7 @@
   addEventListener('focus', () => {
     focused = true;
     last = performance.now();
+    checkAppUpdate().catch(() => {});
   });
   document.addEventListener('visibilitychange', () => {
     clearInput();
@@ -2980,7 +3025,7 @@
       renderResolution.suspend();
       save();
       audio.setPaused(true);
-    }
+    } else checkAppUpdate().catch(() => {});
   });
   addEventListener('pagehide', () => {
     clearInput();
@@ -3601,7 +3646,7 @@
       const draw = fps.shouldDraw(now);
       if (draw) {
         const sample = runtime.record(now, frameStart, () => renderer.draw());
-        if (renderResolution.observe(now, sample.renderMs, fps.target)) {
+        if (renderResolution.observe(now, sample.renderMs, fps.target, sample.preRenderMs)) {
           resize();
           renderer.draw();
           runtime.reset();
@@ -3665,15 +3710,19 @@
         .then((reg) => {
           appRegistration = reg;
           function check() {
-            appUpdateReady = !!reg.waiting;
-            if (appUpdateReady) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+            refreshUpdateNotice();
           }
           check();
-          reg.addEventListener('updatefound', () => {
+          function watchWorker() {
             const worker = reg.installing;
             if (worker) worker.addEventListener('statechange', check);
-          });
-          reg.update().catch(() => {});
+          }
+          reg.addEventListener('updatefound', watchWorker);
+          watchWorker();
+          checkAppUpdate(true).catch(() => {});
+          setInterval(() => {
+            if (!document.hidden && navigator.onLine !== false) checkAppUpdate().catch(() => {});
+          }, 300000);
         })
         .catch(() => {});
     }
