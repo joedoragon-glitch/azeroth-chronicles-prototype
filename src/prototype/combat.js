@@ -698,6 +698,7 @@
           defensiveFactor = Math.min(defensiveFactor, 1 - Math.min(0.75, u.wardReduction || 0));
         mitigated *= defensiveFactor;
         u.hp = Math.max(0, u.hp - mitigated);
+        if (oldHp > u.hp && attacker) this.noteGatheringAttack(u, attacker);
         this.recordPartyChargeDamage(u, oldHp - u.hp);
         if (u === this.hero) this.recordDeveloperDamage('incoming', mitigated);
         if (R.resourceMode.manaEnabled && u === this.hero && manaDrain > 0)

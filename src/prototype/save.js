@@ -8,6 +8,23 @@
     const clone = (x) => JSON.parse(JSON.stringify(x)),
       clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
       dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+    const gatheringOrder = (u, s) => {
+      if (
+        !['soldier', 'archer'].includes(u.type) ||
+        u.active === false ||
+        !['gather', 'deposit'].includes(u.order?.type)
+      )
+        return null;
+      const nodes = s.zones?.[s.zone]?.nodes;
+      const node = Array.isArray(nodes) ? nodes.find((n) => n.id === u.order.id) : null;
+      return node
+        ? {
+            type: u.order.type,
+            id: node.id,
+            ...(node.resourceGroup ? { group: node.resourceGroup } : {}),
+          }
+        : null;
+    };
     class Save {
       snapshot() {
         const out = clone(this.s);
@@ -41,7 +58,7 @@
         this.clearEncounterUnits([out.hero, ...out.party]);
         out.party.forEach((u) => {
           delete u.path;
-          u.order = null;
+          u.order = gatheringOrder(u, out);
         });
         for (const z of Object.values(out.zones)) {
           z.props = z.props.filter((p) => !p.garunTemporary && !p.garunPreview);
@@ -462,6 +479,7 @@
         }
         const petFamilies = new Set();
         for (const u of s.party) {
+          u.order = gatheringOrder(u, s);
           validateName(u.customName);
           if (u.type === 'pet') {
             if (

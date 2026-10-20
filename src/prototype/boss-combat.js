@@ -4,7 +4,168 @@
   function install(Campaign, { R }) {
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     const originalRogueMove = Campaign.prototype.tacticalResolveRogueMove;
+    const mobility = new WeakMap(),
+      returns = new WeakMap();
     class BossCombat {
+      fieldBossOpenDirections(point) {
+        const cfg = R.fieldBossMobility;
+        let open = 0;
+        for (let j = 0; j < cfg.directions; j++) {
+          const a = (j * Math.PI * 2) / cfg.directions;
+          if (
+            this.clearSegment(
+              point,
+              {
+                x: point.x + Math.cos(a) * cfg.roomRadius,
+                y: point.y + Math.sin(a) * cfg.roomRadius,
+              },
+              cfg.bodyRadius,
+            )
+          )
+            open++;
+        }
+        return open;
+      }
+      fieldBossRecoveryPoint(e) {
+        const cfg = R.fieldBossMobility,
+          home = e.home || e;
+        for (const radius of cfg.recoveryRings)
+          for (let j = 0; j < (radius ? cfg.directions : 1); j++) {
+            const a = (j * Math.PI * 2) / cfg.directions,
+              p = { x: home.x + Math.cos(a) * radius, y: home.y + Math.sin(a) * radius };
+            if (
+              this.blocked(p.x, p.y, this.zoneId, cfg.bodyRadius) ||
+              this.fieldBossOpenDirections(p) < cfg.recoveryDirections
+            )
+              continue;
+            if (
+              this.zone().npcs.some(
+                (n) =>
+                  ['rest', 'shop', 'transport', 'teacher'].includes(n.kind) &&
+                  dist(n, p) < cfg.serviceClearance,
+              )
+            )
+              continue;
+            if (
+              [this.hero, ...this.activeLivingParty()].some(
+                (u) => u.hp > 0 && dist(u, p) < cfg.landingClearance,
+              )
+            )
+              continue;
+            if (
+              this.zone().enemies.some(
+                (u) =>
+                  u !== e && u.hp > 0 && dist(u, p) < cfg.bodyRadius + this.actorRadius(u) + 20,
+              )
+            )
+              continue;
+            return p;
+          }
+        return null;
+      }
+      fieldBossMobilityReset(e, target, dt) {
+        if (
+          e.type !== 'boss' ||
+          this.boss(e.family).kind !== 'field' ||
+          this.isDungeon() ||
+          !e.aggro ||
+          e.returning ||
+          e.hp <= 0 ||
+          e.neutral
+        )
+          return null;
+        const cfg = R.fieldBossMobility;
+        let state = mobility.get(e);
+        if (
+          !state ||
+          state.zone !== this.zoneId ||
+          this.s.time - (state.lastTick || this.s.time) > cfg.sampleSeconds * 2
+        ) {
+          state = { zone: this.zoneId, elapsed: 0, confined: 0, stalled: 0, x: e.x, y: e.y };
+          mobility.set(e, state);
+        }
+        state.lastTick = this.s.time;
+        state.elapsed += dt;
+        if (state.elapsed < cfg.sampleSeconds) return null;
+        const elapsed = state.elapsed;
+        state.elapsed = 0;
+        const travel = Math.hypot(e.x - state.x, e.y - state.y),
+          confined = this.fieldBossOpenDirections(e) < cfg.minimumDirections,
+          pursuing =
+            target?.hp > 0 &&
+            dist(e, target) > cfg.meleeRange &&
+            !e.telegraph &&
+            !e.motion &&
+            !e.rangedAim &&
+            !e.supportHeal &&
+            !e.sequence?.length &&
+            !(e.slow > 0);
+        state.confined = confined ? state.confined + elapsed : 0;
+        state.stalled = pursuing && travel < cfg.minimumProgress ? state.stalled + elapsed : 0;
+        state.x = e.x;
+        state.y = e.y;
+        if (state.confined < cfg.confinedSeconds && state.stalled < cfg.stallSeconds) return null;
+        const point = this.fieldBossRecoveryPoint(e);
+        if (point) mobility.delete(e);
+        return point;
+      }
+      beginFieldBossReturn(e, point) {
+        returns.set(e, {
+          zone: this.zoneId,
+          point: { ...point },
+          remaining: R.fieldBossMobility.returnSeconds,
+        });
+        e.aggro = false;
+        this.notice(e.name + ' withdraws to open ground.', 3);
+      }
+      fieldBossReturning(e) {
+        return returns.get(e)?.zone === this.zoneId;
+      }
+      advanceFieldBossReturn(e, dt) {
+        const state = returns.get(e);
+        if (!state) return null;
+        if (state.zone !== this.zoneId || e.hp <= 0) {
+          returns.delete(e);
+          return null;
+        }
+        state.remaining -= dt;
+        if (state.remaining > 0) return { waiting: true };
+        const landing = this.fieldBossRecoveryPoint(e);
+        if (!landing) {
+          state.remaining = R.fieldBossMobility.sampleSeconds;
+          return { waiting: true };
+        }
+        state.point = landing;
+        returns.delete(e);
+        delete e.thornReturn;
+        delete e.cinderReturn;
+        delete e.cinderDestination;
+        this.releasePatrolResume(e);
+        // Roaming captives and their existing living escorts return with the
+        // encounter. No new units, revival or quest-state change.
+        const captive =
+          this.thornPatroller(e) && this.thornCaptiveFollowing()
+            ? this.thornCaptive()
+            : this.cinderPatroller(e) && this.veraHeld()
+              ? this.veraCaptive()
+              : null;
+        if (captive) {
+          Object.assign(captive, this.safe(state.point.x - 65, state.point.y + 45));
+          delete captive.path;
+          captive.routeAge = 0;
+        }
+        if (this.cinderPatroller(e))
+          for (const [i, u] of this.zone()
+            .enemies.filter((u) => u.veraEscort && u.hp > 0)
+            .entries()) {
+            Object.assign(u, this.safe(state.point.x + (i ? 90 : -90), state.point.y + 85));
+            delete u.path;
+            u.routeAge = 0;
+          }
+        delete e.path;
+        e.routeAge = 0;
+        return { point: state.point };
+      }
       // Each role is explicitly checked: species/name collisions cannot grant a trait.
       snapshotBossIncomingFactor(e) {
         if (!e || !e.aggro || e.hp <= 0 || e.returning || e.neutral) return 1;
@@ -323,6 +484,8 @@
       }
 
       clearEncounterState(e, units = [this.hero, ...this.s.party]) {
+        mobility.delete(e);
+        returns.delete(e);
         for (const u of units) {
           if (u.keeperHeld === e.id) delete u.keeperHeld;
           if (e.deathRoll?.victim === (u === units[0] ? 'hero' : u.id)) delete u.deathRollHeld;

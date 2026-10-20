@@ -2200,7 +2200,12 @@
         return false;
       }
       this.s.recallActive = false;
-      for (const u of labor) u.order = { type: 'gather', id: nodeId, group: n.resourceGroup };
+      for (const u of labor) {
+        this.clearPartyCharge(u);
+        this._companionCharges?.delete(u.id);
+        this.clearGatheringIntent(u);
+        u.order = { type: 'gather', id: nodeId, group: n.resourceGroup };
+      }
       this.say(
         labor.length +
           ' troop' +
@@ -5485,6 +5490,11 @@
           this.disengage(e, dt);
           continue;
         }
+        const mobilityReset = this.fieldBossMobilityReset(e, target, dt);
+        if (mobilityReset) {
+          this.disengage(e, dt, mobilityReset);
+          continue;
+        }
         if (this.enemySupportHeal(e)) continue;
         if (this.enemySupportApproach(e, dt)) continue;
         // A short-lived rogue decision is distinct from normal aggro.
@@ -5796,7 +5806,7 @@
       this.updateThornCaptive(dt);
       this.updateVeraFieldwork(dt);
     }
-    disengage(e, dt) {
+    disengage(e, dt, resetPoint = null) {
       const resume = this.patrolResume(e);
       if (!e.returning) {
         if (e.family === 'mine' && e.type === 'boss')
@@ -5813,7 +5823,13 @@
         this.say(e.name + ' disengages.');
         this.event('reset');
       }
-      if (this.thornPatroller(e)) {
+      if (resetPoint) this.beginFieldBossReturn(e, resetPoint);
+      const mobilityReturn = this.advanceFieldBossReturn(e, dt);
+      if (mobilityReturn) {
+        if (mobilityReturn.waiting) return;
+        Object.assign(e, mobilityReturn.point);
+        e.returning = 0;
+      } else if (this.thornPatroller(e)) {
         e.thornReturn = true;
         e.aggro = false;
         const before = { x: e.x, y: e.y },
@@ -5853,7 +5869,11 @@
         e.returning = 0;
       } else e.returning -= dt;
       if (e.returning <= 0) {
-        if (!resume && !(e.veraEscort && this.zoneId === 'crown' && this.veraHeld()))
+        if (
+          !resume &&
+          !mobilityReturn &&
+          !(e.veraEscort && this.zoneId === 'crown' && this.veraHeld())
+        )
           Object.assign(e, e.home);
         e.aggro = false;
         delete e.ashCloud;

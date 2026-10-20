@@ -1,5 +1,7 @@
 # Current development state — 20 October 2026
 
+**Prepared dev.105 — aesthetic audit, confined field bosses and gathering:** Joel requested the post-layout audit, quick field-boss reset to usable terrain, and resource-first defensive gathering with safe travel/delivery and Recall. Focused checks/build/format passed; package-only publication pending. Veyra remains preview-only. [Scope](FRONTIER_AESTHETICS_BOSS_GATHER_20261020.md).
+
 **Published dev.104 — Frontier and Abyss layouts:** PR #338 / `b0723ddee51d7f3534fdd9fa4b1e126340331aaf`; package-only run 39411703976 succeeded. Focused layout/save/door checks passed, 16 exact live files verified. Normal workflow restored. Follow-up now active: aesthetic audit of relocated areas and faster recovery/reset for confined field bosses. Veyra correction remains preview-only.
 
 **Approved map implementation — dev.104:** Joel approved the Frontier relocation and Abyss Bastion expansion on 20 October. Implementation preserves nature and existing-save progress; focused layout/save/movement checks only, package-only publication. Veyra arm/skirt correction remains preview-only pending review. [Scope](FRONTIER_ABYSS_LAYOUT_20261020.md).

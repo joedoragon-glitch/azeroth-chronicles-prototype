@@ -6,12 +6,238 @@
     // Runtime-only broad phase and congestion clocks. Never persist crowd state.
     const crowds = new WeakMap();
     const patrolResumes = new WeakMap();
+    const companionTrips = new WeakMap(),
+      laborThreatFrames = new WeakMap();
     class Navigation {
+      gatheringUnit(u) {
+        return u?.order?.type === 'gather' || u?.order?.type === 'deposit';
+      }
+      gatheringThreats() {
+        let frame = laborThreatFrames.get(this);
+        const z = this.s.zones[this.zoneId];
+        if (frame?.zone === z && frame.time === this.s.time && frame.enemies === z.enemies)
+          return frame.threats;
+        const cfg = R.gatheringTravel;
+        const threats = this.peace
+          ? []
+          : z.enemies
+              .filter((e) => e.hp > 0 && !e.neutral && !e.returning)
+              .map((e) => ({
+                x: e.x,
+                y: e.y,
+                r:
+                  (e.type === 'boss'
+                    ? Math.max(
+                        R.bossCadence.specialRange,
+                        R.balance.enemyAcquisitionRange * R.balance.enemyTargetingMultiplier,
+                      )
+                    : R.balance.enemyAcquisitionRange * R.balance.enemyTargetingMultiplier) +
+                  cfg.enemyMargin,
+              }));
+        laborThreatFrames.set(this, { zone: z, time: this.s.time, enemies: z.enemies, threats });
+        return threats;
+      }
+      companionTravelClear(a, b, threats = [], origin = a) {
+        if (!this.clearSegment(a, b)) return false;
+        // A troop already caught inside awareness can leave it, while routes
+        // from safety never deliberately enter the enemy's acquisition radius.
+        return threats.every(
+          (e) => this.distanceToSegment(e, a, b) >= Math.min(e.r, dist(e, origin)) - 0.001,
+        );
+      }
+      companionRoute(a, b, gathering = false) {
+        const target = this.safe(b.x, b.y),
+          threats = gathering ? this.gatheringThreats() : [],
+          step = R.gatheringTravel.gridStep,
+          n = Math.ceil(this.zoneSize() / step),
+          point = (id) => ({
+            x: (id % n) * step + step / 2,
+            y: Math.floor(id / n) * step + step / 2,
+          }),
+          clear = (p, q) => this.companionTravelClear(p, q, threats, a),
+          valid = new Map(),
+          free = (id) => {
+            if (!valid.has(id)) {
+              const p = point(id);
+              valid.set(id, !this.blocked(p.x, p.y));
+            }
+            return valid.get(id);
+          };
+        if (clear(a, target)) return [target];
+        const near = (p) => {
+            const out = [],
+              cx = Math.floor(p.x / step),
+              cy = Math.floor(p.y / step);
+            for (let dx = -2; dx <= 2; dx++)
+              for (let dy = -2; dy <= 2; dy++) {
+                const x = cx + dx,
+                  y = cy + dy,
+                  id = y * n + x;
+                if (x >= 0 && y >= 0 && x < n && y < n && free(id) && clear(p, point(id)))
+                  out.push(id);
+              }
+            return out.sort((i, j) => dist(point(i), p) - dist(point(j), p)).slice(0, 8);
+          },
+          starts = near(a),
+          ends = new Set(near(target));
+        if (!starts.length || !ends.size) return [];
+        // Eight-direction A* minimizes actual travel distance rather than the
+        // old four-direction breadth-first hop count. Every diagonal and every
+        // smoothed segment still obeys physical collision and hostile clearance.
+        const heap = [],
+          cost = new Map(),
+          parents = new Map(),
+          push = (id, g) => {
+            const item = { id, g, f: g + dist(point(id), target) };
+            let i = heap.length;
+            heap.push(item);
+            while (i) {
+              const p = (i - 1) >> 1;
+              if (heap[p].f <= item.f) break;
+              heap[i] = heap[p];
+              i = p;
+            }
+            heap[i] = item;
+          },
+          pop = () => {
+            const first = heap[0],
+              last = heap.pop();
+            if (heap.length) {
+              let i = 0;
+              while (i * 2 + 1 < heap.length) {
+                let j = i * 2 + 1;
+                if (j + 1 < heap.length && heap[j + 1].f < heap[j].f) j++;
+                if (heap[j].f >= last.f) break;
+                heap[i] = heap[j];
+                i = j;
+              }
+              heap[i] = last;
+            }
+            return first;
+          };
+        for (const id of starts) {
+          const g = dist(a, point(id));
+          cost.set(id, g);
+          parents.set(id, null);
+          push(id, g);
+        }
+        while (heap.length) {
+          const current = pop(),
+            id = current.id;
+          if (current.g !== cost.get(id)) continue;
+          if (ends.has(id)) {
+            const path = [target];
+            for (let at = id; at !== null; at = parents.get(at)) path.push(point(at));
+            path.reverse();
+            const smooth = [];
+            let from = a,
+              j = 0;
+            while (j < path.length) {
+              let far = j;
+              for (let k = path.length - 1; k > j; k--)
+                if (clear(from, path[k])) {
+                  far = k;
+                  break;
+                }
+              smooth.push(path[far]);
+              from = path[far];
+              j = far + 1;
+            }
+            return smooth;
+          }
+          const x = id % n,
+            y = Math.floor(id / n),
+            from = point(id);
+          for (const [dx, dy] of [
+            [1, 0],
+            [-1, 0],
+            [0, 1],
+            [0, -1],
+            [1, 1],
+            [1, -1],
+            [-1, 1],
+            [-1, -1],
+          ]) {
+            const xx = x + dx,
+              yy = y + dy,
+              next = yy * n + xx;
+            if (xx < 0 || yy < 0 || xx >= n || yy >= n || !free(next)) continue;
+            const g = current.g + step * Math.hypot(dx, dy);
+            if (g >= (cost.get(next) ?? Infinity) || !clear(from, point(next))) continue;
+            cost.set(next, g);
+            parents.set(next, id);
+            push(next, g);
+          }
+        }
+        return [];
+      }
+      clearCompanionTravel(u) {
+        companionTrips.delete(u);
+        u.path = [];
+        u.routeAge = 0;
+      }
+      followCompanion(u, target, speed, dt, stop) {
+        if (dist(u, target) <= stop) return true;
+        const gathering = this.gatheringUnit(u),
+          threats = gathering ? this.gatheringThreats() : [];
+        if (this.companionTravelClear(u, target, threats)) {
+          companionTrips.delete(u);
+          u.path = [];
+          return this.move(u, target, speed, dt, stop);
+        }
+        let trip = companionTrips.get(u);
+        if (
+          !trip ||
+          trip.zone !== this.zoneId ||
+          trip.gathering !== gathering ||
+          dist(trip.target, target) > 30
+        ) {
+          trip = {
+            zone: this.zoneId,
+            gathering,
+            target: { x: target.x, y: target.y },
+            age: 0,
+            path: [],
+            stalled: 0,
+          };
+          companionTrips.set(u, trip);
+        }
+        trip.age -= dt;
+        if (trip.path.length && !this.companionTravelClear(u, trip.path[0], threats)) {
+          trip.path = [];
+          trip.age = 0;
+        }
+        if (trip.age <= 0) {
+          trip.path = this.companionRoute(u, target, gathering);
+          trip.age = R.gatheringTravel.replanSeconds;
+          trip.target = { x: target.x, y: target.y };
+          u.path = trip.path;
+        }
+        while (trip.path.length && dist(u, trip.path[0]) < 1) trip.path.shift();
+        if (!trip.path.length) {
+          if (gathering && this.s.time >= (this._gatherRouteNoticeAt || 0)) {
+            this._gatherRouteNoticeAt = this.s.time + R.gatheringTravel.noticeSeconds;
+            this.notice('Gatherers wait for a safe route. Clear nearby enemies or Recall them.', 4);
+          }
+          return false;
+        }
+        const moved = this.move(u, trip.path[0], speed, dt);
+        if (dist(u, trip.path[0]) < 1) trip.path.shift();
+        trip.stalled = moved ? 0 : trip.stalled + dt;
+        if (trip.stalled >= R.actorSpacing.congestionSeconds) {
+          trip.age = 0;
+          trip.stalled = 0;
+        }
+        return moved;
+      }
       roamingBoss(e) {
         return this.thornPatroller(e) || this.cinderPatroller(e);
       }
       attackResetProtected(e) {
-        return !!(e.returning || e.thornReturn || e.cinderReturn) && !this.roamingBoss(e);
+        return (
+          this.fieldBossReturning(e) ||
+          (!!(e.returning || e.thornReturn || e.cinderReturn) && !this.roamingBoss(e))
+        );
       }
       patrolResume(e) {
         const state = patrolResumes.get(this)?.get(e.id);
@@ -185,6 +411,11 @@
         return out;
       }
       actorStepAllowed(unit, point, relaxFriendly = false, frame = this.actorCrowd()) {
+        if (
+          this.gatheringUnit(unit) &&
+          !this.companionTravelClear(unit, point, this.gatheringThreats())
+        )
+          return false;
         if (!frame.members.has(unit)) return true;
         const candidates = new Set(),
           steps = Math.max(1, Math.ceil(dist(unit, point) / R.actorSpacing.cellSize));
@@ -767,6 +998,8 @@
         z.npcs = z.npcs.filter((n) => !remove.has(n.id));
       }
       follow(entity, target, speed, dt, stop = 45) {
+        if (this.s.party.includes(entity))
+          return this.followCompanion(entity, target, speed, dt, stop);
         if (dist(entity, target) <= stop) return true;
         if (this.clearSegment(entity, target)) {
           entity.path = [];
