@@ -1,5 +1,7 @@
 # Project working rules
 
+- **Candidate dev.101 — Frontier and enemy combat:** Map-edge channel, civic fountain, burned-tree shoots; 20% enemy special reach with shared warnings/effects, 10% acquisition/ranged targeting; earlier regroup assessment and idle healer triage. Mage bows are preview-only, owner selection pending. Focused checks only; package-only publication. [Scope](docs/FRONTIER_REACH_REGROUP_20261020.md).
+
 - **Published dev.100 — mounted movement and roster skill repair:** PR #334 / `82622dc002b96f2fa4a6c9744542d76a80387bfe`; package-only run 39396497512 succeeded; exact live files match. Mounted walking 30% faster than equivalent foot movement. Existing pets/troops use current rules without rest/rehire; stale core-only training repaired when hero Skill 2 is learned. 39 restored-roster cases and focused movement/combat checks passed; no broad CI/browser matrix. Normal workflow restored; temporary publisher removed. [Receipt](docs/evidence/MOUNTED_ROSTER_DEV100_PUBLICATION_20261020.json). Owner live play next; no automatic further work.
 
 - **Historical candidate dev.100 — mounted movement and existing-roster skills:** 30% mounted walking advantage across movement modes; repair stale advanced-training flag when hero Skill 2 is learned, preserve existing roster/cooldowns. Focused checks only; package-only publication. [Scope](docs/MOUNTED_ROSTER_SKILLS_20261020.md).

@@ -103,7 +103,20 @@
           from = { x: a.fromX + side.x * offset, y: a.fromY + side.y * offset },
           to =
             a.kind === 'volley'
-              ? { x: from.x + Math.cos(angle) * 650, y: from.y + Math.sin(angle) * 650 }
+              ? {
+                  x:
+                    from.x +
+                    Math.cos(angle) *
+                      (a.tracking
+                        ? a.shotSpeed * a.shotLife
+                        : 650 * R.balance.enemySpecialReachMultiplier),
+                  y:
+                    from.y +
+                    Math.sin(angle) *
+                      (a.tracking
+                        ? a.shotSpeed * a.shotLife
+                        : 650 * R.balance.enemySpecialReachMultiplier),
+                }
               : { x: a.x + side.x * offset, y: a.y + side.y * offset },
           width =
             a.kind === 'volley'
