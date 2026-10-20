@@ -1,5 +1,7 @@
 # Project working rules
 
+- Current release: dev.93 selected C / twin braids is merged in PR #327 (9c2e1f2bc7be1570502a8d2b389f534d91a9166a) and published by packaging-only run 39381650071. Both Mage staff drawings are unchanged; staff work deferred. Exact public files verified; no tests/browser checks. Normal workflow restored, temporary publisher removed. All dev.90 performance and dev.91 identities retained. See docs/MAGE_HAIR_QUICKFIX_20261020.md. No automatic further work.
+
 - Latest steering (20 October): owner deferred all staff changes and authorized publishing only selected Mage hair C / twin braids. Leave the live dev.92 staff unchanged in both appearances. Complete dev.93 direct merge/publication with no tests; preserve existing headgear, identities and performance. Staff previews are unselected historical references. Restore normal workflow after packaging-only publication.
 
 - Latest owner selection (20 October, 02:21 EDT): C / Twin braids from regular-and-crowned Mage comparison, replacing rejected dev.92 ponytail. Apply exact accepted procedural option in dev.93 using the existing quick no-test direct merge/publication process. Preserve headgear/scarf, dev.91 identities and dev.90 performance. Canon and comparison: docs/MAGE_HAIR_QUICKFIX_20261020.md. Temporary packaging-only publisher must be removed and normal workflow restored afterward.

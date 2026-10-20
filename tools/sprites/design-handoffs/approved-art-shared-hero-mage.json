@@ -115,7 +115,7 @@
     "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
     "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
     "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
-    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "resultReviewStatus": "Final completed design set approved by Joel \u00b7 19 October 2026",
     "requestedCorrection": "Clearly female silver-haired mage, bright eyes and warm expression, blue gown and moon hat.",
     "finalResultApprovalDate": "2026-10-19",
     "latestOwnerQuickfix": {
@@ -160,7 +160,7 @@
       "optionSource": "tools/visual-review/mage-hair-options-20261020/options.json",
       "sourceSha256": "b00881fcdf9ff68d20bed63789289ec522460461c5d62d611701297e9a736262",
       "decisionRecord": "docs/MAGE_HAIR_QUICKFIX_20261020.md",
-      "status": "dev.93 selected correction; merge/publication pending, no tests."
+      "status": "Released dev.93 in PR #327, merge 9c2e1f2bc7be1570502a8d2b389f534d91a9166a; packaging-only run 39381650071. Staff unchanged; no tests. Exact public files verified."
     }
   }
 }

@@ -1,0 +1,65 @@
+{
+  "date": "2026-10-20",
+  "version": "0.9.1+snapshot.dev.93",
+  "pullRequest": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/327",
+  "publishedCommit": "9c2e1f2bc7be1570502a8d2b389f534d91a9166a",
+  "publicationRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39381650071",
+  "publicationConclusion": "success",
+  "jobs": [
+    "publish: packages committed files and deploys Pages only"
+  ],
+  "fullGameCI": false,
+  "repeatedCompletedChecks": false,
+  "liveVerification": [
+    {
+      "path": "build.txt",
+      "matches": true,
+      "commit": "9c2e1f2bc7be1570502a8d2b389f534d91a9166a"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "matches": true,
+      "sha256": "c073c2ffeb1d093271cc8081f310208400de789c227d8c44ccaddf2694c26a7b"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "matches": true,
+      "sha256": "9886d0651cf83dc7c9be05af71c5740a78fa9216f71bc5e58501bb591b0a9454"
+    },
+    {
+      "path": "src/prototype/runtime.js",
+      "matches": true,
+      "sha256": "6f2dde188f9a2245ca578b5b14a6be0936f740ffe511f5050fb65ff0158fac55"
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "matches": true,
+      "sha256": "bd1a36badcdd115ab386aae643e1a8f6bd51132bc84ed36d7682ec7d98b3146d"
+    },
+    {
+      "path": "src/prototype/sprites.js",
+      "matches": true,
+      "sha256": "e28cbe6142c2014e813e59b7eddc1f1e9aba945b62475414fee897c9cfd3aa34"
+    },
+    {
+      "path": "assets/sprites/manifest.json",
+      "matches": true,
+      "sha256": "733ebc84dc1b0d159ff0a6be6bcd2a401e1ecba533a8e26c2e5358327f5afa84"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "matches": true,
+      "sha256": "b00881fcdf9ff68d20bed63789289ec522460461c5d62d611701297e9a736262"
+    },
+    {
+      "path": "sw.js",
+      "matches": true,
+      "sha256": "425ab759e07ea6d13ee3630832442b59ca7e03bda7911e1c60bd68055f4d00fe"
+    }
+  ],
+  "testsRun": false,
+  "browserChecksRun": false,
+  "releaseScope": "Owner-selected C twin braids across normal/crowned Mage. Both live staff drawings and headgear/scarf unchanged; staff redesign deferred. Withdrawn QoL change excluded. All dev.91 identities and dev.90 performance changes retained.",
+  "actualChromebookFPS": "Owner dev.90 play remains pending; dev.93 preserves performance source.",
+  "workflowCleanup": "Restored pages.yml byte-for-byte from pre-release main 9d36fb5106958dbdebd82b221fc687cebf0ea822; removed one-time publisher. Cleanup changes no published runtime."
+}

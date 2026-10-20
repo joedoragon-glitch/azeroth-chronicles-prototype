@@ -1,5 +1,7 @@
 # Mage hairstyle quick fix — 20 October 2026
 
+**Published dev.93 — selected twin braids:** [PR #327](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/327) merged as `9c2e1f2bc7be1570502a8d2b389f534d91a9166a`; packaging-only [run 39381650071](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39381650071) succeeded. Selected C silver twin braids apply to regular/crowned Mage. Both staff drawings, headgear/scarf, dev.91 identities and dev.90 performance are unchanged. Staff redesign is deferred. Exact public files verified; no tests/browser checks. Normal workflow restored and temporary publisher removed. [Receipt](evidence/MAGE_DEV93_PUBLICATION_20261020.json).
+
 **Latest owner direction — hairstyle only:** Joel deferred the staff redesign and authorized proceeding with selected C / twin braids only. Both regular/crowned live dev.92 staff drawings remain byte-for-byte unchanged. Staff previews below are unselected/deferred history; the combined-release hold is superseded. Direct dev.93 merge/publication proceeds with no tests.
 
 **02:31 EDT — staff preview correction:** Joel clarified that the staff shaft must be straight. All four staff previews now have one vertical shaft aligned below the head and a fitted holding hand. Twin braids are unchanged. The updated staff comparison/options supersede the earlier bent shafts. No staff chosen yet; no tests or publication.

@@ -1,5 +1,7 @@
 # Current development state — 20 October 2026
 
+**Published dev.93 — selected twin braids:** [PR #327](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/327) merged as `9c2e1f2bc7be1570502a8d2b389f534d91a9166a`; packaging-only [run 39381650071](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39381650071) succeeded. Selected C silver twin braids apply to regular/crowned Mage. Both staff drawings, headgear/scarf, dev.91 identities and dev.90 performance are unchanged. Staff redesign is deferred. Exact public files verified; no tests/browser checks. Normal workflow restored and temporary publisher removed. [Receipt](evidence/MAGE_DEV93_PUBLICATION_20261020.json).
+
 **Latest owner direction — hairstyle-only dev.93:** Staff redesign deferred; keep both live staff drawings unchanged. Publish accepted C / twin braids for regular/crowned Mage through the authorized packaging-only release, with no tests. The earlier staff-choice hold is superseded. Headgear/scarf, dev.91 identities and dev.90 performance are retained.
 
 **02:21 EDT — dev.93 selected Mage style:** Joel selected C / Twin braids after rejecting the hidden ponytail. Exact previewed drawing applied across regular/crowned Mage, with existing hat/crown/scarf, identity preferences and performance fixes retained. No tests; direct merge/publication pending. [Decision and accepted comparison](MAGE_HAIR_QUICKFIX_20261020.md).

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "status": "procedural-design",
   "designId": "approved-art-raster-hero-mage",
-  "name": "Active sprite — Hero / Mage",
+  "name": "Active sprite \u2014 Hero / Mage",
   "kind": "active-sprite",
   "nextAction": "Publish selected option C in dev.93 using the authorized no-test process; preserve other characters, original rasters and performance fixes.",
   "context": {
@@ -143,7 +143,7 @@
     "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
     "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
     "beforeSourceCommit": "e6ea987aded7b441bdedf51e1fc29b38b1ed2f02",
-    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "resultReviewStatus": "Final completed design set approved by Joel \u00b7 19 October 2026",
     "requestedCorrection": "Updated the relevant shared character identity, face/hair, rigid helmet, held tool, quiver or camp/riding composition under the latest owner correction. Carries through indexed loadouts, captive and appointed states. Gameplay geometry and protected raster pixels remain intact.",
     "finalResultApprovalDate": "2026-10-19",
     "latestOwnerQuickfix": {
@@ -188,7 +188,7 @@
       "optionSource": "tools/visual-review/mage-hair-options-20261020/options.json",
       "sourceSha256": "b00881fcdf9ff68d20bed63789289ec522460461c5d62d611701297e9a736262",
       "decisionRecord": "docs/MAGE_HAIR_QUICKFIX_20261020.md",
-      "status": "dev.93 selected correction; merge/publication pending, no tests."
+      "status": "Released dev.93 in PR #327, merge 9c2e1f2bc7be1570502a8d2b389f534d91a9166a; packaging-only run 39381650071. Staff unchanged; no tests. Exact public files verified."
     }
   }
 }
