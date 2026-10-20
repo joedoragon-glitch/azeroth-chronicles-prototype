@@ -1,0 +1,1809 @@
+{
+  "version": "0.9.1+snapshot.dev.116",
+  "baseRegistrations": 33,
+  "idleFrames": 4,
+  "baseSelections": {
+    "sprite": 29,
+    "procedural": 4
+  },
+  "variantCount": 0,
+  "exactProductionPairs": 28,
+  "visibleBoundsAlphaThreshold": 24,
+  "sourcePixelClippingFailures": 0,
+  "emptyRenders": 0,
+  "entityStateMutations": 0,
+  "allBaseKeysCovered": true,
+  "worldAnchorsAndPairMagnificationEqual": true,
+  "frontierRegrowthIncluded": true,
+  "reviewOnlyResolverCopy": true,
+  "productionSourceUnmodified": true,
+  "proceduralSourceSha256": "2b129ca6d73109d874335ce9ff5e1e2b514b91393a3300e3a04d96292516a977",
+  "spriteSourceSha256": "c2b5687c29c662be3f4e25c84c14faa4f30be21011519441885ecc46c546daab",
+  "pages": [
+    {
+      "group": "characters",
+      "name": "Characters",
+      "file": "comparison-characters.png",
+      "numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "group": "greenwood",
+      "name": "Greenwood Vale",
+      "file": "comparison-greenwood.png",
+      "numbers": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ]
+    },
+    {
+      "group": "wetlands",
+      "name": "Wetlands",
+      "file": "comparison-wetlands.png",
+      "numbers": [
+        14,
+        15,
+        16,
+        17
+      ]
+    },
+    {
+      "group": "highlands",
+      "name": "Highlands",
+      "file": "comparison-highlands.png",
+      "numbers": [
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25
+      ]
+    },
+    {
+      "group": "frontier",
+      "name": "Frontier",
+      "file": "comparison-frontier.png",
+      "numbers": [
+        26,
+        27,
+        28,
+        29
+      ]
+    },
+    {
+      "group": "crown",
+      "name": "Crown",
+      "file": "comparison-crown.png",
+      "numbers": [
+        30,
+        31,
+        32,
+        33
+      ]
+    },
+    {
+      "group": "animation",
+      "name": "Retained idle frames",
+      "file": "comparison-animation.png",
+      "numbers": [
+        34,
+        35,
+        36,
+        37
+      ]
+    }
+  ],
+  "records": [
+    {
+      "number": 1,
+      "key": "hero:paladin",
+      "title": "Paladin",
+      "group": "characters",
+      "groupName": "Characters",
+      "file": "cards/01-hero-paladin.webp",
+      "frame": null,
+      "liveSelection": "procedural",
+      "entity": {
+        "id": "sprite-reference-paladin",
+        "name": "hero:paladin",
+        "x": 600,
+        "y": 600,
+        "renderKind": "hero",
+        "class": "paladin",
+        "visualScale": 1
+      },
+      "region": 0,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-hero-paladin.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 489,
+          "t": 663,
+          "r": 713,
+          "b": 916
+        },
+        "sprite": {
+          "l": 505,
+          "t": 653,
+          "r": 703,
+          "b": 913
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 477,
+          "t": 641,
+          "w": 249,
+          "h": 288
+        },
+        "scale": 1.6319444444444444
+      }
+    },
+    {
+      "number": 2,
+      "key": "hero:mage",
+      "title": "Mage",
+      "group": "characters",
+      "groupName": "Characters",
+      "file": "cards/02-hero-mage.webp",
+      "frame": null,
+      "liveSelection": "procedural",
+      "entity": {
+        "id": "sprite-reference-002",
+        "name": "hero:mage",
+        "x": 600,
+        "y": 600,
+        "renderKind": "hero",
+        "class": "mage",
+        "visualScale": 1
+      },
+      "region": 0,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-hero-mage.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 521,
+          "t": 621,
+          "r": 702,
+          "b": 916
+        },
+        "sprite": {
+          "l": 528,
+          "t": 662,
+          "r": 687,
+          "b": 913
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 509,
+          "t": 609,
+          "w": 206,
+          "h": 320
+        },
+        "scale": 1.46875
+      }
+    },
+    {
+      "number": 3,
+      "key": "hero:ranger",
+      "title": "Hero Ranger",
+      "group": "characters",
+      "groupName": "Characters",
+      "file": "cards/03-hero-ranger.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "sprite-reference-003",
+        "name": "hero:ranger",
+        "x": 600,
+        "y": 600,
+        "renderKind": "hero",
+        "class": "ranger",
+        "visualScale": 1
+      },
+      "region": 0,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-hero-ranger.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 498,
+          "t": 667,
+          "r": 738,
+          "b": 916
+        },
+        "sprite": {
+          "l": 528,
+          "t": 682,
+          "r": 707,
+          "b": 913
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 486,
+          "t": 655,
+          "w": 265,
+          "h": 274
+        },
+        "scale": 1.7153284671532847
+      }
+    },
+    {
+      "number": 4,
+      "key": "ally:soldier",
+      "title": "Companion Soldier",
+      "group": "characters",
+      "groupName": "Characters",
+      "file": "cards/04-ally-soldier.webp",
+      "frame": null,
+      "liveSelection": "procedural",
+      "entity": {
+        "id": "ally-64",
+        "type": "soldier",
+        "x": 600,
+        "y": 600,
+        "hp": 120,
+        "maxHp": 120,
+        "damage": 12,
+        "icon": "⚔️",
+        "cd": 0,
+        "skill1Cd": 0,
+        "skill2Cd": 0,
+        "skillGlobalCd": 0,
+        "healCd": 0,
+        "manaCd": 0,
+        "survivalCd": 0,
+        "immune": 0,
+        "supportEffects": [],
+        "order": null,
+        "carry": 0,
+        "active": true,
+        "renderKind": "ally",
+        "visualScale": 1
+      },
+      "region": 0,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-ally-soldier.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 489,
+          "t": 627,
+          "r": 713,
+          "b": 916
+        },
+        "sprite": {
+          "l": 508,
+          "t": 682,
+          "r": 699,
+          "b": 913
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 477,
+          "t": 615,
+          "w": 249,
+          "h": 314
+        },
+        "scale": 1.4968152866242037
+      }
+    },
+    {
+      "number": 5,
+      "key": "ally:archer",
+      "title": "Companion Archer",
+      "group": "characters",
+      "groupName": "Characters",
+      "file": "cards/05-ally-archer.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "ally-65",
+        "type": "archer",
+        "x": 600,
+        "y": 600,
+        "hp": 105,
+        "maxHp": 105,
+        "damage": 15,
+        "icon": "🏹",
+        "cd": 0,
+        "skill1Cd": 0,
+        "skill2Cd": 0,
+        "skillGlobalCd": 0,
+        "healCd": 0,
+        "manaCd": 0,
+        "survivalCd": 0,
+        "immune": 0,
+        "supportEffects": [],
+        "order": null,
+        "carry": 0,
+        "active": true,
+        "renderKind": "ally",
+        "visualScale": 1
+      },
+      "region": 0,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-ally-archer.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 511,
+          "t": 653,
+          "r": 734,
+          "b": 916
+        },
+        "sprite": {
+          "l": 520,
+          "t": 658,
+          "r": 723,
+          "b": 913
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 499,
+          "t": 641,
+          "w": 248,
+          "h": 288
+        },
+        "scale": 1.6319444444444444
+      }
+    },
+    {
+      "number": 6,
+      "key": "enemy:goblin",
+      "title": "Goblin — melee",
+      "group": "characters",
+      "groupName": "Characters",
+      "file": "cards/06-enemy-goblin.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "sprite-reference-goblin",
+        "name": "enemy:goblin",
+        "x": 600,
+        "y": 600,
+        "renderKind": "enemy",
+        "type": "goblin",
+        "species": "goblin",
+        "visualScale": 1
+      },
+      "region": 0,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-enemy-goblin.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 517,
+          "t": 691,
+          "r": 701,
+          "b": 916
+        },
+        "sprite": {
+          "l": 533,
+          "t": 714,
+          "r": 686,
+          "b": 910
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 505,
+          "t": 679,
+          "w": 209,
+          "h": 250
+        },
+        "scale": 1.88
+      }
+    },
+    {
+      "number": 7,
+      "key": "prop:vale-cottage:vale",
+      "title": "Vale Cottage",
+      "group": "greenwood",
+      "groupName": "Greenwood Vale",
+      "file": "cards/07-prop-vale-cottage-vale.webp",
+      "frame": null,
+      "liveSelection": "procedural",
+      "entity": {
+        "id": "sprite-reference-cottage",
+        "name": "prop:vale-cottage:vale",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "structure": "vale-cottage",
+        "visualScale": 1.4
+      },
+      "region": 0,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-vale-cottage-vale.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 392,
+          "t": 561,
+          "r": 816,
+          "b": 959
+        },
+        "sprite": {
+          "l": 411,
+          "t": 565,
+          "r": 791,
+          "b": 938
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 380,
+          "t": 549,
+          "w": 449,
+          "h": 423
+        },
+        "scale": 1.1111111111111112
+      }
+    },
+    {
+      "number": 8,
+      "key": "prop:bush:vale",
+      "title": "Bush",
+      "group": "greenwood",
+      "groupName": "Greenwood Vale",
+      "file": "cards/08-prop-bush-vale.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "aesthetic-nature-7",
+        "name": "prop:bush:vale",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "bush",
+        "visualScale": 1
+      },
+      "region": 0,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-bush-vale.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 499,
+          "t": 771,
+          "r": 711,
+          "b": 888
+        },
+        "sprite": {
+          "l": 528,
+          "t": 794,
+          "r": 671,
+          "b": 884
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 487,
+          "t": 759,
+          "w": 237,
+          "h": 142
+        },
+        "scale": 2.2362869198312234
+      }
+    },
+    {
+      "number": 9,
+      "key": "prop:wildflowers:vale",
+      "title": "Wildflowers",
+      "group": "greenwood",
+      "groupName": "Greenwood Vale",
+      "file": "cards/09-prop-wildflowers-vale.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "aesthetic-nature-10",
+        "name": "prop:wildflowers:vale",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "wildflowers",
+        "visualScale": 1
+      },
+      "region": 0,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-wildflowers-vale.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 512,
+          "t": 783,
+          "r": 699,
+          "b": 899
+        },
+        "sprite": {
+          "l": 559,
+          "t": 825,
+          "r": 646,
+          "b": 888
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 500,
+          "t": 771,
+          "w": 212,
+          "h": 141
+        },
+        "scale": 2.5
+      }
+    },
+    {
+      "number": 10,
+      "key": "prop:sapling:vale",
+      "title": "Sapling",
+      "group": "greenwood",
+      "groupName": "Greenwood Vale",
+      "file": "cards/10-prop-sapling-vale.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "sprite-reference-276",
+        "name": "prop:sapling:vale",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "sapling",
+        "visualScale": 1.3
+      },
+      "region": 0,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-sapling-vale.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 448,
+          "t": 598,
+          "r": 764,
+          "b": 931
+        },
+        "sprite": {
+          "l": 508,
+          "t": 714,
+          "r": 694,
+          "b": 912
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 436,
+          "t": 586,
+          "w": 341,
+          "h": 358
+        },
+        "scale": 1.312849162011173
+      }
+    },
+    {
+      "number": 11,
+      "key": "prop:stump:vale",
+      "title": "Stump",
+      "group": "greenwood",
+      "groupName": "Greenwood Vale",
+      "file": "cards/11-prop-stump-vale.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "side-entrance-side-vale-cellars-0",
+        "name": "prop:stump:vale",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "stump",
+        "visualScale": 1
+      },
+      "region": 0,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-stump-vale.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 529,
+          "t": 767,
+          "r": 666,
+          "b": 908
+        },
+        "sprite": {
+          "l": 564,
+          "t": 814,
+          "r": 631,
+          "b": 888
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 517,
+          "t": 755,
+          "w": 162,
+          "h": 166
+        },
+        "scale": 2.8313253012048194
+      }
+    },
+    {
+      "number": 12,
+      "key": "prop:fallen-log:vale",
+      "title": "Fallen Log",
+      "group": "greenwood",
+      "groupName": "Greenwood Vale",
+      "file": "cards/12-prop-fallen-log-vale.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "side-entrance-side-vale-cellars-2",
+        "name": "prop:fallen-log:vale",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "fallen-log",
+        "visualScale": 1
+      },
+      "region": 0,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-fallen-log-vale.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 469,
+          "t": 795,
+          "r": 714,
+          "b": 897
+        },
+        "sprite": {
+          "l": 499,
+          "t": 801,
+          "r": 698,
+          "b": 892
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 457,
+          "t": 783,
+          "w": 270,
+          "h": 127
+        },
+        "scale": 1.962962962962963
+      }
+    },
+    {
+      "number": 13,
+      "key": "prop:rock:vale",
+      "title": "Rock",
+      "group": "greenwood",
+      "groupName": "Greenwood Vale",
+      "file": "cards/13-prop-rock-vale.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "sprite-reference-295",
+        "name": "prop:rock:vale",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "icon": "🪨",
+        "visualScale": 1
+      },
+      "region": 0,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-rock-vale.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 497,
+          "t": 747,
+          "r": 702,
+          "b": 920
+        },
+        "sprite": {
+          "l": 513,
+          "t": 753,
+          "r": 696,
+          "b": 878
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 485,
+          "t": 735,
+          "w": 230,
+          "h": 198
+        },
+        "scale": 2.3043478260869565
+      }
+    },
+    {
+      "number": 14,
+      "key": "prop:cattails:march",
+      "title": "Cattails",
+      "group": "wetlands",
+      "groupName": "Wetlands",
+      "file": "cards/14-prop-cattails-march.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "harbor-reeds-b",
+        "name": "prop:cattails:march",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "cattails",
+        "visualScale": 1
+      },
+      "region": 1,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-cattails-march.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 532,
+          "t": 715,
+          "r": 674,
+          "b": 897
+        },
+        "sprite": {
+          "l": 559,
+          "t": 754,
+          "r": 640,
+          "b": 889
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 520,
+          "t": 703,
+          "w": 167,
+          "h": 207
+        },
+        "scale": 2.2705314009661834
+      }
+    },
+    {
+      "number": 15,
+      "key": "prop:driftwood:march",
+      "title": "Driftwood",
+      "group": "wetlands",
+      "groupName": "Wetlands",
+      "file": "cards/15-prop-driftwood-march.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "harbor-drift",
+        "name": "prop:driftwood:march",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "driftwood",
+        "visualScale": 1
+      },
+      "region": 1,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-driftwood-march.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 479,
+          "t": 791,
+          "r": 719,
+          "b": 889
+        },
+        "sprite": {
+          "l": 513,
+          "t": 815,
+          "r": 674,
+          "b": 889
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 467,
+          "t": 779,
+          "w": 265,
+          "h": 123
+        },
+        "scale": 2
+      }
+    },
+    {
+      "number": 16,
+      "key": "prop:mangrove:march",
+      "title": "Mangrove",
+      "group": "wetlands",
+      "groupName": "Wetlands",
+      "file": "cards/16-prop-mangrove-march.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "harbor-mangrove-a",
+        "name": "prop:mangrove:march",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "mangrove",
+        "visualScale": 1.3
+      },
+      "region": 1,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-mangrove-march.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 432,
+          "t": 598,
+          "r": 764,
+          "b": 955
+        },
+        "sprite": {
+          "l": 461,
+          "t": 697,
+          "r": 714,
+          "b": 958
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 420,
+          "t": 586,
+          "w": 357,
+          "h": 385
+        },
+        "scale": 1.2207792207792207
+      }
+    },
+    {
+      "number": 17,
+      "key": "prop:marsh-bush:march",
+      "title": "Marsh Bush",
+      "group": "wetlands",
+      "groupName": "Wetlands",
+      "file": "cards/17-prop-marsh-bush-march.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "aesthetic-nature-16",
+        "name": "prop:marsh-bush:march",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "marsh-bush",
+        "visualScale": 1
+      },
+      "region": 1,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-marsh-bush-march.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 499,
+          "t": 788,
+          "r": 711,
+          "b": 892
+        },
+        "sprite": {
+          "l": 529,
+          "t": 802,
+          "r": 668,
+          "b": 881
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 487,
+          "t": 776,
+          "w": 237,
+          "h": 129
+        },
+        "scale": 2.2362869198312234
+      }
+    },
+    {
+      "number": 18,
+      "key": "prop:pine-sapling:highlands",
+      "title": "Pine Sapling",
+      "group": "highlands",
+      "groupName": "Highlands",
+      "file": "cards/18-prop-pine-sapling-highlands.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "harbor-pine-a",
+        "name": "prop:pine-sapling:highlands",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "pine-sapling",
+        "visualScale": 1.3
+      },
+      "region": 2,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-pine-sapling-highlands.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 477,
+          "t": 581,
+          "r": 722,
+          "b": 925
+        },
+        "sprite": {
+          "l": 532,
+          "t": 701,
+          "r": 665,
+          "b": 914
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 465,
+          "t": 569,
+          "w": 270,
+          "h": 369
+        },
+        "scale": 1.2737127371273713
+      }
+    },
+    {
+      "number": 19,
+      "key": "prop:alpine-scrub:highlands",
+      "title": "Alpine Scrub",
+      "group": "highlands",
+      "groupName": "Highlands",
+      "file": "cards/19-prop-alpine-scrub-highlands.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "aesthetic-nature-7",
+        "name": "prop:alpine-scrub:highlands",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "alpine-scrub",
+        "visualScale": 1
+      },
+      "region": 2,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-alpine-scrub-highlands.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 495,
+          "t": 815,
+          "r": 702,
+          "b": 893
+        },
+        "sprite": {
+          "l": 547,
+          "t": 822,
+          "r": 648,
+          "b": 877
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 483,
+          "t": 803,
+          "w": 232,
+          "h": 103
+        },
+        "scale": 2.2844827586206895
+      }
+    },
+    {
+      "number": 20,
+      "key": "prop:rock-cluster:highlands",
+      "title": "Rock Cluster",
+      "group": "highlands",
+      "groupName": "Highlands",
+      "file": "cards/20-prop-rock-cluster-highlands.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "harbor-rock-a",
+        "name": "prop:rock-cluster:highlands",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "rock-cluster",
+        "visualScale": 1
+      },
+      "region": 2,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-rock-cluster-highlands.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 465,
+          "t": 779,
+          "r": 742,
+          "b": 928
+        },
+        "sprite": {
+          "l": 527,
+          "t": 814,
+          "r": 671,
+          "b": 885
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 453,
+          "t": 767,
+          "w": 302,
+          "h": 174
+        },
+        "scale": 1.7549668874172186
+      }
+    },
+    {
+      "number": 21,
+      "key": "prop:heather:highlands",
+      "title": "Heather",
+      "group": "highlands",
+      "groupName": "Highlands",
+      "file": "cards/21-prop-heather-highlands.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "harbor-heather",
+        "name": "prop:heather:highlands",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "heather",
+        "visualScale": 1
+      },
+      "region": 2,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-heather-highlands.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 521,
+          "t": 777,
+          "r": 666,
+          "b": 899
+        },
+        "sprite": {
+          "l": 569,
+          "t": 801,
+          "r": 632,
+          "b": 889
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 509,
+          "t": 765,
+          "w": 170,
+          "h": 147
+        },
+        "scale": 3.1176470588235294
+      }
+    },
+    {
+      "number": 22,
+      "key": "prop:rock:highlands",
+      "title": "Rock",
+      "group": "highlands",
+      "groupName": "Highlands",
+      "file": "cards/22-prop-rock-highlands.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "sprite-reference-296",
+        "name": "prop:rock:highlands",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "icon": "🪨",
+        "visualScale": 1
+      },
+      "region": 2,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-rock-highlands.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 497,
+          "t": 747,
+          "r": 702,
+          "b": 920
+        },
+        "sprite": {
+          "l": 513,
+          "t": 753,
+          "r": 696,
+          "b": 878
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 485,
+          "t": 735,
+          "w": 230,
+          "h": 198
+        },
+        "scale": 2.3043478260869565
+      }
+    },
+    {
+      "number": 23,
+      "key": "prop:mint-workbench:highlands",
+      "title": "Mint Workbench",
+      "group": "highlands",
+      "groupName": "Highlands",
+      "file": "cards/23-prop-mint-workbench-highlands.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "sprite-reference-239",
+        "name": "prop:mint-workbench:highlands",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "structure": "mint-workbench",
+        "decorative": true,
+        "visualScale": 1
+      },
+      "region": 2,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-mint-workbench-highlands.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 477,
+          "t": 648,
+          "r": 726,
+          "b": 920
+        },
+        "sprite": {
+          "l": 460,
+          "t": 690,
+          "r": 739,
+          "b": 913
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 448,
+          "t": 636,
+          "w": 304,
+          "h": 297
+        },
+        "scale": 1.5824915824915824
+      }
+    },
+    {
+      "number": 24,
+      "key": "prop:ore-sorting-bay:highlands",
+      "title": "Ore Sorting Bay",
+      "group": "highlands",
+      "groupName": "Highlands",
+      "file": "cards/24-prop-ore-sorting-bay-highlands.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "sprite-reference-238",
+        "name": "prop:ore-sorting-bay:highlands",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "structure": "ore-sorting-bay",
+        "decorative": true,
+        "visualScale": 1
+      },
+      "region": 2,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-ore-sorting-bay-highlands.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 468,
+          "t": 681,
+          "r": 735,
+          "b": 920
+        },
+        "sprite": {
+          "l": 464,
+          "t": 710,
+          "r": 735,
+          "b": 917
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 452,
+          "t": 669,
+          "w": 296,
+          "h": 264
+        },
+        "scale": 1.7803030303030303
+      }
+    },
+    {
+      "number": 25,
+      "key": "prop:caravan-loading-bay:highlands",
+      "title": "Caravan Loading Bay",
+      "group": "highlands",
+      "groupName": "Highlands",
+      "file": "cards/25-prop-caravan-loading-bay-highlands.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "sprite-reference-240",
+        "name": "prop:caravan-loading-bay:highlands",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "structure": "caravan-loading-bay",
+        "decorative": true,
+        "visualScale": 1
+      },
+      "region": 2,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-caravan-loading-bay-highlands.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 398,
+          "t": 715,
+          "r": 798,
+          "b": 940
+        },
+        "sprite": {
+          "l": 456,
+          "t": 746,
+          "r": 807,
+          "b": 929
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 386,
+          "t": 703,
+          "w": 434,
+          "h": 250
+        },
+        "scale": 1.2211981566820276
+      }
+    },
+    {
+      "number": 26,
+      "key": "prop:dead-tree:frontier",
+      "title": "Dead Tree",
+      "group": "frontier",
+      "groupName": "Frontier",
+      "file": "cards/26-prop-dead-tree-frontier.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "aesthetic-nature-9",
+        "name": "prop:dead-tree:frontier",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "dead-tree",
+        "visualScale": 1.3
+      },
+      "region": 3,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-dead-tree-frontier.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 487,
+          "t": 607,
+          "r": 738,
+          "b": 931
+        },
+        "sprite": {
+          "l": 498,
+          "t": 704,
+          "r": 675,
+          "b": 924
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 475,
+          "t": 595,
+          "w": 276,
+          "h": 349
+        },
+        "scale": 1.346704871060172
+      }
+    },
+    {
+      "number": 27,
+      "key": "prop:charred-stump:frontier",
+      "title": "Charred Stump",
+      "group": "frontier",
+      "groupName": "Frontier",
+      "file": "cards/27-prop-charred-stump-frontier.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "sprite-reference-288",
+        "name": "prop:charred-stump:frontier",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "charred-stump",
+        "visualScale": 1
+      },
+      "region": 3,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-charred-stump-frontier.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 529,
+          "t": 767,
+          "r": 666,
+          "b": 908
+        },
+        "sprite": {
+          "l": 560,
+          "t": 802,
+          "r": 636,
+          "b": 889
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 517,
+          "t": 755,
+          "w": 162,
+          "h": 166
+        },
+        "scale": 2.8313253012048194
+      }
+    },
+    {
+      "number": 28,
+      "key": "prop:dry-scrub:frontier",
+      "title": "Dry Scrub",
+      "group": "frontier",
+      "groupName": "Frontier",
+      "file": "cards/28-prop-dry-scrub-frontier.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "aesthetic-bank-96",
+        "name": "prop:dry-scrub:frontier",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "dry-scrub",
+        "visualScale": 1
+      },
+      "region": 3,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-dry-scrub-frontier.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 552,
+          "t": 747,
+          "r": 658,
+          "b": 884
+        },
+        "sprite": {
+          "l": 551,
+          "t": 815,
+          "r": 640,
+          "b": 885
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 539,
+          "t": 735,
+          "w": 132,
+          "h": 163
+        },
+        "scale": 2.8834355828220857
+      }
+    },
+    {
+      "number": 29,
+      "key": "prop:burned-log:frontier",
+      "title": "Burned Log",
+      "group": "frontier",
+      "groupName": "Frontier",
+      "file": "cards/29-prop-burned-log-frontier.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "aesthetic-nature-7",
+        "name": "prop:burned-log:frontier",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "burned-log",
+        "visualScale": 1
+      },
+      "region": 3,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-burned-log-frontier.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 469,
+          "t": 795,
+          "r": 714,
+          "b": 897
+        },
+        "sprite": {
+          "l": 503,
+          "t": 814,
+          "r": 692,
+          "b": 893
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 457,
+          "t": 783,
+          "w": 270,
+          "h": 127
+        },
+        "scale": 1.962962962962963
+      }
+    },
+    {
+      "number": 30,
+      "key": "prop:black-rock:crown",
+      "title": "Black Rock",
+      "group": "crown",
+      "groupName": "Crown",
+      "file": "cards/30-prop-black-rock-crown.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "side-entrance-side-crown-foundry-0",
+        "name": "prop:black-rock:crown",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "black-rock",
+        "visualScale": 1
+      },
+      "region": 4,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-black-rock-crown.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 465,
+          "t": 779,
+          "r": 742,
+          "b": 928
+        },
+        "sprite": {
+          "l": 525,
+          "t": 811,
+          "r": 671,
+          "b": 885
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 453,
+          "t": 767,
+          "w": 302,
+          "h": 174
+        },
+        "scale": 1.7549668874172186
+      }
+    },
+    {
+      "number": 31,
+      "key": "prop:crystal-cluster:crown",
+      "title": "Crystal Cluster",
+      "group": "crown",
+      "groupName": "Crown",
+      "file": "cards/31-prop-crystal-cluster-crown.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "aesthetic-nature-12",
+        "name": "prop:crystal-cluster:crown",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "crystal-cluster",
+        "visualScale": 1
+      },
+      "region": 4,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-crystal-cluster-crown.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 509,
+          "t": 711,
+          "r": 694,
+          "b": 888
+        },
+        "sprite": {
+          "l": 540,
+          "t": 751,
+          "r": 658,
+          "b": 889
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 497,
+          "t": 699,
+          "w": 210,
+          "h": 203
+        },
+        "scale": 2.315270935960591
+      }
+    },
+    {
+      "number": 32,
+      "key": "prop:dead-shrub:crown",
+      "title": "Dead Shrub",
+      "group": "crown",
+      "groupName": "Crown",
+      "file": "cards/32-prop-dead-shrub-crown.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "aesthetic-nature-11",
+        "name": "prop:dead-shrub:crown",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "dead-shrub",
+        "visualScale": 1
+      },
+      "region": 4,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-dead-shrub-crown.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 544,
+          "t": 728,
+          "r": 668,
+          "b": 890
+        },
+        "sprite": {
+          "l": 557,
+          "t": 819,
+          "r": 643,
+          "b": 885
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 532,
+          "t": 716,
+          "w": 149,
+          "h": 187
+        },
+        "scale": 2.513368983957219
+      }
+    },
+    {
+      "number": 33,
+      "key": "prop:obsidian:crown",
+      "title": "Obsidian",
+      "group": "crown",
+      "groupName": "Crown",
+      "file": "cards/33-prop-obsidian-crown.webp",
+      "frame": null,
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "aesthetic-nature-16",
+        "name": "prop:obsidian:crown",
+        "x": 600,
+        "y": 600,
+        "renderKind": "prop",
+        "decorative": true,
+        "structure": "obsidian",
+        "visualScale": 1
+      },
+      "region": 4,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-prop-obsidian-crown.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 525,
+          "t": 691,
+          "r": 674,
+          "b": 920
+        },
+        "sprite": {
+          "l": 544,
+          "t": 761,
+          "r": 655,
+          "b": 885
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 513,
+          "t": 679,
+          "w": 174,
+          "h": 254
+        },
+        "scale": 1.8503937007874016
+      }
+    },
+    {
+      "number": 34,
+      "key": "hero:paladin",
+      "title": "Paladin · idle frame 1",
+      "group": "animation",
+      "groupName": "Retained idle frames",
+      "file": "cards/34-hero-paladin-idle-0.webp",
+      "frame": {
+        "clip": "idle",
+        "index": 0
+      },
+      "liveSelection": "procedural",
+      "entity": {
+        "id": "sprite-reference-paladin",
+        "name": "hero:paladin",
+        "x": 600,
+        "y": 600,
+        "renderKind": "hero",
+        "class": "paladin",
+        "visualScale": 1
+      },
+      "region": 0,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-hero-paladin.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 489,
+          "t": 663,
+          "r": 713,
+          "b": 916
+        },
+        "sprite": {
+          "l": 505,
+          "t": 653,
+          "r": 703,
+          "b": 913
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 477,
+          "t": 641,
+          "w": 249,
+          "h": 288
+        },
+        "scale": 1.6319444444444444
+      }
+    },
+    {
+      "number": 35,
+      "key": "hero:paladin",
+      "title": "Paladin · idle frame 2",
+      "group": "animation",
+      "groupName": "Retained idle frames",
+      "file": "cards/35-hero-paladin-idle-1.webp",
+      "frame": {
+        "clip": "idle",
+        "index": 1
+      },
+      "liveSelection": "procedural",
+      "entity": {
+        "id": "sprite-reference-paladin",
+        "name": "hero:paladin",
+        "x": 600,
+        "y": 600,
+        "renderKind": "hero",
+        "class": "paladin",
+        "visualScale": 1
+      },
+      "region": 0,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-hero-paladin.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 489,
+          "t": 663,
+          "r": 713,
+          "b": 916
+        },
+        "sprite": {
+          "l": 501,
+          "t": 646,
+          "r": 700,
+          "b": 909
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 477,
+          "t": 634,
+          "w": 249,
+          "h": 295
+        },
+        "scale": 1.5932203389830508
+      }
+    },
+    {
+      "number": 36,
+      "key": "enemy:goblin",
+      "title": "Goblin — melee · idle frame 1",
+      "group": "animation",
+      "groupName": "Retained idle frames",
+      "file": "cards/36-enemy-goblin-idle-0.webp",
+      "frame": {
+        "clip": "idle",
+        "index": 0
+      },
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "sprite-reference-goblin",
+        "name": "enemy:goblin",
+        "x": 600,
+        "y": 600,
+        "renderKind": "enemy",
+        "type": "goblin",
+        "species": "goblin",
+        "visualScale": 1
+      },
+      "region": 0,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-enemy-goblin.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 517,
+          "t": 691,
+          "r": 701,
+          "b": 916
+        },
+        "sprite": {
+          "l": 533,
+          "t": 714,
+          "r": 686,
+          "b": 910
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 505,
+          "t": 679,
+          "w": 209,
+          "h": 250
+        },
+        "scale": 1.88
+      }
+    },
+    {
+      "number": 37,
+      "key": "enemy:goblin",
+      "title": "Goblin — melee · idle frame 2",
+      "group": "animation",
+      "groupName": "Retained idle frames",
+      "file": "cards/37-enemy-goblin-idle-1.webp",
+      "frame": {
+        "clip": "idle",
+        "index": 1
+      },
+      "liveSelection": "sprite",
+      "entity": {
+        "id": "sprite-reference-goblin",
+        "name": "enemy:goblin",
+        "x": 600,
+        "y": 600,
+        "renderKind": "enemy",
+        "type": "goblin",
+        "species": "goblin",
+        "visualScale": 1
+      },
+      "region": 0,
+      "reference": "tools/sprites/design-handoffs/approved-art-raster-enemy-goblin.json",
+      "sourceBounds": {
+        "procedural": {
+          "l": 517,
+          "t": 691,
+          "r": 701,
+          "b": 916
+        },
+        "sprite": {
+          "l": 531,
+          "t": 717,
+          "r": 687,
+          "b": 910
+        }
+      },
+      "sharedView": {
+        "crop": {
+          "l": 505,
+          "t": 679,
+          "w": 209,
+          "h": 250
+        },
+        "scale": 1.88
+      }
+    }
+  ]
+}
