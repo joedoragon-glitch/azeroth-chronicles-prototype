@@ -1,5 +1,7 @@
 # Current development state — 20 October 2026
 
+**Published dev.91 — character correction:** [PR #325](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/325) merged as `58714cf407de9397ebb8ba0343a4ded508865d75`, published by packaging-only run `39373388652`. Paladin/Mage/companion Soldier use current procedural designs; Ranger/companion Archer keep raster sprites; Goblin slinger has a sly expression. All dev.90 performance/Frontier work remains. Exact live source verified; no tests/browser checks/CI. Normal release wiring restored. [Focused record](PROCEDURAL_CHARACTER_QUICKFIX_20261020.md), [receipt](evidence/CHARACTER_DEV91_PUBLICATION_20261020.json).
+
 **01:05 EDT — dev.91 quick fix authorized for direct merge:** Joel requested procedural Paladin/Mage/companion Soldier, retained raster Ranger/companion Archer, and a sly Goblin slinger face. No tests; direct merge/publication. Dev.90 performance and Frontier improvements are preserved. [Focused change record](PROCEDURAL_CHARACTER_QUICKFIX_20261020.md). Publication pending.
 
 **Published dev.90 — 20 October 2026:** PR #324 merged as `9a6815fdaf76a6c00818921625f485b51c2d01a6`. Packaging-only [publication run 39368492291](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39368492291) succeeded. Exact public build/version, engine, runtime, renderer, visuals and service worker match the prepared source. Performance improvements and occupied Frontier repairs are live. No broad CI or repeated completed checks ran; normal release wiring is restored and temporary publisher removed. Actual Chromebook FPS remains for owner live play. [Publication receipt](evidence/CHROMEBOOK_DEV90_PUBLICATION_20261020.json).
@@ -23,7 +25,7 @@
 
 | Item | Recorded state |
 | --- | --- |
-| Published runtime | `0.9.1+snapshot.dev.90`; merge `9a6815fdaf76a6c00818921625f485b51c2d01a6`, package-only publication run `39368492291` |
+| Published runtime | `0.9.1+snapshot.dev.91`; merge `58714cf407de9397ebb8ba0343a4ded508865d75`, package-only publication run `39373388652` |
 | Historical documentation-audit main | `57453c4651366a6debbcae454c70af3115e8ac2e` |
 | Last published gameplay source | `23d951092ea5dff806c460c62ca71eeced574f5c`, merged manual Developer Mode Skill 1 fix and documentation closeout #319 |
 | Publication evidence | [Packaging-only run 39312326936](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39312326936); exact public build/copy reads recorded in the [release handoff](COMMUNITY_SNAPSHOT_RELEASE_HANDOFF_20261016.md) |
