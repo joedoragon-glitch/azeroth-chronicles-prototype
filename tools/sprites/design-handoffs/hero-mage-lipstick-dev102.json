@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "status": "integrated",
+  "designId": "hero-mage-lipstick-dev102",
+  "name": "Hero Mage",
+  "kind": "hero",
+  "nextAction": "Owner live play and appearance feedback after authorized dev.102 publication; preserve this reference for a later explicit sprite request.",
+  "context": {
+    "originConversation": "Conversation URL unavailable; Joel instruction dated 20 October 2026.",
+    "decisionSummary": "Joel approved the paired Mage bow candidate and requested lipstick for the Mage, female specialists and Marshal Veyra.",
+    "decisionDate": "2026-10-20",
+    "repositoryIssueOrPR": null,
+    "contentDocuments": [
+      "docs/BOWS_LIPSTICK_20261020.md"
+    ],
+    "locationAndLore": "Existing authored role, outfit and region retained."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner requested implementation.",
+    "proceduralDesignAcceptance": "Mage bows explicitly approved; lipstick implemented under request, with independent appearance acceptance not claimed.",
+    "spriteProductionAuthorization": "Procedural edit only; no new raster generation.",
+    "generatedAppearanceAcceptance": "Not applicable; no new raster.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "9eab6e25fdc85055436884c2945f2964ad8dfe05 (rollback baseline; updated source retained in release)",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::mageHead",
+      "polish/bows-lipstick-dev102"
+    ],
+    "exactEntityState": {
+      "entity": {
+        "renderKind": "hero",
+        "class": "mage"
+      },
+      "region": 3,
+      "cameraZoom": 1.5
+    },
+    "isolatedReferencePath": "tools/visual-review/bows-lipstick-dev102/hero-mage.webp",
+    "isolatedReferenceHash": "4f39a0ec7203969d0d65cb31828c89dec7dd1c086c44d670b707d73a97234d69",
+    "gameplayContextPaths": [
+      "tools/visual-review/bows-lipstick-dev102/character-review.png"
+    ],
+    "traitsToPreserve": [
+      "Existing face, hair, clothing, equipment and proportions",
+      "Small rose/berry lips",
+      "Approved paired violet bows"
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "cea434a2dd69ca3cb18e42e7441b5c9b0d82aac945ac73e94d21332880470824"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "hero-mage"
+    ],
+    "reusedDesignIds": [
+      "approved-art-shared-hero-mage"
+    ],
+    "variantRequirements": [
+      "Normal and crowned; lipstick remains beneath crowned scarf"
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js",
+        "reason": "Small face and ribbon detail stays in existing procedural painter."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing procedural motion retained",
+    "gameplayStates": [
+      "Existing states"
+    ],
+    "directions": [
+      "Existing directions"
+    ],
+    "pivotContract": "Existing root anchor and geometry retained",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "Published dev.101 / 3fccc550e4bca3e356a8b152915bb842682508ef",
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

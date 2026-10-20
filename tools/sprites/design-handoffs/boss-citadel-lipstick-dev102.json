@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "status": "integrated",
+  "designId": "boss-citadel-lipstick-dev102",
+  "name": "Marshal Veyra",
+  "kind": "boss",
+  "nextAction": "Owner live play and appearance feedback after authorized dev.102 publication; preserve this reference for a later explicit sprite request.",
+  "context": {
+    "originConversation": "Conversation URL unavailable; Joel instruction dated 20 October 2026.",
+    "decisionSummary": "Joel approved the paired Mage bow candidate and requested lipstick for the Mage, female specialists and Marshal Veyra.",
+    "decisionDate": "2026-10-20",
+    "repositoryIssueOrPR": null,
+    "contentDocuments": [
+      "docs/BOWS_LIPSTICK_20261020.md"
+    ],
+    "locationAndLore": "Existing authored role, outfit and region retained."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner requested implementation.",
+    "proceduralDesignAcceptance": "Mage bows explicitly approved; lipstick implemented under request, with independent appearance acceptance not claimed.",
+    "spriteProductionAuthorization": "Procedural edit only; no new raster generation.",
+    "generatedAppearanceAcceptance": "Not applicable; no new raster.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "9eab6e25fdc85055436884c2945f2964ad8dfe05 (rollback baseline; updated source retained in release)",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::boss/citadel",
+      "polish/bows-lipstick-dev102"
+    ],
+    "exactEntityState": {
+      "entity": {
+        "renderKind": "enemy",
+        "type": "boss",
+        "family": "citadel"
+      },
+      "region": 3,
+      "cameraZoom": 1.5
+    },
+    "isolatedReferencePath": "tools/visual-review/bows-lipstick-dev102/boss-citadel.webp",
+    "isolatedReferenceHash": "d7325a2dabf3c0b4687ee89c777c13adb546881771be3b96478b20d29e81fa10",
+    "gameplayContextPaths": [
+      "tools/visual-review/bows-lipstick-dev102/character-review.png"
+    ],
+    "traitsToPreserve": [
+      "Existing face, hair, clothing, equipment and proportions",
+      "Small rose/berry lips",
+      "Shared variant consistency"
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "cea434a2dd69ca3cb18e42e7441b5c9b0d82aac945ac73e94d21332880470824"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "boss-citadel"
+    ],
+    "reusedDesignIds": [
+      "approved-art-boss-citadel"
+    ],
+    "variantRequirements": [
+      "Normal and TRUE"
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js",
+        "reason": "Small face and ribbon detail stays in existing procedural painter."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing procedural motion retained",
+    "gameplayStates": [
+      "Existing states"
+    ],
+    "directions": [
+      "Existing directions"
+    ],
+    "pivotContract": "Existing root anchor and geometry retained",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "Published dev.101 / 3fccc550e4bca3e356a8b152915bb842682508ef",
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}
