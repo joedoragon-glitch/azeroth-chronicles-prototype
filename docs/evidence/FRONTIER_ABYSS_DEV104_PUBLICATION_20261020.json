@@ -1,0 +1,107 @@
+{
+  "verified_at": "2026-10-20T11:00:12.321119+00:00",
+  "merge": "b0723ddee51d7f3534fdd9fa4b1e126340331aaf",
+  "files": [
+    {
+      "path": "index.html",
+      "match": true,
+      "bytes": 5315,
+      "sha256": "a3f042d98d0512f4f3d67c940ea1539e39009b5f1f7266ecaebde919341ab641"
+    },
+    {
+      "path": "phone.html",
+      "match": true,
+      "bytes": 5316,
+      "sha256": "8c81fbab873ebe789919285e73e2f61d82b038d89a46c916be03d5013e83061e"
+    },
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "10d2d38a8cf0d5f73edf29f23e450ec702a0d2dad522ff3785647dffe82217cf"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 296,
+      "sha256": "21cd632ef6342d6fa154112684fd75706dfd5f91a8816d49c578b6d6f5249b3c"
+    },
+    {
+      "path": "src/prototype/archive.js",
+      "match": true,
+      "bytes": 54118,
+      "sha256": "96d9ac878ae4e0a02ff72f7115e397ea5482763e14ecc7d8b7e6494b558733fd"
+    },
+    {
+      "path": "src/prototype/boss-combat.js",
+      "match": true,
+      "bytes": 93534,
+      "sha256": "9173fe80181bb30128dc389d8b1df9df29b427c6016f5f3828629aac2a9adfc9"
+    },
+    {
+      "path": "src/prototype/combat-visuals.js",
+      "match": true,
+      "bytes": 51139,
+      "sha256": "6e64734dcf425c51b73fca7c65122362a4ddba419a6c069845ce3cb005408034"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 250433,
+      "sha256": "635e40db2155ac77868ea605735aecb4b75abf6a3263c79184cba5ee55e44b3b"
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "match": true,
+      "bytes": 98548,
+      "sha256": "6086ed9a99d0a742f8850f573c3f5ff2573b3b6d7c6c24cb68824f118d46b39d"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "match": true,
+      "bytes": 197460,
+      "sha256": "413a8baba44096fcc2c2dc6f69d7214bc17b5d16e5c353908f4bd5995b072f1b"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "match": true,
+      "bytes": 468835,
+      "sha256": "e1ac73093eed9756e62243785f0becf6446a4b9207db499567ec45005d918a10"
+    },
+    {
+      "path": "src/prototype/app.js",
+      "match": true,
+      "bytes": 133795,
+      "sha256": "65bd0752380ef46ddcf96df2977f9b89a32c5020c3dd295924ed033a47964e0f"
+    },
+    {
+      "path": "src/prototype/party.js",
+      "match": true,
+      "bytes": 52407,
+      "sha256": "17929913e6d4910789c8f32e673cf17adae32d973d387eb259c2696711149cda"
+    },
+    {
+      "path": "src/prototype/save.js",
+      "match": true,
+      "bytes": 47103,
+      "sha256": "ce64fabc3d7f18d2a7c8f0b34e69f9a9dd28be83c3f76c0217ad9c16edb0e0f2"
+    },
+    {
+      "path": "src/prototype/world.js",
+      "match": true,
+      "bytes": 160095,
+      "sha256": "1f9ae2e905e17e36f319735a6a9e8a9154c995287dd1437f62d1fd255c4060cf"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20550,
+      "sha256": "ef7b76f911afe30f6469b4c04846e29277c4aa949b9d5ab5db245c70dde219b5"
+    }
+  ],
+  "version": "0.9.1+snapshot.dev.104",
+  "pr": 338,
+  "run": 39411703976,
+  "workflow": "package-only",
+  "normal_workflow_restored": true
+}

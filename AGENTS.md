@@ -1,5 +1,7 @@
 # Project working rules
 
+**Published dev.104 — Frontier and Abyss layouts:** PR #338 / `b0723ddee51d7f3534fdd9fa4b1e126340331aaf`; package-only run 39411703976 succeeded. Focused layout/save/door checks passed, 16 exact live files verified. Normal workflow restored. Follow-up now active: aesthetic audit of relocated areas and faster recovery/reset for confined field bosses. Veyra correction remains preview-only.
+
 **Approved map implementation — dev.104:** Joel approved the Frontier relocation and Abyss Bastion expansion on 20 October. Implementation preserves nature and existing-save progress; focused layout/save/movement checks only, package-only publication. Veyra arm/skirt correction remains preview-only pending review. [Scope](docs/FRONTIER_ABYSS_LAYOUT_20261020.md).
 
 - **Current Veyra review — ivory B selected with corrections:** Joel chose ivory parade armor and requested a compact fully armored arm (bring weapon inward, no stretched limb), plus a continuous skirt with short plates over it. Corrected normal/TRUE preview: `tools/visual-review/veyra-ivory-correction-20261020/README.md`. Face/palette preserved; new arm/skirt not yet accepted. Preview only, no runtime changes or publication.
