@@ -1,0 +1,334 @@
+{
+  "seed": "Developer mode fixed combat RNG 0.9; authored current geometry.",
+  "frontier": {
+    "size": 3400,
+    "props": 391,
+    "nature": 204,
+    "structures": 187,
+    "structureBins850": [
+      [
+        28,
+        17,
+        12,
+        11
+      ],
+      [
+        3,
+        23,
+        18,
+        26
+      ],
+      [
+        0,
+        6,
+        23,
+        16
+      ],
+      [
+        0,
+        0,
+        0,
+        4
+      ]
+    ],
+    "groups": [
+      {
+        "id": "settlement-major",
+        "count": 9,
+        "center": [
+          351,
+          590
+        ],
+        "blocking": 9
+      },
+      {
+        "id": "settlement-minor",
+        "count": 6,
+        "center": [
+          1521,
+          1104
+        ],
+        "blocking": 6
+      },
+      {
+        "id": "mini-wall-field-warlord",
+        "count": 12,
+        "center": [
+          2568,
+          1623
+        ],
+        "blocking": 12
+      },
+      {
+        "id": "side-entrance-side-frontier-shrine",
+        "count": 2,
+        "center": [
+          1018,
+          1866
+        ],
+        "blocking": 0
+      },
+      {
+        "id": "aesthetic-town",
+        "count": 9,
+        "center": [
+          415,
+          534
+        ],
+        "blocking": 0
+      },
+      {
+        "id": "aesthetic-hamlet",
+        "count": 4,
+        "center": [
+          1322,
+          1125
+        ],
+        "blocking": 0
+      },
+      {
+        "id": "world-life-civilian",
+        "count": 2,
+        "center": [
+          447,
+          661
+        ],
+        "blocking": 0
+      },
+      {
+        "id": "world-life-habitat",
+        "count": 10,
+        "center": [
+          2820,
+          1474
+        ],
+        "blocking": 0
+      },
+      {
+        "id": "world-life-field",
+        "count": 5,
+        "center": [
+          2621,
+          1705
+        ],
+        "blocking": 0
+      },
+      {
+        "id": "orc-road-fort",
+        "count": 15,
+        "center": [
+          1821,
+          420
+        ],
+        "blocking": 8
+      },
+      {
+        "id": "raider-drill-redoubt",
+        "count": 27,
+        "center": [
+          3048,
+          961
+        ],
+        "blocking": 22
+      },
+      {
+        "id": "stalker-cinder-hold",
+        "count": 11,
+        "center": [
+          1741,
+          2108
+        ],
+        "blocking": 8
+      },
+      {
+        "id": "emberwatch-livelihood",
+        "count": 8,
+        "center": [
+          654,
+          653
+        ],
+        "blocking": 0
+      },
+      {
+        "id": "burned-hamlet-recovery",
+        "count": 8,
+        "center": [
+          1231,
+          1072
+        ],
+        "blocking": 0
+      },
+      {
+        "id": "roadworks-yard",
+        "count": 8,
+        "center": [
+          1057,
+          709
+        ],
+        "blocking": 0
+      },
+      {
+        "id": "inspection-yard",
+        "count": 7,
+        "center": [
+          1710,
+          1355
+        ],
+        "blocking": 0
+      },
+      {
+        "id": "checkpoint-support",
+        "count": 7,
+        "center": [
+          2313,
+          1631
+        ],
+        "blocking": 0
+      },
+      {
+        "id": "bastion-cordon",
+        "count": 8,
+        "center": [
+          3023,
+          2451
+        ],
+        "blocking": 0
+      },
+      {
+        "id": "route-convoy-service",
+        "count": 4,
+        "center": [
+          917,
+          675
+        ],
+        "blocking": 0
+      },
+      {
+        "id": "route-north-ravine-works",
+        "count": 4,
+        "center": [
+          1318,
+          810
+        ],
+        "blocking": 0
+      },
+      {
+        "id": "route-inspection-spur",
+        "count": 4,
+        "center": [
+          1910,
+          1342
+        ],
+        "blocking": 0
+      },
+      {
+        "id": "route-checkpoint-logistics",
+        "count": 4,
+        "center": [
+          2274,
+          1732
+        ],
+        "blocking": 0
+      },
+      {
+        "id": "route-bastion-cordon",
+        "count": 4,
+        "center": [
+          3052,
+          2522
+        ],
+        "blocking": 0
+      },
+      {
+        "id": "burned-hamlet-home",
+        "count": 1,
+        "center": [
+          1301,
+          1143
+        ],
+        "blocking": 0
+      },
+      {
+        "id": "regime-banner-frontier",
+        "count": 4,
+        "center": [
+          2116,
+          1249
+        ],
+        "blocking": 0
+      },
+      {
+        "id": "public-lantern-frontier",
+        "count": 4,
+        "center": [
+          1535,
+          1120
+        ],
+        "blocking": 0
+      }
+    ]
+  },
+  "abyss": {
+    "size": 1500,
+    "decorative": 38,
+    "blockingProps": 0,
+    "occupants": 27,
+    "gates": [
+      {
+        "id": "containment-gate",
+        "gaps": [
+          {
+            "raw": 100,
+            "actor15": 70,
+            "actor25": 50
+          }
+        ]
+      },
+      {
+        "id": "hatchery-baffle",
+        "gaps": [
+          {
+            "raw": 110,
+            "actor15": 80,
+            "actor25": 60
+          },
+          {
+            "raw": 105,
+            "actor15": 75,
+            "actor25": 55
+          }
+        ]
+      },
+      {
+        "id": "service-gate",
+        "gaps": [
+          {
+            "raw": 100,
+            "actor15": 70,
+            "actor25": 50
+          },
+          {
+            "raw": 80,
+            "actor15": 50,
+            "actor25": 30
+          }
+        ]
+      },
+      {
+        "id": "aerie-gate",
+        "gaps": [
+          {
+            "raw": 110,
+            "actor15": 80,
+            "actor25": 60
+          },
+          {
+            "raw": 90,
+            "actor15": 60,
+            "actor25": 40
+          }
+        ]
+      }
+    ]
+  }
+}

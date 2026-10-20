@@ -1,5 +1,15 @@
 # Project working rules
 
+- **Candidate dev.103 — approved lips and staffs:** Joel accepted revised shaped lips, Mage Moon setting (A) and Mira Amber ring (C). Exact original arms/hands/grips and x=18 shaft axis retained. Sixteen draws match accepted preview pixels; focused build/format only. Map work is audit/proposal only, no runtime layout changes. [Scope](docs/APPROVED_LIPS_STAFFS_20261020.md).
+
+
+- **Audits/previews prepared, not applied:** Frontier census confirms only 4/187 structural props in bottom quarter; proposal relocates 65 props, preserves all 204 natural props and adds 13 connected spurs. Abyss has 38 decorative props/zero solid props; narrow 80–110 gates are the physical bottlenecks. Proposal: 1500→1650 shell, 160–180 gates and side furnishings; all 27 static routes pass in original/proposed layouts, no live AI-stall claim. Scope/evidence: `tools/visual-review/frontier-bastion-audit-20261020/README.md`. Revised mouth/staff previews remain unselected; no runtime edits, build, CI or deployment.
+
+- **Latest preview corrections:** Joel rejected the broad pink mouth-line proposal and the staff previews with extended arms. New previews use shaped upper/lower lips with the original expression and no underlying old mouth; staffs change only equipment at original x=18, retaining exact arms/hands/grips and live faces. All unselected, no runtime edits. Frontier/Abyss audit continues.
+
+- **Active preview/audit — 20 October:** Joel reported doubled lips and requested single-mouth coloring along original expressions (especially Lyss), with preview before any character changes or shading; Mage/Mira staff options reopened. Unselected VM-only previews: `tools/visual-review/mouth-staff-preview-20261020/README.md`. No runtime edits or publication. Also audit Frontier central clutter/underused edges with roads and unchanged nature, then modest Abyss Bastion expansion/obstruction relief. Preserve live dev.102 until the relevant scope is ready; character art awaits owner review.
+
+
 - **Published dev.102 — Mage bows and lipstick:** PR #336 / `84047541c7acec3b53fe14c895ac49ac5a184d27`; package-only run 39402833461 succeeded; all 15 exact live checks match. Approved violet bows on regular/crowned Mage. Lipstick for Mage, Mira, Sela, Neri, Dara, Lyss, Vera and Marshal Veyra (normal/TRUE); shared captive/rescued/appointed appearances. Crowned Mage scarf retained. Focused build/native canvas checks only; no broad CI. Normal workflow restored; temporary publisher removed. [Receipt](docs/evidence/BOWS_LIPSTICK_DEV102_PUBLICATION_20261020.json). Owner live play/appearance feedback next; no automatic further work.
 
 

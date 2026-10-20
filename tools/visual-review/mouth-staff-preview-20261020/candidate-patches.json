@@ -1,0 +1,46 @@
+{
+  "status": "Joel approved revised shaped lips, Mage A Moon setting, Mira C Amber ring on 20 October 2026; integrated in dev.103. Other choices unselected.",
+  "date": "2026-10-20",
+  "baseVersion": "0.9.1+snapshot.dev.102",
+  "sourceSha256": "cea434a2dd69ca3cb18e42e7441b5c9b0d82aac945ac73e94d21332880470824",
+  "mouthPatches": [
+    {
+      "before": "    function face(",
+      "after": "\n    function expressionLips(x, y, warm, wry, tone) {\n      // A tapered upper lip with a cupid's bow and a rounded lower lip.\n      // Both follow the existing expression curve; the old mouth is not painted.\n      const point = (t) => {\n        const inv = 1-t, ax=x-2.5, ay=y+5, bx=x+0.5,\n          by=y+(warm?8:wry?5.8:5), cx=x+3, cy=y+(wry?3.6:5);\n        const dx=2*inv*(bx-ax)+2*t*(cx-bx),dy=2*inv*(by-ay)+2*t*(cy-by),len=Math.hypot(dx,dy);\n        return {x:inv*inv*ax+2*inv*t*bx+t*t*cx,y:inv*inv*ay+2*inv*t*by+t*t*cy,nx:-dy/len,ny:dx/len};\n      };\n      const trace = (side) => {\n        ctx.beginPath();\n        for(let j=0;j<=24;j++) {\n          const t=j/24,p=point(t),taper=Math.pow(Math.sin(Math.PI*t),0.8),\n            width=side<0?taper*(0.9-0.45*Math.exp(-Math.pow((t-0.5)/0.12,2))):taper*0.9;\n          const xx=p.x+p.nx*width*side,yy=p.y+p.ny*width*side;\n          j?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);\n        }\n        for(let j=24;j>=0;j--){const p=point(j/24);ctx.lineTo(p.x,p.y);}\n        ctx.closePath();ctx.fill();\n      };\n      ctx.fillStyle=tone;trace(-1);trace(1);\n      ctx.strokeStyle='#7c3c4d';ctx.lineWidth=0.34;ctx.beginPath();\n      for(let j=0;j<=24;j++){const p=point(j/24);j?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y);}\n      ctx.stroke();\n    }\n\n    function face("
+    },
+    {
+      "before": "function face(x, y, color = skin, bulk = 1, aged = false, mood = 'steady')",
+      "after": "function face(x, y, color = skin, bulk = 1, aged = false, mood = 'steady', lipColor = null)"
+    },
+    {
+      "before": "      ctx.strokeStyle = '#825a50';\n      ctx.lineWidth = 0.9;\n      ctx.beginPath();\n      ctx.moveTo(x - 2.5, y + 5);\n      ctx.quadraticCurveTo(x + 0.5, y + (warm ? 8 : wry ? 5.8 : 5), x + 3, y + (wry ? 3.6 : 5));\n      ctx.stroke();",
+      "after": "      if (lipColor) expressionLips(x, y, warm, wry, lipColor);\n      else {\n      ctx.strokeStyle = '#825a50';\n      ctx.lineWidth = 0.9;\n      ctx.beginPath();\n      ctx.moveTo(x - 2.5, y + 5);\n      ctx.quadraticCurveTo(x + 0.5, y + (warm ? 8 : wry ? 5.8 : 5), x + 3, y + (wry ? 3.6 : 5));\n      ctx.stroke();\n      }"
+    },
+    {
+      "before": "face(0, -29, skin, 0.94, false, 'bright');\n      lipstick(0, -24, '#bd587d', 0.7);",
+      "after": "face(0, -29, skin, 0.94, false, 'bright', '#bd587d');"
+    },
+    {
+      "before": "face(0, -29, skin, 1, ['ridge', 'citadel', 'crypt'].includes(e.family), mood);\n      if (women) lipstick(0, -24, '#b75c70', mood === 'wry' ? 0 : 0.7);",
+      "after": "face(0, -29, skin, 1, ['ridge', 'citadel', 'crypt'].includes(e.family), mood, women ? '#b75c70' : null);"
+    },
+    {
+      "before": "lipstick(0, -30, '#a94058');",
+      "after": "expressionLips(-0.25, -35, false, false, '#a94058');"
+    }
+  ],
+  "staffHelpers": "\n    function previewStaff(option, woodland = false) {\n      ctx.save();ctx.translate(-7,0); // Original staff axis x=18; arms/hands never move.\n      const shaft = woodland ? '#806348' : '#596983';\n      shaped(shaft, () => {\n        ctx.moveTo(23.4,14);ctx.lineTo(23,-34);ctx.lineTo(27,-34);ctx.lineTo(26.6,14);\n      });\n      softRect(22,-36,6,4,woodland?'#c9b57d':'#c6b482',0.6);\n      softRect(23,11,4,4,'#b6bdbe',0.7);\n      softRect(22.3,-8,5.4,14,woodland?'#574b3a':'#51465f',1);\n      for(const y of [-5,-1,3]) line([[22.6,y],[27.4,y-1]],'#c9b57d',0.8);\n      if(option==='A') {\n        if(woodland) {\n          shaped('#8baf78',()=>{ctx.moveTo(25,-35);ctx.bezierCurveTo(12,-37,13,-48,16,-51);ctx.bezierCurveTo(26,-48,27,-41,25,-35);});\n          shaped('#b5c795',()=>{ctx.moveTo(25,-35);ctx.bezierCurveTo(36,-40,37,-48,33,-54);ctx.bezierCurveTo(24,-51,22,-42,25,-35);});\n          oval(25,-41,2.3,3.2,'#d5ad69');\n        } else {\n          shaped('#c4d1d7',()=>{ctx.moveTo(29,-55);ctx.bezierCurveTo(11,-55,12,-33,27,-33);ctx.lineTo(28,-37);ctx.bezierCurveTo(18,-38,19,-48,29,-51);});\n          oval(28,-44,4,5.3,'#b18bd0');\n          line([[25,-37],[26,-39],[30,-39],[31,-37]],'#c6b482',1.4);\n        }\n      } else if(option==='B') {\n        if(woodland) {\n          ctx.strokeStyle=ink;ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(25,-35);ctx.lineTo(25,-44);ctx.bezierCurveTo(25,-57,11,-57,13,-45);ctx.stroke();\n          ctx.strokeStyle='#806348';ctx.lineWidth=3.6;ctx.stroke();\n          softRect(22,-39,6,3,'#c9b57d',0.6);\n        } else {\n          shaped('#99c9dc',()=>{ctx.moveTo(25,-56);ctx.quadraticCurveTo(34,-48,31,-39);ctx.quadraticCurveTo(25,-33,19,-39);ctx.quadraticCurveTo(16,-48,25,-56);});\n          line([[18,-43],[20,-35],[30,-35],[32,-43]],'#c6b482',2);\n        }\n      } else {\n        ctx.strokeStyle=ink;ctx.lineWidth=4.6;ctx.beginPath();ctx.ellipse(25,-45,8,10,0,0,Math.PI*2);ctx.stroke();\n        ctx.strokeStyle=woodland?'#c9b57d':'#c4d1d7';ctx.lineWidth=2.5;ctx.stroke();\n        line([[25,-54],[25,-50]],woodland?'#c9b57d':'#c4d1d7',1.5);\n        oval(25,-45,3.7,5.4,woodland?'#d0a163':'#8a9dca');\n      }\n      ctx.restore();\n    }\n",
+  "staffChoices": [
+    "A",
+    "B",
+    "C"
+  ],
+  "staffConstraint": "Staff-only changes. Use original x=18 axis; preserve all original arm and grip code. Staff views use LIVE dev.102 faces, independent of the mouth proposal.",
+  "mouthRule": "Shaped upper and lower lips replace the original mouth, preserving its expression curve and Lyss’s raised corner. The broad-line preview was explicitly rejected. No new face shading; crowned scarf retained.",
+  "selected": {
+    "mouths": "Revised shaped lips",
+    "mageStaff": "A",
+    "miraStaff": "C",
+    "arms": "Exact original arms, hands and grips"
+  }
+}

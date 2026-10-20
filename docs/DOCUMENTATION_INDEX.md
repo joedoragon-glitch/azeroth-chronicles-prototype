@@ -4,6 +4,9 @@
 
 | Need | Maintained entrypoint |
 | --- | --- |
+| Approved shaped lips and staff-only selections (dev.103) | [Art update scope](APPROVED_LIPS_STAFFS_20261020.md) |
+| Frontier redistribution / dragon dungeon circulation audit and proposals | [20 October spatial audit](../tools/visual-review/frontier-bastion-audit-20261020/README.md) |
+| Revised shaped-lip and staff-only previews (no arm changes; unselected) | [Preview record](../tools/visual-review/mouth-staff-preview-20261020/README.md) |
 | Approved Mage bows, female lipstick and Marshal Veyra | [Dev.102 scope](BOWS_LIPSTICK_20261020.md) |
 | Frontier channel/fountain/regrowth, enemy special reach and regroup healing | [Dev.101 scope](FRONTIER_REACH_REGROUP_20261020.md) |
 | Mounted riders and updating skills on existing pets/companions | [Dev.100 scope](MOUNTED_ROSTER_SKILLS_20261020.md) |

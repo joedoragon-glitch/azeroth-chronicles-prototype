@@ -1,0 +1,2108 @@
+{
+  "frontier": {
+    "moves": 65,
+    "movesByGroup": [
+      {
+        "id": "roadworks-yard",
+        "from": [
+          1080,
+          700
+        ],
+        "to": [
+          990,
+          280
+        ],
+        "name": "North repair yard",
+        "count": 8
+      },
+      {
+        "id": "emberwatch-livelihood",
+        "from": [
+          650,
+          620
+        ],
+        "to": [
+          340,
+          970
+        ],
+        "name": "West market / work frontage",
+        "count": 8
+      },
+      {
+        "id": "burned-hamlet-recovery",
+        "from": [
+          1240,
+          1080
+        ],
+        "to": [
+          480,
+          1740
+        ],
+        "name": "West recovery yard",
+        "count": 8
+      },
+      {
+        "id": "inspection-yard",
+        "from": [
+          1720,
+          1360
+        ],
+        "to": [
+          3050,
+          1560
+        ],
+        "name": "East inspection yard",
+        "count": 7
+      },
+      {
+        "id": "checkpoint-support",
+        "from": [
+          2300,
+          1650
+        ],
+        "to": [
+          2360,
+          3000
+        ],
+        "name": "South garrison support",
+        "count": 7
+      },
+      {
+        "id": "bastion-cordon",
+        "from": [
+          3000,
+          2420
+        ],
+        "to": [
+          3070,
+          3020
+        ],
+        "name": "South Bastion support",
+        "count": 8
+      },
+      {
+        "id": "route-convoy-service",
+        "from": [
+          900,
+          600
+        ],
+        "to": [
+          450,
+          2640
+        ],
+        "name": "Southwest supplies",
+        "count": 4
+      },
+      {
+        "id": "route-inspection-spur",
+        "from": [
+          1900,
+          1250
+        ],
+        "to": [
+          3070,
+          1360
+        ],
+        "name": "East inspection spur",
+        "count": 4
+      },
+      {
+        "id": "route-checkpoint-logistics",
+        "from": [
+          2250,
+          1650
+        ],
+        "to": [
+          2370,
+          2790
+        ],
+        "name": "South logistics spur",
+        "count": 4
+      },
+      {
+        "id": "route-bastion-cordon",
+        "from": [
+          3000,
+          2400
+        ],
+        "to": [
+          3030,
+          2810
+        ],
+        "name": "South Bastion spur",
+        "count": 4
+      }
+    ],
+    "natureUnchanged": 204,
+    "oldBottomQuarterStructures": 4,
+    "newBottomQuarterStructures": 30,
+    "proposedStructureBins850": [
+      [
+        20,
+        13,
+        12,
+        11
+      ],
+      [
+        12,
+        11,
+        6,
+        36
+      ],
+      [
+        7,
+        6,
+        15,
+        8
+      ],
+      [
+        6,
+        0,
+        11,
+        13
+      ]
+    ],
+    "maximumRelocatedPropRoadDistance": 311,
+    "newRoadSpurs": 13,
+    "movedProps": [
+      {
+        "id": "settlement-minor-0",
+        "structure": "frontier-patched-house",
+        "group": "settlement-minor",
+        "before": [
+          1266.4998633947214,
+          231.76814963150832
+        ],
+        "after": [
+          312.5,
+          2480.3108891324555
+        ]
+      },
+      {
+        "id": "settlement-minor-2",
+        "structure": "frontier-patched-house",
+        "group": "settlement-minor",
+        "before": [
+          870.0000000000001,
+          1567.0319397786861
+        ],
+        "after": [
+          700,
+          2620
+        ]
+      },
+      {
+        "id": "settlement-minor-4",
+        "structure": "frontier-patched-house",
+        "group": "settlement-minor",
+        "before": [
+          2149.0847575771295,
+          1035.5369846106657
+        ],
+        "after": [
+          545,
+          2940
+        ]
+      },
+      {
+        "id": "frontier-layout-emberwatch-livelihood-0",
+        "structure": "market",
+        "group": "emberwatch-livelihood",
+        "before": [
+          521.7703529715172,
+          614.6006673128917
+        ],
+        "after": [
+          211.77035297151724,
+          964.6006673128918
+        ]
+      },
+      {
+        "id": "frontier-layout-emberwatch-livelihood-1",
+        "structure": "field-kitchen",
+        "group": "emberwatch-livelihood",
+        "before": [
+          580.0530851933103,
+          671.6568286601009
+        ],
+        "after": [
+          209.43130692839955,
+          1056.656828660101
+        ]
+      },
+      {
+        "id": "frontier-layout-emberwatch-livelihood-2",
+        "structure": "supply-stack",
+        "group": "emberwatch-livelihood",
+        "before": [
+          777.6286813787284,
+          441.58946486683607
+        ],
+        "after": [
+          467.6286813787283,
+          791.5894648668361
+        ]
+      },
+      {
+        "id": "frontier-layout-emberwatch-livelihood-3",
+        "structure": "woodpile",
+        "group": "emberwatch-livelihood",
+        "before": [
+          500,
+          690
+        ],
+        "after": [
+          165.25126265847084,
+          1064.7487373415292
+        ]
+      },
+      {
+        "id": "frontier-layout-emberwatch-livelihood-4",
+        "structure": "cart",
+        "group": "emberwatch-livelihood",
+        "before": [
+          640,
+          730
+        ],
+        "after": [
+          354.74873734152914,
+          1104.7487373415292
+        ]
+      },
+      {
+        "id": "frontier-layout-emberwatch-livelihood-5",
+        "structure": "watchpost",
+        "group": "emberwatch-livelihood",
+        "before": [
+          828.8936664179496,
+          757.78973862015
+        ],
+        "after": [
+          451.2788585777148,
+          1089.6724054629735
+        ]
+      },
+      {
+        "id": "frontier-layout-emberwatch-livelihood-6",
+        "structure": "patched-fence",
+        "group": "emberwatch-livelihood",
+        "before": [
+          720,
+          755
+        ],
+        "after": [
+          480,
+          1226.2435565298215
+        ]
+      },
+      {
+        "id": "frontier-layout-emberwatch-livelihood-7",
+        "structure": "road-patch",
+        "group": "emberwatch-livelihood",
+        "before": [
+          665,
+          565
+        ],
+        "after": [
+          305.5025253169416,
+          865.5025253169417
+        ]
+      },
+      {
+        "id": "frontier-layout-burned-hamlet-recovery-8",
+        "structure": "charred-foundation",
+        "group": "burned-hamlet-recovery",
+        "before": [
+          1006.715162649135,
+          853.9997778676715
+        ],
+        "after": [
+          246.71516264913498,
+          1513.9997778676716
+        ]
+      },
+      {
+        "id": "frontier-layout-burned-hamlet-recovery-10",
+        "structure": "tool-rack",
+        "group": "burned-hamlet-recovery",
+        "before": [
+          1380,
+          970
+        ],
+        "after": [
+          585,
+          1630
+        ]
+      },
+      {
+        "id": "frontier-layout-burned-hamlet-recovery-11",
+        "structure": "stacked-lumber",
+        "group": "burned-hamlet-recovery",
+        "before": [
+          1080,
+          1150
+        ],
+        "after": [
+          320,
+          1810
+        ]
+      },
+      {
+        "id": "frontier-layout-burned-hamlet-recovery-12",
+        "structure": "broken-cart",
+        "group": "burned-hamlet-recovery",
+        "before": [
+          1205,
+          1200
+        ],
+        "after": [
+          411.1925960798826,
+          1869.0586665785881
+        ]
+      },
+      {
+        "id": "frontier-layout-burned-hamlet-recovery-13",
+        "structure": "field-kitchen",
+        "group": "burned-hamlet-recovery",
+        "before": [
+          1380,
+          1150
+        ],
+        "after": [
+          620,
+          1810
+        ]
+      },
+      {
+        "id": "frontier-layout-burned-hamlet-recovery-14",
+        "structure": "supply-stack",
+        "group": "burned-hamlet-recovery",
+        "before": [
+          1295,
+          1095
+        ],
+        "after": [
+          552.5,
+          1785.3108891324553
+        ]
+      },
+      {
+        "id": "frontier-layout-burned-hamlet-recovery-15",
+        "structure": "repair-brace",
+        "group": "burned-hamlet-recovery",
+        "before": [
+          1135,
+          1100
+        ],
+        "after": [
+          410,
+          1760
+        ]
+      },
+      {
+        "id": "frontier-layout-burned-hamlet-recovery-16",
+        "structure": "replacement-stakes",
+        "group": "burned-hamlet-recovery",
+        "before": [
+          1365,
+          1060
+        ],
+        "after": [
+          679.2462120245875,
+          1794.2462120245875
+        ]
+      },
+      {
+        "id": "frontier-layout-roadworks-yard-17",
+        "structure": "cart",
+        "group": "roadworks-yard",
+        "before": [
+          970,
+          625
+        ],
+        "after": [
+          904.7487373415291,
+          229.74873734152916
+        ]
+      },
+      {
+        "id": "frontier-layout-roadworks-yard-18",
+        "structure": "tool-rack",
+        "group": "roadworks-yard",
+        "before": [
+          977.8167639725472,
+          669.1223439990789
+        ],
+        "after": [
+          912.5655013140762,
+          273.87108134060804
+        ]
+      },
+      {
+        "id": "frontier-layout-roadworks-yard-19",
+        "structure": "stacked-lumber",
+        "group": "roadworks-yard",
+        "before": [
+          1170,
+          605
+        ],
+        "after": [
+          1080,
+          185
+        ]
+      },
+      {
+        "id": "frontier-layout-roadworks-yard-20",
+        "structure": "supply-stack",
+        "group": "roadworks-yard",
+        "before": [
+          935,
+          770
+        ],
+        "after": [
+          880,
+          350
+        ]
+      },
+      {
+        "id": "frontier-layout-roadworks-yard-21",
+        "structure": "barricade",
+        "group": "roadworks-yard",
+        "before": [
+          1070,
+          810
+        ],
+        "after": [
+          1015,
+          390
+        ]
+      },
+      {
+        "id": "frontier-layout-roadworks-yard-22",
+        "structure": "watchpost",
+        "group": "roadworks-yard",
+        "before": [
+          1099.7844528191129,
+          708.5813762437263
+        ],
+        "after": [
+          1009.7844528191126,
+          288.58137624372625
+        ]
+      },
+      {
+        "id": "frontier-layout-roadworks-yard-23",
+        "structure": "wagon-wheel",
+        "group": "roadworks-yard",
+        "before": [
+          1145,
+          805
+        ],
+        "after": [
+          1090,
+          385
+        ]
+      },
+      {
+        "id": "frontier-layout-roadworks-yard-24",
+        "structure": "road-ruts",
+        "group": "roadworks-yard",
+        "before": [
+          1085,
+          680
+        ],
+        "after": [
+          964.6891108675446,
+          277.5
+        ]
+      },
+      {
+        "id": "frontier-layout-inspection-yard-25",
+        "structure": "watchpost",
+        "group": "inspection-yard",
+        "before": [
+          1570,
+          1280
+        ],
+        "after": [
+          2900,
+          1480
+        ]
+      },
+      {
+        "id": "frontier-layout-inspection-yard-26",
+        "structure": "war-table",
+        "group": "inspection-yard",
+        "before": [
+          1685,
+          1240
+        ],
+        "after": [
+          3015,
+          1440
+        ]
+      },
+      {
+        "id": "frontier-layout-inspection-yard-27",
+        "structure": "weapon-rack",
+        "group": "inspection-yard",
+        "before": [
+          1815,
+          1270
+        ],
+        "after": [
+          3180,
+          1470
+        ]
+      },
+      {
+        "id": "frontier-layout-inspection-yard-28",
+        "structure": "supply-stack",
+        "group": "inspection-yard",
+        "before": [
+          1580,
+          1430
+        ],
+        "after": [
+          2910,
+          1700
+        ]
+      },
+      {
+        "id": "frontier-layout-inspection-yard-29",
+        "structure": "training-dummy",
+        "group": "inspection-yard",
+        "before": [
+          1710,
+          1470
+        ],
+        "after": [
+          3110,
+          1670
+        ]
+      },
+      {
+        "id": "frontier-layout-inspection-yard-30",
+        "structure": "barricade",
+        "group": "inspection-yard",
+        "before": [
+          1845,
+          1415
+        ],
+        "after": [
+          3175,
+          1615
+        ]
+      },
+      {
+        "id": "frontier-layout-inspection-yard-31",
+        "structure": "inspection-marker",
+        "group": "inspection-yard",
+        "before": [
+          1765,
+          1380
+        ],
+        "after": [
+          3200,
+          1580
+        ]
+      },
+      {
+        "id": "frontier-layout-checkpoint-support-32",
+        "structure": "command-tent",
+        "group": "checkpoint-support",
+        "before": [
+          2177.2989754812825,
+          1456.2167916080489
+        ],
+        "after": [
+          2237.2989754812825,
+          2806.216791608049
+        ]
+      },
+      {
+        "id": "frontier-layout-checkpoint-support-33",
+        "structure": "field-kitchen",
+        "group": "checkpoint-support",
+        "before": [
+          2293.0673736389067,
+          1485.3027070918447
+        ],
+        "after": [
+          2285.4525657986724,
+          2853.4200402490214
+        ]
+      },
+      {
+        "id": "frontier-layout-checkpoint-support-34",
+        "structure": "weapon-rack",
+        "group": "checkpoint-support",
+        "before": [
+          2452.240368025584,
+          1537.7969785051703
+        ],
+        "after": [
+          2512.240368025584,
+          2887.79697850517
+        ]
+      },
+      {
+        "id": "frontier-layout-checkpoint-support-35",
+        "structure": "bunk",
+        "group": "checkpoint-support",
+        "before": [
+          2150,
+          1725
+        ],
+        "after": [
+          2210,
+          3075
+        ]
+      },
+      {
+        "id": "frontier-layout-checkpoint-support-36",
+        "structure": "supply-stack",
+        "group": "checkpoint-support",
+        "before": [
+          2285,
+          1765
+        ],
+        "after": [
+          2314.6891108675445,
+          3132.5
+        ]
+      },
+      {
+        "id": "frontier-layout-checkpoint-support-37",
+        "structure": "war-table",
+        "group": "checkpoint-support",
+        "before": [
+          2425,
+          1710
+        ],
+        "after": [
+          2485,
+          3060
+        ]
+      },
+      {
+        "id": "frontier-layout-checkpoint-support-38",
+        "structure": "checkpoint-standard",
+        "group": "checkpoint-support",
+        "before": [
+          2409.0522609692416,
+          1735.786671341621
+        ],
+        "after": [
+          2469.0522609692416,
+          3120.7866713416206
+        ]
+      },
+      {
+        "id": "frontier-layout-bastion-cordon-39",
+        "structure": "flight-harness-station",
+        "group": "bastion-cordon",
+        "before": [
+          2710.65686544842,
+          2393.5756805311125
+        ],
+        "after": [
+          2789.715532027008,
+          3027.3830844512295
+        ]
+      },
+      {
+        "id": "frontier-layout-bastion-cordon-40",
+        "structure": "warm-brazier",
+        "group": "bastion-cordon",
+        "before": [
+          3063.9997336498463,
+          2338.2321421137044
+        ],
+        "after": [
+          3133.9997336498463,
+          2938.232142113704
+        ]
+      },
+      {
+        "id": "frontier-layout-bastion-cordon-41",
+        "structure": "supply-stack",
+        "group": "bastion-cordon",
+        "before": [
+          3095,
+          2325
+        ],
+        "after": [
+          3200,
+          2925
+        ]
+      },
+      {
+        "id": "frontier-layout-bastion-cordon-42",
+        "structure": "roost",
+        "group": "bastion-cordon",
+        "before": [
+          2811.5888204964854,
+          2617.120389101957
+        ],
+        "after": [
+          2881.588820496485,
+          3217.120389101957
+        ]
+      },
+      {
+        "id": "frontier-layout-bastion-cordon-43",
+        "structure": "bone-pile",
+        "group": "bastion-cordon",
+        "before": [
+          3066.3169358844198,
+          2609.0780395148868
+        ],
+        "after": [
+          3136.3169358844198,
+          3209.0780395148868
+        ]
+      },
+      {
+        "id": "frontier-layout-bastion-cordon-44",
+        "structure": "barricade",
+        "group": "bastion-cordon",
+        "before": [
+          3125,
+          2480
+        ],
+        "after": [
+          3195,
+          3080
+        ]
+      },
+      {
+        "id": "frontier-layout-bastion-cordon-45",
+        "structure": "watchpost",
+        "group": "bastion-cordon",
+        "before": [
+          3164.0045401233597,
+          2442.9706298483493
+        ],
+        "after": [
+          3234.00454012336,
+          3042.970629848349
+        ]
+      },
+      {
+        "id": "frontier-layout-bastion-cordon-46",
+        "structure": "royal-flight-standard",
+        "group": "bastion-cordon",
+        "before": [
+          3145,
+          2400
+        ],
+        "after": [
+          3215,
+          3000
+        ]
+      },
+      {
+        "id": "frontier-layout-route-convoy-service-47",
+        "structure": "cart",
+        "group": "route-convoy-service",
+        "before": [
+          815,
+          655
+        ],
+        "after": [
+          263.5777882396478,
+          2722.175999735765
+        ]
+      },
+      {
+        "id": "frontier-layout-route-convoy-service-48",
+        "structure": "supply-stack",
+        "group": "route-convoy-service",
+        "before": [
+          955,
+          655
+        ],
+        "after": [
+          505,
+          2695
+        ]
+      },
+      {
+        "id": "frontier-layout-route-convoy-service-49",
+        "structure": "road-ruts",
+        "group": "route-convoy-service",
+        "before": [
+          900,
+          600
+        ],
+        "after": [
+          485,
+          2640
+        ]
+      },
+      {
+        "id": "frontier-layout-route-convoy-service-50",
+        "structure": "watchpost",
+        "group": "route-convoy-service",
+        "before": [
+          996.4164699483895,
+          789.988196903366
+        ],
+        "after": [
+          528.2991367912131,
+          2762.373389063131
+        ]
+      },
+      {
+        "id": "frontier-layout-route-inspection-spur-55",
+        "structure": "watchpost",
+        "group": "route-inspection-spur",
+        "before": [
+          1736.0449495199132,
+          1341.9004833920544
+        ],
+        "after": [
+          2941.0449495199136,
+          1451.9004833920544
+        ]
+      },
+      {
+        "id": "frontier-layout-route-inspection-spur-56",
+        "structure": "war-table",
+        "group": "route-inspection-spur",
+        "before": [
+          1999.9377661475248,
+          1323.048199760396
+        ],
+        "after": [
+          3204.9377661475246,
+          1433.048199760396
+        ]
+      },
+      {
+        "id": "frontier-layout-route-inspection-spur-57",
+        "structure": "inspection-marker",
+        "group": "route-inspection-spur",
+        "before": [
+          1890,
+          1355
+        ],
+        "after": [
+          3029.6891108675445,
+          1482.5
+        ]
+      },
+      {
+        "id": "frontier-layout-route-inspection-spur-58",
+        "structure": "supply-stack",
+        "group": "route-inspection-spur",
+        "before": [
+          2015,
+          1350
+        ],
+        "after": [
+          3252.614807840235,
+          1478.1173331571765
+        ]
+      },
+      {
+        "id": "frontier-layout-route-checkpoint-logistics-59",
+        "structure": "weapon-rack",
+        "group": "route-checkpoint-logistics",
+        "before": [
+          2155,
+          1700
+        ],
+        "after": [
+          2241.1925960798826,
+          2849.058666578588
+        ]
+      },
+      {
+        "id": "frontier-layout-route-checkpoint-logistics-60",
+        "structure": "supply-stack",
+        "group": "route-checkpoint-logistics",
+        "before": [
+          2346.641251124668,
+          1718.925675213291
+        ],
+        "after": [
+          2466.641251124668,
+          2858.9256752132915
+        ]
+      },
+      {
+        "id": "frontier-layout-route-checkpoint-logistics-61",
+        "structure": "checkpoint-standard",
+        "group": "route-checkpoint-logistics",
+        "before": [
+          2235,
+          1755
+        ],
+        "after": [
+          2305.5025253169415,
+          2944.4974746830585
+        ]
+      },
+      {
+        "id": "frontier-layout-route-checkpoint-logistics-62",
+        "structure": "banner",
+        "group": "route-checkpoint-logistics",
+        "before": [
+          2360,
+          1755
+        ],
+        "after": [
+          2489.058666578588,
+          2928.8074039201174
+        ]
+      },
+      {
+        "id": "frontier-layout-route-bastion-cordon-63",
+        "structure": "chain",
+        "group": "route-bastion-cordon",
+        "before": [
+          2898.5584083547346,
+          2503.796746933462
+        ],
+        "after": [
+          2928.5584083547346,
+          2913.7967469334617
+        ]
+      },
+      {
+        "id": "frontier-layout-route-bastion-cordon-64",
+        "structure": "warm-brazier",
+        "group": "route-bastion-cordon",
+        "before": [
+          3092.351185849806,
+          2485.090982561268
+        ],
+        "after": [
+          3157.351185849806,
+          2895.090982561268
+        ]
+      },
+      {
+        "id": "frontier-layout-route-bastion-cordon-65",
+        "structure": "chain-anchor",
+        "group": "route-bastion-cordon",
+        "before": [
+          3109.085836411265,
+          2594.9661487732337
+        ],
+        "after": [
+          3139.0858364112646,
+          3004.9661487732337
+        ]
+      },
+      {
+        "id": "frontier-layout-route-bastion-cordon-66",
+        "structure": "barricade",
+        "group": "route-bastion-cordon",
+        "before": [
+          3110,
+          2505
+        ],
+        "after": [
+          3175,
+          2975.6217782649105
+        ]
+      }
+    ],
+    "roadFailures": [],
+    "placementFailures": []
+  },
+  "abyss": {
+    "currentShell": 1500,
+    "proposedShell": 1650,
+    "currentWalkableArea": 1240100,
+    "proposedWalkableArea": 1517600,
+    "currentStaticRoutes": [
+      {
+        "species": "orc",
+        "position": [
+          240,
+          300
+        ],
+        "exitRoute": 1,
+        "bossRoute": 2,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          390,
+          300
+        ],
+        "exitRoute": 1,
+        "bossRoute": 2,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          250,
+          500
+        ],
+        "exitRoute": 1,
+        "bossRoute": 2,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          420,
+          500
+        ],
+        "exitRoute": 1,
+        "bossRoute": 3,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          620,
+          360
+        ],
+        "exitRoute": 1,
+        "bossRoute": 3,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          760,
+          360
+        ],
+        "exitRoute": 1,
+        "bossRoute": 3,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          640,
+          720
+        ],
+        "exitRoute": 2,
+        "bossRoute": 4,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          800,
+          720
+        ],
+        "exitRoute": 3,
+        "bossRoute": 5,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          960,
+          420
+        ],
+        "exitRoute": 3,
+        "bossRoute": 2,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          1120,
+          420
+        ],
+        "exitRoute": 3,
+        "bossRoute": 1,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          960,
+          650
+        ],
+        "exitRoute": 3,
+        "bossRoute": 2,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          1140,
+          650
+        ],
+        "exitRoute": 3,
+        "bossRoute": 1,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          420,
+          900
+        ],
+        "exitRoute": 3,
+        "bossRoute": 4,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          580,
+          900
+        ],
+        "exitRoute": 2,
+        "bossRoute": 4,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          420,
+          1160
+        ],
+        "exitRoute": 3,
+        "bossRoute": 2,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          600,
+          1160
+        ],
+        "exitRoute": 3,
+        "bossRoute": 2,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          790,
+          930
+        ],
+        "exitRoute": 3,
+        "bossRoute": 5,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          970,
+          930
+        ],
+        "exitRoute": 4,
+        "bossRoute": 2,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          800,
+          1180
+        ],
+        "exitRoute": 3,
+        "bossRoute": 2,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          980,
+          1180
+        ],
+        "exitRoute": 3,
+        "bossRoute": 2,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          1020,
+          850
+        ],
+        "exitRoute": 3,
+        "bossRoute": 3,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          1220,
+          850
+        ],
+        "exitRoute": 4,
+        "bossRoute": 1,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          1000,
+          1080
+        ],
+        "exitRoute": 3,
+        "bossRoute": 3,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          1260,
+          1080
+        ],
+        "exitRoute": 5,
+        "bossRoute": 1,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          1000,
+          1280
+        ],
+        "exitRoute": 4,
+        "bossRoute": 2,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          1260,
+          1280
+        ],
+        "exitRoute": 5,
+        "bossRoute": 1,
+        "blocked": false
+      },
+      {
+        "species": "abyss",
+        "position": [
+          1160,
+          1110
+        ],
+        "exitRoute": 5,
+        "bossRoute": 1,
+        "blocked": false
+      }
+    ],
+    "proposedStaticRoutes": [
+      {
+        "species": "orc",
+        "position": [
+          264,
+          330
+        ],
+        "exitRoute": 1,
+        "bossRoute": 2,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          429.00000000000006,
+          330
+        ],
+        "exitRoute": 1,
+        "bossRoute": 2,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          275,
+          550
+        ],
+        "exitRoute": 1,
+        "bossRoute": 2,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          462.00000000000006,
+          550
+        ],
+        "exitRoute": 1,
+        "bossRoute": 2,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          682,
+          396.00000000000006
+        ],
+        "exitRoute": 1,
+        "bossRoute": 3,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          836.0000000000001,
+          396.00000000000006
+        ],
+        "exitRoute": 1,
+        "bossRoute": 3,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          704,
+          792.0000000000001
+        ],
+        "exitRoute": 2,
+        "bossRoute": 4,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          880.0000000000001,
+          792.0000000000001
+        ],
+        "exitRoute": 3,
+        "bossRoute": 3,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          1056,
+          462.00000000000006
+        ],
+        "exitRoute": 2,
+        "bossRoute": 2,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          1232,
+          462.00000000000006
+        ],
+        "exitRoute": 2,
+        "bossRoute": 1,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          1056,
+          715.0000000000001
+        ],
+        "exitRoute": 3,
+        "bossRoute": 2,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          1254,
+          715.0000000000001
+        ],
+        "exitRoute": 1,
+        "bossRoute": 1,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          462.00000000000006,
+          990.0000000000001
+        ],
+        "exitRoute": 3,
+        "bossRoute": 3,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          638,
+          990.0000000000001
+        ],
+        "exitRoute": 2,
+        "bossRoute": 3,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          462.00000000000006,
+          1276
+        ],
+        "exitRoute": 4,
+        "bossRoute": 1,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          660,
+          1276
+        ],
+        "exitRoute": 3,
+        "bossRoute": 1,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          869.0000000000001,
+          1023.0000000000001
+        ],
+        "exitRoute": 2,
+        "bossRoute": 3,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          1067,
+          1023.0000000000001
+        ],
+        "exitRoute": 3,
+        "bossRoute": 2,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          880.0000000000001,
+          1298
+        ],
+        "exitRoute": 3,
+        "bossRoute": 1,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          1078,
+          1298
+        ],
+        "exitRoute": 4,
+        "bossRoute": 1,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          1122,
+          935.0000000000001
+        ],
+        "exitRoute": 3,
+        "bossRoute": 3,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          1342,
+          935.0000000000001
+        ],
+        "exitRoute": 4,
+        "bossRoute": 1,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          1100,
+          1188
+        ],
+        "exitRoute": 4,
+        "bossRoute": 1,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          1386,
+          1188
+        ],
+        "exitRoute": 4,
+        "bossRoute": 1,
+        "blocked": false
+      },
+      {
+        "species": "orc",
+        "position": [
+          1100,
+          1408
+        ],
+        "exitRoute": 5,
+        "bossRoute": 2,
+        "blocked": false
+      },
+      {
+        "species": "archer",
+        "position": [
+          1386,
+          1408
+        ],
+        "exitRoute": 6,
+        "bossRoute": 1,
+        "blocked": false
+      },
+      {
+        "species": "abyss",
+        "position": [
+          1276,
+          1221
+        ],
+        "exitRoute": 4,
+        "bossRoute": 1,
+        "blocked": false
+      }
+    ],
+    "architecture": {
+      "version": 2,
+      "walkable": [
+        {
+          "id": "handler-intake",
+          "bounds": [
+            88,
+            660,
+            110,
+            682
+          ]
+        },
+        {
+          "id": "containment-spine",
+          "bounds": [
+            473,
+            1056,
+            308,
+            1078
+          ]
+        },
+        {
+          "id": "hatchery-wing",
+          "bounds": [
+            792,
+            1342,
+            198,
+            1078
+          ]
+        },
+        {
+          "id": "feeding-service",
+          "bounds": [
+            330,
+            990,
+            902,
+            1496
+          ]
+        },
+        {
+          "id": "dragon-aerie",
+          "bounds": [
+            1023,
+            1529,
+            858,
+            1529
+          ]
+        },
+        {
+          "id": "service-loop",
+          "bounds": [
+            836,
+            1210,
+            990,
+            1375
+          ]
+        }
+      ],
+      "partitions": [
+        {
+          "id": "containment-gate",
+          "x1": 528,
+          "x2": 836,
+          "y1": 616,
+          "y2": 677,
+          "axis": "x",
+          "gaps": [
+            [
+              591,
+              751
+            ]
+          ]
+        },
+        {
+          "id": "hatchery-baffle",
+          "x1": 913,
+          "x2": 974,
+          "y1": 396,
+          "y2": 1078,
+          "axis": "y",
+          "gaps": [
+            [
+              531,
+              691
+            ],
+            [
+              825,
+              985
+            ]
+          ]
+        },
+        {
+          "id": "service-gate",
+          "x1": 550,
+          "x2": 1012,
+          "y1": 1100,
+          "y2": 1161,
+          "axis": "x",
+          "gaps": [
+            [
+              625,
+              785
+            ],
+            [
+              815,
+              975
+            ]
+          ]
+        },
+        {
+          "id": "aerie-gate",
+          "x1": 1166,
+          "x2": 1227,
+          "y1": 858,
+          "y2": 1375,
+          "axis": "y",
+          "gaps": [
+            [
+              940,
+              1120
+            ],
+            [
+              1160,
+              1340
+            ]
+          ]
+        }
+      ]
+    },
+    "proposedProps": [
+      {
+        "id": "decor-0",
+        "x": 330,
+        "y": 374,
+        "r": 0,
+        "decorative": true,
+        "structure": "torch",
+        "icon": "🕯️",
+        "dungeonDistrict": "rider-preparation"
+      },
+      {
+        "id": "decor-1",
+        "x": 550,
+        "y": 374,
+        "r": 0,
+        "decorative": true,
+        "structure": "torch",
+        "icon": "🕯️",
+        "dungeonDistrict": "rider-preparation"
+      },
+      {
+        "id": "decor-2",
+        "x": 385,
+        "y": 616,
+        "r": 0,
+        "decorative": true,
+        "structure": "flight-harness-station",
+        "icon": "🕯️",
+        "dungeonDistrict": "rider-preparation"
+      },
+      {
+        "id": "decor-3",
+        "x": 550,
+        "y": 572,
+        "r": 0,
+        "decorative": true,
+        "structure": "chain",
+        "icon": "🕯️",
+        "dungeonDistrict": "rider-preparation"
+      },
+      {
+        "id": "decor-4",
+        "x": 400,
+        "y": 430,
+        "r": 0,
+        "decorative": true,
+        "structure": "flight-planning-table",
+        "icon": "🕯️",
+        "dungeonDistrict": "rider-preparation"
+      },
+      {
+        "id": "decor-5",
+        "x": 560,
+        "y": 390,
+        "r": 0,
+        "decorative": true,
+        "structure": "feed-crate",
+        "icon": "🕯️",
+        "dungeonDistrict": "rider-preparation"
+      },
+      {
+        "id": "decor-6",
+        "x": 506,
+        "y": 715,
+        "r": 0,
+        "decorative": true,
+        "structure": "supply-stack",
+        "icon": "🕯️",
+        "dungeonDistrict": "rider-preparation"
+      },
+      {
+        "id": "decor-7",
+        "x": 792,
+        "y": 363,
+        "r": 0,
+        "decorative": true,
+        "structure": "roost",
+        "icon": "🕯️",
+        "dungeonDistrict": "flight-training"
+      },
+      {
+        "id": "decor-8",
+        "x": 880,
+        "y": 363,
+        "r": 0,
+        "decorative": true,
+        "structure": "banner",
+        "icon": "🕯️",
+        "dungeonDistrict": "flight-training"
+      },
+      {
+        "id": "decor-9",
+        "x": 1023,
+        "y": 627,
+        "r": 0,
+        "decorative": true,
+        "structure": "ember",
+        "icon": "🕯️",
+        "dungeonDistrict": "flight-training"
+      },
+      {
+        "id": "decor-10",
+        "x": 880,
+        "y": 836,
+        "r": 0,
+        "decorative": true,
+        "structure": "chain",
+        "icon": "🕯️",
+        "dungeonDistrict": "flight-training"
+      },
+      {
+        "id": "decor-11",
+        "x": 770,
+        "y": 935,
+        "r": 0,
+        "decorative": true,
+        "structure": "chain-anchor",
+        "icon": "🕯️",
+        "dungeonDistrict": "flight-training"
+      },
+      {
+        "id": "decor-12",
+        "x": 774.3185165257813,
+        "y": 695.1763809020504,
+        "r": 0,
+        "decorative": true,
+        "structure": "flight-harness-station",
+        "icon": "🕯️",
+        "dungeonDistrict": "flight-training"
+      },
+      {
+        "id": "decor-13",
+        "x": 1034,
+        "y": 770,
+        "r": 0,
+        "decorative": true,
+        "structure": "scorched-floor",
+        "icon": "🕯️",
+        "dungeonDistrict": "flight-training"
+      },
+      {
+        "id": "decor-14",
+        "x": 1166,
+        "y": 396,
+        "r": 0,
+        "decorative": true,
+        "structure": "banner",
+        "icon": "🕯️",
+        "dungeonDistrict": "hatchery"
+      },
+      {
+        "id": "decor-15",
+        "x": 1232,
+        "y": 627,
+        "r": 0,
+        "decorative": true,
+        "structure": "ember",
+        "icon": "🕯️",
+        "dungeonDistrict": "hatchery"
+      },
+      {
+        "id": "decor-16",
+        "x": 1188,
+        "y": 836,
+        "r": 0,
+        "decorative": true,
+        "structure": "chain",
+        "icon": "🕯️",
+        "dungeonDistrict": "hatchery"
+      },
+      {
+        "id": "decor-17",
+        "x": 1298,
+        "y": 836,
+        "r": 0,
+        "decorative": true,
+        "structure": "chain",
+        "icon": "🕯️",
+        "dungeonDistrict": "hatchery"
+      },
+      {
+        "id": "decor-18",
+        "x": 1240,
+        "y": 340,
+        "r": 0,
+        "decorative": true,
+        "structure": "hatchery",
+        "icon": "🕯️",
+        "dungeonDistrict": "hatchery"
+      },
+      {
+        "id": "decor-19",
+        "x": 1240,
+        "y": 460,
+        "r": 0,
+        "decorative": true,
+        "structure": "egg-cradle",
+        "icon": "🕯️",
+        "dungeonDistrict": "hatchery"
+      },
+      {
+        "id": "decor-20",
+        "x": 1254,
+        "y": 946,
+        "r": 0,
+        "decorative": true,
+        "structure": "warm-brazier",
+        "icon": "🕯️",
+        "dungeonDistrict": "hatchery"
+      },
+      {
+        "id": "decor-21",
+        "x": 1320,
+        "y": 1034,
+        "r": 0,
+        "decorative": true,
+        "structure": "ember",
+        "icon": "🕯️",
+        "dungeonDistrict": "hatchery"
+      },
+      {
+        "id": "decor-22",
+        "x": 836,
+        "y": 572,
+        "r": 0,
+        "decorative": true,
+        "structure": "bone-pile",
+        "icon": "🕯️",
+        "dungeonDistrict": "feeding-service"
+      },
+      {
+        "id": "decor-23",
+        "x": 1012,
+        "y": 1056,
+        "r": 0,
+        "decorative": true,
+        "structure": "ember",
+        "icon": "🕯️",
+        "dungeonDistrict": "feeding-service"
+      },
+      {
+        "id": "decor-24",
+        "x": 1144,
+        "y": 1056,
+        "r": 0,
+        "decorative": true,
+        "structure": "ember",
+        "icon": "🕯️",
+        "dungeonDistrict": "feeding-service"
+      },
+      {
+        "id": "decor-25",
+        "x": 616,
+        "y": 1232,
+        "r": 0,
+        "decorative": true,
+        "structure": "sleep-roll",
+        "icon": "🕯️",
+        "dungeonDistrict": "feeding-service"
+      },
+      {
+        "id": "decor-26",
+        "x": 500,
+        "y": 1340,
+        "r": 0,
+        "decorative": true,
+        "structure": "feeding-trough",
+        "icon": "🕯️",
+        "dungeonDistrict": "feeding-service"
+      },
+      {
+        "id": "decor-27",
+        "x": 640,
+        "y": 1400,
+        "r": 0,
+        "decorative": true,
+        "structure": "carcass-rack",
+        "icon": "🕯️",
+        "dungeonDistrict": "feeding-service"
+      },
+      {
+        "id": "decor-28",
+        "x": 990,
+        "y": 1254,
+        "r": 0,
+        "decorative": true,
+        "structure": "banner",
+        "icon": "🕯️",
+        "dungeonDistrict": "feeding-service"
+      },
+      {
+        "id": "decor-29",
+        "x": 968,
+        "y": 1386,
+        "r": 0,
+        "decorative": true,
+        "structure": "torch",
+        "icon": "🕯️",
+        "dungeonDistrict": "feeding-service"
+      },
+      {
+        "id": "decor-30",
+        "x": 1440,
+        "y": 1360,
+        "r": 0,
+        "decorative": true,
+        "structure": "treasure-hoard",
+        "icon": "🕯️",
+        "dungeonDistrict": "royal-aerie"
+      },
+      {
+        "id": "decor-31",
+        "x": 1450,
+        "y": 1420,
+        "r": 0,
+        "decorative": true,
+        "structure": "royal-flight-standard",
+        "icon": "🕯️",
+        "dungeonDistrict": "royal-aerie"
+      },
+      {
+        "id": "decor-32",
+        "x": 1420,
+        "y": 1140,
+        "r": 0,
+        "decorative": true,
+        "structure": "ember-pit",
+        "icon": "🕯️",
+        "dungeonDistrict": "royal-aerie"
+      },
+      {
+        "id": "decor-33",
+        "x": 1460,
+        "y": 1210,
+        "r": 0,
+        "decorative": true,
+        "structure": "roost",
+        "icon": "🕯️",
+        "dungeonDistrict": "royal-aerie"
+      },
+      {
+        "id": "decor-34",
+        "x": 1386,
+        "y": 1364,
+        "r": 0,
+        "decorative": true,
+        "structure": "torch",
+        "icon": "🕯️",
+        "dungeonDistrict": "royal-aerie"
+      },
+      {
+        "id": "decor-35",
+        "x": 1309,
+        "y": 660,
+        "r": 0,
+        "decorative": true,
+        "structure": "supply-stack",
+        "icon": "🕯️",
+        "dungeonDistrict": "royal-aerie"
+      },
+      {
+        "id": "decor-36",
+        "x": 1199,
+        "y": 1309,
+        "r": 0,
+        "decorative": true,
+        "structure": "claw-scrape",
+        "icon": "🕯️",
+        "dungeonDistrict": "royal-aerie"
+      },
+      {
+        "id": "decor-37",
+        "x": 1440,
+        "y": 925,
+        "r": 0,
+        "decorative": true,
+        "structure": "royal-launch-platform",
+        "icon": "🕯️",
+        "dungeonDistrict": "royal-aerie"
+      }
+    ],
+    "gates": [
+      {
+        "id": "containment-gate",
+        "widths": [
+          160
+        ]
+      },
+      {
+        "id": "hatchery-baffle",
+        "widths": [
+          160,
+          160
+        ]
+      },
+      {
+        "id": "service-gate",
+        "widths": [
+          160,
+          160
+        ]
+      },
+      {
+        "id": "aerie-gate",
+        "widths": [
+          180,
+          180
+        ]
+      }
+    ],
+    "note": "Current static routes exist for all guards and boss. Crowd/AI stalls during live combat are not reproduced or claimed solved. This is an unimplemented geometric proposal."
+  }
+}

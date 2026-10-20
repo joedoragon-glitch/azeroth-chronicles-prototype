@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "frontier-edge-redistribution-20261020",
+  "name": "Frontier work yards and edge plots",
+  "kind": "spatial-proposal",
+  "nextAction": "Review the concrete spatial proposal with the audit. No runtime implementation or release has occurred.",
+  "context": {
+    "originConversation": "Conversation URL unavailable; Joel instructions dated 20 October 2026.",
+    "decisionSummary": "Audit central Frontier clutter/underused edges and road extensions, preserving nature; assess modest dragon-dungeon expansion and movement bottlenecks.",
+    "decisionDate": "2026-10-20",
+    "contentDocuments": [
+      "tools/visual-review/frontier-bastion-audit-20261020/README.md"
+    ]
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner requested audit and improvements.",
+    "proceduralDesignAcceptance": "Spatial proposal has not received appearance acceptance.",
+    "spriteProductionAuthorization": "None; spatial planning reuses existing bodies.",
+    "generatedAppearanceAcceptance": "Not applicable.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "fe6cf08adcae239903fc95726b31f4a92ec4b6aa",
+    "ownerFilesAndBranches": [
+      "tools/visual-review/frontier-bastion-audit-20261020/audit.cjs",
+      "tools/visual-review/frontier-bastion-audit-20261020/propose.cjs",
+      "src/prototype/rules.js (read only)",
+      "src/prototype/world.js (read only)",
+      "preview/mouths-staves-frontier-20261020"
+    ],
+    "isolatedReferencePath": "tools/visual-review/frontier-bastion-audit-20261020/frontier-proposed.png",
+    "isolatedReferenceHash": "8b835990291441aea8c49a8196357a76576857876d01166f010148c2dde8fa24",
+    "exactCandidatesPath": "tools/visual-review/frontier-bastion-audit-20261020/proposal.json",
+    "traitsToPreserve": [
+      "Existing natural scenery and authored content identities",
+      "Quest, rescue and enemy progression",
+      "Clear walking routes and appropriate roads"
+    ]
+  },
+  "production": {
+    "releaseCommit": null,
+    "releaseEvidence": null,
+    "rollbackRevision": "Live dev.102 remains unchanged"
+  }
+}
