@@ -4,7 +4,7 @@
   "designId": "approved-art-crowned-mage",
   "name": "Crowned Mage",
   "kind": "crowned-player",
-  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "nextAction": "Publish the quick dev.92 Mage hair correction without tests; retain original raster, headgear and performance improvements.",
   "context": {
     "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
     "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Reshape the hat/crown fit, lower or flare the collar around the face, drape embroidered violet stoles and refine staff hands.",
@@ -118,6 +118,15 @@
     "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
     "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
     "requestedCorrection": "Restores the original blue-robed masked mage identity, purple mouth scarf and silver hair, with the crown fixed around the pointed mage hat.",
-    "finalResultApprovalDate": "2026-10-19"
+    "finalResultApprovalDate": "2026-10-19",
+    "latestMageHairCorrection": {
+      "date": "2026-10-20",
+      "ownerRequest": "Very quick, no tests: younger, more stylish Mage hair across Mage appearances; must fit existing headgear. Withdrawn quality-of-life change is excluded.",
+      "implementation": "Shared mageHead draws swept silver bangs and a layered side ponytail emerging below/behind the hat brim. Applies to base and crowned Mage; hat, crown and purple scarf retained.",
+      "sourceSha256": "3a195f5e462b7f003f49a869a6e32815a83f933e01c4f07c7bf698081c2047c0",
+      "decisionRecord": "docs/MAGE_HAIR_QUICKFIX_20261020.md",
+      "appearanceAcceptance": "Owner requested implementation; no acceptance of an unseen revised drawing is claimed.",
+      "status": "dev.92 quick correction; merge/publication pending."
+    }
   }
 }
