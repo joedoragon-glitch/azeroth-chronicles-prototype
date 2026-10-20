@@ -1,5 +1,7 @@
 # Mage hairstyle quick fix — 20 October 2026
 
+**Latest owner direction — hairstyle only:** Joel deferred the staff redesign and authorized proceeding with selected C / twin braids only. Both regular/crowned live dev.92 staff drawings remain byte-for-byte unchanged. Staff previews below are unselected/deferred history; the combined-release hold is superseded. Direct dev.93 merge/publication proceeds with no tests.
+
 **02:31 EDT — staff preview correction:** Joel clarified that the staff shaft must be straight. All four staff previews now have one vertical shaft aligned below the head and a fitted holding hand. Twin braids are unchanged. The updated staff comparison/options supersede the earlier bent shafts. No staff chosen yet; no tests or publication.
 
 **02:23 EDT — combined release held for staff choice:** Twin-braid option C is implemented locally, not merged/published. Joel requested a better staff and asked to choose from options first. [Four actual procedural staff choices](../tools/visual-review/mage-staff-options-20261020/comparison.png) use the accepted braids and show both regular/crowned outfits. [Exact preview code](../tools/visual-review/mage-staff-options-20261020/options.json) is retained. Wait for staff selection, then integrate hair/staff together under the existing no-test publication instruction. Dev.92 remains live.

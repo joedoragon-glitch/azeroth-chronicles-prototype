@@ -1,6 +1,6 @@
 # Current development state — 20 October 2026
 
-**02:23 EDT — staff choice pending:** Mage hair C / twin braids is implemented in the unmerged dev.93 candidate. Joel then requested four staff options and will select one; publication is held to combine hair/staff. [Staff comparison](../tools/visual-review/mage-staff-options-20261020/comparison.png), [exact option source](../tools/visual-review/mage-staff-options-20261020/options.json). No staff is selected, no tests ran, published game remains dev.92.
+**Latest owner direction — hairstyle-only dev.93:** Staff redesign deferred; keep both live staff drawings unchanged. Publish accepted C / twin braids for regular/crowned Mage through the authorized packaging-only release, with no tests. The earlier staff-choice hold is superseded. Headgear/scarf, dev.91 identities and dev.90 performance are retained.
 
 **02:21 EDT — dev.93 selected Mage style:** Joel selected C / Twin braids after rejecting the hidden ponytail. Exact previewed drawing applied across regular/crowned Mage, with existing hat/crown/scarf, identity preferences and performance fixes retained. No tests; direct merge/publication pending. [Decision and accepted comparison](MAGE_HAIR_QUICKFIX_20261020.md).
 

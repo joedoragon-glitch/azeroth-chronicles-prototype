@@ -1,6 +1,6 @@
 {
   "shaftRevision": "Straight vertical x=26; right grip x=25; no angled neck.",
-  "status": "Staff options only, no staff selected. Twin-braid candidate dev.93 held for combined release.",
+  "status": "Deferred by owner. No staff selected or integrated; live dev.92 staff remains unchanged. Release dev.93 contains selected hairstyle C only.",
   "shaft": "\n      // Straight vertical haft aligned beneath the head, with a fitted forearm.\n      line([[15,-3],[24,-2]], ink, 5.4);\n      line([[15,-3],[24,-2]], skin, 3.4);\n      line([[26,14],[26,-36]], '#53627d', 4.1);\n      line([[25.4,11],[25.4,-34]], '#bbcbd5', .95);\n      for (const y of [-22,-19,-16]) line([[24.4,y],[27.6,y-1]], '#a791c2',1.15);\n      softRect(23.7,-6,4.6,12,'#48576b',1);\n      for(const y of [-4,0,4]) line([[24,y],[28,y-1]], '#d2bd83',1.1);\n      softRect(24,10,4,4,'#b5c4cc',.8);\n      softRect(22.5,-36,7,3,'#c4ad76',.7);\n",
   "options": [
     {
