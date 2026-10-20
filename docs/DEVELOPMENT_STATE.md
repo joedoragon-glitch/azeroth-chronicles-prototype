@@ -1,4 +1,4 @@
-**Prepared dev.118 — Treasurer money bag:** Owner reopened the coin-hand correction. Shared tied leather pouch with silver Crown stamp for pet and normal/TRUE boss, held at original left grips. Nine changed/90 unchanged visual cases pass; arms, hammer, face/body and state purity preserved. Scoped checks only; package-only publication next. [Record](TREASURER_MONEYBAG_20261020.md).
+**Published dev.118 — Treasurer money bag:** PR #352 / `31f44279585ca8400d395024417a4f12431bfd2c`; package-only run 39516901245 succeeded; eight exact relevant live files match. Shared tied leather pouch with silver Crown stamp at existing left grips, for pet and normal/TRUE boss. Nine changed/90 unchanged visual cases; arms, hammer, face/body and render state preserved. Normal workflow restored; receipt `evidence/TREASURER_MONEYBAG_DEV118_PUBLICATION_20261020.json`. Prior coin-hand deferral is superseded; no further automatic art work.
 
 **End-of-day closeout — 20 October 2026:** Live runtime is `0.9.1+snapshot.dev.117` (PR #351; verified 32-file publication receipt). All today’s requested implementations are published. No automatic work continues. Next sprite work reviews/revises existing registrations against current procedural canon first; read [the restart guide](SPRITE_RESTART_20261020.md). Treasurer coin-hand deferral was superseded by the later owner-requested money bag correction; other unselected gallery choices await later review. Earlier dated “pending”, “preview-only” and pause statements below describe their own checkpoints and are superseded by later publications.
 
@@ -142,8 +142,8 @@
 
 | Item | Recorded state |
 | --- | --- |
-| Published runtime | `0.9.1+snapshot.dev.117`; merge `f291edaea04aebfaf6076b7697d5b9751f5bb5f6`, package-only publication run `39511519262` |
-| Latest publication evidence | [Verified dev.117 receipt](evidence/PROCEDURAL_SELECTIONS_DEV117_PUBLICATION_20261020.json); all 32 exact live files match |
+| Published runtime | `0.9.1+snapshot.dev.118`; merge `31f44279585ca8400d395024417a4f12431bfd2c`, package-only publication run `39516901245` |
+| Latest publication evidence | [Verified dev.118 receipt](evidence/TREASURER_MONEYBAG_DEV118_PUBLICATION_20261020.json); eight exact relevant live files match |
 | Historical documentation-audit main | `57453c4651366a6debbcae454c70af3115e8ac2e` |
 | Historical dev.79 gameplay source | `23d951092ea5dff806c460c62ca71eeced574f5c`, merged manual Developer Mode Skill 1 fix and documentation closeout #319 |
 | Historical dev.79 publication evidence | [Packaging-only run 39312326936](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39312326936); exact public build/copy reads recorded in the [release handoff](COMMUNITY_SNAPSHOT_RELEASE_HANDOFF_20261016.md) |

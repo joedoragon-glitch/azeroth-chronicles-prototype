@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "status": "procedural-design",
+  "status": "integrated",
   "designId": "approved-art-boss-ridge",
   "name": "Ridge Tyrant — normal / TRUE",
   "kind": "boss",
-  "nextAction": "Publish the requested silver-Crown money bag correction as dev.118; preserve the original arms, hammer, face, body and prior art history.",
+  "nextAction": "Preserve the published silver-Crown money bag design at original grips for future sprite translation. Retain original hammer, arms, face/body and historical art. Owner play/appearance feedback next; no further automatic work.",
   "context": {
     "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
     "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Give the horned mountain humanoid brows, nose, jaw and hands; integrate the payroll kit and weighty hammer.",
@@ -207,7 +207,7 @@
     "preview": "tools/visual-review/treasurer-moneybag-dev118/comparison.png",
     "audit": "tools/visual-review/treasurer-moneybag-dev118/audit.json",
     "sourceSha256": "8f08f418f8c3140ca82bea8da13df317262de0e7d4eab00801f857c134d18f69",
-    "release": "Prepared dev.118; publication pending."
+    "release": "Published PR #352 / 31f44279585ca8400d395024417a4f12431bfd2c; package-only run 39516901245; eight exact relevant live files match."
   },
   "currentHandoff": {
     "date": "2026-10-20",
@@ -215,6 +215,8 @@
     "decisionIndex": "tools/sprites/current-design-decisions.json",
     "instruction": "Treasurer carries a tied leather money bag stamped with a silver Crown emblem in the existing left-hand grip, replacing the gold coin/empty hand. Preserve the exact Treasury hammer, arm positions, face and body. Same bag design at pet scale and on normal/TRUE boss. Owner requested this correction on 20 October 2026; prior coin-hand deferral is superseded.",
     "sourceFile": "src/prototype/visuals.js",
-    "sourceSha256": "8f08f418f8c3140ca82bea8da13df317262de0e7d4eab00801f857c134d18f69"
+    "sourceSha256": "8f08f418f8c3140ca82bea8da13df317262de0e7d4eab00801f857c134d18f69",
+    "baseline": "0.9.1+snapshot.dev.118",
+    "sourceCommit": "31f44279585ca8400d395024417a4f12431bfd2c"
   }
 }

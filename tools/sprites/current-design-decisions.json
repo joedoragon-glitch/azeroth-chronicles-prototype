@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-20",
-  "runtimeBaseline": "0.9.1+snapshot.dev.117",
-  "sourceCommit": "0c4db7c2e4133892c6c32fd48a2c32a3bfefedc5",
+  "runtimeBaseline": "0.9.1+snapshot.dev.118",
+  "sourceCommit": "31f44279585ca8400d395024417a4f12431bfd2c",
   "guide": "docs/SPRITE_RESTART_20261020.md",
   "priority": "Review and revise existing registered sprites against current accepted procedural designs before expanding the catalog. This closeout does not start generation.",
   "precedence": "Later recorded owner corrections and current procedural source supersede conflicting old catalog prose and historical reference images. Preserve historical provenance; do not infer unseen raster acceptance.",

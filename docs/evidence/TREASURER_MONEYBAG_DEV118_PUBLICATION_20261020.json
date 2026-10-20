@@ -1,0 +1,60 @@
+{
+  "verified_at": "2026-10-20T23:44:55.586197+00:00",
+  "version": "0.9.1+snapshot.dev.118",
+  "pr": 352,
+  "merge": "31f44279585ca8400d395024417a4f12431bfd2c",
+  "package_only_run": 39516901245,
+  "candidate_tree": "c25fd6f3415c45209847c3c89348a43242712f5e",
+  "files": [
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "7e22771435301dd647e2d808a68dfc9746cd36739a510c417ae8437338099961"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "match": true,
+      "bytes": 494552,
+      "sha256": "8f08f418f8c3140ca82bea8da13df317262de0e7d4eab00801f857c134d18f69"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 296,
+      "sha256": "61eab6169829cb99c1cc513d5dc5c351e05d24cdd1a9211cefeaa2d52a38c0d4"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20703,
+      "sha256": "8577fd22beeca55a1894745e2d528cf4c2d81eee00dbf4fea9b0c4fdfa22d9e0"
+    },
+    {
+      "path": "index.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "phone.html",
+      "match": true,
+      "bytes": 5490,
+      "sha256": "6d6fe5990cccba9b450925b101e959acd1de0f04735bfb920147dc89db783eb8"
+    },
+    {
+      "path": "prototype.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "assets/sprites/manifest.json",
+      "match": true,
+      "bytes": 18798,
+      "sha256": "ca34058374aea87794536c01b3c7f4b8883ee5eb7b85e63c29192c954efce3b5"
+    }
+  ],
+  "all_match": true,
+  "scope": "Eight exact relevant live files verified; other game source/art unchanged from dev.117. No broad CI."
+}
