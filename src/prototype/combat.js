@@ -858,11 +858,13 @@
               effect: p.effect,
             });
           }
-          const before = { x: p.x, y: p.y },
-            d = dist(p, e),
-            step = Math.min(p.speed * dt, d);
-          p.dx = (e.x - p.x) / Math.max(1, d);
-          p.dy = (e.y - p.y) / Math.max(1, d);
+          // Friendly shots keep their launch direction, just like enemy arrows.
+          // Sweep the whole frame segment so fast beams cannot skip a contact.
+          const flight = R.balance.friendlyProjectiles,
+            elapsed = Math.min(dt, p.life ?? flight.lifeSeconds),
+            before = { x: p.x, y: p.y },
+            step = p.speed * elapsed;
+          p.life = (p.life ?? flight.lifeSeconds) - elapsed;
           p.x += p.dx * step;
           p.y += p.dy * step;
           if (!this.clearSegment(before, p, 0)) {
@@ -883,7 +885,7 @@
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
             continue;
           }
-          if (d < step + 15) {
+          if (this.distanceToSegment(e, before, p) < flight.hitRadius) {
             // Royal Prerogative only redirects actual approaching projectiles
             // into an existing living Crown summon crossing the flight path.
             const guard =
@@ -904,18 +906,23 @@
             const victim = guard || e;
             const contactPoint = { x: victim.x, y: victim.y };
             if (guard) e.royalPrerogativeReadyAt = this.s.time + 18;
-            const landed = this.damage(
-              victim,
-              p.damage,
-              p.source,
-              p.encountersAtStart || p.area || p.piercing
-                ? {
-                    ...(p.encountersAtStart ? { encountersAtStart: p.encountersAtStart } : {}),
-                    ...(p.area ? { area: true } : {}),
-                    ...(p.piercing ? { piercing: true } : {}),
-                  }
-                : null,
-            );
+            const landed =
+              p.effect === 'interrupt'
+                ? this.interruptEnemyAction(victim, p.interruptAction)
+                : this.damage(
+                    victim,
+                    p.damage,
+                    p.source,
+                    p.encountersAtStart || p.area || p.piercing
+                      ? {
+                          ...(p.encountersAtStart
+                            ? { encountersAtStart: p.encountersAtStart }
+                            : {}),
+                          ...(p.area ? { area: true } : {}),
+                          ...(p.piercing ? { piercing: true } : {}),
+                        }
+                      : null,
+                  );
             if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
               return;
             if (p.cancelledChargedOpener) continue;
@@ -927,6 +934,17 @@
                 p.source,
                 p.comboClass || this.hero.class,
               );
+            if (landed && p.petSkillSlot) {
+              const pet = this.s.party.find((unit) => unit.id === p.source && unit.type === 'pet');
+              if (pet) this.petSkillContact(pet, victim, p.petSkillSlot);
+            }
+            if (landed && p.fractureFraction)
+              this.fractureEnemy(victim, p.fractureFraction, p.fractureDuration);
+            if (landed && p.tauntDuration) {
+              const duration =
+                victim.type === 'boss' ? Math.min(2.5, p.tauntDuration) : p.tauntDuration;
+              victim.tauntUntil = Math.max(victim.tauntUntil || 0, this.s.time + duration);
+            }
             if (landed && p.slow) this.applySlow(victim, p.slow);
             if (landed && p.push && victim.hp > 0 && p.source === 'hero')
               this.shieldPush(victim, p.push);
@@ -955,6 +973,8 @@
                 y: e.y,
                 class: this.hero.class,
               });
+            this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
+          } else if (p.life <= 0) {
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
           }
         }

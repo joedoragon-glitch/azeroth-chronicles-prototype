@@ -66,7 +66,7 @@
       [
         'Dust and displacement',
         'Goblin dust blocks direct targeting; area attacks still work. Shoves move you without a lasting stun.',
-        'Dust cover protects the caster from selection and homing, not area damage. A shove obeys terrain collision. Thornfang’s forced scatter briefly overrides movement commands; ordinary shoves do not create a general stun. Ground warning shapes show the affected area, while their label follows the caster; a warning alone applies no damage or condition.',
+        'Dust cover protects the caster from selection and incoming targeted shots, not area damage. A shove obeys terrain collision. Thornfang’s forced scatter briefly overrides movement commands; ordinary shoves do not create a general stun. Ground warning shapes show the affected area, while their label follows the caster; a warning alone applies no damage or condition.',
       ],
       [
         'Healing in battle',
@@ -382,7 +382,7 @@
       paladin: {
         2: 'Tap Sundering Strike: hit and weaken one enemy. Charge Holy Cleave: weaken a frontal group.',
         3: 'Tap Shield Stance: guard for 8s; basic attacks stop and other damage drops. Tap again to lower. Charge Shield Bash: push nearby enemies.',
-        4: 'Tap Judgment: strike and taunt one foe. Charge Grand Judgment: hit and taunt a group. Boss specials keep their own targets.',
+        4: 'Tap Judgment: a dodgeable holy shot strikes and taunts one foe. Charge Grand Judgment: hit and taunt a group. Boss specials keep their own targets.',
         5: 'Tap: holy area damage to 6 enemies. Charge Consecrated Wave: stronger holy damage and weaken up to 8.',
         6: 'Tap Vanguard Rush: approach and strike. Charge Vanguard Impact: rush, then push nearby enemies.',
         7: 'Tap: holy damage to 6 enemies. Charge Oath Strike: stronger holy damage and weaken up to 8.',
@@ -390,8 +390,8 @@
       },
       mage: {
         2: 'Tap Frost Bolt: damage and slow one foe for 2–2.2s. Charge Frost Burst: slow nearby enemies for 3.2–4.2s.',
-        3: 'Tap Spell Interrupt: cancel one warned attack. Charge Silence Field: block special skills for enemies, you and companions inside.',
-        4: 'Tap Arcane Fracture: damage and increase incoming damage to one foe. Charge Arcane Rupture: stronger vulnerability on a group; no stacking.',
+        3: 'Tap Spell Interrupt: a dodgeable bolt cancels one warned attack on contact. Charge Silence Field: block special skills for enemies, you and companions inside.',
+        4: 'Tap Arcane Fracture: a dodgeable bolt damages and increases incoming damage to one foe. Charge Arcane Rupture: stronger vulnerability on a group; no stacking.',
         5: 'Tap Force Pulse: knock back up to 6 enemies. Charge Force Wave: stronger push on up to 8. Neither slows.',
         6: 'Tap: a slowing magic shot. Charge: stronger focused beam and longer slow.',
         7: 'Tap Arcane Chain: strike up to 3 foes. Charge Chainstorm: stronger chain against up to 5. No slow.',

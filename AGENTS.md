@@ -1,5 +1,7 @@
 # Project working rules
 
+- **Current dev.98 Neri/projectile/pet update:** Owner requests full-body rescued Neri, dodgeable friendly ranged/single-target attacks, pet activation/training review, repair of the shown ravine snowmelt, and recognizable boss-derived pet skill effects. Neri moved into square; fixed projectile flight/contact effects; pet training menu clarified; all 22 pet skills have release/contact effects and name cues; snowmelt redrawn as a shallow stream. Focused validation; preserve FPS/travel/night/character art/save. Package-only publication. [Scope](docs/NERI_PROJECTILE_PET_20261020.md).
+
 - Published dev.97: PR #331 / 7650c732a9aefd34c69b611c765bbb31767bd6c7; packaging-only run 39389110093 succeeded and exact live files match. Night combat movement/basic attack rate starts at +10%, rises +0.75 percentage points per boss-counter point, caps at +25% at twenty. Healing/Rogue cooldowns and aiming warnings preserved. Focused checks only; no broad CI. Normal workflow restored, temporary publisher removed. Receipt: docs/evidence/NIGHT_TEMPO_DEV97_PUBLICATION_20261020.json. Owner play next; no automatic further work.
 
 - **Historical candidate dev.97 night-tempo update:** Owner revised the nighttime movement/basic attack-rate boost to 10%, rising with the same boss counter to 25%. Focused checks passed; healing/Rogue cooldowns, warnings, FPS/travel/art preserved. No broad CI. [Scope](docs/NIGHT_TEMPO_20261020.md).

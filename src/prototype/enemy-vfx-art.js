@@ -908,7 +908,176 @@
     ctx.restore();
     return true;
   }
+  // Pet-sized versions share their bosses' action/material drawing vocabulary.
+  // These are observation-only recipes: never invoke hostile attack controllers.
+  const petRecipes = Object.freeze({
+    thorn: [
+      ['landing', 'fur'],
+      ['roots', 'root'],
+    ],
+    crypt: [
+      ['drain', 'spectral'],
+      ['pool', 'bone'],
+    ],
+    mire: [
+      ['landing', 'mire'],
+      ['pool', 'water'],
+    ],
+    archive: [
+      ['channel', 'water'],
+      ['drain', 'water'],
+    ],
+    ridge: [
+      ['slam', 'steel'],
+      ['rush', 'stone'],
+    ],
+    mine: [
+      ['slam', 'stone'],
+      ['rupture', 'stone'],
+    ],
+    warlord: [
+      ['cleave', 'steel'],
+      ['sweep', 'ember'],
+    ],
+    abyss: [
+      ['pressure', 'ash'],
+      ['pool', 'ash'],
+    ],
+    citadel: [
+      ['fan', 'steel'],
+      ['rupture', 'ember'],
+    ],
+    cindermaw: [
+      ['seal', 'ember'],
+      ['command', 'ash'],
+    ],
+    darklord: [
+      ['cleave', 'shadow'],
+      ['rush', 'shadow'],
+    ],
+  });
+  function petRecipe(family, slot) {
+    const pair = Object.hasOwn(petRecipes, family) && petRecipes[family]?.[slot - 1];
+    return pair
+      ? {
+          action: pair[0],
+          material: pair[1],
+          colors: family === 'crypt' && slot === 2 ? ['#c4e8ed', '#7397b5'] : palette[pair[1]],
+        }
+      : null;
+  }
+  function petSkill(ctx, screen, f, options = {}) {
+    const rec = petRecipe(f.petFamily, f.slot);
+    if (!rec) return false;
+    const progress = options.reduced ? 0.5 : clamp(1 - f.life / f.max, 0, 1),
+      from = { x: f.fromX, y: f.fromY },
+      to = { x: f.x, y: f.y },
+      angle = Math.atan2(to.y - from.y, to.x - from.x),
+      releasing = f.stage === 'release' || f.stage === 'windup',
+      count = options.optimized ? 3 : f.slot === 2 ? 6 : 4;
+    ctx.save();
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    if (releasing) {
+      local(
+        ctx,
+        screen,
+        { ...f, ...from, geometry: { angle } },
+        rec,
+        progress,
+        f.stage === 'windup' ? 'windup' : 'release',
+      );
+      ellipse(ctx, screen, from, 20 + progress * 9, 7 + progress * 3, rec.colors[0], 1.7);
+      if (f.stage !== 'windup') {
+        const p = screen(from);
+        ctx.globalAlpha *= 0.9;
+        ctx.font = 'bold 10px system-ui';
+        ctx.textAlign = 'center';
+        ctx.shadowColor = '#10201b';
+        ctx.shadowBlur = 3;
+        ctx.fillStyle = '#e1f2dc';
+        ctx.fillText(f.skill || '', p.x, p.y - 88 - (options.reduced ? 0 : progress * 6));
+      }
+    } else {
+      // Keep the existing true shape outline; add recognizable local materials
+      // inside it, never a boss-sized or invented damage footprint.
+      if (f.shape === 'line') {
+        for (let n = 0; n < count; n++) {
+          const distance = f.range * ((n + 0.5) / count),
+            p = offset(from, distance, angle);
+          surface(ctx, screen, p, Math.min(18, f.halfWidth * 0.6), rec, progress, 1, angle);
+        }
+        if (f.petFamily === 'archive' || f.petFamily === 'citadel')
+          line(ctx, screen, [from, offset(from, f.range, angle)], rec.colors[0], 2.5);
+      } else if (f.shape === 'cone') {
+        for (let n = 0; n < count; n++) {
+          const a = angle - f.halfAngle + 2 * f.halfAngle * ((n + 0.5) / count),
+            p = offset(from, f.range * (0.45 + progress * 0.35), a);
+          surface(ctx, screen, p, 12, rec, progress, 1, a);
+        }
+        arc(
+          ctx,
+          screen,
+          from,
+          f.range * (0.35 + progress * 0.6),
+          angle,
+          f.halfAngle,
+          rec.colors[0],
+          2.2,
+        );
+      } else if (f.shape === 'circle') {
+        const radius = f.radius * (0.3 + progress * 0.65);
+        for (let n = 0; n < count; n++)
+          surface(
+            ctx,
+            screen,
+            offset(to, radius * 0.75, (n * Math.PI * 2) / count),
+            12,
+            rec,
+            progress,
+            1,
+            angle,
+          );
+        // Algor Mortis shares the Lifebinder's cold radial motif; Mirejaw/air
+        // descendants keep their boss wave/vortex vocabulary at the pet radius.
+        if (['crypt', 'mire', 'abyss'].includes(f.petFamily)) {
+          ellipse(ctx, screen, to, radius * 0.76, radius * 0.27, rec.colors[0], 2.2);
+          if (f.petFamily === 'crypt')
+            for (let n = 0; n < count; n++) {
+              const a = (n * Math.PI * 2) / count;
+              line(
+                ctx,
+                screen,
+                [offset(to, radius * 0.45, a), offset(to, radius, a)],
+                rec.colors[0],
+                1.7,
+              );
+            }
+        }
+      } else {
+        surface(ctx, screen, to, 20, rec, progress, count, angle);
+        local(ctx, screen, { ...f, geometry: { angle } }, rec, progress, 'impact');
+      }
+    }
+    ctx.restore();
+    return true;
+  }
+  function petProjectile(ctx, screen, p, options = {}) {
+    if (!p.petSkillSlot) return false;
+    const rec = petRecipe(p.petFamily, p.petSkillSlot);
+    if (!rec) return false;
+    const tail = { x: p.x - p.dx * 25, y: p.y - p.dy * 25 };
+    ctx.save();
+    line(ctx, screen, [tail, p], rec.colors[1], 4);
+    line(ctx, screen, [tail, p], rec.colors[0], 1.7);
+    surface(ctx, screen, p, 7, rec, 0.35, options.optimized ? 1 : 2, Math.atan2(p.dy, p.dx));
+    ctx.restore();
+    return true;
+  }
   const api = {
+    petRecipe,
+    petSkill,
+    petProjectile,
     recipe,
     boss,
     captains,

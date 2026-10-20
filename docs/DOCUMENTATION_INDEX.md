@@ -4,6 +4,7 @@
 
 | Need | Maintained entrypoint |
 | --- | --- |
+| Neri visibility, dodgeable friendly attacks and pet skill activation/training | [Dev.98 focused scope](NERI_PROJECTILE_PET_20261020.md) |
 | Night movement and attack tempo | [Dev.97 owner-revised 10–25% scaling](NIGHT_TEMPO_20261020.md) |
 | Night counter, ringleader defense and Rogue reuse | [Dev.96 balance scope](NIGHT_RINGLEADER_ROGUE_20261020.md) |
 | Companion blocking while traveling | [Dev.95 movement fix](TRAVEL_COMPANION_COLLISION_20261020.md) |

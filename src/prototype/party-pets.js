@@ -72,6 +72,9 @@
             ' · clear line required; aim stays locked during the second skill’s 0.65s interruptible hold';
         return (
           geometry +
+          (def.shape === 'target' && this.petDefinition(family).role === 'ranged'
+            ? ' · dodgeable shot; effects require contact'
+            : '') +
           ' · ' +
           def.multiplier +
           '× companion attack · up to ' +
@@ -152,25 +155,61 @@
           !targets.length
         )
           return false;
+        const projectile = this.petDefinition(u).role === 'ranged' && def.shape === 'target';
         let hits = 0;
-        for (const e of targets) {
-          if (u.hp <= 0) break;
-          if (
-            !this.damage(e, this.companionAttackDamage(u) * def.multiplier, u.id, {
-              area: def.shape !== 'target',
-            })
-          )
-            continue;
-          hits++;
-          if (def.slow) this.applySlow(e, def.slow);
+        if (projectile) {
+          const distance = Math.max(1, dist(u, target));
+          this.s.projectiles.push({
+            id: 'projectile-' + this.s.nextId++,
+            x: u.x,
+            y: u.y,
+            dx: (target.x - u.x) / distance,
+            dy: (target.y - u.y) / distance,
+            target: target.id,
+            source: u.id,
+            style: 'pet',
+            petFamily: u.petFamily,
+            damage: this.companionAttackDamage(u) * def.multiplier,
+            speed: R.balance.friendlyProjectiles.skillSpeed,
+            slow: def.slow || 0,
+            petSkillSlot: slot,
+          });
+          this.event('projectileLaunch', {
+            actor: 'companion',
+            role: 'pet',
+            source: u.id,
+            style: 'magic',
+            x: u.x,
+            y: u.y,
+            target: target.id,
+          });
+        } else {
+          for (const e of targets) {
+            if (u.hp <= 0) break;
+            if (
+              !this.damage(e, this.companionAttackDamage(u) * def.multiplier, u.id, {
+                area: def.shape !== 'target',
+              })
+            )
+              continue;
+            hits++;
+            if (def.slow) this.applySlow(e, def.slow);
+          }
         }
-        if (!hits) return false;
+        if (!projectile && !hits) return false;
         u[key] =
           slot === 1
             ? R.balance.companions.petFirstCooldown
             : R.balance.companions.petSecondCooldown;
         u.skillGlobalCd = R.companionSkills.globalCooldown;
         u.cd = Math.max(u.cd, 0.5);
+        this.petSkillEvent(u, target, slot, 0, 'release');
+        if (!projectile) this.petSkillContact(u, target, slot, hits);
+        return true;
+      }
+      petSkillContact(u, target, slot, hits = 1) {
+        const def = this.petSkillDefinition(u, slot);
+        if (!def || u.hp <= 0 || u.active === false) return false;
         if (u.hp > 0 && def.heal) {
           u.hp = Math.min(u.maxHp, u.hp + u.maxHp * def.heal);
           this.event('heal', { x: u.x, y: u.y, target: u.id, resource: 'health' });
@@ -182,8 +221,22 @@
             u.wardReduction = def.ward;
           }
         }
+        this.petSkillEvent(u, target, slot, hits, 'impact');
+        this.event('spell', {
+          actor: 'companion',
+          role: 'pet',
+          source: u.id,
+          x: u.x,
+          y: u.y,
+          special: 'pet-skill',
+        });
+        return true;
+      }
+      petSkillEvent(u, target, slot, hits, stage) {
+        const def = this.petSkillDefinition(u, slot);
         const pet = this.petDefinition(u);
         this.event('petSkill', {
+          stage,
           source: u.id,
           petFamily: u.petFamily,
           skill: def.name,
@@ -200,15 +253,6 @@
           slot,
           hits,
         });
-        this.event('spell', {
-          actor: 'companion',
-          role: 'pet',
-          source: u.id,
-          x: u.x,
-          y: u.y,
-          special: 'pet-skill',
-        });
-        return true;
       }
       petCombatPoint(u, target, living, reach) {
         const cfg = R.balance.companions,
