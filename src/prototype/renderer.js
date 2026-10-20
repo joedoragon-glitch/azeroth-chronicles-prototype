@@ -2094,7 +2094,15 @@
       // Optional #294 viewport integration is disabled: exact art parity was
       // restored, but paired controls did not establish a reliable speed gain.
       if (!game.isDungeon())
-        PrototypeVisuals.terrain(ctx, screen, i, size, optimized ? null : PrototypeMaterials);
+        PrototypeVisuals.terrain(
+          ctx,
+          screen,
+          i,
+          size,
+          optimized ? null : PrototypeMaterials,
+          null,
+          z.crownInheritedDecks || [],
+        );
       PrototypeVisuals.roads(ctx, z.roads || [], screen, i, optimized ? null : PrototypeMaterials);
       PrototypeVisuals.footpaths(ctx, z.footpaths || [], screen);
       if (!game.isDungeon())

@@ -1,3 +1,5 @@
+**Prepared dev.110 — Crown, companion safety and arc landing:** Owner-authorized complete audit/repair/merge. Coherent town/roads/banks, contained heat raceways, orrery and shared watchpost; wider Citadel gates. All three companion findings repaired; dodged arcs now end at their original landing point. Focused checks/native/save audit pass; package-only publication and exact-live verification pending. Scope: `docs/CROWN_COMPANIONS_20261020.md`. Veyra stays preview-only.
+
 # Current development state — 20 October 2026
 
 **20 October companion audit — dev.109, no runtime changes:** Joel requested a group-update draft and an audit of reckless companion behavior. Existing idle-targeting/Recall/regroup/gather checks pass, but three remaining defects are reproduced: critical solo wounds do not trigger retreat; close targets can require unsupported ~570-unit detours; resource/regroup threat envelopes miss fort ranged reach (321 vs 400.4). Audit/evidence: `docs/COMPANION_BEHAVIOR_AUDIT_20261020.md`; `tools/visual-review/companion-behavior-audit-20261020/`. Repairs pending; live build remains dev.109, no CI/release or group message.

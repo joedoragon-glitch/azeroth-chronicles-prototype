@@ -388,3 +388,12 @@ These later requested procedural designs supplement the historical census withou
 | --- | --- |
 | `frontier-grain-silo` | PROCEDURAL — requested grain storage structure; dev.108 native reference and scope in `tools/sprites/design-handoffs/frontier-grain-silo.json`. Exact appearance awaits owner feedback. |
 | `frontier-civic-fountain` | PROCEDURAL — dev.101 native civic water feature; shared terrain body/collision and depth-sorted drawing. No new raster production requested. See `FRONTIER_REACH_REGROUP_20261020.md`. |
+
+## 20 October native Crown additions
+
+| Family | Current classification |
+| --- | --- |
+| `crown-orrery` | PROCEDURAL — native bronze survey landmark replacing the old obsidian circle; handoff `tools/sprites/design-handoffs/crown-orrery.json`. Implementation authorized; exact appearance awaits owner play feedback. |
+| Crown contained heat raceways | PROCEDURAL — existing lava collision rectangles with masonry containment/dry aprons; handoff `tools/sprites/design-handoffs/crown-heat-raceways.json`. No new raster authorization. |
+
+Watchpost catalog 096 retains its identity and future raster classification. Its old exact procedural reference is superseded by the owner-requested supported tower overhaul in `tools/sprites/design-handoffs/approved-art-decoration-watchpost.json`; this new appearance does not inherit the 19 October exact-art acceptance.

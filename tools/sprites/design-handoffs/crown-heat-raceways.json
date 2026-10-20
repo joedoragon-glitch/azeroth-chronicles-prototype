@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "crown-heat-raceways",
+  "name": "Crown contained heat raceways",
+  "kind": "terrain",
+  "nextAction": "Owner live appearance/play feedback; retain references for any separately requested raster work.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Joel requested coherent Crown planning, appropriate industrial surroundings and replacement of the unexplained circle, plus a shared tower overhaul. On 20 October he authorized audit, repairs, merge and publication without further confirmation.",
+    "decisionDate": "2026-10-20",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/344",
+    "contentDocuments": [
+      "docs/CROWN_COMPANIONS_20261020.md"
+    ],
+    "locationAndLore": "Dark Crown and shared regional watchposts. Existing purple masonry and thermal glass/ceramic industry; no map retheming."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner requested this overhaul and authorized implementation.",
+    "proceduralDesignAcceptance": "Implementation authorized; this exact new appearance has not received separate owner review.",
+    "spriteProductionAuthorization": "No new raster production requested.",
+    "generatedAppearanceAcceptance": "No generated raster artwork.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "working dev110 candidate",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js",
+      "src/prototype/rules.js",
+      "src/prototype/world.js",
+      "fix/crown-scene-dev110"
+    ],
+    "exactEntityState": {
+      "kind": "lava",
+      "industrial": true,
+      "x1": 2110,
+      "x2": 2190,
+      "y1": 2000,
+      "y2": 2940,
+      "gaps": [
+        [
+          2260,
+          2520
+        ]
+      ]
+    },
+    "isolatedReferencePath": "tools/visual-review/crown-companions-dev110/after-south-forge.webp",
+    "isolatedReferenceHash": "4f7ec770ae595b325ba96f82a87775c3c1e650f81b650cd1f1a37be75e82a050",
+    "gameplayContextPaths": [
+      "tools/visual-review/crown-companions-dev110/after-south-forge.webp",
+      "tools/visual-review/crown-companions-dev110/after-north-forge.webp"
+    ],
+    "traitsToPreserve": [
+      "Closed masonry ends and restrained stone rims",
+      "Protected dry working aprons",
+      "Existing lava rectangles and dry crossings; glass, ceramic and thermal work nearby"
+    ],
+    "assetSpecificDependencies": [],
+    "workingTreeSourceHashes": {
+      "src/prototype/visuals.js": "c8c98b5b389d3be2c270683051e19e1583e49a85376182cd2afdc03a43a3ef3c",
+      "src/prototype/rules.js": "d32370ed52812946cfe1850edc8db0d15b8d320147e1addcfdc36e724e2c47db",
+      "src/prototype/world.js": "ef87866358d195c050c86354c5c27a4bfd6c7580116c1b6d8cb5bebf62724f3a"
+    },
+    "referenceNote": "The native field view is the reference for this integrated terrain/industrial arrangement; no separate generated body."
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [
+      "terrain[4].industrial"
+    ],
+    "requiredVisibleAssets": [
+      "Crown contained heat raceways"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      "Rules own geometry and collision; native visuals own depth-sorted structures and shared terrain masonry. No new raster registration."
+    ]
+  },
+  "animationRequirements": {
+    "status": "procedural",
+    "gameplayStates": [
+      "day",
+      "night"
+    ],
+    "directions": [],
+    "pivotContract": "Existing foot anchor and world projection; retain logical collision geometry.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

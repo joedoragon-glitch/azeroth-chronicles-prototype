@@ -783,10 +783,11 @@
                 );
             }
             const fort = this.projectileFort(p);
-            p.life -= dt;
+            const elapsed = p.rangedArc ? Math.min(dt, Math.max(0, p.life)) : dt;
+            p.life -= elapsed;
             const before = { x: p.x, y: p.y };
-            p.x += p.dx * p.speed * dt;
-            p.y += p.dy * p.speed * dt;
+            p.x += p.dx * p.speed * elapsed;
+            p.y += p.dy * p.speed * elapsed;
             if (!(fort ? this.fortShotClear(before, p, fort) : this.clearSegment(before, p, 0))) {
               // Report the actual first obstruction, rather than the previous frame's origin.
               const steps = Math.max(1, Math.ceil(dist(before, p) / 4));
@@ -849,6 +850,18 @@
                 target: victim === this.hero ? 'hero' : victim.id,
               });
               p.life = 0;
+            }
+            if (!victim && p.rangedArc && p.life <= 0 && !this.peace) {
+              this.enemyVfxProjectileImpact?.(p, { x: p.x, y: p.y, terrain: true });
+              this.event('projectileImpact', {
+                actor: 'enemy',
+                source: p.sourceId || 'enemy',
+                species: p.species,
+                style: p.style || 'arrow',
+                terrain: true,
+                x: p.x,
+                y: p.y,
+              });
             }
             if (p.life <= 0 || (!fort && !this.line(before, p)) || this.peace)
               this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);

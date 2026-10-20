@@ -873,6 +873,7 @@
           // Expand before old coordinates are filtered against the new floor.
           c.dungeonSpaceLayout(z);
           z.enemies = z.enemies.filter((e) => !e.summon);
+          c.crownSceneComposition(z);
           z.props = z.props.filter(
             (p) =>
               !p.garunTemporary && !p.garunPreview && !c.blocked(p.x, p.y, z.id, p.r || 0, true),

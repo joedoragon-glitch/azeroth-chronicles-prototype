@@ -17301,7 +17301,15 @@
     );
   }
   // World-space surfaces avoid losing narrow barriers between coarse tile samples.
-  function terrain(ctx, screen, region = 0, size = 3000, materialLayer = null, viewport = null) {
+  function terrain(
+    ctx,
+    screen,
+    region = 0,
+    size = 3000,
+    materialLayer = null,
+    viewport = null,
+    inheritedDecks = [],
+  ) {
     const bounds = viewport || {
       width: ctx.canvas?.width || 10000,
       height: ctx.canvas?.height || 10000,
@@ -17819,6 +17827,13 @@
         }
         segment(at, p.y2);
       }
+    }
+    for (const d of inheritedDecks) {
+      rect(d.x1, d.x2, d.y1, d.y2, '#413d47');
+      rect(d.x1 + 6, d.x2 - 6, d.y1 + 6, d.y2 - 6, '#928797');
+      for (let y = d.y1 + 12; y < d.y2; y += 35)
+        line({ x: d.x1 + 7, y }, { x: d.x2 - 7, y }, '#5c5265', 1);
+      for (const y of [d.y1 + 4, d.y2 - 4]) line({ x: d.x1, y }, { x: d.x2, y }, '#c3ac94', 3);
     }
     ctx.restore();
   }

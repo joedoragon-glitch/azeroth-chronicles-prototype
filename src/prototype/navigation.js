@@ -669,7 +669,14 @@
             bounds: [, , c, e],
             gaps,
           } = R.barriers[i];
+          const onInheritedDeck =
+            zone === 'crown' &&
+            this.s.zones[zone]?.crownInheritedDecks?.some(
+              (d) =>
+                x > d.x1 + radius && x < d.x2 - radius && y > d.y1 + radius && y < d.y2 - radius,
+            );
           if (
+            !onInheritedDeck &&
             y > c - radius &&
             y < e + radius &&
             !gaps.some(([l, h]) => y > l + radius && y < h - radius)

@@ -1300,7 +1300,7 @@
     version: 1,
     props: {
       'settlement-major-0': [180, 230],
-      'settlement-major-1': [600, 230],
+      'settlement-major-1': [400, 100],
       'settlement-major-2': [1040, 230],
       'settlement-major-3': [1040, 550],
       'settlement-major-4': [180, 1000],
@@ -1310,7 +1310,7 @@
       'settlement-major-8': [120, 360],
       'crown-layout-labor-quarter-0': [180, 550],
       'crown-layout-labor-quarter-1': [180, 1400],
-      'crown-layout-labor-quarter-2': [640, 1220],
+      'crown-layout-labor-quarter-2': [640, 1320],
       'crown-layout-labor-quarter-3': [730, 1320],
       'crown-layout-labor-quarter-4': [690, 1120],
       'aesthetic-town-0': [180, 710],
@@ -1334,11 +1334,11 @@
       'settlement-minor-0': [740, 1870],
       'settlement-minor-1': [1020, 2140],
       'settlement-minor-2': [740, 2460],
-      'settlement-minor-3': [1020, 2700],
+      'settlement-minor-3': [1020, 2900],
       'settlement-minor-4': [1020, 2460],
       'settlement-minor-5': [680, 2040],
       'aesthetic-hamlet-8': [650, 1820],
-      'aesthetic-hamlet-9': [1010, 2850],
+      'aesthetic-hamlet-9': [1090, 2950],
       'aesthetic-hamlet-10': [960, 2010],
       'aesthetic-hamlet-11': [760, 2140],
       'aesthetic-hamlet-12': [640, 2250],
@@ -1362,6 +1362,11 @@
       'service-citadel': [460, 520],
       'service-cindermaw': [740, 520],
       minor: [1030, 1840],
+      shelf: [1080, 2580],
+    },
+    nodes: {
+      'tribute-crown-crystal-shipment': [1130, 2620],
+      'tribute-crown-southern-levy': [1600, 2560],
     },
     streets: [
       [
@@ -1392,7 +1397,8 @@
         [180, 1600],
         [500, 1600],
         [500, 3100],
-        [760, 3100],
+        [900, 3100],
+        [900, 2800],
       ],
       [
         [500, 1800],
@@ -2670,7 +2676,7 @@
         y2: 1500,
         gaps: [[980, 1160]],
       },
-      { kind: 'orrery', x: 760, y: 3100, r: 70 },
+      { kind: 'orrery', x: 1850, y: 3150, r: 70 },
     ],
   ];
   const landforms = [
@@ -3834,11 +3840,11 @@
         {
           id: 'inner-gate',
           x1: 940,
-          x2: 1260,
+          x2: 1220,
           y1: 810,
           y2: 855,
           axis: 'x',
-          gaps: [[1000, 1200]],
+          gaps: [[990, 1200]],
         },
       ],
     },

@@ -209,9 +209,12 @@
         };
         p.rangedArc = !!fort || !this.line(p, end);
         p.fortDistance = Math.max(
-          80,
+          1,
           target ? Math.hypot(target.x - p.x, target.y - p.y) : p.speed * p.life,
         );
+        // An arc has one fixed landing point. A dodged shot ends there rather
+        // than skating along the floor for the remainder of its range budget.
+        if (p.rangedArc) p.life = Math.min(p.life, p.fortDistance / p.speed);
       }
       projectileFort(p) {
         return p.source === 'enemy' && p.fortZone === this.zoneId

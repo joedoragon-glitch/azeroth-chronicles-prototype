@@ -8,7 +8,10 @@ const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 function fixture(type = 'soldier', cls = 'mage') {
   const g = new C('developer', cls, () => 0.9),
     z = g.zone();
-  z.enemies.forEach((e) => (e.hp = 0));
+  z.enemies.forEach((e) => {
+    e.hp = 0;
+    e.respawn = 1e9;
+  });
   z.props = [];
   z.nodes = [];
   z.npcs = [];
@@ -40,7 +43,7 @@ const result = {
   version: '0.9.1+snapshot.dev.110',
   sourceCommit: 'working dev110 candidate',
   scope:
-    'Focused headless behavior audit; no runtime changes, full-campaign simulation or device/survival-rate claim',
+    'Focused regression reproductions; no full-campaign simulation or device/survival-rate claim',
   passed: [],
   findings: [],
 };
@@ -72,7 +75,7 @@ for (const cls of ['paladin', 'mage', 'ranger'])
     const hp = e.hp;
     g.updateParty(0.05);
     const attacked = e.hp < hp;
-    assert(g.companionRetreating(u), cls+' '+type+' retreats immediately at 10% HP');
+    assert(g.companionRetreating(u), cls + ' ' + type + ' retreats immediately at 10% HP');
     let deathAt = null,
       maxReturn = 0;
     for (let j = 0; j < 60; j++) {
@@ -143,6 +146,51 @@ result.findings.push({
   cause:
     'Unsupported checks target-to-hero distance (minus attack reach), not the companion’s own distance or physical pursuit route. Ordinary attack routes do not use the hostile-avoidance option used by gathering/regrouping.',
 });
+// Reject an unsafe intermediate turn even when the final firing position is near support.
+for (const type of ['soldier', 'archer', 'pet:thorn', 'pet:mire']) {
+  const { g, u } = fixture(type);
+  Object.assign(u, { x: 500, y: 1500 });
+  assert(
+    !g.companionPursuitRouteAllowed(
+      u,
+      [
+        { x: 500, y: 1810 },
+        { x: 700, y: 1500 },
+      ],
+      55,
+    ),
+    type + ' intermediate detour rejected',
+  );
+  assert(
+    g.companionPursuitRouteAllowed(u, [{ x: 700, y: 1500 }], 55),
+    type + ' short supported approach allowed',
+  );
+  const ally = g.unit('soldier', 550, 1650);
+  g.s.party.push(ally);
+  assert(
+    g.companionPursuitRouteAllowed(
+      u,
+      [
+        { x: 500, y: 1810 },
+        { x: 700, y: 1500 },
+      ],
+      55,
+    ),
+    'healthy local support permits route',
+  );
+  ally.order = { type: 'gather', id: 'resource' };
+  assert(
+    !g.companionPursuitRouteAllowed(
+      u,
+      [
+        { x: 500, y: 1810 },
+        { x: 700, y: 1500 },
+      ],
+      55,
+    ),
+    'working companion is not combat support',
+  );
+}
 // The new fort range is not represented by the old resource-route margin.
 {
   const g = new C('developer', 'mage', () => 0.9);
@@ -202,11 +250,23 @@ result.findings.push({
     note: 'Existing numeric support is local to the companion; no prediction of support at the destination. This is a tuning limitation, not counted as a third independently reproduced failure.',
   };
 }
-for(const f of result.findings) assert(!f.observed, f.id+' must be repaired');
-assert(wounds.every(w=>w.maximumProgressTowardHero>100),'critical units withdraw rather than duel');
-assert(detours.every(d=>d.maximumCompanionDistance<=C.rules.companionJudgment.maxAdvanceFromHero),'detours stay in support');
-assert(result.findings[2].case.routeAvoidanceRadius>=result.findings[2].case.enemyActualRange+C.rules.gatheringTravel.enemyMargin);
-fs.writeFileSync(path.join(__dirname, 'companion-recheck.json'), JSON.stringify(result, null, 2) + '\n');
+for (const f of result.findings) assert(!f.observed, f.id + ' must be repaired');
+assert(
+  wounds.every((w) => w.maximumProgressTowardHero > 100),
+  'critical units withdraw rather than duel',
+);
+assert(
+  detours.every((d) => d.maximumCompanionDistance <= C.rules.companionJudgment.maxAdvanceFromHero),
+  'detours stay in support',
+);
+assert(
+  result.findings[2].case.routeAvoidanceRadius >=
+    result.findings[2].case.enemyActualRange + C.rules.gatheringTravel.enemyMargin,
+);
+fs.writeFileSync(
+  path.join(__dirname, 'companion-recheck.json'),
+  JSON.stringify(result, null, 2) + '\n',
+);
 console.log(
   JSON.stringify({
     passed: result.passed,

@@ -1,7 +1,7 @@
 {
   "version": "0.9.1+snapshot.dev.110",
   "sourceCommit": "working dev110 candidate",
-  "scope": "Focused headless behavior audit; no runtime changes, full-campaign simulation or device/survival-rate claim",
+  "scope": "Focused regression reproductions; no full-campaign simulation or device/survival-rate claim",
   "passed": [
     {
       "behavior": "No autonomous hunting of idle mobs",

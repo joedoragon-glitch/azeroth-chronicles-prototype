@@ -1,6 +1,4 @@
-# Active dev.110 — Crown and companion repairs
-
-Owner authorized Crown planning/industrial scenery/shared tower review, all three companion audit repairs, final audits and merge/publication. Work in progress; focused save/access/native visual and behavior checks still pending. See `docs/CROWN_COMPANIONS_20261020.md`. Veyra remains preview-only.
+**Prepared dev.110 — Crown, companion safety and arc landing:** Owner-authorized complete audit/repair/merge. Coherent town/roads/banks, contained heat raceways, orrery and shared watchpost; wider Citadel gates. All three companion findings repaired; dodged arcs now end at their original landing point. Focused checks/native/save audit pass; package-only publication and exact-live verification pending. Scope: `docs/CROWN_COMPANIONS_20261020.md`. Veyra stays preview-only.
 
 # Project working rules
 

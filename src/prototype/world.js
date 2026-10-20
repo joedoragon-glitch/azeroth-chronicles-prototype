@@ -489,6 +489,19 @@
         const oldZone = this.s.zone;
         this.s.zone = z.id;
         try {
+          // An old player construction at the newly extended channel gets a
+          // retained masonry deck. New construction still obeys lava collision.
+          z.crownInheritedDecks = (z.buildings || [])
+            .filter((b) => {
+              const [lo, hi] = R.channelBanks(4, b.y);
+              return (b.y < 300 || b.y > 2810) && b.x > lo - 90 && b.x < hi + 90;
+            })
+            .map((b) => ({
+              x1: Math.min(1200, b.x - 115),
+              x2: Math.max(1510, b.x + 115),
+              y1: b.y - 120,
+              y2: b.y + 120,
+            }));
           const at = (xy) => ({ x: xy[0], y: xy[1] }),
             natural = (p) => /^forest-|^aesthetic-nature-|^aesthetic-bank-/.test(p.id || ''),
             planned = new Set(Object.keys(cfg.props)),
@@ -609,12 +622,25 @@
             );
             if (q) Object.assign(p, q);
           }
+          // Repair only scenery newly submerged by the channel extension,
+          // before restore's generic invalid-prop filter can discard its ID.
+          for (const p of z.props) {
+            if (!this.blocked(p.x, p.y, z.id, p.r || 0, true)) continue;
+            const q = choose(p, p);
+            if (q) Object.assign(p, q);
+          }
           z.crownTownPlacements = {};
           for (const [id, xy] of Object.entries(cfg.npcs)) {
             const raw = at(xy),
               q = choose(raw, { r: 0 }, (q) => shoreClear(q, { structure: 'house' }));
             const target = q || this.safe(raw.x, raw.y, z.id);
             z.crownTownPlacements[id] = [target.x, target.y];
+          }
+          for (const [id, xy] of Object.entries(cfg.nodes)) {
+            const n = z.nodes.find((n) => n.id === id);
+            if (!n) continue;
+            const q = choose(at(xy), { r: 0 }, (q) => shoreClear(q, { structure: 'crate' }));
+            if (q) Object.assign(n, q);
           }
           z.crownSceneVersion = cfg.version;
           this.crownTownServices(z);
@@ -629,6 +655,7 @@
               (n) =>
                 Object.hasOwn(cfg.npcs, n.id) || /entrance|foundry|siege|fortress-gate/.test(n.id),
             ),
+            ...z.nodes,
           ];
           const walking = () => ({ roads: [...z.roads, ...z.footpaths] });
           // Only conflicting natural dressing moves. Retain the surrounding
@@ -659,7 +686,7 @@
           for (const q of [
             { x: 2290, y: 2350 },
             { x: 2710, y: 1100 },
-            { x: 760, y: 3220 },
+            { x: 1850, y: 3320 },
           ]) {
             const near = this.nearestRoadPoint(z, q),
               route = near && this.route(near, q);
