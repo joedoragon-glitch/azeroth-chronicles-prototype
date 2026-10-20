@@ -20,6 +20,13 @@
     separationSpeed: 85,
     congestionSeconds: 0.65,
     relaxSeconds: 0.35,
+    escapeBlockedSeconds: 1,
+    escapeSeconds: 1.2,
+    slowFrameMs: 40,
+    slowFrameSeconds: 0.5,
+    pressureBlockedSeconds: 0.2,
+    routeRetrySeconds: 1.3,
+    movementPlansPerTick: 4,
   };
   // Canonical visible melee loadouts, shared by real strike metadata and expression.
   const enemyMeleeKits = {

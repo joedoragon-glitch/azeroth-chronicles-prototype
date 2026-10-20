@@ -4,6 +4,7 @@
 
 | Need | Maintained entrypoint |
 | --- | --- |
+| Mixed-crowd escape and bounded pathfinding | [Dev.107 movement safeguard](CROWD_ESCAPE_20261020.md) |
 | Companion local support, safe engagement and regrouping | [Dev.106 behavior](COMPANION_JUDGMENT_20261020.md) |
 | Frontier aesthetic audit, confined field bosses, defensive resource trips | [Dev.105 scope](FRONTIER_AESTHETICS_BOSS_GATHER_20261020.md) |
 | Approved Frontier relocation and Abyss expansion, dev.104 | [Implementation and save migration](FRONTIER_ABYSS_LAYOUT_20261020.md) |

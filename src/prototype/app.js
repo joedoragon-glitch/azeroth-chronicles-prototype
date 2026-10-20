@@ -2993,6 +2993,7 @@
     clearInput();
     last = performance.now();
     if (document.hidden) {
+      game.observeCrowdFrame(0, false);
       renderResolution.suspend();
       save();
       audio.setPaused(true);
@@ -3483,6 +3484,7 @@
       return;
     }
     const frameStart = performance.now();
+    const intervalMs = now - last;
     const dt = Math.min(0.1, Math.max(0, (now - last) / 1000));
     last = now;
     const frozen =
@@ -3492,6 +3494,7 @@
       document.hidden ||
       game.s.challenge.pending ||
       game.s.challenge.gameOver;
+    game.observeCrowdFrame(intervalMs, !frozen);
     if (typeof PrototypeSprites !== 'undefined') PrototypeSprites.advance(dt * 1000, !!frozen);
     if (!frozen) progressTargetPress();
     if (menu) {
