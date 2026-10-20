@@ -183,7 +183,7 @@
         : side
           ? side.size || 1100
           : dungeonIds.includes(id)
-            ? 1500
+            ? R.dungeonSpace?.[id]?.size || 1500
             : D.regions[this.regionIndex(id)]?.size;
     }
     isDungeon() {
@@ -1464,7 +1464,16 @@
           if (p) Object.assign(n, p);
         }
         for (const e of z.enemies) {
-          const h = nearest(e.home, e.type === 'boss' ? this.safe(1160, 1110, z.id) : fallback);
+          const h = nearest(
+            e.home,
+            e.type === 'boss'
+              ? this.safe(
+                  R.dungeonSpace?.[z.id]?.boss.x || 1160,
+                  R.dungeonSpace?.[z.id]?.boss.y || 1110,
+                  z.id,
+                )
+              : fallback,
+          );
           if (h) e.home = { ...h };
           if (e.hp > 0 && !e.aggro) {
             const p = nearest(e, h || fallback);
@@ -2219,7 +2228,7 @@
             : this.sideDungeon(zone)
               ? { x: 120, y: 150 }
               : dungeonIds.includes(zone)
-                ? { x: 160, y: 240 }
+                ? R.dungeonSpace?.[zone]?.exit || { x: 160, y: 240 }
                 : { x: D.towns[i][0], y: D.towns[i][1] });
       this.clearPartyCharges();
       this.tacticalClearThreat(); // Transient observations never survive zone travel.
@@ -3058,7 +3067,11 @@
           this.s.awakeningLevel = this.hero.level + 2;
         let e = this.zone().enemies.find((e) => e.type === 'boss' && e.form === 'true' && e.hp > 0);
         if (!e) {
-          e = this.bossEnemy(this.boss(this.s.zone), 'true', { x: 1160, y: 1110 });
+          e = this.bossEnemy(
+            this.boss(this.s.zone),
+            'true',
+            R.dungeonSpace?.[this.s.zone]?.boss || { x: 1160, y: 1110 },
+          );
           this.zone().enemies.push(e);
         }
         if (this.s.phase === 'awakening') {
@@ -3178,7 +3191,7 @@
         count = side ? 5 : dungeon ? 4 : [8, 10, 12, 14, 16][i];
       for (let j = 0; j < count; j++) {
         const sp = D.species[i][Math.floor(j / 2) % 2],
-          size = side ? side.size || 1100 : dungeon ? 1500 : D.regions[i].size,
+          size = side ? side.size || 1100 : dungeon ? this.zoneSize() : D.regions[i].size,
           p = this.safe(
             350 + ((Math.floor(j / 2) * 337) % (size - 600)) + (j % 2) * 55,
             400 + ((Math.floor(j / 2) * 277) % (size - 650)),
