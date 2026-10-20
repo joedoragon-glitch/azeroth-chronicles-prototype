@@ -66,7 +66,7 @@
         return u.damage + this.hero.level * 2 + this.companionInheritedDamageBonus();
       }
       companionSecondSkillUnlocked() {
-        return (this.s.companionCombatTraining || 1) >= 2;
+        return (this.s.companionCombatTraining || 1) >= 2 || (this.hero.skills[1] || 0) > 0;
       }
       companionSecondSkillTargets(u, target) {
         if (u.type === 'pet') return this.petSkillTargets(u, target, 2);

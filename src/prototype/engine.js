@@ -207,6 +207,9 @@
         ? { hp: 1.1 + 0.03 * n, damage: 1.15 + 0.02 * n }
         : { hp: 1, damage: 1 };
     }
+    mountedMovementFactor(e) {
+      return e.mountedCrownRider ? R.balance.mountedMovementMultiplier : 1;
+    }
     nightTempo() {
       if (!this.night() || this.peace) return 1;
       const cfg = R.balance.nightTempo;
@@ -394,7 +397,7 @@
       this.follow(
         e,
         ally,
-        160 * this.slowMovementFactor(e) * this.nightTempo(),
+        160 * this.slowMovementFactor(e) * this.mountedMovementFactor(e) * this.nightTempo(),
         dt,
         cfg.range - 25,
       );
@@ -3467,7 +3470,9 @@
         e.captainPatrolWait = profile.inspectionPause || 2.4;
         return true;
       }
-      if (!this.follow(e, target, profile.patrolSpeed || 82, dt, 20)) {
+      if (
+        !this.follow(e, target, (profile.patrolSpeed || 82) * this.mountedMovementFactor(e), dt, 20)
+      ) {
         e.captainPatrolIndex = (index + 1) % patrol.length;
         e.captainPatrolWait = 0.5;
       }
@@ -3546,7 +3551,7 @@
           e.idleWanderWait = cfg.minPause + this.random() * (cfg.maxPause - cfg.minPause);
           return true;
         }
-        if (!this.follow(e, e.idleWanderTarget, cfg.speed, dt, 4)) {
+        if (!this.follow(e, e.idleWanderTarget, cfg.speed * this.mountedMovementFactor(e), dt, 4)) {
           delete e.idleWanderTarget;
           e.idleWanderWait = 0.8;
         }
@@ -4209,7 +4214,13 @@
             x: e.x + ((e.x - target.x) / d) * 145,
             y: e.y + ((e.y - target.y) / d) * 145,
           };
-        this.move(e, away, (e.type === 'boss' ? 145 : 175) * 1.5 * this.nightTempo(), dt, 0);
+        this.move(
+          e,
+          away,
+          (e.type === 'boss' ? 145 : 175) * 1.5 * this.mountedMovementFactor(e) * this.nightTempo(),
+          dt,
+          0,
+        );
         state.stalled = dist(before, e) > Math.max(0.1, dt * 10) ? 0 : state.stalled + dt;
         e.noProgress = 0;
         if (dist(target, e) > 480 || state.fleeRemaining <= 0 || state.stalled > 1.8) {
@@ -4238,7 +4249,10 @@
           this.follow(
             e,
             state.destination,
-            (e.type === 'boss' ? 145 : 175) * 1.5 * this.nightTempo(),
+            (e.type === 'boss' ? 145 : 175) *
+              1.5 *
+              this.mountedMovementFactor(e) *
+              this.nightTempo(),
             dt,
             55,
           );
@@ -5154,7 +5168,7 @@
           ) {
             delete e.dressPost;
           } else if (dist(e, post) > 7) {
-            this.move(e, post, 145, dt);
+            this.move(e, post, 145 * this.mountedMovementFactor(e), dt);
             e.noProgress = 0;
             continue;
           } else delete e.dressPost;
@@ -5467,7 +5481,7 @@
                   : 70,
                 pace =
                   (e.type === 'boss' ? 145 : 175) *
-                  (e.mountedCrownRider ? 1.18 : 1) *
+                  this.mountedMovementFactor(e) *
                   (e.form === 'ringleader' ? R.ringleaderScaling.pursuit : 1) *
                   (e.captainPhaseMove || 1) *
                   this.ownedSummonMovementFactor(e) *
@@ -5488,7 +5502,12 @@
                     y: e.y + ((e.y - castTarget.y) / Math.max(1, gap)) * step,
                   };
                   if (dist(retreat, e.home) < territory && this.clearSegment(e, retreat, 12))
-                    this.move(e, retreat, R.rangedEnemyCombat.retreatSpeed * nightTempo, dt);
+                    this.move(
+                      e,
+                      retreat,
+                      R.rangedEnemyCombat.retreatSpeed * this.mountedMovementFactor(e) * nightTempo,
+                      dt,
+                    );
                 }
               }
             }
@@ -5635,6 +5654,7 @@
             },
             speed =
               R.rangedEnemyCombat.retreatSpeed *
+              this.mountedMovementFactor(e) *
               (e.form === 'ringleader' ? R.rangedEnemyCombat.ringleaderRetreatMultiplier : 1) *
               (e.slow > 0 ? 0.5 : 1) *
               nightTempo;
@@ -5709,7 +5729,7 @@
             e,
             target,
             (e.type === 'boss' ? 145 : 175) *
-              (e.mountedCrownRider ? 1.18 : 1) *
+              this.mountedMovementFactor(e) *
               (e.form === 'ringleader' ? R.ringleaderScaling.pursuit : 1) *
               (e.captainPhaseMove || 1) *
               this.ownedSummonMovementFactor(e) *

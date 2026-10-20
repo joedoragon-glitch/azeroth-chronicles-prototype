@@ -5502,6 +5502,7 @@
   // Live balance ownership. Arrays retain their original slot/tier indices and fallbacks.
   // Historical migration mappings and procedural coordinates intentionally remain separate.
   const balance = {
+    mountedMovementMultiplier: 1.3,
     friendlyProjectiles: { hitRadius: 22, lifeSeconds: 3, skillSpeed: 550 },
     nightTempo: {
       baseBonus: 0.1,

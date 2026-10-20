@@ -214,6 +214,9 @@
           s.hero.skills[0] < 1
         )
           throw Error('Invalid hero');
+        // Older rosters may retain the core-only flag after learning hero Skill 2.
+        // Repair the shared unlock without replacing units or resetting their cooldowns.
+        if (s.hero.skills[1] > 0) s.companionCombatTraining = 2;
         finite(s.mercyTime, 0, 10);
         if (s.restCooldown !== undefined) finite(s.restCooldown, 0, 90);
         if (s.manaBalanceVersion !== undefined && s.manaBalanceVersion !== 1)

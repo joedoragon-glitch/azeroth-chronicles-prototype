@@ -444,7 +444,7 @@
               true,
             );
           }),
-        companionAdvanced = (getGame().s.companionCombatTraining || 1) >= 2,
+        companionAdvanced = getGame().companionSecondSkillUnlocked(),
         companionLine = action(
           'Companion combat skills · ' + (companionAdvanced ? 'Advanced' : 'Core'),
           () => {},
