@@ -1,6 +1,8 @@
 # Project working rules
 
-- **Current dev.99 Keeper Archive copy audit:** Full Archive/ledger audit removes authoring leakage, rewrites Keeper self-history and relationships in his own voice, keeps rules-derived figures and evidence/throne gates. Focused text/menu checks only; no broad CI. [Scope](docs/KEEPER_ARCHIVE_COPY_AUDIT_20261020.md).
+- Published dev.99: PR #333 / bfc9497c3b7059b3ca172bc256c99637367f0210; package-only run 39394946739 succeeded and exact live files match. Full Keeper Archive/ledger copy audit: own first-person account, authoring leakage removed, readable labels; established lore, live figures and evidence/throne gates preserved. 72 text states and 144 numerical figures blocks checked; focused checks only, no broad CI. Normal workflow restored; temporary publisher removed. Receipt: docs/evidence/KEEPER_ARCHIVE_DEV99_PUBLICATION_20261020.json. Owner reading/play next; no automatic further work.
+
+- **Historical candidate dev.99 Keeper Archive copy audit:** Full Archive/ledger audit removes authoring leakage, rewrites Keeper self-history and relationships in his own voice, keeps rules-derived figures and evidence/throne gates. Focused text/menu checks only; no broad CI. [Scope](docs/KEEPER_ARCHIVE_COPY_AUDIT_20261020.md).
 
 - Published dev.98: PR #332 / 958cca69d8de96ccf91240323f13260c1f4e8960; package-only run 39393295596 succeeded and exact live files match. Neri visible; friendly ranged shots dodgeable; pet activation/training checked and menus clarified; all 22 pet skills show boss-derived effects and name cues; proper ravine snowmelt stream. Focused checks only, no broad CI. Normal workflow restored; temporary publisher removed. Receipt: docs/evidence/DEV98_NERI_PROJECTILES_PETS_SNOWMELT_20261020.json. Owner play next; no automatic further work.
 

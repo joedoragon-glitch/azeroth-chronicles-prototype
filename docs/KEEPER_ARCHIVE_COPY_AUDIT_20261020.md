@@ -1,5 +1,7 @@
 # Keeper Archive copy audit — 20 October 2026
 
+Published through [PR #333](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/333), merge `bfc9497c3b7059b3ca172bc256c99637367f0210`. Package-only run `39394946739` succeeded; exact public files match. Normal workflow restored and temporary publisher removed. [Receipt](evidence/KEEPER_ARCHIVE_DEV99_PUBLICATION_20261020.json). Owner reading/play next; no automatic further work.
+
 Dev.99 follows published dev.98, main `61f87fd5aa224fa3e56eeabbd8006f013552e78c`. Joel requested a complete Archive text audit for leaked authoring instructions and for entries that discuss their author, the Drowned Keeper, in third person. Correct the player text, preserving lore, gameplay figures and discovery gates.
 
 ## Findings and corrections
@@ -23,4 +25,4 @@ Read every Archive shelf, topic, optional figures generator and imported prose s
 
 Existing Archive-reference, Keeper bargain/ledger/escape/save/menu and player-condition reference checks pass. Six class/mode throne-reveal cases pass. Numerical strings in every optional figures block were compared with dev.98 for all three classes; unchanged. Build/generated syntax and changed-file formatting checked. No browser matrix, whole-game testing or broad hosted CI.
 
-Only Archive/menu prose and presentation labels change at runtime. No engine, rules, combat, AI, balance, save, graphics or rendering change. Package committed assets only, then restore normal release wiring and remove the temporary publisher. Owner reading/play follows publication; no further automatic work.
+Only Archive/menu prose and presentation labels change at runtime. No engine, rules, combat, AI, balance, save, graphics or rendering change. Publication and workflow cleanup are complete. Owner reading/play follows publication; no further automatic work.

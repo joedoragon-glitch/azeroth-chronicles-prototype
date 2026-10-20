@@ -1,0 +1,91 @@
+{
+  "version": "0.9.1+snapshot.dev.99",
+  "date": "2026-10-20",
+  "pullRequest": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/333",
+  "publishedCommit": "bfc9497c3b7059b3ca172bc256c99637367f0210",
+  "preparedTree": "159fd6d20a7439f66eca35734b6ccf52f948200e",
+  "publicationRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39394946739",
+  "conclusion": "success",
+  "jobs": [
+    "publish: package/deploy committed files only"
+  ],
+  "copyAudit": {
+    "states": 72,
+    "renderedTopics": 5040,
+    "uniquePassages": 198,
+    "failures": [],
+    "scope": "Every generated shelf, topic and figures path across three classes, three modes, evidence/throne gates, legacy resource branches and all eleven unlocked pet entries; no gameplay simulation."
+  },
+  "numericalReferenceBlocksCompared": 144,
+  "focusedChecks": [
+    "Archive reference across classes/modes and optional figures",
+    "Keeper bargain/ledger, evidence gate, escape/recapture, saves and menu guards",
+    "shared player condition guide",
+    "six class/mode throne reveal cases",
+    "72 generated text states / 5040 topics / 198 distinct passages; state/effects unchanged",
+    "144 numerical figures blocks match dev.98",
+    "build/generated syntax, changed-file formatting and diff check"
+  ],
+  "broadCI": false,
+  "browserMatrix": false,
+  "verifiedAt": "2026-10-20T08:40:18.292179+00:00",
+  "liveVerification": [
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "375af322adfc561c1dd0f01e831fe1e4e7b41cdf49c3a6fbff96586c0859eb10"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 295,
+      "sha256": "fe901962e383e652da3eb881f313f9cbed3a10c690de44b015d5a10e4862c24b"
+    },
+    {
+      "path": "src/prototype/archive.js",
+      "match": true,
+      "bytes": 53962,
+      "sha256": "70a0388857ae6b5f6cfc3538ec88f5a2daa2a93f714cb933a956d71708c51b58"
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "match": true,
+      "bytes": 72348,
+      "sha256": "558a1186876114c7dae4e39ff533d9824e12bf4687c00bfad8b64797fa899e9b"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 248103,
+      "sha256": "d8f30dde596fb80be292a3f0f659b3f2b7fbfb1b72b84c8a984a1126835cf6b0"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "match": true,
+      "bytes": 176656,
+      "sha256": "aadf7b587bb9f40b98ad33c04fed08425fec0a9b3cd8ea42371fe4e39f4e7bca"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20549,
+      "sha256": "6292dea6dc9968f315b2e45e9493bfd70b1bfd44f1bc0a70bf72c1c764fe9784"
+    }
+  ],
+  "changes": [
+    "Archive-owned histories, offices and province records replace imported development-facing lore briefs",
+    "Keeper self-history, old company, Wraith relationships, council records, ledger and gated revelations use his own first-person account",
+    "Authoring/implementation/version-change wording and narrative reward/progression disclaimers removed",
+    "Readable attack and summon labels; real game instructions and rules-derived figures retained",
+    "Pet training reference matches existing Mira/hero Skill 2 unlock"
+  ],
+  "preserved": [
+    "existing keeperEvidence and throneClaimed gates",
+    "unknown flood cause and established professions/relationships/captivity history",
+    "all gameplay, balance and v4 saves",
+    "dev.98 Neri/projectiles/pets/snowmelt and prior FPS/travel/night changes"
+  ],
+  "limits": "Text audit and focused checks only; no browser or whole-game playthrough claimed. Owner reading/play is next.",
+  "workflowCleanup": "Normal pages.yml restored byte-for-byte; temporary dev.99 publisher removed. No runtime changes in closeout."
+}
