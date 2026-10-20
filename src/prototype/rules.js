@@ -2306,7 +2306,7 @@
     },
     {
       kind: 'ravine',
-      bounds: [1400, 1510, 200, 2450],
+      bounds: [1400, 1510, 0, 3400],
       gaps: [
         [630, 870],
         [2070, 2250],
@@ -2385,7 +2385,7 @@
       { kind: 'cliff', x1: 3000, x2: 3150, y1: 1050, y2: 1700, gaps: [[1320, 1450]] },
     ],
     [
-      { kind: 'ravine', x1: 1740, x2: 1810, y1: 1020, y2: 1220 },
+      { kind: 'fountain', x: 1775, y: 1120, r: 46 },
       { kind: 'ravine', x1: 2720, x2: 2860, y1: 1850, y2: 2550, gaps: [[2160, 2320]] },
       { kind: 'rock', x: 850, y: 2850, r: 145 },
     ],
@@ -5028,6 +5028,7 @@
     // collapse, rather than waiting until half their HP has disappeared.
     // One area cast treats every eligible recipient in the existing range.
     threshold: 0.75,
+    regroupThreshold: 0.9,
     range: 350,
     species: Object.freeze({
       wolf: 'Packheart Howl',
@@ -5503,6 +5504,9 @@
   // Historical migration mappings and procedural coordinates intentionally remain separate.
   const balance = {
     mountedMovementMultiplier: 1.3,
+    enemySpecialReachMultiplier: 1.2,
+    enemyTargetingMultiplier: 1.1,
+    enemyAcquisitionRange: 260,
     friendlyProjectiles: { hitRadius: 22, lifeSeconds: 3, skillSpeed: 550 },
     nightTempo: {
       baseBonus: 0.1,
@@ -6075,7 +6079,7 @@
     heroLevelDisadvantageMinimum: 1,
     outlevelProtection: 3,
     simultaneousPressureSources: 2,
-    woundedThreshold: 0.3,
+    woundedThreshold: 0.5,
     summonSupportThreshold: 1,
     awarenessRadius: 750,
     threatWindowSeconds: 6,
@@ -6086,7 +6090,8 @@
     // Rogue disruption must create an escape edge even against baseline sprint.
     // Durations remain authored per move; ordinary non-Rogue Slow stays unchanged.
     rogueSlowMovementFactor: 0.4,
-    thinkingSeconds: 0.8,
+    thinkingSeconds: 0.3,
+    initialAssessmentSeconds: 0.4,
     escapeSeconds: 5.5,
     rogueMoves,
     rogueRingleaderSignatures,
@@ -6112,20 +6117,78 @@
     }),
   });
 
+  // Expand enemy-owned offensive geometry once, before runtime consumers read it.
+  // Heroes, pets, healing, timers, angles and damage coefficients retain their own tables.
+  function expandedEnemyGeometry(value) {
+    const dimensions = new Set([
+      'radius',
+      'initialRadius',
+      'finalRadius',
+      'finalBlastRadius',
+      'finisherRadius',
+      'sealOrbit',
+      'approachRadius',
+      'legLength',
+      'orbit',
+      'minimumSeparation',
+    ]);
+    if (Array.isArray(value)) return value.map(expandedEnemyGeometry);
+    if (!value || typeof value !== 'object') return value;
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [
+        key,
+        dimensions.has(key) && typeof item === 'number'
+          ? item * balance.enemySpecialReachMultiplier
+          : key === 'allowedRadii'
+            ? item.map((r) => r * balance.enemySpecialReachMultiplier)
+            : expandedEnemyGeometry(item),
+      ]),
+    );
+  }
+  const expandedCaptains = Object.fromEntries(
+    Object.entries(roomCaptains).map(([id, profile]) => [
+      id,
+      {
+        ...profile,
+        specialRange: (profile.specialRange || 420) * balance.enemySpecialReachMultiplier,
+        attacks:
+          id === 'supply-crown'
+            ? expandedEnemyGeometry(profile.attacks)
+            : profile.attacks?.map((plan) => ({
+                ...plan,
+                ...(plan.fixedRadius
+                  ? { radius: plan.radius * balance.enemySpecialReachMultiplier }
+                  : {}),
+                ...(plan.tracking
+                  ? { shotLife: plan.shotLife * balance.enemySpecialReachMultiplier }
+                  : {}),
+              })),
+      },
+    ]),
+  );
   const R = {
     resourceMode,
     cooldownBalance,
     ashFeeding,
     vitalitySiphon,
     bossRecovery,
-    tacticalFoundation,
+    tacticalFoundation: Object.freeze({
+      ...tacticalFoundation,
+      rogueMoves: expandedEnemyGeometry(rogueMoves),
+      rogueSignatures: expandedEnemyGeometry(rogueSignatures),
+      rogueRingleaderSignatures: expandedEnemyGeometry(rogueRingleaderSignatures),
+    }),
     balance,
     combatGeometry,
     actorSpacing,
     enemyMeleeKits,
     enemyMeleeEquipment,
     arenaPlacement,
-    bossCadence,
+    bossCadence: {
+      ...bossCadence,
+      specialRange: bossCadence.specialRange * balance.enemySpecialReachMultiplier,
+      areaRangeMultiplier: bossCadence.areaRangeMultiplier * balance.enemySpecialReachMultiplier,
+    },
     bossSummoning,
     bossBehavior,
     greenwoodPassives,
@@ -6148,8 +6211,8 @@
     summonScaling,
     trueBossSummons,
     ringleaderScaling,
-    nightEnemyCombat,
-    roomCaptains,
+    nightEnemyCombat: expandedEnemyGeometry(nightEnemyCombat),
+    roomCaptains: expandedCaptains,
     manaBalance,
     dungeonTrapTuning,
     dungeonReinforcement,
@@ -6257,7 +6320,21 @@
     dungeonTraps,
     forests,
     resourceDepositCounts,
-    attacks,
+    attacks: {
+      ...attacks,
+      cindermaw: attacks.cindermaw.map((plan) =>
+        plan.cinderMechanic === 'protection'
+          ? plan
+          : plan.cinderMechanic === 'delegation'
+            ? { ...plan, finisherRadius: plan.finisherRadius * balance.enemySpecialReachMultiplier }
+            : expandedEnemyGeometry(plan),
+      ),
+      crypt: attacks.crypt.map((plan) =>
+        plan.slowOnly
+          ? { ...plan, waveLife: plan.waveLife * balance.enemySpecialReachMultiplier }
+          : plan,
+      ),
+    },
     sites,
     quests,
     barriers,

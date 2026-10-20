@@ -285,6 +285,12 @@
       // are checked by the support cast itself, not by formation membership.
       return !!(this.enemyHealingActor(e) && this.enemyHealingActor(u) && u !== e && !u.returning);
     }
+    enemyNeedsSupportHeal(u) {
+      const cfg = R.enemySupportHealing;
+      return (
+        u.hp / u.maxHp <= (this.tacticalRogueRegroup(u) ? cfg.regroupThreshold : cfg.threshold)
+      );
+    }
     enemySupportHeal(e) {
       const cfg = R.enemySupportHealing,
         skill = this.enemyHealProfile(e);
@@ -293,7 +299,6 @@
         !this.enemyHealingActor(e) ||
         this.mageSilenceActive(e) ||
         this.peace ||
-        !e.aggro ||
         e.returning ||
         e.motion ||
         e.telegraph ||
@@ -308,7 +313,7 @@
           dist(e, u) <= cfg.range &&
           (e === u || this.line(e, u)),
         injured = this.zone().enemies.filter(
-          (u) => this.enemyHealTeammate(e, u) && inReach(u) && u.hp / u.maxHp <= cfg.threshold,
+          (u) => this.enemyHealTeammate(e, u) && inReach(u) && this.enemyNeedsSupportHeal(u),
         ),
         // Do not add a duplicate self-restoration route to a boss that
         // already has authored recovery, vitality siphon, or self-restoring mud.
@@ -373,7 +378,6 @@
         !cfg ||
         !this.enemyHealProfile(e) ||
         !this.enemyHealingActor(e) ||
-        !e.aggro ||
         e.returning ||
         this.mageSilenceActive(e) ||
         e.motion ||
@@ -387,7 +391,8 @@
           (u) =>
             this.enemyHealTeammate(e, u) &&
             !u.supportHeal &&
-            u.hp / u.maxHp <= cfg.threshold &&
+            this.enemyNeedsSupportHeal(u) &&
+            (e.aggro || !!this.tacticalRogueRegroup(u)) &&
             dist(e, u) > cfg.range &&
             dist(e, u) <= cfg.range + 210,
         )
@@ -4299,6 +4304,11 @@
         }
         state.holdRemaining = 12;
         this.tacticalRecruitRegroupAllies(e, state, target);
+        // Use the shelter actually reached while an ally's restorative pulses are running.
+        if (e.supportHeal && this.tacticalRogueWounded(e) && dist(target, e) > 180) {
+          e.noProgress = 0;
+          return true;
+        }
         const pressure = this.tacticalActiveTargetCount(e);
         const wounded = this.tacticalRogueWounded(e);
         const freshWound = wounded && !this._tacticalWoundedUsed?.has(e.id);
@@ -4394,7 +4404,7 @@
                 ...basic,
                 name: e.ranged ? 'Crown Direwolf Archer Dash' : 'Crown Direwolf Lance Dash',
                 style: 'dash',
-                radius: 165,
+                radius: 165 * R.balance.enemySpecialReachMultiplier,
               }
             : basic,
         target =
@@ -4403,13 +4413,18 @@
               ? threat
               : closeTargets[0]
             : threat,
-        maxRange = e.type === 'boss' ? 500 : e.captain || e.roomCaptain ? 440 : 340;
+        maxRange =
+          (e.type === 'boss' ? 500 : e.captain || e.roomCaptain ? 440 : 340) *
+          R.balance.enemySpecialReachMultiplier;
       if (!target || dist(e, target) > maxRange || !this.line(e, target)) return false;
       const effect = isSignature ? profile.effect : null,
         centered = effect === 'scatter' || effect === 'sweep',
         warning =
           profile.warning || (e.type === 'boss' ? 1.05 : e.captain || e.roomCaptain ? 0.95 : 0.75),
-        radius = profile.radius || (e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 95 : 80);
+        radius =
+          profile.radius ||
+          (e.type === 'boss' ? 105 : e.captain || e.roomCaptain ? 95 : 80) *
+            R.balance.enemySpecialReachMultiplier;
       e.telegraph = {
         rogueMove: true,
         rogueSignature: isSignature,
@@ -4427,7 +4442,10 @@
         effect,
         coefficient: profile.coefficient,
         targetId: target === this.hero ? 'hero' : target.id,
-        fromX: profile.style === 'slab' ? target.x - (target.x >= e.x ? 60 : -60) : e.x,
+        fromX:
+          profile.style === 'slab'
+            ? target.x - (target.x >= e.x ? 60 : -60) * R.balance.enemySpecialReachMultiplier
+            : e.x,
         fromY: profile.style === 'slab' ? target.y : e.y,
         angle:
           profile.style === 'slab'
@@ -4437,7 +4455,7 @@
             : Math.atan2(target.y - e.y, target.x - e.x),
         x:
           profile.style === 'slab'
-            ? target.x + (target.x >= e.x ? 100 : -100)
+            ? target.x + (target.x >= e.x ? 100 : -100) * R.balance.enemySpecialReachMultiplier
             : centered
               ? e.x
               : target.x,
@@ -5080,7 +5098,9 @@
         e.rangedAim ||
         this.tacticalRogueRegroup(e) ||
         (!newWound && (this._tacticalRogueNext?.get(e.id) || 0) > this.s.time) ||
-        (!newWound && Number.isFinite(e.fightStart) && this.s.time - e.fightStart < 1.1)
+        (!newWound &&
+          Number.isFinite(e.fightStart) &&
+          this.s.time - e.fightStart < cfg.initialAssessmentSeconds)
       )
         return false;
       const pressure = this.tacticalActiveTargetCount(e);
@@ -5105,7 +5125,10 @@
     updateEnemies(dt) {
       const z = this.zone(),
         deaths = this.s.statistics.deaths,
-        nightTempo = this.nightTempo();
+        nightTempo = this.nightTempo(),
+        hasWoundedAllies = z.enemies.some(
+          (u) => u.hp > 0 && u.hp < u.maxHp && !u.neutral && !u.returning,
+        );
       for (const e of [...z.enemies]) {
         const recovery = this.cooldownRecoveryElapsed(e, dt, true);
         // Read remaining Slow before consuming it, including the final partial
@@ -5368,6 +5391,13 @@
                 dist(e, this.hero) < 700
               ? this.hero
               : candidates.sort((a, b) => dist(e, a) - dist(b, e))[0]);
+        // An arriving wounded ally does not have to drag the healer into combat first.
+        if (
+          !e.aggro &&
+          hasWoundedAllies &&
+          (this.enemySupportHeal(e) || this.enemySupportApproach(e, dt))
+        )
+          continue;
         if (!e.aggro && e.fieldCaptain) this.updateCaptainPatrol(e, dt);
         else if (
           !e.aggro &&
@@ -5400,7 +5430,7 @@
           !e.aggro &&
           // Reject distant targets before tracing through every intervening
           // obstacle. The same range and visibility rules still gate aggro.
-          dist(e, target) < 260 &&
+          dist(e, target) < R.balance.enemyAcquisitionRange * R.balance.enemyTargetingMultiplier &&
           this.line(e, target) &&
           (!this.isDungeon() &&
           dist(target, { x: D.towns[this.regionIndex()][0], y: D.towns[this.regionIndex()][1] }) <
@@ -5605,7 +5635,7 @@
           ranged =
             (e.ranged ?? ['archer', 'crownguard'].includes(e.species)) &&
             !(e.hybrid && d <= hybridMeleeRange),
-          range = ranged ? e.shotRange || 280 : 65,
+          range = ranged ? (e.shotRange || 280) * R.balance.enemyTargetingMultiplier : 65,
           retreatRange = ranged && !e.hybrid ? range * R.rangedEnemyCombat.retreatFraction : 0,
           before = { x: e.x, y: e.y },
           visible = this.line(e, target);
@@ -5643,7 +5673,10 @@
           !this.mageSilenceActive(e) &&
           e.specialCd <= 0 &&
           visible &&
-          d < (e.species === 'wraith' ? R.nightEnemyCombat.wraith.radius : 360) &&
+          d <
+            (e.species === 'wraith'
+              ? R.nightEnemyCombat.wraith.radius
+              : 360 * R.balance.enemySpecialReachMultiplier) &&
           this.startNightSkill(e, target)
         ) {
           opportunity = true;

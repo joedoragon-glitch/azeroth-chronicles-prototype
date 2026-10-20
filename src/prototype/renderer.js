@@ -577,8 +577,10 @@
             rescued,
             bodyOnly ? { silhouette: true } : undefined,
           )
-        )
+        ) {
+          PrototypeVisuals.frontierTreeShoots?.(target, e, q, game.regionIndex(), true);
           return;
+        }
         PrototypeVisuals.draw(target, e, q, game.regionIndex(), rescued);
       } finally {
         if (facing < 0) target.restore();
@@ -2095,6 +2097,21 @@
         }
       }
       add(z.props, 'prop');
+      // Authored civic terrain has one fixed, depth-sorted body; no saved duplicate prop.
+      if (!game.isDungeon() && !game.supplyRoom?.(game.zoneId) && !game.sideDungeon?.(game.zoneId))
+        add(
+          (Campaign.rules.terrain[game.regionIndex()] || [])
+            .filter((p) => p.kind === 'fountain')
+            .map((p) => ({
+              id: 'frontier-civic-fountain',
+              x: p.x,
+              y: p.y,
+              r: p.r,
+              structure: 'frontier-civic-fountain',
+              decorative: true,
+            })),
+          'prop',
+        );
       add(game.visibleNPCs(), 'npc');
       add(game.visibleResourceNodes(), 'node');
       add(z.buildings, 'building');

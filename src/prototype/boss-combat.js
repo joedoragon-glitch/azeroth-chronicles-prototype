@@ -1165,7 +1165,7 @@
         if (e.family === 'citadel') {
           if (index === 0) {
             a.kind = 'canister';
-            a.radius = 360;
+            a.radius = 360 * R.balance.enemySpecialReachMultiplier;
             a.opening = 0;
           }
           if (index === 1) {
@@ -1344,9 +1344,12 @@
             { x: a.x - 185, y: a.y - 95 },
             { x: a.x + 185, y: a.y + 95 },
           ];
-          return marks
-            .slice(0, a.count || 4)
-            .map((mark) => ({ ...a, x: mark.x, y: mark.y, radius: 72 }));
+          return marks.slice(0, a.count || 4).map((mark) => ({
+            ...a,
+            x: mark.x,
+            y: mark.y,
+            radius: 72 * R.balance.enemySpecialReachMultiplier,
+          }));
         }
         if (
           a.family === 'warlord' &&
@@ -1364,7 +1367,12 @@
             [0, 125],
             [220, 125],
           ];
-          return offsets.map(([dx, dy]) => ({ ...a, x: a.x + dx, y: a.y + dy, radius: 72 }));
+          return offsets.map(([dx, dy]) => ({
+            ...a,
+            x: a.x + dx * R.balance.enemySpecialReachMultiplier,
+            y: a.y + dy * R.balance.enemySpecialReachMultiplier,
+            radius: 72 * R.balance.enemySpecialReachMultiplier,
+          }));
         }
         if (a.captainSpread) {
           // Separate footprints; no stacked damage and a gap between neighboring circles.
@@ -1907,7 +1915,7 @@
               dx: Math.cos(angle),
               dy: Math.sin(angle),
               speed: 490,
-              life: 0.72, // 490 paces/s × 0.72 s remains inside the 360-pace warning.
+              life: (a.radius - 7) / 490, // The last fragment stays inside its actual warning.
               damage: this.weakenedEnemyDamage(e) / 9, // At close range nine fragments cap at one raw boss hit.
               manaDrain: 0,
               source: 'enemy',
@@ -2016,7 +2024,7 @@
               dx: Math.cos(a.angle + delta),
               dy: Math.sin(a.angle + delta),
               speed: 260 * R.enemyProjectileMultiplier,
-              life: 2.5 / R.enemyProjectileMultiplier,
+              life: (2.5 * R.balance.enemySpecialReachMultiplier) / R.enemyProjectileMultiplier,
               damage: this.weakenedEnemyDamage(e),
               manaDrain: a.manaDrain || 0,
               source: 'enemy',

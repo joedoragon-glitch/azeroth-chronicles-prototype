@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "frontier-burned-tree-shoots-20261020",
+  "name": "Frontier burned trees with fresh shoots",
+  "kind": "flora",
+  "nextAction": "Owner live play and appearance feedback after this authorized update. Preserve these procedural references for any later explicit sprite request.",
+  "context": {
+    "originConversation": "Conversation URL unavailable; owner screenshot requests dated 20 October 2026.",
+    "decisionSummary": "Dev.101 follows published dev.100. Joel supplied three Frontier screenshots and requested map-edge channel continuity, replacement of the detached dark strip with a polished civic fountain, and new leaves on burned trees. He then requested longer enemy specials with matching warnings/effects, slightly greater targeting distance to balance all ranged party members, earlier recognition of losing fights, and healing for wounded enemies arriving to regroup. A fourth screenshot requests a preview of paired violet bows on the Mage's braids; that preview is unselected and is not applied to the runtime.",
+    "decisionDate": "2026-10-20",
+    "repositoryIssueOrPR": null,
+    "contentDocuments": [
+      "docs/FRONTIER_REACH_REGROUP_20261020.md"
+    ],
+    "locationAndLore": "Recovering occupied Ashen Frontier; old scars remain beside new civic repairs."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner requested this implementation on 20 October 2026.",
+    "proceduralDesignAcceptance": "Implemented under the owner request; independent appearance acceptance is not claimed.",
+    "spriteProductionAuthorization": "No new raster generation or registration requested.",
+    "generatedAppearanceAcceptance": "Not applicable; original raster bodies retained.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "6cf9f0ffab243a8a7484bce4925151863eff0fd2",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::frontierTreeShoots",
+      "src/prototype/renderer.js::sprite/raster overlay",
+      "polish/frontier-reach-dev101"
+    ],
+    "exactEntityState": {
+      "region": "frontier",
+      "cameraZoom": 1.5,
+      "body": "Frontier burned trees with fresh shoots"
+    },
+    "isolatedReferencePath": "tools/visual-review/frontier-reach-dev101/wild-tree-body.webp",
+    "isolatedReferenceHash": "0089679ca933bb6a03d064798c712c32318df6263db32931572bbcd0489c4a01",
+    "gameplayContextPaths": [
+      "tools/visual-review/frontier-reach-dev101/recovering-woodland.webp",
+      "tools/visual-review/frontier-reach-dev101/raster-tree-shoots-body.webp"
+    ],
+    "traitsToPreserve": [
+      "Sparse fresh leaves and epicormic shoots",
+      "Old broken/charred trunks remain prominent",
+      "Retained raster and procedural wild-tree attachments",
+      "Existing IDs, anchors, collision and scale; only Frontier"
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "c6ce658c844e5ad4ad5b6bebdc8956f02869f3d464c2b1acfe783f56a9e17f29"
+      },
+      {
+        "path": "src/prototype/renderer.js",
+        "sha256": "6086ed9a99d0a742f8850f573c3f5ff2573b3b6d7c6c24cb68824f118d46b39d"
+      },
+      {
+        "path": "src/prototype/rules.js",
+        "sha256": "8bde71f67ae67119d4bddd9f31c01dcb610a2cfa732d75605cb38439cf2aae0b"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "frontier-burned-tree-shoots-20261020"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::frontierTreeShoots",
+        "reason": "Geometry and small scenery details remain procedural; preserve original images."
+      },
+      {
+        "owner": "src/prototype/renderer.js::sprite/raster overlay",
+        "reason": "Geometry and small scenery details remain procedural; preserve original images."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [
+      "scenery"
+    ],
+    "directions": [],
+    "pivotContract": "Existing world foot anchor.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

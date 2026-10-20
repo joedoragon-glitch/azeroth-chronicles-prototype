@@ -119,7 +119,9 @@
           percent(heal.threshold) +
           '% HP or less on a ' +
           heal.cooldown +
-          's cooldown. Slow delays the next skill, not ongoing healing pulses. Siphon instead heals from HP actually taken; each leader’s own recovery techniques work separately.',
+          's cooldown. Allies arriving to regroup can receive care at ' +
+          percent(heal.regroupThreshold) +
+          '% HP or less, even before the healer joins combat. Slow delays the next skill, not ongoing healing pulses. Siphon instead heals from HP actually taken; each leader’s own recovery techniques work separately.',
       ],
     ];
   }

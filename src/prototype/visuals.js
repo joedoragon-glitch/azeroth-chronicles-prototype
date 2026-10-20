@@ -210,6 +210,50 @@
       walking: progress < 1,
     };
   }
+  // Fresh epicormic shoots on surviving burned trunks, including retained raster bodies.
+  // Fixed positions derive from identity; no animation or simulation fields.
+  function frontierTreeShoots(ctx, e, p, region = 0, raster = false) {
+    if (
+      region !== 3 ||
+      e.renderKind !== 'prop' ||
+      !(e.structure === 'dead-tree' || (!e.structure && /🌲|🌳/.test(e.icon || '')))
+    )
+      return;
+    const scale = Number.isFinite(e.visualScale) && e.visualScale > 0 ? e.visualScale : 1;
+    const seed = String(e.id || 'tree')
+      .split('')
+      .reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.scale(scale, scale);
+    ctx.lineCap = 'round';
+    const shoot = (x, y, side, size) => {
+      ctx.strokeStyle = '#6f8050';
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.quadraticCurveTo(x + side * 3, y - 4, x + side * 2, y - 9);
+      ctx.stroke();
+      for (let n = 0; n < 3; n++) {
+        const px = x + side * (n % 2 ? 4 : 0),
+          py = y - 3 - n * 2.7;
+        ctx.fillStyle = n === 2 ? '#b2c481' : n === 1 ? '#91ad64' : '#718c50';
+        ctx.beginPath();
+        ctx.ellipse(px, py, 3.4 * size, 1.65 * size, side * (n % 2 ? -0.5 : 0.6), 0, Math.PI * 2);
+        ctx.fill();
+      }
+    };
+    if (raster) {
+      shoot(-10, -13, -1, 0.95);
+      shoot(8, -10, 1, 0.85);
+      if (seed % 3 !== 0) shoot(-2, 7, -1, 0.75);
+    } else {
+      shoot(-13, -25, -1, 1);
+      shoot(14, -29, 1, 0.9);
+      if (seed % 3 !== 0) shoot(3, 7, 1, 0.8);
+    }
+    ctx.restore();
+  }
   function draw(ctx, e, p, region = 0, rescued = false) {
     if (e.type === 'pet' && !Object.hasOwn(R.petCompanions, e.petFamily)) return;
     if (e.kind === 'landmark' && e.id?.startsWith('bridge-')) return; // The full deck is drawn in world space.
@@ -10690,6 +10734,73 @@
     }
     function craftedDecoration(kind) {
       switch (kind) {
+        case 'frontier-civic-fountain':
+          // A broad carved basin on two low steps, with a bronze lily and clear falling water.
+          oval(0, 17, 55, 19, '#292c2b55');
+          oval(0, 12, 52, 18, '#626e69');
+          oval(0, 8, 52, 18, '#b0b4a2');
+          oval(0, 7, 47, 15, '#d0cfb7');
+          oval(0, 3, 46, 15, '#7f9189');
+          oval(0, -2, 46, 15, '#d3d2bd');
+          oval(0, -3, 40, 11, '#487d83');
+          oval(0, -5, 35, 8, '#6ca4a5');
+          for (const x of [-33, -16, 0, 16, 33])
+            line(
+              [
+                [x, 7],
+                [x * 1.07, 13],
+              ],
+              '#868d7e',
+              0.8,
+            );
+          for (const side of [-1, 1]) {
+            shaped('#9eac9d', () => {
+              ctx.moveTo(side * 10, -3);
+              ctx.quadraticCurveTo(side * 13, -20, side * 6, -42);
+              ctx.lineTo(side * 3, -42);
+              ctx.lineTo(side * 3, -3);
+            });
+          }
+          oval(0, -7, 15, 5, '#bbc1ab');
+          rimBowl(0, -43, 22, '#b8c2ae', '#669c98');
+          oval(0, -46, 17, 4, '#91c1b4');
+          for (const side of [-1, 1]) {
+            shaped('#a99461', () => {
+              ctx.moveTo(0, -48);
+              ctx.bezierCurveTo(side * 19, -51, side * 13, -63, side * 3, -61);
+              ctx.quadraticCurveTo(side * 6, -54, 0, -48);
+            });
+            ctx.strokeStyle = '#d8eee1';
+            ctx.lineWidth = 1.7;
+            ctx.beginPath();
+            ctx.moveTo(side * 7, -57);
+            ctx.bezierCurveTo(side * 27, -64, side * 36, -32, side * 29, -7);
+            ctx.stroke();
+            line(
+              [
+                [side * 18, -42],
+                [side * 20, -19],
+                [side * 18, -6],
+              ],
+              '#b1d8cb',
+              1.4,
+            );
+            oval(side * 29, -5, 5, 1.7, '#d5ede1');
+          }
+          ctx.strokeStyle = '#ddf1e4';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(0, -58);
+          ctx.bezierCurveTo(-5, -82, 7, -83, 2, -58);
+          ctx.stroke();
+          for (const y of [-4, 0]) {
+            ctx.strokeStyle = '#b9dcd0';
+            ctx.lineWidth = 0.7;
+            ctx.beginPath();
+            ctx.ellipse(0, y, 27, 5, 0, 0.1, Math.PI - 0.1);
+            ctx.stroke();
+          }
+          break;
         case 'direwolf-kennel':
           nest(0, 3, 1.25);
           softPoly(
@@ -16333,8 +16444,10 @@
       }
     }
     ctx.restore();
+    frontierTreeShoots(ctx, e, p, region);
   }
   function unscaledHeight(e) {
+    if (e.structure === 'frontier-civic-fountain') return 110;
     if (e.type === 'pet') return 58;
     if (e.mountedCrownRider) return 99;
     if (e.type === 'boss') return e.form === 'true' ? 140 : 102;
@@ -17043,6 +17156,7 @@
     }
     for (const p of R.terrain[region]) {
       const kind = p.kind || 'cliff';
+      if (kind === 'fountain') continue; // Depth-sorted civic masonry is painted as a prop.
       if (p.r) {
         if (viewport) {
           const q = screen(p),
@@ -17877,6 +17991,7 @@
   }
   root.PrototypeVisuals = {
     draw,
+    frontierTreeShoots,
     height,
     floor,
     dungeonFloorPath,
