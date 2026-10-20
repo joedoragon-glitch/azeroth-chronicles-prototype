@@ -1,0 +1,40 @@
+{
+  "frontier": {
+    "props": 391,
+    "moved": 65,
+    "natureUnchanged": 204,
+    "newRoadSpurs": 13,
+    "bottomQuarterStructures": 30
+  },
+  "abyss": {
+    "size": 1650,
+    "props": 38,
+    "enemies": 27,
+    "staticRoutes": 27,
+    "traffic": [
+      {
+        "gap": [
+          940,
+          1120
+        ],
+        "guards": 2,
+        "reached": true
+      },
+      {
+        "gap": [
+          1160,
+          1340
+        ],
+        "guards": 2,
+        "reached": true
+      }
+    ]
+  },
+  "save": {
+    "woundsDeathsCurrencyLootPreserved": true,
+    "idempotent": true,
+    "offZone": true,
+    "occupiedPlot": true
+  },
+  "scope": "Focused layout, real pre-dev104 save migration and doorway movement only; no whole-game/browser suite."
+}

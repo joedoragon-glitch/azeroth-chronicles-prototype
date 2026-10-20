@@ -1,0 +1,13 @@
+# Approved Frontier and Abyss Bastion layouts — dev.104
+
+Joel approved the retained Frontier relocation proposal and clarified approval of the Abyss Bastion dungeon expansion on 20 October 2026. These changes implement those plans. Veyra's corrected arm/skirt remains a separate unaccepted preview; no character art changes in this release.
+
+Frontier moves 65 existing structures into north/west/east/south work plots and three recovery homes. The fresh layout matches all 65 approved individual positions. Thirteen connected road spurs serve these plots. All 204 natural props retain their serialized metadata and coordinates. Bottom-quarter structures increase from 4 to 30. Town services, quest sites, rescues, enemies/homes, resource nodes, fountain, rivers and existing roads retain their identities and positions.
+
+Abyss expands from 1500 to 1650 per side. The approved floor/partitions give 160–180-unit openings. All 38 decorative props remain, with bulky equipment toward side alcoves. Guard positions/homes, entrance, Eren, normal/TRUE boss anchors and trap coordinates follow the expanded layout. Enemy population, wounds, deaths, damage, HP, combat radii, cooldowns, trap timing and rewards remain unchanged.
+
+The world module owns two independent one-time layout markers. Frontier moves existing records without rerunning global settlement/forest generation and chooses local alternatives around player constructions. Abyss migration runs before save filtering against the new floor, scales existing coordinates and current active party/loot, reanchors decor by stable ID and clears navigation paths. Off-zone cached dungeons migrate without moving the hero on another map. Existing dungeon population/flight-project versions are retained so the expansion does not revive guards.
+
+Focused evidence: `tools/visual-review/frontier-bastion-implementation-20261020/checks.json`. The compressed fixture is a genuine dev.103 save captured before editing, with developer-mode seeded geometry. The check exercises original-to-new state, preservation of deaths/wounds/currency/depleted nodes/loot, fresh-versus-restored equality, second-restore idempotence, off-zone migration, an occupied player-building plot, 27 static enemy routes, every new road segment at radius 25, and two actual guards moving through each aerie opening together. Four native renderer captures leave simulation state unchanged.
+
+No whole-game suite or browser matrix. Static route/door movement success does not establish that every tactical AI crowd state is solved; Joel will assess live movement. Build and changed-source formatting complete before package-only publication. Original audit/proposal evidence remains at `tools/visual-review/frontier-bastion-audit-20261020/`.

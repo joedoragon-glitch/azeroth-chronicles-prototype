@@ -8,6 +8,145 @@
       dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y),
       originalDepartureRegion = (id) => ['vale', 'highlands', 'frontier'].includes(id);
     class World {
+      dungeonSpaceLayout(z) {
+        const space = R.dungeonSpace?.[z.id];
+        if (!space || z.dungeonSpaceVersion === space.version) return;
+        // Existing objects keep their IDs, wounds, deaths and progression. Only
+        // spatial coordinates change; attack radii and encounter tuning do not.
+        const moved = new Set(),
+          move = (p) => {
+            if (!p || moved.has(p)) return;
+            moved.add(p);
+            p.x *= space.scale;
+            p.y *= space.scale;
+            if (p.home) move(p.home);
+            delete p.path;
+            delete p.pathTarget;
+          };
+        for (const p of [...z.enemies, ...z.npcs, ...z.props, ...z.nodes, ...z.buildings]) move(p);
+        for (const p of z.props) {
+          const index = /^decor-(\d+)$/.exec(p.id || '')?.[1],
+            row = index === undefined ? null : R.dungeonDecor[z.id]?.[Number(index)];
+          if (row) [p.x, p.y] = row;
+        }
+        for (const p of this.s.loot || []) if (p.zone === z.id) move(p);
+        for (const [id, pending] of Object.entries(this.s.pending || {}))
+          if (id === z.id && pending.base) move(pending.base);
+        if (this.s.zone === z.id) for (const p of [this.hero, ...this.activeParty()]) move(p);
+        z.dungeonSpaceVersion = space.version;
+      }
+      frontierEdgeRedistribution(z) {
+        const cfg = R.frontierEdgeLayout;
+        if (z.id !== 'frontier' || z.frontierEdgeVersion === cfg.version) return;
+        const oldZone = this.s.zone,
+          originalProps = z.props,
+          nature = new Set(cfg.nature),
+          isNature = (p) =>
+            nature.has(p.structure) || (!p.structure && ['🌲', '🌳', '🪨'].includes(p.icon)),
+          group = (p) =>
+            p.frontierDistrict ||
+            p.stronghold ||
+            p.regionalDistrict ||
+            String(p.id || '').replace(/-\d+$/, ''),
+          groups = new Map(cfg.groups.map((g) => [g.id, g])),
+          moving = originalProps.filter(
+            (p) =>
+              !isNature(p) &&
+              (groups.has(group(p)) ||
+                cfg.moves.some((m) => m.id === p.id && m.structure === p.structure)),
+          ),
+          blocked = this.blocked;
+        this.s.zone = z.id;
+        try {
+          // Work on the same records; never regenerate forests, quest sites or
+          // player constructions. Occupied plots in older saves get local alternatives.
+          z.props = originalProps.filter((p) => !moving.includes(p));
+          const roadDistance = (p) =>
+            Math.min(
+              Infinity,
+              ...z.roads.flatMap((road) =>
+                road.slice(1).map((q, i) => this.distanceToSegment(p, road[i], q)),
+              ),
+            );
+          for (const p of moving) {
+            const exact = cfg.moves.find((m) => m.id === p.id && m.structure === p.structure),
+              g = groups.get(group(p)),
+              raw = exact
+                ? { x: exact.after[0], y: exact.after[1] }
+                : { x: p.x + g.to[0] - g.from[0], y: p.y + g.to[1] - g.from[1] },
+              margin = p.r ? p.r + 34 : 45,
+              clear = (q) =>
+                q.x > 100 + margin &&
+                q.y > 100 + margin &&
+                q.x < 3300 - margin &&
+                q.y < 3300 - margin &&
+                !blocked.call(this, q.x, q.y, z.id, Math.max(18, p.r || 0)) &&
+                roadDistance(q) > margin + 12 &&
+                !z.npcs.some((n) => dist(n, q) < 85 + margin * 0.3) &&
+                !z.nodes.some((n) => dist(n, q) < 65 + margin * 0.3) &&
+                !z.buildings.some((n) => dist(n, q) < 85 + margin * 0.3) &&
+                !z.enemies.some((e) => e.hp > 0 && dist(e, q) < (p.r || 0) + 40) &&
+                !z.props.some(
+                  (n) => dist(n, q) < (isNature(n) ? 44 : 42) + (p.r || 0) + (n.r || 0),
+                );
+            let chosen;
+            for (const radius of [0, 35, 70, 105, 140, 180, 225, 270]) {
+              for (let j = 0; j < (radius ? 24 : 1); j++) {
+                const q = {
+                  x: raw.x + Math.cos((j * Math.PI) / 12) * radius,
+                  y: raw.y + Math.sin((j * Math.PI) / 12) * radius,
+                };
+                if (clear(q)) {
+                  chosen = q;
+                  break;
+                }
+              }
+              if (chosen) break;
+            }
+            if (chosen) Object.assign(p, chosen);
+            z.props.push(p);
+          }
+          z.props = originalProps;
+          // Route through the final structures, with shoulders wide enough for
+          // normal traffic. Existing road and scenery versions remain untouched.
+          const goals = [
+            ...cfg.groups.map((g) => ({ x: g.to[0], y: Math.min(3220, g.to[1] + 175) })),
+            ...cfg.homes.map(([x, y]) => ({ x, y })),
+          ];
+          this.blocked = function (x, y, zone, radius = 15, terrainOnly = false) {
+            return blocked.call(this, x, y, zone, Math.max(radius, 30), terrainOnly);
+          };
+          for (const goal of goals) {
+            const starts = z.roads
+                .flat()
+                .filter((p) => !this.blocked(p.x, p.y, z.id, 30))
+                .sort((p, q) => dist(p, goal) - dist(q, goal))
+                .slice(0, 8),
+              candidates = [goal];
+            for (const radius of [60, 120])
+              for (let j = 0; j < 12; j++)
+                candidates.push({
+                  x: goal.x + Math.cos((j * Math.PI) / 6) * radius,
+                  y: goal.y + Math.sin((j * Math.PI) / 6) * radius,
+                });
+            let road = [];
+            for (const target of candidates) {
+              if (this.blocked(target.x, target.y, z.id, 30)) continue;
+              for (const start of starts) {
+                road = this.route(start, target, { road: true });
+                if (road.length) break;
+              }
+              if (road.length) break;
+            }
+            if (road.length) z.roads.push(road);
+          }
+          z.frontierEdgeVersion = cfg.version;
+        } finally {
+          z.props = originalProps;
+          this.blocked = blocked;
+          this.s.zone = oldZone;
+        }
+      }
       settlementLayout(z) {
         if (
           dungeonIds.includes(z.id) ||
@@ -1094,6 +1233,7 @@
       zone() {
         if (this.s.zones[this.s.zone]) {
           const z = this.s.zones[this.s.zone];
+          this.dungeonSpaceLayout(z);
           if (!this.isDungeon()) {
             this.regionalDestinations(z);
             this.roadNetwork(z);
@@ -1108,6 +1248,7 @@
           // Space the lived-in courtyard after those final scenic relocations.
           this.strongholdCourtyardClearance(z);
           this.interiorCoherence(z);
+          this.frontierEdgeRedistribution(z);
           return z;
         }
         const i = this.regionIndex(),
@@ -1125,6 +1266,7 @@
           clock: 0,
         };
         this.s.zones[id] = z;
+        if (R.dungeonSpace?.[id]) z.dungeonSpaceVersion = R.dungeonSpace[id].version;
         const room = this.supplyRoom();
         if (room) {
           z.room = true;
@@ -1295,14 +1437,19 @@
           boss = dungeon ? this.boss(id) : field;
         if (dungeon) {
           z.npcs.push(
-            { id: 'exit', name: 'Return to ' + r.name, kind: 'exit', x: 160, y: 240, icon: '🚪' },
+            {
+              id: 'exit',
+              name: 'Return to ' + r.name,
+              kind: 'exit',
+              ...(R.dungeonSpace?.[id]?.exit || { x: 160, y: 240 }),
+              icon: '🚪',
+            },
             {
               id: 'cage-' + boss.id,
               name: boss.captive,
               kind: 'cage',
               family: boss.id,
-              x: 1200,
-              y: 1270,
+              ...(R.dungeonSpace?.[id]?.captive || { x: 1200, y: 1270 }),
               icon: '🔒',
             },
           );
@@ -1444,7 +1591,7 @@
           const pack = Math.floor(j / group),
             g = dungeon ? this.dungeonGuardBlueprint(id, j) : null,
             s = g?.sp || species[pack % species.length],
-            size = dungeon ? 1500 : r.size;
+            size = dungeon ? this.zoneSize(id) : r.size;
           const base = dungeon
             ? { x: g.x, y: g.y }
             : {
@@ -1480,7 +1627,9 @@
           if (dungeon) this.configureEnemy(e, j);
           z.enemies.push(e);
         }
-        const point = dungeon ? { x: 1160, y: 1110 } : this.fieldCenter(i);
+        const point = dungeon
+          ? R.dungeonSpace?.[id]?.boss || { x: 1160, y: 1110 }
+          : this.fieldCenter(i);
         if (dungeon && this.s.normal[boss.id]) z.enemies = z.enemies.filter((e) => !e.guard);
         if (!this.s.normal[boss.id] || (boss.kind === 'field' && !this.s.pending[boss.id]))
           z.enemies.push(this.bossEnemy(boss, 'normal', point));
@@ -1513,6 +1662,7 @@
         this.refreshNPCs();
         if (this.peace) this.makeHabitat(z);
         this.syncDungeonMasterStation(z);
+        this.frontierEdgeRedistribution(z);
         return z;
       }
       regionalDestinations(z) {

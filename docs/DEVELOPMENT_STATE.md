@@ -1,5 +1,9 @@
 # Current development state — 20 October 2026
 
+**Approved map implementation — dev.104:** Joel approved the Frontier relocation and Abyss Bastion expansion on 20 October. Implementation preserves nature and existing-save progress; focused layout/save/movement checks only, package-only publication. Veyra arm/skirt correction remains preview-only pending review. [Scope](FRONTIER_ABYSS_LAYOUT_20261020.md).
+
+**Current Veyra review — ivory B selected with corrections:** Joel chose ivory parade armor and requested a compact fully armored arm (bring weapon inward, no stretched limb), plus a continuous skirt with short plates over it. Corrected normal/TRUE preview: `tools/visual-review/veyra-ivory-correction-20261020/README.md`. Face/palette preserved; new arm/skirt not yet accepted. Preview only, no runtime changes or publication.
+
 **Current owner review:** Marshal Veyra eye/armor options A blue steel, B ivory parade, C dark field: `tools/visual-review/veyra-options-20261020/README.md`. Proper eyes, accepted lips and original spear/shield stance; normal/TRUE views. These remain preview-only; no selection yet. Frontier/Abyss audits and proposals are retained separately.
 
 **Published dev.103 — approved lips and staffs:** PR #337 / `1944f7a56ed1f8cc205a51c33979e5d629561d2a`; package-only run 39407044593 succeeded and all 15 live checks match. Shaped lips retain expressions; Mage Moon setting A and Mira Amber ring C, with original arms/hands/grips. Sixteen accepted-preview draws match exactly. Normal workflow restored; temporary publisher removed. Frontier/Abyss remain audit/proposals, Veyra face/armor remains preview-only. [Receipt](evidence/LIPS_STAFFS_DEV103_PUBLICATION_20261020.json).

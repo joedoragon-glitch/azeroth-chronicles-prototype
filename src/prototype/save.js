@@ -849,6 +849,8 @@
         c.messages = [];
         c.effects = [];
         for (const z of Object.values(c.s.zones)) {
+          // Expand before old coordinates are filtered against the new floor.
+          c.dungeonSpaceLayout(z);
           z.enemies = z.enemies.filter((e) => !e.summon);
           z.props = z.props.filter(
             (p) =>
@@ -900,6 +902,7 @@
           c.migrateThornPatrol(z);
           c.migrateCinderInspection(z);
           c.clearVeraRepairs(z);
+          c.frontierEdgeRedistribution(z);
           const families = new Set();
           z.enemies = z.enemies.filter((e) => {
             if (
