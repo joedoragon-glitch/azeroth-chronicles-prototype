@@ -5501,6 +5501,11 @@
   // Live balance ownership. Arrays retain their original slot/tier indices and fallbacks.
   // Historical migration mappings and procedural coordinates intentionally remain separate.
   const balance = {
+    nightTempo: {
+      baseBonus: 0.1,
+      perVictoryBonus: 0.0075,
+      maxBonus: 0.25,
+    },
     economy: {
       startingCrowns: 30,
       deathPenaltyFraction: 0.2,
