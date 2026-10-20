@@ -32,7 +32,7 @@ const priorStrongTiers = Object.fromEntries(
 const expected = {
   ordinary: priorStrongTiers.ordinary,
   guardian: priorStrongTiers.guardian,
-  ringleader: priorStrongTiers.captain,
+  ringleader: priorStrongTiers.trueBoss,
   captain: priorStrongTiers.trueBoss,
   boss: priorStrongTiers.boss,
   trueBoss: priorStrongTiers.boss,
@@ -51,8 +51,8 @@ for (const tier of tiers) {
 }
 assert.deepEqual(cfg.tiers.trueBoss, cfg.tiers.boss, 'TRUE and normal bosses now match');
 assert.deepEqual(cfg.tiers.captain, priorStrongTiers.trueBoss, 'captain inherits old TRUE defense');
-assert.deepEqual(cfg.tiers.ringleader, priorStrongTiers.captain,
-  'ringleader inherits old captain defense');
+assert.deepEqual(cfg.tiers.ringleader, cfg.tiers.captain,
+  'ringleader receives the current captain defense');
 for (const tier of ['ordinary', 'guardian', 'boss'])
   assert.deepEqual(cfg.tiers[tier], priorStrongTiers[tier], tier + ' is unchanged by the reassignment');
 for (const tier of ['ordinary', 'guardian', 'ringleader', 'captain', 'boss', 'trueBoss'])
@@ -75,7 +75,8 @@ for (const tier of tiers) {
 }
 assert(outputs[0] > outputs[1], 'guardian more resilient than ordinary');
 assert(outputs[1] > outputs[2], 'ringleader more resilient than guardian');
-assert(outputs[2] > outputs[4], 'boss more resilient than ringleader');
+assert.equal(outputs[2], outputs[3], 'ringleader and captain compress identical raw bursts');
+assert(outputs[2] < outputs[4], 'ringleaders share stricter captain protection');
 assert.equal(outputs[4], outputs[5], 'TRUE and normal bosses compress identical raw bursts');
 assert(outputs[3] < outputs[4], 'captains inherit stricter previous TRUE protection');
 

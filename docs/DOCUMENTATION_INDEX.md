@@ -4,6 +4,7 @@
 
 | Need | Maintained entrypoint |
 | --- | --- |
+| Night counter, ringleader defense and Rogue reuse | [Dev.96 balance scope](NIGHT_RINGLEADER_ROGUE_20261020.md) |
 | Companion blocking while traveling | [Dev.95 movement fix](TRAVEL_COMPANION_COLLISION_20261020.md) |
 | Current 7-FPS report / adaptive pixel density | [Dev.94 candidate and bounded evidence](ADAPTIVE_RESOLUTION_20261020.md) |
 | Chromebook idle FPS / inhabited Frontier correction | [Focused candidate, received Chromebook reports and verification limits](CHROMEBOOK_PERFORMANCE_20261019.md) |
