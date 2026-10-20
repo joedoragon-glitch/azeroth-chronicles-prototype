@@ -1,4 +1,6 @@
-# Current development state — 19 October 2026
+# Current development state — 20 October 2026
+
+**Published dev.90 — 20 October 2026:** PR #324 merged as `9a6815fdaf76a6c00818921625f485b51c2d01a6`. Packaging-only [publication run 39368492291](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39368492291) succeeded. Exact public build/version, engine, runtime, renderer, visuals and service worker match the prepared source. Performance improvements and occupied Frontier repairs are live. No broad CI or repeated completed checks ran; normal release wiring is restored and temporary publisher removed. Actual Chromebook FPS remains for owner live play. [Publication receipt](evidence/CHROMEBOOK_DEV90_PUBLICATION_20261020.json).
 
 **20 October, 00:12 EDT — dev.90 publication authorized:** Joel explicitly authorized merging and publishing the complete PR #324 candidate to test live on his Chromebook, and confirmed that performance improvements must be included. Reuse completed evidence; package/deploy and verify exact live build only. The one-time publisher is removed and normal release wiring restored after success. This supersedes the candidate-only release limits below for dev.90. Actual-device FPS is not yet verified.
 
@@ -19,7 +21,7 @@
 
 | Item | Recorded state |
 | --- | --- |
-| Published runtime | `0.9.1+snapshot.dev.88`; merge `523ddcee09c34455776d876e1e7d6fcd738bb745`, package-only publication run `39358577620` |
+| Published runtime | `0.9.1+snapshot.dev.90`; merge `9a6815fdaf76a6c00818921625f485b51c2d01a6`, package-only publication run `39368492291` |
 | Historical documentation-audit main | `57453c4651366a6debbcae454c70af3115e8ac2e` |
 | Last published gameplay source | `23d951092ea5dff806c460c62ca71eeced574f5c`, merged manual Developer Mode Skill 1 fix and documentation closeout #319 |
 | Publication evidence | [Packaging-only run 39312326936](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39312326936); exact public build/copy reads recorded in the [release handoff](COMMUNITY_SNAPSHOT_RELEASE_HANDOFF_20261016.md) |

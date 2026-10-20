@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-20",
+  "version": "0.9.1+snapshot.dev.90",
+  "pullRequest": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/324",
+  "publishedCommit": "9a6815fdaf76a6c00818921625f485b51c2d01a6",
+  "publicationRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39368492291",
+  "publicationConclusion": "success",
+  "jobs": [
+    "publish: packages committed files and deploys Pages only"
+  ],
+  "fullGameCI": false,
+  "repeatedCompletedChecks": false,
+  "liveVerification": [
+    {
+      "path": "build.txt",
+      "matches": true,
+      "commit": "9a6815fdaf76a6c00818921625f485b51c2d01a6"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "matches": true,
+      "sha256": "45d613ed5541746792acef1f809efc1f390f5d24262c3d0349df4a542d3bd276"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "matches": true,
+      "sha256": "9886d0651cf83dc7c9be05af71c5740a78fa9216f71bc5e58501bb591b0a9454"
+    },
+    {
+      "path": "src/prototype/runtime.js",
+      "matches": true,
+      "sha256": "6f2dde188f9a2245ca578b5b14a6be0936f740ffe511f5050fb65ff0158fac55"
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "matches": true,
+      "sha256": "bd1a36badcdd115ab386aae643e1a8f6bd51132bc84ed36d7682ec7d98b3146d"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "matches": true,
+      "sha256": "0e71187f9d1e8036b67df93aa08ee06627984e1e35242d2acd7ab87df124d3a0"
+    },
+    {
+      "path": "sw.js",
+      "matches": true,
+      "sha256": "1e8da8f1147f600a74603ee846bdf4e37ff209cbb92741c96a96a4257891d511"
+    }
+  ],
+  "boundedPriorChecks": "Build/syntax, existing renderer/cache/occlusion checks, exact two-scene simulation comparison and local startup recorded in CHROMEBOOK_PERFORMANCE_20261019.md; not rerun for deployment.",
+  "actualChromebookFPS": "Not yet measured for dev.90; owner live play remains necessary.",
+  "workflowCleanup": "Restore pages.yml byte-for-byte from b91d8a5c and remove the one-time publisher. Cleanup changes no published runtime."
+}
