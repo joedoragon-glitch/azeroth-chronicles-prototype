@@ -86,6 +86,13 @@
           's recovery' +
           (def.slow ? ' · Slow ' + def.slow + 's' : '') +
           (def.heal ? ' · self-heal ' + Math.round(def.heal * 100) + '% HP' : '') +
+          (def.allyHeal
+            ? ' · heals one wounded ally within ' +
+              def.healRange +
+              ' for ' +
+              Math.round(def.allyHeal * 100) +
+              '% of the pet’s maximum HP; clear line required'
+            : '') +
           (def.ward
             ? ' · self-ward ' + Math.round(def.ward * 100) + '% for ' + def.duration + 's'
             : '') +
@@ -213,6 +220,31 @@
         if (u.hp > 0 && def.heal) {
           u.hp = Math.min(u.maxHp, u.hp + u.maxHp * def.heal);
           this.event('heal', { x: u.x, y: u.y, target: u.id, resource: 'health' });
+        }
+        if (def.allyHeal) {
+          const ally = [this.hero, ...this.activeLivingParty()]
+            .filter(
+              (a) =>
+                a !== u &&
+                a.hp > 0 &&
+                a.hp < a.maxHp &&
+                dist(u, a) <= def.healRange &&
+                this.line(u, a),
+            )
+            .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
+          if (ally) {
+            // One ally per contact, based on the pet's HP rather than the
+            // recipient's pool; large hero HP cannot inflate the heal.
+            ally.hp = Math.min(ally.maxHp, ally.hp + u.maxHp * def.allyHeal);
+            this.event('heal', {
+              x: ally.x,
+              y: ally.y,
+              fromX: u.x,
+              fromY: u.y,
+              target: ally === this.hero ? 'hero' : ally.id,
+              resource: 'health',
+            });
+          }
         }
         if (u.hp > 0 && def.ward) {
           // Self-only, strongest ward wins; never stacks with Paladin protection.
