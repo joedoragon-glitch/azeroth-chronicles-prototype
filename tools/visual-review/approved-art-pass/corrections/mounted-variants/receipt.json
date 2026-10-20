@@ -1,0 +1,189 @@
+{
+  "baseline": "005ace71",
+  "sourceSHA256": "1e3a712ccfe53499f5f9cc634423d64b0ce30a10f75996cd735858012878abab",
+  "variants": [
+    {
+      "ranged": false,
+      "tier": "Patrol",
+      "entity": {
+        "id": "mounted-direwolf:lance",
+        "name": "lance",
+        "x": 600,
+        "y": 600,
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "wolf",
+        "crownTroop": true,
+        "mountedCrownRider": true,
+        "crownAncestry": "wolf",
+        "ranged": false,
+        "form": "normal",
+        "visualScale": 1
+      },
+      "region": 2,
+      "height": 99,
+      "featureScale": 1
+    },
+    {
+      "ranged": false,
+      "tier": "Guard",
+      "entity": {
+        "id": "mounted-direwolf:lance",
+        "name": "lance",
+        "x": 600,
+        "y": 600,
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "wolf",
+        "crownTroop": true,
+        "mountedCrownRider": true,
+        "crownAncestry": "wolf",
+        "ranged": false,
+        "form": "normal",
+        "visualScale": 1,
+        "guard": true
+      },
+      "region": 4,
+      "height": 99,
+      "featureScale": 1
+    },
+    {
+      "ranged": false,
+      "tier": "Room guard",
+      "entity": {
+        "id": "mounted-direwolf:lance",
+        "name": "lance",
+        "x": 600,
+        "y": 600,
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "wolf",
+        "crownTroop": true,
+        "mountedCrownRider": true,
+        "crownAncestry": "wolf",
+        "ranged": false,
+        "form": "normal",
+        "visualScale": 1,
+        "guard": true,
+        "roomGuard": true
+      },
+      "region": 4,
+      "height": 99,
+      "featureScale": 1
+    },
+    {
+      "ranged": false,
+      "tier": "Ringleader",
+      "entity": {
+        "id": "mounted-direwolf:lance",
+        "name": "lance",
+        "x": 600,
+        "y": 600,
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "wolf",
+        "crownTroop": true,
+        "mountedCrownRider": true,
+        "crownAncestry": "wolf",
+        "ranged": false,
+        "form": "ringleader",
+        "visualScale": 1
+      },
+      "region": 4,
+      "height": 99,
+      "featureScale": 1
+    },
+    {
+      "ranged": true,
+      "tier": "Patrol",
+      "entity": {
+        "id": "mounted-direwolf:lance",
+        "name": "lance",
+        "x": 600,
+        "y": 600,
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "wolf",
+        "crownTroop": true,
+        "mountedCrownRider": true,
+        "crownAncestry": "wolf",
+        "ranged": true,
+        "form": "normal",
+        "visualScale": 1
+      },
+      "region": 2,
+      "height": 99,
+      "featureScale": 1
+    },
+    {
+      "ranged": true,
+      "tier": "Guard",
+      "entity": {
+        "id": "mounted-direwolf:lance",
+        "name": "lance",
+        "x": 600,
+        "y": 600,
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "wolf",
+        "crownTroop": true,
+        "mountedCrownRider": true,
+        "crownAncestry": "wolf",
+        "ranged": true,
+        "form": "normal",
+        "visualScale": 1,
+        "guard": true
+      },
+      "region": 4,
+      "height": 99,
+      "featureScale": 1
+    },
+    {
+      "ranged": true,
+      "tier": "Room guard",
+      "entity": {
+        "id": "mounted-direwolf:lance",
+        "name": "lance",
+        "x": 600,
+        "y": 600,
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "wolf",
+        "crownTroop": true,
+        "mountedCrownRider": true,
+        "crownAncestry": "wolf",
+        "ranged": true,
+        "form": "normal",
+        "visualScale": 1,
+        "guard": true,
+        "roomGuard": true
+      },
+      "region": 4,
+      "height": 99,
+      "featureScale": 1
+    },
+    {
+      "ranged": true,
+      "tier": "Ringleader",
+      "entity": {
+        "id": "mounted-direwolf:lance",
+        "name": "lance",
+        "x": 600,
+        "y": 600,
+        "renderKind": "enemy",
+        "type": "mob",
+        "species": "wolf",
+        "crownTroop": true,
+        "mountedCrownRider": true,
+        "crownAncestry": "wolf",
+        "ranged": true,
+        "form": "ringleader",
+        "visualScale": 1
+      },
+      "region": 4,
+      "height": 99,
+      "featureScale": 1
+    }
+  ],
+  "scope": "Shared profile seat across both weapons and patrol/guard/room guard/ringleader states; drawing review only, no combat test."
+}

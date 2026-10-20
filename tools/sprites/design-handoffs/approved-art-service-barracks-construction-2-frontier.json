@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-service-barracks-construction-2-frontier",
+  "name": "Barracks Construction 2 Frontier",
+  "kind": "service",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Use patched dusty canvas, scarred timber and ash-dark repairs; refine a curved tensioned first canvas sheet, broad seams and anchored edges. Keep this stage visibly distinct from the next.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::building / barracks-construction-2 / regional palette 3",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "Current body",
+        "mode": "procedural",
+        "entity": {
+          "id": "service:barracks-construction-2-frontier",
+          "name": "barracks-construction-2-frontier",
+          "x": 600,
+          "y": 600,
+          "renderKind": "building",
+          "kind": "barracks",
+          "progress": 2,
+          "full": false,
+          "visualScale": 1.35
+        },
+        "region": 3,
+        "scale": 1.5,
+        "displayDPR": 2
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/after/service_barracks-construction-2-frontier--Current_body.webp",
+    "isolatedReferenceHash": "334e354e9a8e1a9fc58b09d3742b1d4f286b365d2657735e444223ad25433ab0",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "Construction progress looks physically plausible while preserving the reserved footprint.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/service_barracks-construction-2-frontier--Current_body.webp",
+        "beforeSHA256": "f95d03bd18055aa1df53cd068837826d827b8f8210a9dc35948bbabcc34159fc",
+        "after": "tools/visual-review/approved-art-pass/after/service_barracks-construction-2-frontier--Current_body.webp",
+        "afterSHA256": "334e354e9a8e1a9fc58b09d3742b1d4f286b365d2657735e444223ad25433ab0",
+        "label": "Current body"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "service:barracks-construction-2-frontier"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::building / barracks-construction-2 / regional palette 3",
+        "reason": "Use patched dusty canvas, scarred timber and ash-dark repairs; refine a curved tensioned first canvas sheet, broad seams and anchored edges. Keep this stage visibly distinct from the next."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "Current body"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 298,
+    "assessmentId": "service:barracks-construction-2-frontier",
+    "disposition": "refine",
+    "implementationStatus": "Implemented",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": null,
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}

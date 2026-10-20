@@ -4,7 +4,7 @@
   "designId": "pt312-shared-captain-frontier-overseer",
   "name": "shared:captain-frontier-overseer",
   "kind": "shared",
-  "nextAction": "Owner authorized merging the visual update on 19 October 2026. Use the combined candidate and the normal shared release checks; retain exact-source receipts and archived local source provenance. No new sprite generation.",
+  "nextAction": "Continue from tools/sprites/design-handoffs/approved-art-shared-captain-frontier-overseer.json. The later all-plans instruction authorized and completed this procedural pass; preserve this record as historical evidence.",
   "context": {
     "originConversation": "Chat URL unavailable. Owner requested implementation of the three requirements recorded in issue #320 on 19 October 2026.",
     "decisionSummary": "Cinder Warlord: Orc inspector, admiring imitation of the governor with smaller crest, short mantle, cheek stripe and ledger.",
@@ -160,5 +160,13 @@
         ]
       }
     }
-  ]
+  ],
+  "latestProceduralReview": {
+    "date": "2026-10-19",
+    "handoff": "tools/sprites/design-handoffs/approved-art-shared-captain-frontier-overseer.json",
+    "sourceCommit": "8acd14de52359febdb40a1d588d2c4c62b4fabf7",
+    "resultAppearanceAccepted": false,
+    "historicalEvidencePreserved": true
+  },
+  "historicalNextAction": "Owner authorized merging the visual update on 19 October 2026. Use the combined candidate and the normal shared release checks; retain exact-source receipts and archived local source provenance. No new sprite generation."
 }

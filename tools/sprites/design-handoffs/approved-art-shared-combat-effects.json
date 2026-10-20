@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-shared-combat-effects",
+  "name": "Combat Effects",
+  "kind": "shared",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Keep hit geometry and secrecy; refine material-specific release/contact shapes only where they obscure bodies or resemble flat generic glyphs, and review event stages separately.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "src/prototype/renderer.js::drawVisualFx / hero-presentation / enemy-vfx-art",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "Authored preparation effects — representative contexts",
+        "mode": "context",
+        "scale": null
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/images/shared_combat-effects--samples.webp",
+    "isolatedReferenceHash": "d2efaf0b43fed89d6016ee9210e31abfb2c1b7b811b1fedad01a1db250f0b649",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "Richer effects support the art without hiding the character or changing combat cues.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/shared_combat-effects--samples.webp",
+        "beforeSHA256": "d2efaf0b43fed89d6016ee9210e31abfb2c1b7b811b1fedad01a1db250f0b649",
+        "after": "tools/visual-review/approved-art-pass/images/shared_combat-effects--samples.webp",
+        "afterSHA256": "d2efaf0b43fed89d6016ee9210e31abfb2c1b7b811b1fedad01a1db250f0b649",
+        "label": "Authored preparation effects — representative contexts"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "shared:combat-effects"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/renderer.js::drawVisualFx / hero-presentation / enemy-vfx-art",
+        "reason": "Keep hit geometry and secrecy; refine material-specific release/contact shapes only where they obscure bodies or resemble flat generic glyphs, and review event stages separately."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "Authored preparation effects — representative contexts"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 354,
+    "assessmentId": "shared:combat-effects",
+    "disposition": "context",
+    "implementationStatus": "Context retained",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": null,
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}

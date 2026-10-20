@@ -1,0 +1,254 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-enemy-stalker",
+  "name": "Stalker",
+  "kind": "enemy",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Keep the shadow palette; shape a crouched stalking posture, deeper hood and asymmetric trailing cloth.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::draw / enemy species stalker",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "Current body",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-47",
+          "family": null,
+          "species": "stalker",
+          "name": "stalker",
+          "icon": "👿",
+          "form": "normal",
+          "type": "mob",
+          "level": 1,
+          "baseHp": 100,
+          "baseDamage": 0,
+          "hp": 100,
+          "maxHp": 100,
+          "damage": 0,
+          "gold": 0,
+          "xp": 0,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "guardian",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-47",
+          "family": null,
+          "species": "stalker",
+          "name": "stalker",
+          "icon": "👿",
+          "form": "normal",
+          "type": "mob",
+          "level": 1,
+          "baseHp": 100,
+          "baseDamage": 0,
+          "hp": 100,
+          "maxHp": 100,
+          "damage": 0,
+          "gold": 0,
+          "xp": 0,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1,
+          "guard": true
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "ringleader",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-47",
+          "family": null,
+          "species": "stalker",
+          "name": "stalker",
+          "icon": "👿",
+          "form": "ringleader",
+          "type": "mob",
+          "level": 1,
+          "baseHp": 100,
+          "baseDamage": 0,
+          "hp": 100,
+          "maxHp": 100,
+          "damage": 0,
+          "gold": 0,
+          "xp": 0,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/after/enemy_stalker--Current_body.webp",
+    "isolatedReferenceHash": "146f36404286e5e50954e8e868bce32c1573f7153d3433ad3c478e4157ec8b5a",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "The night predator separates from the lantern-bearing Wraith.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/enemy_stalker--Current_body.webp",
+        "beforeSHA256": "1359a8c2d92cc2384dff8e52bf36f1848d14db10a99ab0cfc764aae6a569b90c",
+        "after": "tools/visual-review/approved-art-pass/after/enemy_stalker--Current_body.webp",
+        "afterSHA256": "146f36404286e5e50954e8e868bce32c1573f7153d3433ad3c478e4157ec8b5a",
+        "label": "Current body"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/enemy_stalker--guardian.webp",
+        "beforeSHA256": "65e6e640878a2e45bd555652013ff3880b02451fd264e6ae61f35c1a270f3d9d",
+        "after": "tools/visual-review/approved-art-pass/after/enemy_stalker--guardian.webp",
+        "afterSHA256": "7edf656923e49d2b9a08197afd98ae7a4e976dc5e7e41127da055fa4a1f12b85",
+        "label": "guardian"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/enemy_stalker--ringleader.webp",
+        "beforeSHA256": "4f2e9e40065c3df83d98637e7c1249d5e2966017a9bea0b13e95fa66176883af",
+        "after": "tools/visual-review/approved-art-pass/after/enemy_stalker--ringleader.webp",
+        "afterSHA256": "85438e4d8bbc838b3e18dd1cc991bdaadfd19b987b4b7733f88f97003a878dc3",
+        "label": "ringleader"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "enemy:stalker"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      {
+        "state": "guardian",
+        "plan": "Fit the guard equipment to the same anatomy; keep the face clear and the guarding role distinct."
+      },
+      {
+        "state": "ringleader",
+        "plan": "Preserve authored elite/military rank language; integrate rank details into the clothing instead of concealing the improved face."
+      }
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::draw / enemy species stalker",
+        "reason": "Keep the shadow palette; shape a crouched stalking posture, deeper hood and asymmetric trailing cloth."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "Current body",
+      "guardian",
+      "ringleader"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 12,
+    "assessmentId": "enemy:stalker",
+    "disposition": "rebuild",
+    "implementationStatus": "Implemented",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": null,
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}

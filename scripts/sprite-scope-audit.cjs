@@ -13,25 +13,53 @@ function audit(options = {}) {
   const coverage = options.coverage ?? read('docs/GRAPHICS_CANON_SPRITE_COVERAGE.md');
   const catalog = options.catalog ?? pipeline.catalog();
   const sections = [
-    ['decoration', 'function decoration(kind)', 'function landmark()'],
-    ['settlement', 'function settlementBuilding(kind)', 'function decoration(kind)'],
-    ['landmark', 'function landmark()', 'function workDetails(role)'],
+    ['decoration', 'function craftedDecoration(kind)', 'function decoration(kind)'],
+    ['settlement', 'function craftedSettlement(kind)', 'function regionalServiceFooting('],
+    ['landmark', 'function craftedLandmark()', 'function gate(family)'],
   ];
   const families = {};
   for (const [name, start, end] of sections) {
     const a = source.indexOf(start),
       b = source.indexOf(end, a);
     if (a < 0 || b <= a) throw Error('Review renderer section: ' + name);
-    families[name] = [...source.slice(a, b).matchAll(/case '([^']+)'/g)].map((m) => m[1]);
+    const body = source.slice(a, b);
+    families[name] = [...body.matchAll(/case '([^']+)'/g)].map((m) => m[1]);
+    if (name === 'settlement') {
+      const named = [...body.matchAll(/kind === '([^']+)'/g)].map((m) => m[1]);
+      for (const list of body.matchAll(/\[((?:\s*'[^']+'[,\s]*)+)\]\s*\.includes\(kind\)/g))
+        named.push(...[...list[1].matchAll(/'([^']+)'/g)].map((m) => m[1]));
+      families[name] = [...new Set(named)];
+    }
+
+    // The public wrapper is still an authoring surface: reject unclassified
+    // additions there as well as in the material-specific construction owner.
+    const wrapper = {
+      decoration: 'function decoration(kind)',
+      settlement: 'function settlementBuilding(kind)',
+      landmark: 'function landmark()',
+    }[name];
+    const wa = source.indexOf(wrapper),
+      wb = source.indexOf('\n    function ', wa + wrapper.length);
+    if (wa >= 0)
+      families[name] = [
+        ...new Set([
+          ...families[name],
+          ...[...source.slice(wa, wb < 0 ? source.length : wb).matchAll(/case '([^']+)'/g)].map(
+            (m) => m[1],
+          ),
+        ]),
+      ];
     for (const key of families[name])
       if (!coverage.includes('| `' + key + '` |'))
         throw Error('Unclassified renderer family: ' + key);
   }
-  const workStart = source.indexOf('function workDetails(role)');
-  const workEnd = source.indexOf('const type = e.renderKind', workStart);
+  const workStart = source.indexOf('function craftedWork(role)');
+  const workEnd = source.indexOf('function craftedDefense()', workStart);
   if (workStart < 0 || workEnd < 0) throw Error('Missing contextual renderer boundary');
   const work = source.slice(workStart, workEnd);
-  const workRoles = [...work.matchAll(/role === '([^']+)'/g)].map((m) => m[1]);
+  const workRoles = [
+    ...new Set([...work.matchAll(/(?:role ===|case) '([^']+)'/g)].map((m) => m[1])),
+  ];
   for (const role of workRoles)
     if (!coverage.includes('`sceneRole:' + role + '`'))
       throw Error('Unclassified contextual state: ' + role);

@@ -1,0 +1,309 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-enemy-orc",
+  "name": "Orc",
+  "kind": "enemy",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Preserve the rebuilt body; refine fingers, tusk edge contrast and armor articulation, checking guard/thrower/rank overlays together.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md.",
+    "subsequentOwnerReview": "Joel requested distinct hero identities, rigid helmets, real quivers, varied NPC hair and expression, believable spear/staff/hammer/anchor, separated barracks desk, character-specific dungeon masters, Cinder Warlord mace and coherent profile direwolf riders across every loadout and tier. Revised drawings propagate through shared, crowned, captive, pet, appointed and fallback states where applicable. No acceptance of unseen revisions is claimed."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::draw / enemy species orc",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "Current body",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-44",
+          "family": null,
+          "species": "orc",
+          "name": "orc",
+          "icon": "👿",
+          "form": "normal",
+          "type": "mob",
+          "level": 1,
+          "baseHp": 100,
+          "baseDamage": 0,
+          "hp": 100,
+          "maxHp": 100,
+          "damage": 0,
+          "gold": 0,
+          "xp": 0,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "ranged",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-44",
+          "family": null,
+          "species": "orc",
+          "name": "orc",
+          "icon": "👿",
+          "form": "normal",
+          "type": "mob",
+          "level": 1,
+          "baseHp": 100,
+          "baseDamage": 0,
+          "hp": 100,
+          "maxHp": 100,
+          "damage": 0,
+          "gold": 0,
+          "xp": 0,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1,
+          "ranged": true
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "guardian",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-44",
+          "family": null,
+          "species": "orc",
+          "name": "orc",
+          "icon": "👿",
+          "form": "normal",
+          "type": "mob",
+          "level": 1,
+          "baseHp": 100,
+          "baseDamage": 0,
+          "hp": 100,
+          "maxHp": 100,
+          "damage": 0,
+          "gold": 0,
+          "xp": 0,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1,
+          "guard": true
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "ringleader",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-44",
+          "family": null,
+          "species": "orc",
+          "name": "orc",
+          "icon": "👿",
+          "form": "ringleader",
+          "type": "mob",
+          "level": 1,
+          "baseHp": 100,
+          "baseDamage": 0,
+          "hp": 100,
+          "maxHp": 100,
+          "damage": 0,
+          "gold": 0,
+          "xp": 0,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/after/enemy_orc--Current_body.webp",
+    "isolatedReferenceHash": "ac37fb7418f0fd071c7efcf39cba6b5e3326676cf7417892c6dfb144e10d6ec6",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "A consistent Orc species language across ordinary units and commanders.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/enemy_orc--Current_body.webp",
+        "beforeSHA256": "912d72936b21c167ee4ecfd9d41db7ec67890ce3ad8369ede8c5f5876a67cca7",
+        "after": "tools/visual-review/approved-art-pass/after/enemy_orc--Current_body.webp",
+        "afterSHA256": "ac37fb7418f0fd071c7efcf39cba6b5e3326676cf7417892c6dfb144e10d6ec6",
+        "label": "Current body"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/enemy_orc--ranged.webp",
+        "beforeSHA256": "5e9d71e604ff04a9bae083a5f5fe39eb6057fb15de93a71e9baa7ef77f566ff1",
+        "after": "tools/visual-review/approved-art-pass/after/enemy_orc--ranged.webp",
+        "afterSHA256": "9e3c5acd111356c0fd0fcddde08b29b6c0bd621f2fea64d9a32ff2abedb9884a",
+        "label": "ranged"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/enemy_orc--guardian.webp",
+        "beforeSHA256": "705d3983021b391b1104da8186773b33575eb9a317194da65c82a23ff0844295",
+        "after": "tools/visual-review/approved-art-pass/after/enemy_orc--guardian.webp",
+        "afterSHA256": "43bcefdba0605363909c2265d8961e2701adb7c292cd82e8c69b0780e359fc77",
+        "label": "guardian"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/enemy_orc--ringleader.webp",
+        "beforeSHA256": "9060d27e57682913e97c46d89e0ffdb40a356db22313bbe96a3d45f57f118b46",
+        "after": "tools/visual-review/approved-art-pass/after/enemy_orc--ringleader.webp",
+        "afterSHA256": "d1a2d06e8ab3bed5c6bf4dbd8bad9aeca0899f3e915b99ef80e869b5fe91fbf9",
+        "label": "ringleader"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "enemy:orc"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      {
+        "state": "ranged",
+        "plan": "Keep the actual projectile equipment and one coherent loadout; refine shoulder, hand and carrying straps with the base body."
+      },
+      {
+        "state": "guardian",
+        "plan": "Fit the guard equipment to the same anatomy; keep the face clear and the guarding role distinct."
+      },
+      {
+        "state": "ringleader",
+        "plan": "Preserve authored elite/military rank language; integrate rank details into the clothing instead of concealing the improved face."
+      }
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::draw / enemy species orc",
+        "reason": "Preserve the rebuilt body; refine fingers, tusk edge contrast and armor articulation, checking guard/thrower/rank overlays together."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "Current body",
+      "ranged",
+      "guardian",
+      "ringleader"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 9,
+    "assessmentId": "enemy:orc",
+    "disposition": "refine",
+    "implementationStatus": "Implemented",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": "Updated the relevant shared character identity, face/hair, rigid helmet, held tool, quiver or camp/riding composition under the latest owner correction. Carries through indexed loadouts, captive and appointed states. Gameplay geometry and protected raster pixels remain intact.",
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}

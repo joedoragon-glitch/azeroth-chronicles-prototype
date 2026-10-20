@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-shared-captain-frontier-overseer",
+  "name": "Cinder Warlord",
+  "kind": "shared",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Preserve this redesign; refine the ledger grip, subordinate armor wear and sash/pauldron separation at 150%.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md.",
+    "subsequentOwnerReview": "Joel requested distinct hero identities, rigid helmets, real quivers, varied NPC hair and expression, believable spear/staff/hammer/anchor, separated barracks desk, character-specific dungeon masters, Cinder Warlord mace and coherent profile direwolf riders across every loadout and tier. Revised drawings propagate through shared, crowned, captive, pet, appointed and fallback states where applicable. No acceptance of unseen revisions is claimed."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::captain-frontier-overseer",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "Current body",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-93",
+          "family": null,
+          "species": "orc",
+          "name": "Cinder Warlord",
+          "icon": "👹",
+          "form": "normal",
+          "type": "mob",
+          "level": 11,
+          "baseHp": 3000,
+          "baseDamage": 62,
+          "hp": 3000,
+          "maxHp": 3000,
+          "damage": 62,
+          "gold": 68,
+          "xp": 100,
+          "x": 1200,
+          "y": 950,
+          "home": {
+            "x": 1200,
+            "y": 950
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "pack": "frontier-overseer",
+          "captain": true,
+          "fieldCaptain": true,
+          "meleeBalanceVersion": 1,
+          "captainProfile": "frontier-overseer",
+          "captainMentor": "warlord",
+          "captainVisualIdol": "warlord",
+          "visualScale": 1,
+          "specialCd": 1.25,
+          "captainPatrolIndex": 0,
+          "captainPatrolWait": 0,
+          "fieldCaptainVersion": 1,
+          "captainPhase": false,
+          "captainPhaseMove": 1,
+          "captainAttackRate": 1,
+          "captainGuard": 0,
+          "captainReflect": 0,
+          "captainOvertimeCd": 0,
+          "captainEnduranceVersion": 2,
+          "telegraph": null,
+          "sequence": [],
+          "motion": null,
+          "rangedAim": null,
+          "captainPursuit": 0,
+          "captainOpeningSummon": false,
+          "frozen": false,
+          "renderKind": "enemy"
+        },
+        "region": 3,
+        "scale": 1.5,
+        "displayDPR": 2
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/after/shared_captain-frontier-overseer--Current_body.webp",
+    "isolatedReferenceHash": "ce191299be99b7debab148e6f65717aeeb30de8fd1bf0f3716951942ea343c57",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "The fan-like imitation stays readable without duplicating the boss.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/shared_captain-frontier-overseer--Current_body.webp",
+        "beforeSHA256": "ef6bd537db5355a490e73804596eb4b50caf05e18f58db06ce1cd3bfb76f84a2",
+        "after": "tools/visual-review/approved-art-pass/after/shared_captain-frontier-overseer--Current_body.webp",
+        "afterSHA256": "ce191299be99b7debab148e6f65717aeeb30de8fd1bf0f3716951942ea343c57",
+        "label": "Current body"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "shared:captain-frontier-overseer"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::captain-frontier-overseer",
+        "reason": "Preserve this redesign; refine the ledger grip, subordinate armor wear and sash/pauldron separation at 150%."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "Current body"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 347,
+    "assessmentId": "shared:captain-frontier-overseer",
+    "disposition": "refine",
+    "implementationStatus": "Implemented",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": "Cinder Warlord wields a socketed spiky iron mace and retains his officious ledger; raised brow, lopsided grin and short crest distinguish the captain from governor and common troops.",
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}

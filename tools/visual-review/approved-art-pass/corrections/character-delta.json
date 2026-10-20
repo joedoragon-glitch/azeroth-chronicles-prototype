@@ -1,0 +1,608 @@
+[
+  {
+    "id": "enemy:wolf",
+    "states": [
+      "mounted-lance",
+      "mounted-bow"
+    ]
+  },
+  {
+    "id": "enemy:goblin",
+    "states": [
+      "Current body",
+      "ranged",
+      "guardian",
+      "ringleader"
+    ]
+  },
+  {
+    "id": "enemy:archer",
+    "states": [
+      "Current body",
+      "ranged",
+      "guardian",
+      "ringleader"
+    ]
+  },
+  {
+    "id": "enemy:orc",
+    "states": [
+      "ranged"
+    ]
+  },
+  {
+    "id": "enemy:crownguard",
+    "states": [
+      "Current body",
+      "ranged",
+      "guardian",
+      "ringleader"
+    ]
+  },
+  {
+    "id": "boss:mire",
+    "states": [
+      "Current body",
+      "TRUE form"
+    ]
+  },
+  {
+    "id": "boss:archive",
+    "states": [
+      "Current body",
+      "TRUE form"
+    ]
+  },
+  {
+    "id": "boss:ridge",
+    "states": [
+      "Current body",
+      "TRUE form"
+    ]
+  },
+  {
+    "id": "boss:citadel",
+    "states": [
+      "Current body",
+      "TRUE form"
+    ]
+  },
+  {
+    "id": "boss:darklord",
+    "states": [
+      "Current body",
+      "TRUE form"
+    ]
+  },
+  {
+    "id": "decoration:silver-die-tray",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:highland-pay-station",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:barracks-full-vale",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:barracks-full-march",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:barracks-full-highlands",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:barracks-full-frontier",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:barracks-basic-crown",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:barracks-full-crown",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "shared:hero-paladin",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "shared:hero-mage",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "shared:hero-ranger",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "shared:ally-soldier",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "shared:ally-archer",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "shared:working-captives",
+    "states": [
+      "dispatch:repair-workstation \u2014 shared child reference",
+      "dispatch:mobile-forge \u2014 shared child reference",
+      "dispatch:mobile-captive \u2014 shared child reference"
+    ]
+  },
+  {
+    "id": "shared:crowned-hero",
+    "states": [
+      "crowned:paladin \u2014 shared child reference",
+      "crowned:mage \u2014 shared child reference",
+      "crowned:ranger \u2014 shared child reference"
+    ]
+  },
+  {
+    "id": "shared:transport-ferry",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "shared:captain-supply-vale",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "shared:captain-supply-highlands",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "shared:captain-frontier-overseer",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "pet:archive",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "pet:citadel",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "specialist:thorn",
+    "states": [
+      "Current body",
+      "Rescued / service appearance"
+    ]
+  },
+  {
+    "id": "specialist:crypt",
+    "states": [
+      "Current body",
+      "Rescued / service appearance"
+    ]
+  },
+  {
+    "id": "specialist:mire",
+    "states": [
+      "Current body",
+      "Rescued / service appearance"
+    ]
+  },
+  {
+    "id": "specialist:archive",
+    "states": [
+      "Current body",
+      "Rescued / service appearance"
+    ]
+  },
+  {
+    "id": "specialist:ridge",
+    "states": [
+      "Current body",
+      "Rescued / service appearance"
+    ]
+  },
+  {
+    "id": "specialist:mine",
+    "states": [
+      "Current body",
+      "Rescued / service appearance"
+    ]
+  },
+  {
+    "id": "specialist:warlord",
+    "states": [
+      "Current body",
+      "Rescued / service appearance"
+    ]
+  },
+  {
+    "id": "specialist:abyss",
+    "states": [
+      "Current body",
+      "Rescued / service appearance"
+    ]
+  },
+  {
+    "id": "specialist:citadel",
+    "states": [
+      "Current body",
+      "Rescued / service appearance"
+    ]
+  },
+  {
+    "id": "specialist:cindermaw",
+    "states": [
+      "Current body",
+      "Rescued / service appearance"
+    ]
+  },
+  {
+    "id": "specialist:darklord",
+    "states": [
+      "Current body",
+      "Rescued / service appearance"
+    ]
+  },
+  {
+    "id": "dispatch:captive-cage",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "dispatch:repair-workstation",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "dispatch:mobile-forge",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "dispatch:mobile-captive",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "dispatch:patrol-report",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "dispatch:dungeon-master",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "dispatch:npc-smith-fallback",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "dispatch:npc-alchemist-fallback",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "dispatch:npc-guide-fallback",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "renderer-alias:keeper",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "crowned:paladin",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "crowned:mage",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "crowned:ranger",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "crown-troop:crownguard:guard",
+    "states": [
+      "Actual Citadel troop body"
+    ]
+  },
+  {
+    "id": "crown-troop:crownguard:marksman",
+    "states": [
+      "Actual Citadel troop body"
+    ]
+  },
+  {
+    "id": "crown-troop:goblin:guard",
+    "states": [
+      "Actual Citadel troop body"
+    ]
+  },
+  {
+    "id": "crown-troop:goblin:marksman",
+    "states": [
+      "Actual Citadel troop body"
+    ]
+  },
+  {
+    "id": "crown-troop:orc:marksman",
+    "states": [
+      "Actual Citadel troop body"
+    ]
+  },
+  {
+    "id": "crown-troop:archer:guard",
+    "states": [
+      "Actual Citadel troop body"
+    ]
+  },
+  {
+    "id": "crown-troop:archer:marksman",
+    "states": [
+      "Actual Citadel troop body"
+    ]
+  },
+  {
+    "id": "mounted-direwolf:lance",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "mounted-direwolf:bow",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "raider:highlands-contractor",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "captive:thorn",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "captive:crypt",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "captive:mire",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "captive:archive",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "captive:ridge",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "captive:mine",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "captive:warlord",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "captive:abyss",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "captive:citadel",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "captive:cindermaw",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "raster:hero:paladin",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "raster:enemy:goblin",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "raster:hero:mage",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "raster:hero:ranger",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "raster:ally:soldier",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "raster:ally:archer",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "appointed:field:mire",
+    "states": [
+      "Current appointed appearance"
+    ]
+  },
+  {
+    "id": "appointed:field:ridge",
+    "states": [
+      "Current appointed appearance"
+    ]
+  },
+  {
+    "id": "appointed:captain:supply-vale",
+    "states": [
+      "Current appointed appearance"
+    ]
+  },
+  {
+    "id": "appointed:captain:supply-highlands",
+    "states": [
+      "Current appointed appearance"
+    ]
+  },
+  {
+    "id": "appointed:captain:frontier-overseer",
+    "states": [
+      "Current appointed appearance"
+    ]
+  },
+  {
+    "id": "appointed:specialist:thorn",
+    "states": [
+      "Current appointed appearance"
+    ]
+  },
+  {
+    "id": "appointed:specialist:crypt",
+    "states": [
+      "Current appointed appearance"
+    ]
+  },
+  {
+    "id": "appointed:specialist:mire",
+    "states": [
+      "Current appointed appearance"
+    ]
+  },
+  {
+    "id": "appointed:specialist:archive",
+    "states": [
+      "Current appointed appearance"
+    ]
+  },
+  {
+    "id": "appointed:specialist:ridge",
+    "states": [
+      "Current appointed appearance"
+    ]
+  },
+  {
+    "id": "appointed:specialist:mine",
+    "states": [
+      "Current appointed appearance"
+    ]
+  },
+  {
+    "id": "appointed:specialist:warlord",
+    "states": [
+      "Current appointed appearance"
+    ]
+  },
+  {
+    "id": "appointed:specialist:abyss",
+    "states": [
+      "Current appointed appearance"
+    ]
+  },
+  {
+    "id": "appointed:specialist:citadel",
+    "states": [
+      "Current appointed appearance"
+    ]
+  },
+  {
+    "id": "appointed:specialist:cindermaw",
+    "states": [
+      "Current appointed appearance"
+    ]
+  }
+]

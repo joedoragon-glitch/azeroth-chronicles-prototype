@@ -353,223 +353,28 @@
       ctx.restore();
     };
     function wildProp() {
-      const rock = e.icon === '🪨' || region === 4,
-        jitter = ((variant >>> 3) % 7) - 3;
-      if (rock) {
-        const base = region === 4 ? '#55515c' : region === 2 ? '#7d8179' : '#788579',
-          light = region === 4 ? '#8e8398' : region === 2 ? '#adb09f' : '#9fac98';
-        shade(23, 7, 0.18);
-        poly(
-          [
-            [-23, 9],
-            [-19, -10],
-            [-6, -24],
-            [13, -20],
-            [24, -2],
-            [18, 10],
-          ],
-          base,
-        );
-        poly(
-          [
-            [-19, -10],
-            [-6, -24],
-            [0, -3],
-            [-23, 9],
-          ],
-          light,
-        );
-        poly(
-          [
-            [0, -3],
-            [13, -20],
-            [24, -2],
-            [18, 10],
-          ],
-          region === 4 ? '#45434e' : '#667268',
-        );
+      if (e.icon === '🪨' || region === 4) {
+        rockPiece(0, 9, 25, 34, region === 4);
         line(
           [
-            [-7, -19],
-            [-2, -7],
-            [7, -11],
+            [-12, -14],
+            [-3, -5],
+            [7, -9],
           ],
-          region === 4 ? '#b38aa5' : '#c0c5ad',
-          1.3,
+          region === 4 ? '#ad91b0' : '#bbc2a4',
+          1,
         );
-        if (region === 4) {
-          poly(
-            [
-              [7, -8],
-              [12, -22],
-              [17, -9],
-            ],
-            '#8f7eb0',
-          );
-          glint(12, -15, '#d7c1ee', 1.5);
-        } else if (variant % 4 === 0) {
-          for (const [x, y] of [
-            [-9, 2],
-            [2, 4],
-            [10, 1],
-          ])
-            oval(x, y, 3, 2, '#87966e');
-        }
+        if (region === 0) foliage(-14, 8, 8, 5, '#7e9160');
         return;
       }
-      shade(22, 6, 0.14);
-      if (region === 0) {
-        rect(-4, -12, 8, 28, '#76583b');
-        line(
-          [
-            [-3, -3],
-            [9, -13],
-          ],
-          '#8b6944',
-          3,
-        );
-        line(
-          [
-            [3, -5],
-            [-10, -16],
-          ],
-          '#8b6944',
-          3,
-        );
-        for (const [x, y, rx, ry, c] of [
-          [-12, -28, 16, 12, '#426d48'],
-          [5, -34, 19, 14, '#537e52'],
-          [15, -21, 14, 11, '#355f42'],
-          [-2, -17, 17, 10, '#628756'],
-        ])
-          oval(x + jitter * 0.3, y, rx, ry, c);
-        if (variant % 3 === 0) {
-          for (const [x, c] of [
-            [-13, '#e7d08a'],
-            [4, '#cfa4ad'],
-            [12, '#e9dfb2'],
-          ])
-            glint(x, 5, c, 1.4);
-        }
-      } else if (region === 1) {
-        rect(-3, -10, 6, 24, '#6f6044');
-        for (const [x, y] of [
-          [-12, -24],
-          [0, -32],
-          [13, -22],
-          [-5, -14],
-          [10, -10],
-        ])
-          oval(x, y, 12, 8, y < -25 ? '#507466' : '#5d8068');
-        for (const x of [-17, -11, 13, 18]) {
-          line(
-            [
-              [x, 10],
-              [x + flip * 3, -14],
-            ],
-            '#71825f',
-            2,
-          );
-          poly(
-            [
-              [x - 3, -13],
-              [x + 3, -17],
-              [x + 5, -10],
-            ],
-            '#879a70',
-          );
-        }
-        if (variant % 4 === 0) {
-          oval(-8, 7, 5, 2, '#9eb29b');
-          oval(7, 4, 4, 2, '#a8bbb0');
-          glint(7, 3, '#d9e6d1', 1);
-        }
-      } else if (region === 2) {
-        rect(-4, -8, 8, 26, '#6e5a42');
-        for (const [y, w, c] of [
-          [0, 24, '#48624a'],
-          [-15, 20, '#587159'],
-          [-30, 15, '#6c8166'],
-          [-42, 9, '#809276'],
-        ])
-          poly(
-            [
-              [-w, y],
-              [0, y - 26],
-              [w, y],
-            ],
-            c,
-          );
-        line(
-          [
-            [-4, 4],
-            [-14, 12],
-          ],
-          '#8b7654',
-          2,
-        );
-        line(
-          [
-            [4, 4],
-            [14, 12],
-          ],
-          '#8b7654',
-          2,
-        );
-        if (variant % 5 === 0) {
-          for (const x of [-8, 6]) glint(x, 10, '#b9a4d5', 1.5);
-        }
-      } else {
-        rect(-4, -14, 8, 30, '#58483d');
-        line(
-          [
-            [0, -10],
-            [-17, -28],
-          ],
-          '#665046',
-          4,
-        );
-        line(
-          [
-            [0, -4],
-            [17, -23],
-          ],
-          '#665046',
-          4,
-        );
-        line(
-          [
-            [-17, -28],
-            [-24, -35],
-          ],
-          '#665046',
-          2,
-        );
-        line(
-          [
-            [17, -23],
-            [25, -29],
-          ],
-          '#665046',
-          2,
-        );
-        for (const [x, y] of [
-          [-5, -7],
-          [4, -16],
-          [10, -2],
-        ]) {
-          poly(
-            [
-              [x - 3, y + 6],
-              [x, y - 8],
-              [x + 4, y + 6],
-            ],
-            '#7d5b47',
-          );
-          if (variant % 3 === 0) glint(x, y, '#d68c58', 1);
-        }
-      }
+      const jitter = ((variant >>> 3) % 7) - 3;
+      ctx.save();
+      ctx.translate(jitter * 0.4, 0);
+      if (region === 3) craftedDecoration('dead-tree');
+      else tree(region === 2 ? 'pine' : region === 1 ? 'willow' : 'sapling');
+      ctx.restore();
     }
+
     function enemyFinish() {
       switch (e.species) {
         case 'goblin':
@@ -745,24 +550,7 @@
           // Anatomy, clothing and equipment are one layered species drawing.
           break;
         case 'archer':
-          if (region === 3) break; // frontierRaider owns the single quiver.
-          line(
-            [
-              [-14, -28],
-              [-18, -3],
-            ],
-            '#725a3d',
-            4,
-          );
-          for (const y of [-22, -17, -12])
-            line(
-              [
-                [-17, y],
-                [-11, y - 5],
-              ],
-              '#d9cba7',
-              1,
-            );
+          // The body owns its single leather back quiver.
           break;
         case 'crownguard':
           poly(
@@ -1454,101 +1242,1675 @@
         1.5,
       );
     }
-    function humanoid(color, head = skin, bulk = 1) {
-      softRect(-9 * bulk, 2, 7 * bulk, 13, '#39423e', 2.5);
-      softRect(2 * bulk, 2, 7 * bulk, 13, '#39423e', 2.5);
-      fillPoly(
-        [
-          [-9 * bulk, 7],
-          [-2 * bulk, 7],
-          [-2 * bulk, 15],
-          [-10 * bulk, 15],
-        ],
-        '#17201d',
-        0.24,
-      );
-      fillPoly(
-        [
-          [2 * bulk, 7],
-          [9 * bulk, 7],
-          [10 * bulk, 15],
-          [3 * bulk, 15],
-        ],
-        '#dbe3d0',
-        0.08,
-      );
-      // Sloped shoulders, connected chest/waist and a draped hem replace a rigid trapezoid.
+    // Art construction helpers: articulated bodies and tailored equipment.
+    // All coordinates are presentation-local; no actor/state/collision is changed.
+    function shaped(color, trace, width = 1.2) {
       ctx.fillStyle = color;
       ctx.strokeStyle = ink;
-      ctx.lineWidth = 1.2;
+      ctx.lineWidth = width;
       ctx.beginPath();
-      ctx.moveTo(-11 * bulk, 5);
-      ctx.bezierCurveTo(-12 * bulk, -3, -12 * bulk, -12, -9 * bulk, -17);
-      ctx.quadraticCurveTo(0, -22, 9 * bulk, -17);
-      ctx.bezierCurveTo(12 * bulk, -12, 12 * bulk, -3, 11 * bulk, 5);
-      ctx.quadraticCurveTo(0, 8, -11 * bulk, 5);
+      trace();
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
-      fillPoly(
-        [
-          [-12 * bulk, 5],
-          [-10 * bulk, -18],
-          [0, -18],
-          [0, 5],
-        ],
-        '#14211c',
-        0.18,
-      );
-      fillPoly(
-        [
-          [0, -17],
-          [8 * bulk, -17],
-          [10 * bulk, 1],
-          [0, 1],
-        ],
-        '#fff2c7',
-        0.09,
-      );
-      oval(0, -28, 8 * bulk, 9, head);
-      fillOval(-2.5 * bulk, -31, 3 * bulk, 4, '#fff3dc', 0.22);
-      fillOval(3 * bulk, -25, 3 * bulk, 3, '#7c4f43', 0.08);
+    }
+    function face(x, y, color = skin, bulk = 1, aged = false, mood = 'steady') {
+      oval(x, y, 8 * bulk, 9, color);
+      fillOval(x - 2 * bulk, y - 3, 4 * bulk, 4, '#fff1d5', 0.17);
+      const warm = ['warm', 'bright', 'amused', 'gentle'].includes(mood);
+      for (const side of [-1, 1]) {
+        line(
+          [
+            [x + side * 2.5 * bulk, y - (warm ? 3.4 : mood === 'wry' ? (side < 0 ? 4 : 2.5) : 2)],
+            [
+              x + side * 5 * bulk,
+              y - (mood === 'stern' ? 4 : mood === 'wry' ? (side < 0 ? 5 : 3) : 3),
+            ],
+          ],
+          '#51483c',
+          warm ? 0.8 : 1.2,
+        );
+        oval(
+          x + side * 3.2 * bulk,
+          y - 0.5,
+          warm ? 1.1 : 0.85,
+          mood === 'bright' ? 1.7 : 1.1,
+          '#293a35',
+        );
+        if (warm) fillOval(x + side * 3.2 * bulk - 0.2, y - 1, 0.35, 0.45, '#f9f1d7');
+        if (aged)
+          line(
+            [
+              [x + side * 5 * bulk, y + 2],
+              [x + side * 6 * bulk, y + 3],
+            ],
+            '#987864',
+            0.65,
+          );
+      }
       line(
         [
-          [-9 * bulk, -13],
-          [-16 * bulk, -1],
+          [x, y],
+          [x - 1, y + 3],
+          [x + 1.5, y + 3],
         ],
-        color,
-        5,
+        '#a67960',
+        0.8,
+      );
+      ctx.strokeStyle = '#825a50';
+      ctx.lineWidth = 0.9;
+      ctx.beginPath();
+      ctx.moveTo(x - 2.5, y + 5);
+      ctx.quadraticCurveTo(
+        x + 0.5,
+        y + (warm ? 8 : mood === 'wry' ? 5.8 : 5),
+        x + 3,
+        y + (mood === 'wry' ? 3.6 : 5),
+      );
+      ctx.stroke();
+      if (warm)
+        for (const side of [-1, 1]) fillOval(x + side * 5, y + 3, 1.8, 1.1, '#d88f86', 0.23);
+    }
+    function coiffure(style, color = '#76553e') {
+      // Distinct silhouettes belong to the identity, never to random animation state.
+      if (style === 'bun') oval(10, -39, 6, 6, color);
+      if (style === 'pony')
+        shaped(color, () => {
+          ctx.moveTo(8, -37);
+          ctx.bezierCurveTo(23, -43, 23, -19, 14, -15);
+          ctx.quadraticCurveTo(19, -29, 8, -31);
+        });
+      if (style === 'curls')
+        for (const [x, y] of [
+          [-9, -34],
+          [-11, -28],
+          [-9, -22],
+          [9, -34],
+          [11, -28],
+          [9, -22],
+        ])
+          oval(x, y, 4, 4, color);
+      if (style === 'bob')
+        shaped(color, () => {
+          ctx.moveTo(-9, -35);
+          ctx.lineTo(-12, -22);
+          ctx.lineTo(-6, -20);
+          ctx.lineTo(-6, -32);
+          ctx.lineTo(6, -32);
+          ctx.lineTo(7, -20);
+          ctx.lineTo(12, -23);
+          ctx.lineTo(9, -36);
+        });
+      shaped(color, () => {
+        ctx.moveTo(-8, -32);
+        ctx.quadraticCurveTo(-12, -41, 0, -41);
+        ctx.quadraticCurveTo(11, -41, 9, -31);
+        ctx.lineTo(6, -35);
+        ctx.lineTo(1, -33);
+        ctx.lineTo(-2, -36);
+        ctx.quadraticCurveTo(-6, -34, -8, -32);
+      });
+      line(
+        [
+          [-6, -36],
+          [-2, -38],
+          [4, -38],
+        ],
+        '#e7d6ad',
+        0.65,
+      );
+      if (style === 'braid')
+        for (let y = -29; y <= -13; y += 4) {
+          oval(10, y, 3, 3, color);
+          line(
+            [
+              [8, y - 1],
+              [12, y + 1],
+            ],
+            '#b69c6a',
+            0.65,
+          );
+        }
+      if (style === 'braid' || style === 'pony')
+        line(
+          [
+            [8, -32],
+            [12, -32],
+          ],
+          '#b89462',
+          1.5,
+        );
+    }
+    function beard(style, color = '#c2a05c') {
+      if (style === 'goatee') {
+        shaped(color, () => {
+          ctx.moveTo(-3, -23);
+          ctx.lineTo(3, -23);
+          ctx.lineTo(3, -19);
+          ctx.lineTo(0, -16);
+          ctx.lineTo(-3, -19);
+        });
+        line(
+          [
+            [-4, -25],
+            [-1, -26],
+            [0, -25],
+            [1, -26],
+            [4, -25],
+          ],
+          color,
+          1.4,
+        );
+        line(
+          [
+            [0, -21],
+            [0, -18],
+          ],
+          '#ead396',
+          0.6,
+        );
+      } else {
+        shaped(color, () => {
+          ctx.moveTo(-7, -26);
+          ctx.quadraticCurveTo(0, -21, 7, -26);
+          ctx.lineTo(7, -20);
+          ctx.lineTo(0, -14);
+          ctx.lineTo(-7, -20);
+        });
+        line(
+          [
+            [-5, -25],
+            [-2, -26],
+            [0, -25],
+            [2, -26],
+            [5, -25],
+          ],
+          color,
+          2,
+        );
+        line(
+          [
+            [0, -21],
+            [0, -17],
+          ],
+          '#d9c49d',
+          0.7,
+        );
+      }
+    }
+    function plateHelmet(paladin = false, crowned = false) {
+      // Rigid crown, brow, visor and cheek plates have separate metal planes.
+      shaped(paladin ? '#9cb1bb' : '#687b82', () => {
+        ctx.moveTo(-10, -30);
+        ctx.lineTo(-11, -38);
+        ctx.quadraticCurveTo(-8, -46, 0, -46);
+        ctx.quadraticCurveTo(9, -45, 11, -38);
+        ctx.lineTo(10, -29);
+        ctx.lineTo(6, -33);
+        ctx.lineTo(-6, -33);
+      });
+      poly(
+        [
+          [-10, -35],
+          [0, -38],
+          [10, -35],
+          [8, -25],
+          [0, -21],
+          [-8, -25],
+        ],
+        paladin ? '#b9cbd0' : '#8b9ca2',
+      );
+      poly(
+        [
+          [0, -38],
+          [10, -35],
+          [8, -25],
+          [0, -21],
+        ],
+        '#7d929d',
       );
       line(
         [
-          [9 * bulk, -13],
-          [15 * bulk, -1],
+          [-8, -33],
+          [-2, -32],
+          [2, -32],
+          [8, -33],
         ],
-        color,
-        5,
+        '#24353b',
+        2,
       );
       line(
         [
-          [-8 * bulk, -12],
-          [-14 * bulk, -2],
+          [0, -43],
+          [0, -24],
         ],
-        '#f6e7c7',
-        1,
+        '#e6e8d7',
+        1.1,
       );
-      rect(-9 * bulk, -1, 18 * bulk, 3, '#705c42');
+      for (const side of [-1, 1]) {
+        line(
+          [
+            [side * 5, -28],
+            [side * 6, -26],
+          ],
+          '#354b55',
+          0.8,
+        );
+        fillOval(side * 9, -35, 1, 1, '#e6ce8d');
+      }
+      if (paladin) {
+        line(
+          [
+            [-5, -40],
+            [0, -42],
+            [5, -40],
+          ],
+          '#dbc486',
+          1.5,
+        );
+        softPoly(
+          [
+            [-8, -23],
+            [0, -20],
+            [8, -23],
+            [6, -19],
+            [-6, -19],
+          ],
+          '#9eafb5',
+          1,
+        );
+      } else if (!crowned) {
+        oval(0, -45, 3.5, 1.5, '#bfab72');
+        poly(
+          [
+            [-2, -46],
+            [0, -55],
+            [3, -46],
+          ],
+          '#c5c7b1',
+        );
+      }
+    }
+    function mageHead(crowned = false) {
+      face(0, -29, skin, 0.94, false, 'bright');
+      // Silver bob with a long side lock, visibly different from the specialists.
+      coiffure('bob', '#c7d2db');
       line(
         [
-          [-7 * bulk, 1],
-          [7 * bulk, 1],
+          [7, -31],
+          [9, -24],
+          [8, -18],
         ],
-        '#b59563',
-        1,
+        '#e7e8dd',
+        2.5,
+      );
+      shaped('#526d9b', () => {
+        ctx.moveTo(-11, -36);
+        ctx.quadraticCurveTo(-5, -47, -2, -56);
+        ctx.quadraticCurveTo(4, -58, 9, -52);
+        ctx.lineTo(5, -51);
+        ctx.lineTo(12, -36);
+      });
+      shaped('#7893b4', () => {
+        ctx.moveTo(-17, -35);
+        ctx.quadraticCurveTo(-8, -40, 0, -38);
+        ctx.quadraticCurveTo(9, -40, 17, -35);
+        ctx.quadraticCurveTo(0, -30, -17, -35);
+      });
+      line(
+        [
+          [-10, -37],
+          [0, -39],
+          [11, -37],
+        ],
+        '#c9c193',
+        1.2,
+      );
+      if (crowned) {
+        // The crown encircles the cone above the brim; the scarf masks the mouth.
+        craftAt(0, -43, 0.65, () => royalCrown(0));
+        softPoly(
+          [
+            [-9, -27],
+            [0, -25],
+            [9, -28],
+            [9, -20],
+            [1, -17],
+            [-9, -21],
+          ],
+          '#79608c',
+          1.2,
+        );
+        line(
+          [
+            [-7, -24],
+            [0, -22],
+            [7, -24],
+          ],
+          '#b196bd',
+          1,
+        );
+        shaped('#66527b', () => {
+          ctx.moveTo(7, -22);
+          ctx.quadraticCurveTo(20, -21, 20, -11);
+          ctx.lineTo(11, -15);
+          ctx.lineTo(8, -18);
+        });
+      }
+    }
+    function smithHammer(x = 22) {
+      line(
+        [
+          [x, -27],
+          [x - 6, 14],
+        ],
+        '#947450',
+        3.8,
+      );
+      // Socket, heavy rectangular poll and a short tapered peen.
+      poly(
+        [
+          [x - 10, -34],
+          [x + 4, -34],
+          [x + 7, -30],
+          [x + 7, -23],
+          [x - 10, -23],
+        ],
+        '#9ba9ac',
+      );
+      poly(
+        [
+          [x + 7, -32],
+          [x + 14, -29],
+          [x + 7, -25],
+        ],
+        '#71868c',
+      );
+      poly(
+        [
+          [x - 10, -34],
+          [x + 4, -34],
+          [x + 2, -30],
+          [x - 10, -30],
+        ],
+        '#d3d9ca',
+      );
+      softRect(x - 2, -31, 4, 6, '#64767c', 0.6);
+    }
+    function runicStaff(x = 18) {
+      line(
+        [
+          [x, -37],
+          [x, 15],
+        ],
+        '#79604e',
+        3,
+      );
+      line(
+        [
+          [x + 1, -32],
+          [x + 1, 12],
+        ],
+        '#b79b6c',
+        0.7,
+      );
+      // A narrow carved crook surrounds a floating crystal rather than a flat sign.
+      shaped('#a58b67', () => {
+        ctx.moveTo(x - 2, -31);
+        ctx.bezierCurveTo(x - 13, -41, x - 5, -50, x + 3, -48);
+        ctx.quadraticCurveTo(x + 13, -46, x + 8, -38);
+        ctx.lineTo(x + 5, -40);
+        ctx.quadraticCurveTo(x + 8, -45, x + 2, -45);
+        ctx.quadraticCurveTo(x - 6, -44, x - 2, -36);
+      });
+      poly(
+        [
+          [x + 1, -43],
+          [x + 4, -39],
+          [x + 1, -34],
+          [x - 2, -39],
+        ],
+        '#baa5d4',
+      );
+      line(
+        [
+          [x - 3, -31],
+          [x + 3, -31],
+        ],
+        '#d9c28e',
+        2,
       );
     }
-    // Orc lineage: broad brow, low ears, heavy muzzle, paired lower tusks,
-    // thick neck and articulated limbs. Rank changes kit, never species.
+    function staffAnchor(x = 21) {
+      line(
+        [
+          [x, -31],
+          [x, 11],
+        ],
+        '#819f9c',
+        3,
+      );
+      oval(x, -33, 4, 4, '#9ebbb1');
+      fillOval(x, -33, 1.6, 1.6, '#395b60');
+      line(
+        [
+          [x - 7, -24],
+          [x + 7, -24],
+        ],
+        '#c2d1b8',
+        2.5,
+      );
+      line(
+        [
+          [x - 10, 0],
+          [x - 8, 8],
+          [x, 13],
+          [x + 8, 8],
+          [x + 10, 0],
+        ],
+        '#a3bfb5',
+        3.5,
+      );
+      poly(
+        [
+          [x - 12, 0],
+          [x - 5, 3],
+          [x - 10, 6],
+        ],
+        '#ccd5be',
+      );
+      poly(
+        [
+          [x + 12, 0],
+          [x + 5, 3],
+          [x + 10, 6],
+        ],
+        '#ccd5be',
+      );
+    }
+    function grip(x, y, color = skin, angle = 0) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      oval(0, 0, 3.1, 3.7, color);
+      line(
+        [
+          [-1.7, -0.5],
+          [1.4, 0.1],
+        ],
+        '#7b6550',
+        0.7,
+      );
+      line(
+        [
+          [-1.8, 1.1],
+          [1.2, 1.6],
+        ],
+        '#7b6550',
+        0.65,
+      );
+      ctx.restore();
+    }
+    function spectralRoyalCrown() {
+      // The original three-point royal silhouette becomes one fitted glasslike crown.
+      // Broad valleys, a taller center and curved band keep the hierarchy readable.
+      ctx.save();
+      const alpha = ctx.globalAlpha;
+      ctx.beginPath();
+      ctx.moveTo(-19, -44);
+      ctx.lineTo(-21, -59);
+      ctx.quadraticCurveTo(-21, -62, -18, -60);
+      ctx.lineTo(-11, -52);
+      ctx.lineTo(-7, -54);
+      ctx.lineTo(0, -67);
+      ctx.lineTo(7, -54);
+      ctx.lineTo(11, -52);
+      ctx.lineTo(18, -60);
+      ctx.quadraticCurveTo(21, -62, 21, -59);
+      ctx.lineTo(19, -44);
+      ctx.quadraticCurveTo(0, -39, -19, -44);
+      ctx.closePath();
+      const crystal = ctx.createLinearGradient(0, -67, 0, -40);
+      crystal.addColorStop(0, '#edc870');
+      crystal.addColorStop(0.5, '#d3b889');
+      crystal.addColorStop(1, '#a38abb');
+      ctx.globalAlpha = alpha * 0.62;
+      ctx.fillStyle = crystal;
+      ctx.fill();
+      ctx.globalAlpha = alpha * 0.18;
+      ctx.strokeStyle = '#ffe2a1';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.globalAlpha = alpha * 0.88;
+      ctx.strokeStyle = '#8f785e';
+      ctx.lineWidth = 0.95;
+      ctx.stroke();
+      // Translucent facet planes carry volume without adding more spikes.
+      ctx.globalAlpha = alpha * 0.24;
+      fillPoly(
+        [
+          [-18, -59],
+          [-14, -47],
+          [-9, -45],
+          [-11, -52],
+        ],
+        '#fff0bc',
+        alpha * 0.24,
+      );
+      fillPoly(
+        [
+          [0, -65],
+          [0, -46],
+          [7, -46],
+          [7, -54],
+        ],
+        '#f9dfaa',
+        alpha * 0.24,
+      );
+      fillPoly(
+        [
+          [18, -59],
+          [13, -46],
+          [18, -45],
+        ],
+        '#e9d7f2',
+        alpha * 0.24,
+      );
+      ctx.globalAlpha = alpha * 0.78;
+      line(
+        [
+          [-18, -46],
+          [-9, -44],
+          [0, -43],
+          [9, -44],
+          [18, -46],
+        ],
+        '#e8c582',
+        1.35,
+      );
+      line(
+        [
+          [-17, -48],
+          [-10, -46],
+        ],
+        '#fff0bf',
+        0.7,
+      );
+      line(
+        [
+          [10, -46],
+          [17, -48],
+        ],
+        '#fff0bf',
+        0.7,
+      );
+      poly(
+        [
+          [0, -55],
+          [3.5, -50],
+          [0, -45],
+          [-3.5, -50],
+        ],
+        '#ad89c1',
+      );
+      line(
+        [
+          [0, -53],
+          [-1.3, -50],
+          [0, -48],
+        ],
+        '#f1d7ec',
+        0.8,
+      );
+      for (const x of [-12, 12]) fillOval(x, -47, 0.8, 0.8, '#f4dda4', alpha * 0.55);
+      ctx.restore();
+    }
+    function royalCrown(y = -39) {
+      shaped(gold, () => {
+        ctx.moveTo(-10, y);
+        ctx.lineTo(-13, y - 10);
+        ctx.lineTo(-5, y - 6);
+        ctx.lineTo(0, y - 14);
+        ctx.lineTo(5, y - 6);
+        ctx.lineTo(13, y - 10);
+        ctx.lineTo(10, y);
+        ctx.quadraticCurveTo(0, y + 3, -10, y);
+      });
+      line(
+        [
+          [-10, y],
+          [0, y + 1],
+          [10, y],
+        ],
+        '#8f713d',
+        2,
+      );
+      poly(
+        [
+          [0, y - 9],
+          [3, y - 5],
+          [0, y - 1],
+          [-3, y - 5],
+        ],
+        '#bc93c3',
+      );
+      fillOval(-0.7, y - 5.5, 0.9, 1.2, '#f9e2ed');
+    }
+    function backQuiver(x = -18, y = -25, scale = 1) {
+      craftAt(x, y, scale, () => {
+        ctx.rotate(0.12);
+        shaped('#71503a', () => {
+          ctx.moveTo(-4.5, 0);
+          ctx.lineTo(-4, 23);
+          ctx.quadraticCurveTo(0, 28, 4, 23);
+          ctx.lineTo(4.5, 0);
+        });
+        oval(0, 0, 4.5, 2, '#382f29');
+        for (const [x, top] of [
+          [-2.5, -12],
+          [0, -16],
+          [2.5, -10],
+        ]) {
+          line(
+            [
+              [x, 1],
+              [x, top],
+            ],
+            '#c6ad7d',
+            1,
+          );
+          // Paired feather vanes and a blunt nock, never exposed arrowheads.
+          for (const side of [-1, 1])
+            shaped(
+              '#d2d7bc',
+              () => {
+                ctx.moveTo(x, top + 1);
+                ctx.lineTo(x + side * 2.2, top - 1);
+                ctx.lineTo(x + side * 2, top + 3);
+                ctx.lineTo(x, top + 5);
+              },
+              0.45,
+            );
+        }
+        line(
+          [
+            [-4.5, 1],
+            [0, 2.5],
+            [4.5, 1],
+          ],
+          '#bc9565',
+          1.6,
+        );
+        line(
+          [
+            [-2, 5],
+            [-2, 22],
+          ],
+          '#a57b53',
+          0.7,
+        );
+        line(
+          [
+            [-4, 20],
+            [4, 20],
+          ],
+          '#453a2e',
+          1.4,
+        );
+        for (const y of [7, 12, 17]) fillOval(2.5, y, 0.45, 0.6, '#c0a17b');
+      });
+    }
+    function tricornHat(y = -39, scale = 1) {
+      craftAt(0, y, scale, () => {
+        // A fitted felt cap and three folded brim corners, without royal metalwork.
+        oval(0, -3, 10, 7, '#443b50');
+        shaped('#51455d', () => {
+          ctx.moveTo(-16, 1);
+          ctx.quadraticCurveTo(-19, -3, -18, -10);
+          ctx.quadraticCurveTo(-11, -7, -7, -5);
+          ctx.quadraticCurveTo(-2, -11, 0, -14);
+          ctx.quadraticCurveTo(3, -11, 7, -5);
+          ctx.quadraticCurveTo(13, -7, 18, -10);
+          ctx.quadraticCurveTo(19, -2, 15, 1);
+          ctx.quadraticCurveTo(0, 6, -16, 1);
+        });
+        line(
+          [
+            [-16, -7],
+            [-11, 0],
+            [0, 3],
+            [11, 0],
+            [16, -7],
+          ],
+          '#9e929f',
+          1,
+        );
+        line(
+          [
+            [0, -12],
+            [-4, -4],
+            [4, -4],
+            [0, -12],
+          ],
+          '#74677e',
+          0.8,
+        );
+        oval(-9, -1, 1.8, 2, '#a1a48f');
+      });
+    }
+    function marshalSpear(x = 29, scale = 1) {
+      craftAt(x, 0, scale, () => {
+        line(
+          [
+            [0, -42],
+            [0, 22],
+          ],
+          '#947a50',
+          3,
+        );
+        line(
+          [
+            [1, -39],
+            [1, 19],
+          ],
+          '#c1aa79',
+          0.7,
+        );
+        poly(
+          [
+            [-2, -40],
+            [-5, -44],
+            [-3, -50],
+            [0, -61],
+            [3, -50],
+            [5, -44],
+            [2, -40],
+          ],
+          '#a7babe',
+        );
+        poly(
+          [
+            [0, -61],
+            [0, -41],
+            [4, -44],
+            [2, -50],
+          ],
+          '#d6dfd1',
+        );
+        line(
+          [
+            [0, -57],
+            [0, -42],
+          ],
+          '#617c83',
+          0.9,
+        );
+        softRect(-2, -41, 4, 5, '#7f969c', 0.5);
+        for (const y of [-37, -35, -33])
+          line(
+            [
+              [-2, y],
+              [2, y],
+            ],
+            '#c5ad76',
+            0.8,
+          );
+      });
+    }
+    function goblinBody(crown = false, ranged = !!e.ranged, friendly = false) {
+      const hide = '#9caa78',
+        cloth = crown ? '#55485f' : friendly ? '#66875c' : '#867356';
+      if (ranged) backQuiver(-16, -24, 0.85);
+      humanoid(cloth, hide, 0.85, false);
+      grip(-13, -1, hide);
+      for (const side of [-1, 1]) {
+        shaped(hide, () => {
+          ctx.moveTo(side * 5, -33);
+          ctx.quadraticCurveTo(side * 12, -35, side * 20, -39);
+          ctx.quadraticCurveTo(side * 18, -28, side * 8, -27);
+        });
+        line(
+          [
+            [side * 10, -31],
+            [side * 16, -35],
+          ],
+          '#717c58',
+          1.3,
+        );
+      }
+      face(0, -29, hide, 0.85, false, friendly ? 'wry' : crown ? 'stern' : 'amused');
+      shaped('#b8bd87', () => {
+        ctx.moveTo(-1, -29);
+        ctx.lineTo(-1.5, -27);
+        ctx.quadraticCurveTo(0, -26, 2, -27);
+        ctx.lineTo(1, -29);
+      });
+      if (friendly) {
+        shaped('#496b48', () => {
+          ctx.moveTo(-10, -35);
+          ctx.quadraticCurveTo(-7, -44, 3, -43);
+          ctx.lineTo(15, -39);
+          ctx.lineTo(7, -36);
+          ctx.lineTo(-10, -35);
+        });
+        line(
+          [
+            [-12, -35],
+            [0, -37],
+            [11, -35],
+          ],
+          '#b7ae78',
+          2,
+        );
+        line(
+          [
+            [6, -39],
+            [10, -48],
+          ],
+          '#d8c6a0',
+          1.3,
+        );
+        line(
+          [
+            [10, -48],
+            [13, -45],
+          ],
+          '#c2a47f',
+          2,
+        );
+      }
+      softRect(-8, -16, 16, 13, crown ? '#87929a' : '#67533e', 2.5);
+      line(
+        [
+          [-7, -15],
+          [6, -3],
+        ],
+        crown ? '#c1af7d' : '#ac9365',
+        2.3,
+      );
+      if (ranged) {
+        bow(16, -6);
+        grip(15, -4, hide);
+      } else {
+        sword(15, -8);
+        grip(17, 0, hide);
+      }
+      if (crown) {
+        shaped('#79858d', () => {
+          ctx.moveTo(-8, -34);
+          ctx.quadraticCurveTo(-9, -45, 0, -46);
+          ctx.quadraticCurveTo(10, -44, 9, -34);
+          ctx.quadraticCurveTo(0, -37, -8, -34);
+        });
+        line(
+          [
+            [-8, -34],
+            [0, -36],
+            [9, -34],
+          ],
+          '#c7c4ae',
+          1.1,
+        );
+      }
+    }
+    function crownSoldier() {
+      const ancestry = e.crownAncestry || e.species;
+      if (ancestry === 'orc') {
+        orcBody();
+        return;
+      }
+      if (ancestry === 'ogre') {
+        ogreBody(!!e.ranged);
+        for (const side of [-1, 1])
+          softPoly(
+            [
+              [side * 14, -25],
+              [side * 24, -28],
+              [side * 29, -20],
+              [side * 24, -14],
+              [side * 15, -17],
+            ],
+            '#8e9ba1',
+            3,
+          );
+        softPoly(
+          [
+            [-13, -21],
+            [0, -24],
+            [14, -20],
+            [12, -4],
+            [0, 0],
+            [-13, -5],
+          ],
+          '#82909a',
+          3,
+        );
+        line(
+          [
+            [-10, -18],
+            [0, -20],
+            [10, -17],
+          ],
+          '#c1c6b8',
+          1.2,
+        );
+        shaped('#77858c', () => {
+          ctx.moveTo(-14, -36);
+          ctx.quadraticCurveTo(-17, -48, 0, -49);
+          ctx.quadraticCurveTo(17, -47, 14, -36);
+          ctx.quadraticCurveTo(0, -40, -14, -36);
+        });
+        line(
+          [
+            [-13, -36],
+            [0, -39],
+            [13, -36],
+          ],
+          '#c4c7b5',
+          1.4,
+        );
+      } else if (ancestry === 'goblin') goblinBody(true);
+      else {
+        if (e.ranged) backQuiver();
+        humanoid('#55485f', skin, 1.05, false);
+        grip(-15, -1);
+        softPoly(
+          [
+            [-10, -20],
+            [0, -23],
+            [10, -20],
+            [9, -3],
+            [0, 0],
+            [-9, -3],
+          ],
+          '#8d9ca5',
+          3,
+        );
+        for (const side of [-1, 1])
+          softPoly(
+            [
+              [side * 8, -19],
+              [side * 15, -22],
+              [side * 20, -16],
+              [side * 16, -10],
+              [side * 10, -12],
+            ],
+            '#a7b0b1',
+            2.5,
+          );
+        if (ancestry === 'archer') {
+          shaped('#627b67', () => {
+            ctx.moveTo(-10, -29);
+            ctx.lineTo(-11, -38);
+            ctx.quadraticCurveTo(0, -44, 11, -38);
+            ctx.lineTo(10, -29);
+            ctx.lineTo(7, -34);
+            ctx.quadraticCurveTo(0, -38, -7, -34);
+          });
+        }
+        if (ancestry === 'archer') {
+          face(0, -29, '#cbaa8c', 1, false, 'wry');
+          coiffure('short', '#9e784c');
+        } else plateHelmet(false, true);
+        if (e.ranged) {
+          bow(18, -7);
+          grip(17, -5);
+        } else {
+          sword(18, -8);
+          grip(20, 1, '#9da9b0');
+        }
+      }
+      const width = ancestry === 'ogre' ? 1.4 : ancestry === 'goblin' ? 0.8 : 1;
+      ctx.save();
+      ctx.scale(width, 1);
+      poly(
+        [
+          [0, -19],
+          [4, -14],
+          [0, -9],
+          [-4, -14],
+        ],
+        '#74434e',
+      );
+      oval(0, -14, 1.2, 1.2, gold);
+      line(
+        [
+          [-8, -3],
+          [8, -3],
+        ],
+        '#c5b582',
+        1.3,
+      );
+      if (!e.ranged) shield(ancestry === 'ogre' ? -23 : -18, 0, '#744952');
+      ctx.restore();
+    }
+    function appointedResident() {
+      // Repaint the same immutable visual recipe; this does not construct a Campaign unit.
+      const [group, key] = (e.masterId || '').split(':');
+      if (group === 'specialist')
+        specialist({
+          ...e,
+          family: key,
+          kind: ['crypt', 'mine', 'cindermaw'].includes(key)
+            ? 'smith'
+            : key === 'archive'
+              ? 'alchemist'
+              : 'teacher',
+        });
+      else {
+        const captain = {
+          'supply-vale': { species: 'goblin', captainVisualIdol: 'thorn' },
+          'supply-march': { species: 'mireling', captainVisualIdol: 'mire' },
+          'supply-highlands': { family: 'ridge', type: 'boss', captainProfile: 'supply-highlands' },
+          'supply-crown': {
+            species: 'ashbeast',
+            captainVisualIdol: 'darklord',
+            captainProfile: 'supply-crown',
+          },
+          'frontier-overseer': {
+            species: 'orc',
+            captainVisualIdol: 'warlord',
+            captainProfile: 'frontier-overseer',
+          },
+        };
+        const visual =
+          group === 'field'
+            ? { type: 'boss', family: key }
+            : group === 'captain'
+              ? captain[key]
+              : null;
+        if (visual)
+          draw(
+            ctx,
+            {
+              ...e,
+              kind: undefined,
+              renderKind: 'enemy',
+              type: 'mob',
+              form: 'normal',
+              captain: group === 'captain',
+              ...visual,
+              visualScale: 1,
+            },
+            { x: 0, y: 0 },
+            region,
+            true,
+          );
+        else humanoid('#787467', '#b9b09d');
+      }
+      // One small official clasp leaves animal, skeletal and humanoid identities intact.
+      oval(0, 0, 3, 2.7, '#bfa169');
+      poly(
+        [
+          [0, -2],
+          [1.4, 0],
+          [0, 2],
+          [-1.4, 0],
+        ],
+        '#b595b7',
+      );
+    }
+    function skeletonBody(ceremonial = false) {
+      if (ceremonial)
+        shaped('#574e62', () => {
+          ctx.moveTo(-11, -20);
+          ctx.quadraticCurveTo(-19, -13, -20, 10);
+          ctx.quadraticCurveTo(-11, 13, -5, 8);
+          ctx.lineTo(5, 8);
+          ctx.quadraticCurveTo(15, 14, 20, 10);
+          ctx.quadraticCurveTo(19, -13, 10, -20);
+        });
+      for (const side of [-1, 1]) {
+        const x = side * 6;
+        line(
+          [
+            [x, 0],
+            [side * 8, 8],
+            [side * 8, 14],
+          ],
+          '#9e9d88',
+          4.3,
+        );
+        line(
+          [
+            [x, 0],
+            [side * 7, 8],
+            [side * 7, 14],
+          ],
+          bone,
+          2.7,
+        );
+        oval(side * 8, 8, 2.7, 2.5, bone);
+        shaped(bone, () => {
+          ctx.moveTo(side * 5, 13);
+          ctx.lineTo(side * 9, 13);
+          ctx.lineTo(side * 13, 16);
+          ctx.quadraticCurveTo(side * 9, 19, side * 4, 17);
+        });
+        for (let i = 0; i < 3; i++)
+          line(
+            [
+              [side * (8 + i * 1.4), 15],
+              [side * (9 + i * 1.4), 17],
+            ],
+            '#8b8d7d',
+            0.65,
+          );
+        line(
+          [
+            [side * 7, -17],
+            [side * 13, -9],
+            [side * 15, -1],
+          ],
+          '#a6a58e',
+          4,
+        );
+        line(
+          [
+            [side * 7, -17],
+            [side * 12, -9],
+            [side * 14, -1],
+          ],
+          bone,
+          2.6,
+        );
+        oval(side * 12, -9, 2.2, 2.2, bone);
+        grip(side * 15, -1, bone);
+      }
+      oval(0, 0, 7, 4, bone);
+      oval(0, -0.7, 3, 1.4, '#6b766a');
+      line(
+        [
+          [0, -21],
+          [0, -1],
+        ],
+        '#a8a68d',
+        4,
+      );
+      for (const y of [-17, -12, -7]) {
+        shaped(
+          bone,
+          () => {
+            ctx.moveTo(0, y - 2);
+            ctx.bezierCurveTo(-12, y - 5, -12, y + 4, 0, y + 4);
+            ctx.bezierCurveTo(12, y + 4, 12, y - 5, 0, y - 2);
+          },
+          0.8,
+        );
+        line(
+          [
+            [-6, y],
+            [0, y + 2],
+            [6, y],
+          ],
+          '#7f8979',
+          1,
+        );
+      }
+      line(
+        [
+          [-8, -18],
+          [0, -21],
+          [8, -18],
+        ],
+        bone,
+        2.2,
+      );
+      skull(0, -30, 9);
+      line(
+        [
+          [-4, -23],
+          [4, -23],
+        ],
+        '#918f79',
+        0.8,
+      );
+      if (ceremonial) {
+        tricornHat(-39);
+        softPoly(
+          [
+            [-11, -20],
+            [-17, -17],
+            [-16, -7],
+            [-9, -9],
+          ],
+          '#81738a',
+          2,
+        );
+        line(
+          [
+            [-15, -17],
+            [-12, -9],
+          ],
+          '#d2bc85',
+          1.3,
+        );
+        line(
+          [
+            [20, -32],
+            [20, 16],
+          ],
+          '#947956',
+          3,
+        );
+        shaped(bone, () => {
+          ctx.moveTo(19, -31);
+          ctx.quadraticCurveTo(30, -39, 36, -33);
+          ctx.quadraticCurveTo(26, -31, 25, -23);
+          ctx.lineTo(20, -24);
+        });
+        grip(18, -2, bone);
+        shield(-18, 0, '#766b66');
+      } else {
+        if (e.ranged) bow(17, -7);
+        else sword(15, -9);
+        grip(15, 0, bone);
+      }
+    }
+    function scorpionBody(minister = false, young = false) {
+      const shell = minister ? '#986755' : e.ranged ? '#936d67' : '#ad8065',
+        highlight = minister ? '#bf9375' : '#c7a181';
+      const k = minister ? 1.18 : 1;
+      ctx.save();
+      ctx.scale(k, k);
+      // Rear tail arches above the carapace. The shell occludes its root.
+      const tail = [
+        [0, 5],
+        [-14, -5],
+        [-23, -20],
+        [-23, -33],
+        [-17, -43],
+        [-5, -46],
+        [6, -40],
+      ];
+      for (let i = 0; i < tail.length - 1; i++) {
+        line([tail[i], tail[i + 1]], '#674e46', 8 - i * 0.5);
+        oval(tail[i + 1][0], tail[i + 1][1], 4.5 - i * 0.25, 4.8 - i * 0.3, shell);
+        fillOval(tail[i + 1][0] - 1, tail[i + 1][1] - 1, 2, 2, highlight, 0.45);
+      }
+      shaped('#e1cc9e', () => {
+        ctx.moveTo(3, -43);
+        ctx.quadraticCurveTo(15, -44, 13, -30);
+        ctx.quadraticCurveTo(9, -37, 5, -36);
+      });
+      // Far legs precede the shell; paired tapered segments meet at real sockets.
+      for (const side of [-1, 1])
+        for (let i = 0; i < 4; i++) {
+          const y = -7 + i * 5,
+            reach = 29 + i * 2;
+          shaped(shell, () => {
+            ctx.moveTo(side * 12, y - 2);
+            ctx.quadraticCurveTo(side * 24, y - 2, side * reach, y + 4);
+            ctx.lineTo(side * (reach + 5), y + 12);
+            ctx.lineTo(side * (reach + 2), y + 12);
+            ctx.lineTo(side * (reach - 2), y + 6);
+            ctx.lineTo(side * 14, y + 2);
+          });
+          oval(side * (reach - 2), y + 4, 2.6, 2.2, highlight);
+        }
+      shaped(shell, () => {
+        ctx.moveTo(-12, 7);
+        ctx.bezierCurveTo(-24, 6, -26, -6, -13, -13);
+        ctx.quadraticCurveTo(0, -19, 14, -12);
+        ctx.bezierCurveTo(27, -6, 23, 7, 12, 10);
+        ctx.quadraticCurveTo(0, 15, -12, 7);
+      });
+      for (let y = -6; y < 11; y += 5) {
+        line(
+          [
+            [-16, y],
+            [0, y + 3],
+            [16, y],
+          ],
+          '#704d43',
+          1.1,
+        );
+        line(
+          [
+            [-9, y - 1],
+            [0, y],
+            [9, y - 1],
+          ],
+          highlight,
+          1,
+        );
+      }
+      for (const side of [-1, 1]) {
+        line(
+          [
+            [side * 14, -9],
+            [side * 22, -18],
+            [side * 27, -24],
+          ],
+          '#6c5148',
+          8,
+        );
+        line(
+          [
+            [side * 14, -9],
+            [side * 22, -18],
+            [side * 27, -24],
+          ],
+          shell,
+          5.8,
+        );
+        oval(side * 22, -18, 4, 3.5, highlight);
+        shaped(highlight, () => {
+          ctx.moveTo(side * 24, -26);
+          ctx.bezierCurveTo(side * 26, -35, side * 37, -36, side * 39, -31);
+          ctx.lineTo(side * 32, -29);
+          ctx.lineTo(side * 38, -25);
+          ctx.bezierCurveTo(side * 37, -18, side * 28, -18, side * 24, -26);
+        });
+        line(
+          [
+            [side * 29, -29],
+            [side * 32, -26],
+          ],
+          '#755348',
+          1,
+        );
+      }
+      oval(0, -11, 12, 7, shell);
+      for (const x of [-5, 5]) {
+        oval(x, -13, young ? 2.7 : 1.9, young ? 3.3 : 2.3, '#302c2c');
+        fillOval(x - 0.5, -14, 0.7, 1, '#e7c482');
+      }
+      line(
+        [
+          [-5, -6],
+          [0, -4],
+          [5, -6],
+        ],
+        '#65483e',
+        1,
+      );
+      if (minister || e.captainProfile === 'supply-crown') {
+        line(
+          [
+            [-14, -4],
+            [0, 4],
+            [14, -4],
+          ],
+          '#51465a',
+          4,
+        );
+        poly(
+          [
+            [0, -7],
+            [5, -2],
+            [0, 3],
+            [-5, -2],
+          ],
+          '#b78db6',
+        );
+        for (const x of [-11, 11]) oval(x, -3, 1.2, 1.2, gold);
+      } else if (e.ranged) {
+        softRect(-10, -1, 7, 6, '#754c4c', 2);
+        softRect(4, -1, 7, 6, '#754c4c', 2);
+      }
+      ctx.restore();
+    }
+    function mountainBody() {
+      humanoid('#846c52', '#acaa7d', 1.55, false);
+      grip(-23, -1, '#a5a678');
+      // Muscular neck, cheek planes and curved horn roots belong to this mountain people.
+      oval(0, -22, 10, 7, '#92966d');
+      face(0, -30, '#b3b284', 1.5, true);
+      shaped('#bec093', () => {
+        ctx.moveTo(-9, -27);
+        ctx.quadraticCurveTo(0, -21, 10, -27);
+        ctx.quadraticCurveTo(8, -18, 0, -19);
+        ctx.quadraticCurveTo(-9, -19, -9, -27);
+      });
+      line(
+        [
+          [-6, -24],
+          [5, -24],
+        ],
+        '#686b50',
+        1.2,
+      );
+      for (const side of [-1, 1]) {
+        shaped(bone, () => {
+          ctx.moveTo(side * 9, -36);
+          ctx.quadraticCurveTo(side * 18, -38, side * 18, -47);
+          ctx.quadraticCurveTo(side * 24, -35, side * 12, -32);
+        });
+        oval(side * 16, -35, 3, 3, '#898c6a');
+        softPoly(
+          [
+            [side * 10, -18],
+            [side * 20, -21],
+            [side * 23, -12],
+            [side * 13, -10],
+          ],
+          '#8d9186',
+          3,
+        );
+      }
+      softRect(-12, -15, 24, 14, '#6b715f', 3);
+      line(
+        [
+          [-11, -12],
+          [10, -12],
+        ],
+        '#b1b29b',
+        1.2,
+      );
+      softRect(-15, 0, 30, 4, '#584735', 1);
+      softRect(-7, -6, 14, 9, '#846949', 2);
+      line(
+        [
+          [-5, -4],
+          [5, -4],
+        ],
+        gold,
+        1,
+      );
+      oval(0, -1, 2, 1, gold);
+      line(
+        [
+          [26, -27],
+          [20, 17],
+        ],
+        '#6c533b',
+        5,
+      );
+      line(
+        [
+          [24, -26],
+          [19, 15],
+        ],
+        '#b79664',
+        2,
+      );
+      poly(
+        [
+          [16, -37],
+          [38, -37],
+          [42, -31],
+          [37, -21],
+          [15, -23],
+        ],
+        '#7d8b89',
+      );
+      poly(
+        [
+          [16, -37],
+          [38, -37],
+          [42, -31],
+          [20, -31],
+        ],
+        '#b8c2b5',
+      );
+      line(
+        [
+          [20, -29],
+          [37, -28],
+        ],
+        '#535f5e',
+        1.1,
+      );
+      for (const x of [22, 29, 35]) oval(x, -26, 1.2, 1.2, '#c9cbb1');
+      grip(23, -4, '#a5a678');
+    }
+    function spectralScholar() {
+      shaped('#3c5f63', () => {
+        ctx.moveTo(-11, -22);
+        ctx.quadraticCurveTo(-19, -7, -20, 12);
+        ctx.quadraticCurveTo(-12, 17, -3, 12);
+        ctx.quadraticCurveTo(8, 18, 19, 11);
+        ctx.quadraticCurveTo(16, -9, 10, -23);
+      });
+      for (const x of [-10, 0, 10])
+        line(
+          [
+            [x * 0.6, -17],
+            [x, 9],
+          ],
+          '#8cafa4',
+          1.3,
+        );
+      face(0, -29, '#a7bfb0', 1, true);
+      shaped('#466b70', () => {
+        ctx.moveTo(-11, -24);
+        ctx.bezierCurveTo(-16, -35, -7, -46, 1, -47);
+        ctx.quadraticCurveTo(12, -43, 13, -25);
+        ctx.lineTo(8, -29);
+        ctx.quadraticCurveTo(7, -39, 0, -38);
+        ctx.quadraticCurveTo(-8, -39, -8, -27);
+      });
+      line(
+        [
+          [-10, -26],
+          [-6, -39],
+          [0, -43],
+          [8, -36],
+          [11, -26],
+        ],
+        '#89a9a1',
+        1.2,
+      );
+      line(
+        [
+          [23, -29],
+          [23, 19],
+        ],
+        '#768f89',
+        3,
+      );
+      oval(23, -29, 4, 4, gold);
+      line(
+        [
+          [15, 11],
+          [17, 18],
+          [23, 23],
+          [30, 18],
+          [32, 11],
+        ],
+        '#a0b7aa',
+        3.5,
+      );
+      line(
+        [
+          [-9, -18],
+          [-16, -9],
+          [-14, -2],
+        ],
+        '#668e88',
+        6,
+      );
+      line(
+        [
+          [10, -18],
+          [17, -9],
+          [21, -5],
+        ],
+        '#668e88',
+        6,
+      );
+      grip(21, -5, '#a1bbad');
+      grip(-14, -2, '#a1bbad');
+      softRect(-20, -4, 13, 10, '#5f6659', 1.5);
+      line(
+        [
+          [-19, -2],
+          [-9, -2],
+        ],
+        '#c3c6a9',
+        1,
+      );
+      for (const x of [-11, 6])
+        line(
+          [
+            [x, 8],
+            [x + 2, 11],
+          ],
+          '#a9b8a4',
+          1,
+        );
+    }
+    function humanoid(color, head = skin, bulk = 1, withHands = true) {
+      for (const side of [-1, 1]) {
+        shaped('#444b42', () => {
+          ctx.moveTo(side * 2 * bulk, 0);
+          ctx.lineTo(side * 9 * bulk, 0);
+          ctx.quadraticCurveTo(side * 10 * bulk, 7, side * 9 * bulk, 13);
+          ctx.lineTo(side * 3 * bulk, 13);
+        });
+        oval(side * 7 * bulk, 13, 5 * bulk, 3, '#3b3930');
+        line(
+          [
+            [side * 5 * bulk, 6],
+            [side * 5.5 * bulk, 10],
+          ],
+          '#878c74',
+          0.9,
+        );
+      }
+      shaped(color, () => {
+        ctx.moveTo(-10 * bulk, 4);
+        ctx.bezierCurveTo(-12 * bulk, -3, -13 * bulk, -13, -9 * bulk, -18);
+        ctx.quadraticCurveTo(0, -23, 9 * bulk, -18);
+        ctx.bezierCurveTo(13 * bulk, -13, 12 * bulk, -3, 10 * bulk, 4);
+        ctx.quadraticCurveTo(0, 8, -10 * bulk, 4);
+      });
+      fillOval(-5 * bulk, -7, 5 * bulk, 11, '#1d3027', 0.14);
+      line(
+        [
+          [-7 * bulk, -15],
+          [-4 * bulk, -6],
+          [-6 * bulk, 2],
+        ],
+        '#e3d5b1',
+        0.7,
+      );
+      oval(0, -20, 4 * bulk, 5, head);
+      face(0, -29, head, bulk);
+      for (const side of [-1, 1]) {
+        shaped(color, () => {
+          ctx.moveTo(side * 8 * bulk, -18);
+          ctx.quadraticCurveTo(side * 14 * bulk, -19, side * 15 * bulk, -10);
+          ctx.lineTo(side * 17 * bulk, -3);
+          ctx.quadraticCurveTo(side * 17 * bulk, 1, side * 12 * bulk, -1);
+          ctx.lineTo(side * 10 * bulk, -9);
+          ctx.lineTo(side * 7 * bulk, -14);
+        });
+        line(
+          [
+            [side * 12 * bulk, -10],
+            [side * 14 * bulk, -7],
+          ],
+          '#d5c6a4',
+          0.8,
+        );
+        if (withHands) grip(side * 15 * bulk, -1, head);
+      }
+      softRect(-10 * bulk, -1, 20 * bulk, 3, '#665238', 1);
+      softRect(-2, -1, 4, 3, '#baa16b', 0.5);
+    }
+
     function orcBody(rank) {
       const governor = rank === 'governor',
         inspector = rank === 'inspector',
@@ -1559,6 +2921,7 @@
         light = '#b5bd8c',
         cloth = crown ? '#54485f' : officer ? '#79504a' : e.ranged ? '#77604e' : '#746656',
         metal = crown ? '#9da9b0' : governor ? '#a5afb0' : '#888e88';
+      if (crown && e.ranged) backQuiver(-24, -27, 1.2);
       const shape = (color, trace) => {
         ctx.fillStyle = color;
         ctx.strokeStyle = ink;
@@ -1733,6 +3096,27 @@
         );
         if (governor) softRect(-3, -47, 6, 6, '#c2a472', 1.5);
       }
+      if (inspector) {
+        line(
+          [
+            [1, -43],
+            [3, -50],
+            [6, -43],
+          ],
+          '#363c32',
+          5,
+        );
+      } else if (e.ranged && !governor) {
+        line(
+          [
+            [-8, -39],
+            [-4, -42],
+            [2, -40],
+          ],
+          '#665039',
+          3,
+        );
+      }
       // High-contrast sockets, amber eyes and a heavy, angled brow.
       for (const side of [-1, 1]) {
         oval(side * 5.5, -33, 3.3, 2.2, '#30372b');
@@ -1741,7 +3125,7 @@
         line(
           [
             [side * 9, -36],
-            [side * 3, inspector ? -35.5 : -34.5],
+            [side * 3, inspector ? (side < 0 ? -34 : -38) : e.ranged ? -36 : -34.5],
           ],
           shadow,
           2.7,
@@ -1753,8 +3137,8 @@
       line(
         [
           [-7, -23],
-          [0, inspector ? -22 : -23.7],
-          [7, -23],
+          [0, inspector ? -21 : e.ranged ? -22 : -23.7],
+          [7, inspector ? -25 : e.ranged ? -24 : -23],
         ],
         '#46503a',
         1.5,
@@ -1798,7 +3182,53 @@
         oval(-22, -6, 2, 1.4, '#b0aaa0');
       }
       // Real equipment retains deliberate cutting edges and the existing role.
-      if (governor || inspector || e.ranged) {
+      if (crown && e.ranged && !officer) {
+        bow(27, -7);
+        grip(26, -5, hide);
+      } else if (inspector) {
+        line(
+          [
+            [29, -28],
+            [23, 15],
+          ],
+          '#71523d',
+          4,
+        );
+        for (const y of [0, 4, 8])
+          line(
+            [
+              [23, y],
+              [27, y + 1],
+            ],
+            '#b39766',
+            1.2,
+          );
+        oval(29, -31, 8, 9, '#65777a');
+        for (const [x, y, dx, dy] of [
+          [22, -35, -5, -4],
+          [35, -35, 6, -5],
+          [29, -39, 0, -7],
+          [36, -28, 6, 2],
+          [22, -27, -5, 3],
+        ])
+          poly(
+            [
+              [x - 2, y + 1],
+              [x + dx, y + dy],
+              [x + 2, y - 1],
+            ],
+            '#bbc2ad',
+          );
+        line(
+          [
+            [27, -37],
+            [25, -30],
+            [28, -25],
+          ],
+          '#c3c6ae',
+          1.3,
+        );
+      } else if (governor || e.ranged) {
         const x = inspector ? 27 : 28;
         line(
           [
@@ -1848,6 +3278,42 @@
         sword(21, -5);
         if (crown) shield(-22, -1, '#74434e');
       }
+      if (officer) {
+        grip(23, -2, hide);
+        line(
+          [
+            [24, -29],
+            [28, -28],
+          ],
+          '#e1ddc4',
+          1.1,
+        );
+        line(
+          [
+            [-8, -13],
+            [5, -3],
+          ],
+          '#d2b18a',
+          0.7,
+        );
+      } else {
+        line(
+          [
+            [-9, -10],
+            [-8, -4],
+          ],
+          '#bca47c',
+          0.65,
+        );
+        line(
+          [
+            [7, -11],
+            [8, -4],
+          ],
+          '#bca47c',
+          0.65,
+        );
+      }
     }
     function frontierRaider() {
       // One complete irregular marksman, not a hooded archer under a second
@@ -1874,48 +3340,8 @@
         ctx.quadraticCurveTo(-15, 11, -7, 4);
         ctx.lineTo(-3, -19);
       });
-      // The only quiver sits behind the left shoulder, with three arrows.
-      for (const [x, top] of [
-        [-19, -34],
-        [-15, -38],
-        [-11, -33],
-      ]) {
-        line(
-          [
-            [x, top],
-            [-17, -10],
-          ],
-          '#b99c72',
-          1.4,
-        );
-        line(
-          [
-            [x - 2, top + 2],
-            [x, top + 5],
-            [x + 2, top + 3],
-          ],
-          '#d9c9ac',
-          1.5,
-        );
-      }
-      softPoly(
-        [
-          [-21, -20],
-          [-13, -18],
-          [-15, 4],
-          [-21, 3],
-        ],
-        leather,
-        2,
-      );
-      line(
-        [
-          [-21, -18],
-          [-13, -17],
-        ],
-        '#b49164',
-        1.6,
-      );
+      backQuiver(-18, -21);
+
       // Trouser knees and worn soft boots give a mobile, planted stance.
       line(
         [
@@ -2190,13 +3616,38 @@
         '#8b6b50',
         0.8,
       );
+      line(
+        [
+          [-8, -10],
+          [-7, -4],
+          [-2, -2],
+        ],
+        '#bda77e',
+        0.65,
+      );
+      line(
+        [
+          [8, -13],
+          [10, -8],
+        ],
+        '#c1a982',
+        0.7,
+      );
+      line(
+        [
+          [-14, -5],
+          [-12, -4],
+        ],
+        '#bca080',
+        0.7,
+      );
     }
     // One organic species body for melee, thrower and guard variants.
     function ogreBody(ranged) {
       const hide = '#b2a684',
         shadow = '#8b8063',
         light = '#c8bb96';
-      const cloth = ranged ? '#777469' : '#8d7a5f';
+      const cloth = e.crownTroop ? '#55485f' : ranged ? '#777469' : '#8d7a5f';
       const shape = (color, trace) => {
         ctx.fillStyle = color;
         ctx.strokeStyle = ink;
@@ -2207,6 +3658,7 @@
         ctx.fill();
         ctx.stroke();
       };
+      if (e.crownTroop && ranged) backQuiver(-30, -27, 1.35);
       // Weight-bearing legs and broad boots under a rounded, heavy torso.
       for (const side of [-1, 1]) {
         line(
@@ -2312,7 +3764,10 @@
           ctx.quadraticCurveTo(side * 8, -27, side * 5, -24);
         });
       // Preserve the existing weapon identities, without extra armor or lore.
-      if (ranged) {
+      if (e.crownTroop && ranged) {
+        bow(30, -7);
+        grip(29, -5, hide);
+      } else if (ranged) {
         shape('#68675e', () => {
           ctx.moveTo(-16, -25);
           ctx.quadraticCurveTo(-29, -28, -28, -14);
@@ -2381,6 +3836,33 @@
           );
         oval(26, -2, 5, 4, hide);
       }
+      for (const side of [-1, 1]) {
+        line(
+          [
+            [side * 22, -3],
+            [side * 28, -2],
+          ],
+          '#675f49',
+          0.8,
+        );
+        line(
+          [
+            [side * 20, -19],
+            [side * 23, -22],
+          ],
+          light,
+          0.9,
+        );
+      }
+      line(
+        [
+          [-15, -13],
+          [-14, -5],
+          [-10, -3],
+        ],
+        '#b4a17a',
+        0.8,
+      );
     }
     function skull(x = 0, y = -28, r = 8) {
       oval(x, y, r, r, bone);
@@ -2396,286 +3878,270 @@
         1,
       );
     }
-    function bossPet(family) {
-      const known = Object.hasOwn(R.petCompanions, family);
-      if (!known) return; // Inherited object keys are not pet families either.
+    function craftedPet(family) {
+      if (!Object.hasOwn(R.petCompanions, family)) return false;
       shade(18, 5, 0.24);
       const eyes = (x, y, gap = 6) => {
-        for (const dx of [-gap, gap]) {
-          oval(x + dx, y, 3.3, 4.2, '#273b3b');
-          fillOval(x + dx - 0.8, y - 1.3, 1.2, 1.5, '#fff6da');
+        for (const side of [-1, 1]) {
+          oval(x + side * gap, y, 3, 4, '#2d4140');
+          fillOval(x + side * gap - 0.8, y - 1.2, 1.2, 1.5, '#fff0cf');
         }
       };
-      const paws = (c) => {
-        for (const x of [-12, 10]) oval(x, 9, 7, 4, c);
-      };
       const smile = (x, y) => {
-        ctx.strokeStyle = ink;
-        ctx.lineWidth = 1.2;
+        ctx.strokeStyle = '#42514a';
+        ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(x - 3, y);
         ctx.quadraticCurveTo(x, y + 3, x + 3, y);
         ctx.stroke();
       };
+      if (family === 'cindermaw') {
+        craftAt(0, 0, 0.8, () => scorpionBody(false, true));
+        return true;
+      }
       if (family === 'thorn') {
-        // Puppy anatomy, leafy mantle and branching ears preserve Thornfang.
-        poly(
-          [
-            [-14, -3],
-            [-28, -12],
-            [-24, 1],
-            [-13, 4],
-          ],
-          '#917a5b',
-        );
-        oval(-2, -2, 18, 12, '#a68e6e');
-        paws('#bca27e');
-        oval(8, -18, 17, 16, '#b9a17c');
-        poly(
-          [
-            [-6, -27],
-            [-9, -42],
-            [3, -32],
-          ],
-          '#997c58',
-        );
-        poly(
-          [
-            [14, -31],
-            [26, -39],
-            [22, -23],
-          ],
-          '#997c58',
-        );
-        oval(13, -11, 12, 7, '#d9c7a0');
-        eyes(10, -21, 6);
-        oval(19, -13, 3, 2.5, '#3c3931');
-        smile(13, -7);
-        for (const x of [-14, -6, 2])
-          poly(
-            [
-              [x, -9],
-              [x - 4, -19],
-              [x + 6, -13],
-            ],
-            '#6f895a',
-          );
+        shaped('#9d896a', () => {
+          ctx.moveTo(-12, 1);
+          ctx.quadraticCurveTo(-29, -3, -27, -14);
+          ctx.quadraticCurveTo(-17, -6, -12, -5);
+        });
+        oval(-1, -2, 18, 12, '#a38d6c');
+        for (const x of [-11, 11]) {
+          oval(x, 3, 6, 8, '#b9a27b');
+          oval(x + 1, 9, 7, 3.5, '#c4b08a');
+          for (const dx of [-2, 1])
+            line(
+              [
+                [x + dx, 8],
+                [x + dx + 1, 11],
+              ],
+              '#81775b',
+              0.6,
+            );
+        }
+        oval(8, -18, 17, 16, '#b9a27e');
+        for (const side of [-1, 1])
+          shaped('#9b805f', () => {
+            const x = side < 0 ? -3 : 22;
+            ctx.moveTo(x - 5, -27);
+            ctx.quadraticCurveTo(x - 6, -44, x + 3, -37);
+            ctx.lineTo(x + 7, -26);
+          });
+        oval(15, -10, 12, 7, '#d9c59a');
+        eyes(10, -21);
+        oval(22, -12, 3, 2.5, '#3b433a');
+        smile(15, -7);
+        for (const [x, y] of [
+          [-14, -10],
+          [-6, -13],
+          [2, -10],
+        ])
+          shaped('#718956', () => {
+            ctx.moveTo(x - 4, y + 3);
+            ctx.quadraticCurveTo(x - 6, y - 7, x, y - 9);
+            ctx.quadraticCurveTo(x + 7, y - 1, x + 3, y + 3);
+          });
         line(
           [
-            [-3, -33],
-            [-5, -39],
-            [-1, -42],
+            [-2, -31],
+            [8, -34],
+            [19, -31],
           ],
-          '#a8b37b',
+          '#6e533b',
           2,
         );
-      } else if (family === 'mire') {
-        poly(
-          [
-            [-12, 0],
-            [-30, -6],
-            [-25, 5],
-            [-9, 9],
-          ],
-          '#698b67',
-        );
-        oval(-1, -1, 20, 12, '#80a077');
-        paws('#9dbb8b');
-        oval(10, -15, 20, 14, '#8daa7f');
-        oval(17, -7, 19, 8, '#bdc897');
+        for (const x of [0, 17]) {
+          const flip = x === 0 ? -1 : 1;
+          line(
+            [
+              [x, -32],
+              [x + flip * 2, -39],
+              [x + flip * 5, -43],
+            ],
+            '#ddcba0',
+            2,
+          );
+          line(
+            [
+              [x + flip * 2, -38],
+              [x + flip * 7, -38],
+            ],
+            '#ddcba0',
+            1.3,
+          );
+          oval(x, -32, 2.2, 1.5, '#967447');
+        }
+        return true;
+      }
+      if (family === 'mire') {
+        shaped('#74946e', () => {
+          ctx.moveTo(-11, 0);
+          ctx.quadraticCurveTo(-25, -7, -33, -3);
+          ctx.quadraticCurveTo(-27, 7, -9, 9);
+        });
+        oval(0, -1, 19, 12, '#85a27a');
+        for (const x of [-12, 12]) {
+          oval(x, 4, 7, 7, '#93ae80');
+          oval(x + 2, 10, 8, 3, '#a8bb89');
+          for (const dx of [-3, 0, 3])
+            line(
+              [
+                [x + dx, 9],
+                [x + dx + 3, 12],
+              ],
+              '#627c58',
+              0.8,
+            );
+        }
+        oval(9, -16, 19, 14, '#94ae82');
+        oval(17, -7, 19, 8, '#becb99');
         eyes(11, -20, 7);
         line(
           [
-            [6, -5],
-            [28, -5],
+            [4, -5],
+            [29, -5],
           ],
-          '#52684c',
-          1.5,
+          '#566f50',
+          1.2,
         );
-        smile(20, -4);
-        for (const x of [-18, -9, 0])
-          poly(
+        smile(19, -3);
+        for (const x of [13, 25]) oval(x, -11, 1, 1, '#526a4c');
+        for (const x of [-15, -6, 2])
+          softPoly(
             [
-              [x, -9],
-              [x + 3, -18],
+              [x, -10],
+              [x + 3, -17],
               [x + 8, -10],
             ],
-            '#596f50',
-          );
-        for (const x of [13, 25]) oval(x, -10, 1, 1, '#5e7755');
-      } else if (family === 'abyss') {
-        // Rounded wings, four limbs, belly plates, short horns and purple muzzle.
-        for (const side of [-1, 1]) {
-          poly(
-            [
-              [side * 7, -10],
-              [side * 21, -34],
-              [side * 34, -21],
-              [side * 27, -4],
-              [side * 18, -12],
-            ],
-            '#805d99',
-          );
-          line(
-            [
-              [side * 9, -10],
-              [side * 21, -30],
-              [side * 27, -8],
-            ],
-            '#caa6c3',
+            '#60794f',
             1.4,
           );
-        }
-        line(
-          [
-            [-7, 6],
-            [-24, 17],
-            [-29, 9],
-          ],
-          '#9070a5',
-          6,
-        );
-        oval(0, -2, 14, 18, '#9977af');
-        oval(1, 2, 9, 11, '#ccb9b3');
-        paws('#ad8bbd');
-        oval(5, -25, 18, 16, '#b18bc2');
-        poly(
-          [
-            [-8, -36],
-            [-7, -46],
-            [0, -38],
-          ],
-          bone,
-        );
-        poly(
-          [
-            [13, -38],
-            [20, -45],
-            [20, -33],
-          ],
-          bone,
-        );
-        oval(12, -17, 13, 8, '#c6a4cc');
-        eyes(6, -28, 6);
-        smile(15, -14);
-        for (const y of [-3, 2, 7])
+        return true;
+      }
+      if (family === 'abyss') {
+        for (const side of [-1, 1]) {
+          shaped('#8b6895', () => {
+            ctx.moveTo(side * 7, -12);
+            ctx.quadraticCurveTo(side * 16, -36, side * 25, -32);
+            ctx.quadraticCurveTo(side * 34, -29, side * 36, -16);
+            ctx.quadraticCurveTo(side * 24, -21, side * 20, -7);
+          });
           line(
             [
-              [-5, y],
-              [7, y],
+              [side * 7, -13],
+              [side * 20, -31],
+              [side * 34, -17],
             ],
-            '#ad969d',
+            '#c19dab',
+            1.4,
+          );
+          line(
+            [
+              [side * 20, -31],
+              [side * 20, -9],
+            ],
+            '#c19dab',
             1,
           );
-      } else if (family === 'cindermaw') {
-        // Cindermaw is a scorpion-like Ash beast, never a mammalian kitten.
-        line(
-          [
-            [-8, 7],
-            [-25, 12],
-            [-31, -1],
-            [-29, -23],
-            [-20, -31],
-          ],
-          '#ae7b62',
-          6,
-        );
-        poly(
-          [
-            [-23, -34],
-            [-15, -40],
-            [-17, -28],
-          ],
-          bone,
-        );
+          oval(side * 20, -30, 2, 2, '#b894a7');
+        }
+        shaped('#85618d', () => {
+          ctx.moveTo(-9, 6);
+          ctx.quadraticCurveTo(-23, 20, -29, 8);
+          ctx.quadraticCurveTo(-24, 24, -5, 15);
+        });
+        oval(0, -2, 17, 17, '#8a6897');
+        oval(1, 2, 10, 12, '#b0a0b4');
         for (const side of [-1, 1]) {
-          for (const y of [-3, 3, 8])
+          oval(side * 12, 8, 7, 5, '#9c7ca3');
+          line(
+            [
+              [side * 12, -9],
+              [side * 16, 1],
+            ],
+            '#9c7ca3',
+            5,
+          );
+          for (const dx of [-2, 2])
             line(
               [
-                [side * 9, y],
-                [side * 23, y + 2],
-                [side * 28, y + 8],
+                [side * 12 + dx, 9],
+                [side * 12 + dx + 1, 13],
               ],
-              '#ba8c72',
-              2.5,
+              bone,
+              1,
             );
+        }
+        oval(4, -24, 18, 16, '#9b79a4');
+        oval(12, -15, 16, 8, '#b999af');
+        eyes(6, -28, 7);
+        oval(22, -17, 1, 1, '#66556b');
+        smile(14, -12);
+        for (const side of [-1, 1])
+          shaped(bone, () => {
+            ctx.moveTo(side * 10, -35);
+            ctx.quadraticCurveTo(side * 15, -48, side * 17, -43);
+            ctx.lineTo(side * 14, -33);
+          });
+        return true;
+      }
+      if (family === 'mine') {
+        for (const side of [-1, 1]) {
+          softRect(side * 9 - 6, 0, 12, 10, '#879b8b', 2);
+          softRect(side * 10 - 8, 7, 16, 7, '#728b7e', 2);
+          softPoly(
+            [
+              [side * 12, -19],
+              [side * 22, -15],
+              [side * 23, 0],
+              [side * 15, 2],
+            ],
+            '#8fa799',
+            2,
+          );
           line(
             [
-              [side * 10, -6],
-              [side * 24, -18],
+              [side * 16, -9],
+              [side * 21, -10],
             ],
-            '#c29170',
-            4,
-          );
-          oval(side * 26, -20, 8, 7, '#ce9c76');
-          poly(
-            [
-              [side * 27, -26],
-              [side * 33, -30],
-              [side * 32, -20],
-            ],
-            '#e0b58b',
+            '#c0cbb0',
+            1,
           );
         }
-        oval(0, 0, 17, 11, '#a8725d');
-        oval(4, -14, 15, 12, '#c29273');
-        eyes(5, -17, 5);
-        smile(7, -9);
-        for (const x of [-7, 0, 7])
-          line(
-            [
-              [x, -2],
-              [x, 6],
-            ],
-            '#dfa67b',
-            1.5,
-          );
-        poly(
+        softPoly(
           [
-            [0, -25],
-            [3, -31],
-            [7, -24],
-          ],
-          '#b77956',
-        );
-      } else if (family === 'mine') {
-        // Fitted, weathered stone rather than a human wearing gray clothing.
-        for (const x of [-10, 10]) {
-          oval(x, 9, 8, 5, '#7c8f84');
-          poly(
-            [
-              [x - 7, 4],
-              [x - 8, -8],
-              [x + 7, -8],
-              [x + 6, 5],
-            ],
-            '#92a497',
-          );
-          oval(x * 1.9, -4, 8, 10, '#899d91');
-        }
-        poly(
-          [
-            [-14, 0],
-            [-18, -18],
-            [-9, -25],
-            [12, -24],
-            [17, -10],
+            [-15, -3],
+            [-18, -20],
+            [-7, -26],
+            [11, -24],
+            [17, -11],
             [13, 2],
           ],
-          '#a3b5a4',
+          '#a7baa5',
+          2,
+        );
+        softPoly(
+          [
+            [-14, -25],
+            [-13, -42],
+            [9, -44],
+            [17, -34],
+            [12, -23],
+          ],
+          '#b6c5ab',
+          2,
         );
         poly(
           [
-            [-14, -25],
-            [-12, -42],
-            [10, -44],
-            [17, -32],
-            [12, -23],
+            [-13, -40],
+            [-7, -42],
+            [-7, -27],
+            [-13, -27],
           ],
-          '#b2c1ac',
+          '#d0d6ba',
         );
-        eyes(1, -32, 6);
-        for (const x of [-5, 7]) fillOval(x, -32, 1.5, 2, '#f0cf73');
+        eyes(1, -32);
+        for (const x of [-5, 7]) fillOval(x, -32, 1.5, 2, '#e5c578');
         poly(
           [
             [-6, -13],
@@ -2683,238 +4149,363 @@
             [7, -13],
             [0, -4],
           ],
-          '#f1cb80',
+          '#e6c67f',
         );
         line(
           [
-            [-12, -36],
-            [-8, -32],
-            [-10, -27],
+            [-4, -13],
+            [0, -17],
+            [3, -12],
           ],
-          '#758a7d',
-          1.2,
+          '#fff0b9',
+          1,
         );
+        return true;
+      }
+      const colors = {
+        crypt: ['#756781', bone],
+        archive: ['#5d8588', '#aec3b5'],
+        ridge: ['#a2835d', '#b5b488'],
+        warlord: ['#936c5b', '#a2ae7c'],
+        citadel: ['#7d929b', '#d7b69b'],
+        darklord: ['#65516f', '#bdb4b8'],
+      }[family];
+      if (!colors) return false;
+      const [cloth, skinColor] = colors;
+      shaped(cloth, () => {
+        ctx.moveTo(-10, -17);
+        ctx.quadraticCurveTo(-17, -8, -17, 9);
+        ctx.quadraticCurveTo(0, 15, 17, 9);
+        ctx.quadraticCurveTo(15, -9, 10, -17);
+      });
+      for (const side of [-1, 1]) {
         line(
           [
-            [-11, -9],
-            [-5, -6],
+            [side * 7, 1],
+            [side * 10, 9],
           ],
-          '#657f71',
-          1.2,
+          family === 'crypt' ? bone : cloth,
+          6,
         );
-      } else {
-        const palette = {
-          crypt: ['#756b85', bone],
-          archive: ['#547d84', '#a8c0b6'],
-          ridge: ['#a67f59', '#b0b286'],
-          warlord: ['#9a655c', '#a3af7d'],
-          citadel: ['#718c99', '#c3c9c7'],
-          darklord: ['#594664', '#b2adb6'],
-        }[family];
-        if (!palette) return;
-        const [cloth, face] = palette;
-        // Short torso, big expressive head and tiny boots, with canonical equipment.
-        poly(
+        oval(side * 10, 10, 7, 4, '#6d6d60');
+        line(
           [
-            [-12, -15],
-            [-17, 9],
-            [17, 9],
-            [12, -15],
+            [side * 10, -13],
+            [side * 14, -5],
+            [side * 16, -1],
           ],
           cloth,
+          6,
         );
-        paws('#6d6b66');
-        oval(0, -7, 11, 13, cloth);
-        for (const side of [-1, 1]) oval(side * 13, -7, 5, 7, cloth);
-        oval(0, -27, 16, 15, face);
-        eyes(0, -29, 6);
-        smile(0, -19);
+        grip(side * 16, -1, skinColor);
+      }
+      oval(0, -26, 16, 15, skinColor);
+      eyes(0, -29);
+      smile(0, -18);
+      line(
+        [
+          [-9, 2],
+          [9, 2],
+        ],
+        '#c6ad78',
+        2,
+      );
+      if (family === 'crypt') {
+        tricornHat(-38, 1.05);
+        oval(0, -23, 1.6, 2, '#75776c');
+        for (const x of [-5, 0, 5])
+          line(
+            [
+              [x, -19],
+              [x, -16],
+            ],
+            '#929580',
+            0.7,
+          );
+        for (const y of [-10, -5])
+          line(
+            [
+              [-7, y],
+              [0, y + 1],
+              [7, y],
+            ],
+            bone,
+            1.5,
+          );
         line(
           [
-            [-10, 0],
-            [10, 0],
+            [20, -31],
+            [20, 11],
           ],
-          '#c8ac74',
+          '#ae9770',
+          2.5,
+        );
+        oval(20, -32, 5, 4, '#b6adc2');
+        grip(18, -2, bone);
+        line(
+          [
+            [-14, -9],
+            [-11, -4],
+          ],
+          bone,
           2,
         );
-        if (family === 'crypt') {
-          for (const x of [-6, 0, 6])
-            line(
-              [
-                [x, -11],
-                [x, -4],
-              ],
-              bone,
-              1.5,
-            );
-          oval(0, -23, 1.8, 2, '#6a6463');
-          line(
+      } else if (family === 'archive') {
+        shaped('#52777f', () => {
+          ctx.moveTo(-16, -28);
+          ctx.quadraticCurveTo(-17, -45, -3, -48);
+          ctx.quadraticCurveTo(15, -49, 18, -28);
+          ctx.lineTo(12, -30);
+          ctx.quadraticCurveTo(2, -44, -10, -31);
+        });
+        line(
+          [
+            [-13, -31],
+            [-5, -43],
+            [6, -41],
+            [14, -31],
+          ],
+          '#9ab6aa',
+          1.2,
+        );
+        softRect(-19, -8, 15, 11, '#9da98d', 1.5);
+        line(
+          [
+            [-12, -7],
+            [-12, 2],
+          ],
+          '#ddd4b0',
+          1,
+        );
+        staffAnchor(21);
+        grip(18, -2, skinColor);
+      } else if (family === 'ridge') {
+        for (const side of [-1, 1])
+          shaped(bone, () => {
+            ctx.moveTo(side * 10, -35);
+            ctx.quadraticCurveTo(side * 20, -39, side * 18, -45);
+            ctx.quadraticCurveTo(side * 24, -34, side * 13, -31);
+          });
+        line(
+          [
+            [-10, -32],
+            [-4, -31],
+          ],
+          '#7b805d',
+          1.4,
+        );
+        line(
+          [
+            [4, -31],
+            [10, -32],
+          ],
+          '#7b805d',
+          1.4,
+        );
+        oval(0, -23, 4, 3, '#c3c192');
+        softRect(-9, -13, 18, 11, '#7c775d', 2);
+        line(
+          [
+            [23, -26],
+            [19, 11],
+          ],
+          '#9d8057',
+          3,
+        );
+        poly(
+          [
+            [15, -30],
+            [31, -30],
+            [35, -26],
+            [31, -19],
+            [15, -20],
+          ],
+          '#9daaa0',
+        );
+        poly(
+          [
+            [15, -30],
+            [31, -30],
+            [35, -26],
+            [18, -26],
+          ],
+          '#d1d3b6',
+        );
+        grip(19, -1, skinColor);
+        oval(-17, -3, 5, 5, '#ccb36c');
+        oval(-17, -3, 3, 3, '#e1c988');
+        line(
+          [
+            [-19, -3],
+            [-15, -3],
+          ],
+          '#9e8c55',
+          0.7,
+        );
+      } else if (family === 'warlord') {
+        for (const side of [-1, 1]) {
+          softPoly(
             [
-              [20, -33],
-              [20, 9],
+              [side * 11, -33],
+              [side * 24, -36],
+              [side * 14, -26],
             ],
-            '#ad9b7a',
-            2.5,
-          );
-          oval(20, -34, 5, 4, '#b4aec4');
-          oval(-17, -3, 6, 9, '#9b9590');
-        } else if (family === 'archive') {
-          poly(
-            [
-              [-17, -32],
-              [-10, -47],
-              [11, -45],
-              [18, -30],
-              [4, -35],
-            ],
-            '#547f85',
-          );
-          rect(-16, -7, 14, 11, '#a1b4aa');
-          line(
-            [
-              [-9, -7],
-              [-9, 4],
-            ],
-            '#e1dcc0',
-            1,
-          );
-          line(
-            [
-              [21, -34],
-              [21, 10],
-            ],
-            steel,
+            '#a2ae7c',
             2,
           );
-          poly(
-            [
-              [16, -26],
-              [21, -19],
-              [26, -26],
-            ],
-            steel,
-          );
-          oval(22, -35, 3, 3, gold);
-        } else if (family === 'ridge') {
-          for (const side of [-1, 1])
-            poly(
-              [
-                [side * 10, -37],
-                [side * 19, -44],
-                [side * 14, -31],
-              ],
-              bone,
-            );
+          shaped(bone, () => {
+            ctx.moveTo(side * 6, -19);
+            ctx.quadraticCurveTo(side * 11, -22, side * 9, -27);
+            ctx.lineTo(side * 5, -22);
+          });
+        }
+        line(
+          [
+            [-10, -32],
+            [-3, -30],
+          ],
+          '#647850',
+          2,
+        );
+        line(
+          [
+            [3, -30],
+            [10, -32],
+          ],
+          '#647850',
+          2,
+        );
+        oval(0, -23, 5, 3, '#bdbe8a');
+        softRect(-9, -13, 18, 12, '#765340', 2);
+        line(
+          [
+            [-10, -15],
+            [9, -2],
+          ],
+          '#c6a170',
+          2,
+        );
+        line(
+          [
+            [21, -27],
+            [19, 10],
+          ],
+          '#9b7e55',
+          3,
+        );
+        softPoly(
+          [
+            [20, -31],
+            [32, -29],
+            [33, -20],
+            [20, -19],
+          ],
+          steel,
+          1,
+        );
+        grip(19, -1, skinColor);
+
+        shaped('#778b85', () => {
+          ctx.moveTo(-11, -34);
+          ctx.quadraticCurveTo(-12, -45, 0, -46);
+          ctx.quadraticCurveTo(12, -45, 11, -34);
+          ctx.quadraticCurveTo(0, -38, -11, -34);
+        });
+        softRect(-2, -45, 4, 4, gold, 1);
+      } else if (family === 'citadel') {
+        shaped('#8499a0', () => {
+          ctx.moveTo(-14, -29);
+          ctx.quadraticCurveTo(-14, -47, 0, -47);
+          ctx.quadraticCurveTo(16, -46, 15, -28);
+          ctx.lineTo(11, -31);
+          ctx.quadraticCurveTo(2, -43, -11, -32);
+        });
+        softPoly(
+          [
+            [8, -35],
+            [13, -32],
+            [12, -24],
+            [9, -27],
+            [9, -31],
+            [5, -33],
+          ],
+          '#c8c6ad',
+          1,
+        );
+        softPoly(
+          [
+            [-10, -15],
+            [0, -19],
+            [10, -15],
+            [8, 0],
+            [-8, 0],
+          ],
+          '#a2b2af',
+          2,
+        );
+        line(
+          [
+            [0, -14],
+            [0, -2],
+          ],
+          '#e5d6a4',
+          1,
+        );
+        marshalSpear(20, 0.75);
+        grip(20, 2, '#a2b2af');
+      } else {
+        softPoly(
+          [
+            [-12, -16],
+            [-18, 9],
+            [-8, 11],
+            [0, -5],
+            [9, 11],
+            [18, 9],
+            [12, -16],
+          ],
+          '#574260',
+          3,
+        );
+        royalCrown(-38);
+        line(
+          [
+            [-7, -31],
+            [-2, -30],
+          ],
+          '#59605c',
+          1.2,
+        );
+        line(
+          [
+            [3, -30],
+            [8, -31],
+          ],
+          '#59605c',
+          1.2,
+        );
+        sword(18, -7);
+        grip(20, 2, skinColor);
+        shield(-18, 0, '#8b6e89');
+        for (const x of [-6, 6]) {
+          softRect(x - 3.5, -33, 7, 4.5, '#bdb4b8', 0.4);
           line(
             [
-              [23, -25],
-              [18, 10],
+              [x - 2.5, -29],
+              [x + 2.5, -29],
             ],
-            '#a98b66',
-            3,
-          );
-          rect(15, -28, 17, 10, steel);
-          oval(-12, -6, 6, 6, '#c1a160');
-          line(
-            [
-              [-14, -6],
-              [-10, -6],
-            ],
-            '#e4cf8c',
+            '#515655',
             1,
           );
-        } else {
-          poly(
-            [
-              [-15, -30],
-              [-12, -43],
-              [0, -48],
-              [13, -42],
-              [16, -30],
-            ],
-            family === 'darklord' ? '#666278' : steel,
-          );
-          if (family === 'warlord') {
-            for (const side of [-1, 1])
-              poly(
-                [
-                  [side * 13, -39],
-                  [side * 24, -46],
-                  [side * 19, -32],
-                ],
-                bone,
-              );
-            line(
-              [
-                [24, -27],
-                [20, 9],
-              ],
-              '#a28560',
-              3,
-            );
-            poly(
-              [
-                [23, -29],
-                [33, -33],
-                [34, -19],
-                [22, -19],
-              ],
-              steel,
-            );
-          } else {
-            poly(
-              [
-                [-14, -41],
-                [-17, -50],
-                [-6, -46],
-                [0, -53],
-                [6, -46],
-                [17, -50],
-                [14, -41],
-              ],
-              gold,
-            );
-            oval(-17, -1, 6, 9, family === 'citadel' ? '#5d7a83' : '#795b75');
-            if (family === 'citadel') {
-              line(
-                [
-                  [23, -29],
-                  [23, 10],
-                ],
-                '#b5a077',
-                2.5,
-              );
-              poly(
-                [
-                  [18, -28],
-                  [30, -29],
-                  [31, -19],
-                  [18, -19],
-                ],
-                steel,
-              );
-            } else {
-              line(
-                [
-                  [21, 7],
-                  [21, -23],
-                ],
-                steel,
-                3,
-              );
-              line(
-                [
-                  [15, -8],
-                  [27, -8],
-                ],
-                gold,
-                2,
-              );
-            }
-          }
         }
       }
+      return true;
     }
+
+    function bossPet(family) {
+      craftedPet(family);
+    }
+
     function wolf(c = '#8c9998', large = false) {
       // Tapered trunk, shoulder, haunch and bent hocks replace the box and four sticks.
       ctx.fillStyle = c;
@@ -3012,24 +4603,133 @@
         ],
         bone,
       );
-      if (large) {
-        poly(
-          [
-            [-22, -12],
-            [-20, -28],
-            [-10, -21],
-            [-5, -29],
-            [1, -17],
-          ],
-          '#4e6246',
-        );
+      // Fur breaks follow the shoulder and haunch, with toes grounded under each hock.
+      for (const [x, y] of [
+        [-20, -10],
+        [-11, -15],
+        [2, -13],
+        [12, -9],
+      ])
         line(
           [
-            [-11, -24],
-            [-15, -35],
+            [x, y],
+            [x + 3, y + 2],
+            [x + 6, y],
           ],
-          '#a0ae76',
+          '#c1c5af',
+          0.8,
+        );
+      for (const x of [-16, -6, 10, 18])
+        for (const dx of [-1, 1])
+          line(
+            [
+              [x + dx, 12],
+              [x + dx + 1, 14],
+            ],
+            '#53675c',
+            0.6,
+          );
+      if (large) {
+        line(
+          [
+            [-19, -11],
+            [-6, -18],
+            [11, -12],
+          ],
+          '#6f5c3f',
           3,
+        );
+        for (const [x, y, ang] of [
+          [-20, -13, -0.7],
+          [-12, -18, -0.3],
+          [-3, -17, 0.4],
+          [4, -12, 0.9],
+          [10, -13, 0.5],
+        ])
+          craftAt(x, y, 1, () => {
+            ctx.rotate(ang);
+            shaped('#64804f', () => {
+              ctx.moveTo(-3, 0);
+              ctx.quadraticCurveTo(-7, -9, 0, -12);
+              ctx.quadraticCurveTo(6, -4, 3, 2);
+            });
+            line(
+              [
+                [0, -9],
+                [0, 0],
+              ],
+              '#a5b27a',
+              0.7,
+            );
+          });
+        line(
+          [
+            [10, -28],
+            [18, -31],
+            [26, -27],
+          ],
+          '#59432f',
+          3,
+        );
+        for (const [x, y, flip] of [
+          [13, -29, -1],
+          [23, -28, 1],
+        ]) {
+          line(
+            [
+              [x, y],
+              [x + flip * 3, y - 10],
+              [x + flip * 8, y - 19],
+            ],
+            '#b4a16f',
+            3,
+          );
+          line(
+            [
+              [x + flip * 3, y - 10],
+              [x + flip * 11, y - 11],
+              [x + flip * 14, y - 16],
+            ],
+            '#a18c62',
+            2,
+          );
+          line(
+            [
+              [x + flip * 5, y - 14],
+              [x + flip * 4, y - 20],
+            ],
+            '#b4a16f',
+            1.5,
+          );
+          oval(x, y, 3, 2, '#876c44');
+          line(
+            [
+              [x - 2, y - 2],
+              [x + 2, y],
+              [x - 2, y + 2],
+            ],
+            '#d6b783',
+            1,
+          );
+        }
+        // A fang pendant hangs from the woodland harness rather than growing from fur.
+        line(
+          [
+            [-14, -12],
+            [-11, -3],
+          ],
+          '#5b4732',
+          1.3,
+        );
+        shaped(
+          bone,
+          () => {
+            ctx.moveTo(-13, -4);
+            ctx.lineTo(-9, -4);
+            ctx.quadraticCurveTo(-8, 2, -14, 4);
+            ctx.quadraticCurveTo(-11, 0, -13, -4);
+          },
+          0.7,
         );
       }
     }
@@ -3037,50 +4737,13 @@
     function crownDirewolfRider(ranged = false) {
       ctx.save();
       ctx.scale(1.14, 1.14);
-      // Scale the animal and its tack around the paws, keeping its ground anchor.
+      // Animal and rider both face right. A single visible bent leg follows the
+      // near flank; the far leg is occluded by the saddle and animal's body.
       ctx.save();
       ctx.translate(0, 13);
       ctx.scale(1.22, 1.22);
       ctx.translate(0, -13);
-      wolf('#65717c', true);
-      // Fur mane, armored cheek plate, leather reins and a working war saddle.
-      poly(
-        [
-          [-25, -12],
-          [-16, -26],
-          [-4, -22],
-          [10, -14],
-        ],
-        '#77878e',
-      );
-      poly(
-        [
-          [7, -21],
-          [15, -27],
-          [27, -20],
-          [28, -7],
-          [12, -9],
-        ],
-        '#697c84',
-      );
-      line(
-        [
-          [11, -14],
-          [28, -11],
-          [32, -5],
-        ],
-        '#cfaa70',
-        2.2,
-      );
-      poly(
-        [
-          [14, -17],
-          [30, -16],
-          [34, -11],
-          [17, -10],
-        ],
-        '#adb4af',
-      );
+      wolf('#65717c');
       for (const x of [-17, -5, 9])
         poly(
           [
@@ -3091,1292 +4754,1213 @@
           ],
           '#8c9699',
         );
-      // Saddle straps continue below the body to avoid a floating rider.
       poly(
         [
-          [-17, -21],
-          [-13, -30],
-          [7, -32],
-          [16, -22],
-          [5, -17],
-          [-9, -17],
+          [14, -25],
+          [25, -23],
+          [29, -15],
+          [35, -12],
+          [32, -8],
+          [17, -11],
         ],
-        '#624c42',
+        '#9eafb3',
       );
       line(
         [
-          [-15, -18],
-          [-11, -5],
+          [14, -22],
+          [21, -21],
+          [25, -16],
         ],
-        '#d2b67f',
-        2.5,
+        '#d8d5b9',
+        1.1,
       );
       line(
         [
-          [13, -21],
-          [17, -6],
+          [29, -12],
+          [18, -15],
+          [12, -10],
         ],
-        '#d2b67f',
-        2.5,
-      );
-      for (const x of [-16, 13]) {
-        oval(x, -14, 3, 4, '#c49d61');
-        line(
-          [
-            [x - 6, -10],
-            [x + 4, -10],
-          ],
-          '#4b4b4a',
-          1.5,
-        );
-      }
-      ctx.restore();
-      // Fit the human to the enlarged saddle rather than enlarging both bodies.
-      // Both weapon variants share this seated scale and matching stirrup height.
-      ctx.save();
-      ctx.translate(0, -35);
-      ctx.scale(0.72, 0.72);
-      ctx.translate(0, 28);
-      // Human legs remain on both flanks, armored boots in real stirrups.
-      poly(
-        [
-          [-16, -31],
-          [-22, -14],
-          [-24, -8],
-          [-17, -8],
-          [-9, -23],
-        ],
-        '#535b69',
-      );
-      poly(
-        [
-          [11, -29],
-          [17, -13],
-          [20, -7],
-          [12, -6],
-          [4, -24],
-        ],
-        '#596779',
-      );
-      line(
-        [
-          [-25, -9],
-          [-16, -9],
-        ],
-        '#c7af7b',
+        '#b89b6a',
         2,
       );
-      line(
-        [
-          [13, -7],
-          [22, -8],
-        ],
-        '#c7af7b',
-        2,
-      );
-      // Riding torso, fitted silver breastplate and gold Crown insignia.
       poly(
         [
-          [-13, -47],
-          [-5, -56],
-          [6, -55],
-          [16, -46],
-          [12, -27],
+          [-15, -22],
           [-12, -28],
+          [3, -28],
+          [9, -21],
+          [3, -17],
+          [-10, -18],
         ],
-        '#3f5368',
+        '#614a3b',
+      );
+      line(
+        [
+          [-12, -22],
+          [0, -25],
+          [7, -21],
+        ],
+        '#bd9c67',
+        2.5,
+      );
+      line(
+        [
+          [-4, -20],
+          [-1, -4],
+        ],
+        '#5d4b38',
+        3,
+      );
+      line(
+        [
+          [-3, -20],
+          [0, -5],
+        ],
+        '#c4a776',
+        0.7,
+      );
+      ctx.restore();
+      // Small far boot and stirrup peek beyond the chest, not a second spread leg.
+      softPoly(
+        [
+          [7, -18],
+          [11, -17],
+          [13, -8],
+          [18, -7],
+          [18, -4],
+          [10, -4],
+        ],
+        '#485766',
+        1,
+      );
+      line(
+        [
+          [9, -4],
+          [18, -4],
+        ],
+        '#c2a676',
+        1.4,
+      );
+      if (ranged) backQuiver(-11, -44, 0.65);
+      // Profile coat and plate: narrower back, forward chest, one side insignia.
+      shaped('#41566a', () => {
+        ctx.moveTo(-9, -28);
+        ctx.lineTo(-10, -43);
+        ctx.quadraticCurveTo(-6, -49, 2, -47);
+        ctx.lineTo(10, -40);
+        ctx.lineTo(8, -27);
+        ctx.lineTo(-3, -25);
+      });
+      poly(
+        [
+          [-6, -45],
+          [3, -45],
+          [9, -39],
+          [7, -31],
+          [-6, -32],
+        ],
+        '#9eafb8',
       );
       poly(
         [
-          [-10, -46],
-          [10, -47],
-          [12, -34],
-          [0, -28],
-          [-11, -34],
+          [3, -45],
+          [9, -39],
+          [7, -31],
+          [2, -33],
         ],
-        '#adb9bd',
+        '#687e8e',
+      );
+      line(
+        [
+          [-5, -42],
+          [-4, -34],
+        ],
+        '#d9ddcd',
+        1.1,
       );
       poly(
         [
-          [-5, -43],
-          [0, -49],
-          [5, -43],
-          [2, -40],
           [-2, -40],
+          [1, -43],
+          [4, -40],
+          [1, -37],
         ],
-        '#e3c779',
+        '#dbc17e',
+      );
+      // Hip, forward knee, dropped shin and forward boot describe a riding seat.
+      shaped('#586679', () => {
+        ctx.moveTo(-8, -28);
+        ctx.lineTo(0, -29);
+        ctx.lineTo(11, -19);
+        ctx.lineTo(8, -7);
+        ctx.lineTo(13, -5);
+        ctx.lineTo(13, -2);
+        ctx.lineTo(2, -2);
+        ctx.lineTo(1, -8);
+        ctx.lineTo(3, -17);
+        ctx.lineTo(-7, -22);
+      });
+      poly(
+        [
+          [5, -20],
+          [11, -19],
+          [9, -10],
+          [3, -11],
+        ],
+        '#91a6ae',
       );
       line(
         [
-          [-10, -36],
-          [10, -36],
+          [5, -18],
+          [7, -12],
         ],
-        '#6f747d',
-        2,
-      );
-      oval(0, -59, 8, 9, '#a7aeb6');
-      poly(
-        [
-          [-10, -64],
-          [-7, -71],
-          [0, -75],
-          [8, -70],
-          [11, -62],
-          [8, -57],
-          [-8, -57],
-        ],
-        '#596c7b',
-      );
-      poly(
-        [
-          [-13, -61],
-          [12, -62],
-          [9, -57],
-          [-9, -57],
-        ],
-        '#d0bd8b',
+        '#d0d6c6',
+        1,
       );
       line(
         [
-          [0, -73],
-          [0, -79],
+          [1, -24],
+          [1, -5],
+          [14, -5],
         ],
-        '#e2c374',
-        2,
+        '#b39a69',
+        1.2,
+      );
+      line(
+        [
+          [1, -2],
+          [14, -2],
+        ],
+        '#d0b57d',
+        1.6,
+      );
+      // Visored profile helmet, with a nose-facing edge rather than two eyes.
+      shaped('#8ea2ad', () => {
+        ctx.moveTo(-7, -50);
+        ctx.lineTo(-7, -58);
+        ctx.quadraticCurveTo(0, -66, 8, -59);
+        ctx.lineTo(11, -52);
+        ctx.lineTo(9, -47);
+        ctx.lineTo(1, -46);
+        ctx.lineTo(-4, -49);
+      });
+      poly(
+        [
+          [1, -55],
+          [10, -55],
+          [12, -51],
+          [8, -48],
+          [1, -48],
+        ],
+        '#b6c4c5',
+      );
+      line(
+        [
+          [3, -54],
+          [9, -53],
+        ],
+        '#233b45',
+        1.7,
+      );
+      line(
+        [
+          [-5, -57],
+          [0, -60],
+          [5, -59],
+        ],
+        '#e2d1a2',
+        1.2,
       );
       poly(
         [
-          [0, -79],
-          [-5, -83],
-          [0, -87],
-          [5, -83],
+          [-1, -62],
+          [1, -70],
+          [4, -62],
         ],
-        '#ddba6e',
+        '#d9c086',
+      );
+      // Forward arms and reins are tied to the same seated shoulder and muzzle.
+      line(
+        [
+          [1, -41],
+          [8, -34],
+          [15, -30],
+        ],
+        '#526c7b',
+        5,
+      );
+      line(
+        [
+          [4, -41],
+          [10, -39],
+          [20, -40],
+        ],
+        '#8398a2',
+        4,
+      );
+      line(
+        [
+          [15, -30],
+          [27, -25],
+          [41, -16],
+        ],
+        '#584334',
+        1.2,
+      );
+      line(
+        [
+          [15, -29],
+          [28, -20],
+          [41, -14],
+        ],
+        '#b69a6c',
+        0.8,
       );
       if (ranged) {
-        // Bow and blue fletching: unmistakably a mobile mounted archer.
+        craftAt(24, -31, 0.75, () => bow(0, 0));
         line(
           [
-            [15, -45],
-            [31, -54],
-            [34, -31],
-            [17, -21],
+            [12, -39],
+            [32, -40],
           ],
-          '#b99a67',
-          2.8,
-        );
-        line(
-          [
-            [31, -54],
-            [38, -44],
-            [34, -31],
-          ],
-          '#e6d6b2',
-          1.5,
-        );
-        line(
-          [
-            [9, -40],
-            [40, -42],
-          ],
-          '#d5c9a2',
-          2,
+          '#c6ae7f',
+          1.3,
         );
         poly(
           [
-            [40, -42],
-            [33, -46],
-            [33, -38],
+            [32, -40],
+            [28, -42],
+            [28, -38],
           ],
-          '#a4c2d3',
+          '#b8c5bb',
         );
-        rect(-17, -42, 8, 23, '#705842');
-        for (const y of [-38, -32, -26])
-          line(
-            [
-              [-15, y],
-              [-22, y - 6],
-            ],
-            '#a6c3da',
-            1.5,
-          );
       } else {
-        // Blunted practice lance doubles as a real combat dash cue.
         line(
           [
-            [16, -38],
-            [36, -55],
-            [51, -66],
+            [11, -23],
+            [22, -41],
+            [49, -64],
           ],
-          '#ccb080',
-          4,
-        );
-        poly(
-          [
-            [48, -64],
-            [61, -77],
-            [56, -60],
-            [50, -56],
-          ],
-          '#adb9be',
-        );
-        line(
-          [
-            [-21, -43],
-            [-30, -33],
-          ],
-          '#a6b4b8',
+          '#bea16f',
           3,
         );
         poly(
           [
-            [-34, -41],
-            [-22, -44],
-            [-17, -30],
-            [-29, -28],
+            [46, -63],
+            [56, -72],
+            [52, -60],
+            [48, -57],
           ],
-          '#59748a',
+          '#acbdc2',
+        );
+        line(
+          [
+            [51, -67],
+            [49, -60],
+          ],
+          '#e6e9d6',
+          1,
         );
         poly(
           [
-            [-30, -39],
-            [-25, -45],
-            [-20, -39],
+            [-12, -39],
+            [-5, -42],
+            [-2, -30],
+            [-9, -27],
           ],
-          '#e2c371',
+          '#5f788d',
         );
       }
-      ctx.restore();
+      grip(15, -30, '#aebbc0');
+      grip(20, -40, '#aebbc0');
       ctx.restore();
     }
-    function crocodile(c = '#71886a') {
-      ctx.fillStyle = c;
-      ctx.strokeStyle = ink;
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.moveTo(-16, -4);
-      ctx.bezierCurveTo(-27, -4, -36, -6, -48, 4);
-      ctx.quadraticCurveTo(-34, 10, -20, 8);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-      oval(-2, 0, 25, 13, c);
-      for (const x of [-15, 7]) {
-        line(
-          [
-            [x, -4],
-            [x - 7, -12],
-            [x - 5, -15],
-          ],
-          c,
-          6,
+    function crocodile(c = '#71886a', boss = false) {
+      shaped(c, () => {
+        ctx.moveTo(-17, -4);
+        ctx.bezierCurveTo(-29, -3, -40, -1, -51, 5);
+        ctx.quadraticCurveTo(-29, 12, -15, 7);
+      });
+      for (const side of [-1, 1])
+        for (const x of [-14, 8]) {
+          shaped(c, () => {
+            ctx.moveTo(x - 5, -2);
+            ctx.quadraticCurveTo(x - 11, side * 10, x - 8, side * 13);
+            ctx.lineTo(x + 1, side * 14);
+            ctx.lineTo(x + 3, side * 10);
+            ctx.lineTo(x - 4, side * 8);
+            ctx.lineTo(x + 3, 1);
+          });
+          if (side > 0)
+            for (const dx of [-3, 0, 3])
+              line(
+                [
+                  [x + dx, 11],
+                  [x + dx + 2, 14],
+                ],
+                bone,
+                1,
+              );
+        }
+      shaped(c, () => {
+        ctx.moveTo(-23, -3);
+        ctx.bezierCurveTo(-28, -17, 8, -20, 19, -7);
+        ctx.quadraticCurveTo(26, 4, 16, 10);
+        ctx.quadraticCurveTo(-6, 18, -23, 7);
+      });
+      fillOval(-2, 5, 20, 6, '#c0c68f', 0.2);
+      shaped(boss ? '#a5ab7e' : '#97a979', () => {
+        ctx.moveTo(14, 2);
+        ctx.quadraticCurveTo(30, 0, 45, 3);
+        ctx.quadraticCurveTo(48, 9, 37, 12);
+        ctx.lineTo(18, 10);
+        ctx.quadraticCurveTo(12, 8, 14, 2);
+      });
+      shaped(c, () => {
+        ctx.moveTo(12, boss ? -12 : -8);
+        ctx.quadraticCurveTo(16, boss ? -26 : -19, 28, boss ? -16 : -13);
+        ctx.quadraticCurveTo(35, -12, 44, -8);
+        ctx.quadraticCurveTo(51, -4, 45, 2);
+        ctx.quadraticCurveTo(27, 5, 14, 1);
+      });
+      oval(23, boss ? -16 : -12, 6, boss ? 3.5 : 4, c);
+      oval(25, boss ? -17 : -13, 2, 2.3, '#d8c67c');
+      oval(25.5, boss ? -17 : -13, boss ? 0.7 : 1, 1.5, '#304b39');
+      if (boss) {
+        shaped(
+          '#344b3b',
+          () => {
+            ctx.moveTo(18, 2);
+            ctx.lineTo(46, 1);
+            ctx.lineTo(42, 10);
+            ctx.quadraticCurveTo(28, 13, 18, 7);
+          },
+          0.8,
         );
         line(
           [
-            [x, 4],
-            [x - 6, 10],
-            [x + 2, 12],
+            [18, -21],
+            [24, -20],
+            [29, -17],
           ],
-          c,
-          6,
+          '#42563c',
+          2.6,
         );
-        for (const dx of [-2, 1, 4])
+        line(
+          [
+            [14, -6],
+            [27, -9],
+            [38, -7],
+          ],
+          '#a8ad7a',
+          1.4,
+        );
+      }
+      line(
+        [
+          [17, 2],
+          [32, 3],
+          [45, 1],
+        ],
+        '#405840',
+        1.2,
+      );
+      for (const x of boss ? [21, 27, 34, 41] : [23, 31, 39])
+        softPoly(
+          [
+            [x, 3],
+            [x + 2, boss ? 10 : 7],
+            [x + 4, 3],
+          ],
+          bone,
+          0.4,
+        );
+      if (boss) {
+        for (const x of [25, 37])
+          poly(
+            [
+              [x, 12],
+              [x + 2, 8],
+              [x + 4, 12],
+            ],
+            bone,
+          );
+        line(
+          [
+            [15, 11],
+            [29, 16],
+            [42, 13],
+          ],
+          '#4a603f',
+          1.4,
+        );
+      }
+      const plates = boss
+        ? [
+            [-22, 7],
+            [-13, 11],
+            [-3, 14],
+            [7, 11],
+            [16, 8],
+          ]
+        : [
+            [-19, 7],
+            [-8, 7],
+            [3, 7],
+            [12, 7],
+          ];
+      for (const [x, h] of plates) {
+        shaped(boss ? '#7b8560' : '#596c4d', () => {
+          ctx.moveTo(x, -10);
+          ctx.lineTo(x + 3, -10 - h);
+          if (boss) {
+            ctx.lineTo(x + 6, -17);
+            ctx.lineTo(x + 9, -8);
+          } else ctx.quadraticCurveTo(x + 8, -13, x + 9, -8);
+        });
+        line(
+          [
+            [x + 2, -10],
+            [x + 4, -12 - h * 0.5],
+          ],
+          '#aeb38a',
+          0.8,
+        );
+      }
+      for (const [x, y] of [
+        [-14, -2],
+        [-4, 1],
+        [6, -3],
+      ])
+        softPoly(
+          [
+            [x - 3, y],
+            [x, y - 3],
+            [x + 4, y],
+            [x, y + 2],
+          ],
+          '#9bab7b',
+          1,
+        );
+      oval(42, -6, 1.2, 1, '#3b5340');
+      line(
+        [
+          [-42, 5],
+          [-27, 3],
+          [-19, -1],
+        ],
+        '#a0ac7b',
+        1.1,
+      );
+    }
+
+    function dragon(c = '#765080') {
+      // Shoulder, elbow and finger rays support curved, tensioned membranes.
+      for (const side of [-1, 1]) {
+        shaped(c, () => {
+          ctx.moveTo(side * 10, -15);
+          ctx.quadraticCurveTo(side * 15, -34, side * 29, -47);
+          ctx.quadraticCurveTo(side * 47, -43, side * 55, -24);
+          ctx.quadraticCurveTo(side * 43, -27, side * 39, -9);
+          ctx.quadraticCurveTo(side * 29, -20, side * 24, -13);
+          ctx.quadraticCurveTo(side * 18, -8, side * 10, -15);
+        });
+        line(
+          [
+            [side * 10, -14],
+            [side * 18, -31],
+            [side * 29, -46],
+          ],
+          '#b28a9d',
+          3,
+        );
+        oval(side * 18, -31, 3, 3, '#a57c91');
+        oval(side * 29, -45, 3, 3, '#b995a1');
+        for (const [x, y] of [
+          [53, -25],
+          [39, -10],
+          [24, -13],
+        ])
           line(
             [
-              [x + dx, 11],
-              [x + dx + 2, 13],
+              [side * 29, -44],
+              [side * x, y],
+            ],
+            '#c19aaa',
+            1.3,
+          );
+        shaped(bone, () => {
+          ctx.moveTo(side * 28, -47);
+          ctx.quadraticCurveTo(side * 33, -54, side * 34, -49);
+          ctx.lineTo(side * 31, -44);
+        });
+      }
+      shaped(c, () => {
+        ctx.moveTo(-8, 9);
+        ctx.quadraticCurveTo(-22, 26, -38, 13);
+        ctx.quadraticCurveTo(-28, 32, -1, 20);
+        ctx.lineTo(7, 12);
+      });
+      for (const side of [-1, 1]) {
+        oval(side * 12, 8, 9, 13, c);
+        line(
+          [
+            [side * 10, 9],
+            [side * 17, 18],
+          ],
+          c,
+          8,
+        );
+        oval(side * 18, 20, 9, 4, c);
+        for (const dx of [-3, 1, 5])
+          softPoly(
+            [
+              [side * 18 + dx, 18],
+              [side * 18 + dx + 1, 24],
+              [side * 18 + dx + 3, 20],
+            ],
+            bone,
+            0.5,
+          );
+      }
+      oval(0, -8, 16, 24, c);
+      oval(1, -2, 10, 18, '#af94a3');
+      for (const y of [-15, -8, 0, 8])
+        line(
+          [
+            [-6, y],
+            [0, y + 2],
+            [7, y],
+          ],
+          '#806f86',
+          1,
+        );
+      shaped(c, () => {
+        ctx.moveTo(-7, -21);
+        ctx.quadraticCurveTo(-8, -37, 1, -47);
+        ctx.quadraticCurveTo(12, -52, 23, -40);
+        ctx.lineTo(29, -35);
+        ctx.quadraticCurveTo(32, -26, 19, -25);
+        ctx.lineTo(5, -25);
+      });
+      shaped('#a17d9a', () => {
+        ctx.moveTo(12, -34);
+        ctx.quadraticCurveTo(28, -39, 30, -31);
+        ctx.quadraticCurveTo(26, -26, 14, -28);
+      });
+      for (const [x, y] of [
+        [4, -45],
+        [17, -44],
+      ])
+        shaped(bone, () => {
+          ctx.moveTo(x - 3, y);
+          ctx.quadraticCurveTo(x - 6, y - 14, x - 1, y - 11);
+          ctx.lineTo(x + 4, y + 1);
+        });
+      oval(15, -39, 3, 2.6, '#dbb27c');
+      oval(16, -39, 1.2, 2, '#354239');
+      line(
+        [
+          [11, -42],
+          [18, -43],
+        ],
+        '#4c3f60',
+        2,
+      );
+      oval(27, -33, 1.1, 1, '#493d57');
+      line(
+        [
+          [15, -28],
+          [26, -29],
+        ],
+        '#4a4058',
+        1,
+      );
+      for (const x of [18, 24])
+        softPoly(
+          [
+            [x, -28],
+            [x + 1, -25],
+            [x + 3, -28],
+          ],
+          bone,
+          0.4,
+        );
+      for (const side of [-1, 1]) {
+        line(
+          [
+            [side * 10, -19],
+            [side * 17, -7],
+            [side * 14, 1],
+          ],
+          c,
+          7,
+        );
+        oval(side * 15, 0, 5, 4, c);
+        for (const dx of [-2, 2])
+          line(
+            [
+              [side * 15 + dx, 0],
+              [side * 15 + dx + 1, 4],
             ],
             bone,
             1,
           );
       }
-      ctx.fillStyle = c;
-      ctx.strokeStyle = ink;
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.moveTo(12, -9);
-      ctx.quadraticCurveTo(29, -14, 43, -6);
-      ctx.quadraticCurveTo(48, -2, 44, 5);
-      ctx.quadraticCurveTo(31, 9, 16, 7);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-      oval(24, -9, 6, 4, c);
-      eye(25, -10);
-      line(
-        [
-          [17, 2],
-          [43, 1],
-        ],
-        '#3e5541',
-        1.3,
-      );
-      for (let x = -19; x < 13; x += 8)
-        poly(
-          [
-            [x, -10],
-            [x + 4, -18],
-            [x + 8, -10],
-          ],
-          '#455b47',
-        );
-      for (const [x, y] of [
-        [-13, -2],
-        [-5, 3],
-        [3, -2],
-        [11, 3],
-      ])
-        line(
-          [
-            [x - 2, y],
-            [x, y - 2],
-            [x + 3, y],
-          ],
-          '#a4b38a',
-          1.1,
-        );
-      for (let x = 24; x < 43; x += 6)
-        poly(
-          [
-            [x, 1],
-            [x + 3, 5],
-            [x + 4, 1],
-          ],
-          bone,
-        );
-      oval(40, -5, 1, 0.8, '#425744');
     }
 
-    function dragon(c = '#765080') {
-      for (const side of [-1, 1]) {
-        ctx.fillStyle = c;
-        ctx.strokeStyle = ink;
-        ctx.lineWidth = 1.2;
-        ctx.beginPath();
-        ctx.moveTo(side * 9, -12);
-        ctx.quadraticCurveTo(side * 14, -31, side * 28, -45);
-        ctx.quadraticCurveTo(side * 43, -40, side * 55, -24);
-        ctx.quadraticCurveTo(side * 41, -26, side * 40, -8);
-        ctx.quadraticCurveTo(side * 32, -19, side * 25, -15);
-        ctx.quadraticCurveTo(side * 17, -6, side * 9, -12);
-        ctx.fill();
-        ctx.stroke();
-        line(
-          [
-            [side * 9, -12],
-            [side * 28, -43],
-            [side * 40, -8],
-          ],
-          '#c39783',
-          1.6,
-        );
-        line(
-          [
-            [side * 28, -43],
-            [side * 25, -15],
-          ],
-          '#b88ca4',
-          1.2,
-        );
-        line(
-          [
-            [side * 28, -43],
-            [side * 53, -25],
-          ],
-          '#b88ca4',
-          1.2,
-        );
-      }
-      oval(0, -7, 15, 22, c);
-      oval(1, -1, 9, 15, '#a58c9e');
-      poly(
-        [
-          [-7, 8],
-          [-25, 21],
-          [-37, 12],
-          [-25, 26],
-          [1, 19],
-        ],
-        c,
-      );
-      poly(
-        [
-          [-5, -31],
-          [0, -48],
-          [14, -45],
-          [26, -34],
-          [18, -27],
-          [1, -26],
-        ],
-        c,
-      );
-      poly(
-        [
-          [3, -43],
-          [-3, -56],
-          [10, -46],
-        ],
-        bone,
-      );
-      poly(
-        [
-          [12, -43],
-          [16, -55],
-          [20, -39],
-        ],
-        bone,
-      );
-      oval(16, -31, 7, 3, '#99718e');
-      eye(15, -37);
-      line(
-        [
-          [-9, 7],
-          [-17, 21],
-        ],
-        c,
-        7,
-      );
-      line(
-        [
-          [8, 9],
-          [18, 22],
-        ],
-        c,
-        7,
-      );
-      line(
-        [
-          [-5, -12],
-          [5, -12],
-        ],
-        '#d1b18e',
-        3,
-      );
-      line(
-        [
-          [-6, -4],
-          [6, -4],
-        ],
-        '#d1b18e',
-        3,
-      );
-    }
     function human(role) {
-      const cloth =
-        role === 'mage'
-          ? '#637ca5'
-          : role === 'ranger'
-            ? '#6e9468'
-            : role === 'archer'
-              ? '#5d865f'
-              : role === 'worker'
-                ? '#af9063'
-                : '#708c9c';
-      humanoid(cloth);
-      if (role === 'mage') {
-        poly(
-          [
-            [-13, -34],
-            [0, -56],
-            [13, -34],
-          ],
-          '#677da7',
-        );
-        fillPoly(
-          [
-            [-13, -34],
-            [0, -56],
-            [0, -34],
-          ],
-          '#263b62',
-          0.24,
-        );
-        poly(
-          [
-            [-13, 6],
-            [-9, -16],
-            [9, -16],
-            [15, 6],
-          ],
-          '#536791',
-        );
-        line(
-          [
-            [-9, -11],
-            [10, 1],
-          ],
-          '#89a6ca',
-          1.4,
-        );
-        line(
-          [
-            [17, -35],
-            [17, 14],
-          ],
-          '#b19365',
-          3,
-        );
-        oval(17, -38, 5, 6, '#8cd2e1');
-        fillOval(15.5, -40, 2, 2, '#eaffff', 0.75);
-        rect(-3, -14, 6, 6, gold);
-      } else if (role === 'ranger' || role === 'archer') {
-        const hood = role === 'ranger' ? '#557a52' : '#466d4d',
-          cloak = role === 'ranger' ? '#587653' : '#43644b';
-        poly(
-          [
-            [-10, -26],
-            [-7, -39],
-            [0, -44],
-            [9, -37],
-            [11, -26],
-            [6, -32],
-            [-5, -32],
-          ],
-          hood,
-        );
-        fillPoly(
-          [
-            [-10, -26],
-            [-7, -39],
-            [0, -44],
-            [0, -27],
-          ],
-          '#1c3328',
-          0.22,
-        );
-        poly(
-          [
-            [-11, -16],
-            [-18, 9],
-            [-4, 6],
-          ],
-          cloak,
-        );
-        fillPoly(
-          [
-            [-11, -15],
-            [-18, 8],
-            [-11, 6],
-          ],
-          '#21392c',
-          0.25,
-        );
-        line(
-          [
-            [-12, -12],
-            [-6, 5],
-          ],
-          '#90aa78',
-          1,
-        );
-        bow(14, -7);
-        line(
-          [
-            [-15, -27],
-            [-19, 4],
-          ],
-          '#9c7953',
-          5,
-        );
-        line(
-          [
-            [-19, -29],
-            [-14, -26],
-          ],
-          bone,
-          2,
-        );
-        for (const y of [-28, -23, -18])
+      const mage = role === 'mage',
+        ranger = role === 'ranger' || role === 'archer',
+        worker = role === 'worker',
+        paladin = role === 'paladin';
+      const cloth = mage ? '#637ca5' : ranger ? '#6e9468' : worker ? '#af9063' : '#708c9c';
+      if (ranger)
+        shaped('#49664d', () => {
+          ctx.moveTo(-9, -22);
+          ctx.quadraticCurveTo(-21, -10, -19, 11);
+          ctx.quadraticCurveTo(-7, 14, 2, 7);
+          ctx.lineTo(10, -20);
+        });
+      if (ranger) backQuiver();
+      humanoid(cloth, skin, 1, false);
+      grip(-15, -1);
+      if (mage) {
+        shaped('#596f97', () => {
+          ctx.moveTo(-8, -18);
+          ctx.quadraticCurveTo(-10, -2, -15, 9);
+          ctx.quadraticCurveTo(0, 15, 15, 9);
+          ctx.quadraticCurveTo(10, -3, 8, -18);
+        });
+        for (const x of [-7, 7])
           line(
             [
-              [-20, y],
-              [-13, y - 5],
+              [x, -13],
+              [x * 1.4, 8],
             ],
-            '#e6d7ae',
+            '#95acbf',
             1,
           );
-        if (role === 'ranger') {
-          oval(-10, -7, 5, 7, '#7aa99a');
-          line(
-            [
-              [-10, -14],
-              [-10, -19],
-            ],
-            '#d6c98a',
-            2,
-          );
-          poly(
-            [
-              [-3, -18],
-              [0, -24],
-              [3, -18],
-              [0, -14],
-            ],
-            '#d8c47a',
-          );
-          line(
-            [
-              [6, -12],
-              [10, -6],
-            ],
-            '#a8d4b5',
-            2,
-          );
-          glint(10, -5, '#d8f2df', 1.2);
-          fillOval(-10, -7, 2.5, 4, '#b7ddd1', 0.2);
-        }
-      } else if (role === 'worker') {
-        poly(
-          [
-            [-10, -33],
-            [-7, -40],
-            [6, -40],
-            [11, -33],
-          ],
-          '#ceab64',
-        );
-        rect(-6, -14, 12, 16, '#665343');
+        mageHead();
         line(
           [
-            [17, -28],
-            [10, 14],
+            [18, -36],
+            [18, 14],
           ],
-          '#ae8c60',
+          '#ad8e61',
+          3,
+        );
+        oval(18, -39, 5, 6, '#a5d1d5');
+        fillOval(16, -41, 2, 2, '#eaf7e3');
+        softRect(15, -29, 6, 4, '#c9b17c', 1);
+        grip(17, -2);
+        poly(
+          [
+            [0, -16],
+            [3, -12],
+            [0, -8],
+            [-3, -12],
+          ],
+          '#c3bd83',
+        );
+      } else if (ranger) {
+        shaped('#55764f', () => {
+          ctx.moveTo(-10, -27);
+          ctx.quadraticCurveTo(-14, -43, 0, -45);
+          ctx.quadraticCurveTo(13, -43, 11, -27);
+          ctx.lineTo(7, -31);
+          ctx.quadraticCurveTo(0, -39, -7, -32);
+        });
+        face(0, -29, skin, 1, false, 'stern');
+        coiffure('short', '#c2a05c');
+        if (role === 'ranger') beard('goatee');
+        line(
+          [
+            [-8, -18],
+            [9, -4],
+          ],
+          '#b59c6f',
+          3,
+        );
+        bow(17, -7);
+        grip(16, -5);
+        grip(-15, -1);
+        if (role === 'ranger') {
+          softPoly(
+            [
+              [-12, -20],
+              [-17, -12],
+              [-5, -10],
+              [0, -16],
+              [9, -11],
+              [12, -17],
+            ],
+            '#6f8c61',
+            2,
+          );
+          oval(-6, -13, 2, 2, gold);
+        }
+      } else if (worker) {
+        shaped('#bea56e', () => {
+          ctx.moveTo(-10, -34);
+          ctx.quadraticCurveTo(-8, -43, 2, -42);
+          ctx.quadraticCurveTo(9, -42, 11, -34);
+          ctx.quadraticCurveTo(0, -31, -10, -34);
+        });
+        softPoly(
+          [
+            [-6, -15],
+            [6, -15],
+            [6, -5],
+            [10, 5],
+            [-10, 5],
+            [-6, -5],
+          ],
+          '#79604a',
+          2,
+        );
+        softRect(-4, -4, 8, 6, '#9b7d57', 1);
+        line(
+          [
+            [17, -26],
+            [11, 14],
+          ],
+          '#ad8c60',
+          3,
+        );
+        softPoly(
+          [
+            [9, -30],
+            [24, -28],
+            [25, -24],
+            [11, -25],
+          ],
+          steel,
+          1,
+        );
+        grip(14, -3);
+      } else {
+        const plate = paladin ? '#aebfc0' : '#98aeb2';
+        softPoly(
+          [
+            [-9, -19],
+            [0, -22],
+            [9, -19],
+            [8, -3],
+            [0, 0],
+            [-8, -3],
+          ],
+          plate,
+          2.5,
+        );
+        line(
+          [
+            [0, -18],
+            [0, -3],
+          ],
+          '#d2d9cd',
+          1.2,
+        );
+        for (const side of [-1, 1]) {
+          softPoly(
+            [
+              [side * 8, -18],
+              [side * 14, -21],
+              [side * 19, -16],
+              [side * 16, -10],
+              [side * 10, -11],
+            ],
+            plate,
+            2.8,
+          );
+          line(
+            [
+              [side * 11, -17],
+              [side * 16, -16],
+            ],
+            '#d8dfcf',
+            1,
+          );
+        }
+        plateHelmet(paladin);
+        shield(-19, -1, paladin ? '#497694' : '#6a8178');
+        sword(18, -7);
+        grip(20, 2, plate);
+        line(
+          [
+            [-18, 0],
+            [-15, 2],
+          ],
+          '#c8c8ae',
+          1,
+        );
+      }
+      if (paladin) {
+        line(
+          [
+            [0, -16],
+            [0, -5],
+          ],
+          '#dfc67f',
+          2,
+        );
+        line(
+          [
+            [-4, -12],
+            [4, -12],
+          ],
+          '#dfc67f',
+          2,
+        );
+      }
+      if (mage)
+        shaped(
+          '#dfcb8e',
+          () => {
+            ctx.moveTo(-2, -49);
+            ctx.quadraticCurveTo(-7, -42, 0, -42);
+            ctx.quadraticCurveTo(4, -42, 4, -45);
+            ctx.quadraticCurveTo(-2, -42, -2, -49);
+          },
+          0.4,
+        );
+      if (role === 'ranger') {
+        craftAt(-10, -8, 0.45, () => bottle(0, 0, '#81afa2'));
+        line(
+          [
+            [-11, -17],
+            [-10, -12],
+          ],
+          '#c8ad76',
+          1,
+        );
+      }
+    }
+
+    function goblinArcher() {
+      goblinBody(false, true, true);
+      softPoly(
+        [
+          [-10, -18],
+          [-15, -9],
+          [-7, -7],
+          [0, -13],
+          [8, -7],
+          [12, -12],
+          [9, -18],
+        ],
+        '#69875b',
+        2,
+      );
+      line(
+        [
+          [-8, -14],
+          [0, -10],
+          [8, -14],
+        ],
+        '#a1b181',
+        1,
+      );
+      grip(15, -4, '#9caa78');
+    }
+
+    function hero(role) {
+      const cape = role === 'paladin' ? '#785848' : role === 'mage' ? '#394f78' : '#355643';
+      shaped(cape, () => {
+        ctx.moveTo(-10, -21);
+        ctx.quadraticCurveTo(-18, -8, -19, 10);
+        ctx.quadraticCurveTo(-8, 15, 0, 11);
+        ctx.quadraticCurveTo(9, 16, 18, 10);
+        ctx.quadraticCurveTo(16, -9, 10, -21);
+      });
+      line(
+        [
+          [-14, -7],
+          [-15, 9],
+          [-6, 11],
+        ],
+        '#a09b76',
+        0.9,
+      );
+      human(role);
+      oval(0, -16, 2, 2, gold);
+    }
+
+    function crownedHero(role, openFace = false) {
+      const purple = '#4c405e',
+        trim = '#d9b978',
+        metal = role === 'paladin' ? '#9696a6' : '#697a82';
+      shaped(purple, () => {
+        ctx.moveTo(-11, -22);
+        ctx.bezierCurveTo(-19, -14, -21, 1, -20, 11);
+        ctx.quadraticCurveTo(-8, 15, 0, 11);
+        ctx.quadraticCurveTo(10, 15, 20, 10);
+        ctx.quadraticCurveTo(19, -10, 11, -22);
+      });
+      line(
+        [
+          [-15, -11],
+          [-16, 8],
+          [-7, 11],
+        ],
+        trim,
+        1.2,
+      );
+      line(
+        [
+          [15, -11],
+          [16, 8],
+          [8, 11],
+        ],
+        trim,
+        1.2,
+      );
+      if (role === 'ranger') backQuiver();
+      humanoid(
+        role === 'mage' ? '#637ca5' : role === 'ranger' ? '#536b58' : '#68717f',
+        skin,
+        1,
+        false,
+      );
+      grip(-15, -1);
+      if (role === 'mage') {
+        shaped('#596f97', () => {
+          ctx.moveTo(-8, -17);
+          ctx.lineTo(-14, 9);
+          ctx.quadraticCurveTo(0, 15, 14, 9);
+          ctx.lineTo(8, -17);
+        });
+        for (const x of [-7, 7])
+          line(
+            [
+              [x, -15],
+              [x * 1.6, 9],
+            ],
+            trim,
+            1.4,
+          );
+        line(
+          [
+            [0, -16],
+            [0, 7],
+          ],
+          '#3d405a',
+          1.5,
+        );
+        line(
+          [
+            [18, -36],
+            [18, 14],
+          ],
+          '#9c805b',
+          3,
+        );
+        oval(18, -38, 5, 6, '#b3d6dd');
+        fillOval(17, -40, 2, 2, '#eff9e8');
+        grip(17, -1);
+        mageHead(true);
+      } else if (role === 'ranger') {
+        face(0, -29, skin, 1, false, 'stern');
+        coiffure('short', '#c2a05c');
+        beard('goatee');
+        line(
+          [
+            [-8, -17],
+            [7, -4],
+          ],
+          '#b19a69',
+          3,
+        );
+        bow(18, -7);
+        grip(17, -5);
+        grip(-15, -1);
+        softPoly(
+          [
+            [-12, -20],
+            [-18, -12],
+            [-8, -10],
+            [0, -17],
+            [8, -10],
+            [15, -13],
+            [11, -20],
+          ],
+          purple,
           3,
         );
         line(
           [
-            [9, -28],
-            [24, -24],
+            [-10, -17],
+            [0, -13],
+            [10, -17],
           ],
-          steel,
-          4,
+          trim,
+          1.4,
         );
-        rect(-15, -3, 9, 10, '#af8558');
       } else {
-        poly(
+        softPoly(
           [
-            [-9, -30],
-            [-7, -40],
-            [6, -40],
-            [10, -29],
+            [-10, -19],
+            [0, -23],
+            [10, -19],
+            [9, -3],
+            [0, 0],
+            [-9, -3],
           ],
-          steel,
+          metal,
+          3,
         );
-        fillPoly(
-          [
-            [-9, -30],
-            [-7, -40],
-            [0, -40],
-            [0, -29],
-          ],
-          '#4e6268',
-          0.25,
-        );
-        line(
-          [
-            [-7, -28],
-            [6, -28],
-          ],
-          ink,
-          2,
-        );
-        rect(-7, -17, 14, 14, steel);
-        fillPoly(
-          [
-            [-7, -17],
-            [0, -17],
-            [0, -3],
-            [-7, -3],
-          ],
-          '#53676d',
-          0.22,
-        );
-        line(
-          [
-            [-5, -13],
-            [5, -13],
-          ],
-          '#d8e1dc',
-          1,
-        );
-        oval(-11, -17, 5, 4, steel);
-        oval(11, -17, 5, 4, steel);
-        shield(-16, -1, role === 'paladin' ? '#497694' : '#6a8178');
-        sword(15, -6);
-        if (role === 'paladin') {
-          line(
+        for (const side of [-1, 1]) {
+          softPoly(
             [
-              [0, -16],
-              [0, -5],
+              [side * 9, -19],
+              [side * 15, -23],
+              [side * 21, -17],
+              [side * 18, -10],
+              [side * 11, -11],
             ],
-            gold,
+            metal,
             3,
           );
           line(
             [
-              [-4, -12],
-              [4, -12],
+              [side * 12, -18],
+              [side * 18, -17],
             ],
-            gold,
-            2,
-          );
-          poly(
-            [
-              [8, -16],
-              [17, 8],
-              [8, 5],
-            ],
-            '#916854',
-          );
-        } else {
-          poly(
-            [
-              [-3, -41],
-              [0, -47],
-              [3, -41],
-            ],
-            '#b99c68',
-          );
-          line(
-            [
-              [-4, -8],
-              [5, -1],
-            ],
-            '#a98a61',
-            2,
-          );
-          line(
-            [
-              [5, -8],
-              [-4, -1],
-            ],
-            '#a98a61',
-            2,
+            trim,
+            1.3,
           );
         }
+        line(
+          [
+            [0, -20],
+            [0, -3],
+          ],
+          '#c7c6be',
+          1.2,
+        );
+        sword(18, -16);
+        shield(-20, -1, '#65516e');
+        grip(20, -5, '#9696a6');
+        if (openFace) {
+          // The Dark Lord retains his accepted open face; hero visor changes are separate.
+          shaped('#687583', () => {
+            ctx.moveTo(-9, -29);
+            ctx.lineTo(-10, -39);
+            ctx.quadraticCurveTo(0, -47, 10, -39);
+            ctx.lineTo(9, -29);
+            ctx.lineTo(6, -35);
+            ctx.lineTo(-6, -35);
+          });
+        } else plateHelmet(true, true);
       }
+      if (role !== 'mage') royalCrown(-40);
+      poly(
+        [
+          [0, -17],
+          [3, -13],
+          [0, -9],
+          [-3, -13],
+        ],
+        '#b595b7',
+      );
+      oval(0, -13, 1, 1, trim);
     }
-    function goblinArcher() {
-      // Companion Archer: an allied goblin scout. This keeps the established companion bow/quiver role
-      // while making the party visibly include a normally-hostile species without borrowing the hero Ranger body.
-      humanoid('#6f7f5d', '#9ba574', 0.82);
-      // Goblin anatomy stays unmistakable: long ears and compact semi-human proportions.
-      poly(
+
+    function protectedSmithBody(color, head = skin, bulk = 1) {
+      softRect(-9 * bulk, 2, 7 * bulk, 13, '#39423e', 2.5);
+      softRect(2 * bulk, 2, 7 * bulk, 13, '#39423e', 2.5);
+      fillPoly(
         [
-          [-6, -29],
-          [-18, -36],
-          [-12, -24],
+          [-9 * bulk, 7],
+          [-2 * bulk, 7],
+          [-2 * bulk, 15],
+          [-10 * bulk, 15],
         ],
-        '#9ba574',
-      );
-      poly(
-        [
-          [6, -29],
-          [18, -36],
-          [12, -24],
-        ],
-        '#9ba574',
-      );
-      poly(
-        [
-          [-3, -27],
-          [0, -21],
-          [5, -25],
-        ],
-        '#c1bd8d',
-      );
-      // Scout hood/cape keep the old companion-Archer readability without Ranger-specific flask/utility ornaments.
-      poly(
-        [
-          [-10, -26],
-          [-7, -39],
-          [0, -44],
-          [9, -37],
-          [11, -26],
-          [6, -32],
-          [-5, -32],
-        ],
-        '#5b7157',
+        '#17201d',
+        0.24,
       );
       fillPoly(
         [
-          [-10, -26],
-          [-7, -39],
-          [0, -44],
-          [0, -27],
+          [2 * bulk, 7],
+          [9 * bulk, 7],
+          [10 * bulk, 15],
+          [3 * bulk, 15],
         ],
-        '#1f3429',
-        0.22,
+        '#dbe3d0',
+        0.08,
       );
-      poly(
+      // Sloped shoulders, connected chest/waist and a draped hem replace a rigid trapezoid.
+      ctx.fillStyle = color;
+      ctx.strokeStyle = ink;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(-11 * bulk, 5);
+      ctx.bezierCurveTo(-12 * bulk, -3, -12 * bulk, -12, -9 * bulk, -17);
+      ctx.quadraticCurveTo(0, -22, 9 * bulk, -17);
+      ctx.bezierCurveTo(12 * bulk, -12, 12 * bulk, -3, 11 * bulk, 5);
+      ctx.quadraticCurveTo(0, 8, -11 * bulk, 5);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      fillPoly(
         [
-          [-11, -16],
-          [-18, 9],
-          [-4, 6],
+          [-12 * bulk, 5],
+          [-10 * bulk, -18],
+          [0, -18],
+          [0, 5],
         ],
-        '#4f654d',
+        '#14211c',
+        0.18,
       );
       fillPoly(
         [
-          [-11, -15],
-          [-18, 8],
-          [-11, 6],
+          [0, -17],
+          [8 * bulk, -17],
+          [10 * bulk, 1],
+          [0, 1],
         ],
-        '#21382c',
-        0.25,
+        '#fff2c7',
+        0.09,
       );
-      // Existing companion role language: bow on screen-right, quiver/arrows on screen-left/back.
-      bow(14, -7);
+      oval(0, -28, 8 * bulk, 9, head);
+      fillOval(-2.5 * bulk, -31, 3 * bulk, 4, '#fff3dc', 0.22);
+      fillOval(3 * bulk, -25, 3 * bulk, 3, '#7c4f43', 0.08);
       line(
         [
-          [-15, -27],
-          [-19, 4],
+          [-9 * bulk, -13],
+          [-16 * bulk, -1],
         ],
-        '#9c7953',
+        color,
         5,
       );
       line(
         [
-          [-19, -29],
-          [-14, -26],
+          [9 * bulk, -13],
+          [15 * bulk, -1],
         ],
-        bone,
-        2,
+        color,
+        5,
       );
-      for (const y of [-28, -23, -18])
-        line(
-          [
-            [-20, y],
-            [-13, y - 5],
-          ],
-          '#e6d7ae',
-          1,
-        );
-      // Simple travel strap/pouch and warm ally knot distinguish this scout from hostile goblins and Raider Archers.
       line(
         [
-          [-9, -14],
-          [7, -2],
+          [-8 * bulk, -12],
+          [-14 * bulk, -2],
         ],
-        '#b39768',
-        2,
-      );
-      rect(-15, -4, 8, 9, '#785d43');
-      poly(
-        [
-          [-4, -18],
-          [0, -23],
-          [4, -18],
-          [0, -14],
-        ],
-        '#d0b36f',
-      );
-    }
-    function hero(role) {
-      const cape = role === 'paladin' ? '#785848' : role === 'mage' ? '#394f78' : '#355643';
-      poly(
-        [
-          [-10, -21],
-          [-18, 11],
-          [-7, 8],
-          [0, 13],
-          [12, 8],
-          [16, -18],
-        ],
-        cape,
-      );
-      human(role);
-      line(
-        [
-          [-7, 6],
-          [-7, 13],
-        ],
-        '#b2b6a7',
+        '#f6e7c7',
         1,
       );
+      rect(-9 * bulk, -1, 18 * bulk, 3, '#705c42');
       line(
         [
-          [5, 6],
-          [5, 13],
+          [-7 * bulk, 1],
+          [7 * bulk, 1],
         ],
-        '#b2b6a7',
+        '#b59563',
         1,
       );
-      if (role === 'paladin') {
-        poly(
-          [
-            [-12, -18],
-            [-19, -17],
-            [-15, -9],
-            [-9, -10],
-          ],
-          '#bfd0d4',
-        );
-        poly(
-          [
-            [10, -18],
-            [17, -16],
-            [15, -9],
-            [9, -10],
-          ],
-          '#c1d0d5',
-        );
-        line(
-          [
-            [-5, -39],
-            [5, -39],
-          ],
-          '#e0e9df',
-          1.5,
-        );
-        line(
-          [
-            [-7, -31],
-            [7, -31],
-          ],
-          '#536b75',
-          2,
-        );
-        line(
-          [
-            [-5, -17],
-            [-5, -4],
-          ],
-          '#d2dcd7',
-          1.5,
-        );
-        line(
-          [
-            [6, -16],
-            [6, -4],
-          ],
-          '#718894',
-          1,
-        );
-        poly(
-          [
-            [-17, -5],
-            [-12, 1],
-            [-17, 7],
-            [-22, 1],
-          ],
-          '#e3c47e',
-        );
-        line(
-          [
-            [-17, -3],
-            [-17, 5],
-          ],
-          '#f3e2ad',
-          1,
-        );
-        line(
-          [
-            [18, -28],
-            [18, -9],
-          ],
-          '#dce8e0',
-          1,
-        );
-        oval(0, 0, 2, 2, gold);
-      } else if (role === 'mage') {
-        rect(-4, -29, 2, 2, '#354552');
-        rect(3, -29, 2, 2, '#354552');
-        line(
-          [
-            [-1, -24],
-            [2, -24],
-          ],
-          '#ab7965',
-          1,
-        );
-        line(
-          [
-            [-8, -35],
-            [9, -35],
-          ],
-          '#c6b987',
-          2,
-        );
-        poly(
-          [
-            [-2, -47],
-            [1, -42],
-            [5, -43],
-            [2, -39],
-            [-2, -41],
-          ],
-          '#e3d5a1',
-        );
-        line(
-          [
-            [-8, -13],
-            [-10, 3],
-          ],
-          '#8bafd0',
-          1.5,
-        );
-        line(
-          [
-            [7, -13],
-            [10, 3],
-          ],
-          '#36456c',
-          1.5,
-        );
-        line(
-          [
-            [-9, 5],
-            [12, 5],
-          ],
-          '#b6b88d',
-          2,
-        );
-        oval(17, -38, 3, 4, '#c7f0ed');
-        line(
-          [
-            [15, -40],
-            [18, -40],
-          ],
-          '#f4fff1',
-          1,
-        );
-        line(
-          [
-            [14, -26],
-            [20, -26],
-          ],
-          gold,
-          2,
-        );
-        poly(
-          [
-            [0, -12],
-            [3, -9],
-            [0, -6],
-            [-3, -9],
-          ],
-          '#a9d7e0',
-        );
-      } else {
-        rect(-4, -29, 2, 2, '#344338');
-        rect(3, -29, 2, 2, '#344338');
-        line(
-          [
-            [-1, -24],
-            [2, -24],
-          ],
-          '#a47660',
-          1,
-        );
-        line(
-          [
-            [-8, -36],
-            [-4, -40],
-            [2, -41],
-          ],
-          '#91aa76',
-          1.5,
-        );
-        line(
-          [
-            [-7, -16],
-            [7, -4],
-          ],
-          '#c3aa79',
-          3,
-        );
-        line(
-          [
-            [-6, -16],
-            [8, -4],
-          ],
-          '#755b40',
-          1,
-        );
-        line(
-          [
-            [-13, -10],
-            [-15, 5],
-          ],
-          '#789a6d',
-          1.5,
-        );
-        line(
-          [
-            [13, -23],
-            [19, -15],
-            [22, -7],
-          ],
-          '#d8bd8a',
-          1.5,
-        );
-        for (const x of [-19, -16, -13]) {
-          line(
-            [
-              [x, -30],
-              [x + 2, -18],
-            ],
-            '#d9caa3',
-            1,
-          );
-          poly(
-            [
-              [x, -31],
-              [x - 3, -36],
-              [x + 1, -35],
-            ],
-            '#d2d7bd',
-          );
-        }
-        oval(3, -6, 2, 2, gold);
-      }
     }
-    function crownedHero(role) {
-      // Keep each class's weapon and readable silhouette; adapt the original
-      // ruler's violet mantle, gold three-point crown and amethyst diamond.
-      const purple = '#423c55',
-        trim = '#e0bd73',
-        gem = '#b48fbc';
-      if (role === 'paladin') {
-        // Royal plate and heavy ceremonial shoulder wings, sword still present.
-        for (const x of [-14, 14]) {
-          poly(
-            [
-              [x - 5, -18],
-              [x, -27],
-              [x + 6, -15],
-              [x, -10],
-            ],
-            '#8c8699',
-          );
-          line(
-            [
-              [x - 3, -17],
-              [x + 3, -17],
-            ],
-            trim,
-            2,
-          );
-        }
-        poly(
-          [
-            [-9, -16],
-            [0, -22],
-            [9, -16],
-            [7, -3],
-            [-7, -3],
-          ],
-          '#666077',
-        );
-        line(
-          [
-            [-6, -8],
-            [6, -8],
-          ],
-          trim,
-          2,
-        );
-      } else if (role === 'mage') {
-        // An embroidered violet stole and a floating courtly collar.
-        poly(
-          [
-            [-10, -19],
-            [-17, 9],
-            [-10, 12],
-            [-4, -19],
-          ],
-          purple,
-        );
-        poly(
-          [
-            [5, -19],
-            [10, 12],
-            [17, 9],
-            [10, -19],
-          ],
-          purple,
-        );
-        for (const x of [-11, 11])
-          line(
-            [
-              [x, -12],
-              [x, 5],
-            ],
-            trim,
-            1.5,
-          );
-        poly(
-          [
-            [-13, -23],
-            [0, -28],
-            [13, -23],
-            [8, -18],
-            [-8, -18],
-          ],
-          '#776582',
-        );
-      } else {
-        // The archer keeps a hood, bow and quiver; a short mantle and
-        // feathered gold clasp communicate rank without heavy armor.
-        poly(
-          [
-            [-12, -18],
-            [-22, 6],
-            [-10, 5],
-            [0, -10],
-            [11, 5],
-            [21, 6],
-            [12, -18],
-          ],
-          purple,
-        );
-        line(
-          [
-            [-9, -16],
-            [0, -10],
-            [9, -16],
-          ],
-          trim,
-          2,
-        );
-        poly(
-          [
-            [10, -33],
-            [18, -42],
-            [17, -30],
-            [12, -23],
-          ],
-          '#bfabbf',
-        );
-      }
-      // Head silhouette is shorter than the former ruler's: crown sits over
-      // the existing face or hood without replacing its class-specific headgear.
-      poly(
-        [
-          [-12, -44],
-          [-17, -55],
-          [-6, -50],
-          [0, -60],
-          [6, -50],
-          [17, -55],
-          [12, -44],
-        ],
-        trim,
-      );
-      rect(-12, -46, 24, 4, '#957446');
-      poly(
-        [
-          [0, -54],
-          [4, -49],
-          [0, -45],
-          [-4, -49],
-        ],
-        gem,
-      );
-      oval(0, -49, 1.8, 2, '#eed1f0');
-    }
+    // Orc lineage: broad brow, low ears, heavy muzzle, paired lower tusks,
+    // thick neck and articulated limbs. Rank changes kit, never species.
     function specialist(e) {
       const style = {
         thorn: { cloth: '#62856c', cape: '#435b4c', hair: '#765d43', trim: '#d0be78' },
@@ -4407,7 +5991,8 @@
         ],
         style.cape,
       );
-      humanoid(style.cloth, skin, 1);
+      if (e.family === 'darklord') protectedSmithBody(style.cloth, skin, 1);
+      else humanoid(style.cloth, skin, 1, false);
       // Joel's named women wear regional kirtles/gowns, with their own work layers.
       // Both captive and rescued scenes share this specialist painter.
       const women = {
@@ -4656,22 +6241,7 @@
             ],
             '#a6aa91',
           );
-          line(
-            [
-              [19, -35],
-              [19, 16],
-            ],
-            '#9b815b',
-            4,
-          );
-          poly(
-            [
-              [11, -37],
-              [19, -48],
-              [26, -37],
-            ],
-            '#a9b0a0',
-          );
+          marshalSpear(19, 0.9);
           break;
         case 'mine':
           rect(-14, -20, 28, 30, '#5f5a4d');
@@ -4685,15 +6255,7 @@
             style.trim,
             2,
           );
-          line(
-            [
-              [22, -27],
-              [16, 14],
-            ],
-            '#947854',
-            3,
-          );
-          rect(16, -32, 17, 7, steel);
+          smithHammer(22);
           break;
         case 'warlord':
           poly(
@@ -4724,23 +6286,7 @@
             ],
             steel,
           );
-          line(
-            [
-              [19, -36],
-              [19, 16],
-            ],
-            '#8f7059',
-            3,
-          );
-          poly(
-            [
-              [12, -37],
-              [19, -43],
-              [26, -37],
-              [19, -32],
-            ],
-            style.trim,
-          );
+          runicStaff(19);
           break;
         case 'abyss':
           poly(
@@ -4754,31 +6300,7 @@
             style.hair,
           );
           rect(-14, -10, 12, 18, '#765c64');
-          line(
-            [
-              [17, -35],
-              [17, 16],
-            ],
-            '#928396',
-            3,
-          );
-          poly(
-            [
-              [17, -44],
-              [25, -35],
-              [17, -27],
-              [9, -35],
-            ],
-            '#bd9abc',
-          );
-          line(
-            [
-              [17, -41],
-              [17, -30],
-            ],
-            '#dfc6cd',
-            2,
-          );
+          runicStaff(18);
           break;
         case 'citadel':
           poly(
@@ -4839,15 +6361,7 @@
             ],
             '#e0d2b4',
           );
-          line(
-            [
-              [20, -37],
-              [14, 16],
-            ],
-            '#9e7f59',
-            4,
-          );
-          rect(14, -41, 23, 10, '#c0b9a4');
+          smithHammer(22);
           rect(-7, -13, 14, 4, style.trim);
           break;
       }
@@ -5159,54 +6673,119 @@
           );
           break;
       }
-      if (women) {
-        // Hair is dressed for work: tied braids and fitted coifs, not loose forge hazards.
-        const pale = ['archive', 'mine', 'cindermaw'].includes(e.family);
-        if (pale) {
-          softPoly(
-            [
-              [-11, -34],
-              [-9, -43],
-              [-2, -47],
-              [8, -45],
-              [12, -37],
-              [8, -34],
-              [5, -40],
-              [-5, -40],
-              [-8, -33],
-            ],
-            e.family === 'mine' ? '#b8bcae' : '#e0d7bc',
-            2,
-          );
-          line(
-            [
-              [-7, -41],
-              [5, -43],
-              [9, -38],
-            ],
-            style.trim,
-            1.2,
-          );
-        }
-        const side = e.family === 'warlord' ? -1 : 1;
-        for (const [y, width] of [
-          [-29, 3],
-          [-24, 3],
-          [-19, 2.5],
-        ])
-          oval(side * 9, y, width, 3.2, style.hair);
+      const mood = {
+        thorn: 'warm',
+        crypt: 'amused',
+        mire: 'gentle',
+        archive: 'bright',
+        ridge: 'wry',
+        mine: 'warm',
+        warlord: 'wry',
+        abyss: 'gentle',
+        citadel: 'warm',
+        cindermaw: 'amused',
+        darklord: 'amused',
+      }[e.family];
+      face(0, -29, skin, 1, ['ridge', 'citadel', 'crypt'].includes(e.family), mood);
+      const hair = {
+        thorn: 'curls',
+        crypt: 'short',
+        mire: 'braid',
+        archive: 'bun',
+        ridge: 'short',
+        mine: 'bob',
+        warlord: 'pony',
+        abyss: 'short',
+        citadel: 'short',
+        cindermaw: 'bun',
+        darklord: 'curls',
+      }[e.family];
+      coiffure(hair, style.hair);
+      if (['crypt', 'ridge', 'citadel'].includes(e.family))
+        beard(e.family === 'ridge' ? 'goatee' : 'full', style.hair);
+      if (e.family === 'abyss')
         line(
           [
-            [side * 7, -17],
-            [side * 11, -17],
+            [-4, -25],
+            [-1, -26],
+            [1, -26],
+            [5, -25],
           ],
-          style.trim,
-          1.8,
+          style.hair,
+          1.7,
+        );
+      if (e.family === 'mine') {
+        line(
+          [
+            [-10, -37],
+            [0, -39],
+            [9, -37],
+          ],
+          '#a6b4ae',
+          2,
+        );
+        oval(0, -39, 2, 2, '#e0c68a');
+      }
+      if (e.family === 'darklord') {
+        oval(-5, -30, 3, 3, '#b5aa7c');
+        fillOval(-5, -30, 1.6, 1.6, skin);
+        line(
+          [
+            [-8, -30],
+            [-10, -34],
+          ],
+          '#b5aa7c',
+          0.8,
+        );
+        line(
+          [
+            [-6, -25],
+            [-3, -23],
+            [0, -25],
+            [3, -23],
+            [6, -25],
+          ],
+          '#c6b58e',
+          2.5,
         );
       }
-      eye(-4, -28, '#433e34');
-      eye(3, -28, '#433e34');
+
+      // One consistent face; wrists connect the two actual hands to their tools.
+      fillOval(-3, -31, 2, 2, '#eed0ad', 0.16);
+      grip(-15, -1, skin);
+      const hand = teacher ? { x: 19, y: -8 } : chemist ? { x: 14, y: -6 } : { x: 17, y: -5 };
+      line(
+        [
+          [14, -5],
+          [hand.x, hand.y],
+        ],
+        style.cloth,
+        4,
+      );
+      grip(hand.x, hand.y, skin);
+      for (const side of [-1, 1])
+        line(
+          [
+            [side * 12, -7],
+            [side * 14, -5],
+          ],
+          style.trim,
+          0.9,
+        );
+      if (chemist) craftAt(16, -12, 0.55, () => bottle(0, 0, '#9fc6bb'));
+      else if (!teacher) {
+        line(
+          [
+            [-8, 0],
+            [6, 0],
+          ],
+          '#bca57e',
+          0.8,
+        );
+        softRect(-5, 1, 10, 6, style.cape, 1.5);
+      }
     }
+
     function bossFinish(family) {
       switch (family) {
         case 'thorn':
@@ -5643,7 +7222,1139 @@
           break;
       }
     }
+    function craftedRoof(w = 35, y = -20, top = -48, r = region) {
+      const colors = ['#a76f50', '#718d78', '#7b8580', '#887365', '#626d80'];
+      ctx.save();
+      ctx.fillStyle = colors[r];
+      ctx.strokeStyle = ink;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(-w, y);
+      if (r === 1 || r === 3) {
+        ctx.quadraticCurveTo(-w * 0.6, top + 1, 0, top);
+        ctx.quadraticCurveTo(w * 0.6, top + 1, w, y);
+        ctx.quadraticCurveTo(w * 0.5, y + 5, 0, y + 2);
+        ctx.quadraticCurveTo(-w * 0.5, y + 5, -w, y);
+      } else {
+        ctx.lineTo(0, top);
+        ctx.lineTo(w, y);
+        ctx.lineTo(w, y + 4);
+        ctx.lineTo(-w, y + 4);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.clip();
+      for (let z = top + 7, i = 0; z <= y; z += r === 1 ? 4 : 7, i++) {
+        line(
+          [
+            [-w, z],
+            [w, z],
+          ],
+          r === 1 ? '#a7b08a' : r === 4 ? '#9195a2' : '#b5a285',
+          0.8,
+        );
+        if (r !== 1)
+          for (let x = -w + (i % 2 ? 6 : 0); x < w; x += 13)
+            line(
+              [
+                [x, z - 6],
+                [x + 1, z],
+              ],
+              r === 2 ? '#54675e' : '#655e51',
+              0.65,
+            );
+      }
+      if (r === 3) {
+        boards(-19, top + 13, 18, 11, '#a68d6b');
+        line(
+          [
+            [-17, top + 15],
+            [-4, top + 22],
+          ],
+          '#6c6858',
+          1,
+        );
+      }
+      ctx.restore();
+      line(
+        [
+          [-w, y + 3],
+          [w, y + 3],
+        ],
+        r === 4 ? '#9c9b9e' : '#62583f',
+        2,
+      );
+    }
+    function recessedDoor(x, y, w = 17, h = 27, open = false, r = region) {
+      softRect(x - w / 2 - 3, y - 3, w + 6, h + 4, r === 4 ? '#696576' : '#756b52', 1.7);
+      softRect(x - w / 2, y, w, h, '#283d33', 1);
+      if (!open) {
+        boards(x - w / 2 + 2, y + 2, w - 4, h - 4, r === 4 ? '#596575' : '#8c7653');
+        for (const z of [7, h - 8]) {
+          line(
+            [
+              [x - w / 2 + 2, y + z],
+              [x + w / 2 - 2, y + z],
+            ],
+            '#54685d',
+            1.8,
+          );
+        }
+        oval(x + w / 2 - 4, y + h / 2, 1.1, 1.1, '#d2bc7e');
+      }
+      poly(
+        [
+          [x - w / 2 - 5, y + h],
+          [x + w / 2 + 4, y + h],
+          [x + w / 2 + 7, y + h + 4],
+          [x - w / 2 - 6, y + h + 4],
+        ],
+        '#a6a28a',
+      );
+    }
+    function craftedHouse(kind = 'house') {
+      const r = kind.startsWith('vale')
+        ? 0
+        : kind.startsWith('march')
+          ? 1
+          : kind.startsWith('highland')
+            ? 2
+            : kind.startsWith('frontier')
+              ? 3
+              : kind.startsWith('crown')
+                ? 4
+                : region;
+      const workshop = /workshop|smithy|forgehouse/.test(kind),
+        boat = kind === 'march-boathouse';
+      const woods = ['#876849', '#7b7659', '#78725d', '#78604e', '#5d5e6b'];
+      if (r === 1) {
+        for (const x of [-25, -8, 9, 25]) {
+          timber([x, 10], [x, 27], 5, woods[r]);
+          fillOval(x, 24, 3, 4, '#426b5c', 0.25);
+        }
+        timber([-25, 12], [-8, 25], 3, woods[r]);
+        timber([25, 12], [9, 25], 3, woods[r]);
+      }
+      if (r >= 2) {
+        blockwork(-29, -21, 58, 36, r === 2 ? '#92988b' : r === 3 ? '#8c7d68' : '#737383', 8);
+      } else {
+        boards(-29, -21, 58, 36, r === 0 ? '#c2b18c' : '#a5aa8d', r === 1);
+        for (const x of [-27, 0, 27]) timber([x, -21], [x, 14], 4, woods[r]);
+      }
+      poly(
+        [
+          [29, -20],
+          [38, -13],
+          [38, 9],
+          [29, 15],
+        ],
+        r === 4 ? '#4d5262' : '#6d705c',
+      );
+      if (workshop || boat) {
+        softRect(-22, -15, 44, 29, '#34463b', 1);
+        timber([-24, -16], [24, -16], 5, woods[r]);
+        if (boat) {
+          shaped('#9e8860', () => {
+            ctx.moveTo(-19, 4);
+            ctx.quadraticCurveTo(0, 19, 21, 2);
+            ctx.lineTo(17, -1);
+            ctx.quadraticCurveTo(0, 7, -16, 0);
+          });
+          line(
+            [
+              [-17, 1],
+              [0, 5],
+              [18, 0],
+            ],
+            '#d0b681',
+            1.2,
+          );
+          timber([0, -6], [0, 6], 2.3);
+        } else {
+          craftAt(-9, 7, 0.5, () => table(40));
+          craftAt(16, 8, 0.55, () => rack(true));
+          if (/smithy|forgehouse/.test(kind)) craftAt(-15, 6, 0.45, () => hearth(true, r === 4));
+        }
+      } else {
+        recessedDoor(-7, -11, 18, 26, false, r);
+        softRect(12, -14, 11, 13, '#5f7f75', 1);
+        line(
+          [
+            [17.5, -13],
+            [17.5, -2],
+          ],
+          '#c2c1a0',
+          1,
+        );
+        line(
+          [
+            [13, -8],
+            [22, -8],
+          ],
+          '#c2c1a0',
+          1,
+        );
+      }
+      if (r === 3) {
+        timber([-24, -14], [-10, 10], 3, '#b29870');
+        softRect(16, -17, 10, 7, '#b19e7b', 1);
+        fillOval(13, -23, 9, 4, '#514d46', 0.2);
+      }
+      if (r === 4) {
+        for (const x of [-26, 26]) {
+          softRect(x - 3, -22, 6, 36, '#9095a1', 1);
+          line(
+            [
+              [x, -19],
+              [x, 10],
+            ],
+            '#bab7b0',
+            0.8,
+          );
+        }
+        poly(
+          [
+            [0, -23],
+            [4, -18],
+            [0, -13],
+            [-4, -18],
+          ],
+          '#b49ab6',
+        );
+      }
+      craftedRoof(36, -21, -51, r);
+      if (r === 4)
+        poly(
+          [
+            [0, -40],
+            [5, -34],
+            [0, -28],
+            [-5, -34],
+          ],
+          '#b49ab6',
+        );
+      if (!boat) {
+        blockwork(20, -43, 9, 23, r === 4 ? '#707782' : '#949987', 6);
+        fillOval(24, -44, 5, 2, '#354c41', 0.4);
+      }
+      if (r === 1) {
+        timber([-26, 15], [28, 15], 4, woods[r]);
+        for (const y of [20, 24]) timber([-13, y], [3, y], 2, woods[r]);
+      }
+      if (workshop) {
+        timber([32, -13], [46, -13], 2.5, woods[r]);
+        boards(38, -13, 11, 11, '#a58c64');
+        line(
+          [
+            [40, -9],
+            [46, -7],
+          ],
+          '#535f50',
+          2,
+        );
+      }
+    }
+    function craftedFence(palisade = false) {
+      for (const [x, h] of [
+        [-26, 28],
+        [-12, 31],
+        [2, 27],
+        [16, 32],
+        [29, 29],
+      ]) {
+        if (palisade)
+          poly(
+            [
+              [x - 3, 14],
+              [x - 3, 14 - h],
+              [x, 8 - h],
+              [x + 4, 13 - h],
+              [x + 4, 14],
+            ],
+            '#887255',
+          );
+        else timber([x, 14], [x, 14 - h], 4, '#8d7754');
+        line(
+          [
+            [x + 1, 12 - h],
+            [x + 1, 11],
+          ],
+          '#b69e71',
+          0.7,
+        );
+      }
+      for (const y of [-10, 4]) {
+        timber([-30, y], [32, y], 4, '#a48a60');
+        for (const x of [-26, 2, 29]) {
+          if (palisade)
+            line(
+              [
+                [x - 3, y - 4],
+                [x + 3, y + 4],
+              ],
+              '#c3b28a',
+              1.5,
+            );
+          else softRect(x - 2, y - 1, 4, 3, '#65573f', 0.4);
+        }
+      }
+    }
+    function craftedSettlement(kind) {
+      if (kind === 'vale-fence') {
+        craftedFence();
+        return true;
+      }
+      if (kind === 'frontier-palisade') {
+        craftedFence(true);
+        return true;
+      }
+      if (kind === 'march-boardwalk') {
+        boards(-33, 1, 66, 13, '#8a8667', true);
+        for (const x of [-27, 0, 27]) {
+          timber([x, 13], [x, 21], 5, '#6c7054');
+          timber([x, 7], [x, -7], 3, '#a59c74');
+        }
+        line(
+          [
+            [-29, -3],
+            [29, -3],
+          ],
+          '#a6ad8b',
+          2,
+        );
+        return true;
+      }
+      if (kind === 'highland-wall' || kind === 'crown-wall') {
+        blockwork(-32, -10, 64, 26, kind === 'crown-wall' ? '#696674' : '#94988a', 8);
+        poly(
+          [
+            [-35, -12],
+            [30, -12],
+            [36, -7],
+            [-34, -7],
+          ],
+          kind === 'crown-wall' ? '#92919c' : '#babba2',
+        );
+        if (kind === 'crown-wall')
+          for (const x of [-27, 27])
+            poly(
+              [
+                [x - 4, -12],
+                [x, -23],
+                [x + 4, -12],
+              ],
+              '#8b8098',
+            );
+        return true;
+      }
+      if (
+        [
+          'vale-cottage',
+          'vale-workshop',
+          'march-stilt-house',
+          'march-boathouse',
+          'highland-stone-house',
+          'highland-smithy',
+          'frontier-patched-house',
+          'frontier-workshop',
+          'crown-ash-house',
+          'crown-forgehouse',
+        ].includes(kind)
+      ) {
+        craftedHouse(kind);
+        return true;
+      }
+      return false;
+    }
+    function regionalServiceFooting(w = 34) {
+      if (region === 1) {
+        boards(-w, 9, w * 2, 7, '#8e8a6b', true);
+        for (const x of [-w + 7, w - 7]) {
+          timber([x, 13], [x, 25], 4, '#707357');
+          timber([x, 14], [x - Math.sign(x) * 12, 24], 2.5, '#7f8969');
+        }
+      } else if (region === 2 || region === 4)
+        blockwork(-w, 8, w * 2, 8, region === 4 ? '#656774' : '#8b9183', 8);
+      else {
+        timber([-w, 12], [w, 12], 4, region === 3 ? '#78614e' : '#8d754d');
+        if (region === 3)
+          line(
+            [
+              [-w + 3, 14],
+              [w - 4, 14],
+            ],
+            '#b3a078',
+            1.2,
+          );
+      }
+    }
+    function craftedService(kind) {
+      if (!['quests', 'supplier', 'recruiter', 'rest', 'barracks'].includes(kind)) return false;
+      if (kind === 'barracks') {
+        const ground = ['#68764c', '#667b70', '#777a68', '#78634c', '#5e5968'][region];
+        if (!Number.isFinite(e.progress) || e.progress >= 4) {
+          fillOval(0, 10, 45, 12, ground, 0.28);
+        }
+        const stage = barracksVisualState(e),
+          full = stage === 'full';
+        if (stage === 'construction') {
+          regionalServiceFooting(28);
+          if (e.progress < 1) {
+            craftAt(-2, 4, 0.65, () => craftedDecoration('stacked-lumber'));
+            sack(19, 8, 0.65);
+            for (const x of [-25, 25]) timber([x, 13], [x, -5], 3);
+          } else {
+            for (const x of [-23, 0, 23]) timber([x, 13], [x, -33], 5);
+            timber([-25, -33], [25, -33], 5);
+            for (const side of [-1, 1]) timber([side * 23, 6], [0, -31], 3);
+            if (e.progress >= 2) {
+              shaped(['#ad9872', '#859b80', '#95998b', '#9e8d73', '#776b86'][region], () => {
+                ctx.moveTo(0, -35);
+                ctx.quadraticCurveTo(-15, -16, -27, 9);
+                ctx.quadraticCurveTo(-18, 12, -7, 8);
+                ctx.lineTo(0, -35);
+              });
+              line(
+                [
+                  [0, -33],
+                  [-23, 7],
+                ],
+                '#c8b990',
+                1.2,
+              );
+            }
+            if (e.progress >= 3) {
+              shaped(['#bfaa80', '#9cb092', '#adb0a0', '#b29f83', '#9586a2'][region], () => {
+                ctx.moveTo(0, -35);
+                ctx.quadraticCurveTo(13, -18, 27, 9);
+                ctx.lineTo(9, 10);
+                ctx.quadraticCurveTo(5, -13, 0, -35);
+              });
+              line(
+                [
+                  [1, -32],
+                  [23, 8],
+                ],
+                '#d9c9a1',
+                1.2,
+              );
+            }
+            for (const x of [-23, 23])
+              line(
+                [
+                  [x - 3, -30],
+                  [x + 3, -27],
+                ],
+                '#c6b88b',
+                1.5,
+              );
+          }
+        } else {
+          regionalServiceFooting(full ? 62 : 51);
+          // Preserve Basic/Full layouts and their existing footprint; the same
+          // tent, bedding and supplies are tailored to each regional material.
+          craftAt(full ? -32 : -20, 1, 0.8, () => tent(region === 4));
+          if (full) craftAt(32, 0, 0.65, () => tent(region === 4));
+          craftAt(-23, 10, 0.44, () => craftedDecoration('sleep-roll'));
+          craftAt(22, 11, 0.4, () => craftedDecoration('cookfire'));
+          crateBody(full ? 52 : 40, 6, 0.48);
+          fillOval(full ? 57 : 40, -3.4, 4, 1, '#493f2f', 0.22);
+          sack(full ? 57 : 40, -6.8, 0.45);
+          craftAt(-43, -11, 0.55, () => flag(region === 4));
+          if (full) {
+            craftAt(0, 12, 0.56, () => ledgerDesk(true));
+            craftAt(-48, 10, 0.4, () => bed());
+            craftAt(12, 16, 0.6, () => stool(0, 0));
+            craftAt(-59, -1, 0.45, () => lantern());
+          }
+          if (region === 1)
+            for (const x of [-36, 35])
+              line(
+                [
+                  [x, 16],
+                  [x + 4, 21],
+                ],
+                '#536e5d',
+                1,
+              );
+          if (region === 3) {
+            softRect(-28, -19, 8, 6, '#baa884', 1);
+            line(
+              [
+                [-27, -18],
+                [-22, -15],
+              ],
+              '#716552',
+              0.8,
+            );
+          }
+          if (region === 4) {
+            // Sew the regional badge onto tent cloth after removing the desk canopy.
+            craftAt(full ? 32 : -20, -15, 0.65, () => {
+              poly(
+                [
+                  [0, -5],
+                  [4, 0],
+                  [0, 5],
+                  [-4, 0],
+                ],
+                '#b69fb5',
+              );
+              line(
+                [
+                  [-3, 0],
+                  [0, 4],
+                  [3, 0],
+                ],
+                '#d3bed0',
+                0.7,
+              );
+            });
+          }
+        }
+        return true;
+      }
+      if (kind === 'rest') {
+        craftedHouse(
+          [
+            'vale-cottage',
+            'march-stilt-house',
+            'highland-stone-house',
+            'frontier-patched-house',
+            'crown-ash-house',
+          ][region],
+        );
+        craftAt(-27, -1, 0.5, () => lantern());
+        return true;
+      }
+      regionalServiceFooting();
+      for (const x of [-28, 28]) {
+        if (region === 2 || region === 4)
+          blockwork(x - 3, -31, 6, 43, region === 4 ? '#727484' : '#919989', 9);
+        else timber([x, 12], [x, -31], 4, '#806d4c');
+      }
+      if (kind === 'quests') {
+        if (region === 2 || region === 4)
+          blockwork(-23, -30, 46, 32, region === 4 ? '#666476' : '#929a88', 8);
+        else boards(-23, -30, 46, 32, '#8c7755');
+        paper(-19, -26, 18);
+        paper(3, -23, 16);
+        for (const x of [-16, 7]) oval(x, -25, 1, 1, '#605e48');
+        oval(11, -10, 2.5, 2.5, '#a66f62');
+        timber([-26, 5], [27, 5], 5);
+      } else {
+        if (region === 2 || region === 4)
+          blockwork(-27, -10, 54, 22, region === 4 ? '#727080' : '#929b88', 8);
+        else boards(-27, -10, 54, 22, '#a38a60', true);
+        timber([-28, -11], [28, -11], 4);
+        if (kind === 'supplier') {
+          poly(
+            [
+              [-27, -16],
+              [27, -16],
+              [29, -10],
+              [-29, -10],
+            ],
+            '#b49b70',
+          );
+          restingObject(-15, -12, 7, () => rimBowl(0, -10, 8, '#a3946f', '#bbad79'));
+          restingObject(5, -12, 6, () => sack(0, -5, 0.65));
+          restingObject(20, -12, 3, () => bottle(0, -3.6, '#96afa0', 0.6));
+          boards(-22, -26, 44, 4, '#8f7a55');
+          for (const x of [-14, 0, 14]) bottle(x, -28.4, '#94a98c', 0.4);
+        } else {
+          craftAt(-17, -12, 0.43, () => rack());
+          shield(9, -19, region === 4 ? '#78647a' : '#8b8d69');
+          line(
+            [
+              [18, -27],
+              [18, -6],
+            ],
+            '#bdab7d',
+            2,
+          );
+          paper(10, -9, 14);
+        }
+      }
+      craftedRoof(34, -31, -48, region);
+      if (region === 4)
+        poly(
+          [
+            [0, -43],
+            [4, -38],
+            [0, -33],
+            [-4, -38],
+          ],
+          '#b69bbb',
+        );
+      return true;
+    }
+    function carvedGateway(family) {
+      const side = R.sideDungeons?.find((d) => d.id === family),
+        theme = side?.theme;
+      const crypt = family === 'crypt',
+        archive = family === 'archive',
+        mine = family === 'mine',
+        military = family === 'abyss' || family === 'citadel';
+      if (!side && !crypt && !archive && !mine && !military) return false;
+      if (family === 'abyss') {
+        for (const side of [-1, 1]) {
+          shaped('#5b4a50', () => {
+            ctx.moveTo(side * 28, 14);
+            ctx.lineTo(side * 42, 14);
+            ctx.lineTo(side * 40, -47);
+            ctx.lineTo(side * 34, -73);
+            ctx.lineTo(side * 28, -43);
+          });
+          for (const y of [-35, -21, -7, 7])
+            line(
+              [
+                [side * 30, y],
+                [side * 40, y],
+              ],
+              '#947b7b',
+              0.8,
+            );
+          line(
+            [
+              [side * 33, -48],
+              [side * 33, -22],
+            ],
+            '#bc917a',
+            1.1,
+          );
+        }
+        softRect(-25, -32, 50, 46, '#263c33', 1);
+        poly(
+          [
+            [-29, -35],
+            [-20, -49],
+            [-9, -44],
+            [0, -53],
+            [10, -44],
+            [21, -49],
+            [29, -35],
+            [23, -29],
+            [-23, -29],
+          ],
+          '#93716c',
+        );
+        line(
+          [
+            [-24, -35],
+            [-16, -42],
+            [0, -38],
+            [16, -42],
+            [24, -35],
+          ],
+          '#c5a088',
+          1.2,
+        );
+        for (const x of [-17, -8, 0, 8, 17]) {
+          line(
+            [
+              [x, -28],
+              [x, 13],
+            ],
+            '#9aaba1',
+            2,
+          );
+          softPoly(
+            [
+              [x - 3, -26],
+              [x, -31],
+              [x + 3, -26],
+              [x, -23],
+            ],
+            '#738a80',
+            0.6,
+          );
+        }
+        for (const y of [14, 18])
+          poly(
+            [
+              [-29, y],
+              [29, y],
+              [32, y + 3],
+              [-32, y + 3],
+            ],
+            '#9b9984',
+          );
+        oval(0, -44, 3, 4, '#bfa172');
+        return true;
+      }
+      const dark = military || theme === 'foundry',
+        stone = dark ? '#6a6878' : archive ? '#85968a' : '#939b86';
+      if (mine || theme === 'cellar') {
+        shaped('#7f8976', () => {
+          ctx.moveTo(-36, 14);
+          ctx.lineTo(-33, -12);
+          ctx.quadraticCurveTo(-28, -36, -5, -38);
+          ctx.quadraticCurveTo(20, -43, 34, -17);
+          ctx.lineTo(38, 14);
+        });
+        shaped('#293e33', () => {
+          ctx.moveTo(-23, 14);
+          ctx.lineTo(-24, -10);
+          ctx.quadraticCurveTo(-21, -29, 0, -28);
+          ctx.quadraticCurveTo(22, -31, 25, -10);
+          ctx.lineTo(25, 14);
+        });
+        if (mine) {
+          for (const x of [-24, 24]) timber([x, 15], [x, -24], 7);
+          timber([-29, -25], [29, -25], 8);
+          for (const side of [-1, 1]) timber([side * 24, -12], [side * 13, -24], 4);
+          craftAt(0, 13, 0.65, () => {
+            ctx.transform(0.85, 0.25, -0.85, 0.25, 0, 0);
+            craftedDecoration('rail');
+          });
+        } else {
+          recessedDoor(0, -18, 31, 31, false);
+          for (const x of [-29, 29]) rockPiece(x, 10, 10, 20);
+        }
+      } else if (theme === 'flooded') {
+        craftAt(0, -2, 1, () => craftedHouse('march-stilt-house'));
+        line(
+          [
+            [-23, -28],
+            [-8, -35],
+            [3, -28],
+          ],
+          '#515f4e',
+          2,
+        );
+        fillOval(0, 19, 32, 5, '#5d8879', 0.25);
+        recessedDoor(-7, -13, 18, 26, true, 1);
+        poly(
+          [
+            [5, -40],
+            [14, -45],
+            [19, -29],
+            [10, -32],
+          ],
+          '#465f50',
+        );
+        timber([7, -40], [18, -29], 2, '#a7a17c');
+        line(
+          [
+            [-22, -2],
+            [-17, 5],
+          ],
+          '#546e5b',
+          1.8,
+        );
+      } else {
+        const w = military ? 43 : 34,
+          top = military ? -46 : -35;
+        blockwork(-w, top, 2 * w, 50 - (military ? 0 : 10), stone, 8);
+        if (archive) {
+          for (const x of [-29, 29]) {
+            blockwork(x - 5, -40, 10, 53, '#9aab9b', 10);
+            softRect(x - 7, -43, 14, 5, '#b9c2a9', 1);
+          }
+          blockwork(-37, -43, 74, 8, '#a4b4a1', 8);
+        }
+        recessedDoor(0, -24, military ? 40 : 34, 38, true, dark ? 4 : 0);
+        if (crypt) {
+          shaped(stone, () => {
+            ctx.moveTo(-25, -23);
+            ctx.quadraticCurveTo(-27, -52, 0, -52);
+            ctx.quadraticCurveTo(28, -51, 26, -23);
+            ctx.lineTo(18, -23);
+            ctx.quadraticCurveTo(18, -40, 0, -41);
+            ctx.quadraticCurveTo(-18, -40, -18, -23);
+          });
+          for (const x of [-19, -10, 0, 10, 19])
+            line(
+              [
+                [x, -44 + Math.abs(x) * 0.25],
+                [x * 0.8, -34 + Math.abs(x) * 0.25],
+              ],
+              '#687e6c',
+              0.9,
+            );
+          skull(0, -39, 5);
+          foliage(-27, 11, 8, 6, '#738866');
+        }
+        if (family === 'citadel')
+          poly(
+            [
+              [-38, -45],
+              [0, -65],
+              [38, -45],
+            ],
+            '#79788a',
+          );
+        if (military) {
+          for (const side of [-1, 1]) {
+            blockwork(side * w - 7, -52, 14, 66, stone, 9);
+            poly(
+              [
+                [side * w - 10, -52],
+                [side * w, -70],
+                [side * w + 10, -52],
+              ],
+              '#8d819a',
+            );
+          }
+          for (const x of [-14, -7, 0, 7, 14])
+            line(
+              [
+                [x, -22],
+                [x, 12],
+              ],
+              '#899990',
+              2,
+            );
+          poly(
+            [
+              [0, -45],
+              [6, -37],
+              [0, -29],
+              [-6, -37],
+            ],
+            '#ad94b6',
+          );
+        }
+        if (theme === 'keep') {
+          for (const x of [-27, -6, 18]) blockwork(x, -43, 10, 10, '#9a9e88', 7);
+          timber([-28, -10], [-15, 12], 4);
+          craftAt(21, -30, 0.45, () => flag());
+          rockPiece(-25, 13, 10, 10);
+          line(
+            [
+              [14, -31],
+              [19, -20],
+              [13, -9],
+            ],
+            '#526c5e',
+            1.5,
+          );
+        }
+        if (theme === 'shrine') {
+          poly(
+            [
+              [-38, -35],
+              [-10, -50],
+              [3, -43],
+              [12, -49],
+              [36, -35],
+            ],
+            '#9c9382',
+          );
+          line(
+            [
+              [-15, -31],
+              [-7, -25],
+              [-12, -19],
+            ],
+            '#6b6557',
+            1.3,
+          );
+          poly(
+            [
+              [0, -36],
+              [5, -30],
+              [0, -24],
+              [-5, -30],
+            ],
+            '#bc9d79',
+          );
+        }
+        if (theme === 'shrine') craftAt(27, -9, 0.55, () => flag());
+        if (theme === 'foundry') {
+          blockwork(22, -58, 10, 32, '#737c77', 7);
+          fillOval(26, -58, 6, 2, '#2b4136', 0.4);
+          timber([-32, -31], [32, -31], 6, '#777263');
+          craftedRoof(36, -33, -43, 3);
+        }
+        if (archive) fillOval(0, 11, 34, 4, '#638c79', 0.22);
+      }
+      if (!mine)
+        for (const y of [14, 18])
+          poly(
+            [
+              [-25, y],
+              [25, y],
+              [28, y + 3],
+              [-28, y + 3],
+            ],
+            '#a2a38a',
+          );
+      return true;
+    }
+    function craftedResidence(boss) {
+      if (boss === 'crown') return false; // The unconfirmed fallback remains protected.
+      if (boss === 'cindermaw') {
+        craftedDecoration('cindermaw-ash-den');
+        rockPiece(-30, 7, 12, 22, true);
+        rockPiece(29, 9, 12, 18, true);
+        return true;
+      }
+      const key =
+        boss === 'thorn'
+          ? 'vale-cottage'
+          : boss === 'mire'
+            ? 'march-stilt-house'
+            : boss === 'ridge'
+              ? 'highland-stone-house'
+              : null;
+      if (!key) return false;
+      craftedHouse(key);
+      // A broad recessed Treasury threshold fits the creature's body.
+      recessedDoor(0, -15, 34, 30, true, boss === 'ridge' ? 2 : boss === 'mire' ? 1 : 0);
+      if (boss === 'thorn') {
+        for (const x of [-18, -7, 6, 18]) foliage(x, -27, 6, 7, '#6d8656');
+      }
+      if (boss === 'ridge') {
+        for (const side of [-1, 1])
+          shaped(bone, () => {
+            ctx.moveTo(side * 17, -30);
+            ctx.quadraticCurveTo(side * 26, -33, side * 24, -44);
+            ctx.quadraticCurveTo(side * 33, -29, side * 20, -26);
+          });
+      }
+      if (boss === 'thorn')
+        for (const x of [-4, 4])
+          shaped(
+            bone,
+            () => {
+              ctx.moveTo(x - 2, -37);
+              ctx.quadraticCurveTo(x + 3, -38, x, -29);
+              ctx.quadraticCurveTo(x - 1, -33, x - 2, -37);
+            },
+            0.6,
+          );
+      if (boss === 'mire')
+        for (const x of [-12, 0, 12])
+          softPoly(
+            [
+              [x - 4, -32],
+              [x, -41],
+              [x + 5, -32],
+            ],
+            '#8d9e79',
+            1.2,
+          );
+      return true;
+    }
+    function craftedLandmark() {
+      switch (e.id) {
+        case 'orchard':
+          for (const [x, sc] of [
+            [-22, 0.65],
+            [1, 0.8],
+            [24, 0.62],
+          ])
+            craftAt(x, 4, sc, () => tree('fruit'));
+          timber([-34, 14], [34, 14], 2);
+          break;
+        case 'den-ruins':
+          blockwork(-27, -19, 16, 34, '#8d9482');
+          blockwork(12, -29, 16, 44, '#7e8a7d');
+          timber([-23, -18], [-7, -27], 4);
+          timber([10, -26], [25, -17], 4);
+          rockPiece(-1, 11, 12, 7);
+          break;
+        case 'mill-pond':
+          pool();
+          craftAt(-25, 7, 0.5, () => grassTuft(0, 4, true));
+          timber([16, 3], [29, -7], 3);
+          break;
+        case 'night-site':
+          pool();
+          craftAt(18, -2, 0.6, () => lantern());
+          break;
+        case 'cache':
+          chest(true, 0.9);
+          timber([22, 10], [31, -15], 3);
+          softPoly(
+            [
+              [25, -15],
+              [33, -13],
+              [34, -8],
+              [29, -6],
+            ],
+            '#8d9d91',
+            1,
+          );
+          break;
+        case 'wagon':
+        case 'convoy':
+          cartBody(e.id === 'convoy');
+          shaped('#c5b58e', () => {
+            ctx.moveTo(-28, -15);
+            ctx.bezierCurveTo(-31, -39, 26, -44, 29, -15);
+            ctx.lineTo(23, -11);
+            ctx.quadraticCurveTo(0, -8, -26, -12);
+          });
+          for (const x of [-18, 0, 18])
+            line(
+              [
+                [x, -31],
+                [x + 3, -14],
+              ],
+              '#968765',
+              1.4,
+            );
+          if (e.id === 'convoy') {
+            sack(23, -15, 0.6);
+            paper(25, -13, 8);
+            timber([28, -5], [48, 4], 4);
+          }
+          break;
+        case 'watch':
+          craftedDecoration('watchpost');
+          break;
+        case 'dock':
+          pool();
+          boards(-28, 0, 56, 10, '#8b8a69', true);
+          for (const x of [-26, 25]) craftAt(x, 0, 0.6, () => craftedDecoration('dock-post'));
+          line(
+            [
+              [-24, -2],
+              [25, -2],
+            ],
+            '#b9b696',
+            1.3,
+          );
+          break;
+        case 'lookout':
+          rockPiece(0, 10, 33, 21);
+          craftAt(1, -4, 0.8, () => flag());
+          break;
+        case 'ore':
+          craftAt(-12, 7, 0.7, () => craftedDecoration('silver-ore-face'));
+          craftAt(17, 10, 0.6, () => craftedDecoration('copper-ore-face'));
+          break;
+        case 'tower':
+          blockwork(-23, -42, 46, 57, '#8e9789', 9);
+          for (const x of [-26, -7, 14]) blockwork(x, -49, 12, 12, '#a2aa96', 6);
+          recessedDoor(0, -26, 13, 19, true);
+          blockwork(-27, 12, 54, 7, '#a6ad97', 7);
+          break;
+        case 'shrine':
+          blockwork(-26, -24, 52, 39, '#969e89', 8);
+          recessedDoor(0, -20, 22, 32, true);
+          craftedRoof(32, -25, -44, 2);
+          poly(
+            [
+              [0, -18],
+              [6, -10],
+              [0, -3],
+              [-6, -10],
+            ],
+            '#b9aa7e',
+          );
+          softRect(-8, -20, 16, 26, '#75836c', 1);
+          line(
+            [
+              [-4, -18],
+              [5, -12],
+              [-3, -4],
+            ],
+            '#3e594e',
+            3,
+          );
+          line(
+            [
+              [-4, -18],
+              [5, -12],
+              [-3, -4],
+            ],
+            '#c8ae88',
+            1.1,
+          );
+          break;
+        case 'overlook':
+          rockPiece(-14, 8, 22, 18);
+          rockPiece(18, 10, 20, 15);
+          for (const x of [-25, 25]) timber([x, 10], [x, -9], 4);
+          timber([-28, -6], [28, -6], 4);
+          break;
+        case 'checkpoint':
+          craftedDecoration('crown-fortress-checkpoint');
+          break;
+        case 'foundry':
+          craftAt(-12, 2, 0.8, () => hearth(true));
+          blockwork(22, -45, 12, 56, '#7c877c', 8);
+          fillOval(27, -44, 7, 3, '#354b3d', 0.4);
+          craftAt(25, 7, 0.45, () => table(30));
+          break;
+        case 'shelf':
+          rockPiece(0, 11, 33, 19, true);
+          craftAt(0, 0, 0.85, () => craftedDecoration('crystal-cluster'));
+          break;
+        case 'siege':
+          craftAt(-8, 0, 0.8, () => tent(true));
+          crateBody(24, 9, 0.6);
+          craftAt(-29, -12, 0.6, () => flag(true));
+          break;
+        case 'fortress-gate':
+          carvedGateway('citadel');
+          break;
+        case 'goblin-camp':
+          craftAt(-20, 6, 0.65, () => tent());
+          craftAt(22, 4, 0.6, () => tent());
+          craftAt(1, 10, 0.4, () => craftedDecoration('cookfire'));
+          sack(-30, 10, 0.4);
+          break;
+        case 'mire-nests':
+          pool();
+          nest(-10, 3, 0.6, true);
+          nest(10, 5, 0.55, true);
+          for (const [index, [x, y]] of [
+            [-8, 3],
+            [9, 4],
+          ].entries())
+            ambientAt(x, y, 0.19, index, () => crocodile('#849774'));
+          craftAt(23, 2, 0.4, () => grassTuft(0, 4, true));
+          break;
+        case 'wolf-den':
+          craftedDecoration('cindermaw-ash-den');
+          craftAt(-21, -10, 0.5, () => tree());
+          break;
+        case 'ogre-hearth':
+          craftAt(0, 0, 1.1, () => hearth());
+          stool(-34, 11, true);
+          stool(34, 11, true);
+          rimBowl(27, 6, 9, '#949d87', '#aa9d75');
+          break;
+        case 'orc-bivouac':
+          craftAt(-9, 1, 0.85, () => tent());
+          crateBody(27, 8, 0.65);
+          craftAt(-25, -12, 0.6, () => flag());
+          craftAt(29, -7, 0.45, () => ledgerDesk());
+          break;
+        case 'ash-roost':
+          craftedDecoration('ashbeast-roost-scene');
+          break;
+        case 'crown-barracks':
+          craftAt(0, 0, 0.9, () => craftedHouse('crown-ash-house'));
+          craftAt(27, 6, 0.4, () => rack());
+          break;
+        default:
+          return false;
+      }
+      return true;
+    }
+
     function gate(family) {
+      if (carvedGateway(family)) return;
+      if (e.kind === 'exit') {
+        blockwork(-31, -32, 62, 47, '#8b9588', 8);
+        recessedDoor(0, -27, 37, 42, true);
+        poly(
+          [
+            [-35, -34],
+            [0, -48],
+            [35, -34],
+          ],
+          '#a0aa96',
+        );
+        return;
+      }
       // Destination bodies share an anchor, not a facade. Exits retain a quiet generic doorway.
       const side = R.sideDungeons?.find((s) => s.id === family),
         theme = side?.theme;
@@ -6357,6 +9068,7 @@
       oval(0, -40, 4, 6, '#e8b766');
     }
     function treasuryEntrance(boss) {
+      if (craftedResidence(boss)) return;
       const wall = ['#baa888', '#aab1a1', '#a1aaa4', '#a18e7b', '#929ba5'][region],
         roof = ['#9b6350', '#618789', '#727a73', '#76585a', '#596478'][region],
         wood = ['#765b40', '#6c6652', '#69665d', '#5e4d46', '#51515e'][region],
@@ -6583,5486 +9295,3064 @@
       }
     }
     function building(kind) {
-      const wall = ['#baa888', '#aab1a1', '#a1aaa4', '#a18e7b', '#929ba5'][region],
-        roof = ['#9b6350', '#618789', '#727a73', '#76585a', '#596478'][region],
-        timber = ['#806044', '#71654f', '#71695b', '#614f46', '#555563'][region],
-        trim = ['#d8bd83', '#abd0c0', '#c8c4a3', '#c69a75', '#b6a5c2'][region],
-        dark = ['#594b3b', '#465a57', '#54574f', '#4d403a', '#454653'][region];
-      const utilityFrame = () => {
-        if (region === 0) {
-          for (const x of [-31, 31])
-            line(
-              [
-                [x, 13],
-                [x, -26],
-              ],
-              timber,
-              3,
-            );
-          for (const x of [-24, 24]) oval(x, 10, 6, 3, '#6c8a58');
-        } else if (region === 1) {
-          for (const x of [-29, -14, 14, 29])
-            line(
-              [
-                [x, 12],
-                [x, 27],
-              ],
-              timber,
-              4,
-            );
+      if (!craftedService(kind)) craftedHouse(kind);
+    }
+
+    function settlementBuilding(kind) {
+      craftedSettlement(kind);
+    }
+
+    function ambientAt(x, y, scale, index, paint) {
+      const motion = ambientAnimalPose(e, index, e.ambientTime || 0);
+      ctx.save();
+      ctx.translate(x + motion.x, y + motion.y);
+      ctx.scale(scale * motion.facing, scale);
+      paint();
+      ctx.restore();
+    }
+    function craftAt(x, y, scale, paint) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(scale, scale);
+      paint();
+      ctx.restore();
+    }
+    function timber(a, b, width = 5, color = '#816247') {
+      line([a, b], '#403d32', width + 1.3);
+      line([a, b], color, width);
+      const dx = b[0] - a[0],
+        dy = b[1] - a[1],
+        len = Math.hypot(dx, dy) || 1,
+        nx = -dy / len,
+        ny = dx / len;
+      line(
+        [
+          [a[0] + nx, a[1] + ny],
+          [b[0] + nx, b[1] + ny],
+        ],
+        '#bb9c70',
+        0.7,
+      );
+      for (const t of [0.12, 0.88]) fillOval(a[0] + dx * t, a[1] + dy * t, 1, 1, '#3d4036');
+    }
+    function boards(x, y, w, h, color = '#8b6b49', horizontal = false) {
+      poly(
+        [
+          [x, y],
+          [x + w, y],
+          [x + w, y + h],
+          [x, y + h],
+        ],
+        color,
+      );
+      const span = horizontal ? h : w;
+      for (let q = 6, i = 0; q < span; q += i++ % 2 ? 8 : 7) {
+        const a = horizontal ? [x, y + q] : [x + q, y],
+          b = horizontal ? [x + w, y + q + 0.5] : [x + q + 0.7, y + h];
+        line([a, b], '#584934', 0.8);
+        if (i % 2 === 0)
+          line(
+            horizontal
+              ? [
+                  [x + 4, y + q - 2],
+                  [x + w - 5, y + q - 1],
+                ]
+              : [
+                  [x + q - 2, y + 3],
+                  [x + q - 1, y + h - 4],
+                ],
+            '#b99c70',
+            0.6,
+          );
+      }
+    }
+    function blockwork(x, y, w, h, color = '#85877b', course = 7) {
+      rect(x, y, w, h, color);
+      for (let q = course, i = 0; q < h; q += course, i++) {
+        line(
+          [
+            [x, y + q],
+            [x + w, y + q],
+          ],
+          '#505b54',
+          0.75,
+        );
+        for (let z = i % 2 ? 7 : 14; z < w; z += 15)
           line(
             [
-              [-34, 15],
-              [34, 15],
+              [x + z, y + q - course + 1],
+              [x + z, y + q - 0.5],
             ],
-            '#867557',
+            '#59645a',
+            0.7,
+          );
+      }
+      line(
+        [
+          [x + 1, y + 1],
+          [x + w - 1, y + 1],
+        ],
+        '#b5b6a0',
+        1.2,
+      );
+      poly(
+        [
+          [x + w, y],
+          [x + w + 4, y - 2],
+          [x + w + 4, y + h - 3],
+          [x + w, y + h],
+        ],
+        '#5a655d',
+      );
+    }
+    function rockPiece(x, y, w = 20, h = 15, dark = false) {
+      const base = dark ? '#55515f' : '#858b7d',
+        light = dark ? '#82788d' : '#a9ad98';
+      poly(
+        [
+          [x - w, y + 4],
+          [x - w * 0.75, y - h * 0.55],
+          [x - w * 0.15, y - h],
+          [x + w * 0.65, y - h * 0.7],
+          [x + w, y + 1],
+          [x + w * 0.55, y + 7],
+          [x - w * 0.6, y + 8],
+        ],
+        base,
+      );
+      poly(
+        [
+          [x - w * 0.75, y - h * 0.55],
+          [x - w * 0.15, y - h],
+          [x + w * 0.65, y - h * 0.7],
+          [x + w * 0.1, y - 1],
+          [x - w * 0.6, y + 2],
+        ],
+        light,
+      );
+      line(
+        [
+          [x - w * 0.15, y - h + 2],
+          [x + w * 0.1, y - 1],
+          [x + w * 0.55, y + 5],
+        ],
+        dark ? '#3d3d48' : '#59675f',
+        0.9,
+      );
+    }
+    function flame(x = 0, y = 0, size = 1, violet = false) {
+      craftAt(x, y, size, () => {
+        shaped(
+          violet ? '#b47cba' : '#d98948',
+          () => {
+            ctx.moveTo(-8, 0);
+            ctx.bezierCurveTo(-14, -8, -3, -15, -7, -23);
+            ctx.quadraticCurveTo(0, -18, 1, -12);
+            ctx.quadraticCurveTo(10, -22, 6, -29);
+            ctx.bezierCurveTo(18, -14, 14, -2, 7, 1);
+            ctx.quadraticCurveTo(0, 4, -8, 0);
+          },
+          0.7,
+        );
+        shaped(
+          violet ? '#ead2d1' : '#f6cd7c',
+          () => {
+            ctx.moveTo(-4, 0);
+            ctx.quadraticCurveTo(-5, -8, 1, -14);
+            ctx.quadraticCurveTo(0, -7, 5, -5);
+            ctx.quadraticCurveTo(10, 2, -4, 0);
+          },
+          0.4,
+        );
+      });
+    }
+    function coals(x = 0, y = 4, size = 1) {
+      craftAt(x, y, size, () => {
+        oval(0, 0, 20, 6, '#4c4540');
+        for (const [a, b, r] of [
+          [-13, 0, 4],
+          [-5, 2, 5],
+          [3, -1, 4],
+          [12, 1, 5],
+        ]) {
+          softRect(a - r, b - 2, r * 1.8, 4, '#795244', 1);
+          line(
+            [
+              [a - r + 1, b],
+              [a + r - 1, b],
+            ],
+            '#db8e55',
+            0.8,
+          );
+        }
+      });
+    }
+    function hearth(industrial = false, dark = false) {
+      if (industrial) blockwork(20, -50, 10, 27, dark ? '#6b6d76' : '#828778', 7);
+
+      blockwork(-27, -31, 54, 42, dark ? '#64606b' : '#8d8877', 8);
+      shaped('#332e2d', () => {
+        ctx.moveTo(-18, 9);
+        ctx.lineTo(-18, -13);
+        ctx.quadraticCurveTo(0, -33, 18, -13);
+        ctx.lineTo(18, 9);
+      });
+      for (const side of [-1, 1])
+        poly(
+          [
+            [side * 18, -11],
+            [side * 22, -14],
+            [side * 16, -25],
+            [side * 11, -21],
+          ],
+          dark ? '#89808e' : '#b3a58a',
+        );
+      fillOval(0, -24, 13, 5, '#252729', 0.25);
+      coals(0, 6, 0.8);
+      flame(0, 5, 0.72, dark);
+      poly(
+        [
+          [-30, 10],
+          [26, 10],
+          [32, 16],
+          [-33, 16],
+        ],
+        '#777368',
+      );
+      if (industrial) {
+        softRect(-17, -5, 34, 5, '#645f57', 1);
+        oval(0, -5, 10, 4, '#443f3c');
+        oval(0, -6, 7, 2, '#e4bb87');
+      }
+    }
+    function stool(x, y, stone = false) {
+      craftAt(x, y, 1, () => {
+        for (const side of [-1, 1])
+          timber([side * 6, -1], [side * 8, 12], 4, stone ? '#7e8276' : '#765a41');
+        oval(0, -2, 12, 5, stone ? '#a4a797' : '#a8895e');
+        line(
+          [
+            [-8, -3],
+            [7, -4],
+          ],
+          stone ? '#c4c4ad' : '#d2b27e',
+          0.8,
+        );
+      });
+    }
+    function table(w = 44) {
+      for (const side of [-1, 1]) timber([side * (w / 2 - 6), -4], [side * (w / 2 - 5), 15], 4);
+      timber([-w / 2 + 5, 8], [w / 2 - 5, 8], 3);
+      poly(
+        [
+          [-w / 2, -16],
+          [w / 2, -16],
+          [w / 2 + 5, -4],
+          [-w / 2 - 4, -4],
+        ],
+        '#aa885c',
+      );
+      boards(-w / 2 - 3, -4, w + 7, 5, '#73553c', true);
+      line(
+        [
+          [-w / 2 + 3, -10],
+          [w / 2 - 2, -10],
+        ],
+        '#d4b57d',
+        0.8,
+      );
+    }
+    function paper(x = -12, y = -13, w = 22) {
+      shaped(
+        '#e0d5b2',
+        () => {
+          ctx.moveTo(x, y);
+          ctx.lineTo(x + w, y - 1);
+          ctx.quadraticCurveTo(x + w - 3, y + 5, x + w + 2, y + 8);
+          ctx.lineTo(x - 2, y + 9);
+          ctx.quadraticCurveTo(x + 2, y + 4, x, y);
+        },
+        0.7,
+      );
+      for (let z = 3; z < 7; z += 2)
+        line(
+          [
+            [x + 4, y + z],
+            [x + w - 4, y + z],
+          ],
+          '#989b83',
+          0.6,
+        );
+    }
+    function bottle(x, y, c = '#89a6a2', scale = 1) {
+      craftAt(x, y, scale, () => {
+        shaped(c, () => {
+          ctx.moveTo(-3, -12);
+          ctx.lineTo(3, -12);
+          ctx.lineTo(3, -7);
+          ctx.quadraticCurveTo(8, -4, 6, 4);
+          ctx.quadraticCurveTo(0, 8, -6, 4);
+          ctx.quadraticCurveTo(-8, -4, -3, -7);
+        });
+        line(
+          [
+            [-3, -13],
+            [3, -13],
+          ],
+          '#a78e61',
+          2,
+        );
+        line(
+          [
+            [-3, -3],
+            [-4, 2],
+          ],
+          '#e3edcd',
+          1,
+        );
+        line(
+          [
+            [-4, 1],
+            [4, 1],
+          ],
+          '#596f6b',
+          0.7,
+        );
+      });
+    }
+    function sack(x, y, size = 1, c = '#b3a078') {
+      craftAt(x, y, size, () => {
+        shaped(c, () => {
+          ctx.moveTo(-4, -15);
+          ctx.quadraticCurveTo(-2, -9, -9, -4);
+          ctx.bezierCurveTo(-17, 10, 17, 13, 10, -3);
+          ctx.quadraticCurveTo(3, -9, 5, -15);
+          ctx.quadraticCurveTo(0, -11, -4, -15);
+        });
+        line(
+          [
+            [-5, -10],
+            [5, -10],
+          ],
+          '#6e654b',
+          2,
+        );
+        line(
+          [
+            [-6, -2],
+            [-8, 4],
+          ],
+          '#d6c19a',
+          1,
+        );
+      });
+    }
+    function chest(sealed = false, size = 1) {
+      craftAt(0, 0, size, () => {
+        boards(-22, -10, 44, 24, '#8b6744');
+        poly(
+          [
+            [22, -10],
+            [28, -15],
+            [28, 9],
+            [22, 14],
+          ],
+          '#604c36',
+        );
+        shaped('#a48154', () => {
+          ctx.moveTo(-22, -10);
+          ctx.quadraticCurveTo(-23, -27, 0, -28);
+          ctx.quadraticCurveTo(23, -27, 22, -10);
+          ctx.quadraticCurveTo(0, -7, -22, -10);
+        });
+        for (const x of [-13, 12]) {
+          line(
+            [
+              [x, -24],
+              [x, -11],
+              [x, 13],
+            ],
+            '#5b625c',
             4,
           );
-        } else if (region === 2) {
-          rect(-36, 7, 72, 9, '#777b73');
-          for (const x of [-31, -13, 8, 27]) rect(x, 8, 16, 7, '#929389');
-        } else if (region === 3) {
-          for (const x of [-35, 35]) {
-            rect(x - 3, -29, 6, 44, '#604f45');
-            poly(
-              [
-                [x - 4, -29],
-                [x, -39],
-                [x + 4, -29],
-              ],
-              '#8a6b54',
-            );
-          }
           line(
             [
-              [-36, 7],
-              [36, -3],
+              [x - 1, -23],
+              [x - 1, 11],
             ],
-            '#785d4f',
-            3,
+            '#b4b69a',
+            0.7,
           );
-        } else {
-          for (const x of [-35, -22, 22, 35]) rect(x - 3, -31, 6, 46, '#555762');
-          for (const x of [-29, 29])
-            poly(
-              [
-                [x - 5, -30],
-                [x, -44],
-                [x + 5, -30],
-              ],
-              '#71697e',
-            );
-          poly(
-            [
-              [-6, -44],
-              [0, -54],
-              [6, -44],
-              [0, -35],
-            ],
-            '#9b87ad',
-          );
+          for (const y of [-19, -7, 9]) oval(x, y, 1, 1, '#d0c0a0');
         }
-      };
-      const serviceRoof = (y) => {
-        if (region === 0) {
-          poly(
-            [
-              [-33, y],
-              [-20, y - 17],
-              [20, y - 17],
-              [33, y],
-            ],
-            roof,
-          );
+        softRect(-4, -7, 8, 10, '#c3a166', 1);
+        oval(0, -3, 1.2, 1.5, '#3e4539');
+        line(
+          [
+            [0, -2],
+            [0, 1],
+          ],
+          '#3e4539',
+          1,
+        );
+        for (const x of [-18, 17]) softRect(x - 2, 12, 5, 4, '#594b39', 1);
+        if (sealed) {
           line(
             [
-              [-31, y],
-              [31, y],
+              [-19, -17],
+              [20, 8],
             ],
-            trim,
-            2,
-          );
-        } else if (region === 1) {
-          poly(
-            [
-              [-34, y],
-              [-26, y - 13],
-              [24, y - 20],
-              [34, y],
-            ],
-            roof,
-          );
-          for (const x of [-27, -16, -5, 6, 17, 28])
-            line(
-              [
-                [x, y - 3],
-                [x - 4, y - 13],
-              ],
-              '#a2ae85',
-              1.5,
-            );
-        } else if (region === 2) {
-          rect(-31, y - 12, 62, 13, roof);
-          rect(-25, y - 17, 50, 6, '#92998b');
-          line(
-            [
-              [-29, y - 7],
-              [29, y - 7],
-            ],
-            '#555f58',
+            '#cdbb8e',
             1.5,
           );
-        } else if (region === 3) {
-          poly(
-            [
-              [-34, y],
-              [-23, y - 18],
-              [7, y - 20],
-              [34, y],
-            ],
-            roof,
-          );
-          poly(
-            [
-              [8, y - 16],
-              [18, y - 11],
-              [14, y - 3],
-              [3, y - 9],
-            ],
-            '#aa8067',
-          );
+          oval(8, 0, 4, 3.7, '#9f5351');
+          paper(13, -6, 8);
+        }
+      });
+    }
+    function crateBody(x = 0, y = 0, size = 1) {
+      craftAt(x, y, size, () => {
+        boards(-20, -17, 40, 30);
+        poly(
+          [
+            [20, -17],
+            [26, -22],
+            [26, 7],
+            [20, 13],
+          ],
+          '#65523c',
+        );
+        poly(
+          [
+            [-20, -17],
+            [-14, -22],
+            [26, -22],
+            [20, -17],
+          ],
+          '#bd9b6a',
+        );
+        for (const a of [-15, 15]) timber([a, -17], [a, 12], 3, '#b39a6d');
+        timber([-17, 9], [17, -14], 3, '#aa8d60');
+        for (const a of [-15, 15]) for (const b of [-13, 9]) oval(a, b, 1, 1, '#443e32');
+      });
+    }
+    function rimBowl(x, y, w = 15, c = '#7b8176', contents = '#9aa493') {
+      oval(x, y + 4, w, 6, c);
+      oval(x, y, w, 5, c);
+      oval(x, y - 1, w - 3, 3, contents);
+      line(
+        [
+          [x - w + 3, y + 2],
+          [x + w - 4, y + 3],
+        ],
+        '#bcc0a4',
+        0.8,
+      );
+    }
+    function nest(x = 0, y = 4, size = 1, wet = false) {
+      craftAt(x, y, size, () => {
+        oval(0, 0, 25, 9, wet ? '#726d50' : '#8b7852');
+        oval(0, -1, 18, 5, wet ? '#535c43' : '#635e44');
+        for (let i = 0; i < 12; i++) {
+          const a = i * 0.58;
           line(
             [
-              [-29, y],
-              [29, y - 5],
+              [Math.cos(a) * 19, Math.sin(a) * 5],
+              [Math.cos(a + 0.6) * 24, Math.sin(a + 0.6) * 8],
             ],
-            timber,
-            3,
-          );
-        } else {
-          poly(
-            [
-              [-34, y],
-              [-25, y - 18],
-              [25, y - 18],
-              [34, y],
-            ],
-            roof,
-          );
-          for (const x of [-27, 27])
-            poly(
-              [
-                [x - 4, y],
-                [x, y - 15],
-                [x + 4, y],
-              ],
-              '#8c8296',
-            );
-          line(
-            [
-              [-24, y - 2],
-              [24, y - 2],
-            ],
-            trim,
-            2,
+            i % 2 ? '#b9a371' : '#7b8860',
+            1.3,
           );
         }
-      };
-      if (kind === 'quests') {
-        utilityFrame();
-        for (const x of [-20, 20]) rect(x - 2, -38, 4, 52, timber);
-        rect(-22, -32, 44, 31, wall);
-        serviceRoof(-34);
-        line(
-          [
-            [-22, -27],
-            [22, -27],
-          ],
-          trim,
-          2,
-        );
-        for (const [x, y] of [
-          [-16, -23],
-          [-3, -25],
-          [10, -22],
-          [-11, -9],
-          [5, -10],
-        ]) {
-          rect(x, y, 10, 9, '#e7d7ad');
-          line(
-            [
-              [x + 2, y + 3],
-              [x + 8, y + 3],
-            ],
-            '#8f765a',
-            1,
-          );
-        }
-        rect(-18, 3, 24, 4, timber);
-        rect(13, -3, 6, 12, dark);
-        return;
-      }
-      if (kind === 'supplier') {
-        utilityFrame();
-        for (const x of [-25, 25]) rect(x - 2, -28, 4, 43, timber);
-        serviceRoof(-27);
-        rect(-28, -7, 56, 20, wall);
-        line(
-          [
-            [-27, -6],
-            [27, -6],
-          ],
-          trim,
-          3,
-        );
-        rect(-21, -24, 13, 17, dark);
-        for (const y of [-21, -14])
-          line(
-            [
-              [-20, y],
-              [-9, y],
-            ],
-            trim,
-            2,
-          );
-        oval(0, -12, 7, 5, '#b1a17b');
-        line(
-          [
-            [-4, -15],
-            [4, -15],
-          ],
-          '#776047',
-          2,
-        );
-        rect(12, -20, 10, 13, timber);
-        line(
-          [
-            [12, -14],
-            [22, -14],
-          ],
-          trim,
-          1.5,
-        );
-        for (const x of [-18, 18])
+        for (const x of [-15, -5, 7])
           line(
             [
               [x, 0],
-              [x, 12],
+              [x + 7, 2],
             ],
-            timber,
-            2,
+            '#c3b18a',
+            0.8,
           );
-        return;
-      }
-      if (kind === 'recruiter') {
-        utilityFrame();
-        rect(-29, 5, 58, 9, dark);
-        for (const x of [-25, 25]) rect(x - 3, -34, 6, 40, timber);
-        serviceRoof(-32);
-        shield(-13, -10, wall);
-        line(
-          [
-            [8, -27],
-            [8, 9],
-          ],
-          steel,
-          3,
-        );
-        line(
-          [
-            [17, -27],
-            [17, 9],
-          ],
-          timber,
-          3,
-        );
-        poly(
-          [
-            [6, -29],
-            [12, -42],
-            [18, -29],
-          ],
-          trim,
-        );
-        rect(-3, -17, 7, 22, timber);
-        line(
-          [
-            [29, -32],
-            [29, 12],
-          ],
-          timber,
-          3,
-        );
-        poly(
-          [
-            [30, -30],
-            [39, -27],
-            [37, -13],
-            [30, -16],
-          ],
-          region === 4 ? '#71586f' : roof,
-        );
-        return;
-      }
-      if (kind === 'rest') {
-        utilityFrame();
-        if (region === 0) {
-          rect(-28, -19, 56, 34, wall);
-          poly(
-            [
-              [-34, -20],
-              [0, -50],
-              [34, -20],
-            ],
-            roof,
-          );
-          for (const x of [-23, 23])
-            line(
-              [
-                [x, -18],
-                [x, 12],
-              ],
-              timber,
-              3,
-            );
-        } else if (region === 1) {
-          rect(-30, -16, 60, 29, wall);
-          serviceRoof(-17);
-          line(
-            [
-              [-28, 7],
-              [28, 7],
-            ],
-            trim,
-            3,
-          );
-          for (const x of [-24, 24])
-            line(
-              [
-                [x, 9],
-                [x, 23],
-              ],
-              timber,
-              3,
-            );
-        } else if (region === 2) {
-          rect(-30, -23, 60, 38, '#92968b');
-          poly(
-            [
-              [-34, -24],
-              [-22, -39],
-              [22, -39],
-              [34, -24],
-            ],
-            roof,
-          );
-          for (const y of [-17, -5, 7])
-            line(
-              [
-                [-28, y],
-                [28, y],
-              ],
-              '#68756b',
-              1.5,
-            );
-          rect(21, -51, 9, 28, '#757a71');
-        } else if (region === 3) {
-          rect(-28, -19, 56, 34, wall);
-          serviceRoof(-20);
-          rect(12, -13, 12, 10, '#6e574c');
-          line(
-            [
-              [12, -12],
-              [24, -4],
-            ],
-            '#b89676',
-            2,
-          );
-          poly(
-            [
-              [-31, 12],
-              [-31, -9],
-              [-17, -20],
-              [-13, 12],
-            ],
-            '#89705e',
-          );
-        } else {
-          rect(-29, -23, 58, 38, wall);
-          serviceRoof(-24);
-          rect(-24, -18, 10, 14, '#414752');
-          for (const x of [-21, -17])
-            line(
-              [
-                [x, -17],
-                [x, -5],
-              ],
-              steel,
-              1.5,
-            );
-          poly(
-            [
-              [-5, -35],
-              [0, -43],
-              [5, -35],
-              [0, -28],
-            ],
-            '#ae98bd',
-          );
-        }
-        rect(-7, -4, 14, 19, dark);
-        rect(12, 4, 14, 6, timber);
-        oval(-18, -8, 5, 5, '#d6b56f');
-        rect(-21, -7, 6, 12, timber);
-        line(
-          [
-            [-4, -3],
-            [-4, 12],
-          ],
-          trim,
-          1,
-        );
-        return;
-      }
-      if (kind === 'barracks' && Number.isFinite(e.progress) && e.progress < 4) {
-        const timber = ['#8a6a49', '#7a7258', '#7b6f58', '#66564a', '#555563'][region],
-          base = ['#6f765c', '#667b78', '#777a70', '#65524a', '#545867'][region];
-        rect(-28, 7, 56, 7, base);
-        if (e.progress < 1) {
-          for (const x of [-23, 23])
-            line(
-              [
-                [x, 13],
-                [x, -5],
-              ],
-              timber,
-              3,
-            );
-          for (const y of [-3, 2])
-            line(
-              [
-                [-17, y],
-                [16, y],
-              ],
-              timber,
-              4,
-            );
-          oval(15, 7, 8, 4, roof);
-        } else {
-          for (const x of [-23, 0, 23]) {
-            rect(x - 3, -28, 6, 42, timber);
-            poly(
-              [
-                [x - 4, -28],
-                [x, -37],
-                [x + 4, -28],
-              ],
-              roof,
-            );
-          }
-          rect(-18, -34, 36, 4, timber);
-          if (e.progress < 2) {
-            line(
-              [
-                [-27, -17],
-                [27, 3],
-              ],
-              '#c1a477',
-              3,
-            );
-            line(
-              [
-                [27, -17],
-                [-27, 3],
-              ],
-              '#c1a477',
-              3,
-            );
-          } else {
-            poly(
-              [
-                [0, -35],
-                [-26, 8],
-                [-7, 8],
-              ],
-              roof,
-            );
-            line(
-              [
-                [0, -33],
-                [-25, 7],
-              ],
-              '#c1a477',
-              2,
-            );
-            if (e.progress >= 3) {
-              poly(
-                [
-                  [0, -35],
-                  [26, 8],
-                  [9, 8],
-                ],
-                roof,
-              );
-              line(
-                [
-                  [0, -33],
-                  [25, 7],
-                ],
-                '#c1a477',
-                2,
-              );
-            } else
-              line(
-                [
-                  [27, -17],
-                  [3, 3],
-                ],
-                '#c1a477',
-                3,
-              );
-          }
-        }
-        if (region === 1) {
-          for (const x of [-24, -8, 8, 24])
-            line(
-              [
-                [x, 13],
-                [x, 22],
-              ],
-              '#7d7255',
-              3,
-            );
-          line(
-            [
-              [-29, 16],
-              [29, 16],
-            ],
-            '#9a8a65',
-            3,
-          );
-        }
-        if (region === 2) {
-          for (const x of [-25, -8, 9]) rect(x, 10, 16, 7, '#777e74');
-        }
-        if (region === 3 && e.progress >= 1) {
-          for (const x of [-24, 24])
-            line(
-              [
-                [x, -31],
-                [x - 7, -41],
-              ],
-              '#4f4a43',
-              3,
-            );
-        }
-        if (region === 4) {
-          for (const x of [-18, 18])
-            poly(
-              [
-                [x - 5, 10],
-                [x, -3],
-                [x + 5, 10],
-              ],
-              '#77718c',
-            );
-        }
-        return;
-      }
-      if (kind === 'barracks') {
-        // Barracks are expedition camps, not shops or houses. Basic is a cozy field camp;
-        // Full is the same camp grown into a larger, more capable expedition base.
-        const full = !!e.full,
-          campScale = 1.18; // Basic and Full reserve the same visual footprint; upgrades change contents, never site size.
-        ctx.save();
-        ctx.scale(campScale, campScale);
-        const canvas = ['#927554', '#6b7867', '#77766a', '#75594f', '#555463'][region];
-        const canvasLight = ['#b29a72', '#859483', '#949184', '#947166', '#6e6b7c'][region];
-        const bedding = ['#8b6b55', '#627b75', '#777064', '#7f5f58', '#686171'][region];
-        const ground = ['#6f684f', '#55665f', '#69695f', '#625149', '#4d4b57'][region];
-        const fireRing = ['#777367', '#66746e', '#73756d', '#665b54', '#5c5963'][region];
-
-        // Soft camp footprint and scattered sleeping gear make the site feel inhabited.
-        shade(full ? 48 : 39, full ? 12 : 10, 0.18);
-        fillOval(0, 10, 45, 12, ground, 0.28);
-
-        // Main low expedition tent. Open flap stays readable as shelter rather than storefront.
-        const tentW = 37,
-          tentH = 43;
-        poly(
-          [
-            [-tentW, 8],
-            [0, -tentH],
-            [tentW, 8],
-          ],
-          canvas,
-        );
-        fillPoly(
-          [
-            [0, -tentH],
-            [tentW, 8],
-            [0, 8],
-          ],
-          canvasLight,
-          0.23,
-        );
-        poly(
-          [
-            [-12, 8],
-            [0, -18],
-            [12, 8],
-          ],
-          dark,
-        );
-        line(
-          [
-            [0, -tentH + 3],
-            [0, 9],
-          ],
-          timber,
-          2,
-        );
-        for (const side of [-1, 1])
-          line(
-            [
-              [side * (tentW - 4), 6],
-              [side * (tentW + 10), 15],
-            ],
-            timber,
-            2,
-          );
-        line(
-          [
-            [-tentW + 3, 8],
-            [tentW - 3, 8],
-          ],
-          trim,
-          1.5,
-        );
-
-        // Bedrolls/blankets beside the tent, deliberately visible in the world.
-        rect(-31, 5, 18, 7, bedding);
-        line(
-          [
-            [-28, 7],
-            [-16, 7],
-          ],
-          trim,
-          1,
-        );
-        if (full) {
-          rect(-10, 9, 18, 7, bedding);
-          line(
-            [
-              [-7, 11],
-              [5, 11],
-            ],
-            trim,
-            1,
-          );
-        }
-        oval(-29, 4, 5, 3, canvasLight);
-
-        // Communal cookfire: the visual heart of both camp tiers.
-        for (const [x, y] of [
-          [21, 9],
-          [27, 11],
-          [33, 8],
-          [27, 5],
-        ])
-          oval(x, y, 4, 2.5, fireRing);
-        line(
-          [
-            [20, 8],
-            [34, 3],
-          ],
-          timber,
-          3,
-        );
-        line(
-          [
-            [21, 3],
-            [34, 9],
-          ],
-          timber,
-          3,
-        );
-        for (const x of [24, 28, 32])
-          poly(
-            [
-              [x - 3, 7],
-              [x, -5 - (x % 2) * 2],
-              [x + 3, 7],
-            ],
-            '#c77b48',
-          );
-        glint(28, -2, region === 4 ? '#d7a0ba' : '#f0bd72', 2);
-        if (region === 1) {
-          oval(28, 0, 7, 3, '#5f7772');
-        }
-        if (region === 4) {
-          poly(
-            [
-              [25, 3],
-              [28, -7],
-              [31, 3],
-            ],
-            '#8c6677',
-          );
-        }
-
-        // Small supply/gear corner; practical clutter rather than a counter or storefront.
-        rect(15, -7, 13, 11, timber);
-        line(
-          [
-            [16, -6],
-            [27, 3],
-          ],
-          trim,
-          1,
-        );
-        line(
-          [
-            [37, -29],
-            [37, 10],
-          ],
-          timber,
-          3,
-        );
-        for (const y of [-24, -13, -2])
-          line(
-            [
-              [33, y],
-              [45, y],
-            ],
-            steel,
-            1.7,
-          );
-        shield(-39, -2, wall);
-
-        // Region-specific camp identity.
-        if (region === 0) {
-          for (const x of [-39, -34, -29]) glint(x, 12, x === -34 ? '#d7b47a' : '#8ea16d', 1.2);
-          line(
-            [
-              [-42, -8],
-              [-47, -20],
-            ],
-            '#75573e',
-            2,
-          );
-        } else if (region === 1) {
-          for (const x of [-43, -37, -31])
-            line(
-              [
-                [x, 13],
-                [x + 2, -9],
-              ],
-              '#7e936c',
-              1.5,
-            );
-          line(
-            [
-              [-45, 15],
-              [45, 15],
-            ],
-            '#8f7c59',
-            2,
-          );
-        } else if (region === 2) {
-          for (const [x, y, r] of [
-            [-41, 10, 5],
-            [-35, 7, 4],
-            [42, 9, 5],
-          ])
-            oval(x, y, r, r * 0.55, '#777a72');
-          line(
-            [
-              [-38, -6],
-              [-30, -14],
-            ],
-            '#b3aa8e',
-            1.5,
-          );
-        } else if (region === 3) {
-          line(
-            [
-              [-42, 9],
-              [-35, -15],
-            ],
-            '#4d433d',
-            3,
-          );
-          line(
-            [
-              [-36, 12],
-              [-27, -10],
-            ],
-            '#4d433d',
-            2,
-          );
-          for (const x of [23, 28, 33]) glint(x, 4, '#c77b53', 1.2);
-        } else {
-          for (const x of [-42, 42])
-            poly(
-              [
-                [x - 5, 12],
-                [x, -2],
-                [x + 5, 12],
-              ],
-              '#706b82',
-            );
-          poly(
-            [
-              [-4, -33],
-              [0, -40],
-              [4, -33],
-              [0, -27],
-            ],
-            '#9b87ad',
-          );
-        }
-
-        // Simple camp banner/lantern reads as "our base" without making the camp a fort.
-        line(
-          [
-            [44, -35],
-            [44, 12],
-          ],
-          timber,
-          3,
-        );
-        poly(
-          [
-            [46, -33],
-            [58, -30],
-            [46, -22],
-          ],
-          trim,
-        );
-        glint(44, -37, region === 4 ? '#d8c2ea' : '#efd28a', 1.8);
-
-        if (full) {
-          // Full Barracks = established expedition base: second sleeping tent, command canopy,
-          // extra bunks/supplies, and more warm lived-in detail while remaining unmistakably a camp.
-          poly(
-            [
-              [-58, 10],
-              [-44, -23],
-              [-26, 10],
-            ],
-            canvas,
-          );
-          fillPoly(
-            [
-              [-44, -23],
-              [-26, 10],
-              [-44, 10],
-            ],
-            canvasLight,
-            0.22,
-          );
-          poly(
-            [
-              [-49, 10],
-              [-44, -7],
-              [-38, 10],
-            ],
-            dark,
-          );
-          line(
-            [
-              [-44, -21],
-              [-44, 11],
-            ],
-            timber,
-            2,
-          );
-          rect(-58, 11, 20, 6, bedding);
-          line(
-            [
-              [-55, 13],
-              [-41, 13],
-            ],
-            trim,
-            1,
-          );
-
-          // Open command canopy and low map table, not a shop counter.
-          for (const x of [-12, 12])
-            line(
-              [
-                [x, -13],
-                [x, -37],
-              ],
-              timber,
-              3,
-            );
-          poly(
-            [
-              [-18, -35],
-              [0, -46],
-              [18, -35],
-              [12, -27],
-              [-12, -27],
-            ],
-            canvasLight,
-          );
-          rect(-15, -18, 30, 7, timber);
-          line(
-            [
-              [-11, -15],
-              [10, -13],
-            ],
-            '#c9b284',
-            1,
-          );
-          for (const [x, y] of [
-            [-8, -15],
-            [2, -16],
-            [9, -13],
-          ])
-            glint(x, y, trim, 1);
-
-          // More supplies and seating establish permanence/coziness.
-          rect(48, -5, 15, 12, timber);
-          rect(51, -17, 12, 11, canvas);
-          oval(15, 14, 7, 3, bedding);
-          oval(33, 15, 7, 3, bedding);
-          line(
-            [
-              [15, 12],
-              [15, 19],
-            ],
-            timber,
-            2,
-          );
-          line(
-            [
-              [33, 12],
-              [33, 19],
-            ],
-            timber,
-            2,
-          );
-          for (const x of [-18, 0, 18]) glint(x, 16, region === 4 ? '#c8a8d8' : '#d7bc7c', 1.2);
-
-          // A second warm lamp makes Full camps feel welcoming at a glance.
-          line(
-            [
-              [-62, -20],
-              [-62, 13],
-            ],
-            timber,
-            2,
-          );
-          glint(-62, -22, region === 4 ? '#d7b4e4' : '#f2cc7f', 2);
-        }
-        ctx.restore();
-        return;
-      }
-      rect(-23, -22, 46, 37, wall);
-      poly(
-        [
-          [23, -22],
-          [35, -15],
-          [35, 10],
-          [23, 15],
-        ],
-        '#737f75',
-      );
-      poly(
-        [
-          [-29, -22],
-          [0, -47],
-          [30, -22],
-        ],
-        roof,
-      );
-      poly(
-        [
-          [0, -47],
-          [12, -43],
-          [36, -15],
-          [30, -22],
-        ],
-        '#4b5957',
+      });
+    }
+    function flag(crown = false, x = -17, y = 14) {
+      timber([x, y], [x, y - 60], 3, '#7e674a');
+      shaped(
+        crown ? '#62506f' : ['#8b7454', '#6e9588', '#7f8b7d', '#947863', '#62506f'][region],
+        () => {
+          ctx.moveTo(x + 1, y - 58);
+          ctx.bezierCurveTo(x + 15, y - 64, x + 20, y - 52, x + 33, y - 56);
+          ctx.lineTo(x + 31, y - 30);
+          ctx.bezierCurveTo(x + 17, y - 26, x + 14, y - 39, x + 1, y - 33);
+        },
       );
       line(
         [
-          [-26, -23],
-          [0, -44],
-          [27, -22],
+          [x + 4, y - 55],
+          [x + 4, y - 36],
         ],
-        '#dfc9a0',
-        2,
+        '#c4ad7d',
+        1.1,
       );
       line(
         [
-          [30, -20],
-          [36, -15],
-          [36, 10],
+          [x + 1, y - 53],
+          [x - 2, y - 53],
         ],
-        '#8c9687',
-        1.5,
+        '#c6b790',
+        1.6,
       );
-      rect(-7, -5, 14, 20, '#504d40');
-      rect(-18, -14, 8, 9, '#87a7a2');
-      rect(11, -14, 8, 9, '#87a7a2');
-      for (const x of [-17, 12])
+      if (crown)
+        poly(
+          [
+            [x + 17, y - 51],
+            [x + 23, y - 44],
+            [x + 17, y - 37],
+            [x + 11, y - 44],
+          ],
+          '#b5a0bc',
+        );
+      if (!crown)
         line(
           [
-            [x, -12],
-            [x + 6, -12],
+            [x + 17, y - 50],
+            [x + 17, y - 39],
           ],
-          '#c8d7b9',
-          1.5,
+          '#d0b47b',
+          1.8,
         );
+    }
+    function wheel(x, y, r = 11, broken = false) {
+      oval(x + 2, y, r, r, '#534b3c');
+      oval(x, y, r, r, '#7b6548');
+      oval(x, y, r - 2, r - 2, '#453f35');
+      for (let i = 0; i < 8; i++) {
+        if (broken && i === 3) continue;
+        const a = (i * Math.PI) / 4;
+        line(
+          [
+            [x, y],
+            [x + Math.cos(a) * (r - 3), y + Math.sin(a) * (r - 3)],
+          ],
+          '#b09668',
+          1.8,
+        );
+      }
+      oval(x, y, 3, 3, '#b6a477');
+      oval(x, y, 1, 1, '#4e4f42');
+    }
+    function cartBody(loaded = false, broken = false) {
+      timber([-27, 3], [25, 3], 5, '#55564a');
+      wheel(-20, 12, 10, broken);
+      wheel(22, 12, 10);
+      boards(-30, -14, 58, 22, '#947149', true);
+      poly(
+        [
+          [-30, -14],
+          [-22, -20],
+          [33, -20],
+          [28, -14],
+        ],
+        '#ba9767',
+      );
+      timber([-31, -14], [28, -14], 3);
+      timber([27, -8], [47, 2], 4);
+      if (loaded) {
+        restingObject(-12, -14, 9, () => crateBody(0, -7.15, 0.55));
+        restingObject(16, -14, 7, () => sack(0, -6, 0.8));
+        line(
+          [
+            [-28, -13],
+            [21, -27],
+            [29, -11],
+          ],
+          '#d1bb88',
+          1.8,
+        );
+      }
+      if (broken) {
+        timber([-4, 7], [10, 19], 3);
+        timber([-28, -7], [-3, 14], 3);
+      }
+    }
+    function bed(royal = false) {
+      for (const x of [-25, 25]) timber([x, -15], [x, 15], 4);
+      boards(-26, 4, 52, 6, '#796044', true);
+      softRect(-23, -13, 46, 18, royal ? '#706178' : '#6f8581', 5);
+      softRect(-21, -12, 14, 12, '#d2c3a1', 4);
+      shaped(royal ? '#88718b' : '#839995', () => {
+        ctx.moveTo(-4, -12);
+        ctx.lineTo(21, -12);
+        ctx.quadraticCurveTo(27, -4, 24, 10);
+        ctx.lineTo(15, 8);
+        ctx.lineTo(13, 3);
+        ctx.lineTo(-6, 3);
+      });
       line(
         [
-          [-23, 2],
-          [-9, 2],
+          [0, -10],
+          [0, 1],
+          [16, 4],
+          [18, 8],
         ],
-        '#746b56',
+        '#c6c8ad',
         1,
       );
+      oval(-17, -7, 4, 2, '#b3ad94');
+      oval(30, 13, 5, 3, '#5c4a37');
+      oval(38, 12, 5, 3, '#5c4a37');
+    }
+    function tent(crown = false, lean = false) {
+      const c = crown ? '#786675' : ['#aa9871', '#7d9d8b', '#8a948a', '#a68c6b', '#786675'][region];
+      timber([-24, 10], [-12, -32], 3);
+      timber([25, 10], [5, -32], 3);
+      shaped(c, () => {
+        ctx.moveTo(-35, 11);
+        ctx.quadraticCurveTo(-25, -12, -13, -36);
+        ctx.quadraticCurveTo(-4, -39, 6, -34);
+        ctx.quadraticCurveTo(21, -12, 35, 10);
+        ctx.quadraticCurveTo(15, 15, 0, 9);
+        ctx.quadraticCurveTo(-18, 13, -35, 11);
+      });
+      shaped('#474d3d', () => {
+        ctx.moveTo(-10, 9);
+        ctx.quadraticCurveTo(-7, -8, -3, -27);
+        ctx.quadraticCurveTo(3, -9, 14, 10);
+      });
       line(
         [
-          [-22, 11],
-          [22, 11],
+          [-29, 8],
+          [-13, -34],
+          [6, -33],
+          [29, 8],
         ],
-        '#897f68',
-        2,
+        '#d2c09b',
+        1.2,
       );
-      rect(14, -43, 7, 17, '#9a8e7c');
-      rect(-5, -24, 10, 8, gold);
-    }
-    function settlementBuilding(kind) {
-      const wood = ['#806044', '#71654f', '#71695b', '#614f46', '#555563'][region],
-        stone = ['#9b9c8f', '#7e8780', '#85877f', '#766c64', '#666775'][region],
-        roof = ['#9b6350', '#617f79', '#727a73', '#76585a', '#596478'][region],
-        trim = ['#d8bd83', '#abd0c0', '#c8c4a3', '#c69a75', '#b6a5c2'][region],
-        dark = ['#594b3b', '#465a57', '#54574f', '#4d403a', '#454653'][region];
-      switch (kind) {
-        case 'vale-cottage':
-          rect(-27, -18, 54, 33, '#c0ad8d');
-          poly(
-            [
-              [-34, -19],
-              [0, -48],
-              [34, -19],
-            ],
-            '#a8684d',
-          );
-          for (const x of [-20, 0, 20])
-            line(
-              [
-                [x, -18],
-                [x, 12],
-              ],
-              wood,
-              3,
-            );
-          rect(-8, -4, 16, 19, dark);
-          rect(14, -12, 8, 9, '#8aa2a0');
-          line(
-            [
-              [-24, -15],
-              [24, -15],
-            ],
-            trim,
-            2,
-          );
-          for (const x of [-18, 17]) glint(x, -11, '#e8d889', 1.4);
-          return;
-        case 'vale-workshop':
-          rect(-31, -13, 62, 28, '#ad956f');
-          for (const x of [-27, -8, 11, 28]) rect(x - 3, -32, 6, 47, wood);
-          poly(
-            [
-              [-36, -31],
-              [-18, -47],
-              [25, -43],
-              [36, -29],
-            ],
-            '#8f5d47',
-          );
-          rect(-18, -7, 36, 22, '#574b3d');
-          line(
-            [
-              [-28, -10],
-              [28, -10],
-            ],
-            trim,
-            2,
-          );
-          rect(18, -25, 12, 14, '#816245');
-          // Timber joinery, slatted door and layered roof repair.
-          for (const x of [-9, 0, 9])
-            line(
-              [
-                [x, -3],
-                [x, 12],
-              ],
-              '#9d8260',
-              1,
-            );
-          line(
-            [
-              [-29, -25],
-              [-18, -39],
-              [19, -37],
-              [29, -27],
-            ],
-            '#ac8060',
-            1.2,
-          );
-          line(
-            [
-              [-27, 12],
-              [27, 12],
-            ],
-            '#c5a37b',
-            1.6,
-          );
-          for (const x of [-25, 26]) {
-            oval(x, -10, 1.2, 1.2, '#463d35');
-            oval(x, 7, 1.2, 1.2, '#463d35');
-          }
-
-          return;
-        case 'vale-fence':
-          for (const x of [-22, -7, 8, 23]) rect(x - 2, -17, 4, 30, wood);
-          line(
-            [
-              [-27, -10],
-              [28, -10],
-            ],
-            '#a98a61',
-            4,
-          );
-          line(
-            [
-              [-27, 2],
-              [28, 2],
-            ],
-            '#a98a61',
-            4,
-          );
-          return;
-        case 'march-stilt-house':
-          for (const x of [-23, -8, 8, 23])
-            line(
-              [
-                [x, 11],
-                [x, 27],
-              ],
-              wood,
-              4,
-            );
-          rect(-30, -14, 60, 27, '#9e9f84');
-          poly(
-            [
-              [-35, -15],
-              [-22, -39],
-              [24, -39],
-              [35, -15],
-            ],
-            '#6f8a76',
-          );
-          for (const x of [-28, -18, -8, 3, 14, 25])
-            line(
-              [
-                [x, -37],
-                [x + 4, -49],
-              ],
-              '#83956d',
-              2,
-            );
-          rect(-9, -3, 18, 16, dark);
-          line(
-            [
-              [-26, 9],
-              [26, 9],
-            ],
-            '#c4b986',
-            2,
-          );
-          // Braced pilings, raised threshold and woven reed courses.
-          for (const side of [-1, 1])
-            line(
-              [
-                [side * 23, 12],
-                [side * 8, 25],
-              ],
-              '#647466',
-              2,
-            );
-          line(
-            [
-              [-28, 13],
-              [28, 13],
-            ],
-            '#d0c099',
-            2,
-          );
-          for (const y of [-28, -21])
-            line(
-              [
-                [-27, y],
-                [28, y + 1],
-              ],
-              '#8da18a',
-              1,
-            );
-          if (kind === 'march-stilt-house') {
-            rect(15, -9, 9, 9, '#4b6261');
-            line(
-              [
-                [19, -8],
-                [19, 0],
-              ],
-              '#c7bf92',
-              1,
-            );
-            line(
-              [
-                [-12, 14],
-                [-12, 20],
-                [12, 20],
-                [12, 14],
-              ],
-              '#b3a17e',
-              2,
-            );
-          } else {
-            line(
-              [
-                [-14, 3],
-                [0, 8],
-                [14, 3],
-              ],
-              '#b9a783',
-              2,
-            );
-          }
-
-          return;
-        case 'march-boathouse':
-          for (const x of [-28, -12, 12, 28])
-            line(
-              [
-                [x, 12],
-                [x, 29],
-              ],
-              wood,
-              4,
-            );
-          rect(-35, -9, 70, 23, '#8e947d');
-          poly(
-            [
-              [-39, -10],
-              [-24, -34],
-              [26, -34],
-              [39, -10],
-            ],
-            '#607d72',
-          );
-          rect(-17, -5, 34, 18, '#40534e');
-          line(
-            [
-              [-30, -5],
-              [30, -5],
-            ],
-            trim,
-            2,
-          );
-          for (const x of [-25, -8, 9, 26])
-            line(
-              [
-                [x, -32],
-                [x + 3, -43],
-              ],
-              '#8fa071',
-              1.7,
-            );
-          // Braced pilings, raised threshold and woven reed courses.
-          for (const side of [-1, 1])
-            line(
-              [
-                [side * 23, 12],
-                [side * 8, 25],
-              ],
-              '#647466',
-              2,
-            );
-          line(
-            [
-              [-28, 13],
-              [28, 13],
-            ],
-            '#d0c099',
-            2,
-          );
-          for (const y of [-28, -21])
-            line(
-              [
-                [-27, y],
-                [28, y + 1],
-              ],
-              '#8da18a',
-              1,
-            );
-          if (kind === 'march-stilt-house') {
-            rect(15, -9, 9, 9, '#4b6261');
-            line(
-              [
-                [19, -8],
-                [19, 0],
-              ],
-              '#c7bf92',
-              1,
-            );
-            line(
-              [
-                [-12, 14],
-                [-12, 20],
-                [12, 20],
-                [12, 14],
-              ],
-              '#b3a17e',
-              2,
-            );
-          } else {
-            line(
-              [
-                [-14, 3],
-                [0, 8],
-                [14, 3],
-              ],
-              '#b9a783',
-              2,
-            );
-          }
-
-          return;
-        case 'march-boardwalk':
-          rect(-31, 2, 62, 12, '#897354');
-          for (let x = -27; x <= 27; x += 11)
-            line(
-              [
-                [x, 2],
-                [x, 14],
-              ],
-              '#5f513f',
-              2,
-            );
-          for (const x of [-25, 25])
-            line(
-              [
-                [x, 11],
-                [x, 24],
-              ],
-              wood,
-              3,
-            );
-          return;
-        case 'highland-stone-house':
-          rect(-30, -19, 60, 34, '#8c8e84');
-          for (const y of [-15, -4, 7])
-            line(
-              [
-                [-28, y],
-                [28, y],
-              ],
-              '#656a64',
-              1.4,
-            );
-          poly(
-            [
-              [-35, -20],
-              [0, -48],
-              [35, -20],
-            ],
-            '#6d746f',
-          );
-          rect(-8, -4, 16, 19, '#444741');
-          rect(17, -43, 8, 23, '#77766d');
-          line(
-            [
-              [-26, -17],
-              [26, -17],
-            ],
-            trim,
-            2,
-          );
-          // Staggered dressed masonry, slate courses and a recessed lintel.
-          for (const [x, y] of [
-            [-18, -14],
-            [1, -14],
-            [18, -3],
-            [-8, -3],
-            [5, 8],
-          ])
-            line(
-              [
-                [x, y],
-                [x, y + 6],
-              ],
-              '#636e67',
-              1,
-            );
-          for (const y of [-32, -25])
-            line(
-              [
-                [-16, y],
-                [18, y],
-              ],
-              '#919a8d',
-              1,
-            );
-          line(
-            [
-              [-11, 13],
-              [-11, -6],
-              [11, -6],
-              [11, 13],
-            ],
-            '#a8ac98',
-            2,
-          );
-          line(
-            [
-              [-29, 14],
-              [30, 14],
-            ],
-            '#c3bda1',
-            1.5,
-          );
-
-          return;
-        case 'highland-smithy':
-          rect(-34, -17, 68, 32, '#777b75');
-          for (const y of [-12, 0, 11])
-            line(
-              [
-                [-32, y],
-                [32, y],
-              ],
-              '#585e59',
-              1.5,
-            );
-          poly(
-            [
-              [-37, -18],
-              [-22, -40],
-              [23, -40],
-              [37, -18],
-            ],
-            '#616a66',
-          );
-          rect(16, -49, 11, 31, '#696a63');
-          rect(-14, -5, 28, 20, '#454842');
-          oval(20, 8, 8, 4, '#4b443c');
-          glint(20, 4, '#e19c5e', 1.7);
-          // Staggered dressed masonry, slate courses and a recessed lintel.
-          for (const [x, y] of [
-            [-18, -14],
-            [1, -14],
-            [18, -3],
-            [-8, -3],
-            [5, 8],
-          ])
-            line(
-              [
-                [x, y],
-                [x, y + 6],
-              ],
-              '#636e67',
-              1,
-            );
-          for (const y of [-32, -25])
-            line(
-              [
-                [-16, y],
-                [18, y],
-              ],
-              '#919a8d',
-              1,
-            );
-          line(
-            [
-              [-11, 13],
-              [-11, -6],
-              [11, -6],
-              [11, 13],
-            ],
-            '#a8ac98',
-            2,
-          );
-          line(
-            [
-              [-29, 14],
-              [30, 14],
-            ],
-            '#c3bda1',
-            1.5,
-          );
-
-          return;
-        case 'highland-wall':
-          rect(-31, -14, 62, 28, '#777c75');
-          for (const y of [-9, 2, 12])
-            line(
-              [
-                [-30, y],
-                [30, y],
-              ],
-              '#555d57',
-              2,
-            );
-          for (const x of [-22, -4, 15])
-            line(
-              [
-                [x, -13],
-                [x, 0],
-              ],
-              '#555d57',
-              1.5,
-            );
-          return;
-        case 'frontier-patched-house':
-          rect(-30, -19, 60, 34, '#9c826d');
-          poly(
-            [
-              [-36, -20],
-              [-20, -43],
-              [8, -48],
-              [36, -20],
-            ],
-            '#6f514d',
-          );
-          rect(-8, -4, 16, 19, '#493f39');
-          for (const [x, y] of [
-            [-20, -12],
-            [12, -14],
-            [19, 1],
-          ])
-            rect(x, y, 9, 7, '#725f52');
-          line(
-            [
-              [-25, -16],
-              [25, -16],
-            ],
-            '#bd8f6f',
-            2,
-          );
-          line(
-            [
-              [-29, -25],
-              [-20, -38],
-            ],
-            '#443d38',
-            3,
-          );
-          if (variant % 3 === 0) {
-            line(
-              [
-                [19, -16],
-                [29, 8],
-              ],
-              '#5a4439',
-              4,
-            );
-            rect(18, -37, 8, 17, '#635149');
-          } else if (variant % 3 === 1) {
-            for (const x of [-20, -10, 0])
-              line(
-                [
-                  [x, 13],
-                  [x + 13, 7],
-                ],
-                '#7d6048',
-                3,
-              );
-            rect(-27, -31, 12, 7, '#8f6d55');
-          } else {
-            line(
-              [
-                [-25, -2],
-                [-11, 10],
-              ],
-              '#6d5141',
-              4,
-            );
-            line(
-              [
-                [10, -43],
-                [25, -30],
-              ],
-              '#9a735a',
-              3,
-            );
-            glint(21, -10, '#d18b5a', 1.3);
-          }
-          // Timber joinery, slatted door and layered roof repair.
-          for (const x of [-9, 0, 9])
-            line(
-              [
-                [x, -3],
-                [x, 12],
-              ],
-              '#9d8260',
-              1,
-            );
-          line(
-            [
-              [-29, -25],
-              [-18, -39],
-              [19, -37],
-              [29, -27],
-            ],
-            '#ac8060',
-            1.2,
-          );
-          line(
-            [
-              [-27, 12],
-              [27, 12],
-            ],
-            '#c5a37b',
-            1.6,
-          );
-          for (const x of [-25, 26]) {
-            oval(x, -10, 1.2, 1.2, '#463d35');
-            oval(x, 7, 1.2, 1.2, '#463d35');
-          }
-
-          return;
-        case 'frontier-workshop':
-          for (const x of [-30, 30]) rect(x - 3, -31, 6, 46, wood);
-          poly(
-            [
-              [-35, -30],
-              [-19, -44],
-              [23, -41],
-              [36, -28],
-            ],
-            '#654a47',
-          );
-          rect(-31, -8, 62, 23, '#846e61');
-          rect(-15, -8, 30, 23, dark);
-          line(
-            [
-              [-27, -7],
-              [27, -7],
-            ],
-            trim,
-            2,
-          );
-          oval(23, 7, 8, 4, '#4b423c');
-          for (const x of [19, 23, 27]) glint(x, 3, '#c77b53', 1.3);
-          if (variant % 3 === 0) {
-            for (const x of [-20, -10, 0])
-              line(
-                [
-                  [x, 13],
-                  [x + 14, 7],
-                ],
-                '#765742',
-                3,
-              );
-            line(
-              [
-                [-31, -20],
-                [-18, -31],
-              ],
-              '#9b765b',
-              2,
-            );
-          } else if (variant % 3 === 1) {
-            rect(-28, -18, 12, 9, '#6d584c');
-            line(
-              [
-                [26, -8],
-                [35, -20],
-              ],
-              '#7e5f48',
-              4,
-            );
-            oval(36, -20, 5, 5, '#514842');
-          } else {
-            line(
-              [
-                [-26, -30],
-                [-12, -43],
-              ],
-              '#ae8061',
-              3,
-            );
-            rect(15, -35, 10, 8, '#765950');
-            glint(-20, 5, '#d69a64', 1.2);
-          }
-          // Timber joinery, slatted door and layered roof repair.
-          for (const x of [-9, 0, 9])
-            line(
-              [
-                [x, -3],
-                [x, 12],
-              ],
-              '#9d8260',
-              1,
-            );
-          line(
-            [
-              [-29, -25],
-              [-18, -39],
-              [19, -37],
-              [29, -27],
-            ],
-            '#ac8060',
-            1.2,
-          );
-          line(
-            [
-              [-27, 12],
-              [27, 12],
-            ],
-            '#c5a37b',
-            1.6,
-          );
-          for (const x of [-25, 26]) {
-            oval(x, -10, 1.2, 1.2, '#463d35');
-            oval(x, 7, 1.2, 1.2, '#463d35');
-          }
-
-          return;
-        case 'frontier-palisade':
-          for (const x of [-24, -12, 0, 12, 24]) {
-            rect(x - 4, -28, 8, 42, '#665248');
-            poly(
-              [
-                [x - 4, -28],
-                [x, -40],
-                [x + 4, -28],
-              ],
-              '#8b6f55',
-            );
-          }
-          line(
-            [
-              [-27, -16],
-              [27, -16],
-            ],
-            '#54463e',
-            4,
-          );
-          return;
-        case 'crown-ash-house':
-          rect(-32, -21, 64, 36, '#666875');
-          for (const x of [-29, -13, 14, 29]) rect(x - 3, -29, 6, 44, '#50515d');
-          poly(
-            [
-              [-37, -29],
-              [-22, -47],
-              [24, -47],
-              [38, -29],
-            ],
-            '#515a69',
-          );
-          rect(-10, -7, 20, 22, '#2d2f38');
-          poly(
-            [
-              [-5, -37],
-              [0, -45],
-              [5, -37],
-              [0, -29],
-            ],
-            '#9b87ad',
-          );
-          line(
-            [
-              [-28, -18],
-              [28, -18],
-            ],
-            trim,
-            2,
-          );
-          glint(20, -9, '#d5a074', 1.4);
-          // Cut basalt joints and metal roof seams retain Crown civic character.
-          for (const y of [-35, -29])
-            line(
-              [
-                [-24, y],
-                [25, y],
-              ],
-              '#75818d',
-              1,
-            );
-          for (const x of [-24, -6, 13])
-            line(
-              [
-                [x, -16],
-                [x, -8],
-              ],
-              '#858b94',
-              1,
-            );
-          line(
-            [
-              [-13, 13],
-              [-13, -8],
-              [13, -8],
-              [13, 13],
-            ],
-            '#9ca4ab',
-            2,
-          );
-          line(
-            [
-              [-30, 14],
-              [30, 14],
-            ],
-            '#a2a39e',
-            1.5,
-          );
-          if (kind === 'crown-ash-house') {
-            rect(16, -15, 9, 10, '#a58d72');
-            line(
-              [
-                [20, -14],
-                [20, -6],
-              ],
-              '#d8c8a1',
-              1,
-            );
-          }
-
-          return;
-        case 'crown-forgehouse':
-          rect(-35, -20, 70, 35, '#5b5e69');
-          for (const x of [-31, -14, 5, 24]) rect(x, -14, 13, 10, '#737481');
-          poly(
-            [
-              [-38, -21],
-              [-24, -42],
-              [25, -42],
-              [39, -21],
-            ],
-            '#4f5867',
-          );
-          rect(19, -52, 11, 32, '#555762');
-          rect(-14, -8, 28, 23, '#2d3038');
-          oval(24, 7, 8, 4, '#3f3b43');
-          for (const x of [20, 24, 28]) glint(x, 3, '#c88962', 1.4);
-          // Cut basalt joints and metal roof seams retain Crown civic character.
-          for (const y of [-35, -29])
-            line(
-              [
-                [-24, y],
-                [25, y],
-              ],
-              '#75818d',
-              1,
-            );
-          for (const x of [-24, -6, 13])
-            line(
-              [
-                [x, -16],
-                [x, -8],
-              ],
-              '#858b94',
-              1,
-            );
-          line(
-            [
-              [-13, 13],
-              [-13, -8],
-              [13, -8],
-              [13, 13],
-            ],
-            '#9ca4ab',
-            2,
-          );
-          line(
-            [
-              [-30, 14],
-              [30, 14],
-            ],
-            '#a2a39e',
-            1.5,
-          );
-          if (kind === 'crown-ash-house') {
-            rect(16, -15, 9, 10, '#a58d72');
-            line(
-              [
-                [20, -14],
-                [20, -6],
-              ],
-              '#d8c8a1',
-              1,
-            );
-          }
-
-          return;
-        case 'crown-wall':
-          rect(-32, -16, 64, 30, '#555762');
-          for (const y of [-10, 1, 12])
-            line(
-              [
-                [-31, y],
-                [31, y],
-              ],
-              '#3c3e48',
-              2,
-            );
-          for (const x of [-23, -5, 14])
-            line(
-              [
-                [x, -15],
-                [x, 0],
-              ],
-              '#777381',
-              1.5,
-            );
-          for (const x of [-24, 24])
-            poly(
-              [
-                [x - 5, -16],
-                [x, -27],
-                [x + 5, -16],
-              ],
-              '#6d6878',
-            );
-          return;
+      line(
+        [
+          [-30, 3],
+          [-43, 15],
+        ],
+        '#baa780',
+        1.2,
+      );
+      line(
+        [
+          [30, 3],
+          [43, 15],
+        ],
+        '#baa780',
+        1.2,
+      );
+      if (lean) craftAt(2, 6, 0.45, () => bed());
+      else {
+        line(
+          [
+            [4, -28],
+            [17, 7],
+          ],
+          '#6b6650',
+          2,
+        );
+        line(
+          [
+            [-10, -27],
+            [-19, 5],
+          ],
+          '#d3c2a0',
+          3,
+        );
       }
     }
-    function decoration(kind) {
-      const localWood = ['#806044', '#71654f', '#71695b', '#614f46', '#555563'][region];
+    function ledgerDesk(map = false, game = false) {
+      table(48);
+      if (map) {
+        paper(-18, -14, 32);
+        line(
+          [
+            [-13, -9],
+            [-2, -12],
+            [10, -7],
+          ],
+          '#8b7255',
+          1,
+        );
+        for (const x of [-8, 7]) {
+          line(
+            [
+              [x, -9],
+              [x, -18],
+            ],
+            '#554f44',
+            1,
+          );
+          softPoly(
+            [
+              [x, -18],
+              [x + 5, -16],
+              [x, -14],
+            ],
+            '#866a77',
+            0.4,
+          );
+        }
+      } else if (game) {
+        poly(
+          [
+            [-16, -14],
+            [12, -14],
+            [17, -7],
+            [-20, -7],
+          ],
+          '#d0bf94',
+        );
+        for (const x of [-10, -2, 6])
+          for (const y of [-12, -9]) softRect(x, y, 3, 2, (x + y) % 3 ? '#695847' : '#bcaa7c', 0.3);
+        oval(-5, -13, 2, 2, '#484b43');
+        oval(9, -10, 2, 2, '#976e56');
+      } else {
+        softRect(-15, -15, 25, 8, '#61524d', 1);
+        paper(-12, -17, 20);
+        oval(17, -11, 3, 2.5, '#454c45');
+        line(
+          [
+            [17, -12],
+            [22, -23],
+          ],
+          '#d6caa8',
+          1.3,
+        );
+      }
+    }
+    function rack(tools = false, farm = false) {
+      for (const x of [-23, 23]) timber([x, 14], [x, -35], 5);
+      timber([-25, -27], [25, -27], 5);
+      timber([-24, 4], [24, 4], 3);
+      for (const x of [-14, 0, 14]) {
+        timber([x, 8], [x, -26], 2.7, '#ad895a');
+        oval(x, -24, 1, 1, '#d7c49a');
+        if (tools) {
+          if (x === -14) softRect(x - 6, -33, 12, 7, '#89958f', 1.5);
+          else if (x === 0)
+            shaped('#8b9a93', () => {
+              ctx.moveTo(-5, -28);
+              ctx.lineTo(5, -28);
+              ctx.lineTo(6, -19);
+              ctx.quadraticCurveTo(0, -14, -6, -19);
+            });
+          else
+            for (const dx of [-4, 0, 4])
+              line(
+                [
+                  [x + dx, -34],
+                  [x + dx, -25],
+                  [x, -22],
+                ],
+                '#99a399',
+                1.5,
+              );
+        } else if (x === -14) {
+          line(
+            [
+              [x, 10],
+              [x, -38],
+            ],
+            '#aa895b',
+            2.8,
+          );
+          poly(
+            [
+              [x, -44],
+              [x + 4, -35],
+              [x, -32],
+              [x - 4, -35],
+            ],
+            steel,
+          );
+        } else if (x === 14) {
+          line(
+            [
+              [x, 10],
+              [x, -29],
+            ],
+            '#aa895b',
+            3,
+          );
+          softPoly(
+            [
+              [x - 2, -34],
+              [x + 10, -34],
+              [x + 11, -23],
+              [x - 2, -25],
+            ],
+            steel,
+            1,
+          );
+        } else {
+          sword(x, -7);
+        }
+      }
+    }
+    function chainLinks(x = -16, y = 7, count = 6) {
+      for (let i = 0; i < count; i++) {
+        oval(x + i * 6, y + (i % 2), i % 2 ? 2 : 4, i % 2 ? 4 : 2, '#737e78');
+        if (i % 2 === 0) oval(x + i * 6, y, 2, 1, '#d1d0b6');
+      }
+    }
+    function lantern(x = 0, y = -20) {
+      timber([x, y + 33], [x, y + 2], 3);
+      softRect(x - 7, y - 5, 14, 18, '#5d655b', 2);
+      softRect(x - 4, y - 2, 8, 11, '#dbbf75', 1);
+      line(
+        [
+          [x, y - 2],
+          [x, y + 9],
+        ],
+        '#777b65',
+        1,
+      );
+      poly(
+        [
+          [x - 9, y - 5],
+          [x, y - 11],
+          [x + 9, y - 5],
+        ],
+        '#7e8375',
+      );
+      line(
+        [
+          [x - 3, y - 11],
+          [x - 3, y - 16],
+          [x + 4, y - 16],
+        ],
+        '#666d61',
+        1.8,
+      );
+      fillOval(x - 1, y + 2, 2, 3, '#ffe2a0', 0.7);
+    }
+    function pool(wet = true) {
+      shaped(wet ? '#6c8378' : '#85765a', () => {
+        ctx.moveTo(-34, 4);
+        ctx.bezierCurveTo(-38, -5, -17, -9, -7, -7);
+        ctx.bezierCurveTo(4, -14, 36, -6, 34, 3);
+        ctx.quadraticCurveTo(23, 14, 7, 10);
+        ctx.quadraticCurveTo(-16, 15, -34, 4);
+      });
+      fillOval(0, 1, 26, 6, wet ? '#7eaaa0' : '#9c8d70', 0.6);
+      for (const [x, y] of [
+        [-12, 0],
+        [8, 4],
+        [18, -2],
+      ])
+        line(
+          [
+            [x - 5, y],
+            [x + 2, y - 1],
+            [x + 7, y],
+          ],
+          wet ? '#bfd2b8' : '#b3a287',
+          0.8,
+        );
+    }
+    function foliage(x, y, w = 15, h = 12, c = '#648251') {
+      shaped(c, () => {
+        ctx.moveTo(x - w, y + 2);
+        ctx.bezierCurveTo(
+          x - w - 3,
+          y - h * 0.3,
+          x - w * 0.5,
+          y - h * 0.5,
+          x - w * 0.7,
+          y - h * 0.8,
+        );
+        ctx.quadraticCurveTo(x - w * 0.2, y - h * 1.3, x + 1, y - h);
+        ctx.quadraticCurveTo(x + w * 0.6, y - h * 1.2, x + w * 0.5, y - h * 0.5);
+        ctx.quadraticCurveTo(x + w * 1.3, y - h * 0.4, x + w, y + 2);
+        ctx.quadraticCurveTo(x, y + h * 0.4, x - w, y + 2);
+      });
+      line(
+        [
+          [x - w * 0.5, y - 3],
+          [x - 2, y - h * 0.45],
+          [x + w * 0.4, y - h * 0.3],
+        ],
+        '#93aa6e',
+        0.8,
+      );
+    }
+    function grassTuft(x = 0, y = 6, wet = false, seed = false) {
+      for (const [dx, h] of [
+        [-12, 16],
+        [-5, 24],
+        [2, 19],
+        [9, 27],
+        [15, 15],
+      ]) {
+        ctx.strokeStyle = wet ? '#719877' : '#82965e';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(x + dx * 0.4, y);
+        ctx.quadraticCurveTo(x + dx, y - h * 0.8, x + dx + (dx < 0 ? -4 : 3), y - h);
+        ctx.stroke();
+        if (seed) oval(x + dx + 3, y - h, 1.5, 3, '#b7ac7b');
+      }
+    }
+    // Growing wood has tapered grain and forks, never the rivets of built timber.
+    function grownStem(a, b, width = 4, color = '#806747') {
+      const dx = b[0] - a[0],
+        dy = b[1] - a[1],
+        len = Math.hypot(dx, dy) || 1;
+      const nx = -dy / len,
+        ny = dx / len;
+      shaped(
+        color,
+        () => {
+          ctx.moveTo(a[0] + (nx * width) / 2, a[1] + (ny * width) / 2);
+          ctx.quadraticCurveTo(
+            a[0] + dx * 0.55 + nx * width * 0.55,
+            a[1] + dy * 0.55 + ny * width * 0.55,
+            b[0],
+            b[1],
+          );
+          ctx.quadraticCurveTo(
+            a[0] + dx * 0.55 - nx * width * 0.2,
+            a[1] + dy * 0.55 - ny * width * 0.2,
+            a[0] - (nx * width) / 2,
+            a[1] - (ny * width) / 2,
+          );
+        },
+        0.6,
+      );
+      line(
+        [
+          [a[0], a[1]],
+          [a[0] + dx * 0.55, a[1] + dy * 0.55],
+          [b[0], b[1]],
+        ],
+        '#a18b62',
+        0.55,
+      );
+    }
+    function naturalTrunk(dead = false, birch = false) {
+      const bark = birch ? '#c7c7ab' : dead ? '#736149' : '#7a6044';
+      // One continuous silhouette joins both forks to the trunk, with flared roots.
+      shaped(bark, () => {
+        ctx.moveTo(-9, 14);
+        ctx.quadraticCurveTo(-3, 6, -4, -9);
+        ctx.quadraticCurveTo(-13, -18, -19, -28);
+        ctx.lineTo(-21, -37);
+        ctx.lineTo(-18, -34);
+        ctx.lineTo(-17, -38);
+        ctx.quadraticCurveTo(-16, -27, -12, -23);
+        ctx.quadraticCurveTo(-6, -18, -3, -15);
+        ctx.lineTo(-3, -31);
+        ctx.lineTo(-5, -43);
+        ctx.lineTo(-2, -41);
+        ctx.lineTo(0, -46);
+        ctx.lineTo(2, -41);
+        ctx.lineTo(3, -25);
+        ctx.quadraticCurveTo(9, -29, 14, -34);
+        ctx.lineTo(24, -37);
+        ctx.lineTo(22, -34);
+        ctx.lineTo(26, -34);
+        ctx.quadraticCurveTo(15, -31, 11, -25);
+        ctx.quadraticCurveTo(5, -19, 4, -12);
+        ctx.quadraticCurveTo(4, 5, 10, 14);
+        ctx.lineTo(3, 11);
+        ctx.lineTo(0, 15);
+        ctx.lineTo(-3, 12);
+      });
+      line(
+        [
+          [-2, 10],
+          [-1, -9],
+          [-2, -25],
+          [-2, -36],
+        ],
+        birch ? '#8d907e' : '#4f4b36',
+        0.9,
+      );
+      line(
+        [
+          [-13, -27],
+          [-9, -22],
+          [-3, -17],
+          [-1, -10],
+        ],
+        '#a9956c',
+        0.8,
+      );
+      line(
+        [
+          [2, -15],
+          [7, -24],
+          [16, -32],
+        ],
+        birch ? '#a7ad94' : '#b0986a',
+        0.75,
+      );
+      if (dead) {
+        shaped(
+          '#a18a65',
+          () => {
+            ctx.moveTo(-3, 2);
+            ctx.lineTo(-2, -11);
+            ctx.lineTo(1, -16);
+            ctx.lineTo(0, -2);
+            ctx.lineTo(2, 5);
+          },
+          0.4,
+        );
+        for (const [x, y] of [
+          [-18, -35],
+          [0, -43],
+          [23, -35],
+        ])
+          line(
+            [
+              [x - 1, y + 2],
+              [x, y],
+              [x + 1, y + 2],
+            ],
+            '#c2aa7a',
+            0.7,
+          );
+        line(
+          [
+            [-5, 12],
+            [-3, 3],
+            [-4, -3],
+          ],
+          '#353e34',
+          1.3,
+        );
+      }
+    }
+    function naturalLog(
+      x = 0,
+      y = 5,
+      length = 54,
+      width = 11,
+      burnt = false,
+      drift = false,
+      fork = true,
+    ) {
+      craftAt(x, y, 1, () => {
+        const lo = -length / 2,
+          hi = length / 2,
+          r = width / 2;
+        const bark = drift ? '#aca083' : burnt ? '#514a40' : '#786044';
+        shaped(bark, () => {
+          ctx.moveTo(lo + 2, r);
+          ctx.lineTo(lo - 2, r * 0.25);
+          ctx.lineTo(lo + 1, -r * 0.35);
+          ctx.lineTo(lo, -r);
+          ctx.quadraticCurveTo(-14, -r - 2, -8, -r * 0.8);
+          if (fork) {
+            ctx.quadraticCurveTo(-11, -12, -13, -16);
+            ctx.lineTo(-10, -14);
+            ctx.lineTo(-10, -18);
+            ctx.quadraticCurveTo(-7, -13, -4, -r);
+          }
+          ctx.quadraticCurveTo(10, -r - 1, hi, -r * 0.8);
+          ctx.lineTo(hi + 1, r * 0.8);
+          ctx.quadraticCurveTo(7, r + 2, lo + 2, r);
+        });
+        if (drift) {
+          line(
+            [
+              [lo + 1, 0],
+              [-15, -2],
+              [-3, 0],
+              [12, -2],
+              [hi, -3],
+            ],
+            '#d5c7a7',
+            1.1,
+          );
+          for (const dy of [-2, 2])
+            line(
+              [
+                [hi - 9, dy],
+                [hi - 2, dy - 1],
+                [hi + 2, dy - 2],
+              ],
+              '#796f58',
+              0.8,
+            );
+        } else {
+          // Solid irregular cut end: a pale heartwood face, not a dark pipe opening.
+          shaped(
+            burnt ? '#8e7858' : '#c5a26c',
+            () => {
+              ctx.moveTo(hi - 1, -r * 0.85);
+              ctx.quadraticCurveTo(hi + 5, -r, hi + 4, 1);
+              ctx.quadraticCurveTo(hi + 4, r + 2, hi - 1, r * 0.8);
+              ctx.quadraticCurveTo(hi - 4, 0, hi - 1, -r * 0.85);
+            },
+            0.8,
+          );
+          ctx.strokeStyle = burnt ? '#5f533c' : '#9d7f50';
+          ctx.lineWidth = 0.65;
+          ctx.beginPath();
+          ctx.moveTo(hi, -r * 0.5);
+          ctx.bezierCurveTo(hi + 3, -r * 0.5, hi + 3, r * 0.6, hi, r * 0.45);
+          ctx.stroke();
+          line(
+            [
+              [hi + 1, r * 0.1],
+              [hi + 3, r * 0.7],
+            ],
+            '#786343',
+            0.7,
+          );
+        }
+        line(
+          [
+            [lo + 5, -r * 0.6],
+            [-17, -r * 0.4],
+            [-7, -r * 0.6],
+            [5, -r * 0.25],
+            [hi - 4, -r * 0.5],
+          ],
+          drift ? '#e0d1ad' : burnt ? '#958262' : '#b0986a',
+          0.9,
+        );
+        line(
+          [
+            [lo + 7, r * 0.5],
+            [-13, r * 0.2],
+            [2, r * 0.5],
+            [hi - 5, r * 0.3],
+          ],
+          drift ? '#7e775d' : '#514c37',
+          0.8,
+        );
+        if (fork)
+          line(
+            [
+              [-9, -13],
+              [-6, -8],
+              [-3, -3],
+              [5, -1],
+            ],
+            drift ? '#cdbd9b' : '#9f875c',
+            0.7,
+          );
+      });
+    }
+    function splitFirewood(x, y, length = 36, tilt = 0) {
+      craftAt(x, y, 1, () => {
+        ctx.rotate(tilt);
+        shaped('#675039', () => {
+          ctx.moveTo(-length / 2, 2);
+          ctx.lineTo(-length / 2 - 2, -2);
+          ctx.lineTo(-length / 2 + 2, -6);
+          ctx.quadraticCurveTo(0, -8, length / 2, -5);
+          ctx.lineTo(length / 2 + 2, 3);
+          ctx.quadraticCurveTo(0, 6, -length / 2, 2);
+        });
+        shaped(
+          '#ac8758',
+          () => {
+            ctx.moveTo(-length / 2 + 1, -5);
+            ctx.lineTo(-length / 2 + 5, -8);
+            ctx.lineTo(length / 2 + 1, -6);
+            ctx.lineTo(length / 2, -3);
+            ctx.quadraticCurveTo(0, -5, -length / 2 + 1, -5);
+          },
+          0.5,
+        );
+        poly(
+          [
+            [length / 2, -6],
+            [length / 2 + 5, -3],
+            [length / 2 + 4, 3],
+            [length / 2 - 2, 2],
+            [length / 2 - 3, -2],
+          ],
+          '#d1b17c',
+        );
+        line(
+          [
+            [length / 2 + 1, -3],
+            [length / 2, 0],
+            [length / 2 + 2, 2],
+          ],
+          '#a08354',
+          0.7,
+        );
+        for (const dy of [-1, 2])
+          line(
+            [
+              [-length / 2 + 4, dy],
+              [-5, dy - 1],
+              [7, dy + 1],
+              [length / 2 - 3, dy],
+            ],
+            '#413d2c',
+            0.6,
+          );
+      });
+    }
+    function restingObject(x, surfaceY, width, paint) {
+      fillOval(x, surfaceY, width, 1.25, '#473f32', 0.23);
+      craftAt(x, surfaceY, 1, paint);
+    }
+    function tree(kind = 'sapling') {
+      const willow = kind === 'willow',
+        birch = kind === 'birch',
+        pine = kind === 'pine',
+        mangrove = kind === 'mangrove',
+        fruit = kind === 'fruit';
+      if (mangrove) {
+        // Uneven prop roots descend from different trunk/branch heights into the mud.
+        for (const [sx, sy, cx, cy, ex, ey, w] of [
+          [-2, -21, -25, -9, -31, 12, 3.6],
+          [3, -26, 22, -13, 29, 13, 3],
+          [-1, -10, -14, 3, -18, 18, 3.8],
+          [4, -17, 14, 0, 18, 20, 3.2],
+          [-3, -7, -6, 6, -9, 17, 3],
+          [2, -2, 6, 9, 8, 20, 2.4],
+        ]) {
+          shaped(
+            '#736449',
+            () => {
+              ctx.moveTo(sx - w / 2, sy);
+              ctx.quadraticCurveTo(cx - w, cy, ex - 1, ey);
+              ctx.lineTo(ex + 1, ey);
+              ctx.quadraticCurveTo(cx + w * 0.6, cy, sx + w / 2, sy);
+            },
+            0.6,
+          );
+        }
+      }
+      if (pine) {
+        shaped('#7a6044', () => {
+          ctx.moveTo(-7, 14);
+          ctx.quadraticCurveTo(-3, 5, -3, -16);
+          ctx.lineTo(0, -49);
+          ctx.lineTo(3, -17);
+          ctx.quadraticCurveTo(3, 5, 8, 14);
+          ctx.lineTo(2, 11);
+          ctx.lineTo(0, 14);
+          ctx.lineTo(-3, 12);
+        });
+        line(
+          [
+            [-1, 10],
+            [0, -7],
+            [0, -29],
+          ],
+          '#ac9366',
+          0.8,
+        );
+      } else naturalTrunk(false, birch);
+      if (pine) {
+        for (let i = 0; i < 4; i++) {
+          const y = -36 + i * 9,
+            w = 8 + i * 5;
+          shaped(i % 2 ? '#55705a' : '#668164', () => {
+            ctx.moveTo(0, y - 15);
+            ctx.quadraticCurveTo(-w * 0.5, y - 3, -w, y + 1);
+            ctx.lineTo(-w * 0.4, y);
+            ctx.lineTo(-w * 0.2, y + 3);
+            ctx.quadraticCurveTo(w * 0.6, y + 4, w, y);
+            ctx.quadraticCurveTo(w * 0.4, y - 3, 0, y - 15);
+          });
+        }
+      } else {
+        foliage(-14, -22, 14, 15, willow ? '#6f8f6a' : '#648657');
+        foliage(7, -31, 19, 15, willow ? '#799775' : '#74975e');
+        foliage(18, -18, 12, 13, '#527d58');
+        if (willow)
+          for (const dx of [-24, -14, -3, 11, 24]) {
+            ctx.strokeStyle = '#8ba67b';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(dx, -27);
+            ctx.quadraticCurveTo(dx + 6, -11, dx + 3, 4);
+            ctx.stroke();
+          }
+        if (fruit)
+          for (const [x, y] of [
+            [-18, -25],
+            [-5, -36],
+            [13, -29],
+            [20, -20],
+          ]) {
+            line(
+              [
+                [x, y - 4],
+                [x, y],
+              ],
+              '#6a6545',
+              0.7,
+            );
+            oval(x, y, 2.5, 3, '#c8885a');
+          }
+      }
+      if (birch)
+        for (const y of [-20, -10, 2])
+          line(
+            [
+              [-2, y],
+              [2, y - 1],
+            ],
+            '#696b60',
+            1.3,
+          );
+    }
+    function craftedDecoration(kind) {
       switch (kind) {
         case 'direwolf-kennel':
-          poly(
+          nest(0, 3, 1.25);
+          softPoly(
             [
-              [-33, -7],
-              [-18, -17],
-              [28, -17],
-              [34, -5],
-              [28, 15],
-              [-26, 15],
+              [-28, 3],
+              [-24, 12],
+              [-12, 15],
+              [9, 13],
+              [25, 7],
             ],
-            '#6b665b',
+            '#82938a',
+            4,
           );
-          poly(
-            [
-              [-26, -6],
-              [-8, -13],
-              [26, -8],
-              [22, 9],
-              [-22, 9],
-            ],
-            '#82938c',
-          );
-          for (const x of [-21, 0, 20])
-            line(
-              [
-                [x, -4],
-                [x + 5, 10],
-              ],
-              '#aab2a2',
-              2,
-            );
-          oval(19, 9, 6, 3, '#c1a573');
+          for (const x of [-10, 8]) {
+            oval(x, 8, 3, 2, '#687c71');
+            for (const dx of [-2, 0, 2]) fillOval(x + dx, 5, 1, 1, '#687c71');
+          }
           break;
         case 'rider-tack-rack':
-          for (const x of [-24, 24])
-            line(
-              [
-                [x, 12],
-                [x, -34],
-              ],
-              '#756048',
-              4,
-            );
+        case 'flight-harness-station':
+          for (const x of [-24, 24]) timber([x, 14], [x, -34], 4);
+          timber([-26, -29], [26, -29], 5);
+          shaped('#7e5c43', () => {
+            ctx.moveTo(-19, -29);
+            ctx.quadraticCurveTo(-11, -44, -6, -34);
+            ctx.quadraticCurveTo(2, -27, 12, -36);
+            ctx.quadraticCurveTo(19, -40, 22, -28);
+            ctx.lineTo(12, -15);
+            ctx.quadraticCurveTo(-2, -11, -14, -17);
+          });
           line(
             [
-              [-25, -29],
-              [25, -29],
+              [-13, -27],
+              [-8, -20],
+              [10, -20],
+              [16, -27],
             ],
-            '#9f8156',
-            4,
+            '#c4a274',
+            1.2,
           );
-          poly(
-            [
-              [-18, -26],
-              [-10, -39],
-              [5, -40],
-              [17, -26],
-              [9, -15],
-              [-10, -16],
-            ],
-            '#694e40',
-          );
-          for (const x of [-15, 0, 14])
+          for (const x of [-16, 16]) {
             line(
               [
-                [x, -19],
-                [x + 5, 12],
+                [x, -21],
+                [x, 5],
               ],
-              '#d4ba87',
+              '#b39061',
               2,
             );
-          oval(-20, 7, 6, 6, '#b59b66');
-          oval(22, 6, 6, 5, '#9a9d9b');
+            oval(x, 7, 5, 4, '#8c9990');
+            oval(x, 6, 2.5, 2, '#d3c8a3');
+          }
+          if (kind === 'flight-harness-station') {
+            chainLinks(-10, 11, 4);
+            softRect(-6, -29, 12, 5, '#9f8a65', 1);
+          } else {
+            line(
+              [
+                [2, -19],
+                [7, 8],
+                [2, 11],
+              ],
+              '#493e33',
+              2,
+            );
+            oval(1, -30, 1, 1, gold);
+          }
           break;
         case 'rider-bunk':
-          rect(-25, -10, 50, 25, '#665445');
-          rect(-21, -14, 43, 22, '#557080');
-          rect(-20, -13, 13, 13, '#c9b99a');
-          line(
-            [
-              [-28, 17],
-              [28, 17],
-            ],
-            '#b39668',
-            2,
-          );
+        case 'bunk':
+          bed();
           break;
         case 'torch':
-          line(
-            [
-              [0, -6],
-              [0, 16],
-            ],
-            '#807660',
-            4,
-          );
-          poly(
-            [
-              [-8, -7],
-              [-4, -24],
-              [0, -16],
-              [5, -29],
-              [9, -7],
-            ],
-            '#d99753',
-          );
-          poly(
-            [
-              [-3, -7],
-              [0, -18],
-              [4, -7],
-            ],
-            '#f2cf7c',
-          );
+          timber([0, 15], [0, -6], 4, '#72654d');
+          for (const y of [-4, 0, 4])
+            line(
+              [
+                [-2, y],
+                [2, y + 1],
+              ],
+              '#c1aa78',
+              1.2,
+            );
+          softRect(-4, -9, 8, 7, '#4d4640', 1);
+          flame(0, -7, 0.65);
           break;
         case 'estate-rug':
-          // Finished Crown luxury, deliberately non-colliding with the original route.
-          poly(
+          softPoly(
             [
               [-42, -4],
               [8, -20],
               [45, -5],
               [-4, 12],
             ],
-            '#4c2d40',
+            '#563446',
+            3,
           );
-          poly(
+          softPoly(
             [
-              [-32, -4],
-              [7, -16],
-              [36, -5],
+              [-35, -4],
+              [8, -16],
+              [37, -5],
               [-4, 8],
             ],
-            '#7d4655',
+            '#8b5460',
+            2,
           );
           line(
             [
-              [-30, -3],
-              [7, -15],
-              [34, -5],
-              [-4, 7],
+              [-32, -3],
+              [7, -14],
+              [33, -5],
+              [-4, 6],
+              [-32, -3],
             ],
-            '#c8a671',
-            2,
+            '#cdb07d',
+            1.5,
           );
+          for (let x = -26; x < 28; x += 7)
+            line(
+              [
+                [x, -4],
+                [x + 9, -1],
+              ],
+              '#aa7974',
+              0.6,
+            );
+          for (const x of [-34, -25, -16, -7]) {
+            const y = -4 + ((x + 42) * 16) / 38;
+            line(
+              [
+                [x, y],
+                [x - 2, y + 2],
+              ],
+              '#c4aa7b',
+              0.8,
+            );
+          }
           break;
         case 'estate-hearth':
-          rect(-28, -34, 56, 43, '#57454a');
-          rect(-21, -27, 42, 31, '#2b2329');
-          poly(
-            [
-              [-12, 0],
-              [-6, -22],
-              [0, -11],
-              [7, -27],
-              [16, 0],
-            ],
-            '#d58b47',
-          );
-          poly(
-            [
-              [-7, 0],
-              [0, -15],
-              [8, 0],
-            ],
-            '#ffd17e',
-          );
-          rect(-33, -39, 66, 7, '#9b8280');
+          hearth();
+          blockwork(-32, -39, 64, 7, '#a08b80', 7);
           break;
         case 'estate-lounge':
-          rect(-27, -21, 54, 20, '#513343');
-          rect(-26, -10, 52, 20, '#77505c');
-          rect(-28, 0, 7, 14, '#856e60');
-          rect(21, 0, 7, 14, '#856e60');
+          for (const x of [-23, 23]) timber([x, 5], [x, 15], 4, '#68513c');
+          softRect(-28, -26, 56, 24, '#5e3f50', 7);
+          softRect(-22, -20, 44, 15, '#8c6270', 5);
+          softRect(-28, -10, 56, 20, '#765160', 5);
+          for (const x of [-15, 9]) softRect(x - 9, -9, 22, 14, '#a47a81', 4);
+          for (const x of [-26, 26]) softRect(x - 5, -15, 10, 24, '#674657', 4);
           line(
             [
-              [-22, -12],
-              [22, -12],
+              [-20, -19],
+              [20, -19],
             ],
-            '#d4b57b',
-            2,
+            '#c9ac7e',
+            1,
+          );
+          line(
+            [
+              [0, -7],
+              [0, 4],
+            ],
+            '#65474e',
+            0.8,
           );
           break;
         case 'coffin':
           poly(
             [
-              [-18, -14],
-              [-12, -24],
-              [12, -24],
-              [19, -12],
-              [15, 16],
-              [-15, 16],
+              [-17, -16],
+              [-10, -26],
+              [10, -26],
+              [18, -15],
+              [15, 15],
+              [-15, 15],
             ],
-            '#787e75',
+            '#747b70',
+          );
+          poly(
+            [
+              [18, -15],
+              [24, -19],
+              [20, 11],
+              [15, 15],
+            ],
+            '#525f55',
+          );
+          poly(
+            [
+              [-14, -16],
+              [-8, -23],
+              [8, -23],
+              [14, -14],
+              [12, 11],
+              [-12, 11],
+            ],
+            '#a0a58e',
           );
           line(
             [
-              [-7, -17],
-              [7, -17],
+              [-7, -12],
+              [7, -12],
             ],
-            '#b3b6a1',
+            '#626d60',
+            1.7,
+          );
+          line(
+            [
+              [0, -20],
+              [0, 4],
+            ],
+            '#626d60',
+            1.7,
+          );
+          for (const y of [-8, 7]) softRect(12, y, 5, 3, '#776d59', 0.6);
+          break;
+        case 'bones':
+        case 'bone-pile':
+          fillOval(0, 8, 22, 5, '#526151', 0.15);
+          skull(-8, -3, kind === 'bones' ? 6 : 8);
+          for (const [x, y, ang] of [
+            [8, 4, 0.6],
+            [12, 2, -0.5],
+            [-7, 9, 0.1],
+          ])
+            craftAt(x, y, 1, () => {
+              ctx.rotate(ang);
+              shaped(bone, () => {
+                ctx.moveTo(-8, -1);
+                ctx.quadraticCurveTo(-12, -5, -12, 0);
+                ctx.quadraticCurveTo(-13, 5, -8, 2);
+                ctx.lineTo(8, 2);
+                ctx.quadraticCurveTo(13, 5, 12, 0);
+                ctx.quadraticCurveTo(12, -5, 8, -1);
+              });
+            });
+          if (kind === 'bone-pile')
+            for (const y of [0, 4, 8])
+              line(
+                [
+                  [12, y],
+                  [20, y + 2],
+                  [25, y],
+                ],
+                '#b8baa1',
+                1.5,
+              );
+          break;
+        case 'banner':
+          flag();
+          break;
+        case 'crown-banner':
+        case 'royal-flight-standard':
+          flag(true);
+          if (kind === 'royal-flight-standard')
+            softPoly(
+              [
+                [-7, -32],
+                [3, -37],
+                [10, -31],
+                [3, -33],
+              ],
+              '#d0b887',
+              0.5,
+            );
+          break;
+        case 'shelf':
+          boards(-26, -34, 52, 46, '#68543e');
+          for (const y of [-19, 2, 13]) {
+            boards(-28, y, 56, 4, '#a0855b', true);
+            for (let i = 0, x = -21; x < 23; x += 6, i++) {
+              const h = 10 + (i % 3) * 3;
+              craftAt(x, y - 1, 1, () => {
+                ctx.rotate(((i % 3) - 1) * 0.07);
+                softRect(-2, -h, 5, h, ['#8b7562', '#697c77', '#a3936f'][i % 3], 0.8);
+                line(
+                  [
+                    [-1, -h + 3],
+                    [2, -h + 3],
+                  ],
+                  '#d0bd8e',
+                  0.7,
+                );
+              });
+            }
+          }
+          break;
+        case 'water':
+          pool();
+          break;
+        case 'rune':
+          rockPiece(0, 5, 23, 24);
+          line(
+            [
+              [-1, -16],
+              [9, -5],
+              [0, 5],
+              [-10, -5],
+              [-1, -16],
+            ],
+            '#4d6967',
+            3,
+          );
+          line(
+            [
+              [-1, -16],
+              [9, -5],
+              [0, 5],
+              [-10, -5],
+            ],
+            '#a8cfbb',
+            1.1,
+          );
+          break;
+        case 'crate':
+          crateBody();
+          break;
+        case 'rail':
+          for (const y of [-10, 0, 10]) timber([-28, y], [29, y], 5, '#756650');
+          for (const x of [-14, 14]) {
+            line(
+              [
+                [x, -20],
+                [x, 18],
+              ],
+              '#735e4b',
+              4,
+            );
+            line(
+              [
+                [x - 1, -20],
+                [x - 1, 18],
+              ],
+              '#bbc0ab',
+              1.2,
+            );
+            for (const y of [-10, 0, 10]) {
+              softRect(x - 4, y - 2, 8, 4, '#6f7468', 0.5);
+              oval(x + 2, y, 1, 1, '#c8c5a2');
+            }
+          }
+          break;
+        case 'crystal':
+        case 'crystal-cluster':
+          for (const [x, y, h, w] of [
+            [-15, 6, 25, 7],
+            [0, 9, 43, 9],
+            [16, 6, 31, 7],
+          ]) {
+            poly(
+              [
+                [x - w, y],
+                [x - w, y - h + 7],
+                [x, y - h],
+                [x + w, y - h + 8],
+                [x + w, y],
+              ],
+              kind === 'crystal' ? '#83a6ae' : '#82758c',
+            );
+            poly(
+              [
+                [x, y - h],
+                [x + w, y - h + 8],
+                [x + w, y],
+                [x, y - 3],
+              ],
+              kind === 'crystal' ? '#527c87' : '#594c72',
+            );
+            line(
+              [
+                [x - 3, y - h + 9],
+                [x - 3, y - 5],
+              ],
+              kind === 'crystal' ? '#c6dada' : '#c6b7d4',
+              1.1,
+            );
+            fillOval(x - 2, y - h + 12, 1, 2, '#e8d3e2', 0.8);
+          }
+          break;
+        case 'chain':
+          craftAt(0, -34, 1, () => {
+            ctx.rotate(Math.PI / 2);
+            chainLinks(0, 0, 8);
+          });
+          rockPiece(0, 14, 13, 6);
+          oval(0, -34, 5, 3, '#87988a');
+          break;
+        case 'ember':
+          coals();
+          flame(2, 1, 0.35);
+          break;
+        case 'armor':
+          timber([0, 14], [0, -37], 4);
+          timber([-13, 14], [13, 14], 4);
+          softPoly(
+            [
+              [-11, -27],
+              [0, -31],
+              [11, -27],
+              [9, -6],
+              [0, -2],
+              [-9, -6],
+            ],
+            '#939f9c',
+            3,
+          );
+          for (const side of [-1, 1])
+            softPoly(
+              [
+                [side * 9, -26],
+                [side * 17, -28],
+                [side * 21, -21],
+                [side * 16, -15],
+                [side * 10, -17],
+              ],
+              '#acb5ab',
+              2,
+            );
+          softRect(-8, -44, 16, 15, '#8b9b9a', 4);
+          line(
+            [
+              [-6, -37],
+              [6, -37],
+            ],
+            '#3d514f',
             2,
+          );
+          line(
+            [
+              [0, -25],
+              [0, -8],
+            ],
+            '#d0ceb1',
+            1,
+          );
+          break;
+        case 'thorn-bed':
+          nest(0, 4, 1.2);
+          for (const x of [-17, -5, 8, 18])
+            craftAt(x, 2, 0.5, () => foliage(0, 0, 10, 7, '#6d8557'));
+          break;
+        case 'fang-trophy':
+        case 'trophy-rack':
+          for (const x of [-23, 23]) timber([x, 14], [x, -31], 4);
+          timber([-26, -27], [26, -27], 4);
+          for (const [x, h] of [
+            [-20, 11],
+            [-12, 15],
+            [-4, 13],
+            [5, 17],
+            [13, 14],
+            [21, 10],
+          ]) {
+            line(
+              [
+                [x, -25],
+                [x, -18],
+              ],
+              '#c1ac76',
+              1,
+            );
+            shaped(bone, () => {
+              ctx.moveTo(x - 3, -18);
+              ctx.quadraticCurveTo(x + 5, -18, x + 1, -18 + h);
+              ctx.quadraticCurveTo(x, -12, x - 3, -18);
+            });
+          }
+          break;
+        case 'root-table':
+          for (const side of [-1, 1]) {
+            grownStem([side * 3, -4], [side * 10, 8], 8, '#6b583d');
+            grownStem([side * 10, 8], [side * 21, 13], 4, '#746043');
+          }
+          oval(0, -7, 27, 9, '#97784e');
+          oval(0, -10, 27, 8, '#b49868');
+          oval(0, -10, 18, 4, '#ac8b5c');
+          line(
+            [
+              [-17, -12],
+              [3, -10],
+              [15, -9],
+            ],
+            '#746247',
+            0.9,
+          );
+          restingObject(-7, -10, 5, () => rimBowl(0, -10, 6, '#a8a68b', '#dbca9a'));
+          bottle(12, -12, '#7c9587', 0.65);
+          break;
+        case 'warm-brazier':
+        case 'dark-brazier':
+          for (const x of [-13, 13]) timber([x, 3], [x + Math.sign(x) * 3, 16], 4, '#65665e');
+          rimBowl(0, 0, 23, kind === 'dark-brazier' ? '#575060' : '#7d8172', '#4f423a');
+          coals(0, -2, 0.8);
+          flame(0, -4, 0.8, kind === 'dark-brazier');
+          line(
+            [
+              [-19, 2],
+              [0, 6],
+              [19, 2],
+            ],
+            '#b3aa8d',
+            1.4,
+          );
+          break;
+        case 'treasure-hoard':
+          for (let i = 0; i < 14; i++) {
+            const x = (i % 5) * 10 - 20,
+              y = Math.floor(i / 5) * 5 - 3;
+            oval(x, y, 7, 2.6, '#a1874d');
+            oval(x, y - 2, 7, 2.3, '#d7bc72');
+            line(
+              [
+                [x - 3, y - 3],
+                [x + 2, y - 3],
+              ],
+              '#f2d590',
+              0.8,
+            );
+          }
+          sack(22, 4, 0.65, '#7d6751');
+          oval(22, -2, 4, 2, '#d6b76f');
+          break;
+        case 'boss-chest':
+          chest();
+          break;
+        case 'mire-pool':
+          pool();
+          craftAt(-24, 0, 0.6, () => grassTuft(0, 4, true));
+          craftAt(25, 2, 0.5, () => grassTuft(0, 4, true));
+          break;
+        case 'fish-rack':
+        case 'drying-rack':
+        case 'carcass-rack':
+          for (const x of [-25, 25]) timber([x, 14], [x, -31], 4);
+          timber([-28, -29], [28, -29], 4);
+          for (const [x, y] of [
+            [-16, -22],
+            [0, -20],
+            [16, -24],
+          ]) {
+            line(
+              [
+                [x, -29],
+                [x, y],
+              ],
+              '#bda779',
+              1,
+            );
+            if (kind === 'drying-rack') {
+              shaped('#bdad86', () => {
+                ctx.moveTo(x - 5, y);
+                ctx.quadraticCurveTo(x, y + 3, x + 6, y);
+                ctx.lineTo(x + 8, y + 19);
+                ctx.quadraticCurveTo(x, y + 23, x - 7, y + 18);
+              });
+              line(
+                [
+                  [x - 2, y + 4],
+                  [x - 3, y + 17],
+                ],
+                '#837d64',
+                0.8,
+              );
+            } else {
+              shaped(kind === 'carcass-rack' ? '#a47762' : '#93a28f', () => {
+                ctx.moveTo(x, y);
+                ctx.quadraticCurveTo(x + 9, y + 8, x + 4, y + 18);
+                ctx.lineTo(x + 8, y + 24);
+                ctx.lineTo(x - 2, y + 22);
+                ctx.lineTo(x, y + 18);
+                ctx.quadraticCurveTo(x - 8, y + 8, x, y);
+              });
+              line(
+                [
+                  [x - 3, y + 7],
+                  [x + 3, y + 9],
+                ],
+                '#4b695f',
+                0.8,
+              );
+              if (kind === 'fish-rack') oval(x, y + 5, 1, 1, '#384f48');
+            }
+          }
+          break;
+        case 'reed-nest':
+        case 'mud-nest':
+          nest(0, 4, 1.1, true);
+          for (const x of [-23, 20]) craftAt(x, 3, 0.45, () => grassTuft(0, 4, true));
+          break;
+        case 'shell-hoard':
+          for (const [x, y, r] of [
+            [-15, 4, 9],
+            [3, 7, 10],
+            [15, 0, 7],
+            [-2, -5, 7],
+          ]) {
+            shaped('#c5b992', () => {
+              ctx.moveTo(x - r, y);
+              ctx.quadraticCurveTo(x - r, y - r, x, y - r);
+              ctx.quadraticCurveTo(x + r, y - r, x + r, y);
+              ctx.lineTo(x + 2, y + 4);
+              ctx.lineTo(x - 2, y + 4);
+            });
+            for (const dx of [-0.6, 0, 0.6])
+              line(
+                [
+                  [x, y + 3],
+                  [x + r * dx, y - r + 2],
+                ],
+                '#8d987d',
+                0.8,
+              );
+          }
+          break;
+        case 'drift-seat':
+          for (const side of [-1, 1]) {
+            grownStem([side * 16, 0], [side * 21, 14], 6, '#92836b');
+            grownStem([side * 17, 6], [side * 9, 14], 3, '#988a70');
+          }
+          shaped('#b4a183', () => {
+            ctx.moveTo(-29, -3);
+            ctx.quadraticCurveTo(-10, -9, 28, -5);
+            ctx.lineTo(25, 2);
+            ctx.quadraticCurveTo(-9, 5, -28, 3);
+          });
+          line(
+            [
+              [-21, -1],
+              [-7, -3],
+              [20, -2],
+            ],
+            '#786e57',
+            1,
+          );
+          break;
+        case 'silver-ore-face':
+        case 'copper-ore-face':
+          rockPiece(0, 7, 28, 40);
+          for (const [x, y] of [
+            [-15, -10],
+            [1, -21],
+            [11, -3],
+          ]) {
+            line(
+              [
+                [x - 5, y - 5],
+                [x, y],
+                [x - 3, y + 6],
+                [x + 6, y + 10],
+              ],
+              kind === 'silver-ore-face' ? '#d2d4c0' : '#679782',
+              3,
+            );
+            line(
+              [
+                [x - 5, y - 5],
+                [x, y],
+                [x - 3, y + 6],
+                [x + 6, y + 10],
+              ],
+              kind === 'silver-ore-face' ? '#ecebd8' : '#c48a63',
+              1.4,
+            );
+          }
+          break;
+        case 'copper-sort-samples':
+        case 'silver-sort-samples':
+        case 'silver-die-tray':
+          boards(-27, -8, 54, 21, '#867050');
+          for (const x of [-10, 9]) timber([x, -7], [x, 11], 2);
+          for (const [x, y] of [
+            [-20, 1],
+            [-13, 6],
+            [-3, 2],
+            [6, 7],
+            [17, 1],
+            [23, 6],
+          ]) {
+            if (kind === 'copper-sort-samples')
+              poly(
+                [
+                  [x - 4, y],
+                  [x - 2, y - 4],
+                  [x + 4, y - 2],
+                  [x + 3, y + 4],
+                ],
+                '#ba8963',
+              );
+            else if (kind === 'silver-sort-samples' && x < 8)
+              poly(
+                [
+                  [x - 4, y],
+                  [x - 2, y - 4],
+                  [x + 5, y - 4],
+                  [x + 4, y + 2],
+                ],
+                '#b8c3b8',
+              );
+            else {
+              oval(x, y, 4, 2.5, '#889890');
+              oval(x, y - 1.4, 4, 2, '#d3d6bf');
+            }
+          }
+          if (kind === 'silver-die-tray') {
+            softRect(-8, -21, 12, 16, '#7a8d86', 2);
+            oval(-2, -21, 6, 3, '#b5c1af');
+            craftAt(-2, -21, 0.18, () => {
+              face(0, 0, '#a7b4a6');
+              royalCrown(-8);
+            });
+          }
+          break;
+        case 'silver-refining-hearth':
+          hearth(true);
+          bottle(24, 3, '#9caeaa', 0.6);
+          break;
+        case 'sealed-crown-consignment':
+          chest(true, 0.9);
+          break;
+        case 'highland-pay-station':
+          craftAt(0, -10, 0.7, () => {
+            human('worker');
+            grip(-10, 1);
+            grip(10, 1);
+          });
+          table(55);
+          paper(-6, -14, 20);
+          for (const x of [-20, -12, 17]) {
+            oval(x, -8, 4, 2, '#b2a066');
+            oval(x, -11, 4, 2, '#e0cb86');
+          }
+          break;
+        case 'ore-sorting-bay':
+          table(58);
+          sack(-22, 2, 0.7);
+          sack(23, 4, 0.8);
+          timber([0, -12], [0, -40], 3);
+          line(
+            [
+              [-20, -34],
+              [20, -39],
+            ],
+            '#a4ada0',
+            3,
+          );
+          oval(0, -37, 2, 2, '#d6cca6');
+          for (const [x, y] of [
+            [-19, -16],
+            [19, -21],
+          ]) {
+            line(
+              [
+                [x, -35],
+                [x - 7, y],
+                [x + 7, y],
+                [x, -35],
+              ],
+              '#9f9d81',
+              0.8,
+            );
+            rimBowl(x, y, 8, '#8c9990', '#727669');
+            rockPiece(x, y - 2, 4, 4);
+          }
+          break;
+        case 'mint-workbench':
+          table(52);
+          for (const x of [-17, 17]) timber([x, -12], [x, -42], 5);
+          timber([-21, -42], [21, -42], 5);
+          line(
+            [
+              [0, -48],
+              [0, -18],
+            ],
+            '#8b9690',
+            5,
+          );
+          for (let y = -44; y < -17; y += 4)
+            line(
+              [
+                [-3, y],
+                [3, y - 2],
+              ],
+              '#d0c9a9',
+              1,
+            );
+          softRect(-9, -22, 18, 7, '#666f68', 1);
+          oval(0, -13, 8, 3, '#b7c0ae');
+          timber([-11, -47], [12, -47], 3);
+          break;
+        case 'caravan-loading-bay':
+          cartBody(true);
+          crateBody(-39, 14.85, 0.55);
+          break;
+        case 'mine-supports':
+          for (const x of [-24, 24]) {
+            timber([x, 14], [x, -40], 7);
+            rockPiece(x, 13, 7, 6);
+            timber([x, -20], [x * 0.55, -37], 4);
+            softRect(x - 4, -35, 8, 4, '#606e68', 0.5);
+          }
+          timber([-29, -40], [29, -40], 8);
+          break;
+        case 'mine-old-markings':
+          rockPiece(0, 8, 24, 30);
+          line(
+            [
+              [-10, -9],
+              [0, -21],
+              [10, -9],
+              [0, 2],
+              [-10, -9],
+            ],
+            '#515e57',
+            2.6,
+          );
+          line(
+            [
+              [-10, -10],
+              [0, -22],
+              [10, -10],
+            ],
+            '#abb69a',
+            0.8,
+          );
+          line(
+            [
+              [-12, 6],
+              [12, 5],
+            ],
+            '#5c7165',
+            1.3,
+          );
+          break;
+        case 'mine-collapse':
+          for (const [x, y, w, h] of [
+            [-21, 8, 15, 16],
+            [4, 11, 19, 24],
+            [24, 11, 12, 11],
+            [-6, 1, 10, 27],
+          ])
+            rockPiece(x, y, w, h);
+          timber([-28, -17], [5, 11], 5);
+          timber([6, -12], [23, 7], 4);
+          line(
+            [
+              [-27, -17],
+              [-29, -23],
+              [-24, -21],
+            ],
+            '#c4a67b',
+            1.2,
+          );
+          break;
+        case 'ridge-supper':
+          table(54);
+          for (const x of [-13, 6])
+            restingObject(x, -8, 6, () => rimBowl(0, -10, 7, '#bebba0', '#946f50'));
+          bottle(20, -15, '#7f9688', 0.8);
+          softRect(-5.5, -12, 5, 3, '#c5a76c', 1.2);
+          break;
+        case 'ridge-game-corner':
+        case 'game-table':
+          ledgerDesk(false, true);
+          if (kind === 'ridge-game-corner') {
+            stool(-32, 6);
+            stool(32, 5);
+          }
+          break;
+        case 'ridge-study':
+        case 'scribe-desk':
+          ledgerDesk();
+          if (kind === 'ridge-study') {
+            boards(-20, 2, 18, 10, '#816647');
+            oval(-11, 6, 1.4, 1.4, gold);
+            restingObject(-17.5, -8, 4, () => {
+              rimBowl(0, -10, 4, '#9a987d', '#665b41');
+              softRect(-1.5, -26, 3, 15, '#d0bc8d', 1);
+              flame(0, -27, 0.16);
+            });
+          }
+          break;
+        case 'ridge-bed':
+          timber([-27, -19], [27, -19], 7);
+          for (const x of [-27, 27]) timber([x, -24], [x, 15], 5);
+          bed(false);
+          line(
+            [
+              [-23, -17],
+              [23, -17],
+            ],
+            '#c1ab7e',
+            1.2,
+          );
+          break;
+        case 'crag-rest':
+          softRect(-29, -9, 58, 22, '#84736b', 7);
+          softRect(-22, -7, 43, 15, '#a09479', 6);
+          line(
+            [
+              [-21, -5],
+              [-19, 4],
+              [17, 6],
+            ],
+            '#c3b690',
+            1.1,
+          );
+          rimBowl(29, 9, 9, '#8e9b92', '#8aa399');
+          break;
+        case 'ridge-hearth':
+          hearth();
+          break;
+        case 'weapon-rack':
+          rack();
+          break;
+        case 'tool-rack':
+        case 'farm-tool-rack':
+          rack(true, kind === 'farm-tool-rack');
+          if (kind === 'farm-tool-rack')
+            line(
+              [
+                [-20, -32],
+                [-20, -26],
+              ],
+              '#b5bbae',
+              1.5,
+            );
+          break;
+        case 'stone-seat':
+          blockwork(-23, -27, 46, 28, '#969e8c', 9);
+          softRect(-24, -1, 48, 9, '#b3baa1', 2);
+          for (const x of [-22, 14]) softRect(x, 3, 9, 14, '#899680', 1.8);
+          for (const x of [-24, 17]) softRect(x, -11, 8, 21, '#a5ae96', 2);
+          line(
+            [
+              [-15, -19],
+              [15, -19],
+            ],
+            '#c6cbb0',
+            1,
+          );
+          line(
+            [
+              [-10, -11],
+              [8, -13],
+            ],
+            '#7b8e77',
+            0.8,
+          );
+          break;
+        case 'dark-throne':
+          blockwork(-24, -38, 48, 49, '#595467', 10);
+          softRect(-17, -34, 34, 24, '#745a78', 4);
+          softRect(-17, -8, 34, 13, '#8c6d89', 4);
+          for (const x of [-23, 23]) {
+            softRect(x - 5, -17, 10, 27, '#8f8794', 2);
+            line(
+              [
+                [x - 2, -15],
+                [x - 2, 6],
+              ],
+              '#c4ad79',
+              1,
+            );
+          }
+          poly(
+            [
+              [-25, -38],
+              [-29, -51],
+              [-9, -46],
+              [0, -59],
+              [9, -46],
+              [29, -51],
+              [25, -38],
+            ],
+            gold,
+          );
+          poly(
+            [
+              [0, -32],
+              [6, -24],
+              [0, -17],
+              [-6, -24],
+            ],
+            '#b28db9',
+          );
+          break;
+        case 'war-table':
+        case 'flight-planning-table':
+          ledgerDesk(true);
+          if (kind === 'flight-planning-table') {
+            for (const x of [-11, 9])
+              softPoly(
+                [
+                  [x, -21],
+                  [x + 6, -15],
+                  [x - 5, -16],
+                ],
+                '#aa91b3',
+                0.7,
+              );
+          }
+          break;
+        case 'crown-levy-yard':
+          craftAt(-15, 0, 0.8, () => cartBody(true));
+          craftAt(31, -8, 0.6, () => ledgerDesk());
+          craftAt(32, -4, 0.55, () => flag(true));
+          break;
+        case 'crown-command-post':
+          blockwork(-32, 0, 64, 13, '#656471', 7);
+          craftAt(-7, -6, 0.85, () => ledgerDesk(true));
+          craftAt(31, -4, 0.7, () => flag(true));
+          crateBody(-30, 0, 0.45);
+          break;
+        case 'ashbeast-roost-scene':
+        case 'roost':
+          rockPiece(-24, 5, 15, 28, true);
+          rockPiece(24, 8, 18, 22, true);
+          nest(0, 8, 1.1);
+          for (const x of [-12, 6, 15])
+            line(
+              [
+                [x - 1, 4],
+                [x + 4, 7],
+              ],
+              '#4d4450',
+              1.6,
+            );
+          break;
+        case 'cindermaw-hoard-scene':
+          rockPiece(-29, 8, 14, 28, true);
+          rockPiece(29, 8, 12, 22, true);
+          craftAt(-5, 0, 0.8, () => craftedDecoration('treasure-hoard'));
+          crateBody(20, -5, 0.6);
+          break;
+        case 'cindermaw-ash-den':
+          shaped('#756471', () => {
+            ctx.moveTo(-37, 13);
+            ctx.bezierCurveTo(-41, -14, -17, -34, 0, -29);
+            ctx.bezierCurveTo(24, -35, 40, -10, 38, 13);
+          });
+          shaped('#312f35', () => {
+            ctx.moveTo(-26, 12);
+            ctx.bezierCurveTo(-29, -9, -14, -20, 1, -18);
+            ctx.bezierCurveTo(19, -21, 28, -6, 27, 12);
+          });
+          rockPiece(-26, 6, 12, 16, true);
+          rockPiece(29, 8, 10, 14, true);
+          nest(0, 10, 0.9);
+          break;
+        case 'dreadmaw-vault-post':
+          blockwork(-36, -20, 11, 34, '#5a5667');
+          blockwork(25, -20, 11, 34, '#5a5667');
+          craftAt(0, 3, 0.6, () => craftedDecoration('dark-brazier'));
+          craftAt(28, -9, 0.6, () => flag(true));
+          table(28);
+          break;
+        case 'crown-logistics-bay':
+          craftAt(-13, 3, 0.8, () => tent(true));
+          crateBody(-17, 0, 0.65);
+          crateBody(20, 4, 0.7);
+          line(
+            [
+              [-29, -1],
+              [26, -8],
+            ],
+            '#c5b186',
+            1.6,
+          );
+          break;
+        case 'crown-fortress-checkpoint':
+          for (const x of [-28, 28]) {
+            blockwork(x - 4, -25, 8, 40, '#6c6b75');
+            softRect(x - 5, -7, 10, 5, '#a5ac9e', 1);
+          }
+          timber([-28, -10], [28, -10], 6);
+          line(
+            [
+              [-25, -13],
+              [22, -7],
+            ],
+            '#c3af7c',
+            2,
+          );
+          craftAt(25, -5, 0.65, () => flag(true));
+          break;
+        case 'citadel-muster':
+          boards(-33, 5, 66, 9, '#6f6570', true);
+          timber([-29, -18], [29, -18], 4);
+          for (const x of [-22, 0, 22]) {
+            timber([x, 7], [x, -20], 3);
+            shield(x, -10, '#756275');
+            line(
+              [
+                [x - 3, 11],
+                [x + 4, 11],
+              ],
+              '#b8b29c',
+              1.3,
+            );
+          }
+          craftAt(-24, -14, 0.6, () => flag(true));
+          break;
+        case 'citadel-command':
+          ledgerDesk(true);
+          for (const x of [-33, 33]) {
+            stool(x, 4);
+            blockwork(x - 8, -17, 16, 16, '#6d6976', 8);
+          }
+          restingObject(33, 2, 9, () => crateBody(0, -5.85, 0.45));
+          break;
+        case 'citadel-ritual-array':
+          for (const [x, y] of [
+            [-24, 6],
+            [0, -9],
+            [24, 6],
+          ]) {
+            blockwork(x - 9, y - 3, 18, 9, '#686675', 5);
+            oval(x, y - 4, 10, 4, '#96919c');
+            poly(
+              [
+                [x, y - 12],
+                [x + 4, y - 7],
+                [x, y - 2],
+                [x - 4, y - 7],
+              ],
+              '#6f597d',
+            );
+            line(
+              [
+                [x, y - 10],
+                [x + 2, y - 7],
+                [x, y - 4],
+              ],
+              '#b3a0ba',
+              0.9,
+            );
+          }
+          line(
+            [
+              [-19, 2],
+              [0, -11],
+              [19, 2],
+            ],
+            '#ab94b0',
+            0.7,
+          );
+          break;
+        case 'citadel-barracks-bay':
+          craftAt(-20, -4, 0.6, () => bed());
+          craftAt(20, 6, 0.6, () => bed());
+          craftAt(27, -11, 0.45, () => craftedDecoration('armor'));
+          break;
+        case 'citadel-forge-bay':
+          craftAt(-20, 1, 0.7, () => hearth(true, true));
+          craftAt(24, 5, 0.6, () => table(44));
+          softPoly(
+            [
+              [10, -14],
+              [30, -14],
+              [26, -8],
+              [13, -7],
+            ],
+            '#919b94',
+            1,
+          );
+          timber([20, -9], [20, 2], 4);
+          bottle(29, -6, '#8ca298', 0.5);
+          break;
+        case 'citadel-vanity-quarters':
+          table(70);
+          softRect(-30, -43, 35, 29, '#a49388', 5);
+          softRect(-26, -39, 27, 21, '#9eafb0', 3);
+          line(
+            [
+              [-22, -36],
+              [-11, -22],
+            ],
+            '#d8e2c9',
+            2,
+          );
+          for (const [x, c, sc] of [
+            [-27, '#c6b78e', 0.65],
+            [-11, '#af818d', 0.75],
+            [5, '#83a79f', 0.6],
+          ])
+            bottle(x, -11, c, sc);
+          softRect(14, -11, 18, 5, '#dfd0b2', 2);
+          line(
+            [
+              [17, -9],
+              [29, -9],
+            ],
+            '#a1ab8a',
+            0.7,
+          );
+          oval(22, -20, 8, 3, '#b79b6c');
+          for (const x of [17, 20, 23, 26])
+            line(
+              [
+                [x, -18],
+                [x, -13],
+              ],
+              '#7f795d',
+              0.8,
+            );
+          softPoly(
+            [
+              [30, -12],
+              [37, -11],
+              [39, 17],
+              [31, 16],
+            ],
+            '#85677f',
+            2,
+          );
+          line(
+            [
+              [33, -8],
+              [35, 13],
+            ],
+            '#ba91a5',
+            0.8,
+          );
+          break;
+        case 'citadel-boss-approach':
+          for (const side of [-1, 1]) {
+            craftAt(side * 32, -5, 0.68, () => flag(true));
+            craftAt(side * 23, 7, 0.55, () => craftedDecoration('dark-brazier'));
+            shield(side * 36, 3, '#776174');
+          }
+          blockwork(-15, 8, 30, 7, '#686473', 7);
+          break;
+        case 'animal-pen':
+          for (const x of [-29, 29]) timber([x, 14], [x, -13], 3);
+          timber([-29, -8], [29, -8], 3);
+          timber([-29, 4], [29, 4], 3);
+          for (const [index, x] of [-9, 7].entries())
+            ambientAt(x, 5, 0.48, index, () => {
+              for (const dx of [-7, 7]) {
+                line(
+                  [
+                    [dx, 0],
+                    [dx, 9],
+                  ],
+                  '#5c6753',
+                  3,
+                );
+                softRect(dx - 2, 8, 4, 3, '#3b493e', 1);
+              }
+              oval(0, -3, 14, 9, '#c1bea0');
+              oval(11, -6, 7, 6, '#a79b7a');
+              oval(14, -4, 4, 3, '#c9b694');
+              oval(13, -9, 1, 1, '#38443b');
+              softPoly(
+                [
+                  [7, -10],
+                  [6, -15],
+                  [11, -11],
+                ],
+                '#8b8f6e',
+                1,
+              );
+            });
+          break;
+        case 'tax-post':
+        case 'inspection-marker':
+          timber([0, 15], [0, -35], 5);
+          boards(-21, -35, 42, 27, '#796248');
+          paper(-16, -32, 31);
+          for (const [x, y] of [
+            [-14, -30],
+            [13, -30],
+          ])
+            oval(x, y, 1, 1, '#63533e');
+          oval(9, -16, 3, 3, kind === 'inspection-marker' ? '#a45d58' : '#9c7762');
+          break;
+        case 'lean-to':
+          for (const x of [-27, 27]) timber([x, 15], [x, -20], 4);
+          timber([-27, -20], [27, -20], 4);
+          shaped('#b09c74', () => {
+            ctx.moveTo(-35, -19);
+            ctx.quadraticCurveTo(-25, -27, -17, -39);
+            ctx.lineTo(24, -36);
+            ctx.quadraticCurveTo(28, -25, 35, -18);
+            ctx.quadraticCurveTo(6, -12, -35, -19);
+          });
+          line(
+            [
+              [-26, -20],
+              [-15, -35],
+              [23, -33],
+              [29, -19],
+            ],
+            '#d1bd92',
+            1,
+          );
+          craftAt(0, 8, 0.7, () => craftedDecoration('sleep-roll'));
+          break;
+        case 'cookfire':
+          craftAt(0, 7, 0.65, () => naturalLog(0, 0, 43, 8, true, false, false));
+          craftAt(0, 11, 0.6, () => {
+            ctx.rotate(-0.2);
+            naturalLog(0, 0, 43, 8, true, false, false);
+          });
+          coals(0, 8, 0.8);
+          flame(0, 4, 0.8);
+          break;
+        case 'sleep-roll':
+          softRect(-27, -5, 54, 16, '#89957b', 6);
+          oval(-22, 2, 7, 8, '#b2b397');
+          oval(-22, 2, 3.5, 4, '#818e74');
+          line(
+            [
+              [-20, -3],
+              [20, -3],
+            ],
+            '#c2c4a1',
+            1,
+          );
+          softRect(11, -5, 5, 17, '#6b624a', 1);
+          line(
+            [
+              [-12, 4],
+              [5, 5],
+            ],
+            '#657760',
+            1.2,
+          );
+          break;
+        case 'stolen-goods':
+          crateBody(-12, 2, 0.8);
+          sack(16, 4, 0.9, '#b6a487');
+          restingObject(-10, -13.6, 7, () => rimBowl(0, -10, 8, '#a8a88e', '#686d59'));
+          softRect(14, -7, 8, 6, '#5c6b65', 1);
+          break;
+        case 'training-dummy':
+          timber([0, 14], [0, -35], 5);
+          timber([-21, -20], [21, -20], 5);
+          softRect(-11, -27, 22, 23, '#b5a074', 5);
+          oval(0, -37, 9, 9, '#baaa7a');
+          for (const y of [-23, -16, -8])
+            line(
+              [
+                [-10, y],
+                [10, y],
+              ],
+              '#796c4e',
+              1.7,
+            );
+          line(
+            [
+              [-4, -40],
+              [3, -38],
+            ],
+            '#746344',
+            1,
+          );
+          for (const x of [-7, 3])
+            line(
+              [
+                [x, -20],
+                [x + 5, -15],
+              ],
+              '#89774f',
+              1.2,
+            );
+          break;
+        case 'grave-marker':
+          softPoly(
+            [
+              [-17, 14],
+              [-17, -25],
+              [-11, -35],
+              [9, -35],
+              [17, -26],
+              [17, 14],
+            ],
+            '#939e89',
+            1.3,
+          );
+          poly(
+            [
+              [17, -26],
+              [21, -28],
+              [21, 11],
+              [17, 14],
+            ],
+            '#6c7e6c',
+          );
+          softRect(-12, -25, 24, 33, '#a5af96', 1);
+          line(
+            [
+              [-6, -13],
+              [6, -13],
+            ],
+            '#64785e',
+            1.4,
           );
           line(
             [
               [0, -21],
-              [0, 3],
+              [0, -5],
             ],
-            '#b3b6a1',
-            2,
-          );
-          poly(
-            [
-              [15, 16],
-              [20, 11],
-              [24, -13],
-              [19, -12],
-            ],
-            '#555e58',
+            '#64785e',
+            1.4,
           );
           line(
             [
-              [-12, 12],
-              [-14, -12],
-              [-9, -20],
-              [9, -20],
-              [15, -11],
-              [12, 12],
+              [-14, -25],
+              [-11, -28],
             ],
-            '#a5ae9b',
+            '#c9cbb0',
             1,
           );
-          break;
-        case 'bones':
-          skull(-9, -5, 6);
-          line(
-            [
-              [0, 5],
-              [18, -7],
-            ],
-            bone,
-            4,
-          );
-          line(
-            [
-              [1, -6],
-              [18, 7],
-            ],
-            bone,
-            4,
-          );
-          for (const [x, y] of [
-            [0, 5],
-            [18, -7],
-            [1, -6],
-            [18, 7],
-          ]) {
-            oval(x - 1, y, 2.4, 2, bone);
-            oval(x + 1, y + 1, 2.4, 2, bone);
-          }
-          break;
-        case 'banner':
-          line(
-            [
-              [0, -55],
-              [0, 15],
-            ],
-            steel,
-            3,
-          );
-          poly(
-            [
-              [2, -52],
-              [27, -49],
-              [24, -19],
-              [14, -10],
-              [3, -19],
-            ],
-            region === 4 ? '#785266' : '#876c5a',
-          );
-          line(
-            [
-              [13, -41],
-              [13, -24],
-            ],
-            gold,
-            2,
-          );
-          break;
-        case 'shelf':
-          rect(-24, -43, 48, 57, '#716b53');
-          for (const y of [-34, -16, 3]) {
-            line(
-              [
-                [-21, y + 14],
-                [21, y + 14],
-              ],
-              '#aa926a',
-              3,
-            );
-            for (let x = -17; x < 20; x += 7) rect(x, y, 5, 12, x % 2 ? '#6a8d8f' : '#a28f72');
-          }
-          break;
-        case 'water':
-          oval(0, 5, 29, 12, '#526e75');
-          for (const y of [2, 7])
-            line(
-              [
-                [-19, y],
-                [20, y],
-              ],
-              '#79a6a8',
-              2,
-            );
-          break;
-        case 'rune':
-          oval(0, 5, 24, 11, '#738287');
-          poly(
-            [
-              [0, -7],
-              [10, 4],
-              [0, 14],
-              [-10, 4],
-            ],
-            '#a6b8bc',
-          );
-          line(
-            [
-              [0, -1],
-              [0, 9],
-            ],
-            '#c7d5c2',
-            2,
-          );
-          break;
-        case 'crate':
-          rect(-20, -16, 40, 30, '#9b7953');
-          line(
-            [
-              [-20, -16],
-              [20, 14],
-            ],
-            '#c6aa78',
-            3,
-          );
-          line(
-            [
-              [20, -16],
-              [-20, 14],
-            ],
-            '#c6aa78',
-            3,
-          );
-          poly(
-            [
-              [20, -16],
-              [26, -20],
-              [26, 8],
-              [20, 14],
-            ],
-            '#6e573f',
-          );
-          poly(
-            [
-              [-20, -16],
-              [-14, -20],
-              [26, -20],
-              [20, -16],
-            ],
-            '#b4966c',
-          );
-          for (const x of [-10, 0, 10])
-            line(
-              [
-                [x, -13],
-                [x, 11],
-              ],
-              '#705a40',
-              1,
-            );
-          for (const x of [-16, 16]) for (const y of [-12, 10]) oval(x, y, 1, 1, '#514d41');
-          break;
-        case 'rail':
-          for (const y of [-10, 0, 10])
-            line(
-              [
-                [-24, y],
-                [24, y],
-              ],
-              '#8d7354',
-              4,
-            );
-          line(
-            [
-              [-14, -18],
-              [-14, 17],
-            ],
-            steel,
-            3,
-          );
-          line(
-            [
-              [14, -18],
-              [14, 17],
-            ],
-            steel,
-            3,
-          );
-          break;
-        case 'crystal':
-          for (const x of [-12, 0, 12])
-            poly(
-              [
-                [x - 5, 12],
-                [x - 5, -15],
-                [x, -25],
-                [x + 5, -15],
-                [x + 5, 12],
-              ],
-              '#83a7b1',
-            );
-          break;
-        case 'chain':
-          for (let y = -48; y < 12; y += 9) oval(0, y, 4, 6, '#9ca59e');
-          oval(0, 13, 12, 7, '#6c7674');
-          if (region === 3) {
-            if (variant % 2 === 0)
-              line(
-                [
-                  [-7, -34],
-                  [7, -25],
-                ],
-                '#6e6f6a',
-                3,
-              );
-            else oval(9, 5, 7, 5, '#777973');
-          }
-          break;
-        case 'ember':
-          oval(0, 5, 27, 12, '#4d4945');
-          for (const x of [-13, 0, 13])
-            poly(
-              [
-                [x - 5, 8],
-                [x, -9],
-                [x + 7, 8],
-              ],
-              '#b7784e',
-            );
-          break;
-        case 'armor':
-          humanoid('#88999d', steel);
-          rect(-25, 7, 50, 9, '#6b756f');
-          shield(-19, -1, '#626f79');
-          break;
-        case 'thorn-bed':
-          oval(0, 7, 29, 12, '#6f7f55');
-          for (const [x, y] of [
-            [-18, -2],
-            [-8, -8],
-            [4, -6],
-            [16, -1],
-          ])
-            poly(
-              [
-                [x - 5, y + 8],
-                [x, y - 8],
-                [x + 6, y + 8],
-              ],
-              '#5e744d',
-            );
-          for (const x of [-17, 17])
-            line(
-              [
-                [x, 6],
-                [x + (x < 0 ? -7 : 7), -5],
-              ],
-              '#806543',
-              3,
-            );
-          break;
-        case 'fang-trophy':
-          line(
-            [
-              [0, -41],
-              [0, 13],
-            ],
-            localWood,
-            3,
-          );
-          for (const y of [-31, -18, -5]) {
-            poly(
-              [
-                [-11, y],
-                [-5, y - 8],
-                [-2, y],
-              ],
-              bone,
-            );
-            poly(
-              [
-                [11, y],
-                [5, y - 8],
-                [2, y],
-              ],
-              bone,
-            );
-          }
-          break;
-        case 'root-table':
-          poly(
-            [
-              [-12, 5],
-              [-9, 14],
-              [-22, 18],
-              [-10, 19],
-              [0, 13],
-              [12, 19],
-              [22, 16],
-              [10, 12],
-              [12, 5],
-            ],
-            '#604831',
-          );
-          poly(
-            [
-              [-29, 0],
-              [-20, -9],
-              [-5, -11],
-              [9, -8],
-              [25, -9],
-              [30, 1],
-              [21, 9],
-              [-17, 10],
-            ],
-            '#896b49',
-          );
-          line(
-            [
-              [-20, 1],
-              [18, 3],
-            ],
-            '#b49567',
-            1.5,
-          );
-          for (const [x, c] of [
-            [-12, '#d0a85e'],
-            [0, '#b98555'],
-            [13, '#8c9a69'],
-          ]) {
-            oval(x, -2, 5, 3, '#d2bc89');
-            oval(x, -3, 3, 2, c);
-          }
-          break;
-        case 'warm-brazier':
-          oval(0, 8, 16, 6, '#5a4a3b');
-          for (const x of [-7, 0, 7])
-            poly(
-              [
-                [x - 4, 7],
-                [x, -8],
-                [x + 4, 7],
-              ],
-              '#c87946',
-            );
-          glint(0, -5, '#ffd27e', 2);
-          break;
-        case 'treasure-hoard':
-          for (const [x, y, r] of [
-            [-15, 6, 7],
-            [-5, 1, 8],
-            [7, 5, 9],
-            [16, 8, 6],
-            [2, -5, 6],
-          ])
-            oval(x, y, r, r * 0.55, '#c59a4f');
-          for (const [x, y] of [
-            [-8, -2],
-            [4, 1],
-            [13, 4],
-          ])
-            glint(x, y, '#f3dc8a', 1.5);
-          break;
-        case 'boss-chest':
-          rect(-23, -10, 46, 23, '#806144');
-          poly(
-            [
-              [-23, -10],
-              [-17, -23],
-              [17, -23],
-              [23, -10],
-            ],
-            '#9d7950',
-          );
-          line(
-            [
-              [0, -22],
-              [0, 12],
-            ],
-            gold,
-            3,
-          );
-          rect(-5, -8, 10, 8, gold);
-          break;
-        case 'mire-pool':
-          oval(0, 7, 30, 12, '#4d7470');
-          for (const x of [-22, -14, 18, 25])
-            line(
-              [
-                [x, 12],
-                [x, -8],
-              ],
-              '#71865e',
-              2,
-            );
-          for (const [x, y] of [
-            [-9, 4],
-            [6, 1],
-            [14, 8],
-          ])
-            oval(x, y, 4, 2, '#829c75');
-          break;
-        case 'fish-rack':
-          for (const x of [-22, 22]) {
-            line(
-              [
-                [x, 13],
-                [x, -34],
-              ],
-              localWood,
-              4,
-            );
-            line(
-              [
-                [x, 7],
-                [x + (x < 0 ? 7 : -7), -7],
-              ],
-              '#9b8764',
-              2,
-            );
-          }
-          line(
-            [
-              [-24, -30],
-              [24, -30],
-            ],
-            localWood,
-            4,
-          );
-          for (const [x, y] of [
-            [-14, -13],
-            [0, -8],
-            [14, -16],
-          ]) {
-            line(
-              [
-                [x, -28],
-                [x, y - 8],
-              ],
-              '#d5c9a5',
-              1.5,
-            );
-            poly(
-              [
-                [x - 3, y - 9],
-                [x + 3, y - 9],
-                [x, y - 4],
-              ],
-              '#b4b6a1',
-            );
-            poly(
-              [
-                [x, y - 5],
-                [x + 5, y + 1],
-                [x + 3, y + 10],
-                [x - 3, y + 10],
-                [x - 5, y + 1],
-              ],
-              '#8fa197',
-            );
-            line(
-              [
-                [x, y - 1],
-                [x, y + 6],
-              ],
-              '#ccd2b7',
-              1,
-            );
-            eye(x - 1, y + 7, ink);
-          }
-          break;
-        case 'reed-nest':
-          oval(0, 7, 29, 12, '#7d8060');
-          for (let x = -25; x <= 25; x += 8)
-            line(
-              [
-                [x, 10],
-                [x + 4, -4],
-              ],
-              '#a0986d',
-              2,
-            );
-          oval(0, 3, 18, 7, '#556e5a');
-          break;
-        case 'shell-hoard':
-          for (const [x, y] of [
-            [-15, 5],
-            [-7, -1],
-            [2, 5],
-            [11, 0],
-            [18, 7],
-          ]) {
-            oval(x, y, 7, 4, '#b9ad8f');
-            line(
-              [
-                [x - 4, y],
-                [x + 4, y],
-              ],
-              '#806f5f',
-              1,
-            );
-          }
-          for (const x of [-8, 8]) glint(x, -5, '#d9cfac', 1.3);
-          break;
-        case 'drift-seat':
-          line(
-            [
-              [-24, 8],
-              [22, -2],
-            ],
-            '#76654e',
-            8,
-          );
-          line(
-            [
-              [-13, 4],
-              [-16, 16],
-            ],
-            '#665440',
-            4,
-          );
-          line(
-            [
-              [12, 0],
-              [16, 13],
-            ],
-            '#665440',
-            4,
-          );
-          for (const x of [-12, 2, 14])
-            line(
-              [
-                [x, 3],
-                [x + 3, -6],
-              ],
-              '#9b8b6c',
-              1,
-            );
-          break;
-        case 'silver-ore-face':
-          // Argentiferous dark ore, deliberately unlike the beige quarry rubble.
-          shade(42, 12, 0.15);
-          poly(
-            [
-              [-37, 13],
-              [-33, -15],
-              [-15, -40],
-              [16, -42],
-              [35, -16],
-              [39, 12],
-            ],
-            '#555f64',
-          );
-          poly(
-            [
-              [-16, -36],
-              [5, -31],
-              [22, -13],
-              [7, 10],
-              [-22, -2],
-            ],
-            '#727c81',
-          );
-          for (const [x, y] of [
-            [-22, -14],
-            [-5, -23],
-            [14, -10],
-            [24, 3],
-            [-8, 4],
-          ]) {
-            rect(x, y, 7, 5, '#aeb8bd');
-            rect(x + 2, y + 1, 3, 2, '#e0e5e5');
-          }
-          line(
-            [
-              [-30, 13],
-              [13, 14],
-            ],
-            '#887b65',
-            3,
-          );
-          break;
-        case 'copper-ore-face':
-          shade(42, 12, 0.15);
-          poly(
-            [
-              [-36, 13],
-              [-29, -29],
-              [-5, -42],
-              [25, -31],
-              [38, 12],
-            ],
-            '#6a625d',
-          );
-          for (const [x, y] of [
-            [-22, -12],
-            [-5, -29],
-            [13, -18],
-            [22, 3],
-          ]) {
-            oval(x, y, 9, 5, '#bd744b');
-            glint(x + 3, y - 2, '#d6a078', 1.4);
-          }
-          for (const [x, y] of [
-            [-14, 6],
-            [9, -2],
-          ])
-            oval(x, y, 6, 3, '#6b927c');
-          break;
-        case 'copper-sort-samples':
-          shade(37, 10, 0.13);
-          rect(-31, -12, 62, 28, '#766d5b');
-          rect(-27, -10, 54, 19, '#514d46');
-          for (const [x, y] of [
-            [-21, -5],
-            [-10, 1],
-            [4, -6],
-            [16, 2],
-          ]) {
-            oval(x, y, 7, 4, '#b9754e');
-            glint(x + 2, y - 2, '#d8a07b', 1.2);
-          }
-          break;
-        case 'silver-refining-hearth':
-          // A compact cupellation/assay station: oxidizing fire, cupel and silver buttons.
-          shade(43, 12, 0.17);
-          rect(-34, -8, 67, 22, '#756f65');
-          rect(-25, -33, 48, 27, '#989083');
-          rect(16, -49, 13, 36, '#6a655e');
-          oval(0, -9, 17, 7, '#443b38');
-          for (const x of [-11, 0, 11])
-            poly(
-              [
-                [x - 5, -8],
-                [x, -23],
-                [x + 5, -8],
-              ],
-              '#c57945',
-            );
-          oval(-24, 3, 10, 5, '#b7aa95');
-          oval(-24, 1, 6, 3, '#d8e0de');
-          for (const x of [10, 20]) {
-            rect(x - 4, 3, 8, 4, '#b7c4c5');
-            line(
-              [
-                [x - 3, 4],
-                [x + 3, 4],
-              ],
-              '#e6e9e5',
-              1,
-            );
-          }
-          oval(-1, 11, 8, 3, '#55524e');
-          break;
-        case 'silver-sort-samples':
-          // An ore-sorter's flat slate pans separate silver-bearing pieces from waste stone.
-          shade(37, 10, 0.13);
-          rect(-31, -12, 62, 28, '#766d5b');
-          rect(-27, -10, 24, 19, '#484f52');
-          for (const [x, y] of [
-            [-22, -5],
-            [-13, 0],
-            [-8, -6],
-            [-19, 5],
-          ]) {
-            rect(x, y, 6, 4, '#a6b8bc');
-            glint(x + 3, y, '#dce5e4', 1);
-          }
-          for (const [x, y] of [
-            [7, -4],
-            [16, 2],
-            [24, -5],
-          ])
-            oval(x, y, 5, 4, '#948876');
-          line(
-            [
-              [-31, 14],
-              [31, 14],
-            ],
-            localWood,
-            3,
-          );
-          break;
-        case 'silver-die-tray':
-          // A readable issue of Crown pieces next to the approved striking-bench sprite.
-          shade(40, 10, 0.14);
-          rect(-32, -10, 64, 25, localWood);
-          rect(-27, -13, 54, 20, '#625c54');
-          for (const [x, y] of [
-            [-20, -7],
-            [-9, -6],
-            [3, -7],
-            [16, -5],
-            [-14, 2],
-            [-1, 3],
-            [12, 4],
-          ]) {
-            oval(x, y, 6, 4, '#d3dcdd');
-            line(
-              [
-                [x - 3, y],
-                [x + 3, y],
-              ],
-              '#859ba1',
-              1,
-            );
-          }
-          // The same pointed helm, projecting nose and tall central Crown
-          // tip used on dropped coins; no separate mint-only generic ruler.
-          oval(0, -24, 9, 8, '#c5d1d1');
-          poly(
-            [
-              [-5, -23],
-              [-4, -29],
-              [0, -31],
-              [4, -27],
-              [4, -22],
-              [8, -22],
-              [2, -20],
-              [-3, -19],
-            ],
-            '#718185',
-          );
-          poly(
-            [
-              [-6, -27],
-              [-8, -31],
-              [-3, -29],
-              [0, -33],
-              [3, -29],
-              [7, -31],
-              [5, -27],
-            ],
-            '#718185',
-          );
-          break;
-        case 'sealed-crown-consignment':
-          // Distinct silver Crown seals; ordinary wagon/crate sprites remain unchanged.
-          shade(40, 11, 0.14);
-          rect(-32, -12, 63, 28, '#76654f');
-          rect(-28, -22, 55, 13, '#98836b');
-          for (const x of [-23, 21]) rect(x, -21, 5, 36, '#50585a');
-          rect(-9, -20, 17, 11, '#c3ced0');
-          oval(0, -17, 6, 5, '#edf0ed');
-          oval(-2, -18, 3, 4, '#708087');
-          poly(
-            [
-              [0, -19],
-              [5, -16],
-              [0, -14],
-            ],
-            '#708087',
-          );
-          poly(
-            [
-              [-4, -19],
-              [-5, -22],
-              [-2, -20],
-              [0, -23],
-              [2, -20],
-              [5, -22],
-              [4, -19],
-            ],
-            '#708087',
-          );
-          line(
-            [
-              [-9, -8],
-              [8, -8],
-            ],
-            '#64757a',
-            2,
-          );
-          rect(12, -34, 18, 12, '#d6cbb0');
-          line(
-            [
-              [16, -30],
-              [25, -30],
-            ],
-            '#64757a',
-            2,
-          );
-          break;
-        case 'highland-pay-station':
-          shade(40, 12, 0.15);
-          rect(-34, -6, 68, 22, localWood);
-          rect(-19, -20, 23, 17, '#ded2af');
-          for (const y of [-16, -11, -6])
-            line(
-              [
-                [-15, y],
-                [0, y],
-              ],
-              '#776f5f',
-              1,
-            );
-          for (const x of [13, 20, 27]) oval(x, -3, 3, 2, gold);
-          rect(-34, -39, 19, 20, '#8b795c');
-          rect(-32, -37, 15, 14, '#d8cb9f');
-          line(
-            [
-              [-24, -19],
-              [-24, -6],
-            ],
-            localWood,
-            3,
-          );
-          oval(18, -31, 6, 7, '#c09b7b');
-          rect(12, -23, 13, 18, '#6a7e71');
-          break;
-        case 'ore-sorting-bay':
-          shade(45, 12, 0.16);
-          for (const x of [-29, -7, 16]) {
-            rect(x, -6, 20, 20, localWood);
-            for (const dx of [5, 13])
-              poly(
-                [
-                  [x + dx - 5, -6],
-                  [x + dx, -17],
-                  [x + dx + 5, -6],
-                ],
-                '#a19a80',
-              );
-          }
-          line(
-            [
-              [-28, -20],
-              [30, -20],
-            ],
-            steel,
-            2,
-          );
-          line(
-            [
-              [1, -38],
-              [1, -20],
-            ],
-            steel,
-            2,
-          );
-          for (const x of [-20, 22]) {
-            line(
-              [
-                [x, -20],
-                [x, -9],
-              ],
-              steel,
-              1,
-            );
-            oval(x, -7, 9, 3, '#a7a08a');
-          }
-          break;
-        case 'mint-workbench':
-          shade(40, 10, 0.14);
-          rect(-34, -3, 68, 19, localWood);
-          rect(-17, -37, 8, 34, steel);
-          rect(15, -37, 8, 34, steel);
-          rect(-17, -40, 40, 7, '#888f88');
-          line(
-            [
-              [3, -40],
-              [3, -9],
-            ],
-            steel,
-            5,
-          );
-          line(
-            [
-              [-14, -28],
-              [23, -28],
-            ],
-            '#b9b3a0',
-            3,
-          );
-          rect(-9, -6, 26, 6, '#969c90');
-          oval(4, -8, 5, 2, gold);
-          for (const x of [-27, -23, -19]) oval(x, -3, 2, 2, gold);
-          rect(26, -15, 7, 12, '#8b7761');
-          break;
-        case 'caravan-loading-bay':
-          shade(47, 12, 0.16);
-          for (const x of [-25, 22]) {
-            oval(x, 10, 9, 9, '#454b41');
-            oval(x, 10, 4, 4, '#a29e82');
-          }
-          rect(-35, -12, 70, 23, localWood);
-          rect(-26, -25, 23, 17, '#8c7554');
-          rect(2, -29, 25, 22, '#82745c');
-          line(
-            [
-              [-34, -5],
-              [34, -5],
-            ],
-            '#b49e74',
-            2,
-          );
-          line(
-            [
-              [32, 4],
-              [48, -3],
-            ],
-            localWood,
-            4,
-          );
-          rect(9, -26, 13, 7, '#ded0ad');
-          line(
-            [
-              [13, -24],
-              [18, -24],
-            ],
-            '#786d57',
-            1,
-          );
-          break;
-        case 'mine-supports':
-          shade(39, 10, 0.12);
-          for (const x of [-29, 29]) {
-            rect(x - 4, -44, 8, 56, localWood);
-            rect(x - 6, -8, 12, 5, steel);
-          }
-          rect(-34, -48, 68, 9, '#95805e');
-          line(
-            [
-              [-29, -36],
-              [-14, -44],
-            ],
-            localWood,
-            4,
-          );
-          line(
-            [
-              [29, -36],
-              [14, -44],
-            ],
-            localWood,
-            4,
-          );
-          rect(-9, 6, 18, 7, '#a99b72');
-          break;
-        case 'mine-old-markings':
-          shade(36, 10, 0.17);
-          poly(
-            [
-              [-31, 12],
-              [-28, -25],
-              [-14, -44],
-              [12, -42],
-              [30, -17],
-              [26, 13],
-            ],
-            '#757768',
-          );
-          line(
-            [
-              [-15, -21],
-              [0, -32],
-              [13, -20],
-              [0, -8],
-              [-15, -21],
-            ],
-            '#c6bfa2',
-            2,
-          );
-          line(
-            [
-              [-12, 1],
-              [12, 1],
-            ],
-            '#9f9c85',
-            2,
-          );
-          break;
-        case 'mine-collapse':
-          shade(45, 13, 0.19);
-          for (const [x, y, h] of [
-            [-27, 7, 18],
-            [-10, 0, 31],
-            [12, 6, 24],
-            [29, 8, 16],
-          ])
-            poly(
-              [
-                [x - 12, y],
-                [x - 7, y - h],
-                [x + 5, y - h + 3],
-                [x + 13, y],
-              ],
-              '#777a6c',
-            );
-          line(
-            [
-              [-39, -17],
-              [35, 12],
-            ],
-            localWood,
-            7,
-          );
-          line(
-            [
-              [-26, 11],
-              [22, -21],
-            ],
-            localWood,
-            5,
-          );
-          break;
-        case 'ridge-supper':
-          shade(37, 12, 0.12);
-          rect(-30, -3, 60, 15, localWood);
-          for (const x of [-22, 22]) {
-            rect(x - 3, 8, 6, 12, localWood);
-            oval(x, -4, 8, 4, '#ded0ad');
-          }
-          oval(0, -5, 10, 5, '#514d40');
-          oval(0, -7, 8, 4, '#be9565');
-          rect(8, -21, 9, 14, '#966f4b');
-          line(
-            [
-              [13, -20],
-              [13, -26],
-            ],
-            '#ddd0ae',
-            2,
-          );
-          break;
-        case 'ridge-game-corner':
-          shade(43, 12, 0.12);
-          rect(-29, -6, 58, 19, localWood);
-          for (let row = 0; row < 4; row++)
-            for (let col = 0; col < 4; col++)
-              rect(-21 + col * 10, -10 + row * 4, 10, 4, (row + col) % 2 ? '#655b49' : '#ceba8c');
-          for (const [x, y, c] of [
-            [-16, -8, '#d9d0b3'],
-            [14, 2, '#504e48'],
-            [4, -4, '#504e48'],
-          ]) {
-            oval(x, y, 3, 2, c);
-            rect(x - 2, y - 7, 4, 6, c);
-          }
-          rect(-41, 0, 9, 17, '#8a8c7e');
-          rect(34, 0, 9, 17, '#8a8c7e');
-          break;
-        case 'ridge-study':
-          shade(38, 12, 0.12);
-          rect(-31, -4, 62, 21, localWood);
-          rect(-19, -20, 28, 18, '#ded2b1');
-          for (const y of [-16, -11, -6])
-            line(
-              [
-                [-15, y],
-                [5, y],
-              ],
-              '#7c7564',
-              1,
-            );
-          rect(15, -16, 11, 12, '#ece1c2');
-          oval(20, -13, 3, 2, '#855c67');
-          line(
-            [
-              [10, -5],
-              [17, -30],
-            ],
-            '#a29980',
-            2,
-          );
-          rect(-25, -30, 7, 22, '#ddd0ad');
-          glint(-22, -32, '#ffc276', 2);
-          break;
-        case 'ridge-bed':
-          shade(38, 12, 0.14);
-          rect(-28, -15, 56, 32, localWood);
-          rect(-24, -13, 48, 27, '#687769');
-          rect(-24, -13, 48, 8, '#d4c8aa');
-          rect(-31, -23, 62, 9, localWood);
-          line(
-            [
-              [-24, 8],
-              [24, 8],
-            ],
-            '#bba584',
-            2,
-          );
-          break;
-        case 'crag-rest':
-          shade(36, 11, 0.14);
-          oval(0, 3, 29, 13, '#8d8068');
-          oval(0, 1, 22, 9, '#b9aa87');
-          oval(29, 4, 8, 4, steel);
-          oval(29, 2, 6, 2, '#809998');
-          line(
-            [
-              [-23, -6],
-              [-13, 8],
-            ],
-            '#d3c2a0',
-            2,
-          );
-          break;
-        case 'ridge-hearth':
-          rect(-25, -10, 50, 23, '#7d7f76');
-          rect(-18, -27, 36, 17, '#666960');
-          oval(0, 4, 17, 6, '#4d4841');
-          for (const x of [-8, 0, 8])
-            poly(
-              [
-                [x - 4, 5],
-                [x, -9],
-                [x + 4, 5],
-              ],
-              '#c27e4c',
-            );
-          break;
-        case 'weapon-rack':
-          for (const x of [-24, 24])
-            line(
-              [
-                [x, 14],
-                [x, -32],
-              ],
-              localWood,
-              4,
-            );
-          for (const y of [-22, 5])
-            line(
-              [
-                [-25, y],
-                [25, y],
-              ],
-              localWood,
-              3,
-            );
-          line(
-            [
-              [-15, -26],
-              [-15, 10],
-            ],
-            '#9f825a',
-            3,
-          );
-          poly(
-            [
-              [-19, -23],
-              [-15, -38],
-              [-11, -23],
-            ],
-            steel,
-          );
-          line(
-            [
-              [-2, -18],
-              [-2, 11],
-            ],
-            '#9f825a',
-            3,
-          );
-          poly(
-            [
-              [-7, -26],
-              [-2, -33],
-              [4, -24],
-              [4, -9],
-              [-2, -5],
-              [-7, -10],
-            ],
-            steel,
-          );
-          line(
-            [
-              [-9, -6],
-              [5, -6],
-            ],
-            gold,
-            2,
-          );
-          line(
-            [
-              [15, -24],
-              [15, 10],
-            ],
-            '#9f825a',
-            3,
-          );
-          poly(
-            [
-              [14, -30],
-              [25, -32],
-              [24, -21],
-              [15, -19],
-            ],
-            '#a6afa7',
-          );
-          break;
-        case 'stone-seat':
-          rect(-24, -12, 48, 27, '#777a72');
-          rect(-18, -34, 36, 23, '#898b82');
-          for (const x of [-17, 17]) rect(x - 6, -4, 12, 19, '#686b65');
-          line(
-            [
-              [-14, -26],
-              [14, -26],
-            ],
-            '#aaa68f',
-            2,
-          );
-          break;
-        case 'trophy-rack':
-          for (const x of [-20, 20])
-            line(
-              [
-                [x, 13],
-                [x, -36],
-              ],
-              localWood,
-              3,
-            );
-          line(
-            [
-              [-21, -31],
-              [21, -31],
-            ],
-            localWood,
-            3,
-          );
-          for (const x of [-12, 0, 12]) {
-            poly(
-              [
-                [x - 6, -27],
-                [x, -37],
-                [x + 6, -27],
-              ],
-              bone,
-            );
-            line(
-              [
-                [x, -26],
-                [x, -8],
-              ],
-              '#9b8e73',
-              2,
-            );
-          }
-          break;
-        case 'dark-brazier':
-          oval(0, 8, 18, 7, '#4c4652');
-          for (const x of [-9, 0, 9])
-            poly(
-              [
-                [x - 5, 7],
-                [x, -11],
-                [x + 5, 7],
-              ],
-              '#9c5f58',
-            );
-          for (const x of [-5, 5]) glint(x, -4, '#d5a074', 1.5);
-          break;
-        case 'dark-throne':
-          rect(-24, -11, 48, 27, '#555461');
-          poly(
-            [
-              [-20, -10],
-              [-17, -39],
-              [0, -51],
-              [17, -39],
-              [20, -10],
-            ],
-            '#64616f',
-          );
-          poly(
-            [
-              [0, -39],
-              [6, -29],
-              [0, -19],
-              [-6, -29],
-            ],
-            '#9b82aa',
-          );
-          for (const x of [-18, 18]) rect(x - 5, -3, 10, 19, '#464752');
-          break;
-        case 'war-table':
-          for (const x of [-22, 22])
-            line(
-              [
-                [x, 4],
-                [x, 18],
-              ],
-              localWood,
-              4,
-            );
-          poly(
-            [
-              [-31, -8],
-              [25, -8],
-              [31, 4],
-              [27, 11],
-              [-29, 11],
-            ],
-            '#695e54',
-          );
-          poly(
-            [
-              [-21, -5],
-              [17, -5],
-              [22, 6],
-              [-18, 6],
-            ],
-            '#b3a17c',
-          );
-          line(
-            [
-              [-15, -2],
-              [-4, 2],
-              [4, -2],
-              [15, 3],
-            ],
-            '#6f7c65',
-            2,
-          );
-          for (const [x, y] of [
-            [-11, 0],
-            [2, -1],
-            [12, 3],
-          ]) {
-            line(
-              [
-                [x, y],
-                [x, y - 9],
-              ],
-              '#6a5944',
-              1.5,
-            );
-            poly(
-              [
-                [x, y - 9],
-                [x + 5, y - 7],
-                [x, y - 5],
-              ],
-              region === 4 ? '#94799f' : '#af7557',
-            );
-          }
-          oval(-25, -4, 3, 5, '#c7b68f');
-          rect(24, -3, 4, 8, '#8a7457');
-          break;
-        case 'crown-banner':
-          line(
-            [
-              [0, -50],
-              [0, 14],
-            ],
-            steel,
-            3,
-          );
-          poly(
-            [
-              [3, -47],
-              [27, -43],
-              [23, -13],
-              [12, -6],
-              [3, -15],
-            ],
-            '#71586f',
-          );
-          poly(
-            [
-              [14, -37],
-              [20, -28],
-              [14, -19],
-              [8, -28],
-            ],
-            '#a78ab1',
-          );
-          break;
-        case 'crown-levy-yard':
-          shade(42, 10, 0.18);
-          rect(-38, -5, 48, 18, '#765b47');
-          for (const x of [-28, 0]) oval(x, 13, 7, 7, '#45474a');
-          line(
-            [
-              [8, -2],
-              [28, -18],
-            ],
-            localWood,
-            4,
-          );
-          rect(15, -3, 22, 17, '#8d6d4b');
-          rect(25, -18, 20, 16, '#7c6047');
-          line(
-            [
-              [16, -2],
-              [36, 13],
-            ],
-            '#b99566',
-            2,
-          );
-          line(
-            [
-              [26, -17],
-              [44, -3],
-            ],
-            '#b99566',
-            2,
-          );
-          oval(-3, -16, 12, 5, '#4c4652');
-          for (const x of [-7, -1, 5])
-            poly(
-              [
-                [x - 3, -15],
-                [x, -27],
-                [x + 3, -15],
-              ],
-              '#a76149',
-            );
-          line(
-            [
-              [-45, -28],
-              [-45, 12],
-            ],
-            steel,
-            3,
-          );
-          poly(
-            [
-              [-43, -26],
-              [-22, -23],
-              [-26, -7],
-              [-43, -11],
-            ],
-            '#71586f',
-          );
-          break;
-        case 'crown-command-post':
-          shade(44, 10, 0.18);
-          rect(-34, -8, 68, 18, '#5e5a61');
-          for (const x of [-28, 28])
-            line(
-              [
-                [x, 9],
-                [x, -28],
-              ],
-              steel,
-              4,
-            );
-          line(
-            [
-              [-30, -25],
-              [30, -25],
-            ],
-            steel,
-            3,
-          );
-          line(
-            [
-              [0, -55],
-              [0, 11],
-            ],
-            steel,
-            3,
-          );
-          poly(
-            [
-              [3, -52],
-              [31, -48],
-              [26, -18],
-              [13, -10],
-              [3, -18],
-            ],
-            '#71586f',
-          );
-          poly(
-            [
-              [15, -39],
-              [21, -30],
-              [15, -21],
-              [9, -30],
-            ],
-            '#a78ab1',
-          );
-          for (const x of [-21, 21]) {
-            line(
-              [
-                [x, -22],
-                [x, 7],
-              ],
-              '#aeb6b2',
-              2,
-            );
-            poly(
-              [
-                [x - 4, -23],
-                [x, -34],
-                [x + 4, -23],
-              ],
-              '#c2b48d',
-            );
-          }
-          rect(-9, -15, 18, 18, '#4b4651');
-          break;
-        case 'ashbeast-roost-scene':
-          shade(46, 11, 0.16);
-          oval(0, 7, 38, 15, '#544a4b');
-          for (let x = -34; x <= 34; x += 10)
-            line(
-              [
-                [x, 11],
-                [x + 5, -3],
-              ],
-              '#78634f',
-              3,
-            );
-          oval(0, 4, 25, 9, '#6d5a4e');
-          for (const [x, h] of [
-            [-34, 22],
-            [28, 28],
-            [40, 18],
-          ])
-            poly(
-              [
-                [x - 5, 9],
-                [x, -h],
-                [x + 6, 9],
-              ],
-              '#514c59',
-            );
-          for (const [x, y] of [
-            [-20, -1],
-            [16, 1],
-            [7, -7],
-          ])
-            line(
-              [
-                [x - 5, y + 3],
-                [x + 5, y - 3],
-              ],
-              bone,
-              3,
-            );
-          oval(-28, 12, 11, 5, '#4b403d');
-          for (const x of [-32, -27, -22])
-            poly(
-              [
-                [x - 3, 11],
-                [x, -3],
-                [x + 3, 11],
-              ],
-              '#b06b4d',
-            );
-          break;
-        case 'cindermaw-hoard-scene':
-          shade(48, 12, 0.19);
-          for (const [x, y, r] of [
-            [-25, 7, 10],
-            [-12, 0, 12],
-            [3, 6, 13],
-            [18, 1, 10],
-            [30, 8, 8],
-          ])
-            oval(x, y, r, r * 0.52, '#c19a55');
-          for (const [x, h] of [
-            [-36, 22],
-            [36, 26],
-            [-8, 18],
-          ])
-            poly(
-              [
-                [x - 6, 10],
-                [x, -h],
-                [x + 7, 10],
-              ],
-              '#3b3943',
-            );
-          for (const [x, y] of [
-            [-20, -2],
-            [-3, 1],
-            [15, -1],
-            [28, 5],
-          ])
-            glint(x, y, '#f0d58a', 1.5);
-          line(
-            [
-              [-32, -7],
-              [-21, -13],
-            ],
-            bone,
-            3,
-          );
-          line(
-            [
-              [19, -8],
-              [31, -14],
-            ],
-            bone,
-            3,
-          );
-          oval(5, -9, 8, 4, '#6a4f45');
-          break;
-        case 'cindermaw-ash-den':
-          shade(47, 11, 0.18);
-          oval(0, 8, 41, 15, '#50474a');
-          oval(-9, 3, 24, 9, '#66544c');
-          for (let x = -36; x <= 36; x += 9)
-            line(
-              [
-                [x, 11],
-                [x + 5, -5],
-              ],
-              '#76604d',
-              3,
-            );
-          for (const [x, h] of [
-            [-33, 20],
-            [28, 24],
-          ])
-            poly(
-              [
-                [x - 5, 10],
-                [x, -h],
-                [x + 6, 10],
-              ],
-              '#47434d',
-            );
-          for (const [x, y] of [
-            [-18, -2],
-            [12, 1],
-            [23, -4],
-          ])
-            line(
-              [
-                [x - 5, y + 3],
-                [x + 5, y - 3],
-              ],
-              bone,
-              3,
-            );
-          for (const x of [-8, 0, 8])
-            poly(
-              [
-                [x - 4, 9],
-                [x, -7],
-                [x + 4, 9],
-              ],
-              '#9f6048',
-            );
-          break;
-        case 'dreadmaw-vault-post':
-          shade(45, 10, 0.2);
-          for (const x of [-32, 32])
-            poly(
-              [
-                [x - 7, 10],
-                [x - 4, -20],
-                [x, -34],
-                [x + 5, -20],
-                [x + 8, 10],
-              ],
-              '#3e3b47',
-            );
-          oval(0, 7, 18, 7, '#4b4140');
-          for (const x of [-8, 0, 8])
-            poly(
-              [
-                [x - 4, 6],
-                [x, -10],
-                [x + 4, 6],
-              ],
-              '#a76149',
-            );
-          line(
-            [
-              [0, -52],
-              [0, 12],
-            ],
-            steel,
-            3,
-          );
-          poly(
-            [
-              [3, -49],
-              [29, -45],
-              [24, -17],
-              [13, -9],
-              [3, -17],
-            ],
-            '#6f5268',
-          );
-          poly(
-            [
-              [14, -36],
-              [20, -28],
-              [14, -20],
-              [8, -28],
-            ],
-            '#aa8ab2',
-          );
-          for (const [x, y] of [
-            [-20, 0],
-            [18, 2],
-          ])
-            glint(x, y, '#d7b66f', 1.5);
-          break;
-        case 'crown-logistics-bay':
-          shade(46, 11, 0.18);
-          poly(
-            [
-              [-43, -2],
-              [-25, -34],
-              [25, -34],
-              [44, -2],
-            ],
-            '#57515f',
-          );
-          line(
-            [
-              [-24, -31],
-              [-24, 13],
-            ],
-            localWood,
-            4,
-          );
-          line(
-            [
-              [24, -31],
-              [24, 13],
-            ],
-            localWood,
-            4,
-          );
-          rect(-35, -4, 27, 20, '#806144');
-          rect(-10, -10, 25, 24, '#8b6b49');
-          rect(14, -2, 25, 18, '#745945');
-          for (const [x, y] of [
-            [-26, -8],
-            [4, -14],
-            [26, -6],
-          ])
-            glint(x, y, '#b99468', 1);
-          oval(-28, -17, 13, 5, '#4d4642');
-          for (const x of [-34, -28, -22])
-            poly(
-              [
-                [x - 3, -16],
-                [x, -30],
-                [x + 3, -16],
-              ],
-              '#b96f47',
-            );
-          for (const x of [5, 15, 25])
-            line(
-              [
-                [x, -31],
-                [x, 7],
-              ],
-              steel,
-              2,
-            );
-          break;
-        case 'crown-fortress-checkpoint':
-          shade(48, 11, 0.2);
-          for (const x of [-38, 38]) {
-            oval(x, 5, 13, 5, '#4c4652');
-            for (const dx of [-5, 0, 5])
-              poly(
-                [
-                  [x + dx - 3, 4],
-                  [x + dx, -12],
-                  [x + dx + 3, 4],
-                ],
-                '#9c5f58',
-              );
-          }
-          for (const x of [-32, -16, 0, 16, 32])
-            line(
-              [
-                [x, 13],
-                [x, -8],
-              ],
-              '#6e5d55',
-              5,
-            );
-          line(
-            [
-              [-39, -4],
-              [39, -4],
-            ],
-            steel,
-            3,
-          );
-          line(
-            [
-              [0, -56],
-              [0, 12],
-            ],
-            steel,
-            3,
-          );
-          poly(
-            [
-              [3, -53],
-              [29, -49],
-              [24, -19],
-              [12, -10],
-              [3, -18],
-            ],
-            '#71586f',
-          );
-          poly(
-            [
-              [14, -40],
-              [20, -31],
-              [14, -22],
-              [8, -31],
-            ],
-            '#b08db9',
-          );
-          for (const x of [-20, 20])
-            line(
-              [
-                [x, -7],
-                [x, -32],
-              ],
-              '#b7b8b0',
-              2,
-            );
-          break;
-        case 'citadel-muster':
-          shade(45, 10, 0.17);
-          for (const x of [-28, 28]) {
-            line(
-              [
-                [x, -2],
-                [x, -43],
-              ],
-              steel,
-              3,
-            );
-            poly(
-              [
-                [x - 8, -40],
-                [x, -52],
-                [x + 8, -40],
-                [x + 5, -17],
-                [x - 5, -17],
-              ],
-              '#85979b',
-            );
-          }
-          rect(-38, -4, 76, 16, '#555d61');
-          for (const x of [-22, 0, 22]) {
-            poly(
-              [
-                [x - 7, -2],
-                [x + 7, -2],
-                [x + 6, 9],
-                [x, 15],
-                [x - 6, 9],
-              ],
-              '#5a6670',
-            );
-            line(
-              [
-                [x, 0],
-                [x, 10],
-              ],
-              gold,
-              1.4,
-            );
-          }
-          for (const x of [-34, 34]) {
-            line(
-              [
-                [x, -50],
-                [x, 11],
-              ],
-              steel,
-              3,
-            );
-            poly(
-              [
-                [x + 2, -47],
-                [x + (x < 0 ? 20 : -20), -43],
-                [x + (x < 0 ? 17 : -17), -18],
-                [x + 2, -15],
-              ],
-              '#785266',
-            );
-          }
-          break;
-        case 'citadel-command':
-          shade(44, 10, 0.16);
-          oval(0, 2, 31, 11, '#5e5654');
-          for (const x of [-20, 20])
-            line(
-              [
-                [x, 6],
-                [x, 19],
-              ],
-              '#4a4140',
-              4,
-            );
-          line(
-            [
-              [-20, -2],
-              [20, 7],
-            ],
-            '#b18f70',
-            1.2,
-          );
-          for (const [x, y] of [
-            [-12, 0],
-            [2, 3],
-            [13, 5],
-          ])
-            glint(x, y, '#d7b46d', 1.4);
-          line(
-            [
-              [0, -56],
-              [0, 13],
-            ],
-            steel,
-            3,
-          );
-          poly(
-            [
-              [3, -53],
-              [29, -49],
-              [24, -18],
-              [13, -10],
-              [3, -18],
-            ],
-            '#785266',
-          );
-          line(
-            [
-              [13, -41],
-              [13, -24],
-            ],
-            gold,
-            2,
-          );
-          for (const x of [-31, 31])
-            poly(
-              [
-                [x - 8, -17],
-                [x + 8, -17],
-                [x + 7, -3],
-                [x, 4],
-                [x - 7, -3],
-              ],
-              '#66757b',
-            );
-          break;
-        case 'citadel-ritual-array':
-          shade(44, 10, 0.13);
-          for (const [x, y] of [
-            [-26, 5],
-            [0, -2],
-            [26, 5],
-          ]) {
-            oval(x, y, 18, 7, '#67777d');
-            poly(
-              [
-                [x, y - 10],
-                [x + 8, y],
-                [x, y + 9],
-                [x - 8, y],
-              ],
-              '#9eb1b4',
-            );
-            line(
-              [
-                [x, y - 5],
-                [x, y + 5],
-              ],
-              '#d4c58f',
-              1.4,
-            );
-          }
-          line(
-            [
-              [-38, -24],
-              [38, -24],
-            ],
-            '#868f91',
-            3,
-          );
-          for (const x of [-28, 0, 28])
-            poly(
-              [
-                [x - 7, -24],
-                [x, -39],
-                [x + 7, -24],
-              ],
-              '#79878a',
-            );
-          for (const x of [-36, 36]) glint(x, -8, '#e3bd76', 1.8);
-          break;
-        case 'citadel-barracks-bay':
-          shade(48, 11, 0.16);
-          rect(-42, -6, 84, 18, '#62564a');
-          rect(-39, -4, 37, 10, '#7b6d5b');
-          rect(3, -4, 36, 10, '#7b6d5b');
-          for (const x of [-35, -5, 7, 37])
-            line(
-              [
-                [x, 8],
-                [x, 17],
-              ],
-              localWood,
-              3,
-            );
-          rect(-34, -3, 11, 7, '#ad9676');
-          rect(8, -3, 11, 7, '#ad9676');
-          line(
-            [
-              [0, -42],
-              [0, 13],
-            ],
-            localWood,
-            4,
-          );
-          line(
-            [
-              [-22, -26],
-              [22, -26],
-            ],
-            localWood,
-            4,
-          );
-          oval(0, -49, 9, 9, '#967c5f');
-          for (const x of [-28, 28])
-            line(
-              [
-                [x, -20],
-                [x, 5],
-              ],
-              steel,
-              2,
-            );
-          break;
-        case 'citadel-forge-bay':
-          shade(48, 11, 0.18);
-          rect(-40, -10, 48, 25, '#65645f');
-          rect(-31, -29, 30, 19, '#76716a');
-          oval(-17, 4, 14, 5, '#3f3a37');
-          for (const x of [-23, -17, -11])
-            poly(
-              [
-                [x - 3, 4],
-                [x, -10],
-                [x + 3, 4],
-              ],
-              '#bd7148',
-            );
-          rect(-2, -42, 9, 32, '#595653');
-          for (const x of [17, 28, 39]) {
-            line(
-              [
-                [x, -29],
-                [x, 10],
-              ],
-              steel,
-              2,
-            );
-            poly(
-              [
-                [x - 5, -29],
-                [x, -40],
-                [x + 5, -29],
-              ],
-              '#aaa891',
-            );
-          }
-          rect(13, -1, 22, 17, '#806144');
-          rect(25, -17, 20, 17, '#725744');
-          line(
-            [
-              [14, 0],
-              [34, 15],
-            ],
-            '#b99566',
-            2,
-          );
-          break;
-        case 'citadel-vanity-quarters':
-          // Veyra's private dressing station and working cosmetology tools.
-          shade(45, 12, 0.17);
-          rect(-40, -4, 80, 15, '#665047');
-          rect(-37, -1, 74, 9, '#a77d5d');
-          rect(-26, -47, 52, 40, '#a47d57');
-          rect(-22, -43, 44, 32, '#8fadb0');
-          rect(-14, -39, 19, 3, '#d1e4dc');
-          rect(-30, 8, 4, 10, localWood);
-          rect(28, 8, 4, 10, localWood);
-          glint(-30, -4, '#f3c982', 2);
-          glint(30, -4, '#f3c982', 2);
-          rect(-24, -16, 11, 15, '#e9dcc3');
-          rect(-22, -20, 7, 4, gold);
-          rect(-7, -16, 11, 15, '#ba6370');
-          rect(-5, -20, 7, 4, gold);
-          rect(10, -16, 11, 15, '#83a09a');
-          rect(12, -20, 7, 4, gold);
-          rect(24, -32, 2, 16, '#bc9d77');
-          rect(28, -32, 2, 16, '#bc9d77');
-          rect(32, -32, 2, 16, '#bc9d77');
-          oval(28, -33, 9, 3, '#e2c9a7');
-          rect(-39, 11, 23, 9, '#bb7657');
-          rect(35, -24, 10, 38, '#77576d');
-          break;
-        case 'citadel-boss-approach':
-          shade(46, 10, 0.12);
-          for (const x of [-35, 35]) {
-            line(
-              [
-                [x, -55],
-                [x, 13],
-              ],
-              steel,
-              3,
-            );
-            poly(
-              [
-                [x + (x < 0 ? 2 : -2), -52],
-                [x + (x < 0 ? 27 : -27), -48],
-                [x + (x < 0 ? 24 : -24), -18],
-                [x + (x < 0 ? 13 : -13), -10],
-                [x + (x < 0 ? 2 : -2), -18],
-              ],
-              '#785266',
-            );
-          }
-          for (const x of [-20, 20]) {
-            oval(x, 3, 16, 7, '#67777d');
-            poly(
-              [
-                [x, -8],
-                [x + 8, 2],
-                [x, 12],
-                [x - 8, 2],
-              ],
-              '#a6b8bc',
-            );
-          }
-          oval(0, 7, 17, 6, '#4c4652');
-          for (const x of [-8, 0, 8])
-            poly(
-              [
-                [x - 4, 6],
-                [x, -10],
-                [x + 4, 6],
-              ],
-              '#a9634d',
-            );
-          glint(0, -7, '#e6bd7a', 2);
-          break;
-        case 'animal-pen':
-          for (const x of [-23, 23])
-            line(
-              [
-                [x, 12],
-                [x, -18],
-              ],
-              localWood,
-              3,
-            );
-          line(
-            [
-              [-24, -13],
-              [24, -13],
-            ],
-            localWood,
-            3,
-          );
-          line(
-            [
-              [-24, 2],
-              [24, 2],
-            ],
-            localWood,
-            3,
-          );
-          for (const [index, [x, y]] of [
-            [-9, 5],
-            [7, 7],
-          ].entries()) {
-            const motion = ambientAnimalPose(e, index, e.ambientTime);
-            ctx.save();
-            ctx.translate(x + motion.x, y + motion.y);
-            ctx.scale(motion.facing, 1);
-            for (const dx of [-4, 4])
-              line(
-                [
-                  [dx, 2],
-                  [dx, 6],
-                ],
-                '#615b47',
-                1.5,
-              );
-            oval(0, 0, 7, 4, '#8c8062');
-            oval(6, -3, 3.5, 3, '#a0916d');
-            poly(
-              [
-                [4, -5],
-                [5, -9],
-                [7, -5],
-              ],
-              '#9a8b68',
-            );
-            eye(7, -4, ink);
-            ctx.restore();
-          }
-          break;
-        case 'drying-rack':
-          for (const x of [-22, 22])
-            line(
-              [
-                [x, 12],
-                [x, -34],
-              ],
-              localWood,
-              3,
-            );
-          line(
-            [
-              [-23, -29],
-              [23, -29],
-            ],
-            localWood,
-            3,
-          );
-          for (const x of [-14, 0, 14]) {
-            line(
-              [
-                [x, -28],
-                [x, -10],
-              ],
-              '#cdbf9f',
-              1,
-            );
-            rect(x - 5, -10, 10, 12, x === 0 ? '#8da0a0' : '#a1846f');
-          }
-          break;
-        case 'tax-post':
-          line(
-            [
-              [0, -48],
-              [0, 14],
-            ],
-            localWood,
-            4,
-          );
-          rect(-18, -43, 36, 25, '#8a7357');
-          for (const y of [-37, -31, -25])
-            line(
-              [
-                [-13, y],
-                [12, y],
-              ],
-              '#d3c298',
-              1,
-            );
-          rect(7, -14, 12, 10, '#6f5541');
-          break;
-        case 'lean-to':
-          for (const x of [-24, 24])
-            line(
-              [
-                [x, 13],
-                [x, -27],
-              ],
-              localWood,
-              4,
-            );
-          poly(
-            [
-              [-31, -25],
-              [-12, -41],
-              [28, -32],
-              [31, -20],
-            ],
-            '#8a7359',
-          );
-          rect(-22, -5, 44, 17, '#665848');
-          break;
-        case 'cookfire':
-          for (const a of [-15, 0, 15])
-            line(
-              [
-                [-18, a / 5 + 7],
-                [18, a / 5 - 4],
-              ],
-              '#70543d',
-              4,
-            );
-          oval(0, 7, 16, 6, '#4b443c');
-          for (const x of [-8, 0, 8])
-            poly(
-              [
-                [x - 4, 6],
-                [x, -9],
-                [x + 4, 6],
-              ],
-              '#c97d48',
-            );
-          glint(0, -5, '#efbd72', 2);
-          break;
-        case 'sleep-roll':
-          poly(
-            [
-              [-25, -8],
-              [18, -8],
-              [25, -3],
-              [25, 11],
-              [-25, 11],
-            ],
-            '#7b6c58',
-          );
-          poly(
-            [
-              [-12, -6],
-              [20, -6],
-              [23, 9],
-              [-11, 9],
-            ],
-            region === 1 ? '#78928a' : region === 4 ? '#7b728b' : '#a08a67',
-          );
-          for (const y of [-3, 7])
-            line(
-              [
-                [-10, y],
-                [20, y],
-              ],
-              '#c2af86',
-              1.5,
-            );
-          oval(-20, -6, 6, 4, '#c9b997');
-          line(
-            [
-              [-26, 10],
-              [24, 10],
-            ],
-            localWood,
-            2,
-          );
-          line(
-            [
-              [14, -6],
-              [14, 9],
-            ],
-            '#6b5945',
-            2,
-          );
-          break;
-        case 'game-table':
-          for (const x of [-18, 18])
-            line(
-              [
-                [x, 4],
-                [x, 17],
-              ],
-              localWood,
-              4,
-            );
-          poly(
-            [
-              [-25, -7],
-              [23, -7],
-              [28, 7],
-              [-25, 7],
-            ],
-            '#8a6b4b',
-          );
-          rect(-13, -5, 24, 11, '#d2bc89');
-          for (let row = 0; row < 3; row++)
-            for (let col = 0; col < 4; col++)
-              if ((row + col) % 2 === 0) rect(-12 + col * 6, -4 + row * 3, 5, 3, '#776448');
-          for (const [x, y, c] of [
-            [-8, -3, '#d9c582'],
-            [3, 0, '#8fa0a0'],
-            [8, 4, '#aa7c6f'],
-          ])
-            oval(x, y, 2, 1.5, c);
-          oval(-20, -1, 3, 3, '#b7956a');
-          break;
-        case 'stolen-goods':
-          rect(-20, -10, 24, 23, '#8b6b49');
-          rect(3, -5, 21, 18, '#9a7752');
-          poly(
-            [
-              [-8, -12],
-              [-1, -25],
-              [7, -13],
-            ],
-            '#8d9b76',
-          );
-          line(
-            [
-              [12, -4],
-              [22, -17],
-            ],
-            steel,
-            2,
-          );
-          break;
-        case 'training-dummy':
-          line(
-            [
-              [0, -40],
-              [0, 15],
-            ],
-            localWood,
-            5,
-          );
-          line(
-            [
-              [-20, -24],
-              [20, -24],
-            ],
-            localWood,
-            4,
-          );
-          oval(0, -48, 9, 9, '#9b8060');
-          rect(-12, -18, 24, 24, '#77614d');
-          break;
-        case 'bone-pile':
-          for (const [x, y] of [
-            [-13, 4],
-            [-4, -1],
-            [6, 5],
-            [14, 0],
-          ]) {
-            line(
-              [
-                [x - 7, y - 4],
-                [x + 7, y + 4],
-              ],
-              bone,
-              3,
-            );
-            oval(x + 6, y + 4, 2.5, 2.5, bone);
-          }
-          skull(-2, -7, 5);
-          if (region === 3) {
-            if (variant % 2 === 0)
-              line(
-                [
-                  [-22, 8],
-                  [-12, -3],
-                ],
-                '#7b6252',
-                2,
-              );
-            else skull(15, -5, 3.5);
-          }
-          break;
-        case 'grave-marker':
-          rect(-11, -29, 22, 42, '#7a7f78');
-          poly(
-            [
-              [-13, -28],
-              [0, -42],
-              [13, -28],
-            ],
-            '#8f958b',
-          );
-          line(
-            [
-              [0, -25],
-              [0, 2],
-            ],
-            '#b5b5a5',
-            2,
-          );
-          line(
-            [
-              [-6, -16],
-              [6, -16],
-            ],
-            '#b5b5a5',
-            2,
-          );
-          poly(
-            [
-              [11, 13],
-              [16, 9],
-              [16, -29],
-              [11, -29],
-            ],
-            '#5e6962',
-          );
-          line(
-            [
-              [-8, -26],
-              [-8, 9],
-              [8, 9],
-            ],
-            '#a1aa97',
-            1,
-          );
-          line(
-            [
-              [-8, 9],
-              [-3, 5],
-              [0, 8],
-              [6, 5],
-            ],
-            '#5e7b55',
-            2,
-          );
+          foliage(-7, 13, 11, 5, '#71895c');
           break;
         case 'pup-nest':
-          oval(0, 7, 28, 11, '#7d7657');
-          for (let x = -24; x <= 24; x += 8)
-            line(
-              [
-                [x, 10],
-                [x + 5, -2],
-              ],
-              '#a28d62',
-              2,
-            );
+          nest(0, 6, 1.1);
           for (const [index, [x, y]] of [
             [-8, 3],
             [8, 4],
-          ].entries()) {
-            const motion = ambientAnimalPose(e, index, e.ambientTime);
-            ctx.save();
-            ctx.translate(x + motion.x, y + motion.y);
-            ctx.scale(motion.facing, 1);
-            oval(0, 0, 5, 3, '#8c775d');
-            oval(4, -2, 3.5, 3, '#a28c6c');
-            poly(
-              [
-                [2, -4],
-                [2, -7],
-                [5, -4],
-              ],
-              '#8c775d',
-            );
-            oval(6, -1, 2.5, 1.5, '#b49b7a');
-            line(
-              [
-                [3, -2],
-                [5, -2],
-              ],
-              ink,
-              0.8,
-            );
-            oval(0, 2, 3, 1, '#b49b7a');
-            ctx.restore();
-          }
+          ].entries())
+            ambientAt(x, y, 0.6, index, () => {
+              oval(0, 0, 11, 7, '#a38c69');
+              oval(7, -3, 7, 6, '#b7a07a');
+              oval(10, 0, 4, 3, '#d1bc94');
+              softPoly(
+                [
+                  [4, -5],
+                  [2, -11],
+                  [9, -7],
+                ],
+                '#7c8067',
+                2,
+              );
+              line(
+                [
+                  [7, -4],
+                  [10, -3],
+                ],
+                '#405043',
+                1,
+              );
+              oval(3, 6, 4, 2.5, '#bba67f');
+            });
           break;
         case 'fishing-net':
-          for (const x of [-22, 22])
+          for (const x of [-28, 28]) timber([x, 13], [x, -28], 3);
+          for (let j = 0; j < 5; j++) {
+            ctx.strokeStyle = '#b1ab7e';
+            ctx.lineWidth = 0.8;
+            ctx.beginPath();
+            ctx.moveTo(-27, -23 + j * 7);
+            ctx.quadraticCurveTo(0, -12 + j * 7, 27, -23 + j * 7);
+            ctx.stroke();
+          }
+          for (let x = -24; x < 26; x += 8) {
             line(
               [
-                [x, 13],
-                [x, -31],
+                [x, -22],
+                [x - 3, -5],
+                [x + 1, 13],
               ],
-              localWood,
-              3,
+              '#9c9f75',
+              0.8,
             );
-          for (let y = -28; y < 9; y += 8)
-            line(
-              [
-                [-20, y],
-                [20, y + 4],
-              ],
-              '#b4b39a',
-              1,
-            );
-          for (let x = -18; x <= 18; x += 9)
-            line(
-              [
-                [x, -29],
-                [x + 5, 10],
-              ],
-              '#b4b39a',
-              1,
-            );
-          for (const x of [-18, -5, 8, 20]) oval(x, -28 + x * 0.04, 2, 1.5, '#d2caa7');
-          line(
-            [
-              [-20, 10],
-              [0, 13],
-              [20, 10],
-            ],
-            '#8d8c73',
-            2,
-          );
-          break;
-        case 'mud-nest':
-          oval(0, 7, 28, 12, '#675e4b');
-          oval(0, 4, 20, 8, '#4d6655');
-          for (const x of [-19, -8, 10, 21])
-            line(
-              [
-                [x, 9],
-                [x + 4, -4],
-              ],
-              '#7d7357',
-              2,
-            );
-          break;
-        case 'wallow':
-          oval(0, 7, 29, 12, '#5d6254');
-          oval(0, 5, 23, 8, '#4f6f69');
-          for (const [x, y] of [
-            [-9, 3],
-            [7, 5],
-            [13, 1],
-          ])
-            oval(x, y, 3, 2, '#7c8972');
-          break;
-        case 'ore-cart':
-          rect(-23, -11, 46, 18, '#806548');
-          for (const x of [-15, 15]) oval(x, 10, 7, 7, '#4f514c');
-          for (const [x, y] of [
-            [-12, -12],
-            [0, -16],
-            [12, -11],
-          ])
-            oval(x, y, 8, 5, '#858880');
-          line(
-            [
-              [21, -7],
-              [34, -15],
-            ],
-            localWood,
-            3,
-          );
-          for (const x of [-15, 15]) {
-            oval(x, 10, 4, 4, '#8c8e80');
-            line(
-              [
-                [x - 3, 10],
-                [x + 3, 10],
-              ],
-              '#c0b89d',
-              1,
-            );
+            oval(x + 1, 13, 1.8, 2.3, '#817f63');
           }
           line(
             [
-              [-21, -9],
-              [21, -9],
+              [-28, -25],
+              [0, -20],
+              [28, -25],
             ],
-            '#b3afa0',
-            2,
+            '#bdae80',
+            1.7,
           );
-          line(
-            [
-              [-20, 4],
-              [20, 4],
-            ],
-            '#6a6d65',
-            1.5,
-          );
+          break;
+        case 'wallow':
+          pool(false);
+          for (const [x, y] of [
+            [-15, 6],
+            [4, 1],
+            [17, 6],
+          ]) {
+            oval(x, y, 3, 2, '#786b52');
+            line(
+              [
+                [x - 2, y - 2],
+                [x - 1, y + 1],
+              ],
+              '#b09d79',
+              0.8,
+            );
+          }
+          break;
+        case 'ore-cart':
+          cartBody();
+          for (const [x, y] of [
+            [-18, -17],
+            [0, -16],
+            [18, -16],
+          ])
+            rockPiece(x, y, 10, 11);
+          timber([-31, -13], [28, -13], 4, '#6f7d75');
           break;
         case 'ore-crane':
-          for (const x of [-25, 25])
+          timber([-24, 14], [-24, -41], 7);
+          timber([-29, -41], [23, -41], 6);
+          timber([-24, -14], [2, -40], 5);
+          oval(18, -40, 5, 5, '#8d9a8d');
+          oval(18, -40, 2, 2, '#46584e');
+          line(
+            [
+              [18, -39],
+              [18, -13],
+            ],
+            '#c6b58c',
+            1.7,
+          );
+          rimBowl(18, -5, 11, '#7c8d80', '#737d6a');
+          line(
+            [
+              [7, -5],
+              [18, -16],
+              [29, -5],
+            ],
+            '#adb39a',
+            1.4,
+          );
+          softRect(-30, -13, 12, 13, '#72604a', 2);
+          for (const y of [-10, -6, -2])
             line(
               [
-                [x, 14],
-                [x, -42],
+                [-29, y],
+                [-20, y + 1],
               ],
-              localWood,
-              5,
+              '#c1a375',
+              1.2,
             );
-          line(
-            [
-              [-27, -39],
-              [28, -39],
-            ],
-            localWood,
-            4,
-          );
-          line(
-            [
-              [20, -38],
-              [20, -5],
-            ],
-            steel,
-            2,
-          );
-          oval(20, -2, 6, 4, '#777b75');
-          line(
-            [
-              [-25, -30],
-              [25, -39],
-            ],
-            '#9c805a',
-            3,
-          );
-          break;
-        case 'tool-rack':
-          for (const x of [-23, 23])
-            line(
-              [
-                [x, 14],
-                [x, -33],
-              ],
-              localWood,
-              4,
-            );
-          line(
-            [
-              [-24, -28],
-              [24, -28],
-            ],
-            localWood,
-            4,
-          );
-          line(
-            [
-              [-24, 7],
-              [24, 7],
-            ],
-            localWood,
-            3,
-          );
-          line(
-            [
-              [-14, -23],
-              [-14, 8],
-            ],
-            '#b09265',
-            3,
-          );
-          rect(-20, -26, 12, 7, steel);
-          line(
-            [
-              [0, -22],
-              [0, 0],
-            ],
-            '#b09265',
-            3,
-          );
-          poly(
-            [
-              [-6, -1],
-              [6, -1],
-              [4, 8],
-              [0, 11],
-              [-4, 8],
-            ],
-            '#899a9a',
-          );
-          line(
-            [
-              [-4, -23],
-              [4, -23],
-            ],
-            '#b09265',
-            2,
-          );
-          for (const x of [11, 17])
-            line(
-              [
-                [x, -24],
-                [x - 1, 4],
-              ],
-              steel,
-              2,
-            );
-          line(
-            [
-              [11, 4],
-              [15, 9],
-              [17, 4],
-            ],
-            steel,
-            2,
-          );
           break;
         case 'stone-marker':
-          for (const [x, y, r] of [
-            [0, 7, 12],
-            [-2, -8, 9],
-            [1, -20, 6],
-          ])
-            oval(x, y, r, r * 0.55, '#797d75');
+          rockPiece(0, 9, 17, 9);
+          rockPiece(-3, 0, 13, 10);
+          rockPiece(1, -10, 9, 10);
           line(
             [
-              [-5, -9],
-              [5, -13],
+              [-6, -9],
+              [4, -9],
             ],
-            '#b4aa8e',
-            1.5,
+            '#b7b8a0',
+            0.8,
           );
           break;
         case 'field-kitchen':
-          rect(-24, 0, 48, 13, '#776956');
-          oval(0, 6, 14, 5, '#413d37');
-          for (const x of [-7, 0, 7])
-            poly(
-              [
-                [x - 3, 6],
-                [x, -5],
-                [x + 3, 6],
-              ],
-              '#b96f47',
-            );
-          for (const x of [-24, 24])
-            line(
-              [
-                [x, 13],
-                [x, -30],
-              ],
-              localWood,
-              4,
-            );
-          line(
-            [
-              [-28, -27],
-              [28, -27],
-            ],
-            localWood,
-            4,
-          );
-          line(
-            [
-              [0, -25],
-              [0, -14],
-            ],
-            steel,
-            2,
-          );
-          oval(0, -10, 11, 8, '#565957');
-          oval(0, -15, 11, 4, '#87918a');
-          line(
-            [
-              [-9, -12],
-              [9, -12],
-            ],
-            '#a6b1a2',
-            1.5,
-          );
-          line(
-            [
-              [19, -26],
-              [19, -7],
-            ],
-            '#b8996b',
-            2,
-          );
-          oval(19, -5, 3, 4, '#a18b6b');
-          rect(-25, -11, 11, 10, '#b7a17b');
-          if (region === 3 && variant % 2 === 0)
-            line(
-              [
-                [-23, -24],
-                [-17, -18],
-              ],
-              '#b79573',
-              2,
-            );
-          break;
-        case 'supply-stack':
-          for (const [x, y] of [
-            [-17, 0],
-            [5, 2],
-            [-6, -14],
-            [15, -13],
-          ]) {
-            rect(x - 10, y - 8, 20, 17, '#8d6d4b');
-            line(
-              [
-                [x - 9, y - 7],
-                [x + 9, y + 7],
-              ],
-              '#b89565',
-              2,
-            );
-          }
-          if (region === 3) {
-            if (variant % 3 === 0) oval(22, 6, 9, 6, '#8a765e');
-            else if (variant % 3 === 1) rect(-30, -4, 13, 16, '#725942');
-            else
-              line(
-                [
-                  [-24, -18],
-                  [20, -21],
-                ],
-                '#c6a477',
-                2,
-              );
-          }
-          break;
-        case 'command-tent':
-          poly(
-            [
-              [-35, 12],
-              [0, -47],
-              [36, 12],
-            ],
-            region === 4 ? '#5d5668' : '#7c5e53',
-          );
-          line(
-            [
-              [0, -44],
-              [0, 14],
-            ],
-            localWood,
-            4,
-          );
-          rect(-12, -2, 24, 17, region === 4 ? '#33313a' : '#54463f');
-          line(
-            [
-              [-29, 9],
-              [29, 9],
-            ],
-            '#b79573',
-            2,
-          );
-          if (region === 3) {
-            if (variant % 2 === 0) {
-              rect(-24, -22, 13, 8, '#956f60');
-              line(
-                [
-                  [-34, 11],
-                  [-45, 19],
-                ],
-                '#6a5141',
-                2,
-              );
-            } else {
-              line(
-                [
-                  [22, -18],
-                  [34, -26],
-                ],
-                '#9e735d',
-                3,
-              );
-              rect(18, -3, 10, 8, '#6d5144');
-            }
-          }
-          break;
-        case 'bunk':
-          for (const x of [-26, 26])
-            line(
-              [
-                [x, -14],
-                [x, 17],
-              ],
-              localWood,
-              4,
-            );
-          rect(-27, -8, 54, 18, localWood);
-          rect(-23, -8, 46, 12, '#ada086');
-          rect(-21, -7, 11, 6, '#d0c3a3');
-          rect(-8, -7, 30, 13, region === 4 ? '#796b85' : region === 3 ? '#9b7260' : '#8a917d');
-          line(
-            [
-              [-4, -6],
-              [-4, 5],
-            ],
-            '#c8b78e',
-            2,
-          );
-          line(
-            [
-              [-26, -15],
-              [-16, -15],
-            ],
-            '#b49a71',
-            3,
-          );
-          line(
-            [
-              [17, -12],
-              [26, -12],
-            ],
-            '#b49a71',
-            3,
-          );
-          line(
-            [
-              [-25, 10],
-              [25, 10],
-            ],
-            '#554b3b',
-            2,
-          );
-          break;
-        case 'forge':
-          rect(-26, -12, 52, 27, '#696863');
-          rect(-18, -29, 36, 18, '#77736b');
-          oval(0, 4, 16, 6, '#403b38');
-          for (const x of [-8, 0, 8])
-            poly(
-              [
-                [x - 4, 5],
-                [x, -9],
-                [x + 4, 5],
-              ],
-              '#bd7148',
-            );
-          rect(19, -42, 9, 31, '#5b5855');
-          break;
-        case 'roost':
-          oval(0, 7, 30, 12, '#62594f');
-          for (const x of [-24, -12, 0, 12, 24])
-            line(
-              [
-                [x, 10],
-                [x + 5, -6],
-              ],
-              '#806a4e',
-              2,
-            );
-          for (const [x, y] of [
-            [-9, 1],
-            [8, 4],
-          ])
-            poly(
-              [
-                [x - 5, y + 6],
-                [x, y - 8],
-                [x + 5, y + 6],
-              ],
-              '#676b62',
-            );
-          if (region === 3) {
-            if (variant % 2 === 0)
-              for (const x of [-16, 15])
-                line(
-                  [
-                    [x, 6],
-                    [x + flip * 7, -9],
-                  ],
-                  '#4b4240',
-                  3,
-                );
-            else glint(13, -2, '#d58a59', 1.3);
-          }
-          break;
-        case 'hatchery':
-          oval(0, 7, 30, 12, '#5a5049');
-          for (const [x, y] of [
-            [-12, 3],
-            [0, -1],
-            [12, 4],
-          ])
-            oval(x, y, 6, 8, '#8d826d');
-          for (const x of [-22, 22])
-            line(
-              [
-                [x, 10],
-                [x + 4, -7],
-              ],
-              '#7b6750',
-              2,
-            );
-          if (region === 3) {
-            if (variant % 2 === 0) {
-              line(
-                [
-                  [-25, 8],
-                  [-12, -9],
-                ],
-                '#645048',
-                3,
-              );
-              line(
-                [
-                  [24, 8],
-                  [12, -7],
-                ],
-                '#645048',
-                3,
-              );
-            } else oval(0, 3, 21, 9, '#4c4541');
-          }
-          break;
-        case 'scribe-desk':
-          for (const x of [-21, 21])
-            line(
-              [
-                [x, 3],
-                [x, 18],
-              ],
-              localWood,
-              4,
-            );
-          poly(
-            [
-              [-28, 5],
-              [-23, -17],
-              [23, -17],
-              [28, 5],
-            ],
-            '#88704f',
-          );
-          poly(
-            [
-              [-17, -14],
-              [-2, -12],
-              [13, -14],
-              [16, 2],
-              [0, 4],
-              [-19, 2],
-            ],
-            '#d4c49a',
-          );
-          line(
-            [
-              [-2, -11],
-              [0, 3],
-            ],
-            '#89785d',
-            1.5,
-          );
-          for (const y of [-7, -2]) {
-            line(
-              [
-                [-14, y],
-                [-6, y + 1],
-              ],
-              '#9b8968',
-              1,
-            );
-            line(
-              [
-                [3, y],
-                [11, y - 1],
-              ],
-              '#9b8968',
-              1,
-            );
-          }
-          oval(22, -5, 3, 3, '#394b4a');
-          line(
-            [
-              [21, -8],
-              [25, -22],
-            ],
-            '#d4c9a7',
-            2,
-          );
-          poly(
-            [
-              [24, -21],
-              [28, -26],
-              [28, -17],
-            ],
-            '#d4c9a7',
-          );
-          line(
-            [
-              [-25, 5],
-              [25, 5],
-            ],
-            '#bc9f70',
-            2,
-          );
-          break;
-        case 'scroll-stack':
-          for (const [x, y] of [
-            [-13, 5],
-            [0, 1],
-            [13, 6],
-            [-5, -8],
-            [8, -9],
-          ]) {
-            rect(x - 8, y - 3, 16, 6, '#c5b78e');
-            oval(x - 8, y, 2, 3, '#927a5e');
-          }
-          break;
-        case 'ossuary':
-          rect(-24, -17, 48, 31, '#747872');
-          for (const [x, y] of [
-            [-12, -8],
-            [0, -10],
-            [12, -7],
-            [-7, 4],
-            [8, 3],
-          ])
-            skull(x, y, 4);
-          line(
-            [
-              [-22, -14],
-              [22, -14],
-            ],
-            '#a5aa9d',
-            2,
-          );
-          break;
-        case 'ritual-table':
-          rect(-16, 3, 32, 14, region === 1 ? '#778b7a' : '#80756c');
-          poly(
-            [
-              [-28, -5],
-              [-18, -13],
-              [19, -13],
-              [28, -5],
-              [25, 6],
-              [-25, 6],
-            ],
-            region === 1 ? '#9bafa0' : '#9a8a7c',
-          );
-          line(
-            [
-              [-24, 3],
-              [24, 3],
-            ],
-            '#c1b59a',
-            2,
-          );
-          poly(
-            [
-              [-7, -4],
-              [0, -11],
-              [7, -4],
-              [0, 3],
-            ],
-            '#746579',
-          );
-          oval(0, -5, 3, 2, '#c8ae84');
-          for (const x of [-19, 19]) {
-            rect(x - 2, -16, 4, 9, '#d4c6a5');
-            oval(x, -7, 4, 2, '#746252');
-          }
-          line(
-            [
-              [-8, 13],
-              [8, 13],
-            ],
-            '#c7b694',
-            2,
-          );
-          break;
-        case 'grave-lamp':
+          timber([-24, 14], [-15, -35], 4);
+          timber([24, 14], [15, -35], 4);
+          timber([-18, -35], [18, -35], 4);
           line(
             [
               [0, -35],
-              [0, 13],
+              [0, -19],
             ],
-            steel,
-            3,
+            '#7a8479',
+            2,
           );
+          rimBowl(0, -7, 18, '#606d65', '#a2986e');
+          line(
+            [
+              [-17, -10],
+              [-21, -15],
+              [-21, -6],
+            ],
+            '#919e8f',
+            1.5,
+          );
+          line(
+            [
+              [17, -10],
+              [21, -15],
+              [21, -6],
+            ],
+            '#919e8f',
+            1.5,
+          );
+          flame(0, 10, 0.5);
+          craftAt(29, 6, 0.5, () => table(30));
+          break;
+        case 'supply-stack':
+          crateBody(-16, 5, 0.85);
+          crateBody(15, 7, 0.7);
+          fillOval(-8, -11.6, 12, 1.6, '#514732', 0.28);
+          crateBody(-8, -20, 0.65);
+          sack(29, 9, 0.65);
+          line(
+            [
+              [-26, 6],
+              [-8, -31],
+              [27, 5],
+            ],
+            '#c4ae7d',
+            1.4,
+          );
+          break;
+        case 'command-tent':
+          tent(true);
+          craftAt(20, -29, 0.45, () => flag(true));
+          break;
+        case 'forge':
+          hearth(true);
+          craftAt(27, 7, 0.55, () => rack(true));
+          break;
+        case 'hatchery':
+        case 'egg-cradle':
+          nest(0, 6, 1.2);
+          for (const [x, y, r] of [
+            [-12, 0, 8],
+            [3, -4, 10],
+            [17, 3, 7],
+          ]) {
+            oval(x, y, r, r * 1.3, '#d4c9a2');
+            fillOval(x - 2, y - 3, r * 0.35, r * 0.6, '#f0dec1', 0.5);
+            for (const dx of [-2, 2]) fillOval(x + dx, y + dx, 1, 1.5, '#9d9d7e', 0.5);
+          }
+          if (kind === 'egg-cradle') for (const x of [-23, 23]) timber([x, 6], [x * 0.8, -8], 3);
+          break;
+        case 'scroll-stack':
+          for (const [x, y, w] of [
+            [-17, 6, 25],
+            [-11, 0, 28],
+            [2, -7, 22],
+          ]) {
+            softRect(x, y - 3, w, 7, '#d4c8a4', 3);
+            oval(x, y, 3, 3.5, '#b7b18e');
+            oval(x, y, 1.3, 1.8, '#777f68');
+            line(
+              [
+                [x + w * 0.65, y - 3],
+                [x + w * 0.65, y + 3],
+              ],
+              '#8b7655',
+              1,
+            );
+          }
+          paper(4, 7, 22);
+          break;
+        case 'ossuary':
+          blockwork(-28, -8, 56, 23, '#82867a', 8);
+          softRect(-23, -8, 46, 16, '#4c5b51', 1);
+          for (const x of [-15, 0, 15]) {
+            skull(x, -5, 5);
+            for (const y of [5, 8])
+              line(
+                [
+                  [x - 5, y],
+                  [x + 6, y],
+                ],
+                bone,
+                1.5,
+              );
+          }
+          break;
+        case 'ritual-table':
+          blockwork(-22, -1, 10, 16, '#777e72');
+          blockwork(12, -1, 10, 16, '#777e72');
           poly(
             [
-              [-8, -33],
-              [0, -43],
-              [8, -33],
-              [6, -18],
-              [-6, -18],
+              [-31, -11],
+              [25, -11],
+              [32, -4],
+              [-31, -2],
             ],
-            '#7c7260',
+            '#a1a58f',
           );
-          glint(0, -27, '#e0bd72', 2);
+          boards(-31, -2, 63, 5, '#787f72', true);
+          line(
+            [
+              [-18, -7],
+              [0, -10],
+              [18, -6],
+              [0, -4],
+              [-18, -7],
+            ],
+            '#52665d',
+            1.2,
+          );
+          for (const x of [-24, 25]) {
+            restingObject(x, -6, 3, () => {
+              rimBowl(0, -10, 4, '#aaa48a', '#7c6b51');
+              flame(0, -13, 0.2);
+            });
+          }
+          poly(
+            [
+              [0, -10],
+              [5, -7],
+              [0, -4],
+              [-5, -7],
+            ],
+            '#9d88ac',
+          );
+          break;
+        case 'grave-lamp':
+        case 'roadside-lantern':
+          lantern(0, kind === 'roadside-lantern' ? -45 : -25);
+          if (kind === 'roadside-lantern') timber([0, -12], [0, 15], 4, '#746c51');
+          if (kind === 'grave-lamp') rockPiece(0, 12, 11, 9);
           break;
         case 'caretaker-table':
-          rect(-24, -7, 48, 16, '#6f5a45');
-          for (const x of [-18, 18])
-            line(
-              [
-                [x, 7],
-                [x, 18],
-              ],
-              localWood,
-              3,
-            );
-          rect(-17, -14, 15, 7, '#9a8669');
-          oval(10, -10, 6, 4, '#83725a');
+          table(45);
+          softRect(-17, -16, 24, 7, '#646250', 1);
+          paper(-14, -17, 20);
+          restingObject(15, -8, 5, () => softRect(-5, -4, 10, 4, '#c3c3a4', 1.5));
+          line(
+            [
+              [12, -10],
+              [18, -9],
+            ],
+            '#829179',
+            0.8,
+          );
           break;
         case 'grass':
-          for (const x of [-7, 0, 7])
-            line(
-              [
-                [x, 8],
-                [x + (x ? Math.sign(x) * 3 : 1), -8 - (variant % 5)],
-              ],
-              '#739266',
-              1.5,
-            );
+          grassTuft(0, 8, false);
           break;
         case 'wet-grass':
-          for (const x of [-8, -3, 3, 8])
-            line(
-              [
-                [x, 9],
-                [x + (x % 3), -10 - (variant % 6)],
-              ],
-              '#688c70',
-              1.6,
-            );
+          fillOval(0, 8, 17, 3, '#517264', 0.18);
+          grassTuft(0, 8, true);
           break;
         case 'bush':
-          for (const [x, y, r] of [
-            [-8, 2, 9],
-            [0, -5, 11],
-            [9, 2, 8],
-          ])
-            oval(x, y, r, r * 0.7, '#58784f');
+          foliage(-9, 2, 15, 19, '#5d8053');
+          foliage(10, 5, 16, 15, '#719258');
+          grownStem([-2, 8], [-5, -5], 2);
           break;
         case 'marsh-bush':
-          for (const [x, y, r] of [
-            [-8, 3, 8],
-            [0, -4, 10],
-            [9, 2, 8],
-          ])
-            oval(x, y, r, r * 0.65, '#5d7662');
-          for (const x of [-5, 5]) glint(x, -4, '#b7c69d', 1);
+          foliage(-9, 2, 15, 15, '#688669');
+          foliage(11, 5, 15, 17, '#577d66');
+          for (const x of [-16, -4, 13])
+            line(
+              [
+                [x, -4],
+                [x + 4, 10],
+              ],
+              '#799b7b',
+              1.2,
+            );
           break;
         case 'battlefield-poppies':
           // Red corn poppies recolonize disturbed but cooled old battlefield soil.
@@ -12077,2270 +12367,1310 @@
             [-25, 5],
             [1, -19],
           ]) {
-            line(
-              [
-                [x, 9],
-                [x, y],
-              ],
-              '#547b4a',
-              1.8,
-            );
+            ctx.strokeStyle = '#547b4a';
+            ctx.lineWidth = 1.8;
+            ctx.beginPath();
+            ctx.moveTo(x, 9);
+            ctx.quadraticCurveTo(x + ((x % 3) - 1) * 1.2, (y + 9) / 2, x, y);
+            ctx.stroke();
             for (const dx of [-3.5, 3.5]) oval(x + dx, y - 2, 3.9, 3.2, '#c92e39');
             oval(x, y - 5.5, 3.5, 3.5, '#e84a4b');
             oval(x, y - 2, 1.6, 1.6, '#34352c');
           }
           break;
         case 'pioneer-grasses':
-          oval(0, 9, 25, 7, '#566a4d');
-          for (const x of [-20, -15, -9, -2, 5, 12, 19]) {
-            line(
-              [
-                [x, 9],
-                [x + (x % 3) * 2 - 3, -11 - (x % 4) * 2],
-              ],
-              '#7e9361',
-              2,
-            );
-            line(
-              [
-                [x, 8],
-                [x + 5, -1],
-              ],
-              '#9baa70',
-              1.2,
-            );
-          }
+          grassTuft(-11, 9, false, true);
+          craftAt(12, 3, 0.7, () => grassTuft(0, 9, false));
           break;
         case 'pioneer-brush':
-          for (const [x, y, radius] of [
-            [-15, 2, 11],
-            [0, -8, 14],
-            [17, 4, 11],
-          ])
-            oval(x, y, radius, 7, '#658355');
-          for (const x of [-16, 3, 17]) {
-            line(
-              [
-                [x, 9],
-                [x + 2, -13],
-              ],
-              '#6b664d',
-              2,
-            );
-            oval(x + 2, -9, 6, 4, '#84966a');
-          }
+          grownStem([-12, 11], [-16, -7], 2);
+          grownStem([10, 12], [17, -11], 2);
+          foliage(-16, -5, 8, 7, '#829c6d');
+          foliage(14, -8, 9, 8, '#718f65');
+          rockPiece(0, 10, 8, 4, true);
           break;
         case 'regrowth-birch':
-          // Skinny pale-trunk pioneer tree; not a mature, uniform forest canopy.
-          line(
-            [
-              [0, 14],
-              [2, -53],
-            ],
-            '#c8c5b1',
-            6,
-          );
-          for (const [y, offset] of [
-            [-15, -22],
-            [-31, 20],
-            [-43, -14],
-          ])
-            line(
-              [
-                [1, y],
-                [offset, y - 15],
-              ],
-              '#aaa89a',
-              3,
-            );
-          for (const [x, y, rx] of [
-            [-17, -36, 15],
-            [15, -45, 15],
-            [0, -56, 18],
-          ])
-            oval(x, y, rx, 10, '#78945d');
-          for (const y of [-9, -24, -39])
-            line(
-              [
-                [-1, y],
-                [4, y - 2],
-              ],
-              '#62675b',
-              1.3,
-            );
+          tree('birch');
           break;
         case 'regrowth-willow':
-          line(
-            [
-              [0, 15],
-              [-1, -45],
-            ],
-            '#8f836b',
-            7,
-          );
-          for (const [x, y, rx] of [
-            [-18, -39, 18],
-            [17, -39, 17],
-            [0, -57, 20],
-          ])
-            oval(x, y, rx, 11, '#6f8865');
-          for (const x of [-25, -12, 1, 14, 26])
-            line(
-              [
-                [x, -35],
-                [x + (x < 0 ? -4 : 4), -7],
-              ],
-              '#80996d',
-              1.7,
-            );
+          tree('willow');
           break;
         case 'mossy-basalt':
-          poly(
+          rockPiece(0, 8, 27, 28, true);
+          foliage(-16, 4, 9, 6, '#739269');
+          foliage(6, -15, 8, 5, '#6e8d62');
+          line(
             [
-              [-24, 9],
-              [-21, -7],
-              [-3, -18],
-              [17, -12],
-              [27, 8],
+              [-12, 0],
+              [3, -8],
+              [10, -5],
             ],
-            '#505451',
+            '#8d9f6e',
+            1.2,
           );
-          poly(
-            [
-              [-21, -7],
-              [-3, -18],
-              [9, -3],
-              [-24, 9],
-            ],
-            '#747970',
-          );
-          for (const [x, y, rx] of [
-            [-13, -7, 7],
-            [3, -10, 6],
-            [14, 1, 8],
-          ])
-            oval(x, y, rx, 3.1, '#658365');
           break;
         case 'wildflowers':
-          for (const [x, c] of [
-            [-8, '#d8b47a'],
-            [-2, '#d6a4b1'],
-            [5, '#ded9a6'],
-            [10, '#b8c9d4'],
+          for (const [x, y, c] of [
+            [-18, -4, '#c9a8a8'],
+            [-5, -13, '#e0cd95'],
+            [9, -7, '#b0b9ce'],
+            [21, 0, '#dfcfb2'],
           ]) {
             line(
               [
-                [x, 9],
-                [x, -3],
+                [x - 3, 12],
+                [x, y],
               ],
-              '#6f8b62',
+              '#758c62',
               1,
             );
-            glint(x, -5, c, 1.8);
+            for (const [dx, dy] of [
+              [-2, 0],
+              [2, 0],
+              [0, -2],
+              [0, 2],
+            ])
+              fillOval(x + dx, y + dy, 1.8, 1.6, c);
+            fillOval(x, y, 1, 1, '#ab9e66');
           }
           break;
         case 'fruit-tree':
-          rect(-3, -12, 6, 26, '#76573d');
-          for (const [x, y] of [
-            [-10, -23],
-            [1, -28],
-            [12, -21],
-          ]) {
-            oval(x, y, 11, 9, '#58794f');
-          }
-          for (const [x, y] of [
-            [-10, -20],
-            [2, -31],
-            [13, -18],
-          ]) {
-            glint(x, y, '#cf8a67', 2);
-          }
+          tree('fruit');
           break;
         case 'sapling':
-          rect(-2, -8, 4, 20, '#74583e');
-          for (const [x, y] of [
-            [-7, -15],
-            [3, -20],
-            [9, -11],
-          ])
-            oval(x, y, 9, 7, '#52794f');
+          tree();
+          break;
+        case 'mangrove':
+          tree('mangrove');
+          break;
+        case 'pine-sapling':
+          tree('pine');
           break;
         case 'stump':
-          rect(-8, -5, 16, 15, '#76563c');
-          oval(0, -6, 9, 4, '#b38b5d');
+        case 'charred-stump':
+          shaped(kind === 'stump' ? '#846348' : '#514b43', () => {
+            ctx.moveTo(-17, 12);
+            ctx.lineTo(-12, -15);
+            ctx.lineTo(-5, -19);
+            ctx.lineTo(2, -15);
+            ctx.lineTo(12, -17);
+            ctx.lineTo(16, 12);
+            ctx.lineTo(7, 9);
+            ctx.lineTo(0, 14);
+            ctx.lineTo(-8, 10);
+          });
+          oval(0, -15, 12, 5, kind === 'stump' ? '#b89c6e' : '#71634f');
+          oval(0, -15, 7, 3, kind === 'stump' ? '#ab8d60' : '#48483d');
+          for (const x of [-9, -3, 7])
+            line(
+              [
+                [x, -10],
+                [x - 2, 9],
+              ],
+              kind === 'stump' ? '#594d37' : '#2f3830',
+              1.2,
+            );
           line(
             [
-              [-4, -6],
-              [3, -4],
+              [2, -18],
+              [0, -15],
+              [4, -12],
             ],
-            '#75573e',
-            1,
+            '#645841',
+            0.8,
           );
           break;
         case 'fallen-log':
-          line(
-            [
-              [-22, 8],
-              [20, -5],
-            ],
-            '#76563c',
-            8,
-          );
-          oval(21, -5, 5, 5, '#b79061');
-          for (const x of [-9, 3])
-            line(
-              [
-                [x, 2],
-                [x - 5, -6],
-              ],
-              '#5f4b38',
-              2,
-            );
+        case 'burned-log':
+          naturalLog(-3, 5, 54, 11, kind === 'burned-log');
+          break;
+        case 'woodpile':
+          // Varied split billets touch and overlap, with solid pale end grain.
+          fillOval(0, 12, 31, 4, '#4a4935', 0.22);
+          splitFirewood(-13, 10, 36, -0.06);
+          splitFirewood(14, 8, 29, 0.1);
+          splitFirewood(-8, 2, 40, -0.04);
+          splitFirewood(10, -1, 28, 0.06);
+          splitFirewood(-2, -8, 33, -0.08);
           break;
         case 'reeds':
-          for (const x of [-10, -6, -1, 4, 9])
-            line(
-              [
-                [x, 10],
-                [x + (x % 2), -15 - ((variant + x) % 7)],
-              ],
-              '#748c62',
-              1.6,
-            );
-          break;
         case 'cattails':
-          for (const x of [-9, -3, 4, 10]) {
+          grassTuft(0, 11, true);
+          for (const [x, y] of [
+            [-14, -15],
+            [0, -24],
+            [13, -18],
+          ]) {
             line(
               [
-                [x, 10],
-                [x, -16],
+                [x - 2, 11],
+                [x, y],
               ],
-              '#71875e',
+              '#7b9670',
               1.5,
             );
-            oval(x, -17, 2.2, 5, '#796245');
+            if (kind === 'cattails') softRect(x - 2, y - 9, 4, 11, '#806c4c', 1.7);
           }
           break;
         case 'driftwood':
-          line(
-            [
-              [-20, 8],
-              [19, -2],
-            ],
-            '#776752',
-            5,
-          );
-          line(
-            [
-              [-5, 3],
-              [-11, -6],
-            ],
-            '#776752',
-            2,
-          );
-          line(
-            [
-              [7, 1],
-              [14, -7],
-            ],
-            '#776752',
-            2,
-          );
-          break;
-        case 'mangrove':
-          rect(-4, -5, 8, 22, '#625442');
-          for (const [x, y] of [
-            [-13, -14],
-            [-3, -21],
-            [10, -15],
-            [3, -8],
-          ])
-            oval(x, y, 12, 8, '#4d735f');
-          for (const side of [-1, 1]) {
-            line(
-              [
-                [side * 2, 9],
-                [side * 11, 17],
-              ],
-              '#6c5b45',
-              2,
-            );
-            line(
-              [
-                [side * 1, 9],
-                [side * 6, 20],
-              ],
-              '#6c5b45',
-              1.5,
-            );
-          }
-          for (const x of [-8, 7]) glint(x, -14, '#91b69a', 1);
+          naturalLog(0, 4, 55, 9, false, true);
+          grownStem([10, 1], [21, -12], 3, '#b7a98b');
           break;
         case 'dock-post':
-          rect(-3, -25, 6, 38, '#6b543d');
-          oval(0, -25, 4, 2, '#9b7954');
-          line(
-            [
-              [-2, -17],
-              [2, -17],
-            ],
-            '#b89669',
-            1,
-          );
-          for (const y of [-16, -13, -10])
+          timber([0, 15], [0, -26], 10, '#78684d');
+          oval(0, -26, 5, 3, '#b5a076');
+          for (const y of [-16, -12, -8])
             line(
               [
-                [-4, y],
-                [0, y + 1],
-                [4, y],
+                [-5, y],
+                [0, y + 2],
+                [5, y],
               ],
-              '#c1af86',
-              1.5,
+              '#c7b48a',
+              2,
             );
-          line(
-            [
-              [-1, -23],
-              [-1, 9],
-            ],
-            '#4e493b',
-            1,
-          );
-          break;
-        case 'pine-sapling':
-          rect(-2, -4, 4, 16, '#65533d');
-          for (const [y, w] of [
-            [1, 12],
-            [-7, 10],
-            [-15, 7],
-          ])
-            poly(
-              [
-                [-w, y],
-                [0, y - 15],
-                [w, y],
-              ],
-              '#526c50',
-            );
+          fillOval(0, 9, 6, 4, '#476b5c', 0.3);
           break;
         case 'alpine-scrub':
-          for (const [x, y, r] of [
-            [-7, 3, 7],
-            [1, -1, 8],
-            [8, 4, 6],
-          ])
-            oval(x, y, r, r * 0.55, '#778166');
+          grownStem([-9, 9], [-16, -6], 2);
+          grownStem([3, 10], [19, -7], 2);
+          foliage(-14, 2, 11, 9, '#7d8e66');
+          foliage(10, 4, 14, 10, '#697f5b');
           break;
         case 'heather':
-          for (const x of [-8, -3, 2, 7]) {
-            line(
-              [
-                [x, 9],
-                [x, -5],
-              ],
-              '#778067',
-              1,
-            );
-            glint(x, -6, x % 2 ? '#b79ab9' : '#a99bc6', 1.6);
+          for (const [x, y] of [
+            [-16, 0],
+            [-3, -7],
+            [12, -2],
+          ]) {
+            grownStem([x + 2, 12], [x, y - 7], 1.7);
+            for (let z = 0; z < 4; z++) oval(x + (z % 2 ? 2 : -1), y - z * 3, 2, 1.5, '#a78eaa');
           }
           break;
         case 'rock-cluster':
-          for (const [x, y, r, c] of [
-            [-9, 4, 8, '#797d75'],
-            [2, -2, 10, '#90928a'],
-            [11, 5, 7, '#666b66'],
+        case 'black-rock':
+          for (const [x, y, w, h] of [
+            [-18, 8, 15, 14],
+            [5, 9, 19, 26],
+            [23, 11, 12, 12],
           ])
-            oval(x, y, r, r * 0.55, c);
+            rockPiece(x, y, w, h, kind === 'black-rock');
           break;
         case 'dead-tree':
-          rect(-3, -14, 6, 28, '#5f4b40');
-          line(
-            [
-              [0, -8],
-              [-14, -24],
-            ],
-            '#5f4b40',
-            4,
-          );
-          line(
-            [
-              [0, -5],
-              [13, -21],
-            ],
-            '#5f4b40',
-            4,
-          );
-          line(
-            [
-              [-13, -24],
-              [-18, -29],
-            ],
-            '#5f4b40',
-            2,
-          );
-          break;
-        case 'charred-stump':
-          rect(-8, -5, 16, 15, '#4a403a');
-          oval(0, -6, 9, 4, '#6c5545');
-          line(
-            [
-              [-3, -7],
-              [4, -4],
-            ],
-            '#2e2c29',
-            2,
+        case 'dead-shrub':
+        case 'dry-scrub':
+          craftAt(0, 0, kind === 'dead-tree' ? 1 : kind === 'dead-shrub' ? 0.65 : 0.55, () =>
+            naturalTrunk(true),
           );
           break;
         case 'ash-patch':
-          ctx.save();
-          ctx.globalAlpha = 0.55;
-          oval(0, 6, 18, 7, '#55504d');
-          for (const [x, y] of [
-            [-8, 5],
-            [1, 2],
-            [9, 7],
-          ])
-            glint(x, y, '#8d8179', 1);
-          ctx.restore();
-          break;
-        case 'dry-scrub':
-          for (const x of [-8, -3, 3, 8]) {
-            line(
-              [
-                [x, 9],
-                [x + (x < 0 ? -4 : 4), -7],
-              ],
-              '#78614f',
-              1.5,
-            );
-            line(
-              [
-                [x, 1],
-                [x + (x < 0 ? 4 : -4), -3],
-              ],
-              '#78614f',
-              1,
-            );
-          }
-          break;
-        case 'burned-log':
-          line(
+        case 'scorched-floor':
+          softPoly(
             [
-              [-22, 8],
-              [21, -4],
+              [-34, 3],
+              [-21, -7],
+              [-10, -5],
+              [4, -11],
+              [32, -4],
+              [26, 9],
+              [4, 12],
+              [-14, 8],
             ],
-            '#4a403a',
-            8,
-          );
-          for (const x of [-8, 6])
-            line(
-              [
-                [x, 3],
-                [x - 4, -6],
-              ],
-              '#2f2d2b',
-              2,
-            );
-          break;
-        case 'ember-pit':
-          oval(0, 6, 17, 7, '#49423e');
-          for (const x of [-7, 0, 7]) {
-            poly(
-              [
-                [x - 4, 7],
-                [x, -6],
-                [x + 4, 7],
-              ],
-              '#a55f42',
-            );
-            glint(x, -2, '#efb36d', 1.3);
-          }
-          break;
-        case 'black-rock':
-          for (const [x, y, r, c] of [
-            [-8, 4, 9, '#4e4a54'],
-            [3, -2, 11, '#625a69'],
-            [11, 5, 7, '#403f48'],
-          ])
-            oval(x, y, r, r * 0.55, c);
-          break;
-        case 'crystal-cluster':
-          for (const [x, h, c] of [
-            [-9, 20, '#766a91'],
-            [0, 28, '#9382ac'],
-            [10, 17, '#6f6488'],
-          ])
-            poly(
-              [
-                [x - 5, 10],
-                [x - 4, 10 - h],
-                [x, 5 - h],
-                [x + 5, 10 - h],
-                [x + 5, 10],
-              ],
-              c,
-            );
-          glint(0, -21, '#d8c7e9', 1.5);
-          break;
-        case 'dead-shrub':
-          for (const x of [-8, -3, 3, 8]) {
-            line(
-              [
-                [x, 9],
-                [x + (x < 0 ? -3 : 3), -6],
-              ],
-              '#62534e',
-              1.3,
-            );
-            line(
-              [
-                [x, 0],
-                [x + (x < 0 ? 4 : -4), -4],
-              ],
-              '#62534e',
-              1,
-            );
-          }
-          break;
-        case 'roadside-lantern':
-          // Existing material during the day, lit locally only by the
-          // shared night-grade source selection (no daytime magical glow).
-          oval(0, 12, 14, 5, '#656a68');
-          line(
-            [
-              [0, 11],
-              [0, -54],
-            ],
-            '#767d81',
-            5,
-          );
-          rect(-9, -56, 18, 5, '#a9a7a0');
-          line(
-            [
-              [-12, -51],
-              [12, -51],
-            ],
-            '#a3a6a1',
-            2,
-          );
-          poly(
-            [
-              [-11, -55],
-              [-8, -68],
-              [8, -68],
-              [11, -55],
-            ],
-            '#676870',
-          );
-          poly(
-            [
-              [-9, -52],
-              [-7, -39],
-              [7, -39],
-              [9, -52],
-            ],
-            '#d5b781',
-          );
-          rect(-5, -50, 10, 9, '#f0d597');
-          for (const x of [-9, 9])
-            line(
-              [
-                [x, -53],
-                [x, -38],
-              ],
-              '#848b88',
-              1.5,
-            );
-          poly(
-            [
-              [-12, -39],
-              [12, -39],
-              [8, -35],
-              [-8, -35],
-            ],
-            '#656a70',
-          );
-          break;
-        case 'geothermal-heat-intake':
-          // Insulated channel intake over safe rock, not a mineable lava prop.
-          rect(-30, 4, 60, 14, '#55545a');
-          rect(-22, -11, 44, 18, '#777e7e');
-          for (const x of [-18, -7, 5, 16]) rect(x - 2, -9, 5, 10, '#c39f66');
-          rect(-8, -37, 16, 28, '#6b7277');
-          line(
-            [
-              [-18, -18],
-              [16, -18],
-            ],
-            '#c0a470',
+            kind === 'ash-patch' ? '#969286' : '#655b58',
             4,
           );
-          glint(0, -15, '#eb9b52', 2.4);
-          break;
-        case 'thermal-flue':
-          rect(-26, 2, 52, 13, '#63646b');
-          rect(-23, -7, 46, 12, '#8b8e8a');
-          for (const x of [-19, -2, 16]) {
-            rect(x - 4, -17, 8, 11, '#7b7a73');
-            oval(x, -19, 4, 2.3, '#a9b2b4');
-          }
-          line(
-            [
-              [-27, 7],
-              [27, 7],
-            ],
-            '#d1a26e',
-            3.5,
-          );
-          break;
-        case 'crown-glass-kiln':
-          rect(-31, -19, 62, 34, '#78757a');
-          poly(
-            [
-              [-35, -20],
-              [-19, -38],
-              [21, -38],
-              [35, -20],
-            ],
-            '#6a6065',
-          );
-          rect(-18, -10, 36, 19, '#4f4145');
-          poly(
-            [
-              [-15, 6],
-              [-10, -6],
-              [10, -6],
-              [15, 6],
-            ],
-            '#c97940',
-          );
-          line(
-            [
-              [-12, -6],
-              [12, -6],
-            ],
-            '#f4c16f',
-            2.5,
-          );
-          rect(19, -46, 11, 27, '#767a7a');
           for (const [x, y] of [
-            [-25, 10],
-            [23, 12],
+            [-19, 0],
+            [0, 5],
+            [15, -1],
           ])
-            oval(x, y, 5, 3, '#b9c6ba');
+            line(
+              [
+                [x - 5, y],
+                [x + 4, y - 2],
+                [x + 8, y],
+              ],
+              kind === 'ash-patch' ? '#c0b6a0' : '#9f8170',
+              1.1,
+            );
+          if (kind === 'ash-patch') rockPiece(-10, 3, 5, 4, true);
           break;
-        case 'crown-ceramic-kiln':
-          oval(0, 9, 31, 11, '#70665c');
-          poly(
+        case 'ember-pit':
+          for (const [x, y] of [
+            [-22, 4],
+            [-13, 11],
+            [5, 13],
+            [22, 7],
+          ])
+            rockPiece(x, y, 7, 6);
+          coals(0, 6);
+          flame(2, 3, 0.6);
+          break;
+        case 'geothermal-heat-intake':
+          blockwork(-33, 5, 66, 13, '#74786d', 8);
+          softRect(-29, 2, 59, 5, '#4e5c56', 1);
+          // Well casing and bolted cap rise out of the plinth.
+          softRect(-23, -28, 11, 32, '#687f7e', 2);
+          oval(-17.5, -28, 7, 3, '#a3b1a2');
+          for (const y of [-24, -5]) softRect(-25, y, 15, 4, '#abb59e', 0.6);
+          // Hot flow enters the exchanger; the return bends back into a second riser.
+          line(
             [
-              [-28, 8],
-              [-23, -18],
-              [-12, -32],
-              [14, -32],
-              [26, -16],
-              [29, 7],
-            ],
-            '#8e7770',
-          );
-          poly(
-            [
-              [-19, 7],
-              [-13, -15],
-              [13, -15],
-              [19, 7],
-            ],
-            '#533e39',
-          );
-          poly(
-            [
-              [-13, 5],
+              [-17, -19],
+              [-6, -19],
               [-6, -10],
-              [6, -10],
-              [14, 5],
+              [7, -10],
             ],
-            '#bb7547',
-          );
-          for (const x of [-27, 27]) oval(x, 7, 5, 4, '#bba489');
-          glint(0, -2, '#efb76d', 2);
-          break;
-        case 'heat-distribution-post':
-          rect(-20, 7, 40, 9, '#777c7c');
-          for (const x of [-15, 15])
-            line(
-              [
-                [x, 8],
-                [x, -29],
-              ],
-              '#8d9694',
-              4,
-            );
-          rect(-25, -33, 50, 9, '#6b7174');
-          for (const x of [-17, 0, 17]) rect(x - 4, -43, 8, 12, '#aa8861');
-          line(
-            [
-              [-26, 11],
-              [26, 11],
-            ],
-            '#d4a56c',
-            2,
-          );
-          break;
-        case 'heated-drying-shed':
-          for (const x of [-27, 27])
-            line(
-              [
-                [x, 14],
-                [x, -27],
-              ],
-              '#77675a',
-              4,
-            );
-          poly(
-            [
-              [-33, -30],
-              [-16, -44],
-              [18, -44],
-              [34, -30],
-            ],
-            '#87847d',
+            '#3e5452',
+            7,
           );
           line(
             [
-              [-30, -23],
-              [30, -23],
+              [-17, -19],
+              [-6, -19],
+              [-6, -10],
+              [7, -10],
             ],
-            '#b39e79',
-            3,
+            '#b18b60',
+            4.3,
           );
-          for (const x of [-19, -5, 9, 22]) {
-            line(
-              [
-                [x, -23],
-                [x, 8],
-              ],
-              '#b99b74',
-              1.5,
-            );
-            rect(x - 5, -4, 10, 9, '#9b7959');
-          }
-          rect(-29, 11, 58, 5, '#66666b');
-          break;
-        case 'heated-washhouse':
-          rect(-29, -11, 58, 26, '#89817b');
-          oval(0, -6, 25, 12, '#a8c3bc');
-          oval(0, -7, 19, 7, '#5b898b');
-          for (const x of [-17, 17])
-            line(
-              [
-                [x, 5],
-                [x, -24],
-              ],
-              '#847160',
-              3,
-            );
-          line(
-            [
-              [-20, -25],
-              [20, -25],
-            ],
-            '#bca985',
-            3,
-          );
-          rect(-17, -23, 12, 11, '#d3c5ad');
-          rect(4, -23, 13, 11, '#9bb4ad');
-          break;
-        case 'fumarole':
-          oval(0, 7, 13, 5, '#4d484f');
-          ctx.save();
-          ctx.globalAlpha = 0.35;
-          for (const [x, y, r] of [
-            [-3, -4, 5],
-            [3, -13, 7],
-            [-1, -23, 9],
-          ])
-            oval(x, y, r, r * 0.7, '#b9aebb');
-          ctx.restore();
-          break;
-        case 'obsidian':
-          poly(
-            [
-              [-12, 9],
-              [-9, -10],
-              [0, -23],
-              [11, -8],
-              [14, 9],
-            ],
-            '#373740',
-          );
-          line(
-            [
-              [-7, -8],
-              [0, -19],
-              [5, -7],
-            ],
-            '#8b789a',
-            1.5,
-          );
-          break;
-        case 'market':
-          rect(-24, 3, 48, 11, '#8d704d');
-          for (const x of [-20, 20]) rect(x - 2, -25, 4, 29, '#776043');
-          poly(
-            [
-              [-27, -23],
-              [-17, -37],
-              [19, -37],
-              [27, -23],
-            ],
-            region === 3 ? '#8c6259' : '#c4ad77',
-          );
-          for (const x of [-13, 0, 13]) oval(x, 0, 4, 3, '#8f9d69');
-          break;
-        case 'woodpile':
-          for (const [x, y] of [
-            [-13, 5],
-            [0, 2],
-            [12, 6],
-            [-7, -3],
-            [7, -5],
-          ]) {
-            line(
-              [
-                [x - 10, y],
-                [x + 10, y],
-              ],
-              '#806044',
-              6,
-            );
-            oval(x + 10, y, 3, 3, '#c09a68');
-          }
-          break;
-        case 'laundry':
-          for (const x of [-19, 19])
-            line(
-              [
-                [x, 12],
-                [x, -30],
-              ],
-              '#75654e',
-              3,
-            );
-          line(
-            [
-              [-19, -21],
-              [19, -21],
-            ],
-            '#d7c8a0',
-            1,
-          );
-          rect(-13, -20, 9, 13, '#8ba0a2');
-          rect(1, -20, 11, 15, '#a77f74');
-          break;
-        case 'well':
-          oval(0, 7, 20, 9, '#858b80');
-          oval(0, 4, 15, 6, '#3f6d73');
-          for (const x of [-15, 15])
-            line(
-              [
-                [x, 5],
-                [x, -28],
-              ],
-              '#806a4d',
-              3,
-            );
-          poly(
-            [
-              [-20, -26],
-              [0, -39],
-              [20, -26],
-            ],
-            '#9a7355',
-          );
-          line(
-            [
-              [-17, 10],
-              [-5, 13],
-              [8, 12],
-              [18, 8],
-            ],
-            '#b5b8a5',
-            2,
-          );
-          for (const x of [-10, 4, 14])
-            line(
-              [
-                [x, 6],
-                [x + 1, 12],
-              ],
-              '#656e64',
-              1,
-            );
-          line(
-            [
-              [-12, -20],
-              [12, -20],
-            ],
-            '#baa27c',
-            2,
-          );
-          line(
-            [
-              [1, -20],
-              [1, 2],
-            ],
-            '#b7a47d',
-            1,
-          );
-          oval(1, 1, 4, 2, '#9c9d89');
-          break;
-        case 'barrel':
-          oval(0, -8, 9, 5, '#a48158');
-          rect(-9, -8, 18, 20, '#8b6b49');
-          oval(0, 12, 9, 5, '#72573e');
-          for (const y of [-5, 7])
-            line(
-              [
-                [-8, y],
-                [8, y],
-              ],
-              '#b7aa8a',
-              2,
-            );
-          for (const x of [-5, 0, 5])
-            line(
-              [
-                [x, -6],
-                [x, 10],
-              ],
-              '#5c4a36',
-              1,
-            );
-          oval(0, -8, 7, 3, '#b59970');
-          line(
-            [
-              [-6, -8],
-              [6, -8],
-            ],
-            '#786043',
-            1,
-          );
-          for (const y of [-5, 7])
-            line(
-              [
-                [-8, y],
-                [0, y + 2],
-                [8, y],
-              ],
-              '#a8aaa0',
-              1.5,
-            );
-          break;
-        case 'cart':
-          rect(-22, -9, 44, 17, '#987752');
-          for (const x of [-14, 14]) oval(x, 10, 7, 7, '#53564f');
           line(
             [
               [20, -5],
-              [34, -13],
+              [30, -5],
+              [30, 10],
             ],
-            '#80654a',
-            3,
+            '#3e5452',
+            6,
           );
-          rect(-15, -19, 30, 10, '#b08b5d');
-          if (region === 3) {
-            if (variant % 3 === 0) {
-              for (const x of [-11, 0, 11])
-                line(
-                  [
-                    [x, -19],
-                    [x + 5, -28],
-                  ],
-                  '#765642',
-                  4,
-                );
-            } else if (variant % 3 === 1) {
-              rect(-14, -28, 28, 8, '#8d6c4e');
-              line(
-                [
-                  [-20, -7],
-                  [-7, -18],
-                ],
-                '#5e493c',
-                2,
-              );
-            } else {
-              oval(-14, 10, 4, 4, '#b79664');
-              line(
-                [
-                  [14, 10],
-                  [25, 16],
-                ],
-                '#6e5541',
-                3,
-              );
-            }
-          }
-          for (const x of [-14, 14]) {
-            oval(x, 10, 4.5, 4.5, '#9f8866');
-            line(
-              [
-                [x - 4, 10],
-                [x + 4, 10],
-              ],
-              '#d0b585',
-              1,
-            );
-            line(
-              [
-                [x, 6],
-                [x, 14],
-              ],
-              '#d0b585',
-              1,
-            );
-          }
-          for (const x of [-12, 0, 12])
-            line(
-              [
-                [x, -7],
-                [x, 5],
-              ],
-              '#715a41',
-              1,
-            );
-          break;
-        case 'ration':
-          for (const [x, y] of [
-            [-10, 3],
-            [4, 5],
-            [-2, -7],
-          ]) {
-            rect(x - 8, y - 7, 16, 13, '#96734d');
-            line(
-              [
-                [x - 7, y - 6],
-                [x + 7, y + 5],
-              ],
-              '#c1a170',
-              2,
-            );
-          }
-          break;
-        case 'hay-rick':
-          // Straw under a simple tied thatch: harvested fields, not new buildings.
-          shade(35, 9, 0.13);
-          poly(
-            [
-              [-29, 10],
-              [-22, -7],
-              [-7, -26],
-              [12, -23],
-              [29, -2],
-              [32, 11],
-            ],
-            '#b79754',
-          );
-          poly(
-            [
-              [-21, -5],
-              [-8, -26],
-              [11, -22],
-              [25, -4],
-            ],
-            '#d3b96e',
-          );
-          for (const y of [-8, 1, 8])
-            line(
-              [
-                [-22, y],
-                [24, y + 2],
-              ],
-              y === 1 ? '#8b724b' : '#e5cb82',
-              1.6,
-            );
-          for (const x of [-12, 2, 14])
-            line(
-              [
-                [x, -14],
-                [x + 6, 9],
-              ],
-              '#a28a54',
-              1,
-            );
           line(
             [
-              [-25, -5],
-              [28, -3],
+              [20, -5],
+              [30, -5],
+              [30, 10],
             ],
-            '#90754d',
+            '#8baba3',
+            3.8,
+          );
+          for (const x of [-11, 1]) softRect(x - 1.5, -22, 3, 7, '#c4b18b', 0.5);
+          // Handwheel sits on a real valve stem, above the inlet pipe.
+          line(
+            [
+              [-7, -20],
+              [-7, -30],
+            ],
+            '#83938c',
+            2,
+          );
+          oval(-7, -31, 6, 2.7, '#8f5948');
+          line(
+            [
+              [-12, -31],
+              [-2, -31],
+            ],
+            '#c29a75',
+            1,
+          );
+          line(
+            [
+              [-7, -33],
+              [-7, -29],
+            ],
+            '#c29a75',
+            1,
+          );
+          // Ribbed heat exchanger stands on two feet and has inlet/outlet connections.
+          for (const x of [7, 21]) softRect(x, -1, 4, 7, '#3c504c', 0.5);
+          softRect(4, -25, 22, 24, '#56716c', 2);
+          for (const x of [8, 12, 16, 20])
+            line(
+              [
+                [x, -22],
+                [x, -5],
+              ],
+              '#9bab95',
+              1.8,
+            );
+          softRect(3, -25, 24, 4, '#acb8a1', 0.6);
+          softRect(3, -6, 24, 4, '#a4ad98', 0.6);
+          // Pressure gauge and a narrow safety vent preserve the earlier machine silhouette.
+          line(
+            [
+              [-18, -30],
+              [-18, -37],
+            ],
+            '#aeb9a3',
+            2,
+          );
+          oval(-18, -41, 5, 5, '#c2c5aa');
+          oval(-18, -41, 3.6, 3.6, '#e0d8b6');
+          line(
+            [
+              [-18, -41],
+              [-16, -44],
+            ],
+            '#6a4f3c',
+            0.9,
+          );
+          line(
+            [
+              [23, -25],
+              [23, -35],
+              [28, -35],
+            ],
+            '#9bac9d',
             2.5,
           );
           break;
-        case 'furrow-plot':
-          // A modest vegetable plot: short parallel rows with young green leaves.
-          shade(36, 10, 0.12);
-          poly(
-            [
-              [-33, 10],
-              [-18, -10],
-              [24, -16],
-              [35, 8],
-            ],
-            '#695c3d',
-          );
-          for (const y of [-8, -1, 6]) {
+        case 'thermal-flue':
+          blockwork(-28, 1, 56, 12, '#74786f', 7);
+          for (const [x, h] of [
+            [-17, 28],
+            [0, 42],
+            [17, 33],
+          ]) {
+            softRect(x - 5, -h, 10, h + 3, '#78857c', 2);
+            oval(x, -h, 6, 3, '#a2ad9a');
+            oval(x, -h, 3, 1.5, '#3f4b45');
             line(
               [
-                [-19, y + 1],
-                [25, y - 5],
+                [x - 4, -h + 8],
+                [x + 4, -h + 8],
               ],
-              '#a18451',
-              3.4,
+              '#b7b59a',
+              1.5,
             );
-            for (const x of [-13, 0, 13]) {
-              oval(x, y - 3 - x * 0.09, 3.5, 2.5, '#6c9255');
-              line(
-                [
-                  [x, y],
-                  [x + 2, y - 5],
-                ],
-                '#4f7749',
-                1.5,
-              );
-            }
           }
           break;
-        case 'pasture-sheep':
-          // Two real small livestock silhouettes; sheep are domestic, not mobs.
-          for (const [index, [x, y, size]] of [
-            [-13, 2, 1],
-            [18, -2, 0.78],
-          ].entries()) {
-            ctx.save();
-            const motion = ambientAnimalPose(e, index, e.ambientTime);
-            ctx.translate(x + motion.x, y + motion.y);
-            ctx.scale(size * motion.facing, size);
-            shade(15, 4, 0.11);
-            for (const dx of [-9, 8]) {
-              line(
-                [
-                  [dx, 4],
-                  [dx - 1, 13],
-                ],
-                '#6a6254',
-                3.2,
-              );
-              oval(dx - 1, 13, 2.4, 1.5, '#524e47');
-            }
-            oval(-1, -3, 16, 11, '#d9d4bd');
-            for (const [dx, dy] of [
-              [-12, -5],
-              [-5, -11],
-              [6, -9],
-              [12, -3],
-            ])
-              oval(dx, dy, 5, 4, '#e8e2c9');
-            oval(17, -8, 7, 6, '#847a67');
-            poly(
-              [
-                [13, -11],
-                [11, -17],
-                [18, -13],
-              ],
-              '#a39b83',
-            );
-            oval(20, -9, 1.6, 1.5, '#252927');
-            ctx.restore();
-          }
+        case 'crown-glass-kiln':
+          hearth(true, true);
+          timber([18, 11], [31, 11], 4);
+          for (const x of [20, 29]) timber([x, 11], [x, 18], 3);
+          craftAt(24, 7.3, 0.65, () => bottle(0, 0, '#9ebeb3'));
           break;
-        case 'poultry-yard':
-          // Scattered hens and feed make a tiny farmyard immediately legible.
-          for (const [index, [x, y, scale]] of [
-            [-19, 4, 1],
-            [11, 8, 0.86],
-            [19, -10, 0.78],
-          ].entries()) {
-            ctx.save();
-            const motion = ambientAnimalPose(e, index, e.ambientTime);
-            ctx.translate(x + motion.x, y + motion.y);
-            ctx.scale(scale * motion.facing, scale);
-            oval(-2, 1, 9, 6, '#c6ab7f');
-            poly(
-              [
-                [-9, -1],
-                [-14, -10],
-                [-9, -8],
-                [-5, -4],
-              ],
-              '#a98a60',
-            );
-            oval(6, -5, 4.5, 4.2, '#e2c9a1');
-            poly(
-              [
-                [9, -4],
-                [16, -2],
-                [10, 1],
-              ],
-              '#d6a85a',
-            );
-            poly(
-              [
-                [4, -10],
-                [6, -14],
-                [9, -10],
-              ],
-              '#ad5540',
-            );
-            oval(8, -6, 1.2, 1.2, '#31342a');
-            for (const dx of [-5, 2])
-              line(
-                [
-                  [dx, 5],
-                  [dx - 1, 11],
-                ],
-                '#ac8150',
-                1.4,
-              );
-            ctx.restore();
-          }
-          for (const [x, y] of [
-            [-5, -7],
-            [1, 14],
-            [-26, 13],
-          ])
-            oval(x, y, 2.3, 1.3, '#b7a16a');
-          break;
-        case 'feed-trough':
-          // Feeding and watering imply routine husbandry, not just a fence.
-          shade(31, 8, 0.1);
-          poly(
+        case 'crown-ceramic-kiln':
+          shaped('#9e8370', () => {
+            ctx.moveTo(-27, 12);
+            ctx.bezierCurveTo(-33, -11, -16, -34, 0, -33);
+            ctx.bezierCurveTo(20, -35, 33, -9, 27, 12);
+          });
+          softRect(-15, -11, 30, 23, '#645449', 5);
+          softRect(-10, -8, 20, 15, '#d69458', 3);
+          line(
             [
-              [-29, -7],
-              [28, -7],
-              [22, 13],
-              [-21, 13],
+              [-24, -3],
+              [-16, -20],
+              [0, -27],
+              [16, -20],
+              [24, -3],
             ],
-            '#82654a',
+            '#be9e7f',
+            1.4,
           );
-          poly(
+          for (const x of [24, 33]) rimBowl(x, 9, 6, '#b7a28a', '#796751');
+          break;
+        case 'heat-distribution-post':
+          blockwork(-25, 3, 50, 11, '#72786f');
+          line(
             [
-              [-25, -9],
-              [25, -9],
-              [20, -3],
-              [-20, -3],
+              [-28, -13],
+              [28, -13],
             ],
-            '#b2986a',
+            '#657970',
+            9,
           );
-          rect(-21, -4, 42, 10, '#71826b');
-          for (const x of [-15, -4, 8, 17])
+          line(
+            [
+              [-28, -15],
+              [28, -15],
+            ],
+            '#a9b09a',
+            1.3,
+          );
+          for (const x of [-18, 0, 18]) {
+            softRect(x - 4, -20, 8, 15, '#8d9b8c', 2);
+            oval(x, -25, 6, 3, '#a99e7e');
             line(
               [
-                [x, -3],
-                [x + 5, -9],
+                [x, -22],
+                [x, -16],
               ],
-              '#9cb081',
+              '#6d745e',
               2,
             );
-          for (const x of [-22, 18]) rect(x, 10, 5, 8, '#6e553d');
-          break;
-        case 'farm-tool-rack':
-          for (const x of [-24, 24])
             line(
               [
-                [x, 14],
-                [x, -29],
+                [x - 3, -25],
+                [x + 3, -25],
               ],
-              '#896a4c',
-              3.5,
-            );
-          line(
-            [
-              [-27, -23],
-              [27, -23],
-            ],
-            '#ac8657',
-            4,
-          );
-          for (const x of [-16, 2, 17])
-            line(
-              [
-                [x, -23],
-                [x, 13],
-              ],
-              '#b29a68',
-              2.4,
-            );
-          for (const dx of [-4, 0, 4])
-            line(
-              [
-                [-16 + dx, -12],
-                [-16 + dx, -22],
-              ],
-              '#727a69',
-              1.8,
-            );
-          poly(
-            [
-              [-2, 1],
-              [5, -1],
-              [8, 11],
-              [-6, 11],
-            ],
-            '#9eaca6',
-          );
-          line(
-            [
-              [13, 14],
-              [22, 14],
-            ],
-            '#b0a886',
-            2,
-          );
-          break;
-        case 'garden':
-          for (const x of [-14, -7, 0, 7, 14]) {
-            line(
-              [
-                [x, 9],
-                [x, -3],
-              ],
-              '#66845d',
-              1.4,
-            );
-            oval(x, -5, 3, 2, x % 2 ? '#bb966d' : '#799b68');
-          }
-          line(
-            [
-              [-20, 11],
-              [20, 11],
-            ],
-            '#755c43',
-            2,
-          );
-          break;
-        case 'watchpost':
-          for (const x of [-13, 13])
-            line(
-              [
-                [x, 12],
-                [x, -27],
-              ],
-              '#776047',
-              4,
-            );
-          rect(-18, -29, 36, 8, '#997954');
-          poly(
-            [
-              [-20, -30],
-              [0, -43],
-              [20, -30],
-            ],
-            '#84644b',
-          );
-          line(
-            [
-              [0, -29],
-              [0, -48],
-            ],
-            '#ad9a72',
-            2,
-          );
-          if (region === 3) {
-            rect(-6, -34, 12, 7, '#8c5d54');
-            if (variant % 2 === 0)
-              line(
-                [
-                  [15, -27],
-                  [24, -18],
-                ],
-                '#6e5141',
-                3,
-              );
-          }
-          break;
-        case 'barricade':
-          for (const x of [-18, -6, 6, 18]) {
-            rect(x - 3, -11, 6, 24, '#665248');
-            poly(
-              [
-                [x - 3, -11],
-                [x, -21],
-                [x + 3, -11],
-              ],
-              '#8b6f55',
-            );
-          }
-          line(
-            [
-              [-22, -4],
-              [22, 5],
-            ],
-            '#8a6d53',
-            4,
-          );
-          if (region === 3) {
-            line(
-              [
-                [-20, 4],
-                [18, -7],
-              ],
-              '#5b4439',
-              3,
-            );
-            if (variant % 2 === 0) rect(-5, -9, 11, 5, '#955d50');
-          }
-          break;
-        case 'road-ruts':
-          ctx.save();
-          ctx.globalAlpha = 0.5;
-          for (const y of [-7, 7]) {
-            line(
-              [
-                [-30, y],
-                [30, y + flip * 2],
-              ],
-              '#493b34',
-              3,
-            );
-            line(
-              [
-                [-22, y + 3],
-                [24, y + 4],
-              ],
-              '#796151',
+              '#5b6458',
               1,
             );
           }
-          for (const x of [-18, 4, 22]) oval(x, 2 + (x % 3), 2, 1.4, '#8d735d');
-          ctx.restore();
+          for (const x of [-18, 0, 18])
+            line(
+              [
+                [x, -5],
+                [x, 4],
+              ],
+              '#7b9180',
+              4,
+            );
           break;
-        case 'road-patch':
-          ctx.save();
-          ctx.globalAlpha = 0.65;
-          poly(
-            [
-              [-27, -9],
-              [-9, -13],
-              [10, -10],
-              [28, -5],
-              [22, 10],
-              [1, 13],
-              [-22, 8],
-            ],
-            '#766257',
-          );
-          for (const [x, y] of [
-            [-15, -4],
-            [-3, 5],
-            [10, -2],
-            [19, 5],
-          ])
-            oval(x, y, 2.5, 1.7, '#a2866e');
+        case 'heated-drying-shed':
+          for (const x of [-27, 27]) timber([x, 14], [x, -36], 4);
+          boards(-30, -39, 60, 6, '#71624c', true);
           line(
             [
-              [-19, 0],
-              [17, 4],
+              [-25, -27],
+              [25, -27],
             ],
-            '#4d4039',
-            1.2,
+            '#beb08a',
+            1.6,
           );
+          for (const x of [-15, 1, 16])
+            softPoly(
+              [
+                [x - 5, -24],
+                [x + 5, -24],
+                [x + 7, 1],
+                [x + 1, 4],
+                [x - 6, 0],
+              ],
+              '#b5b39a',
+              2,
+            );
+          line(
+            [
+              [-23, 9],
+              [24, 9],
+            ],
+            '#7d9a8d',
+            5,
+          );
+          for (const x of [-20, 20]) softRect(x - 3, 5, 6, 9, '#b2b6a1', 1);
+          break;
+        case 'heated-washhouse':
+          blockwork(-28, 2, 56, 12, '#858d80');
+          rimBowl(0, 1, 25, '#b2b6a0', '#79a99d');
+          line(
+            [
+              [21, -21],
+              [21, -7],
+              [14, -7],
+            ],
+            '#8b9c8f',
+            4,
+          );
+          line(
+            [
+              [14, -7],
+              [14, -1],
+            ],
+            '#bad6c3',
+            1.4,
+          );
+          softRect(-28, -13, 15, 8, '#d4d0b3', 2);
+          line(
+            [
+              [-26, -9],
+              [-15, -9],
+            ],
+            '#96a58c',
+            1,
+          );
+          timber([-29, -5], [-12, -5], 3, '#9ca58c');
+          timber([-24, -5], [-24, 7], 2.5, '#929e86');
+          break;
+        case 'fumarole':
+          rockPiece(0, 10, 24, 12, true);
+          oval(0, 4, 11, 4, '#40454a');
+          ctx.save();
+          ctx.globalAlpha = 0.4;
+          for (const [x, y] of [
+            [-9, -3],
+            [4, -15],
+            [0, -29],
+          ]) {
+            ctx.strokeStyle = '#c3d2c7';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(x, y + 5);
+            ctx.bezierCurveTo(x - 12, y - 4, x + 13, y - 10, x + 1, y - 18);
+            ctx.stroke();
+          }
           ctx.restore();
           break;
-        case 'stacked-lumber':
-          for (const [y, w] of [
-            [7, 25],
-            [0, 22],
-            [-7, 19],
+        case 'obsidian':
+          rockPiece(0, 9, 18, 48, true);
+          shaped(
+            '#a09aa7',
+            () => {
+              ctx.moveTo(-4, -30);
+              ctx.quadraticCurveTo(-12, -16, -5, -4);
+              ctx.quadraticCurveTo(-8, -20, -4, -30);
+            },
+            0.5,
+          );
+          line(
+            [
+              [0, -37],
+              [7, -23],
+              [4, -11],
+            ],
+            '#b2a5b2',
+            0.9,
+          );
+          break;
+        case 'market':
+          for (const x of [-28, 28]) timber([x, 15], [x, -34], 4);
+          shaped('#b3a17a', () => {
+            ctx.moveTo(-35, -28);
+            ctx.lineTo(-24, -40);
+            ctx.lineTo(25, -40);
+            ctx.lineTo(35, -28);
+            ctx.quadraticCurveTo(24, -20, 13, -26);
+            ctx.quadraticCurveTo(0, -19, -12, -26);
+            ctx.quadraticCurveTo(-26, -19, -35, -28);
+          });
+          table(55);
+          for (const [x, c] of [
+            [-16, '#9da771'],
+            [0, '#ba9865'],
+            [16, '#ac7862'],
           ]) {
-            line(
-              [
-                [-w, y],
-                [w, y - 2],
-              ],
-              '#7d5b43',
-              6,
-            );
-            oval(w, y - 2, 3, 3, '#b2875e');
+            restingObject(x, -8, 6, () => rimBowl(0, -10, 7, '#9e8963', c));
+            for (const dx of [-3, 3]) oval(x + dx, -20, 2.5, 2.5, c);
           }
-          for (const x of [-18, 18])
+          break;
+        case 'laundry':
+          for (const x of [-30, 30]) timber([x, 14], [x, -31], 3);
+          ctx.strokeStyle = '#b6ab83';
+          ctx.lineWidth = 1.4;
+          ctx.beginPath();
+          ctx.moveTo(-30, -28);
+          ctx.quadraticCurveTo(0, -16, 30, -28);
+          ctx.stroke();
+          for (const [x, h, c] of [
+            [-14, 27, '#b6c2ab'],
+            [10, 21, '#b2839f'],
+          ]) {
+            shaped(c, () => {
+              ctx.moveTo(x - 7, -23);
+              ctx.lineTo(x + 8, -23);
+              ctx.quadraticCurveTo(x + 5, -12, x + 9, -23 + h);
+              ctx.quadraticCurveTo(x, -20 + h, x - 8, -23 + h);
+              ctx.quadraticCurveTo(x - 5, -12, x - 7, -23);
+            });
             line(
               [
-                [x, 11],
-                [x - 3, -12],
+                [x, -19],
+                [x - 2, -26 + h],
               ],
-              '#5f4739',
-              2,
+              x > 0 ? '#805d7b' : '#6e8277',
+              1,
+            );
+            for (const dx of [-5, 5]) softRect(x + dx - 1, -25, 2, 6, '#9c8156', 0.4);
+          }
+          break;
+        case 'well':
+          blockwork(-24, -4, 48, 20, '#929989', 7);
+          oval(0, -4, 25, 9, '#b6b8a1');
+          oval(0, -5, 17, 5, '#3e5c54');
+          for (const x of [-25, 25]) timber([x, 8], [x, -35], 5);
+          line(
+            [
+              [-24, -20],
+              [24, -20],
+            ],
+            '#8b6c47',
+            6,
+          );
+          line(
+            [
+              [0, -20],
+              [0, -3],
+            ],
+            '#c5ad79',
+            1.5,
+          );
+          softPoly(
+            [
+              [-30, -35],
+              [0, -51],
+              [31, -35],
+              [26, -30],
+              [-27, -30],
+            ],
+            '#8d7351',
+            1.5,
+          );
+          rimBowl(20, 8, 7, '#88764f', '#5c705c');
+          line(
+            [
+              [14, 7],
+              [20, -1],
+              [26, 7],
+            ],
+            '#a99c74',
+            1.2,
+          );
+          break;
+        case 'barrel':
+          shaped('#95754c', () => {
+            ctx.moveTo(-13, -23);
+            ctx.quadraticCurveTo(-22, -5, -15, 13);
+            ctx.quadraticCurveTo(0, 20, 15, 13);
+            ctx.quadraticCurveTo(22, -5, 13, -23);
+          });
+          oval(0, -23, 13, 5, '#bc9e6b');
+          for (const x of [-8, 0, 8]) {
+            ctx.strokeStyle = '#604e34';
+            ctx.lineWidth = 0.9;
+            ctx.beginPath();
+            ctx.moveTo(x, -19);
+            ctx.quadraticCurveTo(x * 1.3, -2, x, 13);
+            ctx.stroke();
+          }
+          for (const y of [-14, 7]) {
+            line(
+              [
+                [-16, y],
+                [0, y + 3],
+                [16, y],
+              ],
+              '#626e65',
+              4,
+            );
+            line(
+              [
+                [-15, y - 1],
+                [0, y + 1],
+                [15, y - 1],
+              ],
+              '#b3b7a0',
+              0.9,
+            );
+          }
+          oval(10, -3, 2.5, 2.5, '#67593d');
+          line(
+            [
+              [-10, -24],
+              [10, -24],
+            ],
+            '#715c3d',
+            0.8,
+          );
+          break;
+        case 'cart':
+          cartBody();
+          break;
+        case 'ration':
+          sack(-17, 6, 0.9);
+          softRect(-1, -9, 25, 20, '#c9b996', 5);
+          line(
+            [
+              [2, -7],
+              [19, 9],
+            ],
+            '#88704d',
+            1.3,
+          );
+          softRect(9, -10, 4, 22, '#8d7955', 1);
+          oval(16, -7, 6, 3, '#b9945c');
+          break;
+        case 'hay-rick':
+          shaped('#b5a06b', () => {
+            ctx.moveTo(-29, 12);
+            ctx.bezierCurveTo(-30, -4, -15, -30, 0, -30);
+            ctx.bezierCurveTo(17, -28, 28, -6, 29, 12);
+            ctx.quadraticCurveTo(0, 19, -29, 12);
+          });
+          for (let x = -24; x < 26; x += 5)
+            line(
+              [
+                [x * 0.3, -22 + Math.abs(x) * 0.25],
+                [x, 11],
+                [x + 2, 13],
+              ],
+              '#d4bd83',
+              1,
+            );
+          line(
+            [
+              [-25, 4],
+              [0, 8],
+              [25, 4],
+            ],
+            '#7e7952',
+            1.6,
+          );
+          break;
+        case 'furrow-plot':
+        case 'garden':
+          softPoly(
+            [
+              [-32, 1],
+              [-7, -13],
+              [33, -3],
+              [8, 14],
+            ],
+            '#8c7a56',
+            3,
+          );
+          for (const y of [-3, 3, 9])
+            line(
+              [
+                [-23 + y, -3 + y],
+                [18 + y, -8 + y],
+              ],
+              '#665f42',
+              2.5,
+            );
+          for (const [x, y] of [
+            [-20, 0],
+            [-8, -5],
+            [2, 6],
+            [13, 1],
+            [23, -4],
+          ]) {
+            foliage(x, y, 5, 6, kind === 'garden' ? '#73925f' : '#87985e');
+          }
+          break;
+        case 'pasture-sheep':
+          for (const [index, [x, y, sc]] of [
+            [-13, 2, 1],
+            [18, -2, 0.78],
+          ].entries())
+            ambientAt(x, y, sc, index, () => {
+              for (const dx of [-9, 8]) {
+                line(
+                  [
+                    [dx, 0],
+                    [dx, 10],
+                  ],
+                  '#857f68',
+                  3,
+                );
+                softRect(dx - 2, 8, 4, 4, '#4c5648', 1);
+              }
+              oval(0, -5, 16, 11, '#b9bda4');
+              for (const [a, b] of [
+                [-11, -9],
+                [0, -14],
+                [11, -9],
+                [-7, -1],
+                [7, -1],
+              ])
+                oval(a, b, 7, 6, '#d2ceb0');
+              oval(16, -5, 7, 7, '#7b7e65');
+              softPoly(
+                [
+                  [11, -9],
+                  [8, -13],
+                  [15, -11],
+                ],
+                '#777a60',
+                1.5,
+              );
+              oval(18, -7, 1.2, 1.2, '#283d33');
+            });
+          break;
+        case 'poultry-yard':
+          for (const [index, [x, y, sc]] of [
+            [-19, 4, 1],
+            [11, 8, 0.86],
+            [19, -10, 0.78],
+          ].entries())
+            ambientAt(x, y, sc, index, () => {
+              for (const dx of [-3, 4])
+                line(
+                  [
+                    [dx, 2],
+                    [dx, 10],
+                    [dx + 3, 11],
+                  ],
+                  '#b29b64',
+                  1.5,
+                );
+              oval(0, -4, 11, 8, '#c4b78e');
+              oval(-3, -3, 7, 5, '#a29871');
+              oval(9, -10, 6, 6, '#d2c298');
+              poly(
+                [
+                  [14, -11],
+                  [20, -8],
+                  [14, -7],
+                ],
+                '#c6a05e',
+              );
+              oval(10, -12, 1.1, 1.1, '#354b3c');
+              for (const dx of [-1, 2, 5]) oval(8 + dx, -16, 2.2, 2.8, '#ab6658');
+              shaped('#a39166', () => {
+                ctx.moveTo(-9, -5);
+                ctx.quadraticCurveTo(-20, -14, -14, -16);
+                ctx.lineTo(-4, -9);
+              });
+            });
+          break;
+        case 'feed-trough':
+        case 'feeding-trough':
+          for (const x of [-22, 22]) timber([x, 6], [x, 15], 4);
+          boards(-29, -6, 58, 16, '#94754f', true);
+          poly(
+            [
+              [-29, -6],
+              [-20, -12],
+              [32, -12],
+              [29, -6],
+            ],
+            '#ba9b6b',
+          );
+          softRect(-23, -7, 48, 7, '#514f37', 2);
+          for (const [x, y] of [
+            [-16, -6],
+            [-3, -5],
+            [11, -7],
+            [20, -5],
+          ]) {
+            if (kind === 'feed-trough')
+              line(
+                [
+                  [x - 3, y],
+                  [x + 4, y + 1],
+                ],
+                '#c1b177',
+                1.5,
+              );
+            else
+              softPoly(
+                [
+                  [x - 5, y],
+                  [x - 2, y - 5],
+                  [x + 4, y - 4],
+                  [x + 5, y + 1],
+                ],
+                '#a58768',
+                1.5,
+              );
+          }
+          break;
+        case 'watchpost':
+          for (const x of [-22, 22]) timber([x, 15], [x, -41], 5);
+          timber([-21, 13], [20, -23], 3);
+          boards(-27, -24, 54, 6, '#9a7c53', true);
+          softPoly(
+            [
+              [-30, -39],
+              [0, -55],
+              [30, -39],
+              [25, -34],
+              [-26, -34],
+            ],
+            '#866e50',
+            1.3,
+          );
+          for (const y of [-12, -4, 4, 12]) timber([9, y], [21, y], 2);
+          break;
+        case 'barricade':
+        case 'replacement-stakes':
+          for (const [x, h] of [
+            [-26, 28],
+            [-13, 34],
+            [1, 29],
+            [14, 37],
+            [27, 31],
+          ]) {
+            poly(
+              [
+                [x - 3, 13],
+                [x - 3, 13 - h],
+                [x, 7 - h],
+                [x + 4, 12 - h],
+                [x + 4, 13],
+              ],
+              kind === 'replacement-stakes' ? '#b29466' : '#806d50',
+            );
+            line(
+              [
+                [x, 11 - h],
+                [x + 1, 10],
+              ],
+              '#c5ab79',
+              0.9,
+            );
+            fillOval(x + 1, 13, 6, 2, '#6d7358', 0.25);
+          }
+          if (kind === 'barricade') {
+            timber([-31, -2], [31, 4], 5);
+            for (const x of [-24, 0, 24])
+              line(
+                [
+                  [x - 3, -5],
+                  [x + 3, 5],
+                ],
+                '#c7b184',
+                2,
+              );
+            timber([-24, 3], [-35, 16], 4);
+          }
+          break;
+        case 'road-ruts':
+          for (const y of [-3, 7]) {
+            line(
+              [
+                [-33, y],
+                [-18, y + 1],
+                [-4, y - 2],
+                [12, y],
+                [31, y - 1],
+              ],
+              '#847455',
+              2.5,
+            );
+            line(
+              [
+                [-32, y + 2],
+                [-15, y + 3],
+                [4, y],
+                [29, y + 1],
+              ],
+              '#b1a27b',
+              0.9,
+            );
+          }
+          break;
+        case 'road-patch':
+          softPoly(
+            [
+              [-31, 3],
+              [-18, -8],
+              [-3, -5],
+              [13, -10],
+              [30, 1],
+              [16, 10],
+              [-8, 12],
+            ],
+            '#9b8e6c',
+            4,
+          );
+          for (const [x, y] of [
+            [-20, 1],
+            [-10, 5],
+            [3, -3],
+            [15, 2],
+            [5, 8],
+          ]) {
+            fillOval(x, y, 1.9, 1, '#b9ab87');
+          }
+          line(
+            [
+              [-23, 3],
+              [-5, 1],
+              [18, 3],
+            ],
+            '#b5a781',
+            1,
+          );
+          break;
+        case 'stacked-lumber':
+          for (const [x, y, w] of [
+            [-7, 8, 51],
+            [2, 2, 55],
+            [-5, -4, 48],
+          ]) {
+            boards(x - w / 2, y - 5, w, 7, '#a8895b', true);
+            poly(
+              [
+                [x + w / 2, y - 5],
+                [x + w / 2 + 4, y - 8],
+                [x + w / 2 + 4, y - 1],
+                [x + w / 2, y + 2],
+              ],
+              '#d1b685',
+            );
+            line(
+              [
+                [x + w / 2 + 1, y - 5],
+                [x + w / 2 + 3, y - 4],
+              ],
+              '#8f7850',
+              0.7,
+            );
+          }
+          for (const x of [-14, 14])
+            line(
+              [
+                [x, -9],
+                [x, 12],
+              ],
+              '#685f46',
+              2.5,
             );
           break;
         case 'repair-brace':
-          for (const x of [-18, 18])
-            line(
-              [
-                [x, 13],
-                [x, -34],
-              ],
-              '#745641',
-              4,
-            );
-          line(
-            [
-              [-18, 7],
-              [18, -28],
-            ],
-            '#9a7455',
-            5,
-          );
-          line(
-            [
-              [-18, -18],
-              [18, -18],
-            ],
-            '#6a4f3f',
-            3,
-          );
+          timber([-21, 15], [-21, -31], 7);
+          timber([22, 15], [22, -31], 7);
+          timber([-24, -31], [25, -31], 7);
+          timber([-20, 12], [20, -28], 6);
+          for (const x of [-20, 20]) softRect(x - 4, -23, 8, 4, '#8c9685', 1);
           break;
         case 'broken-cart':
-          rect(-23, -8, 39, 15, '#7d5d46');
-          oval(-13, 10, 7, 7, '#4b4b45');
-          oval(15, 10, 7, 7, '#4b4b45');
-          line(
+          timber([-28, 2], [10, 13], 5, '#665b43');
+          craftAt(-24, 15, 1, () => {
+            ctx.rotate(-0.3);
+            ctx.scale(1, 0.65);
+            wheel(0, 0, 12, true);
+          });
+          wheel(22, 10, 10);
+          softPoly(
             [
-              [15, 10],
-              [29, 18],
+              [-30, -15],
+              [-7, -16],
+              [-3, -7],
+              [4, -12],
+              [28, -14],
+              [27, 7],
+              [2, 7],
+              [-4, 3],
+              [-8, 9],
+              [-27, 6],
             ],
-            '#684c3a',
-            3,
+            '#8f704d',
+            0.7,
           );
           line(
             [
-              [12, -5],
-              [31, -17],
+              [-26, -10],
+              [-9, -10],
             ],
-            '#7a5842',
-            3,
+            '#c7a673',
+            1,
           );
           line(
             [
-              [-19, -13],
-              [-2, -22],
+              [5, -8],
+              [24, -9],
             ],
-            '#9a7150',
-            4,
+            '#c7a673',
+            1,
           );
+          line(
+            [
+              [-7, -12],
+              [-1, -3],
+              [-8, 7],
+            ],
+            '#4d4b37',
+            2,
+          );
+          timber([-20, -8], [11, 14], 4, '#bc9d6b');
+          timber([13, 7], [35, 17], 3, '#8b7150');
+          timber([27, -8], [44, 2], 4);
           break;
         case 'wagon-wheel':
-          oval(0, 0, 15, 15, '#5a5147');
-          oval(0, 0, 11, 11, '#8a684c');
-          oval(0, 0, 9, 9, '#534b3f');
-          for (let a = 0; a < Math.PI * 2; a += Math.PI / 4)
-            line(
-              [
-                [Math.cos(a) * 2, Math.sin(a) * 2],
-                [Math.cos(a) * 12, Math.sin(a) * 12],
-              ],
-              '#c09968',
-              2,
-            );
-          oval(0, 0, 3, 3, '#c09968');
-          oval(0, 0, 1.2, 1.2, steel);
-          break;
-        case 'charred-foundation':
-          ctx.save();
-          ctx.globalAlpha = 0.75;
-          for (const [x1, y1, x2, y2] of [
-            [-27, -12, 24, -12],
-            [24, -12, 27, 12],
-            [27, 12, -22, 12],
-            [-22, 12, -27, -12],
-          ])
-            line(
-              [
-                [x1, y1],
-                [x2, y2],
-              ],
-              '#4b423e',
-              6,
-            );
-          for (const [x, y] of [
-            [-18, -6],
-            [8, 7],
-            [20, -4],
-          ])
-            oval(x, y, 4, 2, '#66534a');
-          ctx.restore();
-          break;
-        case 'replacement-stakes':
-          for (const x of [-22, -11, 0, 11, 22]) {
-            rect(x - 2, -17, 4, 30, '#8a684d');
-            poly(
-              [
-                [x - 2, -17],
-                [x, -24],
-                [x + 2, -17],
-              ],
-              '#b38a60',
-            );
-          }
+          wheel(0, 0, 23);
           line(
             [
-              [-24, 0],
-              [24, 0],
+              [-17, -13],
+              [-14, -16],
             ],
-            '#6d513f',
+            '#c7b082',
+            1.3,
+          );
+          break;
+        case 'charred-foundation':
+          for (const [a, b] of [
+            [
+              [-31, -3],
+              [7, -14],
+            ],
+            [
+              [7, -14],
+              [31, 0],
+            ],
+            [
+              [31, 0],
+              [-5, 14],
+            ],
+            [
+              [-5, 14],
+              [-31, -3],
+            ],
+          ]) {
+            timber(a, b, 6, '#575046');
+            rockPiece(a[0], a[1], 5, 5, true);
+          }
+          softPoly(
+            [
+              [-21, 0],
+              [3, -7],
+              [22, 1],
+              [-3, 10],
+            ],
+            '#827c6c',
             3,
           );
           break;
         case 'patched-fence':
-          for (const x of [-22, -7, 8, 23])
-            rect(x - 2, -17, 4, 30, x === 8 ? '#9a7656' : '#6d5342');
-          line(
-            [
-              [-27, -10],
-              [28, -8],
-            ],
-            '#8e6d50',
-            4,
-          );
-          line(
-            [
-              [-27, 3],
-              [28, 0],
-            ],
-            '#a17b58',
-            4,
-          );
-          rect(3, -6, 12, 8, '#76584a');
-          break;
-        case 'inspection-marker':
-          line(
-            [
-              [0, -35],
-              [0, 14],
-            ],
-            '#745942',
-            4,
-          );
-          rect(-15, -31, 30, 20, '#7b644f');
-          for (const y of [-26, -20, -14])
-            line(
-              [
-                [-10, y],
-                [9, y],
-              ],
-              '#d0bc91',
-              1,
-            );
-          rect(8, -8, 9, 8, '#8f5c52');
+          for (const x of [-25, 0, 25]) timber([x, 14], [x, -23], 4, '#76644b');
+          timber([-28, -13], [29, -13], 4, '#786a52');
+          timber([-28, 2], [29, 2], 4, '#786a52');
+          timber([-15, -17], [14, 8], 5, '#ba9c6b');
+          for (const [x, y] of [
+            [-12, -14],
+            [10, 5],
+          ])
+            oval(x, y, 1, 1, '#505a49');
           break;
         case 'checkpoint-standard':
-          line(
-            [
-              [0, -49],
-              [0, 15],
-            ],
-            '#6b5543',
-            4,
-          );
-          poly(
-            [
-              [3, -46],
-              [24, -41],
-              [20, -23],
-              [3, -27],
-            ],
-            '#965b53',
-          );
-          line(
-            [
-              [7, -37],
-              [18, -34],
-            ],
-            '#d4b988',
-            2,
-          );
-          for (const x of [-16, 16])
-            line(
-              [
-                [x, 11],
-                [x, -12],
-              ],
-              '#675044',
-              3,
-            );
+          flag(false);
+          softRect(-22, 11, 10, 5, '#727b6a', 1);
           break;
         case 'chain-anchor':
-          poly(
-            [
-              [-12, 11],
-              [-9, -8],
-              [0, -18],
-              [10, -8],
-              [13, 11],
-            ],
-            '#5d5b56',
-          );
-          for (let x = -24; x <= 24; x += 8) oval(x, 3 + Math.abs(x) / 10, 4, 3, '#85877f');
-          line(
-            [
-              [-20, 2],
-              [-9, -1],
-            ],
-            '#9a9b91',
-            2,
-          );
-          line(
-            [
-              [10, -1],
-              [22, 3],
-            ],
-            '#9a9b91',
-            2,
-          );
-          break;
-        case 'flight-planning-table':
-          shade(34, 9);
-          for (const x of [-23, 23])
-            line(
-              [
-                [x, 0],
-                [x, 18],
-              ],
-              '#5a493c',
-              4,
-            );
-          poly(
-            [
-              [-34, -9],
-              [22, -18],
-              [34, 4],
-              [-22, 14],
-            ],
-            '#735847',
-          );
-          poly(
-            [
-              [-27, -8],
-              [19, -14],
-              [27, 2],
-              [-19, 9],
-            ],
-            '#c4b38e',
-          );
-          for (const x of [-18, -4, 10])
-            line(
-              [
-                [x, -9],
-                [x + 8, 5],
-              ],
-              '#95876e',
-              1,
-            );
-          line(
-            [
-              [-19, 2],
-              [-6, -5],
-              [8, -2],
-              [18, -8],
-            ],
-            '#765780',
-            2,
-          );
-          for (const [x, y] of [
-            [-18, 1],
-            [-5, -5],
-            [8, -2],
-          ]) {
-            poly(
-              [
-                [x - 5, y],
-                [x - 2, y - 4],
-                [x, y - 2],
-                [x + 3, y - 5],
-                [x + 6, y],
-                [x, y + 2],
-              ],
-              '#5d436d',
-            );
-          }
-          rect(24, -16, 9, 14, '#5e486c');
-          line(
-            [
-              [27, -13],
-              [30, -6],
-            ],
-            '#c6ae7f',
-            1,
-          );
-          break;
-        case 'flight-harness-station':
-          shade(32, 8);
-          for (const x of [-25, 25])
-            line(
-              [
-                [x, 13],
-                [x, -35],
-              ],
-              '#806046',
-              4,
-            );
-          line(
-            [
-              [-30, -35],
-              [30, -35],
-            ],
-            '#9b7855',
-            5,
-          );
-          poly(
-            [
-              [-20, -22],
-              [-12, -30],
-              [12, -30],
-              [20, -22],
-              [12, -9],
-              [-12, -9],
-            ],
-            '#59465f',
-          );
-          poly(
-            [
-              [-13, -21],
-              [-6, -27],
-              [6, -27],
-              [13, -21],
-              [8, -17],
-              [-8, -17],
-            ],
-            '#a98863',
-          );
-          line(
-            [
-              [-17, -17],
-              [-21, 1],
-              [-11, 8],
-              [-8, -9],
-            ],
-            '#b8936a',
-            3,
-          );
-          line(
-            [
-              [17, -17],
-              [21, 1],
-              [11, 8],
-              [8, -9],
-            ],
-            '#b8936a',
-            3,
-          );
-          for (const x of [-16, 16]) oval(x, 3, 4, 5, '#c0b293');
-          rect(-13, 10, 26, 8, '#7d644c');
-          line(
-            [
-              [-7, 9],
-              [4, 4],
-            ],
-            '#abb0a4',
-            2,
-          );
-          break;
-        case 'royal-flight-standard':
-          shade(20, 6);
-          line(
-            [
-              [-17, 15],
-              [-17, -56],
-            ],
-            '#a88a60',
-            4,
-          );
-          poly(
-            [
-              [-17, -62],
-              [-12, -56],
-              [-17, -51],
-              [-22, -56],
-            ],
-            '#c2a578',
-          );
-          poly(
-            [
-              [-14, -51],
-              [25, -46],
-              [25, -17],
-              [6, -22],
-              [-14, -25],
-            ],
-            '#624774',
-          );
-          // Purple dragon wings and a Crown diamond identify the Dark Lord's aviation project.
-          poly(
-            [
-              [-8, -34],
-              [-2, -43],
-              [5, -36],
-              [10, -45],
-              [18, -34],
-              [8, -30],
-              [3, -27],
-              [-1, -30],
-            ],
-            '#bd9abf',
-          );
-          poly(
-            [
-              [4, -39],
-              [8, -35],
-              [4, -31],
-              [0, -35],
-            ],
-            '#e4ce99',
-          );
-          line(
-            [
-              [-14, -25],
-              [6, -22],
-              [25, -17],
-            ],
-            '#b49a77',
-            1.5,
-          );
+          rockPiece(-17, 5, 15, 26, true);
+          oval(-14, -2, 7, 5, '#96a095');
+          oval(-14, -2, 3, 2, '#4a5b51');
+          chainLinks(-9, 4, 7);
           break;
         case 'royal-launch-platform':
-          shade(46, 12);
+          boards(-36, -1, 72, 13, '#817358');
           poly(
             [
-              [-41, 3],
-              [-8, -18],
-              [39, -2],
-              [12, 18],
+              [-36, -1],
+              [-15, -14],
+              [40, -14],
+              [36, -1],
             ],
-            '#705a4c',
+            '#b1a179',
           );
-          poly(
+          for (const x of [-25, 24]) {
+            timber([x, 10], [x, 24], 7);
+            timber([x, 20], [x * 0.4, 9], 4);
+            oval(x, -2, 5, 3, '#a4b0a1');
+            oval(x, -2, 2, 1, '#54665c');
+          }
+          line(
             [
-              [-41, 3],
-              [12, 18],
-              [12, 29],
-              [-41, 14],
+              [-31, 0],
+              [31, 0],
             ],
-            '#544536',
+            '#d0b987',
+            1.3,
           );
-          poly(
-            [
-              [12, 18],
-              [39, -2],
-              [39, 10],
-              [12, 29],
-            ],
-            '#635343',
-          );
-          for (const x of [-31, -18, -5, 8, 21])
+          for (const x of [-25, -13, -1, 11, 23])
             line(
               [
-                [x, 5],
-                [x + 19, -8],
+                [x + 13, -12],
+                [x, -2],
               ],
-              '#a18a68',
-              1.5,
+              '#72694f',
+              0.8,
             );
-          poly(
-            [
-              [-21, 22],
-              [-5, 27],
-              [-11, 34],
-              [-28, 29],
-            ],
-            '#948064',
-          );
-          line(
-            [
-              [-33, -2],
-              [-33, -29],
-            ],
-            '#9e805d',
-            3,
-          );
-          line(
-            [
-              [-33, -29],
-              [-8, -38],
-            ],
-            '#9e805d',
-            3,
-          );
-          line(
-            [
-              [30, -3],
-              [30, -32],
-            ],
-            '#9e805d',
-            3,
-          );
-          poly(
-            [
-              [31, -32],
-              [45, -29],
-              [32, -22],
-            ],
-            '#836493',
-          );
-          // Open framing, spare beams and tools keep the air-force facility visibly unfinished.
-          line(
-            [
-              [16, 24],
-              [39, 28],
-            ],
-            '#a58159',
-            4,
-          );
-          line(
-            [
-              [21, 19],
-              [42, 23],
-            ],
-            '#b39269',
-            4,
-          );
-          rect(-40, 20, 9, 7, '#68523e');
-          line(
-            [
-              [-33, 18],
-              [-25, 10],
-            ],
-            '#bac0b3',
-            2,
-          );
-          poly(
-            [
-              [-11, -14],
-              [-4, -21],
-              [8, -15],
-              [7, -5],
-              [-7, -5],
-            ],
-            '#5d466c',
-          );
-          line(
-            [
-              [-6, -12],
-              [4, -11],
-            ],
-            '#cbb486',
-            2,
-          );
           break;
         case 'handler-station':
-          rect(-28, -8, 56, 17, '#675647');
-          for (const x of [-22, 22])
+          ledgerDesk();
+          for (const x of [-25, 25]) {
+            timber([x, 11], [x, -30], 3);
             line(
               [
-                [x, 7],
-                [x, 18],
+                [x, -26],
+                [x + 3, -26],
+                [x + 3, -20],
               ],
-              '#5a493c',
-              3,
+              '#9ca695',
+              1.5,
             );
-          line(
-            [
-              [-20, -3],
-              [18, 3],
-            ],
-            '#c0a16e',
-            1.5,
-          );
-          rect(-24, -23, 15, 13, '#7d684f');
-          for (const y of [-19, -15, -11])
-            line(
-              [
-                [-21, y],
-                [-11, y],
-              ],
-              '#d0bc91',
-              1,
-            );
+          }
+          sack(24, 10, 0.65, '#947c5b');
           break;
         case 'feed-crate':
-          rect(-24, -12, 48, 25, '#795d47');
-          line(
-            [
-              [-22, -10],
-              [22, 10],
-            ],
-            '#a67e58',
-            3,
-          );
-          for (const [x, y] of [
-            [-12, -17],
-            [3, -20],
-            [14, -16],
-          ])
-            oval(x, y, 7, 4, '#705a48');
-          break;
-        case 'containment-post':
-          rect(-8, -35, 16, 49, '#615b57');
-          for (const y of [-26, -14, -2]) oval(0, y, 9, 5, '#8b8d86');
-          for (const side of [-1, 1])
+          crateBody(0, 2, 1.1);
+          softRect(-19, -16, 37, 12, '#5c6047', 2);
+          sack(-9, -10, 0.7);
+          sack(11, -8, 0.65);
+          for (const x of [-17, 0, 17])
             line(
               [
-                [side * 8, -22],
-                [side * 22, -12],
+                [x, -10],
+                [x + 6, -7],
               ],
-              '#999b94',
-              3,
-            );
-          break;
-        case 'scorched-floor':
-          ctx.save();
-          ctx.globalAlpha = 0.6;
-          oval(0, 6, 29, 10, '#463d3a');
-          for (const [x, y] of [
-            [-17, 4],
-            [-5, 0],
-            [8, 7],
-            [18, 2],
-          ])
-            line(
-              [
-                [x - 5, y],
-                [x + 4, y - 3],
-              ],
-              '#8d5e4a',
-              2,
-            );
-          ctx.restore();
-          break;
-        case 'egg-cradle':
-          oval(0, 8, 28, 10, '#65584b');
-          for (const x of [-20, -10, 0, 10, 20])
-            line(
-              [
-                [x, 10],
-                [x + 3, -2],
-              ],
-              '#866b52',
-              2,
-            );
-          for (const [x, y] of [
-            [-8, 1],
-            [8, 3],
-          ]) {
-            oval(x, y, 6, 8, '#a18c77');
-            line(
-              [
-                [x - 2, y - 5],
-                [x + 2, y + 4],
-              ],
-              '#c1ac90',
+              '#c2ad75',
               1,
             );
-          }
           break;
-        case 'feeding-trough':
-          rect(-29, -8, 58, 17, '#6a5848');
-          poly(
-            [
-              [-29, -8],
-              [-23, -18],
-              [23, -18],
-              [29, -8],
-            ],
-            '#806650',
-          );
-          for (const [x, y] of [
-            [-13, -8],
-            [0, -11],
-            [14, -7],
-          ])
-            oval(x, y, 6, 3, '#8c7057');
-          break;
-        case 'carcass-rack':
-          for (const x of [-22, 22])
-            line(
-              [
-                [x, 14],
-                [x, -38],
-              ],
-              '#725943',
-              4,
-            );
-          line(
-            [
-              [-24, -34],
-              [24, -34],
-            ],
-            '#84664b',
-            4,
-          );
-          for (const x of [-12, 7]) {
-            line(
-              [
-                [x, -32],
-                [x, -9],
-              ],
-              '#a99b80',
-              2,
-            );
-            poly(
-              [
-                [x - 7, -7],
-                [x, -13],
-                [x + 7, -7],
-                [x, 0],
-              ],
-              '#806857',
-            );
+        case 'containment-post':
+          blockwork(-12, 6, 24, 10, '#6f796e');
+          softRect(-7, -35, 14, 44, '#697b76', 2);
+          for (const y of [-28, -11, 4]) {
+            softRect(-11, y, 22, 6, '#a5afa0', 1);
+            for (const x of [-7, 7]) oval(x, y + 3, 1.2, 1.2, '#5d6f65');
           }
+          oval(4, -17, 5, 4, '#b0b8a6');
+          chainLinks(7, -15, 4);
           break;
         case 'claw-scrape':
-          for (const y of [-6, 0, 6])
+          for (const [y, left, right] of [
+            [-5, -28, 25],
+            [3, -25, 29],
+            [11, -23, 23],
+          ]) {
+            shaped(
+              '#695953',
+              () => {
+                ctx.moveTo(left, y + 2);
+                ctx.quadraticCurveTo(0, y - 1, right, y - 5);
+                ctx.lineTo(right - 5, y - 2);
+                ctx.quadraticCurveTo(0, y + 2, left, y + 2);
+              },
+              0.4,
+            );
             line(
               [
-                [-25, y],
-                [24, y - 7],
+                [left + 7, y + 3],
+                [3, y],
+                [right - 4, y - 2],
               ],
-              '#8c5e4e',
-              2.5,
+              '#b19479',
+              0.7,
             );
-          for (const x of [-18, 5]) glint(x, -4, '#c17b57', 1);
+          }
           break;
         case 'dragon-perch':
-          poly(
-            [
-              [-31, 11],
-              [-23, -12],
-              [-12, -24],
-              [3, -18],
-              [14, -30],
-              [30, -9],
-              [27, 11],
-            ],
-            '#655f5d',
-          );
-          for (const [x, y] of [
-            [-17, -7],
-            [2, -13],
-            [18, -6],
-          ])
+          rockPiece(0, 8, 38, 36, true);
+          rockPiece(-24, 10, 18, 13, true);
+          rockPiece(25, 10, 17, 17, true);
+          for (const x of [-13, 1, 12])
             line(
               [
-                [x - 5, y],
-                [x + 5, y - 4],
+                [x - 3, -4],
+                [x + 3, 1],
               ],
-              '#928379',
-              2,
+              '#443e4a',
+              1.7,
             );
           line(
             [
-              [-26, 7],
-              [25, 7],
+              [-25, -7],
+              [-7, -17],
+              [15, -12],
             ],
-            '#493f3d',
-            2,
+            '#9c8f9e',
+            1.4,
           );
           break;
+        default:
+          return false;
       }
+      return true;
     }
+
+    function decoration(kind) {
+      craftedDecoration(kind);
+    }
+
     function landmark() {
+      if (craftedLandmark()) return;
       switch (e.id) {
         case 'orchard':
           for (const x of [-18, 0, 18]) {
@@ -14887,7 +14217,7 @@
               '#b8aa7a',
             );
           else {
-            rect(-12, -25, 24, 38, '#999d8c');
+            blockwork(-12, -25, 24, 38, '#999d8c', 9);
             poly(
               [
                 [-15, -26],
@@ -14907,307 +14237,903 @@
           }
       }
     }
-    function workDetails(role) {
-      if (!role) return;
-      if (role === 'pages') {
-        for (const x of [-18, -6, 6, 18]) {
-          rect(x - 4, -30, 8, 19, '#ded1ae');
+    function captiveScene() {
+      const smith = ['crypt', 'mine', 'cindermaw'].includes(e.family),
+        role = e.workKind || (smith ? 'smith' : e.family === 'archive' ? 'alchemist' : 'teacher');
+      if (e.workstation === 'equipment-repair') {
+        craftAt(0, 7, 1, () => table(65));
+        softPoly(
+          [
+            [-26, -7],
+            [-16, -13],
+            [-7, -7],
+            [-9, 2],
+            [-23, 2],
+          ],
+          '#a5b0aa',
+          2,
+        );
+        if (!rescued) {
+          specialist({ ...e, kind: 'smith' });
+          grip(17, -5);
+          softRect(28, -3, 7, 9, gold, 1);
+          chainLinks(30, 7, 3);
+        }
+        return;
+      }
+      if (e.presentation === 'mobile-forge') {
+        if (!rescued) {
+          craftAt(36, 7, 0.75, () => {
+            cartBody();
+            blockwork(-17, -25, 34, 22, '#7c8174', 6);
+            softRect(-12, -23, 24, 13, '#383d33', 2);
+            coals(0, -15, 0.6);
+            flame(0, -15, 0.4);
+            line(
+              [
+                [-18, -25],
+                [18, -25],
+              ],
+              '#b5b4a2',
+              3,
+            );
+            craftAt(15, -12, 0.45, () => rack(true));
+          });
+          specialist({ ...e, kind: 'smith' });
+          grip(17, -5);
+        }
+        return;
+      }
+      if (e.presentation === 'mobile-captive') {
+        if (!rescued) {
+          specialist({ ...e, kind: role });
+          softRect(10, -17, 10, 13, '#c8ba97', 2);
+          paper(11, -15, 7);
+          grip(14, -6);
           line(
             [
-              [x - 2, -23],
-              [x + 2, -23],
+              [10, -3],
+              [18, -1],
             ],
-            '#8a7d67',
-            1,
-          );
-          rect(x - 1, -32, 2, 4, '#726249');
-        }
-      } else if (role === 'alchemy') {
-        for (const [x, color] of [
-          [-16, '#90b9a8'],
-          [1, '#c19c74'],
-          [17, '#8bafc0'],
-        ]) {
-          rect(x - 3, -26, 6, 12, color);
-          rect(x - 2, -32, 4, 6, '#cbd7c4');
-          line(
-            [
-              [x - 3, -18],
-              [x + 3, -18],
-            ],
-            '#e3e6cb',
-            1,
+            '#7f6c4e',
+            1.2,
           );
         }
-      } else if (role === 'pump') {
-        oval(0, -8, 13, 9, '#697f81');
-        rect(-10, -28, 20, 17, '#93a69b');
+        return;
+      }
+      if (e.presentation === 'workstation') {
+        craftAt(29, 1, 0.7, () => {
+          if (role === 'alchemist') {
+            table(42);
+            for (const x of [-12, 2, 15]) bottle(x, -13, '#93b4a1', 0.65);
+          } else rack(true);
+        });
+        if (!rescued) {
+          specialist({ ...e, kind: role });
+          softRect(-29, -3, 7, 9, '#ac9c76', 1);
+          chainLinks(-27, 6, 3);
+        }
+        return;
+      }
+      // Frame behind the person; door uprights leave a deliberate open face window.
+      boards(-25, -44, 50, 60, '#615f4d');
+      softRect(-21, -40, 42, 53, '#293d34', 1);
+      for (const x of [-25, 25]) {
+        timber([x, 15], [x, -45], 4, '#897c5b');
         line(
           [
-            [0, -27],
-            [0, -43],
-            [19, -43],
+            [x + 1, -38],
+            [x + 1, 11],
           ],
-          '#bdac80',
-          4,
+          '#a49a76',
+          0.8,
+        );
+      }
+      if (!rescued) specialist({ ...e, kind: role });
+      if (!rescued) {
+        for (const x of [-20, -11, 11, 20])
+          line(
+            [
+              [x, -40],
+              [x, 14],
+            ],
+            '#a2ada0',
+            2.1,
+          );
+        line(
+          [
+            [-23, -41],
+            [23, -41],
+          ],
+          '#bfc3ac',
+          3,
         );
         line(
           [
-            [11, -9],
-            [27, -5],
-            [31, 14],
+            [-22, -15],
+            [22, -15],
           ],
-          '#566b71',
-          5,
+          '#8f9d8e',
+          2,
         );
-        oval(-20, 7, 7, 5, '#829a96');
-      } else if (role === 'submerged') {
-        oval(0, 5, 35, 9, '#568c9766');
-        for (const y of [1, 7])
-          line(
-            [
-              [-29, y],
-              [26, y - 2],
-            ],
-            '#9ec1bb',
-            1,
-          );
-      } else if (role === 'construction') {
-        for (const x of [-12, 0, 12])
-          line(
-            [
-              [x - 10, 9],
-              [x + 6, -18],
-            ],
-            '#b29c74',
-            5,
-          );
-        for (const x of [-14, 4, 19]) rect(x, -7, 5, 5, '#9ba3a0');
-      } else if (role === 'preservation') {
-        for (const x of [-13, 3, 17]) {
-          rect(x - 4, -26, 8, 13, '#b2bf9d');
-          rect(x - 2, -30, 4, 4, '#80724f');
-        }
-        rect(-20, -3, 22, 4, '#d7cbaa');
-      } else if (role === 'fish-study') {
-        oval(-9, -8, 12, 4, '#9db9ad');
+        line(
+          [
+            [-23, 14],
+            [23, 14],
+          ],
+          '#bfc3ac',
+          3,
+        );
+        for (const y of [-31, 4]) softRect(-25, y, 7, 4, '#a9ae98', 0.7);
+        softRect(8, -6, 8, 9, '#c6a86a', 1);
+        oval(12, -2, 1, 1.4, '#6c654a');
+      } else {
         poly(
           [
-            [3, -8],
-            [10, -13],
-            [10, -3],
+            [24, -41],
+            [37, -33],
+            [37, 19],
+            [24, 14],
           ],
-          '#78989c',
+          '#687d6d',
         );
+        for (const x of [28, 33])
+          line(
+            [
+              [x, -34],
+              [x, 14],
+            ],
+            '#acb7a1',
+            1.6,
+          );
         line(
           [
-            [-13, -11],
-            [-6, -5],
+            [25, -12],
+            [36, -7],
           ],
-          '#536c70',
-          1,
-        );
-        oval(-17, -8, 1.5, 1.5, '#34494c');
-      } else if (role === 'coin-accounting') {
-        for (const [x, y] of [
-          [-15, -8],
-          [-10, -5],
-          [-4, -9],
-          [17, -7],
-        ])
-          oval(x, y, 3, 1.6, '#cfb36d');
-        rect(-8, -23, 18, 6, '#e0d4b2');
-        line(
-          [
-            [-5, -20],
-            [6, -20],
-          ],
-          '#81745b',
-          1,
+          '#c0c3a7',
+          1.4,
         );
       }
     }
+    function basketBody() {
+      shaped('#a78d60', () => {
+        ctx.moveTo(-19, -3);
+        ctx.lineTo(19, -3);
+        ctx.lineTo(14, 14);
+        ctx.quadraticCurveTo(0, 19, -14, 14);
+      });
+      for (const y of [1, 5, 9, 13])
+        line(
+          [
+            [-17 + y * 0.2, y],
+            [17 - y * 0.2, y],
+          ],
+          '#6a6346',
+          0.9,
+        );
+      for (const x of [-12, -5, 3, 11])
+        line(
+          [
+            [x, -2],
+            [x * 0.75, 14],
+          ],
+          '#d0b785',
+          0.8,
+        );
+      oval(0, -3, 19, 4, '#b9a16f');
+      oval(0, -4, 15, 2, '#5f674d');
+      ctx.strokeStyle = '#c7ae7d';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(-14, -3);
+      ctx.bezierCurveTo(-13, -27, 13, -27, 14, -3);
+      ctx.stroke();
+    }
+    function craftedNode() {
+      if (e.tribute || e.icon === '🪙') {
+        chest(true, 0.9);
+      } else if (e.icon === '🪵') craftedDecoration('woodpile');
+      else if (e.icon === '🧺') basketBody();
+      else if (e.icon === '💎') craftAt(0, 4, 0.8, () => craftedDecoration('crystal-cluster'));
+      else {
+        rockPiece(0, 9, 23, 29);
+        for (const [x, y] of [
+          [-11, -5],
+          [4, -12],
+          [13, 1],
+        ]) {
+          line(
+            [
+              [x - 3, y - 3],
+              [x, y],
+              [x - 2, y + 5],
+            ],
+            '#bec0a0',
+            2,
+          );
+          line(
+            [
+              [x, y],
+              [x + 3, y + 2],
+            ],
+            '#d3b078',
+            1,
+          );
+        }
+      }
+      workDetails(e.sceneRole);
+    }
+    function craftedWork(role) {
+      if (!role) return;
+      if (role === 'submerged') {
+        fillOval(0, 7, 34, 7, '#6eaba1', 0.3);
+        for (const [x, y] of [
+          [-18, 3],
+          [13, 9],
+        ])
+          line(
+            [
+              [x - 8, y],
+              [x, y + 1],
+              [x + 7, y],
+            ],
+            '#c0d6bc',
+            1,
+          );
+        return;
+      }
+      // Supports touch the resource; tools no longer float as disconnected glyphs.
+      timber([-24, -9], [24, -9], 3, '#9b8b63');
+      for (const x of [-20, 20]) timber([x, -9], [x, 3], 2.2, '#827957');
+      switch (role) {
+        case 'pages':
+          for (const [x, y] of [
+            [-16, -30],
+            [-3, -33],
+            [11, -28],
+          ]) {
+            paper(x, y, 11);
+            line(
+              [
+                [x + 2, y - 1],
+                [x + 2, y + 1],
+              ],
+              '#8a7750',
+              1.6,
+            );
+          }
+          break;
+        case 'alchemy':
+          for (const [x, c] of [
+            [-16, '#98b9a5'],
+            [0, '#b8a37f'],
+            [16, '#8eacbc'],
+          ])
+            bottle(x, -16, c, 0.85);
+          break;
+        case 'pump':
+          softRect(-10, -30, 20, 23, '#8eaaa1', 4);
+          oval(0, -29, 10, 4, '#bdc4a7');
+          line(
+            [
+              [0, -30],
+              [0, -43],
+              [17, -43],
+            ],
+            '#b9a47a',
+            4,
+          );
+          oval(0, -36, 4, 4, '#72887b');
+          line(
+            [
+              [10, -15],
+              [24, -13],
+              [29, 7],
+            ],
+            '#5b7d76',
+            5,
+          );
+          for (const [x, y] of [
+            [11, -15],
+            [24, -13],
+          ])
+            oval(x, y, 3, 3, '#b9c6ad');
+          line(
+            [
+              [29, 7],
+              [28, 13],
+            ],
+            '#a9d1bd',
+            2,
+          );
+          break;
+        case 'construction':
+          for (const [x, y] of [
+            [-12, -15],
+            [1, -11],
+            [12, -16],
+          ])
+            timber([x - 9, y + 14], [x + 7, y - 8], 4, '#c0a577');
+          line(
+            [
+              [13, -11],
+              [22, -20],
+            ],
+            '#766a49',
+            3,
+          );
+          softRect(17, -25, 14, 6, '#9aa99b', 1);
+          break;
+        case 'preservation':
+          softRect(-23, -13, 46, 6, '#9b8a62', 1);
+          for (const x of [-14, 1, 16]) {
+            restingObject(x, -13, 3, () => bottle(0, -3.8, '#afbf9b', 0.65));
+            line(
+              [
+                [x - 3, -25],
+                [x + 3, -25],
+              ],
+              '#8c7852',
+              2,
+            );
+          }
+          softRect(-14, -10, 25, 5, '#e0d1ad', 2);
+          line(
+            [
+              [-10, -9],
+              [7, -8],
+            ],
+            '#a9ac8c',
+            0.8,
+          );
+          break;
+        case 'fish-study':
+          softRect(-24, -17, 46, 10, '#9d8e66', 2);
+          shaped('#a5b9a6', () => {
+            ctx.moveTo(-20, -13);
+            ctx.quadraticCurveTo(-7, -23, 4, -13);
+            ctx.lineTo(12, -18);
+            ctx.lineTo(11, -8);
+            ctx.lineTo(3, -11);
+            ctx.quadraticCurveTo(-8, -5, -20, -13);
+          });
+          oval(-16, -14, 1, 1, '#3a594a');
+          line(
+            [
+              [-11, -17],
+              [-8, -10],
+            ],
+            '#647e6c',
+            1,
+          );
+          for (const x of [14, 17, 20])
+            line(
+              [
+                [x, -15],
+                [x, -11],
+              ],
+              '#d3c9a4',
+              0.7,
+            );
+          break;
+        case 'coin-accounting':
+          for (const [x, y] of [
+            [-15, -15],
+            [-5, -12],
+            [6, -16],
+          ]) {
+            oval(x, y, 4, 2.4, '#a28d53');
+            oval(x, y - 2, 4, 2, '#d6c07e');
+            line(
+              [
+                [x - 2, y - 3],
+                [x + 1, y - 3],
+              ],
+              '#edda9e',
+              0.7,
+            );
+          }
+          softRect(9, -23, 16, 7, '#6d6850', 1);
+          paper(10, -24, 13);
+          break;
+      }
+    }
+    function craftedDefense() {
+      const stone = e.structure === 'stonewall',
+        style = e.strongholdDefenseStyle;
+      if (stone) {
+        blockwork(-28, -28, 56, 42, '#929b8a', 9);
+        poly(
+          [
+            [-31, -31],
+            [26, -31],
+            [31, -25],
+            [-30, -25],
+          ],
+          '#b4bba6',
+        );
+        for (const x of [-26, -7, 13]) blockwork(x, -36, 12, 9, '#a5ad98', 8);
+      } else {
+        for (const [x, h] of [
+          [-24, 46],
+          [-12, 51],
+          [0, 47],
+          [12, 50],
+          [24, 45],
+        ]) {
+          poly(
+            [
+              [x - 4, 14],
+              [x - 4, 14 - h],
+              [x, 6 - h],
+              [x + 4, 14 - h],
+              [x + 4, 14],
+            ],
+            '#967c55',
+          );
+          line(
+            [
+              [x + 1, 12 - h],
+              [x + 1, 12],
+            ],
+            '#c4ac79',
+            0.8,
+          );
+        }
+        for (const y of [-16, 4]) {
+          timber([-28, y], [28, y], 5, '#74664a');
+          for (const x of [-24, 0, 24])
+            line(
+              [
+                [x - 3, y - 4],
+                [x + 3, y + 4],
+              ],
+              '#c1ad7c',
+              1.6,
+            );
+        }
+      }
+      if (style === 'fort') {
+        if (stone) blockwork(-29, -39, 58, 10, '#acb6a4', 8);
+        else {
+          boards(-28, -39, 56, 11, '#ae956b', true);
+          for (const side of [-1, 1]) timber([side * 22, -30], [side * 10, -39], 3);
+        }
+        for (const x of [-25, -10, 5, 20])
+          softRect(x, -45, 10, 9, stone ? '#8e9d8c' : '#9a7d53', 1);
+        if (e.fortCorner) {
+          blockwork(-21, -59, 42, 30, stone ? '#82917e' : '#8f7958', 8);
+          craftedRoof(24, -59, -75, stone ? 2 : 0);
+          for (const x of [-12, 12]) recessedDoor(x, -54, 7, 13, true);
+        }
+      } else if (style === 'ruin') {
+        if (stone) {
+          for (const [x, y] of [
+            [-19, -32],
+            [3, -35],
+            [19, -27],
+          ])
+            rockPiece(x, y, 9, 10);
+          line(
+            [
+              [-14, -27],
+              [-10, -16],
+              [-16, -7],
+              [-6, 1],
+            ],
+            '#4c5a4b',
+            2,
+          );
+          rockPiece(-20, 12, 11, 7);
+          rockPiece(20, 13, 8, 7);
+        } else {
+          for (const x of [-18, 6, 22]) {
+            softPoly(
+              [
+                [x - 4, -32],
+                [x, -22],
+                [x + 3, -33],
+                [x + 5, -25],
+                [x + 4, -10],
+              ],
+              '#5d5842',
+              0.4,
+            );
+            timber([x - 6, -6], [x + 5, 5], 3, '#c0a277');
+          }
+          timber([-27, 4], [20, 10], 4, '#685a41');
+        }
+      } else if (style === 'habitat') {
+        for (let y = -24; y < 5; y += 5) {
+          ctx.strokeStyle = y % 2 ? '#9c9970' : '#b2a57b';
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.moveTo(-25, y);
+          ctx.quadraticCurveTo(-6, y - 3, 6, y + 1);
+          ctx.quadraticCurveTo(17, y + 4, 26, y);
+          ctx.stroke();
+        }
+        for (const x of [-21, -6, 9, 23]) {
+          timber([x, 10], [x, -36], 2, '#95896a');
+          line(
+            [
+              [x - 3, -18],
+              [x + 3, -12],
+            ],
+            '#d0bf8f',
+            1.4,
+          );
+        }
+        foliage(17, 12, 11, 6, '#72855d');
+      }
+    }
+    function draftAnimal(camel = false) {
+      const hide = camel ? '#b29b75' : '#a58966',
+        light = camel ? '#c6b18a' : '#bda17a';
+      for (const [x, y] of [
+        [-18, 0],
+        [-6, 1],
+        [12, 0],
+        [25, -1],
+      ]) {
+        shaped(hide, () => {
+          ctx.moveTo(x - 4, y);
+          ctx.lineTo(x + 4, y);
+          ctx.quadraticCurveTo(x + 4, 10, x + 1, 13);
+          ctx.lineTo(x + 3, 24);
+          ctx.lineTo(x - 3, 24);
+          ctx.lineTo(x - 4, 13);
+        });
+        oval(x, 25, 5, 2.8, '#484538');
+        line(
+          [
+            [x - 2, 12],
+            [x + 2, 12],
+          ],
+          '#d0ba92',
+          1,
+        );
+      }
+      shaped(hide, () => {
+        ctx.moveTo(-26, -7);
+        ctx.bezierCurveTo(-35, -27, -5, -31, 19, -23);
+        ctx.quadraticCurveTo(34, -18, 28, 1);
+        ctx.quadraticCurveTo(7, 11, -25, 3);
+      });
+      oval(-18, -6, 11, 14, hide);
+      oval(21, -7, 10, 15, hide);
+      if (camel)
+        for (const x of [-13, 11]) {
+          shaped(light, () => {
+            ctx.moveTo(x - 10, -22);
+            ctx.quadraticCurveTo(x - 9, -46, x + 2, -40);
+            ctx.quadraticCurveTo(x + 10, -38, x + 11, -22);
+          });
+        }
+      shaped(light, () => {
+        ctx.moveTo(19, -17);
+        ctx.quadraticCurveTo(29, -29, 32, camel ? -49 : -38);
+        ctx.quadraticCurveTo(34, -56, 43, -46);
+        ctx.lineTo(42, -22);
+        ctx.quadraticCurveTo(36, -6, 27, -4);
+      });
+      oval(43, camel ? -49 : -38, 11, 7, light);
+      oval(51, camel ? -46 : -35, 7, 4.5, '#9f8767');
+      oval(47, camel ? -51 : -40, 1.3, 1.3, '#2d3c32');
+      shaped(hide, () => {
+        const y = camel ? -52 : -41;
+        ctx.moveTo(38, y);
+        ctx.quadraticCurveTo(31, y - 16, 38, y - 13);
+        ctx.lineTo(43, y);
+      });
+      if (!camel) {
+        line(
+          [
+            [31, -39],
+            [28, -29],
+            [26, -19],
+          ],
+          '#66513b',
+          5,
+        );
+        shaped('#62523e', () => {
+          ctx.moveTo(-27, -18);
+          ctx.quadraticCurveTo(-38, -16, -32, 4);
+          ctx.quadraticCurveTo(-28, 1, -28, -9);
+        });
+      }
+      softPoly(
+        [
+          [-20, -25],
+          [-12, -31],
+          [18, -29],
+          [26, -22],
+          [14, -13],
+          [-16, -15],
+        ],
+        '#7c6046',
+        3,
+      );
+      line(
+        [
+          [-15, -24],
+          [-10, 0],
+          [15, 1],
+          [22, -22],
+        ],
+        '#d0b784',
+        2,
+      );
+      line(
+        [
+          [38, camel ? -46 : -36],
+          [46, camel ? -41 : -30],
+          [51, camel ? -44 : -33],
+        ],
+        '#d5bc88',
+        1.6,
+      );
+    }
+    function craftedTransport() {
+      if (e.icon === '🐉' || /Dragon/.test(e.name || '')) {
+        dragon('#8b9980');
+        shaped('#795a42', () => {
+          ctx.moveTo(-17, -23);
+          ctx.quadraticCurveTo(-9, -39, 1, -29);
+          ctx.quadraticCurveTo(10, -23, 17, -31);
+          ctx.lineTo(22, -23);
+          ctx.lineTo(12, -14);
+          ctx.quadraticCurveTo(-6, -10, -17, -23);
+        });
+        line(
+          [
+            [-12, -22],
+            [0, -17],
+            [15, -22],
+          ],
+          '#d2b885',
+          1.2,
+        );
+        for (const x of [-18, 18]) {
+          softRect(x - 5, -14, 10, 15, '#8d6e4a', 2);
+          line(
+            [
+              [x, -13],
+              [x, -1],
+            ],
+            '#c6b18a',
+            1.3,
+          );
+        }
+        line(
+          [
+            [-12, -14],
+            [0, -5],
+            [15, -14],
+          ],
+          '#c4ac7e',
+          2,
+        );
+        return;
+      }
+      if (e.icon === '⛵') {
+        shaped('#8b7554', () => {
+          ctx.moveTo(-59, -3);
+          ctx.quadraticCurveTo(-12, 8, 61, -6);
+          ctx.quadraticCurveTo(41, 20, -25, 18);
+          ctx.quadraticCurveTo(-50, 14, -59, -3);
+        });
+        line(
+          [
+            [-52, 1],
+            [-19, 9],
+            [29, 9],
+            [53, 0],
+          ],
+          '#bda778',
+          1.5,
+        );
+        line(
+          [
+            [-44, 7],
+            [-17, 13],
+            [27, 13],
+            [42, 8],
+          ],
+          '#665a42',
+          1,
+        );
+        timber([0, 6], [0, -59], 4);
+        shaped('#c4c6aa', () => {
+          ctx.moveTo(3, -55);
+          ctx.quadraticCurveTo(27, -42, 39, -17);
+          ctx.quadraticCurveTo(20, -11, 3, -14);
+        });
+        line(
+          [
+            [7, -49],
+            [11, -21],
+            [31, -19],
+          ],
+          '#a0a68c',
+          1,
+        );
+        craftAt(-24, -2, 0.65, () => {
+          human('worker');
+          line(
+            [
+              [15, -30],
+              [29, 25],
+            ],
+            '#9c8057',
+            3,
+          );
+          grip(16, -10);
+        });
+        return;
+      }
+      if (e.icon === '🐫') {
+        craftAt(0, -2, 1, () => draftAnimal(true));
+        for (const x of [-22, 20]) {
+          softRect(x - 6, -25, 13, 22, '#8e6b47', 2);
+          line(
+            [
+              [x, -23],
+              [x, -4],
+            ],
+            '#d7ba83',
+            2,
+          );
+        }
+        line(
+          [
+            [-13, -29],
+            [34, -44],
+          ],
+          '#bba576',
+          1.6,
+        );
+        return;
+      }
+      craftAt(-28, 1, 0.95, () => cartBody(true));
+      shaped('#c7b48a', () => {
+        ctx.moveTo(-58, -16);
+        ctx.bezierCurveTo(-65, -54, 5, -56, 8, -18);
+        ctx.lineTo(0, -13);
+        ctx.quadraticCurveTo(-29, -8, -56, -12);
+      });
+      for (const x of [-48, -28, -9])
+        line(
+          [
+            [x, -42],
+            [x + 4, -17],
+          ],
+          '#9b8a64',
+          1.4,
+        );
+      craftAt(56, 0, 0.8, () => draftAnimal());
+      timber([0, -2], [45, 2], 3);
+      line(
+        [
+          [-4, -26],
+          [32, -28],
+          [85, -30],
+        ],
+        '#d4bd91',
+        1.5,
+      );
+      craftAt(-58, 3, 0.4, () => lantern(0, -20));
+    }
+
+    function craftedDispatch() {
+      if (e.kind === 'bundle') {
+        sack(-7, 5, 1.2, '#b5a17d');
+        softRect(4, -12, 25, 25, '#aa8c65', 4);
+        line(
+          [
+            [6, -10],
+            [26, 11],
+          ],
+          '#d4c093',
+          1.5,
+        );
+        line(
+          [
+            [25, -10],
+            [7, 11],
+          ],
+          '#d4c093',
+          1.5,
+        );
+        return true;
+      }
+      if (e.kind === 'throne') {
+        craftedDecoration('dark-throne');
+        return true;
+      }
+      if (e.kind === 'appointment') {
+        blockwork(-18, -19, 36, 34, '#696577', 9);
+        poly(
+          [
+            [-21, -22],
+            [17, -22],
+            [23, -16],
+            [-21, -16],
+          ],
+          '#bca373',
+        );
+        softRect(-10, -15, 20, 17, '#a3a899', 1);
+        line(
+          [
+            [-7, -10],
+            [7, -10],
+          ],
+          '#5b6a61',
+          1,
+        );
+        poly(
+          [
+            [0, -27],
+            [5, -22],
+            [0, -17],
+            [-5, -22],
+          ],
+          '#ad8fb5',
+        );
+        return true;
+      }
+      if (e.kind === 'fountain') {
+        rimBowl(0, 5, 28, '#9fae9f', '#78a79b');
+        blockwork(-6, -24, 12, 26, '#9fafa0', 8);
+        rimBowl(0, -25, 15, '#becbb4', '#80ac9b');
+        ctx.strokeStyle = '#b8dfc6';
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(0, -26);
+        ctx.bezierCurveTo(-8, -45, 7, -45, 4, -26);
+        ctx.stroke();
+        for (const x of [-11, 11])
+          line(
+            [
+              [x, -24],
+              [x * 0.9, 3],
+            ],
+            '#a2cdbb',
+            1.3,
+          );
+        for (const y of [3, 6])
+          line(
+            [
+              [-18, y],
+              [0, y + 1],
+              [19, y],
+            ],
+            '#c0d7b9',
+            0.9,
+          );
+        return true;
+      }
+      return false;
+    }
+
+    function workDetails(role) {
+      craftedWork(role);
+    }
     const type = e.renderKind;
-    if (type === 'prop') {
+    if (craftedDispatch()) {
+      // Explicit furniture and interaction artwork owns this body.
+    } else if (type === 'prop') {
       if (e.treasuryBoss) decoration(e.structure);
       else if (e.decorative) decoration(e.structure);
       else if (/^(vale-|march-|highland-|frontier-|crown-)/.test(e.structure || '')) {
         settlementBuilding(e.structure);
       } else if (e.structure === 'fence') {
-        for (const x of [-18, 0, 18]) rect(x - 2, -18, 4, 30, '#a48c69');
-        line(
-          [
-            [-23, -12],
-            [23, -12],
-          ],
-          '#9c835e',
-          4,
-        );
-        line(
-          [
-            [-23, 2],
-            [23, 2],
-          ],
-          '#9c835e',
-          4,
-        );
+        craftedFence();
       } else if (e.structure === 'house' || e.structure === 'workshop') {
         building(e.structure);
-        if (e.structure === 'workshop') {
-          rect(-25, -12, 12, 15, '#8e7150');
-          line(
-            [
-              [-26, -15],
-              [-10, -15],
-            ],
-            steel,
-            4,
-          );
-        }
       } else if (['stonewall', 'stockade', 'palisade'].includes(e.structure)) {
-        if (e.structure === 'stonewall') {
-          rect(-28, -28, 56, 42, '#858d85');
-          for (const y of [-22, -10, 2])
-            line(
-              [
-                [-27, y],
-                [27, y],
-              ],
-              '#59685e',
-              2,
-            );
-          for (const x of [-21, -3, 15]) {
-            line(
-              [
-                [x, -27],
-                [x, -12],
-              ],
-              '#59685e',
-              2,
-            );
-            line(
-              [
-                [x + 9, -10],
-                [x + 9, 3],
-              ],
-              '#59685e',
-              2,
-            );
-          }
-          for (const x of [-28, -7, 14]) rect(x, -35, 14, 10, '#9ea79b');
-        } else {
-          for (const x of [-24, -12, 0, 12, 24]) {
-            rect(x - 4, -28, 8, 42, '#977752');
-            poly(
-              [
-                [x - 4, -28],
-                [x, -40],
-                [x + 4, -28],
-              ],
-              '#b49465',
-            );
-          }
-          line(
-            [
-              [-27, -16],
-              [27, -16],
-            ],
-            '#675c40',
-            4,
-          );
-          line(
-            [
-              [-27, 3],
-              [27, 3],
-            ],
-            '#675c40',
-            4,
-          );
-        }
-        // Stronghold walls have deliberate local histories. A frontier fort
-        // retains solid matching defensive wood/stone; a disused keep exposes
-        // cracks and rubble; a swamp habitat is a woven animal enclosure.
-        // All dressing remains inside the existing wall footprint.
-        if (e.strongholdDefenseStyle === 'fort') {
-          rect(-28, -38, 56, 10, e.structure === 'stonewall' ? '#aeb6ab' : '#b59468');
-          for (const x of [-24, -10, 4, 18])
-            rect(x, -44, 11, 8, e.structure === 'stonewall' ? '#8c978e' : '#9c7951');
-          if (e.fortCorner) {
-            rect(-21, -59, 42, 30, e.structure === 'stonewall' ? '#778579' : '#886849');
-            poly(
-              [
-                [-24, -59],
-                [0, -75],
-                [24, -59],
-              ],
-              e.structure === 'stonewall' ? '#68776b' : '#634b37',
-            );
-            for (const x of [-12, 12]) rect(x - 4, -52, 8, 15, '#2b3830');
-            rect(-25, -28, 50, 8, '#514e43');
-          }
-        } else if (e.strongholdDefenseStyle === 'ruin') {
-          poly(
-            [
-              [-27, -31],
-              [-18, -45],
-              [-8, -34],
-              [2, -42],
-              [11, -30],
-              [21, -38],
-              [28, -25],
-            ],
-            e.structure === 'stonewall' ? '#7b817a' : '#8d765b',
-          );
-          line(
-            [
-              [-19, -26],
-              [-13, -17],
-              [-17, -8],
-              [-4, 0],
-            ],
-            '#494c45',
-            2.5,
-          );
-          line(
-            [
-              [12, -30],
-              [8, -15],
-              [21, -4],
-            ],
-            '#484a45',
-            2,
-          );
-          oval(-19, 13, 10, 4, '#716c60');
-          oval(20, 14, 9, 4, '#7f7b6c');
-        } else if (e.strongholdDefenseStyle === 'habitat') {
-          for (const x of [-21, -9, 3, 15, 24]) {
-            line(
-              [
-                [x, -30],
-                [x + 4, -43],
-              ],
-              '#aa946d',
-              3,
-            );
-            line(
-              [
-                [x, -25],
-                [x - 7, -35],
-              ],
-              '#819777',
-              2,
-            );
-          }
-          line(
-            [
-              [-27, -14],
-              [27, -11],
-            ],
-            '#827154',
-            3,
-          );
-          oval(16, 12, 11, 3, '#58664c');
-        }
+        craftedDefense();
       } else if (e.structure === 'pillar') {
         if (e.householdPartition) {
           // Worn masonry and a low return wall describe an alcove, not another temple colonnade.
@@ -15245,6 +15171,23 @@
           oval(0, 14, 26, 5, '#777d69');
         } else {
           rect(-13, -44, 26, 58, '#9ca49a');
+          poly(
+            [
+              [13, -44],
+              [18, -47],
+              [18, 10],
+              [13, 14],
+            ],
+            '#748779',
+          );
+          line(
+            [
+              [-10, -43],
+              [-10, 10],
+            ],
+            '#c2cab3',
+            1.3,
+          );
           rect(-18, -48, 36, 8, '#bac0ad');
           rect(-18, 10, 36, 8, '#8a9488');
           for (const x of [-7, 0, 7])
@@ -15258,150 +15201,12 @@
             );
         }
       } else if (e.icon === '🪨') {
-        poly(
-          [
-            [-20, 7],
-            [-18, -12],
-            [-3, -24],
-            [14, -17],
-            [24, 4],
-          ],
-          '#849183',
-        );
-        poly(
-          [
-            [-18, -12],
-            [-3, -24],
-            [3, -4],
-            [-20, 7],
-          ],
-          '#a0ad9b',
-        );
-        line(
-          [
-            [3, -4],
-            [14, -17],
-          ],
-          '#647466',
-        );
+        wildProp();
       } else wildProp();
     } else if (type === 'node') {
-      if (e.tribute || e.icon === '🪙') {
-        rect(-22, -10, 44, 22, '#765536');
-        poly(
-          [
-            [-22, -10],
-            [-16, -23],
-            [16, -23],
-            [22, -10],
-          ],
-          '#8e6742',
-        );
-        line(
-          [
-            [0, -22],
-            [0, 11],
-          ],
-          gold,
-          3,
-        );
-        rect(-5, -8, 10, 8, gold);
-        for (const [x, y] of [
-          [-14, 5],
-          [11, 4],
-          [0, -15],
-        ])
-          glint(x, y, '#f0d88a', 1.6);
-      } else if (e.icon === '🪵') {
-        for (const [x, y] of [
-          [-12, 2],
-          [2, -3],
-          [10, 7],
-        ]) {
-          rect(x - 12, y - 8, 24, 10, '#836244');
-          oval(x + 12, y - 3, 4, 5, '#c9a572');
-          oval(x + 12, y - 3, 2, 3, '#916b44');
-        }
-      } else if (e.icon === '🧺') {
-        poly(
-          [
-            [-19, -3],
-            [19, -3],
-            [13, 14],
-            [-13, 14],
-          ],
-          '#aa885e',
-        );
-        line(
-          [
-            [-13, -3],
-            [-8, -17],
-            [8, -17],
-            [13, -3],
-          ],
-          '#bca06d',
-          3,
-        );
-        for (const y of [1, 5, 9])
-          line(
-            [
-              [-14, y],
-              [14, y],
-            ],
-            '#795f42',
-            1,
-          );
-      } else if (e.icon === '💎') {
-        for (const [x, y] of [
-          [-10, 2],
-          [0, -7],
-          [10, 4],
-        ])
-          poly(
-            [
-              [x - 6, y],
-              [x - 5, y - 20],
-              [x, y - 28],
-              [x + 6, y - 18],
-              [x + 6, y],
-            ],
-            '#a89bcf',
-          );
-        line(
-          [
-            [0, -32],
-            [0, -7],
-          ],
-          '#e5ddf6',
-          1,
-        );
-      } else {
-        poly(
-          [
-            [-18, 8],
-            [-13, -12],
-            [0, -23],
-            [18, -9],
-            [22, 8],
-          ],
-          '#7d8781',
-        );
-        for (const [x, y] of [
-          [-7, -8],
-          [7, -12],
-          [12, 1],
-        ])
-          poly(
-            [
-              [x - 4, y],
-              [x, y - 5],
-              [x + 5, y],
-              [x, y + 4],
-            ],
-            '#c1a16b',
-          );
-      }
-      workDetails(e.sceneRole);
+      craftedNode();
+    } else if (e.kind === 'cage') {
+      captiveScene();
     } else if (type === 'building' || ['rest', 'supplier', 'recruiter', 'quests'].includes(e.kind))
       building(type === 'building' ? 'barracks' : e.kind);
     else if (e.kind === 'cage' && e.workstation === 'equipment-repair') {
@@ -15526,6 +15331,18 @@
         2,
       );
       rect(11, -7, 5, 13, '#c6b58e');
+
+      face(0, -29, '#d3ad88', 0.85);
+      grip(14, -5);
+      grip(20, -4);
+      line(
+        [
+          [-17, -2],
+          [-12, -1],
+        ],
+        '#c4ad7b',
+        1,
+      );
     } else if (e.presentation === 'scout-tracks') {
       ctx.save();
       // Impressions lie in the isometric ground plane, not upright little feet.
@@ -15639,517 +15456,7 @@
     } else if (e.kind === 'dungeon' && e.treasury) treasuryEntrance(e.treasuryBoss);
     else if (e.kind === 'dungeon' || e.kind === 'exit') gate(e.family);
     else if (e.kind === 'transport') {
-      // Visual-only regional vehicles. Travel identifiers, fares and collision do not change.
-      if (e.icon === '🐉' || /Dragon/.test(e.name)) {
-        dragon('#8b9980');
-        // Leather courier saddle, rope tack, supply panniers and wind pennant.
-        poly(
-          [
-            [-17, -29],
-            [-8, -36],
-            [12, -34],
-            [20, -25],
-            [9, -21],
-            [-12, -22],
-          ],
-          '#74543d',
-        );
-        poly(
-          [
-            [-12, -33],
-            [9, -33],
-            [16, -28],
-            [-9, -26],
-          ],
-          '#c7a776',
-        );
-        line(
-          [
-            [-23, -15],
-            [-10, -19],
-            [14, -17],
-            [27, -10],
-          ],
-          '#ddc396',
-          2.5,
-        );
-        for (const x of [-17, 17]) {
-          rect(x - 5, -18, 10, 14, '#806043');
-          line(
-            [
-              [x - 5, -12],
-              [x + 5, -12],
-            ],
-            '#d3b17a',
-            2,
-          );
-          glint(x, -11, '#f5d996', 1.5);
-        }
-        line(
-          [
-            [7, -34],
-            [10, -51],
-          ],
-          '#d3bc8b',
-          2,
-        );
-        poly(
-          [
-            [10, -51],
-            [31, -46],
-            [11, -40],
-          ],
-          '#a98252',
-        );
-      } else if (e.icon === '⛵') {
-        const marsh = region === 1,
-          rim = marsh ? '#b9a178' : '#b6b9ae';
-        // Shallow working ferry, with a real keel, planked deck and steering pole.
-        for (const y of [12, 22])
-          line(
-            [
-              [-52, y],
-              [-36, y + 2],
-              [28, y + 1],
-              [50, y],
-            ],
-            marsh ? '#689da0' : '#88b7bd',
-            2,
-          );
-        softPoly(
-          [
-            [-51, -4],
-            [47, -6],
-            [36, 20],
-            [-37, 21],
-          ],
-          marsh ? '#604a38' : '#53606a',
-        );
-        softPoly(
-          [
-            [-52, -5],
-            [47, -7],
-            [35, 7],
-            [-38, 9],
-          ],
-          marsh ? '#af9368' : '#9b9784',
-        );
-        softPoly(
-          [
-            [-38, 10],
-            [35, 8],
-            [29, 16],
-            [-32, 18],
-          ],
-          '#534438',
-        );
-        for (const y of [-3, 2])
-          line(
-            [
-              [-38, y],
-              [34, y - 2],
-            ],
-            '#d6bb83',
-            1.6,
-          );
-        for (const x of [-29, -12, 5, 22])
-          line(
-            [
-              [x, -3],
-              [x + 3, 7],
-            ],
-            '#71583e',
-            1.3,
-          );
-        // Rail and mooring fenders.
-        for (const x of [-38, 34]) {
-          line(
-            [
-              [x, -4],
-              [x, -24],
-            ],
-            rim,
-            3,
-          );
-          oval(x + 4, 12, 4, 6, '#896c48');
-          oval(x, -5, 3, 2, '#d8bb82');
-        }
-        line(
-          [
-            [-38, -23],
-            [34, -25],
-          ],
-          rim,
-          3,
-        );
-        line(
-          [
-            [-37, -14],
-            [33, -16],
-          ],
-          '#76583c',
-          1.6,
-        );
-        // Tied cargo and a working ferryman in a regional coat.
-        rect(5, -14, 18, 15, '#967248');
-        line(
-          [
-            [7, -13],
-            [22, 0],
-          ],
-          '#d7c093',
-          2,
-        );
-        oval(29, -13, 7, 8, '#9d7d55');
-        poly(
-          [
-            [-24, -17],
-            [-13, -17],
-            [-11, -32],
-            [-20, -33],
-          ],
-          marsh ? '#557c6a' : '#677f92',
-        );
-        oval(-17, -39, 6, 7, '#c4a683');
-        poly(
-          [
-            [-29, -44],
-            [-12, -44],
-            [-9, -41],
-            [-29, -40],
-          ],
-          '#695741',
-        );
-        line(
-          [
-            [-13, -25],
-            [-2, -34],
-            [11, -65],
-          ],
-          '#cfb58a',
-          3,
-        );
-        line(
-          [
-            [-40, -22],
-            [-40, -38],
-          ],
-          '#9f7c4d',
-          2,
-        );
-        oval(-40, -42, 4, 5, '#d4a45b');
-        glint(-40, -42, '#ffe4a6', 2);
-        line(
-          [
-            [38, -12],
-            [46, -22],
-          ],
-          '#ba9d75',
-          2.5,
-        );
-        if (!marsh) {
-          rect(-2, -14, 10, 11, '#606a6c');
-          line(
-            [
-              [-29, 2],
-              [-23, -10],
-            ],
-            '#aebabc',
-            2,
-          );
-        }
-      } else if (e.icon === '🐫') {
-        // Ironroot-frontier caravan: beast, leg joints, saddle, loads and tack.
-        shade(47, 10, 0.18);
-        for (const x of [-25, -8, 14, 30]) {
-          line(
-            [
-              [x, -1],
-              [x + (x < 0 ? -5 : 4), 22],
-            ],
-            '#8b7654',
-            6,
-          );
-          oval(x + (x < 0 ? -5 : 4), 24, 6, 3, '#494039');
-        }
-        poly(
-          [
-            [-39, -10],
-            [-20, -29],
-            [12, -27],
-            [34, -10],
-            [29, 6],
-            [-33, 8],
-          ],
-          '#ab9671',
-        );
-        oval(-15, -27, 12, 13, '#c0a982');
-        oval(12, -26, 12, 12, '#b69f77');
-        poly(
-          [
-            [-26, -33],
-            [-21, -43],
-            [14, -42],
-            [25, -30],
-            [13, -19],
-            [-21, -19],
-          ],
-          '#715844',
-        );
-        poly(
-          [
-            [-19, -40],
-            [13, -40],
-            [16, -34],
-            [-20, -34],
-          ],
-          '#d0ae79',
-        );
-        for (const x of [-30, 17]) {
-          softRect(x, -28, 15, 24, x < 0 ? '#76543f' : '#826047');
-          line(
-            [
-              [x + 7, -26],
-              [x + 7, -6],
-            ],
-            '#d3b788',
-            2,
-          );
-          glint(x + 7, -15, '#efd596', 2);
-        }
-        poly(
-          [
-            [29, -10],
-            [40, -33],
-            [53, -42],
-            [61, -36],
-            [51, -10],
-            [42, 2],
-          ],
-          '#b7a17b',
-        );
-        oval(58, -42, 12, 7, '#bfaa81');
-        oval(65, -39, 6, 4, '#927958');
-        eye(60, -44, '#2b2d26');
-        line(
-          [
-            [54, -38],
-            [64, -30],
-            [47, -11],
-          ],
-          '#cfb381',
-          2,
-        );
-        line(
-          [
-            [-7, -31],
-            [39, -33],
-            [56, -33],
-          ],
-          '#e0c89c',
-          2,
-        );
-        line(
-          [
-            [-9, -42],
-            [-9, -59],
-          ],
-          '#ac8957',
-          2,
-        );
-        poly(
-          [
-            [-9, -59],
-            [11, -54],
-            [-9, -49],
-          ],
-          '#b58b5a',
-        );
-      } else {
-        // Greenwood merchant wagon: a canvas-covered cart, real spoke wheels,
-        // sacks, rear lantern, reins and a four-legged draft horse.
-        shade(58, 10, 0.17);
-        for (const x of [-30, 17]) {
-          oval(x, 16, 12, 12, '#423c33');
-          oval(x, 16, 9, 9, '#a98c5f');
-          for (let i = 0; i < 8; i++) {
-            const ang = (i * Math.PI) / 4;
-            line(
-              [
-                [x, 16],
-                [x + Math.cos(ang) * 8, 16 + Math.sin(ang) * 8],
-              ],
-              '#5c4935',
-              1.6,
-            );
-          }
-          oval(x, 16, 3, 3, '#d9c497');
-        }
-        softPoly(
-          [
-            [-49, -18],
-            [27, -19],
-            [31, 6],
-            [-45, 8],
-          ],
-          '#78553b',
-        );
-        softPoly(
-          [
-            [-46, -16],
-            [25, -17],
-            [22, -4],
-            [-43, -2],
-          ],
-          '#a48158',
-        );
-        line(
-          [
-            [-44, 0],
-            [24, -1],
-          ],
-          '#d8b887',
-          2.4,
-        );
-        for (const x of [-31, -13, 4, 19])
-          line(
-            [
-              [x, -13],
-              [x + 2, 4],
-            ],
-            '#60442c',
-            1.5,
-          );
-        rect(-44, -22, 13, 17, '#936a47');
-        oval(-38, -20, 7, 7, '#c9a679');
-        softPoly(
-          [
-            [-53, -20],
-            [-43, -41],
-            [-27, -51],
-            [7, -51],
-            [27, -39],
-            [32, -19],
-          ],
-          '#c1a97d',
-        );
-        softPoly(
-          [
-            [-48, -21],
-            [-39, -38],
-            [-22, -44],
-            [5, -44],
-            [24, -35],
-            [28, -20],
-          ],
-          '#e4d2a5',
-        );
-        for (const x of [-34, -8, 18])
-          line(
-            [
-              [x - 3, -43],
-              [x + 4, -20],
-            ],
-            '#a38a64',
-            2,
-          );
-        poly(
-          [
-            [23, -36],
-            [31, -19],
-            [28, -7],
-            [22, -8],
-          ],
-          '#65503d',
-        );
-        line(
-          [
-            [-52, -20],
-            [31, -20],
-          ],
-          '#896b4c',
-          2.5,
-        );
-        line(
-          [
-            [-46, -18],
-            [-54, -12],
-          ],
-          '#c3a275',
-          2,
-        );
-        oval(-55, -11, 4, 5, '#e1b664');
-        glint(-55, -11, '#ffdf98', 2);
-        for (const pts of [
-          [
-            [28, -3],
-            [54, -9],
-          ],
-          [
-            [28, 5],
-            [54, 0],
-          ],
-        ])
-          line(pts, '#947953', 3);
-        for (const x of [46, 64]) {
-          line(
-            [
-              [x, -2],
-              [x - 4, 20],
-            ],
-            '#785e46',
-            5,
-          );
-          oval(x - 4, 21, 5, 3, '#3e3730');
-        }
-        oval(56, -17, 21, 13, '#9c8060');
-        poly(
-          [
-            [66, -19],
-            [75, -39],
-            [84, -37],
-            [83, -18],
-            [77, -11],
-          ],
-          '#ac9472',
-        );
-        oval(85, -35, 10, 7, '#b39c77');
-        poly(
-          [
-            [78, -39],
-            [77, -51],
-            [84, -42],
-          ],
-          '#7e6349',
-        );
-        poly(
-          [
-            [88, -40],
-            [91, -51],
-            [93, -36],
-          ],
-          '#7e6349',
-        );
-        eye(89, -37, '#252c26');
-        line(
-          [
-            [75, -28],
-            [90, -28],
-            [93, -24],
-          ],
-          '#dbc397',
-          2,
-        );
-        line(
-          [
-            [33, -18],
-            [64, -25],
-            [83, -27],
-          ],
-          '#d3bb8e',
-          1.7,
-        );
-      }
+      craftedTransport();
     } else if (e.kind === 'bundle') {
       rect(-15, -15, 30, 28, '#a78455');
       line(
@@ -16193,50 +15500,7 @@
         '#b58cc2',
       );
     } else if (e.kind === 'dungeon-master') {
-      // A real named peaceful resident with identifiable military/field/
-      // specialist regalia. No hostile body or combat AI is spawned.
-      const mantle =
-        e.masterGroup === 'captain' ? '#626c76' : e.masterGroup === 'field' ? '#6b5565' : '#57786c';
-      poly(
-        [
-          [-13, -22],
-          [-21, 9],
-          [0, 12],
-          [21, 9],
-          [13, -22],
-        ],
-        mantle,
-      );
-      humanoid('#a18a7d', '#b9b09d', 1);
-      poly(
-        [
-          [-10, -18],
-          [0, -24],
-          [10, -18],
-          [8, -5],
-          [-8, -5],
-        ],
-        mantle,
-      );
-      poly(
-        [
-          [0, -16],
-          [5, -11],
-          [0, -6],
-          [-5, -11],
-        ],
-        '#dfbd76',
-      );
-      line(
-        [
-          [-12, -40],
-          [0, -45],
-          [12, -40],
-        ],
-        '#dcc58b',
-        2.3,
-      );
-      oval(0, -11, 2, 2, '#d8b4d7');
+      appointedResident();
     } else if (e.kind === 'throne') {
       // Real interactable court furniture, distinctly different from an Ash
       // Citadel decoration; no collision, hitbox or new quest infrastructure.
@@ -16292,17 +15556,22 @@
       else {
         const smith = ['smith', 'alchemist'].includes(e.kind);
         humanoid(smith ? '#8b7770' : '#8b9c7b');
+        face(
+          0,
+          -29,
+          skin,
+          1,
+          false,
+          e.kind === 'smith' ? 'amused' : e.kind === 'alchemist' ? 'bright' : 'warm',
+        );
+        coiffure(
+          e.kind === 'alchemist' ? 'curls' : 'short',
+          e.kind === 'smith' ? '#80543b' : '#554939',
+        );
+        if (e.kind === 'smith') beard('full', '#80543b');
         if (smith && e.kind === 'smith') {
           rect(-8, -15, 16, 19, '#675448');
-          line(
-            [
-              [18, -20],
-              [12, 13],
-            ],
-            '#b29367',
-            3,
-          );
-          rect(13, -24, 15, 7, steel);
+          smithHammer(20);
           poly(
             [
               [19, 9],
@@ -16328,10 +15597,12 @@
           oval(17, -33, 4, 4, '#c9d6ab');
           rect(-14, -10, 8, 14, '#cab483');
         }
+        grip(15, -2);
+        if (e.kind === 'alchemist') craftAt(16, -8, 0.65, () => bottle(0, 0, '#91b3aa'));
       }
     } else if (type === 'hero') {
-      hero(e.class || 'paladin');
       if (e.crowned) crownedHero(e.class || 'paladin');
+      else hero(e.class || 'paladin');
     } else if (type === 'ally') {
       const role = allyBodyKind(e);
       if (e.type === 'pet') bossPet(e.petFamily);
@@ -16358,119 +15629,19 @@
           wolf('#a08864', true);
           break;
         case 'mire':
-          crocodile('#6e8060');
-          poly(
-            [
-              [-18, -12],
-              [-12, -29],
-              [-5, -16],
-              [2, -31],
-              [10, -11],
-            ],
-            '#b3a47c',
-          );
-          line(
-            [
-              [29, -8],
-              [34, -4],
-            ],
-            '#d7c69e',
-            2,
-          );
+          crocodile('#788966', true);
           break;
         case 'abyss':
           dragon();
           break;
         case 'crypt':
-          humanoid('#625f67', bone, 1.15);
-          skull(0, -30, 10);
-          poly(
-            [
-              [-11, -19],
-              [-20, -24],
-              [-23, 2],
-              [-11, 4],
-            ],
-            '#74677b',
-          );
-          shield(-18, -2, '#7b756a');
-          line(
-            [
-              [20, -31],
-              [20, 17],
-            ],
-            '#a4916c',
-            3,
-          );
-          poly(
-            [
-              [19, -32],
-              [35, -36],
-              [27, -23],
-              [20, -22],
-            ],
-            bone,
-          );
+          skeletonBody(true);
           break;
         case 'archive':
-          humanoid('#557c7c', '#9bb4a8', 1.15);
-          poly(
-            [
-              [-12, -22],
-              [0, -47],
-              [13, -23],
-            ],
-            '#4e6e75',
-          );
-          line(
-            [
-              [23, -29],
-              [23, 19],
-            ],
-            steel,
-            3,
-          );
-          line(
-            [
-              [14, 10],
-              [16, 18],
-              [23, 23],
-              [31, 18],
-              [33, 10],
-            ],
-            steel,
-            4,
-          );
-          oval(23, -29, 4, 4, gold);
+          spectralScholar();
           break;
         case 'ridge':
-          humanoid('#9a775c', '#adad80', 1.6);
-          poly(
-            [
-              [-10, -35],
-              [-16, -43],
-              [-4, -38],
-            ],
-            bone,
-          );
-          poly(
-            [
-              [10, -35],
-              [16, -43],
-              [4, -38],
-            ],
-            bone,
-          );
-          line(
-            [
-              [29, -27],
-              [22, 18],
-            ],
-            '#ad8f65',
-            4,
-          );
-          rect(17, -35, 23, 14, '#8f9894');
-          rect(-13, -14, 26, 7, '#696b61');
+          mountainBody();
           break;
         case 'mine':
           softRect(-18, 0, 14, 20, '#77847f');
@@ -16524,73 +15695,64 @@
             ],
             '#596d67',
           );
+          for (const side of [-1, 1]) {
+            oval(side * 12, 3, 4, 4, '#4d695e');
+            poly(
+              [
+                [side * 8, 5],
+                [side * 18, 5],
+                [side * 18, 16],
+                [side * 12, 18],
+              ],
+              '#aab8a2',
+            );
+            line(
+              [
+                [side * 26, -13],
+                [side * 33, -10],
+                [side * 32, 4],
+              ],
+              '#b6c5b0',
+              1.5,
+            );
+            for (const y of [1, 5])
+              line(
+                [
+                  [side * 27, y],
+                  [side * 34, y],
+                ],
+                '#4c6e60',
+                1,
+              );
+          }
+          poly(
+            [
+              [-21, -24],
+              [-11, -32],
+              [-8, -26],
+              [-16, -17],
+            ],
+            '#bac6ac',
+          );
+          line(
+            [
+              [-10, -47],
+              [8, -47],
+            ],
+            '#d0d4b7',
+            1.4,
+          );
           break;
         case 'warlord':
           orcBody('governor');
           break;
         case 'cindermaw':
-          oval(0, -2, 27, 14, '#9a6657');
-          for (const side of [-1, 1]) {
-            for (const y of [-8, 0, 8])
-              line(
-                [
-                  [side * 15, y],
-                  [side * 35, y + 5],
-                  [side * 43, y + 13],
-                ],
-                '#a87b63',
-                3,
-              );
-            line(
-              [
-                [side * 18, -5],
-                [side * 31, -24],
-              ],
-              '#bd8d6f',
-              5,
-            );
-            poly(
-              [
-                [side * 29, -27],
-                [side * 43, -34],
-                [side * 43, -19],
-                [side * 31, -17],
-              ],
-              '#bd8d6f',
-            );
-          }
-          line(
-            [
-              [0, 9],
-              [-9, 27],
-              [-25, 17],
-              [-31, -5],
-              [-22, -22],
-            ],
-            '#b78567',
-            7,
-          );
-          poly(
-            [
-              [-25, -25],
-              [-15, -37],
-              [-16, -18],
-            ],
-            bone,
-          );
-          poly(
-            [
-              [10, -14],
-              [17, -29],
-              [23, -13],
-            ],
-            '#6f5260',
-          );
+          scorpionBody(true);
           break;
         case 'citadel':
-          humanoid('#697c82', steel, 1.45);
+          humanoid('#697c82', steel, 1.45, false);
           // Marshal Veyra: an adult woman in imposing, carefully fitted plate.
-          // Her open helmet and pinned braid keep her identity visible at native size.
+          // Her open helmet and cropped swept hair keep her identity visible at native size.
           softPoly(
             [
               [-13, -48],
@@ -16618,20 +15780,25 @@
             '#e0d4bc',
             2,
           );
-          for (const [x, y] of [
-            [11, -34],
-            [12, -29],
-            [12, -24],
-            [11, -19],
-          ])
-            oval(x, y, 3, 3.4, '#d1c2a6');
+          softPoly(
+            [
+              [7, -43],
+              [12, -40],
+              [10, -33],
+              [8, -31],
+              [8, -38],
+              [3, -40],
+            ],
+            '#d1c2a6',
+            1,
+          );
           line(
             [
-              [9, -18],
-              [13, -18],
+              [9, -40],
+              [10, -36],
             ],
-            gold,
-            1.8,
+            '#f0e2c5',
+            0.8,
           );
           line(
             [
@@ -16698,45 +15865,23 @@
             gold,
             2,
           );
-          poly(
-            [
-              [-16, -49],
-              [-16, -57],
-              [-7, -52],
-              [0, -58],
-              [7, -52],
-              [16, -57],
-              [16, -49],
-            ],
-            gold,
-          );
+          shaped('#8b9fa3', () => {
+            ctx.moveTo(-13, -48);
+            ctx.quadraticCurveTo(0, -58, 13, -48);
+            ctx.lineTo(11, -46);
+            ctx.quadraticCurveTo(0, -52, -11, -46);
+          });
           line(
             [
-              [-12, -46],
-              [0, -49],
-              [12, -46],
+              [-11, -48],
+              [0, -53],
+              [11, -48],
             ],
-            '#f1c580',
-            2.2,
+            '#c5cbbf',
+            1.1,
           );
           shield(-24, -1, '#526970');
-          line(
-            [
-              [29, -42],
-              [29, 22],
-            ],
-            '#ac976d',
-            4,
-          );
-          poly(
-            [
-              [21, -39],
-              [35, -42],
-              [39, -27],
-              [20, -25],
-            ],
-            steel,
-          );
+          marshalSpear();
           poly(
             [
               [-7, -16],
@@ -16746,752 +15891,252 @@
             ],
             '#e8ae70',
           );
+          line(
+            [
+              [16, -13],
+              [23, -5],
+              [29, -2],
+            ],
+            '#879da2',
+            4,
+          );
+          grip(29, -2, '#a7b7b2');
+
+          line(
+            [
+              [-8, -16],
+              [-7, -7],
+              [0, -4],
+            ],
+            '#b3c7bf',
+            1,
+          );
+          line(
+            [
+              [7, -15],
+              [7, -6],
+            ],
+            '#4d6e70',
+            1.1,
+          );
+          for (const y of [-33, -28, -23])
+            line(
+              [
+                [10, y],
+                [13, y + 1],
+              ],
+              '#a79d85',
+              0.7,
+            );
           break;
         case 'darklord':
-          poly(
+          crownedHero('paladin', true);
+          shaped('#596274', () => {
+            ctx.moveTo(-10, -31);
+            ctx.lineTo(-10, -43);
+            ctx.quadraticCurveTo(0, -55, 11, -43);
+            ctx.lineTo(10, -31);
+            ctx.lineTo(5, -35);
+            ctx.lineTo(-5, -35);
+          });
+          line(
             [
-              [-23, 17],
-              [-16, -27],
-              [0, -41],
-              [16, -27],
-              [26, 17],
+              [-5, -33],
+              [-2, -33],
             ],
-            '#423c55',
+            '#d8a896',
+            1.5,
           );
-          humanoid('#594c65', '#aaa8a7', 1.15);
-          poly(
+          line(
             [
-              [-11, -26],
-              [-9, -41],
-              [0, -48],
-              [10, -40],
-              [11, -26],
+              [3, -33],
+              [6, -33],
             ],
-            '#596274',
+            '#d8a896',
+            1.5,
           );
-          poly(
-            [
-              [-13, -42],
-              [-18, -55],
-              [-6, -48],
-              [0, -57],
-              [6, -48],
-              [18, -55],
-              [13, -42],
-            ],
-            gold,
-          );
-          rect(-6, -32, 4, 2, '#d8a896');
-          rect(3, -32, 4, 2, '#d8a896');
-          sword(21, -17);
-          shield(-22, -1, '#725965');
+          royalCrown(-44);
           break;
         default:
           humanoid('#897773');
       }
-      bossFinish(e.family);
-      bossPolish(e.family);
+      if (
+        !['thorn', 'mire', 'crypt', 'archive', 'ridge', 'abyss', 'cindermaw', 'darklord'].includes(
+          e.family,
+        ) &&
+        e.captainProfile !== 'supply-highlands'
+      ) {
+        bossFinish(e.family);
+        bossPolish(e.family);
+      }
     } else {
       if (e.captain || e.roomCaptain) {
         const s = e.visualScale || 1.18;
         ctx.scale(s, s);
       }
-      switch (e.species) {
-        case 'skeleton':
-          skull();
-          line(
-            [
-              [0, -18],
-              [0, 5],
-            ],
-            bone,
-            3,
-          );
-          for (const y of [-14, -9, -4])
-            line(
-              [
-                [-8, y],
-                [0, y + 2],
-                [8, y],
-              ],
-              bone,
-              2,
-            );
-          line(
-            [
-              [-7, -15],
-              [-14, -2],
-              [-16, 6],
-            ],
-            bone,
-            3,
-          );
-          line(
-            [
-              [7, -15],
-              [14, -4],
-              [17, 3],
-            ],
-            bone,
-            3,
-          );
-          line(
-            [
-              [0, 3],
-              [-7, 9],
-              [-8, 16],
-            ],
-            bone,
-            3,
-          );
-          line(
-            [
-              [0, 3],
-              [7, 9],
-              [8, 16],
-            ],
-            bone,
-            3,
-          );
-          if (e.ranged) bow(17, -7);
-          else sword(15, -9);
-          // Shoulder/pelvis joints and paired shin bones replace a pure stick diagram.
-          oval(0, 1, 5, 3, bone);
-          for (const [x, y] of [
-            [-7, -15],
-            [7, -15],
-            [-14, -2],
-            [14, -4],
-            [-7, 9],
-            [7, 9],
-          ])
-            oval(x, y, 2.3, 2.3, '#c7c1a7');
-          for (const side of [-1, 1]) {
-            line(
-              [
-                [side * 8, 10],
-                [side * 10, 16],
-                [side * 14, 17],
-              ],
-              bone,
-              2,
-            );
-            line(
-              [
-                [side * 5, -14],
-                [side * 8, -8],
-              ],
-              '#a9ad99',
-              1,
-            );
-          }
-          break;
-        case 'wolf':
-          if (e.mountedCrownRider) crownDirewolfRider(!!e.ranged);
-          else wolf();
-          break;
-        case 'mireling':
-          if (e.ranged) {
-            crocodile('#687a61');
-            line(
-              [
-                [-20, -8],
-                [13, 7],
-              ],
-              '#8d7352',
-              3,
-            );
-            rect(-4, -4, 10, 9, '#745d45');
-            poly(
-              [
-                [18, -10],
-                [28, -13],
-                [34, -7],
-                [27, -3],
-              ],
-              '#9a8660',
-            );
-          } else crocodile();
-          break;
-        case 'reedbeast':
-          // Folded hind legs, webbed toes and a broad damp muzzle read as an amphibian.
-          for (const side of [-1, 1]) {
-            oval(side * 18, 6, 11, 7, '#738857');
-            line(
-              [
-                [side * 19, 3],
-                [side * 26, 10],
-                [side * 14, 13],
-              ],
-              '#9bab77',
-              3,
-            );
-            for (const x of [13, 18, 23])
+      if (e.crownTroop && !e.mountedCrownRider) crownSoldier();
+      else
+        switch (e.species) {
+          case 'skeleton':
+            skeletonBody();
+            break;
+          case 'wolf':
+            if (e.mountedCrownRider) crownDirewolfRider(!!e.ranged);
+            else wolf();
+            break;
+          case 'mireling':
+            if (e.ranged) {
+              crocodile('#687a61');
               line(
                 [
-                  [side * 17, 11],
-                  [side * x, 14],
+                  [-20, -8],
+                  [13, 7],
                 ],
-                '#a7b888',
-                1.7,
+                '#8d7352',
+                3,
               );
-          }
-          oval(0, -2, 19, 16, '#8d9c65');
-          oval(0, 2, 12, 9, '#b1ba83');
-          oval(0, -12, 19, 9, '#98a96e');
-          for (const x of [-11, 11]) {
-            oval(x, -17, 8, 7, '#a5b17a');
-            oval(x, -18, 3, 3.5, '#34443c');
-            fillOval(x - 1, -19, 1, 1.3, '#f5eaca');
-          }
-          line(
-            [
-              [-12, -7],
-              [0, -4],
-              [12, -7],
-            ],
-            '#526744',
-            1.2,
-          );
-          for (const [x, y] of [
-            [-9, -2],
-            [9, 1],
-            [-4, 5],
-          ])
-            oval(x, y, 1.7, 1.2, '#697e50');
-          break;
-        case 'ashbeast':
-          {
-            const ranged = e.ranged,
-              body = ranged ? '#8f655f' : '#aa7c62',
-              leg = ranged ? '#9d7569' : '#b18b6b',
-              claw = ranged ? '#b78d80' : '#c0a080',
-              tail = ranged ? '#aa7a69' : '#bd936b';
-            oval(0, 0, 20, 10, body);
-            oval(5, -3, 12, 5, ranged ? '#a47a70' : '#bd9476');
+              rect(-4, -4, 10, 9, '#745d45');
+              poly(
+                [
+                  [18, -10],
+                  [28, -13],
+                  [34, -7],
+                  [27, -3],
+                ],
+                '#9a8660',
+              );
+            } else crocodile();
+            break;
+          case 'reedbeast':
+            // Folded hind legs, webbed toes and a broad damp muzzle read as an amphibian.
             for (const side of [-1, 1]) {
-              for (const y of [-4, 2, 8])
+              oval(side * 18, 6, 11, 7, '#738857');
+              line(
+                [
+                  [side * 19, 3],
+                  [side * 26, 10],
+                  [side * 14, 13],
+                ],
+                '#9bab77',
+                3,
+              );
+              for (const x of [13, 18, 23])
                 line(
                   [
-                    [side * 12, y],
-                    [side * 28, y + 4],
-                    [side * 33, y + 10],
+                    [side * 17, 11],
+                    [side * x, 14],
                   ],
-                  leg,
-                  2,
+                  '#a7b888',
+                  1.7,
                 );
+            }
+            for (const side of [-1, 1]) {
+              oval(side * 13, 4, 6, 8, '#8e9e69');
               line(
                 [
-                  [side * 15, -4],
-                  [side * 24, -17],
+                  [side * 12, 7],
+                  [side * 17, 12],
                 ],
-                claw,
-                4,
+                '#adba84',
+                2.5,
               );
-              softPoly(
-                [
-                  [side * 23, -19],
-                  [side * 34, -25],
-                  [side * 34, -15],
-                  [side * 25, -13],
-                ],
-                claw,
-              );
+            }
+            oval(0, -2, 19, 16, '#8d9c65');
+            oval(0, 2, 12, 9, '#b1ba83');
+            oval(0, -12, 19, 9, '#98a96e');
+            for (const x of [-11, 11]) {
+              oval(x, -17, 8, 7, '#a5b17a');
+              oval(x, -18, 3, 3.5, '#34443c');
+              fillOval(x - 1, -19, 1, 1.3, '#f5eaca');
             }
             line(
               [
-                [0, 7],
-                [-7, 20],
-                [-19, 12],
-                [-23, -3],
-                [-17, -15],
+                [-12, -7],
+                [0, -4],
+                [12, -7],
               ],
-              tail,
+              '#526744',
+              1.2,
+            );
+            for (const [x, y] of [
+              [-9, -2],
+              [9, 1],
+              [-4, 5],
+            ])
+              oval(x, y, 1.7, 1.2, '#697e50');
+            break;
+          case 'ashbeast':
+            scorpionBody();
+            break;
+          case 'goblin':
+            goblinBody();
+            break;
+          case 'ogre':
+            ogreBody(!!e.ranged);
+            break;
+          case 'archer':
+            if (region === 3) frontierRaider();
+            else human('archer');
+            break;
+          case 'orc':
+            orcBody(e.captainProfile === 'frontier-overseer' ? 'inspector' : 'soldier');
+            break;
+          case 'crownguard':
+            crownSoldier();
+            break;
+          case 'wraith':
+          case 'stalker':
+          case 'summon': {
+            const cloth = e.species === 'stalker' ? '#816a79' : '#6f9694';
+            shaped(cloth, () => {
+              ctx.moveTo(-10, -29);
+              ctx.quadraticCurveTo(-4, -45, 3, -43);
+              ctx.quadraticCurveTo(14, -35, 13, -21);
+              ctx.lineTo(20, 9);
+              ctx.quadraticCurveTo(13, 16, 7, 8);
+              ctx.quadraticCurveTo(0, 17, -7, 9);
+              ctx.quadraticCurveTo(-17, 18, -20, 10);
+              ctx.lineTo(-12, -20);
+            });
+            oval(0, -27, 7, 9, '#2d4949');
+            for (const x of [-3, 3])
+              fillOval(x, -28, 1.1, 1.5, e.species === 'stalker' ? '#ddb0bc' : '#b8d9c3');
+            line(
+              [
+                [-9, -26],
+                [-5, -36],
+                [1, -40],
+                [8, -33],
+                [11, -25],
+              ],
+              '#aec1ae',
+              1.1,
+            );
+            for (const x of [-10, 8]) {
+              ctx.strokeStyle = '#4c7372';
+              ctx.lineWidth = 1.2;
+              ctx.beginPath();
+              ctx.moveTo(x, -15);
+              ctx.quadraticCurveTo(x - 4, 0, x + 2, 8);
+              ctx.stroke();
+            }
+            line(
+              [
+                [10, -13],
+                [18, -8],
+                [21, -3],
+              ],
+              cloth,
               5,
             );
-            poly(
-              [
-                [-20, -17],
-                [-12, -25],
-                [-13, -13],
-              ],
-              bone,
-            );
-            if (ranged) {
-              poly(
-                [
-                  [-13, -9],
-                  [-5, -18],
-                  [3, -13],
-                  [10, -19],
-                  [17, -8],
-                  [8, -3],
-                  [-8, -3],
-                ],
-                '#665166',
-              );
-              oval(8, -10, 5, 4, '#a95f4d');
-              oval(-5, -9, 4, 3, '#ba6d50');
-              glint(8, -11, '#f0a36d', 1.5);
-            }
+            oval(20, -3, 2.8, 3, '#b4c9b3');
+            if (e.species === 'wraith') craftAt(24, 4, 0.5, () => lantern(0, -17));
+            break;
           }
-          break;
-        case 'goblin':
-          humanoid('#89745a', '#9ba574', 0.8);
-          softPoly(
-            [
-              [-6, -29],
-              [-18, -36],
-              [-12, -24],
-            ],
-            '#9ba574',
-          );
-          softPoly(
-            [
-              [6, -29],
-              [18, -36],
-              [12, -24],
-            ],
-            '#9ba574',
-          );
-          poly(
-            [
-              [-3, -27],
-              [0, -21],
-              [5, -25],
-            ],
-            '#bdba8c',
-          );
-          if (e.ranged) {
-            line(
-              [
-                [13, -5],
-                [23, -21],
-                [19, -32],
-              ],
-              '#c0b386',
-              2,
-            );
-            oval(20, -29, 4, 4, '#8d978f');
-            rect(-18, -7, 10, 12, '#775d43');
-          } else sword(12, -3);
-          break;
-        case 'ogre':
-          ogreBody(!!e.ranged);
-          break;
-        case 'archer':
-          if (region === 3) frontierRaider();
-          else human('archer');
-          break;
-        case 'orc':
-          orcBody(e.captainProfile === 'frontier-overseer' ? 'inspector' : 'soldier');
-          break;
-        case 'crownguard':
-          {
-            if (e.estateAttendant) {
-              // Winter-estate household retainer: Crown colors, lighter apron and
-              // soft cap, no full legionary helm or heavy frontline shield.
-              humanoid('#493038', '#aa9381', 0.91);
-              poly(
-                [
-                  [-13, -29],
-                  [0, -40],
-                  [13, -29],
-                  [9, -24],
-                  [-9, -24],
-                ],
-                '#6d343e',
-              );
-              rect(-11, -21, 22, 24, '#322b37');
-              rect(-8, -18, 16, 19, '#72535a');
-              line(
-                [
-                  [-8, -16],
-                  [8, -16],
-                ],
-                '#b79c67',
-                2.4,
-              );
-              poly(
-                [
-                  [-8, -42],
-                  [0, -48],
-                  [8, -42],
-                  [8, -38],
-                  [-8, -38],
-                ],
-                '#563944',
-              );
-              line(
-                [
-                  [15, -17],
-                  [16, 7],
-                ],
-                '#988373',
-                3,
-              );
-              line(
-                [
-                  [-15, -15],
-                  [-15, 7],
-                ],
-                '#7a5653',
-                3,
-              );
-            } else {
-              const cloth = e.guard ? '#51495d' : '#62566e',
-                metal = e.guard ? '#aab2b5' : '#939fa7';
-              humanoid(cloth, metal, 1.03);
-              poly(
-                [
-                  [-12, -32],
-                  [-9, -42],
-                  [0, -47],
-                  [10, -41],
-                  [13, -31],
-                  [7, -35],
-                  [-7, -35],
-                ],
-                '#6d5260',
-              );
-              fillPoly(
-                [
-                  [-12, -32],
-                  [-9, -42],
-                  [0, -47],
-                  [0, -32],
-                ],
-                '#2f2938',
-                0.28,
-              );
-              line(
-                [
-                  [-7, -29],
-                  [7, -29],
-                ],
-                '#d2b77b',
-                2,
-              );
-              rect(-8, -17, 16, 15, metal);
-              fillPoly(
-                [
-                  [-8, -17],
-                  [0, -17],
-                  [0, -2],
-                  [-8, -2],
-                ],
-                '#2e3440',
-                0.18,
-              );
-              if (e.ranged) {
-                bow(17, -7);
-                line(
-                  [
-                    [-15, -29],
-                    [-19, 5],
-                  ],
-                  '#7b604f',
-                  5,
-                );
-                for (const y of [-29, -23, -17])
-                  line(
-                    [
-                      [-20, y],
-                      [-13, y - 5],
-                    ],
-                    '#e5d4ad',
-                    1,
-                  );
-                poly(
-                  [
-                    [-11, -14],
-                    [-18, 8],
-                    [-6, 6],
-                  ],
-                  '#4d4259',
-                );
-              } else {
-                shield(-17, -1, '#7e4f56');
-                sword(16, -6);
-              }
-              if (e.guard) {
-                poly(
-                  [
-                    [-13, -19],
-                    [-22, -18],
-                    [-18, -10],
-                    [-10, -11],
-                  ],
-                  '#858e91',
-                );
-                poly(
-                  [
-                    [13, -19],
-                    [22, -18],
-                    [18, -10],
-                    [10, -11],
-                  ],
-                  '#858e91',
-                );
-                line(
-                  [
-                    [-8, -24],
-                    [8, -24],
-                  ],
-                  '#e0c989',
-                  2,
-                );
-              }
-            }
-          }
-          break;
-        case 'wraith':
-        case 'stalker':
-        case 'summon': {
-          const cloth = e.species === 'stalker' ? '#877179' : '#87a9a6';
-          ctx.fillStyle = cloth;
-          ctx.strokeStyle = ink;
-          ctx.lineWidth = 1.2;
-          ctx.beginPath();
-          ctx.moveTo(-16, 12);
-          ctx.bezierCurveTo(-13, -4, -16, -27, 0, -40);
-          ctx.bezierCurveTo(15, -33, 12, -4, 17, 12);
-          ctx.quadraticCurveTo(10, 4, 8, 8);
-          ctx.quadraticCurveTo(4, 18, 0, 14);
-          ctx.quadraticCurveTo(-4, 5, -7, 7);
-          ctx.quadraticCurveTo(-10, 14, -16, 12);
-          ctx.fill();
-          ctx.stroke();
-          oval(0, -24, 8, 10, '#354c50');
-          line(
-            [
-              [-9, -23],
-              [-7, -31],
-              [0, -35],
-              [8, -29],
-            ],
-            '#b5c5b8',
-            1.3,
-          );
-          line(
-            [
-              [-9, -14],
-              [-6, -2],
-              [-9, 6],
-            ],
-            '#5b7779',
-            1.4,
-          );
-          line(
-            [
-              [8, -14],
-              [5, 2],
-              [8, 7],
-            ],
-            '#5b7779',
-            1.4,
-          );
-          eye(-4, -25);
-          eye(2, -25);
-          if (e.species === 'wraith') {
-            line(
-              [
-                [12, -10],
-                [22, -5],
-              ],
-              '#a6bbae',
-              2,
-            );
-            rect(18, -4, 9, 12, '#6b7769');
-            rect(20, -2, 5, 7, '#dfc980');
-            line(
-              [
-                [19, -4],
-                [22, -9],
-                [26, -4],
-              ],
-              '#b3bdac',
-              1.5,
-            );
-            line(
-              [
-                [19, 6],
-                [26, 6],
-              ],
-              '#9aa48f',
-              1,
-            );
-          }
-          break;
+          default:
+            humanoid('#919b81');
         }
-        default:
-          humanoid('#919b81');
-      }
-      if (
-        e.crownTroop &&
-        !e.mountedCrownRider &&
-        e.species !== 'orc' &&
-        !(e.species === 'archer' && region === 3)
-      ) {
-        // All ranks share a single Crown-issued steel, violet-and-oxblood
-        // livery. Helm silhouettes reveal the people inside the armor rather
-        // than painting Orcs, Ogres and Goblins as identical human soldiers.
-        const ancestry = e.crownAncestry || e.species;
-        const armor = '#9da9b0',
-          cloth = '#54485f',
-          wine = '#74434e';
-        if (ancestry === 'ogre') {
-          for (const x of [-23, 23]) oval(x, -19, 10, 12, armor);
-          poly(
-            [
-              [-21, -38],
-              [-16, -52],
-              [0, -55],
-              [17, -51],
-              [21, -38],
-            ],
-            '#767e8a',
-          );
-          for (const x of [-11, 11])
-            poly(
-              [
-                [x - 3, -39],
-                [x, -34],
-                [x + 4, -39],
-              ],
-              '#d9c49e',
-            );
-        } else if (ancestry === 'goblin') {
-          for (const side of [-1, 1]) {
-            poly(
-              [
-                [side * 10, -39],
-                [side * 24, -43],
-                [side * 13, -31],
-              ],
-              '#9ca77b',
-            );
-            poly(
-              [
-                [side * 13, -38],
-                [side * 20, -41],
-                [side * 14, -35],
-              ],
-              '#7d856e',
-            );
-          }
-          poly(
-            [
-              [-12, -39],
-              [-10, -50],
-              [0, -53],
-              [11, -48],
-              [13, -39],
-            ],
-            '#75828a',
-          );
-        } else if (ancestry === 'orc') {
-          poly(
-            [
-              [-16, -38],
-              [-11, -51],
-              [0, -54],
-              [12, -50],
-              [17, -38],
-            ],
-            '#727c85',
-          );
-          for (const x of [-8, 8])
-            poly(
-              [
-                [x - 3, -31],
-                [x, -38],
-                [x + 3, -31],
-              ],
-              '#e2d4b5',
-            );
-        } else {
-          poly(
-            [
-              [-13, -39],
-              [-9, -52],
-              [0, -57],
-              [10, -50],
-              [13, -39],
-            ],
-            '#75808b',
-          );
-        }
-        // Shoulder plates, cuirass and royal seal have identical color and
-        // location across the diverse units, even when their sizes differ.
-        for (const side of [-1, 1])
-          poly(
-            [
-              [side * 10, -27],
-              [side * 22, -26],
-              [side * 23, -16],
-              [side * 12, -13],
-            ],
-            armor,
-          );
-        poly(
-          [
-            [-13, -24],
-            [13, -24],
-            [11, -5],
-            [-11, -5],
-          ],
-          cloth,
-        );
-        poly(
-          [
-            [-8, -23],
-            [8, -23],
-            [8, -9],
-            [-8, -9],
-          ],
-          '#808e9b',
-        );
-        poly(
-          [
-            [0, -24],
-            [6, -18],
-            [0, -11],
-            [-6, -18],
-          ],
-          wine,
-        );
-        glint(0, -18, '#e8cf94', 2.5);
-        line(
-          [
-            [-11, -5],
-            [11, -5],
-          ],
-          '#dfc997',
-          2,
-        );
-        if (e.ranged) {
-          line(
-            [
-              [18, -36],
-              [23, -16],
-              [20, 4],
-            ],
-            '#987c57',
-            4,
-          );
-          for (const y of [-32, -25, -18])
-            line(
-              [
-                [21, y],
-                [27, y - 6],
-              ],
-              '#e1c695',
-              1.5,
-            );
-        } else shield(-20, -1, '#774a59');
-      }
-      enemyFinish();
+      if (!e.crownTroop) enemyFinish();
       captainFinish();
     }
     if (e.hybrid && e.species === 'reedbeast') {
@@ -17509,8 +16154,8 @@
       oval(0, -56, 5, 5, '#ead6a0');
     }
     if (e.form === 'true') {
-      // Boss radiance is owned by renderer.entityAura, behind the body. Keep
-      // the authored gilded crest here, without a second opaque gold wash.
+      // Every TRUE boss shares a floating translucent status crown. The Dark
+      // Lord also keeps his physical royal crown as part of his normal outfit.
       if (e.type !== 'boss') {
         ctx.save();
         ctx.globalAlpha = 0.32;
@@ -17523,34 +16168,47 @@
         }
         ctx.restore();
       }
-      for (const x of [-17, 17])
-        poly(
-          [
-            [x, -36],
-            [x * 1.45, -54],
-            [x * 0.48, -42],
-          ],
-          '#e1bd6d',
-        );
-      for (const x of [-11, 0, 11]) glint(x, -47, '#ffe7a8', e.type === 'boss' ? 2.4 : 1.3);
       if (e.type === 'boss') {
-        poly(
-          [
-            [-22, -52],
-            [-14, -66],
-            [-7, -56],
-            [0, -70],
-            [7, -56],
-            [14, -66],
-            [22, -52],
-          ],
-          '#d7ad42',
-        );
-        for (const x of [-26, 26]) glint(x, -28, '#fff4bd', 2.8);
-      }
+        const [x, base] = {
+          thorn: [18, -54],
+          crypt: [0, -58],
+          mire: [0, -32],
+          archive: [0, -52],
+          ridge: [0, -52],
+          mine: [0, -56],
+          warlord: [0, -52],
+          abyss: [6, -62],
+          citadel: [0, -62],
+          cindermaw: [0, -59],
+          darklord: [0, -62],
+        }[e.family] || [0, -56];
+        // Identical indicator design and scale, positioned above each anatomy.
+        craftAt(x, base + 44 * 0.85, 0.85, () => spectralRoyalCrown());
+      } else
+        for (const x of [-11, 0, 11])
+          fillOval(x, -47, e.type === 'boss' ? 1.4 : 0.9, 1.2, '#e8d9f1', 0.48);
     } else if (e.form === 'ringleader') {
       const military = ['orc', 'archer', 'crownguard'].includes(e.species);
-      if (military) militaryRingleaderFinish();
+      if (e.mountedCrownRider) {
+        // Rank trim follows the elevated profile helmet, never the animal's chest.
+        craftAt(0, 0, 1.14, () => {
+          shaped('#9a6556', () => {
+            ctx.moveTo(-5, -62);
+            ctx.quadraticCurveTo(-7, -74, 2, -75);
+            ctx.lineTo(6, -69);
+            ctx.quadraticCurveTo(-1, -72, -1, -62);
+          });
+          line(
+            [
+              [-5, -57],
+              [0, -60],
+              [5, -59],
+            ],
+            '#e4c682',
+            1.8,
+          );
+        });
+      } else if (military) militaryRingleaderFinish();
       else {
         rect(-4, -47, 8, 8, gold);
         poly(
@@ -17590,29 +16248,12 @@
         for (const x of [-19, 19]) glint(x, -21, '#ff9f6b', 2);
       }
     }
-    // This decorative foot stroke crosses the irregular archer's spread boots
-    // and reads as a rope tying them together. Keep his two feet separate.
-    if (
-      (type === 'hero' || type === 'ally' || type === 'enemy') &&
-      !(type === 'enemy' && e.species === 'archer' && region === 3)
-    ) {
-      line(
-        [
-          [-8, 13],
-          [0, 15],
-          [8, 13],
-        ],
-        type === 'enemy' ? '#d2aa87' : '#c9d6ad',
-        1.2,
-      );
-      if (type === 'hero') oval(0, -47, 2, 2, '#f6dfa0');
-    }
     ctx.restore();
   }
   function unscaledHeight(e) {
     if (e.type === 'pet') return 58;
     if (e.mountedCrownRider) return 99;
-    if (e.type === 'boss') return 102;
+    if (e.type === 'boss') return e.form === 'true' ? 140 : 102;
     if (e.captain || e.roomCaptain) return 68;
     if (e.renderKind === 'building' && e.kind === 'barracks') return 88;
     if (
@@ -17915,6 +16556,18 @@
         { x, y: y + 80 },
       ]);
     }
+    if (!materials && !blocked) {
+      ctx.save();
+      ctx.globalAlpha = outdoor ? 0.055 : 0.035;
+      ctx.fillStyle = colors[1];
+      ctx.beginPath();
+      ctx.moveTo(p.x - 29, p.y + 20);
+      ctx.bezierCurveTo(p.x - 20, p.y + 10, p.x + 4, p.y + 14, p.x + 26, p.y + 19);
+      ctx.quadraticCurveTo(p.x + 12, p.y + 28, p.x - 14, p.y + 27);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
     // Slab joints belong to built interiors; natural ground has continuous material variation.
     if (!outdoor) {
       ctx.save();
@@ -18077,6 +16730,10 @@
           );
           if (!water && !lava)
             line({ x: edge - side * 3, y: y + 10 }, { x: inside, y: mid }, '#a3a18b77', 1);
+          if (water)
+            line({ x: edge - side * 2, y: y + 8 }, { x: inside, y: mid }, '#afc0a044', 1.3);
+          else if (lava)
+            line({ x: edge - side * 4, y: y + 12 }, { x: inside, y: mid }, '#b5917855', 1);
         }
       }
       for (let y = y1 + 24; y < y2 - 8; y += water ? 62 : 48) {
@@ -18399,6 +17056,15 @@
       );
       for (let x = x1 - 12; x < x2 + 18; x += stone ? 40 : 18)
         line({ x, y: lo }, { x, y: hi }, stone ? '#716e61' : '#705338');
+      for (let x = x1 + 6; x < x2; x += stone ? 40 : 36) {
+        for (const y of [lo + 5, hi - 5]) {
+          const p = screen({ x, y });
+          ctx.fillStyle = stone ? '#c3c0a155' : '#5b5140';
+          ctx.fillRect(p.x - 1, p.y - 1, 2, 1.5);
+        }
+        if (!stone) line({ x: x - 4, y: lo + 8 }, { x: x + 7, y: hi - 8 }, '#d2b88655', 0.7);
+      }
+
       for (const y of [lo, hi]) {
         line({ x: x1 - 18, y }, { x: x2 + 18, y }, stone ? '#d0cbb5' : '#e0c394', 3);
         for (const x of [x1 - 12, x2 + 12]) {
@@ -18551,6 +17217,17 @@
         palette.side,
       );
       poly(top, palette.top, palette.edge, 1.7);
+      for (const j of [1, 3]) {
+        const a = top[j],
+          b = top[2];
+        ctx.strokeStyle = palette.edge + '55';
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y + 3);
+        ctx.lineTo(b.x, b.y + 3);
+        ctx.stroke();
+      }
+
       const seam = (a, b) => {
         a = screen(a);
         b = screen(b);
@@ -18857,6 +17534,27 @@
         ctx.closePath();
         ctx.fill();
         if (command.material) materials?.paint(ctx, materialKey, screen, command.points);
+        if (command.material && !materials && projected.length === 4) {
+          ctx.save();
+          ctx.clip();
+          ctx.strokeStyle = region === 4 ? '#bab7a122' : '#d4bd922b';
+          ctx.lineWidth = 1.3;
+          for (const t of [0.28, 0.7]) {
+            const a = {
+                x: projected[0].x * (1 - t) + projected[3].x * t,
+                y: projected[0].y * (1 - t) + projected[3].y * t,
+              },
+              b = {
+                x: projected[1].x * (1 - t) + projected[2].x * t,
+                y: projected[1].y * (1 - t) + projected[2].y * t,
+              };
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.quadraticCurveTo((a.x + b.x) / 2 + 1.5, (a.y + b.y) / 2 - 1, b.x, b.y);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
       } else {
         const a = screen(command.a),
           b = screen(command.b);

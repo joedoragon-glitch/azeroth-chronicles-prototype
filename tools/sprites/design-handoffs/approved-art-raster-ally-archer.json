@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-raster-ally-archer",
+  "name": "Active sprite — Ally / Archer",
+  "kind": "active-sprite",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Retain this accepted raster revision for the procedural pass. If an image edit is later selected, adjust only ear/hood edge contrast and bow-hand attachment from its preserved original and update dependent frames together.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md.",
+    "subsequentOwnerReview": "Joel requested distinct hero identities, rigid helmets, real quivers, varied NPC hair and expression, believable spear/staff/hammer/anchor, separated barracks desk, character-specific dungeon masters, Cinder Warlord mace and coherent profile direwolf riders across every loadout and tier. Revised drawings propagate through shared, crowned, captive, pet, appointed and fallback states where applicable. No acceptance of unseen revisions is claimed."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "assets/sprites/manifest.json",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "Current active image",
+        "mode": "sprite",
+        "entity": {
+          "id": "ally-65",
+          "type": "archer",
+          "x": 600,
+          "y": 600,
+          "hp": 105,
+          "maxHp": 105,
+          "damage": 15,
+          "icon": "🏹",
+          "cd": 0,
+          "skill1Cd": 0,
+          "skill2Cd": 0,
+          "skillGlobalCd": 0,
+          "healCd": 0,
+          "manaCd": 0,
+          "survivalCd": 0,
+          "immune": 0,
+          "supportEffects": [],
+          "order": null,
+          "carry": 0,
+          "active": true,
+          "renderKind": "ally",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "Procedural fallback",
+        "mode": "procedural",
+        "entity": {
+          "id": "ally-65",
+          "type": "archer",
+          "x": 600,
+          "y": 600,
+          "hp": 105,
+          "maxHp": 105,
+          "damage": 15,
+          "icon": "🏹",
+          "cd": 0,
+          "skill1Cd": 0,
+          "skill2Cd": 0,
+          "skillGlobalCd": 0,
+          "healCd": 0,
+          "manaCd": 0,
+          "survivalCd": 0,
+          "immune": 0,
+          "supportEffects": [],
+          "order": null,
+          "carry": 0,
+          "active": true,
+          "renderKind": "ally",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/images/raster_ally_archer--Current_active_image.webp",
+    "isolatedReferenceHash": "3db7666e59a9bf5bfb1cd7ddb0801341a237b609911769d90a39f2aafb3ed177",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "Existing high-quality art stays intact while the procedural world catches up.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/raster_ally_archer--Current_active_image.webp",
+        "beforeSHA256": "3db7666e59a9bf5bfb1cd7ddb0801341a237b609911769d90a39f2aafb3ed177",
+        "after": "tools/visual-review/approved-art-pass/images/raster_ally_archer--Current_active_image.webp",
+        "afterSHA256": "3db7666e59a9bf5bfb1cd7ddb0801341a237b609911769d90a39f2aafb3ed177",
+        "label": "Current active image"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/raster_ally_archer--Procedural_fallback.webp",
+        "beforeSHA256": "b25e4829077f02d04a70d6722557e03b13c2f522df0d6757707df864f8579651",
+        "after": "tools/visual-review/approved-art-pass/after/raster_ally_archer--Procedural_fallback.webp",
+        "afterSHA256": "d5d9e6c99dbe71466e5f8cdd7ea7e54e25741a90d7d664f1004a2779d7aeb2da",
+        "label": "Procedural fallback"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [
+      "005"
+    ],
+    "verifiedRuntimeKeys": [
+      "ally:archer"
+    ],
+    "requiredVisibleAssets": [
+      "raster:ally:archer"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "assets/sprites/manifest.json",
+        "reason": "Retain this accepted raster revision for the procedural pass. If an image edit is later selected, adjust only ear/hood edge contrast and bow-hand attachment from its preserved original and update dependent frames together."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "Current active image",
+      "Procedural fallback"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": "ally:archer",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 460,
+    "assessmentId": "raster:ally:archer",
+    "disposition": "retain",
+    "implementationStatus": "Protected",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "e6ea987aded7b441bdedf51e1fc29b38b1ed2f02",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": "Updated the relevant shared character identity, face/hair, rigid helmet, held tool, quiver or camp/riding composition under the latest owner correction. Carries through indexed loadouts, captive and appointed states. Gameplay geometry and protected raster pixels remain intact.",
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}

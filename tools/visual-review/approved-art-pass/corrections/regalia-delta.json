@@ -1,0 +1,68 @@
+[
+  {
+    "id": "boss:thorn",
+    "states": [
+      "TRUE form"
+    ]
+  },
+  {
+    "id": "boss:crypt",
+    "states": [
+      "TRUE form"
+    ]
+  },
+  {
+    "id": "boss:mire",
+    "states": [
+      "TRUE form"
+    ]
+  },
+  {
+    "id": "boss:archive",
+    "states": [
+      "TRUE form"
+    ]
+  },
+  {
+    "id": "boss:ridge",
+    "states": [
+      "TRUE form"
+    ]
+  },
+  {
+    "id": "boss:mine",
+    "states": [
+      "TRUE form"
+    ]
+  },
+  {
+    "id": "boss:warlord",
+    "states": [
+      "TRUE form"
+    ]
+  },
+  {
+    "id": "boss:abyss",
+    "states": [
+      "TRUE form"
+    ]
+  },
+  {
+    "id": "boss:citadel",
+    "states": [
+      "TRUE form"
+    ]
+  },
+  {
+    "id": "boss:cindermaw",
+    "states": [
+      "TRUE form"
+    ]
+  },
+  {
+    "id": "boss:darklord",
+    "states": [
+      "TRUE form"
+    ]
+  }
+]

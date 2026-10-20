@@ -5,7 +5,7 @@
       "version": 1,
       "key": "terrain:ground:vale",
       "catalogId": "T001",
-      "dependencyHash": "3bea9060e82355f7fcde2117748e3be031d5b43740ac82a0a3a7f24dc89e71a0",
+      "dependencyHash": "0346e0daf239424c1008f8d130f431360c6eae43b7a19c6b8afa5d152ac59ccd",
       "source": {
         "hash": "7f9eaf3eae7d9a30baa8f07bafc27b54dd88e592da36fbbb6b9970e996ee72b1",
         "width": 1254,
@@ -52,15 +52,26 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "wrap": true,
-        "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
+        "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16.",
+        "canonRetention": {
+          "date": "2026-10-19",
+          "authority": "Owner approved the keep/protect plan for every registered material; exact texture bytes retained.",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+          "decisionRecord": "docs/APPROVED_ART_PASS_20261019.md",
+          "priorRevision": "8745ab9dad2252b3fc17a6717d54e9b376fa489fc8d2ccb9fe3cadca249bc74f",
+          "priorDependency": "3bea9060e82355f7fcde2117748e3be031d5b43740ac82a0a3a7f24dc89e71a0",
+          "currentDependency": "0346e0daf239424c1008f8d130f431360c6eae43b7a19c6b8afa5d152ac59ccd",
+          "outputHash": "a1fa0f5fb4fb2f203147fa8ebce4c4a1703dd7161890e69df4592e0e1d6f4334",
+          "newGeneratedAppearanceAccepted": false
+        }
       },
-      "revision": "8745ab9dad2252b3fc17a6717d54e9b376fa489fc8d2ccb9fe3cadca249bc74f"
+      "revision": "b8bbf9f365d240dad6bb42ac87b2e3fdc96b639fd0366fcfe8b87bf6f5166556"
     },
     "terrain:ground:march": {
       "version": 1,
       "key": "terrain:ground:march",
       "catalogId": "T002",
-      "dependencyHash": "25b3d28969ae877432dcefd8a0166d60ba7a2a7a013f1ce1c86d5f35061f8fde",
+      "dependencyHash": "c0c2745364011c96437f6583a6d538b4dd5edfea3fd37fdf2e191e69eaba1ea2",
       "source": {
         "hash": "4f2acfca7d423ef4c0b1002cf4b0eea447f507caff5ba87e4ac6241803da5b53",
         "width": 1254,
@@ -107,15 +118,26 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "wrap": true,
-        "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
+        "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16.",
+        "canonRetention": {
+          "date": "2026-10-19",
+          "authority": "Owner approved the keep/protect plan for every registered material; exact texture bytes retained.",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+          "decisionRecord": "docs/APPROVED_ART_PASS_20261019.md",
+          "priorRevision": "583f60ce6e4bab3b4ed6f22680eab2a7dfd32a40e4b5b18e7efd8efab11e0648",
+          "priorDependency": "25b3d28969ae877432dcefd8a0166d60ba7a2a7a013f1ce1c86d5f35061f8fde",
+          "currentDependency": "c0c2745364011c96437f6583a6d538b4dd5edfea3fd37fdf2e191e69eaba1ea2",
+          "outputHash": "b1782a435760ed6bce0e5b1b5ad87ae8709ac22ae21c880e0b6a70bf13712276",
+          "newGeneratedAppearanceAccepted": false
+        }
       },
-      "revision": "583f60ce6e4bab3b4ed6f22680eab2a7dfd32a40e4b5b18e7efd8efab11e0648"
+      "revision": "dd5826a20283d1dd38157ef69dcff8017d89bfcc120c59bcf8179d2fd16cdb90"
     },
     "terrain:ground:highlands": {
       "version": 1,
       "key": "terrain:ground:highlands",
       "catalogId": "T003",
-      "dependencyHash": "3968e9ce138276536311f1a3ee36586dc276a2b9469bee5a84ea9121dd744328",
+      "dependencyHash": "0c9d76b67b7d274be33028c01869cc2a577e3bbba3aeb3459c5d4396e4d0ba69",
       "source": {
         "hash": "c5274b0e34ceb87967e252343ce090a235be91a9bacaf4d02dbdf86b9c71ced1",
         "width": 1254,
@@ -162,15 +184,26 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "wrap": true,
-        "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
+        "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16.",
+        "canonRetention": {
+          "date": "2026-10-19",
+          "authority": "Owner approved the keep/protect plan for every registered material; exact texture bytes retained.",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+          "decisionRecord": "docs/APPROVED_ART_PASS_20261019.md",
+          "priorRevision": "c825d85ca3f87c8b7d91fb3fb1e4465c7ed4e8af24e2a80e76c0c3904a519f07",
+          "priorDependency": "3968e9ce138276536311f1a3ee36586dc276a2b9469bee5a84ea9121dd744328",
+          "currentDependency": "0c9d76b67b7d274be33028c01869cc2a577e3bbba3aeb3459c5d4396e4d0ba69",
+          "outputHash": "e108c18f0c95bcd577a0cf6a802a33847162af9276d3336be5d9f3b9abbae09d",
+          "newGeneratedAppearanceAccepted": false
+        }
       },
-      "revision": "c825d85ca3f87c8b7d91fb3fb1e4465c7ed4e8af24e2a80e76c0c3904a519f07"
+      "revision": "e5748ee4dde27452f02f4ed40da717fd1c8d7fce4fdfc88c1b3e45cf9fbb0104"
     },
     "terrain:ground:frontier": {
       "version": 1,
       "key": "terrain:ground:frontier",
       "catalogId": "T004",
-      "dependencyHash": "69e5d2e1455efc2de2040f40eec391dafadf04c92ca69a22d61911933f51ca0b",
+      "dependencyHash": "e00b5b1617f982bd8d00289b0bb4df418cc08905103e63fa5285e16fa2a0ceca",
       "source": {
         "hash": "9504556f05eb570dbd1f12ee6cc3bab52fc224d2c3d99b7d5ef74d3e4410710a",
         "width": 1254,
@@ -217,15 +250,26 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "wrap": true,
-        "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
+        "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16.",
+        "canonRetention": {
+          "date": "2026-10-19",
+          "authority": "Owner approved the keep/protect plan for every registered material; exact texture bytes retained.",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+          "decisionRecord": "docs/APPROVED_ART_PASS_20261019.md",
+          "priorRevision": "c9a09db6aed83db02cb784200c9fa1cb9cbfc5e6608a313a5388dcd8d509fe82",
+          "priorDependency": "69e5d2e1455efc2de2040f40eec391dafadf04c92ca69a22d61911933f51ca0b",
+          "currentDependency": "e00b5b1617f982bd8d00289b0bb4df418cc08905103e63fa5285e16fa2a0ceca",
+          "outputHash": "bf8577c52fb47274c71ce2e8c73c98c66a2515d5b62a89120156e5749c3a4ba7",
+          "newGeneratedAppearanceAccepted": false
+        }
       },
-      "revision": "c9a09db6aed83db02cb784200c9fa1cb9cbfc5e6608a313a5388dcd8d509fe82"
+      "revision": "75b4324a6eab58666e1150da6e88e9ced01eecddf2f2beac3f27aaab144ee776"
     },
     "terrain:ground:crown": {
       "version": 1,
       "key": "terrain:ground:crown",
       "catalogId": "T005",
-      "dependencyHash": "74350b029d3cef23685edb97420d3e435bb08fc08fc20cfae495f4895f6e7420",
+      "dependencyHash": "48d75fb248c425e4a2da2273997d1aa7f78fc5b0706b8ad6729dcb418e2002a7",
       "source": {
         "hash": "c2f3d98cc187c4195afda455b237e98391972085b72355e1eba6a251832335b7",
         "width": 1254,
@@ -272,15 +316,26 @@
         "userAppearanceAcceptance": false,
         "nativeScale": true,
         "wrap": true,
-        "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
+        "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16.",
+        "canonRetention": {
+          "date": "2026-10-19",
+          "authority": "Owner approved the keep/protect plan for every registered material; exact texture bytes retained.",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+          "decisionRecord": "docs/APPROVED_ART_PASS_20261019.md",
+          "priorRevision": "bff0c54cfe529928e3d0b9f552e28fb23393d21ae647b7510ca63d8d7b9134f8",
+          "priorDependency": "74350b029d3cef23685edb97420d3e435bb08fc08fc20cfae495f4895f6e7420",
+          "currentDependency": "48d75fb248c425e4a2da2273997d1aa7f78fc5b0706b8ad6729dcb418e2002a7",
+          "outputHash": "7985f36f485ad35a0b55907cbb099bd4656695f5b4377373bdeba23f727eb3b2",
+          "newGeneratedAppearanceAccepted": false
+        }
       },
-      "revision": "bff0c54cfe529928e3d0b9f552e28fb23393d21ae647b7510ca63d8d7b9134f8"
+      "revision": "a121d57534feac0a5ccd9413ac084caff6f4a2a8b9daa92d3ad18b5954fee5f7"
     },
     "terrain:road:vale": {
       "version": 1,
       "key": "terrain:road:vale",
       "catalogId": "T006",
-      "dependencyHash": "efddb4d54fddf21d07bd6e66bc285036653c7feb9db62042d5d734d6f027cffb",
+      "dependencyHash": "84ce8faf47ebec92e64df017238b9d4725b3522e47c77c4e086dcc5ce2dfe5bf",
       "source": {
         "hash": "cf00b49877b545d3d36ac97aec12797021005c96743a48a5afa3c7886ff64b37",
         "width": 1254,
@@ -328,15 +383,26 @@
         "nativeScale": true,
         "wrap": true,
         "scope": "Engineer appearance review: restrained soil/gravel grain, opaque tile, 3x3 wrap and six capped-ratio device profiles in day/night. Browser/offline release gates pending.",
-        "evidence": "native-review-v2/evidence.json"
+        "evidence": "native-review-v2/evidence.json",
+        "canonRetention": {
+          "date": "2026-10-19",
+          "authority": "Owner approved the keep/protect plan for every registered material; exact texture bytes retained.",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+          "decisionRecord": "docs/APPROVED_ART_PASS_20261019.md",
+          "priorRevision": "cff0219382ae8e530213e01e9564e51d461685f081c13861938d8edeb9cb3445",
+          "priorDependency": "efddb4d54fddf21d07bd6e66bc285036653c7feb9db62042d5d734d6f027cffb",
+          "currentDependency": "84ce8faf47ebec92e64df017238b9d4725b3522e47c77c4e086dcc5ce2dfe5bf",
+          "outputHash": "e655205174d24f1f359916071fd764584953e3acaba4451f9d158e304fc87134",
+          "newGeneratedAppearanceAccepted": false
+        }
       },
-      "revision": "cff0219382ae8e530213e01e9564e51d461685f081c13861938d8edeb9cb3445"
+      "revision": "e040c561cb96f113632c1ade4480465b68215cb6fd1433ef8cd56e6c36d75b96"
     },
     "terrain:road:highlands": {
       "version": 1,
       "key": "terrain:road:highlands",
       "catalogId": "T008",
-      "dependencyHash": "532b47b87cd84d3363e15124c83dcae7c6fc011d3fd12fb892975cf450c7afab",
+      "dependencyHash": "31f6e13cdbebaf6dcc29d57a411dd20fdb24315ad25fd7606731bdda5961601b",
       "source": {
         "hash": "358ffc144c6e905bd9e738d20bbacc5332972bd948d5072d683ca3715ec0eb5d",
         "width": 1254,
@@ -384,18 +450,423 @@
         "nativeScale": true,
         "wrap": true,
         "scope": "Engineer appearance review: restrained soil/gravel grain, opaque tile, 3x3 wrap and six capped-ratio device profiles in day/night. Browser/offline release gates pending.",
-        "evidence": "native-review-v2/evidence.json"
+        "evidence": "native-review-v2/evidence.json",
+        "canonRetention": {
+          "date": "2026-10-19",
+          "authority": "Owner approved the keep/protect plan for every registered material; exact texture bytes retained.",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+          "decisionRecord": "docs/APPROVED_ART_PASS_20261019.md",
+          "priorRevision": "13c98eed9c5be3ddf092032a628aac30d2b414bdfb587c41ac0247ef99625082",
+          "priorDependency": "532b47b87cd84d3363e15124c83dcae7c6fc011d3fd12fb892975cf450c7afab",
+          "currentDependency": "31f6e13cdbebaf6dcc29d57a411dd20fdb24315ad25fd7606731bdda5961601b",
+          "outputHash": "15ad70f49d7ba8593468ebd9cd1dca34b9df8fc70975f8b757d0686bc0881f22",
+          "newGeneratedAppearanceAccepted": false
+        }
       },
-      "revision": "13c98eed9c5be3ddf092032a628aac30d2b414bdfb587c41ac0247ef99625082"
+      "revision": "4142695562a1f799c3f47abba3f48a2e0f1f57fd0b67256fae2e5ae6fb44d205"
     }
   },
   "history": {
-    "terrain:ground:vale": [],
-    "terrain:ground:march": [],
-    "terrain:ground:highlands": [],
-    "terrain:ground:frontier": [],
-    "terrain:ground:crown": [],
-    "terrain:road:vale": [],
-    "terrain:road:highlands": []
+    "terrain:ground:vale": [
+      {
+        "version": 1,
+        "key": "terrain:ground:vale",
+        "catalogId": "T001",
+        "dependencyHash": "3bea9060e82355f7fcde2117748e3be031d5b43740ac82a0a3a7f24dc89e71a0",
+        "source": {
+          "hash": "7f9eaf3eae7d9a30baa8f07bafc27b54dd88e592da36fbbb6b9970e996ee72b1",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 2584104,
+          "opaque": true,
+          "seams": {
+            "x": 6.115629984051032,
+            "y": 5.406964380648595,
+            "interiorX": 3.9888592736284787,
+            "interiorY": 4.229761172866314
+          }
+        },
+        "output": {
+          "hash": "a1fa0f5fb4fb2f203147fa8ebce4c4a1703dd7161890e69df4592e0e1d6f4334",
+          "width": 256,
+          "height": 256,
+          "bytes": 123625,
+          "opaque": true,
+          "seams": {
+            "x": 4.348958333333334,
+            "y": 4.447916666666666,
+            "interiorX": 5.273549836601345,
+            "interiorY": 5.372569444444484
+          }
+        },
+        "processing": {
+          "tool": "sharp",
+          "version": "0.35.5",
+          "kernel": "lanczos3",
+          "crop": false,
+          "trim": false,
+          "colorConversion": false,
+          "seamRepair": false
+        },
+        "runtime": {
+          "worldSpan": 320,
+          "opacity": 0.28
+        },
+        "review": {
+          "status": "approved",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+          "kind": "engineer-authorized",
+          "userAppearanceAcceptance": false,
+          "nativeScale": true,
+          "wrap": true,
+          "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
+        },
+        "revision": "8745ab9dad2252b3fc17a6717d54e9b376fa489fc8d2ccb9fe3cadca249bc74f"
+      }
+    ],
+    "terrain:ground:march": [
+      {
+        "version": 1,
+        "key": "terrain:ground:march",
+        "catalogId": "T002",
+        "dependencyHash": "25b3d28969ae877432dcefd8a0166d60ba7a2a7a013f1ce1c86d5f35061f8fde",
+        "source": {
+          "hash": "4f2acfca7d423ef4c0b1002cf4b0eea447f507caff5ba87e4ac6241803da5b53",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 2906561,
+          "opaque": true,
+          "seams": {
+            "x": 7.409090909090889,
+            "y": 6.0571504518872885,
+            "interiorX": 5.381465980848742,
+            "interiorY": 5.469520466138705
+          }
+        },
+        "output": {
+          "hash": "b1782a435760ed6bce0e5b1b5ad87ae8709ac22ae21c880e0b6a70bf13712276",
+          "width": 256,
+          "height": 256,
+          "bytes": 106250,
+          "opaque": true,
+          "seams": {
+            "x": 4.62890625,
+            "y": 5.3789062499999964,
+            "interiorX": 4.6683874591502725,
+            "interiorY": 4.5920802696078145
+          }
+        },
+        "processing": {
+          "tool": "sharp",
+          "version": "0.35.5",
+          "kernel": "lanczos3",
+          "crop": false,
+          "trim": false,
+          "colorConversion": false,
+          "seamRepair": false
+        },
+        "runtime": {
+          "worldSpan": 320,
+          "opacity": 0.28
+        },
+        "review": {
+          "status": "approved",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+          "kind": "engineer-authorized",
+          "userAppearanceAcceptance": false,
+          "nativeScale": true,
+          "wrap": true,
+          "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
+        },
+        "revision": "583f60ce6e4bab3b4ed6f22680eab2a7dfd32a40e4b5b18e7efd8efab11e0648"
+      }
+    ],
+    "terrain:ground:highlands": [
+      {
+        "version": 1,
+        "key": "terrain:ground:highlands",
+        "catalogId": "T003",
+        "dependencyHash": "3968e9ce138276536311f1a3ee36586dc276a2b9469bee5a84ea9121dd744328",
+        "source": {
+          "hash": "c5274b0e34ceb87967e252343ce090a235be91a9bacaf4d02dbdf86b9c71ced1",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 2611394,
+          "opaque": true,
+          "seams": {
+            "x": 6.17570441254652,
+            "y": 6.027113237639556,
+            "interiorX": 4.110788016257068,
+            "interiorY": 4.093045377961742
+          }
+        },
+        "output": {
+          "hash": "e108c18f0c95bcd577a0cf6a802a33847162af9276d3336be5d9f3b9abbae09d",
+          "width": 256,
+          "height": 256,
+          "bytes": 103737,
+          "opaque": true,
+          "seams": {
+            "x": 4.805989583333333,
+            "y": 4.680989583333333,
+            "interiorX": 5.284931576797413,
+            "interiorY": 5.0774356617646905
+          }
+        },
+        "processing": {
+          "tool": "sharp",
+          "version": "0.35.5",
+          "kernel": "lanczos3",
+          "crop": false,
+          "trim": false,
+          "colorConversion": false,
+          "seamRepair": false
+        },
+        "runtime": {
+          "worldSpan": 320,
+          "opacity": 0.28
+        },
+        "review": {
+          "status": "approved",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+          "kind": "engineer-authorized",
+          "userAppearanceAcceptance": false,
+          "nativeScale": true,
+          "wrap": true,
+          "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
+        },
+        "revision": "c825d85ca3f87c8b7d91fb3fb1e4465c7ed4e8af24e2a80e76c0c3904a519f07"
+      }
+    ],
+    "terrain:ground:frontier": [
+      {
+        "version": 1,
+        "key": "terrain:ground:frontier",
+        "catalogId": "T004",
+        "dependencyHash": "69e5d2e1455efc2de2040f40eec391dafadf04c92ca69a22d61911933f51ca0b",
+        "source": {
+          "hash": "9504556f05eb570dbd1f12ee6cc3bab52fc224d2c3d99b7d5ef74d3e4410710a",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 2642587,
+          "opaque": true,
+          "seams": {
+            "x": 6.028442317916002,
+            "y": 4.520999468367887,
+            "interiorX": 3.7277519598898308,
+            "interiorY": 3.881519016773654
+          }
+        },
+        "output": {
+          "hash": "bf8577c52fb47274c71ce2e8c73c98c66a2515d5b62a89120156e5749c3a4ba7",
+          "width": 256,
+          "height": 256,
+          "bytes": 91835,
+          "opaque": true,
+          "seams": {
+            "x": 4.541666666666666,
+            "y": 3.393229166666668,
+            "interiorX": 3.1557904411765114,
+            "interiorY": 3.1848651960784666
+          }
+        },
+        "processing": {
+          "tool": "sharp",
+          "version": "0.35.5",
+          "kernel": "lanczos3",
+          "crop": false,
+          "trim": false,
+          "colorConversion": false,
+          "seamRepair": false
+        },
+        "runtime": {
+          "worldSpan": 320,
+          "opacity": 0.28
+        },
+        "review": {
+          "status": "approved",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+          "kind": "engineer-authorized",
+          "userAppearanceAcceptance": false,
+          "nativeScale": true,
+          "wrap": true,
+          "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
+        },
+        "revision": "c9a09db6aed83db02cb784200c9fa1cb9cbfc5e6608a313a5388dcd8d509fe82"
+      }
+    ],
+    "terrain:ground:crown": [
+      {
+        "version": 1,
+        "key": "terrain:ground:crown",
+        "catalogId": "T005",
+        "dependencyHash": "74350b029d3cef23685edb97420d3e435bb08fc08fc20cfae495f4895f6e7420",
+        "source": {
+          "hash": "c2f3d98cc187c4195afda455b237e98391972085b72355e1eba6a251832335b7",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 1945247,
+          "opaque": true,
+          "seams": {
+            "x": 2.4728867623604462,
+            "y": 2.4808612440191378,
+            "interiorX": 1.7886299887184145,
+            "interiorY": 1.8801114433285082
+          }
+        },
+        "output": {
+          "hash": "7985f36f485ad35a0b55907cbb099bd4656695f5b4377373bdeba23f727eb3b2",
+          "width": 256,
+          "height": 256,
+          "bytes": 81860,
+          "opaque": true,
+          "seams": {
+            "x": 2.6822916666666674,
+            "y": 2.9414062500000027,
+            "interiorX": 3.161672794117689,
+            "interiorY": 3.22643484477128
+          }
+        },
+        "processing": {
+          "tool": "sharp",
+          "version": "0.35.5",
+          "kernel": "lanczos3",
+          "crop": false,
+          "trim": false,
+          "colorConversion": false,
+          "seamRepair": false
+        },
+        "runtime": {
+          "worldSpan": 320,
+          "opacity": 0.28
+        },
+        "review": {
+          "status": "approved",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/111",
+          "kind": "engineer-authorized",
+          "userAppearanceAcceptance": false,
+          "nativeScale": true,
+          "wrap": true,
+          "checks": "Fully opaque original; retained unmodified source; numerical edge gate; inspected 3x3 wraps; four native device viewports day/night with actual world renderer, clipped procedural geometry and scene hashes. Grain remains subtle behind entities. No generation after call 16."
+        },
+        "revision": "bff0c54cfe529928e3d0b9f552e28fb23393d21ae647b7510ca63d8d7b9134f8"
+      }
+    ],
+    "terrain:road:vale": [
+      {
+        "version": 1,
+        "key": "terrain:road:vale",
+        "catalogId": "T006",
+        "dependencyHash": "efddb4d54fddf21d07bd6e66bc285036653c7feb9db62042d5d734d6f027cffb",
+        "source": {
+          "hash": "cf00b49877b545d3d36ac97aec12797021005c96743a48a5afa3c7886ff64b37",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 2976878,
+          "opaque": true,
+          "seams": {
+            "x": 9.0337586390218,
+            "y": 9.284954811270602,
+            "interiorX": 5.792457485342059,
+            "interiorY": 5.958554334032251
+          }
+        },
+        "output": {
+          "hash": "e655205174d24f1f359916071fd764584953e3acaba4451f9d158e304fc87134",
+          "width": 256,
+          "height": 256,
+          "bytes": 130920,
+          "opaque": true,
+          "seams": {
+            "x": 6.684895833333336,
+            "y": 8.347656250000002,
+            "interiorX": 7.829279003268038,
+            "interiorY": 7.976516544117657
+          }
+        },
+        "processing": {
+          "tool": "sharp",
+          "version": "0.35.5",
+          "kernel": "lanczos3",
+          "crop": false,
+          "trim": false,
+          "colorConversion": false,
+          "seamRepair": false
+        },
+        "runtime": {
+          "worldSpan": 320,
+          "opacity": 0.28
+        },
+        "review": {
+          "status": "approved",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+          "kind": "engineer-authorized",
+          "userAppearanceAcceptance": false,
+          "nativeScale": true,
+          "wrap": true,
+          "scope": "Engineer appearance review: restrained soil/gravel grain, opaque tile, 3x3 wrap and six capped-ratio device profiles in day/night. Browser/offline release gates pending.",
+          "evidence": "native-review-v2/evidence.json"
+        },
+        "revision": "cff0219382ae8e530213e01e9564e51d461685f081c13861938d8edeb9cb3445"
+      }
+    ],
+    "terrain:road:highlands": [
+      {
+        "version": 1,
+        "key": "terrain:road:highlands",
+        "catalogId": "T008",
+        "dependencyHash": "532b47b87cd84d3363e15124c83dcae7c6fc011d3fd12fb892975cf450c7afab",
+        "source": {
+          "hash": "358ffc144c6e905bd9e738d20bbacc5332972bd948d5072d683ca3715ec0eb5d",
+          "width": 1254,
+          "height": 1254,
+          "bytes": 3783401,
+          "opaque": true,
+          "seams": {
+            "x": 14.213981924508243,
+            "y": 14.964646464646469,
+            "interiorX": 10.235812784033813,
+            "interiorY": 10.546996618005629
+          }
+        },
+        "output": {
+          "hash": "15ad70f49d7ba8593468ebd9cd1dca34b9df8fc70975f8b757d0686bc0881f22",
+          "width": 256,
+          "height": 256,
+          "bytes": 126537,
+          "opaque": true,
+          "seams": {
+            "x": 8.843750000000004,
+            "y": 10.692708333333341,
+            "interiorX": 8.995169526143828,
+            "interiorY": 8.994658905228762
+          }
+        },
+        "processing": {
+          "tool": "sharp",
+          "version": "0.35.5",
+          "kernel": "lanczos3",
+          "crop": false,
+          "trim": false,
+          "colorConversion": false,
+          "seamRepair": false
+        },
+        "runtime": {
+          "worldSpan": 320,
+          "opacity": 0.28
+        },
+        "review": {
+          "status": "approved",
+          "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/160",
+          "kind": "engineer-authorized",
+          "userAppearanceAcceptance": false,
+          "nativeScale": true,
+          "wrap": true,
+          "scope": "Engineer appearance review: restrained soil/gravel grain, opaque tile, 3x3 wrap and six capped-ratio device profiles in day/night. Browser/offline release gates pending.",
+          "evidence": "native-review-v2/evidence.json"
+        },
+        "revision": "13c98eed9c5be3ddf092032a628aac30d2b414bdfb587c41ac0247ef99625082"
+      }
+    ]
   }
 }

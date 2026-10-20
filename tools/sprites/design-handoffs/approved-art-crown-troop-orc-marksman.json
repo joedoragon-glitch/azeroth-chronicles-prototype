@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-crown-troop-orc-marksman",
+  "name": "Crown Orc — marksman",
+  "kind": "crown-troop",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Build one fitted orc marksman uniform using the existing royal steel/violet/oxblood palette. Shape the orc face and limb proportions first; integrate one bow, one quiver and a light drawing shoulder rather than stacking another loadout.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md.",
+    "subsequentOwnerReview": "Joel requested distinct hero identities, rigid helmets, real quivers, varied NPC hair and expression, believable spear/staff/hammer/anchor, separated barracks desk, character-specific dungeon masters, Cinder Warlord mace and coherent profile direwolf riders across every loadout and tier. Revised drawings propagate through shared, crowned, captive, pet, appointed and fallback states where applicable. No acceptance of unseen revisions is claimed."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "Actual Citadel troop body",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-43",
+          "name": "Crown orc marksman",
+          "x": 520,
+          "y": 850,
+          "family": null,
+          "species": "crownguard",
+          "icon": "👿",
+          "form": "normal",
+          "type": "mob",
+          "level": 14,
+          "baseHp": 1382,
+          "baseDamage": 82,
+          "hp": 1382,
+          "maxHp": 1382,
+          "damage": 82,
+          "gold": 0,
+          "xp": 0,
+          "home": {
+            "x": 520,
+            "y": 850
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "pack": "citadel-command",
+          "guard": true,
+          "forcedRole": "ranged",
+          "ranged": true,
+          "shotRange": 280,
+          "shotSpeed": 260,
+          "projectileStyle": "arrow",
+          "mountedCrownRider": false,
+          "guardianBalanceVersion": 2,
+          "crownTroop": true,
+          "crownAncestry": "orc",
+          "telegraph": null,
+          "sequence": [],
+          "motion": null,
+          "rangedAim": null,
+          "frozen": false,
+          "renderKind": "enemy",
+          "visualScale": 1
+        },
+        "region": 4,
+        "scale": 1.5,
+        "displayDPR": 2
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/after/crown-troop_orc_marksman--Actual_Citadel_troop_body.webp",
+    "isolatedReferenceHash": "a2a487a3954dc57d286be99e25b1bef2b62cb8a8acacd52a5840fb59579f3966",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "Species, professional rank and combat role remain readable together.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/crown-troop_orc_marksman--Actual_Citadel_troop_body.webp",
+        "beforeSHA256": "112a2b13f9271aa59b338499d995f8143f97779bf4d82805ed7d5a7ea9f597fb",
+        "after": "tools/visual-review/approved-art-pass/after/crown-troop_orc_marksman--Actual_Citadel_troop_body.webp",
+        "afterSHA256": "a2a487a3954dc57d286be99e25b1bef2b62cb8a8acacd52a5840fb59579f3966",
+        "label": "Actual Citadel troop body"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "crown-troop:orc:marksman"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js",
+        "reason": "Build one fitted orc marksman uniform using the existing royal steel/violet/oxblood palette. Shape the orc face and limb proportions first; integrate one bow, one quiver and a light drawing shoulder rather than stacking another loadout."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "Actual Citadel troop body"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 435,
+    "assessmentId": "crown-troop:orc:marksman",
+    "disposition": "rebuild",
+    "implementationStatus": "Implemented",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": "Updated the relevant shared character identity, face/hair, rigid helmet, held tool, quiver or camp/riding composition under the latest owner correction. Carries through indexed loadouts, captive and appointed states. Gameplay geometry and protected raster pixels remain intact.",
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}

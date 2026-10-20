@@ -88,3 +88,10 @@ Immediate exception requested 19 October: enable manual normal/charged Skill 1 i
 ## Dev.79 publication closeout — 19 October 2026
 
 The owner explicitly approved #319 merge/publication with no further testing. Merge `23d951092ea5dff806c460c62ca71eeced574f5c` and packaging-only run [39312326936](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39312326936) published manual Developer Mode Skill 1 and the documentation closeout. Movement auto-attack remains disabled. Earlier draft/no-merge/candidate-only statements in this dated reconciliation are historical. Preserve the existing branch, old source branches and deferred notes; no new feature work or automatic restart follows from this publication.
+
+
+## Prospective Dark Lord class variants — 19 October, owner idea
+
+Joel proposed three recognizable Dark Lord archetypes: sword/Paladin, Mage and Ranger. Preserve the same open face, character identity, royal palette and crown, with class kit and selected attack substitutions. His class should differ from the player's starting class; which of the other two classes is selected, and whether the mapping is fixed or varies by run, remain undecided. Mage and Ranger forms should gain appropriate magical or ranged attacks rather than merely swapping the held weapon. Retain shared signature moves where they work.
+
+This is a prospective design idea, not implemented gameplay: Joel also said the existing version may be good for now. Current dev.86 only refines TRUE-form regalia. A future explicit gameplay request should reconcile the existing Dark Lord boss-combat owner, choose the mapping/attack replacements, and cover persistence and balance within the single consolidated update process. Do not begin a parallel boss implementation or new balance sweep from this note.

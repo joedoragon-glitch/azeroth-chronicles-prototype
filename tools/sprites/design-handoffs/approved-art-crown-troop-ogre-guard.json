@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-crown-troop-ogre-guard",
+  "name": "Crown Ogre — guard",
+  "kind": "crown-troop",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Build one fitted ogre guard uniform using the existing royal steel/violet/oxblood palette. Shape the ogre face and limb proportions first; integrate one shield, one melee weapon and weight-bearing armor rather than stacking another loadout.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "Actual Citadel troop body",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-40",
+          "name": "Crown ogre guard",
+          "x": 450,
+          "y": 540,
+          "family": null,
+          "species": "crownguard",
+          "icon": "👿",
+          "form": "normal",
+          "type": "mob",
+          "level": 13,
+          "baseHp": 1382,
+          "baseDamage": 82,
+          "hp": 1382,
+          "maxHp": 1382,
+          "damage": 82,
+          "gold": 0,
+          "xp": 0,
+          "home": {
+            "x": 450,
+            "y": 540
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "pack": "citadel-muster",
+          "guard": true,
+          "forcedRole": "melee",
+          "ranged": false,
+          "mountedCrownRider": false,
+          "guardianBalanceVersion": 2,
+          "crownTroop": true,
+          "crownAncestry": "ogre",
+          "telegraph": null,
+          "sequence": [],
+          "motion": null,
+          "rangedAim": null,
+          "frozen": false,
+          "renderKind": "enemy",
+          "visualScale": 1
+        },
+        "region": 4,
+        "scale": 1.5,
+        "displayDPR": 2
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/after/crown-troop_ogre_guard--Actual_Citadel_troop_body.webp",
+    "isolatedReferenceHash": "fce1060361c3e81fac580b97617deffa4b3f46821a67e0f2ba251caa206f42cb",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "Species, professional rank and combat role remain readable together.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/crown-troop_ogre_guard--Actual_Citadel_troop_body.webp",
+        "beforeSHA256": "e04c58c3e355329c193dc72cbbfed5357ec581c3598192e24075486b3c36367d",
+        "after": "tools/visual-review/approved-art-pass/after/crown-troop_ogre_guard--Actual_Citadel_troop_body.webp",
+        "afterSHA256": "fce1060361c3e81fac580b97617deffa4b3f46821a67e0f2ba251caa206f42cb",
+        "label": "Actual Citadel troop body"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "crown-troop:ogre:guard"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js",
+        "reason": "Build one fitted ogre guard uniform using the existing royal steel/violet/oxblood palette. Shape the ogre face and limb proportions first; integrate one shield, one melee weapon and weight-bearing armor rather than stacking another loadout."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "Actual Citadel troop body"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 438,
+    "assessmentId": "crown-troop:ogre:guard",
+    "disposition": "rebuild",
+    "implementationStatus": "Implemented",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": null,
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}

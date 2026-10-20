@@ -1,0 +1,308 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-enemy-reedbeast",
+  "name": "Reedbeast",
+  "kind": "enemy",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Connect the squat torso to folded thighs, shape a broad damp muzzle and show webbed hands/feet.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::draw / enemy species reedbeast",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "Current body",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-39",
+          "family": null,
+          "species": "reedbeast",
+          "name": "reedbeast",
+          "icon": "👿",
+          "form": "normal",
+          "type": "mob",
+          "level": 1,
+          "baseHp": 100,
+          "baseDamage": 0,
+          "hp": 100,
+          "maxHp": 100,
+          "damage": 0,
+          "gold": 0,
+          "xp": 0,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "ranged",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-39",
+          "family": null,
+          "species": "reedbeast",
+          "name": "reedbeast",
+          "icon": "👿",
+          "form": "normal",
+          "type": "mob",
+          "level": 1,
+          "baseHp": 100,
+          "baseDamage": 0,
+          "hp": 100,
+          "maxHp": 100,
+          "damage": 0,
+          "gold": 0,
+          "xp": 0,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1,
+          "ranged": true
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "guardian",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-39",
+          "family": null,
+          "species": "reedbeast",
+          "name": "reedbeast",
+          "icon": "👿",
+          "form": "normal",
+          "type": "mob",
+          "level": 1,
+          "baseHp": 100,
+          "baseDamage": 0,
+          "hp": 100,
+          "maxHp": 100,
+          "damage": 0,
+          "gold": 0,
+          "xp": 0,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1,
+          "guard": true
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      },
+      {
+        "label": "ringleader",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-39",
+          "family": null,
+          "species": "reedbeast",
+          "name": "reedbeast",
+          "icon": "👿",
+          "form": "ringleader",
+          "type": "mob",
+          "level": 1,
+          "baseHp": 100,
+          "baseDamage": 0,
+          "hp": 100,
+          "maxHp": 100,
+          "damage": 0,
+          "gold": 0,
+          "xp": 0,
+          "x": 600,
+          "y": 600,
+          "home": {
+            "x": 600,
+            "y": 600
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "renderKind": "enemy",
+          "visualScale": 1
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/after/enemy_reedbeast--Current_body.webp",
+    "isolatedReferenceHash": "92a585b730ded5450fa927a50cb188eacf09d3fae5f910ada3d566ede29a0f75",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "An amphibian body with weight and personality.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/enemy_reedbeast--Current_body.webp",
+        "beforeSHA256": "233213dc5c7a919f8d19bd2fe3126c74b9257f359352a6cf2dc4b28b1cf9eb3f",
+        "after": "tools/visual-review/approved-art-pass/after/enemy_reedbeast--Current_body.webp",
+        "afterSHA256": "92a585b730ded5450fa927a50cb188eacf09d3fae5f910ada3d566ede29a0f75",
+        "label": "Current body"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/enemy_reedbeast--ranged.webp",
+        "beforeSHA256": "233213dc5c7a919f8d19bd2fe3126c74b9257f359352a6cf2dc4b28b1cf9eb3f",
+        "after": "tools/visual-review/approved-art-pass/after/enemy_reedbeast--ranged.webp",
+        "afterSHA256": "92a585b730ded5450fa927a50cb188eacf09d3fae5f910ada3d566ede29a0f75",
+        "label": "ranged"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/enemy_reedbeast--guardian.webp",
+        "beforeSHA256": "49d48324e0d17a939e1cfd666766415ed97d220313f11fb18bbfdf0385a20d66",
+        "after": "tools/visual-review/approved-art-pass/after/enemy_reedbeast--guardian.webp",
+        "afterSHA256": "dc5c3de63dbc86f59d8c4bfb8c360054ff1a22d57d1df2a668a1058feefb69f6",
+        "label": "guardian"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/enemy_reedbeast--ringleader.webp",
+        "beforeSHA256": "28b3de63c94356f65ad328aaf02cbf10f8bd6f84e7c41599c372574186790e50",
+        "after": "tools/visual-review/approved-art-pass/after/enemy_reedbeast--ringleader.webp",
+        "afterSHA256": "5acc0174c72df618f24a4c872e119893e3c39b5154b86b522f45d74ef2be0ecc",
+        "label": "ringleader"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "enemy:reedbeast"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      {
+        "state": "ranged",
+        "plan": "Keep the actual projectile equipment and one coherent loadout; refine shoulder, hand and carrying straps with the base body."
+      },
+      {
+        "state": "guardian",
+        "plan": "Fit the guard equipment to the same anatomy; keep the face clear and the guarding role distinct."
+      },
+      {
+        "state": "ringleader",
+        "plan": "Preserve authored elite/military rank language; integrate rank details into the clothing instead of concealing the improved face."
+      }
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::draw / enemy species reedbeast",
+        "reason": "Connect the squat torso to folded thighs, shape a broad damp muzzle and show webbed hands/feet."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "Current body",
+      "ranged",
+      "guardian",
+      "ringleader"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 4,
+    "assessmentId": "enemy:reedbeast",
+    "disposition": "refine",
+    "implementationStatus": "Implemented",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": null,
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}

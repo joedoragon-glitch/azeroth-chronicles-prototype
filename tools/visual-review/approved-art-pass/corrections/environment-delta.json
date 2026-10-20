@@ -1,0 +1,590 @@
+[
+  {
+    "id": "structure:vale-workshop",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "structure:highland-smithy",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "structure:frontier-workshop",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "structure:crown-forgehouse",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:root-table",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:drift-seat",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:highland-pay-station",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:ore-sorting-bay",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:mint-workbench",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:caravan-loading-bay",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:ridge-supper",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:ridge-game-corner",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:ridge-study",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:war-table",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:crown-levy-yard",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:crown-command-post",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:dreadmaw-vault-post",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:citadel-command",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:citadel-forge-bay",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:citadel-vanity-quarters",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:cookfire",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:game-table",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:stolen-goods",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:field-kitchen",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:supply-stack",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:scribe-desk",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:ritual-table",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:caretaker-table",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:bush",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:pioneer-brush",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:regrowth-birch",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:regrowth-willow",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:fruit-tree",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:sapling",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:fallen-log",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:driftwood",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:mangrove",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:pine-sapling",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:alpine-scrub",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:heather",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:dead-tree",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:dry-scrub",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:burned-log",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:dead-shrub",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:geothermal-heat-intake",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:crown-glass-kiln",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:market",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:woodpile",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:laundry",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:flight-planning-table",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "decoration:handler-station",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "landmark:orchard",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "landmark:convoy",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "landmark:foundry",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "landmark:goblin-camp",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "landmark:wolf-den",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "landmark:orc-bivouac",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "environment:wild-tree-vale",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:supplier-vale",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:barracks-basic-vale",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:barracks-full-vale",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "environment:wild-tree-march",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:supplier-march",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:barracks-basic-march",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:barracks-full-march",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "environment:wild-tree-highlands",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:supplier-highlands",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:barracks-basic-highlands",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:barracks-full-highlands",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "environment:wild-tree-frontier",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:supplier-frontier",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:barracks-basic-frontier",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:barracks-full-frontier",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:supplier-crown",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:barracks-basic-crown",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "service:barracks-full-crown",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "shared:working-captives",
+    "states": [
+      "dispatch:repair-workstation \u2014 shared child reference"
+    ]
+  },
+  {
+    "id": "shared:transport-wagon",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "shared:nodes",
+    "states": [
+      "node:wood \u2014 shared child reference"
+    ]
+  },
+  {
+    "id": "dispatch:workshop",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "dispatch:repair-workstation",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "work-detail:preservation",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "node:wood",
+    "states": [
+      "Current body"
+    ]
+  },
+  {
+    "id": "raster:prop:bush:vale",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "raster:prop:sapling:vale",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "raster:prop:fallen-log:vale",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "raster:prop:driftwood:march",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "raster:prop:mangrove:march",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "raster:prop:pine-sapling:highlands",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "raster:prop:alpine-scrub:highlands",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "raster:prop:dead-tree:frontier",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "raster:prop:dry-scrub:frontier",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "raster:prop:burned-log:frontier",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "raster:prop:dead-shrub:crown",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "raster:prop:heather:highlands",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "raster:prop:mint-workbench:highlands",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "raster:prop:ore-sorting-bay:highlands",
+    "states": [
+      "Procedural fallback"
+    ]
+  },
+  {
+    "id": "raster:prop:caravan-loading-bay:highlands",
+    "states": [
+      "Procedural fallback"
+    ]
+  }
+]

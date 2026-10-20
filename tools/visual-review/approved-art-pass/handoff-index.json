@@ -1,0 +1,2570 @@
+{
+  "entries": [
+    {
+      "id": "enemy:skeleton",
+      "catalogNumber": 1,
+      "handoff": "tools/sprites/design-handoffs/approved-art-enemy-skeleton.json"
+    },
+    {
+      "id": "enemy:wolf",
+      "catalogNumber": 2,
+      "handoff": "tools/sprites/design-handoffs/approved-art-enemy-wolf.json"
+    },
+    {
+      "id": "enemy:mireling",
+      "catalogNumber": 3,
+      "handoff": "tools/sprites/design-handoffs/approved-art-enemy-mireling.json"
+    },
+    {
+      "id": "enemy:reedbeast",
+      "catalogNumber": 4,
+      "handoff": "tools/sprites/design-handoffs/approved-art-enemy-reedbeast.json"
+    },
+    {
+      "id": "enemy:ashbeast",
+      "catalogNumber": 5,
+      "handoff": "tools/sprites/design-handoffs/approved-art-enemy-ashbeast.json"
+    },
+    {
+      "id": "enemy:goblin",
+      "catalogNumber": 6,
+      "handoff": "tools/sprites/design-handoffs/approved-art-enemy-goblin.json"
+    },
+    {
+      "id": "enemy:ogre",
+      "catalogNumber": 7,
+      "handoff": "tools/sprites/design-handoffs/approved-art-enemy-ogre.json"
+    },
+    {
+      "id": "enemy:archer",
+      "catalogNumber": 8,
+      "handoff": "tools/sprites/design-handoffs/approved-art-enemy-archer.json"
+    },
+    {
+      "id": "enemy:orc",
+      "catalogNumber": 9,
+      "handoff": "tools/sprites/design-handoffs/approved-art-enemy-orc.json"
+    },
+    {
+      "id": "enemy:crownguard",
+      "catalogNumber": 10,
+      "handoff": "tools/sprites/design-handoffs/approved-art-enemy-crownguard.json"
+    },
+    {
+      "id": "enemy:wraith",
+      "catalogNumber": 11,
+      "handoff": "tools/sprites/design-handoffs/approved-art-enemy-wraith.json"
+    },
+    {
+      "id": "enemy:stalker",
+      "catalogNumber": 12,
+      "handoff": "tools/sprites/design-handoffs/approved-art-enemy-stalker.json"
+    },
+    {
+      "id": "enemy:summon",
+      "catalogNumber": 13,
+      "handoff": "tools/sprites/design-handoffs/approved-art-enemy-summon.json"
+    },
+    {
+      "id": "boss:thorn",
+      "catalogNumber": 14,
+      "handoff": "tools/sprites/design-handoffs/approved-art-boss-thorn.json"
+    },
+    {
+      "id": "boss:crypt",
+      "catalogNumber": 15,
+      "handoff": "tools/sprites/design-handoffs/approved-art-boss-crypt.json"
+    },
+    {
+      "id": "boss:mire",
+      "catalogNumber": 16,
+      "handoff": "tools/sprites/design-handoffs/approved-art-boss-mire.json"
+    },
+    {
+      "id": "boss:archive",
+      "catalogNumber": 17,
+      "handoff": "tools/sprites/design-handoffs/approved-art-boss-archive.json"
+    },
+    {
+      "id": "boss:ridge",
+      "catalogNumber": 18,
+      "handoff": "tools/sprites/design-handoffs/approved-art-boss-ridge.json"
+    },
+    {
+      "id": "boss:mine",
+      "catalogNumber": 19,
+      "handoff": "tools/sprites/design-handoffs/approved-art-boss-mine.json"
+    },
+    {
+      "id": "boss:warlord",
+      "catalogNumber": 20,
+      "handoff": "tools/sprites/design-handoffs/approved-art-boss-warlord.json"
+    },
+    {
+      "id": "boss:abyss",
+      "catalogNumber": 21,
+      "handoff": "tools/sprites/design-handoffs/approved-art-boss-abyss.json"
+    },
+    {
+      "id": "boss:citadel",
+      "catalogNumber": 22,
+      "handoff": "tools/sprites/design-handoffs/approved-art-boss-citadel.json"
+    },
+    {
+      "id": "boss:cindermaw",
+      "catalogNumber": 23,
+      "handoff": "tools/sprites/design-handoffs/approved-art-boss-cindermaw.json"
+    },
+    {
+      "id": "boss:darklord",
+      "catalogNumber": 24,
+      "handoff": "tools/sprites/design-handoffs/approved-art-boss-darklord.json"
+    },
+    {
+      "id": "structure:vale-cottage",
+      "catalogNumber": 25,
+      "handoff": "tools/sprites/design-handoffs/approved-art-structure-vale-cottage.json"
+    },
+    {
+      "id": "structure:vale-workshop",
+      "catalogNumber": 26,
+      "handoff": "tools/sprites/design-handoffs/approved-art-structure-vale-workshop.json"
+    },
+    {
+      "id": "structure:vale-fence",
+      "catalogNumber": 27,
+      "handoff": "tools/sprites/design-handoffs/approved-art-structure-vale-fence.json"
+    },
+    {
+      "id": "structure:march-stilt-house",
+      "catalogNumber": 28,
+      "handoff": "tools/sprites/design-handoffs/approved-art-structure-march-stilt-house.json"
+    },
+    {
+      "id": "structure:march-boathouse",
+      "catalogNumber": 29,
+      "handoff": "tools/sprites/design-handoffs/approved-art-structure-march-boathouse.json"
+    },
+    {
+      "id": "structure:march-boardwalk",
+      "catalogNumber": 30,
+      "handoff": "tools/sprites/design-handoffs/approved-art-structure-march-boardwalk.json"
+    },
+    {
+      "id": "structure:highland-stone-house",
+      "catalogNumber": 31,
+      "handoff": "tools/sprites/design-handoffs/approved-art-structure-highland-stone-house.json"
+    },
+    {
+      "id": "structure:highland-smithy",
+      "catalogNumber": 32,
+      "handoff": "tools/sprites/design-handoffs/approved-art-structure-highland-smithy.json"
+    },
+    {
+      "id": "structure:highland-wall",
+      "catalogNumber": 33,
+      "handoff": "tools/sprites/design-handoffs/approved-art-structure-highland-wall.json"
+    },
+    {
+      "id": "structure:frontier-patched-house",
+      "catalogNumber": 34,
+      "handoff": "tools/sprites/design-handoffs/approved-art-structure-frontier-patched-house.json"
+    },
+    {
+      "id": "structure:frontier-workshop",
+      "catalogNumber": 35,
+      "handoff": "tools/sprites/design-handoffs/approved-art-structure-frontier-workshop.json"
+    },
+    {
+      "id": "structure:frontier-palisade",
+      "catalogNumber": 36,
+      "handoff": "tools/sprites/design-handoffs/approved-art-structure-frontier-palisade.json"
+    },
+    {
+      "id": "structure:crown-ash-house",
+      "catalogNumber": 37,
+      "handoff": "tools/sprites/design-handoffs/approved-art-structure-crown-ash-house.json"
+    },
+    {
+      "id": "structure:crown-forgehouse",
+      "catalogNumber": 38,
+      "handoff": "tools/sprites/design-handoffs/approved-art-structure-crown-forgehouse.json"
+    },
+    {
+      "id": "structure:crown-wall",
+      "catalogNumber": 39,
+      "handoff": "tools/sprites/design-handoffs/approved-art-structure-crown-wall.json"
+    },
+    {
+      "id": "decoration:direwolf-kennel",
+      "catalogNumber": 40,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-direwolf-kennel.json"
+    },
+    {
+      "id": "decoration:rider-tack-rack",
+      "catalogNumber": 41,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-rider-tack-rack.json"
+    },
+    {
+      "id": "decoration:rider-bunk",
+      "catalogNumber": 42,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-rider-bunk.json"
+    },
+    {
+      "id": "decoration:torch",
+      "catalogNumber": 43,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-torch.json"
+    },
+    {
+      "id": "decoration:estate-rug",
+      "catalogNumber": 44,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-estate-rug.json"
+    },
+    {
+      "id": "decoration:estate-hearth",
+      "catalogNumber": 45,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-estate-hearth.json"
+    },
+    {
+      "id": "decoration:estate-lounge",
+      "catalogNumber": 46,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-estate-lounge.json"
+    },
+    {
+      "id": "decoration:coffin",
+      "catalogNumber": 47,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-coffin.json"
+    },
+    {
+      "id": "decoration:bones",
+      "catalogNumber": 48,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-bones.json"
+    },
+    {
+      "id": "decoration:banner",
+      "catalogNumber": 49,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-banner.json"
+    },
+    {
+      "id": "decoration:shelf",
+      "catalogNumber": 50,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-shelf.json"
+    },
+    {
+      "id": "decoration:water",
+      "catalogNumber": 51,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-water.json"
+    },
+    {
+      "id": "decoration:rune",
+      "catalogNumber": 52,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-rune.json"
+    },
+    {
+      "id": "decoration:crate",
+      "catalogNumber": 53,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-crate.json"
+    },
+    {
+      "id": "decoration:rail",
+      "catalogNumber": 54,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-rail.json"
+    },
+    {
+      "id": "decoration:crystal",
+      "catalogNumber": 55,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-crystal.json"
+    },
+    {
+      "id": "decoration:chain",
+      "catalogNumber": 56,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-chain.json"
+    },
+    {
+      "id": "decoration:ember",
+      "catalogNumber": 57,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-ember.json"
+    },
+    {
+      "id": "decoration:armor",
+      "catalogNumber": 58,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-armor.json"
+    },
+    {
+      "id": "decoration:thorn-bed",
+      "catalogNumber": 59,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-thorn-bed.json"
+    },
+    {
+      "id": "decoration:fang-trophy",
+      "catalogNumber": 60,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-fang-trophy.json"
+    },
+    {
+      "id": "decoration:root-table",
+      "catalogNumber": 61,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-root-table.json"
+    },
+    {
+      "id": "decoration:warm-brazier",
+      "catalogNumber": 62,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-warm-brazier.json"
+    },
+    {
+      "id": "decoration:treasure-hoard",
+      "catalogNumber": 63,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-treasure-hoard.json"
+    },
+    {
+      "id": "decoration:boss-chest",
+      "catalogNumber": 64,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-boss-chest.json"
+    },
+    {
+      "id": "decoration:mire-pool",
+      "catalogNumber": 65,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-mire-pool.json"
+    },
+    {
+      "id": "decoration:fish-rack",
+      "catalogNumber": 66,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-fish-rack.json"
+    },
+    {
+      "id": "decoration:reed-nest",
+      "catalogNumber": 67,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-reed-nest.json"
+    },
+    {
+      "id": "decoration:shell-hoard",
+      "catalogNumber": 68,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-shell-hoard.json"
+    },
+    {
+      "id": "decoration:drift-seat",
+      "catalogNumber": 69,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-drift-seat.json"
+    },
+    {
+      "id": "decoration:silver-ore-face",
+      "catalogNumber": 70,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-silver-ore-face.json"
+    },
+    {
+      "id": "decoration:copper-ore-face",
+      "catalogNumber": 71,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-copper-ore-face.json"
+    },
+    {
+      "id": "decoration:copper-sort-samples",
+      "catalogNumber": 72,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-copper-sort-samples.json"
+    },
+    {
+      "id": "decoration:silver-refining-hearth",
+      "catalogNumber": 73,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-silver-refining-hearth.json"
+    },
+    {
+      "id": "decoration:silver-sort-samples",
+      "catalogNumber": 74,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-silver-sort-samples.json"
+    },
+    {
+      "id": "decoration:silver-die-tray",
+      "catalogNumber": 75,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-silver-die-tray.json"
+    },
+    {
+      "id": "decoration:sealed-crown-consignment",
+      "catalogNumber": 76,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-sealed-crown-consignment.json"
+    },
+    {
+      "id": "decoration:highland-pay-station",
+      "catalogNumber": 77,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-highland-pay-station.json"
+    },
+    {
+      "id": "decoration:ore-sorting-bay",
+      "catalogNumber": 78,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-ore-sorting-bay.json"
+    },
+    {
+      "id": "decoration:mint-workbench",
+      "catalogNumber": 79,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-mint-workbench.json"
+    },
+    {
+      "id": "decoration:caravan-loading-bay",
+      "catalogNumber": 80,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-caravan-loading-bay.json"
+    },
+    {
+      "id": "decoration:mine-supports",
+      "catalogNumber": 81,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-mine-supports.json"
+    },
+    {
+      "id": "decoration:mine-old-markings",
+      "catalogNumber": 82,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-mine-old-markings.json"
+    },
+    {
+      "id": "decoration:mine-collapse",
+      "catalogNumber": 83,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-mine-collapse.json"
+    },
+    {
+      "id": "decoration:ridge-supper",
+      "catalogNumber": 84,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-ridge-supper.json"
+    },
+    {
+      "id": "decoration:ridge-game-corner",
+      "catalogNumber": 85,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-ridge-game-corner.json"
+    },
+    {
+      "id": "decoration:ridge-study",
+      "catalogNumber": 86,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-ridge-study.json"
+    },
+    {
+      "id": "decoration:ridge-bed",
+      "catalogNumber": 87,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-ridge-bed.json"
+    },
+    {
+      "id": "decoration:crag-rest",
+      "catalogNumber": 88,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-crag-rest.json"
+    },
+    {
+      "id": "decoration:ridge-hearth",
+      "catalogNumber": 89,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-ridge-hearth.json"
+    },
+    {
+      "id": "decoration:weapon-rack",
+      "catalogNumber": 90,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-weapon-rack.json"
+    },
+    {
+      "id": "decoration:stone-seat",
+      "catalogNumber": 91,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-stone-seat.json"
+    },
+    {
+      "id": "decoration:trophy-rack",
+      "catalogNumber": 92,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-trophy-rack.json"
+    },
+    {
+      "id": "decoration:dark-brazier",
+      "catalogNumber": 93,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-dark-brazier.json"
+    },
+    {
+      "id": "decoration:dark-throne",
+      "catalogNumber": 94,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-dark-throne.json"
+    },
+    {
+      "id": "decoration:war-table",
+      "catalogNumber": 95,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-war-table.json"
+    },
+    {
+      "id": "decoration:crown-banner",
+      "catalogNumber": 96,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-crown-banner.json"
+    },
+    {
+      "id": "decoration:crown-levy-yard",
+      "catalogNumber": 97,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-crown-levy-yard.json"
+    },
+    {
+      "id": "decoration:crown-command-post",
+      "catalogNumber": 98,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-crown-command-post.json"
+    },
+    {
+      "id": "decoration:ashbeast-roost-scene",
+      "catalogNumber": 99,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-ashbeast-roost-scene.json"
+    },
+    {
+      "id": "decoration:cindermaw-hoard-scene",
+      "catalogNumber": 100,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-cindermaw-hoard-scene.json"
+    },
+    {
+      "id": "decoration:cindermaw-ash-den",
+      "catalogNumber": 101,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-cindermaw-ash-den.json"
+    },
+    {
+      "id": "decoration:dreadmaw-vault-post",
+      "catalogNumber": 102,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-dreadmaw-vault-post.json"
+    },
+    {
+      "id": "decoration:crown-logistics-bay",
+      "catalogNumber": 103,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-crown-logistics-bay.json"
+    },
+    {
+      "id": "decoration:crown-fortress-checkpoint",
+      "catalogNumber": 104,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-crown-fortress-checkpoint.json"
+    },
+    {
+      "id": "decoration:citadel-muster",
+      "catalogNumber": 105,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-citadel-muster.json"
+    },
+    {
+      "id": "decoration:citadel-command",
+      "catalogNumber": 106,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-citadel-command.json"
+    },
+    {
+      "id": "decoration:citadel-ritual-array",
+      "catalogNumber": 107,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-citadel-ritual-array.json"
+    },
+    {
+      "id": "decoration:citadel-barracks-bay",
+      "catalogNumber": 108,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-citadel-barracks-bay.json"
+    },
+    {
+      "id": "decoration:citadel-forge-bay",
+      "catalogNumber": 109,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-citadel-forge-bay.json"
+    },
+    {
+      "id": "decoration:citadel-vanity-quarters",
+      "catalogNumber": 110,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-citadel-vanity-quarters.json"
+    },
+    {
+      "id": "decoration:citadel-boss-approach",
+      "catalogNumber": 111,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-citadel-boss-approach.json"
+    },
+    {
+      "id": "decoration:animal-pen",
+      "catalogNumber": 112,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-animal-pen.json"
+    },
+    {
+      "id": "decoration:drying-rack",
+      "catalogNumber": 113,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-drying-rack.json"
+    },
+    {
+      "id": "decoration:tax-post",
+      "catalogNumber": 114,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-tax-post.json"
+    },
+    {
+      "id": "decoration:lean-to",
+      "catalogNumber": 115,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-lean-to.json"
+    },
+    {
+      "id": "decoration:cookfire",
+      "catalogNumber": 116,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-cookfire.json"
+    },
+    {
+      "id": "decoration:sleep-roll",
+      "catalogNumber": 117,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-sleep-roll.json"
+    },
+    {
+      "id": "decoration:game-table",
+      "catalogNumber": 118,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-game-table.json"
+    },
+    {
+      "id": "decoration:stolen-goods",
+      "catalogNumber": 119,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-stolen-goods.json"
+    },
+    {
+      "id": "decoration:training-dummy",
+      "catalogNumber": 120,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-training-dummy.json"
+    },
+    {
+      "id": "decoration:bone-pile",
+      "catalogNumber": 121,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-bone-pile.json"
+    },
+    {
+      "id": "decoration:grave-marker",
+      "catalogNumber": 122,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-grave-marker.json"
+    },
+    {
+      "id": "decoration:pup-nest",
+      "catalogNumber": 123,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-pup-nest.json"
+    },
+    {
+      "id": "decoration:fishing-net",
+      "catalogNumber": 124,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-fishing-net.json"
+    },
+    {
+      "id": "decoration:mud-nest",
+      "catalogNumber": 125,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-mud-nest.json"
+    },
+    {
+      "id": "decoration:wallow",
+      "catalogNumber": 126,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-wallow.json"
+    },
+    {
+      "id": "decoration:ore-cart",
+      "catalogNumber": 127,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-ore-cart.json"
+    },
+    {
+      "id": "decoration:ore-crane",
+      "catalogNumber": 128,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-ore-crane.json"
+    },
+    {
+      "id": "decoration:tool-rack",
+      "catalogNumber": 129,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-tool-rack.json"
+    },
+    {
+      "id": "decoration:stone-marker",
+      "catalogNumber": 130,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-stone-marker.json"
+    },
+    {
+      "id": "decoration:field-kitchen",
+      "catalogNumber": 131,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-field-kitchen.json"
+    },
+    {
+      "id": "decoration:supply-stack",
+      "catalogNumber": 132,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-supply-stack.json"
+    },
+    {
+      "id": "decoration:command-tent",
+      "catalogNumber": 133,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-command-tent.json"
+    },
+    {
+      "id": "decoration:bunk",
+      "catalogNumber": 134,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-bunk.json"
+    },
+    {
+      "id": "decoration:forge",
+      "catalogNumber": 135,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-forge.json"
+    },
+    {
+      "id": "decoration:roost",
+      "catalogNumber": 136,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-roost.json"
+    },
+    {
+      "id": "decoration:hatchery",
+      "catalogNumber": 137,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-hatchery.json"
+    },
+    {
+      "id": "decoration:scribe-desk",
+      "catalogNumber": 138,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-scribe-desk.json"
+    },
+    {
+      "id": "decoration:scroll-stack",
+      "catalogNumber": 139,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-scroll-stack.json"
+    },
+    {
+      "id": "decoration:ossuary",
+      "catalogNumber": 140,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-ossuary.json"
+    },
+    {
+      "id": "decoration:ritual-table",
+      "catalogNumber": 141,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-ritual-table.json"
+    },
+    {
+      "id": "decoration:grave-lamp",
+      "catalogNumber": 142,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-grave-lamp.json"
+    },
+    {
+      "id": "decoration:caretaker-table",
+      "catalogNumber": 143,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-caretaker-table.json"
+    },
+    {
+      "id": "decoration:grass",
+      "catalogNumber": 144,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-grass.json"
+    },
+    {
+      "id": "decoration:wet-grass",
+      "catalogNumber": 145,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-wet-grass.json"
+    },
+    {
+      "id": "decoration:bush",
+      "catalogNumber": 146,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-bush.json"
+    },
+    {
+      "id": "decoration:marsh-bush",
+      "catalogNumber": 147,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-marsh-bush.json"
+    },
+    {
+      "id": "decoration:battlefield-poppies",
+      "catalogNumber": 148,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-battlefield-poppies.json"
+    },
+    {
+      "id": "decoration:pioneer-grasses",
+      "catalogNumber": 149,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-pioneer-grasses.json"
+    },
+    {
+      "id": "decoration:pioneer-brush",
+      "catalogNumber": 150,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-pioneer-brush.json"
+    },
+    {
+      "id": "decoration:regrowth-birch",
+      "catalogNumber": 151,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-regrowth-birch.json"
+    },
+    {
+      "id": "decoration:regrowth-willow",
+      "catalogNumber": 152,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-regrowth-willow.json"
+    },
+    {
+      "id": "decoration:mossy-basalt",
+      "catalogNumber": 153,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-mossy-basalt.json"
+    },
+    {
+      "id": "decoration:wildflowers",
+      "catalogNumber": 154,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-wildflowers.json"
+    },
+    {
+      "id": "decoration:fruit-tree",
+      "catalogNumber": 155,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-fruit-tree.json"
+    },
+    {
+      "id": "decoration:sapling",
+      "catalogNumber": 156,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-sapling.json"
+    },
+    {
+      "id": "decoration:stump",
+      "catalogNumber": 157,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-stump.json"
+    },
+    {
+      "id": "decoration:fallen-log",
+      "catalogNumber": 158,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-fallen-log.json"
+    },
+    {
+      "id": "decoration:reeds",
+      "catalogNumber": 159,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-reeds.json"
+    },
+    {
+      "id": "decoration:cattails",
+      "catalogNumber": 160,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-cattails.json"
+    },
+    {
+      "id": "decoration:driftwood",
+      "catalogNumber": 161,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-driftwood.json"
+    },
+    {
+      "id": "decoration:mangrove",
+      "catalogNumber": 162,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-mangrove.json"
+    },
+    {
+      "id": "decoration:dock-post",
+      "catalogNumber": 163,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-dock-post.json"
+    },
+    {
+      "id": "decoration:pine-sapling",
+      "catalogNumber": 164,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-pine-sapling.json"
+    },
+    {
+      "id": "decoration:alpine-scrub",
+      "catalogNumber": 165,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-alpine-scrub.json"
+    },
+    {
+      "id": "decoration:heather",
+      "catalogNumber": 166,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-heather.json"
+    },
+    {
+      "id": "decoration:rock-cluster",
+      "catalogNumber": 167,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-rock-cluster.json"
+    },
+    {
+      "id": "decoration:dead-tree",
+      "catalogNumber": 168,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-dead-tree.json"
+    },
+    {
+      "id": "decoration:charred-stump",
+      "catalogNumber": 169,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-charred-stump.json"
+    },
+    {
+      "id": "decoration:ash-patch",
+      "catalogNumber": 170,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-ash-patch.json"
+    },
+    {
+      "id": "decoration:dry-scrub",
+      "catalogNumber": 171,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-dry-scrub.json"
+    },
+    {
+      "id": "decoration:burned-log",
+      "catalogNumber": 172,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-burned-log.json"
+    },
+    {
+      "id": "decoration:ember-pit",
+      "catalogNumber": 173,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-ember-pit.json"
+    },
+    {
+      "id": "decoration:black-rock",
+      "catalogNumber": 174,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-black-rock.json"
+    },
+    {
+      "id": "decoration:crystal-cluster",
+      "catalogNumber": 175,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-crystal-cluster.json"
+    },
+    {
+      "id": "decoration:dead-shrub",
+      "catalogNumber": 176,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-dead-shrub.json"
+    },
+    {
+      "id": "decoration:roadside-lantern",
+      "catalogNumber": 177,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-roadside-lantern.json"
+    },
+    {
+      "id": "decoration:geothermal-heat-intake",
+      "catalogNumber": 178,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-geothermal-heat-intake.json"
+    },
+    {
+      "id": "decoration:thermal-flue",
+      "catalogNumber": 179,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-thermal-flue.json"
+    },
+    {
+      "id": "decoration:crown-glass-kiln",
+      "catalogNumber": 180,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-crown-glass-kiln.json"
+    },
+    {
+      "id": "decoration:crown-ceramic-kiln",
+      "catalogNumber": 181,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-crown-ceramic-kiln.json"
+    },
+    {
+      "id": "decoration:heat-distribution-post",
+      "catalogNumber": 182,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-heat-distribution-post.json"
+    },
+    {
+      "id": "decoration:heated-drying-shed",
+      "catalogNumber": 183,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-heated-drying-shed.json"
+    },
+    {
+      "id": "decoration:heated-washhouse",
+      "catalogNumber": 184,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-heated-washhouse.json"
+    },
+    {
+      "id": "decoration:fumarole",
+      "catalogNumber": 185,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-fumarole.json"
+    },
+    {
+      "id": "decoration:obsidian",
+      "catalogNumber": 186,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-obsidian.json"
+    },
+    {
+      "id": "decoration:market",
+      "catalogNumber": 187,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-market.json"
+    },
+    {
+      "id": "decoration:woodpile",
+      "catalogNumber": 188,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-woodpile.json"
+    },
+    {
+      "id": "decoration:laundry",
+      "catalogNumber": 189,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-laundry.json"
+    },
+    {
+      "id": "decoration:well",
+      "catalogNumber": 190,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-well.json"
+    },
+    {
+      "id": "decoration:barrel",
+      "catalogNumber": 191,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-barrel.json"
+    },
+    {
+      "id": "decoration:cart",
+      "catalogNumber": 192,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-cart.json"
+    },
+    {
+      "id": "decoration:ration",
+      "catalogNumber": 193,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-ration.json"
+    },
+    {
+      "id": "decoration:hay-rick",
+      "catalogNumber": 194,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-hay-rick.json"
+    },
+    {
+      "id": "decoration:furrow-plot",
+      "catalogNumber": 195,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-furrow-plot.json"
+    },
+    {
+      "id": "decoration:pasture-sheep",
+      "catalogNumber": 196,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-pasture-sheep.json"
+    },
+    {
+      "id": "decoration:poultry-yard",
+      "catalogNumber": 197,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-poultry-yard.json"
+    },
+    {
+      "id": "decoration:feed-trough",
+      "catalogNumber": 198,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-feed-trough.json"
+    },
+    {
+      "id": "decoration:farm-tool-rack",
+      "catalogNumber": 199,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-farm-tool-rack.json"
+    },
+    {
+      "id": "decoration:garden",
+      "catalogNumber": 200,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-garden.json"
+    },
+    {
+      "id": "decoration:watchpost",
+      "catalogNumber": 201,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-watchpost.json"
+    },
+    {
+      "id": "decoration:barricade",
+      "catalogNumber": 202,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-barricade.json"
+    },
+    {
+      "id": "decoration:road-ruts",
+      "catalogNumber": 203,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-road-ruts.json"
+    },
+    {
+      "id": "decoration:road-patch",
+      "catalogNumber": 204,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-road-patch.json"
+    },
+    {
+      "id": "decoration:stacked-lumber",
+      "catalogNumber": 205,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-stacked-lumber.json"
+    },
+    {
+      "id": "decoration:repair-brace",
+      "catalogNumber": 206,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-repair-brace.json"
+    },
+    {
+      "id": "decoration:broken-cart",
+      "catalogNumber": 207,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-broken-cart.json"
+    },
+    {
+      "id": "decoration:wagon-wheel",
+      "catalogNumber": 208,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-wagon-wheel.json"
+    },
+    {
+      "id": "decoration:charred-foundation",
+      "catalogNumber": 209,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-charred-foundation.json"
+    },
+    {
+      "id": "decoration:replacement-stakes",
+      "catalogNumber": 210,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-replacement-stakes.json"
+    },
+    {
+      "id": "decoration:patched-fence",
+      "catalogNumber": 211,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-patched-fence.json"
+    },
+    {
+      "id": "decoration:inspection-marker",
+      "catalogNumber": 212,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-inspection-marker.json"
+    },
+    {
+      "id": "decoration:checkpoint-standard",
+      "catalogNumber": 213,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-checkpoint-standard.json"
+    },
+    {
+      "id": "decoration:chain-anchor",
+      "catalogNumber": 214,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-chain-anchor.json"
+    },
+    {
+      "id": "decoration:flight-planning-table",
+      "catalogNumber": 215,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-flight-planning-table.json"
+    },
+    {
+      "id": "decoration:flight-harness-station",
+      "catalogNumber": 216,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-flight-harness-station.json"
+    },
+    {
+      "id": "decoration:royal-flight-standard",
+      "catalogNumber": 217,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-royal-flight-standard.json"
+    },
+    {
+      "id": "decoration:royal-launch-platform",
+      "catalogNumber": 218,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-royal-launch-platform.json"
+    },
+    {
+      "id": "decoration:handler-station",
+      "catalogNumber": 219,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-handler-station.json"
+    },
+    {
+      "id": "decoration:feed-crate",
+      "catalogNumber": 220,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-feed-crate.json"
+    },
+    {
+      "id": "decoration:containment-post",
+      "catalogNumber": 221,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-containment-post.json"
+    },
+    {
+      "id": "decoration:scorched-floor",
+      "catalogNumber": 222,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-scorched-floor.json"
+    },
+    {
+      "id": "decoration:egg-cradle",
+      "catalogNumber": 223,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-egg-cradle.json"
+    },
+    {
+      "id": "decoration:feeding-trough",
+      "catalogNumber": 224,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-feeding-trough.json"
+    },
+    {
+      "id": "decoration:carcass-rack",
+      "catalogNumber": 225,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-carcass-rack.json"
+    },
+    {
+      "id": "decoration:claw-scrape",
+      "catalogNumber": 226,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-claw-scrape.json"
+    },
+    {
+      "id": "decoration:dragon-perch",
+      "catalogNumber": 227,
+      "handoff": "tools/sprites/design-handoffs/approved-art-decoration-dragon-perch.json"
+    },
+    {
+      "id": "landmark:orchard",
+      "catalogNumber": 228,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-orchard.json"
+    },
+    {
+      "id": "landmark:den-ruins",
+      "catalogNumber": 229,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-den-ruins.json"
+    },
+    {
+      "id": "landmark:mill-pond",
+      "catalogNumber": 230,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-mill-pond.json"
+    },
+    {
+      "id": "landmark:night-site",
+      "catalogNumber": 231,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-night-site.json"
+    },
+    {
+      "id": "landmark:cache",
+      "catalogNumber": 232,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-cache.json"
+    },
+    {
+      "id": "landmark:wagon",
+      "catalogNumber": 233,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-wagon.json"
+    },
+    {
+      "id": "landmark:convoy",
+      "catalogNumber": 234,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-convoy.json"
+    },
+    {
+      "id": "landmark:watch",
+      "catalogNumber": 235,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-watch.json"
+    },
+    {
+      "id": "landmark:dock",
+      "catalogNumber": 236,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-dock.json"
+    },
+    {
+      "id": "landmark:lookout",
+      "catalogNumber": 237,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-lookout.json"
+    },
+    {
+      "id": "landmark:ore",
+      "catalogNumber": 238,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-ore.json"
+    },
+    {
+      "id": "landmark:tower",
+      "catalogNumber": 239,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-tower.json"
+    },
+    {
+      "id": "landmark:shrine",
+      "catalogNumber": 240,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-shrine.json"
+    },
+    {
+      "id": "landmark:overlook",
+      "catalogNumber": 241,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-overlook.json"
+    },
+    {
+      "id": "landmark:checkpoint",
+      "catalogNumber": 242,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-checkpoint.json"
+    },
+    {
+      "id": "landmark:foundry",
+      "catalogNumber": 243,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-foundry.json"
+    },
+    {
+      "id": "landmark:shelf",
+      "catalogNumber": 244,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-shelf.json"
+    },
+    {
+      "id": "landmark:siege",
+      "catalogNumber": 245,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-siege.json"
+    },
+    {
+      "id": "landmark:fortress-gate",
+      "catalogNumber": 246,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-fortress-gate.json"
+    },
+    {
+      "id": "landmark:goblin-camp",
+      "catalogNumber": 247,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-goblin-camp.json"
+    },
+    {
+      "id": "landmark:mire-nests",
+      "catalogNumber": 248,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-mire-nests.json"
+    },
+    {
+      "id": "landmark:wolf-den",
+      "catalogNumber": 249,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-wolf-den.json"
+    },
+    {
+      "id": "landmark:ogre-hearth",
+      "catalogNumber": 250,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-ogre-hearth.json"
+    },
+    {
+      "id": "landmark:orc-bivouac",
+      "catalogNumber": 251,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-orc-bivouac.json"
+    },
+    {
+      "id": "landmark:ash-roost",
+      "catalogNumber": 252,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-ash-roost.json"
+    },
+    {
+      "id": "landmark:crown-barracks",
+      "catalogNumber": 253,
+      "handoff": "tools/sprites/design-handoffs/approved-art-landmark-crown-barracks.json"
+    },
+    {
+      "id": "environment:wild-tree-vale",
+      "catalogNumber": 254,
+      "handoff": "tools/sprites/design-handoffs/approved-art-environment-wild-tree-vale.json"
+    },
+    {
+      "id": "environment:wild-rock-vale",
+      "catalogNumber": 255,
+      "handoff": "tools/sprites/design-handoffs/approved-art-environment-wild-rock-vale.json"
+    },
+    {
+      "id": "service:quests-vale",
+      "catalogNumber": 256,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-quests-vale.json"
+    },
+    {
+      "id": "service:supplier-vale",
+      "catalogNumber": 257,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-supplier-vale.json"
+    },
+    {
+      "id": "service:recruiter-vale",
+      "catalogNumber": 258,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-recruiter-vale.json"
+    },
+    {
+      "id": "service:rest-vale",
+      "catalogNumber": 259,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-rest-vale.json"
+    },
+    {
+      "id": "service:barracks-construction-0-vale",
+      "catalogNumber": 260,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-0-vale.json"
+    },
+    {
+      "id": "service:barracks-construction-1-vale",
+      "catalogNumber": 261,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-1-vale.json"
+    },
+    {
+      "id": "service:barracks-construction-2-vale",
+      "catalogNumber": 262,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-2-vale.json"
+    },
+    {
+      "id": "service:barracks-construction-3-vale",
+      "catalogNumber": 263,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-3-vale.json"
+    },
+    {
+      "id": "service:barracks-basic-vale",
+      "catalogNumber": 264,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-basic-vale.json"
+    },
+    {
+      "id": "service:barracks-full-vale",
+      "catalogNumber": 265,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-full-vale.json"
+    },
+    {
+      "id": "environment:wild-tree-march",
+      "catalogNumber": 266,
+      "handoff": "tools/sprites/design-handoffs/approved-art-environment-wild-tree-march.json"
+    },
+    {
+      "id": "environment:wild-rock-march",
+      "catalogNumber": 267,
+      "handoff": "tools/sprites/design-handoffs/approved-art-environment-wild-rock-march.json"
+    },
+    {
+      "id": "service:quests-march",
+      "catalogNumber": 268,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-quests-march.json"
+    },
+    {
+      "id": "service:supplier-march",
+      "catalogNumber": 269,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-supplier-march.json"
+    },
+    {
+      "id": "service:recruiter-march",
+      "catalogNumber": 270,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-recruiter-march.json"
+    },
+    {
+      "id": "service:rest-march",
+      "catalogNumber": 271,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-rest-march.json"
+    },
+    {
+      "id": "service:barracks-construction-0-march",
+      "catalogNumber": 272,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-0-march.json"
+    },
+    {
+      "id": "service:barracks-construction-1-march",
+      "catalogNumber": 273,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-1-march.json"
+    },
+    {
+      "id": "service:barracks-construction-2-march",
+      "catalogNumber": 274,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-2-march.json"
+    },
+    {
+      "id": "service:barracks-construction-3-march",
+      "catalogNumber": 275,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-3-march.json"
+    },
+    {
+      "id": "service:barracks-basic-march",
+      "catalogNumber": 276,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-basic-march.json"
+    },
+    {
+      "id": "service:barracks-full-march",
+      "catalogNumber": 277,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-full-march.json"
+    },
+    {
+      "id": "environment:wild-tree-highlands",
+      "catalogNumber": 278,
+      "handoff": "tools/sprites/design-handoffs/approved-art-environment-wild-tree-highlands.json"
+    },
+    {
+      "id": "environment:wild-rock-highlands",
+      "catalogNumber": 279,
+      "handoff": "tools/sprites/design-handoffs/approved-art-environment-wild-rock-highlands.json"
+    },
+    {
+      "id": "service:quests-highlands",
+      "catalogNumber": 280,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-quests-highlands.json"
+    },
+    {
+      "id": "service:supplier-highlands",
+      "catalogNumber": 281,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-supplier-highlands.json"
+    },
+    {
+      "id": "service:recruiter-highlands",
+      "catalogNumber": 282,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-recruiter-highlands.json"
+    },
+    {
+      "id": "service:rest-highlands",
+      "catalogNumber": 283,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-rest-highlands.json"
+    },
+    {
+      "id": "service:barracks-construction-0-highlands",
+      "catalogNumber": 284,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-0-highlands.json"
+    },
+    {
+      "id": "service:barracks-construction-1-highlands",
+      "catalogNumber": 285,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-1-highlands.json"
+    },
+    {
+      "id": "service:barracks-construction-2-highlands",
+      "catalogNumber": 286,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-2-highlands.json"
+    },
+    {
+      "id": "service:barracks-construction-3-highlands",
+      "catalogNumber": 287,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-3-highlands.json"
+    },
+    {
+      "id": "service:barracks-basic-highlands",
+      "catalogNumber": 288,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-basic-highlands.json"
+    },
+    {
+      "id": "service:barracks-full-highlands",
+      "catalogNumber": 289,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-full-highlands.json"
+    },
+    {
+      "id": "environment:wild-tree-frontier",
+      "catalogNumber": 290,
+      "handoff": "tools/sprites/design-handoffs/approved-art-environment-wild-tree-frontier.json"
+    },
+    {
+      "id": "environment:wild-rock-frontier",
+      "catalogNumber": 291,
+      "handoff": "tools/sprites/design-handoffs/approved-art-environment-wild-rock-frontier.json"
+    },
+    {
+      "id": "service:quests-frontier",
+      "catalogNumber": 292,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-quests-frontier.json"
+    },
+    {
+      "id": "service:supplier-frontier",
+      "catalogNumber": 293,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-supplier-frontier.json"
+    },
+    {
+      "id": "service:recruiter-frontier",
+      "catalogNumber": 294,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-recruiter-frontier.json"
+    },
+    {
+      "id": "service:rest-frontier",
+      "catalogNumber": 295,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-rest-frontier.json"
+    },
+    {
+      "id": "service:barracks-construction-0-frontier",
+      "catalogNumber": 296,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-0-frontier.json"
+    },
+    {
+      "id": "service:barracks-construction-1-frontier",
+      "catalogNumber": 297,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-1-frontier.json"
+    },
+    {
+      "id": "service:barracks-construction-2-frontier",
+      "catalogNumber": 298,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-2-frontier.json"
+    },
+    {
+      "id": "service:barracks-construction-3-frontier",
+      "catalogNumber": 299,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-3-frontier.json"
+    },
+    {
+      "id": "service:barracks-basic-frontier",
+      "catalogNumber": 300,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-basic-frontier.json"
+    },
+    {
+      "id": "service:barracks-full-frontier",
+      "catalogNumber": 301,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-full-frontier.json"
+    },
+    {
+      "id": "environment:wild-rock-crown",
+      "catalogNumber": 302,
+      "handoff": "tools/sprites/design-handoffs/approved-art-environment-wild-rock-crown.json"
+    },
+    {
+      "id": "service:quests-crown",
+      "catalogNumber": 303,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-quests-crown.json"
+    },
+    {
+      "id": "service:supplier-crown",
+      "catalogNumber": 304,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-supplier-crown.json"
+    },
+    {
+      "id": "service:recruiter-crown",
+      "catalogNumber": 305,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-recruiter-crown.json"
+    },
+    {
+      "id": "service:rest-crown",
+      "catalogNumber": 306,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-rest-crown.json"
+    },
+    {
+      "id": "service:barracks-construction-0-crown",
+      "catalogNumber": 307,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-0-crown.json"
+    },
+    {
+      "id": "service:barracks-construction-1-crown",
+      "catalogNumber": 308,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-1-crown.json"
+    },
+    {
+      "id": "service:barracks-construction-2-crown",
+      "catalogNumber": 309,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-2-crown.json"
+    },
+    {
+      "id": "service:barracks-construction-3-crown",
+      "catalogNumber": 310,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-construction-3-crown.json"
+    },
+    {
+      "id": "service:barracks-basic-crown",
+      "catalogNumber": 311,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-basic-crown.json"
+    },
+    {
+      "id": "service:barracks-full-crown",
+      "catalogNumber": 312,
+      "handoff": "tools/sprites/design-handoffs/approved-art-service-barracks-full-crown.json"
+    },
+    {
+      "id": "entrance:crypt",
+      "catalogNumber": 313,
+      "handoff": "tools/sprites/design-handoffs/approved-art-entrance-crypt.json"
+    },
+    {
+      "id": "entrance:archive",
+      "catalogNumber": 314,
+      "handoff": "tools/sprites/design-handoffs/approved-art-entrance-archive.json"
+    },
+    {
+      "id": "entrance:mine",
+      "catalogNumber": 315,
+      "handoff": "tools/sprites/design-handoffs/approved-art-entrance-mine.json"
+    },
+    {
+      "id": "entrance:abyss",
+      "catalogNumber": 316,
+      "handoff": "tools/sprites/design-handoffs/approved-art-entrance-abyss.json"
+    },
+    {
+      "id": "entrance:citadel",
+      "catalogNumber": 317,
+      "handoff": "tools/sprites/design-handoffs/approved-art-entrance-citadel.json"
+    },
+    {
+      "id": "entrance:side-cellar",
+      "catalogNumber": 318,
+      "handoff": "tools/sprites/design-handoffs/approved-art-entrance-side-cellar.json"
+    },
+    {
+      "id": "entrance:side-flooded",
+      "catalogNumber": 319,
+      "handoff": "tools/sprites/design-handoffs/approved-art-entrance-side-flooded.json"
+    },
+    {
+      "id": "entrance:side-keep",
+      "catalogNumber": 320,
+      "handoff": "tools/sprites/design-handoffs/approved-art-entrance-side-keep.json"
+    },
+    {
+      "id": "entrance:side-shrine",
+      "catalogNumber": 321,
+      "handoff": "tools/sprites/design-handoffs/approved-art-entrance-side-shrine.json"
+    },
+    {
+      "id": "entrance:side-foundry",
+      "catalogNumber": 322,
+      "handoff": "tools/sprites/design-handoffs/approved-art-entrance-side-foundry.json"
+    },
+    {
+      "id": "residence-entrance:thorn",
+      "catalogNumber": 323,
+      "handoff": "tools/sprites/design-handoffs/approved-art-residence-entrance-thorn.json"
+    },
+    {
+      "id": "residence-entrance:mire",
+      "catalogNumber": 324,
+      "handoff": "tools/sprites/design-handoffs/approved-art-residence-entrance-mire.json"
+    },
+    {
+      "id": "residence-entrance:ridge",
+      "catalogNumber": 325,
+      "handoff": "tools/sprites/design-handoffs/approved-art-residence-entrance-ridge.json"
+    },
+    {
+      "id": "residence-entrance:cindermaw",
+      "catalogNumber": 326,
+      "handoff": "tools/sprites/design-handoffs/approved-art-residence-entrance-cindermaw.json"
+    },
+    {
+      "id": "residence-entrance:crown",
+      "catalogNumber": 327,
+      "handoff": "tools/sprites/design-handoffs/approved-art-residence-entrance-crown.json"
+    },
+    {
+      "id": "shared:hero-paladin",
+      "catalogNumber": 328,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-hero-paladin.json"
+    },
+    {
+      "id": "shared:hero-mage",
+      "catalogNumber": 329,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-hero-mage.json"
+    },
+    {
+      "id": "shared:hero-ranger",
+      "catalogNumber": 330,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-hero-ranger.json"
+    },
+    {
+      "id": "shared:ally-soldier",
+      "catalogNumber": 331,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-ally-soldier.json"
+    },
+    {
+      "id": "shared:ally-archer",
+      "catalogNumber": 332,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-ally-archer.json"
+    },
+    {
+      "id": "shared:working-captives",
+      "catalogNumber": 333,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-working-captives.json"
+    },
+    {
+      "id": "shared:crowned-hero",
+      "catalogNumber": 334,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-crowned-hero.json"
+    },
+    {
+      "id": "shared:ambient-livestock",
+      "catalogNumber": 335,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-ambient-livestock.json"
+    },
+    {
+      "id": "shared:ambient-wildlife",
+      "catalogNumber": 336,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-ambient-wildlife.json"
+    },
+    {
+      "id": "shared:transport-wagon",
+      "catalogNumber": 337,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-transport-wagon.json"
+    },
+    {
+      "id": "shared:transport-caravan",
+      "catalogNumber": 338,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-transport-caravan.json"
+    },
+    {
+      "id": "shared:transport-ferry",
+      "catalogNumber": 339,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-transport-ferry.json"
+    },
+    {
+      "id": "shared:transport-dragon",
+      "catalogNumber": 340,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-transport-dragon.json"
+    },
+    {
+      "id": "shared:nodes",
+      "catalogNumber": 341,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-nodes.json"
+    },
+    {
+      "id": "shared:loot",
+      "catalogNumber": 342,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-loot.json"
+    },
+    {
+      "id": "shared:captain-supply-vale",
+      "catalogNumber": 343,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-captain-supply-vale.json"
+    },
+    {
+      "id": "shared:captain-supply-march",
+      "catalogNumber": 344,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-captain-supply-march.json"
+    },
+    {
+      "id": "shared:captain-supply-highlands",
+      "catalogNumber": 345,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-captain-supply-highlands.json"
+    },
+    {
+      "id": "shared:captain-supply-crown",
+      "catalogNumber": 346,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-captain-supply-crown.json"
+    },
+    {
+      "id": "shared:captain-frontier-overseer",
+      "catalogNumber": 347,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-captain-frontier-overseer.json"
+    },
+    {
+      "id": "shared:floor",
+      "catalogNumber": 348,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-floor.json"
+    },
+    {
+      "id": "shared:terrain",
+      "catalogNumber": 349,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-terrain.json"
+    },
+    {
+      "id": "shared:roads",
+      "catalogNumber": 350,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-roads.json"
+    },
+    {
+      "id": "shared:bridges",
+      "catalogNumber": 351,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-bridges.json"
+    },
+    {
+      "id": "shared:interior-partitions",
+      "catalogNumber": 352,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-interior-partitions.json"
+    },
+    {
+      "id": "shared:combat-warnings",
+      "catalogNumber": 353,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-combat-warnings.json"
+    },
+    {
+      "id": "shared:combat-effects",
+      "catalogNumber": 354,
+      "handoff": "tools/sprites/design-handoffs/approved-art-shared-combat-effects.json"
+    },
+    {
+      "id": "pet:thorn",
+      "catalogNumber": 355,
+      "handoff": "tools/sprites/design-handoffs/approved-art-pet-thorn.json"
+    },
+    {
+      "id": "pet:crypt",
+      "catalogNumber": 356,
+      "handoff": "tools/sprites/design-handoffs/approved-art-pet-crypt.json"
+    },
+    {
+      "id": "pet:mire",
+      "catalogNumber": 357,
+      "handoff": "tools/sprites/design-handoffs/approved-art-pet-mire.json"
+    },
+    {
+      "id": "pet:archive",
+      "catalogNumber": 358,
+      "handoff": "tools/sprites/design-handoffs/approved-art-pet-archive.json"
+    },
+    {
+      "id": "pet:ridge",
+      "catalogNumber": 359,
+      "handoff": "tools/sprites/design-handoffs/approved-art-pet-ridge.json"
+    },
+    {
+      "id": "pet:mine",
+      "catalogNumber": 360,
+      "handoff": "tools/sprites/design-handoffs/approved-art-pet-mine.json"
+    },
+    {
+      "id": "pet:warlord",
+      "catalogNumber": 361,
+      "handoff": "tools/sprites/design-handoffs/approved-art-pet-warlord.json"
+    },
+    {
+      "id": "pet:abyss",
+      "catalogNumber": 362,
+      "handoff": "tools/sprites/design-handoffs/approved-art-pet-abyss.json"
+    },
+    {
+      "id": "pet:citadel",
+      "catalogNumber": 363,
+      "handoff": "tools/sprites/design-handoffs/approved-art-pet-citadel.json"
+    },
+    {
+      "id": "pet:cindermaw",
+      "catalogNumber": 364,
+      "handoff": "tools/sprites/design-handoffs/approved-art-pet-cindermaw.json"
+    },
+    {
+      "id": "pet:darklord",
+      "catalogNumber": 365,
+      "handoff": "tools/sprites/design-handoffs/approved-art-pet-darklord.json"
+    },
+    {
+      "id": "specialist:thorn",
+      "catalogNumber": 366,
+      "handoff": "tools/sprites/design-handoffs/approved-art-specialist-thorn.json"
+    },
+    {
+      "id": "specialist:crypt",
+      "catalogNumber": 367,
+      "handoff": "tools/sprites/design-handoffs/approved-art-specialist-crypt.json"
+    },
+    {
+      "id": "specialist:mire",
+      "catalogNumber": 368,
+      "handoff": "tools/sprites/design-handoffs/approved-art-specialist-mire.json"
+    },
+    {
+      "id": "specialist:archive",
+      "catalogNumber": 369,
+      "handoff": "tools/sprites/design-handoffs/approved-art-specialist-archive.json"
+    },
+    {
+      "id": "specialist:ridge",
+      "catalogNumber": 370,
+      "handoff": "tools/sprites/design-handoffs/approved-art-specialist-ridge.json"
+    },
+    {
+      "id": "specialist:mine",
+      "catalogNumber": 371,
+      "handoff": "tools/sprites/design-handoffs/approved-art-specialist-mine.json"
+    },
+    {
+      "id": "specialist:warlord",
+      "catalogNumber": 372,
+      "handoff": "tools/sprites/design-handoffs/approved-art-specialist-warlord.json"
+    },
+    {
+      "id": "specialist:abyss",
+      "catalogNumber": 373,
+      "handoff": "tools/sprites/design-handoffs/approved-art-specialist-abyss.json"
+    },
+    {
+      "id": "specialist:citadel",
+      "catalogNumber": 374,
+      "handoff": "tools/sprites/design-handoffs/approved-art-specialist-citadel.json"
+    },
+    {
+      "id": "specialist:cindermaw",
+      "catalogNumber": 375,
+      "handoff": "tools/sprites/design-handoffs/approved-art-specialist-cindermaw.json"
+    },
+    {
+      "id": "specialist:darklord",
+      "catalogNumber": 376,
+      "handoff": "tools/sprites/design-handoffs/approved-art-specialist-darklord.json"
+    },
+    {
+      "id": "dispatch:fence",
+      "catalogNumber": 377,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-fence.json"
+    },
+    {
+      "id": "dispatch:house",
+      "catalogNumber": 378,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-house.json"
+    },
+    {
+      "id": "dispatch:workshop",
+      "catalogNumber": 379,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-workshop.json"
+    },
+    {
+      "id": "dispatch:pillar",
+      "catalogNumber": 380,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-pillar.json"
+    },
+    {
+      "id": "dispatch:wild-fallback-crown",
+      "catalogNumber": 381,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-wild-fallback-crown.json"
+    },
+    {
+      "id": "dispatch:exit",
+      "catalogNumber": 382,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-exit.json"
+    },
+    {
+      "id": "dispatch:captive-cage",
+      "catalogNumber": 383,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-captive-cage.json"
+    },
+    {
+      "id": "dispatch:repair-workstation",
+      "catalogNumber": 384,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-repair-workstation.json"
+    },
+    {
+      "id": "dispatch:mobile-forge",
+      "catalogNumber": 385,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-mobile-forge.json"
+    },
+    {
+      "id": "dispatch:mobile-captive",
+      "catalogNumber": 386,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-mobile-captive.json"
+    },
+    {
+      "id": "dispatch:patrol-report",
+      "catalogNumber": 387,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-patrol-report.json"
+    },
+    {
+      "id": "dispatch:bundle",
+      "catalogNumber": 388,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-bundle.json"
+    },
+    {
+      "id": "dispatch:appointment",
+      "catalogNumber": 389,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-appointment.json"
+    },
+    {
+      "id": "dispatch:dungeon-master",
+      "catalogNumber": 390,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-dungeon-master.json"
+    },
+    {
+      "id": "dispatch:throne",
+      "catalogNumber": 391,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-throne.json"
+    },
+    {
+      "id": "dispatch:fountain",
+      "catalogNumber": 392,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-fountain.json"
+    },
+    {
+      "id": "dispatch:mini",
+      "catalogNumber": 393,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-mini.json"
+    },
+    {
+      "id": "dispatch:stonewall-plain",
+      "catalogNumber": 394,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-stonewall-plain.json"
+    },
+    {
+      "id": "dispatch:stonewall-fort",
+      "catalogNumber": 395,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-stonewall-fort.json"
+    },
+    {
+      "id": "dispatch:stonewall-ruin",
+      "catalogNumber": 396,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-stonewall-ruin.json"
+    },
+    {
+      "id": "dispatch:stonewall-habitat",
+      "catalogNumber": 397,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-stonewall-habitat.json"
+    },
+    {
+      "id": "dispatch:stockade-plain",
+      "catalogNumber": 398,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-stockade-plain.json"
+    },
+    {
+      "id": "dispatch:stockade-fort",
+      "catalogNumber": 399,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-stockade-fort.json"
+    },
+    {
+      "id": "dispatch:stockade-ruin",
+      "catalogNumber": 400,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-stockade-ruin.json"
+    },
+    {
+      "id": "dispatch:stockade-habitat",
+      "catalogNumber": 401,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-stockade-habitat.json"
+    },
+    {
+      "id": "dispatch:palisade-plain",
+      "catalogNumber": 402,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-palisade-plain.json"
+    },
+    {
+      "id": "dispatch:palisade-fort",
+      "catalogNumber": 403,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-palisade-fort.json"
+    },
+    {
+      "id": "dispatch:palisade-ruin",
+      "catalogNumber": 404,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-palisade-ruin.json"
+    },
+    {
+      "id": "dispatch:palisade-habitat",
+      "catalogNumber": 405,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-palisade-habitat.json"
+    },
+    {
+      "id": "work-detail:pages",
+      "catalogNumber": 406,
+      "handoff": "tools/sprites/design-handoffs/approved-art-work-detail-pages.json"
+    },
+    {
+      "id": "work-detail:alchemy",
+      "catalogNumber": 407,
+      "handoff": "tools/sprites/design-handoffs/approved-art-work-detail-alchemy.json"
+    },
+    {
+      "id": "work-detail:pump",
+      "catalogNumber": 408,
+      "handoff": "tools/sprites/design-handoffs/approved-art-work-detail-pump.json"
+    },
+    {
+      "id": "work-detail:submerged",
+      "catalogNumber": 409,
+      "handoff": "tools/sprites/design-handoffs/approved-art-work-detail-submerged.json"
+    },
+    {
+      "id": "work-detail:construction",
+      "catalogNumber": 410,
+      "handoff": "tools/sprites/design-handoffs/approved-art-work-detail-construction.json"
+    },
+    {
+      "id": "work-detail:preservation",
+      "catalogNumber": 411,
+      "handoff": "tools/sprites/design-handoffs/approved-art-work-detail-preservation.json"
+    },
+    {
+      "id": "work-detail:fish-study",
+      "catalogNumber": 412,
+      "handoff": "tools/sprites/design-handoffs/approved-art-work-detail-fish-study.json"
+    },
+    {
+      "id": "work-detail:coin-accounting",
+      "catalogNumber": 413,
+      "handoff": "tools/sprites/design-handoffs/approved-art-work-detail-coin-accounting.json"
+    },
+    {
+      "id": "node:tribute",
+      "catalogNumber": 414,
+      "handoff": "tools/sprites/design-handoffs/approved-art-node-tribute.json"
+    },
+    {
+      "id": "node:wood",
+      "catalogNumber": 415,
+      "handoff": "tools/sprites/design-handoffs/approved-art-node-wood.json"
+    },
+    {
+      "id": "node:basket",
+      "catalogNumber": 416,
+      "handoff": "tools/sprites/design-handoffs/approved-art-node-basket.json"
+    },
+    {
+      "id": "node:crystal",
+      "catalogNumber": 417,
+      "handoff": "tools/sprites/design-handoffs/approved-art-node-crystal.json"
+    },
+    {
+      "id": "node:ore",
+      "catalogNumber": 418,
+      "handoff": "tools/sprites/design-handoffs/approved-art-node-ore.json"
+    },
+    {
+      "id": "dispatch:landmark-default-water",
+      "catalogNumber": 419,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-landmark-default-water.json"
+    },
+    {
+      "id": "dispatch:landmark-default-camp",
+      "catalogNumber": 420,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-landmark-default-camp.json"
+    },
+    {
+      "id": "dispatch:landmark-default-marker",
+      "catalogNumber": 421,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-landmark-default-marker.json"
+    },
+    {
+      "id": "dispatch:npc-smith-fallback",
+      "catalogNumber": 422,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-npc-smith-fallback.json"
+    },
+    {
+      "id": "dispatch:npc-alchemist-fallback",
+      "catalogNumber": 423,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-npc-alchemist-fallback.json"
+    },
+    {
+      "id": "dispatch:npc-guide-fallback",
+      "catalogNumber": 424,
+      "handoff": "tools/sprites/design-handoffs/approved-art-dispatch-npc-guide-fallback.json"
+    },
+    {
+      "id": "renderer-alias:keeper",
+      "catalogNumber": 425,
+      "handoff": "tools/sprites/design-handoffs/approved-art-renderer-alias-keeper.json"
+    },
+    {
+      "id": "renderer-alias:archive-record",
+      "catalogNumber": 426,
+      "handoff": "tools/sprites/design-handoffs/approved-art-renderer-alias-archive-record.json"
+    },
+    {
+      "id": "crowned:paladin",
+      "catalogNumber": 427,
+      "handoff": "tools/sprites/design-handoffs/approved-art-crowned-paladin.json"
+    },
+    {
+      "id": "crowned:mage",
+      "catalogNumber": 428,
+      "handoff": "tools/sprites/design-handoffs/approved-art-crowned-mage.json"
+    },
+    {
+      "id": "crowned:ranger",
+      "catalogNumber": 429,
+      "handoff": "tools/sprites/design-handoffs/approved-art-crowned-ranger.json"
+    },
+    {
+      "id": "crown-troop:crownguard:guard",
+      "catalogNumber": 430,
+      "handoff": "tools/sprites/design-handoffs/approved-art-crown-troop-crownguard-guard.json"
+    },
+    {
+      "id": "crown-troop:crownguard:marksman",
+      "catalogNumber": 431,
+      "handoff": "tools/sprites/design-handoffs/approved-art-crown-troop-crownguard-marksman.json"
+    },
+    {
+      "id": "crown-troop:goblin:guard",
+      "catalogNumber": 432,
+      "handoff": "tools/sprites/design-handoffs/approved-art-crown-troop-goblin-guard.json"
+    },
+    {
+      "id": "crown-troop:goblin:marksman",
+      "catalogNumber": 433,
+      "handoff": "tools/sprites/design-handoffs/approved-art-crown-troop-goblin-marksman.json"
+    },
+    {
+      "id": "crown-troop:orc:guard",
+      "catalogNumber": 434,
+      "handoff": "tools/sprites/design-handoffs/approved-art-crown-troop-orc-guard.json"
+    },
+    {
+      "id": "crown-troop:orc:marksman",
+      "catalogNumber": 435,
+      "handoff": "tools/sprites/design-handoffs/approved-art-crown-troop-orc-marksman.json"
+    },
+    {
+      "id": "crown-troop:archer:guard",
+      "catalogNumber": 436,
+      "handoff": "tools/sprites/design-handoffs/approved-art-crown-troop-archer-guard.json"
+    },
+    {
+      "id": "crown-troop:archer:marksman",
+      "catalogNumber": 437,
+      "handoff": "tools/sprites/design-handoffs/approved-art-crown-troop-archer-marksman.json"
+    },
+    {
+      "id": "crown-troop:ogre:guard",
+      "catalogNumber": 438,
+      "handoff": "tools/sprites/design-handoffs/approved-art-crown-troop-ogre-guard.json"
+    },
+    {
+      "id": "crown-troop:ogre:marksman",
+      "catalogNumber": 439,
+      "handoff": "tools/sprites/design-handoffs/approved-art-crown-troop-ogre-marksman.json"
+    },
+    {
+      "id": "mounted-direwolf:lance",
+      "catalogNumber": 440,
+      "handoff": "tools/sprites/design-handoffs/approved-art-mounted-direwolf-lance.json"
+    },
+    {
+      "id": "mounted-direwolf:bow",
+      "catalogNumber": 441,
+      "handoff": "tools/sprites/design-handoffs/approved-art-mounted-direwolf-bow.json"
+    },
+    {
+      "id": "raider:frontier",
+      "catalogNumber": 442,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raider-frontier.json"
+    },
+    {
+      "id": "raider:highlands-contractor",
+      "catalogNumber": 443,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raider-highlands-contractor.json"
+    },
+    {
+      "id": "captive:thorn",
+      "catalogNumber": 444,
+      "handoff": "tools/sprites/design-handoffs/approved-art-captive-thorn.json"
+    },
+    {
+      "id": "captive:crypt",
+      "catalogNumber": 445,
+      "handoff": "tools/sprites/design-handoffs/approved-art-captive-crypt.json"
+    },
+    {
+      "id": "captive:mire",
+      "catalogNumber": 446,
+      "handoff": "tools/sprites/design-handoffs/approved-art-captive-mire.json"
+    },
+    {
+      "id": "captive:archive",
+      "catalogNumber": 447,
+      "handoff": "tools/sprites/design-handoffs/approved-art-captive-archive.json"
+    },
+    {
+      "id": "captive:ridge",
+      "catalogNumber": 448,
+      "handoff": "tools/sprites/design-handoffs/approved-art-captive-ridge.json"
+    },
+    {
+      "id": "captive:mine",
+      "catalogNumber": 449,
+      "handoff": "tools/sprites/design-handoffs/approved-art-captive-mine.json"
+    },
+    {
+      "id": "captive:warlord",
+      "catalogNumber": 450,
+      "handoff": "tools/sprites/design-handoffs/approved-art-captive-warlord.json"
+    },
+    {
+      "id": "captive:abyss",
+      "catalogNumber": 451,
+      "handoff": "tools/sprites/design-handoffs/approved-art-captive-abyss.json"
+    },
+    {
+      "id": "captive:citadel",
+      "catalogNumber": 452,
+      "handoff": "tools/sprites/design-handoffs/approved-art-captive-citadel.json"
+    },
+    {
+      "id": "captive:cindermaw",
+      "catalogNumber": 453,
+      "handoff": "tools/sprites/design-handoffs/approved-art-captive-cindermaw.json"
+    },
+    {
+      "id": "raster:hero:paladin",
+      "catalogNumber": 454,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-hero-paladin.json"
+    },
+    {
+      "id": "raster:enemy:goblin",
+      "catalogNumber": 455,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-enemy-goblin.json"
+    },
+    {
+      "id": "raster:prop:vale-cottage:vale",
+      "catalogNumber": 456,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-vale-cottage-vale.json"
+    },
+    {
+      "id": "raster:hero:mage",
+      "catalogNumber": 457,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-hero-mage.json"
+    },
+    {
+      "id": "raster:hero:ranger",
+      "catalogNumber": 458,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-hero-ranger.json"
+    },
+    {
+      "id": "raster:ally:soldier",
+      "catalogNumber": 459,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-ally-soldier.json"
+    },
+    {
+      "id": "raster:ally:archer",
+      "catalogNumber": 460,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-ally-archer.json"
+    },
+    {
+      "id": "raster:prop:bush:vale",
+      "catalogNumber": 461,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-bush-vale.json"
+    },
+    {
+      "id": "raster:prop:wildflowers:vale",
+      "catalogNumber": 462,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-wildflowers-vale.json"
+    },
+    {
+      "id": "raster:prop:sapling:vale",
+      "catalogNumber": 463,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-sapling-vale.json"
+    },
+    {
+      "id": "raster:prop:stump:vale",
+      "catalogNumber": 464,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-stump-vale.json"
+    },
+    {
+      "id": "raster:prop:fallen-log:vale",
+      "catalogNumber": 465,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-fallen-log-vale.json"
+    },
+    {
+      "id": "raster:prop:cattails:march",
+      "catalogNumber": 466,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-cattails-march.json"
+    },
+    {
+      "id": "raster:prop:driftwood:march",
+      "catalogNumber": 467,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-driftwood-march.json"
+    },
+    {
+      "id": "raster:prop:mangrove:march",
+      "catalogNumber": 468,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-mangrove-march.json"
+    },
+    {
+      "id": "raster:prop:pine-sapling:highlands",
+      "catalogNumber": 469,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-pine-sapling-highlands.json"
+    },
+    {
+      "id": "raster:prop:alpine-scrub:highlands",
+      "catalogNumber": 470,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-alpine-scrub-highlands.json"
+    },
+    {
+      "id": "raster:prop:marsh-bush:march",
+      "catalogNumber": 471,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-marsh-bush-march.json"
+    },
+    {
+      "id": "raster:prop:rock-cluster:highlands",
+      "catalogNumber": 472,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-rock-cluster-highlands.json"
+    },
+    {
+      "id": "raster:prop:dead-tree:frontier",
+      "catalogNumber": 473,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-dead-tree-frontier.json"
+    },
+    {
+      "id": "raster:prop:charred-stump:frontier",
+      "catalogNumber": 474,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-charred-stump-frontier.json"
+    },
+    {
+      "id": "raster:prop:dry-scrub:frontier",
+      "catalogNumber": 475,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-dry-scrub-frontier.json"
+    },
+    {
+      "id": "raster:prop:burned-log:frontier",
+      "catalogNumber": 476,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-burned-log-frontier.json"
+    },
+    {
+      "id": "raster:prop:black-rock:crown",
+      "catalogNumber": 477,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-black-rock-crown.json"
+    },
+    {
+      "id": "raster:prop:crystal-cluster:crown",
+      "catalogNumber": 478,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-crystal-cluster-crown.json"
+    },
+    {
+      "id": "raster:prop:dead-shrub:crown",
+      "catalogNumber": 479,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-dead-shrub-crown.json"
+    },
+    {
+      "id": "raster:prop:obsidian:crown",
+      "catalogNumber": 480,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-obsidian-crown.json"
+    },
+    {
+      "id": "raster:prop:heather:highlands",
+      "catalogNumber": 481,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-heather-highlands.json"
+    },
+    {
+      "id": "raster:prop:rock:vale",
+      "catalogNumber": 482,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-rock-vale.json"
+    },
+    {
+      "id": "raster:prop:rock:highlands",
+      "catalogNumber": 483,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-rock-highlands.json"
+    },
+    {
+      "id": "raster:prop:mint-workbench:highlands",
+      "catalogNumber": 484,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-mint-workbench-highlands.json"
+    },
+    {
+      "id": "raster:prop:ore-sorting-bay:highlands",
+      "catalogNumber": 485,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-ore-sorting-bay-highlands.json"
+    },
+    {
+      "id": "raster:prop:caravan-loading-bay:highlands",
+      "catalogNumber": 486,
+      "handoff": "tools/sprites/design-handoffs/approved-art-raster-prop-caravan-loading-bay-highlands.json"
+    },
+    {
+      "id": "material:terrain:ground:vale",
+      "catalogNumber": 487,
+      "handoff": "tools/sprites/design-handoffs/approved-art-material-terrain-ground-vale.json"
+    },
+    {
+      "id": "material:terrain:ground:march",
+      "catalogNumber": 488,
+      "handoff": "tools/sprites/design-handoffs/approved-art-material-terrain-ground-march.json"
+    },
+    {
+      "id": "material:terrain:ground:highlands",
+      "catalogNumber": 489,
+      "handoff": "tools/sprites/design-handoffs/approved-art-material-terrain-ground-highlands.json"
+    },
+    {
+      "id": "material:terrain:ground:frontier",
+      "catalogNumber": 490,
+      "handoff": "tools/sprites/design-handoffs/approved-art-material-terrain-ground-frontier.json"
+    },
+    {
+      "id": "material:terrain:ground:crown",
+      "catalogNumber": 491,
+      "handoff": "tools/sprites/design-handoffs/approved-art-material-terrain-ground-crown.json"
+    },
+    {
+      "id": "material:terrain:road:vale",
+      "catalogNumber": 492,
+      "handoff": "tools/sprites/design-handoffs/approved-art-material-terrain-road-vale.json"
+    },
+    {
+      "id": "material:terrain:road:highlands",
+      "catalogNumber": 493,
+      "handoff": "tools/sprites/design-handoffs/approved-art-material-terrain-road-highlands.json"
+    },
+    {
+      "id": "appointed:field:thorn",
+      "catalogNumber": 494,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-field-thorn.json"
+    },
+    {
+      "id": "appointed:field:mire",
+      "catalogNumber": 495,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-field-mire.json"
+    },
+    {
+      "id": "appointed:field:ridge",
+      "catalogNumber": 496,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-field-ridge.json"
+    },
+    {
+      "id": "appointed:field:warlord",
+      "catalogNumber": 497,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-field-warlord.json"
+    },
+    {
+      "id": "appointed:field:cindermaw",
+      "catalogNumber": 498,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-field-cindermaw.json"
+    },
+    {
+      "id": "appointed:captain:supply-vale",
+      "catalogNumber": 499,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-captain-supply-vale.json"
+    },
+    {
+      "id": "appointed:captain:supply-march",
+      "catalogNumber": 500,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-captain-supply-march.json"
+    },
+    {
+      "id": "appointed:captain:supply-highlands",
+      "catalogNumber": 501,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-captain-supply-highlands.json"
+    },
+    {
+      "id": "appointed:captain:supply-crown",
+      "catalogNumber": 502,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-captain-supply-crown.json"
+    },
+    {
+      "id": "appointed:captain:frontier-overseer",
+      "catalogNumber": 503,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-captain-frontier-overseer.json"
+    },
+    {
+      "id": "appointed:specialist:thorn",
+      "catalogNumber": 504,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-specialist-thorn.json"
+    },
+    {
+      "id": "appointed:specialist:crypt",
+      "catalogNumber": 505,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-specialist-crypt.json"
+    },
+    {
+      "id": "appointed:specialist:mire",
+      "catalogNumber": 506,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-specialist-mire.json"
+    },
+    {
+      "id": "appointed:specialist:archive",
+      "catalogNumber": 507,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-specialist-archive.json"
+    },
+    {
+      "id": "appointed:specialist:ridge",
+      "catalogNumber": 508,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-specialist-ridge.json"
+    },
+    {
+      "id": "appointed:specialist:mine",
+      "catalogNumber": 509,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-specialist-mine.json"
+    },
+    {
+      "id": "appointed:specialist:warlord",
+      "catalogNumber": 510,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-specialist-warlord.json"
+    },
+    {
+      "id": "appointed:specialist:abyss",
+      "catalogNumber": 511,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-specialist-abyss.json"
+    },
+    {
+      "id": "appointed:specialist:citadel",
+      "catalogNumber": 512,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-specialist-citadel.json"
+    },
+    {
+      "id": "appointed:specialist:cindermaw",
+      "catalogNumber": 513,
+      "handoff": "tools/sprites/design-handoffs/approved-art-appointed-specialist-cindermaw.json"
+    }
+  ],
+  "historicalHandoffsContinued": 168
+}

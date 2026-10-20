@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "approved-art-shared-captain-supply-vale",
+  "name": "Scornfang",
+  "kind": "shared",
+  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "context": {
+    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Rebuild a distinct Goblin face and connected bow stance; integrate wolf admiration through a subordinate trophy mantle.",
+    "decisionDate": "2026-10-19",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+    "contentDocuments": [
+      "docs/APPROVED_ART_PASS_20261019.md"
+    ],
+    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md.",
+    "subsequentOwnerReview": "Joel requested distinct hero identities, rigid helmets, real quivers, varied NPC hair and expression, believable spear/staff/hammer/anchor, separated barracks desk, character-specific dungeon masters, Cinder Warlord mace and coherent profile direwolf riders across every loadout and tier. Revised drawings propagate through shared, crowned, captive, pet, appointed and fallback states where applicable. No acceptance of unseen revisions is claimed."
+  },
+  "decisions": {
+    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::captain-supply-vale",
+      "polish/approved-whole-game-art"
+    ],
+    "exactEntityState": [
+      {
+        "label": "Current body",
+        "mode": "procedural",
+        "entity": {
+          "id": "enemy-39",
+          "family": null,
+          "species": "goblin",
+          "name": "Scornfang",
+          "icon": "🧌",
+          "form": "normal",
+          "type": "mob",
+          "level": 2,
+          "baseHp": 390,
+          "baseDamage": 12,
+          "hp": 390,
+          "maxHp": 390,
+          "damage": 12,
+          "gold": 2,
+          "xp": 4,
+          "x": 745,
+          "y": 590,
+          "home": {
+            "x": 745,
+            "y": 590
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "guard": true,
+          "roomGuard": true,
+          "mountedCrownRider": false,
+          "pack": "supply-vale-command",
+          "captain": true,
+          "roomCaptain": true,
+          "captainProfile": "supply-vale",
+          "captainMentor": "thorn",
+          "captainVisualIdol": "thorn",
+          "visualScale": 1,
+          "specialCd": 1.25,
+          "roomCaptainVersion": 1,
+          "variant": "slinger",
+          "shotRange": 240,
+          "shotSpeed": 240,
+          "projectileStyle": "stone",
+          "ranged": true,
+          "guardianBalanceVersion": 2,
+          "captainPhase": false,
+          "captainPhaseMove": 1,
+          "captainAttackRate": 1,
+          "captainGuard": 0,
+          "captainReflect": 0,
+          "captainOvertimeCd": 0,
+          "captainEnduranceVersion": 3,
+          "telegraph": null,
+          "sequence": [],
+          "motion": null,
+          "rangedAim": null,
+          "captainPursuit": 0,
+          "captainOpeningSummon": false,
+          "frozen": false,
+          "renderKind": "enemy"
+        },
+        "region": 0,
+        "scale": 1.5,
+        "displayDPR": 2
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/approved-art-pass/after/shared_captain-supply-vale--Current_body.webp",
+    "isolatedReferenceHash": "facd1e5e51e3b03a876fe22c6d6f4bebbcefdce7698ba4ac48eac746d4dcdc5a",
+    "gameplayContextPaths": [
+      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "A Goblin captain visibly inspired by Thornfang without becoming a wolf.",
+      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+      },
+      {
+        "before": "tools/visual-review/approved-art-pass/images/shared_captain-supply-vale--Current_body.webp",
+        "beforeSHA256": "ff18a1f388244018acb62b99840024bb8b25c67be17e604d3f38aabc9c410b00",
+        "after": "tools/visual-review/approved-art-pass/after/shared_captain-supply-vale--Current_body.webp",
+        "afterSHA256": "facd1e5e51e3b03a876fe22c6d6f4bebbcefdce7698ba4ac48eac746d4dcdc5a",
+        "label": "Current body"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "shared:captain-supply-vale"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::captain-supply-vale",
+        "reason": "Rebuild a distinct Goblin face and connected bow stance; integrate wolf admiration through a subordinate trophy mantle."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "Existing animation preserved; no new clips authored.",
+    "gameplayStates": [
+      "Current body"
+    ],
+    "directions": [],
+    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+  },
+  "reviewEvidence": {
+    "catalogNumber": 343,
+    "assessmentId": "shared:captain-supply-vale",
+    "disposition": "rebuild",
+    "implementationStatus": "Implemented",
+    "resultAccepted": true,
+    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+    "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
+    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "requestedCorrection": "Updated the relevant shared character identity, face/hair, rigid helmet, held tool, quiver or camp/riding composition under the latest owner correction. Carries through indexed loadouts, captive and appointed states. Gameplay geometry and protected raster pixels remain intact.",
+    "finalResultApprovalDate": "2026-10-19"
+  }
+}
