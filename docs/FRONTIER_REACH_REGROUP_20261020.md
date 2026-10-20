@@ -1,5 +1,7 @@
 # Frontier scenery, enemy reach and regroup support — 20 October 2026
 
+Published through [PR #335](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/335), merge `3fccc550e4bca3e356a8b152915bb842682508ef`. Package-only [run 39400269827](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39400269827) succeeded; all 13 live file checks match. Normal workflow restored; temporary publisher removed. [Receipt](evidence/FRONTIER_REACH_REGROUP_DEV101_PUBLICATION_20261020.json). Owner live play and bow-preview feedback next; no automatic further work.
+
 Dev.101 follows published dev.100. Joel supplied three Frontier screenshots and requested map-edge channel continuity, replacement of the detached dark strip with a polished civic fountain, and new leaves on burned trees. He then requested longer enemy specials with matching warnings/effects, slightly greater targeting distance to balance all ranged party members, earlier recognition of losing fights, and healing for wounded enemies arriving to regroup. A fourth screenshot requests a preview of paired violet bows on the Mage's braids; that preview is unselected and is not applied to the runtime.
 
 ## Frontier

@@ -1,0 +1,135 @@
+{
+  "version": "0.9.1+snapshot.dev.101",
+  "date": "2026-10-20",
+  "pullRequest": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/335",
+  "publishedCommit": "3fccc550e4bca3e356a8b152915bb842682508ef",
+  "preparedTree": "6197f8845afac6cb944311d0f7bd3d5ac6a6bd7b",
+  "publicationRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39400269827",
+  "conclusion": "success",
+  "jobs": [
+    "publish: package/deploy committed files only"
+  ],
+  "broadCI": false,
+  "browserMatrix": false,
+  "focusedChecks": [
+    "expanded cone fringe damage, matching warning and safe outside boundary",
+    "expanded volley flight/warning endpoint and Sentinel fragment containment",
+    "night/Rogue special reach, automatic idle acquisition and ordinary ranged aiming",
+    "earlier wounded and outnumbered assessment",
+    "idle healer triage/approach and cooldown/Silence/cover/returning recipient gates",
+    "all seven specialized Dreadmaw plans legal in actual Treasury; minister finisher/support radius",
+    "existing enemy area healing and enemy support healing focused checks",
+    "sixteen integrated Rogue effectiveness/lifecycle checks",
+    "Frontier full-length channel collision, retained crossings, round-basin routing and dry former strip",
+    "old save safe-position repair with currency/XP/dead-enemy preservation",
+    "all nine existing crossings both directions and restored saves",
+    "four actual native canvas scene captures; isolated fountain/procedural tree/retained-raster overlay; state unchanged",
+    "hero, troop and pet combat definitions match dev.100 exactly",
+    "unselected runtime mageHead function byte-identical to dev.100",
+    "build/generated syntax, changed-file formatting and diff checks",
+    "tactical configuration remains immutable"
+  ],
+  "verifiedAt": "2026-10-20T09:23:46.713031+00:00",
+  "liveVerification": [
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "deb09870395c6141b592de638861d86de43aab8a529a2650b329aae1f8355157"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 296,
+      "sha256": "a014f6346d4b7461578ff94cf3f4f854934f6b7b4c2e9466089d9fb32fbcfbcc"
+    },
+    {
+      "path": "src/prototype/archive.js",
+      "match": true,
+      "bytes": 54118,
+      "sha256": "96d9ac878ae4e0a02ff72f7115e397ea5482763e14ecc7d8b7e6494b558733fd"
+    },
+    {
+      "path": "src/prototype/boss-combat.js",
+      "match": true,
+      "bytes": 93534,
+      "sha256": "9173fe80181bb30128dc389d8b1df9df29b427c6016f5f3828629aac2a9adfc9"
+    },
+    {
+      "path": "src/prototype/combat-visuals.js",
+      "match": true,
+      "bytes": 51139,
+      "sha256": "6e64734dcf425c51b73fca7c65122362a4ddba419a6c069845ce3cb005408034"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 250066,
+      "sha256": "53ad7f074d974ef33ff6440855d2be2b5729c748271c3973ceb2163709f96a50"
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "match": true,
+      "bytes": 98548,
+      "sha256": "6086ed9a99d0a742f8850f573c3f5ff2573b3b6d7c6c24cb68824f118d46b39d"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "match": true,
+      "bytes": 179602,
+      "sha256": "8bde71f67ae67119d4bddd9f31c01dcb610a2cfa732d75605cb38439cf2aae0b"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "match": true,
+      "bytes": 464900,
+      "sha256": "c6ce658c844e5ad4ad5b6bebdc8956f02869f3d464c2b1acfe783f56a9e17f29"
+    },
+    {
+      "path": "src/prototype/app.js",
+      "match": true,
+      "bytes": 133795,
+      "sha256": "65bd0752380ef46ddcf96df2977f9b89a32c5020c3dd295924ed033a47964e0f"
+    },
+    {
+      "path": "src/prototype/party.js",
+      "match": true,
+      "bytes": 52407,
+      "sha256": "17929913e6d4910789c8f32e673cf17adae32d973d387eb259c2696711149cda"
+    },
+    {
+      "path": "src/prototype/save.js",
+      "match": true,
+      "bytes": 46946,
+      "sha256": "86abb2f225e060a02e4f256daac3851864c5cf43048b323c76c149983bf709ad"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20550,
+      "sha256": "da2a9d1ce7769dd64fa0568fb60d413e16ced77bf2d6e7e43855faa0792a2457"
+    }
+  ],
+  "changes": [
+    "Frontier channel reaches both map boundaries; detached strip becomes civic fountain",
+    "fresh shoots/leaves on Frontier burned tree bodies, original raster preserved",
+    "enemy special reach +20%, ordinary acquisition/ranged basic targeting +10%; shared warning/VFX geometry",
+    "initial assessment 1.1 to 0.4 seconds, thinking 0.8 to 0.3, wounded threshold 30 to 50 percent",
+    "idle healers aid arriving regrouped allies at 90 percent HP or lower; ordinary threshold 75 percent; original healing amount and cooldown"
+  ],
+  "mageBows": {
+    "status": "preview only; owner selection pending",
+    "preview": "tools/visual-review/frontier-reach-dev101/mage-bows-preview.png",
+    "candidate": "tools/visual-review/frontier-reach-dev101/mage-bows-candidate.json",
+    "runtimeHeadUnchanged": true,
+    "headSha256": "5b85ede18efe14d802835890517834a76fa18525ec99ea72193aec9179319f77"
+  },
+  "limits": [
+    "Focused simulation and native canvas inspection only; owner live play remains the device/FPS and subjective balance check.",
+    "Arena-bound formations/checkerboard remain authored; wall-aware placement can reduce or reject enlarged ground areas."
+  ],
+  "workflowCleanup": {
+    "normalPagesRestored": true,
+    "temporaryPublisherRemoved": true
+  }
+}
