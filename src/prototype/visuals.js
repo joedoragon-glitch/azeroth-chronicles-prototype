@@ -3251,6 +3251,81 @@
       }
       ctx.restore();
     }
+    function treasuryHammer() {
+      line(
+        [
+          [26, -27],
+          [20, 17],
+        ],
+        '#6c533b',
+        5,
+      );
+      line(
+        [
+          [24, -26],
+          [19, 15],
+        ],
+        '#b79664',
+        2,
+      );
+      poly(
+        [
+          [16, -37],
+          [38, -37],
+          [42, -31],
+          [37, -21],
+          [15, -23],
+        ],
+        '#7d8b89',
+      );
+      poly(
+        [
+          [16, -37],
+          [38, -37],
+          [42, -31],
+          [20, -31],
+        ],
+        '#b8c2b5',
+      );
+      line(
+        [
+          [20, -29],
+          [37, -28],
+        ],
+        '#535f5e',
+        1.1,
+      );
+      for (const x of [22, 29, 35]) oval(x, -26, 1.2, 1.2, '#c9cbb1');
+    }
+
+    function governorAxe(x = 28, metal = '#a5afb0') {
+      line(
+        [
+          [x, -29],
+          [x - 6, 15],
+        ],
+        '#8f704f',
+        3.5,
+      );
+      poly(
+        [
+          [x - 1, -29],
+          [x + 12, -35],
+          [x + 14, -19],
+          [x - 3, -20],
+        ],
+        metal,
+      );
+      line(
+        [
+          [x + 12, -33],
+          [x + 14, -21],
+        ],
+        '#d6d8c6',
+        1.6,
+      );
+    }
+
     function mountainBody() {
       humanoid('#846c52', '#acaa7d', 1.55, false);
       grip(-23, -1, '#a5a678');
@@ -3309,50 +3384,7 @@
         1,
       );
       oval(0, -1, 2, 1, gold);
-      line(
-        [
-          [26, -27],
-          [20, 17],
-        ],
-        '#6c533b',
-        5,
-      );
-      line(
-        [
-          [24, -26],
-          [19, 15],
-        ],
-        '#b79664',
-        2,
-      );
-      poly(
-        [
-          [16, -37],
-          [38, -37],
-          [42, -31],
-          [37, -21],
-          [15, -23],
-        ],
-        '#7d8b89',
-      );
-      poly(
-        [
-          [16, -37],
-          [38, -37],
-          [42, -31],
-          [20, -31],
-        ],
-        '#b8c2b5',
-      );
-      line(
-        [
-          [20, -29],
-          [37, -28],
-        ],
-        '#535f5e',
-        1.1,
-      );
-      for (const x of [22, 29, 35]) oval(x, -26, 1.2, 1.2, '#c9cbb1');
+      treasuryHammer();
       grip(23, -4, '#a5a678');
     }
     function spectralScholar() {
@@ -3830,31 +3862,7 @@
         );
       } else if (governor || e.ranged) {
         const x = inspector ? 27 : 28;
-        line(
-          [
-            [x, -29],
-            [x - 6, 15],
-          ],
-          '#8f704f',
-          3.5,
-        );
-        poly(
-          [
-            [x - 1, -29],
-            [x + 12, -35],
-            [x + 14, -19],
-            [x - 3, -20],
-          ],
-          metal,
-        );
-        line(
-          [
-            [x + 12, -33],
-            [x + 14, -21],
-          ],
-          '#d6d8c6',
-          1.6,
-        );
+        governorAxe(x, metal);
         if (e.ranged && !officer) {
           softRect(-21, -4, 8, 12, '#6e493b', 2);
           line(
@@ -4478,9 +4486,239 @@
         1,
       );
     }
+    function littleMarshal() {
+      // Miniature of Veyra's approved ivory parade kit; keep the pet's large head
+      // and short, armored arms rather than shrinking the adult silhouette.
+      const plate = '#dbd9c9',
+        light = '#f3edda',
+        trim = '#ccac69',
+        shadow = '#929e9c',
+        cloth = '#685974';
+      for (const side of [-1, 1]) oval(side * 9, 11, 6, 3, shadow);
+      shaped(cloth, () => {
+        ctx.moveTo(-10, -12);
+        ctx.lineTo(10, -12);
+        ctx.quadraticCurveTo(12, 0, 16, 8);
+        ctx.quadraticCurveTo(0, 16, -16, 8);
+        ctx.quadraticCurveTo(-12, 0, -10, -12);
+      });
+      line(
+        [
+          [-13, 9],
+          [0, 12],
+          [13, 9],
+        ],
+        trim,
+        0.9,
+      );
+      for (const side of [-1, 1]) {
+        softPoly(
+          [
+            [side * 4, -1],
+            [side * 12, -2],
+            [side * 14, 5],
+            [side * 8, 8],
+            [side * 4, 6],
+          ],
+          plate,
+          1,
+        );
+        line(
+          [
+            [side * 11, 0],
+            [side * 12, 4],
+            [side * 8, 6],
+          ],
+          trim,
+          0.8,
+        );
+        line(
+          [
+            [side * 12, -13],
+            [side * 15, -7],
+            [side * 16, -1],
+          ],
+          shadow,
+          6,
+        );
+        softPoly(
+          [
+            [side * 11, -16],
+            [side * 18, -14],
+            [side * 20, -10],
+            [side * 15, -8],
+            [side * 11, -10],
+          ],
+          plate,
+          1,
+        );
+        line(
+          [
+            [side * 13, -14],
+            [side * 17, -13],
+          ],
+          trim,
+          0.9,
+        );
+        oval(side * 15, -6, 3.4, 2.7, plate);
+        softRect(side * 16 - 3, -5, 6, 7, plate, 1);
+        line(
+          [
+            [side * 16 - 2, -1],
+            [side * 16 + 2, -1],
+          ],
+          trim,
+          0.8,
+        );
+      }
+      softPoly(
+        [
+          [-10, -16],
+          [0, -19],
+          [10, -16],
+          [9, -5],
+          [0, -2],
+          [-9, -5],
+        ],
+        plate,
+        2,
+      );
+      line(
+        [
+          [-8, -14],
+          [0, -16],
+          [8, -14],
+        ],
+        light,
+        1.5,
+      );
+      line(
+        [
+          [-8, -5],
+          [0, -3],
+          [8, -5],
+        ],
+        trim,
+        1,
+      );
+      softRect(-9, -2, 18, 3, '#574a43', 0.5);
+      softRect(-2, -2, 4, 3, trim, 0.4);
+      poly(
+        [
+          [0, -15],
+          [3, -11],
+          [0, -7],
+          [-3, -11],
+        ],
+        trim,
+      );
+      fillOval(0, -11, 1.1, 1.5, '#83749c');
+      // A single face: blonde crop, blue almond eyes and shaped rose lips.
+      oval(0, -28, 16, 15, shadow);
+      oval(0, -27, 12.5, 13, '#d5ad94');
+      shaped('#dfcfb3', () => {
+        ctx.moveTo(-12, -33);
+        ctx.quadraticCurveTo(-13, -44, 3, -41);
+        ctx.quadraticCurveTo(14, -41, 12, -29);
+        ctx.lineTo(8, -32);
+        ctx.quadraticCurveTo(5, -40, -3, -34);
+        ctx.lineTo(-11, -30);
+      });
+      for (const side of [-1, 1]) {
+        const x = side * 5,
+          y = -28;
+        shaped('#f3e7d8', () => {
+          ctx.moveTo(x - 3, y);
+          ctx.quadraticCurveTo(x, y - 3.2, x + 3, y);
+          ctx.quadraticCurveTo(x, y + 2.8, x - 3, y);
+        });
+        fillOval(x, y, 1.55, 2.15, '#5f829d');
+        fillOval(x, y + 0.1, 0.7, 1.7, '#2c343b');
+        fillOval(x - 0.5, y - 0.7, 0.5, 0.6, '#fff6e4');
+        line(
+          [
+            [x - 2.6, -32],
+            [x, -33],
+            [x + 2.5, -32],
+          ],
+          '#8a765d',
+          0.8,
+        );
+        shaped(plate, () => {
+          ctx.moveTo(side * 12, -36);
+          ctx.lineTo(side * 15, -34);
+          ctx.lineTo(side * 14, -19);
+          ctx.lineTo(side * 10, -16);
+          ctx.lineTo(side * 11, -24);
+        });
+        line(
+          [
+            [side * 13, -33],
+            [side * 12.5, -22],
+            [side * 11, -19],
+          ],
+          trim,
+          0.8,
+        );
+      }
+      line(
+        [
+          [0, -26],
+          [-0.5, -23.5],
+          [0.8, -23.5],
+        ],
+        '#ae7f68',
+        0.6,
+      );
+      expressionLips(-0.25, -25, false, false, '#a94058');
+      shaped(plate, () => {
+        ctx.moveTo(-15, -37);
+        ctx.quadraticCurveTo(0, -51, 15, -37);
+        ctx.lineTo(12, -35);
+        ctx.quadraticCurveTo(0, -45, -12, -35);
+      });
+      line(
+        [
+          [-12, -38],
+          [0, -44],
+          [12, -38],
+        ],
+        trim,
+        1,
+      );
+      softPoly(
+        [
+          [-3, -43],
+          [0, -48],
+          [3, -43],
+          [2, -40],
+          [-2, -40],
+        ],
+        trim,
+        0.6,
+      );
+      oval(0, -43, 1, 1.6, '#856b96');
+      shield(-16, -1, shadow);
+      marshalSpear(20, 0.75);
+      // The gauntlet reaches the existing spear grip without lengthening the arm.
+      softRect(16, -1, 5.5, 4, light, 1);
+      line(
+        [
+          [17, 1],
+          [20.5, 1],
+        ],
+        shadow,
+        0.6,
+      );
+    }
+
     function craftedPet(family) {
       if (!Object.hasOwn(R.petCompanions, family)) return false;
       shade(18, 5, 0.24);
+      if (family === 'citadel') {
+        littleMarshal();
+        return true;
+      }
       const eyes = (x, y, gap = 6) => {
         for (const side of [-1, 1]) {
           oval(x + side * gap, y, 3, 4, '#2d4140');
@@ -4767,7 +5005,6 @@
         archive: ['#5d8588', '#aec3b5'],
         ridge: ['#a2835d', '#b5b488'],
         warlord: ['#936c5b', '#a2ae7c'],
-        citadel: ['#7d929b', '#d7b69b'],
         darklord: ['#65516f', '#bdb4b8'],
       }[family];
       if (!colors) return false;
@@ -4904,33 +5141,7 @@
         );
         oval(0, -23, 4, 3, '#c3c192');
         softRect(-9, -13, 18, 11, '#7c775d', 2);
-        line(
-          [
-            [23, -26],
-            [19, 11],
-          ],
-          '#9d8057',
-          3,
-        );
-        poly(
-          [
-            [15, -30],
-            [31, -30],
-            [35, -26],
-            [31, -19],
-            [15, -20],
-          ],
-          '#9daaa0',
-        );
-        poly(
-          [
-            [15, -30],
-            [31, -30],
-            [35, -26],
-            [18, -26],
-          ],
-          '#d1d3b6',
-        );
+        craftAt(1.75, 2, 0.75, treasuryHammer);
         grip(19, -1, skinColor);
         oval(-17, -3, 5, 5, '#ccb36c');
         oval(-17, -3, 3, 3, '#e1c988');
@@ -4985,24 +5196,7 @@
           '#c6a170',
           2,
         );
-        line(
-          [
-            [21, -27],
-            [19, 10],
-          ],
-          '#9b7e55',
-          3,
-        );
-        softPoly(
-          [
-            [20, -31],
-            [32, -29],
-            [33, -20],
-            [20, -19],
-          ],
-          steel,
-          1,
-        );
+        craftAt(1.75, 0.5, 0.75, () => governorAxe());
         grip(19, -1, skinColor);
 
         shaped('#778b85', () => {
@@ -5012,47 +5206,6 @@
           ctx.quadraticCurveTo(0, -38, -11, -34);
         });
         softRect(-2, -45, 4, 4, gold, 1);
-      } else if (family === 'citadel') {
-        shaped('#8499a0', () => {
-          ctx.moveTo(-14, -29);
-          ctx.quadraticCurveTo(-14, -47, 0, -47);
-          ctx.quadraticCurveTo(16, -46, 15, -28);
-          ctx.lineTo(11, -31);
-          ctx.quadraticCurveTo(2, -43, -11, -32);
-        });
-        softPoly(
-          [
-            [8, -35],
-            [13, -32],
-            [12, -24],
-            [9, -27],
-            [9, -31],
-            [5, -33],
-          ],
-          '#c8c6ad',
-          1,
-        );
-        softPoly(
-          [
-            [-10, -15],
-            [0, -19],
-            [10, -15],
-            [8, 0],
-            [-8, 0],
-          ],
-          '#a2b2af',
-          2,
-        );
-        line(
-          [
-            [0, -14],
-            [0, -2],
-          ],
-          '#e5d6a4',
-          1,
-        );
-        marshalSpear(20, 0.75);
-        grip(20, 2, '#a2b2af');
       } else {
         softPoly(
           [

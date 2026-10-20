@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "status": "procedural-design",
+  "status": "procedural-candidate-unreviewed",
   "designId": "approved-art-pet-ridge",
   "name": "Ridge Tyrant miniature companion",
   "kind": "pet",
-  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "nextAction": "Owner review of the implemented 20 October correction; candidate is not merged or deployed.",
   "context": {
     "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
     "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Refine horn roots, gripping hands, miniature hammer depth and fitted vest.",
@@ -134,5 +134,18 @@
     "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
     "requestedCorrection": null,
     "finalResultApprovalDate": "2026-10-19"
+  },
+  "latestCorrection": {
+    "date": "2026-10-20",
+    "request": "Match Little Marshal to the updated Marshal Veyra; match Little Treasurer and Ash Cadet weapons to their actual bosses without stretching or changing their existing arms.",
+    "implementation": "Exact Treasury boss hammer, scaled at the existing pet grip; arms, body, face and pose unchanged.",
+    "scope": "Procedural game drawing only; no image generation, registry, gameplay or save changes.",
+    "appearanceAcceptance": "Not yet reviewed by owner.",
+    "sourceBaseline": "b2cc002f9883a93758ab1a747a87f87d44e2cc62",
+    "comparison": "tools/visual-review/pet-identity-dev115/comparacion.png",
+    "comparisonSha256": "98f3ac4604f31e4adae89aa27008d573d6f6beff6fc5b660973a534528340e2b",
+    "nativeScene": "tools/visual-review/pet-identity-dev115/native-valley.png",
+    "checks": "tools/visual-review/pet-identity-dev115/checks.json",
+    "release": "Local dev.115 candidate; not merged or deployed."
   }
 }
