@@ -1,5 +1,7 @@
 # Project working rules
 
+- **Candidate dev.100 — mounted movement and existing-roster skills:** 30% mounted walking advantage across movement modes; repair stale advanced-training flag when hero Skill 2 is learned, preserve existing roster/cooldowns. Focused checks only; package-only publication. [Scope](docs/MOUNTED_ROSTER_SKILLS_20261020.md).
+
 - Published dev.99: PR #333 / bfc9497c3b7059b3ca172bc256c99637367f0210; package-only run 39394946739 succeeded and exact live files match. Full Keeper Archive/ledger copy audit: own first-person account, authoring leakage removed, readable labels; established lore, live figures and evidence/throne gates preserved. 72 text states and 144 numerical figures blocks checked; focused checks only, no broad CI. Normal workflow restored; temporary publisher removed. Receipt: docs/evidence/KEEPER_ARCHIVE_DEV99_PUBLICATION_20261020.json. Owner reading/play next; no automatic further work.
 
 - **Historical candidate dev.99 Keeper Archive copy audit:** Full Archive/ledger audit removes authoring leakage, rewrites Keeper self-history and relationships in his own voice, keeps rules-derived figures and evidence/throne gates. Focused text/menu checks only; no broad CI. [Scope](docs/KEEPER_ARCHIVE_COPY_AUDIT_20261020.md).
