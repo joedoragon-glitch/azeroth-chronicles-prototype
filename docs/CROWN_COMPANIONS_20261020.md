@@ -46,4 +46,4 @@ No whole-game/browser matrix or device-FPS claim. Map retheming remains deferred
 
 ## Publication
 
-Prepared in PR #344. Package-only publication and exact live verification follow the completed local audit.
+PR [#344](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/344) merged as `3a76a9e532f03f2e9f9656a2fadacea7f07743ca`. Package-only [run 39441975047](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39441975047) succeeded. All 24 checked live files match. Normal workflow restored; temporary publisher removed. Receipt: `docs/evidence/CROWN_COMPANIONS_DEV110_PUBLICATION_20261020.json`.

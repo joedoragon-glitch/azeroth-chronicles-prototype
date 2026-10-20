@@ -23,7 +23,7 @@
     "pendingCorrections": []
   },
   "reference": {
-    "sourceCommit": "working dev110 candidate",
+    "sourceCommit": "3a76a9e532f03f2e9f9656a2fadacea7f07743ca",
     "ownerFilesAndBranches": [
       "src/prototype/visuals.js",
       "src/prototype/rules.js",
@@ -88,7 +88,7 @@
     "activeContentRevision": null,
     "expectedReplacementRevision": null,
     "rollbackRevision": null,
-    "releaseCommit": null,
-    "releaseEvidence": null
+    "releaseCommit": "3a76a9e532f03f2e9f9656a2fadacea7f07743ca",
+    "releaseEvidence": "docs/evidence/CROWN_COMPANIONS_DEV110_PUBLICATION_20261020.json"
   }
 }

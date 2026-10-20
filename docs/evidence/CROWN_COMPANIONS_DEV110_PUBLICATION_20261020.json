@@ -1,0 +1,166 @@
+{
+  "verified_at": "2026-10-20T14:45:23.900447+00:00",
+  "merge": "3a76a9e532f03f2e9f9656a2fadacea7f07743ca",
+  "files": [
+    {
+      "path": "index.html",
+      "match": true,
+      "bytes": 5372,
+      "sha256": "527cf38ed3915b1228994cb7a99e2db0ab6113f4b4237af16bfaf14155fb0a85"
+    },
+    {
+      "path": "phone.html",
+      "match": true,
+      "bytes": 5373,
+      "sha256": "3c5926116fb0395daa4626ec9454d35bedd81b8db61d1a2cb6753a3b81ab4bd5"
+    },
+    {
+      "path": "prototype.html",
+      "match": true,
+      "bytes": 5372,
+      "sha256": "527cf38ed3915b1228994cb7a99e2db0ab6113f4b4237af16bfaf14155fb0a85"
+    },
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "f7a0b8a86f72f51e667b57a2414d022b2fce2d96354a64080001907b46d5a288"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 296,
+      "sha256": "44adcadd04ecc5f528cdcd8a4ba4ca2a6a8fca87f9b9de232d762abc6ca6b30c"
+    },
+    {
+      "path": "src/prototype/archive.js",
+      "match": true,
+      "bytes": 54988,
+      "sha256": "d35b92523b7dfa4be414cb38441b15f2ea2e76b400a87280f3d7a4178dee032d"
+    },
+    {
+      "path": "src/prototype/boss-combat.js",
+      "match": true,
+      "bytes": 99293,
+      "sha256": "9dd2e97e2a271d2809b769dd153da8f915a628b751c0b4cb9a0607b3d93ac908"
+    },
+    {
+      "path": "src/prototype/combat-visuals.js",
+      "match": true,
+      "bytes": 51139,
+      "sha256": "6e64734dcf425c51b73fca7c65122362a4ddba419a6c069845ce3cb005408034"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 251943,
+      "sha256": "7f959151daf730af84f28eb1fd8b5dcb34ddbcba5303fc1451c6a696b97211d6"
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "match": true,
+      "bytes": 100797,
+      "sha256": "a9aba40b768d2fa6f7b0b8157e9fb3d8dc45f8cdb679a83c3745b8d6c5308013"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "match": true,
+      "bytes": 209118,
+      "sha256": "247e3241a2bab25ef07caf34f133acfa9aae04f3126662b18a6a8525272dc837"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "match": true,
+      "bytes": 484327,
+      "sha256": "c8c98b5b389d3be2c270683051e19e1583e49a85376182cd2afdc03a43a3ef3c"
+    },
+    {
+      "path": "src/prototype/app.js",
+      "match": true,
+      "bytes": 133144,
+      "sha256": "8d0f67f5b412fc63eae662d07055438fd155667a2102a23d0415af75e70e230f"
+    },
+    {
+      "path": "src/prototype/party.js",
+      "match": true,
+      "bytes": 68202,
+      "sha256": "3d898d2ef2841544f372c0a6aa41b366c7bfa0d75b3f893b3a1250967c58e713"
+    },
+    {
+      "path": "src/prototype/save.js",
+      "match": true,
+      "bytes": 47941,
+      "sha256": "ccb8e9787bad096c96c25e8cc45ae744f7015c89c03afaae9605a18e085765b4"
+    },
+    {
+      "path": "src/prototype/world.js",
+      "match": true,
+      "bytes": 184337,
+      "sha256": "ef87866358d195c050c86354c5c27a4bfd6c7580116c1b6d8cb5bebf62724f3a"
+    },
+    {
+      "path": "src/prototype/navigation.js",
+      "match": true,
+      "bytes": 46155,
+      "sha256": "954c80ec334b61fe3919dfb6f081d72cb1e5078d971ef8cfa6dab59f1b6fe45e"
+    },
+    {
+      "path": "src/prototype/combat.js",
+      "match": true,
+      "bytes": 48641,
+      "sha256": "ae8c36339c4828eb6770ee3882e5804628847c955045dcc6b2917be6ce635dd5"
+    },
+    {
+      "path": "src/prototype/hero-combat.js",
+      "match": true,
+      "bytes": 62011,
+      "sha256": "bd1e499aeec1694c4d86be7b2ce1e9b0fd60fd688bd873303458cb7aec902531"
+    },
+    {
+      "path": "src/prototype/fortifications.js",
+      "match": true,
+      "bytes": 9981,
+      "sha256": "5f669aa0e6295df09208d04464a40a551d5b696ff6a0f1dd6f8d48917734dce9"
+    },
+    {
+      "path": "src/prototype/economy.js",
+      "match": true,
+      "bytes": 4728,
+      "sha256": "1b1e6c45db20a50f136b8bec6a9423d45fe47b3ce56bc842a724edf9b3fc588f"
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "match": true,
+      "bytes": 73955,
+      "sha256": "55502b58cbcfce2c415e7a833fe3b31be2260600a34637859a6b924830725fd4"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20586,
+      "sha256": "be97d1d9691a5a5f256a6afae3451588ff7fe01e738d68edb9c2d4d2e008036c"
+    },
+    {
+      "path": "assets/sprites/manifest.json",
+      "match": true,
+      "bytes": 18798,
+      "sha256": "ca34058374aea87794536c01b3c7f4b8883ee5eb7b85e63c29192c954efce3b5"
+    }
+  ],
+  "version": "0.9.1+snapshot.dev.110",
+  "pull_request": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/344",
+  "publication_run": {
+    "id": 39441975047,
+    "url": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39441975047",
+    "conclusion": "success",
+    "scope": "Package tested committed files only; no hosted test matrix"
+  },
+  "candidate_tree": "a3cbba39ad17b0b92c8f64870c23b74dca746093",
+  "focused_evidence": "tools/visual-review/crown-companions-dev110/",
+  "normal_workflow_restored": true,
+  "normal_workflow_blob": "ae39fa32e5eb4adfdfa1f7ce7b2a15680b82b398",
+  "deferred": [
+    "Veyra arm/skirt correction awaiting owner review",
+    "Regional retheming"
+  ]
+}
