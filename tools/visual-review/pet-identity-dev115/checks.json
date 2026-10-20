@@ -1,0 +1,8 @@
+{
+  "baseline": "b2cc002f9883a93758ab1a747a87f87d44e2cc62",
+  "unchangedPixelCases": 90,
+  "changedPetCases": 9,
+  "allRenderStatesPure": true,
+  "sharedArmsAndBodyUnchanged": true,
+  "sourceSha256": "2b129ca6d73109d874335ce9ff5e1e2b514b91393a3300e3a04d96292516a977"
+}

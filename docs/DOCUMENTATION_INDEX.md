@@ -8,6 +8,8 @@
 
 # Documentation index — 19 October 2026
 
+- [Pet visual identity correction — prepared dev.115](PET_VISUAL_IDENTITY_20261020.md): Veyra miniature and exact boss weapons; comparison and native scene.
+
 ## Start here
 
 | Need | Maintained entrypoint |
