@@ -1,0 +1,93 @@
+{
+  "version": "0.9.1+snapshot.dev.97",
+  "date": "2026-10-20",
+  "pullRequest": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/331",
+  "publishedCommit": "7650c732a9aefd34c69b611c765bbb31767bd6c7",
+  "preparedTree": "1234fdb2ad34e8db3cced3a9d44fecbaf29638d1",
+  "publicationRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39389110093",
+  "conclusion": "success",
+  "jobs": [
+    "publish: package/deploy committed files only"
+  ],
+  "focusedChecks": [
+    "night tempo: counter/day/peace/Nightmare, actual melee/ranged cycles, aim duration, pursuit displacement",
+    "pursuit burst",
+    "Slow/cooldown",
+    "Rogue cast continuity",
+    "enemy area healing",
+    "build, generated source/assets and changed-file formatting"
+  ],
+  "broadCI": false,
+  "browserMatrix": false,
+  "verifiedAt": "2026-10-20T07:50:55.424604+00:00",
+  "liveVerification": [
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "08a035bf2e4f2069b3c75f11bd61bb4acca607b9380d30832ae36368bd006102"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 295,
+      "sha256": "14fe8b28e46575c60ca4b5330aa0fad52895c906171c68b415e8a07a8dd7399e"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 248103,
+      "sha256": "d8f30dde596fb80be292a3f0f659b3f2b7fbfb1b72b84c8a984a1126835cf6b0"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "match": true,
+      "bytes": 176504,
+      "sha256": "7a7c5ffd058c97da323b221c008248121eb91f4be26bad00bc6014204751c7d0"
+    },
+    {
+      "path": "src/prototype/app.js",
+      "match": true,
+      "bytes": 133795,
+      "sha256": "65bd0752380ef46ddcf96df2977f9b89a32c5020c3dd295924ed033a47964e0f"
+    },
+    {
+      "path": "src/prototype/runtime.js",
+      "match": true,
+      "bytes": 9135,
+      "sha256": "210a1821b48294ff978a43096efe26f74671b916ddfdfe36adbf98ad24fe8c1b"
+    },
+    {
+      "path": "src/prototype/navigation.js",
+      "match": true,
+      "bytes": 31225,
+      "sha256": "4f20feda4bf5fc0e4a1d4dfb4235fa867ff2a14b87eff642ef73bdd5144d82df"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "match": true,
+      "bytes": 458592,
+      "sha256": "b00881fcdf9ff68d20bed63789289ec522460461c5d62d611701297e9a736262"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20549,
+      "sha256": "8d1073faeb47e9230ff425dde2da343bead020dd01c6a9f05dfc37a771423835"
+    }
+  ],
+  "changes": [
+    "Enemy combat walking and basic attack rate: 10% at night +0.75 percentage points per eligible boss victory, capped at 25% at twenty points",
+    "Ranged aim warnings preserved by shortening recovery for the full aim-and-shot cycle"
+  ],
+  "preserved": [
+    "HP/damage night scaling",
+    "10-second support healing and 3-second Rogue reuse",
+    "special warnings, dashes, projectiles and summon clocks",
+    "hero/companion/pet speed",
+    "dev.94 FPS and dev.95 travel source",
+    "artwork and v4 save schema"
+  ],
+  "limits": "Actual difficulty and physical-device pacing remain for owner live play. No whole-game validation is claimed.",
+  "workflowCleanup": "Normal pages.yml restored byte-for-byte; temporary dev.97 publisher removed. No runtime changes in closeout."
+}
