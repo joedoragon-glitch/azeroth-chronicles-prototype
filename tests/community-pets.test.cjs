@@ -95,6 +95,7 @@ for (const boss of Campaign.data.bosses) {
   const e = target(g, 550);
   const before = e.hp;
   assert(g.companionUseFirstSkill(u, e), family + ' first skill');
+  g.updateProjectiles(0.2); // Ranged single-target pet skills resolve on physical contact.
   assert(e.hp < before);
   assert.equal(u.skill1Cd, R.balance.companions.petFirstCooldown);
   assert(!g.s.hazards.length);

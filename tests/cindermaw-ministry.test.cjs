@@ -236,6 +236,7 @@ for (const mode of ['normal', 'nightmare'])
       c.hero.skills[2] = 1;
       c.hero.cd[2] = 0;
       assert(c.cast(3), 'Mage releases the actual interrupt');
+      c.updateProjectiles(0.1); // The interrupt now requires bolt contact.
       assert.equal(first.telegraph, null);
       assert.doesNotThrow(() => c.updateCinderDelegate(first, 0.05));
       assert(!e.cinderDelegation, 'lost warning cancels the delegated sequence');

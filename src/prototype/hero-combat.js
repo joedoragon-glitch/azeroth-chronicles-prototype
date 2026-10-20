@@ -89,6 +89,64 @@
           .sort((a, b) => dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b));
         return targets.find((e) => e.id === selected?.id) || targets[0] || null;
       }
+      interruptEnemyAction(enemy, action) {
+        const cfg = R.heroTactics.mage.interrupt;
+        if (!enemy.telegraph && !enemy.rangedAim) return false;
+        if (action && enemy.telegraph !== action && enemy.rangedAim !== action) return false;
+        if (enemy.telegraph) {
+          // Interrupt exactly the current warned action. An authored
+          // multi-stage boss sequence retains its later, separately
+          // warned attacks instead of silently losing the entire phase.
+          const interrupted = enemy.telegraph;
+          enemy.telegraph = this.advanceQueuedAttack(enemy);
+          if (enemy.family === 'mine' && interrupted.index !== 1 && enemy.telegraph?.index === 1)
+            this.prepareMineWorksPreview(enemy);
+          if (enemy.telegraph) {
+            this.event(
+              'warning',
+              enemy.telegraph.anonymousCast
+                ? { family: enemy.family, anonymousCast: true }
+                : { family: enemy.family },
+            );
+          } else {
+            enemy.cd = Math.max(enemy.cd || 0, cfg.enemyRecovery);
+            enemy.specialCd = Math.max(enemy.specialCd || 0, cfg.enemyRecovery);
+          }
+        } else if (enemy.rangedAim) {
+          enemy.rangedAim = null;
+          enemy.cd = Math.max(enemy.cd || 0, cfg.enemyRecovery);
+        }
+        return true;
+      }
+      launchTargetedHeroSkill(enemy, slot, damage, style, extra) {
+        const hero = this.hero,
+          distance = Math.max(1, dist(hero, enemy));
+        this.engage(enemy);
+        this.s.projectiles.push({
+          id: 'projectile-' + this.s.nextId++,
+          x: hero.x,
+          y: hero.y,
+          dx: (enemy.x - hero.x) / distance,
+          dy: (enemy.y - hero.y) / distance,
+          target: enemy.id,
+          source: 'hero',
+          slot,
+          damage,
+          style,
+          speed: R.balance.friendlyProjectiles.skillSpeed,
+          ...extra,
+        });
+        this.event('projectileLaunch', {
+          actor: 'hero',
+          class: hero.class,
+          source: 'hero',
+          slot,
+          style,
+          x: hero.x,
+          y: hero.y,
+          target: enemy.id,
+        });
+      }
       // Ranger ultimates distribute real arrows across a bounded number of
       // enemies rather than recreating the former shared immunity attack.
       launchHuntArrow(enemy, damage, charged = false, delay = 0, receipt = null) {
@@ -1193,41 +1251,9 @@
               const cfg = R.heroTactics.mage.interrupt,
                 enemy = this.tacticalSkillTarget(cfg.range + steps * cfg.rangeStep, true);
               if (!enemy) return false;
-              if (enemy.telegraph) {
-                // Interrupt exactly the current warned action. An authored
-                // multi-stage boss sequence retains its later, separately
-                // warned attacks instead of silently losing the entire phase.
-                const interrupted = enemy.telegraph;
-                enemy.telegraph = this.advanceQueuedAttack(enemy);
-                if (
-                  enemy.family === 'mine' &&
-                  interrupted.index !== 1 &&
-                  enemy.telegraph?.index === 1
-                )
-                  this.prepareMineWorksPreview(enemy);
-                if (enemy.telegraph) {
-                  this.event(
-                    'warning',
-                    enemy.telegraph.anonymousCast
-                      ? { family: enemy.family, anonymousCast: true }
-                      : { family: enemy.family },
-                  );
-                } else {
-                  enemy.cd = Math.max(enemy.cd || 0, cfg.enemyRecovery);
-                  enemy.specialCd = Math.max(enemy.specialCd || 0, cfg.enemyRecovery);
-                }
-              } else if (enemy.rangedAim) {
-                enemy.rangedAim = null;
-                enemy.cd = Math.max(enemy.cd || 0, cfg.enemyRecovery);
-              }
-              this.event('spell', {
-                actor: 'hero',
-                class: 'mage',
-                slot: 3,
+              this.launchTargetedHeroSkill(enemy, 3, 0, 'magic', {
                 effect: 'interrupt',
-                x: enemy.x,
-                y: enemy.y,
-                target: enemy.id,
+                interruptAction: enemy.telegraph || enemy.rangedAim,
               });
             }
           } else {
@@ -1347,6 +1373,13 @@
                   : advanced.damage) *
                 power *
                 scale;
+              if (!isCharged) {
+                this.launchTargetedHeroSkill(enemy, 4, damage, 'holy', {
+                  effect: 'judgment',
+                  tauntDuration: advanced.taunt + steps * advanced.tauntStep,
+                });
+                continue;
+              }
               if (this.damage(enemy, damage, 'hero', { area: isCharged, encountersAtStart })) {
                 // Captains and bosses keep their authored scripted specials;
                 // boss basic-target provocation is deliberately short-lived.
@@ -1373,16 +1406,6 @@
                 fromY: this.hero.y,
                 targetId: target.id,
               });
-            else
-              this.event('melee', {
-                actor: 'hero',
-                class: 'paladin',
-                slot: 4,
-                x: target.x,
-                y: target.y,
-                target: target.id,
-                weapon: 'sword',
-              });
           } else {
             const cfg = R.heroTactics.mage,
               advanced = isCharged ? cfg.rupture : cfg.fracture,
@@ -1408,6 +1431,14 @@
                     ? advanced.primaryDamage
                     : advanced.splashDamage
                   : advanced.damage);
+              if (!isCharged) {
+                this.launchTargetedHeroSkill(enemy, 4, damage, 'magic', {
+                  effect: 'arcane-fracture',
+                  fractureFraction: advanced.fraction + steps * advanced.fractionStep,
+                  fractureDuration: advanced.duration + steps * advanced.durationStep,
+                });
+                continue;
+              }
               if (this.damage(enemy, damage, 'hero', { area: isCharged, encountersAtStart })) {
                 this.fractureEnemy(
                   enemy,
@@ -1431,16 +1462,6 @@
                 fromX: this.hero.x,
                 fromY: this.hero.y,
                 targetId: target.id,
-              });
-            else
-              this.event('spell', {
-                actor: 'hero',
-                class: 'mage',
-                slot: 4,
-                effect: 'arcane-fracture',
-                x: target.x,
-                y: target.y,
-                target: target.id,
               });
           }
         } else if (slot === 5 || (slot === 7 && this.hero.class === 'paladin')) {

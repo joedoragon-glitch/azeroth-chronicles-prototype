@@ -162,7 +162,7 @@
         [
           'Judgment',
           'Taunt / group taunt',
-          'Strike and draw one foe’s attention',
+          'Dodgeable holy shot: hit + draw attention',
           'Grand Judgment: splash + group taunt',
           'Boss taunt affects basic attacks briefly; scripted specials remain.',
         ],
@@ -208,14 +208,14 @@
         [
           'Spell Interrupt',
           'Interrupt / bilateral silence',
-          'Stop one warned or aimed attack',
+          'Dodgeable bolt: stop one warned/aimed attack on hit',
           'Silence Field: block nearby special skills',
           'Silence affects you and companions too; basic attacks still work.',
         ],
         [
           'Arcane Fracture',
           'Vulnerability / group rupture',
-          'Hit + 15–19% incoming damage to foe',
+          'Dodgeable bolt: hit + 15–19% incoming damage',
           'Arcane Rupture: area hit + 20–24% vulnerability',
           'Fracture never stacks; the stronger effect applies.',
         ],
@@ -978,13 +978,17 @@
           action(
             'First · ' + def.first.name,
             () => {},
-            'Automatic · ' + game.petSkillSummary(family, 1),
+            'Automatic in combat · clear line required · no training needed · ' +
+              game.petSkillSummary(family, 1),
             true,
           ),
           action(
             'Charged · ' + def.second.name,
             () => {},
-            'Requires companion combat training · ' + game.petSkillSummary(family, 2),
+            (game.companionSecondSkillUnlocked()
+              ? 'Training unlocked · automatic 0.65s charge · '
+              : 'Learn hero Skill 2 from rescued Mira in Millhaven to unlock · ') +
+              game.petSkillSummary(family, 2),
             true,
           ),
           action(

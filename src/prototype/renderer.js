@@ -862,6 +862,23 @@
             if (target && def) {
               ctx.save();
               ctx.globalAlpha = 0.35;
+              PrototypeEnemyVfxArt?.petSkill?.(
+                ctx,
+                screen,
+                {
+                  ...def,
+                  petFamily: e.petFamily,
+                  slot: 2,
+                  stage: 'windup',
+                  x: target.x,
+                  y: target.y,
+                  fromX: e.x,
+                  fromY: e.y,
+                  life: 1 - game.partyChargeProgress(e),
+                  max: 1,
+                },
+                { reduced: reducedMotion(), optimized },
+              );
               drawPetSkillGeometry({
                 ...def,
                 x: target.x,
@@ -1327,7 +1344,8 @@
         ctx.save();
         ctx.globalAlpha = a;
         if (f.type === 'petSkill') {
-          drawPetSkillGeometry(f);
+          if (f.stage !== 'release') drawPetSkillGeometry(f);
+          PrototypeEnemyVfxArt?.petSkill?.(ctx, screen, f, { reduced: reducedMotion(), optimized });
         } else if (f.type === 'ability') {
           PrototypeCombatVisuals.ability(ctx, screen, f);
         } else if (f.type === 'contact') {

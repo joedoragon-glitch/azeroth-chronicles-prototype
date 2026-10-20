@@ -192,7 +192,7 @@
           def[1] +
             ' learned · Rank 1.' +
             (slot === 2
-              ? ' Companion training advanced: Soldiers learned Holy Cleave; Archers learned Piercing Volley.'
+              ? ' Companion training advanced: Soldiers learned Holy Cleave; Archers learned Piercing Volley; pets unlocked charged second skills.'
               : ''),
         );
         this.event('learning', { slot });

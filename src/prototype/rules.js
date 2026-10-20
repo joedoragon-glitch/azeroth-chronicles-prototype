@@ -578,7 +578,8 @@
       [0, 195, 'laundry'],
     ],
   };
-  const serviceOffsets = { teacher: [-155, -150], smith: [75, -175], alchemist: [105, -155] };
+  // Neri stands in the open square, clear of Reedport Supplies' raised stall.
+  const serviceOffsets = { teacher: [-155, -150], smith: [75, -175], alchemist: [0, 35] };
   // Deterministic regional nature dressing. Repeated entries are deliberate weighting.
   const natureThemes = [
     ['grass', 'grass', 'bush', 'bush', 'wildflowers', 'sapling', 'stump', 'fallen-log'],
@@ -5501,6 +5502,7 @@
   // Live balance ownership. Arrays retain their original slot/tier indices and fallbacks.
   // Historical migration mappings and procedural coordinates intentionally remain separate.
   const balance = {
+    friendlyProjectiles: { hitRadius: 22, lifeSeconds: 3, skillSpeed: 550 },
     nightTempo: {
       baseBonus: 0.1,
       perVictoryBonus: 0.0075,

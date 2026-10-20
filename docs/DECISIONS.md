@@ -173,3 +173,13 @@ Joel adds area-of-effect enemy support healing to this same update, preserving t
 Joel revises the proposed small buff to +10% at night, rising with the same non-final normal/TRUE boss counter to +25%. The live rule is `1 + min(0.25, 0.10 + 0.0075 × nightPoints)`: zero / ten / twenty victories yield 1.10× / 1.175× / 1.25×. Apply to enemy combat walking (pursuit, retreat, mobile Rogue casting, support approach and regroup/escape travel) and melee/ranged basic attack cycles. Day and peace use 1×; Nightmare uses its existing nighttime condition.
 
 Keep aim/cast warnings and scripted charge/projectile speeds unchanged. Ranged recovery compensates for its unchanged aiming time so the complete basic shooting cycle receives the intended rate bonus. Healing's 10-second cooldown, Rogue reuse's 3-second cooldown, special/summon clocks, ordinary hero/companion speed, HP/damage multipliers, artwork and rendering remain unchanged. The numerical settings belong in `rules.balance.nightTempo`. No new save fields or new timer loop.
+
+## Friendly ranged evasion and rescued Neri · 20 October 2026
+
+Owner requires movement-based evasion for friendly ranged auto-attacks and single-target ranged skills, matching hostile arrows. Lock friendly shot direction at launch, resolve contact over each frame segment and expire misses; retain existing damage/effects only on contact. Normal Mage Interrupt/Fracture, Paladin Judgment and ranged single-target pet skills follow this rule too. Preserve authored area/melee geometry and existing cooldown costs. Neri's rescued town service stands openly clear of the Reedport supplier stall; her original artwork remains unchanged.
+
+Pet first skills require no learning. Companion charged second skills already unlock through hero Skill 2 learned from rescued Mira; clarify that existing prerequisite and current unlock state in pet menus. No pet balance/training-cost change. See [scope](NERI_PROJECTILE_PET_20261020.md).
+
+Owner rejects the long blue snowmelt centerline in the reported ravine, then asks to retain the snowmelt idea if drawn properly. Replace the uniform line with a shallow variable-width stream, wet bed, small pools, exposed stones and subtle ripples inside the unchanged channel; retain rocks, banks, crossings and collision geometry.
+
+All pets must visibly announce skill use. Reuse the related bosses' action/material vocabulary at pet scale for both first and charged second skills; visible launch/name cues, charge cues, family-colored ranged trails and truthful contact effects. Keep on-hit effects tied to real hits, existing geometry, reduced-motion/optimization modes and the bounded effect queue.

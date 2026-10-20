@@ -16944,12 +16944,63 @@
       );
     }
     if (region === 2) {
-      // Snowmelt is visible within the existing mountain ravine, not a separate rectangular pond.
-      for (let y = 0; y < size; y += 38) {
-        if (b.gaps.some(([lo, hi]) => y >= lo - 20 && y <= hi + 20)) continue;
-        const a = R.channelBanks(region, y),
-          q = R.channelBanks(region, y + 38);
-        line({ x: (a[0] + a[1]) / 2, y }, { x: (q[0] + q[1]) / 2, y: y + 38 }, '#43757b', 3);
+      // Snowmelt sits inside the ravine floor: an uneven wet bed and shallow
+      // pools, not a constant-width stroke running down the map.
+      const bed = [],
+        water = [],
+        samples = [];
+      for (let y = b.bounds[2]; y <= b.bounds[3]; y = Math.min(b.bounds[3], y + 16)) {
+        const [lo, hi] = R.channelBanks(region, y),
+          width = hi - lo,
+          center = (lo + hi) / 2 + Math.sin(y / 99) * width * 0.18 + Math.sin(y / 31) * 4,
+          half = width * (0.055 + 0.09 * (0.5 + 0.5 * Math.sin(y / 83 + 0.7))),
+          left = Math.max(lo + 18, center - half),
+          right = Math.min(hi - 18, center + half);
+        bed.push([
+          { x: left - 4, y },
+          { x: right + 4, y },
+        ]);
+        water.push([
+          { x: left, y },
+          { x: right, y },
+        ]);
+        samples.push({ y, left, right, half });
+        if (y === b.bounds[3]) break;
+      }
+      const ribbon = (pairs) => [...pairs.map((p) => p[0]), ...pairs.map((p) => p[1]).reverse()];
+      poly(ribbon(bed), '#354a4b');
+      poly(ribbon(water), '#3d6269');
+      for (let n = 6; n < samples.length - 3; n += 11) {
+        const p = samples[n],
+          mid = (p.left + p.right) / 2,
+          q = screen({ x: mid, y: p.y });
+        if (!visible({ x: mid, y: p.y })) continue;
+        const sheen = ctx.createRadialGradient(q.x, q.y, 0, q.x, q.y, 42);
+        sheen.addColorStop(0, '#91b0a955');
+        sheen.addColorStop(1, '#91b0a900');
+        poly(ribbon(water.slice(n - 3, n + 4)), sheen);
+        // Small exposed wet stones interrupt the edges and narrow the riffles.
+        const x = n % 2 ? p.left + 2 : p.right - 2;
+        poly(
+          [
+            { x: x - 3, y: p.y - 4 },
+            { x: x + 4, y: p.y - 2 },
+            { x: x + 5, y: p.y + 7 },
+            { x: x - 2, y: p.y + 9 },
+          ],
+          '#515c58',
+        );
+        line({ x: x - 2, y: p.y - 3 }, { x: x + 3, y: p.y - 1 }, '#9b9c8877', 0.8);
+      }
+      // Short cross-current glints mark separate pools. They never join into
+      // another bright centerline and remain beneath the existing bridge decks.
+      for (let n = 4; n < samples.length; n += 9) {
+        const p = samples[n],
+          mid = (p.left + p.right) / 2;
+        if (!visible({ x: mid, y: p.y })) continue;
+        line({ x: p.left + 2, y: p.y }, { x: mid + p.half * 0.35, y: p.y + 2 }, '#9bb9b477', 0.9);
+        if (p.half > 10)
+          line({ x: mid - 2, y: p.y + 9 }, { x: p.right - 2, y: p.y + 11 }, '#71989866', 0.8);
       }
     }
     const harbor = R.harbors?.[['vale', 'march', 'highlands', 'frontier', 'crown'][region]];
