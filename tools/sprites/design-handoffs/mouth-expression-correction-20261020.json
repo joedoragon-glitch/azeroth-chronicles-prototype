@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "mouth-expression-correction-20261020",
+  "name": "Single mouth following original expression",
+  "kind": "preview",
+  "nextAction": "Joel reviews the preview and selects/corrects it before any game art changes.",
+  "context": {
+    "originConversation": "Conversation URL unavailable; owner instruction dated 20 October 2026.",
+    "decisionSummary": "Preview first; fix doubled lips without altering expressions or adding shading. Review Mage/Mira staves.",
+    "decisionDate": "2026-10-20",
+    "contentDocuments": [
+      "tools/visual-review/mouth-staff-preview-20261020/README.md"
+    ]
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner requested previews.",
+    "proceduralDesignAcceptance": "Pending owner review; no candidate is accepted.",
+    "spriteProductionAuthorization": "None; procedural preview only.",
+    "generatedAppearanceAcceptance": "Not applicable.",
+    "pendingCorrections": [
+      "Owner review pending"
+    ]
+  },
+  "reference": {
+    "sourceCommit": "fe6cf08adcae239903fc95726b31f4a92ec4b6aa",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js (read only)",
+      "tools/visual-review/mouth-staff-preview-20261020/preview.cjs",
+      "preview/mouths-staves-frontier-20261020"
+    ],
+    "isolatedReferencePath": "tools/visual-review/mouth-staff-preview-20261020/mouths-preview.png",
+    "isolatedReferenceHash": "3e6d58d26e5ced62adcb12b7256feabeda213bd1a889f9b663d454e1abc4a36f",
+    "traitsToPreserve": [
+      "Exact original smile curves",
+      "Lyss raised right corner",
+      "One flat colored stroke; no gloss or extra face shading"
+    ]
+  },
+  "production": {
+    "releaseCommit": null,
+    "releaseEvidence": null,
+    "rollbackRevision": "Live dev.102 is unchanged"
+  }
+}

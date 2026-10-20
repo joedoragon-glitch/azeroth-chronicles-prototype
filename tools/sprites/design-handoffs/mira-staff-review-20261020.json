@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "mira-staff-review-20261020",
+  "name": "Mira instructor staff options",
+  "kind": "preview",
+  "nextAction": "Joel reviews the preview and selects/corrects it before any game art changes.",
+  "context": {
+    "originConversation": "Conversation URL unavailable; owner instruction dated 20 October 2026.",
+    "decisionSummary": "Preview first; fix doubled lips without altering expressions or adding shading. Review Mage/Mira staves.",
+    "decisionDate": "2026-10-20",
+    "contentDocuments": [
+      "tools/visual-review/mouth-staff-preview-20261020/README.md"
+    ]
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner requested previews.",
+    "proceduralDesignAcceptance": "Pending owner review; no candidate is accepted.",
+    "spriteProductionAuthorization": "None; procedural preview only.",
+    "generatedAppearanceAcceptance": "Not applicable.",
+    "pendingCorrections": [
+      "Owner review pending"
+    ]
+  },
+  "reference": {
+    "sourceCommit": "fe6cf08adcae239903fc95726b31f4a92ec4b6aa",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js (read only)",
+      "tools/visual-review/mouth-staff-preview-20261020/preview.cjs",
+      "preview/mouths-staves-frontier-20261020"
+    ],
+    "isolatedReferencePath": "tools/visual-review/mouth-staff-preview-20261020/mira-staff-preview.png",
+    "isolatedReferenceHash": "761d425b4aa21f9ff16d51b14fb03565b1a4cba60eb5ef5672305939a221de3b",
+    "traitsToPreserve": [
+      "Regional green dress and book",
+      "One hand on a straight shaft",
+      "Leaf, crook or amber-ring head alternatives"
+    ]
+  },
+  "production": {
+    "releaseCommit": null,
+    "releaseEvidence": null,
+    "rollbackRevision": "Live dev.102 is unchanged"
+  }
+}

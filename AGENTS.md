@@ -1,5 +1,8 @@
 # Project working rules
 
+- **Active preview/audit — 20 October:** Joel reported doubled lips and requested single-mouth coloring along original expressions (especially Lyss), with preview before any character changes or shading; Mage/Mira staff options reopened. Unselected VM-only previews: `tools/visual-review/mouth-staff-preview-20261020/README.md`. No runtime edits or publication. Also audit Frontier central clutter/underused edges with roads and unchanged nature, then modest Abyss Bastion expansion/obstruction relief. Preserve live dev.102 until the relevant scope is ready; character art awaits owner review.
+
+
 - **Published dev.102 — Mage bows and lipstick:** PR #336 / `84047541c7acec3b53fe14c895ac49ac5a184d27`; package-only run 39402833461 succeeded; all 15 exact live checks match. Approved violet bows on regular/crowned Mage. Lipstick for Mage, Mira, Sela, Neri, Dara, Lyss, Vera and Marshal Veyra (normal/TRUE); shared captive/rescued/appointed appearances. Crowned Mage scarf retained. Focused build/native canvas checks only; no broad CI. Normal workflow restored; temporary publisher removed. [Receipt](docs/evidence/BOWS_LIPSTICK_DEV102_PUBLICATION_20261020.json). Owner live play/appearance feedback next; no automatic further work.
 
 
