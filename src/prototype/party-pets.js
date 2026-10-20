@@ -77,7 +77,15 @@
             : '') +
           ' · ' +
           def.multiplier +
-          '× companion attack · up to ' +
+          '× companion attack' +
+          (def.woundedBonus
+            ? ' · +' +
+              Math.round(def.woundedBonus * 100) +
+              '% damage against targets at or below ' +
+              Math.round(def.woundedThreshold * 100) +
+              '% HP'
+            : '') +
+          ' · up to ' +
           (def.cap || 1) +
           ' target(s) · ' +
           (slot === 1
@@ -193,8 +201,10 @@
         } else {
           for (const e of targets) {
             if (u.hp <= 0) break;
+            const woundedBonus =
+              def.woundedBonus && e.hp / e.maxHp <= def.woundedThreshold ? 1 + def.woundedBonus : 1;
             if (
-              !this.damage(e, this.companionAttackDamage(u) * def.multiplier, u.id, {
+              !this.damage(e, this.companionAttackDamage(u) * def.multiplier * woundedBonus, u.id, {
                 area: def.shape !== 'target',
               })
             )

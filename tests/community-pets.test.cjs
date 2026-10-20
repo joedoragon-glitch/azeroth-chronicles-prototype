@@ -198,7 +198,20 @@ for (const { id: family } of Campaign.data.bosses) {
   opened.actions.find((a) => a.label === 'Boss pet collection').action();
   assert.equal(opened.actions.length, 11);
   assert(opened.actions[0].label.includes('Recruitable'));
-  opened.actions[0].action();
+  const collectionRows = opened.actions.slice();
+  Campaign.data.bosses.forEach((boss, i) => {
+    const specialty = R.petCompanions[boss.id].specialty;
+    assert(
+      collectionRows[i].detail.includes(specialty),
+      'collection explains the actual pet specialty',
+    );
+    collectionRows[i].action();
+    assert(
+      opened.description.includes(specialty),
+      'pet detail keeps its distinct combat role visible',
+    );
+  });
+  collectionRows[0].action();
   const old = g,
     recruit = opened.actions.find((a) => a.label === 'Recruit · FREE');
   g = arena();
