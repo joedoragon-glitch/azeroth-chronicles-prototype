@@ -683,6 +683,8 @@
         // still protects companions, while a tank cannot stack two defenses
         // into near-immunity. Enemy weakening remains an offensive debuff.
         let defensiveFactor = 1;
+        if (this.companionRetreating(u))
+          defensiveFactor = Math.min(defensiveFactor, R.companionRecall.retreatDamageMultiplier);
         if (u === this.hero && u.class === 'paladin' && (u.shieldStance || 0) > 0) {
           const shield = R.heroTactics.paladin.shield;
           defensiveFactor = Math.min(

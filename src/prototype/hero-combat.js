@@ -923,9 +923,8 @@
         const cost = this.skillManaCost(slot, rank, isCharged);
         if (this.hero.mp < cost) return false;
         this.hero.mp -= cost;
-        // Recall holds until the player deliberately attacks, not only until
-        // they select a single target. Self-heal, guard and Ranger support
-        // skills remain defensive and do not reactivate companion pursuit.
+        // The hero may defend the retreat without cancelling an unfinished
+        // Recall. Deliberate offense releases the defensive hold after arrival.
         const offensive =
           (requiresTarget && !!target) ||
           slot === 5 ||
@@ -933,7 +932,7 @@
           (slot === 3 &&
             (this.hero.class === 'mage' || (this.hero.class === 'paladin' && isCharged)));
         // Passive covering fire is not a new squad engagement order.
-        if (offensive && !automatic) this.s.recallActive = false;
+        if (offensive && !automatic) this.releaseRecallForCombat();
         this.hero.cd[i] =
           slot === 3 && this.hero.class === 'paladin' && !isCharged
             ? 0

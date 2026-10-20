@@ -1,5 +1,9 @@
 # Current development state — 20 October 2026
 
+**Dev.106 scope expanded — one-press Recall:** Joel clarified durable cancellation/return with retreat protection. Recall now finishes through hero attacks, avoids route resets on repeated presses, gathers a compact formation and persists through reload. Returning companions get non-stacking 50% damage reduction until arrival. Focused behavior/Recall checks passed; final build/publication next. Companion judgment remains included; Veyra remains preview-only.
+
+**Prepared dev.106 — companion judgment:** Joel requested awareness of nearby ally positions and enemy force, with regrouping instead of isolated reckless charges and no new Rogue skills. Focused behavior/doctrine/gather/travel checks passed; build/format and package-only publication next. [Scope](COMPANION_JUDGMENT_20261020.md). Veyra remains preview-only.
+
 **Published dev.105 — aesthetic audit, field-boss resets and resource trips:** PR #339 / `002a4eab3fe7f16c4218fedb0d5ee6eee23bc531`; package-only run 39414588422 succeeded; 18 exact live files match. Focused checks/build passed, normal workflow restored. Active follow-up: companions should judge local support/threats and regroup instead of rushing enemy crowds; no new skills. Veyra correction remains preview-only.
 
 **Prepared dev.105 — aesthetic audit, confined field bosses and gathering:** Joel requested the post-layout audit, quick field-boss reset to usable terrain, and resource-first defensive gathering with safe travel/delivery and Recall. Focused checks/build/format passed; package-only publication pending. Veyra remains preview-only. [Scope](FRONTIER_AESTHETICS_BOSS_GATHER_20261020.md).

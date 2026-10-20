@@ -15,8 +15,248 @@
     Campaign.normalizeCharacterName = normalizeCharacterName;
     const laborAttacks = new WeakMap(),
       depositTrips = new WeakMap();
+    const companionJudgments = new WeakMap();
 
     class Party {
+      clearCompanionJudgment(u) {
+        companionJudgments.delete(u);
+      }
+      recallInProgress() {
+        return (
+          !!this.s.recallActive &&
+          this.activeLivingParty().some((u) => dist(u, this.hero) > R.companionRecall.arrivalRadius)
+        );
+      }
+      releaseRecallForCombat() {
+        if (!this.recallInProgress()) this.s.recallActive = false;
+      }
+      companionRetreating(u) {
+        if (u === this.hero || u.hp <= 0 || u.active === false || !this.s.party.includes(u))
+          return false;
+        if (this.s.recallActive) return dist(u, this.hero) > R.companionRecall.arrivalRadius;
+        const state = companionJudgments.get(u);
+        return !!(
+          state?.zone === this.zoneId &&
+          state.regrouping &&
+          state.point &&
+          !u.order &&
+          dist(u, state.point) > R.companionJudgment.arrivalRadius
+        );
+      }
+      followRecalledCompanion(u, living, dt) {
+        const index = Math.max(0, living.indexOf(u)),
+          count = Math.min(6, living.length),
+          row = Math.floor(index / 6),
+          angle = ((index % 6) * Math.PI * 2) / count + (row ? Math.PI / 6 : 0),
+          radius = R.companionRecall.formationRadius + row * 24,
+          desired = {
+            x: this.hero.x + Math.cos(angle) * radius,
+            y: this.hero.y + Math.sin(angle) * radius,
+          };
+        let point = this.safe(desired.x, desired.y);
+        if (dist(point, this.hero) > R.companionRecall.arrivalRadius - 10) point = this.hero;
+        const d = dist(u, this.hero),
+          speed =
+            this.companionRallyMoveSpeed(u, d > 650 ? 500 : d > 350 ? 390 : d > 200 ? 315 : 255) *
+            this.slowMovementFactor(u) *
+            this.mireBogMovementFactor(u) *
+            this.ashMovementFactor(u);
+        return this.follow(u, point, speed, dt, point === this.hero ? 35 : 15);
+      }
+      companionCombatReach(u) {
+        return u.type === 'pet'
+          ? this.petDefinition(u)?.role === 'ranged'
+            ? R.balance.companions.petBasicRange
+            : 70
+          : u.type === 'archer'
+            ? 185
+            : 65;
+      }
+      companionEnemyWeight(e) {
+        const cfg = R.companionJudgment;
+        return e.type === 'boss'
+          ? cfg.bossWeight
+          : e.captain || e.roomCaptain || e.fieldCaptain
+            ? cfg.captainWeight
+            : e.form === 'ringleader'
+              ? cfg.ringleaderWeight
+              : 1;
+      }
+      companionCoverAttack(u, e) {
+        if (
+          !e ||
+          e.hp <= 0 ||
+          e.neutral ||
+          e.returning ||
+          u.cd > 0 ||
+          dist(u, e) > this.companionCombatReach(u) ||
+          !this.line(u, e) ||
+          !this.tacticalDirectTargetable(e)
+        )
+          return false;
+        if (u.type === 'pet') return this.petDefensiveCounter(u, e);
+        u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+        if (u.type === 'archer') {
+          const d = Math.max(1, dist(u, e));
+          this.s.projectiles.push({
+            id: 'projectile-' + this.s.nextId++,
+            x: u.x,
+            y: u.y,
+            dx: (e.x - u.x) / d,
+            dy: (e.y - u.y) / d,
+            target: e.id,
+            damage: this.companionAttackDamage(u),
+            source: u.id,
+            speed: 450,
+            style: 'arrow',
+          });
+          return true;
+        }
+        const hit = this.damage(e, this.companionAttackDamage(u), u.id);
+        if (hit)
+          this.event('melee', {
+            actor: 'companion',
+            role: 'soldier',
+            source: u.id,
+            weapon: 'sword',
+            x: e.x,
+            y: e.y,
+            target: e.id,
+          });
+        return hit;
+      }
+      companionSafetyAssessment(u, target, living) {
+        const cfg = R.companionJudgment,
+          enemies = this.zone().enemies.filter((e) => e.hp > 0 && !e.neutral && !e.returning),
+          weight = (a) =>
+            cfg.minimumAllyWeight +
+            (1 - cfg.minimumAllyWeight) * Math.max(0, Math.min(1, a.hp / a.maxHp)),
+          allies = living.filter(
+            (a) => !a.order && dist(a, u) <= cfg.supportRadius && this.clearSegment(a, u),
+          ),
+          heroNearby =
+            this.hero.hp > 0 &&
+            dist(this.hero, u) <= cfg.supportRadius &&
+            this.clearSegment(this.hero, u),
+          support =
+            allies.reduce((sum, a) => sum + weight(a), 0) +
+            (heroNearby ? cfg.heroWeight * weight(this.hero) : 0),
+          danger = enemies
+            .filter(
+              (e) => dist(e, target) <= cfg.threatRadius || dist(e, u) <= cfg.nearThreatRadius,
+            )
+            .reduce((sum, e) => sum + this.companionEnemyWeight(e), 0),
+          nearby = enemies
+            .filter((e) => dist(e, u) <= cfg.nearThreatRadius)
+            .reduce((sum, e) => sum + this.companionEnemyWeight(e), 0),
+          wounded = u.hp / u.maxHp <= cfg.woundedFraction && nearby >= cfg.woundedThreatForce,
+          ranged =
+            u.type === 'archer' || (u.type === 'pet' && this.petDefinition(u)?.role === 'ranged'),
+          unsupported =
+            dist(target, this.hero) - (ranged ? this.companionCombatReach(u) : 55) >
+              cfg.maxAdvanceFromHero && dist(u, target) > this.companionCombatReach(u),
+          overwhelmed = danger >= cfg.minimumEnemyForce && danger > support * cfg.overwhelmRatio,
+          heroCommitted =
+            dist(this.hero, target) <= cfg.heroCommittedRange &&
+            heroNearby &&
+            this.line(this.hero, target);
+        return {
+          unsafe: unsupported || wounded || (overwhelmed && !heroCommitted),
+          safe: !unsupported && !wounded && (danger <= support * cfg.safeRatio || heroCommitted),
+          enemies,
+          danger,
+          support,
+        };
+      }
+      companionRegroupPoint(u, living, enemies) {
+        const cfg = R.companionJudgment,
+          points = [this.partyFollowPoint(u, living)];
+        for (const ally of living) {
+          if (
+            ally === u ||
+            ally.order ||
+            ally.hp / ally.maxHp < cfg.woundedFraction ||
+            dist(ally, this.hero) > cfg.supportRadius
+          )
+            continue;
+          const d = Math.max(1, dist(u, ally));
+          const point = this.safe(
+            ally.x + ((u.x - ally.x) / d) * 65,
+            ally.y + ((u.y - ally.y) / d) * 65,
+          );
+          points.push(point);
+        }
+        const score = (p) =>
+          enemies
+            .filter((e) => dist(e, p) < cfg.nearThreatRadius)
+            .reduce((sum, e) => sum + this.companionEnemyWeight(e), 0) *
+            cfg.anchorDangerCost +
+          dist(p, this.hero) * 0.25 +
+          dist(p, u) * 0.1;
+        return points.sort((a, b) => score(a) - score(b))[0];
+      }
+      companionCautiousCombat(u, target, living, dt) {
+        const cfg = R.companionJudgment;
+        let state = companionJudgments.get(u);
+        if (!state || state.zone !== this.zoneId) {
+          state = { zone: this.zoneId, next: 0, regrouping: false, safeSince: null };
+          companionJudgments.set(u, state);
+        }
+        if (this.s.time >= state.next || state.target !== target.id) {
+          const assessment = this.companionSafetyAssessment(u, target, living);
+          state.next = this.s.time + cfg.assessSeconds;
+          state.target = target.id;
+          state.enemies = assessment.enemies;
+          if (assessment.unsafe) {
+            state.regrouping = true;
+            state.safeSince = null;
+          } else if (state.regrouping) {
+            if (assessment.safe) {
+              state.safeSince ??= this.s.time;
+              if (this.s.time - state.safeSince >= cfg.regroupSeconds) state.regrouping = false;
+            } else state.safeSince = null;
+          }
+          state.point = state.regrouping
+            ? this.companionRegroupPoint(u, living, assessment.enemies)
+            : null;
+        }
+        if (!state.regrouping) return false;
+        const point = state.point || this.partyFollowPoint(u, living),
+          before = { x: u.x, y: u.y };
+        if (dist(u, point) > cfg.arrivalRadius) {
+          this.followCompanion(
+            u,
+            point,
+            this.companionRallyMoveSpeed(u, cfg.retreatSpeed) *
+              this.slowMovementFactor(u) *
+              this.mireBogMovementFactor(u) *
+              this.ashMovementFactor(u),
+            dt,
+            cfg.arrivalRadius,
+            !(state.escapeUntil > this.s.time),
+          );
+          state.stalled = dist(before, u) < 0.1 ? (state.stalled || 0) + dt : 0;
+          // Escape an enclosing crowd toward support if no fully clear route
+          // exists. Physical collision remains authoritative; never teleport.
+          if (state.stalled >= cfg.escapeDelay) {
+            state.escapeUntil = this.s.time + cfg.escapeSeconds;
+            state.stalled = 0;
+          }
+        }
+        const attacker = (state.enemies || [])
+          .filter(
+            (e) =>
+              e.hp > 0 &&
+              e.aggro &&
+              !e.returning &&
+              (target.type === 'boss' || e.type !== 'boss') &&
+              dist(u, e) <= this.companionCombatReach(u),
+          )
+          .sort((a, b) => dist(a, u) - dist(b, u))[0];
+        if (this.companionCoverAttack(u, attacker))
+          this._tacticalPartyTargets.set(u.id, attacker.id);
+        return true;
+      }
       clearGatheringIntent(u) {
         laborAttacks.delete(u);
         depositTrips.delete(u);
@@ -721,6 +961,7 @@
           active = dead.active !== false,
           u = this.unit(dead.type, this.hero.x + 40, this.hero.y, dead.petFamily);
         this.clearPartyCharge(dead);
+        this.clearCompanionJudgment(dead);
         this._partyChargeRecovery?.delete(dead);
         this.tacticalClearScatter(dead);
         Object.assign(dead, u, { id, active, slow: 0 });
@@ -755,6 +996,7 @@
         const u = this.s.party.find((u) => u.id === id && u.active !== false);
         if (!u || this.refugeThreat()) return false;
         this.clearPartyCharge(u);
+        this.clearCompanionJudgment(u);
         u.active = false;
         u.order = null;
         u.path = [];
@@ -772,6 +1014,7 @@
         )
           return false;
         u.active = true;
+        this.clearCompanionJudgment(u);
         Object.assign(u, this.safe(b.x + 45, b.y + 45));
         u.order = null;
         return true;
@@ -868,7 +1111,7 @@
         if (!context.engaged) return false;
         // An explicit combat-doctrine switch during an ongoing encounter is
         // a new engagement order; Recall itself remains defensive until then.
-        this.s.recallActive = false;
+        this.releaseRecallForCombat();
         this.s.squadDoctrine = this.s.squadDoctrine === 'focus' ? 'guard' : 'focus';
         this.event('squadDoctrine', { mode: this.s.squadDoctrine, boss: context.boss });
         return true;
@@ -889,14 +1132,20 @@
         };
       }
       recallParty() {
+        if (
+          this.s.recallActive &&
+          this.activeLivingParty().every((u) => !u.order && !this.partyChargeState(u))
+        )
+          return true;
         const gathering = this.activeLivingParty().filter((u) => this.gatheringUnit(u));
         this._gatherRecallResume = gathering.length
           ? { zone: this.zoneId, ids: gathering.map((u) => u.id) }
           : null;
         this.s.recallActive = true;
-        this.hero.order = null;
+        if (this.hero.order?.type !== 'move') this.hero.order = null;
         this._tacticalPartyTargets?.clear();
         for (const u of this.activeLivingParty()) {
+          this.clearCompanionJudgment(u);
           this.clearGatheringIntent(u);
           this.clearPartyCharge(u);
           u.order = null;
@@ -904,6 +1153,7 @@
           u.routeAge = 0;
         }
         this.say('Squad recalled. Companions are regrouping on the hero.');
+        this.notice('Recall ordered. Companions return under retreat protection.', 4);
         this.event('squadRecall');
         return true;
       }
@@ -1052,12 +1302,7 @@
         const returningLabor = this._gatherRecallResume;
         if (returningLabor && (!this.s.recallActive || returningLabor.zone !== this.zoneId))
           this._gatherRecallResume = null;
-        else if (
-          returningLabor &&
-          living
-            .filter((u) => returningLabor.ids.includes(u.id))
-            .every((u) => dist(u, this.hero) <= R.gatheringTravel.recallArrival)
-        ) {
+        else if (returningLabor && !this.recallInProgress()) {
           this.s.recallActive = false;
           this._gatherRecallResume = null;
         }
@@ -1262,7 +1507,8 @@
             // Recall is a defensive escort posture: no target acquisition,
             // pursuit or active skills. A nearby attacking enemy may be
             // counterattacked from the companion's *current* position only.
-            this.followPartyMember(u, living, dt);
+            if (this.s.recallActive) this.followRecalledCompanion(u, living, dt);
+            else this.followPartyMember(u, living, dt);
             if (this.s.recallActive && !this.peace && u.cd <= 0) {
               const pet = u.type === 'pet' ? this.petDefinition(u) : null;
               const reach = pet
@@ -1374,9 +1620,11 @@
                   : crowdTarget(u, context.threats);
           }
           if (!e) {
+            this.clearCompanionJudgment(u);
             this.followPartyMember(u, living, dt);
             continue;
           }
+          if (this.companionCautiousCombat(u, e, living, dt)) continue;
           claimed.add(e.id);
           this._tacticalPartyTargets.set(u.id, e.id);
           if (u.type === 'pet') {

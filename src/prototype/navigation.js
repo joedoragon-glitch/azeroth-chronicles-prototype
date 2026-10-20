@@ -176,10 +176,11 @@
         u.path = [];
         u.routeAge = 0;
       }
-      followCompanion(u, target, speed, dt, stop) {
+      followCompanion(u, target, speed, dt, stop, avoidHostiles = false) {
         if (dist(u, target) <= stop) return true;
         const gathering = this.gatheringUnit(u),
-          threats = gathering ? this.gatheringThreats() : [];
+          cautious = gathering || avoidHostiles,
+          threats = cautious ? this.gatheringThreats() : [];
         if (this.companionTravelClear(u, target, threats)) {
           companionTrips.delete(u);
           u.path = [];
@@ -189,12 +190,12 @@
         if (
           !trip ||
           trip.zone !== this.zoneId ||
-          trip.gathering !== gathering ||
+          trip.cautious !== cautious ||
           dist(trip.target, target) > 30
         ) {
           trip = {
             zone: this.zoneId,
-            gathering,
+            cautious,
             target: { x: target.x, y: target.y },
             age: 0,
             path: [],
@@ -208,7 +209,7 @@
           trip.age = 0;
         }
         if (trip.age <= 0) {
-          trip.path = this.companionRoute(u, target, gathering);
+          trip.path = this.companionRoute(u, target, cautious);
           trip.age = R.gatheringTravel.replanSeconds;
           trip.target = { x: target.x, y: target.y };
           u.path = trip.path;
