@@ -1,4 +1,4 @@
-# Pet visual identity correction — prepared dev.115
+# Approved pet visual identity correction — dev.115
 
 Joel requested Little Marshal resemble the current Marshal Veyra, and Little Treasurer/Ash Cadet carry their bosses' actual weapons without stretched arms.
 
@@ -10,4 +10,6 @@ Evidence: [comparison](../tools/visual-review/pet-identity-dev115/comparacion.pn
 
 The focused audit passes 90 unchanged pixel comparisons (eight other pets and all eleven normal/TRUE bosses at three scales), nine changed-pet cases, exact shared arm/body source preservation, and render state purity. Native scene inspected with current sprite/material registries. Build/generated syntax and sprite, material, scope and audio inventories pass. Changed source formatting passes; the full format command reports only the pre-existing, unchanged `tools/sprites/approved.json` warning; no whole-game suite or CI is needed for these appearance-only edits.
 
-Status: local implemented candidate for owner appearance review. Not merged or deployed. Previous art and baseline commit remain recoverable; each affected design handoff records this correction separately from historical approvals.
+Joel approved the shown corrections: “I like the pet corrections. You can proceed with them.” He noticed the Treasurer’s coin hand in both miniature and boss and explicitly left it unchanged for this pass.
+
+Status: approved, audited candidate; merge and package-only publication next. Previous art and baseline commit remain recoverable; each affected design handoff records this correction separately from historical approvals.

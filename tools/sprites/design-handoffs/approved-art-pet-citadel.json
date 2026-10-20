@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "status": "procedural-candidate-unreviewed",
+  "status": "procedural-design",
   "designId": "approved-art-pet-citadel",
   "name": "Marshal Veyra / Ash Sentinel miniature companion",
   "kind": "pet",
-  "nextAction": "Owner review of the implemented 20 October correction; candidate is not merged or deployed.",
+  "nextAction": "Publish the owner-approved, audited dev.115 correction using package-only workflow; preserve the Treasurer coin hand for a later pass.",
   "context": {
     "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
     "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Refine helmet fit, tiny braid/face, hands and ceremonial armor joints.",
@@ -141,12 +141,13 @@
     "request": "Match Little Marshal to the updated Marshal Veyra; match Little Treasurer and Ash Cadet weapons to their actual bosses without stretching or changing their existing arms.",
     "implementation": "Ivory/gold parade armor, blonde crop, blue almond eyes, shaped lips, violet skirt with short tassets, shield and compact armored spear arm.",
     "scope": "Procedural game drawing only; no image generation, registry, gameplay or save changes.",
-    "appearanceAcceptance": "Not yet reviewed by owner.",
+    "appearanceAcceptance": "Joel approved the exact comparison: I like the pet corrections. You can proceed with them.",
     "sourceBaseline": "b2cc002f9883a93758ab1a747a87f87d44e2cc62",
     "comparison": "tools/visual-review/pet-identity-dev115/comparacion.png",
     "comparisonSha256": "98f3ac4604f31e4adae89aa27008d573d6f6beff6fc5b660973a534528340e2b",
     "nativeScene": "tools/visual-review/pet-identity-dev115/native-valley.png",
     "checks": "tools/visual-review/pet-identity-dev115/checks.json",
-    "release": "Local dev.115 candidate; not merged or deployed."
+    "release": "Approved dev.115 candidate; merge/publication next.",
+    "explicitDeferral": "Treasurer and boss coin hand remain unchanged in this pass."
   }
 }
