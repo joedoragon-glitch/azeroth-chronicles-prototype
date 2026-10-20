@@ -4,7 +4,7 @@
   "designId": "approved-art-raster-prop-alpine-scrub-highlands",
   "name": "Active sprite — Prop / Alpine Scrub / Highlands",
   "kind": "active-sprite",
-  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "nextAction": "Publish owner-selected procedural representation in dev.117; retain original registered sprite for rollback.",
   "context": {
     "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
     "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Retain this accepted raster revision for the procedural pass. If an image edit is later selected, adjust only a few readable woody stems from its preserved original and update dependent frames together.",
@@ -148,5 +148,17 @@
     "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
     "requestedCorrection": "Updated the relevant natural wood, tabletop/container support or dependent composition to follow the subsequent owner correction. Existing role, region, gameplay geometry and protected raster pixels remain intact.",
     "finalResultApprovalDate": "2026-10-19"
+  },
+  "latestOwnerDecision": {
+    "date": "2026-10-20",
+    "galleryNumber": 19,
+    "runtimeKey": "prop:alpine-scrub:highlands",
+    "instruction": "For all the images I am showing here, I prefer the procedurals.",
+    "selection": "Current procedural design from the dev.116 side-by-side gallery, without repainting.",
+    "referenceBranch": "review/sprites-vs-procedural-dev116",
+    "referencePath": "tools/visual-review/sprite-procedural-review-dev116/review.html",
+    "scope": "These seven selected props only. Other selections remain unchanged.",
+    "approval": "Explicit procedural preference from owner-provided numbered comparison screenshots.",
+    "release": "Approved dev.117 candidate; package-only publication next."
   }
 }

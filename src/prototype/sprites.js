@@ -3,6 +3,17 @@
   'use strict';
 
   const DEFAULT_MANIFEST = './assets/sprites/manifest.json';
+  // Exact owner selections from the numbered sprite/procedural review.
+  // Keep registered originals intact; only these regional bodies use fallback.
+  const proceduralProps = new Set([
+    'prop:wildflowers:vale',
+    'prop:cattails:march',
+    'prop:alpine-scrub:highlands',
+    'prop:heather:highlands',
+    'prop:mint-workbench:highlands',
+    'prop:ore-sorting-bay:highlands',
+    'prop:caravan-loading-bay:highlands',
+  ]);
   const Format =
     root.PrototypeSpriteFormat ||
     (typeof require === 'function' ? require('./sprite-format.js') : null);
@@ -202,6 +213,7 @@
     if (e?.form === 'ringleader' && ['orc', 'archer', 'crownguard'].includes(e.species))
       return null;
     for (const key of candidateKeys(e, region, rescued)) {
+      if (proceduralProps.has(key)) return null;
       const entry = manifest.sprites[key];
       if (entry?.src) return { key, entry };
     }

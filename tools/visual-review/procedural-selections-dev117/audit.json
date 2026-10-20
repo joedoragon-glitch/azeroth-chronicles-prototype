@@ -1,0 +1,240 @@
+{
+  "baseline": "655e748",
+  "registeredPairsChecked": 33,
+  "approvedSelectionChanges": 7,
+  "unchangedSelections": 26,
+  "proceduralArtUnchanged": true,
+  "registeredOriginalsUnchanged": true,
+  "native": [
+    {
+      "number": 9,
+      "key": "prop:wildflowers:vale",
+      "zone": "vale",
+      "authoredPropId": "aesthetic-nature-16",
+      "proceduralDraws": 1,
+      "rasterDraws": 0,
+      "statePure": true
+    },
+    {
+      "number": 14,
+      "key": "prop:cattails:march",
+      "zone": "march",
+      "authoredPropId": "harbor-reeds-b",
+      "proceduralDraws": 1,
+      "rasterDraws": 0,
+      "statePure": true
+    },
+    {
+      "number": 19,
+      "key": "prop:alpine-scrub:highlands",
+      "zone": "highlands",
+      "authoredPropId": "aesthetic-nature-13",
+      "proceduralDraws": 1,
+      "rasterDraws": 0,
+      "statePure": true
+    },
+    {
+      "number": 21,
+      "key": "prop:heather:highlands",
+      "zone": "highlands",
+      "authoredPropId": "harbor-heather",
+      "proceduralDraws": 1,
+      "rasterDraws": 0,
+      "statePure": true
+    },
+    {
+      "number": 23,
+      "key": "prop:mint-workbench:highlands",
+      "zone": "highlands",
+      "authoredPropId": "ironroot-life-stonecross-2",
+      "proceduralDraws": 1,
+      "rasterDraws": 0,
+      "statePure": true
+    },
+    {
+      "number": 24,
+      "key": "prop:ore-sorting-bay:highlands",
+      "zone": "highlands",
+      "authoredPropId": "ironroot-life-quarry-0",
+      "proceduralDraws": 1,
+      "rasterDraws": 0,
+      "statePure": true
+    },
+    {
+      "number": 25,
+      "key": "prop:caravan-loading-bay:highlands",
+      "zone": "highlands",
+      "authoredPropId": "ironroot-life-stonecross-4",
+      "proceduralDraws": 1,
+      "rasterDraws": 0,
+      "statePure": true
+    }
+  ],
+  "selectionResults": [
+    {
+      "key": "hero:paladin",
+      "before": null,
+      "after": null
+    },
+    {
+      "key": "enemy:goblin",
+      "before": "enemy:goblin",
+      "after": "enemy:goblin"
+    },
+    {
+      "key": "prop:vale-cottage:vale",
+      "before": null,
+      "after": null
+    },
+    {
+      "key": "hero:mage",
+      "before": null,
+      "after": null
+    },
+    {
+      "key": "hero:ranger",
+      "before": "hero:ranger",
+      "after": "hero:ranger"
+    },
+    {
+      "key": "ally:soldier",
+      "before": null,
+      "after": null
+    },
+    {
+      "key": "ally:archer",
+      "before": "ally:archer",
+      "after": "ally:archer"
+    },
+    {
+      "key": "prop:bush:vale",
+      "before": "prop:bush:vale",
+      "after": "prop:bush:vale"
+    },
+    {
+      "key": "prop:wildflowers:vale",
+      "before": "prop:wildflowers:vale",
+      "after": null
+    },
+    {
+      "key": "prop:sapling:vale",
+      "before": "prop:sapling:vale",
+      "after": "prop:sapling:vale"
+    },
+    {
+      "key": "prop:stump:vale",
+      "before": "prop:stump:vale",
+      "after": "prop:stump:vale"
+    },
+    {
+      "key": "prop:fallen-log:vale",
+      "before": "prop:fallen-log:vale",
+      "after": "prop:fallen-log:vale"
+    },
+    {
+      "key": "prop:cattails:march",
+      "before": "prop:cattails:march",
+      "after": null
+    },
+    {
+      "key": "prop:driftwood:march",
+      "before": "prop:driftwood:march",
+      "after": "prop:driftwood:march"
+    },
+    {
+      "key": "prop:mangrove:march",
+      "before": "prop:mangrove:march",
+      "after": "prop:mangrove:march"
+    },
+    {
+      "key": "prop:pine-sapling:highlands",
+      "before": "prop:pine-sapling:highlands",
+      "after": "prop:pine-sapling:highlands"
+    },
+    {
+      "key": "prop:alpine-scrub:highlands",
+      "before": "prop:alpine-scrub:highlands",
+      "after": null
+    },
+    {
+      "key": "prop:marsh-bush:march",
+      "before": "prop:marsh-bush:march",
+      "after": "prop:marsh-bush:march"
+    },
+    {
+      "key": "prop:rock-cluster:highlands",
+      "before": "prop:rock-cluster:highlands",
+      "after": "prop:rock-cluster:highlands"
+    },
+    {
+      "key": "prop:dead-tree:frontier",
+      "before": "prop:dead-tree:frontier",
+      "after": "prop:dead-tree:frontier"
+    },
+    {
+      "key": "prop:charred-stump:frontier",
+      "before": "prop:charred-stump:frontier",
+      "after": "prop:charred-stump:frontier"
+    },
+    {
+      "key": "prop:dry-scrub:frontier",
+      "before": "prop:dry-scrub:frontier",
+      "after": "prop:dry-scrub:frontier"
+    },
+    {
+      "key": "prop:burned-log:frontier",
+      "before": "prop:burned-log:frontier",
+      "after": "prop:burned-log:frontier"
+    },
+    {
+      "key": "prop:black-rock:crown",
+      "before": "prop:black-rock:crown",
+      "after": "prop:black-rock:crown"
+    },
+    {
+      "key": "prop:crystal-cluster:crown",
+      "before": "prop:crystal-cluster:crown",
+      "after": "prop:crystal-cluster:crown"
+    },
+    {
+      "key": "prop:dead-shrub:crown",
+      "before": "prop:dead-shrub:crown",
+      "after": "prop:dead-shrub:crown"
+    },
+    {
+      "key": "prop:obsidian:crown",
+      "before": "prop:obsidian:crown",
+      "after": "prop:obsidian:crown"
+    },
+    {
+      "key": "prop:heather:highlands",
+      "before": "prop:heather:highlands",
+      "after": null
+    },
+    {
+      "key": "prop:rock:vale",
+      "before": "prop:rock:vale",
+      "after": "prop:rock:vale"
+    },
+    {
+      "key": "prop:rock:highlands",
+      "before": "prop:rock:highlands",
+      "after": "prop:rock:highlands"
+    },
+    {
+      "key": "prop:mint-workbench:highlands",
+      "before": "prop:mint-workbench:highlands",
+      "after": null
+    },
+    {
+      "key": "prop:ore-sorting-bay:highlands",
+      "before": "prop:ore-sorting-bay:highlands",
+      "after": null
+    },
+    {
+      "key": "prop:caravan-loading-bay:highlands",
+      "before": "prop:caravan-loading-bay:highlands",
+      "after": null
+    }
+  ]
+}
