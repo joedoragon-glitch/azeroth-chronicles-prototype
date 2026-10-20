@@ -397,6 +397,8 @@
       entitiesConsidered: 0,
       entitiesDrawn: 0,
       floorTilesPainted: 0,
+      outlineMasks: 0,
+      outlineMaskPixels: 0,
     };
     function iso(x, y) {
       return { x: (x - y) * 0.76, y: (x + y) * 0.27 };
@@ -593,40 +595,103 @@
     // A thin contour *only inside the pixels of the foreground obstacle*.
     // Four reused transparent canvases avoid readback, bright halos, filled
     // ghosts and per-actor allocations. No change to hitboxes or AI visibility.
-    let outlineLayers = null;
+    const outlineLayers = new Map();
+    let compactOutlines = true;
+    function outlineSize(e) {
+      if (!compactOutlines || e.type === 'boss' || e.captain || e.roomCaptain) return 384;
+      const ordinary =
+        e.renderKind === 'hero' ||
+        (e.renderKind === 'ally' && ['soldier', 'archer'].includes(e.type)) ||
+        (e.renderKind === 'enemy' &&
+          [
+            'goblin',
+            'archer',
+            'skeleton',
+            'rogue',
+            'crownguard',
+            'orc',
+            'ogre',
+            'ashbeast',
+            'mireling',
+            'wolf',
+            'kobold',
+            'ghoul',
+          ].includes(e.species));
+      if (!ordinary || e.mountedCrownRider || (e.visualScale || 1) > 1.25) return 384;
+      const entry = PrototypeSprites?.definitionFor?.(
+        e,
+        game.regionIndex(),
+        !!game.s.rescued[e.family],
+      )?.entry;
+      // Registered artwork can replace a familiar identity with a larger body.
+      // Unknown/large actors retain the original full mask, including all bosses.
+      if (entry) {
+        const scale = (entry.scale || 1) * (e.visualScale || 1);
+        const dw = entry.displayWidth * scale,
+          dh = entry.displayHeight * scale;
+        if (!dw || !dh) return 384;
+        const anchors = [[entry.anchorX ?? 0.5, entry.anchorY ?? 0.88]];
+        for (const clip of Object.values(entry.clips || {}))
+          for (const frame of clip.frames || [])
+            anchors.push([frame.pivot[0] / frame.rect[2], frame.pivot[1] / frame.rect[3]]);
+        if (
+          anchors.some(
+            ([x, y]) =>
+              dw * Math.max(x, 1 - x) + 8 > 128 || dh * y + 8 > 192 || dh * (1 - y) + 8 > 64,
+          )
+        )
+          return 384;
+      }
+      return 256;
+    }
     function drawOcclusionOutlines(entities) {
       const pairs = occlusionPairs(entities, screen, spriteHeight);
       if (!pairs.length || typeof document === 'undefined') return;
-      if (!outlineLayers) {
-        const layers = [];
-        for (let i = 0; i < 4; i++) {
-          const surface = document.createElement('canvas');
-          surface.width = 384;
-          surface.height = 384;
-          const brush = surface.getContext('2d');
-          if (!brush) return;
-          layers.push({ surface, brush });
-        }
-        outlineLayers = layers;
-      }
-      const [actorLayer, tintLayer, edgeLayer, coverLayer] = outlineLayers,
-        centerX = 192,
-        footY = 260,
-        ring = [
-          [-1.35, 0],
-          [1.35, 0],
-          [0, -1.35],
-          [0, 1.35],
-          [-0.95, -0.95],
-          [0.95, -0.95],
-          [-0.95, 0.95],
-          [0.95, 0.95],
-        ];
       for (const pair of pairs) {
-        for (const layer of outlineLayers) {
+        const size = outlineSize(pair.actor);
+        if (!outlineLayers.has(size)) {
+          const layers = [];
+          for (let i = 0; i < 4; i++) {
+            const surface = document.createElement('canvas');
+            surface.width = surface.height = size;
+            const brush = surface.getContext('2d');
+            if (!brush) return;
+            layers.push({ surface, brush });
+          }
+          outlineLayers.set(size, layers);
+        }
+        const layers = outlineLayers.get(size);
+        const [actorLayer, tintLayer, edgeLayer, coverLayer] = layers,
+          centerX = size / 2,
+          footY = size === 384 ? 260 : 192,
+          ring =
+            optimized && compactOutlines
+              ? [
+                  [-1, 0],
+                  [1, 0],
+                  [0, -1],
+                  [0, 1],
+                  [-1, -1],
+                  [1, -1],
+                  [-1, 1],
+                  [1, 1],
+                ]
+              : [
+                  [-1.35, 0],
+                  [1.35, 0],
+                  [0, -1.35],
+                  [0, 1.35],
+                  [-0.95, -0.95],
+                  [0.95, -0.95],
+                  [-0.95, 0.95],
+                  [0.95, 0.95],
+                ];
+        stats.outlineMasks++;
+        stats.outlineMaskPixels += size * size;
+        for (const layer of layers) {
           layer.brush.globalCompositeOperation = 'source-over';
           layer.brush.globalAlpha = 1;
-          layer.brush.clearRect(0, 0, 384, 384);
+          layer.brush.clearRect(0, 0, size, size);
         }
         sprite(pair.actor, { x: centerX, y: footY }, actorLayer.brush, true);
 
@@ -635,7 +700,7 @@
         tint.drawImage(actorLayer.surface, 0, 0);
         tint.globalCompositeOperation = 'source-in';
         tint.fillStyle = pair.actor.renderKind === 'enemy' ? '#d3a69e' : '#b8cfc2';
-        tint.fillRect(0, 0, 384, 384);
+        tint.fillRect(0, 0, size, size);
         tint.globalCompositeOperation = 'source-over';
 
         const edge = edgeLayer.brush;
@@ -2463,6 +2528,9 @@
       },
       tileBounds,
       // Development A/B control; both paths use identical art and gameplay.
+      setOutlineCompaction: (enabled) => {
+        compactOutlines = !!enabled;
+      },
       setGroundReuse: (enabled) => {
         cacheGround = !!enabled;
         groundCache?.clear();

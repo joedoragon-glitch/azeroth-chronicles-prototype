@@ -26,10 +26,54 @@ async function spriteAssetURLs(cache){
         return [...new Set(PrototypeSpriteFormat.sources(manifest).map(appURL))];
     } catch (_) { return []; }
 }
+// Preserve complete offline installation, but do not redownload unchanged
+// recordings for every code/art release. A matching path alone is not enough.
+async function audioHashes(cache) {
+    try {
+        const response = await cache.match(appURL('./assets/audio/manifest.json'));
+        const manifest = response && await response.json();
+        const hashes = new Map();
+        for (const entry of Object.values(manifest?.assets || {})) {
+            for (const resource of [entry, ...(entry.variants || [])]) {
+                if (/^\.\/assets\/audio\/[a-zA-Z0-9/_-]+\.(mp3|ogg|wav)$/.test(resource.src) &&
+                    /^[a-f0-9]{64}$/.test(resource.sha256 || ''))
+                    hashes.set(appURL(resource.src), resource.sha256);
+            }
+        }
+        return hashes;
+    } catch (_) { return new Map(); }
+}
 self.addEventListener('install', event => {
     event.waitUntil((async () => {
         const cache = await caches.open(CACHE_VERSION);
-        await cache.addAll([...appFiles].map(url => new Request(url, { cache: 'reload' })));
+        const audioManifest = appURL('./assets/audio/manifest.json');
+        await cache.addAll([new Request(audioManifest, { cache: 'reload' })]);
+        const wanted = await audioHashes(cache);
+        const previous = [];
+        for (const name of await caches.keys()) {
+            if (name.startsWith(CACHE_PREFIX) && name !== CACHE_VERSION) {
+                const old = await caches.open(name);
+                previous.push({ cache: old, hashes: await audioHashes(old) });
+            }
+        }
+        const downloads = [];
+        for (const url of appFiles) {
+            if (url === audioManifest) continue;
+            const hash = wanted.get(url);
+            let reused = false;
+            if (hash) {
+                for (const old of previous) {
+                    if (old.hashes.get(url) !== hash) continue;
+                    const response = await old.cache.match(url);
+                    if (!response?.ok) continue;
+                    await cache.put(url, response);
+                    reused = true;
+                    break;
+                }
+            }
+            if (!reused) downloads.push(new Request(url, { cache: 'reload' }));
+        }
+        await cache.addAll(downloads);
         const sprites = await spriteAssetURLs(cache);
         if (sprites.length) await cache.addAll(sprites.map(url => new Request(url, { cache: 'reload' })));
         await self.skipWaiting();

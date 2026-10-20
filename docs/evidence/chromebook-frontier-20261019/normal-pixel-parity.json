@@ -1,0 +1,86 @@
+{
+  "scope": "Eight frozen desktop/phone day/night normal/crowned hero scene comparisons, original full masks versus compact masks; same approved renderer and artwork.",
+  "results": [
+    {
+      "phone": false,
+      "cls": "paladin",
+      "night": false,
+      "changedChannels": 0,
+      "maxDifference": 0,
+      "fullMaskPixels": 1032192,
+      "compactMaskPixels": 458752,
+      "outlineMasks": 7
+    },
+    {
+      "phone": false,
+      "cls": "paladin",
+      "night": true,
+      "changedChannels": 0,
+      "maxDifference": 0,
+      "fullMaskPixels": 1032192,
+      "compactMaskPixels": 458752,
+      "outlineMasks": 7
+    },
+    {
+      "phone": false,
+      "cls": "mage",
+      "night": false,
+      "changedChannels": 0,
+      "maxDifference": 0,
+      "fullMaskPixels": 1032192,
+      "compactMaskPixels": 458752,
+      "outlineMasks": 7
+    },
+    {
+      "phone": false,
+      "cls": "mage",
+      "night": true,
+      "changedChannels": 0,
+      "maxDifference": 0,
+      "fullMaskPixels": 1032192,
+      "compactMaskPixels": 458752,
+      "outlineMasks": 7
+    },
+    {
+      "phone": false,
+      "cls": "ranger",
+      "night": false,
+      "changedChannels": 0,
+      "maxDifference": 0,
+      "fullMaskPixels": 1769472,
+      "compactMaskPixels": 868352,
+      "outlineMasks": 12
+    },
+    {
+      "phone": false,
+      "cls": "ranger",
+      "night": true,
+      "changedChannels": 0,
+      "maxDifference": 0,
+      "fullMaskPixels": 1769472,
+      "compactMaskPixels": 868352,
+      "outlineMasks": 12
+    },
+    {
+      "phone": true,
+      "cls": "mage",
+      "night": false,
+      "changedChannels": 0,
+      "maxDifference": 0,
+      "fullMaskPixels": 589824,
+      "compactMaskPixels": 262144,
+      "outlineMasks": 4
+    },
+    {
+      "phone": true,
+      "cls": "mage",
+      "night": true,
+      "changedChannels": 0,
+      "maxDifference": 0,
+      "fullMaskPixels": 589824,
+      "compactMaskPixels": 262144,
+      "outlineMasks": 4
+    }
+  ],
+  "errors": []
+}

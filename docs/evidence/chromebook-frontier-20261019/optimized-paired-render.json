@@ -1,0 +1,50 @@
+{
+  "scope": "Two frozen desktop scenes: three interleaved full/compact draws per scene with forced readback; a renderer comparison, not Chromebook FPS.",
+  "results": [
+    {
+      "phone": false,
+      "cls": "paladin",
+      "night": false,
+      "times": {
+        "full": [
+          79,
+          71,
+          69.59999999776483
+        ],
+        "compact": [
+          39.099999997764826,
+          46.900000002235174,
+          38.100000001490116
+        ]
+      },
+      "changedChannels": 0,
+      "maxDifference": 0,
+      "fullMaskPixels": 1032192,
+      "compactMaskPixels": 458752,
+      "outlineMasks": 7
+    },
+    {
+      "phone": false,
+      "cls": "ranger",
+      "night": false,
+      "times": {
+        "full": [
+          121.89999999850988,
+          125.30000000074506,
+          127.5
+        ],
+        "compact": [
+          75.40000000223517,
+          74.5,
+          67.39999999850988
+        ]
+      },
+      "changedChannels": 2548,
+      "maxDifference": 22,
+      "fullMaskPixels": 1769472,
+      "compactMaskPixels": 868352,
+      "outlineMasks": 12
+    }
+  ],
+  "errors": []
+}

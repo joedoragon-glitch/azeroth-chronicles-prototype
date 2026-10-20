@@ -1,0 +1,291 @@
+{
+  "cpuSlowdown": 4,
+  "limits": "Headless virtual CPU sample, not a measurement of Joel’s Chromebook; two 3.5-second scenes, no regression suite.",
+  "results": [
+    {
+      "region": "vale",
+      "performance": {
+        "experience": "desktop",
+        "sampleFrames": 11,
+        "fps": 2,
+        "workP95Ms": 303,
+        "workP99Ms": 303,
+        "sampledWindowMs": 4050,
+        "render": {
+          "tileCandidates": 342,
+          "tilesDrawn": 225,
+          "entitiesConsidered": 264,
+          "entitiesDrawn": 99,
+          "floorTilesPainted": 0,
+          "cameraZoom": 1.5,
+          "optimizationMode": "off",
+          "transientEffects": 0,
+          "enemyVfxEffects": 0,
+          "groundCache": {
+            "bytes": 13111296,
+            "budget": 67108864,
+            "builds": 3,
+            "hits": 16,
+            "margin": 256
+          },
+          "phases": {
+            "sampledFrames": 1,
+            "sampleEvery": 12,
+            "floor": {
+              "p95Ms": 0.1,
+              "p99Ms": 0.1
+            },
+            "terrain": {
+              "p95Ms": 17.3,
+              "p99Ms": 17.3
+            },
+            "entities": {
+              "p95Ms": 45.6,
+              "p99Ms": 45.6
+            },
+            "effects": {
+              "p95Ms": 193,
+              "p99Ms": 193
+            }
+          }
+        }
+      },
+      "audio": "running",
+      "top": [
+        {
+          "name": "(program)",
+          "url": "",
+          "self": 1281
+        },
+        {
+          "name": "drawImage",
+          "url": "",
+          "self": 1257
+        },
+        {
+          "name": "",
+          "url": "navigation.js",
+          "self": 54
+        },
+        {
+          "name": "blocked",
+          "url": "navigation.js",
+          "self": 43
+        },
+        {
+          "name": "(garbage collector)",
+          "url": "",
+          "self": 29
+        },
+        {
+          "name": "render",
+          "url": "renderer.js",
+          "self": 23
+        },
+        {
+          "name": "roads",
+          "url": "visuals.js",
+          "self": 19
+        },
+        {
+          "name": "draw",
+          "url": "visuals.js",
+          "self": 14
+        },
+        {
+          "name": "line",
+          "url": "navigation.js",
+          "self": 10
+        },
+        {
+          "name": "matchMedia",
+          "url": "",
+          "self": 10
+        },
+        {
+          "name": "updateEnemies",
+          "url": "engine.js",
+          "self": 9
+        },
+        {
+          "name": "matchMedia",
+          "url": "",
+          "self": 9
+        },
+        {
+          "name": "drawOcclusionOutlines",
+          "url": "renderer.js",
+          "self": 8
+        },
+        {
+          "name": "digest",
+          "url": "",
+          "self": 8
+        },
+        {
+          "name": "add",
+          "url": "renderer.js",
+          "self": 7
+        },
+        {
+          "name": "sprite",
+          "url": "renderer.js",
+          "self": 7
+        },
+        {
+          "name": "save",
+          "url": "",
+          "self": 6
+        },
+        {
+          "name": "ground",
+          "url": "combat-visuals.js",
+          "self": 6
+        }
+      ]
+    },
+    {
+      "region": "frontier",
+      "performance": {
+        "experience": "desktop",
+        "sampleFrames": 7,
+        "fps": 1,
+        "workP95Ms": 619.7,
+        "workP99Ms": 619.7,
+        "sampledWindowMs": 3183,
+        "render": {
+          "tileCandidates": 420,
+          "tilesDrawn": 255,
+          "entitiesConsidered": 466,
+          "entitiesDrawn": 123,
+          "floorTilesPainted": 0,
+          "cameraZoom": 1.5,
+          "optimizationMode": "off",
+          "transientEffects": 0,
+          "enemyVfxEffects": 0,
+          "groundCache": {
+            "bytes": 13111296,
+            "budget": 67108864,
+            "builds": 5,
+            "hits": 22,
+            "margin": 256
+          },
+          "phases": {
+            "sampledFrames": 2,
+            "sampleEvery": 12,
+            "floor": {
+              "p95Ms": 0.1,
+              "p99Ms": 0.1
+            },
+            "terrain": {
+              "p95Ms": 17.1,
+              "p99Ms": 17.1
+            },
+            "entities": {
+              "p95Ms": 45.6,
+              "p99Ms": 45.6
+            },
+            "effects": {
+              "p95Ms": 193,
+              "p99Ms": 193
+            }
+          }
+        }
+      },
+      "audio": "running",
+      "top": [
+        {
+          "name": "drawImage",
+          "url": "",
+          "self": 1408
+        },
+        {
+          "name": "(program)",
+          "url": "",
+          "self": 1018
+        },
+        {
+          "name": "drawImage",
+          "url": "",
+          "self": 131
+        },
+        {
+          "name": "",
+          "url": "navigation.js",
+          "self": 101
+        },
+        {
+          "name": "blocked",
+          "url": "navigation.js",
+          "self": 77
+        },
+        {
+          "name": "line",
+          "url": "navigation.js",
+          "self": 64
+        },
+        {
+          "name": "",
+          "url": "world.js",
+          "self": 40
+        },
+        {
+          "name": "render",
+          "url": "renderer.js",
+          "self": 37
+        },
+        {
+          "name": "(garbage collector)",
+          "url": "",
+          "self": 35
+        },
+        {
+          "name": "setTransform",
+          "url": "",
+          "self": 21
+        },
+        {
+          "name": "crownMilitaryRoster",
+          "url": "world.js",
+          "self": 18
+        },
+        {
+          "name": "authoredPlaces",
+          "url": "world.js",
+          "self": 14
+        },
+        {
+          "name": "createPattern",
+          "url": "",
+          "self": 14
+        },
+        {
+          "name": "updateEnemies",
+          "url": "engine.js",
+          "self": 12
+        },
+        {
+          "name": "",
+          "url": "world.js",
+          "self": 11
+        },
+        {
+          "name": "channelBanks",
+          "url": "rules.js",
+          "self": 9
+        },
+        {
+          "name": "drawOcclusionOutlines",
+          "url": "renderer.js",
+          "self": 9
+        },
+        {
+          "name": "digest",
+          "url": "",
+          "self": 9
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

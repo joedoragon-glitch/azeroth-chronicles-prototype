@@ -4,7 +4,7 @@
   "designId": "approved-art-service-barracks-full-frontier",
   "name": "Barracks Full Frontier",
   "kind": "service",
-  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "nextAction": "Preserve this inhabited/recovering Frontier direction. Candidate is prepared alongside Chromebook optimization; no new raster production or release is implied.",
   "context": {
     "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
     "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Integrate cloth drape, command-table depth, bedding, secured supplies and patched dusty canvas, scarred timber and ash-dark repairs; preserve the exact Basic/Full footprint.",
@@ -15,14 +15,16 @@
     ],
     "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
     "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md.",
-    "subsequentOwnerReview": "Joel requested distinct hero identities, rigid helmets, real quivers, varied NPC hair and expression, believable spear/staff/hammer/anchor, separated barracks desk, character-specific dungeon masters, Cinder Warlord mace and coherent profile direwolf riders across every loadout and tier. Revised drawings propagate through shared, crowned, captive, pet, appointed and fallback states where applicable. No acceptance of unseen revisions is claimed."
+    "subsequentOwnerReview": "Joel requested distinct hero identities, rigid helmets, real quivers, varied NPC hair and expression, believable spear/staff/hammer/anchor, separated barracks desk, character-specific dungeon masters, Cinder Warlord mace and coherent profile direwolf riders across every loadout and tier. Revised drawings propagate through shared, crowned, captive, pet, appointed and fallback states where applicable. No acceptance of unseen revisions is claimed.",
+    "latestOwnerDirection": "Frontier is inhabited and recovering from warfare; remove boarding that implies abandonment."
   },
   "decisions": {
     "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
     "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
     "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
     "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
-    "pendingCorrections": []
+    "pendingCorrections": [],
+    "latestCorrectionAuthorization": "Joel explicitly requested inhabited/recovering Frontier buildings on 19 October 2026 at 23:29 EDT; faithful procedural correction authorized. Earlier approved boarded details are superseded."
   },
   "reference": {
     "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
@@ -119,6 +121,16 @@
     "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
     "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
     "requestedCorrection": "Updated the relevant shared character identity, face/hair, rigid helmet, held tool, quiver or camp/riding composition under the latest owner correction. Carries through indexed loadouts, captive and appointed states. Gameplay geometry and protected raster pixels remain intact.",
-    "finalResultApprovalDate": "2026-10-19"
+    "finalResultApprovalDate": "2026-10-19",
+    "latestFrontierCorrection": {
+      "date": "2026-10-19",
+      "request": "Frontier is inhabited and recovering from warfare; remove boarding that implies abandonment.",
+      "implementation": "Removed diagonal facade brace and the window-covering patch from the shared Frontier house/workshop/rest design. Replaced roof planks with aligned replacement tiles in the shared Frontier roof used by related service buildings. Repaired masonry stays clear of doors and windows.",
+      "sourceSHA256": "0e71187f9d1e8036b67df93aa08ee06627984e1e35242d2acd7ab87df124d3a0",
+      "beforeSource": "b91d8a5c83b74930241065dea71c6ce10a8dfe43",
+      "before": "docs/evidence/chromebook-frontier-20261019/frontier-before.png",
+      "after": "docs/evidence/chromebook-frontier-20261019/frontier-after.png",
+      "resultReview": "Implemented as requested and locally inspected; not independently accepted or published yet."
+    }
   }
 }

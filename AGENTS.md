@@ -1,5 +1,7 @@
 # Project working rules
 
+- Latest bounded task: owner reports 7 FPS while idle on Chromebook and below 15 with Optimization Mode on. Dev.89 candidate `perf/chromebook-dev88` prepares renderer/cache optimizations and occupied Frontier building repairs; see docs/CHROMEBOOK_PERFORMANCE_20261019.md. Actual-device FPS is unresolved. Preserve the candidate and request the existing playtest report from the slow location; no broad regression/CI or new release follows automatically.
+
 - Final state: the completed dev.88 art pass is merged in #323 and published (run 39358577620). The explicitly waived broad test suites were not run. Bounded startup/visual/audio results are in docs/evidence/APPROVED_ART_PUBLICATION_20261019.json. Temporary publication wiring is removed and normal release workflow restored. No additional testing, release or gameplay work follows automatically.
 
 - Latest owner instruction (19 October, 22:06 EDT): the entire completed dev.88 visual pass is approved for merge and publication. Do not run whole-game suites/CI for this release; desktop/phone crash-only startup is recorded. Publish first, then one bounded visual/audio integration check. Restore normal release wiring after the one-time publisher. This supersedes earlier local-only release limits for this specific pass.
