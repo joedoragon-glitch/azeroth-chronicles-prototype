@@ -1,0 +1,443 @@
+{
+  "verified_at": "2026-10-20T22:56:20.165182+00:00",
+  "version": "0.9.1+snapshot.dev.117",
+  "pr": 351,
+  "merge": "f291edaea04aebfaf6076b7697d5b9751f5bb5f6",
+  "package_only_run": 39511519262,
+  "candidate_tree": "49aa6887e0fb3c48845c1567b5f93cbaad286b16",
+  "files": [
+    {
+      "path": "index.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "phone.html",
+      "match": true,
+      "bytes": 5490,
+      "sha256": "6d6fe5990cccba9b450925b101e959acd1de0f04735bfb920147dc89db783eb8"
+    },
+    {
+      "path": "prototype.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "653ac94e9efe1a5f0c42daabb18aa222961e4abca3f7d3f6191fa7ca67e671c0"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 296,
+      "sha256": "a7105de9f519df294e17a249ad11d3bb050012e9ce4fa2f3160b464319c10a71"
+    },
+    {
+      "path": "src/prototype/archive.js",
+      "match": true,
+      "bytes": 54988,
+      "sha256": "d35b92523b7dfa4be414cb38441b15f2ea2e76b400a87280f3d7a4178dee032d"
+    },
+    {
+      "path": "src/prototype/boss-combat.js",
+      "match": true,
+      "bytes": 99293,
+      "sha256": "9dd2e97e2a271d2809b769dd153da8f915a628b751c0b4cb9a0607b3d93ac908"
+    },
+    {
+      "path": "src/prototype/combat-visuals.js",
+      "match": true,
+      "bytes": 51139,
+      "sha256": "6e64734dcf425c51b73fca7c65122362a4ddba419a6c069845ce3cb005408034"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 251943,
+      "sha256": "7f959151daf730af84f28eb1fd8b5dcb34ddbcba5303fc1451c6a696b97211d6"
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "match": true,
+      "bytes": 100974,
+      "sha256": "0aa3c774264e24b10c6bd6073b19acf0315220880c8be3a380aaa0c7956448ac"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "match": true,
+      "bytes": 210323,
+      "sha256": "20cda6f6585dc0fe58af4ee904ea1edbf3f411ef462a68aba473e75410b25e60"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "match": true,
+      "bytes": 493314,
+      "sha256": "2b129ca6d73109d874335ce9ff5e1e2b514b91393a3300e3a04d96292516a977"
+    },
+    {
+      "path": "src/prototype/app.js",
+      "match": true,
+      "bytes": 135741,
+      "sha256": "93a6cbcb6015ceda6f606476bc6ebda9a3bc850d00b3904818207730356f7067"
+    },
+    {
+      "path": "src/prototype/party.js",
+      "match": true,
+      "bytes": 68774,
+      "sha256": "fee55550c5d615ad68b74c1e5820511e060b9667f418d8548cc9dd27214d4aa6"
+    },
+    {
+      "path": "src/prototype/party-pets.js",
+      "match": true,
+      "bytes": 19172,
+      "sha256": "6f97ffe5f4af3e93017e21088b719448dc997916cb1e35daebfe0a51ea7827b2"
+    },
+    {
+      "path": "src/prototype/save.js",
+      "match": true,
+      "bytes": 47941,
+      "sha256": "ccb8e9787bad096c96c25e8cc45ae744f7015c89c03afaae9605a18e085765b4"
+    },
+    {
+      "path": "src/prototype/world.js",
+      "match": true,
+      "bytes": 184958,
+      "sha256": "7512c6826afbb040b7afb1a8a5df02907c3fa8cadfc730e49f1351bea02c2ea3"
+    },
+    {
+      "path": "src/prototype/navigation.js",
+      "match": true,
+      "bytes": 46155,
+      "sha256": "954c80ec334b61fe3919dfb6f081d72cb1e5078d971ef8cfa6dab59f1b6fe45e"
+    },
+    {
+      "path": "src/prototype/combat.js",
+      "match": true,
+      "bytes": 48641,
+      "sha256": "ae8c36339c4828eb6770ee3882e5804628847c955045dcc6b2917be6ce635dd5"
+    },
+    {
+      "path": "src/prototype/hero-combat.js",
+      "match": true,
+      "bytes": 62011,
+      "sha256": "bd1e499aeec1694c4d86be7b2ce1e9b0fd60fd688bd873303458cb7aec902531"
+    },
+    {
+      "path": "src/prototype/fortifications.js",
+      "match": true,
+      "bytes": 9981,
+      "sha256": "5f669aa0e6295df09208d04464a40a551d5b696ff6a0f1dd6f8d48917734dce9"
+    },
+    {
+      "path": "src/prototype/economy.js",
+      "match": true,
+      "bytes": 4728,
+      "sha256": "1b1e6c45db20a50f136b8bec6a9423d45fe47b3ce56bc842a724edf9b3fc588f"
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "match": true,
+      "bytes": 74008,
+      "sha256": "893e8cafc3444b14ab44ea0c18a800758bd987f26ede13620b8ad920bad5a3e0"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20703,
+      "sha256": "26cf03c3f73ee6c024f43776dc1ba08e8f3e3479afaa88c9f6de205bc1fe699a"
+    },
+    {
+      "path": "assets/sprites/manifest.json",
+      "match": true,
+      "bytes": 18798,
+      "sha256": "ca34058374aea87794536c01b3c7f4b8883ee5eb7b85e63c29192c954efce3b5"
+    },
+    {
+      "path": "src/prototype/runtime.js",
+      "match": true,
+      "bytes": 10039,
+      "sha256": "08b8f7ee023e5a94e75b3f2cc4867e984829f40597fbefd6b201c4a56a711dc2"
+    },
+    {
+      "path": "src/prototype/materials.js",
+      "match": true,
+      "bytes": 13515,
+      "sha256": "14565836a362b367bf054989938ab9be3074551e276077ffbd77fd7b02fd6cc8"
+    },
+    {
+      "path": "src/prototype/ground-cache.js",
+      "match": true,
+      "bytes": 3611,
+      "sha256": "37aa9447ddc05a9e580decd18b53f7d5ce701420e1ec8637ede882b1a6e3fdb2"
+    },
+    {
+      "path": "styles/prototype.css",
+      "match": true,
+      "bytes": 17348,
+      "sha256": "1499d5e8ff3bd5c9c3320c25c4d2c9f856df5b8daf40a63456751b112024669a"
+    },
+    {
+      "path": "styles/desktop.css",
+      "match": true,
+      "bytes": 4989,
+      "sha256": "8b15cbc481b4bbde93841c0ae126a563d142a9b02d7a1b29017808380a2fa3be"
+    },
+    {
+      "path": "styles/phone.css",
+      "match": true,
+      "bytes": 17362,
+      "sha256": "5a3aecb56d17c2a391ec5795261100c89ea465281efab8da6e160dd0626e1f29"
+    },
+    {
+      "path": "src/prototype/sprites.js",
+      "match": true,
+      "bytes": 25335,
+      "sha256": "7a9925e4e12aa567178b444d60673a8da2d9199757b14e15726c52b391858fbf"
+    }
+  ],
+  "checks": {
+    "baseline": "655e748",
+    "registeredPairsChecked": 33,
+    "approvedSelectionChanges": 7,
+    "unchangedSelections": 26,
+    "proceduralArtUnchanged": true,
+    "registeredOriginalsUnchanged": true,
+    "native": [
+      {
+        "number": 9,
+        "key": "prop:wildflowers:vale",
+        "zone": "vale",
+        "authoredPropId": "aesthetic-nature-16",
+        "proceduralDraws": 1,
+        "rasterDraws": 0,
+        "statePure": true
+      },
+      {
+        "number": 14,
+        "key": "prop:cattails:march",
+        "zone": "march",
+        "authoredPropId": "harbor-reeds-b",
+        "proceduralDraws": 1,
+        "rasterDraws": 0,
+        "statePure": true
+      },
+      {
+        "number": 19,
+        "key": "prop:alpine-scrub:highlands",
+        "zone": "highlands",
+        "authoredPropId": "aesthetic-nature-13",
+        "proceduralDraws": 1,
+        "rasterDraws": 0,
+        "statePure": true
+      },
+      {
+        "number": 21,
+        "key": "prop:heather:highlands",
+        "zone": "highlands",
+        "authoredPropId": "harbor-heather",
+        "proceduralDraws": 1,
+        "rasterDraws": 0,
+        "statePure": true
+      },
+      {
+        "number": 23,
+        "key": "prop:mint-workbench:highlands",
+        "zone": "highlands",
+        "authoredPropId": "ironroot-life-stonecross-2",
+        "proceduralDraws": 1,
+        "rasterDraws": 0,
+        "statePure": true
+      },
+      {
+        "number": 24,
+        "key": "prop:ore-sorting-bay:highlands",
+        "zone": "highlands",
+        "authoredPropId": "ironroot-life-quarry-0",
+        "proceduralDraws": 1,
+        "rasterDraws": 0,
+        "statePure": true
+      },
+      {
+        "number": 25,
+        "key": "prop:caravan-loading-bay:highlands",
+        "zone": "highlands",
+        "authoredPropId": "ironroot-life-stonecross-4",
+        "proceduralDraws": 1,
+        "rasterDraws": 0,
+        "statePure": true
+      }
+    ],
+    "selectionResults": [
+      {
+        "key": "hero:paladin",
+        "before": null,
+        "after": null
+      },
+      {
+        "key": "enemy:goblin",
+        "before": "enemy:goblin",
+        "after": "enemy:goblin"
+      },
+      {
+        "key": "prop:vale-cottage:vale",
+        "before": null,
+        "after": null
+      },
+      {
+        "key": "hero:mage",
+        "before": null,
+        "after": null
+      },
+      {
+        "key": "hero:ranger",
+        "before": "hero:ranger",
+        "after": "hero:ranger"
+      },
+      {
+        "key": "ally:soldier",
+        "before": null,
+        "after": null
+      },
+      {
+        "key": "ally:archer",
+        "before": "ally:archer",
+        "after": "ally:archer"
+      },
+      {
+        "key": "prop:bush:vale",
+        "before": "prop:bush:vale",
+        "after": "prop:bush:vale"
+      },
+      {
+        "key": "prop:wildflowers:vale",
+        "before": "prop:wildflowers:vale",
+        "after": null
+      },
+      {
+        "key": "prop:sapling:vale",
+        "before": "prop:sapling:vale",
+        "after": "prop:sapling:vale"
+      },
+      {
+        "key": "prop:stump:vale",
+        "before": "prop:stump:vale",
+        "after": "prop:stump:vale"
+      },
+      {
+        "key": "prop:fallen-log:vale",
+        "before": "prop:fallen-log:vale",
+        "after": "prop:fallen-log:vale"
+      },
+      {
+        "key": "prop:cattails:march",
+        "before": "prop:cattails:march",
+        "after": null
+      },
+      {
+        "key": "prop:driftwood:march",
+        "before": "prop:driftwood:march",
+        "after": "prop:driftwood:march"
+      },
+      {
+        "key": "prop:mangrove:march",
+        "before": "prop:mangrove:march",
+        "after": "prop:mangrove:march"
+      },
+      {
+        "key": "prop:pine-sapling:highlands",
+        "before": "prop:pine-sapling:highlands",
+        "after": "prop:pine-sapling:highlands"
+      },
+      {
+        "key": "prop:alpine-scrub:highlands",
+        "before": "prop:alpine-scrub:highlands",
+        "after": null
+      },
+      {
+        "key": "prop:marsh-bush:march",
+        "before": "prop:marsh-bush:march",
+        "after": "prop:marsh-bush:march"
+      },
+      {
+        "key": "prop:rock-cluster:highlands",
+        "before": "prop:rock-cluster:highlands",
+        "after": "prop:rock-cluster:highlands"
+      },
+      {
+        "key": "prop:dead-tree:frontier",
+        "before": "prop:dead-tree:frontier",
+        "after": "prop:dead-tree:frontier"
+      },
+      {
+        "key": "prop:charred-stump:frontier",
+        "before": "prop:charred-stump:frontier",
+        "after": "prop:charred-stump:frontier"
+      },
+      {
+        "key": "prop:dry-scrub:frontier",
+        "before": "prop:dry-scrub:frontier",
+        "after": "prop:dry-scrub:frontier"
+      },
+      {
+        "key": "prop:burned-log:frontier",
+        "before": "prop:burned-log:frontier",
+        "after": "prop:burned-log:frontier"
+      },
+      {
+        "key": "prop:black-rock:crown",
+        "before": "prop:black-rock:crown",
+        "after": "prop:black-rock:crown"
+      },
+      {
+        "key": "prop:crystal-cluster:crown",
+        "before": "prop:crystal-cluster:crown",
+        "after": "prop:crystal-cluster:crown"
+      },
+      {
+        "key": "prop:dead-shrub:crown",
+        "before": "prop:dead-shrub:crown",
+        "after": "prop:dead-shrub:crown"
+      },
+      {
+        "key": "prop:obsidian:crown",
+        "before": "prop:obsidian:crown",
+        "after": "prop:obsidian:crown"
+      },
+      {
+        "key": "prop:heather:highlands",
+        "before": "prop:heather:highlands",
+        "after": null
+      },
+      {
+        "key": "prop:rock:vale",
+        "before": "prop:rock:vale",
+        "after": "prop:rock:vale"
+      },
+      {
+        "key": "prop:rock:highlands",
+        "before": "prop:rock:highlands",
+        "after": "prop:rock:highlands"
+      },
+      {
+        "key": "prop:mint-workbench:highlands",
+        "before": "prop:mint-workbench:highlands",
+        "after": null
+      },
+      {
+        "key": "prop:ore-sorting-bay:highlands",
+        "before": "prop:ore-sorting-bay:highlands",
+        "after": null
+      },
+      {
+        "key": "prop:caravan-loading-bay:highlands",
+        "before": "prop:caravan-loading-bay:highlands",
+        "after": null
+      }
+    ]
+  },
+  "limits": "Only the seven owner-selected exact regional props changed; other art and all gameplay are unchanged. Focused native/build/sprite checks; no broad CI."
+}

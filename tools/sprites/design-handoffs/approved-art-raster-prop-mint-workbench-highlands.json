@@ -4,7 +4,7 @@
   "designId": "approved-art-raster-prop-mint-workbench-highlands",
   "name": "Active sprite — Prop / Mint Workbench / Highlands",
   "kind": "active-sprite",
-  "nextAction": "Publish owner-selected procedural representation in dev.117; retain original registered sprite for rollback.",
+  "nextAction": "Published owner-selected procedural representation in dev.117. Preserve current appearance and retained registered master for rollback.",
   "context": {
     "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
     "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Retain this accepted raster revision for the procedural pass. If an image edit is later selected, adjust only die/press-head readability from its preserved original and update dependent frames together.",
@@ -159,6 +159,6 @@
     "referencePath": "tools/visual-review/sprite-procedural-review-dev116/review.html",
     "scope": "These seven selected props only. Other selections remain unchanged.",
     "approval": "Explicit procedural preference from owner-provided numbered comparison screenshots.",
-    "release": "Approved dev.117 candidate; package-only publication next."
+    "release": "Published PR #351 / f291edaea04aebfaf6076b7697d5b9751f5bb5f6; package-only run 39511519262; 32 exact live files match."
   }
 }

@@ -20,4 +20,4 @@ The focused native audit locates each real authored prop in its region and verif
 
 Evidence and reproduction: `tools/visual-review/procedural-selections-dev117/audit.json` and `audit.cjs`. The owner-reviewed artwork remains on `review/sprites-vs-procedural-dev116`; its LIVE labels describe that frozen baseline, before these new selections.
 
-Status: approved and audited; package-only publication next. Further gallery choices remain pending owner review.
+Published in PR [#351](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/351), merge `f291edaea04aebfaf6076b7697d5b9751f5bb5f6`. Package-only run 39511519262 succeeded; all 32 exact live files match at 2026-10-20T22:56:20.165182+00:00. Normal workflow restored and temporary publisher removed. Receipt: `docs/evidence/PROCEDURAL_SELECTIONS_DEV117_PUBLICATION_20261020.json`. Further gallery choices remain pending owner review.
