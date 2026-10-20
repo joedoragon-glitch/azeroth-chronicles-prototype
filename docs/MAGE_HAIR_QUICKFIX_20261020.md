@@ -8,4 +8,4 @@ The Mage remains procedural under dev.91's explicit preference. Her inactive leg
 
 No tests, browser review or full CI ran. Build generation/packaging and the existing syntax step completed before the final headgear-coordinate adjustment; no runtime performance or appearance pass is claimed. Publication uses a temporary packaging-only workflow, removed after exact public-file verification.
 
-Publication pending.
+**Published dev.92:** [PR #326](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/326) merged as `657df95348a21e4f396872dd1b2cbc4c775e3f79`. Packaging-only [run 39375505253](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39375505253) succeeded. Exact public build/version, visuals, sprite resolver/manifest, engine, runtime, renderer and service worker match the prepared source. No tests/browser review ran. Normal release workflow restored and temporary publisher removed. [Publication receipt](evidence/MAGE_DEV92_PUBLICATION_20261020.json).

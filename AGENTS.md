@@ -1,5 +1,7 @@
 # Project working rules
 
+- Current release: dev.92 Mage hairstyle correction merged in PR #326 (657df95348a21e4f396872dd1b2cbc4c775e3f79) and published by packaging-only run 39375505253. Shared youthful silver fringe/side ponytail fits below/behind normal/crowned headgear; existing crown/scarf retained. No tests/browser review; withdrawn QoL idea excluded. Exact live source verified; dev.91 identities and dev.90 performance retained. Normal workflow restored and temporary publisher removed. See docs/MAGE_HAIR_QUICKFIX_20261020.md. No automatic further work.
+
 - Latest owner continuation (20 October, 01:29 EDT): quick dev.92 Mage hairstyle correction, no tests, using the direct merge/publication workflow. Younger swept silver fringe and side ponytail fitted below/behind existing headgear in normal/crowned appearances. Withdrawn quality-of-life idea excluded. Preserve dev.91 presentation choices and dev.90 performance work. See docs/MAGE_HAIR_QUICKFIX_20261020.md.
 
 - Current release: dev.91 character correction is merged in PR #325 (58714cf407de9397ebb8ba0343a4ded508865d75) and published by packaging-only run 39373388652. Procedural Paladin/Mage/Soldier; raster Ranger/companion Archer retained; sly Goblin slinger. Exact live source verified. No tests/browser checks/CI; all dev.90 performance changes retained. Normal workflow restored and temporary dev.91 publisher removed. See docs/PROCEDURAL_CHARACTER_QUICKFIX_20261020.md. No automatic further work.

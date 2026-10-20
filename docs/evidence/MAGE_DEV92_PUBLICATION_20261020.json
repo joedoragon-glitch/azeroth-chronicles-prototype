@@ -1,0 +1,65 @@
+{
+  "date": "2026-10-20",
+  "version": "0.9.1+snapshot.dev.92",
+  "pullRequest": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/326",
+  "publishedCommit": "657df95348a21e4f396872dd1b2cbc4c775e3f79",
+  "publicationRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39375505253",
+  "publicationConclusion": "success",
+  "jobs": [
+    "publish: packages committed files and deploys Pages only"
+  ],
+  "fullGameCI": false,
+  "repeatedCompletedChecks": false,
+  "liveVerification": [
+    {
+      "path": "build.txt",
+      "matches": true,
+      "commit": "657df95348a21e4f396872dd1b2cbc4c775e3f79"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "matches": true,
+      "sha256": "a8721a024b3d8a8ab3c72a03fc9b20fc331c284667be27763b25bf9b189b0222"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "matches": true,
+      "sha256": "9886d0651cf83dc7c9be05af71c5740a78fa9216f71bc5e58501bb591b0a9454"
+    },
+    {
+      "path": "src/prototype/runtime.js",
+      "matches": true,
+      "sha256": "6f2dde188f9a2245ca578b5b14a6be0936f740ffe511f5050fb65ff0158fac55"
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "matches": true,
+      "sha256": "bd1a36badcdd115ab386aae643e1a8f6bd51132bc84ed36d7682ec7d98b3146d"
+    },
+    {
+      "path": "src/prototype/sprites.js",
+      "matches": true,
+      "sha256": "e28cbe6142c2014e813e59b7eddc1f1e9aba945b62475414fee897c9cfd3aa34"
+    },
+    {
+      "path": "assets/sprites/manifest.json",
+      "matches": true,
+      "sha256": "cbe66a02078d54258d2f8a72978d5c636925e851554d67e73ace7265738038a1"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "matches": true,
+      "sha256": "3a195f5e462b7f003f49a869a6e32815a83f933e01c4f07c7bf698081c2047c0"
+    },
+    {
+      "path": "sw.js",
+      "matches": true,
+      "sha256": "d8a838c8a159e63e2a218931d22c3f6616ecde5d6382830ee0de0dce1beae908"
+    }
+  ],
+  "testsRun": false,
+  "browserChecksRun": false,
+  "releaseScope": "Youthful shared normal/crowned Mage hairstyle fitted beneath existing hat brim; crown/scarf retained. Withdrawn QoL change excluded. All dev.91 identities and dev.90 performance changes retained.",
+  "actualChromebookFPS": "Owner dev.90 play remains pending; dev.92 preserves performance source.",
+  "workflowCleanup": "Restore pages.yml byte-for-byte from b91d8a5c and remove the one-time publisher. Cleanup changes no published runtime."
+}

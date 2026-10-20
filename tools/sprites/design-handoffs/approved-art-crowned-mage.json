@@ -4,7 +4,7 @@
   "designId": "approved-art-crowned-mage",
   "name": "Crowned Mage",
   "kind": "crowned-player",
-  "nextAction": "Publish the quick dev.92 Mage hair correction without tests; retain original raster, headgear and performance improvements.",
+  "nextAction": "Released dev.92 hair correction. Preserve headgear/identities/performance changes and originals; no automatic further work.",
   "context": {
     "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
     "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Reshape the hat/crown fit, lower or flare the collar around the face, drape embroidered violet stoles and refine staff hands.",
@@ -126,7 +126,10 @@
       "sourceSha256": "3a195f5e462b7f003f49a869a6e32815a83f933e01c4f07c7bf698081c2047c0",
       "decisionRecord": "docs/MAGE_HAIR_QUICKFIX_20261020.md",
       "appearanceAcceptance": "Owner requested implementation; no acceptance of an unseen revised drawing is claimed.",
-      "status": "dev.92 quick correction; merge/publication pending."
+      "status": "Merged in PR #326 and published dev.92, exact live source verified. No tests.",
+      "pullRequest": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/326",
+      "publishedCommit": "657df95348a21e4f396872dd1b2cbc4c775e3f79",
+      "releaseEvidence": "docs/evidence/MAGE_DEV92_PUBLICATION_20261020.json"
     }
   }
 }
