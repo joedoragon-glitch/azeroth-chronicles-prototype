@@ -10,6 +10,8 @@
 
 - [Pet visual identity correction — prepared dev.115](PET_VISUAL_IDENTITY_20261020.md): Veyra miniature and exact boss weapons; comparison and native scene.
 
+- [Approved procedural gallery selections — dev.117](PROCEDURAL_SELECTIONS_20261020.md): seven numbered owner choices, native selection audit and release.
+
 ## Start here
 
 | Need | Maintained entrypoint |
