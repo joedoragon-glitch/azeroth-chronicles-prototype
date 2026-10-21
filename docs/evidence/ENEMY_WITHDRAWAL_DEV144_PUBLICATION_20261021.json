@@ -1,0 +1,85 @@
+{
+  "version": "0.9.1+snapshot.dev.144",
+  "pr": 380,
+  "mergeCommit": "68f16e1b43c6d819bbb5b5d607cfb370547ea3d1",
+  "candidateCommit": "c5f8d09ef75146c4765654875e2ed8906c7bfa0c",
+  "candidateTree": "2ee133d15c3cdadaccfe32b36d815f175af9b0dc",
+  "publisherRunId": 39677059008,
+  "publisherRunUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39677059008",
+  "site": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/",
+  "verifiedAt": "2026-10-21T21:15:09.551320+00:00",
+  "publishedBuild": "68f16e1b43c6d819bbb5b5d607cfb370547ea3d1",
+  "publicFiles": [
+    {
+      "path": "index.html",
+      "bytes": 5646,
+      "sha256": "1b0ca7a29dd6c5c4d57adb28e31a47b1a6c8b7a7845a3ed57872c46a4332ae20",
+      "matchesPrepared": true
+    },
+    {
+      "path": "phone.html",
+      "bytes": 5647,
+      "sha256": "9bcc581900bbd5c85d9a5416f5a3bc10f4eea7b9d1f2d68b2c66774c317912b8",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "bytes": 273984,
+      "sha256": "57c85739ad02244254e55bc58b61360db0013821bf86d25b33cfa64faa0949e3",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/boss-combat.js",
+      "bytes": 105986,
+      "sha256": "f9acc167bc45b2f3f6598d4943d9b90f33aa5374d6453d4686f93256ae677d5b",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/dreadmaw-combat.js",
+      "bytes": 18664,
+      "sha256": "3ee5b4f2afb4857535079de3e00d20fe41189dc7446826467cb2a3eb6ec86d00",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "bytes": 220574,
+      "sha256": "c0c0a167190994b1dc72e01a931368b8e49c9d46aad199369212581fa39f40ef",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/save.js",
+      "bytes": 55421,
+      "sha256": "f16db49da643f3cb11a3eff838f06f8cc06ebf965d85d4ba58dc779a7cd02572",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "bytes": 296,
+      "sha256": "1ca2480289cc678eb9ce07ad006da8f4e46c931b9a156af4d5c34c923f094f0a",
+      "matchesPrepared": true
+    },
+    {
+      "path": "sw.js",
+      "bytes": 20797,
+      "sha256": "3b9f9313b127f4e7b795dfb0238fcca51d530f27cd2845310cc7ae408eada1e2",
+      "matchesPrepared": true
+    }
+  ],
+  "focusedWithdrawalScenarios": 61,
+  "existingFocusedChecks": [
+    "rogue-integration: 16 checks including all basic/signature effect families",
+    "snapshot-mobile-rogue-casts",
+    "slow-cooldown",
+    "boss-retreat-recovery: 18 pilots"
+  ],
+  "phoneStartup": "Passed dev.144 phone shell startup, native support healing before a ready covering shot, subsequent projectile release and continuing withdrawal; no JavaScript exceptions.",
+  "baselineFailuresReproducedOnUnchangedDev143": {
+    "night-ringleader-rogue": "existing night HP escalation assertion",
+    "enemy-support-healing": "existing Nightmare night scaling assertion (1 versus 1.15)",
+    "snapshot-dreadmaw": "historical protected Rogue rules hash",
+    "cindermaw-ministry": "baseline Cordon fixture absent"
+  },
+  "broadCiRan": false,
+  "workflowRestoration": "Completed in subsequent closeout commit; normal workflow retained byte-for-byte; temporary publisher removed.",
+  "limits": "Existing retreat intent and native action requirements retained; covering fire does not guarantee survival, player comfort or device FPS. Committed warnings/motions finish before another healing decision."
+}
