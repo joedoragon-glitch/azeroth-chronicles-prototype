@@ -1053,20 +1053,33 @@
         )
           this.rangerSupport('mana', false);
       }
+      companionRecruitmentReason(type, barracksId = null) {
+        if (!['soldier', 'archer'].includes(type)) return 'Choose a Soldier or Ranger to recruit.';
+        if ((this.s.expeditionRank || 1) < 2)
+          return 'Recruitment unlocks at Expedition 2. Rescue Mira and train the Expedition Skill.';
+        if (barracksId !== null) {
+          const b = this.zone().buildings.find((b) => b.id === barracksId);
+          if (!b) return 'This Barracks is no longer available. Reopen a local Barracks.';
+          if (b.progress < 4) return 'Finish building this Barracks before recruiting.';
+          if (b.queue > 0)
+            return 'This Barracks is already training a companion. Wait for training to finish.';
+          if (this.rosterCount() + this.queuedCompanions() >= 200)
+            return 'Company limit reached: 200 companions, including reserves and queued recruits.';
+        } else if (this.rosterCount() >= 3)
+          return 'The town can employ only 3 companions, including reserves. Recruit at a completed Basic or Full Barracks; resting someone does not free a town hiring place.';
+        const price =
+          barracksId === null ? this.recruitPrice(type) : this.barracksRecruitPrice(type);
+        if (!price) return 'Recruitment is unavailable for this companion.';
+        if (this.hero.gold < price) return 'Not enough crowns: recruitment costs ' + price + '.';
+        return '';
+      }
       recruit(type) {
-        const price = this.recruitPrice(type);
-        if ((this.s.expeditionRank || 1) < 2) {
-          this.say(
-            'Recruitment unlocks at Expedition 2. Rescue Mira and train the Expedition Skill.',
-          );
+        const reason = this.companionRecruitmentReason(type);
+        if (reason) {
+          this.say(reason);
           return false;
         }
-        if (!price) return false;
-        if (this.rosterCount() >= 3) {
-          this.say('Town recruitment limit reached. Build a barracks to recruit more companions.');
-          return false;
-        }
-        if (!this.spend(price)) return false;
+        if (!this.spend(this.recruitPrice(type))) return false;
         const p = this.safe(this.hero.x + 50, this.hero.y + 50),
           u = this.unit(type, p.x, p.y);
         u.active = this.activeParty().length < this.expeditionPartyCap();
@@ -1111,9 +1124,21 @@
           (u) => ['soldier', 'archer'].includes(u.type) && !u.order,
         );
       }
+      companionRestReason(id) {
+        const u = this.s.party.find((u) => u.id === id);
+        if (!u) return 'This companion is no longer in your company. Reopen Manage active group.';
+        if (u.active === false) return 'This companion is already resting in reserve.';
+        if (this.refugeThreat())
+          return 'Cannot rest a companion while nearby enemies are engaged. Retreat and end the fight first.';
+        return '';
+      }
       restCompanion(id) {
-        const u = this.s.party.find((u) => u.id === id && u.active !== false);
-        if (!u || this.refugeThreat()) return false;
+        const reason = this.companionRestReason(id);
+        if (reason) {
+          this.say(reason);
+          return false;
+        }
+        const u = this.s.party.find((u) => u.id === id);
         this.clearPartyCharge(u);
         this.clearCompanionJudgment(u);
         u.active = false;
@@ -1121,17 +1146,41 @@
         u.path = [];
         return true;
       }
-      activateCompanion(id, barracksId) {
+      companionActivationReason(id, barracksId) {
         const u = this.s.party.find((u) => u.id === id && u.active === false),
           b = this.zone().buildings.find((b) => b.id === barracksId && b.progress >= 4);
-        if (
-          !u ||
-          !b ||
-          u.hp <= 0 ||
-          this.refugeThreat() ||
-          this.activeParty().length >= this.barracksFieldCap(b)
-        )
+        if (!u)
+          return 'This companion is no longer resting in reserve. Reopen Manage active group.';
+        if (!b) return 'Adding a companion requires a completed local Barracks.';
+        if (u.hp <= 0) return 'This companion has fallen. Recover them at the Barracks first.';
+        if (this.refugeThreat())
+          return 'Cannot add a companion while nearby enemies are engaged. Retreat and end the fight first.';
+        if (this.activeParty().length >= this.barracksFieldCap(b)) {
+          const count = this.activeParty().length,
+            cap = this.barracksFieldCap(b),
+            needed = count - cap + 1;
+          return (
+            'Active group full (' +
+            count +
+            '/' +
+            cap +
+            '). Rest ' +
+            needed +
+            ' active member' +
+            (needed === 1 ? '' : 's') +
+            ' in Manage active group to make room here. Fallen active companions also use slots.'
+          );
+        }
+        return '';
+      }
+      activateCompanion(id, barracksId) {
+        const reason = this.companionActivationReason(id, barracksId);
+        if (reason) {
+          this.say(reason);
           return false;
+        }
+        const u = this.s.party.find((u) => u.id === id),
+          b = this.zone().buildings.find((b) => b.id === barracksId);
         u.active = true;
         this.clearCompanionJudgment(u);
         Object.assign(u, this.safe(b.x + 45, b.y + 45));

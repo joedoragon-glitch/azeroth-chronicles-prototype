@@ -1001,7 +1001,15 @@
       const game = getGame(),
         row = game.petCollection().find((r) => r.boss.id === family);
       if (!row?.def) return back();
-      const { boss, def, unit, state } = row;
+      const { boss, def, unit, state } = row,
+        reason =
+          state === 'Locked' || !unit
+            ? game.petRecruitmentReason(family, b.id)
+            : state === 'Fallen'
+              ? 'This pet has fallen. Recover it at the Barracks first.'
+              : unit.active !== false
+                ? game.companionRestReason(unit.id)
+                : game.companionActivationReason(unit.id, b.id);
       openMenu(
         unit?.customName || def.name,
         'Inspired by ' +
@@ -1057,14 +1065,13 @@
               else getGame().activateCompanion(current.id, b.id);
               barracksPetDetail(b, family, back);
             },
-            !unit
-              ? 'One permanent individual; uses an ordinary group slot.'
-              : 'Health and recovery persist while resting.',
-            state === 'Locked' ||
-              state === 'Fallen' ||
-              game.refugeThreat() ||
-              (!unit && game.rosterCount() + game.queuedCompanions() >= 200) ||
-              (state === 'Resting' && game.activeParty().length >= game.barracksFieldCap(b)),
+            reason ||
+              (!unit
+                ? game.activeParty().length < game.barracksFieldCap(b)
+                  ? 'Free · joins your active group in the open slot.'
+                  : 'Active group full. Recruited pet will wait in reserve; rest a member to free a slot.'
+                : 'Health and recovery persist while resting.'),
+            !!reason,
           ),
         ],
         back,
@@ -1102,15 +1109,19 @@
             ['soldier', 'Soldier'],
             ['archer', 'Ranger'],
           ].map(([type, label]) => {
-            const price = getGame().barracksRecruitPrice(type);
+            const price = getGame().barracksRecruitPrice(type),
+              reason = getGame().companionRecruitmentReason(type, b.id);
             return action(
               'Recruit ' + label + ' · ' + price + ' crowns',
               () => {
                 getGame().train(b.id, type);
                 barracksRecruitmentMenu(b, back);
               },
-              b.queue > 0 ? 'Barracks queue occupied' : 'Barracks rate',
-              b.queue > 0 || getGame().hero.gold < price,
+              reason ||
+                (getGame().activeParty().length < getGame().barracksFieldCap(b)
+                  ? 'Joins your active group when training finishes if a slot remains open.'
+                  : 'Active group full. New recruit will wait in reserve unless you free a slot before training finishes.'),
+              !!reason,
             );
           }),
         ],
@@ -1163,19 +1174,27 @@
     function barracksGroupMenu(b, back) {
       const active = getGame().activeParty().length,
         cap = getGame().barracksFieldCap(b),
-        threat = getGame().refugeThreat(),
-        actions = getGame().s.party.map((u) =>
-          u.active !== false
+        actions = getGame().s.party.map((u) => {
+          const reason =
+            u.active !== false
+              ? getGame().companionRestReason(u.id)
+              : getGame().companionActivationReason(u.id, b.id);
+          return u.active !== false
             ? action(
                 'Rest ' + rosterLabel(u),
                 () => {
                   getGame().restCompanion(u.id);
                   barracksGroupMenu(b, back);
                 },
-                u.hp > 0
-                  ? 'With you · ' + Math.ceil(u.hp) + '/' + u.maxHp + ' HP'
-                  : 'With you · FALLEN',
-                threat,
+                reason ||
+                  (u.hp > 0
+                    ? 'With you · ' +
+                      Math.ceil(u.hp) +
+                      '/' +
+                      u.maxHp +
+                      ' HP · Rest to free a group slot.'
+                    : 'With you · FALLEN · Rest to free a group slot.'),
+                !!reason,
               )
             : action(
                 'Add ' + rosterLabel(u) + ' to group',
@@ -1183,12 +1202,10 @@
                   getGame().activateCompanion(u.id, b.id);
                   barracksGroupMenu(b, back);
                 },
-                u.hp <= 0
-                  ? 'Resting · FALLEN — recover first'
-                  : 'Resting · ' + Math.ceil(u.hp) + '/' + u.maxHp + ' HP',
-                u.hp <= 0 || active >= cap || threat,
-              ),
-        );
+                reason || 'Resting · ' + Math.ceil(u.hp) + '/' + u.maxHp + ' HP',
+                !!reason,
+              );
+        });
       openMenu(
         'Manage group',
         'With you ' +
@@ -1197,7 +1214,7 @@
           cap +
           ' · Employed ' +
           getGame().rosterCount() +
-          '. ' +
+          '. Resting frees a slot for a new recruit or reserve companion. ' +
           (!b.full && (getGame().s.expeditionRank || 1) >= 4
             ? 'Basic barracks support at most 3 active companions. Upgrade it to use your higher Expedition cap.'
             : ''),
@@ -1654,7 +1671,7 @@
           action(
             'Town recruitment limit reached',
             () => {},
-            'Further recruiting requires a barracks.',
+            getGame().companionRecruitmentReason('soldier'),
             true,
           ),
         );
@@ -1670,8 +1687,8 @@
                 getGame().recruit(type);
                 townRecruitmentMenu(back);
               },
-              'Town can employ only the first 3 companions',
-              getGame().hero.gold < price,
+              getGame().companionRecruitmentReason(type) || 'Town can employ only the first 3 companions',
+              !!getGame().companionRecruitmentReason(type),
             ),
           ),
         );
