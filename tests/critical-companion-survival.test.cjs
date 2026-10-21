@@ -96,6 +96,21 @@ console.log(
   }
   cases++;
 }
+// Existing catch-up pace follows a continuously moving Ranger rather than falling behind forever.
+{
+  const { g, z, u } = scene('soldier', 'ranger');
+  z.enemies = [];
+  Object.assign(g.hero, { x: 500, y: 1500 });
+  Object.assign(u, { x: 400, y: 1500 });
+  for (let i = 0; i < 80; i++) {
+    g.hero.x += 16;
+    step(g);
+  }
+  assert(distance(u, g.hero) < 420);
+  assert(u.x > 1200);
+  assert(g.companionSurvivalMode(u));
+  cases++;
+}
 // Crossing critical HP bypasses the ordinary assessment interval and cancels preparation.
 for (const type of ['soldier', 'pet:thorn'])
   for (const phase of ['update', 'resolution']) {

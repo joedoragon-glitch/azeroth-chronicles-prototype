@@ -168,8 +168,12 @@
           state.hero = { x: this.hero.x, y: this.hero.y };
           state.point = this.companionSurvivalPoint(u, living, threats);
         }
-        const speed =
-            this.companionRallyMoveSpeed(u, cfg.retreatSpeed) *
+        const distance = dist(u, this.hero),
+          speed =
+            this.companionRallyMoveSpeed(
+              u,
+              distance > 650 ? 500 : distance > 350 ? 390 : distance > 200 ? 315 : cfg.retreatSpeed,
+            ) *
             this.slowMovementFactor(u) *
             this.mireBogMovementFactor(u) *
             this.ashMovementFactor(u),
