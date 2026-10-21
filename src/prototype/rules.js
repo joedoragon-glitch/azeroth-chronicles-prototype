@@ -3959,7 +3959,9 @@
         },
         {
           id: 'keeper-study',
-          bounds: [790, 1240, 800, 1080],
+          // Overlap the lab floor so actor clearance does not create a seam at y=800.
+          // This overlap stays entirely inside the existing Archive footprint.
+          bounds: [790, 1240, 740, 1080],
         },
         {
           id: 'preservation-hall',

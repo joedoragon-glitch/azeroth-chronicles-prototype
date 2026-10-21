@@ -1,0 +1,14 @@
+{
+  "version": "0.9.1+snapshot.dev.124",
+  "before": {
+    "x": 1130,
+    "y": 780
+  },
+  "after": {
+    "x": 1130,
+    "y": 850
+  },
+  "outerWall": true,
+  "partition": true,
+  "errors": []
+}
