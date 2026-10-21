@@ -1,3 +1,5 @@
+**Prepared dev.137 — ferry proportion correction:** PR #373. Ferry/ferryman display is exactly 1.5× per dimension from the unchanged selected original; fresh 918×459 export, matching fallback, Highlands hull clear of timber with original reachable boarding point. Focused export/loader/24 boarding/registry/generated checks and six native renders pass. Existing terrain scope/material contract failures reproduced on dev.136, unrelated to ferry. Package-only publication pending. Scope: `docs/FERRY_SIZE_DEV137.md`. Tribute work preserved on fix/highlands-tribute-dev137; future Highlands coast annotation only.
+
 Published dev.136: [Selected Tidal Twin-Hull Ferry](TIDAL_FERRY_DEV136.md), PR #372. Exact live build/eight public files match; package-only run 39590482492 succeeded. Normal workflow restored.
 
 Published dev.135: [Lantern Shore timber and ferry](LANTERN_DOCK_DEV135.md), PR #371. Exact live build/five public files match; package-only run 39586784767 succeeded. Normal workflow restored.

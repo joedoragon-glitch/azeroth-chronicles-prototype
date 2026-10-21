@@ -25,8 +25,8 @@
   ],
   "assets": {
     "transport:ferry": {
-      "traits": "Owner-selected option 3: twin curved plank hulls, reed canopy, benches/open deck, blue-green trim, rope fenders, paired amber lamps and tan-hatted ferryman. Replace the old single-sail design; preserve compact dock clearance.",
-      "decisionDocuments": ["docs/TIDAL_FERRY_DEV136.md"],
+      "traits": "Owner-selected option 3: twin curved plank hulls, reed canopy, benches/open deck, blue-green trim, rope fenders, paired amber lamps and tan-hatted ferryman. Replace the old single-sail design; render at 216×108, exactly 50% larger than dev.136 in each dimension, with hull floating clear of timber.",
+      "decisionDocuments": ["docs/TIDAL_FERRY_DEV136.md", "docs/FERRY_SIZE_DEV137.md"],
       "handoffs": ["tools/sprites/design-handoffs/tidal-twin-hull-ferry.json"],
       "selectedRepresentation": "raster"
     },

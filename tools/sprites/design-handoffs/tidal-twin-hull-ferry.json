@@ -2,16 +2,14 @@
   "schemaVersion": 1,
   "designId": "tidal-twin-hull-ferry",
   "name": "Tidal Twin-Hull Ferry \u2014 owner-selected option 3",
-  "status": "selected-raster-released-owner-playtest-next",
-  "nextAction": "Owner plays the published selected ferry. Retain original and current registration for future edits.",
+  "status": "size-correction-prepared-owner-playtest-next",
+  "nextAction": "Finish focused checks and publish dev.137, then owner playtests the larger ferry.",
   "context": {
     "decisionDate": "2026-10-21",
     "originConversation": null,
-    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/372",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/373",
     "decisionSummary": "After reviewing three generated ferry redesigns, Joel said: \u201cI'll pick number three.\u201d This selects the Tidal Twin-Hull Ferry for implementation in the current game.",
-    "contentDocuments": [
-      "docs/TIDAL_FERRY_DEV136.md"
-    ],
+    "contentDocuments": ["docs/TIDAL_FERRY_DEV136.md", "docs/FERRY_SIZE_DEV137.md"],
     "locationAndLore": "Same passenger ferry between Lantern Shore and the Highlands; no new faction or lore."
   },
   "decisions": {
@@ -24,7 +22,15 @@
       "sourceHash": "19d990901d6538a796fdd132842da1d04c219afa2f47f5eb8b991e24617ae336",
       "ownerWords": "I'll pick number three."
     },
-    "pendingCorrections": []
+    "pendingCorrections": [],
+    "sizeCorrection": {
+      "ownerRequest": "Render the original selected ferry at least 50% larger so the ferryman is reasonably proportionate to other NPCs.",
+      "displayBefore": [144, 72],
+      "displayAfter": [216, 108],
+      "factorPerDimension": 1.5,
+      "originalUnchanged": true,
+      "oldCompactSize": "superseded"
+    }
   },
   "reference": {
     "sourceCommit": "f1315dc42dd65c0252c3535154de8f62a321007c",
@@ -39,41 +45,35 @@
     "originalImageTool": "image_gen.imagegen",
     "originalToolOutputFilename": "exec-c01d6c18-95c4-41d0-bdfd-0883cbe2c172.png",
     "toolRequestId": null,
-    "originalDimensions": [
-      1774,
-      887
-    ],
+    "originalDimensions": [1774, 887],
     "exactEntityState": {
       "renderKind": "npc",
       "kind": "transport",
       "icon": "\u26f5",
-      "ids": [
-        "march:outbound",
-        "highlands:return"
-      ]
+      "ids": ["march:outbound", "highlands:return"]
     },
     "gameplayContextPaths": [
-      "tools/visual-review/tidal-ferry-dev136/shore-night.webp",
-      "tools/visual-review/tidal-ferry-dev136/highlands-day.webp",
-      "tools/visual-review/tidal-ferry-dev136/shore-day.webp",
-      "tools/visual-review/tidal-ferry-dev136/highlands-night.webp",
-      "tools/visual-review/tidal-ferry-dev136/phone-day.webp",
-      "tools/visual-review/tidal-ferry-dev136/phone-night.webp"
+      "tools/visual-review/ferry-size-dev137/shore-night.webp",
+      "tools/visual-review/ferry-size-dev137/highlands-day.webp",
+      "tools/visual-review/ferry-size-dev137/shore-day.webp",
+      "tools/visual-review/ferry-size-dev137/highlands-night.webp",
+      "tools/visual-review/ferry-size-dev137/phone-day.webp",
+      "tools/visual-review/ferry-size-dev137/phone-night.webp"
     ],
     "traitsToPreserve": [
       "Two curved shallow plank hulls and clear twin bow gap.",
       "Woven reed canopy over cypress ribs, open passenger deck and benches.",
       "Blue-green trim, coarse rope fenders and two amber lamps.",
       "Tan-hatted ferryman in brown clothing with a short steering oar.",
-      "Low compact silhouette; no mast or sail."
+      "Low twin-hull silhouette; no mast or sail. Display at 216\u00d7108 (50% larger per dimension than dev.136)."
     ],
     "nativeReviewHashes": {
-      "tools/visual-review/tidal-ferry-dev136/shore-night.webp": "5dd948d6d5c0302d6acbd119a0518ac3a62c7f02db4508fe7679d0ddc9aafa57",
-      "tools/visual-review/tidal-ferry-dev136/highlands-day.webp": "e514f68420af624d9878ef48c0da6b868f612fd6707901ee309c036bc0a7bd4a",
-      "tools/visual-review/tidal-ferry-dev136/shore-day.webp": "7e82ff562f49a8ed6dffbc2576607d3c04ac75ff442f58b84477b287b9cc4cf6",
-      "tools/visual-review/tidal-ferry-dev136/highlands-night.webp": "ee289262ed41e8caa074667a87b2d34d0867a7f9ff53b61c859f99670eb132b2",
-      "tools/visual-review/tidal-ferry-dev136/phone-day.webp": "5fedc24cf3f9b5a59d3576cab2da36f042fdae01c361cf8a7463008b6670ff47",
-      "tools/visual-review/tidal-ferry-dev136/phone-night.webp": "535e851a8f4aacea64e014761ee99905b436f5983a1b8fe5a8cf77d43716b635"
+      "tools/visual-review/ferry-size-dev137/shore-night.webp": "f85250bbab66ca54c4ff0660c4ff3c5f771f20629720fe6597761240f581d324",
+      "tools/visual-review/ferry-size-dev137/highlands-day.webp": "340407c1d942e9f4a72eda2e0ddef51617a69d902e43c70abd375bd591ee1350",
+      "tools/visual-review/ferry-size-dev137/shore-day.webp": "f4165f40d475ac15d55843210276994603df860e508f9af033fc84f6559ae328",
+      "tools/visual-review/ferry-size-dev137/highlands-night.webp": "4abdedef837472d3c0692739d40847b91fc56a20fd489fe197dc9905555ff2cf",
+      "tools/visual-review/ferry-size-dev137/phone-day.webp": "bd911057bcdec9fa5f30ca23bf8d56b95ac459874dbd04959549d67816460717",
+      "tools/visual-review/ferry-size-dev137/phone-night.webp": "831c08bb52bff03ed114906a69451105149358edd44d54b9f123cdd50c0458b5"
     },
     "rendererDependencies": {
       "@napi-rs/canvas": "1.0.10",
@@ -81,12 +81,8 @@
     }
   },
   "scope": {
-    "catalogIds": [
-      "091"
-    ],
-    "verifiedRuntimeKeys": [
-      "transport:ferry"
-    ],
+    "catalogIds": ["091"],
+    "verifiedRuntimeKeys": ["transport:ferry"],
     "requiredVisibleAssets": [
       "Selected static ferry body",
       "Matching procedural loading/failure fallback"
@@ -107,13 +103,14 @@
   },
   "production": {
     "candidateRecords": [
-      "tools/sprites/batches/2026-10-21-tidal-ferry/candidate/candidate.json"
+      "tools/sprites/batches/2026-10-21-tidal-ferry/candidate/candidate.json",
+      "tools/sprites/batches/2026-10-21-ferry-size/candidate/candidate.json"
     ],
     "approvedRecordKey": "transport:ferry",
-    "expectedReplacementRevision": "absent",
-    "rollbackRevision": "remove new registration with exact revision; matching procedural fallback remains",
+    "expectedReplacementRevision": "e96ca108d314232c57f102999010262d4168f1e6dd3a9cc5c1cbf9ff1cac1b49",
+    "rollbackRevision": "e96ca108d314232c57f102999010262d4168f1e6dd3a9cc5c1cbf9ff1cac1b49",
     "releaseCommit": "718de6bd05386bdc877e6ec0e805a1d957f16d1d",
     "releaseEvidence": "docs/evidence/TIDAL_FERRY_DEV136_PUBLICATION_20261021.json",
-    "activeContentRevision": "e96ca108d314232c57f102999010262d4168f1e6dd3a9cc5c1cbf9ff1cac1b49"
+    "activeContentRevision": "e426c0349b4ea4e25810e99def9942eeb6e216b888ad0cce0c3b8ac362d86df7"
   }
 }

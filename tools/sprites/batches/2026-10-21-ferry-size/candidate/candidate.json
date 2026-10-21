@@ -104,7 +104,8 @@
     }
   },
   "review": {
-    "status": "pending",
-    "reference": null
+    "status": "approved",
+    "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/373",
+    "basis": "Owner-selected option 3 plus explicit 50% size correction; engineering native-size review complete. Owner has not yet played this correction."
   }
 }

@@ -2136,8 +2136,14 @@
                 ? Campaign.rules?.harbors?.[game.zoneId]?.vessel
                 : null,
             presentation = vessel ? { ...e, ...vessel } : e,
-            p = screen(presentation);
-          if (p.x < -180 || p.x > canvas.width + 180 || p.y < -180 || p.y > canvas.height + 180)
+            p = screen(presentation),
+            margin = e.harbor ? Math.max(180, 240 * zoom()) : 180;
+          if (
+            p.x < -margin ||
+            p.x > canvas.width + margin ||
+            p.y < -margin ||
+            p.y > canvas.height + margin
+          )
             continue;
           // Keep the normal draw eligibility for actors, blockers, resources,
           // buildings and all other interactive or identity-bearing objects.
