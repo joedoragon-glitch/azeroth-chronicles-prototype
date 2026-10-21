@@ -1,0 +1,47 @@
+{
+  "version": "0.9.1+snapshot.dev.147",
+  "pr": 386,
+  "mergeCommit": "344b0a20e08e5d06c50031ecacc274a336d34e00",
+  "publishedBuild": "344b0a20e08e5d06c50031ecacc274a336d34e00",
+  "verifiedAt": "2026-10-21T23:56:56.737259+00:00",
+  "publicFiles": [
+    {
+      "path": "src/prototype/navigation.js",
+      "sha256": "f2cb25f3bd4fca522b723d8a965c363adf736c89aa93f3b70b79f1a0d1ddbab3",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "sha256": "ffc69204c112ac872b945139a97144d9125b46502dc31d8dbbd8e0b682f0e669",
+      "matchesPrepared": true
+    },
+    {
+      "path": "sw.js",
+      "sha256": "0c4e20f76702398474334fbf1528eb9e9775e7124b2e3140178fa7eb357c7c67",
+      "matchesPrepared": true
+    },
+    {
+      "path": "phone.html",
+      "sha256": "9bcc581900bbd5c85d9a5416f5a3bc10f4eea7b9d1f2d68b2c66774c317912b8",
+      "matchesPrepared": true
+    }
+  ],
+  "checks": {
+    "witness": "Existing clue/interaction suite and 3-seed fresh/old-save placement, route and idempotent migration passed",
+    "build": "Passed",
+    "changedSourceFormat": "Passed"
+  },
+  "placement": {
+    "previous": [
+      900,
+      850
+    ],
+    "current": [
+      780,
+      740
+    ]
+  },
+  "broadCiRan": false,
+  "publisherRunId": 39696613681,
+  "nativeVisualReview": "Full native scene rendered at 150%; witness entire body clear of nearby roofs and lantern."
+}
