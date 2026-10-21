@@ -17369,7 +17369,7 @@
   }
   const floorPalettes = [
     ['#294b36', '#31583e', '#203e30', '#95ad80'],
-    ['#26444b', '#31535a', '#203b42', '#85ada6'],
+    ['#3e5544', '#4b614b', '#30483c', '#a2b48e'],
     ['#485447', '#56614d', '#3b493f', '#b1b59a'],
     ['#50413b', '#5d4b42', '#423732', '#b9987b'],
     ['#343644', '#414351', '#2c2f3c', '#a09b9e'],
@@ -18052,7 +18052,88 @@
     if (harbor) {
       const w = harbor.water,
         d = harbor.dock;
-      strip('water', w.x1, w.x2, w.y1, w.y2);
+      if (w.points) {
+        const bank = w.points.slice(0, w.bankCount);
+        // The painted tide boundary is the same polygon used by collision.
+        for (let j = 1; j < bank.length; j++) {
+          const a = bank[j - 1],
+            b = bank[j],
+            len = Math.hypot(b.x - a.x, b.y - a.y),
+            nx = -(b.y - a.y) / len,
+            ny = (b.x - a.x) / len;
+          poly(
+            [a, b, { x: b.x + nx * 62, y: b.y + ny * 62 }, { x: a.x + nx * 62, y: a.y + ny * 62 }],
+            '#716e4f',
+          );
+          poly(
+            [a, b, { x: b.x + nx * 24, y: b.y + ny * 24 }, { x: a.x + nx * 24, y: a.y + ny * 24 }],
+            '#8a8060',
+          );
+        }
+        poly(w.points, '#426e70');
+        const deep = w.points.map((p, j) =>
+          j < w.bankCount ? { x: Math.min(3000, p.x + 30), y: Math.min(3000, p.y + 28) } : p,
+        );
+        ctx.save();
+        ctx.beginPath();
+        w.points.map(screen).forEach((p, j) => (j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
+        ctx.closePath();
+        ctx.clip();
+        poly(deep, '#355d66');
+        ctx.restore();
+        for (let j = 1; j < bank.length; j++) {
+          const a = bank[j - 1],
+            b = bank[j],
+            len = Math.hypot(b.x - a.x, b.y - a.y),
+            nx = -(b.y - a.y) / len,
+            ny = (b.x - a.x) / len;
+          for (let d = 30; d < len; d += 100) {
+            const x = a.x + ((b.x - a.x) * d) / len,
+              y = a.y + ((b.y - a.y) * d) / len;
+            if (!visible({ x, y })) continue;
+            line(
+              { x: x - nx * 9, y: y - ny * 9 },
+              {
+                x: x + ((b.x - a.x) / len) * 32 - nx * 9,
+                y: y + ((b.y - a.y) / len) * 32 - ny * 9,
+              },
+              '#b6ccac66',
+              1,
+            );
+          }
+        }
+        // Raised timber follows the last leg through the coastal marsh.
+        const walks = [
+          [1830, 2410, 1770, 2730],
+          [1770, 2730, 1770, 2860],
+        ];
+        for (const [ax, ay, bx, by] of walks) {
+          const dx = bx - ax,
+            dy = by - ay,
+            len = Math.hypot(dx, dy),
+            nx = -dy / len,
+            ny = dx / len;
+          poly(
+            [
+              { x: ax + nx * 31, y: ay + ny * 31 },
+              { x: bx + nx * 31, y: by + ny * 31 },
+              { x: bx - nx * 31, y: by - ny * 31 },
+              { x: ax - nx * 31, y: ay - ny * 31 },
+            ],
+            '#786748',
+          );
+          for (let t = 12; t < len; t += 23) {
+            const x = ax + (dx * t) / len,
+              y = ay + (dy * t) / len;
+            line(
+              { x: x + nx * 29, y: y + ny * 29 },
+              { x: x - nx * 29, y: y - ny * 29 },
+              '#b6a17a',
+              1.6,
+            );
+          }
+        }
+      } else strip('water', w.x1, w.x2, w.y1, w.y2);
       rect(d.x1, d.x2, d.y1, d.y2, '#594735');
       rect(d.x1 + 4, d.x2 - 4, d.y1 + 4, d.y2 - 4, region === 1 ? '#a1855c' : '#968265');
       for (let x = d.x1 + 10; x < d.x2 - 6; x += 22) {
@@ -18125,7 +18206,7 @@
             x: pool.x + (q.x - pool.x) * 1.075,
             y: pool.y + (q.y - pool.y) * 1.035,
           }));
-          poly(rim, '#767663');
+          poly(rim, p.wetland ? '#797752' : '#767663');
           poly(pool.points, '#426d71');
           poly(
             pool.points.map((q) => ({
@@ -18134,7 +18215,7 @@
             })),
             '#355c65',
           );
-          for (const j of [2, 9, 18, 25]) {
+          for (const j of p.wetland ? [] : [2, 9, 18, 25]) {
             const q = pool.points[j],
               side = q.x < pool.x ? -1 : 1,
               x = q.x + side * 6,

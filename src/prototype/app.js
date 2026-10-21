@@ -97,6 +97,8 @@
     'Skill journal': 'Diario de habilidades',
     Talents: 'Talentos',
     'Open Talents': 'Abrir talentos',
+    'Lantern Shore is held by the night Wraiths. Clear them before departure, or wait for daylight.':
+      'Los Wraiths nocturnos ocupan Lantern Shore. Derrótalos para partir o espera a que amanezca.',
     Training: 'Entrenamiento',
     Character: 'Personaje',
     Company: 'Compañía',
@@ -218,7 +220,7 @@
     'Open Adventure menu while in the field → Establish Basic Barracks · first one FREE':
       'Abre el menú de aventura en el campo → Establecer cuartel básico · el primero es GRATIS',
     'shore observed': 'costa observada',
-    'observe Lantern shore after dark': 'observa Lantern shore de noche',
+    'observe Lantern Shore after dark': 'observa Lantern Shore de noche',
     'FIELD BASE · Build your first Barracks — FREE · Open Menu/Esc while in the field → Establish Basic Barracks. It gives companions a nearby recovery base.':
       'BASE DE CAMPO · Construye tu primer cuartel GRATIS · Abre Menú/Esc en el campo → Establecer cuartel básico. Tus compañeros podrán recuperarse allí.',
     'Establish Basic Barracks': 'Establecer cuartel básico',
@@ -297,8 +299,8 @@
     [
       'Shadows After Sundown',
       'Sombras después del anochecer',
-      'Visit Lantern shore at night; defeat 2 wraiths',
-      'Visita Lantern shore de noche y derrota a 2 wraiths.',
+      'Visit Lantern Shore at night; defeat 2 wraiths',
+      'Visita Lantern Shore de noche y derrota a 2 wraiths.',
     ],
     [
       'Beyond the Main Road',
@@ -467,7 +469,7 @@
       return piece
         .replace('night wraiths', 'wraiths nocturnos')
         .replace('shore observed', 'costa observada')
-        .replace('observe Lantern shore after dark', 'observa Lantern shore de noche');
+        .replace('observe Lantern Shore after dark', 'observa Lantern Shore de noche');
     if (/^Navigate · /.test(piece)) return piece.replace('Navigate · ', 'Ir a · ');
     if (/^Return to /.test(piece)) return piece.replace('Return to ', 'Regresar a ');
     if (/^Awakening · /.test(piece))

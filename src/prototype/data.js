@@ -38,7 +38,7 @@ const PrototypeData = {
       transport: 'Ferryman',
       fare: 60,
       route:
-        "The wagon stops behind Reedport near the western map edge at (145, 1380). Raised roads connect Fisher Camp at (1050, 500), Mirejaw's marsh territory near (2180, 1120), the Sunken Archive entrance at (2600, 2350), and the Reedport ferry at (2250, 650).",
+        "The wagon stops behind Reedport near the western map edge at (145, 1380). Raised roads connect Fisher Camp at (1050, 500), Mirejaw's marsh territory near (2180, 1120), the Sunken Archive on the western bank at (500, 2350), and Lantern Shore’s southern ferry at (1770, 2860).",
       obstacle:
         'A lake occupies the central basin. Two raised crossings and a bridge provide useful choices around it. Reeds are decorative or collision marked; open water is consistently impassable.',
       exploration:
@@ -423,7 +423,7 @@ const PrototypeData = {
     ['march', 'Unsafe Crossings', 'Defeat 6 outdoor enemies in Flooded Marches', 65, 175],
     ['march', 'Records at Risk', 'Defeat Drowned Keeper; free Neri', 110, 300],
     ['march', 'Hidden Provisions', "Recover 3 caches from Mirejaw's Treasury", 80, 175],
-    ['march', 'Shadows After Sundown', 'Visit Lantern shore at night; defeat 2 wraiths', 0, 150],
+    ['march', 'Shadows After Sundown', 'Visit Lantern Shore at night; defeat 2 wraiths', 0, 150],
     ['march', 'Beyond the Main Road', 'Discover any 3 Flooded Marches sites', 25, 175],
     ['highlands', "The Tyrant's Grip", 'Defeat Ridge Tyrant; free Orin', 180, 350],
     [
@@ -499,14 +499,14 @@ const PrototypeData = {
   ],
   ports: [
     [2450, 650],
-    [2250, 650],
+    [1770, 2860],
     [3100, 500],
     [3100, 500],
     [350, 600],
   ],
   entrances: [
     [2150, 2100],
-    [2600, 2350],
+    [500, 2350],
     [2850, 2350],
     [3000, 2700],
     [2400, 1100],

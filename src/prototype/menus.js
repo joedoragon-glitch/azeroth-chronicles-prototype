@@ -75,15 +75,16 @@
         target = D.regions[i + n.direction];
       if (!target) return;
       const cost = game.travelFare(i, n.direction),
-        work = game.passageWorkQuote(n.direction);
+        work = game.passageWorkQuote(n.direction),
+        departureReason = game.lanternFerryReason(n.direction);
       const actions = [
         action(
           'Travel to ' + target.name,
           () => {
             if (getGame().travel(n.direction)) closeMenu();
           },
-          cost + ' crowns',
-          game.hero.gold < cost,
+          departureReason || cost + ' crowns',
+          !!departureReason || game.hero.gold < cost,
         ),
       ];
       if (work)
@@ -93,9 +94,11 @@
             () => {
               if (getGame().travel(n.direction, { workPassage: true })) closeMenu();
             },
-            'Help the crew cover the missing ' +
-              work.work +
-              ' crowns. Includes free return; no companions or resource deposits needed.',
+            departureReason ||
+              'Help the crew cover the missing ' +
+                work.work +
+                ' crowns. Includes free return; no companions or resource deposits needed.',
+            !!departureReason,
           ),
         );
       openMenu(

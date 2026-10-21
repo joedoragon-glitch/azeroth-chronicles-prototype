@@ -1,9 +1,9 @@
 name: Test and deploy app
 on:
   push:
-    branches: [main]
+    branches: [owner-coastal-marches-dev134-hold]
   pull_request:
-    branches: [main, perf/v09-integration-20261010]
+    branches: [owner-coastal-marches-dev134-hold]
   workflow_dispatch:
 
 permissions:

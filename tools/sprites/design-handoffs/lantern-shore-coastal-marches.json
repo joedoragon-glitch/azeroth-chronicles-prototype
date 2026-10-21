@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-implemented-owner-playtest-next",
+  "designId": "lantern-shore-coastal-marches",
+  "name": "Flooded Marches coastal swamp and Lantern Shore ferry district",
+  "nextAction": "Owner tests the published regional layout and night crossing on the existing playthrough; no automatic raster generation.",
+  "context": {
+    "decisionDate": "2026-10-21",
+    "originConversation": null,
+    "repositoryIssueOrPR": null,
+    "decisionSummary": "Owner explicitly authorized a full coherent coastal-swamp pass, nonlinear southern coast, relocation of major assets to underused edges, all surrounding aesthetic work, and Wraiths as a collective night ferry challenge with daylight as the alternative.",
+    "contentDocuments": [
+      "docs/COASTAL_MARCHES_DEV134.md"
+    ]
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner-authorized implementation/publication scope; use judgment for geography and placement.",
+    "proceduralDesignAcceptance": "Implemented for owner playtesting; no claim of separate visual approval of unseen final captures.",
+    "spriteProductionAuthorization": "No new raster sprites requested.",
+    "generatedAppearanceAcceptance": null,
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "232123ac10186dcd44f2401a57361833b26234ce",
+    "ownerFilesAndBranches": [
+      "src/prototype/rules.js",
+      "src/prototype/world.js",
+      "src/prototype/navigation.js",
+      "src/prototype/visuals.js",
+      "src/prototype/engine.js",
+      "src/prototype/save.js",
+      "fix/coastal-marches-dev134"
+    ],
+    "sourceHashes": {
+      "src/prototype/rules.js": "2410740114210a9ed71dc38efbe6bbef4dc369e63cdabab50cbc2648d8aa0ead",
+      "src/prototype/world.js": "e48de08862946d96082f04d9ffa9737e1d27cb6a6c65cfd8a4c827ab21da82fd",
+      "src/prototype/navigation.js": "55ed80e3118bdc76989a1fc89ffe7c8b3511dedc75dcda0437b3e665203517d6",
+      "src/prototype/visuals.js": "8668cecdc331ab3781a501d4ffe7b84a13c6ce9493dd5b5654b9e02d0443c3af",
+      "src/prototype/engine.js": "243374589937b6b9e4602bb13ebd2e7d1b312087f5f5dc0c5b0ee715f794543e",
+      "src/prototype/save.js": "98ad69c3d561a08a08b9b25658b1e2620448e63756843e91e0ff3e7749900fa4"
+    },
+    "exactEntityState": "Flooded Marches, original stable night-site/lantern-wraith-hold; day and night, native desktop and phone renderer.",
+    "isolatedReferencePath": "tools/visual-review/lantern-shore-dev134/shore-day.webp",
+    "gameplayContextPaths": [
+      "tools/visual-review/lantern-shore-dev134/archive-west-bank.webp",
+      "tools/visual-review/lantern-shore-dev134/fisher-lagoon.webp",
+      "tools/visual-review/lantern-shore-dev134/marches-coast-overview.webp",
+      "tools/visual-review/lantern-shore-dev134/shore-day.webp",
+      "tools/visual-review/lantern-shore-dev134/shore-night.webp",
+      "tools/visual-review/lantern-shore-dev134/shore-phone-landscape.webp",
+      "tools/visual-review/lantern-shore-dev134/shore-phone-night.webp",
+      "tools/visual-review/lantern-shore-dev134/treasury-northeast.webp",
+      "tools/visual-review/lantern-shore-dev134/watchhouse-estuary.webp"
+    ],
+    "imageHashes": {
+      "tools/visual-review/lantern-shore-dev134/archive-west-bank.webp": "4e784c2bca324f96dfe4309349bcc87946160ad68603b5dfb3450024f3316d79",
+      "tools/visual-review/lantern-shore-dev134/fisher-lagoon.webp": "b05178bf0f5ae2a1781ac0039af6fcb32cb6ba653648378509bb18f124aa9d2c",
+      "tools/visual-review/lantern-shore-dev134/marches-coast-overview.webp": "cb6d4cfa07f7727010004ca858cca16121f5647ce37df1c8c9413ab4c2c9faa1",
+      "tools/visual-review/lantern-shore-dev134/shore-day.webp": "dafd2068368bb68f0523d1248d1b067a4b96445d88f47a24694b410faf90d647",
+      "tools/visual-review/lantern-shore-dev134/shore-night.webp": "2c446f0e152fe4bdd913b6a53dbce8c59c946cbc292bdd16759281538e1c23d3",
+      "tools/visual-review/lantern-shore-dev134/shore-phone-landscape.webp": "25e4c332731c4274e4968f74b777c207e58b8eb89671f80961ebb8297293fef9",
+      "tools/visual-review/lantern-shore-dev134/shore-phone-night.webp": "2dba1efae3370aba76a618d7bc70f0ab041733e0ab93a1515905c170d591e052",
+      "tools/visual-review/lantern-shore-dev134/treasury-northeast.webp": "7daaa43289557526f8cfeda276b3991f3dae62fea3f8e505fbf699bfee088927",
+      "tools/visual-review/lantern-shore-dev134/watchhouse-estuary.webp": "c66881905bcc7907785b8efc6e2214e8f844fe0ec33bab8e2b3382c17cd64200"
+    },
+    "traitsToPreserve": [
+      "Organic estuary bays and tidal creek; shared water/collision outline.",
+      "Southern working ferry/shore watch with books, lamps, shelter, nets and timber.",
+      "Western Archive restoration scene, northern fishing lagoon, northeastern Treasury and eastern estuary Watchhouse.",
+      "Four original strong Lantern Wraiths; Archive-helper lore and unexplained flooding retained."
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [
+      "night-site",
+      "lantern-wraith-hold",
+      "lantern-shore-ferry",
+      "structure:mangrove",
+      "structure:caretaker-table",
+      "structure:roadside-lantern",
+      "structure:grave-lamp",
+      "structure:scroll-stack",
+      "structure:fishing-net"
+    ],
+    "reusedDesignIds": [
+      "lantern-wraith-light"
+    ],
+    "requiredVisibleAssets": [
+      "Tidal banks, water and mud margins",
+      "Existing mangroves, reeds, cattails, willows and wetland ground",
+      "Existing study supplies, fishing gear and ferry structures"
+    ],
+    "variantRequirements": [
+      "day/night native scenes",
+      "phone portrait/landscape"
+    ],
+    "proceduralOwnersAndReasons": [
+      "rules/world preserve gameplay geometry and authored object identities; visuals/renderer paint existing component assets."
+    ]
+  },
+  "animationRequirements": {
+    "status": "existing animations retained",
+    "gameplayStates": [
+      "day",
+      "night",
+      "dawn",
+      "peace"
+    ],
+    "directions": [],
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}
