@@ -5325,6 +5325,7 @@
     }
 
     function wolf(c = '#8c9998', large = false) {
+      const forestCoat = region === 2 && !large;
       // Tapered trunk, shoulder, haunch and bent hocks replace the box and four sticks.
       ctx.fillStyle = c;
       ctx.strokeStyle = ink;
@@ -5365,6 +5366,31 @@
       }
       oval(9, -8, 9, 12, c);
       oval(-15, -3, 8, 9, c);
+      if (forestCoat) {
+        // Buff underside, dark dorsal guard hairs and rusty ears/legs recall American red wolves.
+        shaped('#514739', () => {
+          ctx.moveTo(-21, -14);
+          ctx.quadraticCurveTo(-12, -23, 1, -17);
+          ctx.quadraticCurveTo(7, -18, 14, -13);
+          ctx.lineTo(5, -10);
+          ctx.quadraticCurveTo(-9, -15, -21, -14);
+        });
+        oval(-1, 4, 14, 3.5, '#cbb38a');
+        oval(12, -5, 5, 9, '#cbb38a');
+        for (const x of [-16, -6, 10, 18])
+          line(
+            [
+              [x - 1, 6],
+              [x - 2, 11],
+            ],
+            '#a86c49',
+            2,
+          );
+      }
+      if (forestCoat) {
+        ctx.fillStyle = c;
+        ctx.strokeStyle = ink;
+      }
       ctx.beginPath();
       ctx.moveTo(10, -16);
       ctx.quadraticCurveTo(8, -26, 14, -28);
@@ -5384,7 +5410,7 @@
           [17, -24],
           [14, -23],
         ],
-        '#bdafa0',
+        forestCoat ? '#b67a5b' : '#bdafa0',
       );
       poly(
         [
@@ -5392,7 +5418,7 @@
           [26, -20],
           [22, -21],
         ],
-        '#bdafa0',
+        forestCoat ? '#b67a5b' : '#bdafa0',
       );
       line(
         [
@@ -5410,7 +5436,7 @@
           [-3, -15],
           [5, -10],
         ],
-        '#a9b5a6',
+        forestCoat ? '#d7bd94' : '#a9b5a6',
         1.3,
       );
       poly(
@@ -5434,7 +5460,7 @@
             [x + 3, y + 2],
             [x + 6, y],
           ],
-          '#c1c5af',
+          forestCoat ? '#d4b98d' : '#c1c5af',
           0.8,
         );
       for (const x of [-16, -6, 10, 18])
@@ -5561,7 +5587,7 @@
       ctx.translate(0, 13);
       ctx.scale(1.22, 1.22);
       ctx.translate(0, -13);
-      wolf('#65717c');
+      wolf(region === 2 ? '#79614b' : '#65717c');
       for (const x of [-17, -5, 9])
         poly(
           [
@@ -17202,7 +17228,7 @@
             break;
           case 'wolf':
             if (e.mountedCrownRider) crownDirewolfRider(!!e.ranged);
-            else wolf();
+            else wolf(region === 2 ? ['#7b5b43', '#b69a6d', '#a46543'][variant % 3] : undefined);
             break;
           case 'mireling':
             if (e.ranged) {

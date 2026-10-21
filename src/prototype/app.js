@@ -34,6 +34,18 @@
     'Touch and mouse options': 'Opciones táctiles y de ratón',
     'Screen and performance': 'Pantalla y rendimiento',
     'Gather resources': 'Recolectar recursos',
+    'The ferry crosses a sheltered coastal channel from Lantern Shore’s mangrove inlet to Stonecross’s western landing. The Ironroot dock connects directly to the hardwood forest and mint town.':
+      'El ferry cruza un canal costero resguardado desde la ensenada de manglares de Lantern Shore hasta el embarcadero occidental de Stonecross. El muelle de Ironroot conecta directamente con el bosque caducifolio y el pueblo de la ceca.',
+    'Hidden Highlands tribute': 'Tributo oculto de las Highlands',
+    'Ask about the regional tribute and search facilities.':
+      'Preguntar por el tributo regional y los medios para buscarlo.',
+    'Crag Tyrant took precautions and hid the region’s Dark Lord Tribute among its stores. No one in town knows where he put it. This supply post can receive recovered cargo, but it has no facilities to organize a search. Use a completed Barracks to send workers to investigate the Highlands, and escort them to the sites.':
+      'Crag Tyrant tomó precauciones y ocultó el tributo del Dark Lord de la región entre sus almacenes. Nadie en el pueblo sabe dónde lo puso. Este puesto de suministros puede recibir la carga recuperada, pero no tiene los medios para organizar una búsqueda. Usa un cuartel terminado para enviar trabajadores a investigar las Highlands y escóltalos hasta los lugares.',
+    'Organize Highlands searches from a completed Barracks.':
+      'Organiza las búsquedas en las Highlands desde un cuartel terminado.',
+    'Investigate the stores with idle troops. Escort them to the site; tribute is revealed only after their search.':
+      'Investiga los almacenes con tropas disponibles. Escóltalas hasta el lugar; el tributo solo se descubre tras su búsqueda.',
+
     'Resource expeditions': 'Expediciones de recursos',
     'Choose expedition companion': 'Elegir compañero de expedición',
     'No resource companion available': 'No hay compañeros recolectores disponibles',
@@ -430,6 +442,10 @@
   spanishText['In the field, choose Establish Basic Barracks from Adventure (free).'] =
     'En el campo, abre Aventura y elige Establecer cuartel básico (gratis).';
   function translateSegment(piece) {
+    const ferryPassage = Campaign.rules.tidalFerryPassage;
+    if (ferryPassage && piece.startsWith(ferryPassage))
+      return spanishText[ferryPassage] + piece.slice(ferryPassage.length);
+    if (/^Search /.test(piece)) return piece.replace('Search ', 'Investigar ');
     if (Object.prototype.hasOwnProperty.call(spanishText, piece)) return spanishText[piece];
     if (/^One available companion goes away for /.test(piece))
       return piece
@@ -2276,7 +2292,8 @@
       for (let x = 0; x < size; x += 60)
         for (let y = 0; y < size; y += 60)
           if (game.blocked(x, y, game.zoneId, 0, true)) {
-            ctx.fillStyle = game.isDungeon() ? '#78807d' : '#355d72';
+            const cliff = region.id === 'highlands' && Campaign.rules.terrain[2].some(p => p.kind === 'cliff' && x > p.x1 && x < p.x2 && y > p.y1 && y < p.y2);
+            ctx.fillStyle = game.isDungeon() || cliff ? '#78807d' : '#355d72';
             ctx.fillRect(sx(x), sy(y), sx(60) + 1, sy(60) + 1);
           }
       ctx.fillStyle = game.isDungeon() ? '#59615d' : '#77715a';

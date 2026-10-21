@@ -111,7 +111,12 @@
     if (kind === 'enemy') {
       // New authored multiracial armor and mounted-direwolf silhouettes are
       // procedural: the old generic guard/Wolf sprites cannot depict them.
-      if (e.crownTroop || e.mountedCrownRider) return [];
+      if (
+        e.crownTroop ||
+        e.mountedCrownRider ||
+        (region === 2 && e.species === 'wolf' && e.type !== 'boss')
+      )
+        return [];
       if (e.type === 'boss') return ['boss:' + clean(e.family)];
       return [enemyKey(e)];
     }

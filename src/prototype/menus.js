@@ -76,7 +76,12 @@
       if (!target) return;
       const cost = game.travelFare(i, n.direction),
         work = game.passageWorkQuote(n.direction),
-        departureReason = game.lanternFerryReason(n.direction);
+        departureReason = game.lanternFerryReason(n.direction),
+        ferryPassage =
+          (game.zoneId === 'march' && n.direction === 1) ||
+          (game.zoneId === 'highlands' && n.direction === -1)
+            ? Campaign.rules.tidalFerryPassage
+            : '';
       const actions = [
         action(
           'Travel to ' + target.name,
@@ -103,14 +108,15 @@
         );
       openMenu(
         n.name,
-        game.s.mode === 'developer'
-          ? 'FREE — Developer Mode. Travel has no fare or return-ticket requirement.'
-          : 'Fare ' +
+        (ferryPassage ? ferryPassage + '\n\n' : '') +
+          (game.s.mode === 'developer'
+            ? 'FREE — Developer Mode. Travel has no fare or return-ticket requirement.'
+            : 'Fare ' +
               cost +
               ' crowns. Outbound travel includes free return. Health and supplies are preserved.' +
               (work
                 ? ' Both local specialists are rescued: the crew will accept help with their supplies for the fare shortfall.'
-                : ''),
+                : '')),
         actions,
       );
     }
@@ -1213,7 +1219,7 @@
             action(
               'Search ' + n.siteName,
               () => {
-                if (getGame().scoutTribute(n.id)) closeMenu();
+                if (getGame().scoutTribute(n.id, b.id)) closeMenu();
                 else barracksLaborMenu(b, back);
               },
               'Investigate the stores with idle troops. Escort them to the site; tribute is revealed only after their search.',
@@ -1396,6 +1402,18 @@
     }
     function barracksGatherAction(b, back) {
       const unlocked = (getGame().s.expeditionRank || 1) >= 2;
+      if (getGame().zoneId === 'highlands' && b.kind === 'supplier')
+        return action(
+          'Gather resources',
+          () =>
+            openMenu(
+              'Hidden Highlands tribute',
+              'Crag Tyrant took precautions and hid the region’s Dark Lord Tribute among its stores. No one in town knows where he put it. This supply post can receive recovered cargo, but it has no facilities to organize a search. Use a completed Barracks to send workers to investigate the Highlands, and escort them to the sites.',
+              [],
+              back,
+            ),
+          'Ask about the regional tribute and search facilities.',
+        );
       return action(
         'Gather resources',
         () => barracksLaborMenu(b, back),

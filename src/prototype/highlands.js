@@ -330,7 +330,11 @@
           if (p.stronghold === 'wolf-packhold') return 'wolf';
           if (p.stronghold === 'ogre-hearth-fort' || p.ironrootDistrict === 'ogre-home')
             return 'ogre';
-          if (id.startsWith('mini-wall-field-ridge') || id.startsWith('world-life-field'))
+          if (
+            p.mini === 'field-ridge' ||
+            id.startsWith('mini-wall-field-ridge') ||
+            id.startsWith('world-life-field')
+          )
             return 'field';
           if (id.startsWith('side-entrance-')) return 'lookout';
           if (id.startsWith('treasury-approach-')) return 'treasury';
@@ -420,6 +424,19 @@
           );
           z.props.push({ ...p, ...q });
         }
+        // Saved encounter metadata must follow the complete relocated compound as well.
+        const fieldMini = z.minis?.find((m) => m.id === 'field-ridge');
+        if (fieldMini) {
+          const dx = anchors.field[0] - fieldMini.x,
+            dy = anchors.field[1] - fieldMini.y;
+          fieldMini.x = anchors.field[0];
+          fieldMini.y = anchors.field[1];
+          fieldMini.trapPosts = (fieldMini.trapPosts || []).map((p) => ({
+            ...p,
+            x: p.x + dx,
+            y: p.y + dy,
+          }));
+        }
         const siteGroups = {
           'wolf-den': 'wolf',
           'ogre-hearth': 'ogre',
@@ -497,7 +514,17 @@
         ))
           moveEnemy(e);
         for (const p of Object.values(this.s.pending))
-          if (p.zone === z.id && p.base) moveEnemy(p.base);
+          if (p.zone === z.id && p.base) {
+            const source = z.enemies.find((e) => e.id === p.base.id);
+            if (source) {
+              p.base.home = { ...source.home };
+              Object.assign(p.base, source.home);
+              delete p.base.path;
+              this.clearEncounterState(p.base);
+              p.base.aggro = false;
+              p.base.returning = 0;
+            } else moveEnemy(p.base);
+          }
         // Place concealed stores at the actual named sites after their relocation.
         // Amounts, paid crowns and saved discovery remain authoritative.
         this.highlandsTributeLayout(z, true);

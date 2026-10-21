@@ -2894,6 +2894,8 @@
     ],
   ];
   // Small authored arrival harbors supplement the region-scale barriers. Their dock rectangles are walkable over the water.
+  const tidalFerryPassage =
+    'The ferry crosses a sheltered coastal channel from Lantern Shore’s mangrove inlet to Stonecross’s western landing. The Ironroot dock connects directly to the hardwood forest and mint town.';
   const harbors = {
     march: {
       id: 'lantern-shore-ferry',
@@ -7604,6 +7606,7 @@
     terrain,
     landforms,
     harbors,
+    tidalFerryPassage,
     harborWaterBlocked,
     travelArrivalStands,
     travelArrivals,
