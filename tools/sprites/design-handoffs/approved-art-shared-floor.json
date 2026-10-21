@@ -14,7 +14,12 @@
       "docs/APPROVED_ART_PASS_20261019.md"
     ],
     "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
-    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md."
+    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md.",
+    "dev122Followup": {
+      "decisionDate": "2026-10-20",
+      "summary": "Owner requested procedural dandelions replacing only the beige Greenwood miniature-tree floor marks; latest details are canonical for later sprite work. Existing terrain material stays.",
+      "handoff": "tools/sprites/design-handoffs/greenwood-dandelion-ground-details-dev122.json"
+    }
   },
   "decisions": {
     "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
@@ -103,7 +108,7 @@
     "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
     "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
     "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
-    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
+    "resultReviewStatus": "Final completed design set approved by Joel \u00b7 19 October 2026",
     "requestedCorrection": null,
     "finalResultApprovalDate": "2026-10-19"
   }

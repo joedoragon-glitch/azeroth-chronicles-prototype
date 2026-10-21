@@ -1,0 +1,23 @@
+{
+  "engine": "chromium",
+  "nativePhoneStartup": true,
+  "combo": {
+    "steps": [
+      0,
+      0,
+      1
+    ],
+    "finish": {
+      "class": "mage",
+      "range": 210,
+      "halfAngle": 0.6
+    },
+    "version": "0.9.1+snapshot.dev.122"
+  },
+  "continuity": {
+    "frames": 121,
+    "maxMeanJump": 1.187948605777791,
+    "whiteFrames": 0
+  },
+  "errors": []
+}

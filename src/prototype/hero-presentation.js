@@ -471,6 +471,66 @@
     }
     ctx.restore();
   }
+  // The combo's contact cone uses the same arcane material as its flying orbs.
+  // Paint within the actual hit sector; this never owns hit tests or damage.
+  function basicFinisher(ctx, screen, f, { reduced = false, optimized = false } = {}) {
+    if (f.class !== 'mage') return false;
+    const origin = { x: f.fromX, y: f.fromY },
+      from = screen(origin),
+      [color, light] = palettes.arcane,
+      age = Math.max(0, Math.min(1, 1 - f.life / f.max)),
+      fade = Math.max(0, Math.min(1, f.life / 0.15)),
+      front = reduced ? 0.8 : 0.3 + 0.7 * (1 - (1 - age) ** 2),
+      point = (distance, angle) =>
+        screen({
+          x: origin.x + Math.cos(angle) * distance,
+          y: origin.y + Math.sin(angle) * distance,
+        }),
+      tip = point(f.range, f.angle);
+    ctx.save();
+    C.polygon(ctx, screen, C.sectorPoints(origin, f.range, f.angle, f.halfAngle));
+    ctx.clip();
+    // A translucent violet fan, without the old opaque-looking blue perimeter.
+    const wash = ctx.createLinearGradient(from.x, from.y, tip.x, tip.y);
+    wash.addColorStop(0, '#9956db08');
+    wash.addColorStop(0.38, '#9956db3d');
+    wash.addColorStop(1, '#9956db00');
+    ctx.globalAlpha = fade;
+    ctx.fillStyle = wash;
+    ctx.fill();
+    const arc = (distance) => {
+      ctx.beginPath();
+      for (let j = 0; j <= 20; j++) {
+        const q = point(distance, f.angle - f.halfAngle + (j / 20) * f.halfAngle * 2);
+        j ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y);
+      }
+      ctx.stroke();
+    };
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = color;
+    ctx.globalAlpha = fade * 0.24;
+    ctx.lineWidth = reduced ? 3 : 7;
+    arc(f.range * front);
+    ctx.strokeStyle = light;
+    ctx.globalAlpha = fade * 0.8;
+    ctx.lineWidth = 1.5;
+    arc(f.range * front);
+    // Bounded outward streaks and small arcane sparks give the hit movement.
+    const count = reduced ? 0 : optimized ? 3 : 7;
+    for (let j = 0; j < count; j++) {
+      const angle = f.angle + ((j + 0.5) / count - 0.5) * f.halfAngle * 1.7,
+        head = point(f.range * front * (0.76 + (j % 3) * 0.1), angle),
+        tail = point(f.range * Math.max(0.12, front - 0.28), angle);
+      ctx.globalAlpha = fade * 0.55;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.8;
+      line(ctx, tail, head);
+      ctx.strokeStyle = light;
+      glyph(ctx, head.x, head.y, 'orb', j % 2 ? 2 : 3);
+    }
+    ctx.restore();
+    return true;
+  }
   function projectile(ctx, screen, p, heroClass, reduced = false) {
     if (p.source !== 'hero') return false;
     if (p.delay > 0) return true;
@@ -622,7 +682,7 @@
     }
     ctx.restore();
   }
-  const api = { catalog, profile, owns, queue, draw, projectile, charge, statuses };
+  const api = { catalog, profile, owns, queue, draw, basicFinisher, projectile, charge, statuses };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeHeroPresentation = api;
 })(typeof window !== 'undefined' ? window : globalThis);

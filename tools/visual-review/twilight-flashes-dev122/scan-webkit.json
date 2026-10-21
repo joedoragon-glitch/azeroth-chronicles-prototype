@@ -1,0 +1,27 @@
+{
+  "engine": "webkit",
+  "framesPerTransition": 601,
+  "reports": [
+    {
+      "phase": "sunrise",
+      "maxJump": 33,
+      "maxMeanJump": 0.8116753472222222,
+      "jumpAt": 0.0016666666666666668,
+      "whiteFrames": 0
+    },
+    {
+      "phase": "sunset",
+      "maxJump": 11,
+      "maxMeanJump": 0.8475,
+      "jumpAt": 0.8583333333333333,
+      "whiteFrames": 0
+    },
+    {
+      "phase": "victory-sunrise",
+      "maxJump": 10,
+      "maxMeanJump": 0.817734375,
+      "jumpAt": 0.013333333333333334,
+      "whiteFrames": 0
+    }
+  ]
+}

@@ -17469,9 +17469,51 @@
         line(x - 7, y + 2, x + 7, y - 3, '#8a6d49', 2);
         line(x - 2, y - 1, x - 5, y - 5, '#6f553d', 1);
       } else if (k === 4) {
-        dot(x - 3, y, 3, '#bd9d77');
-        dot(x - 3, y - 2, 2, '#d2b784');
-        line(x - 3, y + 2, x - 3, y + 5, '#7b6c4d', 1);
+        // Tiny dandelions replace the old beige, miniature-tree ground mark.
+        // Stable tile variation keeps them organic and free to cache.
+        const lean = seed % 2 ? 1.5 : -1,
+          height = 9 + (seed % 3),
+          headX = x - 3 + lean,
+          headY = y + 5 - height;
+        ctx.strokeStyle = '#90ad68';
+        ctx.lineWidth = 0.9;
+        ctx.beginPath();
+        ctx.moveTo(x - 3, y + 5);
+        ctx.quadraticCurveTo(x - 3 + lean * 0.35, y, headX, headY);
+        ctx.stroke();
+        for (const side of [-1, 1]) {
+          ctx.fillStyle = side < 0 ? '#6f9452' : '#85a65c';
+          ctx.beginPath();
+          ctx.moveTo(x - 3, y + 5);
+          ctx.lineTo(x - 3 + side * 6, y + 1);
+          ctx.lineTo(x - 3 + side * 4, y + 4);
+          ctx.lineTo(x - 3 + side * 7, y + 3);
+          ctx.quadraticCurveTo(x + side * 3, y + 7, x - 3, y + 5);
+          ctx.fill();
+        }
+        // Open filaments and little parachute tips, rather than a solid disc.
+        const radius = 3.5 + (seed % 2) * 0.5;
+        dot(headX, headY, radius * 0.8, '#f1eed914');
+        for (let j = 0; j < 16; j++) {
+          const angle = (j / 16) * Math.PI * 2 + (seed % 7) * 0.14,
+            reach = radius * (0.78 + ((j * 7 + seed) % 5) * 0.055),
+            dx = Math.cos(angle),
+            dy = Math.sin(angle),
+            px = headX + dx * reach,
+            py = headY + dy * reach;
+          line(headX, headY, px, py, '#dedfc16e', 0.4);
+          // Separated little Y-shaped parachutes, no connected circular rim.
+          for (const side of [-1, 1])
+            line(
+              px - dx * 0.55,
+              py - dy * 0.55,
+              px - dy * side * 0.42,
+              py + dx * side * 0.42,
+              '#f1eed9dd',
+              0.5,
+            );
+        }
+        dot(headX, headY + 0.3, 0.8, '#b9af7f');
       } else if (k === 5) {
         for (const [ox, c] of [
           [-4, '#d9bd7b'],

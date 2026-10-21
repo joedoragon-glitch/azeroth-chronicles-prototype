@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-design",
+  "designId": "greenwood-dandelion-ground-details-dev122",
+  "name": "Greenwood decorative dandelion seed heads",
+  "kind": "procedural floor detail",
+  "nextAction": "Owner phone play; preserve this procedural canon for any later sprite work. No raster generation authorized.",
+  "context": {
+    "originConversation": "Conversation URL unavailable; owner screenshot of beige miniature-tree ground marks and explicit request for procedural dandelions.",
+    "decisionSummary": "Replace only Greenwood beige teardrop floor marks with properly procedural dandelions.",
+    "decisionDate": "2026-10-20",
+    "repositoryIssueOrPR": null,
+    "contentDocuments": [
+      "docs/VISUAL_FOLLOWUPS_DEV122.md"
+    ],
+    "locationAndLore": "Greenwood Vale decorative ground, existing sparse deterministic tile positions; passable."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner explicitly requested the procedural dandelion replacement.",
+    "proceduralDesignAcceptance": "Implementation authorized; owner has not yet reviewed this exact rendered result.",
+    "spriteProductionAuthorization": "None. Procedural rendering only.",
+    "generatedAppearanceAcceptance": "No generated raster image.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": null,
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::groundDetail, region 0 / k === 4",
+      "fix/twilight-flashes-dev122"
+    ],
+    "exactEntityState": {
+      "region": 0,
+      "k": 4,
+      "room": false,
+      "dungeonId": "",
+      "sampleSeeds": [
+        2048,
+        2050,
+        2051,
+        2053
+      ]
+    },
+    "isolatedReferencePath": "tools/visual-review/twilight-flashes-dev122/captures/dandelion-detail.png",
+    "isolatedReferenceHash": "22a7f62b2cb019aea62f2a58c22d924248de2cb5ab158a4c7e217c1585c933e5",
+    "gameplayContextPaths": [
+      "tools/visual-review/twilight-flashes-dev122/captures/webkit-greenwood.jpg",
+      "tools/visual-review/twilight-flashes-dev122/captures/chromium-greenwood.jpg"
+    ],
+    "traitsToPreserve": [
+      "Slender slightly leaning green stems",
+      "Basal toothed leaves",
+      "Airy off-white seed heads with separate tiny parachutes; no solid beige teardrops or connected rim",
+      "Existing sparse density, deterministic grounding and tiny scale"
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "162f67fc40e39db5f0199bb87d96854624e2ab963bbf4f7e7d4d02417b22fa6e"
+      }
+    ]
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "Greenwood floor detail (not a world entity or registered sprite)"
+    ],
+    "reusedDesignIds": [
+      "approved-art-shared-floor",
+      "terrain-ground-vale"
+    ],
+    "variantRequirements": [
+      "Stable tile-seed variation",
+      "Normal/Optimization cached floor paths",
+      "Outdoor Greenwood only"
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::groundDetail",
+        "reason": "Owner requested procedural dandelions in place of the beige marks; existing terrain grain remains unchanged."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "static decorative floor",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": "Existing tile detail anchor; no collision or entity state.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}
