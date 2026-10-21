@@ -1,0 +1,122 @@
+{
+  "version": "0.9.1+snapshot.dev.130",
+  "merge": "b1988401963c5a468317a348eb3a26711e9a7d8f",
+  "pr": 366,
+  "run": 39572449344,
+  "build": "b1988401963c5a468317a348eb3a26711e9a7d8f",
+  "buildMatches": true,
+  "files": [
+    {
+      "path": "index.html",
+      "matches": true,
+      "sha256": "cb8f4c1036e00936726b7ca963eb901c03a7653bf0cd0d4d37af65a81c53383d",
+      "bytes": 5594
+    },
+    {
+      "path": "phone.html",
+      "matches": true,
+      "sha256": "cbac05583f913484864260f9e04d127d4fe6dc12f58f2de12dc3803ef50ff6c9",
+      "bytes": 5595
+    },
+    {
+      "path": "prototype.html",
+      "matches": true,
+      "sha256": "cb8f4c1036e00936726b7ca963eb901c03a7653bf0cd0d4d37af65a81c53383d",
+      "bytes": 5594
+    },
+    {
+      "path": "sw.js",
+      "matches": true,
+      "sha256": "ed684ce13c3abd1d9216c874e78c83701ada5cd0b20f5491de41d30753b35c27",
+      "bytes": 20766
+    },
+    {
+      "path": "src/prototype/app.js",
+      "matches": true,
+      "sha256": "b716994000575ffd94287f8c044fb23c3eda8504456bd66603152eb7293694a8",
+      "bytes": 152632
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "matches": true,
+      "sha256": "cd595a326cd2c5ad9121de2f805a6b756f4c85b56580992fbd25ca413283540b",
+      "bytes": 296
+    },
+    {
+      "path": "src/prototype/economy.js",
+      "matches": true,
+      "sha256": "2c52d328374d7371076fb29067d813d358f98dbffb7aeb6f52ee281d2f9f11ff",
+      "bytes": 6574
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "matches": true,
+      "sha256": "7241279609349ca2ec694ec60e24279f7fc975215cefb1c639cc78b3393da7c1",
+      "bytes": 263886
+    },
+    {
+      "path": "src/prototype/expeditions.js",
+      "matches": true,
+      "sha256": "d933a42998fb648c6ac164717518a46a0b101fe80a6c1096ea7f72f304c077dc",
+      "bytes": 6509
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "matches": true,
+      "sha256": "6f3cf3d484b2b52e90bdfd768a7b21b8e46eca9a8433abe0ad4fd1c79319d32d",
+      "bytes": 79945
+    },
+    {
+      "path": "src/prototype/party.js",
+      "matches": true,
+      "sha256": "93daa43cf4be861f6e76ad24803c57fd0c3ea641f16342fbd68779e9f4ae4724",
+      "bytes": 76484
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "matches": true,
+      "sha256": "505cee21fc60f0a9cf1a865fb3d3cb5a65fdb6a8a1994d46f49e250e5cf60a9d",
+      "bytes": 213613
+    },
+    {
+      "path": "src/prototype/save.js",
+      "matches": true,
+      "sha256": "e3bc30e18e664df63d4649d6602be5f0f8944f2b5a3a6d8d6d706c464c936686",
+      "bytes": 53366
+    }
+  ],
+  "allFilesMatch": true,
+  "deployment": "success",
+  "verifiedAt": "2026-10-21T08:52:54.079905+00:00",
+  "livePhone": {
+    "version": "0.9.1+snapshot.dev.130",
+    "suppliesPayout": 36,
+    "allCompanyCargoCleared": true,
+    "fallenStayedFallen": true,
+    "assigned": 2,
+    "guidePersistsCombatRecallReload": true,
+    "combat": {
+      "fought": true,
+      "paused": true,
+      "order": "tribute-vale-orchard-stores",
+      "visible": true,
+      "distance": 40,
+      "cd": 0.4,
+      "target": "enemy-41",
+      "retreating": false
+    },
+    "hidden": "tribute-vale-pond-strongbox",
+    "exhaustionClearsGuide": true,
+    "directKnownSite": true,
+    "expedition": {
+      "treasurerSelectedByTouch": true,
+      "savedWhileAway": true,
+      "recovered": 490,
+      "returnedOnce": true
+    },
+    "errors": []
+  },
+  "normalWorkflowRestored": true,
+  "temporaryPublisherRemoved": true,
+  "broadCiRun": false
+}

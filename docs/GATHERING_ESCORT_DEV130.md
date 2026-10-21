@@ -14,7 +14,7 @@ Implemented behavior:
 
 Normal v4 save keys remain. Optional target/remainder defaults are compatible with older saves; malformed/hidden-unlocated targets are discarded and malformed remainders rejected. Little Treasurer (ridge family) is the sole pet exception for both gathering and resource expeditions; his combat skills stay intact. Other pets retain their roles. Builders remain Soldiers/Rangers. No fort bonuses, warning changes, companion damage buffs or resource respawn changes.
 
-Workflow: focused local checks and one short native phone interaction check, package-only publication. No broad CI, full game/device suite, or review loop. Publication and live verification are the remaining steps.
+Workflow: focused local checks and one short native phone interaction check, package-only publication. No broad CI, full game/device suite, or review loop. Published through PR #366 (`b1988401963c5a468317a348eb3a26711e9a7d8f`), package-only run 39572449344. All 13 checked public files and exact build match. The same phone flow passed live without JavaScript errors; `live-result.json` records it. Normal workflow restored and temporary publisher removed. Publication receipt: `docs/evidence/GATHERING_ESCORT_DEV130_PUBLICATION_20261021.json`.
 
 ## Resource expeditions — added owner scope
 
