@@ -1,0 +1,37 @@
+{
+  "version": "0.9.1+snapshot.dev.133",
+  "pr": 369,
+  "merge": "ba49c33879ea4e83fba0d69a0e71a728bebd5bab",
+  "files": [
+    {
+      "path": "src/prototype/app.js",
+      "matches": true,
+      "sha256": "11a20b37a921c5a70a03b080125c72b83aca167b45cc5a2681ed7139f02c2ebc"
+    },
+    {
+      "path": "styles/prototype.css",
+      "matches": true,
+      "sha256": "f14d5096f23bede797a0abadef1f2276d428c2bd6081dce9b86bf7b40190617f"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "matches": true,
+      "sha256": "d757d3d8c8f6c01201693449e60b03e2bb0628c15353276cdfc64bf95769f69c"
+    },
+    {
+      "path": "sw.js",
+      "matches": true,
+      "sha256": "adf60085af04233c8c92cf2615c6d0128891be7ac02e1bbeaa6134687a6e4415"
+    }
+  ],
+  "build": "ba49c33879ea4e83fba0d69a0e71a728bebd5bab",
+  "buildMatches": true,
+  "packageOnlyRun": {
+    "id": 39582121732,
+    "conclusion": "success"
+  },
+  "livePhoneStartup": {
+    "status": "not run",
+    "reason": "Host browser libraries unavailable; actual shell notice/input checks passed, owner phone play follows."
+  }
+}

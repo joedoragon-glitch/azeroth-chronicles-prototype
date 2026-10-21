@@ -1,4 +1,4 @@
-Current patch: [Tap talent announcement — dev.133](TALENT_NOTICE_DEV133.md). Direct talent-menu access from actionable level-up banner; focused notice/input checks.
+Published: [Tap talent announcement — dev.133](TALENT_NOTICE_DEV133.md), PR #369. Direct talent-menu access from actionable level-up banner; focused notice/input/build checks and four live file/exact build matches. Package-only release; normal workflow restored.
 
 Published: [Resource menu discovery — dev.132](RESOURCE_DISCOVERY_DEV132.md), PR #368. Generic instructions preserve discovery and all resource-worker abilities. Focused copy/build/menu/expedition checks; six live files/exact build verified. Package-only release, normal workflow restored; phone startup unavailable (missing browser libraries).
 
