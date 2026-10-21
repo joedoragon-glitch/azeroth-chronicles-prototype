@@ -1,0 +1,88 @@
+{
+  "version": "0.9.1+snapshot.dev.145",
+  "pr": 381,
+  "mergeCommit": "0590b69834a9daff97c6e76786be96ca656c6ffd",
+  "candidateCommit": "def870c9f4139fe4cde02563515fb3f8be02550e",
+  "candidateTree": "c5abf562da0f0de0892b8cab673e5928490cbbc4",
+  "publisherRunId": 39681613347,
+  "publisherRunUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39681613347",
+  "site": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/",
+  "verifiedAt": "2026-10-21T21:48:37.101438+00:00",
+  "publishedBuild": "0590b69834a9daff97c6e76786be96ca656c6ffd",
+  "publicFiles": [
+    {
+      "path": "index.html",
+      "bytes": 5646,
+      "sha256": "1b0ca7a29dd6c5c4d57adb28e31a47b1a6c8b7a7845a3ed57872c46a4332ae20",
+      "matchesPrepared": true
+    },
+    {
+      "path": "phone.html",
+      "bytes": 5647,
+      "sha256": "9bcc581900bbd5c85d9a5416f5a3bc10f4eea7b9d1f2d68b2c66774c317912b8",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/party.js",
+      "bytes": 110038,
+      "sha256": "1d86c40518f191103b348c0285f65fd8eae464d074a7984aa2b3651b88342b91",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/boss-combat.js",
+      "bytes": 105986,
+      "sha256": "f9acc167bc45b2f3f6598d4943d9b90f33aa5374d6453d4686f93256ae677d5b",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/dreadmaw-combat.js",
+      "bytes": 18664,
+      "sha256": "3ee5b4f2afb4857535079de3e00d20fe41189dc7446826467cb2a3eb6ec86d00",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "bytes": 220705,
+      "sha256": "77f2b51fa85f32a0b0b61003f00afa00a0bdfb072eb30f326ff7c68b6cbf36f7",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/save.js",
+      "bytes": 55421,
+      "sha256": "f16db49da643f3cb11a3eff838f06f8cc06ebf965d85d4ba58dc779a7cd02572",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "bytes": 296,
+      "sha256": "ffe19987c9cee066f8839422aea1e985d1bf8ddb0f26d5bee00f8676204a52f0",
+      "matchesPrepared": true
+    },
+    {
+      "path": "sw.js",
+      "bytes": 20797,
+      "sha256": "524f853db1bc4c9c4b3d223daf76c254e13a6c33e6f543c1c0b38f2f7917e41f",
+      "matchesPrepared": true
+    }
+  ],
+  "focusedScenarios": {
+    "heroGuidance": 68,
+    "criticalSurvival": 62,
+    "safeContributions": 72,
+    "friendlyPassage": 108
+  },
+  "existingFocusedChecks": ["companion judgment", "one-press Recall"],
+  "phoneStartup": "Passed dev.145 phone startup, hero-guided dodge, native warning escape after stopping, nearby survival and no saved latch; no JavaScript exceptions.",
+  "auditReassessment": {
+    "probes": 16,
+    "resolvedReproductions": ["F1", "F2", "F3", "F4"],
+    "stillOpen": [
+      "F5: moving Dreadmaw ring cast recenters prevalidated placement, invalidating an exit"
+    ],
+    "evidence": "tools/survival-audit-dev142-144/dev145.json"
+  },
+  "criticalBoundary": "Hero guidance only at 20% HP or below, including pets; 21% retains normal prepared attacks through hero movement.",
+  "broadCiRan": false,
+  "workflowRestoration": "Completed in subsequent closeout commit; normal workflow retained byte-for-byte; temporary publisher removed.",
+  "limits": "Moving hero guidance has priority. Existing native collision and action requirements retained. A unit already in an active hit may still take damage during escape; no guaranteed survival, player comfort or device FPS claim."
+}
