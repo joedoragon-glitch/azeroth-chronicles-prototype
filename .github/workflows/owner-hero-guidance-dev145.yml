@@ -1,0 +1,49 @@
+name: Owner hero guidance dev145 package and publish
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Package the locally checked owner update
+        run: |
+          node -e "if(require('./package.json').version!=='0.9.1+snapshot.dev.145')process.exit(1)"
+          node scripts/build.cjs --site
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+  deploy:
+    needs: package
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment
+      - name: Verify published commit
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: |
+          for attempt in 1 2 3 4 5 6; do
+            actual=$(curl -fsSL "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/build.txt?guidance=$EXPECTED_SHA")
+            if [ "$actual" = "$EXPECTED_SHA" ]; then exit 0; fi
+            sleep 5
+          done
+          echo "Published build does not match $EXPECTED_SHA"
+          exit 1
