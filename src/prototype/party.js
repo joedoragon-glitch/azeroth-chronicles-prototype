@@ -35,32 +35,27 @@
       companionSurvivalMode(u) {
         if (u === this.hero || u.hp <= 0 || u.active === false || !this.s.party.includes(u))
           return false;
-        const cfg = R.companionJudgment,
-          fraction = u.hp / u.maxHp;
-        return (
-          fraction <= cfg.criticalFraction ||
-          (u.survivalRetreat === true && fraction < cfg.criticalRecoverFraction)
-        );
+        return u.hp <= u.maxHp * R.companionJudgment.criticalFraction;
       }
       companionRetreatMode(u) {
         if (u === this.hero || u.hp <= 0 || u.active === false || !this.s.party.includes(u))
           return false;
-        if (this.companionSurvivalMode(u)) return true;
-        if (this.s.recallActive) return dist(u, this.hero) > R.companionRecall.arrivalRadius;
-        const state = companionJudgments.get(u);
+        const state = companionJudgments.get(u),
+          critical = this.companionSurvivalMode(u) && state?.critical;
+        if (this.s.recallActive && !critical)
+          return dist(u, this.hero) > R.companionRecall.arrivalRadius;
         return !!(
           state?.zone === this.zoneId &&
           state.regrouping &&
           state.point &&
-          (!u.order || this.gatheringUnit(u))
+          (critical || !u.order || this.gatheringUnit(u))
         );
       }
       companionRetreating(u) {
         if (!this.companionRetreatMode(u)) return false;
-        if (this.companionSurvivalMode(u)) {
-          const point = companionJudgments.get(u)?.point;
-          return !!point && dist(u, point) > R.companionJudgment.criticalArrivalRadius;
-        }
+        const state = companionJudgments.get(u);
+        if (this.companionSurvivalMode(u) && state?.critical && state.point)
+          return dist(u, state.point) > R.companionJudgment.criticalArrivalRadius;
         if (this.s.recallActive) return true;
         return dist(u, companionJudgments.get(u).point) > R.companionJudgment.arrivalRadius;
       }
@@ -71,6 +66,7 @@
           : this.zone()
               .enemies.filter((e) => e.hp > 0 && !e.neutral && !e.returning)
               .map((e) => ({
+                enemy: e,
                 x: e.x,
                 y: e.y,
                 r: Math.max(
@@ -137,37 +133,10 @@
             .sort((a, b) => a.score - b.score)[0]?.point || { x: u.x, y: u.y }
         );
       }
-      companionCriticalSurvival(u, living, dt) {
-        let state = companionJudgments.get(u);
-        if (!this.companionSurvivalMode(u)) {
-          delete u.survivalRetreat;
-          if (state?.critical) {
-            this.clearCompanionJudgment(u);
-            this.clearCompanionTravel(u);
-          }
-          return false;
-        }
+      followCriticalCompanion(u, living, dt, state) {
         const cfg = R.companionJudgment;
-        u.survivalRetreat = true;
-        if (!state || state.zone !== this.zoneId || !state.critical) {
-          state = { zone: this.zoneId, critical: true, regrouping: true, next: 0 };
-          companionJudgments.set(u, state);
-          this.clearCompanionTravel(u);
-          this.notice(
-            'Critically wounded companions are avoiding combat.',
-            2.8,
-            'They keep following and rejoin at 40% HP.',
-            'feedback',
-          );
-        }
         this.clearPartyCharge(u);
         this._tacticalPartyTargets?.delete(u.id);
-        if (this.s.time >= state.next || !state.hero || dist(state.hero, this.hero) > 50) {
-          const threats = this.companionSurvivalThreats();
-          state.next = this.s.time + cfg.assessSeconds;
-          state.hero = { x: this.hero.x, y: this.hero.y };
-          state.point = this.companionSurvivalPoint(u, living, threats);
-        }
         const distance = dist(u, this.hero),
           speed =
             this.companionRallyMoveSpeed(
@@ -373,8 +342,8 @@
         return points.sort((a, b) => score(a) - score(b))[0];
       }
       companionCautiousCombat(u, target, living, dt) {
-        if (this.companionCriticalSurvival(u, living, dt)) return true;
-        const cfg = R.companionJudgment;
+        const cfg = R.companionJudgment,
+          critical = this.companionSurvivalMode(u);
         let state = companionJudgments.get(u);
         if (!state || state.zone !== this.zoneId) {
           state = { zone: this.zoneId, next: 0, regrouping: false, safeSince: null };
@@ -387,9 +356,14 @@
         if (
           this.s.time >= state.next ||
           state.target !== target.id ||
+          state.critical !== critical ||
+          (critical && state.hero && dist(state.hero, this.hero) > 50) ||
           (!state.regrouping && this.companionPursuitDetour(u))
         ) {
-          const assessment = this.companionSafetyAssessment(u, target, living);
+          const wasCritical = state.critical,
+            assessment = this.companionSafetyAssessment(u, target, living);
+          state.critical = critical;
+          state.hero = { x: this.hero.x, y: this.hero.y };
           state.next = this.s.time + cfg.assessSeconds;
           state.target = target.id;
           state.enemies = assessment.enemies;
@@ -403,10 +377,20 @@
             } else state.safeSince = null;
           }
           state.point = state.regrouping
-            ? this.companionRegroupPoint(u, living, assessment.enemies)
+            ? critical
+              ? this.companionSurvivalPoint(u, living, this.companionSurvivalThreats())
+              : this.companionRegroupPoint(u, living, assessment.enemies)
             : null;
+          if (critical && !wasCritical && state.regrouping)
+            this.notice(
+              'Critically wounded companions are avoiding combat.',
+              2.8,
+              'They keep following and rejoin when conditions are safe.',
+              'feedback',
+            );
         }
         if (!state.regrouping) return false;
+        if (critical) return this.followCriticalCompanion(u, living, dt, state);
         // Defensive Triple Shot is an existing veteran technique. Take the
         // shot before moving out of its close range, then keep withdrawing.
         const pursuer = (state.enemies || [])
@@ -1910,9 +1894,21 @@
             }
             continue;
           }
-          // Critical survival takes priority over preparation, labor, Recall
-          // counters and doctrine. Healthy companions keep their own orders.
-          if (this.companionCriticalSurvival(u, living, dt)) continue;
+          // Run the existing judgment early for critical wounds, so a cast or
+          // job cannot hide danger. No independent recovery state or HP gate.
+          if (this.companionSurvivalMode(u)) {
+            this.clearPartyCharge(u);
+            const threat = this.companionSurvivalThreats()
+              .filter(
+                (e) =>
+                  dist(u, e) <= e.r ||
+                  dist(this.hero, e) <= e.r + R.companionJudgment.criticalFollowRadius,
+              )
+              .sort((a, b) => dist(u, a) - dist(u, b))[0]?.enemy;
+            if (threat) {
+              if (this.companionCautiousCombat(u, threat, living, dt)) continue;
+            } else this.clearCompanionJudgment(u);
+          }
           const pending = this._companionCharges?.get(u.id);
           if (pending) {
             const observation = this.partyChargeState(u);

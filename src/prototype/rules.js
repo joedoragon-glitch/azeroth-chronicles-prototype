@@ -6119,7 +6119,6 @@
     minimumEnemyForce: 2,
     woundedFraction: 0.4,
     criticalFraction: 0.2,
-    criticalRecoverFraction: 0.4,
     criticalFollowRadius: 420,
     criticalPreferredRadius: 280,
     criticalEnemyMargin: 80,
