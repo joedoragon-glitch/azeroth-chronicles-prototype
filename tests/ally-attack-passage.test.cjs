@@ -1,0 +1,89 @@
+'use strict';
+const assert = require('node:assert/strict');
+const C = require('../src/prototype/engine');
+function arena(cls, distance, allies = true) {
+  const g = new C('normal', cls, () => 0.9);
+  Object.assign(g.hero, { x: 1400, y: 1700, order: null });
+  g.hero.skills.fill(1);
+  g.hero.cd.fill(0);
+  g.s.mercyTime = 0;
+  g.s.time = 30;
+  const z = g.zone();
+  z.props = [];
+  z.buildings = [];
+  z.npcs = [];
+  const e = g.makeEnemy(
+    { species: 'goblin', name: 'Attack passage', level: 5, hp: 100000, damage: 0, gold: 0, xp: 0 },
+    { x: 1400 + distance, y: 1700 },
+  );
+  z.enemies = [e];
+  g.engage(e);
+  g.s.party = allies
+    ? [
+        g.unit('soldier', 1432, 1700),
+        g.unit('archer', 1400 + distance * 0.65, 1700),
+        g.unit('pet', e.x, e.y, 'crypt'),
+      ]
+    : [];
+  return { g, e };
+}
+let cases = 0;
+for (const cls of ['paladin', 'mage', 'ranger']) {
+  const { g, e } = arena(cls, cls === 'paladin' ? 65 : 250);
+  assert(g.actorCrowd(true).combatActive);
+  assert(
+    !g.actorStepAllowed(g.hero, { x: 1430, y: 1700 }),
+    cls + ': companion blocks combat movement',
+  );
+  assert(g.line(g.hero, e), cls + ': companion does not block skill sight');
+  assert(g.clearSegment(g.hero, e, 0), cls + ': companion does not block shot flight');
+  assert.equal(
+    g.cycleHeroTarget().id,
+    e.id,
+    cls + ': target acquisition ignores overlapping friendly body',
+  );
+  cases++;
+}
+for (const cls of ['paladin', 'mage', 'ranger']) {
+  const attacks =
+    cls === 'paladin'
+      ? [
+          [1, false],
+          [1, true],
+          [4, false],
+          [4, true],
+        ]
+      : [
+          [1, false],
+          [1, true],
+          [2, false],
+          [cls === 'mage' ? 4 : 7, true],
+          [6, false],
+          [6, true],
+        ];
+  for (const [slot, charged] of attacks) {
+    const results = [];
+    for (const allies of [false, true]) {
+      const { g, e } = arena(cls, cls === 'paladin' ? 65 : 250, allies),
+        hp = e.hp;
+      assert(g.cast(slot, e.id, charged), cls + ' ' + slot + ' ' + charged + ' can release');
+      for (let i = 0; i < 70; i++) {
+        g.s.time += 0.05;
+        g.updateProjectiles(0.05);
+      }
+      assert(e.hp < hp, cls + ' ' + slot + ' ' + charged + ' lands through allies');
+      results.push(hp - e.hp);
+    }
+    assert.equal(
+      results[0],
+      results[1],
+      'allies neither absorb nor weaken ' + cls + ' ' + slot + ' ' + charged,
+    );
+    cases++;
+  }
+}
+console.log(
+  'PASS ' +
+    cases +
+    ' ally attack-passage cases: combat movement blocks, targeting/line/shot passage and actual class basic/charged/skill hits',
+);

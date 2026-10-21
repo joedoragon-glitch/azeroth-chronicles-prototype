@@ -1373,6 +1373,11 @@
           p = screen(f),
           grow = reducedMotion() ? 0.5 : 1 - a;
         if (f.type === 'enemyVfx') continue;
+        if (
+          f.type === 'basicComboFinisher' &&
+          heroArt?.basicFinisher(ctx, screen, f, { reduced: reducedMotion(), optimized })
+        )
+          continue;
         if (f.type === 'heroSkill') {
           heroArt?.draw(ctx, screen, f, {
             reduced: reducedMotion(),

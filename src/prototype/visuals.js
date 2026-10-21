@@ -17469,9 +17469,40 @@
         line(x - 7, y + 2, x + 7, y - 3, '#8a6d49', 2);
         line(x - 2, y - 1, x - 5, y - 5, '#6f553d', 1);
       } else if (k === 4) {
-        dot(x - 3, y, 3, '#bd9d77');
-        dot(x - 3, y - 2, 2, '#d2b784');
-        line(x - 3, y + 2, x - 3, y + 5, '#7b6c4d', 1);
+        // Tiny dandelions replace the old beige, miniature-tree ground mark.
+        // Stable tile variation keeps them organic and free to cache.
+        const lean = seed % 2 ? 1.5 : -1,
+          height = 9 + (seed % 3),
+          headX = x - 3 + lean,
+          headY = y + 5 - height;
+        ctx.strokeStyle = '#90ad68';
+        ctx.lineWidth = 0.9;
+        ctx.beginPath();
+        ctx.moveTo(x - 3, y + 5);
+        ctx.quadraticCurveTo(x - 3 + lean * 0.35, y, headX, headY);
+        ctx.stroke();
+        for (const side of [-1, 1]) {
+          ctx.fillStyle = side < 0 ? '#6f9452' : '#85a65c';
+          ctx.beginPath();
+          ctx.moveTo(x - 3, y + 5);
+          ctx.lineTo(x - 3 + side * 6, y + 1);
+          ctx.lineTo(x - 3 + side * 4, y + 4);
+          ctx.lineTo(x - 3 + side * 7, y + 3);
+          ctx.quadraticCurveTo(x + side * 3, y + 7, x - 3, y + 5);
+          ctx.fill();
+        }
+        // Open filaments and little parachute tips, rather than a solid disc.
+        const radius = 3.3 + (seed % 2) * 0.5;
+        for (let j = 0; j < 12; j++) {
+          const angle = (j / 12) * Math.PI * 2 + (seed % 7) * 0.14,
+            px = headX + Math.cos(angle) * radius,
+            py = headY + Math.sin(angle) * radius;
+          line(headX, headY, px, py, '#dedfc1aa', 0.55);
+          const tx = -Math.sin(angle) * 0.8,
+            ty = Math.cos(angle) * 0.8;
+          line(px - tx, py - ty, px + tx, py + ty, '#f1eed9dd', 0.7);
+        }
+        dot(headX, headY + 0.3, 0.8, '#b9af7f');
       } else if (k === 5) {
         for (const [ox, c] of [
           [-4, '#d9bd7b'],
@@ -18833,20 +18864,28 @@
       peaceBlend = peace ? (daylight?.phase === 'victory-sunrise' ? daylight.progress : 1) : 0,
       time = (typeof performance !== 'undefined' ? performance.now() : 0) / 1000;
     ctx.save();
+    // Keep fading atmosphere on ordinary alpha compositing. Avoid screen-blend
+    // render targets during twilight, and bake opacity into full-screen colors.
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+    const rgba = (channels, opacity = 1) => {
+      const [r, g, b, alpha] = channels;
+      return `rgba(${Math.round(r)},${Math.round(g)},${Math.round(b)},${Math.max(0, Math.min(1, alpha * opacity)).toFixed(6)})`;
+    };
     // Regional color grade: gentle enough to preserve combat readability, strong enough to make each zone feel authored.
     const dayTints = [
-      'rgba(213,229,163,.045)',
-      'rgba(150,206,205,.05)',
-      'rgba(221,219,184,.045)',
-      'rgba(215,157,120,.05)',
-      'rgba(166,146,196,.05)',
+      [213, 229, 163, 0.045],
+      [150, 206, 205, 0.05],
+      [221, 219, 184, 0.045],
+      [215, 157, 120, 0.05],
+      [166, 146, 196, 0.05],
     ];
     const nightTints = [
-      'rgba(11,25,42,.48)', // Greenwood: moonlit blue-greens, not a blackout
-      'rgba(12,32,44,.48)', // Marches: wet blue reflections
-      'rgba(19,29,42,.50)', // Ironroot: cool altitude, warm occupied windows
-      'rgba(32,20,35,.52)', // Frontier: ash dusk with working checkpoints
-      'rgba(27,19,43,.54)', // Crown: rich night violet, still navigable
+      [11, 25, 42, 0.48], // Greenwood: moonlit blue-greens, not a blackout
+      [12, 32, 44, 0.48], // Marches: wet blue reflections
+      [19, 29, 42, 0.5], // Ironroot: cool altitude, warm occupied windows
+      [32, 20, 35, 0.52], // Frontier: ash dusk with working checkpoints
+      [27, 19, 43, 0.54], // Crown: rich night violet, still navigable
     ];
     const glow = (p, r = 120, a = 0.22, c = '255,218,151') => {
       if (!p) return;
@@ -18858,18 +18897,29 @@
       ctx.fillRect(p.x - r, p.y - r, r * 2, r * 2);
     };
     if (darkness > 0) {
-      ctx.globalAlpha = darkness;
       const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      g.addColorStop(0, nightTints[region] || nightTints[0]);
+      g.addColorStop(0, rgba(nightTints[region] || nightTints[0], darkness));
       g.addColorStop(
         1,
-        `rgba(${9 + 13 * peaceBlend},${17 + 14 * peaceBlend},${30 + 19 * peaceBlend},${0.58 - 0.28 * peaceBlend})`,
+        rgba(
+          [
+            9 + 13 * peaceBlend,
+            17 + 14 * peaceBlend,
+            30 + 19 * peaceBlend,
+            0.58 - 0.28 * peaceBlend,
+          ],
+          darkness,
+        ),
       );
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       // Warm pools around the hero and inhabited field structures make night readable without flattening the whole scene.
-      ctx.globalCompositeOperation = 'screen';
-      glow(hero, 145, 0.18 + 0.04 * peaceBlend, region === 4 ? '215,191,231' : '235,221,184');
+      glow(
+        hero,
+        145,
+        (0.18 + 0.04 * peaceBlend) * darkness,
+        region === 4 ? '215,191,231' : '235,221,184',
+      );
       // Night sources are the current map's actual windows, services and fires.
       // Keep the soft lit ground distinct from the lamp itself. Only a small
       // radius for each source, with a larger effect at working kitchens/forges.
@@ -18882,10 +18932,10 @@
           y = carried ? p.y : p.y - (p.fixture === 'post' ? 46 : window ? 32 : fire ? 13 : 28),
           source = { x: p.x, y },
           tint = region === 1 ? '245,208,150' : region === 4 ? '247,194,147' : '255,207,132';
-        glow(source, radius, window ? 0.27 : fire ? 0.3 : 0.25, tint);
-        if (carried) glow(source, 10, 0.5, '255,221,150');
+        glow(source, radius, (window ? 0.27 : fire ? 0.3 : 0.25) * darkness, tint);
+        if (carried) glow(source, 10, 0.5 * darkness, '255,221,150');
       }
-      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalAlpha = darkness;
       // Luminous windows and sheltered lantern glass are localized light
       // sources, not new scenery obstacles. Fires already have drawn flames.
       for (const p of renderedLights) {
@@ -18934,13 +18984,16 @@
       }
     }
     if (darkness < 1) {
-      ctx.globalAlpha = 1 - darkness;
-      ctx.fillStyle = dayTints[region] || dayTints[0];
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = rgba(dayTints[region] || dayTints[0], 1 - darkness);
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       const sun = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      sun.addColorStop(0, 'rgba(255,244,203,.07)');
+      sun.addColorStop(0, rgba([255, 244, 203, 0.07], 1 - darkness));
       sun.addColorStop(0.45, 'rgba(255,255,255,0)');
-      sun.addColorStop(1, region >= 3 ? 'rgba(97,56,55,.035)' : 'rgba(22,55,42,.025)');
+      sun.addColorStop(
+        1,
+        rgba(region >= 3 ? [97, 56, 55, 0.035] : [22, 55, 42, 0.025], 1 - darkness),
+      );
       if (!opts.optimized) {
         ctx.fillStyle = sun;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -18950,7 +19003,6 @@
     if (darkness < 1) {
       // A lit hand lantern keeps a small bloom in daylight; broad illumination
       // becomes visible after dark. Existing civic day/night lights stay off.
-      ctx.globalCompositeOperation = 'screen';
       for (const p of lights.filter((p) => p.kind === 'carried-lantern').slice(0, 8))
         glow(p, 22, 0.12 * (1 - darkness), '255,221,150');
       ctx.globalCompositeOperation = 'source-over';
