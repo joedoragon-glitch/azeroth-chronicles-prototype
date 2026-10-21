@@ -1,6 +1,6 @@
 # Ironroot Highlands — autumn hardwood and coinage province
 
-Status: dev.138 implementation and focused validation prepared in PR #374. Publication is recorded separately; this document is not a live-release claim.
+Status: dev.138 published via PR #374 as `9e0c8218a34a42a9039d6f0d9fe6ece92c8ddf2e`. Package-only run 39655923053 succeeded; exact public build and 21 resources match. Normal workflow restored and temporary publisher removed. Receipt: [verified publication](evidence/HIGHLANDS_DEV138_PUBLICATION_20261021.json).
 
 Joel approved a complete regional rework on 21 October 2026: Appalachian/Blue Ridge/Smokies-inspired deciduous forests, extensive relocation of bosses, dungeons and associated assets, purposeful use of the edges, the same or greater aesthetic care as the recent Marches/Frontier work, and preservation of the region's fantasy society and Crown coinage role. New procedural assets are authorized. Exact unseen artwork is not separately declared accepted. This supersedes the Scottish Highlands direction and the earlier annotation-only coast restriction.
 
@@ -61,7 +61,7 @@ The keep’s Ogre household/interior retains its established role. Its old exter
 
 The requested geographical/aesthetic, quest, ferry and Map & Navigation audit is recorded in [the audit](HIGHLANDS_DEV138_GEOGRAPHY_AESTHETIC_AUDIT.md). It includes concrete saved-encounter and map-color repairs.
 
-Per-design references and current sprite decisions are updated in the same change. The normal workflow must be restored and the one-time package-only publisher removed after successful deployment.
+Per-design references and current sprite decisions are updated in the same change. The normal workflow is restored and the one-time package-only publisher is removed after successful deployment.
 
 Spawn audit: four original dev.137 seed controls retain 49/49 native outdoor IDs (48 ordinary enemies and Ridge Tyrant), with clear relocated homes and unchanged night/leave/return/reload counts. Both scheduled ringleaders and TRUE Ridge spawn on valid ground. Pending bases now reuse their original monster’s migrated home, preserving counts and timers. Evidence: `tools/visual-review/highlands-dev138/spawn-checks.json`.
 

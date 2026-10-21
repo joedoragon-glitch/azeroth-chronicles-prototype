@@ -5,7 +5,7 @@
   "designId": "appalachian-highlands-geography",
   "name": "Ironroot coast, forest roads and distributed sites",
   "kind": "environment",
-  "nextAction": "Publish the focused owner update, then receive owner play/appearance feedback. Resume future raster work from these exact procedural states when requested.",
+  "nextAction": "Published dev.138; receive owner play/appearance feedback. Resume future sprite work only when requested, from the exact current procedural source and states; preserve historical references.",
   "context": {
     "originConversation": "Conversation URL unavailable; owner instructions dated 21 October 2026 are recorded in PR #374 and the scope document.",
     "decisionSummary": "Complete Appalachian-inspired Highlands overhaul approved, including new nature assets, site relocation and coinage-ore facilities. All four tribute stores now require a physical Barracks search at existing named locations; Crag Tyrant arranged the concealment. Town Supplies retains cargo delivery.",
@@ -22,7 +22,7 @@
     "pendingCorrections": []
   },
   "reference": {
-    "sourceCommit": "cc2020f1f27283c66fbe2bed0ca34b8aaee907f4",
+    "sourceCommit": "9e0c8218a34a42a9039d6f0d9fe6ece92c8ddf2e",
     "ownerFilesAndBranches": [
       "src/prototype/highlands.js",
       "src/prototype/world.js",
@@ -62,7 +62,8 @@
         "sha256": "c6c8f9e90225f534acb4cf5f213efaff5647b44c3eba36fd6953d1515b755cd9"
       }
     ],
-    "workingTreeAfterSourceCommit": false
+    "workingTreeAfterSourceCommit": false,
+    "publicationReceipt": "docs/evidence/HIGHLANDS_DEV138_PUBLICATION_20261021.json"
   },
   "scope": {
     "catalogIds": [],

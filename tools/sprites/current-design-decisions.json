@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "date": "2026-10-21",
   "runtimeBaseline": "0.9.1+snapshot.dev.138",
-  "sourceCommit": "cc2020f1f27283c66fbe2bed0ca34b8aaee907f4",
+  "sourceCommit": "9e0c8218a34a42a9039d6f0d9fe6ece92c8ddf2e",
   "guide": "docs/SPRITE_RESTART_20261020.md",
   "priority": "Review and revise existing registered sprites against current accepted procedural designs before expanding the catalog. This closeout does not start generation.",
   "precedence": "Later recorded owner corrections and current procedural source supersede conflicting old catalog prose and historical reference images. Preserve historical provenance; do not infer unseen raster acceptance.",
@@ -27,7 +27,7 @@
   ],
   "assets": {
     "transport:ferry": {
-      "traits": "Owner-selected option 3: twin curved plank hulls, reed canopy, benches/open deck, blue-green trim, rope fenders, paired amber lamps and tan-hatted ferryman. Replace the old single-sail design; render at 216\u00d7108, exactly 50% larger than dev.136 in each dimension, with hull floating clear of timber.",
+      "traits": "Owner-selected option 3: twin curved plank hulls, reed canopy, benches/open deck, blue-green trim, rope fenders, paired amber lamps and tan-hatted ferryman. Replace the old single-sail design; render at 216×108, exactly 50% larger than dev.136 in each dimension, with hull floating clear of timber.",
       "decisionDocuments": ["docs/TIDAL_FERRY_DEV136.md", "docs/FERRY_SIZE_DEV137.md"],
       "handoffs": ["tools/sprites/design-handoffs/tidal-twin-hull-ferry.json"],
       "selectedRepresentation": "raster"
@@ -240,8 +240,9 @@
       ],
       "selection": "New highlandsNature and miningFacility props explicitly bypass retained sprites. Highlands ground uses current warm procedural floor. All retained originals, registrations and ferry remain available; no raster generation.",
       "fauna": "Owner-approved brown/buff/rust wild wolves and larger armored direwolf mounts; elk mounts declined. Highlands wild wolves bypass retained gray raster. Other regions retain identical drawings.",
-      "treasury": "Owner-requested procedural complete interior pilot: Crag\u2019s defended coinage household, functional rooms, real structural cover, seven original defenders, three stable caches and preserved progress/return rules. Other Treasury remakes are future work."
+      "treasury": "Owner-requested procedural complete interior pilot: Crag’s defended coinage household, functional rooms, real structural cover, seven original defenders, three stable caches and preserved progress/return rules. Other Treasury remakes are future work."
     }
   },
-  "workingTreeAfterSourceCommit": false
+  "workingTreeAfterSourceCommit": false,
+  "publicationReceipt": "docs/evidence/HIGHLANDS_DEV138_PUBLICATION_20261021.json"
 }

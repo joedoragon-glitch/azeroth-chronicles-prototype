@@ -35,3 +35,5 @@ The pre-existing unrelated Marches material/scope audit mismatches remain outsid
 Spawn audit: four original dev.137 seed controls retain 49/49 native outdoor IDs (48 ordinary enemies and Ridge Tyrant), with clear relocated homes and unchanged night/leave/return/reload counts. Both scheduled ringleaders and TRUE Ridge spawn on valid ground. Pending bases now reuse their original monster’s migrated home, preserving counts and timers. Evidence: `tools/visual-review/highlands-dev138/spawn-checks.json`.
 
 The later requested Highlands Treasury interior is also complete: see [its scoped audit and pilot standard](HIGHLANDS_TREASURY_DEV138.md). Its five additional native scenes use 150%, all 18 prop bases respect usable space, and all seven original defenders, three exact quest caches, fort benefits, paired returns and saved balances remain.
+
+Published in dev.138 / PR #374; exact public build/resources verified, package-only run 39655923053 succeeded. Normal workflow restored and temporary publisher removed. See [publication receipt](evidence/HIGHLANDS_DEV138_PUBLICATION_20261021.json). Owner phone play follows.

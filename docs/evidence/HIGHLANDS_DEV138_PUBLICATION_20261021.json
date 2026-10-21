@@ -1,0 +1,142 @@
+{
+  "version": "0.9.1+snapshot.dev.138",
+  "pr": 374,
+  "mergeCommit": "9e0c8218a34a42a9039d6f0d9fe6ece92c8ddf2e",
+  "candidateCommit": "316375f3c8c89964e3702d16108d4b4e3262c95b",
+  "publisherRunId": 39655923053,
+  "publisherRunUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39655923053",
+  "site": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/",
+  "verifiedAt": "2026-10-21T18:49:05.073447+00:00",
+  "publishedBuild": "9e0c8218a34a42a9039d6f0d9fe6ece92c8ddf2e",
+  "publicFiles": [
+    {
+      "path": "index.html",
+      "bytes": 5646,
+      "sha256": "1b0ca7a29dd6c5c4d57adb28e31a47b1a6c8b7a7845a3ed57872c46a4332ae20",
+      "matchesPrepared": true
+    },
+    {
+      "path": "phone.html",
+      "bytes": 5647,
+      "sha256": "9bcc581900bbd5c85d9a5416f5a3bc10f4eea7b9d1f2d68b2c66774c317912b8",
+      "matchesPrepared": true
+    },
+    {
+      "path": "prototype.html",
+      "bytes": 5646,
+      "sha256": "1b0ca7a29dd6c5c4d57adb28e31a47b1a6c8b7a7845a3ed57872c46a4332ae20",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/app.js",
+      "bytes": 158667,
+      "sha256": "5b26a09ecac8fb4b87273a6c7c4e1f58cc53b8b9e4864a35be5f2c117f5816a2",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/archive.js",
+      "bytes": 55204,
+      "sha256": "78e3ce84f8cfb0c542fff48f861e57b072bd9aa112c57b62ad889d1a05a93c7a",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "bytes": 296,
+      "sha256": "7a68f0f8b2241f0508b4123d5d4ce2ea452c86824953c0b17b01f3b937434ed7",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/data.js",
+      "bytes": 30687,
+      "sha256": "010daccf3b0a7a1f93527b0f900e56a2ce482429bfccfc178ddc3b29a208fee0",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "bytes": 275013,
+      "sha256": "10ccfd39bdd991bc8ab4c0c8cd2e8b27de80884d3e130c9ee72e3838441c6cbe",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/highlands.js",
+      "bytes": 34661,
+      "sha256": "b2b0aa8b7ed42ecfa20d710e5acb617b5096d6dfb2cca01cf1393a6c207fc703",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "bytes": 83863,
+      "sha256": "abf5ba061fbf0065f8a2d7e46ce7aa6dc7084b0d3ffc358bbe792940daf98fb5",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/party.js",
+      "bytes": 77187,
+      "sha256": "ef242e0b17326a07b753cd114925c5dbff51f5d1d725294676c633bec2bc6cd3",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "bytes": 102744,
+      "sha256": "ab0bfa2fd82b634518e364f7d4ce3c5927fee7be44600270fb123fda97fa7346",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "bytes": 220050,
+      "sha256": "c6c8f9e90225f534acb4cf5f213efaff5647b44c3eba36fd6953d1515b755cd9",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/save.js",
+      "bytes": 55135,
+      "sha256": "4617c379b716f8ba3aba70b9bdcda3a4fae13a3bbbd7274fb2e0b66809c6dc57",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/sprites.js",
+      "bytes": 25734,
+      "sha256": "7285847b152fd6476b107f515b5ff6ae64de88aee0b921a5dbd804862d8434d9",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "bytes": 512531,
+      "sha256": "1f2e24f5c19c9fe3a3873c38ecd441e2e64a5f99abbd69a8deee82d86fd08f99",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/world.js",
+      "bytes": 206664,
+      "sha256": "7985833a8f97b71939c1401cfa4e8abb8f8ce5d684dc8e2f981705e139aebb2f",
+      "matchesPrepared": true
+    },
+    {
+      "path": "sw.js",
+      "bytes": 20797,
+      "sha256": "a5c23905270c1d601db38d523a16ad79564c2da6d03077f8feff07ba090b7b64",
+      "matchesPrepared": true
+    },
+    {
+      "path": "assets/sprites/manifest.json",
+      "bytes": 19282,
+      "sha256": "81bc06b6783773fa21a89ffd864c806a145ccc42473bd7d3751f899c3cd67f12",
+      "matchesPrepared": true
+    },
+    {
+      "path": "manifest.webmanifest",
+      "bytes": 852,
+      "sha256": "537cb82e39652a95ddb9e4fb804cb89a91b03b011872fdfd3fc6d675b94f8842",
+      "matchesPrepared": true
+    },
+    {
+      "path": "assets/sprites/transport-ferry-cad068c7a770a34ea9a70924968c5be179d6c2461fdee2e9b954ce6407229003.webp",
+      "bytes": 216700,
+      "sha256": "cad068c7a770a34ea9a70924968c5be179d6c2461fdee2e9b954ce6407229003",
+      "matchesPrepared": true
+    }
+  ],
+  "validation": "Completed focused local behavior/save/navigation/spawn and native 150% audits reused. No broad CI, repeated whole-game tests or device matrix. This receipt verifies exact public resources, not an owner phone playtest.",
+  "workflowCloseout": "Normal pages.yml restored byte-for-byte (blob ae39fa32e5eb4adfdfa1f7ce7b2a15680b82b398); one-time owner-highlands-dev138.yml removed in the atomic commit containing this receipt.",
+  "publisherConclusion": "success"
+}

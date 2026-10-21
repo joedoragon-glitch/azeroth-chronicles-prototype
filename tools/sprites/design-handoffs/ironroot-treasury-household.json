@@ -3,9 +3,9 @@
   "templateOnly": false,
   "status": "procedural-design",
   "designId": "ironroot-treasury-household",
-  "name": "Crag Tyrant\u2019s defended Treasury household",
+  "name": "Crag Tyrant’s defended Treasury household",
   "kind": "environment",
-  "nextAction": "Publish the focused owner update, then receive owner play/appearance feedback. Resume future raster work from these exact procedural states when requested.",
+  "nextAction": "Published dev.138; receive owner play/appearance feedback. Resume future sprite work only when requested, from the exact current procedural source and states; preserve historical references.",
   "context": {
     "originConversation": "Conversation URL unavailable; owner instructions dated 21 October 2026 are recorded in PR #374 and the scope document.",
     "decisionSummary": "Joel requested a complete procedural Highlands Treasury interior overhaul: clear creature/administrative/domestic purpose, assets respecting usable boundaries, combat-shaping obstacles supporting defenders. This may become a quality pilot for other Treasuries after owner play; no other interior rollout is included.",
@@ -15,7 +15,7 @@
       "docs/HIGHLANDS_TREASURY_DEV138.md",
       "docs/HIGHLANDS_DEV138_GEOGRAPHY_AESTHETIC_AUDIT.md"
     ],
-    "locationAndLore": "Ridge Tyrant\u2019s Treasury is administered and defended by Crag Tyrant and six Crown direwolf riders."
+    "locationAndLore": "Ridge Tyrant’s Treasury is administered and defended by Crag Tyrant and six Crown direwolf riders."
   },
   "decisions": {
     "conceptAcceptance": "Owner explicitly approved the complete rework and new procedural assets, then directed named-site/Barracks-only tribute search and Town Supplies cargo delivery.",
@@ -25,7 +25,7 @@
     "pendingCorrections": []
   },
   "reference": {
-    "sourceCommit": "cc2020f1f27283c66fbe2bed0ca34b8aaee907f4",
+    "sourceCommit": "9e0c8218a34a42a9039d6f0d9fe6ece92c8ddf2e",
     "ownerFilesAndBranches": [
       "src/prototype/rules.js::treasuryArchitecture / treasuryDecor / treasuryGuardFormations",
       "src/prototype/engine.js::treasuryInterior",
@@ -114,7 +114,7 @@
       "Receiving/hearth/private household, account room, guarded coin cabinet and southern rider reserve have distinct purposes.",
       "Double-opening counting screen, raised coursed masonry piers and reserve screen shape movement; unchanged fort benefits and two-post entry crossfire support defenders.",
       "Silver coin stacks, sealed portrait-crown consignments, weighing/ledger counter, bordered warm rugs, stone courses and household furniture remain procedural at native 150%.",
-      "Crag\u2019s horned humanoid body and six larger armored direwolf riders remain the seven original defenders; no stat/reward/roster change.",
+      "Crag’s horned humanoid body and six larger armored direwolf riders remain the seven original defenders; no stat/reward/roster change.",
       "All 16 original prop IDs, three exact cache identities, paid/dead progress, seized crowns and pending/paired-return rules remain compatible."
     ],
     "assetSpecificDependencies": [
@@ -135,7 +135,8 @@
         "sha256": "7285847b152fd6476b107f515b5ff6ae64de88aee0b921a5dbd804862d8434d9"
       }
     ],
-    "workingTreeAfterSourceCommit": false
+    "workingTreeAfterSourceCommit": false,
+    "publicationReceipt": "docs/evidence/HIGHLANDS_DEV138_PUBLICATION_20261021.json"
   },
   "scope": {
     "catalogIds": [],

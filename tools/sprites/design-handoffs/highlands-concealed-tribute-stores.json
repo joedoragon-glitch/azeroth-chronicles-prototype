@@ -3,9 +3,9 @@
   "templateOnly": false,
   "status": "procedural-design",
   "designId": "highlands-concealed-tribute-stores",
-  "name": "Crag Tyrant\u2019s concealed tribute stores",
+  "name": "Crag Tyrant’s concealed tribute stores",
   "kind": "environment",
-  "nextAction": "Publish the focused owner update, then receive owner play/appearance feedback. Resume future raster work from these exact procedural states when requested.",
+  "nextAction": "Published dev.138; receive owner play/appearance feedback. Resume future sprite work only when requested, from the exact current procedural source and states; preserve historical references.",
   "context": {
     "originConversation": "Conversation URL unavailable; owner instructions dated 21 October 2026 are recorded in PR #374 and the scope document.",
     "decisionSummary": "Complete Appalachian-inspired Highlands overhaul approved, including new nature assets, site relocation and coinage-ore facilities. All four tribute stores now require a physical Barracks search at existing named locations; Crag Tyrant arranged the concealment. Town Supplies retains cargo delivery.",
@@ -22,7 +22,7 @@
     "pendingCorrections": []
   },
   "reference": {
-    "sourceCommit": "cc2020f1f27283c66fbe2bed0ca34b8aaee907f4",
+    "sourceCommit": "9e0c8218a34a42a9039d6f0d9fe6ece92c8ddf2e",
     "ownerFilesAndBranches": [
       "src/prototype/world.js",
       "src/prototype/engine.js",
@@ -39,7 +39,7 @@
           "x": 810,
           "y": 520,
           "amount": 220,
-          "icon": "\ud83e\ude99",
+          "icon": "🪙",
           "site": "ore",
           "siteName": "Stonecross ore vein",
           "name": "Dark Lord Tribute",
@@ -47,7 +47,7 @@
           "tribute": true,
           "tributeId": "ore-shipment",
           "hidden": true,
-          "context": "sealed mint payroll beneath the ore store\u2019s false floor",
+          "context": "sealed mint payroll beneath the ore store’s false floor",
           "resourceGroup": "tribute-highlands",
           "concealedTribute": true,
           "storageStyle": "ore-store",
@@ -61,7 +61,7 @@
           "x": 1465,
           "y": 1050,
           "amount": 160,
-          "icon": "\ud83e\ude99",
+          "icon": "🪙",
           "site": "bridge-north",
           "siteName": "Northern stone bridge",
           "name": "Dark Lord Tribute",
@@ -69,7 +69,7 @@
           "tribute": true,
           "tributeId": "stone-toll",
           "hidden": true,
-          "context": "collector\u2019s reserve concealed behind the bridge-store inventory",
+          "context": "collector’s reserve concealed behind the bridge-store inventory",
           "resourceGroup": "tribute-highlands",
           "concealedTribute": true,
           "storageStyle": "collector-store",
@@ -83,7 +83,7 @@
           "x": 1735,
           "y": 2420,
           "amount": 130,
-          "icon": "\ud83e\ude99",
+          "icon": "🪙",
           "site": "bridge-south",
           "siteName": "Timber haul crossing",
           "name": "Dark Lord Tribute",
@@ -105,7 +105,7 @@
           "x": 3125,
           "y": 2145,
           "amount": 130,
-          "icon": "\ud83e\ude99",
+          "icon": "🪙",
           "site": "lookout",
           "siteName": "Old Signal Keep",
           "name": "Dark Lord Tribute",
@@ -113,7 +113,7 @@
           "tribute": true,
           "tributeId": "ogre-cache",
           "hidden": true,
-          "context": "a former Crown signal reserve behind the keep\u2019s disused store fittings",
+          "context": "a former Crown signal reserve behind the keep’s disused store fittings",
           "resourceGroup": "tribute-highlands",
           "concealedTribute": true,
           "storageStyle": "signal-store",
@@ -157,7 +157,8 @@
         "sha256": "c6c8f9e90225f534acb4cf5f213efaff5647b44c3eba36fd6953d1515b755cd9"
       }
     ],
-    "workingTreeAfterSourceCommit": false
+    "workingTreeAfterSourceCommit": false,
+    "publicationReceipt": "docs/evidence/HIGHLANDS_DEV138_PUBLICATION_20261021.json"
   },
   "scope": {
     "catalogIds": [],
