@@ -161,5 +161,5 @@ console.log(
   assert(!h.s.party.find((u) => u.id === pet.id).expeditionId);
   const other = h.unit('pet', h.hero.x, h.hero.y, 'thorn');
   h.s.party.push(other);
-  assert(h.resourceExpeditionWorkerReason(other).includes('Little Treasurer'));
+  assert.equal(h.resourceExpeditionWorkerReason(other), 'This companion cannot gather resources.');
 }

@@ -1200,7 +1200,7 @@
             getGame().availableGatherers().length
               ? Math.floor(n.amount) +
                   ' crowns remaining · all idle troops · escort along the waypoint'
-              : 'An idle Soldier, Ranger or Little Treasurer is needed.',
+              : 'An idle gatherer is needed.',
             !getGame().availableGatherers().length,
           ),
         );
@@ -1222,7 +1222,7 @@
         );
       openMenu(
         'Resources & labor',
-        'All idle Soldiers, Rangers and Little Treasurer work one selected tribute site. Escort them along the waypoint; combat pauses work. Supplies unloads all company cargo. Hidden sources can be located here.',
+        'All idle gatherers work one selected tribute site. Escort them along the waypoint; combat pauses work. Supplies unloads all company cargo. Hidden sources can be located here.',
         actions.length
           ? actions
           : [
@@ -1387,7 +1387,7 @@
         workers = game.s.party.filter((u) => game.canGatherTribute(u));
       openMenu(
         'Choose expedition companion',
-        'One living Soldier, Ranger or Little Treasurer goes away for ' +
+        'One available companion goes away for ' +
           Math.round(game.resourceExpeditionDuration() / 60) +
           ' minutes of active play. Reserves can go. Tribute is delivered automatically on return.',
         workers.length
