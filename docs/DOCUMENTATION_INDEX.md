@@ -1,4 +1,4 @@
-Prepared dev.129: [defender space, corner arrivals and discussion checklist](DEFENDER_SPACE_DEV129.md). Focused verification passes; package-only publication pending.
+Published dev.129: [defender space, corner arrivals and discussion checklist](DEFENDER_SPACE_DEV129.md), PR #365. Nine checked public files/exact build match; live phone entry/touch exit/skills pass. Package-only publication; normal workflow restored.
 
 Published dev.128: [regional Treasury recovery and defender-favoring arena steering](TREASURY_DEATH_RECOVERY_DEV128.md), PR #364. Exact live build/12 runtime files match; phone captain announcement/touch collection and saved Frontier drop pass. Normal workflow restored.
 

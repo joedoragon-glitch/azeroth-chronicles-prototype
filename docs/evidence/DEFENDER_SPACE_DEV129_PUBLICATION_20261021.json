@@ -1,0 +1,105 @@
+{
+  "version": "0.9.1+snapshot.dev.129",
+  "merge": "47e0c63b0e7112e3465eeca5bb2f6d5c5287b939",
+  "run": 39565062265,
+  "publicBuild": "47e0c63b0e7112e3465eeca5bb2f6d5c5287b939",
+  "files": [
+    {
+      "file": "phone.html",
+      "match": true,
+      "sha256": "ea474daecb23899bad38da8952829e2fe25bc69add2546f5e83f9ab354a885ee",
+      "bytes": 5541
+    },
+    {
+      "file": "index.html",
+      "match": true,
+      "sha256": "b2954d6014c3d9a3195365e55d1cb976a055b3795e1fb2a5633b466eaba9b48f",
+      "bytes": 5540
+    },
+    {
+      "file": "prototype.html",
+      "match": true,
+      "sha256": "b2954d6014c3d9a3195365e55d1cb976a055b3795e1fb2a5633b466eaba9b48f",
+      "bytes": 5540
+    },
+    {
+      "file": "src/prototype/build-info.js",
+      "match": true,
+      "sha256": "f8a5c1c71e9a5e59c74d26e116d5ce23629a0d000c2ab8df0cf54d6c8285d43f",
+      "bytes": 296
+    },
+    {
+      "file": "src/prototype/world.js",
+      "match": true,
+      "sha256": "940f8b057fc21b6f2e7db57d2a59313e1ca584f38246e2bc361d860edc88f323",
+      "bytes": 189251
+    },
+    {
+      "file": "src/prototype/engine.js",
+      "match": true,
+      "sha256": "3e6e7465baf8233ca141c651f23e48d562e3eb6c7bf5132640b405da9e2f5d40",
+      "bytes": 263319
+    },
+    {
+      "file": "src/prototype/rules.js",
+      "match": true,
+      "sha256": "018efa5b3339b2f9844ec83278e74b68786835638823615a7ea0963d56b38ab8",
+      "bytes": 213355
+    },
+    {
+      "file": "src/prototype/treasury.js",
+      "match": true,
+      "sha256": "fd25c348f2be16c6df51e0e0e453367ef0e7c9c254abfcd2796854a601bcae83",
+      "bytes": 10775
+    },
+    {
+      "file": "sw.js",
+      "match": true,
+      "sha256": "54aa0a0585fe7639246c05793f3fbc2960db31bc4bfdaee9acdfed1bfe16311a",
+      "bytes": 20733
+    }
+  ],
+  "pullRequest": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/365",
+  "workflowConclusion": "success",
+  "workflowKind": "package existing committed assets and deploy only; no test steps",
+  "focusedChecks": [
+    "defender-space.test.cjs",
+    "treasury-recovery.test.cjs",
+    "build / generated and syntax verification",
+    "changed-source formatting"
+  ],
+  "phone": {
+    "title": "So I Became the Dark Lord's Problem",
+    "entry": {
+      "x": 120,
+      "y": 140
+    },
+    "visibleAcquisition": 0,
+    "touchExit": true,
+    "keeper": {
+      "home": {
+        "x": 1175,
+        "y": 1230
+      },
+      "channels": 2
+    },
+    "crag": {
+      "home": {
+        "x": 720,
+        "y": 430
+      },
+      "bodyClear": true
+    },
+    "errors": []
+  },
+  "cleanup": {
+    "normalWorkflowRestored": true,
+    "oneTimePublisherRemoved": true,
+    "commitSkipsCI": true
+  },
+  "remaining": {
+    "captainObservation": "unidentified; ordinary hits do not generically interrupt",
+    "fortBonuses": "Crypt/Archive/Mine additional bonuses undecided/unapproved",
+    "lighting": "sunrise/possible sunset flashes deferred"
+  }
+}
