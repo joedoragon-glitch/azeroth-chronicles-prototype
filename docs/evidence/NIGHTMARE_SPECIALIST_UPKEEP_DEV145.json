@@ -1,0 +1,158 @@
+{
+  "review": "first bounded specialist Nightmare follow-up",
+  "completedUtc": "2026-10-21T23:29:34.702971+00:00",
+  "node": "v24.19.0",
+  "baselineMainCommit": "49531c11a59b76a3a8de5de8967d05d1ebe5d0c1",
+  "baselineEquivalentLocalCommit": "61361bae26826b5ff4a2c7b2bb6838b8723a806c",
+  "baselineTree": "43e890fb583f93578c1aa027c8f333ad6e9f7c7c",
+  "runtimeVersion": "0.9.1+snapshot.dev.145",
+  "runtimeChanged": false,
+  "broadCiRun": false,
+  "deviceMatrixRun": false,
+  "deploymentNeeded": false,
+  "contexts": ["normal", "nightmare-grace", "nightmare-night", "nightmare-legacy"],
+  "helper": {
+    "path": "tests/helpers/specialist-night-context.cjs",
+    "sha256": "e2f98683cf00cf8a05ef5362441df2ff98e25153db394df5ed5828fca7f56673"
+  },
+  "suiteRuns": [
+    {
+      "suite": "snapshot-dreadmaw",
+      "stage": "before",
+      "exitCode": 0,
+      "log": "tools/nightmare-specialist-upkeep-dev145/snapshot-dreadmaw-before.log",
+      "logSha256": "d550b559bc9b6e21b1c3c915fea55dd69c2830432d7f5277c83e4f2b86ccbbca"
+    },
+    {
+      "suite": "snapshot-dreadmaw",
+      "stage": "after",
+      "exitCode": 0,
+      "log": "tools/nightmare-specialist-upkeep-dev145/snapshot-dreadmaw-after.log",
+      "logSha256": "dd6ad0a786f6f70e9934b968e62ca76b7180a742f2fcd37319138277959e8171",
+      "testFile": "tests/snapshot-dreadmaw.test.cjs",
+      "testSha256": "720b28171f3c0b65176a49afb6bae3570ffd1f037c2394769e3ea9f0d94b40c8"
+    },
+    {
+      "suite": "cindermaw-ministry",
+      "stage": "before",
+      "exitCode": 0,
+      "log": "tools/nightmare-specialist-upkeep-dev145/cindermaw-ministry-before.log",
+      "logSha256": "02e337d7f5644db1908d5cfa6dcf87f26b768543d2d4716962149631411ff47e"
+    },
+    {
+      "suite": "cindermaw-ministry",
+      "stage": "after",
+      "exitCode": 0,
+      "log": "tools/nightmare-specialist-upkeep-dev145/cindermaw-ministry-after.log",
+      "logSha256": "7bb07477d461d2a254565b1f097deb9ce8856150321b78765565c3318d47a424",
+      "testFile": "tests/cindermaw-ministry.test.cjs",
+      "testSha256": "478cc5e37603636095514a7ba61987d1ef48c92881396ecfd178341ddec999f4"
+    },
+    {
+      "suite": "snapshot-lifebinder",
+      "stage": "before",
+      "exitCode": 1,
+      "log": "tools/nightmare-specialist-upkeep-dev145/snapshot-lifebinder-before.log",
+      "logSha256": "27fe577ac785daf741a059a33b12d19213f3be8d3b0c8db36935c75b04eb4a88"
+    },
+    {
+      "suite": "snapshot-lifebinder",
+      "stage": "after",
+      "exitCode": 0,
+      "log": "tools/nightmare-specialist-upkeep-dev145/snapshot-lifebinder-after.log",
+      "logSha256": "3587cb258c863d3b22584056ebdf5855a5bf02e066e21150d72e1d3fbcda2f06",
+      "testFile": "tests/snapshot-lifebinder.test.cjs",
+      "testSha256": "c5f75d5e4269441523f6b587963638c4b240310b7126739ddcb4a3a94037e17e"
+    },
+    {
+      "suite": "snapshot-scornfang",
+      "stage": "before",
+      "exitCode": 1,
+      "log": "tools/nightmare-specialist-upkeep-dev145/snapshot-scornfang-before.log",
+      "logSha256": "9f2d9561652431f1e6d44a69d7fbbd103831fbd3ad26abb9b77e99cc499e4dc4"
+    },
+    {
+      "suite": "snapshot-scornfang",
+      "stage": "after",
+      "exitCode": 0,
+      "log": "tools/nightmare-specialist-upkeep-dev145/snapshot-scornfang-after.log",
+      "logSha256": "fd20916aaa68ee5bc7845c29343bb5c5fdbd52984594f4b44431103492894ffa",
+      "testFile": "tests/snapshot-scornfang.test.cjs",
+      "testSha256": "64883cb1f38fc22b7116364f9fe68b0292ac42b4671d7b3fbb7f76c42a765aea"
+    },
+    {
+      "suite": "snapshot-passive-completion",
+      "stage": "before",
+      "exitCode": 0,
+      "log": "tools/nightmare-specialist-upkeep-dev145/snapshot-passive-completion-before.log",
+      "logSha256": "8630d449021e3569b17f0b5ee6ace384ffebb84acd57793c621231b6ba20b0b7"
+    },
+    {
+      "suite": "snapshot-passive-completion",
+      "stage": "after",
+      "exitCode": 0,
+      "log": "tools/nightmare-specialist-upkeep-dev145/snapshot-passive-completion-after.log",
+      "logSha256": "8630d449021e3569b17f0b5ee6ace384ffebb84acd57793c621231b6ba20b0b7",
+      "testFile": "tests/snapshot-passive-completion.test.cjs",
+      "testSha256": "2b28da47937df9b1be67263ed023dffa52de78d4e4df3cdb17ed588b680ab731"
+    },
+    {
+      "suite": "garun-mechanics",
+      "stage": "before",
+      "exitCode": 0,
+      "log": "tools/nightmare-specialist-upkeep-dev145/garun-mechanics-before.log",
+      "logSha256": "0edd801b690dbfa8c8e5d791cad4b6ea0e5e5542a22fe731dc3b9ecf6f93cb9f"
+    },
+    {
+      "suite": "garun-mechanics",
+      "stage": "after",
+      "exitCode": 0,
+      "log": "tools/nightmare-specialist-upkeep-dev145/garun-mechanics-after.log",
+      "logSha256": "4adce8e788762d530e0603d47f58e878fa811520d057c2796a039403c66dc624",
+      "testFile": "tests/garun-mechanics.test.cjs",
+      "testSha256": "6b9ea288ccca665be102ed9cd84bf106fa1cb5093c4ada28b3432981c72400e4"
+    }
+  ],
+  "boundaryControls": [
+    {
+      "command": "node tests/daylight-cycle.test.cjs",
+      "exitCode": 0,
+      "result": "Normal boundaries, Nightmare one-time grace/engaged scaling/spawns, old/new saves, travel/death/Succession, victory gate/resume and unchanged Normal combat lock"
+    },
+    {
+      "command": "node tests/night-tempo.test.cjs",
+      "exitCode": 0,
+      "result": "night tempo 10\u201325%, counter/day/peace/Nightmare, real melee/ranged cadence, unchanged aim and pursuit movement"
+    }
+  ],
+  "independentControls": {
+    "command": "node tools/nightmare-specialist-upkeep-dev145/controls.cjs",
+    "exitCode": 0,
+    "scriptSha256": "18afc95296affd011a4351b81dbc79624bef9fff54714b36b7529b741605123d",
+    "results": "tools/nightmare-specialist-upkeep-dev145/controls.json",
+    "resultSha256": "ad53c436b754e05a692f5a11eeda39bdb88ab89eff32df3fcd09a559e21063f2"
+  },
+  "findings": [
+    {
+      "id": "phase-gap",
+      "since": "dev.121",
+      "status": "six original matrices repaired; full suites pass"
+    },
+    {
+      "id": "lifebinder-detached-actor",
+      "contractSince": "dev.131",
+      "status": "live same-ID actor assertion repaired"
+    },
+    {
+      "id": "scornfang-coarse-step",
+      "firstFailureVersion": "not established",
+      "status": "300 ms unsupported fixture step replaced by six real-sized 50 ms steps; native collision retained"
+    }
+  ],
+  "limits": [
+    "Dreadmaw fatal cases and seeded selector pilots remain Normal controls.",
+    "Cindermaw unforced selector pilot remains a Normal control.",
+    "Passive matrix checks components rather than complete native fights.",
+    "No gameplay defect established by these findings; next proposed review is native range/cover/fort interactions."
+  ]
+}

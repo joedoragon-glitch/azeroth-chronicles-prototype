@@ -1,4 +1,5 @@
 'use strict';
+const nightContext = require('./helpers/specialist-night-context.cjs');
 const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine.js');
 const rogue = require('./fixtures/snapshot-dread-rogue.json'),
@@ -54,7 +55,7 @@ assert.deepEqual(
   ],
 );
 function setup(mode = 'normal', heroClass = 'mage', random = () => 0.9, options = {}) {
-  const c = new C(mode, heroClass, random, options);
+  const c = nightContext.campaign(mode, heroClass, random, options);
   c.enter('supply-crown');
   c.s.party = [];
   const e = c.zone().enemies.find((u) => u.captainProfile === 'supply-crown');
@@ -79,7 +80,7 @@ function cast(c, e, index) {
   return built;
 }
 let realCasts = 0;
-for (const mode of ['normal', 'nightmare'])
+for (const mode of nightContext.contexts)
   for (const heroClass of ['paladin', 'mage', 'ranger'])
     for (let index = 0; index < 7; index++) {
       const { c, e } = setup(mode, heroClass);

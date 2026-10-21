@@ -1,4 +1,5 @@
 'use strict';
+const nightContext = require('./helpers/specialist-night-context.cjs');
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
 
@@ -192,8 +193,8 @@ assert.equal(Campaign.rules.bossSummoning.trueCap, 6);
 console.log('PASS core exposure, defensive sweep and Ogre summons retain locked contracts');
 
 let cases = 0;
-for (const cls of ['paladin','mage','ranger']) for (const mode of ['normal','nightmare']) for (const succession of [false,true]) {
- const c = new Campaign(mode,cls,()=>0.9); c.enter('mine'); c.s.party=[]; c.s.challenge.succession=succession;
+for (const cls of ['paladin','mage','ranger']) for (const mode of nightContext.contexts) for (const succession of [false,true]) {
+ const c = nightContext.campaign(mode,cls,()=>0.9); c.enter('mine'); c.s.party=[]; c.s.challenge.succession=succession;
  const e=c.zone().enemies.find(e=>e.type==='boss'&&e.family==='mine'); c.zone().enemies=[e];
  assert(c.startAttack(e,{x:910,y:1100},1)); const previews=c.zone().props.filter(p=>p.garunPreview); assert(previews.length);
  const raw=JSON.parse(JSON.stringify(c.s)); assert(Campaign.restore(raw).zone().props.every(p=>!p.garunTemporary&&!p.garunPreview));
