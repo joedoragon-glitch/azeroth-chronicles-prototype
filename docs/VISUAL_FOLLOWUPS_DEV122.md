@@ -1,3 +1,5 @@
+**21 October owner follow-up:** Sunrise flashes still occur after dev.125. Possible sunset flashes must also be investigated; sunset is not yet confirmed. The first local checks were inconclusive. A deeper investigation is deliberately deferred until after active warning/effect transparency and charged-skill cooldown requests. Issue #357 remains open. No twilight lighting changes or speculative glow adjustment are authorized in the current update.
+
 # Contained visual follow-ups — dev.122
 
 Owner requested fixes while testing dev.121: brief partial/full white flashes during sunrise while only standing/moving; Mage third-hit blue cone mismatched to purple basic orbs; verify allied bodies do not block hero targeting/skills; replace Greenwood's beige miniature-tree floor details with procedural dandelions. Existing enemy warnings/effects stay as-is; their visual handoff is a deferred review item.

@@ -1,0 +1,10 @@
+{
+  "danger": "Living non-neutral aggro enemy within strictly 700 units of hero; ordinary nearby idle spawns alone do not qualify.",
+  "sharedDangerBlocksRestAndPetRecruit": true,
+  "recruitFullPartyCreatesReserve": true,
+  "restThenActivateWorksWhenSafe": true,
+  "basicCapAtExpedition4": 3,
+  "fullCapAtExpedition4": 4,
+  "fallenActiveUnitsCountTowardSlots": true,
+  "limitation": "No owner save supplied; shared danger is a likely explanation, not confirmed for the reported Barracks."
+}

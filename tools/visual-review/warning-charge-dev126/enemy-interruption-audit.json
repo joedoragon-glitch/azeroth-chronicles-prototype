@@ -1,0 +1,10 @@
+{
+  "captain": "Direjaw",
+  "realMageBasicHits": true,
+  "basicDamageKeepsCast": true,
+  "slowKeepsCastClockRunning": true,
+  "silencePausesWithoutErasing": true,
+  "knockbackKeepsCast": true,
+  "explicitInterruptCancelsCurrentAction": true,
+  "limitation": "One actual treasury captain mechanism check; owner-reported captain/attack identity is unknown. No generic basic-hit stunlock found; no enemy casting/balance change."
+}

@@ -1783,6 +1783,24 @@
           this.s.zone = oldZone;
         }
       }
+      reedportRefugeSpacing(z) {
+        if (z.id !== 'march' || z.reedportRefugeSpacingVersion === 1) return;
+        // Keep the refuge frontage open. These are decorative town services,
+        // not deleted objects or changes to player buildings/enemy territory.
+        const layout = {
+          'aesthetic-town-0': [150, 1600],
+          'aesthetic-town-5': [600, 1550],
+          'aesthetic-town-7': [80, 1680],
+          'aesthetic-town-99': [300, 1750],
+        };
+        for (const [id, [x, y]] of Object.entries(layout)) {
+          const p = z.props.find((p) => p.id === id);
+          if (p) Object.assign(p, { x, y });
+        }
+        const recruiter = z.npcs.find((n) => n.id === 'recruiter');
+        if (recruiter) Object.assign(recruiter, { x: 650, y: 800 });
+        z.reedportRefugeSpacingVersion = 1;
+      }
       zone() {
         if (this.s.zones[this.s.zone]) {
           const z = this.s.zones[this.s.zone];
@@ -1803,6 +1821,7 @@
           // Environment coherence adds bridge approaches and clears their roads.
           // Space the lived-in courtyard after those final scenic relocations.
           this.strongholdCourtyardClearance(z);
+          this.reedportRefugeSpacing(z);
           this.interiorCoherence(z);
           this.frontierEdgeRedistribution(z);
           this.frontierSceneComposition(z);
@@ -1834,8 +1853,7 @@
             id: 'exit',
             name: 'Leave ' + room.name,
             kind: 'exit',
-            x: 125,
-            y: 155,
+            ...R.treasuryEntry.exit,
             icon: '🚪',
           });
           const cacheSpots = R.treasuryCacheSpots?.[id] || [
@@ -2217,6 +2235,7 @@
         this.clearNamedRoadMarkers(z);
         this.townVisualClearance(z);
         this.strongholdCourtyardClearance(z);
+        this.reedportRefugeSpacing(z);
         this.interiorCoherence(z);
         this.refreshNPCs();
         if (this.peace) this.makeHabitat(z);

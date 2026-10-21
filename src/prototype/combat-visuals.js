@@ -606,12 +606,12 @@
             ? '#8ecde6'
             : '#ffe09a';
       ctx.fillStyle = a.bossHeal
-        ? '#4c9f6730'
+        ? '#4c9f6726'
         : a.rogueSignature
-          ? '#369ab33e'
+          ? '#369ab332'
           : a.rogueMove
-            ? '#4b95c132'
-            : '#dc644c30';
+            ? '#4b95c128'
+            : '#dc644c26';
       ctx.lineWidth = a.rogueSignature ? 3.3 : 2.5;
       ctx.setLineDash(cue ? (a.rogueSignature ? [10, 4] : [8, 5]) : []);
       for (const points of shapes) {

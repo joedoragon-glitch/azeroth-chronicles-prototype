@@ -7,7 +7,9 @@ function kill(c, e) {
   c.kill(e);
 }
 for (const mode of ['normal', 'nightmare']) {
-  for (let index = 0; index < 30; index++) {
+  for (const index of process.env.QUEST_INDEX
+    ? [Number(process.env.QUEST_INDEX)]
+    : Array.from({ length: 30 }, (_, i) => i)) {
     const c = new C(mode, 'paladin', () => 0.9),
       q = c.questDefs().find((q) => q.id === 'quest-' + index);
     c.enter(q.region);
@@ -36,6 +38,8 @@ for (const mode of ['normal', 'nightmare']) {
       }
     } else {
       if (q.kind === 'night') {
+        // This case tests active night, after Nightmare's existing sunset grace.
+        c.s.nightmareIntroRemaining = 0;
         c.s.clock = 400;
         c.updateNight();
         for (const e of c
