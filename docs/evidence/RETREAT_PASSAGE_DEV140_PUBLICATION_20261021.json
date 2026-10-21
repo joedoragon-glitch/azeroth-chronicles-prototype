@@ -1,0 +1,61 @@
+{
+  "version": "0.9.1+snapshot.dev.140",
+  "pr": 376,
+  "mergeCommit": "e8bd3a39e700b03813a229ba4b553b258be4c066",
+  "candidateCommit": "f5c2f24eec3f483eb3e3f7e56dbdfd1d14692a13",
+  "candidateTree": "6da8c27f3c839f069c59d8efdac2fa0e2efe2d5e",
+  "publisherRunId": 39664374072,
+  "publisherRunUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39664374072",
+  "site": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/",
+  "verifiedAt": "2026-10-21T19:46:19.277225+00:00",
+  "publishedBuild": "e8bd3a39e700b03813a229ba4b553b258be4c066",
+  "publicFiles": [
+    {
+      "path": "index.html",
+      "bytes": 5646,
+      "sha256": "1b0ca7a29dd6c5c4d57adb28e31a47b1a6c8b7a7845a3ed57872c46a4332ae20",
+      "matchesPrepared": true
+    },
+    {
+      "path": "phone.html",
+      "bytes": 5647,
+      "sha256": "9bcc581900bbd5c85d9a5416f5a3bc10f4eea7b9d1f2d68b2c66774c317912b8",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/navigation.js",
+      "bytes": 48762,
+      "sha256": "b9761b0c76535eafbf9658a3a59c39ca1fc7bca49af5c91e171058ed13fb1f27",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/party.js",
+      "bytes": 80026,
+      "sha256": "36886a002c117a9ffffce471ee7ac8d611124603089c0cda8b3d849e6ad3faf1",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "bytes": 296,
+      "sha256": "723a676b5f0e943f09140f1e963b3052108e30d6e02da063c219e2305d000bf3",
+      "matchesPrepared": true
+    },
+    {
+      "path": "sw.js",
+      "bytes": 20797,
+      "sha256": "d1ebc6c5d94497c5fb27b4c9bfaccb2624e36a4ef6d437d01593167c38e053ee",
+      "matchesPrepared": true
+    }
+  ],
+  "focusedPassageCases": 108,
+  "existingFocusedSuites": [
+    "travel-party-collision",
+    "crowd-escape",
+    "companion-judgment-dev106/recall-check",
+    "companion-judgment-dev106/check"
+  ],
+  "phoneStartup": "Passed real shell startup and Recall tick without JavaScript exceptions.",
+  "broadCiRan": false,
+  "workflowRestoration": "Completed in subsequent closeout commit; normal workflow retained byte-for-byte; temporary publisher removed.",
+  "limits": "Focused behavior and public-byte verification do not certify owner-device comfort or FPS. Separate critical-health destination, charge/construction priority and reassessment-delay findings remain open."
+}
