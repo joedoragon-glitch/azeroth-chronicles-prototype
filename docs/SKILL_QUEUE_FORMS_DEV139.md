@@ -29,6 +29,6 @@ Focused real-shell coverage: `tests/skill-queue-forms-browser.test.cjs`, evidenc
 
 ## Delivery state
 
-Prepared from published main `7d9d89ed19e3bcedda2893b8726a7a99088a156c`. Implementation checkpoint `dd96a19df94cf7d9380bd025735eb0252615c635` is preserved on `fix/skill-queue-forms-dev139` with an exact local/remote Git tree match. Final gesture/UI review, generated/syntax/build consistency and locked changed-source formatting pass.
+Published in PR #375 as `ef7b0b849859f8bc355e3c40710d1cd3fa128a38`. Package-only publisher run [39661237073](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39661237073) succeeded. Candidate `7a55016d054505dce8a12c4d814309a70b5ba0d3` has exact local/remote tree `42a6c45b66ca401f6c019d7249866e8134657b0e`. The exact public build and ten checked runtime resources match the prepared source; [publication receipt](evidence/SKILL_QUEUE_DEV139_PUBLICATION_20261021.json).
 
-Package-only publication is next under the owner's established phone-play workflow. Broad CI/full-game/device suites remain deferred. Restore normal `pages.yml` byte-for-byte and remove the temporary publisher after verified publication.
+Normal `pages.yml` is restored byte-for-byte and the temporary publisher removed in closeout. No broad CI/full-game/device suites ran. Existing charge-interruption, 54 charged-opener and cooldown-only evidence was reused; Ranger domain/support-feedback, 63 focused browser input/lifecycle cases, generated/syntax/build and locked changed-source formatting pass. Owner phone comfort/gameplay remains for Joel's own play; no FPS claim or further automatic work. No implementation or publication task remains for this release.

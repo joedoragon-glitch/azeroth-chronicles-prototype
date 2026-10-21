@@ -1,0 +1,79 @@
+{
+  "version": "0.9.1+snapshot.dev.139",
+  "pr": 375,
+  "mergeCommit": "ef7b0b849859f8bc355e3c40710d1cd3fa128a38",
+  "candidateCommit": "7a55016d054505dce8a12c4d814309a70b5ba0d3",
+  "candidateTree": "42a6c45b66ca401f6c019d7249866e8134657b0e",
+  "publisherRunId": 39661237073,
+  "publisherRunUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39661237073",
+  "site": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/",
+  "verifiedAt": "2026-10-21T19:24:31.933491+00:00",
+  "publishedBuild": "ef7b0b849859f8bc355e3c40710d1cd3fa128a38",
+  "publicFiles": [
+    {
+      "path": "index.html",
+      "bytes": 5646,
+      "sha256": "1b0ca7a29dd6c5c4d57adb28e31a47b1a6c8b7a7845a3ed57872c46a4332ae20",
+      "matchesPrepared": true
+    },
+    {
+      "path": "phone.html",
+      "bytes": 5647,
+      "sha256": "9bcc581900bbd5c85d9a5416f5a3bc10f4eea7b9d1f2d68b2c66774c317912b8",
+      "matchesPrepared": true
+    },
+    {
+      "path": "prototype.html",
+      "bytes": 5646,
+      "sha256": "1b0ca7a29dd6c5c4d57adb28e31a47b1a6c8b7a7845a3ed57872c46a4332ae20",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/app.js",
+      "bytes": 163816,
+      "sha256": "398f39cbf2a174e4f6a9c6782327014f972034ba60c3dde41df86c65e7ab73bf",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/party.js",
+      "bytes": 79860,
+      "sha256": "3a4c5750756600f673b318030bb214bb9d8ed6c072b84576fb3c61a38b02c5b0",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/hero-presentation.js",
+      "bytes": 26024,
+      "sha256": "cca5f3ebb03e472b1495156b73be9de4bbe20f51b1d5f0580719e6c5e5845a0e",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "bytes": 220169,
+      "sha256": "67f43cc8531b005050cd2eccd3256a14001754a5802ece8bcaa97f4a8ec2ce9d",
+      "matchesPrepared": true
+    },
+    {
+      "path": "styles/prototype.css",
+      "bytes": 17881,
+      "sha256": "6002f6d5f44d5360f71092da650342ce21aa4d80f584626d0b386bea1416fd68",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "bytes": 296,
+      "sha256": "651d0e63da6bb6c56cf8f4cf302566a857a11b4de17c45c4a8e7c25dbcfc7729",
+      "matchesPrepared": true
+    },
+    {
+      "path": "sw.js",
+      "bytes": 20797,
+      "sha256": "fca38e16674436cfdab9447a150224a37ba80ef863d961c258f968e7fd450f29",
+      "matchesPrepared": true
+    }
+  ],
+  "focusedBrowserCases": 63,
+  "rangerDomainChecks": "Passed real tick, priority, cooldown, duplicate, Silence, multiple-caster, lifecycle and snapshot/reload cases; original support-feedback suite passes.",
+  "broadCiRan": false,
+  "workflowRestoration": "Completed in subsequent closeout commit; normal workflow retained byte-for-byte; temporary publisher removed.",
+  "limits": "Public-byte verification and focused Chromium shell checks do not certify owner-phone comfort or FPS."
+}
