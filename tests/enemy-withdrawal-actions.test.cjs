@@ -53,7 +53,11 @@ const mob =
       form,
     });
 const captain = (id) => (c, p) =>
-  Object.assign(mob('goblin', false)(c, p), { captain: true, captainProfile: id });
+  Object.assign(mob('goblin', false)(c, p), {
+    captain: true,
+    roomCaptain: id === 'supply-crown',
+    captainProfile: id,
+  });
 const boss =
   (id, form = 'normal') =>
   (c, p) =>
@@ -85,6 +89,10 @@ for (const id of Object.keys(C.rules.roomCaptains))
     step();
     const a = e.telegraph;
     assert(a?.withdrawal, id + ' starts a skill');
+    if (id === 'supply-crown') {
+      assert.equal(e.roomCaptain, true, 'native Dreadmaw actor dispatch is active');
+      assert(a.dreadMechanic, 'the selected withdrawal really uses an agricultural mechanic');
+    }
     assert(!a.charge && !a.landing);
     assert.equal(a.total, a.timer);
     const x = e.x;
@@ -123,6 +131,47 @@ for (const id of Object.keys(C.rules.attacks))
       assert(!e.motion);
       assert(e.cd > 0 || e.telegraph);
     });
+test('native Dreadmaw withdrawal closure deliberately recenters its warned gaps', () => {
+  const c = new C('normal', 'mage', () => 0.5);
+  c.enter('supply-crown');
+  const e = c.zone().enemies.find((u) => u.roomCaptain && u.captainProfile === 'supply-crown');
+  assert(e, 'use the real authored captain, not a generic captain double');
+  c.s.party = [];
+  c.zone().enemies = [e];
+  Object.assign(e, { x: 120, y: 120, aggro: true, cd: 0, specialCd: 0, summonCd: 100 });
+  assert(!c.blocked(e.x, e.y, c.zoneId, 20));
+  Object.assign(c.hero, { x: e.x + 140, y: e.y });
+  let a;
+  for (let roll = 0; roll <= 100; roll++) {
+    c.random = () => roll / 101;
+    e.telegraph = null;
+    e.sequence = [];
+    e.specialCd = 0;
+    delete e.lastCaptainAttack;
+    c.enemyWithdrawalAction(e, c.hero);
+    if (e.telegraph?.dreadMechanic === 'closure') {
+      a = e.telegraph;
+      break;
+    }
+  }
+  assert(a?.withdrawal, 'the native withdrawal selector starts the real closure');
+  const anchor = { x: a.x, y: a.y },
+    gaps = [...a.gaps],
+    timer = a.timer;
+  assert(
+    Math.hypot(anchor.x - e.x, anchor.y - e.y) > 1,
+    'native terrain needs an offset initial plan',
+  );
+  c.enemyWithdrawalCastPosition(e);
+  assert.deepEqual({ x: a.x, y: a.y }, { x: e.x, y: e.y });
+  assert.deepEqual(a.gaps, gaps, 'the approved shift retains the warned gap directions');
+  assert.equal(a.timer, timer, 'recentring does not restart the warning');
+  c.resolveAttack(e);
+  assert(e.dreadClosure, 'native resolution creates the actual specialist ring');
+  assert.deepEqual({ x: e.dreadClosure.x, y: e.dreadClosure.y }, { x: a.x, y: a.y });
+  assert.deepEqual(e.dreadClosure.gaps, gaps);
+  // Terrain may obstruct an opening after the shift: no guaranteed-exit rule.
+});
 test('support healing wins before firing, skills or Rogue; full cooldown and pulses retained', () => {
   const { c, e, ally, step } = arena(mob('skeleton', true));
   ally.hp = ally.maxHp * 0.5;

@@ -1,0 +1,4 @@
+PASS preservation gate rejects unlisted rule
+PASS preservation gate rejects approved field changed again
+PASS preservation gate rejects approved method changed again
+PASS preservation gate rejects historically unchanged method

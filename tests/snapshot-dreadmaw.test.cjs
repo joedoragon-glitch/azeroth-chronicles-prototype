@@ -2,12 +2,18 @@
 const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine.js');
 const rogue = require('./fixtures/snapshot-dread-rogue.json'),
+  upkeep = require('./fixtures/snapshot-dread-upkeep-dev145.json'),
   crypto = require('node:crypto');
 const sha = (s) => crypto.createHash('sha256').update(s).digest('hex');
 // Reconstruct the protected original with only the documented director changes
 // reversed. Any other rule mutation still fails the original SHA assertion.
 const protectedRules = JSON.parse(JSON.stringify(C.rules.tacticalFoundation));
-for (const change of [...(rogue.approvedRuleChanges?.changes || []), ...(rogue.authorizedPlaytestChanges?.changes || []), ...(rogue.authorizedPr311SpeciesChanges?.changes || [])]) {
+for (const change of [
+  ...(rogue.approvedRuleChanges?.changes || []),
+  ...(rogue.authorizedPlaytestChanges?.changes || []),
+  ...(rogue.authorizedPr311SpeciesChanges?.changes || []),
+  ...upkeep.ruleGroups.flatMap((group) => group.changes),
+]) {
   let owner = protectedRules;
   for (const key of change.path.slice(0, -1)) owner = owner[key];
   const key = change.path.at(-1);
@@ -15,14 +21,25 @@ for (const change of [...(rogue.approvedRuleChanges?.changes || []), ...(rogue.a
   if (change.added) delete owner[key];
   else owner[key] = change.before;
 }
-assert.equal(sha(JSON.stringify(protectedRules)), rogue.ruleSha256,
-  'Rogue rules remain original apart from the documented approved deltas');
-for (const [method, expected] of Object.entries(rogue.methods))
+assert.equal(
+  sha(JSON.stringify(protectedRules)),
+  rogue.ruleSha256,
+  'Rogue rules remain original apart from the documented approved deltas',
+);
+for (const method of Object.keys(upkeep.methodChanges))
+  assert(Object.hasOwn(rogue.methods, method), method + ' must be an existing protected method');
+for (const [method, expected] of Object.entries(rogue.methods)) {
+  const change = upkeep.methodChanges[method];
+  if (change) {
+    assert.equal(change.beforeSha256, expected, method + ' keeps its immutable historical receipt');
+    assert(change.sourceCommits.length, method + ' has reviewed change provenance');
+  }
   assert.equal(
     sha(C.prototype[method].toString()),
-    expected,
-    method + ' unchanged from certified b87e22dc',
+    change?.afterSha256 || expected,
+    method + ' matches its original or explicitly reconciled approved receipt',
   );
+}
 const plans = C.rules.roomCaptains['supply-crown'].attacks;
 assert.deepEqual(
   plans.map((p) => p.name),
@@ -262,8 +279,17 @@ for (const end of ['snapshot', 'raw-restore', 'travel', 'cancel', 'peace']) {
       c.s.phase = 'peace';
       c.updateCinderRegularState(e, 0.1);
     }
-    assert(!e.dreadClosure);
-    assert(!e.dreadVapors);
+    // Door travel replaces native defenders; check the live same-ID actor.
+    const checked =
+      end === 'travel' ? c.s.zones['supply-crown'].enemies.find((u) => u.id === e.id) : e;
+    assert(checked, 'the native captain remains in the actual Treasury roster');
+    if (end === 'travel') {
+      assert.notEqual(checked, e, 'door reset replaces the old encounter actor');
+      assert.equal(checked.aggro, false);
+      assert(!checked.telegraph && !checked.motion);
+    }
+    assert(!checked.dreadClosure);
+    assert(!checked.dreadVapors);
     if (end !== 'peace') assert(c.s.zones['supply-crown'].enemies.every((u) => !u.dreadFeedUntil));
   }
 }

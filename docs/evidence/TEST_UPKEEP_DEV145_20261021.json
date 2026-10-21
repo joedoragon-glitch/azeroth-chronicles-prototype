@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-21",
+  "pr": 382,
+  "baseCommit": "390fea7307b14cbefeb36feaf137b90e28148da1",
+  "liveVersion": "0.9.1+snapshot.dev.145",
+  "runtimeChanged": false,
+  "existingSuites": {
+    "night-ringleader-rogue": "passed: actual Nightmare sunset/night, escalation, pets, restore, peace, repeated Rogue",
+    "enemy-support-healing": "passed: sunset/day then actual night scaling, existing species/faction/pulses/cooldowns/save/renderer",
+    "enemy-withdrawal-actions": "passed: 62 scenarios, native Dreadmaw dispatch and accepted shifted closure",
+    "snapshot-dreadmaw": "passed: immutable original hash reconstructed; 42 live casts, 42 fatal recovery cases, 12 contextual pilots",
+    "cindermaw-ministry": "passed: native placement/refusal, four mode/form move groups, lifecycle, 120 fatal boundaries, all seven native selector slots"
+  },
+  "preservationNegativeChecks": [
+    "unlisted rule rejected",
+    "approved field changed again rejected",
+    "approved method changed again rejected",
+    "historically unchanged method changed rejected"
+  ],
+  "historicalFixtureUnchanged": true,
+  "historicalFixtureSha256": "af8a29d080da2f56e1f1e979ab74ea6a4568fe0c51514448444704a18b8525eb",
+  "reviewedRuleDeltas": 46,
+  "reviewedMethodDeltas": 4,
+  "broadCiRan": false,
+  "deploymentNeeded": false,
+  "evidenceDirectory": "tools/survival-test-upkeep-dev145"
+}

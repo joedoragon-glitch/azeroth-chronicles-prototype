@@ -4,6 +4,13 @@ const C = require('../src/prototype/engine');
 for (const mode of ['normal', 'nightmare', 'developer']) {
   const c = new C(mode, 'mage', () => 0.9);
   c.s.clock = 500;
+  if (mode === 'nightmare') {
+    assert.equal(c.s.nightmareIntroRemaining, C.rules.dayCycle.twilightSeconds);
+    assert.equal(c.night(), false, 'fresh Nightmare sunset retains day rules even at clock 500');
+    assert.deepEqual(c.multipliers(), { hp: 1, damage: 1 });
+    c.advanceDaylight(c.s.nightmareIntroRemaining);
+    assert.equal(c.night(), true, 'the actual sunset boundary starts permanent night');
+  }
   c.victory('thorn', 'normal');
   c.victory('crypt', 'normal');
   assert.equal(c.nightPoints(), 2);

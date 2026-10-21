@@ -25,9 +25,24 @@ function scene(mode = 'normal', form = 'normal', cls = 'mage', succession = fals
   c._tacticalRogueNext = new Map([[e.id, 1e6]]);
   return { c, e };
 }
+// Cordon's expanded footprint needs two real openings. Keep native terrain;
+// the default roost anchor can reject this slot until Cindermaw relocates.
+function positionForCordon(c, e) {
+  assert.equal(c.zoneId, 'crown');
+  const point = { x: 2260, y: 1750 };
+  assert(!c.blocked(point.x, point.y, c.zoneId, 15), 'Cordon fixture body fits native terrain');
+  assert(c.clearSegment(e, point, 15), 'the nearby Cordon origin is physically reachable');
+  Object.assign(e, point);
+  Object.assign(c.hero, c.safe(e.x + 70, e.y));
+  assert(c.cinderGapPlan(e, c.hero), 'forced Cordon fixture has both native openings');
+}
 function cast(c, e, slot, resolve = true) {
   const built = c.buildBossAttack(e, slot, c.bossAttackTarget(e, c.hero, slot));
   assert(built.first, 'actual attack plan exists for slot ' + slot);
+  if (slot === 0) {
+    assert(Number.isFinite(built.first.gapAngle), 'forced ring has a valid first gap');
+    assert(Number.isFinite(built.first.nextGap), 'forced ring has a valid second gap');
+  }
   e.telegraph = built.first;
   e.sequence = built.sequence;
   if (resolve) {
@@ -53,6 +68,10 @@ for (const mode of ['normal', 'nightmare'])
     // Cordon is a live contracting ring, with one real gap and exactly one change.
     {
       const { c, e } = scene(mode, form, 'mage', false, true);
+      assert.equal(c.cinderGapPlan(e, c.hero), null, 'current roost origin cannot fit two gaps');
+      assert.equal(c.bossAttackWeights(e, c.hero)[0], 0, 'real selector rejects invalid Cordon');
+      positionForCordon(c, e);
+      assert(c.bossAttackWeights(e, c.hero)[0] > 0, 'native valid placement restores eligibility');
       const a = cast(c, e, 0);
       assert.equal(FX.warningShapes(a, []).length, 1);
       const start = e.cinderCordon.radius,
@@ -260,8 +279,9 @@ for (const mode of ['normal', 'nightmare'])
 
 // Live snapshot must clear copies only; historical raw saves and every cancel boundary drop orders.
 for (const boundary of ['snapshot', 'raw-restore', 'disengage', 'death', 'travel']) {
-  const { c, e } = scene(),
-    troops = allies(c, e, 4);
+  const { c, e } = scene('normal', 'normal', 'mage', false, true);
+  positionForCordon(c, e);
+  const troops = allies(c, e, 4);
   // Use persistent native identities here: travel removes owned magical staff.
   for (const u of troops) {
     u.summon = false;
@@ -271,6 +291,12 @@ for (const boundary of ['snapshot', 'raw-restore', 'disengage', 'death', 'travel
   cast(c, e, 0);
   cast(c, e, 5);
   const originalState = e.cinderDelegation;
+  assert(e.cinderCordon, 'cleanup fixture starts a real Cordon');
+  assert(originalState?.members.length, 'cleanup fixture starts real delegate orders');
+  assert(
+    troops.some((u) => u.cinderGuard),
+    'cleanup fixture starts real protection',
+  );
   if (boundary === 'snapshot') {
     const s = c.snapshot();
     assert.equal(e.cinderDelegation, originalState);
@@ -320,7 +346,8 @@ for (const mode of ['normal', 'nightmare'])
     for (const cls of ['paladin', 'mage', 'ranger'])
       for (const succession of [false, true])
         for (const kind of ['cordon', 'distraint', 'equalisation', 'delegation', 'retaliation']) {
-          const { c, e } = scene(mode, form, cls, succession);
+          const { c, e } = scene(mode, form, cls, succession, kind === 'cordon');
+          if (kind === 'cordon') positionForCordon(c, e);
           const troops = allies(c, e, 4);
           c.hero.hp = 1;
           c.hero.immune = 0;
