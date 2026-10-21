@@ -7523,6 +7523,9 @@
       },
     },
     thornPatrol: {
+      // Start toward the southern crossing, away from the opening woodland.
+      startLeg: 7,
+      direction: -1,
       speed: 82,
       captiveSpeed: 240,
       separation: 55,

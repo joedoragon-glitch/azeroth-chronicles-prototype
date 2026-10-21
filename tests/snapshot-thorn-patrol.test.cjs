@@ -23,6 +23,25 @@ function frame(c, e, n) {
   assert(!c.blocked(n.x, n.y), 'Mira must remain interactable outside walls');
   assert(dist(e, { x: 300, y: 350 }) > 320, 'circuit avoids Millhaven');
 }
+// The initial circuit must reach the southern/remote sites before the opening
+// Goblin territory. Exercise real movement, then preserve an in-flight saved leg.
+{
+  const { c, e, n } = fixture();
+  const order = [];
+  let prior;
+  for (let i = 0; i < 1600 && order.length < 8; i++) {
+    frame(c, e, n);
+    if (e.thornLeg !== prior) {
+      order.push(e.thornLeg);
+      prior = e.thornLeg;
+    }
+  }
+  assert.deepEqual(order, [7, 6, 5, 4, 3, 2, 1, 0]);
+  Object.assign(e, { thornLeg: 3 });
+  c.s.mercyTime = 0;
+  const restored = C.restore(c.snapshot());
+  assert.equal(restored.zone().enemies.find((u) => u.id === e.id).thornLeg, 3);
+}
 let cases = 0;
 for (const cls of ['paladin', 'mage', 'ranger'])
   for (const mode of ['normal', 'nightmare'])
@@ -55,7 +74,8 @@ for (const cls of ['paladin', 'mage', 'ranger'])
       e.telegraph = { timer: 99 };
       c.s.projectiles = [{ sourceId: e.id }];
       c.s.hazards = [{ sourceId: e.id }];
-      const activeSnapshot = c.snapshot(), interruptedLeg = e.thornLeg;
+      const activeSnapshot = c.snapshot(),
+        interruptedLeg = e.thornLeg;
       Object.assign(c.hero, { x: 300, y: 350 });
       frame(c, e, n);
       assert(!e.aggro && !e.returning, 'ordinary reset resumes from interception point');
@@ -78,7 +98,7 @@ for (const cls of ['paladin', 'mage', 'ranger'])
       assert(dist(e, e.home) < 1e-7);
       assert(dist(e, n) <= 100);
       assert.equal(e.hp, e.baseHp);
-      assert.equal(e.thornLeg, 1);
+      assert.equal(e.thornLeg, C.rules.thornPatrol.startLeg);
       const prev = { x: e.x, y: e.y },
         np = { x: n.x, y: n.y };
       c.enter('march');
