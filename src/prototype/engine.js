@@ -2357,22 +2357,13 @@
       return true;
     }
     train(id, type = 'soldier') {
-      if (!['soldier', 'archer'].includes(type)) return false;
-      const b = this.zone().buildings.find((b) => b.id === id),
-        price = this.barracksRecruitPrice(type);
-      if ((this.s.expeditionRank || 1) < 2) {
-        this.say('Recruitment unlocks at Expedition 2.');
+      const reason = this.companionRecruitmentReason(type, id ?? '');
+      if (reason) {
+        this.say(reason);
         return false;
       }
-      if (
-        !b ||
-        b.progress < 4 ||
-        b.queue > 0 ||
-        !price ||
-        this.rosterCount() + this.queuedCompanions() >= 200 ||
-        !this.spend(price)
-      )
-        return false;
+      const b = this.zone().buildings.find((b) => b.id === id);
+      if (!this.spend(this.barracksRecruitPrice(type))) return false;
       b.queue = 4;
       b.queueType = type;
       return true;

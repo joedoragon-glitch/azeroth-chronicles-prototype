@@ -34,18 +34,29 @@
           };
         });
       }
-      recruitPet(family, barracksId) {
+      petRecruitmentReason(family, barracksId) {
         const b = this.zone().buildings.find(
           (x) => x.id === barracksId && x.kind === 'barracks' && x.progress >= 4,
         );
-        if (
-          !b ||
-          !this.petUnlocked(family) ||
-          this.refugeThreat() ||
-          this.s.party.some((u) => u.type === 'pet' && u.petFamily === family) ||
-          this.rosterCount() + this.queuedCompanions() >= 200
-        )
+        if (!b) return 'Recruiting a pet requires a completed local Barracks.';
+        if (!this.petDefinition(family)) return 'This pet is not available in the collection.';
+        if (!this.petUnlocked(family))
+          return 'Defeat TRUE ' + this.boss(family).name + ' to unlock this pet.';
+        if (this.refugeThreat())
+          return 'Cannot recruit a pet while nearby enemies are engaged. Retreat and end the fight first.';
+        if (this.s.party.some((u) => u.type === 'pet' && u.petFamily === family))
+          return 'This pet already belongs to your company. Add it from reserve or recover it if fallen.';
+        if (this.rosterCount() + this.queuedCompanions() >= 200)
+          return 'Company limit reached: 200 companions, including reserves and queued recruits.';
+        return '';
+      }
+      recruitPet(family, barracksId) {
+        const reason = this.petRecruitmentReason(family, barracksId);
+        if (reason) {
+          this.say(reason);
           return false;
+        }
+        const b = this.zone().buildings.find((b) => b.id === barracksId);
         const p = this.safe(b.x + 45, b.y + 45);
         const u = this.unit('pet', p.x, p.y, family);
         u.active = this.activeParty().length < this.barracksFieldCap(b);
