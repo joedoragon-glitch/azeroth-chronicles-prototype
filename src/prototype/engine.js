@@ -25,6 +25,16 @@
   const pursuitBurstSeconds = R.balance.pursuit.burstSeconds,
     pursuitBurstMultiplier = R.balance.pursuit.burstMultiplier,
     mercyStartRadius = R.balance.pursuit.mercyStartRadius;
+  // Civilian restoration routes are runtime-only; only the worker's position saves.
+  const archiveRestorationTrips = new WeakMap();
+  const archiveRepairSites = [
+    { x: 1130, y: 560 },
+    { x: 790, y: 430 },
+    { x: 480, y: 650 },
+    { x: 530, y: 850 },
+    { x: 700, y: 1180 },
+    { x: 1030, y: 945 },
+  ];
   class Campaign {
     constructor(mode = 'normal', heroClass = 'paladin', random = Math.random, options = {}) {
       if (!['normal', 'nightmare', 'developer'].includes(mode) || !classes[heroClass])
@@ -628,6 +638,48 @@
       const room = this.s.zones.archive;
       return !room?.enemies.some((e) => e.type === 'boss' && e.family === 'archive' && e.hp > 0);
     }
+    archiveRestorerAvailable() {
+      return !!this.s.rescued.archive && !!this.s.keeperPact && this.keeperAvailable();
+    }
+    updateArchiveRestoration(dt) {
+      if (this.s.zone !== 'archive') return;
+      const n = this.zone().npcs.find((n) => n.id === 'archive-restorer');
+      if (!n) return;
+      if (!this.archiveRestorerAvailable()) {
+        archiveRestorationTrips.delete(n);
+        return;
+      }
+      let trip = archiveRestorationTrips.get(n);
+      if (!trip) {
+        let nearest = 0;
+        for (let i = 1; i < archiveRepairSites.length; i++)
+          if (dist(n, archiveRepairSites[i]) < dist(n, archiveRepairSites[nearest])) nearest = i;
+        trip = { index: (nearest + 1) % archiveRepairSites.length, wait: 6, path: [], retry: 0 };
+        archiveRestorationTrips.set(n, trip);
+      }
+      if (trip.wait > 0) {
+        trip.wait = Math.max(0, trip.wait - dt);
+        return;
+      }
+      const target = archiveRepairSites[trip.index];
+      if (dist(n, target) < 4) {
+        trip.index = (trip.index + 1) % archiveRepairSites.length;
+        trip.wait = 6;
+        trip.path = [];
+        trip.retry = 0;
+        return;
+      }
+      trip.retry = Math.max(0, trip.retry - dt);
+      if (!trip.path.length && trip.retry <= 0) {
+        trip.path = this.route(n, target);
+        trip.retry = 2;
+      }
+      while (trip.path.length && dist(n, trip.path[0]) < 2) trip.path.shift();
+      if (trip.path.length && !this.move(n, trip.path[0], 42, dt)) {
+        trip.path = [];
+        trip.retry = 2;
+      }
+    }
     keeperPactReady() {
       return this.keeperAvailable() && !!this.s.rescued.archive;
     }
@@ -635,7 +687,7 @@
       if (!this.keeperPactReady() || this.s.keeperPact) return false;
       this.s.keeperPact = true;
       this.event('archiveKnowledge', { fact: 'keeperPact' });
-      this.say('The Keeper takes your word. His shelves are yours to consult.');
+      this.say('The Keeper takes your word. Neri will return freely to restore the Archive.');
       return true;
     }
     keeperReadLedger() {
@@ -743,6 +795,8 @@
           !n.internalSite &&
           !this.bundleCollected(n) &&
           (n.kind !== 'keeper' || this.keeperAvailable()) &&
+          (n.id !== 'cage-archive' || !this.s.rescued.archive) &&
+          (n.id !== 'archive-restorer' || this.archiveRestorerAvailable()) &&
           (!n.thornFootprint || n.expires > this.s.time) &&
           (n.id !== 'cage-thorn' || !this.s.rescued.thorn),
       );
@@ -3598,6 +3652,7 @@
       if (R.resourceMode.manaEnabled) h.mp = Math.min(h.maxMp, h.mp + this.manaRegenRate() * dt);
       this.updateNight();
       this.updateEscort(dt);
+      this.updateArchiveRestoration(dt);
       this.checkClear();
       this.checkMinis();
       for (const l of [...this.s.loot])

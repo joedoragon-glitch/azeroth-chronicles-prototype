@@ -1515,6 +1515,7 @@
   const treasuryWalls = {
     'supply-vale': [
       {
+        id: 'stores-divider',
         axis: 'y',
         x1: 405,
         x2: 465,
@@ -1528,6 +1529,7 @@
     ],
     'supply-march': [
       {
+        id: 'flood-divider',
         axis: 'x',
         x1: 185,
         x2: 835,
@@ -3966,6 +3968,12 @@
         {
           id: 'preservation-hall',
           bounds: [960, 1390, 1000, 1390],
+        },
+        {
+          // Shared floor, not an exterior expansion: bridge radius clearance
+          // between the flooded room and hall without changing their outline.
+          id: 'lower-hall-join',
+          bounds: [900, 1000, 1000, 1380],
         },
       ],
       partitions: [
@@ -6449,7 +6457,7 @@
       rangeMultiplier: 1.3,
       projectileSpeedMultiplier: 1.3,
       compoundHalfSize: 190,
-      interiorZones: ['abyss', 'citadel', 'side-highlands-signal'],
+      interiorZones: ['abyss', 'citadel', 'side-highlands-signal', ...supplyRooms.map((r) => r.id)],
       outdoorAreas: [
         {
           zone: 'crown',

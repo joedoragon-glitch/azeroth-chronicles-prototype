@@ -1,0 +1,40 @@
+{
+  "version": "0.9.1+snapshot.dev.125",
+  "before": {
+    "x": 940,
+    "y": 1200
+  },
+  "after": {
+    "x": 1010,
+    "y": 1200
+  },
+  "outerWall": true,
+  "partition": true,
+  "treasuries": [
+    {
+      "id": "supply-vale",
+      "count": 6,
+      "fortified": 6,
+      "captain": true
+    },
+    {
+      "id": "supply-march",
+      "count": 6,
+      "fortified": 6,
+      "captain": true
+    },
+    {
+      "id": "supply-highlands",
+      "count": 7,
+      "fortified": 7,
+      "captain": true
+    },
+    {
+      "id": "supply-crown",
+      "count": 11,
+      "fortified": 11,
+      "captain": true
+    }
+  ],
+  "errors": []
+}

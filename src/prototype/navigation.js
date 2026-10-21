@@ -654,6 +654,7 @@
             }
           } else
             for (const w of R.treasuryWalls?.[zone] || []) {
+              if (fort?.partitions.has(w.id)) continue;
               const hit =
                 x > w.x1 - radius && x < w.x2 + radius && y > w.y1 - radius && y < w.y2 + radius;
               if (!hit) continue;

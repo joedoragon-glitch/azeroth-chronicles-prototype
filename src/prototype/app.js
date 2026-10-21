@@ -111,6 +111,8 @@
     'Gathering route is blocked by terrain.': 'El terreno bloquea la ruta de recolección.',
     'Try another resource site or Recall the squad.':
       'Prueba otro recurso o reagrupa al escuadrón.',
+    '“I return by choice. The soaked pages still need drying, and the damaged shelves need care.” Neri offers her usual tonics and training here.':
+      '«Vuelvo porque quiero. Las páginas mojadas aún necesitan secarse, y las estanterías dañadas necesitan cuidados». Neri ofrece aquí sus tónicos y entrenamientos habituales.',
     'Return death recovery to refuge': 'Volver al refugio al morir',
     'Set death recovery point': 'Establecer punto de reaparición',
     'Recover here within this region. Entering another region switches to its refuge.':

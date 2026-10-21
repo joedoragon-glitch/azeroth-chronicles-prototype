@@ -105,17 +105,20 @@
           );
         }
         if (cfg.interiorZones.includes(z.id)) {
-          const architecture = R.dungeonArchitecture[z.id];
+          const architecture = R.dungeonArchitecture[z.id] || R.treasuryArchitecture[z.id];
           if (architecture) {
             const partitions = architecture.partitions.map((p) => p.id);
             for (const area of architecture.walkable)
               add(z.id + '-' + area.id, rectangle(...area.bounds), [], partitions);
           } else {
-            const size = this.zoneSize();
+            const size = this.zoneSize(),
+              treasury = !!this.supplyRoom(z.id),
+              edge = treasury ? 40 : 70;
             add(
               z.id,
-              rectangle(70, size - 70, 70, size - 70),
+              rectangle(edge, size - edge, edge, size - edge),
               z.props.filter((p) => String(p.id).startsWith('side-wall-')),
+              treasury ? (R.treasuryWalls[z.id] || []).map((p) => p.id) : [],
             );
           }
         }
