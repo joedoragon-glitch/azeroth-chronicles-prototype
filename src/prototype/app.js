@@ -1921,6 +1921,7 @@
               ? 'Cannot rest during combat.'
               : 'Rest ready in ' + Math.ceil(game.s.restCooldown) + 's.',
           );
+        else if (n.treasuryRecovery) status(game.messages.at(-1));
         else if (n.kind === 'bundle' || n.kind === 'fountain')
           status(n.kind === 'bundle' ? 'Clear the guards first.' : 'Fountain unavailable.');
         else if (n.kind === 'resource')

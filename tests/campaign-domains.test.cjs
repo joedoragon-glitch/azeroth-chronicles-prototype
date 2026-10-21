@@ -52,6 +52,7 @@ for (const owner of [
   'party',
   'party-pets',
   'economy',
+  'treasury',
   'rewards',
 ]) {
   assert(inventory.core.includes('src/prototype/' + owner + '.js'));

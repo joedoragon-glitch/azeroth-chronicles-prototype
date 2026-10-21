@@ -2285,7 +2285,7 @@
           if (
             e.renderKind === 'npc' &&
             e.kind === 'bundle' &&
-            game.supplyRoom() &&
+            (game.supplyRoom() || e.treasuryRecovery) &&
             !game.bundleCollected(e)
           ) {
             ctx.save();

@@ -68,8 +68,9 @@
         return Math.ceil(this.hero.gold * this.deathPenaltyFraction());
       }
       applyDeathPenalty() {
-        const lost = this.deathPenaltyAmount();
+        const lost = Math.min(Math.max(0, this.hero.gold), this.deathPenaltyAmount());
         this.hero.gold = Math.max(0, this.hero.gold - lost);
+        this.depositTreasuryDeathLoss(lost);
         return lost;
       }
       spend(amount) {
@@ -92,6 +93,11 @@
         this.hero.gold += gold;
         this.s.statistics.goldEarned += gold;
         this.xp(xp);
+      }
+      refundCrowns(amount) {
+        if (!Number.isFinite(amount) || amount <= 0) return false;
+        this.hero.gold += amount;
+        return true;
       }
       expeditionSupportCost(id) {
         const def = R.expeditionSupportSkills?.[id],

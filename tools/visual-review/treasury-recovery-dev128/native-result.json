@@ -1,0 +1,23 @@
+{
+  "url": "local candidate",
+  "phone": "375x812",
+  "captainAnnouncement": "Scornfang defeated · 60 crowns recoverable",
+  "automaticPayout": false,
+  "frontierDroppedAtKill": {
+    "diedAt": {
+      "x": 1400,
+      "y": 1080
+    },
+    "drop": {
+      "x": 1400,
+      "y": 1080
+    },
+    "balance": 20
+  },
+  "frontierTouchRecoveryAfterReload": true,
+  "touchCacheCollection": true,
+  "recovered": 60,
+  "wallet": 220,
+  "saveReload": true,
+  "javascriptErrors": []
+}
