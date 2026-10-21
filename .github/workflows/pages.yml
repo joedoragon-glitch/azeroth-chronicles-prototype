@@ -1,9 +1,9 @@
 name: Test and deploy app
 on:
   push:
-    branches: [main]
+    branches: [owner-ranger-feedback-dev119-hold]
   pull_request:
-    branches: [main, perf/v09-integration-20261010]
+    branches: [owner-ranger-feedback-dev119-hold]
   workflow_dispatch:
 
 permissions:
