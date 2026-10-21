@@ -17,6 +17,7 @@
       depositTrips = new WeakMap(),
       deliveryAvoidance = new WeakMap();
     const companionJudgments = new WeakMap();
+    const rangerHealRequests = new WeakMap();
 
     class Party {
       clearCompanionJudgment(u) {
@@ -911,6 +912,70 @@
         if (!u.supportEffects) u.supportEffects = [];
         u.supportEffects.push({ type, remaining: amount, seconds: R.rangerSupport.duration });
       }
+      cancelRangerHealRequest() {
+        rangerHealRequests.delete(this);
+      }
+      queuedRangerHeal() {
+        const request = rangerHealRequests.get(this);
+        if (!request) return null;
+        const active = this.activeLivingParty().filter((u) => u.type === 'archer');
+        if (
+          request.hero !== this.hero ||
+          request.zone !== this.zoneId ||
+          request.deaths !== this.s.statistics.deaths ||
+          this.hero.hp <= 0 ||
+          this.s.challenge.pending ||
+          this.s.challenge.gameOver ||
+          !active.length
+        ) {
+          this.cancelRangerHealRequest();
+          return null;
+        }
+        const casters = active.filter((u) => !u.keeperHeld);
+        return {
+          cooldown: casters.length
+            ? Math.max(0, Math.min(...casters.map((u) => u.healCd || 0)))
+            : 0,
+          blocked: !casters.some((u) => (u.healCd || 0) <= 0 && !this.mageSilenceActive(u)),
+        };
+      }
+      requestRangerHeal() {
+        if (this.queuedRangerHeal()) {
+          this.resolveQueuedRangerHeal();
+          return true;
+        }
+        const active = this.activeLivingParty().filter((u) => u.type === 'archer'),
+          ready = this.availableRangers('health').some((u) => !this.mageSilenceActive(u));
+        if (
+          !ready &&
+          active.some((u) => (u.healCd || 0) > 0) &&
+          this.hero.hp > 0 &&
+          !this.s.challenge.pending &&
+          !this.s.challenge.gameOver
+        ) {
+          rangerHealRequests.set(this, {
+            hero: this.hero,
+            zone: this.zoneId,
+            deaths: this.s.statistics.deaths,
+          });
+          this.say('Ranger Heal queued for the hero.');
+          return true;
+        }
+        return this.rangerSupport('health', true);
+      }
+      resolveQueuedRangerHeal() {
+        if (!this.queuedRangerHeal()) return false;
+        if (!this.availableRangers('health').some((u) => !this.mageSilenceActive(u))) return false;
+        // A stored hero request must never fall back to a wounded companion.
+        // Already-full/covered heroes need no duplicate effect or paid cooldown.
+        if (this.hero.hp >= this.hero.maxHp || this.hasSupportEffect(this.hero, 'health')) {
+          this.cancelRangerHealRequest();
+          return false;
+        }
+        const cast = this.rangerSupport('health', false, this.hero);
+        if (cast) this.cancelRangerHealRequest();
+        return cast;
+      }
       rangerSupport(type, manual = true, targetOverride = null) {
         if (type === 'mana' && !R.resourceMode.manaEnabled) return false;
         if (
@@ -1041,6 +1106,8 @@
         }
       }
       autoRangerSupport() {
+        // Explicit queued hero care gets the first eligible Ranger before triage.
+        this.resolveQueuedRangerHeal();
         const h = this.hero;
         if (h.hp <= 0 || this.s.challenge.pending || this.s.challenge.gameOver) return;
         const engaged = this.manaCombatActive(),
@@ -1330,6 +1397,7 @@
         };
       }
       recallParty() {
+        this.cancelRangerHealRequest();
         if (
           this.s.recallActive &&
           this.activeLivingParty().every((u) => !u.order && !this.partyChargeState(u))

@@ -207,3 +207,9 @@ Owner chooses all available idle gatherers per ordinary source order, combat-per
 ## 21 October 2026 — dungeon preparation and leader return rules
 
 Owner requests two entrance choices: enter or build an outside Barracks with recovery selected after construction. Skip repeated prompts for camps requested from this entrance or completed camps genuinely nearby. Apply only to five main dungeons and four Treasuries; side dungeons stay direct/unchanged. Main exits return to their entrance. Unfinished encounters reset on exit/entry. After captain victory, Treasury stays empty for the existing 120-second timer; captain and garrison return together when due/safe. Doors preserve the deadline and collection permission. Main victories/TRUE progression retain their existing rules. Preserve rescued specialists, claimed treasure and death-loss balances. No new fort bonuses or free recovery services.
+
+## Cooldown queue forms — 21 October 2026
+
+Owner prefers the original small colored numbers and prioritizes reliable form selection over alternative gestures. Use normal tap versus a forgiving hold of at least 0.25s while cooling down; double tap is removed. Repeated quick taps remain normal and incur no double-tap waiting window. Light-blue numbered markers mean normal, gold means charged; button labels also name the form. Retain independent one-shot requests and the actual 0.65s charged preparation after cooldown. Ready-skill tap/hold stays unchanged. No automatic chase or saved queue. See [dev.139](SKILL_QUEUE_FORMS_DEV139.md).
+
+Ranger companion Heal follows the same one-request principle: its button/H command can queue one hero-directed cast during the Ranger's cooldown. Resolve before automatic ally triage, preserve amount/duration/caster cooldown, never redirect the queued request to another ally, and do not spend it on a full/already-covered hero. Transient lifecycle and visible queued feedback follow the hero queue.
