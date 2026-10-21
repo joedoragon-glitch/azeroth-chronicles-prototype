@@ -442,6 +442,10 @@ async function prepare(key, input, format = 'png', placement = {}) {
         ),
       'Invalid original placement normalization',
     );
+    fail(
+      sizeW * source.height === sizeH * source.width,
+      'Original placement must preserve source aspect',
+    );
     const virtualWidth = sizeW + pad.left + pad.right;
     const virtualHeight = sizeH + pad.top + pad.bottom;
     fail(

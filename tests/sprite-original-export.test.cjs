@@ -7,7 +7,7 @@ const assert = require('node:assert/strict'),
   p = require('../scripts/sprite-pipeline.cjs');
 (async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'original-export-'));
-  let candidate;
+  let candidate, rectangular;
   try {
     const pixels = Buffer.alloc(768 * 768 * 4);
     for (let y = 0; y < 768; y++)
@@ -51,12 +51,53 @@ const assert = require('node:assert/strict'),
       }),
       /aspect/,
     );
+    // A wide selected ferry original must retain its aspect while gaining edge padding.
+    const wide = path.join(dir, 'wide-original.png');
+    await sharp({ create: { width: 1536, height: 768, channels: 4, background: '#00000000' } })
+      .composite([
+        {
+          input: await sharp({
+            create: { width: 768, height: 384, channels: 4, background: '#71917b' },
+          })
+            .png()
+            .toBuffer(),
+          left: 384,
+          top: 192,
+        },
+      ])
+      .png()
+      .toFile(wide);
+    const wideBytes = fs.readFileSync(wide);
+    rectangular = await p.prepare('transport:ferry', wide, 'png', {
+      rasterScale: 4.25,
+      normalization: {
+        fullCanvasWidth: 1536,
+        fullCanvasHeight: 768,
+        padding: { left: 48, right: 48, top: 24, bottom: 24 },
+      },
+    });
+    assert.deepEqual(rectangular.record.processing.to, [612, 306]);
+    assert.deepEqual(rectangular.record.output.materialBounds, {
+      x1: 162,
+      y1: 81,
+      x2: 449,
+      y2: 224,
+    });
+    assert(fs.readFileSync(wide).equals(wideBytes));
+    await assert.rejects(
+      p.prepare('transport:ferry', wide, 'png', {
+        rasterScale: 4.25,
+        normalization: { fullCanvasWidth: 1536, fullCanvasHeight: 1536, padding: 0 },
+      }),
+      /preserve source aspect/,
+    );
     console.log(
-      'PASS one-pass original exports recover detail, preserve source bytes and reject invalid placement',
+      'PASS square/rectangular one-pass exports preserve source detail, aspect and bytes; invalid placement rejected',
     );
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
-    if (candidate) fs.rmSync(candidate.directory, { recursive: true, force: true });
+    for (const item of [candidate, rectangular])
+      if (item) fs.rmSync(item.directory, { recursive: true, force: true });
   }
 })().catch((e) => {
   console.error(e);

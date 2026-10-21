@@ -1,3 +1,5 @@
+Prepared dev.136: [Selected Tidal Twin-Hull Ferry](TIDAL_FERRY_DEV136.md), PR #372. Exact owner-selected original and native placement evidence retained; publication pending.
+
 Published dev.135: [Lantern Shore timber and ferry](LANTERN_DOCK_DEV135.md), PR #371. Exact live build/five public files match; package-only run 39586784767 succeeded. Normal workflow restored.
 
 Published: [Coastal Marches and Lantern Shore — dev.134](COASTAL_MARCHES_DEV134.md), PR #370. Coherent coastal-swamp geography/site redistribution, native day/night/phone review, current/dev133 migration and nighttime ferry challenge. Exact build/12 live files verified; package-only publication, normal workflow restored.

@@ -44,7 +44,9 @@ vm.runInNewContext(fs.readFileSync(root + '/src/prototype/visuals.js', 'utf8'), 
     const g = new C('normal', 'mage', () => 0.73);
     g.enter(zone);
     const ferry = g.zone().npcs.find((n) => n.harbor);
-    if (S.definitionFor({ ...ferry, renderKind: 'npc' }, g.regionIndex())?.key !== 'transport:ferry')
+    if (
+      S.definitionFor({ ...ferry, renderKind: 'npc' }, g.regionIndex())?.key !== 'transport:ferry'
+    )
       throw Error('Ferry raster not selected');
     g.s.clock = night ? 500 : 190;
     if (night) g.updateNight();

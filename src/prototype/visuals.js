@@ -16168,12 +16168,35 @@
             ctx.quadraticCurveTo(50, dy + 12, 14, dy + 13);
             ctx.quadraticCurveTo(-35, dy + 14, -53, dy - 4);
           });
-          line([[-47, dy], [0, dy + 7], [46, dy + 1]], '#b09b71', 1);
+          line(
+            [
+              [-47, dy],
+              [0, dy + 7],
+              [46, dy + 1],
+            ],
+            '#b09b71',
+            1,
+          );
         };
         hull(-12, '#73654b');
-        poly([[-46, -13], [40, -16], [48, 0], [-43, 5]], '#9d875d');
+        poly(
+          [
+            [-46, -13],
+            [40, -16],
+            [48, 0],
+            [-43, 5],
+          ],
+          '#9d875d',
+        );
         for (let x = -35; x < 40; x += 14)
-          line([[x, -12], [x + 5, 3]], '#6f6049', 0.7);
+          line(
+            [
+              [x, -12],
+              [x + 5, 3],
+            ],
+            '#6f6049',
+            0.7,
+          );
         for (const x of [-15, 15]) {
           softRect(x - 9, -15, 21, 7, '#667b70', 1);
           softRect(x - 9, -20, 21, 6, '#8e7a55', 1);
@@ -16190,16 +16213,53 @@
           ctx.closePath();
         });
         for (let x = -25; x < 34; x += 7)
-          line([[x, -34 + (x + 25) * 0.1], [x + 4, -25 + (x + 25) * 0.07]], '#d1bd81', 0.7);
+          line(
+            [
+              [x, -34 + (x + 25) * 0.1],
+              [x + 4, -25 + (x + 25) * 0.07],
+            ],
+            '#d1bd81',
+            0.7,
+          );
         for (const x of [-29, -4, 31])
-          line([[x - 3, -27], [x, -37 + (x + 29) * 0.1], [x + 6, -24]], '#716549', 2);
+          line(
+            [
+              [x - 3, -27],
+              [x, -37 + (x + 29) * 0.1],
+              [x + 6, -24],
+            ],
+            '#716549',
+            2,
+          );
         hull(3, '#8a7451');
-        line([[-47, 0], [4, 5], [55, -5]], '#607d73', 3);
-        for (const [x, y] of [[-36, 8], [0, 13], [37, 8]]) {
+        line(
+          [
+            [-47, 0],
+            [4, 5],
+            [55, -5],
+          ],
+          '#607d73',
+          3,
+        );
+        for (const [x, y] of [
+          [-36, 8],
+          [0, 13],
+          [37, 8],
+        ]) {
           oval(x, y, 3.2, 5, '#c0ab78');
-          line([[x - 2, y - 2], [x + 2, y - 1]], '#786a4d', 0.8);
+          line(
+            [
+              [x - 2, y - 2],
+              [x + 2, y - 1],
+            ],
+            '#786a4d',
+            0.8,
+          );
         }
-        for (const [x, y] of [[44, -9], [52, -20]]) {
+        for (const [x, y] of [
+          [44, -9],
+          [52, -20],
+        ]) {
           timber([x, y + 5], [x, y - 12], 2, '#6e6245');
           softRect(x - 3, y - 13, 6, 8, '#ddaf56', 1);
           rect(x - 2, y - 11, 3, 4, '#f7d57c');
@@ -18094,12 +18154,9 @@
           }
         }
         // Raised timber follows the last leg through the coastal marsh.
-        const walks = harbor.boardwalk.slice(1).map((p, j) => [
-          harbor.boardwalk[j].x,
-          harbor.boardwalk[j].y,
-          p.x,
-          p.y,
-        ]);
+        const walks = harbor.boardwalk
+          .slice(1)
+          .map((p, j) => [harbor.boardwalk[j].x, harbor.boardwalk[j].y, p.x, p.y]);
         for (const [ax, ay, bx, by] of walks) {
           const dx = bx - ax,
             dy = by - ay,

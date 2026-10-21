@@ -479,6 +479,18 @@
       "anchorX": 0.5,
       "anchorY": 0.75,
       "labelHeight": 64
+    },
+    "transport:ferry": {
+      "src": "./assets/sprites/transport-ferry-76ebb2349a8e0ece74cc2f578e9eeed72a6d1d6e2f3cf61736dd100d0324395a.webp",
+      "width": 612,
+      "height": 306,
+      "hash": "76ebb2349a8e0ece74cc2f578e9eeed72a6d1d6e2f3cf61736dd100d0324395a",
+      "revision": "e96ca108d314232c57f102999010262d4168f1e6dd3a9cc5c1cbf9ff1cac1b49",
+      "displayWidth": 144,
+      "displayHeight": 72,
+      "anchorX": 0.5,
+      "anchorY": 0.64,
+      "labelHeight": 76
     }
   },
   "formatVersion": 3
