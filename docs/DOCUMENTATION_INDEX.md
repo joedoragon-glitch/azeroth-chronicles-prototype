@@ -1,3 +1,5 @@
+Current patch: [Resource menu discovery — dev.132](RESOURCE_DISCOVERY_DEV132.md). Generic instructions preserve discovery and all existing resource-worker abilities; focused copy audit, no broad CI.
+
 Discussion only: [Side-dungeon possibilities and latest decision to leave them unchanged](SIDE_DUNGEON_DESIGN_DISCUSSION_20261021.md). Includes functioning places, Goblin coherence, flooding, magic and proposed SIBDL framing. Not a feature backlog or canon commitment.
 
 Current implementation: [Dungeon camps and fresh defenses — dev.131](DUNGEON_CAMPS_DEV131.md), published and live-verified; release cleanup complete. Receipt: `docs/evidence/DUNGEON_CAMPS_DEV131_PUBLICATION_20261021.json`.

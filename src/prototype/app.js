@@ -44,10 +44,12 @@
       'Localizar y recolectar tributo oculto del Dark Lord',
     'Tribute collection and delivery. Visiting unloads all company cargo, including resting and fallen companions. Rangers provide Heal in the field.':
       'Recolección y entrega de tributo. Al visitar, se descarga toda la carga de la compañía, incluidos los compañeros en reserva y caídos. Los Rangers curan en el campo.',
-    'All idle Soldiers, Rangers and Little Treasurer work one selected tribute site. Escort them along the waypoint; combat pauses work. Supplies unloads all company cargo. Hidden sources can be located here.':
-      'Todos los Soldados, Rangers y Little Treasurer disponibles trabajan en el tributo elegido. Escóltalos siguiendo la ruta; el combate pausa el trabajo. Suministros descarga toda la carga de la compañía. Aquí puedes localizar tributos ocultos.',
-    'An idle Soldier, Ranger or Little Treasurer is needed.':
-      'Necesitas un Soldado, Ranger o Little Treasurer disponible.',
+    'All idle gatherers work one selected tribute site. Escort them along the waypoint; combat pauses work. Supplies unloads all company cargo. Hidden sources can be located here.':
+      'Todos los recolectores disponibles trabajan en el tributo elegido. Escóltalos siguiendo la ruta; el combate pausa el trabajo. Suministros descarga toda la carga de la compañía. Aquí puedes localizar tributos ocultos.',
+    'An idle gatherer is needed.': 'Necesitas un recolector disponible.',
+    'An idle gatherer and an unexhausted tribute site are required.':
+      'Necesitas un recolector disponible y un tributo sin agotar.',
+    'This companion cannot gather resources.': 'Este compañero no puede recolectar recursos.',
     'Includes resting and fallen companions.': 'Incluye a los compañeros en reserva y caídos.',
     'Story guide': 'Guía de la historia',
     'All pending quests': 'Todas las misiones pendientes',
@@ -426,6 +428,16 @@
     'En el campo, abre Aventura y elige Establecer cuartel básico (gratis).';
   function translateSegment(piece) {
     if (Object.prototype.hasOwnProperty.call(spanishText, piece)) return spanishText[piece];
+    if (/^One available companion goes away for /.test(piece))
+      return piece
+        .replace(
+          'One available companion goes away for ',
+          'Un compañero disponible se ausenta durante ',
+        )
+        .replace(
+          ' minutes of active play. Reserves can go. Tribute is delivered automatically on return.',
+          ' minutos de juego activo. Los compañeros en reserva pueden ir. El tributo se entrega automáticamente al regresar.',
+        );
     if (/^Recruit (Soldier|Ranger) · \d+ crowns/.test(piece))
       return piece.replace('Recruit ', 'Reclutar ').replace('crowns', 'coronas');
     if (/^Treat wounded companions/.test(piece))

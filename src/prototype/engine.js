@@ -2500,9 +2500,7 @@
         return false;
       }
       if (!n || n.amount <= 0 || !labor.length) {
-        this.say(
-          'An idle Soldier, Ranger or Little Treasurer and an unexhausted tribute site are required.',
-        );
+        this.say('An idle gatherer and an unexhausted tribute site are required.');
         return false;
       }
       this.s.recallActive = false;

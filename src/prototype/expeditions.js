@@ -20,8 +20,7 @@
       }
       resourceExpeditionWorkerReason(u) {
         if (!u || !this.s.party.includes(u)) return 'This companion is no longer in your company.';
-        if (!this.canGatherTribute(u))
-          return 'Resource expeditions need a Soldier, Ranger or Little Treasurer.';
+        if (!this.canGatherTribute(u)) return 'This companion cannot gather resources.';
         if (u.hp <= 0) return 'Recover this fallen companion first.';
         if (u.expeditionId) return 'This companion is already away on an expedition.';
         if (u.order || u.keeperHeld || u.deathRollHeld || this._companionCharges?.has(u.id))
