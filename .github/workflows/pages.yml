@@ -1,9 +1,9 @@
 name: Test and deploy app
 on:
   push:
-    branches: [main]
+    branches: [owner-archive-passage-dev124-hold]
   pull_request:
-    branches: [main, perf/v09-integration-20261010]
+    branches: [owner-archive-passage-dev124-hold]
   workflow_dispatch:
 
 permissions:
