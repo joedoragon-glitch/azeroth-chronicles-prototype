@@ -5,22 +5,22 @@
     {
       "phase": "sunrise",
       "maxJump": 10,
-      "maxMeanJump": 0.8160243055555556,
-      "jumpAt": 0.0016666666666666668,
+      "maxMeanJump": 0.78875,
+      "jumpAt": 0.005,
       "whiteFrames": 0
     },
     {
       "phase": "sunset",
-      "maxJump": 9,
-      "maxMeanJump": 0.7285069444444444,
-      "jumpAt": 0.5433333333333333,
+      "maxJump": 10,
+      "maxMeanJump": 0.7647482638888888,
+      "jumpAt": 0.625,
       "whiteFrames": 0
     },
     {
       "phase": "victory-sunrise",
-      "maxJump": 10,
-      "maxMeanJump": 1.1950520833333333,
-      "jumpAt": 0.0033333333333333335,
+      "maxJump": 11,
+      "maxMeanJump": 0.8193229166666667,
+      "jumpAt": 0.025,
       "whiteFrames": 0
     }
   ]

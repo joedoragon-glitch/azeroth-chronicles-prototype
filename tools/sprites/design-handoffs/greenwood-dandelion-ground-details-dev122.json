@@ -56,7 +56,7 @@
     "assetSpecificDependencies": [
       {
         "path": "src/prototype/visuals.js",
-        "sha256": "8b51de17403ccec368fafff2c50cb42dd121e9a2130ad65f609d45caf464f4ff"
+        "sha256": "162f67fc40e39db5f0199bb87d96854624e2ab963bbf4f7e7d4d02417b22fa6e"
       }
     ]
   },

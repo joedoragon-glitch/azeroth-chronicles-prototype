@@ -4,23 +4,23 @@
   "reports": [
     {
       "phase": "sunrise",
-      "maxJump": 37,
-      "maxMeanJump": 1.0642100694444445,
+      "maxJump": 33,
+      "maxMeanJump": 0.8116753472222222,
       "jumpAt": 0.0016666666666666668,
       "whiteFrames": 0
     },
     {
       "phase": "sunset",
-      "maxJump": 20,
-      "maxMeanJump": 1.1565885416666666,
-      "jumpAt": 0.915,
+      "maxJump": 11,
+      "maxMeanJump": 0.8475,
+      "jumpAt": 0.8583333333333333,
       "whiteFrames": 0
     },
     {
       "phase": "victory-sunrise",
-      "maxJump": 12,
-      "maxMeanJump": 0.9389496527777778,
-      "jumpAt": 0.06666666666666667,
+      "maxJump": 10,
+      "maxMeanJump": 0.817734375,
+      "jumpAt": 0.013333333333333334,
       "whiteFrames": 0
     }
   ]

@@ -18875,28 +18875,20 @@
       peaceBlend = peace ? (daylight?.phase === 'victory-sunrise' ? daylight.progress : 1) : 0,
       time = (typeof performance !== 'undefined' ? performance.now() : 0) / 1000;
     ctx.save();
-    // Keep fading atmosphere on ordinary alpha compositing. Avoid screen-blend
-    // render targets during twilight, and bake opacity into full-screen colors.
-    ctx.globalAlpha = 1;
-    ctx.globalCompositeOperation = 'source-over';
-    const rgba = (channels, opacity = 1) => {
-      const [r, g, b, alpha] = channels;
-      return `rgba(${Math.round(r)},${Math.round(g)},${Math.round(b)},${Math.max(0, Math.min(1, alpha * opacity)).toFixed(6)})`;
-    };
     // Regional color grade: gentle enough to preserve combat readability, strong enough to make each zone feel authored.
     const dayTints = [
-      [213, 229, 163, 0.045],
-      [150, 206, 205, 0.05],
-      [221, 219, 184, 0.045],
-      [215, 157, 120, 0.05],
-      [166, 146, 196, 0.05],
+      'rgba(213,229,163,.045)',
+      'rgba(150,206,205,.05)',
+      'rgba(221,219,184,.045)',
+      'rgba(215,157,120,.05)',
+      'rgba(166,146,196,.05)',
     ];
     const nightTints = [
-      [11, 25, 42, 0.48], // Greenwood: moonlit blue-greens, not a blackout
-      [12, 32, 44, 0.48], // Marches: wet blue reflections
-      [19, 29, 42, 0.5], // Ironroot: cool altitude, warm occupied windows
-      [32, 20, 35, 0.52], // Frontier: ash dusk with working checkpoints
-      [27, 19, 43, 0.54], // Crown: rich night violet, still navigable
+      'rgba(11,25,42,.48)', // Greenwood: moonlit blue-greens, not a blackout
+      'rgba(12,32,44,.48)', // Marches: wet blue reflections
+      'rgba(19,29,42,.50)', // Ironroot: cool altitude, warm occupied windows
+      'rgba(32,20,35,.52)', // Frontier: ash dusk with working checkpoints
+      'rgba(27,19,43,.54)', // Crown: rich night violet, still navigable
     ];
     const glow = (p, r = 120, a = 0.22, c = '255,218,151') => {
       if (!p) return;
@@ -18908,30 +18900,18 @@
       ctx.fillRect(p.x - r, p.y - r, r * 2, r * 2);
     };
     if (darkness > 0) {
+      ctx.globalAlpha = darkness;
       const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      g.addColorStop(0, rgba(nightTints[region] || nightTints[0], darkness));
+      g.addColorStop(0, nightTints[region] || nightTints[0]);
       g.addColorStop(
         1,
-        rgba(
-          [
-            9 + 13 * peaceBlend,
-            17 + 14 * peaceBlend,
-            30 + 19 * peaceBlend,
-            0.58 - 0.28 * peaceBlend,
-          ],
-          darkness,
-        ),
+        `rgba(${9 + 13 * peaceBlend},${17 + 14 * peaceBlend},${30 + 19 * peaceBlend},${0.58 - 0.28 * peaceBlend})`,
       );
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       // Warm pools around the hero and inhabited field structures make night readable without flattening the whole scene.
-      if (dungeon || room) ctx.globalCompositeOperation = 'screen';
-      glow(
-        hero,
-        145,
-        (0.18 + 0.04 * peaceBlend) * darkness,
-        region === 4 ? '215,191,231' : '235,221,184',
-      );
+      ctx.globalCompositeOperation = 'screen';
+      glow(hero, 145, 0.18 + 0.04 * peaceBlend, region === 4 ? '215,191,231' : '235,221,184');
       // Night sources are the current map's actual windows, services and fires.
       // Keep the soft lit ground distinct from the lamp itself. Only a small
       // radius for each source, with a larger effect at working kitchens/forges.
@@ -18944,11 +18924,10 @@
           y = carried ? p.y : p.y - (p.fixture === 'post' ? 46 : window ? 32 : fire ? 13 : 28),
           source = { x: p.x, y },
           tint = region === 1 ? '245,208,150' : region === 4 ? '247,194,147' : '255,207,132';
-        glow(source, radius, (window ? 0.27 : fire ? 0.3 : 0.25) * darkness, tint);
-        if (carried) glow(source, 10, 0.5 * darkness, '255,221,150');
+        glow(source, radius, window ? 0.27 : fire ? 0.3 : 0.25, tint);
+        if (carried) glow(source, 10, 0.5, '255,221,150');
       }
       ctx.globalCompositeOperation = 'source-over';
-      ctx.globalAlpha = darkness;
       // Luminous windows and sheltered lantern glass are localized light
       // sources, not new scenery obstacles. Fires already have drawn flames.
       for (const p of renderedLights) {
@@ -18997,16 +18976,13 @@
       }
     }
     if (darkness < 1) {
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = rgba(dayTints[region] || dayTints[0], 1 - darkness);
+      ctx.globalAlpha = 1 - darkness;
+      ctx.fillStyle = dayTints[region] || dayTints[0];
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       const sun = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      sun.addColorStop(0, rgba([255, 244, 203, 0.07], 1 - darkness));
+      sun.addColorStop(0, 'rgba(255,244,203,.07)');
       sun.addColorStop(0.45, 'rgba(255,255,255,0)');
-      sun.addColorStop(
-        1,
-        rgba(region >= 3 ? [97, 56, 55, 0.035] : [22, 55, 42, 0.025], 1 - darkness),
-      );
+      sun.addColorStop(1, region >= 3 ? 'rgba(97,56,55,.035)' : 'rgba(22,55,42,.025)');
       if (!opts.optimized) {
         ctx.fillStyle = sun;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -19016,7 +18992,7 @@
     if (darkness < 1) {
       // A lit hand lantern keeps a small bloom in daylight; broad illumination
       // becomes visible after dark. Existing civic day/night lights stay off.
-      if (dungeon || room) ctx.globalCompositeOperation = 'screen';
+      ctx.globalCompositeOperation = 'screen';
       for (const p of lights.filter((p) => p.kind === 'carried-lantern').slice(0, 8))
         glow(p, 22, 0.12 * (1 - darkness), '255,221,150');
       ctx.globalCompositeOperation = 'source-over';
