@@ -509,7 +509,8 @@
       }
       actorStepAllowed(unit, point, relaxFriendly = false, frame = this.actorCrowd()) {
         if (!frame.members.has(unit)) return true;
-        if (this.crowdEscaping(unit, frame)) return true;
+        const retreating = this.companionRetreatMode(unit),
+          escaping = this.crowdEscaping(unit, frame);
         const candidates = new Set(),
           steps = Math.max(1, Math.ceil(dist(unit, point) / R.actorSpacing.cellSize));
         for (let j = 0; j <= steps; j++)
@@ -523,15 +524,21 @@
             candidates.add(other);
         for (const other of candidates) {
           if (other === unit || other.hp <= 0) continue;
-          // A brief, symmetric passage lets either side leave a real jam.
-          if (this.crowdEscaping(other, frame)) continue;
-          const friendly = frame.hostile.has(unit) === frame.hostile.has(other);
-          // Travel should not snag the hero on their own companions. Keep
-          // normal body blocking throughout the existing combat-active state.
+          const friendly = frame.hostile.has(unit) === frame.hostile.has(other),
+            otherRetreating = this.companionRetreatMode(other);
+          // Friends make room for a withdrawal. Ordinary travel also lets the
+          // hero pass allies; other combat pairs keep their usual body blocking.
           if (
             friendly &&
-            (relaxFriendly || (!frame.combatActive && (unit === this.hero || other === this.hero)))
+            (retreating ||
+              otherRetreating ||
+              relaxFriendly ||
+              (!frame.combatActive && (unit === this.hero || other === this.hero)))
           )
+            continue;
+          // Withdrawing party members receive friendly passage, never hostile
+          // passage. Even an existing mixed-crowd escape cannot bypass this pair.
+          if (!retreating && !otherRetreating && (escaping || this.crowdEscaping(other, frame)))
             continue;
           const gap = this.actorRadius(unit) + this.actorRadius(other),
             before = dist(unit, other),
@@ -549,6 +556,7 @@
         const frame = this.actorCrowd(true),
           cfg = R.actorSpacing;
         for (const unit of frame.bodies) {
+          const retreating = this.companionRetreatMode(unit);
           // Fixed warning origins, held victims and scripted motion remain authoritative.
           if (
             unit === this.hero ||
@@ -557,7 +565,7 @@
             unit.motion ||
             unit.keeperHeld ||
             unit.deathRollHeld ||
-            this.crowdEscaping(unit, frame) ||
+            (this.crowdEscaping(unit, frame) && !retreating) ||
             this.partyChargeState(unit)
           )
             continue;
@@ -565,7 +573,10 @@
             dy = 0;
           for (const other of this.nearbyActors(unit, frame)) {
             if (other === unit || other.hp <= 0) continue;
-            if (this.crowdEscaping(other, frame)) continue;
+            const otherRetreating = this.companionRetreatMode(other),
+              friendly = frame.hostile.has(unit) === frame.hostile.has(other);
+            if (friendly && (retreating || otherRetreating)) continue;
+            if (this.crowdEscaping(other, frame) && !retreating && !otherRetreating) continue;
             if (other === this.hero && !frame.combatActive && !frame.hostile.has(unit)) continue;
             const gap = this.actorRadius(unit) + this.actorRadius(other),
               distance = dist(unit, other),
@@ -916,6 +927,9 @@
         const frame = this.actorCrowd(),
           cfg = R.actorSpacing,
           congestion = frame.congestion.get(entity) || { blocked: 0, until: 0 };
+        // A retreat cannot acquire or retain enemy-phasing from a previous jam.
+        const retreating = this.companionRetreatMode(entity);
+        if (retreating) congestion.until = 0;
         if (this.s.time - (congestion.at ?? this.s.time) > 0.25) congestion.blocked = 0;
         const elapsed = congestion.at === this.s.time ? 0 : Math.min(dt, 0.1),
           relaxed = (congestion.friendlyUntil || 0) > this.s.time;
@@ -966,7 +980,7 @@
         const escapeAfter = this.crowdUnderPressure()
           ? cfg.pressureBlockedSeconds
           : cfg.escapeBlockedSeconds;
-        if (congestion.blocked >= escapeAfter) {
+        if (congestion.blocked >= escapeAfter && !retreating) {
           // Terrain was clear but bodies prevented progress. Permit temporary
           // overlap, including opposing bodies/bosses; never teleport or replan.
           congestion.until = this.s.time + cfg.escapeSeconds;
