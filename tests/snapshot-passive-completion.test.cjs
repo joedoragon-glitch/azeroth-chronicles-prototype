@@ -1,4 +1,5 @@
 'use strict';
+const nightContext = require('./helpers/specialist-night-context.cjs');
 const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine.js');
 const R = C.rules;
@@ -187,10 +188,10 @@ assert.equal(R.roomCaptains['supply-crown'].summon.guardPerSummon, 0.25);
  // Matrix covers the high-pressure scenario the passive completion exists for:
  // three classes, two difficulties, Normal/TRUE and solo/full party.
  for (const heroClass of ['paladin', 'mage', 'ranger'])
-   for (const mode of ['normal', 'nightmare'])
+   for (const mode of nightContext.contexts)
      for (const form of ['normal', 'true'])
        for (const partyCount of [0, 6]) {
-         const c = new C(mode, heroClass, () => 0.9);
+         const c = nightContext.campaign(mode, heroClass, () => 0.9);
          c.s.party = Array.from({ length: partyCount }, (_, i) =>
            c.unit(i % 2 ? 'archer' : 'soldier', c.hero.x, c.hero.y),
          );

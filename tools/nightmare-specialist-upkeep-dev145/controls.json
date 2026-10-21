@@ -1,0 +1,83 @@
+{
+  "coarse": {
+    "step": 0.3,
+    "origin": {
+      "x": 745,
+      "y": 590
+    },
+    "target": {
+      "x": 836.46165735328,
+      "y": 651.1127256321563
+    },
+    "shots": 4,
+    "hpLost": 0,
+    "remaining": 0
+  },
+  "fine": {
+    "step": 0.05,
+    "origin": {
+      "x": 745,
+      "y": 590
+    },
+    "target": {
+      "x": 836.46165735328,
+      "y": 651.1127256321563
+    },
+    "shots": 4,
+    "hpLost": 12,
+    "remaining": 0
+  },
+  "defenderReset": {
+    "sameId": true,
+    "replaced": true,
+    "detachedBuff": 4,
+    "activeBuff": 0
+  },
+  "enemyOnlyIntroAfterFiveSeconds": 30,
+  "phases": [
+    {
+      "context": "normal",
+      "mode": "normal",
+      "intro": 0,
+      "phase": "day",
+      "multipliers": {
+        "hp": 1,
+        "damage": 1
+      },
+      "tempo": 1
+    },
+    {
+      "context": "nightmare-grace",
+      "mode": "nightmare",
+      "intro": 30,
+      "phase": "sunset",
+      "multipliers": {
+        "hp": 1,
+        "damage": 1
+      },
+      "tempo": 1
+    },
+    {
+      "context": "nightmare-night",
+      "mode": "nightmare",
+      "intro": 0,
+      "phase": "night",
+      "multipliers": {
+        "hp": 1.1,
+        "damage": 1.15
+      },
+      "tempo": 1.1
+    },
+    {
+      "context": "nightmare-legacy",
+      "mode": "nightmare",
+      "intro": 0,
+      "phase": "night",
+      "multipliers": {
+        "hp": 1.1,
+        "damage": 1.15
+      },
+      "tempo": 1.1
+    }
+  ]
+}

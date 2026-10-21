@@ -1,9 +1,10 @@
 'use strict';
+const nightContext = require('./helpers/specialist-night-context.cjs');
 const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine.js');
 const FX = require('../src/prototype/combat-visuals.js');
 function arena(cls = 'paladin', mode = 'normal', form = 'normal') {
-  const c = new C(mode, cls, () => 0.9);
+  const c = nightContext.campaign(mode, cls, () => 0.9);
   c.enter('crypt');
   const e = c.bossEnemy(c.boss('crypt'), form, c.safe(850, 850));
   c.zone().enemies = [e];
@@ -16,7 +17,7 @@ function arena(cls = 'paladin', mode = 'normal', form = 'normal') {
 }
 let cases = 0;
 for (const cls of ['paladin', 'mage', 'ranger'])
-  for (const mode of ['normal', 'nightmare'])
+  for (const mode of nightContext.contexts)
     for (const form of ['normal', 'true']) {
       {
         const { c, e } = arena(cls, mode, form);
@@ -90,7 +91,11 @@ for (const cls of ['paladin', 'mage', 'ranger'])
         const raw = c.snapshot();
         assert(!raw.zones.crypt.enemies.find((u) => u.id === e.id).anastylosis);
         c.enter('vale');
-        assert(!e.anastylosis);
+        const reset = c.s.zones.crypt.enemies.find((u) => u.id === e.id);
+        assert(reset, 'the actual Crypt roster retains the same-ID Lifebinder');
+        assert.notStrictEqual(reset, e, 'door travel replaces the encounter actor');
+        assert(!reset.anastylosis, 'replacement has no stale self-defense');
+        assert(!reset.telegraph && !reset.motion && !reset.aggro);
         cases++;
       }
       {

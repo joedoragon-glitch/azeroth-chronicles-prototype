@@ -23,3 +23,5 @@ All five affected original suites now pass on the final candidate:
 ## Follow-on history request
 
 PR #382 is merged as `5f4b28af08a24aeff253f8f7f11a6acbfeac3e9d`. The owner then requested a trace of first drift and a reviewable retest scope. [Historical trace](TEST_DRIFT_HISTORY_DEV145.md) distinguishes the repaired original failures from a broader permanent-Nightmare coverage gap in older specialist mode fixtures. Passing the repaired suites does not certify every untested phase/interaction; that gap is the first proposed follow-up for joint review.
+
+That first package is now complete: [six original specialist matrices cover explicit grace, post-sunset and legacy night](NIGHTMARE_SPECIALIST_UPKEEP_DEV145.md), alongside Normal controls. The independently reproduced Lifebinder identity and Scornfang stepping assumptions are corrected. All six original suites and the daylight/tempo controls pass; no gameplay change or deployment follows from this test upkeep.

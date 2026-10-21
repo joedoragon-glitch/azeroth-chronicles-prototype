@@ -1,11 +1,12 @@
 'use strict';
+const nightContext = require('./helpers/specialist-night-context.cjs');
 const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine');
 const FX = require('../src/prototype/combat-visuals');
 const VFX = require('../src/prototype/enemy-vfx');
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 function scene(mode = 'normal', form = 'normal', cls = 'mage', succession = false, roost = false) {
-  const c = new C(mode, cls, () => 0.9, { succession });
+  const c = nightContext.campaign(mode, cls, () => 0.9, { succession });
   c.s.party = [];
   c.s.mercyTime = 0;
   if (roost) c.enter('crown');
@@ -63,7 +64,7 @@ function allies(c, e, count = 4) {
   }
   return units;
 }
-for (const mode of ['normal', 'nightmare'])
+for (const mode of nightContext.contexts)
   for (const form of ['normal', 'true']) {
     // Cordon is a live contracting ring, with one real gap and exactly one change.
     {
@@ -341,7 +342,7 @@ console.log(
 }
 
 let fatalities = 0;
-for (const mode of ['normal', 'nightmare'])
+for (const mode of nightContext.contexts)
   for (const form of ['normal', 'true'])
     for (const cls of ['paladin', 'mage', 'ranger'])
       for (const succession of [false, true])

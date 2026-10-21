@@ -1,8 +1,9 @@
 'use strict';
+const nightContext = require('./helpers/specialist-night-context.cjs');
 const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine.js');
 function arena(cls = 'paladin', mode = 'normal') {
-  const c = new C(mode, cls, () => 0.9);
+  const c = nightContext.campaign(mode, cls, () => 0.9);
   c.enter('supply-vale');
   const e = c.zone().enemies.find((e) => e.roomCaptain);
   const point = Array.from({ length: 32 }, (_, i) => ({
@@ -28,7 +29,7 @@ function select(c, e, index) {
   throw Error('Scornfang slot unavailable: ' + index);
 }
 for (const cls of ['paladin', 'mage', 'ranger'])
-  for (const mode of ['normal', 'nightmare']) {
+  for (const mode of nightContext.contexts) {
     {
       const { c, e } = arena(cls, mode);
       select(c, e, 3);
@@ -68,7 +69,9 @@ for (const cls of ['paladin', 'mage', 'ranger'])
       assert.equal(launches.length, 4);
       assert.equal(e.telegraph, null);
       const hp = c.hero.hp;
-      c.updateProjectiles(0.3);
+      // Stay within the real game's <=100 ms simulation step. A single 300 ms
+      // jump can reach terrain behind the hero before testing swept contact.
+      for (let frame = 0; frame < 6; frame++) c.updateProjectiles(0.05);
       assert(c.hero.hp < hp, 'real sling projectiles hit through an open lane');
       select(c, e, 3);
       c.hero.hp = 0;
