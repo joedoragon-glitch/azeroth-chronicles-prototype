@@ -1918,6 +1918,28 @@
       );
     }
 
+    function announcements(back = closeMenu) {
+      const game = getGame(),
+        entries = game.storyReadings();
+      openMenu(
+        'Announcements',
+        'Earned lore and recent announcements. Select an entry to read the full text.',
+        [...entries]
+          .reverse()
+          .map((n) =>
+            action(
+              (D.regions.find((r) => r.id === n.region)?.name || 'Adventure') +
+                ' · ' +
+                n.text.slice(0, 64),
+              () =>
+                openMenu('Announcements', n.text + (n.detail ? '\n\n' + n.detail : ''), [], () =>
+                  announcements(back),
+                ),
+            ),
+          ),
+        back,
+      );
+    }
     function quests(atBoard, back = closeMenu) {
       if (!atBoard) return storyJournal(back);
       const local = atBoard
@@ -1959,6 +1981,7 @@
       partyMenu,
       talents,
       quests,
+      announcements,
     };
   }
   const api = { create };

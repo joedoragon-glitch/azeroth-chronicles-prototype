@@ -1,0 +1,868 @@
+{
+  "samples": [
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390,
+        "phone": true
+      },
+      "kind": "feedback",
+      "message": {
+        "x": 272,
+        "y": 12,
+        "w": 560,
+        "h": 25.59375,
+        "right": 832,
+        "bottom": 37.59375
+      },
+      "hud": {
+        "x": 8,
+        "y": 8,
+        "w": 252,
+        "h": 56,
+        "right": 260,
+        "bottom": 64
+      },
+      "skills": {
+        "x": 496,
+        "y": 332,
+        "w": 340,
+        "h": 50,
+        "right": 836,
+        "bottom": 382
+      },
+      "text": "Companions recalled · retreat protection active.",
+      "overflow": false,
+      "font": "12px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390,
+        "phone": true
+      },
+      "kind": "milestone",
+      "message": {
+        "x": 272,
+        "y": 12,
+        "w": 560,
+        "h": 25.59375,
+        "right": 832,
+        "bottom": 37.59375
+      },
+      "hud": {
+        "x": 8,
+        "y": 8,
+        "w": 252,
+        "h": 56,
+        "right": 260,
+        "bottom": 64
+      },
+      "skills": {
+        "x": 496,
+        "y": 332,
+        "w": 340,
+        "h": 50,
+        "right": 836,
+        "bottom": 382
+      },
+      "text": "BOSS VANQUISHED · The Ashen Warlord",
+      "overflow": false,
+      "font": "12px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390,
+        "phone": true
+      },
+      "kind": "warning",
+      "message": {
+        "x": 272,
+        "y": 12,
+        "w": 560,
+        "h": 25.59375,
+        "right": 832,
+        "bottom": 37.59375
+      },
+      "hud": {
+        "x": 8,
+        "y": 8,
+        "w": 252,
+        "h": 56,
+        "right": 260,
+        "bottom": 64
+      },
+      "skills": {
+        "x": 496,
+        "y": 332,
+        "w": 340,
+        "h": 50,
+        "right": 836,
+        "bottom": 382
+      },
+      "text": "Cindermaw TRUE will emerge in 5 seconds",
+      "overflow": false,
+      "font": "12px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 844,
+        "height": 390,
+        "phone": true
+      },
+      "kind": "narration",
+      "message": {
+        "x": 272,
+        "y": 12,
+        "w": 560,
+        "h": 64.78125,
+        "right": 832,
+        "bottom": 76.78125
+      },
+      "hud": {
+        "x": 8,
+        "y": 8,
+        "w": 252,
+        "h": 56,
+        "right": 260,
+        "bottom": 64
+      },
+      "skills": {
+        "x": 496,
+        "y": 332,
+        "w": 340,
+        "h": 50,
+        "right": 836,
+        "bottom": 382
+      },
+      "text": "Silver and copper arrive separately at Stonecross. They leave as crowns stamped with the Dark Lord’s face, while armed guards cou…Full text: Menu · Announcements",
+      "overflow": false,
+      "font": "12px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 667,
+        "height": 375,
+        "phone": true
+      },
+      "kind": "feedback",
+      "message": {
+        "x": 272,
+        "y": 12,
+        "w": 383,
+        "h": 25.59375,
+        "right": 655,
+        "bottom": 37.59375
+      },
+      "hud": {
+        "x": 8,
+        "y": 8,
+        "w": 252,
+        "h": 56,
+        "right": 260,
+        "bottom": 64
+      },
+      "skills": {
+        "x": 391.98968505859375,
+        "y": 325.29998779296875,
+        "w": 267.01031494140625,
+        "h": 41.70001220703125,
+        "right": 659,
+        "bottom": 367
+      },
+      "text": "Companions recalled · retreat protection active.",
+      "overflow": false,
+      "font": "12px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 667,
+        "height": 375,
+        "phone": true
+      },
+      "kind": "milestone",
+      "message": {
+        "x": 272,
+        "y": 12,
+        "w": 383,
+        "h": 25.59375,
+        "right": 655,
+        "bottom": 37.59375
+      },
+      "hud": {
+        "x": 8,
+        "y": 8,
+        "w": 252,
+        "h": 56,
+        "right": 260,
+        "bottom": 64
+      },
+      "skills": {
+        "x": 391.98968505859375,
+        "y": 325.29998779296875,
+        "w": 267.01031494140625,
+        "h": 41.70001220703125,
+        "right": 659,
+        "bottom": 367
+      },
+      "text": "BOSS VANQUISHED · The Ashen Warlord",
+      "overflow": false,
+      "font": "12px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 667,
+        "height": 375,
+        "phone": true
+      },
+      "kind": "warning",
+      "message": {
+        "x": 272,
+        "y": 12,
+        "w": 383,
+        "h": 25.59375,
+        "right": 655,
+        "bottom": 37.59375
+      },
+      "hud": {
+        "x": 8,
+        "y": 8,
+        "w": 252,
+        "h": 56,
+        "right": 260,
+        "bottom": 64
+      },
+      "skills": {
+        "x": 391.98968505859375,
+        "y": 325.29998779296875,
+        "w": 267.01031494140625,
+        "h": 41.70001220703125,
+        "right": 659,
+        "bottom": 367
+      },
+      "text": "Cindermaw TRUE will emerge in 5 seconds",
+      "overflow": false,
+      "font": "12px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 667,
+        "height": 375,
+        "phone": true
+      },
+      "kind": "narration",
+      "message": {
+        "x": 272,
+        "y": 12,
+        "w": 383,
+        "h": 80.375,
+        "right": 655,
+        "bottom": 92.375
+      },
+      "hud": {
+        "x": 8,
+        "y": 8,
+        "w": 252,
+        "h": 56,
+        "right": 260,
+        "bottom": 64
+      },
+      "skills": {
+        "x": 391.98968505859375,
+        "y": 325.29998779296875,
+        "w": 267.01031494140625,
+        "h": 41.70001220703125,
+        "right": 659,
+        "bottom": 367
+      },
+      "text": "Silver and copper arrive separately at Stonecross. They leave as crowns stamped with the Dark Lord’s face, while armed guards cou…Full text: Menu · Announcements",
+      "overflow": false,
+      "font": "12px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 375,
+        "height": 812,
+        "phone": true
+      },
+      "kind": "feedback",
+      "message": {
+        "x": 12,
+        "y": 70,
+        "w": 351,
+        "h": 27.59375,
+        "right": 363,
+        "bottom": 97.59375
+      },
+      "hud": {
+        "x": 8,
+        "y": 8,
+        "w": 252,
+        "h": 56,
+        "right": 260,
+        "bottom": 64
+      },
+      "skills": {
+        "x": 191.5,
+        "y": 752,
+        "w": 175.5,
+        "h": 52,
+        "right": 367,
+        "bottom": 804
+      },
+      "text": "Companions recalled · retreat protection active.",
+      "overflow": false,
+      "font": "12px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 375,
+        "height": 812,
+        "phone": true
+      },
+      "kind": "milestone",
+      "message": {
+        "x": 12,
+        "y": 70,
+        "w": 351,
+        "h": 27.59375,
+        "right": 363,
+        "bottom": 97.59375
+      },
+      "hud": {
+        "x": 8,
+        "y": 8,
+        "w": 252,
+        "h": 56,
+        "right": 260,
+        "bottom": 64
+      },
+      "skills": {
+        "x": 191.5,
+        "y": 752,
+        "w": 175.5,
+        "h": 52,
+        "right": 367,
+        "bottom": 804
+      },
+      "text": "BOSS VANQUISHED · The Ashen Warlord",
+      "overflow": false,
+      "font": "12px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 375,
+        "height": 812,
+        "phone": true
+      },
+      "kind": "warning",
+      "message": {
+        "x": 12,
+        "y": 70,
+        "w": 351,
+        "h": 27.59375,
+        "right": 363,
+        "bottom": 97.59375
+      },
+      "hud": {
+        "x": 8,
+        "y": 8,
+        "w": 252,
+        "h": 56,
+        "right": 260,
+        "bottom": 64
+      },
+      "skills": {
+        "x": 191.5,
+        "y": 752,
+        "w": 175.5,
+        "h": 52,
+        "right": 367,
+        "bottom": 804
+      },
+      "text": "Cindermaw TRUE will emerge in 5 seconds",
+      "overflow": false,
+      "font": "12px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 375,
+        "height": 812,
+        "phone": true
+      },
+      "kind": "narration",
+      "message": {
+        "x": 12,
+        "y": 70,
+        "w": 351,
+        "h": 76.375,
+        "right": 363,
+        "bottom": 146.375
+      },
+      "hud": {
+        "x": 8,
+        "y": 8,
+        "w": 252,
+        "h": 56,
+        "right": 260,
+        "bottom": 64
+      },
+      "skills": {
+        "x": 191.5,
+        "y": 752,
+        "w": 175.5,
+        "h": 52,
+        "right": 367,
+        "bottom": 804
+      },
+      "text": "Silver and copper arrive separately at Stonecross. They leave as crowns stamped with the Dark Lord’s face, while armed guards count the sealed crates.",
+      "overflow": false,
+      "font": "12px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 600,
+        "phone": true
+      },
+      "kind": "feedback",
+      "message": {
+        "x": 12,
+        "y": 70,
+        "w": 366,
+        "h": 27.59375,
+        "right": 378,
+        "bottom": 97.59375
+      },
+      "hud": {
+        "x": 8,
+        "y": 8,
+        "w": 252,
+        "h": 56,
+        "right": 260,
+        "bottom": 64
+      },
+      "skills": {
+        "x": 235.59999084472656,
+        "y": 550.4000244140625,
+        "w": 146.40000915527344,
+        "h": 41.5999755859375,
+        "right": 382,
+        "bottom": 592
+      },
+      "text": "Companions recalled · retreat protection active.",
+      "overflow": false,
+      "font": "12px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 600,
+        "phone": true
+      },
+      "kind": "milestone",
+      "message": {
+        "x": 12,
+        "y": 70,
+        "w": 366,
+        "h": 27.59375,
+        "right": 378,
+        "bottom": 97.59375
+      },
+      "hud": {
+        "x": 8,
+        "y": 8,
+        "w": 252,
+        "h": 56,
+        "right": 260,
+        "bottom": 64
+      },
+      "skills": {
+        "x": 235.59999084472656,
+        "y": 550.4000244140625,
+        "w": 146.40000915527344,
+        "h": 41.5999755859375,
+        "right": 382,
+        "bottom": 592
+      },
+      "text": "BOSS VANQUISHED · The Ashen Warlord",
+      "overflow": false,
+      "font": "12px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 600,
+        "phone": true
+      },
+      "kind": "warning",
+      "message": {
+        "x": 12,
+        "y": 70,
+        "w": 366,
+        "h": 27.59375,
+        "right": 378,
+        "bottom": 97.59375
+      },
+      "hud": {
+        "x": 8,
+        "y": 8,
+        "w": 252,
+        "h": 56,
+        "right": 260,
+        "bottom": 64
+      },
+      "skills": {
+        "x": 235.59999084472656,
+        "y": 550.4000244140625,
+        "w": 146.40000915527344,
+        "h": 41.5999755859375,
+        "right": 382,
+        "bottom": 592
+      },
+      "text": "Cindermaw TRUE will emerge in 5 seconds",
+      "overflow": false,
+      "font": "12px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 600,
+        "phone": true
+      },
+      "kind": "narration",
+      "message": {
+        "x": 12,
+        "y": 70,
+        "w": 366,
+        "h": 60.78125,
+        "right": 378,
+        "bottom": 130.78125
+      },
+      "hud": {
+        "x": 8,
+        "y": 8,
+        "w": 252,
+        "h": 56,
+        "right": 260,
+        "bottom": 64
+      },
+      "skills": {
+        "x": 235.59999084472656,
+        "y": 550.4000244140625,
+        "w": 146.40000915527344,
+        "h": 41.5999755859375,
+        "right": 382,
+        "bottom": 592
+      },
+      "text": "Silver and copper arrive separately at Stonecross. They leave as crowns stamped with the Dark Lord’s face, while armed guards count the sealed crates.",
+      "overflow": false,
+      "font": "12px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 800,
+        "phone": false
+      },
+      "kind": "feedback",
+      "message": {
+        "x": 288,
+        "y": 12,
+        "w": 480,
+        "h": 32.890625,
+        "right": 768,
+        "bottom": 44.890625
+      },
+      "hud": {
+        "x": 1056,
+        "y": 10,
+        "w": 214,
+        "h": 211.53125,
+        "right": 1270,
+        "bottom": 221.53125
+      },
+      "skills": {
+        "x": 482,
+        "y": 722,
+        "w": 78,
+        "h": 64,
+        "right": 560,
+        "bottom": 786
+      },
+      "text": "Companions recalled · retreat protection active.",
+      "overflow": false,
+      "font": "13px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 800,
+        "phone": false
+      },
+      "kind": "milestone",
+      "message": {
+        "x": 288,
+        "y": 12,
+        "w": 480,
+        "h": 32.890625,
+        "right": 768,
+        "bottom": 44.890625
+      },
+      "hud": {
+        "x": 1056,
+        "y": 10,
+        "w": 214,
+        "h": 211.53125,
+        "right": 1270,
+        "bottom": 221.53125
+      },
+      "skills": {
+        "x": 482,
+        "y": 722,
+        "w": 78,
+        "h": 64,
+        "right": 560,
+        "bottom": 786
+      },
+      "text": "BOSS VANQUISHED · The Ashen Warlord",
+      "overflow": false,
+      "font": "13px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 800,
+        "phone": false
+      },
+      "kind": "warning",
+      "message": {
+        "x": 288,
+        "y": 12,
+        "w": 480,
+        "h": 32.890625,
+        "right": 768,
+        "bottom": 44.890625
+      },
+      "hud": {
+        "x": 1056,
+        "y": 10,
+        "w": 214,
+        "h": 211.53125,
+        "right": 1270,
+        "bottom": 221.53125
+      },
+      "skills": {
+        "x": 482,
+        "y": 722,
+        "w": 78,
+        "h": 64,
+        "right": 560,
+        "bottom": 786
+      },
+      "text": "Cindermaw TRUE will emerge in 5 seconds",
+      "overflow": false,
+      "font": "13px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 1280,
+        "height": 800,
+        "phone": false
+      },
+      "kind": "narration",
+      "message": {
+        "x": 288,
+        "y": 12,
+        "w": 480,
+        "h": 89.578125,
+        "right": 768,
+        "bottom": 101.578125
+      },
+      "hud": {
+        "x": 1056,
+        "y": 10,
+        "w": 214,
+        "h": 211.53125,
+        "right": 1270,
+        "bottom": 221.53125
+      },
+      "skills": {
+        "x": 482,
+        "y": 722,
+        "w": 78,
+        "h": 64,
+        "right": 560,
+        "bottom": 786
+      },
+      "text": "Silver and copper arrive separately at Stonecross. They leave as crowns stamped with the Dark Lord’s face, while armed guards count the sealed crates.",
+      "overflow": false,
+      "font": "13px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 600,
+        "phone": false
+      },
+      "kind": "feedback",
+      "message": {
+        "x": 37,
+        "y": 12,
+        "w": 480,
+        "h": 32.890625,
+        "right": 517,
+        "bottom": 44.890625
+      },
+      "hud": {
+        "x": 554,
+        "y": 10,
+        "w": 204,
+        "h": 211.53125,
+        "right": 758,
+        "bottom": 221.53125
+      },
+      "skills": {
+        "x": 231,
+        "y": 522,
+        "w": 78,
+        "h": 64,
+        "right": 309,
+        "bottom": 586
+      },
+      "text": "Companions recalled · retreat protection active.",
+      "overflow": false,
+      "font": "13px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 600,
+        "phone": false
+      },
+      "kind": "milestone",
+      "message": {
+        "x": 37,
+        "y": 12,
+        "w": 480,
+        "h": 32.890625,
+        "right": 517,
+        "bottom": 44.890625
+      },
+      "hud": {
+        "x": 554,
+        "y": 10,
+        "w": 204,
+        "h": 211.53125,
+        "right": 758,
+        "bottom": 221.53125
+      },
+      "skills": {
+        "x": 231,
+        "y": 522,
+        "w": 78,
+        "h": 64,
+        "right": 309,
+        "bottom": 586
+      },
+      "text": "BOSS VANQUISHED · The Ashen Warlord",
+      "overflow": false,
+      "font": "13px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 600,
+        "phone": false
+      },
+      "kind": "warning",
+      "message": {
+        "x": 37,
+        "y": 12,
+        "w": 480,
+        "h": 32.890625,
+        "right": 517,
+        "bottom": 44.890625
+      },
+      "hud": {
+        "x": 554,
+        "y": 10,
+        "w": 204,
+        "h": 211.53125,
+        "right": 758,
+        "bottom": 221.53125
+      },
+      "skills": {
+        "x": 231,
+        "y": 522,
+        "w": 78,
+        "h": 64,
+        "right": 309,
+        "bottom": 586
+      },
+      "text": "Cindermaw TRUE will emerge in 5 seconds",
+      "overflow": false,
+      "font": "13px",
+      "cards": 1
+    },
+    {
+      "viewport": {
+        "width": 768,
+        "height": 600,
+        "phone": false
+      },
+      "kind": "narration",
+      "message": {
+        "x": 37,
+        "y": 12,
+        "w": 480,
+        "h": 89.578125,
+        "right": 517,
+        "bottom": 101.578125
+      },
+      "hud": {
+        "x": 554,
+        "y": 10,
+        "w": 204,
+        "h": 211.53125,
+        "right": 758,
+        "bottom": 221.53125
+      },
+      "skills": {
+        "x": 231,
+        "y": 522,
+        "w": 78,
+        "h": 64,
+        "right": 309,
+        "bottom": 586
+      },
+      "text": "Silver and copper arrive separately at Stonecross. They leave as crowns stamped with the Dark Lord’s face, while armed guards count the sealed crates.",
+      "overflow": false,
+      "font": "13px",
+      "cards": 1
+    }
+  ]
+}

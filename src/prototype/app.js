@@ -55,6 +55,10 @@
     'Map and travel routes': 'Mapa y rutas de viaje',
     'Quest journal': 'Diario de misiones',
     'Story journal': 'Guía de la historia',
+    Announcements: 'Anuncios',
+    'Earned lore and recent announcements. Select an entry to read the full text.':
+      'Historia descubierta y anuncios recientes. Selecciona uno para leer el texto completo.',
+    'Full text: Menu · Announcements': 'Texto completo: Menú · Anuncios',
     'Local quests': 'Misiones de la región',
     'Inventory and support': 'Inventario y apoyo',
     Inventory: 'Inventario',
@@ -459,6 +463,7 @@
       quietAfter: 0,
     },
     statusUntil = 0,
+    statusContext = null,
     worldPointer = null,
     pointer = null,
     joystickTouchId = null,
@@ -613,6 +618,7 @@
         text,
       );
     statusUntil = performance.now() + (important ? 6000 : 2800);
+    statusContext = important ? null : { game, zone: game?.zoneId, visit: game?.noticeVisit };
   }
   function manaStatus(text) {
     // Dormant MP remains recoverable: the restoration flag brings this back.
@@ -683,6 +689,7 @@
     partyMenu,
     talents,
     quests,
+    announcements,
     transport,
   } = PrototypeMenus.create({
     getGame: () => game,
@@ -1592,6 +1599,7 @@
       ...(appUpdateReady ? [action('Install available game update', updateApp)] : []),
       action('Map and travel routes', showMap),
       action('Quest journal', () => quests(false)),
+      action('Announcements', () => announcements(openMain)),
       action('Inventory and support', inventory),
       action('Skill journal', () => skillBook(openMain), 'Tap / charged effects and cooldowns'),
       action('Talents', () => talents(openMain)),
@@ -3050,6 +3058,7 @@
       state.waiting = [];
       state.active = [];
       state.rendered = '';
+      state.layout = '';
       state.quietAfter = 0;
       host.replaceChildren();
     }
@@ -3059,10 +3068,27 @@
     // completion or restored run must not lose observations before the next frame.
     for (const n of (game.notices || []).splice(0))
       if (n.id > state.lastId) {
-        state.waiting.push(n);
+        // Repeated routine feedback replaces the previous routine receipt.
+        if (n.kind === 'feedback') {
+          state.waiting = state.waiting.filter((p) => p.kind !== 'feedback');
+          state.active = state.active.filter((p) => p.kind !== 'feedback');
+        }
+        state.waiting.push({ ...n, receivedAt: now });
         state.lastId = n.id;
       }
     state.active = state.active.filter((n) => now < n.until);
+    const validVisit = (n) =>
+      n.scope !== 'visit' || (n.zone === game.zoneId && n.visit === game.noticeVisit);
+    const relevant = (n) =>
+      validVisit(n) && (n.scope !== 'region' || n.region === game.definition().id);
+    // Regional lore waits for a return to its own region. Local warnings and
+    // command receipts expire on travel, even if the player immediately returns.
+    state.waiting = state.waiting.filter(
+      (n) => validVisit(n) && (n.kind !== 'feedback' || now - n.receivedAt < 4000),
+    );
+    const away = state.active.filter((n) => n.scope === 'region' && !relevant(n));
+    state.waiting.unshift(...away.map(({ until, ...n }) => n));
+    state.active = state.active.filter(relevant);
     // Nonurgent reading waits for a quiet interval, including incoming shots and
     // nearby lingering hazards after the last attacker falls or disengages.
     const readers = [game.hero, ...game.activeLivingParty()];
@@ -3094,16 +3120,17 @@
       !game.s.challenge.gameOver;
     // Hide an already-visible nonurgent card as soon as danger resumes; preserve
     // the notice and its full reading time for the next safe opportunity.
-    if (!canNarrate && state.active.some((n) => n.kind !== 'warning')) {
+    const immediate = (n) => n.kind === 'warning' || n.kind === 'feedback';
+    if (!canNarrate && state.active.some((n) => !immediate(n))) {
       const interrupted = state.active
-        .filter((n) => n.kind !== 'warning')
+        .filter((n) => !immediate(n))
         .map(({ until, ...notice }) => notice);
-      state.active = state.active.filter((n) => n.kind === 'warning');
+      state.active = state.active.filter(immediate);
       state.waiting.unshift(...interrupted);
     }
     if (
       state.active.some((n) => n.kind === 'narration') &&
-      (!canNarrate || state.waiting.some((n) => n.kind !== 'narration'))
+      (!canNarrate || state.waiting.some((n) => relevant(n) && n.kind !== 'narration'))
     ) {
       const interrupted = state.active
         .filter((n) => n.kind === 'narration')
@@ -3111,22 +3138,76 @@
       state.active = state.active.filter((n) => n.kind !== 'narration');
       state.waiting.unshift(...interrupted);
     }
-    while (state.active.length < 2 && state.waiting.length) {
+    const slots = platform.mode === 'phone' ? 1 : 2;
+    if (state.active.length > slots) {
+      state.waiting.unshift(...state.active.splice(slots).map(({ until, ...n }) => n));
+    }
+    if (
+      state.waiting.some((n) => relevant(n) && n.kind === 'warning') &&
+      state.active.some((n) => n.kind !== 'warning')
+    ) {
+      state.waiting.unshift(
+        ...state.active.filter((n) => n.kind !== 'warning').map(({ until, ...n }) => n),
+      );
+      state.active = state.active.filter((n) => n.kind === 'warning');
+    }
+    if (
+      slots === 1 &&
+      state.active.some((n) => n.kind === 'milestone' || !n.kind) &&
+      state.waiting.some((n) => relevant(n) && n.kind === 'feedback')
+    ) {
+      state.waiting.unshift(...state.active.map(({ until, ...n }) => n));
+      state.active = [];
+    }
+    while (state.active.length < slots && state.waiting.length) {
       // Existing milestones retain their full duration. New warnings lead the
       // waiting queue, while a story is shown only when both slots are clear.
-      const warningIndex = state.waiting.findIndex((n) => n.kind === 'warning');
+      const warningIndex = state.waiting.findIndex((n) => relevant(n) && n.kind === 'warning');
+      const feedbackIndex =
+        !menu && !paused && focused && !document.hidden
+          ? state.waiting.findIndex((n) => relevant(n) && n.kind === 'feedback')
+          : -1;
       const milestoneIndex = canNarrate
-        ? state.waiting.findIndex((n) => n.kind !== 'narration')
+        ? state.waiting.findIndex(
+            (n) => relevant(n) && n.kind !== 'narration' && n.kind !== 'feedback',
+          )
         : -1;
-      const index = warningIndex >= 0 ? warningIndex : milestoneIndex;
-      if (index < 0 && (!canNarrate || state.active.length)) break;
-      const [notice] = state.waiting.splice(index < 0 ? 0 : index, 1);
+      let index =
+        warningIndex >= 0 ? warningIndex : feedbackIndex >= 0 ? feedbackIndex : milestoneIndex;
+      if (index < 0 && canNarrate && !state.active.length)
+        index = state.waiting.findIndex((n) => relevant(n) && n.kind === 'narration');
+      if (index < 0) break;
+      const [notice] = state.waiting.splice(index, 1);
       state.active.push({
         ...notice,
         until: now + (notice.duration || 5.5) * 1000,
       });
     }
-    const rendered = state.active.map((n) => n.id).join(',');
+    const width = typeof window === 'undefined' ? 1280 : window.innerWidth,
+      height = typeof window === 'undefined' ? 800 : window.innerHeight,
+      shortPhone = platform.mode === 'phone' && width > height,
+      layout = [platform.mode, width, height].join(':');
+    if (layout !== state.layout) {
+      state.layout = layout;
+      const style = typeof getComputedStyle === 'undefined' ? null : getComputedStyle(host),
+        safeLeft = Number.parseFloat(style?.getPropertyValue('--notice-safe-left')) || 0,
+        safeRight = Number.parseFloat(style?.getPropertyValue('--notice-safe-right')) || 0;
+      const hud = $('hud').getBoundingClientRect(),
+        edge = Math.max(12, platform.mode === 'phone' ? safeLeft : 0),
+        right =
+          platform.mode === 'desktop'
+            ? Math.max(180, hud.left - edge)
+            : width - Math.max(12, safeRight),
+        left = shortPhone && width - hud.right > 250 ? hud.right + edge : edge,
+        available = Math.max(160, right - left),
+        noticeWidth = Math.min(platform.mode === 'phone' ? 600 : 480, available);
+      host.style.width = noticeWidth + 'px';
+      host.style.left = left + available / 2 + 'px';
+      host.style.top =
+        (platform.mode === 'phone' && !shortPhone ? hud.bottom + 6 : Math.max(edge, hud.top)) +
+        'px';
+    }
+    const rendered = layout + ':' + state.active.map((n) => n.id).join(',');
     if (rendered !== state.rendered) {
       state.rendered = rendered;
       host.replaceChildren(
@@ -3134,10 +3215,18 @@
           const card = document.createElement('div');
           card.className =
             'notice-card notice-' +
-            (n.kind === 'narration' || n.kind === 'warning' ? n.kind : 'milestone');
+            (['narration', 'warning', 'feedback'].includes(n.kind) ? n.kind : 'milestone');
           if (n.kind === 'warning') card.setAttribute('role', 'alert');
-          card.textContent = n.text;
-          if (n.detail) {
+          const full = n.text + (n.detail ? ' ' + n.detail : ''),
+            limit = shortPhone ? 130 : platform.mode === 'phone' ? 170 : 240,
+            compact = full.length > limit;
+          card.textContent = compact ? full.slice(0, limit - 1).trimEnd() + '…' : n.text;
+          if (compact) {
+            const hint = document.createElement('small');
+            hint.className = 'notice-detail';
+            hint.textContent = tr('Full text: Menu · Announcements');
+            card.append(hint);
+          } else if (n.detail) {
             const detail = document.createElement('small');
             detail.className = 'notice-detail';
             detail.textContent = n.detail;
@@ -3277,7 +3366,14 @@
       heroMarkup +=
         '<small class="restoring" aria-label="Slowed: movement and skill recovery reduced">Slow · movement + recovery ↓</small>';
     setMarkup('hero-stats', heroMarkup);
-    if (statusUntil && performance.now() >= statusUntil) {
+    if (
+      statusUntil &&
+      (performance.now() >= statusUntil ||
+        (statusContext &&
+          (statusContext.game !== game ||
+            statusContext.zone !== game.zoneId ||
+            statusContext.visit !== game.noticeVisit)))
+    ) {
       $('status').textContent = '';
       statusUntil = 0;
     }

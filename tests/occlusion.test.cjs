@@ -34,7 +34,10 @@ for (const structure of ['rock-cluster', 'mangrove']) {
 }
 assert(majorOccluder(obj('building', 0, 0, { kind: 'barracks' })));
 assert(majorOccluder(obj('npc', 0, 0, { kind: 'supplier' })), 'service building counts as cover');
-for (const structure of ['sapling', 'pine-sapling', 'grass', 'stump', 'barrel', 'market']) {
+for (const structure of ['sapling', 'pine-sapling', 'regrowth-birch', 'regrowth-willow']) {
+  assert(majorOccluder(obj('prop', 0, 0, { structure, decorative: true })), 'authored tree canopy: ' + structure);
+}
+for (const structure of ['grass', 'stump', 'barrel', 'market']) {
   assert(!majorOccluder(obj('prop', 0, 0, { structure, decorative: true })), structure);
 }
 assert(!majorOccluder(obj('npc', 0, 0, { kind: 'quests' })), 'quest board is not cover');
@@ -139,7 +142,7 @@ function rasterScene({ actorKind = 'hero', structure = 'house', foreground = tru
     platform: { cameraZoom: 1, cameraAnchor: () => ({ x: 190, y: 210 }) },
     chargePresentation: () => null,
     isPaused: () => false,
-    Campaign: { dungeonIds: [] },
+    Campaign: { dungeonIds: [], rules: require('../src/prototype/rules') },
     PrototypeVisuals: visuals,
     PrototypeCombatVisuals: { ground() {} },
     PrototypeSprites: null,
@@ -174,6 +177,8 @@ function pixelsWithAndWithoutHelper(sceneOptions) {
     else global.document = previousDocument;
   }
 }
+assert(pixelsWithAndWithoutHelper({ actorKind: 'hero', structure: 'sapling' }) > 25,
+  'a character behind an authored tree canopy receives the bounded contour');
 const behindHouse = pixelsWithAndWithoutHelper({ actorKind: 'hero' });
 assert(behindHouse > 25, 'actual painted hero contour must be visible behind a house');
 assert(behindHouse < 650, 'outline may touch edges but must not fill the character');
@@ -187,7 +192,7 @@ assert.equal(
   'a civilian behind cover must not acquire a halo',
 );
 assert.equal(
-  pixelsWithAndWithoutHelper({ actorKind: 'hero', structure: 'sapling' }),
+  pixelsWithAndWithoutHelper({ actorKind: 'hero', structure: 'grass' }),
   0,
   'a small prop must not trigger the overlay',
 );

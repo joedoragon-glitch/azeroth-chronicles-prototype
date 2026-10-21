@@ -116,7 +116,7 @@
           remaining: R.fieldBossMobility.returnSeconds,
         });
         e.aggro = false;
-        this.notice(e.name + ' withdraws to open ground.', 3);
+        this.notice(e.name + ' withdraws to open ground.', 3, '', 'feedback');
       }
       fieldBossReturning(e) {
         return returns.get(e)?.zone === this.zoneId;

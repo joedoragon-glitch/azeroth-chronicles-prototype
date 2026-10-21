@@ -89,11 +89,44 @@
           const index = Number(q.id.slice('quest-'.length));
           const payoff = Number.isInteger(index) ? Narration[index] : null;
           if (payoff && (payoff.kind === 'narration' || payoff.kind === 'milestone'))
-            this.notice(payoff.text, payoff.kind === 'milestone' ? 5.5 : 6.8, '', payoff.kind);
+            this.notice(
+              payoff.text,
+              payoff.kind === 'milestone' ? 5.5 : 6.8,
+              '',
+              payoff.kind,
+              payoff.kind === 'narration'
+                ? { scope: 'region', region: q.region, zone: null, visit: null }
+                : {},
+            );
         }
         this.event('questComplete', { id: q.id });
         this.event('quest', { id: q.id, automatic: true });
         return true;
+      }
+      storyReadings() {
+        // Reconstruct earned prose from existing v4 facts, including older saves.
+        const entries = this.questDefs().flatMap((q) => {
+          const index = Number(q.id.slice('quest-'.length)),
+            payoff = Narration[index];
+          return this.s.quests[q.id]?.paid && payoff
+            ? [{ text: payoff.text, region: q.region, kind: payoff.kind }]
+            : [];
+        });
+        for (const [zone, text] of Object.entries(R.dungeonLore || {})) {
+          const region = D.regions[this.regionIndex(zone)]?.id;
+          if (this.s.discovered[region + ':dungeon-lore:' + zone]) entries.push({ text, region });
+        }
+        for (const side of R.sideDungeons || [])
+          if (side.lore && this.s.discovered[side.region + ':side-lore:' + side.id])
+            entries.push({ text: side.lore, region: side.region });
+        if (this.s.keeperEvidence)
+          entries.push({
+            text: 'The orders bear the Keeper’s seal. The plan to seize the specialists began among these shelves.',
+            region: 'march',
+          });
+        for (const n of this.noticeHistory || [])
+          if (!entries.some((e) => e.text === n.text && e.detail === n.detail)) entries.push(n);
+        return entries;
       }
       reward(gold, xp, level) {
         const gap = Math.max(0, this.hero.level - level),

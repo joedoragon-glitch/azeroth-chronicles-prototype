@@ -213,6 +213,7 @@
       e &&
       e.decorative === true &&
       !e.r &&
+      !['sapling', 'pine-sapling'].includes(e.structure) &&
       !e.roadBlocker &&
       !e.sceneRole &&
       /(?:^|[-_])(?:grass|wildflowers|flowers|reeds?|mushrooms?|pebbles?|fern|shrub|bush|sapling)(?:$|[-_])/i.test(
@@ -227,6 +228,8 @@
       return ['rest', 'supplier', 'recruiter', 'mini', 'dungeon', 'exit'].includes(e.kind);
     if (e.renderKind !== 'prop') return false;
     const structure = String(e.structure || '');
+    if (['sapling', 'pine-sapling', 'regrowth-birch', 'regrowth-willow'].includes(structure))
+      return true;
     // Ground decals and genuinely low clutter never conceal an actor. Use the
     // actual object alpha in drawOcclusionOutlines for the final cover check.
     if (

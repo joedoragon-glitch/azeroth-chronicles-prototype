@@ -219,7 +219,9 @@ body[data-experience='phone'] #message {
 }
 body[data-experience='phone'] #message .notice-card {
   font-size: 12px;
-  padding: 9px 12px;
+  padding: 5px 8px;
+  font-weight: 500;
+  line-height: 1.3;
 }
 /* The optional historical layout keeps combat above the left joystick. */
 body[data-experience='phone'][data-phone-layout='left-hand'] #skills {
@@ -433,6 +435,11 @@ body[data-experience='phone'] #message.wide-notice .notice-card {
 body[data-experience='phone'] #message .notice-card.notice-narration::before {
   display: inline;
   margin: 0 6px 0 0;
+}
+@media (orientation: landscape) {
+  body[data-experience='phone'] #message .notice-card {
+    padding: 4px 8px;
+  }
 }
 body[data-experience='phone'] #modal-description,
 body[data-experience='phone'] #modal-actions button {

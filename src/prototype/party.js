@@ -1203,7 +1203,7 @@
           u.routeAge = 0;
         }
         this.say('Squad recalled. Companions are regrouping on the hero.');
-        this.notice('Recall ordered. Companions return under retreat protection.', 4);
+        this.notice('Companions recalled · retreat protection active.', 2.8, '', 'feedback');
         this.event('squadRecall');
         return true;
       }

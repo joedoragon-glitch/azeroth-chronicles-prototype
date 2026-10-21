@@ -859,7 +859,12 @@
               delay: 5,
             };
             if (c.s.zone === b.region)
-              c.notice(b.name + ' TRUE encounter restored from your saved boss defeats', 6.5);
+              c.notice(
+                b.name + ' TRUE encounter restored from your saved boss defeats',
+                4,
+                '',
+                'feedback',
+              );
           }
         }
         if (c.s.awakeningAck === undefined) c.s.awakeningAck = c.s.phase !== 'awakening';
