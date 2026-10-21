@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "designId": "tidal-twin-hull-ferry",
   "name": "Tidal Twin-Hull Ferry \u2014 owner-selected option 3",
-  "status": "size-correction-prepared-owner-playtest-next",
-  "nextAction": "Finish focused checks and publish dev.137, then owner playtests the larger ferry.",
+  "status": "size-correction-released-owner-playtest-next",
+  "nextAction": "Owner plays published dev.137 larger ferry; resume Highlands tribute from the saved continuation.",
   "context": {
     "decisionDate": "2026-10-21",
     "originConversation": null,
@@ -109,8 +109,8 @@
     "approvedRecordKey": "transport:ferry",
     "expectedReplacementRevision": "e96ca108d314232c57f102999010262d4168f1e6dd3a9cc5c1cbf9ff1cac1b49",
     "rollbackRevision": "e96ca108d314232c57f102999010262d4168f1e6dd3a9cc5c1cbf9ff1cac1b49",
-    "releaseCommit": "718de6bd05386bdc877e6ec0e805a1d957f16d1d",
-    "releaseEvidence": "docs/evidence/TIDAL_FERRY_DEV136_PUBLICATION_20261021.json",
+    "releaseCommit": "e6c4fa2f22dbf70113a9e9c367a3b39f3cf5c179",
+    "releaseEvidence": "docs/evidence/FERRY_SIZE_DEV137_PUBLICATION_20261021.json",
     "activeContentRevision": "e426c0349b4ea4e25810e99def9942eeb6e216b888ad0cce0c3b8ac362d86df7"
   }
 }

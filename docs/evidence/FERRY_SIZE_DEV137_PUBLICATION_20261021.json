@@ -1,0 +1,65 @@
+{
+  "version": "0.9.1+snapshot.dev.137",
+  "pr": 373,
+  "merge": "e6c4fa2f22dbf70113a9e9c367a3b39f3cf5c179",
+  "runId": 39594121105,
+  "runConclusion": "success",
+  "url": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/",
+  "verifiedAt": "2026-10-21T11:45:03.834029+00:00",
+  "checks": [
+    {
+      "path": "build.txt",
+      "bytes": 41,
+      "sha256": "95b900e7aefbd7ed008edd45067d20dcc84fc29988ec5b579531473b248f36ec",
+      "matches": true
+    },
+    {
+      "path": "assets/sprites/manifest.json",
+      "bytes": 19282,
+      "sha256": "81bc06b6783773fa21a89ffd864c806a145ccc42473bd7d3751f899c3cd67f12",
+      "matches": true
+    },
+    {
+      "path": "assets/sprites/transport-ferry-cad068c7a770a34ea9a70924968c5be179d6c2461fdee2e9b954ce6407229003.webp",
+      "bytes": 216700,
+      "sha256": "cad068c7a770a34ea9a70924968c5be179d6c2461fdee2e9b954ce6407229003",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "bytes": 102672,
+      "sha256": "b2040835addcf17cffd597930aa75fd1010a5c3eb75f58d298a48b7e79ac5363",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "bytes": 216846,
+      "sha256": "c7ae1694f5b60de2601c6956f11dcecb288835ed73902b1f55e9073be2daef83",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "bytes": 503477,
+      "sha256": "6ca0e9b1ae9ee042a6edbb8dc1294ca4ab9e3abfdb505da43412fc6ec26a1390",
+      "matches": true
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "bytes": 296,
+      "sha256": "1cf5677be66942589e1e65fbd60e932fd7880d6a7617c95d6291efd62a0c1bf3",
+      "matches": true
+    },
+    {
+      "path": "sw.js",
+      "bytes": 20766,
+      "sha256": "cef4790ae40beec954f98e7e3f5f3ba48936912a36c62d51fd040703b10f1986",
+      "matches": true
+    }
+  ],
+  "focusedChecks": "Original exports, real loaded/failed/absent renderer, registry/provenance, 24 fresh/current/dev136 boarding routes, offline resources, build/generated/syntax/format; six native state-pure captures",
+  "knownBaselineFailures": [
+    "Marches terrain palette evidence mismatch",
+    "Stale material contract"
+  ],
+  "broadCI": false
+}
