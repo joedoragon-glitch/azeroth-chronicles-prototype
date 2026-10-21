@@ -2,6 +2,8 @@
 
 Published in PR #362 as `c7ec2999248dca1491db2629795b786880dfa0d2`, package-only run 39556310506. All 19 checked live files match; live phone startup passes without JavaScript errors. Normal workflow restored and temporary publisher removed. [Publication receipt](evidence/COMBAT_FLOW_DEV126_PUBLICATION_20261021.json). Owner requested necessary focused checks only; no broad CI.
 
+> Later update: [dev.139](SKILL_QUEUE_FORMS_DEV139.md) distinguishes normal tap requests from brief-hold charged requests. The all-charged input below is historical.
+
 ## Final behavior
 
 - A charged skill requested during cooldown retains one independent request for that skill. Other skills never replace it. When its cooldown/shared recovery ends, it goes through the normal 0.65-second charge and releases once. Ready requests prepare in sequence; they do not wait behind a longer unrelated cooldown. Repeated input does not restart a stored charge.

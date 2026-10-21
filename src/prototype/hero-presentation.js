@@ -653,7 +653,7 @@
       ctx.arc(x, y, 6.5, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
-      ctx.fillStyle = request.ready ? '#14232d' : '#eee8dc';
+      ctx.fillStyle = request.ready ? '#14232d' : request.color;
       ctx.fillText(String(request.slot), x, y + 0.5);
     }
     ctx.restore();

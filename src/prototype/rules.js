@@ -6177,6 +6177,8 @@
   const chargedSkills = {
     holdSeconds: 0.65,
     tapSeconds: 0.2,
+    // Cooldown input selects a form; actual charged preparation remains 0.65s.
+    queueInput: { holdSeconds: 0.25 },
     // Accumulate actual post-mitigation HP loss only during the fixed hold.
     // A strong hit or several small hits can interrupt, but grazing damage cannot.
     interrupt: { hpFraction: 0.07, minimumHp: 6, recoverySeconds: 0.5 },

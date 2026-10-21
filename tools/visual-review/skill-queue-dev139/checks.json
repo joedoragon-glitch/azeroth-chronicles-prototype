@@ -1,0 +1,59 @@
+{
+  "cases": 59,
+  "desktopBounds": [
+    {
+      "width": 52,
+      "scroll": 52,
+      "text": "NORMAL\nCOLA 2.8s"
+    },
+    {
+      "width": 52,
+      "scroll": 52,
+      "text": "CARGADA\nCOLA 2.8s"
+    }
+  ],
+  "errors": [],
+  "bounds": [
+    {
+      "width": 0,
+      "scroll": 0,
+      "text": "1"
+    },
+    {
+      "width": 79,
+      "scroll": 79,
+      "text": "NORMAL\nQUEUED 2.8s"
+    },
+    {
+      "width": 0,
+      "scroll": 0,
+      "text": "3"
+    },
+    {
+      "width": 79,
+      "scroll": 79,
+      "text": "CHARGED\nQUEUED 2.8s"
+    },
+    {
+      "width": 0,
+      "scroll": 0,
+      "text": "5"
+    },
+    {
+      "width": 0,
+      "scroll": 0,
+      "text": "Space"
+    },
+    {
+      "width": 0,
+      "scroll": 0,
+      "text": "Left Shift"
+    },
+    {
+      "width": 0,
+      "scroll": 0,
+      "text": "B"
+    }
+  ],
+  "scope": "Focused Chromium phone shell; deterministic active clock, actual dispatch and selected physical inputs. No broad CI or device/FPS certification."
+}

@@ -905,6 +905,7 @@
       skillKeys +
       '. Tap for normal; hold any skill' +
       ' for 0.65s until CHARGED, then release. Damage can interrupt preparation. ' +
+      'During cooldown: tap to queue normal; briefly hold to queue charged. Blue numbers beside the hero mean normal; gold means charged. ' +
       (game.hero.class === 'paladin'
         ? 'Skill 3 raises a shield; tap again to lower it or hold for Shield Bash.'
         : game.hero.class === 'mage'
@@ -947,6 +948,7 @@
             '.\nHabilidades: ' +
             skillKeys +
             '. Toca para usar; mantén 0,65 s hasta CHARGED y suelta. ' +
+            'En recuperación: toca para poner la versión normal en cola; mantén brevemente para la cargada. Los números azules junto al héroe indican normal; dorados, cargada. ' +
             (game.hero.class === 'paladin'
               ? 'Habilidad 3: escudo. Toca para bajarlo o mantén pulsado para Shield Bash.'
               : game.hero.class === 'mage'
@@ -2529,6 +2531,52 @@
   function chargeTapSeconds() {
     return PrototypeRules.chargedSkills?.tapSeconds || 0.2;
   }
+  function queueInputRule() {
+    return PrototypeRules.chargedSkills.queueInput;
+  }
+  function syncQueuedInput(request) {
+    if (
+      request.input &&
+      game.partyChargeNow() - request.input.pressedAt + 1e-9 >= queueInputRule().holdSeconds
+    )
+      request.charged = true;
+  }
+  function queuedInputReady(request) {
+    syncQueuedInput(request);
+    return request.charged || !request.input;
+  }
+  function queuedSkillLabel(request) {
+    const form =
+      language === 'es'
+        ? request.charged
+          ? 'CARGADA'
+          : 'NORMAL'
+        : request.charged
+          ? 'CHARGED'
+          : 'NORMAL';
+    return form + ' ' + (language === 'es' ? 'COLA' : 'QUEUED');
+  }
+  function beginQueuedInput(request, source, pointerId) {
+    if (request.input) return;
+    request.input = { source, pointerId, pressedAt: game.partyChargeNow() };
+  }
+  function finishQueuedInput(slot, source, pointerId = null) {
+    const request = queuedCharges.get(slot),
+      contact = request?.input;
+    if (!contact || contact.source !== source || contact.pointerId !== pointerId) return false;
+    syncQueuedInput(request);
+    request.input = null;
+    updateHUD();
+    return true;
+  }
+  function cancelQueuedInput(slot, source, pointerId) {
+    const request = queuedCharges.get(slot),
+      contact = request?.input;
+    if (!contact || contact.source !== source || contact.pointerId !== pointerId) return;
+    if (charge === request) cancelCharge();
+    else queuedCharges.delete(slot);
+    updateHUD();
+  }
   function chargedManaPercent(slot) {
     return Math.round((PrototypeRules.chargedSkills?.manaFractions?.[slot] || 0) * 100);
   }
@@ -2538,9 +2586,9 @@
   function chargedTargetRange(slot) {
     return chargeNeedsTarget(slot) ? game.heroSkillRange(slot, true) : 0;
   }
-  function chargeTarget(slot, targetId = null) {
+  function chargeTarget(slot, targetId = null, charged = true) {
     if (!chargeNeedsTarget(slot)) return null;
-    const range = chargedTargetRange(slot),
+    const range = game.heroSkillRange(slot, charged),
       valid = game.zone().enemies.filter(
         (e) =>
           e.hp > 0 &&
@@ -2656,6 +2704,7 @@
     if (
       charge.unit !== game.hero ||
       charge.zone !== game.zoneId ||
+      charge.deaths !== game.s.statistics.deaths ||
       game.hero.hp <= 0 ||
       game.hero.deathRollHeld ||
       game.hero.keeperHeld ||
@@ -2666,22 +2715,22 @@
       return false;
     }
     if (charge.started !== null || !activePlay()) return false;
+    if (charge.autoRelease && (!queuedInputReady(charge) || !charge.charged)) return false;
     if (game.hero.cd[charge.slot - 1] <= 0 && game.partyChargeRecovery(game.hero) <= 0)
       return startChargeClock();
     return false;
   }
   function queuedChargePresentation() {
-    return [...queuedCharges.values()].map((request) => ({
-      slot: request.slot,
-      ready: game.hero.cd[request.slot - 1] <= 0,
-      charging: charge === request && request.started !== null,
-      color:
-        PrototypeHeroPresentation.profile({
-          class: game.hero.class,
-          slot: request.slot,
-          charged: true,
-        })?.colors[0] || '#f6d77a',
-    }));
+    return [...queuedCharges.values()].map((request) => {
+      syncQueuedInput(request);
+      return {
+        slot: request.slot,
+        charged: request.charged,
+        ready: game.hero.cd[request.slot - 1] <= 0,
+        charging: charge === request && request.started !== null,
+        color: request.charged ? '#f6d77a' : '#9dc6dd',
+      };
+    });
   }
   function chargePresentation() {
     if (!charge) return null;
@@ -2713,6 +2762,7 @@
     if (charge.started === null)
       return {
         slot: charge.slot,
+        charged: charge.charged,
         state: 'waiting',
         elapsed: 0,
         progress: 0,
@@ -2814,7 +2864,11 @@
     const rank = game.hero.skills[slot - 1];
     if (!canChargeSlot(slot) || !activePlay() || !rank || game.peace) return false;
     syncPartyChargeClock();
-    if (queuedCharges.has(slot)) return true;
+    if (queuedCharges.has(slot)) {
+      beginQueuedInput(queuedCharges.get(slot), source, pointerId);
+      updateHUD();
+      return true;
+    }
     const queued = game.hero.cd[slot - 1] > 0 || game.partyChargeRecovery(game.hero) > 0;
     if (!queued && charge) cancelCharge(true, true);
     const request = {
@@ -2828,11 +2882,15 @@
       campaign: game,
       unit: game.hero,
       zone: game.zoneId,
+      deaths: game.s.statistics.deaths,
       pressedAt: game.partyChargeNow(),
+      charged: !queued,
+      input: null,
     };
     if (queued) {
       request.source = 'queued';
       request.pointerId = null;
+      beginQueuedInput(request, source, pointerId);
       queuedCharges.set(slot, request);
       if (!charge) charge = request;
     } else {
@@ -2913,8 +2971,10 @@
       chargeFeedback('ready');
     }
   }
-  function releaseCharge(slot, source, automatic = false) {
+  function releaseCharge(slot, source, automatic = false, pointerId = null) {
+    if (!automatic && finishQueuedInput(slot, source, pointerId)) return true;
     if (!charge || charge.slot !== slot || charge.source !== source) return false;
+    if (!automatic && source === 'pointer' && charge.pointerId !== pointerId) return false;
     syncChargeReady();
     if (!charge) return false;
     if (charge.autoRelease && !automatic) {
@@ -3000,6 +3060,7 @@
         request.campaign !== game ||
         request.unit !== game.hero ||
         request.zone !== game.zoneId ||
+        request.deaths !== game.s.statistics.deaths ||
         game.hero.hp <= 0 ||
         game.peace ||
         !game.hero.skills[slot - 1] ||
@@ -3013,13 +3074,39 @@
     // skills retain independent requests and wait for their own cooldown.
     if (charge && (!charge.autoRelease || charge.started !== null)) return;
     const ready = [...queuedCharges.values()].find(
-      (request) => game.hero.cd[request.slot - 1] <= 0 && game.partyChargeRecovery(game.hero) <= 0,
+      (request) =>
+        queuedInputReady(request) &&
+        game.hero.cd[request.slot - 1] <= 0 &&
+        game.partyChargeRecovery(game.hero) <= 0,
     );
     if (ready) charge = ready;
     else if (!charge) charge = queuedCharges.values().next().value || null;
   }
   function releaseQueuedCharge() {
     if (!charge?.autoRelease || !activePlay()) return;
+    syncQueuedInput(charge);
+    if (!charge.charged) {
+      if (
+        !queuedInputReady(charge) ||
+        game.hero.cd[charge.slot - 1] > 0 ||
+        game.partyChargeRecovery(game.hero) > 0
+      )
+        return;
+      // A normal request has no preparation, but obeys the same no-chase rule.
+      const slot = charge.slot,
+        target = chargeTarget(slot, null, false);
+      const invalid =
+        chargeNeedsTarget(slot) &&
+        (!target ||
+          Math.hypot(target.x - game.hero.x, target.y - game.hero.y) >
+            game.heroSkillRange(slot, false) ||
+          !game.line(game.hero, target));
+      cancelCharge(false);
+      if (invalid) status('Target lost. Move closer.');
+      else if (!game.cast(slot, target?.id, false)) chargeFailureStatus(slot, false);
+      updateHUD();
+      return;
+    }
     const state = chargePresentation();
     if (!charge || !state || state.state === 'waiting' || state.state === 'charging') return;
     const slot = charge.slot,
@@ -3081,11 +3168,11 @@
         if (beginCharge(slot, 'pointer', e?.pointerId ?? null)) b.setPointerCapture?.(e.pointerId);
       };
       b.onpointerup = (e) => {
-        if (e?.button > 0 || (charge?.pointerId !== null && charge?.pointerId !== e?.pointerId))
-          return;
-        releaseCharge(slot, 'pointer');
+        if (e?.button > 0) return;
+        releaseCharge(slot, 'pointer', false, e?.pointerId ?? null);
       };
       b.onpointercancel = b.onlostpointercapture = (e) => {
+        cancelQueuedInput(slot, 'pointer', e?.pointerId ?? null);
         if (
           charge?.source === 'pointer' &&
           (charge.pointerId === null || charge.pointerId === e?.pointerId)
@@ -3852,12 +3939,16 @@
       const slot = i + 1,
         b = $('skill-' + slot),
         rank = h.skills[i],
+        queuedRequest = queuedCharges.get(slot),
         cast = charge?.slot === slot ? chargePresentation() : null,
         charging = !!cast;
+      if (queuedRequest) syncQueuedInput(queuedRequest);
       b.disabled = false;
       b.classList.toggle('locked', !rank || b.disabled);
       b.classList.toggle('charging', charging);
-      b.classList.toggle('skill-ready', !!rank && h.cd[i] <= 0 && !charging);
+      b.classList.toggle('skill-ready', !!rank && h.cd[i] <= 0 && !charging && !queuedRequest);
+      b.classList.toggle('skill-queued', !!queuedRequest);
+      b.dataset.queuedForm = queuedRequest ? (queuedRequest.charged ? 'charged' : 'normal') : '';
       const revealed = game.skillRevealed(slot),
         chargeTip = canChargeSlot(slot)
           ? ' · Tap under ' +
@@ -3865,7 +3956,7 @@
             's for normal · hold ' +
             chargeSeconds().toFixed(2) +
             's for charged' +
-            ' · During cooldown, request once to auto-charge and cast when ready' +
+            ' · During cooldown: tap queues normal; briefly hold queues charged' +
             (manaEnabled
               ? ' · Charged cost ' + chargedManaPercent(slot) + '% max MP'
               : ' · charged cooldown ' + game.skillCooldown(slot, true).toFixed(1) + 's')
@@ -3891,7 +3982,8 @@
           (canChargeSlot(slot)
             ? ' · tap for normal or hold to charge' +
               (manaEnabled ? ' · charged cost ' + chargedManaPercent(slot) + ' percent max MP' : '')
-            : ''),
+            : '') +
+          (queuedRequest ? ' · ' + queuedSkillLabel(queuedRequest) : ''),
       );
       if (b.firstChild?.nodeType === 3)
         b.firstChild.textContent =
@@ -3904,11 +3996,16 @@
         ? 'OFF'
         : charging
           ? cast.state === 'waiting'
-            ? (language === 'es' ? 'COLA ' : 'QUEUED ') + cooldownText(cast.cooldown)
+            ? queuedSkillLabel(queuedRequest).replace(' ', '\n') +
+              ' ' +
+              cooldownText(cast.cooldown) +
+              's'
             : cast.state === 'interrupted'
               ? 'BROKEN'
               : cast.state === 'charging'
-                ? Math.min(99, Math.round(cast.progress * 100)) + '%'
+                ? (queuedRequest ? (language === 'es' ? 'CARGADA\n' : 'CHARGED\n') : '') +
+                  Math.min(99, Math.round(cast.progress * 100)) +
+                  '%'
                 : cast.state === 'need-mp'
                   ? 'NEED MP'
                   : cast.state === 'no-target'
@@ -3919,7 +4016,7 @@
                         ? 'NO ALLIES'
                         : 'CHARGED'
           : queuedCharges.has(slot)
-            ? (language === 'es' ? 'COLA ' : 'QUEUED ') + cooldownText(h.cd[i])
+            ? queuedSkillLabel(queuedRequest).replace(' ', '\n') + ' ' + cooldownText(h.cd[i]) + 's'
             : slot === 3 && h.class === 'paladin' && h.shieldStance > 0
               ? 'SHIELD ' + cooldownText(h.shieldStance)
               : !rank
