@@ -133,10 +133,166 @@
             .sort((a, b) => a.score - b.score)[0]?.point || { x: u.x, y: u.y }
         );
       }
+      companionContributionRange(u, slot = 0) {
+        if (!slot) return this.companionCombatReach(u);
+        if (u.type === 'pet') return this.petSkillDefinition(u, slot)?.range || 0;
+        if (slot === 2) return R.companionSkills.second[u.type]?.range || 0;
+        return u.type === 'archer' ? 185 : u.type === 'soldier' ? 80 : 0;
+      }
+      companionContributionTargets() {
+        const context = this.squadContext();
+        if (!context.engaged) return [];
+        if (context.boss) {
+          if (this.s.squadDoctrine === 'focus') return [context.bossEnemy];
+          const adds = this.zone().enemies.filter(
+            (e) =>
+              e.hp > 0 &&
+              !e.neutral &&
+              !e.returning &&
+              e.type !== 'boss' &&
+              this.tacticalDirectTargetable(e) &&
+              (context.threats.includes(e) || (e.summon && e.owner === context.bossEnemy.id)),
+          );
+          return adds.length ? adds : [context.bossEnemy];
+        }
+        if (this.s.squadDoctrine === 'focus')
+          return [
+            context.threats.find((e) => e.id === this.s.heroTarget) ||
+              context.threats.slice().sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0],
+          ].filter(Boolean);
+        return context.threats;
+      }
+      companionSafeContribution(u, target, slot = 0) {
+        const cfg = R.companionJudgment;
+        if (
+          !this.companionSurvivalMode(u) ||
+          !target ||
+          target.hp <= 0 ||
+          !target.aggro ||
+          target.neutral ||
+          target.returning ||
+          this.peace ||
+          u.deathRollHeld ||
+          u.keeperHeld ||
+          this._tacticalScatter?.has(u.id) ||
+          dist(u, this.hero) > cfg.maxAdvanceFromHero ||
+          !this.line(u, target) ||
+          !this.tacticalDirectTargetable(target) ||
+          dist(u, target) > this.companionContributionRange(u, slot)
+        )
+          return false;
+        const allowed = this.companionContributionTargets();
+        if (!allowed.includes(target)) return false;
+        const victims =
+          slot === 2
+            ? this.companionSecondSkillTargets(u, target)
+            : slot === 1 && u.type === 'pet'
+              ? this.petSkillTargets(u, target, 1)
+              : [target];
+        if (!victims.length || victims.some((e) => !e.aggro || !allowed.includes(e))) return false;
+        const margin =
+            slot === 2 ? cfg.criticalChargeSafetyMargin : cfg.criticalInstantSafetyMargin,
+          protectors = [
+            this.hero,
+            ...this.activeLivingParty().filter(
+              (a) => a !== u && !a.order && !this.companionSurvivalMode(a),
+            ),
+          ].filter(
+            (a) =>
+              a.hp > 0 &&
+              !a.deathRollHeld &&
+              !a.keeperHeld &&
+              dist(a, u) <= cfg.supportRadius &&
+              this.clearSegment(a, u),
+          );
+        for (const e of this.zone().enemies) {
+          if (e.hp <= 0 || e.neutral || e.returning || !this.enemyRangedLine(e, u)) continue;
+          const gap = dist(u, e),
+            reach = Math.max(
+              65,
+              this.enemyRanged(e) ? this.enemyRangedRange(e) : 0,
+              e.type === 'boss' ? R.bossCadence.specialRange : 0,
+              e.captain || e.roomCaptain || e.fieldCaptain
+                ? this.captainProfile(e)?.specialRange || cfg.nearThreatRadius
+                : 0,
+              e.telegraph || e.motion || e.nightOnly ? cfg.nearThreatRadius : 0,
+            );
+          if (gap < reach + margin) return false;
+          if (
+            gap <= Math.max(this.enemyAcquisitionRange(e), reach) + cfg.criticalEnemyMargin &&
+            !protectors.some((a) => dist(e, a) + cfg.criticalScreenMargin < gap && this.line(e, a))
+          )
+            return false;
+        }
+        if (this.s.hazards.some((a) => a.life > 0 && dist(u, a) < (a.radius || 0) + margin))
+          return false;
+        if (
+          this.isDungeon() &&
+          this.traps().some(
+            (t) =>
+              this.trapContains(t, u) &&
+              (t.phase < t.warningTime + t.activeTime ||
+                (slot === 2 && t.phase + R.chargedSkills.holdSeconds >= t.cycleLength)),
+          )
+        )
+          return false;
+        return true;
+      }
+      companionCriticalContribution(u) {
+        const targets = this.companionContributionTargets()
+          .slice()
+          .sort((a, b) => dist(u, a) - dist(u, b));
+        for (const target of targets) {
+          if (!this.mageSilenceActive(u) && (u.skillGlobalCd || 0) <= 0) {
+            if ((u.skill1Cd || 0) <= 0 && this.companionSafeContribution(u, target, 1))
+              return { target, slot: 1 };
+            if (
+              (u.skill2Cd || 0) <= 0 &&
+              this.companionSecondSkillUnlocked() &&
+              this.companionSafeContribution(u, target, 2)
+            )
+              return { target, slot: 2 };
+          }
+          if (this.companionSafeContribution(u, target, 0)) return { target, slot: 0 };
+        }
+        return null;
+      }
       followCriticalCompanion(u, living, dt, state) {
         const cfg = R.companionJudgment;
-        this.clearPartyCharge(u);
         this._tacticalPartyTargets?.delete(u.id);
+        const pending = this._companionCharges?.get(u.id),
+          prepared = pending && this.zone().enemies.find((e) => e.id === pending.targetId),
+          observation = this.partyChargeState(u);
+        if (
+          pending &&
+          !this.s.recallActive &&
+          observation &&
+          !observation.interrupted &&
+          !this.mageSilenceActive(u) &&
+          this.companionSafeContribution(u, prepared, 2)
+        ) {
+          state.contributing = true;
+          state.point = { x: u.x, y: u.y };
+          this.clearCompanionTravel(u);
+          return true;
+        }
+        this.clearPartyCharge(u);
+        const contribution = !this.s.recallActive && this.companionCriticalContribution(u);
+        if (contribution) {
+          state.contributing = true;
+          state.point = { x: u.x, y: u.y };
+          this.clearCompanionTravel(u);
+          const fired = contribution.slot
+            ? this.companionTrySkill(u, contribution.target)
+            : this.companionCoverAttack(u, contribution.target);
+          if (fired) this._tacticalPartyTargets?.set(u.id, contribution.target.id);
+          return true;
+        }
+        if (state.contributing) {
+          state.contributing = false;
+          state.point = this.companionSurvivalPoint(u, living, this.companionSurvivalThreats());
+          this.clearCompanionTravel(u);
+        }
         const distance = dist(u, this.hero),
           speed =
             this.companionRallyMoveSpeed(
@@ -176,6 +332,13 @@
               this.companionSurvivalScore(u, b, preferred, danger),
           );
           if (candidates.length) this.move(u, candidates[0], speed, dt);
+        }
+        if (this.s.recallActive) {
+          const counter = this.companionContributionTargets().find((e) =>
+            this.companionSafeContribution(u, e, 0),
+          );
+          if (counter && this.companionCoverAttack(u, counter, true))
+            this._tacticalPartyTargets?.set(u.id, counter.id);
         }
         return true;
       }
@@ -218,8 +381,9 @@
               ? cfg.ringleaderWeight
               : 1;
       }
-      companionCoverAttack(u, e) {
-        if (this.companionCoveringShot(u, e)) return true;
+      companionCoverAttack(u, e, basicOnly = false) {
+        if (this.companionSurvivalMode(u) && !this.companionSafeContribution(u, e, 0)) return false;
+        if (!basicOnly && this.companionCoveringShot(u, e)) return true;
         if (
           !e ||
           e.hp <= 0 ||
@@ -383,9 +547,9 @@
             : null;
           if (critical && !wasCritical && state.regrouping)
             this.notice(
-              'Critically wounded companions are avoiding combat.',
+              'Critically wounded companions are keeping their distance.',
               2.8,
-              'They keep following and rejoin when conditions are safe.',
+              'Safe attacks and skills remain available; retreat comes first.',
               'feedback',
             );
         }
@@ -593,7 +757,8 @@
           .sort((a, b) => this.idOrder(a, b));
       }
       companionUseFirstSkill(u, target) {
-        if (this.companionSurvivalMode(u)) return false;
+        if (this.companionSurvivalMode(u) && !this.companionSafeContribution(u, target, 1))
+          return false;
         if (u.type === 'pet') return this.usePetSkill(u, target, 1);
         if (!['soldier', 'archer'].includes(u.type)) return false;
         const cfg = R.companionSkills?.first,
@@ -710,7 +875,7 @@
       // The actor keeps the aim for 0.65s and releases only after surviving damage.
       companionUseSecondSkill(u, target, targets = this.companionSecondSkillTargets(u, target)) {
         if (
-          this.companionSurvivalMode(u) ||
+          (this.companionSurvivalMode(u) && !this.companionSafeContribution(u, target, 2)) ||
           !this.companionSecondSkillUnlocked() ||
           !(u.type === 'pet' ? this.petDefinition(u) : R.companionSkills.second?.[u.type]) ||
           !target ||
@@ -833,7 +998,12 @@
             !this.mageSilenceActive(u) &&
             !this._tacticalScatter?.has(u.id) &&
             !this.peace &&
-            !this.companionSurvivalMode(u) &&
+            (!this.companionSurvivalMode(u) ||
+              this.companionSafeContribution(
+                u,
+                z.enemies.find((foe) => foe.id === pending.targetId),
+                2,
+              )) &&
             !this.s.recallActive;
           if (!valid || !observation || observation.interrupted) {
             this.clearPartyCharge(u);
@@ -1897,7 +2067,6 @@
           // Run the existing judgment early for critical wounds, so a cast or
           // job cannot hide danger. No independent recovery state or HP gate.
           if (this.companionSurvivalMode(u)) {
-            this.clearPartyCharge(u);
             const threat = this.companionSurvivalThreats()
               .filter(
                 (e) =>
@@ -1907,7 +2076,10 @@
               .sort((a, b) => dist(u, a) - dist(u, b))[0]?.enemy;
             if (threat) {
               if (this.companionCautiousCombat(u, threat, living, dt)) continue;
-            } else this.clearCompanionJudgment(u);
+            } else {
+              this.clearCompanionJudgment(u);
+              this.clearPartyCharge(u);
+            }
           }
           const pending = this._companionCharges?.get(u.id);
           if (pending) {

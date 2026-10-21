@@ -22,10 +22,10 @@
   } catch (_) {}
   document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
   const spanishText = {
-    'Critically wounded companions are avoiding combat.':
-      'Los compañeros con heridas críticas están evitando el combate.',
-    'They keep following and rejoin when conditions are safe.':
-      'Siguen acompañándote y vuelven a combatir cuando las condiciones son seguras.',
+    'Critically wounded companions are keeping their distance.':
+      'Los compañeros con heridas críticas están manteniendo la distancia.',
+    'Safe attacks and skills remain available; retreat comes first.':
+      'Pueden usar ataques y habilidades seguros; retirarse tiene prioridad.',
     'Choose your language': 'Elige tu idioma',
     'Adventure menu': 'Menú de aventura',
     'Game and settings': 'Juego y ajustes',
