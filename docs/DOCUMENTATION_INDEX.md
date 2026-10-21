@@ -1,3 +1,5 @@
+Prepared dev.128: [regional Treasury death-loss recovery and owner arena steering](TREASURY_DEATH_RECOVERY_DEV128.md). Focused checks and actual phone flow pass; publication pending.
+
 Published dev.127: [roster restriction explanations](BARRACKS_ROSTER_FEEDBACK_DEV127.md), PR #363. Nine live files match; actual phone rest/recruit and visible blocker checks pass. Normal workflow restored. [Boss/captain encounter-space audit](ENCOUNTER_SPACE_AUDIT_DEV127.md) is complete, review-only; proposed spatial/arrival/fort repairs are not implemented.
 
 Published dev.126: [combat flow, gathering returns, menu priorities and quest guidance](COMBAT_FLOW_AND_MENUS_DEV126.md), PR #362. Nineteen public files match; live phone startup verified; normal workflow restored. Includes roster/interruption audits. Basic Barracks replacement proposal and persistent flashes remain open.

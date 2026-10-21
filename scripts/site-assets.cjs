@@ -18,6 +18,7 @@ const scripts = [
     'party',
     'party-pets',
     'economy',
+    'treasury',
     'narration',
     'rewards',
     'enemy-presentation',

@@ -235,6 +235,35 @@
         const finite = (v, min, max) => {
           if (!Number.isFinite(v) || v < min || v > max) throw Error('Invalid save number');
         };
+        if (s.treasuryRecovery === undefined) s.treasuryRecovery = {};
+        if (
+          !s.treasuryRecovery ||
+          typeof s.treasuryRecovery !== 'object' ||
+          Array.isArray(s.treasuryRecovery)
+        )
+          throw Error('Invalid Treasury recovery balances');
+        for (const [region, account] of Object.entries(s.treasuryRecovery)) {
+          if (
+            !D.regions.some((r) => r.id === region) ||
+            !account ||
+            typeof account !== 'object' ||
+            Array.isArray(account) ||
+            typeof account.unlocked !== 'boolean'
+          )
+            throw Error('Invalid Treasury recovery account');
+          finite(account.crowns, 0, 1e9);
+          finite(account.respawnAt, 0, 1e9);
+          if (account.cachePoint !== undefined) {
+            if (
+              !account.cachePoint ||
+              typeof account.cachePoint !== 'object' ||
+              Array.isArray(account.cachePoint)
+            )
+              throw Error('Invalid Treasury recovery cache position');
+            finite(account.cachePoint.x, 0, 5000);
+            finite(account.cachePoint.y, 0, 5000);
+          }
+        }
         for (const field of [
           'level',
           'gold',
@@ -990,6 +1019,7 @@
         for (const u of [c.hero, ...c.s.party])
           if (c.blocked(u.x, u.y)) Object.assign(u, c.safe(u.x, u.y));
         if (c.s.phase === 'awakening') c.activatePending();
+        c.syncTreasuryRecovery(c.zone());
         return c;
       }
       repairLegacyRescues() {

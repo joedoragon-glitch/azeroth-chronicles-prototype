@@ -83,6 +83,7 @@
         paid: {},
         tickets: {},
         recovery: {},
+        treasuryRecovery: {},
         quests: {},
         discovered: {},
         gathered: {},
@@ -628,6 +629,7 @@
       }
     }
     bundleCollected(n) {
+      if (n.treasuryRecovery) return this.treasuryLostCrowns(n.region) <= 0;
       return (
         n.kind === 'bundle' && !!this.s.discovered[this.definition().id + ':bundle-' + n.index]
       );
@@ -952,7 +954,11 @@
         return z.npcs.find((n) => n.mini === q.clear) || null;
       if (q.kind === 'bundles')
         return (
-          nearest(z.npcs.filter((n) => n.kind === 'bundle' && !this.bundleCollected(n))) || null
+          nearest(
+            z.npcs.filter(
+              (n) => n.kind === 'bundle' && !n.treasuryRecovery && !this.bundleCollected(n),
+            ),
+          ) || null
         );
       if (q.kind === 'patrol')
         return (
@@ -2549,6 +2555,7 @@
         if (side.lore) this.say(side.lore);
         this.event('sideInteriorDiscovery', { id: side.id, region: side.region });
       }
+      this.syncTreasuryRecovery(this.zone());
       return true;
     }
     travel(direction, options = null) {
@@ -2721,6 +2728,7 @@
           this.say(this.miniStatus(npc.mini));
           return true;
         case 'bundle':
+          if (npc.treasuryRecovery) return this.collectTreasuryRecovery(npc);
           this.checkMinis();
           if (
             this.supplyRoom() &&
@@ -2977,7 +2985,7 @@
       this.s.streak = { key: null, count: 0 };
       this.s.projectiles = [];
       this.s.hazards = [];
-      this.event('death', { goldLost, ...(cause ? { cause } : {}) });
+      this.event('death', { goldLost, region: this.definition().id, ...(cause ? { cause } : {}) });
       if (goldLost) this.say('Defeat penalty: lost ' + goldLost + ' crowns.');
       if (this.s.lastEdge) this.s.recovery[this.s.lastEdge] = true;
       for (const z of Object.values(this.s.zones))
@@ -3037,7 +3045,14 @@
       this.notice(
         'Defeated · Recovered at ' + (chosen ? 'your barracks' : 'your refuge'),
         6,
-        (goldLost ? goldLost + ' crowns lost. ' : '') + 'Your progress is safe.',
+        (goldLost
+          ? goldLost +
+            ' crowns lost. Recover ' +
+            this.treasuryLostCrowns() +
+            ' accumulated crowns at ' +
+            this.treasuryRecoverySite().name +
+            '. '
+          : '') + 'Your progress is safe.',
         'warning',
       );
     }
@@ -3138,6 +3153,7 @@
       }
       this.s.statistics.kills++;
       this.awardEnemyReward(e);
+      this.treasuryCaptainDefeated(e);
       for (const q of this.questDefs().filter((q) => q.region === this.definition().id)) {
         const p = this.s.quests[q.id];
         if (
@@ -5412,6 +5428,7 @@
       return true;
     }
     updateEnemies(dt) {
+      this.syncTreasuryRecovery(this.zone());
       const z = this.zone(),
         deaths = this.s.statistics.deaths,
         nightTempo = this.nightTempo(),
@@ -6768,6 +6785,9 @@
   const Economy =
     typeof PrototypeEconomy !== 'undefined' ? PrototypeEconomy : require('./economy.js');
   Economy.install(Campaign, { D, R, dungeonIds });
+  const Treasury =
+    typeof PrototypeTreasury !== 'undefined' ? PrototypeTreasury : require('./treasury.js');
+  Treasury.install(Campaign, { D, R });
   const Rewards =
     typeof PrototypeRewards !== 'undefined' ? PrototypeRewards : require('./rewards.js');
   Rewards.install(Campaign, { D, R, dungeonIds });
