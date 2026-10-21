@@ -58,3 +58,16 @@ assert(!restored.blocked(1020, 500), 'authored lab doorway stays open');
 console.log(
   'PASS Archive lab/study passage, hero/troop/enemy movement, existing save and real walls/doorway',
 );
+// The lower flooded room/hall join must not become a second invisible divider.
+for (const y of [1100, 1200, 1350]) {
+  const a = { x: 930, y },
+    b = { x: 1010, y };
+  assert(restored.clearSegment(a, b), 'lower hall opens at y=' + y);
+  assert(restored.clearSegment(b, a), 'lower hall return opens at y=' + y);
+}
+Object.assign(restored.hero, { x: 940, y: 1200 });
+for (let i = 0; i < 24; i++) restored.tick(0.05, { x: 1, y: 0 });
+assert(restored.hero.x > 990, 'real input crosses the lower hall join');
+assert(restored.blocked(990, 1050), 'real records-threshold partition remains solid');
+assert(restored.blocked(940, 1380), 'real lower room edge remains solid');
+console.log('PASS lower flooded/hall seam, return passage and retained threshold/outer boundary');

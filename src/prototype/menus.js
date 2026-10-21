@@ -622,9 +622,11 @@
       }
       openMenu(
         n.name,
-        manaEnabled
-          ? 'Neri sells Preparation Tonics and trains permanent Ranger field support.'
-          : 'Neri sells Preparation Tonics and trains permanent Ranger Heal, companion vitality and discipline resets.',
+        n.presentation === 'archive-restorer'
+          ? '“I return by choice. The soaked pages still need drying, and the damaged shelves need care.” Neri offers her usual tonics and training here.'
+          : manaEnabled
+            ? 'Neri sells Preparation Tonics and trains permanent Ranger field support.'
+            : 'Neri sells Preparation Tonics and trains permanent Ranger Heal, companion vitality and discipline resets.',
         [
           action(
             getGame().preparationTonicStock() >= 10000

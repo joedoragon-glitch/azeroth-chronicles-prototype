@@ -1,0 +1,9 @@
+{
+  "step": 5,
+  "clearance": 15.01,
+  "checked": 52076,
+  "priorFalseBlocks": 280,
+  "remainingFalseBlocks": 0,
+  "footprintUnchanged": true,
+  "limit": "Static Archive floor samples with true partition clearance excluded; not an every-frame campaign simulation"
+}

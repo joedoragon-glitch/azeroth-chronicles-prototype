@@ -3205,6 +3205,15 @@
               icon: '🧙',
             },
             {
+              id: 'archive-restorer',
+              name: 'Neri the Alchemist',
+              kind: 'alchemist',
+              family: 'archive',
+              presentation: 'archive-restorer',
+              ...this.safe(1130, 560, z.id),
+              icon: '⚗️',
+            },
+            {
               id: 'archive-ledger',
               name: 'The Keeper’s ledger',
               kind: 'archive-record',

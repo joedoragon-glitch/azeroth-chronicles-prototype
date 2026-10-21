@@ -1,0 +1,16 @@
+{
+  "version": "0.9.1+snapshot.dev.125",
+  "before": {
+    "x": 1130,
+    "y": 560
+  },
+  "after": {
+    "x": 792.6204772517849,
+    "y": 431.001947184506
+  },
+  "free": true,
+  "oldCaptiveVisible": false,
+  "hiddenDuringTrue": true,
+  "returnsAfterTrue": true,
+  "errors": []
+}
