@@ -94,7 +94,7 @@ console.log(
   step(g, 100);
   for (const wounded of [u, pet]) {
     assert(distance(wounded, g.hero) < 440, 'follows moving player');
-    assert(distance(wounded, e) > 260);
+    assert(distance(wounded, e) >= 90, 'physical clearance without leaving the hero behind');
   }
   cases++;
 }
@@ -177,7 +177,7 @@ for (const work of ['build', 'upgrade', 'gather', 'deposit']) {
   assert.equal(n.amount, 1000);
   assert.equal(b.progress, progress);
   assert.equal(b.upgradeProgress, 0);
-  assert(distance(u, e) > 100);
+  assert(distance(u, e) >= 90, 'work remains paused at local physical clearance');
   z.enemies = [];
   u.hp = u.maxHp;
   Object.assign(u, { x: b.x, y: b.y });
@@ -196,7 +196,8 @@ for (const work of ['build', 'upgrade', 'gather', 'deposit']) {
   step(g, 30);
   assert(g.companionSurvivalMode(u));
   assert(!g._companionCharges?.has(u.id), 'Recall never starts an active charged skill');
-  assert(distance(u, e) > 260);
+  assert(distance(u, e) >= 90, 'Recall keeps local physical clearance');
+  assert(distance(u, g.hero) < 150, 'Recall remains nearby the stationary hero');
   cases++;
 }
 // Critical health does not strip existing Recall movement protection on a clear return.
@@ -285,23 +286,23 @@ for (const work of ['build', 'upgrade', 'gather', 'deposit']) {
   );
   cases++;
 }
-// Idle foes and ranged reach are avoided rather than drawing extra fights.
+// Idle foes are not attacked; possible ranged reach alone does not force a long flight.
 {
   const { g, u, e } = scene();
   e.ranged = true;
   e.shotRange = 400;
   e.aggro = false;
   step(g, 100);
-  assert(distance(u, e) > g.enemyRangedRange(e) + 25);
+  assert(distance(u, e) >= 90, 'keeps physical clearance without fleeing possible ranged reach');
   assert(!e.aggro);
   cases++;
 }
-// Boss reach expands the safe following band rather than capping it inside danger.
+// Possible boss reach does not override the bounded hero-following band.
 {
   const { g, u, e } = scene();
   e.type = 'boss';
   step(g, 130);
-  assert(distance(u, e) > C.rules.bossCadence.specialRange);
+  assert(distance(u, e) >= 90, 'keeps physical clearance while remaining near the hero');
   assert(distance(u, g.hero) < g.companionSurvivalRadius(g.companionSurvivalThreats()) + 20);
   cases++;
 }

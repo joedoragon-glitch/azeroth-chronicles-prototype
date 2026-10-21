@@ -17,6 +17,7 @@
       depositTrips = new WeakMap(),
       deliveryAvoidance = new WeakMap();
     const companionJudgments = new WeakMap();
+    const heroGuidance = new WeakMap();
     const rangerHealRequests = new WeakMap();
 
     class Party {
@@ -54,8 +55,15 @@
       companionRetreating(u) {
         if (!this.companionRetreatMode(u)) return false;
         const state = companionJudgments.get(u);
-        if (this.companionSurvivalMode(u) && state?.critical && state.point)
-          return dist(u, state.point) > R.companionJudgment.criticalArrivalRadius;
+        if (this.companionSurvivalMode(u) && state?.critical && state.point) {
+          if (state.guiding)
+            return state.guidanceMovedAt === this.s.time && state.guidanceMoved > 0.1;
+          return (
+            dist(u, state.point) > R.companionJudgment.criticalArrivalRadius ||
+            (dist(u, state.point) > 1 &&
+              (this.companionAreaDanger(u) > 0 || !this.companionPositionProtected(u)))
+          );
+        }
         if (this.s.recallActive) return true;
         return dist(u, companionJudgments.get(u).point) > R.companionJudgment.arrivalRadius;
       }
@@ -78,57 +86,399 @@
                 weight: this.companionEnemyWeight(e),
               }));
       }
-      companionSurvivalScore(u, p, preferred, threats) {
+      updateCompanionHeroGuidance() {
+        const old = heroGuidance.get(this),
+          h = this.hero;
+        heroGuidance.set(this, {
+          hero: h,
+          zone: this.zoneId,
+          x: h.x,
+          y: h.y,
+          dx: old && old.hero === h && old.zone === this.zoneId ? h.x - old.x : 0,
+          dy: old && old.hero === h && old.zone === this.zoneId ? h.y - old.y : 0,
+          moving: !!(
+            old &&
+            old.hero === h &&
+            old.zone === this.zoneId &&
+            dist(old, h) > R.companionJudgment.criticalHeroMotionEpsilon
+          ),
+        });
+      }
+      companionHeroMoving() {
+        const state = heroGuidance.get(this);
+        return !!(
+          state &&
+          state.hero === this.hero &&
+          state.zone === this.zoneId &&
+          (state.moving || dist(state, this.hero) > R.companionJudgment.criticalHeroMotionEpsilon)
+        );
+      }
+      companionPositionProtected(
+        u,
+        point = u,
+        margin = R.companionJudgment.criticalInstantSafetyMargin,
+      ) {
         const cfg = R.companionJudgment;
+        const allies = [
+          this.hero,
+          ...this.activeLivingParty().filter(
+            (a) => a !== u && !a.order && !this.companionSurvivalMode(a),
+          ),
+        ].filter(
+          (a) =>
+            a.hp > 0 &&
+            !a.deathRollHeld &&
+            !a.keeperHeld &&
+            dist(a, point) <= cfg.supportRadius &&
+            this.clearSegment(a, point),
+        );
+        return !this.zone().enemies.some((e) => {
+          if (e.hp <= 0 || e.neutral || e.returning || !this.enemyRangedLine(e, point))
+            return false;
+          const gap = dist(e, point);
+          if (gap < 65 + margin) return true;
+          const reach = Math.max(
+            this.enemyAcquisitionRange(e),
+            this.enemyRanged(e) ? this.enemyRangedRange(e) : 0,
+            e.type === 'boss' ? R.bossCadence.specialRange : 0,
+            e.captain || e.roomCaptain ? this.captainProfile(e)?.specialRange || 0 : 0,
+          );
+          return (
+            gap <= reach + cfg.criticalEnemyMargin &&
+            !allies.some((a) => dist(e, a) + cfg.criticalScreenMargin < gap && this.line(e, a))
+          );
+        });
+      }
+      // Read current mechanical states, not the enemy's possible future range.
+      // Shared native patch/board/trap geometry remains authoritative.
+      companionDangerShapes(horizon = R.companionJudgment.criticalAvoidLookahead) {
+        if (this.peace) return [];
+        const out = [],
+          circle = (p, radius, source = p) => {
+            if (Number.isFinite(p?.x) && Number.isFinite(p?.y) && radius > 0)
+              out.push({ ...p, shape: 'circle', radius, source });
+          },
+          line = (from, to, width, source = from) => {
+            if (
+              Number.isFinite(from?.x) &&
+              Number.isFinite(to?.x) &&
+              Number.isFinite(from?.y) &&
+              Number.isFinite(to?.y)
+            )
+              out.push({ shape: 'line', from, to, width, source });
+          },
+          attack = (e, a) => {
+            if (!a || a.bossHeal || a.selfDefense || a.kind === 'summon' || a.kind === 'formation')
+              return;
+            if (a.kind === 'checkerboard') {
+              if (a.boardPlan)
+                for (const cell of this.sentinelBoardCells({ board: { ...a.boardPlan, beat: 0 } }))
+                  if (cell.selected) out.push({ ...cell, shape: 'box', source: e });
+            } else if (a.kind === 'line' || a.charge || a.landing || a.kind === 'pattern-charge') {
+              if (a.landing && !a.charge) {
+                for (const p of this.attackPatches(a)) circle(p, p.radius, e);
+              } else {
+                const from = { x: a.fromX ?? e.x, y: a.fromY ?? e.y };
+                if (a.arenaLines)
+                  for (const p of a.arenaLines) line({ x: p.fromX, y: p.fromY }, p, p.halfWidth, e);
+                else if (a.path?.length || a.flightPath?.length) {
+                  let previous = from;
+                  for (const p of a.path || a.flightPath) {
+                    line(previous, p, a.radius || R.combatGeometry.lineHalfWidth, e);
+                    previous = p;
+                  }
+                } else if (a.count === 2 && !a.charge && !a.cargo) {
+                  for (const n of [-85, 85]) {
+                    const dx = Math.cos(a.angle + Math.PI / 2) * n,
+                      dy = Math.sin(a.angle + Math.PI / 2) * n;
+                    line(
+                      { x: from.x + dx, y: from.y + dy },
+                      { x: a.x + dx, y: a.y + dy },
+                      R.combatGeometry.dualLineHalfWidth,
+                      e,
+                    );
+                  }
+                } else line(from, a, a.charge ? a.radius || 55 : R.combatGeometry.lineHalfWidth, e);
+              }
+            } else if (['cone', 'sector', 'canister', 'volley'].includes(a.kind)) {
+              out.push({
+                ...a,
+                shape: 'cone',
+                x: a.kind === 'volley' ? e.x : a.x,
+                y: a.kind === 'volley' ? e.y : a.y,
+                halfAngle: a.angleDegrees
+                  ? (a.angleDegrees * Math.PI) / 360
+                  : a.kind === 'sector'
+                    ? 0.65
+                    : a.kind === 'canister'
+                      ? 0.46
+                      : a.kind === 'volley'
+                        ? 0.22
+                        : 1.1,
+                radius: a.kind === 'volley' ? R.bossCadence.specialRange : a.radius,
+                source: e,
+              });
+            } else if (a.kind === 'ring' && a.dreadMechanic === 'closure') {
+              out.push({
+                ...a,
+                shape: 'ring',
+                inner: a.initialRadius,
+                outer: a.initialRadius,
+                width: a.width,
+                source: a,
+              });
+            } else if (a.kind === 'ring') circle(a, a.radius, e);
+            else if (Number.isFinite(a.x) && Number.isFinite(a.y))
+              for (const p of this.attackPatches(a)) circle(p, p.radius || a.radius, e);
+          };
+        for (const a of this.s.hazards) {
+          if (!(a.life > 0)) continue;
+          if (a.kind === 'ring') {
+            const radius = a.radius || 0;
+            out.push({
+              ...a,
+              shape: 'ring',
+              inner: radius,
+              outer:
+                radius + (a.waveSpeed || R.combatGeometry.ringSpeed) * Math.min(horizon, a.life),
+              width: R.combatGeometry.ringHalfWidth,
+              source: a,
+            });
+          } else circle(a, a.radius);
+        }
+        for (const e of this.zone().enemies) {
+          if (e.hp <= 0 || e.neutral || e.returning) continue;
+          attack(e, e.telegraph);
+          if (
+            e.motion &&
+            !e.motion.bossHeal &&
+            !e.motion.royalSidestepAfterStrike &&
+            e.motion.aerial !== 'go-around'
+          ) {
+            const m = e.motion;
+            line(e, m.target || m, m.radius || 55, e);
+          }
+          if (e.rangedAim) {
+            line(e, e.rangedAim, R.balance.enemyProjectileHitRadius || 10, e);
+            out.at(-1).enemyAim = e;
+          }
+          for (const v of e.dreadVapors || [])
+            if (v.life > 0)
+              v.kind === 'cone'
+                ? out.push({
+                    ...v,
+                    shape: 'cone',
+                    halfAngle: (v.angleDegrees * Math.PI) / 360,
+                    source: v,
+                  })
+                : circle(v, v.radius);
+          const ring = e.dreadClosure;
+          if (ring) {
+            const remaining = Math.max(0, ring.duration - ring.age),
+              radius = ring.radius;
+            out.push({
+              ...ring,
+              shape: 'ring',
+              inner: radius,
+              outer:
+                radius +
+                ((ring.finalRadius - ring.initialRadius) / ring.duration) *
+                  Math.min(horizon, remaining),
+              source: ring,
+            });
+            if (remaining <= horizon) circle(ring, ring.finalBlastRadius);
+          }
+          if (e.cinderCordon) {
+            const c = e.cinderCordon,
+              p = R.attacks.cindermaw[0],
+              remaining = Math.max(0, p.cordonLife - c.elapsed);
+            out.push({
+              ...c,
+              shape: 'ring',
+              gaps: [c.gapAngle],
+              gapWidth: p.gapWidth,
+              width: p.width,
+              inner: c.radius,
+              outer:
+                c.radius +
+                ((p.finalRadius - p.initialRadius) / p.cordonLife) * Math.min(horizon, remaining),
+              source: c,
+            });
+            if (!c.switched && c.elapsed + horizon >= p.switchAt)
+              out.push({ ...out.at(-1), gaps: [c.nextGap] });
+            if (remaining <= horizon)
+              out.push({
+                ...c,
+                shape: 'circle',
+                radius: p.finalRadius + p.width,
+                gaps: [c.gapAngle],
+                gapWidth: p.gapWidth,
+                source: c,
+              });
+          }
+          if (e.board?.phase === 'warn')
+            for (const cell of this.sentinelBoardCells(e))
+              if (cell.selected) out.push({ ...cell, shape: 'box', source: e });
+          if (e.ashCloud?.expires > this.s.time) circle(e.ashCloud, 180);
+        }
+        for (const t of this.traps())
+          if (t.phase < t.warningTime + t.activeTime || t.phase + horizon >= t.cycleLength) {
+            if (t.kind === 'jet')
+              line(
+                { x: t.x - t.length / 2, y: t.y },
+                { x: t.x + t.length / 2, y: t.y },
+                t.halfWidth,
+                null,
+              );
+            else circle(t, t.radius, null);
+          }
+        for (const p of this.s.projectiles)
+          if (p.source === 'enemy' && p.life > 0 && (p.delay || 0) <= horizon) {
+            const duration = Math.min(p.life, Math.max(0, horizon - (p.delay || 0)));
+            const to = { x: p.x + p.dx * p.speed * duration, y: p.y + p.dy * p.speed * duration };
+            line(p, to, 10, p);
+            out.at(-1).fort = this.projectileFort(p);
+          }
+        return out;
+      }
+      companionAreaDanger(
+        u,
+        point = u,
+        horizon = R.companionJudgment.criticalAvoidLookahead,
+        shapes = null,
+      ) {
+        const padding = R.companionJudgment.criticalAreaMargin;
+        let total = 0;
+        for (const a of shapes || this.companionDangerShapes(horizon)) {
+          if (a.shape === 'ring' && a.hit?.includes(u === this.hero ? 'hero' : u.id)) continue;
+          const gap = dist(point, a),
+            margin = padding;
+          let depth = 0;
+          if (a.shape === 'circle') depth = a.radius + margin - gap;
+          else if (a.shape === 'line')
+            depth = (a.width || 0) + margin - this.distanceToSegment(point, a.from, a.to);
+          else if (a.shape === 'box')
+            depth =
+              a.size / 2 + margin - Math.max(Math.abs(point.x - a.x), Math.abs(point.y - a.y));
+          else if (a.shape === 'cone') {
+            const angle = Math.abs(
+              Math.atan2(
+                Math.sin(Math.atan2(point.y - a.y, point.x - a.x) - a.angle),
+                Math.cos(Math.atan2(point.y - a.y, point.x - a.x) - a.angle),
+              ),
+            );
+            if (angle <= a.halfAngle + Math.atan2(margin, Math.max(1, gap)))
+              depth = a.radius + margin - gap;
+          } else if (a.shape === 'ring') {
+            const angle = Math.atan2(point.y - a.y, point.x - a.x);
+            const inGap = a.gaps?.some(
+              (g) =>
+                Math.abs(Math.atan2(Math.sin(angle - g), Math.cos(angle - g))) <
+                Math.max(0, a.gapWidth / 2 - Math.atan2(margin, Math.max(1, gap))),
+            );
+            if (!inGap) {
+              const low = Math.min(a.inner, a.outer) - (a.width || 0) - margin,
+                high = Math.max(a.inner, a.outer) + (a.width || 0) + margin;
+              if (gap >= low && gap <= high) depth = Math.min(gap - low, high - gap) + 1;
+            }
+          }
+          if (!(depth > 0)) continue;
+          if (
+            a.shape !== 'ring' &&
+            a.gaps?.some(
+              (g) =>
+                Math.abs(
+                  Math.atan2(
+                    Math.sin(Math.atan2(point.y - a.y, point.x - a.x) - g),
+                    Math.cos(Math.atan2(point.y - a.y, point.x - a.x) - g),
+                  ),
+                ) < Math.max(0, a.gapWidth / 2 - Math.atan2(margin, Math.max(1, gap))),
+            )
+          )
+            continue;
+          if (
+            a.source &&
+            !(a.enemyAim
+              ? this.enemyRangedLine(a.enemyAim, point)
+              : a.fort
+                ? this.fortShotClear(a.source, point, a.fort)
+                : this.line(a.source, point))
+          )
+            continue;
+          total += 1 + depth / 100;
+        }
+        return total;
+      }
+      companionSurvivalScore(u, p, preferred, threats, shapes = null) {
+        const cfg = R.companionJudgment;
+        shapes ||= this.companionDangerShapes();
+        let crossing = threats.reduce(
+          (cost, e) =>
+            cost + Math.max(0, Math.min(90, dist(u, e)) - this.distanceToSegment(e, u, p)) / 90,
+          0,
+        );
+        if (shapes.length) {
+          const initial = this.companionAreaDanger(u, u, cfg.criticalAvoidLookahead, shapes),
+            steps = Math.max(1, Math.ceil(dist(u, p) / 24));
+          for (let i = 1; i < steps; i++)
+            crossing = Math.max(
+              crossing,
+              this.companionAreaDanger(
+                u,
+                { x: u.x + ((p.x - u.x) * i) / steps, y: u.y + ((p.y - u.y) * i) / steps },
+                cfg.criticalAvoidLookahead,
+                shapes,
+              ) - initial,
+            );
+        }
         return (
-          threats.reduce((sum, e) => {
-            const exposure = Math.max(0, 1 - dist(p, e) / e.r);
-            return sum + exposure * exposure * e.weight;
-          }, 0) *
+          (this.companionAreaDanger(u, p, cfg.criticalAvoidLookahead, shapes) + crossing) *
+            cfg.criticalDangerCost +
+          (this.companionPositionProtected(u, p) ? 0 : cfg.criticalDangerCost / 4) +
+          threats.reduce((sum, e) => sum + Math.max(0, 1 - dist(p, e) / 90) * e.weight, 0) *
             cfg.criticalDangerCost +
           dist(p, preferred) * cfg.criticalFormationCost +
           dist(p, u) * cfg.criticalTravelCost
         );
       }
-      companionSurvivalRadius(threats) {
-        const cfg = R.companionJudgment;
-        return Math.max(
-          cfg.criticalFollowRadius,
-          ...threats
-            .filter((e) => dist(e, this.hero) < e.r + cfg.criticalFollowRadius)
-            .map((e) => e.r + cfg.criticalArrivalRadius),
-        );
+      companionSurvivalRadius() {
+        return R.companionJudgment.criticalFollowRadius;
       }
       companionSurvivalPoint(u, living, threats) {
         const cfg = R.companionJudgment,
+          shapes = this.companionDangerShapes(),
           preferred = this.partyFollowPoint(u, living),
-          candidates = [{ x: u.x, y: u.y }, preferred],
-          radius = this.companionSurvivalRadius(threats),
-          limit = Math.max(radius, dist(u, this.hero));
-        // Sample around the moving hero and the wounded unit, not just an
-        // already-arrived formation anchor beside the same enemy.
+          radius = this.companionSurvivalRadius(),
+          candidates = [{ x: u.x, y: u.y }, preferred, { x: this.hero.x, y: this.hero.y }];
+        if (
+          dist(u, this.hero) <= cfg.maxAdvanceFromHero &&
+          this.companionPositionProtected(u) &&
+          !this.companionAreaDanger(u, u, cfg.criticalAvoidLookahead, shapes)
+        )
+          return { x: u.x, y: u.y };
         for (const [origin, radii] of [
           [this.hero, [cfg.criticalPreferredRadius, radius]],
           [u, cfg.criticalLocalRadii],
         ])
-          for (const radius of radii)
+          for (const r of radii)
             for (let i = 0; i < cfg.criticalDirections; i++) {
               const angle = (i * Math.PI * 2) / cfg.criticalDirections;
               candidates.push({
-                x: origin.x + Math.cos(angle) * radius,
-                y: origin.y + Math.sin(angle) * radius,
+                x: origin.x + Math.cos(angle) * r,
+                y: origin.y + Math.sin(angle) * r,
               });
             }
-        const legal = candidates.filter(
-          (p) =>
-            dist(p, this.hero) <= limit + 1 &&
-            !this.blocked(p.x, p.y, this.s.zone, this.actorRadius(u)),
-        );
         return (
-          legal
+          candidates
+            .filter(
+              (p) =>
+                dist(p, this.hero) <= radius &&
+                !this.blocked(p.x, p.y, this.zoneId, this.actorRadius(u)) &&
+                this.clearSegment(u, p, this.actorRadius(u)),
+            )
             .map((point) => ({
               point,
-              score: this.companionSurvivalScore(u, point, preferred, threats),
+              score: this.companionSurvivalScore(u, point, preferred, threats, shapes),
             }))
             .sort((a, b) => a.score - b.score)[0]?.point || { x: u.x, y: u.y }
         );
@@ -191,72 +541,16 @@
               : [target];
         if (!victims.length || victims.some((e) => !e.aggro || !allowed.includes(e))) return false;
         const margin =
-            slot === 2 ? cfg.criticalChargeSafetyMargin : cfg.criticalInstantSafetyMargin,
-          protectors = [
-            this.hero,
-            ...this.activeLivingParty().filter(
-              (a) => a !== u && !a.order && !this.companionSurvivalMode(a),
-            ),
-          ].filter(
-            (a) =>
-              a.hp > 0 &&
-              !a.deathRollHeld &&
-              !a.keeperHeld &&
-              dist(a, u) <= cfg.supportRadius &&
-              this.clearSegment(a, u),
-          );
-        for (const e of this.zone().enemies) {
-          if (e.hp <= 0 || e.neutral || e.returning || !this.enemyRangedLine(e, u)) continue;
-          const warning = e.telegraph;
-          if (
-            warning &&
-            Number.isFinite(warning.x) &&
-            Number.isFinite(warning.y) &&
-            (dist(u, warning) < (warning.radius || 0) + margin ||
-              (warning.kind === 'line' &&
-                this.distanceToSegment(
-                  u,
-                  { x: warning.fromX ?? e.x, y: warning.fromY ?? e.y },
-                  warning,
-                ) <
-                  (warning.halfWidth || R.combatGeometry.lineHalfWidth) + margin))
+          slot === 2 ? cfg.criticalChargeSafetyMargin : cfg.criticalInstantSafetyMargin;
+        return (
+          !this.companionHeroMoving() &&
+          this.companionPositionProtected(u, u, margin) &&
+          !this.companionAreaDanger(
+            u,
+            u,
+            slot === 2 ? R.chargedSkills.holdSeconds : cfg.criticalAvoidLookahead,
           )
-            return false;
-          const gap = dist(u, e),
-            reach = Math.max(
-              65,
-              this.enemyRanged(e) ? this.enemyRangedRange(e) : 0,
-              e.type === 'boss' ? R.bossCadence.specialRange : 0,
-              e.captain || e.roomCaptain || e.fieldCaptain
-                ? this.captainProfile(e)?.specialRange || cfg.nearThreatRadius
-                : 0,
-              e.telegraph || e.motion ? cfg.nearThreatRadius : 0,
-              e.nightOnly
-                ? e.species === 'wraith'
-                  ? R.nightEnemyCombat.wraith.radius
-                  : 360 * R.balance.enemySpecialReachMultiplier
-                : 0,
-            );
-          if (gap < reach + margin) return false;
-          if (
-            gap <= Math.max(this.enemyAcquisitionRange(e), reach) + cfg.criticalEnemyMargin &&
-            !protectors.some((a) => dist(e, a) + cfg.criticalScreenMargin < gap && this.line(e, a))
-          )
-            return false;
-        }
-        if (this.s.hazards.some((a) => a.life > 0 && dist(u, a) < (a.radius || 0) + margin))
-          return false;
-        if (
-          this.isDungeon() &&
-          this.traps().some(
-            (t) =>
-              this.trapContains(t, u) &&
-              (t.phase < t.warningTime + t.activeTime ||
-                (slot === 2 && t.phase + R.chargedSkills.holdSeconds >= t.cycleLength)),
-          )
-        )
-          return false;
-        return true;
+        );
       }
       companionCriticalContribution(u) {
         const targets = this.companionContributionTargets()
@@ -280,6 +574,64 @@
       followCriticalCompanion(u, living, dt, state) {
         const cfg = R.companionJudgment;
         this._tacticalPartyTargets?.delete(u.id);
+        const moving = this.companionHeroMoving();
+        if (moving || (this.s.recallActive && dist(u, this.hero) > cfg.maxAdvanceFromHero)) {
+          this.clearPartyCharge(u);
+          state.contributing = false;
+          state.evading = false;
+          state.guiding = true;
+          const distance = dist(u, this.hero),
+            guide = heroGuidance.get(this),
+            copy = moving && distance <= cfg.maxAdvanceFromHero;
+          state.point = copy
+            ? { x: u.x + guide.dx, y: u.y + guide.dy }
+            : { x: this.hero.x, y: this.hero.y };
+          const before = { x: u.x, y: u.y };
+          const speed =
+            this.companionRallyMoveSpeed(
+              u,
+              distance > 650 ? 500 : distance > 350 ? 390 : distance > 200 ? 315 : cfg.retreatSpeed,
+            ) *
+            this.slowMovementFactor(u) *
+            this.mireBogMovementFactor(u) *
+            this.ashMovementFactor(u);
+          this.followCompanion(
+            u,
+            state.point,
+            speed,
+            dt,
+            copy ? 0 : cfg.criticalHeroFollowStop,
+            false,
+          );
+          state.guidanceMovedAt = this.s.time;
+          state.guidanceMoved = dist(before, u);
+          if (this.s.recallActive && !moving) {
+            const target = this.companionContributionTargets().find((e) =>
+              this.companionSafeContribution(u, e, 0),
+            );
+            if (target && this.companionCoverAttack(u, target, true))
+              this._tacticalPartyTargets?.set(u.id, target.id);
+          }
+          return true;
+        }
+        // The hero has stopped. Replan immediately if either our current spot
+        // or the old destination is threatened by a newly marked attack.
+        const exposed = this.companionAreaDanger(u);
+        if (state.guiding) {
+          state.guiding = false;
+          state.point = this.companionSurvivalPoint(u, living, this.companionSurvivalThreats());
+          this.clearCompanionTravel(u);
+        }
+        if (
+          (!state.evading && exposed) ||
+          !state.point ||
+          this.companionAreaDanger(u, state.point)
+        ) {
+          state.point = this.companionSurvivalPoint(u, living, this.companionSurvivalThreats());
+          state.contributing = false;
+          state.evading = !!exposed;
+        }
+        if (!exposed) state.evading = false;
         const pending = this._companionCharges?.get(u.id),
           prepared = pending && this.zone().enemies.find((e) => e.id === pending.targetId),
           observation = this.partyChargeState(u);
@@ -323,12 +675,15 @@
             this.mireBogMovementFactor(u) *
             this.ashMovementFactor(u),
           before = { x: u.x, y: u.y };
-        this.followCompanion(u, state.point, speed, dt, cfg.criticalArrivalRadius, true);
+        const stop =
+          this.companionAreaDanger(u) || !this.companionPositionProtected(u)
+            ? 0
+            : cfg.criticalArrivalRadius;
+        this.followCompanion(u, state.point, speed, dt, stop, false);
         if (dist(before, u) < 0.1 && dist(u, state.point) > cfg.criticalArrivalRadius) {
           // If a distant anchor has no safe route, make a bounded local escape
           // without ever relaxing hostile or terrain collision.
-          const threats = this.gatheringThreats(),
-            danger = this.companionSurvivalThreats(),
+          const danger = this.companionSurvivalThreats(),
             preferred = this.partyFollowPoint(u, living),
             candidates = [];
           for (let i = 0; i < cfg.criticalDirections; i++) {
@@ -340,7 +695,7 @@
             if (
               dist(p, this.hero) <=
                 Math.max(this.companionSurvivalRadius(danger), dist(u, this.hero)) + 1 &&
-              this.companionTravelClear(u, p, threats) &&
+              this.clearSegment(u, p, this.actorRadius(u)) &&
               this.companionSurvivalScore(u, p, preferred, danger) <
                 this.companionSurvivalScore(u, u, preferred, danger)
             )
@@ -475,7 +830,8 @@
             .filter((e) => dist(e, u) <= cfg.nearThreatRadius)
             .reduce((sum, e) => sum + this.companionEnemyWeight(e), 0),
           wounded =
-            (u.hp / u.maxHp <= cfg.criticalFraction && nearby >= 1) ||
+            (this.companionSurvivalMode(u) &&
+              (target?.aggro || nearby >= 1 || this.companionAreaDanger(u) > 0)) ||
             (u.hp / u.maxHp <= cfg.woundedFraction && nearby >= cfg.woundedThreatForce),
           ranged =
             u.type === 'archer' || (u.type === 'pet' && this.petDefinition(u)?.role === 'ranged'),
@@ -2016,6 +2372,7 @@
         }
       }
       updateParty(dt) {
+        this.updateCompanionHeroGuidance();
         const z = this.zone(),
           living = this.activeLivingParty(),
           context = this.syncSquadDoctrine(),
@@ -2087,13 +2444,15 @@
           // Run the existing judgment early for critical wounds, so a cast or
           // job cannot hide danger. No independent recovery state or HP gate.
           if (this.companionSurvivalMode(u)) {
-            const threat = this.companionSurvivalThreats()
-              .filter(
-                (e) =>
-                  dist(u, e) <= e.r ||
-                  dist(this.hero, e) <= e.r + R.companionJudgment.criticalFollowRadius,
-              )
-              .sort((a, b) => dist(u, a) - dist(u, b))[0]?.enemy;
+            const threat =
+              this.companionSurvivalThreats()
+                .filter(
+                  (e) =>
+                    dist(u, e) <= e.r ||
+                    dist(this.hero, e) <= e.r + R.companionJudgment.criticalFollowRadius,
+                )
+                .sort((a, b) => dist(u, a) - dist(u, b))[0]?.enemy ||
+              (this.companionAreaDanger(u) ? { id: 'environment-danger', x: u.x, y: u.y } : null);
             if (threat) {
               if (this.companionCautiousCombat(u, threat, living, dt)) continue;
             } else {

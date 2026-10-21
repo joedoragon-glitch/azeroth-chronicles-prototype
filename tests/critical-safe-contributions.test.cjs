@@ -116,11 +116,20 @@ for (const risk of [
 ]) {
   const { g, z, u, e } = scene();
   if (risk === 'melee') e.x = u.x - 60;
-  if (risk === 'ranged') e.ranged = true;
-  if (risk === 'boss') e.type = 'boss';
-  if (risk === 'captain') e.captain = true;
-  if (risk === 'telegraph') e.telegraph = {};
-  if (risk === 'motion') e.motion = {};
+  if (risk === 'ranged') {
+    e.ranged = true;
+    e.rangedAim = { x: u.x, y: u.y, timer: 0.3 };
+  }
+  if (risk === 'boss') {
+    e.type = 'boss';
+    e.telegraph = { kind: 'circle', x: u.x, y: u.y, radius: 65 };
+  }
+  if (risk === 'captain') {
+    e.captain = true;
+    e.telegraph = { kind: 'circle', x: u.x, y: u.y, radius: 65 };
+  }
+  if (risk === 'telegraph') e.telegraph = { kind: 'circle', x: u.x, y: u.y, radius: 65 };
+  if (risk === 'motion') e.motion = { target: { x: u.x + 100, y: u.y }, charge: true };
   if (risk === 'screen') Object.assign(g.hero, { x: 1300, y: 1500 });
   if (risk === 'wall') g.blocked = (x, y, zone, r = 15) => x > 1080 - r && x < 1090 + r;
   if (risk === 'hazard') g.s.hazards.push({ x: u.x, y: u.y, radius: 70, life: 2, damage: 10 });
@@ -145,6 +154,7 @@ for (const risk of [
     e.nightOnly = true;
     u.x = e.x + 350;
     g.hero.x = 1100;
+    e.telegraph = { kind: 'circle', x: u.x, y: u.y, radius: 65, landing: true };
   }
 
   assert(
@@ -177,7 +187,7 @@ for (const risk of [
   if (risk === 'silence') g.mageSilenceActive = (actor) => actor === u;
   step(g);
   assert(!g.partyChargeState(u), risk + ' cancels the hold');
-  assert(distance(u, start) > 0, risk + ' allows immediate movement');
+  if (risk !== 'silence') assert(distance(u, start) > 0, risk + ' allows immediate movement');
   step(g, 15);
   assert.equal(e.hp, hp, 'cancelled skill cannot release later');
   cases++;

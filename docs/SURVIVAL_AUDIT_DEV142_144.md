@@ -62,3 +62,7 @@ Repair order: F1, then the shared trap/hazard geometry behind F2–F4, then F5. 
 - Historical comparison: set `SURVIVAL_AUDIT_ENGINE` to an archived historical `src/prototype/engine.js` and pass `--entry-only`.
 
 Companion probes use an open bounded mechanical arena to isolate decisions; trap data and damage resolution are native. Vapor state uses authored timing/coefficient and native damage resolution. F5 uses the real Treasury geometry and native captain dispatch. This is a bounded implementation audit, not a full campaign/device/FPS certification. No broad CI, repair implementation, balance changes or publication was performed.
+
+## dev.145 follow-up
+
+Owner-approved companion guidance and actual-footprint checks resolve reproductions F1–F4. F5 remains open: the native moving Dreadmaw cast still invalidates one exit by recentering its planned ring. See [scope, limits and reassessment](HERO_GUIDED_SURVIVAL_DEV145.md) and [the 16 rerun observations](../tools/survival-audit-dev142-144/dev145.json). Original evidence above is historical and unchanged.
