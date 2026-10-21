@@ -60,10 +60,13 @@ for (const cls of ['paladin', 'mage', 'ranger'])
     assert(!g._companionCharges?.has(u.id));
     u.hp = u.maxHp * 0.21;
     step(g);
-    assert(g.companionSurvivalMode(u), 'no flutter above entry threshold');
-    u.hp = u.maxHp * 0.4;
+    assert(
+      !g.companionSurvivalMode(u),
+      'ordinary judgment resumes immediately above critical health',
+    );
+    u.hp = u.maxHp * 0.25;
     step(g);
-    assert(!g.companionSurvivalMode(u), 'releases at recovery threshold');
+    assert(!g.companionSurvivalMode(u), 'no separate recovery threshold');
     cases++;
   }
 console.log(
@@ -197,27 +200,50 @@ for (const work of ['build', 'upgrade', 'gather', 'deposit']) {
   assert(distance(u, e) > 260);
   cases++;
 }
-// Hysteresis survives save/reload, Recall and travel; old saves and malformed input are handled.
+// Critical health does not strip existing Recall movement protection on a clear return.
+{
+  const { g, z, u, e } = scene();
+  e.hp = 0;
+  Object.assign(u, { x: 600, y: 1500, maxHp: 10000, hp: 1000 });
+  g.recallParty();
+  step(g);
+  assert(g.companionRetreating(u));
+  const before = u.hp;
+  g.hitParty(u, 100);
+  assert(before - u.hp > 0 && before - u.hp <= 50);
+  cases++;
+}
+// A critical worker does not abandon safe construction after nearby danger is gone.
+{
+  const { g, z, u, e } = scene();
+  e.hp = 0;
+  z.buildings = [{ id: 'safe-work', kind: 'barracks', x: u.x, y: u.y, progress: 1 }];
+  u.order = { type: 'build', id: 'safe-work' };
+  step(g);
+  assert(z.buildings[0].progress > 1);
+  assert(!g.companionRetreatMode(u));
+  cases++;
+}
+// Only current health and ordinary judgment survive reload; dev.141 locks are stripped.
 {
   const { g, u } = scene();
   step(g);
-  u.hp = u.maxHp * 0.3;
-  const saved = g.snapshot(),
-    restored = C.restore(saved, () => 0.9),
+  const saved = g.snapshot();
+  assert(!('survivalRetreat' in saved.party[0]));
+  const restored = C.restore(saved, () => 0.9),
     ru = restored.s.party[0];
   assert(restored.companionSurvivalMode(ru));
   restored.recallParty();
   assert(restored.companionSurvivalMode(ru));
   restored.enter('frontier');
   assert(restored.companionSurvivalMode(ru));
-  ru.hp = ru.maxHp * 0.4;
-  step(restored);
+  ru.hp = ru.maxHp * 0.21;
   assert(!restored.companionSurvivalMode(ru));
-  const old = structuredClone(saved);
-  delete old.party[0].survivalRetreat;
-  old.party[0].hp = old.party[0].maxHp * 0.1;
-  const legacy = C.restore(old, () => 0.9);
-  assert(legacy.companionSurvivalMode(legacy.s.party[0]));
+  saved.party[0].hp = saved.party[0].maxHp * 0.21;
+  saved.party[0].survivalRetreat = true;
+  const legacy = C.restore(saved, () => 0.9);
+  assert(!legacy.companionSurvivalMode(legacy.s.party[0]));
+  assert(!('survivalRetreat' in legacy.s.party[0]));
   const bad = structuredClone(saved);
   bad.party[0].survivalRetreat = 'yes';
   assert.throws(() => C.restore(bad), /survival retreat/);
@@ -226,6 +252,38 @@ for (const work of ['build', 'upgrade', 'gather', 'deposit']) {
   u.active = true;
   u.hp = 0;
   assert(!g.companionSurvivalMode(u));
+  cases++;
+}
+// Existing favorable-condition delay, support and pressure decide combat above 20%, without a recovery lock.
+{
+  const { g, z, u, e } = scene();
+  step(g);
+  u.hp = u.maxHp * 0.21;
+  u.cd = 60;
+  u.skill1Cd = 60;
+  u.skill2Cd = 60;
+  const startHp = e.hp;
+  step(g);
+  assert(!g.companionSurvivalMode(u));
+  assert.equal(e.hp, startHp, 'ordinary rejoin observation still prevents an instant charge');
+  step(g, 70);
+  u.cd = 0;
+  u.skill1Cd = 0;
+  step(g);
+  assert(
+    e.hp < startHp,
+    'safe ordinary foe can be attacked at 21%, below either abandoned recovery threshold',
+  );
+  const second = g.makeEnemy(
+    { species: 'goblin', name: 'Second foe', level: 1, hp: 10000, damage: 0, gold: 0, xp: 0 },
+    { x: u.x + 40, y: u.y + 20 },
+  );
+  second.aggro = true;
+  z.enemies.push(second);
+  assert(
+    g.companionSafetyAssessment(u, e, [u]).unsafe,
+    'ordinary wounded-pressure caution still applies',
+  );
   cases++;
 }
 // Idle foes and ranged reach are avoided rather than drawing extra fights.

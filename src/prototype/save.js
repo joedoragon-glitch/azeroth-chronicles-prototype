@@ -601,6 +601,8 @@
             throw Error('Invalid companion');
           if (u.survivalRetreat !== undefined && typeof u.survivalRetreat !== 'boolean')
             throw Error('Invalid companion survival retreat');
+          // Dev.141's saved recovery lock is obsolete; health and tactical judgment own retreat.
+          delete u.survivalRetreat;
           if (u.skill1Cd === undefined) u.skill1Cd = 0;
           if (u.skill2Cd === undefined) u.skill2Cd = 0;
           if (u.skillGlobalCd === undefined) u.skillGlobalCd = 0;

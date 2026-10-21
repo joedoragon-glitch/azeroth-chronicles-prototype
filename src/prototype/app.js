@@ -24,8 +24,8 @@
   const spanishText = {
     'Critically wounded companions are avoiding combat.':
       'Los compañeros con heridas críticas están evitando el combate.',
-    'They keep following and rejoin at 40% HP.':
-      'Siguen acompañándote y vuelven a combatir al alcanzar el 40% de salud.',
+    'They keep following and rejoin when conditions are safe.':
+      'Siguen acompañándote y vuelven a combatir cuando las condiciones son seguras.',
     'Choose your language': 'Elige tu idioma',
     'Adventure menu': 'Menú de aventura',
     'Game and settings': 'Juego y ajustes',
