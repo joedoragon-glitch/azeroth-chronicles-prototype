@@ -1,0 +1,51 @@
+{
+  "version": "0.9.1+snapshot.dev.146",
+  "pr": 384,
+  "mergeCommit": "e01f3a0d81bb228cf6ec538d93e7d68c4c9562b5",
+  "publisherRunId": 39694788549,
+  "publishedBuild": "e01f3a0d81bb228cf6ec538d93e7d68c4c9562b5",
+  "verifiedAt": "2026-10-21T23:39:45.541975+00:00",
+  "publicFiles": [
+    {
+      "path": "src/prototype/rules.js",
+      "sha256": "19dcc040daab7f1a6cb3ed2052a213e1551e1030b311daf643e8de310ccbab5b",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/navigation.js",
+      "sha256": "b7998e94e3a718c80162b6f022945fa7cfd1e4b6048d70bc27a6a7650fa186cd",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "sha256": "ea397beccb5c755480438b1f2b7b867eac3d1da81a7a0161e6614958a559bd3e",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "sha256": "ab083c7a96d48d1dde7174d408a35ea070b11c25b3a3958938c5ebd361034d3c",
+      "matchesPrepared": true
+    },
+    {
+      "path": "sw.js",
+      "sha256": "7173a18f6cfa0b058dd42bfbe62f1d6692e503fdf4f551b33d6ee16b562c3210",
+      "matchesPrepared": true
+    },
+    {
+      "path": "phone.html",
+      "sha256": "9bcc581900bbd5c85d9a5416f5a3bc10f4eea7b9d1f2d68b2c66774c317912b8",
+      "matchesPrepared": true
+    }
+  ],
+  "checks": {
+    "thornMira": "18 seeded class/mode circuits, collision, shared damage, joint return, save/travel, rescue, respawn and TRUE/peace passed",
+    "witness": "All route legs, fallback, combat/return/rescue, report purity and interaction passed",
+    "build": "Passed",
+    "changedSourceFormat": "Passed"
+  },
+  "firstGoblinArrivalSeconds": {
+    "previous": 9.4,
+    "reversed": 60.7
+  },
+  "broadCiRan": false
+}
