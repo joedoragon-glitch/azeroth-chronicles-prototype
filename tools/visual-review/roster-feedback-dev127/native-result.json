@@ -1,5 +1,6 @@
 {
   "startup": "phone",
+  "url": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html",
   "viewport": "375x812",
   "restRecruitPet": "3 → 2 → 3 through actual buttons",
   "blockedReasonVisible": true,

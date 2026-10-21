@@ -15,9 +15,9 @@ Full active groups still permit new pet/troop recruitment into reserve. The menu
 - `tests/barracks-roster-feedback.test.cjs`: native menu-catalog rest/recruit flows for pet/Soldier/Ranger, v4 round-trip, visible denial explanations, town-versus-Barracks distinction, idle/engaged threat distinction, stale-action revalidation, no state mutation on denial, fallen/full/larger-group/queue/company/unlock/rank/crown/construction cases.
 - Existing menu, community-pet lifecycle and regional death/Barracks suites pass.
 - Build, generated/asset checks and changed-source formatting performed for this candidate. No broad CI or full-game suite.
-- Local native Chromium phone check (375×812): actual Rest and Recruit pet buttons complete 3 → 2 → 3; blocked actions visibly explain nearby combat; layout fits; no JavaScript errors. Capture, script and receipt: `tools/visual-review/roster-feedback-dev127/`. Live startup remains to verify after publication.
+- Local native Chromium phone check (375×812): actual Rest and Recruit pet buttons complete 3 → 2 → 3; blocked actions visibly explain nearby combat; layout fits; no JavaScript errors. Capture, script and receipt: `tools/visual-review/roster-feedback-dev127/`. The same actual-button flow and crash check pass against the published phone URL.
 
-Publication pending at this checkpoint.
+Published in PR #363 as `e1781b946bf6544977f79082b5b2080a5d03bf9a`; package-only run 39558619461 succeeded. Nine exact checked live files match, and live phone startup/rest/recruit/visible-blocker checks pass without JavaScript errors. Normal workflow restored and temporary publisher removed in closeout. Receipt: `evidence/BARRACKS_ROSTER_DEV127_PUBLICATION_20261021.json`.
 
 ## New owner-directed audit
 

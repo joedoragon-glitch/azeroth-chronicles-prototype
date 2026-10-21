@@ -28,9 +28,13 @@ const http = require('node:http'),
   const browser = await chromium.launch({
     executablePath: process.env.CHROMIUM_EXECUTABLE,
     args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
+    ...(process.env.PLAYTEST_URL && process.env.HTTPS_PROXY
+      ? { proxy: { server: process.env.HTTPS_PROXY } }
+      : {}),
   });
   try {
     const page = await browser.newPage({
+      ignoreHTTPSErrors: true,
       viewport: { width: 375, height: 812 },
       hasTouch: true,
       isMobile: true,
@@ -113,6 +117,7 @@ const http = require('node:http'),
     assert.deepEqual(errors, []);
     const receipt = {
       startup: 'phone',
+      url: process.env.PLAYTEST_URL || 'local candidate',
       viewport: '375x812',
       restRecruitPet: '3 → 2 → 3 through actual buttons',
       blockedReasonVisible: true,

@@ -1,0 +1,71 @@
+{
+  "version": "0.9.1+snapshot.dev.127",
+  "pr": 363,
+  "merge": "e1781b946bf6544977f79082b5b2080a5d03bf9a",
+  "package_only_run": 39558619461,
+  "verified_at": "2026-10-21T06:59:07.591123+00:00",
+  "files": [
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 262675,
+      "sha256": "67649bd092b0fd49570c760fbe9f8c17f127eb50dba480381e52079dca512f9f"
+    },
+    {
+      "path": "src/prototype/party.js",
+      "match": true,
+      "bytes": 74574,
+      "sha256": "2322f5a9bd4f353e62e954114ea8e88e4aa013248258a3160e4bd24725a99000"
+    },
+    {
+      "path": "src/prototype/party-pets.js",
+      "match": true,
+      "bytes": 19989,
+      "sha256": "12ce74ee75424ef828ee6fb6fd455f37bf65e42b3f04aa56835968ea91df27a4"
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "match": true,
+      "bytes": 76158,
+      "sha256": "0604e65a7333195bf6b589875f0390ad8ff34d4a71d49b33410662fecc38ad8b"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 296,
+      "sha256": "8bcd1a5c8963399053b6c3dc858132af1642738b0f2b7f445aab055876eca3e2"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20703,
+      "sha256": "96aff3307added5e1de77b7000a437daf1c42421b934a94e3f065c1a7d4a5bae"
+    },
+    {
+      "path": "phone.html",
+      "match": true,
+      "bytes": 5490,
+      "sha256": "6d6fe5990cccba9b450925b101e959acd1de0f04735bfb920147dc89db783eb8"
+    },
+    {
+      "path": "index.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "prototype.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    }
+  ],
+  "live_phone": {
+    "startup": "phone",
+    "url": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html",
+    "viewport": "375x812",
+    "restRecruitPet": "3 \u2192 2 \u2192 3 through actual buttons",
+    "blockedReasonVisible": true,
+    "javascriptErrors": []
+  }
+}
