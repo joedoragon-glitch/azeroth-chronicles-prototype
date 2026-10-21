@@ -1,0 +1,101 @@
+{
+  "version": "0.9.1+snapshot.dev.124",
+  "pr": 360,
+  "merge": "9dfbef583a47c93c9f93c2b1b73096a2e5d4de71",
+  "package_only_run": 39544261325,
+  "verified_at": "2026-10-21T04:29:55.997670+00:00",
+  "files": [
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "3bb7c626d45ca520bba49f46808594d2428d52ee16f20652c69db455c27e0ad5"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 296,
+      "sha256": "e334b21d42ce3b873fdcba86a2ec476b24373a2c4fe939a77f75eb12a1e21122"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "match": true,
+      "bytes": 211023,
+      "sha256": "2452bd429ced431bc57b7c4b5d95727e1ce3d0bb5f9ca4a5a5ea33f9d79aae42"
+    },
+    {
+      "path": "src/prototype/navigation.js",
+      "match": true,
+      "bytes": 47959,
+      "sha256": "50dd74018f05feabc3630bfdcfda438b5999b3d97a311798dee47595c685e5f5"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 256921,
+      "sha256": "5912c4955092e514c09abd2bc46a7478c509381edc3cb1211bc2813fb7d0096b"
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "match": true,
+      "bytes": 101450,
+      "sha256": "2a92ee40114889b0e33a97d0bd261f3a49736c4fe304210d989bed7a1acf930f"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "match": true,
+      "bytes": 498064,
+      "sha256": "162f67fc40e39db5f0199bb87d96854624e2ab963bbf4f7e7d4d02417b22fa6e"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20703,
+      "sha256": "f3444a207ee0a0835c0a157c56aff794e9f8d570220f0129bcbf2a22ee3378e8"
+    },
+    {
+      "path": "index.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "phone.html",
+      "match": true,
+      "bytes": 5490,
+      "sha256": "6d6fe5990cccba9b450925b101e959acd1de0f04735bfb920147dc89db783eb8"
+    },
+    {
+      "path": "prototype.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "src/prototype/app.js",
+      "match": true,
+      "bytes": 141210,
+      "sha256": "11c295b25dba378d7e85f7665175136a45c36f6696fc2e993948bf39664ff751"
+    }
+  ],
+  "all_match": true,
+  "checks": [
+    "Focused Archive passage at four crossing positions, bidirectional movement and sight",
+    "Actual hero, Soldier, Ranger and enemy movement",
+    "Existing saved Archive state with real tick/input; outer wall, partition and doorway retained",
+    "One native phone startup/crossing with no JavaScript errors",
+    "Build/generated source/syntax and changed-source formatting; no broad suite or CI"
+  ],
+  "scope": "Single Archive floor overlap inside the existing footprint; no fort, lighting or global collision changes",
+  "live_phone_crossing": {
+    "x": 1130,
+    "y": 850,
+    "outerWall": true,
+    "partition": true
+  },
+  "live_phone_startup": {
+    "version": "0.9.1+snapshot.dev.124",
+    "errors": [],
+    "passed": true
+  }
+}

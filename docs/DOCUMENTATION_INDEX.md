@@ -1,3 +1,5 @@
+Published dev.124: [Sunken Archive floor seam](ARCHIVE_FLOOR_SEAM_DEV124.md), PR #360; invisible lab/study join repaired within the existing footprint. Twelve live-file matches and actual live phone crossing/startup verified; normal workflow restored.
+
 Published dev.123: [regional recovery, actionable talent reminders and gathering orders](REGIONAL_RECOVERY_AND_WARNING_AUDIT_DEV123.md), PR #359; 17 live-file matches and phone startup verified. Includes audit-only boss-warning handoff and dungeon/treasury fort coverage; original twilight and fort balance preserved. Normal workflow restored.
 
 Published dev.122: [Mage combo, Greenwood dandelions and ally audit](VISUAL_FOLLOWUPS_DEV122.md), PR #358; original twilight lighting preserved, [sunrise flashes remain open in #357](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/357).
