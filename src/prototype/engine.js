@@ -1231,7 +1231,7 @@
     treasuryInterior(z) {
       const room = this.supplyRoom(z.id),
         layout = room && R.treasuryDecor?.[room.id],
-        targetVersion = room?.id === 'supply-crown' ? 5 : room?.id === 'supply-highlands' ? 5 : 3;
+        targetVersion = room?.id === 'supply-crown' ? 5 : room?.id === 'supply-highlands' ? 6 : 3;
       if (!room || !layout) return;
       if (z.treasuryEntryVersion !== 1) {
         const exit = z.npcs.find((n) => n.kind === 'exit');
@@ -1288,7 +1288,9 @@
           [720, 690],
           [545, 760],
         ];
-      z.npcs = z.npcs.filter((n) => n.kind !== 'bundle');
+      z.npcs = z.npcs.filter(
+        (n) => n.kind !== 'bundle' || (room.id === 'supply-highlands' && n.treasuryRecovery),
+      );
       for (let j = 0; j < room.count; j++) {
         const p = this.safe(cacheSpots[j][0], cacheSpots[j][1], z.id);
         z.npcs.push({
@@ -1299,6 +1301,13 @@
           ...p,
           icon: '📦',
         });
+      }
+      if (room.id === 'supply-highlands') {
+        const recovery = z.npcs.find((n) => n.treasuryRecovery);
+        if (recovery) {
+          const point = R.treasuryRecovery.sites.find((s) => s.zone === z.id).point;
+          Object.assign(recovery, this.safe(...point, z.id));
+        }
       }
       if (room.id !== 'supply-highlands') {
         for (let j = 0; j < 3; j++) delete this.s.discovered[room.region + ':bundle-' + j];
@@ -1345,6 +1354,24 @@
                 ),
               );
         }
+      }
+      if (room.id === 'supply-highlands') {
+        for (const e of z.enemies) {
+          if (e.home) Object.assign(e, e.home);
+          delete e.path;
+          this.clearEncounterState(e);
+          e.aggro = false;
+          e.returning = 0;
+        }
+        for (const p of Object.values(this.s.pending))
+          if (p.zone === z.id && p.base) {
+            const source = z.enemies.find((e) => e.id === p.base.id);
+            if (source) {
+              p.base.home = { ...source.home };
+              Object.assign(p.base, source.home);
+              delete p.base.path;
+            }
+          }
       }
       for (const e of z.enemies.filter(
         (e) => e.roomGuard && !e.roomCaptain && / store guard/i.test(e.name),

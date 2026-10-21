@@ -12363,6 +12363,97 @@
           hearth(true);
           bottle(24, 3, '#9caeaa', 0.6);
           break;
+        case 'crown-coin-vault':
+          boards(-31, -46, 62, 59, '#66553d');
+          poly(
+            [
+              [31, -46],
+              [39, -51],
+              [39, 7],
+              [31, 13],
+            ],
+            '#3f463e',
+          );
+          for (const y of [-31, -12, 7]) {
+            rect(-28, y - 12, 55, 14, '#303d37');
+            for (const x of [-18, 0, 18]) {
+              for (let j = 0; j < 3; j++) {
+                oval(x, y - j * 3, 6, 2.4, '#99aaa4');
+                line(
+                  [
+                    [x - 4, y - j * 3],
+                    [x + 3, y - j * 3],
+                  ],
+                  '#d0d5c1',
+                  0.7,
+                );
+              }
+            }
+            timber([-31, y + 4], [31, y + 4], 3);
+          }
+          for (const x of [-24, 24])
+            line(
+              [
+                [x, -44],
+                [x, 11],
+              ],
+              '#7f8f87',
+              3,
+            );
+          line(
+            [
+              [-27, -39],
+              [27, 4],
+            ],
+            '#cab98c',
+            1.5,
+          );
+          oval(8, -13, 4, 4, '#9b5550');
+          paper(19, -32, 13);
+          break;
+        case 'treasury-audit-counter':
+          table(68);
+          paper(-14, -17, 23);
+          line(
+            [
+              [-21, -16],
+              [-7, -20],
+            ],
+            '#524e3d',
+            1,
+          );
+          for (const x of [-25, 22]) {
+            oval(x, -9, 7, 2.5, '#80958f');
+            oval(x, -12, 7, 2.5, '#c6d0c1');
+          }
+          timber([12, -14], [12, -43], 2.5);
+          line(
+            [
+              [-2, -36],
+              [26, -40],
+            ],
+            '#a7b5aa',
+            2,
+          );
+          for (const [x, y] of [
+            [0, -35],
+            [24, -39],
+          ]) {
+            line(
+              [
+                [x, y],
+                [x - 6, y + 13],
+                [x + 6, y + 13],
+                [x, y],
+              ],
+              '#7e8c7e',
+              1,
+            );
+            oval(x, y + 14, 7, 2, '#9aa99b');
+          }
+          softRect(-34, -8, 10, 12, '#b2a384', 1);
+          oval(-29, -3, 2, 2, '#a45c51');
+          break;
         case 'sealed-crown-consignment':
           chest(true, 0.9);
           break;
@@ -17831,7 +17922,7 @@
       ctx.lineWidth = 1.2;
       ctx.stroke();
     }
-    if (!blocked && materials && !(outdoor && region === 2)) {
+    if (!blocked && materials && !(outdoor && region === 2) && dungeonId !== 'supply-highlands') {
       const regionName = ['vale', 'march', 'highlands', 'frontier', 'crown'][region];
       const key =
         'terrain:' +
@@ -18731,7 +18822,7 @@
     if (!layout) return;
     const palette =
       dungeonId === 'supply-highlands'
-        ? { top: '#857965', side: '#52483d', edge: '#b2a28a' }
+        ? { top: '#979a86', side: '#626658', edge: '#c7c4a4' }
         : dungeonId === 'abyss'
           ? { top: '#6f5b5d', side: '#463b3d', edge: '#a77a6b' }
           : dungeonId === 'crypt'
@@ -18754,13 +18845,18 @@
       }
     };
     const block = (x1, x2, y1, y2) => {
-      const top = [
+      const rise =
+          dungeonId === 'supply-highlands' ? (Math.max(x2 - x1, y2 - y1) <= 45 ? 44 : 30) : 0,
+        top = [
           { x: x1, y: y1 },
           { x: x2, y: y1 },
           { x: x2, y: y2 },
           { x: x1, y: y2 },
-        ].map(screen),
-        drop = 7;
+        ].map((q) => {
+          const p = screen(q);
+          return { x: p.x, y: p.y - rise };
+        }),
+        drop = rise || 7;
       poly(
         [top[1], top[2], { x: top[2].x, y: top[2].y + drop }, { x: top[1].x, y: top[1].y + drop }],
         palette.side,
@@ -18781,9 +18877,46 @@
         ctx.stroke();
       }
 
+      if (dungeonId === 'supply-highlands') {
+        // Masonry courses and staggered joints make the counting screens real built cover.
+        for (const [a, b] of [
+          [top[1], top[2]],
+          [top[3], top[2]],
+        ]) {
+          for (const f of [1 / 3, 2 / 3]) {
+            ctx.strokeStyle = '#3f493f99';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y + drop * f);
+            ctx.lineTo(b.x, b.y + drop * f);
+            ctx.stroke();
+          }
+          const length = Math.hypot(b.x - a.x, b.y - a.y),
+            count = Math.max(1, Math.ceil(length / 42));
+          for (let row = 0; row < 3; row++)
+            for (let j = 1; j <= count; j++) {
+              const t = (j - (row % 2) * 0.5) / count;
+              if (t <= 0 || t >= 1) continue;
+              const x = a.x + (b.x - a.x) * t,
+                y = a.y + (b.y - a.y) * t;
+              ctx.beginPath();
+              ctx.moveTo(x, y + (drop * row) / 3);
+              ctx.lineTo(x, y + (drop * (row + 1)) / 3);
+              ctx.stroke();
+            }
+        }
+        for (const p of top) {
+          ctx.fillStyle = '#c5c9b1';
+          ctx.beginPath();
+          ctx.ellipse(p.x, p.y + 1, 1.7, 1, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
       const seam = (a, b) => {
         a = screen(a);
         b = screen(b);
+        a.y -= rise;
+        b.y -= rise;
         ctx.strokeStyle = palette.side + '99';
         ctx.lineWidth = 1;
         ctx.beginPath();
@@ -18802,7 +18935,18 @@
     for (const s of layout.surfaces || []) {
       const [x1, x2, y1, y2] = s.bounds;
       const color =
-        s.kind === 'flooded' ? '#416d7888' : s.kind === 'earth' ? '#6e614e66' : '#887b6555';
+        s.kind === 'flooded'
+          ? '#416d7888'
+          : s.kind === 'earth'
+            ? '#6e614e66'
+            : dungeonId === 'supply-highlands'
+              ? {
+                  'hearth-rug': '#915d3b99',
+                  'counting-slate': '#42534c66',
+                  'private-rug': '#74574599',
+                  'rider-mats': '#a0967066',
+                }[s.kind] || '#887b6555'
+              : '#887b6555';
       poly(
         [
           { x: x1, y: y1 },
@@ -18812,6 +18956,32 @@
         ].map(screen),
         color,
       );
+      if (dungeonId === 'supply-highlands' && s.kind !== 'counting-slate') {
+        const inset = 12;
+        poly(
+          [
+            { x: x1 + inset, y: y1 + inset },
+            { x: x2 - inset, y: y1 + inset },
+            { x: x2 - inset, y: y2 - inset },
+            { x: x1 + inset, y: y2 - inset },
+          ].map(screen),
+          '#00000000',
+          '#c9b78e99',
+          1.1,
+        );
+        for (let x = x1 + 35; x < x2 - 20; x += 45) {
+          const p = screen({ x, y: y1 + 23 });
+          poly(
+            [
+              { x: p.x, y: p.y - 2 },
+              { x: p.x + 3, y: p.y },
+              { x: p.x, y: p.y + 2 },
+              { x: p.x - 3, y: p.y },
+            ],
+            '#cab88a99',
+          );
+        }
+      }
       for (let y = y1 + 35; y < y2; y += 100)
         for (let x = x1 + 35; x < x2; x += 110) {
           const a = screen({ x, y }),

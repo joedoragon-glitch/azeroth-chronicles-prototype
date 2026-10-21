@@ -206,7 +206,13 @@
     return true;
   }
   function definitionFor(e, region = 0, rescued = false) {
-    if (e?.highlandsNature || e?.miningFacility) return null;
+    if (
+      e?.highlandsNature ||
+      e?.miningFacility ||
+      e?.treasuryBoss === 'ridge' ||
+      e?.captainProfile === 'supply-highlands'
+    )
+      return null;
     // Owner-selected procedural faces, hair and armor supersede these three
     // raster bodies, including every soldier tier. Keep stable catalog keys,
     // registrations and their clips intact for recovery; Ranger/Archer stay raster.
