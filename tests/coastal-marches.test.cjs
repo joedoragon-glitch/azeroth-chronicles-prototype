@@ -25,8 +25,12 @@ for (const seed of [0.13, 0.43, 0.73, 0.93]) {
   ]) {
     const n = z.npcs.find((n) => n.id === id);
     assert(n, id);
-    assert(!g.blocked(n.x, n.y, 'march', 12), id + ' dry entrance');
-    assert(g.route(arrival, n).length, id + ' reachable');
+    const path = g.route(arrival, n);
+    if (id === 'outbound') {
+      assert(R.harborWaterBlocked(R.harbors.march.water, n.x, n.y, 0), 'ferry floats in water');
+      assert(path.length && dist(path.at(-1), n) <= 115, 'board from reachable dock');
+    } else assert(!g.blocked(n.x, n.y, 'march', 12), id + ' dry entrance');
+    assert(path.length, id + ' reachable');
   }
   for (const road of z.roads)
     for (let j = 1; j < road.length; j++) {
