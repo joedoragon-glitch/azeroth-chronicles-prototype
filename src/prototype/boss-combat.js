@@ -665,6 +665,7 @@
             angle: Math.atan2(target.y - e.y, target.x - e.x),
           });
         }
+        if (a?.withdrawal) this.enemyWithdrawalCastPosition(e, a);
         return a;
       }
       ownedSummonMovementFactor(e) {
@@ -1030,6 +1031,188 @@
         }
         b.timer = Math.max(0.05, b.timer);
       }
+      // This filters the existing repertoire; no new attack, cooldown or
+      // pursuit is created. Warnings remain full length and dodgeable.
+      enemyWithdrawalPlan(e, plan, index) {
+        if (
+          !plan ||
+          plan.charge ||
+          plan.landing ||
+          plan.advance ||
+          plan.opening ||
+          plan.combo ||
+          plan.royalSidestep
+        )
+          return false;
+        // These attacks commit the actor to holding/grappling a victim.
+        if (e.type === 'boss' && ['mire', 'archive', 'darklord'].includes(e.family) && index === 0)
+          return false;
+        // Keep the bespoke moving arena/commandeering sequences under their
+        // own owner. Protection and reinforcements remain useful during retreat.
+        if (plan.cinderMechanic && !['protection', 'equalisation'].includes(plan.cinderMechanic))
+          return false;
+        return [
+          'circle',
+          'line',
+          'cone',
+          'sector',
+          'ring',
+          'volley',
+          'summon',
+          'canister',
+          'formation',
+          'checkerboard',
+        ].includes(plan.kind);
+      }
+      enemyWithdrawalCastPosition(e, a = e.telegraph) {
+        if (!a?.withdrawal) return;
+        // Only actor-centered cues move with the actor. Ground marks and
+        // target snapshots stay where the full warning put them; no homing.
+        if (
+          ['cone', 'sector', 'ring'].includes(a.kind) ||
+          a.selfDefense ||
+          a.nightSkill === 'drain'
+        ) {
+          a.x = e.x;
+          a.y = e.y;
+          a.fromX = e.x;
+          a.fromY = e.y;
+        }
+      }
+      enemyBackpedal(e, target, dt, territory) {
+        const gap = dist(e, target),
+          range = this.enemyRangedRange(e);
+        if (
+          !this.enemyRanged(e) ||
+          e.hybrid ||
+          gap >= range * R.rangedEnemyCombat.retreatFraction ||
+          !this.line(e, target)
+        )
+          return false;
+        const away = {
+          x: e.x + ((e.x - target.x) / Math.max(1, gap)) * 95,
+          y: e.y + ((e.y - target.y) / Math.max(1, gap)) * 95,
+        };
+        if (dist(away, e.home) >= territory || !this.clearSegment(e, away)) return false;
+        this.move(
+          e,
+          away,
+          R.rangedEnemyCombat.retreatSpeed *
+            this.mountedMovementFactor(e) *
+            (e.form === 'ringleader' ? R.rangedEnemyCombat.ringleaderRetreatMultiplier : 1) *
+            (e.slow > 0 ? 0.5 : 1) *
+            this.nightTempo(),
+          dt,
+        );
+        return true;
+      }
+      enemyWithdrawalAction(e, target, bossTarget = target) {
+        if (
+          this.peace ||
+          !e.aggro ||
+          e.hp <= 0 ||
+          e.returning ||
+          e.telegraph ||
+          e.motion ||
+          e.rangedAim ||
+          !target ||
+          target.hp <= 0
+        )
+          return false;
+        // The caller gives support healing/approach first refusal. Recovery
+        // and normal skills still pay their native readiness costs.
+        const gap = dist(e, target),
+          visible = this.line(e, target);
+        let skill = false;
+        if (!this.mageSilenceActive(e) && visible && e.cd <= 0) {
+          if (
+            (e.captain || e.roomCaptain) &&
+            e.specialCd <= 0 &&
+            gap < (this.captainProfile(e)?.specialRange || 420)
+          )
+            skill = this.startCaptainAttack(e, target, true);
+          else if (
+            e.type === 'boss' &&
+            gap < R.bossCadence.specialRange &&
+            (!e.basicDue || gap > 200)
+          )
+            skill = this.startAttack(e, bossTarget, null, true);
+          else if (
+            e.nightOnly &&
+            e.species === 'wraith' &&
+            e.specialCd <= 0 &&
+            gap < R.nightEnemyCombat.wraith.radius
+          )
+            skill = this.startNightSkill(e, target);
+        }
+        if (skill) {
+          for (const a of [e.telegraph, ...(e.sequence || [])]) if (a) a.withdrawal = true;
+          return true;
+        }
+        const ranged =
+          this.enemyRanged(e) &&
+          !(
+            e.hybrid &&
+            gap <= (e.form === 'ringleader' ? R.rangedEnemyCombat.ringleaderHybridMeleeRange : 65)
+          );
+        if (
+          e.cd > 0 ||
+          gap > (ranged ? this.enemyRangedRange(e) : 65) ||
+          !(ranged ? this.enemyRangedLine(e, target) : visible)
+        )
+          return false;
+        this.enemyStartBasic(e, target, ranged);
+        if (e.rangedAim) e.rangedAim.withdrawal = true;
+        return true;
+      }
+      enemyStartBasic(e, target, ranged) {
+        const nightTempo = this.nightTempo();
+        e.cd =
+          ((e.type === 'boss' ? R.bossCadence.basicCooldown : 1.4) *
+            (e.frenzy ? R.ringleaderScaling.frenzyCooldown : 1) *
+            (e.captainAttackRate || 1) *
+            (e.quotaOvertime > 0 ? 0.75 : 1)) /
+          nightTempo;
+        if (ranged) {
+          const aimTime =
+            R.rangedEnemyCombat.aimTime *
+            (e.frenzy ? R.ringleaderScaling.frenzyAim : 1) *
+            (e.captainAttackRate || 1) *
+            (e.quotaOvertime > 0 ? 0.8 : 1);
+          e.rangedAim = {
+            x: target.x,
+            y: target.y,
+            timer: aimTime,
+            total: aimTime,
+          };
+        } else {
+          const equipment = R.enemyMeleeEquipment(e);
+          this.event('swing', {
+            actor: 'enemy',
+            source: e.id,
+            species: e.species,
+            family: e.family,
+            boss: e.type === 'boss',
+            ...equipment,
+            x: e.x,
+            y: e.y,
+          });
+          if (this.hitParty(target, this.weakenedEnemyDamage(e), 0, e.id))
+            this.event('melee', {
+              actor: 'enemy',
+              source: e.id,
+              species: e.species,
+              family: e.family,
+              boss: e.type === 'boss',
+              ...equipment,
+              x: target.x,
+              y: target.y,
+              target: target === this.hero ? 'hero' : target.id,
+            });
+          if (e.form === 'ringleader') e.pursuitBurstUsed = false;
+        }
+        e.basicDue = false;
+      }
       bossCenteredReach(e, plan) {
         const scale = R.bossCadence.areaRangeMultiplier;
         const kind = plan.kind === 'sector' && e.hp > e.maxHp * 0.5 ? 'cone' : plan.kind;
@@ -1084,12 +1267,19 @@
           return w;
         });
       }
-      chooseBossAttack(e, target = this.hero) {
+      chooseBossAttack(e, target = this.hero, withdrawal = false) {
         const plans = R.attacks[e.family] || [];
-        if (e.family === 'citadel' && !e.board && dist(e, target) <= R.bossCadence.specialRange)
+        if (
+          !withdrawal &&
+          e.family === 'citadel' &&
+          !e.board &&
+          dist(e, target) <= R.bossCadence.specialRange
+        )
           return 3;
         for (const allowRepeat of [false, true]) {
-          const weights = this.bossAttackWeights(e, target, allowRepeat),
+          const weights = this.bossAttackWeights(e, target, allowRepeat).map((weight, index) =>
+              withdrawal && !this.enemyWithdrawalPlan(e, plans[index], index) ? 0 : weight,
+            ),
             total = weights.reduce((n, w) => n + w, 0);
           if (total <= 0) continue;
           let roll = this.random() * total;
@@ -1460,12 +1650,12 @@
         this.event('warning', { family: e.family, bossHeal: true });
         return true;
       }
-      startAttack(e, target, indexOverride = null) {
+      startAttack(e, target, indexOverride = null, withdrawal = false) {
         const plans = R.attacks[e.family] || [];
         if (!plans.length) return false;
         const selected = Number.isInteger(indexOverride)
             ? Math.max(0, Math.min(plans.length - 1, indexOverride))
-            : this.chooseBossAttack(e, target),
+            : this.chooseBossAttack(e, target, withdrawal),
           actualTarget = selected < 0 ? null : this.bossAttackTarget(e, target, selected);
         if (selected < 0) return false;
         if (e.family === 'archive' && selected === 0 && e.hookedVictim) {
@@ -1480,6 +1670,11 @@
         const built = this.buildBossAttack(e, selected, actualTarget, true);
         if (!built.first) return false;
         const sequence = [...built.sequence, ...this.bossComboSequence(e, selected, actualTarget)];
+        if (
+          withdrawal &&
+          [built.first, ...sequence].some((a) => !this.enemyWithdrawalPlan(e, a, a.index))
+        )
+          return false;
         if (!this.prepareAttackSequence(e, built.first, sequence)) return false;
         e.attackIndex = (e.attackIndex || 0) + 1;
         e.lastAttackIndex = selected;

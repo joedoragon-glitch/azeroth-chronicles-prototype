@@ -4291,7 +4291,7 @@
       }
       return made;
     }
-    startCaptainAttack(e, target) {
+    startCaptainAttack(e, target, withdrawal = false) {
       const profile = this.captainProfile(e),
         plans = profile?.attacks || [];
       if (!plans.length) return false;
@@ -4301,6 +4301,7 @@
         eligible = plans
           .map((plan, index) => ({ plan, index }))
           .filter((x) => {
+            if (withdrawal && !this.enemyWithdrawalPlan(e, x.plan, x.index)) return false;
             if (x.plan.kind === 'summon')
               return summonCfg && owned < (summonCfg.cap || 3) && (e.summonCd || 0) <= 0;
             if (x.plan.kind === 'cone')
@@ -4736,9 +4737,12 @@
         this.tacticalPresentOpponents(e) > this.tacticalLocalSupport(e)
       );
     }
-    tacticalAdvanceRogueRegroup(e, target, dt) {
+    tacticalAdvanceRogueRegroup(e, target, dt, committed = false) {
       const state = this.tacticalRogueRegroup(e);
       if (!state) return false;
+      // Covering actions keep traveling, but cannot start another decision or
+      // replace a committed warning when they arrive at support.
+      if (committed && !['travel', 'escape'].includes(state.phase)) return false;
       if (state.phase === 'thinking') {
         state.thinkRemaining -= dt;
         e.noProgress = 0;
@@ -4784,7 +4788,7 @@
       if (state.phase === 'escape') {
         state.fleeRemaining -= dt;
         state.seekDelay -= dt;
-        if (state.seekDelay <= 0) {
+        if (!committed && state.seekDelay <= 0) {
           state.seekDelay = 1;
           if (this.tacticalSeekRogueSupport(e, this.tacticalActiveTargetCount(e))) return true;
         }
@@ -4857,6 +4861,7 @@
         state.moveUsed = false;
         e.path = [];
         e.routeAge = 0;
+        if (committed) return true;
       }
       if (state.phase === 'anchored') {
         // The temporary combat anchor follows a real continued encounter,
@@ -6055,18 +6060,33 @@
         }
         if (this.enemySupportHeal(e)) continue;
         if (this.enemySupportApproach(e, dt)) continue;
-        // A short-lived rogue decision is distinct from normal aggro.
-        if (!this.mageSilenceActive(e) && this.tacticalAutoRogue(e, target)) continue;
-        // A committed attack owns its warning/release clock. Regroup holds and
-        // retreat decisions must not suspend it when the victim moves away.
+        // Healing wins the next free decision, including a fresh Rogue window.
+        // Committed warnings, motions and aiming still own their release clocks.
         if (
+          e.type === 'boss' &&
           !e.telegraph &&
           !e.motion &&
           !e.rangedAim &&
-          this.tacticalRogueRegroup(e) &&
-          this.tacticalAdvanceRogueRegroup(e, target, dt)
+          !this.mageSilenceActive(e) &&
+          e.cd <= 0 &&
+          this.line(e, target) &&
+          dist(e, target) < R.bossCadence.specialRange &&
+          this.startBossRecovery(e)
         )
           continue;
+        if (!this.mageSilenceActive(e) && this.tacticalAutoRogue(e, target)) continue;
+        const covering = !!(e.telegraph?.withdrawal || e.rangedAim?.withdrawal),
+          regroup = this.tacticalRogueRegroup(e);
+        if (regroup && !e.motion && ((!e.telegraph && !e.rangedAim) || covering)) {
+          const held = this.tacticalAdvanceRogueRegroup(e, target, dt, covering);
+          if (e.returning || !e.aggro) continue;
+          if (covering) this.enemyWithdrawalCastPosition(e);
+          else if (held) {
+            if (['travel', 'escape', 'anchored'].includes(this.tacticalRogueRegroup(e)?.phase))
+              this.enemyWithdrawalAction(e, target, scriptedBossTarget);
+            continue;
+          }
+        }
         if (e.telegraph && this.mageSilenceActive(e)) {
           // Existing warned specials remain queued, but cannot resolve
           // inside a Silence Field. Pausing the warning preserves boss
@@ -6159,6 +6179,8 @@
           continue;
         }
         if (e.rangedAim) {
+          if (e.rangedAim.withdrawal && !this.tacticalRogueRegroup(e))
+            this.enemyBackpedal(e, target, dt, territory);
           e.rangedAim.timer -= dt;
           if (e.rangedAim.timer <= 0) {
             const a = e.rangedAim,
@@ -6237,15 +6259,6 @@
           e.type === 'boss' &&
           !this.mageSilenceActive(e) &&
           e.cd <= 0 &&
-          visible &&
-          d < R.bossCadence.specialRange &&
-          this.startBossRecovery(e)
-        ) {
-          opportunity = true;
-        } else if (
-          e.type === 'boss' &&
-          !this.mageSilenceActive(e) &&
-          e.cd <= 0 &&
           d < R.bossCadence.specialRange &&
           visible &&
           (!e.basicDue || d > 200) &&
@@ -6265,67 +6278,11 @@
         ) {
           opportunity = true;
         } else if (retreatRange && d < retreatRange && visible) {
-          const away = {
-              x: e.x + ((e.x - target.x) / Math.max(1, d)) * 95,
-              y: e.y + ((e.y - target.y) / Math.max(1, d)) * 95,
-            },
-            speed =
-              R.rangedEnemyCombat.retreatSpeed *
-              this.mountedMovementFactor(e) *
-              (e.form === 'ringleader' ? R.rangedEnemyCombat.ringleaderRetreatMultiplier : 1) *
-              (e.slow > 0 ? 0.5 : 1) *
-              nightTempo;
-          if (dist(away, e.home) < territory && this.clearSegment(e, away)) {
-            this.move(e, away, speed, dt);
-            opportunity = true;
-          }
+          opportunity = this.enemyBackpedal(e, target, dt, territory);
+          if (opportunity) this.enemyWithdrawalAction(e, target, scriptedBossTarget);
         }
         if (!opportunity && d <= range && e.cd <= 0 && firingLine) {
-          e.cd =
-            ((e.type === 'boss' ? R.bossCadence.basicCooldown : 1.4) *
-              (e.frenzy ? R.ringleaderScaling.frenzyCooldown : 1) *
-              (e.captainAttackRate || 1) *
-              (e.quotaOvertime > 0 ? 0.75 : 1)) /
-            nightTempo;
-          if (ranged) {
-            const aimTime =
-              R.rangedEnemyCombat.aimTime *
-              (e.frenzy ? R.ringleaderScaling.frenzyAim : 1) *
-              (e.captainAttackRate || 1) *
-              (e.quotaOvertime > 0 ? 0.8 : 1);
-            e.rangedAim = {
-              x: target.x,
-              y: target.y,
-              timer: aimTime,
-              total: aimTime,
-            };
-          } else {
-            const equipment = R.enemyMeleeEquipment(e);
-            this.event('swing', {
-              actor: 'enemy',
-              source: e.id,
-              species: e.species,
-              family: e.family,
-              boss: e.type === 'boss',
-              ...equipment,
-              x: e.x,
-              y: e.y,
-            });
-            if (this.hitParty(target, this.weakenedEnemyDamage(e), 0, e.id))
-              this.event('melee', {
-                actor: 'enemy',
-                source: e.id,
-                species: e.species,
-                family: e.family,
-                boss: e.type === 'boss',
-                ...equipment,
-                x: target.x,
-                y: target.y,
-                target: target === this.hero ? 'hero' : target.id,
-              });
-            if (e.form === 'ringleader') e.pursuitBurstUsed = false;
-          }
-          e.basicDue = false;
+          this.enemyStartBasic(e, target, ranged);
           opportunity = true;
         }
         if (!opportunity && (d > range || !firingLine)) {
