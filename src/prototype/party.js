@@ -32,7 +32,7 @@
       releaseRecallForCombat() {
         if (!this.recallInProgress()) this.s.recallActive = false;
       }
-      companionRetreating(u) {
+      companionRetreatMode(u) {
         if (u === this.hero || u.hp <= 0 || u.active === false || !this.s.party.includes(u))
           return false;
         if (this.s.recallActive) return dist(u, this.hero) > R.companionRecall.arrivalRadius;
@@ -41,9 +41,13 @@
           state?.zone === this.zoneId &&
           state.regrouping &&
           state.point &&
-          (!u.order || this.gatheringUnit(u)) &&
-          dist(u, state.point) > R.companionJudgment.arrivalRadius
+          (!u.order || this.gatheringUnit(u))
         );
+      }
+      companionRetreating(u) {
+        if (!this.companionRetreatMode(u)) return false;
+        if (this.s.recallActive) return true;
+        return dist(u, companionJudgments.get(u).point) > R.companionJudgment.arrivalRadius;
       }
       followRecalledCompanion(u, living, dt) {
         const index = Math.max(0, living.indexOf(u)),

@@ -1,0 +1,494 @@
+{
+  "version": "0.9.1+snapshot.dev.139",
+  "publishedCommit": "ef7b0b849859f8bc355e3c40710d1cd3fa128a38",
+  "scope": "Focused current-source read-only characterization. Native terrain, navigation and actual enemy ticks unless specifically marked direct update; no runtime edits, full-game CI or statistical survival claim.",
+  "rules": {
+    "assessSeconds": 0.4,
+    "supportRadius": 260,
+    "threatRadius": 260,
+    "nearThreatRadius": 260,
+    "heroWeight": 2.5,
+    "bossWeight": 3.5,
+    "captainWeight": 2,
+    "ringleaderWeight": 1.35,
+    "minimumAllyWeight": 0.5,
+    "overwhelmRatio": 1.6,
+    "safeRatio": 1.15,
+    "minimumEnemyForce": 2,
+    "woundedFraction": 0.4,
+    "criticalFraction": 0.2,
+    "woundedThreatForce": 1.5,
+    "maxAdvanceFromHero": 280,
+    "heroCommittedRange": 165,
+    "regroupSeconds": 1.4,
+    "arrivalRadius": 45,
+    "retreatSpeed": 260,
+    "anchorDangerCost": 140,
+    "escapeDelay": 0.65,
+    "escapeSeconds": 1.5
+  },
+  "retreatCases": [
+    {
+      "cls": "paladin",
+      "type": "soldier",
+      "heroNearby": false,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 308.6486675817668,
+      "anchorEnemyDistanceAtStart": 358.55822400274127,
+      "firstRetreat": true,
+      "maxMoved": 263.64866758176686,
+      "maxEnemyDistance": 143.6762279021239,
+      "deathAt": 1.5,
+      "finalHp": 0
+    },
+    {
+      "cls": "paladin",
+      "type": "soldier",
+      "heroNearby": true,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 26.907248094147423,
+      "anchorEnemyDistanceAtStart": 70.88018058667741,
+      "firstRetreat": false,
+      "maxMoved": 0,
+      "maxEnemyDistance": 50,
+      "deathAt": 1,
+      "finalHp": 0
+    },
+    {
+      "cls": "paladin",
+      "type": "archer",
+      "heroNearby": false,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 350,
+      "anchorEnemyDistanceAtStart": 400,
+      "firstRetreat": true,
+      "maxMoved": 305,
+      "maxEnemyDistance": 156.5,
+      "deathAt": 1.75,
+      "finalHp": 0
+    },
+    {
+      "cls": "paladin",
+      "type": "archer",
+      "heroNearby": true,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 60,
+      "anchorEnemyDistanceAtStart": 110,
+      "firstRetreat": true,
+      "maxMoved": 15,
+      "maxEnemyDistance": 65,
+      "deathAt": 1,
+      "finalHp": 0
+    },
+    {
+      "cls": "paladin",
+      "type": "pet:thorn",
+      "heroNearby": false,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 222.76669409945464,
+      "anchorEnemyDistanceAtStart": 272.25906780123967,
+      "firstRetreat": true,
+      "maxMoved": 177.7666940994546,
+      "maxEnemyDistance": 113.590419467017,
+      "deathAt": 1,
+      "finalHp": 0
+    },
+    {
+      "cls": "paladin",
+      "type": "pet:thorn",
+      "heroNearby": true,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 78.26237921249265,
+      "anchorEnemyDistanceAtStart": 40.311288741492746,
+      "firstRetreat": true,
+      "maxMoved": 33.78631295651296,
+      "maxEnemyDistance": 50,
+      "deathAt": 1,
+      "finalHp": 0
+    },
+    {
+      "cls": "paladin",
+      "type": "pet:archive",
+      "heroNearby": false,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 350,
+      "anchorEnemyDistanceAtStart": 400,
+      "firstRetreat": true,
+      "maxMoved": 305,
+      "maxEnemyDistance": 156.5,
+      "deathAt": 1.75,
+      "finalHp": 0
+    },
+    {
+      "cls": "paladin",
+      "type": "pet:archive",
+      "heroNearby": true,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 60,
+      "anchorEnemyDistanceAtStart": 110,
+      "firstRetreat": true,
+      "maxMoved": 15,
+      "maxEnemyDistance": 65,
+      "deathAt": 1,
+      "finalHp": 0
+    },
+    {
+      "cls": "mage",
+      "type": "soldier",
+      "heroNearby": false,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 362.66375611577183,
+      "anchorEnemyDistanceAtStart": 411.12650121343427,
+      "firstRetreat": true,
+      "maxMoved": 317.6637561157717,
+      "maxEnemyDistance": 159.51661003934325,
+      "deathAt": 1.8,
+      "finalHp": 0
+    },
+    {
+      "cls": "mage",
+      "type": "soldier",
+      "heroNearby": true,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 112.36102527122117,
+      "anchorEnemyDistanceAtStart": 145.34441853748635,
+      "firstRetreat": true,
+      "maxMoved": 67.36102527122117,
+      "maxEnemyDistance": 66.38975576508467,
+      "deathAt": 1,
+      "finalHp": 0
+    },
+    {
+      "cls": "mage",
+      "type": "archer",
+      "heroNearby": false,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 316.91008188443607,
+      "anchorEnemyDistanceAtStart": 366.78604117387016,
+      "firstRetreat": true,
+      "maxMoved": 271.9100818844361,
+      "maxEnemyDistance": 146.80911617372308,
+      "deathAt": 1.55,
+      "finalHp": 0
+    },
+    {
+      "cls": "mage",
+      "type": "archer",
+      "heroNearby": true,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 35.38361202590826,
+      "anchorEnemyDistanceAtStart": 79.6994353806851,
+      "firstRetreat": false,
+      "maxMoved": 0,
+      "maxEnemyDistance": 50,
+      "deathAt": 1,
+      "finalHp": 0
+    },
+    {
+      "cls": "mage",
+      "type": "pet:thorn",
+      "heroNearby": false,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 237.69728648009428,
+      "anchorEnemyDistanceAtStart": 284.60498941515414,
+      "firstRetreat": true,
+      "maxMoved": 192.69728648009425,
+      "maxEnemyDistance": 117.61791319928662,
+      "deathAt": 1.1,
+      "finalHp": 0
+    },
+    {
+      "cls": "mage",
+      "type": "pet:thorn",
+      "heroNearby": true,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 114.0175425099138,
+      "anchorEnemyDistanceAtStart": 92.19544457292888,
+      "firstRetreat": true,
+      "maxMoved": 128.51459061133875,
+      "maxEnemyDistance": 65.39065761886904,
+      "deathAt": 1,
+      "finalHp": 0
+    },
+    {
+      "cls": "mage",
+      "type": "pet:archive",
+      "heroNearby": false,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 222.76669409945464,
+      "anchorEnemyDistanceAtStart": 272.25906780123967,
+      "firstRetreat": true,
+      "maxMoved": 177.7666940994546,
+      "maxEnemyDistance": 113.590419467017,
+      "deathAt": 1,
+      "finalHp": 0
+    },
+    {
+      "cls": "mage",
+      "type": "pet:archive",
+      "heroNearby": true,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 78.26237921249265,
+      "anchorEnemyDistanceAtStart": 40.311288741492746,
+      "firstRetreat": true,
+      "maxMoved": 33.78631295651296,
+      "maxEnemyDistance": 50,
+      "deathAt": 1,
+      "finalHp": 0
+    },
+    {
+      "cls": "ranger",
+      "type": "soldier",
+      "heroNearby": false,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 362.66375611577183,
+      "anchorEnemyDistanceAtStart": 411.12650121343427,
+      "firstRetreat": true,
+      "maxMoved": 317.6637561157717,
+      "maxEnemyDistance": 159.51661003934325,
+      "deathAt": 1.8,
+      "finalHp": 0
+    },
+    {
+      "cls": "ranger",
+      "type": "soldier",
+      "heroNearby": true,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 112.36102527122117,
+      "anchorEnemyDistanceAtStart": 145.34441853748635,
+      "firstRetreat": true,
+      "maxMoved": 67.36102527122117,
+      "maxEnemyDistance": 66.38975576508467,
+      "deathAt": 1,
+      "finalHp": 0
+    },
+    {
+      "cls": "ranger",
+      "type": "archer",
+      "heroNearby": false,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 316.91008188443607,
+      "anchorEnemyDistanceAtStart": 366.78604117387016,
+      "firstRetreat": true,
+      "maxMoved": 271.9100818844361,
+      "maxEnemyDistance": 146.80911617372308,
+      "deathAt": 1.55,
+      "finalHp": 0
+    },
+    {
+      "cls": "ranger",
+      "type": "archer",
+      "heroNearby": true,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 35.38361202590826,
+      "anchorEnemyDistanceAtStart": 79.6994353806851,
+      "firstRetreat": false,
+      "maxMoved": 0,
+      "maxEnemyDistance": 50,
+      "deathAt": 1,
+      "finalHp": 0
+    },
+    {
+      "cls": "ranger",
+      "type": "pet:thorn",
+      "heroNearby": false,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 237.69728648009428,
+      "anchorEnemyDistanceAtStart": 284.60498941515414,
+      "firstRetreat": true,
+      "maxMoved": 192.69728648009425,
+      "maxEnemyDistance": 117.61791319928662,
+      "deathAt": 1.1,
+      "finalHp": 0
+    },
+    {
+      "cls": "ranger",
+      "type": "pet:thorn",
+      "heroNearby": true,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 114.0175425099138,
+      "anchorEnemyDistanceAtStart": 92.19544457292888,
+      "firstRetreat": true,
+      "maxMoved": 128.51459061133875,
+      "maxEnemyDistance": 65.39065761886904,
+      "deathAt": 1,
+      "finalHp": 0
+    },
+    {
+      "cls": "ranger",
+      "type": "pet:archive",
+      "heroNearby": false,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 222.76669409945464,
+      "anchorEnemyDistanceAtStart": 272.25906780123967,
+      "firstRetreat": true,
+      "maxMoved": 177.7666940994546,
+      "maxEnemyDistance": 113.590419467017,
+      "deathAt": 1,
+      "finalHp": 0
+    },
+    {
+      "cls": "ranger",
+      "type": "pet:archive",
+      "heroNearby": true,
+      "criticalDetected": true,
+      "anchorDistanceFromStart": 78.26237921249265,
+      "anchorEnemyDistanceAtStart": 40.311288741492746,
+      "firstRetreat": true,
+      "maxMoved": 33.78631295651296,
+      "maxEnemyDistance": 50,
+      "deathAt": 1,
+      "finalHp": 0
+    }
+  ],
+  "chargePriority": [
+    {
+      "type": "soldier",
+      "hpFraction": 0.19,
+      "criticalDetected": true,
+      "pending": true,
+      "interrupted": false,
+      "moved": 0,
+      "retreating": false
+    },
+    {
+      "type": "pet:thorn",
+      "hpFraction": 0.19,
+      "criticalDetected": true,
+      "pending": true,
+      "interrupted": false,
+      "moved": 0,
+      "retreating": false
+    }
+  ],
+  "workPriority": [
+    {
+      "order": "build",
+      "criticalDetected": true,
+      "moved": 0,
+      "retreating": false,
+      "constructionProgress": 1.05,
+      "upgradeProgress": 0,
+      "orderAfter": {
+        "type": "build",
+        "id": "audit-barracks"
+      }
+    },
+    {
+      "order": "upgrade",
+      "criticalDetected": true,
+      "moved": 0,
+      "retreating": false,
+      "constructionProgress": 4,
+      "upgradeProgress": 0.05,
+      "orderAfter": {
+        "type": "upgrade",
+        "id": "audit-barracks"
+      }
+    },
+    {
+      "order": "gather",
+      "criticalDetected": true,
+      "moved": 12.999999999999964,
+      "retreating": true,
+      "constructionProgress": 1,
+      "upgradeProgress": 0,
+      "orderAfter": {
+        "type": "gather",
+        "id": "audit-tribute",
+        "group": "audit"
+      }
+    }
+  ],
+  "assessmentDelay": [
+    {
+      "elapsed": 0.05,
+      "hpFraction": 0.1,
+      "retreating": false,
+      "distance": 0
+    },
+    {
+      "elapsed": 0.1,
+      "hpFraction": 0.1,
+      "retreating": false,
+      "distance": 0
+    },
+    {
+      "elapsed": 0.15000000000000002,
+      "hpFraction": 0.1,
+      "retreating": false,
+      "distance": 0
+    },
+    {
+      "elapsed": 0.2,
+      "hpFraction": 0.1,
+      "retreating": false,
+      "distance": 0
+    },
+    {
+      "elapsed": 0.25,
+      "hpFraction": 0.1,
+      "retreating": false,
+      "distance": 0
+    },
+    {
+      "elapsed": 0.30000000000000004,
+      "hpFraction": 0.1,
+      "retreating": false,
+      "distance": 0
+    },
+    {
+      "elapsed": 0.35000000000000003,
+      "hpFraction": 0.1,
+      "retreating": false,
+      "distance": 0
+    },
+    {
+      "elapsed": 0.4,
+      "hpFraction": 0.1,
+      "retreating": false,
+      "distance": 0
+    },
+    {
+      "elapsed": 0.45,
+      "hpFraction": 0.1,
+      "retreating": true,
+      "distance": 13.000000000000053
+    },
+    {
+      "elapsed": 0.5,
+      "hpFraction": 0.1,
+      "retreating": true,
+      "distance": 26.000000000000107
+    }
+  ],
+  "nearbyAnchorControls": [
+    {
+      "cls": "paladin",
+      "type": "soldier",
+      "moved": 0,
+      "enemyDistance": 50,
+      "retreating": false,
+      "physicallyClearSideEscape": false,
+      "sideEscapeEnemyDistance": 206.15528128088303
+    },
+    {
+      "cls": "mage",
+      "type": "archer",
+      "moved": 0,
+      "enemyDistance": 50,
+      "retreating": false,
+      "physicallyClearSideEscape": false,
+      "sideEscapeEnemyDistance": 206.15528128088303
+    },
+    {
+      "cls": "ranger",
+      "type": "archer",
+      "moved": 0,
+      "enemyDistance": 50,
+      "retreating": false,
+      "physicallyClearSideEscape": false,
+      "sideEscapeEnemyDistance": 206.15528128088303
+    }
+  ]
+}
