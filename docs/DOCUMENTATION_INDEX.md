@@ -1,4 +1,4 @@
-Current implementation: [Dungeon camps and fresh defenses — dev.131](DUNGEON_CAMPS_DEV131.md), focused checks complete; publication pending.
+Current implementation: [Dungeon camps and fresh defenses — dev.131](DUNGEON_CAMPS_DEV131.md), published and live-verified; release cleanup complete. Receipt: `docs/evidence/DUNGEON_CAMPS_DEV131_PUBLICATION_20261021.json`.
 
 Current implementation: [Gathering escort, Supplies and resource expeditions — dev.130](GATHERING_ESCORT_DEV130.md), published and live-verified; receipt in `docs/evidence/GATHERING_ESCORT_DEV130_PUBLICATION_20261021.json`.
 

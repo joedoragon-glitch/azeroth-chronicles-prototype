@@ -1,0 +1,116 @@
+{
+  "version": "0.9.1+snapshot.dev.131",
+  "merge": "edf89f0cffb61b91853ea5c8d065da0c1fde3526",
+  "pr": 367,
+  "build": "edf89f0cffb61b91853ea5c8d065da0c1fde3526",
+  "buildMatches": true,
+  "files": [
+    {
+      "path": "index.html",
+      "matches": true,
+      "sha256": "cb8f4c1036e00936726b7ca963eb901c03a7653bf0cd0d4d37af65a81c53383d",
+      "bytes": 5594
+    },
+    {
+      "path": "phone.html",
+      "matches": true,
+      "sha256": "cbac05583f913484864260f9e04d127d4fe6dc12f58f2de12dc3803ef50ff6c9",
+      "bytes": 5595
+    },
+    {
+      "path": "prototype.html",
+      "matches": true,
+      "sha256": "cb8f4c1036e00936726b7ca963eb901c03a7653bf0cd0d4d37af65a81c53383d",
+      "bytes": 5594
+    },
+    {
+      "path": "sw.js",
+      "matches": true,
+      "sha256": "dc0004b7b5fd9a50614568ee6261b53d0756ec68bf54d7e2abc6e1f5fd594ca1",
+      "bytes": 20766
+    },
+    {
+      "path": "src/prototype/app.js",
+      "matches": true,
+      "sha256": "d3b60e0353f572b560354b9c2bfeef6af7365894dbbfbba32e10ce0770c0c332",
+      "bytes": 154514
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "matches": true,
+      "sha256": "c1e54970046a96a0cc4e2f6b86be8b917b4acf94c1df00677d4aca4d2dcadcf5",
+      "bytes": 296
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "matches": true,
+      "sha256": "29a09189184f37253e60b44092fce8b26e77faed872bd0dade9d9aad680f3470",
+      "bytes": 271857
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "matches": true,
+      "sha256": "c6d94b074d3bc42b5d4a2964f1b78ca100a24265c54addf9270ff19e77fedf6a",
+      "bytes": 82054
+    },
+    {
+      "path": "src/prototype/party.js",
+      "matches": true,
+      "sha256": "079b9420011cdb0f13c41cd330cab169111b329b5b20fa967aa071a0bff3d809",
+      "bytes": 76559
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "matches": true,
+      "sha256": "c7c2e9dd0bde75eaa7b8b96fd0a97e43820905018e4af070af06b969f7abf7b5",
+      "bytes": 213671
+    },
+    {
+      "path": "src/prototype/save.js",
+      "matches": true,
+      "sha256": "13f85ba0ca0dfc03c69805527128252479857eb2735854bf3392968fd2275761",
+      "bytes": 54394
+    },
+    {
+      "path": "src/prototype/treasury.js",
+      "matches": true,
+      "sha256": "2f23f2c66c75da1e55ec2d09fffd26dfa824e92e861bb88e2caca560adab05af",
+      "bytes": 11082
+    }
+  ],
+  "allFilesMatch": true,
+  "run": 39575019566,
+  "deployment": "success",
+  "verifiedAt": "2026-10-21T09:13:37.744831+00:00",
+  "livePhone": {
+    "version": "0.9.1+snapshot.dev.131",
+    "twoChoiceEntrance": true,
+    "directRepeatEntry": true,
+    "camp": {
+      "id": "barracks-38",
+      "selected": "barracks-38",
+      "progress": 4
+    },
+    "campAssignmentSurvivesReload": true,
+    "restored": {
+      "arrival": 57.0087712549569,
+      "guards": 10,
+      "bossFull": true
+    },
+    "recovered": {
+      "zone": "vale",
+      "selected": "barracks-38",
+      "distance": 98.6154146165801
+    },
+    "treasury": {
+      "emptyUntilDue": true,
+      "deadlineUnchangedByDoors": true,
+      "fullGarrisonReturnsWithCaptain": true
+    },
+    "sideDungeonDirect": true,
+    "errors": []
+  },
+  "normalWorkflowRestored": true,
+  "temporaryPublisherRemoved": true,
+  "broadCiRun": false
+}
