@@ -34,6 +34,21 @@
     'Touch and mouse options': 'Opciones táctiles y de ratón',
     'Screen and performance': 'Pantalla y rendimiento',
     'Gather resources': 'Recolectar recursos',
+    'Resource expeditions': 'Expediciones de recursos',
+    'Choose expedition companion': 'Elegir compañero de expedición',
+    'No resource companion available': 'No hay compañeros recolectores disponibles',
+    'No earlier regions': 'No hay regiones anteriores',
+    'Expedition returned': 'Regresó la expedición',
+    'Tribute delivered': 'Tributo entregado',
+    'Locate & gather hidden Dark Lord Tribute':
+      'Localizar y recolectar tributo oculto del Dark Lord',
+    'Tribute collection and delivery. Visiting unloads all company cargo, including resting and fallen companions. Rangers provide Heal in the field.':
+      'Recolección y entrega de tributo. Al visitar, se descarga toda la carga de la compañía, incluidos los compañeros en reserva y caídos. Los Rangers curan en el campo.',
+    'All idle Soldiers, Rangers and Little Treasurer work one selected tribute site. Escort them along the waypoint; combat pauses work. Supplies unloads all company cargo. Hidden sources can be located here.':
+      'Todos los Soldados, Rangers y Little Treasurer disponibles trabajan en el tributo elegido. Escóltalos siguiendo la ruta; el combate pausa el trabajo. Suministros descarga toda la carga de la compañía. Aquí puedes localizar tributos ocultos.',
+    'An idle Soldier, Ranger or Little Treasurer is needed.':
+      'Necesitas un Soldado, Ranger o Little Treasurer disponible.',
+    'Includes resting and fallen companions.': 'Incluye a los compañeros en reserva y caídos.',
     'Story guide': 'Guía de la historia',
     'All pending quests': 'Todas las misiones pendientes',
     'Completed quests': 'Misiones completadas',

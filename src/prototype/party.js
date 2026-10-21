@@ -1134,6 +1134,16 @@
         );
         return true;
       }
+      canGatherTribute(u) {
+        return (
+          !!u &&
+          (['soldier', 'archer'].includes(u.type) ||
+            (u.type === 'pet' && u.petFamily === R.gatheringTravel.petWorkerFamily))
+        );
+      }
+      availableGatherers() {
+        return this.activeLivingParty().filter((u) => this.canGatherTribute(u) && !u.order);
+      }
       availableLabor() {
         return this.activeLivingParty().filter(
           (u) => ['soldier', 'archer'].includes(u.type) && !u.order,
@@ -1167,6 +1177,7 @@
         if (!u)
           return 'This companion is no longer resting in reserve. Reopen Manage active group.';
         if (!b) return 'Adding a companion requires a completed local Barracks.';
+        if (u.expeditionId) return 'This companion is away on a resource expedition.';
         if (u.hp <= 0) return 'This companion has fallen. Recover them at the Barracks first.';
         if (this.refugeThreat())
           return 'Cannot add a companion while nearby enemies are engaged. Retreat and end the fight first.';
@@ -1205,6 +1216,10 @@
       dismissCompanion(id) {
         const i = this.s.party.findIndex((u) => u.id === id && u.active === false);
         if (i < 0) return false;
+        if (this.s.party[i].expeditionId) {
+          this.say('This companion is away on a resource expedition. Wait for their return.');
+          return false;
+        }
         if (this.s.party[i].type === 'pet') {
           this.say('Boss pets stay in your collection. Rest them or recover them at a Barracks.');
           return false;
@@ -1674,7 +1689,7 @@
             // Waiting here prevents another skill or basic during preparation.
             continue;
           }
-          if (u.type === 'pet') u.order = null; // Pets never perform troop labor.
+          if (u.type === 'pet' && !this.canGatherTribute(u)) u.order = null;
           if (u.order?.type === 'build') {
             const b = z.buildings.find((b) => b.id === u.order.id);
             if (b && b.progress < 4) {

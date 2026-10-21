@@ -17,14 +17,18 @@
       companionRecoveryCost() {
         return R.balance.companions.recoveryCost;
       }
+      creditRecoveredTribute(amount) {
+        const raw = Math.max(0, amount) + (this.s.tributeRemainder || 0),
+          total = Math.abs(raw - Math.round(raw)) < 1e-7 ? Math.round(raw) : raw,
+          payout = this.resourceDepositReward(total);
+        this.s.tributeRemainder = Math.max(0, total - payout);
+        if (payout) this.grant(payout, 0);
+        return payout;
+      }
       depositTributeCargo(units) {
         const carriers = units.filter((u) => Number.isFinite(u.carry) && u.carry > 0),
-          total = carriers.reduce((sum, u) => sum + u.carry, this.s.tributeRemainder || 0),
-          payout = this.resourceDepositReward(total);
-        // Pool sub-crown remnants across carriers instead of stranding each one.
-        this.s.tributeRemainder = Math.max(0, total - payout);
+          payout = this.creditRecoveredTribute(carriers.reduce((sum, u) => sum + u.carry, 0));
         for (const u of carriers) u.carry = 0;
-        if (payout) this.grant(payout, 0);
         return payout;
       }
       unloadCompanyTribute(npc) {

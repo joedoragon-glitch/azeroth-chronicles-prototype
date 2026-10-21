@@ -197,3 +197,8 @@ The owner resumed spatial repairs after Treasury recovery, explicitly rejecting 
 ## 21 October 2026 — flow standard and resource audit
 
 The owner confirms difficulty should reward game knowledge/execution while respecting time: readable threats with useful responses, recoverable setbacks, clear rules and purposeful progression. Extra Crypt/Archive/Mine fort bonuses remain off/undecided; late Ranger-only piercing is not justification for early blanket mitigation. Resource gathering is now audited against this standard. Review-only findings and proposed repairs are recorded in `RESOURCE_GATHERING_FLOW_AUDIT_DEV129.md`; no runtime change or new balance authority is implied.
+
+
+## 21 October 2026 — resource escort and remote recovery
+
+Owner chooses all available idle gatherers per ordinary source order, combat-persistent guidance and normal companion fight/withdraw/resume, with no worker-count selector or static danger veto. Supplies shares orders and immediately unloads whole-company cargo, including resting/fallen. Resource expeditions are Full Barracks only, one chosen living idle Soldier/Ranger/Little Treasurer, earlier region with every specialist rescued, recovering actual remaining tribute automatically once. Initial duration is 300 active seconds following owner concern about a full cycle. Little Treasurer is the only pet eligible for both resource jobs; construction remains Soldier/Ranger work. No new early dungeon fort bonuses.

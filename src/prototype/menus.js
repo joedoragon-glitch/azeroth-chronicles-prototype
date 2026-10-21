@@ -854,6 +854,12 @@
     }
     function rosterLabel(u) {
       const i = getGame().s.party.indexOf(u) + 1;
+      if (u.expeditionId)
+        return (
+          (u.customName ||
+            (u.type === 'pet' ? getGame().petDefinition(u).name : unitLabel(u.type) + ' #' + i)) +
+          ' · On expedition'
+        );
       if (u.customName) return u.customName;
       return u.type === 'pet'
         ? getGame().petDefinition(u)?.name || 'Boss pet'
@@ -1139,11 +1145,11 @@
             () => {
               if (getGame().gather(n.id)) closeMenu();
             },
-            getGame().availableLabor().length
+            getGame().availableGatherers().length
               ? Math.floor(n.amount) +
                   ' crowns remaining · all idle troops · escort along the waypoint'
-              : 'An idle Soldier or Ranger is needed; pets do not gather.',
-            !getGame().availableLabor().length,
+              : 'An idle Soldier, Ranger or Little Treasurer is needed.',
+            !getGame().availableGatherers().length,
           ),
         );
       if (hidden.length)
@@ -1159,12 +1165,12 @@
               ' undiscovered source' +
               (hidden.length === 1 ? '' : 's') +
               ' remain · locate one and send all idle troops',
-            !getGame().availableLabor().length,
+            !getGame().availableGatherers().length,
           ),
         );
       openMenu(
         'Resources & labor',
-        'All idle Soldiers and Rangers work one selected tribute site. Escort them along the waypoint; combat pauses work. Supplies unloads all company cargo. Hidden sources can be located here.',
+        'All idle Soldiers, Rangers and Little Treasurer work one selected tribute site. Escort them along the waypoint; combat pauses work. Supplies unloads all company cargo. Hidden sources can be located here.',
         actions.length
           ? actions
           : [
@@ -1324,6 +1330,75 @@
         !unlocked,
       );
     }
+    function resourceExpeditionWorkers(b, region, back) {
+      const game = getGame(),
+        workers = game.s.party.filter((u) => game.canGatherTribute(u));
+      openMenu(
+        'Choose expedition companion',
+        'One living Soldier, Ranger or Little Treasurer goes away for ' +
+          Math.round(game.resourceExpeditionDuration() / 60) +
+          ' minutes of active play. Reserves can go. Tribute is delivered automatically on return.',
+        workers.length
+          ? workers.map((u) => {
+              const reason = game.resourceExpeditionWorkerReason(u);
+              return action(
+                rosterLabel(u) + (u.active === false ? ' · Reserve' : ' · Active'),
+                () => {
+                  if (getGame().startResourceExpedition(b.id, region, u.id))
+                    resourceExpeditionsMenu(b, back);
+                },
+                reason || 'Send this companion · no fee',
+                !!reason,
+              );
+            })
+          : [
+              action(
+                'No resource companion available',
+                () => {},
+                'Recruit a worker at the Barracks.',
+                true,
+              ),
+            ],
+        back,
+      );
+    }
+    function resourceExpeditionsMenu(b, back) {
+      const game = getGame(),
+        regions = game.resourceExpeditionRegions(),
+        returnHere = () => resourceExpeditionsMenu(b, back);
+      openMenu(
+        'Resource expeditions',
+        'Recover leftover tribute from earlier regions after every local specialist is rescued. Choose one companion; continue playing while they work.',
+        regions.length
+          ? regions.map((row) => {
+              if (row.mission)
+                return action(
+                  row.region.name + ' · Expedition underway',
+                  () => {},
+                  Math.ceil(Math.max(0, row.mission.finishAt - game.s.time)) +
+                    's remaining · companion returns automatically',
+                  true,
+                );
+              const reason = game.resourceExpeditionReason(b.id, row.region.id);
+              return action(
+                row.region.name,
+                () => resourceExpeditionWorkers(b, row.region.id, returnHere),
+                reason ||
+                  Math.floor(row.remaining) + ' crowns remaining · includes undiscovered tribute',
+                !!reason,
+              );
+            })
+          : [
+              action(
+                'No earlier regions',
+                () => {},
+                'Visit a later region to send a recovery expedition back.',
+                true,
+              ),
+            ],
+        back,
+      );
+    }
     function barracksOperationsMenu(b, back) {
       const returnHere = () => barracksOperationsMenu(b, back);
       openMenu(
@@ -1475,6 +1550,15 @@
         baseActions = [
           ...barracksRecoveryActions(returnHere),
           barracksGatherAction(b, returnHere),
+          ...(b.full
+            ? [
+                action(
+                  'Resource expeditions',
+                  () => resourceExpeditionsMenu(b, returnHere),
+                  'Send one companion to recover leftover tribute from earlier cleared regions',
+                ),
+              ]
+            : []),
           action(
             'Rescued specialists',
             () => barracksSpecialistMenu(b, returnHere),

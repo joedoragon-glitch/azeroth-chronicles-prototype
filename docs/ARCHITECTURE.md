@@ -21,6 +21,7 @@ The browser is the current desktop playtest target, especially Chromebook keyboa
 | `progression.js` | EXP thresholds/level growth, discipline ranks/resets, instructor curricula, Expedition training, equipment and companion inheritance |
 | `economy.js` | Crown transactions, quoted purchase/training/service prices, fares and death penalties |
 | `treasury.js` | Regional death-loss accounts, captain-gated collection and returning native Treasury defenders; wallets remain in economy |
+| `expeditions.js` | Full Barracks resource missions to cleared earlier regions, worker absence and simulation-clock return; wallets remain in economy |
 | `rewards.js` | Regional/boss/ringleader reward profiles, challenge reductions, enemy drops, quest payouts, first-clear amounts and resource deposit rounding |
 | `save.js` | v4 snapshots, validation/repair, restoration and legacy v2 migration; no browser storage |
 | `persistence.js` | Browser storage, existing v4 keys, profile persistence and original legacy backup retention |
