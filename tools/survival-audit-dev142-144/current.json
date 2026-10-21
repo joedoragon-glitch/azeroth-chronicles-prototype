@@ -1,0 +1,219 @@
+{
+  "runtimeVersion": "0.9.1+snapshot.dev.144",
+  "runtimeMerge": "68f16e1b43c6d819bbb5b5d607cfb370547ea3d1",
+  "observations": [
+    {
+      "case": "critical-long-reach",
+      "kind": "ranged",
+      "role": "soldier",
+      "hp": 0.1,
+      "enemyReach": 440.00000000000006,
+      "unsafe": false,
+      "before": 320,
+      "after": 307.5,
+      "retreat": false,
+      "fired": false
+    },
+    {
+      "case": "critical-long-reach",
+      "kind": "ranged",
+      "role": "archer",
+      "hp": 0.1,
+      "enemyReach": 440.00000000000006,
+      "unsafe": false,
+      "before": 320,
+      "after": 307.52092734581225,
+      "retreat": false,
+      "fired": false
+    },
+    {
+      "case": "critical-long-reach",
+      "kind": "ranged",
+      "role": "pet:ridge",
+      "hp": 0.1,
+      "enemyReach": 440.00000000000006,
+      "unsafe": false,
+      "before": 320,
+      "after": 307.25,
+      "retreat": false,
+      "fired": false
+    },
+    {
+      "case": "critical-long-reach",
+      "kind": "ranged",
+      "role": "pet:archive",
+      "hp": 0.1,
+      "enemyReach": 440.00000000000006,
+      "unsafe": false,
+      "before": 320,
+      "after": 309.4778765051336,
+      "retreat": false,
+      "fired": false
+    },
+    {
+      "case": "critical-long-reach",
+      "kind": "boss",
+      "role": "soldier",
+      "hp": 0.1,
+      "enemyReach": 720,
+      "unsafe": false,
+      "before": 320,
+      "after": 307.5,
+      "retreat": false,
+      "fired": false
+    },
+    {
+      "case": "critical-long-reach",
+      "kind": "boss",
+      "role": "archer",
+      "hp": 0.1,
+      "enemyReach": 720,
+      "unsafe": false,
+      "before": 320,
+      "after": 307.52092734581225,
+      "retreat": false,
+      "fired": false
+    },
+    {
+      "case": "critical-long-reach",
+      "kind": "boss",
+      "role": "pet:ridge",
+      "hp": 0.1,
+      "enemyReach": 720,
+      "unsafe": false,
+      "before": 320,
+      "after": 307.25,
+      "retreat": false,
+      "fired": false
+    },
+    {
+      "case": "critical-long-reach",
+      "kind": "boss",
+      "role": "pet:archive",
+      "hp": 0.1,
+      "enemyReach": 720,
+      "unsafe": false,
+      "before": 320,
+      "after": 309.4778765051336,
+      "retreat": false,
+      "fired": false
+    },
+    {
+      "case": "critical-long-reach",
+      "kind": "captain",
+      "role": "soldier",
+      "hp": 0.1,
+      "enemyReach": 672,
+      "unsafe": false,
+      "before": 320,
+      "after": 307.5,
+      "retreat": false,
+      "fired": false
+    },
+    {
+      "case": "critical-long-reach",
+      "kind": "captain",
+      "role": "archer",
+      "hp": 0.1,
+      "enemyReach": 672,
+      "unsafe": false,
+      "before": 320,
+      "after": 307.52092734581225,
+      "retreat": false,
+      "fired": false
+    },
+    {
+      "case": "critical-long-reach",
+      "kind": "captain",
+      "role": "pet:ridge",
+      "hp": 0.1,
+      "enemyReach": 672,
+      "unsafe": false,
+      "before": 320,
+      "after": 307.25,
+      "retreat": false,
+      "fired": false
+    },
+    {
+      "case": "critical-long-reach",
+      "kind": "captain",
+      "role": "pet:archive",
+      "hp": 0.1,
+      "enemyReach": 672,
+      "unsafe": false,
+      "before": 320,
+      "after": 309.4778765051336,
+      "retreat": false,
+      "fired": false
+    },
+    {
+      "case": "outdoor-trap",
+      "zone": "vale",
+      "isDungeon": false,
+      "trap": {
+        "x": 810,
+        "y": 1815,
+        "kind": "spikes",
+        "miniId": "field-thorn",
+        "radius": 44,
+        "length": 0,
+        "halfWidth": 30,
+        "phase": 0.9800000000000271,
+        "warningTime": 0.93,
+        "activeTime": 1,
+        "cycleLength": 3.4,
+        "damageFraction": 0.055,
+        "slowSeconds": 2.5,
+        "cycle": 100,
+        "index": 110
+      },
+      "contains": true,
+      "allowed": true,
+      "held": 0,
+      "hpBefore": 10.5,
+      "hpAfter": 6.475
+    },
+    {
+      "case": "special-vapor",
+      "allowed": true,
+      "hpBefore": 10.5,
+      "hpAfter": 0,
+      "elapsed": 1.25,
+      "contributing": true
+    },
+    {
+      "case": "spent-ring-interior",
+      "allowed": false,
+      "ringDistance": 50,
+      "radius": 181.8,
+      "hpBefore": 10.5,
+      "hpAfter": 10.5
+    },
+    {
+      "case": "dread-closure-prevalidated-center",
+      "zone": "supply-crown",
+      "nativeWithdrawalCast": true,
+      "before": {
+        "x": 180,
+        "y": 120
+      },
+      "after": {
+        "x": 120,
+        "y": 120
+      },
+      "actor": {
+        "x": 120,
+        "y": 120
+      },
+      "shift": 60,
+      "gapValidityBefore": [
+        true,
+        true
+      ],
+      "gapValidityAfter": [
+        true,
+        false
+      ]
+    }
+  ]
+}
