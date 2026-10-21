@@ -10,7 +10,7 @@
     "originConversation": "Conversation URL unavailable; owner screenshot of beige miniature-tree ground marks and explicit request for procedural dandelions.",
     "decisionSummary": "Replace only Greenwood beige teardrop floor marks with properly procedural dandelions.",
     "decisionDate": "2026-10-20",
-    "repositoryIssueOrPR": null,
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/358",
     "contentDocuments": [
       "docs/VISUAL_FOLLOWUPS_DEV122.md"
     ],
@@ -24,7 +24,7 @@
     "pendingCorrections": []
   },
   "reference": {
-    "sourceCommit": null,
+    "sourceCommit": "2f17a7da7c7a7b2fd4266548d4d0a569a27484b9",
     "ownerFilesAndBranches": [
       "src/prototype/visuals.js::groundDetail, region 0 / k === 4",
       "fix/twilight-flashes-dev122"
@@ -96,7 +96,7 @@
     "activeContentRevision": null,
     "expectedReplacementRevision": null,
     "rollbackRevision": null,
-    "releaseCommit": null,
-    "releaseEvidence": null
+    "releaseCommit": "2f17a7da7c7a7b2fd4266548d4d0a569a27484b9",
+    "releaseEvidence": "docs/evidence/VISUAL_FOLLOWUPS_DEV122_PUBLICATION_20261020.json"
   }
 }
