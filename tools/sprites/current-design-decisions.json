@@ -24,6 +24,16 @@
     "docs/CROWN_COMPANIONS_20261020.md"
   ],
   "assets": {
+    "transport:ferry": {
+      "traits": "Owner-selected option 3: twin curved plank hulls, reed canopy, benches/open deck, blue-green trim, rope fenders, paired amber lamps and tan-hatted ferryman. Replace the old single-sail design; preserve compact dock clearance.",
+      "decisionDocuments": [
+        "docs/TIDAL_FERRY_DEV136.md"
+      ],
+      "handoffs": [
+        "tools/sprites/design-handoffs/tidal-twin-hull-ferry.json"
+      ],
+      "selectedRepresentation": "raster"
+    },
     "hero:mage": {
       "traits": "Silver twin front braids (option C), violet bows, original hat and crowned headgear/scarf; shaped lips where visible; Moon setting staff (A). Preserve original arms, hands, grips and shaft axis; no extended limbs. Side ponytail and broad pink mouth stripe are superseded.",
       "decisionDocuments": [

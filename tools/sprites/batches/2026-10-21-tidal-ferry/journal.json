@@ -1,0 +1,12 @@
+{
+  "stage": "selected-original-prepared-native-review-complete-registration-pending",
+  "sourceHash": "19d990901d6538a796fdd132842da1d04c219afa2f47f5eb8b991e24617ae336",
+  "outputHash": "76ebb2349a8e0ece74cc2f578e9eeed72a6d1d6e2f3cf61736dd100d0324395a",
+  "candidateCanonHash": "de0d81d5a17bbcf97f5b99cde0dcb19bb2846ab0c24e42ea65597793dd5a3f9c",
+  "source": "option-3-original.png",
+  "processing": "placement.json",
+  "candidate": "candidate/candidate.json",
+  "ownerSelection": "I'll pick number three.",
+  "retainedGeneratorAlpha": "Original alpha=1 edge pixels preserved; explicit output padding.",
+  "nextAction": "Record PR reference, register selected original, focused export/loader/build and boarding/save checks, package-only publication."
+}

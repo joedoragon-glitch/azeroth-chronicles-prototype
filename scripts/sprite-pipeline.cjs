@@ -429,29 +429,28 @@ async function prepare(key, input, format = 'png', placement = {}) {
   let pipeline;
   if (placement.normalization) {
     const plan = placement.normalization;
-    const size = plan.fullCanvasSize;
+    const sizeW = plan.fullCanvasWidth ?? plan.fullCanvasSize,
+      sizeH = plan.fullCanvasHeight ?? plan.fullCanvasSize;
     const pad = Number.isInteger(plan.padding)
       ? { left: plan.padding, right: plan.padding, top: plan.padding, bottom: plan.padding }
       : plan.padding;
     fail(
-      Number.isInteger(size) &&
-        size > 0 &&
-        size <= 4096 &&
+      [sizeW, sizeH].every((n) => Number.isInteger(n) && n > 0 && n <= 4096) &&
         pad &&
         ['left', 'right', 'top', 'bottom'].every(
           (k) => Number.isInteger(pad[k]) && pad[k] >= 0 && pad[k] <= 2048,
         ),
       'Invalid original placement normalization',
     );
-    const virtualWidth = size + pad.left + pad.right;
-    const virtualHeight = size + pad.top + pad.bottom;
+    const virtualWidth = sizeW + pad.left + pad.right;
+    const virtualHeight = sizeH + pad.top + pad.bottom;
     fail(
       virtualWidth * raster.height === virtualHeight * raster.width,
       'Normalized placement aspect must match reference canvas',
     );
     fail(
-      (raster.width * size) / virtualWidth <= source.width &&
-        (raster.height * size) / virtualHeight <= source.height,
+      (raster.width * sizeW) / virtualWidth <= source.width &&
+        (raster.height * sizeH) / virtualHeight <= source.height,
       'Original placement would enlarge source pixels',
     );
     const { data, info } = await sharp(bytes)
@@ -462,18 +461,20 @@ async function prepare(key, input, format = 'png', placement = {}) {
     // Sample the untouched original once. The old resize/padding is geometry only.
     for (let y = 0; y < raster.height; y++) {
       const ny = ((y + 0.5) * virtualHeight) / raster.height - pad.top;
-      if (ny < 0 || ny >= size) continue;
-      const sy = Math.floor((ny * info.height) / size);
+      if (ny < 0 || ny >= sizeH) continue;
+      const sy = Math.floor((ny * info.height) / sizeH);
       for (let x = 0; x < raster.width; x++) {
         const nx = ((x + 0.5) * virtualWidth) / raster.width - pad.left;
-        if (nx < 0 || nx >= size) continue;
-        const sx = Math.floor((nx * info.width) / size);
+        if (nx < 0 || nx >= sizeW) continue;
+        const sx = Math.floor((nx * info.width) / sizeW);
         const from = (sy * info.width + sx) * 4;
         data.copy(outputPixels, (y * raster.width + x) * 4, from, from + 4);
       }
     }
     normalization = {
-      fullCanvasSize: size,
+      ...(sizeW === sizeH
+        ? { fullCanvasSize: sizeW }
+        : { fullCanvasWidth: sizeW, fullCanvasHeight: sizeH }),
       padding: pad,
       virtualWidth,
       virtualHeight,

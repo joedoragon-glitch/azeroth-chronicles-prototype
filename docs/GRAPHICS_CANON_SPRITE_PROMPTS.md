@@ -823,11 +823,13 @@ TRUE radiance is a translucent, hollow gold corona behind the body, fine taperin
 
 ### 091 — Ferryman boat
 
-**Canonical cues:** Simple wooden ferry boat: long brown hull, pale trim line, central vertical mast, single pale triangular sail extending to screen-right.
+**Runtime sprite key:** `transport:ferry`
+
+**Canonical cues:** Joel selected option 3, Tidal Twin-Hull Ferry, on 21 October 2026: two curved shallow wooden hulls, visible twin bow gap, open passenger deck and benches, low woven-reed canopy over cypress ribs, blue-green trim, rope fenders, two amber boarding lanterns and a tan-hatted ferryman with steering oar. The accepted original is retained in `tools/sprites/batches/2026-10-21-tidal-ferry/option-3-original.png`. This later explicit selection supersedes the old mast/sail-only translation. Both shores show the same vessel, within the compact existing transport footprint; gameplay remains separate.
 
 **Image-generation prompt:**
 
-> Create exactly ONE isolated static 2D game sprite for Azeroth Chronicles. The current procedural game drawing is canon; this is only a higher-fidelity raster translation of that same design. Preserve the stated silhouette, proportions, pose, equipment/feature placement, and color relationships. Add only material definition, shading, edge clarity, and surface detail naturally implied by those existing shapes. Do not redesign, restyle, beautify by invention, or add lore-bearing details. Transparent background. No scenery. No floor patch. No baked ground shadow. No text, labels, frame, UI, health bar, target ring, aura, attack effect, or extra objects. Keep the full asset visible with modest transparent padding and readability at small gameplay scale. Render the Ferryman boat exactly as described. Preserve long hull, single mast and one right-side triangular sail. No ferryman, water, oars, second sail, cargo or dock.
+> Preserve the owner-selected Tidal Twin-Hull Ferry original: two graceful shallow plank hulls, separated bow tips, low woven-reed canopy, visible passenger benches/open deck, blue-green trim, coarse rope fenders, two amber lanterns, and tan-hatted brown-clothed ferryman with short steering oar. Muted hand-drawn flat-shaded game art, clear dark outlines and phone-size readability. No mast, sail, larger footprint, dock, scenery, water patch, cast ground shadow, text or UI. Future edits start from the untouched accepted option 3 original; do not silently redesign it.
 
 ### 092 — Pack-beast caravan mount
 

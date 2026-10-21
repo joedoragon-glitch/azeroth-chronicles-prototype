@@ -16160,59 +16160,50 @@
         return;
       }
       if (e.icon === '⛵') {
-        shaped('#8b7554', () => {
-          ctx.moveTo(-59, -3);
-          ctx.quadraticCurveTo(-12, 8, 61, -6);
-          ctx.quadraticCurveTo(41, 20, -25, 18);
-          ctx.quadraticCurveTo(-50, 14, -59, -3);
+        // Selected twin-hull/reed-canopy ferry; retained when the raster is loading.
+        const hull = (dy, color) => {
+          shaped(color, () => {
+            ctx.moveTo(-53, dy - 4);
+            ctx.quadraticCurveTo(-2, dy + 2, 59, dy - 10);
+            ctx.quadraticCurveTo(50, dy + 12, 14, dy + 13);
+            ctx.quadraticCurveTo(-35, dy + 14, -53, dy - 4);
+          });
+          line([[-47, dy], [0, dy + 7], [46, dy + 1]], '#b09b71', 1);
+        };
+        hull(-12, '#73654b');
+        poly([[-46, -13], [40, -16], [48, 0], [-43, 5]], '#9d875d');
+        for (let x = -35; x < 40; x += 14)
+          line([[x, -12], [x + 5, 3]], '#6f6049', 0.7);
+        for (const x of [-15, 15]) {
+          softRect(x - 9, -15, 21, 7, '#667b70', 1);
+          softRect(x - 9, -20, 21, 6, '#8e7a55', 1);
+        }
+        craftAt(-40, -10, 0.52, () => human('worker'));
+        timber([-46, -8], [-69, 5], 3, '#806b48');
+        for (const x of [-29, 31]) timber([x, -6], [x - 2, -30], 2.5, '#796846');
+        shaped('#b5a46e', () => {
+          ctx.moveTo(-34, -27);
+          ctx.quadraticCurveTo(-29, -42, -19, -40);
+          ctx.lineTo(31, -33);
+          ctx.quadraticCurveTo(41, -28, 39, -20);
+          ctx.lineTo(-23, -25);
+          ctx.closePath();
         });
-        line(
-          [
-            [-52, 1],
-            [-19, 9],
-            [29, 9],
-            [53, 0],
-          ],
-          '#bda778',
-          1.5,
-        );
-        line(
-          [
-            [-44, 7],
-            [-17, 13],
-            [27, 13],
-            [42, 8],
-          ],
-          '#665a42',
-          1,
-        );
-        timber([0, 6], [0, -59], 4);
-        shaped('#c4c6aa', () => {
-          ctx.moveTo(3, -55);
-          ctx.quadraticCurveTo(27, -42, 39, -17);
-          ctx.quadraticCurveTo(20, -11, 3, -14);
-        });
-        line(
-          [
-            [7, -49],
-            [11, -21],
-            [31, -19],
-          ],
-          '#a0a68c',
-          1,
-        );
-        craftAt(-24, -2, 0.65, () => {
-          human('worker');
-          line(
-            [
-              [15, -30],
-              [29, 25],
-            ],
-            '#9c8057',
-            3,
-          );
-          grip(16, -10);
-        });
+        for (let x = -25; x < 34; x += 7)
+          line([[x, -34 + (x + 25) * 0.1], [x + 4, -25 + (x + 25) * 0.07]], '#d1bd81', 0.7);
+        for (const x of [-29, -4, 31])
+          line([[x - 3, -27], [x, -37 + (x + 29) * 0.1], [x + 6, -24]], '#716549', 2);
+        hull(3, '#8a7451');
+        line([[-47, 0], [4, 5], [55, -5]], '#607d73', 3);
+        for (const [x, y] of [[-36, 8], [0, 13], [37, 8]]) {
+          oval(x, y, 3.2, 5, '#c0ab78');
+          line([[x - 2, y - 2], [x + 2, y - 1]], '#786a4d', 0.8);
+        }
+        for (const [x, y] of [[44, -9], [52, -20]]) {
+          timber([x, y + 5], [x, y - 12], 2, '#6e6245');
+          softRect(x - 3, y - 13, 6, 8, '#ddaf56', 1);
+          rect(x - 2, y - 11, 3, 4, '#f7d57c');
+        }
         return;
       }
       if (e.icon === '🐫') {

@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "designId": "tidal-twin-hull-ferry",
+  "name": "Tidal Twin-Hull Ferry \u2014 owner-selected option 3",
+  "status": "selected-raster-prepared-native-review-complete",
+  "nextAction": "Register the selected original after recording its PR reference, complete focused build/boarding checks and publish under owner workflow.",
+  "context": {
+    "decisionDate": "2026-10-21",
+    "originConversation": null,
+    "repositoryIssueOrPR": null,
+    "decisionSummary": "After reviewing three generated ferry redesigns, Joel said: \u201cI'll pick number three.\u201d This selects the Tidal Twin-Hull Ferry for implementation in the current game.",
+    "contentDocuments": [
+      "docs/TIDAL_FERRY_DEV136.md"
+    ],
+    "locationAndLore": "Same passenger ferry between Lantern Shore and the Highlands; no new faction or lore."
+  },
+  "decisions": {
+    "conceptAcceptance": "Option 3 explicitly selected by Joel.",
+    "proceduralDesignAcceptance": "Selected generated design supersedes the simple sailboat; matching procedural fallback implements its broad silhouette.",
+    "spriteProductionAuthorization": "Implement the selected existing original; no additional generation needed.",
+    "generatedAppearanceAcceptance": {
+      "selectedOption": 3,
+      "sourceFile": "tools/sprites/batches/2026-10-21-tidal-ferry/option-3-original.png",
+      "sourceHash": "19d990901d6538a796fdd132842da1d04c219afa2f47f5eb8b991e24617ae336",
+      "ownerWords": "I'll pick number three."
+    },
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "f91fe422263e7e7a02538abe1918ba3e7984b335",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js",
+      "src/prototype/sprites.js",
+      "src/prototype/rules.js",
+      "feat/tidal-ferry-dev136"
+    ],
+    "isolatedReferencePath": "tools/sprites/batches/2026-10-21-tidal-ferry/option-3-original.png",
+    "isolatedReferenceHash": "19d990901d6538a796fdd132842da1d04c219afa2f47f5eb8b991e24617ae336",
+    "originalImageTool": "image_gen.imagegen",
+    "originalToolOutputFilename": "exec-c01d6c18-95c4-41d0-bdfd-0883cbe2c172.png",
+    "toolRequestId": null,
+    "originalDimensions": [
+      1774,
+      887
+    ],
+    "exactEntityState": {
+      "renderKind": "npc",
+      "kind": "transport",
+      "icon": "\u26f5",
+      "ids": [
+        "march:outbound",
+        "highlands:return"
+      ]
+    },
+    "gameplayContextPaths": [
+      "tools/visual-review/tidal-ferry-dev136/shore-night.webp",
+      "tools/visual-review/tidal-ferry-dev136/highlands-day.webp",
+      "tools/visual-review/tidal-ferry-dev136/shore-day.webp",
+      "tools/visual-review/tidal-ferry-dev136/highlands-night.webp",
+      "tools/visual-review/tidal-ferry-dev136/phone-day.webp",
+      "tools/visual-review/tidal-ferry-dev136/phone-night.webp"
+    ],
+    "traitsToPreserve": [
+      "Two curved shallow plank hulls and clear twin bow gap.",
+      "Woven reed canopy over cypress ribs, open passenger deck and benches.",
+      "Blue-green trim, coarse rope fenders and two amber lamps.",
+      "Tan-hatted ferryman in brown clothing with a short steering oar.",
+      "Low compact silhouette; no mast or sail."
+    ]
+  },
+  "scope": {
+    "catalogIds": [
+      "091"
+    ],
+    "verifiedRuntimeKeys": [
+      "transport:ferry"
+    ],
+    "requiredVisibleAssets": [
+      "Selected static ferry body",
+      "Matching procedural loading/failure fallback"
+    ],
+    "variantRequirements": [
+      "Marches/Highlands landing",
+      "day/night",
+      "desktop/phone portrait/landscape"
+    ],
+    "proceduralOwnersAndReasons": [
+      "rules/world retain walkable dock, landing and interaction geometry; visuals supplies matching fallback."
+    ]
+  },
+  "animationRequirements": {
+    "status": "static selected; no animation requested",
+    "staticFallbackKey": "transport:ferry",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "tools/sprites/batches/2026-10-21-tidal-ferry/candidate/candidate.json"
+    ],
+    "approvedRecordKey": "transport:ferry",
+    "expectedReplacementRevision": "absent",
+    "rollbackRevision": "remove new registration with exact revision; matching procedural fallback remains",
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}
