@@ -22,3 +22,7 @@ Four older suites also fail on an isolated unchanged dev.143 checkout at exactly
 Live as `0.9.1+snapshot.dev.144` through PR #380, merge `68f16e1b43c6d819bbb5b5d607cfb370547ea3d1`. Package-only run [39677059008](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39677059008) succeeded. The exact public build and nine checked files match the locally checked candidate byte-for-byte, including all three changed combat owners. [Receipt](evidence/ENEMY_WITHDRAWAL_DEV144_PUBLICATION_20261021.json).
 
 Normal `pages.yml` restored byte-for-byte; temporary owner publisher removed in closeout. No broad GitHub CI. Saved progress/schema retained. Owner phone play is next; no automatic further changes.
+
+## Dreadmaw disposition — 21 October 2026
+
+The owner accepts the existing withdrawal closure recentering as a sneaky tactic: terrain may obstruct a ring gap after the shift, without a guaranteed clear escape route. Existing warning and active geometry share the shifted center. Audit F5 is closed by design decision, not repaired or generalized into new placement rules. See [Decisions](DECISIONS.md#dreadmaw-withdrawal-ring--owner-decision-21-october-2026). Runtime remains dev.145; this documentation/comment closeout needs no deployment or broad CI.

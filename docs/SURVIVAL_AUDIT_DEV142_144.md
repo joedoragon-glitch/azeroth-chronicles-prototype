@@ -38,13 +38,15 @@ Reproduction: Archer 50 units from a generic ring center, ring radius 180 and ex
 
 Repair: use ring-specific present/future geometry for the relevant action duration. Preserve the native ring's authored effects; distinguish specialized closing rings with final blasts.
 
-### F5 — High: moving casts invalidate Dreadmaw's validated escape gaps (dev.144)
+### F5 — Originally high; now accepted: Dreadmaw withdrawal shifts escape gaps (dev.144)
 
 `enemyWithdrawalCastPosition()` recenters every `kind:'ring'` on the actor. Dreadmaw's native `dreadClosurePlan()` deliberately chooses a possibly offset center and validates two terrain-clear exit gaps. Generic recentering discards that placement without validating it again.
 
 Reproduction uses the actual Dreadmaw object and actual Treasury terrain, without a terrain override. At legal actor position `(120,120)`, the native closure planner chooses `(180,120)` and both gaps pass the original nine-ray clearance test. The native withdrawal selector starts that real skill. The moving-cast position update snaps its center 60 units back to `(120,120)`; one of the same two validated exits becomes blocked. This can occur without a change in the player's position.
 
-Repair: preserve the validated ground anchor for this specialist ring, or perform the full native placement/escape validation before allowing any relocation. Generic actor-centered rings must not overwrite specialist arena plans.
+Original repair recommendation (superseded by owner decision below): preserve the validated ground anchor for this specialist ring, or perform native exit validation before relocation.
+
+**Owner disposition, 21 October 2026: closed as accepted behavior.** Keep Dreadmaw’s sneaky actor-centered withdrawal ring. Terrain-obstructed gaps can occur situationally; no guaranteed reachable escape route or additional revalidation is required. Existing cues track the shifted geometry. See [design decision](DECISIONS.md#dreadmaw-withdrawal-ring--owner-decision-21-october-2026). The reproduction remains accurate; the design requirement changed.
 
 ## Validation gap and retained behavior
 
@@ -52,7 +54,7 @@ The three release suites still pass on current dev.144: **62 critical-survival, 
 
 Existing positive checks continue to cover 21% rejoining without a recovery latch, independent healthy fighters, safe ranged/troop/pet contributions, unsafe charge cancellation, following/Recall, healing priority, cooldowns, warning clocks, collision and save cleanup. No defect in the removal of the fixed 40% recovery gate or current v4 save compatibility was reproduced. The four older suite failures recorded in dev.144 remain inherited baseline limitations; this audit does not reclassify them as new survival findings.
 
-Repair order: F1, then the shared trap/hazard geometry behind F2–F4, then F5. Extend tests with actual runtime actor flags, native environmental states, legal destinations and explicit expected survival/withdrawal outcomes. Keep the existing tactical architecture, skill identities, percentages and release workflow.
+Historical repair order: F1, then the shared trap/hazard geometry behind F2–F4, then F5. F1–F4 were addressed in dev.145; the owner subsequently accepted F5 rather than requesting a repair. Extend tests with actual runtime actor flags, native environmental states, legal destinations and explicit expected survival/withdrawal outcomes. Keep the existing tactical architecture, skill identities, percentages and release workflow.
 
 ## Evidence and reproduction
 
@@ -65,4 +67,4 @@ Companion probes use an open bounded mechanical arena to isolate decisions; trap
 
 ## dev.145 follow-up
 
-Owner-approved companion guidance and actual-footprint checks resolve reproductions F1–F4. F5 remains open: the native moving Dreadmaw cast still invalidates one exit by recentering its planned ring. See [scope, limits and reassessment](HERO_GUIDED_SURVIVAL_DEV145.md) and [the 16 rerun observations](../tools/survival-audit-dev142-144/dev145.json). Original evidence above is historical and unchanged.
+Owner-approved companion guidance and actual-footprint checks resolve reproductions F1–F4. F5’s reproduction is unchanged, but the owner subsequently accepted the situational obstruction as Dreadmaw’s intentional withdrawal tactic; it is closed rather than awaiting repair. See [scope, limits and reassessment](HERO_GUIDED_SURVIVAL_DEV145.md) and [the 16 rerun observations](../tools/survival-audit-dev142-144/dev145.json). Original evidence above is historical and unchanged.

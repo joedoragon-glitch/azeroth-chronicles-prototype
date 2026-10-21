@@ -1068,6 +1068,10 @@
         if (!a?.withdrawal) return;
         // Only actor-centered cues move with the actor. Ground marks and
         // target snapshots stay where the full warning put them; no homing.
+        // Dreadmaw's withdrawal closure deliberately shares this recentering:
+        // terrain may obstruct its gaps as he retreats. Do not restore the
+        // original two-clear-exit placement here; this is his approved trick.
+        // The warning and resolved closure both read this same shifted center.
         if (
           ['cone', 'sector', 'ring'].includes(a.kind) ||
           a.selfDefense ||
