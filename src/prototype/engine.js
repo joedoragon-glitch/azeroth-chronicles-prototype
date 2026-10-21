@@ -2107,7 +2107,8 @@
     }
     selectedBarracksRespawn() {
       const selected = this.s.barracksRespawn;
-      if (!selected || this.s.challenge.succession) return null;
+      if (!selected || selected.zone !== this.definition().id || this.s.challenge.succession)
+        return null;
       const barracks = this.s.zones[selected.zone]?.buildings?.find(
         (b) => b.id === selected.id && b.kind === 'barracks' && b.progress >= 4,
       );
@@ -2314,7 +2315,8 @@
         !this.sideDungeon(zone)
       )
         return false;
-      const i = this.regionIndex(zone),
+      const previousRegion = this.definition().id,
+        i = this.regionIndex(zone),
         p =
           arrival ||
           (this.supplyRoom(zone)
@@ -2339,6 +2341,12 @@
       this.noticeVisit++;
       this.clearPatrolResumes();
       this.zone();
+      // A camp choice belongs to its region. Crossing into another region
+      // starts recovery at that region's refuge until a local camp is chosen.
+      if (previousRegion !== this.definition().id) {
+        this.s.barracksRespawn = null;
+        if (zone === this.definition().id) this.setRefuge(zone, 'rest');
+      }
       this.syncDungeonMasterStation();
       this.s.recallActive = false;
       this.s.squadEngagement = null;
@@ -2883,8 +2891,12 @@
         this.say('Recovered at your selected barracks in ' + this.definition().name + '.');
       } else {
         if (this.s.barracksRespawn) this.s.barracksRespawn = null;
-        const refuge = clone(this.s.refugeSite || { zone: this.s.refuge, id: 'rest' });
+        const region = this.definition().id,
+          refuge = clone(
+            this.s.refugeSite?.zone === region ? this.s.refugeSite : { zone: region, id: 'rest' },
+          );
         this.enter(refuge.zone);
+        this.setRefuge(refuge.zone, refuge.id);
         this.arriveRefuge(refuge);
         this.say('Returned to your refuge. Learning and rescue progress are safe.');
       }

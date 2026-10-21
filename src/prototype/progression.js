@@ -284,7 +284,16 @@
               this.hero.level +
               '! Training point available — press C or use Discipline Training.',
           );
-          this.notice('LEVEL ' + this.hero.level + ' · Training point available', 5.5);
+          this.notice(
+            'LEVEL ' + this.hero.level + ' · Training point available',
+            5.5,
+            '',
+            'milestone',
+            {
+              requiresTalentPoints: true,
+              heroClass: this.hero.class,
+            },
+          );
         }
       }
 

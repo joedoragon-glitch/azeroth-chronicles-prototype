@@ -1,0 +1,362 @@
+{
+  "scope": "Representative real boss update/release/contact paths; isolated clear terrain, high HP, no companion or hero attacks; not a full campaign or physical-device attention study",
+  "attacks": [
+    {
+      "family": "thorn",
+      "index": 0,
+      "form": "normal",
+      "kind": "cone",
+      "warningSeconds": 0.8,
+      "releaseAt": 0.8,
+      "firstImpactAt": 0.8,
+      "oldWarningAtRelease": false,
+      "nextWarningAtRelease": false,
+      "nextWarningAtImpact": false,
+      "oldWarningAtImpact": false
+    },
+    {
+      "family": "crypt",
+      "index": 0,
+      "form": "normal",
+      "kind": "cone",
+      "warningSeconds": 1,
+      "releaseAt": 1,
+      "firstImpactAt": 1,
+      "oldWarningAtRelease": false,
+      "nextWarningAtRelease": false,
+      "nextWarningAtImpact": false,
+      "oldWarningAtImpact": false
+    },
+    {
+      "family": "mire",
+      "index": 0,
+      "form": "normal",
+      "kind": "cone",
+      "warningSeconds": 0.9,
+      "releaseAt": 0.9,
+      "firstImpactAt": 0.9,
+      "oldWarningAtRelease": false,
+      "nextWarningAtRelease": false,
+      "nextWarningAtImpact": false,
+      "oldWarningAtImpact": false
+    },
+    {
+      "family": "archive",
+      "index": 0,
+      "form": "normal",
+      "kind": "cone",
+      "warningSeconds": 1.1,
+      "releaseAt": 1.1,
+      "firstImpactAt": 1.1,
+      "oldWarningAtRelease": false,
+      "nextWarningAtRelease": false,
+      "nextWarningAtImpact": false,
+      "oldWarningAtImpact": false
+    },
+    {
+      "family": "ridge",
+      "index": 0,
+      "form": "normal",
+      "kind": "cone",
+      "warningSeconds": 1,
+      "releaseAt": 1,
+      "firstImpactAt": 1,
+      "oldWarningAtRelease": false,
+      "nextWarningAtRelease": false,
+      "nextWarningAtImpact": false,
+      "oldWarningAtImpact": false
+    },
+    {
+      "family": "mine",
+      "index": 0,
+      "form": "normal",
+      "kind": "circle",
+      "warningSeconds": 1.6,
+      "releaseAt": 1.6,
+      "firstImpactAt": 1.6,
+      "oldWarningAtRelease": false,
+      "nextWarningAtRelease": false,
+      "nextWarningAtImpact": false,
+      "oldWarningAtImpact": false
+    },
+    {
+      "family": "warlord",
+      "index": 0,
+      "form": "normal",
+      "kind": "cone",
+      "warningSeconds": 1.2,
+      "releaseAt": 1.2,
+      "firstImpactAt": 1.2,
+      "oldWarningAtRelease": false,
+      "nextWarningAtRelease": true,
+      "nextWarningAtImpact": true,
+      "oldWarningAtImpact": false
+    },
+    {
+      "family": "abyss",
+      "index": 0,
+      "form": "normal",
+      "kind": "cone",
+      "warningSeconds": 1.5,
+      "releaseAt": 1.5,
+      "firstImpactAt": 1.5,
+      "oldWarningAtRelease": false,
+      "nextWarningAtRelease": false,
+      "nextWarningAtImpact": false,
+      "oldWarningAtImpact": false
+    },
+    {
+      "family": "citadel",
+      "index": 0,
+      "form": "normal",
+      "kind": "canister",
+      "warningSeconds": 1.6,
+      "releaseAt": 1.6,
+      "firstImpactAt": 1.92,
+      "oldWarningAtRelease": false,
+      "nextWarningAtRelease": false,
+      "nextWarningAtImpact": false,
+      "oldWarningAtImpact": false
+    },
+    {
+      "family": "cindermaw",
+      "index": 0,
+      "form": "normal",
+      "kind": "ring",
+      "warningSeconds": 1.4,
+      "releaseAt": 1.4,
+      "firstImpactAt": null,
+      "oldWarningAtRelease": false,
+      "nextWarningAtRelease": false,
+      "nextWarningAtImpact": null
+    },
+    {
+      "family": "darklord",
+      "index": 0,
+      "form": "normal",
+      "kind": "cone",
+      "warningSeconds": 1.1,
+      "releaseAt": 1.1,
+      "firstImpactAt": 1.1,
+      "oldWarningAtRelease": false,
+      "nextWarningAtRelease": false,
+      "nextWarningAtImpact": false,
+      "oldWarningAtImpact": false
+    },
+    {
+      "family": "thorn",
+      "index": 0,
+      "form": "true",
+      "kind": "cone",
+      "warningSeconds": 0.8,
+      "releaseAt": 0.8,
+      "firstImpactAt": 0.8,
+      "oldWarningAtRelease": false,
+      "nextWarningAtRelease": false,
+      "nextWarningAtImpact": false,
+      "oldWarningAtImpact": false
+    },
+    {
+      "family": "darklord",
+      "index": 0,
+      "form": "true",
+      "kind": "cone",
+      "warningSeconds": 1.1,
+      "releaseAt": 1.1,
+      "firstImpactAt": 1.1,
+      "oldWarningAtRelease": false,
+      "nextWarningAtRelease": false,
+      "nextWarningAtImpact": false,
+      "oldWarningAtImpact": false
+    },
+    {
+      "family": "crypt",
+      "index": 1,
+      "form": "normal",
+      "kind": "volley",
+      "warningSeconds": 1.2,
+      "releaseAt": 1.2,
+      "firstImpactAt": 2.28,
+      "oldWarningAtRelease": false,
+      "nextWarningAtRelease": false,
+      "nextWarningAtImpact": true,
+      "oldWarningAtImpact": false
+    },
+    {
+      "family": "abyss",
+      "index": 1,
+      "form": "normal",
+      "kind": "ring",
+      "warningSeconds": 1.7,
+      "releaseAt": 1.7,
+      "firstImpactAt": null,
+      "oldWarningAtRelease": false,
+      "nextWarningAtRelease": false,
+      "nextWarningAtImpact": null
+    }
+  ],
+  "interiors": [
+    {
+      "zone": "crypt",
+      "fortAreas": 0,
+      "protectedEnemies": 0,
+      "hostileEnemies": 11
+    },
+    {
+      "zone": "archive",
+      "fortAreas": 0,
+      "protectedEnemies": 0,
+      "hostileEnemies": 15
+    },
+    {
+      "zone": "mine",
+      "fortAreas": 0,
+      "protectedEnemies": 0,
+      "hostileEnemies": 19
+    },
+    {
+      "zone": "abyss",
+      "fortAreas": 6,
+      "protectedEnemies": 27,
+      "hostileEnemies": 27
+    },
+    {
+      "zone": "citadel",
+      "fortAreas": 7,
+      "protectedEnemies": 33,
+      "hostileEnemies": 33
+    },
+    {
+      "zone": "supply-vale",
+      "fortAreas": 0,
+      "protectedEnemies": 0,
+      "hostileEnemies": 6
+    },
+    {
+      "zone": "supply-march",
+      "fortAreas": 0,
+      "protectedEnemies": 0,
+      "hostileEnemies": 6
+    },
+    {
+      "zone": "supply-highlands",
+      "fortAreas": 0,
+      "protectedEnemies": 0,
+      "hostileEnemies": 7
+    },
+    {
+      "zone": "supply-crown",
+      "fortAreas": 0,
+      "protectedEnemies": 0,
+      "hostileEnemies": 11
+    },
+    {
+      "zone": "side-vale-cellars",
+      "fortAreas": 0,
+      "protectedEnemies": 0,
+      "hostileEnemies": 6
+    },
+    {
+      "zone": "side-march-watchhouse",
+      "fortAreas": 0,
+      "protectedEnemies": 0,
+      "hostileEnemies": 8
+    },
+    {
+      "zone": "side-highlands-signal",
+      "fortAreas": 1,
+      "protectedEnemies": 10,
+      "hostileEnemies": 10
+    },
+    {
+      "zone": "side-frontier-shrine",
+      "fortAreas": 0,
+      "protectedEnemies": 0,
+      "hostileEnemies": 12
+    },
+    {
+      "zone": "side-crown-foundry",
+      "fortAreas": 0,
+      "protectedEnemies": 0,
+      "hostileEnemies": 14
+    }
+  ],
+  "fortRules": {
+    "incomingMultiplier": 0.6,
+    "rangeMultiplier": 1.3,
+    "projectileSpeedMultiplier": 1.3,
+    "compoundHalfSize": 190,
+    "interiorZones": [
+      "abyss",
+      "citadel",
+      "side-highlands-signal"
+    ],
+    "outdoorAreas": [
+      {
+        "zone": "crown",
+        "id": "citadel-command",
+        "bounds": [
+          2350,
+          2800,
+          700,
+          1100
+        ],
+        "districts": [
+          "citadel-command"
+        ]
+      },
+      {
+        "zone": "crown",
+        "id": "fortress-approach",
+        "bounds": [
+          2990,
+          3370,
+          2660,
+          3000
+        ],
+        "districts": [
+          "fortress-approach"
+        ]
+      },
+      {
+        "zone": "crown",
+        "id": "dark-fortress-court",
+        "bounds": [
+          3000,
+          3550,
+          3000,
+          3500
+        ],
+        "districts": [
+          "fortress-approach"
+        ]
+      }
+    ],
+    "launchHeight": 18,
+    "arcHeight": 58,
+    "lowObstacleStructures": [
+      "fence",
+      "patched-fence",
+      "barricade",
+      "crate",
+      "crates",
+      "supply-stack",
+      "cart",
+      "broken-cart",
+      "ore-cart",
+      "fallen-log",
+      "burned-log",
+      "stump",
+      "charred-stump"
+    ],
+    "lowPartitionIds": [
+      "old-crypt-screen",
+      "work-screen",
+      "stack-screen",
+      "drying-screen",
+      "lab-screen",
+      "roost-shelf"
+    ]
+  },
+  "visualChanges": false
+}

@@ -1,0 +1,10 @@
+{
+  "version": "0.9.1+snapshot.dev.123",
+  "talentReminderRemoved": true,
+  "recovery": {
+    "cleared": true,
+    "zone": "march",
+    "refuge": "march"
+  },
+  "errors": []
+}

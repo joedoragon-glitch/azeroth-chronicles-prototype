@@ -339,7 +339,7 @@
           });
       }
       gatheringRouteLength(u, target) {
-        const path = this.companionRoute(u, target, true);
+        const path = this.companionRoute(u, target);
         if (!path.length) return Infinity;
         let length = 0,
           from = u;
