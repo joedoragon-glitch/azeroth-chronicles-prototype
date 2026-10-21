@@ -340,7 +340,7 @@
         patrolResumes.get(this).set(e.id, {
           zone: this.zoneId,
           point: { x: e.x, y: e.y },
-          leg: e.thornLeg ?? 1,
+          leg: e.thornLeg ?? R.thornPatrol.startLeg,
           pause: e.thornPause || 0,
           destination: e.cinderDestination ? { ...e.cinderDestination } : null,
           stop: e.cinderStop ?? 0,
@@ -1073,7 +1073,7 @@
             scout.thornLeg >= 0 &&
             scout.thornLeg < cfg.route.length
               ? scout.thornLeg
-              : 1;
+              : cfg.startLeg;
           clue =
             scout.returning || scout.thornReturn
               ? 'The patrol is returning to the temporary den. The tracks loop back there. '
@@ -1099,7 +1099,7 @@
             scout.thornLeg >= 0 &&
             scout.thornLeg < cfg.route.length
               ? scout.thornLeg
-              : 1;
+              : cfg.startLeg;
           return scout.aggro
             ? 'Fighting near ' + cfg.names[nearest] + '. Mira is still with Thornfang.'
             : 'Last sighting: ' +
@@ -1111,7 +1111,7 @@
         if (fresh) clue += 'Fresh pawprints mark the route; follow their direction. ';
         return (
           clue +
-          'Thornfang once served as a Crown wilderness scout. He takes Mira from his temporary den through Goblin territory, the Mill crossing, Skeleton territory, the Forest Crypt perimeter and the Southern crossing. They avoid Millhaven. Mira performs paid but compulsory inspections. When the winter estate is finished and its inhabitants can keep it secure, he intends to return to his distant home.'
+          'Thornfang once served as a Crown wilderness scout. He takes Mira from his temporary den through the Southern crossing, the Forest Crypt perimeter, Skeleton territory, the Mill crossing and Goblin territory. They avoid Millhaven. Mira performs paid but compulsory inspections. When the winter estate is finished and its inhabitants can keep it secure, he intends to return to his distant home.'
         );
       }
       updateThornCaptive(dt) {
@@ -1137,13 +1137,13 @@
         const i =
           Number.isInteger(e.thornLeg) && e.thornLeg >= 0 && e.thornLeg < cfg.route.length
             ? e.thornLeg
-            : 1;
+            : cfg.startLeg;
         const [x, y] = cfg.route[i];
         const before = { x: e.x, y: e.y };
         this.follow(e, { x, y }, cfg.speed * (e.slow > 0 ? 0.5 : 1), dt, cfg.arrival);
         if (dist(before, e) > 0) this.recordThornTracks(e, before);
         if (dist(e, { x, y }) <= cfg.arrival + 1e-7) {
-          e.thornLeg = (i + 1) % cfg.route.length;
+          e.thornLeg = (i + cfg.direction + cfg.route.length) % cfg.route.length;
           e.thornPause = cfg.pause;
           delete e.path;
         } else e.thornLeg = i;

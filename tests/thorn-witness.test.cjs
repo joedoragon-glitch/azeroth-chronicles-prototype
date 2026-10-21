@@ -9,15 +9,23 @@ for (let leg = 0; leg < cfg.route.length; leg++) {
   Object.assign(e, {
     x: cfg.route[leg][0],
     y: cfg.route[leg][1],
-    thornLeg: (leg + 1) % cfg.route.length,
+    thornLeg: (leg + cfg.direction + cfg.route.length) % cfg.route.length,
   });
   const before = JSON.stringify(c.snapshot()),
     report = c.thornReport();
   assert(report.includes('near ' + cfg.names[leg]));
-  assert(report.includes('heading toward ' + cfg.names[(leg + 1) % cfg.route.length]));
+  assert(
+    report.includes(
+      'heading toward ' + cfg.names[(leg + cfg.direction + cfg.route.length) % cfg.route.length],
+    ),
+  );
   const short = c.thornReport(true);
   assert(short.includes('Last sighting: ' + cfg.names[leg]));
-  assert(short.includes('heading for ' + cfg.names[(leg + 1) % cfg.route.length]));
+  assert(
+    short.includes(
+      'heading for ' + cfg.names[(leg + cfg.direction + cfg.route.length) % cfg.route.length],
+    ),
+  );
   assert(short.length < 180, 'witness gives a concise actionable clue');
   assert.equal(JSON.stringify(c.snapshot()), before, 'reports do not move patrol or change save');
 }

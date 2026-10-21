@@ -6360,7 +6360,7 @@
         if (dist(e, goal) > 1e-7 || !together) return;
         e.returning = 0;
         delete e.thornReturn;
-        e.thornLeg = resume?.leg ?? 1;
+        e.thornLeg = resume?.leg ?? R.thornPatrol.startLeg;
         e.thornPause = resume ? resume.pause : R.thornPatrol.pause;
       } else if (this.cinderPatroller(e)) {
         e.cinderReturn = true;
