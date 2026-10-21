@@ -1,0 +1,94 @@
+{
+  "version": "0.9.1+snapshot.dev.121",
+  "pr": 356,
+  "merge": "2a27bce46d53efb239214626acb916f82cda35c9",
+  "package_only_run": 39535618569,
+  "verified_at": "2026-10-21T02:55:17.569904+00:00",
+  "files": [
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "a9f6393c10659d0a51b90c3c45b07f56de8be77ec4e41701ec495fc7c1b8dbc3"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 296,
+      "sha256": "75ca6dc3946c385f960002fce56b1e345a0394f0425fd05b2c1edd2b85e99aa6"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 256354,
+      "sha256": "5e6dc80fe7694bac9f27b9332eb348d89f1824d9d5f089a4006a249ea4b1e93f"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "match": true,
+      "bytes": 210856,
+      "sha256": "2055d5e47a98b47d6c30c01b30be1e14c819b1b2d66eff80dacbb556f8922066"
+    },
+    {
+      "path": "src/prototype/save.js",
+      "match": true,
+      "bytes": 48621,
+      "sha256": "01b4e434d4f1782dabf733cdff8b9bc47d61f50c7ec7c6a8488991a230008e18"
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "match": true,
+      "bytes": 101272,
+      "sha256": "002d0d3065a37253db98ed22d3b32cbab4bcdd069193ee623bfcac3902a0a5fa"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "match": true,
+      "bytes": 496349,
+      "sha256": "5f958e09bbafa176df67cddc99858be240ce6a5ea8fd33eadeea560358a33894"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20703,
+      "sha256": "fc57d31ca89df7d6b0c0d7d6972a2949b9298cb30dfc49c271682ff7435f6c46"
+    },
+    {
+      "path": "index.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "phone.html",
+      "match": true,
+      "bytes": 5490,
+      "sha256": "6d6fe5990cccba9b450925b101e959acd1de0f04735bfb920147dc89db783eb8"
+    },
+    {
+      "path": "prototype.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "src/prototype/app.js",
+      "match": true,
+      "bytes": 140571,
+      "sha256": "e34e403cd6579a5e11421f66f12058783607ef39c4e98e5041fb3db33da69b12"
+    }
+  ],
+  "all_match": true,
+  "checks": [
+    "Focused daylight/save/lifecycle/scaling/Succession suite",
+    "Existing night-tempo suite",
+    "Exact old day/night atmosphere pixels across five regions and Optimization Mode; interior isolation",
+    "24 native desktop/phone render cases, render purity, menu pause; no JS errors",
+    "Build, generated files/inventory, changed-source formatting"
+  ],
+  "live_phone_startup": {
+    "version": "0.9.1+snapshot.dev.121",
+    "errors": [],
+    "passed": true
+  }
+}

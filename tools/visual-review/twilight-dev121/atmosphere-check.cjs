@@ -5,7 +5,15 @@ const fs = require('fs'),
   cp = require('child_process'),
   { createCanvas } = require('@napi-rs/canvas');
 const sources = [
-  cp.execFileSync('git', ['show', '96d7d1b:src/prototype/visuals.js'], { encoding: 'utf8' }),
+  cp.execFileSync(
+    'git',
+    [
+      'show',
+      (process.env.TWILIGHT_BASE_REF || '34b84b3c408aee6569e1cc27579d98a63c31f519') +
+        ':src/prototype/visuals.js',
+    ],
+    { encoding: 'utf8' },
+  ),
   fs.readFileSync('src/prototype/visuals.js', 'utf8'),
 ];
 const painters = sources.map((s) => {

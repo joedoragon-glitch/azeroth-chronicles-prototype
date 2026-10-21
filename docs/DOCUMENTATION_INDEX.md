@@ -1,3 +1,5 @@
+Published dev.121: [daylight transitions and Nightmare framing](TWILIGHT_DEV121.md), PR #356; focused checks, 24 native render cases, 12 live-file matches and live phone startup verified. Normal workflow restored.
+
 Published dev.120: [scenery and announcement batch #354](SCENERY_NOTIFICATIONS_BATCH_354.md), PR #355, package-only run 39532717860; 20 exact live files verified and normal workflow restored. Owner phone play next.
 
 - [Individual pet roles — dev.114](RANGED_PET_ROLES_20261020.md): all eleven specialties, approved buffs, actual healing/ward/finisher/geometry checks and verified publication.
