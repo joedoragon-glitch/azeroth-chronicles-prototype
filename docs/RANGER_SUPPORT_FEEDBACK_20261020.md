@@ -6,4 +6,4 @@ Caster selection, availability, healing, cooldowns and Silence rules are unchang
 
 Eight focused cases pass: Silence, quiet automatic failure, actual cooldown, dead/resting/absent Rangers, mixed silenced-ready/cooling casters, and an outside ready caster successfully healing. Build/generated syntax, asset inventories and changed-source formatting are checked. No full-game suite or hosted test CI is needed for this message correction.
 
-Prepared for package-only publication. The earlier 146-case dev.118 audit and reproduction remain immutable historical evidence; use `tests/ranger-support-feedback.test.cjs` for the repaired message.
+Published in PR [#353](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/353), merge `2c302d6c4d0a08993111027e0f64bb692658a800`; package-only run 39524586782 succeeded. [Eight exact relevant live files match](evidence/RANGER_FEEDBACK_DEV119_PUBLICATION_20261020.json). Normal workflow restored and temporary publisher removed. The earlier 146-case dev.118 audit and reproduction remain immutable historical evidence; use `tests/ranger-support-feedback.test.cjs` for the repaired message.

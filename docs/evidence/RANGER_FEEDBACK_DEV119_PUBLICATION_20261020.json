@@ -1,0 +1,60 @@
+{
+  "version": "0.9.1+snapshot.dev.119",
+  "pr": 353,
+  "merge": "2c302d6c4d0a08993111027e0f64bb692658a800",
+  "package_only_run": 39524586782,
+  "candidate_tree": "7da1373b0fec257b68aba1d3817cd6bb1fc92a2f",
+  "verified_at": "2026-10-21T00:59:45.949887+00:00",
+  "files": [
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "6e44e21e6e1c66decc15e0e86f404dd85ce31ac121eb19b34c90a68329d352cb"
+    },
+    {
+      "path": "src/prototype/party.js",
+      "match": true,
+      "bytes": 69040,
+      "sha256": "aef523f2cc4abb8aa14f7edf3d668cd181e84f8f25cdc62a1d604fcd33a4ff6f"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 296,
+      "sha256": "15cec1a20667e55292349ad8549922acaeb8c4de07362eb3d80801c494345813"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20703,
+      "sha256": "0115e2b9eddb1f310e5ce23536826c47ea38d8d46003881d61f88ee3de679a30"
+    },
+    {
+      "path": "index.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "phone.html",
+      "match": true,
+      "bytes": 5490,
+      "sha256": "6d6fe5990cccba9b450925b101e959acd1de0f04735bfb920147dc89db783eb8"
+    },
+    {
+      "path": "prototype.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "assets/sprites/manifest.json",
+      "match": true,
+      "bytes": 18798,
+      "sha256": "ca34058374aea87794536c01b3c7f4b8883ee5eb7b85e63c29192c954efce3b5"
+    }
+  ],
+  "all_match": true,
+  "checks": "Eight focused feedback/availability/healing cases, build/generated, asset inventories and changed-source formatting pass. No broad CI."
+}

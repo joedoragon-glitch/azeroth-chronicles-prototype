@@ -1,12 +1,12 @@
 # So I Became the Dark Lord's Problem — October 2026 Community Snapshot
 
-**Published runtime: `0.9.1+snapshot.dev.118`. Today’s requested work is complete.** The former unpublished v0.9.0 candidate notice is preserved in [documentation history](PRE_BREAK_DOCUMENTATION_HISTORY_20261019.md). It no longer describes release status.
+**Published runtime: `0.9.1+snapshot.dev.119`. Today’s requested work is complete.** The former unpublished v0.9.0 candidate notice is preserved in [documentation history](PRE_BREAK_DOCUMENTATION_HISTORY_20261019.md). It no longer describes release status.
 
 ## 20 October published updates
 
 Improved adaptive performance/caches and crowd recovery; safer companion support, resource routes and one-press Recall; enemy healing/regrouping and nighttime balance; fortified ranged defense and clean arc landings; Frontier/Crown town, roads, river/lava and dungeon improvements; first-person Keeper Archive and NPC visibility; passage-fare recovery and visible update notices. All eleven pets have current roster/skill behavior, distinct roles and readable skill effects. Character appearance and selected procedural scenery/cottage replacements are live.
 
-Latest publication: PR [#352](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/352), merge `31f44279585ca8400d395024417a4f12431bfd2c`, package-only run `39516901245`; [eight exact relevant live files verified](evidence/TREASURER_MONEYBAG_DEV118_PUBLICATION_20261020.json). Treasurer and pet now carry the requested silver-Crown money bag at unchanged grips. Per-change focused checks, receipts and limits are indexed in [current state](DEVELOPMENT_STATE.md). Existing saves remain compatible. This is publication evidence, not a new universal hardware-FPS or whole-game playtest certificate.
+Latest publication: PR [#353](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/353), merge `2c302d6c4d0a08993111027e0f64bb692658a800`, package-only run `39524586782`; [eight exact relevant live files verified](evidence/RANGER_FEEDBACK_DEV119_PUBLICATION_20261020.json). Ranger Heal now explains Silence instead of a zero cooldown. Treasurer and pet now carry the requested silver-Crown money bag at unchanged grips. Per-change focused checks, receipts and limits are indexed in [current state](DEVELOPMENT_STATE.md). Existing saves remain compatible. This is publication evidence, not a new universal hardware-FPS or whole-game playtest certificate.
 
 Current art decisions and the revision-first sprite queue: [restart handoff](SPRITE_RESTART_20261020.md). The later owner-requested Treasurer money bag correction is tracked separately in [its release record](TREASURER_MONEYBAG_20261020.md). No automatic new production follows this closeout.
 

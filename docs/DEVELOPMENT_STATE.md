@@ -1,6 +1,6 @@
-**Prepared dev.119 — Ranger Heal feedback:** Ready Rangers blocked by Mage Silence now report Silence instead of a zero-second cooldown. Eight focused failure/success cases pass; healing, cooldown and availability behavior unchanged. Build/inventory and package-only publication; no broad CI. Scope: [feedback correction](RANGER_SUPPORT_FEEDBACK_20261020.md).
+**Published dev.119 — Ranger Heal Silence feedback:** PR #353 / `2c302d6c4d0a08993111027e0f64bb692658a800`; package-only run 39524586782 succeeded; eight exact relevant live files match. Ready silenced Rangers report “Ranger cannot use Heal while silenced.” Eight focused cases, build/inventory/format pass; no broad CI. Normal workflow restored; receipt `evidence/RANGER_FEEDBACK_DEV119_PUBLICATION_20261020.json`. Support mechanics and cooldowns unchanged; no further automatic work.
 
-**Support recipient audit — live dev.118, no gameplay changes:** 146 native role/AI/projectile probes and four existing support/tactics suites pass. Hero/companion support includes all eleven pets as intended; personal wards/heals remain personal. Minor unpatched feedback issue: ready Ranger blocked by Mage Silence reports “cooling down · 0s.” Scope and reproductions: [support audit](SUPPORT_RECIPIENT_AUDIT_20261020.md). No new release or automatic implementation.
+**Support recipient audit — live dev.118, no gameplay changes:** 146 native role/AI/projectile probes and four existing support/tactics suites pass. Hero/companion support includes all eleven pets as intended; personal wards/heals remain personal. The minor Silence feedback finding is repaired in dev.119; the dated audit retains its original evidence. Scope and reproductions: [support audit](SUPPORT_RECIPIENT_AUDIT_20261020.md). No new release or automatic implementation.
 
 **Published dev.118 — Treasurer money bag:** PR #352 / `31f44279585ca8400d395024417a4f12431bfd2c`; package-only run 39516901245 succeeded; eight exact relevant live files match. Shared tied leather pouch with silver Crown stamp at existing left grips, for pet and normal/TRUE boss. Nine changed/90 unchanged visual cases; arms, hammer, face/body and render state preserved. Normal workflow restored; receipt `evidence/TREASURER_MONEYBAG_DEV118_PUBLICATION_20261020.json`. Prior coin-hand deferral is superseded; no further automatic art work.
 
@@ -146,8 +146,8 @@
 
 | Item | Recorded state |
 | --- | --- |
-| Published runtime | `0.9.1+snapshot.dev.118`; merge `31f44279585ca8400d395024417a4f12431bfd2c`, package-only publication run `39516901245` |
-| Latest publication evidence | [Verified dev.118 receipt](evidence/TREASURER_MONEYBAG_DEV118_PUBLICATION_20261020.json); eight exact relevant live files match |
+| Published runtime | `0.9.1+snapshot.dev.119`; merge `2c302d6c4d0a08993111027e0f64bb692658a800`, package-only publication run `39524586782` |
+| Latest publication evidence | [Verified dev.119 receipt](evidence/RANGER_FEEDBACK_DEV119_PUBLICATION_20261020.json); eight exact relevant live files match |
 | Historical documentation-audit main | `57453c4651366a6debbcae454c70af3115e8ac2e` |
 | Historical dev.79 gameplay source | `23d951092ea5dff806c460c62ca71eeced574f5c`, merged manual Developer Mode Skill 1 fix and documentation closeout #319 |
 | Historical dev.79 publication evidence | [Packaging-only run 39312326936](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39312326936); exact public build/copy reads recorded in the [release handoff](COMMUNITY_SNAPSHOT_RELEASE_HANDOFF_20261016.md) |
