@@ -1,3 +1,5 @@
+Current implementation: [Dungeon camps and fresh defenses — dev.131](DUNGEON_CAMPS_DEV131.md), focused checks complete; publication pending.
+
 Current implementation: [Gathering escort, Supplies and resource expeditions — dev.130](GATHERING_ESCORT_DEV130.md), published and live-verified; receipt in `docs/evidence/GATHERING_ESCORT_DEV130_PUBLICATION_20261021.json`.
 
 Audit only, dev.129: [resource gathering against the flow standard](RESOURCE_GATHERING_FLOW_AUDIT_DEV129.md). Concrete return-route/cargo/waiting findings, scoped timing and proposed repairs; no gameplay changes or CI.

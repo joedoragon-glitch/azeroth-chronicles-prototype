@@ -1709,6 +1709,7 @@
                 if (b.progress >= 4) {
                   u.order = null;
                   this.say('Barracks construction complete.');
+                  if (b.recoveryOnComplete) this.setBarracksRespawn(b.id);
                   this.event('construction', { id: b.id });
                   this.checkQuests();
                 }

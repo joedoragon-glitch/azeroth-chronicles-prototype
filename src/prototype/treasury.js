@@ -48,6 +48,7 @@
         )
           return;
         const state = this.treasuryRecoveryState(site.region);
+        if (this.supplyRoom()) this.emptyDungeonDefenders(e);
         state.unlocked = true;
         state.respawnAt = this.s.time + R.treasuryRecovery.respawnSeconds;
         if (site.region === 'frontier')
@@ -207,6 +208,11 @@
         const captain = this.treasuryCaptain(z, site);
         if (this.peace) state.unlocked = true;
         else if (captain?.hp <= 0) {
+          if (
+            z.enemies.some((e) => e !== captain && !e.neutral && e.hp > 0) ||
+            Object.values(this.s.pending).some((p) => p.kind === 'mob' && p.zone === z.id)
+          )
+            this.emptyDungeonDefenders(captain);
           // Existing v4 saves can already contain a defeated captain.
           if (!state.unlocked && !state.respawnAt) {
             state.unlocked = true;

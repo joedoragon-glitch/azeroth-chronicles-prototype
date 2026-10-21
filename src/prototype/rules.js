@@ -7219,6 +7219,7 @@
     fieldBossMobility,
     gatheringTravel,
     resourceExpeditions: { durationCycles: 0.5 },
+    dungeonCamp: { nearbyRadius: 300, builtRadius: 650 },
     companionJudgment,
     companionRecall,
     bossCadence: {

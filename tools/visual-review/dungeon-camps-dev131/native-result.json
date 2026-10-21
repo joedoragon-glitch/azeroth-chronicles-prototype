@@ -1,0 +1,28 @@
+{
+  "version": "0.9.1+snapshot.dev.131",
+  "twoChoiceEntrance": true,
+  "directRepeatEntry": true,
+  "camp": {
+    "id": "barracks-38",
+    "selected": "barracks-38",
+    "progress": 4
+  },
+  "campAssignmentSurvivesReload": true,
+  "restored": {
+    "arrival": 57.0087712549569,
+    "guards": 10,
+    "bossFull": true
+  },
+  "recovered": {
+    "zone": "vale",
+    "selected": "barracks-38",
+    "distance": 98.6154146165801
+  },
+  "treasury": {
+    "emptyUntilDue": true,
+    "deadlineUnchangedByDoors": true,
+    "fullGarrisonReturnsWithCaptain": true
+  },
+  "sideDungeonDirect": true,
+  "errors": []
+}

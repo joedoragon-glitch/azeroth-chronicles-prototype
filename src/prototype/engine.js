@@ -2263,6 +2263,8 @@
         (b) => b.id === id && b.kind === 'barracks' && b.progress >= 4,
       );
       if (!barracks) return false;
+      for (const z of Object.values(this.s.zones))
+        for (const b of z.buildings) delete b.recoveryOnComplete;
       this.s.barracksRespawn = { zone: this.zoneId, id: barracks.id };
       this.say('Barracks selected for death recovery. You can change camps later.');
       return true;
@@ -2274,13 +2276,90 @@
       return true;
     }
 
-    build() {
+    dungeonEntrance(ref) {
+      if (this.isDungeon()) return null;
+      return (
+        this.zone().npcs.find(
+          (n) =>
+            n.kind === 'dungeon' &&
+            !this.sideDungeon(n.family) &&
+            n.id === ref?.id &&
+            n.family === ref.family &&
+            dist(n, this.hero) <= 115,
+        ) || null
+      );
+    }
+    dungeonCamp(ref) {
+      const entrance = this.dungeonEntrance(ref);
+      if (!entrance) return null;
+      return (
+        this.zone()
+          .buildings.filter(
+            (b) =>
+              b.kind === 'barracks' &&
+              dist(b, entrance) <=
+                (b.dungeonEntrance === entrance.family
+                  ? R.dungeonCamp.builtRadius
+                  : R.dungeonCamp.nearbyRadius) &&
+              this.route(entrance, b).length,
+          )
+          .sort(
+            (a, b) =>
+              (b.progress >= 4) - (a.progress >= 4) || dist(a, entrance) - dist(b, entrance),
+          )[0] || null
+      );
+    }
+    dungeonCampReason(ref) {
+      if (!this.dungeonEntrance(ref)) return 'Visit the dungeon entrance to prepare a camp.';
+      if (this.s.challenge.succession)
+        return 'Succession uses successors instead of recovery points.';
+      if (this.refugeThreat()) return 'End nearby combat before preparing your camp.';
+      const camp = this.dungeonCamp(ref);
+      if (camp?.progress >= 4) return '';
+      if (
+        camp &&
+        this.activeLivingParty().some((u) => u.order?.type === 'build' && u.order.id === camp.id)
+      )
+        return '';
+      if (!this.availableLabor().length)
+        return 'An idle active Soldier or Ranger is needed to build. Recall workers or recover a fallen companion first.';
+      if (!camp && this.hero.gold < this.barracksBuildCost())
+        return 'Not enough crowns to build a Barracks (' + this.barracksBuildCost() + ' needed).';
+      return '';
+    }
+    prepareDungeonCamp(ref) {
+      const reason = this.dungeonCampReason(ref);
+      if (reason) {
+        this.say(reason);
+        return false;
+      }
+      let camp = this.dungeonCamp(ref);
+      if (camp?.progress >= 4) return this.setBarracksRespawn(camp.id);
+      if (!camp) {
+        if (!this.build(this.dungeonEntrance(ref))) return false;
+        camp = this.zone().buildings.at(-1);
+      } else if (
+        !this.activeLivingParty().some((u) => u.order?.type === 'build' && u.order.id === camp.id)
+      ) {
+        if (!this.assignBuilder(camp.id)) return false;
+      }
+      for (const z of Object.values(this.s.zones))
+        for (const b of z.buildings) delete b.recoveryOnComplete;
+      camp.recoveryOnComplete = true;
+      camp.dungeonEntrance = this.dungeonEntrance(ref).family;
+      this.say(
+        'Your companion is building outside the dungeon. Stay outside until construction finishes; this camp will then become your recovery point.',
+      );
+      return true;
+    }
+
+    build(anchor = this.hero) {
       if (this.isDungeon()) return false;
       const builder = this.availableLabor()[0],
         cost = this.barracksBuildCost();
       if (!builder) return false;
       const zone = this.zone(),
-        origin = { x: this.hero.x + 130, y: this.hero.y },
+        origin = { x: anchor.x + 130, y: anchor.y },
         candidates = [origin];
       for (const radius of [85, 145, 205, 275, 355, 440])
         for (let j = 0; j < 24; j++) {
@@ -2298,7 +2377,8 @@
           zone.buildings.every((b) => Math.hypot(b.x - point.x, b.y - point.y) > 170) &&
           zone.props.every(
             (item) => Math.hypot(item.x - point.x, item.y - point.y) > (item.r || 0) + 60,
-          ),
+          ) &&
+          this.route(anchor, point).length > 0,
       );
       if (!p) {
         this.say('No clear plot for barracks nearby. Move away from the road and try again.');
@@ -2444,6 +2524,114 @@
       return true;
     }
 
+    emptyDungeonDefenders(leader) {
+      const z = this.zone();
+      z.enemies = z.enemies.filter((e) => !e.summon && !e.reinforcement && e.form !== 'ringleader');
+      for (const e of z.enemies)
+        if (e !== leader && !e.neutral && e.hp > 0) {
+          this.cancelEncounter(e);
+          this.clearEncounterState(e);
+          e.hp = 0;
+          e.deathPaid = true;
+        }
+      z.packTimers = {};
+      z.guardianReinforcementTimer = 0;
+      for (const [key, pending] of Object.entries(this.s.pending))
+        if (pending.kind === 'mob' && pending.zone === z.id) delete this.s.pending[key];
+    }
+    resetDungeonDefenders() {
+      if (!this.isDungeon() || this.sideDungeon() || this.peace) return;
+      const z = this.zone();
+      const captain = this.supplyRoom() && z.enemies.find((e) => e.roomCaptain && !e.summon);
+      const activeBoss = z.enemies.find(
+        (e) => e.type === 'boss' && e.hp > 0 && !e.neutral && !e.summon,
+      );
+      // A defeated leader owns the return schedule. Door travel never
+      // bypasses its cooldown or leaves defenders without their leader.
+      if ((captain && captain.hp <= 0) || (dungeonIds.includes(z.id) && !activeBoss)) {
+        this.emptyDungeonDefenders(captain || z.enemies.find((e) => e.type === 'boss'));
+        return;
+      }
+      // Restore native defenses, not accumulated summons/reinforcement waves.
+      // Keep campaign victories, rescue/collection flags, loot and geometry.
+      z.enemies = z.enemies
+        .filter(
+          (e) => !e.summon && !e.developerSummon && !e.reinforcement && e.form !== 'ringleader',
+        )
+        .map((old) => {
+          if (old.neutral) return old;
+          if (
+            old.type === 'boss' &&
+            (old.hp <= 0 || this.s[old.form === 'true' ? 'true' : 'normal'][old.family])
+          )
+            return old;
+          const home = old.home || old;
+          const fresh =
+            old.type === 'boss'
+              ? this.bossEnemy(this.boss(old.family), old.form, home)
+              : this.makeEnemy(
+                  {
+                    species: old.species,
+                    name: old.name,
+                    icon: old.icon,
+                    family: old.family,
+                    form: old.form,
+                    level: old.level,
+                    hp: old.baseHp,
+                    damage: old.baseDamage,
+                    gold: old.deathPaid || old.hp <= 0 ? 0 : old.gold,
+                    xp: old.deathPaid || old.hp <= 0 ? 0 : old.xp,
+                  },
+                  home,
+                );
+          fresh.id = old.id;
+          fresh.home = { x: home.x, y: home.y };
+          for (const key of Object.keys(old))
+            if (
+              /Version$/.test(key) ||
+              [
+                'guard',
+                'roomGuard',
+                'roomCaptain',
+                'captain',
+                'captainProfile',
+                'captainMentor',
+                'captainVisualIdol',
+                'visualScale',
+                'pack',
+                'forcedRole',
+                'ranged',
+                'hybrid',
+                'shotRange',
+                'shotSpeed',
+                'projectileStyle',
+                'mountedCrownRider',
+                'crownTroop',
+                'crownAncestry',
+                'crownRogueTurn',
+                'awakenedGuard',
+                'awakeningStatsLevel',
+                'sideDungeon',
+                'treasuryReinforcement',
+              ].includes(key)
+            )
+              fresh[key] = old[key];
+          fresh.specialCd = fresh.captain ? 1.25 : 0;
+          return fresh;
+        });
+      z.packTimers = {};
+      z.guardianReinforcementTimer = 0;
+      for (const [key, pending] of Object.entries(this.s.pending))
+        if (pending.kind === 'mob' && pending.zone === z.id) delete this.s.pending[key];
+      this.s.streak = { key: null, count: 0 };
+      const site = R.treasuryRecovery.sites.find((s) => s.zone === z.id);
+      if (site && this.treasuryCaptain(z, site)?.hp > 0) {
+        const state = this.treasuryRecoveryState(site.region);
+        state.unlocked = false;
+        state.respawnAt = 0;
+      }
+    }
+
     enter(zone, arrival = null) {
       if (
         !D.regions.some((r) => r.id === zone) &&
@@ -2452,7 +2640,8 @@
         !this.sideDungeon(zone)
       )
         return false;
-      const previousRegion = this.definition().id,
+      const previousZone = this.zoneId,
+        previousRegion = this.definition().id,
         i = this.regionIndex(zone),
         p =
           arrival ||
@@ -2474,12 +2663,14 @@
       this._tacticalRepositions?.clear();
       this._tacticalPartyTargets?.clear();
       this.clearEncounterUnits();
+      if (zone !== this.zoneId) this.resetDungeonDefenders();
       for (const oldZone of Object.values(this.s.zones))
         oldZone.props = oldZone.props.filter((p) => !p.garunTemporary && !p.garunPreview);
       this.s.zone = zone;
       this.noticeVisit++;
       this.clearPatrolResumes();
       this.zone();
+      if (zone !== previousZone && this.isDungeon()) this.resetDungeonDefenders();
       // A camp choice belongs to its region. Crossing into another region
       // starts recovery at that region's refuge until a local camp is chosen.
       if (previousRegion !== this.definition().id) {
@@ -2772,7 +2963,13 @@
             );
             return this.enter(side.region, entrance && { x: entrance.x + 45, y: entrance.y + 35 });
           }
-          if (!room) return this.enter(this.definition().id);
+          if (!room) {
+            const region = this.definition().id,
+              entrance = this.s.zones[region]?.npcs.find(
+                (n) => n.kind === 'dungeon' && n.family === this.zoneId,
+              );
+            return this.enter(region, entrance && { x: entrance.x + 45, y: entrance.y + 35 });
+          }
           const entrance = this.s.zones[room.region]?.npcs.find((n) => n.id === 'supply-entrance');
           return this.enter(room.region, entrance && { x: entrance.x + 35, y: entrance.y + 40 });
         }
@@ -3210,6 +3407,8 @@
           if (a.summon && a.owner === e.id) a.hp = 0;
         });
         this.say(e.name + ' defeated.');
+        if (dungeonIds.includes(this.zoneId) && e.family === this.zoneId)
+          this.emptyDungeonDefenders(e);
         if (firstVictory && e.form === 'normal') this.notice('BOSS VANQUISHED · ' + b.name, 5.5);
         this.event('bossDefeat', { family: e.family, form: e.form });
       }
@@ -3355,10 +3554,12 @@
       if (this.isDungeon() && p && !this.s.true[this.s.zone]) {
         if (this.s.phase === 'awakening' && !this.s.awakeningLevel)
           this.s.awakeningLevel = this.hero.level + 2;
-        let e = this.zone().enemies.find((e) => e.type === 'boss' && e.form === 'true' && e.hp > 0);
+        let e = this.zone().enemies.find((e) => e.type === 'boss' && e.form === 'true' && e.hp > 0),
+          appeared = false;
         if (!e) {
           e = this.bossEnemy(this.boss(this.s.zone), 'true', this.dungeonBossHome());
           this.zone().enemies.push(e);
+          appeared = true;
         }
         if (this.s.phase === 'awakening') {
           e.level = this.s.awakeningLevel;
@@ -3376,6 +3577,7 @@
           }
           this.returnGuardians(this.s.zone);
         }
+        if (appeared) this.resetDungeonDefenders();
         p.active = true;
         this.s.origins[this.s.zone] = this.s.phase === 'adventure' ? 'early' : 'awakening';
         this.say(this.boss(this.s.zone).name + ' TRUE waits in the chamber.');

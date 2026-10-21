@@ -17,6 +17,58 @@
     requestName = () => {},
     openCharacter = null,
   }) {
+    function dungeonEntranceMenu(ref, back = closeMenu) {
+      const game = getGame(),
+        entrance = game.dungeonEntrance(ref);
+      if (!entrance) {
+        status('Visit the dungeon entrance to prepare a camp.');
+        return;
+      }
+      const camp = game.dungeonCamp(entrance),
+        reason = game.dungeonCampReason(entrance),
+        cost = camp ? 0 : game.barracksBuildCost();
+      if (camp && (camp.progress >= 4 || camp.dungeonEntrance === entrance.family)) {
+        if (game.interact(entrance)) closeMenu();
+        return;
+      }
+      openMenu(
+        entrance.name,
+        game.peace
+          ? 'Enter, or prepare your recovery camp outside.'
+          : 'Leaving resets an unfinished encounter. Defeated leaders keep their normal return time; earned progress stays saved.',
+        [
+          action('Enter dungeon', () => {
+            const current = getGame().dungeonEntrance(entrance);
+            if (current && getGame().interact(current)) closeMenu();
+          }),
+          action(
+            camp?.progress >= 4
+              ? 'Use nearby Barracks & set recovery'
+              : camp
+                ? 'Finish Barracks & set recovery'
+                : 'Build Barracks & set recovery',
+            () => {
+              if (!getGame().prepareDungeonCamp(entrance)) {
+                status(getGame().messages.at(-1));
+                dungeonEntranceMenu(entrance, back);
+                return;
+              }
+              const ready = getGame().dungeonCamp(entrance);
+              if (ready?.progress >= 4)
+                barracksMenu(ready, () => dungeonEntranceMenu(entrance, back));
+              else closeMenu();
+            },
+            reason ||
+              (camp?.progress >= 4
+                ? 'Reuse this camp for recovery and companion services.'
+                : (camp ? 'No extra cost' : cost ? cost + ' crowns' : 'First Barracks FREE') +
+                  ' · one Soldier or Ranger builds outside. Recovery switches when finished.'),
+            !!reason,
+          ),
+        ],
+        back,
+      );
+    }
     function transport(n) {
       const game = getGame(),
         i = game.regionIndex(),
@@ -2080,6 +2132,7 @@
       );
     }
     return {
+      dungeonEntranceMenu,
       transport,
       teacher,
       skillBook,
