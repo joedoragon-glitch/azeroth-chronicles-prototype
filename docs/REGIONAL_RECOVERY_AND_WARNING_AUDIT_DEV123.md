@@ -1,5 +1,7 @@
 # Regional recovery fix and combat presentation audit — dev.123
 
+Published in PR #359 / `58f50a2c2472eadedd0848c040b62e272c9e82bd`; package-only run 39543158502 succeeded. All 17 checked public files match, live phone startup passes without JavaScript errors, and original dev.121 atmosphere is unchanged. Normal workflow restored and temporary publisher removed. Receipt: `evidence/REGIONAL_RECOVERY_DEV123_PUBLICATION_20261021.json`. Owner phone play next; fort extension remains a separate proposal.
+
 Owner requested regional death recovery, a review of the boss warning-to-impact handoff with no visual adjustment yet, and a tentative assessment of fort rules for dungeons/treasuries. Owner explicitly rejected the provisional glow adjustment; keep existing lighting untouched. Sunrise flashes remain open in #357.
 
 ## Implemented recovery
@@ -24,7 +26,7 @@ The existing fort rules are 40% less incoming ordinary damage (piercing bypass r
 
 Technically feasible in the existing fortifications owner; no parallel defense system needed. A careful extension must use authored walkable room/partition geometry, including treasury architecture, rather than treating each entire map square as a fort and granting unrelated wall permissions. Decide the intended boss/guard scope before a later implementation. No fort rules, map geometry, enemy stats or combat permissions changed in this release.
 
-Checkpoint: prepared dev.123 based on published main `34ee609a8b9436e4ee25d49528fc9959cf4047a2`. Package-only publication follows the completed focused checks; owner phone play follows. Reuse completed evidence.
+Prepared on main `34ee609a8b9436e4ee25d49528fc9959cf4047a2`; publication and verification are now complete. Completed focused evidence was reused.
 
 ## Additional owner reports in this batch
 
@@ -34,4 +36,4 @@ Gathering correction implemented: gather/deposit orders use physical routes thro
 
 Focused `gathering-orders` check covers actual departure through awareness, complete harvesting/delivery with a living hostile covering both endpoints, local verified self-defense without pursuit, terrain-aware deposit selection, Recall and snapshot intent. Crowd escape and existing companion judgment/Recall checks pass. One crowd fixture initially asserted that a short step must reach a wall 50 units away; corrected to assert the actual blocked segment. No runtime change was needed for that fixture. Final generated-source/syntax and changed-source format checks pass. No broad test run or CI suite.
 
-Evidence for the integrated phone check: `tools/visual-review/warning-handoff-dev123/fixes-native.cjs` and `fixes-native.json`. Boss warning evidence is reused; no lighting or boss visual changes were introduced. Fort extension remains the next owner discussion after these fixes publish.
+Evidence for the integrated phone check: `tools/visual-review/warning-handoff-dev123/fixes-native.cjs` and `fixes-native.json`. Boss warning evidence is reused; no lighting or boss visual changes were introduced. Fort extension is the next owner discussion now that these fixes are published.

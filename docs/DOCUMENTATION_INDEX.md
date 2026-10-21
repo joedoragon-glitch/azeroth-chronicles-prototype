@@ -1,3 +1,5 @@
+Published dev.123: [regional recovery, actionable talent reminders and gathering orders](REGIONAL_RECOVERY_AND_WARNING_AUDIT_DEV123.md), PR #359; 17 live-file matches and phone startup verified. Includes audit-only boss-warning handoff and dungeon/treasury fort coverage; original twilight and fort balance preserved. Normal workflow restored.
+
 Published dev.122: [Mage combo, Greenwood dandelions and ally audit](VISUAL_FOLLOWUPS_DEV122.md), PR #358; original twilight lighting preserved, [sunrise flashes remain open in #357](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/357).
 
 Published dev.121: [daylight transitions and Nightmare framing](TWILIGHT_DEV121.md), PR #356; focused checks, 24 native render cases, 12 live-file matches and live phone startup verified. Normal workflow restored.
