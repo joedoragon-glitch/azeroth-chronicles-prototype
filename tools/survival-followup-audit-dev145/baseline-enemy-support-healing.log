@@ -1,0 +1,26 @@
+PASS twelve ranged species use individual identity and the Archer healing interval
+PASS hostile healing excludes wounded hero, both troop types and all eleven pets
+PASS three authored hybrid/ranged captains heal nearby allies and eligible self together
+node:internal/assert/utils:77
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: nightmare permanently inherits night scaling: 1 !== 1.15
+    at near (/workspace/scratch/aeeac3381cf6/game/tests/enemy-support-healing.test.cjs:26:33)
+    at Object.<anonymous> (/workspace/scratch/aeeac3381cf6/game/tests/enemy-support-healing.test.cjs:227:3)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

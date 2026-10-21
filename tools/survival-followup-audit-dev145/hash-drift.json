@@ -1,0 +1,245 @@
+{
+  "historicalSource": "b87e22dc0ddd7e029ec132f6dd23bcb7c78044aa",
+  "originalHash": "c77b46e67b51dd023b71edec3faca99888e60bf1db21ce680ea27f76becb4792",
+  "fixtureHash": "c77b46e67b51dd023b71edec3faca99888e60bf1db21ce680ea27f76becb4792",
+  "originalHashMatches": true,
+  "unaccountedByFixture": [
+    {
+      "path": "woundedThreshold",
+      "before": 0.3,
+      "after": 0.5
+    },
+    {
+      "path": "moveCooldownSeconds",
+      "before": 6,
+      "after": 3
+    },
+    {
+      "path": "thinkingSeconds",
+      "before": 0.8,
+      "after": 0.3
+    },
+    {
+      "path": "rogueRingleaderSignatures.melee.wolf.radius",
+      "before": 120,
+      "after": 144
+    },
+    {
+      "path": "rogueRingleaderSignatures.melee.goblin.radius",
+      "before": 115,
+      "after": 138
+    },
+    {
+      "path": "rogueRingleaderSignatures.melee.skeleton.radius",
+      "before": 135,
+      "after": 162
+    },
+    {
+      "path": "rogueRingleaderSignatures.melee.wraith.radius",
+      "before": 125,
+      "after": 150
+    },
+    {
+      "path": "rogueRingleaderSignatures.melee.stalker.radius",
+      "before": 125,
+      "after": 150
+    },
+    {
+      "path": "rogueRingleaderSignatures.melee.mireling.radius",
+      "before": 125,
+      "after": 150
+    },
+    {
+      "path": "rogueRingleaderSignatures.melee.reedbeast.radius",
+      "before": 135,
+      "after": 162
+    },
+    {
+      "path": "rogueRingleaderSignatures.melee.archer.radius",
+      "before": 105,
+      "after": 126
+    },
+    {
+      "path": "rogueRingleaderSignatures.melee.crownguard.radius",
+      "before": 140,
+      "after": 168
+    },
+    {
+      "path": "rogueRingleaderSignatures.melee.ashbeast.radius",
+      "before": 145,
+      "after": 174
+    },
+    {
+      "path": "rogueRingleaderSignatures.melee.orc.radius",
+      "before": 140,
+      "after": 168
+    },
+    {
+      "path": "rogueRingleaderSignatures.melee.ogre.radius",
+      "before": 165,
+      "after": 198
+    },
+    {
+      "path": "rogueRingleaderSignatures.ranged.wolf.radius",
+      "before": 145,
+      "after": 174
+    },
+    {
+      "path": "rogueRingleaderSignatures.ranged.goblin.radius",
+      "before": 140,
+      "after": 168
+    },
+    {
+      "path": "rogueRingleaderSignatures.ranged.skeleton.radius",
+      "before": 145,
+      "after": 174
+    },
+    {
+      "path": "rogueRingleaderSignatures.ranged.wraith.radius",
+      "before": 150,
+      "after": 180
+    },
+    {
+      "path": "rogueRingleaderSignatures.ranged.stalker.radius",
+      "before": 150,
+      "after": 180
+    },
+    {
+      "path": "rogueRingleaderSignatures.ranged.mireling.radius",
+      "before": 145,
+      "after": 174
+    },
+    {
+      "path": "rogueRingleaderSignatures.ranged.reedbeast.radius",
+      "before": 145,
+      "after": 174
+    },
+    {
+      "path": "rogueRingleaderSignatures.ranged.archer.radius",
+      "before": 150,
+      "after": 180
+    },
+    {
+      "path": "rogueRingleaderSignatures.ranged.crownguard.radius",
+      "before": 155,
+      "after": 186
+    },
+    {
+      "path": "rogueRingleaderSignatures.ranged.ashbeast.radius",
+      "before": 155,
+      "after": 186
+    },
+    {
+      "path": "rogueRingleaderSignatures.ranged.orc.radius",
+      "before": 145,
+      "after": 174
+    },
+    {
+      "path": "rogueRingleaderSignatures.ranged.ogre.radius",
+      "before": 160,
+      "after": 192
+    },
+    {
+      "path": "rogueSignatures.captains.supply-vale.radius",
+      "before": 115,
+      "after": 138
+    },
+    {
+      "path": "rogueSignatures.captains.supply-march.radius",
+      "before": 125,
+      "after": 150
+    },
+    {
+      "path": "rogueSignatures.captains.supply-highlands.radius",
+      "before": 120,
+      "after": 144
+    },
+    {
+      "path": "rogueSignatures.captains.supply-crown.radius",
+      "before": 160,
+      "after": 192
+    },
+    {
+      "path": "rogueSignatures.captains.frontier-overseer.radius",
+      "before": 135,
+      "after": 162
+    },
+    {
+      "path": "rogueSignatures.bosses.thorn.radius",
+      "before": 165,
+      "after": 198
+    },
+    {
+      "path": "rogueSignatures.bosses.crypt.radius",
+      "before": 120,
+      "after": 144
+    },
+    {
+      "path": "rogueSignatures.bosses.mire.radius",
+      "before": 145,
+      "after": 174
+    },
+    {
+      "path": "rogueSignatures.bosses.archive.radius",
+      "before": 140,
+      "after": 168
+    },
+    {
+      "path": "rogueSignatures.bosses.ridge.radius",
+      "before": 135,
+      "after": 162
+    },
+    {
+      "path": "rogueSignatures.bosses.mine.radius",
+      "before": 195,
+      "after": 234
+    },
+    {
+      "path": "rogueSignatures.bosses.warlord.radius",
+      "before": 155,
+      "after": 186
+    },
+    {
+      "path": "rogueSignatures.bosses.abyss.radius",
+      "before": 205,
+      "after": 246
+    },
+    {
+      "path": "rogueSignatures.bosses.citadel.radius",
+      "before": 150,
+      "after": 180
+    },
+    {
+      "path": "rogueSignatures.bosses.cindermaw.radius",
+      "before": 1200,
+      "after": 1440
+    },
+    {
+      "path": "rogueSignatures.bosses.darklord.radius",
+      "before": 175,
+      "after": 210
+    },
+    {
+      "path": "burstCompression.tiers.ringleader.knee",
+      "before": 0.25,
+      "after": 0.145
+    },
+    {
+      "path": "burstCompression.tiers.ringleader.tail",
+      "before": 0.375,
+      "after": 0.24
+    },
+    {
+      "path": "initialAssessmentSeconds",
+      "before": null,
+      "after": 0.4
+    }
+  ],
+  "changedProtectedMethods": [
+    "tacticalClearRogueRegroup",
+    "tacticalAdvanceRogueRegroup",
+    "tacticalAutoRogue",
+    "tacticalHighestThreatTarget"
+  ],
+  "sameTacticalTableAsPreDev145": true
+}
