@@ -1,0 +1,33 @@
+# Gathering escort and Supplies — dev.130
+
+Owner implementation instructions supersede the audit's worker-count selector and hostile-awareness route veto proposals. Preserve one-command dispatch of all idle Soldiers/Rangers and Little Treasurer. The player escorts the group along navigation that survives combat, ordinary orders and Recall until the selected source is exhausted. Known sources remain directly usable in the world. Both completed Barracks and town Supplies offer collection and locating hidden tribute.
+
+Implemented behavior:
+
+- Saved gathering target uses the existing waypoint renderer without forcing hero movement. Combat/Recall preserve the target; exhaustion clears it. Travel/death/new campaign end the local route. Explicit Clear waypoint remains supported.
+- Gathering pauses for the shared companion combat executor: ordinary attacks and unlocked skills, existing wounds/overwhelm assessments and retreat. Assigned co-workers count as nearby support. A work order/cargo stays intact through combat. Encounter response uses actual enemy acquisition/line rules, including fortified ranged reach.
+- Delivery attempts physical routes. Enemy perception is not treated as an impassable wall. Reachable refuges, Full Barracks and town Supplies remain destinations, preferring safer drop-offs. After withdrawing from a delivery encounter, a recent destination is deprioritized so an alternate can be attempted. No wait-until-safe veto is retained.
+- Town Supplies immediately unloads every company member's cargo when visited, including distant, resting and fallen members, without moving/reviving them. The NPC now also exposes the shared gathering menu. No extra deposit confirmation is needed; the all-company fallback is owner-requested.
+- Capacity: 120 / 150 / 180 / 210 / 240 crowns by region. Harvest rate stays 12 per troop/second. A command handles one selected source; no unsolicited next-source assignment. Completed source deliveries do not return to that exhausted source.
+- Actual reverse-route movement checks the carrier's body radius and moves with that same radius, fixing the Crown 14-versus-15 clearance mismatch. New terrain still requires a physical path.
+- All deposits pool fractional remnants in a saved company remainder, pay whole crowns and clear the deposited cargo. Fractions from separate troops combine rather than staying inaccessible. No rounding every troop upward; no duplicate payout.
+
+Normal v4 save keys remain. Optional target/remainder defaults are compatible with older saves; malformed/hidden-unlocated targets are discarded and malformed remainders rejected. Little Treasurer (ridge family) is the sole pet exception for both gathering and resource expeditions; his combat skills stay intact. Other pets retain their roles. Builders remain Soldiers/Rangers. No fort bonuses, warning changes, companion damage buffs or resource respawn changes.
+
+Workflow: focused local checks and one short native phone interaction check, package-only publication. No broad CI, full game/device suite, or review loop. Publication and live verification are the remaining steps.
+
+## Resource expeditions — added owner scope
+
+Full Barracks expose Resource expeditions, separate from Expedition Skill training. Choose one living idle Soldier, Ranger or Little Treasurer, active or reserve. All earlier regions are listed; every captive specialist in the destination region must already be rescued. Current/later regions and duplicate missions to the same region are blocked with their reason. Ordinary monsters/respawns do not block an otherwise cleared region.
+
+One recovery adventure takes half of the current game day/night cycle: 300 seconds of active simulation. There is no dispatch fee or forced waiting screen. The worker is unavailable while away, and cannot be activated from reserve. Saved missions continue through travel, death and reload. On return, the actual remaining tribute (including undiscovered sources) is paid automatically once, depleted from that region and counted as gathered. Any tribute manually gathered in the meantime is excluded to prevent duplicates. The worker rejoins the active group if they left it and a slot remains; otherwise they return to reserve. Clear departure and return messages name the companion/region.
+
+Ownership: `expeditions.js` owns remote mission eligibility, absence and completion; wallet pooling stays in economy. It installs through the normal browser/CommonJS graph and the independent audio audition graph. Optional v4 job/worker links are validated; old saves default to no missions. The 300-second duration is an initial tuning choice following the owner's concern that a full ten-minute cycle may be too much. No additional travel-back or claim action is required.
+
+## Focused evidence
+
+`tests/gathering-escort.test.cjs` covers escort combat/retreat/resume, source exhaustion, alternate delivery, real Crown 14/15 clearance and a 480-crown two-load journey, pooled fractions, whole-company unloading, navigation/save and Treasurer-only resource work. `tests/resource-expeditions.test.cjs` covers eligibility, specialist gates, chosen active/reserve workers, absence/dismissal guards, 300-second return, travel/save/concurrent missions/manual gathering, exactly-once payout, old saves and the Treasurer exception.
+
+Existing gathering route/delivery, local-sites, economy, menus, companion regroup, pet activation and browser/CommonJS domain checks passed. These are local focused checks, not a broad campaign or device matrix. Cleared-map comparison: March delivery 51.9→26.3 seconds, Highlands 64.8→29.1 seconds, Crown previously unfinished at 600 seconds→40.1 seconds; Greenwood's split 170-crown source now pays 170. Timings measure logistics with enemies removed, not combat difficulty or hardware FPS.
+
+Native phone evidence: `tools/visual-review/gathering-escort-dev130/native-result.json` and screenshots. Actual touch Supplies pays 36 across active/resting/fallen cargo; normal fighting preserves work and guide through Recall/reload; hidden-site order, source exhaustion and direct known-site collection pass. Actual touch Full Barracks selects Little Treasurer, saves while away, returns all 490 remaining Vale crowns once and reloads without duplicate payout. No JavaScript errors. New enemy fixture engages before taking its HP baseline so existing night scaling is included.

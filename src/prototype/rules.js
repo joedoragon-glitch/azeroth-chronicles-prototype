@@ -5980,6 +5980,11 @@
     escapeSeconds: 1.5,
   };
   const gatheringTravel = {
+    petWorkerFamily: 'ridge',
+    capacity: 120,
+    capacityPerRegion: 30,
+    harvestPerSecond: 12,
+    retryDestinationSeconds: 12,
     gridStep: 40,
     enemyMargin: 35,
     replanSeconds: 2,
@@ -6287,7 +6292,8 @@
     ridge: {
       name: 'Little Treasurer',
       role: 'melee',
-      specialty: 'Heavy opening hit and broad, straight-line cargo attacks.',
+      specialty:
+        'Heavy opening hit and broad, straight-line cargo attacks. The only pet who gathers tribute and joins resource expeditions.',
       color: '#cfaf65',
       first: { name: 'Coinage Bonk', shape: 'target', range: 90, multiplier: 2.8 },
       second: {
@@ -7212,6 +7218,7 @@
     arenaPlacement,
     fieldBossMobility,
     gatheringTravel,
+    resourceExpeditions: { durationCycles: 0.5 },
     companionJudgment,
     companionRecall,
     bossCadence: {

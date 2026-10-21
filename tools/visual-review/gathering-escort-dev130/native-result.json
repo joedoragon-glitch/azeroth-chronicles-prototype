@@ -1,0 +1,28 @@
+{
+  "version": "0.9.1+snapshot.dev.130",
+  "suppliesPayout": 36,
+  "allCompanyCargoCleared": true,
+  "fallenStayedFallen": true,
+  "assigned": 2,
+  "guidePersistsCombatRecallReload": true,
+  "combat": {
+    "fought": true,
+    "paused": true,
+    "order": "tribute-vale-orchard-stores",
+    "visible": true,
+    "distance": 40,
+    "cd": 0.4,
+    "target": "enemy-41",
+    "retreating": false
+  },
+  "hidden": "tribute-vale-pond-strongbox",
+  "exhaustionClearsGuide": true,
+  "directKnownSite": true,
+  "expedition": {
+    "treasurerSelectedByTouch": true,
+    "savedWhileAway": true,
+    "recovered": 490,
+    "returnedOnce": true
+  },
+  "errors": []
+}

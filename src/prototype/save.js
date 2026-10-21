@@ -11,7 +11,10 @@
     const gatheringOrder = (u, s) => {
       if (
         s.recallActive ||
-        !['soldier', 'archer'].includes(u.type) ||
+        !(
+          ['soldier', 'archer'].includes(u.type) ||
+          (u.type === 'pet' && u.petFamily === R.gatheringTravel.petWorkerFamily)
+        ) ||
         u.active === false ||
         !['gather', 'deposit'].includes(u.order?.type)
       )
@@ -561,8 +564,10 @@
             petFamilies.add(u.petFamily);
             u.name = R.petCompanions[u.petFamily].name;
             u.damage = R.balance.companions.petDamage;
-            u.order = null;
-            u.carry = 0;
+            if (u.petFamily !== R.gatheringTravel.petWorkerFamily) {
+              u.order = null;
+              u.carry = 0;
+            }
           } else if (u.petFamily !== undefined) throw Error('Pet identity on troop');
           if (
             !['worker', 'soldier', 'archer', 'pet'].includes(u.type) ||
@@ -857,6 +862,64 @@
             finite(p.value, 1, 1000);
           }
         }
+        s.resourceExpeditions ??= [];
+        if (
+          !Array.isArray(s.resourceExpeditions) ||
+          s.resourceExpeditions.length > D.regions.length - 1
+        )
+          throw Error('Invalid resource expeditions');
+        const expeditionRegions = new Set(),
+          expeditionWorkers = new Set(),
+          expeditionIds = new Set();
+        for (const mission of s.resourceExpeditions) {
+          const worker = mission && s.party.find((u) => u.id === mission.workerId);
+          if (
+            !mission ||
+            typeof mission.id !== 'string' ||
+            !/^resource-expedition-\d+$/.test(mission.id) ||
+            !D.regions.some((r) => r.id === mission.region) ||
+            !s.zones[mission.region] ||
+            !worker ||
+            !(
+              ['soldier', 'archer'].includes(worker.type) ||
+              (worker.type === 'pet' && worker.petFamily === R.gatheringTravel.petWorkerFamily)
+            ) ||
+            worker.active ||
+            worker.order ||
+            worker.expeditionId !== mission.id ||
+            typeof mission.wasActive !== 'boolean' ||
+            expeditionRegions.has(mission.region) ||
+            expeditionWorkers.has(mission.workerId) ||
+            expeditionIds.has(mission.id)
+          )
+            throw Error('Invalid resource expedition');
+          finite(mission.startedAt, 0, 1e12);
+          finite(mission.finishAt, mission.startedAt, 1e12);
+          if (mission.finishAt - mission.startedAt > R.dayCycle.seconds)
+            throw Error('Invalid resource expedition duration');
+          expeditionRegions.add(mission.region);
+          expeditionWorkers.add(mission.workerId);
+          expeditionIds.add(mission.id);
+        }
+        for (const u of s.party)
+          if (u.expeditionId !== undefined && !expeditionWorkers.has(u.id))
+            throw Error('Orphan resource expedition worker');
+        s.tributeRemainder ??= 0;
+        finite(s.tributeRemainder, 0, 1);
+        if (s.tributeRemainder >= 1) throw Error('Invalid tribute remainder');
+        const gathering = s.gatheringTarget;
+        s.gatheringTarget =
+          gathering &&
+          gathering.zone === s.zone &&
+          typeof gathering.id === 'string' &&
+          s.zones[s.zone]?.nodes.some(
+            (n) =>
+              n.id === gathering.id &&
+              n.amount > 0 &&
+              (!n.hidden || s.discovered[s.zone + ':tribute:' + n.tributeId]),
+          )
+            ? { zone: s.zone, id: gathering.id }
+            : null;
         return s;
       }
       static restore(data, random = Math.random) {
@@ -1020,6 +1083,7 @@
           if (c.blocked(u.x, u.y)) Object.assign(u, c.safe(u.x, u.y));
         if (c.s.phase === 'awakening') c.activatePending();
         c.syncTreasuryRecovery(c.zone());
+        c.advanceResourceExpeditions();
         return c;
       }
       repairLegacyRescues() {

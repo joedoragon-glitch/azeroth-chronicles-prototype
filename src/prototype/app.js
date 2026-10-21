@@ -34,6 +34,21 @@
     'Touch and mouse options': 'Opciones táctiles y de ratón',
     'Screen and performance': 'Pantalla y rendimiento',
     'Gather resources': 'Recolectar recursos',
+    'Resource expeditions': 'Expediciones de recursos',
+    'Choose expedition companion': 'Elegir compañero de expedición',
+    'No resource companion available': 'No hay compañeros recolectores disponibles',
+    'No earlier regions': 'No hay regiones anteriores',
+    'Expedition returned': 'Regresó la expedición',
+    'Tribute delivered': 'Tributo entregado',
+    'Locate & gather hidden Dark Lord Tribute':
+      'Localizar y recolectar tributo oculto del Dark Lord',
+    'Tribute collection and delivery. Visiting unloads all company cargo, including resting and fallen companions. Rangers provide Heal in the field.':
+      'Recolección y entrega de tributo. Al visitar, se descarga toda la carga de la compañía, incluidos los compañeros en reserva y caídos. Los Rangers curan en el campo.',
+    'All idle Soldiers, Rangers and Little Treasurer work one selected tribute site. Escort them along the waypoint; combat pauses work. Supplies unloads all company cargo. Hidden sources can be located here.':
+      'Todos los Soldados, Rangers y Little Treasurer disponibles trabajan en el tributo elegido. Escóltalos siguiendo la ruta; el combate pausa el trabajo. Suministros descarga toda la carga de la compañía. Aquí puedes localizar tributos ocultos.',
+    'An idle Soldier, Ranger or Little Treasurer is needed.':
+      'Necesitas un Soldado, Ranger o Little Treasurer disponible.',
+    'Includes resting and fallen companions.': 'Incluye a los compañeros en reserva y caídos.',
     'Story guide': 'Guía de la historia',
     'All pending quests': 'Todas las misiones pendientes',
     'Completed quests': 'Misiones completadas',
@@ -679,7 +694,8 @@
   }
   let started = loaded;
   let storyRouteActive = false,
-    questGuide = null;
+    questGuide = null,
+    gatheringGuideRequest = null;
   const viewport = { width: innerWidth, height: innerHeight };
   const renderer = PrototypeRenderer.create({
     canvas: viewport,
@@ -762,7 +778,8 @@
     get trackedWaypoint() {
       return questGuide
         ? {
-            id: questGuide.id,
+            id: questGuide.id || questGuide.nodeId,
+            kind: questGuide.kind || 'quest',
             zone: questGuide.zone,
             points: questGuide.route.map((p) => ({ ...p })),
           }
@@ -1667,6 +1684,7 @@
       ...(questGuide
         ? [
             action('Clear waypoint', () => {
+              if (questGuide?.kind === 'gathering') game.s.gatheringTarget = null;
               questGuide = null;
               closeMenu();
             }),
@@ -1942,8 +1960,11 @@
     else if (n.kind === 'smith') smith(n);
     else if (n.kind === 'keeper') keeper();
     else if (n.kind === 'archive-record') keeperLedger();
-    else if (n.kind === 'supplier' || n.kind === 'alchemist') supplier(n);
-    else if (n.kind === 'recruiter') partyMenu();
+    else if (n.kind === 'supplier' || n.kind === 'alchemist') {
+      supplier(n);
+      save();
+      updateHUD();
+    } else if (n.kind === 'recruiter') partyMenu();
     else if (n.kind === 'quests') quests(true);
     else if (n.kind === 'transport') {
       if (n.hub) {
@@ -2010,6 +2031,25 @@
   }
 
   function updateQuestGuide(force = false) {
+    const gathering = game.s.gatheringTarget;
+    if (gathering && gathering !== gatheringGuideRequest) {
+      gatheringGuideRequest = gathering;
+      questGuide = {
+        kind: 'gathering',
+        nodeId: gathering.id,
+        sourceZone: gathering.zone,
+        campaign: game,
+        hero: game.hero,
+        deaths: game.s.statistics.deaths,
+        zone: null,
+        route: [],
+        next: 0,
+      };
+      storyRouteActive = false;
+    } else if (!gathering) {
+      gatheringGuideRequest = null;
+      if (questGuide?.kind === 'gathering') questGuide = null;
+    }
     if (!questGuide) return;
     if (
       questGuide.campaign !== game ||
@@ -2029,12 +2069,22 @@
       questGuide.route.shift();
     if (!force && questGuide.zone === game.zoneId && game.s.time < questGuide.next) return;
     questGuide.next = game.s.time + 1;
-    const target = questGuide.id ? game.questDestination(questGuide.id) : questGuide.destination;
+    const target =
+      questGuide.kind === 'gathering'
+        ? questGuide.sourceZone === game.zoneId &&
+          game.zone().nodes.find((n) => n.id === questGuide.nodeId && n.amount > 0)
+        : questGuide.id
+          ? game.questDestination(questGuide.id)
+          : questGuide.destination;
     if (!target || target.hp <= 0) {
       questGuide.route = [];
       return;
     }
-    if (!questGuide.id && Math.hypot(target.x - game.hero.x, target.y - game.hero.y) < 90) {
+    if (
+      !questGuide.id &&
+      questGuide.kind !== 'gathering' &&
+      Math.hypot(target.x - game.hero.x, target.y - game.hero.y) < 90
+    ) {
       questGuide = null;
       return;
     }

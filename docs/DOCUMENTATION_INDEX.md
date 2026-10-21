@@ -1,3 +1,5 @@
+Current implementation: [Gathering escort, Supplies and resource expeditions — dev.130](GATHERING_ESCORT_DEV130.md), focused evidence complete; publication pending.
+
 Audit only, dev.129: [resource gathering against the flow standard](RESOURCE_GATHERING_FLOW_AUDIT_DEV129.md). Concrete return-route/cargo/waiting findings, scoped timing and proposed repairs; no gameplay changes or CI.
 
 Published dev.129: [defender space, corner arrivals and discussion checklist](DEFENDER_SPACE_DEV129.md), PR #365. Nine checked public files/exact build match; live phone entry/touch exit/skills pass. Package-only publication; normal workflow restored.

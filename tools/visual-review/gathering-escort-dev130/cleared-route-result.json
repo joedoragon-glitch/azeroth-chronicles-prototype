@@ -1,0 +1,349 @@
+{
+  "baseline": "dev.130 candidate",
+  "scope": "Controlled cleared-route comparison using the unchanged dev.129 audit fixture; recovery cases here predate the new Supplies interaction.",
+  "sites": [
+    {
+      "region": "vale",
+      "total": 640,
+      "known": 2,
+      "hidden": 2,
+      "nodes": [
+        {
+          "id": "tribute-vale-orchard-stores",
+          "site": "Abandoned orchard",
+          "amount": 170,
+          "hidden": false,
+          "x": 1095,
+          "y": 1000
+        },
+        {
+          "id": "tribute-vale-woodland-cache",
+          "site": "Woodland supply cache",
+          "amount": 180,
+          "hidden": false,
+          "x": 1600,
+          "y": 900
+        },
+        {
+          "id": "tribute-vale-pond-strongbox",
+          "site": "Mill pond",
+          "amount": 150,
+          "hidden": true,
+          "x": 885,
+          "y": 1255
+        },
+        {
+          "id": "tribute-vale-bridge-toll",
+          "site": "Mill bridge",
+          "amount": 140,
+          "hidden": true,
+          "x": 1020,
+          "y": 1000
+        }
+      ]
+    },
+    {
+      "region": "march",
+      "total": 640,
+      "known": 2,
+      "hidden": 2,
+      "nodes": [
+        {
+          "id": "tribute-march-wagon-levy",
+          "site": "Stranded supply wagon",
+          "amount": 200,
+          "hidden": false,
+          "x": 1100,
+          "y": 1220
+        },
+        {
+          "id": "tribute-march-causeway-toll",
+          "site": "Lake causeway",
+          "amount": 150,
+          "hidden": false,
+          "x": 1552.4264068711927,
+          "y": 1737.4264068711927
+        },
+        {
+          "id": "tribute-march-watchhouse-cache",
+          "site": "Mire nesting bank",
+          "amount": 160,
+          "hidden": true,
+          "x": 1820,
+          "y": 1210
+        },
+        {
+          "id": "tribute-march-lantern-cache",
+          "site": "Lantern shore",
+          "amount": 130,
+          "hidden": true,
+          "x": 1815,
+          "y": 985
+        }
+      ]
+    },
+    {
+      "region": "highlands",
+      "total": 640,
+      "known": 2,
+      "hidden": 2,
+      "nodes": [
+        {
+          "id": "tribute-highlands-ore-shipment",
+          "site": "Stonecross ore vein",
+          "amount": 220,
+          "hidden": false,
+          "x": 1205,
+          "y": 730
+        },
+        {
+          "id": "tribute-highlands-stone-toll",
+          "site": "Stone bridge",
+          "amount": 160,
+          "hidden": false,
+          "x": 1195,
+          "y": 1045
+        },
+        {
+          "id": "tribute-highlands-timber-toll",
+          "site": "Timber crossing",
+          "amount": 130,
+          "hidden": true,
+          "x": 1405,
+          "y": 1965
+        },
+        {
+          "id": "tribute-highlands-ogre-cache",
+          "site": "Ogre hearth camp",
+          "amount": 130,
+          "hidden": true,
+          "x": 2100,
+          "y": 1740
+        }
+      ]
+    },
+    {
+      "region": "frontier",
+      "total": 640,
+      "known": 2,
+      "hidden": 2,
+      "nodes": [
+        {
+          "id": "tribute-frontier-convoy-tribute",
+          "site": "Supply convoy",
+          "amount": 220,
+          "hidden": false,
+          "x": 790,
+          "y": 380
+        },
+        {
+          "id": "tribute-frontier-ravine-toll",
+          "site": "Guarded ravine bridge",
+          "amount": 150,
+          "hidden": false,
+          "x": 1670,
+          "y": 570
+        },
+        {
+          "id": "tribute-frontier-forest-levy",
+          "site": "Burned forest crossing",
+          "amount": 150,
+          "hidden": true,
+          "x": 1565,
+          "y": 2255
+        },
+        {
+          "id": "tribute-frontier-overlook-cache",
+          "site": "Ravine overlook",
+          "amount": 120,
+          "hidden": true,
+          "x": 1865,
+          "y": 1970
+        }
+      ]
+    },
+    {
+      "region": "crown",
+      "total": 640,
+      "known": 2,
+      "hidden": 2,
+      "nodes": [
+        {
+          "id": "tribute-crown-siege-war-chest",
+          "site": "Siege camp",
+          "amount": 220,
+          "hidden": false,
+          "x": 2810,
+          "y": 2330
+        },
+        {
+          "id": "tribute-crown-crystal-shipment",
+          "site": "Crystal shelf",
+          "amount": 180,
+          "hidden": false,
+          "x": 1130,
+          "y": 2620
+        },
+        {
+          "id": "tribute-crown-barracks-payroll",
+          "site": "Crown field barracks",
+          "amount": 140,
+          "hidden": true,
+          "x": 2833.0384757729335,
+          "y": 1305
+        },
+        {
+          "id": "tribute-crown-southern-levy",
+          "site": "Southern stone crossing",
+          "amount": 100,
+          "hidden": true,
+          "x": 1600,
+          "y": 2560
+        }
+      ]
+    }
+  ],
+  "trips": [
+    {
+      "region": "vale",
+      "troops": 1,
+      "site": "Abandoned orchard",
+      "amount": 170,
+      "paid": 170,
+      "firstPayout": 14.399999999999965,
+      "lastPayout": 18.799999999999997,
+      "harvestFinished": 18.699999999999996,
+      "jobEnded": true,
+      "totalSeconds": 18.799999999999997,
+      "harvestSeconds": 14.199999999999966,
+      "deposits": 2,
+      "maxCarry": 120,
+      "remaining": 0,
+      "residualCarry": 0,
+      "finalSourceDistance": 44.999999999999964
+    },
+    {
+      "region": "march",
+      "troops": 1,
+      "site": "Stranded supply wagon",
+      "amount": 200,
+      "paid": 200,
+      "firstPayout": 17.799999999999983,
+      "lastPayout": 26.300000000000104,
+      "harvestFinished": 24.200000000000074,
+      "jobEnded": true,
+      "totalSeconds": 26.300000000000104,
+      "harvestSeconds": 16.699999999999967,
+      "deposits": 2,
+      "maxCarry": 150,
+      "remaining": 0,
+      "residualCarry": 0,
+      "finalSourceDistance": 508.3123122340803
+    },
+    {
+      "region": "highlands",
+      "troops": 1,
+      "site": "Stonecross ore vein",
+      "amount": 220,
+      "paid": 220,
+      "firstPayout": 20.900000000000027,
+      "lastPayout": 29.100000000000144,
+      "harvestFinished": 26.70000000000011,
+      "jobEnded": true,
+      "totalSeconds": 29.100000000000144,
+      "harvestSeconds": 18.39999999999999,
+      "deposits": 2,
+      "maxCarry": 179.99999999999972,
+      "remaining": 0,
+      "residualCarry": 0,
+      "finalSourceDistance": 575.1214940671023
+    },
+    {
+      "region": "frontier",
+      "troops": 1,
+      "site": "Supply convoy",
+      "amount": 220,
+      "paid": 220,
+      "firstPayout": 19,
+      "lastPayout": 20.100000000000016,
+      "harvestFinished": 20.000000000000014,
+      "jobEnded": true,
+      "totalSeconds": 20.100000000000016,
+      "harvestSeconds": 18.39999999999999,
+      "deposits": 2,
+      "maxCarry": 209.99999999999943,
+      "remaining": 0,
+      "residualCarry": 0,
+      "finalSourceDistance": 44.999999999999986
+    },
+    {
+      "region": "crown",
+      "troops": 1,
+      "site": "Siege camp",
+      "amount": 220,
+      "paid": 220,
+      "firstPayout": 40.1000000000003,
+      "lastPayout": 40.1000000000003,
+      "harvestFinished": 31.70000000000018,
+      "jobEnded": true,
+      "totalSeconds": 40.1000000000003,
+      "harvestSeconds": 18.39999999999999,
+      "deposits": 1,
+      "maxCarry": 220,
+      "remaining": 0,
+      "residualCarry": 0,
+      "finalSourceDistance": 1762.5864107000916
+    },
+    {
+      "region": "vale",
+      "troops": 2,
+      "site": "Abandoned orchard",
+      "amount": 170,
+      "paid": 170,
+      "firstPayout": 11.799999999999974,
+      "lastPayout": 11.799999999999974,
+      "harvestFinished": 11.699999999999974,
+      "jobEnded": true,
+      "totalSeconds": 11.799999999999974,
+      "harvestSeconds": 7.39999999999999,
+      "deposits": 1,
+      "maxCarry": 88.4000000000003,
+      "remaining": 0,
+      "residualCarry": 0,
+      "finalSourceDistance": 44.99999999999996
+    }
+  ],
+  "cases": {
+    "assignment": {
+      "accepted": true,
+      "eligible": 3,
+      "assigned": 3
+    },
+    "exhaustedRecall": {
+      "carry": 35,
+      "order": null,
+      "purseChange": 0,
+      "redispatchAccepted": false,
+      "feedback": "At least one idle living troop and an unexhausted deposit are required."
+    },
+    "exhaustedReload": {
+      "carry": 35,
+      "order": null
+    },
+    "travel": {
+      "carry": 12,
+      "order": null,
+      "region": "crypt"
+    },
+    "noSafeDeposit": {
+      "deposit": {
+        "x": 300,
+        "y": 350
+      },
+      "order": "deposit",
+      "carry": 35,
+      "purseChange": 0,
+      "notice": []
+    }
+  }
+}

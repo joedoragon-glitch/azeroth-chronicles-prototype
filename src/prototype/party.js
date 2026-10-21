@@ -14,7 +14,8 @@
     };
     Campaign.normalizeCharacterName = normalizeCharacterName;
     const laborAttacks = new WeakMap(),
-      depositTrips = new WeakMap();
+      depositTrips = new WeakMap(),
+      deliveryAvoidance = new WeakMap();
     const companionJudgments = new WeakMap();
 
     class Party {
@@ -39,7 +40,7 @@
           state?.zone === this.zoneId &&
           state.regrouping &&
           state.point &&
-          !u.order &&
+          (!u.order || this.gatheringUnit(u)) &&
           dist(u, state.point) > R.companionJudgment.arrivalRadius
         );
       }
@@ -133,7 +134,10 @@
             cfg.minimumAllyWeight +
             (1 - cfg.minimumAllyWeight) * Math.max(0, Math.min(1, a.hp / a.maxHp)),
           allies = living.filter(
-            (a) => !a.order && dist(a, u) <= cfg.supportRadius && this.clearSegment(a, u),
+            (a) =>
+              (!a.order || (this.gatheringUnit(u) && this.gatheringUnit(a))) &&
+              dist(a, u) <= cfg.supportRadius &&
+              this.clearSegment(a, u),
           ),
           heroNearby =
             this.hero.hp > 0 &&
@@ -286,6 +290,7 @@
       clearGatheringIntent(u) {
         laborAttacks.delete(u);
         depositTrips.delete(u);
+        deliveryAvoidance.delete(u);
         this.clearCompanionTravel(u);
       }
       noteGatheringAttack(u, e) {
@@ -770,48 +775,74 @@
       rosterCount() {
         return this.s.party.length;
       }
+      gatheringCapacity() {
+        return (
+          R.gatheringTravel.capacity +
+          Math.max(0, this.regionIndex()) * R.gatheringTravel.capacityPerRegion
+        );
+      }
       depositSite(u) {
         const z = this.isDungeon() ? this.s.zones[this.definition().id] : this.zone(),
           i = this.regionIndex(),
-          threats = this.gatheringThreats(),
-          safeSite = (p) => p && threats.every((e) => dist(p, e) >= e.r),
           sites = [
-            ...(z?.npcs.filter((n) => n.kind === 'rest') || []),
+            ...(z?.npcs.filter((n) => n.kind === 'supplier' || n.kind === 'rest') || []),
             ...(this.isDungeon()
               ? []
               : z?.buildings.filter((b) => b.progress >= 4 && b.full) || []),
             { x: D.towns[i][0], y: D.towns[i][1] },
           ];
-        if (!this.gatheringUnit(u) || this.isDungeon())
-          return sites.sort((a, b) => dist(a, u) - dist(b, u))[0];
-        const cached = depositTrips.get(u);
+        const cached = depositTrips.get(u),
+          avoid = deliveryAvoidance.get(u);
         if (
           cached?.zone === this.zoneId &&
           cached.until > this.s.time &&
-          (!cached.site ||
-            (safeSite(cached.site) &&
-              sites.some((p) => p.x === cached.site.x && p.y === cached.site.y)))
+          cached.site &&
+          sites.some((p) => p.x === cached.site.x && p.y === cached.site.y) &&
+          !(avoid?.until > this.s.time && dist(avoid.point, cached.site) < 30)
         )
           return cached.site;
-        let site = null,
-          best = Infinity;
-        const seen = new Set();
-        for (const candidate of sites.sort((a, b) => dist(a, u) - dist(b, u))) {
-          const key = candidate.x + ':' + candidate.y;
-          if (!safeSite(candidate) || seen.has(key) || dist(candidate, u) >= best) continue;
+        const threats = this.gatheringThreats(),
+          seen = new Set(),
+          candidates = [];
+        for (const site of sites) {
+          const key = site.x + ':' + site.y;
+          if (seen.has(key)) continue;
           seen.add(key);
-          const length = this.gatheringRouteLength(u, candidate, true);
-          if (length < best) {
-            site = candidate;
-            best = length;
-          }
+          const length = this.gatheringRouteLength(u, site);
+          if (!Number.isFinite(length)) continue;
+          const danger = threats.filter((e) => dist(site, e) < e.r).length;
+          const rejected =
+            avoid?.zone === this.zoneId &&
+            avoid.until > this.s.time &&
+            dist(avoid.point, site) < 30;
+          candidates.push({
+            site,
+            score: length + danger * this.zoneSize() + (rejected ? this.zoneSize() * 4 : 0),
+          });
         }
+        const site = candidates.sort((a, b) => a.score - b.score)[0]?.site || null;
         depositTrips.set(u, {
           zone: this.zoneId,
           until: this.s.time + R.gatheringTravel.replanSeconds,
           site,
         });
         return site;
+      }
+      gatheringEncounter(u) {
+        if (this.peace) return null;
+        return (
+          this.zone()
+            .enemies.filter(
+              (e) =>
+                e.hp > 0 &&
+                !e.neutral &&
+                !e.returning &&
+                dist(u, e) <=
+                  Math.max(R.companionJudgment.nearThreatRadius, this.enemyAcquisitionRange(e)) &&
+                (e.aggro || this.enemyRangedLine(e, u)),
+            )
+            .sort((a, b) => dist(a, u) - dist(b, u))[0] || null
+        );
       }
       laborMoveSpeed(u) {
         return (
@@ -838,30 +869,13 @@
           );
       }
       resumeGathering(u) {
-        const z = this.zone(),
-          current = z.nodes.find(
-            (n) => n.id === u.order.id && n.amount > 0 && this.tributeKnown(n),
-          ),
-          next =
-            current ||
-            z.nodes
-              .filter(
-                (n) =>
-                  u.order.group &&
-                  n.resourceGroup === u.order.group &&
-                  n.amount > 0 &&
-                  this.tributeKnown(n) &&
-                  (!n.mini || this.peace || this.miniCleared(n.mini)),
-              )
-              .map((n) => ({ node: n, length: this.gatheringRouteLength(u, n, true) }))
-              .filter((row) => Number.isFinite(row.length))
-              .sort((a, b) => a.length - b.length)[0]?.node;
-        u.order = next
-          ? { type: 'gather', id: next.id, group: next.resourceGroup, cautious: true }
-          : null;
+        const current = this.zone().nodes.find(
+          (n) => n.id === u.order.id && n.amount > 0 && this.tributeKnown(n),
+        );
+        u.order = current ? { type: 'gather', id: current.id, group: current.resourceGroup } : null;
         depositTrips.delete(u);
         this.clearCompanionTravel(u);
-        if (!next) this.clearGatheringIntent(u);
+        if (!current) this.clearGatheringIntent(u);
       }
       returnFromDelivery(u, living, dt) {
         const journey = u.order?.journey;
@@ -871,11 +885,12 @@
           this.resumeGathering(u);
           return true;
         }
-        const point = journey.points[0],
-          threats = this.gatheringThreats();
-        if (this.companionTravelClear(u, point, threats))
-          this.followCompanion(u, point, this.laborMoveSpeed(u), dt, 3, true);
-        else this.laborRegroup(u, living, dt);
+        const point = journey.points[0];
+        // Validate and traverse the recorded segment with the same actual body.
+        // Encounter AI above this branch handles enemies; perception is not a wall.
+        if (this.clearSegment(u, point, this.actorRadius(u)))
+          this.move(u, point, this.laborMoveSpeed(u), dt, 3);
+        else this.followCompanion(u, point, this.laborMoveSpeed(u), dt, 3);
         return true;
       }
       availableRangers(type) {
@@ -1119,6 +1134,16 @@
         );
         return true;
       }
+      canGatherTribute(u) {
+        return (
+          !!u &&
+          (['soldier', 'archer'].includes(u.type) ||
+            (u.type === 'pet' && u.petFamily === R.gatheringTravel.petWorkerFamily))
+        );
+      }
+      availableGatherers() {
+        return this.activeLivingParty().filter((u) => this.canGatherTribute(u) && !u.order);
+      }
       availableLabor() {
         return this.activeLivingParty().filter(
           (u) => ['soldier', 'archer'].includes(u.type) && !u.order,
@@ -1152,6 +1177,7 @@
         if (!u)
           return 'This companion is no longer resting in reserve. Reopen Manage active group.';
         if (!b) return 'Adding a companion requires a completed local Barracks.';
+        if (u.expeditionId) return 'This companion is away on a resource expedition.';
         if (u.hp <= 0) return 'This companion has fallen. Recover them at the Barracks first.';
         if (this.refugeThreat())
           return 'Cannot add a companion while nearby enemies are engaged. Retreat and end the fight first.';
@@ -1190,6 +1216,10 @@
       dismissCompanion(id) {
         const i = this.s.party.findIndex((u) => u.id === id && u.active === false);
         if (i < 0) return false;
+        if (this.s.party[i].expeditionId) {
+          this.say('This companion is away on a resource expedition. Wait for their return.');
+          return false;
+        }
         if (this.s.party[i].type === 'pet') {
           this.say('Boss pets stay in your collection. Rest them or recover them at a Barracks.');
           return false;
@@ -1466,6 +1496,113 @@
           return anchor;
         }
       }
+      companionFight(u, e, living, dt) {
+        this._tacticalPartyTargets.set(u.id, e.id);
+        if (u.type === 'pet') {
+          this.updatePetCombat(u, e, living, dt);
+          return;
+        }
+        if (u.type === 'archer') {
+          const d = dist(u, e),
+            visible = this.line(u, e),
+            anchor = this.partyFollowPoint(u, living);
+          if (d < 150) {
+            // Veteran Rangers can cover a retreat with their existing Triple Shot.
+            // Still move this frame; never trade the fallback for standing fire.
+            this.companionCoveringShot(u, e);
+            this.follow(
+              u,
+              this.archerFallbackPoint(u, e, living),
+              this.companionRallyMoveSpeed(u, 270) *
+                this.slowMovementFactor(u) *
+                this.mireBogMovementFactor(u) *
+                this.ashMovementFactor(u),
+              dt,
+              35,
+            );
+            return;
+          }
+          if (d > 280 || !visible) {
+            this.follow(
+              u,
+              this.archerCombatPoint(u, e, living),
+              this.companionRallyMoveSpeed(u, 260) *
+                this.slowMovementFactor(u) *
+                this.mireBogMovementFactor(u) *
+                this.ashMovementFactor(u),
+              dt,
+              35,
+            );
+            return;
+          }
+          if (dist(u, anchor) > 70 && dist(anchor, e) <= 280 && this.line(anchor, e)) {
+            this.follow(
+              u,
+              anchor,
+              this.companionRallyMoveSpeed(u, 245) *
+                this.slowMovementFactor(u) *
+                this.mireBogMovementFactor(u) *
+                this.ashMovementFactor(u),
+              dt,
+              35,
+            );
+            return;
+          }
+          if (this.companionTrySkill(u, e)) return;
+          if (u.cd <= 0) {
+            u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+            const shot = Math.max(1, d);
+            this.s.projectiles.push({
+              id: 'projectile-' + this.s.nextId++,
+              x: u.x,
+              y: u.y,
+              dx: (e.x - u.x) / shot,
+              dy: (e.y - u.y) / shot,
+              target: e.id,
+              damage: this.companionAttackDamage(u),
+              source: u.id,
+              speed: 450,
+              style: 'arrow',
+            });
+            this.event('projectileLaunch', {
+              actor: 'companion',
+              role: 'archer',
+              source: u.id,
+              style: 'arrow',
+              x: u.x,
+              y: u.y,
+              target: e.id,
+            });
+          }
+          return;
+        }
+        if (u.type !== 'soldier') return;
+        if (this.line(u, e) && dist(u, e) <= 185 && this.companionTrySkill(u, e)) return;
+        if (dist(u, e) > 65 || !this.line(u, e))
+          this.follow(
+            u,
+            e,
+            this.companionRallyMoveSpeed(u, 250) *
+              this.slowMovementFactor(u) *
+              this.mireBogMovementFactor(u) *
+              this.ashMovementFactor(u),
+            dt,
+            this.line(u, e) ? 55 : 0,
+          );
+        else if (u.cd <= 0) {
+          u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+          if (this.damage(e, this.companionAttackDamage(u), u.id))
+            this.event('melee', {
+              actor: 'companion',
+              role: 'soldier',
+              source: u.id,
+              weapon: 'sword',
+              x: e.x,
+              y: e.y,
+              target: e.id,
+            });
+        }
+      }
       updateParty(dt) {
         const z = this.zone(),
           living = this.activeLivingParty(),
@@ -1552,7 +1689,7 @@
             // Waiting here prevents another skill or basic during preparation.
             continue;
           }
-          if (u.type === 'pet') u.order = null; // Pets never perform troop labor.
+          if (u.type === 'pet' && !this.canGatherTribute(u)) u.order = null;
           if (u.order?.type === 'build') {
             const b = z.buildings.find((b) => b.id === u.order.id);
             if (b && b.progress < 4) {
@@ -1616,17 +1753,28 @@
               journey.points.push({ x: u.x, y: u.y });
           }
           if (this.gatheringUnit(u)) {
-            const nearby = z.enemies
-              .filter(
-                (e) =>
-                  e.hp > 0 &&
-                  !e.neutral &&
-                  !e.returning &&
-                  dist(u, e) <= R.companionJudgment.nearThreatRadius,
-              )
-              .sort((a, b) => dist(u, a) - dist(u, b))[0];
-            if (nearby && this.companionCautiousCombat(u, nearby, living, dt)) continue;
-            if (!nearby) this.clearCompanionJudgment(u);
+            const enemy = this.gatheringEncounter(u);
+            if (enemy) {
+              if (this.companionCautiousCombat(u, enemy, living, dt)) {
+                if (u.order.type === 'deposit') {
+                  const trip = depositTrips.get(u);
+                  if (trip?.site) {
+                    deliveryAvoidance.set(u, {
+                      zone: this.zoneId,
+                      point: { x: trip.site.x, y: trip.site.y },
+                      until: this.s.time + R.gatheringTravel.retryDestinationSeconds,
+                    });
+                    depositTrips.delete(u);
+                  }
+                }
+              } else {
+                this.engage(enemy);
+                this._tacticalPartyTargets.set(u.id, enemy.id);
+                this.companionFight(u, enemy, living, dt);
+              }
+              continue;
+            }
+            this.clearCompanionJudgment(u);
             if (this.returnFromDelivery(u, living, dt)) continue;
           }
           if (u.order?.type === 'gather') {
@@ -1643,18 +1791,26 @@
                     this.ashMovementFactor(u),
                   dt,
                   45,
-                  !!u.order.cautious,
+                  false,
                 );
               else {
-                const amount = Math.min(n.amount, 12 * dt);
+                const amount = Math.min(
+                  n.amount,
+                  R.gatheringTravel.harvestPerSecond * dt,
+                  Math.max(0, this.gatheringCapacity() - u.carry),
+                );
                 n.amount = Math.max(0, n.amount - amount);
                 u.carry += amount;
                 this.s.gathered[this.definition().id] =
                   (this.s.gathered[this.definition().id] || 0) + amount;
               }
-              if (u.carry >= 35 || n.amount <= 0)
+              if (this.s.gatheringTarget?.id === n.id && n.amount <= 0)
+                this.s.gatheringTarget = null;
+              if (u.carry >= this.gatheringCapacity() - 1e-7 || n.amount <= 0)
                 u.order = { type: 'deposit', id: n.id, group: n.resourceGroup };
-            } else u.order = { type: 'deposit', id: u.order.id, group: u.order.group };
+            } else
+              u.order =
+                u.carry > 1e-7 ? { type: 'deposit', id: u.order.id, group: u.order.group } : null;
             continue;
           }
           if (u.order?.type === 'deposit') {
@@ -1666,16 +1822,17 @@
               continue;
             }
             if (dist(u, deposit) > 130)
-              this.followCompanion(u, deposit, this.laborMoveSpeed(u), dt, 110, true);
+              this.followCompanion(u, deposit, this.laborMoveSpeed(u), dt, 110);
             else {
-              const payout = this.resourceDepositReward(u.carry);
-              this.grant(payout, 0);
-              u.carry = Math.max(0, u.carry - payout);
-              u.order = {
-                ...u.order,
-                type: 'gather',
-                journey: { returning: true, points: journey.points.slice().reverse() },
-              };
+              this.depositTributeCargo([u]);
+              const source = z.nodes.find((n) => n.id === u.order.id && n.amount > 0);
+              u.order = source
+                ? {
+                    ...u.order,
+                    type: 'gather',
+                    journey: { returning: true, points: journey.points.slice().reverse() },
+                  }
+                : null;
               depositTrips.delete(u);
               this.clearCompanionTravel(u);
             }
@@ -1805,111 +1962,7 @@
           }
           if (this.companionCautiousCombat(u, e, living, dt)) continue;
           claimed.add(e.id);
-          this._tacticalPartyTargets.set(u.id, e.id);
-          if (u.type === 'pet') {
-            this.updatePetCombat(u, e, living, dt);
-            continue;
-          }
-          if (u.type === 'archer') {
-            const d = dist(u, e),
-              visible = this.line(u, e),
-              anchor = this.partyFollowPoint(u, living);
-            if (d < 150) {
-              // Veteran Rangers can cover a retreat with their existing Triple Shot.
-              // Still move this frame; never trade the fallback for standing fire.
-              this.companionCoveringShot(u, e);
-              this.follow(
-                u,
-                this.archerFallbackPoint(u, e, living),
-                this.companionRallyMoveSpeed(u, 270) *
-                  this.slowMovementFactor(u) *
-                  this.mireBogMovementFactor(u) *
-                  this.ashMovementFactor(u),
-                dt,
-                35,
-              );
-              continue;
-            }
-            if (d > 280 || !visible) {
-              this.follow(
-                u,
-                this.archerCombatPoint(u, e, living),
-                this.companionRallyMoveSpeed(u, 260) *
-                  this.slowMovementFactor(u) *
-                  this.mireBogMovementFactor(u) *
-                  this.ashMovementFactor(u),
-                dt,
-                35,
-              );
-              continue;
-            }
-            if (dist(u, anchor) > 70 && dist(anchor, e) <= 280 && this.line(anchor, e)) {
-              this.follow(
-                u,
-                anchor,
-                this.companionRallyMoveSpeed(u, 245) *
-                  this.slowMovementFactor(u) *
-                  this.mireBogMovementFactor(u) *
-                  this.ashMovementFactor(u),
-                dt,
-                35,
-              );
-              continue;
-            }
-            if (this.companionTrySkill(u, e)) continue;
-            if (u.cd <= 0) {
-              u.cd = 0.85 / this.companionRallyAttackSpeed(u);
-              const shot = Math.max(1, d);
-              this.s.projectiles.push({
-                id: 'projectile-' + this.s.nextId++,
-                x: u.x,
-                y: u.y,
-                dx: (e.x - u.x) / shot,
-                dy: (e.y - u.y) / shot,
-                target: e.id,
-                damage: this.companionAttackDamage(u),
-                source: u.id,
-                speed: 450,
-                style: 'arrow',
-              });
-              this.event('projectileLaunch', {
-                actor: 'companion',
-                role: 'archer',
-                source: u.id,
-                style: 'arrow',
-                x: u.x,
-                y: u.y,
-                target: e.id,
-              });
-            }
-            continue;
-          }
-          if (u.type !== 'soldier') continue;
-          if (this.line(u, e) && dist(u, e) <= 185 && this.companionTrySkill(u, e)) continue;
-          if (dist(u, e) > 65 || !this.line(u, e))
-            this.follow(
-              u,
-              e,
-              this.companionRallyMoveSpeed(u, 250) *
-                this.slowMovementFactor(u) *
-                this.mireBogMovementFactor(u) *
-                this.ashMovementFactor(u),
-              dt,
-              this.line(u, e) ? 55 : 0,
-            );
-          else if (u.cd <= 0) {
-            u.cd = 0.85 / this.companionRallyAttackSpeed(u);
-            if (this.damage(e, this.companionAttackDamage(u), u.id))
-              this.event('melee', {
-                actor: 'companion',
-                role: 'soldier',
-                source: u.id,
-                weapon: 'sword',
-                x: e.x,
-                y: e.y,
-                target: e.id,
-              });
-          }
+          this.companionFight(u, e, living, dt);
         }
         const finishRecruit = (b) => {
           if (b.queue > 0) {

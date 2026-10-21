@@ -106,8 +106,9 @@ module.exports = function replay(C, mode = 'normal', cls = 'paladin', succession
   const depositGold = c.hero.gold;
   c.updateParty(0.01);
   assert.equal(c.hero.gold, depositGold + 35);
-  assert(Math.abs(laborer.carry - 0.4) < 1e-9);
-  record('labor-deposit-retains-fraction');
+  assert.equal(laborer.carry, 0);
+  assert(Math.abs(c.s.tributeRemainder - 0.4) < 1e-9);
+  record('labor-deposit-pools-fraction');
   const fare = C.data.regions[0].fare;
   paid(fare, () => c.travel(1));
   paid(0, () => c.travel(-1));

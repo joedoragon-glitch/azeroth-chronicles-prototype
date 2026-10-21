@@ -87,6 +87,9 @@
         quests: {},
         discovered: {},
         gathered: {},
+        tributeRemainder: 0,
+        gatheringTarget: null,
+        resourceExpeditions: [],
         fountains: {},
         zones: {},
         loot: [],
@@ -2407,7 +2410,7 @@
       }
       this.checkMinis();
       const n = this.zone().nodes.find((n) => n.id === nodeId),
-        labor = this.availableLabor();
+        labor = this.availableGatherers();
       if (n?.tribute && !this.tributeKnown(n)) {
         this.say('That tribute cache has not been located by your expedition yet.');
         return false;
@@ -2417,10 +2420,13 @@
         return false;
       }
       if (!n || n.amount <= 0 || !labor.length) {
-        this.say('At least one idle living troop and an unexhausted deposit are required.');
+        this.say(
+          'An idle Soldier, Ranger or Little Treasurer and an unexhausted tribute site are required.',
+        );
         return false;
       }
       this.s.recallActive = false;
+      this.s.gatheringTarget = { zone: this.zoneId, id: n.id };
       for (const u of labor) {
         this.clearPartyCharge(u);
         this._companionCharges?.delete(u.id);
@@ -2433,7 +2439,7 @@
           (labor.length === 1 ? '' : 's') +
           ' assigned to recover Dark Lord Tribute at ' +
           (n.siteName || n.name) +
-          '. They will deposit it and continue through other known tribute sites.',
+          '. Escort them along the waypoint. They will fight or withdraw when needed, then resume this site.',
       );
       return true;
     }
@@ -2459,6 +2465,7 @@
                   R.dungeonSpace?.[zone]?.exit || { x: 160, y: 240 }
                 : { x: D.towns[i][0], y: D.towns[i][1] });
       this.clearPartyCharges();
+      this.s.gatheringTarget = null;
       this.tacticalClearThreat(); // Transient observations never survive zone travel.
       this.tacticalClearBurst();
       this.tacticalClearRogueRegroup();
@@ -2680,6 +2687,8 @@
             return false;
           }
           return this.rescue(npc.family);
+        case 'supplier':
+          return this.unloadCompanyTribute(npc) !== null;
         case 'rest':
           return this.rest();
         case 'appointment':
@@ -3518,6 +3527,7 @@
       this.advancePartyChargeClock(dt);
       dt = Math.min(dt, 0.1);
       this.s.time += dt;
+      this.advanceResourceExpeditions();
       this.s.mercyTime = Math.max(0, (this.s.mercyTime || 0) - dt);
       if (this.s.mercyTime < 1e-9) this.s.mercyTime = 0;
       this.s.restCooldown = Math.max(0, (this.s.restCooldown || 0) - dt);
@@ -6781,6 +6791,11 @@
   const Treasury =
     typeof PrototypeTreasury !== 'undefined' ? PrototypeTreasury : require('./treasury.js');
   Treasury.install(Campaign, { D, R });
+  const Expeditions =
+    typeof PrototypeExpeditions !== 'undefined'
+      ? PrototypeExpeditions
+      : require('./expeditions.js');
+  Expeditions.install(Campaign, { D, R });
   const Rewards =
     typeof PrototypeRewards !== 'undefined' ? PrototypeRewards : require('./rewards.js');
   Rewards.install(Campaign, { D, R, dungeonIds });
