@@ -33,6 +33,21 @@
     'Customize keyboard': 'Personalizar teclado',
     'Touch and mouse options': 'Opciones táctiles y de ratón',
     'Screen and performance': 'Pantalla y rendimiento',
+    'Gather resources': 'Recolectar recursos',
+    'Story guide': 'Guía de la historia',
+    'All pending quests': 'Todas las misiones pendientes',
+    'Completed quests': 'Misiones completadas',
+    'No pending quests': 'No hay misiones pendientes',
+    'No completed quests': 'No hay misiones completadas',
+    'Clear waypoint': 'Quitar ruta',
+    'Tap a pending quest to track its next objective. The waypoint remains during combat. Rewards are delivered automatically.':
+      'Toca una misión pendiente para seguir su próximo objetivo. La ruta permanece durante el combate. Las recompensas se entregan automáticamente.',
+    'Rescued specialists': 'Especialistas rescatados',
+    'Build in the field, outside dungeons': 'Construye en el campo, fuera de las mazmorras',
+    'An idle active Soldier or Ranger is needed':
+      'Se necesita un soldado o explorador activo sin tarea',
+    'Choose tribute for idle companions to gather':
+      'Elige el tributo que recogerán los compañeros sin tarea',
     'Sound settings': 'Ajustes de sonido',
     'Save and game management': 'Guardar y gestionar partidas',
     'Save run': 'Guardar partida',
@@ -378,6 +393,10 @@
     if (Object.prototype.hasOwnProperty.call(spanishText, piece)) return spanishText[piece];
     if (/^Recruit (Soldier|Ranger) · \d+ crowns/.test(piece))
       return piece.replace('Recruit ', 'Reclutar ').replace('crowns', 'coronas');
+    if (/^Treat wounded companions/.test(piece))
+      return piece
+        .replace('Treat wounded companions', 'Curar compañeros heridos')
+        .replace('crowns', 'coronas');
     if (/^Recover fallen companion/.test(piece))
       return piece
         .replace('Recover fallen companion', 'Recuperar compañero caído')
@@ -459,6 +478,7 @@
     focused = true,
     paused = false,
     charge = null,
+    queuedCharges = new Map(),
     chargeClockGame = null,
     gateDismissed = false,
     criticalNotices = {
@@ -658,7 +678,8 @@
     persistProfile();
   }
   let started = loaded;
-  let storyRouteActive = false;
+  let storyRouteActive = false,
+    questGuide = null;
   const viewport = { width: innerWidth, height: innerHeight };
   const renderer = PrototypeRenderer.create({
     canvas: viewport,
@@ -666,9 +687,14 @@
     getGame: () => game,
     platform,
     chargePresentation,
+    queuedChargePresentation,
     isPaused: () => paused || !focused || document.hidden,
     getGuideRoute: () =>
-      storyRouteActive && game.hero.order?.type === 'move' ? game.hero.path : null,
+      questGuide?.route?.length
+        ? questGuide.route
+        : storyRouteActive && game.hero.order?.type === 'move'
+          ? game.hero.path
+          : null,
     Campaign,
     PrototypeVisuals,
     PrototypeCombatVisuals,
@@ -732,6 +758,19 @@
     updateHUD,
     labelVisible: worldLabelVisible,
     chargePresentation,
+    queuedChargePresentation,
+    get trackedWaypoint() {
+      return questGuide
+        ? {
+            id: questGuide.id,
+            zone: questGuide.zone,
+            points: questGuide.route.map((p) => ({ ...p })),
+          }
+        : null;
+    },
+    get trackedQuest() {
+      return questGuide?.id || null;
+    },
     get profile() {
       return profile;
     },
@@ -942,6 +981,7 @@
   function clearInput() {
     syncPartyChargeClock();
     if (typeof Sprint !== 'undefined') Sprint.release();
+    queuedCharges.clear();
     cancelCharge();
     cancelTargetPress();
     keys = {};
@@ -1603,31 +1643,40 @@
       cost = game.barracksBuildCost(),
       costLabel = cost ? cost + ' crowns' : 'FREE';
     openMenu('Adventure menu', '', [
+      action(
+        'Establish Basic Barracks · ' + costLabel,
+        () => {
+          if (game.build()) closeMenu();
+        },
+        !canBuild
+          ? game.isDungeon()
+            ? 'Build in the field, outside dungeons'
+            : 'An idle active Soldier or Ranger is needed'
+          : cost === 0
+            ? 'FIRST BARRACKS FREE · Creates a nearby companion recovery base'
+            : rank >= 4
+              ? 'One companion builds a Basic camp · optional Full upgrade costs ' +
+                game.barracksUpgradeCost() +
+                ' crowns'
+              : 'One companion builds a recovery base; Full upgrade unlocks at Expedition 4',
+        !canBuild || game.hero.gold < cost,
+      ),
+      action('Screen and performance', () => platformMenu(openMain)),
       ...(appUpdateReady ? [action('Install available game update', updateApp)] : []),
       action('Map and travel routes', showMap),
+      ...(questGuide
+        ? [
+            action('Clear waypoint', () => {
+              questGuide = null;
+              closeMenu();
+            }),
+          ]
+        : []),
       action('Quest journal', () => quests(false)),
       action('Announcements', () => announcements(openMain)),
       action('Inventory and support', inventory),
       action('Skill journal', () => skillBook(openMain), 'Tap / charged effects and cooldowns'),
       action('Talents', () => talents(openMain)),
-      ...(canBuild
-        ? [
-            action(
-              'Establish Basic Barracks · ' + costLabel,
-              () => {
-                if (game.build()) closeMenu();
-              },
-              cost === 0
-                ? 'FIRST BARRACKS FREE · Creates a nearby companion recovery base'
-                : rank >= 4
-                  ? 'One companion builds a Basic camp · optional Full upgrade costs ' +
-                    game.barracksUpgradeCost() +
-                    ' crowns'
-                  : 'One companion builds a recovery base; Full upgrade unlocks at Expedition 4',
-              game.hero.gold < cost,
-            ),
-          ]
-        : []),
       ...(game.s.phase === 'awakening'
         ? [
             action(
@@ -1922,6 +1971,8 @@
   };
 
   function recallSquad() {
+    queuedCharges.clear();
+    if (charge?.autoRelease) cancelCharge();
     game.recallParty();
     updateHUD();
   }
@@ -1957,7 +2008,82 @@
     );
   }
 
-  function storyNavigate(destination, label) {
+  function updateQuestGuide(force = false) {
+    if (!questGuide) return;
+    if (
+      questGuide.campaign !== game ||
+      questGuide.hero !== game.hero ||
+      questGuide.deaths !== game.s.statistics.deaths ||
+      game.s.quests[questGuide.id]?.paid ||
+      game.s.quests[questGuide.id]?.done ||
+      game.s.quests[questGuide.id]?.closedByPeace
+    ) {
+      questGuide = null;
+      return;
+    }
+    while (
+      questGuide.route.length &&
+      Math.hypot(questGuide.route[0].x - game.hero.x, questGuide.route[0].y - game.hero.y) < 38
+    )
+      questGuide.route.shift();
+    if (!force && questGuide.zone === game.zoneId && game.s.time < questGuide.next) return;
+    questGuide.next = game.s.time + 1;
+    const target = questGuide.id ? game.questDestination(questGuide.id) : questGuide.destination;
+    if (!target || target.hp <= 0) {
+      questGuide.route = [];
+      return;
+    }
+    if (!questGuide.id && Math.hypot(target.x - game.hero.x, target.y - game.hero.y) < 90) {
+      questGuide = null;
+      return;
+    }
+    const moved =
+      questGuide.target &&
+      Math.hypot(target.x - questGuide.target.x, target.y - questGuide.target.y) > 60;
+    const displaced =
+      questGuide.origin &&
+      Math.hypot(game.hero.x - questGuide.origin.x, game.hero.y - questGuide.origin.y) > 100;
+    if (
+      !force &&
+      !moved &&
+      !displaced &&
+      (questGuide.route.length ||
+        Math.hypot(target.x - game.hero.x, target.y - game.hero.y) < 115) &&
+      questGuide.zone === game.zoneId &&
+      questGuide.target?.id === target.id
+    )
+      return;
+    const choice = game.navigationTarget(target);
+    questGuide.zone = game.zoneId;
+    questGuide.target = { id: target.id, x: target.x, y: target.y };
+    questGuide.origin = { x: game.hero.x, y: game.hero.y };
+    questGuide.route =
+      choice && Math.hypot(choice.point.x - game.hero.x, choice.point.y - game.hero.y) > 75
+        ? choice.path
+        : [];
+  }
+  function storyNavigate(destination, label, questId = null) {
+    if (questId) {
+      closeMenu();
+      storyRouteActive = false;
+      questGuide = {
+        id: questId,
+        campaign: game,
+        hero: game.hero,
+        deaths: game.s.statistics.deaths,
+        zone: null,
+        route: [],
+        next: 0,
+      };
+      updateQuestGuide(true);
+      status(
+        language === 'es'
+          ? 'Objetivo: ' + tr(label) + '. Sigue la ruta.'
+          : 'Tracking ' + label + '. Follow the waypoint.',
+      );
+      return;
+    }
+    questGuide = null;
     if (!destination || !Number.isFinite(destination.x) || !Number.isFinite(destination.y)) {
       status('Destination unavailable.');
       return;
@@ -1969,7 +2095,18 @@
     }
     closeMenu();
     if (PrototypeInput.requestMove(game, choice)) {
-      storyRouteActive = true;
+      storyRouteActive = false;
+      questGuide = {
+        id: null,
+        destination,
+        campaign: game,
+        hero: game.hero,
+        deaths: game.s.statistics.deaths,
+        zone: null,
+        route: [],
+        next: 0,
+      };
+      updateQuestGuide(true);
       status('Following path to ' + label + '.');
     } else status('Route unavailable. Try again nearby.');
   }
@@ -1997,6 +2134,7 @@
             return;
           }
           closeMenu();
+          questGuide=null;
           if (PrototypeInput.requestMove(game, latest.point)) {
             storyRouteActive = true;
             status('Walking to ' + selected.name + '.');
@@ -2424,6 +2562,19 @@
       return startChargeClock();
     return false;
   }
+  function queuedChargePresentation() {
+    return [...queuedCharges.values()].map((request) => ({
+      slot: request.slot,
+      ready: game.hero.cd[request.slot - 1] <= 0,
+      charging: charge === request && request.started !== null,
+      color:
+        PrototypeHeroPresentation.profile({
+          class: game.hero.class,
+          slot: request.slot,
+          charged: true,
+        })?.colors[0] || '#f6d77a',
+    }));
+  }
   function chargePresentation() {
     if (!charge) return null;
     syncChargeReady();
@@ -2554,14 +2705,16 @@
   function beginCharge(slot, source, pointerId = null) {
     const rank = game.hero.skills[slot - 1];
     if (!canChargeSlot(slot) || !activePlay() || !rank || game.peace) return false;
-    if (charge) cancelCharge();
     syncPartyChargeClock();
-    const queued = game.hero.cd[slot - 1] > 0;
-    charge = {
+    if (queuedCharges.has(slot)) return true;
+    const queued = game.hero.cd[slot - 1] > 0 || game.partyChargeRecovery(game.hero) > 0;
+    if (!queued && charge) cancelCharge(true, true);
+    const request = {
       slot,
       source,
       pointerId,
       queued,
+      autoRelease: queued,
       started: null,
       targetId: null,
       campaign: game,
@@ -2569,7 +2722,15 @@
       zone: game.zoneId,
       pressedAt: game.partyChargeNow(),
     };
-    if (!queued) startChargeClock();
+    if (queued) {
+      request.source = 'queued';
+      request.pointerId = null;
+      queuedCharges.set(slot, request);
+      if (!charge) charge = request;
+    } else {
+      charge = request;
+      startChargeClock();
+    }
     updateHUD();
     return true;
   }
@@ -2644,10 +2805,18 @@
       chargeFeedback('ready');
     }
   }
-  function releaseCharge(slot, source) {
+  function releaseCharge(slot, source, automatic = false) {
     if (!charge || charge.slot !== slot || charge.source !== source) return false;
     syncChargeReady();
     if (!charge) return false;
+    if (charge.autoRelease && !automatic) {
+      // A completed input during cooldown is one retained request. Detach it
+      // from pointer capture/key-up so natural contact release cannot discard it.
+      charge.source = 'queued';
+      charge.pointerId = null;
+      updateHUD();
+      return true;
+    }
     if (charge.started === null) {
       const quickTap =
           !charge.queued && game.partyChargeNow() - charge.pressedAt < chargeTapSeconds(),
@@ -2717,7 +2886,52 @@
     updateHUD();
     return cast;
   }
-  function cancelCharge(feedback = true) {
+  function selectQueuedCharge() {
+    for (const [slot, request] of queuedCharges)
+      if (
+        request.campaign !== game ||
+        request.unit !== game.hero ||
+        request.zone !== game.zoneId ||
+        game.hero.hp <= 0 ||
+        game.peace ||
+        !game.hero.skills[slot - 1] ||
+        game.hero.deathRollHeld ||
+        game.hero.keeperHeld ||
+        game._tacticalScatter?.has('hero')
+      )
+        queuedCharges.delete(slot);
+    if (charge?.autoRelease && !queuedCharges.has(charge.slot)) cancelCharge(false);
+    // A manual cast or a running charge keeps its normal preparation. Other
+    // skills retain independent requests and wait for their own cooldown.
+    if (charge && (!charge.autoRelease || charge.started !== null)) return;
+    const ready = [...queuedCharges.values()].find(
+      (request) => game.hero.cd[request.slot - 1] <= 0 && game.partyChargeRecovery(game.hero) <= 0,
+    );
+    if (ready) charge = ready;
+    else if (!charge) charge = queuedCharges.values().next().value || null;
+  }
+  function releaseQueuedCharge() {
+    if (!charge?.autoRelease || !activePlay()) return;
+    const state = chargePresentation();
+    if (!charge || !state || state.state === 'waiting' || state.state === 'charging') return;
+    const slot = charge.slot,
+      target = chargeNeedsTarget(slot) ? chargeTarget(slot, charge.targetId) : null;
+    // An automatic request can fire at a valid current target; it must not
+    // turn a later retreat into a new approach order.
+    if (
+      state.ready &&
+      chargeNeedsTarget(slot) &&
+      (!target ||
+        Math.hypot(target.x - game.hero.x, target.y - game.hero.y) > chargedTargetRange(slot) ||
+        !game.line(game.hero, target))
+    ) {
+      cancelCharge();
+      status('Target lost. Move closer.');
+      return;
+    }
+    releaseCharge(slot, charge.source, true);
+  }
+  function cancelCharge(feedback = true, preserveQueued = false) {
     if (!charge) return;
     if (
       feedback &&
@@ -2729,6 +2943,14 @@
     )
       chargeFeedback('cancel');
     charge.campaign.clearPartyCharge(charge.unit);
+    if (charge.autoRelease) {
+      if (preserveQueued) {
+        charge.started = null;
+        charge.avBuildup = charge.avRise = charge.avReady = false;
+        charge.targetId = null;
+        delete charge.encountersAtStart;
+      } else queuedCharges.delete(charge.slot);
+    }
     charge = null;
     if (started) updateHUD();
   }
@@ -3504,6 +3726,7 @@
             's for normal · hold ' +
             chargeSeconds().toFixed(2) +
             's for charged' +
+            ' · During cooldown, request once to auto-charge and cast when ready' +
             (manaEnabled
               ? ' · Charged cost ' + chargedManaPercent(slot) + '% max MP'
               : ' · charged cooldown ' + game.skillCooldown(slot, true).toFixed(1) + 's')
@@ -3542,7 +3765,7 @@
         ? 'OFF'
         : charging
           ? cast.state === 'waiting'
-            ? 'WAIT ' + cooldownText(cast.cooldown)
+            ? (language === 'es' ? 'COLA ' : 'QUEUED ') + cooldownText(cast.cooldown)
             : cast.state === 'interrupted'
               ? 'BROKEN'
               : cast.state === 'charging'
@@ -3556,13 +3779,15 @@
                       : cast.state === 'no-allies'
                         ? 'NO ALLIES'
                         : 'CHARGED'
-          : slot === 3 && h.class === 'paladin' && h.shieldStance > 0
-            ? 'SHIELD ' + cooldownText(h.shieldStance)
-            : !rank
-              ? 'Locked'
-              : h.cd[i] > 0
-                ? cooldownText(h.cd[i])
-                : skillKeys()[i];
+          : queuedCharges.has(slot)
+            ? (language === 'es' ? 'COLA ' : 'QUEUED ') + cooldownText(h.cd[i])
+            : slot === 3 && h.class === 'paladin' && h.shieldStance > 0
+              ? 'SHIELD ' + cooldownText(h.shieldStance)
+              : !rank
+                ? 'Locked'
+                : h.cd[i] > 0
+                  ? cooldownText(h.cd[i])
+                  : skillKeys()[i];
     }
     const n = nearestNPC();
     $('touch-interact-button').hidden = !n || !activePlay();
@@ -3674,6 +3899,8 @@
           order: !!movingHero.order,
         };
       game.tick(dt, { x, y, speedFactor });
+      selectQueuedCharge();
+      updateQuestGuide();
       syncChargeReady();
       // A held charged skill must not secretly resume after a damaging hit.
       // A genuine sub-0.2s tap is still an ordinary, immediate skill.
@@ -3687,6 +3914,7 @@
         status('Charged skill interrupted by damage.');
       }
       observeChargeFeedback();
+      releaseQueuedCharge();
       if (
         game.s.mode !== 'developer' &&
         (x || y || was.order) &&

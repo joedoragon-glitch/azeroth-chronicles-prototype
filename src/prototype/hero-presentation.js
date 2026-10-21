@@ -634,6 +634,30 @@
     }
     ctx.restore();
   }
+  function queued(ctx, screen, hero, requests) {
+    if (!requests?.length) return;
+    const p = screen(hero),
+      firstX = p.x - ((requests.length - 1) * 17) / 2;
+    ctx.save();
+    ctx.font = 'bold 9px system-ui';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (let i = 0; i < requests.length; i++) {
+      const request = requests[i],
+        x = firstX + i * 17,
+        y = p.y + 15;
+      ctx.fillStyle = request.ready ? request.color : '#14232de8';
+      ctx.strokeStyle = request.color;
+      ctx.lineWidth = request.charging ? 2 : 1;
+      ctx.beginPath();
+      ctx.arc(x, y, 6.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = request.ready ? '#14232d' : '#eee8dc';
+      ctx.fillText(String(request.slot), x, y + 0.5);
+    }
+    ctx.restore();
+  }
   function statuses(ctx, screen, game, width, height) {
     // Actual status lifetimes only; no guessed invulnerability or control windows.
     const now = game.s.time;
@@ -682,7 +706,18 @@
     }
     ctx.restore();
   }
-  const api = { catalog, profile, owns, queue, draw, basicFinisher, projectile, charge, statuses };
+  const api = {
+    catalog,
+    profile,
+    owns,
+    queue,
+    draw,
+    basicFinisher,
+    projectile,
+    charge,
+    queued,
+    statuses,
+  };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeHeroPresentation = api;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -1582,13 +1582,25 @@
   };
   // Cindermaw's Treasury is a volcanic den rather than the generic supply-room rectangle.
   // Shared Interior/Agriculture administration needs real storage, circulation and a substantial Inner Vault.
+  const treasuryEntry = {
+    exit: { x: 60, y: 80 },
+    spawn: { x: 100, y: 100 },
+    party: [
+      { x: 70, y: 70 },
+      { x: 100, y: 70 },
+      { x: 130, y: 70 },
+      { x: 70, y: 100 },
+      { x: 130, y: 100 },
+      { x: 70, y: 130 },
+    ],
+  };
   const treasuryArchitecture = {
     'supply-crown': {
       version: 2,
       walkable: [
         {
           id: 'entrance-cleft',
-          bounds: [70, 360, 70, 320],
+          bounds: [40, 360, 40, 320],
         },
         {
           id: 'roost-chamber',
@@ -1661,7 +1673,7 @@
       walkable: [
         {
           id: 'entry',
-          bounds: [70, 400, 70, 370],
+          bounds: [40, 400, 40, 370],
         },
         {
           id: 'hearth-room',
@@ -7238,6 +7250,7 @@
     supplyRooms,
     treasuryWalls,
     treasuryArchitecture,
+    treasuryEntry,
     treasuryCacheSpots,
     treasuryGuardFormations,
     treasuryDecor,

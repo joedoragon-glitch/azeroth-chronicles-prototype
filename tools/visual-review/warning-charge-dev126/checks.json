@@ -1,0 +1,86 @@
+{
+  "warnings": {
+    "faded": 51610,
+    "increased": 0,
+    "maxIncrease": 0,
+    "alphaRatio": 0.8426094094836857,
+    "fillOpacity": 0.8
+  },
+  "overlap": {
+    "impact": true,
+    "nextWarning": true,
+    "pure": true
+  },
+  "portrait": {
+    "width": 390,
+    "height": 844,
+    "fillOpacity": 0.8
+  },
+  "paintCost": {
+    "rows": [
+      {
+        "name": "before",
+        "msPerDraw": 19.45
+      },
+      {
+        "name": "after",
+        "msPerDraw": 4.8
+      },
+      {
+        "name": "before",
+        "msPerDraw": 5.2
+      },
+      {
+        "name": "after",
+        "msPerDraw": 19.15
+      }
+    ],
+    "scope": "Clean native phone canvas, no pixel interception/readback; static color alpha, same effect passes and surfaces. Host timings only."
+  },
+  "queued": [
+    {
+      "cls": "paladin",
+      "slot": 2,
+      "charged": true,
+      "at": 2087.39999999851
+    },
+    {
+      "cls": "mage",
+      "slot": 2,
+      "charged": true,
+      "at": 3301.5
+    },
+    {
+      "cls": "ranger",
+      "slot": 2,
+      "charged": true,
+      "at": 4551.5
+    }
+  ],
+  "otherSkillPreservesRequest": true,
+  "independentRequests": [
+    1,
+    2
+  ],
+  "visibleQueuedState": true,
+  "repeatDoesNotReset": true,
+  "recallCancels": true,
+  "menuCancels": true,
+  "retreatDoesNotChase": true,
+  "interruptionCancels": true,
+  "readyTapUnchanged": true,
+  "menuShortcuts": true,
+  "errors": [],
+  "reedport": {
+    "moved": 5,
+    "errors": []
+  },
+  "questNavigation": {
+    "combatPersists": true,
+    "clearsOnCompletion": true,
+    "treasuryTransition": true,
+    "initialPoints": 1,
+    "cacheCollectedCueRemoved": true,
+    "errors": []
+  }
+}

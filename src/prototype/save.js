@@ -18,13 +18,38 @@
         return null;
       const nodes = s.zones?.[s.zone]?.nodes;
       const node = Array.isArray(nodes) ? nodes.find((n) => n.id === u.order.id) : null;
-      return node
-        ? {
-            type: u.order.type,
-            id: node.id,
-            ...(node.resourceGroup ? { group: node.resourceGroup } : {}),
-          }
-        : null;
+      if (!node) return null;
+      const journey = u.order.journey;
+      const validJourney =
+        journey &&
+        typeof journey.returning === 'boolean' &&
+        Array.isArray(journey.points) &&
+        journey.points.length > 0 &&
+        journey.points.length <= 512 &&
+        journey.points.every(
+          (p) =>
+            p &&
+            Number.isFinite(p.x) &&
+            Number.isFinite(p.y) &&
+            p.x >= 0 &&
+            p.y >= 0 &&
+            p.x <= 10000 &&
+            p.y <= 10000,
+        );
+      return {
+        type: u.order.type,
+        id: node.id,
+        ...(u.order.cautious === true ? { cautious: true } : {}),
+        ...(node.resourceGroup ? { group: node.resourceGroup } : {}),
+        ...(validJourney
+          ? {
+              journey: {
+                returning: journey.returning,
+                points: journey.points.map((p) => ({ x: p.x, y: p.y })),
+              },
+            }
+          : {}),
+      };
     };
     class Save {
       snapshot() {

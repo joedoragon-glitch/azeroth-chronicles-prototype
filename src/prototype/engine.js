@@ -910,6 +910,85 @@
       else parts.push('The war is over; this place is safe.');
       return n.name + '. ' + parts.join(' ');
     }
+    questDestination(id) {
+      const q = this.questDefs().find((q) => q.id === id),
+        state = this.s.quests[id];
+      if (!q || state?.paid || state?.done || state?.closedByPeace) return null;
+      const z = this.zone(),
+        nearest = (list) => list.slice().sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0],
+        seen = (id) => !!this.s.discovered[q.region + ':' + id];
+      if (q.kind === 'barracks') return nearest(z.buildings.filter((b) => b.progress < 4)) || null;
+      let targetZone = q.region,
+        rescue = q.kind === 'rescue' ? q.target : null;
+      if (q.requiresRescues) rescue = q.requiresRescues.find((id) => !this.s.rescued[id]) || rescue;
+      if (rescue && !this.s.rescued[rescue] && this.boss(rescue)?.kind === 'dungeon')
+        targetZone = rescue;
+      if (q.kind === 'bundles')
+        targetZone = R.supplyRooms.find((r) => r.region === q.region)?.id || targetZone;
+      const currentRegion = this.definition().id;
+      if (this.isDungeon() && this.zoneId !== targetZone)
+        return z.npcs.find((n) => n.kind === 'exit') || null;
+      if (currentRegion !== q.region) {
+        const from = D.regions.findIndex((r) => r.id === currentRegion),
+          to = D.regions.findIndex((r) => r.id === q.region);
+        return (
+          z.npcs.find((n) => n.kind === 'transport' && n.direction === Math.sign(to - from)) ||
+          z.npcs.find((n) => n.kind === 'transport' && n.hub) ||
+          null
+        );
+      }
+      if (this.zoneId !== targetZone)
+        return z.npcs.find((n) => n.kind === 'dungeon' && n.family === targetZone) || null;
+      if (rescue && !this.s.rescued[rescue])
+        return (
+          (this.s.keys[rescue]
+            ? z.npcs.find((n) => n.kind === 'cage' && n.family === rescue)
+            : null) ||
+          nearest(z.enemies.filter((e) => e.type === 'boss' && e.family === rescue && e.hp > 0)) ||
+          z.npcs.find((n) => n.kind === 'cage' && n.family === rescue) ||
+          null
+        );
+      if (q.clear && !this.miniCleared(q.clear, q.region))
+        return z.npcs.find((n) => n.mini === q.clear) || null;
+      if (q.kind === 'bundles')
+        return (
+          nearest(z.npcs.filter((n) => n.kind === 'bundle' && !this.bundleCollected(n))) || null
+        );
+      if (q.kind === 'patrol')
+        return (
+          nearest(
+            z.enemies.filter(
+              (e) =>
+                e.type === 'mob' &&
+                !e.guard &&
+                !e.neutral &&
+                !e.summon &&
+                (e.hp > 0 || e.respawn > 0),
+            ),
+          ) || null
+        );
+      if (q.kind === 'night')
+        return (
+          (!seen('night-site') ? z.npcs.find((n) => n.id === 'night-site') : null) ||
+          nearest(
+            z.enemies.filter(
+              (e) => e.species === 'wraith' && e.nightOnly && (e.hp > 0 || e.respawn > 0),
+            ),
+          ) ||
+          z.npcs.find((n) => n.id === 'night-site') ||
+          null
+        );
+      if (q.kind === 'sites') {
+        const sites = z.npcs.filter((n) => q.sites.includes(n.id) && !seen(n.id));
+        if (q.sites.includes('port') && !seen('port')) {
+          const [x, y] = D.ports[D.regions.findIndex((r) => r.id === q.region)];
+          sites.push({ id: 'port', kind: 'landmark', x, y });
+        }
+        return nearest(sites) || null;
+      }
+      if (q.kind === 'barracks') return nearest(z.buildings.filter((b) => b.progress < 4)) || null;
+      return null;
+    }
     questProgress(q) {
       const p = this.s.quests[q.id],
         seen = (id) => !!this.s.discovered[q.region + ':' + id];
@@ -1145,6 +1224,11 @@
         layout = room && R.treasuryDecor?.[room.id],
         targetVersion = room?.id === 'supply-crown' ? 5 : room?.id === 'supply-highlands' ? 5 : 3;
       if (!room || !layout) return;
+      if (z.treasuryEntryVersion !== 1) {
+        const exit = z.npcs.find((n) => n.kind === 'exit');
+        if (exit) Object.assign(exit, R.treasuryEntry.exit);
+        z.treasuryEntryVersion = 1;
+      }
       if (z.treasuryVersion === targetVersion) {
         // Append only new nonblocking character-life details to historical
         // saves. Never rebuild the Treasury or reset caches, guards or captain.
@@ -2374,7 +2458,7 @@
         p =
           arrival ||
           (this.supplyRoom(zone)
-            ? { x: 125, y: 155 }
+            ? R.treasuryEntry.spawn
             : this.sideDungeon(zone)
               ? { x: 120, y: 150 }
               : dungeonIds.includes(zone)
@@ -2416,9 +2500,14 @@
         : p;
       const q = this.safe(landing.x, landing.y);
       Object.assign(this.hero, q);
+      let arrivalSlot = 0;
       for (const u of this.activeParty()) {
         this.clearCompanionJudgment(u);
-        Object.assign(u, this.safe(q.x + 40, q.y + 30));
+        const staging =
+          this.supplyRoom(zone) && !arrival
+            ? R.treasuryEntry.party[arrivalSlot++ % R.treasuryEntry.party.length]
+            : null;
+        Object.assign(u, this.safe(staging?.x ?? q.x + 40, staging?.y ?? q.y + 30));
         u.order = null;
         u.path = [];
       }

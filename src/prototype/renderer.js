@@ -331,6 +331,7 @@
     getGame,
     platform,
     chargePresentation,
+    queuedChargePresentation = () => [],
     isPaused,
     getGuideRoute = () => null,
     Campaign,
@@ -1862,6 +1863,11 @@
         ctx.lineTo(next.x, next.y);
       }
       ctx.stroke();
+      const end = screen(route.at(-1));
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.arc(end.x, end.y, 5, 0, Math.PI * 2);
+      ctx.stroke();
       ctx.restore();
     }
 
@@ -2116,8 +2122,6 @@
       if (!game.isDungeon())
         PrototypeVisuals.bridges(ctx, screen, i, optimized ? null : PrototypeMaterials);
       PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000);
-      // All warning footprints/outlines belong to the floor, below characters,
-      // companions, monsters and scenery. Floating cast captions render later.
       PrototypeCombatVisuals.ground(ctx, screen, game, 'underlay-cue', game.s.time);
       finishPhase('terrain');
       const boardCue = null,
@@ -2278,6 +2282,27 @@
         if (p.x < -180 || p.x > canvas.width + 180 || p.y < -180 || p.y > canvas.height + 180)
           continue;
         if (!e.interactionOnly) {
+          if (
+            e.renderKind === 'npc' &&
+            e.kind === 'bundle' &&
+            game.supplyRoom() &&
+            !game.bundleCollected(e)
+          ) {
+            ctx.save();
+            ctx.strokeStyle = '#e7d59aa8';
+            ctx.lineWidth = 1.4;
+            ctx.beginPath();
+            ctx.ellipse(p.x, p.y + 2, 18, 6, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y - 43);
+            ctx.lineTo(p.x + 4, p.y - 38);
+            ctx.lineTo(p.x, p.y - 33);
+            ctx.lineTo(p.x - 4, p.y - 38);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.restore();
+          }
           groundMarker(e, p);
           entityShadow(e, p);
           entityAura(e, p);
@@ -2619,6 +2644,7 @@
       drawVisualFx();
       heroArt?.statuses(ctx, screen, game, canvas.width, canvas.height);
       heroArt?.charge(ctx, screen, game.hero, chargePresentation(), reducedMotion());
+      heroArt?.queued(ctx, screen, game.hero, queuedChargePresentation());
       PrototypeCombatVisuals.enemySupportStatus?.(ctx, screen, game);
       PrototypeCombatVisuals.actorCues?.(ctx, screen, game, spriteHeight);
       targetGuidance();

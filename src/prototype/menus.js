@@ -964,34 +964,36 @@
         back,
       );
     }
+    function barracksRecoveryActions(refresh) {
+      const game = getGame(),
+        wounded = game.s.party.some((u) => u.hp > 0 && u.hp < u.maxHp),
+        fallen = game.s.party.some((u) => u.hp <= 0);
+      return [
+        action(
+          'Recover fallen companion · ' + game.companionRecoveryCost() + ' crowns',
+          () => {
+            getGame().recover();
+            refresh();
+          },
+          'Restores one fallen companion at full health',
+          !fallen || game.hero.gold < game.companionRecoveryCost(),
+        ),
+        action(
+          'Treat wounded companions · ' + game.companionTreatmentCost() + ' crowns',
+          () => {
+            getGame().treatCompanions();
+            refresh();
+          },
+          'Restores every living wounded companion to full health',
+          !wounded || game.hero.gold < game.companionTreatmentCost() || game.refugeThreat(),
+        ),
+      ];
+    }
     function barracksRecoveryMenu(b, back) {
-      const wounded = getGame().s.party.some((u) => u.hp > 0 && u.hp < u.maxHp),
-        fallen = getGame().s.party.some((u) => u.hp <= 0);
       openMenu(
         'Recovery',
         'Basic barracks recovery is available from Expedition Rank 1.',
-        [
-          action(
-            'Treat wounded companions · ' + getGame().companionTreatmentCost() + ' crowns',
-            () => {
-              getGame().treatCompanions();
-              barracksRecoveryMenu(b, back);
-            },
-            'Restores every living wounded companion to full health',
-            !wounded ||
-              getGame().hero.gold < getGame().companionTreatmentCost() ||
-              getGame().refugeThreat(),
-          ),
-          action(
-            'Recover fallen companion · ' + getGame().companionRecoveryCost() + ' crowns',
-            () => {
-              getGame().recover();
-              barracksRecoveryMenu(b, back);
-            },
-            'Restores one fallen companion at full health',
-            !fallen || getGame().hero.gold < getGame().companionRecoveryCost(),
-          ),
-        ],
+        barracksRecoveryActions(() => barracksRecoveryMenu(b, back)),
         back,
       );
     }
@@ -1287,26 +1289,25 @@
         back,
       );
     }
+    function barracksGatherAction(b, back) {
+      const unlocked = (getGame().s.expeditionRank || 1) >= 2;
+      return action(
+        'Gather resources',
+        () => barracksLaborMenu(b, back),
+        unlocked
+          ? 'Choose tribute for idle companions to gather'
+          : 'Rescue Mira and train Expedition to Rank 2',
+        !unlocked,
+      );
+    }
     function barracksOperationsMenu(b, back) {
-      const returnHere = () => barracksOperationsMenu(b, back),
-        rank = getGame().s.expeditionRank || 1;
+      const returnHere = () => barracksOperationsMenu(b, back);
       openMenu(
         'Operations',
         'Local objectives and expedition labor.',
         [
           action('Local objectives', () => quests(true, returnHere)),
-          rank >= 2
-            ? action(
-                'Resources & labor',
-                () => barracksLaborMenu(b, returnHere),
-                'Assign idle active troops · full barracks is a deposit point',
-              )
-            : action(
-                'Resources — Expedition 2',
-                () => {},
-                'Rescue Mira and train Expedition to Rank 2',
-                true,
-              ),
+          barracksGatherAction(b, returnHere),
         ],
         back,
       );
@@ -1448,6 +1449,14 @@
               ),
             ],
         baseActions = [
+          ...barracksRecoveryActions(returnHere),
+          barracksGatherAction(b, returnHere),
+          action(
+            'Rescued specialists',
+            () => barracksSpecialistMenu(b, returnHere),
+            (specialists.length ? specialists.length + ' available here · ' : '') +
+              regionalSpecialistBarracksDetail(),
+          ),
           ...(getGame().peace && !getGame().s.finalRestCompleted
             ? [
                 action(
@@ -1471,12 +1480,6 @@
             'Company',
             () => barracksCompanyMenu(b, returnHere),
             'Recruit · active group · recovery',
-          ),
-          action(
-            'Rescued specialists',
-            () => barracksSpecialistMenu(b, returnHere),
-            (specialists.length ? specialists.length + ' available here · ' : '') +
-              regionalSpecialistBarracksDetail(),
           ),
           action(
             'Operations',
@@ -1544,32 +1547,7 @@
           (getGame().s.challenge.succession
             ? 'Succession deaths never cost crowns; class loss is the penalty.'
             : 'Local death loss drops to 5%, including regional dungeons.'),
-        [
-          exp,
-          action(
-            'Skill journal',
-            () => skillBook(returnHere),
-            'Tap / charged effects and cooldowns',
-          ),
-          ...(tonic ? [tonic] : []),
-          ...respawnActions,
-          action(
-            'Company',
-            () => barracksCompanyMenu(b, returnHere),
-            'Recruit · active group · recovery',
-          ),
-          action(
-            'Rescued specialists',
-            () => barracksSpecialistMenu(b, returnHere),
-            (specialists.length ? specialists.length + ' available here · ' : '') +
-              regionalSpecialistBarracksDetail(),
-          ),
-          action(
-            'Operations',
-            () => barracksOperationsMenu(b, returnHere),
-            'Local objectives · resources',
-          ),
-        ],
+        baseActions,
         back,
       );
     }
@@ -1942,29 +1920,54 @@
         back,
       );
     }
-    function quests(atBoard, back = closeMenu) {
-      if (!atBoard) return storyJournal(back);
-      const local = atBoard
-        ? getGame()
-            .questDefs()
-            .filter((q) => q.region === getGame().definition().id)
-        : getGame().questDefs();
-      openMenu(
-        atBoard ? 'Local quests' : 'Quest journal',
-        atBoard
-          ? 'All local quests are already ACTIVE. Rewards are automatically delivered as soon as their objectives are completed.'
-          : 'All quests begin active automatically. Rewards are delivered immediately on completion; no return trip is required.',
-        local.map((q) => {
-          const p = getGame().s.quests[q.id],
-            reward = q.tutorial ? 'Tutorial' : q.gold + ' crowns / ' + q.xp + ' XP';
-          return action(
-            q.name +
-              ' · ' +
-              (p?.paid ? 'Complete' : p?.closedByPeace ? 'Resolved by peace' : 'ACTIVE'),
-            () => {},
-            q.objective + ' · ' + reward + ' · ' + getGame().questProgress(q),
+    function quests(atBoard, back = closeMenu, completed = false) {
+      const game = getGame(),
+        returnHere = () => quests(atBoard, back, completed),
+        local = game
+          .questDefs()
+          .filter(
+            (q) =>
+              (!atBoard || q.region === game.definition().id) &&
+              (completed
+                ? game.s.quests[q.id]?.paid || game.s.quests[q.id]?.closedByPeace
+                : !game.s.quests[q.id]?.paid && !game.s.quests[q.id]?.closedByPeace),
           );
-        }),
+      openMenu(
+        completed ? 'Completed quests' : atBoard ? 'Local quests' : 'Quest journal',
+        'Tap a pending quest to track its next objective. The waypoint remains during combat. Rewards are delivered automatically.',
+        [
+          ...(!completed ? [action('Story guide', () => storyJournal(returnHere))] : []),
+          ...local.map((q) =>
+            action(
+              q.name + (completed ? ' · Complete' : ' · ACTIVE'),
+              () => {
+                const destination = getGame().questDestination(q.id);
+                if (destination) storyNavigate(destination, q.name, q.id);
+                else
+                  status(
+                    q.kind === 'barracks'
+                      ? getGame().questProgress(q)
+                      : 'No destination is currently available. ' + q.objective,
+                  );
+              },
+              q.objective +
+                ' · ' +
+                (q.tutorial ? 'Tutorial' : q.gold + ' crowns / ' + q.xp + ' XP') +
+                ' · ' +
+                game.questProgress(q),
+              completed,
+            ),
+          ),
+          ...(!local.length
+            ? [action(completed ? 'No completed quests' : 'No pending quests', () => {}, '', true)]
+            : []),
+          ...(atBoard && !completed
+            ? [action('All pending quests', () => quests(false, returnHere))]
+            : []),
+          ...(!completed
+            ? [action('Completed quests', () => quests(atBoard, returnHere, true))]
+            : []),
+        ],
         back,
       );
     }

@@ -132,7 +132,7 @@ assert(g.s.recallActive);
 Object.assign(u, { x: g.hero.x + 50, y: g.hero.y });
 g.updateParty(0.1);
 assert(!g.s.recallActive);
-// Complete an escorted resource trip while a living hostile covers both endpoints.
+// Dispatch still works under escort; an enemy-held drop-off must not receive cargo.
 g.blocked = (x, y, zone, r = 15) => x < 40 + r || y < 40 + r || x > 3345 - r || y > 3345 - r;
 z.enemies = [enemy];
 Object.assign(enemy, { x: 550, y: 600, aggro: false });
@@ -147,16 +147,26 @@ u.order = null;
 assert(g.gather('job'));
 const escortedGold = g.hero.gold;
 let departed = false;
-for (let i = 0; i < 500 && u.order; i++) {
+for (let i = 0; i < 100; i++) {
   g.s.time += 0.05;
   g.updateParty(0.05);
   if (u.x > 500) departed = true;
+}
+assert.equal(g.hero.gold, escortedGold);
+assert(u.carry > 0);
+assert.equal(g.depositSite(u), null);
+// The owner clears the threat; the same retained job can deliver and return.
+enemy.hp = 0;
+g.s.time += 3;
+for (let i = 0; i < 500 && u.order; i++) {
+  g.s.time += 0.05;
+  g.updateParty(0.05);
 }
 assert(departed);
 assert.equal(u.order, null);
 assert.equal(z.nodes[0].amount, 0);
 assert(g.hero.gold > escortedGold);
-assert(enemy.hp > 0);
+assert.equal(enemy.hp, 0);
 // Restore the real map and complete a round trip with actual navigation.
 z.enemies = [];
 g.blocked = originalBlocked;

@@ -338,8 +338,8 @@
             target: e.id,
           });
       }
-      gatheringRouteLength(u, target) {
-        const path = this.companionRoute(u, target);
+      gatheringRouteLength(u, target, cautious = false) {
+        const path = this.companionRoute(u, target, cautious);
         if (!path.length) return Infinity;
         let length = 0,
           from = u;
@@ -773,6 +773,8 @@
       depositSite(u) {
         const z = this.isDungeon() ? this.s.zones[this.definition().id] : this.zone(),
           i = this.regionIndex(),
+          threats = this.gatheringThreats(),
+          safeSite = (p) => p && threats.every((e) => dist(p, e) >= e.r),
           sites = [
             ...(z?.npcs.filter((n) => n.kind === 'rest') || []),
             ...(this.isDungeon()
@@ -786,7 +788,9 @@
         if (
           cached?.zone === this.zoneId &&
           cached.until > this.s.time &&
-          (!cached.site || sites.some((p) => p.x === cached.site.x && p.y === cached.site.y))
+          (!cached.site ||
+            (safeSite(cached.site) &&
+              sites.some((p) => p.x === cached.site.x && p.y === cached.site.y)))
         )
           return cached.site;
         let site = null,
@@ -794,9 +798,9 @@
         const seen = new Set();
         for (const candidate of sites.sort((a, b) => dist(a, u) - dist(b, u))) {
           const key = candidate.x + ':' + candidate.y;
-          if (seen.has(key) || dist(candidate, u) >= best) continue;
+          if (!safeSite(candidate) || seen.has(key) || dist(candidate, u) >= best) continue;
           seen.add(key);
-          const length = this.gatheringRouteLength(u, candidate);
+          const length = this.gatheringRouteLength(u, candidate, true);
           if (length < best) {
             site = candidate;
             best = length;
@@ -808,6 +812,71 @@
           site,
         });
         return site;
+      }
+      laborMoveSpeed(u) {
+        return (
+          this.companionRallyMoveSpeed(u, 230) *
+          this.slowMovementFactor(u) *
+          this.mireBogMovementFactor(u) *
+          this.ashMovementFactor(u)
+        );
+      }
+      laborRegroup(u, living, dt) {
+        const point = this.companionRegroupPoint(
+          u,
+          living,
+          this.zone().enemies.filter((e) => e.hp > 0 && !e.neutral),
+        );
+        if (dist(u, point) > R.companionRecall.arrivalRadius)
+          this.followCompanion(
+            u,
+            point,
+            this.laborMoveSpeed(u),
+            dt,
+            R.companionRecall.arrivalRadius,
+            true,
+          );
+      }
+      resumeGathering(u) {
+        const z = this.zone(),
+          current = z.nodes.find(
+            (n) => n.id === u.order.id && n.amount > 0 && this.tributeKnown(n),
+          ),
+          next =
+            current ||
+            z.nodes
+              .filter(
+                (n) =>
+                  u.order.group &&
+                  n.resourceGroup === u.order.group &&
+                  n.amount > 0 &&
+                  this.tributeKnown(n) &&
+                  (!n.mini || this.peace || this.miniCleared(n.mini)),
+              )
+              .map((n) => ({ node: n, length: this.gatheringRouteLength(u, n, true) }))
+              .filter((row) => Number.isFinite(row.length))
+              .sort((a, b) => a.length - b.length)[0]?.node;
+        u.order = next
+          ? { type: 'gather', id: next.id, group: next.resourceGroup, cautious: true }
+          : null;
+        depositTrips.delete(u);
+        this.clearCompanionTravel(u);
+        if (!next) this.clearGatheringIntent(u);
+      }
+      returnFromDelivery(u, living, dt) {
+        const journey = u.order?.journey;
+        if (!journey?.returning) return false;
+        while (journey.points.length && dist(u, journey.points[0]) <= 8) journey.points.shift();
+        if (!journey.points.length) {
+          this.resumeGathering(u);
+          return true;
+        }
+        const point = journey.points[0],
+          threats = this.gatheringThreats();
+        if (this.companionTravelClear(u, point, threats))
+          this.followCompanion(u, point, this.laborMoveSpeed(u), dt, 3, true);
+        else this.laborRegroup(u, living, dt);
+        return true;
       }
       availableRangers(type) {
         const key = type === 'health' ? 'healCd' : 'manaCd';
@@ -1488,12 +1557,35 @@
             } else u.order = null;
             continue;
           }
+          if (u.order?.type === 'deposit') {
+            const journey = (u.order.journey ||= {
+                returning: false,
+                points: [{ x: u.x, y: u.y }],
+              }),
+              last = journey.points.at(-1);
+            if (last && dist(last, u) >= 20 && journey.points.length < 512)
+              journey.points.push({ x: u.x, y: u.y });
+          }
+          if (this.gatheringUnit(u)) {
+            const nearby = z.enemies
+              .filter(
+                (e) =>
+                  e.hp > 0 &&
+                  !e.neutral &&
+                  !e.returning &&
+                  dist(u, e) <= R.companionJudgment.nearThreatRadius,
+              )
+              .sort((a, b) => dist(u, a) - dist(u, b))[0];
+            if (nearby && this.companionCautiousCombat(u, nearby, living, dt)) continue;
+            if (!nearby) this.clearCompanionJudgment(u);
+            if (this.returnFromDelivery(u, living, dt)) continue;
+          }
           if (u.order?.type === 'gather') {
             this.gatheringCounterattack(u);
             const n = z.nodes.find((n) => n.id === u.order.id);
             if (n && n.amount > 0 && (!n.mini || this.peace || this.miniCleared(n.mini))) {
               if (dist(u, n) > 60)
-                this.follow(
+                this.followCompanion(
                   u,
                   n,
                   this.companionRallyMoveSpeed(u, 230) *
@@ -1501,6 +1593,8 @@
                     this.mireBogMovementFactor(u) *
                     this.ashMovementFactor(u),
                   dt,
+                  45,
+                  !!u.order.cautious,
                 );
               else {
                 const amount = Math.min(n.amount, 12 * dt);
@@ -1516,43 +1610,25 @@
           }
           if (u.order?.type === 'deposit') {
             this.gatheringCounterattack(u);
+            const journey = u.order.journey;
             const deposit = this.depositSite(u);
-            if (!deposit) continue;
+            if (!deposit) {
+              this.laborRegroup(u, living, dt);
+              continue;
+            }
             if (dist(u, deposit) > 130)
-              this.follow(
-                u,
-                deposit,
-                this.companionRallyMoveSpeed(u, 230) *
-                  this.slowMovementFactor(u) *
-                  this.mireBogMovementFactor(u) *
-                  this.ashMovementFactor(u),
-                dt,
-              );
+              this.followCompanion(u, deposit, this.laborMoveSpeed(u), dt, 110, true);
             else {
               const payout = this.resourceDepositReward(u.carry);
               this.grant(payout, 0);
               u.carry = Math.max(0, u.carry - payout);
-              const current = z.nodes.find(
-                  (n) => n.id === u.order.id && n.amount > 0 && this.tributeKnown(n),
-                ),
-                next =
-                  current ||
-                  z.nodes
-                    .filter(
-                      (n) =>
-                        u.order.group &&
-                        n.resourceGroup === u.order.group &&
-                        n.amount > 0 &&
-                        this.tributeKnown(n) &&
-                        (!n.mini || this.peace || this.miniCleared(n.mini)),
-                    )
-                    .map((n) => ({ node: n, length: this.gatheringRouteLength(u, n) }))
-                    .sort((a, b) => a.length - b.length || dist(a.node, u) - dist(b.node, u))[0]
-                    ?.node;
-              u.order = next ? { type: 'gather', id: next.id, group: next.resourceGroup } : null;
+              u.order = {
+                ...u.order,
+                type: 'gather',
+                journey: { returning: true, points: journey.points.slice().reverse() },
+              };
               depositTrips.delete(u);
               this.clearCompanionTravel(u);
-              if (!next) this.clearGatheringIntent(u);
             }
             continue;
           }
