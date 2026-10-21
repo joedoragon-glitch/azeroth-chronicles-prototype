@@ -203,13 +203,17 @@
         }
         return { first: a, sequence };
       }
-      startCaptainAttack(e, target) {
-        if (!dread(e)) return previous.startCaptainAttack.call(this, e, target);
+      startCaptainAttack(e, target, withdrawal = false) {
+        if (!dread(e)) return previous.startCaptainAttack.call(this, e, target, withdrawal);
         const plans = R.roomCaptains['supply-crown'].attacks,
           brood = this.captainOwnedSummons(e).length;
         let eligible = plans
           .map((p, i) => ({ p, i }))
-          .filter((x) => this.dreadEligible(e, target, x.i));
+          .filter(
+            (x) =>
+              this.dreadEligible(e, target, x.i) &&
+              (!withdrawal || this.enemyWithdrawalPlan(e, x.p, x.i)),
+          );
         if (!eligible.length) return false;
         let chosen;
         if (!e.captainOpeningSummon && brood === 0 && eligible.some((x) => x.i === 3)) {
