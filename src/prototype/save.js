@@ -61,6 +61,12 @@
         type: u.order.type,
         id: node.id,
         ...(u.order.cautious === true ? { cautious: true } : {}),
+        ...(u.order.scouting === true &&
+        s.zone === 'highlands' &&
+        node.hidden &&
+        node.concealedTribute
+          ? { scouting: true }
+          : {}),
         ...(node.resourceGroup ? { group: node.resourceGroup } : {}),
         ...(validJourney
           ? {
@@ -942,7 +948,11 @@
             (n) =>
               n.id === gathering.id &&
               n.amount > 0 &&
-              (!n.hidden || s.discovered[s.zone + ':tribute:' + n.tributeId]),
+              (!n.hidden ||
+                s.discovered[s.zone + ':tribute:' + n.tributeId] ||
+                (s.zone === 'highlands' &&
+                  n.concealedTribute &&
+                  s.party.some((u) => u.order?.id === n.id && u.order.scouting === true))),
           )
             ? { zone: s.zone, id: gathering.id }
             : null;

@@ -463,6 +463,58 @@
       },
     ],
   };
+  // Four different approaches; amounts remain owned by tributePlans.
+  const highlandsTribute = {
+    version: 1,
+    searchRadius: 48,
+    sites: [
+      {
+        id: 'ore-shipment',
+        x: 1740,
+        y: 480,
+        name: 'Northern ore convoy',
+        props: [
+          [-90, -60, 'ore-cart'],
+          [75, -55, 'supply-stack'],
+          [-100, 55, 'tool-rack'],
+        ],
+      },
+      {
+        id: 'stone-toll',
+        x: 2920,
+        y: 1260,
+        name: 'Eastern collector post',
+        props: [
+          [-80, -70, 'tax-post'],
+          [85, -60, 'sealed-crown-consignment'],
+          [90, 75, 'ore-cart'],
+        ],
+      },
+      {
+        id: 'timber-toll',
+        x: 740,
+        y: 2710,
+        name: 'Western pine hollow',
+        props: [
+          [-85, -65, 'highland-rock'],
+          [80, -55, 'pine'],
+          [-95, 70, 'fallen-log'],
+        ],
+      },
+      {
+        id: 'ogre-cache',
+        x: 1860,
+        y: 2900,
+        name: 'Southern levy hideaway',
+        props: [
+          [-95, -75, 'highland-rock'],
+          [90, -50, 'dead-tree'],
+          [95, 80, 'stolen-goods'],
+        ],
+      },
+    ],
+    woodlandPatrol: { from: [500, 650], to: [740, 2530] },
+  };
   // Field-boss compounds sit away from the main town approach instead of sharing the central traffic band.
   const fieldBossCenters = [
     [760, 1750],
@@ -7422,6 +7474,7 @@
     tributeTotal,
     legacyResourceTotals,
     tributePlans,
+    highlandsTribute,
     miniPlans,
     expeditions,
     cinderInspection: {

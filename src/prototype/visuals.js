@@ -15673,7 +15673,36 @@
       ctx.stroke();
     }
     function craftedNode() {
-      if (e.tribute || e.icon === '🪙') {
+      if (e.tribute && e.concealedTribute) {
+        // Located buried stores retain their concealment, rather than an open coin chest.
+        oval(0, 10, 24, 7, '#655f46');
+        softRect(-16, -3, 32, 15, '#6e6145', 3);
+        softRect(-17, -7, 34, 7, '#89764f', 2);
+        for (const x of [-11, 10]) rect(x, -6, 3, 15, '#797c65');
+        rect(-3, -1, 6, 6, '#b29a63');
+        poly(
+          [
+            [-24, 10],
+            [-12, 5],
+            [0, 12],
+            [14, 6],
+            [25, 11],
+            [10, 16],
+            [-12, 16],
+          ],
+          '#77714e',
+        );
+        for (const x of [-20, 17])
+          line(
+            [
+              [x, 12],
+              [x - 3, 3],
+              [x + 1, 8],
+            ],
+            '#73845c',
+            1.4,
+          );
+      } else if (e.tribute || e.icon === '🪙') {
         chest(true, 0.9);
       } else if (e.icon === '🪵') craftedDecoration('woodpile');
       else if (e.icon === '🧺') basketBody();
