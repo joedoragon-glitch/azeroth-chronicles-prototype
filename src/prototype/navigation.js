@@ -1027,17 +1027,21 @@
               thornTrail: i,
             });
         }
-        if (!z.npcs.some((n) => n.id === 'thorn-local-report')) {
-          const p = this.safe(900, 850, 'vale');
-          z.npcs.push({
-            id: 'thorn-local-report',
-            kind: 'patrol-report',
-            name: 'Orchard trail witness',
-            ...p,
-            icon: '🧑',
-            thornReport: true,
-          });
+        let witness = z.npcs.find((n) => n.id === 'thorn-local-report');
+        if (!witness) {
+          z.npcs.push(
+            (witness = {
+              id: 'thorn-local-report',
+              kind: 'patrol-report',
+              name: 'Orchard trail witness',
+              icon: '🧑',
+              thornReport: true,
+            }),
+          );
         }
+        // Open western road shoulder: clear of the hamlet roofs and lantern.
+        // Reposition the same resident on old saves as well as fresh campaigns.
+        Object.assign(witness, this.safe(780, 740, 'vale'));
       }
       thornReport(concise = false) {
         if (this.s.rescued.thorn) return 'Mira is free. Find her teaching in Millhaven.';
