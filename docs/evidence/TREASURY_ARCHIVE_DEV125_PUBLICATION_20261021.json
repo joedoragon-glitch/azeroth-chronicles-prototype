@@ -1,0 +1,121 @@
+{
+  "version": "0.9.1+snapshot.dev.125",
+  "pr": 361,
+  "merge": "6b5948f3161387707087571581ea40b82c8247ed",
+  "package_only_run": 39546920121,
+  "verified_at": "2026-10-21T04:59:07.377719+00:00",
+  "files": [
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "06258d86abcb7f9584b0b11ee0c2b3751554d0fc105afbf01b85d844bbcbb105"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 296,
+      "sha256": "861ea073e23b613ba0bd8409146a973dc3013a1d654f3912e4bbbb0be38daaa8"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "match": true,
+      "bytes": 211369,
+      "sha256": "310d7750e5ec8fca37043ee2f361f771468e269df0e01d28ec519c3d669b3454"
+    },
+    {
+      "path": "src/prototype/navigation.js",
+      "match": true,
+      "bytes": 48015,
+      "sha256": "47e5227067990903c419f42fc649eed49c9b6c0b842991883b00d27529899878"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 258989,
+      "sha256": "bb574c283c694a838d6088a5a68bb4ac1db9c3fbc577b6c6f748b50331115e79"
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "match": true,
+      "bytes": 101450,
+      "sha256": "2a92ee40114889b0e33a97d0bd261f3a49736c4fe304210d989bed7a1acf930f"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "match": true,
+      "bytes": 498064,
+      "sha256": "162f67fc40e39db5f0199bb87d96854624e2ab963bbf4f7e7d4d02417b22fa6e"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20703,
+      "sha256": "f277639f7a2a67e64964b53166b50fc72bae10ce1fa99a72b710b2e92b21e166"
+    },
+    {
+      "path": "index.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "phone.html",
+      "match": true,
+      "bytes": 5490,
+      "sha256": "6d6fe5990cccba9b450925b101e959acd1de0f04735bfb920147dc89db783eb8"
+    },
+    {
+      "path": "prototype.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "src/prototype/app.js",
+      "match": true,
+      "bytes": 141550,
+      "sha256": "ac0aba76dfeb7ca24718726246bf02e3a74c7c4912aeafb6ab5fcbcedc549080"
+    },
+    {
+      "path": "src/prototype/fortifications.js",
+      "match": true,
+      "bytes": 10190,
+      "sha256": "c38423fe37b196372eed023324c175bbf9ca2cf15d524db480b3d81b52749b8f"
+    },
+    {
+      "path": "src/prototype/world.js",
+      "match": true,
+      "bytes": 185538,
+      "sha256": "0e14af042fb5c41dfef0d3bf67b7d27a930adc90659a7fa570295602a5ab6835"
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "match": true,
+      "bytes": 74972,
+      "sha256": "ef388e4b1278e9b2b6d0196e7819c27681ccc2a282b05e7ae8a3f84902bcec7e"
+    }
+  ],
+  "all_match": true,
+  "checks": [
+    "Archive lab/study and lower hall crossing, restored-save input, retained partitions and outer walls",
+    "Static Archive floor audit: 280 old false blocks to zero among 52076 clear samples; footprint identical",
+    "All-four treasury guards/captains, mitigation/piercing, range, flight, wall permissions and restore",
+    "Existing shared fort suite: real AI aim, contact/dodge, fixed landing and footprint",
+    "Neri voluntary repair tour, services, old-save restore, TRUE absence/return and existing Keeper suite",
+    "Necessary native phone startup/behavior captures, no JavaScript errors",
+    "Build/generated syntax and changed-source formatting; no broad CI"
+  ],
+  "scope": "Lower Archive floor join, full existing fort bonuses for four treasuries and Neri restoration continuity; lighting and unapproved main-dungeon coverage unchanged",
+  "live_phone_crossing": {
+    "x": 1010,
+    "y": 1200,
+    "outerWall": true,
+    "partition": true
+  },
+  "live_phone_startup": {
+    "version": "0.9.1+snapshot.dev.125",
+    "errors": [],
+    "passed": true
+  }
+}
