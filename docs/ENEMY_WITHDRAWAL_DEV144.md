@@ -8,6 +8,15 @@ Selection filters existing plans, retaining native weights, eligibility, repeats
 
 No new skills, balance tables, health thresholds, damage, cooldown durations, persistent retreat mode, spawn/home changes or save schema. This does not guarantee survival or certify owner-device comfort/FPS.
 
-## Checkpoint
+## Validation
 
-Implementation prepared; 61 focused withdrawal scenarios pass. Native Rogue/healing/captain/boss regressions, phone startup and build checks are next. Publication pending. The normal release workflow is temporarily held on this candidate so only the owner-authorized package publisher can run on merge; restoration follows successful live-byte verification. No broad CI.
+- 61 focused withdrawal scenarios pass: twelve ordinary/ringleader ranged roles; five captain repertoires; both forms of eleven bosses; actual warning/release and travel; support and leader healing priority; native recovery before Rogue; cooldown/Silence/cover/range/contact gates; normal backpedal shots; arrival, dead support, escape, death and restore cleanup.
+- Existing Rogue integration passes all 16 integrated checks, including all basic/signature effect families, dodge/cover and lifecycle; existing mobile Rogue casting and Slow/cooldown checks pass.
+- Existing 18 real Thornfang retreat pilots pass, retaining escape, fatal recovery receipts and Developer immortality.
+- Phone shell starts dev.144 without JavaScript exceptions; actual enemy updates prioritize native healing, then release a covering projectile while continuing retreat. Local build/generated syntax and changed-source formatting pass.
+
+Four older suites also fail on an isolated unchanged dev.143 checkout at exactly the same assertions: `night-ringleader-rogue` expects obsolete night HP escalation; `enemy-support-healing` expects inherited Nightmare night scaling; `snapshot-dreadmaw` fails its historical Rogue-rules hash; `cindermaw-ministry` assumes a Cordon state absent in its baseline fixture. No unrelated rules or fixtures changed to force those suites green. Current focused cases cover the affected withdrawal/healing choices directly. No broad CI or device matrix.
+
+## Publication checkpoint
+
+Implementation checked; PR #380. Package-only publication and exact live-byte verification are next. The normal release workflow is temporarily held on this candidate so only the owner-authorized package publisher can run on merge; restoration follows successful live-byte verification. No broad CI.
