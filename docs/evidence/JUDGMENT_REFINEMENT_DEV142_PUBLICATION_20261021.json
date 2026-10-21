@@ -1,0 +1,85 @@
+{
+  "version": "0.9.1+snapshot.dev.142",
+  "pr": 378,
+  "mergeCommit": "6dbc66d44d3670e20a76ef382fa64e7c303cda55",
+  "candidateCommit": "a2a2ff24582b7dc03e98ff91f9e2ca1967c0f582",
+  "candidateTree": "6a9f57654f9c98fa7c7d2a495f9937278f6c4b73",
+  "publisherRunId": 39672336793,
+  "publisherRunUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39672336793",
+  "site": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/",
+  "verifiedAt": "2026-10-21T20:41:37.869627+00:00",
+  "publishedBuild": "6dbc66d44d3670e20a76ef382fa64e7c303cda55",
+  "publicFiles": [
+    {
+      "path": "index.html",
+      "bytes": 5646,
+      "sha256": "1b0ca7a29dd6c5c4d57adb28e31a47b1a6c8b7a7845a3ed57872c46a4332ae20",
+      "matchesPrepared": true
+    },
+    {
+      "path": "phone.html",
+      "bytes": 5647,
+      "sha256": "9bcc581900bbd5c85d9a5416f5a3bc10f4eea7b9d1f2d68b2c66774c317912b8",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/app.js",
+      "bytes": 164102,
+      "sha256": "1347a5bad98a7d7ba8288f003be2b617e3ddab51621eb8ae0dfa15c57f62dfbd",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/combat.js",
+      "bytes": 48641,
+      "sha256": "ae8c36339c4828eb6770ee3882e5804628847c955045dcc6b2917be6ce635dd5",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/party-pets.js",
+      "bytes": 20103,
+      "sha256": "2f88996096f15aa61e03b820735b8a2e21c45ed5ec4ad5420046a2a033751d4a",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/party.js",
+      "bytes": 87333,
+      "sha256": "f9600c006073e19c783b8fc0a9a6386f81e630d34b51124de1ae1c9ca2a8968d",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "bytes": 220471,
+      "sha256": "cd53193188004ea07c2c0f4caef2db91a5264295dd38c15e4d2071c59491b60d",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/save.js",
+      "bytes": 55421,
+      "sha256": "f16db49da643f3cb11a3eff838f06f8cc06ebf965d85d4ba58dc779a7cd02572",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "bytes": 296,
+      "sha256": "ea6e4bb25730a891cb0fdad36bcf38c2bbdda13f576f4f4490678432bb4adf76",
+      "matchesPrepared": true
+    },
+    {
+      "path": "sw.js",
+      "bytes": 20797,
+      "sha256": "6fac8f36e2a6c960f30321d18829633b0f5d4864faaf337bb9b039722f1c4060",
+      "matchesPrepared": true
+    }
+  ],
+  "focusedSurvivalCases": 62,
+  "focusedPassageCases": 108,
+  "existingFocusedSuites": [
+    "retreat-party-collision",
+    "companion-judgment-dev106/recall-check",
+    "companion-judgment-dev106/check"
+  ],
+  "phoneStartup": "Passed real phone shell startup, tactical critical retreat, visible situation-based feedback and absence of saved recovery latch without JavaScript exceptions.",
+  "broadCiRan": false,
+  "workflowRestoration": "Completed in subsequent closeout commit; normal workflow retained byte-for-byte; temporary publisher removed.",
+  "limits": "Focused behavior and public-byte verification do not certify owner-device comfort or FPS. Existing tactical judgment owns retreat and rejoining with no added recovery percentage. Targeted critical movement and priority fixes remain. Enclosed or overwhelming encounters can still be dangerous."
+}
