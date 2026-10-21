@@ -1,0 +1,88 @@
+{
+  "version": "0.9.1+snapshot.dev.143",
+  "pr": 379,
+  "mergeCommit": "3dc6399fa1354a6aecadbb477f8b253c4ab4c8c5",
+  "candidateCommit": "a3a329fef75ecb4df08ba380a51cbe0af642246a",
+  "candidateTree": "5ae9b2197adade421d0372ac5c03d13b976c79d1",
+  "publisherRunId": 39674864589,
+  "publisherRunUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39674864589",
+  "site": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/",
+  "verifiedAt": "2026-10-21T20:59:13.141160+00:00",
+  "publishedBuild": "3dc6399fa1354a6aecadbb477f8b253c4ab4c8c5",
+  "publicFiles": [
+    {
+      "path": "index.html",
+      "bytes": 5646,
+      "sha256": "1b0ca7a29dd6c5c4d57adb28e31a47b1a6c8b7a7845a3ed57872c46a4332ae20",
+      "matchesPrepared": true
+    },
+    {
+      "path": "phone.html",
+      "bytes": 5647,
+      "sha256": "9bcc581900bbd5c85d9a5416f5a3bc10f4eea7b9d1f2d68b2c66774c317912b8",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/app.js",
+      "bytes": 164110,
+      "sha256": "8e602deb777d8268421409673a9efdb8afc9079d8e88b918fce4f1bc0394d1bb",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/combat.js",
+      "bytes": 48641,
+      "sha256": "ae8c36339c4828eb6770ee3882e5804628847c955045dcc6b2917be6ce635dd5",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/party-pets.js",
+      "bytes": 20224,
+      "sha256": "a35b849c1ff7ad24f55fca30e5a2dba3f85e3248bbd8c6aee87896528e9d0041",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/party.js",
+      "bytes": 95308,
+      "sha256": "037fe0f8ffdf56eeee191423c579996539a559f16dd3331dad3f45a762857acf",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "bytes": 220574,
+      "sha256": "c0c0a167190994b1dc72e01a931368b8e49c9d46aad199369212581fa39f40ef",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/save.js",
+      "bytes": 55421,
+      "sha256": "f16db49da643f3cb11a3eff838f06f8cc06ebf965d85d4ba58dc779a7cd02572",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "bytes": 296,
+      "sha256": "f78d98570d14f080136604153e81d66a60cf7426abd145636c6e6ec787c8ffb6",
+      "matchesPrepared": true
+    },
+    {
+      "path": "sw.js",
+      "bytes": 20797,
+      "sha256": "71e89d24eff8d09521c80f8ba98add4f05abe52b59940c7c11107b6ebf663522",
+      "matchesPrepared": true
+    }
+  ],
+  "focusedContributionCases": 72,
+  "focusedSurvivalCases": 62,
+  "focusedPassageCases": 108,
+  "existingFocusedSuites": [
+    "retreat-party-collision",
+    "companion-judgment-dev106/recall-check",
+    "companion-judgment-dev106/check",
+    "pet-skill-effects",
+    "pet-skill-activation"
+  ],
+  "phoneStartup": "Passed real phone shell startup, action-specific withdrawal feedback, safe ranged fire and absence of a recovery latch without JavaScript exceptions.",
+  "broadCiRan": false,
+  "workflowRestoration": "Completed in subsequent closeout commit; normal workflow retained byte-for-byte; temporary publisher removed.",
+  "limits": "Focused behavior and public-byte verification do not certify owner-device comfort or FPS. Safe contribution checks judge current conditions and preserve native skill requirements; they do not guarantee survival or device FPS. Enclosed or overwhelming encounters can still be dangerous."
+}
