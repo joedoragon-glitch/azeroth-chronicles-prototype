@@ -1,0 +1,79 @@
+{
+  "rules": [
+    {
+      "version": 95,
+      "hash": "c77b46e67b51dd023b71edec3faca99888e60bf1db21ce680ea27f76becb4792",
+      "passesHistoricalRuleReceipt": true,
+      "mismatches": []
+    },
+    {
+      "version": 96,
+      "hash": "44ab30eaf45a77939223beecb5ed65c283b808cdeaa2d9c666910809c655afa5",
+      "passesHistoricalRuleReceipt": false,
+      "mismatches": []
+    }
+  ],
+  "cinder": [
+    {
+      "version": 100,
+      "form": "normal",
+      "ringRadius": 250,
+      "gaps": [0, 4.014257279586958],
+      "weight": 1.8,
+      "ringCreated": true
+    },
+    {
+      "version": 100,
+      "form": "true",
+      "ringRadius": 250,
+      "gaps": [0, 4.014257279586958],
+      "weight": 1.8,
+      "ringCreated": true
+    },
+    {
+      "version": 101,
+      "form": "normal",
+      "ringRadius": 300,
+      "gaps": null,
+      "weight": 0,
+      "ringCreated": false
+    },
+    {
+      "version": 101,
+      "form": "true",
+      "ringRadius": 300,
+      "gaps": null,
+      "weight": 0,
+      "ringCreated": false
+    }
+  ],
+  "nightmare": [
+    {
+      "version": 120,
+      "probe": "pinned methods, explicit new intro and twenty victories",
+      "night": true,
+      "multipliers": {
+        "hp": 1.7000000000000002,
+        "damage": 1.5499999999999998
+      }
+    },
+    {
+      "version": 121,
+      "probe": "pinned methods, explicit new intro and twenty victories",
+      "night": false,
+      "multipliers": {
+        "hp": 1,
+        "damage": 1
+      }
+    }
+  ],
+  "enemyOnlyNightmareFixture": {
+    "elapsed": 5,
+    "introRemaining": 30,
+    "night": false
+  },
+  "afterActualNightBoundary": {
+    "introRemaining": 0,
+    "night": true
+  }
+}

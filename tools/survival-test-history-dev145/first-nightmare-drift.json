@@ -1,0 +1,20 @@
+[
+  {
+    "version": 120,
+    "probe": "pinned methods with explicit fresh-Nightmare intro and 20 victories",
+    "night": true,
+    "multipliers": {
+      "hp": 1.7000000000000002,
+      "damage": 1.5499999999999998
+    }
+  },
+  {
+    "version": 121,
+    "probe": "pinned methods with explicit fresh-Nightmare intro and 20 victories",
+    "night": false,
+    "multipliers": {
+      "hp": 1,
+      "damage": 1
+    }
+  }
+]

@@ -1,0 +1,16 @@
+[
+  {
+    "version": 95,
+    "hash": "c77b46e67b51dd023b71edec3faca99888e60bf1db21ce680ea27f76becb4792",
+    "expected": "c77b46e67b51dd023b71edec3faca99888e60bf1db21ce680ea27f76becb4792",
+    "passesHistoricalRuleReceipt": true,
+    "existingDeltaMismatch": null
+  },
+  {
+    "version": 96,
+    "hash": "44ab30eaf45a77939223beecb5ed65c283b808cdeaa2d9c666910809c655afa5",
+    "expected": "c77b46e67b51dd023b71edec3faca99888e60bf1db21ce680ea27f76becb4792",
+    "passesHistoricalRuleReceipt": false,
+    "existingDeltaMismatch": null
+  }
+]

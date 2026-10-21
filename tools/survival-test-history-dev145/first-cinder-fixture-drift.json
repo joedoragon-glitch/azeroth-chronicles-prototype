@@ -1,0 +1,34 @@
+[
+  {
+    "version": 100,
+    "form": "normal",
+    "ringRadius": 250,
+    "gaps": [0, 4.014257279586958],
+    "selectionWeightBeforeCast": 1.8,
+    "ringCreated": true
+  },
+  {
+    "version": 100,
+    "form": "true",
+    "ringRadius": 250,
+    "gaps": [0, 4.014257279586958],
+    "selectionWeightBeforeCast": 1.8,
+    "ringCreated": true
+  },
+  {
+    "version": 101,
+    "form": "normal",
+    "ringRadius": 300,
+    "gaps": null,
+    "selectionWeightBeforeCast": 0,
+    "ringCreated": false
+  },
+  {
+    "version": 101,
+    "form": "true",
+    "ringRadius": 300,
+    "gaps": null,
+    "selectionWeightBeforeCast": 0,
+    "ringCreated": false
+  }
+]

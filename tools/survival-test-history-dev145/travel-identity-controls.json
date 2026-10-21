@@ -1,0 +1,23 @@
+[
+  {
+    "version": 100,
+    "sameActor": true,
+    "oldClosure": false,
+    "rosterClosure": false,
+    "rosterVapors": false
+  },
+  {
+    "version": 101,
+    "sameActor": true,
+    "oldClosure": false,
+    "rosterClosure": false,
+    "rosterVapors": false
+  },
+  {
+    "version": 145,
+    "sameActor": false,
+    "oldClosure": true,
+    "rosterClosure": false,
+    "rosterVapors": false
+  }
+]

@@ -19,3 +19,7 @@ All five affected original suites now pass on the final candidate:
 - Four negative preservation probes reject unexpected rules/methods. The historical fixture is byte-for-byte unchanged. Changed test formatting and whitespace checks pass.
 
 [Evidence receipt](evidence/TEST_UPKEEP_DEV145_20261021.json) and [guard probe/logs](../tools/survival-test-upkeep-dev145/) retain results. PR #382 contains the complete test/documentation change; no new runtime build, deployment, broad CI or device matrix is needed. The review-only audit’s pending original-suite status is superseded by these real suite results. Original diagnostic evidence remains historical.
+
+## Follow-on history request
+
+PR #382 is merged as `5f4b28af08a24aeff253f8f7f11a6acbfeac3e9d`. The owner then requested a trace of first drift and a reviewable retest scope. [Historical trace](TEST_DRIFT_HISTORY_DEV145.md) distinguishes the repaired original failures from a broader permanent-Nightmare coverage gap in older specialist mode fixtures. Passing the repaired suites does not certify every untested phase/interaction; that gap is the first proposed follow-up for joint review.

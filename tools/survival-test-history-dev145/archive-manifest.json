@@ -1,0 +1,222 @@
+{
+  "history-dev100/src/prototype/hero-combat.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/hero-combat.js",
+    "sha256": "f22c60ac54327ebc9071cc325e89156eb5913a107dbe577daed7dc1b33215953"
+  },
+  "history-dev100/src/prototype/narration.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/narration.js",
+    "sha256": "b9c9441b0ec6ff54381c371e8027ad7def2812767b4cc3f0af9d44e8c9748d17"
+  },
+  "history-dev100/src/prototype/boss-combat.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/boss-combat.js",
+    "sha256": "5f297eff0833bff80367da90e1c5204ce357d8cb9526fecece4fa3a7a1f51834"
+  },
+  "history-dev100/src/prototype/progression.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/progression.js",
+    "sha256": "728fea0fc0ede2776c6994dffe3d19eb2bf5426ae36a38b4320e2271933d4dfc"
+  },
+  "history-dev100/src/prototype/combat.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/combat.js",
+    "sha256": "cc58b13fafcea1b5d233c4b906b6d86810339d0de29ee169b94fe3138b8801ad"
+  },
+  "history-dev100/src/prototype/cindermaw-combat.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/cindermaw-combat.js",
+    "sha256": "8aa2c90410bafb837af0231e8b09d06799a929c146579ed6363eca54900f6161"
+  },
+  "history-dev100/src/prototype/data.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/data.js",
+    "sha256": "6b1827b97bd3056c0ab3f315d396db1f76752b2dc3b8b5013423140721154338"
+  },
+  "history-dev100/src/prototype/rewards.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/rewards.js",
+    "sha256": "cc7719359cb592fcba4d90aeadeafef11910765efb81aaa9ab8977fea52574c6"
+  },
+  "history-dev100/src/prototype/rules.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/rules.js",
+    "sha256": "399e01f962434e95b477091975eb23e6871e0a4bac789c49cafdca72d4f618ea"
+  },
+  "history-dev100/src/prototype/enemy-vfx-events.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/enemy-vfx-events.js",
+    "sha256": "aa16dc2961f24386d7a0dc73d74f4db8738c05e85e556e1ba2333a349a92c69a"
+  },
+  "history-dev100/src/prototype/world.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/world.js",
+    "sha256": "7c5537cfa032d1c4b012cb7e52b51cd3be181cecdd9746040ee90bb008c745c1"
+  },
+  "history-dev100/src/prototype/party.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/party.js",
+    "sha256": "d2bbcc0a827c7ab7364a3a7dd7755b43044fc3cfde084a1c85dcd2d9ddc34d23"
+  },
+  "history-dev100/src/prototype/enemy-vfx.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/enemy-vfx.js",
+    "sha256": "80f536d729e8fa8f06734319e3c7dedddc6f69e5899323526b68cfd9a28ff596"
+  },
+  "history-dev100/src/prototype/navigation.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/navigation.js",
+    "sha256": "e067d4affc512889fbe910d5a30111b4397583f21b5607651c17fedc29e68989"
+  },
+  "history-dev100/src/prototype/enemy-presentation.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/enemy-presentation.js",
+    "sha256": "9d8153f90085b3958936a7bfe8875ba5a26ce0a19dc47141f2dc84dd9fd34b07"
+  },
+  "history-dev100/src/prototype/economy.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/economy.js",
+    "sha256": "a4197c759f75b6672181272f53778de4d398b516bd1aee4b701f8946459d6859"
+  },
+  "history-dev100/src/prototype/party-pets.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/party-pets.js",
+    "sha256": "3dc47eca4d2f7dd7da6c9696cecbf3a88fa11987e56306d84dc00372d10d3e41"
+  },
+  "history-dev100/src/prototype/dreadmaw-combat.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/dreadmaw-combat.js",
+    "sha256": "48a54ee99a063667355e6bba61a6e55f8bf6eb44dfd7138e2a169d86a1e9c60c"
+  },
+  "history-dev100/src/prototype/save.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/save.js",
+    "sha256": "78c78bb643c5f456a1b0b52fba5a0aed247083b87f26da142d30571e48e02a36"
+  },
+  "history-dev100/src/prototype/engine.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/engine.js",
+    "sha256": "c28442e3d26b64c759ab6d1a0c5862f0328d28bc79bd40b7709821b3f186c899"
+  },
+  "history-dev101/src/prototype/hero-combat.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/hero-combat.js",
+    "sha256": "f22c60ac54327ebc9071cc325e89156eb5913a107dbe577daed7dc1b33215953"
+  },
+  "history-dev101/src/prototype/narration.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/narration.js",
+    "sha256": "b9c9441b0ec6ff54381c371e8027ad7def2812767b4cc3f0af9d44e8c9748d17"
+  },
+  "history-dev101/src/prototype/boss-combat.js": {
+    "sourceCommit": "4c4b59aac44464b38da4379cf84f4b48a7138b31",
+    "path": "src/prototype/boss-combat.js",
+    "sha256": "94466524f26becc115376e91ff52e986c68541f2b77a13317a14d103c056938d"
+  },
+  "history-dev101/src/prototype/progression.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/progression.js",
+    "sha256": "728fea0fc0ede2776c6994dffe3d19eb2bf5426ae36a38b4320e2271933d4dfc"
+  },
+  "history-dev101/src/prototype/combat.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/combat.js",
+    "sha256": "cc58b13fafcea1b5d233c4b906b6d86810339d0de29ee169b94fe3138b8801ad"
+  },
+  "history-dev101/src/prototype/cindermaw-combat.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/cindermaw-combat.js",
+    "sha256": "8aa2c90410bafb837af0231e8b09d06799a929c146579ed6363eca54900f6161"
+  },
+  "history-dev101/src/prototype/data.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/data.js",
+    "sha256": "6b1827b97bd3056c0ab3f315d396db1f76752b2dc3b8b5013423140721154338"
+  },
+  "history-dev101/src/prototype/rewards.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/rewards.js",
+    "sha256": "cc7719359cb592fcba4d90aeadeafef11910765efb81aaa9ab8977fea52574c6"
+  },
+  "history-dev101/src/prototype/rules.js": {
+    "sourceCommit": "4c4b59aac44464b38da4379cf84f4b48a7138b31",
+    "path": "src/prototype/rules.js",
+    "sha256": "2ad3374584bd2af4e91e89fadbdbc118f1c4d097b0c40cbb5a3ebf87e7d97618"
+  },
+  "history-dev101/src/prototype/enemy-vfx-events.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/enemy-vfx-events.js",
+    "sha256": "aa16dc2961f24386d7a0dc73d74f4db8738c05e85e556e1ba2333a349a92c69a"
+  },
+  "history-dev101/src/prototype/world.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/world.js",
+    "sha256": "7c5537cfa032d1c4b012cb7e52b51cd3be181cecdd9746040ee90bb008c745c1"
+  },
+  "history-dev101/src/prototype/party.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/party.js",
+    "sha256": "d2bbcc0a827c7ab7364a3a7dd7755b43044fc3cfde084a1c85dcd2d9ddc34d23"
+  },
+  "history-dev101/src/prototype/enemy-vfx.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/enemy-vfx.js",
+    "sha256": "80f536d729e8fa8f06734319e3c7dedddc6f69e5899323526b68cfd9a28ff596"
+  },
+  "history-dev101/src/prototype/navigation.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/navigation.js",
+    "sha256": "e067d4affc512889fbe910d5a30111b4397583f21b5607651c17fedc29e68989"
+  },
+  "history-dev101/src/prototype/enemy-presentation.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/enemy-presentation.js",
+    "sha256": "9d8153f90085b3958936a7bfe8875ba5a26ce0a19dc47141f2dc84dd9fd34b07"
+  },
+  "history-dev101/src/prototype/economy.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/economy.js",
+    "sha256": "a4197c759f75b6672181272f53778de4d398b516bd1aee4b701f8946459d6859"
+  },
+  "history-dev101/src/prototype/party-pets.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/party-pets.js",
+    "sha256": "3dc47eca4d2f7dd7da6c9696cecbf3a88fa11987e56306d84dc00372d10d3e41"
+  },
+  "history-dev101/src/prototype/dreadmaw-combat.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/dreadmaw-combat.js",
+    "sha256": "48a54ee99a063667355e6bba61a6e55f8bf6eb44dfd7138e2a169d86a1e9c60c"
+  },
+  "history-dev101/src/prototype/save.js": {
+    "sourceCommit": "b8b1b80b942f9bbb1c2c946df356ea54f66f8104",
+    "path": "src/prototype/save.js",
+    "sha256": "78c78bb643c5f456a1b0b52fba5a0aed247083b87f26da142d30571e48e02a36"
+  },
+  "history-dev101/src/prototype/engine.js": {
+    "sourceCommit": "4c4b59aac44464b38da4379cf84f4b48a7138b31",
+    "path": "src/prototype/engine.js",
+    "sha256": "f1fbf0850042b1ab36bdcc5eb79aeb362c46351f3991cf9e9702ad9e85dac667"
+  },
+  "history-dev95-rules.js": {
+    "sourceCommit": "b03f1ed6f2ac0925d5c8eedd72c2186b9d6c2632",
+    "path": "src/prototype/rules.js",
+    "sha256": "99aacce297769694231ffe1b6ea2fc86cdc1706f48132bb4ac72e3b350c94a31"
+  },
+  "history-dev96-rules.js": {
+    "sourceCommit": "7eea76c77469e2193f69a65cad658fabe0e5d6b4",
+    "path": "src/prototype/rules.js",
+    "sha256": "73e0c673222103f4d7149c233dbccd8dbda9736ae1adc76cd792838d392de956"
+  },
+  "history-dev120-engine.js": {
+    "sourceCommit": "34b84b3c408aee6569e1cc27579d98a63c31f519",
+    "path": "src/prototype/engine.js",
+    "sha256": "31347d8ae62b3ce8f63a3bbd770337d019565092efc2fdf20c0079ef30f0ff0b"
+  },
+  "history-dev121-engine.js": {
+    "sourceCommit": "37a4c342eb9b7d926eff131cd257c0ca3e331452",
+    "path": "src/prototype/engine.js",
+    "sha256": "886b49cfa714083949ec32dc58980dc899a14458240376c43632a5fddfb7ba15"
+  }
+}
