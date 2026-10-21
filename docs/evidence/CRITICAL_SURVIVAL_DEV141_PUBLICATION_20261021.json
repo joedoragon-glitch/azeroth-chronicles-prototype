@@ -1,0 +1,88 @@
+{
+  "version": "0.9.1+snapshot.dev.141",
+  "pr": 377,
+  "mergeCommit": "296ab447c4b21e6d8e2020190bde751bc7a8e8b4",
+  "candidateCommit": "993b4348be62136dc7a9c4dc1bb2092e51e38b53",
+  "candidateTree": "e2867a6818fcf27cfcc02fa98d51c0c32cc85ae0",
+  "publisherRunId": 39666364126,
+  "publisherRunUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39666364126",
+  "site": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/",
+  "verifiedAt": "2026-10-21T20:00:22.777182+00:00",
+  "publishedBuild": "296ab447c4b21e6d8e2020190bde751bc7a8e8b4",
+  "publicFiles": [
+    {
+      "path": "index.html",
+      "bytes": 5646,
+      "sha256": "1b0ca7a29dd6c5c4d57adb28e31a47b1a6c8b7a7845a3ed57872c46a4332ae20",
+      "matchesPrepared": true
+    },
+    {
+      "path": "phone.html",
+      "bytes": 5647,
+      "sha256": "9bcc581900bbd5c85d9a5416f5a3bc10f4eea7b9d1f2d68b2c66774c317912b8",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/app.js",
+      "bytes": 164080,
+      "sha256": "384346207afc3ad77fe998530222e6aab3c04663c670b3dd7156b5c93f7c0580",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/combat.js",
+      "bytes": 48710,
+      "sha256": "906f9b958bc446b7f181dad2ee56533715d9f2daae947d27c496db2d420743f1",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/party-pets.js",
+      "bytes": 20103,
+      "sha256": "2f88996096f15aa61e03b820735b8a2e21c45ed5ec4ad5420046a2a033751d4a",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/party.js",
+      "bytes": 87318,
+      "sha256": "1564dde5c00e6f95fdb4951466a19fb3b23fd3cc094b11b3a43cf323deb7c2ba",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "bytes": 220505,
+      "sha256": "78eb85242251000f2f669b142562182659b95a8de5924c09f8c6492978d2949f",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/save.js",
+      "bytes": 55287,
+      "sha256": "65ae0aeee8761db9985afb8454d9a28d534c5f8497edca7cec891aa93c3db2a2",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "bytes": 296,
+      "sha256": "8424f3077d44b75bd1df6548f7eeb1f60d12fee389a11dd88a5601215964837e",
+      "matchesPrepared": true
+    },
+    {
+      "path": "sw.js",
+      "bytes": 20797,
+      "sha256": "8aa5ecd1f4b93014ed6edcdcef6eb1d7e149d120d816bcd1de3a2c921b535bf3",
+      "matchesPrepared": true
+    }
+  ],
+  "focusedSurvivalCases": 59,
+  "focusedPassageCases": 108,
+  "existingFocusedSuites": [
+    "retreat-party-collision",
+    "companion-judgment-dev106/recall-check",
+    "companion-judgment-dev106/check",
+    "companion-regroup-resume",
+    "charge-interruption",
+    "ranger-heal-queue"
+  ],
+  "phoneStartup": "Passed real phone shell startup, critical-survival update, visible feedback and saved recovery intent without JavaScript exceptions.",
+  "broadCiRan": false,
+  "workflowRestoration": "Completed in subsequent closeout commit; normal workflow retained byte-for-byte; temporary publisher removed.",
+  "limits": "Focused behavior and public-byte verification do not certify owner-device comfort or FPS. Critical survival addresses the earlier critical anchor, charge/work priority and delayed-entry gaps. Non-critical regroup behavior is retained; enclosed or overwhelming encounters can still be dangerous."
+}

@@ -10,7 +10,7 @@ The wounded companion selects lower-pressure positions around the moving hero an
 
 One optional boolean, `survivalRetreat`, retains the recovery threshold through Recall, travel and save/reload, including partial healing above 20%. It is validated in the compatible v4 save schema. Old saves need no migration and critically wounded old-save companions recognize their health on update. Destinations, paths and threat observations remain transient. Recovery to 40% releases this hold; ordinary non-critical caution still applies.
 
-An English/Spanish notice explains that critical companions are avoiding combat, keep following and rejoin at 40%. Existing Ranger healing and other supportive effects remain usable.
+An English/Spanish notice explains that critical companions are avoiding combat, keep following and rejoin at 40%. Existing Ranger healing and receiving existing supportive effects remain available. Attack-linked pet healing still belongs to its offensive skill; survival does not create a free standalone cast.
 
 ## Validation record
 
@@ -28,4 +28,4 @@ The dev.106 cover-fire fixture now uses wounded 30% HP, because critical units i
 
 The dev.139 assessment's critical anchor, preparation/construction priority and delayed-entry findings are addressed for critical companions by this update. Ordinary non-critical regroup destination and preparation/work priority behavior remains unchanged. The historical dev.139 evidence is preserved and must not be presented as a dev.141 result.
 
-Standing owner requested-fix publication workflow: package-only deploy after the focused checks, verify exact public build/resources, then restore normal workflow byte-for-byte and remove temporary publisher. Publication pending.
+Published in [PR #377](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/377), runtime merge `296ab447c4b21e6d8e2020190bde751bc7a8e8b4`. Package-only run [39666364126](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39666364126) succeeded. Exact public build and all ten checked runtime resources match the checked candidate. Normal workflow restored byte-for-byte and temporary publisher removed at closeout; no broad CI ran. Receipt: `docs/evidence/CRITICAL_SURVIVAL_DEV141_PUBLICATION_20261021.json`. Owner phone play next; no automatic wider AI changes.
