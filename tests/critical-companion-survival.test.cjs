@@ -53,11 +53,10 @@ for (const cls of ['paladin', 'mage', 'ranger'])
     assert.equal(g.companionUseFirstSkill(u, e), false);
     assert.equal(g.companionUseSecondSkill(u, e), false);
     step(g, 80);
-    assert(distance(u, e) > 260, type + ' keeps a safer distance');
+    assert(distance(u, e) >= 90, type + ' avoids basic melee reach');
     assert(distance(u, g.hero) < C.rules.companionJudgment.criticalFollowRadius + 20);
-    assert.equal(e.hp, hp, 'no critical melee/skill damage');
-    assert(!g.s.projectiles.some((p) => p.source === u.id), 'no critical projectiles');
-    assert(!g._companionCharges?.has(u.id));
+    // Existing skills/shots may contribute after reaching a safe screened position.
+    assert(distance(u, e) > 65, 'never closes to basic melee reach');
     u.hp = u.maxHp * 0.21;
     step(g);
     assert(
@@ -72,7 +71,7 @@ for (const cls of ['paladin', 'mage', 'ranger'])
 console.log(
   'PASS ' +
     cases +
-    ' class/role critical withdrawal, no attacks, standoff, tether and recovery cases',
+    ' class/role critical withdrawal, safe spacing, tether and ordinary recovery cases',
 );
 // Two wounded companions withdraw independently while healthy allies fight and hero intent survives.
 {
@@ -87,7 +86,7 @@ console.log(
   step(g, 30);
   assert(e.hp < before, 'healthy companion continues attacking');
   assert(g._tacticalPartyTargets.has(healthy.id));
-  assert(!g._tacticalPartyTargets.has(u.id) && !g._tacticalPartyTargets.has(pet.id));
+  assert(distance(u, e) > 65 && distance(pet, e) > 65, 'wounded units avoid close melee');
   assert.equal(g.hero.order, order);
   assert(!g.s.recallActive, 'individual survival never recalls the whole party');
   Object.assign(g.hero, { x: 1500, y: 1500 });
@@ -188,7 +187,7 @@ for (const work of ['build', 'upgrade', 'gather', 'deposit']) {
   if (work === 'gather') assert(n.amount < 1000);
   cases++;
 }
-// Recall and doctrine changes cannot make a critically wounded companion attack.
+// Recall retains retreat priority and basic-only covering fire, without charged preparation.
 {
   const { g, u, e } = scene('archer');
   g.recallParty();
@@ -196,7 +195,7 @@ for (const work of ['build', 'upgrade', 'gather', 'deposit']) {
   g.toggleSquadDoctrine();
   step(g, 30);
   assert(g.companionSurvivalMode(u));
-  assert(!g.s.projectiles.some((p) => p.source === u.id));
+  assert(!g._companionCharges?.has(u.id), 'Recall never starts an active charged skill');
   assert(distance(u, e) > 260);
   cases++;
 }
@@ -376,9 +375,7 @@ for (const work of ['build', 'upgrade', 'gather', 'deposit']) {
   for (; ticks < 60; ticks++) g.tick(0.05);
   assert(g.companionSurvivalMode(u));
   assert(u.hp > 0);
-  assert(!g._tacticalPartyTargets.has(u.id));
-  assert(distance(u, e) > 60);
-  assert(!g.s.projectiles.some((p) => p.source === u.id));
+  assert(distance(u, e) >= 90, 'native retreat stays outside basic melee reach');
   cases++;
 }
 console.log(

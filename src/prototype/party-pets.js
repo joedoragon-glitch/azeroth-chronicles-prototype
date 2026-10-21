@@ -168,7 +168,8 @@
           .slice(0, def.cap || 1);
       }
       usePetSkill(u, target, slot, targets = this.petSkillTargets(u, target, slot)) {
-        if (this.companionSurvivalMode(u)) return false;
+        if (this.companionSurvivalMode(u) && !this.companionSafeContribution(u, target, slot))
+          return false;
         const def = this.petSkillDefinition(u, slot),
           key = slot === 1 ? 'skill1Cd' : 'skill2Cd';
         if (
@@ -346,7 +347,8 @@
       // While Recall holds, a nearby pet may counterattack without chasing
       // or casting an active skill. Keep pet art/audio distinct from troops.
       petDefensiveCounter(u, target) {
-        if (this.companionSurvivalMode(u)) return false;
+        if (this.companionSurvivalMode(u) && !this.companionSafeContribution(u, target, 0))
+          return false;
         const def = this.petDefinition(u);
         if (!def || !target || target.hp <= 0 || u.hp <= 0 || u.active === false || (u.cd || 0) > 0)
           return false;
