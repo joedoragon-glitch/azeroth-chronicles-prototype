@@ -1,9 +1,9 @@
 name: Test and deploy app
 on:
   push:
-    branches: [main]
+    branches: [owner-talent-notice-dev133-hold]
   pull_request:
-    branches: [main, perf/v09-integration-20261010]
+    branches: [owner-talent-notice-dev133-hold]
   workflow_dispatch:
 
 permissions:

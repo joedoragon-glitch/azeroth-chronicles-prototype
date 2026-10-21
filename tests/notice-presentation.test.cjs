@@ -6,9 +6,10 @@ const assert = require('node:assert/strict'),
 const source = fs.readFileSync('src/prototype/app.js', 'utf8');
 const start = source.indexOf('  function updateCriticalNotice() {');
 const end = source.indexOf('  const developerSummonButton', start);
-function element() {
+function element(tagName = 'div') {
   const classes = new Set();
   return {
+    tagName,
     children: [],
     style: {},
     classList: {
@@ -325,3 +326,55 @@ for (const queued of [true, false]) {
 console.log(
   'PASS actual talent reminders: queued/visible spending, partial points, multi-level queue, fresh levels, refunds and capped talents',
 );
+
+// The real level banner is a native button that routes directly to training.
+{
+  const leveling = new Campaign('normal', 'mage', () => 0.9);
+  leveling.zone().enemies = [];
+  context.game = leveling;
+  context.menu = null;
+  context.started = true;
+  let opened = 0, unlocked = 0, stopped = 0;
+  context.audio = { unlock: () => unlocked++ };
+  context.talents = () => { opened++; context.menu = { title: 'Talents' }; };
+  leveling.xp(leveling.xpRequired());
+  update();
+  const card = host.children[0], click = () => card.onclick({ stopPropagation: () => stopped++ });
+  assert.equal(card.tagName, 'button');
+  assert.equal(card.type, 'button');
+  assert(card.className.includes('notice-action'));
+  assert.equal(card.children.at(-1).textContent, 'Open Talents');
+  let keyboardStops = 0;
+  for (const code of ['Enter', 'Space']) {
+    card.onkeydown({ code, stopPropagation: () => keyboardStops++ });
+    card.onkeyup({ code, stopPropagation: () => keyboardStops++ });
+  }
+  assert.equal(keyboardStops, 4, 'native activation keys cannot also trigger gameplay');
+  click();
+  assert.equal(opened, 1);
+  assert.equal(unlocked, 1);
+  assert.equal(stopped, 1, 'tap cannot bubble to gameplay');
+  assert.equal(host.children.length, 0, 'opening the menu immediately hides the banner');
+  click();
+  assert.equal(opened, 1, 'old hidden button cannot open another menu');
+  context.menu = null;
+  update();
+  const current = host.children[0];
+  leveling.talent(0);
+  current.onclick({ stopPropagation() {} });
+  assert.equal(opened, 1, 'spending points before the next paint disables stale activation');
+  update();
+  assert.equal(host.children.length, 0);
+  leveling.xp(leveling.xpRequired());
+  update();
+  const fresh = host.children[0];
+  leveling.s.challenge.pending = true;
+  fresh.onclick({ stopPropagation() {} });
+  assert.equal(opened, 1, 'succession cannot be bypassed');
+  leveling.s.challenge.pending = false;
+  context.game = new Campaign('normal', 'paladin', () => 0.9);
+  update();
+  fresh.onclick({ stopPropagation() {} });
+  assert.equal(opened, 1, 'a banner from a previous campaign cannot open training');
+}
+console.log('PASS talent banner activation, immediate hiding, spent points, succession and stale campaign guards');

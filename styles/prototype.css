@@ -477,6 +477,12 @@ button:disabled {
   text-align: center;
   letter-spacing: 0.01em;
 }
+#message .notice-action {
+  pointer-events: auto;
+  cursor: pointer;
+  touch-action: manipulation;
+  width: 100%;
+}
 /* Narrative prose is deliberately quieter than the golden milestone banner. */
 #message .notice-card.notice-narration {
   padding: 7px 11px;

@@ -96,6 +96,7 @@
     Inventory: 'Inventario',
     'Skill journal': 'Diario de habilidades',
     Talents: 'Talentos',
+    'Open Talents': 'Abrir talentos',
     Training: 'Entrenamiento',
     Character: 'Personaje',
     Company: 'Compañía',
@@ -3534,10 +3535,35 @@
       state.rendered = rendered;
       host.replaceChildren(
         ...state.active.map((n) => {
-          const card = document.createElement('div');
+          const card = document.createElement(n.requiresTalentPoints ? 'button' : 'div');
           card.className =
             'notice-card notice-' +
             (['narration', 'warning', 'feedback'].includes(n.kind) ? n.kind : 'milestone');
+          if (n.requiresTalentPoints) {
+            card.type = 'button';
+            card.className += ' notice-action';
+            card.setAttribute('aria-label', tr('Open Talents') + ' · ' + n.text);
+            card.onkeydown = card.onkeyup = (e) => {
+              if (['Enter', 'Space'].includes(e.code)) e.stopPropagation();
+            };
+            card.onclick = (e) => {
+              e.stopPropagation();
+              if (
+                !started ||
+                menu ||
+                paused ||
+                game.s.challenge.pending ||
+                game.s.challenge.gameOver ||
+                state.game !== game ||
+                !state.active.includes(n) ||
+                !actionable(n)
+              )
+                return;
+              audio.unlock();
+              talents();
+              updateCriticalNotice();
+            };
+          }
           if (n.kind === 'warning') card.setAttribute('role', 'alert');
           const full = n.text + (n.detail ? ' ' + n.detail : ''),
             limit = shortPhone ? 130 : platform.mode === 'phone' ? 170 : 240,
@@ -3553,6 +3579,12 @@
             detail.className = 'notice-detail';
             detail.textContent = n.detail;
             card.append(detail);
+          }
+          if (n.requiresTalentPoints) {
+            const hint = document.createElement('small');
+            hint.className = 'notice-detail';
+            hint.textContent = tr('Open Talents');
+            card.append(hint);
           }
           return card;
         }),
