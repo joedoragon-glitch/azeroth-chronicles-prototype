@@ -24,3 +24,7 @@ Dreadmaw diagnostic execution omits the stale hash gates to inspect behavior; th
 The historical table was read from pinned original `b87e22dc0ddd7e029ec132f6dd23bcb7c78044aa`; its SHA matches the original fixture. [Hash drift evidence](../tools/survival-followup-audit-dev145/hash-drift.json) lists all 46 residual paths and four methods. This is a receipt-maintenance gap; the audit does not certify the provenance of every old delta merely because it predates dev.145.
 
 [Diagnostic runner](../tools/survival-followup-audit-dev145/legacy-diagnostic.cjs) compiles adapted copies in memory; it never edits runtime or original tests. Adjacent baseline/diagnostic logs retain failures and successful continuations. No broad GitHub CI, full-game/device matrix, new release or deployment was run. Existing four failures remain visible until a separately requested test-maintenance pass reconciles them; no gameplay repair is indicated by the present evidence.
+
+## Owner-requested test upkeep
+
+The owner subsequently requested correction of these original suites and the upkeep process. The separate [test-maintenance record](TEST_UPKEEP_DEV145.md) tracks their actual final-candidate runs and preserved source-linked receipts. The audit observations and diagnostic evidence above remain historical; the maintenance record supersedes their pending status when marked complete.

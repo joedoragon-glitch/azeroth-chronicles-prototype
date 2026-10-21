@@ -1,0 +1,6 @@
+PASS twelve ranged species use individual identity and the Archer healing interval
+PASS hostile healing excludes wounded hero, both troop types and all eleven pets
+PASS three authored hybrid/ranged captains heal nearby allies and eligible self together
+PASS region, night, progression, night-species, TRUE, elite scaling and boss eligibility
+PASS boss skill independence, support priority, and old v4 save compatibility
+PASS combined phone healing particles/status, warning layering and save-pure rendering

@@ -15,3 +15,15 @@ Use the existing feature PR/issue as the work record. No separate approval cerem
 The final rogue PR [#146](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/146) contains 79 commits. That count alone is not wasted work: the integration audit records genuine targeting, respawn and lifecycle corrections. However, one v0.8.108 update was published as four successive one-file commits: `c89b652` (package), `856a0b9` (lockfile), `2aeaa41` (build info) and `274a43e` (worker). Publishing that logical update once replaces four commit/ref publication steps with one (75% fewer); it does not establish a 75% reduction in total development time or historical CI runs. A temporary formatting workflow was also added (`709442d`) and removed (`99ac095`). The existing locked formatter already provides that feedback locally.
 
 The later rogue audit found lifecycle gaps despite 99 basic and 51 signature cases. Preserve those valuable tests and add boundary cases early; do not chase a smaller test count. This process cannot repair OpenAI/client connectivity or quantify past outage time. Durable checkpoints and checking remote state prevent an interruption from forcing a restart or duplicate publication. No gameplay or rogue rules change in this workflow update.
+
+## Existing survival tests to revisit when their inputs change
+
+| Changed contract                                     | Existing suites/fixtures to reconcile                                                                                                                                    |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Nightmare opening or day/night scaling               | `daylight-cycle`, `night-ringleader-rogue`, `enemy-support-healing`                                                                                                      |
+| Tactical Rogue tables or protected methods           | `snapshot-dreadmaw` and its immutable historical fixture plus explicit approved-delta receipt; `night-ringleader-rogue` and `enemy-withdrawal-actions` for live behavior |
+| Captain dispatch or withdrawal casting               | `enemy-withdrawal-actions`; use native actor flags and verify specialist mechanics                                                                                       |
+| Cindermaw/Dreadmaw attack geometry or native terrain | `cindermaw-ministry`, `snapshot-dreadmaw`; retain native placement/refusal checks before forced mechanical scenarios                                                     |
+| Travel, defender replacement or encounter cleanup    | Lifecycle sections in both specialist suites; check the actual active roster after reset                                                                                 |
+
+This is an impact map for focused selection, not a requirement to run every suite for every update. Expand it when a newly found dependency belongs here.

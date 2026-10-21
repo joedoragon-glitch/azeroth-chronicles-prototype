@@ -279,8 +279,9 @@ for (const mode of ['normal', 'nightmare'])
 
 // Live snapshot must clear copies only; historical raw saves and every cancel boundary drop orders.
 for (const boundary of ['snapshot', 'raw-restore', 'disengage', 'death', 'travel']) {
-  const { c, e } = scene(),
-    troops = allies(c, e, 4);
+  const { c, e } = scene('normal', 'normal', 'mage', false, true);
+  positionForCordon(c, e);
+  const troops = allies(c, e, 4);
   // Use persistent native identities here: travel removes owned magical staff.
   for (const u of troops) {
     u.summon = false;
@@ -290,6 +291,12 @@ for (const boundary of ['snapshot', 'raw-restore', 'disengage', 'death', 'travel
   cast(c, e, 0);
   cast(c, e, 5);
   const originalState = e.cinderDelegation;
+  assert(e.cinderCordon, 'cleanup fixture starts a real Cordon');
+  assert(originalState?.members.length, 'cleanup fixture starts real delegate orders');
+  assert(
+    troops.some((u) => u.cinderGuard),
+    'cleanup fixture starts real protection',
+  );
   if (boundary === 'snapshot') {
     const s = c.snapshot();
     assert.equal(e.cinderDelegation, originalState);

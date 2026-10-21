@@ -8,6 +8,14 @@ The historical protected Rogue fixture and original hashes are preserved. The ne
 
 Development guidance now requires affected original tests/fixtures to accompany rule changes in the same PR, explicit timing/geometry/native actor prerequisites, source-linked snapshot reconciliation and actual final-candidate suite results. Diagnostic passes cannot stand in for failing originals. Focused validation remains focused; no automatic broad CI or device matrix is introduced.
 
-## Checkpoint
+## Complete verification
 
-Night/ringleader and 61 withdrawal cases pass; healing and complete Dreadmaw/Cindermaw results are being collected. Four preservation mutation probes pass. No broad CI or runtime release. Next: collect remaining original-suite results, check formatting/whitespace and finish this tests/documentation-only PR with `[skip ci]`.
+All five affected original suites now pass on the final candidate:
+
+- Night/ringleader/Rogue and enemy support-healing suites, including actual sunset boundaries and native renderer/save checks.
+- 62 enemy withdrawal scenarios, including real Dreadmaw dispatch and the intentionally shifting native closure.
+- Dreadmaw: protected original table reconstructed with source-linked approved changes; 42 live casts, 42 fatal recovery boundaries and 12 contextual scheduler pilots.
+- Cindermaw: native placement/refusal, all four mode/form move groups and lifecycle, 120 fatal boundaries, and all seven regular slots through the unforced native selector.
+- Four negative preservation probes reject unexpected rules/methods. The historical fixture is byte-for-byte unchanged. Changed test formatting and whitespace checks pass.
+
+[Evidence receipt](evidence/TEST_UPKEEP_DEV145_20261021.json) and [guard probe/logs](../tools/survival-test-upkeep-dev145/) retain results. PR #382 contains the complete test/documentation change; no new runtime build, deployment, broad CI or device matrix is needed. The review-only audit’s pending original-suite status is superseded by these real suite results. Original diagnostic evidence remains historical.

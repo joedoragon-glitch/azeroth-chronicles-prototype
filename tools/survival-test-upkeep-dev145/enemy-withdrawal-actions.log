@@ -1,0 +1,63 @@
+PASS wolf normal fires while continuing a real retreat
+PASS wolf ringleader fires while continuing a real retreat
+PASS goblin normal fires while continuing a real retreat
+PASS goblin ringleader fires while continuing a real retreat
+PASS skeleton normal fires while continuing a real retreat
+PASS skeleton ringleader fires while continuing a real retreat
+PASS wraith normal fires while continuing a real retreat
+PASS wraith ringleader fires while continuing a real retreat
+PASS stalker normal fires while continuing a real retreat
+PASS stalker ringleader fires while continuing a real retreat
+PASS mireling normal fires while continuing a real retreat
+PASS mireling ringleader fires while continuing a real retreat
+PASS reedbeast normal fires while continuing a real retreat
+PASS reedbeast ringleader fires while continuing a real retreat
+PASS archer normal fires while continuing a real retreat
+PASS archer ringleader fires while continuing a real retreat
+PASS crownguard normal fires while continuing a real retreat
+PASS crownguard ringleader fires while continuing a real retreat
+PASS ashbeast normal fires while continuing a real retreat
+PASS ashbeast ringleader fires while continuing a real retreat
+PASS orc normal fires while continuing a real retreat
+PASS orc ringleader fires while continuing a real retreat
+PASS ogre normal fires while continuing a real retreat
+PASS ogre ringleader fires while continuing a real retreat
+PASS supply-vale chooses a compatible existing skill and completes its warning while moving
+PASS supply-march chooses a compatible existing skill and completes its warning while moving
+PASS supply-highlands chooses a compatible existing skill and completes its warning while moving
+PASS supply-crown chooses a compatible existing skill and completes its warning while moving
+PASS frontier-overseer chooses a compatible existing skill and completes its warning while moving
+PASS thorn normal keeps native selection within withdrawal-compatible skills
+PASS thorn true keeps native selection within withdrawal-compatible skills
+PASS crypt normal keeps native selection within withdrawal-compatible skills
+PASS crypt true keeps native selection within withdrawal-compatible skills
+PASS mire normal keeps native selection within withdrawal-compatible skills
+PASS mire true keeps native selection within withdrawal-compatible skills
+PASS archive normal keeps native selection within withdrawal-compatible skills
+PASS archive true keeps native selection within withdrawal-compatible skills
+PASS ridge normal keeps native selection within withdrawal-compatible skills
+PASS ridge true keeps native selection within withdrawal-compatible skills
+PASS mine normal keeps native selection within withdrawal-compatible skills
+PASS mine true keeps native selection within withdrawal-compatible skills
+PASS warlord normal keeps native selection within withdrawal-compatible skills
+PASS warlord true keeps native selection within withdrawal-compatible skills
+PASS abyss normal keeps native selection within withdrawal-compatible skills
+PASS abyss true keeps native selection within withdrawal-compatible skills
+PASS citadel normal keeps native selection within withdrawal-compatible skills
+PASS citadel true keeps native selection within withdrawal-compatible skills
+PASS cindermaw normal keeps native selection within withdrawal-compatible skills
+PASS cindermaw true keeps native selection within withdrawal-compatible skills
+PASS darklord normal keeps native selection within withdrawal-compatible skills
+PASS darklord true keeps native selection within withdrawal-compatible skills
+PASS native Dreadmaw withdrawal closure deliberately recenters its warned gaps
+PASS support healing wins before firing, skills or Rogue; full cooldown and pulses retained
+PASS leader self-healing wins over a ready withdrawal special
+PASS authored boss recovery wins before a fresh Rogue decision
+PASS cooldown, walls, out of range and Silence retain their action gates
+PASS Silence still allows a native ranged basic, and cover blocks its release
+PASS melee basics only cover at contact; no charge or pursuit toward distant targets
+PASS ordinary backpedaling starts a shot and continues moving throughout its warning
+PASS arriving at support cannot replace or stall a committed covering warning
+PASS dead support, escape timeout, death and restoration retain cleanup
+PASS forced movement, grabs and exposure are rejected without spending native resources
+PASS 62 enemy withdrawal scenarios
