@@ -2,7 +2,7 @@
 
 Owner issue: #354. Joel narrowed collision work to straightforward corrections, leaving ambiguous cases annotated, and explicitly requested a concluding implementation audit. All announcement categories remain in scope, including previous-region lore arriving after travel.
 
-Prepared on `update/scenery-notifications-batch-354`, based on main `9a44fd5`. Not merged or published. No broad CI or whole-game suites. The concluding focused audit is complete. Source upload was rejected by automatic approval review; this candidate remains in local Git until explicit push authorization.
+Published in PR #355 as `2fb077f31b58b43cfbac77eee6e3f8aef80befa6`. Package-only run 39532717860 succeeded. All 20 checked public files match. The normal workflow is restored and the one-time publisher removed in this closeout. Existing focused checks were reused; no broad CI or whole-game suites. Owner phone play is next. See [publication receipt](evidence/SCENERY_NOTICES_DEV120_PUBLICATION_20261020.json).
 
 ## Implemented first pass
 
@@ -56,6 +56,6 @@ Native captures and replay tools: `tools/visual-review/scenery-notifications-354
 
 Joel explicitly requested the sole-developer/manual-phone-play workflow: implement each requested change, use only necessary focused tests and startup checks, and publish for his own playthrough. This batch is authorized for publication. Existing 24 native startup/layout cases and focused checks are reused; no additional broad test run is needed.
 
-The local release wiring follows the prior dev.119 package-only publisher: `owner-scene-notices-dev120.yml` packages committed assets and deploys Pages only for a main commit carrying `owner-scene-notices-dev120`, with an exact dev.120 version check. The normal `pages.yml` triggers are temporarily held; restore them and delete the one-time publisher immediately after verified deployment. Original normal workflow bytes are preserved in Git parent `1ee5098`.
+The local release wiring follows the prior dev.119 package-only publisher: `owner-scene-notices-dev120.yml` packages committed assets and deploys Pages only for a main commit carrying `owner-scene-notices-dev120`, with an exact dev.120 version check. The normal `pages.yml` triggers are temporarily held; restore them and delete the one-time publisher immediately after verified deployment. Original normal workflow bytes are preserved in local Git parent `1ee5098` and are restored by the publication closeout.
 
-Source push was rejected again by automatic approval review after the owner requested publication. Read-only checks verified authenticated user `joedoragon-glitch` owns the public repository, has push permission, and the local origin matches exactly. No alternative remote write was attempted after the repeated rejection. Local preparation is complete; remote publication remains blocked pending the tool-required explicit destination authorization.
+Source push was rejected again by automatic approval review after the owner requested publication. Read-only checks verified authenticated user `joedoragon-glitch` owns the public repository, has push permission, and the local origin matches exactly. No alternative remote write was attempted after the repeated rejection. Local preparation is complete; the owner subsequently gave the exact explicit confirmation, and connected GitHub upload/merge/publication succeeded. The uploaded Git tree matched the complete prepared local tree.

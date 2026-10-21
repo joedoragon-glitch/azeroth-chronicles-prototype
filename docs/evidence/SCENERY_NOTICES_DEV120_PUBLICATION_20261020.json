@@ -1,0 +1,136 @@
+{
+  "version": "0.9.1+snapshot.dev.120",
+  "pr": 355,
+  "merge": "2fb077f31b58b43cfbac77eee6e3f8aef80befa6",
+  "package_only_run": 39532717860,
+  "verified_at": "2026-10-21T02:24:05.473781+00:00",
+  "files": [
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "2a72e48ec26a139f34ae0c8fbc2bc4f36aacf13f49e9924b03a16a08b003771d"
+    },
+    {
+      "path": "src/prototype/app.js",
+      "match": true,
+      "bytes": 140571,
+      "sha256": "e34e403cd6579a5e11421f66f12058783607ef39c4e98e5041fb3db33da69b12"
+    },
+    {
+      "path": "src/prototype/boss-combat.js",
+      "match": true,
+      "bytes": 99309,
+      "sha256": "bee07c9f64009cdf0c2fa109b5d80126ec6d79fd062861c30de5c8f8e58fe165"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 296,
+      "sha256": "29542b70fe91d7ced339358af6bca1ef8ec4169b9159bcd1248e6a79681e0aae"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 253160,
+      "sha256": "ca24488cbebcda6d3865d128c5dba38e4ec1940a476bd7941d876f7fc546792c"
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "match": true,
+      "bytes": 74734,
+      "sha256": "0b99be727f373b2073f9542c12a5bb17ffcde28db6007c96a7d4756d6d418606"
+    },
+    {
+      "path": "src/prototype/navigation.js",
+      "match": true,
+      "bytes": 48289,
+      "sha256": "e8cdcd258e2c396f29f1c84999ff738b000ec9f19b9a2db2a43c9bca129cae37"
+    },
+    {
+      "path": "src/prototype/party.js",
+      "match": true,
+      "bytes": 69048,
+      "sha256": "2cdc93587e75137b49f646e2766b311731e56dbb4a2a065908807b4edd1de09c"
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "match": true,
+      "bytes": 101147,
+      "sha256": "b7a6462db815efbc93671164dd4f638a63e01d609b96b3e0fee086f43d0b3c57"
+    },
+    {
+      "path": "src/prototype/rewards.js",
+      "match": true,
+      "bytes": 6217,
+      "sha256": "cbe6320ecc2485cd83b1b5b6169a5ce9c29b94f2aef6847039db29d46753d175"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "match": true,
+      "bytes": 210789,
+      "sha256": "5cc5b5c10c8787ec258b8421c8a63eb97525154ae8d392766f1773e169ebd0b2"
+    },
+    {
+      "path": "src/prototype/save.js",
+      "match": true,
+      "bytes": 48036,
+      "sha256": "db0315fd31141c78b38781fdfc3cb1c3e2e5d39f11eae8b183cc1be861d5ea7c"
+    },
+    {
+      "path": "src/prototype/world.js",
+      "match": true,
+      "bytes": 185240,
+      "sha256": "4c93bc81846c6f3b35b69e82fae693bfaf2d74d648ea691b201b0f6690e1a811"
+    },
+    {
+      "path": "styles/phone.css",
+      "match": true,
+      "bytes": 17519,
+      "sha256": "e197675b04a5631d3f6e7c092d427fa0a88555af1e9b044b251e791bf929e2a2"
+    },
+    {
+      "path": "styles/prototype.css",
+      "match": true,
+      "bytes": 17616,
+      "sha256": "bd3a2e6963c5d2908a7972a75b8edc219ef84beb69e7b2f4aa41fd8d8d0d6899"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20703,
+      "sha256": "62b697d3e0ff155162306c57673f675c0a7b4b2814c0f6dcc18d49042f4e298e"
+    },
+    {
+      "path": "index.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "phone.html",
+      "match": true,
+      "bytes": 5490,
+      "sha256": "6d6fe5990cccba9b450925b101e959acd1de0f04735bfb920147dc89db783eb8"
+    },
+    {
+      "path": "prototype.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "assets/sprites/manifest.json",
+      "match": true,
+      "bytes": 18798,
+      "sha256": "ca34058374aea87794536c01b3c7f4b8883ee5eb7b85e63c29192c954efce3b5"
+    }
+  ],
+  "all_match": true,
+  "checks": "Reused completed focused behavior/build/asset checks and 24 native local layout/startup cases. No broad CI or repeated suites.",
+  "live_phone_startup": {
+    "version": "0.9.1+snapshot.dev.120",
+    "gameReady": true,
+    "errors": []
+  }
+}

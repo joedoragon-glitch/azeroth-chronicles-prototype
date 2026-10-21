@@ -1,4 +1,4 @@
-Current next-update candidate: [scenery and announcement batch #354](SCENERY_NOTIFICATIONS_BATCH_354.md), prepared locally and focused-audited; not pushed, merged or published.
+Published dev.120: [scenery and announcement batch #354](SCENERY_NOTIFICATIONS_BATCH_354.md), PR #355, package-only run 39532717860; 20 exact live files verified and normal workflow restored. Owner phone play next.
 
 - [Individual pet roles — dev.114](RANGED_PET_ROLES_20261020.md): all eleven specialties, approved buffs, actual healing/ward/finisher/geometry checks and verified publication.
 
