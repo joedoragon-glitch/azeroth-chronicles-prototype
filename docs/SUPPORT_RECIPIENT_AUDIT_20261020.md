@@ -1,3 +1,5 @@
+> **Dev.119 follow-up:** The one message defect below is repaired in the [Ranger feedback correction](RANGER_SUPPORT_FEEDBACK_20261020.md). The dev.118 findings and reproduction below remain historical evidence.
+
 # Support recipients audit — dev.118, 20 October 2026
 
 **Result: no missing pet recipient or broken support effect found in the covered paths.** All eleven pet families, Soldier, Ranger companion and the hero receive the effects their current definitions intend. One minor feedback defect is reproduced below. This audit changes no live gameplay, balance, saves or artwork.
