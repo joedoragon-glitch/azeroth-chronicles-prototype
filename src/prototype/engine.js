@@ -35,6 +35,8 @@
       this.effects = [];
       this.notices = [];
       this.noticeId = 0;
+      this.noticeVisit = 0;
+      this.noticeHistory = [];
       this.basicComboStep = 0;
       this.basicComboAt = -1e9;
       this.basicComboClass = heroClass;
@@ -445,14 +447,22 @@
       this.messages.push(text);
       if (this.messages.length > 7) this.messages.shift();
     }
-    notice(text, duration = 5.5, detail = '', kind) {
-      this.notices.push({
+    notice(text, duration = 5.5, detail = '', kind, context = {}) {
+      const local = kind === 'narration' || kind === 'warning' || kind === 'feedback';
+      const notice = {
         id: ++this.noticeId,
         text,
         duration,
         ...(detail ? { detail } : {}),
         ...(kind ? { kind } : {}),
-      });
+        region: this.definition().id,
+        scope: local ? 'visit' : 'global',
+        ...(local ? { zone: this.zoneId, visit: this.noticeVisit } : {}),
+        ...context,
+      };
+      this.notices.push(notice);
+      this.noticeHistory.push(notice);
+      if (this.noticeHistory.length > 60) this.noticeHistory.shift();
     }
     boss(id) {
       return D.bosses.find((b) => b.id === id);
@@ -560,6 +570,8 @@
         this.notice(
           'The orders bear the Keeper’s seal. The plan to seize the specialists began among these shelves.',
           7,
+          '',
+          'narration',
         );
         this.event('archiveKnowledge', { fact: 'keeperEvidence' });
       }
@@ -2249,6 +2261,7 @@
       for (const oldZone of Object.values(this.s.zones))
         oldZone.props = oldZone.props.filter((p) => !p.garunTemporary && !p.garunPreview);
       this.s.zone = zone;
+      this.noticeVisit++;
       this.clearPatrolResumes();
       this.zone();
       this.syncDungeonMasterStation();
@@ -2337,6 +2350,11 @@
       }
       const before = clone(this.s),
         messageCount = this.messages.length,
+        noticeState = {
+          visit: this.noticeVisit,
+          notices: [...this.notices],
+          history: [...this.noticeHistory],
+        },
         effectCount = this.effects.length,
         from = D.regions[i].id,
         to = D.regions[j].id,
@@ -2362,6 +2380,9 @@
       } catch (_) {
         this.s = before;
         this.messages.length = messageCount;
+        this.noticeVisit = noticeState.visit;
+        this.notices = noticeState.notices;
+        this.noticeHistory = noticeState.history;
         this.effects.length = effectCount;
         this.say('Travel could not complete. Your fare and progress were kept.');
         return false;
@@ -2379,6 +2400,11 @@
       if (targetIndex < 0 || !this.hubDestinations().some((r) => r.id === regionId)) return false;
       const before = clone(this.s),
         messageCount = this.messages.length,
+        noticeState = {
+          visit: this.noticeVisit,
+          notices: [...this.notices],
+          history: [...this.noticeHistory],
+        },
         effectCount = this.effects.length,
         arrival = R.travelArrivals?.['crown>' + regionId];
       try {
@@ -2388,6 +2414,9 @@
       } catch (_) {
         this.s = before;
         this.messages.length = messageCount;
+        this.noticeVisit = noticeState.visit;
+        this.notices = noticeState.notices;
+        this.noticeHistory = noticeState.history;
         this.effects.length = effectCount;
         this.say('Travel could not complete. Your progress was kept.');
         return false;
@@ -3156,7 +3185,10 @@
         this.s.paid['clear:' + id] = true;
         this.grant(this.dungeonClearReward(id), 0);
         this.say('Dungeon first clear reward earned.');
-        this.notice(this.boss(id).place + ' · halls secured', 5.5);
+        this.notice(this.boss(id).place + ' · halls secured', 5.5, '', 'milestone', {
+          scope: 'region',
+          region: this.definition().id,
+        });
       }
     }
     checkEnding() {

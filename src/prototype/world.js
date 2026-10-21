@@ -1786,6 +1786,9 @@
       zone() {
         if (this.s.zones[this.s.zone]) {
           const z = this.s.zones[this.s.zone];
+          // Keep authored generation/migrations on their established geometry.
+          // Enable the scoped traversal correction only on the finished scene.
+          this.setSceneryTraversal(z, false);
           this.dungeonSpaceLayout(z);
           if (!this.isDungeon()) {
             this.regionalDestinations(z);
@@ -1804,6 +1807,7 @@
           this.frontierEdgeRedistribution(z);
           this.frontierSceneComposition(z);
           this.crownSceneComposition(z);
+          this.setSceneryTraversal(z);
           return z;
         }
         const i = this.regionIndex(),
@@ -2220,6 +2224,7 @@
         this.frontierEdgeRedistribution(z);
         this.frontierSceneComposition(z);
         this.crownSceneComposition(z);
+        this.setSceneryTraversal(z);
         return z;
       }
       regionalDestinations(z) {

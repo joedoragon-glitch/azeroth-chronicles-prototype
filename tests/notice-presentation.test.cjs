@@ -24,7 +24,7 @@ function element() {
       this.children.push(c);
     },
     setAttribute() {},
-    getBoundingClientRect: () => ({ bottom: 100 }),
+    getBoundingClientRect: () => ({ left: 12, right: 264, top: 8, bottom: 70 }),
   };
 }
 const host = element(),
@@ -39,6 +39,7 @@ const game = {
   activeLivingParty: () => [],
   attackResetProtected: require('../src/prototype/engine.js').prototype.attackResetProtected,
   roamingBoss: () => false,
+  fieldBossReturning: () => false,
 };
 const context = {
   game,
@@ -50,6 +51,7 @@ const context = {
   menu: null,
   paused: false,
   focused: true,
+  tr: (text) => text,
 };
 vm.createContext(context);
 vm.runInContext(source.slice(start, end), context);
@@ -125,3 +127,135 @@ assert.equal(host.children.length, 0, 'new campaign discards old transient notic
 console.log(
   'PASS real notice queue: combat/quiet interval, interruption, warnings, projectile/hazard safety, full reading time and campaign isolation',
 );
+
+// Travel and priority use real emitted context, not synthetic scoped objects.
+const Campaign = require('../src/prototype/engine');
+const c = new Campaign('developer', 'mage', () => 0.73);
+context.game = c;
+const quiet = () => {
+  c.zone().enemies = [];
+  c.s.party = [];
+  c.s.projectiles = [];
+  c.s.hazards = [];
+};
+quiet();
+c.notices = [];
+clock = 30000;
+c.notice('Greenwood lore', 6.8, '', 'narration', {
+  scope: 'region',
+  region: 'vale',
+  zone: null,
+  visit: null,
+});
+c.notice('Old local warning', 3, '', 'warning');
+c.enter('march');
+quiet();
+c.notices = c.notices.filter((n) => /Greenwood lore|Old local warning/.test(n.text));
+update();
+assert.equal(
+  host.children.length,
+  0,
+  'queued old-region lore and local warnings stay off the next map',
+);
+assert.equal(context.criticalNotices.waiting.length, 1, 'earned regional lore remains available');
+c.notice('New region lore', 6.8, '', 'narration', {
+  scope: 'region',
+  region: 'march',
+  zone: null,
+  visit: null,
+});
+update();
+assert.equal(
+  context.criticalNotices.active[0].text,
+  'New region lore',
+  'irrelevant older lore cannot block current reading',
+);
+c.enter('vale');
+quiet();
+update();
+assert.equal(
+  context.criticalNotices.active[0].text,
+  'Greenwood lore',
+  'active and queued lore both obey region travel',
+);
+c.notice('LEVEL 5', 5.5);
+update();
+assert.equal(context.criticalNotices.active[0].text, 'LEVEL 5');
+c.notice('Companions recalled', 2.8, '', 'feedback');
+update();
+assert.equal(
+  context.criticalNotices.active[0].kind,
+  'feedback',
+  'routine confirmation promptly interrupts a milestone on phone',
+);
+c.notice('TRUE boss emerging', 5.5, '', 'warning');
+update();
+assert.equal(
+  context.criticalNotices.active[0].kind,
+  'warning',
+  'urgent warning preempts routine confirmation',
+);
+assert.equal(context.criticalNotices.active.length, 1, 'phone displays only one card');
+c.enter('march');
+quiet();
+update();
+assert.equal(
+  context.criticalNotices.active[0].text,
+  'LEVEL 5',
+  'global achievement survives travel while local warning expires',
+);
+assert(
+  c.storyReadings().some((n) => n.text === 'Greenwood lore'),
+  'full notice remains readable in announcements',
+);
+// A deferred command receipt must not replay later after a menu or long warning.
+context.menu = {};
+c.notice('Waiting for a route', 2.8, '', 'feedback');
+update();
+clock += 5000;
+context.menu = null;
+update();
+assert(
+  !context.criticalNotices.waiting.some((n) => n.kind === 'feedback'),
+  'stale routine feedback expires',
+);
+context.platform.mode = 'desktop';
+c.notice('BOSS VANQUISHED', 5.5);
+clock += 6000;
+update();
+assert(context.criticalNotices.active.length <= 2, 'desktop retains bounded milestone stacking');
+console.log(
+  'PASS region/visit isolation, global achievements, phone priorities, stale commands and full-text history',
+);
+{
+  const visit = c.noticeVisit,
+    notices = [...c.notices],
+    history = [...c.noticeHistory];
+  const pay = c.payTravelFare;
+  c.payTravelFare = () => {
+    throw Error('failed fare transaction fixture');
+  };
+  assert.equal(c.travel(1), false);
+  assert.equal(c.noticeVisit, visit, 'failed travel retains source visit');
+  assert.deepEqual(c.notices, notices, 'failed travel retains pending notices');
+  assert.deepEqual(c.noticeHistory, history, 'failed travel does not leak destination prose');
+  c.payTravelFare = pay;
+}
+console.log('PASS failed travel retains source notice context');
+{
+  const saved = new Campaign('normal', 'paladin', () => 0.73),
+    line = require('../src/prototype/narration')[3].text;
+  saved.s.quests['quest-3'].done = true;
+  saved.checkQuests();
+  const restored = Campaign.restore(saved.snapshot(), () => 0.73);
+  assert.equal(
+    restored.storyReadings().filter((n) => n.text === line).length,
+    1,
+    'earned quest lore survives reload once',
+  );
+  assert(
+    !restored.notices.some((n) => n.text === line),
+    'reading history does not replay a paid quest notification',
+  );
+}
+console.log('PASS earned full-text quest history survives reload without announcement replay');

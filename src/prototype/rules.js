@@ -7352,6 +7352,23 @@
     dungeonWorkstations,
     regionalHandoffScenes,
     // Harmless scenery creatures use the paused presentation clock, not combat RNG.
+    // First-pass outdoor movement only. Undefined types keep their existing contract.
+    sceneryTraversal: {
+      radii: {
+        'march-boardwalk': 0,
+        'fruit-tree': 12,
+        'dead-tree': 10,
+        'regrowth-birch': 10,
+        'regrowth-willow': 12,
+        sapling: 10,
+        'pine-sapling': 10,
+      },
+      serviceClearance: 70,
+      resourceClearance: 50,
+      campClearance: 180,
+      homeClearance: 55,
+      roadClearance: 40,
+    },
     ambientLife: {
       'pasture-sheep': { radius: 24, walk: 4.5, rest: 5 },
       'poultry-yard': { radius: 25, walk: 3.2, rest: 3.5 },

@@ -1,3 +1,5 @@
+Current next-update candidate: [scenery and announcement batch #354](SCENERY_NOTIFICATIONS_BATCH_354.md), prepared locally and focused-audited; not pushed, merged or published.
+
 - [Individual pet roles — dev.114](RANGED_PET_ROLES_20261020.md): all eleven specialties, approved buffs, actual healing/ward/finisher/geometry checks and verified publication.
 
 - [Pet parity — dev.113](PET_PARITY_AUDIT_20261020.md): approved shared cadence/formations, three behavior repairs, individual assessments and verified publication.

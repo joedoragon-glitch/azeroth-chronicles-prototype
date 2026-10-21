@@ -1,0 +1,1033 @@
+{
+  "source": "9a44fd5",
+  "fixture": "fresh developer campaign, deterministic .73",
+  "scope": "first-pass selected outdoor types; not a whole-game collision certificate",
+  "placementDifferences": 0,
+  "summary": {
+    "solid trunk": 97,
+    "walkable boardwalk": 2,
+    "deferred access conflict": 3
+  },
+  "entries": [
+    {
+      "region": "vale",
+      "id": "regional-handoff-3",
+      "type": "fruit-tree",
+      "x": 835.2140651059904,
+      "y": 985.2086245181753,
+      "old": null,
+      "current": 12,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "vale",
+      "id": "regional-handoff-4",
+      "type": "fruit-tree",
+      "x": 910,
+      "y": 1040,
+      "old": null,
+      "current": 12,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "vale",
+      "id": "regional-handoff-5",
+      "type": "fruit-tree",
+      "x": 860.3131920001125,
+      "y": 1161.111390420987,
+      "old": null,
+      "current": 12,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "vale",
+      "id": "regional-handoff-6",
+      "type": "fruit-tree",
+      "x": 910,
+      "y": 1110,
+      "old": null,
+      "current": 12,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "vale",
+      "id": "greenwood-country-15",
+      "type": "sapling",
+      "x": 97.29014785063295,
+      "y": 775.5371111771444,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "vale",
+      "id": "greenwood-country-16",
+      "type": "sapling",
+      "x": 236.242559070553,
+      "y": 821.3504854652653,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "march",
+      "id": "settlement-major-8",
+      "type": "march-boardwalk",
+      "x": 100.70552360820162,
+      "y": 1267.7259338968745,
+      "old": 32,
+      "current": null,
+      "decision": "walkable boardwalk"
+    },
+    {
+      "region": "march",
+      "id": "settlement-minor-5",
+      "type": "march-boardwalk",
+      "x": 1300,
+      "y": 720,
+      "old": 32,
+      "current": null,
+      "decision": "walkable boardwalk"
+    },
+    {
+      "region": "highlands",
+      "id": "harbor-pine-a",
+      "type": "pine-sapling",
+      "x": 560,
+      "y": 1765,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "harbor-pine-b",
+      "type": "pine-sapling",
+      "x": 510,
+      "y": 2140,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-14",
+      "type": "pine-sapling",
+      "x": 128,
+      "y": 373,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-16",
+      "type": "pine-sapling",
+      "x": 177,
+      "y": 813,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-18",
+      "type": "pine-sapling",
+      "x": 175,
+      "y": 1267,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-20",
+      "type": "pine-sapling",
+      "x": 170,
+      "y": 1731,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-22",
+      "type": "pine-sapling",
+      "x": 151,
+      "y": 2535,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-23",
+      "type": "pine-sapling",
+      "x": 187,
+      "y": 2782,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-25",
+      "type": "pine-sapling",
+      "x": 146,
+      "y": 3160,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-28",
+      "type": "pine-sapling",
+      "x": 386,
+      "y": 617,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-29",
+      "type": "pine-sapling",
+      "x": 357,
+      "y": 802,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-30",
+      "type": "pine-sapling",
+      "x": 364,
+      "y": 1289,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-33",
+      "type": "pine-sapling",
+      "x": 399,
+      "y": 2537,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-36",
+      "type": "pine-sapling",
+      "x": 412,
+      "y": 3164,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-37",
+      "type": "pine-sapling",
+      "x": 649,
+      "y": 185,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-41",
+      "type": "pine-sapling",
+      "x": 648,
+      "y": 2374,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-44",
+      "type": "pine-sapling",
+      "x": 613,
+      "y": 3002,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-45",
+      "type": "pine-sapling",
+      "x": 609,
+      "y": 3241,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-46",
+      "type": "pine-sapling",
+      "x": 773,
+      "y": 189,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-47",
+      "type": "pine-sapling",
+      "x": 827,
+      "y": 422,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-48",
+      "type": "pine-sapling",
+      "x": 767,
+      "y": 646,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-50",
+      "type": "pine-sapling",
+      "x": 837,
+      "y": 1901,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-51",
+      "type": "pine-sapling",
+      "x": 810,
+      "y": 2140,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-52",
+      "type": "pine-sapling",
+      "x": 861,
+      "y": 2336,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-53",
+      "type": "pine-sapling",
+      "x": 775,
+      "y": 2536,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-54",
+      "type": "pine-sapling",
+      "x": 825,
+      "y": 2769,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-56",
+      "type": "pine-sapling",
+      "x": 847,
+      "y": 3176,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-60",
+      "type": "pine-sapling",
+      "x": 1003,
+      "y": 1053,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-62",
+      "type": "pine-sapling",
+      "x": 1010,
+      "y": 2129,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-64",
+      "type": "pine-sapling",
+      "x": 1029,
+      "y": 2542,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-66",
+      "type": "pine-sapling",
+      "x": 1010,
+      "y": 3210,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-73",
+      "type": "pine-sapling",
+      "x": 1231,
+      "y": 3176,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-76",
+      "type": "pine-sapling",
+      "x": 1416,
+      "y": 649,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-77",
+      "type": "pine-sapling",
+      "x": 1492,
+      "y": 1473,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-79",
+      "type": "pine-sapling",
+      "x": 1491,
+      "y": 2086,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-84",
+      "type": "pine-sapling",
+      "x": 1420,
+      "y": 3182,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-85",
+      "type": "pine-sapling",
+      "x": 1678,
+      "y": 167,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-92",
+      "type": "pine-sapling",
+      "x": 1664,
+      "y": 2950,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-94",
+      "type": "pine-sapling",
+      "x": 1915,
+      "y": 211,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-96",
+      "type": "pine-sapling",
+      "x": 1861,
+      "y": 632,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-111",
+      "type": "pine-sapling",
+      "x": 2113,
+      "y": 1949,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-119",
+      "type": "pine-sapling",
+      "x": 2319,
+      "y": 375,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-122",
+      "type": "pine-sapling",
+      "x": 2317,
+      "y": 1304,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-124",
+      "type": "pine-sapling",
+      "x": 2296,
+      "y": 2090,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "highlands",
+      "id": "aesthetic-nature-128",
+      "type": "pine-sapling",
+      "x": 2356,
+      "y": 2973,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-15",
+      "type": "dead-tree",
+      "x": 312.27922061357856,
+      "y": 1282.2792206135784,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-21",
+      "type": "dead-tree",
+      "x": 190,
+      "y": 2732,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-23",
+      "type": "dead-tree",
+      "x": 172,
+      "y": 3179,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-24",
+      "type": "dead-tree",
+      "x": 571.7056274847714,
+      "y": 1130.7056274847714,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-27",
+      "type": "dead-tree",
+      "x": 282.5405845398161,
+      "y": 1814.459415460184,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-29",
+      "type": "dead-tree",
+      "x": 468,
+      "y": 2207,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-38",
+      "type": "dead-tree",
+      "x": 713,
+      "y": 2181,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-39",
+      "type": "dead-tree",
+      "x": 655,
+      "y": 2424,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-40",
+      "type": "dead-tree",
+      "x": 714,
+      "y": 2720,
+      "old": null,
+      "current": null,
+      "decision": "deferred access conflict"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-43",
+      "type": "dead-tree",
+      "x": 937,
+      "y": 189,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-45",
+      "type": "dead-tree",
+      "x": 981.2349903967339,
+      "y": 766.4824349377226,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-52",
+      "type": "dead-tree",
+      "x": 882,
+      "y": 2980,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-55",
+      "type": "dead-tree",
+      "x": 1091.7645513089524,
+      "y": 1947.7035860171188,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-57",
+      "type": "dead-tree",
+      "x": 1063.8301950380508,
+      "y": 2133.2910932243753,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-59",
+      "type": "dead-tree",
+      "x": 1182,
+      "y": 2728,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-67",
+      "type": "dead-tree",
+      "x": 1695,
+      "y": 1466,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-69",
+      "type": "dead-tree",
+      "x": 1692.3741917251764,
+      "y": 1867.8319741697364,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-73",
+      "type": "dead-tree",
+      "x": 1679,
+      "y": 2895,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-80",
+      "type": "dead-tree",
+      "x": 1884,
+      "y": 2734,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-84",
+      "type": "dead-tree",
+      "x": 2205,
+      "y": 418,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-87",
+      "type": "dead-tree",
+      "x": 2242.708086886263,
+      "y": 1449.959431489289,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-90",
+      "type": "dead-tree",
+      "x": 2144,
+      "y": 2468,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-92",
+      "type": "dead-tree",
+      "x": 2206,
+      "y": 2898,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-93",
+      "type": "dead-tree",
+      "x": 2134,
+      "y": 3214,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-98",
+      "type": "dead-tree",
+      "x": 2414,
+      "y": 1914,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-99",
+      "type": "dead-tree",
+      "x": 2456,
+      "y": 2180,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-nature-100",
+      "type": "dead-tree",
+      "x": 2421,
+      "y": 2438,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-bank-101",
+      "type": "dead-tree",
+      "x": 1254.9439313267271,
+      "y": 95,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-bank-103",
+      "type": "dead-tree",
+      "x": 1248.3241838049942,
+      "y": 429.8399714827693,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-bank-105",
+      "type": "dead-tree",
+      "x": 1304.1597134133792,
+      "y": 1273,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-bank-107",
+      "type": "dead-tree",
+      "x": 1632.949889391881,
+      "y": 1528,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-bank-109",
+      "type": "dead-tree",
+      "x": 1644.9814014584765,
+      "y": 1834,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-bank-111",
+      "type": "dead-tree",
+      "x": 1654.413014121714,
+      "y": 2372,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-bank-113",
+      "type": "dead-tree",
+      "x": 1633.7944529101633,
+      "y": 2678,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "aesthetic-bank-115",
+      "type": "dead-tree",
+      "x": 1627.7984428884606,
+      "y": 2933,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "recovery-heat-frontier-2",
+      "type": "regrowth-birch",
+      "x": 798.9625322141366,
+      "y": 1034.510902307062,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "recovery-heat-frontier-6",
+      "type": "regrowth-birch",
+      "x": 792.8883098598476,
+      "y": 1320.0693933942039,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "recovery-heat-frontier-13",
+      "type": "regrowth-birch",
+      "x": 1090.459415460184,
+      "y": 1835.459415460184,
+      "old": null,
+      "current": null,
+      "decision": "deferred access conflict"
+    },
+    {
+      "region": "frontier",
+      "id": "recovery-heat-frontier-17",
+      "type": "regrowth-willow",
+      "x": 1218.425421036992,
+      "y": 2058.95241121992,
+      "old": null,
+      "current": 12,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "recovery-heat-frontier-19",
+      "type": "regrowth-birch",
+      "x": 550,
+      "y": 2040,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "recovery-heat-frontier-22",
+      "type": "regrowth-willow",
+      "x": 838.9524112199201,
+      "y": 2370.813374288121,
+      "old": null,
+      "current": 12,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "recovery-heat-frontier-24",
+      "type": "regrowth-birch",
+      "x": 815,
+      "y": 2730,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "recovery-heat-frontier-29",
+      "type": "regrowth-birch",
+      "x": 1670,
+      "y": 3070,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "recovery-heat-frontier-32",
+      "type": "regrowth-willow",
+      "x": 2150,
+      "y": 2950,
+      "old": null,
+      "current": 12,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "recovery-heat-frontier-35",
+      "type": "regrowth-birch",
+      "x": 2950,
+      "y": 3030,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "recovery-heat-frontier-39",
+      "type": "regrowth-willow",
+      "x": 2500,
+      "y": 1090,
+      "old": null,
+      "current": 12,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "recovery-heat-frontier-42",
+      "type": "regrowth-birch",
+      "x": 3010,
+      "y": 1350,
+      "old": null,
+      "current": null,
+      "decision": "deferred access conflict"
+    },
+    {
+      "region": "frontier",
+      "id": "recovery-heat-frontier-45",
+      "type": "regrowth-willow",
+      "x": 3140,
+      "y": 1960,
+      "old": null,
+      "current": 12,
+      "decision": "solid trunk"
+    },
+    {
+      "region": "frontier",
+      "id": "recovery-heat-frontier-49",
+      "type": "regrowth-birch",
+      "x": 2600,
+      "y": 2180,
+      "old": null,
+      "current": 10,
+      "decision": "solid trunk"
+    }
+  ]
+}

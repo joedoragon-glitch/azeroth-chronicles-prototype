@@ -8,6 +8,7 @@
     const crowdPressure = new WeakMap(),
       terrainTrips = new WeakMap();
     const patrolResumes = new WeakMap();
+    const sceneryReady = new WeakSet();
     const companionTrips = new WeakMap(),
       laborThreatFrames = new WeakMap(),
       unsupportedPursuits = new WeakSet();
@@ -302,7 +303,12 @@
         if (!trip.path.length) {
           if (gathering && this.s.time >= (this._gatherRouteNoticeAt || 0)) {
             this._gatherRouteNoticeAt = this.s.time + R.gatheringTravel.noticeSeconds;
-            this.notice('Gatherers wait for a safe route. Clear nearby enemies or Recall them.', 4);
+            this.notice(
+              'Gatherers waiting for a safe route.',
+              2.8,
+              'Clear nearby enemies or Recall them.',
+              'feedback',
+            );
           }
           return false;
         }
@@ -598,6 +604,29 @@
           }
         }
       }
+      setSceneryTraversal(z, ready = true) {
+        if (ready) sceneryReady.add(z);
+        else sceneryReady.delete(z);
+      }
+      sceneryMovementRadius(p, z) {
+        const cfg = R.sceneryTraversal,
+          r = cfg.radii[p.structure];
+        if (r > 0 && !p.decorative) return p.r;
+        if (r === undefined) return p.decorative ? null : p.r;
+        if (r === 0) return null;
+        // Keep mixed-use sites for the later case-by-case pass. This decision
+        // depends on authored homes/services, never moving actors or frame rate.
+        if (
+          this.distanceToRoad(z, p) < cfg.roadClearance ||
+          this.distanceToRoad({ roads: z.footpaths || [] }, p) < cfg.roadClearance ||
+          z.npcs.some((n) => dist(p, n.servicePoint || n) < cfg.serviceClearance) ||
+          z.nodes.some((n) => dist(p, n) < cfg.resourceClearance) ||
+          z.buildings.some((b) => dist(p, b) < cfg.campClearance) ||
+          z.enemies.some((e) => e.home && dist(p, e.home) < cfg.homeClearance)
+        )
+          return p.decorative ? null : p.r;
+        return r;
+      }
       blocked(x, y, zone = this.s.zone, radius = 15, terrainOnly = false, fort = null) {
         const i = this.regionIndex(zone),
           room = this.supplyRoom(zone),
@@ -721,12 +750,31 @@
         const z = this.s.zones[zone];
         return (
           (!terrainOnly &&
-            z?.props.some(
-              (p) =>
-                !p.decorative &&
-                !fort?.props.has(p.id) &&
-                Math.hypot(x - p.x, y - p.y) < p.r + radius,
-            )) ||
+            z?.props.some((p) => {
+              if (fort?.props.has(p.id)) return false;
+              // Zero-radius queries are the existing LOS/projectile contract.
+              // Only positive-radius outdoor movement receives this first pass.
+              const candidate =
+                sceneryReady.has(z) &&
+                radius > 0 &&
+                !dungeon &&
+                !room &&
+                !side &&
+                R.sceneryTraversal.radii[p.structure] !== undefined;
+              const r = candidate
+                ? Math.max(R.sceneryTraversal.radii[p.structure], p.decorative ? 0 : p.r)
+                : p.decorative
+                  ? null
+                  : p.r;
+              if (
+                r === null ||
+                (candidate && R.sceneryTraversal.radii[p.structure] === 0) ||
+                Math.hypot(x - p.x, y - p.y) >= r + radius
+              )
+                return false;
+              const body = candidate ? this.sceneryMovementRadius(p, z) : r;
+              return body !== null && Math.hypot(x - p.x, y - p.y) < body + radius;
+            })) ||
           false
         );
       }
