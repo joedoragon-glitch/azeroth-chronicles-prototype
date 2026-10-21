@@ -1841,7 +1841,7 @@
         mountedCrownRider: true,
       },
       {
-        x: 670,
+        x: 720,
         y: 430,
         group: 'household',
         name: 'Crag Tyrant',
@@ -3636,7 +3636,7 @@
     mine: { version: 1, entry: { x: 120, y: 140 } },
     abyss: { version: 1, entry: { x: 120, y: 140 }, guards: [0, 1] },
     citadel: { version: 1, entry: { x: 120, y: 140 }, guards: [0, 1, 3] },
-    'supply-highlands': { version: 1, captain: { x: 670, y: 430 }, guards: [6] },
+    'supply-highlands': { version: 1, captain: { x: 720, y: 430 }, guards: [6] },
   };
   const dungeonArchitecture = {
     mine: {

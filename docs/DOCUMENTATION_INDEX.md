@@ -1,3 +1,5 @@
+Prepared dev.129: [defender space, corner arrivals and discussion checklist](DEFENDER_SPACE_DEV129.md). Focused verification passes; package-only publication pending.
+
 Published dev.128: [regional Treasury recovery and defender-favoring arena steering](TREASURY_DEATH_RECOVERY_DEV128.md), PR #364. Exact live build/12 runtime files match; phone captain announcement/touch collection and saved Frontier drop pass. Normal workflow restored.
 
 Published dev.127: [roster restriction explanations](BARRACKS_ROSTER_FEEDBACK_DEV127.md), PR #363. Nine live files match; actual phone rest/recruit and visible blocker checks pass. Normal workflow restored. [Boss/captain encounter-space audit](ENCOUNTER_SPACE_AUDIT_DEV127.md) is complete, review-only; proposed spatial/arrival/fort repairs are not implemented.

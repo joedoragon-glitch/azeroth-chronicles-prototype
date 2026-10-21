@@ -1,0 +1,147 @@
+{
+  "entrances": [
+    {
+      "id": "crypt",
+      "acquisition": 0,
+      "defenders": 11
+    },
+    {
+      "id": "archive",
+      "acquisition": 0,
+      "defenders": 15
+    },
+    {
+      "id": "mine",
+      "acquisition": 0,
+      "defenders": 19
+    },
+    {
+      "id": "abyss",
+      "acquisition": 0,
+      "defenders": 27
+    },
+    {
+      "id": "citadel",
+      "acquisition": 0,
+      "defenders": 33
+    }
+  ],
+  "signatures": [
+    {
+      "id": "crypt",
+      "form": "normal",
+      "index": 1,
+      "stages": 1
+    },
+    {
+      "id": "crypt",
+      "form": "normal",
+      "index": 3,
+      "stages": 2
+    },
+    {
+      "id": "crypt",
+      "form": "true",
+      "index": 1,
+      "stages": 1
+    },
+    {
+      "id": "crypt",
+      "form": "true",
+      "index": 3,
+      "stages": 2
+    },
+    {
+      "id": "archive",
+      "form": "normal",
+      "index": 1,
+      "stages": 1
+    },
+    {
+      "id": "archive",
+      "form": "normal",
+      "index": 2,
+      "stages": 1
+    },
+    {
+      "id": "archive",
+      "form": "true",
+      "index": 1,
+      "stages": 2
+    },
+    {
+      "id": "archive",
+      "form": "true",
+      "index": 2,
+      "stages": 1
+    },
+    {
+      "id": "mine",
+      "form": "normal",
+      "index": 3,
+      "stages": 1
+    },
+    {
+      "id": "mine",
+      "form": "true",
+      "index": 3,
+      "stages": 1
+    }
+  ],
+  "summons": [
+    {
+      "id": "crypt",
+      "form": "normal",
+      "count": 3
+    },
+    {
+      "id": "crypt",
+      "form": "true",
+      "count": 6
+    },
+    {
+      "id": "archive",
+      "form": "normal",
+      "count": 3
+    },
+    {
+      "id": "archive",
+      "form": "true",
+      "count": 6
+    },
+    {
+      "id": "mine",
+      "form": "normal",
+      "count": 3
+    },
+    {
+      "id": "mine",
+      "form": "true",
+      "count": 6
+    }
+  ],
+  "migrations": [
+    {
+      "id": "crypt",
+      "activeDeferred": true,
+      "occupiedDeferred": true,
+      "deadPreserved": true
+    },
+    {
+      "id": "archive",
+      "activeDeferred": true,
+      "occupiedDeferred": true,
+      "deadPreserved": true
+    },
+    {
+      "id": "supply-highlands",
+      "activeDeferred": true,
+      "occupiedDeferred": true,
+      "deadPreserved": true
+    }
+  ],
+  "crag": {
+    "impacts": 3,
+    "bodyClear": true
+  }
+}

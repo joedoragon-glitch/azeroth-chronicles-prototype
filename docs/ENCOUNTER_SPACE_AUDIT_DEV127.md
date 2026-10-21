@@ -39,3 +39,7 @@ Completed evidence must be reused. No broad CI, full-game balance sweep or autom
 ## Later owner steering — 21 October
 
 Optimize arenas for prepared defenders to use their real movement, skills and summons. Corner entrances separate entry from confrontation, rather than providing easier clears. Arrival stacking is acceptable; spacing is optional where actual combat movement/FPS supports it. Crypt/Archive/Mine fort bonuses remain undecided and unapproved because of early difficulty concerns. Prioritize approved Treasury death-loss recovery (`TREASURY_DEATH_RECOVERY_DEV128.md`). The earlier table records proposals, not authorization to add those bonuses.
+
+## Dev.129 spatial implementation
+
+The owner resumed contained spatial repairs with focused verification. See `DEFENDER_SPACE_DEV129.md` for the implemented corner arrivals, prepared receiving posts, rearward ranged boss homes, body-clear Treasury posts and full discussion checklist. The earlier table remains historical audit evidence; it does not authorize additional fort bonuses or require companion spreading. Unidentified captain casting remains unreproduced.
