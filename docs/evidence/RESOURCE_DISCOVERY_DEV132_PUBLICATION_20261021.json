@@ -1,0 +1,47 @@
+{
+  "version": "0.9.1+snapshot.dev.132",
+  "pr": 368,
+  "merge": "fb0a6d0edf97e57a654dc57757e9fae0a660828e",
+  "files": [
+    {
+      "path": "src/prototype/app.js",
+      "matches": true,
+      "sha256": "1b3025eca18520217801a12bcea45487dd578df80f672b8898d2a1e05606d3b2"
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "matches": true,
+      "sha256": "35a57637020f7e0f0e8cb70b050cbbd841050bab24c0bc01c54ee92e3a078bf5"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "matches": true,
+      "sha256": "d6ac823a0663711a93f89e458ee9752096df213852791c1ff23327a9f75324db"
+    },
+    {
+      "path": "src/prototype/expeditions.js",
+      "matches": true,
+      "sha256": "6fefceb9529c6185a1857b25f9725e166c1e867ae4ea279dc94f52261dd0e16e"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "matches": true,
+      "sha256": "6e98e4d60d3a0ba8f84fb5928c57ccafa86789317860db2ef7433220d13505ed"
+    },
+    {
+      "path": "sw.js",
+      "matches": true,
+      "sha256": "8fd84df209110df4552784b4fe27af9beeb455b8fb2466cae91e24731dcc7edb"
+    }
+  ],
+  "build": "fb0a6d0edf97e57a654dc57757e9fae0a660828e",
+  "buildMatches": true,
+  "packageOnlyRun": {
+    "id": 39581559035,
+    "conclusion": "success"
+  },
+  "livePhoneStartup": {
+    "status": "unavailable",
+    "reason": "Installed WebKit cannot launch because system libraries are missing; no browser dependencies installed for this copy-only patch."
+  }
+}

@@ -1,4 +1,4 @@
-Current patch: [Resource menu discovery — dev.132](RESOURCE_DISCOVERY_DEV132.md). Generic instructions preserve discovery and all existing resource-worker abilities; focused copy audit, no broad CI.
+Published: [Resource menu discovery — dev.132](RESOURCE_DISCOVERY_DEV132.md), PR #368. Generic instructions preserve discovery and all resource-worker abilities. Focused copy/build/menu/expedition checks; six live files/exact build verified. Package-only release, normal workflow restored; phone startup unavailable (missing browser libraries).
 
 Discussion only: [Side-dungeon possibilities and latest decision to leave them unchanged](SIDE_DUNGEON_DESIGN_DISCUSSION_20261021.md). Includes functioning places, Goblin coherence, flooding, magic and proposed SIBDL framing. Not a feature backlog or canon commitment.
 

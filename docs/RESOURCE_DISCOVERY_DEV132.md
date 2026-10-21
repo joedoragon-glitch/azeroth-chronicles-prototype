@@ -8,4 +8,4 @@ Audit: inspected every Little Treasurer reference in runtime sources; only its a
 
 Workflow: implement requested issue, focused review/checks as needed, publish for Joel’s phone playthrough; reserve broad CI for an explicitly requested end-of-batch pass.
 
-Publication pending.
+Published as PR #368 / `fb0a6d0edf97e57a654dc57757e9fae0a660828e`, package-only run 39581559035 (success). Six exact live files and build verified. Optional WebKit phone startup could not launch because host system libraries are missing; no browser/dependency installation or broader tests added. Normal workflow restored and temporary publisher removed. Receipt: `docs/evidence/RESOURCE_DISCOVERY_DEV132_PUBLICATION_20261021.json`.
