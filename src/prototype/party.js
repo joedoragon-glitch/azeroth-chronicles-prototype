@@ -207,6 +207,21 @@
           );
         for (const e of this.zone().enemies) {
           if (e.hp <= 0 || e.neutral || e.returning || !this.enemyRangedLine(e, u)) continue;
+          const warning = e.telegraph;
+          if (
+            warning &&
+            Number.isFinite(warning.x) &&
+            Number.isFinite(warning.y) &&
+            (dist(u, warning) < (warning.radius || 0) + margin ||
+              (warning.kind === 'line' &&
+                this.distanceToSegment(
+                  u,
+                  { x: warning.fromX ?? e.x, y: warning.fromY ?? e.y },
+                  warning,
+                ) <
+                  (warning.halfWidth || R.combatGeometry.lineHalfWidth) + margin))
+          )
+            return false;
           const gap = dist(u, e),
             reach = Math.max(
               65,
@@ -215,7 +230,12 @@
               e.captain || e.roomCaptain || e.fieldCaptain
                 ? this.captainProfile(e)?.specialRange || cfg.nearThreatRadius
                 : 0,
-              e.telegraph || e.motion || e.nightOnly ? cfg.nearThreatRadius : 0,
+              e.telegraph || e.motion ? cfg.nearThreatRadius : 0,
+              e.nightOnly
+                ? e.species === 'wraith'
+                  ? R.nightEnemyCombat.wraith.radius
+                  : 360 * R.balance.enemySpecialReachMultiplier
+                : 0,
             );
           if (gap < reach + margin) return false;
           if (

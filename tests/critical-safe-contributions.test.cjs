@@ -110,6 +110,9 @@ for (const risk of [
   'neutral',
   'range',
   'hero-distance',
+  'marked-warning',
+  'line-warning',
+  'night-special',
 ]) {
   const { g, z, u, e } = scene();
   if (risk === 'melee') e.x = u.x - 60;
@@ -126,11 +129,39 @@ for (const risk of [
   if (risk === 'neutral') e.neutral = true;
   if (risk === 'range') u.x = e.x + 250;
   if (risk === 'hero-distance') g.hero.x = 700;
-  assert(!g.companionSafeContribution(u, e, 0), risk + ' blocks a supposedly safe shot');
+  if (risk === 'marked-warning' || risk === 'line-warning') {
+    const distant = g.makeEnemy(
+      { species: 'goblin', name: 'Warning caster', level: 1, hp: 10000, damage: 0, gold: 0, xp: 0 },
+      { x: 500, y: 1500 },
+    );
+    distant.aggro = true;
+    distant.telegraph =
+      risk === 'marked-warning'
+        ? { kind: 'circle', x: u.x, y: u.y, radius: 65 }
+        : { kind: 'line', fromX: 500, fromY: 1500, x: 1600, y: 1500, halfWidth: 30 };
+    z.enemies.push(distant);
+  }
+  if (risk === 'night-special') {
+    e.nightOnly = true;
+    u.x = e.x + 350;
+    g.hero.x = 1100;
+  }
+
+  assert(
+    !g.companionSafeContribution(u, e, risk === 'night-special' ? 2 : 0),
+    risk + ' blocks a supposedly safe shot',
+  );
   cases++;
 }
 // Risk arriving during a real charged preparation cancels it and immediately restores retreat.
-for (const risk of ['closing-enemy', 'lost-screen', 'silence', 'hero-moving', 'hazard']) {
+for (const risk of [
+  'closing-enemy',
+  'lost-screen',
+  'silence',
+  'hero-moving',
+  'hazard',
+  'warning',
+]) {
   const { g, u, e } = scene('soldier');
   u.skill2Cd = 0;
   step(g);
@@ -141,6 +172,7 @@ for (const risk of ['closing-enemy', 'lost-screen', 'silence', 'hero-moving', 'h
   if (risk === 'lost-screen') g.hero.x = 1300;
   if (risk === 'silence') u.silenceField = { remaining: 1 };
   if (risk === 'hero-moving') g.hero.x = 650;
+  if (risk === 'warning') e.telegraph = { kind: 'circle', x: u.x, y: u.y, radius: 65 };
   if (risk === 'hazard') g.s.hazards.push({ x: u.x, y: u.y, radius: 70, life: 2, damage: 10 });
   if (risk === 'silence') g.mageSilenceActive = (actor) => actor === u;
   step(g);
