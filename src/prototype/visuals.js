@@ -18828,6 +18828,9 @@
       room = !!opts.room,
       hero = opts.hero || null,
       lights = opts.lights || [],
+      daylight = !dungeon && !room ? opts.daylight : null,
+      darkness = daylight ? Math.max(0, Math.min(1, daylight.darkness)) : night ? 1 : 0,
+      peaceBlend = peace ? (daylight?.phase === 'victory-sunrise' ? daylight.progress : 1) : 0,
       time = (typeof performance !== 'undefined' ? performance.now() : 0) / 1000;
     ctx.save();
     // Regional color grade: gentle enough to preserve combat readability, strong enough to make each zone feel authored.
@@ -18854,15 +18857,19 @@
       ctx.fillStyle = q;
       ctx.fillRect(p.x - r, p.y - r, r * 2, r * 2);
     };
-    if (night) {
+    if (darkness > 0) {
+      ctx.globalAlpha = darkness;
       const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
       g.addColorStop(0, nightTints[region] || nightTints[0]);
-      g.addColorStop(1, peace ? 'rgba(22,31,49,.30)' : 'rgba(9,17,30,.58)');
+      g.addColorStop(
+        1,
+        `rgba(${9 + 13 * peaceBlend},${17 + 14 * peaceBlend},${30 + 19 * peaceBlend},${0.58 - 0.28 * peaceBlend})`,
+      );
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       // Warm pools around the hero and inhabited field structures make night readable without flattening the whole scene.
       ctx.globalCompositeOperation = 'screen';
-      glow(hero, 145, peace ? 0.22 : 0.18, region === 4 ? '215,191,231' : '235,221,184');
+      glow(hero, 145, 0.18 + 0.04 * peaceBlend, region === 4 ? '215,191,231' : '235,221,184');
       // Night sources are the current map's actual windows, services and fires.
       // Keep the soft lit ground distinct from the lamp itself. Only a small
       // radius for each source, with a larger effect at working kitchens/forges.
@@ -18925,7 +18932,9 @@
           ctx.fillRect(x - 6, y + 7, 14, 3);
         }
       }
-    } else {
+    }
+    if (darkness < 1) {
+      ctx.globalAlpha = 1 - darkness;
       ctx.fillStyle = dayTints[region] || dayTints[0];
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       const sun = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
@@ -18937,13 +18946,38 @@
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
     }
-    if (!night) {
+    ctx.globalAlpha = 1;
+    if (darkness < 1) {
       // A lit hand lantern keeps a small bloom in daylight; broad illumination
       // becomes visible after dark. Existing civic day/night lights stay off.
       ctx.globalCompositeOperation = 'screen';
       for (const p of lights.filter((p) => p.kind === 'carried-lantern').slice(0, 8))
-        glow(p, 22, 0.12, '255,221,150');
+        glow(p, 22, 0.12 * (1 - darkness), '255,221,150');
       ctx.globalCompositeOperation = 'source-over';
+    }
+    // A low directional sunset and diffuse rose/gold dawn read across the
+    // existing isometric landscape. Endpoint-zero warmth avoids boundary flashes.
+    if (daylight?.warmth > 0) {
+      const sunset = daylight.phase === 'sunset',
+        victory = daylight.phase === 'victory-sunrise';
+      const wash = ctx.createLinearGradient(
+        0,
+        canvas.height * (sunset ? 0.15 : 0.8),
+        canvas.width,
+        canvas.height * (sunset ? 0.9 : 0.1),
+      );
+      const strength = daylight.warmth * (victory ? 1.25 : 1);
+      wash.addColorStop(
+        0,
+        sunset ? `rgba(244,139,70,${0.23 * strength})` : `rgba(248,185,177,${0.18 * strength})`,
+      );
+      wash.addColorStop(0.52, `rgba(255,216,143,${0.07 * strength})`);
+      wash.addColorStop(
+        1,
+        sunset ? `rgba(103,64,126,${0.09 * strength})` : `rgba(255,233,171,${0.19 * strength})`,
+      );
+      ctx.fillStyle = wash;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
     // Keep the night safety grade and useful light pools, but omit purely
     // decorative pollen/mist/sparks and vignette in Optimization Mode.
@@ -18952,12 +18986,18 @@
       return;
     }
     // Atmospheric motes are screen-space and intentionally sparse: pollen, marsh mist, alpine dust, ash and Crown sparks.
-    const moteColors = night
-        ? ['#dcefa8', '#b7e2d5', '#dbe4df', '#e6a170', '#c7a4df']
-        : ['#eadf9e', '#b8d8ca', '#dedcc7', '#b98569', '#aa8ec0'],
+    const dayMotes = ['#eadf9e', '#b8d8ca', '#dedcc7', '#b98569', '#aa8ec0'],
+      nightMotes = ['#dcefa8', '#b7e2d5', '#dbe4df', '#e6a170', '#c7a4df'],
       count = dungeon || room ? 8 : region === 3 || region === 4 ? 18 : 14;
-    ctx.globalAlpha = night ? 0.24 : 0.18;
-    ctx.fillStyle = moteColors[region] || moteColors[0];
+    const blend = (a, b) =>
+      [1, 3, 5].map((i) =>
+        Math.round(
+          parseInt(a.slice(i, i + 2), 16) * (1 - darkness) +
+            parseInt(b.slice(i, i + 2), 16) * darkness,
+        ),
+      );
+    ctx.globalAlpha = 0.18 + 0.06 * darkness;
+    ctx.fillStyle = `rgb(${blend(dayMotes[region] || dayMotes[0], nightMotes[region] || nightMotes[0]).join(',')})`;
     for (let j = 0; j < count; j++) {
       const seed = (j + 1) * 91 + region * 137,
         x = ((seed * 37 + time * (region >= 3 ? 10 : 5)) % (canvas.width + 80)) - 40,
@@ -18981,7 +19021,10 @@
       Math.max(canvas.width, canvas.height) * 0.72,
     );
     v.addColorStop(0, 'rgba(0,0,0,0)');
-    v.addColorStop(1, night ? 'rgba(0,0,0,.15)' : 'rgba(5,15,10,.12)');
+    v.addColorStop(
+      1,
+      `rgba(${5 * (1 - darkness)},${15 * (1 - darkness)},${10 * (1 - darkness)},${0.12 + 0.03 * darkness})`,
+    );
     ctx.fillStyle = v;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.restore();
