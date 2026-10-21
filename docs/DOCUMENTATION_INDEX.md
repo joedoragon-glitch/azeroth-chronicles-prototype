@@ -1,3 +1,5 @@
+Published dev.126: [combat flow, gathering returns, menu priorities and quest guidance](COMBAT_FLOW_AND_MENUS_DEV126.md), PR #362. Nineteen public files match; live phone startup verified; normal workflow restored. Includes roster/interruption audits. Basic Barracks replacement proposal and persistent flashes remain open.
+
 Published dev.125: [Treasury forts, Archive passage and Neri restoration](TREASURY_FORTS_AND_ARCHIVE_DEV125.md), PR #361. Fifteen public files match; live phone crossing/startup verified. Full four-Treasury bonuses, second Archive seam and Neri rescue/pact/TRUE continuity. Normal workflow restored. Charged-skill queue remains a proposal.
 
 Published dev.124: [Sunken Archive floor seam](ARCHIVE_FLOOR_SEAM_DEV124.md), PR #360; invisible lab/study join repaired within the existing footprint. Twelve live-file matches and actual live phone crossing/startup verified; normal workflow restored.

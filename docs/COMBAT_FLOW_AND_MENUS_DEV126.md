@@ -1,6 +1,6 @@
 # Combat flow and frequent menu actions — dev.126
 
-Owner requested implementation and phone publication with necessary focused checks only.
+Published in PR #362 as `c7ec2999248dca1491db2629795b786880dfa0d2`, package-only run 39556310506. All 19 checked live files match; live phone startup passes without JavaScript errors. Normal workflow restored and temporary publisher removed. [Publication receipt](evidence/COMBAT_FLOW_DEV126_PUBLICATION_20261021.json). Owner requested necessary focused checks only; no broad CI.
 
 ## Final behavior
 
@@ -57,3 +57,9 @@ Reedport's market, cart and two supply decorations move away from the refuge fro
 Focused delivery tests cover safe destination choice, hostile detour, actual reverse trip, new blocked return, saved/malformed trails, retained cargo, critical wounds and Recall. Existing gathering and regroup checks pass.
 
 Publication receipt: `evidence/COMBAT_FLOW_DEV126_PUBLICATION_20261021.json` (added after live verification).
+
+## Next discussion: Basic Barracks replacement
+
+The owner reports having three active companions at a 20-crown Basic Barracks and being unable to rest one/add the newly unlocked pet. Source review confirms capacity does not block rest, and with a three-person cap resting one should permit activation of one replacement. The specific failure therefore remains unconfirmed; do not present capacity alone as the diagnosis.
+
+Proposed contained UX: a “Replace with…” action exchanges one active member with one living reserve companion or recruitable unlocked pet in a single operation. Keep the active party size unchanged and respect the Expedition maximum; Basic Barracks retain their three-person expansion cap and all other restrictions. Full Barracks retain the ability to expand up to the higher Expedition cap. Validate both sides before resting either unit, and preserve pet uniqueness, roster bounds, health, unlocks and the existing combat safety gate. No roster mechanics were changed in dev.126. This proposal awaits the next owner discussion.

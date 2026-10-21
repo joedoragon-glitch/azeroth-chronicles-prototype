@@ -1,9 +1,9 @@
 name: Test and deploy app
 on:
   push:
-    branches: [owner-combat-flow-dev126-hold]
+    branches: [main]
   pull_request:
-    branches: [owner-combat-flow-dev126-hold]
+    branches: [main, perf/v09-integration-20261010]
   workflow_dispatch:
 
 permissions:

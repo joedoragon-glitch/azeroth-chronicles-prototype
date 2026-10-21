@@ -1,0 +1,137 @@
+{
+  "version": "0.9.1+snapshot.dev.126",
+  "pr": 362,
+  "merge": "c7ec2999248dca1491db2629795b786880dfa0d2",
+  "package_only_run": 39556310506,
+  "verified_at": "2026-10-21T06:35:56.121399+00:00",
+  "files": [
+    {
+      "path": "build.txt",
+      "match": true,
+      "bytes": 41,
+      "sha256": "e8b675a1ca0092fbd5b7a4fb0dba9080f4acfc8f6246c8220c76f6a2048a5420"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 296,
+      "sha256": "66e994f5708034592f701642438ab2b4cc6530e399a276848a28c815ff68b1f1"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "match": true,
+      "bytes": 211648,
+      "sha256": "53ba38992cff6e0d77e279c3eb2c41c06bc9cdd4c158f8eb86f1081f73ced786"
+    },
+    {
+      "path": "src/prototype/navigation.js",
+      "match": true,
+      "bytes": 48015,
+      "sha256": "47e5227067990903c419f42fc649eed49c9b6c0b842991883b00d27529899878"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 262917,
+      "sha256": "a37b670bdafb393e0123568a3d1716094bf152c135ec74fd6c9c7fb705744330"
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "match": true,
+      "bytes": 102243,
+      "sha256": "3a08e39bf7c56d18b1ea03c732471f1363f6fcc19fa0980d0071404b08930c60"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "match": true,
+      "bytes": 498064,
+      "sha256": "162f67fc40e39db5f0199bb87d96854624e2ab963bbf4f7e7d4d02417b22fa6e"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20703,
+      "sha256": "ba82ca2b6ee2332b87eacd107ca581740a4635ef72a58108410f0803aae995f1"
+    },
+    {
+      "path": "index.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "phone.html",
+      "match": true,
+      "bytes": 5490,
+      "sha256": "6d6fe5990cccba9b450925b101e959acd1de0f04735bfb920147dc89db783eb8"
+    },
+    {
+      "path": "prototype.html",
+      "match": true,
+      "bytes": 5489,
+      "sha256": "6e99fe864257c62977288c61d8aa726e6bb3e28f41977c86bfc2390fb9710699"
+    },
+    {
+      "path": "src/prototype/app.js",
+      "match": true,
+      "bytes": 149990,
+      "sha256": "3bd669f68854dd84e45d22ab395a49db49b80ba5030534b92b07bfe314c48a31"
+    },
+    {
+      "path": "src/prototype/fortifications.js",
+      "match": true,
+      "bytes": 10190,
+      "sha256": "c38423fe37b196372eed023324c175bbf9ca2cf15d524db480b3d81b52749b8f"
+    },
+    {
+      "path": "src/prototype/world.js",
+      "match": true,
+      "bytes": 186450,
+      "sha256": "c8413cc51bb5c02af1f60762fddea7a808a8e783f964a4cf9f067ee2d772c943"
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "match": true,
+      "bytes": 75206,
+      "sha256": "df9d7f6efb8de2f6f67b1223be473fd49bc632c2341320fde43984ae18b62f01"
+    },
+    {
+      "path": "src/prototype/hero-presentation.js",
+      "match": true,
+      "bytes": 26020,
+      "sha256": "80f74df60ea442ab81287f975484e6f482cc0be7a3b29442d72a8b72f2f8a472"
+    },
+    {
+      "path": "src/prototype/combat-visuals.js",
+      "match": true,
+      "bytes": 51139,
+      "sha256": "e632a76e73bf6a095ed73409748a75adc139a7df7ae0f74df743501a82731e9b"
+    },
+    {
+      "path": "src/prototype/party.js",
+      "match": true,
+      "bytes": 71795,
+      "sha256": "aca3e483d58c2cbd76dea8847e65119a6a9a5413b614edc3f14c97b137ebc693"
+    },
+    {
+      "path": "src/prototype/save.js",
+      "match": true,
+      "bytes": 49404,
+      "sha256": "434f417bf5999cdf981de3ee97ae8e368e2b8c592e58435fa7496811fac30c33"
+    }
+  ],
+  "all_match": true,
+  "checks": [
+    "Focused independent cooldown request/normal charge/input/lifecycle checks",
+    "Cautious safe delivery and actual reversed trail including save/blocked return",
+    "Shared menu priorities and native phone quest navigation/combat/transition/collection",
+    "Treasury quiet staging and existing-save Reedport spacing",
+    "Build/generated syntax and changed-source format; no broad CI"
+  ],
+  "scope": "Combat requests, gathering delivery/return, frequent menu actions, quest waypoints, Treasury cues/arrival and Reedport spacing. Lighter existing warning fill colors; original lighting unchanged. Roster/interrupt audits only.",
+  "live_phone_startup": {
+    "version": "0.9.1+snapshot.dev.126",
+    "errors": [],
+    "passed": true
+  }
+}
