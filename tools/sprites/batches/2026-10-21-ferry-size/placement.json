@@ -1,0 +1,13 @@
+{
+  "rasterScale": 4.25,
+  "normalization": {
+    "fullCanvasWidth": 1774,
+    "fullCanvasHeight": 887,
+    "padding": {
+      "left": 50,
+      "right": 50,
+      "top": 25,
+      "bottom": 25
+    }
+  }
+}

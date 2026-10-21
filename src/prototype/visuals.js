@@ -16160,6 +16160,8 @@
         return;
       }
       if (e.icon === '⛵') {
+        // Owner correction: same design at 150% of the dev.136 ferry footprint.
+        ctx.scale(1.5, 1.5);
         // Selected twin-hull/reed-canopy ferry; retained when the raster is loading.
         const hull = (dy, color) => {
           shaped(color, () => {

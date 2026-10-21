@@ -1,0 +1,110 @@
+{
+  "version": 2,
+  "key": "transport:ferry",
+  "catalogId": "091",
+  "canonHash": "233161f746399a15dc19cb26716ca7c26b94727983910505ede6453e7c14738c",
+  "canonSnapshotHash": "6dd243e0933b5a1b216fc803b9876f3292096a6632a35bbfaa2c52639f9f147b",
+  "catalogHash": "f715b1810e9c6696869b51f3d23001f3f3a6d4d64774c0c506ecb9be4020b58d",
+  "source": {
+    "file": "source.png",
+    "format": "png",
+    "width": 1774,
+    "height": 887,
+    "bytes": 1139285,
+    "decodedBytes": 6294152,
+    "hash": "19d990901d6538a796fdd132842da1d04c219afa2f47f5eb8b991e24617ae336",
+    "pixelHash": "fbf56e9211ab946a9623887bc28b8c69deae823155a1ca6eb507312f9f531040",
+    "bounds": {
+      "x1": 0,
+      "y1": 9,
+      "x2": 1755,
+      "y2": 886
+    },
+    "padding": 0,
+    "transparentPixels": 979627,
+    "visiblePixels": 593911,
+    "lowAlphaPixels": 18401,
+    "materialBounds": {
+      "x1": 48,
+      "y1": 157,
+      "x2": 1725,
+      "y2": 786
+    }
+  },
+  "output": {
+    "file": "candidate.webp",
+    "format": "webp",
+    "width": 918,
+    "height": 459,
+    "bytes": 216700,
+    "decodedBytes": 1685448,
+    "hash": "cad068c7a770a34ea9a70924968c5be179d6c2461fdee2e9b954ce6407229003",
+    "pixelHash": "4e4ac5d67b591ab10519bf230585cf9ebdd523ebe62e9865105c7e249cca6d1a",
+    "bounds": {
+      "x1": 24,
+      "y1": 18,
+      "x2": 884,
+      "y2": 446
+    },
+    "padding": 12,
+    "transparentPixels": 278906,
+    "visiblePixels": 142456,
+    "lowAlphaPixels": 4365,
+    "materialBounds": {
+      "x1": 48,
+      "y1": 89,
+      "x2": 869,
+      "y2": 397
+    }
+  },
+  "runtime": {
+    "displayWidth": 216,
+    "displayHeight": 108,
+    "anchorX": 0.5,
+    "anchorY": 0.64,
+    "labelHeight": 76
+  },
+  "processing": {
+    "tool": "sharp",
+    "version": "0.35.5",
+    "kernel": "nearest",
+    "from": [
+      1774,
+      887
+    ],
+    "to": [
+      918,
+      459
+    ],
+    "rasterScale": 4.25,
+    "normalization": {
+      "fullCanvasWidth": 1774,
+      "fullCanvasHeight": 887,
+      "padding": {
+        "left": 50,
+        "right": 50,
+        "top": 25,
+        "bottom": 25
+      },
+      "virtualWidth": 1874,
+      "virtualHeight": 937,
+      "input": "untouched-original",
+      "samplingPasses": 1,
+      "intermediatePixelsUsed": false
+    },
+    "crop": false,
+    "trim": false,
+    "colorConversion": false,
+    "translation": {
+      "x": 0,
+      "y": 0,
+      "rasterX": 0,
+      "rasterY": 0,
+      "visiblePixelsDiscarded": 0
+    }
+  },
+  "review": {
+    "status": "pending",
+    "reference": null
+  }
+}

@@ -353,12 +353,14 @@ function targetRasterScaleFor(contract) {
 }
 function rasterFor(contract, scale = 1) {
   const width = contract.canvas.width * scale,
-    height = contract.canvas.height * scale;
+    height = contract.canvas.height * scale,
+    limit = contract.rasterMaxDimension ?? specs.policy.maxOutputDimension;
+  fail(Number.isInteger(limit) && limit > 0 && limit <= 1024, 'Invalid asset raster limit');
   fail(
     Number.isFinite(scale) &&
       scale >= 1 &&
       scale <= specs.policy.maxRasterScale &&
-      [width, height].every((n) => Number.isInteger(n) && n <= specs.policy.maxOutputDimension) &&
+      [width, height].every((n) => Number.isInteger(n) && n <= limit) &&
       width * height <= Format.LIMITS.resourcePixels,
     'Invalid raster scale or output pixel budget',
   );

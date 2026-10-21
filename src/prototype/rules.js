@@ -2903,6 +2903,8 @@
       dock: { x1: 325, x2: 470, y1: 1845, y2: 1955 },
       arrival: { x: 425, y: 1900 },
       boat: { x: 300, y: 1995 },
+      // Boarding is at the near end; the larger hull floats off the dock.
+      vessel: { x: 260, y: 2020 },
       shore: { x: 390, y: 1900 },
       name: 'Stonecross Ferry Landing',
       vegetation: 'pine',
