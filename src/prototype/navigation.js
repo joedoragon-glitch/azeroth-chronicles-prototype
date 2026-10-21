@@ -733,14 +733,7 @@
               d = harbor.dock,
               onDock =
                 x > d.x1 + radius && x < d.x2 - radius && y > d.y1 + radius && y < d.y2 - radius;
-            if (
-              !onDock &&
-              x > w.x1 - radius &&
-              x < w.x2 + radius &&
-              y > w.y1 - radius &&
-              y < w.y2 + radius
-            )
-              return true;
+            if (!onDock && R.harborWaterBlocked(w, x, y, radius)) return true;
           }
         }
         const z = this.s.zones[zone];

@@ -3150,23 +3150,24 @@
             z.id === 'march' ? 'Ferry to Ironroot Highlands' : 'Ferry back to Flooded Marches';
           transport.harbor = true;
         }
-        if (z.harborVersion === 2) return;
+        const version = z.id === 'march' ? 3 : 2;
+        if (z.harborVersion === version) return;
         const oldZone = this.s.zone;
         this.s.zone = z.id;
         try {
           const w = h.water,
             d = h.dock,
-            insideHarbor = (p) =>
-              p.x > w.x1 - 70 && p.x < w.x2 + 70 && p.y > w.y1 - 70 && p.y < w.y2 + 70;
+            insideHarbor = (p) => R.harborWaterBlocked(w, p.x, p.y, 12);
           z.props = z.props.filter(
-            (p) => !String(p.id || '').startsWith('harbor-') && !insideHarbor(p),
+            (p) =>
+              !String(p.id || '').startsWith('harbor-') && (z.id === 'march' || !insideHarbor(p)),
           );
           for (const e of z.enemies.filter(
             (e) => e.hp > 0 && e.type === 'mob' && dist(e, h.arrival) < 280,
           )) {
             const fallback = this.safe(
-              z.id === 'march' ? 1900 : 650,
-              z.id === 'march' ? 980 : 2180,
+              z.id === 'march' ? 940 : 650,
+              z.id === 'march' ? 2250 : 2180,
               z.id,
             );
             e.home = { ...fallback };
@@ -3218,7 +3219,7 @@
             ])
               add(id, x, y, structure);
           }
-          z.harborVersion = 2;
+          z.harborVersion = version;
         } finally {
           this.s.zone = oldZone;
         }
@@ -3618,6 +3619,8 @@
         this.regimeHeraldry(z);
         this.recoveryAndThermalLife(z);
         this.roadsideLanternLife(z);
+        this.marchCoastalLayout(z);
+        this.lanternShoreLayout(z);
       }
       spaceQuestBoard(z) {
         if (dungeonIds.includes(z.id) || z.boardPositionVersion === 2) return;
@@ -3637,6 +3640,347 @@
         Object.assign(supplier, this.safe(x + 115, y - 85, z.id));
         z.supplierPositionVersion = 2;
       }
+      marchCoastalLayout(z) {
+        if (z.id !== 'march' || z.coastalSwampVersion === 1) return;
+        const before = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          const h = R.harbors.march,
+            nature = new Set([
+              'sapling',
+              'willow',
+              'regrowth-willow',
+              'bush',
+              'marsh-bush',
+              'reeds',
+              'cattails',
+              'wet-grass',
+              'grass',
+              'mangrove',
+              'dead-tree',
+              'driftwood',
+            ]);
+          // Retire the old harbor's isolated decor and replace only coastal nature.
+          z.props = z.props.filter(
+            (p) =>
+              !String(p.id || '').startsWith('harbor-') &&
+              !(nature.has(p.structure) && (p.y > 2390 || p.x > 2740)),
+          );
+          const roads = [
+            [
+              [145, 1380],
+              [350, 1370],
+              [560, 1250],
+              [650, 1110],
+            ],
+            [
+              [560, 1250],
+              [700, 1490],
+              [920, 1640],
+              [1015, 1780],
+            ],
+            [
+              [650, 1110],
+              [800, 1030],
+              [870, 810],
+              [1000, 670],
+              [1050, 500],
+            ],
+            [
+              [650, 1110],
+              [950, 1050],
+              [1200, 1160],
+              [1500, 1080],
+              [1730, 1120],
+              [2020, 1120],
+            ],
+            [
+              [1050, 500],
+              [1200, 360],
+              [1550, 330],
+              [1850, 430],
+              [2220, 350],
+              [2520, 520],
+            ],
+            [
+              [1015, 1780],
+              [1795, 1780],
+            ],
+            [
+              [1015, 1780],
+              [940, 2050],
+              [830, 2210],
+              [650, 2290],
+              [560, 2350],
+            ],
+            [
+              [1795, 1780],
+              [1890, 1650],
+              [2130, 1660],
+              [2370, 1740],
+              [2510, 1720],
+            ],
+            [
+              [2020, 1120],
+              [2270, 1280],
+              [2630, 1350],
+              [2650, 1570],
+              [2510, 1720],
+            ],
+          ].map((r) => r.map(([x, y]) => ({ x, y })));
+          const trail = [
+            [1795, 1780],
+            [1810, 2050],
+            [1790, 2240],
+            [1830, 2410],
+            [1770, 2730],
+            [1770, 2860],
+          ].map(([x, y]) => ({ x, y }));
+          z.roads = [...roads, trail];
+          const relocate = (id, to, predicate) => {
+            const n = z.npcs.find((n) => n.id === id);
+            if (!n) return;
+            const delta = { x: to.x - n.x, y: to.y - n.y };
+            if (Math.hypot(delta.x, delta.y) > 1)
+              for (const p of z.props.filter(predicate))
+                Object.assign(p, this.safe(p.x + delta.x, p.y + delta.y, z.id));
+            Object.assign(n, to);
+          };
+          relocate('entrance', { x: 500, y: 2350 }, (p) => p.regionalDistrict === 'archive-relief');
+          relocate('watch', { x: 2600, y: 1720 }, (p) =>
+            String(p.id || '').startsWith('side-entrance-side-march-watchhouse-'),
+          );
+          relocate('supply-entrance', { x: 2580, y: 520 }, (p) =>
+            String(p.id || '').startsWith('treasury-approach-'),
+          );
+          for (const p of z.props.filter(
+            (p) => p.regionalDistrict === 'archive-relief' && p.x > 1500,
+          ))
+            Object.assign(p, this.safe(p.x - 2100, p.y, z.id));
+          for (const p of z.props.filter(
+            (p) => String(p.id || '').startsWith('world-life-habitat-') && p.x > 2100 && p.y > 2200,
+          ))
+            Object.assign(p, this.safe(p.x - 1500, p.y - 130, z.id));
+          // Keep old saved/player assets out of the newly authored water, with their IDs/state intact.
+          for (const p of [...z.props, ...z.nodes, ...z.buildings, ...z.npcs])
+            if (R.harborWaterBlocked(h.water, p.x, p.y, Math.min(p.r || 0, 20)))
+              Object.assign(p, this.safe(p.x, p.y, z.id));
+          for (const e of z.enemies) {
+            if (R.harborWaterBlocked(h.water, e.home.x, e.home.y, 15))
+              e.home = this.safe(e.home.x, e.home.y, z.id);
+            if (R.harborWaterBlocked(h.water, e.x, e.y, 15))
+              Object.assign(e, this.safe(e.x, e.y, z.id));
+          }
+          if (this.s.refugeSite?.zone === 'march') {
+            const refuge = z.npcs.find((n) => n.id === this.s.refugeSite.id);
+            if (refuge) Object.assign(this.s.refugeSite, { x: refuge.x, y: refuge.y });
+          }
+          z.streetClearanceVersion = 0;
+          this.clearStreetCorridors(z);
+
+          z.props = z.props.filter(
+            (p) =>
+              !nature.has(p.structure) ||
+              !trail.some((q, j) => j && this.distanceToSegment(p, trail[j - 1], q) < 65),
+          );
+          let serial = 0;
+          const add = (x, y, structure, water = false) => {
+            const q = { x, y };
+            if (
+              this.distanceToRoad(z, q) < 58 ||
+              z.npcs.some((n) => dist(n, q) < 70) ||
+              z.nodes.some((n) => dist(n, q) < 65) ||
+              z.buildings.some((b) => dist(b, q) < 100)
+            )
+              return;
+            if (!water && this.blocked(x, y, z.id, 10, true)) return;
+            z.props.push({
+              id: 'lantern-coast-' + serial++,
+              x,
+              y,
+              r: 0,
+              decorative: true,
+              structure,
+              coastalSwamp: true,
+            });
+          };
+          const bank = h.water.points.slice(0, h.water.bankCount);
+          for (let j = 1; j < bank.length; j++) {
+            const a = bank[j - 1],
+              b = bank[j],
+              len = dist(a, b),
+              nx = -(b.y - a.y) / len,
+              ny = (b.x - a.x) / len;
+            for (let d = 35 + ((j * 17) % 60); d < len; d += 85 + (j % 4) * 19) {
+              const x = a.x + ((b.x - a.x) * d) / len,
+                y = a.y + ((b.y - a.y) * d) / len;
+              // Bank runs clockwise around the water: inland roots, reed margins and tide litter.
+              for (const off of [24 + (j % 3) * 13, 85 + (j % 4) * 17]) {
+                const px = x + nx * off,
+                  py = y + ny * off;
+                if (
+                  px < 35 ||
+                  py < 35 ||
+                  px > 2965 ||
+                  py > 2965 ||
+                  Math.hypot(px - 1880, py - 2600) < 290
+                )
+                  continue;
+                add(
+                  px,
+                  py,
+                  off === 32
+                    ? 'mangrove'
+                    : j % 3 === 0
+                      ? 'driftwood'
+                      : j % 2
+                        ? 'cattails'
+                        : 'wet-grass',
+                );
+              }
+            }
+          }
+          // Raised freshwater hummocks grade into the coastal salt marsh.
+          for (const [cx, cy] of [
+            [620, 2250],
+            [970, 2420],
+            [1360, 2300],
+            [2330, 2450],
+            [2610, 2550],
+            [2700, 1160],
+            [2670, 1920],
+          ])
+            for (let j = 0; j < 9; j++) {
+              const a = j * 2.4,
+                r = 60 + (j % 3) * 42;
+              add(
+                cx + Math.cos(a) * r,
+                cy + Math.sin(a) * r,
+                j % 4 === 0
+                  ? 'mangrove'
+                  : j % 3 === 0
+                    ? 'marsh-bush'
+                    : j % 2
+                      ? 'reeds'
+                      : 'wet-grass',
+              );
+            }
+          // A working landing with sheltered records, lamps, seats and fishing gear.
+          for (const [x, y, kind] of [
+            [1640, 2700, 'fishing-net'],
+            [1590, 2640, 'fish-rack'],
+            [2030, 2630, 'lean-to'],
+            [2050, 2590, 'shelf'],
+            [2060, 2700, 'scroll-stack'],
+            [1590, 2740, 'drift-seat'],
+            [1650, 2810, 'driftwood'],
+            [1710, 2670, 'roadside-lantern'],
+            [1855, 2740, 'roadside-lantern'],
+            [1970, 2770, 'grave-lamp'],
+            [2020, 2480, 'grave-lamp'],
+            [1710, 2510, 'roadside-lantern'],
+          ])
+            add(x, y, kind);
+          z.coastalSwampVersion = 1;
+        } finally {
+          this.s.zone = before;
+        }
+      }
+      lanternFerryReason(direction = 1) {
+        if (this.zoneId !== 'march' || direction !== 1 || !this.night() || this.peace) return '';
+        const z = this.zone(),
+          living = z.enemies.filter(
+            (e) => e.species === 'wraith' && e.nightOnly && e.hp > 0,
+          ).length,
+          pending = Object.values(this.s.pending).some(
+            (p) =>
+              p.zone === 'march' &&
+              p.kind === 'mob' &&
+              p.base?.nightOnly &&
+              p.base.species === 'wraith' &&
+              !p.active,
+          );
+        return living || pending || !z.nightSpawned
+          ? 'Lantern Shore is held by the night Wraiths. Clear them before departure, or wait for daylight.'
+          : '';
+      }
+      lanternShoreLayout(z) {
+        if (z.id !== 'march') return;
+        const cfg = R.creatureStrongholds.find((h) => h.id === 'lantern-wraith-hold');
+        if (z.lanternShoreVersion === cfg.relocationVersion) return;
+        const before = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          const center = this.creatureStrongholdCenter(z, cfg),
+            site = z.npcs.find((n) => n.id === cfg.site);
+          if (site) Object.assign(site, center);
+          // Retain the hidden source's identity, remaining amount and discovery.
+          for (const node of z.nodes.filter((n) => n.site === cfg.site)) {
+            const plan = R.tributePlans.march.find((p) => p.id === node.tributeId),
+              [dx, dy] = plan?.offset || [80, 60];
+            Object.assign(node, this.safe(center.x + dx, center.y + dy, z.id));
+          }
+          // Only this ruin is rebuilt; the Mire/Reed-beast homes stay untouched.
+          this.creatureStrongholds(z, cfg.id);
+          for (const [j, [x, y]] of [
+            [2080, 2480],
+            [2110, 2710],
+          ].entries())
+            if (!this.blocked(x, y, z.id, 26, true) && this.distanceToRoad(z, { x, y }) > 85)
+              z.props.push({
+                id: 'stronghold-' + cfg.id + '-quay-' + j,
+                x,
+                y,
+                r: 26,
+                structure: 'stonewall',
+                stronghold: cfg.id,
+                strongholdDefenseStyle: 'ruin',
+              });
+
+          const placed = [],
+            spots = [
+              ...cfg.nightSpots,
+              ...Array.from({ length: 24 }, (_, j) => [
+                Math.cos((j * Math.PI) / 12) * 155,
+                Math.sin((j * Math.PI) / 12) * 155,
+              ]),
+            ],
+            move = (e) => {
+              const point = spots
+                .map(([dx, dy]) => ({ x: center.x + dx, y: center.y + dy }))
+                .find(
+                  (p) => !this.blocked(p.x, p.y, z.id, 15) && placed.every((q) => dist(p, q) >= 40),
+                );
+              if (!point) return;
+              e.home = { ...point };
+              Object.assign(e, point);
+              e.stronghold = cfg.id;
+              this.clearEncounterState(e);
+              e.aggro = false;
+              e.returning = false;
+              delete e.path;
+              delete e.pathTarget;
+              delete e.idleWanderTarget;
+              placed.push(point);
+            };
+          for (const e of z.enemies.filter((e) => e.species === cfg.nightSpecies && e.nightOnly))
+            move(e);
+          for (const p of Object.values(this.s.pending))
+            if (
+              p.zone === z.id &&
+              p.kind === 'mob' &&
+              p.base?.nightOnly &&
+              p.base.species === cfg.nightSpecies
+            ) {
+              p.base.home = { ...center };
+              Object.assign(p.base, center);
+              p.base.stronghold = cfg.id;
+            }
+          z.lanternShoreVersion = cfg.relocationVersion;
+        } finally {
+          this.s.zone = before;
+        }
+      }
       creatureStrongholdCenter(z, cfg) {
         if (cfg.site) {
           const site = R.sites[this.regionIndex(z.id)].find(([id]) => id === cfg.site);
@@ -3644,20 +3988,27 @@
         }
         return cfg.center ? { x: cfg.center[0], y: cfg.center[1] } : null;
       }
-      creatureStrongholds(z) {
+      creatureStrongholds(z, onlyId = null) {
         const strongholdVersion = { crown: 10, highlands: 9, frontier: 9 }[z.id] || 8;
         if (
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
           this.sideDungeon(z.id) ||
-          z.creatureStrongholdsVersion === strongholdVersion
+          (!onlyId && z.creatureStrongholdsVersion === strongholdVersion)
         )
           return;
-        const plans = (R.creatureStrongholds || []).filter((s) => s.region === z.id),
+        const plans = (R.creatureStrongholds || []).filter(
+            (s) => s.region === z.id && (!onlyId || s.id === onlyId),
+          ),
           oldZone = this.s.zone;
         this.s.zone = z.id;
         try {
-          z.props = z.props.filter((p) => !String(p.id || '').startsWith('stronghold-'));
+          z.props = z.props.filter((p) =>
+            onlyId
+              ? p.stronghold !== onlyId &&
+                !String(p.id || '').startsWith('stronghold-' + onlyId + '-')
+              : !String(p.id || '').startsWith('stronghold-'),
+          );
           const roadNear = (p, margin = 55) =>
             z.roads?.some((path) =>
               path.some((b, j) => j && this.distanceToSegment(p, path[j - 1], b) < margin),
@@ -3913,7 +4264,7 @@
               occupied.add(e.id);
             }
           }
-          z.creatureStrongholdsVersion = strongholdVersion;
+          if (!onlyId) z.creatureStrongholdsVersion = strongholdVersion;
         } finally {
           this.s.zone = oldZone;
         }

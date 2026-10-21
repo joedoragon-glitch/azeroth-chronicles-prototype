@@ -855,7 +855,7 @@
             : 'The Dark Lord remains beyond the fortress, but first free Vera from Cindermaw and Tovan from the Citadel.',
         );
       if (n.id === 'night-site')
-        parts.push('Visit after dark and defeat two Lantern wraiths for Lanterns after dark.');
+        parts.push('Visit after dark and defeat two Lantern wraiths for Shadows After Sundown.');
       if (n.id === 'goblin-camp')
         parts.push(
           'A working goblin roadside camp: bedding, cookfire and stolen goods show a raiding community that lives here between attacks.',
@@ -2758,6 +2758,11 @@
       if (j < 0 || j >= D.regions.length) return false;
       const edge = direction === 1 ? D.regions[i].id : D.regions[j].id;
       if (this.s.mode !== 'developer' && direction < 0 && !this.s.tickets[edge]) return false;
+      const departureReason = this.lanternFerryReason(direction);
+      if (departureReason) {
+        this.say(departureReason);
+        return false;
+      }
       const work = options?.workPassage ? this.passageWorkQuote(direction) : null;
       if (options?.workPassage && !work) return false;
       const fare = work ? work.payment : this.travelFare(i, direction);
@@ -6889,7 +6894,7 @@
               (s) => s.region === z.id && s.nightSpecies === species,
             ),
             center = hold ? this.creatureStrongholdCenter(z, hold) : { x: 1700, y: 900 },
-            spots = [
+            spots = hold?.nightSpots || [
               [-95, -20],
               [-25, -95],
               [80, -65],
@@ -6919,7 +6924,23 @@
           z.nightSpawned = true;
         }
       } else {
-        z.enemies = z.enemies.filter((e) => !e.nightOnly || e.aggro || e.form === 'ringleader');
+        if (i === 1) {
+          // Dawn ends the shore challenge without granting kill rewards.
+          for (const e of z.enemies.filter((e) => e.nightOnly && e.species === 'wraith')) {
+            this.cancelEncounter(e);
+            this.clearEncounterState(e);
+          }
+          z.enemies = z.enemies.filter((e) => !e.nightOnly || e.species !== 'wraith');
+          for (const [key, p] of Object.entries(this.s.pending))
+            if (
+              p.zone === z.id &&
+              p.kind === 'mob' &&
+              p.base?.nightOnly &&
+              p.base.species === 'wraith'
+            )
+              delete this.s.pending[key];
+        } else
+          z.enemies = z.enemies.filter((e) => !e.nightOnly || e.aggro || e.form === 'ringleader');
         z.nightSpawned = false;
       }
     }

@@ -97,6 +97,8 @@
     'Skill journal': 'Diario de habilidades',
     Talents: 'Talentos',
     'Open Talents': 'Abrir talentos',
+    'Lantern Shore is held by the night Wraiths. Clear them before departure, or wait for daylight.':
+      'Los Wraiths nocturnos ocupan Lantern Shore. Derrótalos para partir o espera a que amanezca.',
     Training: 'Entrenamiento',
     Character: 'Personaje',
     Company: 'Compañía',

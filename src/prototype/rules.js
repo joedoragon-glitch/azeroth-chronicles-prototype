@@ -243,9 +243,9 @@
     ],
     [
       ['bridge-lake', 'Lake causeway', 1405, 1780],
-      ['night-site', 'Lantern shore', 1700, 900],
+      ['night-site', 'Lantern Shore', 1880, 2600],
       ['wagon', 'Stranded supply wagon', 1000, 1150],
-      ['watch', 'Drowned Watchhouse', 2550, 1480],
+      ['watch', 'Drowned Watchhouse', 2600, 1720],
       ['mire-nests', 'Mire nesting bank', 1940, 1120],
     ],
     [
@@ -795,7 +795,7 @@
         },
         {
           id: 'causeway-scavengers',
-          center: [2480, 2450],
+          center: [980, 2320],
           props: [
             [-65, -25, 'lean-to'],
             [30, -25, 'cookfire'],
@@ -1071,6 +1071,8 @@
         'A roadkeeper accepts Ironroot-minted crowns for timber and repairs. Goblin carts and the Crypt’s skeleton work crews can cross the same maintained bridge; inspections and compulsory estate work reveal the price of this calm.',
     },
     march: {
+      'night-site':
+        'Lantern Shore is the southern mangrove coast and ferry departure. The Lantern Wraiths study and sort records here between visits to the Keeper’s Archive. Their lamps mark the old shore watch. At night the ferryman waits until the Wraiths are cleared; daylight opens the crossing again.',
       'bridge-lake':
         'Reedport fish and paper for the Keeper’s Archive travel along this Crown-maintained causeway. Lantern Wraiths help preserve records and take care with their lamps; the Archive’s flooding remains unexplained.',
     },
@@ -1488,7 +1490,7 @@
       region: 'march',
       boss: 'mire',
       count: 3,
-      entryOffset: [260, -165],
+      entryOffset: [400, -600],
       name: "Mirejaw's Treasury",
       objective: "Recover 3 caches from Mirejaw's Treasury",
     },
@@ -2101,6 +2103,14 @@
     },
     {
       id: 'lantern-wraith-hold',
+      relocationVersion: 1,
+      reanchorSite: true,
+      nightSpots: [
+        [-130, -25],
+        [-50, 70],
+        [110, -30],
+        [60, -130],
+      ],
       defenseStyle: 'ruin',
       region: 'march',
       site: 'night-site',
@@ -2108,11 +2118,11 @@
       wall: 'stonewall',
       night: true,
       props: [
-        [-95, -50, 'grave-marker'],
+        [-95, -50, 'drift-seat'],
         [-35, -105, 'grave-lamp'],
-        [55, -95, 'bone-pile'],
-        [105, -25, 'ritual-table'],
-        [75, 80, 'grave-marker'],
+        [55, -95, 'scroll-stack'],
+        [105, -25, 'caretaker-table'],
+        [75, 80, 'drift-seat'],
         [-65, 90, 'cattails'],
       ],
     },
@@ -2658,6 +2668,22 @@
       { kind: 'water', x: 2050, y: 1180, r: 150 },
     ],
     [
+      {
+        kind: 'rain-pools',
+        pools: [
+          {
+            x: 1420,
+            y: 580,
+            rx: 210,
+            ry: 155,
+            points: Array.from({ length: 32 }, (_, j) => {
+              const a = (j * Math.PI) / 16,
+                r = 0.94 + 0.045 * Math.sin(a * 3);
+              return { x: 1420 + Math.cos(a) * 210 * r, y: 580 + Math.sin(a) * 155 * r };
+            }),
+          },
+        ],
+      },
       { kind: 'water', x: 690, y: 1980, r: 175 },
       { kind: 'water', x: 2380, y: 1540, r: 145 },
     ],
@@ -2808,13 +2834,60 @@
   // Small authored arrival harbors supplement the region-scale barriers. Their dock rectangles are walkable over the water.
   const harbors = {
     march: {
-      id: 'reedport-ferry',
-      water: { x1: 2140, x2: 3000, y1: 470, y2: 900 },
-      dock: { x1: 2075, x2: 2255, y1: 615, y2: 735 },
-      arrival: { x: 2115, y: 675 },
-      boat: { x: 2200, y: 735 },
-      shore: { x: 2140, y: 675 },
-      name: 'Reedport Mangrove Ferry',
+      id: 'lantern-shore-ferry',
+      water: {
+        x1: 0,
+        x2: 3000,
+        y1: 650,
+        y2: 3000,
+        x: 1500,
+        y: 1825,
+        rx: 1500,
+        ry: 1175,
+        points: [
+          [3000, 650],
+          [2920, 730],
+          [2860, 990],
+          [2930, 1220],
+          [2820, 1420],
+          [2760, 1720],
+          [2510, 1900],
+          [2230, 2060],
+          [2300, 2220],
+          [2600, 2300],
+          [2800, 2470],
+          [2750, 2700],
+          [2550, 2820],
+          [2290, 2760],
+          [2070, 2830],
+          [1850, 2780],
+          [1680, 2810],
+          [1490, 2690],
+          [1260, 2760],
+          [1090, 2640],
+          [870, 2740],
+          [650, 2690],
+          [410, 2800],
+          [220, 2630],
+          [280, 2420],
+          [155, 2180],
+          [240, 1980],
+          [110, 1760],
+          [170, 1580],
+          [70, 1400],
+          [120, 1220],
+          [20, 1050],
+          [0, 950],
+          [0, 3000],
+          [3000, 3000],
+        ].map(([x, y]) => ({ x, y })),
+        bankCount: 33,
+      },
+      dock: { x1: 1705, x2: 1840, y1: 2730, y2: 2920 },
+      arrival: { x: 1770, y: 2770 },
+      boat: { x: 1770, y: 2860 },
+      shore: { x: 1770, y: 2800 },
+      name: 'Lantern Shore Ferry',
       vegetation: 'mangrove',
     },
     highlands: {
@@ -2828,7 +2901,30 @@
       vegetation: 'pine',
     },
   };
+  // Round tidal banks once; rendering and navigation use the identical outline.
+  {
+    const w = harbors.march.water,
+      bank = w.points.slice(0, w.bankCount),
+      rounded = [bank[0]];
+    for (let j = 1; j < bank.length; j++) {
+      const a = bank[j - 1],
+        b = bank[j];
+      rounded.push(
+        { x: a.x * 0.75 + b.x * 0.25, y: a.y * 0.75 + b.y * 0.25 },
+        { x: a.x * 0.25 + b.x * 0.75, y: a.y * 0.25 + b.y * 0.75 },
+      );
+    }
+    rounded.push(bank.at(-1));
+    w.points = [...rounded, ...w.points.slice(w.bankCount)];
+    w.bankCount = rounded.length;
+  }
   // The vehicle that actually brought the party to a region determines its landing.
+  function harborWaterBlocked(w, x, y, radius = 0) {
+    if (w.points && x > 340 + radius && x < 2150 - radius && y < 2550 - radius) return false;
+    return w.points
+      ? rainPoolBlocked([w], x, y, radius)
+      : x > w.x1 - radius && x < w.x2 + radius && y > w.y1 - radius && y < w.y2 + radius;
+  }
   // Ferries use harbors; inbound overland arrivals use rear town stands, not outbound departures.
   const travelArrivalStands = {
     march: { x: 145, y: 1380 },
@@ -2838,7 +2934,7 @@
     'vale>march': { transportId: 'return', dx: 95, dy: 30 },
     'march>vale': { transportId: 'outbound', dx: 95, dy: 25 },
     'march>highlands': { x: 425, y: 1900 },
-    'highlands>march': { x: 2115, y: 675 },
+    'highlands>march': { x: 1770, y: 2770 },
     'highlands>frontier': { transportId: 'return', dx: 95, dy: 25 },
     'frontier>highlands': { transportId: 'outbound', dx: 95, dy: 25 },
     'frontier>crown': { transportId: 'crown-travel-frontier-return', dx: 95, dy: 50 },
@@ -2890,9 +2986,9 @@
       [275, 760, 'tool-rack', 'millhaven-carpentry'],
     ],
     march: [
-      [2480, 2230, 'drying-rack', 'archive-relief', 'pages'],
-      [2560, 2170, 'supply-stack', 'archive-relief', 'pump'],
-      [2700, 2250, 'scroll-stack', 'archive-relief'],
+      [380, 2230, 'drying-rack', 'archive-relief', 'pages'],
+      [460, 2170, 'supply-stack', 'archive-relief', 'pump'],
+      [600, 2250, 'scroll-stack', 'archive-relief'],
       [650, 1040, 'fishing-net', 'shore-work'],
       [1090, 680, 'fish-rack', 'camp-work'],
       // Small fishing-trade details in existing Reedport and Fisher Camp.
@@ -7429,6 +7525,7 @@
     terrain,
     landforms,
     harbors,
+    harborWaterBlocked,
     travelArrivalStands,
     travelArrivals,
     dungeonWorkstations,
