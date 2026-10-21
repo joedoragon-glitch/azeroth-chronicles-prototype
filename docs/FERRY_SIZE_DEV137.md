@@ -1,0 +1,11 @@
+# Ferry proportion correction — dev.137
+
+Joel reported that the selected ferry and ferryman were too small, and requested at least a 50% larger implementation from the original image. Retain the selected option 3 design; no new design or generated image is necessary.
+
+The display frame changes from 144×72 to 216×108, exactly 1.5 times each dimension with the same existing 1.35 presentation multiplier. A fresh lossless 918×459 WebP is sampled once from the untouched 1774×887 selected original; the previous reduced runtime image is not used as a source. The source hash remains 19d990901d6538a796fdd132842da1d04c219afa2f47f5eb8b991e24617ae336. The ferry-specific raster dimension allowance is 1024; all other assets retain the existing policy.
+
+The matching procedural fallback scales by the same factor. In Highlands the larger hull has a separate presentation center (260,2020), floating off the dock, while the reachable boarding NPC remains at (300,1995). No fare, landing, dock geometry, Wraith gate, saved progress or interaction range changes.
+
+Focused checks: original-master rectangular/square exports and invalid-placement guards; real loaded/failed/absent sprite renderer paths; six state-pure native captures across both landings, day/night and phone; generated build, registry/provenance and unchanged other 33 registrations. All 24 four-seed fresh/current/dev.136-save boarding routes pass at both landings with unchanged interaction range; the larger image is present in actual offline resource enumeration. Build/generated/syntax, complete registry/provenance and changed-file formatting pass. The aggregate npm run check stops at a pre-existing scope-audit mismatch: terrain:ground:march lists #26444b/#31535a/#203b42/#85ada6, absent from both base dev.136 and current visuals. This ferry update does not change that terrain palette. Enemy audio coverage passes. Material inventory reports an existing stale material contract, reproduced unchanged in dev.136; no materials are modified in this update. Heavy game suites and browser installation are deferred under the owner workflow.
+
+Prepared in PR #373. Package-only publication pending; temporary workflow wiring must be removed after exact live verification. Highlands tribute work remains saved separately on fix/highlands-tribute-dev137; future Highlands coast work remains annotation only.

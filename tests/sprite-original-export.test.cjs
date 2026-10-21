@@ -76,12 +76,12 @@ const assert = require('node:assert/strict'),
         padding: { left: 48, right: 48, top: 24, bottom: 24 },
       },
     });
-    assert.deepEqual(rectangular.record.processing.to, [612, 306]);
+    assert.deepEqual(rectangular.record.processing.to, [918, 459]);
     assert.deepEqual(rectangular.record.output.materialBounds, {
-      x1: 162,
-      y1: 81,
-      x2: 449,
-      y2: 224,
+      x1: 243,
+      y1: 121,
+      x2: 674,
+      y2: 336,
     });
     assert(fs.readFileSync(wide).equals(wideBytes));
     await assert.rejects(

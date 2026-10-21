@@ -2131,8 +2131,19 @@
         for (const e of list) {
           stats.entitiesConsidered++;
           if (renderKind === 'enemy' && e.hp <= 0) continue;
-          const p = screen(e);
-          if (p.x < -180 || p.x > canvas.width + 180 || p.y < -180 || p.y > canvas.height + 180)
+          const vessel =
+              renderKind === 'npc' && e.harbor && e.kind === 'transport'
+                ? Campaign.rules?.harbors?.[game.zoneId]?.vessel
+                : null,
+            presentation = vessel ? { ...e, ...vessel } : e,
+            p = screen(presentation),
+            margin = e.harbor ? Math.max(180, 240 * zoom()) : 180;
+          if (
+            p.x < -margin ||
+            p.x > canvas.width + margin ||
+            p.y < -margin ||
+            p.y > canvas.height + margin
+          )
             continue;
           // Keep the normal draw eligibility for actors, blockers, resources,
           // buildings and all other interactive or identity-bearing objects.
@@ -2146,7 +2157,7 @@
           // Calculate scale from the same authored rule used by procedural art.
           // A registered sprite consumes visualScale itself; no source pixels change.
           const visualEntity = {
-            ...e,
+            ...presentation,
             renderKind,
             ...(renderKind === 'hero' && game.s.throneClaimed ? { crowned: true } : {}),
             ...(Campaign.rules?.ambientLife?.[e.structure || e.id]
