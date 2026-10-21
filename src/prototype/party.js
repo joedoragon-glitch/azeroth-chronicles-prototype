@@ -32,9 +32,20 @@
       releaseRecallForCombat() {
         if (!this.recallInProgress()) this.s.recallActive = false;
       }
+      companionSurvivalMode(u) {
+        if (u === this.hero || u.hp <= 0 || u.active === false || !this.s.party.includes(u))
+          return false;
+        const cfg = R.companionJudgment,
+          fraction = u.hp / u.maxHp;
+        return (
+          fraction <= cfg.criticalFraction ||
+          (u.survivalRetreat === true && fraction < cfg.criticalRecoverFraction)
+        );
+      }
       companionRetreatMode(u) {
         if (u === this.hero || u.hp <= 0 || u.active === false || !this.s.party.includes(u))
           return false;
+        if (this.companionSurvivalMode(u)) return true;
         if (this.s.recallActive) return dist(u, this.hero) > R.companionRecall.arrivalRadius;
         const state = companionJudgments.get(u);
         return !!(
@@ -46,8 +57,154 @@
       }
       companionRetreating(u) {
         if (!this.companionRetreatMode(u)) return false;
+        if (this.companionSurvivalMode(u)) {
+          const point = companionJudgments.get(u)?.point;
+          return !!point && dist(u, point) > R.companionJudgment.criticalArrivalRadius;
+        }
         if (this.s.recallActive) return true;
         return dist(u, companionJudgments.get(u).point) > R.companionJudgment.arrivalRadius;
+      }
+      companionSurvivalThreats() {
+        const cfg = R.companionJudgment;
+        return this.peace
+          ? []
+          : this.zone()
+              .enemies.filter((e) => e.hp > 0 && !e.neutral && !e.returning)
+              .map((e) => ({
+                x: e.x,
+                y: e.y,
+                r: Math.max(
+                  cfg.nearThreatRadius,
+                  this.enemyAcquisitionRange(e) + cfg.criticalEnemyMargin,
+                  this.enemyRanged(e) ? this.enemyRangedRange(e) + cfg.criticalEnemyMargin : 0,
+                  e.type === 'boss' ? R.bossCadence.specialRange + cfg.criticalEnemyMargin : 0,
+                ),
+                weight: this.companionEnemyWeight(e),
+              }));
+      }
+      companionSurvivalScore(u, p, preferred, threats) {
+        const cfg = R.companionJudgment;
+        return (
+          threats.reduce((sum, e) => {
+            const exposure = Math.max(0, 1 - dist(p, e) / e.r);
+            return sum + exposure * exposure * e.weight;
+          }, 0) *
+            cfg.criticalDangerCost +
+          dist(p, preferred) * cfg.criticalFormationCost +
+          dist(p, u) * cfg.criticalTravelCost
+        );
+      }
+      companionSurvivalRadius(threats) {
+        const cfg = R.companionJudgment;
+        return Math.max(
+          cfg.criticalFollowRadius,
+          ...threats
+            .filter((e) => dist(e, this.hero) < e.r + cfg.criticalFollowRadius)
+            .map((e) => e.r + cfg.criticalArrivalRadius),
+        );
+      }
+      companionSurvivalPoint(u, living, threats) {
+        const cfg = R.companionJudgment,
+          preferred = this.partyFollowPoint(u, living),
+          candidates = [{ x: u.x, y: u.y }, preferred],
+          radius = this.companionSurvivalRadius(threats),
+          limit = Math.max(radius, dist(u, this.hero));
+        // Sample around the moving hero and the wounded unit, not just an
+        // already-arrived formation anchor beside the same enemy.
+        for (const [origin, radii] of [
+          [this.hero, [cfg.criticalPreferredRadius, radius]],
+          [u, cfg.criticalLocalRadii],
+        ])
+          for (const radius of radii)
+            for (let i = 0; i < cfg.criticalDirections; i++) {
+              const angle = (i * Math.PI * 2) / cfg.criticalDirections;
+              candidates.push({
+                x: origin.x + Math.cos(angle) * radius,
+                y: origin.y + Math.sin(angle) * radius,
+              });
+            }
+        const legal = candidates.filter(
+          (p) =>
+            dist(p, this.hero) <= limit + 1 &&
+            !this.blocked(p.x, p.y, this.s.zone, this.actorRadius(u)),
+        );
+        return (
+          legal
+            .map((point) => ({
+              point,
+              score: this.companionSurvivalScore(u, point, preferred, threats),
+            }))
+            .sort((a, b) => a.score - b.score)[0]?.point || { x: u.x, y: u.y }
+        );
+      }
+      companionCriticalSurvival(u, living, dt) {
+        let state = companionJudgments.get(u);
+        if (!this.companionSurvivalMode(u)) {
+          delete u.survivalRetreat;
+          if (state?.critical) {
+            this.clearCompanionJudgment(u);
+            this.clearCompanionTravel(u);
+          }
+          return false;
+        }
+        const cfg = R.companionJudgment;
+        u.survivalRetreat = true;
+        if (!state || state.zone !== this.zoneId || !state.critical) {
+          state = { zone: this.zoneId, critical: true, regrouping: true, next: 0 };
+          companionJudgments.set(u, state);
+          this.clearCompanionTravel(u);
+          this.notice(
+            'Critically wounded companions are avoiding combat.',
+            2.8,
+            'They keep following and rejoin at 40% HP.',
+            'feedback',
+          );
+        }
+        this.clearPartyCharge(u);
+        this._tacticalPartyTargets?.delete(u.id);
+        if (this.s.time >= state.next || !state.hero || dist(state.hero, this.hero) > 50) {
+          const threats = this.companionSurvivalThreats();
+          state.next = this.s.time + cfg.assessSeconds;
+          state.hero = { x: this.hero.x, y: this.hero.y };
+          state.point = this.companionSurvivalPoint(u, living, threats);
+        }
+        const speed =
+            this.companionRallyMoveSpeed(u, cfg.retreatSpeed) *
+            this.slowMovementFactor(u) *
+            this.mireBogMovementFactor(u) *
+            this.ashMovementFactor(u),
+          before = { x: u.x, y: u.y };
+        this.followCompanion(u, state.point, speed, dt, cfg.criticalArrivalRadius, true);
+        if (dist(before, u) < 0.1 && dist(u, state.point) > cfg.criticalArrivalRadius) {
+          // If a distant anchor has no safe route, make a bounded local escape
+          // without ever relaxing hostile or terrain collision.
+          const threats = this.gatheringThreats(),
+            danger = this.companionSurvivalThreats(),
+            preferred = this.partyFollowPoint(u, living),
+            candidates = [];
+          for (let i = 0; i < cfg.criticalDirections; i++) {
+            const angle = (i * Math.PI * 2) / cfg.criticalDirections,
+              p = {
+                x: u.x + Math.cos(angle) * cfg.criticalStep,
+                y: u.y + Math.sin(angle) * cfg.criticalStep,
+              };
+            if (
+              dist(p, this.hero) <=
+                Math.max(this.companionSurvivalRadius(danger), dist(u, this.hero)) + 1 &&
+              this.companionTravelClear(u, p, threats) &&
+              this.companionSurvivalScore(u, p, preferred, danger) <
+                this.companionSurvivalScore(u, u, preferred, danger)
+            )
+              candidates.push(p);
+          }
+          candidates.sort(
+            (a, b) =>
+              this.companionSurvivalScore(u, a, preferred, danger) -
+              this.companionSurvivalScore(u, b, preferred, danger),
+          );
+          if (candidates.length) this.move(u, candidates[0], speed, dt);
+        }
+        return true;
       }
       followRecalledCompanion(u, living, dt) {
         const index = Math.max(0, living.indexOf(u)),
@@ -140,6 +297,7 @@
             (1 - cfg.minimumAllyWeight) * Math.max(0, Math.min(1, a.hp / a.maxHp)),
           allies = living.filter(
             (a) =>
+              !this.companionSurvivalMode(a) &&
               (!a.order || (this.gatheringUnit(u) && this.gatheringUnit(a))) &&
               dist(a, u) <= cfg.supportRadius &&
               this.clearSegment(a, u),
@@ -211,6 +369,7 @@
         return points.sort((a, b) => score(a) - score(b))[0];
       }
       companionCautiousCombat(u, target, living, dt) {
+        if (this.companionCriticalSurvival(u, living, dt)) return true;
         const cfg = R.companionJudgment;
         let state = companionJudgments.get(u);
         if (!state || state.zone !== this.zoneId) {
@@ -446,6 +605,7 @@
           .sort((a, b) => this.idOrder(a, b));
       }
       companionUseFirstSkill(u, target) {
+        if (this.companionSurvivalMode(u)) return false;
         if (u.type === 'pet') return this.usePetSkill(u, target, 1);
         if (!['soldier', 'archer'].includes(u.type)) return false;
         const cfg = R.companionSkills?.first,
@@ -562,6 +722,7 @@
       // The actor keeps the aim for 0.65s and releases only after surviving damage.
       companionUseSecondSkill(u, target, targets = this.companionSecondSkillTargets(u, target)) {
         if (
+          this.companionSurvivalMode(u) ||
           !this.companionSecondSkillUnlocked() ||
           !(u.type === 'pet' ? this.petDefinition(u) : R.companionSkills.second?.[u.type]) ||
           !target ||
@@ -684,6 +845,7 @@
             !this.mageSilenceActive(u) &&
             !this._tacticalScatter?.has(u.id) &&
             !this.peace &&
+            !this.companionSurvivalMode(u) &&
             !this.s.recallActive;
           if (!valid || !observation || observation.interrupted) {
             this.clearPartyCharge(u);
@@ -1744,6 +1906,9 @@
             }
             continue;
           }
+          // Critical survival takes priority over preparation, labor, Recall
+          // counters and doctrine. Healthy companions keep their own orders.
+          if (this.companionCriticalSurvival(u, living, dt)) continue;
           const pending = this._companionCharges?.get(u.id);
           if (pending) {
             const observation = this.partyChargeState(u);

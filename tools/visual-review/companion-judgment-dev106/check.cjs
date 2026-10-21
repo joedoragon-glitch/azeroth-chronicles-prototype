@@ -148,11 +148,11 @@ for (const types of [
   g.enter('frontier');
   assert(units.every((u) => u.order === null));
 }
-// Cover basics while falling back do not turn into chase or a new active skill.
+// Wounded (not critical) cover basics do not turn into chase or a new active skill.
 {
   const { g, z, units, target } = fixture(['archer']);
   const u = units[0];
-  Object.assign(u, { x: 920, y: 1500, cd: 0, hp: u.maxHp * 0.2 });
+  Object.assign(u, { x: 920, y: 1500, cd: 0, hp: u.maxHp * 0.3 });
   Object.assign(g.hero, { x: 650, y: 1500 });
   const before = distance(u, g.hero);
   step(g, 2);

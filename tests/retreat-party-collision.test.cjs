@@ -37,9 +37,10 @@ function scene(type = 'soldier', mode = 'automatic', cls = 'mage') {
     { x: 500, y: 1750 },
   );
   e.aggro = true;
+  e.captain = true; // Enough pressure for ordinary wounded regrouping below dev.141 survival mode.
   z.enemies = [e];
   g.zone();
-  u.hp = u.maxHp * 0.1;
+  u.hp = u.maxHp * 0.3;
   const [side, forward] = g.partyFormationOffset(u, [u]),
     length = Math.hypot(side, forward);
   g.formationHeading = { x: -side / length, y: -forward / length };
