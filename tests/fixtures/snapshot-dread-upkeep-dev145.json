@@ -1,0 +1,287 @@
+{
+  "historicalFixture": "snapshot-dread-rogue.json",
+  "historicalSource": "b87e22dc0ddd7e029ec132f6dd23bcb7c78044aa",
+  "reviewedAgainst": "390fea7307b14cbefeb36feaf137b90e28148da1",
+  "notes": "Additional explicit reversals after the original fixture deltas. Immutable historical hashes remain authoritative; no wildcard or runtime-derived expected hash.",
+  "ruleGroups": [
+    {
+      "sourceCommit": "7eea76c77469e2193f69a65cad658fabe0e5d6b4",
+      "decision": "docs/NIGHT_RINGLEADER_ROGUE_20261020.md",
+      "reason": "Owner-approved three-second Rogue reuse and captain-tier ringleader compression.",
+      "changes": [
+        {
+          "path": ["moveCooldownSeconds"],
+          "after": 3,
+          "before": 6
+        },
+        {
+          "path": ["burstCompression", "tiers", "ringleader", "knee"],
+          "after": 0.145,
+          "before": 0.25
+        },
+        {
+          "path": ["burstCompression", "tiers", "ringleader", "tail"],
+          "after": 0.24,
+          "before": 0.375
+        }
+      ]
+    },
+    {
+      "sourceCommit": "4c4b59aac44464b38da4379cf84f4b48a7138b31",
+      "decision": "docs/FRONTIER_REACH_REGROUP_20261020.md",
+      "reason": "Owner-approved 20-percent offensive reach expansion, earlier assessment/thinking and wounded threshold.",
+      "changes": [
+        {
+          "path": ["woundedThreshold"],
+          "after": 0.5,
+          "before": 0.3
+        },
+        {
+          "path": ["thinkingSeconds"],
+          "after": 0.3,
+          "before": 0.8
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "melee", "wolf", "radius"],
+          "after": 144,
+          "before": 120
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "melee", "goblin", "radius"],
+          "after": 138,
+          "before": 115
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "melee", "skeleton", "radius"],
+          "after": 162,
+          "before": 135
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "melee", "wraith", "radius"],
+          "after": 150,
+          "before": 125
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "melee", "stalker", "radius"],
+          "after": 150,
+          "before": 125
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "melee", "mireling", "radius"],
+          "after": 150,
+          "before": 125
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "melee", "reedbeast", "radius"],
+          "after": 162,
+          "before": 135
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "melee", "archer", "radius"],
+          "after": 126,
+          "before": 105
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "melee", "crownguard", "radius"],
+          "after": 168,
+          "before": 140
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "melee", "ashbeast", "radius"],
+          "after": 174,
+          "before": 145
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "melee", "orc", "radius"],
+          "after": 168,
+          "before": 140
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "melee", "ogre", "radius"],
+          "after": 198,
+          "before": 165
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "ranged", "wolf", "radius"],
+          "after": 174,
+          "before": 145
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "ranged", "goblin", "radius"],
+          "after": 168,
+          "before": 140
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "ranged", "skeleton", "radius"],
+          "after": 174,
+          "before": 145
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "ranged", "wraith", "radius"],
+          "after": 180,
+          "before": 150
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "ranged", "stalker", "radius"],
+          "after": 180,
+          "before": 150
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "ranged", "mireling", "radius"],
+          "after": 174,
+          "before": 145
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "ranged", "reedbeast", "radius"],
+          "after": 174,
+          "before": 145
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "ranged", "archer", "radius"],
+          "after": 180,
+          "before": 150
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "ranged", "crownguard", "radius"],
+          "after": 186,
+          "before": 155
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "ranged", "ashbeast", "radius"],
+          "after": 186,
+          "before": 155
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "ranged", "orc", "radius"],
+          "after": 174,
+          "before": 145
+        },
+        {
+          "path": ["rogueRingleaderSignatures", "ranged", "ogre", "radius"],
+          "after": 192,
+          "before": 160
+        },
+        {
+          "path": ["rogueSignatures", "captains", "supply-vale", "radius"],
+          "after": 138,
+          "before": 115
+        },
+        {
+          "path": ["rogueSignatures", "captains", "supply-march", "radius"],
+          "after": 150,
+          "before": 125
+        },
+        {
+          "path": ["rogueSignatures", "captains", "supply-highlands", "radius"],
+          "after": 144,
+          "before": 120
+        },
+        {
+          "path": ["rogueSignatures", "captains", "supply-crown", "radius"],
+          "after": 192,
+          "before": 160
+        },
+        {
+          "path": ["rogueSignatures", "captains", "frontier-overseer", "radius"],
+          "after": 162,
+          "before": 135
+        },
+        {
+          "path": ["rogueSignatures", "bosses", "thorn", "radius"],
+          "after": 198,
+          "before": 165
+        },
+        {
+          "path": ["rogueSignatures", "bosses", "crypt", "radius"],
+          "after": 144,
+          "before": 120
+        },
+        {
+          "path": ["rogueSignatures", "bosses", "mire", "radius"],
+          "after": 174,
+          "before": 145
+        },
+        {
+          "path": ["rogueSignatures", "bosses", "archive", "radius"],
+          "after": 168,
+          "before": 140
+        },
+        {
+          "path": ["rogueSignatures", "bosses", "ridge", "radius"],
+          "after": 162,
+          "before": 135
+        },
+        {
+          "path": ["rogueSignatures", "bosses", "mine", "radius"],
+          "after": 234,
+          "before": 195
+        },
+        {
+          "path": ["rogueSignatures", "bosses", "warlord", "radius"],
+          "after": 186,
+          "before": 155
+        },
+        {
+          "path": ["rogueSignatures", "bosses", "abyss", "radius"],
+          "after": 246,
+          "before": 205
+        },
+        {
+          "path": ["rogueSignatures", "bosses", "citadel", "radius"],
+          "after": 180,
+          "before": 150
+        },
+        {
+          "path": ["rogueSignatures", "bosses", "cindermaw", "radius"],
+          "after": 1440,
+          "before": 1200
+        },
+        {
+          "path": ["rogueSignatures", "bosses", "darklord", "radius"],
+          "after": 210,
+          "before": 175
+        },
+        {
+          "path": ["initialAssessmentSeconds"],
+          "after": 0.4,
+          "added": true
+        }
+      ]
+    }
+  ],
+  "methodChanges": {
+    "tacticalClearRogueRegroup": {
+      "beforeSha256": "b9c7b6a98bb7a8eb72b0aa98eba6e49777c77760d742d04e3289c3567a052562",
+      "afterSha256": "236ee5df9e14935ce9009f6807a47a4a3a68655ed3a8ac2360cd822e8c7fb587",
+      "sourceCommits": ["7eea76c77469e2193f69a65cad658fabe0e5d6b4"],
+      "reason": "Remove once-per-fight Rogue veto cleanup with the approved cooldown-based reuse."
+    },
+    "tacticalAutoRogue": {
+      "beforeSha256": "351218afa34473be5f1a689f6ea86cf098ebaf05b96d9d673ab5854584cfb2fc",
+      "afterSha256": "78c29efb3cc695bbfeafbf68a985c6dd9a69b2f52bce403149064f5ce877acc7",
+      "sourceCommits": [
+        "7eea76c77469e2193f69a65cad658fabe0e5d6b4",
+        "4c4b59aac44464b38da4379cf84f4b48a7138b31"
+      ],
+      "reason": "Remove once-per-fight veto and use the authored 0.4-second initial assessment."
+    },
+    "tacticalAdvanceRogueRegroup": {
+      "beforeSha256": "28b124922dd678f033c4a5205bb2901323c4b78b67d6b69ba5ae288af1eb7421",
+      "afterSha256": "13bf9645e12dbfea368a36a55962a8c66e575ac60276bf604a97c6c006dd85ae",
+      "sourceCommits": [
+        "7eea76c77469e2193f69a65cad658fabe0e5d6b4",
+        "33faf14590ed16877dbe652b5de1da2eb82e1d72",
+        "4c4b59aac44464b38da4379cf84f4b48a7138b31",
+        "eb4cff3d73e9dd220dbb63dfb0ec10394a29a4aa",
+        "68f16e1b43c6d819bbb5b5d607cfb370547ea3d1"
+      ],
+      "reason": "Approved repeated Rogue use, night tempo, mounted walking, sheltered healing and committed covering-action continuation."
+    },
+    "tacticalHighestThreatTarget": {
+      "beforeSha256": "d001eb1cb366e1535a3a02fbd1e58d86c9e3bfa676a0eefa02b32dedf9ddd692",
+      "afterSha256": "c6d8dc17d437308eece03945780abfb53b177f3ee35c6565411fd227d4fe90f2",
+      "sourceCommits": ["4263c6a6ee8be9c72fe2740f2f88b8c7ef35042f"],
+      "reason": "Use actual fort ranged reach and authoritative enemy cover-fire line checks."
+    }
+  }
+}

@@ -53,7 +53,11 @@ const mob =
       form,
     });
 const captain = (id) => (c, p) =>
-  Object.assign(mob('goblin', false)(c, p), { captain: true, captainProfile: id });
+  Object.assign(mob('goblin', false)(c, p), {
+    captain: true,
+    roomCaptain: id === 'supply-crown',
+    captainProfile: id,
+  });
 const boss =
   (id, form = 'normal') =>
   (c, p) =>
@@ -85,6 +89,10 @@ for (const id of Object.keys(C.rules.roomCaptains))
     step();
     const a = e.telegraph;
     assert(a?.withdrawal, id + ' starts a skill');
+    if (id === 'supply-crown') {
+      assert.equal(e.roomCaptain, true, 'native Dreadmaw actor dispatch is active');
+      assert(a.dreadMechanic, 'the selected withdrawal really uses an agricultural mechanic');
+    }
     assert(!a.charge && !a.landing);
     assert.equal(a.total, a.timer);
     const x = e.x;

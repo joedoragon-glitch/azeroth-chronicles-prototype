@@ -29,19 +29,47 @@ const near = (a, b, message) => assert(Math.abs(a - b) < 1e-8, message + ': ' + 
   const { g, mob } = fixture();
   const healer = mob('ogre', { ranged: true });
   const recipient = mob('ogre', { hp: 400 });
-  g.zone = () => { throw new Error('faction checks must not run world maintenance'); };
+  g.zone = () => {
+    throw new Error('faction checks must not run world maintenance');
+  };
   assert(g.enemyHealTeammate(healer, recipient));
   delete g.s.zones[g.zoneId];
-  assert.equal(g.enemyHealTeammate(healer, recipient), false, 'missing current roster fails closed');
+  assert.equal(
+    g.enemyHealTeammate(healer, recipient),
+    false,
+    'missing current roster fails closed',
+  );
 }
 
 assert.equal(R.enemySupportHealing.cooldown, R.rangerSupport.cooldown);
 assert.equal(R.enemySupportHealing.duration, R.rangerSupport.duration);
 assert.equal(R.enemySupportHealing.fraction, 0.05);
-assert.deepEqual(Object.keys(R.enemySupportHealing.captains).sort(), ['supply-crown', 'supply-march', 'supply-vale']);
-assert.deepEqual(Object.keys(R.enemySupportHealing.bosses).sort(), ['abyss', 'archive', 'crypt', 'mire', 'ridge']);
-for (const species of ['wolf', 'goblin', 'skeleton', 'wraith', 'stalker', 'mireling',
-  'reedbeast', 'archer', 'crownguard', 'ashbeast', 'orc', 'ogre']) {
+assert.deepEqual(Object.keys(R.enemySupportHealing.captains).sort(), [
+  'supply-crown',
+  'supply-march',
+  'supply-vale',
+]);
+assert.deepEqual(Object.keys(R.enemySupportHealing.bosses).sort(), [
+  'abyss',
+  'archive',
+  'crypt',
+  'mire',
+  'ridge',
+]);
+for (const species of [
+  'wolf',
+  'goblin',
+  'skeleton',
+  'wraith',
+  'stalker',
+  'mireling',
+  'reedbeast',
+  'archer',
+  'crownguard',
+  'ashbeast',
+  'orc',
+  'ogre',
+]) {
   const { g, mob } = fixture();
   const healer = mob(species, { ranged: true });
   const ally = mob(species, { hp: 400 });
@@ -49,14 +77,16 @@ for (const species of ['wolf', 'goblin', 'skeleton', 'wraith', 'stalker', 'mirel
   assert(g.enemySupportHeal(healer), species + ' heals a wounded companion');
   // The live zone may normalize ally max HP as its ordinary population
   // migrates; assert against the recipient's actual post-normalization values.
-  const budget = Math.min(ally.maxHp - ally.hp,
-    ally.maxHp * R.enemySupportHealing.fraction * g.enemyHealMultiplier(healer));
+  const budget = Math.min(
+    ally.maxHp - ally.hp,
+    ally.maxHp * R.enemySupportHealing.fraction * g.enemyHealMultiplier(healer),
+  );
   const before = ally.hp;
   near(ally.supportHeal.remaining, budget, species + ' 5% of recipient maximum HP');
   near(healer.supportHealCd, 10, species + ' ten-second cooldown');
   assert(!g.enemySupportHeal(healer), species + ' cannot duplicate the cast');
   g.advanceEnemySupportHeal(ally, 2);
-  near(ally.hp, before + budget * 2 / 5, species + ' partial five-second heal');
+  near(ally.hp, before + (budget * 2) / 5, species + ' partial five-second heal');
   g.advanceEnemySupportHeal(ally, 3);
   near(ally.hp, before + budget, species + ' full heal');
   assert(!ally.supportHeal, species + ' effect completes');
@@ -71,28 +101,37 @@ for (const species of Object.keys(R.enemySupportHealing.species)) {
   g.s.party = [
     g.unit('soldier', 981, 900),
     g.unit('archer', 982, 900),
-    ...Object.keys(R.petCompanions).map(family => g.unit('pet', 983, 900, family)),
+    ...Object.keys(R.petCompanions).map((family) => g.unit('pet', 983, 900, family)),
   ];
   for (const u of g.s.party) u.hp = u.maxHp * 0.1;
-  const playerHp = [g.hero, ...g.s.party].map(u => u.hp);
+  const playerHp = [g.hero, ...g.s.party].map((u) => u.hp);
   const healer = mob(species, { ranged: true });
   const recipient = mob('ogre', { hp: 400 });
   for (const u of [g.hero, ...g.s.party]) {
     assert.equal(g.enemyHealTeammate(healer, u), false, 'player actors are never healer allies');
-    assert.equal(g.enemyHealTeammate(u, recipient), false, 'player actors are never hostile healers');
+    assert.equal(
+      g.enemyHealTeammate(u, recipient),
+      false,
+      'player actors are never hostile healers',
+    );
   }
   // Prove faction exclusion is explicit, rather than trusting the collection's
   // name: even a malformed roster containing player actors cannot heal them.
   g.zone().enemies.push(g.hero, ...g.s.party);
   assert(g.enemySupportHeal(healer), species + ' starts real hostile support');
-  const event = g.effects.find(e => e.type === 'heal' && e.actor === 'enemy');
+  const event = g.effects.find((e) => e.type === 'heal' && e.actor === 'enemy');
   assert.equal(event.target, recipient.id, species + ' targets only the hostile roster');
   g.advanceEnemySupportHeal(recipient, R.enemySupportHealing.duration);
   assert(recipient.hp > 400, species + ' actually restores hostile HP');
-  assert.deepEqual([g.hero, ...g.s.party].map(u => u.hp), playerHp,
-    species + ' never restores hero, troops or any boss pet HP');
-  assert([g.hero, ...g.s.party].every(u => !u.supportHeal),
-    species + ' never attaches enemy regeneration to player actors');
+  assert.deepEqual(
+    [g.hero, ...g.s.party].map((u) => u.hp),
+    playerHp,
+    species + ' never restores hero, troops or any boss pet HP',
+  );
+  assert(
+    [g.hero, ...g.s.party].every((u) => !u.supportHeal),
+    species + ' never attaches enemy regeneration to player actors',
+  );
 }
 console.log('PASS hostile healing excludes wounded hero, both troop types and all eleven pets');
 
@@ -106,16 +145,25 @@ console.log('PASS hostile healing excludes wounded hero, both troop types and al
 {
   const { g, mob } = fixture();
   const ordinary = mob('goblin', { ranged: false });
-  assert(!Object.hasOwn(ordinary, 'supportHealCd'), 'ordinary enemy starts without a healing clock');
+  assert(
+    !Object.hasOwn(ordinary, 'supportHealCd'),
+    'ordinary enemy starts without a healing clock',
+  );
   g.updateEnemies(0.1);
-  assert(!Object.hasOwn(ordinary, 'supportHealCd'), 'combat tick does not alter non-healer save shape');
+  assert(
+    !Object.hasOwn(ordinary, 'supportHealCd'),
+    'combat tick does not alter non-healer save shape',
+  );
 }
 
 {
   const { g, mob } = fixture();
   const healer = mob('goblin', { ranged: true });
   const unrelated = mob('wolf', { hp: 400, pack: 'unrelated' });
-  assert(g.enemySupportHeal(healer), 'hostile factions provide aid across species and formation posts');
+  assert(
+    g.enemySupportHeal(healer),
+    'hostile factions provide aid across species and formation posts',
+  );
   assert(unrelated.supportHeal, 'cross-species recipient is actually healing');
 }
 {
@@ -133,8 +181,11 @@ console.log('PASS hostile healing excludes wounded hero, both troop types and al
 {
   const { g, mob } = fixture();
   const leader = mob('goblin', {
-    captain: true, roomCaptain: true, captainProfile: 'supply-vale',
-    ranged: false, hp: 100,
+    captain: true,
+    roomCaptain: true,
+    captainProfile: 'supply-vale',
+    ranged: false,
+    hp: 100,
   });
   const ally = mob('goblin', { hp: 400 });
   assert.equal(g.enemyHealProfile(leader), 'Salvage Surge');
@@ -152,7 +203,11 @@ console.log('PASS hostile healing excludes wounded hero, both troop types and al
 {
   const { g, mob } = fixture('crown');
   const leader = mob('ashbeast', {
-    captain: true, roomCaptain: true, captainProfile: 'supply-crown', ranged: false, hp: 100,
+    captain: true,
+    roomCaptain: true,
+    captainProfile: 'supply-crown',
+    ranged: false,
+    hp: 100,
   });
   const ally = mob('ashbeast', { hp: 300, owner: leader.id });
   assert.equal(g.enemyHealProfile(leader), 'Grafting');
@@ -162,7 +217,10 @@ console.log('PASS hostile healing excludes wounded hero, both troop types and al
 {
   const { g, mob } = fixture('march');
   const direjaw = mob('mireling', {
-    captain: true, roomCaptain: true, captainProfile: 'supply-march', hp: 110,
+    captain: true,
+    roomCaptain: true,
+    captainProfile: 'supply-march',
+    hp: 110,
   });
   const wounded = mob('mireling', { hp: 300 });
   assert.equal(g.enemyHealProfile(direjaw), 'Silt Pulse');
@@ -183,13 +241,18 @@ for (const profile of ['supply-highlands', 'frontier-overseer']) {
 {
   const { g, mob } = fixture('crown');
   const dreadmaw = mob('ashbeast', {
-    captain: true, roomCaptain: true, captainProfile: 'supply-crown', hp: 300,
+    captain: true,
+    roomCaptain: true,
+    captainProfile: 'supply-crown',
+    hp: 300,
   });
   mob('ashbeast', { hp: 800 });
   assert(g.enemySupportHeal(dreadmaw), 'Dreadmaw can use agricultural self-treatment');
   assert(dreadmaw.supportHeal, 'Dreadmaw really heals himself, not just broodmates');
 }
-console.log('PASS three authored hybrid/ranged captains heal nearby allies and eligible self together');
+console.log(
+  'PASS three authored hybrid/ranged captains heal nearby allies and eligible self together',
+);
 
 for (let i = 0; i < 5; i++) {
   const region = ['vale', 'march', 'highlands', 'frontier', 'crown'][i];
@@ -204,9 +267,11 @@ for (let i = 0; i < 5; i++) {
 {
   const { g, mob } = fixture('crown');
   const ringleader = mob('orc', { ranged: true, form: 'ringleader' });
-  near(g.enemyHealMultiplier(ringleader),
+  near(
+    g.enemyHealMultiplier(ringleader),
     R.ordinaryRangedScaling[4].damage * R.ringleaderScaling.damage,
-    'Ringleader gets one 1.5x elite modifier');
+    'Ringleader gets one 1.5x elite modifier',
+  );
 }
 {
   const { g, mob } = fixture('vale');
@@ -217,14 +282,22 @@ for (let i = 0; i < 5; i++) {
   near(g.enemyHealMultiplier(archer), 1.25, 'night progress five increments');
   const wraith = mob('wraith', { ranged: true, nightOnly: true });
   wraith.damage *= g.multipliers().damage;
-  near(g.enemyHealMultiplier(wraith), 1.25 * R.nightEnemyCombat.wraith.damage,
-    'night-only Wraith scaling applied once');
+  near(
+    g.enemyHealMultiplier(wraith),
+    1.25 * R.nightEnemyCombat.wraith.damage,
+    'night-only Wraith scaling applied once',
+  );
 }
 {
   const { g, mob } = fixture('vale', 'nightmare');
   const archer = mob('goblin', { ranged: true });
-  archer.damage *= g.multipliers().damage;
-  near(g.enemyHealMultiplier(archer), 1.15, 'nightmare permanently inherits night scaling');
+  assert.equal(g.night(), false, 'new Nightmare begins with the authored sunset');
+  near(g.enemyHealMultiplier(archer), 1, 'sunset healing uses day scaling');
+  const hpFraction = archer.hp / archer.maxHp;
+  g.advanceDaylight(g.s.nightmareIntroRemaining);
+  assert.equal(g.night(), true, 'the actual intro boundary starts permanent night');
+  near(archer.hp / archer.maxHp, hpFraction, 'boundary preserves existing wounds');
+  near(g.enemyHealMultiplier(archer), 1.15, 'post-sunset Nightmare inherits night scaling once');
 }
 {
   const { g, mob } = fixture();
@@ -234,10 +307,18 @@ for (let i = 0; i < 5; i++) {
   assert(g.enemyHealProfile(boss), 'Lifebinder uses individually authored recovery');
   const meleeBoss = g.bossEnemy(g.boss('thorn'), 'normal', { x: 990, y: 900 });
   assert(!g.enemyHealProfile(meleeBoss), 'melee-only boss does not get generic skill');
-  const elite = mob('wraith', { ranged: true, summon: true, form: 'ringleader',
-    trueSummonRole: 'captain', owner: boss.id });
-  near(g.enemyHealMultiplier(elite), R.summonScaling[0].damage * 1.5,
-    'TRUE captain summons gain one elite multiplier, not two');
+  const elite = mob('wraith', {
+    ranged: true,
+    summon: true,
+    form: 'ringleader',
+    trueSummonRole: 'captain',
+    owner: boss.id,
+  });
+  near(
+    g.enemyHealMultiplier(elite),
+    R.summonScaling[0].damage * 1.5,
+    'TRUE captain summons gain one elite multiplier, not two',
+  );
 }
 {
   const { g } = fixture('march');
@@ -250,7 +331,9 @@ for (let i = 0; i < 5; i++) {
     assert.equal(g.enemyHealProfile(boss), null, id + ' is deliberately excluded');
   }
 }
-console.log('PASS region, night, progression, night-species, TRUE, elite scaling and boss eligibility');
+console.log(
+  'PASS region, night, progression, night-species, TRUE, elite scaling and boss eligibility',
+);
 
 {
   const { g, mob } = fixture();
@@ -265,7 +348,10 @@ console.log('PASS region, night, progression, night-species, TRUE, elite scaling
   delete attendant.supportHeal;
   attendant.hp = attendant.maxHp;
   boss.healCd = 8;
-  assert(!g.enemySupportHeal(boss), 'Lifebinder keeps existing vitality siphon instead of duplicate self-healing');
+  assert(
+    !g.enemySupportHeal(boss),
+    'Lifebinder keeps existing vitality siphon instead of duplicate self-healing',
+  );
   near(boss.healCd, 8, 'existing boss recovery and support remain independent');
   near(boss.supportHealCd, 0, 'ineligible duplicate self-cast does not spend support cooldown');
 }
@@ -275,7 +361,10 @@ console.log('PASS region, night, progression, night-species, TRUE, elite scaling
   ridge.aggro = true;
   ridge.hp = ridge.maxHp * 0.25;
   g.zone().enemies.push(ridge);
-  assert(g.enemySupportHeal(ridge), 'Ridge Tyrant can self-heal without duplicate authored recovery');
+  assert(
+    g.enemySupportHeal(ridge),
+    'Ridge Tyrant can self-heal without duplicate authored recovery',
+  );
   assert(ridge.supportHeal && ridge.supportHeal.skill === 'Bailout');
   near(ridge.supportHealCd, R.rangerSupport.cooldown, 'Ridge self-heal uses Archer cooldown');
 }
@@ -293,8 +382,11 @@ console.log('PASS region, night, progression, night-species, TRUE, elite scaling
   const restored = Campaign.restore(snapshot, () => 0.9);
   assert(restored && restored.s.version === 4, 'save restores with unchanged version');
   const copied = JSON.parse(JSON.stringify(snapshot));
-  copied.zones[copied.zone].enemies[0].supportHeal =
-    { seconds: 1e9, remaining: 1e9, source: 'malicious' };
+  copied.zones[copied.zone].enemies[0].supportHeal = {
+    seconds: 1e9,
+    remaining: 1e9,
+    source: 'malicious',
+  };
   copied.zones[copied.zone].enemies[0].supportHealCd = 1e9;
   const repaired = Campaign.restore(copied, () => 0.9);
   const enemy = repaired.zone().enemies[0];
@@ -316,7 +408,10 @@ console.log('PASS region, night, progression, night-species, TRUE, elite scaling
   dragon.hp = dragon.maxHp * 0.25;
   g.zone().enemies.push(dragon);
   assert(g.enemyHealProfile(dragon), 'Abyss Dragon can support its ranged warband');
-  assert(!g.enemySupportHeal(dragon), 'authored recovery bosses do not gain duplicate self-healing');
+  assert(
+    !g.enemySupportHeal(dragon),
+    'authored recovery bosses do not gain duplicate self-healing',
+  );
 }
 console.log('PASS boss skill independence, support priority, and old v4 save compatibility');
 
@@ -331,26 +426,49 @@ console.log('PASS boss skill independence, support priority, and old v4 save com
   const healer = mob('goblin', { ranged: true });
   const recipient = mob('goblin', { hp: 400 });
   assert(g.enemySupportHeal(healer));
-  const canvas = createCanvas(844, 390), order = [], heals = [];
+  const canvas = createCanvas(844, 390),
+    order = [],
+    heals = [];
   const renderer = Renderer.create({
-    canvas, ctx: canvas.getContext('2d'), getGame: () => g,
+    canvas,
+    ctx: canvas.getContext('2d'),
+    getGame: () => g,
     platform: { cameraZoom: 1.5, cameraAnchor: () => ({ x: 422, y: 195 }) },
-    Campaign, PrototypeVisuals: Visuals,
+    Campaign,
+    PrototypeVisuals: Visuals,
     PrototypeCombatVisuals: {
       ...FX,
-      ground(...args) { order.push(args[3]); return FX.ground(...args); },
-      enemySupportHeal(...args) { order.push('heal-event'); heals.push(args[2]); return FX.enemySupportHeal(...args); },
-      enemySupportStatus(...args) { order.push('heal-status'); return FX.enemySupportStatus(...args); },
-      actorCues(...args) { order.push('captions'); return FX.actorCues(...args); },
+      ground(...args) {
+        order.push(args[3]);
+        return FX.ground(...args);
+      },
+      enemySupportHeal(...args) {
+        order.push('heal-event');
+        heals.push(args[2]);
+        return FX.enemySupportHeal(...args);
+      },
+      enemySupportStatus(...args) {
+        order.push('heal-status');
+        return FX.enemySupportStatus(...args);
+      },
+      actorCues(...args) {
+        order.push('captions');
+        return FX.actorCues(...args);
+      },
     },
-    chargePresentation: () => null, isPaused: () => false, now: () => 16000,
+    chargePresentation: () => null,
+    isPaused: () => false,
+    now: () => 16000,
   });
   g.zone();
   const before = JSON.stringify(g.snapshot());
   renderer.queue(g.effects);
   renderer.draw();
   assert(order.includes('heal-event'), 'real queued enemy heal reaches its species VFX');
-  assert(order.includes('heal-status'), 'ongoing recovery remains visible in the combined renderer');
+  assert(
+    order.includes('heal-status'),
+    'ongoing recovery remains visible in the combined renderer',
+  );
   assert(order.indexOf('underlay-cue') < order.indexOf('heal-status'));
   assert(order.indexOf('heal-status') < order.indexOf('captions'));
   assert(!order.includes('cue'), 'healing does not restore old floor warnings above actors');
@@ -376,14 +494,19 @@ console.log('PASS boss skill independence, support priority, and old v4 save com
   g.s.party = [soldier];
   g.zone().enemies.push(g.hero, soldier);
   for (const target of ['hero', soldier.id, 'missing-enemy']) {
-    const queued = FX.queue([{type:'heal',actor:'enemy',target,resource:'health'}], g);
-    assert(!queued.some(f => f.type === 'heal'), 'enemy heal never falls back to hero coordinates');
+    const queued = FX.queue([{ type: 'heal', actor: 'enemy', target, resource: 'health' }], g);
+    assert(
+      !queued.some((f) => f.type === 'heal'),
+      'enemy heal never falls back to hero coordinates',
+    );
   }
   const heroHp = g.hero.hp;
   g.hero.aggro = true;
-  g.hero.supportHeal = {seconds:5,remaining:1000};
+  g.hero.supportHeal = { seconds: 5, remaining: 1000 };
   g.advanceEnemySupportHeal(g.hero, 1);
   assert.equal(g.hero.hp, heroHp, 'forged hostile healing cannot advance on a player actor');
   assert(!g.hero.supportHeal, 'invalid player-side hostile regeneration is discarded');
 }
-console.log('PASS combined phone healing particles/status, warning layering and save-pure rendering');
+console.log(
+  'PASS combined phone healing particles/status, warning layering and save-pure rendering',
+);
