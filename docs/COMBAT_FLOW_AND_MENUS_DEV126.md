@@ -63,3 +63,7 @@ Publication receipt: `evidence/COMBAT_FLOW_DEV126_PUBLICATION_20261021.json` (ad
 The owner reports having three active companions at a 20-crown Basic Barracks and being unable to rest one/add the newly unlocked pet. Source review confirms capacity does not block rest, and with a three-person cap resting one should permit activation of one replacement. The specific failure therefore remains unconfirmed; do not present capacity alone as the diagnosis.
 
 Proposed contained UX: a “Replace with…” action exchanges one active member with one living reserve companion or recruitable unlocked pet in a single operation. Keep the active party size unchanged and respect the Expedition maximum; Basic Barracks retain their three-person expansion cap and all other restrictions. Full Barracks retain the ability to expand up to the higher Expedition cap. Validate both sides before resting either unit, and preserve pet uniqueness, roster bounds, health, unlocks and the existing combat safety gate. No roster mechanics were changed in dev.126. This proposal awaits the next owner discussion.
+
+### Later owner clarification — dev.127
+
+The owner wants the existing two-step Rest → Recruit/Add flow, with visible reasons when blocked; an atomic replacement feature is unnecessary. Restriction feedback is published in dev.127 (`BARRACKS_ROSTER_FEEDBACK_DEV127.md`). The expanded boss/captain spawn/skills/summons/entrances/fort audit is recorded separately in `ENCOUNTER_SPACE_AUDIT_DEV127.md`; its proposed repairs are not implemented.

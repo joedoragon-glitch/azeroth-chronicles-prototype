@@ -22,3 +22,5 @@ Published in PR #363 as `e1781b946bf6544977f79082b5b2080a5d03bf9a`; package-only
 ## New owner-directed audit
 
 The dungeon entrance/remaining fort work must include **both captains and bosses in their real authored encounter spaces**. Audit spawn location and usable room for actual current skill geometry, movement/charges, summon deployment, walls/props, entrances/player arrival and leash/reset behavior. Inspect normal/TRUE variants where geometry or behavior differs; do not assume a valid spawn point alone proves the whole encounter fits. No generic basic-hit interruption defect is confirmed, and no balance retuning is implied. Sunrise/sunset investigation stays deferred.
+
+Audit completed: `ENCOUNTER_SPACE_AUDIT_DEV127.md`; proposals are not runtime changes.

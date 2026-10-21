@@ -1,0 +1,815 @@
+{
+  "arrivals": [
+    {
+      "zone": "crypt",
+      "visibleAcquisition": [
+        {
+          "id": "enemy-42",
+          "name": "Goblin guardian",
+          "distance": 283.1960451701259,
+          "range": 286
+        },
+        {
+          "id": "enemy-43",
+          "name": "Goblin guardian slinger",
+          "distance": 265.75928958363806,
+          "range": 286
+        }
+      ],
+      "bodyOverlaps": [
+        [
+          "ally-36",
+          "ally-37"
+        ],
+        [
+          "ally-36",
+          "ally-38"
+        ],
+        [
+          "ally-36",
+          "ally-39"
+        ],
+        [
+          "ally-36",
+          "ally-40"
+        ],
+        [
+          "ally-36",
+          "ally-41"
+        ],
+        [
+          "ally-37",
+          "ally-38"
+        ],
+        [
+          "ally-37",
+          "ally-39"
+        ],
+        [
+          "ally-37",
+          "ally-40"
+        ],
+        [
+          "ally-37",
+          "ally-41"
+        ],
+        [
+          "ally-38",
+          "ally-39"
+        ],
+        [
+          "ally-38",
+          "ally-40"
+        ],
+        [
+          "ally-38",
+          "ally-41"
+        ],
+        [
+          "ally-39",
+          "ally-40"
+        ],
+        [
+          "ally-39",
+          "ally-41"
+        ],
+        [
+          "ally-40",
+          "ally-41"
+        ]
+      ]
+    },
+    {
+      "zone": "archive",
+      "visibleAcquisition": [
+        {
+          "id": "enemy-42",
+          "name": "Mireling guardian",
+          "distance": 283.1960451701259,
+          "range": 286
+        },
+        {
+          "id": "enemy-43",
+          "name": "Mireling guardian spitter",
+          "distance": 265.75928958363806,
+          "range": 286
+        }
+      ],
+      "bodyOverlaps": [
+        [
+          "ally-36",
+          "ally-37"
+        ],
+        [
+          "ally-36",
+          "ally-38"
+        ],
+        [
+          "ally-36",
+          "ally-39"
+        ],
+        [
+          "ally-36",
+          "ally-40"
+        ],
+        [
+          "ally-36",
+          "ally-41"
+        ],
+        [
+          "ally-37",
+          "ally-38"
+        ],
+        [
+          "ally-37",
+          "ally-39"
+        ],
+        [
+          "ally-37",
+          "ally-40"
+        ],
+        [
+          "ally-37",
+          "ally-41"
+        ],
+        [
+          "ally-38",
+          "ally-39"
+        ],
+        [
+          "ally-38",
+          "ally-40"
+        ],
+        [
+          "ally-38",
+          "ally-41"
+        ],
+        [
+          "ally-39",
+          "ally-40"
+        ],
+        [
+          "ally-39",
+          "ally-41"
+        ],
+        [
+          "ally-40",
+          "ally-41"
+        ]
+      ]
+    },
+    {
+      "zone": "mine",
+      "visibleAcquisition": [],
+      "bodyOverlaps": [
+        [
+          "ally-36",
+          "ally-37"
+        ],
+        [
+          "ally-36",
+          "ally-38"
+        ],
+        [
+          "ally-36",
+          "ally-39"
+        ],
+        [
+          "ally-36",
+          "ally-40"
+        ],
+        [
+          "ally-36",
+          "ally-41"
+        ],
+        [
+          "ally-37",
+          "ally-38"
+        ],
+        [
+          "ally-37",
+          "ally-39"
+        ],
+        [
+          "ally-37",
+          "ally-40"
+        ],
+        [
+          "ally-37",
+          "ally-41"
+        ],
+        [
+          "ally-38",
+          "ally-39"
+        ],
+        [
+          "ally-38",
+          "ally-40"
+        ],
+        [
+          "ally-38",
+          "ally-41"
+        ],
+        [
+          "ally-39",
+          "ally-40"
+        ],
+        [
+          "ally-39",
+          "ally-41"
+        ],
+        [
+          "ally-40",
+          "ally-41"
+        ]
+      ]
+    },
+    {
+      "zone": "abyss",
+      "visibleAcquisition": [
+        {
+          "id": "enemy-42",
+          "name": "Orc guardian",
+          "distance": 110,
+          "range": 286
+        },
+        {
+          "id": "enemy-43",
+          "name": "Raider guardian",
+          "distance": 261.4670151281037,
+          "range": 400.40000000000003
+        }
+      ],
+      "bodyOverlaps": [
+        [
+          "ally-36",
+          "ally-37"
+        ],
+        [
+          "ally-36",
+          "ally-38"
+        ],
+        [
+          "ally-36",
+          "ally-39"
+        ],
+        [
+          "ally-36",
+          "ally-40"
+        ],
+        [
+          "ally-36",
+          "ally-41"
+        ],
+        [
+          "ally-37",
+          "ally-38"
+        ],
+        [
+          "ally-37",
+          "ally-39"
+        ],
+        [
+          "ally-37",
+          "ally-40"
+        ],
+        [
+          "ally-37",
+          "ally-41"
+        ],
+        [
+          "ally-38",
+          "ally-39"
+        ],
+        [
+          "ally-38",
+          "ally-40"
+        ],
+        [
+          "ally-38",
+          "ally-41"
+        ],
+        [
+          "ally-39",
+          "ally-40"
+        ],
+        [
+          "ally-39",
+          "ally-41"
+        ],
+        [
+          "ally-40",
+          "ally-41"
+        ]
+      ]
+    },
+    {
+      "zone": "citadel",
+      "visibleAcquisition": [
+        {
+          "id": "enemy-42",
+          "name": "Crown shield guard",
+          "distance": 92.19544457292886,
+          "range": 286
+        },
+        {
+          "id": "enemy-43",
+          "name": "Crown goblin marksman",
+          "distance": 237.69728648009422,
+          "range": 400.40000000000003
+        },
+        {
+          "id": "enemy-45",
+          "name": "Crown archer marksman",
+          "distance": 305.9411708155671,
+          "range": 400.40000000000003
+        }
+      ],
+      "bodyOverlaps": [
+        [
+          "ally-36",
+          "ally-37"
+        ],
+        [
+          "ally-36",
+          "ally-38"
+        ],
+        [
+          "ally-36",
+          "ally-39"
+        ],
+        [
+          "ally-36",
+          "ally-40"
+        ],
+        [
+          "ally-36",
+          "ally-41"
+        ],
+        [
+          "ally-37",
+          "ally-38"
+        ],
+        [
+          "ally-37",
+          "ally-39"
+        ],
+        [
+          "ally-37",
+          "ally-40"
+        ],
+        [
+          "ally-37",
+          "ally-41"
+        ],
+        [
+          "ally-38",
+          "ally-39"
+        ],
+        [
+          "ally-38",
+          "ally-40"
+        ],
+        [
+          "ally-38",
+          "ally-41"
+        ],
+        [
+          "ally-39",
+          "ally-40"
+        ],
+        [
+          "ally-39",
+          "ally-41"
+        ],
+        [
+          "ally-40",
+          "ally-41"
+        ]
+      ]
+    },
+    {
+      "zone": "supply-vale",
+      "visibleAcquisition": [],
+      "bodyOverlaps": []
+    },
+    {
+      "zone": "supply-march",
+      "visibleAcquisition": [],
+      "bodyOverlaps": []
+    },
+    {
+      "zone": "supply-highlands",
+      "visibleAcquisition": [],
+      "bodyOverlaps": []
+    },
+    {
+      "zone": "supply-crown",
+      "visibleAcquisition": [],
+      "bodyOverlaps": []
+    },
+    {
+      "zone": "side-vale-cellars",
+      "visibleAcquisition": [
+        {
+          "id": "enemy-42",
+          "name": "Goblin resident",
+          "distance": 277.8488797889961,
+          "range": 286
+        }
+      ],
+      "bodyOverlaps": [
+        [
+          "ally-36",
+          "ally-37"
+        ],
+        [
+          "ally-36",
+          "ally-38"
+        ],
+        [
+          "ally-36",
+          "ally-39"
+        ],
+        [
+          "ally-36",
+          "ally-40"
+        ],
+        [
+          "ally-36",
+          "ally-41"
+        ],
+        [
+          "ally-37",
+          "ally-38"
+        ],
+        [
+          "ally-37",
+          "ally-39"
+        ],
+        [
+          "ally-37",
+          "ally-40"
+        ],
+        [
+          "ally-37",
+          "ally-41"
+        ],
+        [
+          "ally-38",
+          "ally-39"
+        ],
+        [
+          "ally-38",
+          "ally-40"
+        ],
+        [
+          "ally-38",
+          "ally-41"
+        ],
+        [
+          "ally-39",
+          "ally-40"
+        ],
+        [
+          "ally-39",
+          "ally-41"
+        ],
+        [
+          "ally-40",
+          "ally-41"
+        ]
+      ]
+    },
+    {
+      "zone": "side-march-watchhouse",
+      "visibleAcquisition": [
+        {
+          "id": "enemy-42",
+          "name": "Reed beast resident spitter",
+          "distance": 277.8488797889961,
+          "range": 286
+        }
+      ],
+      "bodyOverlaps": [
+        [
+          "ally-36",
+          "ally-37"
+        ],
+        [
+          "ally-36",
+          "ally-38"
+        ],
+        [
+          "ally-36",
+          "ally-39"
+        ],
+        [
+          "ally-36",
+          "ally-40"
+        ],
+        [
+          "ally-36",
+          "ally-41"
+        ],
+        [
+          "ally-37",
+          "ally-38"
+        ],
+        [
+          "ally-37",
+          "ally-39"
+        ],
+        [
+          "ally-37",
+          "ally-40"
+        ],
+        [
+          "ally-37",
+          "ally-41"
+        ],
+        [
+          "ally-38",
+          "ally-39"
+        ],
+        [
+          "ally-38",
+          "ally-40"
+        ],
+        [
+          "ally-38",
+          "ally-41"
+        ],
+        [
+          "ally-39",
+          "ally-40"
+        ],
+        [
+          "ally-39",
+          "ally-41"
+        ],
+        [
+          "ally-40",
+          "ally-41"
+        ]
+      ]
+    },
+    {
+      "zone": "side-highlands-signal",
+      "visibleAcquisition": [
+        {
+          "id": "enemy-42",
+          "name": "Ogre resident",
+          "distance": 277.8488797889961,
+          "range": 286
+        }
+      ],
+      "bodyOverlaps": [
+        [
+          "ally-36",
+          "ally-37"
+        ],
+        [
+          "ally-36",
+          "ally-38"
+        ],
+        [
+          "ally-36",
+          "ally-39"
+        ],
+        [
+          "ally-36",
+          "ally-40"
+        ],
+        [
+          "ally-36",
+          "ally-41"
+        ],
+        [
+          "ally-37",
+          "ally-38"
+        ],
+        [
+          "ally-37",
+          "ally-39"
+        ],
+        [
+          "ally-37",
+          "ally-40"
+        ],
+        [
+          "ally-37",
+          "ally-41"
+        ],
+        [
+          "ally-38",
+          "ally-39"
+        ],
+        [
+          "ally-38",
+          "ally-40"
+        ],
+        [
+          "ally-38",
+          "ally-41"
+        ],
+        [
+          "ally-39",
+          "ally-40"
+        ],
+        [
+          "ally-39",
+          "ally-41"
+        ],
+        [
+          "ally-40",
+          "ally-41"
+        ]
+      ]
+    },
+    {
+      "zone": "side-frontier-shrine",
+      "visibleAcquisition": [
+        {
+          "id": "enemy-42",
+          "name": "Orc resident",
+          "distance": 277.8488797889961,
+          "range": 286
+        }
+      ],
+      "bodyOverlaps": [
+        [
+          "ally-36",
+          "ally-37"
+        ],
+        [
+          "ally-36",
+          "ally-38"
+        ],
+        [
+          "ally-36",
+          "ally-39"
+        ],
+        [
+          "ally-36",
+          "ally-40"
+        ],
+        [
+          "ally-36",
+          "ally-41"
+        ],
+        [
+          "ally-37",
+          "ally-38"
+        ],
+        [
+          "ally-37",
+          "ally-39"
+        ],
+        [
+          "ally-37",
+          "ally-40"
+        ],
+        [
+          "ally-37",
+          "ally-41"
+        ],
+        [
+          "ally-38",
+          "ally-39"
+        ],
+        [
+          "ally-38",
+          "ally-40"
+        ],
+        [
+          "ally-38",
+          "ally-41"
+        ],
+        [
+          "ally-39",
+          "ally-40"
+        ],
+        [
+          "ally-39",
+          "ally-41"
+        ],
+        [
+          "ally-40",
+          "ally-41"
+        ]
+      ]
+    },
+    {
+      "zone": "side-crown-foundry",
+      "visibleAcquisition": [
+        {
+          "id": "enemy-42",
+          "name": "Crown soldier resident",
+          "distance": 277.8488797889961,
+          "range": 286
+        }
+      ],
+      "bodyOverlaps": [
+        [
+          "ally-36",
+          "ally-37"
+        ],
+        [
+          "ally-36",
+          "ally-38"
+        ],
+        [
+          "ally-36",
+          "ally-39"
+        ],
+        [
+          "ally-36",
+          "ally-40"
+        ],
+        [
+          "ally-36",
+          "ally-41"
+        ],
+        [
+          "ally-37",
+          "ally-38"
+        ],
+        [
+          "ally-37",
+          "ally-39"
+        ],
+        [
+          "ally-37",
+          "ally-40"
+        ],
+        [
+          "ally-37",
+          "ally-41"
+        ],
+        [
+          "ally-38",
+          "ally-39"
+        ],
+        [
+          "ally-38",
+          "ally-40"
+        ],
+        [
+          "ally-38",
+          "ally-41"
+        ],
+        [
+          "ally-39",
+          "ally-40"
+        ],
+        [
+          "ally-39",
+          "ally-41"
+        ],
+        [
+          "ally-40",
+          "ally-41"
+        ]
+      ]
+    }
+  ],
+  "crag": {
+    "spawn": {
+      "x": 760,
+      "y": 564.0192378864668
+    },
+    "bodyBlocked": true,
+    "started": true,
+    "ordinaryDamagePreservesCast": true,
+    "nearbySolid": [
+      {
+        "id": "treasury-7",
+        "x": 730,
+        "y": 570,
+        "r": 14
+      }
+    ],
+    "proposedPoints": [
+      {
+        "x": 700,
+        "y": 450,
+        "blocked": false,
+        "open140UsingBossRadius": 9
+      },
+      {
+        "x": 670,
+        "y": 430,
+        "blocked": false,
+        "open140UsingBossRadius": 10
+      }
+    ],
+    "simulatedSeconds": 6,
+    "impacts": 3,
+    "final": {
+      "x": 664.4602845290731,
+      "y": 622.9407108626651
+    },
+    "finalBlocked": false
+  }
+}
