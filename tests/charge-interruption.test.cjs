@@ -153,8 +153,8 @@ console.log(
 }
 {
   const { game, u, e } = arena();
-  u.hp = 1;
   assert(game.companionUseSecondSkill(u, e));
+  u.hp = 1; // Preparation began while healthy; fatal contact still cancels it.
   assert(game.hitParty(u, 1, 0, null, true), 'lethal contact removes actual remaining HP');
   assert(game.partyChargeState(u).interrupted, 'lethal hit always cancels even below threshold');
   advanceCast(game, 0.65);
@@ -243,7 +243,7 @@ for (const phase of ['enemy', 'projectile', 'trap']) {
   const { game, u, e } = arena('archer');
   assert(game.companionUseSecondSkill(u, e));
   e.aggro = false;
-  Object.assign(game.hero, {x:300,y:350});
+  Object.assign(game.hero, { x: 300, y: 350 });
   assert(game.restCompanion(u.id));
   assert(!game.partyChargeState(u), 'benching cancels immediately before any reactivation');
 }

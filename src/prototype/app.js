@@ -22,6 +22,10 @@
   } catch (_) {}
   document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
   const spanishText = {
+    'Critically wounded companions are avoiding combat.':
+      'Los compañeros con heridas críticas están evitando el combate.',
+    'They keep following and rejoin at 40% HP.':
+      'Siguen acompañándote y vuelven a combatir al alcanzar el 40% de salud.',
     'Choose your language': 'Elige tu idioma',
     'Adventure menu': 'Menú de aventura',
     'Game and settings': 'Juego y ajustes',
