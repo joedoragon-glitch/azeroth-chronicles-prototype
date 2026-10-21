@@ -31,4 +31,4 @@ The later enemy repair must also correct the dev.144 Dreadmaw fixture to set nat
 
 ## Publication
 
-Prepared for PR #381 and package-only publication. Restore the normal release workflow byte-for-byte and remove the temporary publisher after exact public build/file verification.
+PR #381 merged as `0590b69834a9daff97c6e76786be96ca656c6ffd`; package-only publisher run 39681613347 succeeded. Exact live build and all nine checked public resources match the prepared candidate. The normal workflow is restored byte-for-byte and the temporary publisher removed in the closeout. See [publication receipt](evidence/HERO_GUIDANCE_DEV145_PUBLICATION_20261021.json). No broad CI.
