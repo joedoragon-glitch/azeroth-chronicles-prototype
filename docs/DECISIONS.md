@@ -193,3 +193,7 @@ The Keeper collected and authored the Archive. Self-history, old-company memorie
 ## 21 October 2026 — defender space and direct workflow (dev.129)
 
 The owner resumed spatial repairs after Treasury recovery, explicitly rejecting broad GitHub checks/reviews and asking for focused quality. Main entrances move toward the corner, the fortified receiving watch waits deeper, and older ranged boss homes sit behind their existing thresholds with summon/body room. Crag and his mounted household archer receive body-clear posts; Crag’s home also retains the existing recovery respawn clearance from arrival. Walls, guard counts, roles, ranges and existing fort bonuses remain. No companion-spreading feature is needed. Crypt/Archive/Mine fort bonuses are still undecided. Specific captain interruption and sunrise/possible sunset flashes remain open, with lighting deferred. Full checklist and evidence: `DEFENDER_SPACE_DEV129.md`.
+
+## 21 October 2026 — flow standard and resource audit
+
+The owner confirms difficulty should reward game knowledge/execution while respecting time: readable threats with useful responses, recoverable setbacks, clear rules and purposeful progression. Extra Crypt/Archive/Mine fort bonuses remain off/undecided; late Ranger-only piercing is not justification for early blanket mitigation. Resource gathering is now audited against this standard. Review-only findings and proposed repairs are recorded in `RESOURCE_GATHERING_FLOW_AUDIT_DEV129.md`; no runtime change or new balance authority is implied.
