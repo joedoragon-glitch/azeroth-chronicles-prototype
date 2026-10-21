@@ -202,3 +202,8 @@ The owner confirms difficulty should reward game knowledge/execution while respe
 ## 21 October 2026 — resource escort and remote recovery
 
 Owner chooses all available idle gatherers per ordinary source order, combat-persistent guidance and normal companion fight/withdraw/resume, with no worker-count selector or static danger veto. Supplies shares orders and immediately unloads whole-company cargo, including resting/fallen. Resource expeditions are Full Barracks only, one chosen living idle Soldier/Ranger/Little Treasurer, earlier region with every specialist rescued, recovering actual remaining tribute automatically once. Initial duration is 300 active seconds following owner concern about a full cycle. Little Treasurer is the only pet eligible for both resource jobs; construction remains Soldier/Ranger work. No new early dungeon fort bonuses.
+
+
+## 21 October 2026 — dungeon preparation and leader return rules
+
+Owner requests two entrance choices: enter or build an outside Barracks with recovery selected after construction. Skip repeated prompts for camps requested from this entrance or completed camps genuinely nearby. Apply only to five main dungeons and four Treasuries; side dungeons stay direct/unchanged. Main exits return to their entrance. Unfinished encounters reset on exit/entry. After captain victory, Treasury stays empty for the existing 120-second timer; captain and garrison return together when due/safe. Doors preserve the deadline and collection permission. Main victories/TRUE progression retain their existing rules. Preserve rescued specialists, claimed treasure and death-loss balances. No new fort bonuses or free recovery services.

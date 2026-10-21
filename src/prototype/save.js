@@ -8,6 +8,24 @@
     const clone = (x) => JSON.parse(JSON.stringify(x)),
       clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
       dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+    const recoveryCampOrder = (u, s) => {
+      if (
+        s.recallActive ||
+        u.active === false ||
+        u.hp <= 0 ||
+        !['soldier', 'archer'].includes(u.type) ||
+        u.order?.type !== 'build'
+      )
+        return null;
+      const camp = s.zones?.[s.zone]?.buildings?.find(
+        (b) =>
+          b.id === u.order.id &&
+          b.kind === 'barracks' &&
+          b.progress < 4 &&
+          b.recoveryOnComplete === true,
+      );
+      return camp ? { type: 'build', id: camp.id } : null;
+    };
     const gatheringOrder = (u, s) => {
       if (
         s.recallActive ||
@@ -87,7 +105,7 @@
         this.clearEncounterUnits([out.hero, ...out.party]);
         out.party.forEach((u) => {
           delete u.path;
-          u.order = gatheringOrder(u, out);
+          u.order = gatheringOrder(u, out) || recoveryCampOrder(u, out);
         });
         for (const z of Object.values(out.zones)) {
           z.props = z.props.filter((p) => !p.garunTemporary && !p.garunPreview);
@@ -551,7 +569,7 @@
         }
         const petFamilies = new Set();
         for (const u of s.party) {
-          u.order = gatheringOrder(u, s);
+          u.order = gatheringOrder(u, s) || recoveryCampOrder(u, s);
           validateName(u.customName);
           if (u.type === 'pet') {
             if (
@@ -841,6 +859,14 @@
             finite(b.progress, 0, 4);
             finite(b.queue, 0, 4);
             finite(b.upgradeProgress, 0, 4);
+            if (b.recoveryOnComplete !== undefined && typeof b.recoveryOnComplete !== 'boolean')
+              throw Error('Invalid pending recovery camp');
+            if (
+              b.dungeonEntrance !== undefined &&
+              (typeof b.dungeonEntrance !== 'string' ||
+                !z.npcs.some((n) => n.kind === 'dungeon' && n.family === b.dungeonEntrance))
+            )
+              throw Error('Invalid dungeon camp entrance');
             if (typeof b.full !== 'boolean' || typeof b.upgradePaid !== 'boolean')
               throw Error('Invalid barracks state');
             if (b.queueType != null && !['soldier', 'archer'].includes(b.queueType))

@@ -1,9 +1,9 @@
 name: Test and deploy app
 on:
   push:
-    branches: [main]
+    branches: [owner-dungeon-camps-dev131-hold]
   pull_request:
-    branches: [main, perf/v09-integration-20261010]
+    branches: [owner-dungeon-camps-dev131-hold]
   workflow_dispatch:
 
 permissions:

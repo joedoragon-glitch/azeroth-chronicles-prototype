@@ -145,6 +145,26 @@
       '«Vuelvo porque quiero. Las páginas mojadas aún necesitan secarse, y las estanterías dañadas necesitan cuidados». Neri ofrece aquí sus tónicos y entrenamientos habituales.',
     'Return death recovery to refuge': 'Volver al refugio al morir',
     'Set death recovery point': 'Establecer punto de reaparición',
+    'Enter dungeon': 'Entrar en la mazmorra',
+    'Build Barracks & set recovery': 'Construir cuartel y fijar reaparición',
+    'Finish Barracks & set recovery': 'Terminar cuartel y fijar reaparición',
+    'Use nearby Barracks & set recovery': 'Usar cuartel cercano y fijar reaparición',
+    'Leaving resets an unfinished encounter. Defeated leaders keep their normal return time; earned progress stays saved.':
+      'Al salir se reinicia un encuentro no terminado. Los líderes derrotados conservan su tiempo normal de regreso; tu progreso ganado se conserva.',
+    'Enter, or prepare your recovery camp outside.':
+      'Entra o prepara tu campamento de recuperación fuera.',
+    'Reuse this camp for recovery and companion services.':
+      'Usa este campamento para recuperarte y atender a tus compañeros.',
+    'Visit the dungeon entrance to prepare a camp.':
+      'Acércate a la entrada de la mazmorra para preparar un campamento.',
+    'Succession uses successors instead of recovery points.':
+      'Sucesión usa sucesores en lugar de puntos de reaparición.',
+    'End nearby combat before preparing your camp.':
+      'Termina el combate cercano antes de preparar tu campamento.',
+    'An idle active Soldier or Ranger is needed to build. Recall workers or recover a fallen companion first.':
+      'Necesitas un Soldado o Ranger activo y libre para construir. Reagrupa a los trabajadores o recupera a un compañero caído primero.',
+    'Your companion is building outside the dungeon. Stay outside until construction finishes; this camp will then become your recovery point.':
+      'Tu compañero construye fuera de la mazmorra. Quédate fuera hasta que termine; entonces este campamento será tu punto de reaparición.',
     'Recover here within this region. Entering another region switches to its refuge.':
       'Reaparece aquí dentro de esta región. Al entrar en otra región, usarás su refugio.',
     'Rest here · Complete the journey': 'Descansar aquí · completar el viaje',
@@ -740,6 +760,7 @@
     quests,
     announcements,
     transport,
+    dungeonEntranceMenu,
   } = PrototypeMenus.create({
     getGame: () => game,
     Campaign,
@@ -1911,6 +1932,10 @@
     const n = nearestNPC();
     if (!n) {
       status('Nothing nearby to interact with.');
+      return;
+    }
+    if (n.kind === 'dungeon' && !game.sideDungeon(n.family)) {
+      dungeonEntranceMenu(n);
       return;
     }
     if (
