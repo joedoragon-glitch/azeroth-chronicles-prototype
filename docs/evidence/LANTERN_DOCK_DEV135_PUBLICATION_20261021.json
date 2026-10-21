@@ -1,0 +1,39 @@
+{
+  "version": "0.9.1+snapshot.dev.135",
+  "pr": 371,
+  "merge": "fffb5f45d698cc07af318c91fdb078af0cee7ef6",
+  "packageOnlyRun": {
+    "id": 39586784767,
+    "conclusion": "success"
+  },
+  "build": "fffb5f45d698cc07af318c91fdb078af0cee7ef6",
+  "buildMatches": true,
+  "files": [
+    {
+      "path": "src/prototype/rules.js",
+      "matches": true,
+      "sha256": "35f22432d4df1539b691d1c7e5895f161941fe7047f021c8a23b1204549d9fea"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "matches": true,
+      "sha256": "d9de08453423cd9e13cc35150d06b6f3865654a7326062bba3d8d2566cefaf5f"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "matches": true,
+      "sha256": "7f2f3f2151732dedf0abfcbdb7b636b4f26104a47f6de120c61d143a023d990d"
+    },
+    {
+      "path": "sw.js",
+      "matches": true,
+      "sha256": "27e0106dfe99e55566a42d2fdcae265ab053b07975605e8311c408a237cd91ed"
+    },
+    {
+      "path": "phone.html",
+      "matches": true,
+      "sha256": "cbac05583f913484864260f9e04d127d4fe6dc12f58f2de12dc3803ef50ff6c9"
+    }
+  ],
+  "validation": "Four seeded fresh/current/dev134-save boarding checks; native road-paint/route-state check; existing coastal suite; build/generated/syntax/whitespace; four native day/night/phone renderer reviews with state purity. No broad CI or browser installation."
+}

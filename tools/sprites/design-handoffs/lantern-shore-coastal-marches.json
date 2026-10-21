@@ -113,14 +113,14 @@
   },
   "production": {
     "candidateRecords": [],
-    "releaseCommit": "a45ca097fac1bfe9ca5d6792de7d80c1ba59dd60",
-    "releaseEvidence": "docs/evidence/COASTAL_MARCHES_DEV134_PUBLICATION_20261021.json"
+    "releaseCommit": "fffb5f45d698cc07af318c91fdb078af0cee7ef6",
+    "releaseEvidence": "docs/evidence/LANTERN_DOCK_DEV135_PUBLICATION_20261021.json"
   },
   "corrections": [
     {
       "version": "0.9.1+snapshot.dev.135",
       "request": "Stop earth road paint before timber; move ferry hull fully into the water beside the dock. Preserve accepted shore composition.",
-      "status": "implemented-focused-review-complete-publication-pending",
+      "status": "published-owner-playtest-next",
       "sourceBase": "34e5364a64908093c798c9eb6b3850ae7031533b",
       "ownerFiles": [
         "src/prototype/rules.js",
@@ -136,7 +136,10 @@
         "tools/visual-review/lantern-dock-dev135/dock-phone-night.webp": "58df9194f446f2e7246ee80b023a4f1d95ac00274e2f32b6e106046e8ef56305",
         "tools/visual-review/lantern-dock-dev135/shore-day.webp": "c8cc130ad50cef64967d2d36ed05d86f5c87859430ed0768d2afb01693d5486c"
       },
-      "spriteAuthorization": "No new raster generation requested."
+      "spriteAuthorization": "No new raster generation requested.",
+      "releaseCommit": "fffb5f45d698cc07af318c91fdb078af0cee7ef6",
+      "releaseEvidence": "docs/evidence/LANTERN_DOCK_DEV135_PUBLICATION_20261021.json",
+      "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/371"
     }
   ]
 }
