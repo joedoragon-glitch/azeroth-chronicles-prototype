@@ -1,9 +1,9 @@
 name: Test and deploy app
 on:
   push:
-    branches: [owner-tidal-ferry-dev136-hold]
+    branches: [main]
   pull_request:
-    branches: [owner-tidal-ferry-dev136-hold]
+    branches: [main, perf/v09-integration-20261010]
   workflow_dispatch:
 
 permissions:

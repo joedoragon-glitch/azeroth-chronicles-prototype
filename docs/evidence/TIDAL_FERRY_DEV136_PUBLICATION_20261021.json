@@ -1,0 +1,54 @@
+{
+  "version": "0.9.1+snapshot.dev.136",
+  "pr": 372,
+  "merge": "718de6bd05386bdc877e6ec0e805a1d957f16d1d",
+  "packageOnlyRun": {
+    "id": 39590482492,
+    "conclusion": "success"
+  },
+  "build": "718de6bd05386bdc877e6ec0e805a1d957f16d1d",
+  "buildMatches": true,
+  "files": [
+    {
+      "path": "src/prototype/rules.js",
+      "matches": true,
+      "sha256": "e1a3d4b6d7c065d3dc85e60972f11d07edfd7ddd6d3c6b373ae3aff127271ca0"
+    },
+    {
+      "path": "src/prototype/sprites.js",
+      "matches": true,
+      "sha256": "db55fac6eb23435ce433eb6f79d002bd5d35486193f1b41421ee11c17a38e071"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "matches": true,
+      "sha256": "b8a36047719286ae925d0ee3f7b9c251921b6777ce9635212c5b7e48e2c733dc"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "matches": true,
+      "sha256": "1dbcd5870e791cf57e2ce8c09058b6e30ffed1d136243b1644f6ee99d46ed23b"
+    },
+    {
+      "path": "sw.js",
+      "matches": true,
+      "sha256": "b7ce4cefce835d8afcece7b9131414fd1bb8cc2e98eb5780e9359448bc0fe33d"
+    },
+    {
+      "path": "phone.html",
+      "matches": true,
+      "sha256": "cbac05583f913484864260f9e04d127d4fe6dc12f58f2de12dc3803ef50ff6c9"
+    },
+    {
+      "path": "assets/sprites/manifest.json",
+      "matches": true,
+      "sha256": "574da0c9333addf3c701da607cb7b6bdd8db79b4893e7fc4eddf6013cc0cd0a0"
+    },
+    {
+      "path": "assets/sprites/transport-ferry-76ebb2349a8e0ece74cc2f578e9eeed72a6d1d6e2f3cf61736dd100d0324395a.webp",
+      "matches": true,
+      "sha256": "76ebb2349a8e0ece74cc2f578e9eeed72a6d1d6e2f3cf61736dd100d0324395a"
+    }
+  ],
+  "validation": "Selected original and all 33 prior registrations retained; pinned complete registry/export/loader checks, 24 boarding/save cases, both travel directions, actual offline resource enumeration and six native day/night/location/phone captures. No broad CI."
+}

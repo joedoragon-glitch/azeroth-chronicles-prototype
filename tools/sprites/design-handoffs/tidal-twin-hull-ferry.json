@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "designId": "tidal-twin-hull-ferry",
   "name": "Tidal Twin-Hull Ferry \u2014 owner-selected option 3",
-  "status": "registered-focused-checks-complete-publication-pending",
-  "nextAction": "Publish complete dev.136 package, verify exact live build and files, then restore normal workflow.",
+  "status": "selected-raster-released-owner-playtest-next",
+  "nextAction": "Owner plays the published selected ferry. Retain original and current registration for future edits.",
   "context": {
     "decisionDate": "2026-10-21",
     "originConversation": null,
@@ -112,8 +112,8 @@
     "approvedRecordKey": "transport:ferry",
     "expectedReplacementRevision": "absent",
     "rollbackRevision": "remove new registration with exact revision; matching procedural fallback remains",
-    "releaseCommit": null,
-    "releaseEvidence": null,
+    "releaseCommit": "718de6bd05386bdc877e6ec0e805a1d957f16d1d",
+    "releaseEvidence": "docs/evidence/TIDAL_FERRY_DEV136_PUBLICATION_20261021.json",
     "activeContentRevision": "e96ca108d314232c57f102999010262d4168f1e6dd3a9cc5c1cbf9ff1cac1b49"
   }
 }

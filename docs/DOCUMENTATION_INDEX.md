@@ -1,4 +1,4 @@
-Prepared dev.136: [Selected Tidal Twin-Hull Ferry](TIDAL_FERRY_DEV136.md), PR #372. Exact owner-selected original and native placement evidence retained; publication pending.
+Published dev.136: [Selected Tidal Twin-Hull Ferry](TIDAL_FERRY_DEV136.md), PR #372. Exact live build/eight public files match; package-only run 39590482492 succeeded. Normal workflow restored.
 
 Published dev.135: [Lantern Shore timber and ferry](LANTERN_DOCK_DEV135.md), PR #371. Exact live build/five public files match; package-only run 39586784767 succeeded. Normal workflow restored.
 
