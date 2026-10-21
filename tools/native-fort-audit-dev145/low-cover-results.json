@@ -1,0 +1,77 @@
+[
+  {
+    "zone": "crypt",
+    "partition": "old-crypt-screen",
+    "hostileShotPasses": true,
+    "movementBlocked": true,
+    "friendlySightBlocked": true,
+    "from": {
+      "x": 158,
+      "y": 675
+    },
+    "to": {
+      "x": 158,
+      "y": 770
+    }
+  },
+  {
+    "zone": "crypt",
+    "partition": "work-screen",
+    "hostileShotPasses": true,
+    "movementBlocked": true,
+    "friendlySightBlocked": true,
+    "from": {
+      "x": 592,
+      "y": 595
+    },
+    "to": {
+      "x": 592,
+      "y": 690
+    }
+  },
+  {
+    "zone": "archive",
+    "partition": "stack-screen",
+    "hostileShotPasses": true,
+    "movementBlocked": true,
+    "friendlySightBlocked": true,
+    "from": {
+      "x": 116,
+      "y": 675
+    },
+    "to": {
+      "x": 116,
+      "y": 770
+    }
+  },
+  {
+    "zone": "archive",
+    "partition": "drying-screen",
+    "hostileShotPasses": true,
+    "movementBlocked": true,
+    "friendlySightBlocked": true,
+    "from": {
+      "x": 658,
+      "y": 625
+    },
+    "to": {
+      "x": 658,
+      "y": 720
+    }
+  },
+  {
+    "zone": "archive",
+    "partition": "lab-screen",
+    "hostileShotPasses": true,
+    "movementBlocked": true,
+    "friendlySightBlocked": true,
+    "from": {
+      "x": 975,
+      "y": 228
+    },
+    "to": {
+      "x": 1065,
+      "y": 228
+    }
+  }
+]

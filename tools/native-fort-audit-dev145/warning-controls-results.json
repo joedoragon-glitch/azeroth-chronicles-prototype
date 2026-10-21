@@ -1,0 +1,27 @@
+{
+  "thornfang": {
+    "enemyId": "enemy-35",
+    "origin": {
+      "x": 760,
+      "y": 1750
+    },
+    "warningRadius": 227.7,
+    "fringe": {
+      "x": 970,
+      "y": 1750
+    },
+    "insideDamage": 8.949999999953434,
+    "outside": {
+      "x": 997.7,
+      "y": 1750
+    },
+    "outsideDamage": 0
+  },
+  "lifebinder": {
+    "enemyId": "enemy-46",
+    "shots": 3,
+    "nominalSpan": 780,
+    "fortGranted": false,
+    "scope": "long volley launch contract; not a claim of unobstructed native end-to-end flight"
+  }
+}

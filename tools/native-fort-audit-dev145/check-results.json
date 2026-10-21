@@ -1,0 +1,574 @@
+{
+  "kind": "audit reproductions, not a green gameplay gate",
+  "cleanup": [
+    {
+      "context": "normal",
+      "captainId": "enemy-93",
+      "unrelatedAliveAfterKill": 57,
+      "unrelatedAliveAfterTick": 0,
+      "regionalBossId": "enemy-92",
+      "regionalBossHpAfterTick": 0,
+      "regionalBossVictoryCredited": false,
+      "regionalBossReturnScheduled": false,
+      "survivorsAfterRestore": 0,
+      "walletChangeOnCleanup": 0,
+      "xpChangeOnCleanup": 0
+    },
+    {
+      "context": "nightmare-grace",
+      "captainId": "enemy-93",
+      "unrelatedAliveAfterKill": 57,
+      "unrelatedAliveAfterTick": 0,
+      "regionalBossId": "enemy-92",
+      "regionalBossHpAfterTick": 0,
+      "regionalBossVictoryCredited": false,
+      "regionalBossReturnScheduled": false,
+      "survivorsAfterRestore": 0,
+      "walletChangeOnCleanup": 0,
+      "xpChangeOnCleanup": 0
+    },
+    {
+      "context": "nightmare-night",
+      "captainId": "enemy-93",
+      "unrelatedAliveAfterKill": 57,
+      "unrelatedAliveAfterTick": 0,
+      "regionalBossId": "enemy-92",
+      "regionalBossHpAfterTick": 0,
+      "regionalBossVictoryCredited": false,
+      "regionalBossReturnScheduled": false,
+      "survivorsAfterRestore": 0,
+      "walletChangeOnCleanup": 0,
+      "xpChangeOnCleanup": 0
+    },
+    {
+      "context": "nightmare-legacy",
+      "captainId": "enemy-93",
+      "unrelatedAliveAfterKill": 57,
+      "unrelatedAliveAfterTick": 0,
+      "regionalBossId": "enemy-92",
+      "regionalBossHpAfterTick": 0,
+      "regionalBossVictoryCredited": false,
+      "regionalBossReturnScheduled": false,
+      "survivorsAfterRestore": 0,
+      "walletChangeOnCleanup": 0,
+      "xpChangeOnCleanup": 0
+    }
+  ],
+  "enclosedTreasuryCleanup": "intentionally retained",
+  "canister": [
+    {
+      "context": "normal",
+      "form": "normal",
+      "degrees": 180,
+      "sourceId": "enemy-68",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 698,
+        "y": 1110
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 5.838888888945803
+    },
+    {
+      "context": "normal",
+      "form": "normal",
+      "degrees": 225,
+      "sourceId": "enemy-68",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 833.3166670918151,
+        "y": 783.316667091815
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 5.838888888945803
+    },
+    {
+      "context": "normal",
+      "form": "normal",
+      "degrees": 270,
+      "sourceId": "enemy-68",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 1160,
+        "y": 648
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 5.838888888945803
+    },
+    {
+      "context": "normal",
+      "form": "true",
+      "degrees": 180,
+      "sourceId": "enemy-102",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 698,
+        "y": 1110
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 7.56111111107748
+    },
+    {
+      "context": "normal",
+      "form": "true",
+      "degrees": 225,
+      "sourceId": "enemy-102",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 833.3166670918151,
+        "y": 783.316667091815
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 7.56111111107748
+    },
+    {
+      "context": "normal",
+      "form": "true",
+      "degrees": 270,
+      "sourceId": "enemy-102",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 1160,
+        "y": 648
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 7.56111111107748
+    },
+    {
+      "context": "nightmare-grace",
+      "form": "normal",
+      "degrees": 180,
+      "sourceId": "enemy-68",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 698,
+        "y": 1110
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 5.838888888945803
+    },
+    {
+      "context": "nightmare-grace",
+      "form": "normal",
+      "degrees": 225,
+      "sourceId": "enemy-68",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 833.3166670918151,
+        "y": 783.316667091815
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 5.838888888945803
+    },
+    {
+      "context": "nightmare-grace",
+      "form": "normal",
+      "degrees": 270,
+      "sourceId": "enemy-68",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 1160,
+        "y": 648
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 5.838888888945803
+    },
+    {
+      "context": "nightmare-grace",
+      "form": "true",
+      "degrees": 180,
+      "sourceId": "enemy-102",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 698,
+        "y": 1110
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 7.56111111107748
+    },
+    {
+      "context": "nightmare-grace",
+      "form": "true",
+      "degrees": 225,
+      "sourceId": "enemy-102",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 833.3166670918151,
+        "y": 783.316667091815
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 7.56111111107748
+    },
+    {
+      "context": "nightmare-grace",
+      "form": "true",
+      "degrees": 270,
+      "sourceId": "enemy-102",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 1160,
+        "y": 648
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 7.56111111107748
+    },
+    {
+      "context": "nightmare-night",
+      "form": "normal",
+      "degrees": 180,
+      "sourceId": "enemy-68",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 698,
+        "y": 1110
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 6.872222222271375
+    },
+    {
+      "context": "nightmare-night",
+      "form": "normal",
+      "degrees": 225,
+      "sourceId": "enemy-68",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 833.3166670918151,
+        "y": 783.316667091815
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 6.872222222271375
+    },
+    {
+      "context": "nightmare-night",
+      "form": "normal",
+      "degrees": 270,
+      "sourceId": "enemy-68",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 1160,
+        "y": 648
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 6.872222222271375
+    },
+    {
+      "context": "nightmare-night",
+      "form": "true",
+      "degrees": 180,
+      "sourceId": "enemy-102",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 698,
+        "y": 1110
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 8.852777777821757
+    },
+    {
+      "context": "nightmare-night",
+      "form": "true",
+      "degrees": 225,
+      "sourceId": "enemy-102",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 833.3166670918151,
+        "y": 783.316667091815
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 8.852777777821757
+    },
+    {
+      "context": "nightmare-night",
+      "form": "true",
+      "degrees": 270,
+      "sourceId": "enemy-102",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 1160,
+        "y": 648
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 8.852777777821757
+    },
+    {
+      "context": "nightmare-legacy",
+      "form": "normal",
+      "degrees": 180,
+      "sourceId": "enemy-68",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 698,
+        "y": 1110
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 6.872222222271375
+    },
+    {
+      "context": "nightmare-legacy",
+      "form": "normal",
+      "degrees": 225,
+      "sourceId": "enemy-68",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 833.3166670918151,
+        "y": 783.316667091815
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 6.872222222271375
+    },
+    {
+      "context": "nightmare-legacy",
+      "form": "normal",
+      "degrees": 270,
+      "sourceId": "enemy-68",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 1160,
+        "y": 648
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 6.872222222271375
+    },
+    {
+      "context": "nightmare-legacy",
+      "form": "true",
+      "degrees": 180,
+      "sourceId": "enemy-102",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 698,
+        "y": 1110
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 8.852777777821757
+    },
+    {
+      "context": "nightmare-legacy",
+      "form": "true",
+      "degrees": 225,
+      "sourceId": "enemy-102",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 833.3166670918151,
+        "y": 783.316667091815
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 8.852777777821757
+    },
+    {
+      "context": "nightmare-legacy",
+      "form": "true",
+      "degrees": 270,
+      "sourceId": "enemy-102",
+      "origin": {
+        "x": 1160,
+        "y": 1110
+      },
+      "point": {
+        "x": 1160,
+        "y": 648
+      },
+      "warningRadius": 432,
+      "warned": false,
+      "originalSpan": 425,
+      "fortifiedSpan": 449.4,
+      "speed": 637,
+      "hpLost": 8.852777777821757
+    }
+  ],
+  "closeRoads": [
+    {
+      "wall": "stronghold-wolf-packhold-wall-6",
+      "road": 5,
+      "segment": 3,
+      "distance": 44.41015808048201,
+      "radius": 26,
+      "clearForRadius15": true
+    },
+    {
+      "wall": "stronghold-wolf-packhold-wall-6",
+      "road": 5,
+      "segment": 4,
+      "distance": 46.8360122089902,
+      "radius": 26,
+      "clearForRadius15": true
+    },
+    {
+      "wall": "stronghold-wolf-packhold-wall-7",
+      "road": 5,
+      "segment": 3,
+      "distance": 69.46221994724903,
+      "radius": 26,
+      "clearForRadius15": true
+    },
+    {
+      "wall": "stronghold-wolf-packhold-wall-7",
+      "road": 5,
+      "segment": 4,
+      "distance": 58.616921244063775,
+      "radius": 26,
+      "clearForRadius15": true
+    }
+  ]
+}

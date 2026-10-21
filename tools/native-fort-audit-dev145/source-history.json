@@ -1,0 +1,27 @@
+{
+  "frontierCleanup": {
+    "commit": "ceb3b59f8f5ffa4ca397b5cb154a3ba44b69d646",
+    "parent": "e99df3f45f28a70fee64a7b62a738590b384ce81",
+    "date": "2026-10-21T09:10:12Z",
+    "title": "Prepare dungeon camps and respect leader return schedules dev131 [skip ci]",
+    "path": "src/prototype/treasury.js",
+    "patch": "@@ -48,6 +48,7 @@\n         )\n           return;\n         const state = this.treasuryRecoveryState(site.region);\n+        if (this.supplyRoom()) this.emptyDungeonDefenders(e);\n         state.unlocked = true;\n         state.respawnAt = this.s.time + R.treasuryRecovery.respawnSeconds;\n         if (site.region === 'frontier')\n@@ -207,6 +208,11 @@\n         const captain = this.treasuryCaptain(z, site);\n         if (this.peace) state.unlocked = true;\n         else if (captain?.hp <= 0) {\n+          if (\n+            z.enemies.some((e) => e !== captain && !e.neutral && e.hp > 0) ||\n+            Object.values(this.s.pending).some((p) => p.kind === 'mob' && p.zone === z.id)\n+          )\n+            this.emptyDungeonDefenders(captain);\n           // Existing v4 saves can already contain a defeated captain.\n           if (!state.unlocked && !state.respawnAt) {\n             state.unlocked = true;"
+  },
+  "fortFlightExtension": {
+    "commit": "4263c6a6ee8be9c72fe2740f2f88b8c7ef35042f",
+    "parent": "4b8daf1f053773716fc2ca5c97d0c56716dc8d5c",
+    "date": "2026-10-20T13:23:03Z",
+    "title": "Prepare fort defenses, enemy cover fire and passage recovery dev.109 [skip ci]",
+    "path": "src/prototype/fortifications.js",
+    "patch": "+      prepareFortProjectile(p, enemy, target = null) {\n+        // Capture launch rights, never grant them to a shot entering from outside.\n+        p.fortChecked = true;\n+        const fort = this.enemyFort(enemy);\n+        p.fortZone = this.zoneId;\n+        if (fort) p.fortId = fort.id;\n+        p.fortFromX = p.x;\n+        p.fortFromY = p.y;\n+        if (fort) p.life = Math.max(p.life || 0, this.enemyRangedRange(enemy) / p.speed + 0.1);\n+        const end = target || {\n+          x: p.x + (p.dx || 0) * p.speed * p.life,\n+          y: p.y + (p.dy || 0) * p.speed * p.life,\n+        };\n+        p.rangedArc = !!fort || !this.line(p, end);\n+        p.fortDistance = Math.max(\n+          80,\n+          target ? Math.hypot(target.x - p.x, target.y - p.y) : p.speed * p.life,\n+        );\n+      }\n"
+  },
+  "retainedBySpeedChange": {
+    "commit": "a91370d84485e18ae66a67dc548cdf498a904bf1",
+    "parent": "aa897ea09a8e00e3cefb579e77c4ab51e0c4202f",
+    "date": "2026-10-20T14:43:53Z",
+    "title": "Speed up garrison projectiles while preserving their landing points [skip ci]",
+    "path": "src/prototype/fortifications.js",
+    "patch": "@@ -202,16 +202,19 @@\n         if (fort) p.fortId = fort.id;\n         p.fortFromX = p.x;\n         p.fortFromY = p.y;\n-        if (fort) p.life = Math.max(p.life || 0, this.enemyRangedRange(enemy) / p.speed + 0.1);\n-        const end = target || {\n-          x: p.x + (p.dx || 0) * p.speed * p.life,\n-          y: p.y + (p.dy || 0) * p.speed * p.life,\n-        };\n+        p.fortBaseSpeed ??= p.speed;\n+        p.fortBaseLife ??= p.life || 0;\n+        const baseLife = fort\n+            ? Math.max(p.fortBaseLife, this.enemyRangedRange(enemy) / p.fortBaseSpeed + 0.1)\n+            : p.fortBaseLife,\n+          span = p.fortBaseSpeed * baseLife;\n+        p.speed = p.fortBaseSpeed * (fort ? R.balance.fortifications.projectileSpeedMultiplier : 1);\n+        // Speed up the same flight, preserving special-shot footprints and\n+        // warning reach rather than extending their range a second time.\n+        p.life = span / p.speed;\n+        const end = target || { x: p.x + (p.dx || 0) * span, y: p.y + (p.dy || 0) * span };\n         p.rangedArc = !!fort || !this.line(p, end);\n-        p.fortDistance = Math.max(\n-          1,\n-          target ? Math.hypot(target.x - p.x, target.y - p.y) : p.speed * p.life,\n-        );\n+        p.fortDistance = Math.max(1, target ? Math.hypot(target.x - p.x, target.y - p.y) : span);\n         // An arc has one fixed landing point. A dodged shot ends there rather\n         // than skating along the floor for the remainder of its range budget.\n         if (p.rangedArc) p.life = Math.min(p.life, p.fortDistance / p.speed);"
+  },
+  "limits": "Source change provenance; not a full historical native-build matrix. Current native reproductions and exact source hashes are recorded separately."
+}

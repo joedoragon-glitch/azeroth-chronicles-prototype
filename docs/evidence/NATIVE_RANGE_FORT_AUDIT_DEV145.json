@@ -1,0 +1,179 @@
+{
+  "scope": "bounded native range/cover/fort audit; gameplay repairs pending review",
+  "completedUtc": "2026-10-21T23:47:08.043955+00:00",
+  "runtimeVersion": "0.9.1+snapshot.dev.146",
+  "mainBaseline": "1aa0ff95453a11e54a6eac9e0362fc22e1e0f889",
+  "baselineTree": "ef4e45da6b89df7609e9a27863f94a60c8a08342",
+  "node": "v24.19.0",
+  "runtimeOrOriginalTestsChanged": false,
+  "broadCiRun": false,
+  "deviceMatrixRun": false,
+  "deploymentRun": false,
+  "originalSuites": [
+    {
+      "command": "node tests/enemy-reach-regroup.test.cjs",
+      "exitCode": 0,
+      "log": "tools/native-fort-audit-dev145/enemy-reach-regroup.log",
+      "logSha256": "7ac78cc5c85e30442b1d9fdc311cbfb41d6e09004645de9315a133663596a140",
+      "testSha256": "d8cf1f8531a0bdea122cc5258236c957fd6561b6fe923bfbb995ce4a33051d8d"
+    },
+    {
+      "command": "node tests/fortifications.test.cjs",
+      "exitCode": 1,
+      "log": "tools/native-fort-audit-dev145/fortifications.log",
+      "logSha256": "6d78df19285c7802922506496ad1d575df321bbdf99e92c48da5a6805720ed50",
+      "testSha256": "c5eeb56fc02df5d0570b32dd30e8d5b252982ec706317155c53e925068caff46"
+    },
+    {
+      "command": "node tests/monster-forts.test.cjs",
+      "exitCode": 1,
+      "log": "tools/native-fort-audit-dev145/monster-forts.log",
+      "logSha256": "9d0e71e06139a130bfcc4e85db078a3efb08eabe62848702ee92127e97e1605f",
+      "testSha256": "f5289b77c6546f35232c786a5d32a8b4c75cde4c7b22ed0e48e0e7e6f0eeccb7"
+    },
+    {
+      "command": "node tests/treasury-fortifications.test.cjs",
+      "exitCode": 0,
+      "log": "tools/native-fort-audit-dev145/treasury-fortifications.log",
+      "logSha256": "53715ba645934f1101584be12ae12ed2b4f67a5df77fb5f1dc636606a1253685",
+      "testSha256": "eef06b90b41f427803bbb8f4a66c71b161c5f81b4a8528500eb71bdc8a77e3ed"
+    },
+    {
+      "command": "node tests/treasury-recovery.test.cjs",
+      "exitCode": 0,
+      "log": "tools/native-fort-audit-dev145/treasury-recovery.log",
+      "logSha256": "834b232dfb8d956aa4dda82331098305444c0cb854681790ec35816a1b751f98",
+      "testSha256": "6f48d9780c4dacbe47ef90f92625f5e0436578de74b4c207b5a1de3a61450594"
+    },
+    {
+      "command": "node tests/snapshot-veyra-combat.test.cjs",
+      "exitCode": 0,
+      "log": "tools/native-fort-audit-dev145/snapshot-veyra-combat.log",
+      "logSha256": "0325c0b6c3f247eebbfeb0b9871192352e20ce089ab576272de8a3b11758f7be",
+      "testSha256": "a78777afa8cb0d78de3772b25979c20cc58dd7fc4a7ee9bf832c7ce35f8f2ea0"
+    }
+  ],
+  "probes": [
+    {
+      "command": "node tools/native-fort-audit-dev145/check.cjs",
+      "exitCode": 0,
+      "scriptSha256": "8fb927eca89e1bda4111b1709f635773de264241e4c5db0d9c568a698112733f",
+      "results": "tools/native-fort-audit-dev145/check-results.json",
+      "resultsSha256": "c925d201ef389801ff3572cd00562559120cd2f93ce9a05458828b57baa56ade"
+    },
+    {
+      "command": "node tools/native-fort-audit-dev145/positive-lanes.cjs",
+      "exitCode": 0,
+      "scriptSha256": "3a5f206c835f0fc2786fc641081c270f432e0f365263a76093e4d307ed1c6f41",
+      "results": "tools/native-fort-audit-dev145/positive-lanes-results.json",
+      "resultsSha256": "9c9ab8148f448f2dc4e489c22da6c85d4f1ffa7c1caab08bc44de0124a62e198"
+    },
+    {
+      "command": "node tools/native-fort-audit-dev145/warning-controls.cjs",
+      "exitCode": 0,
+      "scriptSha256": "7ae87ad93fa2a5aee6502f4d655103083b6c6f087210083326bf7e2dad933a71",
+      "results": "tools/native-fort-audit-dev145/warning-controls-results.json",
+      "resultsSha256": "ffaba0cbe958996ce158e4a2dc60047f098121d2c8b57ee07fb164fb0b9b2bcf"
+    },
+    {
+      "command": "node tools/native-fort-audit-dev145/low-cover.cjs",
+      "exitCode": 0,
+      "scriptSha256": "e9f7a43794c3bbc42706f52b2ad39ff4010bfbc878e7b024725464f833271c2c",
+      "results": "tools/native-fort-audit-dev145/low-cover-results.json",
+      "resultsSha256": "62c89007c9f59cbe711d99818f9e092d9fb8f1d9518f82150fff3fc402970d14"
+    }
+  ],
+  "runtimeSourceSha256": {
+    "src/prototype/engine.js": "ea397beccb5c755480438b1f2b7b867eac3d1da81a7a0161e6614958a559bd3e",
+    "src/prototype/treasury.js": "2f23f2c66c75da1e55ec2d09fffd26dfa824e92e861bb88e2caca560adab05af",
+    "src/prototype/fortifications.js": "c38423fe37b196372eed023324c175bbf9ca2cf15d524db480b3d81b52749b8f",
+    "src/prototype/boss-combat.js": "c8ae6d459d20d3d05668d8d4bdb94ef10d14dd860014bca8274d0a8c6950cf80",
+    "src/prototype/combat.js": "ae8c36339c4828eb6770ee3882e5804628847c955045dcc6b2917be6ce635dd5",
+    "src/prototype/combat-visuals.js": "e632a76e73bf6a095ed73409748a75adc139a7df7ae0f74df743501a82731e9b",
+    "src/prototype/navigation.js": "b7998e94e3a718c80162b6f022945fa7cfd1e4b6048d70bc27a6a7650fa186cd",
+    "src/prototype/world.js": "7985833a8f97b71939c1401cfa4e8abb8f8ce5d684dc8e2f981705e139aebb2f",
+    "src/prototype/rules.js": "19dcc040daab7f1a6cb3ed2052a213e1551e1030b311daf643e8de310ccbab5b",
+    "src/prototype/save.js": "f16db49da643f3cb11a3eff838f06f8cc06ebf965d85d4ba58dc779a7cd02572"
+  },
+  "historicalSourceEvidence": {
+    "path": "tools/native-fort-audit-dev145/source-history.json",
+    "sha256": "5ce6d8f7529fb7475b0b5fa62c21715aec53e3b57307d62d01a6da93ff85f18f"
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "high",
+      "status": "confirmed, unrepaired",
+      "sourceChange": "dev.131 / ceb3b59f8f5ffa4ca397b5cb154a3ba44b69d646",
+      "cases": 4,
+      "unrelatedEnemiesAliveAfterCaptainDeath": 57,
+      "unrelatedEnemiesAliveAfterUpdate": 0,
+      "bossVictoryCredited": false,
+      "bossReturnScheduled": false,
+      "restoreAlsoReproduces": true
+    },
+    {
+      "id": "F2",
+      "severity": "medium",
+      "status": "confirmed, unrepaired",
+      "sourceMechanism": "dev.109 / 4263c6a6ee8be9c72fe2740f2f88b8c7ef35042f; historical source provenance, not a full native historical matrix",
+      "cases": 24,
+      "warningRadius": 432,
+      "heroDistance": 462,
+      "nominalFlight": 425,
+      "fortifiedFlight": 449.4,
+      "renderedLaneHalfWidth": 6,
+      "actualContactRadius": 22
+    },
+    {
+      "id": "C1",
+      "status": "separate layout/expectation review; not proven impassable",
+      "originalTest": "monster-forts",
+      "oldExclusion": 85,
+      "wallSegmentPairs": 4,
+      "sampledCenterlinesClearForRadius15": true
+    }
+  ],
+  "positiveCoverage": {
+    "actualAiFiringLanes": 7,
+    "beyondOrdinaryRangeLanes": 6,
+    "ownWallPermissionAndImpact": 7,
+    "actualOtherFortWallBlocked": true,
+    "nativeLowScreens": 5,
+    "mainDungeonsReceivingNoFortBonus": ["crypt", "archive", "mine"],
+    "nativeThornfangFringeAndOutsideControl": true,
+    "nativeLifebinderDelayedVolleyLaunchContract": true
+  },
+  "fullTickCorroboration": {
+    "mode": "normal",
+    "owner": "tick(0.05)",
+    "observedRegionalBoss": {
+      "family": "warlord",
+      "name": "Ashen Warlord",
+      "hp": 0,
+      "deathPaid": true,
+      "victoryFlag": false,
+      "returnScheduled": false,
+      "bossDefeatEvents": 0
+    },
+    "note": "Separately executed current native runtime control; loot pickup in a full tick is not counted as an unrelated cleanup reward.",
+    "version": "dev.145; the exact enemy-owner and restore reproductions were repeated on dev.146"
+  },
+  "limits": [
+    "Four original suites pass; two remain failing unchanged.",
+    "Probe success means confirmed reproductions or scoped positive controls, not repaired gameplay.",
+    "TRUE canister variants use the native boss factory at the authored home, not a complete naturally progressed TRUE fight.",
+    "Selected lanes/attacks do not certify every fight, withdrawal, skill or save interaction.",
+    "No automatic save revival or wolf layout alteration is implemented."
+  ],
+  "initialAuditVersion": "0.9.1+snapshot.dev.145",
+  "concurrentPublication": {
+    "change": "Thornfang patrol direction/start leg",
+    "version": "dev.146",
+    "publicationCommit": "1aa0ff95453a11e54a6eac9e0362fc22e1e0f889",
+    "publishedBytesVerifiedBeforeImport": true,
+    "allSixOriginalSuitesAndFourProbesRerun": true,
+    "originalResultsUnchanged": true,
+    "publicationPreserved": true
+  }
+}

@@ -1,5 +1,7 @@
 # Test drift: first breakpoints and current retest scope
 
+**Native range/fort follow-up audited:** [Two runtime defects confirmed](NATIVE_RANGE_FORT_AUDIT_DEV145.md): dev.131's outdoor Frontier cleanup exception and the fort minimum-flight/canister warning interaction. Four of six selected original suites pass; `fortifications` and `monster-forts` fail unchanged. Seven native firing lanes and five actual low screens pass. Repairs are pending review; no runtime publication follows from this audit.
+
 **First follow-up completed:** The six specialist matrices now cover explicit Normal, Nightmare grace, post-sunset night and legacy-restored night contexts. Two inherited test assumptions in Lifebinder travel cleanup and Scornfang projectile stepping are also repaired. All six updated original suites and the daylight/tempo suites pass; no new gameplay defect established. [Scope, evidence and remaining review](NIGHTMARE_SPECIALIST_UPKEEP_DEV145.md). The proposed first package below is retained as the historical handoff, superseded by this completed result.
 
 Joel requested a historical trace after PR #382 corrected the five known affected suites. That PR is merged as `5f4b28af08a24aeff253f8f7f11a6acbfeac3e9d`. Its original suites pass on the current dev.145 implementation; this review investigates how earlier checks lost relevance and where additional coverage may still be needed. Runtime, player saves and the public desktop/phone build are unchanged.
