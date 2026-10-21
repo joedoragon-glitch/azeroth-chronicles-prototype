@@ -857,6 +857,22 @@
             finite(p.value, 1, 1000);
           }
         }
+        s.tributeRemainder ??= 0;
+        finite(s.tributeRemainder, 0, 1);
+        if (s.tributeRemainder >= 1) throw Error('Invalid tribute remainder');
+        const gathering = s.gatheringTarget;
+        s.gatheringTarget =
+          gathering &&
+          gathering.zone === s.zone &&
+          typeof gathering.id === 'string' &&
+          s.zones[s.zone]?.nodes.some(
+            (n) =>
+              n.id === gathering.id &&
+              n.amount > 0 &&
+              (!n.hidden || s.discovered[s.zone + ':tribute:' + n.tributeId]),
+          )
+            ? { zone: s.zone, id: gathering.id }
+            : null;
         return s;
       }
       static restore(data, random = Math.random) {

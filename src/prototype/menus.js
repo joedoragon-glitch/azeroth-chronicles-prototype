@@ -601,12 +601,14 @@
         healCost = getGame().rangerSupportCost('health'),
         manaCost = getGame().rangerSupportCost('mana');
       if (!advanced) {
+        getGame().unloadCompanyTribute(n);
         openMenu(
           n.name,
           manaEnabled
             ? 'Combat potions have been retired. Rangers now provide field Heal and Mana Recovery, so the supply shop no longer requires you to maintain potion stock.'
-            : 'Combat potions have been retired. Rangers provide Heal in the field.',
+            : 'Tribute collection and delivery. Visiting unloads all company cargo, including resting and fallen companions. Rangers provide Heal in the field.',
           [
+            barracksGatherAction(n, () => supplier(n, back)),
             action(
               'Ranger field support',
               () => {},
@@ -1135,29 +1137,34 @@
           action(
             'Recover Dark Lord Tribute · ' + (n.siteName || n.name),
             () => {
-              getGame().gather(n.id);
-              closeMenu();
+              if (getGame().gather(n.id)) closeMenu();
             },
-            Math.floor(n.amount) + ' crowns remaining · ' + (n.context || 'recovered tribute'),
+            getGame().availableLabor().length
+              ? Math.floor(n.amount) +
+                  ' crowns remaining · all idle troops · escort along the waypoint'
+              : 'An idle Soldier or Ranger is needed; pets do not gather.',
+            !getGame().availableLabor().length,
           ),
         );
       if (hidden.length)
         actions.push(
           action(
-            'Search for hidden Dark Lord Tribute',
+            'Locate & gather hidden Dark Lord Tribute',
             () => {
-              getGame().scoutTribute();
-              barracksLaborMenu(b, back);
+              const next = getGame().hiddenTributeNodes()[0];
+              if (next && getGame().scoutTribute() && getGame().gather(next.id)) closeMenu();
+              else barracksLaborMenu(b, back);
             },
             hidden.length +
               ' undiscovered source' +
               (hidden.length === 1 ? '' : 's') +
-              ' remain · scouts reveal locations, not their value',
+              ' remain · locate one and send all idle troops',
+            !getGame().availableLabor().length,
           ),
         );
       openMenu(
         'Resources & labor',
-        'Companions recover tribute intended for the Dark Lord and return its value to the resistance economy. Exact amounts are managed here; hidden sources must be located by expedition scouts.',
+        'All idle Soldiers and Rangers work one selected tribute site. Escort them along the waypoint; combat pauses work. Supplies unloads all company cargo. Hidden sources can be located here.',
         actions.length
           ? actions
           : [

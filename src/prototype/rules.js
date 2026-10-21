@@ -5980,6 +5980,10 @@
     escapeSeconds: 1.5,
   };
   const gatheringTravel = {
+    capacity: 120,
+    capacityPerRegion: 30,
+    harvestPerSecond: 12,
+    retryDestinationSeconds: 12,
     gridStep: 40,
     enemyMargin: 35,
     replanSeconds: 2,

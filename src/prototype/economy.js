@@ -17,6 +17,40 @@
       companionRecoveryCost() {
         return R.balance.companions.recoveryCost;
       }
+      depositTributeCargo(units) {
+        const carriers = units.filter((u) => Number.isFinite(u.carry) && u.carry > 0),
+          total = carriers.reduce((sum, u) => sum + u.carry, this.s.tributeRemainder || 0),
+          payout = this.resourceDepositReward(total);
+        // Pool sub-crown remnants across carriers instead of stranding each one.
+        this.s.tributeRemainder = Math.max(0, total - payout);
+        for (const u of carriers) u.carry = 0;
+        if (payout) this.grant(payout, 0);
+        return payout;
+      }
+      unloadCompanyTribute(npc) {
+        if (
+          npc?.kind !== 'supplier' ||
+          !this.zone().npcs.includes(npc) ||
+          Math.hypot(npc.x - this.hero.x, npc.y - this.hero.y) > 115
+        )
+          return null;
+        const carriers = this.s.party.filter((u) => u.carry > 0),
+          payout = this.depositTributeCargo(carriers);
+        for (const u of carriers) {
+          if (u.order?.type === 'deposit') {
+            if (u.hp <= 0 || u.active === false) {
+              u.order = null;
+              this.clearGatheringIntent(u);
+            } else this.resumeGathering(u);
+          }
+        }
+        if (carriers.length) {
+          const message = 'Tribute delivered · ' + payout + ' crowns';
+          this.say(message + '. All company cargo unloaded.');
+          this.notice(message, 4, 'Includes resting and fallen companions.', 'feedback');
+        }
+        return payout;
+      }
       companionTreatmentCost() {
         return R.balance.companions.treatmentCost;
       }

@@ -87,6 +87,8 @@
         quests: {},
         discovered: {},
         gathered: {},
+        tributeRemainder: 0,
+        gatheringTarget: null,
         fountains: {},
         zones: {},
         loot: [],
@@ -2421,6 +2423,7 @@
         return false;
       }
       this.s.recallActive = false;
+      this.s.gatheringTarget = { zone: this.zoneId, id: n.id };
       for (const u of labor) {
         this.clearPartyCharge(u);
         this._companionCharges?.delete(u.id);
@@ -2433,7 +2436,7 @@
           (labor.length === 1 ? '' : 's') +
           ' assigned to recover Dark Lord Tribute at ' +
           (n.siteName || n.name) +
-          '. They will deposit it and continue through other known tribute sites.',
+          '. Escort them along the waypoint. They will fight or withdraw when needed, then resume this site.',
       );
       return true;
     }
@@ -2459,6 +2462,7 @@
                   R.dungeonSpace?.[zone]?.exit || { x: 160, y: 240 }
                 : { x: D.towns[i][0], y: D.towns[i][1] });
       this.clearPartyCharges();
+      this.s.gatheringTarget = null;
       this.tacticalClearThreat(); // Transient observations never survive zone travel.
       this.tacticalClearBurst();
       this.tacticalClearRogueRegroup();
@@ -2680,6 +2684,8 @@
             return false;
           }
           return this.rescue(npc.family);
+        case 'supplier':
+          return this.unloadCompanyTribute(npc) !== null;
         case 'rest':
           return this.rest();
         case 'appointment':
