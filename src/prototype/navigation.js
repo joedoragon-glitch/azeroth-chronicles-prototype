@@ -252,7 +252,7 @@
       followCompanion(u, target, speed, dt, stop, avoidHostiles = false) {
         if (dist(u, target) <= stop) return true;
         const gathering = this.gatheringUnit(u),
-          cautious = gathering || avoidHostiles,
+          cautious = avoidHostiles,
           pursuing =
             !gathering &&
             !this.s.recallActive &&
@@ -304,9 +304,9 @@
           if (gathering && this.s.time >= (this._gatherRouteNoticeAt || 0)) {
             this._gatherRouteNoticeAt = this.s.time + R.gatheringTravel.noticeSeconds;
             this.notice(
-              'Gatherers waiting for a safe route.',
+              'Gathering route is blocked by terrain.',
               2.8,
-              'Clear nearby enemies or Recall them.',
+              'Try another resource site or Recall the squad.',
               'feedback',
             );
           }
@@ -508,11 +508,6 @@
         return out;
       }
       actorStepAllowed(unit, point, relaxFriendly = false, frame = this.actorCrowd()) {
-        if (
-          this.gatheringUnit(unit) &&
-          !this.companionTravelClear(unit, point, this.gatheringThreats())
-        )
-          return false;
         if (!frame.members.has(unit)) return true;
         if (this.crowdEscaping(unit, frame)) return true;
         const candidates = new Set(),
@@ -935,11 +930,6 @@
         const legal = (p) => {
           if (!this.clearSegment(entity, p)) return false;
           if (forced || entity.motion) return true;
-          if (
-            this.gatheringUnit(entity) &&
-            !this.companionTravelClear(entity, p, this.gatheringThreats())
-          )
-            return false;
           if (this.actorStepAllowed(entity, p, relaxed, frame)) return true;
           crowdBlocked = true;
           return false;

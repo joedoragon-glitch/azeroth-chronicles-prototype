@@ -96,7 +96,11 @@ for (const kind of ['hero', 'soldier', 'pet', 'normal', 'boss', 'mounted']) {
   u.order = { type: 'gather', id: 'fixture' };
   const f = g.actorCrowd();
   f.congestion.set(u, { until: g.s.time + 1 });
-  assert(!g.actorStepAllowed(u, { x: 250, y: 1500 }), 'escape cannot override gathering safety');
+  assert(
+    g.actorStepAllowed(u, { x: 250, y: 1500 }),
+    'hostile awareness is not a gathering movement wall',
+  );
+  assert(!g.clearSegment(u, { x: 200, y: 1400 }), 'terrain still blocks gathering movement');
   assert.equal(e.hp, e.maxHp);
 }
 {

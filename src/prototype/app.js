@@ -108,6 +108,9 @@
     'Awakening complete': 'Despertar completado',
     'Awakening · Final objective': 'Despertar · objetivo final',
     'Campaign complete · Nightmare unlocked': 'Campaña completada · Nightmare desbloqueado',
+    'Gathering route is blocked by terrain.': 'El terreno bloquea la ruta de recolección.',
+    'Try another resource site or Recall the squad.':
+      'Prueba otro recurso o reagrupa al escuadrón.',
     'Return death recovery to refuge': 'Volver al refugio al morir',
     'Set death recovery point': 'Establecer punto de reaparición',
     'Recover here within this region. Entering another region switches to its refuge.':
