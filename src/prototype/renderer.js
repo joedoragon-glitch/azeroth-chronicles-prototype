@@ -2499,8 +2499,9 @@
       // occupied window light, services have sheltered lanterns, and existing
       // fires/forges illuminate their own work. All sources are presentational:
       // no generated actors, blockers, saved flags or combat visibility changes.
-      const nightNow = game.night();
-      const nightSources = !nightNow
+      const nightNow = game.night(),
+        daylight = !dungeon && !room ? game.daylightPhase?.() : null;
+      const nightSources = !(daylight ? daylight.darkness > 0 : nightNow)
         ? []
         : [
             ...z.props.flatMap((prop) => {
@@ -2574,6 +2575,7 @@
         .slice(0, 8);
       PrototypeVisuals.atmosphere(ctx, canvas, i, {
         night: nightNow,
+        daylight,
         peace: game.peace,
         dungeon,
         room,

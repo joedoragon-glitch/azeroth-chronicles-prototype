@@ -388,6 +388,18 @@
         if (s.phase === 'peace' && !dungeonIds.every((id) => s.true[id]))
           throw Error('Invalid peace');
         if (s.phase === 'adventure' && s.true.darklord) throw Error('Missing awakening');
+        // Missing fields belong to pre-twilight v4 runs; never grant a new grace
+        // period or replay the victory dawn on an established save.
+        for (const key of ['nightmareIntroRemaining', 'victoryDawnRemaining']) {
+          if (s[key] === undefined) s[key] = 0;
+          finite(s[key], 0, R.dayCycle.twilightSeconds);
+          if (
+            s[key] > 0 &&
+            (s.mode !== 'nightmare' ||
+              (key === 'nightmareIntroRemaining' ? s.phase === 'peace' : s.phase !== 'peace'))
+          )
+            throw Error('Invalid twilight state');
+        }
         finite(s.clock, 0, 720);
         finite(s.time, 0, 1e12);
         finite(s.nextId, 1, 1e9);

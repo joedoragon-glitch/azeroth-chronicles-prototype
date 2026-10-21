@@ -50,6 +50,8 @@
         mode,
         phase: 'adventure',
         clock: 0,
+        nightmareIntroRemaining: mode === 'nightmare' ? R.dayCycle.twilightSeconds : 0,
+        victoryDawnRemaining: 0,
         time: 0,
         mercyTime: 10,
         restCooldown: 0,
@@ -192,7 +194,80 @@
       return dungeonIds.includes(this.s.zone) || !!this.supplyRoom() || !!this.sideDungeon();
     }
     night() {
-      return (!this.peace && this.s.mode === 'nightmare') || this.s.clock % 600 >= 360;
+      if (!this.peace && this.s.mode === 'nightmare') return !(this.s.nightmareIntroRemaining > 0);
+      return this.s.clock % R.dayCycle.seconds >= R.dayCycle.nightAt;
+    }
+    daylightPhase() {
+      const cfg = R.dayCycle,
+        span = cfg.twilightSeconds;
+      let phase, progress;
+      if (this.peace && this.s.victoryDawnRemaining > 0) {
+        phase = 'victory-sunrise';
+        progress = 1 - this.s.victoryDawnRemaining / span;
+      } else if (!this.peace && this.s.mode === 'nightmare') {
+        if (!(this.s.nightmareIntroRemaining > 0))
+          return { phase: 'night', progress: 1, darkness: 1, warmth: 0 };
+        phase = 'sunset';
+        progress = 1 - this.s.nightmareIntroRemaining / span;
+      } else {
+        const time = this.s.clock % cfg.seconds;
+        if (time >= cfg.seconds - span) {
+          phase = 'sunrise';
+          progress = (time - cfg.seconds + span) / span;
+        } else if (time >= cfg.nightAt)
+          return { phase: 'night', progress: 1, darkness: 1, warmth: 0 };
+        else if (time >= cfg.nightAt - span) {
+          phase = 'sunset';
+          progress = (time - cfg.nightAt + span) / span;
+        } else return { phase: 'day', progress: 1, darkness: 0, warmth: 0 };
+      }
+      progress = clamp(progress, 0, 1);
+      const smooth = progress * progress * (3 - 2 * progress);
+      return {
+        phase,
+        progress,
+        darkness: phase === 'sunset' ? smooth : 1 - smooth,
+        warmth: Math.sin(Math.PI * progress),
+      };
+    }
+    advanceDaylight(dt) {
+      const cfg = R.dayCycle;
+      if (!this.peace && this.s.mode === 'nightmare') {
+        if (this.s.nightmareIntroRemaining > 0) {
+          this.s.nightmareIntroRemaining = Math.max(0, this.s.nightmareIntroRemaining - dt);
+          if (this.s.nightmareIntroRemaining < 1e-9) {
+            this.s.nightmareIntroRemaining = 0;
+            // Only the one-time Nightmare grace boundary refreshes engaged
+            // combat. Ordinary day/night encounter locking remains unchanged.
+            const m = this.multipliers();
+            for (const z of Object.values(this.s.zones))
+              for (const e of z.enemies) {
+                if (
+                  !(e.hp > 0) ||
+                  !e.aggro ||
+                  e.neutral ||
+                  e.eliteNightBonus ||
+                  !(e.baseHp > 0) ||
+                  !Number.isFinite(e.baseDamage)
+                )
+                  continue;
+                const fraction = e.hp / e.maxHp;
+                e.maxHp = e.baseHp * m.hp;
+                e.hp = e.maxHp * fraction;
+                e.damage = e.baseDamage * m.damage;
+              }
+          }
+        }
+        return;
+      }
+      this.s.clock = (this.s.clock + dt) % cfg.seconds;
+      if (this.peace && this.s.victoryDawnRemaining > 0) {
+        this.s.victoryDawnRemaining = Math.max(0, this.s.victoryDawnRemaining - dt);
+        if (this.s.victoryDawnRemaining < 1e-9) {
+          this.s.victoryDawnRemaining = 0;
+          this.s.clock = 0;
+        }
+      }
     }
     nightPoints() {
       const count = (obj) =>
@@ -3209,7 +3284,11 @@
         this.s.hazards = [];
         this.hero.order = null;
         this.s.party.forEach((u) => (u.order = null));
-        if (this.s.mode === 'nightmare') this.s.clock = 360;
+        if (this.s.mode === 'nightmare') {
+          this.s.nightmareIntroRemaining = 0;
+          this.s.victoryDawnRemaining = R.dayCycle.twilightSeconds;
+          this.s.clock = R.dayCycle.seconds - R.dayCycle.twilightSeconds;
+        }
         for (const z of Object.values(this.s.zones)) {
           this.makeHabitat(z);
           this.syncDungeonMasterStation(z);
@@ -3287,7 +3366,7 @@
       this.s.mercyTime = Math.max(0, (this.s.mercyTime || 0) - dt);
       if (this.s.mercyTime < 1e-9) this.s.mercyTime = 0;
       this.s.restCooldown = Math.max(0, (this.s.restCooldown || 0) - dt);
-      if (this.peace || this.s.mode !== 'nightmare') this.s.clock = (this.s.clock + dt) % 600;
+      this.advanceDaylight(dt);
       const h = this.hero,
         z = this.zone(),
         formationStart = { x: h.x, y: h.y };

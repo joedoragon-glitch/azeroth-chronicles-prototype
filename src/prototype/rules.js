@@ -7351,7 +7351,7 @@
     travelArrivals,
     dungeonWorkstations,
     regionalHandoffScenes,
-    // Harmless scenery creatures use the paused presentation clock, not combat RNG.
+    dayCycle: { seconds: 600, nightAt: 360, twilightSeconds: 30 },
     // First-pass outdoor movement only. Undefined types keep their existing contract.
     sceneryTraversal: {
       radii: {
@@ -7369,6 +7369,7 @@
       homeClearance: 55,
       roadClearance: 40,
     },
+    // Harmless scenery creatures use the paused presentation clock, not combat RNG.
     ambientLife: {
       'pasture-sheep': { radius: 24, walk: 4.5, rest: 5 },
       'poultry-yard': { radius: 25, walk: 3.2, rest: 3.5 },

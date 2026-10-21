@@ -1,0 +1,10 @@
+{
+  "cases": 24,
+  "nativeStartup": [
+    "desktop",
+    "phone landscape"
+  ],
+  "renderPurity": true,
+  "pauseTimer": true,
+  "errors": []
+}
