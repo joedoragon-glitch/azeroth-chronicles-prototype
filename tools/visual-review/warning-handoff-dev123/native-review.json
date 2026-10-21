@@ -1,0 +1,31 @@
+{
+  "version": "0.9.1+snapshot.dev.123",
+  "cases": [
+    {
+      "family": "mire",
+      "form": "normal",
+      "released": true,
+      "impact": true,
+      "oldWarning": false,
+      "nextWarning": false
+    },
+    {
+      "family": "warlord",
+      "form": "normal",
+      "released": true,
+      "impact": true,
+      "oldWarning": false,
+      "nextWarning": true
+    },
+    {
+      "family": "crypt",
+      "form": "normal",
+      "released": true,
+      "impact": true,
+      "oldWarning": false,
+      "nextWarning": false,
+      "nextWarningAtImpact": true
+    }
+  ],
+  "errors": []
+}

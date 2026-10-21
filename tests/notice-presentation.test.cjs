@@ -259,3 +259,69 @@ console.log('PASS failed travel retains source notice context');
   );
 }
 console.log('PASS earned full-text quest history survives reload without announcement replay');
+
+// Real level notices must remain actionable while queued and while displayed.
+for (const queued of [true, false]) {
+  const leveling = new Campaign('normal', 'mage', () => 0.9);
+  leveling.zone().enemies = [];
+  leveling.s.party = [];
+  context.game = leveling;
+  context.platform.mode = 'phone';
+  context.menu = queued ? {} : null;
+  leveling.xp(leveling.xpRequired());
+  update();
+  assert.equal(context.criticalNotices[queued ? 'waiting' : 'active'].length, 1);
+  assert(leveling.talent(0));
+  context.menu = null;
+  update();
+  assert.equal(context.criticalNotices.active.length, 0, 'spent points hide the visible reminder');
+  assert.equal(context.criticalNotices.waiting.length, 0, 'spent points discard queued reminders');
+  assert(leveling.freeResetTalents());
+  update();
+  assert.equal(
+    context.criticalNotices.active.length,
+    0,
+    'refunding points does not replay an old reminder',
+  );
+}
+{
+  const leveling = new Campaign('normal', 'paladin', () => 0.9);
+  leveling.zone().enemies = [];
+  leveling.s.party = [];
+  context.game = leveling;
+  context.menu = null;
+  leveling.xp(leveling.xpRequired(1) + leveling.xpRequired(2));
+  update();
+  assert(leveling.talent(0));
+  update();
+  assert.equal(
+    context.criticalNotices.active.length,
+    1,
+    'remaining spendable point keeps reminder useful',
+  );
+  assert(leveling.talent(0));
+  update();
+  assert.equal(context.criticalNotices.active.length, 0);
+  assert.equal(
+    context.criticalNotices.waiting.length,
+    0,
+    'all queued level reminders clear together',
+  );
+  leveling.xp(leveling.xpRequired());
+  update();
+  assert.equal(
+    context.criticalNotices.active.length,
+    1,
+    'a later level produces a fresh valid reminder',
+  );
+  leveling.hero.talents = leveling.hero.talents.map((_, i) => leveling.talentMaxRank(i));
+  update();
+  assert.equal(
+    context.criticalNotices.active.length,
+    0,
+    'fully capped talents have no actionable training reminder',
+  );
+}
+console.log(
+  'PASS actual talent reminders: queued/visible spending, partial points, multi-level queue, fresh levels, refunds and capped talents',
+);

@@ -1442,7 +1442,7 @@
                 },
                 selected
                   ? 'Selected recovery point · choose this to use your last refuge instead'
-                  : 'On defeat, respawn here rather than at your last refuge',
+                  : 'Recover here within this region. Entering another region switches to its refuge.',
               ),
             ],
         baseActions = [
