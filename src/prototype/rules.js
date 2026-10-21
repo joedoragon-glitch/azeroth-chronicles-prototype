@@ -1841,8 +1841,8 @@
         mountedCrownRider: true,
       },
       {
-        x: 745,
-        y: 590,
+        x: 670,
+        y: 430,
         group: 'household',
         name: 'Crag Tyrant',
         captain: true,
@@ -1864,8 +1864,8 @@
         mountedCrownRider: true,
       },
       {
-        x: 760,
-        y: 770,
+        x: 750,
+        y: 720,
         role: 'ranged',
         group: 'household',
         name: 'Crown direwolf archer',
@@ -3628,6 +3628,16 @@
       boss: { x: 1276, y: 1221 },
     },
   };
+  // Positions inside existing architecture: receiving buffer and prepared defenders.
+  // No fort, perception, damage or skill-range bonuses are added here.
+  const interiorEncounterLayout = {
+    crypt: { version: 1, entry: { x: 120, y: 140 }, boss: { x: 1180, y: 1210 } },
+    archive: { version: 1, entry: { x: 120, y: 140 }, boss: { x: 1175, y: 1230 } },
+    mine: { version: 1, entry: { x: 120, y: 140 } },
+    abyss: { version: 1, entry: { x: 120, y: 140 }, guards: [0, 1] },
+    citadel: { version: 1, entry: { x: 120, y: 140 }, guards: [0, 1, 3] },
+    'supply-highlands': { version: 1, captain: { x: 670, y: 430 }, guards: [6] },
+  };
   const dungeonArchitecture = {
     mine: {
       version: 1,
@@ -4211,16 +4221,16 @@
     ],
     abyss: [
       {
-        x: 264.0,
-        y: 330.0,
+        x: 360,
+        y: 490,
         species: 'orc',
         name: 'Orc guardian',
         role: 'melee',
         group: 'intake-watch',
       },
       {
-        x: 429.00000000000006,
-        y: 330.0,
+        x: 530,
+        y: 490,
         species: 'archer',
         name: 'Raider guardian',
         role: 'ranged',
@@ -4421,14 +4431,14 @@
     ],
     citadel: [
       {
-        x: 230,
-        y: 300,
+        x: 330,
+        y: 470,
         role: 'melee',
         group: 'entry-watch',
       },
       {
-        x: 390,
-        y: 300,
+        x: 530,
+        y: 450,
         role: 'ranged',
         group: 'entry-watch',
       },
@@ -4439,8 +4449,8 @@
         group: 'muster',
       },
       {
-        x: 220,
-        y: 540,
+        x: 300,
+        y: 560,
         role: 'ranged',
         group: 'muster',
       },
@@ -7448,6 +7458,7 @@
     dungeonArchitecture,
     frontierEdgeLayout,
     dungeonSpace,
+    interiorEncounterLayout,
     pillars,
   };
   if (typeof module !== 'undefined') module.exports = R;

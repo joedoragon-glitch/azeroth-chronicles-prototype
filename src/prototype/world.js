@@ -39,6 +39,75 @@
         if (this.s.zone === z.id) for (const p of [this.hero, ...this.activeParty()]) move(p);
         z.dungeonSpaceVersion = space.version;
       }
+      dungeonBossHome(id = this.s.zone) {
+        return (
+          R.interiorEncounterLayout?.[id]?.boss ||
+          R.dungeonSpace?.[id]?.boss || { x: 1160, y: 1110 }
+        );
+      }
+      defenderEncounterLayout(z) {
+        const cfg = R.interiorEncounterLayout?.[z.id];
+        if (!cfg || z.defenderLayoutVersion === cfg.version) return;
+        const exit = z.npcs.find((n) => n.kind === 'exit');
+        if (exit && cfg.entry) Object.assign(exit, cfg.entry);
+        let deferred = false;
+        const place = (e, point) => {
+          if (!e || e.defenderHomeVersion === cfg.version) return;
+          // Let an ongoing cast, movement or return finish at its current anchor.
+          // Dead records keep their state; the new home is used by later returns.
+          if (
+            e.hp > 0 &&
+            (e.aggro || e.returning || e.telegraph || e.motion || e.sequence?.length)
+          ) {
+            deferred = true;
+            return;
+          }
+          if (this.blocked(point.x, point.y, z.id, this.actorRadius(e))) {
+            deferred = true;
+            return;
+          }
+          if (
+            e.hp > 0 &&
+            this.s.zone === z.id &&
+            [this.hero, ...this.activeLivingParty()].some(
+              (u) => dist(u, point) < this.actorRadius(e) + this.actorRadius(u) + 8,
+            )
+          ) {
+            deferred = true;
+            return;
+          }
+          e.home = { ...point };
+          if (e.hp > 0) Object.assign(e, point);
+          delete e.path;
+          delete e.pathTarget;
+          delete e.idleWanderTarget;
+          e.defenderHomeVersion = cfg.version;
+        };
+        if (cfg.boss)
+          for (const e of z.enemies.filter((e) => e.type === 'boss' && e.family === z.id))
+            place(e, cfg.boss);
+        if (cfg.captain)
+          for (const e of z.enemies.filter((e) => e.roomCaptain && !e.summon && !e.reinforcement))
+            place(e, cfg.captain);
+        if (cfg.guards) {
+          const guards = z.enemies
+            .filter(
+              (e) =>
+                e.guard &&
+                e.form === 'normal' &&
+                e.type !== 'boss' &&
+                !e.summon &&
+                !e.reinforcement &&
+                !e.awakenedGuard,
+            )
+            .sort((a, b) => this.idOrder(a, b));
+          for (const index of cfg.guards) {
+            const post = (R.dungeonGuardFormations[z.id] || R.treasuryGuardFormations[z.id])[index];
+            place(guards[index], { x: post.x, y: post.y });
+          }
+        }
+        if (!deferred) z.defenderLayoutVersion = cfg.version;
+      }
       frontierEdgeRedistribution(z) {
         const cfg = R.frontierEdgeLayout;
         if (z.id !== 'frontier') return;
@@ -1823,6 +1892,7 @@
           this.strongholdCourtyardClearance(z);
           this.reedportRefugeSpacing(z);
           this.interiorCoherence(z);
+          this.defenderEncounterLayout(z);
           this.frontierEdgeRedistribution(z);
           this.frontierSceneComposition(z);
           this.crownSceneComposition(z);
@@ -1932,6 +2002,7 @@
           this.guardianPopulation(z);
           this.roomCaptainPopulation(z);
           this.interiorCoherence(z);
+          this.defenderEncounterLayout(z);
           return z;
         }
         const side = this.sideDungeon();
@@ -2006,6 +2077,7 @@
           }
           z.sideDungeonVersion = 1;
           this.interiorCoherence(z);
+          this.defenderEncounterLayout(z);
           return z;
         }
         const region = r.id,
@@ -2018,7 +2090,8 @@
               id: 'exit',
               name: 'Return to ' + r.name,
               kind: 'exit',
-              ...(R.dungeonSpace?.[id]?.exit || { x: 160, y: 240 }),
+              ...(R.interiorEncounterLayout?.[id]?.entry ||
+                R.dungeonSpace?.[id]?.exit || { x: 160, y: 240 }),
               icon: '🚪',
             },
             {
@@ -2204,9 +2277,7 @@
           if (dungeon) this.configureEnemy(e, j);
           z.enemies.push(e);
         }
-        const point = dungeon
-          ? R.dungeonSpace?.[id]?.boss || { x: 1160, y: 1110 }
-          : this.fieldCenter(i);
+        const point = dungeon ? this.dungeonBossHome(id) : this.fieldCenter(i);
         if (dungeon && this.s.normal[boss.id]) z.enemies = z.enemies.filter((e) => !e.guard);
         if (!this.s.normal[boss.id] || (boss.kind === 'field' && !this.s.pending[boss.id]))
           z.enemies.push(this.bossEnemy(boss, 'normal', point));
@@ -2237,6 +2308,7 @@
         this.strongholdCourtyardClearance(z);
         this.reedportRefugeSpacing(z);
         this.interiorCoherence(z);
+        this.defenderEncounterLayout(z);
         this.refreshNPCs();
         if (this.peace) this.makeHabitat(z);
         this.syncDungeonMasterStation(z);

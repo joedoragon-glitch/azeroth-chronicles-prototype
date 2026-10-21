@@ -1698,11 +1698,7 @@
           const h = nearest(
             e.home,
             e.type === 'boss'
-              ? this.safe(
-                  R.dungeonSpace?.[z.id]?.boss.x || 1160,
-                  R.dungeonSpace?.[z.id]?.boss.y || 1110,
-                  z.id,
-                )
+              ? this.safe(this.dungeonBossHome(z.id).x, this.dungeonBossHome(z.id).y, z.id)
               : fallback,
           );
           if (h) e.home = { ...h };
@@ -2459,7 +2455,8 @@
             : this.sideDungeon(zone)
               ? { x: 120, y: 150 }
               : dungeonIds.includes(zone)
-                ? R.dungeonSpace?.[zone]?.exit || { x: 160, y: 240 }
+                ? R.interiorEncounterLayout?.[zone]?.entry ||
+                  R.dungeonSpace?.[zone]?.exit || { x: 160, y: 240 }
                 : { x: D.towns[i][0], y: D.towns[i][1] });
       this.clearPartyCharges();
       this.tacticalClearThreat(); // Transient observations never survive zone travel.
@@ -3351,11 +3348,7 @@
           this.s.awakeningLevel = this.hero.level + 2;
         let e = this.zone().enemies.find((e) => e.type === 'boss' && e.form === 'true' && e.hp > 0);
         if (!e) {
-          e = this.bossEnemy(
-            this.boss(this.s.zone),
-            'true',
-            R.dungeonSpace?.[this.s.zone]?.boss || { x: 1160, y: 1110 },
-          );
+          e = this.bossEnemy(this.boss(this.s.zone), 'true', this.dungeonBossHome());
           this.zone().enemies.push(e);
         }
         if (this.s.phase === 'awakening') {
