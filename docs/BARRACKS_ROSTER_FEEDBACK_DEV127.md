@@ -15,7 +15,7 @@ Full active groups still permit new pet/troop recruitment into reserve. The menu
 - `tests/barracks-roster-feedback.test.cjs`: native menu-catalog rest/recruit flows for pet/Soldier/Ranger, v4 round-trip, visible denial explanations, town-versus-Barracks distinction, idle/engaged threat distinction, stale-action revalidation, no state mutation on denial, fallen/full/larger-group/queue/company/unlock/rank/crown/construction cases.
 - Existing menu, community-pet lifecycle and regional death/Barracks suites pass.
 - Build, generated/asset checks and changed-source formatting performed for this candidate. No broad CI or full-game suite.
-- Local browser unavailable: Chromium download is truncated; installed WebKit lacks host dependencies. Do not claim a local native-browser pass. Live startup remains to verify after publication.
+- Local native Chromium phone check (375×812): actual Rest and Recruit pet buttons complete 3 → 2 → 3; blocked actions visibly explain nearby combat; layout fits; no JavaScript errors. Capture, script and receipt: `tools/visual-review/roster-feedback-dev127/`. Live startup remains to verify after publication.
 
 Publication pending at this checkpoint.
 

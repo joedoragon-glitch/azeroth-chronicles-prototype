@@ -1,0 +1,7 @@
+{
+  "startup": "phone",
+  "viewport": "375x812",
+  "restRecruitPet": "3 → 2 → 3 through actual buttons",
+  "blockedReasonVisible": true,
+  "javascriptErrors": []
+}
