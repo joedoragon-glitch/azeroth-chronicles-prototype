@@ -1,9 +1,9 @@
 name: Test and deploy app
 on:
   push:
-    branches: [main]
+    branches: [owner-lantern-dock-dev135-hold]
   pull_request:
-    branches: [main, perf/v09-integration-20261010]
+    branches: [owner-lantern-dock-dev135-hold]
   workflow_dispatch:
 
 permissions:

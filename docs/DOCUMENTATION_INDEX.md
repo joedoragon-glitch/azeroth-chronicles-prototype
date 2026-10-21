@@ -1,3 +1,5 @@
+Prepared dev.135: [Lantern Shore timber and ferry](LANTERN_DOCK_DEV135.md), bounded road-material/mooring correction following owner acceptance of dev.134.
+
 Published: [Coastal Marches and Lantern Shore — dev.134](COASTAL_MARCHES_DEV134.md), PR #370. Coherent coastal-swamp geography/site redistribution, native day/night/phone review, current/dev133 migration and nighttime ferry challenge. Exact build/12 live files verified; package-only publication, normal workflow restored.
 
 Published: [Tap talent announcement — dev.133](TALENT_NOTICE_DEV133.md), PR #369. Direct talent-menu access from actionable level-up banner; focused notice/input/build checks and four live file/exact build matches. Package-only release; normal workflow restored.

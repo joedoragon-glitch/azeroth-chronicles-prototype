@@ -18103,10 +18103,12 @@
           }
         }
         // Raised timber follows the last leg through the coastal marsh.
-        const walks = [
-          [1830, 2410, 1770, 2730],
-          [1770, 2730, 1770, 2860],
-        ];
+        const walks = harbor.boardwalk.slice(1).map((p, j) => [
+          harbor.boardwalk[j].x,
+          harbor.boardwalk[j].y,
+          p.x,
+          p.y,
+        ]);
         for (const [ax, ay, bx, by] of walks) {
           const dx = bx - ax,
             dy = by - ay,
@@ -18754,7 +18756,26 @@
     const edges = [],
       seen = new Set(),
       nodes = new Map();
-    for (const path of paths) {
+    for (const route of paths) {
+      let path = route;
+      if (region === 1) {
+        const start = R.harbors.march.boardwalk[0],
+          entry = path.findIndex((p) => p.x === start.x && p.y === start.y);
+        if (entry > 0) {
+          // Routes continue across timber for navigation; earth stops at its edge.
+          // Set back the round 35-unit road cap so it cannot cover the first planks.
+          const before = path[entry - 1],
+            length = Math.hypot(start.x - before.x, start.y - before.y),
+            setback = Math.min(35, length);
+          path = [
+            ...path.slice(0, entry),
+            {
+              x: start.x - ((start.x - before.x) * setback) / length,
+              y: start.y - ((start.y - before.y) * setback) / length,
+            },
+          ];
+        }
+      }
       for (const q of path) nodes.set(q.x + ':' + q.y, q);
       for (let j = 1; j < path.length; j++) {
         const a = path[j - 1],

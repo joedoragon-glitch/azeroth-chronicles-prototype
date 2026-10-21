@@ -10,12 +10,13 @@
     "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/370",
     "decisionSummary": "Owner explicitly authorized a full coherent coastal-swamp pass, nonlinear southern coast, relocation of major assets to underused edges, all surrounding aesthetic work, and Wraiths as a collective night ferry challenge with daylight as the alternative.",
     "contentDocuments": [
-      "docs/COASTAL_MARCHES_DEV134.md"
+      "docs/COASTAL_MARCHES_DEV134.md",
+      "docs/LANTERN_DOCK_DEV135.md"
     ]
   },
   "decisions": {
     "conceptAcceptance": "Owner-authorized implementation/publication scope; use judgment for geography and placement.",
-    "proceduralDesignAcceptance": "Implemented for owner playtesting; no claim of separate visual approval of unseen final captures.",
+    "proceduralDesignAcceptance": "Owner: \u201cI love the way Lantern Shore looks now\u201d and \u201cother than that, it looks amazing.\u201d Dev.134 shore accepted, with requested road-over-wood and ferry-over-dock corrections in dev.135.",
     "spriteProductionAuthorization": "No new raster sprites requested.",
     "generatedAppearanceAcceptance": null,
     "pendingCorrections": []
@@ -114,5 +115,28 @@
     "candidateRecords": [],
     "releaseCommit": "a45ca097fac1bfe9ca5d6792de7d80c1ba59dd60",
     "releaseEvidence": "docs/evidence/COASTAL_MARCHES_DEV134_PUBLICATION_20261021.json"
-  }
+  },
+  "corrections": [
+    {
+      "version": "0.9.1+snapshot.dev.135",
+      "request": "Stop earth road paint before timber; move ferry hull fully into the water beside the dock. Preserve accepted shore composition.",
+      "status": "implemented-focused-review-complete-publication-pending",
+      "sourceBase": "34e5364a64908093c798c9eb6b3850ae7031533b",
+      "ownerFiles": [
+        "src/prototype/rules.js",
+        "src/prototype/visuals.js"
+      ],
+      "sourceHashes": {
+        "src/prototype/rules.js": "35f22432d4df1539b691d1c7e5895f161941fe7047f021c8a23b1204549d9fea",
+        "src/prototype/visuals.js": "d9de08453423cd9e13cc35150d06b6f3865654a7326062bba3d8d2566cefaf5f"
+      },
+      "references": {
+        "tools/visual-review/lantern-dock-dev135/shore-night.webp": "023647889a614c16b08a7e48383945e5951154d25f6549afb43a1742991ed68c",
+        "tools/visual-review/lantern-dock-dev135/dock-phone-day.webp": "ea54c88e4f73caac9cd5c3e9445e276e040c7cc9ca377b56435b8180b00b47ab",
+        "tools/visual-review/lantern-dock-dev135/dock-phone-night.webp": "58df9194f446f2e7246ee80b023a4f1d95ac00274e2f32b6e106046e8ef56305",
+        "tools/visual-review/lantern-dock-dev135/shore-day.webp": "c8cc130ad50cef64967d2d36ed05d86f5c87859430ed0768d2afb01693d5486c"
+      },
+      "spriteAuthorization": "No new raster generation requested."
+    }
+  ]
 }

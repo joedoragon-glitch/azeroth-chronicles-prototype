@@ -2886,7 +2886,13 @@
       },
       dock: { x1: 1705, x2: 1840, y1: 2730, y2: 2920 },
       arrival: { x: 1770, y: 2770 },
-      boat: { x: 1770, y: 2860 },
+      // Keep the vessel in the tidal water beside the dock's outer corner.
+      boat: { x: 1900, y: 2940 },
+      boardwalk: [
+        { x: 1830, y: 2410 },
+        { x: 1770, y: 2730 },
+        { x: 1770, y: 2860 },
+      ],
       shore: { x: 1770, y: 2800 },
       name: 'Lantern Shore Ferry',
       vegetation: 'mangrove',
