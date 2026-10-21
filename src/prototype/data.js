@@ -60,15 +60,15 @@ const PrototypeData = {
       size: 3400,
       town: 'Stonecross',
       minor: 'Quarry Outpost',
-      biome: 'Mountains and pine forest',
+      biome: 'Autumn hardwood mountains, ore workings and a working coast',
       transport: 'Pack beast caravan',
       fare: 110,
       route:
-        "The ferry landing at (425, 1900) climbs by switchbacks to Stonecross at (850, 1500), Quarry Outpost at (1750, 1150), the Ridge Tyrant's mountain watchtower near (2700, 700), the Colossus Mine entrance at (2850, 2350), and the original outbound caravan stand at (3100, 500).",
+        'The western ferry landing reaches Stonecross’s coastal mint town. Northern silver and copper workings feed the northeastern Quarry Outpost; winding roads reach the eastern Ridge Tyrant watch, Old Signal Keep and southeastern Colossus Mine. The guarded caravan leaves from the northeast. Hardwood hollows, open ridges and three ravine crossings connect the region.',
       obstacle:
-        'Cliffs divide the plateau into connected terraces. Switchbacks, a stone bridge and a timber crossing provide routes. Rock walls and pine thickets block movement and projectiles consistently.',
+        'A winding stream ravine divides wooded slopes. Three maintained crossings connect the ore roads and southern households; exposed rock shelves, hardwood trunks and defended compounds provide consistent physical cover.',
       exploration:
-        'The Dark Lord seized Ironroot’s silver-bearing and copper-bearing mountains long ago. The Master of Coin, Ridge Tyrant, supervises separate ore workings, wages, escorted shipments and Stonecross’s mint, which strikes crowns bearing the Dark Lord’s portrait. Quarry Outpost also cuts building stone, separately from the metal ores. Stonecross trades and raises families; some welcome regular payday while others resent ownership of the mountains. Wolves hunt the wild valleys and Ogres still live, cook, work stone and play at their own hearths.',
+        'The Dark Lord seized Ironroot’s silver-bearing and copper-bearing mountains long ago. The Master of Coin, Ridge Tyrant, supervises separate ore workings, wages, escorted shipments and Stonecross’s mint, which strikes crowns bearing the Dark Lord’s portrait. Quarry Outpost retains an old name from before the Crown discovered the silver and copper hidden in its host rock. Its workings extract and sort those coinage ores for Stonecross’s mint. Stonecross trades and raises families; some welcome regular payday while others resent ownership of the mountains. Wolves hunt the wild valleys and Ogres still live, cook, work stone and play at their own hearths.',
       resource: 640,
       questgold: 700,
       questxp: 1800,
@@ -428,7 +428,7 @@ const PrototypeData = {
     ['highlands', "The Tyrant's Grip", 'Defeat Ridge Tyrant; free Orin', 180, 350],
     [
       'highlands',
-      'Quarry Workers at Risk',
+      'Ore Workers at Risk',
       'Defeat 7 outdoor enemies in Ironroot Highlands',
       120,
       350,
@@ -486,14 +486,14 @@ const PrototypeData = {
   towns: [
     [300, 350],
     [350, 1100],
-    [850, 1500],
+    [750, 2180],
     [450, 500],
     [350, 600],
   ],
   minors: [
     [900, 700],
     [1050, 500],
-    [1750, 1150],
+    [2520, 510],
     [1300, 1000],
     [1250, 1800],
   ],
@@ -507,14 +507,14 @@ const PrototypeData = {
   entrances: [
     [2150, 2100],
     [500, 2350],
-    [2850, 2350],
+    [2850, 2850],
     [3000, 2700],
     [2400, 1100],
   ],
   fields: [
     [760, 1750],
     [2180, 1120],
-    [2700, 700],
+    [2850, 1170],
     [2600, 1650],
     [3250, 3200],
   ],

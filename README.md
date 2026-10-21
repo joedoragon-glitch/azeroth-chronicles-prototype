@@ -1,3 +1,5 @@
+**Prepared dev.138 — Appalachian Ironroot:** Owner-approved complete nature/geography and coinage-ore rework, PR #374. Mixed autumn hardwood forests, distributed complete sites, continuous west shore and preserved selected ferry. Quarry Outpost serves silver/copper coinage production; no building-stone industry. All four tribute stores require physical Barracks searches at named sites; Crag Tyrant arranged concealment. Town Supplies explains this and retains all cargo delivery. Brown/buff/rust wild wolves and armored direwolf riders retained. Complete procedural Crag Treasury household included, preserving seven defenders and saved recovery/quest progress; possible future Treasury quality pilot. Focused navigation/save/scouting, six Ironroot scenarios and native rendering pass; package-only publication pending. [Scope and current canon](docs/HIGHLANDS_APPALACHIAN_DEV138.md).
+
 # So I Became the Dark Lord's Problem
 
 **Community Snapshot — October 2026 · `0.9.1+snapshot.dev.119`.** Published; today’s work is complete. [Current state](docs/DEVELOPMENT_STATE.md) records release evidence and the next-work boundary. [Documentation index](docs/DOCUMENTATION_INDEX.md) distinguishes current guides from historical records.
@@ -33,20 +35,20 @@ Forest Crypt, Sunken Archive and Colossus Mine now have distinct authored wings,
 
 ## Controls
 
-| Action | Desktop | Phone |
-| --- | --- | --- |
-| Move | WASD | Left joystick or tap a reachable destination |
-| Interact | F | Interact |
-| Skills 1–5 | 1–5 | Skill buttons |
-| Skills 6–8 | Space / left Shift / B | Skill buttons |
-| Charged skills 1–8 | Quick tap for normal; hold 0.65 seconds for charged | Same tap/hold behavior |
-| Ranger healing | H / left mouse for Heal | Heal button |
-| Squad doctrine | Tab during combat, Expedition 3+ | Contextual Squad button |
-| Recall | Q or backtick | Recall squad |
-| Change target | E (customizable), or click Target in the HUD | Target beside Recall, above joystick |
-| Map / inventory / journal | M or Z / I / J | Adventure menu |
-| Pause / menu / controls | P or V / Escape / G | Menu |
-| Menu navigation | W/A previous; S/D next; F/Enter/Space confirms | Direct tap; joystick and Confirm also work |
+| Action                    | Desktop                                             | Phone                                        |
+| ------------------------- | --------------------------------------------------- | -------------------------------------------- |
+| Move                      | WASD                                                | Left joystick or tap a reachable destination |
+| Interact                  | F                                                   | Interact                                     |
+| Skills 1–5                | 1–5                                                 | Skill buttons                                |
+| Skills 6–8                | Space / left Shift / B                              | Skill buttons                                |
+| Charged skills 1–8        | Quick tap for normal; hold 0.65 seconds for charged | Same tap/hold behavior                       |
+| Ranger healing            | H / left mouse for Heal                             | Heal button                                  |
+| Squad doctrine            | Tab during combat, Expedition 3+                    | Contextual Squad button                      |
+| Recall                    | Q or backtick                                       | Recall squad                                 |
+| Change target             | E (customizable), or click Target in the HUD        | Target beside Recall, above joystick         |
+| Map / inventory / journal | M or Z / I / J                                      | Adventure menu                               |
+| Pause / menu / controls   | P or V / Escape / G                                 | Menu                                         |
+| Menu navigation           | W/A previous; S/D next; F/Enter/Space confirms      | Direct tap; joystick and Confirm also work   |
 
 These are keyboard defaults. **Game and settings → Controls → Customize keyboard** changes and saves bindings on this browser/device. Menu navigation follows the chosen movement keys; Enter and Space remain confirmation fallbacks, and Esc opens/backtracks menus. Browser shortcuts remain available.
 
@@ -83,12 +85,12 @@ npm ci --ignore-scripts # install all locked development tools, including Playwr
 npm run dev            # http://127.0.0.1:8080; phone entry is /phone.html
 ```
 
-| Change | Local checks |
-| --- | --- |
-| During implementation | Run the affected `node tests/<name>.test.cjs` suites; `npm run test:quick` is an optional broader feedback pass. |
+| Change                                   | Local checks                                                                                                                                                                         |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| During implementation                    | Run the affected `node tests/<name>.test.cjs` suites; `npm run test:quick` is an optional broader feedback pass.                                                                     |
 | Runtime code, styles or published assets | Bump the package version, run `npm run build`, then `npm run format:check`, `npm run check`, `npm test` and relevant browser tests. Commit the generated entries and service worker. |
-| Tests or development tooling | Run formatting/generated checks and affected tests. CI runs the full gate. No runtime version bump or regeneration is needed unless generated inputs change. |
-| Documentation only | Check links and instructions. No runtime version bump or regeneration. |
+| Tests or development tooling             | Run formatting/generated checks and affected tests. CI runs the full gate. No runtime version bump or regeneration is needed unless generated inputs change.                         |
+| Documentation only                       | Check links and instructions. No runtime version bump or regeneration.                                                                                                               |
 
 `npm test` automatically discovers every non-browser `tests/*.test.cjs` suite, including road access and town-street audits. Do not list those suites separately in CI or rerun `test:quick` after the full suite. Browser suites are separate: `npm run test:browser` runs the main Chromium device matrix, not every browser suite.
 

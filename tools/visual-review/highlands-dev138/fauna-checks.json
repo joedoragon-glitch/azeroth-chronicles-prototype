@@ -1,0 +1,8 @@
+{
+  "outsideHighlandsPixelIdentical": 20,
+  "distinctWildCoats": 3,
+  "retainedArmoredMountVariants": 2,
+  "proceduralSelection": true,
+  "renderStatePure": true,
+  "reference": "fauna-states.json"
+}

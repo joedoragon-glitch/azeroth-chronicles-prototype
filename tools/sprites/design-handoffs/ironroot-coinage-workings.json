@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-design",
+  "designId": "ironroot-coinage-workings",
+  "name": "Crown silver and copper workings",
+  "kind": "environment",
+  "nextAction": "Publish the focused owner update, then receive owner play/appearance feedback. Resume future raster work from these exact procedural states when requested.",
+  "context": {
+    "originConversation": "Conversation URL unavailable; owner instructions dated 21 October 2026 are recorded in PR #374 and the scope document.",
+    "decisionSummary": "Complete Appalachian-inspired Highlands overhaul approved, including new nature assets, site relocation and coinage-ore facilities. All four tribute stores now require a physical Barracks search at existing named locations; Crag Tyrant arranged the concealment. Town Supplies retains cargo delivery.",
+    "decisionDate": "2026-10-21",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/374",
+    "contentDocuments": ["docs/HIGHLANDS_APPALACHIAN_DEV138.md"],
+    "locationAndLore": "Ironroot Highlands; silver/copper extraction and portrait-crown production. Preserve native households and current character canon."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner explicitly approved the complete rework and new procedural assets, then directed named-site/Barracks-only tribute search and Town Supplies cargo delivery.",
+    "proceduralDesignAcceptance": "Implementation authorized; exact unseen final artwork is not independently claimed accepted.",
+    "spriteProductionAuthorization": "Procedural code-native implementation in this update; no new raster job or registration.",
+    "generatedAppearanceAcceptance": "No generated raster images in this update.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "cc2020f1f27283c66fbe2bed0ca34b8aaee907f4",
+    "ownerFilesAndBranches": [
+      "src/prototype/highlands.js",
+      "src/prototype/visuals.js",
+      "src/prototype/rules.js",
+      "rework/appalachian-highlands-dev138"
+    ],
+    "exactEntityState": [
+      {
+        "label": "silver-workings",
+        "entity": {
+          "id": "appalachian-silver-adit",
+          "structure": "appalachian-silver-workings",
+          "r": 0,
+          "decorative": true,
+          "sceneRole": "crown-coinage-ore",
+          "miningFacility": true,
+          "x": 610,
+          "y": 250,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "copper-workings",
+        "entity": {
+          "id": "appalachian-copper-adit",
+          "structure": "appalachian-copper-workings",
+          "r": 0,
+          "decorative": true,
+          "sceneRole": "crown-coinage-ore",
+          "miningFacility": true,
+          "x": 880,
+          "y": 370,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "ore-washer",
+        "entity": {
+          "id": "appalachian-outpost-washer",
+          "structure": "appalachian-ore-washer",
+          "r": 0,
+          "decorative": true,
+          "sceneRole": "crown-coinage-ore",
+          "miningFacility": true,
+          "x": 2370,
+          "y": 310,
+          "renderKind": "prop"
+        }
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/highlands-dev138/isolated-families.webp",
+    "isolatedReferenceHash": "1180584304ea1065db8468316276cabf06337f48ca042dca7a59176d9f900635",
+    "gameplayContextPaths": [
+      "tools/visual-review/highlands-dev138/northern-workings.webp",
+      "tools/visual-review/highlands-dev138/outpost.webp",
+      "tools/visual-review/highlands-dev138/stonecross.webp"
+    ],
+    "traitsToPreserve": [
+      "Silver/copper-bearing ore, supported adits, sorted loads and washing troughs all serve Crown coinage.",
+      "Quarry Outpost is a historical name; no separate building-stone business.",
+      "Preserve manual craft scale, retained mint/haulage assets, mineral cues and silver Crown wages."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/highlands.js",
+        "sha256": "b2b0aa8b7ed42ecfa20d710e5acb617b5096d6dfb2cca01cf1393a6c207fc703"
+      },
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "1f2e24f5c19c9fe3a3873c38ecd441e2e64a5f99abbd69a8deee82d86fd08f99"
+      },
+      {
+        "path": "src/prototype/rules.js",
+        "sha256": "c6c8f9e90225f534acb4cf5f213efaff5647b44c3eba36fd6953d1515b755cd9"
+      }
+    ],
+    "workingTreeAfterSourceCommit": false
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": ["silver-workings", "copper-workings", "ore-washer"],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Static seeded variation; preserve exact entity state and native 150% context."
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/highlands.js",
+        "reason": "Authored composition, geography, seeded variation and functional placement remain procedural."
+      },
+      {
+        "owner": "src/prototype/visuals.js",
+        "reason": "Authored composition, geography, seeded variation and functional placement remain procedural."
+      },
+      {
+        "owner": "src/prototype/rules.js",
+        "reason": "Authored composition, geography, seeded variation and functional placement remain procedural."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": ["silver-workings", "copper-workings", "ore-washer"],
+    "directions": [],
+    "pivotContract": "Existing world coordinates and foot grounding; render must not mutate campaign state.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "Original main dev137 source and all 208 retained binary assets.",
+    "releaseCommit": null,
+    "releaseEvidence": "tools/visual-review/highlands-dev138/native-review.json"
+  }
+}

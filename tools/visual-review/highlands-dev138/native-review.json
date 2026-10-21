@@ -1,0 +1,233 @@
+{
+  "captures": [
+    {
+      "name": "overview",
+      "width": 1800,
+      "height": 1050,
+      "zoom": 0.31,
+      "night": false,
+      "outlineMasks": 24
+    },
+    {
+      "name": "stonecross",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 9
+    },
+    {
+      "name": "northern-workings",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 5
+    },
+    {
+      "name": "outpost",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 14
+    },
+    {
+      "name": "shore",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 6
+    },
+    {
+      "name": "woodland",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 5
+    },
+    {
+      "name": "mine-approach",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 7
+    },
+    {
+      "name": "stonecross-night",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": true,
+      "outlineMasks": 9
+    },
+    {
+      "name": "woodland-phone",
+      "width": 430,
+      "height": 900,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 5
+    },
+    {
+      "name": "search-ore-shipment",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 7
+    },
+    {
+      "name": "found-ore-shipment",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 7
+    },
+    {
+      "name": "search-stone-toll",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 8
+    },
+    {
+      "name": "found-stone-toll",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 8
+    },
+    {
+      "name": "search-timber-toll",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 1
+    },
+    {
+      "name": "found-timber-toll",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 1
+    },
+    {
+      "name": "search-ogre-cache",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 13
+    },
+    {
+      "name": "found-ogre-cache",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 13
+    },
+    {
+      "name": "forest-wolf-territory",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 7
+    },
+    {
+      "name": "treasury-approach",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 11
+    },
+    {
+      "name": "ridge-watch",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 16
+    },
+    {
+      "name": "ogre-hearth",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 9
+    },
+    {
+      "name": "signal-keep",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 21
+    },
+    {
+      "name": "caravan",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 5
+    },
+    {
+      "name": "north-bridge",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 6
+    },
+    {
+      "name": "haul-crossing",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 2
+    },
+    {
+      "name": "shore-phone",
+      "width": 430,
+      "height": 900,
+      "zoom": 1.5,
+      "night": false,
+      "outlineMasks": 1
+    }
+  ],
+  "sprites": {
+    "manifestVersion": 8,
+    "definitions": 34,
+    "loaded": 33,
+    "loading": 0,
+    "queued": 0,
+    "failed": 0,
+    "decodedBytes": 41360328,
+    "reservedBytes": 0,
+    "maxDecodedBytes": 268435456,
+    "maxConcurrentDecodes": 2,
+    "clockMs": 0,
+    "evictions": 0,
+    "staleLoads": 0,
+    "invalidPresentation": 0,
+    "budgetSkips": 0,
+    "peakDecodedBytes": 41360328,
+    "peakReservedBytes": 41360328,
+    "peakConcurrent": 2
+  },
+  "statePure": true
+}

@@ -1,0 +1,336 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-design",
+  "designId": "ironroot-forest-wolves",
+  "name": "Ironroot forest wolves and armored direwolf mounts",
+  "kind": "environment",
+  "nextAction": "Publish the focused owner update, then receive owner play/appearance feedback. Resume future raster work from these exact procedural states when requested.",
+  "context": {
+    "originConversation": "Conversation URL unavailable; owner instructions dated 21 October 2026 are recorded in PR #374 and the scope document.",
+    "decisionSummary": "Joel approved brown, buff and rusty-red wild wolf coats with larger armored direwolf mounts, retaining riders. Elk mounts declined. Only Highlands appearance changes; species, combat geometry, stats, IDs and behavior remain unchanged.",
+    "decisionDate": "2026-10-21",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/374",
+    "contentDocuments": ["docs/HIGHLANDS_APPALACHIAN_DEV138.md"],
+    "locationAndLore": "Ironroot Highlands; silver/copper extraction and portrait-crown production. Preserve native households and current character canon."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner explicitly approved the complete rework and new procedural assets, then directed named-site/Barracks-only tribute search and Town Supplies cargo delivery.",
+    "proceduralDesignAcceptance": "Implementation authorized; exact unseen final artwork is not independently claimed accepted.",
+    "spriteProductionAuthorization": "Procedural code-native implementation in this update; no new raster job or registration.",
+    "generatedAppearanceAcceptance": "No generated raster images in this update.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "cc2020f1f27283c66fbe2bed0ca34b8aaee907f4",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js::wolf / crownDirewolfRider",
+      "src/prototype/sprites.js::candidateKeys",
+      "rework/appalachian-highlands-dev138"
+    ],
+    "exactEntityState": [
+      {
+        "label": "brown forest wolf",
+        "entity": {
+          "id": "enemy-47",
+          "family": null,
+          "species": "wolf",
+          "name": "Wolf",
+          "icon": "\ud83d\udc3a",
+          "form": "normal",
+          "type": "mob",
+          "level": 7,
+          "baseHp": 454,
+          "baseDamage": 32,
+          "hp": 454,
+          "maxHp": 454,
+          "damage": 32,
+          "gold": 18,
+          "xp": 44,
+          "x": 580,
+          "y": 1045,
+          "home": {
+            "x": 580,
+            "y": 1045
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "pack": "stronghold-wolf-packhold-1",
+          "guard": false,
+          "site": "wolf-den",
+          "stronghold": "wolf-packhold",
+          "strongholdResident": true,
+          "meleeBalanceVersion": 1,
+          "telegraph": null,
+          "sequence": [],
+          "motion": null,
+          "rangedAim": null,
+          "returning": 0,
+          "renderKind": "enemy"
+        }
+      },
+      {
+        "label": "buff forest wolf",
+        "entity": {
+          "id": "enemy-36",
+          "family": null,
+          "species": "wolf",
+          "name": "Wolf",
+          "icon": "\ud83d\udc3a",
+          "form": "normal",
+          "type": "mob",
+          "level": 7,
+          "baseHp": 454,
+          "baseDamage": 32,
+          "hp": 454,
+          "maxHp": 454,
+          "damage": 32,
+          "gold": 18,
+          "xp": 44,
+          "x": 3085,
+          "y": 2030,
+          "home": {
+            "x": 3085,
+            "y": 2030
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "pack": "highlands-pack-0",
+          "guard": false,
+          "site": "lookout",
+          "meleeBalanceVersion": 1,
+          "telegraph": null,
+          "sequence": [],
+          "motion": null,
+          "rangedAim": null,
+          "returning": 0,
+          "renderKind": "enemy"
+        }
+      },
+      {
+        "label": "rust forest wolf",
+        "entity": {
+          "id": "enemy-37",
+          "family": null,
+          "species": "wolf",
+          "name": "Wolf",
+          "icon": "\ud83d\udc3a",
+          "form": "normal",
+          "type": "mob",
+          "level": 7,
+          "baseHp": 454,
+          "baseDamage": 32,
+          "hp": 454,
+          "maxHp": 454,
+          "damage": 32,
+          "gold": 18,
+          "xp": 44,
+          "x": 3060.1040764008567,
+          "y": 2090.1040764008567,
+          "home": {
+            "x": 3060.1040764008567,
+            "y": 2090.1040764008567
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "pack": "highlands-pack-0",
+          "guard": false,
+          "site": "lookout",
+          "meleeBalanceVersion": 1,
+          "telegraph": null,
+          "sequence": [],
+          "motion": null,
+          "rangedAim": null,
+          "returning": 0,
+          "renderKind": "enemy"
+        }
+      },
+      {
+        "label": "Crown mounted Soldier",
+        "entity": {
+          "id": "enemy-76",
+          "family": null,
+          "species": "wolf",
+          "name": "Crown direwolf lance patrol",
+          "icon": "\ud83d\udc3a",
+          "form": "normal",
+          "type": "mob",
+          "level": 7,
+          "baseHp": 454,
+          "baseDamage": 32,
+          "hp": 454,
+          "maxHp": 454,
+          "damage": 32,
+          "gold": 0,
+          "xp": 0,
+          "x": 2850,
+          "y": 2580,
+          "home": {
+            "x": 2850,
+            "y": 2580
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "pack": "highlands-pack-10",
+          "guard": false,
+          "meleeBalanceVersion": 1,
+          "mountedCrownRider": true,
+          "crownTroop": true,
+          "crownAncestry": "wolf",
+          "forcedRole": "melee",
+          "ranged": false,
+          "telegraph": null,
+          "sequence": [],
+          "motion": null,
+          "rangedAim": null,
+          "returning": 0,
+          "renderKind": "enemy"
+        }
+      },
+      {
+        "label": "Crown mounted Ranger",
+        "entity": {
+          "id": "enemy-78",
+          "family": null,
+          "species": "wolf",
+          "name": "Crown direwolf mounted archer",
+          "icon": "\ud83d\udc3a",
+          "form": "normal",
+          "type": "mob",
+          "level": 7,
+          "baseHp": 545,
+          "baseDamage": 35,
+          "hp": 545,
+          "maxHp": 545,
+          "damage": 35,
+          "gold": 0,
+          "xp": 0,
+          "x": 2794.5251836948037,
+          "y": 2605.189869886345,
+          "home": {
+            "x": 2794.5251836948037,
+            "y": 2605.189869886345
+          },
+          "cd": 0,
+          "aggro": false,
+          "heroParticipated": false,
+          "noProgress": 0,
+          "attackIndex": 0,
+          "respawn": 0,
+          "neutral": false,
+          "open": 0,
+          "deathPaid": false,
+          "pack": "highlands-pack-10",
+          "guard": false,
+          "meleeBalanceVersion": 1,
+          "mountedCrownRider": true,
+          "crownTroop": true,
+          "crownAncestry": "wolf",
+          "forcedRole": "ranged",
+          "ranged": true,
+          "shotRange": 280,
+          "shotSpeed": 260,
+          "projectileStyle": "arrow",
+          "telegraph": null,
+          "sequence": [],
+          "motion": null,
+          "rangedAim": null,
+          "returning": 0,
+          "rangedBalanceVersion": 1,
+          "renderKind": "enemy"
+        }
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/highlands-dev138/fauna-families.webp",
+    "isolatedReferenceHash": "721c5cfb74b79eb3034367a7403ae5a2586d0ac60342d6d4681140d89b0d55f3",
+    "gameplayContextPaths": ["tools/visual-review/highlands-dev138/forest-wolf-territory.webp"],
+    "traitsToPreserve": [
+      "Three stable wild coats: brown, buff and rusty red, with dark dorsal hairs, buff undersides and rusty ears/legs.",
+      "Larger Crown direwolf mounts retain their steel plate armor, saddles and existing Soldier/Ranger equipment.",
+      "No elk replacement. Current wolves and mounted variants remain their existing game species, geometry, stats and identities."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "1f2e24f5c19c9fe3a3873c38ecd441e2e64a5f99abbd69a8deee82d86fd08f99"
+      },
+      {
+        "path": "src/prototype/sprites.js",
+        "sha256": "7285847b152fd6476b107f515b5ff6ae64de88aee0b921a5dbd804862d8434d9"
+      }
+    ],
+    "workingTreeAfterSourceCommit": false
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "Wild brown forest wolf",
+      "Wild buff forest wolf",
+      "Wild rusty-red forest wolf",
+      "Mounted Crown Soldier",
+      "Mounted Crown Ranger"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Seeded wild coat from stable entity ID; armored melee/ranged mounted variants."
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::wolf / crownDirewolfRider",
+        "reason": "Region-specific color and fur pattern; preserve original animal/rider shapes and equipment."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [
+      "Wild brown forest wolf",
+      "Wild buff forest wolf",
+      "Wild rusty-red forest wolf",
+      "Mounted Crown Soldier",
+      "Mounted Crown Ranger"
+    ],
+    "directions": [],
+    "pivotContract": "Existing world coordinates and foot grounding; render must not mutate campaign state.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "Original main dev137 source and all 208 retained binary assets.",
+    "releaseCommit": null,
+    "releaseEvidence": "tools/visual-review/highlands-dev138/native-review.json"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "fresh": [
+    {
+      "seed": 7,
+      "props": 369,
+      "trees": 123,
+      "roads": 54,
+      "doors": 16
+    },
+    {
+      "seed": 39,
+      "props": 369,
+      "trees": 123,
+      "roads": 54,
+      "doors": 16
+    },
+    {
+      "seed": 89,
+      "props": 369,
+      "trees": 123,
+      "roads": 54,
+      "doors": 16
+    },
+    {
+      "seed": 319,
+      "props": 369,
+      "trees": 123,
+      "roads": 54,
+      "doors": 16
+    }
+  ],
+  "migration": {
+    "preservedProps": 311,
+    "preservedEnemies": 49,
+    "gold": 4321,
+    "tributeRemaining": 626.75,
+    "roads": 56,
+    "doors": 17
+  },
+  "scouting": {
+    "hiddenOnDispatch": true,
+    "savedSearch": true,
+    "recallPreservesConcealment": true,
+    "physicalArrival": true
+  },
+  "townSupply": {
+    "credits": "Crag Tyrant",
+    "explainsBarracks": true,
+    "noRemoteSearch": true,
+    "allCompanyCargoDelivered": 20
+  }
+}

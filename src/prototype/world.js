@@ -1896,6 +1896,7 @@
           this.frontierEdgeRedistribution(z);
           this.frontierSceneComposition(z);
           this.crownSceneComposition(z);
+          this.highlandsLandscape(z);
           this.setSceneryTraversal(z);
           return z;
         }
@@ -1905,6 +1906,7 @@
           id = this.s.zone;
         const z = {
           id,
+          ...(id === 'highlands' ? { appalachianSourceVersion: 1 } : {}),
           enemies: [],
           props: [],
           npcs: [],
@@ -2315,6 +2317,7 @@
         this.frontierEdgeRedistribution(z);
         this.frontierSceneComposition(z);
         this.crownSceneComposition(z);
+        this.highlandsLandscape(z);
         this.setSceneryTraversal(z);
         return z;
       }
@@ -3335,6 +3338,9 @@
       // damage, level, rewards, spawn count, home or saved enemy identity.
       crownMilitaryRoster(z) {
         if (this.peace) return;
+        // Ironroot's relocation preserves the already assigned soldiery. New
+        // distances must not recruit another native Wolf into a mounted slot.
+        if (z.id === 'highlands' && z.appalachianVersion) return;
         const lineages = ['crownguard', 'goblin', 'orc', 'archer', 'ogre'];
         const label = (e) =>
           'Crown ' +
@@ -3621,6 +3627,64 @@
         this.roadsideLanternLife(z);
         this.marchCoastalLayout(z);
         this.lanternShoreLayout(z);
+        this.highlandsTributeLayout(z);
+      }
+      highlandsTributeLayout(z, finalLayout = false) {
+        const cfg = R.highlandsTribute;
+        if (
+          z.id !== 'highlands' ||
+          z.highlandsTributeVersion === cfg.version ||
+          (!finalLayout && z.appalachianVersion !== 1)
+        )
+          return;
+        const before = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          const moved = new Set();
+          // Named places own these sources; discard only obsolete invisible WIP markers.
+          z.npcs = z.npcs.filter((n) => !n.id.startsWith('highlands-tribute-site-'));
+          for (const [index, site] of cfg.sites.entries()) {
+            const node = z.nodes.find((n) => n.tributeId === site.id && n.tribute);
+            if (!node) continue;
+            const landmark = z.npcs.find((n) => n.id === site.site),
+              plan = R.tributePlans.highlands.find((p) => p.id === site.id),
+              point = this.safe(site.x, site.y, z.id);
+            if (node.amount < plan.amount || this.s.party.some((u) => u.order?.id === node.id))
+              this.s.discovered['highlands:tribute:' + node.tributeId] = true;
+            Object.assign(node, point, {
+              site: site.site,
+              siteName: landmark?.name || site.site,
+              hidden: true,
+              concealedTribute: true,
+              storageStyle: site.storageStyle,
+              context: plan.context,
+            });
+            moved.add(node.id);
+            for (const [j, [dx, dy, structure]] of site.props.entries()) {
+              const id = 'highlands-tribute-scene-' + index + '-' + j,
+                p = z.props.find((p) => p.id === id),
+                position = this.safe(point.x + dx, point.y + dy, z.id);
+              const dressing = {
+                id,
+                ...position,
+                structure,
+                r: 0,
+                decorative: true,
+                tributeScene: site.id,
+              };
+              if (p) Object.assign(p, dressing);
+              else z.props.push(dressing);
+            }
+          }
+          if (before === z.id)
+            for (const u of this.s.party.filter((u) => moved.has(u.order?.id))) {
+              delete u.order.journey;
+              this.clearGatheringIntent(u);
+            }
+          z.highlandsTributeVersion = cfg.version;
+        } finally {
+          this.s.zone = before;
+        }
       }
       spaceQuestBoard(z) {
         if (dungeonIds.includes(z.id) || z.boardPositionVersion === 2) return;

@@ -2,6 +2,8 @@
 (function (root) {
   'use strict';
   const R = typeof PrototypeRules !== 'undefined' ? PrototypeRules : require('./rules.js');
+  const Highlands =
+    typeof PrototypeHighlands !== 'undefined' ? PrototypeHighlands : require('./highlands.js');
   // Ogre-quality craft across the existing catalog: organic contours and worn
   // material joins, with deliberate mineral, weapon and fortification edges retained.
   const organicContours = new Set([
@@ -255,6 +257,14 @@
     ctx.restore();
   }
   function draw(ctx, e, p, region = 0, rescued = false) {
+    if (e.renderKind === 'prop' && e.miningFacility) {
+      Highlands.drawMining(ctx, e, p);
+      return;
+    }
+    if (region === 2 && e.renderKind === 'prop' && e.highlandsNature) {
+      Highlands.drawNature(ctx, e, p);
+      return;
+    }
     if (e.type === 'pet' && !Object.hasOwn(R.petCompanions, e.petFamily)) return;
     if (e.kind === 'landmark' && e.id?.startsWith('bridge-')) return; // The full deck is drawn in world space.
     ctx.save();
@@ -5315,6 +5325,7 @@
     }
 
     function wolf(c = '#8c9998', large = false) {
+      const forestCoat = region === 2 && !large;
       // Tapered trunk, shoulder, haunch and bent hocks replace the box and four sticks.
       ctx.fillStyle = c;
       ctx.strokeStyle = ink;
@@ -5355,6 +5366,31 @@
       }
       oval(9, -8, 9, 12, c);
       oval(-15, -3, 8, 9, c);
+      if (forestCoat) {
+        // Buff underside, dark dorsal guard hairs and rusty ears/legs recall American red wolves.
+        shaped('#514739', () => {
+          ctx.moveTo(-21, -14);
+          ctx.quadraticCurveTo(-12, -23, 1, -17);
+          ctx.quadraticCurveTo(7, -18, 14, -13);
+          ctx.lineTo(5, -10);
+          ctx.quadraticCurveTo(-9, -15, -21, -14);
+        });
+        oval(-1, 4, 14, 3.5, '#cbb38a');
+        oval(12, -5, 5, 9, '#cbb38a');
+        for (const x of [-16, -6, 10, 18])
+          line(
+            [
+              [x - 1, 6],
+              [x - 2, 11],
+            ],
+            '#a86c49',
+            2,
+          );
+      }
+      if (forestCoat) {
+        ctx.fillStyle = c;
+        ctx.strokeStyle = ink;
+      }
       ctx.beginPath();
       ctx.moveTo(10, -16);
       ctx.quadraticCurveTo(8, -26, 14, -28);
@@ -5374,7 +5410,7 @@
           [17, -24],
           [14, -23],
         ],
-        '#bdafa0',
+        forestCoat ? '#b67a5b' : '#bdafa0',
       );
       poly(
         [
@@ -5382,7 +5418,7 @@
           [26, -20],
           [22, -21],
         ],
-        '#bdafa0',
+        forestCoat ? '#b67a5b' : '#bdafa0',
       );
       line(
         [
@@ -5400,7 +5436,7 @@
           [-3, -15],
           [5, -10],
         ],
-        '#a9b5a6',
+        forestCoat ? '#d7bd94' : '#a9b5a6',
         1.3,
       );
       poly(
@@ -5424,7 +5460,7 @@
             [x + 3, y + 2],
             [x + 6, y],
           ],
-          '#c1c5af',
+          forestCoat ? '#d4b98d' : '#c1c5af',
           0.8,
         );
       for (const x of [-16, -6, 10, 18])
@@ -5551,7 +5587,7 @@
       ctx.translate(0, 13);
       ctx.scale(1.22, 1.22);
       ctx.translate(0, -13);
-      wolf('#65717c');
+      wolf(region === 2 ? '#79614b' : '#65717c');
       for (const x of [-17, -5, 9])
         poly(
           [
@@ -12327,6 +12363,97 @@
           hearth(true);
           bottle(24, 3, '#9caeaa', 0.6);
           break;
+        case 'crown-coin-vault':
+          boards(-31, -46, 62, 59, '#66553d');
+          poly(
+            [
+              [31, -46],
+              [39, -51],
+              [39, 7],
+              [31, 13],
+            ],
+            '#3f463e',
+          );
+          for (const y of [-31, -12, 7]) {
+            rect(-28, y - 12, 55, 14, '#303d37');
+            for (const x of [-18, 0, 18]) {
+              for (let j = 0; j < 3; j++) {
+                oval(x, y - j * 3, 6, 2.4, '#99aaa4');
+                line(
+                  [
+                    [x - 4, y - j * 3],
+                    [x + 3, y - j * 3],
+                  ],
+                  '#d0d5c1',
+                  0.7,
+                );
+              }
+            }
+            timber([-31, y + 4], [31, y + 4], 3);
+          }
+          for (const x of [-24, 24])
+            line(
+              [
+                [x, -44],
+                [x, 11],
+              ],
+              '#7f8f87',
+              3,
+            );
+          line(
+            [
+              [-27, -39],
+              [27, 4],
+            ],
+            '#cab98c',
+            1.5,
+          );
+          oval(8, -13, 4, 4, '#9b5550');
+          paper(19, -32, 13);
+          break;
+        case 'treasury-audit-counter':
+          table(68);
+          paper(-14, -17, 23);
+          line(
+            [
+              [-21, -16],
+              [-7, -20],
+            ],
+            '#524e3d',
+            1,
+          );
+          for (const x of [-25, 22]) {
+            oval(x, -9, 7, 2.5, '#80958f');
+            oval(x, -12, 7, 2.5, '#c6d0c1');
+          }
+          timber([12, -14], [12, -43], 2.5);
+          line(
+            [
+              [-2, -36],
+              [26, -40],
+            ],
+            '#a7b5aa',
+            2,
+          );
+          for (const [x, y] of [
+            [0, -35],
+            [24, -39],
+          ]) {
+            line(
+              [
+                [x, y],
+                [x - 6, y + 13],
+                [x + 6, y + 13],
+                [x, y],
+              ],
+              '#7e8c7e',
+              1,
+            );
+            oval(x, y + 14, 7, 2, '#9aa99b');
+          }
+          softRect(-34, -8, 10, 12, '#b2a384', 1);
+          oval(-29, -3, 2, 2, '#a45c51');
+          break;
         case 'sealed-crown-consignment':
           chest(true, 0.9);
           break;
@@ -12339,8 +12466,8 @@
           table(55);
           paper(-6, -14, 20);
           for (const x of [-20, -12, 17]) {
-            oval(x, -8, 4, 2, '#b2a066');
-            oval(x, -11, 4, 2, '#e0cb86');
+            oval(x, -8, 4, 2, '#73878a');
+            oval(x, -11, 4, 2, '#cbd6cf');
           }
           break;
         case 'ore-sorting-bay':
@@ -12373,6 +12500,15 @@
             );
             rimBowl(x, y, 8, '#8c9990', '#727669');
             rockPiece(x, y - 2, 4, 4);
+            if (region === 2)
+              line(
+                [
+                  [x - 3, y - 5],
+                  [x + 2, y - 1],
+                ],
+                x < 0 ? '#d0d8c9' : '#a77c5a',
+                1.8,
+              );
           }
           break;
         case 'mint-workbench':
@@ -13113,8 +13249,28 @@
             [-18, -17],
             [0, -16],
             [18, -16],
-          ])
+          ]) {
             rockPiece(x, y, 10, 11);
+            if (region === 2) {
+              line(
+                [
+                  [x - 5, y - 6],
+                  [x, y - 2],
+                  [x + 4, y + 2],
+                ],
+                x < 0 ? '#bdc8bc' : '#6e9c83',
+                1.8,
+              );
+              line(
+                [
+                  [x, y - 5],
+                  [x + 4, y - 3],
+                ],
+                x < 0 ? '#dde1d0' : '#c08a63',
+                1.1,
+              );
+            }
+          }
           timber([-31, -13], [28, -13], 4, '#6f7d75');
           break;
         case 'ore-crane':
@@ -15673,7 +15829,61 @@
       ctx.stroke();
     }
     function craftedNode() {
-      if (e.tribute || e.icon === '🪙') {
+      if (e.tribute && e.concealedTribute) {
+        // Discovery exposes the reserve inside ordinary Crown stores; no burial mound.
+        if (e.storageStyle === 'signal-store') {
+          boards(-30, -20, 60, 36, '#727c70');
+          rect(-25, -16, 50, 26, '#343e36');
+          craftAt(0, 6, 0.7, () => chest(true));
+          line(
+            [
+              [-26, -15],
+              [-17, -7],
+            ],
+            '#a9ae97',
+            3,
+          );
+        } else if (e.storageStyle === 'ore-store') {
+          crateBody(-16, 9, 0.85);
+          craftAt(8, 3, 0.7, () => chest(true));
+          poly(
+            [
+              [-29, -28],
+              [-8, -33],
+              [27, -23],
+              [23, -13],
+              [-6, -17],
+            ],
+            '#707b62',
+          );
+          line(
+            [
+              [-27, -27],
+              [-7, -19],
+              [23, -15],
+            ],
+            '#b3ac85',
+            1.5,
+          );
+        } else if (e.storageStyle === 'haul-store') {
+          crateBody(0, 5, 1.1);
+          rect(-17, -6, 34, 17, '#3a4135');
+          craftAt(0, 6, 0.62, () => chest(true));
+          timber([-26, -19], [25, -25], 4);
+        } else {
+          craftAt(-12, 2, 0.7, () => chest(true));
+          crateBody(21, 8, 0.62);
+          paper(18, -15, 19);
+          line(
+            [
+              [-24, 15],
+              [27, 15],
+            ],
+            '#6c5a3c',
+            3,
+          );
+        }
+      } else if (e.tribute || e.icon === '🪙') {
         chest(true, 0.9);
       } else if (e.icon === '🪵') craftedDecoration('woodpile');
       else if (e.icon === '🧺') basketBody();
@@ -17109,7 +17319,7 @@
             break;
           case 'wolf':
             if (e.mountedCrownRider) crownDirewolfRider(!!e.ranged);
-            else wolf();
+            else wolf(region === 2 ? ['#7b5b43', '#b69a6d', '#a46543'][variant % 3] : undefined);
             break;
           case 'mireling':
             if (e.ranged) {
@@ -17379,6 +17589,8 @@
     frontierTreeShoots(ctx, e, p, region);
   }
   function unscaledHeight(e) {
+    if (e.miningFacility) return 90;
+    if (e.highlandsNature === 'tree') return 110;
     if (e.structure === 'crown-orrery') return 165;
     if (e.structure === 'watchpost') return 95;
     if (e.structure === 'frontier-grain-silo') return 165;
@@ -17423,7 +17635,7 @@
   const floorPalettes = [
     ['#294b36', '#31583e', '#203e30', '#95ad80'],
     ['#3e5544', '#4b614b', '#30483c', '#a2b48e'],
-    ['#485447', '#56614d', '#3b493f', '#b1b59a'],
+    ['#4a593b', '#74734b', '#3b4d36', '#c6b079'],
     ['#50413b', '#5d4b42', '#423732', '#b9987b'],
     ['#343644', '#414351', '#2c2f3c', '#a09b9e'],
   ];
@@ -17602,24 +17814,20 @@
       }
     } else if (region === 2) {
       if (k < 2) {
-        for (const ox of [-5, 0, 5])
-          line(x + ox, y + 3, x + ox + (ox === 0 ? 0 : Math.sign(ox) * 2), y - 5, '#9ca681', 1.2);
-      } else if (k === 2) {
-        for (const [ox, oy] of [
-          [-6, 1],
-          [0, -2],
-          [6, 2],
-        ])
-          dot(x + ox, y + oy, 2, '#8b8e82');
-      } else if (k === 3) {
-        line(x - 7, y + 1, x + 7, y - 3, '#7d6749', 2);
-        for (const ox of [-4, 0, 4]) line(x + ox, y - 1, x + ox + 2, y - 4, '#a28b65', 1);
-      } else if (k === 4) {
-        dot(x, y, 2.4, '#a89bc4');
-        dot(x - 4, y + 2, 1.2, '#c6b7dd');
+        for (const ox of [-5, 0, 5]) line(x + ox, y + 3, x + ox + 2, y - 3, '#9eaa68', 1);
+      } else if (k < 6) {
+        for (let j = 0; j < 5; j++) {
+          const lx = x + Math.sin(seed + j * 2.4) * 10,
+            ly = y + (j % 3) * 2;
+          ctx.fillStyle = ['#b18a46', '#a35b3b', '#c7ad62', '#78904d'][j % 4];
+          ctx.beginPath();
+          ctx.ellipse(lx, ly, 2.8, 1.2, j * 0.7, 0, Math.PI * 2);
+          ctx.fill();
+          line(lx - 2, ly + 1, lx + 2, ly - 1, '#63533b', 0.45);
+        }
       } else {
-        dot(x - 4, y, 1.5, '#9f997f');
-        dot(x + 3, y + 1, 1.8, '#777a72');
+        dot(x - 4, y, 1.5, '#a4a58a');
+        dot(x + 3, y + 1, 1.8, '#75826b');
       }
     } else if (region === 3) {
       if (k < 3) {
@@ -17714,7 +17922,7 @@
       ctx.lineWidth = 1.2;
       ctx.stroke();
     }
-    if (!blocked && materials) {
+    if (!blocked && materials && !(outdoor && region === 2) && dungeonId !== 'supply-highlands') {
       const regionName = ['vale', 'march', 'highlands', 'frontier', 'crown'][region];
       const key =
         'terrain:' +
@@ -18112,8 +18320,8 @@
           const a = bank[j - 1],
             b = bank[j],
             len = Math.hypot(b.x - a.x, b.y - a.y),
-            nx = -(b.y - a.y) / len,
-            ny = (b.x - a.x) / len;
+            nx = ((region === 2 ? 1 : -1) * (b.y - a.y)) / len,
+            ny = ((region === 2 ? -1 : 1) * (b.x - a.x)) / len;
           poly(
             [a, b, { x: b.x + nx * 62, y: b.y + ny * 62 }, { x: a.x + nx * 62, y: a.y + ny * 62 }],
             '#716e4f',
@@ -18125,7 +18333,12 @@
         }
         poly(w.points, '#426e70');
         const deep = w.points.map((p, j) =>
-          j < w.bankCount ? { x: Math.min(3000, p.x + 30), y: Math.min(3000, p.y + 28) } : p,
+          j < w.bankCount
+            ? {
+                x: Math.max(0, Math.min(size, p.x + (region === 2 ? -35 : 30))),
+                y: Math.min(size, p.y + 28),
+              }
+            : p,
         );
         ctx.save();
         ctx.beginPath();
@@ -18138,8 +18351,8 @@
           const a = bank[j - 1],
             b = bank[j],
             len = Math.hypot(b.x - a.x, b.y - a.y),
-            nx = -(b.y - a.y) / len,
-            ny = (b.x - a.x) / len;
+            nx = ((region === 2 ? 1 : -1) * (b.y - a.y)) / len,
+            ny = ((region === 2 ? -1 : 1) * (b.x - a.x)) / len;
           for (let d = 30; d < len; d += 100) {
             const x = a.x + ((b.x - a.x) * d) / len,
               y = a.y + ((b.y - a.y) * d) / len;
@@ -18156,7 +18369,7 @@
           }
         }
         // Raised timber follows the last leg through the coastal marsh.
-        const walks = harbor.boardwalk
+        const walks = (harbor.boardwalk || [])
           .slice(1)
           .map((p, j) => [harbor.boardwalk[j].x, harbor.boardwalk[j].y, p.x, p.y]);
         for (const [ax, ay, bx, by] of walks) {
@@ -18408,7 +18621,7 @@
     ctx.restore();
   }
   function bridges(ctx, screen, region = 0, materials = null, viewport = null) {
-    const {
+    let {
         bounds: [x1, x2],
         gaps,
       } = R.barriers[region],
@@ -18437,6 +18650,10 @@
     };
     ctx.save();
     for (const [lo, hi] of gaps) {
+      if (region === 2) {
+        [x1, x2] = R.channelBanks(2, (lo + hi) / 2);
+        stone = lo < 1100;
+      }
       if (
         viewport &&
         outsideScreen(
@@ -18605,7 +18822,7 @@
     if (!layout) return;
     const palette =
       dungeonId === 'supply-highlands'
-        ? { top: '#857965', side: '#52483d', edge: '#b2a28a' }
+        ? { top: '#979a86', side: '#626658', edge: '#c7c4a4' }
         : dungeonId === 'abyss'
           ? { top: '#6f5b5d', side: '#463b3d', edge: '#a77a6b' }
           : dungeonId === 'crypt'
@@ -18628,13 +18845,18 @@
       }
     };
     const block = (x1, x2, y1, y2) => {
-      const top = [
+      const rise =
+          dungeonId === 'supply-highlands' ? (Math.max(x2 - x1, y2 - y1) <= 45 ? 44 : 30) : 0,
+        top = [
           { x: x1, y: y1 },
           { x: x2, y: y1 },
           { x: x2, y: y2 },
           { x: x1, y: y2 },
-        ].map(screen),
-        drop = 7;
+        ].map((q) => {
+          const p = screen(q);
+          return { x: p.x, y: p.y - rise };
+        }),
+        drop = rise || 7;
       poly(
         [top[1], top[2], { x: top[2].x, y: top[2].y + drop }, { x: top[1].x, y: top[1].y + drop }],
         palette.side,
@@ -18655,9 +18877,46 @@
         ctx.stroke();
       }
 
+      if (dungeonId === 'supply-highlands') {
+        // Masonry courses and staggered joints make the counting screens real built cover.
+        for (const [a, b] of [
+          [top[1], top[2]],
+          [top[3], top[2]],
+        ]) {
+          for (const f of [1 / 3, 2 / 3]) {
+            ctx.strokeStyle = '#3f493f99';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y + drop * f);
+            ctx.lineTo(b.x, b.y + drop * f);
+            ctx.stroke();
+          }
+          const length = Math.hypot(b.x - a.x, b.y - a.y),
+            count = Math.max(1, Math.ceil(length / 42));
+          for (let row = 0; row < 3; row++)
+            for (let j = 1; j <= count; j++) {
+              const t = (j - (row % 2) * 0.5) / count;
+              if (t <= 0 || t >= 1) continue;
+              const x = a.x + (b.x - a.x) * t,
+                y = a.y + (b.y - a.y) * t;
+              ctx.beginPath();
+              ctx.moveTo(x, y + (drop * row) / 3);
+              ctx.lineTo(x, y + (drop * (row + 1)) / 3);
+              ctx.stroke();
+            }
+        }
+        for (const p of top) {
+          ctx.fillStyle = '#c5c9b1';
+          ctx.beginPath();
+          ctx.ellipse(p.x, p.y + 1, 1.7, 1, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
       const seam = (a, b) => {
         a = screen(a);
         b = screen(b);
+        a.y -= rise;
+        b.y -= rise;
         ctx.strokeStyle = palette.side + '99';
         ctx.lineWidth = 1;
         ctx.beginPath();
@@ -18676,7 +18935,18 @@
     for (const s of layout.surfaces || []) {
       const [x1, x2, y1, y2] = s.bounds;
       const color =
-        s.kind === 'flooded' ? '#416d7888' : s.kind === 'earth' ? '#6e614e66' : '#887b6555';
+        s.kind === 'flooded'
+          ? '#416d7888'
+          : s.kind === 'earth'
+            ? '#6e614e66'
+            : dungeonId === 'supply-highlands'
+              ? {
+                  'hearth-rug': '#915d3b99',
+                  'counting-slate': '#42534c66',
+                  'private-rug': '#74574599',
+                  'rider-mats': '#a0967066',
+                }[s.kind] || '#887b6555'
+              : '#887b6555';
       poly(
         [
           { x: x1, y: y1 },
@@ -18686,6 +18956,32 @@
         ].map(screen),
         color,
       );
+      if (dungeonId === 'supply-highlands' && s.kind !== 'counting-slate') {
+        const inset = 12;
+        poly(
+          [
+            { x: x1 + inset, y: y1 + inset },
+            { x: x2 - inset, y: y1 + inset },
+            { x: x2 - inset, y: y2 - inset },
+            { x: x1 + inset, y: y2 - inset },
+          ].map(screen),
+          '#00000000',
+          '#c9b78e99',
+          1.1,
+        );
+        for (let x = x1 + 35; x < x2 - 20; x += 45) {
+          const p = screen({ x, y: y1 + 23 });
+          poly(
+            [
+              { x: p.x, y: p.y - 2 },
+              { x: p.x + 3, y: p.y },
+              { x: p.x, y: p.y + 2 },
+              { x: p.x - 3, y: p.y },
+            ],
+            '#cab88a99',
+          );
+        }
+      }
       for (let y = y1 + 35; y < y2; y += 100)
         for (let x = x1 + 35; x < x2; x += 110) {
           const a = screen({ x, y }),
@@ -18826,6 +19122,7 @@
           ];
         }
       }
+      if (region === 2) path = path.filter((p) => !(p.x < 470 && p.y >= 1810 && p.y <= 2020));
       for (const q of path) nodes.set(q.x + ':' + q.y, q);
       for (let j = 1; j < path.length; j++) {
         const a = path[j - 1],

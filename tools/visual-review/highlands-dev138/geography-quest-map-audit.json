@@ -1,0 +1,277 @@
+{
+  "quests": [
+    {
+      "mode": "fresh",
+      "name": "The Tyrant's Grip",
+      "targets": [
+        {
+          "id": "enemy-84",
+          "x": 2850,
+          "y": 1170,
+          "kind": "boss"
+        }
+      ]
+    },
+    {
+      "mode": "fresh",
+      "name": "Ore Workers at Risk",
+      "targets": [
+        {
+          "id": "enemy-54",
+          "x": 760.507820653572,
+          "y": 2677.2412244252,
+          "kind": "mob"
+        }
+      ]
+    },
+    {
+      "mode": "fresh",
+      "name": "An Unwilling Hand",
+      "targets": [
+        {
+          "id": "entrance",
+          "x": 2850,
+          "y": 2850,
+          "kind": "dungeon"
+        }
+      ]
+    },
+    {
+      "mode": "fresh",
+      "name": "The Master's Reserve",
+      "targets": [
+        {
+          "id": "supply-entrance",
+          "x": 1920,
+          "y": 330,
+          "kind": "dungeon"
+        }
+      ]
+    },
+    {
+      "mode": "fresh",
+      "name": "Whose Mountain?",
+      "targets": [
+        {
+          "id": "wolf-den",
+          "x": 480,
+          "y": 1010,
+          "kind": "landmark"
+        },
+        {
+          "id": "bridge-north",
+          "x": 1610,
+          "y": 950
+        },
+        {
+          "id": "wolf-den",
+          "x": 480,
+          "y": 1010
+        },
+        {
+          "id": "ogre-hearth",
+          "x": 940,
+          "y": 3010
+        },
+        {
+          "id": "bridge-south",
+          "x": 1890,
+          "y": 2300
+        },
+        {
+          "id": "lookout",
+          "x": 3000,
+          "y": 2030
+        }
+      ]
+    },
+    {
+      "mode": "fresh",
+      "name": "Follow the Crowns",
+      "targets": [
+        {
+          "id": "ore",
+          "x": 650,
+          "y": 390,
+          "kind": "landmark"
+        },
+        {
+          "id": "ore",
+          "x": 650,
+          "y": 390
+        },
+        {
+          "id": "port",
+          "x": 3100,
+          "y": 500
+        }
+      ]
+    },
+    {
+      "mode": "dev137",
+      "name": "The Tyrant's Grip",
+      "targets": [
+        {
+          "id": "enemy-84",
+          "x": 2850,
+          "y": 1170,
+          "kind": "boss"
+        }
+      ]
+    },
+    {
+      "mode": "dev137",
+      "name": "Ore Workers at Risk",
+      "targets": [
+        {
+          "id": "enemy-54",
+          "x": 775.507820653572,
+          "y": 2651.2604623116667,
+          "kind": "mob"
+        }
+      ]
+    },
+    {
+      "mode": "dev137",
+      "name": "An Unwilling Hand",
+      "targets": [
+        {
+          "id": "entrance",
+          "x": 2850,
+          "y": 2850,
+          "kind": "dungeon"
+        }
+      ]
+    },
+    {
+      "mode": "dev137",
+      "name": "The Master's Reserve",
+      "targets": [
+        {
+          "id": "supply-entrance",
+          "x": 1920,
+          "y": 330,
+          "kind": "dungeon"
+        }
+      ]
+    },
+    {
+      "mode": "dev137",
+      "name": "Whose Mountain?",
+      "targets": [
+        {
+          "id": "wolf-den",
+          "x": 480,
+          "y": 1010,
+          "kind": "landmark"
+        },
+        {
+          "id": "bridge-north",
+          "x": 1610,
+          "y": 950
+        },
+        {
+          "id": "wolf-den",
+          "x": 480,
+          "y": 1010
+        },
+        {
+          "id": "ogre-hearth",
+          "x": 940,
+          "y": 3010
+        },
+        {
+          "id": "bridge-south",
+          "x": 1890,
+          "y": 2300
+        },
+        {
+          "id": "lookout",
+          "x": 3000,
+          "y": 2030
+        }
+      ]
+    },
+    {
+      "mode": "dev137",
+      "name": "Follow the Crowns",
+      "targets": [
+        {
+          "id": "ore",
+          "x": 650,
+          "y": 390,
+          "kind": "landmark"
+        },
+        {
+          "id": "ore",
+          "x": 650,
+          "y": 390
+        },
+        {
+          "id": "port",
+          "x": 3100,
+          "y": 500
+        }
+      ]
+    }
+  ],
+  "maps": [
+    {
+      "mode": "fresh",
+      "destinations": 14,
+      "selected": "Old Signal Keep",
+      "navigateStartsMovement": true,
+      "hiddenStoresNotExposed": true,
+      "terrainSource": "current game.blocked terrain grid, current roads and actual live destinations"
+    },
+    {
+      "mode": "dev137",
+      "destinations": 14,
+      "selected": "Old Signal Keep",
+      "navigateStartsMovement": true,
+      "hiddenStoresNotExposed": true,
+      "terrainSource": "current game.blocked terrain grid, current roads and actual live destinations"
+    }
+  ],
+  "ferry": [
+    {
+      "mode": "developer",
+      "roundTrip": true,
+      "ticketsAndFare": true,
+      "cargoRetained": true,
+      "clearArrivals": true,
+      "boardingFromLand": true,
+      "routeCopy": true
+    },
+    {
+      "mode": "normal",
+      "roundTrip": true,
+      "ticketsAndFare": true,
+      "cargoRetained": true,
+      "clearArrivals": true,
+      "boardingFromLand": true,
+      "routeCopy": true
+    },
+    {
+      "mode": "dev137",
+      "roundTrip": true,
+      "ticketsAndFare": true,
+      "cargoRetained": true,
+      "clearArrivals": true,
+      "boardingFromLand": true,
+      "routeCopy": true
+    }
+  ],
+  "distribution": {
+    "before": {
+      "total": 311,
+      "edgeProps": 200
+    },
+    "after": {
+      "total": 369,
+      "edgeProps": 265
+    },
+    "natureSpecies": ["beech", "birch", "hickory", "maple", "oak", "spruce", "tulip"],
+    "sourceNote": "Outer quarter-width band; counts describe props only, not a blanket quality score."
+  }
+}

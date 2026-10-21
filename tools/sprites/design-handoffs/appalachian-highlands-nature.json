@@ -1,0 +1,284 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-design",
+  "designId": "appalachian-highlands-nature",
+  "name": "Ironroot autumn mixed hardwood forest",
+  "kind": "environment",
+  "nextAction": "Publish the focused owner update, then receive owner play/appearance feedback. Resume future raster work from these exact procedural states when requested.",
+  "context": {
+    "originConversation": "Conversation URL unavailable; owner instructions dated 21 October 2026 are recorded in PR #374 and the scope document.",
+    "decisionSummary": "Complete Appalachian-inspired Highlands overhaul approved, including new nature assets, site relocation and coinage-ore facilities. All four tribute stores now require a physical Barracks search at existing named locations; Crag Tyrant arranged the concealment. Town Supplies retains cargo delivery.",
+    "decisionDate": "2026-10-21",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/374",
+    "contentDocuments": ["docs/HIGHLANDS_APPALACHIAN_DEV138.md"],
+    "locationAndLore": "Ironroot Highlands; silver/copper extraction and portrait-crown production. Preserve native households and current character canon."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner explicitly approved the complete rework and new procedural assets, then directed named-site/Barracks-only tribute search and Town Supplies cargo delivery.",
+    "proceduralDesignAcceptance": "Implementation authorized; exact unseen final artwork is not independently claimed accepted.",
+    "spriteProductionAuthorization": "Procedural code-native implementation in this update; no new raster job or registration.",
+    "generatedAppearanceAcceptance": "No generated raster images in this update.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "cc2020f1f27283c66fbe2bed0ca34b8aaee907f4",
+    "ownerFilesAndBranches": [
+      "src/prototype/highlands.js",
+      "src/prototype/visuals.js",
+      "src/prototype/sprites.js",
+      "rework/appalachian-highlands-dev138"
+    ],
+    "exactEntityState": [
+      {
+        "label": "oak",
+        "entity": {
+          "id": "forest-0-16",
+          "x": 1189.0645376071545,
+          "y": 1599.08226927828,
+          "r": 18,
+          "icon": "\ud83c\udf33",
+          "highlandsNature": "tree",
+          "treeSpecies": "oak",
+          "structure": "appalachian-tree",
+          "decorative": false,
+          "visualScale": 1.3,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "maple",
+        "entity": {
+          "id": "forest-0-33",
+          "x": 1218.0532920776714,
+          "y": 1846.266362279387,
+          "r": 18,
+          "icon": "\ud83c\udf33",
+          "highlandsNature": "tree",
+          "treeSpecies": "maple",
+          "structure": "appalachian-tree",
+          "decorative": false,
+          "visualScale": 1.5,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "hickory",
+        "entity": {
+          "id": "forest-0-44",
+          "x": 1262.3975751650369,
+          "y": 1670.3503006308465,
+          "r": 18,
+          "icon": "\ud83c\udf33",
+          "highlandsNature": "tree",
+          "treeSpecies": "hickory",
+          "structure": "appalachian-tree",
+          "decorative": false,
+          "visualScale": 1.4000000000000001,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "birch",
+        "entity": {
+          "id": "forest-0-18",
+          "x": 2322.7719531849643,
+          "y": 2003.1647897502216,
+          "r": 18,
+          "icon": "\ud83c\udf33",
+          "highlandsNature": "tree",
+          "treeSpecies": "birch",
+          "structure": "appalachian-tree",
+          "decorative": false,
+          "visualScale": 1.3,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "beech",
+        "entity": {
+          "id": "forest-1-5",
+          "x": 2305.8989170358063,
+          "y": 2120.1987535521876,
+          "r": 18,
+          "icon": "\ud83c\udf33",
+          "highlandsNature": "tree",
+          "treeSpecies": "beech",
+          "structure": "appalachian-tree",
+          "decorative": false,
+          "visualScale": 1.4000000000000001,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "tulip",
+        "entity": {
+          "id": "forest-1-44",
+          "x": 1171.0313541920877,
+          "y": 230.75440586991635,
+          "r": 18,
+          "icon": "\ud83c\udf33",
+          "highlandsNature": "tree",
+          "treeSpecies": "tulip",
+          "structure": "appalachian-tree",
+          "decorative": false,
+          "visualScale": 1.4000000000000001,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "spruce",
+        "entity": {
+          "id": "forest-4-6",
+          "x": 2467.4009263113244,
+          "y": 3166.645754377205,
+          "r": 18,
+          "icon": "\ud83c\udf33",
+          "highlandsNature": "tree",
+          "treeSpecies": "spruce",
+          "structure": "appalachian-tree",
+          "decorative": false,
+          "visualScale": 1.3,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "fern",
+        "entity": {
+          "id": "forest-0-34",
+          "x": 2474.232988852488,
+          "y": 2223.26006529065,
+          "r": 0,
+          "icon": "\ud83c\udf3f",
+          "highlandsNature": "fern",
+          "treeSpecies": "maple",
+          "structure": "appalachian-fern",
+          "decorative": true,
+          "visualScale": 1.15,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "laurel",
+        "entity": {
+          "id": "forest-0-43",
+          "x": 2535.0999392126323,
+          "y": 1981.2474221295568,
+          "r": 0,
+          "icon": "\ud83c\udf3f",
+          "highlandsNature": "laurel",
+          "treeSpecies": "oak",
+          "structure": "appalachian-laurel",
+          "decorative": true,
+          "visualScale": 1.15,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "fallen-log",
+        "entity": {
+          "id": "forest-1-16",
+          "x": 2716.058575674307,
+          "y": 1623.4409232805428,
+          "r": 0,
+          "icon": "\ud83c\udf3f",
+          "highlandsNature": "fallen-log",
+          "treeSpecies": "maple",
+          "structure": "appalachian-fallen-log",
+          "decorative": true,
+          "visualScale": 1.15,
+          "renderKind": "prop"
+        }
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/highlands-dev138/isolated-families.webp",
+    "isolatedReferenceHash": "1180584304ea1065db8468316276cabf06337f48ca042dca7a59176d9f900635",
+    "gameplayContextPaths": [
+      "tools/visual-review/highlands-dev138/woodland.webp",
+      "tools/visual-review/highlands-dev138/woodland-phone.webp",
+      "tools/visual-review/highlands-dev138/overview.webp"
+    ],
+    "traitsToPreserve": [
+      "Seven deliberate species: oak/maple/hickory/birch/beech/tulip/spruce; spruce stays a small minority.",
+      "Organic clustered leaves, species-specific trunks/branching and green/gold/copper/red seasonal stages; open floor with ferns, laurel, logs and fallen leaves.",
+      "Retain nature IDs and seeded state; preserve walkable road frontages and native actor outlines."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/highlands.js",
+        "sha256": "b2b0aa8b7ed42ecfa20d710e5acb617b5096d6dfb2cca01cf1393a6c207fc703"
+      },
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "1f2e24f5c19c9fe3a3873c38ecd441e2e64a5f99abbd69a8deee82d86fd08f99"
+      },
+      {
+        "path": "src/prototype/sprites.js",
+        "sha256": "7285847b152fd6476b107f515b5ff6ae64de88aee0b921a5dbd804862d8434d9"
+      }
+    ],
+    "workingTreeAfterSourceCommit": false
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "oak",
+      "maple",
+      "hickory",
+      "birch",
+      "beech",
+      "tulip",
+      "spruce",
+      "fern",
+      "laurel",
+      "fallen-log"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Static seeded variation; preserve exact entity state and native 150% context."
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/highlands.js",
+        "reason": "Authored composition, geography, seeded variation and functional placement remain procedural."
+      },
+      {
+        "owner": "src/prototype/visuals.js",
+        "reason": "Authored composition, geography, seeded variation and functional placement remain procedural."
+      },
+      {
+        "owner": "src/prototype/sprites.js",
+        "reason": "Authored composition, geography, seeded variation and functional placement remain procedural."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [
+      "oak",
+      "maple",
+      "hickory",
+      "birch",
+      "beech",
+      "tulip",
+      "spruce",
+      "fern",
+      "laurel",
+      "fallen-log"
+    ],
+    "directions": [],
+    "pivotContract": "Existing world coordinates and foot grounding; render must not mutate campaign state.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "Original main dev137 source and all 208 retained binary assets.",
+    "releaseCommit": null,
+    "releaseEvidence": "tools/visual-review/highlands-dev138/native-review.json"
+  }
+}

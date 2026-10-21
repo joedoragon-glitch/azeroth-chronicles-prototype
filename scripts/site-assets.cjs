@@ -3,6 +3,7 @@
 const scripts = [
   'src/sprint.js',
   ...[
+    'highlands',
     'data',
     'rules',
     'world',

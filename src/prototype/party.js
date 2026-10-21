@@ -1781,6 +1781,19 @@
           if (u.order?.type === 'gather') {
             this.gatheringCounterattack(u);
             const n = z.nodes.find((n) => n.id === u.order.id);
+            if (n?.tribute && !this.tributeKnown(n)) {
+              if (!u.order.scouting || !n.concealedTribute || z.id !== 'highlands') {
+                u.order =
+                  u.carry > 1e-7 ? { type: 'deposit', id: n.id, group: n.resourceGroup } : null;
+                continue;
+              }
+              if (dist(u, n) > R.highlandsTribute.searchRadius || !this.line(u, n)) {
+                this.followCompanion(u, n, this.laborMoveSpeed(u), dt, 30, false);
+                continue;
+              }
+              this.locateTribute(n);
+            }
+            if (u.order?.scouting) delete u.order.scouting;
             if (n && n.amount > 0 && (!n.mini || this.peace || this.miniCleared(n.mini))) {
               if (dist(u, n) > 60)
                 this.followCompanion(

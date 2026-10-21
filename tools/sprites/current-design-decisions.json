@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "date": "2026-10-20",
-  "runtimeBaseline": "0.9.1+snapshot.dev.118",
-  "sourceCommit": "31f44279585ca8400d395024417a4f12431bfd2c",
+  "date": "2026-10-21",
+  "runtimeBaseline": "0.9.1+snapshot.dev.138",
+  "sourceCommit": "cc2020f1f27283c66fbe2bed0ca34b8aaee907f4",
   "guide": "docs/SPRITE_RESTART_20261020.md",
   "priority": "Review and revise existing registered sprites against current accepted procedural designs before expanding the catalog. This closeout does not start generation.",
   "precedence": "Later recorded owner corrections and current procedural source supersede conflicting old catalog prose and historical reference images. Preserve historical provenance; do not infer unseen raster acceptance.",
@@ -21,11 +21,13 @@
     "docs/VEYRA_IVORY_20261020.md",
     "docs/APPROVED_LIPS_STAFFS_20261020.md",
     "docs/FRONTIER_TOWN_RIVER_20261020.md",
-    "docs/CROWN_COMPANIONS_20261020.md"
+    "docs/CROWN_COMPANIONS_20261020.md",
+    "docs/HIGHLANDS_APPALACHIAN_DEV138.md",
+    "docs/HIGHLANDS_TREASURY_DEV138.md"
   ],
   "assets": {
     "transport:ferry": {
-      "traits": "Owner-selected option 3: twin curved plank hulls, reed canopy, benches/open deck, blue-green trim, rope fenders, paired amber lamps and tan-hatted ferryman. Replace the old single-sail design; render at 216×108, exactly 50% larger than dev.136 in each dimension, with hull floating clear of timber.",
+      "traits": "Owner-selected option 3: twin curved plank hulls, reed canopy, benches/open deck, blue-green trim, rope fenders, paired amber lamps and tan-hatted ferryman. Replace the old single-sail design; render at 216\u00d7108, exactly 50% larger than dev.136 in each dimension, with hull floating clear of timber.",
       "decisionDocuments": ["docs/TIDAL_FERRY_DEV136.md", "docs/FERRY_SIZE_DEV137.md"],
       "handoffs": ["tools/sprites/design-handoffs/tidal-twin-hull-ferry.json"],
       "selectedRepresentation": "raster"
@@ -110,21 +112,29 @@
     },
     "prop:alpine-scrub:highlands": {
       "traits": "Owner selected current procedural gallery #19, including its silhouette, composition and proportions. Retained raster is comparison/rollback source; do not use it to undo that choice.",
-      "decisionDocuments": ["docs/PROCEDURAL_SELECTIONS_20261020.md"],
+      "decisionDocuments": [
+        "docs/PROCEDURAL_SELECTIONS_20261020.md",
+        "docs/HIGHLANDS_APPALACHIAN_DEV138.md"
+      ],
       "handoffs": [
         "tools/sprites/design-handoffs/approved-art-raster-prop-alpine-scrub-highlands.json",
         "tools/sprites/design-handoffs/approved-art-decoration-alpine-scrub.json"
       ],
-      "selectedRepresentation": "procedural"
+      "selectedRepresentation": "procedural",
+      "currentRegionalUse": "Historical retained design; rebuilt Highlands nature is now the appalachian-highlands-nature family."
     },
     "prop:heather:highlands": {
       "traits": "Owner selected current procedural gallery #21, including its silhouette, composition and proportions. Retained raster is comparison/rollback source; do not use it to undo that choice.",
-      "decisionDocuments": ["docs/PROCEDURAL_SELECTIONS_20261020.md"],
+      "decisionDocuments": [
+        "docs/PROCEDURAL_SELECTIONS_20261020.md",
+        "docs/HIGHLANDS_APPALACHIAN_DEV138.md"
+      ],
       "handoffs": [
         "tools/sprites/design-handoffs/approved-art-raster-prop-heather-highlands.json",
         "tools/sprites/design-handoffs/approved-art-decoration-heather.json"
       ],
-      "selectedRepresentation": "procedural"
+      "selectedRepresentation": "procedural",
+      "currentRegionalUse": "Historical retained design; rebuilt Highlands nature is now the appalachian-highlands-nature family."
     },
     "prop:mint-workbench:highlands": {
       "traits": "Owner selected current procedural gallery #23, including its silhouette, composition and proportions. Retained raster is comparison/rollback source; do not use it to undo that choice.",
@@ -136,11 +146,12 @@
       "selectedRepresentation": "procedural"
     },
     "prop:ore-sorting-bay:highlands": {
-      "traits": "Owner selected current procedural gallery #24, including its silhouette, composition and proportions. Retained raster is comparison/rollback source; do not use it to undo that choice.",
+      "traits": "Owner selected current procedural gallery #24, including its silhouette, composition and proportions. Retained raster is comparison/rollback source; do not use it to undo that choice. Current silver/copper mineral cues serve coinage production; use dev138 ore-working context.",
       "decisionDocuments": ["docs/PROCEDURAL_SELECTIONS_20261020.md"],
       "handoffs": [
         "tools/sprites/design-handoffs/approved-art-raster-prop-ore-sorting-bay-highlands.json",
-        "tools/sprites/design-handoffs/approved-art-decoration-ore-sorting-bay.json"
+        "tools/sprites/design-handoffs/approved-art-decoration-ore-sorting-bay.json",
+        "tools/sprites/design-handoffs/ironroot-coinage-workings.json"
       ],
       "selectedRepresentation": "procedural"
     },
@@ -215,5 +226,22 @@
       "decisionDocuments": ["docs/TREASURER_MONEYBAG_20261020.md"],
       "handoffs": ["tools/sprites/design-handoffs/approved-art-boss-ridge.json"]
     }
-  }
+  },
+  "regionDesigns": {
+    "highlands": {
+      "direction": "Appalachian autumn hardwood and Crown coinage province; current procedural source supersedes old Scottish/pine/heather/alpine presentation.",
+      "handoffs": [
+        "tools/sprites/design-handoffs/appalachian-highlands-nature.json",
+        "tools/sprites/design-handoffs/ironroot-coinage-workings.json",
+        "tools/sprites/design-handoffs/appalachian-highlands-geography.json",
+        "tools/sprites/design-handoffs/highlands-concealed-tribute-stores.json",
+        "tools/sprites/design-handoffs/ironroot-forest-wolves.json",
+        "tools/sprites/design-handoffs/ironroot-treasury-household.json"
+      ],
+      "selection": "New highlandsNature and miningFacility props explicitly bypass retained sprites. Highlands ground uses current warm procedural floor. All retained originals, registrations and ferry remain available; no raster generation.",
+      "fauna": "Owner-approved brown/buff/rust wild wolves and larger armored direwolf mounts; elk mounts declined. Highlands wild wolves bypass retained gray raster. Other regions retain identical drawings.",
+      "treasury": "Owner-requested procedural complete interior pilot: Crag\u2019s defended coinage household, functional rooms, real structural cover, seven original defenders, three stable caches and preserved progress/return rules. Other Treasury remakes are future work."
+    }
+  },
+  "workingTreeAfterSourceCommit": false
 }
