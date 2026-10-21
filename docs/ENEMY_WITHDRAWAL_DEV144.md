@@ -17,6 +17,8 @@ No new skills, balance tables, health thresholds, damage, cooldown durations, pe
 
 Four older suites also fail on an isolated unchanged dev.143 checkout at exactly the same assertions: `night-ringleader-rogue` expects obsolete night HP escalation; `enemy-support-healing` expects inherited Nightmare night scaling; `snapshot-dreadmaw` fails its historical Rogue-rules hash; `cindermaw-ministry` assumes a Cordon state absent in its baseline fixture. No unrelated rules or fixtures changed to force those suites green. Current focused cases cover the affected withdrawal/healing choices directly. No broad CI or device matrix.
 
-## Publication checkpoint
+## Published
 
-Implementation checked; PR #380. Package-only publication and exact live-byte verification are next. The normal release workflow is temporarily held on this candidate so only the owner-authorized package publisher can run on merge; restoration follows successful live-byte verification. No broad CI.
+Live as `0.9.1+snapshot.dev.144` through PR #380, merge `68f16e1b43c6d819bbb5b5d607cfb370547ea3d1`. Package-only run [39677059008](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39677059008) succeeded. The exact public build and nine checked files match the locally checked candidate byte-for-byte, including all three changed combat owners. [Receipt](evidence/ENEMY_WITHDRAWAL_DEV144_PUBLICATION_20261021.json).
+
+Normal `pages.yml` restored byte-for-byte; temporary owner publisher removed in closeout. No broad GitHub CI. Saved progress/schema retained. Owner phone play is next; no automatic further changes.

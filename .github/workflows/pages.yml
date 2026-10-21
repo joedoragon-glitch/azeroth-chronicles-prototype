@@ -1,9 +1,9 @@
 name: Test and deploy app
 on:
   push:
-    branches: [owner-withdrawal-dev144-held]
+    branches: [main]
   pull_request:
-    branches: [owner-withdrawal-dev144-held]
+    branches: [main, perf/v09-integration-20261010]
   workflow_dispatch:
 
 permissions:
