@@ -1,0 +1,757 @@
+{
+  "runtime": "0.9.1+snapshot.dev.118",
+  "baseline": "31fcdc9b500cc13e09082349745b83f77055ea71",
+  "passedCases": 146,
+  "findings": [
+    {
+      "severity": "low",
+      "kind": "misleading feedback",
+      "reproduction": "Mage charged Skill 3; ready Ranger inside Silence; wounded pet; manual Heal.",
+      "actualMessage": "Heal is cooling down · 0s.",
+      "expected": "Explain that the ready Ranger is silenced, rather than on cooldown.",
+      "mechanics": "Correctly blocked; no pet exclusion or cooldown consumption."
+    }
+  ],
+  "results": [
+    {
+      "skill": "Ranger hero charged Heal",
+      "recipient": "hero",
+      "pass": true
+    },
+    {
+      "skill": "Paladin party ward",
+      "recipient": "hero",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Last Bastion",
+      "recipient": "hero",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion manual Heal",
+      "recipient": "hero",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion AI Heal",
+      "recipient": "hero",
+      "pass": true
+    },
+    {
+      "skill": "Lifebinder ally heal",
+      "recipient": "hero",
+      "pass": true
+    },
+    {
+      "skill": "Mage Fracture amplification",
+      "recipient": "hero",
+      "pass": true
+    },
+    {
+      "skill": "Ranger hero charged Heal",
+      "recipient": "soldier",
+      "pass": true
+    },
+    {
+      "skill": "Paladin party ward",
+      "recipient": "soldier",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Last Bastion",
+      "recipient": "soldier",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion manual Heal",
+      "recipient": "soldier",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion AI Heal",
+      "recipient": "soldier",
+      "pass": true
+    },
+    {
+      "skill": "Lifebinder ally heal",
+      "recipient": "soldier",
+      "pass": true
+    },
+    {
+      "skill": "Mage Fracture amplification",
+      "recipient": "soldier",
+      "pass": true
+    },
+    {
+      "skill": "Ranger Rally actual AI basic/movement/expiry",
+      "recipient": "soldier",
+      "pass": true
+    },
+    {
+      "skill": "Ranger hero charged Heal",
+      "recipient": "archer",
+      "pass": true
+    },
+    {
+      "skill": "Paladin party ward",
+      "recipient": "archer",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Last Bastion",
+      "recipient": "archer",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion manual Heal",
+      "recipient": "archer",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion AI Heal",
+      "recipient": "archer",
+      "pass": true
+    },
+    {
+      "skill": "Lifebinder ally heal",
+      "recipient": "archer",
+      "pass": true
+    },
+    {
+      "skill": "Mage Fracture amplification",
+      "recipient": "archer",
+      "pass": true
+    },
+    {
+      "skill": "Ranger Rally actual AI basic/movement/expiry",
+      "recipient": "archer",
+      "pass": true
+    },
+    {
+      "skill": "Ranger hero charged Heal",
+      "recipient": "pet:thorn",
+      "pass": true
+    },
+    {
+      "skill": "Paladin party ward",
+      "recipient": "pet:thorn",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Last Bastion",
+      "recipient": "pet:thorn",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion manual Heal",
+      "recipient": "pet:thorn",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion AI Heal",
+      "recipient": "pet:thorn",
+      "pass": true
+    },
+    {
+      "skill": "Lifebinder ally heal",
+      "recipient": "pet:thorn",
+      "pass": true
+    },
+    {
+      "skill": "Mage Fracture amplification",
+      "recipient": "pet:thorn",
+      "pass": true
+    },
+    {
+      "skill": "Ranger Rally actual AI basic/movement/expiry",
+      "recipient": "pet:thorn",
+      "pass": true
+    },
+    {
+      "skill": "Ranger hero charged Heal",
+      "recipient": "pet:crypt",
+      "pass": true
+    },
+    {
+      "skill": "Paladin party ward",
+      "recipient": "pet:crypt",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Last Bastion",
+      "recipient": "pet:crypt",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion manual Heal",
+      "recipient": "pet:crypt",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion AI Heal",
+      "recipient": "pet:crypt",
+      "pass": true
+    },
+    {
+      "skill": "Lifebinder self-heal",
+      "recipient": "pet:crypt",
+      "pass": true
+    },
+    {
+      "skill": "Mage Fracture amplification",
+      "recipient": "pet:crypt",
+      "pass": true
+    },
+    {
+      "skill": "Ranger Rally actual AI basic/movement/expiry",
+      "recipient": "pet:crypt",
+      "pass": true
+    },
+    {
+      "skill": "Ranger hero charged Heal",
+      "recipient": "pet:mire",
+      "pass": true
+    },
+    {
+      "skill": "Paladin party ward",
+      "recipient": "pet:mire",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Last Bastion",
+      "recipient": "pet:mire",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion manual Heal",
+      "recipient": "pet:mire",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion AI Heal",
+      "recipient": "pet:mire",
+      "pass": true
+    },
+    {
+      "skill": "Lifebinder ally heal",
+      "recipient": "pet:mire",
+      "pass": true
+    },
+    {
+      "skill": "Mage Fracture amplification",
+      "recipient": "pet:mire",
+      "pass": true
+    },
+    {
+      "skill": "Ranger Rally actual AI basic/movement/expiry",
+      "recipient": "pet:mire",
+      "pass": true
+    },
+    {
+      "skill": "Ranger hero charged Heal",
+      "recipient": "pet:archive",
+      "pass": true
+    },
+    {
+      "skill": "Paladin party ward",
+      "recipient": "pet:archive",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Last Bastion",
+      "recipient": "pet:archive",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion manual Heal",
+      "recipient": "pet:archive",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion AI Heal",
+      "recipient": "pet:archive",
+      "pass": true
+    },
+    {
+      "skill": "Lifebinder ally heal",
+      "recipient": "pet:archive",
+      "pass": true
+    },
+    {
+      "skill": "Mage Fracture amplification",
+      "recipient": "pet:archive",
+      "pass": true
+    },
+    {
+      "skill": "Ranger Rally actual AI basic/movement/expiry",
+      "recipient": "pet:archive",
+      "pass": true
+    },
+    {
+      "skill": "Ranger hero charged Heal",
+      "recipient": "pet:ridge",
+      "pass": true
+    },
+    {
+      "skill": "Paladin party ward",
+      "recipient": "pet:ridge",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Last Bastion",
+      "recipient": "pet:ridge",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion manual Heal",
+      "recipient": "pet:ridge",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion AI Heal",
+      "recipient": "pet:ridge",
+      "pass": true
+    },
+    {
+      "skill": "Lifebinder ally heal",
+      "recipient": "pet:ridge",
+      "pass": true
+    },
+    {
+      "skill": "Mage Fracture amplification",
+      "recipient": "pet:ridge",
+      "pass": true
+    },
+    {
+      "skill": "Ranger Rally actual AI basic/movement/expiry",
+      "recipient": "pet:ridge",
+      "pass": true
+    },
+    {
+      "skill": "Ranger hero charged Heal",
+      "recipient": "pet:mine",
+      "pass": true
+    },
+    {
+      "skill": "Paladin party ward",
+      "recipient": "pet:mine",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Last Bastion",
+      "recipient": "pet:mine",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion manual Heal",
+      "recipient": "pet:mine",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion AI Heal",
+      "recipient": "pet:mine",
+      "pass": true
+    },
+    {
+      "skill": "Lifebinder ally heal",
+      "recipient": "pet:mine",
+      "pass": true
+    },
+    {
+      "skill": "Mage Fracture amplification",
+      "recipient": "pet:mine",
+      "pass": true
+    },
+    {
+      "skill": "Ranger Rally actual AI basic/movement/expiry",
+      "recipient": "pet:mine",
+      "pass": true
+    },
+    {
+      "skill": "Ranger hero charged Heal",
+      "recipient": "pet:warlord",
+      "pass": true
+    },
+    {
+      "skill": "Paladin party ward",
+      "recipient": "pet:warlord",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Last Bastion",
+      "recipient": "pet:warlord",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion manual Heal",
+      "recipient": "pet:warlord",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion AI Heal",
+      "recipient": "pet:warlord",
+      "pass": true
+    },
+    {
+      "skill": "Lifebinder ally heal",
+      "recipient": "pet:warlord",
+      "pass": true
+    },
+    {
+      "skill": "Mage Fracture amplification",
+      "recipient": "pet:warlord",
+      "pass": true
+    },
+    {
+      "skill": "Ranger Rally actual AI basic/movement/expiry",
+      "recipient": "pet:warlord",
+      "pass": true
+    },
+    {
+      "skill": "Ranger hero charged Heal",
+      "recipient": "pet:abyss",
+      "pass": true
+    },
+    {
+      "skill": "Paladin party ward",
+      "recipient": "pet:abyss",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Last Bastion",
+      "recipient": "pet:abyss",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion manual Heal",
+      "recipient": "pet:abyss",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion AI Heal",
+      "recipient": "pet:abyss",
+      "pass": true
+    },
+    {
+      "skill": "Lifebinder ally heal",
+      "recipient": "pet:abyss",
+      "pass": true
+    },
+    {
+      "skill": "Mage Fracture amplification",
+      "recipient": "pet:abyss",
+      "pass": true
+    },
+    {
+      "skill": "Ranger Rally actual AI basic/movement/expiry",
+      "recipient": "pet:abyss",
+      "pass": true
+    },
+    {
+      "skill": "Ranger hero charged Heal",
+      "recipient": "pet:citadel",
+      "pass": true
+    },
+    {
+      "skill": "Paladin party ward",
+      "recipient": "pet:citadel",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Last Bastion",
+      "recipient": "pet:citadel",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion manual Heal",
+      "recipient": "pet:citadel",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion AI Heal",
+      "recipient": "pet:citadel",
+      "pass": true
+    },
+    {
+      "skill": "Lifebinder ally heal",
+      "recipient": "pet:citadel",
+      "pass": true
+    },
+    {
+      "skill": "Mage Fracture amplification",
+      "recipient": "pet:citadel",
+      "pass": true
+    },
+    {
+      "skill": "Ranger Rally actual AI basic/movement/expiry",
+      "recipient": "pet:citadel",
+      "pass": true
+    },
+    {
+      "skill": "Ranger hero charged Heal",
+      "recipient": "pet:cindermaw",
+      "pass": true
+    },
+    {
+      "skill": "Paladin party ward",
+      "recipient": "pet:cindermaw",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Last Bastion",
+      "recipient": "pet:cindermaw",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion manual Heal",
+      "recipient": "pet:cindermaw",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion AI Heal",
+      "recipient": "pet:cindermaw",
+      "pass": true
+    },
+    {
+      "skill": "Lifebinder ally heal",
+      "recipient": "pet:cindermaw",
+      "pass": true
+    },
+    {
+      "skill": "Mage Fracture amplification",
+      "recipient": "pet:cindermaw",
+      "pass": true
+    },
+    {
+      "skill": "Ranger Rally actual AI basic/movement/expiry",
+      "recipient": "pet:cindermaw",
+      "pass": true
+    },
+    {
+      "skill": "Ranger hero charged Heal",
+      "recipient": "pet:darklord",
+      "pass": true
+    },
+    {
+      "skill": "Paladin party ward",
+      "recipient": "pet:darklord",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Last Bastion",
+      "recipient": "pet:darklord",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion manual Heal",
+      "recipient": "pet:darklord",
+      "pass": true
+    },
+    {
+      "skill": "Ranger companion AI Heal",
+      "recipient": "pet:darklord",
+      "pass": true
+    },
+    {
+      "skill": "Lifebinder ally heal",
+      "recipient": "pet:darklord",
+      "pass": true
+    },
+    {
+      "skill": "Mage Fracture amplification",
+      "recipient": "pet:darklord",
+      "pass": true
+    },
+    {
+      "skill": "Ranger Rally actual AI basic/movement/expiry",
+      "recipient": "pet:darklord",
+      "pass": true
+    },
+    {
+      "skill": "ward exclusion",
+      "recipient": "dead",
+      "pass": true
+    },
+    {
+      "skill": "ward exclusion",
+      "recipient": "resting",
+      "pass": true
+    },
+    {
+      "skill": "ward exclusion",
+      "recipient": "far",
+      "pass": true
+    },
+    {
+      "skill": "ward exclusion",
+      "recipient": "wall",
+      "pass": true
+    },
+    {
+      "skill": "rally exclusion",
+      "recipient": "dead",
+      "pass": true
+    },
+    {
+      "skill": "rally exclusion",
+      "recipient": "resting",
+      "pass": true
+    },
+    {
+      "skill": "rally exclusion",
+      "recipient": "far",
+      "pass": true
+    },
+    {
+      "skill": "rally exclusion",
+      "recipient": "wall",
+      "pass": true
+    },
+    {
+      "skill": "heroHeal exclusion",
+      "recipient": "dead",
+      "pass": true
+    },
+    {
+      "skill": "heroHeal exclusion",
+      "recipient": "resting",
+      "pass": true
+    },
+    {
+      "skill": "rangerHeal exclusion",
+      "recipient": "dead",
+      "pass": true
+    },
+    {
+      "skill": "rangerHeal exclusion",
+      "recipient": "resting",
+      "pass": true
+    },
+    {
+      "skill": "lifebinder exclusion",
+      "recipient": "dead",
+      "pass": true
+    },
+    {
+      "skill": "lifebinder exclusion",
+      "recipient": "resting",
+      "pass": true
+    },
+    {
+      "skill": "mine actual self ward",
+      "recipient": "self only",
+      "pass": true
+    },
+    {
+      "skill": "cindermaw actual self ward",
+      "recipient": "self only",
+      "pass": true
+    },
+    {
+      "skill": "Actual Mage Fracture cast/projectile",
+      "recipient": "pet:ridge",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Weaken shared incoming damage",
+      "recipient": "hero",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Weaken shared incoming damage",
+      "recipient": "soldier",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Weaken shared incoming damage",
+      "recipient": "archer",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Weaken shared incoming damage",
+      "recipient": "pet:thorn",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Weaken shared incoming damage",
+      "recipient": "pet:crypt",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Weaken shared incoming damage",
+      "recipient": "pet:mire",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Weaken shared incoming damage",
+      "recipient": "pet:archive",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Weaken shared incoming damage",
+      "recipient": "pet:ridge",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Weaken shared incoming damage",
+      "recipient": "pet:mine",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Weaken shared incoming damage",
+      "recipient": "pet:warlord",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Weaken shared incoming damage",
+      "recipient": "pet:abyss",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Weaken shared incoming damage",
+      "recipient": "pet:citadel",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Weaken shared incoming damage",
+      "recipient": "pet:cindermaw",
+      "pass": true
+    },
+    {
+      "skill": "Paladin Weaken shared incoming damage",
+      "recipient": "pet:darklord",
+      "pass": true
+    },
+    {
+      "skill": "Ranger charged Heal simultaneous mixed party",
+      "recipient": "hero + Soldier + Ranger + two different pets",
+      "pass": true
+    },
+    {
+      "skill": "ranger personal Skill 3",
+      "recipient": "hero only",
+      "pass": true
+    },
+    {
+      "skill": "paladin personal Skill 3",
+      "recipient": "hero only",
+      "pass": true
+    },
+    {
+      "skill": "Mage Silence caster restriction / outside support",
+      "recipient": "Ranger and Lifebinder source; wounded pet inside field",
+      "pass": true
+    }
+  ],
+  "sourceHashes": {
+    "src/prototype/hero-combat.js": "bd1e499aeec1694c4d86be7b2ce1e9b0fd60fd688bd873303458cb7aec902531",
+    "src/prototype/party.js": "fee55550c5d615ad68b74c1e5820511e060b9667f418d8548cc9dd27214d4aa6",
+    "src/prototype/party-pets.js": "6f97ffe5f4af3e93017e21088b719448dc997916cb1e35daebfe0a51ea7827b2",
+    "src/prototype/combat.js": "ae8c36339c4828eb6770ee3882e5804628847c955045dcc6b2917be6ce635dd5",
+    "src/prototype/rules.js": "20cda6f6585dc0fe58af4ee904ea1edbf3f411ef462a68aba473e75410b25e60",
+    "src/prototype/engine.js": "7f959151daf730af84f28eb1fd8b5dcb34ddbcba5303fc1451c6a696b97211d6",
+    "src/prototype/progression.js": "fa26ab74278d23dc84557a2084117ccc3dc08198aa6554a788f015fd5d6511d5"
+  },
+  "scope": "Source audit plus native domain-method/AI/projectile probes; no browser, full-game CI or live gameplay changes."
+}

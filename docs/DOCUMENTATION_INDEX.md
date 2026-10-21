@@ -20,6 +20,7 @@ Current entrypoints below supersede dated checkpoint prose above. The per-file h
 
 | Need | Maintained entrypoint |
 | --- | --- |
+| Hero, troop and pet support recipients; one Silence feedback issue | [Dev.118 recipient audit](SUPPORT_RECIPIENT_AUDIT_20261020.md) |
 | Resume sprite work, current procedural selections and accepted character corrections | [20 October sprite restart](SPRITE_RESTART_20261020.md) |
 | Companion behavior audit findings (all three repaired in dev.110) | [Audit](COMPANION_BEHAVIOR_AUDIT_20261020.md), [implemented repairs](CROWN_COMPANIONS_20261020.md) |
 | Fort defenses, enemy cover fire, Expedition IV audit and Work for passage | [Dev.109 scope](FORTS_RANGER_PASSAGE_20261020.md) |
