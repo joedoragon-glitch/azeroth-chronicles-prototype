@@ -85,6 +85,7 @@ const server = http.createServer((req, res) => {
           order: null,
           shieldStance: 0,
           shieldRank: 0,
+          supportEffects: [],
           deathRollHeld: false,
           keeperHeld: false,
         });
@@ -400,6 +401,27 @@ const server = http.createServer((req, res) => {
     await page.mouse.up();
     assert((await state()).queue[0].charged);
     cases++;
+    // Native emulated finger hold exercises browser touch -> pointer capture -> release.
+    await reset();
+    const touchSession = await page.context().newCDPSession(page);
+    await touchSession.send('Input.dispatchTouchEvent', {
+      type: 'touchStart',
+      touchPoints: [
+        {
+          x: box.x + box.width / 2,
+          y: box.y + box.height / 2,
+          id: 7,
+          radiusX: 1,
+          radiusY: 1,
+          force: 1,
+        },
+      ],
+    });
+    await step(0.27);
+    await touchSession.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    assert((await state()).queue[0].charged);
+    await touchSession.detach();
+    cases++;
     // Long frame / low cadence cannot turn a held request into an ordinary cast.
     await reset('mage', 0.05);
     await down();
@@ -431,6 +453,60 @@ const server = http.createServer((req, res) => {
     await step(0.02);
     assert.equal((await state()).queue.length, 0);
     cases++;
+    // Actual companion Heal button/key route queues one hero-directed request.
+    await reset();
+    await tap();
+    await page.evaluate(() => {
+      const g = Prototype.game,
+        r = g.unit('archer', 630, 900);
+      r.healCd = 1;
+      g.s.party.push(r);
+      Prototype.updateHUD();
+    });
+    assert(await page.locator('#health-potion').isEnabled());
+    await page.locator('#health-potion').click();
+    assert(await page.evaluate(() => !!Prototype.game.queuedRangerHeal()));
+    assert((await page.locator('#health-potion small').textContent()).includes('QUEUED'));
+    await page.keyboard.press('h');
+    await page.locator('#health-potion').click();
+    await page.evaluate(() => {
+      const g = Prototype.game;
+      g.s.party.find((u) => u.type === 'archer').healCd = 0;
+      g.autoRangerSupport();
+      Prototype.updateHUD();
+    });
+    assert.equal(await page.evaluate(() => Prototype.game.queuedRangerHeal()), null);
+    assert.equal(
+      await page.evaluate(
+        () => Prototype.game.hero.supportEffects.filter((e) => e.type === 'health').length,
+      ),
+      1,
+    );
+    assert.equal(
+      await page.evaluate(() => Prototype.game.s.party.find((u) => u.type === 'archer').healCd),
+      10,
+    );
+    assert(
+      (await state()).queue.some((r) => r.slot === 2 && !r.charged),
+      'companion healing preserves the independent hero skill request',
+    );
+    cases++;
+    for (const cancel of ['recall', 'menu']) {
+      await reset();
+      await page.evaluate(() => {
+        const g = Prototype.game,
+          r = g.unit('archer', 630, 900);
+        r.healCd = 1;
+        g.s.party.push(r);
+        Prototype.updateHUD();
+      });
+      await page.locator('#health-potion').click();
+      if (cancel === 'recall') await page.locator('#recall-button').click();
+      else await page.evaluate(() => Prototype.openMenu('Heal cancel', '', []));
+      assert.equal(await page.evaluate(() => Prototype.game.queuedRangerHeal()), null);
+      if (cancel === 'menu') await page.evaluate(() => Prototype.closeMenu());
+      cases++;
+    }
     // Capture English and Spanish feedback at phone dimensions.
     const out = path.join(root, 'tools/visual-review/skill-queue-dev139');
     fs.mkdirSync(out, { recursive: true });
@@ -440,6 +516,14 @@ const server = http.createServer((req, res) => {
     await down(4);
     await step(0.27);
     await up(4);
+    await page.evaluate(() => {
+      const g = Prototype.game,
+        r = g.unit('archer', 630, 900);
+      r.healCd = 2.8;
+      g.s.party.push(r);
+      Prototype.updateHUD();
+    });
+    await page.locator('#health-potion').click();
     await page.screenshot({
       path: path.join(out, 'phone-queued-en.jpg'),
       type: 'jpeg',
@@ -469,6 +553,15 @@ const server = http.createServer((req, res) => {
     await down(4);
     await step(0.27);
     await up(4);
+    await page.evaluate(() => {
+      const g = Prototype.game,
+        r = g.unit('archer', 630, 900);
+      r.healCd = 2.8;
+      g.s.party.push(r);
+      Prototype.updateHUD();
+    });
+    await page.locator('#health-potion').click();
+    assert((await page.locator('#health-potion small').textContent()).includes('COLA'));
     assert((await state()).label.includes('NORMAL\nCOLA'));
     assert((await page.locator('#skill-4 small').textContent()).includes('CARGADA\nCOLA'));
     await page.screenshot({

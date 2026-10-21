@@ -131,6 +131,9 @@ h2 {
   font-size: 8px;
   line-height: 1.15;
 }
+#skills .support-queued {
+  border-color: #9dc6dd;
+}
 #quick-items {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

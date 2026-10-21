@@ -207,6 +207,7 @@
     'Tap / charged effects and cooldowns': 'Efectos normales y cargados; tiempos de recuperación',
     'Charged skill interrupted by damage.': 'El daño interrumpió la habilidad cargada.',
     'Charged skill interrupted.': 'Habilidad cargada interrumpida.',
+    'Ranger Heal queued for the hero.': 'Curación del Ranger en cola para el héroe.',
     'Already up to date.': 'Ya tienes la versión más reciente.',
     'Update unavailable. Your saved run is safe.':
       'No se pudo actualizar. Tu partida está a salvo.',
@@ -918,7 +919,7 @@
       'Recall ' +
       input.key('recall') +
       (input.actionFor('KeyQ') === 'recall' ? ' / Q' : '') +
-      '; Ranger Heal ' +
+      '; Ranger Heal (tap during cooldown to queue hero healing) ' +
       input.key('heal') +
       (PrototypeRules.resourceMode?.manaEnabled !== false
         ? '; Mana Recovery ' + input.key('mana')
@@ -1053,6 +1054,7 @@
     syncPartyChargeClock();
     if (typeof Sprint !== 'undefined') Sprint.release();
     queuedCharges.clear();
+    game?.cancelRangerHealRequest();
     cancelCharge();
     cancelTargetPress();
     keys = {};
@@ -3189,7 +3191,7 @@
   function useRangerSupport(type) {
     if (!activePlay()) return;
     audio.unlock();
-    if (game.rangerSupport(type, true)) {
+    if (type === 'health' ? game.requestRangerHeal() : game.rangerSupport(type, true)) {
       updateHUD();
       save();
     }
@@ -3846,14 +3848,30 @@
         ]
       : [['health', 'Heal', input.key('heal'), 'healCd', 50]]) {
       const b = $(type + '-potion'),
-        ready = rangers.filter((u) => (u[cdKey] || 0) <= 0).length,
+        queuedHeal = type === 'health' ? game.queuedRangerHeal() : null,
+        ready = game.availableRangers(type).filter((u) => !game.mageSilenceActive(u)).length,
         full =
           type === 'health'
             ? [h, ...game.activeLivingParty()].every((u) => u.hp >= u.maxHp)
             : h.mp >= h.maxMp,
         next = rangers.length ? Math.min(...rangers.map((u) => u[cdKey] || 0)) : 0;
       const recovering = type === 'mana' && game.hasSupportEffect(h, 'mana');
-      b.disabled = !rangers.length || !ready || full || recovering;
+      const canQueueHeal = type === 'health' && rangers.some((u) => (u.healCd || 0) > 0);
+      b.disabled =
+        !rangers.length ||
+        (!ready && !canQueueHeal && !queuedHeal) ||
+        (full && !canQueueHeal && !queuedHeal) ||
+        recovering;
+      b.classList.toggle('support-queued', !!queuedHeal);
+      b.setAttribute(
+        'aria-label',
+        tr('Command Ranger ' + label) +
+          (queuedHeal
+            ? language === 'es'
+              ? ' · Curación del héroe en cola'
+              : ' · Hero heal queued'
+            : ''),
+      );
       b.hidden = platform.mode === 'phone' && !rangers.length;
       setMarkup(
         type + '-potion',
@@ -3861,13 +3879,20 @@
           '<small><span class="key-hint">' +
           key +
           ' · </span>' +
-          (recovering
-            ? 'Restoring'
-            : ready
-              ? ready + ' ready'
-              : rangers.length
-                ? next.toFixed(1) + 's'
-                : 'Need Ranger') +
+          (queuedHeal
+            ? (language === 'es' ? 'COLA ' : 'QUEUED ') +
+              (queuedHeal.cooldown > 0
+                ? cooldownText(queuedHeal.cooldown) + 's'
+                : language === 'es'
+                  ? 'esperando'
+                  : 'waiting')
+            : recovering
+              ? 'Restoring'
+              : ready
+                ? ready + ' ready'
+                : rangers.length
+                  ? next.toFixed(1) + 's'
+                  : 'Need Ranger') +
           '</small>',
       );
       b.title =
@@ -3879,7 +3904,8 @@
           : 'restores ' + game.rangerSupportAmount(type) + ' MP to the hero') +
         ' over five seconds · auto at ' +
         threshold +
-        '% or less · 10-second cooldown belongs only to the Ranger who casts it';
+        '% or less · 10-second cooldown belongs only to the Ranger who casts it' +
+        (type === 'health' ? ' · Tap during cooldown to queue one Heal for the hero' : '');
     }
     const remaining = Campaign.dungeonIds.filter((id) => !game.s.true[id]),
       liveFieldTrue = game
