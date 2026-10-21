@@ -870,7 +870,7 @@
         );
       if (n.id === 'ogre-hearth')
         parts.push(
-          'A rough ogre home camp with a communal hearth, stone seats and scavenged quarry gear.',
+          'A rough ogre home camp with a communal hearth, stone seats and scavenged mining gear.',
         );
       if (n.id === 'orc-bivouac')
         parts.push(
@@ -2038,6 +2038,7 @@
         }
         this.frontierTownServices(z);
         this.crownTownServices(z);
+        this.highlandsTownServices(z);
       }
     }
     clearTonic() {
@@ -2472,6 +2473,12 @@
         return false;
       }
       const n = hidden[0];
+      if (this.zoneId === 'highlands' && n.concealedTribute)
+        return this.gather(n.id, { scouting: true });
+      return this.locateTribute(n);
+    }
+    locateTribute(n) {
+      if (!n?.tribute || this.tributeKnown(n) || !this.zone().nodes.includes(n)) return false;
       this.s.discovered[this.definition().id + ':tribute:' + n.tributeId] = true;
       this.say('Scouts located Dark Lord Tribute at ' + n.siteName + '. ' + n.context + '.');
       this.event('tributeDiscovery', {
@@ -2481,7 +2488,7 @@
       });
       return true;
     }
-    gather(nodeId) {
+    gather(nodeId, options = null) {
       if ((this.s.expeditionRank || 1) < 2) {
         this.say(
           'Resource gathering unlocks at Expedition 2. Rescue Mira and train the Expedition Skill.',
@@ -2490,8 +2497,13 @@
       }
       this.checkMinis();
       const n = this.zone().nodes.find((n) => n.id === nodeId),
-        labor = this.availableGatherers();
-      if (n?.tribute && !this.tributeKnown(n)) {
+        labor = this.availableGatherers(),
+        scouting =
+          this.zoneId === 'highlands' &&
+          n?.concealedTribute &&
+          options?.scouting === true &&
+          !this.tributeKnown(n);
+      if (n?.tribute && !this.tributeKnown(n) && !scouting) {
         this.say('That tribute cache has not been located by your expedition yet.');
         return false;
       }
@@ -2509,7 +2521,20 @@
         this.clearPartyCharge(u);
         this._companionCharges?.delete(u.id);
         this.clearGatheringIntent(u);
-        u.order = { type: 'gather', id: nodeId, group: n.resourceGroup };
+        u.order = {
+          type: 'gather',
+          id: nodeId,
+          group: n.resourceGroup,
+          ...(scouting ? { scouting: true } : {}),
+        };
+      }
+      if (scouting) {
+        this.say(
+          'Search party sent toward ' +
+            n.siteName +
+            '. Escort them; the cache stays concealed until they reach it.',
+        );
+        return true;
       }
       this.say(
         labor.length +
@@ -6951,6 +6976,9 @@
   }
   const World = typeof PrototypeWorld !== 'undefined' ? PrototypeWorld : require('./world.js');
   World.install(Campaign, { D, R, dungeonIds, classes });
+  const Highlands =
+    typeof PrototypeHighlands !== 'undefined' ? PrototypeHighlands : require('./highlands.js');
+  Highlands.install(Campaign, { D, R });
   const Navigation =
     typeof PrototypeNavigation !== 'undefined' ? PrototypeNavigation : require('./navigation.js');
   Navigation.install(Campaign, D, R, dungeonIds);

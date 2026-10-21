@@ -61,6 +61,12 @@
         type: u.order.type,
         id: node.id,
         ...(u.order.cautious === true ? { cautious: true } : {}),
+        ...(u.order.scouting === true &&
+        s.zone === 'highlands' &&
+        node.hidden &&
+        node.concealedTribute
+          ? { scouting: true }
+          : {}),
         ...(node.resourceGroup ? { group: node.resourceGroup } : {}),
         ...(validJourney
           ? {
@@ -942,7 +948,11 @@
             (n) =>
               n.id === gathering.id &&
               n.amount > 0 &&
-              (!n.hidden || s.discovered[s.zone + ':tribute:' + n.tributeId]),
+              (!n.hidden ||
+                s.discovered[s.zone + ':tribute:' + n.tributeId] ||
+                (s.zone === 'highlands' &&
+                  n.concealedTribute &&
+                  s.party.some((u) => u.order?.id === n.id && u.order.scouting === true))),
           )
             ? { zone: s.zone, id: gathering.id }
             : null;
@@ -1034,6 +1044,8 @@
           c.dungeonSpaceLayout(z);
           z.enemies = z.enemies.filter((e) => !e.summon);
           c.crownSceneComposition(z);
+          // Relocate complete Ironroot sites before the new shore/ravine can prune old records.
+          c.highlandsLandscape(z);
           // Move authored Marches assets before new water can prune old exterior scenery.
           if (z.id === 'march') {
             c.roadNetwork(z);

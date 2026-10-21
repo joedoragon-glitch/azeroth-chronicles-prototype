@@ -249,12 +249,12 @@
       ['mire-nests', 'Mire nesting bank', 1940, 1120],
     ],
     [
-      ['bridge-north', 'Stone bridge', 1300, 950],
-      ['bridge-south', 'Timber crossing', 1300, 1870],
-      ['lookout', 'Old Signal Keep', 2350, 1500],
-      ['ore', 'Stonecross ore vein', 1100, 650],
-      ['wolf-den', 'Wolf hunting ground', 340, 1020],
-      ['ogre-hearth', 'Ogre hearth camp', 1980, 1820],
+      ['bridge-north', 'Northern stone bridge', 1610, 950],
+      ['bridge-south', 'Timber haul crossing', 1890, 2300],
+      ['lookout', 'Old Signal Keep', 3000, 2030],
+      ['ore', 'Stonecross ore vein', 650, 390],
+      ['wolf-den', 'Wolf hunting ground', 480, 1010],
+      ['ogre-hearth', 'Ogre hearth camp', 940, 3010],
     ],
     [
       ['bridge-north', 'Guarded ravine bridge', 1450, 750],
@@ -463,11 +463,63 @@
       },
     ],
   };
+  // Four different approaches; amounts remain owned by tributePlans.
+  const highlandsTribute = {
+    version: 1,
+    searchRadius: 48,
+    sites: [
+      {
+        id: 'ore-shipment',
+        x: 1170,
+        y: 570,
+        name: 'Northern ore convoy',
+        props: [
+          [-90, -60, 'ore-cart'],
+          [75, -55, 'supply-stack'],
+          [-100, 55, 'tool-rack'],
+        ],
+      },
+      {
+        id: 'stone-toll',
+        x: 3210,
+        y: 1680,
+        name: 'Eastern collector post',
+        props: [
+          [-80, -70, 'tax-post'],
+          [85, -60, 'sealed-crown-consignment'],
+          [90, 75, 'ore-cart'],
+        ],
+      },
+      {
+        id: 'timber-toll',
+        x: 740,
+        y: 2710,
+        name: 'Western hardwood hollow',
+        props: [
+          [-85, -65, 'highland-rock'],
+          [80, -55, 'pine'],
+          [-95, 70, 'fallen-log'],
+        ],
+      },
+      {
+        id: 'ogre-cache',
+        x: 1210,
+        y: 3130,
+        name: 'Southern levy hideaway',
+        props: [
+          [-95, -75, 'highland-rock'],
+          [90, -50, 'dead-tree'],
+          [95, 80, 'stolen-goods'],
+        ],
+      },
+    ],
+    woodlandPatrol: { from: [500, 650], to: [740, 2530] },
+  };
   // Field-boss compounds sit away from the main town approach instead of sharing the central traffic band.
   const fieldBossCenters = [
     [760, 1750],
     [2180, 1120],
-    [2700, 700],
+    [2850, 1170],
     [2600, 1650],
     [2200, 1750],
   ];
@@ -1001,26 +1053,26 @@
     {
       id: 'stonecross',
       props: [
-        [640, 1430, 'highland-pay-station'],
-        [930, 1250, 'silver-refining-hearth'],
-        [1070, 1360, 'mint-workbench'],
-        [1065, 1240, 'silver-die-tray'],
-        [1100, 1540, 'caravan-loading-bay'],
-        [1150, 1625, 'sealed-crown-consignment'],
-        [700, 1690, 'ridge-supper'],
-        [610, 1570, 'garden'],
+        [530, 2120, 'highland-pay-station'],
+        [1170, 2510, 'silver-refining-hearth'],
+        [1145, 2310, 'mint-workbench'],
+        [1070, 2280, 'silver-die-tray'],
+        [1130, 2080, 'caravan-loading-bay'],
+        [1180, 2020, 'sealed-crown-consignment'],
+        [485, 2440, 'ridge-supper'],
+        [355, 2520, 'garden'],
       ],
     },
     {
       id: 'quarry',
       props: [
-        [1510, 1020, 'ore-sorting-bay'],
-        [1640, 1080, 'silver-sort-samples'],
-        [1790, 1090, 'copper-sort-samples'],
-        [1830, 980, 'mine-supports'],
-        [1920, 1190, 'caravan-loading-bay'],
-        [1630, 1270, 'ridge-supper'],
-        [1860, 1320, 'tool-rack'],
+        [2450, 300, 'ore-sorting-bay'],
+        [2570, 275, 'silver-sort-samples'],
+        [2680, 280, 'copper-sort-samples'],
+        [2770, 240, 'mine-supports'],
+        [2670, 545, 'caravan-loading-bay'],
+        [2330, 810, 'ridge-supper'],
+        [2800, 810, 'tool-rack'],
       ],
     },
     {
@@ -1035,32 +1087,32 @@
     {
       id: 'roads',
       props: [
-        [1180, 530, 'silver-ore-face'],
-        [1290, 610, 'copper-ore-face'],
-        [2600, 2210, 'silver-ore-face'],
-        [2780, 2190, 'copper-ore-face'],
-        [1160, 1040, 'mine-supports'],
-        [1440, 1840, 'tool-rack'],
+        [540, 320, 'silver-ore-face'],
+        [820, 350, 'copper-ore-face'],
+        [2680, 2780, 'silver-ore-face'],
+        [3010, 2760, 'copper-ore-face'],
+        [730, 320, 'mine-supports'],
+        [1130, 610, 'tool-rack'],
       ],
     },
     {
       id: 'ogre-home',
       props: [
-        [2080, 1950, 'ore-sorting-bay'],
-        [1860, 1970, 'ridge-supper'],
+        [1050, 3160, 'ore-sorting-bay'],
+        [800, 3130, 'ridge-supper'],
       ],
     },
   ];
   const ironrootLore = {
-    ore: 'Ironroot miners work separate silver-bearing and copper-bearing veins. At Quarry Outpost the two ores are sorted beside ordinary building stone; Stonecross refines both metals and strikes crowns with the Dark Lord’s portrait. Sealed wagons travel under Crown guard. Miners earn wages, but the mountains and their wealth belong to the regime.',
+    ore: 'Ironroot miners work separate silver-bearing and copper-bearing veins. The Crown discovered the wealth hidden beneath Quarry Outpost’s old name. Its workings extract and sort silver-bearing and copper-bearing ore; Stonecross refines both metals and strikes crowns with the Dark Lord’s portrait. Sealed wagons travel under Crown guard. Miners earn wages, but the mountains and their wealth belong to the regime.',
     'bridge-north':
       'Fresh stone repairs and spare hauling timbers keep mineral carts moving. The Master of Coin counts reliable roads as proof of better rule; traders welcome fewer delays without necessarily welcoming their ruler.',
     'bridge-south':
-      'The timber crossing carries quarry supplies and household goods as well as crown shipments. Maintained roads make payday possible; armed escorts make clear whose roads they are.',
+      'The timber crossing carries mine supplies and household goods as well as crown shipments. Maintained roads make payday possible; armed escorts make clear whose roads they are.',
     'ogre-hearth':
-      'Quarry crews trade tools and food here, then put work aside for supper and games. Regular crowns matter to some households; other Ogres prefer their own stonework and territorial life.',
+      'Ore crews trade tools and food here, then put work aside for supper and games. Regular crowns matter to some households; other Ogres prefer their own stonework and territorial life.',
     lookout:
-      'The old keep predates the crown-production system. Its Ogre household borrows quarry tools, shares a hearth and plays games after hauling; it is a home, not another mint office.',
+      'The old keep predates the crown-production system. Its Ogre household borrows mining tools, shares a hearth and plays games after hauling; it is a home, not another mint office.',
   };
   // The same Crown roads and coinage connect five otherwise distinct cultures.
   // Existing interactable landmarks carry these cues, with no new actors,
@@ -1077,7 +1129,7 @@
         'Reedport fish and paper for the Keeper’s Archive travel along this Crown-maintained causeway. Lantern Wraiths help preserve records and take care with their lamps; the Archive’s flooding remains unexplained.',
     },
     highlands: {
-      ore: 'Separate silver and copper loads leave for Stonecross’s portrait-crown mint, then guarded wagons serve the Ashen Frontier and Dark Crown. Quarry stone remains a distinct trade.',
+      ore: 'Separate silver and copper loads leave for Stonecross’s portrait-crown mint, then guarded wagons serve the Ashen Frontier and Dark Crown. Quarry Outpost’s name predates the Crown’s discovery: its entire working district now serves the coinage-ore supply chain.',
     },
     frontier: {
       convoy:
@@ -1499,7 +1551,7 @@
       region: 'highlands',
       boss: 'ridge',
       count: 3,
-      entryOffset: [-265, 185],
+      entryOffset: [-930, -840],
       name: "Ridge Tyrant's Treasury",
       objective: "Recover 3 caches from Ridge Tyrant's Treasury",
     },
@@ -2370,7 +2422,7 @@
       enemyCount: 10,
       theme: 'keep',
       species: 'ogre',
-      lore: 'Ogres have rebuilt the dead signal keep around a communal hearth. Stone seats, scavenged quarry tools and a game table make the ruin look less like a battlefield and more like a rough household.',
+      lore: 'Ogres have rebuilt the dead signal keep around a communal hearth. Stone seats, scavenged mining tools and a game table make the ruin look less like a battlefield and more like a rough household.',
       decor: [
         [180, 215, 'ridge-hearth'],
         [305, 210, 'weapon-rack'],
@@ -2487,7 +2539,7 @@
   const miniPlans = [
     { field: 'Orchard den stockade', resource: 'Woodland cache ruins', theme: 'stockade' },
     { field: 'Mirejaw island redoubt', resource: 'Stranded wagon enclosure', theme: 'palisade' },
-    { field: 'Mountain watchtower yard', resource: 'Abandoned quarry works', theme: 'stonewall' },
+    { field: 'Mountain watchtower yard', resource: 'Crown ore workings', theme: 'stonewall' },
     { field: 'Warlord checkpoint', resource: 'Ruined shrine courtyard', theme: 'stonewall' },
     {
       field: "Cindermaw's roosting compound",
@@ -2553,11 +2605,12 @@
     },
     { kind: 'water', bounds: [1120, 1690, 1450, 2070], gaps: [[1710, 1850]] },
     {
-      kind: 'ravine',
-      bounds: [1250, 1350, 0, 3400],
+      kind: 'water',
+      bounds: [1500, 2230, 0, 3400],
       gaps: [
-        [860, 1100],
-        [1770, 1980],
+        [840, 1060],
+        [2180, 2420],
+        [2870, 3090],
       ],
     },
     {
@@ -2587,6 +2640,10 @@
     { bend: 18, width: 0.09 },
   ];
   function channelBanks(region, y) {
+    if (region === 2)
+      return (
+        typeof PrototypeHighlands !== 'undefined' ? PrototypeHighlands : require('./highlands.js')
+      ).riverBanks(y);
     const barrier = barriers[region],
       [x1, x2] = barrier.bounds,
       cfg = channelProfiles[region];
@@ -2689,9 +2746,8 @@
       { kind: 'water', x: 2380, y: 1540, r: 145 },
     ],
     [
-      { kind: 'cliff', x1: 520, x2: 650, y1: 430, y2: 1050 },
-      { kind: 'cliff', x1: 2220, x2: 2350, y1: 1360, y2: 2060, gaps: [[1640, 1800]] },
-      { kind: 'cliff', x1: 3000, x2: 3150, y1: 1050, y2: 1700, gaps: [[1320, 1450]] },
+      { kind: 'cliff', x1: 460, x2: 550, y1: 180, y2: 390 },
+      { kind: 'cliff', x1: 2910, x2: 3015, y1: 2390, y2: 2640 },
     ],
     [
       { kind: 'fountain', x: 1775, y: 1120, r: 46 },
@@ -2776,8 +2832,8 @@
           [1900, 1960],
         ],
       },
-      { kind: 'quarry-shelf', shape: 'ellipse', x: 1700, y: 1020, rx: 520, ry: 350 },
-      { kind: 'pine-basin', shape: 'ellipse', x: 850, y: 2450, rx: 650, ry: 480 },
+      { kind: 'ore-workings-shelf', shape: 'ellipse', x: 2520, y: 450, rx: 500, ry: 350 },
+      { kind: 'hardwood-hollow', shape: 'ellipse', x: 1150, y: 2700, rx: 550, ry: 480 },
     ],
     [
       {
@@ -2899,7 +2955,10 @@
     },
     highlands: {
       id: 'stonecross-ferry',
-      water: { x1: 0, x2: 390, y1: 1740, y2: 2190 },
+      water: (typeof PrototypeHighlands !== 'undefined'
+        ? PrototypeHighlands
+        : require('./highlands.js')
+      ).coast,
       dock: { x1: 325, x2: 470, y1: 1845, y2: 1955 },
       arrival: { x: 425, y: 1900 },
       boat: { x: 300, y: 1995 },
@@ -2907,7 +2966,7 @@
       vessel: { x: 260, y: 2020 },
       shore: { x: 390, y: 1900 },
       name: 'Stonecross Ferry Landing',
-      vegetation: 'pine',
+      vegetation: 'hardwood',
     },
   };
   // Round tidal banks once; rendering and navigation use the identical outline.
@@ -2929,7 +2988,8 @@
   }
   // The vehicle that actually brought the party to a region determines its landing.
   function harborWaterBlocked(w, x, y, radius = 0) {
-    if (w.points && x > 340 + radius && x < 2150 - radius && y < 2550 - radius) return false;
+    if (w === harbors.march.water && x > 340 + radius && x < 2150 - radius && y < 2550 - radius)
+      return false;
     return w.points
       ? rainPoolBlocked([w], x, y, radius)
       : x > w.x1 - radius && x < w.x2 + radius && y > w.y1 - radius && y < w.y2 + radius;
@@ -7424,6 +7484,11 @@
     tributeTotal,
     legacyResourceTotals,
     tributePlans,
+    highlandsTribute,
+    highlandsLandscape: (typeof PrototypeHighlands !== 'undefined'
+      ? PrototypeHighlands
+      : require('./highlands.js')
+    ).anchors,
     miniPlans,
     expeditions,
     cinderInspection: {

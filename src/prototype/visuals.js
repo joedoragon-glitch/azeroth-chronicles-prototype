@@ -2,6 +2,8 @@
 (function (root) {
   'use strict';
   const R = typeof PrototypeRules !== 'undefined' ? PrototypeRules : require('./rules.js');
+  const Highlands =
+    typeof PrototypeHighlands !== 'undefined' ? PrototypeHighlands : require('./highlands.js');
   // Ogre-quality craft across the existing catalog: organic contours and worn
   // material joins, with deliberate mineral, weapon and fortification edges retained.
   const organicContours = new Set([
@@ -255,6 +257,14 @@
     ctx.restore();
   }
   function draw(ctx, e, p, region = 0, rescued = false) {
+    if (e.renderKind === 'prop' && e.miningFacility) {
+      Highlands.drawMining(ctx, e, p);
+      return;
+    }
+    if (region === 2 && e.renderKind === 'prop' && e.highlandsNature) {
+      Highlands.drawNature(ctx, e, p);
+      return;
+    }
     if (e.type === 'pet' && !Object.hasOwn(R.petCompanions, e.petFamily)) return;
     if (e.kind === 'landmark' && e.id?.startsWith('bridge-')) return; // The full deck is drawn in world space.
     ctx.save();
@@ -15673,7 +15683,36 @@
       ctx.stroke();
     }
     function craftedNode() {
-      if (e.tribute || e.icon === '🪙') {
+      if (e.tribute && e.concealedTribute) {
+        // Located buried stores retain their concealment, rather than an open coin chest.
+        oval(0, 10, 24, 7, '#655f46');
+        softRect(-16, -3, 32, 15, '#6e6145', 3);
+        softRect(-17, -7, 34, 7, '#89764f', 2);
+        for (const x of [-11, 10]) rect(x, -6, 3, 15, '#797c65');
+        rect(-3, -1, 6, 6, '#b29a63');
+        poly(
+          [
+            [-24, 10],
+            [-12, 5],
+            [0, 12],
+            [14, 6],
+            [25, 11],
+            [10, 16],
+            [-12, 16],
+          ],
+          '#77714e',
+        );
+        for (const x of [-20, 17])
+          line(
+            [
+              [x, 12],
+              [x - 3, 3],
+              [x + 1, 8],
+            ],
+            '#73845c',
+            1.4,
+          );
+      } else if (e.tribute || e.icon === '🪙') {
         chest(true, 0.9);
       } else if (e.icon === '🪵') craftedDecoration('woodpile');
       else if (e.icon === '🧺') basketBody();
@@ -17379,6 +17418,8 @@
     frontierTreeShoots(ctx, e, p, region);
   }
   function unscaledHeight(e) {
+    if (e.miningFacility) return 90;
+    if (e.highlandsNature === 'tree') return 110;
     if (e.structure === 'crown-orrery') return 165;
     if (e.structure === 'watchpost') return 95;
     if (e.structure === 'frontier-grain-silo') return 165;
@@ -17423,7 +17464,7 @@
   const floorPalettes = [
     ['#294b36', '#31583e', '#203e30', '#95ad80'],
     ['#3e5544', '#4b614b', '#30483c', '#a2b48e'],
-    ['#485447', '#56614d', '#3b493f', '#b1b59a'],
+    ['#4a593b', '#74734b', '#3b4d36', '#c6b079'],
     ['#50413b', '#5d4b42', '#423732', '#b9987b'],
     ['#343644', '#414351', '#2c2f3c', '#a09b9e'],
   ];
@@ -17602,24 +17643,20 @@
       }
     } else if (region === 2) {
       if (k < 2) {
-        for (const ox of [-5, 0, 5])
-          line(x + ox, y + 3, x + ox + (ox === 0 ? 0 : Math.sign(ox) * 2), y - 5, '#9ca681', 1.2);
-      } else if (k === 2) {
-        for (const [ox, oy] of [
-          [-6, 1],
-          [0, -2],
-          [6, 2],
-        ])
-          dot(x + ox, y + oy, 2, '#8b8e82');
-      } else if (k === 3) {
-        line(x - 7, y + 1, x + 7, y - 3, '#7d6749', 2);
-        for (const ox of [-4, 0, 4]) line(x + ox, y - 1, x + ox + 2, y - 4, '#a28b65', 1);
-      } else if (k === 4) {
-        dot(x, y, 2.4, '#a89bc4');
-        dot(x - 4, y + 2, 1.2, '#c6b7dd');
+        for (const ox of [-5, 0, 5]) line(x + ox, y + 3, x + ox + 2, y - 3, '#9eaa68', 1);
+      } else if (k < 6) {
+        for (let j = 0; j < 5; j++) {
+          const lx = x + Math.sin(seed + j * 2.4) * 10,
+            ly = y + (j % 3) * 2;
+          ctx.fillStyle = ['#b18a46', '#a35b3b', '#c7ad62', '#78904d'][j % 4];
+          ctx.beginPath();
+          ctx.ellipse(lx, ly, 2.8, 1.2, j * 0.7, 0, Math.PI * 2);
+          ctx.fill();
+          line(lx - 2, ly + 1, lx + 2, ly - 1, '#63533b', 0.45);
+        }
       } else {
-        dot(x - 4, y, 1.5, '#9f997f');
-        dot(x + 3, y + 1, 1.8, '#777a72');
+        dot(x - 4, y, 1.5, '#a4a58a');
+        dot(x + 3, y + 1, 1.8, '#75826b');
       }
     } else if (region === 3) {
       if (k < 3) {
@@ -17714,7 +17751,7 @@
       ctx.lineWidth = 1.2;
       ctx.stroke();
     }
-    if (!blocked && materials) {
+    if (!blocked && materials && !(outdoor && region === 2)) {
       const regionName = ['vale', 'march', 'highlands', 'frontier', 'crown'][region];
       const key =
         'terrain:' +
@@ -18112,8 +18149,8 @@
           const a = bank[j - 1],
             b = bank[j],
             len = Math.hypot(b.x - a.x, b.y - a.y),
-            nx = -(b.y - a.y) / len,
-            ny = (b.x - a.x) / len;
+            nx = ((region === 2 ? 1 : -1) * (b.y - a.y)) / len,
+            ny = ((region === 2 ? -1 : 1) * (b.x - a.x)) / len;
           poly(
             [a, b, { x: b.x + nx * 62, y: b.y + ny * 62 }, { x: a.x + nx * 62, y: a.y + ny * 62 }],
             '#716e4f',
@@ -18125,7 +18162,12 @@
         }
         poly(w.points, '#426e70');
         const deep = w.points.map((p, j) =>
-          j < w.bankCount ? { x: Math.min(3000, p.x + 30), y: Math.min(3000, p.y + 28) } : p,
+          j < w.bankCount
+            ? {
+                x: Math.max(0, Math.min(size, p.x + (region === 2 ? -35 : 30))),
+                y: Math.min(size, p.y + 28),
+              }
+            : p,
         );
         ctx.save();
         ctx.beginPath();
@@ -18138,8 +18180,8 @@
           const a = bank[j - 1],
             b = bank[j],
             len = Math.hypot(b.x - a.x, b.y - a.y),
-            nx = -(b.y - a.y) / len,
-            ny = (b.x - a.x) / len;
+            nx = ((region === 2 ? 1 : -1) * (b.y - a.y)) / len,
+            ny = ((region === 2 ? -1 : 1) * (b.x - a.x)) / len;
           for (let d = 30; d < len; d += 100) {
             const x = a.x + ((b.x - a.x) * d) / len,
               y = a.y + ((b.y - a.y) * d) / len;
@@ -18156,7 +18198,7 @@
           }
         }
         // Raised timber follows the last leg through the coastal marsh.
-        const walks = harbor.boardwalk
+        const walks = (harbor.boardwalk || [])
           .slice(1)
           .map((p, j) => [harbor.boardwalk[j].x, harbor.boardwalk[j].y, p.x, p.y]);
         for (const [ax, ay, bx, by] of walks) {
@@ -18408,7 +18450,7 @@
     ctx.restore();
   }
   function bridges(ctx, screen, region = 0, materials = null, viewport = null) {
-    const {
+    let {
         bounds: [x1, x2],
         gaps,
       } = R.barriers[region],
@@ -18437,6 +18479,10 @@
     };
     ctx.save();
     for (const [lo, hi] of gaps) {
+      if (region === 2) {
+        [x1, x2] = R.channelBanks(2, (lo + hi) / 2);
+        stone = lo < 1100;
+      }
       if (
         viewport &&
         outsideScreen(
@@ -18826,6 +18872,7 @@
           ];
         }
       }
+      if (region === 2) path = path.filter((p) => !(p.x < 470 && p.y >= 1810 && p.y <= 2020));
       for (const q of path) nodes.set(q.x + ':' + q.y, q);
       for (let j = 1; j < path.length; j++) {
         const a = path[j - 1],

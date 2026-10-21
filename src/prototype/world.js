@@ -1896,6 +1896,7 @@
           this.frontierEdgeRedistribution(z);
           this.frontierSceneComposition(z);
           this.crownSceneComposition(z);
+          this.highlandsLandscape(z);
           this.setSceneryTraversal(z);
           return z;
         }
@@ -1905,6 +1906,7 @@
           id = this.s.zone;
         const z = {
           id,
+          ...(id === 'highlands' ? { appalachianSourceVersion: 1 } : {}),
           enemies: [],
           props: [],
           npcs: [],
@@ -2315,6 +2317,7 @@
         this.frontierEdgeRedistribution(z);
         this.frontierSceneComposition(z);
         this.crownSceneComposition(z);
+        this.highlandsLandscape(z);
         this.setSceneryTraversal(z);
         return z;
       }
@@ -3621,6 +3624,91 @@
         this.roadsideLanternLife(z);
         this.marchCoastalLayout(z);
         this.lanternShoreLayout(z);
+        this.highlandsTributeLayout(z);
+      }
+      highlandsTributeLayout(z) {
+        const cfg = R.highlandsTribute;
+        if (z.id !== 'highlands' || z.highlandsTributeVersion === cfg.version) return;
+        const before = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          const moved = new Set();
+          for (const [index, site] of cfg.sites.entries()) {
+            const node = z.nodes.find((n) => n.tributeId === site.id && n.tribute);
+            if (!node) continue;
+            // Make a small usable cache scene; leave towns, coast and roads alone.
+            z.props = z.props.filter(
+              (p) =>
+                Math.hypot(p.x - site.x, p.y - site.y) >= (p.r || 0) + 78 ||
+                ![
+                  'rock',
+                  'highland-rock',
+                  'pine',
+                  'sapling',
+                  'bush',
+                  'stump',
+                  'fallen-log',
+                ].includes(p.structure),
+            );
+            const point = this.safe(site.x, site.y, z.id),
+              siteId = 'highlands-tribute-site-' + site.id;
+            Object.assign(node, point, {
+              site: siteId,
+              siteName: site.name,
+              concealedTribute: !!node.hidden,
+            });
+            moved.add(node.id);
+            const landmark = {
+              id: siteId,
+              ...point,
+              name: site.name,
+              kind: 'landmark',
+              internalSite: true,
+            };
+            const old = z.npcs.find((n) => n.id === siteId);
+            if (old) Object.assign(old, landmark);
+            else z.npcs.push(landmark);
+            for (const [j, [dx, dy, structure]] of site.props.entries()) {
+              const p = { x: point.x + dx, y: point.y + dy };
+              if (!this.blocked(p.x, p.y, z.id, 12, true))
+                z.props.push({
+                  id: 'highlands-tribute-scene-' + index + '-' + j,
+                  ...p,
+                  structure,
+                  r: 0,
+                  decorative: true,
+                  tributeScene: site.id,
+                });
+            }
+          }
+          // Reuse an overlapping free Wolf patrol, preserving identities and dead state.
+          const [fx, fy] = cfg.woodlandPatrol.from,
+            [tx, ty] = cfg.woodlandPatrol.to;
+          for (const e of z.enemies.filter(
+            (e) =>
+              e.species === 'wolf' &&
+              e.type === 'mob' &&
+              !e.site &&
+              !e.stronghold &&
+              !e.crownTroop &&
+              !e.nightOnly &&
+              !e.summon &&
+              e.home &&
+              Math.hypot(e.home.x - fx, e.home.y - fy) < 140,
+          )) {
+            const p = this.safe(tx + e.home.x - fx, ty + e.home.y - fy, z.id);
+            e.home = { ...p };
+            if (!e.aggro) Object.assign(e, p);
+          }
+          if (before === z.id)
+            for (const u of this.s.party.filter((u) => moved.has(u.order?.id))) {
+              delete u.order.journey;
+              this.clearGatheringIntent(u);
+            }
+          z.highlandsTributeVersion = cfg.version;
+        } finally {
+          this.s.zone = before;
+        }
       }
       spaceQuestBoard(z) {
         if (dungeonIds.includes(z.id) || z.boardPositionVersion === 2) return;

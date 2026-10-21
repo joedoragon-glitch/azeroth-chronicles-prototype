@@ -315,7 +315,7 @@
       'Derrota a Ridge Tyrant y rescata a Orin.',
     ],
     [
-      'Quarry Workers at Risk',
+      'Ore Workers at Risk',
       'Trabajadores de la cantera en peligro',
       'Defeat 7 outdoor enemies in Ironroot Highlands',
       'Derrota a 7 enemigos al aire libre en Ironroot Highlands.',

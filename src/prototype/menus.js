@@ -1213,13 +1213,20 @@
             'Locate & gather hidden Dark Lord Tribute',
             () => {
               const next = getGame().hiddenTributeNodes()[0];
-              if (next && getGame().scoutTribute() && getGame().gather(next.id)) closeMenu();
+              if (
+                next &&
+                getGame().scoutTribute() &&
+                (!getGame().tributeKnown(next) || getGame().gather(next.id))
+              )
+                closeMenu();
               else barracksLaborMenu(b, back);
             },
             hidden.length +
               ' undiscovered source' +
               (hidden.length === 1 ? '' : 's') +
-              ' remain · locate one and send all idle troops',
+              (getGame().zoneId === 'highlands'
+                ? ' remain · escort a search party; reveal on arrival'
+                : ' remain · locate one and send all idle troops'),
             !getGame().availableGatherers().length,
           ),
         );
