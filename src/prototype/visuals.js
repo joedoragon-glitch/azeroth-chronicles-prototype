@@ -17492,15 +17492,26 @@
           ctx.fill();
         }
         // Open filaments and little parachute tips, rather than a solid disc.
-        const radius = 3.3 + (seed % 2) * 0.5;
-        for (let j = 0; j < 12; j++) {
-          const angle = (j / 12) * Math.PI * 2 + (seed % 7) * 0.14,
-            px = headX + Math.cos(angle) * radius,
-            py = headY + Math.sin(angle) * radius;
-          line(headX, headY, px, py, '#dedfc1aa', 0.55);
-          const tx = -Math.sin(angle) * 0.8,
-            ty = Math.cos(angle) * 0.8;
-          line(px - tx, py - ty, px + tx, py + ty, '#f1eed9dd', 0.7);
+        const radius = 3.5 + (seed % 2) * 0.5;
+        dot(headX, headY, radius * 0.8, '#f1eed914');
+        for (let j = 0; j < 16; j++) {
+          const angle = (j / 16) * Math.PI * 2 + (seed % 7) * 0.14,
+            reach = radius * (0.78 + ((j * 7 + seed) % 5) * 0.055),
+            dx = Math.cos(angle),
+            dy = Math.sin(angle),
+            px = headX + dx * reach,
+            py = headY + dy * reach;
+          line(headX, headY, px, py, '#dedfc16e', 0.4);
+          // Separated little Y-shaped parachutes, no connected circular rim.
+          for (const side of [-1, 1])
+            line(
+              px - dx * 0.55,
+              py - dy * 0.55,
+              px - dy * side * 0.42,
+              py + dx * side * 0.42,
+              '#f1eed9dd',
+              0.5,
+            );
         }
         dot(headX, headY + 0.3, 0.8, '#b9af7f');
       } else if (k === 5) {
@@ -18914,6 +18925,7 @@
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       // Warm pools around the hero and inhabited field structures make night readable without flattening the whole scene.
+      if (dungeon || room) ctx.globalCompositeOperation = 'screen';
       glow(
         hero,
         145,
@@ -18935,6 +18947,7 @@
         glow(source, radius, (window ? 0.27 : fire ? 0.3 : 0.25) * darkness, tint);
         if (carried) glow(source, 10, 0.5 * darkness, '255,221,150');
       }
+      ctx.globalCompositeOperation = 'source-over';
       ctx.globalAlpha = darkness;
       // Luminous windows and sheltered lantern glass are localized light
       // sources, not new scenery obstacles. Fires already have drawn flames.
@@ -19003,6 +19016,7 @@
     if (darkness < 1) {
       // A lit hand lantern keeps a small bloom in daylight; broad illumination
       // becomes visible after dark. Existing civic day/night lights stay off.
+      if (dungeon || room) ctx.globalCompositeOperation = 'screen';
       for (const p of lights.filter((p) => p.kind === 'carried-lantern').slice(0, 8))
         glow(p, 22, 0.12 * (1 - darkness), '255,221,150');
       ctx.globalCompositeOperation = 'source-over';

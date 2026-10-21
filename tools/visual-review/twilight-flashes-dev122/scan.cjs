@@ -1,5 +1,6 @@
 'use strict';
-const fs = require('node:fs'),
+const assert = require('node:assert/strict'),
+  fs = require('node:fs'),
   { chromium, webkit } = require('playwright');
 const source = fs.readFileSync('src/prototype/visuals.js', 'utf8');
 const code = source.slice(
@@ -70,7 +71,16 @@ const code = source.slice(
       }
       return reports;
     });
-    console.log(JSON.stringify({ engine: type.name(), reports: result }, null, 2));
+    for (const row of result) {
+      assert.equal(row.whiteFrames, 0);
+      assert(row.maxMeanJump < 1.5, 'bounded consecutive-frame brightness');
+    }
+    const report = { engine: type.name(), framesPerTransition: 601, reports: result };
+    fs.writeFileSync(
+      __dirname + '/scan-' + type.name() + '.json',
+      JSON.stringify(report, null, 2) + '\n',
+    );
+    console.log(JSON.stringify(report, null, 2));
   } finally {
     await browser.close();
   }

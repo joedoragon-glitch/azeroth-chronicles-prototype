@@ -492,9 +492,9 @@
     ctx.clip();
     // A translucent violet fan, without the old opaque-looking blue perimeter.
     const wash = ctx.createLinearGradient(from.x, from.y, tip.x, tip.y);
-    wash.addColorStop(0, color + '05');
-    wash.addColorStop(0.45, color + '35');
-    wash.addColorStop(1, light + '08');
+    wash.addColorStop(0, '#9956db08');
+    wash.addColorStop(0.38, '#9956db3d');
+    wash.addColorStop(1, '#9956db00');
     ctx.globalAlpha = fade;
     ctx.fillStyle = wash;
     ctx.fill();
