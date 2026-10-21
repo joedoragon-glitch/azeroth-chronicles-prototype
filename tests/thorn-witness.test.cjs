@@ -61,3 +61,23 @@ assert(c.notices.at(-1).detail.includes('Mira is free'));
 console.log(
   'PASS live witness clues for all route legs, combat, return, fresh tracks, rescue, historical fallback and interaction range',
 );
+
+// Old saved coordinates must move the same resident into the open road shoulder.
+for (const seed of [0.1, 0.5, 0.9]) {
+  const g = new C('normal', 'paladin', () => seed);
+  const resident = g.zone().npcs.find((n) => n.thornReport);
+  assert.deepEqual({ x: resident.x, y: resident.y }, { x: 780, y: 740 });
+  assert(!g.blocked(resident.x, resident.y));
+  assert(g.route(g.hero, resident).length, 'witness reachable from the starting town');
+  Object.assign(resident, { x: 900, y: 850, savedWitnessNote: 'retained' });
+  const restored = C.restore(g.snapshot(), () => seed);
+  const matches = restored.zone().npcs.filter((n) => n.id === resident.id);
+  assert.equal(matches.length, 1);
+  assert.equal(matches[0].savedWitnessNote, 'retained');
+  assert.deepEqual({ x: matches[0].x, y: matches[0].y }, { x: 780, y: 740 });
+  restored.migrateThornPatrol(restored.zone());
+  assert.deepEqual({ x: matches[0].x, y: matches[0].y }, { x: 780, y: 740 });
+}
+console.log(
+  'PASS witness fresh/save placement, starting-town access and idempotent same-resident migration',
+);
