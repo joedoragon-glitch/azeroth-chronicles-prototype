@@ -3163,7 +3163,7 @@
               !String(p.id || '').startsWith('harbor-') && (z.id === 'march' || !insideHarbor(p)),
           );
           for (const e of z.enemies.filter(
-            (e) => e.hp > 0 && e.type === 'mob' && dist(e, h.arrival) < 280,
+            (e) => e.hp > 0 && e.type === 'mob' && !e.nightOnly && dist(e, h.arrival) < 280,
           )) {
             const fallback = this.safe(
               z.id === 'march' ? 940 : 650,
@@ -3737,6 +3737,25 @@
             [1770, 2860],
           ].map(([x, y]) => ({ x, y }));
           z.roads = [...roads, trail];
+          const oldEntrances = {
+              archive: [2600, 2350],
+              'supply-march': [2440, 955],
+              'side-march-watchhouse': [2550, 1480],
+            },
+            destinations = {
+              archive: [500, 2350],
+              'supply-march': [2580, 520],
+              'side-march-watchhouse': [2600, 1720],
+            };
+          for (const b of z.buildings) {
+            const from = oldEntrances[b.dungeonEntrance],
+              to = destinations[b.dungeonEntrance];
+            if (from && to && Math.hypot(b.x - to[0], b.y - to[1]) > 650)
+              Object.assign(b, this.safe(b.x + to[0] - from[0], b.y + to[1] - from[1], z.id));
+          }
+          if (this.s.zone === 'march' && Math.hypot(this.hero.x - 2600, this.hero.y - 2350) < 340)
+            for (const u of [this.hero, ...this.s.party])
+              Object.assign(u, this.safe(500 + (u.x - 2600), 2350 + (u.y - 2350), z.id));
           const relocate = (id, to, predicate) => {
             const n = z.npcs.find((n) => n.id === id);
             if (!n) return;
@@ -3763,8 +3782,11 @@
             Object.assign(p, this.safe(p.x - 1500, p.y - 130, z.id));
           // Keep old saved/player assets out of the newly authored water, with their IDs/state intact.
           for (const p of [...z.props, ...z.nodes, ...z.buildings, ...z.npcs])
-            if (R.harborWaterBlocked(h.water, p.x, p.y, Math.min(p.r || 0, 20)))
+            if (this.blocked(p.x, p.y, z.id, Math.min(p.r || 0, 20), true))
               Object.assign(p, this.safe(p.x, p.y, z.id));
+          for (const drop of this.s.loot || [])
+            if (drop.zone === z.id && this.blocked(drop.x, drop.y, z.id, 8, true))
+              Object.assign(drop, this.safe(drop.x, drop.y, z.id));
           for (const e of z.enemies) {
             if (R.harborWaterBlocked(h.water, e.home.x, e.home.y, 15))
               e.home = this.safe(e.home.x, e.home.y, z.id);
@@ -3772,11 +3794,13 @@
               Object.assign(e, this.safe(e.x, e.y, z.id));
           }
           if (this.s.refugeSite?.zone === 'march') {
-            const refuge = z.npcs.find((n) => n.id === this.s.refugeSite.id);
+            const refuge = [...z.npcs, ...z.buildings].find((n) => n.id === this.s.refugeSite.id);
             if (refuge) Object.assign(this.s.refugeSite, { x: refuge.x, y: refuge.y });
           }
           z.streetClearanceVersion = 0;
           this.clearStreetCorridors(z);
+          const board = z.npcs.find((n) => n.id === 'board');
+          if (board) Object.assign(board, this.safe(680, 1300, z.id));
 
           z.props = z.props.filter(
             (p) =>
@@ -3840,6 +3864,19 @@
               }
             }
           }
+          const lagoon = R.terrain[1].find((t) => t.kind === 'rain-pools').pools[0];
+          for (let j = 0; j < lagoon.points.length; j += 2) {
+            const p = lagoon.points[j],
+              dx = p.x - lagoon.x,
+              dy = p.y - lagoon.y;
+            add(
+              lagoon.x + dx * 1.17,
+              lagoon.y + dy * 1.17,
+              j % 6 === 0 ? 'regrowth-willow' : j % 4 ? 'cattails' : 'wet-grass',
+            );
+          }
+          add(1140, 650, 'fishing-net');
+          add(1100, 720, 'fish-rack');
           // Raised freshwater hummocks grade into the coastal salt marsh.
           for (const [cx, cy] of [
             [620, 2250],

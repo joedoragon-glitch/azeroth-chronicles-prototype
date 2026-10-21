@@ -1034,6 +1034,12 @@
           c.dungeonSpaceLayout(z);
           z.enemies = z.enemies.filter((e) => !e.summon);
           c.crownSceneComposition(z);
+          // Move authored Marches assets before new water can prune old exterior scenery.
+          if (z.id === 'march') {
+            c.roadNetwork(z);
+            c.marchCoastalLayout(z);
+            c.lanternShoreLayout(z);
+          }
           z.props = z.props.filter(
             (p) =>
               !p.garunTemporary && !p.garunPreview && !c.blocked(p.x, p.y, z.id, p.r || 0, true),

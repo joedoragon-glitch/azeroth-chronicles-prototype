@@ -18074,7 +18074,13 @@
         const deep = w.points.map((p, j) =>
           j < w.bankCount ? { x: Math.min(3000, p.x + 30), y: Math.min(3000, p.y + 28) } : p,
         );
+        ctx.save();
+        ctx.beginPath();
+        w.points.map(screen).forEach((p, j) => (j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
+        ctx.closePath();
+        ctx.clip();
         poly(deep, '#355d66');
+        ctx.restore();
         for (let j = 1; j < bank.length; j++) {
           const a = bank[j - 1],
             b = bank[j],
@@ -18200,7 +18206,7 @@
             x: pool.x + (q.x - pool.x) * 1.075,
             y: pool.y + (q.y - pool.y) * 1.035,
           }));
-          poly(rim, '#767663');
+          poly(rim, p.wetland ? '#797752' : '#767663');
           poly(pool.points, '#426d71');
           poly(
             pool.points.map((q) => ({
@@ -18209,7 +18215,7 @@
             })),
             '#355c65',
           );
-          for (const j of [2, 9, 18, 25]) {
+          for (const j of p.wetland ? [] : [2, 9, 18, 25]) {
             const q = pool.points[j],
               side = q.x < pool.x ? -1 : 1,
               x = q.x + side * 6,

@@ -2670,6 +2670,7 @@
     [
       {
         kind: 'rain-pools',
+        wetland: true,
         pools: [
           {
             x: 1420,

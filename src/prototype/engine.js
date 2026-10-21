@@ -1025,7 +1025,7 @@
           '/' +
           q.target +
           ' night wraiths; ' +
-          (seen('night-site') ? 'shore observed' : 'observe Lantern shore after dark')
+          (seen('night-site') ? 'shore observed' : 'observe Lantern Shore after dark')
         );
       if (q.kind === 'sites') {
         if (q.minSites)
