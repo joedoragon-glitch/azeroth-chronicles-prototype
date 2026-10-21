@@ -265,7 +265,7 @@ test('Recall and transient guidance save/restore stay intact', () => {
   g.s.party.push(healthy);
   g.recallParty();
   for (let n = 0; n < 30; n++) step();
-  assert(distance(u, g.hero) < 100);
+  assert(distance(u, g.hero) <= C.rules.companionJudgment.maxAdvanceFromHero);
   assert(!g.partyChargeState(u));
   g.hero.cd = g.hero.cd.map(() => 0);
   const snapshot = g.snapshot();
@@ -274,4 +274,61 @@ test('Recall and transient guidance save/restore stay intact', () => {
   assert(restored);
   assert(!restored.companionHeroMoving());
 });
+test('a companion ahead of the hero copies his dodge direction instead of being pulled backward into the warning', () => {
+  const { g, u, e, step } = scene();
+  step();
+  e.telegraph = { kind: 'circle', x: u.x - 50, y: u.y, radius: 90 };
+  const x = u.x;
+  g.hero.x += 20;
+  step();
+  assert(u.x > x);
+  assert(g.hero.x < u.x);
+  assert(!g.partyChargeState(u));
+});
+test('a clear companion stops following immediately when the hero stops; stationary holding has no retreat defense', () => {
+  const { g, u, step } = scene();
+  step();
+  g.hero.y -= 20;
+  step();
+  const p = { x: u.x, y: u.y };
+  step();
+  assert.equal(distance(u, p), 0);
+  assert(!g.companionRetreating(u));
+});
+test('copying movement retains actual enemy and terrain collision', () => {
+  for (const blocked of ['enemy', 'wall']) {
+    const { g, u, e, step } = scene();
+    if (blocked === 'enemy') u.x = 1100;
+    else
+      g.blocked = (x, y, zone, r = 15) =>
+        x > 1080 - r && x < 1090 + r && y > 1300 - r && y < 1700 + r;
+    step();
+    for (let n = 0; n < 10; n++) {
+      g.hero.x -= 15;
+      step();
+      assert(!g.blocked(u.x, u.y, g.zoneId, g.actorRadius(u)));
+      assert(distance(u, e) >= g.actorRadius(u) + g.actorRadius(e) - 0.1);
+    }
+  }
+});
+for (const cls of ['paladin', 'mage', 'ranger'])
+  for (const role of ['soldier', 'archer', 'pet:ridge', 'pet:archive'])
+    test(
+      cls + ' ' + role + ' guides at 20% only; 21% retains its prepared attack during a hero dodge',
+      () => {
+        for (const fraction of [0.2, 0.21]) {
+          const { g, u, e, step } = scene(role, cls);
+          u.hp = u.maxHp * fraction;
+          u.skill2Cd = 0;
+          assert(g.companionUseSecondSkill(u, e));
+          g.updateCompanionHeroGuidance();
+          const before = { x: u.x, y: u.y };
+          g.hero.y -= 20;
+          step();
+          assert.equal(!!g.partyChargeState(u), fraction > 0.2);
+          if (fraction > 0.2) assert.equal(distance(u, before), 0);
+          else assert(u.y < before.y);
+        }
+      },
+    );
 console.log('PASS ' + cases + ' hero-guided survival scenarios');

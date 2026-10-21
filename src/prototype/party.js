@@ -57,7 +57,7 @@
         const state = companionJudgments.get(u);
         if (this.companionSurvivalMode(u) && state?.critical && state.point) {
           if (state.guiding)
-            return dist(u, this.hero) > R.companionJudgment.criticalHeroFollowStop + 0.1;
+            return state.guidanceMovedAt === this.s.time && state.guidanceMoved > 0.1;
           return (
             dist(u, state.point) > R.companionJudgment.criticalArrivalRadius ||
             (dist(u, state.point) > 1 &&
@@ -94,6 +94,8 @@
           zone: this.zoneId,
           x: h.x,
           y: h.y,
+          dx: old && old.hero === h && old.zone === this.zoneId ? h.x - old.x : 0,
+          dy: old && old.hero === h && old.zone === this.zoneId ? h.y - old.y : 0,
           moving: !!(
             old &&
             old.hero === h &&
@@ -256,7 +258,10 @@
             const m = e.motion;
             line(e, m.target || m, m.radius || 55, e);
           }
-          if (e.rangedAim) line(e, e.rangedAim, R.balance.enemyProjectileHitRadius || 10, e);
+          if (e.rangedAim) {
+            line(e, e.rangedAim, R.balance.enemyProjectileHitRadius || 10, e);
+            out.at(-1).enemyAim = e;
+          }
           for (const v of e.dreadVapors || [])
             if (v.life > 0)
               v.kind === 'cone'
@@ -393,7 +398,11 @@
             continue;
           if (
             a.source &&
-            !(a.fort ? this.fortShotClear(a.source, point, a.fort) : this.line(a.source, point))
+            !(a.enemyAim
+              ? this.enemyRangedLine(a.enemyAim, point)
+              : a.fort
+                ? this.fortShotClear(a.source, point, a.fort)
+                : this.line(a.source, point))
           )
             continue;
           total += 1 + depth / 100;
@@ -566,31 +575,36 @@
         const cfg = R.companionJudgment;
         this._tacticalPartyTargets?.delete(u.id);
         const moving = this.companionHeroMoving();
-        if (
-          moving ||
-          (this.s.recallActive && dist(u, this.hero) > R.companionRecall.arrivalRadius)
-        ) {
+        if (moving || (this.s.recallActive && dist(u, this.hero) > cfg.maxAdvanceFromHero)) {
           this.clearPartyCharge(u);
           state.contributing = false;
           state.evading = false;
           state.guiding = true;
-          state.point = { x: this.hero.x, y: this.hero.y };
           const distance = dist(u, this.hero),
-            speed =
-              this.companionRallyMoveSpeed(
-                u,
-                distance > 650
-                  ? 500
-                  : distance > 350
-                    ? 390
-                    : distance > 200
-                      ? 315
-                      : cfg.retreatSpeed,
-              ) *
-              this.slowMovementFactor(u) *
-              this.mireBogMovementFactor(u) *
-              this.ashMovementFactor(u);
-          this.followCompanion(u, state.point, speed, dt, cfg.criticalHeroFollowStop, false);
+            guide = heroGuidance.get(this),
+            copy = moving && distance <= cfg.maxAdvanceFromHero;
+          state.point = copy
+            ? { x: u.x + guide.dx, y: u.y + guide.dy }
+            : { x: this.hero.x, y: this.hero.y };
+          const before = { x: u.x, y: u.y };
+          const speed =
+            this.companionRallyMoveSpeed(
+              u,
+              distance > 650 ? 500 : distance > 350 ? 390 : distance > 200 ? 315 : cfg.retreatSpeed,
+            ) *
+            this.slowMovementFactor(u) *
+            this.mireBogMovementFactor(u) *
+            this.ashMovementFactor(u);
+          this.followCompanion(
+            u,
+            state.point,
+            speed,
+            dt,
+            copy ? 0 : cfg.criticalHeroFollowStop,
+            false,
+          );
+          state.guidanceMovedAt = this.s.time;
+          state.guidanceMoved = dist(before, u);
           if (this.s.recallActive && !moving) {
             const target = this.companionContributionTargets().find((e) =>
               this.companionSafeContribution(u, e, 0),
