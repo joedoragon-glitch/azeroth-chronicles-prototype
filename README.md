@@ -1,3 +1,5 @@
+**Prepared dev.138 — Appalachian Ironroot:** Owner-approved complete nature/geography and coinage-ore rework, PR #374. Mixed autumn hardwood forests, distributed complete sites, continuous west shore and preserved selected ferry. Quarry Outpost serves silver/copper coinage production; no building-stone industry. Recovered tribute WIP included. Focused navigation/save/scouting, six Ironroot scenarios and native rendering pass; package-only publication pending. [Scope and current canon](docs/HIGHLANDS_APPALACHIAN_DEV138.md).
+
 # So I Became the Dark Lord's Problem
 
 **Community Snapshot — October 2026 · `0.9.1+snapshot.dev.119`.** Published; today’s work is complete. [Current state](docs/DEVELOPMENT_STATE.md) records release evidence and the next-work boundary. [Documentation index](docs/DOCUMENTATION_INDEX.md) distinguishes current guides from historical records.

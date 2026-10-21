@@ -1207,7 +1207,20 @@
             !getGame().availableGatherers().length,
           ),
         );
-      if (hidden.length)
+      if (getGame().zoneId === 'highlands') {
+        for (const n of hidden)
+          actions.push(
+            action(
+              'Search ' + n.siteName,
+              () => {
+                if (getGame().scoutTribute(n.id)) closeMenu();
+                else barracksLaborMenu(b, back);
+              },
+              'Investigate the stores with idle troops. Escort them to the site; tribute is revealed only after their search.',
+              !getGame().availableGatherers().length,
+            ),
+          );
+      } else if (hidden.length)
         actions.push(
           action(
             'Locate & gather hidden Dark Lord Tribute',

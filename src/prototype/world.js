@@ -3338,6 +3338,9 @@
       // damage, level, rewards, spawn count, home or saved enemy identity.
       crownMilitaryRoster(z) {
         if (this.peace) return;
+        // Ironroot's relocation preserves the already assigned soldiery. New
+        // distances must not recruit another native Wolf into a mounted slot.
+        if (z.id === 'highlands' && z.appalachianVersion) return;
         const lineages = ['crownguard', 'goblin', 'orc', 'archer', 'ogre'];
         const label = (e) =>
           'Crown ' +
@@ -3626,79 +3629,52 @@
         this.lanternShoreLayout(z);
         this.highlandsTributeLayout(z);
       }
-      highlandsTributeLayout(z) {
+      highlandsTributeLayout(z, finalLayout = false) {
         const cfg = R.highlandsTribute;
-        if (z.id !== 'highlands' || z.highlandsTributeVersion === cfg.version) return;
+        if (
+          z.id !== 'highlands' ||
+          z.highlandsTributeVersion === cfg.version ||
+          (!finalLayout && z.appalachianVersion !== 1)
+        )
+          return;
         const before = this.s.zone;
         this.s.zone = z.id;
         try {
           const moved = new Set();
+          // Named places own these sources; discard only obsolete invisible WIP markers.
+          z.npcs = z.npcs.filter((n) => !n.id.startsWith('highlands-tribute-site-'));
           for (const [index, site] of cfg.sites.entries()) {
             const node = z.nodes.find((n) => n.tributeId === site.id && n.tribute);
             if (!node) continue;
-            // Make a small usable cache scene; leave towns, coast and roads alone.
-            z.props = z.props.filter(
-              (p) =>
-                Math.hypot(p.x - site.x, p.y - site.y) >= (p.r || 0) + 78 ||
-                ![
-                  'rock',
-                  'highland-rock',
-                  'pine',
-                  'sapling',
-                  'bush',
-                  'stump',
-                  'fallen-log',
-                ].includes(p.structure),
-            );
-            const point = this.safe(site.x, site.y, z.id),
-              siteId = 'highlands-tribute-site-' + site.id;
+            const landmark = z.npcs.find((n) => n.id === site.site),
+              plan = R.tributePlans.highlands.find((p) => p.id === site.id),
+              point = this.safe(site.x, site.y, z.id);
+            if (node.amount < plan.amount || this.s.party.some((u) => u.order?.id === node.id))
+              this.s.discovered['highlands:tribute:' + node.tributeId] = true;
             Object.assign(node, point, {
-              site: siteId,
-              siteName: site.name,
-              concealedTribute: !!node.hidden,
+              site: site.site,
+              siteName: landmark?.name || site.site,
+              hidden: true,
+              concealedTribute: true,
+              storageStyle: site.storageStyle,
+              context: plan.context,
             });
             moved.add(node.id);
-            const landmark = {
-              id: siteId,
-              ...point,
-              name: site.name,
-              kind: 'landmark',
-              internalSite: true,
-            };
-            const old = z.npcs.find((n) => n.id === siteId);
-            if (old) Object.assign(old, landmark);
-            else z.npcs.push(landmark);
             for (const [j, [dx, dy, structure]] of site.props.entries()) {
-              const p = { x: point.x + dx, y: point.y + dy };
-              if (!this.blocked(p.x, p.y, z.id, 12, true))
-                z.props.push({
-                  id: 'highlands-tribute-scene-' + index + '-' + j,
-                  ...p,
-                  structure,
-                  r: 0,
-                  decorative: true,
-                  tributeScene: site.id,
-                });
+              const id = 'highlands-tribute-scene-' + index + '-' + j,
+                p = z.props.find((p) => p.id === id),
+                position = this.safe(point.x + dx, point.y + dy, z.id);
+              const dressing = {
+                id,
+                ...position,
+                structure,
+                r: 0,
+                decorative: true,
+                tributeScene: site.id,
+              };
+              if (p) Object.assign(p, dressing);
+              else z.props.push(dressing);
             }
-          }
-          // Reuse an overlapping free Wolf patrol, preserving identities and dead state.
-          const [fx, fy] = cfg.woodlandPatrol.from,
-            [tx, ty] = cfg.woodlandPatrol.to;
-          for (const e of z.enemies.filter(
-            (e) =>
-              e.species === 'wolf' &&
-              e.type === 'mob' &&
-              !e.site &&
-              !e.stronghold &&
-              !e.crownTroop &&
-              !e.nightOnly &&
-              !e.summon &&
-              e.home &&
-              Math.hypot(e.home.x - fx, e.home.y - fy) < 140,
-          )) {
-            const p = this.safe(tx + e.home.x - fx, ty + e.home.y - fy, z.id);
-            e.home = { ...p };
-            if (!e.aggro) Object.assign(e, p);
           }
           if (before === z.id)
             for (const u of this.s.party.filter((u) => moved.has(u.order?.id))) {

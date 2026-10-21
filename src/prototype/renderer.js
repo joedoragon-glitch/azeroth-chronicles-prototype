@@ -2022,7 +2022,7 @@
       if (authoredFloor) {
         PrototypeVisuals.dungeonFloorPath(ctx, screen, game.zoneId, size);
         ctx.clip();
-      } else if (!dungeon && !room && ['frontier', 'crown'].includes(game.zoneId)) {
+      } else if (!dungeon && !room && ['highlands', 'frontier', 'crown'].includes(game.zoneId)) {
         // Edge tiles straddle their anchors. Clip them to the same map boundary
         // as the channel, so a final half-tile cannot cap its open mouth.
         ctx.beginPath();
@@ -2114,7 +2114,7 @@
           i,
           size,
           optimized ? null : PrototypeMaterials,
-          null,
+          i === 2 ? { width: canvas.width, height: canvas.height } : null,
           z.crownInheritedDecks || [],
         );
       PrototypeVisuals.roads(ctx, z.roads || [], screen, i, optimized ? null : PrototypeMaterials);

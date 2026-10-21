@@ -12349,8 +12349,8 @@
           table(55);
           paper(-6, -14, 20);
           for (const x of [-20, -12, 17]) {
-            oval(x, -8, 4, 2, '#b2a066');
-            oval(x, -11, 4, 2, '#e0cb86');
+            oval(x, -8, 4, 2, '#73878a');
+            oval(x, -11, 4, 2, '#cbd6cf');
           }
           break;
         case 'ore-sorting-bay':
@@ -12383,6 +12383,15 @@
             );
             rimBowl(x, y, 8, '#8c9990', '#727669');
             rockPiece(x, y - 2, 4, 4);
+            if (region === 2)
+              line(
+                [
+                  [x - 3, y - 5],
+                  [x + 2, y - 1],
+                ],
+                x < 0 ? '#d0d8c9' : '#a77c5a',
+                1.8,
+              );
           }
           break;
         case 'mint-workbench':
@@ -13123,8 +13132,28 @@
             [-18, -17],
             [0, -16],
             [18, -16],
-          ])
+          ]) {
             rockPiece(x, y, 10, 11);
+            if (region === 2) {
+              line(
+                [
+                  [x - 5, y - 6],
+                  [x, y - 2],
+                  [x + 4, y + 2],
+                ],
+                x < 0 ? '#bdc8bc' : '#6e9c83',
+                1.8,
+              );
+              line(
+                [
+                  [x, y - 5],
+                  [x + 4, y - 3],
+                ],
+                x < 0 ? '#dde1d0' : '#c08a63',
+                1.1,
+              );
+            }
+          }
           timber([-31, -13], [28, -13], 4, '#6f7d75');
           break;
         case 'ore-crane':
@@ -15684,34 +15713,59 @@
     }
     function craftedNode() {
       if (e.tribute && e.concealedTribute) {
-        // Located buried stores retain their concealment, rather than an open coin chest.
-        oval(0, 10, 24, 7, '#655f46');
-        softRect(-16, -3, 32, 15, '#6e6145', 3);
-        softRect(-17, -7, 34, 7, '#89764f', 2);
-        for (const x of [-11, 10]) rect(x, -6, 3, 15, '#797c65');
-        rect(-3, -1, 6, 6, '#b29a63');
-        poly(
-          [
-            [-24, 10],
-            [-12, 5],
-            [0, 12],
-            [14, 6],
-            [25, 11],
-            [10, 16],
-            [-12, 16],
-          ],
-          '#77714e',
-        );
-        for (const x of [-20, 17])
+        // Discovery exposes the reserve inside ordinary Crown stores; no burial mound.
+        if (e.storageStyle === 'signal-store') {
+          boards(-30, -20, 60, 36, '#727c70');
+          rect(-25, -16, 50, 26, '#343e36');
+          craftAt(0, 6, 0.7, () => chest(true));
           line(
             [
-              [x, 12],
-              [x - 3, 3],
-              [x + 1, 8],
+              [-26, -15],
+              [-17, -7],
             ],
-            '#73845c',
-            1.4,
+            '#a9ae97',
+            3,
           );
+        } else if (e.storageStyle === 'ore-store') {
+          crateBody(-16, 9, 0.85);
+          craftAt(8, 3, 0.7, () => chest(true));
+          poly(
+            [
+              [-29, -28],
+              [-8, -33],
+              [27, -23],
+              [23, -13],
+              [-6, -17],
+            ],
+            '#707b62',
+          );
+          line(
+            [
+              [-27, -27],
+              [-7, -19],
+              [23, -15],
+            ],
+            '#b3ac85',
+            1.5,
+          );
+        } else if (e.storageStyle === 'haul-store') {
+          crateBody(0, 5, 1.1);
+          rect(-17, -6, 34, 17, '#3a4135');
+          craftAt(0, 6, 0.62, () => chest(true));
+          timber([-26, -19], [25, -25], 4);
+        } else {
+          craftAt(-12, 2, 0.7, () => chest(true));
+          crateBody(21, 8, 0.62);
+          paper(18, -15, 19);
+          line(
+            [
+              [-24, 15],
+              [27, 15],
+            ],
+            '#6c5a3c',
+            3,
+          );
+        }
       } else if (e.tribute || e.icon === '🪙') {
         chest(true, 0.9);
       } else if (e.icon === '🪵') craftedDecoration('woodpile');

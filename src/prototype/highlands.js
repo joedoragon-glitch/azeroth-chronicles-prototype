@@ -51,9 +51,23 @@
     [330, 3240],
     [450, 3400],
   ].map(point);
+  const roundedShore = [shore[0]];
+  for (let j = 1; j < shore.length; j++) {
+    const a = shore[j - 1],
+      b = shore[j];
+    if (a.y >= 1750 && b.y <= 2140) {
+      roundedShore.push(b);
+      continue;
+    }
+    roundedShore.push(
+      { x: a.x * 0.75 + b.x * 0.25, y: a.y * 0.75 + b.y * 0.25 },
+      { x: a.x * 0.25 + b.x * 0.75, y: a.y * 0.25 + b.y * 0.75 },
+    );
+  }
+  roundedShore.push(shore.at(-1));
   const coast = {
-    points: [...shore, point([0, 3400]), point([0, 0])],
-    bankCount: shore.length,
+    points: [...roundedShore, point([0, 3400]), point([0, 0])],
+    bankCount: roundedShore.length,
     x: 225,
     y: 1700,
     rx: 225,
@@ -294,6 +308,7 @@
     Campaign.prototype.highlandsLandscape = function (z) {
       if (z.id !== 'highlands') return;
       if (z.appalachianVersion === 1) {
+        this.highlandsTributeLayout(z);
         this.highlandsTownServices(z);
         return;
       }
@@ -367,9 +382,7 @@
             );
             if (n.servicePoint) n.servicePoint = { x: n.x, y: n.y };
           }
-        const specials = Object.entries(npcTargets)
-          .filter(([id]) => !id.startsWith('service-'))
-          .map(([, p]) => point(p));
+        const specials = Object.entries(npcTargets).map(([, p]) => point(p));
         for (const p of work.sort((a, b) => (b.r || 0) - (a.r || 0))) {
           const k = group(p),
             raw = plots[p.id] ? point(plots[p.id]) : k ? shifted(p, k) : { x: p.x, y: p.y };
@@ -378,8 +391,8 @@
             raw,
             p,
             (q) =>
-              (fort || this.distanceToRoad(z, q) > 62 + (p.r || 0)) &&
-              !specials.some((n) => distance(n, q) < (p.r || 0) + 78),
+              (fort || this.distanceToRoad(z, q) > 80 + (p.r || 0)) &&
+              !specials.some((n) => distance(n, q) < (p.r || 0) + 100),
           );
           Object.assign(p, q);
           z.props.push(p);
@@ -413,7 +426,8 @@
           lookout: 'lookout',
           ore: 'ore',
         };
-        const packs = new Map();
+        const packs = new Map(),
+          enemyHomes = [];
         const moveEnemy = (e) => {
           let k =
             e.family === 'ridge' || e.mini === 'field-ridge'
@@ -447,8 +461,25 @@
               h = e.home || e;
             raw = { x: p.to.x + h.x - p.from.x, y: p.to.y + h.y - p.from.y };
           }
-          const q = this.safe(raw.x, raw.y, z.id),
-            dx = q.x - (e.home || e).x,
+          let q = null;
+          const radius = Math.max(18, this.actorRadius(e));
+          for (const reach of [0, 45, 85, 125, 170]) {
+            for (let j = 0; j < (reach ? 16 : 1); j++) {
+              const angle = (j * Math.PI) / 8,
+                target = { x: raw.x + Math.cos(angle) * reach, y: raw.y + Math.sin(angle) * reach };
+              if (
+                !this.blocked(target.x, target.y, z.id, radius) &&
+                enemyHomes.every((p) => distance(p, target) >= p.radius + radius + 12)
+              ) {
+                q = target;
+                break;
+              }
+            }
+            if (q) break;
+          }
+          q ||= this.safe(raw.x, raw.y, z.id);
+          enemyHomes.push({ ...q, radius });
+          const dx = q.x - (e.home || e).x,
             dy = q.y - (e.home || e).y;
           e.home = { ...q };
           e.x += dx;
@@ -461,26 +492,17 @@
           e.aggro = false;
           e.returning = 0;
         };
-        for (const e of z.enemies) moveEnemy(e);
+        for (const e of [...z.enemies].sort(
+          (a, b) => Number(b.type === 'boss') - Number(a.type === 'boss'),
+        ))
+          moveEnemy(e);
         for (const p of Object.values(this.s.pending))
           if (p.zone === z.id && p.base) moveEnemy(p.base);
-        // Stable source IDs, remaining fractions and discovery are authoritative.
-        // Keep the existing dispersed tribute audit; its western cache now sits in a hardwood hollow.
-        const tribute = {
-          'ore-shipment': [1170, 570],
-          'stone-toll': [3210, 1680],
-          'timber-toll': [740, 2710],
-          'ogre-cache': [1210, 3130],
-        };
-        for (const n of z.nodes) {
-          const target = tribute[n.tributeId];
-          if (target) Object.assign(n, this.safe(...target, z.id));
-          else if (this.blocked(n.x, n.y, z.id, 20)) Object.assign(n, this.safe(n.x, n.y, z.id));
-        }
-        for (const n of z.npcs) {
-          const target = tribute[String(n.id).replace('highlands-tribute-site-', '')];
-          if (target) Object.assign(n, point(target));
-        }
+        // Place concealed stores at the actual named sites after their relocation.
+        // Amounts, paid crowns and saved discovery remain authoritative.
+        this.highlandsTributeLayout(z, true);
+        for (const n of z.nodes)
+          if (this.blocked(n.x, n.y, z.id, 20)) Object.assign(n, this.safe(n.x, n.y, z.id));
         // Repair entire road edges against the final real geometry. Their
         // painted centerlines and the routes used by walkers stay identical.
         z.roads = z.roads
@@ -493,6 +515,25 @@
             return out;
           })
           .filter((path) => path.length > 1);
+        for (const p of [...z.props]) {
+          if (
+            p.tributeScene ||
+            p.stronghold ||
+            /^mini-wall/.test(p.id || '') ||
+            this.distanceToRoad(z, p) >= 75 + (p.r || 0)
+          )
+            continue;
+          z.props.splice(z.props.indexOf(p), 1);
+          const q = choose(
+            p,
+            p,
+            (q) =>
+              this.distanceToRoad(z, q) >= 80 + (p.r || 0) &&
+              !specials.some((n) => distance(n, q) < (p.r || 0) + 100),
+          );
+          Object.assign(p, q);
+          z.props.push(p);
+        }
         const allDoors = z.npcs.filter(
           (n) => !n.internalSite && !n.id.startsWith('highlands-tribute-site-'),
         );

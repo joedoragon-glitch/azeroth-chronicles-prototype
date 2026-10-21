@@ -316,7 +316,7 @@
     ],
     [
       'Ore Workers at Risk',
-      'Trabajadores de la cantera en peligro',
+      'Mineros en peligro',
       'Defeat 7 outdoor enemies in Ironroot Highlands',
       'Derrota a 7 enemigos al aire libre en Ironroot Highlands.',
     ],

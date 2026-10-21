@@ -2465,14 +2465,15 @@
         (n) => n.tribute && n.hidden && n.amount > 0 && !this.tributeKnown(n),
       );
     }
-    scoutTribute() {
+    scoutTribute(nodeId = null) {
       if ((this.s.expeditionRank || 1) < 2 || this.isDungeon()) return false;
       const hidden = this.hiddenTributeNodes();
       if (!hidden.length) {
         this.say('No undiscovered Dark Lord Tribute remains in this region.');
         return false;
       }
-      const n = hidden[0];
+      const n = nodeId ? hidden.find((n) => n.id === nodeId) : hidden[0];
+      if (!n) return false;
       if (this.zoneId === 'highlands' && n.concealedTribute)
         return this.gather(n.id, { scouting: true });
       return this.locateTribute(n);
