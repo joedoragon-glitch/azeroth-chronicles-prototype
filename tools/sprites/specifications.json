@@ -1375,6 +1375,25 @@
         "anchorX": 0.5,
         "anchorY": 0.75
       }
+    },
+    {
+      "catalogId": "091",
+      "key": "transport:ferry",
+      "region": 1,
+      "entity": {
+        "renderKind": "npc",
+        "kind": "transport",
+        "id": "outbound",
+        "name": "Ferry to Ironroot Highlands",
+        "icon": "\u26f5",
+        "harbor": true
+      },
+      "canvas": {
+        "width": 144,
+        "height": 72,
+        "anchorX": 0.5,
+        "anchorY": 0.64
+      }
     }
   ]
 }

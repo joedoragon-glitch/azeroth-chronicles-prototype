@@ -5227,6 +5227,122 @@
           "decision": "Existing accepted illustration retained; current fallback contour changes reviewed without replacing art."
         }
       ]
+    },
+    "transport:ferry": {
+      "version": 2,
+      "key": "transport:ferry",
+      "catalogId": "091",
+      "canonHash": "3529bbc8fb67ff003e0c397f9bad26a49b7d4985ee9f31199ee0e939904b8a20",
+      "canonSnapshotHash": "77faa675af43f85ae5d229203693993763e3e733cb7b08ce44c474417d28cd0d",
+      "catalogHash": "f715b1810e9c6696869b51f3d23001f3f3a6d4d64774c0c506ecb9be4020b58d",
+      "source": {
+        "file": "19d990901d6538a796fdd132842da1d04c219afa2f47f5eb8b991e24617ae336.png",
+        "format": "png",
+        "width": 1774,
+        "height": 887,
+        "bytes": 1139285,
+        "decodedBytes": 6294152,
+        "hash": "19d990901d6538a796fdd132842da1d04c219afa2f47f5eb8b991e24617ae336",
+        "pixelHash": "fbf56e9211ab946a9623887bc28b8c69deae823155a1ca6eb507312f9f531040",
+        "bounds": {
+          "x1": 0,
+          "y1": 9,
+          "x2": 1755,
+          "y2": 886
+        },
+        "padding": 0,
+        "transparentPixels": 979627,
+        "visiblePixels": 593911,
+        "lowAlphaPixels": 18401,
+        "materialBounds": {
+          "x1": 48,
+          "y1": 157,
+          "x2": 1725,
+          "y2": 786
+        }
+      },
+      "output": {
+        "file": "transport-ferry-76ebb2349a8e0ece74cc2f578e9eeed72a6d1d6e2f3cf61736dd100d0324395a.webp",
+        "format": "webp",
+        "width": 612,
+        "height": 306,
+        "bytes": 106984,
+        "decodedBytes": 749088,
+        "hash": "76ebb2349a8e0ece74cc2f578e9eeed72a6d1d6e2f3cf61736dd100d0324395a",
+        "pixelHash": "e89b9a08c1b058e80a961d375c7ce58398d526ed28084f864b330100e966c1f9",
+        "bounds": {
+          "x1": 16,
+          "y1": 15,
+          "x2": 589,
+          "y2": 297
+        },
+        "padding": 8,
+        "transparentPixels": 123948,
+        "visiblePixels": 63324,
+        "lowAlphaPixels": 1968,
+        "materialBounds": {
+          "x1": 32,
+          "y1": 59,
+          "x2": 579,
+          "y2": 264
+        }
+      },
+      "runtime": {
+        "displayWidth": 144,
+        "displayHeight": 72,
+        "anchorX": 0.5,
+        "anchorY": 0.64,
+        "labelHeight": 76
+      },
+      "processing": {
+        "tool": "sharp",
+        "version": "0.35.5",
+        "kernel": "nearest",
+        "from": [
+          1774,
+          887
+        ],
+        "to": [
+          612,
+          306
+        ],
+        "rasterScale": 4.25,
+        "normalization": {
+          "fullCanvasWidth": 1774,
+          "fullCanvasHeight": 887,
+          "padding": {
+            "left": 50,
+            "right": 50,
+            "top": 25,
+            "bottom": 25
+          },
+          "virtualWidth": 1874,
+          "virtualHeight": 937,
+          "input": "untouched-original",
+          "samplingPasses": 1,
+          "intermediatePixelsUsed": false
+        },
+        "crop": false,
+        "trim": false,
+        "colorConversion": false,
+        "translation": {
+          "x": 0,
+          "y": 0,
+          "rasterX": 0,
+          "rasterY": 0,
+          "visiblePixelsDiscarded": 0
+        }
+      },
+      "review": {
+        "status": "approved",
+        "reference": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/372",
+        "ownerSelection": "I'll pick number three.",
+        "scope": "Exact selected original; engineer-reviewed faithful export and native placement.",
+        "nativeReview": "tools/visual-review/tidal-ferry-dev136/",
+        "sourceHash": "19d990901d6538a796fdd132842da1d04c219afa2f47f5eb8b991e24617ae336",
+        "outputHash": "76ebb2349a8e0ece74cc2f578e9eeed72a6d1d6e2f3cf61736dd100d0324395a"
+      },
+      "revision": "e96ca108d314232c57f102999010262d4168f1e6dd3a9cc5c1cbf9ff1cac1b49"
     }
   },
   "history": {

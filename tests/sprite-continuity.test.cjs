@@ -25,7 +25,7 @@ const root = path.resolve(__dirname, '..');
     for (const item of current.handoffs)
       assert.equal(item.hash, pipeline.hash(fs.readFileSync(path.join(root, item.file))));
   }
-  assert.deepEqual(counts, { raster: 22, procedural: 11 });
+  assert.deepEqual(counts, { raster: 23, procedural: 11 });
   for (const value of Object.values(decisions.assets)) {
     for (const file of [...value.decisionDocuments, ...value.handoffs])
       assert(fs.existsSync(path.join(root, file)), file);
@@ -88,7 +88,7 @@ const root = path.resolve(__dirname, '..');
   for (const [file, hash] of before)
     assert.equal(pipeline.hash(fs.readFileSync(path.join(root, file))), hash, file);
   console.log(
-    'PASS current runtime disposition for all 33 registrations, decision links/hashes, retained sources, latest Mage request/reference/body footprint, immutable capture and unchanged production art/registries',
+    'PASS current runtime disposition for all 34 registrations, decision links/hashes, retained sources, latest Mage request/reference/body footprint, immutable capture and unchanged production art/registries',
   );
 })().catch((error) => {
   console.error(error);

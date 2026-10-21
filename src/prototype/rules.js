@@ -2902,7 +2902,7 @@
       water: { x1: 0, x2: 390, y1: 1740, y2: 2190 },
       dock: { x1: 325, x2: 470, y1: 1845, y2: 1955 },
       arrival: { x: 425, y: 1900 },
-      boat: { x: 340, y: 1960 },
+      boat: { x: 300, y: 1995 },
       shore: { x: 390, y: 1900 },
       name: 'Stonecross Ferry Landing',
       vegetation: 'pine',

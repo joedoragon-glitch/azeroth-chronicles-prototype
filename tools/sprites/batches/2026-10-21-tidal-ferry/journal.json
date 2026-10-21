@@ -1,0 +1,13 @@
+{
+  "stage": "registered-focused-checks-complete-publication-pending",
+  "sourceHash": "19d990901d6538a796fdd132842da1d04c219afa2f47f5eb8b991e24617ae336",
+  "outputHash": "76ebb2349a8e0ece74cc2f578e9eeed72a6d1d6e2f3cf61736dd100d0324395a",
+  "candidateCanonHash": "3529bbc8fb67ff003e0c397f9bad26a49b7d4985ee9f31199ee0e939904b8a20",
+  "source": "option-3-original.png",
+  "processing": "placement.json",
+  "candidate": "candidate/candidate.json",
+  "ownerSelection": "I'll pick number three.",
+  "retainedGeneratorAlpha": "Original alpha=1 edge pixels preserved; explicit output padding.",
+  "nextAction": "Authorized package-only publication and exact live-source verification; restore normal workflow.",
+  "activeRevision": "e96ca108d314232c57f102999010262d4168f1e6dd3a9cc5c1cbf9ff1cac1b49"
+}

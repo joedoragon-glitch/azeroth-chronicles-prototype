@@ -122,7 +122,10 @@
       if (e.family && ['teacher', 'smith', 'alchemist'].includes(e.kind))
         return ['specialist:' + clean(e.family)];
       if (e.kind === 'dungeon' || e.kind === 'exit') return ['dungeon:' + clean(e.family)];
-      if (e.kind === 'transport') return ['transport:' + clean(e.name || e.icon || 'regional')];
+      if (e.kind === 'transport')
+        return e.icon === '⛵'
+          ? ['transport:ferry', 'transport:' + clean(e.name || e.icon || 'regional')]
+          : ['transport:' + clean(e.name || e.icon || 'regional')];
       if (e.kind === 'mini') return ['site:mini:' + regionKey(region)];
       if (e.kind === 'landmark') return ['landmark:' + clean(e.id || e.name)];
       return ['npc:' + clean(e.kind) + ':' + regionKey(region)];

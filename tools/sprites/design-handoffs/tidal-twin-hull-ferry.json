@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "designId": "tidal-twin-hull-ferry",
+  "name": "Tidal Twin-Hull Ferry \u2014 owner-selected option 3",
+  "status": "registered-focused-checks-complete-publication-pending",
+  "nextAction": "Publish complete dev.136 package, verify exact live build and files, then restore normal workflow.",
+  "context": {
+    "decisionDate": "2026-10-21",
+    "originConversation": null,
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/372",
+    "decisionSummary": "After reviewing three generated ferry redesigns, Joel said: \u201cI'll pick number three.\u201d This selects the Tidal Twin-Hull Ferry for implementation in the current game.",
+    "contentDocuments": [
+      "docs/TIDAL_FERRY_DEV136.md"
+    ],
+    "locationAndLore": "Same passenger ferry between Lantern Shore and the Highlands; no new faction or lore."
+  },
+  "decisions": {
+    "conceptAcceptance": "Option 3 explicitly selected by Joel.",
+    "proceduralDesignAcceptance": "Selected generated design supersedes the simple sailboat; matching procedural fallback implements its broad silhouette.",
+    "spriteProductionAuthorization": "Implement the selected existing original; no additional generation needed.",
+    "generatedAppearanceAcceptance": {
+      "selectedOption": 3,
+      "sourceFile": "tools/sprites/batches/2026-10-21-tidal-ferry/option-3-original.png",
+      "sourceHash": "19d990901d6538a796fdd132842da1d04c219afa2f47f5eb8b991e24617ae336",
+      "ownerWords": "I'll pick number three."
+    },
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "f1315dc42dd65c0252c3535154de8f62a321007c",
+    "ownerFilesAndBranches": [
+      "src/prototype/visuals.js",
+      "src/prototype/sprites.js",
+      "src/prototype/rules.js",
+      "feat/tidal-ferry-dev136"
+    ],
+    "isolatedReferencePath": "tools/sprites/batches/2026-10-21-tidal-ferry/option-3-original.png",
+    "isolatedReferenceHash": "19d990901d6538a796fdd132842da1d04c219afa2f47f5eb8b991e24617ae336",
+    "originalImageTool": "image_gen.imagegen",
+    "originalToolOutputFilename": "exec-c01d6c18-95c4-41d0-bdfd-0883cbe2c172.png",
+    "toolRequestId": null,
+    "originalDimensions": [
+      1774,
+      887
+    ],
+    "exactEntityState": {
+      "renderKind": "npc",
+      "kind": "transport",
+      "icon": "\u26f5",
+      "ids": [
+        "march:outbound",
+        "highlands:return"
+      ]
+    },
+    "gameplayContextPaths": [
+      "tools/visual-review/tidal-ferry-dev136/shore-night.webp",
+      "tools/visual-review/tidal-ferry-dev136/highlands-day.webp",
+      "tools/visual-review/tidal-ferry-dev136/shore-day.webp",
+      "tools/visual-review/tidal-ferry-dev136/highlands-night.webp",
+      "tools/visual-review/tidal-ferry-dev136/phone-day.webp",
+      "tools/visual-review/tidal-ferry-dev136/phone-night.webp"
+    ],
+    "traitsToPreserve": [
+      "Two curved shallow plank hulls and clear twin bow gap.",
+      "Woven reed canopy over cypress ribs, open passenger deck and benches.",
+      "Blue-green trim, coarse rope fenders and two amber lamps.",
+      "Tan-hatted ferryman in brown clothing with a short steering oar.",
+      "Low compact silhouette; no mast or sail."
+    ],
+    "nativeReviewHashes": {
+      "tools/visual-review/tidal-ferry-dev136/shore-night.webp": "5dd948d6d5c0302d6acbd119a0518ac3a62c7f02db4508fe7679d0ddc9aafa57",
+      "tools/visual-review/tidal-ferry-dev136/highlands-day.webp": "e514f68420af624d9878ef48c0da6b868f612fd6707901ee309c036bc0a7bd4a",
+      "tools/visual-review/tidal-ferry-dev136/shore-day.webp": "7e82ff562f49a8ed6dffbc2576607d3c04ac75ff442f58b84477b287b9cc4cf6",
+      "tools/visual-review/tidal-ferry-dev136/highlands-night.webp": "ee289262ed41e8caa074667a87b2d34d0867a7f9ff53b61c859f99670eb132b2",
+      "tools/visual-review/tidal-ferry-dev136/phone-day.webp": "5fedc24cf3f9b5a59d3576cab2da36f042fdae01c361cf8a7463008b6670ff47",
+      "tools/visual-review/tidal-ferry-dev136/phone-night.webp": "535e851a8f4aacea64e014761ee99905b436f5983a1b8fe5a8cf77d43716b635"
+    },
+    "rendererDependencies": {
+      "@napi-rs/canvas": "1.0.10",
+      "sharp": "0.35.5"
+    }
+  },
+  "scope": {
+    "catalogIds": [
+      "091"
+    ],
+    "verifiedRuntimeKeys": [
+      "transport:ferry"
+    ],
+    "requiredVisibleAssets": [
+      "Selected static ferry body",
+      "Matching procedural loading/failure fallback"
+    ],
+    "variantRequirements": [
+      "Marches/Highlands landing",
+      "day/night",
+      "desktop/phone portrait/landscape"
+    ],
+    "proceduralOwnersAndReasons": [
+      "rules/world retain walkable dock, landing and interaction geometry; visuals supplies matching fallback."
+    ]
+  },
+  "animationRequirements": {
+    "status": "static selected; no animation requested",
+    "staticFallbackKey": "transport:ferry",
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      "tools/sprites/batches/2026-10-21-tidal-ferry/candidate/candidate.json"
+    ],
+    "approvedRecordKey": "transport:ferry",
+    "expectedReplacementRevision": "absent",
+    "rollbackRevision": "remove new registration with exact revision; matching procedural fallback remains",
+    "releaseCommit": null,
+    "releaseEvidence": null,
+    "activeContentRevision": "e96ca108d314232c57f102999010262d4168f1e6dd3a9cc5c1cbf9ff1cac1b49"
+  }
+}
