@@ -1,0 +1,104 @@
+{
+  "version": "0.9.1+snapshot.dev.128",
+  "pr": 364,
+  "merge": "55ad078ee1a7e0b092ff52729b435f4d2ea98d0f",
+  "package_only_run": 39563416611,
+  "verified_at": "2026-10-21T07:39:53.876216+00:00",
+  "files": [
+    {
+      "path": "src/prototype/treasury.js",
+      "match": true,
+      "bytes": 10775,
+      "sha256": "fd25c348f2be16c6df51e0e0e453367ef0e7c9c254abfcd2796854a601bcae83"
+    },
+    {
+      "path": "src/prototype/economy.js",
+      "match": true,
+      "bytes": 4971,
+      "sha256": "1c150991f593eb6ba872d28f95fd72b26a6323bb03dced2b5816f4a4bd78d562"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "match": true,
+      "bytes": 263436,
+      "sha256": "97a4035c7f09e010bcfa127f3090d380ea56936e067ffa212718bd7857220db6"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "match": true,
+      "bytes": 212702,
+      "sha256": "c1bd80b1ab82e2cc43586528bb2d0a11b5cb6fabee9186816f061f020131ff80"
+    },
+    {
+      "path": "src/prototype/save.js",
+      "match": true,
+      "bytes": 50611,
+      "sha256": "3c2f2bc04be11f63584c07a70ada43dced327f450262b6d8698a64b40a74ded7"
+    },
+    {
+      "path": "src/prototype/app.js",
+      "match": true,
+      "bytes": 150057,
+      "sha256": "baa915a9a72366b60b8cdb0a404c14347ea60bc8a6f4fe83b43dfa54a781e088"
+    },
+    {
+      "path": "src/prototype/renderer.js",
+      "match": true,
+      "bytes": 102267,
+      "sha256": "7a5b25a86294d42f927e8e94a33869f85ea81a10ca8f107604968d9ba0d863c0"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "match": true,
+      "bytes": 296,
+      "sha256": "c4d76047e1e41954185684907b49c1d904200c4375358ec67c8fd0f39a365ddc"
+    },
+    {
+      "path": "sw.js",
+      "match": true,
+      "bytes": 20733,
+      "sha256": "3fd08217cc23e36fa62ff94e2e8f87302f80b9980c7d18e5761cd092c9af613c"
+    },
+    {
+      "path": "index.html",
+      "match": true,
+      "bytes": 5540,
+      "sha256": "b2954d6014c3d9a3195365e55d1cb976a055b3795e1fb2a5633b466eaba9b48f"
+    },
+    {
+      "path": "prototype.html",
+      "match": true,
+      "bytes": 5540,
+      "sha256": "b2954d6014c3d9a3195365e55d1cb976a055b3795e1fb2a5633b466eaba9b48f"
+    },
+    {
+      "path": "phone.html",
+      "match": true,
+      "bytes": 5541,
+      "sha256": "ea474daecb23899bad38da8952829e2fe25bc69add2546f5e83f9ab354a885ee"
+    }
+  ],
+  "live_phone": {
+    "url": "https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html",
+    "phone": "375x812",
+    "captainAnnouncement": "Scornfang defeated \u00b7 60 crowns recoverable",
+    "automaticPayout": false,
+    "frontierDroppedAtKill": {
+      "diedAt": {
+        "x": 1400,
+        "y": 1080
+      },
+      "drop": {
+        "x": 1400,
+        "y": 1080
+      },
+      "balance": 20
+    },
+    "frontierTouchRecoveryAfterReload": true,
+    "touchCacheCollection": true,
+    "recovered": 60,
+    "wallet": 220,
+    "saveReload": true,
+    "javascriptErrors": []
+  }
+}

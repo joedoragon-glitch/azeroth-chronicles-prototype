@@ -21,8 +21,12 @@ Frontier has no Treasury interior. The owner selected the existing **Cinder Warl
 - `tests/treasury-recovery.test.cjs`: all five regions in Normal/Nightmare, repeated actual deaths, exact balance/debit, captain defeat versus collection, refused living-captain collection, save/exit/reentry, duplicate/refused collection, safe scheduled respawn, another loss cycle, native guard return, separate banks, interior attribution, fractional/zero wallet, Succession, old/malformed saves and forged wrong-region cache.
 - Existing regional death/Barracks, economy, Treasury fortification and browser/CommonJS domain graph checks pass. No broad CI or whole-game suite.
 - Actual phone Chromium at 375×812: live app captain damage/defeat, visible `60 crowns recoverable` announcement, no automatic payout, marked cache, real touch interaction paying 60 once, zero balance/hidden cache and saved/reloaded wallet. No JavaScript errors. Script, Treasury/Frontier captures and receipt: `tools/visual-review/treasury-recovery-dev128/`.
-- Build/generated/assets and changed-source formatting checked for this candidate; publication pending.
+- Build/generated/assets and changed-source formatting checked for this candidate; publication verified below.
 
 ## Arena audit steering retained
 
 The owner clarified that arena work must support prepared defenders using their intended skills, summons and defensive positions; it is not a plan to make clearing dungeons easier. Corner entrances provide separation before confrontation. Initial companion stacking is acceptable; spacing is optional where actual combat movement/performance supports it. **Crypt, Archive and Mine fort bonuses are undecided and not authorized.** Their absence in the audit is not a defect to fix automatically. Death-loss recovery is the current priority. Crag/arena/entrance changes and sunrise/sunset flashes are not part of this release.
+
+## Publication
+
+Published in PR #364 as `55ad078ee1a7e0b092ff52729b435f4d2ea98d0f`; package-only run 39563416611 succeeded. Twelve exact checked public runtime files and `build.txt` match. The actual published phone URL passes the Treasury amount announcement/touch payout/reset/save flow and Frontier kill-point drop, reload and touch collection, without JavaScript errors. Normal workflow restored and temporary publisher removed. Receipt: `evidence/TREASURY_RECOVERY_DEV128_PUBLICATION_20261021.json`. No broad CI or further automatic gameplay work follows.

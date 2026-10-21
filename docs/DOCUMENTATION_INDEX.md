@@ -1,4 +1,4 @@
-Prepared dev.128: [regional Treasury death-loss recovery and owner arena steering](TREASURY_DEATH_RECOVERY_DEV128.md). Focused checks and actual phone flow pass; publication pending.
+Published dev.128: [regional Treasury recovery and defender-favoring arena steering](TREASURY_DEATH_RECOVERY_DEV128.md), PR #364. Exact live build/12 runtime files match; phone captain announcement/touch collection and saved Frontier drop pass. Normal workflow restored.
 
 Published dev.127: [roster restriction explanations](BARRACKS_ROSTER_FEEDBACK_DEV127.md), PR #363. Nine live files match; actual phone rest/recruit and visible blocker checks pass. Normal workflow restored. [Boss/captain encounter-space audit](ENCOUNTER_SPACE_AUDIT_DEV127.md) is complete, review-only; proposed spatial/arrival/fort repairs are not implemented.
 
