@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "status": "procedural-implemented-owner-playtest-next",
+  "status": "procedural-released-owner-playtest-next",
   "designId": "lantern-shore-coastal-marches",
   "name": "Flooded Marches coastal swamp and Lantern Shore ferry district",
   "nextAction": "Owner tests the published regional layout and night crossing on the existing playthrough; no automatic raster generation.",
   "context": {
     "decisionDate": "2026-10-21",
     "originConversation": null,
-    "repositoryIssueOrPR": null,
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/370",
     "decisionSummary": "Owner explicitly authorized a full coherent coastal-swamp pass, nonlinear southern coast, relocation of major assets to underused edges, all surrounding aesthetic work, and Wraiths as a collective night ferry challenge with daylight as the alternative.",
     "contentDocuments": [
       "docs/COASTAL_MARCHES_DEV134.md"
@@ -112,7 +112,7 @@
   },
   "production": {
     "candidateRecords": [],
-    "releaseCommit": null,
-    "releaseEvidence": null
+    "releaseCommit": "a45ca097fac1bfe9ca5d6792de7d80c1ba59dd60",
+    "releaseEvidence": "docs/evidence/COASTAL_MARCHES_DEV134_PUBLICATION_20261021.json"
   }
 }

@@ -1,0 +1,79 @@
+{
+  "version": "0.9.1+snapshot.dev.134",
+  "pr": 370,
+  "merge": "a45ca097fac1bfe9ca5d6792de7d80c1ba59dd60",
+  "files": [
+    {
+      "path": "src/prototype/app.js",
+      "matches": true,
+      "sha256": "247587b23a429b656a22d8df7112b3a7ff39c1d07b47ed08f023f5084b5b9eff"
+    },
+    {
+      "path": "src/prototype/data.js",
+      "matches": true,
+      "sha256": "0e8532e133ba57df83dba22ff234d547bf33f38c38f8d875a405664998d2ab9d"
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "matches": true,
+      "sha256": "243374589937b6b9e4602bb13ebd2e7d1b312087f5f5dc0c5b0ee715f794543e"
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "matches": true,
+      "sha256": "91a7df318c8da438abae730a58e1d268923cd7d788efef991eac1fa2d67dec86"
+    },
+    {
+      "path": "src/prototype/navigation.js",
+      "matches": true,
+      "sha256": "55ed80e3118bdc76989a1fc89ffe7c8b3511dedc75dcda0437b3e665203517d6"
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "matches": true,
+      "sha256": "2410740114210a9ed71dc38efbe6bbef4dc369e63cdabab50cbc2648d8aa0ead"
+    },
+    {
+      "path": "src/prototype/save.js",
+      "matches": true,
+      "sha256": "98ad69c3d561a08a08b9b25658b1e2620448e63756843e91e0ff3e7749900fa4"
+    },
+    {
+      "path": "src/prototype/visuals.js",
+      "matches": true,
+      "sha256": "8668cecdc331ab3781a501d4ffe7b84a13c6ce9493dd5b5654b9e02d0443c3af"
+    },
+    {
+      "path": "src/prototype/world.js",
+      "matches": true,
+      "sha256": "e48de08862946d96082f04d9ffa9737e1d27cb6a6c65cfd8a4c827ab21da82fd"
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "matches": true,
+      "sha256": "8530039bc1cbe1f17990789e3b718e70195ff5021e89268d6ad7b67115f6e8d5"
+    },
+    {
+      "path": "sw.js",
+      "matches": true,
+      "sha256": "7e54532fbbab40647e4aae3c54f702ef5c30629dadbb8e8596465c4ebeefe66a"
+    },
+    {
+      "path": "phone.html",
+      "matches": true,
+      "sha256": "cbac05583f913484864260f9e04d127d4fe6dc12f58f2de12dc3803ef50ff6c9"
+    }
+  ],
+  "packageOnlyRun": {
+    "id": 39585485126,
+    "conclusion": "success"
+  },
+  "build": "a45ca097fac1bfe9ca5d6792de7d80c1ba59dd60",
+  "buildMatches": true,
+  "validation": {
+    "focused": "Four seeds, principal routes/water, current and actual dev133 save/camp/identity migration, night/day clear/wait and work/old-menu guards, existing local quests and menus passed.",
+    "native": "Nine exact native renderer day/night/location and phone portrait/landscape scenes; reviewed and state pure.",
+    "broadCI": "Not run, per owner workflow.",
+    "browserStartup": "Not run; host browser system libraries unavailable. Native renderer and real menu/domain paths verified."
+  }
+}
