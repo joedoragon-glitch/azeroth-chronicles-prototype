@@ -835,7 +835,8 @@
           this.s.challenge.gameOver
         )
           return false;
-        const rangers = this.availableRangers(type).filter((u) => !this.mageSilenceActive(u)),
+        const readyRangers = this.availableRangers(type),
+          rangers = readyRangers.filter((u) => !this.mageSilenceActive(u)),
           key = type === 'health' ? 'healCd' : 'manaCd';
         if (!rangers.length) {
           if (manual) {
@@ -844,6 +845,12 @@
               this.say(
                 'No active Ranger is available to use ' +
                   (type === 'health' ? 'Heal.' : 'Mana Recovery.'),
+              );
+            else if (readyRangers.length)
+              this.say(
+                'Ranger cannot use ' +
+                  (type === 'health' ? 'Heal' : 'Mana Recovery') +
+                  ' while silenced.',
               );
             else
               this.say(
