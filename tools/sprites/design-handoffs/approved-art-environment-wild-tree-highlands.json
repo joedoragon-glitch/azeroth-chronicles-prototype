@@ -2,98 +2,272 @@
   "schemaVersion": 1,
   "status": "procedural-design",
   "designId": "approved-art-environment-wild-tree-highlands",
-  "name": "Wild Tree Highlands",
+  "name": "Wild Tree Highlands \u2014 current Appalachian family",
   "kind": "environment",
-  "nextAction": "Merge and publish the approved procedural pass under owner authorization. Preserve these identities for future sprite work. Only a bounded visual/audio check follows publication; no full-game regression.",
+  "nextAction": "Use appalachian-highlands-nature.json as current canon; preserve earlier pine record as historical provenance.",
   "context": {
-    "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
-    "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Refine uneven tapered pine branches, a visible trunk and grouped needles; preserve existing seeded size and placement.",
-    "decisionDate": "2026-10-19",
-    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
-    "contentDocuments": [
-      "docs/APPROVED_ART_PASS_20261019.md"
-    ],
-    "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
-    "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md.",
-    "subsequentOwnerReview": "Joel requested additional corrections to natural trees/logs, mangrove roots, objects on hard surfaces, geothermal machinery, split firewood and laundry. The related shared states are corrected; no independent acceptance of unseen corrected results is presumed."
+    "originConversation": "Conversation URL unavailable; owner instructions dated 21 October 2026 are recorded in PR #374 and the scope document.",
+    "decisionSummary": "Complete Appalachian-inspired Highlands overhaul approved, including new nature assets, site relocation and coinage-ore facilities. All four tribute stores now require a physical Barracks search at existing named locations; Crag Tyrant arranged the concealment. Town Supplies retains cargo delivery.",
+    "decisionDate": "2026-10-21",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/374",
+    "contentDocuments": ["docs/HIGHLANDS_APPALACHIAN_DEV138.md"],
+    "locationAndLore": "Ironroot Highlands; silver/copper extraction and portrait-crown production. Preserve native households and current character canon."
   },
   "decisions": {
-    "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
-    "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
-    "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
-    "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+    "conceptAcceptance": "Owner explicitly approved the complete rework and new procedural assets, then directed named-site/Barracks-only tribute search and Town Supplies cargo delivery.",
+    "proceduralDesignAcceptance": "Implementation authorized; exact unseen final artwork is not independently claimed accepted.",
+    "spriteProductionAuthorization": "Procedural code-native implementation in this update; no new raster job or registration.",
+    "generatedAppearanceAcceptance": "No generated raster images in this update.",
     "pendingCorrections": []
   },
   "reference": {
-    "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+    "sourceCommit": "cc2020f1f27283c66fbe2bed0ca34b8aaee907f4",
     "ownerFilesAndBranches": [
-      "src/prototype/visuals.js::wildProp / non-rock / region 2",
-      "polish/approved-whole-game-art"
+      "src/prototype/highlands.js",
+      "src/prototype/visuals.js",
+      "src/prototype/sprites.js",
+      "rework/appalachian-highlands-dev138"
     ],
     "exactEntityState": [
       {
-        "label": "Current body",
-        "mode": "procedural",
+        "label": "oak",
         "entity": {
-          "id": "forest-audit-wild-tree-highlands",
-          "name": "wild-tree-highlands",
-          "x": 600,
-          "y": 600,
-          "renderKind": "prop",
-          "icon": "🌲",
-          "visualScale": 1.3
-        },
-        "region": 2,
-        "scale": 1.5,
-        "displayDPR": 2
+          "id": "forest-0-16",
+          "x": 1189.0645376071545,
+          "y": 1599.08226927828,
+          "r": 18,
+          "icon": "\ud83c\udf33",
+          "highlandsNature": "tree",
+          "treeSpecies": "oak",
+          "structure": "appalachian-tree",
+          "decorative": false,
+          "visualScale": 1.3,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "maple",
+        "entity": {
+          "id": "forest-0-33",
+          "x": 1218.0532920776714,
+          "y": 1846.266362279387,
+          "r": 18,
+          "icon": "\ud83c\udf33",
+          "highlandsNature": "tree",
+          "treeSpecies": "maple",
+          "structure": "appalachian-tree",
+          "decorative": false,
+          "visualScale": 1.5,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "hickory",
+        "entity": {
+          "id": "forest-0-44",
+          "x": 1262.3975751650369,
+          "y": 1670.3503006308465,
+          "r": 18,
+          "icon": "\ud83c\udf33",
+          "highlandsNature": "tree",
+          "treeSpecies": "hickory",
+          "structure": "appalachian-tree",
+          "decorative": false,
+          "visualScale": 1.4000000000000001,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "birch",
+        "entity": {
+          "id": "forest-0-18",
+          "x": 2322.7719531849643,
+          "y": 2003.1647897502216,
+          "r": 18,
+          "icon": "\ud83c\udf33",
+          "highlandsNature": "tree",
+          "treeSpecies": "birch",
+          "structure": "appalachian-tree",
+          "decorative": false,
+          "visualScale": 1.3,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "beech",
+        "entity": {
+          "id": "forest-1-5",
+          "x": 2305.8989170358063,
+          "y": 2120.1987535521876,
+          "r": 18,
+          "icon": "\ud83c\udf33",
+          "highlandsNature": "tree",
+          "treeSpecies": "beech",
+          "structure": "appalachian-tree",
+          "decorative": false,
+          "visualScale": 1.4000000000000001,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "tulip",
+        "entity": {
+          "id": "forest-1-44",
+          "x": 1171.0313541920877,
+          "y": 230.75440586991635,
+          "r": 18,
+          "icon": "\ud83c\udf33",
+          "highlandsNature": "tree",
+          "treeSpecies": "tulip",
+          "structure": "appalachian-tree",
+          "decorative": false,
+          "visualScale": 1.4000000000000001,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "spruce",
+        "entity": {
+          "id": "forest-4-6",
+          "x": 2467.4009263113244,
+          "y": 3166.645754377205,
+          "r": 18,
+          "icon": "\ud83c\udf33",
+          "highlandsNature": "tree",
+          "treeSpecies": "spruce",
+          "structure": "appalachian-tree",
+          "decorative": false,
+          "visualScale": 1.3,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "fern",
+        "entity": {
+          "id": "forest-0-34",
+          "x": 2474.232988852488,
+          "y": 2223.26006529065,
+          "r": 0,
+          "icon": "\ud83c\udf3f",
+          "highlandsNature": "fern",
+          "treeSpecies": "maple",
+          "structure": "appalachian-fern",
+          "decorative": true,
+          "visualScale": 1.15,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "laurel",
+        "entity": {
+          "id": "forest-0-43",
+          "x": 2535.0999392126323,
+          "y": 1981.2474221295568,
+          "r": 0,
+          "icon": "\ud83c\udf3f",
+          "highlandsNature": "laurel",
+          "treeSpecies": "oak",
+          "structure": "appalachian-laurel",
+          "decorative": true,
+          "visualScale": 1.15,
+          "renderKind": "prop"
+        }
+      },
+      {
+        "label": "fallen-log",
+        "entity": {
+          "id": "forest-1-16",
+          "x": 2716.058575674307,
+          "y": 1623.4409232805428,
+          "r": 0,
+          "icon": "\ud83c\udf3f",
+          "highlandsNature": "fallen-log",
+          "treeSpecies": "maple",
+          "structure": "appalachian-fallen-log",
+          "decorative": true,
+          "visualScale": 1.15,
+          "renderKind": "prop"
+        }
       }
     ],
-    "isolatedReferencePath": "tools/visual-review/approved-art-pass/after/environment_wild-tree-highlands--Current_body.webp",
-    "isolatedReferenceHash": "9266b049078c04f4f7cb35672855dccc24fccd9c0c76ed198fe29f89c1ae3170",
+    "isolatedReferencePath": "tools/visual-review/highlands-dev138/isolated-families.webp",
+    "isolatedReferenceHash": "1180584304ea1065db8468316276cabf06337f48ca042dca7a59176d9f900635",
     "gameplayContextPaths": [
-      "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+      "tools/visual-review/highlands-dev138/woodland.webp",
+      "tools/visual-review/highlands-dev138/woodland-phone.webp",
+      "tools/visual-review/highlands-dev138/overview.webp"
     ],
     "traitsToPreserve": [
-      "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
-      "The regional tree has organic species-specific construction.",
-      "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+      "Seven deliberate species: oak/maple/hickory/birch/beech/tulip/spruce; spruce stays a small minority.",
+      "Organic clustered leaves, species-specific trunks/branching and green/gold/copper/red seasonal stages; open floor with ferns, laurel, logs and fallen leaves.",
+      "Retain nature IDs and seeded state; preserve walkable road frontages and native actor outlines."
     ],
     "assetSpecificDependencies": [
       {
-        "path": "src/prototype/visuals.js",
-        "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+        "path": "src/prototype/highlands.js",
+        "sha256": "b2b0aa8b7ed42ecfa20d710e5acb617b5096d6dfb2cca01cf1393a6c207fc703"
       },
       {
-        "before": "tools/visual-review/approved-art-pass/images/environment_wild-tree-highlands--Current_body.webp",
-        "beforeSHA256": "17f621f44dce97a1d515f6b28dead03741d4e6c216c150f76a4fc44d1b81887f",
-        "after": "tools/visual-review/approved-art-pass/after/environment_wild-tree-highlands--Current_body.webp",
-        "afterSHA256": "9266b049078c04f4f7cb35672855dccc24fccd9c0c76ed198fe29f89c1ae3170",
-        "label": "Current body"
+        "path": "src/prototype/visuals.js",
+        "sha256": "1f2e24f5c19c9fe3a3873c38ecd441e2e64a5f99abbd69a8deee82d86fd08f99"
+      },
+      {
+        "path": "src/prototype/sprites.js",
+        "sha256": "7285847b152fd6476b107f515b5ff6ae64de88aee0b921a5dbd804862d8434d9"
       }
-    ]
+    ],
+    "workingTreeAfterSourceCommit": false
   },
   "scope": {
     "catalogIds": [],
     "verifiedRuntimeKeys": [],
     "requiredVisibleAssets": [
-      "environment:wild-tree-highlands"
+      "oak",
+      "maple",
+      "hickory",
+      "birch",
+      "beech",
+      "tulip",
+      "spruce",
+      "fern",
+      "laurel",
+      "fallen-log"
     ],
     "reusedDesignIds": [],
-    "variantRequirements": [],
+    "variantRequirements": [
+      "Static seeded variation; preserve exact entity state and native 150% context."
+    ],
     "proceduralOwnersAndReasons": [
       {
-        "owner": "src/prototype/visuals.js::wildProp / non-rock / region 2",
-        "reason": "Refine uneven tapered pine branches, a visible trunk and grouped needles; preserve existing seeded size and placement."
+        "owner": "src/prototype/highlands.js",
+        "reason": "Authored composition, geography, seeded variation and functional placement remain procedural."
+      },
+      {
+        "owner": "src/prototype/visuals.js",
+        "reason": "Authored composition, geography, seeded variation and functional placement remain procedural."
+      },
+      {
+        "owner": "src/prototype/sprites.js",
+        "reason": "Authored composition, geography, seeded variation and functional placement remain procedural."
       }
     ]
   },
   "animationRequirements": {
-    "status": "Existing animation preserved; no new clips authored.",
+    "status": "static",
     "gameplayStates": [
-      "Current body"
+      "oak",
+      "maple",
+      "hickory",
+      "birch",
+      "beech",
+      "tulip",
+      "spruce",
+      "fern",
+      "laurel",
+      "fallen-log"
     ],
     "directions": [],
-    "pivotContract": "Existing runtime anchors and presentation preserved.",
+    "pivotContract": "Existing world coordinates and foot grounding; render must not mutate campaign state.",
     "staticFallbackKey": null,
     "linkedFrameJobs": []
   },
@@ -102,21 +276,103 @@
     "approvedRecordKey": null,
     "activeContentRevision": null,
     "expectedReplacementRevision": null,
-    "rollbackRevision": null,
+    "rollbackRevision": "Original main dev137 source and all 208 retained binary assets.",
     "releaseCommit": null,
-    "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+    "releaseEvidence": "tools/visual-review/highlands-dev138/native-review.json"
   },
   "reviewEvidence": {
-    "catalogNumber": 278,
-    "assessmentId": "environment:wild-tree-highlands",
-    "disposition": "refine",
-    "implementationStatus": "Implemented",
-    "resultAccepted": true,
-    "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
-    "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
-    "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
-    "resultReviewStatus": "Final completed design set approved by Joel · 19 October 2026",
-    "requestedCorrection": "Updated the relevant natural wood, tabletop/container support or dependent composition to follow the subsequent owner correction. Existing role, region, gameplay geometry and protected raster pixels remain intact.",
-    "finalResultApprovalDate": "2026-10-19"
-  }
+    "nativeReview": "tools/visual-review/highlands-dev138/native-review.json",
+    "ownerConceptApproved": true,
+    "exactFinalAppearanceAcceptance": null
+  },
+  "historicalPineDesign": {
+    "reference": {
+      "sourceCommit": "eec4ab7791df604c956569ded36f746c11cb2dc3",
+      "ownerFilesAndBranches": [
+        "src/prototype/visuals.js::wildProp / non-rock / region 2",
+        "polish/approved-whole-game-art"
+      ],
+      "exactEntityState": [
+        {
+          "label": "Current body",
+          "mode": "procedural",
+          "entity": {
+            "id": "forest-audit-wild-tree-highlands",
+            "name": "wild-tree-highlands",
+            "x": 600,
+            "y": 600,
+            "renderKind": "prop",
+            "icon": "\ud83c\udf32",
+            "visualScale": 1.3
+          },
+          "region": 2,
+          "scale": 1.5,
+          "displayDPR": 2
+        }
+      ],
+      "isolatedReferencePath": "tools/visual-review/approved-art-pass/after/environment_wild-tree-highlands--Current_body.webp",
+      "isolatedReferenceHash": "9266b049078c04f4f7cb35672855dccc24fccd9c0c76ed198fe29f89c1ae3170",
+      "gameplayContextPaths": [
+        "tools/visual-review/approved-art-pass/native-scenes/capture-receipt.json"
+      ],
+      "traitsToPreserve": [
+        "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+        "The regional tree has organic species-specific construction.",
+        "Camera 150%; existing label/collision geometry, timing and active raster/material bytes."
+      ],
+      "assetSpecificDependencies": [
+        {
+          "path": "src/prototype/visuals.js",
+          "sha256": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d"
+        },
+        {
+          "before": "tools/visual-review/approved-art-pass/images/environment_wild-tree-highlands--Current_body.webp",
+          "beforeSHA256": "17f621f44dce97a1d515f6b28dead03741d4e6c216c150f76a4fc44d1b81887f",
+          "after": "tools/visual-review/approved-art-pass/after/environment_wild-tree-highlands--Current_body.webp",
+          "afterSHA256": "9266b049078c04f4f7cb35672855dccc24fccd9c0c76ed198fe29f89c1ae3170",
+          "label": "Current body"
+        }
+      ]
+    },
+    "context": {
+      "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
+      "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Refine uneven tapered pine branches, a visible trunk and grouped needles; preserve existing seeded size and placement.",
+      "decisionDate": "2026-10-19",
+      "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
+      "contentDocuments": ["docs/APPROVED_ART_PASS_20261019.md"],
+      "locationAndLore": "Stable identity, actual role/region, existing anchor and size, gameplay geometry, saves and current accepted originals.",
+      "ownerReview": "Joel accepted the remaining results and requested the six corrections recorded in docs/APPROVED_ART_PASS_20261019.md.",
+      "subsequentOwnerReview": "Joel requested additional corrections to natural trees/logs, mangrove roots, objects on hard surfaces, geothermal machinery, split firewood and laundry. The related shared states are corrected; no independent acceptance of unseen corrected results is presumed."
+    },
+    "decisions": {
+      "conceptAcceptance": "All reviewed plans approved by Joel on 19 October 2026.",
+      "proceduralDesignAcceptance": "Entire completed 513-entry design set, including all requested corrections and the shared overhead translucent TRUE boss crown. Explicit final approval by Joel on 19 October 2026.",
+      "spriteProductionAuthorization": "Procedural refinement only; no new raster generation or registration.",
+      "generatedAppearanceAcceptance": "No new generated image. Existing protected registrations retain their prior provenance.",
+      "pendingCorrections": []
+    },
+    "production": {
+      "candidateRecords": [],
+      "approvedRecordKey": null,
+      "activeContentRevision": null,
+      "expectedReplacementRevision": null,
+      "rollbackRevision": null,
+      "releaseCommit": null,
+      "releaseEvidence": "Local unreleased candidate 0.9.1+snapshot.dev.81; external GitHub branch push rejected by automatic approval review. No merge or deployment."
+    },
+    "reviewEvidence": {
+      "catalogNumber": 278,
+      "assessmentId": "environment:wild-tree-highlands",
+      "disposition": "refine",
+      "implementationStatus": "Implemented",
+      "resultAccepted": true,
+      "catalogPath": "tools/visual-review/approved-art-pass/asset-assessment.json",
+      "liveContextLimitation": "Native captures cover nine selected scenes, not individual live acceptance of every card.",
+      "beforeSourceCommit": "0a1030b0771670752ae3b6a454daf423787881b7",
+      "resultReviewStatus": "Final completed design set approved by Joel \u00b7 19 October 2026",
+      "requestedCorrection": "Updated the relevant natural wood, tabletop/container support or dependent composition to follow the subsequent owner correction. Existing role, region, gameplay geometry and protected raster pixels remain intact.",
+      "finalResultApprovalDate": "2026-10-19"
+    }
+  },
+  "currentDesignHandoff": "tools/sprites/design-handoffs/appalachian-highlands-nature.json"
 }

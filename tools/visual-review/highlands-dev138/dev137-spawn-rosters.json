@@ -1,0 +1,1985 @@
+{
+  "baseline": "81796446d0e8c9d36a1136ab1613dc36d0986d8c",
+  "rows": [
+    {
+      "seed": 7,
+      "enemies": [
+        {
+          "id": "enemy-36",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2465,
+            "y": 1500
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-37",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2440.1040764008567,
+            "y": 1560.1040764008565
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-38",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2380,
+            "y": 1620
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-39",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2380,
+            "y": 1380
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-40",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2450,
+            "y": 600
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-41",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2770,
+            "y": 700
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-42",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2749.4974746830585,
+            "y": 749.4974746830583
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-43",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2700,
+            "y": 770
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-44",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 245,
+            "y": 1000
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-45",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 315,
+            "y": 925
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-46",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 420,
+            "y": 955
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-47",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 440,
+            "y": 1055
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-48",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2850,
+            "y": 810
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-49",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2880,
+            "y": 740
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-50",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2730,
+            "y": 880
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-51",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2640,
+            "y": 860
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-52",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 500,
+            "y": 645.9807621135332
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-53",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 454.19208926793624,
+            "y": 643.6421602998928
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-54",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 485.507820653572,
+            "y": 557.2412244252002
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-55",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 503.331648245966,
+            "y": 695.9776094416151
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-56",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1906.2132034355964,
+            "y": 1821.2132034355964
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-57",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1955,
+            "y": 1725
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-58",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2060,
+            "y": 1755
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-59",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2080,
+            "y": 1855
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-60",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2895,
+            "y": 1180
+          },
+          "mountedCrownRider": true
+        },
+        {
+          "id": "enemy-61",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2834.1920892679364,
+            "y": 1203.6421602998928
+          },
+          "mountedCrownRider": true
+        },
+        {
+          "id": "enemy-62",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2865.507820653572,
+            "y": 1117.2412244252002
+          },
+          "mountedCrownRider": true
+        },
+        {
+          "id": "enemy-63",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2898.331648245966,
+            "y": 1229.996847328082
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-64",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1735,
+            "y": 2860
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-65",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1674.1920892679361,
+            "y": 2883.642160299893
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-66",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1705.507820653572,
+            "y": 2797.2412244252
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-67",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1738.331648245966,
+            "y": 2909.996847328082
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-68",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 555,
+            "y": 1250
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-69",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 494.19208926793624,
+            "y": 1273.6421602998928
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-70",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 525.507820653572,
+            "y": 1187.2412244252002
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-71",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 558.331648245966,
+            "y": 1299.996847328082
+          },
+          "mountedCrownRider": true
+        },
+        {
+          "id": "enemy-72",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1755,
+            "y": 360
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-73",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1694.1920892679361,
+            "y": 383.6421602998928
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-74",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1725.507820653572,
+            "y": 297.24122442520024
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-75",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1758.331648245966,
+            "y": 409.9968473280819
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-76",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2835,
+            "y": 2500
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-77",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2774.1920892679364,
+            "y": 2523.642160299893
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-78",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2805.507820653572,
+            "y": 2437.2412244252
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-79",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2838.331648245966,
+            "y": 2549.996847328082
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-80",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 3085,
+            "y": 2050
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-81",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 3024.1920892679364,
+            "y": 2073.642160299893
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-82",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 3055.507820653572,
+            "y": 1987.2412244252002
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-83",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 3088.331648245966,
+            "y": 2099.996847328082
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-84",
+          "type": "boss",
+          "species": "ridge",
+          "home": {
+            "x": 2700,
+            "y": 700
+          },
+          "mountedCrownRider": false
+        }
+      ]
+    },
+    {
+      "seed": 39,
+      "enemies": [
+        {
+          "id": "enemy-36",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2465,
+            "y": 1500
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-37",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2440.1040764008567,
+            "y": 1560.1040764008565
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-38",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2380,
+            "y": 1620
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-39",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2380,
+            "y": 1380
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-40",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2450,
+            "y": 600
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-41",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2770,
+            "y": 700
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-42",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2749.4974746830585,
+            "y": 749.4974746830583
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-43",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2700,
+            "y": 770
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-44",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 245,
+            "y": 1000
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-45",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 315,
+            "y": 925
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-46",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 420,
+            "y": 955
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-47",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 440,
+            "y": 1055
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-48",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2850,
+            "y": 810
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-49",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2880,
+            "y": 740
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-50",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2730,
+            "y": 880
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-51",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2640,
+            "y": 860
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-52",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 500,
+            "y": 645.9807621135332
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-53",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 454.19208926793624,
+            "y": 643.6421602998928
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-54",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 485.507820653572,
+            "y": 557.2412244252002
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-55",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 503.331648245966,
+            "y": 695.9776094416151
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-56",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1906.2132034355964,
+            "y": 1821.2132034355964
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-57",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1955,
+            "y": 1725
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-58",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2060,
+            "y": 1755
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-59",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2080,
+            "y": 1855
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-60",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2895,
+            "y": 1180
+          },
+          "mountedCrownRider": true
+        },
+        {
+          "id": "enemy-61",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2834.1920892679364,
+            "y": 1203.6421602998928
+          },
+          "mountedCrownRider": true
+        },
+        {
+          "id": "enemy-62",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2865.507820653572,
+            "y": 1117.2412244252002
+          },
+          "mountedCrownRider": true
+        },
+        {
+          "id": "enemy-63",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2898.331648245966,
+            "y": 1229.996847328082
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-64",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1735,
+            "y": 2860
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-65",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1674.1920892679361,
+            "y": 2883.642160299893
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-66",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1705.507820653572,
+            "y": 2797.2412244252
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-67",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1738.331648245966,
+            "y": 2909.996847328082
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-68",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 555,
+            "y": 1250
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-69",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 494.19208926793624,
+            "y": 1273.6421602998928
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-70",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 525.507820653572,
+            "y": 1187.2412244252002
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-71",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 558.331648245966,
+            "y": 1299.996847328082
+          },
+          "mountedCrownRider": true
+        },
+        {
+          "id": "enemy-72",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1755,
+            "y": 360
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-73",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1694.1920892679361,
+            "y": 383.6421602998928
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-74",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1725.507820653572,
+            "y": 297.24122442520024
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-75",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1758.331648245966,
+            "y": 409.9968473280819
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-76",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2835,
+            "y": 2500
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-77",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2774.1920892679364,
+            "y": 2523.642160299893
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-78",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2805.507820653572,
+            "y": 2437.2412244252
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-79",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2838.331648245966,
+            "y": 2549.996847328082
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-80",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 3085,
+            "y": 2050
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-81",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 3024.1920892679364,
+            "y": 2073.642160299893
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-82",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 3055.507820653572,
+            "y": 1987.2412244252002
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-83",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 3088.331648245966,
+            "y": 2099.996847328082
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-84",
+          "type": "boss",
+          "species": "ridge",
+          "home": {
+            "x": 2700,
+            "y": 700
+          },
+          "mountedCrownRider": false
+        }
+      ]
+    },
+    {
+      "seed": 89,
+      "enemies": [
+        {
+          "id": "enemy-36",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2465,
+            "y": 1500
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-37",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2440.1040764008567,
+            "y": 1560.1040764008565
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-38",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2380,
+            "y": 1620
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-39",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2380,
+            "y": 1380
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-40",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2450,
+            "y": 600
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-41",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2770,
+            "y": 700
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-42",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2749.4974746830585,
+            "y": 749.4974746830583
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-43",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2700,
+            "y": 770
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-44",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 245,
+            "y": 1000
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-45",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 315,
+            "y": 925
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-46",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 420,
+            "y": 955
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-47",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 440,
+            "y": 1055
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-48",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2850,
+            "y": 810
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-49",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2880,
+            "y": 740
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-50",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2730,
+            "y": 880
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-51",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2640,
+            "y": 860
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-52",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 500,
+            "y": 645.9807621135332
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-53",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 454.19208926793624,
+            "y": 643.6421602998928
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-54",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 485.507820653572,
+            "y": 557.2412244252002
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-55",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 503.331648245966,
+            "y": 695.9776094416151
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-56",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1906.2132034355964,
+            "y": 1821.2132034355964
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-57",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1955,
+            "y": 1725
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-58",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2060,
+            "y": 1755
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-59",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2080,
+            "y": 1855
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-60",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2895,
+            "y": 1180
+          },
+          "mountedCrownRider": true
+        },
+        {
+          "id": "enemy-61",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2834.1920892679364,
+            "y": 1203.6421602998928
+          },
+          "mountedCrownRider": true
+        },
+        {
+          "id": "enemy-62",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2865.507820653572,
+            "y": 1117.2412244252002
+          },
+          "mountedCrownRider": true
+        },
+        {
+          "id": "enemy-63",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2898.331648245966,
+            "y": 1229.996847328082
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-64",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1735,
+            "y": 2860
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-65",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1674.1920892679361,
+            "y": 2883.642160299893
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-66",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1705.507820653572,
+            "y": 2797.2412244252
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-67",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1738.331648245966,
+            "y": 2909.996847328082
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-68",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 555,
+            "y": 1250
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-69",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 494.19208926793624,
+            "y": 1273.6421602998928
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-70",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 525.507820653572,
+            "y": 1187.2412244252002
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-71",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 558.331648245966,
+            "y": 1299.996847328082
+          },
+          "mountedCrownRider": true
+        },
+        {
+          "id": "enemy-72",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1755,
+            "y": 360
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-73",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1694.1920892679361,
+            "y": 383.6421602998928
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-74",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1725.507820653572,
+            "y": 297.24122442520024
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-75",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1758.331648245966,
+            "y": 409.9968473280819
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-76",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2835,
+            "y": 2500
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-77",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2774.1920892679364,
+            "y": 2523.642160299893
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-78",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2805.507820653572,
+            "y": 2437.2412244252
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-79",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2838.331648245966,
+            "y": 2549.996847328082
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-80",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 3085,
+            "y": 2050
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-81",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 3024.1920892679364,
+            "y": 2073.642160299893
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-82",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 3055.507820653572,
+            "y": 1987.2412244252002
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-83",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 3088.331648245966,
+            "y": 2099.996847328082
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-84",
+          "type": "boss",
+          "species": "ridge",
+          "home": {
+            "x": 2700,
+            "y": 700
+          },
+          "mountedCrownRider": false
+        }
+      ]
+    },
+    {
+      "seed": 319,
+      "enemies": [
+        {
+          "id": "enemy-36",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2465,
+            "y": 1500
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-37",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2440.1040764008567,
+            "y": 1560.1040764008565
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-38",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2380,
+            "y": 1620
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-39",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2380,
+            "y": 1380
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-40",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2450,
+            "y": 600
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-41",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2770,
+            "y": 700
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-42",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2749.4974746830585,
+            "y": 749.4974746830583
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-43",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2700,
+            "y": 770
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-44",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 245,
+            "y": 1000
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-45",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 315,
+            "y": 925
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-46",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 420,
+            "y": 955
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-47",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 440,
+            "y": 1055
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-48",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2850,
+            "y": 810
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-49",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2880,
+            "y": 740
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-50",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2730,
+            "y": 880
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-51",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2640,
+            "y": 860
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-52",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 500,
+            "y": 645.9807621135332
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-53",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 454.19208926793624,
+            "y": 643.6421602998928
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-54",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 485.507820653572,
+            "y": 557.2412244252002
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-55",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 503.331648245966,
+            "y": 695.9776094416151
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-56",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1906.2132034355964,
+            "y": 1821.2132034355964
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-57",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1955,
+            "y": 1725
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-58",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2060,
+            "y": 1755
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-59",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 2080,
+            "y": 1855
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-60",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2895,
+            "y": 1180
+          },
+          "mountedCrownRider": true
+        },
+        {
+          "id": "enemy-61",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2834.1920892679364,
+            "y": 1203.6421602998928
+          },
+          "mountedCrownRider": true
+        },
+        {
+          "id": "enemy-62",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2865.507820653572,
+            "y": 1117.2412244252002
+          },
+          "mountedCrownRider": true
+        },
+        {
+          "id": "enemy-63",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2898.331648245966,
+            "y": 1229.996847328082
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-64",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1735,
+            "y": 2860
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-65",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1674.1920892679361,
+            "y": 2883.642160299893
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-66",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1705.507820653572,
+            "y": 2797.2412244252
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-67",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1738.331648245966,
+            "y": 2909.996847328082
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-68",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 555,
+            "y": 1250
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-69",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 494.19208926793624,
+            "y": 1273.6421602998928
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-70",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 525.507820653572,
+            "y": 1187.2412244252002
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-71",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 558.331648245966,
+            "y": 1299.996847328082
+          },
+          "mountedCrownRider": true
+        },
+        {
+          "id": "enemy-72",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1755,
+            "y": 360
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-73",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1694.1920892679361,
+            "y": 383.6421602998928
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-74",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1725.507820653572,
+            "y": 297.24122442520024
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-75",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 1758.331648245966,
+            "y": 409.9968473280819
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-76",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2835,
+            "y": 2500
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-77",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2774.1920892679364,
+            "y": 2523.642160299893
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-78",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2805.507820653572,
+            "y": 2437.2412244252
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-79",
+          "type": "mob",
+          "species": "wolf",
+          "home": {
+            "x": 2838.331648245966,
+            "y": 2549.996847328082
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-80",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 3085,
+            "y": 2050
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-81",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 3024.1920892679364,
+            "y": 2073.642160299893
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-82",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 3055.507820653572,
+            "y": 1987.2412244252002
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-83",
+          "type": "mob",
+          "species": "ogre",
+          "home": {
+            "x": 3088.331648245966,
+            "y": 2099.996847328082
+          },
+          "mountedCrownRider": false
+        },
+        {
+          "id": "enemy-84",
+          "type": "boss",
+          "species": "ridge",
+          "home": {
+            "x": 2700,
+            "y": 700
+          },
+          "mountedCrownRider": false
+        }
+      ]
+    }
+  ]
+}

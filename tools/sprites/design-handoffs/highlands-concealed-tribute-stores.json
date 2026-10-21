@@ -1,0 +1,210 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-design",
+  "designId": "highlands-concealed-tribute-stores",
+  "name": "Crag Tyrant\u2019s concealed tribute stores",
+  "kind": "environment",
+  "nextAction": "Publish the focused owner update, then receive owner play/appearance feedback. Resume future raster work from these exact procedural states when requested.",
+  "context": {
+    "originConversation": "Conversation URL unavailable; owner instructions dated 21 October 2026 are recorded in PR #374 and the scope document.",
+    "decisionSummary": "Complete Appalachian-inspired Highlands overhaul approved, including new nature assets, site relocation and coinage-ore facilities. All four tribute stores now require a physical Barracks search at existing named locations; Crag Tyrant arranged the concealment. Town Supplies retains cargo delivery.",
+    "decisionDate": "2026-10-21",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/374",
+    "contentDocuments": ["docs/HIGHLANDS_APPALACHIAN_DEV138.md"],
+    "locationAndLore": "Ironroot Highlands; silver/copper extraction and portrait-crown production. Preserve native households and current character canon."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner explicitly approved the complete rework and new procedural assets, then directed named-site/Barracks-only tribute search and Town Supplies cargo delivery.",
+    "proceduralDesignAcceptance": "Implementation authorized; exact unseen final artwork is not independently claimed accepted.",
+    "spriteProductionAuthorization": "Procedural code-native implementation in this update; no new raster job or registration.",
+    "generatedAppearanceAcceptance": "No generated raster images in this update.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "cc2020f1f27283c66fbe2bed0ca34b8aaee907f4",
+    "ownerFilesAndBranches": [
+      "src/prototype/world.js",
+      "src/prototype/engine.js",
+      "src/prototype/menus.js",
+      "src/prototype/visuals.js",
+      "src/prototype/rules.js",
+      "rework/appalachian-highlands-dev138"
+    ],
+    "exactEntityState": [
+      {
+        "label": "ore-store",
+        "entity": {
+          "id": "tribute-highlands-ore-shipment",
+          "x": 810,
+          "y": 520,
+          "amount": 220,
+          "icon": "\ud83e\ude99",
+          "site": "ore",
+          "siteName": "Stonecross ore vein",
+          "name": "Dark Lord Tribute",
+          "kind": "resource",
+          "tribute": true,
+          "tributeId": "ore-shipment",
+          "hidden": true,
+          "context": "sealed mint payroll beneath the ore store\u2019s false floor",
+          "resourceGroup": "tribute-highlands",
+          "concealedTribute": true,
+          "storageStyle": "ore-store",
+          "renderKind": "node"
+        }
+      },
+      {
+        "label": "collector-store",
+        "entity": {
+          "id": "tribute-highlands-stone-toll",
+          "x": 1465,
+          "y": 1050,
+          "amount": 160,
+          "icon": "\ud83e\ude99",
+          "site": "bridge-north",
+          "siteName": "Northern stone bridge",
+          "name": "Dark Lord Tribute",
+          "kind": "resource",
+          "tribute": true,
+          "tributeId": "stone-toll",
+          "hidden": true,
+          "context": "collector\u2019s reserve concealed behind the bridge-store inventory",
+          "resourceGroup": "tribute-highlands",
+          "concealedTribute": true,
+          "storageStyle": "collector-store",
+          "renderKind": "node"
+        }
+      },
+      {
+        "label": "haul-store",
+        "entity": {
+          "id": "tribute-highlands-timber-toll",
+          "x": 1735,
+          "y": 2420,
+          "amount": 130,
+          "icon": "\ud83e\ude99",
+          "site": "bridge-south",
+          "siteName": "Timber haul crossing",
+          "name": "Dark Lord Tribute",
+          "kind": "resource",
+          "tribute": true,
+          "tributeId": "timber-toll",
+          "hidden": true,
+          "context": "Crown haulage pay hidden in a repair-supply crate",
+          "resourceGroup": "tribute-highlands",
+          "concealedTribute": true,
+          "storageStyle": "haul-store",
+          "renderKind": "node"
+        }
+      },
+      {
+        "label": "signal-store",
+        "entity": {
+          "id": "tribute-highlands-ogre-cache",
+          "x": 3125,
+          "y": 2145,
+          "amount": 130,
+          "icon": "\ud83e\ude99",
+          "site": "lookout",
+          "siteName": "Old Signal Keep",
+          "name": "Dark Lord Tribute",
+          "kind": "resource",
+          "tribute": true,
+          "tributeId": "ogre-cache",
+          "hidden": true,
+          "context": "a former Crown signal reserve behind the keep\u2019s disused store fittings",
+          "resourceGroup": "tribute-highlands",
+          "concealedTribute": true,
+          "storageStyle": "signal-store",
+          "renderKind": "node"
+        }
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/highlands-dev138/isolated-families.webp",
+    "isolatedReferenceHash": "1180584304ea1065db8468316276cabf06337f48ca042dca7a59176d9f900635",
+    "gameplayContextPaths": [
+      "tools/visual-review/highlands-dev138/found-ore-shipment.webp",
+      "tools/visual-review/highlands-dev138/found-stone-toll.webp",
+      "tools/visual-review/highlands-dev138/found-timber-toll.webp",
+      "tools/visual-review/highlands-dev138/found-ogre-cache.webp"
+    ],
+    "traitsToPreserve": [
+      "All four reserves belong to existing named ore/crossing/keep locations. No added hollow markers or burial mound.",
+      "Distinct false-floor ore store, collector inventory, repair crate and disused signal-store fittings.",
+      "Conceal until physical worker search; retain saved discovery, stable node IDs and remaining amounts.",
+      "Crag Tyrant arranged hiding; Ridge remains Master of Coin. Town Supplies explains search facilities and still unloads all carried cargo."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/world.js",
+        "sha256": "7985833a8f97b71939c1401cfa4e8abb8f8ce5d684dc8e2f981705e139aebb2f"
+      },
+      {
+        "path": "src/prototype/engine.js",
+        "sha256": "10ccfd39bdd991bc8ab4c0c8cd2e8b27de80884d3e130c9ee72e3838441c6cbe"
+      },
+      {
+        "path": "src/prototype/menus.js",
+        "sha256": "abf5ba061fbf0065f8a2d7e46ce7aa6dc7084b0d3ffc358bbe792940daf98fb5"
+      },
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "1f2e24f5c19c9fe3a3873c38ecd441e2e64a5f99abbd69a8deee82d86fd08f99"
+      },
+      {
+        "path": "src/prototype/rules.js",
+        "sha256": "c6c8f9e90225f534acb4cf5f213efaff5647b44c3eba36fd6953d1515b755cd9"
+      }
+    ],
+    "workingTreeAfterSourceCommit": false
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": ["ore-store", "collector-store", "haul-store", "signal-store"],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Static seeded variation; preserve exact entity state and native 150% context."
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/world.js",
+        "reason": "Authored composition, geography, seeded variation and functional placement remain procedural."
+      },
+      {
+        "owner": "src/prototype/engine.js",
+        "reason": "Authored composition, geography, seeded variation and functional placement remain procedural."
+      },
+      {
+        "owner": "src/prototype/menus.js",
+        "reason": "Authored composition, geography, seeded variation and functional placement remain procedural."
+      },
+      {
+        "owner": "src/prototype/visuals.js",
+        "reason": "Authored composition, geography, seeded variation and functional placement remain procedural."
+      },
+      {
+        "owner": "src/prototype/rules.js",
+        "reason": "Authored composition, geography, seeded variation and functional placement remain procedural."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": ["ore-store", "collector-store", "haul-store", "signal-store"],
+    "directions": [],
+    "pivotContract": "Existing world coordinates and foot grounding; render must not mutate campaign state.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "Original main dev137 source and all 208 retained binary assets.",
+    "releaseCommit": null,
+    "releaseEvidence": "tools/visual-review/highlands-dev138/native-review.json"
+  }
+}

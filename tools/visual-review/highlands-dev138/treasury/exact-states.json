@@ -1,0 +1,68 @@
+[
+  {
+    "id": "treasury-7",
+    "x": 790,
+    "y": 360,
+    "r": 24,
+    "decorative": false,
+    "structure": "crown-coin-vault",
+    "treasuryBoss": "ridge",
+    "sceneRole": "sealed-coin-inventory",
+    "renderKind": "prop"
+  },
+  {
+    "id": "treasury-16",
+    "x": 565,
+    "y": 185,
+    "r": 22,
+    "decorative": false,
+    "structure": "treasury-audit-counter",
+    "treasuryBoss": "ridge",
+    "sceneRole": "coinage-accounts-and-weights",
+    "renderKind": "prop"
+  },
+  {
+    "id": "treasury-0",
+    "x": 160,
+    "y": 350,
+    "r": 18,
+    "decorative": false,
+    "structure": "ridge-hearth",
+    "treasuryBoss": "ridge",
+    "sceneRole": "household-hearth",
+    "renderKind": "prop"
+  },
+  {
+    "id": "treasury-4",
+    "x": 660,
+    "y": 180,
+    "r": 0,
+    "decorative": true,
+    "structure": "ridge-study",
+    "treasuryBoss": "ridge",
+    "sceneRole": "captain-accounts",
+    "renderKind": "prop"
+  },
+  {
+    "id": "treasury-15",
+    "x": 790,
+    "y": 700,
+    "r": 0,
+    "decorative": true,
+    "structure": "rider-tack-rack",
+    "treasuryBoss": "ridge",
+    "sceneRole": "mount-tack",
+    "renderKind": "prop"
+  },
+  {
+    "id": "treasury-13",
+    "x": 600,
+    "y": 800,
+    "r": 0,
+    "decorative": true,
+    "structure": "direwolf-kennel",
+    "treasuryBoss": "ridge",
+    "sceneRole": "mount-bedding",
+    "renderKind": "prop"
+  }
+]

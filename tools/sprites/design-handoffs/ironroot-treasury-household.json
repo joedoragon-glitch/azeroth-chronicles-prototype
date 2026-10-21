@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "templateOnly": false,
+  "status": "procedural-design",
+  "designId": "ironroot-treasury-household",
+  "name": "Crag Tyrant\u2019s defended Treasury household",
+  "kind": "environment",
+  "nextAction": "Publish the focused owner update, then receive owner play/appearance feedback. Resume future raster work from these exact procedural states when requested.",
+  "context": {
+    "originConversation": "Conversation URL unavailable; owner instructions dated 21 October 2026 are recorded in PR #374 and the scope document.",
+    "decisionSummary": "Joel requested a complete procedural Highlands Treasury interior overhaul: clear creature/administrative/domestic purpose, assets respecting usable boundaries, combat-shaping obstacles supporting defenders. This may become a quality pilot for other Treasuries after owner play; no other interior rollout is included.",
+    "decisionDate": "2026-10-21",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/374",
+    "contentDocuments": [
+      "docs/HIGHLANDS_TREASURY_DEV138.md",
+      "docs/HIGHLANDS_DEV138_GEOGRAPHY_AESTHETIC_AUDIT.md"
+    ],
+    "locationAndLore": "Ridge Tyrant\u2019s Treasury is administered and defended by Crag Tyrant and six Crown direwolf riders."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner explicitly approved the complete rework and new procedural assets, then directed named-site/Barracks-only tribute search and Town Supplies cargo delivery.",
+    "proceduralDesignAcceptance": "Implementation authorized; exact unseen final artwork is not independently claimed accepted.",
+    "spriteProductionAuthorization": "Procedural code-native implementation in this update; no new raster job or registration.",
+    "generatedAppearanceAcceptance": "No generated raster images in this update.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "cc2020f1f27283c66fbe2bed0ca34b8aaee907f4",
+    "ownerFilesAndBranches": [
+      "src/prototype/rules.js::treasuryArchitecture / treasuryDecor / treasuryGuardFormations",
+      "src/prototype/engine.js::treasuryInterior",
+      "src/prototype/visuals.js::craftedDecoration / dungeonArchitecture / floor",
+      "src/prototype/sprites.js::definitionFor",
+      "rework/appalachian-highlands-dev138"
+    ],
+    "exactEntityState": [
+      {
+        "id": "treasury-7",
+        "x": 790,
+        "y": 360,
+        "r": 24,
+        "decorative": false,
+        "structure": "crown-coin-vault",
+        "treasuryBoss": "ridge",
+        "sceneRole": "sealed-coin-inventory",
+        "renderKind": "prop"
+      },
+      {
+        "id": "treasury-16",
+        "x": 565,
+        "y": 185,
+        "r": 22,
+        "decorative": false,
+        "structure": "treasury-audit-counter",
+        "treasuryBoss": "ridge",
+        "sceneRole": "coinage-accounts-and-weights",
+        "renderKind": "prop"
+      },
+      {
+        "id": "treasury-0",
+        "x": 160,
+        "y": 350,
+        "r": 18,
+        "decorative": false,
+        "structure": "ridge-hearth",
+        "treasuryBoss": "ridge",
+        "sceneRole": "household-hearth",
+        "renderKind": "prop"
+      },
+      {
+        "id": "treasury-4",
+        "x": 660,
+        "y": 180,
+        "r": 0,
+        "decorative": true,
+        "structure": "ridge-study",
+        "treasuryBoss": "ridge",
+        "sceneRole": "captain-accounts",
+        "renderKind": "prop"
+      },
+      {
+        "id": "treasury-15",
+        "x": 790,
+        "y": 700,
+        "r": 0,
+        "decorative": true,
+        "structure": "rider-tack-rack",
+        "treasuryBoss": "ridge",
+        "sceneRole": "mount-tack",
+        "renderKind": "prop"
+      },
+      {
+        "id": "treasury-13",
+        "x": 600,
+        "y": 800,
+        "r": 0,
+        "decorative": true,
+        "structure": "direwolf-kennel",
+        "treasuryBoss": "ridge",
+        "sceneRole": "mount-bedding",
+        "renderKind": "prop"
+      }
+    ],
+    "isolatedReferencePath": "tools/visual-review/highlands-dev138/treasury/treasury-procedural-families.webp",
+    "isolatedReferenceHash": "e07ebfbed5d35579fa178d5cf7bd4735fb1516a08218ca6c53201a000e4d6a8f",
+    "gameplayContextPaths": [
+      "tools/visual-review/highlands-dev138/treasury/treasury-overview.webp",
+      "tools/visual-review/highlands-dev138/treasury/accounts-and-defense.webp",
+      "tools/visual-review/highlands-dev138/treasury/private-and-rider-quarters.webp",
+      "tools/visual-review/highlands-dev138/treasury/treasury-phone.webp",
+      "tools/visual-review/highlands-dev138/treasury/dev137-before.webp"
+    ],
+    "traitsToPreserve": [
+      "Receiving/hearth/private household, account room, guarded coin cabinet and southern rider reserve have distinct purposes.",
+      "Double-opening counting screen, raised coursed masonry piers and reserve screen shape movement; unchanged fort benefits and two-post entry crossfire support defenders.",
+      "Silver coin stacks, sealed portrait-crown consignments, weighing/ledger counter, bordered warm rugs, stone courses and household furniture remain procedural at native 150%.",
+      "Crag\u2019s horned humanoid body and six larger armored direwolf riders remain the seven original defenders; no stat/reward/roster change.",
+      "All 16 original prop IDs, three exact cache identities, paid/dead progress, seized crowns and pending/paired-return rules remain compatible."
+    ],
+    "assetSpecificDependencies": [
+      {
+        "path": "src/prototype/rules.js",
+        "sha256": "c6c8f9e90225f534acb4cf5f213efaff5647b44c3eba36fd6953d1515b755cd9"
+      },
+      {
+        "path": "src/prototype/engine.js",
+        "sha256": "10ccfd39bdd991bc8ab4c0c8cd2e8b27de80884d3e130c9ee72e3838441c6cbe"
+      },
+      {
+        "path": "src/prototype/visuals.js",
+        "sha256": "1f2e24f5c19c9fe3a3873c38ecd441e2e64a5f99abbd69a8deee82d86fd08f99"
+      },
+      {
+        "path": "src/prototype/sprites.js",
+        "sha256": "7285847b152fd6476b107f515b5ff6ae64de88aee0b921a5dbd804862d8434d9"
+      }
+    ],
+    "workingTreeAfterSourceCommit": false
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "Receiving and household",
+      "Counting and vault",
+      "Private and rider quarters",
+      "Crag and six mounted guards",
+      "Coin cabinet",
+      "Weighing/audit counter",
+      "Coursed masonry screens and piers",
+      "Warm bordered rugs"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Static procedural furniture; active/cleared/legacy Treasury and native day/phone contexts."
+    ],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/rules.js",
+        "reason": "Usable floor, combat architecture, cache positions and defender posts are authoritative."
+      },
+      {
+        "owner": "src/prototype/visuals.js",
+        "reason": "Procedural material detail/furniture and existing actor bodies."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "static",
+    "gameplayStates": [
+      "Receiving and household",
+      "Counting and vault",
+      "Private and rider quarters",
+      "Crag and six mounted guards",
+      "Coin cabinet",
+      "Weighing/audit counter",
+      "Coursed masonry screens and piers",
+      "Warm bordered rugs"
+    ],
+    "directions": [],
+    "pivotContract": "Existing world coordinates and foot grounding; render must not mutate campaign state.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": "Original main dev137 source and all 208 retained binary assets.",
+    "releaseCommit": null,
+    "releaseEvidence": "tools/visual-review/highlands-dev138/treasury/checks.json"
+  }
+}

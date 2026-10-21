@@ -1,0 +1,43 @@
+{
+  "scenes": [
+    {
+      "label": "fresh",
+      "defenders": 7,
+      "mountedRiders": 6,
+      "caches": 3,
+      "props": 18,
+      "propsInside": true,
+      "defenderFortPreserved": true,
+      "entryRangedPosts": 2,
+      "routes": true,
+      "spatiallyStable": true
+    },
+    {
+      "label": "dev137",
+      "defenders": 7,
+      "mountedRiders": 6,
+      "caches": 3,
+      "props": 18,
+      "propsInside": true,
+      "defenderFortPreserved": true,
+      "entryRangedPosts": 2,
+      "routes": true,
+      "spatiallyStable": true
+    }
+  ],
+  "migration": {
+    "guardDeathAndPaid": true,
+    "exactCollectedCacheIndex": 2,
+    "seizedCrowns": 735.5,
+    "returnDeadline": 900.25,
+    "oldPropIdsRetained": 16,
+    "defenderIdsRetained": 7,
+    "statsMatchNormalDev137Restore": true
+  },
+  "returnAndPending": {
+    "allSevenOriginalIdsReturn": true,
+    "crownsPreserved": 91.5,
+    "pendingTimerPreserved": 9.5,
+    "pendingRingleaders": 2
+  }
+}

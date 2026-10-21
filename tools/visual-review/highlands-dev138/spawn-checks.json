@@ -1,0 +1,49 @@
+{
+  "baseline": "81796446d0e8c9d36a1136ab1613dc36d0986d8c",
+  "fresh": [
+    {
+      "seed": 7,
+      "before": 49,
+      "after": 49,
+      "ordinary": 48,
+      "bosses": 1,
+      "clearHomes": true,
+      "nightAndReturnAndReload": true
+    },
+    {
+      "seed": 39,
+      "before": 49,
+      "after": 49,
+      "ordinary": 48,
+      "bosses": 1,
+      "clearHomes": true,
+      "nightAndReturnAndReload": true
+    },
+    {
+      "seed": 89,
+      "before": 49,
+      "after": 49,
+      "ordinary": 48,
+      "bosses": 1,
+      "clearHomes": true,
+      "nightAndReturnAndReload": true
+    },
+    {
+      "seed": 319,
+      "before": 49,
+      "after": 49,
+      "ordinary": 48,
+      "bosses": 1,
+      "clearHomes": true,
+      "nightAndReturnAndReload": true
+    }
+  ],
+  "pending": {
+    "originalNativeIds": 49,
+    "ringleaders": 2,
+    "trueRidge": 1,
+    "relocatedSourceHomes": true,
+    "clearSpawnPoints": true,
+    "noNativeLoss": true
+  }
+}

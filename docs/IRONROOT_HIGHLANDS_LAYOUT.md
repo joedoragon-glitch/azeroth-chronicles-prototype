@@ -1,3 +1,5 @@
+> **Current Ironroot design — 21 October 2026:** [The Appalachian/coinage rework](HIGHLANDS_APPALACHIAN_DEV138.md) supersedes the former pine geography and separate building-stone trade. Quarry Outpost is a silver/copper ore district. Use current data/Archive lore for Garun and Crag; old rollout/body descriptions below are historical.
+
 > **Reference boundary — 19 October 2026:** Design/ownership rules below remain reference material where consistent with current source and later director decisions. Version numbers, asset counts, historical verification and next-stage instructions describe their own checkpoints. Development is paused; use [current state](DEVELOPMENT_STATE.md) and [the documentation index](DOCUMENTATION_INDEX.md) before any new work.
 
 # Ironroot Highlands livelihood and mine pass
@@ -14,14 +16,14 @@ Colossus Mine replaces the legacy divider with receiving/haulage, new supported 
 
 ## Deliberate choices from the open handoff
 
-| Open choice | Implemented interpretation |
-| --- | --- |
-| Colossus history | Ancient guardian exposed by old workings; current production routes around its territory rather than controlling it |
-| Dara's compelled work | Repairing mining tools, cart axles and supports at a secured repair bench |
-| Tyrant's private comfort | Supper and a tabletop game by a warm hearth |
-| Minting visibility | One small Stonecross striking workbench, supported by sorted ore and sealed shipments |
-| Ridge archers | Hired convoy/payroll escorts; established species, caps, stats and attacks retained |
-| Direct Dark Crown presence | Restrained sealed correspondence and guarded movement; no new administrative district |
+| Open choice                | Implemented interpretation                                                                                          |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Colossus history           | Ancient guardian exposed by old workings; current production routes around its territory rather than controlling it |
+| Dara's compelled work      | Repairing mining tools, cart axles and supports at a secured repair bench                                           |
+| Tyrant's private comfort   | Supper and a tabletop game by a warm hearth                                                                         |
+| Minting visibility         | One small Stonecross striking workbench, supported by sorted ore and sealed shipments                               |
+| Ridge archers              | Hired convoy/payroll escorts; established species, caps, stats and attacks retained                                 |
+| Direct Dark Crown presence | Restrained sealed correspondence and guarded movement; no new administrative district                               |
 
 These interpretations are recorded as implementation decisions for further playtesting. They were not fixed in the earlier discussion.
 

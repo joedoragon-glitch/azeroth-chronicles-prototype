@@ -1,0 +1,345 @@
+[
+  {
+    "id": "enemy-36",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-37",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-38",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-39",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-40",
+    "maxHp": 591,
+    "damage": 38,
+    "gold": 6,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-41",
+    "maxHp": 591,
+    "damage": 38,
+    "gold": 6,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-42",
+    "maxHp": 591,
+    "damage": 38,
+    "gold": 6,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-43",
+    "maxHp": 591,
+    "damage": 38,
+    "gold": 6,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-44",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-45",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-46",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-47",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-48",
+    "maxHp": 591,
+    "damage": 38,
+    "gold": 6,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-49",
+    "maxHp": 591,
+    "damage": 38,
+    "gold": 6,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-50",
+    "maxHp": 591,
+    "damage": 38,
+    "gold": 6,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-51",
+    "maxHp": 591,
+    "damage": 38,
+    "gold": 6,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-52",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-53",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-54",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-55",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-56",
+    "maxHp": 330,
+    "damage": 25,
+    "gold": 18,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-57",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-58",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-59",
+    "maxHp": 330,
+    "damage": 25,
+    "gold": 18,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-60",
+    "maxHp": 545,
+    "damage": 35,
+    "gold": 0,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-61",
+    "maxHp": 545,
+    "damage": 35,
+    "gold": 0,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-62",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 0,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-63",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-64",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-65",
+    "maxHp": 330,
+    "damage": 25,
+    "gold": 18,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-66",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-67",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-68",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-69",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-70",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-71",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 0,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-72",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-73",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-74",
+    "maxHp": 330,
+    "damage": 25,
+    "gold": 18,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-75",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-76",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-77",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-78",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-79",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "wolf"
+  },
+  {
+    "id": "enemy-80",
+    "maxHp": 330,
+    "damage": 25,
+    "gold": 18,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-81",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-82",
+    "maxHp": 454,
+    "damage": 32,
+    "gold": 18,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-83",
+    "maxHp": 330,
+    "damage": 25,
+    "gold": 18,
+    "species": "ogre"
+  },
+  {
+    "id": "enemy-84",
+    "maxHp": 2400,
+    "damage": 36,
+    "gold": 220,
+    "species": "ridge"
+  }
+]

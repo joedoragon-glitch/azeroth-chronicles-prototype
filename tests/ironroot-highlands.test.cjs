@@ -68,7 +68,7 @@ test('Treasury keeps Crag and Crown direwolf guards, mixed lodging and exact cac
   const c = fresh();
   c.enter('supply-highlands');
   const z = c.zone();
-  assert.equal(z.treasuryVersion, 5);
+  assert.equal(z.treasuryVersion, 6);
   const crag = z.enemies.find((e) => e.roomCaptain);
   assert.equal(crag.species, 'ridge');
   assert(

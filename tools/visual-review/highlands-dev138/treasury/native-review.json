@@ -1,0 +1,36 @@
+{
+  "captures": [
+    {
+      "name": "treasury-overview",
+      "width": 2200,
+      "height": 1250,
+      "zoom": 1.5
+    },
+    {
+      "name": "receiving-and-hearth",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5
+    },
+    {
+      "name": "accounts-and-defense",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5
+    },
+    {
+      "name": "private-and-rider-quarters",
+      "width": 1280,
+      "height": 800,
+      "zoom": 1.5
+    },
+    {
+      "name": "treasury-phone",
+      "width": 430,
+      "height": 900,
+      "zoom": 1.5
+    }
+  ],
+  "renderStatePure": true,
+  "proceduralProps": true
+}
