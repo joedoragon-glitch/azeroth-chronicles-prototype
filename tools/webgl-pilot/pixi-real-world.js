@@ -233,7 +233,8 @@
          const selected=adapter.commandFor(visual,{x:point.x/zoom,y:point.y/zoom},
            {region:game.regionIndex(),rescued:!!game.s.rescued[entity.family]});
          if(selected.supported){
-           await ensureTexture(selected.texture.src);
+           if(!scene.hasTexture(selected.texture.src))
+             await ensureTexture(selected.texture.src);
            const c=selected.command;
            records.push({key,textureId:selected.texture.src,
              sourceRect:c.sourceRect,
