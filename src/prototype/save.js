@@ -372,6 +372,8 @@
         if (s.hero.skills[1] > 0) s.companionCombatTraining = 2;
         finite(s.mercyTime, 0, 10);
         if (s.restCooldown !== undefined) finite(s.restCooldown, 0, 90);
+        if (s.thornHeroInitiated !== undefined && typeof s.thornHeroInitiated !== 'boolean')
+          throw Error('Invalid Thornfang introduction');
         for (const id of ['rest', 'minor']) {
           const value = s.discovered?.['vale:refuge-help:' + id];
           if (value !== undefined && typeof value !== 'boolean')
@@ -563,8 +565,36 @@
             z.npcs.length > 100
           )
             throw Error('Invalid population');
+          if (z.thornArrival !== undefined) {
+            const arrival = z.thornArrival;
+            if (
+              id !== 'vale' ||
+              !arrival ||
+              arrival.boss?.family !== 'thorn' ||
+              arrival.boss.type !== 'boss' ||
+              arrival.captive?.id !== 'cage-thorn' ||
+              arrival.captive.kind !== 'cage' ||
+              arrival.captive.family !== 'thorn' ||
+              z.npcs.some((n) => n.id === 'cage-thorn')
+            )
+              throw Error('Invalid Thornfang arrival');
+            finite(arrival.captive.x, 0, 1e9);
+            finite(arrival.captive.y, 0, 1e9);
+          }
           const seen = new Set();
-          for (const e of z.enemies) {
+          for (const e of [...z.enemies, ...(z.thornArrival ? [z.thornArrival.boss] : [])]) {
+            if (e.introHeroProvoked !== undefined && typeof e.introHeroProvoked !== 'boolean')
+              throw Error('Invalid opening provocation');
+            if (
+              e.thornIntroRetreat !== undefined &&
+              (id !== 'vale' ||
+                e.family !== 'thorn' ||
+                e.type !== 'boss' ||
+                !Number.isInteger(e.thornIntroRetreat) ||
+                e.thornIntroRetreat < 0 ||
+                e.thornIntroRetreat >= R.thornPatrol.route.length)
+            )
+              throw Error('Invalid Thornfang retreat');
             delete e.rogueDustCoverUntil;
             delete e.supportHeal;
             delete e.supportHealCd;

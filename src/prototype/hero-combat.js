@@ -580,7 +580,14 @@
         this.basicComboClass = this.hero.class;
         this.basicComboTargetId = null;
       }
-      basicComboFinisher(target, from, baseDamage, source = 'hero', heroClass = this.hero.class) {
+      basicComboFinisher(
+        target,
+        from,
+        baseDamage,
+        source = 'hero',
+        heroClass = this.hero.class,
+        automatic = false,
+      ) {
         const cfg = R.basicAttackCombo?.finisher,
           def = cfg?.[heroClass];
         if (!target || !def) return 0;
@@ -591,6 +598,7 @@
           .enemies.filter(
             (e) =>
               e !== target &&
+              (!automatic || !this.awaitsHeroAttack(e)) &&
               e.hp > 0 &&
               !e.neutral &&
               dist(e, from) <= def.range &&
@@ -815,6 +823,7 @@
             (e) =>
               e.hp > 0 &&
               !e.neutral &&
+              (!automatic || !this.awaitsHeroAttack(e)) &&
               !this.attackResetProtected(e) &&
               this.tacticalDirectTargetable(e) &&
               dist(e, this.hero) <= range &&
@@ -1514,7 +1523,12 @@
             combo = comboState?.step || 0,
             dmg = baseDmg * (comboState?.multiplier || 1);
           if (this.hero.class === 'paladin') {
-            const landed = this.damage(target, dmg);
+            const landed = this.damage(
+              target,
+              dmg,
+              'hero',
+              automatic ? { automaticBasic: true } : null,
+            );
             if (landed) {
               if (slot === 2) this.weakenEnemy(target, rank);
               this.event('melee', {
@@ -1535,6 +1549,7 @@
                   baseDmg,
                   'hero',
                   'paladin',
+                  automatic,
                 );
             }
             this.event('swing', {
@@ -1577,6 +1592,7 @@
                       ? 'piercing-shot'
                       : undefined,
                 combo,
+                ...(automatic ? { automaticBasic: true } : {}),
                 slow:
                   this.hero.class === 'mage' && [2, 6].includes(slot)
                     ? slot === 2

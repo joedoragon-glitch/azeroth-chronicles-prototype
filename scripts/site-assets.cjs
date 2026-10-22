@@ -7,6 +7,7 @@ const scripts = [
     'data',
     'rules',
     'world',
+    'field-onboarding',
     'navigation',
     'fortifications',
     'progression',

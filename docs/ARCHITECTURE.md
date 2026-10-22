@@ -7,6 +7,7 @@ The browser is the current desktop playtest target, especially Chromebook keyboa
 | Module | Responsibility |
 | --- | --- |
 | `data.js` / `rules.js` | Approved content and authoritative live balance (`rules.balance`), combat/support and authored geometry tables |
+| `field-onboarding.js` | Saved opening-field hero-first admission, silent level-2 Thornfang/Mira arrival and physical companion-triggered Thornfang withdrawal; native combat/path/reset owners resolve admitted behavior |
 | `world.js` | Region generation, settlements, authored sites, interiors, occupation layouts and world migrations |
 | `fortifications.js` | Authored defended footprints, position-derived enemy bonuses and enemy-only wall/low-cover shot permissions; transient geometry cache |
 | `navigation.js` | Collision, line of sight, routing, movement and following |

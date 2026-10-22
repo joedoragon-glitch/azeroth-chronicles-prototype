@@ -3,8 +3,10 @@ const assert = require('node:assert/strict'),
   C = require('../src/prototype/engine.js');
 const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 function fixture(cls = 'paladin', mode = 'normal', seed = 0.5) {
-  const c = new C(mode, cls, () => seed),
-    e = c.zone().enemies.find((e) => e.family === 'thorn'),
+  const c = new C(mode, cls, () => seed);
+  c.hero.level = 2;
+  c.s.thornHeroInitiated = true; // This suite covers ordinary later encounters; the opening gate has its own native tests.
+  const e = c.zone().enemies.find((e) => e.family === 'thorn'),
     n = c.thornCaptive();
   c.zone().enemies = [e];
   c.s.party = [];

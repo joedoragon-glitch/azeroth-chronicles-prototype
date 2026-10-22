@@ -1947,6 +1947,7 @@
           this.frontierSceneComposition(z);
           this.crownSceneComposition(z);
           this.highlandsLandscape(z);
+          this.syncThornArrival(z);
           this.setSceneryTraversal(z);
           return z;
         }
@@ -2369,6 +2370,7 @@
         this.frontierSceneComposition(z);
         this.crownSceneComposition(z);
         this.highlandsLandscape(z);
+        this.syncThornArrival(z);
         this.setSceneryTraversal(z);
         return z;
       }
