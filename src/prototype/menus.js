@@ -953,8 +953,13 @@
         return 'COMPANIONS · Meet the town Captain to learn about your Soldier and Ranger. Your first Barracks is FREE: Open Menu/Esc in the field → Establish Basic Barracks.';
       if (tutorial && !tutorial.paid && !tutorial.recallPracticed)
         return 'COMPANIONS · Try Recall squad to bring your companions back, then build your first Barracks — FREE. Open Menu/Esc in the field → Establish Basic Barracks.';
-      if (tutorial && !tutorial.paid)
-        return 'FIELD BASE · Build your first Barracks — FREE · Open Menu/Esc while in the field → Establish Basic Barracks. It gives companions a nearby recovery base.';
+      if (tutorial && !tutorial.paid) {
+        if (getGame().hasAnyBarracks())
+          return 'FIELD BASE · Construction in progress. Keep your builder assigned.';
+        return tutorial.barracksBriefed
+          ? 'FIELD BASE · Leave town → open ground off the road → Menu → Establish Basic Barracks (FREE).'
+          : "COMPANIONS · Recall practiced. Continue the Captain's briefing.";
+      }
       const p = regionalSpecialistProgress();
       if (!p.total)
         return 'Rescue specialists, rebuild your strength and continue the campaign. Map: Z.';
@@ -1955,9 +1960,27 @@
           ? 'Recalled!\nOrders cancelled. Companions stay close and defend without chasing.\nGive a new order to send them out again.\n\nNext: build your first Barracks for FREE.'
           : 'Soldier: close combat.\nRanger: ranged attacks + healing.\nThey follow and fight automatically.\n\nRecall brings them back to you.',
         [
-          ...(practiced ? [action('Continue', closeMenu)] : []),
+          ...(practiced
+            ? [
+                action('Continue', () => {
+                  if (getGame().hasAnyBarracks()) closeMenu();
+                  else {
+                    getGame().briefBarracks();
+                    barracksBasics(back);
+                  }
+                }),
+              ]
+            : []),
           action('Practice Recall squad', () => practiceRecall(() => companionBasics(back))),
         ],
+        back,
+      );
+    }
+    function barracksBasics(back = closeMenu) {
+      openMenu(
+        'Meet your company',
+        'Leave town. Find open ground off the road.\nOpen Menu → Establish Basic Barracks (FREE).\nOne idle Soldier or Ranger builds it.',
+        [action("Let's go", closeMenu)],
         back,
       );
     }

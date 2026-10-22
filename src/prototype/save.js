@@ -713,7 +713,8 @@
             !Number.isFinite(q.count) ||
             q.count < 0 ||
             (q.captainBriefed !== undefined && typeof q.captainBriefed !== 'boolean') ||
-            (q.recallPracticed !== undefined && typeof q.recallPracticed !== 'boolean')
+            (q.recallPracticed !== undefined && typeof q.recallPracticed !== 'boolean') ||
+            (q.barracksBriefed !== undefined && typeof q.barracksBriefed !== 'boolean')
           )
             throw Error('Invalid quest');
         for (const [id, z] of Object.entries(s.zones)) {

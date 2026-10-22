@@ -925,7 +925,11 @@
         nearest = (list) => list.slice().sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0],
         seen = (id) => !!this.s.discovered[q.region + ':' + id];
       if (q.kind === 'barracks') {
-        if (!state.captainBriefed) return z.npcs.find((n) => n.kind === 'recruiter') || null;
+        if (
+          !state.captainBriefed ||
+          (state.recallPracticed && !state.barracksBriefed && !this.hasAnyBarracks())
+        )
+          return z.npcs.find((n) => n.kind === 'recruiter') || null;
         return nearest(z.buildings.filter((b) => b.progress < 4)) || null;
       }
       let targetZone = q.region,
@@ -1016,10 +1020,13 @@
         return 'Meet the town Captain to learn about your Soldier and Ranger.';
       if (q.kind === 'barracks' && !p?.recallPracticed)
         return 'Try Recall squad to bring your companions back to you.';
-      if (q.kind === 'barracks')
-        return this.hasAnyBarracks()
-          ? 'Construction in progress · keep one companion assigned until complete'
-          : 'Open Adventure menu while in the field → Establish Basic Barracks · first one FREE';
+      if (q.kind === 'barracks') {
+        if (this.hasAnyBarracks())
+          return 'Construction in progress · keep one companion assigned until complete';
+        return p?.barracksBriefed
+          ? 'Leave town → open ground off the road → Menu → Establish Basic Barracks (FREE).'
+          : "Continue the Captain's briefing for the next step.";
+      }
       if (q.kind === 'bundles')
         return (
           Array.from({ length: q.target }, (_, j) => j).filter((j) => seen('bundle-' + j)).length +

@@ -191,7 +191,15 @@ for (const source of ['town', 'barracks']) {
   practiceComplete();
   assert(opened.description.includes('Orders cancelled.'));
   assert(g.s.quests[q.id].recallPracticed);
+  assert(g.questProgress(q).includes("Continue the Captain's briefing"));
+  opened.actions.find((a) => a.label === 'Continue').action();
+  assert(opened.description.includes('Leave town.'));
+  assert(g.s.quests[q.id].barracksBriefed);
   assert(g.questProgress(q).includes('FREE'));
+  const invalid = g.snapshot();
+  invalid.quests[q.id].barracksBriefed = 'yes';
+  assert.throws(() => C.restore(invalid), /Invalid quest/);
+
   g = C.restore(g.snapshot());
   menu.partyMenu();
   assert.equal(opened.title, 'Millhaven Captain');
