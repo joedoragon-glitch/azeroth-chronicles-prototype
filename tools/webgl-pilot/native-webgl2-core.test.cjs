@@ -62,7 +62,8 @@ test('world isometry and camera anchor match the production renderer projection'
   const platform={cameraZoom:1.5,cameraAnchor:(w,h)=>({x:w*.45,y:h*.42})};
   const center=Core.project({x:600,y:700},{x:600,y:700},
     {width:900,height:540},platform);
-  assert.deepEqual(center,{x:405,y:226.8});
+  assert.equal(center.x,405);
+  assert.ok(Math.abs(center.y-226.8)<1e-9);
   const moved=Core.project({x:610,y:700},{x:600,y:700},
     {width:900,height:540},platform);
   assert.ok(Math.abs(moved.x-center.x-11.4)<1e-9);
