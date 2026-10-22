@@ -147,11 +147,11 @@
      const ctx=need(ref.getContext('2d'),'Original Canvas unavailable');
      if(activeApp){activeApp.destroy(true);activeApp=null;output.replaceChildren();}
      const app=new PIXI.Application();
-     await app.init({width,height,autoStart:false,preference:'webgl',
-       resolution:1,antialias:false,background:0x0c1913});
-     need(app.renderer.type==='webgl'||app.renderer.name==='webgl'||
-       String(app.renderer.constructor?.name).includes('WebGL'),
-       'PixiJS did not select its WebGL renderer');
+     await app.init({width,height,autoStart:false,preference:['webgl'],
+       preferWebGLVersion:2,resolution:1,antialias:false,background:0x0c1913});
+     // The test must refuse fallback to WebGPU, WebGL1, or Canvas.
+     need(app.canvas.getContext('webgl2'),
+       'PixiJS could not initialize WebGL2 on this browser');
      activeApp=app;output.appendChild(app.canvas);
      const game=new Campaign('normal','paladin',()=>0.7);
      game.s.zone=region;game.zone();game.zone();
@@ -339,7 +339,7 @@
        if(step===0||step===rounds-1){
          const source=ctx.getImageData(0,0,width,height).data;
          try {
-           const image=app.renderer.extract.pixels({
+           const image=await app.renderer.extract.pixels({
              target:app.stage,frame:new PIXI.Rectangle(0,0,width,height)
            });
            const actual=image?.pixels||image;
@@ -356,7 +356,7 @@
      const report={
        verdict:'EXPERIMENTAL PIXIJS PATH ONLY — not production-parity, no winner',
        approach:'Real production terrain/roads baked once; every actor is a separate movable GPU sprite, including individually prepared procedural bodies. Atlas animation frames and radial lamps drawn using PixiJS WebGL2.',
-       renderer:app.renderer.name||String(app.renderer.constructor?.name),
+       renderer:'WebGL2 / '+(app.renderer.name||String(app.renderer.constructor?.name)),
        region,lighting:night?'night':'day',viewport:[width,height],zoom,
        preparationMs:{onceOnlyOriginalTerrainAndRoads:+artPrepMs.toFixed(2),
          totalGPUScenePreparation:+prepMs.toFixed(2)},
@@ -365,6 +365,7 @@
          pixiGpuSceneWithIndependentMovingActors:stats(gpuTimes)},
        actorsAndLights:lastCounts,counters,
        proceduralTextureBytes,pixelParity:pixels,
+       dependency:'PixiJS 8.22.0 pinned external development CDN (requires connectivity)',
        incompleteFeatures:[
          'Procedural actor bodies currently use one-time original art textures, not live art state',
          'Full original day/night screen-blend grading and lamp fixtures are not yet parity verified',
