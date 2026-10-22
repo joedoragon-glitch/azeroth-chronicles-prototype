@@ -175,40 +175,39 @@
       alpha: false, antialias: false, preserveDrawingBuffer: true,
       powerPreference: 'high-performance'
     });
-    checked(gl, 'WebGL2 is unavailable on this browser. No GPU comparison can be claimed.');
-    const start = performance.now();
-    // Size the texture to the art actually present rather than always reserving
-    // a 4096-square (~64 MiB) texture for a small sprite scene.
+    checked(gl, 'WebGL2 unavailable on this browser; no GPU timing possible.');
+    const begun = performance.now();
+    // Real procedural images can require several atlases. Preserve depth
+    // ordering by drawing contiguous runs, not re-sorting by texture.
     const maxSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
-    const canFit = (dimension) => {
-      let x = 2, y = 2, rowHeight = 0;
-      for (const img of images.values()) {
-        const iw = img.naturalWidth, ih = img.naturalHeight;
-        if (iw + 4 > dimension || ih + 4 > dimension) return false;
-        if (x + iw + 2 >= dimension) { x = 2; y += rowHeight + 2; rowHeight = 0; }
-        if (y + ih + 2 >= dimension) return false;
-        x += iw + 2;
-        rowHeight = Math.max(rowHeight, ih);
-      }
-      return true;
+    const size = maxSize >= 2048 ? 2048 : maxSize >= 1024 ? 1024 : 0;
+    checked(size, 'GPU texture limit too small for original art');
+    const pages = [];
+    const makePage = () => {
+      checked(pages.length < 8, 'Texture memory safety limit (8 pages) exceeded');
+      const atlas = document.createElement('canvas');
+      atlas.width = atlas.height = size;
+      const painter = checked(atlas.getContext('2d'), 'Cannot create texture page');
+      painter.imageSmoothingEnabled = false;
+      pages.push({ atlas, painter });
     };
-    let size = 1024;
-    while (size <= maxSize && !canFit(size)) size *= 2;
-    checked(size <= maxSize, 'Sprite atlas exceeds supported WebGL texture size');
-    const atlas = document.createElement('canvas');
-    atlas.width = atlas.height = size;
-    const painter = checked(atlas.getContext('2d'), 'Cannot create atlas');
-    painter.imageSmoothingEnabled = false;
+    makePage();
     const entries = new Map();
     let left = 2, top = 2, shelf = 0;
     for (const [src, img] of images) {
-      const iw = img.naturalWidth, ih = img.naturalHeight;
-      checked(iw + 4 < size && ih + 4 < size, 'Atlas source exceeds GPU texture size');
+      const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
+      checked(iw + 4 < size && ih + 4 < size,
+        'One original object is too large for the diagnostic atlas');
       if (left + iw + 2 >= size) { left = 2; top += shelf + 2; shelf = 0; }
-      checked(top + ih + 2 < size, 'Too many source sprites for this test atlas');
-      painter.drawImage(img, left, top);
-      entries.set(src, { u0: left / size, v0: top / size,
-        u1: (left + iw) / size, v1: (top + ih) / size });
+      if (top + ih + 2 >= size) {
+        makePage(); left = 2; top = 2; shelf = 0;
+      }
+      pages[pages.length - 1].painter.drawImage(img, left, top);
+      entries.set(src, {
+        page: pages.length - 1,
+        u0: left / size, v0: top / size,
+        u1: (left + iw) / size, v1: (top + ih) / size
+      });
       shelf = Math.max(shelf, ih);
       left += iw + 2;
     }
@@ -216,10 +215,9 @@
       'attribute vec2 p; attribute vec2 uv; attribute float opacity; uniform vec2 screen; varying highp vec2 vUv; varying highp float vOpacity;' +
       'void main(){gl_Position=vec4(p.x/screen.x*2.0-1.0,1.0-p.y/screen.y*2.0,0.,1.);vUv=uv;vOpacity=opacity;}');
     const frag = compile(gl, gl.FRAGMENT_SHADER,
-      // Sprite atlas dimensions exceed the precision of mediump UVs on some GPUs.
       'precision highp float; varying highp vec2 vUv; varying highp float vOpacity; uniform sampler2D atlas;' +
       'void main(){gl_FragColor=texture2D(atlas,vUv)*vOpacity;}');
-    const program = checked(gl.createProgram(), 'Cannot create shader program');
+    const program = checked(gl.createProgram(), 'Cannot create GPU program');
     gl.attachShader(program, vert); gl.attachShader(program, frag); gl.linkProgram(program);
     checked(gl.getProgramParameter(program, gl.LINK_STATUS), gl.getProgramInfoLog(program));
     gl.useProgram(program);
@@ -228,16 +226,19 @@
     gl.uniform1i(gl.getUniformLocation(program, 'atlas'), 0);
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-    const texture = checked(gl.createTexture(), 'Cannot allocate atlas texture');
-    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.activeTexture(gl.TEXTURE0);
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-    // UVs are top-origin atlas coordinates: flipping this upload made most sprites transparent.
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, atlas);
+    const textures = pages.map(({ atlas }) => {
+      const texture = checked(gl.createTexture(), 'GPU texture allocation failed');
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, atlas);
+      return texture;
+    });
     const buffer = checked(gl.createBuffer(), 'Cannot create geometry buffer');
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     const stride = 5 * 4;
@@ -249,8 +250,14 @@
     const renderer = gl.getExtension('WEBGL_debug_renderer_info');
     const backend = renderer ? gl.getParameter(renderer.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
     gl.finish();
-    return { gl, entries, buffer, backend, atlasPixels: size * size,
-      atlasBytes: size * size * 4, preparationMs: Number((performance.now() - start).toFixed(2)) };
+    // Drop temporary CPU-side atlases after GPU upload.
+    for (const page of pages) { page.atlas.width = 0; page.atlas.height = 0; }
+    return {
+      gl, entries, buffer, textures, backend,
+      atlasPages: pages.length, atlasPixels: size * size * pages.length,
+      atlasBytes: size * size * pages.length * 4,
+      preparationMs: Number((performance.now() - begun).toFixed(1))
+    };
   }
 
   function packGeometry(objects, uvBySource, step) {
