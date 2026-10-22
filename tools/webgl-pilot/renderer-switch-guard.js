@@ -32,6 +32,20 @@
       reason:saved==='webgl2'?'confirmed-preference':'canvas-default'
     };
   }
+  function armConfirmedBoot(storage) {
+    // Only attempt a saved WebGL choice if a crash-recovery marker can be
+    // stored BEFORE creating the GPU context. Otherwise boot with Canvas.
+    if(read(storage,PREFERENCE_KEY)!=='webgl2'||
+       read(storage,PENDING_KEY)==='pending')return false;
+    return write(storage,PENDING_KEY,'pending');
+  }
+  function finishConfirmedBoot(storage){
+    // The integration must call this only after its first COMPLETE, validated
+    // WebGL scene frame and accessible DOM settings are visible.
+    if(read(storage,PREFERENCE_KEY)!=='webgl2'||
+       read(storage,PENDING_KEY)!=='pending')return false;
+    return remove(storage,PENDING_KEY);
+  }
   function create({
     storage=null,
     prepareWebGL,
@@ -146,7 +160,8 @@
     });
   }
   const api=Object.freeze({
-    create,startupChoice,PREFERENCE_KEY,PENDING_KEY,DURATION_MS
+    create,startupChoice,armConfirmedBoot,finishConfirmedBoot,
+    PREFERENCE_KEY,PENDING_KEY,DURATION_MS
   });
   if(typeof module!=='undefined'&&module.exports)module.exports=api;
   else root.AzerothRendererSwitchGuard=api;

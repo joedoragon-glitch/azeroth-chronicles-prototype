@@ -183,3 +183,30 @@ test('unconfirmed renderer is reverted when its settings controller is disposed'
  assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),'canvas2d');
  assert.equal(await f.run.requestWebGL(),false);
 });
+
+test('confirmed WebGL boot is crash guarded until its first complete scene frame',()=>{
+ const f=fixture();
+ f.storage.setItem(Guard.PREFERENCE_KEY,'webgl2');
+ assert.equal(Guard.armConfirmedBoot(f.storage),true);
+ assert.equal(f.storage.getItem(Guard.PENDING_KEY),'pending');
+ // Simulate a crash/reload during GPU initialization.
+ assert.equal(Guard.startupChoice(f.storage).renderer,'canvas2d');
+ assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),'canvas2d');
+ f.run.dispose();
+});
+test('a completed confirmed WebGL boot clears only its crash marker',()=>{
+ const f=fixture();
+ f.storage.setItem(Guard.PREFERENCE_KEY,'webgl2');
+ assert.equal(Guard.armConfirmedBoot(f.storage),true);
+ assert.equal(Guard.finishConfirmedBoot(f.storage),true);
+ assert.equal(Guard.startupChoice(f.storage).renderer,'webgl2');
+ assert.equal(f.storage.getItem(Guard.PENDING_KEY),null);
+ assert.equal(Guard.finishConfirmedBoot(f.storage),false);
+ f.run.dispose();
+});
+test('if crash-marker storage is unavailable, automatic WebGL boot must be refused',()=>{
+ const f=fixture({brokenStorage:true});
+ assert.equal(Guard.armConfirmedBoot(f.storage),false);
+ assert.equal(Guard.startupChoice(f.storage).renderer,'canvas2d');
+ f.run.dispose();
+});
