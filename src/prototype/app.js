@@ -785,11 +785,62 @@
     'Normal and charged forms share a cooldown.':
       'Las versiones normal y cargada comparten recuperación.',
   });
+  Object.assign(spanishText, {
+    'Choose your training.': 'Elige tu entrenamiento.',
+    'Hero skills': 'Habilidades del héroe',
+    'Learn or improve your class skills.': 'Aprende o mejora habilidades de tu clase.',
+    'Expedition training': 'Entrenamiento de Expedición',
+    FREE: 'GRATIS',
+    'Group size and field options.': 'Tamaño del grupo y opciones de campo.',
+    'Companion training': 'Entrenamiento de compañeros',
+    'Bonuses shared with your companions.': 'Bonificaciones compartidas con tus compañeros.',
+    'Open skill journal': 'Abrir diario de habilidades',
+    'Effects and controls.': 'Efectos y controles.',
+    'Higher ranks': 'Rangos superiores',
+    'Find the next instructor.': 'Encuentra al siguiente instructor.',
+    'Choose a skill to learn or improve.': 'Elige una habilidad para aprender o mejorar.',
+    'Training finished here. Back → Higher ranks for the next instructor.':
+      'Entrenamiento terminado aquí. Atrás → Rangos superiores para ver al siguiente instructor.',
+    'All available skills are at maximum rank.':
+      'Todas las habilidades disponibles están al máximo.',
+    'Finished here': 'Terminado aquí',
+    'Finished with this instructor.': 'Terminado con este instructor.',
+    'Need more crowns.': 'Necesitas más coronas.',
+    'Expand your group and field options. Training is free.':
+      'Amplía tu grupo y las opciones de campo. El entrenamiento es gratis.',
+    'Maximum Expedition rank.': 'Rango máximo de Expedición.',
+    'Train bonuses shared with your companions.':
+      'Entrena bonificaciones compartidas con tus compañeros.',
+    'This instructor teaches higher hero-skill ranks.':
+      'Este instructor enseña rangos superiores de habilidades del héroe.',
+    'Magic combo / beam': 'Combo mágico / rayo',
+    'Single slow / frost burst': 'Ralentizar / explosión de escarcha',
+    'Basic attack / holy burst': 'Ataque básico / explosión sagrada',
+    'Weaken / frontal cleave': 'Debilitar / corte frontal',
+    'Arrow combo / rapid triple': 'Combo de flechas / triple rápido',
+    'Two slowing arrows / line': 'Dos flechas ralentizadoras / línea',
+    'Companions inherit applicable discipline-training HP, damage and movement speed.':
+      'Los compañeros heredan salud, daño y velocidad del entrenamiento de disciplinas aplicable.',
+  });
   function translateSegment(piece) {
     const ferryPassage = Campaign.rules.tidalFerryPassage;
     if (ferryPassage && piece.startsWith(ferryPassage))
       return spanishText[ferryPassage] + piece.slice(ferryPassage.length);
     if (/^Search /.test(piece)) return piece.replace('Search ', 'Investigar ');
+    if (/^(Learn|Train) /.test(piece) && !spanishText[piece])
+      return piece
+        .replace(/^Learn /, 'Aprender ')
+        .replace(/^Train /, 'Entrenar ')
+        .replace('Expedition Skill', 'Expedición');
+    if (/^Expedition Skill/.test(piece)) return piece.replace('Expedition Skill', 'Expedición');
+    if (/^Rank /.test(piece)) return piece.replace('Rank ', 'Rango ');
+    if (/^Instructor limit: Rank /.test(piece))
+      return piece.replace('Instructor limit: Rank ', 'Límite del instructor: rango ');
+    if (/^Skill \d+$/.test(piece)) return piece.replace('Skill ', 'Habilidad ');
+    if (/^\d+% inheritance/.test(piece)) return piece.replace('inheritance', 'herencia');
+    if (/^Next: /.test(piece)) return piece.replace('Next: ', 'Siguiente: ');
+    if (/^Visit /.test(piece)) return piece.replace('Visit ', 'Visita a ');
+
     if (/^Crowns \d+/.test(piece)) return piece.replace('Crowns ', 'Coronas ');
     if (/^Stored: /.test(piece)) return piece.replace('Stored: ', 'Guardados: ');
     if (/^Equipped weapon: /.test(piece))

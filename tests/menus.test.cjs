@@ -24,9 +24,10 @@ const catalog = Menus.create({
 game.s.keys.thorn = true;
 game.rescue('thorn');
 catalog.teacher({ family: 'thorn', name: game.boss('thorn').captive }, back);
+assert.equal(opened.back, back);
+opened.actions.find((a) => a.label.startsWith('Expedition training')).action();
 const train = opened.actions.find((a) => a.label.startsWith('Train Expedition Skill'));
 assert(train && !train.disabled);
-assert.equal(opened.back, back);
 const original = game,
   before = original.snapshot();
 game = new Campaign('nightmare', 'ranger');
@@ -39,6 +40,7 @@ assert.deepEqual(
   before,
   'delayed menu action must use current Campaign, not the old run',
 );
+opened.back();
 assert.equal(opened.back, back);
 opened.back();
 assert.equal(backs, 1);
