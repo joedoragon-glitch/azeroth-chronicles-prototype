@@ -156,6 +156,7 @@ for (const source of ['town', 'barracks']) {
 {
   let g = new C('normal', 'mage', () => 0.5),
     opened,
+    practiceComplete,
     closed = false;
   const menu = Menus.create({
     getGame: () => g,
@@ -167,7 +168,10 @@ for (const source of ['town', 'barracks']) {
     closeMenu: () => {
       closed = true;
     },
-    recallSquad: () => g.recallParty(),
+    practiceRecall: (complete) => {
+      closed = true;
+      practiceComplete = complete;
+    },
     showMap() {},
     finaleMenu() {},
   });
@@ -177,16 +181,22 @@ for (const source of ['town', 'barracks']) {
   assert.equal(g.questDestination(q.id).kind, 'recruiter');
   menu.partyMenu();
   assert.equal(opened.title, 'Meet your company');
-  assert(opened.description.includes('Expedition Rank 2'));
+  assert(opened.description.includes('Recall brings them back'));
+  assert(!opened.actions.some((a) => a.label === 'Open recruitment'));
   assert(g.s.quests[q.id].captainBriefed);
   opened.actions.find((a) => a.label === 'Practice Recall squad').action();
   assert(closed);
+  assert(!g.s.quests[q.id].recallPracticed);
+  g.recallParty();
+  practiceComplete();
+  assert(opened.description.includes('Orders cancelled.'));
   assert(g.s.quests[q.id].recallPracticed);
   assert(g.questProgress(q).includes('FREE'));
   g = C.restore(g.snapshot());
   menu.partyMenu();
   assert.equal(opened.title, 'Millhaven Captain');
-  assert(opened.actions.find((a) => a.label.startsWith('Recruit Soldier')).disabled);
+  assert(!opened.actions.some((a) => a.label.startsWith('Recruit Soldier')));
+  assert(opened.actions.find((a) => a.label === 'Recruitment — Expedition 2 required').disabled);
   g.s.expeditionRank = 2;
   g.hero.gold = 0;
   menu.partyMenu();
@@ -195,6 +205,13 @@ for (const source of ['town', 'barracks']) {
   recruit.action();
   assert(opened.actions.find((a) => a.label.startsWith('Cancel queued Soldier')));
   assert(opened.description.includes('Queued recruitment'));
+  g.s.party.push(g.unit('soldier', g.hero.x + 40, g.hero.y));
+  menu.partyMenu();
+  assert(opened.actions.find((a) => a.label.startsWith('Cancel queued Soldier')));
+  assert(!opened.actions.some((a) => a.label.startsWith('Recruit Ranger')));
+  const limit = opened.actions.find((a) => a.label === 'Recruit at a Barracks');
+  assert(limit.disabled);
+  assert.equal(limit.detail, 'Town limit: 3 companions, reserves included.');
 }
 console.log(
   'PASS ' +

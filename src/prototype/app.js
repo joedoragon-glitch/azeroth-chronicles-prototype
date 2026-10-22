@@ -494,8 +494,25 @@
       'Soldado en cola de reclutamiento. Toca la misma opción para cancelar.',
     'Ranger recruitment queued. Tap the same choice to cancel.':
       'Ranger en cola de reclutamiento. Toca la misma opción para cancelar.',
-    'Soldier: close combat.\nRanger: ranged attacks + healing.\nThey follow and fight automatically.\n\nRecall brings them back to you.\nNext: build your first Barracks for FREE.':
-      'Soldado: combate cercano.\nRanger: ataques a distancia + curación.\nTe siguen y luchan automáticamente.\n\nReagrupar los trae de vuelta.\nDespués: construye tu primer cuartel GRATIS.',
+    'Soldier: close combat.\nRanger: ranged attacks + healing.\nThey follow and fight automatically.\n\nRecall brings them back to you.':
+      'Soldado: combate cercano.\nRanger: ataques a distancia + curación.\nTe siguen y luchan automáticamente.\n\nReagrupar los trae de vuelta.',
+    'Recalled!\nOrders cancelled. Companions stay close and defend without chasing.\nGive a new order to send them out again.\n\nNext: build your first Barracks for FREE.':
+      '¡Reagrupados!\nÓrdenes canceladas. Tus compañeros se quedan cerca y se defienden sin perseguir.\nDales una nueva orden para enviarlos de nuevo.\n\nDespués: construye tu primer cuartel GRATIS.',
+    'Recruit companions or restore your company.\nShort on crowns? Tap an available service to queue it.':
+      'Recluta compañeros o recupera tu compañía.\n¿Te faltan coronas? Toca un servicio disponible para dejarlo en cola.',
+    'Recruit at a Barracks': 'Recluta en un cuartel',
+    'Town limit: 3 companions, reserves included.':
+      'Límite del pueblo: 3 compañeros, incluidas las reservas.',
+    'No fallen companions.': 'No hay compañeros caídos.',
+    'No wounded companions.': 'No hay compañeros heridos.',
+    'Queued · tap to cancel. No crowns spent.': 'En cola · toca para cancelar. Sin gastar coronas.',
+    'Short on crowns? Tap to queue.': '¿Te faltan coronas? Toca para dejarlo en cola.',
+    'Full health for living companions.': 'Salud completa para los compañeros vivos.',
+    'Safe conditions required.': 'Requiere condiciones seguras.',
+    'Joins your group; full groups send recruits to reserve.':
+      'Se une al grupo; si está lleno, queda en reserva.',
+    'Try Recall now': 'Prueba Reagrupar ahora',
+    'Try it now': 'Pruébalo ahora',
   });
   Object.assign(spanishText, {
     'Restore living wounded companions to full health.':
@@ -871,7 +888,8 @@
   let started = loaded;
   let storyRouteActive = false,
     questGuide = null,
-    gatheringGuideRequest = null;
+    gatheringGuideRequest = null,
+    recallPractice = null;
   const viewport = { width: innerWidth, height: innerHeight };
   const renderer = PrototypeRenderer.create({
     canvas: viewport,
@@ -924,7 +942,7 @@
     action,
     openMenu,
     closeMenu,
-    recallSquad,
+    practiceRecall,
     showMap,
     finaleMenu,
     storyNavigate,
@@ -2176,10 +2194,21 @@
     if (activePlay()) interact();
   };
 
+  function practiceRecall(complete) {
+    recallPractice = { owner: game, complete };
+    closeMenu();
+    updateHUD();
+    $('recall-button').focus?.({ preventScroll: true });
+  }
   function recallSquad() {
     queuedCharges.clear();
     if (charge?.autoRelease) cancelCharge();
-    game.recallParty();
+    const recalled = game.recallParty();
+    if (recalled && recallPractice?.owner === game && game.activeLivingParty().length) {
+      const complete = recallPractice.complete;
+      recallPractice = null;
+      complete();
+    }
     updateHUD();
   }
 
@@ -2231,7 +2260,7 @@
       };
       storyRouteActive = false;
     } else if (!gathering) {
-      gatheringGuideRequest = null;
+      (gatheringGuideRequest = null), (recallPractice = null);
       if (questGuide?.kind === 'gathering') questGuide = null;
     }
     if (!questGuide) return;
@@ -4201,9 +4230,18 @@
     $('talent-button').querySelector('small').textContent = input.key('training');
     if ($('squad-button').querySelector('small'))
       $('squad-button').querySelector('small').textContent = input.key('doctrine');
+    if (recallPractice && recallPractice.owner !== game) recallPractice = null;
+    const practicingRecall = !!recallPractice;
+    $('recall-button').classList.toggle('tutorial-highlight', practicingRecall);
+    $('recall-button').setAttribute(
+      'aria-label',
+      tr(practicingRecall ? 'Try Recall now' : 'Recall squad'),
+    );
     if ($('recall-button').querySelector('small'))
       $('recall-button').querySelector('small').textContent =
-        input.key('recall') + (input.actionFor('KeyQ') === 'recall' ? ' / Q' : '');
+        (practicingRecall ? tr('Try it now') + ' · ' : '') +
+        input.key('recall') +
+        (input.actionFor('KeyQ') === 'recall' ? ' / Q' : '');
     const selected = game.selectedHeroTarget(),
       targetButton = $('target-button');
     targetButton.classList.toggle('has-target', !!selected);
