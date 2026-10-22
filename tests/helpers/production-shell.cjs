@@ -2,7 +2,7 @@
 const fs = require('node:fs'),
   vm = require('node:vm'),
   C = require('../../src/prototype/engine');
-function shell(language) {
+function shell(language, heroClass = 'paladin') {
   const elements = new Map(),
     events = {},
     storage = new Map();
@@ -47,7 +47,7 @@ function shell(language) {
       addEventListener() {},
     };
   }
-  const initial = new C('normal', 'paladin', () => 0.5);
+  const initial = new C('normal', heroClass, () => 0.5);
   storage.set('azeroth-v4-normal', JSON.stringify(initial.snapshot()));
   storage.set('azeroth-display-language-v1', language);
   const scope = {

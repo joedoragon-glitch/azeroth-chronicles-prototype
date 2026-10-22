@@ -1,0 +1,9 @@
+# Concise instructor menus — dev.158
+
+Owner requests the same concise tutorial-friendly treatment for Mage, Paladin and Ranger instructors. Root offers Hero skills, free Expedition training, applicable Companion training, the skill journal and Higher ranks where available. Each branch gives a short action-specific prompt. Hero rows retain the class skill name, short role, current rank, local cap and actual authored cost. Finished local training is clearly disabled without a misleading price; Higher ranks names the next instructor and region. Expedition gives its native free upgrade or the next instructor. Companion inheritance, charges and caps remain intact.
+
+No changes to curricula, class mechanics, prices, rank/level gates, native learn/upgrade/train methods or v4 saves. All callbacks still resolve the current campaign. English and Spanish labels added. Existing economy and menus tests updated to enter the new branches; original UI/browser assertions updated for the hierarchy and Back path.
+
+Validation: six actual production-shell English/Spanish Paladin/Mage/Ranger instructor flows pass: branches/Back, zero funds and disabled clicks, native learning and upgrades with exact charges, capped no-price labels, free Expedition and next instructor, Shared Training charges/local cap and skill journal. Existing menus, economy, game-menu shell and companion-onboarding shell suites pass. Changed-source format, build, syntax and diff checks pass. No broad CI, device visual audit or browser matrix; owner live playtest follows.
+
+Publication pending: package committed artifacts only, then restore normal workflow and remove temporary publisher.

@@ -165,76 +165,160 @@
         ];
       });
     }
-    function teacher(n, back = closeMenu) {
-      const catalog = getGame().teacherCatalog(n.family),
-        cap = catalog.maxRank,
-        next = Object.keys(Campaign.rules.teachers).find(
+    function nextSkillInstructor(family) {
+      const cap = getGame().teacherCatalog(family).maxRank;
+      return (
+        Object.keys(Campaign.rules.teachers).find(
           (id) => Campaign.rules.teachers[id].maxRank > cap,
-        ),
-        expCap = getGame().expeditionInstructorCap(n.family),
-        expRank = getGame().s.expeditionRank || 1,
-        expNext = expRank + 1,
-        expActions = expCap
-          ? [
-              expRank < expCap
-                ? action(
-                    'Train Expedition Skill · Rank ' + expRank + ' → ' + expNext + ' · FREE',
-                    () => {
-                      getGame().trainExpedition(n.family);
-                      teacher(n, back);
-                    },
-                    getGame().expeditionUnlock(expNext),
-                  )
-                : action(
-                    'Expedition Skill · Rank ' + expRank,
-                    () => {},
-                    expRank >= 6
-                      ? 'Maximum Expedition rank'
-                      : 'This instructor trains Expedition through rank ' + expCap,
-                    true,
-                  ),
-            ]
-          : [],
-        supportActions = expeditionSupportActions(n, () => teacher(n, back));
+        ) || null
+      );
+    }
+    function teacher(n, back = closeMenu) {
+      const returnHere = () => teacher(n, back),
+        hasSupport = Object.values(Campaign.rules.expeditionSupportSkills).some(
+          (def) => def.trainers?.[n.family],
+        );
       openMenu(
         n.name,
-        (next
-          ? 'Higher hero-skill ranks: rescue ' +
-            getGame().boss(next).captive +
-            ' in ' +
-            D.regions.find((r) => r.id === getGame().boss(next).region).name +
-            '. '
-          : 'Maximum hero-skill training rank available here. ') +
-          'Expedition Rank training is free. Hero skills and specialist companion-training skills use crowns.',
+        'Choose your training.',
         [
-          ...expActions,
-          ...supportActions,
           action(
-            'Open skill journal',
-            () => skillBook(() => teacher(n, back)),
-            'Short tap and charged effects · cooldowns',
+            'Hero skills',
+            () => teacherSkills(n, returnHere),
+            'Learn or improve your class skills.',
           ),
-          ...D.skills
-            .filter((s) =>
-              getGame().hero.skills[s[0] - 1]
-                ? catalog.train.includes(s[0])
-                : catalog.learn.includes(s[0]),
-            )
-            .map((s) => {
-              const rank = getGame().hero.skills[s[0] - 1],
-                cost = getGame().skillTrainingCost(s[0], rank);
-              const card = professionSkillCard(s[0]);
-              return action(
-                (rank ? 'Train ' : 'Learn ') + card.name + ' · ' + cost + ' crowns',
-                () => {
-                  rank ? getGame().upgrade(s[0], n.family) : getGame().learn(s[0], n.family);
-                  teacher(n, back);
-                },
-                'Skill ' + s[0] + ' · ' + card.role + ' · Rank ' + rank + '/' + cap,
-                rank >= cap || getGame().hero.gold < cost,
-              );
-            }),
+          ...(getGame().expeditionInstructorCap(n.family)
+            ? [
+                action(
+                  'Expedition training · FREE',
+                  () => teacherExpedition(n, returnHere),
+                  'Group size and field options.',
+                ),
+              ]
+            : []),
+          ...(hasSupport
+            ? [
+                action(
+                  'Companion training',
+                  () => teacherCompanions(n, returnHere),
+                  'Bonuses shared with your companions.',
+                ),
+              ]
+            : []),
+          action('Open skill journal', () => skillBook(returnHere), 'Effects and controls.'),
+          ...(nextSkillInstructor(n.family)
+            ? [
+                action(
+                  'Higher ranks',
+                  () => teacherNext(n, returnHere),
+                  'Find the next instructor.',
+                ),
+              ]
+            : []),
         ],
+        back,
+      );
+    }
+    function teacherSkills(n, back) {
+      const g = getGame(),
+        catalog = g.teacherCatalog(n.family),
+        cap = catalog.maxRank,
+        skills = D.skills.filter((s) =>
+          g.hero.skills[s[0] - 1] ? catalog.train.includes(s[0]) : catalog.learn.includes(s[0]),
+        ),
+        finished = skills.every((s) => g.hero.skills[s[0] - 1] >= cap);
+      openMenu(
+        'Hero skills',
+        finished
+          ? nextSkillInstructor(n.family)
+            ? 'Training finished here. Back → Higher ranks for the next instructor.'
+            : 'All available skills are at maximum rank.'
+          : 'Choose a skill to learn or improve.\nCrowns ' + Math.floor(g.hero.gold),
+        skills.map((s) => {
+          const rank = g.hero.skills[s[0] - 1],
+            cost = g.skillTrainingCost(s[0], rank),
+            card = professionSkillCard(s[0]),
+            capped = rank >= cap;
+          return action(
+            capped
+              ? card.name + ' · Rank ' + rank + ' · Finished here'
+              : (rank ? 'Train ' : 'Learn ') + card.name + ' · ' + cost + ' crowns',
+            () => {
+              getGame().hero.skills[s[0] - 1]
+                ? getGame().upgrade(s[0], n.family)
+                : getGame().learn(s[0], n.family);
+              teacherSkills(n, back);
+            },
+            'Skill ' +
+              s[0] +
+              ' · ' +
+              card.role +
+              ' · ' +
+              (capped ? 'Instructor limit: Rank ' + cap : 'Rank ' + rank + '/' + cap) +
+              (!capped && g.hero.gold < cost ? '\nNeed more crowns.' : ''),
+            capped || g.hero.gold < cost,
+          );
+        }),
+        back,
+      );
+    }
+    function teacherExpedition(n, back) {
+      const g = getGame(),
+        rank = g.s.expeditionRank || 1,
+        cap = g.expeditionInstructorCap(n.family),
+        next = g.expeditionNextInstructor(rank),
+        nextBoss = next ? g.boss(next) : null;
+      openMenu(
+        'Expedition training',
+        rank < cap
+          ? 'Expand your group and field options. Training is free.'
+          : rank >= 6
+            ? 'Maximum Expedition rank.'
+            : 'Next: ' +
+              nextBoss.captive +
+              ' — ' +
+              D.regions.find((r) => r.id === nextBoss.region).name,
+        [
+          rank < cap
+            ? action(
+                'Train Expedition Skill · Rank ' + rank + ' → ' + (rank + 1) + ' · FREE',
+                () => {
+                  getGame().trainExpedition(n.family);
+                  teacherExpedition(n, back);
+                },
+                g.expeditionUnlock(rank + 1),
+              )
+            : action(
+                'Expedition Skill · Rank ' + rank,
+                () => {},
+                'Finished with this instructor.',
+                true,
+              ),
+        ],
+        back,
+      );
+    }
+    function teacherCompanions(n, back) {
+      openMenu(
+        'Companion training',
+        'Train bonuses shared with your companions.',
+        expeditionSupportActions(n, () => teacherCompanions(n, back)),
+        back,
+      );
+    }
+    function teacherNext(n, back) {
+      const id = nextSkillInstructor(n.family);
+      if (!id) return back();
+      const boss = getGame().boss(id),
+        region = D.regions.find((r) => r.id === boss.region);
+      openMenu(
+        'Higher ranks',
+        (getGame().s.rescued[id] ? 'Visit ' : 'Rescue ') +
+          boss.captive +
+          ' — ' +
+          region.name +
+          '.\nThis instructor teaches higher hero-skill ranks.',
+        [],
         back,
       );
     }

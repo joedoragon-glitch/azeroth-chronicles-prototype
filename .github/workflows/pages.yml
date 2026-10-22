@@ -1,9 +1,9 @@
 name: Test and deploy app
 on:
   push:
-    branches: [main]
+    branches: [owner-instructor-menus-dev158-held]
   pull_request:
-    branches: [main, perf/v09-integration-20261010]
+    branches: [owner-instructor-menus-dev158-held]
   workflow_dispatch:
 
 permissions:

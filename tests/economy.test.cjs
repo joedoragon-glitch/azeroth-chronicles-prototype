@@ -82,6 +82,7 @@ try {
   skill[5] = 39;
   R.balance.equipment.prices.weapon[1] = 101;
   menus.teacher({ family: 'thorn', name: 'Teacher' });
+  opened.actions.find((a) => a.label === 'Hero skills').action();
   let a = opened.actions.find((a) => a.detail?.startsWith('Skill 2 ·'));
   assert(a.label.includes('47 crowns'));
   let gold = c.hero.gold;
