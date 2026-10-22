@@ -34,10 +34,12 @@ for (const language of ['en', 'es'])
     brief();
     for (const name of names)
       assert(e.get('modal-actions').children.some((b) => b.textContent.includes(name)));
-    assert(e.get('modal-actions').children.every((b) => b.disabled));
     const before = g.snapshot();
     e.get('modal-actions').children[1].click();
+    assert(e.get('modal-actions').children[0].disabled, 'training remains blocked without funds');
+    e.get('modal-actions').children[0].click();
     assert.deepEqual(g.snapshot(), before);
+    back();
     back();
     click(t('Expedition training', 'Entrenamiento de Expedición'));
     brief();
@@ -53,11 +55,15 @@ for (const language of ['en', 'es'])
     let gold = g.hero.gold,
       cost = g.skillTrainingCost(2, 0);
     click(t('Learn ', 'Aprender ') + names[1]);
+    assert.equal(g.hero.gold, gold);
+    click(t('Learn ', 'Aprender ') + names[1]);
     assert.equal(g.hero.skills[1], 1);
     assert.equal(g.hero.gold, gold - cost);
     for (const slot of [1, 2]) {
       gold = g.hero.gold;
       cost = g.skillTrainingCost(slot, 1);
+      click(t('Train ', 'Entrenar ') + names[slot - 1]);
+      assert.equal(g.hero.gold, gold);
       click(t('Train ', 'Entrenar ') + names[slot - 1]);
       assert.equal(g.hero.skills[slot - 1], 2);
       assert.equal(g.hero.gold, gold - cost);

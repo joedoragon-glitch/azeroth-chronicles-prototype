@@ -59,3 +59,23 @@ assert.strictEqual(Campaign.talentMaxRanks, Campaign.rules.balance.disciplines.m
 console.log(
   'PASS catalog actions follow the current run, preserve injected Back callbacks and retain public balance aliases',
 );
+
+// A confirmation from another run or an old rank is a refreshed quote, never a purchase.
+game.hero.gold = 1000;
+catalog.teacher({ family: 'thorn', name: game.boss('thorn').captive }, back);
+opened.actions.find((a) => a.label === 'Hero skills').action();
+opened.actions.find((a) => a.detail.startsWith('Skill 1 ·')).action();
+const quoted = opened.actions[0];
+game = new Campaign('normal', 'mage');
+game.s.rescued.thorn = true;
+game.hero.gold = 1000;
+const fresh = game.snapshot();
+quoted.action();
+assert.deepEqual(game.snapshot(), fresh, 'stale cross-run confirmation only refreshes');
+const confirmation = opened.actions[0];
+game.hero.gold = 0;
+confirmation.action();
+assert.equal(game.hero.skills[0], 1);
+assert.equal(game.hero.gold, 0);
+assert(opened.actions[0].disabled, 'native funds guard and refreshed disabled state');
+console.log('PASS instructor confirmations refresh stale campaign quotes and recheck native funds');

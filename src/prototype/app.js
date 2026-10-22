@@ -822,6 +822,152 @@
     'Companions inherit applicable discipline-training HP, damage and movement speed.':
       'Los compañeros heredan salud, daño y velocidad del entrenamiento de disciplinas aplicable.',
   });
+  Object.assign(spanishText, {
+    'Choose a skill to preview its training.': 'Elige una habilidad para ver su entrenamiento.',
+    'Choose a skill. View your current Tap and Charged effects.':
+      'Elige una habilidad. Consulta sus efectos normales y cargados actuales.',
+    'Tap and Charged share this rank.': 'Normal y cargada comparten este rango.',
+    Tap: 'Normal',
+    Charged: 'Cargada',
+    'Next rank · Preview': 'Siguiente rango · Vista previa',
+    'Compare changes and find an instructor.': 'Compara los cambios y encuentra un instructor.',
+    'Using skills': 'Usar habilidades',
+    'Tap, charge, cooldowns and damage figures.': 'Toques, cargas, recuperación y cifras de daño.',
+    'Tap for the normal form. Hold to prepare the charged form.':
+      'Toca para la versión normal. Mantén pulsado para preparar la cargada.',
+    Controls: 'Controles',
+    'Both forms share a cooldown. On cooldown, tap to queue normal; briefly hold to queue charged. A strong hit can interrupt charging.':
+      'Ambas versiones comparten recuperación. Durante ella, toca para poner la normal en cola; mantén brevemente para la cargada. Un golpe fuerte puede interrumpir la carga.',
+    'Reading effects': 'Leer los efectos',
+    'Damage figures use your current Power, before enemy defenses and situational bonuses. Healing cannot exceed maximum health. Distances use map units.':
+      'El daño usa tu Poder actual, antes de defensas y bonificaciones de combate. La curación no supera la salud máxima. Las distancias usan unidades del mapa.',
+    'Skill ranks do not shorten cooldowns. Discipline training can.':
+      'Los rangos de habilidad no reducen la recuperación. El entrenamiento de disciplinas sí puede.',
+    'Learn Rank 1': 'Aprender rango 1',
+    'Compare your upgrade before training.': 'Compara la mejora antes de entrenar.',
+    'Learn both forms at Rank 1.': 'Aprende ambas versiones en rango 1.',
+    'No change at this rank.': 'Sin cambios en este rango.',
+    'Only changed effects are shown. Cooldowns stay the same.':
+      'Solo se muestran efectos que cambian. La recuperación sigue igual.',
+    'Training unavailable here.': 'Entrenamiento no disponible aquí.',
+    'Applies to Tap and Charged.': 'Se aplica a normal y cargada.',
+    'Also unlocks advanced Soldier and Ranger skills, plus charged pet skills.':
+      'También desbloquea habilidades avanzadas de Soldier y Ranger, y habilidades cargadas de mascotas.',
+    'No further instructor available.': 'No hay otro instructor disponible.',
+    Preview: 'Vista previa',
+    'Skills use crowns; Expedition training is free. Preview each skill to see what its next rank changes.':
+      'Las habilidades cuestan coronas; Expedición es gratis. Consulta cada habilidad para ver qué cambia en su siguiente rango.',
+    Cooldown: 'Recuperación',
+    'Base damage': 'Daño base',
+    'Combo damage': 'Daño del combo',
+    'Third-hit splash': 'Daño de área del tercer golpe',
+    'Damage per arrow': 'Daño por flecha',
+    Arrows: 'Flechas',
+    'Enemy damage reduced': 'Daño enemigo reducido',
+    'Weaken duration': 'Duración de Debilitar',
+    'Enemy damage taken': 'Daño que recibe el enemigo',
+    'Vulnerability duration': 'Duración de vulnerabilidad',
+    'Slow duration': 'Duración de Lentitud',
+    Reach: 'Alcance',
+    Radius: 'Radio',
+    Width: 'Anchura',
+    'Incoming damage reduced': 'Daño recibido reducido',
+    Duration: 'Duración',
+    'Damage vs elites': 'Daño contra élites',
+    'Push distance': 'Distancia de empuje',
+    'Silence duration': 'Duración de Silencio',
+    'Healing per ally': 'Curación por aliado',
+    'Self-healing': 'Autocuración',
+    'Movement speed': 'Velocidad de movimiento',
+    'Companion movement': 'Movimiento de compañeros',
+    'Companion basic attack speed': 'Ataques básicos de compañeros',
+    'Primary damage': 'Daño al objetivo principal',
+    'Other targets': 'Daño a otros objetivos',
+    'Taunt duration': 'Duración de provocación',
+    'Max targets': 'Máximo de objetivos',
+    'Final arrow push': 'Empuje de la última flecha',
+    'Damage: first / second / later': 'Daño: primero / segundo / siguientes',
+    'Arrows per target': 'Flechas por objetivo',
+    'Arrows if one foe': 'Flechas contra un solo enemigo',
+    'Self-heal': 'Autocuración',
+    'Party damage reduced': 'Daño al grupo reducido',
+    'Ward duration': 'Duración de protección',
+    'Sword combo; third hit cleaves': 'Combo de espada; el tercer golpe corta en área',
+    'Fire a holy projectile': 'Dispara un proyectil sagrado',
+    'Hit one foe; weaken its damage': 'Golpea a un enemigo y reduce su daño',
+    'Holy Cleave: weaken a frontal group': 'Holy Cleave: debilita enemigos frente a ti',
+    'Raise your shield to reduce incoming damage': 'Alza el escudo para reducir el daño recibido',
+    'Shield Bash: strike and push a cone': 'Shield Bash: golpea y empuja en cono',
+    'No Skill 1 while raised; other damage ×0.6. Tap to lower; cooldown starts on lowering.':
+      'Sin Habilidad 1 mientras está alzado; el resto del daño ×0,6. Toca para bajarlo; ahí empieza la recuperación.',
+    'Dodgeable holy shot: hit + draw attention': 'Disparo sagrado esquivable: daño y provocación',
+    'Grand Judgment: splash + group taunt': 'Grand Judgment: daño en área y provocación grupal',
+    'Boss taunt affects basic attacks briefly; scripted specials remain.':
+      'Provocar jefes afecta brevemente a sus ataques básicos; sus especiales continúan.',
+    'Damage nearby foes': 'Daña enemigos cercanos',
+    'Consecrated Wave: wider damage and weaken': 'Consecrated Wave: más área de daño y debilitar',
+    'Rush to a foe and strike': 'Acércate rápidamente a un enemigo y golpea',
+    'Vanguard Impact: rush + short push wave': 'Vanguard Impact: avance y onda de empuje corta',
+    'Oath Strike: wider damage and weaken': 'Oath Strike: más área de daño y debilitar',
+    'Holy area damage, self-heal and nearby party ward':
+      'Daño sagrado en área, autocuración y protección de aliados cercanos',
+    'Last Bastion: bigger blast, self-heal, party ward and weaken':
+      'Last Bastion: más área, autocuración, protección del grupo y debilitar',
+    'No immunity. Ward and Shield Stance use only the stronger reduction.':
+      'Sin inmunidad. La protección y Shield Stance solo aplican la reducción más fuerte.',
+    'Magic combo; third hit splashes': 'Combo mágico; el tercer golpe daña en área',
+    'Arcane Beam: fire a powerful beam': 'Arcane Beam: dispara un rayo potente',
+    'Hit and slow one foe': 'Golpea y ralentiza a un enemigo',
+    'Frost Burst: damage and slow around the target':
+      'Frost Burst: daño y lentitud alrededor del objetivo',
+    'Dodgeable bolt: stop one warned/aimed attack on hit':
+      'Proyectil esquivable: al acertar, interrumpe un ataque en preparación',
+    'Silence Field: block nearby special skills':
+      'Silence Field: bloquea habilidades especiales cercanas',
+    'Silence affects you and companions too; basic attacks still work.':
+      'Silencio también os afecta a ti y a tus compañeros; los ataques básicos siguen funcionando.',
+    'Dodgeable bolt: damage and vulnerability': 'Proyectil esquivable: daño y vulnerabilidad',
+    'Arcane Rupture: area damage and vulnerability':
+      'Arcane Rupture: daño en área y vulnerabilidad',
+    'Fracture never stacks; the stronger effect applies.':
+      'La vulnerabilidad no se acumula; se aplica la más fuerte.',
+    'Damage and push nearby foes': 'Daña y empuja a enemigos cercanos',
+    'Force Wave: wider damage and stronger push': 'Force Wave: más área y empuje más fuerte',
+    'Magic projectile + brief slow': 'Proyectil mágico y lentitud breve',
+    'Focused Beam: stronger shot + slow': 'Focused Beam: disparo más fuerte y lentitud',
+    'Damage leaps between nearby foes': 'El daño salta entre enemigos cercanos',
+    'Chainstorm: stronger, wider chain': 'Chainstorm: cadena más fuerte y amplia',
+    'Blast around the target; primary hit strongest':
+      'Explosión alrededor del objetivo; más daño al principal',
+    'Arcane Cataclysm: bigger blast and brief vulnerability':
+      'Arcane Cataclysm: explosión mayor y vulnerabilidad breve',
+    'No healing or immunity. Fracture is nonstacking.':
+      'Sin curación ni inmunidad. La vulnerabilidad no se acumula.',
+    'Arrow combo; third hit fans out': 'Combo de flechas; el tercer golpe se abre en abanico',
+    'Rapid Triple Shot: fire three arrows': 'Rapid Triple Shot: dispara tres flechas',
+    'Two arrows slow one foe': 'Dos flechas ralentizan a un enemigo',
+    'Pinning Volley: line hit + slow': 'Pinning Volley: daño en línea y lentitud',
+    'Heal yourself': 'Cúrate',
+    'Party Heal: you + wounded living allies': 'Party Heal: tú y tus aliados vivos heridos',
+    'Cannot revive fallen companions.': 'No revive compañeros caídos.',
+    'Move faster': 'Muévete más rápido',
+    'Companion Rally: nearby companions move and attack faster':
+      'Companion Rally: compañeros cercanos se mueven y atacan más rápido',
+    'Nearby living allies only; no dash and no faster special skills.':
+      'Solo aliados vivos cercanos; sin avance rápido ni especiales más veloces.',
+    'Hit nearby foes': 'Golpea enemigos cercanos',
+    'Arrow Rain: wider hits and slow': 'Arrow Rain: más área de daño y lentitud',
+    'Shoot one foe and push it back': 'Dispara a un enemigo y empújalo',
+    'Repelling Volley: 3 arrows + stronger push':
+      'Repelling Volley: tres flechas y empuje más fuerte',
+    'A powerful arrow that pierces defense': 'Una flecha potente que atraviesa la defensa',
+    'Stronger defense-piercing arrow and slow':
+      'Flecha que atraviesa la defensa más fuerte y lentitud',
+    'Fire arrows at several foes': 'Dispara flechas a varios enemigos',
+    'Grand Hunt: fire two arrows per foe': 'Grand Hunt: dispara dos flechas por enemigo',
+    'When isolated, fire 2 normal or 3 charged arrows at one foe. No piercing.':
+      'Contra un solo enemigo, dispara dos flechas normales o tres cargadas. No atraviesan defensa.',
+  });
   function translateSegment(piece) {
     const ferryPassage = Campaign.rules.tidalFerryPassage;
     if (ferryPassage && piece.startsWith(ferryPassage))
@@ -838,6 +984,9 @@
       return piece.replace('Instructor limit: Rank ', 'Límite del instructor: rango ');
     if (/^Skill \d+$/.test(piece)) return piece.replace('Skill ', 'Habilidad ');
     if (/^\d+% inheritance/.test(piece)) return piece.replace('inheritance', 'herencia');
+    if (/^Next instructor: /.test(piece))
+      return piece.replace('Next instructor: ', 'Siguiente instructor: ');
+    if (/% bonus/.test(piece)) return piece.replaceAll('% bonus', '% adicional');
     if (/^Next: /.test(piece)) return piece.replace('Next: ', 'Siguiente: ');
     if (/^Visit /.test(piece)) return piece.replace('Visit ', 'Visita a ');
 
@@ -1538,21 +1687,57 @@
             : 'default',
     );
     // Small interactions need a small dialog; longer service catalogs keep a readable width.
+    const structured = Array.isArray(description?.sections);
     const compact =
+      !structured &&
       actions.length <= 2 &&
       description.length <= 180 &&
       actions.every((a) => a.label.length <= 46 && (a.detail || '').length <= 95);
     const regular =
-      actions.length <= 5 &&
-      description.length <= 340 &&
-      actions.every((a) => a.label.length <= 68 && (a.detail || '').length <= 160);
+      structured ||
+      (actions.length <= 5 &&
+        description.length <= 340 &&
+        actions.every((a) => a.label.length <= 68 && (a.detail || '').length <= 160));
     $('modal').setAttribute('data-dialog-size', compact ? 'compact' : regular ? 'regular' : 'wide');
     audio.interfaceSound('open');
     menuIndex = 0;
     document.body.classList.add('menu-open');
     $('modal').hidden = false;
     $('modal-title').textContent = tr(title);
-    $('modal-description').textContent = tr(description);
+    const descriptionHost = $('modal-description');
+    descriptionHost.classList.toggle('skill-reference', structured);
+    descriptionHost.textContent = tr(structured ? description.summary || '' : description);
+    if (structured) {
+      for (const block of description.sections) {
+        const section = document.createElement('section'),
+          heading = document.createElement('h3');
+        heading.textContent = tr(block.title);
+        section.append(heading);
+        if (block.text) {
+          const text = document.createElement('p');
+          text.textContent = tr(block.text);
+          section.append(text);
+        }
+        if (block.rows?.length) {
+          const list = document.createElement('dl');
+          for (const row of block.rows) {
+            const term = document.createElement('dt'),
+              value = document.createElement('dd');
+            term.textContent = tr(row.label);
+            value.textContent = tr(row.value);
+            list.append(term, value);
+          }
+          section.append(list);
+        }
+        descriptionHost.append(section);
+      }
+      if (description.note) {
+        const note = document.createElement('p');
+        note.className = 'skill-note';
+        note.textContent = tr(description.note);
+        descriptionHost.append(note);
+      }
+    }
     $('modal-content').scrollTop = 0;
     renderActions();
     // Give keyboard and assistive-technology users a reliable dialog focus entry.

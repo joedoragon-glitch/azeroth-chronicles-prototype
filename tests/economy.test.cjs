@@ -87,11 +87,15 @@ try {
   assert(a.label.includes('47 crowns'));
   let gold = c.hero.gold;
   a.action();
+  assert.equal(c.hero.gold, gold, 'preview cannot charge');
+  opened.actions[0].action();
   assert.equal(c.hero.gold, gold - 47);
   a = opened.actions.find((a) => a.detail?.startsWith('Skill 2 ·'));
   assert(a.label.includes('39 crowns'));
   gold = c.hero.gold;
   a.action();
+  assert.equal(c.hero.gold, gold, 'upgrade preview cannot charge');
+  opened.actions[0].action();
   assert.equal(c.hero.gold, gold - 39);
   menus.smith({ family: 'crypt', name: 'Smith' });
   a = opened.actions.find((a) => a.label.startsWith('Weapon tier 1'));

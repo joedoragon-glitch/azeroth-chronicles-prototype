@@ -233,7 +233,7 @@
           ? nextSkillInstructor(n.family)
             ? 'Training finished here. Back → Higher ranks for the next instructor.'
             : 'All available skills are at maximum rank.'
-          : 'Choose a skill to learn or improve.\nCrowns ' + Math.floor(g.hero.gold),
+          : 'Choose a skill to preview its training.\nCrowns ' + Math.floor(g.hero.gold),
         skills.map((s) => {
           const rank = g.hero.skills[s[0] - 1],
             cost = g.skillTrainingCost(s[0], rank),
@@ -243,20 +243,17 @@
             capped
               ? card.name + ' · Rank ' + rank + ' · Finished here'
               : (rank ? 'Train ' : 'Learn ') + card.name + ' · ' + cost + ' crowns',
-            () => {
-              getGame().hero.skills[s[0] - 1]
-                ? getGame().upgrade(s[0], n.family)
-                : getGame().learn(s[0], n.family);
-              teacherSkills(n, back);
-            },
+            () => skillUpgrade(s[0], () => teacherSkills(n, back), n),
             'Skill ' +
               s[0] +
               ' · ' +
               card.role +
               ' · ' +
-              (capped ? 'Instructor limit: Rank ' + cap : 'Rank ' + rank + '/' + cap) +
+              (capped
+                ? 'Instructor limit: Rank ' + cap
+                : 'Rank ' + rank + ' → ' + (rank + 1) + ' · Preview') +
               (!capped && g.hero.gold < cost ? '\nNeed more crowns.' : ''),
-            capped || g.hero.gold < cost,
+            capped,
           );
         }),
         back,
@@ -325,220 +322,143 @@
     // One short, class-specific reference shared by the skill list and trainers.
     // Rules/Campaign remain authoritative for ranks, cooldowns and availability.
     // The Keeper's Archive is optional deeper reading, not required for basics.
-    const skillCards = {
-      paladin: [
-        [
-          'Sword Combo',
-          'Basic attack / holy burst',
-          'Sword combo; third hit cleaves',
-          'Holy projectile: 3× basic damage',
-        ],
-        [
-          'Sundering Strike',
-          'Weaken / frontal cleave',
-          'Hit one foe; weaken its damage',
-          'Holy Cleave: weaken a frontal group',
-        ],
-        [
-          'Shield Stance',
-          'Defense / shield knockback',
-          'Raise shield: 65–73% protection for 8s',
-          'Shield Bash: strike and push a cone',
-          'No Skill 1 while raised; other damage ×0.6. Tap to lower; cooldown starts on lowering.',
-        ],
-        [
-          'Judgment',
-          'Taunt / group taunt',
-          'Dodgeable holy shot: hit + draw attention',
-          'Grand Judgment: splash + group taunt',
-          'Boss taunt affects basic attacks briefly; scripted specials remain.',
-        ],
-        [
-          'Holy Area',
-          'Area hit / weakening wave',
-          'Holy damage to up to 6 foes',
-          'Consecrated Wave: up to 8 + weaken',
-        ],
-        [
-          'Vanguard Rush',
-          'Approach / impact push',
-          'Rush to a foe and strike',
-          'Vanguard Impact: rush + short push wave',
-        ],
-        [
-          'Holy Assault',
-          'Area hit / stronger weaken',
-          'Holy damage to up to 6 foes',
-          'Oath Strike: up to 8 + weaken',
-        ],
-        [
-          'Sanctuary Oath',
-          'Party ward / Last Bastion',
-          'Holy area + 15% heal + 20% party ward',
-          'Last Bastion: bigger area + 20% heal + 30% ward + weaken',
-          'No immunity. Ward and Shield Stance use only the stronger reduction.',
-        ],
-      ],
-      mage: [
-        [
-          'Arcane Combo',
-          'Magic combo / beam',
-          'Magic combo; third hit splashes',
-          'Arcane Beam: 3× basic damage',
-        ],
-        [
-          'Frost Bolt',
-          'Single slow / frost burst',
-          'Frost hit; slow one foe for 2–2.2s',
-          'Frost Burst: area slow for 3.2–4.2s',
-        ],
-        [
-          'Spell Interrupt',
-          'Interrupt / bilateral silence',
-          'Dodgeable bolt: stop one warned/aimed attack on hit',
-          'Silence Field: block nearby special skills',
-          'Silence affects you and companions too; basic attacks still work.',
-        ],
-        [
-          'Arcane Fracture',
-          'Vulnerability / group rupture',
-          'Dodgeable bolt: hit + 15–19% incoming damage',
-          'Arcane Rupture: area hit + 20–24% vulnerability',
-          'Fracture never stacks; the stronger effect applies.',
-        ],
-        [
-          'Force Pulse',
-          'Push / wider force wave',
-          'Force area damage + knockback, up to 6',
-          'Force Wave: wider push, up to 8',
-        ],
-        [
-          'Magic Shot',
-          'Slowing shot / focused beam',
-          'Magic projectile + brief slow',
-          'Focused Beam: stronger shot + slow',
-        ],
-        [
-          'Arcane Chain',
-          'Chain / wider chainstorm',
-          'Chain damage across up to 3 foes',
-          'Chainstorm: stronger chain, up to 5',
-        ],
-        [
-          'Astral Detonation',
-          'Area burst / brief fracture',
-          'Blast up to 5 foes; primary hit strongest',
-          'Arcane Cataclysm: up to 7 + 25–29% vulnerability for 2.5s',
-          'No healing or immunity. Fracture is nonstacking.',
-        ],
-      ],
-      ranger: [
-        [
-          'Bow Combo',
-          'Arrow combo / rapid triple',
-          'Arrow combo; third hit fans out',
-          'Rapid Triple Shot: 3× basic total',
-        ],
-        [
-          'Pinning Shot',
-          'Two slowing arrows / line',
-          'Two arrows slow one foe',
-          'Pinning Volley: line hit + slow',
-        ],
-        [
-          'Self-Heal',
-          'Personal / party healing',
-          'Heal yourself',
-          'Party Heal: you + wounded living allies',
-          'Cannot revive fallen companions.',
-        ],
-        [
-          'Movement Haste',
-          'Personal speed / companion rally',
-          'Move 25% faster for 4–5.75s',
-          'Companion Rally: +15–19% move, +8–12% basic attack speed',
-          'Nearby living allies only; no dash and no faster special skills.',
-        ],
-        [
-          'Arrow Volley',
-          'Area arrows / slowing rain',
-          'Hit up to 6 nearby foes',
-          'Arrow Rain: arrows at up to 8 + slow',
-        ],
-        [
-          'Repelling Shot',
-          'Single push / repelling volley',
-          'Shoot one foe and push it back',
-          'Repelling Volley: 3 arrows + stronger push',
-        ],
-        [
-          'Piercing Arrow',
-          'Pierce / slowing piercing burst',
-          '10× Power piercing hit on one foe',
-          '12× Power piercing hit + slow',
-        ],
-        [
-          'Hunter’s Salvo',
-          'Multi-target / grand hunt',
-          '5× Power arrow to up to 3 foes',
-          'Grand Hunt: two 4× Power arrows to up to 5',
-          'When isolated, fire 2 normal or 3 charged arrows at one foe. No piercing.',
-        ],
-      ],
-    };
+    const SkillReference =
+      typeof PrototypeSkillReference !== 'undefined'
+        ? PrototypeSkillReference
+        : require('./skill-reference.js');
     function professionSkillCard(slot) {
-      const card = skillCards[getGame().hero.class]?.[slot - 1];
-      if (!card) return { name: 'Skill ' + slot, role: '', tap: '', charge: '', note: '' };
-      return {
-        name: card[0],
-        role: card[1],
-        tap: card[2],
-        charge: card[3],
-        note: card[4] || '',
-      };
+      return SkillReference.card(getGame(), slot);
+    }
+    function skillSections(info) {
+      return [info.tap, info.charge].map((form) => ({
+        title: form.title,
+        text: form.effect,
+        rows: form.metrics.map((m) => ({ label: m.label, value: SkillReference.value(m) })),
+      }));
     }
     function skillDetail(slot, back) {
       const g = getGame(),
-        def = D.skills.find((entry) => entry[0] === slot);
-      if (!def || !(g.hero.skills[slot - 1] > 0)) return;
-      const card = professionSkillCard(slot),
-        rank = g.hero.skills[slot - 1] || 0,
-        formatCd = (value) => (Math.round(value * 10) / 10).toFixed(1),
-        teacher = slot === 1 ? '' : g.boss(def[4]).captive,
-        nextTrainer =
-          rank > 0 && rank < 8
-            ? Object.keys(Campaign.rules.teachers).find(
-                (id) =>
-                  Campaign.rules.teachers[id].train.includes(slot) &&
-                  Campaign.rules.teachers[id].maxRank >= rank + 1,
-              )
-            : null,
-        learn =
-          rank === 8
-            ? '\nMaximum rank'
-            : rank
-              ? '\nNext rank: ' +
-                (nextTrainer ? g.boss(nextTrainer).captive : 'rescued teacher') +
-                ' · ' +
-                g.skillTrainingCost(slot, rank) +
-                ' crowns'
-              : '\nLearn from ' + teacher + ' · ' + g.skillTrainingCost(slot, 0) + ' crowns';
+        info = SkillReference.describe(g, slot);
+      if (!info) return;
       openMenu(
-        'Skill ' + slot + ' · ' + card.name,
-        'Rank ' +
-          rank +
-          (rank ? ' · same rank for tap and charge' : ' · not learned') +
-          '\nTap · ' +
-          formatCd(g.skillCooldown(slot)) +
-          's: ' +
-          card.tap +
-          '\nCharge · ' +
-          formatCd(g.skillCooldown(slot, true)) +
-          's: ' +
-          card.charge +
-          (card.note ? '\n' + card.note : '') +
-          learn,
+        'Skill ' + slot + ' · ' + info.name,
+        {
+          summary:
+            'Rank ' +
+            info.rank +
+            (info.rank === 8 ? ' · Maximum rank' : ' · Tap and Charged share this rank.'),
+          sections: skillSections(info),
+          note: info.note,
+        },
+        [
+          ...(info.rank < 8
+            ? [
+                action(
+                  'Next rank · Preview',
+                  () => skillUpgrade(slot, () => skillDetail(slot, back)),
+                  'Compare changes and find an instructor.',
+                ),
+              ]
+            : []),
+          action(
+            'Using skills',
+            () => skillControls(() => skillDetail(slot, back)),
+            'Tap, charge, cooldowns and damage figures.',
+          ),
+        ],
+        back,
+      );
+    }
+    function skillControls(back) {
+      openMenu(
+        'Using skills',
+        {
+          summary: 'Tap for the normal form. Hold to prepare the charged form.',
+          sections: [
+            {
+              title: 'Controls',
+              text: 'Both forms share a cooldown. On cooldown, tap to queue normal; briefly hold to queue charged. A strong hit can interrupt charging.',
+            },
+            {
+              title: 'Reading effects',
+              text: 'Damage figures use your current Power, before enemy defenses and situational bonuses. Healing cannot exceed maximum health. Distances use map units.',
+            },
+          ],
+          note: 'Skill ranks do not shorten cooldowns. Discipline training can.',
+        },
         [],
+        back,
+      );
+    }
+    function skillUpgrade(slot, back, instructor = null) {
+      const g = getGame(),
+        rank = g.hero.skills[slot - 1],
+        next = rank + 1,
+        info = SkillReference.describe(g, slot, next);
+      if (!info) return back();
+      const trainer =
+          instructor?.family ||
+          Object.keys(Campaign.rules.teachers).find(
+            (id) =>
+              Campaign.rules.teachers[id].train.includes(slot) &&
+              Campaign.rules.teachers[id].maxRank >= next,
+          ),
+        cost = g.skillTrainingCost(slot, rank),
+        previewOnly = !instructor,
+        ready =
+          instructor &&
+          g.s.rescued[instructor.family] &&
+          next <= g.teacherCatalog(instructor.family).maxRank;
+      openMenu(
+        info.name + ' · ' + (rank ? 'Rank ' + rank + ' → ' + next : 'Learn Rank 1'),
+        {
+          summary: previewOnly
+            ? trainer
+              ? 'Next instructor: ' + g.boss(trainer).captive + ' · ' + cost + ' crowns'
+              : 'No further instructor available.'
+            : rank
+              ? 'Compare your upgrade before training.'
+              : 'Learn both forms at Rank 1.',
+          sections: rank
+            ? SkillReference.changes(g, slot).map((block) => ({
+                ...block,
+                text: block.rows.length ? '' : 'No change at this rank.',
+              }))
+            : skillSections(info),
+          note: rank
+            ? 'Only changed effects are shown. Cooldowns stay the same.'
+            : slot === 2 && !g.companionSecondSkillUnlocked()
+              ? 'Also unlocks advanced Soldier and Ranger skills, plus charged pet skills.'
+              : info.note,
+        },
+        previewOnly
+          ? []
+          : [
+              action(
+                (rank ? 'Train ' : 'Learn ') + info.name + ' · ' + cost + ' crowns',
+                () => {
+                  const current = getGame();
+                  // An old quote must never spend money on a different rank or class.
+                  if (
+                    current !== g ||
+                    current.hero.skills[slot - 1] !== rank ||
+                    current.skillTrainingCost(slot, rank) !== cost
+                  )
+                    return skillUpgrade(slot, back, instructor);
+                  const learned = rank
+                    ? current.upgrade(slot, instructor.family)
+                    : current.learn(slot, instructor.family);
+                  if (learned) back();
+                  else skillUpgrade(slot, back, instructor);
+                },
+                !ready
+                  ? 'Training unavailable here.'
+                  : g.hero.gold < cost
+                    ? 'Need more crowns.'
+                    : 'Applies to Tap and Charged.',
+                !ready || g.hero.gold < cost,
+              ),
+            ],
         back,
       );
     }
@@ -570,7 +490,7 @@
           });
       openMenu(
         'Skill journal',
-        'Choose a skill for its effects and controls. Instructors teach new ranks.',
+        'Choose a skill. View your current Tap and Charged effects.',
         [
           ...choices,
           action(
@@ -643,7 +563,7 @@
         );
       openMenu(
         'Training and companions',
-        'Rescued specialists teach skills and higher ranks. Skills use crowns; Expedition training is free.\nDamaging skills gain +15% base damage per rank.',
+        'Skills use crowns; Expedition training is free. Preview each skill to see what its next rank changes.',
         [
           action('Expedition Skill · Rank ' + rank, () => {}, expDetail, true),
           ...support,
