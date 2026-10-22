@@ -76,6 +76,8 @@ if (site) {
     'tools/webgl-pilot/pilot.js',
     'tools/webgl-pilot/full-world.html',
     'tools/webgl-pilot/full-world.js',
+    'tools/webgl-pilot/hybrid.html',
+    'tools/webgl-pilot/hybrid.js',
     ...spriteResources.map((e) => e.src?.replace(/^\.\//, '')).filter(Boolean),
   ])) {
     const dest = path.join(target, file);
