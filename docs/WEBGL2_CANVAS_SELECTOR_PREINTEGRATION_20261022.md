@@ -24,6 +24,21 @@ The backend receives the same read-only `getGame`, platform/camera/projection an
 
 **Atomic switch:** stop presentation briefly but never stop or recreate simulation; load/prepare resources; validate context and render output; switch visible surface; resume presentation; rollback to working Canvas automatically if resource load, draw or context fails. Keep selection stable through resize, visibility changes, resolution and camera zoom, while preserving all input mapping. On `webglcontextlost` suppress default destruction, disable WebGL display and immediately return to Canvas; on restore only offer opt-in retry after rebuilding textures/shaders. Do not copy a broken GPU image into Canvas as fallback.
 
+## First GPU-native foundation — staged, not integrated
+
+The isolated branch now also contains `tools/webgl-pilot/native-webgl2-core.js` and `native-webgl2-core.test.cjs`. This is **new WebGL2-only drawing code**, not the previous "Canvas screenshot moved by GPU" workaround:
+
+- Its renderer takes ordered draw commands, uses WebGL2 shaders and triangles, and never paints frames through a Canvas 2D context.
+- It uploads approved original image/atlas pixels **once when a texture is registered**, tracks a fixed 64 MiB default GPU residency budget and can reject over-budget resources; frame commands reuse already resident textures. Its sprite layout follows the actual original display dimensions, clipped animation-frame pivots, nearest sampling and horizontal facing.
+- It implements GPU-generated radial **lamp glow** primitives, including the real game's lamp/source positions and warmth palette, plus a GPU night-grade shader. These primitives run in WebGL2; lamps are **not required to stay Canvas-based**. Their *appearance and behavior* are the protected reference. Shader/blend parity and all fixture art still require validation.
+- It accepts commands in exact caller-provided order, so future stage integration can preserve depth and compositing. Unsupported command kinds are errors, never silently omitted artwork.
+- It detects WebGL context loss, calls the recovery hook and refuses further drawing until resources/programs have been recreated in a new renderer instance; the playable Canvas fallback is **not yet wired**.
+- `native-webgl2-core.test.cjs` verifies source projections, animation image clipping, facing, lamp radii/colors, GPU-only draw dispatch, GPU memory limits, context-loss behavior and unsupported-art errors using a fake GL interface. Seven tiny checks passed in the isolated development evaluation. **No real WebGL hardware, visual parity or FPS validation of this module has been run.**
+
+The GPU core **does not yet** cover dynamic command extraction from all production entities, procedural high-fidelity bodies, terrain painting, road/material shading, original fixture shapes, full lighting compositing, outlined occlusion, transient combat VFX, labels, UI or every dungeon. It is intentionally **not imported into the game's app**, not published by GitHub Pages and not marked ready in `renderer-readiness.json`. The next preparatory work is to feed the GPU-only command list from the original campaign state with proper frame/sprite selection and all source assets, then add full-scene rendering features and real-device pixel tests, one domain at a time, without swapping the default.
+
+For this foundation's focused checks only: `node --test tools/webgl-pilot/native-webgl2-core.test.cjs`. The old readiness gate remains mandatory and **NOT_READY**.
+
 ## Required genuine WebGL implementation work
 
 1. Native GPU batching for sprites and procedural bodies with original per-actor frame selection, artwork pivots, zoom, facing and depth order. Do not replace quality artwork with generic polygons.
