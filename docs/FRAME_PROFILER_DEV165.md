@@ -1,3 +1,5 @@
+> **22 October 2026 audit annotation:** The timers below are genuine wall-clock measurements for broad code scopes, but the measurement tools are **not yet a precision comparison dashboard**. `companionAIMs` includes full party movement/combat, `enemyAIMs` includes broad enemy updates, and the 180-active-callback profiler window is not synchronized with the renderer's 64 phase samples or legacy drawn-callback FPS. Menu/paused renderer redraws can affect renderer counters. See [the maintained performance measurement audit](PERFORMANCE_MEASUREMENT_AUDIT_20261022.md) before interpreting reports. The owner has paused further performance tuning; this historical implementation note is not a new optimization task.
+
 # Dev.165 · Chromebook frame-stage diagnostics
 
 This is an observational performance-only addition. No AI, combat, movement,

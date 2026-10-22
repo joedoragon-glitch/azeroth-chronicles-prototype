@@ -1,3 +1,5 @@
+> **22 October 2026 audit annotation:** The one-frame skip is **opt-in and defaults Off**; no two-frame/aggressive option has been authorized. The frame-skip controller passes focused tests and suppresses real Canvas calls, but no controlled hardware FPS/input-latency gain or complete long-lived boss-telegraph visual coverage has been proven. Cumulative `frameSkip.skippedDraws` differs from rolling-window `frameProfile.adaptiveSkippedDraws`; opening the menu resets `drawnSamples` while retaining the skip count. `displayedFps` counts issued draw calls, not verified physical display frames. See [the maintained performance measurement audit](PERFORMANCE_MEASUREMENT_AUDIT_20261022.md); keep this optional feature Off for baseline samples while performance tuning is paused.
+
 # dev.166 · Optional adaptive frame skip
 
 Owner-approved device-local, opt-in performance experiment. Defaults **Off**.
