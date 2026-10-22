@@ -10,14 +10,14 @@ button{cursor:pointer}p{line-height:1.5}canvas{max-width:100%;height:auto;border
 pre{white-space:pre-wrap;word-break:break-word;background:#1c2929;padding:14px}
 small{color:#b7c9bd}@media(max-width:700px){.viewport{grid-template-columns:1fr}}
 </style></head><body><main>
-<h1>Azeroth Chronicles: GPU experiment · refined comparison</h1>
-<p>This diagnostic is separate from the game. It compares the <strong>same approved sprite images</strong> from a real campaign scene using Canvas 2D versus WebGL2. It does not test lighting, gameplay, procedural scenery, or full-game FPS.</p>
+<h1>Azeroth Chronicles: GPU experiment · procedural scenery</h1>
+<p>This diagnostic is separate from the game. It now compares <strong>real procedurally painted scenery and characters plus original sprite images</strong> in three ways: direct Canvas drawing, cached Canvas artwork and WebGL2 textures. Lights and game mechanics remain unchanged. This is not full-game FPS.</p>
 <label>Scene <select id="scene"><option value="vale">Greenwood Vale</option><option value="frontier">Ashen Frontier</option><option value="crown">Dark Crown</option></select></label>
-<button id="run">Run isolated comparison</button>
+<button id="run">Run procedural graphics comparison</button>
 <p id="status">Waiting to start. No campaign is saved or modified.</p>
 <div class="viewport"><div><h3>Canvas 2D</h3><canvas id="canvas2d" width="900" height="540"></canvas></div><div><h3>WebGL2</h3><canvas id="canvasgl" width="900" height="540"></canvas></div></div>
 <h3>Results</h3><pre id="results">No measurements yet.</pre>
-<small>Only sprite-capable visible entities are included, with original source images, scale, depth order and camera projection. The rest of the world is deliberately excluded from both paths; this must not be reported as a whole-game FPS gain. Read docs/WEBGL_RENDERER_PILOT_PREPARATION_20261022.md.</small>
+<small>A bounded set of nearby procedural props and actors is included and counted, together with visible registered sprites. Static artwork is baked once for both cached methods; preparation time is reported. Floor/roads, lighting, moving animation and overlays are not part of this trial. Do not infer complete-game FPS or safe production integration.</small>
 </main>
 <script src="./src/prototype/highlands.js"></script>
 <script src="./src/prototype/data.js"></script>
@@ -47,5 +47,5 @@ small{color:#b7c9bd}@media(max-width:700px){.viewport{grid-template-columns:1fr}
 <script src="./src/prototype/visuals.js"></script>
 <script src="./src/prototype/sprite-format.js"></script>
 <script src="./src/prototype/sprites.js"></script>
-<script src="./tools/webgl-pilot/pilot.js?visual-fix=3"></script>
+<script src="./tools/webgl-pilot/pilot.js?procedural-test=1"></script>
 </body></html>
