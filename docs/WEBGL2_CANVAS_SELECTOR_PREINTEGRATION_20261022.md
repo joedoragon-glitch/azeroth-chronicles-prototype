@@ -59,6 +59,22 @@ The immediate implementation path is now the standalone `tools/webgl-pilot/pixi-
 
 **Still a development pilot**: procedural body animations, all fixture details, occlusion outlines, complex effects, and exact source-over/screen blending are not finished. Neither a passed hardware visual comparison nor game-selector readiness is claimed. The PixiJS dependency must be bundled/self-hosted for the final offline PWA; the branch diagnostic currently loads a version-pinned CDN script and is not published.
 
+## Safe renderer selector: 15-second Keep / Revert contract (staged only)
+
+**Owner-approved behavior:** the future game setting has exactly two choices: **Canvas 2D (default)** and **WebGL2 (optional)**. Selecting WebGL2 is a **temporary 15-second trial**. The player must explicitly press **Keep WebGL2** before time expires. Inaction automatically restores Canvas. A **Revert to Canvas** action works immediately. The countdown and both actions must be DOM/HTML controls above BOTH independent canvas surfaces, keyboard/touch accessible even if GPU visuals fail. No selector has been installed in the playable game.
+
+The staging-only module `tools/webgl-pilot/renderer-switch-guard.js` implements this behavior. Its accompanying focused test file verifies **17 cases** with fake clocks and GPU callbacks. These are controller tests, not hardware-level renderer validation.
+
+**Future integration protocol, after genuine PixiJS scene certification:**
+
+1. Read `startupChoice(storage)` before initializing either renderer. Missing/invalid preference => Canvas. An interrupted WebGL trial/crash marker forcibly resets preference to Canvas.
+2. Always create/retain the original Canvas 2D surface first. Build and validate a COMPLETE WebGL frame on a separate, still-hidden canvas. Call `showWebGL` to reveal it only after successful preparation; display a DOM countdown dialog over all graphics.
+3. Start the 15-second countdown after the GPU surface is ready and visible. Only an explicit **Keep WebGL2** action persists that preference. Otherwise restore Canvas at timeout; also restore immediately on user choice, hidden-tab interruption, GPU draw failure, or WebGL context loss.
+4. For subsequent launches with a previously confirmed WebGL setting, call `armConfirmedBoot(storage)` before touching GPU resources. If the marker cannot be written, boot Canvas. Call `finishConfirmedBoot(storage)` only after the first complete WebGL frame and accessible Settings UI have actually rendered. If startup crashes first, the marker forces Canvas next time.
+5. Wire `visibilityChanged(true)` to tab hiding during trials and `webglFailed()` to context-loss or render exceptions. Dispose the controller on teardown. The game simulation, saved campaign and input mapping stay untouched throughout renderer switching.
+6. Before release, test the complete DOM dialog and fallback in real browsers: 15-second expiration, no clicks, forced shader failure, GPU context loss, slow texture preparation, resize/zoom, reload during a trial, and Chromebook/mobile navigation. Do not relax graphical parity to approve incomplete rendering.
+
+The module intentionally does NOT draw art, alter production code, enable the selectable WebGL option or assert that the PixiJS renderer is ready. Focused standalone checks: `node --test tools/webgl-pilot/renderer-switch-guard.test.cjs`.
 ## Required genuine WebGL implementation work
 
 1. Native GPU batching for sprites and procedural bodies with original per-actor frame selection, artwork pivots, zoom, facing and depth order. Do not replace quality artwork with generic polygons.
