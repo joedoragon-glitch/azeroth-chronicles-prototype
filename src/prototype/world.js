@@ -1852,6 +1852,55 @@
           this.s.zone = oldZone;
         }
       }
+      millhavenOnboardingLayout(z) {
+        const cfg = R.millhavenOnboarding;
+        if (z.id !== 'vale' || z.millhavenOnboardingVersion === cfg.version) return;
+        const by = (id) => z.npcs.find((n) => n.id === id),
+          captain = by('recruiter'),
+          supplier = by('supplier'),
+          refuge = by('rest'),
+          orchard = by('minor'),
+          house = z.props.find((p) => p.id === cfg.refugeHouse),
+          workshop = z.props.find((p) => p.id === cfg.orchardHouse);
+        if (![captain, supplier, refuge, orchard, house, workshop].every(Boolean)) return;
+        const point = (p) => ({ x: p.x, y: p.y }),
+          swap = (a, b) => {
+            const old = point(a);
+            Object.assign(a, point(b));
+            Object.assign(b, old);
+          };
+        swap(captain, supplier);
+        swap(refuge, house);
+        // Reuse an existing western orchard home plot rather than placing a
+        // recovery house among the eastern Goblins or across a hostile fort.
+        swap(orchard, workshop);
+        refuge.servicePoint = {
+          x: refuge.x + cfg.refugeDoorOffset.x,
+          y: refuge.y + cfg.refugeDoorOffset.y,
+        };
+        orchard.servicePoint = { ...cfg.orchardDoor };
+        z.millhavenOnboardingVersion = cfg.version;
+        if (this.s.refugeSite?.zone === z.id) {
+          const site = by(this.s.refugeSite.id);
+          if (site?.kind === 'rest')
+            Object.assign(this.s.refugeSite, site.servicePoint || point(site));
+        }
+        // Replace only paths to moved homes. Keep IDs, towns, roads, enemies,
+        // all other scenery and player-built camps intact on old and new runs.
+        const moved = [house, workshop, refuge, orchard];
+        z.footpaths = (z.footpaths || []).filter(
+          (path) => !path.some((p) => moved.some((home) => dist(p, home) < 160)),
+        );
+        for (const site of [refuge, house, workshop]) {
+          const near = this.nearestRoadPoint(z, site),
+            door = site.servicePoint || point(site);
+          if (near) z.footpaths.push([near, ...this.route(near, door)]);
+        }
+        const trail = [...cfg.orchardTrail, orchard.servicePoint];
+        const footpath = [trail[0]];
+        for (let i = 1; i < trail.length; i++) footpath.push(...this.route(trail[i - 1], trail[i]));
+        z.footpaths.push(footpath);
+      }
       reedportRefugeSpacing(z) {
         if (z.id !== 'march' || z.reedportRefugeSpacingVersion === 1) return;
         // Keep the refuge frontage open. These are decorative town services,
@@ -1891,6 +1940,7 @@
           // Space the lived-in courtyard after those final scenic relocations.
           this.strongholdCourtyardClearance(z);
           this.reedportRefugeSpacing(z);
+          this.millhavenOnboardingLayout(z);
           this.interiorCoherence(z);
           this.defenderEncounterLayout(z);
           this.frontierEdgeRedistribution(z);
@@ -2309,6 +2359,7 @@
         this.townVisualClearance(z);
         this.strongholdCourtyardClearance(z);
         this.reedportRefugeSpacing(z);
+        this.millhavenOnboardingLayout(z);
         this.interiorCoherence(z);
         this.defenderEncounterLayout(z);
         this.refreshNPCs();

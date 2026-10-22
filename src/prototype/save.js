@@ -372,6 +372,11 @@
         if (s.hero.skills[1] > 0) s.companionCombatTraining = 2;
         finite(s.mercyTime, 0, 10);
         if (s.restCooldown !== undefined) finite(s.restCooldown, 0, 90);
+        for (const id of ['rest', 'minor']) {
+          const value = s.discovered?.['vale:refuge-help:' + id];
+          if (value !== undefined && typeof value !== 'boolean')
+            throw Error('Invalid refuge guidance');
+        }
         if (s.manaBalanceVersion !== undefined && s.manaBalanceVersion !== 1)
           throw Error('Invalid mana balance version');
         if (s.squadDoctrine !== undefined && !['focus', 'guard'].includes(s.squadDoctrine))

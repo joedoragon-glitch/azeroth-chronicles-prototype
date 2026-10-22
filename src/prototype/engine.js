@@ -571,6 +571,29 @@
         this.s.refugeSite = { zone, id, x: point.x, y: point.y };
       }
     }
+    minorRefugePoint() {
+      const minor = this.s.zones[this.s.zone]?.npcs.find(
+        (n) => n.id === 'minor' && n.kind === 'rest',
+      );
+      return (
+        minor?.servicePoint ||
+        (minor
+          ? { x: minor.x, y: minor.y }
+          : { x: D.minors[this.regionIndex()][0], y: D.minors[this.regionIndex()][1] })
+      );
+    }
+    acknowledgeRefuge(site) {
+      const current = this.zone().npcs.find((n) => n.id === site?.id && n.kind === 'rest');
+      if (
+        this.s.zone !== 'vale' ||
+        !current ||
+        !['rest', 'minor'].includes(current.id) ||
+        this.interactionDistance(current) > 115
+      )
+        return false;
+      this.s.discovered['vale:refuge-help:' + current.id] = true;
+      return true;
+    }
     arriveRefuge(site) {
       const n = this.zone().npcs.find((n) => n.id === site.id && n.kind === 'rest');
       if (!n) return;
@@ -2147,11 +2170,12 @@
       this.event('finalRest', { source });
       return true;
     }
-    rest() {
+    rest(siteId = null) {
       const site = this.zone()
         .npcs.filter(
           (n) =>
             n.kind === 'rest' &&
+            (!siteId || n.id === siteId) &&
             (dist(n, this.hero) <= 115 || dist(n.servicePoint || n, this.hero) <= 115),
         )
         .sort(
@@ -2932,7 +2956,11 @@
       this.checkQuests();
     }
     interact(npc) {
-      if (!npc || dist(npc, this.hero) > 115) return false;
+      if (
+        !npc ||
+        (npc.kind === 'rest' ? this.interactionDistance(npc) : dist(npc, this.hero)) > 115
+      )
+        return false;
       if (npc.thornReport || npc.thornTrail !== undefined || npc.thornFootprint) {
         const report = this.thornReport(!!npc.thornReport);
         this.say(report);
@@ -2962,7 +2990,7 @@
         case 'supplier':
           return this.unloadCompanyTribute(npc) !== null;
         case 'rest':
-          return this.rest();
+          return this.rest(npc.id);
         case 'appointment':
           this.say('Choose the dungeon master through the appointment menu.');
           return false;
@@ -3986,8 +4014,8 @@
           }
         const [px, py] = D.ports[this.regionIndex()];
         if (dist(h, { x: px, y: py }) < 140) this.discover('port');
-        const minor = D.minors[this.regionIndex()];
-        if (dist(h, { x: minor[0], y: minor[1] }) < 180) {
+        const minor = this.minorRefugePoint();
+        if (dist(h, minor) < 180) {
           this.discover('minor');
           this.setRefuge(this.s.zone, 'minor');
         }
@@ -6498,7 +6526,7 @@
       const size = this.definition().size,
         i = this.regionIndex(),
         town = { x: D.towns[i][0], y: D.towns[i][1] },
-        minor = { x: D.minors[i][0], y: D.minors[i][1] },
+        minor = this.minorRefugePoint(),
         home = base.home || base,
         hero = this.hero,
         z = this.zone(),
@@ -6585,9 +6613,10 @@
                 !this.blocked(x, y) &&
                 dist({ x, y }, this.hero) > 200 &&
                 (this.isDungeon() ||
-                  [D.towns[this.regionIndex()], D.minors[this.regionIndex()]].every(
-                    ([tx, ty]) => dist({ x, y }, { x: tx, y: ty }) > 220,
-                  )) &&
+                  [
+                    { x: D.towns[this.regionIndex()][0], y: D.towns[this.regionIndex()][1] },
+                    this.minorRefugePoint(),
+                  ].every((point) => dist({ x, y }, point) > 220)) &&
                 !points.some((q) => dist(q, { x, y }) < 100)
               ) {
                 point = { x, y };
