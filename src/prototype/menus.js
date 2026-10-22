@@ -949,6 +949,10 @@
     }
     function regionalSpecialistObjective() {
       const tutorial = getGame().s.quests['quest-barracks'];
+      if (tutorial && !tutorial.paid && !tutorial.captainBriefed)
+        return 'COMPANIONS · Meet the town Captain to learn about your Soldier and Ranger. Your first Barracks is FREE: Open Menu/Esc in the field → Establish Basic Barracks.';
+      if (tutorial && !tutorial.paid && !tutorial.recallPracticed)
+        return 'COMPANIONS · Try Recall squad to bring your companions back, then build your first Barracks — FREE. Open Menu/Esc in the field → Establish Basic Barracks.';
       if (tutorial && !tutorial.paid)
         return 'FIELD BASE · Build your first Barracks — FREE · Open Menu/Esc while in the field → Establish Basic Barracks. It gives companions a nearby recovery base.';
       const p = regionalSpecialistProgress();
@@ -1165,34 +1169,79 @@
         back,
       );
     }
+    function recruitmentQueueSummary() {
+      const g = getGame(),
+        request = g.s.recruitmentRequest;
+      if (!request) return '';
+      return (
+        'Queued recruitment: ' +
+        unitLabel(request.type) +
+        ' · ' +
+        Math.floor(g.hero.gold) +
+        '/' +
+        g.recruitmentRequestPrice() +
+        ' crowns' +
+        ' · Joins automatically when affordable; full group means reserve.'
+      );
+    }
+    function recruitmentChoice(type, label, barracksId, reopen) {
+      const g = getGame(),
+        queued = g.recruitmentRequestMatches(type, barracksId),
+        price = barracksId === null ? g.recruitPrice(type) : g.barracksRecruitPrice(type),
+        reason = g.companionRecruitmentReason(type, barracksId, {
+          ignoreFunds: true,
+          replaceRequest: true,
+        });
+      return action(
+        queued
+          ? 'Cancel queued ' + label + ' · ' + price + ' crowns'
+          : 'Recruit ' + label + ' · ' + price + ' crowns',
+        () => {
+          getGame().requestCompanionRecruitment(type, barracksId);
+          reopen();
+        },
+        queued
+          ? 'QUEUED · No crowns spent. Tap again to cancel, or choose another companion.'
+          : reason ||
+              (g.hero.gold < price
+                ? 'Not enough crowns. Tap to queue this recruit; payment and arrival happen automatically when affordable.'
+                : barracksId === null
+                  ? 'Town can employ only the first 3 companions.'
+                  : 'Joins after training; a full active group sends the recruit to reserve.'),
+        !queued && !!reason,
+      );
+    }
+    function otherRecruitmentCancellation(barracksId, reopen) {
+      const request = getGame().s.recruitmentRequest;
+      return request && request.barracksId !== barracksId
+        ? [
+            action(
+              'Cancel queued recruitment',
+              () => {
+                getGame().cancelRecruitmentRequest();
+                reopen();
+              },
+              recruitmentQueueSummary(),
+            ),
+          ]
+        : [];
+    }
     function barracksRecruitmentMenu(b, back) {
       const queueName = b.queue > 0 ? unitLabel(b.queueType || 'soldier') : null;
+      const reopen = () => barracksRecruitmentMenu(b, back);
       openMenu(
         'Recruitment',
         (queueName
           ? 'Training ' + queueName + ' · ' + b.queue.toFixed(1) + 's remaining'
           : 'Recruit as many companions as you want') +
-          '. New recruits join the active group if this barracks can support another slot; otherwise they rest in reserve. TRUE boss pets are in the Company collection.',
+          '. New recruits join the active group if this barracks can support another slot; otherwise they rest in reserve. TRUE boss pets are in the Company collection.' +
+          (recruitmentQueueSummary() ? '\n\n' + recruitmentQueueSummary() : ''),
         [
+          ...otherRecruitmentCancellation(b.id, reopen),
           ...[
             ['soldier', 'Soldier'],
             ['archer', 'Ranger'],
-          ].map(([type, label]) => {
-            const price = getGame().barracksRecruitPrice(type),
-              reason = getGame().companionRecruitmentReason(type, b.id);
-            return action(
-              'Recruit ' + label + ' · ' + price + ' crowns',
-              () => {
-                getGame().train(b.id, type);
-                barracksRecruitmentMenu(b, back);
-              },
-              reason ||
-                (getGame().activeParty().length < getGame().barracksFieldCap(b)
-                  ? 'Joins your active group when training finishes if a slot remains open.'
-                  : 'Active group full. New recruit will wait in reserve unless you free a slot before training finishes.'),
-              !!reason,
-            );
-          }),
+          ].map(([type, label]) => recruitmentChoice(type, label, b.id, reopen)),
         ],
         back,
       );
@@ -1836,63 +1885,83 @@
         back,
       );
     }
-    // prettier-ignore
+    function companionBasics(back = closeMenu) {
+      getGame().briefCompanions();
+      openMenu(
+        'Meet your company',
+        'You begin with a Soldier and a Ranger. The Soldier fights up close; the Ranger shoots from range and provides Heal. They follow you and fight automatically.' +
+          '\n\nUse Recall squad to cancel their orders and bring them back. Try it now, then open Adventure in the field and establish your first Basic Barracks for FREE. One companion builds it; the Barracks lets you recover fallen companions and manage your active group and reserves.' +
+          '\n\nRescue Mira and train Expedition Rank 2 to unlock a third active companion and recruitment. If you cannot afford an eligible recruit, tap Recruit to queue one. Tap the same choice to cancel, or select another type to replace it. It arrives automatically when you have enough crowns; if your group is full, it rests in reserve.',
+        [
+          action('Practice Recall squad', () => {
+            recallSquad();
+            closeMenu();
+          }),
+          action('Open recruitment', () => townRecruitmentMenu(back)),
+        ],
+        back,
+      );
+    }
     function townRecruitmentMenu(back) {
-      const rank = getGame().s.expeditionRank || 1,
-        atLimit = getGame().rosterCount() >= 3,
-        actions = [];
-      if (rank < 2)
-        actions.push(
-          action(
-            'Recruitment — Expedition 2 required',
-            () => {},
-            'Rescue Mira and train Expedition to Rank 2',
-            true,
-          ),
-        );
-      else if (atLimit)
-        actions.push(
-          action(
-            'Town recruitment limit reached',
-            () => {},
-            getGame().companionRecruitmentReason('soldier'),
-            true,
-          ),
-        );
-      else
-        actions.push(
-          ...[
-            ['soldier', 'Soldier', getGame().recruitPrice('soldier')],
-            ['archer', 'Ranger', getGame().recruitPrice('archer')],
-          ].map(([type, label, price]) =>
-            action(
-              'Recruit ' + label + ' · ' + price + ' crowns',
-              () => {
-                getGame().recruit(type);
-                townRecruitmentMenu(back);
-              },
-              getGame().companionRecruitmentReason(type) || 'Town can employ only the first 3 companions',
-              !!getGame().companionRecruitmentReason(type),
-            ),
-          ),
-        );
-      actions.push(
+      const reopen = () => townRecruitmentMenu(back);
+      const actions = [
+        action(
+          'Companion basics',
+          () => companionBasics(reopen),
+          'Learn roles, Recall, recruitment and reserves.',
+        ),
+        ...((getGame().s.expeditionRank || 1) < 2
+          ? [
+              action(
+                'Recruitment — Expedition 2 required',
+                () => {},
+                'Rescue Mira and train Expedition to Rank 2',
+                true,
+              ),
+            ]
+          : getGame().rosterCount() >= 3
+            ? [
+                action(
+                  'Town recruitment limit reached',
+                  () => {},
+                  getGame().companionRecruitmentReason('soldier'),
+                  true,
+                ),
+              ]
+            : []),
+        ...otherRecruitmentCancellation(null, reopen),
+        ...[
+          ['soldier', 'Soldier'],
+          ['archer', 'Ranger'],
+        ].map(([type, label]) => recruitmentChoice(type, label, null, reopen)),
         action(
           'Recover fallen companion · ' + getGame().companionRecoveryCost() + ' crowns',
           () => {
             getGame().recover();
-            townRecruitmentMenu(back);
+            reopen();
           },
           '',
           !getGame().s.party.some((u) => u.hp <= 0) ||
             getGame().hero.gold < getGame().companionRecoveryCost(),
         ),
+      ];
+      openMenu(
+        getGame().definition().town + ' Captain',
+        'Your Soldier and Ranger follow and fight automatically. Use Recall squad to regroup. Town hiring supports the first 3 companions; Expedition Rank 2 unlocks recruitment.' +
+          (recruitmentQueueSummary() ? '\n\n' + recruitmentQueueSummary() : ''),
+        actions,
+        back,
       );
-      openMenu(getGame().definition().town + ' Captain', '', actions, back);
     }
-    // prettier-ignore
     function partyMenu(back = closeMenu) {
-      townRecruitmentMenu(back);
+      const g = getGame(),
+        tutorial = g.s.quests['quest-barracks'];
+      if (tutorial && !tutorial.paid && !tutorial.captainBriefed && (g.s.expeditionRank || 1) === 1)
+        companionBasics(back);
+      else {
+        g.briefCompanions();
+        townRecruitmentMenu(back);
+      }
     }
     function formatTrainingNumber(n) {
       return Number(n.toFixed(2)).toString();
@@ -1971,9 +2040,11 @@
       );
     }
 
-    // The global journal is the primary campaign guide. Side quests remain
-    // available from local quest boards without changing their saved progress.
-    function storyJournal(back = closeMenu) {
+    // Share the live story objectives between the journal and local quest board.
+    function storyJournal(
+      back = closeMenu,
+      present = (summary, options) => openMenu('Story journal', summary, options, back),
+    ) {
       const game = getGame(),
         zone = game.zone(),
         room = game.supplyRoom() || game.sideDungeon(),
@@ -1989,7 +2060,6 @@
           ),
         guideAction = (label, destination) =>
           action('Navigate · ' + label, () => storyNavigate(destination, label), '', !destination),
-        present = (summary, options) => openMenu('Story journal', summary, options, back),
         exit = findNpc((n) => n.kind === 'exit');
       const leaveInterior = () => {
         if (!exit) return false;
@@ -2121,23 +2191,64 @@
         back,
       );
     }
-    function quests(atBoard, back = closeMenu, completed = false) {
+    function quests(atBoard, back = closeMenu, completed = false, sideQuests = false) {
+      if (!completed && !sideQuests) {
+        const returnHere = () => quests(atBoard, back);
+        storyJournal(back, (summary, objectives) => {
+          const g = getGame(),
+            tutorial = g
+              .questDefs()
+              .find(
+                (q) => q.tutorial && !g.s.quests[q.id]?.paid && !g.s.quests[q.id]?.closedByPeace,
+              );
+          openMenu(
+            atBoard ? 'Quest board' : 'Quest journal',
+            'Story objectives · ' +
+              summary +
+              '\nChoose an objective to track it. Optional board tasks are in Side Quests.',
+            [
+              ...(tutorial
+                ? [
+                    action(
+                      tutorial.name + ' · ACTIVE',
+                      () => {
+                        const destination = getGame().questDestination(tutorial.id);
+                        if (destination) storyNavigate(destination, tutorial.name, tutorial.id);
+                        else status(getGame().questProgress(tutorial));
+                      },
+                      getGame().questProgress(tutorial),
+                    ),
+                  ]
+                : []),
+              ...objectives,
+              action(
+                'Side Quests',
+                () => quests(atBoard, returnHere, false, true),
+                'Optional tasks, exploration and extra rewards.',
+              ),
+              action('Completed quests', () => quests(atBoard, returnHere, true, true)),
+            ],
+            back,
+          );
+        });
+        return;
+      }
       const game = getGame(),
-        returnHere = () => quests(atBoard, back, completed),
+        returnHere = () => quests(atBoard, back, completed, sideQuests),
         local = game
           .questDefs()
           .filter(
             (q) =>
               (!atBoard || q.region === game.definition().id) &&
+              (completed || !q.tutorial) &&
               (completed
                 ? game.s.quests[q.id]?.paid || game.s.quests[q.id]?.closedByPeace
                 : !game.s.quests[q.id]?.paid && !game.s.quests[q.id]?.closedByPeace),
           );
       openMenu(
-        completed ? 'Completed quests' : atBoard ? 'Local quests' : 'Quest journal',
+        completed ? 'Completed quests' : 'Side Quests',
         'Tap a pending quest to track its next objective. The waypoint remains during combat. Rewards are delivered automatically.',
         [
-          ...(!completed ? [action('Story guide', () => storyJournal(returnHere))] : []),
           ...local.map((q) =>
             action(
               q.name + (completed ? ' · Complete' : ' · ACTIVE'),
@@ -2163,10 +2274,10 @@
             ? [action(completed ? 'No completed quests' : 'No pending quests', () => {}, '', true)]
             : []),
           ...(atBoard && !completed
-            ? [action('All pending quests', () => quests(false, returnHere))]
+            ? [action('All side quests', () => quests(false, returnHere, false, true))]
             : []),
           ...(!completed
-            ? [action('Completed quests', () => quests(atBoard, returnHere, true))]
+            ? [action('Completed quests', () => quests(atBoard, returnHere, true, true))]
             : []),
         ],
         back,

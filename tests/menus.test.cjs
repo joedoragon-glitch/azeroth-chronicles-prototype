@@ -47,7 +47,7 @@ assert.equal(opened.title, 'Inventory');
 assert.equal(opened.back, back);
 catalog.partyMenu(back);
 assert.equal(opened.title, game.definition().town + ' Captain');
-assert.equal(opened.description, '');
+assert.match(opened.description, /Recall squad.*Expedition Rank 2/);
 assert(opened.actions.some((a) => a.label.includes('Recover fallen companion')));
 assert(!opened.actions.some((a) => /Build|Barracks|Construction & resources/i.test(a.label)));
 assert.strictEqual(Campaign.classes, Campaign.rules.balance.classes);

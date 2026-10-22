@@ -428,7 +428,7 @@ await check('Phone controls preserve world space and contextual interaction '+ta
  assert(!overlap(interact,skills)&&!overlap(interact,joy),'context prompt never displaces combat');
  if(v.height>500)assert(interact.y>=joy.y-2,'contextual Interact stays in the thumb region');
  else assert(interact.y>=v.height-75,'landscape Interact is bottom-aligned');
- await page.locator('#touch-interact-button').tap();assert((await page.locator('#modal-title').textContent())==='Local quests','nearby interaction really activates the target');await page.keyboard.press('Escape');
+ await page.locator('#touch-interact-button').tap();assert((await page.locator('#modal-title').textContent())==='Quest board','nearby interaction really activates the target');await page.keyboard.press('Escape');
  await page.evaluate(n=>{Object.assign(Prototype.game.hero,{x:n.x+116,y:n.y});Prototype.updateHUD();},npc);
  assert(await page.locator('#touch-interact-button').isHidden(),'Interact disappears beyond interaction range');
  await page.evaluate(()=>{const c=Prototype.game;c.s.expeditionRank=3;Object.assign(c.hero,{x:600,y:900,order:null});const e=c.makeEnemy({species:'goblin',level:1,hp:10000,damage:0,gold:0,xp:0},{x:680,y:900});Object.assign(e,{aggro:true,heroParticipated:true});c.zone().enemies=[e];});

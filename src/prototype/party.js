@@ -1458,10 +1458,13 @@
           active: true,
         };
       }
-      queuedCompanions() {
-        return Object.values(this.s.zones).reduce(
-          (n, z) => n + z.buildings.filter((b) => b.queue > 0).length,
-          0,
+      queuedCompanions(includeRequest = true) {
+        return (
+          (includeRequest && this.s.recruitmentRequest ? 1 : 0) +
+          Object.values(this.s.zones).reduce(
+            (n, z) => n + z.buildings.filter((b) => b.queue > 0).length,
+            0,
+          )
         );
       }
       activeParty() {
@@ -1835,25 +1838,112 @@
         )
           this.rangerSupport('mana', false);
       }
-      companionRecruitmentReason(type, barracksId = null) {
+      companionRecruitmentReason(type, barracksId = null, options = {}) {
         if (!['soldier', 'archer'].includes(type)) return 'Choose a Soldier or Ranger to recruit.';
         if ((this.s.expeditionRank || 1) < 2)
           return 'Recruitment unlocks at Expedition 2. Rescue Mira and train the Expedition Skill.';
+        const request =
+          options.replaceRequest || options.completeRequest ? null : this.s.recruitmentRequest;
+        if (this.rosterCount() + this.queuedCompanions(false) + (request ? 1 : 0) >= 200)
+          return 'Company limit reached: 200 companions, including reserves and queued recruits.';
         if (barracksId !== null) {
-          const b = this.zone().buildings.find((b) => b.id === barracksId);
+          const b = this.s.zones[options.zone || this.zoneId]?.buildings.find(
+            (b) => b.id === barracksId,
+          );
           if (!b) return 'This Barracks is no longer available. Reopen a local Barracks.';
           if (b.progress < 4) return 'Finish building this Barracks before recruiting.';
-          if (b.queue > 0)
+          if (b.queue > 0 && !options.completeRequest)
             return 'This Barracks is already training a companion. Wait for training to finish.';
-          if (this.rosterCount() + this.queuedCompanions() >= 200)
-            return 'Company limit reached: 200 companions, including reserves and queued recruits.';
-        } else if (this.rosterCount() >= 3)
+        } else if (
+          !options.completeRequest &&
+          this.rosterCount() + (request?.barracksId === null ? 1 : 0) >= 3
+        )
           return 'The town can employ only 3 companions, including reserves. Recruit at a completed Basic or Full Barracks; resting someone does not free a town hiring place.';
         const price =
           barracksId === null ? this.recruitPrice(type) : this.barracksRecruitPrice(type);
         if (!price) return 'Recruitment is unavailable for this companion.';
-        if (this.hero.gold < price) return 'Not enough crowns: recruitment costs ' + price + '.';
+        if (!options.ignoreFunds && this.hero.gold < price)
+          return 'Not enough crowns: recruitment costs ' + price + '.';
         return '';
+      }
+      recruitmentRequestMatches(type, barracksId = null) {
+        const request = this.s.recruitmentRequest;
+        return !!request && request.type === type && request.barracksId === barracksId;
+      }
+      recruitmentRequestPrice(request = this.s.recruitmentRequest) {
+        return !request
+          ? 0
+          : request.barracksId === null
+            ? this.recruitPrice(request.type)
+            : this.barracksRecruitPrice(request.type);
+      }
+      cancelRecruitmentRequest() {
+        if (!this.s.recruitmentRequest) return false;
+        this.s.recruitmentRequest = null;
+        this.say('Queued recruitment cancelled. No crowns were spent.');
+        return true;
+      }
+      requestCompanionRecruitment(type, barracksId = null) {
+        if (this.recruitmentRequestMatches(type, barracksId))
+          return this.cancelRecruitmentRequest();
+        const reason = this.companionRecruitmentReason(type, barracksId, {
+          ignoreFunds: true,
+          replaceRequest: true,
+        });
+        if (reason) {
+          this.say(reason);
+          return false;
+        }
+        const previous = this.s.recruitmentRequest;
+        const request = { type, barracksId, zone: this.zoneId };
+        const price = this.recruitmentRequestPrice(request);
+        if (this.hero.gold >= price) {
+          // Selecting another recruit replaces the unpaid request only on success.
+          this.s.recruitmentRequest = null;
+          const success = barracksId === null ? this.recruit(type) : this.train(barracksId, type);
+          if (!success) this.s.recruitmentRequest = previous;
+          return success;
+        }
+        this.s.recruitmentRequest = request;
+        this.say(
+          (type === 'archer' ? 'Ranger' : 'Soldier') +
+            ' recruitment queued. Tap the same choice to cancel.',
+        );
+        return true;
+      }
+      resolveRecruitmentRequest() {
+        const request = this.s.recruitmentRequest;
+        if (!request || this.hero.hp <= 0 || this.s.challenge.pending || this.s.challenge.gameOver)
+          return false;
+        const reason = this.companionRecruitmentReason(request.type, request.barracksId, {
+          completeRequest: true,
+          zone: request.zone,
+        });
+        if (reason) return false;
+        const price = this.recruitmentRequestPrice(request);
+        if (!this.spend(price)) return false;
+        const b =
+          request.barracksId === null
+            ? null
+            : this.s.zones[request.zone].buildings.find((b) => b.id === request.barracksId);
+        const cap = b ? this.barracksFieldCap(b) : this.expeditionPartyCap();
+        const point = this.safe(this.hero.x + 50, this.hero.y + 50);
+        const u = this.unit(request.type, point.x, point.y);
+        u.active = this.activeParty().length < cap;
+        this.s.recruitmentRequest = null;
+        this.s.party.push(u);
+        const label = request.type === 'archer' ? 'Ranger' : 'Soldier';
+        const destination = u.active
+          ? 'Joined your active group.'
+          : 'Active group full. Resting in reserve.';
+        this.say(label + ' recruited. ' + destination);
+        this.notice(label + ' recruited', 4, destination, 'feedback');
+        this.event('companionRecruitment', { companionId: u.id, active: u.active });
+        return true;
+      }
+      briefCompanions() {
+        const tutorial = this.s.quests['quest-barracks'];
+        if (tutorial && !tutorial.paid) tutorial.captainBriefed = true;
       }
       recruit(type) {
         const reason = this.companionRecruitmentReason(type);
@@ -2097,6 +2187,9 @@
         };
       }
       recallParty() {
+        const tutorial = this.s.quests['quest-barracks'];
+        if (tutorial && !tutorial.paid && this.activeLivingParty().length)
+          tutorial.recallPracticed = true;
         this.cancelRangerHealRequest();
         if (
           this.s.recallActive &&

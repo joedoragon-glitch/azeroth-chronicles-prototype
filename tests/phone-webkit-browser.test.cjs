@@ -41,7 +41,7 @@ const server=http.createServer((req,res)=>{
  await page.keyboard.press('Escape');
  const npc=await page.evaluate(()=>{const c=Prototype.game,n=c.zone().npcs.find(n=>n.kind==='quests');c.zone().npcs=[n];c.zone().nodes=[];c.zone().buildings=[];Object.assign(c.hero,{x:n.x,y:n.y});Prototype.updateHUD();return {x:n.x,y:n.y};});
  const prompt=await page.locator('#touch-interact-button').boundingBox();assert(prompt.x+prompt.width<=all.x||prompt.y+prompt.height<=all.y||prompt.y>=all.y+all.height,'contextual Interact stays clear of all learned controls');
- await page.locator('#touch-interact-button').tap();assert((await page.locator('#modal-title').textContent())==='Local quests');await page.keyboard.press('Escape');
+ await page.locator('#touch-interact-button').tap();assert((await page.locator('#modal-title').textContent())==='Quest board');await page.keyboard.press('Escape');
  await page.evaluate(n=>{Object.assign(Prototype.game.hero,{x:n.x+116,y:n.y});Prototype.updateHUD();},npc);assert(await page.locator('#touch-interact-button').isHidden());
  await page.keyboard.press('g');assert.equal(await page.locator('#modal').evaluate(el=>getComputedStyle(el).touchAction),'pan-y');
  const scroll=await page.locator('#modal-content').evaluate(el=>{el.scrollTop=80;return {top:el.scrollTop,max:el.scrollHeight-el.clientHeight};});assert(scroll.max===0||scroll.top>0,'compact help fits or scrolls while Back remains visible');
