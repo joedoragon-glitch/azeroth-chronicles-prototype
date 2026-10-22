@@ -1,0 +1,69 @@
+{
+  "version": "0.9.1+snapshot.dev.149",
+  "pr": 388,
+  "mergeCommit": "02afb4e9a316cca99ba6e7b66242bce1796559fd",
+  "publishedBuild": "02afb4e9a316cca99ba6e7b66242bce1796559fd",
+  "verifiedAt": "2026-10-22T00:27:34.405419+00:00",
+  "publicFiles": [
+    {
+      "path": "src/prototype/app.js",
+      "sha256": "599adb77b213c0bd21a5252901883996f4a040a034b9bbf8ace14646184dce22",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "sha256": "208bdb294cd16710a68c5a7ec3d9c310b717ab3e234054f8e670ceca06dfda0a",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/party.js",
+      "sha256": "adbd0dd10e1a2271d3038278e2160e725996537ff7ae37e3fc4039d6bdaaa829",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "sha256": "55b7b2780e95d594c064c861ac97dd2f6ece293f7725007a1fc44b63cb1b58cc",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/save.js",
+      "sha256": "b7bd4a63e9855fdc790f6ea09b9452c3cff80213273e90976c1eb49d53a95cf5",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "sha256": "f477d80811f71f75984a6cff88d4897d2843958d004ad165a6bdb7e1e4d9b1db",
+      "matchesPrepared": true
+    },
+    {
+      "path": "sw.js",
+      "sha256": "f1e12d413e2655bde0229b385c1e27f8c83c6d41b042a40f322afd22c0ea8313",
+      "matchesPrepared": true
+    },
+    {
+      "path": "phone.html",
+      "sha256": "9bcc581900bbd5c85d9a5416f5a3bc10f4eea7b9d1f2d68b2c66774c317912b8",
+      "matchesPrepared": true
+    }
+  ],
+  "checks": {
+    "care": "Eight care mode/type/source save-travel-payment paths plus safety/source/hero/target checks, cancellation, reserves, no healing resurrection, fixed target IDs, priority and legacy validation passed",
+    "recruitment": "Original eight paths plus town and Barracks combat, Expedition, source and training revalidation passed",
+    "shell": "English/Spanish actual Captain recovery/treatment queue/cancel, saved IDs, funded combat pause and visible blocker plus prior flows passed",
+    "existingSuites": [
+      "menus",
+      "barracks-roster-feedback",
+      "economy",
+      "community-pets"
+    ],
+    "build": "Passed",
+    "changedSourceFormat": "Passed"
+  },
+  "carePrices": {
+    "recovery": 40,
+    "treatment": 30
+  },
+  "broadCiRan": false,
+  "publisherRunId": 39699745777,
+  "publisherConclusion": "success"
+}

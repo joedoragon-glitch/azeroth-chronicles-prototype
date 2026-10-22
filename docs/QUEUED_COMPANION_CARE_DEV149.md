@@ -23,3 +23,7 @@ Owning modules: existing `party.js`, `menus.js`, `save.js`, `engine.js` and `app
 - The unrelated inherited `prototype-ui` Treasury-menu fixture limitation remains documented in the dev.148 record; no broad CI/browser matrix or whole-game suites run for this release.
 
 Owner authorized immediate live playtesting with minimum checks. Publication uses a temporary package-only workflow, restored/removed after exact-public verification.
+
+## Publication
+
+PR #388 merged as `02afb4e9a316cca99ba6e7b66242bce1796559fd`; package-only run 39699745777. Exact-public receipt: `docs/evidence/QUEUED_COMPANION_CARE_DEV149_PUBLICATION_20261021.json`. Normal Pages workflow restored byte-for-byte and temporary publisher removed in closeout.
