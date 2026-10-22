@@ -1,0 +1,21 @@
+{
+  "version": "0.9.1+snapshot.dev.152",
+  "pr": 391,
+  "mergeCommit": "fac8e62d74b7418ab3f25a143742a5a2fb62797f",
+  "publishedBuild": "fac8e62d74b7418ab3f25a143742a5a2fb62797f",
+  "publisherRun": 39701993125,
+  "publisherConclusion": "success",
+  "verifiedAt": "2026-10-22T00:50:07.042836+00:00",
+  "verification": "Public build.txt visibly matches merged runtime SHA in browser. Per-file byte comparison unavailable under current shell network policy.",
+  "checks": [
+    "Existing English/Spanish production shell: real Recall button, keyboard replay, no-living guard, save progress, short acknowledgements, no tutorial recruitment, concise full-roster Captain and care statuses passed",
+    "Original recruitment-request: eight paths plus gate/cancel/reserve/save cases and updated hands-on menu contract passed",
+    "Original companion-care-queue: eight mode/source/kind paths and menu/safety/target rules passed",
+    "Original menus contract updated and passed",
+    "npm run build passed",
+    "Changed-source Prettier and diff checks passed"
+  ],
+  "broadCiRan": false,
+  "normalWorkflowRestored": true,
+  "temporaryPublisherRemoved": true
+}

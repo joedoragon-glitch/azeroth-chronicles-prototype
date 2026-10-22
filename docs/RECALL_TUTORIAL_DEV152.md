@@ -8,4 +8,4 @@ The shell owns a transient practice callback bound to the current campaign. Swit
 
 Impact/checks: existing production-shell English/Spanish test now checks the real Practice → highlighted Recall → acknowledgement/Continue sequence and absence of recruitment; existing menus, recruitment-request and companion-care tests, build, changed-source formatting and diff checks. No broad CI or browser matrix. Owner ongoing playtest authorizes package-only publication.
 
-Publication pending.
+PR #391 merged as `fac8e62d74b7418ab3f25a143742a5a2fb62797f`; package-only run 39701993125. Public build verified against merged SHA; normal workflow restored and temporary publisher removed. Receipt: `docs/evidence/RECALL_TUTORIAL_DEV152_PUBLICATION_20261021.json`.
