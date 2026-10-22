@@ -341,6 +341,7 @@
       (typeof require === 'function' ? require('./enemy-vfx-art.js') : null),
     PrototypeSprites,
     PrototypeMaterials,
+    renderLayer = 'full',
     PrototypeGroundCache = root.PrototypeGroundCache ||
       (typeof require === 'function' ? require('./ground-cache.js') : null),
     now = () => performance.now(),
@@ -2008,6 +2009,37 @@
     }
 
     function render() {
+      if (renderLayer === 'overlay') {
+        // On the experimental PixiJS path, keep essential native combat cues
+        // above the independent GPU world instead of hiding player warnings.
+        // The full normal Canvas path below is unchanged.
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const z = game.zone();
+        PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000);
+        PrototypeCombatVisuals.ground(ctx, screen, game, 'underlay-cue', game.s.time);
+        PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx);
+        for (const e of [...z.enemies.filter((u) => u.hp > 0),
+          ...game.activeLivingParty(), game.hero]) {
+          if (e !== game.hero && e.hp <= 0) continue;
+          if (e !== game.hero && e.neutral) continue;
+          const p = screen(e);
+          if (p.x > -120 && p.x < canvas.width + 120 &&
+              p.y > -120 && p.y < canvas.height + 120)
+            healthPlate(e, p);
+        }
+        PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx);
+        for (const projectile of game.s.projectiles) drawProjectile(projectile);
+        drawVisualFx();
+        heroArt?.statuses(ctx, screen, game, canvas.width, canvas.height);
+        heroArt?.charge(ctx, screen, game.hero, chargePresentation(), reducedMotion());
+        heroArt?.queued(ctx, screen, game.hero, queuedChargePresentation());
+        PrototypeCombatVisuals.enemySupportStatus?.(ctx, screen, game);
+        PrototypeCombatVisuals.actorCues?.(ctx, screen, game, spriteHeight);
+        targetGuidance();
+        drawNavigationRoute();
+        finishPhase('effects');
+        return;
+      }
       ctx.fillStyle = '#0c1913';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       const z = game.zone(),
@@ -2124,6 +2156,7 @@
       PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000);
       PrototypeCombatVisuals.ground(ctx, screen, game, 'underlay-cue', game.s.time);
       finishPhase('terrain');
+      if (renderLayer === 'background') return;
       const boardCue = null,
         captainCue = game.zoneId === 'vale' && game.s.party.length <= 2;
       const entities = [];
@@ -2672,6 +2705,12 @@
     }
     return {
       draw,
+      // Presentation-only layer split for the opt-in PixiJS experiment.
+      setRenderLayer: (layer) => {
+        if (layer !== 'full' && layer !== 'overlay' && layer !== 'background')
+          throw Error('Unknown Canvas paint layer');
+        renderLayer = layer;
+      },
       world: (x, y) => localWorld(x / zoom(), y / zoom()),
       screen: (e) => {
         const p = screen(e),
