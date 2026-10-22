@@ -1,6 +1,6 @@
 # WebGL renderer pilot — isolated preparation (22 October 2026)
 
-**Status:** PREPARATION ONLY. No renderer prototype, measurable GPU comparison, game change, merge, or deployment has been completed.
+**Status:** ISOLATED PILOT FILES READY. A separately served original-art sprite-only Canvas/WebGL2 comparison page is implemented in `tools/webgl-pilot/`. It has passed static script/path checks, but GPU execution, visual acceptance, and measured results remain **unverified**. No production renderer, game, merge or deployment changes.
 
 **Frozen base:** `main` at `a97a40495c44065e6d33c4462c426a3fe15f7482`; package version `0.9.1+snapshot.dev.163`. The multi-file GitHub Pages/PWA remains the product. No portable/single-HTML constraint.
 
@@ -53,8 +53,9 @@ This preparation session inspected the current repository and existing benchmark
 - [x] Preservation/lighting and gameplay boundaries locked
 - [x] Fair A/B benchmark and stop/go conditions defined
 - [ ] Obtain a browser environment that can actually run the diagnostic scene
-- [ ] Build one isolated same-art GPU candidate and measure it
+- [x] Build an isolated same-art GPU sprite-composition candidate; static syntax and referenced-path checks pass
+- [ ] Execute and measure candidate in a WebGL2-capable browser
 - [ ] Compare screenshots, p95 and full-frame latency on appropriate hardware
 - [ ] Present the measured outcome for the owner's decision
 
-**Release state:** No gameplay/runtime/art files changed, no build/version changed, no release created. Keep this branch isolated; do not open a PR or trigger large CI/deployment merely for the preparation note.
+**Release state:** Only this preparation document and `tools/webgl-pilot/{index.html,pilot.js,README.md}` exist on the experimental branch. No existing gameplay/runtime/art files were changed, no build/version changed, no release created. No PR, CI, or deployment was initiated. This sprite-only pilot is **not a full-game renderer comparison** and must not be interpreted as one.
