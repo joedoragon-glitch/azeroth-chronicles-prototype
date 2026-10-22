@@ -1,0 +1,23 @@
+{
+  "version": "0.9.1+snapshot.dev.156",
+  "pr": 395,
+  "mergeCommit": "94b2cfbbf074d6fa6673b42a8ce930451e92a669",
+  "publishedBuild": "94b2cfbbf074d6fa6673b42a8ce930451e92a669",
+  "publisherRun": 39704450139,
+  "publisherConclusion": "success",
+  "verifiedAt": "2026-10-22T01:14:55.983601+00:00",
+  "verification": "Public build.txt visibly matches merged runtime SHA in browser. Per-file byte comparison unavailable under current shell network policy.",
+  "checks": [
+    "Existing production-shell English/Spanish Basic branches/back, construction, rank-1 lock, actual death point, queued hire/cancel, roster/names/pet-skills/specialist/operations routes, upgrade crowns and Full preservation passed",
+    "Existing companion-care-queue including new Recovery route and 15%/Succession presentation passed",
+    "Existing barracks-roster-feedback retaining native denials and current short menu expectations passed",
+    "Community pets: eleven lifecycle/skills and menu contracts passed",
+    "Existing menus passed",
+    "npm run build passed",
+    "Changed-source Prettier and git diff checks passed"
+  ],
+  "broadCiRan": false,
+  "normalWorkflowRestored": true,
+  "temporaryPublisherRemoved": true,
+  "nextAuthorizedTask": "Apply same concise pass to game menu and its branches"
+}

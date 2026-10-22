@@ -8,4 +8,4 @@ Validation: extended existing production-shell English/Spanish flow covers const
 
 Next authorized task: apply the same concise pass to the rest of the game menu and its branches after this publication.
 
-Publication pending.
+PR #395 merged as `94b2cfbbf074d6fa6673b42a8ce930451e92a669`; package-only run 39704450139. Public build verified against merged SHA; normal workflow restored and temporary publisher removed. Receipt: `docs/evidence/BASIC_BARRACKS_MENUS_DEV156_PUBLICATION_20261021.json`.
