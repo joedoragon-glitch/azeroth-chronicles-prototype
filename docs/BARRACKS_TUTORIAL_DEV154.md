@@ -8,4 +8,4 @@ The shell highlights the real Adventure menu build action independently of keybo
 
 Focused validation: existing English/Spanish production-shell flow now covers Continue directions, immediate save/restore flag, HUD/quest update, actual menu highlight across navigation/reopen/rejected placement, successful native free build and highlight removal. Original recruitment-request test follows the updated stage and rejects malformed flags. Existing quest-waypoints and menus suites pass. Build, changed-source format and diff checks pass. No broad CI/browser matrix; owner-authorized package-only publication.
 
-Publication pending.
+PR #393 merged as `4735bdb33d63055d0455ad1faa4775cdb494d27d`; package-only run 39703009158. Public build verified against merged SHA; normal workflow restored and temporary publisher removed. Receipt: `docs/evidence/BARRACKS_TUTORIAL_DEV154_PUBLICATION_20261021.json`.

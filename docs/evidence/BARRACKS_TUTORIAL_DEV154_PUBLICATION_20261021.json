@@ -1,0 +1,21 @@
+{
+  "version": "0.9.1+snapshot.dev.154",
+  "pr": 393,
+  "mergeCommit": "4735bdb33d63055d0455ad1faa4775cdb494d27d",
+  "publishedBuild": "4735bdb33d63055d0455ad1faa4775cdb494d27d",
+  "publisherRun": 39703009158,
+  "publisherConclusion": "success",
+  "verifiedAt": "2026-10-22T01:00:16.798077+00:00",
+  "verification": "Public build.txt visibly matches merged runtime SHA in browser. Per-file byte comparison unavailable under current shell network policy.",
+  "checks": [
+    "Existing production-shell English/Spanish Continue-to-Barracks directions, immediate save/restore flag, HUD/quest progression, actual menu highlight across keyboard navigation/reopen/rejected placement, native free construction and highlight removal passed",
+    "Original recruitment-request including updated tutorial and malformed barracksBriefed rejection passed",
+    "Original quest-waypoints passed",
+    "Original menus passed",
+    "npm run build passed",
+    "Changed-source Prettier and git diff checks passed"
+  ],
+  "broadCiRan": false,
+  "normalWorkflowRestored": true,
+  "temporaryPublisherRemoved": true
+}
