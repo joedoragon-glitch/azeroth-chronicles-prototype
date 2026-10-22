@@ -57,3 +57,4 @@ Reference for review outside GitHub: a standalone interactive viewer was prepare
 ## Owner decisions — 21 October 2026
 
 - **Millhaven Refuge: B — Shelter Court APPROVED as the preferred procedural design** (three-building court with central entrance; owner selected B in design review). This is *design approval only*: do not implement, merge or deploy until owner authorizes the implementation batch. Plot, doorway, clearance and occlusion still require native fit review before use.
+- **Orchard Hamlet recovery house: A — Harvest Hall APPROVED as the preferred procedural design** (communal orchard barn hall with apple crest; owner selected A in design review). This is design approval only; do not implement, merge, or deploy until owner authorizes the implementation batch. Door, plot and occlusion fit still require native review.
