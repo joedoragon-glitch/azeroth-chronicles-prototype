@@ -22,9 +22,9 @@ jobs:
     outputs:
       reuse: ${{ steps.reuse.outputs.reuse || 'false' }}
       run_id: ${{ steps.reuse.outputs.run_id }}
-      # One-time repair of the isolated GPU demo route. No gameplay checks.
+      # One-time GPU experiment visual orientation repair. No gameplay checks.
       # Exact parent SHA limits this exception to the next main push.
-      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == 'efa0ed8c6c954f3bb26748c8e0fd9d54bd2a8013' }}
+      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == '9c08a94d4c0a9b79b09a5916beedf32d890ce7f8' }}
     steps:
       - uses: actions/checkout@v4
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

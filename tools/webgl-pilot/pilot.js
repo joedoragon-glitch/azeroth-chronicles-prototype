@@ -143,7 +143,8 @@
     const texture = checked(gl.createTexture(), 'Cannot allocate atlas texture');
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    // UVs are top-origin atlas coordinates: flipping this upload made most sprites transparent.
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -183,15 +184,35 @@
   }
 
   function comparePixels(a, b) {
-    let total = 0, max = 0;
+    let total = 0, max = 0, foreground2d = 0, foregroundWebgl = 0;
+    let intersection = 0, union = 0;
     const length = a.length;
-    for (let i = 0; i < length; i++) {
-      const delta = Math.abs(a[i] - b[i]);
-      total += delta;
-      if (delta > max) max = delta;
+    for (let i = 0; i < length; i += 4) {
+      let cpuDistance = 0, gpuDistance = 0;
+      for (let c = 0; c < 4; c++) {
+        const delta = Math.abs(a[i + c] - b[i + c]);
+        total += delta;
+        if (delta > max) max = delta;
+        if (c < 3) {
+          const bg = [12, 25, 19][c];
+          cpuDistance += Math.abs(a[i + c] - bg);
+          gpuDistance += Math.abs(b[i + c] - bg);
+        }
+      }
+      const cpu = cpuDistance > 25;
+      const gpu = gpuDistance > 25;
+      if (cpu) foreground2d++;
+      if (gpu) foregroundWebgl++;
+      if (cpu && gpu) intersection++;
+      if (cpu || gpu) union++;
     }
-    return { meanChannelDifference: Number((total / length).toFixed(3)),
-      maximumChannelDifference: max };
+    return {
+      meanChannelDifference: Number((total / length).toFixed(3)),
+      maximumChannelDifference: max,
+      foregroundPixelsCanvas: foreground2d,
+      foregroundPixelsWebGL: foregroundWebgl,
+      foregroundOverlap: union ? Number((intersection / union).toFixed(3)) : 0,
+    };
   }
 
   async function run() {
@@ -246,7 +267,20 @@
       for (let row = 0; row < H; row++)
         flipped.set(bottomUp.subarray(row * W * 4, (row + 1) * W * 4), (H - row - 1) * W * 4);
       const equality = comparePixels(cpuPixels, flipped);
-      status.textContent = 'Measuring repeated frames…';
+      const coverageRatio = equality.foregroundPixelsCanvas
+        ? equality.foregroundPixelsWebGL / equality.foregroundPixelsCanvas : 0;
+      if (equality.foregroundOverlap < 0.9 || coverageRatio < 0.9 || coverageRatio > 1.1) {
+        status.textContent = 'INVALID comparison — pictures differ. No speed conclusion.';
+        output.textContent = JSON.stringify({
+          message: 'WebGL artwork did not match Canvas closely enough. Timings deliberately withheld.',
+          visualDifference: equality,
+          gpuBackend: gpu.backend,
+          renderedSprites: scene.objects.length
+        }, null, 2);
+        window.AzerothGpuPilotResult = null;
+        return;
+      }
+      status.textContent = 'Pictures aligned; measuring repeated frames…';
       for (let k = 0; k < 6; k++) { draw2d(k,true); drawGPU(k,true); }
       const results = { canvas: [], webgl: [] };
       for (let round = 0; round < 14; round++) {
