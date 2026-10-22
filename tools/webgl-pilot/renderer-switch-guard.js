@@ -35,14 +35,16 @@
   function create({
     storage=null,
     prepareWebGL,
+    showWebGL,
     showCanvas,
     notify=()=>{},
     now=()=>performance.now(),
     schedule=(callback,ms)=>setTimeout(callback,ms),
     unschedule=timer=>clearTimeout(timer)
   }={}){
-    if(typeof prepareWebGL!=='function'||typeof showCanvas!=='function')
-      throw Error('Both prepared WebGL and reliable Canvas fallback hooks are required');
+    if(typeof prepareWebGL!=='function'||typeof showWebGL!=='function'||
+       typeof showCanvas!=='function')
+      throw Error('WebGL preparation, atomic reveal, and reliable Canvas fallback hooks are required');
     let mode='canvas2d',phase='canvas',deadline=0,timer=null,serial=0,closed=false;
     function remaining(){
       return phase==='trial'?Math.max(0,Math.ceil((deadline-now())/1000)):0;
@@ -89,6 +91,9 @@
         const ready=await prepareWebGL();
         if(closed||own!==serial||phase!=='preparing')return false;
         if(ready!==true){fallback('webgl-preparation-failed');return false;}
+        // Preparation MUST occur on an invisible separate GPU canvas. Only
+        // this synchronous hook may reveal it after resources are ready.
+        showWebGL();
         phase='trial';mode='webgl2';deadline=now()+DURATION_MS;
         announce('awaiting-confirmation');
         timer=schedule(pulse,1000);
