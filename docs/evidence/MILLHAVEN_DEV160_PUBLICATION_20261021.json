@@ -1,0 +1,29 @@
+{
+  "version": "0.9.1+snapshot.dev.160",
+  "clientDate": "2026-10-21",
+  "pullRequest": 399,
+  "mergeSha": "bb9df49bfaf6c47bd445669cb2667a207081ef0f",
+  "publisherRun": 39708765406,
+  "publisherConclusion": "success",
+  "publicBuildIdentifier": "bb9df49bfaf6c47bd445669cb2667a207081ef0f",
+  "publicVerification": "Browser observed build.txt matches merged runtime. Per-file byte comparison unavailable under current shell network policy.",
+  "checks": [
+    "three-mode focused native layout/migration/recovery",
+    "bilingual first-use recovery production shell",
+    "native 150% landscape render inspection",
+    "two landscape Captain cue projections",
+    "existing onboarding shell",
+    "existing quest-waypoints",
+    "updated original death-barracks test",
+    "18 seeded Thornfang/Mira patrol lifecycle cases",
+    "existing witness suite",
+    "build",
+    "changed-source formatting",
+    "git diff --check"
+  ],
+  "knownInheritedFailure": "regional-handoffs Archive lower-hall-join hazard-route assertion also fails on unchanged dev.159; no Archive repair attempted.",
+  "broadCI": false,
+  "browserMatrix": false,
+  "normalWorkflowRestored": true,
+  "temporaryPublisherRemoved": true
+}
