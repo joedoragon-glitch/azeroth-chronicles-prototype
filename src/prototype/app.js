@@ -4058,13 +4058,11 @@
       paused = !paused;
       clearInput();
     } else if (actionId === 'map') showMap();
-    else if (actionId === 'inventory') inventory();
     else if (actionId === 'heal') useRangerSupport('health');
     else if (manaEnabled && actionId === 'mana') useRangerSupport('mana');
     else if (actionId === 'training') talents();
     else if (actionId === 'skills') skillBook();
     else if (actionId === 'help') help();
-    else if (actionId === 'quests') quests(false);
     else if (actionId.startsWith('skill')) {
       const slot = Number(actionId.slice(5));
       if (canChargeSlot(slot)) beginCharge(slot, 'keyboard');
