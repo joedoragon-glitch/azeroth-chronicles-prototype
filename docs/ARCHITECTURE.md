@@ -34,6 +34,7 @@ The browser is the current desktop playtest target, especially Chromebook keyboa
 | `audio-score.js` | Cue selection, contextual observation, score scheduling, fades and ambience |
 | `audio-runtime.js` / `audio-effects.js` | Context lifecycle, mixer/source cleanup/bounds, diagnostics and contextual effect recipes |
 | `runtime.js` | Bounded active-frame measurements and idle redraw scheduling |
+| `skill-reference.js` | Read-only class skill descriptions, current effect figures and next-rank comparisons; native hero combat and rules remain authoritative |
 | `menus.js` | Specialist, barracks, party, inventory and training menu definitions/actions; current game and shell callbacks injected |
 | `app.js` | Shell lifecycle, global/settings menus, map presentation, keyboard/touch coordination, charge input, frame scheduling and app updates |
 

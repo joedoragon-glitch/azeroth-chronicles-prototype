@@ -57,6 +57,7 @@ const scripts = [
     'ground-cache',
     'renderer',
     'archive',
+    'skill-reference',
     'menus',
     'app',
   ].map((name) => 'src/prototype/' + name + '.js'),

@@ -153,12 +153,18 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
     menus.skillBook();
     for (let slot = 1; slot <= 8; slot++) {
       const action = opened.actions.find((a) => a.label.startsWith('Skill ' + slot + ' '));
-      const seconds = (Math.round(g.skillCooldown(slot) * 10) / 10).toFixed(1);
       assert(action, 'revealed skill is listed');
       action.action();
-      assert(opened.description.includes('Tap · ' + seconds + 's:'));
-      const charged = (Math.round(g.skillCooldown(slot, true) * 10) / 10).toFixed(1);
-      assert(opened.description.includes('Charge · ' + charged + 's:'));
+      assert.equal(opened.description.sections[0].title, 'Tap');
+      assert.equal(
+        opened.description.sections[0].rows.find((r) => r.label === 'Cooldown').value,
+        String(Math.round(g.skillCooldown(slot) * 100) / 100) + 's',
+      );
+      assert.equal(opened.description.sections[1].title, 'Charged');
+      assert.equal(
+        opened.description.sections[1].rows.find((r) => r.label === 'Cooldown').value,
+        String(Math.round(g.skillCooldown(slot, true) * 100) / 100) + 's',
+      );
       menus.skillBook();
     }
   }

@@ -1,0 +1,462 @@
+/* Read-only skill descriptions projected from native hero-combat formulas and rules.
+   No casts, purchases, temporary hero mutation or saved presentation state. */
+(function (root) {
+  'use strict';
+  const skillCards = {
+    paladin: [
+      [
+        'Sword Combo',
+        'Basic attack / holy burst',
+        'Sword combo; third hit cleaves',
+        'Fire a holy projectile',
+      ],
+      [
+        'Sundering Strike',
+        'Weaken / frontal cleave',
+        'Hit one foe; weaken its damage',
+        'Holy Cleave: weaken a frontal group',
+      ],
+      [
+        'Shield Stance',
+        'Defense / shield knockback',
+        'Raise your shield to reduce incoming damage',
+        'Shield Bash: strike and push a cone',
+        'No Skill 1 while raised; other damage ×0.6. Tap to lower; cooldown starts on lowering.',
+      ],
+      [
+        'Judgment',
+        'Taunt / group taunt',
+        'Dodgeable holy shot: hit + draw attention',
+        'Grand Judgment: splash + group taunt',
+        'Boss taunt affects basic attacks briefly; scripted specials remain.',
+      ],
+      [
+        'Holy Area',
+        'Area hit / weakening wave',
+        'Damage nearby foes',
+        'Consecrated Wave: wider damage and weaken',
+      ],
+      [
+        'Vanguard Rush',
+        'Approach / impact push',
+        'Rush to a foe and strike',
+        'Vanguard Impact: rush + short push wave',
+      ],
+      [
+        'Holy Assault',
+        'Area hit / stronger weaken',
+        'Damage nearby foes',
+        'Oath Strike: wider damage and weaken',
+      ],
+      [
+        'Sanctuary Oath',
+        'Party ward / Last Bastion',
+        'Holy area damage, self-heal and nearby party ward',
+        'Last Bastion: bigger blast, self-heal, party ward and weaken',
+        'No immunity. Ward and Shield Stance use only the stronger reduction.',
+      ],
+    ],
+    mage: [
+      [
+        'Arcane Combo',
+        'Magic combo / beam',
+        'Magic combo; third hit splashes',
+        'Arcane Beam: fire a powerful beam',
+      ],
+      [
+        'Frost Bolt',
+        'Single slow / frost burst',
+        'Hit and slow one foe',
+        'Frost Burst: damage and slow around the target',
+      ],
+      [
+        'Spell Interrupt',
+        'Interrupt / bilateral silence',
+        'Dodgeable bolt: stop one warned/aimed attack on hit',
+        'Silence Field: block nearby special skills',
+        'Silence affects you and companions too; basic attacks still work.',
+      ],
+      [
+        'Arcane Fracture',
+        'Vulnerability / group rupture',
+        'Dodgeable bolt: damage and vulnerability',
+        'Arcane Rupture: area damage and vulnerability',
+        'Fracture never stacks; the stronger effect applies.',
+      ],
+      [
+        'Force Pulse',
+        'Push / wider force wave',
+        'Damage and push nearby foes',
+        'Force Wave: wider damage and stronger push',
+      ],
+      [
+        'Magic Shot',
+        'Slowing shot / focused beam',
+        'Magic projectile + brief slow',
+        'Focused Beam: stronger shot + slow',
+      ],
+      [
+        'Arcane Chain',
+        'Chain / wider chainstorm',
+        'Damage leaps between nearby foes',
+        'Chainstorm: stronger, wider chain',
+      ],
+      [
+        'Astral Detonation',
+        'Area burst / brief fracture',
+        'Blast around the target; primary hit strongest',
+        'Arcane Cataclysm: bigger blast and brief vulnerability',
+        'No healing or immunity. Fracture is nonstacking.',
+      ],
+    ],
+    ranger: [
+      [
+        'Bow Combo',
+        'Arrow combo / rapid triple',
+        'Arrow combo; third hit fans out',
+        'Rapid Triple Shot: fire three arrows',
+      ],
+      [
+        'Pinning Shot',
+        'Two slowing arrows / line',
+        'Two arrows slow one foe',
+        'Pinning Volley: line hit + slow',
+      ],
+      [
+        'Self-Heal',
+        'Personal / party healing',
+        'Heal yourself',
+        'Party Heal: you + wounded living allies',
+        'Cannot revive fallen companions.',
+      ],
+      [
+        'Movement Haste',
+        'Personal speed / companion rally',
+        'Move faster',
+        'Companion Rally: nearby companions move and attack faster',
+        'Nearby living allies only; no dash and no faster special skills.',
+      ],
+      [
+        'Arrow Volley',
+        'Area arrows / slowing rain',
+        'Hit nearby foes',
+        'Arrow Rain: wider hits and slow',
+      ],
+      [
+        'Repelling Shot',
+        'Single push / repelling volley',
+        'Shoot one foe and push it back',
+        'Repelling Volley: 3 arrows + stronger push',
+      ],
+      [
+        'Piercing Arrow',
+        'Pierce / slowing piercing burst',
+        'A powerful arrow that pierces defense',
+        'Stronger defense-piercing arrow and slow',
+      ],
+      [
+        'Hunter’s Salvo',
+        'Multi-target / grand hunt',
+        'Fire arrows at several foes',
+        'Grand Hunt: fire two arrows per foe',
+        'When isolated, fire 2 normal or 3 charged arrows at one foe. No piercing.',
+      ],
+    ],
+  };
+
+  function card(game, slot) {
+    const row = skillCards[game.hero.class]?.[slot - 1];
+    return row
+      ? { name: row[0], role: row[1], tap: row[2], charge: row[3], note: row[4] || '' }
+      : null;
+  }
+  function describe(game, slot, rank = game.hero.skills[slot - 1]) {
+    const c = card(game, slot);
+    if (!c || !Number.isInteger(rank) || rank < 1 || rank > 8) return null;
+    const R = game.constructor.rules,
+      cls = game.hero.class,
+      power = game.power(),
+      scale = 1 + 0.15 * (rank - 1),
+      steps = game.tacticMilestones(rank),
+      tactics = R.heroTactics[cls],
+      advanced = R.advancedCharges[slot]?.[cls];
+    const tap = { title: 'Tap', effect: c.tap, metrics: [] },
+      charge = { title: 'Charged', effect: c.charge, metrics: [] };
+    function add(form, key, label, value, unit = '') {
+      form.metrics.push({ key, label, value, unit });
+    }
+    const damage = (f, coefficient, label = 'Base damage', key = 'damage') =>
+      add(f, key, label, power * coefficient * scale);
+    const radius = (f, cfg) =>
+      add(f, 'radius', 'Radius', cfg.radius + (cfg.radiusStep || 0) * steps);
+    function weaken(f) {
+      const w = R.heroTactics.paladin.weaken;
+      add(f, 'weaken', 'Enemy damage reduced', (w.fraction + w.step * steps) * 100, '%');
+      add(f, 'weakenDuration', 'Weaken duration', w.duration + w.durationStep * steps, 's');
+    }
+    function fracture(f, cfg, ultimate = false) {
+      add(
+        f,
+        'fracture',
+        'Enemy damage taken',
+        (ultimate
+          ? cfg.fracture + cfg.fractureStep * steps
+          : cfg.fraction + cfg.fractionStep * steps) * 100,
+        '% bonus',
+      );
+      add(
+        f,
+        'fractureDuration',
+        'Vulnerability duration',
+        ultimate ? cfg.fractureDuration : cfg.duration + cfg.durationStep * steps,
+        's',
+      );
+    }
+    for (const [f, charged] of [
+      [tap, false],
+      [charge, true],
+    ])
+      add(f, 'cooldown', 'Cooldown', game.skillCooldown(slot, charged), 's');
+    if (slot === 1) {
+      const base = (power + 12) * scale;
+      add(
+        tap,
+        'damage',
+        'Combo damage',
+        R.basicAttackCombo.multipliers.map((v) => base * v),
+      );
+      add(
+        tap,
+        'splashDamage',
+        'Third-hit splash',
+        base * R.basicAttackCombo.finisher.secondaryMultiplier,
+      );
+      add(
+        charge,
+        'damage',
+        cls === 'ranger' ? 'Damage per arrow' : 'Base damage',
+        (base * R.chargedSkills.basicDamageMultiplier) / (cls === 'ranger' ? 3 : 1),
+      );
+      if (cls === 'ranger') add(charge, 'arrows', 'Arrows', 3);
+    } else if (slot === 2) {
+      damage(
+        tap,
+        cls === 'ranger' ? 1.2 : 2.2,
+        cls === 'ranger' ? 'Damage per arrow' : 'Base damage',
+      );
+      damage(charge, cls === 'ranger' ? 2.4 : 2.2);
+      if (cls === 'paladin') {
+        weaken(tap);
+        weaken(charge);
+      } else if (cls === 'mage') {
+        add(tap, 'slow', 'Slow duration', 2 + steps * 0.05, 's');
+        add(charge, 'slow', 'Slow duration', R.chargedSkills.second.mage.slow + steps * 0.25, 's');
+      } else {
+        add(tap, 'arrows', 'Arrows', 2);
+        add(tap, 'slow', 'Slow duration', tactics.pin.slow + steps * tactics.pin.slowStep, 's');
+        add(
+          charge,
+          'slow',
+          'Slow duration',
+          tactics.volley.slow + steps * tactics.volley.slowStep,
+          's',
+        );
+      }
+      const cfg = R.chargedSkills.second[cls];
+      if (cfg.range) add(charge, 'reach', 'Reach', cfg.range + steps * 5);
+      if (cfg.radius) add(charge, 'radius', 'Radius', cfg.radius + steps * 5);
+      if (cfg.halfWidth) add(charge, 'width', 'Width', (cfg.halfWidth + steps * 2) * 2);
+    } else if (slot === 3) {
+      if (cls === 'paladin') {
+        add(
+          tap,
+          'protection',
+          'Incoming damage reduced',
+          (tactics.shield.reduction + steps * tactics.shield.reductionStep) * 100,
+          '%',
+        );
+        add(tap, 'duration', 'Duration', tactics.shield.duration, 's');
+        damage(charge, tactics.bash.damage);
+        damage(
+          charge,
+          tactics.bash.damage * tactics.bash.eliteDamage,
+          'Damage vs elites',
+          'eliteDamage',
+        );
+        add(charge, 'reach', 'Reach', tactics.bash.reach + steps * tactics.bash.reachStep);
+        add(charge, 'push', 'Push distance', tactics.bash.push + steps * tactics.bash.pushStep);
+      } else if (cls === 'mage') {
+        add(tap, 'reach', 'Reach', tactics.interrupt.range + steps * tactics.interrupt.rangeStep);
+        radius(charge, tactics.silence);
+        add(
+          charge,
+          'duration',
+          'Silence duration',
+          tactics.silence.duration + steps * tactics.silence.durationStep,
+          's',
+        );
+      } else {
+        for (const f of [tap, charge])
+          add(
+            f,
+            'healing',
+            f === tap ? 'Self-healing' : 'Healing per ally',
+            (45 + power * 0.5) * scale,
+            ' HP',
+          );
+      }
+    } else if (slot === 4) {
+      if (cls === 'ranger') {
+        add(tap, 'movement', 'Movement speed', 25, '% bonus');
+        add(tap, 'duration', 'Duration', Math.min(6, 4 + 0.25 * (rank - 1)), 's');
+        const cfg = tactics.rally;
+        add(
+          charge,
+          'movement',
+          'Companion movement',
+          (cfg.movementBonus + cfg.movementStep * steps) * 100,
+          '% bonus',
+        );
+        add(
+          charge,
+          'attackSpeed',
+          'Companion basic attack speed',
+          (cfg.attackSpeedBonus + cfg.attackSpeedStep * steps) * 100,
+          '% bonus',
+        );
+        add(charge, 'duration', 'Duration', cfg.duration + cfg.durationStep * steps, 's');
+        radius(charge, cfg);
+      } else {
+        const a = cls === 'paladin' ? tactics.judgment : tactics.fracture,
+          b = cls === 'paladin' ? tactics.grandJudgment : tactics.rupture;
+        damage(tap, a.damage);
+        damage(charge, b.primaryDamage, 'Primary damage');
+        damage(charge, b.splashDamage, 'Other targets', 'splashDamage');
+        radius(charge, b);
+        if (cls === 'paladin') {
+          add(tap, 'taunt', 'Taunt duration', a.taunt + steps * a.tauntStep, 's');
+          add(charge, 'taunt', 'Taunt duration', b.taunt + steps * b.tauntStep, 's');
+        } else {
+          fracture(tap, a);
+          fracture(charge, b);
+        }
+      }
+    } else if (slot === 5 || (slot === 7 && cls === 'paladin')) {
+      damage(tap, slot === 7 ? 6 : 2.3);
+      damage(charge, advanced.damage);
+      add(
+        tap,
+        'targets',
+        'Max targets',
+        slot === 5 ? R.heroAreaTargetCaps[5].normal : R.heroAreaTargetCaps[7].paladinNormal,
+      );
+      add(
+        charge,
+        'targets',
+        'Max targets',
+        slot === 5 ? R.heroAreaTargetCaps[5].charged : R.heroAreaTargetCaps[7].paladinCharged,
+      );
+      add(tap, 'radius', 'Radius', slot === 5 ? 350 : 500);
+      radius(charge, advanced);
+      if (cls === 'paladin') weaken(charge);
+      if (cls === 'mage') {
+        add(tap, 'push', 'Push distance', 30 + steps * 3);
+        add(charge, 'push', 'Push distance', advanced.push + advanced.pushStep * steps);
+      }
+      if (cls === 'ranger')
+        add(charge, 'slow', 'Slow duration', advanced.slow + advanced.slowStep * steps, 's');
+    } else if (slot === 6) {
+      add(tap, 'damage', 'Base damage', (power * 1.8 + 20) * scale);
+      damage(
+        charge,
+        advanced.damage / (cls === 'ranger' ? advanced.arrows : 1),
+        cls === 'ranger' ? 'Damage per arrow' : 'Base damage',
+      );
+      if (cls === 'paladin') {
+        radius(charge, advanced);
+        add(charge, 'push', 'Push distance', advanced.push + advanced.pushStep * steps);
+      }
+      if (cls === 'mage') {
+        add(tap, 'slow', 'Slow duration', 2, 's');
+        add(charge, 'slow', 'Slow duration', advanced.slow + advanced.slowStep * steps, 's');
+      }
+      if (cls === 'ranger') {
+        add(tap, 'push', 'Push distance', 45 + steps * 5);
+        add(charge, 'arrows', 'Arrows', advanced.arrows);
+        add(charge, 'push', 'Final arrow push', advanced.push + advanced.pushStep * steps);
+      }
+    } else if (slot === 7) {
+      if (cls === 'mage')
+        for (const [f, cfg] of [
+          [tap, R.classUltimates.mage.chain],
+          [charge, R.classUltimates.mage.chargedChain],
+        ]) {
+          add(
+            f,
+            'damage',
+            'Damage: first / second / later',
+            [cfg.primaryDamage, cfg.secondaryDamage, cfg.tertiaryDamage || cfg.extraDamage].map(
+              (v) => power * v * scale,
+            ),
+          );
+          add(f, 'targets', 'Max targets', cfg.targets);
+          radius(f, cfg);
+        }
+      else {
+        damage(tap, 10);
+        damage(charge, advanced.damage);
+        add(charge, 'slow', 'Slow duration', advanced.slow + advanced.slowStep * steps, 's');
+      }
+    } else if (slot === 8) {
+      for (const [f, cfg] of [
+        [tap, R.classUltimates[cls].normal],
+        [charge, R.classUltimates[cls].charged],
+      ]) {
+        radius(f, cfg);
+        add(f, 'targets', 'Max targets', cfg.maxTargets || cfg.targets);
+        if (cls === 'ranger') {
+          damage(f, cfg.damagePerArrow, 'Damage per arrow');
+          add(f, 'arrows', 'Arrows per target', cfg.arrowsPerTarget || 1);
+          add(f, 'isolated', 'Arrows if one foe', cfg.isolatedArrows);
+        } else if (cls === 'paladin') {
+          damage(f, cfg.damage);
+          add(f, 'healing', 'Self-heal', game.hero.maxHp * cfg.heal, ' HP');
+          add(f, 'ward', 'Party damage reduced', cfg.wardReduction * 100, '%');
+          add(f, 'wardDuration', 'Ward duration', cfg.wardDuration + cfg.wardStep * steps, 's');
+          if (cfg.weaken) weaken(f);
+        } else {
+          damage(f, cfg.primaryDamage, 'Primary damage');
+          damage(f, cfg.splashDamage, 'Other targets', 'splashDamage');
+          if (cfg.fracture) fracture(f, cfg, true);
+        }
+      }
+    }
+    return { ...c, rank, tap, charge };
+  }
+  function number(value) {
+    return String(Math.round((value + Number.EPSILON) * 100) / 100);
+  }
+  function value(metric) {
+    return (
+      (Array.isArray(metric.value) ? metric.value.map(number).join(' / ') : number(metric.value)) +
+      metric.unit
+    );
+  }
+  function changes(game, slot, rank = game.hero.skills[slot - 1]) {
+    if (rank < 1 || rank >= 8) return [];
+    const before = describe(game, slot, rank),
+      after = describe(game, slot, rank + 1);
+    return ['tap', 'charge'].map((form) => ({
+      title: before[form].title,
+      rows: after[form].metrics.flatMap((m) => {
+        const old = before[form].metrics.find((p) => p.key === m.key);
+        return JSON.stringify(old.value) === JSON.stringify(m.value)
+          ? []
+          : [{ label: m.label, value: value(old) + ' → ' + value(m) }];
+      }),
+    }));
+  }
+  const api = { card, describe, changes, value };
+  if (typeof module !== 'undefined') module.exports = api;
+  else root.PrototypeSkillReference = api;
+})(typeof window !== 'undefined' ? window : globalThis);

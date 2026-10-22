@@ -10,6 +10,7 @@ function shell(language, heroClass = 'paladin') {
   const ctx = new Proxy({}, { get: (o, k) => o[k] || (() => {}) });
   function el() {
     const classes = new Set();
+    let content = '';
     return {
       firstChild: { textContent: '' },
       dataset: {},
@@ -18,7 +19,13 @@ function shell(language, heroClass = 'paladin') {
       style: {},
       width: 393,
       height: 852,
-      textContent: '',
+      get textContent() {
+        return content;
+      },
+      set textContent(value) {
+        content = value;
+        this.children = [];
+      },
       classList: {
         add: (x) => classes.add(x),
         remove: (x) => classes.delete(x),
