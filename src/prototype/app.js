@@ -524,6 +524,8 @@
       'BASE DE CAMPO · Sal del pueblo → terreno abierto fuera del camino → Menú → Establecer cuartel básico (GRATIS).',
     'FIELD BASE · Construction in progress. Keep your builder assigned.':
       'BASE DE CAMPO · Construcción en curso. Mantén al constructor asignado.',
+    'Open ground off the road. One companion builds it.':
+      'Terreno abierto fuera del camino. Un compañero lo construye.',
     'Try Recall now': 'Prueba Reagrupar ahora',
     'Try it now': 'Pruébalo ahora',
   });
@@ -1867,8 +1869,7 @@
     );
   }
   function openMain() {
-    const rank = game.s.expeditionRank || 1,
-      canBuild = !game.isDungeon() && game.availableLabor().length > 0,
+    const canBuild = !game.isDungeon() && game.availableLabor().length > 0,
       cost = game.barracksBuildCost(),
       costLabel = cost ? cost + ' crowns' : 'FREE';
     openMenu('Adventure menu', '', [
@@ -1881,13 +1882,7 @@
           ? game.isDungeon()
             ? 'Build in the field, outside dungeons'
             : 'An idle active Soldier or Ranger is needed'
-          : cost === 0
-            ? 'FIRST BARRACKS FREE · Creates a nearby companion recovery base'
-            : rank >= 4
-              ? 'One companion builds a Basic camp · optional Full upgrade costs ' +
-                game.barracksUpgradeCost() +
-                ' crowns'
-              : 'One companion builds a recovery base; Full upgrade unlocks at Expedition 4',
+          : 'Open ground off the road. One companion builds it.',
         !canBuild || game.hero.gold < cost,
         !!game.s.quests['quest-barracks']?.barracksBriefed &&
           !game.s.quests['quest-barracks'].paid &&
