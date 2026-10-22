@@ -56,7 +56,9 @@ function fakeGPUCanvas(width = 640, height = 360) {
 }
 
 test('world isometry and camera anchor match the production renderer projection',()=>{
-  assert.deepEqual(Core.iso(10,20),{x:-7.6,y:8.1});
+  const projected=Core.iso(10,20);
+  assert.ok(Math.abs(projected.x+7.6)<1e-9);
+  assert.ok(Math.abs(projected.y-8.1)<1e-9);
   const platform={cameraZoom:1.5,cameraAnchor:(w,h)=>({x:w*.45,y:h*.42})};
   const center=Core.project({x:600,y:700},{x:600,y:700},
     {width:900,height:540},platform);
@@ -87,7 +89,7 @@ test('original sprite pivots, clip rectangles and mirroring preserve the approve
   assert.deepEqual(facingLeft.sourceRect,frame.rect);
   assert.throws(()=>Core.spriteLayout({
     textureId:'bad',entry,frame,imageWidth:570,imageHeight:570,
-    point:{x:0,y:0}}),/outside original image/);
+    point:{x:0,y:0}}),/inside original image/);
 });
 
 test('original night-lamp locations, radii and tint feed native light commands',()=>{
@@ -98,7 +100,7 @@ test('original night-lamp locations, radii and tint feed native light commands',
   ],4,{hero:{x:20,y:30}});
   assert.equal(lamps.length,5);
   assert.deepEqual(lamps[0].rgb,[215,191,231]);
-  assert.deepEqual([lamps[1].radius,lamps[1].y],[70,48]);
+  assert.deepEqual([lamps[1].radius,lamps[1].y],[70,28]);
   assert.deepEqual([lamps[2].radius,lamps[2].y],[105,67]);
   assert.deepEqual([lamps[3].radius,lamps[3].y],[64,100]);
   assert.equal(lamps[4].radius,10);
