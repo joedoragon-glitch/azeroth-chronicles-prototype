@@ -2153,8 +2153,12 @@
       PrototypeVisuals.footpaths(ctx, z.footpaths || [], screen);
       if (!game.isDungeon())
         PrototypeVisuals.bridges(ctx, screen, i, optimized ? null : PrototypeMaterials);
-      PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000);
-      PrototypeCombatVisuals.ground(ctx, screen, game, 'underlay-cue', game.s.time);
+      // Moving combat warnings cannot be frozen into the PixiJS cached terrain.
+      // Their real, current state is drawn by the transparent 2D cue overlay.
+      if (renderLayer !== 'background') {
+        PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000);
+        PrototypeCombatVisuals.ground(ctx, screen, game, 'underlay-cue', game.s.time);
+      }
       finishPhase('terrain');
       if (renderLayer === 'background') return;
       const boardCue = null,

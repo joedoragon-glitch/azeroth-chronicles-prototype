@@ -6,7 +6,7 @@ The owner requested five separate chat checkpoints. This branch contains Step 2 
 
 ## Baseline and scope
 
-- Starting main: 869049797d5e29270886871c89068f648c1f2a6c; 0.9.1+snapshot.dev.166.
+- Starting main: 869049797d5e29270886871c89068f648c1f2a6c; package.json/build-info/sw identify 0.9.1+snapshot.dev.167 (maintained docs still cite earlier dev.166).
 - Read AGENTS.md, DEVELOPMENT_STATE.md, DOCUMENTATION_INDEX.md, ARCHITECTURE.md and WEBGL_RENDERER_PILOT_PREPARATION_20261022.md.
 - One authoritative Campaign, original input, audio and v4 saves. No gameplay/rule/balance changes.
 - Only two graphics choices: Canvas 2D (default) or PixiJS WebGL2 (experimental).
