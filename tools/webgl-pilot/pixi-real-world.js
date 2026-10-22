@@ -73,15 +73,22 @@
    const c=document.createElement('canvas');c.width=sizeX;c.height=sizeY;return c;
  }
  function candidateEntities(game,screenPoint,width,height){
-   const z=game.zone(),candidates=[];
+   const z=game.zone(),candidates=[],keyCounts=new Map();
    function add(list,kind){
      for(const entity of list||[]){
        if(kind==='enemy'&&entity.hp<=0)continue;
        const p=screenPoint(entity);
        if(p.x< -250||p.x>width+250||p.y< -250||p.y>height+250)continue;
+       // Object names/structures are not necessarily unique in a zone.
+       // Use a stable id where present, otherwise an authored world position.
+       const identity=entity.id!=null?String(entity.id):
+         String(entity.name||entity.structure||'object')+':'+entity.x+':'+entity.y;
+       const baseKey=kind+':'+identity;
+       const repeat=keyCounts.get(baseKey)||0;
+       keyCounts.set(baseKey,repeat+1);
        candidates.push({entity,visual:{...entity,renderKind:kind,
          spriteIdentity:entity},kind,point:p,
-         key:kind+':'+String(entity.id||entity.name||entity.structure||candidates.length)});
+         key:repeat?baseKey+'#'+repeat:baseKey});
      }
    }
    add(z.props,'prop');add(game.visibleNPCs(),'npc');
@@ -105,8 +112,9 @@
        if(y<top)top=y;if(y>bottom)bottom=y;
      }
    }
-   need(right>=left&&bottom>=top,
-     'Original procedural art had no painted pixels: '+visual.renderKind);
+   // Some original entities intentionally have no independent body: their
+   // artwork belongs to the terrain pass. Report unexpected blanks separately.
+   if(right<left||bottom<top)return null;
    left=Math.max(0,left-2);top=Math.max(0,top-2);
    right=Math.min(w-1,right+2);bottom=Math.min(h-1,bottom+2);
    const tight=canvas(right-left+1,bottom-top+1);
@@ -205,7 +213,9 @@
      const textureLoads=new Map(),proceduralBakes=new Map();
      let measuredResourcesLocked=false,proceduralTextureBytes=0;
      const counters={proceduralBakes:0,authoredTextures:0,missingProcedural:0,
-       unsupportedDynamicOverlays:0};
+       unsupportedDynamicOverlays:0,intentionallyBodyless:0,
+       unexpectedEmptyArtwork:0};
+     const skippedArtwork=new Map();
      async function ensureTexture(src){
        if(measuredResourcesLocked&&!textureLoads.has(src))
          throw Error('New sprite artwork entered measured frames without preloading: '+src);
@@ -230,6 +240,15 @@
        const visible=candidateEntities(game,pointOf,width,height);
        const records=[];
        for(const {entity,visual,key,point} of visible){
+         if(entity.interactionOnly ||
+           (entity.kind==='landmark' && String(entity.id||'').startsWith('bridge-'))){
+           counters.intentionallyBodyless++;
+           if(!skippedArtwork.has(key))skippedArtwork.set(key,{
+             id:key,reason:entity.interactionOnly?'interaction-only (no world body)':
+               'bridge artwork already in terrain',expected:true
+           });
+           continue;
+         }
          const selected=adapter.commandFor(visual,{x:point.x/zoom,y:point.y/zoom},
            {region:game.regionIndex(),rescued:!!game.s.rescued[entity.family]});
          if(selected.supported){
@@ -246,6 +265,16 @@
              if(measuredResourcesLocked)
                throw Error('New procedural actor entered measured frames without preparation: '+key);
              const baked=drawProceduralEntity(visual,game);
+             if(!baked){
+               counters.unexpectedEmptyArtwork++;
+               skippedArtwork.set(key,{
+                 id:key,kind:entity.renderKind,visualKind:entity.kind||null,
+                 presentation:entity.presentation||null,
+                 reason:'original drawing routine painted zero body pixels',expected:false
+               });
+               proceduralBakes.set(key,null);
+               continue;
+             }
              const id='prepared-procedural:'+key;
              const bytes=baked.image.width*baked.image.height*4;
              need(proceduralTextureBytes+bytes<=64*1024*1024,
@@ -258,6 +287,7 @@
              counters.proceduralBakes++;
            }
            const b=proceduralBakes.get(key);
+           if(!b)continue;
            records.push({key,textureId:b.id,
              x:point.x+b.dx*zoom,y:point.y+b.dy*zoom,
              width:b.image.width*zoom,height:b.image.height*zoom,
@@ -310,6 +340,15 @@
        for(const variant of found.entry.variants||[])if(variant.src)urls.add(variant.src);
      }
      await Promise.all([...urls].map(ensureTexture));
+     // Prepare objects across the WHOLE upcoming scripted camera path.
+     // This prevents a surprise Canvas bake during measured GPU frames.
+     for(let warm=0;warm<14;warm++){
+       const pos=game.safe(starting.x+Math.sin(warm*.35)*32,
+         starting.y+(Math.cos(warm*.29)-1)*24);
+       Object.assign(game.hero,pos);
+       await buildFrame();
+     }
+     Object.assign(game.hero,starting);
      await buildFrame();scene.draw();
      measuredResourcesLocked=true;
      const prepMs=now()-prepStarted;
@@ -365,6 +404,10 @@
          pixiGpuSceneWithIndependentMovingActors:stats(gpuTimes)},
        actorsAndLights:lastCounts,counters,
        proceduralTextureBytes,pixelParity:pixels,
+       skippedArtDetails:[...skippedArtwork.values()].slice(0,60),
+       caution:counters.unexpectedEmptyArtwork?
+         'Some original entities painted no standalone sprite. See skippedArtDetails; image parity remains a release blocker.':
+         'Known bodyless landmarks are already drawn in original terrain.',
        dependency:'PixiJS 8.22.0 pinned external development CDN (requires connectivity)',
        incompleteFeatures:[
          'Procedural actor bodies currently use one-time original art textures, not live art state',
