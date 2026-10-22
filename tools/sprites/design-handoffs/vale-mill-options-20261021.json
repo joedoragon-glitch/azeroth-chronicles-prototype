@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-options-awaiting-owner-choice",
+  "designId": "vale-mill-options-20261021",
+  "name": "Mill pond",
+  "kind": "structure",
+  "nextAction": "Owner selects or revises A/B/C. Do not activate or publish; implementation batch is on hold.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Owner requested procedural A/B/C designs and a bounded regional landmark assessment; no option accepted and no implementation authorized.",
+    "decisionDate": "2026-10-21",
+    "repositoryIssueOrPR": null,
+    "contentDocuments": [
+      "docs/VALE_LANDMARK_OPTIONS_20261021.md"
+    ],
+    "locationAndLore": "Greenwood Vale; exact native NPC id mill-pond"
+  },
+  "decisions": {
+    "conceptAcceptance": "Alternatives requested only.",
+    "proceduralDesignAcceptance": null,
+    "spriteProductionAuthorization": null,
+    "generatedAppearanceAcceptance": null,
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "0f5bf0212dacab5c1551e3ae36915a0bfbf8ca4a",
+    "ownerFilesAndBranches": [
+      "tools/visual-review/vale-landmark-options-20261021/designs.cjs",
+      "design/vale-landmark-options"
+    ],
+    "exactEntityState": {
+      "zone": "vale",
+      "id": "mill-pond",
+      "choices": [
+        "A",
+        "B",
+        "C"
+      ],
+      "drawBranch": "mill"
+    },
+    "isolatedReferencePath": "tools/visual-review/vale-landmark-options-20261021/mill-options.png",
+    "isolatedReferenceHash": "3266c0ce867245eccadb8a14016e4437ab37d15e79768b25ede053cb91b205b0",
+    "gameplayContextPaths": [
+      "tools/visual-review/vale-landmark-options-20261021/mill-current-context.webp"
+    ],
+    "traitsToPreserve": [
+      "terracotta tile",
+      "warm plaster and timber",
+      "mossy stone",
+      "local shallow three-quarter perspective",
+      "recognizable service silhouette"
+    ],
+    "assetSpecificDependencies": [
+      "src/prototype/visuals.js",
+      "src/prototype/renderer.js",
+      "src/prototype/world.js",
+      "src/prototype/rules.js"
+    ],
+    "previewSourceSha256": "409cabbe721e6dddb44e23581805e0d0615ffe74c5770ef09d945fdcd6de8033",
+    "contextLimit": "Native 150% current geometry, procedural fallback only. Alternatives are isolated previews, not integrated gameplay screenshots."
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [
+      "vale:mill-pond"
+    ],
+    "requiredVisibleAssets": [
+      "Mill pond"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Three independent options; no selection inferred"
+    ],
+    "proceduralOwnersAndReasons": [
+      "Preview-only canvas definitions. Selected design would later enter visuals.js after native footprint/door/label/occlusion review."
+    ]
+  },
+  "animationRequirements": {
+    "status": "undecided",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      {
+        "option": "A",
+        "name": "Wheel House",
+        "description": "A working timber mill with a large waterwheel.",
+        "referencePath": "tools/visual-review/vale-landmark-options-20261021/mill-A.png",
+        "referenceSha256": "95245a36f75960ac0739b458e5b41264ba86ad7a430bf0d3557b44f5c42435e3",
+        "accepted": false
+      },
+      {
+        "option": "B",
+        "name": "Pondside Mill",
+        "description": "A low mill and covered race beside the pond.",
+        "referencePath": "tools/visual-review/vale-landmark-options-20261021/mill-B.png",
+        "referenceSha256": "468862e320fdc52a68f397fb5b13f1528cb9cd5ed218538d3e706d7674cd2936",
+        "accepted": false
+      },
+      {
+        "option": "C",
+        "name": "Twin Gable Mill",
+        "description": "Paired roofs over a stone millrace and wheel.",
+        "referencePath": "tools/visual-review/vale-landmark-options-20261021/mill-C.png",
+        "referenceSha256": "4a91fd8b49bc014b1fa042c932c680e3987fd916a045f30a1a948c671a05de71",
+        "accepted": false
+      }
+    ],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

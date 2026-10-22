@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-options-awaiting-owner-choice",
+  "designId": "vale-orchard-options-20261021",
+  "name": "Orchard Hamlet · recovery house",
+  "kind": "structure",
+  "nextAction": "Owner selects or revises A/B/C. Do not activate or publish; implementation batch is on hold.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Owner requested procedural A/B/C designs and a bounded regional landmark assessment; no option accepted and no implementation authorized.",
+    "decisionDate": "2026-10-21",
+    "repositoryIssueOrPR": null,
+    "contentDocuments": [
+      "docs/VALE_LANDMARK_OPTIONS_20261021.md"
+    ],
+    "locationAndLore": "Greenwood Vale; exact native NPC id minor"
+  },
+  "decisions": {
+    "conceptAcceptance": "Alternatives requested only.",
+    "proceduralDesignAcceptance": null,
+    "spriteProductionAuthorization": null,
+    "generatedAppearanceAcceptance": null,
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "0f5bf0212dacab5c1551e3ae36915a0bfbf8ca4a",
+    "ownerFilesAndBranches": [
+      "tools/visual-review/vale-landmark-options-20261021/designs.cjs",
+      "design/vale-landmark-options"
+    ],
+    "exactEntityState": {
+      "zone": "vale",
+      "id": "minor",
+      "choices": [
+        "A",
+        "B",
+        "C"
+      ],
+      "drawBranch": "orchard"
+    },
+    "isolatedReferencePath": "tools/visual-review/vale-landmark-options-20261021/orchard-options.png",
+    "isolatedReferenceHash": "dbb8824e081b045dcf74e1d6292948557eba47984828ea24d5912736722e9db4",
+    "gameplayContextPaths": [
+      "tools/visual-review/vale-landmark-options-20261021/orchard-current-context.webp"
+    ],
+    "traitsToPreserve": [
+      "terracotta tile",
+      "warm plaster and timber",
+      "mossy stone",
+      "local shallow three-quarter perspective",
+      "recognizable service silhouette"
+    ],
+    "assetSpecificDependencies": [
+      "src/prototype/visuals.js",
+      "src/prototype/renderer.js",
+      "src/prototype/world.js",
+      "src/prototype/rules.js"
+    ],
+    "previewSourceSha256": "409cabbe721e6dddb44e23581805e0d0615ffe74c5770ef09d945fdcd6de8033",
+    "contextLimit": "Native 150% current geometry, procedural fallback only. Alternatives are isolated previews, not integrated gameplay screenshots."
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [
+      "vale:minor"
+    ],
+    "requiredVisibleAssets": [
+      "Orchard Hamlet · recovery house"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Three independent options; no selection inferred"
+    ],
+    "proceduralOwnersAndReasons": [
+      "Preview-only canvas definitions. Selected design would later enter visuals.js after native footprint/door/label/occlusion review."
+    ]
+  },
+  "animationRequirements": {
+    "status": "undecided",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      {
+        "option": "A",
+        "name": "Harvest Hall",
+        "description": "A communal barn hall with an apple crest.",
+        "referencePath": "tools/visual-review/vale-landmark-options-20261021/orchard-A.png",
+        "referenceSha256": "fe835b7b57a669b923b568d1fd46abec5be6692eef504d35e6317334b87d79d5",
+        "accepted": false
+      },
+      {
+        "option": "B",
+        "name": "Orchard Court",
+        "description": "An open garden court with covered resting bays.",
+        "referencePath": "tools/visual-review/vale-landmark-options-20261021/orchard-B.png",
+        "referenceSha256": "df086396c567f86355d66fceece48e22462d6b10068e29bd199edd826e5db5aa",
+        "accepted": false
+      },
+      {
+        "option": "C",
+        "name": "Wayside Hearth",
+        "description": "A low orchard lodge with a warm chimney and porch.",
+        "referencePath": "tools/visual-review/vale-landmark-options-20261021/orchard-C.png",
+        "referenceSha256": "3b8c9e70405147f423145a6c203ec212558a8dde1da3f315090390fdbfdce37c",
+        "accepted": false
+      }
+    ],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}
