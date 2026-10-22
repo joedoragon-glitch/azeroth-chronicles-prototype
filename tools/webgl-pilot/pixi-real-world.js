@@ -124,6 +124,31 @@
  function pairSource(asset){
    return asset?.texture?.src||asset?.texture?.id||'unknown';
  }
+ function compareByArea(reference,actual,width,height) {
+   // Partition the entire visible scene to localize mismatches. This runs
+   // outside recorded timings and DOES NOT relax any acceptance threshold.
+   const out=[];
+   for(let row=0;row<3;row++)for(let col=0;col<3;col++){
+     const x0=Math.floor(col*width/3),x1=Math.floor((col+1)*width/3),
+       y0=Math.floor(row*height/3),y1=Math.floor((row+1)*height/3);
+     let changed=0,total=0,max=0,count=0;
+     for(let y=y0;y<y1;y++)for(let x=x0;x<x1;x++){
+       const i=4*(y*width+x);let d=0;count++;
+       for(let c=0;c<3;c++){
+         const n=Math.abs(reference[i+c]-actual[i+c]);
+         total+=n;d=Math.max(d,n);max=Math.max(max,n);
+       }
+       if(d>6)changed++;
+     }
+     out.push({
+       zone:['top','middle','bottom'][row]+'-'+['left','center','right'][col],
+       percentPixelsWithin6:+(100*(1-changed/count)).toFixed(3),
+       meanRgbDifference:+(total/(count*3)).toFixed(3),
+       maxChannelDifference:max
+     });
+   }
+   return out;
+ }
  function reportDiff(reference,actual){
    const n=Math.min(reference.length,actual.length);
    let change=0,total=0,worst=0;
@@ -322,9 +347,16 @@
        const lamps=window.AzerothNativeWebGLCore.lampGlowCommands(sourceLights.slice(0,36),
          i,{darkness,hero:pointOf(game.hero)});
        scene.syncLamps(lamps);
+       const lightState=game.daylightPhase?.() || {};
+       scene.setAtmosphere({
+         region:i,darkness,
+         peaceBlend:game.peace ? (lightState.phase==='victory-sunrise'?
+           lightState.progress:1) : 0,
+         optimized:false,
+         warmth:lightState.warmth||0,phase:lightState.phase||'day'
+       });
        return {visible:records.length,nightLights:lamps.length};
      }
-     scene.setNightTint(night?[11,25,42]:[213,229,163],night?.48:.045);
      status.textContent='Preparing approved procedural body textures and actor animations…';
      // Warm the original atlases first so each measured frame only moves
      // PixiJS scene nodes instead of waiting for network decode.
@@ -383,7 +415,8 @@
            });
            const actual=image?.pixels||image;
            if(actual?.length===source.length)
-             pixels.push({frame,parity:reportDiff(source,actual)});
+             pixels.push({frame,parity:reportDiff(source,actual),
+               regions:compareByArea(source,actual,width,height)});
            else pixels.push({frame,error:'Pixi extraction returned unexpected dimensions'});
          }catch(error){pixels.push({frame,error:String(error.message)});}
        }
@@ -409,6 +442,7 @@
          'Some original entities painted no standalone sprite. See skippedArtDetails; image parity remains a release blocker.':
          'Known bodyless landmarks are already drawn in original terrain.',
        dependency:'PixiJS 8.22.0 pinned external development CDN (requires connectivity)',
+       diagnostics:'Nine screen regions locate source mismatches; GPU atmosphere now uses original top-to-bottom region grade and daytime/sunset tint instead of one flat color.',
        incompleteFeatures:[
          'Procedural actor bodies currently use one-time original art textures, not live art state',
          'Full original day/night screen-blend grading and lamp fixtures are not yet parity verified',
@@ -416,6 +450,7 @@
          'Full depth/labels/room architecture parity is not yet validated'
        ],
        workEquivalent:false,
+       timingCaution:'Canvas and PixiJS workloads are NOT yet equivalent. PixiJS times include CPU-side scene work and render submission, not independently measured GPU completion; the Canvas reference includes synchronous readback. Do not interpret 1ms as actual complete-game WebGL FPS.',
        limitation:'This is real GPU scene-graph animation, not a frozen full-world screenshot. It is also not a finished native full game renderer or acceptable game settings option.'
      };
      results.textContent=JSON.stringify(report,null,2);

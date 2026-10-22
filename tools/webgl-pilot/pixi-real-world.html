@@ -36,11 +36,12 @@ to the playable GitHub Pages game.</p>
 <div class="flex"><section><h2>Original Canvas 2D (reference)</h2>
 <canvas id="reference" width="1600" height="900"></canvas></section>
 <section><h2>PixiJS WebGL2 (actors + scene + GPU lamps)</h2><div id="pixi-output"></div></section></div>
+<p class="note"><strong>Fidelity audit v3:</strong> This test now uses Azeroth's original regional night/day gradients instead of a flat overlay and reports pixel differences for nine screen areas. Timings remain provisional until artwork and gameplay workloads match.</p>
 <h2>Visual parity and performance</h2><pre id="results">Run the experiment to inspect counts and pixel differences.</pre>
 </main>
 <script defer src="https://cdn.jsdelivr.net/npm/pixi.js@8.22.0/dist/pixi.min.js"></script>
 <script defer src="./tools/webgl-pilot/native-webgl2-core.js"></script>
 <script defer src="./tools/webgl-pilot/native-sprite-adapter.js"></script>
-<script defer src="./tools/webgl-pilot/pixi-scene-bridge.js"></script>
-<script defer src="./tools/webgl-pilot/pixi-real-world.js?v=2"></script>
+<script defer src="./tools/webgl-pilot/pixi-scene-bridge.js?v=3"></script>
+<script defer src="./tools/webgl-pilot/pixi-real-world.js?v=3"></script>
 </body></html>
