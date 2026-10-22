@@ -22,9 +22,9 @@ jobs:
     outputs:
       reuse: ${{ steps.reuse.outputs.reuse || 'false' }}
       run_id: ${{ steps.reuse.outputs.run_id }}
-      # One-time isolated GPU+Canvas hybrid diagnostic publication. No gameplay checks.
+      # One-time isolated four-strategy graphics diagnostic publication. No gameplay checks.
       # Exact parent SHA limits this exception to the next main push.
-      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == '892b6b353ce30c1d0f3181e44dd46a0a373837e2' }}
+      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == '4c3536391ce7ef0088113ba4433bce91373745e1' }}
     steps:
       - uses: actions/checkout@v4
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
