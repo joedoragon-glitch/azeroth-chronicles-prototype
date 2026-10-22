@@ -20,8 +20,8 @@ moving GPU textures. No completed game frame is uploaded during timed WebGL2 dra
 <p class="note"><b>Known differences:</b> Individual procedural body paintings are currently static after
 their initial bake; detailed outlines, combat overlays, certain lamp fixtures, world
 labels and visual effects have not yet been ported. These omissions are recorded, not hidden.
-Any timing advantage is provisional until full scene parity passes. This branch is not deployed
-to the playable GitHub Pages game.</p>
+Any timing advantage is provisional until full scene parity passes. This separate experiment is published for testing, but not selectable
+in the playable game.</p>
 <label>Region<select id="region"><option value="vale">Greenwood Vale</option><option value="march">Whispering Marches</option>
 <option value="highlands">Ironroot Highlands</option><option value="frontier">Ashen Frontier</option>
 <option value="crown">Dark Crown</option></select></label>
@@ -36,12 +36,12 @@ to the playable GitHub Pages game.</p>
 <div class="flex"><section><h2>Original Canvas 2D (reference)</h2>
 <canvas id="reference" width="1600" height="900"></canvas></section>
 <section><h2>PixiJS WebGL2 (actors + scene + GPU lamps)</h2><div id="pixi-output"></div></section></div>
-<p class="note"><strong>Fidelity audit v3:</strong> This test now uses Azeroth's original regional night/day gradients instead of a flat overlay and reports pixel differences for nine screen areas. Timings remain provisional until artwork and gameplay workloads match.</p>
+<p class="note"><strong>Fidelity audit v4:</strong> Adds Azeroth's real final radial vignette as a PixiJS GPU gradient, drawn after the lamp glows. Compare lighting-only parity to v3 (~95.3% at night in Greenwood Vale), with background-only parity still expected to remain 100%. The implementation has passed source-level tests, but visual improvement is NOT yet confirmed. Timings remain provisional.</p>
 <h2>Visual parity and performance</h2><pre id="results">Run the experiment to inspect counts and pixel differences.</pre>
 </main>
 <script defer src="https://cdn.jsdelivr.net/npm/pixi.js@8.22.0/dist/pixi.min.js"></script>
 <script defer src="./tools/webgl-pilot/native-webgl2-core.js"></script>
 <script defer src="./tools/webgl-pilot/native-sprite-adapter.js"></script>
-<script defer src="./tools/webgl-pilot/pixi-scene-bridge.js?v=4"></script>
-<script defer src="./tools/webgl-pilot/pixi-real-world.js?v=5"></script>
+<script defer src="./tools/webgl-pilot/pixi-scene-bridge.js?v=5"></script>
+<script defer src="./tools/webgl-pilot/pixi-real-world.js?v=6"></script>
 </body></html>

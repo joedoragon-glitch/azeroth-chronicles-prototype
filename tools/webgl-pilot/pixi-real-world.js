@@ -369,6 +369,8 @@
          optimized:false,
          warmth:lightState.warmth||0,phase:lightState.phase||'day'
        });
+       // The original Canvas vignette occurs AFTER night pools and regional grading.
+       scene.setVignette({darkness,optimized:false});
        return {visible:records.length,nightLights:lamps.length};
      }
      status.textContent='Preparing approved procedural body textures and actor animations…';
@@ -492,13 +494,14 @@
        perFrameMs:{fullLiveOriginalCanvas:stats(canvasTimes),
          pixiGpuSceneWithIndependentMovingActors:stats(gpuTimes)},
        actorsAndLights:lastCounts,counters,
+       gpuVignette:scene.metrics().vignetteActive,
        proceduralTextureBytes,pixelParity:pixels,
        skippedArtDetails:[...skippedArtwork.values()].slice(0,60),
        caution:counters.unexpectedEmptyArtwork?
          'Some original entities painted no standalone sprite. See skippedArtDetails; image parity remains a release blocker.':
          'Known bodyless landmarks are already drawn in original terrain.',
        dependency:'PixiJS 8.22.0 pinned external development CDN (requires connectivity)',
-       diagnostics:'Full scene, background-only and original-Canvas-vs-GPU lighting-only comparisons separate missing actors/effects from lamp and color differences in nine screen regions. Lamp positions, fixture offsets and glow radii scale with camera zoom. Readbacks excluded from timed frames.',
+       diagnostics:'Fidelity audit v4: original full-screen radial vignette now runs on PixiJS GPU AFTER night pools. Background and lighting-only parity remain separately measured in nine regions. Browser parity unverified until this experiment runs.',
        incompleteFeatures:[
          'Procedural actor bodies currently use one-time original art textures, not live art state',
          'Full original day/night screen-blend grading and lamp fixtures are not yet parity verified',
