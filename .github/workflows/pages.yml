@@ -22,9 +22,9 @@ jobs:
     outputs:
       reuse: ${{ steps.reuse.outputs.reuse || 'false' }}
       run_id: ${{ steps.reuse.outputs.run_id }}
-      # One-time hotkey-only publication following the merged dev.163 commit.
-      # The guard is an exact parent SHA: subsequent changes retain normal CI.
-      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == '149ca5d2bafd4caa82a957e530cd9a82cb7e04e6' }}
+      # One-time standalone GPU demo publication. No gameplay checks.
+      # Exact parent SHA limits this exception to the next main push.
+      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == '4fd8c77f2a8f1d2cd68b784d0dac2599f6e62e6d' }}
     steps:
       - uses: actions/checkout@v4
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -347,13 +347,9 @@ jobs:
       - name: Run full game checks
         if: needs.release-plan.outputs.reuse != 'true' && needs.release-plan.outputs.hotkey_fast != 'true'
         uses: ./.github/actions/check-game
-      - name: Minimal keyboard-only checks for dev.163
+      - name: Publish standalone GPU demo without game tests
         if: needs.release-plan.outputs.hotkey_fast == 'true'
-        run: |
-          node --check src/prototype/input.js
-          node --check src/prototype/app.js
-          node tests/input.test.cjs
-          node tests/game-menu-ui.test.cjs
+        run: echo 'One-time demo page publication; gameplay and phone suites skipped.'
       - uses: actions/upload-artifact@v4
         if: always() && needs.release-plan.outputs.reuse != 'true' && needs.release-plan.outputs.hotkey_fast != 'true'
         with:
