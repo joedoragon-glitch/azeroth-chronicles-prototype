@@ -17,7 +17,7 @@
    app.stage.addChild(rootStage);
    rootStage.addChild(actorsStage);
    rootStage.addChild(effectsStage);
-   const actors=new Map(), glowObjects=new Map(), gradients=new Map();
+   const actors=new Map(), glowObjects=new Map(), gradients=new Map(), frameTextures=new Map();
    let background=null,grade=null, spritesUpdated=0, resources=new Map();
    let backdropTexture=null, discarded=0;
    const keyOf=entity=>String(entity.key);
@@ -46,7 +46,10 @@
      assert([x,y,w,h].every(Number.isFinite)&&x>=0&&y>=0&&w>0&&h>0 &&
        x+w<=texture.source.width && y+h<=texture.source.height,
        'Animated sprite frame exceeds original atlas');
-     return new PIXI.Texture({source:texture.source,frame:new PIXI.Rectangle(x,y,w,h)});
+     const cacheId=entity.textureId+':'+[x,y,w,h].join(',');
+     if(!frameTextures.has(cacheId)) frameTextures.set(cacheId,
+       new PIXI.Texture({source:texture.source,frame:new PIXI.Rectangle(x,y,w,h)}));
+     return frameTextures.get(cacheId);
    }
    // Each actor moves/animates as a GPU sprite. Canvas never paints a frame.
    // A one-time procedural body bake is allowed as an explicitly counted source.
@@ -156,8 +159,9 @@
      for(const state of glowObjects.values())state.graphic.destroy();
      if(grade)grade.destroy();
      if(background)background.destroy();
+     for(const texture of frameTextures.values())texture.destroy?.(false);
      for(const gradient of gradients.values())gradient.destroy?.();
-     actors.clear();glowObjects.clear();gradients.clear();resources.clear();
+     actors.clear();glowObjects.clear();gradients.clear();resources.clear();frameTextures.clear();
      app.stage.removeChild(rootStage);
      rootStage.destroy({children:false});
    }
