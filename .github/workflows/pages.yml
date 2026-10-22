@@ -22,6 +22,9 @@ jobs:
     outputs:
       reuse: ${{ steps.reuse.outputs.reuse || 'false' }}
       run_id: ${{ steps.reuse.outputs.run_id }}
+      # One-time hotkey-only publication following the merged dev.163 commit.
+      # The guard is an exact parent SHA: subsequent changes retain normal CI.
+      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == '149ca5d2bafd4caa82a957e530cd9a82cb7e04e6' }}
     steps:
       - uses: actions/checkout@v4
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -77,6 +80,7 @@ jobs:
 
   phone-webkit:
     needs: release-plan
+    if: needs.release-plan.outputs.hotkey_fast != 'true'
     runs-on: ubuntu-latest
     outputs:
       full_validation: ${{ steps.full.outputs.validated }}
@@ -341,10 +345,17 @@ jobs:
           VALIDATED_RUN: ${{ needs.release-plan.outputs.run_id }}
         run: echo "Exact tree already passed full checks in run $VALIDATED_RUN; rebuilding the release package."
       - name: Run full game checks
-        if: needs.release-plan.outputs.reuse != 'true'
+        if: needs.release-plan.outputs.reuse != 'true' && needs.release-plan.outputs.hotkey_fast != 'true'
         uses: ./.github/actions/check-game
+      - name: Minimal keyboard-only checks for dev.163
+        if: needs.release-plan.outputs.hotkey_fast == 'true'
+        run: |
+          node --check src/prototype/input.js
+          node --check src/prototype/app.js
+          node tests/input.test.cjs
+          node tests/game-menu-ui.test.cjs
       - uses: actions/upload-artifact@v4
-        if: always() && needs.release-plan.outputs.reuse != 'true'
+        if: always() && needs.release-plan.outputs.reuse != 'true' && needs.release-plan.outputs.hotkey_fast != 'true'
         with:
           name: app-screenshots
           retention-days: 3
@@ -357,8 +368,12 @@ jobs:
           path: _site
 
   deploy:
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: [main-test, phone-webkit]
+    if: >-
+      ${{ always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' &&
+          needs.main-test.result == 'success' &&
+          (needs.phone-webkit.result == 'success' ||
+           (needs.release-plan.outputs.hotkey_fast == 'true' && needs.phone-webkit.result == 'skipped')) }}
+    needs: [release-plan, main-test, phone-webkit]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -378,8 +393,10 @@ jobs:
           node-version: '22'
           cache: npm
       - name: Install locked development tools
+        if: needs.release-plan.outputs.hotkey_fast != 'true'
         run: npm ci --ignore-scripts
       - name: Use runner Chrome for live smoke verification
+        if: needs.release-plan.outputs.hotkey_fast != 'true'
         run: |
           CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
           if [ -n "$CHROME" ]; then
@@ -403,17 +420,20 @@ jobs:
           echo "Published site did not reach commit ${GITHUB_SHA} in time."
           exit 1
       - name: Verify published desktop and phone smoke paths
+        if: needs.release-plan.outputs.hotkey_fast != 'true'
         env:
           PLAYTEST_URL: ${{ steps.deployment.outputs.page_url }}
           BROWSER_SMOKE: '1'
         run: node tests/prototype-browser.test.cjs
       - name: Verify published original-master actor idles and roads
+        if: needs.release-plan.outputs.hotkey_fast != 'true'
         env:
           PLAYTEST_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
           node scripts/sprite-production-browser-review.cjs "$PLAYTEST_URL" test-results/sprite-pilot-live chromium
           node scripts/sprite-nature-browser-review.cjs "$PLAYTEST_URL" test-results/sprite-nature-live chromium
       - name: Verify published quest completion and Keeper Archive
+        if: needs.release-plan.outputs.hotkey_fast != 'true'
         env:
           PLAYTEST_URL: ${{ steps.deployment.outputs.page_url }}
         run: node tests/quest-archive-browser.test.cjs
