@@ -1,0 +1,23 @@
+{
+  "version": "0.9.1+snapshot.dev.162",
+  "localDate": "2026-10-21",
+  "priorPublicVersion": "0.9.1+snapshot.dev.161",
+  "gameplayFixPR": 402,
+  "witnessFixPR": 403,
+  "publicationPR": 404,
+  "publishedCommit": "ab99fca4dd6e0a149bff0ebaaa429717b2c5bf04",
+  "packageOnlyRun": 39719264560,
+  "packageOnlyRunConclusion": "success",
+  "publicVerification": "GitHub Pages deploy action reports success; direct independent public build.txt fetch was unavailable in this tool environment. Published package embeds exact release commit as _site/build.txt.",
+  "checks": [
+    "Changed four game modules pass JavaScript syntax",
+    "Version, generated build-info and service-worker cache match dev.162",
+    "Published artifact generated from committed app inventory",
+    "GitHub Pages deployment action succeeded",
+    "Original full pages.yml restored byte-for-byte and temporary publisher removed"
+  ],
+  "broadCI": false,
+  "browserMatrix": false,
+  "noGameplayBeyondTwoMergedFixes": true,
+  "pending": "Two owner-approved Vale recovery house procedural designs remain pending implementation; four other landmark options remain review-only."
+}
