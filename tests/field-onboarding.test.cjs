@@ -58,6 +58,22 @@ for (const cls of ['paladin', 'mage', 'ranger'])
     assert(e.aggro);
     assert(e.heroParticipated);
     assert(g.damage(e, 5, companion.id), 'companions help after actual hero contact');
+    // A first hit provokes only that monster. The first paid kill with
+    // hero participation unlocks the rest of the field at level 1.
+    assert.equal(g.s.valeFieldAwakened, false);
+    const freshMob = g.makeEnemy(
+      { species: 'goblin', name: 'Still protected', level: 1, hp: 100, damage: 10, gold: 0, xp: 0 },
+      { x: 700, y: 1000 },
+    );
+    z.enemies.push(freshMob);
+    assert(g.awaitsHeroAttack(freshMob));
+    e.hp = 0;
+    g.kill(e);
+    assert(g.s.valeFieldAwakened);
+    assert.equal(g.hero.level, 1, 'opening changes on kill without a level-up');
+    assert(!g.awaitsHeroAttack(freshMob));
+    const remembered = C.restore(g.snapshot(), () => 0.9);
+    assert(remembered.s.valeFieldAwakened, 'first kill persists in a v4 save');
     g.xp(120);
     assert.equal(g.hero.level, 2);
     assert(!z.thornArrival);
@@ -74,7 +90,7 @@ for (const cls of ['paladin', 'mage', 'ranger'])
     z.enemies.push(ordinary);
     assert(!g.awaitsHeroAttack(ordinary));
     g.engage(ordinary, false);
-    assert(ordinary.aggro, 'ordinary aggression resumes at level 2');
+    assert(ordinary.aggro, 'ordinary aggression stays enabled after first kill');
     const thorn = z.enemies.find((u) => u.family === 'thorn');
     assert(g.awaitsHeroAttack(thorn), 'Thornfang keeps his separate once-per-run rule');
     early++;
@@ -220,6 +236,9 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
   restored = C.restore(legacy, () => 0.5);
   assert(restored.s.thornHeroInitiated, 'completed legacy encounter stays unlocked');
   assert(!restored.zone().thornArrival);
+  const invalidField = g.snapshot();
+  invalidField.valeFieldAwakened = 'yes';
+  assert.throws(() => C.restore(invalidField), /Vale first-kill state/);
   const invalid = g.snapshot();
   invalid.thornHeroInitiated = 'yes';
   assert.throws(() => C.restore(invalid), /Thornfang introduction/);
@@ -235,6 +254,33 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
   assert(!g.awaitsHeroAttack(e));
   g.engage(e, true);
   assert(e.aggro, 'dungeon aggression unchanged below level 2');
+}
+{
+  const { g, e } = arena();
+  const other = g.makeEnemy(
+    { species: 'goblin', name: 'Second monster', level: 1, hp: 90, damage: 8, gold: 0, xp: 0 },
+    { x: 720, y: 1000 },
+  );
+  g.zone().enemies.push(other);
+  g.admitOpeningHeroAttack(e);
+  assert(!g.s.valeFieldAwakened, 'nonlethal deliberate attack does not unlock others');
+  assert(g.awaitsHeroAttack(other));
+  e.hp = 0;
+  e.heroParticipated = false;
+  g.kill(e);
+  assert(!g.s.valeFieldAwakened, 'companion-only first kill does not unlock the field');
+  other.hp = 0;
+  other.heroParticipated = true;
+  g.kill(other);
+  assert(g.s.valeFieldAwakened, 'hero-involved first kill unlocks ordinary field');
+  assert(!g.awaitsHeroAttack(e), 'the unlock survives enemy-local flags');
+}
+{
+  const g = new C('normal','paladin',()=>0.5);
+  g.xp(120);
+  const e = g.zone().enemies.find(u=>u.type==='mob'&&!u.guard);
+  assert(g.s.valeFieldAwakened===false);
+  assert(g.awaitsHeroAttack(e),'level 2 without a monster kill is still protected');
 }
 console.log(
   'PASS ' +

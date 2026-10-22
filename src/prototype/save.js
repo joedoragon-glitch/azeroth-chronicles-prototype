@@ -374,6 +374,12 @@
         if (s.restCooldown !== undefined) finite(s.restCooldown, 0, 90);
         if (s.thornHeroInitiated !== undefined && typeof s.thornHeroInitiated !== 'boolean')
           throw Error('Invalid Thornfang introduction');
+        // Old v4 campaigns did not store the first-kill boundary. Preserve
+        // their established field behavior; new campaigns save an explicit fact.
+        if (s.valeFieldAwakened === undefined)
+          s.valeFieldAwakened = (s.statistics?.kills || 0) > 0 || s.hero.level >= R.fieldOnboarding.spawnLevel;
+        if (typeof s.valeFieldAwakened !== 'boolean')
+          throw Error('Invalid Vale first-kill state');
         for (const id of ['rest', 'minor']) {
           const value = s.discovered?.['vale:refuge-help:' + id];
           if (value !== undefined && typeof value !== 'boolean')
