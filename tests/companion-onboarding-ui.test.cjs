@@ -150,6 +150,40 @@ for (const language of ['en', 'es']) {
   assert.equal(JSON.parse(storage.get('azeroth-v4-normal')).recruitmentRequest, null);
 
   s.Prototype.closeMenu();
+  g.zone().enemies = [];
+  g.s.party[0].hp = 0;
+  g.s.party[1].hp = 10;
+  g.s.party[1].healCd = 999;
+  e.get('touch-interact-button').click();
+  click(language === 'en' ? 'Recover fallen companion' : 'Recuperar compañero caído');
+  assert.equal(
+    JSON.parse(storage.get('azeroth-v4-normal')).companionCareRequests.recovery.companionIds[0],
+    g.s.party[0].id,
+  );
+  click(language === 'en' ? 'Treat wounded companions' : 'Curar compañeros heridos');
+  assert(JSON.parse(storage.get('azeroth-v4-normal')).companionCareRequests.treatment);
+  const enemy = g.makeEnemy(
+    { species: 'goblin', level: 1, hp: 100, damage: 1, gold: 0, xp: 0 },
+    { x: g.hero.x + 80, y: g.hero.y },
+  );
+  enemy.aggro = true;
+  g.zone().enemies = [enemy];
+  g.hero.gold = 40;
+  g.resolveCompanionCareRequests();
+  assert.equal(g.hero.gold, 40);
+  s.Prototype.closeMenu();
+  e.get('touch-interact-button').click();
+  assert(
+    e
+      .get('modal-description')
+      .textContent.includes(language === 'en' ? 'nearby combat' : 'combate cercano'),
+  );
+  click(language === 'en' ? 'Cancel queued recovery' : 'Cancelar recuperación en cola');
+  click(language === 'en' ? 'Cancel queued treatment' : 'Cancelar tratamiento en cola');
+  assert.equal(JSON.parse(storage.get('azeroth-v4-normal')).companionCareRequests.recovery, null);
+  assert.equal(JSON.parse(storage.get('azeroth-v4-normal')).companionCareRequests.treatment, null);
+  enemy.aggro = false;
+  s.Prototype.closeMenu();
   const board = g.zone().npcs.find((n) => n.kind === 'quests');
   Object.assign(g.hero, { x: board.x, y: board.y });
   e.get('touch-interact-button').click();

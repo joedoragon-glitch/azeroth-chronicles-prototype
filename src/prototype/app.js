@@ -476,14 +476,14 @@
       'Tu Soldado y tu Ranger te siguen y luchan automáticamente. Usa Reagrupar para reunirlos. El pueblo admite los primeros 3 compañeros; Expedición 2 desbloquea el reclutamiento.',
     'QUEUED · No crowns spent. Tap again to cancel, or choose another companion.':
       'EN COLA · No has gastado coronas. Toca de nuevo para cancelar o elige otro compañero.',
-    'Not enough crowns. Tap to queue this recruit; payment and arrival happen automatically when affordable.':
-      'No tienes suficientes coronas. Toca para dejar el recluta en cola; se pagará y llegará automáticamente cuando puedas pagarlo.',
+    'Not enough crowns. Tap to queue this recruit; payment and arrival happen only when every condition is met.':
+      'No tienes suficientes coronas. Toca para dejar el recluta en cola; se pagará y llegará solo cuando se cumplan todos los requisitos.',
     'Town can employ only the first 3 companions.':
       'El pueblo solo puede contratar a los primeros 3 compañeros.',
     'Joins after training; a full active group sends the recruit to reserve.':
       'Se incorpora tras el entrenamiento; si el grupo está lleno, queda en reserva.',
-    'Joins automatically when affordable; full group means reserve.':
-      'Se incorpora automáticamente cuando puedas pagarlo; si el grupo está lleno, queda en reserva.',
+    'Joins automatically when every condition is met; full group means reserve.':
+      'Se incorpora automáticamente cuando se cumplen todos los requisitos; si el grupo está lleno, queda en reserva.',
     'Cancel queued recruitment': 'Cancelar reclutamiento en cola',
     'Queued recruitment cancelled. No crowns were spent.':
       'Reclutamiento en cola cancelado. No has gastado coronas.',
@@ -495,8 +495,54 @@
       'Soldado en cola de reclutamiento. Toca la misma opción para cancelar.',
     'Ranger recruitment queued. Tap the same choice to cancel.':
       'Ranger en cola de reclutamiento. Toca la misma opción para cancelar.',
-    'You begin with a Soldier and a Ranger. The Soldier fights up close; the Ranger shoots from range and provides Heal. They follow you and fight automatically.\n\nUse Recall squad to cancel their orders and bring them back. Try it now, then open Adventure in the field and establish your first Basic Barracks for FREE. One companion builds it; the Barracks lets you recover fallen companions and manage your active group and reserves.\n\nRescue Mira and train Expedition Rank 2 to unlock a third active companion and recruitment. If you cannot afford an eligible recruit, tap Recruit to queue one. Tap the same choice to cancel, or select another type to replace it. It arrives automatically when you have enough crowns; if your group is full, it rests in reserve.':
-      'Empiezas con un Soldado y un Ranger. El Soldado lucha de cerca; el Ranger dispara a distancia y puede curarte. Te siguen y luchan automáticamente.\n\nUsa Reagrupar para cancelar sus órdenes y reunirlos contigo. Pruébalo y luego abre Aventura en el campo para establecer tu primer cuartel básico GRATIS. Un compañero lo construye; allí podrás recuperar a los caídos y gestionar el grupo activo y las reservas.\n\nRescata a Mira y mejora Expedición al rango 2 para desbloquear el tercer puesto activo y el reclutamiento. Si no puedes pagar un recluta disponible, toca Reclutar para dejarlo en cola. Toca la misma opción para cancelar o elige otro tipo para reemplazarlo. Llegará automáticamente cuando tengas las coronas; si el grupo está lleno, quedará en reserva.',
+    'You begin with a Soldier and a Ranger. The Soldier fights up close; the Ranger shoots from range and provides Heal. They follow you and fight automatically.\n\nUse Recall squad to cancel their orders and bring them back. Try it now, then open Adventure in the field and establish your first Basic Barracks for FREE. One companion builds it; the Barracks lets you recover fallen companions and manage your active group and reserves.\n\nRescue Mira and train Expedition Rank 2 to unlock a third active companion and recruitment. If you cannot afford an eligible recruit, tap Recruit to queue one. Tap the same choice to cancel, or select another type to replace it. It arrives automatically once you have enough crowns and all other requirements still hold; if your group is full, it rests in reserve.':
+      'Empiezas con un Soldado y un Ranger. El Soldado lucha de cerca; el Ranger dispara a distancia y puede curarte. Te siguen y luchan automáticamente.\n\nUsa Reagrupar para cancelar sus órdenes y reunirlos contigo. Pruébalo y luego abre Aventura en el campo para establecer tu primer cuartel básico GRATIS. Un compañero lo construye; allí podrás recuperar a los caídos y gestionar el grupo activo y las reservas.\n\nRescata a Mira y mejora Expedición al rango 2 para desbloquear el tercer puesto activo y el reclutamiento. Si no puedes pagar un recluta disponible, toca Reclutar para dejarlo en cola. Toca la misma opción para cancelar o elige otro tipo para reemplazarlo. Llegará automáticamente cuando tengas las coronas y se cumplan los demás requisitos; si el grupo está lleno, quedará en reserva.',
+  });
+  Object.assign(spanishText, {
+    'Restore living wounded companions to full health.':
+      'Restaura toda la salud de los compañeros vivos y heridos.',
+    'Not enough crowns. Tap to queue; all other requirements must still hold when it executes.':
+      'No tienes suficientes coronas. Toca para dejarlo en cola; los demás requisitos deben seguir cumpliéndose al ejecutarse.',
+    'Basic barracks recovery is available from Expedition Rank 1.':
+      'Los servicios de recuperación del cuartel básico están disponibles desde Expedición 1.',
+    'Companion services require a living, available hero.':
+      'Los servicios de compañeros requieren un héroe vivo y disponible.',
+    'Companion services wait until nearby combat has ended.':
+      'Los servicios de compañeros esperan a que termine el combate cercano.',
+    'The source town Captain is no longer available.':
+      'El capitán del pueblo donde lo pediste ya no está disponible.',
+    'Finish building this Barracks before using companion services.':
+      'Termina este cuartel antes de usar sus servicios de compañeros.',
+    'No requested companion is still fallen.': 'Ninguno de los compañeros elegidos sigue caído.',
+    'No requested companion is living and wounded.':
+      'Ninguno de los compañeros elegidos está vivo y herido.',
+    'A requested companion is away on a resource expedition.':
+      'Un compañero elegido está en una expedición de recursos.',
+    'Not enough crowns for companion care.':
+      'No tienes suficientes coronas para atender a tus compañeros.',
+    'Queued companion care is no longer needed. No crowns were spent.':
+      'La atención en cola ya no es necesaria. No has gastado coronas.',
+    'Queued companion care cancelled. No crowns were spent.':
+      'Atención de compañeros en cola cancelada. No has gastado coronas.',
+    'Companion recovery queued. Tap the same choice to cancel.':
+      'Recuperación de compañero en cola. Toca la misma opción para cancelar.',
+    'Companion treatment queued. Tap the same choice to cancel.':
+      'Tratamiento de compañeros en cola. Toca la misma opción para cancelar.',
+    'Companion recovered.': 'Compañero recuperado.',
+    'Companion recovered': 'Compañero recuperado',
+    'Living companions treated. Fallen companions still require recovery.':
+      'Los compañeros vivos han sido tratados. Los caídos aún necesitan recuperación.',
+    'Companions treated': 'Compañeros tratados',
+    'Living wounded companions restored to full health.':
+      'Los compañeros vivos y heridos recuperaron toda su salud.',
+    'Executes automatically only when every condition is met.':
+      'Se ejecuta automáticamente solo cuando se cumplen todos los requisitos.',
+    'When multiple actions are ready, payment order is recovery, treatment, then recruitment.':
+      'Si hay varias acciones listas, se paga primero la recuperación, luego el tratamiento y por último el reclutamiento.',
+    'Tap again to cancel. No crowns spent.': 'Toca de nuevo para cancelar. No has gastado coronas.',
+    'Tap again to cancel, or choose another companion. No crowns spent.':
+      'Toca de nuevo para cancelar o elige otro compañero. No has gastado coronas.',
+    'Requires safety from nearby combat.': 'Requiere estar fuera de peligro del combate cercano.',
   });
   function translateSegment(piece) {
     const ferryPassage = Campaign.rules.tidalFerryPassage;
@@ -514,6 +560,14 @@
           ' minutes of active play. Reserves can go. Tribute is delivered automatically on return.',
           ' minutos de juego activo. Los compañeros en reserva pueden ir. El tributo se entrega automáticamente al regresar.',
         );
+    if (/^Cancel queued (recovery|treatment)$/.test(piece))
+      return piece
+        .replace('Cancel queued recovery', 'Cancelar recuperación en cola')
+        .replace('Cancel queued treatment', 'Cancelar tratamiento en cola');
+    if (/^Queued (recovery|treatment): /.test(piece))
+      return piece
+        .replace('Queued recovery: ', 'Recuperación en cola: ')
+        .replace('Queued treatment: ', 'Tratamiento en cola: ');
     if (/^Cancel queued (Soldier|Ranger)/.test(piece))
       return piece.replace('Cancel queued ', 'Cancelar en cola: ').replace('Soldier', 'Soldado');
     if (/^Queued recruitment: /.test(piece))
@@ -530,6 +584,8 @@
       return piece
         .replace('Treat wounded companions', 'Curar compañeros heridos')
         .replace('crowns', 'coronas');
+    if (/^Recover (?!fallen companion|Dark Lord)/.test(piece))
+      return piece.replace('Recover ', 'Recuperar ');
     if (/^Recover fallen companion/.test(piece))
       return piece
         .replace('Recover fallen companion', 'Recuperar compañero caído')
@@ -4296,6 +4352,8 @@
           'quest',
           'questComplete',
           'companionRecruitment',
+          'companionRecovery',
+          'companionQueueChanged',
           'supplies',
           'miniClear',
           'archiveKnowledge',

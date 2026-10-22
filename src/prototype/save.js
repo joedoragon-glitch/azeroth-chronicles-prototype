@@ -252,6 +252,39 @@
           )
             throw Error('Invalid pending recruitment');
         }
+        s.companionCareRequests ??= { recovery: null, treatment: null };
+        const care = s.companionCareRequests;
+        if (
+          !care ||
+          typeof care !== 'object' ||
+          Array.isArray(care) ||
+          Object.keys(care).some((kind) => !['recovery', 'treatment'].includes(kind))
+        )
+          throw Error('Invalid companion care requests');
+        for (const kind of ['recovery', 'treatment']) {
+          care[kind] ??= null;
+          const r = care[kind];
+          if (r === null) continue;
+          if (
+            !r ||
+            typeof r !== 'object' ||
+            Array.isArray(r) ||
+            !Array.isArray(r.companionIds) ||
+            !r.companionIds.length ||
+            r.companionIds.length > (kind === 'recovery' ? 1 : 200) ||
+            new Set(r.companionIds).size !== r.companionIds.length ||
+            r.companionIds.some((id) => typeof id !== 'string' || !id.length || id.length > 160) ||
+            typeof r.zone !== 'string' ||
+            !Object.hasOwn(s.zones || {}, r.zone) ||
+            !(
+              r.barracksId === null ||
+              (typeof r.barracksId === 'string' &&
+                r.barracksId.length > 0 &&
+                r.barracksId.length <= 160)
+            )
+          )
+            throw Error('Invalid companion care request');
+        }
         if (s.companionVitalityRank === undefined) s.companionVitalityRank = 0;
         if (s.companionCombatTraining === undefined)
           s.companionCombatTraining = (s.hero?.skills?.[1] || 0) > 0 ? 2 : 1;

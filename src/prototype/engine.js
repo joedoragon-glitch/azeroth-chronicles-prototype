@@ -91,6 +91,7 @@
         gatheringTarget: null,
         resourceExpeditions: [],
         recruitmentRequest: null,
+        companionCareRequests: { recovery: null, treatment: null },
         fountains: {},
         zones: {},
         loot: [],
@@ -4036,6 +4037,7 @@
           this.s.loot.splice(this.s.loot.indexOf(l), 1);
           this.event('gold');
         }
+      this.resolveCompanionCareRequests();
       this.resolveRecruitmentRequest();
     }
 
