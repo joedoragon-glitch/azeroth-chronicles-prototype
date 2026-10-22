@@ -1,0 +1,53 @@
+name: Owner-requested dev.162 first-kill and witness publication (no broad CI)
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+jobs:
+  publish:
+    if: contains(github.event.head_commit.message, 'owner-vale-patch-dev162')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Package existing committed files only
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs'), path = require('node:path');
+          const {core, legacy} = require('./scripts/site-assets.cjs');
+          const sprites = require('./src/prototype/sprite-format.js').resources(require('./assets/sprites/manifest.json'));
+          if (require('./package.json').version !== '0.9.1+snapshot.dev.162') throw Error('Unexpected publication version');
+          fs.mkdirSync('_site', {recursive:true});
+          for (const file of new Set([...core, ...legacy, 'sw.js', ...sprites.map(x=>x.src?.replace(/^\.\//,'')).filter(Boolean)])) {
+            const dest=path.join('_site',file); fs.mkdirSync(path.dirname(dest),{recursive:true}); fs.copyFileSync(file,dest);
+          }
+          fs.writeFileSync('_site/build.txt',process.env.GITHUB_SHA+'\n');
+          NODE
+      - name: Verify four changed game modules parse
+        run: |
+          node --check src/prototype/engine.js
+          node --check src/prototype/save.js
+          node --check src/prototype/field-onboarding.js
+          node --check src/prototype/visuals.js
+          node <<'NODE'
+          const fs=require('node:fs'), v=require('./package.json').version;
+          if (v !== '0.9.1+snapshot.dev.162') throw Error('Wrong release');
+          if (!fs.readFileSync('sw.js','utf8').includes('azeroth-app-v'+v)) throw Error('Stale offline cache');
+          if (!fs.readFileSync('src/prototype/build-info.js','utf8').includes('version:"'+v+'"')) throw Error('Stale build');
+          NODE
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - uses: actions/configure-pages@v5
+      - name: Publish requested first-kill and witness update
+        id: deployment
+        uses: actions/deploy-pages@v5
