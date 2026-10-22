@@ -8,7 +8,7 @@
   const status = byId('status');
   const runButton = byId('run');
   const W = view2d.width, H = view2d.height;
-  const ctx = view2d.getContext('2d', { willReadFrequently: true });
+  const ctx = view2d.getContext('2d');
   const iso = (p) => ({ x: (p.x - p.y) * 0.76, y: (p.x + p.y) * 0.27 });
   const samples = (a) => {
     const sorted = a.slice().sort((x, y) => x - y);
