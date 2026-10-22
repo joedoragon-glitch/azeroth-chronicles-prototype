@@ -360,6 +360,164 @@ for (const language of ['en', 'es']) {
   assert(g.questProgress(g.questDefs()[0]).includes('Construction in progress'));
   e.get('menu-button').click();
   assert(!buildButton().classList.contains('tutorial-highlight'));
+
+  const base = g.zone().buildings.find((b) => b.kind === 'barracks');
+  const text = (en, es) => (language === 'en' ? en : es);
+  const shortHeader = () =>
+    assert(e.get('modal-description').textContent.trim().split(/\s+/).length <= 40);
+  const back = () => e.get('close-button').click();
+  const openBase = () => {
+    s.Prototype.closeMenu();
+    Object.assign(g.hero, { x: base.x, y: base.y });
+    e.get('touch-interact-button').click();
+  };
+  openBase();
+  assert.equal(
+    e.get('modal-title').textContent,
+    text('Barracks under construction', 'Cuartel en construcción'),
+  );
+  shortHeader();
+  base.progress = 4;
+  g.s.party.forEach((u) => {
+    u.order = null;
+  });
+  g.checkQuests();
+  openBase();
+  assert.equal(e.get('modal-title').textContent, text('Basic Barracks', 'Cuartel básico'));
+  shortHeader();
+  const rootLabels = e.get('modal-actions').children.map((b) => b.textContent);
+  assert.equal(rootLabels.length, 5);
+  for (const label of [
+    text('Company', 'Compañía'),
+    text('Recovery', 'Recuperación'),
+    text('Training', 'Entrenamiento'),
+    text('Operations', 'Operaciones'),
+  ])
+    assert(rootLabels.includes(label));
+  assert(
+    !rootLabels.some((label) =>
+      /Recover fallen|Set death|Rescued specialists|Skill journal/.test(label),
+    ),
+  );
+
+  click(text('Recovery', 'Recuperación'));
+  shortHeader();
+  assert(
+    e
+      .get('modal-description')
+      .textContent.includes(text('Local death loss: 15%', 'Pérdida local al caer: 15%')),
+  );
+  click(text('Set death recovery point', 'Establecer punto de reaparición'));
+  assert.equal(g.s.barracksRespawn.id, base.id);
+  assert.equal(e.get('modal-title').textContent, text('Recovery', 'Recuperación'));
+  back();
+  assert.equal(e.get('modal-title').textContent, text('Basic Barracks', 'Cuartel básico'));
+
+  g.s.expeditionRank = 1;
+  click(text('Company', 'Compañía'));
+  assert(
+    e
+      .get('modal-actions')
+      .children.some(
+        (b) =>
+          b.textContent === text('Recruitment — Expedition 2', 'Reclutamiento — Expedición 2') &&
+          b.disabled,
+      ),
+  );
+  back();
+  g.s.expeditionRank = 2;
+  click(text('Company', 'Compañía'));
+  shortHeader();
+  assert(
+    !e
+      .get('modal-actions')
+      .children.some((b) => b.textContent === text('Recovery', 'Recuperación')),
+  );
+  click(text('Manage active group', 'Gestionar grupo activo'));
+  shortHeader();
+  assert.equal(e.get('modal-actions').children.length, g.rosterCount());
+  back();
+  click(text('Recruit companions', 'Reclutar compañeros'));
+  shortHeader();
+  click(text('Recruit Soldier', 'Reclutar Soldado'));
+  assert.equal(g.s.recruitmentRequest.barracksId, base.id);
+  click(text('Cancel queued Soldier', 'Cancelar en cola: Soldado'));
+  assert.equal(g.s.recruitmentRequest, null);
+  back();
+  click(text('Name companions', 'Nombrar compañeros'));
+  shortHeader();
+  back();
+  click(text('Boss pet collection', 'Colección de mascotas de jefes'));
+  shortHeader();
+  const family = g.petCollection()[0].boss.id;
+  click(g.petDefinition(family).name);
+  assert(!e.get('modal-actions').children.some((b) => /^(First|Charged) ·/.test(b.textContent)));
+  click(text('Pet skills', 'Habilidades de mascota'));
+  shortHeader();
+  assert.equal(e.get('modal-actions').children.length, 2);
+  back();
+  back();
+  back();
+  back();
+  assert.equal(e.get('modal-title').textContent, text('Basic Barracks', 'Cuartel básico'));
+
+  click(text('Training', 'Entrenamiento'));
+  shortHeader();
+  assert.equal(e.get('modal-actions').children.length, 3);
+  click(text('Rescued specialists', 'Especialistas rescatados'));
+  shortHeader();
+  assert(
+    e
+      .get('modal-actions')
+      .children.some(
+        (b) =>
+          b.textContent ===
+          text('No specialists rescued yet', 'Aún no hay especialistas rescatados'),
+      ),
+  );
+  back();
+  back();
+  click(text('Operations', 'Operaciones'));
+  shortHeader();
+  click(text('Local objectives', 'Objetivos locales'));
+  assert.equal(e.get('modal-title').textContent, text('Quest board', 'Tablón de misiones'));
+  back();
+  assert.equal(e.get('modal-title').textContent, text('Operations', 'Operaciones'));
+  click(text('Gather resources', 'Recoger recursos'));
+  shortHeader();
+  assert.equal(e.get('modal-title').textContent, text('Resources & labor', 'Recursos y trabajo'));
+  back();
+  back();
+  g.s.expeditionRank = 4;
+  openBase();
+  const upgrade = e
+    .get('modal-actions')
+    .children.find((b) => b.textContent.startsWith('Upgrade to Full Barracks'));
+  assert(upgrade?.disabled, 'upgrade still needs its normal crowns');
+  assert(upgrade.textContent.includes(String(g.barracksUpgradeCost())));
+  base.full = true;
+  base.upgradeProgress = 4;
+  base.upgradePaid = true;
+  openBase();
+  assert.equal(e.get('modal-title').textContent, 'Full Barracks');
+  assert(
+    e
+      .get('modal-actions')
+      .children.some((b) =>
+        b.textContent.startsWith(text('Recover fallen companion', 'Recuperar compañero caído')),
+      ),
+  );
+  assert(
+    e
+      .get('modal-actions')
+      .children.some(
+        (b) => b.textContent === text('Resource expeditions', 'Expediciones de recursos'),
+      ),
+  );
+  click(text('Company', 'Compañía'));
+  assert(
+    e.get('modal-actions').children.some((b) => b.textContent === text('Recovery', 'Recuperación')),
+  );
 }
 console.log(
   'PASS production English/Spanish captain interaction, staged objective, Recall, queue/cancel menu feedback and immediate action saves',
