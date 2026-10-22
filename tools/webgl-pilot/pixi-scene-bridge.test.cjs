@@ -123,3 +123,35 @@ test('scene orders real actors by original isometric depth and retains default G
   assert.equal(actorContainer.children[1].position.x,170);
   scene.destroy();
 });
+
+test('Pixi atmosphere mirrors original vertical night tints and bottom alpha',()=>{
+  const layers=Bridge.atmosphereLayers({region:0,darkness:1,peaceBlend:0});
+  assert.equal(layers.length,1);
+  assert.equal(layers[0].style,'linear');
+  assert.equal(layers[0].colorStops[0].color,'rgba(11,25,42,0.48)');
+  assert.equal(layers[0].colorStops[1].color,'rgba(9,17,30,0.58)');
+  assert.equal(layers[0].start.y,0);
+  assert.equal(layers[0].end.y,1);
+  const peaceful=Bridge.atmosphereLayers({region:4,darkness:1,peaceBlend:1});
+  assert.equal(peaceful[0].colorStops[0].color,'rgba(27,19,43,0.54)');
+  assert.equal(peaceful[0].colorStops[1].color,'rgba(22,31,49,0.3)');
+});
+test('daytime region tint and diagonal sun gradient preserve original palette',()=>{
+  const layer=Bridge.atmosphereLayers({region:1,darkness:0,optimized:false});
+  assert.equal(layer.length,2);
+  assert.equal(layer[0].style,'solid');
+  assert.equal(layer[0].opacity,.05);
+  assert.equal(layer[1].colorStops[0].color,'rgba(255,244,203,0.07)');
+  assert.equal(Bridge.atmosphereLayers({region:1,darkness:0,optimized:true}).length,1);
+});
+test('Pixi atmosphere avoids rebuilding unchanged grades while lights can move',()=>{
+  const {PIXI,app,calls}=pixiFixture();
+  const scene=Bridge.create({PIXI,app,width:640,height:360});
+  scene.setAtmosphere({region:0,darkness:1});
+  const first=calls.glows;
+  scene.setAtmosphere({region:0,darkness:1});
+  assert.equal(calls.glows,first);
+  scene.setAtmosphere({region:1,darkness:1});
+  assert.ok(calls.glows>first);
+  scene.destroy();
+});

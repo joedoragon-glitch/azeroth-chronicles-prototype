@@ -6,6 +6,50 @@
  const assert=(x,msg)=>{if(!x)throw Error(msg);return x;};
  const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
  const hex=rgb=>(rgb[0]<<16)|(rgb[1]<<8)|rgb[2];
+ // Original PrototypeVisuals.atmosphere palettes, unmodified.
+ const NIGHT=[[11,25,42,.48],[12,32,44,.48],[19,29,42,.50],
+   [32,20,35,.52],[27,19,43,.54]];
+ const DAY=[[213,229,163,.045],[150,206,205,.05],[221,219,184,.045],
+   [215,157,120,.05],[166,146,196,.05]];
+ const rgba=(rgb,a)=>'rgba('+rgb.slice(0,3).join(',')+','+a+')';
+ function atmosphereLayers({region=0,darkness=0,peaceBlend=0,
+                            optimized=false,warmth=0,phase='day'}={}) {
+   const i=Math.max(0,Math.min(4,Math.trunc(region)||0));
+   const night=clamp(darkness,0,1),day=1-night,peace=clamp(peaceBlend,0,1);
+   const layers=[];
+   if(night>0){
+     layers.push({type:'night',style:'linear',colorStops:[
+       {offset:0,color:rgba(NIGHT[i],NIGHT[i][3]*night)},
+       {offset:1,color:rgba([9+13*peace,17+14*peace,30+19*peace],
+         (.58-.28*peace)*night)}
+     ],start:{x:0,y:0},end:{x:0,y:1}});
+   }
+   if(day>0){
+     layers.push({type:'day-tint',style:'solid',rgb:DAY[i].slice(0,3),
+       opacity:DAY[i][3]*day});
+     if(!optimized)layers.push({type:'day-sun',style:'linear',
+       start:{x:0,y:0},end:{x:1,y:1},colorStops:[
+         {offset:0,color:rgba([255,244,203],.07*day)},
+         {offset:.45,color:rgba([255,255,255],0)},
+         {offset:1,color:rgba(i>=3?[97,56,55]:[22,55,42],
+           (i>=3?.035:.025)*day)}
+       ]});
+   }
+   if(warmth>0){
+     const sunset=phase==='sunset',strength=clamp(warmth,0,1)*
+       (phase==='victory-sunrise'?1.25:1);
+     layers.push({type:'warmth',style:'linear',
+       start:{x:0,y:sunset?.15:.8},end:{x:1,y:sunset?.9:.1},
+       colorStops:[
+         {offset:0,color:rgba(sunset?[244,139,70]:[248,185,177],
+           (sunset?.23:.18)*strength)},
+         {offset:.52,color:rgba([255,216,143],.07*strength)},
+         {offset:1,color:rgba(sunset?[103,64,126]:[255,233,171],
+           (sunset?.09:.19)*strength)}
+       ]});
+   }
+   return layers;
+ }
  function create({PIXI,app,width,height}={}) {
    assert(PIXI?.Container && PIXI?.Sprite && PIXI?.Graphics && PIXI?.FillGradient,
      'PixiJS v8 scene primitives required');
@@ -18,7 +62,8 @@
    rootStage.addChild(actorsStage);
    rootStage.addChild(effectsStage);
    const actors=new Map(), glowObjects=new Map(), gradients=new Map(), frameTextures=new Map();
-   let background=null,grade=null, spritesUpdated=0, resources=new Map();
+   let background=null,grade=null, atmosphereSignature=null,
+     spritesUpdated=0, resources=new Map();
    let backdropTexture=null, discarded=0;
    const keyOf=entity=>String(entity.key);
    function setBackground(texture,x,y) {
@@ -156,11 +201,27 @@
        glowObjects.delete(id);
      }
    }
-   function setNightTint(color,opacity) {
-     if(grade){effectsStage.removeChild(grade);grade.destroy();}
-     grade=new PIXI.Graphics().rect(0,0,width,height).fill({
-       color:hex(color),alpha:clamp(opacity,0,1)
-     });
+   function setAtmosphere(spec) {
+     const description=atmosphereLayers(spec);
+     const signature=JSON.stringify(description);
+     if(signature===atmosphereSignature)return;
+     atmosphereSignature=signature;
+     if(grade){effectsStage.removeChild(grade);grade.destroy({children:true});}
+     grade=new PIXI.Container();
+     for(const layer of description){
+       const shape=new PIXI.Graphics().rect(0,0,width,height);
+       if(layer.style==='solid')
+         shape.fill({color:hex(layer.rgb),alpha:layer.opacity});
+       else {
+         const fill=new PIXI.FillGradient({
+           type:'linear',textureSpace:'local',start:layer.start,end:layer.end,
+           colorStops:layer.colorStops
+         });
+         gradients.set('atmosphere:'+layer.type,fill);
+         shape.fill(fill);
+       }
+       grade.addChild(shape);
+     }
      effectsStage.addChildAt(grade,0);
    }
    function draw() {app.render();}
@@ -181,10 +242,10 @@
    }
    return Object.freeze({
      setBackground,moveBackground,registerTexture,hasTexture,
-     syncActors,syncLamps,setNightTint,draw,metrics,destroy
+     syncActors,syncLamps,setAtmosphere,draw,metrics,destroy
    });
  }
- const api=Object.freeze({create});
+ const api=Object.freeze({create,atmosphereLayers});
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  else root.AzerothPixiSceneBridge=api;
 })(typeof window!=='undefined'?window:globalThis);
