@@ -122,3 +122,19 @@ test('strict in-flight queue cap does not spawn unlimited decoding',async()=>{
   await first;
   assets.destroy();
 });
+
+test('invalidating during async decode rejects instantly and forbids stale GPU upload',async()=>{
+  const f=fakeGPU(),d=descriptor(originalG);
+  let allowResolution;
+  const assets=Assets.create({gpu:f.gpu,
+    loader:()=>new Promise(resolve=>{allowResolution=resolve})});
+  const original=assets.ensure(d);
+  await Promise.resolve();
+  assets.clear();
+  await assert.rejects(original,/invalidated/);
+  allowResolution(image(d));
+  for(let i=0;i<6;i++)await Promise.resolve();
+  assert.equal(assets.metrics().resident,0);
+  assert.equal(f.log.filter(([kind])=>kind==='upload').length,0);
+  assets.destroy();
+});
