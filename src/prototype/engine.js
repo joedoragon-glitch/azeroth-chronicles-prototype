@@ -65,6 +65,7 @@
         time: 0,
         mercyTime: 10,
         restCooldown: 0,
+        thornHeroInitiated: false,
         zone: 'vale',
         refuge: 'vale',
         nextId: 1,
@@ -3212,6 +3213,7 @@
     }
 
     engage(e, forced = true, spreadPack = true) {
+      if (this.awaitsHeroAttack(e)) return false;
       if (e.aggro || e.neutral || e.returning || e.thornReturn || e.cinderReturn) return false;
       if ((this.s.mercyTime || 0) > 0 && !forced && !e.mercyProvoked) return false;
       this.capturePatrolResume(e);
@@ -5800,6 +5802,8 @@
           }
           continue;
         }
+        if (this.awaitsHeroAttack(e) && e.aggro) this.openingCompanionHit(e);
+        if (this.updateOpeningRetreat(e, dt)) continue;
         if (e.family === 'citadel' && e.board && e.aggro && !e.returning) {
           this.sentinelUpdateBoard(e, dt);
           if (
@@ -7018,6 +7022,11 @@
   }
   const World = typeof PrototypeWorld !== 'undefined' ? PrototypeWorld : require('./world.js');
   World.install(Campaign, { D, R, dungeonIds, classes });
+  const FieldOnboarding =
+    typeof PrototypeFieldOnboarding !== 'undefined'
+      ? PrototypeFieldOnboarding
+      : require('./field-onboarding.js');
+  FieldOnboarding.install(Campaign, { R });
   const Highlands =
     typeof PrototypeHighlands !== 'undefined' ? PrototypeHighlands : require('./highlands.js');
   Highlands.install(Campaign, { D, R });

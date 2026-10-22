@@ -510,6 +510,14 @@
         // regrouper beyond its original home leash would become invulnerable.
         const inCombatArea = this.tacticalRogueLeashAllows(e, origin, normalDamageTerritory);
         if (!this.line(origin, e) || !inCombatArea) return false;
+        if (this.awaitsHeroAttack(e)) {
+          if (source !== 'hero') {
+            this.openingCompanionHit(e);
+            return false;
+          }
+          if (options?.automaticBasic) return false;
+          this.admitOpeningHeroAttack(e);
+        }
         if (this.invalidChargedOpener(e, options?.encountersAtStart)) {
           // Kill every arrow from the same precharged attack, including the
           // copied projectile iterator's later Ranger shots.
@@ -952,13 +960,14 @@
                     victim,
                     p.damage,
                     p.source,
-                    p.encountersAtStart || p.area || p.piercing
+                    p.encountersAtStart || p.area || p.piercing || p.automaticBasic
                       ? {
                           ...(p.encountersAtStart
                             ? { encountersAtStart: p.encountersAtStart }
                             : {}),
                           ...(p.area ? { area: true } : {}),
                           ...(p.piercing ? { piercing: true } : {}),
+                          ...(p.automaticBasic ? { automaticBasic: true } : {}),
                         }
                       : null,
                   );
@@ -972,6 +981,7 @@
                 p.finisherBaseDamage,
                 p.source,
                 p.comboClass || this.hero.class,
+                !!p.automaticBasic,
               );
             if (landed && p.petSkillSlot) {
               const pet = this.s.party.find((unit) => unit.id === p.source && unit.type === 'pet');

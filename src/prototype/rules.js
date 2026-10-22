@@ -7534,6 +7534,7 @@
         restoreFraction: 0.4,
       },
     },
+    fieldOnboarding: { spawnLevel: 2, withdrawClearance: 700 },
     thornPatrol: {
       // Start toward the southern crossing, away from the opening woodland.
       startLeg: 7,

@@ -503,6 +503,7 @@
           'dressUntil',
           'dressPost',
           'thornFightAnchor',
+          'introHeroProvoked',
           'hookedVictim',
           'deathRoll',
           'ashCloud',

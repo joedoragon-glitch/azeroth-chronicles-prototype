@@ -1,8 +1,9 @@
 'use strict';
 const assert = require('node:assert/strict'),
   C = require('../src/prototype/engine');
-const c = new C('normal', 'paladin', () => 0.5),
-  cfg = C.rules.thornPatrol,
+const c = new C('normal', 'paladin', () => 0.5);
+c.hero.level = 2;
+const cfg = C.rules.thornPatrol,
   e = c.zone().enemies.find((e) => e.family === 'thorn'),
   witness = c.zone().npcs.find((n) => n.thornReport);
 for (let leg = 0; leg < cfg.route.length; leg++) {

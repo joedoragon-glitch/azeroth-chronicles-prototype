@@ -295,6 +295,7 @@
             },
           );
         }
+        if (this.zoneId === 'vale' && this.s.zones.vale) this.syncThornArrival(this.s.zones.vale);
       }
 
       trainCompanionVitality(family = 'archive') {
