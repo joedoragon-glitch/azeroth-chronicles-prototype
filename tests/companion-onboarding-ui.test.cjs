@@ -119,11 +119,21 @@ for (const language of ['en', 'es']) {
     e.get('modal-title').textContent,
     language === 'en' ? 'Meet your company' : 'Conoce a tu compañía',
   );
+  const briefing = e.get('modal-description').textContent;
   assert(
-    e
-      .get('modal-description')
-      .textContent.includes(language === 'en' ? 'Expedition Rank 2' : 'rango 2'),
+    briefing.includes(language === 'en' ? 'Soldier: close combat.' : 'Soldado: combate cercano.'),
   );
+  assert(
+    briefing.includes(
+      language === 'en'
+        ? 'Ranger: ranged attacks + healing.'
+        : 'Ranger: ataques a distancia + curación.',
+    ),
+  );
+  assert(briefing.includes(language === 'en' ? 'FREE' : 'GRATIS'));
+  assert(briefing.trim().split(/\s+/).length <= 40);
+  assert(!briefing.includes('Expedition Rank 2'));
+
   click(language === 'en' ? 'Practice Recall squad' : 'Probar Reagrupar');
   assert(e.get('modal').hidden);
   assert(g.s.quests['quest-barracks'].recallPracticed);

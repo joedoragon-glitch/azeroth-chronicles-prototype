@@ -1947,9 +1947,7 @@
       getGame().briefCompanions();
       openMenu(
         'Meet your company',
-        'You begin with a Soldier and a Ranger. The Soldier fights up close; the Ranger shoots from range and provides Heal. They follow you and fight automatically.' +
-          '\n\nUse Recall squad to cancel their orders and bring them back. Try it now, then open Adventure in the field and establish your first Basic Barracks for FREE. One companion builds it; the Barracks lets you recover fallen companions and manage your active group and reserves.' +
-          '\n\nRescue Mira and train Expedition Rank 2 to unlock a third active companion and recruitment. If you cannot afford an eligible recruit, tap Recruit to queue one. Tap the same choice to cancel, or select another type to replace it. It arrives automatically once you have enough crowns and all other requirements still hold; if your group is full, it rests in reserve.',
+        'Soldier: close combat.\nRanger: ranged attacks + healing.\nThey follow and fight automatically.\n\nRecall brings them back to you.\nNext: build your first Barracks for FREE.',
         [
           action('Practice Recall squad', () => {
             recallSquad();
@@ -1963,11 +1961,7 @@
     function townRecruitmentMenu(back) {
       const reopen = () => townRecruitmentMenu(back);
       const actions = [
-        action(
-          'Companion basics',
-          () => companionBasics(reopen),
-          'Learn roles, Recall, recruitment and reserves.',
-        ),
+        action('Companion basics', () => companionBasics(reopen), 'Roles and Recall.'),
         ...((getGame().s.expeditionRank || 1) < 2
           ? [
               action(
