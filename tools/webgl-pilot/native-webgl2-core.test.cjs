@@ -168,3 +168,29 @@ test('unsupported GPU commands fail loudly, never silently omit game artwork',()
     /Unsupported GPU scene command/);
   core.destroy();
 });
+
+test('unsupported command after valid sprite cannot produce a partly painted GPU frame',()=>{
+  const {canvas,calls}=fakeGPUCanvas();
+  const core=Core.create({canvas});
+  core.registerTexture('hero',{width:16,height:16});
+  const valid={kind:'sprite',textureId:'hero',x:0,y:0,width:16,height:16};
+  assert.throws(()=>core.draw([valid,{kind:'missing-original-lamp-shape'}]),
+    /Unsupported GPU scene command/);
+  assert.equal(calls.filter(c=>c[0]==='draw').length,0);
+  assert.equal(core.metrics().frames,0);
+  core.draw([valid]);
+  assert.equal(calls.filter(c=>c[0]==='draw').length,1);
+  core.destroy();
+});
+test('invalid actor geometry or light cannot produce partial visual output',()=>{
+  const {canvas,calls}=fakeGPUCanvas();
+  const core=Core.create({canvas});
+  core.registerTexture('hero',{width:16,height:16});
+  const sprite={kind:'sprite',textureId:'hero',x:0,y:0,width:16,height:16};
+  assert.throws(()=>core.draw([sprite,{kind:'screenGlow',x:0,y:0,radius:-1,
+    rgb:[255,220,160],alpha:0.2}]),/light command invalid/);
+  assert.throws(()=>core.draw([sprite,{kind:'nightGrade',top:[1,2,3,1],
+    bottom:[0,0,0,1]}]),/grade command invalid/);
+  assert.equal(calls.filter(c=>c[0]==='draw').length,0);
+  core.destroy();
+});
