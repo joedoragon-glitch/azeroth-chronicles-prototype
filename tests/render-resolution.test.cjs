@@ -38,6 +38,37 @@ for (let now = 5000; now <= 9000; now += 100) r.observe(now, 80, 30);
 assert.equal(r.ratio, 0.75);
 r.configure(1.5);
 assert.equal(r.ratio, 1.5, 'A changed device ceiling reconfigures the backing store');
+// Fixed density never adapts, even under severe rendering pressure.
+const manual = Runtime.createResolution(storage);
+manual.configure(1.501875);
+for (const [setting, expected] of [
+  ['100', 1],
+  ['80', 0.8],
+  ['60', 0.6],
+  ['50', 0.5],
+]) {
+  assert(manual.select(setting));
+  assert.equal(manual.ratio, expected);
+  assert.equal(manual.preference, setting);
+  for (let i = 0; i <= 100; i++)
+    assert.equal(manual.observe(i * 200, 90, 30, 8), false);
+  assert.equal(manual.ratio, expected, 'Manual density never adapts: ' + setting);
+  const reopened = Runtime.createResolution(storage);
+  assert.equal(reopened.preference, setting, 'Persist ' + setting);
+  reopened.configure(1.75);
+  assert.equal(reopened.ratio, expected, 'Restore after resize: ' + setting);
+  const onLowDpi = Runtime.createResolution(storage);
+  onLowDpi.configure(1);
+  assert.equal(onLowDpi.ratio, expected, 'Restore on a 1x-DPI phone');
+  manual.configure(1);
+  assert.equal(manual.ratio, expected, 'Optimization does not override manual ratio');
+  manual.configure(1.501875);
+}
+assert(!manual.select('bad'));
+assert(manual.select('auto'));
+assert.equal(manual.ratio, 1.501875);
+assert(manual.select('native'));
+assert.equal(manual.ratio, 1.501875);
 const isolated = Runtime.createResolution({
   getItem() {
     throw Error('blocked');
