@@ -39,18 +39,19 @@ Forest Crypt, Sunken Archive and Colossus Mine now have distinct authored wings,
 | ------------------------- | --------------------------------------------------- | -------------------------------------------- |
 | Move                      | WASD                                                | Left joystick or tap a reachable destination |
 | Interact                  | F                                                   | Interact                                     |
-| Skills 1–5                | 1–5                                                 | Skill buttons                                |
-| Skills 6–8                | Space / left Shift / B                              | Skill buttons                                |
+| Skills 1–5                | J / K / L / U / I                                   | Skill buttons                                |
+| Skills 6–8                | Space / O / N                                       | Skill buttons                                |
 | Charged skills 1–8        | Quick tap for normal; hold 0.65 seconds for charged | Same tap/hold behavior                       |
 | Ranger healing            | H / left mouse for Heal                             | Heal button                                  |
 | Squad doctrine            | Tab during combat, Expedition 3+                    | Contextual Squad button                      |
 | Recall                    | Q or backtick                                       | Recall squad                                 |
 | Change target             | E (customizable), or click Target in the HUD        | Target beside Recall, above joystick         |
-| Map / inventory / journal | M or Z / I / J                                      | Adventure menu                               |
+| Map                      | M or Z                                              | Adventure menu                               |
+| Inventory / quest journal | Character / Adventure menus                         | Adventure menu                               |
 | Pause / menu / controls   | P or V / Escape / G                                 | Menu                                         |
 | Menu navigation           | W/A previous; S/D next; F/Enter/Space confirms      | Direct tap; joystick and Confirm also work   |
 
-These are keyboard defaults. **Game and settings → Controls → Customize keyboard** changes and saves bindings on this browser/device. Menu navigation follows the chosen movement keys; Enter and Space remain confirmation fallbacks, and Esc opens/backtracks menus. Browser shortcuts remain available.
+The **default desktop layout is now two-handed**: WASD movement with the right hand operating J/K/L/U/I/Space/O/N for skills 1–8. **Game and settings → Controls → Customize keyboard** offers the old Classic number-key layout, a mirrored IJKL movement/left-hand skills layout, and individually customizable bindings. Existing saved keyboard settings remain in place; new devices use the new default. Preset changes require confirmation and are saved on this browser/device independently from campaign saves. Inventory and the quest journal are accessible through the Character/Adventure menus and intentionally have no keyboard shortcuts in any preset. Menu navigation follows the chosen movement keys; Enter and Space remain confirmation fallbacks, and Esc opens/backtracks menus. Other browser shortcuts remain available.
 
 Menus, HUD buttons and skills accept mouse clicks and touch taps on every screen, including touchscreen Chromebooks and tablets. Skills 1–8 support quick taps and 0.65-second charge holds with either input, including Ranger Skill 4 (tap hero Haste, charged companion Rally). Movement autoattack remains active except during the Paladin's Shield Stance. Tap Target or E to cycle visible hostiles; hold for 0.55 seconds to lock the current target throughout the encounter, including while dodging bosses or ignoring summons. Tap again to cycle and release that lock. The lock drops when its foe dies, returns home, or the hero changes area. The hero favors your chosen enemy, and otherwise falls back to automatic targeting. Holding an aimed Skill 1, 2, 4, 6, 7 or 8 shows subtle brackets and line-of-sight/range guidance (gold ready, amber out of range, red obstructed). Press Target during the hold to retarget. No persistent targeting circles are added.
 
