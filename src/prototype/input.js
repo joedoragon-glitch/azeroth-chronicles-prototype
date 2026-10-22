@@ -20,10 +20,8 @@
     ['recall', 'Recall squad', 'Backquote'],
     ['target', 'Cycle hero target', 'KeyE'],
     ['map', 'Map', 'KeyZ'],
-    ['inventory', 'Inventory', 'KeyR'],
     ['training', 'Talents', 'KeyC'],
     ['skills', 'Skills and teachers', 'KeyX'],
-    ['quests', 'Quest journal', 'KeyT'],
     ['pause', 'Pause', 'KeyP'],
     ['help', 'Controls', 'KeyG'],
     ['heal', 'Command Ranger Heal', 'KeyH'],
@@ -39,8 +37,6 @@
     skill5: 'Digit5',
     skill7: 'ShiftLeft',
     skill8: 'KeyB',
-    inventory: 'KeyI',
-    quests: 'KeyJ',
   };
   const left = {
     ...defaults,
@@ -56,14 +52,13 @@
     skill7: 'KeyQ',
     skill8: 'KeyR',
     target: 'KeyO',
-    inventory: 'KeyB',
   };
   const presets = { right: defaults, classic, left };
   const detectPreset = (bindings) =>
     Object.keys(presets).find((name) =>
       actions.every(([id]) => bindings[id] === presets[name][id]),
     ) || 'custom';
-  const aliases = { KeyR: 'inventory', KeyT: 'quests', KeyV: 'pause', KeyQ: 'recall' };
+  const aliases = { KeyV: 'pause', KeyQ: 'recall' };
   const validCode = (code) =>
     typeof code === 'string' &&
     /^(Key[A-Z]|Digit[0-9]|Space|ShiftLeft|ShiftRight|Tab|Backquote|Minus|Equal|BracketLeft|BracketRight|Backslash|Semicolon|Quote|Comma|Period|Slash|ArrowUp|ArrowDown|ArrowLeft|ArrowRight|Home|End|PageUp|PageDown|F[1-4]|F[6-9]|F10)$/.test(
@@ -106,7 +101,7 @@
         const storedBindings =
           saved.bindings && typeof saved.bindings === 'object' ? saved.bindings : {};
         // Existing preference records predate presets: retain their classic layout.
-        const base = saved.preset in presets
+        const base = Object.hasOwn(presets, saved.preset)
           ? presets[saved.preset]
           : Object.keys(storedBindings).length
             ? classic
@@ -165,11 +160,7 @@
         // If legacy mana is enabled, its historical M shortcut takes priority.
         if (code === 'KeyM' && !legacyManaEnabled) return 'map';
         const alias = aliases[code];
-        // Historical R/T shortcuts continue in Classic, but never shadow skill keys.
-        return alias &&
-          [defaults[alias], classic[alias]].includes(preferences.bindings[alias])
-          ? alias
-          : null;
+        return alias && preferences.bindings[alias] === defaults[alias] ? alias : null;
       },
       rebind(id, code) {
         if (!Object.hasOwn(defaults, id) || !validCode(code))
