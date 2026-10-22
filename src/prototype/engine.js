@@ -4026,8 +4026,13 @@
           this.setRefuge(this.s.zone, 'minor');
         }
       }
+      // Optional presentation timing marks, without exposing a browser clock to rules.
+      const performanceMark = typeof input.performanceMark === 'function' ? input.performanceMark : null;
+      performanceMark?.('partyStart');
       this.updateParty(dt);
+      performanceMark?.('partyEnd');
       this.updateEnemies(dt);
+      performanceMark?.('enemyEnd');
       if (
         h !== this.hero ||
         z !== this.zone() ||
@@ -4044,9 +4049,11 @@
         this.s.challenge.gameOver
       )
         return;
+      performanceMark?.('enemyExtraStart');
       this.updateElites(dt);
       this.updatePacks(dt);
       this.updateGuardianReinforcements(dt);
+      performanceMark?.('enemyExtraEnd');
       this.updateTraps(dt);
       if (
         h !== this.hero ||

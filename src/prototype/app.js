@@ -1392,6 +1392,7 @@
   const { world } = renderer,
     worldLabelVisible = renderer.labelVisible;
   const runtime = PrototypeRuntime.create();
+  const frameProfile = PrototypeRuntime.createFrameProfile();
   const fps = PrototypeRuntime.createFrameRate(localStorage);
   const renderResolution = PrototypeRuntime.createResolution(localStorage);
 
@@ -1438,6 +1439,7 @@
     renderer,
     platform,
     runtime,
+    frameProfile,
     renderResolution,
     fps,
     input,
@@ -1664,6 +1666,7 @@
       document.body.setAttribute('data-phone-layout', input.preferences.phoneLayout);
       clearInput();
       runtime.reset();
+      frameProfile.reset();
       updateHUD();
       pointerMenu(back);
     };
@@ -2238,6 +2241,7 @@
               version: PrototypeBuild.version,
               performance: {
                 ...runtime.report(renderer.metrics(), platform.mode),
+                frameProfile: frameProfile.report(),
                 frameRatePreference: fps.preference,
                 frameRateTarget: fps.target,
                 renderResolution: renderResolution.status(),
@@ -2375,6 +2379,7 @@
             renderer.setOptimizationMode(optimizationMode);
             resize();
             runtime.reset();
+      frameProfile.reset();
             fps.suspend();
             graphicsMenu(back);
           },
@@ -2411,6 +2416,7 @@
             renderResolution.select(value);
             resize();
             runtime.reset();
+      frameProfile.reset();
             fps.suspend();
             renderingResolutionMenu(back);
           },
@@ -2435,6 +2441,7 @@
             () => {
               fps.select(value);
               runtime.reset();
+      frameProfile.reset();
               frameRateMenu(back);
             },
             detail,
@@ -2447,10 +2454,11 @@
   function performanceMenu(back) {
     openMenu(
       'Performance details',
-      runtime.describe(renderer.metrics()),
+      runtime.describe(renderer.metrics()) + '\n\n' + frameProfile.describe(),
       [
         action('Reset performance sample', () => {
           runtime.reset();
+      frameProfile.reset();
           performanceMenu(back);
         }),
       ],
@@ -4927,12 +4935,18 @@
         menuJoyTime = 0.3;
       }
     }
+    const stageTimes = !frozen
+      ? { simulationMs: 0, companionAIMs: 0, enemyAIMs: 0, hudMs: 0,
+          audioUpdateMs: 0, eventDispatchMs: 0, renderMs: 0 }
+      : null;
+    const audioAt = stageTimes ? performance.now() : 0;
     audio.update(game, paused || !focused || document.hidden, {
       menu: !!menu,
       backgrounded: !focused || document.hidden,
       paused,
       started,
     });
+    if (stageTimes) stageTimes.audioUpdateMs = performance.now() - audioAt;
     if (!frozen) {
       let x = (keys.right ? 1 : 0) - (keys.left ? 1 : 0) + joy.x,
         y = (keys.down ? 1 : 0) - (keys.up ? 1 : 0) + joy.y;
@@ -4951,7 +4965,18 @@
           deaths: game.s.statistics.deaths,
           order: !!movingHero.order,
         };
-      game.tick(dt, { x, y, speedFactor });
+      const simulationAt = performance.now(), marks = {};
+      game.tick(dt, {
+        x, y, speedFactor,
+        performanceMark: (stage) => { marks[stage] = performance.now(); },
+      });
+      stageTimes.simulationMs = performance.now() - simulationAt;
+      if (marks.partyStart !== undefined && marks.partyEnd !== undefined)
+        stageTimes.companionAIMs = Math.max(0, marks.partyEnd - marks.partyStart);
+      if (marks.partyEnd !== undefined && marks.enemyEnd !== undefined)
+        stageTimes.enemyAIMs = Math.max(0, marks.enemyEnd - marks.partyEnd);
+      if (marks.enemyExtraStart !== undefined && marks.enemyExtraEnd !== undefined)
+        stageTimes.enemyAIMs += Math.max(0, marks.enemyExtraEnd - marks.enemyExtraStart);
       selectQueuedCharge();
       updateQuestGuide();
       syncChargeReady();
@@ -4992,6 +5017,7 @@
         save();
       }
     }
+    const eventAt = stageTimes ? performance.now() : 0;
     const events = game.effects.splice(0);
     renderer.queue(events);
     renderer.update(frozen ? 0 : dt);
@@ -5002,6 +5028,7 @@
       if (e.type === 'actionFailed' && e.reason === 'crowns')
         status('Need ' + e.needed + ' crowns.');
     }
+    if (stageTimes) stageTimes.eventDispatchMs = performance.now() - eventAt;
     if (
       events.some((e) =>
         [
@@ -5040,20 +5067,37 @@
     hudTimer += dt;
     if (hudTimer > 0.15) {
       hudTimer = 0;
+      const hudAt = stageTimes ? performance.now() : 0;
       updateHUD();
+      if (stageTimes) stageTimes.hudMs = performance.now() - hudAt;
     }
     if (!frozen) {
       const draw = fps.shouldDraw(now);
       if (draw) {
         const sample = runtime.record(now, frameStart, () => renderer.draw());
+        stageTimes.renderMs += sample.renderMs;
         if (renderResolution.observe(now, sample.renderMs, fps.target, sample.preRenderMs)) {
           resize();
+          const redrawAt = performance.now();
           renderer.draw();
+          stageTimes.renderMs += performance.now() - redrawAt;
           runtime.reset();
+      frameProfile.reset();
           fps.suspend();
         }
       }
       fps.observe(now, performance.now() - frameStart, draw);
+      const frameWorkMs = performance.now() - frameStart,
+        otherSimulationMs = Math.max(0,
+          stageTimes.simulationMs - stageTimes.companionAIMs - stageTimes.enemyAIMs),
+        accounted = stageTimes.simulationMs + stageTimes.hudMs + stageTimes.audioUpdateMs +
+          stageTimes.eventDispatchMs + stageTimes.renderMs;
+      frameProfile.record({
+        ...stageTimes,
+        otherSimulationMs, frameWorkMs, intervalMs,
+        otherJsMs: Math.max(0, frameWorkMs - accounted),
+        drawn: draw,
+      });
     } else {
       renderResolution.suspend();
       fps.suspend();
@@ -5076,6 +5120,7 @@
     clearInput();
     resize();
     runtime.reset();
+      frameProfile.reset();
     fps.suspend();
   });
   updateHUD();

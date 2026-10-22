@@ -283,7 +283,56 @@
       status: () => ({ preference, ratio, maximum, changes }),
     };
   }
+  // Bounded diagnostic timings; AI is nested within the total simulation cost.
+  function createFrameProfile() {
+    const keys = ['frameWorkMs', 'intervalMs', 'simulationMs', 'companionAIMs', 'enemyAIMs',
+      'otherSimulationMs', 'hudMs', 'audioUpdateMs', 'eventDispatchMs', 'renderMs', 'otherJsMs'];
+    let samples = [];
+    function summary(values) {
+      if (!values.length) return { samples: 0, meanMs: 0, p95Ms: 0 };
+      const sorted = values.slice().sort((a, b) => a - b),
+        round = n => Math.round(n * 100) / 100;
+      return { samples: values.length,
+        meanMs: round(values.reduce((a, b) => a + b, 0) / values.length),
+        p95Ms: round(sorted[Math.floor((sorted.length - 1) * 0.95)]) };
+    }
+    function report() {
+      const stages = {};
+      for (const key of keys)
+        stages[key] = summary(samples.filter(s => key !== 'renderMs' || s.drawn).map(s => s[key]));
+      return {
+        activeFrames: samples.length,
+        drawnFrames: samples.filter(s => s.drawn).length,
+        stages,
+        note: 'AI is included within simulation, and other simulation excludes measured AI. Render uses drawn frames only. Separate p95 values cannot be added as a frame total.'
+      };
+    }
+    return {
+      record(row) {
+        if (!row || !Number.isFinite(row.frameWorkMs) || row.frameWorkMs < 0) return;
+        const sample = { drawn: !!row.drawn };
+        for (const key of keys) sample[key] = Number.isFinite(row[key]) ? Math.max(0, row[key]) : 0;
+        samples.push(sample);
+        if (samples.length > 180) samples.shift();
+      },
+      reset() { samples = []; },
+      report,
+      describe() {
+        const r = report();
+        if (!r.activeFrames) return 'Frame stages: no active gameplay sampled.';
+        const print = (label, key) => label + ': ' + r.stages[key].meanMs + ' / ' + r.stages[key].p95Ms + ' ms';
+        return 'Frame stages · mean / p95 (' + r.activeFrames + ' active, ' + r.drawnFrames + ' drawn)\n' +
+          [print('Simulation total', 'simulationMs'), print('  Companion AI', 'companionAIMs'),
+            print('  Enemy AI', 'enemyAIMs'), print('  Other simulation', 'otherSimulationMs'),
+            print('Audio update', 'audioUpdateMs'), print('Event dispatch + audio effects', 'eventDispatchMs'),
+            print('HUD', 'hudMs'), print('Canvas (drawn only)', 'renderMs'),
+            print('Other frame JS', 'otherJsMs')].join('\n') +
+          '\nAI is a subset of simulation. Sample in active play, not the menu.';
+      },
+    };
+  }
   const api = {
+    createFrameProfile,
     create,
     createFrameRate,
     fpsPreferenceKey,
