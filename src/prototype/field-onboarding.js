@@ -52,7 +52,7 @@
         if (this.zoneId !== 'vale' || this.peace || !e || e.neutral || e.hp <= 0) return false;
         const thorn = this.openingThornOwner(e);
         if (thorn) return !this.s.thornHeroInitiated && (thorn === e || !e.introHeroProvoked);
-        return this.hero.level < R.fieldOnboarding.spawnLevel && !e.introHeroProvoked;
+        return !this.s.valeFieldAwakened && !e.introHeroProvoked;
       }
       admitOpeningHeroAttack(e) {
         if (!this.awaitsHeroAttack(e)) return;
