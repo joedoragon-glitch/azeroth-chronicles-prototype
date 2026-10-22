@@ -50,6 +50,24 @@
    }
    return layers;
  }
+ // The Canvas artist's final vignette, represented directly as a GPU gradient.
+ function vignetteDescription({darkness=0,optimized=false}={},width,height) {
+   if(optimized)return null;
+   assert(Number.isFinite(width)&&Number.isFinite(height)&&width>0&&height>0,
+     'Positive viewport needed for original vignette');
+   const night=clamp(darkness,0,1),day=1-night;
+   return {
+     type:'radial',textureSpace:'global',
+     center:{x:width*.5,y:height*.48},
+     innerRadius:Math.min(width,height)*.18,
+     outerCenter:{x:width*.5,y:height*.5},
+     outerRadius:Math.max(width,height)*.72,
+     colorStops:[
+       {offset:0,color:'rgba(0,0,0,0)'},
+       {offset:1,color:rgba([5*day,15*day,10*day],.12+.03*night)}
+     ]
+   };
+ }
  function create({PIXI,app,width,height}={}) {
    assert(PIXI?.Container && PIXI?.Sprite && PIXI?.Graphics && PIXI?.FillGradient,
      'PixiJS v8 scene primitives required');
@@ -63,6 +81,7 @@
    rootStage.addChild(effectsStage);
    const actors=new Map(), glowObjects=new Map(), gradients=new Map(), frameTextures=new Map();
    let background=null,grade=null, gradeGradients=[],atmosphereSignature=null,
+     vignette=null,vignetteGradient=null,vignetteSignature=null,
      spritesUpdated=0, resources=new Map();
    let backdropTexture=null, discarded=0;
    const keyOf=entity=>String(entity.key);
@@ -200,6 +219,8 @@
        state.graphic.destroy();
        glowObjects.delete(id);
      }
+     // The original vignette is drawn AFTER the visible night lamps.
+     if(vignette)effectsStage.addChild(vignette);
    }
    function setAtmosphere(spec) {
      const description=atmosphereLayers(spec);
@@ -225,6 +246,18 @@
        grade.addChild(shape);
      }
      effectsStage.addChildAt(grade,0);
+   }
+   function setVignette(spec={}) {
+     const desc=vignetteDescription(spec,width,height),
+       signature=JSON.stringify(desc);
+     if(signature===vignetteSignature)return;
+     vignetteSignature=signature;
+     if(vignette){effectsStage.removeChild(vignette);vignette.destroy();vignette=null;}
+     if(vignetteGradient){vignetteGradient.destroy?.();vignetteGradient=null;}
+     if(!desc)return;
+     vignetteGradient=new PIXI.FillGradient(desc);
+     vignette=new PIXI.Graphics().rect(0,0,width,height).fill(vignetteGradient);
+     effectsStage.addChild(vignette);
    }
    // Outside measured frames: compare GPU lights independently from actors.
    async function captureLightingOnly() {
@@ -256,13 +289,16 @@
    }
    function draw() {app.render();}
    function metrics(){return{
-     actors:actors.size,lights:glowObjects.size,textureSources:resources.size,
+     actors:actors.size,lights:glowObjects.size,vignetteActive:!!vignette,
+     textureSources:resources.size,
      spriteUpdates:spritesUpdated,discarded
    };}
    function destroy(){
      for(const state of actors.values())state.sprite.destroy();
      for(const state of glowObjects.values())state.graphic.destroy();
      if(grade)grade.destroy();
+     if(vignette)vignette.destroy();
+     if(vignetteGradient)vignetteGradient.destroy?.();
      if(background)background.destroy();
      for(const texture of frameTextures.values())texture.destroy?.(false);
      for(const gradient of gradients.values())gradient.destroy?.();
@@ -273,10 +309,11 @@
    }
    return Object.freeze({
      setBackground,moveBackground,registerTexture,hasTexture,
-     syncActors,syncLamps,setAtmosphere,captureBackgroundOnly,captureLightingOnly,draw,metrics,destroy
+     syncActors,syncLamps,setAtmosphere,setVignette,
+     captureBackgroundOnly,captureLightingOnly,draw,metrics,destroy
    });
  }
- const api=Object.freeze({create,atmosphereLayers});
+ const api=Object.freeze({create,atmosphereLayers,vignetteDescription});
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  else root.AzerothPixiSceneBridge=api;
 })(typeof window!=='undefined'?window:globalThis);
