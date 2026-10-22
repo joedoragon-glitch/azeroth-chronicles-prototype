@@ -511,6 +511,19 @@
     'Safe conditions required.': 'Requiere condiciones seguras.',
     'Joins your group; full groups send recruits to reserve.':
       'Se une al grupo; si está lleno, queda en reserva.',
+    'Leave town. Find open ground off the road.\nOpen Menu → Establish Basic Barracks (FREE).\nOne idle Soldier or Ranger builds it.':
+      'Sal del pueblo. Busca terreno abierto fuera del camino.\nAbre Menú → Establecer cuartel básico (GRATIS).\nUn Soldado o Ranger libre lo construye.',
+    "Let's go": 'Vamos',
+    "COMPANIONS · Recall practiced. Continue the Captain's briefing.":
+      'COMPAÑEROS · Reagrupar practicado. Continúa la explicación del capitán.',
+    "Continue the Captain's briefing for the next step.":
+      'Continúa la explicación del capitán para el siguiente paso.',
+    'Leave town → open ground off the road → Menu → Establish Basic Barracks (FREE).':
+      'Sal del pueblo → terreno abierto fuera del camino → Menú → Establecer cuartel básico (GRATIS).',
+    'FIELD BASE · Leave town → open ground off the road → Menu → Establish Basic Barracks (FREE).':
+      'BASE DE CAMPO · Sal del pueblo → terreno abierto fuera del camino → Menú → Establecer cuartel básico (GRATIS).',
+    'FIELD BASE · Construction in progress. Keep your builder assigned.':
+      'BASE DE CAMPO · Construcción en curso. Mantén al constructor asignado.',
     'Try Recall now': 'Prueba Reagrupar ahora',
     'Try it now': 'Pruébalo ahora',
   });
@@ -1203,8 +1216,8 @@
     releaseJoystick();
     cancelTravel();
   }
-  function action(label, fn, detail = '', disabled = false) {
-    return { label, action: fn, detail, disabled };
+  function action(label, fn, detail = '', disabled = false, tutorialHighlight = false) {
+    return { label, action: fn, detail, disabled, tutorialHighlight };
   }
   function openMenu(title, description = '', actions = [], back = closeMenu) {
     bindingCapture = null;
@@ -1251,6 +1264,7 @@
       const b = document.createElement('button');
       b.textContent = tr(a.label);
       b.disabled = a.disabled === true;
+      b.classList.toggle('tutorial-highlight', !!a.tutorialHighlight);
       if (a.detail) {
         const span = document.createElement('span');
         span.className = 'detail';
@@ -1875,6 +1889,9 @@
                 ' crowns'
               : 'One companion builds a recovery base; Full upgrade unlocks at Expedition 4',
         !canBuild || game.hero.gold < cost,
+        !!game.s.quests['quest-barracks']?.barracksBriefed &&
+          !game.s.quests['quest-barracks'].paid &&
+          !game.hasAnyBarracks(),
       ),
       action('Screen and performance', () => platformMenu(openMain)),
       ...(appUpdateReady ? [action('Install available game update', updateApp)] : []),

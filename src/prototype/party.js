@@ -1972,6 +1972,10 @@
         const tutorial = this.s.quests['quest-barracks'];
         if (tutorial && !tutorial.paid) tutorial.captainBriefed = true;
       }
+      briefBarracks() {
+        const tutorial = this.s.quests['quest-barracks'];
+        if (tutorial && !tutorial.paid && tutorial.recallPracticed) tutorial.barracksBriefed = true;
+      }
       recruit(type) {
         const reason = this.companionRecruitmentReason(type);
         if (reason) {

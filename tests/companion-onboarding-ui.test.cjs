@@ -188,9 +188,30 @@ for (const language of ['en', 'es']) {
   assert(g.s.quests['quest-barracks'].recallPracticed);
   assert(JSON.parse(storage.get('azeroth-v4-normal')).quests['quest-barracks'].recallPracticed);
   assert(
-    e.get('objective').textContent.includes(language === 'en' ? 'FIELD BASE' : 'BASE DE CAMPO'),
+    e
+      .get('objective')
+      .textContent.includes(language === 'en' ? 'Recall practiced' : 'Reagrupar practicado'),
   );
   click(language === 'en' ? 'Continue' : 'Continuar');
+  assert(!e.get('modal').hidden);
+  const directions = e.get('modal-description').textContent;
+  assert(directions.includes(language === 'en' ? 'Leave town.' : 'Sal del pueblo.'));
+  assert(
+    directions.includes(
+      language === 'en'
+        ? 'Open Menu → Establish Basic Barracks'
+        : 'Abre Menú → Establecer cuartel básico',
+    ),
+  );
+  assert(directions.trim().split(/\s+/).length <= 32);
+  assert(g.s.quests['quest-barracks'].barracksBriefed);
+  assert(JSON.parse(storage.get('azeroth-v4-normal')).quests['quest-barracks'].barracksBriefed);
+  assert(C.restore(g.snapshot()).s.quests['quest-barracks'].barracksBriefed);
+  assert(g.questProgress(g.questDefs()[0]).includes('off the road'));
+  assert(
+    e.get('objective').textContent.includes(language === 'en' ? 'FIELD BASE' : 'BASE DE CAMPO'),
+  );
+  click(language === 'en' ? "Let's go" : 'Vamos');
   e.get('touch-interact-button').click();
   assert(e.get('modal-title').textContent.includes('Captain'));
   click(language === 'en' ? 'Companion basics' : 'Lo básico de tus compañeros');
@@ -201,6 +222,7 @@ for (const language of ['en', 'es']) {
   assert(!e.get('modal').hidden);
   assert(!e.get('recall-button').classList.contains('tutorial-highlight'));
   click(language === 'en' ? 'Continue' : 'Continuar');
+  click(language === 'en' ? "Let's go" : 'Vamos');
   g.s.expeditionRank = 2;
   g.hero.gold = 0;
   s.Prototype.closeMenu();
@@ -305,6 +327,39 @@ for (const language of ['en', 'es']) {
         b.textContent.includes(language === 'en' ? 'Stolen Stores' : 'Suministros robados'),
       ),
   );
+  // Highlight survives menu navigation/reopening and a rejected placement, then ends on construction.
+  s.Prototype.closeMenu();
+  g.s.party.forEach((u) => {
+    u.hp = u.maxHp;
+    u.order = null;
+  });
+  g.hero.gold = 0;
+  g.zone().enemies = [];
+  Object.assign(g.hero, { x: 600, y: 1500 });
+  const buildPrefix = language === 'en' ? 'Establish Basic Barracks' : 'Establecer cuartel básico';
+  const buildButton = () =>
+    e.get('modal-actions').children.find((b) => b.textContent.startsWith(buildPrefix));
+  e.get('menu-button').click();
+  assert(buildButton().classList.contains('tutorial-highlight'));
+  events.keydown.forEach((fn) => fn({ code: 'ArrowDown', preventDefault() {} }));
+  assert(buildButton().classList.contains('tutorial-highlight'));
+  s.Prototype.closeMenu();
+  e.get('menu-button').click();
+  assert(buildButton().classList.contains('tutorial-highlight'));
+  const route = g.route;
+  g.route = () => [];
+  click(buildPrefix);
+  assert(!g.hasAnyBarracks());
+  assert(buildButton().classList.contains('tutorial-highlight'));
+  g.route = route;
+  click(buildPrefix);
+  assert(g.hasAnyBarracks());
+  assert(e.get('modal').hidden);
+  assert(g.s.party.some((u) => u.order?.type === 'build'));
+  assert.equal(g.hero.gold, 0);
+  assert(g.questProgress(g.questDefs()[0]).includes('Construction in progress'));
+  e.get('menu-button').click();
+  assert(!buildButton().classList.contains('tutorial-highlight'));
 }
 console.log(
   'PASS production English/Spanish captain interaction, staged objective, Recall, queue/cancel menu feedback and immediate action saves',
