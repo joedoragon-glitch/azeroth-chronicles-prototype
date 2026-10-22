@@ -98,7 +98,7 @@
       backdrop=null, backing=null, basePosition=null, baseZone=null,
       baseZoom=null, active=false, lastError=null;
     const baked = new Map(), ownedTextures=[], loaded=new Set();
-    let imageBytes=0, disposed=false;
+    let imageBytes=0, disposed=false, baseGame=null;
     function project(entity) { return canvasRenderer.screen(entity); }
     function game() { return getGame(); }
     function clearBakes() {
@@ -106,10 +106,12 @@
       ownedTextures.length=0;
       baked.clear();
       imageBytes=0;
+      loaded.clear();
     }
     function drawBackground() {
       const current=game(), zoom=platform.cameraZoom || 1;
       if (!backgroundRenderer || !backdrop || !scene) throw Error('Missing original terrain painter');
+      baseGame=current;
       basePosition={x:current.hero.x,y:current.hero.y};
       baseZone=current.zoneId; baseZoom=zoom;
       backgroundRenderer.setOptimizationMode(!!options.getOptimizationMode());
@@ -125,6 +127,8 @@
     }
     function syncBackground() {
       const current=game(), zoom=platform.cameraZoom || 1;
+      if (baseGame && baseGame!==current)
+        throw Error('Campaign changed; reset to Canvas before switching again');
       if (!basePosition || baseZone!==current.zoneId || baseZoom!==zoom)
         drawBackground();
       const d=iso({x:current.hero.x-basePosition.x,y:current.hero.y-basePosition.y});
@@ -255,17 +259,24 @@
           ...getRendererOptions(),canvas:bgViewport,ctx:bgContext,
           platform:bgPlatform,renderLayer:'background',
         });
-        const current=game(), urls=new Set();
-        for(const {entity,visual} of candidates(current,project,viewport.width,viewport.height)) {
-          const found=root.PrototypeSprites.definitionFor(
-            visual,current.regionIndex(),!!current.s.rescued[entity.family]);
-          if(!found)continue;
-          if(found.entry.src)urls.add(found.entry.src);
-          for(const clip of Object.values(found.entry.clips||{}))
-            for(const frame of clip.frames||[])if(frame.src)urls.add(frame.src);
-          for(const variation of found.entry.variants||[])
-            if(variation.src)urls.add(variation.src);
+        // Warm all canonical sprites once (~46 MiB decoded across 38 files).
+        // Otherwise entering any previously unseen neighborhood forces fallback.
+        const response=await fetch('./assets/sprites/manifest.json');
+        requireValue(response.ok,'Original sprite manifest unavailable');
+        const manifest=await response.json(),urls=new Set();
+        function collect(value){
+          if(!value||typeof value!=='object')return;
+          if(typeof value.src==='string' &&
+              value.src.startsWith('./assets/sprites/') &&
+              /\.(?:png|webp)$/i.test(value.src))
+            urls.add(value.src);
+          for(const child of Object.values(value))
+            if(typeof child==='object')
+              Array.isArray(child)?child.forEach(collect):collect(child);
         }
+        collect(manifest.sprites);
+        requireValue(urls.size>0,'Approved sprite manifest is empty');
+        requireValue(urls.size<=128,'Unexpected sprite resource count');
         await Promise.all([...urls].map(async src=>{
           const texture=await PIXI.Assets.load(src);
           requireValue(texture?.source,'Approved sprite decode failed: '+src);
@@ -303,10 +314,11 @@
       clearBakes();
       backing?.destroy?.(false);backing=null;
       if(app){const node=app.canvas;app.destroy(true);node?.remove();app=null;}
-      backgroundRenderer=null;backdrop=null;basePosition=null;
+      backgroundRenderer=null;backdrop=null;basePosition=null;baseGame=null;
     }
     function dispose(){disposed=true;disposeResources();}
-    return Object.freeze({prepare,draw,activate,deactivate,dispose,
+    function noteEvents(events){adapter?.noteEvents?.(events);}
+    return Object.freeze({prepare,draw,activate,deactivate,dispose,noteEvents,
       status:()=>({active,lastError,loadedTextures:loaded.size,proceduralBytes:imageBytes})});
   }
   const api=Object.freeze({create});

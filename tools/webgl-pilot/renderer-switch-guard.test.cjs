@@ -1,0 +1,212 @@
+'use strict';
+const assert=require('node:assert/strict');
+const test=require('node:test');
+const Guard=require('./renderer-switch-guard.js');
+function fixture({prepareWebGL=async()=>true,failReveal=false,brokenStorage=false}={}){
+ const values=new Map(),jobs=new Map(),notifications=[],events=[];
+ let time=0,next=0,visible='canvas';
+ const storage={
+   getItem:key=>{if(brokenStorage)throw Error('storage denied');return values.get(key)??null;},
+   setItem:(key,value)=>{if(brokenStorage)throw Error('storage denied');values.set(key,value);},
+   removeItem:key=>{if(brokenStorage)throw Error('storage denied');values.delete(key);}
+ };
+ const run=Guard.create({
+   storage,prepareWebGL,
+   showWebGL(){events.push('webgl-reveal');if(failReveal)throw Error('GPU reveal unavailable');visible='webgl2';},
+   showCanvas(reason){events.push('canvas-reveal:'+reason);visible='canvas';},
+   notify:status=>notifications.push(status),
+   now:()=>time,
+   schedule:(callback,delay)=>{const id=++next;jobs.set(id,{callback,at:time+delay});return id;},
+   unschedule:id=>jobs.delete(id)
+ });
+ function advance(ms){
+   time+=ms;
+   for(let attempts=0;attempts<30;attempts++){
+     const ready=[...jobs].filter(([,v])=>v.at<=time).sort((a,b)=>a[1].at-b[1].at);
+     if(!ready.length)return;
+     const [id,entry]=ready[0];jobs.delete(id);entry.callback();
+   }
+   throw Error('Test timer loop failed to settle');
+ }
+ return {run,values,storage,jobs,notifications,events,advance,get visible(){return visible}};
+}
+test('Canvas 2D default and a previously confirmed WebGL2 preference are distinct',()=>{
+ const f=fixture();
+ assert.deepEqual(Guard.startupChoice(f.storage),
+   {renderer:'canvas2d',reason:'canvas-default'});
+ f.storage.setItem(Guard.PREFERENCE_KEY,'webgl2');
+ assert.deepEqual(Guard.startupChoice(f.storage),
+   {renderer:'webgl2',reason:'confirmed-preference'});
+ f.storage.setItem(Guard.PREFERENCE_KEY,'hybrid');
+ assert.equal(Guard.startupChoice(f.storage).renderer,'canvas2d');
+ f.run.dispose();
+});
+test('interrupted trial marker forces Canvas on next start before graphics initialization',()=>{
+ const f=fixture();
+ f.storage.setItem(Guard.PREFERENCE_KEY,'webgl2');
+ f.storage.setItem(Guard.PENDING_KEY,'pending');
+ assert.deepEqual(Guard.startupChoice(f.storage),
+   {renderer:'canvas2d',reason:'interrupted-trial'});
+ assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),'canvas2d');
+ assert.equal(f.storage.getItem(Guard.PENDING_KEY),null);
+ f.run.dispose();
+});
+test('WebGL preparation keeps Canvas visible and does not save WebGL before confirmation',async()=>{
+ let resolve;
+ const f=fixture({prepareWebGL:()=>new Promise(ok=>{resolve=ok})});
+ const trial=f.run.requestWebGL();
+ assert.equal(f.visible,'canvas');
+ assert.equal(f.run.status().phase,'preparing');
+ assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),null);
+ assert.equal(f.storage.getItem(Guard.PENDING_KEY),'pending');
+ resolve(true);
+ assert.equal(await trial,true);
+ assert.equal(f.visible,'webgl2');
+ assert.equal(f.run.status().secondsRemaining,15);
+ assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),null);
+ f.run.dispose();
+});
+test('without explicit Keep confirmation, WebGL automatically reverts at 15 seconds',async()=>{
+ const f=fixture();assert.equal(await f.run.requestWebGL(),true);
+ f.advance(13000);
+ assert.equal(f.visible,'webgl2');
+ assert.equal(f.run.status().secondsRemaining,2);
+ f.advance(1999);
+ assert.equal(f.visible,'webgl2');
+ assert.equal(f.run.status().secondsRemaining,1);
+ f.advance(1);
+ assert.equal(f.visible,'canvas');
+ assert.equal(f.run.status().phase,'canvas');
+ assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),'canvas2d');
+ assert.equal(f.storage.getItem(Guard.PENDING_KEY),null);
+ assert.equal(f.jobs.size,0);
+ assert.equal(f.run.confirm(),false);
+ f.run.dispose();
+});
+test('Keep WebGL2 explicitly confirms before deadline and cancels the reset',async()=>{
+ const f=fixture();
+ assert.equal(await f.run.requestWebGL(),true);
+ f.advance(14000);
+ assert.equal(f.run.confirm(),true);
+ assert.equal(f.run.status().phase,'confirmed');
+ assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),'webgl2');
+ assert.equal(f.storage.getItem(Guard.PENDING_KEY),null);
+ f.advance(20000);
+ assert.equal(f.visible,'webgl2');
+ assert.equal(f.jobs.size,0);
+ f.run.dispose();
+});
+test('confirmation at or after expiry is rejected even when a timer was throttled',async()=>{
+ const f=fixture();
+ await f.run.requestWebGL();
+ f.advance(15000);
+ assert.equal(f.run.confirm(),false);
+ assert.equal(f.visible,'canvas');
+ f.run.dispose();
+});
+test('failed WebGL initialization or failed reveal automatically exposes Canvas',async()=>{
+ const fails=fixture({prepareWebGL:async()=>false});
+ assert.equal(await fails.run.requestWebGL(),false);
+ assert.equal(fails.visible,'canvas');
+ assert.equal(fails.storage.getItem(Guard.PENDING_KEY),null);
+ const throws=fixture({prepareWebGL:async()=>{throw Error('compile failed')}});
+ assert.equal(await throws.run.requestWebGL(),false);
+ assert.equal(throws.visible,'canvas');
+ const reveal=fixture({failReveal:true});
+ assert.equal(await reveal.run.requestWebGL(),false);
+ assert.equal(reveal.visible,'canvas');
+ for(const f of [fails,throws,reveal])f.run.dispose();
+});
+test('context loss or rendering error reverts even an explicitly confirmed WebGL renderer',async()=>{
+ const f=fixture();
+ await f.run.requestWebGL();
+ f.run.confirm();
+ assert.equal(f.run.webglFailed(),true);
+ assert.equal(f.visible,'canvas');
+ assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),'canvas2d');
+ assert.equal(f.run.webglFailed(),false);
+ f.run.dispose();
+});
+test('visibility loss automatically exits the unconfirmed graphics trial',async()=>{
+ const f=fixture();
+ await f.run.requestWebGL();
+ f.run.visibilityChanged(true);
+ assert.equal(f.visible,'canvas');
+ assert.equal(f.run.status().reason,'');
+ assert.equal(f.storage.getItem(Guard.PENDING_KEY),null);
+ f.run.dispose();
+});
+test('a late async GPU preparation cannot re-enable WebGL after fallback',async()=>{
+ let resolve;
+ const f=fixture({prepareWebGL:()=>new Promise(ok=>{resolve=ok})});
+ const pending=f.run.requestWebGL();
+ f.run.visibilityChanged(true);
+ resolve(true);
+ assert.equal(await pending,false);
+ assert.equal(f.visible,'canvas');
+ assert.equal(f.events.some(x=>x==='webgl-reveal'),false);
+ f.run.dispose();
+});
+test('a second WebGL request cannot restart or extend an active 15-second trial',async()=>{
+ const f=fixture();
+ await f.run.requestWebGL();
+ f.advance(12000);
+ assert.equal(await f.run.requestWebGL(),false);
+ assert.equal(f.run.status().secondsRemaining,3);
+ f.advance(3000);
+ assert.equal(f.visible,'canvas');
+ f.run.dispose();
+});
+test('manual revert resets preference and refuses a late Keep action',async()=>{
+ const f=fixture();
+ await f.run.requestWebGL();
+ f.run.revert();
+ assert.equal(f.visible,'canvas');
+ assert.equal(f.run.confirm(),false);
+ assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),'canvas2d');
+ f.run.dispose();
+});
+test('storage blocked: timeout still protects Canvas and next boot defaults safely',async()=>{
+ const f=fixture({brokenStorage:true});
+ await f.run.requestWebGL();
+ f.advance(15000);
+ assert.equal(f.visible,'canvas');
+ assert.equal(Guard.startupChoice(f.storage).renderer,'canvas2d');
+ f.run.dispose();
+});
+test('unconfirmed renderer is reverted when its settings controller is disposed',async()=>{
+ const f=fixture();
+ await f.run.requestWebGL();
+ f.run.dispose();
+ assert.equal(f.visible,'canvas');
+ assert.equal(f.jobs.size,0);
+ assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),'canvas2d');
+ assert.equal(await f.run.requestWebGL(),false);
+});
+
+test('confirmed WebGL boot is crash guarded until its first complete scene frame',()=>{
+ const f=fixture();
+ f.storage.setItem(Guard.PREFERENCE_KEY,'webgl2');
+ assert.equal(Guard.armConfirmedBoot(f.storage),true);
+ assert.equal(f.storage.getItem(Guard.PENDING_KEY),'pending');
+ // Simulate a crash/reload during GPU initialization.
+ assert.equal(Guard.startupChoice(f.storage).renderer,'canvas2d');
+ assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),'canvas2d');
+ f.run.dispose();
+});
+test('a completed confirmed WebGL boot clears only its crash marker',()=>{
+ const f=fixture();
+ f.storage.setItem(Guard.PREFERENCE_KEY,'webgl2');
+ assert.equal(Guard.armConfirmedBoot(f.storage),true);
+ assert.equal(Guard.finishConfirmedBoot(f.storage),true);
+ assert.equal(Guard.startupChoice(f.storage).renderer,'webgl2');
+ assert.equal(f.storage.getItem(Guard.PENDING_KEY),null);
+ assert.equal(Guard.finishConfirmedBoot(f.storage),false);
+ f.run.dispose();
+});
+test('if crash-marker storage is unavailable, automatic WebGL boot must be refused',()=>{
+ const f=fixture({brokenStorage:true});
+ assert.equal(Guard.armConfirmedBoot(f.storage),false);
+ assert.equal(Guard.startupChoice(f.storage).renderer,'canvas2d');
+ f.run.dispose();
+});

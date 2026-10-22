@@ -57,17 +57,15 @@ const scripts = [
     'runtime',
     'ground-cache',
     'renderer',
-    'pixi-experimental',
-    'archive',
-    'skill-reference',
-    'menus',
-    'app',
   ].map((name) => 'src/prototype/' + name + '.js'),
-  // Existing real-scene GPU pilot utilities, loaded only when selected.
+  // GPU helpers must initialize BEFORE the experimental adapter and app.
   'tools/webgl-pilot/native-webgl2-core.js',
   'tools/webgl-pilot/native-sprite-adapter.js',
   'tools/webgl-pilot/pixi-scene-bridge.js',
   'tools/webgl-pilot/renderer-switch-guard.js',
+  ...['pixi-experimental', 'archive', 'skill-reference', 'menus', 'app'].map(
+    (name) => 'src/prototype/' + name + '.js',
+  ),
 ];
 const core = [
   'index.html',

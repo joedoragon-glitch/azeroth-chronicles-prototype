@@ -5142,6 +5142,7 @@
     const eventAt = stageTimes ? performance.now() : 0;
     const events = game.effects.splice(0);
     renderer.queue(events);
+    pixiGame.noteEvents(events);
     renderer.update(frozen ? 0 : dt);
     for (const e of events) {
       audio.effect(e);
