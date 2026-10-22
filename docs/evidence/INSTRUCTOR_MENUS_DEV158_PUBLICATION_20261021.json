@@ -1,0 +1,25 @@
+{
+  "version": "0.9.1+snapshot.dev.158",
+  "clientDate": "2026-10-21",
+  "pullRequest": 397,
+  "mergeSha": "30b1ba592c96d5ea7eaaf53199e2f867fa1bf2f6",
+  "publisherRun": 39705994750,
+  "publisherConclusion": "success",
+  "publicBuildIdentifier": "30b1ba592c96d5ea7eaaf53199e2f867fa1bf2f6",
+  "publicVerification": "Browser observed build.txt matches runtime merge; per-file byte comparison unavailable under current shell network policy.",
+  "checks": [
+    "six English/Spanish Paladin/Mage/Ranger production-shell instructor flows",
+    "existing menus",
+    "existing economy",
+    "existing game-menu shell",
+    "existing companion-onboarding shell",
+    "build",
+    "changed-source format",
+    "affected browser/UI test syntax",
+    "git diff --check"
+  ],
+  "broadCI": false,
+  "browserMatrix": false,
+  "normalWorkflowRestored": true,
+  "temporaryPublisherRemoved": true
+}

@@ -6,4 +6,4 @@ No changes to curricula, class mechanics, prices, rank/level gates, native learn
 
 Validation: six actual production-shell English/Spanish Paladin/Mage/Ranger instructor flows pass: branches/Back, zero funds and disabled clicks, native learning and upgrades with exact charges, capped no-price labels, free Expedition and next instructor, Shared Training charges/local cap and skill journal. Existing menus, economy, game-menu shell and companion-onboarding shell suites pass. Changed-source format, build, syntax and diff checks pass. No broad CI, device visual audit or browser matrix; owner live playtest follows.
 
-Publication pending: package committed artifacts only, then restore normal workflow and remove temporary publisher.
+PR #397 merged as `30b1ba592c96d5ea7eaaf53199e2f867fa1bf2f6`; package-only run 39705994750 succeeded. Public build identifier matches the merged SHA. Original workflow restored byte-for-byte and temporary publisher removed. Receipt: `docs/evidence/INSTRUCTOR_MENUS_DEV158_PUBLICATION_20261021.json`.
