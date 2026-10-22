@@ -66,6 +66,7 @@
         mercyTime: 10,
         restCooldown: 0,
         thornHeroInitiated: false,
+        valeFieldAwakened: false,
         zone: 'vale',
         refuge: 'vale',
         nextId: 1,
@@ -3467,6 +3468,9 @@
         return;
       }
       this.s.statistics.kills++;
+      // One hero-involved monster kill ends the Vale's opening protection,
+      // even while the hero is still level 1. A hit alone does not unlock it.
+      if (e.heroParticipated && !e.neutral) this.s.valeFieldAwakened = true;
       this.awardEnemyReward(e);
       this.treasuryCaptainDefeated(e);
       for (const q of this.questDefs().filter((q) => q.region === this.definition().id)) {
