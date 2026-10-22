@@ -22,9 +22,9 @@ jobs:
     outputs:
       reuse: ${{ steps.reuse.outputs.reuse || 'false' }}
       run_id: ${{ steps.reuse.outputs.run_id }}
-      # One-time isolated real-world GPU parity diagnostics; no full game/browser suites.
+      # One-time Canvas vs WebGL two-way diagnostic publication; no full suites.
       # This shortcut expires after the exact parent commit below is pushed.
-      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == 'bc90036ecfefd81530c04bb562ccdc964e7e128b' }}
+      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == '3d044af5dd79cba9fee41a0a1bd37d3de0375a57' }}
     steps:
       - uses: actions/checkout@v4
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
