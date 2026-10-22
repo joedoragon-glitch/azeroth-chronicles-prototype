@@ -668,11 +668,140 @@
     Fallen: 'Caído',
     Resting: 'En descanso',
   });
+  Object.assign(spanishText, {
+    Character: 'Personaje',
+    Equipment: 'Equipo',
+    'Ranger support': 'Apoyo del Ranger',
+    'Preparation Tonics': 'Tónicos de preparación',
+    'Skills and targeting': 'Habilidades y objetivos',
+    'Movement and menus': 'Movimiento y menús',
+    'Companion commands': 'Órdenes de compañeros',
+    'Using skills': 'Usar habilidades',
+    'Queued skills': 'Habilidades en cola',
+    'Targeting and dodging': 'Apuntar y esquivar',
+    'Combat conditions': 'Estados de combate',
+    'Companion combat skills': 'Habilidades de combate de compañeros',
+    'Training and companions': 'Entrenamiento y compañeros',
+    Talents: 'Talentos',
+    'Skill journal': 'Diario de habilidades',
+    Controls: 'Controles',
+    'Character and identity': 'Personaje e identidad',
+    'Choose a topic or adjust your inputs.': 'Elige un tema o ajusta tus controles.',
+    'Choose the control you want to learn.': 'Elige el control que quieres aprender.',
+    'Choose an action, then press its new key. Esc cancels. Each key binds one action.':
+      'Elige una acción y pulsa su nueva tecla. Esc cancela. Cada tecla corresponde a una acción.',
+    'Choose your layout and movement controls.':
+      'Elige la disposición y los controles de movimiento.',
+    'Tap reachable ground to move.': 'Toca terreno accesible para moverte.',
+    'Screen layout': 'Disposición de pantalla',
+    'Camera zoom': 'Zoom de cámara',
+    'Graphics quality': 'Calidad gráfica',
+    'Frame rate': 'Fotogramas por segundo',
+    'Performance details': 'Detalles de rendimiento',
+    'Choose what to adjust.': 'Elige qué ajustar.',
+    'Choose phone or desktop controls. Your save stays the same.':
+      'Elige controles de teléfono u ordenador. Conservas tu partida.',
+    'Automatic screen': 'Pantalla automática',
+    'Chromebook / desktop screen': 'Pantalla de Chromebook / ordenador',
+    'Phone / touch screen': 'Pantalla de teléfono / táctil',
+    'Zoom changes your view only.': 'El zoom solo cambia la vista.',
+    'Lower graphics can improve frame rate.': 'Reducir los gráficos puede mejorar el rendimiento.',
+    'Simpler scenery and lower resolution.': 'Escenario más simple y menor resolución.',
+    'Automatic sharpness': 'Nitidez automática',
+    'Automatic sharpness ✓': 'Nitidez automática ✓',
+    'Maximum sharpness': 'Nitidez máxima',
+    'Maximum sharpness ✓': 'Nitidez máxima ✓',
+    'Adjusts resolution to keep play smooth.': 'Ajusta la resolución para mantener la fluidez.',
+    'Sharper image; more graphics work.': 'Imagen más nítida; mayor carga gráfica.',
+    'Choose a target for smoother motion or lower graphics load.':
+      'Elige mayor fluidez o menor carga gráfica.',
+    'Starts at 30 FPS and tries 60.': 'Empieza a 30 FPS e intenta llegar a 60.',
+    'Lower graphics load.': 'Menor carga gráfica.',
+    'Smoother motion.': 'Movimiento más fluido.',
+    'Reset performance sample': 'Reiniciar muestra de rendimiento',
+    'Master volume': 'Volumen general',
+    'Music volume': 'Volumen de música',
+    'Ambience volume': 'Volumen ambiental',
+    'Effects volume': 'Volumen de efectos',
+    'Interface volume': 'Volumen de interfaz',
+    'Music and sound': 'Música y sonido',
+    'Choose a volume to adjust.': 'Elige el volumen que quieres ajustar.',
+    'Mute all sound': 'Silenciar todo',
+    'Unmute all sound': 'Activar todo el sonido',
+    Quieter: 'Bajar volumen',
+    Louder: 'Subir volumen',
+    'Save and game management': 'Partidas guardadas',
+    'Save backups': 'Copias de seguridad',
+    'Save run': 'Guardar partida',
+    'Export save': 'Exportar partida',
+    'Import save': 'Importar partida',
+    'Export playtest report': 'Exportar informe de prueba',
+    'New game': 'Nueva partida',
+    'Load other mode run': 'Cargar partida del otro modo',
+    'Save, back up, or choose another run.': 'Guarda, crea una copia o elige otra partida.',
+    'Export a backup before replacing a run.': 'Exporta una copia antes de reemplazar una partida.',
+    'Choose a mode. Export a backup to keep your current run.':
+      'Elige un modo. Exporta una copia para conservar tu partida actual.',
+    'New Normal game': 'Nueva partida Normal',
+    'New game in Nightmare Mode': 'Nueva partida Pesadilla',
+    'Unlocked by the peaceful ending': 'Se desbloquea con el final pacífico',
+    'Weapons, armor and reforges.': 'Armas, armadura y reforjas.',
+    'Automatic healing and your Heal command.': 'Curación automática y tu orden de Curar.',
+    'Temporary maximum HP boost.': 'Aumento temporal de salud máxima.',
+    'Recruit a Ranger to unlock field Heal.':
+      'Recluta un Ranger para desbloquear la curación de campo.',
+    'Use the Ranger Heal button. During cooldown, tap to queue hero healing. Automatic healing stays active.':
+      'Usa el botón Curar del Ranger. Durante la recuperación, toca para poner tu curación en cola. La curación automática sigue activa.',
+    ACTIVE: 'ACTIVO',
+    '+10% maximum HP until rest or defeat.': ' +10% de salud máxima hasta descansar o caer.',
+    '+10% maximum HP until rest or defeat. Use at a completed Barracks.':
+      '+10% de salud máxima hasta descansar o caer. Úsalo en un cuartel terminado.',
+    'Rescue Neri to buy tonics.': 'Rescata a Neri para comprar tónicos.',
+    'Choose a skill for its effects and controls. Instructors teach new ranks.':
+      'Elige una habilidad para ver sus efectos y controles. Los instructores enseñan nuevos rangos.',
+    'View automatic combat skills.': 'Ver habilidades automáticas de combate.',
+    'Read unlocked stories and notices.': 'Lee historias y avisos desbloqueados.',
+    'Tap an objective to track it.': 'Toca un objetivo para seguirlo.',
+    'Finished quests and rewards.': 'Misiones terminadas y recompensas.',
+    'Tap a quest to track it. Rewards arrive automatically.':
+      'Toca una misión para seguirla. Las recompensas llegan automáticamente.',
+    'Choose a place, then select Navigate.': 'Elige un lugar y pulsa Ir.',
+    Navigate: 'Ir',
+    'Navigate to selected': 'Ir al lugar elegido',
+    'No route': 'Sin ruta',
+    'Clear waypoint': 'Quitar ruta',
+    Language: 'Idioma',
+    'On ✓': 'Activado ✓',
+    'Off ✓': 'Desactivado ✓',
+    'Phone layout': 'Disposición táctil',
+    'Touch tap-to-move': 'Tocar para moverse',
+    'Mouse click-to-move': 'Clic para moverse',
+    'Two thumbs': 'Dos pulgares',
+    'Left hand': 'Mano izquierda',
+  });
+  Object.assign(spanishText, {
+    'iPhone / iPad: Safari → Share → Add to Home Screen → Add.\nAndroid / Chrome: browser menu → Install app or Add to Home screen.':
+      'iPhone / iPad: Safari → Compartir → Añadir a pantalla de inicio → Añadir.\nAndroid / Chrome: menú del navegador → Instalar app o Añadir a pantalla de inicio.',
+    'Normal and charged forms share a cooldown.':
+      'Las versiones normal y cargada comparten recuperación.',
+  });
   function translateSegment(piece) {
     const ferryPassage = Campaign.rules.tidalFerryPassage;
     if (ferryPassage && piece.startsWith(ferryPassage))
       return spanishText[ferryPassage] + piece.slice(ferryPassage.length);
     if (/^Search /.test(piece)) return piece.replace('Search ', 'Investigar ');
+    if (/^Crowns \d+/.test(piece)) return piece.replace('Crowns ', 'Coronas ');
+    if (/^Stored: /.test(piece)) return piece.replace('Stored: ', 'Guardados: ');
+    if (/^Equipped weapon: /.test(piece))
+      return piece.replace('Equipped weapon: ', 'Arma equipada: ').replace('tier ', 'nivel ');
+    if (/^Equipped armor: /.test(piece))
+      return piece.replace('Equipped armor: ', 'Armadura equipada: ').replace('tier ', 'nivel ');
+    if (/^(Weapon|Armor) reforge: /.test(piece))
+      return piece
+        .replace('Weapon reforge: ', 'Reforja de arma: ')
+        .replace('Armor reforge: ', 'Reforja de armadura: ');
+    if (/^Camera \d+%/.test(piece)) return piece.replace('Camera ', 'Cámara ');
+
     if (/^Local death loss: /.test(piece))
       return piece.replace('Local death loss: ', 'Pérdida local al caer: ');
     if (/^With you /.test(piece)) return piece.replace('With you ', 'Contigo ');
@@ -939,7 +1068,7 @@
   function installInstructions() {
     openMenu(
       'Install on phone',
-      "Install once, then So I Became the Dark Lord's Problem launches from the home screen like an app and keeps its offline cache on that device.\n\nAndroid / Chrome: use the Install button when available. If Chrome does not offer it, open the browser menu and choose Install app or Add to Home screen.\n\niPhone / iPad: open the game in Safari, tap Share, choose Add to Home Screen, then Add.",
+      'iPhone / iPad: Safari → Share → Add to Home Screen → Add.\nAndroid / Chrome: browser menu → Install app or Add to Home screen.',
       installPrompt
         ? [action('Install game', installApp, 'Open the phone installation prompt')]
         : [],
@@ -1160,83 +1289,96 @@
     );
   }
   function help(back = closeMenu) {
-    const skillKeys = Array.from({ length: 8 }, (_, i) => input.key('skill' + (i + 1))).join(' / ');
-    const description =
-      'Move ' +
-      ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('/') +
-      '; phone: joystick. Interact ' +
-      input.key('confirm') +
-      '.\n' +
-      'Skills 1–8: ' +
-      skillKeys +
-      '. Tap for normal; hold any skill' +
-      ' for 0.65s until CHARGED, then release. Damage can interrupt preparation. ' +
-      'During cooldown: tap to queue normal; briefly hold to queue charged. Blue numbers beside the hero mean normal; gold means charged. ' +
-      (game.hero.class === 'paladin'
-        ? 'Skill 3 raises a shield; tap again to lower it or hold for Shield Bash.'
-        : game.hero.class === 'mage'
-          ? 'Skill 3 interrupts an enemy cast; hold for a Silence Field that affects friend and foe.'
-          : 'Skill 3 heals you; charged Skill 3 heals living companions too.') +
-      '\n' +
-      'Target ' +
-      input.key('target') +
-      ': tap to cycle, hold to lock. Aim: gold is clear, amber is too far, red is blocked. Dodge marked attacks.\n' +
-      'Recall ' +
-      input.key('recall') +
-      (input.actionFor('KeyQ') === 'recall' ? ' / Q' : '') +
-      '; Ranger Heal (tap during cooldown to queue hero healing) ' +
-      input.key('heal') +
-      (PrototypeRules.resourceMode?.manaEnabled !== false
-        ? '; Mana Recovery ' + input.key('mana')
-        : '') +
-      '. Fallen companions need Barracks recovery.\nMap ' +
-      input.key('map') +
-      (input.actionFor('KeyM') === 'map' && input.key('map') !== 'M' ? ' / M' : '') +
-      ', Journal ' +
-      input.key('quests') +
-      ', Menu Esc. In menus: ' +
-      input.key('up') +
-      '/' +
-      input.key('down') +
-      ' selects; ' +
-      input.key('confirm') +
-      '/Enter confirms; Esc returns. Mouse/touch buttons also work.' +
-      (game.s.keeperPact && game.keeperAvailable()
-        ? '\nThe Keeper has deeper answers at your Barracks.'
-        : '');
+    const returnHere = () => help(back);
     openMenu(
       'Controls',
-      language === 'es'
-        ? 'Moverse: ' +
-            ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('/') +
-            '; teléfono: palanca táctil. Interactuar: ' +
-            input.key('confirm') +
-            '.\nHabilidades: ' +
-            skillKeys +
-            '. Toca para usar; mantén 0,65 s hasta CHARGED y suelta. ' +
-            'En recuperación: toca para poner la versión normal en cola; mantén brevemente para la cargada. Los números azules junto al héroe indican normal; dorados, cargada. ' +
-            (game.hero.class === 'paladin'
-              ? 'Habilidad 3: escudo. Toca para bajarlo o mantén pulsado para Shield Bash.'
-              : game.hero.class === 'mage'
-                ? 'Habilidad 3: interrumpir hechizos. Mantén pulsado para Silence Field.'
-                : 'Habilidad 3: curación. Cargada también cura a compañeros vivos.') +
-            '\nObjetivo: ' +
-            input.key('target') +
-            ', toca para cambiar y mantén para fijar. Dorado: a tiro; ámbar: lejos; rojo: bloqueado. Esquiva ataques marcados.' +
-            '\nReagrupar: ' +
-            input.key('recall') +
-            '. Mapa: ' +
-            input.key('map') +
-            '. Misiones: ' +
-            input.key('quests') +
-            '. Menú: Esc. En menús, usa flechas, ' +
-            input.key('confirm') +
-            '/Enter para confirmar y Esc para volver.'
-        : description,
+      'Choose a topic or adjust your inputs.',
       [
-        action('Combat conditions', () => combatConditions(() => help(back))),
+        action('Movement and menus', () => {
+          const keys = ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('/');
+          openMenu(
+            'Movement and menus',
+            language === 'es'
+              ? 'Moverse: ' +
+                  keys +
+                  ' o palanca táctil. Interactuar: ' +
+                  input.key('confirm') +
+                  '.\nMenú: Esc. Flechas para elegir, ' +
+                  input.key('confirm') +
+                  '/Enter para confirmar y Esc para volver.'
+              : 'Move: ' +
+                  keys +
+                  ' or joystick. Interact: ' +
+                  input.key('confirm') +
+                  '.\nMenu: Esc. Arrows select, ' +
+                  input.key('confirm') +
+                  '/Enter confirms, Esc returns.',
+            [],
+            returnHere,
+          );
+        }),
+        action('Skills and targeting', () => combatHelp(returnHere)),
+        action('Companion commands', () =>
+          openMenu(
+            'Companion commands',
+            language === 'es'
+              ? 'Reagrupar: ' +
+                  input.key('recall') +
+                  '. Tus compañeros vuelven contigo.\nCuración Ranger: ' +
+                  input.key('heal') +
+                  '. En recuperación, toca para poner tu curación en cola.\nRecupera a los caídos con un capitán o cuartel.'
+              : 'Recall: ' +
+                  input.key('recall') +
+                  '. Companions return to you.\nRanger Heal: ' +
+                  input.key('heal') +
+                  '. During cooldown, tap to queue hero healing.\nRecover fallen companions at a Captain or Barracks.',
+            [],
+            returnHere,
+          ),
+        ),
         action('Customize keyboard', () => keyboardMenu(back)),
         action('Touch and mouse options', () => pointerMenu(back)),
+      ],
+      back,
+    );
+  }
+  function combatHelp(back) {
+    const returnHere = () => combatHelp(back);
+    const explain = (title, en, es) => () =>
+      openMenu(title, language === 'es' ? es : en, [], returnHere);
+    openMenu(
+      'Skills and targeting',
+      'Choose the control you want to learn.',
+      [
+        action(
+          'Using skills',
+          explain(
+            'Using skills',
+            'Tap a skill to use it. Hold until CHARGED, then release.\nTaking damage can interrupt preparation. Normal and charged forms share a cooldown. Read Skill journal for each skill’s effects.',
+            'Toca una habilidad para usarla. Mantén hasta CHARGED y suelta.\nRecibir daño puede interrumpir la preparación. Ambas versiones comparten recuperación. Consulta sus efectos en el Diario de habilidades.',
+          ),
+        ),
+        action(
+          'Queued skills',
+          explain(
+            'Queued skills',
+            'During cooldown: tap to queue normal, or hold briefly to queue charged.\nBlue numbers beside the hero mean normal; gold means charged.',
+            'Durante la recuperación: toca para poner la versión normal en cola o mantén brevemente para la cargada.\nNúmeros azules: normal; dorados: cargada.',
+          ),
+        ),
+        action(
+          'Targeting and dodging',
+          explain(
+            'Targeting and dodging',
+            'Target: ' +
+              input.key('target') +
+              '. Tap to cycle; hold to lock.\nAim: gold is clear, amber is too far, red is blocked. Dodge marked attacks.',
+            'Objetivo: ' +
+              input.key('target') +
+              '. Toca para cambiar; mantén para fijar.\nPuntería: dorado, despejada; ámbar, lejos; rojo, bloqueada. Esquiva ataques marcados.',
+          ),
+        ),
+        action('Combat conditions', () => combatConditions(returnHere)),
       ],
       back,
     );
@@ -1245,7 +1387,7 @@
     bindingCapture = null;
     openMenu(
       'Customize keyboard',
-      'Select an action, then press its new key. Esc cancels. Duplicate keys are rejected. Browser shortcuts remain available.',
+      'Choose an action, then press its new key. Esc cancels. Each key binds one action.',
       [
         ...input.actions.map(([id, name]) =>
           action(name + ' · ' + input.key(id), () => {
@@ -1277,7 +1419,7 @@
     };
     openMenu(
       'Touch and mouse options',
-      'Use the controls that feel comfortable. Menus always accept direct clicks and taps. Movement inputs work alongside the keyboard and joystick.',
+      'Choose your layout and movement controls.',
       [
         action(
           'Phone layout · ' + (p.phoneLayout === 'two-thumb' ? 'Two thumbs' : 'Left hand'),
@@ -1287,7 +1429,7 @@
         action(
           'Touch tap-to-move · ' + (p.touchMove ? 'ON' : 'OFF'),
           () => select('touchMove', !p.touchMove),
-          'Applies to phones, tablets and touchscreen browsers. Tap a reachable place in the world.',
+          'Tap reachable ground to move.',
         ),
         action(
           'Mouse click-to-move · ' + (p.mouseMove ? 'ON' : 'OFF'),
@@ -1773,8 +1915,7 @@
         '\nXP ' +
         Math.floor(h.xp) +
         ' / ' +
-        game.xpRequired(h.level) +
-        '\nHero progression only. Troops, resources and construction are managed at town Captains or your barracks.',
+        game.xpRequired(h.level),
       [
         ...(!h.customName
           ? [action('Name your hero', () => nameHeroMenu(false), 'Optional · choose once')]
@@ -1788,6 +1929,7 @@
               ),
             ]
           : []),
+        action('Inventory and support', () => inventory(characterMenu, true)),
         action('Skill journal', () => skillBook(characterMenu)),
         action('Talents', () => talents(characterMenu)),
       ],
@@ -1797,16 +1939,13 @@
   function saveMenu() {
     openMenu(
       'Save and game management',
-      'Backups, reports and run management.',
+      'Save, back up, or choose another run.',
       [
         action('Save run', () => {
           save();
           closeMenu();
         }),
-        action('Export save', () =>
-          exportJSON(game.snapshot(), 'Azeroth_Chronicles_' + game.s.mode + '.json'),
-        ),
-        action('Import save', () => $('import-file').click()),
+        action('Save backups', saveBackupMenu),
         action('Export playtest report', () =>
           exportJSON(
             {
@@ -1835,16 +1974,7 @@
             'Azeroth_Playtest_Report.json',
           ),
         ),
-        action('New Normal game', () => chooseLanguage('normal')),
-        ...(developerEnabled
-          ? [action('New Developer Mode run', () => chooseLanguage('developer'))]
-          : []),
-        action(
-          'New game in Nightmare Mode',
-          () => chooseLanguage('nightmare'),
-          'Unlocked by the peaceful ending',
-          !profile.nightmareUnlocked,
-        ),
+        action('New game', newGameMenu),
         action('Load other mode run', () => {
           const mode = game.s.mode === 'normal' ? 'nightmare' : 'normal';
           if (load(mode)) {
@@ -1856,27 +1986,57 @@
       systemMenu,
     );
   }
+  function saveBackupMenu() {
+    openMenu(
+      'Save backups',
+      'Export a backup before replacing a run.',
+      [
+        action('Export save', () =>
+          exportJSON(game.snapshot(), 'Azeroth_Chronicles_' + game.s.mode + '.json'),
+        ),
+        action('Import save', () => $('import-file').click()),
+      ],
+      saveMenu,
+    );
+  }
+  function newGameMenu() {
+    openMenu(
+      'New game',
+      'Choose a mode. Export a backup to keep your current run.',
+      [
+        action('New Normal game', () => chooseLanguage('normal')),
+        ...(developerEnabled
+          ? [action('New Developer Mode run', () => chooseLanguage('developer'))]
+          : []),
+        action(
+          'New game in Nightmare Mode',
+          () => chooseLanguage('nightmare'),
+          'Unlocked by the peaceful ending',
+          !profile.nightmareUnlocked,
+        ),
+      ],
+      saveMenu,
+    );
+  }
   function platformMenu(back = systemMenu) {
+    const returnHere = () => platformMenu(back);
     openMenu(
       'Screen and performance',
-      'Current screen: ' +
-        (platform.mode === 'desktop' ? 'Chromebook / desktop' : 'Phone / touch') +
-        '. The two layouts share your saved campaign. Automatic selection uses input capabilities, so a touchscreen Chromebook keeps its desktop layout.\n\n' +
-        'Camera: ' +
-        Math.round((platform.cameraZoom || 1) * 100) +
-        '% for this screen. Compare closer views while movement and attack ranges stay the same.\n\n' +
-        'Optimization Mode: ' +
-        (optimizationMode ? 'On' : 'Off') +
-        '. When On: procedural terrain, less decorative scenery and ambience, and lower internal rendering resolution. Combat warnings and gameplay rules are unchanged.\n\n' +
-        'Frame rate: ' +
-        (fps.preference === 'auto' ? 'Auto' : fps.preference + ' FPS') +
-        ' · current target ' +
-        fps.target +
-        ' FPS. Rendering only; gameplay stays unchanged.\n\n' +
-        'World sharpness: ' +
-        (renderResolution.preference === 'auto' ? 'Auto' : 'Maximum') +
-        '. Auto lowers pixel density in slow scenes and recovers it when rendering has room. Menus and controls stay sharp.\n\n' +
-        runtime.describe(renderer.metrics()),
+      'Choose what to adjust.',
+      [
+        action('Screen layout', () => screenLayoutMenu(returnHere)),
+        action('Camera zoom', () => cameraMenu(returnHere)),
+        action('Graphics quality', () => graphicsMenu(returnHere)),
+        action('Frame rate', () => frameRateMenu(returnHere)),
+        action('Performance details', () => performanceMenu(returnHere)),
+      ],
+      back,
+    );
+  }
+  function screenLayoutMenu(back) {
+    openMenu(
+      'Screen layout',
+      'Choose phone or desktop controls. Your save stays the same.',
       [
         action('Automatic screen', () => {
           platform.select('auto');
@@ -1890,16 +2050,32 @@
           platform.select('phone');
           closeMenu();
         }),
-        ...[1, 1.5, 1.75].map((scale) =>
-          action(
-            'Camera ' + Math.round(scale * 100) + '%' + (scale === 1 ? ' · original' : ''),
-            () => {
-              clearInput();
-              platform.selectCameraZoom(scale);
-              closeMenu();
-            },
-          ),
+      ],
+      back,
+    );
+  }
+  function cameraMenu(back) {
+    openMenu(
+      'Camera zoom',
+      'Zoom changes your view only.',
+      [1, 1.5, 1.75].map((scale) =>
+        action(
+          'Camera ' + Math.round(scale * 100) + '%' + (scale === platform.cameraZoom ? ' ✓' : ''),
+          () => {
+            clearInput();
+            platform.selectCameraZoom(scale);
+            closeMenu();
+          },
         ),
+      ),
+      back,
+    );
+  }
+  function graphicsMenu(back) {
+    openMenu(
+      'Graphics quality',
+      'Lower graphics can improve frame rate.',
+      [
         action(
           'Optimization Mode · ' + (optimizationMode ? 'On ✓' : 'Off ✓'),
           () => {
@@ -1914,36 +2090,62 @@
             resize();
             runtime.reset();
             fps.suspend();
-            platformMenu(back);
+            graphicsMenu(back);
           },
-          'Device-only preference · reduced graphics and possible decorative pop-in',
+          'Simpler scenery and lower resolution.',
         ),
         ...[
-          ['auto', 'Auto (starts at 30, tries 60)'],
-          ['30', '30 FPS · Relaxed'],
-          ['60', '60 FPS · Smooth'],
-        ].map(([value, label]) =>
-          action('Frame rate · ' + label + (fps.preference === value ? ' ✓' : ''), () => {
-            fps.select(value);
-            runtime.reset();
-            platformMenu(back);
-          }),
+          ['auto', 'Automatic sharpness', 'Adjusts resolution to keep play smooth.'],
+          ['native', 'Maximum sharpness', 'Sharper image; more graphics work.'],
+        ].map(([value, label, detail]) =>
+          action(
+            label + (renderResolution.preference === value ? ' ✓' : ''),
+            () => {
+              renderResolution.select(value);
+              resize();
+              runtime.reset();
+              fps.suspend();
+              graphicsMenu(back);
+            },
+            detail,
+          ),
         ),
+      ],
+      back,
+    );
+  }
+  function frameRateMenu(back) {
+    openMenu(
+      'Frame rate',
+      'Choose a target for smoother motion or lower graphics load.',
+      [
         ...[
-          ['auto', 'World sharpness · Auto (favor FPS)'],
-          ['native', 'World sharpness · Maximum'],
-        ].map(([value, label]) =>
-          action(label + (renderResolution.preference === value ? ' ✓' : ''), () => {
-            renderResolution.select(value);
-            resize();
-            runtime.reset();
-            fps.suspend();
-            platformMenu(back);
-          }),
+          ['auto', 'Auto', 'Starts at 30 FPS and tries 60.'],
+          ['30', '30 FPS', 'Lower graphics load.'],
+          ['60', '60 FPS', 'Smoother motion.'],
+        ].map(([value, label, detail]) =>
+          action(
+            label + (fps.preference === value ? ' ✓' : ''),
+            () => {
+              fps.select(value);
+              runtime.reset();
+              frameRateMenu(back);
+            },
+            detail,
+          ),
         ),
+      ],
+      back,
+    );
+  }
+  function performanceMenu(back) {
+    openMenu(
+      'Performance details',
+      runtime.describe(renderer.metrics()),
+      [
         action('Reset performance sample', () => {
           runtime.reset();
-          platformMenu(back);
+          performanceMenu(back);
         }),
       ],
       back,
@@ -1996,23 +2198,10 @@
           !game.s.quests['quest-barracks'].paid &&
           !game.hasAnyBarracks(),
       ),
-      action('Screen and performance', () => platformMenu(openMain)),
       ...(appUpdateReady ? [action('Install available game update', updateApp)] : []),
-      action('Map and travel routes', showMap),
-      ...(questGuide
-        ? [
-            action('Clear waypoint', () => {
-              if (questGuide?.kind === 'gathering') game.s.gatheringTarget = null;
-              questGuide = null;
-              closeMenu();
-            }),
-          ]
-        : []),
-      action('Quest journal', () => quests(false)),
-      action('Announcements', () => announcements(openMain)),
-      action('Inventory and support', inventory),
-      action('Skill journal', () => skillBook(openMain), 'Tap / charged effects and cooldowns'),
-      action('Talents', () => talents(openMain)),
+      action('Map and travel routes', () => showMap(openMain)),
+      action('Quest journal', () => quests(false, openMain)),
+      action('Character', characterMenu),
       ...(game.s.phase === 'awakening'
         ? [
             action(
@@ -2023,18 +2212,6 @@
                 '/5',
             ),
           ]
-        : []),
-      ...(profile.nightmareUnlocked
-        ? [
-            action(
-              '★ New Game — Nightmare Mode',
-              () => chooseLanguage('nightmare'),
-              'Unlocked by the peaceful ending · Standard or Succession challenge',
-            ),
-          ]
-        : []),
-      ...(developerEnabled
-        ? [action('New Developer Mode run', () => chooseLanguage('developer'))]
         : []),
       action('Game and settings', systemMenu),
     ]);
@@ -2332,33 +2509,49 @@
     updateHUD();
   }
 
+  function volumeLabel(key) {
+    return {
+      master: 'Master volume',
+      music: 'Music volume',
+      ambience: 'Ambience volume',
+      effects: 'Effects volume',
+      interface: 'Interface volume',
+    }[key];
+  }
   function soundMenu(back = closeMenu) {
-    const s = audio.settings;
+    const settings = audio.settings;
     openMenu(
       'Music and sound',
-      'Independent volumes. Preferences survive new games.',
+      'Choose a volume to adjust.',
       [
-        action(s.muted ? 'Unmute all sound' : 'Mute all sound', () => {
-          audio.setSettings({ muted: !s.muted });
+        action(settings.muted ? 'Unmute all sound' : 'Mute all sound', () => {
+          audio.setSettings({ muted: !settings.muted });
           profile.audio = { ...audio.settings };
           persistProfile();
           soundMenu(back);
         }),
-        ...['master', 'music', 'ambience', 'effects', 'interface'].flatMap((key) => [
-          action(key + ' − · ' + Math.round((s[key] ?? s.effects) * 100) + '%', () => {
-            audio.setSettings({ [key]: (s[key] ?? s.effects) - 0.1 });
-            profile.audio = { ...audio.settings };
-            persistProfile();
-            soundMenu(back);
-          }),
-          action(key + ' +', () => {
-            audio.setSettings({ [key]: (s[key] ?? s.effects) + 0.1 });
-            profile.audio = { ...audio.settings };
-            persistProfile();
-            soundMenu(back);
-          }),
-        ]),
+        ...['master', 'music', 'ambience', 'effects', 'interface'].map((key) =>
+          action(
+            volumeLabel(key) + ' · ' + Math.round((settings[key] ?? settings.effects) * 100) + '%',
+            () => volumeMenu(key, () => soundMenu(back)),
+          ),
+        ),
       ],
+      back,
+    );
+  }
+  function volumeMenu(key, back) {
+    const settings = audio.settings;
+    const adjust = (delta) => {
+      audio.setSettings({ [key]: (settings[key] ?? settings.effects) + delta });
+      profile.audio = { ...audio.settings };
+      persistProfile();
+      volumeMenu(key, back);
+    };
+    openMenu(
+      volumeLabel(key),
+      Math.round((settings[key] ?? settings.effects) * 100) + '%',
+      [action('Quieter · −10%', () => adjust(-0.1)), action('Louder · +10%', () => adjust(0.1))],
       back,
     );
   }
@@ -2530,8 +2723,12 @@
       ...destinations.map((place) =>
         action((place.icon || '•') + ' ' + place.name, () => choose(place), place.kind === 'transport' ? 'Walk to the travel service; choose your journey there.' : place.kind === 'dungeon' || place.sideDungeon ? 'Walk to the entrance, then interact to enter.' : ''),
       ),
+      ...(questGuide ? [action('Clear waypoint', () => {
+        if (questGuide?.kind === 'gathering') game.s.gatheringTarget = null;
+        questGuide = null; closeMenu();
+      })] : []),
     ];
-    openMenu((room?.name || side?.name || region.name) + ' map', '', choices, back);
+    openMenu((room?.name || side?.name || region.name) + ' map', 'Choose a place, then select Navigate.', choices, back);
     $('modal').setAttribute('data-view', 'map');
     const go = $('modal-actions').children[0];
     go.classList.add('route-go');
@@ -2635,7 +2832,7 @@
       selected = place;
       route = findRoute(place);
       go.disabled = !route;
-      go.textContent = route ? 'Navigate · ' + place.name : 'No route · ' + place.name;
+      go.textContent = tr(route ? 'Navigate · ' + place.name : 'No route · ' + place.name);
       Array.from($('modal-actions').children).forEach((button, index) =>
         button.classList.toggle('route-picked', destinations[index - 1] === place),
       );
