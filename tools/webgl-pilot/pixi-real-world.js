@@ -73,15 +73,22 @@
    const c=document.createElement('canvas');c.width=sizeX;c.height=sizeY;return c;
  }
  function candidateEntities(game,screenPoint,width,height){
-   const z=game.zone(),candidates=[];
+   const z=game.zone(),candidates=[],keyCounts=new Map();
    function add(list,kind){
      for(const entity of list||[]){
        if(kind==='enemy'&&entity.hp<=0)continue;
        const p=screenPoint(entity);
        if(p.x< -250||p.x>width+250||p.y< -250||p.y>height+250)continue;
+       // Object names/structures are not necessarily unique in a zone.
+       // Use a stable id where present, otherwise an authored world position.
+       const identity=entity.id!=null?String(entity.id):
+         String(entity.name||entity.structure||'object')+':'+entity.x+':'+entity.y;
+       const baseKey=kind+':'+identity;
+       const repeat=keyCounts.get(baseKey)||0;
+       keyCounts.set(baseKey,repeat+1);
        candidates.push({entity,visual:{...entity,renderKind:kind,
          spriteIdentity:entity},kind,point:p,
-         key:kind+':'+String(entity.id||entity.name||entity.structure||candidates.length)});
+         key:repeat?baseKey+'#'+repeat:baseKey});
      }
    }
    add(z.props,'prop');add(game.visibleNPCs(),'npc');
