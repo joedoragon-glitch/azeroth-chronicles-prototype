@@ -340,106 +340,162 @@
 
   async function run() {
     runButton.disabled = true;
-    status.textContent = 'Preparing an isolated campaign scene and its original images…';
+    status.textContent = 'Preparing current campaign objects and original art…';
     output.textContent = 'Running…';
-    let gpu = null;
     try {
-      checked(typeof Campaign === 'function', 'Game engine scripts did not load');
-      const manifest = await (await fetch('./assets/sprites/manifest.json')).json();
+      checked(typeof Campaign === 'function', 'Campaign scripts did not load');
+      const response = await fetch('./assets/sprites/manifest.json');
+      checked(response.ok, 'Cannot load original sprite catalog');
+      const manifest = await response.json();
       checked(PrototypeSprites.installManifest(manifest), 'Sprite catalog rejected');
       const scene = sceneObjects(byId('scene').value, manifest);
-      checked(scene.objects.length > 1, 'Not enough registered sprite objects in this camera view');
-      const sources = [...new Set(scene.objects.map((o) => o.src))];
-      const loadedAt = performance.now();
+      checked(scene.objects.length > 1, 'Nothing visible in this scene');
+      const sources = [...new Set(scene.objects.filter((o) => !o.procedural).map((o) => o.src))];
+      const beganDecode = performance.now();
       const pairs = await Promise.all(sources.map(async (src) => [src, await loadImage(src)]));
-      const failed = pairs.filter(([, img]) => !img).map(([src]) => src);
-      checked(!failed.length, 'Some original images failed to load: ' + failed.join(', '));
+      checked(!pairs.some(([, image]) => !image), 'Original sprite image unavailable');
       const images = new Map(pairs);
-      const decodingMs = Number((performance.now() - loadedAt).toFixed(2));
-      status.textContent = 'Preparing GPU texture and checking visuals…';
-      gpu = gpuSetup(images);
-      const draw2d = (step, forceReadback = false) => {
+      const decodeMs = Number((performance.now() - beganDecode).toFixed(1));
+      status.textContent = 'Drawing procedural objects using the real game artist…';
+      const baked = bakeProcedural(scene, images);
+      status.textContent = 'Uploading original and procedural artwork to WebGL…';
+      const gpu = gpuSetup(images);
+      const drawCached = (step, flush = false) => {
+        const ox = Math.round(Math.sin(step * 0.35) * 16);
+        const oy = Math.round(Math.cos(step * 0.25) * 10);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.globalAlpha = 1;
         ctx.fillStyle = '#0c1913';
         ctx.fillRect(0, 0, W, H);
         ctx.imageSmoothingEnabled = false;
-        const ox = Math.round(Math.sin(step * 0.35) * 16);
-        const oy = Math.round(Math.cos(step * 0.25) * 10);
         for (const o of scene.objects) {
           ctx.globalAlpha = o.opacity;
           ctx.drawImage(images.get(o.src), o.x + ox, o.y + oy, o.width, o.height);
         }
         ctx.globalAlpha = 1;
-        if (forceReadback) ctx.getImageData(0, 0, 1, 1);
+        if (flush) ctx.getImageData(0, 0, 1, 1);
       };
-      const drawGPU = (step, forceWait = false) => {
+      const drawOriginal = (step, flush = false) => {
+        const ox = Math.round(Math.sin(step * 0.35) * 16);
+        const oy = Math.round(Math.cos(step * 0.25) * 10);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = '#0c1913';
+        ctx.fillRect(0, 0, W, H);
+        ctx.imageSmoothingEnabled = false;
+        for (const o of scene.objects) {
+          if (!o.procedural) {
+            ctx.globalAlpha = o.opacity;
+            ctx.drawImage(images.get(o.src), o.x + ox, o.y + oy, o.width, o.height);
+          } else {
+            ctx.save();
+            ctx.scale(scene.scale, scene.scale);
+            PrototypeVisuals.draw(ctx, o.entity,
+              { x: (o.anchorX + ox) / scene.scale, y: (o.anchorY + oy) / scene.scale },
+              scene.regionIndex, false);
+            ctx.restore();
+          }
+        }
+        ctx.globalAlpha = 1;
+        if (flush) ctx.getImageData(0, 0, 1, 1);
+      };
+      const drawGPU = (step, flush = false) => {
         const gl = gpu.gl;
         gl.clearColor(12 / 255, 25 / 255, 19 / 255, 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.bindBuffer(gl.ARRAY_BUFFER, gpu.buffer);
         const mesh = packGeometry(scene.objects, gpu.entries, step);
         gl.bufferData(gl.ARRAY_BUFFER, mesh, gl.DYNAMIC_DRAW);
-        gl.drawArrays(gl.TRIANGLES, 0, mesh.length / 5);
-        if (forceWait) gl.finish();
+        // Page batching never rearranges the game's back-to-front draw order.
+        let from = 0;
+        while (from < scene.objects.length) {
+          const page = gpu.entries.get(scene.objects[from].src).page;
+          let end = from + 1;
+          while (end < scene.objects.length && gpu.entries.get(scene.objects[end].src).page === page) end++;
+          gl.bindTexture(gl.TEXTURE_2D, gpu.textures[page]);
+          gl.drawArrays(gl.TRIANGLES, from * 6, (end - from) * 6);
+          from = end;
+        }
+        if (flush) gl.finish();
       };
-      draw2d(0, true); drawGPU(0, true);
-      const cpuPixels = ctx.getImageData(0, 0, W, H).data;
+      drawOriginal(0, true);
+      const livePixels = new Uint8Array(ctx.getImageData(0, 0, W, H).data);
+      drawCached(0, true);
+      const cachedPixels = new Uint8Array(ctx.getImageData(0, 0, W, H).data);
+      drawGPU(0, true);
       const bottomUp = new Uint8Array(W * H * 4);
       gpu.gl.readPixels(0, 0, W, H, gpu.gl.RGBA, gpu.gl.UNSIGNED_BYTE, bottomUp);
       const flipped = new Uint8Array(bottomUp.length);
       for (let row = 0; row < H; row++)
-        flipped.set(bottomUp.subarray(row * W * 4, (row + 1) * W * 4), (H - row - 1) * W * 4);
-      const equality = comparePixels(cpuPixels, flipped);
-      const coverageRatio = equality.foregroundPixelsCanvas
-        ? equality.foregroundPixelsWebGL / equality.foregroundPixelsCanvas : 0;
-      const nearMatch = Math.min(equality.withinOnePixelCanvas, equality.withinOnePixelWebGL);
-      const similarEdges = equality.foregroundOverlap >= 0.9 || nearMatch >= 0.97;
-      const comparable = similarEdges && coverageRatio >= 0.95 && coverageRatio <= 1.05
-        && equality.meanForegroundChannelDifference <= 25;
-      if (!comparable) {
-        status.textContent = 'INVALID comparison — pictures differ. No speed conclusion.';
+        flipped.set(bottomUp.subarray(row * W * 4, (row + 1) * W * 4),
+          (H - row - 1) * W * 4);
+      const visualDifference = comparePixels(cachedPixels, flipped);
+      const cachedVsOriginal = comparePixels(livePixels, cachedPixels);
+      const acceptable = (d) => {
+        const coverage = d.foregroundPixelsCanvas
+          ? d.foregroundPixelsWebGL / d.foregroundPixelsCanvas : 0;
+        return coverage >= 0.95 && coverage <= 1.05
+          && (d.foregroundOverlap >= 0.9 ||
+            Math.min(d.withinOnePixelCanvas, d.withinOnePixelWebGL) >= 0.97)
+          && d.meanForegroundChannelDifference <= 25;
+      };
+      if (!acceptable(visualDifference) || !acceptable(cachedVsOriginal)) {
+        status.textContent = 'INVALID comparison — procedural artwork differs. Timings withheld.';
         output.textContent = JSON.stringify({
-          message: 'WebGL artwork did not match Canvas closely enough. Timings deliberately withheld.',
-          visualDifference: equality,
-          gpuBackend: gpu.backend,
-          renderedSprites: scene.objects.length
+          message: 'All images must match visually before this experiment can claim a speed result.',
+          cachedVsWebgl: visualDifference, originalVsCached: cachedVsOriginal,
+          procedural: baked, includedProcedural: scene.selectedProcedural,
+          gpuBackend: gpu.backend
         }, null, 2);
         window.AzerothGpuPilotResult = null;
         return;
       }
-      status.textContent = 'Artwork coverage matches within one pixel; measuring repeated frames…';
-      for (let k = 0; k < 6; k++) { draw2d(k,true); drawGPU(k,true); }
-      const results = { canvas: [], webgl: [] };
-      for (let round = 0; round < 14; round++) {
-        const order = round % 2 ? ['webgl', 'canvas'] : ['canvas', 'webgl'];
+      status.textContent = 'Pictures aligned; measuring drawing methods…';
+      for (let k = 0; k < 4; k++) { drawOriginal(k, true); drawCached(k, true); drawGPU(k, true); }
+      const results = { originalCanvas: [], cachedCanvas: [], webgl: [] };
+      const methods = { originalCanvas: drawOriginal, cachedCanvas: drawCached, webgl: drawGPU };
+      for (let round = 0; round < 12; round++) {
+        const order = round % 3 === 0 ? ['originalCanvas','cachedCanvas','webgl']
+          : round % 3 === 1 ? ['webgl','originalCanvas','cachedCanvas']
+          : ['cachedCanvas','webgl','originalCanvas'];
         for (const method of order) {
           const at = performance.now();
-          if (method === 'canvas') draw2d(round, true);
-          else drawGPU(round, true);
+          methods[method](round, true);
           results[method].push(performance.now() - at);
         }
       }
+      drawCached(0, true); drawGPU(0, true);
+      const countSprites = scene.objects.filter((o) => !o.procedural).length;
       const report = {
-        scope: 'Sprite composition only; not a full frame, not real gameplay FPS; same live manifest and campaign geometry',
-        scene: scene.region, cameraZoom: scene.scale,
-        viewport: [W, H], renderedSprites: scene.objects.length,
+        scope: 'Current game entity artwork: original procedural draws versus cached Canvas and WebGL texture composition. No floor, lighting, combat overlays or full-game FPS.',
+        scene: scene.region, cameraZoom: scene.scale, viewport: [W, H],
+        renderedSprites: countSprites, renderedProcedural: baked.items,
+        totalObjectsDrawn: scene.objects.length,
         originalEntitiesConsidered: scene.considered,
-        proceduralOrUnregisteredExcludedFromBoth: scene.procedural,
-        registeredOutsideViewport: scene.offscreen,
-        uniqueOriginalImages: images.size,
-        decodePreparationMs: decodingMs,
-        gpuAtlasPreparationMs: gpu.preparationMs,
+        originalProceduralCount: scene.procedural,
+        proceduralOmittedByLimit: scene.proceduralOmittedByLimit,
+        proceduralVisibleKindCounts: scene.selectedKinds,
+        outsideViewOrUnsupported: scene.offscreen,
+        proceduralPreparationMs: baked.preparationMs,
+        proceduralCroppedSourceBytes: baked.croppedSourceBytes,
+        originalImages: sources.length, decodePreparationMs: decodeMs,
+        gpuAtlasPreparationMs: gpu.preparationMs, gpuAtlasPages: gpu.atlasPages,
         gpuAtlasBytes: gpu.atlasBytes, gpuBackend: gpu.backend,
-        visualDifference: equality,
-        timePerFrameMs: { canvas2d: samples(results.canvas), webgl2: samples(results.webgl) },
-        warning: 'Visual comparison allows one pixel of edge tolerance, NOT missing sprites. Report includes raw pixel differences and foreground agreement; inspect both panels. Forced sync (Canvas 1x1 readback; WebGL gl.finish) uses different submit paths. This is sprite composition only: do not extrapolate to whole-game FPS.'
+        visualDifference, originalVsCached: cachedVsOriginal,
+        timePerFrameMs: {
+          originalCanvas2d: samples(results.originalCanvas),
+          cachedCanvas2d: samples(results.cachedCanvas),
+          webgl2: samples(results.webgl)
+        },
+        warning: 'Original Canvas redraws procedural art per frame; cached Canvas and WebGL use static baked images. Preparation is reported separately and must be amortized. Animated actors, changing scenery, floor, roads, lights and effects are not included. Hardware comparisons are not whole-game FPS.'
       };
       window.AzerothGpuPilotResult = report;
       output.textContent = JSON.stringify(report, null, 2);
-      status.textContent = 'Done. Compare both pictures and check the measurements; nothing was changed in the game.';
+      status.textContent = 'Three-way comparison complete. Same static artwork, no game changes.';
     } catch (err) {
-      status.textContent = 'Benchmark blocked: ' + err.message;
+      status.textContent = 'Experiment blocked: ' + err.message;
       output.textContent = String(err.stack || err);
+      window.AzerothGpuPilotResult = null;
     } finally {
       runButton.disabled = false;
     }
