@@ -22,9 +22,9 @@ jobs:
     outputs:
       reuse: ${{ steps.reuse.outputs.reuse || 'false' }}
       run_id: ${{ steps.reuse.outputs.run_id }}
-      # One-time standalone hybrid renderer diagnostic correction; package only.
+      # One-time standalone real-game rendering diagnostic publication only.
       # Parent guard expires immediately after the intended main push.
-      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == '43820b50d5acc48f67c93df76f25206aeee57aec' }}
+      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == '87ba34ddb2424c9f7fb776acb28373c47eca6b2d' }}
     steps:
       - uses: actions/checkout@v4
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
