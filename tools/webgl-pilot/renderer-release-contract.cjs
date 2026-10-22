@@ -5,7 +5,8 @@ const DEFAULT_RENDERER = 'canvas2d';
 const OPTIONS = Object.freeze(['canvas2d', 'webgl2']);
 const API_METHODS = Object.freeze([
   'draw', 'world', 'screen', 'tileBounds', 'setOptimizationMode',
-  'labelVisible', 'queue', 'update', 'metrics'
+  'labelVisible', 'queue', 'update', 'metrics',
+  'setGroundReuse', 'setOutlineCompaction'
 ]);
 // These capabilities must be implemented by the native GPU renderer, not
 // simulated by uploading completed Canvas frames or skipping visual layers.
