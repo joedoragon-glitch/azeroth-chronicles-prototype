@@ -201,3 +201,44 @@ console.log(
     cases +
     ' mode/type/source auto-arrivals plus cancellation, replacement, full-party reserves, reservations, save/travel, legacy validation and captain tutorial/menu',
 );
+
+// Funding is only a trigger to revalidate; combat, training, source and unlocks still gate delivery.
+for (const source of ['town', 'barracks']) {
+  const { g, b } = fixture(),
+    id = source === 'town' ? null : b.id;
+  assert(g.requestCompanionRecruitment('soldier', id));
+  g.hero.gold = g.recruitmentRequestPrice();
+  const e = g.makeEnemy(
+    { species: 'goblin', level: 1, hp: 100, damage: 1, gold: 0, xp: 0 },
+    { x: g.hero.x + 80, y: g.hero.y },
+  );
+  g.zone().enemies = [e];
+  e.aggro = true;
+  const before = g.hero.gold;
+  assert(!g.resolveRecruitmentRequest());
+  assert.equal(g.hero.gold, before);
+  assert.equal(g.rosterCount(), 2);
+  e.aggro = false;
+  g.s.expeditionRank = 1;
+  assert(!g.resolveRecruitmentRequest());
+  g.s.expeditionRank = 2;
+  if (id) {
+    b.queue = 1;
+    b.queueType = 'archer';
+    assert(!g.resolveRecruitmentRequest(), 'busy Barracks remains a blocker after funding');
+    b.queue = 0;
+    b.queueType = null;
+    b.progress = 3;
+    assert(!g.resolveRecruitmentRequest());
+    b.progress = 4;
+  } else {
+    const captain = g.zone().npcs.find((n) => n.kind === 'recruiter');
+    g.zone().npcs = g.zone().npcs.filter((n) => n !== captain);
+    assert(!g.resolveRecruitmentRequest());
+    g.zone().npcs.push(captain);
+  }
+  assert(g.resolveRecruitmentRequest(), 'idle nearby enemies do not block services');
+}
+console.log(
+  'PASS recruitment rechecks engaged combat, Expedition, source Captain/Barracks and paid-training availability before spending',
+);

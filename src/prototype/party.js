@@ -1838,6 +1838,23 @@
         )
           this.rangerSupport('mana', false);
       }
+      companionServiceReason() {
+        if (this.hero.hp <= 0 || this.s.challenge.pending || this.s.challenge.gameOver)
+          return 'Companion services require a living, available hero.';
+        if (this.refugeThreat()) return 'Companion services wait until nearby combat has ended.';
+        return '';
+      }
+      companionServiceSourceReason(barracksId, zone = this.zoneId) {
+        const z = this.s.zones[zone];
+        if (barracksId === null)
+          return z?.npcs.some((n) => n.kind === 'recruiter')
+            ? ''
+            : 'The source town Captain is no longer available.';
+        const b = z?.buildings.find((b) => b.id === barracksId && b.kind === 'barracks');
+        if (!b) return 'This Barracks is no longer available. Reopen a local Barracks.';
+        if (b.progress < 4) return 'Finish building this Barracks before using companion services.';
+        return '';
+      }
       companionRecruitmentReason(type, barracksId = null, options = {}) {
         if (!['soldier', 'archer'].includes(type)) return 'Choose a Soldier or Ranger to recruit.';
         if ((this.s.expeditionRank || 1) < 2)
@@ -1846,19 +1863,28 @@
           options.replaceRequest || options.completeRequest ? null : this.s.recruitmentRequest;
         if (this.rosterCount() + this.queuedCompanions(false) + (request ? 1 : 0) >= 200)
           return 'Company limit reached: 200 companions, including reserves and queued recruits.';
+        if (options.replaceRequest || options.completeRequest) {
+          const sourceReason = this.companionServiceSourceReason(
+            barracksId,
+            options.zone || this.zoneId,
+          );
+          if (sourceReason) return sourceReason;
+        }
         if (barracksId !== null) {
           const b = this.s.zones[options.zone || this.zoneId]?.buildings.find(
             (b) => b.id === barracksId,
           );
           if (!b) return 'This Barracks is no longer available. Reopen a local Barracks.';
           if (b.progress < 4) return 'Finish building this Barracks before recruiting.';
-          if (b.queue > 0 && !options.completeRequest)
+          if (b.queue > 0)
             return 'This Barracks is already training a companion. Wait for training to finish.';
         } else if (
           !options.completeRequest &&
           this.rosterCount() + (request?.barracksId === null ? 1 : 0) >= 3
         )
           return 'The town can employ only 3 companions, including reserves. Recruit at a completed Basic or Full Barracks; resting someone does not free a town hiring place.';
+        const serviceReason = this.companionServiceReason();
+        if (serviceReason) return serviceReason;
         const price =
           barracksId === null ? this.recruitPrice(type) : this.barracksRecruitPrice(type);
         if (!price) return 'Recruitment is unavailable for this companion.';
@@ -1915,6 +1941,7 @@
         const request = this.s.recruitmentRequest;
         if (!request || this.hero.hp <= 0 || this.s.challenge.pending || this.s.challenge.gameOver)
           return false;
+        if (this.hero.gold < this.recruitmentRequestPrice(request)) return false;
         const reason = this.companionRecruitmentReason(request.type, request.barracksId, {
           completeRequest: true,
           zone: request.zone,
@@ -1958,36 +1985,157 @@
         this.s.party.push(u);
         return true;
       }
-      recover() {
-        const dead = this.s.party.find((u) => u.hp <= 0);
-        if (!dead || !this.spend(this.companionRecoveryCost())) return false;
+      companionCarePrice(kind) {
+        return kind === 'recovery'
+          ? this.companionRecoveryCost()
+          : kind === 'treatment'
+            ? this.companionTreatmentCost()
+            : 0;
+      }
+      companionCareTargets(kind, request) {
+        const ids = new Set(request?.companionIds || []);
+        return this.s.party.filter(
+          (u) =>
+            ids.has(u.id) &&
+            (kind === 'recovery' ? u.hp <= 0 : kind === 'treatment' && u.hp > 0 && u.hp < u.maxHp),
+        );
+      }
+      companionCareCandidate(kind, barracksId = null, companionId = null) {
+        const units =
+          kind === 'recovery'
+            ? [
+                companionId
+                  ? this.s.party.find((u) => u.id === companionId)
+                  : this.s.party.find((u) => u.hp <= 0),
+              ].filter(Boolean)
+            : this.s.party.filter((u) => u.hp > 0 && u.hp < u.maxHp);
+        return { companionIds: units.map((u) => u.id), barracksId, zone: this.zoneId };
+      }
+      companionCareReason(kind, request, options = {}) {
+        if (!['recovery', 'treatment'].includes(kind)) return 'Choose recovery or treatment.';
+        const targets = this.companionCareTargets(kind, request);
+        if (!targets.length)
+          return kind === 'recovery'
+            ? 'No requested companion is still fallen.'
+            : 'No requested companion is living and wounded.';
+        if (targets.some((u) => u.expeditionId))
+          return 'A requested companion is away on a resource expedition.';
+        const serviceReason = this.companionServiceReason();
+        if (serviceReason) return serviceReason;
+        if (options.checkSource) {
+          const sourceReason = this.companionServiceSourceReason(request.barracksId, request.zone);
+          if (sourceReason) return sourceReason;
+        }
+        if (!options.ignoreFunds && this.hero.gold < this.companionCarePrice(kind))
+          return 'Not enough crowns for companion care.';
+        return '';
+      }
+      cancelCompanionCareRequest(kind, unnecessary = false) {
+        if (!this.s.companionCareRequests[kind]) return false;
+        this.s.companionCareRequests[kind] = null;
+        const message = unnecessary
+          ? 'Queued companion care is no longer needed. No crowns were spent.'
+          : 'Queued companion care cancelled. No crowns were spent.';
+        this.say(message);
+        if (unnecessary) this.notice(message, 3.5, '', 'feedback');
+        this.event('companionQueueChanged', { kind });
+        return true;
+      }
+      requestCompanionCare(kind, barracksId = null, companionId = null) {
+        if (!['recovery', 'treatment'].includes(kind)) return false;
+        const previous = this.s.companionCareRequests[kind];
+        if (previous && (!companionId || previous.companionIds.includes(companionId)))
+          return this.cancelCompanionCareRequest(kind);
+        const request = this.companionCareCandidate(kind, barracksId, companionId);
+        const reason = this.companionCareReason(kind, request, {
+          ignoreFunds: true,
+          checkSource: true,
+        });
+        if (reason) {
+          this.say(reason);
+          return false;
+        }
+        if (this.hero.gold >= this.companionCarePrice(kind)) {
+          const success =
+            kind === 'recovery'
+              ? this.recover(request.companionIds[0])
+              : this.treatCompanions(request.companionIds);
+          if (success) this.s.companionCareRequests[kind] = null;
+          return success;
+        }
+        this.s.companionCareRequests[kind] = request;
+        this.say(
+          kind === 'recovery'
+            ? 'Companion recovery queued. Tap the same choice to cancel.'
+            : 'Companion treatment queued. Tap the same choice to cancel.',
+        );
+        return true;
+      }
+      resolveCompanionCareRequests() {
+        // Preserve the company first when multiple services become affordable.
+        for (const kind of ['recovery', 'treatment']) {
+          const request = this.s.companionCareRequests[kind];
+          if (!request) continue;
+          if (!this.companionCareTargets(kind, request).length) {
+            this.cancelCompanionCareRequest(kind, true);
+            continue;
+          }
+          if (
+            this.hero.gold < this.companionCarePrice(kind) ||
+            this.companionCareReason(kind, request, { checkSource: true })
+          )
+            continue;
+          const success =
+            kind === 'recovery'
+              ? this.recover(request.companionIds[0])
+              : this.treatCompanions(request.companionIds);
+          if (success) this.s.companionCareRequests[kind] = null;
+        }
+      }
+      recover(companionId = null) {
+        const request = this.companionCareCandidate('recovery', null, companionId);
+        const reason = this.companionCareReason('recovery', request);
+        if (reason) {
+          this.say(reason);
+          return false;
+        }
+        const dead = this.companionCareTargets('recovery', request)[0];
+        if (!this.spend(this.companionRecoveryCost())) return false;
         const id = dead.id,
           active = dead.active !== false,
-          u = this.unit(dead.type, this.hero.x + 40, this.hero.y, dead.petFamily);
+          p = this.safe(this.hero.x + 40, this.hero.y),
+          u = this.unit(dead.type, p.x, p.y, dead.petFamily);
         this.clearPartyCharge(dead);
         this.clearCompanionJudgment(dead);
         this._partyChargeRecovery?.delete(dead);
         this.tacticalClearScatter(dead);
         Object.assign(dead, u, { id, active, slow: 0 });
         delete dead.rogueSlow;
+        this.say('Companion recovered.');
+        this.notice('Companion recovered', 4, this.companionDisplayName(dead), 'feedback');
+        this.event('companionRecovery', { companionId: id });
         return true;
       }
-      treatCompanions() {
-        const wounded = this.s.party.filter((u) => u.hp > 0 && u.hp < u.maxHp);
-        if (!wounded.length) return false;
-        if (this.refugeThreat()) {
-          this.say(
-            'Cannot treat companions while nearby enemies are engaged. Retreat and end the fight first.',
-          );
+      treatCompanions(companionIds = null) {
+        const request = this.companionCareCandidate('treatment');
+        if (companionIds) request.companionIds = companionIds;
+        const reason = this.companionCareReason('treatment', request);
+        if (reason) {
+          this.say(reason);
           return false;
         }
+        const wounded = this.companionCareTargets('treatment', request);
         if (!this.spend(this.companionTreatmentCost())) return false;
         for (const u of wounded) {
           u.hp = u.maxHp;
           this.event('heal', { x: u.x, y: u.y, resource: 'health', target: u.id });
         }
-        this.say(
-          'Living companions treated at the barracks. Fallen companions still require recovery.',
+        this.say('Living companions treated. Fallen companions still require recovery.');
+        this.notice(
+          'Companions treated',
+          4,
+          'Living wounded companions restored to full health.',
+          'feedback',
         );
         return true;
       }

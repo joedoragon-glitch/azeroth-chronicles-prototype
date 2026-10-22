@@ -1037,36 +1037,87 @@
         back,
       );
     }
-    function barracksRecoveryActions(refresh) {
-      const game = getGame(),
-        wounded = game.s.party.some((u) => u.hp > 0 && u.hp < u.maxHp),
-        fallen = game.s.party.some((u) => u.hp <= 0);
+    function careQueueSummary(kind) {
+      const g = getGame(),
+        request = g.s.companionCareRequests[kind];
+      if (!request) return '';
+      const names = request.companionIds
+        .map((id) => g.s.party.find((u) => u.id === id))
+        .filter(Boolean)
+        .map(rosterLabel)
+        .join(', ');
+      const reason = g.companionCareReason(kind, request, { ignoreFunds: true, checkSource: true });
+      return (
+        (kind === 'recovery' ? 'Queued recovery: ' : 'Queued treatment: ') +
+        names +
+        ' · ' +
+        Math.floor(g.hero.gold) +
+        '/' +
+        g.companionCarePrice(kind) +
+        ' crowns · ' +
+        (reason || 'Executes automatically only when every condition is met.')
+      );
+    }
+    function companionQueueSummary() {
+      const lines = [
+        careQueueSummary('recovery'),
+        careQueueSummary('treatment'),
+        recruitmentQueueSummary(),
+      ].filter(Boolean);
+      if (lines.length > 1)
+        lines.push(
+          'When multiple actions are ready, payment order is recovery, treatment, then recruitment.',
+        );
+      return lines.join('\n');
+    }
+    function careChoice(kind, barracksId, refresh) {
+      const g = getGame(),
+        queued = !!g.s.companionCareRequests[kind],
+        request = queued
+          ? g.s.companionCareRequests[kind]
+          : g.companionCareCandidate(kind, barracksId),
+        reason = g.companionCareReason(kind, request, { ignoreFunds: true, checkSource: true }),
+        cost = g.companionCarePrice(kind),
+        target = g.companionCareTargets(kind, request)[0];
+      return action(
+        (queued
+          ? kind === 'recovery'
+            ? 'Cancel queued recovery'
+            : 'Cancel queued treatment'
+          : kind === 'recovery'
+            ? 'Recover fallen companion'
+            : 'Treat wounded companions') +
+          ' · ' +
+          cost +
+          ' crowns',
+        () => {
+          getGame().requestCompanionCare(kind, barracksId);
+          refresh();
+        },
+        queued
+          ? careQueueSummary(kind) + '\nTap again to cancel. No crowns spent.'
+          : reason ||
+              (kind === 'recovery'
+                ? 'Recover ' + rosterLabel(target) + ' · '
+                : 'Restore living wounded companions to full health. · ') +
+                (g.hero.gold < cost
+                  ? 'Not enough crowns. Tap to queue; all other requirements must still hold when it executes.'
+                  : 'Requires safety from nearby combat.'),
+        !queued && !!reason,
+      );
+    }
+    function barracksRecoveryActions(refresh, barracksId) {
       return [
-        action(
-          'Recover fallen companion · ' + game.companionRecoveryCost() + ' crowns',
-          () => {
-            getGame().recover();
-            refresh();
-          },
-          'Restores one fallen companion at full health',
-          !fallen || game.hero.gold < game.companionRecoveryCost(),
-        ),
-        action(
-          'Treat wounded companions · ' + game.companionTreatmentCost() + ' crowns',
-          () => {
-            getGame().treatCompanions();
-            refresh();
-          },
-          'Restores every living wounded companion to full health',
-          !wounded || game.hero.gold < game.companionTreatmentCost() || game.refugeThreat(),
-        ),
+        careChoice('recovery', barracksId, refresh),
+        careChoice('treatment', barracksId, refresh),
       ];
     }
     function barracksRecoveryMenu(b, back) {
       openMenu(
         'Recovery',
-        'Basic barracks recovery is available from Expedition Rank 1.',
-        barracksRecoveryActions(() => barracksRecoveryMenu(b, back)),
+        'Basic barracks recovery is available from Expedition Rank 1.' +
+          (companionQueueSummary() ? '\n\n' + companionQueueSummary() : ''),
+        barracksRecoveryActions(() => barracksRecoveryMenu(b, back), b.id),
         back,
       );
     }
@@ -1173,6 +1224,11 @@
       const g = getGame(),
         request = g.s.recruitmentRequest;
       if (!request) return '';
+      const reason = g.companionRecruitmentReason(request.type, request.barracksId, {
+        ignoreFunds: true,
+        completeRequest: true,
+        zone: request.zone,
+      });
       return (
         'Queued recruitment: ' +
         unitLabel(request.type) +
@@ -1181,7 +1237,8 @@
         '/' +
         g.recruitmentRequestPrice() +
         ' crowns' +
-        ' · Joins automatically when affordable; full group means reserve.'
+        ' · ' +
+        (reason || 'Joins automatically when every condition is met; full group means reserve.')
       );
     }
     function recruitmentChoice(type, label, barracksId, reopen) {
@@ -1201,10 +1258,11 @@
           reopen();
         },
         queued
-          ? 'QUEUED · No crowns spent. Tap again to cancel, or choose another companion.'
+          ? recruitmentQueueSummary() +
+              '\nTap again to cancel, or choose another companion. No crowns spent.'
           : reason ||
               (g.hero.gold < price
-                ? 'Not enough crowns. Tap to queue this recruit; payment and arrival happen automatically when affordable.'
+                ? 'Not enough crowns. Tap to queue this recruit; payment and arrival happen only when every condition is met.'
                 : barracksId === null
                   ? 'Town can employ only the first 3 companions.'
                   : 'Joins after training; a full active group sends the recruit to reserve.'),
@@ -1235,7 +1293,7 @@
           ? 'Training ' + queueName + ' · ' + b.queue.toFixed(1) + 's remaining'
           : 'Recruit as many companions as you want') +
           '. New recruits join the active group if this barracks can support another slot; otherwise they rest in reserve. TRUE boss pets are in the Company collection.' +
-          (recruitmentQueueSummary() ? '\n\n' + recruitmentQueueSummary() : ''),
+          (companionQueueSummary() ? '\n\n' + companionQueueSummary() : ''),
         [
           ...otherRecruitmentCancellation(b.id, reopen),
           ...[
@@ -1690,7 +1748,7 @@
               ),
             ],
         baseActions = [
-          ...barracksRecoveryActions(returnHere),
+          ...barracksRecoveryActions(returnHere, b.id),
           barracksGatherAction(b, returnHere),
           ...(b.full
             ? [
@@ -1891,7 +1949,7 @@
         'Meet your company',
         'You begin with a Soldier and a Ranger. The Soldier fights up close; the Ranger shoots from range and provides Heal. They follow you and fight automatically.' +
           '\n\nUse Recall squad to cancel their orders and bring them back. Try it now, then open Adventure in the field and establish your first Basic Barracks for FREE. One companion builds it; the Barracks lets you recover fallen companions and manage your active group and reserves.' +
-          '\n\nRescue Mira and train Expedition Rank 2 to unlock a third active companion and recruitment. If you cannot afford an eligible recruit, tap Recruit to queue one. Tap the same choice to cancel, or select another type to replace it. It arrives automatically when you have enough crowns; if your group is full, it rests in reserve.',
+          '\n\nRescue Mira and train Expedition Rank 2 to unlock a third active companion and recruitment. If you cannot afford an eligible recruit, tap Recruit to queue one. Tap the same choice to cancel, or select another type to replace it. It arrives automatically once you have enough crowns and all other requirements still hold; if your group is full, it rests in reserve.',
         [
           action('Practice Recall squad', () => {
             recallSquad();
@@ -1934,21 +1992,13 @@
           ['soldier', 'Soldier'],
           ['archer', 'Ranger'],
         ].map(([type, label]) => recruitmentChoice(type, label, null, reopen)),
-        action(
-          'Recover fallen companion · ' + getGame().companionRecoveryCost() + ' crowns',
-          () => {
-            getGame().recover();
-            reopen();
-          },
-          '',
-          !getGame().s.party.some((u) => u.hp <= 0) ||
-            getGame().hero.gold < getGame().companionRecoveryCost(),
-        ),
+        careChoice('recovery', null, reopen),
+        careChoice('treatment', null, reopen),
       ];
       openMenu(
         getGame().definition().town + ' Captain',
         'Your Soldier and Ranger follow and fight automatically. Use Recall squad to regroup. Town hiring supports the first 3 companions; Expedition Rank 2 unlocks recruitment.' +
-          (recruitmentQueueSummary() ? '\n\n' + recruitmentQueueSummary() : ''),
+          (companionQueueSummary() ? '\n\n' + companionQueueSummary() : ''),
         actions,
         back,
       );
