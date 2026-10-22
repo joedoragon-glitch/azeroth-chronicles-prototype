@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<base href="../../"><title>Azeroth Chronicles: real-world rendering matrix</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:17px;background:#101e1b;color:#e9f1e4;font:15px system-ui}
+main{max-width:1440px;margin:auto}h1{margin-bottom:5px}p{line-height:1.48}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+label{display:flex;flex-direction:column;gap:3px}select,button{font:inherit;padding:9px;color:#f0f5e9;background:#253e38;border:1px solid #7b998d;border-radius:6px}
+button{cursor:pointer}button:disabled{opacity:.6}
+.views{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.views section{min-width:0}canvas{display:block;width:100%;height:auto;border:1px solid #6b8678;background:#12251d}
+pre{padding:14px;background:#1a3128;white-space:pre-wrap;overflow-wrap:anywhere;border-radius:8px;max-height:620px;overflow:auto}
+small{color:#bdd1c2}.notice{border-left:3px solid #96ac97;padding-left:13px}a{color:#aee1d0}
+@media(max-width:720px){.views{grid-template-columns:1fr}body{padding:10px}}
+</style></head><body><main>
+<h1>Azeroth Chronicles — Real Game Graphics A/B</h1>
+<p>All four pictures use the <strong>same original Azeroth game assets and full world renderer</strong>:
+actual ground, terrain, roads, buildings, moving heroes and actors, shadows, effects, and original night lamps.
+The same isolated campaign scene is stepped once per frame and then measured with each rendering pipeline.</p>
+<p class="notice"><strong>What this test is NOT:</strong> a complete native-WebGL drawing engine.
+The WebGL cases here display real Canvas-authored game artwork. A full native GPU rewrite of the game's
+procedural drawing and lighting has <em>not yet been implemented</em>, so there will be no invented performance result for it.
+This experiment separates drawing, texture transfer and GPU display costs.</p>
+<div class="controls">
+<label>Real game region<select id="region"><option value="vale">Greenwood Vale</option>
+<option value="march">Whispering Marches</option><option value="highlands">Ironroot Highlands</option>
+<option value="frontier">Ashen Frontier</option><option value="crown" selected>Dark Crown</option></select></label>
+<label>Lighting<select id="lighting"><option value="night" selected>Night — original lamps ON</option><option value="day">Day</option></select></label>
+<label>Camera<select id="zoom"><option value="1">100%</option><option value="1.5">150%</option><option value="1.75" selected>175%</option></select></label>
+<label>Viewport<select id="resolution"><option value="960x540">960 × 540</option>
+<option value="1600x900" selected>1600 × 900</option>
+<option value="2403x1248">2403 × 1248 — Chromebook</option></select></label>
+<label>Movement<select id="movement">
+<option value="scripted" selected>Moving camera and hero</option><option value="simulate">Game simulation + moving hero</option></select></label>
+<button id="run" type="button">Compare four real-world pipelines</button>
+</div>
+<p id="status">Ready. Independent temporary campaign only; no saves or live game settings.</p>
+<div class="views">
+<section><h3>1 · Original Canvas</h3><canvas id="original" width="1600" height="900"></canvas>
+<small>Original production world draw, complete artwork</small></section>
+<section><h3>2 · Canvas → full-frame WebGL</h3><div id="gpuOriginal"></div>
+<small>Canvas paints everything; GPU receives and displays every completed frame</small></section>
+<section><h3>3 · Hybrid GPU ground + Canvas world</h3><canvas id="hybrid" width="1600" height="900"></canvas>
+<small>Reusable GPU ground plus full original Canvas world above it, with lighting</small></section>
+<section><h3>4 · Hybrid → WebGL output</h3><div id="gpuHybrid"></div>
+<small>Hybrid scene is finished by Canvas, then displayed as a full GPU texture</small></section>
+</div>
+<h3>Whole-pipeline measurements</h3><pre id="results">Not measured yet.</pre>
+<p class="notice"><strong>Native WebGL-only complete game renderer:</strong> NOT IMPLEMENTED and not benchmarked.
+The separate <a href="./tools/webgl-pilot/index.html">real artwork GPU-sprite experiment</a> demonstrates actual GPU
+texture composition, but does not cover whole-world lighting, terrain and procedural animation.
+Other preserved workflows:
+<a href="./tools/webgl-pilot/full-world.html">full-world baseline</a>,
+<a href="./tools/webgl-pilot/hybrid.html">hybrid A/B</a>,
+<a href="./tools/webgl-pilot/strategy-lab.html">synthetic four-method strategy test</a>.</p>
+<p><small>Every result includes the Canvas painting cost, GPU upload/display cost, one-time preparation, pixel
+agreement, renderer workload, and any missing GPU-native coverage. Simulation cost is measured separately when enabled.
+No changes to saved campaigns, lamp artwork, or production graphics options.</small></p>
+</main><script src="./tools/webgl-pilot/real-world-matrix.js?v=1"></script></body></html>
