@@ -221,154 +221,174 @@
 
   async function measure() {
     runButton.disabled = true;
-    window.AzerothHybridPilotResult = null;
-    output.textContent = 'Preparing…';
+    window.AzerothRealGpuWorldResult = null;
+    output.textContent = 'Preparing original artwork and GPU worlds…';
     try {
       await loadGame();
-      const [width, height] = $('resolution').value.split('x').map(Number);
-      const zoom = Number($('zoom').value), night = $('lighting').value === 'night';
-      const region = $('region').value;
-      need(width >= 400 && width <= 2403 && height >= 350 && height <= 1248,
-        'Invalid experimental resolution');
-      const margin = 160;
-      original.width = hybrid.width = width;
-      original.height = hybrid.height = height;
-      const originalCtx = need(original.getContext('2d'), 'Original Canvas unavailable');
-      const hybridCtx = need(hybrid.getContext('2d'), 'Hybrid Canvas unavailable');
-      const floorCanvas = document.createElement('canvas');
-      floorCanvas.width = width + 2 * margin;
-      floorCanvas.height = height + 2 * margin;
-      const floorCtx = need(floorCanvas.getContext('2d'), 'Ground preparation Canvas unavailable');
-      const game = new Campaign('normal', 'paladin', () => 0.7);
-      game.s.zone = region; game.zone(); game.zone();
-      const baseTime = night ? Campaign.rules.dayCycle.nightAt + 60 : 60;
-      game.s.clock = baseTime; game.s.time = baseTime;
-      Object.assign(game.hero, game.safe(650, 730));
-      const anchorHero = { x: game.hero.x, y: game.hero.y };
-      const anchor = (w, h) => ({
-        x: Math.max(w * 0.35, (w - (w <= 1000 ? 204 : 214) - 20) / 2),
-        y: (h - 94) / 2
-      });
-      const platform = {
-        cameraZoom: zoom,
-        cameraAnchor(w, h) { return anchor(w, h); }
+      const [width,height] = $('resolution').value.split('x').map(Number);
+      const zoom=Number($('zoom').value);
+      const region=$('region').value, night=$('lighting').value==='night';
+      need(Number.isInteger(width)&&width>=400&&width<=2403&&
+        Number.isInteger(height)&&height>=350&&height<=1248&&
+        [1,1.5,1.75].includes(zoom),'Invalid diagnostic dimensions');
+      original.width=width;original.height=height;
+      const originalCtx=need(original.getContext('2d'),'Original Canvas unavailable');
+      const margin=160;
+      const backdrop=document.createElement('canvas');
+      backdrop.width=width+2*margin; backdrop.height=height+2*margin;
+      const backgroundCtx=need(backdrop.getContext('2d'),'Cannot create background artwork');
+      const live=document.createElement('canvas');
+      live.width=width;live.height=height;
+      const liveCtx=need(live.getContext('2d'),'Cannot paint dynamic game layer');
+      const game=new Campaign('normal','paladin',()=>0.7);
+      game.s.zone=region;game.zone();game.zone();
+      const baseTime=night?Campaign.rules.dayCycle.nightAt+60:60;
+      game.s.clock=baseTime;game.s.time=baseTime;
+      Object.assign(game.hero,game.safe(650,730));
+      const startHero={x:game.hero.x,y:game.hero.y};
+      const baseIso=iso(startHero);
+      const anchor=(w,h)=>({x:Math.max(w*.35,(w-(w<=1000?204:214)-20)/2),y:(h-94)/2});
+      const platform={
+        cameraZoom:zoom,cameraAnchor:(w,h)=>anchor(w,h)
       };
-      const overPlatform = {
-        cameraZoom: zoom,
-        cameraAnchor() {
-          const p = anchor(width, height);
-          return { x: p.x + margin, y: p.y + margin };
+      const expandedPlatform={
+        cameraZoom:zoom,
+        cameraAnchor(){
+          const at=anchor(width,height);
+          return{x:at.x+margin,y:at.y+margin};
         }
       };
-      const options = {
-        getGame: () => game, chargePresentation: () => null,
-        queuedChargePresentation: () => [], isPaused: () => false,
-        Campaign, PrototypeVisuals, PrototypeCombatVisuals,
-        PrototypeEnemyVfxArt, PrototypeSprites, PrototypeMaterials,
-        now: () => 16000
+      // A frozen clock keeps day/night color, effects and original lamps
+      // deterministic between renderers. Sprite animation still advances.
+      const options={
+        getGame:()=>game,chargePresentation:()=>null,
+        queuedChargePresentation:()=>[],
+        isPaused:()=>false,Campaign,PrototypeVisuals,
+        PrototypeCombatVisuals,PrototypeEnemyVfxArt,
+        PrototypeSprites,PrototypeMaterials,now:()=>16000
       };
-      const reference = PrototypeRenderer.create({
-        ...options, canvas: { width, height }, ctx: originalCtx, platform
+      const reference=PrototypeRenderer.create({
+        ...options,canvas:{width,height},ctx:originalCtx,platform
       });
-      const floorOnly = hybridRendererClass.create({
-        ...options, canvas: { width: floorCanvas.width, height: floorCanvas.height },
-        ctx: floorCtx, platform: overPlatform, diagnosticLayer: 'floor'
+      const background=hybridRendererClass.create({
+        ...options,canvas:{width:backdrop.width,height:backdrop.height},
+        ctx:backgroundCtx,platform:expandedPlatform,diagnosticLayer:'background'
       });
-      const foreground = hybridRendererClass.create({
-        ...options, canvas: { width, height }, ctx: hybridCtx, platform,
-        diagnosticLayer: 'overlay'
+      const moving=hybridRendererClass.create({
+        ...options,canvas:{width,height},ctx:liveCtx,platform,
+        diagnosticLayer:'foreground'
       });
       reference.setOptimizationMode(false);
-      floorOnly.setOptimizationMode(false);
-      foreground.setOptimizationMode(false);
-      status.textContent = 'Warming original sprites and material textures…';
+      background.setOptimizationMode(false);
+      moving.setOptimizationMode(false);
+      status.textContent='Loading real game images/materials for all scene layers…';
       await prepareAssets();
-      const startFloor = now();
-      floorOnly.draw(); floorCtx.getImageData(0, 0, 1, 1);
-      const floorPrepareMs = now() - startFloor;
-      const gpu = createGPU(width, height, floorCanvas);
-      const baseIso = iso(anchorHero);
-      const metrics = { reference: [], hybrid: [], gpuFloor: [], canvasOverlay: [], gpuToCanvas: [] };
-      let parity = null, referenceStats = null, overlayStats = null;
-      const rounds = 14;
-      for (let index = 0; index < rounds + 4; index++) {
-        const k = index - 4;
-        const phase = Math.max(k, 0);
-        const position = game.safe(
-          anchorHero.x + Math.sin(phase * 0.35) * 32,
-          anchorHero.y + Math.cos(phase * 0.29) * 24
-        );
-        Object.assign(game.hero, position);
-        game.s.clock = baseTime + phase * 0.03;
-        game.s.time = game.s.clock;
-        PrototypeSprites.advance(16, false);
-        const nextIso = iso(position);
-        const cropX = margin + (nextIso.x - baseIso.x) * zoom;
-        const cropY = margin + (nextIso.y - baseIso.y) * zoom;
-        need(cropX >= 1 && cropY >= 1 &&
-          cropX + width <= floorCanvas.width - 1 &&
-          cropY + height <= floorCanvas.height - 1,
-          'Camera moved outside the preserved GPU ground window');
-        const refAt = now();
+      status.textContent='Building the real terrain, roads and bridges once…';
+      const started=now();
+      background.draw();backgroundCtx.getImageData(0,0,1,1);
+      const bakeMs=now()-started;
+      const layeredGpu=makeCompositor(gpuWorld,width,height,backdrop);
+      const copiedGpu=makeCompositor(gpuCopy,width,height);
+      const rounds=14, warmup=4;
+      const times={fullCanvas:[],fullGpuWorld:[],dynamicCanvasSource:[],
+        gpuDynamicTextureUpload:[],gpuLayerDraw:[],
+        canvasToGpuTotal:[],canvasToGpuUpload:[]};
+      const checkedFrames=[];
+      let first=null,last=null,referenceState=null,layerState=null;
+      for(let index=0;index<rounds+warmup;index++){
+        const step=Math.max(0,index-warmup);
+        const pos=game.safe(startHero.x+Math.sin(step*.35)*32,
+          startHero.y+Math.cos(step*.29)*24);
+        Object.assign(game.hero,pos);
+        game.s.clock=baseTime+step*.03;
+        game.s.time=game.s.clock;
+        PrototypeSprites.advance(16,false);
+        const center=iso(pos);
+        const cropX=margin+(center.x-baseIso.x)*zoom,
+          cropY=margin+(center.y-baseIso.y)*zoom;
+        need(cropX>1&&cropY>1&&cropX+width<backdrop.width-1&&
+          cropY+height<backdrop.height-1,
+          'Camera exceeded static world cache; test stopped rather than showing missing terrain');
+        const baselineStart=now();
         reference.draw();
-        originalCtx.getImageData(0, 0, 1, 1);
-        const refMs = now() - refAt;
-        const glMs = gpu.present(cropX, cropY);
-        const compositeAt = now();
-        hybridCtx.setTransform(1, 0, 0, 1, 0, 0);
-        hybridCtx.drawImage(gpu.canvas, 0, 0);
-        const compositeMs = now() - compositeAt;
-        const overlayAt = now();
-        foreground.draw();
-        hybridCtx.getImageData(0, 0, 1, 1);
-        const overlayMs = now() - overlayAt;
-        if (index === 4 || index === rounds + 3) {
-          parity = compareCanvases(originalCtx, hybridCtx, width, height);
-          referenceStats = reference.metrics(); overlayStats = foreground.metrics();
+        originalCtx.getImageData(0,0,1,1);
+        const baselineTime=now()-baselineStart;
+        const liveStart=now();
+        liveCtx.setTransform(1,0,0,1,0,0);
+        liveCtx.clearRect(0,0,width,height);
+        moving.draw();
+        liveCtx.getImageData(0,0,1,1);
+        const sourceTime=now()-liveStart;
+        const gpuPart=layeredGpu.present(live,cropX,cropY);
+        const copyPart=copiedGpu.present(original);
+        const gpuTime=sourceTime+gpuPart.totalMs;
+        if(index===warmup||index===rounds+warmup-1){
+          const source=originalCtx.getImageData(0,0,width,height).data;
+          const layerCheck=compareBytes(source,layeredGpu.capture());
+          const transferCheck=compareBytes(source,copiedGpu.capture());
+          checkedFrames.push({frame:step,layerCheck,transferCheck});
+          if(index===warmup)first=reference.metrics();
+          if(index===rounds+warmup-1){
+            last=reference.metrics();referenceState=PrototypeSprites.status();
+            layerState={renderer:moving.metrics(),materials:PrototypeMaterials.status()};
+          }
         }
-        if (k >= 0) {
-          metrics.reference.push(refMs);
-          metrics.hybrid.push(glMs + compositeMs + overlayMs);
-          metrics.gpuFloor.push(glMs);
-          metrics.gpuToCanvas.push(compositeMs);
-          metrics.canvasOverlay.push(overlayMs);
+        if(index>=warmup){
+          times.fullCanvas.push(baselineTime);
+          times.fullGpuWorld.push(gpuTime);
+          times.dynamicCanvasSource.push(sourceTime);
+          times.gpuDynamicTextureUpload.push(gpuPart.uploadMs);
+          times.gpuLayerDraw.push(gpuPart.gpuDrawMs);
+          times.canvasToGpuTotal.push(baselineTime+copyPart.totalMs);
+          times.canvasToGpuUpload.push(copyPart.uploadMs);
         }
-        if (index % 4 === 0) {
-          status.textContent = 'Comparing frame ' + Math.max(0, k + 1) + ' of ' + rounds + '…';
+        if(index%4===0){
+          status.textContent='Drawing full real game scenes: frame '+Math.max(0,step+1)+' / '+rounds;
           await nextFrame();
         }
       }
-      const match = parity.percentPixelsMatchingWithin6 >= 99.5;
-      const report = {
-        verdict: match ? 'Hybrid and original visual output closely match' :
-          'Hybrid has visible differences; benchmark NOT VALID for adoption',
-        region, lighting: night ? 'night — unchanged lamps' : 'day',
-        viewport: [width, height], cameraZoom: zoom,
-        framesMeasured: rounds, parity, gpuBackend: gpu.gpuName,
-        preparedStaticGround: {
-          canvasPaintingMs: +floorPrepareMs.toFixed(2),
-          gpuUploadMs: +gpu.preparationMs.toFixed(2),
-          textureBytes: gpu.textureBytes,
-          refreshedPerFrame: false
+      const matches=checkedFrames.every(entry=>
+        entry.layerCheck.percentPixelsMatchingWithin6>=99.5&&
+        entry.transferCheck.percentPixelsMatchingWithin6>=99.9);
+      const report={
+        verdict:matches?'Full real-game GPU-composited scene closely matches Canvas':
+          'Visual mismatch detected — timing must not justify renderer adoption',
+        scope:'Full production scene in an isolated moving unsaved campaign. Canvas makes original artwork; GPU retains terrain/road texture, uploads dynamic actor/effect texture and renders BOTH layers. This is WebGL output, NOT GPU-native procedural artwork generation.',
+        region,lighting:night?'night (original lamps retained)':'day',
+        viewport:[width,height],cameraZoom:zoom,framesMeasured:rounds,
+        originalArtAndLayerParity:checkedFrames,
+        timePerFrameMs:{
+          originalCompleteCanvas:summary(times.fullCanvas),
+          completeGpuCompositedWorld:summary(times.fullGpuWorld),
+          gpuWorldCanvasDynamicArtwork:summary(times.dynamicCanvasSource),
+          gpuWorldDynamicTextureUpload:summary(times.gpuDynamicTextureUpload),
+          gpuWorldShaderDrawing:summary(times.gpuLayerDraw),
+          originalCanvasThenGpuTransfer:summary(times.canvasToGpuTotal),
+          fullFrameCanvasTextureUpload:summary(times.canvasToGpuUpload)
         },
-        timePerFrameMs: {
-          fullOriginalCanvas: summary(metrics.reference),
-          completeHybrid: summary(metrics.hybrid),
-          hybridGpuGround: summary(metrics.gpuFloor),
-          hybridGpuToCanvas: summary(metrics.gpuToCanvas),
-          hybridCanvasForegroundAndEffects: summary(metrics.canvasOverlay)
+        gpuPreparation:{
+          staticOriginalArtworkPaintMs:+bakeMs.toFixed(2),
+          layeredGpuSetupAndUploadMs:+layeredGpu.preparationMs.toFixed(2),
+          copyGpuSetupMs:+copiedGpu.preparationMs.toFixed(2),
+          staticAndDynamicTextureBytes:layeredGpu.textureBytes,
+          fullFrameCopyTextureBytes:copiedGpu.textureBytes,
+          gpuBackend:layeredGpu.backend
         },
-        referenceRender: referenceStats, hybridForegroundRender: overlayStats,
-        limitation: 'Hybrid GPU draws ONLY the reused original static ground layer. Canvas continues to paint terrain/roads/actors/buildings/lighting/occlusion and all dynamic art. Real-world animation may require more invalidation. No gameplay FPS or settings change.'
+        firstOriginalRenderer:first,lastOriginalRenderer:last,
+        dynamicRenderer:layerState,
+        assets:referenceState,
+        limitation:'Full GPU canvas compositing is implemented. Fully native WebGL commands for every production terrain, material, actor, effect and lamp remain unimplemented. Dynamic scenery is still painted with the original Canvas artist before uploading. The scene is scripted, not gameplay FPS. Do not promise GPU-native performance or remove Canvas fallback.',
       };
-      output.textContent = JSON.stringify(report, null, 2);
-      window.AzerothHybridPilotResult = match ? report : null;
-      status.textContent = report.verdict + '. See detailed per-frame times and the one-time preparation cost.';
-    } catch (error) {
-      status.textContent = 'Hybrid diagnostic blocked: ' + error.message;
-      output.textContent = String(error.stack || error);
-    } finally { runButton.disabled = false; }
+      window.AzerothRealGpuWorldResult=matches?report:null;
+      output.textContent=JSON.stringify(report,null,2);
+      status.textContent=report.verdict+'. All methods include real game graphics and scripted motion.';
+    }catch(err){
+      status.textContent='Real-game GPU comparison blocked: '+err.message;
+      output.textContent=String(err.stack||err);
+      window.AzerothRealGpuWorldResult=null;
+    }finally{runButton.disabled=false;}
   }
+
   runButton.addEventListener('click', () => { void measure(); });
-  status.textContent = 'Ready to compare original Canvas with GPU-ground + Canvas-world.';
+  status.textContent = 'Ready to compare full real-game art, moving layers and the GPU world compositor.';
 })();
