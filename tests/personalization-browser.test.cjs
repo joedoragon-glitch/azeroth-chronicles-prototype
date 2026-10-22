@@ -170,8 +170,8 @@ const server = http.createServer((req, res) => {
       });
       await page.keyboard.press('f');
       await page.getByRole('button', { name: 'Skip for now', exact: true }).click();
-      await page.keyboard.press('r');
-      await page.getByRole('button', { name: /^Character and identity\b/ }).click();
+      await page.locator('#menu-button').click();
+      await page.getByRole('button', { name: /^Character\b/ }).click();
       await page.getByRole('button', { name: /^Choose your Dark Lord name\b/ }).click();
       await field.fill('Lord Noctis');
       await page.getByRole('button', { name: 'Continue', exact: true }).click();
