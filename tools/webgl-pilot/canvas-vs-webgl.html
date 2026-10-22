@@ -1,0 +1,50 @@
+<!doctype html><html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<base href="../../"><title>Azeroth — Canvas Only vs WebGL Only</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:16px;background:#111e1b;color:#ebf1e5;font:15px system-ui}
+main{max-width:1400px;margin:auto}p{line-height:1.5}.controls{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
+label{display:flex;flex-direction:column;gap:5px}button,select{background:#29453f;border:1px solid #88a495;color:#fff;border-radius:6px;padding:9px;font:inherit}
+button{cursor:pointer}button:disabled{opacity:.6}.pictures{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+canvas{width:100%;height:auto;background:#0c1913;border:1px solid #608071}
+pre{background:#1b302a;border-radius:6px;padding:14px;overflow-wrap:anywhere;white-space:pre-wrap;max-height:600px;overflow:auto}
+a{color:#b4e2d0}.note{font-size:13px;color:#b8cdc1}
+@media(max-width:680px){.pictures{grid-template-columns:1fr}body{padding:10px}}
+</style></head><body><main>
+<h1>Azeroth Chronicles: Canvas Only vs WebGL Only</h1>
+<p><strong>Just two graphics paths.</strong> Both use actual Azeroth's approved world, textures,
+roads, buildings, character art, lighting and camera. No synthetic shapes and no hybrid layering
+during measured frames.</p>
+<p><strong>Important limitation:</strong> the WebGL-only frame loop renders a <em>prepared real-world texture</em>.
+That complete world artwork is baked once by the original game renderer during preparation.
+WebGL then moves and displays it without calling Canvas during its measured frame.
+This is <strong>not</strong> a fully native WebGL recreation of animated enemies, evolving combat effects,
+or every original procedural drawing command. Don't compare its frame time to live Canvas as
+equivalent gameplay workloads; the report exposes that difference rather than calling it a win.</p>
+<div class="controls">
+<label>Region<select id="region"><option value="vale">Greenwood Vale</option><option value="march">Whispering Marches</option>
+<option value="highlands">Ironroot Highlands</option><option value="frontier">Ashen Frontier</option>
+<option value="crown" selected>Dark Crown</option></select></label>
+<label>Time<select id="lighting"><option value="night" selected>Night (original lights)</option>
+<option value="day">Day</option></select></label>
+<label>Zoom<select id="zoom"><option value="1">100%</option><option value="1.5">150%</option>
+<option value="1.75" selected>175%</option></select></label>
+<label>Viewport<select id="resolution"><option value="960x540">960 × 540</option>
+<option value="1600x900" selected>1600 × 900</option>
+<option value="2403x1248">2403 × 1248 (Chromebook)</option></select></label>
+<button id="run" type="button">Run Canvas vs WebGL</button>
+</div><p id="status">Ready. Neither path reads nor writes your campaign saves.</p>
+<div class="pictures">
+<section><h3>Canvas Only — full live world painter</h3><canvas id="canvasPath" width="1600" height="900"></canvas>
+<p class="note">The game's original renderer paints each frame, including changing characters and effects.</p></section>
+<section><h3>WebGL Only — prepared full-world art</h3><canvas id="webglPath" width="1600" height="900"></canvas>
+<p class="note">GPU shader draws the original artwork from an uploaded texture; no Canvas drawing in the timed WebGL frame path.</p></section>
+</div>
+<h3>Measurements and visual agreement</h3><pre id="results">No benchmark yet.</pre>
+<p class="note">The test records one-time preparation, GPU texture memory, full Canvas frame times, WebGL-only
+frame times, moving-camera agreement and artwork coverage. It will <strong>withhold an apples-to-apples
+winner</strong> until both methods update animated world elements identically. No game's graphics options,
+artwork or lamps are modified.</p>
+<p><a href="./tools/webgl-pilot/real-world-gpu.html">Earlier GPU world compositor (includes Canvas source painting)</a>
+· <a href="./tools/webgl-pilot/strategy-lab.html">Four-strategy technology lab</a></p>
+</main><script src="./tools/webgl-pilot/canvas-vs-webgl.js?v=1"></script></body></html>
