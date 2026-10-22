@@ -208,6 +208,32 @@
     };
   }
 
+  // Explain where the mismatch originates instead of relaxing acceptance.
+  // Transparent pixels test the static background/camera crop; translucent
+  // pixels test original Canvas layer blending; opaque pixels test actors.
+  function mismatchesByDynamicAlpha(reference, gpuImage, overlayRGBA) {
+    const bins = {
+      uncoveredBackground: { pixels: 0, changed: 0 },
+      translucentArtworkOrEffects: { pixels: 0, changed: 0 },
+      opaqueArtwork: { pixels: 0, changed: 0 },
+    };
+    for (let i = 0; i < reference.length; i += 4) {
+      const alpha = overlayRGBA[i + 3];
+      const key = alpha <= 1 ? 'uncoveredBackground'
+        : alpha >= 254 ? 'opaqueArtwork' : 'translucentArtworkOrEffects';
+      const bin = bins[key];
+      bin.pixels++;
+      if (Math.abs(reference[i] - gpuImage[i]) > 6 ||
+          Math.abs(reference[i + 1] - gpuImage[i + 1]) > 6 ||
+          Math.abs(reference[i + 2] - gpuImage[i + 2]) > 6) bin.changed++;
+    }
+    for (const bin of Object.values(bins)) {
+      bin.percentWithin6 = bin.pixels
+        ? +(100 * (1 - bin.changed / bin.pixels)).toFixed(3) : null;
+    }
+    return bins;
+  }
+
   async function prepareAssets() {
     const response = await fetch('./assets/sprites/manifest.json');
     need(response.ok, 'Sprite catalog not available');
@@ -240,6 +266,11 @@
       const live=document.createElement('canvas');
       live.width=width;live.height=height;
       const liveCtx=need(live.getContext('2d'),'Cannot paint dynamic game layer');
+      // Only for two parity checkpoints; never included in timed frames.
+      const cpuAssembly=document.createElement('canvas');
+      cpuAssembly.width=width;cpuAssembly.height=height;
+      const cpuAssemblyCtx=need(cpuAssembly.getContext('2d'),
+        'Cannot compare layer composition on Canvas');
       const game=new Campaign('normal','paladin',()=>0.7);
       game.s.zone=region;game.zone();game.zone();
       const baseTime=night?Campaign.rules.dayCycle.nightAt+60:60;
@@ -298,7 +329,10 @@
       for(let index=0;index<rounds+warmup;index++){
         const step=Math.max(0,index-warmup);
         const pos=game.safe(startHero.x+Math.sin(step*.35)*32,
-          startHero.y+Math.cos(step*.29)*24);
+          startHero.y+(Math.cos(step*.29)-1)*24);
+        // The first measured frame now uses the EXACT cached-camera
+        // position. Later frames move. This separates camera resampling
+        // errors from blend/layer-order errors.
         Object.assign(game.hero,pos);
         game.s.clock=baseTime+step*.03;
         game.s.time=game.s.clock;
@@ -324,9 +358,29 @@
         const gpuTime=sourceTime+gpuPart.totalMs;
         if(index===warmup||index===rounds+warmup-1){
           const source=originalCtx.getImageData(0,0,width,height).data;
-          const layerCheck=compareBytes(source,layeredGpu.capture());
+          const gpuPixels=layeredGpu.capture();
+          const layerCheck=compareBytes(source,gpuPixels);
           const transferCheck=compareBytes(source,copiedGpu.capture());
-          checkedFrames.push({frame:step,layerCheck,transferCheck});
+          const overlayPixels=liveCtx.getImageData(0,0,width,height).data;
+          cpuAssemblyCtx.setTransform(1,0,0,1,0,0);
+          cpuAssemblyCtx.clearRect(0,0,width,height);
+          cpuAssemblyCtx.imageSmoothingEnabled=false;
+          cpuAssemblyCtx.drawImage(backdrop,
+            cropX,cropY,width,height,0,0,width,height);
+          cpuAssemblyCtx.drawImage(live,0,0);
+          const assembledPixels=cpuAssemblyCtx.getImageData(0,0,width,height).data;
+          checkedFrames.push({
+            frame:step,
+            cameraOffsetPixels:{
+              x:+(cropX-margin).toFixed(3),
+              y:+(cropY-margin).toFixed(3)
+            },
+            layerCheck,transferCheck,
+            originalVsCanvasRecomposed:compareBytes(source,assembledPixels),
+            canvasRecomposedVsWebgl:compareBytes(assembledPixels,gpuPixels),
+            layerMismatchByTransparency:
+              mismatchesByDynamicAlpha(source,gpuPixels,overlayPixels)
+          });
           if(index===warmup)first=reference.metrics();
           if(index===rounds+warmup-1){
             last=reference.metrics();referenceState=PrototypeSprites.status();
@@ -357,6 +411,7 @@
         region,lighting:night?'night (original lamps retained)':'day',
         viewport:[width,height],cameraZoom:zoom,framesMeasured:rounds,
         originalArtAndLayerParity:checkedFrames,
+        diagnostic: 'Compare originalVsCanvasRecomposed to canvasRecomposedVsWebgl. If Canvas recomposition also differs from original, layer splitting/camera rasterization is already causing mismatches before WebGL. Transparency bins separate exposed background from translucent effects and opaque actors. Frame 0 has no camera offset; frame 13 moves.',
         timePerFrameMs:{
           originalCompleteCanvas:summary(times.fullCanvas),
           completeGpuCompositedWorld:summary(times.fullGpuWorld),
@@ -381,7 +436,7 @@
       };
       window.AzerothRealGpuWorldResult=matches?report:null;
       output.textContent=JSON.stringify(report,null,2);
-      status.textContent=report.verdict+'. All methods include real game graphics and scripted motion.';
+      status.textContent=report.verdict+'. Parity report now isolates static camera vs movement and Canvas-vs-GPU blending.';
     }catch(err){
       status.textContent='Real-game GPU comparison blocked: '+err.message;
       output.textContent=String(err.stack||err);
