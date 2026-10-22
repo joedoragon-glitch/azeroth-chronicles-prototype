@@ -203,7 +203,7 @@
        isReducedMotion:()=>matchMedia('(prefers-reduced-motion: reduce)').matches
      });
      const textureLoads=new Map(),proceduralBakes=new Map();
-     let measuredResourcesLocked=false;
+     let measuredResourcesLocked=false,proceduralTextureBytes=0;
      const counters={proceduralBakes:0,authoredTextures:0,missingProcedural:0,
        unsupportedDynamicOverlays:0};
      async function ensureTexture(src){
@@ -246,6 +246,10 @@
                throw Error('New procedural actor entered measured frames without preparation: '+key);
              const baked=drawProceduralEntity(visual,game);
              const id='prepared-procedural:'+key;
+             const bytes=baked.image.width*baked.image.height*4;
+             need(proceduralTextureBytes+bytes<=64*1024*1024,
+               'Procedural artwork GPU texture preparation exceeded 64 MiB budget');
+             proceduralTextureBytes+=bytes;
              const texture=PIXI.Texture.from(baked.image);
              texture.source.scaleMode='nearest';
              scene.registerTexture(id,texture);
@@ -358,7 +362,8 @@
        measuredFrames:rounds,
        perFrameMs:{fullLiveOriginalCanvas:stats(canvasTimes),
          pixiGpuSceneWithIndependentMovingActors:stats(gpuTimes)},
-       actorsAndLights:lastCounts,counters,pixelParity:pixels,
+       actorsAndLights:lastCounts,counters,
+       proceduralTextureBytes,pixelParity:pixels,
        incompleteFeatures:[
          'Procedural actor bodies currently use one-time original art textures, not live art state',
          'Full original day/night screen-blend grading and lamp fixtures are not yet parity verified',

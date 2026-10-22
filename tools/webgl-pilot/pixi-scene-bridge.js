@@ -63,6 +63,14 @@
          'Missing original game actor texture: '+String(item.textureId));
        assert([item.x,item.y,item.width,item.height].every(Number.isFinite)&&
          item.width>0&&item.height>0,'Invalid actor geometry');
+       if(item.sourceRect){
+         const rect=item.sourceRect,texture=resources.get(item.textureId);
+         assert(rect.length===4&&rect.every(Number.isFinite)&&
+           rect[0]>=0&&rect[1]>=0&&rect[2]>0&&rect[3]>0&&
+           rect[0]+rect[2]<=texture.source.width&&
+           rect[1]+rect[3]<=texture.source.height,
+           'Original animated atlas frame outside loaded texture');
+       }
        next.add(id);
      }
      for(const [id,old] of actors) {
@@ -114,6 +122,12 @@
    }
    function syncLamps(list) {
      assert(Array.isArray(list),'Azeroth light source array required');
+     for(const lamp of list)assert(lamp &&
+       [lamp.x,lamp.y,lamp.radius,lamp.alpha].every(Number.isFinite) &&
+       lamp.radius>0 && lamp.alpha>=0 && lamp.alpha<=1 &&
+       Array.isArray(lamp.rgb)&&lamp.rgb.length===3&&
+       lamp.rgb.every(c=>Number.isFinite(c)&&c>=0&&c<=255),
+       'Invalid native light');
      const ids=new Set();
      for(let i=0;i<list.length;i++){
        const lamp=list[i];
