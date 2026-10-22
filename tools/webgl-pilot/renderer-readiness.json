@@ -1,0 +1,21 @@
+{
+  "status": "NOT_READY",
+  "renderer": "webgl2",
+  "nativeModule": null,
+  "testReceipt": null,
+  "provenance": "2026-10-22: existing pilots prepaint in Canvas or omit full world layers; neither is a production native WebGL renderer.",
+  "gates": {
+    "nativeGpuDrawsFullScene": false,
+    "allWorldAndDungeonLayers": false,
+    "actorsMoveAndAnimate": false,
+    "originalLightingAndLamps": false,
+    "combatAndOcclusionEffects": false,
+    "identicalCameraAndInputMapping": false,
+    "zoomDprAndResolution": false,
+    "allRegionsAndDungeonScenes": false,
+    "textureMemoryAndInvalidation": false,
+    "contextLossAndFallback": false,
+    "productionParityOnMovingFrames": false,
+    "fairTotalFramePerformance": false
+  }
+}

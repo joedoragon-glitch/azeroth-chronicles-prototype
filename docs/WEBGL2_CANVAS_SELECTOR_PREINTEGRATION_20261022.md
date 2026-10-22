@@ -1,0 +1,57 @@
+# Canvas 2D (default) / WebGL2 — PRE-INTEGRATION SPECIFICATION
+
+**STATUS: PREPARATION ONLY · NOT APPROVED FOR GAME INTEGRATION (2026-10-22)**
+
+The owner explicitly requests exactly two final graphics renderer options: **Canvas 2D (default)** and **WebGL2 (optional)**, never a hybrid choice in the game Settings. They also explicitly prohibit enabling this unfinished experimental work in the live PWA until it is fully functional and proven using real, moving Azeroth artwork. All code in this preparation is under `tools/webgl-pilot/`, not loaded by `templates/game.html`, `scripts/site-assets.cjs`, the service worker or the shipping `src/prototype/app.js`. The preparation branch must **not** be merged/deployed as a game feature yet.
+
+## Existing facts and blockers
+
+The shipping `src/prototype/app.js` creates a 2D context from `#world` immediately and passes it to `PrototypeRenderer.create({ canvas: viewport, ctx, getGame, platform, ... })`. The app's input maps through `renderer.world`, and its frame loop calls `renderer.queue`, `renderer.update`, `renderer.draw`, `renderer.metrics`, `renderer.labelVisible`, `renderer.setOptimizationMode`, `renderer.screen` and `renderer.tileBounds`. A replacement must support the entire active renderer API (see executable contract).
+
+There is extensive bespoke procedural art in `src/prototype/visuals.js`, composited atmospheric/night lighting with screen blends, terrain and road materials, animated sprite clips and silhouettes, occlusion outlines, effects, UI, dynamic labels and cave/room floor logic. These cannot be dismissed as aesthetic details. Night lamps and lighting MUST retain their approved art and behavior; gameplay, simulation and saves cannot change.
+
+**Why existing demos are not candidates to install:** `canvas-vs-webgl.js` measures moving a GPU snapshot of a scene initially painted using Canvas; its last measured visible-image agreement fell to 91.064% during camera motion and it did not animate independent WebGL characters. `real-world-gpu.js` performs layered Canvas-source artwork uploads with 97–99% image agreement; it is not native WebGL scene generation. Neither satisfies complete dynamic scene parity. A GPU display call of ~0 ms does not establish game FPS.
+
+## Future backend API contract
+
+Implement a distinct **native WebGL2** renderer module in a new development branch. It must implement all functions enumerated by `tools/webgl-pilot/renderer-release-contract.cjs`, without invoking the Canvas production renderer to paint full frames or the dynamic game world each frame. It may reuse the game's **original, approved asset images as GPU textures** and precompute immutable artwork from Canvas at bounded, explicitly accounted setup times. Dynamic sprite frames, body orientation, animation, terrain, shadow/occlusion ordering, combat cues and all screen-space lighting must be executed correctly in the native GPU frame path.
+
+The backend receives the same read-only `getGame`, platform/camera/projection and presentation events as Canvas. It must not mutate `Campaign`, profile, inputs, save schema, combat rules or entity state. Common simulation remains singular and authoritative; do not instantiate a different game to switch renderers.
+
+**Graphics selector after certification (NOT coded into game now):** `Screen and performance → Graphics renderer → Canvas 2D (Default) / WebGL2`. Only two values: `canvas2d`, `webgl2`. Unknown, invalid, unverified, unavailable or failed WebGL always resolves to Canvas. Device-only preference should be kept outside campaign saves and exports. An absent preference resolves to Canvas. Display labels should be translated consistently with existing `tr()` localizations. Selection must preserve frame-rate targets, optimization preferences and render-resolution settings.
+
+**Canvas contexts cannot be switched in place.** When adding the player option later, prepare the WebGL canvas as a second independently owned canvas in the existing world display region (same viewport/CSS stacking), keep original Canvas alive, and perform a handoff only after WebGL successfully produces a correct frame. Never call `getContext('webgl2')` on a canvas already holding `2d` (or vice versa). DOM HUD/modal/touch overlays must remain in place, accessible and visually unchanged.
+
+**Atomic switch:** stop presentation briefly but never stop or recreate simulation; load/prepare resources; validate context and render output; switch visible surface; resume presentation; rollback to working Canvas automatically if resource load, draw or context fails. Keep selection stable through resize, visibility changes, resolution and camera zoom, while preserving all input mapping. On `webglcontextlost` suppress default destruction, disable WebGL display and immediately return to Canvas; on restore only offer opt-in retry after rebuilding textures/shaders. Do not copy a broken GPU image into Canvas as fallback.
+
+## Required genuine WebGL implementation work
+
+1. Native GPU batching for sprites and procedural bodies with original per-actor frame selection, artwork pivots, zoom, facing and depth order. Do not replace quality artwork with generic polygons.
+2. Correct floor/terrain/roads/bridges/materials across outdoor regions, room interiors and dungeons. Manage texture/camera-region cache invalidation and bounded GPU memory.
+3. Shader/composite equivalents for **unchanged** lights, lamp glow, night/day grades, shadows, screen blends, aura, occlusion masks, combat glyphs/projectiles, world labels and transient VFX.
+4. Dynamic actors, inventory/quest/zone transitions, hero movement, teleports, combat, dying/revival, and changing daytime under both modes.
+5. Correct DPR/resolution/frame-skip/optimization and viewport changes, plus context-loss fallback.
+6. Real full-frame **end-to-end** benchmarks with equivalent simulation/event streams and scenes; no cached screenshot pretending to be a live renderer.
+
+## Acceptance / release gate
+
+`renderer-readiness.json` is intentionally **NOT_READY**. Every gate must be passed using independent implementation code and a stored reproducible test receipt. `renderer-release-contract.cjs` and its tiny `.test.cjs` are staging-only guardrails; they cannot certify GPU painting by themselves. The read-only audit `renderer-readiness-audit.cjs` explains blockers; `--require-ready` must fail while anything is incomplete.
+
+Before a separate explicit approval to integrate into the game, require all gates to be true, corroborated by file-backed parity receipts and hardware runs: all five regions plus dungeons/rooms; night/day original lighting; 100/150/175% camera zoom; all configured render resolutions; desktop/phone/Chromebook; scripted combat/animation/moving camera; near-identical per-frame pixel comparisons with explicit conservative thresholds, close manual artwork review, no missing actors/effects; low CPU/GPU memory bounded without leaks; WebGL failure recovery. Compare full-frame median and p95 with **the same live state and work** under both modes, including preparation amortization. A candidate that does not outperform Canvas can still be selectable, but must not misrepresent its performance or visually compromise the game.
+
+**Never lower the parity threshold to force a pass.** Pixel-by-pixel tolerances must be grounded in original anti-aliasing/composition semantics, and visual review can veto any quantitative pass. Renderer API and stage-specific source tests do not replace actual browser validation on the target Chromebook.
+
+## Minimal checks before actual implementation
+
+Run ONLY the focused staging contract test: `node --test tools/webgl-pilot/renderer-release-contract.test.cjs`. Optionally inspect missing readiness gates: `node tools/webgl-pilot/renderer-readiness-audit.cjs`. These checks are not a full game suite and do not change CI. The normal player build remains exclusively Canvas 2D. Do not publish or activate the WebGL setting on the basis of this plan alone.
+
+## Integration touchpoints — after explicit permission
+
+- `src/prototype/app.js`: one place for mode preference, display surface ownership, atomic graphics switch; retain existing saved-game logic.
+- `src/prototype/renderer.js`: existing Canvas backend remains unchanged and callable.
+- New multi-file `src/prototype/webgl-renderer.js` and supporting shader/texture modules, **only when fully independently validated**.
+- `templates/game.html` / `styles/prototype.css`: secondary WebGL canvas and correct HUD stacking/accessibility without changing current 2D default.
+- `scripts/site-assets.cjs`, `scripts/build.cjs`, service worker/offline inventory and packaging: include new multi-file resources only at integration time.
+- Existing `PrototypeRuntime` FPS/frame-profile and game Settings localization: report selected/active backend, safe rollback; preserve mode, optimization, camera, resolution and frame skip.
+
+No self-contained single-HTML constraint applies. Azeroth Chronicles is canonically a multi-file GitHub Pages/PWA game.
