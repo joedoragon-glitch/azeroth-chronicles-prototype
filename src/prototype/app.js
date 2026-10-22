@@ -470,8 +470,7 @@
     'Companion basics': 'Lo básico de tus compañeros',
     'Practice Recall squad': 'Probar Reagrupar',
     'Open recruitment': 'Abrir reclutamiento',
-    'Learn roles, Recall, recruitment and reserves.':
-      'Conoce sus funciones, Reagrupar, reclutamiento y reservas.',
+    'Roles and Recall.': 'Funciones y Reagrupar.',
     'Your Soldier and Ranger follow and fight automatically. Use Recall squad to regroup. Town hiring supports the first 3 companions; Expedition Rank 2 unlocks recruitment.':
       'Tu Soldado y tu Ranger te siguen y luchan automáticamente. Usa Reagrupar para reunirlos. El pueblo admite los primeros 3 compañeros; Expedición 2 desbloquea el reclutamiento.',
     'QUEUED · No crowns spent. Tap again to cancel, or choose another companion.':
@@ -495,8 +494,8 @@
       'Soldado en cola de reclutamiento. Toca la misma opción para cancelar.',
     'Ranger recruitment queued. Tap the same choice to cancel.':
       'Ranger en cola de reclutamiento. Toca la misma opción para cancelar.',
-    'You begin with a Soldier and a Ranger. The Soldier fights up close; the Ranger shoots from range and provides Heal. They follow you and fight automatically.\n\nUse Recall squad to cancel their orders and bring them back. Try it now, then open Adventure in the field and establish your first Basic Barracks for FREE. One companion builds it; the Barracks lets you recover fallen companions and manage your active group and reserves.\n\nRescue Mira and train Expedition Rank 2 to unlock a third active companion and recruitment. If you cannot afford an eligible recruit, tap Recruit to queue one. Tap the same choice to cancel, or select another type to replace it. It arrives automatically once you have enough crowns and all other requirements still hold; if your group is full, it rests in reserve.':
-      'Empiezas con un Soldado y un Ranger. El Soldado lucha de cerca; el Ranger dispara a distancia y puede curarte. Te siguen y luchan automáticamente.\n\nUsa Reagrupar para cancelar sus órdenes y reunirlos contigo. Pruébalo y luego abre Aventura en el campo para establecer tu primer cuartel básico GRATIS. Un compañero lo construye; allí podrás recuperar a los caídos y gestionar el grupo activo y las reservas.\n\nRescata a Mira y mejora Expedición al rango 2 para desbloquear el tercer puesto activo y el reclutamiento. Si no puedes pagar un recluta disponible, toca Reclutar para dejarlo en cola. Toca la misma opción para cancelar o elige otro tipo para reemplazarlo. Llegará automáticamente cuando tengas las coronas y se cumplan los demás requisitos; si el grupo está lleno, quedará en reserva.',
+    'Soldier: close combat.\nRanger: ranged attacks + healing.\nThey follow and fight automatically.\n\nRecall brings them back to you.\nNext: build your first Barracks for FREE.':
+      'Soldado: combate cercano.\nRanger: ataques a distancia + curación.\nTe siguen y luchan automáticamente.\n\nReagrupar los trae de vuelta.\nDespués: construye tu primer cuartel GRATIS.',
   });
   Object.assign(spanishText, {
     'Restore living wounded companions to full health.':
