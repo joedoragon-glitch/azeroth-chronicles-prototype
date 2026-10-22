@@ -35,46 +35,133 @@
     const game = new Campaign('normal', 'paladin', () => 0.7);
     if (region !== 'vale') checked(game.enter(region), 'Could not enter ' + region);
     const z = game.zone();
-    const center = region === 'vale' ? { x: 650, y: 730 }
-      : region === 'frontier' ? { x: 650, y: 730 } : { x: 650, y: 730 };
+    const center = { x: 650, y: 730 };
     const focus = iso(center);
-    const scale = 1.5;  // Same isometric transform and authored sprite dimensions as the game.
-    const objects = [];
-    let considered = 0, procedural = 0, offscreen = 0;
+    const scale = 1.5;
+    const objects = [], proceduralCandidates = [];
+    let considered = 0, procedural = 0, offscreen = 0, seq = 0;
     const sets = [
       [z.props, 'prop'], [game.visibleNPCs(), 'npc'], [game.visibleResourceNodes(), 'node'],
       [z.buildings, 'building'], [z.enemies, 'enemy'],
       [game.activeLivingParty(), 'ally'], [[game.hero], 'hero'],
     ];
+    const regionIndex = game.regionIndex();
     for (const [list, kind] of sets) {
       for (const source of list) {
         if (kind === 'enemy' && source.hp <= 0) continue;
         considered++;
         const e = { ...source, renderKind: kind };
-        const found = PrototypeSprites.definitionFor(e, game.regionIndex(), !!game.s.rescued[e.family]);
-        if (!found || !manifest.sprites[found.key]) { procedural++; continue; }
-        const entry = found.entry;
-        if ((PrototypeVisuals.featureScale?.(e) || 1) > 1)
+        const found = PrototypeSprites.definitionFor(e, regionIndex, !!game.s.rescued[e.family]);
+        const entry = found && manifest.sprites[found.key] ? found.entry : null;
+        if (PrototypeVisuals.featureScale(e) > 1)
           e.visualScale = PrototypeVisuals.assetSafeScale(e, entry);
-        const spriteScale = PrototypeSprites.entityScale(e, entry);
-        const width = Math.round((Number(entry.displayWidth) || entry.width) * spriteScale * scale);
-        const height = Math.round((Number(entry.displayHeight) || entry.height) * spriteScale * scale);
-        const p = iso(e);
-        const x = Math.round(W / 2 + (p.x - focus.x) * scale - width * (entry.anchorX ?? 0.5));
-        const y = Math.round(H / 2 + (p.y - focus.y) * scale - height * (entry.anchorY ?? 0.88));
+        const point = iso(e);
+        const anchorX = Math.round(W / 2 + (point.x - focus.x) * scale);
+        const anchorY = Math.round(H / 2 + (point.y - focus.y) * scale);
+        if (!entry) {
+          procedural++;
+          // Include original procedural props and actors near the viewport.
+          // The generous margin admits tall scenery crossing the screen edge.
+          if (e.interactionOnly || (kind === 'npc' && e.kind === 'landmark' && e.id?.startsWith('bridge-')))
+            continue;
+          if (anchorX < -280 || anchorX > W + 280 || anchorY < -350 || anchorY > H + 300) {
+            offscreen++;
+            continue;
+          }
+          proceduralCandidates.push({
+            procedural: true, entity: e, anchorX, anchorY, x: anchorX, y: anchorY,
+            src: 'procedural:' + seq++, kind, sort: e.x + e.y, opacity: 1,
+          });
+          continue;
+        }
+        const factor = PrototypeSprites.entityScale(e, entry);
+        const width = Math.round((Number(entry.displayWidth) || entry.width) * factor * scale);
+        const height = Math.round((Number(entry.displayHeight) || entry.height) * factor * scale);
+        const x = Math.round(anchorX - width * (entry.anchorX ?? 0.5));
+        const y = Math.round(anchorY - height * (entry.anchorY ?? 0.88));
         if (x > W + 10 || x + width < -10 || y > H + 10 || y + height < -10) {
           offscreen++;
           continue;
         }
-        objects.push({ x, y, width, height, key: found.key, src: entry.src,
-          opacity: Number.isFinite(entry.opacity) ? entry.opacity : 1,
-          sort: e.x + e.y });
+        objects.push({
+          x, y, width, height, key: found.key, src: entry.src, kind,
+          opacity: Number.isFinite(entry.opacity) ? entry.opacity : 1, sort: e.x + e.y,
+        });
       }
     }
+    // A bounded mixture of nearby original procedural objects. We report
+    // any excluded objects rather than pretending this is the entire scene.
+    const proceduralLimit = 72;
+    proceduralCandidates.sort((a, b) =>
+      Math.hypot(a.anchorX - W / 2, a.anchorY - H / 2) -
+      Math.hypot(b.anchorX - W / 2, b.anchorY - H / 2));
+    const selected = proceduralCandidates.slice(0, proceduralLimit);
+    objects.push(...selected);
     objects.sort((a, b) => a.sort - b.sort);
-    return { objects, considered, procedural, offscreen, region, scale };
+    return {
+      objects, considered, procedural, offscreen, region, regionIndex, scale,
+      selectedProcedural: selected.length,
+      proceduralOmittedByLimit: Math.max(0, proceduralCandidates.length - proceduralLimit),
+      selectedKinds: selected.reduce((out, e) => {
+        out[e.kind] = (out[e.kind] || 0) + 1; return out;
+      }, {}),
+    };
   }
 
+  function bakeProcedural(scene, images) {
+    const procedural = scene.objects.filter((o) => o.procedural);
+    const begun = performance.now();
+    const stage = document.createElement('canvas');
+    stage.width = 1000;
+    stage.height = 1000;
+    const painter = checked(stage.getContext('2d', { willReadFrequently: true }),
+      'Cannot render procedural artwork');
+    const anchor = { x: 500, y: 700 };
+    let pixelBytes = 0, empty = 0;
+    for (const item of procedural) {
+      painter.setTransform(1, 0, 0, 1, 0, 0);
+      painter.clearRect(0, 0, stage.width, stage.height);
+      painter.save();
+      painter.scale(scene.scale, scene.scale);
+      PrototypeVisuals.draw(painter, item.entity,
+        { x: anchor.x / scene.scale, y: anchor.y / scene.scale },
+        scene.regionIndex, false);
+      painter.restore();
+      const rgba = painter.getImageData(0, 0, stage.width, stage.height).data;
+      let left = stage.width, top = stage.height, right = -1, bottom = -1;
+      for (let i = 3; i < rgba.length; i += 4) {
+        if (rgba[i] < 1) continue;
+        const at = (i - 3) / 4, x = at % stage.width, y = Math.floor(at / stage.width);
+        left = Math.min(left, x); right = Math.max(right, x);
+        top = Math.min(top, y); bottom = Math.max(bottom, y);
+      }
+      if (right < left) { empty++; item.x = item.anchorX; item.y = item.anchorY;
+        item.width = item.height = 1; }
+      else {
+        left = Math.max(0, left - 1); top = Math.max(0, top - 1);
+        right = Math.min(stage.width - 1, right + 1);
+        bottom = Math.min(stage.height - 1, bottom + 1);
+        item.x = item.anchorX + left - anchor.x;
+        item.y = item.anchorY + top - anchor.y;
+        item.width = right - left + 1;
+        item.height = bottom - top + 1;
+      }
+      const image = document.createElement('canvas');
+      image.width = item.width; image.height = item.height;
+      checked(image.getContext('2d'), 'Procedural crop failed')
+        .drawImage(stage, left === stage.width ? 0 : left,
+          top === stage.height ? 0 : top, image.width, image.height,
+          0, 0, image.width, image.height);
+      images.set(item.src, image);
+      pixelBytes += image.width * image.height * 4;
+    }
+    return {
+      items: procedural.length, empty,
+      preparationMs: Number((performance.now() - begun).toFixed(1)),
+      croppedSourceBytes: pixelBytes,
+      staticArtOnly: true,
+    };
+  }
   function compile(gl, type, text) {
     const shader = checked(gl.createShader(type), 'Unable to create shader');
     gl.shaderSource(shader, text);
