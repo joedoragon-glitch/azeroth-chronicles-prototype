@@ -284,21 +284,53 @@
       rect(program,0,0,canvas.width,canvas.height);
       drawUnitQuad();
     }
+    // Preflight the COMPLETE display list before touching the framebuffer.
+    // Missing art or unsupported lighting must NEVER produce half a picture.
+    function validateCommand(command) {
+      assert(command && typeof command==='object','GPU draw command required');
+      if(command.kind==='sprite') {
+        const item=assert(textures.get(command.textureId),
+          'Sprite texture missing; must preload original art before frame');
+        assert(finite(command.x,command.y,command.width,command.height) &&
+          command.width>0&&command.height>0,
+          'Native sprite geometry is invalid');
+        assert(command.opacity===undefined ||
+          (finite(command.opacity) && command.opacity>=0 && command.opacity<=1),
+          'Invalid sprite opacity');
+        const src=command.sourceRect || [0,0,item.width,item.height];
+        assert(Array.isArray(src)&&src.length===4&&src.every(Number.isFinite)&&
+          src[2]>0&&src[3]>0&&src[0]>=0&&src[1]>=0&&
+          src[0]+src[2]<=item.width&&src[1]+src[3]<=item.height,
+          'Sprite source region outside loaded original art');
+      } else if(command.kind==='screenGlow') {
+        assert(finite(command.x,command.y,command.radius,command.alpha) &&
+          command.radius>0&&command.alpha>=0&&command.alpha<=1 &&
+          Array.isArray(command.rgb)&&command.rgb.length===3 &&
+          command.rgb.every(n=>Number.isFinite(n)&&n>=0&&n<=255),
+          'Native lamp/ambient light command invalid');
+      } else if(command.kind==='nightGrade') {
+        assert([command.top,command.bottom].every(c=>Array.isArray(c)&&
+          c.length===4&&c.every(n=>Number.isFinite(n)&&n>=0&&n<=1))&&
+          (command.strength===undefined ||
+            (finite(command.strength)&&command.strength>=0&&command.strength<=1)),
+          'Native night/day grade command invalid');
+      } else throw Error('Unsupported GPU scene command: '+String(command.kind));
+    }
     function draw(commands,{clear=DEFAULT_CLEAR}={}) {
       assert(available(),'WebGL2 context lost; caller must use Canvas fallback');
       assert(Array.isArray(commands),'Ordered GPU display list required');
-      assert(Array.isArray(clear)&&clear.length===4&&clear.every(Number.isFinite),
-        'Frame clear must be RGBA');
+      assert(Array.isArray(clear)&&clear.length===4&&
+        clear.every(n=>Number.isFinite(n)&&n>=0&&n<=1),
+        'Frame clear must be normalized RGBA');
+      for(const command of commands)validateCommand(command);
       gl.viewport(0,0,canvas.width,canvas.height);
       gl.disable(gl.BLEND);
       gl.clearColor(...clear);
       gl.clear(gl.COLOR_BUFFER_BIT);
       for(const command of commands) {
-        assert(command && typeof command==='object','GPU draw command required');
         if(command.kind==='sprite')drawSprite(command);
         else if(command.kind==='screenGlow')drawGlow(command);
-        else if(command.kind==='nightGrade')drawNightGrade(command);
-        else throw Error('Unsupported GPU scene command: '+String(command.kind));
+        else drawNightGrade(command);
       }
       frames++;
       return {frames,commands:commands.length};
