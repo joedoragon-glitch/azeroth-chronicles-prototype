@@ -1,0 +1,30 @@
+{
+  "version": "0.9.1+snapshot.dev.159",
+  "clientDate": "2026-10-21",
+  "pullRequest": 398,
+  "mergeSha": "3629be9f98044a7453ff3ff42b7002e779f57538",
+  "publisherRun": 39707510284,
+  "publisherConclusion": "success",
+  "publicBuildIdentifier": "3629be9f98044a7453ff3ff42b7002e779f57538",
+  "publicVerification": "Browser observed public build.txt matches the runtime merge; per-file byte comparison unavailable under current shell network policy.",
+  "checks": [
+    "192 native resolver comparisons for 24 skills, two forms and four rank contexts",
+    "six English/Spanish production-shell full-class skill journals",
+    "existing instructor production-shell flows",
+    "existing cooldown/healing contract",
+    "existing economy",
+    "existing menus and stale quote/funds checks",
+    "existing game-menu shell",
+    "existing companion-onboarding shell",
+    "existing player conditions reference",
+    "build and generated syntax check",
+    "changed-source formatting",
+    "affected old UI syntax",
+    "git diff --check"
+  ],
+  "broadCI": false,
+  "browserMatrix": false,
+  "deviceVisualAudit": false,
+  "normalWorkflowRestored": true,
+  "temporaryPublisherRemoved": true
+}
