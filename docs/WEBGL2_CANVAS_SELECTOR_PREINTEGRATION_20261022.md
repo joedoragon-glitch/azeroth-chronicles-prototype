@@ -53,6 +53,12 @@ Corresponding narrow tests: `native-sprite-adapter.test.cjs` (8 cases), `native-
 
 **Readiness stays `NOT_READY`**, and no graphics Settings selector is installed. When integration is explicitly approved after full parity, the only two options will remain **Canvas 2D (default)** and **WebGL2**. Light fixture artwork, lamp glow, original grading and visual effects may all be GPU-generated in WebGL2; they must faithfully match their existing approved designs, not remain Canvas-only.
 
+## Simplified delivery direction — PixiJS instead of a custom rendering engine
+
+The immediate implementation path is now the standalone `tools/webgl-pilot/pixi-real-world.html` pilot, documented in `tools/webgl-pilot/PIXI_REAL_WORLD_PILOT.md`. It uses a pinned PixiJS v8 WebGL2 scene graph rather than extending our bespoke WebGL shader/compositor into a full general-purpose engine. Original Canvas-created art can be **prepared once into separate GPU textures**; real objects move and original atlas frames animate independently on the GPU. GPU gradients handle lamp glows (the lamps do not have to remain Canvas-drawn). The previous low-level GPU modules are staging experiments, not mandatory architectural dependencies for the final engine; PixiJS replaces most of their hand-built renderer machinery.
+
+**Still a development pilot**: procedural body animations, all fixture details, occlusion outlines, complex effects, and exact source-over/screen blending are not finished. Neither a passed hardware visual comparison nor game-selector readiness is claimed. The PixiJS dependency must be bundled/self-hosted for the final offline PWA; the branch diagnostic currently loads a version-pinned CDN script and is not published.
+
 ## Required genuine WebGL implementation work
 
 1. Native GPU batching for sprites and procedural bodies with original per-actor frame selection, artwork pivots, zoom, facing and depth order. Do not replace quality artwork with generic polygons.
