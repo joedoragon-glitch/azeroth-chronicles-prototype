@@ -1,0 +1,43 @@
+<!doctype html><html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<base href="../../"><title>Azeroth graphics strategy laboratory</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#121e1c;color:#eaf1e5;font:15px system-ui;padding:18px}
+main{max-width:1400px;margin:auto}p{line-height:1.5}a{color:#a6decd}
+label{display:flex;flex-direction:column;gap:4px}select,button{background:#243e38;border:1px solid #769989;color:#fff;border-radius:7px;padding:9px;font:inherit}
+button{cursor:pointer}button:disabled{opacity:.6}.controls{display:flex;flex-wrap:wrap;gap:12px;align-items:end}
+.views{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.views section{min-width:0}canvas{width:100%;height:auto;border:1px solid #658374;background:#102319}
+pre{background:#1c322b;border-radius:7px;padding:14px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:550px;overflow:auto}
+small,.note{color:#b9cfc2;font-size:13px}
+@media(max-width:900px){.views{grid-template-columns:1fr}} 
+</style></head>
+<body><main>
+<h1>Azeroth Chronicles — graphics strategy laboratory</h1>
+<p>This tests <strong>three different ways of creating/displaying identical simple world-shaped graphics</strong>.
+It distinguishes true GPU-generated geometry from Canvas-produced textures. 
+The shapes are a <strong>technical sample, not our approved finished game artwork</strong>.
+The linked game-scene experiments below test actual game art and lighting.</p>
+<div class="controls">
+<label>Workload<select id="count"><option value="100">100 shapes</option><option value="600" selected>600 shapes</option>
+<option value="1800">1,800 shapes</option><option value="3600">3,600 shapes</option></select></label>
+<label>Viewport<select id="size"><option value="960x540" selected>960 × 540</option>
+<option value="1600x900">1600 × 900</option></select></label>
+<button id="run" type="button">Compare graphics methods</button>
+</div>
+<p id="status">Ready. Independent experiment; no game saves or production graphics are used.</p>
+<div class="views">
+<section><h3>Original Canvas</h3><canvas id="canvas" width="960" height="540"></canvas><small>Creates and paints every shape, every frame</small></section>
+<section><h3>Native WebGL</h3><canvas id="native" width="960" height="540"></canvas><small>GPU builds shapes directly from vertices and colors; no Canvas artwork upload</small></section>
+<section><h3>Canvas → WebGL</h3><canvas id="baked" width="960" height="540"></canvas><small>Canvas paints once; GPU reuses uploaded art while the view moves</small></section>
+</div>
+<h3>Results</h3><pre id="result">Not measured yet.</pre>
+<h3>Existing real-game comparisons (all preserved)</h3>
+<p><a href="./tools/webgl-pilot/index.html">Actual procedural art and sprite comparison</a> ·
+<a href="./tools/webgl-pilot/full-world.html">Whole-world original Canvas vs GPU transfer</a> ·
+<a href="./tools/webgl-pilot/hybrid.html">Hybrid GPU ground + Canvas world</a></p>
+<p class="note">The three simple-shape renderers use one shared dataset and animated view offset. The test reports
+preparation/upload separately from frame costs and checks visual differences. It is a method comparison only,
+not full-world FPS evidence. A production smart hybrid must allocate actual game layers by their measured
+costs, animation needs, compositing, memory use and visual parity; no part of the game has been altered.</p>
+</main><script src="./tools/webgl-pilot/strategy-lab.js?v=1"></script></body></html>
