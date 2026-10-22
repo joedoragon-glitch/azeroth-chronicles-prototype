@@ -96,7 +96,7 @@ for (const type of ['pet', 'soldier', 'archer']) {
 {
   const { g, b, family, menu, row, click, company, pet } = fixture();
   menu.partyMenu();
-  assert.match(row(/^Town recruitment limit/).detail, /including reserves.*Basic or Full Barracks/);
+  assert.match(row(/^Recruit at a Barracks/).detail, /Town limit: 3 companions, reserves included/);
   assert(g.restCompanion(g.s.party[0].id));
   denied(g, () => g.recruit('soldier'), /town.*including reserves/i);
   // The town hiring cap must not disable hiring at a Basic Barracks.
@@ -163,7 +163,7 @@ for (const type of ['pet', 'soldier', 'archer']) {
     return row(/^Recruit Soldier/);
   }
   g.hero.gold = 0;
-  assert.match(recruitment().detail, /Not enough crowns/);
+  assert.match(recruitment().detail, /Short on crowns.*Tap to queue/);
   denied(g, () => g.train(b.id), /Not enough crowns/);
   g.hero.gold = 1000;
   b.queue = 2;

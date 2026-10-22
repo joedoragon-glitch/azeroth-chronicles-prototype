@@ -1010,12 +1010,17 @@
     function barracksSpecialistMenu(b, back) {
       const specialists = getGame().barracksSpecialists(),
         returnHere = () => barracksSpecialistMenu(b, back),
-        regional = regionalSpecialistBarracksDetail();
+        missing = regionalSpecialistProgress().missing[0],
+        regional = missing
+          ? 'Rescue ' +
+            missing.captive.split(' the ')[0] +
+            ' — ' +
+            (missing.kind === 'dungeon' ? missing.place : missing.name)
+          : 'All local specialists rescued.';
       const availableKeeper = !!getGame().s.keeperPact && getGame().keeperAvailable();
       openMenu(
         'Rescued specialists',
-        regional +
-          ' Rescued specialists work from your barracks. More advanced specialists replace older redundant services.',
+        'Choose a rescued specialist for training or equipment.',
         [
           ...(specialists.length
             ? specialists.map((s) =>
@@ -1060,7 +1065,7 @@
         '/' +
         g.companionCarePrice(kind) +
         ' crowns · ' +
-        (reason || 'Executes automatically only when every condition is met.')
+        (reason || 'Automatic when eligible.')
       );
     }
     function companionQueueSummary() {
@@ -1069,10 +1074,7 @@
         careQueueSummary('treatment'),
         recruitmentQueueSummary(),
       ].filter(Boolean);
-      if (lines.length > 1)
-        lines.push(
-          'When multiple actions are ready, payment order is recovery, treatment, then recruitment.',
-        );
+      if (lines.length > 1) lines.push('Queue payment order: recovery → treatment → recruitment.');
       return lines.join('\n');
     }
     function careChoice(kind, barracksId, refresh) {
@@ -1121,12 +1123,35 @@
         careChoice('treatment', barracksId, refresh),
       ];
     }
+    function barracksRespawnActions(b, refresh) {
+      const g = getGame();
+      if (g.s.challenge.succession) return [];
+      const selected = g.s.barracksRespawn?.zone === g.zoneId && g.s.barracksRespawn?.id === b.id;
+      return [
+        action(
+          selected ? 'Return death recovery to refuge' : 'Set death recovery point',
+          () => {
+            if (selected) getGame().clearBarracksRespawn();
+            else getGame().setBarracksRespawn(b.id);
+            refresh();
+          },
+          selected
+            ? 'Respawn here, or switch back to your refuge.'
+            : 'Respawn here after defeat in this region.',
+        ),
+      ];
+    }
     function barracksRecoveryMenu(b, back) {
+      const refresh = () => barracksRecoveryMenu(b, back);
       openMenu(
         'Recovery',
-        'Basic barracks recovery is available from Expedition Rank 1.' +
+        'Restore companions. Short on crowns? Tap to queue.' +
+          '\n' +
+          (getGame().s.challenge.succession
+            ? 'Succession: class loss replaces crown loss.'
+            : 'Local death loss: ' + (b.full ? 5 : 15) + '%.') +
           (companionQueueSummary() ? '\n\n' + companionQueueSummary() : ''),
-        barracksRecoveryActions(() => barracksRecoveryMenu(b, back), b.id),
+        [...barracksRecoveryActions(refresh, b.id), ...barracksRespawnActions(b, refresh)],
         back,
       );
     }
@@ -1149,8 +1174,9 @@
           boss.name +
           ' · ' +
           state +
-          '. ' +
-          (def.role === 'ranged' ? 'Ranged support. ' : 'Close-range support. ') +
+          '\n' +
+          (def.role === 'ranged' ? 'Ranged support.' : 'Close-range support.') +
+          '\n' +
           def.specialty,
         [
           ...(unit
@@ -1164,20 +1190,9 @@
               ]
             : []),
           action(
-            'First · ' + def.first.name,
-            () => {},
-            'Automatic in combat · clear line required · no training needed · ' +
-              game.petSkillSummary(family, 1),
-            true,
-          ),
-          action(
-            'Charged · ' + def.second.name,
-            () => {},
-            (game.companionSecondSkillUnlocked()
-              ? 'Training unlocked · automatic 0.65s charge · '
-              : 'Learn hero Skill 2 from rescued Mira in Millhaven to unlock · ') +
-              game.petSkillSummary(family, 2),
-            true,
+            'Pet skills',
+            () => barracksPetSkills(b, family, () => barracksPetDetail(b, family, back)),
+            'Automatic attacks and charged skills.',
           ),
           action(
             state === 'Locked'
@@ -1201,10 +1216,36 @@
             reason ||
               (!unit
                 ? game.activeParty().length < game.barracksFieldCap(b)
-                  ? 'Free · joins your active group in the open slot.'
-                  : 'Active group full. Recruited pet will wait in reserve; rest a member to free a slot.'
-                : 'Health and recovery persist while resting.'),
+                  ? 'Joins your group for free.'
+                  : 'Group full. Recruits into reserve; rest a member to make room.'
+                : 'Keeps its health while resting.'),
             !!reason,
+          ),
+        ],
+        back,
+      );
+    }
+    function barracksPetSkills(b, family, back) {
+      const game = getGame(),
+        def = game.petDefinition(family);
+      if (!def) return back();
+      openMenu(
+        'Pet skills',
+        'Pets use these skills automatically in combat.',
+        [
+          action(
+            'First · ' + def.first.name,
+            () => {},
+            'Clear line required · ' + game.petSkillSummary(family, 1),
+            true,
+          ),
+          action(
+            'Charged · ' + def.second.name,
+            () => {},
+            (game.companionSecondSkillUnlocked()
+              ? 'Automatic 0.65s charge · '
+              : 'Unlock: learn hero Skill 2 from Mira · ') + game.petSkillSummary(family, 2),
+            true,
           ),
         ],
         back,
@@ -1218,7 +1259,7 @@
         rows.filter((r) => r.state !== 'Locked').length +
           '/' +
           rows.length +
-          ' unlocked · TRUE victories, including past victories, unlock one unique pet each. Free to recruit; ordinary group slots and Barracks recovery apply. Pets do not work or summon.',
+          ' unlocked · TRUE victories unlock free pets.\nThey share group slots and need recovery when fallen. Pets cannot work or summon.',
         rows.map(({ boss, def, state, unit }) =>
           action(
             (unit?.customName || def.name) + ' · ' + state,
@@ -1247,7 +1288,7 @@
         g.recruitmentRequestPrice() +
         ' crowns' +
         ' · ' +
-        (reason || 'Joins automatically when every condition is met; full group means reserve.')
+        (reason || 'Automatic when eligible; full group → reserve.')
       );
     }
     function recruitmentChoice(type, label, barracksId, reopen) {
@@ -1299,8 +1340,8 @@
         'Recruitment',
         (queueName
           ? 'Training ' + queueName + ' · ' + b.queue.toFixed(1) + 's remaining'
-          : 'Recruit as many companions as you want') +
-          '. New recruits join the active group if this barracks can support another slot; otherwise they rest in reserve. TRUE boss pets are in the Company collection.' +
+          : 'Choose a recruit') +
+          '. A full group sends recruits to reserve.\nShort on crowns? Tap to queue.' +
           (companionQueueSummary() ? '\n\n' + companionQueueSummary() : ''),
         [
           ...otherRecruitmentCancellation(b.id, reopen),
@@ -1337,7 +1378,7 @@
                 if (getGame().scoutTribute(n.id, b.id)) closeMenu();
                 else barracksLaborMenu(b, back);
               },
-              'Investigate the stores with idle troops. Escort them to the site; tribute is revealed only after their search.',
+              'Escort idle troops here to reveal the tribute.',
               !getGame().availableGatherers().length,
             ),
           );
@@ -1366,14 +1407,14 @@
         );
       openMenu(
         'Resources & labor',
-        'All idle gatherers work one selected tribute site. Escort them along the waypoint; combat pauses work. Supplies unloads all company cargo. Hidden sources can be located here.',
+        'Choose a tribute site, then escort your workers.\nCombat pauses gathering. Deliver their cargo to Town Supplies.',
         actions.length
           ? actions
           : [
               action(
                 'No remaining regional tribute',
                 () => {},
-                'All known and hidden Dark Lord Tribute in this region has been recovered.',
+                'All regional tribute recovered.',
                 true,
               ),
             ],
@@ -1423,9 +1464,9 @@
           cap +
           ' · Employed ' +
           getGame().rosterCount() +
-          '. Resting frees a slot for a new recruit or reserve companion. ' +
+          ' · Rest a companion to free a slot. ' +
           (!b.full && (getGame().s.expeditionRank || 1) >= 4
-            ? 'Basic barracks support at most 3 active companions. Upgrade it to use your higher Expedition cap.'
+            ? 'Basic cap: 3. Upgrade for larger groups.'
             : ''),
         actions.length ? actions : [action('No companions employed', () => {}, '', true)],
         back,
@@ -1448,7 +1489,7 @@
       const returnHere = () => barracksNamesMenu(b, back);
       openMenu(
         'Name companions',
-        'Every employed companion and pet can receive a name once. Skipping keeps that choice available, including for resting and fallen companions.',
+        'Choose a name once. You can skip and return later.',
         getGame().s.party.length
           ? getGame().s.party.map((u) =>
               action(
@@ -1471,12 +1512,12 @@
         fallen = getGame().s.party.filter((u) => u.hp <= 0).length;
       openMenu(
         'Company',
-        'Recruit, recover and choose who travels with you.',
+        'Choose who travels with you.',
         [
           action(
             'Boss pet collection',
             () => barracksPetMenu(b, returnHere),
-            'Eleven TRUE bosses · permanent unlocks · existing group slots',
+            'Defeat TRUE bosses to unlock pets.',
           ),
           action(
             'Manage active group',
@@ -1486,7 +1527,7 @@
           action(
             'Name companions',
             () => barracksNamesMenu(b, returnHere),
-            'Optional, permanent names · all troops and pets',
+            'Optional · chosen once.',
           ),
           rank >= 2
             ? action(
@@ -1496,7 +1537,7 @@
                   getGame().barracksRecruitPrice('soldier') +
                   ' crowns · Ranger ' +
                   getGame().barracksRecruitPrice('archer') +
-                  ' crowns · extra hires rest in reserve',
+                  ' crowns',
               )
             : action(
                 'Recruitment — Expedition 2',
@@ -1504,13 +1545,17 @@
                 'Rescue Mira and train Expedition to Rank 2',
                 true,
               ),
-          action(
-            'Recovery',
-            () => barracksRecoveryMenu(b, returnHere),
-            fallen
-              ? fallen + ' fallen · treat wounded or recover fallen'
-              : 'Treat wounded · recover fallen',
-          ),
+          ...(b.full
+            ? [
+                action(
+                  'Recovery',
+                  () => barracksRecoveryMenu(b, returnHere),
+                  fallen
+                    ? fallen + ' fallen · treat wounded or recover fallen'
+                    : 'Treat wounded · recover fallen',
+                ),
+              ]
+            : []),
         ],
         back,
       );
@@ -1611,7 +1656,7 @@
       const returnHere = () => barracksOperationsMenu(b, back);
       openMenu(
         'Operations',
-        'Local objectives and expedition labor.',
+        'Quests and resource gathering.',
         [
           action('Local objectives', () => quests(true, returnHere)),
           barracksGatherAction(b, returnHere),
@@ -1619,7 +1664,20 @@
         back,
       );
     }
-    function expeditionBarracksAction(b, back) {
+    function barracksTrainingMenu(b, back) {
+      const returnHere = () => barracksTrainingMenu(b, back);
+      openMenu(
+        'Training',
+        'Rescue specialists to unlock skills and larger groups.',
+        [
+          expeditionBarracksAction(b, returnHere, returnHere),
+          action('Rescued specialists', () => barracksSpecialistMenu(b, returnHere)),
+          action('Skill journal', () => skillBook(returnHere)),
+        ],
+        back,
+      );
+    }
+    function expeditionBarracksAction(b, back, refresh = () => barracksMenu(b, back)) {
       const rank = getGame().s.expeditionRank || 1;
       if (rank >= 6)
         return action('Expedition Skill · Rank 6', () => {}, 'Maximum rank · active group 6', true);
@@ -1630,7 +1688,7 @@
           'Train Expedition Skill · Rank ' + rank + ' → ' + next + ' · FREE',
           () => {
             getGame().trainExpedition(trainer);
-            barracksMenu(b, back);
+            refresh();
           },
           getGame().expeditionUnlock(next),
         );
@@ -1705,11 +1763,16 @@
           canAssign = !assigned && getGame().availableLabor().length > 0;
         openMenu(
           'Barracks under construction',
-          'The hero keeps watch while one companion builds. Progress ' +
-            Math.floor(b.progress) +
-            '/4. Recall cancels labor without losing progress.',
+          'Keep watch while a companion builds. Recall pauses work; progress is kept.',
           assigned
-            ? [action('Construction in progress', () => {}, 'One companion is building.', true)]
+            ? [
+                action(
+                  'Construction in progress',
+                  () => {},
+                  'Progress ' + Math.floor(b.progress) + '/4',
+                  true,
+                ),
+              ]
             : canAssign
               ? [
                   action(
@@ -1737,24 +1800,7 @@
         specialists = getGame().barracksSpecialists(),
         exp = expeditionBarracksAction(b, back),
         tonic = barracksTonicAction(b, back),
-        selected =
-          getGame().s.barracksRespawn?.zone === getGame().zoneId &&
-          getGame().s.barracksRespawn?.id === b.id,
-        respawnActions = getGame().s.challenge.succession
-          ? []
-          : [
-              action(
-                selected ? 'Return death recovery to refuge' : 'Set death recovery point',
-                () => {
-                  if (selected) getGame().clearBarracksRespawn();
-                  else getGame().setBarracksRespawn(b.id);
-                  barracksMenu(b, back);
-                },
-                selected
-                  ? 'Selected recovery point · choose this to use your last refuge instead'
-                  : 'Recover here within this region. Entering another region switches to its refuge.',
-              ),
-            ],
+        respawnActions = barracksRespawnActions(b, () => barracksMenu(b, back)),
         baseActions = [
           ...barracksRecoveryActions(returnHere, b.id),
           barracksGatherAction(b, returnHere),
@@ -1825,7 +1871,7 @@
                     getGame().upgradeBarracks(b.id);
                     barracksMenu(b, back);
                   },
-                  'Optional upgrade · required only for active groups above 3 · becomes a resource deposit · unlocks full operations',
+                  'Larger active groups and a supply deposit.',
                   !getGame().availableLabor().length ||
                     (!b.upgradePaid && getGame().hero.gold < getGame().barracksUpgradeCost()),
                 ),
@@ -1835,17 +1881,41 @@
             action(
               'Full Barracks — Expedition 4',
               () => {},
-              'Supports active groups above 3 · resource deposit · full operations',
+              'Larger active groups and a supply deposit.',
               true,
             ),
           );
+        const upgrade = baseActions.at(-1);
         openMenu(
           'Basic Barracks',
-          getGame().definition().name +
-            (getGame().s.challenge.succession
-              ? ' · Succession deaths never cost crowns; class loss is the penalty.'
-              : ' · completed Basic Barracks reduce local death loss to 15%, including regional dungeons.'),
-          baseActions,
+          'Your field base. Choose a service.',
+          [
+            action(
+              'Company',
+              () => barracksCompanyMenu(b, returnHere),
+              'Group, recruits and pets.',
+            ),
+            action(
+              'Recovery',
+              () => barracksRecoveryMenu(b, returnHere),
+              'Heal or recover companions.',
+            ),
+            action(
+              'Training',
+              () => barracksTrainingMenu(b, returnHere),
+              'Skills and rescued specialists.',
+            ),
+            action(
+              'Operations',
+              () => barracksOperationsMenu(b, returnHere),
+              'Quests and resources.',
+            ),
+            ...(tonic ? [tonic] : []),
+            ...(getGame().peace && !getGame().s.finalRestCompleted
+              ? [baseActions.find((a) => a.label === 'Rest here · Complete the journey')]
+              : []),
+            upgrade,
+          ],
           back,
         );
         return;

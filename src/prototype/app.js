@@ -575,11 +575,119 @@
       'Toca de nuevo para cancelar o elige otro compañero. No has gastado coronas.',
     'Requires safety from nearby combat.': 'Requiere estar fuera de peligro del combate cercano.',
   });
+  Object.assign(spanishText, {
+    'Basic Barracks': 'Cuartel básico',
+    'Barracks under construction': 'Cuartel en construcción',
+    Company: 'Compañía',
+    Recovery: 'Recuperación',
+    Training: 'Entrenamiento',
+    Operations: 'Operaciones',
+    Recruitment: 'Reclutamiento',
+    'Manage group': 'Gestionar grupo',
+    'Manage active group': 'Gestionar grupo activo',
+    'Name companions': 'Nombrar compañeros',
+    'Recruit companions': 'Reclutar compañeros',
+    'Boss pet collection': 'Colección de mascotas de jefes',
+    'Pet skills': 'Habilidades de mascota',
+    'Rescued specialists': 'Especialistas rescatados',
+    'Resources & labor': 'Recursos y trabajo',
+    'Local objectives': 'Objetivos locales',
+    'Gather resources': 'Recoger recursos',
+    'No specialists rescued yet': 'Aún no hay especialistas rescatados',
+    'No companions employed': 'No hay compañeros contratados',
+    'Full Barracks — Expedition 4': 'Cuartel completo — Expedición 4',
+    'Your field base. Choose a service.': 'Tu base de campo. Elige un servicio.',
+    'Group, recruits and pets.': 'Grupo, reclutas y mascotas.',
+    'Heal or recover companions.': 'Cura o recupera compañeros.',
+    'Skills and rescued specialists.': 'Habilidades y especialistas rescatados.',
+    'Quests and resources.': 'Misiones y recursos.',
+    'Restore companions. Short on crowns? Tap to queue.':
+      'Recupera compañeros. ¿Te faltan coronas? Toca para dejarlo en cola.',
+    'Succession: class loss replaces crown loss.':
+      'Sucesión: pierdes la clase en lugar de coronas.',
+    'Respawn here, or switch back to your refuge.': 'Reaparece aquí o vuelve a usar tu refugio.',
+    'Respawn here after defeat in this region.': 'Reaparece aquí al caer en esta región.',
+    'Choose who travels with you.': 'Elige quién viaja contigo.',
+    'Defeat TRUE bosses to unlock pets.': 'Derrota jefes TRUE para desbloquear mascotas.',
+    'Optional · chosen once.': 'Opcional · se elige una vez.',
+    'Rest a companion to free a slot.': 'Deja descansar a un compañero para liberar un puesto.',
+    'Basic cap: 3. Upgrade for larger groups.':
+      'Límite básico: 3. Mejora el cuartel para grupos mayores.',
+    'Choose a name once. You can skip and return later.':
+      'Elige un nombre una vez. Puedes omitirlo y volver después.',
+    'Choose a rescued specialist for training or equipment.':
+      'Elige un especialista rescatado para entrenar o equiparte.',
+    'All local specialists rescued.': 'Todos los especialistas locales rescatados.',
+    'Rescue specialists to unlock skills and larger groups.':
+      'Rescata especialistas para desbloquear habilidades y grupos mayores.',
+    'Choose a recruit. A full group sends recruits to reserve.':
+      'Elige un recluta. Si el grupo está lleno, queda en reserva.',
+    'Choose a tribute site, then escort your workers.':
+      'Elige un lugar con tributo y escolta a tus trabajadores.',
+    'Combat pauses gathering. Deliver their cargo to Town Supplies.':
+      'El combate pausa la recogida. Entrega la carga en Suministros del pueblo.',
+    'Escort idle troops here to reveal the tribute.':
+      'Escolta aquí tropas libres para encontrar el tributo.',
+    'All regional tribute recovered.': 'Todo el tributo de la región recuperado.',
+    'Quests and resource gathering.': 'Misiones y recogida de recursos.',
+    'Larger active groups and a supply deposit.':
+      'Grupos activos mayores y depósito de suministros.',
+    'Keep watch while a companion builds. Recall pauses work; progress is kept.':
+      'Vigila mientras un compañero construye. Reagrupar pausa el trabajo; se conserva el progreso.',
+    'Queue payment order: recovery → treatment → recruitment.':
+      'Orden de pago de la cola: recuperación → tratamiento → reclutamiento.',
+    'Automatic when eligible.': 'Automático al cumplir los requisitos.',
+    'Automatic when eligible; full group → reserve.':
+      'Automático al cumplir los requisitos; grupo lleno → reserva.',
+    'TRUE victories unlock free pets.': 'Las victorias TRUE desbloquean mascotas gratis.',
+    'They share group slots and need recovery when fallen. Pets cannot work or summon.':
+      'Ocupan puestos del grupo y requieren recuperación al caer. No trabajan ni invocan.',
+    'Automatic attacks and charged skills.': 'Ataques automáticos y habilidades cargadas.',
+    'Pets use these skills automatically in combat.':
+      'Las mascotas usan estas habilidades automáticamente en combate.',
+    'Clear line required': 'Requiere línea despejada',
+    'Automatic 0.65s charge': 'Carga automática de 0.65 s',
+    'Unlock: learn hero Skill 2 from Mira': 'Desbloqueo: aprende la habilidad 2 del héroe con Mira',
+    'Joins your group for free.': 'Se une al grupo gratis.',
+    'Group full. Recruits into reserve; rest a member to make room.':
+      'Grupo lleno. Se recluta en reserva; deja descansar a alguien para hacer sitio.',
+    'Keeps its health while resting.': 'Conserva su salud al descansar.',
+    'Construction in progress': 'Construcción en curso',
+    'Assign companion to construction': 'Asignar compañero a construir',
+    'No idle companion available': 'No hay compañeros libres',
+    'Recall or finish another labor assignment first.': 'Reagrupa o termina otro trabajo primero.',
+    'Uses one idle active Soldier or Ranger': 'Usa un Soldado o Ranger activo y libre',
+    'Recruitment — Expedition 2': 'Reclutamiento — Expedición 2',
+    'Name available': 'Nombre disponible',
+    'Permanent name chosen': 'Nombre permanente elegido',
+    'Ranged support.': 'Apoyo a distancia.',
+    'Close-range support.': 'Apoyo cercano.',
+    Active: 'Activo',
+    Locked: 'Bloqueado',
+    Recruitable: 'Disponible',
+    Fallen: 'Caído',
+    Resting: 'En descanso',
+  });
   function translateSegment(piece) {
     const ferryPassage = Campaign.rules.tidalFerryPassage;
     if (ferryPassage && piece.startsWith(ferryPassage))
       return spanishText[ferryPassage] + piece.slice(ferryPassage.length);
     if (/^Search /.test(piece)) return piece.replace('Search ', 'Investigar ');
+    if (/^Local death loss: /.test(piece))
+      return piece.replace('Local death loss: ', 'Pérdida local al caer: ');
+    if (/^With you /.test(piece)) return piece.replace('With you ', 'Contigo ');
+    if (/^[Ee]mployed /.test(piece)) return piece.replace(/^[Ee]mployed /, 'Contratados ');
+    if (/^Rest /.test(piece))
+      return piece.replace('Rest ', 'Descansar ').replace('Soldier', 'Soldado');
+    if (/^Add .+ to group$/.test(piece))
+      return piece
+        .replace('Add ', 'Añadir ')
+        .replace(' to group', ' al grupo')
+        .replace('Soldier', 'Soldado');
+    if (/^Progress /.test(piece)) return piece.replace('Progress ', 'Progreso ');
+    if (/^\d+\/\d+ unlocked$/.test(piece)) return piece.replace('unlocked', 'desbloqueadas');
+    if (/^Inspired by /.test(piece)) return piece.replace('Inspired by ', 'Inspirado en ');
+
     if (Object.prototype.hasOwnProperty.call(spanishText, piece)) return spanishText[piece];
     if (/^One available companion goes away for /.test(piece))
       return piece

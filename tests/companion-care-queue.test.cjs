@@ -206,10 +206,18 @@ for (const kind of ['recovery', 'treatment']) {
   assert(g.s.companionCareRequests.treatment);
   assert(opened.description.includes('payment order'));
   ui.barracksMenu(b);
+  assert.equal(opened.actions.length, 5);
+  click('Recovery');
+  assert(opened.description.includes('Local death loss: 15%'));
   click('Cancel queued recovery');
   assert.equal(g.s.companionCareRequests.recovery, null);
   click('Cancel queued treatment');
   assert.equal(g.s.companionCareRequests.treatment, null);
+  g.s.challenge.succession = true;
+  ui.barracksMenu(b);
+  click('Recovery');
+  assert(opened.description.includes('class loss replaces crown loss'));
+  assert(!opened.actions.some((a) => /death recovery/.test(a.label)));
 }
 console.log(
   'PASS ' +
