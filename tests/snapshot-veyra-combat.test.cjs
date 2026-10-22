@@ -116,3 +116,4 @@ for (let n = 0; n < 85; n++) shotgun.updateProjectiles(.016);
 assert(100000 - shotgun.hero.hp <= shooter.damage + 0.01,
   'even all nine pellets cannot exceed one unarmored boss strike');
 console.log('PASS Sentinel mechanics');
+console.log('PASS ' + require('./helpers/canister-boundaries.cjs')() + ' native canister phase/form warning, fort-flight, edge-contact and step boundaries');

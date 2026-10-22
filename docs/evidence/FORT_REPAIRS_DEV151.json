@@ -1,0 +1,130 @@
+{
+  "version": "0.9.1+snapshot.dev.151",
+  "baseCommit": "917d51748e2457874152b4cecae079aed50f3c1a",
+  "baseTree": "b2bf27c03edffbc41fe558419846f48ffc622eba",
+  "verifiedUtc": "2026-10-22T00:38:55.815041+00:00",
+  "selectedOriginalSuites": [
+    {
+      "command": "node tests/treasury-recovery.test.cjs",
+      "exitCode": 0,
+      "testSha256": "64d12c702fec031b938329957f327fde6c132bc4ec71fca5e347a5dd0f167502",
+      "log": "tools/fort-repairs-dev151/treasury-recovery.log",
+      "logSha256": "f1fd895b37791f25bdaf976330b7ac0ea7534a179975146b96482f0b44e96bb3"
+    },
+    {
+      "command": "node tests/fortifications.test.cjs",
+      "exitCode": 0,
+      "testSha256": "c5eeb56fc02df5d0570b32dd30e8d5b252982ec706317155c53e925068caff46",
+      "log": "tools/fort-repairs-dev151/fortifications.log",
+      "logSha256": "3f1dcf2a44f4c9ce9fce83607fbfa09bdd8033c5cfc173f93f60ac9ad8101a09"
+    },
+    {
+      "command": "node tests/treasury-fortifications.test.cjs",
+      "exitCode": 0,
+      "testSha256": "eef06b90b41f427803bbb8f4a66c71b161c5f81b4a8528500eb71bdc8a77e3ed",
+      "log": "tools/fort-repairs-dev151/treasury-fortifications.log",
+      "logSha256": "53715ba645934f1101584be12ae12ed2b4f67a5df77fb5f1dc636606a1253685"
+    },
+    {
+      "command": "node tests/enemy-reach-regroup.test.cjs",
+      "exitCode": 0,
+      "testSha256": "d8cf1f8531a0bdea122cc5258236c957fd6561b6fe923bfbb995ce4a33051d8d",
+      "log": "tools/fort-repairs-dev151/enemy-reach-regroup.log",
+      "logSha256": "7ac78cc5c85e30442b1d9fdc311cbfb41d6e09004645de9315a133663596a140"
+    },
+    {
+      "command": "node tests/snapshot-veyra-combat.test.cjs",
+      "exitCode": 0,
+      "testSha256": "08eb5f78aab7687ae2a26fb84a4f3f57e32e1fc7113fed3e0f562924225dfc3f",
+      "log": "tools/fort-repairs-dev151/snapshot-veyra-combat.log",
+      "logSha256": "89329ecd7d2cafb8c2c16a30ccdfe3080cb494b50b892ac1a6cf230c3c2479f2"
+    },
+    {
+      "command": "node tests/snapshot-veyra-fatal.test.cjs",
+      "exitCode": 0,
+      "testSha256": "7e028f4f0be49b448b1f87619f6b3d0f29e40eadedcbc2548a9454955c55d65b",
+      "log": "tools/fort-repairs-dev151/snapshot-veyra-fatal.log",
+      "logSha256": "8696ca81021365bfac96ed4fe5a99c75df0acf3a243decd0d3a4e54b35d6bc42"
+    },
+    {
+      "command": "node tests/snapshot-veyra-av.test.cjs",
+      "exitCode": 0,
+      "testSha256": "a31dd6f7c762780f4ad4dc78e38d36f9995497c44087cb0f30723de57dc2d388",
+      "log": "tools/fort-repairs-dev151/snapshot-veyra-av.log",
+      "logSha256": "e0aa1147a3a20b22fcf7975f3255b1feedfb2696fbe051d7e003ad0de89ace30"
+    },
+    {
+      "command": "node tests/companion-care-queue.test.cjs",
+      "exitCode": 0,
+      "testSha256": "88ebccbf8b5f20927edd48ed1b12d3588b6314f9a5b8bb9705cbde6ed0a25f97",
+      "log": "tools/fort-repairs-dev151/companion-care-queue.log",
+      "logSha256": "f044f9e106576b26ac05264522b85a5e95948f045c2ae9120166dd3443aafe2c"
+    }
+  ],
+  "rejectionProbes": [
+    {
+      "restoredOldMethod": "syncTreasuryRecovery",
+      "oldSourceTree": "b2bf27c03edffbc41fe558419846f48ffc622eba",
+      "expectedFailureObserved": "normal preserves every unrelated survivor",
+      "log": "tools/fort-repairs-dev151/rejected-old-treasury.log",
+      "sha256": "09a55e7872c7cf66c1359975bbaf3bc045726bc5e4d20b16d97a9e8f20e82d33"
+    },
+    {
+      "restoredOldMethod": "prepareFortProjectile",
+      "oldSourceTree": "b2bf27c03edffbc41fe558419846f48ffc622eba",
+      "expectedFailureObserved": "fort preserves the authored special footprint",
+      "log": "tools/fort-repairs-dev151/rejected-old-flight.log",
+      "sha256": "77019a8b98893ee05c88914c2a6c45f9f78116ab7281951a1ae299dc65d2d629"
+    },
+    {
+      "restoredOldMethod": "updateProjectiles",
+      "oldSourceTree": "b2bf27c03edffbc41fe558419846f48ffc622eba",
+      "expectedFailureObserved": "actual contact",
+      "log": "tools/fort-repairs-dev151/rejected-old-contact.log",
+      "sha256": "5dd766587c5a7d747e5adca88b152d660c79516c416f90efd1506776ceb2c995"
+    }
+  ],
+  "sourceSha256": {
+    "src/prototype/treasury.js": "11dbff3f06a44a2f4c10999b49caf6de1aaae8b6f0b7c7c7024e439a0c0f46ff",
+    "src/prototype/rules.js": "cb1fcb708cc28cc124645cf2042687d892055749d868b506b1198967dbb374e0",
+    "src/prototype/boss-combat.js": "dd903a608daf5fe6aaca19ace8dbbd510bdbb7efe0b5f14fb419af1212762ad6",
+    "src/prototype/combat-visuals.js": "f76e5361d0a024b20fdb7d03d63499a660acb23820ea610e6ce88e47832cfb75",
+    "src/prototype/combat.js": "1d675bb4f9f0544765958ab42f36c1987ce0b6927aa1a2a9bede77eb049fd924",
+    "src/prototype/fortifications.js": "0e013ec5a9e37c1b9bcae90e40cbd0da83802853c7ed7b8de09bddb53ad76a6d",
+    "tests/helpers/canister-boundaries.cjs": "29c733e4eecf8cc788b266358dc2662accd4b7e42b70b78d448e71db26a140ee",
+    "tools/fort-repairs-dev151/startup.cjs": "10da3aa6bf5846feecfea292c7cd3f298dd26825da0d149c4ba4039fa8572885"
+  },
+  "browserStartup": {
+    "log": "tools/fort-repairs-dev151/startup.log",
+    "sha256": "214bdf19ed865d98609d3eab535f9136fe56d494c56c326d618c6608cf2295b6",
+    "desktopAndPhone": true,
+    "unrelatedSurvivors": 57,
+    "bossSurvives": true,
+    "pageErrors": []
+  },
+  "build": {
+    "log": "tools/fort-repairs-dev151/build.log",
+    "sha256": "5f1bb051e8b84accaa269309da271734dbb9fab8d25e7a8b3c160dff0f6cf816",
+    "campaignAssets": 208,
+    "historicalAssets": 14
+  },
+  "canisterBoundaryCases": 112,
+  "frontierPhaseContexts": 4,
+  "broadCiRun": false,
+  "saveSchemaChanged": false,
+  "limits": [
+    "Existing historical corpses are not automatically revived.",
+    "Separate wolf-road exclusion contract remains under review.",
+    "Mechanic suites ran against the final source; the subsequent version-only bump and generated build do not alter their mechanics."
+  ],
+  "integratedBaseCommit": "95ab65ad0fb3dd7d9c854680c2c30379a1100a4c",
+  "integratedBaseTree": "0831df80de49a9bd66b6632e2430731fc83d4850",
+  "integrationCheck": {
+    "command": "node tests/companion-onboarding-ui.test.cjs",
+    "exitCode": 0,
+    "log": "tools/fort-repairs-dev151/companion-onboarding-ui.log",
+    "testSha256": "e24a59523d5d7cd999416e92e84b532856f0dfee39146bf747550ed0870911da",
+    "logSha256": "63c37e159afeb8cca052b0440899efcc0b51ad8ada7add53aece66c4a8bccce0",
+    "purpose": "Preserve concurrent published dev.150 English/Spanish briefing change."
+  }
+}

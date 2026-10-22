@@ -1,0 +1,111 @@
+PASS normal vale death → captain → collect → save → respawn → new loss
+PASS normal march death → captain → collect → save → respawn → new loss
+PASS normal highlands death → captain → collect → save → respawn → new loss
+PASS normal frontier death → captain → collect → save → respawn → new loss
+PASS normal crown death → captain → collect → save → respawn → new loss
+PASS nightmare vale death → captain → collect → save → respawn → new loss
+PASS nightmare march death → captain → collect → save → respawn → new loss
+PASS nightmare highlands death → captain → collect → save → respawn → new loss
+PASS nightmare frontier death → captain → collect → save → respawn → new loss
+PASS nightmare crown death → captain → collect → save → respawn → new loss
+PASS regional accounting, repeat-proof payout, captain/garrison lifecycle, eligibility feedback, old/malformed saves and Succession
+node:assert:152
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: normal preserves every unrelated survivor
++ actual - expected
+
++ []
+- [
+-   'enemy-37',
+-   'enemy-38',
+-   'enemy-39',
+-   'enemy-40',
+-   'enemy-41',
+-   'enemy-42',
+-   'enemy-43',
+-   'enemy-44',
+-   'enemy-45',
+-   'enemy-46',
+-   'enemy-47',
+-   'enemy-48',
+-   'enemy-49',
+-   'enemy-50',
+-   'enemy-51',
+-   'enemy-52',
+-   'enemy-53',
+-   'enemy-54',
+-   'enemy-55',
+-   'enemy-56',
+-   'enemy-57',
+-   'enemy-58',
+-   'enemy-59',
+-   'enemy-60',
+-   'enemy-61',
+-   'enemy-62',
+-   'enemy-63',
+-   'enemy-64',
+-   'enemy-65',
+-   'enemy-66',
+-   'enemy-67',
+-   'enemy-68',
+-   'enemy-69',
+-   'enemy-70',
+-   'enemy-71',
+-   'enemy-72',
+-   'enemy-73',
+-   'enemy-74',
+-   'enemy-75',
+-   'enemy-76',
+-   'enemy-77',
+-   'enemy-78',
+-   'enemy-79',
+-   'enemy-80',
+-   'enemy-81',
+-   'enemy-82',
+-   'enemy-83',
+-   'enemy-84',
+-   'enemy-85',
+-   'enemy-86',
+-   'enemy-87',
+-   'enemy-88',
+-   'enemy-89',
+-   'enemy-90',
+-   'enemy-91',
+-   'enemy-92'
+- ]
+
+    at assertPopulation (/workspace/scratch/aeeac3381cf6/game/tests/treasury-recovery.test.cjs:246:12)
+    at Object.<anonymous> (/workspace/scratch/aeeac3381cf6/game/tests/treasury-recovery.test.cjs:262:3)
+    at Module._compile (node:internal/modules/cjs/loader:1872:14)
+    at Object..js (node:internal/modules/cjs/loader:2003:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: [],
+  expected: [
+    'enemy-37', 'enemy-38', 'enemy-39', 'enemy-40',
+    'enemy-41', 'enemy-42', 'enemy-43', 'enemy-44',
+    'enemy-45', 'enemy-46', 'enemy-47', 'enemy-48',
+    'enemy-49', 'enemy-50', 'enemy-51', 'enemy-52',
+    'enemy-53', 'enemy-54', 'enemy-55', 'enemy-56',
+    'enemy-57', 'enemy-58', 'enemy-59', 'enemy-60',
+    'enemy-61', 'enemy-62', 'enemy-63', 'enemy-64',
+    'enemy-65', 'enemy-66', 'enemy-67', 'enemy-68',
+    'enemy-69', 'enemy-70', 'enemy-71', 'enemy-72',
+    'enemy-73', 'enemy-74', 'enemy-75', 'enemy-76',
+    'enemy-77', 'enemy-78', 'enemy-79', 'enemy-80',
+    'enemy-81', 'enemy-82', 'enemy-83', 'enemy-84',
+    'enemy-85', 'enemy-86', 'enemy-87', 'enemy-88',
+    'enemy-89', 'enemy-90', 'enemy-91', 'enemy-92'
+  ],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

@@ -207,9 +207,10 @@
         p.fortFromY = p.y;
         p.fortBaseSpeed ??= p.speed;
         p.fortBaseLife ??= p.life || 0;
-        const baseLife = fort
-            ? Math.max(p.fortBaseLife, this.enemyRangedRange(enemy) / p.fortBaseSpeed + 0.1)
-            : p.fortBaseLife,
+        const baseLife =
+            fort && !p.preserveFootprint
+              ? Math.max(p.fortBaseLife, this.enemyRangedRange(enemy) / p.fortBaseSpeed + 0.1)
+              : p.fortBaseLife,
           span = p.fortBaseSpeed * baseLife;
         p.speed = p.fortBaseSpeed * (fort ? R.balance.fortifications.projectileSpeedMultiplier : 1);
         // Speed up the same flight, preserving special-shot footprints and

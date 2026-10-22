@@ -1,5 +1,7 @@
 # Native enemy reach, cover and fort audit · dev.145, rechecked on dev.146
 
+**Owner-approved follow-up:** [Dev.150 repairs](FORT_REPAIRS_DEV151.md) scope outdoor recovery cleanup correctly and bind Veyra's fragment contact to its warning while preserving special flight distance. Updated original suites cover the missing native boundaries. This audit and its defect reproductions remain the historical before-state; see the repair record for current validation/publication status.
+
 Joel approved this bounded follow-up after the specialist Nightmare test upkeep in #383. **Two gameplay defects are confirmed:** outdoor Frontier recovery invokes enclosed-dungeon cleanup, and fortified Veyra canister fragments damage beyond their rendered warning. This is an audit result, with executable reproductions and proposed repair boundaries. Gameplay repairs have not been implemented or published by this audit. During the review, Joel’s separate Thornfang patrol update was published as dev.146. Its exact source bytes were integrated without reverting that work; all six selected original suites and four probe scripts were rerun, with the same findings and outcomes.
 
 ## Findings requiring repair

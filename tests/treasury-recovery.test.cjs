@@ -217,3 +217,55 @@ for (const mode of ['normal', 'nightmare'])
 console.log(
   'PASS regional accounting, repeat-proof payout, captain/garrison lifecycle, eligibility feedback, old/malformed saves and Succession',
 );
+
+// The outdoor recovery captain does not own the region's unrelated population.
+for (const context of require('./helpers/specialist-night-context.cjs').contexts) {
+  const g = require('./helpers/specialist-night-context.cjs').campaign(context, 'mage');
+  g.enter('frontier');
+  g.updateNight(); // Settle the real night-only population before freezing its IDs.
+  g.s.party = [];
+  g.s.mercyTime = 0;
+  const z = g.zone(),
+    site = g.treasuryRecoverySite('frontier');
+  const captain = g.treasuryCaptain(z, site);
+  const unrelated = z.enemies.filter((e) => e !== captain && e.hp > 0 && !e.neutral);
+  const boss = unrelated.find((e) => e.type === 'boss');
+  assert(boss && unrelated.length > 40, 'use the actual regional roster');
+  const alreadyDead = unrelated.find((e) => e !== boss);
+  alreadyDead.hp = 0;
+  alreadyDead.deathPaid = true;
+  const expectedAlive = unrelated
+    .filter((e) => e.hp > 0)
+    .map((e) => e.id)
+    .sort();
+  Object.assign(g.hero, g.safe(captain.x + 40, captain.y), { hp: 1e6, maxHp: 1e6, immune: 1e6 });
+  g.hero.cd.fill(60);
+  assert(g.damage(captain, 1e8, 'hero', { piercing: true }));
+  const savedAfterKill = g.snapshot();
+  const assertPopulation = (game) => {
+    const roster = game.zone().enemies;
+    assert.deepEqual(
+      roster
+        .filter((e) => e.hp > 0 && !e.neutral)
+        .map((e) => e.id)
+        .sort(),
+      expectedAlive,
+      context + ' preserves every unrelated survivor',
+    );
+    assert(roster.find((e) => e.id === boss.id).hp > 0, 'regional boss remains available to fight');
+    assert(!game.s.normal[boss.family], 'captain kill does not award boss victory');
+    assert.equal(roster.find((e) => e.id === alreadyDead.id).hp, 0, 'earlier deaths stay dead');
+    assert.equal(game.treasuryCaptain(game.zone(), site).hp, 0);
+    assert(game.treasuryRecoveryState('frontier').unlocked);
+    assert(game.treasuryRecoveryState('frontier').respawnAt > 0);
+  };
+  g.tick(0.05);
+  assertPopulation(g);
+  const restored = C.restore(savedAfterKill, () => 0.9);
+  assertPopulation(restored);
+  restored.tick(0.05);
+  assertPopulation(restored);
+}
+console.log(
+  'PASS four explicit phase contexts preserve the outdoor Frontier roster and boss through captain death, full tick and restore',
+);
