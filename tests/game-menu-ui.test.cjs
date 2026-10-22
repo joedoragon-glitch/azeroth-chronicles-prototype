@@ -158,7 +158,27 @@ for (const language of ['en', 'es']) {
   short();
   back();
   click(t('Customize keyboard', 'Personalizar teclado'));
-  assert.equal(e.get('modal-actions').children.length, s.Prototype.input.actions.length + 1);
+  assert.equal(e.get('modal-actions').children.length, s.Prototype.input.actions.length + 4);
+  assert.equal(s.Prototype.input.preferences.preset, 'right');
+  click(t('Classic · number keys', 'Clásico · teclas numéricas'));
+  title('Apply keyboard preset', 'Aplicar distribución de teclado');
+  click(t('Keep current keys', 'Conservar teclas actuales'));
+  assert.equal(s.Prototype.input.preferences.preset, 'right','cancelling keeps defaults');
+  click(t('Classic · number keys', 'Clásico · teclas numéricas'));
+  click(t('Apply preset', 'Aplicar distribución'));
+  assert.equal(s.Prototype.input.actionFor('Digit1'),'skill1');
+  assert.equal(s.Prototype.input.actionFor('KeyI'),null,'Classic has no Inventory shortcut');
+  assert.equal(s.Prototype.input.actionFor('KeyJ'),null,'Classic has no Journal shortcut');
+  click(t('Left-hand skills (IJKL)', 'Habilidades con mano izquierda (IJKL)'));
+  click(t('Apply preset', 'Aplicar distribución'));
+  assert.equal(s.Prototype.input.actionFor('KeyI'),'up');
+  assert.equal(s.Prototype.input.actionFor('KeyR'),'skill8');
+  click(t('Right-hand skills (WASD) · Default', 'Habilidades con mano derecha (WASD) · Predeterminado'));
+  click(t('Apply preset', 'Aplicar distribución'));
+  assert.equal(s.Prototype.input.actionFor('KeyJ'),'skill1');
+  assert.equal(s.Prototype.input.actionFor('Space'),'skill6');
+  assert.equal(s.Prototype.input.actionFor('KeyR'),null);
+  assert.equal(s.Prototype.input.actionFor('KeyT'),null);
   back();
   click(t('Touch and mouse options', 'Opciones táctiles y de ratón'));
   short();
@@ -217,19 +237,22 @@ for (const language of ['en', 'es']) {
   click(t('Clear waypoint', 'Quitar ruta'));
   assert.equal(s.Prototype.trackedWaypoint, null);
 
-  // Every keyboard shortcut still opens its own page directly.
+  // Remaining keyboard shortcuts still open their pages directly.
   for (const [code, en, es] of [
-    ['KeyR', 'Inventory', 'Inventario'],
     ['KeyC', 'Talents', 'Talentos'],
     ['KeyX', 'Skill journal', 'Diario de habilidades'],
-    ['KeyT', 'Quest journal', 'Diario de misiones'],
     ['KeyG', 'Controls', 'Controles'],
   ]) {
     s.Prototype.closeMenu();
     events.keydown.forEach((fn) => fn({ code, preventDefault() {} }));
     title(en, es);
   }
+  s.Prototype.closeMenu();
+  for (const code of ['KeyR','KeyT']){
+    events.keydown.forEach(fn=>fn({code,preventDefault(){}}));
+    assert(e.get('modal').hidden, code+' does not open an Inventory/Quest shortcut');
+  }
 }
 console.log(
-  'PASS concise English/Spanish game-menu branches and Back routes, native map movement, unchanged campaign, persistent graphics/audio/input preferences and original shortcuts',
+  'PASS bilingual menus, WASD/right-hand default, keyboard preset switching, no Inventory/Quest shortcuts and unchanged campaign',
 );

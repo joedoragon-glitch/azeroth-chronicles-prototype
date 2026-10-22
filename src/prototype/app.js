@@ -35,6 +35,12 @@
     Controls: 'Controles',
     'Combat conditions': 'Estados de combate',
     'Customize keyboard': 'Personalizar teclado',
+    'Right-hand skills (WASD) · Default': 'Habilidades con mano derecha (WASD) · Predeterminado',
+    'Classic · number keys': 'Clásico · teclas numéricas',
+    'Left-hand skills (IJKL)': 'Habilidades con mano izquierda (IJKL)',
+    'Apply keyboard preset': 'Aplicar distribución de teclado',
+    'Apply preset': 'Aplicar distribución',
+    'Keep current keys': 'Conservar teclas actuales',
     'Touch and mouse options': 'Opciones táctiles y de ratón',
     'Screen and performance': 'Pantalla y rendimiento',
     'Gather resources': 'Recolectar recursos',
@@ -1596,12 +1602,41 @@
       back,
     );
   }
+  function chooseKeyboardPreset(name, back) {
+    openMenu(
+      'Apply keyboard preset',
+      language === 'es'
+        ? 'Esto reemplaza las teclas actuales. La partida y los controles táctiles no cambian.'
+        : 'This replaces current key bindings. Your campaign and touch controls are unchanged.',
+      [
+        action('Apply preset', () => {
+          input.applyPreset(name);
+          clearInput();
+          updateHUD();
+          keyboardMenu(back);
+        }),
+        action('Keep current keys', () => keyboardMenu(back)),
+      ],
+      () => keyboardMenu(back),
+    );
+  }
   function keyboardMenu(back = systemMenu) {
     bindingCapture = null;
+    const presetNames = {
+      right: language === 'es' ? 'Mano derecha + WASD' : 'Right-hand skills + WASD',
+      classic: language === 'es' ? 'Clásico (números)' : 'Classic (numbers)',
+      left: language === 'es' ? 'Mano izquierda + IJKL' : 'Left-hand skills + IJKL',
+      custom: language === 'es' ? 'Personalizado' : 'Custom',
+    };
     openMenu(
       'Customize keyboard',
-      'Choose an action, then press its new key. Esc cancels. Each key binds one action.',
+      language === 'es'
+        ? 'Distribución: ' + presetNames[input.preferences.preset] + '. Elige una o cambia teclas.'
+        : 'Layout: ' + presetNames[input.preferences.preset] + '. Choose a preset or rebind keys.',
       [
+        action('Right-hand skills (WASD) · Default', () => chooseKeyboardPreset('right', back)),
+        action('Classic · number keys', () => chooseKeyboardPreset('classic', back)),
+        action('Left-hand skills (IJKL)', () => chooseKeyboardPreset('left', back)),
         ...input.actions.map(([id, name]) =>
           action(name + ' · ' + input.key(id), () => {
             openMenu('Bind ' + name, 'Press a new key for ' + name + '. Esc cancels.', [], () =>
@@ -1610,12 +1645,7 @@
             bindingCapture = id;
           }),
         ),
-        action('Restore default keys', () => {
-          input.resetBindings();
-          clearInput();
-          updateHUD();
-          keyboardMenu(back);
-        }),
+        action('Restore default keys', () => chooseKeyboardPreset('right', back)),
       ],
       () => help(back),
     );
@@ -4028,13 +4058,11 @@
       paused = !paused;
       clearInput();
     } else if (actionId === 'map') showMap();
-    else if (actionId === 'inventory') inventory();
     else if (actionId === 'heal') useRangerSupport('health');
     else if (manaEnabled && actionId === 'mana') useRangerSupport('mana');
     else if (actionId === 'training') talents();
     else if (actionId === 'skills') skillBook();
     else if (actionId === 'help') help();
-    else if (actionId === 'quests') quests(false);
     else if (actionId.startsWith('skill')) {
       const slot = Number(actionId.slice(5));
       if (canChargeSlot(slot)) beginCharge(slot, 'keyboard');
