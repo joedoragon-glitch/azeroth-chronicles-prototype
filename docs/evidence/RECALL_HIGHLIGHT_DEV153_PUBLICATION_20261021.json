@@ -1,0 +1,20 @@
+{
+  "version": "0.9.1+snapshot.dev.153",
+  "pr": 392,
+  "mergeCommit": "66f981956915af6ccae27a33958c22d09f344be2",
+  "publishedBuild": "66f981956915af6ccae27a33958c22d09f344be2",
+  "publisherRun": 39702604317,
+  "publisherConclusion": "success",
+  "verifiedAt": "2026-10-22T00:55:57.564367+00:00",
+  "verification": "Public build.txt visibly matches merged runtime SHA in browser. Per-file byte comparison unavailable under current shell network policy.",
+  "checks": [
+    "New real-active-frame persistent highlight assertion fails against unchanged dev.152",
+    "Existing production-shell test with 120 active waiting/movement frames passes in English and Spanish after one-line fix",
+    "Existing button/keyboard completion, no-living guard, acknowledgement, menus and queue/save flows pass",
+    "npm run build passed",
+    "Changed-source Prettier and git diff checks passed"
+  ],
+  "broadCiRan": false,
+  "normalWorkflowRestored": true,
+  "temporaryPublisherRemoved": true
+}

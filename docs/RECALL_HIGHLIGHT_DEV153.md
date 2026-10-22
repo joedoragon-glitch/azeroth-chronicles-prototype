@@ -6,4 +6,4 @@ Remove that unrelated reset. Highlight and acknowledgement callback remain armed
 
 Validation: extended existing production-shell English/Spanish test to run 120 real active frames with movement and waiting between Practice and Recall. The unchanged dev.152 runtime fails the persistent-highlight assertion; the one-line fix passes. Existing actual Recall button, keyboard replay, no-living guard, acknowledgements, Captain statuses, queue/save and story-menu flow remains covered. Build, changed-source format and diff checks passed. No broad CI/browser matrix; owner-authorized package-only publication.
 
-Publication pending.
+PR #392 merged as `66f981956915af6ccae27a33958c22d09f344be2`; package-only run 39702604317. Public build verified against merged SHA; normal workflow restored and temporary publisher removed. Receipt: `docs/evidence/RECALL_HIGHLIGHT_DEV153_PUBLICATION_20261021.json`.
