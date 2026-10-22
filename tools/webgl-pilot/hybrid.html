@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<base href="../../"><title>Azeroth Hybrid Graphics Trial</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:18px;background:#111c1b;color:#e9f0e2;font:15px system-ui}
+main{max-width:1360px;margin:auto}p{line-height:1.5}a{color:#b4e1d1}
+.controls{display:flex;flex-wrap:wrap;align-items:end;gap:10px}label{display:flex;flex-direction:column;gap:4px}
+button,select{border:1px solid #76988a;background:#253e39;color:white;border-radius:6px;padding:9px;font:inherit}
+button{cursor:pointer}button:disabled{opacity:.6}.views{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+canvas{width:100%;height:auto;border:1px solid #637c71;background:#0c1913}
+pre{white-space:pre-wrap;word-break:break-word;background:#1c3029;padding:14px;border-radius:6px;max-height:550px;overflow:auto}
+.note{font-size:13px;color:#b9ccbf}@media(max-width:720px){.views{grid-template-columns:1fr}body{padding:10px}}
+</style></head><body><main>
+<h1>Azeroth Chronicles: Hybrid Graphics Experiment</h1>
+<p><strong>Original vs hybrid — same complete world.</strong> Canvas paints everything on the left.
+On the right, WebGL reuses the original static ground while Canvas still draws roads,
+trees, characters, buildings, combat effects, shadows and <strong>all original lighting</strong>.</p>
+<p class="note">This is a diagnostic, not a player setting or new game renderer. It does not read your saves.
+The ground graphic is created once using the game's original artwork. All its preparation and transfer costs are reported.
+We compare moving scenes and check the two pictures for mismatches.</p>
+<div class="controls">
+<label>Region<select id="region"><option value="vale">Greenwood Vale</option>
+<option value="march">Whispering Marches</option><option value="highlands">Ironroot Highlands</option>
+<option value="frontier">Ashen Frontier</option><option value="crown" selected>Dark Crown</option></select></label>
+<label>Lighting<select id="lighting"><option value="night" selected>Night, lamps on</option>
+<option value="day">Day</option></select></label>
+<label>Camera<select id="zoom"><option value="1">100%</option><option value="1.5">150%</option>
+<option value="1.75" selected>175%</option></select></label>
+<label>Viewport<select id="resolution"><option value="960x540">960 × 540</option>
+<option value="1600x900" selected>1600 × 900</option>
+<option value="2403x1248">2403 × 1248 · Chromebook</option></select></label>
+<button id="run">Run hybrid comparison</button>
+</div>
+<p id="status">Ready. The game and its saves remain untouched.</p>
+<div class="views"><section><h3>Original Canvas · complete scene</h3><canvas id="reference" width="1600" height="900"></canvas></section>
+<section><h3>Hybrid · GPU ground + Canvas world</h3><canvas id="hybrid" width="1600" height="900"></canvas></section></div>
+<h3>Measurements</h3><pre id="results">No results yet.</pre>
+<p class="note">Both versions are drawn using current game artwork. This trial optimizes the ground layer only;
+terrain above it, roads, scenery and effects are still drawn by Canvas. No quality reductions, no edited lamps.
+The experiment's renderer variant is generated in your browser from the same production source, and never installed in the game.
+Previous comparisons are still available:
+<a href="./tools/webgl-pilot/index.html">procedural artwork</a> and
+<a href="./tools/webgl-pilot/full-world.html">full-world GPU display transfer</a>.</p>
+</main><script src="./tools/webgl-pilot/hybrid.js?v=1"></script></body></html>
