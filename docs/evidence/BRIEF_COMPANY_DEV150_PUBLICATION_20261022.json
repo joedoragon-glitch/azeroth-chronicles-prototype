@@ -1,0 +1,19 @@
+{
+  "version": "0.9.1+snapshot.dev.150",
+  "pr": 389,
+  "mergeCommit": "73f5c87904007dcee06b2f84dde3bf94e6c79c72",
+  "publishedBuild": "73f5c87904007dcee06b2f84dde3bf94e6c79c72",
+  "publisherRun": 39700704627,
+  "publisherConclusion": "success",
+  "verifiedAt": "2026-10-22T00:37:53.423335+00:00",
+  "verification": "Public build.txt visibly matches merged runtime SHA in browser. Direct shell verification was blocked by network policy; per-file byte comparison unavailable.",
+  "checks": [
+    "Existing production-shell onboarding/queue English and Spanish passed",
+    "npm run build passed",
+    "Changed-source Prettier passed",
+    "git diff --check passed"
+  ],
+  "broadCiRan": false,
+  "normalWorkflowRestored": true,
+  "temporaryPublisherRemoved": true
+}
