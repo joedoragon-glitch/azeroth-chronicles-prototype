@@ -51,7 +51,7 @@ WebGL uploads that finished picture every frame.</small></section>
 </div>
 <h3>Measurements and visual fidelity</h3><pre id="results">Not measured yet.</pre>
 <p class="note">The live HUD is HTML, not in the world canvas. The camera follows a scripted path.
-The experiment measures Canvas source painting, static baking, per-frame GPU uploads and GPU display.
+The experiment measures Canvas source painting, static baking, per-frame GPU uploads and GPU display. It now also checks whether mismatch comes from CPU Canvas layer recomposition or GPU compositing, reports errors by foreground transparency, and includes both a stationary starting camera and moving frames.
 Lighting and world art are not replaced or simplified. A full GPU-native renderer that creates
 every procedural shape without Canvas is <strong>still not built</strong>; this page must not
 claim its expected FPS or substitute for that separate engineering effort.</p>
@@ -59,4 +59,4 @@ claim its expected FPS or substitute for that separate engineering effort.</p>
 <a href="./tools/webgl-pilot/full-world.html">Full-frame transfer baseline</a> ·
 <a href="./tools/webgl-pilot/hybrid.html">GPU-ground / Canvas-foreground hybrid</a> ·
 <a href="./tools/webgl-pilot/index.html">Real procedural assets</a></p>
-</main><script src="./tools/webgl-pilot/real-world-gpu.js?v=1"></script></body></html>
+</main><script src="./tools/webgl-pilot/real-world-gpu.js?v=2"></script></body></html>
