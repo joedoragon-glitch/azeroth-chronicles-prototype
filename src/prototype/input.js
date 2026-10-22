@@ -13,23 +13,56 @@
     ...Array.from({ length: 8 }, (_, i) => [
       'skill' + (i + 1),
       'Skill ' + (i + 1),
-      i < 5 ? 'Digit' + (i + 1) : ['Space', 'ShiftLeft', 'KeyB'][i - 5],
+      ['KeyJ', 'KeyK', 'KeyL', 'KeyU', 'KeyI', 'Space', 'KeyO', 'KeyN'][i],
     ]),
     ['confirm', 'Confirm / interact', 'KeyF'],
     ['doctrine', 'Squad doctrine', 'Tab'],
     ['recall', 'Recall squad', 'Backquote'],
     ['target', 'Cycle hero target', 'KeyE'],
     ['map', 'Map', 'KeyZ'],
-    ['inventory', 'Inventory', 'KeyI'],
+    ['inventory', 'Inventory', 'KeyR'],
     ['training', 'Talents', 'KeyC'],
     ['skills', 'Skills and teachers', 'KeyX'],
-    ['quests', 'Quest journal', 'KeyJ'],
+    ['quests', 'Quest journal', 'KeyT'],
     ['pause', 'Pause', 'KeyP'],
     ['help', 'Controls', 'KeyG'],
     ['heal', 'Command Ranger Heal', 'KeyH'],
     ...(legacyManaEnabled ? [['mana', 'Command Ranger Mana Recovery', 'KeyM']] : []),
   ];
   const defaults = Object.fromEntries(actions.map(([id, , code]) => [id, code]));
+  const classic = {
+    ...defaults,
+    skill1: 'Digit1',
+    skill2: 'Digit2',
+    skill3: 'Digit3',
+    skill4: 'Digit4',
+    skill5: 'Digit5',
+    skill7: 'ShiftLeft',
+    skill8: 'KeyB',
+    inventory: 'KeyI',
+    quests: 'KeyJ',
+  };
+  const left = {
+    ...defaults,
+    up: 'KeyI',
+    down: 'KeyK',
+    left: 'KeyJ',
+    right: 'KeyL',
+    skill1: 'KeyD',
+    skill2: 'KeyS',
+    skill3: 'KeyA',
+    skill4: 'KeyE',
+    skill5: 'KeyW',
+    skill7: 'KeyQ',
+    skill8: 'KeyR',
+    target: 'KeyO',
+    inventory: 'KeyB',
+  };
+  const presets = { right: defaults, classic, left };
+  const detectPreset = (bindings) =>
+    Object.keys(presets).find((name) =>
+      actions.every(([id]) => bindings[id] === presets[name][id]),
+    ) || 'custom';
   const aliases = { KeyR: 'inventory', KeyT: 'quests', KeyV: 'pause', KeyQ: 'recall' };
   const validCode = (code) =>
     typeof code === 'string' &&
@@ -62,6 +95,7 @@
   function create(storage, status = () => {}) {
     let preferences = {
       bindings: { ...defaults },
+      preset: 'right',
       phoneLayout: 'two-thumb',
       touchMove: true,
       mouseMove: false,
@@ -71,7 +105,13 @@
       if (saved && typeof saved === 'object') {
         const storedBindings =
           saved.bindings && typeof saved.bindings === 'object' ? saved.bindings : {};
-        const candidate = { ...defaults, ...storedBindings };
+        // Existing preference records predate presets: retain their classic layout.
+        const base = saved.preset in presets
+          ? presets[saved.preset]
+          : Object.keys(storedBindings).length
+            ? classic
+            : defaults;
+        const candidate = { ...base, ...storedBindings };
         const used = new Set(
           actions.filter(([id]) => id !== 'target').map(([id]) => candidate[id]),
         );
@@ -94,8 +134,10 @@
         if (
           actions.every(([id]) => validCode(candidate[id])) &&
           new Set(actions.map(([id]) => candidate[id])).size === actions.length
-        )
+        ) {
           preferences.bindings = Object.fromEntries(actions.map(([id]) => [id, candidate[id]]));
+          preferences.preset = detectPreset(preferences.bindings);
+        }
         preferences.phoneLayout = saved.phoneLayout === 'left-hand' ? 'left-hand' : 'two-thumb';
         preferences.touchMove = saved.touchMove !== false;
         preferences.mouseMove = saved.mouseMove === true;
@@ -123,7 +165,11 @@
         // If legacy mana is enabled, its historical M shortcut takes priority.
         if (code === 'KeyM' && !legacyManaEnabled) return 'map';
         const alias = aliases[code];
-        return alias && preferences.bindings[alias] === defaults[alias] ? alias : null;
+        // Historical R/T shortcuts continue in Classic, but never shadow skill keys.
+        return alias &&
+          [defaults[alias], classic[alias]].includes(preferences.bindings[alias])
+          ? alias
+          : null;
       },
       rebind(id, code) {
         if (!Object.hasOwn(defaults, id) || !validCode(code))
@@ -133,12 +179,22 @@
         );
         if (conflict)
           return label(code) + ' is already used for ' + conflict[1] + '. Choose another key.';
+        if (preferences.bindings[id] === code) return null;
         preferences.bindings[id] = code;
+        preferences.preset = detectPreset(preferences.bindings);
         persist();
         return null;
       },
+      applyPreset(name) {
+        if (!Object.hasOwn(presets, name)) return false;
+        preferences.bindings = { ...presets[name] };
+        preferences.preset = name;
+        persist();
+        return true;
+      },
       resetBindings() {
         preferences.bindings = { ...defaults };
+        preferences.preset = 'right';
         persist();
       },
       select(name, value) {
@@ -167,7 +223,7 @@
     game.hero.routeAge = 1.3;
     return true;
   }
-  const api = { create, actions, defaults, preferenceKey, requestMove };
+  const api = { create, actions, defaults, presets, preferenceKey, requestMove };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeInput = api;
 })(typeof window !== 'undefined' ? window : globalThis);
