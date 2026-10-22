@@ -16760,7 +16760,7 @@
         ],
         '#4f6453',
       );
-      humanoid('#78866a', skin, 0.95);
+      humanoid('#78866a', skin, 0.95, false);
       oval(0, -31, 11, 13, '#43594c');
       oval(0, -29, 7, 8, '#d3ad88');
       poly(
@@ -16838,7 +16838,8 @@
       rect(11, -7, 5, 13, '#c6b58e');
 
       face(0, -29, '#d3ad88', 0.85);
-      grip(14, -5);
+      // One hand on the satchel side; the other alone grasps the staff.
+      grip(-14, -1);
       grip(20, -4);
       line(
         [
