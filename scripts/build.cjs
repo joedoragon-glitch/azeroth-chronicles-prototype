@@ -70,6 +70,10 @@ if (site) {
     ...core,
     ...legacy,
     'sw.js',
+    // Independent diagnostics: published as an optional page, never loaded by
+    // the game, added to the PWA offline manifest, or enabled in production.
+    'tools/webgl-pilot/index.html',
+    'tools/webgl-pilot/pilot.js',
     ...spriteResources.map((e) => e.src?.replace(/^\.\//, '')).filter(Boolean),
   ])) {
     const dest = path.join(target, file);
