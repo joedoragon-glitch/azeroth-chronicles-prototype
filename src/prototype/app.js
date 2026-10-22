@@ -2260,7 +2260,7 @@
       };
       storyRouteActive = false;
     } else if (!gathering) {
-      (gatheringGuideRequest = null), (recallPractice = null);
+      gatheringGuideRequest = null;
       if (questGuide?.kind === 'gathering') questGuide = null;
     }
     if (!questGuide) return;
