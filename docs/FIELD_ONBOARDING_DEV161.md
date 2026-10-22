@@ -14,3 +14,5 @@ The new field-onboarding domain extends Campaign without browser state or an eng
 - Version/generated build and changed-source formatting, syntax and whitespace checks complete before publication. No broad CI, whole-game suite or browser/device matrix; owner continues live phone testing.
 
 The dev.160 inherited Archive route assertion remains outside this field scope. Publication uses committed assets only, followed by a public build-identifier check and restoration of the original workflow. Publication receipt follows at closeout.
+
+PR #400 merged as `77780ab472609c767f8ecd8b410fd00878df8791`; package-only run 39709717929 succeeded. Public build identifier matches the merged runtime. Original workflow restored byte-for-byte and temporary publisher removed; receipt: `docs/evidence/FIELD_ONBOARDING_DEV161_PUBLICATION_20261021.json`.

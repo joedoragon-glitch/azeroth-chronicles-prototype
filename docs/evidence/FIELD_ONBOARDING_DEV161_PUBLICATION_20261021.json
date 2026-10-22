@@ -1,0 +1,25 @@
+{
+  "version": "0.9.1+snapshot.dev.161",
+  "clientDate": "2026-10-21",
+  "pullRequest": 400,
+  "mergeSha": "77780ab472609c767f8ecd8b410fd00878df8791",
+  "publisherRun": 39709717929,
+  "publisherConclusion": "success",
+  "publicBuildIdentifier": "77780ab472609c767f8ecd8b410fd00878df8791",
+  "publicVerification": "Browser observed build.txt matches merged runtime. Per-file byte comparison unavailable under current shell network policy.",
+  "checks": [
+    "nine native class/mode field opening cases plus save/migration/withdrawal/summon/automatic/manual/dungeon boundaries",
+    "original 18 Thornfang/Mira seeded patrol/lifecycle circuits",
+    "existing thorn-witness",
+    "existing millhaven-onboarding",
+    "existing bilingual refuge-onboarding-ui",
+    "existing bilingual companion-onboarding-ui",
+    "build/generated consistency",
+    "changed-source formatting and syntax",
+    "git diff --check"
+  ],
+  "broadCI": false,
+  "browserMatrix": false,
+  "normalWorkflowRestored": true,
+  "temporaryPublisherRemoved": true
+}
