@@ -22,9 +22,9 @@ jobs:
     outputs:
       reuse: ${{ steps.reuse.outputs.reuse || 'false' }}
       run_id: ${{ steps.reuse.outputs.run_id }}
-      # One-time GPU experiment shader-precision and parity repair. No gameplay checks.
+      # One-time isolated procedural GPU demo publication. No gameplay checks.
       # Exact parent SHA limits this exception to the next main push.
-      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == 'ed96232fd22368a326c02eea7088a8513e52eb8d' }}
+      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == 'cd78c685d5b433acd888706896fc43fcb493aea1' }}
     steps:
       - uses: actions/checkout@v4
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
