@@ -8,7 +8,7 @@
     action,
     openMenu,
     closeMenu,
-    recallSquad,
+    practiceRecall = () => closeMenu(),
     showMap,
     finaleMenu,
     storyNavigate = () => {},
@@ -1095,14 +1095,18 @@
           refresh();
         },
         queued
-          ? careQueueSummary(kind) + '\nTap again to cancel. No crowns spent.'
-          : reason ||
+          ? 'Queued · tap to cancel. No crowns spent.'
+          : (reason === 'No requested companion is still fallen.'
+              ? 'No fallen companions.'
+              : reason === 'No requested companion is living and wounded.'
+                ? 'No wounded companions.'
+                : reason) ||
               (kind === 'recovery'
                 ? 'Recover ' + rosterLabel(target) + ' · '
-                : 'Restore living wounded companions to full health. · ') +
+                : 'Full health for living companions. · ') +
                 (g.hero.gold < cost
-                  ? 'Not enough crowns. Tap to queue; all other requirements must still hold when it executes.'
-                  : 'Requires safety from nearby combat.'),
+                  ? 'Short on crowns? Tap to queue.'
+                  : 'Safe conditions required.'),
         !queued && !!reason,
       );
     }
@@ -1258,13 +1262,12 @@
           reopen();
         },
         queued
-          ? recruitmentQueueSummary() +
-              '\nTap again to cancel, or choose another companion. No crowns spent.'
+          ? 'Queued · tap to cancel. No crowns spent.'
           : reason ||
               (g.hero.gold < price
-                ? 'Not enough crowns. Tap to queue this recruit; payment and arrival happen only when every condition is met.'
+                ? 'Short on crowns? Tap to queue.'
                 : barracksId === null
-                  ? 'Town can employ only the first 3 companions.'
+                  ? 'Joins your group; full groups send recruits to reserve.'
                   : 'Joins after training; a full active group sends the recruit to reserve.'),
         !queued && !!reason,
       );
@@ -1945,21 +1948,23 @@
     }
     function companionBasics(back = closeMenu) {
       getGame().briefCompanions();
+      const practiced = !!getGame().s.quests['quest-barracks']?.recallPracticed;
       openMenu(
         'Meet your company',
-        'Soldier: close combat.\nRanger: ranged attacks + healing.\nThey follow and fight automatically.\n\nRecall brings them back to you.\nNext: build your first Barracks for FREE.',
+        practiced
+          ? 'Recalled!\nOrders cancelled. Companions stay close and defend without chasing.\nGive a new order to send them out again.\n\nNext: build your first Barracks for FREE.'
+          : 'Soldier: close combat.\nRanger: ranged attacks + healing.\nThey follow and fight automatically.\n\nRecall brings them back to you.',
         [
-          action('Practice Recall squad', () => {
-            recallSquad();
-            closeMenu();
-          }),
-          action('Open recruitment', () => townRecruitmentMenu(back)),
+          ...(practiced ? [action('Continue', closeMenu)] : []),
+          action('Practice Recall squad', () => practiceRecall(() => companionBasics(back))),
         ],
         back,
       );
     }
     function townRecruitmentMenu(back) {
       const reopen = () => townRecruitmentMenu(back);
+      const recruitmentLocked =
+        (getGame().s.expeditionRank || 1) < 2 || getGame().rosterCount() >= 3;
       const actions = [
         action('Companion basics', () => companionBasics(reopen), 'Roles and Recall.'),
         ...((getGame().s.expeditionRank || 1) < 2
@@ -1974,9 +1979,9 @@
           : getGame().rosterCount() >= 3
             ? [
                 action(
-                  'Town recruitment limit reached',
+                  'Recruit at a Barracks',
                   () => {},
-                  getGame().companionRecruitmentReason('soldier'),
+                  'Town limit: 3 companions, reserves included.',
                   true,
                 ),
               ]
@@ -1985,13 +1990,15 @@
         ...[
           ['soldier', 'Soldier'],
           ['archer', 'Ranger'],
-        ].map(([type, label]) => recruitmentChoice(type, label, null, reopen)),
+        ]
+          .filter(([type]) => !recruitmentLocked || getGame().recruitmentRequestMatches(type, null))
+          .map(([type, label]) => recruitmentChoice(type, label, null, reopen)),
         careChoice('recovery', null, reopen),
         careChoice('treatment', null, reopen),
       ];
       openMenu(
         getGame().definition().town + ' Captain',
-        'Your Soldier and Ranger follow and fight automatically. Use Recall squad to regroup. Town hiring supports the first 3 companions; Expedition Rank 2 unlocks recruitment.' +
+        'Recruit companions or restore your company.\nShort on crowns? Tap an available service to queue it.' +
           (companionQueueSummary() ? '\n\n' + companionQueueSummary() : ''),
         actions,
         back,

@@ -96,10 +96,10 @@ function shell(language) {
   scope.window = scope;
   vm.createContext(scope);
   vm.runInContext(fs.readFileSync(require.resolve('../src/prototype/app'), 'utf8'), scope);
-  return { scope, elements, storage };
+  return { scope, elements, storage, events };
 }
 for (const language of ['en', 'es']) {
-  const { scope: s, elements: e, storage } = shell(language),
+  const { scope: s, elements: e, storage, events } = shell(language),
     g = s.Prototype.game;
   const npc = g.zone().npcs.find((n) => n.kind === 'recruiter');
   const click = (prefix) => {
@@ -119,6 +119,11 @@ for (const language of ['en', 'es']) {
     e.get('modal-title').textContent,
     language === 'en' ? 'Meet your company' : 'Conoce a tu compañía',
   );
+  assert(
+    !e
+      .get('modal-actions')
+      .children.some((b) => /Open recruitment|Abrir reclutamiento/.test(b.textContent)),
+  );
   const briefing = e.get('modal-description').textContent;
   assert(
     briefing.includes(language === 'en' ? 'Soldier: close combat.' : 'Soldado: combate cercano.'),
@@ -130,19 +135,56 @@ for (const language of ['en', 'es']) {
         : 'Ranger: ataques a distancia + curación.',
     ),
   );
-  assert(briefing.includes(language === 'en' ? 'FREE' : 'GRATIS'));
   assert(briefing.trim().split(/\s+/).length <= 40);
   assert(!briefing.includes('Expedition Rank 2'));
 
   click(language === 'en' ? 'Practice Recall squad' : 'Probar Reagrupar');
   assert(e.get('modal').hidden);
+  assert(e.get('recall-button').classList.contains('tutorial-highlight'));
+  assert(!g.s.quests['quest-barracks'].recallPracticed);
+  assert(!g.s.recallActive);
+  assert(!JSON.parse(storage.get('azeroth-v4-normal')).quests['quest-barracks'].recallPracticed);
+  const health = g.s.party.map((u) => u.hp);
+  g.s.party.forEach((u) => (u.hp = 0));
+  e.get('recall-button').click();
+  assert(e.get('modal').hidden);
+  assert(e.get('recall-button').classList.contains('tutorial-highlight'));
+  assert(!g.s.quests['quest-barracks'].recallPracticed);
+  g.s.party.forEach((u, i) => (u.hp = health[i]));
+  e.get('recall-button').click();
+  assert(!e.get('modal').hidden);
+  assert(!e.get('recall-button').classList.contains('tutorial-highlight'));
+  assert.equal(
+    e.get('modal-title').textContent,
+    language === 'en' ? 'Meet your company' : 'Conoce a tu compañía',
+  );
+  assert(
+    !e
+      .get('modal-actions')
+      .children.some((b) => /Open recruitment|Abrir reclutamiento/.test(b.textContent)),
+  );
+  const acknowledgement = e.get('modal-description').textContent;
+  assert(acknowledgement.includes(language === 'en' ? 'Orders cancelled.' : 'Órdenes canceladas.'));
+  assert(acknowledgement.includes(language === 'en' ? 'without chasing' : 'sin perseguir'));
+  assert(acknowledgement.includes(language === 'en' ? 'FREE' : 'GRATIS'));
+  assert(acknowledgement.trim().split(/\s+/).length <= 40);
+  assert(g.s.recallActive);
   assert(g.s.quests['quest-barracks'].recallPracticed);
   assert(JSON.parse(storage.get('azeroth-v4-normal')).quests['quest-barracks'].recallPracticed);
   assert(
     e.get('objective').textContent.includes(language === 'en' ? 'FIELD BASE' : 'BASE DE CAMPO'),
   );
+  click(language === 'en' ? 'Continue' : 'Continuar');
   e.get('touch-interact-button').click();
   assert(e.get('modal-title').textContent.includes('Captain'));
+  click(language === 'en' ? 'Companion basics' : 'Lo básico de tus compañeros');
+  click(language === 'en' ? 'Practice Recall squad' : 'Probar Reagrupar');
+  assert(e.get('modal').hidden);
+  assert(e.get('recall-button').classList.contains('tutorial-highlight'));
+  events.keydown.forEach((fn) => fn({ code: 'KeyQ', preventDefault() {} }));
+  assert(!e.get('modal').hidden);
+  assert(!e.get('recall-button').classList.contains('tutorial-highlight'));
+  click(language === 'en' ? 'Continue' : 'Continuar');
   g.s.expeditionRank = 2;
   g.hero.gold = 0;
   s.Prototype.closeMenu();
@@ -158,6 +200,37 @@ for (const language of ['en', 'es']) {
   click(language === 'en' ? 'Cancel queued Soldier' : 'Cancelar en cola: Soldado');
   assert.equal(g.s.recruitmentRequest, null);
   assert.equal(JSON.parse(storage.get('azeroth-v4-normal')).recruitmentRequest, null);
+  g.s.party.push(g.unit('soldier', g.hero.x + 40, g.hero.y));
+  s.Prototype.closeMenu();
+  e.get('touch-interact-button').click();
+  assert(e.get('modal-description').textContent.trim().split(/\s+/).length <= 24);
+  assert(
+    e
+      .get('modal-actions')
+      .children.some(
+        (b) =>
+          b.textContent === (language === 'en' ? 'Recruit at a Barracks' : 'Recluta en un cuartel'),
+      ),
+  );
+  assert(
+    !e
+      .get('modal-actions')
+      .children.some((b) =>
+        /^(Recruit Soldier|Recruit Ranger|Reclutar Soldado|Reclutar Ranger)/.test(b.textContent),
+      ),
+  );
+  const careDetails = e
+    .get('modal-actions')
+    .children.flatMap((b) => b.children.map((c) => c.textContent));
+  assert(
+    careDetails.includes(language === 'en' ? 'No fallen companions.' : 'No hay compañeros caídos.'),
+  );
+  assert(
+    careDetails.includes(
+      language === 'en' ? 'No wounded companions.' : 'No hay compañeros heridos.',
+    ),
+  );
+  g.s.party.pop();
 
   s.Prototype.closeMenu();
   g.zone().enemies = [];
