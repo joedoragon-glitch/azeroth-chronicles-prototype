@@ -11,7 +11,7 @@
    [32,20,35,.52],[27,19,43,.54]];
  const DAY=[[213,229,163,.045],[150,206,205,.05],[221,219,184,.045],
    [215,157,120,.05],[166,146,196,.05]];
- const rgba=(rgb,a)=>'rgba('+rgb.slice(0,3).join(',')+','+a+')';
+ const rgba=(rgb,a)=>'rgba('+rgb.slice(0,3).join(',')+','+Number(a.toFixed(6))+')';
  function atmosphereLayers({region=0,darkness=0,peaceBlend=0,
                             optimized=false,warmth=0,phase='day'}={}) {
    const i=Math.max(0,Math.min(4,Math.trunc(region)||0));
@@ -62,7 +62,7 @@
    rootStage.addChild(actorsStage);
    rootStage.addChild(effectsStage);
    const actors=new Map(), glowObjects=new Map(), gradients=new Map(), frameTextures=new Map();
-   let background=null,grade=null, atmosphereSignature=null,
+   let background=null,grade=null, gradeGradients=[],atmosphereSignature=null,
      spritesUpdated=0, resources=new Map();
    let backdropTexture=null, discarded=0;
    const keyOf=entity=>String(entity.key);
@@ -207,6 +207,8 @@
      if(signature===atmosphereSignature)return;
      atmosphereSignature=signature;
      if(grade){effectsStage.removeChild(grade);grade.destroy({children:true});}
+     for(const fill of gradeGradients)fill.destroy?.();
+     gradeGradients=[];
      grade=new PIXI.Container();
      for(const layer of description){
        const shape=new PIXI.Graphics().rect(0,0,width,height);
@@ -217,7 +219,7 @@
            type:'linear',textureSpace:'local',start:layer.start,end:layer.end,
            colorStops:layer.colorStops
          });
-         gradients.set('atmosphere:'+layer.type,fill);
+         gradeGradients.push(fill);
          shape.fill(fill);
        }
        grade.addChild(shape);
@@ -236,6 +238,7 @@
      if(background)background.destroy();
      for(const texture of frameTextures.values())texture.destroy?.(false);
      for(const gradient of gradients.values())gradient.destroy?.();
+     for(const gradient of gradeGradients)gradient.destroy?.();
      actors.clear();glowObjects.clear();gradients.clear();resources.clear();frameTextures.clear();
      app.stage.removeChild(rootStage);
      rootStage.destroy({children:false});
