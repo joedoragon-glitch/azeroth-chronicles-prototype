@@ -28,3 +28,11 @@ This real-world test is complementary to four preserved diagnostics:
 There is **no renderer selection in the shipping game's Settings**. All experimental pages are separate from the PWA's normal gameplay, and the production source and all sacred lamps are untouched.
 
 The work shown here is a bounded, static-region, scripted-motion diagnostic. Real combat, roaming across cache boundaries, night animations that require static-world invalidation, WebGL context loss/recovery, memory pressure and true end-to-end FPS must be handled before enabling it for players.
+
+## 22 October parity investigation (diagnostic v2)
+
+The 150% zoom Greenwood Vale reports showed GPU-layer match of **98.777% at night** and **97.704% in daylight**, while the complete already-Canvas-painted frame transferred to WebGL matched **100%**. The daytime result falsifies the initial assumption that night-lamp screen blending alone caused the mismatch. Neither speed result is accepted for production, and existing art and lighting remain unchanged.
+
+Version 2 retains full original scene drawing and its GPU variants but adds a focused difference-location analysis, not a graphics shortcut: frame 0 uses precisely the static background cache's camera position; later frames move. For both first and final frames, a CPU Canvas-only composition of that exact cached background and real dynamic artwork is compared with the production reference and with the GPU composition. Pixel differences are also classified by whether the dynamic Canvas layer is transparent, translucent, or opaque. This distinguishes resampled static scenery/background offsets, Canvas layering semantics and GPU texture/blending paths without guessing or relaxing thresholds. These two Canvas readbacks and comparisons are outside the timed frame measurements.
+
+The diagnostic still **does not** provide a native WebGL-only recreation of all game procedural art, active gameplay FPS, or a player graphics setting. Use the new parity analysis before making any further lighting or shader changes; preserve all previous test methods.

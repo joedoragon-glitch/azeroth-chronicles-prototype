@@ -22,9 +22,9 @@ jobs:
     outputs:
       reuse: ${{ steps.reuse.outputs.reuse || 'false' }}
       run_id: ${{ steps.reuse.outputs.run_id }}
-      # One-time owner-authorized adaptive frame-skip trial: focused checks, no full CI.
+      # One-time isolated real-world GPU parity diagnostics; no full game/browser suites.
       # This shortcut expires after the exact parent commit below is pushed.
-      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == '1c40e43b1059355a7c8483adfcdd2dc4ddea59b5' }}
+      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == 'bc90036ecfefd81530c04bb562ccdc964e7e128b' }}
     steps:
       - uses: actions/checkout@v4
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
