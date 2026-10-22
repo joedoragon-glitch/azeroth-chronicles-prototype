@@ -84,8 +84,8 @@ const server = http.createServer((req, res) => {
         return result;
       };
     });
-    // Exercise the shipped desktop bindings: slots 6–8 use Space, Shift and B.
-    const desktopKey = (slot) => [null, '1', '2', '3', '4', '5', 'Space', 'ShiftLeft', 'b'][slot];
+    // Exercise the default two-handed WASD + right-hand skills, including charged holds.
+    const desktopKey = (slot) => [null, 'j', 'k', 'l', 'u', 'i', 'Space', 'o', 'n'][slot];
     const press = async (slot) => {
       if (webkit)
         await page.locator('#skill-' + slot).evaluate((el) => {
