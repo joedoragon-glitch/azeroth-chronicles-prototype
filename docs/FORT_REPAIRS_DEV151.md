@@ -1,6 +1,6 @@
 # Frontier cleanup and Veyra warning repairs · dev.151
 
-Joel approved both defects from [the native fort audit](NATIVE_RANGE_FORT_AUDIT_DEV145.md). This candidate builds on published dev.150, retaining the Thornfang patrol/witness, story-first quest board, recruitment and queued companion-care changes and shortened Captain briefing.
+Joel approved both defects from [the native fort audit](NATIVE_RANGE_FORT_AUDIT_DEV145.md). This release builds on published dev.150, retaining the Thornfang patrol/witness, story-first quest board, recruitment and queued companion-care changes and shortened Captain briefing.
 
 ## Resulting behavior
 
@@ -19,3 +19,7 @@ Veyra's nine canister fragments keep their authored flight span when receiving a
 Exact test inputs, logs and the scope of the rejection probes are retained in [the validation receipt](evidence/FORT_REPAIRS_DEV151.json) and [local evidence](../tools/fort-repairs-dev151/). Existing audit reproductions remain historical defect controls; their deliberate old-bug assertions are superseded by the updated original suites.
 
 The separate wolf hold's old 85-unit road exclusion remains a layout/expectation review. No broad CI, full-game/device matrix or save reset is part of this repair. Publication uses committed files only, then restores the normal release workflow. Final deployment details are recorded in the publication receipt after public byte verification.
+
+## Publication
+
+PR [#390](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/390) merged as `a5a8c1f4f76e4a3aa13122c7605e83a988ffbca3`. Package-only run [39700991767](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39700991767) succeeded. Public `build.txt` and all 12 checked desktop/phone/runtime files match the tested checkout exactly, including the retained dev.150 briefing. The normal release workflow is restored byte-for-byte and the temporary publisher removed. [Publication receipt](evidence/FORT_REPAIRS_DEV151_PUBLICATION_20261022.json). No broad CI ran.

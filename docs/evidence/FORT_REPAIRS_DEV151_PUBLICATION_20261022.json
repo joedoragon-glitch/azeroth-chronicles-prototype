@@ -1,0 +1,74 @@
+{
+  "version": "0.9.1+snapshot.dev.151",
+  "publishedCommit": "a5a8c1f4f76e4a3aa13122c7605e83a988ffbca3",
+  "pullRequest": 390,
+  "packageOnlyRun": 39700991767,
+  "verifiedUtc": "2026-10-22T00:40:00.412973+00:00",
+  "files": [
+    {
+      "path": "index.html",
+      "sha256": "1b0ca7a29dd6c5c4d57adb28e31a47b1a6c8b7a7845a3ed57872c46a4332ae20",
+      "bytes": 5646
+    },
+    {
+      "path": "phone.html",
+      "sha256": "9bcc581900bbd5c85d9a5416f5a3bc10f4eea7b9d1f2d68b2c66774c317912b8",
+      "bytes": 5647
+    },
+    {
+      "path": "sw.js",
+      "sha256": "3bd0f40f9d3457d4d4c6a5df72e948ed4e06582cc706996a4c46aac8009a930e",
+      "bytes": 20797
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "sha256": "f41793f4a7d0396ceca81cc31735fe6c425da28c07ed415a48c32df56d29e449",
+      "bytes": 296
+    },
+    {
+      "path": "src/prototype/treasury.js",
+      "sha256": "11dbff3f06a44a2f4c10999b49caf6de1aaae8b6f0b7c7c7024e439a0c0f46ff",
+      "bytes": 11123
+    },
+    {
+      "path": "src/prototype/rules.js",
+      "sha256": "cb1fcb708cc28cc124645cf2042687d892055749d868b506b1198967dbb374e0",
+      "bytes": 220848
+    },
+    {
+      "path": "src/prototype/boss-combat.js",
+      "sha256": "dd903a608daf5fe6aaca19ace8dbbd510bdbb7efe0b5f14fb419af1212762ad6",
+      "bytes": 106400
+    },
+    {
+      "path": "src/prototype/combat-visuals.js",
+      "sha256": "f76e5361d0a024b20fdb7d03d63499a660acb23820ea610e6ce88e47832cfb75",
+      "bytes": 51157
+    },
+    {
+      "path": "src/prototype/combat.js",
+      "sha256": "1d675bb4f9f0544765958ab42f36c1987ce0b6927aa1a2a9bede77eb049fd924",
+      "bytes": 48690
+    },
+    {
+      "path": "src/prototype/fortifications.js",
+      "sha256": "0e013ec5a9e37c1b9bcae90e40cbd0da83802853c7ed7b8de09bddb53ad76a6d",
+      "bytes": 10230
+    },
+    {
+      "path": "src/prototype/app.js",
+      "sha256": "ee2a8bd4bd191b622575233a368f5ff706b359478cbeee3002e5b6fd200838da",
+      "bytes": 173007
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "sha256": "8b5d6f7493ce21e6d14be1364fff4752cfc7f2ed0d9e4b642f3c83c2d15368a0",
+      "bytes": 90118
+    }
+  ],
+  "broadCiRun": false,
+  "validationReceipt": "FORT_REPAIRS_DEV151.json",
+  "normalWorkflowSha256": "b6e0b4098558ebfd11df84fb349dc4babb4e539b2065bd6c669447ca33027702",
+  "normalWorkflowRestored": true,
+  "temporaryPublisherRemoved": true
+}
