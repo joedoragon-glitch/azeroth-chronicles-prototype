@@ -1,9 +1,9 @@
 name: Test and deploy app
 on:
   push:
-    branches: [main]
+    branches: [owner-vale-dev162-held]
   pull_request:
-    branches: [main, perf/v09-integration-20261010]
+    branches: [owner-vale-dev162-held]
   workflow_dispatch:
 
 permissions:
