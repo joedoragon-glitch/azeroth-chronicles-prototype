@@ -6,17 +6,18 @@ Guía del juego publicado `0.9.1+snapshot.dev.79`: [navegador](https://joedorago
 | --- | --- |
 | Mover | W/A/S/D |
 | Interactuar / confirmar | F |
-| Habilidades 1–5 | 1–5 |
-| Habilidades 6–8 | Espacio / Mayús izquierda / B |
+| Habilidades 1–5 | J / K / L / U / I |
+| Habilidades 6–8 | Espacio / O / N |
 | Curación del Ranger | H; clic izquierdo en el mundo si clic para moverse está desactivado |
 | Doctrina del grupo | Tab durante combate, desde Expedición 3 |
 | Reunir al grupo (Recall) | Tecla de acento grave; Q también funciona con la asignación predeterminada |
 | Cambiar objetivo (Target) | E o botón Target |
-| Mapa / inventario / diario | Z o M / I o R / J o T |
+| Mapa | Z o M |
+| Inventario / diario de misiones | Menús de Personaje / Aventura (sin atajos) |
 | Talentos / habilidades | C / X |
 | Pausa / controles / menú y volver | P o V / G / Esc |
 
-En menús, las teclas de movimiento seleccionan; F, Enter o Espacio confirman. Los botones aceptan clics y toques. **Game and settings → Controls → Customize keyboard** permite guardar otras asignaciones en este navegador. Esc cancela una asignación; no se permiten duplicados. Las teclas personalizadas y las etiquetas del propio juego tienen prioridad sobre esta tabla.
+La distribución predeterminada de escritorio ahora usa WASD para moverse con la mano izquierda y J/K/L/U/I/Espacio/O/N para habilidades con la derecha. **Game and settings → Controls → Customize keyboard** también ofrece la distribución clásica con números y la distribución inversa (moverse con IJKL, habilidades con la izquierda). Los ajustes existentes de teclado se conservan. Cambiar de distribución requiere confirmación; cada tecla sigue siendo personalizable. El inventario y el diario de misiones se abren desde los menús y ya no tienen atajos de teclado. En menús, las teclas de movimiento seleccionan; F, Enter o Espacio confirman. Los botones aceptan clics y toques; Esc cancela la captura de una tecla, y no se permiten duplicados.
 
 Las habilidades 1–8 admiten toque rápido o pulsación de **0,65 segundos** para cargar con teclado, ratón o pantalla táctil. Mantener Target durante **0,55 segundos** fija el objetivo durante el encuentro; una pulsación corta cambia de objetivo y libera la fijación. La fijación termina si el enemigo muere, vuelve a su territorio o el héroe cambia de zona. Durante una carga dirigida, Target permite cambiar el objetivo. Dorado indica alcance válido, ámbar fuera de alcance y rojo línea de visión bloqueada.
 
