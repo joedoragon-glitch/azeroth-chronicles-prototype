@@ -83,9 +83,9 @@
     let preference = 'auto';
     try {
       const saved = storage?.getItem(fpsPreferenceKey);
-      if (['auto', '30', '60'].includes(saved)) preference = saved;
+      if (['auto', 'auto60', '20', '30', '60'].includes(saved)) preference = saved;
     } catch (_) {}
-    let target = preference === '60' ? 60 : 30,
+    let target = preference === '60' ? 60 : preference === '20' ? 20 : 30,
       nextDraw = null,
       lastFrame = null,
       lastCheck = null,
@@ -99,9 +99,9 @@
       samples = [];
     }
     function select(value) {
-      if (!['auto', '30', '60'].includes(value)) return false;
+      if (!['auto', 'auto60', '20', '30', '60'].includes(value)) return false;
       preference = value;
-      target = value === '60' ? 60 : 30;
+      target = value === '60' ? 60 : value === '20' ? 20 : 30;
       reset();
       try {
         storage?.setItem(fpsPreferenceKey, value);
@@ -134,7 +134,7 @@
         }
       }
       lastFrame = now;
-      if (preference !== 'auto') return;
+      if (preference !== 'auto' && preference !== 'auto60') return;
       if (lastCheck === null) {
         lastCheck = now;
         return;
@@ -150,7 +150,26 @@
             ? ((frames.length - 1) * 1000) / (frames.at(-1).now - frames[0].now)
             : 0,
         p95 = work[Math.floor((work.length - 1) * 0.95)] || Infinity;
-      if (
+      if (preference === 'auto') {
+        // New default: start at 30, use 20 during sustained pressure, and
+        // cautiously recover to 30 after measured headroom returns.
+        if (target === 30 && (drawRate < 25 || p95 > 33)) {
+          target = 20;
+          nextDraw = null;
+          lastSwitch = now;
+        } else if (
+          target === 20 &&
+          samples.length >= 90 &&
+          meanInterval <= 35 &&
+          drawRate >= 18 &&
+          p95 < 24
+        ) {
+          target = 30;
+          nextDraw = null;
+          lastSwitch = now;
+        }
+      } else if (
+        // Preserve the previous Auto 30–60 policy as an explicit setting.
         target === 30 &&
         samples.length >= 90 &&
         meanInterval <= 19 &&

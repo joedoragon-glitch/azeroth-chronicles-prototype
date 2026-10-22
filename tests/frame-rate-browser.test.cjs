@@ -62,9 +62,11 @@ const server = http.createServer((req, res) => {
       };
       await openSettings();
       for (const [value, label] of [
+        ['20', '20 FPS'],
         ['30', '30 FPS'],
         ['60', '60 FPS'],
-        ['auto', 'Auto'],
+        ['auto60', 'Auto 30–60 FPS'],
+        ['auto', 'Auto 20–30 FPS'],
       ]) {
         const before = await page.evaluate(() => JSON.stringify(Prototype.game.snapshot()));
         await page.getByRole('button', { name: new RegExp('^' + label) }).click();
@@ -74,7 +76,7 @@ const server = http.createServer((req, res) => {
             target: Prototype.fps.target,
             stored: localStorage.getItem(PrototypeRuntime.fpsPreferenceKey),
           })),
-          { preference: value, target: value === '60' ? 60 : 30, stored: value },
+          { preference: value, target: value === '60' ? 60 : value === '20' ? 20 : 30, stored: value },
         );
         assert.equal(
           await page.evaluate(() => JSON.stringify(Prototype.game.snapshot())),

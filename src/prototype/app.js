@@ -731,6 +731,11 @@
     'Sharper image; more graphics work.': 'Imagen más nítida; mayor carga gráfica.',
     'Choose a target for smoother motion or lower graphics load.':
       'Elige mayor fluidez o menor carga gráfica.',
+    'Auto 20–30 FPS · Default': 'Auto 20–30 FPS · Predeterminado',
+    'Auto 30–60 FPS': 'Auto 30–60 FPS',
+    'Starts at 30 FPS; falls back to 20 under load.':
+      'Empieza a 30 FPS; baja a 20 cuando hay mucha carga.',
+    'Lowest graphics load.': 'Carga gráfica mínima.',
     'Starts at 30 FPS and tries 60.': 'Empieza a 30 FPS e intenta llegar a 60.',
     'Lower graphics load.': 'Menor carga gráfica.',
     'Smoother motion.': 'Movimiento más fluido.',
@@ -2438,7 +2443,9 @@
       'Choose a target for smoother motion or lower graphics load.',
       [
         ...[
-          ['auto', 'Auto', 'Starts at 30 FPS and tries 60.'],
+          ['auto', 'Auto 20–30 FPS · Default', 'Starts at 30 FPS; falls back to 20 under load.'],
+          ['auto60', 'Auto 30–60 FPS', 'Starts at 30 FPS and tries 60.'],
+          ['20', '20 FPS', 'Lowest graphics load.'],
           ['30', '30 FPS', 'Lower graphics load.'],
           ['60', '60 FPS', 'Smoother motion.'],
         ].map(([value, label, detail]) =>

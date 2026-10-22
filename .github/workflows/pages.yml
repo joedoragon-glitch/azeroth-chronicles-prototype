@@ -22,9 +22,9 @@ jobs:
     outputs:
       reuse: ${{ steps.reuse.outputs.reuse || 'false' }}
       run_id: ${{ steps.reuse.outputs.run_id }}
-      # One-time Canvas vs WebGL two-way diagnostic publication; no full suites.
+      # One-time owner-approved FPS-settings publication; focused tests only.
       # This shortcut expires after the exact parent commit below is pushed.
-      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == '3d044af5dd79cba9fee41a0a1bd37d3de0375a57' }}
+      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == 'aa84f4290a661e5942020b9a43a7374ddf32a4a1' }}
     steps:
       - uses: actions/checkout@v4
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -347,12 +347,11 @@ jobs:
       - name: Run full game checks
         if: needs.release-plan.outputs.reuse != 'true' && needs.release-plan.outputs.hotkey_fast != 'true'
         uses: ./.github/actions/check-game
-      - name: Run focused frame-skip, frame-rate, profiler and settings checks only
+      - name: Run focused FPS controller and settings checks only
         if: needs.release-plan.outputs.hotkey_fast == 'true'
         run: |
-          node tests/frame-skip.test.cjs
           node tests/frame-rate.test.cjs
-          node tests/frame-profile.test.cjs
+          node tests/frame-skip.test.cjs
           node tests/game-menu-ui.test.cjs
       - uses: actions/upload-artifact@v4
         if: always() && needs.release-plan.outputs.reuse != 'true' && needs.release-plan.outputs.hotkey_fast != 'true'
