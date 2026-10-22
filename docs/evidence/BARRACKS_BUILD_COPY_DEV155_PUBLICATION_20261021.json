@@ -1,0 +1,18 @@
+{
+  "version": "0.9.1+snapshot.dev.155",
+  "pr": 394,
+  "mergeCommit": "ecc02773b6fa6c8b7f9ced56ac347f250bb3b32c",
+  "publishedBuild": "ecc02773b6fa6c8b7f9ced56ac347f250bb3b32c",
+  "publisherRun": 39703291452,
+  "publisherConclusion": "success",
+  "verifiedAt": "2026-10-22T01:02:58.944625+00:00",
+  "verification": "Public build.txt visibly matches merged runtime SHA in browser. Per-file byte comparison unavailable under current shell network policy.",
+  "checks": [
+    "Existing English/Spanish production-shell onboarding, native first-free build and persistent highlight flow passed",
+    "npm run build passed",
+    "Changed-source Prettier and git diff checks passed"
+  ],
+  "broadCiRan": false,
+  "normalWorkflowRestored": true,
+  "temporaryPublisherRemoved": true
+}
