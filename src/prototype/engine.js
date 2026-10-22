@@ -90,6 +90,7 @@
         tributeRemainder: 0,
         gatheringTarget: null,
         resourceExpeditions: [],
+        recruitmentRequest: null,
         fountains: {},
         zones: {},
         loot: [],
@@ -922,7 +923,10 @@
       const z = this.zone(),
         nearest = (list) => list.slice().sort((a, b) => dist(a, this.hero) - dist(b, this.hero))[0],
         seen = (id) => !!this.s.discovered[q.region + ':' + id];
-      if (q.kind === 'barracks') return nearest(z.buildings.filter((b) => b.progress < 4)) || null;
+      if (q.kind === 'barracks') {
+        if (!state.captainBriefed) return z.npcs.find((n) => n.kind === 'recruiter') || null;
+        return nearest(z.buildings.filter((b) => b.progress < 4)) || null;
+      }
       let targetZone = q.region,
         rescue = q.kind === 'rescue' ? q.target : null;
       if (q.requiresRescues) rescue = q.requiresRescues.find((id) => !this.s.rescued[id]) || rescue;
@@ -1007,6 +1011,10 @@
           : 'Complete · reward delivered';
       if (p?.closedByPeace) return 'Resolved by peace';
       if (p?.done) return 'Complete';
+      if (q.kind === 'barracks' && !p?.captainBriefed)
+        return 'Meet the town Captain to learn about your Soldier and Ranger.';
+      if (q.kind === 'barracks' && !p?.recallPracticed)
+        return 'Try Recall squad to bring your companions back to you.';
       if (q.kind === 'barracks')
         return this.hasAnyBarracks()
           ? 'Construction in progress · keep one companion assigned until complete'
@@ -3076,8 +3084,9 @@
       const onboarding = {
         id: 'quest-barracks',
         region: 'vale',
-        name: 'A Place to Recover',
-        objective: 'In the field, choose Establish Basic Barracks from Adventure (free).',
+        name: 'Your First Company',
+        objective:
+          'Meet the town Captain, try Recall squad, then establish your first Basic Barracks (free).',
         gold: 0,
         xp: 0,
         index: -1,
@@ -4027,6 +4036,7 @@
           this.s.loot.splice(this.s.loot.indexOf(l), 1);
           this.event('gold');
         }
+      this.resolveRecruitmentRequest();
     }
 
     captainProfile(e) {

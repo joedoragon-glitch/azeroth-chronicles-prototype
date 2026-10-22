@@ -46,6 +46,11 @@ const ui = Menus.create({
 });
 for (const board of [true, false]) {
   ui.quests(board);
+  assert(!menu.actions.some((a) => a.label === 'Story guide'));
+  assert(menu.actions.some((a) => a.label.startsWith('Navigate ·')));
+  assert(!menu.actions.some((a) => a.label.startsWith('Keeping Trade Open')));
+  menu.actions.find((a) => a.label === 'Side Quests').action();
+  assert.equal(menu.title, 'Side Quests');
   const row = menu.actions.find((a) =>
     a.label.startsWith(g.questDefs().find((q) => q.id === 'quest-4').name),
   );

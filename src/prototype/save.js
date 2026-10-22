@@ -233,6 +233,25 @@
           s.expeditionSupportVersion = 2;
         }
         if (s.expeditionSupportVersion !== 2) throw Error('Invalid Expedition support version');
+        s.recruitmentRequest ??= null;
+        if (s.recruitmentRequest !== null) {
+          const r = s.recruitmentRequest;
+          if (
+            !r ||
+            typeof r !== 'object' ||
+            Array.isArray(r) ||
+            !['soldier', 'archer'].includes(r.type) ||
+            typeof r.zone !== 'string' ||
+            !Object.hasOwn(s.zones || {}, r.zone) ||
+            !(
+              r.barracksId === null ||
+              (typeof r.barracksId === 'string' &&
+                r.barracksId.length > 0 &&
+                r.barracksId.length <= 160)
+            )
+          )
+            throw Error('Invalid pending recruitment');
+        }
         if (s.companionVitalityRank === undefined) s.companionVitalityRank = 0;
         if (s.companionCombatTraining === undefined)
           s.companionCombatTraining = (s.hero?.skills?.[1] || 0) > 0 ? 2 : 1;
@@ -659,7 +678,9 @@
             typeof q.paid !== 'boolean' ||
             (q.paid && !q.done) ||
             !Number.isFinite(q.count) ||
-            q.count < 0
+            q.count < 0 ||
+            (q.captainBriefed !== undefined && typeof q.captainBriefed !== 'boolean') ||
+            (q.recallPracticed !== undefined && typeof q.recallPracticed !== 'boolean')
           )
             throw Error('Invalid quest');
         for (const [id, z] of Object.entries(s.zones)) {
@@ -858,7 +879,7 @@
           if (allIds.has(u.id)) throw Error('Duplicate companion');
           allIds.add(u.id);
         }
-        let reservations = s.party.length;
+        let reservations = s.party.length + (s.recruitmentRequest ? 1 : 0);
         for (const z of Object.values(s.zones)) {
           for (const b of z.buildings) {
             if (b.full === undefined) b.full = true;

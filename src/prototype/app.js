@@ -446,6 +446,58 @@
   spanishText['A Place to Recover'] = 'Un lugar para recuperarse';
   spanishText['In the field, choose Establish Basic Barracks from Adventure (free).'] =
     'En el campo, abre Aventura y elige Establecer cuartel básico (gratis).';
+  Object.assign(spanishText, {
+    'Your First Company': 'Tu primera compañía',
+    'Quest board': 'Tablón de misiones',
+    'Side Quests': 'Misiones secundarias',
+    'All side quests': 'Todas las misiones secundarias',
+    'Story objectives': 'Objetivos de la historia',
+    'Choose an objective to track it. Optional board tasks are in Side Quests.':
+      'Elige un objetivo para seguirlo. Las tareas opcionales del tablón están en Misiones secundarias.',
+    'Optional tasks, exploration and extra rewards.':
+      'Tareas opcionales, exploración y recompensas adicionales.',
+    'Meet the town Captain, try Recall squad, then establish your first Basic Barracks (free).':
+      'Habla con el capitán, prueba Reagrupar y establece tu primer cuartel básico (gratis).',
+    'Meet the town Captain to learn about your Soldier and Ranger.':
+      'Habla con el capitán para conocer a tu Soldado y tu Ranger.',
+    'Try Recall squad to bring your companions back to you.':
+      'Prueba Reagrupar para que tus compañeros regresen contigo.',
+    'COMPANIONS · Meet the town Captain to learn about your Soldier and Ranger. Your first Barracks is FREE: Open Menu/Esc in the field → Establish Basic Barracks.':
+      'COMPAÑEROS · Habla con el capitán para conocer a tu Soldado y tu Ranger. El primer cuartel es GRATIS: abre Menú/Esc en el campo → Establecer cuartel básico.',
+    'COMPANIONS · Try Recall squad to bring your companions back, then build your first Barracks — FREE. Open Menu/Esc in the field → Establish Basic Barracks.':
+      'COMPAÑEROS · Prueba Reagrupar y construye tu primer cuartel GRATIS. Abre Menú/Esc en el campo → Establecer cuartel básico.',
+    'Meet your company': 'Conoce a tu compañía',
+    'Companion basics': 'Lo básico de tus compañeros',
+    'Practice Recall squad': 'Probar Reagrupar',
+    'Open recruitment': 'Abrir reclutamiento',
+    'Learn roles, Recall, recruitment and reserves.':
+      'Conoce sus funciones, Reagrupar, reclutamiento y reservas.',
+    'Your Soldier and Ranger follow and fight automatically. Use Recall squad to regroup. Town hiring supports the first 3 companions; Expedition Rank 2 unlocks recruitment.':
+      'Tu Soldado y tu Ranger te siguen y luchan automáticamente. Usa Reagrupar para reunirlos. El pueblo admite los primeros 3 compañeros; Expedición 2 desbloquea el reclutamiento.',
+    'QUEUED · No crowns spent. Tap again to cancel, or choose another companion.':
+      'EN COLA · No has gastado coronas. Toca de nuevo para cancelar o elige otro compañero.',
+    'Not enough crowns. Tap to queue this recruit; payment and arrival happen automatically when affordable.':
+      'No tienes suficientes coronas. Toca para dejar el recluta en cola; se pagará y llegará automáticamente cuando puedas pagarlo.',
+    'Town can employ only the first 3 companions.':
+      'El pueblo solo puede contratar a los primeros 3 compañeros.',
+    'Joins after training; a full active group sends the recruit to reserve.':
+      'Se incorpora tras el entrenamiento; si el grupo está lleno, queda en reserva.',
+    'Joins automatically when affordable; full group means reserve.':
+      'Se incorpora automáticamente cuando puedas pagarlo; si el grupo está lleno, queda en reserva.',
+    'Cancel queued recruitment': 'Cancelar reclutamiento en cola',
+    'Queued recruitment cancelled. No crowns were spent.':
+      'Reclutamiento en cola cancelado. No has gastado coronas.',
+    'Joined your active group.': 'Se incorporó al grupo activo.',
+    'Active group full. Resting in reserve.': 'El grupo activo está lleno. Descansa en reserva.',
+    'Soldier recruited': 'Soldado reclutado',
+    'Ranger recruited': 'Ranger reclutado',
+    'Soldier recruitment queued. Tap the same choice to cancel.':
+      'Soldado en cola de reclutamiento. Toca la misma opción para cancelar.',
+    'Ranger recruitment queued. Tap the same choice to cancel.':
+      'Ranger en cola de reclutamiento. Toca la misma opción para cancelar.',
+    'You begin with a Soldier and a Ranger. The Soldier fights up close; the Ranger shoots from range and provides Heal. They follow you and fight automatically.\n\nUse Recall squad to cancel their orders and bring them back. Try it now, then open Adventure in the field and establish your first Basic Barracks for FREE. One companion builds it; the Barracks lets you recover fallen companions and manage your active group and reserves.\n\nRescue Mira and train Expedition Rank 2 to unlock a third active companion and recruitment. If you cannot afford an eligible recruit, tap Recruit to queue one. Tap the same choice to cancel, or select another type to replace it. It arrives automatically when you have enough crowns; if your group is full, it rests in reserve.':
+      'Empiezas con un Soldado y un Ranger. El Soldado lucha de cerca; el Ranger dispara a distancia y puede curarte. Te siguen y luchan automáticamente.\n\nUsa Reagrupar para cancelar sus órdenes y reunirlos contigo. Pruébalo y luego abre Aventura en el campo para establecer tu primer cuartel básico GRATIS. Un compañero lo construye; allí podrás recuperar a los caídos y gestionar el grupo activo y las reservas.\n\nRescata a Mira y mejora Expedición al rango 2 para desbloquear el tercer puesto activo y el reclutamiento. Si no puedes pagar un recluta disponible, toca Reclutar para dejarlo en cola. Toca la misma opción para cancelar o elige otro tipo para reemplazarlo. Llegará automáticamente cuando tengas las coronas; si el grupo está lleno, quedará en reserva.',
+  });
   function translateSegment(piece) {
     const ferryPassage = Campaign.rules.tidalFerryPassage;
     if (ferryPassage && piece.startsWith(ferryPassage))
@@ -462,8 +514,18 @@
           ' minutes of active play. Reserves can go. Tribute is delivered automatically on return.',
           ' minutos de juego activo. Los compañeros en reserva pueden ir. El tributo se entrega automáticamente al regresar.',
         );
-    if (/^Recruit (Soldier|Ranger) · \d+ crowns/.test(piece))
-      return piece.replace('Recruit ', 'Reclutar ').replace('crowns', 'coronas');
+    if (/^Cancel queued (Soldier|Ranger)/.test(piece))
+      return piece.replace('Cancel queued ', 'Cancelar en cola: ').replace('Soldier', 'Soldado');
+    if (/^Queued recruitment: /.test(piece))
+      return piece
+        .replace('Queued recruitment: ', 'Reclutamiento en cola: ')
+        .replace('Soldier', 'Soldado');
+    if (/^\d+(?:\/\d+)? crowns$/.test(piece)) return piece.replace('crowns', 'coronas');
+    if (/^Recruit (Soldier|Ranger)(?: · \d+ crowns)?$/.test(piece))
+      return piece
+        .replace('Recruit ', 'Reclutar ')
+        .replace('Soldier', 'Soldado')
+        .replace('crowns', 'coronas');
     if (/^Treat wounded companions/.test(piece))
       return piece
         .replace('Treat wounded companions', 'Curar compañeros heridos')
@@ -513,7 +575,10 @@
   function tr(value) {
     if (language !== 'es' || typeof value !== 'string') return value;
     if (Object.prototype.hasOwnProperty.call(spanishText, value)) return spanishText[value];
-    return value.split(' · ').map(translateSegment).join(' · ');
+    return value
+      .split('\n')
+      .map((line) => line.split(' · ').map(translateSegment).join(' · '))
+      .join('\n');
   }
   function setLanguage(value) {
     language = value === 'es' ? 'es' : 'en';
@@ -4230,6 +4295,7 @@
           'peace',
           'quest',
           'questComplete',
+          'companionRecruitment',
           'supplies',
           'miniClear',
           'archiveKnowledge',
