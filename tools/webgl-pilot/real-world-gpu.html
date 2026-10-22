@@ -1,0 +1,62 @@
+<!doctype html><html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<base href="../../"><title>Azeroth — real game graphics GPU comparison</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:18px;background:#101d1a;color:#ecf1df;font:15px system-ui}
+main{max-width:1420px;margin:auto}p{line-height:1.5}
+a{color:#a5e1d0}label{display:flex;flex-direction:column;gap:4px}
+.controls{display:flex;gap:12px;align-items:end;flex-wrap:wrap}
+select,button{border:1px solid #77978b;background:#244038;color:white;border-radius:6px;padding:10px;font:inherit}
+button{cursor:pointer}button:disabled{opacity:.6}
+.views{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+canvas{width:100%;height:auto;border:1px solid #678777;background:#0c1913}
+pre{background:#1a2b26;padding:14px;border-radius:7px;max-height:580px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+small,.note{color:#b7cfc2;font-size:13px}
+@media(max-width:720px){body{padding:10px}.views{grid-template-columns:1fr}}
+</style></head><body><main>
+<h1>Azeroth Chronicles — real-world graphics comparison</h1>
+<p><strong>Real game art. Real terrain, roads, buildings, procedural characters, moving camera,
+lighting and occlusion.</strong> Every version draws a complete picture from the same unsaved
+campaign and current game assets. No demonstration rectangles or empty scenes.</p>
+<p><strong>Important honesty:</strong> This adds a complete <em>GPU-composited world</em>:
+WebGL retains real game background textures and composites a dynamically updated character/effects texture.
+Those source illustrations still come from the game's original Canvas artist.
+It is <strong>not</strong> a completely native WebGL rewrite of the procedural art.
+The test also measures the older full-frame Canvas → GPU transfer method.</p>
+<div class="controls">
+<label>Region<select id="region"><option value="vale">Greenwood Vale</option>
+<option value="march">Whispering Marches</option><option value="highlands">Ironroot Highlands</option>
+<option value="frontier">Ashen Frontier</option><option value="crown" selected>Dark Crown</option></select></label>
+<label>Time<select id="lighting"><option value="night" selected>Night · original lamps</option>
+<option value="day">Day</option></select></label>
+<label>Camera<select id="zoom"><option value="1">100%</option><option value="1.5">150%</option>
+<option value="1.75" selected>175%</option></select></label>
+<label>Viewport<select id="resolution"><option value="960x540">960 × 540</option>
+<option value="1600x900" selected>1600 × 900</option>
+<option value="2403x1248">2403 × 1248 · Chromebook</option></select></label>
+<button id="run" type="button">Compare complete real-game scenes</button>
+</div><p id="status">Ready. All tests run without using your saved game.</p>
+<div class="views">
+<section><h3>1. Full Original Canvas</h3>
+<canvas id="reference" width="1600" height="900"></canvas>
+<small>Production renderer paints every current world layer as usual.</small></section>
+<section><h3>2. Complete GPU-composited world</h3>
+<canvas id="gpuWorld" width="1600" height="900"></canvas>
+<small>WebGL composites retained terrain/road art plus live character, scenery,
+light and effect textures. Canvas still creates the changing artwork.</small></section>
+<section><h3>3. Full Canvas → WebGL transfer</h3>
+<canvas id="gpuCopy" width="1600" height="900"></canvas>
+<small>Reference benchmark: original Canvas paints the whole picture;
+WebGL uploads that finished picture every frame.</small></section>
+</div>
+<h3>Measurements and visual fidelity</h3><pre id="results">Not measured yet.</pre>
+<p class="note">The live HUD is HTML, not in the world canvas. The camera follows a scripted path.
+The experiment measures Canvas source painting, static baking, per-frame GPU uploads and GPU display.
+Lighting and world art are not replaced or simplified. A full GPU-native renderer that creates
+every procedural shape without Canvas is <strong>still not built</strong>; this page must not
+claim its expected FPS or substitute for that separate engineering effort.</p>
+<p><a href="./tools/webgl-pilot/strategy-lab.html">Four-method technology lab</a> ·
+<a href="./tools/webgl-pilot/full-world.html">Full-frame transfer baseline</a> ·
+<a href="./tools/webgl-pilot/hybrid.html">GPU-ground / Canvas-foreground hybrid</a> ·
+<a href="./tools/webgl-pilot/index.html">Real procedural assets</a></p>
+</main><script src="./tools/webgl-pilot/real-world-gpu.js?v=1"></script></body></html>

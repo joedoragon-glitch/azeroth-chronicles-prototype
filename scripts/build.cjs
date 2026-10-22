@@ -80,6 +80,8 @@ if (site) {
     'tools/webgl-pilot/hybrid.js',
     'tools/webgl-pilot/strategy-lab.html',
     'tools/webgl-pilot/strategy-lab.js',
+    'tools/webgl-pilot/real-world-gpu.html',
+    'tools/webgl-pilot/real-world-gpu.js',
     ...spriteResources.map((e) => e.src?.replace(/^\.\//, '')).filter(Boolean),
   ])) {
     const dest = path.join(target, file);
