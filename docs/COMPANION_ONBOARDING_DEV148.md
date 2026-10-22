@@ -21,3 +21,7 @@ Passed: request suite (eight real mode/type/source funding paths plus cancellati
 Inherited original `prototype-ui` suite: after bringing its minimal DOM mock and Quest journal shortcut expectation up to date, it reaches the existing Treasury entrance assertion and fails `vale` versus `supply-vale` because it omits the current entrance-choice menu. This exact failure is reproduced on unchanged dev.147 runtime with the same mock corrections. The new production-shell suite verifies all changed companion, objective and quest-board behavior directly; no claim that the entire old UI suite passes.
 
 Owner authorizes immediate publication with focused local checks and no broad CI. The one-time workflow only packages committed assets; restore normal Pages triggers and remove it after exact-public verification.
+
+## Publication
+
+PR #387 merged as `0fe7ba154532b1ae1e7ac9598739428e45f7eb78`; package-only run 39698847962. Exact-live receipt: `docs/evidence/COMPANION_ONBOARDING_DEV148_PUBLICATION_20261021.json`. The closeout restores the original Pages workflow byte-for-byte and removes the temporary publisher.

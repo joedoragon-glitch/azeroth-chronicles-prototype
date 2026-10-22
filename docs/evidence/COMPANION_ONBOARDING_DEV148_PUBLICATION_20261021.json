@@ -1,0 +1,65 @@
+{
+  "version": "0.9.1+snapshot.dev.148",
+  "pr": 387,
+  "mergeCommit": "0fe7ba154532b1ae1e7ac9598739428e45f7eb78",
+  "publishedBuild": "0fe7ba154532b1ae1e7ac9598739428e45f7eb78",
+  "verifiedAt": "2026-10-22T00:19:08.325677+00:00",
+  "publicFiles": [
+    {
+      "path": "src/prototype/app.js",
+      "sha256": "113d77228ad2e02c3de0b87a2bdaf063e51b82f6b5af0c99cbd43f751d0e780d",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/engine.js",
+      "sha256": "88c83f1b68406666203c7277cc6fad88ed7cf94fda57ae9129fc66069920242a",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/party.js",
+      "sha256": "ac9d9093f9ef337757a93e502b7cff789aff8e916ee10f221a0efaf3f4da0926",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/menus.js",
+      "sha256": "7f2e20fb6dd2498cf0408b3ce244ed1b1ea6a22d812ecf99e64f6a624990efb9",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/save.js",
+      "sha256": "bc8cb350387e6aba7caac18890962afee0838565e2439bc4d8b8cac38fe2ab54",
+      "matchesPrepared": true
+    },
+    {
+      "path": "src/prototype/build-info.js",
+      "sha256": "1e6e6d657433535c39e94efb1bde4b03feb86ed6e9c4b31548f4803c7f927815",
+      "matchesPrepared": true
+    },
+    {
+      "path": "sw.js",
+      "sha256": "a71d08cb38cd83a4bbce48729a496aced1f4a9992018bdfb46ec3c6cbf161cb9",
+      "matchesPrepared": true
+    },
+    {
+      "path": "phone.html",
+      "sha256": "9bcc581900bbd5c85d9a5416f5a3bc10f4eea7b9d1f2d68b2c66774c317912b8",
+      "matchesPrepared": true
+    }
+  ],
+  "checks": {
+    "request": "Eight mode/type/source funding arrivals plus cancellation, replacement, reserves, reservations, legacy/save/travel validation passed",
+    "shell": "English/Spanish first-captain/tutorial, Recall, queue/cancel/action saves and story-first quest board/Side Quests passed",
+    "existingSuites": [
+      "menus",
+      "barracks-roster-feedback",
+      "quest-waypoints",
+      "quest-narration",
+      "economy"
+    ],
+    "build": "Passed",
+    "changedSourceFormat": "Passed"
+  },
+  "broadCiRan": false,
+  "inheritedUiFailure": "prototype-ui retains an unrelated Treasury entry assertion omitting the current entrance-choice menu; reproduced on unchanged dev.147 runtime.",
+  "publisherRunId": 39698847962
+}
