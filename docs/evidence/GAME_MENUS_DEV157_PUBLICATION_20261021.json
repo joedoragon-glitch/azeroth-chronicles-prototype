@@ -1,0 +1,22 @@
+{
+  "version": "0.9.1+snapshot.dev.157",
+  "pr": 396,
+  "mergeCommit": "798fb9c7383be953c725c1b0a37c3753faaf7910",
+  "publishedBuild": "798fb9c7383be953c725c1b0a37c3753faaf7910",
+  "publisherRun": 39705332220,
+  "publisherConclusion": "success",
+  "verifiedAt": "2026-10-22T01:24:19.538676+00:00",
+  "verification": "Public build.txt visibly matches merged runtime SHA in browser. Per-file byte comparison unavailable under current shell network policy.",
+  "checks": [
+    "Focused game-menu shell English/Spanish: branches/Back, native navigation/Clear waypoint, original shortcuts, actual/persisted device preferences and unchanged Campaign snapshot passed",
+    "Existing onboarding/Barracks shell passed with shared helper",
+    "Existing menus and input suites passed",
+    "npm run build passed",
+    "Changed-source format/diff and changed-test syntax passed"
+  ],
+  "browserMatricesRun": false,
+  "broadCiRan": false,
+  "normalWorkflowRestored": true,
+  "temporaryPublisherRemoved": true,
+  "nextAuthorizedTask": "Skill instructor menus for Mage, Paladin and Ranger"
+}

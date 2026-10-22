@@ -8,4 +8,4 @@ Validation: new focused production-shell English/Spanish game-menu traversal cov
 
 Next authorized task: same pass for skill-instructor menus across Mage, Paladin and Ranger, including capped/locked training. Screenshot supplied by owner is Mage.
 
-Publication pending.
+PR #396 merged as `798fb9c7383be953c725c1b0a37c3753faaf7910`; package-only run 39705332220. Public build verified against merged SHA; normal workflow restored and temporary publisher removed. Receipt: `docs/evidence/GAME_MENUS_DEV157_PUBLICATION_20261021.json`.
