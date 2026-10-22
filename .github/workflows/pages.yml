@@ -24,7 +24,7 @@ jobs:
       run_id: ${{ steps.reuse.outputs.run_id }}
       # One-time owner-approved FPS-settings publication; focused tests only.
       # This shortcut expires after the exact parent commit below is pushed.
-      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == 'b773827200ebafb49402a5c3cf7b1feb304a1412' }}
+      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == '22537a8182d32eb568eea9ba6cce1c2aaccc9761' }}
     steps:
       - uses: actions/checkout@v4
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

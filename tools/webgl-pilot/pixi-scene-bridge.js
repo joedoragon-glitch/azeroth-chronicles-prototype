@@ -226,6 +226,20 @@
      }
      effectsStage.addChildAt(grade,0);
    }
+   // Outside timed frames: capture only the retained real terrain/roads texture.
+   async function captureBackgroundOnly() {
+     const a=actorsStage.visible,e=effectsStage.visible;
+     actorsStage.visible=false;effectsStage.visible=false;
+     try {
+       const raw=await app.renderer.extract.pixels({
+         target:app.stage,frame:new PIXI.Rectangle(0,0,width,height)
+       });
+       return raw?.pixels||raw;
+     } finally {
+       actorsStage.visible=a;effectsStage.visible=e;
+       app.render();
+     }
+   }
    function draw() {app.render();}
    function metrics(){return{
      actors:actors.size,lights:glowObjects.size,textureSources:resources.size,
@@ -245,7 +259,7 @@
    }
    return Object.freeze({
      setBackground,moveBackground,registerTexture,hasTexture,
-     syncActors,syncLamps,setAtmosphere,draw,metrics,destroy
+     syncActors,syncLamps,setAtmosphere,captureBackgroundOnly,draw,metrics,destroy
    });
  }
  const api=Object.freeze({create,atmosphereLayers});

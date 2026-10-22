@@ -385,6 +385,11 @@
      measuredResourcesLocked=true;
      const prepMs=now()-prepStarted;
      const canvasTimes=[],gpuTimes=[],pixels=[],rounds=14,warmup=3;
+     // Check CPU and GPU presentations of exactly the SAME baked background.
+     const staticCanvas=canvas(width,height);
+     const staticCtx=need(staticCanvas.getContext('2d'),
+       'Cannot compare the baked background');
+     staticCtx.imageSmoothingEnabled=false;
      let lastCounts={visible:0,nightLights:0};
      for(let step=-warmup;step<rounds;step++){
        const frame=Math.max(0,step);
@@ -414,9 +419,20 @@
              target:app.stage,frame:new PIXI.Rectangle(0,0,width,height)
            });
            const actual=image?.pixels||image;
-           if(actual?.length===source.length)
-             pixels.push({frame,parity:reportDiff(source,actual),
-               regions:compareByArea(source,actual,width,height)});
+           if(actual?.length===source.length){
+             staticCtx.clearRect(0,0,width,height);
+             staticCtx.drawImage(backdrop,cropX,cropY,width,height,0,0,width,height);
+             const sourceStatic=staticCtx.getImageData(0,0,width,height).data;
+             const gpuStatic=await scene.captureBackgroundOnly();
+             need(gpuStatic?.length===sourceStatic.length,
+               'Pixi static-only extraction size is wrong');
+             pixels.push({
+               frame,parity:reportDiff(source,actual),
+               regions:compareByArea(source,actual,width,height),
+               backgroundOnlyParity:reportDiff(sourceStatic,gpuStatic),
+               backgroundOnlyRegions:compareByArea(sourceStatic,gpuStatic,width,height)
+             });
+           }
            else pixels.push({frame,error:'Pixi extraction returned unexpected dimensions'});
          }catch(error){pixels.push({frame,error:String(error.message)});}
        }
@@ -442,7 +458,7 @@
          'Some original entities painted no standalone sprite. See skippedArtDetails; image parity remains a release blocker.':
          'Known bodyless landmarks are already drawn in original terrain.',
        dependency:'PixiJS 8.22.0 pinned external development CDN (requires connectivity)',
-       diagnostics:'Nine screen regions locate source mismatches; GPU atmosphere now uses original top-to-bottom region grade and daytime/sunset tint instead of one flat color.',
+       diagnostics:'Full-scene and background-only comparisons now independently isolate original baked terrain GPU sampling from missing moving actors, lighting and effects, with nine screen regions; extra GPU readbacks excluded from recorded frame times.',
        incompleteFeatures:[
          'Procedural actor bodies currently use one-time original art textures, not live art state',
          'Full original day/night screen-blend grading and lamp fixtures are not yet parity verified',
