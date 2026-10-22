@@ -126,10 +126,11 @@
       left += iw + 2;
     }
     const vert = compile(gl, gl.VERTEX_SHADER,
-      'attribute vec2 p; attribute vec2 uv; attribute float opacity; uniform vec2 screen; varying vec2 vUv; varying float vOpacity;' +
+      'attribute vec2 p; attribute vec2 uv; attribute float opacity; uniform vec2 screen; varying highp vec2 vUv; varying highp float vOpacity;' +
       'void main(){gl_Position=vec4(p.x/screen.x*2.0-1.0,1.0-p.y/screen.y*2.0,0.,1.);vUv=uv;vOpacity=opacity;}');
     const frag = compile(gl, gl.FRAGMENT_SHADER,
-      'precision mediump float; varying vec2 vUv; varying float vOpacity; uniform sampler2D atlas;' +
+      // Sprite atlas dimensions exceed the precision of mediump UVs on some GPUs.
+      'precision highp float; varying highp vec2 vUv; varying highp float vOpacity; uniform sampler2D atlas;' +
       'void main(){gl_FragColor=texture2D(atlas,vUv)*vOpacity;}');
     const program = checked(gl.createProgram(), 'Cannot create shader program');
     gl.attachShader(program, vert); gl.attachShader(program, frag); gl.linkProgram(program);
@@ -184,11 +185,14 @@
   }
 
   function comparePixels(a, b) {
-    let total = 0, max = 0, foreground2d = 0, foregroundWebgl = 0;
-    let intersection = 0, union = 0;
-    const length = a.length;
-    for (let i = 0; i < length; i += 4) {
-      let cpuDistance = 0, gpuDistance = 0;
+    let total = 0, max = 0, colorDifference = 0;
+    let foreground2d = 0, foregroundWebgl = 0, intersection = 0, union = 0;
+    const pixels = a.length / 4;
+    const mask2d = new Uint8Array(pixels);
+    const maskWebgl = new Uint8Array(pixels);
+    for (let index = 0; index < pixels; index++) {
+      const i = index * 4;
+      let cpuDistance = 0, gpuDistance = 0, rgbDifference = 0;
       for (let c = 0; c < 4; c++) {
         const delta = Math.abs(a[i + c] - b[i + c]);
         total += delta;
@@ -197,21 +201,46 @@
           const bg = [12, 25, 19][c];
           cpuDistance += Math.abs(a[i + c] - bg);
           gpuDistance += Math.abs(b[i + c] - bg);
+          rgbDifference += delta;
         }
       }
       const cpu = cpuDistance > 25;
       const gpu = gpuDistance > 25;
-      if (cpu) foreground2d++;
-      if (gpu) foregroundWebgl++;
+      if (cpu) { foreground2d++; mask2d[index] = 1; }
+      if (gpu) { foregroundWebgl++; maskWebgl[index] = 1; }
       if (cpu && gpu) intersection++;
-      if (cpu || gpu) union++;
+      if (cpu || gpu) { union++; colorDifference += rgbDifference; }
+    }
+    // Canvas and WebGL can disagree on a sprite's edge by one physical pixel.
+    // Compare occupancy within a 3x3 neighborhood in BOTH directions. This
+    // detects missing bodies or substantial displacement without requiring
+    // unrelated rasterizers to have bit-identical edge pixels.
+    const near = (mask, index) => {
+      const x = index % W, y = Math.floor(index / W);
+      for (let dy = -1; dy <= 1; dy++) {
+        const yy = y + dy;
+        if (yy < 0 || yy >= H) continue;
+        for (let dx = -1; dx <= 1; dx++) {
+          const xx = x + dx;
+          if (xx >= 0 && xx < W && mask[yy * W + xx]) return true;
+        }
+      }
+      return false;
+    };
+    let coveredCanvas = 0, coveredWebGL = 0;
+    for (let index = 0; index < pixels; index++) {
+      if (mask2d[index] && near(maskWebgl, index)) coveredCanvas++;
+      if (maskWebgl[index] && near(mask2d, index)) coveredWebGL++;
     }
     return {
-      meanChannelDifference: Number((total / length).toFixed(3)),
+      meanChannelDifference: Number((total / a.length).toFixed(3)),
       maximumChannelDifference: max,
+      meanForegroundChannelDifference: union ? Number((colorDifference / (union * 3)).toFixed(2)) : null,
       foregroundPixelsCanvas: foreground2d,
       foregroundPixelsWebGL: foregroundWebgl,
       foregroundOverlap: union ? Number((intersection / union).toFixed(3)) : 0,
+      withinOnePixelCanvas: foreground2d ? Number((coveredCanvas / foreground2d).toFixed(3)) : 0,
+      withinOnePixelWebGL: foregroundWebgl ? Number((coveredWebGL / foregroundWebgl).toFixed(3)) : 0,
     };
   }
 
@@ -269,7 +298,11 @@
       const equality = comparePixels(cpuPixels, flipped);
       const coverageRatio = equality.foregroundPixelsCanvas
         ? equality.foregroundPixelsWebGL / equality.foregroundPixelsCanvas : 0;
-      if (equality.foregroundOverlap < 0.9 || coverageRatio < 0.9 || coverageRatio > 1.1) {
+      const nearMatch = Math.min(equality.withinOnePixelCanvas, equality.withinOnePixelWebGL);
+      const similarEdges = equality.foregroundOverlap >= 0.9 || nearMatch >= 0.97;
+      const comparable = similarEdges && coverageRatio >= 0.95 && coverageRatio <= 1.05
+        && equality.meanForegroundChannelDifference <= 25;
+      if (!comparable) {
         status.textContent = 'INVALID comparison — pictures differ. No speed conclusion.';
         output.textContent = JSON.stringify({
           message: 'WebGL artwork did not match Canvas closely enough. Timings deliberately withheld.',
@@ -280,7 +313,7 @@
         window.AzerothGpuPilotResult = null;
         return;
       }
-      status.textContent = 'Pictures aligned; measuring repeated frames…';
+      status.textContent = 'Artwork coverage matches within one pixel; measuring repeated frames…';
       for (let k = 0; k < 6; k++) { draw2d(k,true); drawGPU(k,true); }
       const results = { canvas: [], webgl: [] };
       for (let round = 0; round < 14; round++) {
@@ -305,7 +338,7 @@
         gpuAtlasBytes: gpu.atlasBytes, gpuBackend: gpu.backend,
         visualDifference: equality,
         timePerFrameMs: { canvas2d: samples(results.canvas), webgl2: samples(results.webgl) },
-        warning: 'Forced sync (Canvas 1x1 readback; WebGL gl.finish) in local browser. GPU and Canvas submit different batches. Results depend on hardware. Pixel differences require manual review. Do not extrapolate to whole-game FPS.'
+        warning: 'Visual comparison allows one pixel of edge tolerance, NOT missing sprites. Report includes raw pixel differences and foreground agreement; inspect both panels. Forced sync (Canvas 1x1 readback; WebGL gl.finish) uses different submit paths. This is sprite composition only: do not extrapolate to whole-game FPS.'
       };
       window.AzerothGpuPilotResult = report;
       output.textContent = JSON.stringify(report, null, 2);
