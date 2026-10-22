@@ -90,7 +90,24 @@
     });
     checked(gl, 'WebGL2 is unavailable on this browser. No GPU comparison can be claimed.');
     const start = performance.now();
-    const size = Math.min(4096, gl.getParameter(gl.MAX_TEXTURE_SIZE));
+    // Size the texture to the art actually present rather than always reserving
+    // a 4096-square (~64 MiB) texture for a small sprite scene.
+    const maxSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+    const canFit = (dimension) => {
+      let x = 2, y = 2, rowHeight = 0;
+      for (const img of images.values()) {
+        const iw = img.naturalWidth, ih = img.naturalHeight;
+        if (iw + 4 > dimension || ih + 4 > dimension) return false;
+        if (x + iw + 2 >= dimension) { x = 2; y += rowHeight + 2; rowHeight = 0; }
+        if (y + ih + 2 >= dimension) return false;
+        x += iw + 2;
+        rowHeight = Math.max(rowHeight, ih);
+      }
+      return true;
+    };
+    let size = 1024;
+    while (size <= maxSize && !canFit(size)) size *= 2;
+    checked(size <= maxSize, 'Sprite atlas exceeds supported WebGL texture size');
     const atlas = document.createElement('canvas');
     atlas.width = atlas.height = size;
     const painter = checked(atlas.getContext('2d'), 'Cannot create atlas');
