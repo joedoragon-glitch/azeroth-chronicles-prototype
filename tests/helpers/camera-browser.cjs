@@ -29,9 +29,10 @@ exports.verifyCamera = async function (page, results, tag, touch, capture = fals
       await page.keyboard.press('Escape');
       await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
       await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
+      await page.getByRole('button', { name: 'Camera zoom', exact: true }).click();
       await page
         .getByRole('button', {
-          name: 'Camera ' + Math.round(scale * 100) + '%' + (scale === 1 ? ' · original' : ''),
+          name: new RegExp('^Camera ' + Math.round(scale * 100) + '%(?: ✓)?$'),
           exact: true,
         })
         .click();

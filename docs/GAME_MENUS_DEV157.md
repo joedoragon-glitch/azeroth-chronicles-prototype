@@ -1,0 +1,11 @@
+# Concise game menu and branches — dev.157
+
+Owner requests the rest of the game menu receive the same concise, tutorial-friendly pass as Basic Barracks. Five ordinary root choices: build, map, quest journal, Character and Game/settings. Build highlight remains first; live update/final-objective notices remain when relevant. Character groups inventory, skills and talents. Journal keeps story objectives directly visible, Side Quests/Completed and the announcements archive. Clear waypoint moves to the map without changing destination indexes or movement. Existing keyboard/HUD shortcuts remain direct.
+
+Controls are short topics; display settings split into layout, camera, graphics, FPS and opt-in performance details. Sound selects a channel before showing two volume controls. Save hub branches backups and new-game modes; original export/report/import/load callbacks, overwrite confirmation and Nightmare/Developer gates retained. Inventory branches equipment, Ranger support and tonics; original weapon actions, names, ranks and quantities retained. Long companion combat reference is opt-in; original skill summaries and +15% rank rule remain. Install instructions are short device steps. Stories and selected numeric references retain authored content.
+
+Validation: new focused production-shell English/Spanish game-menu traversal covers actual branches/Back, graphics/layout/camera/FPS/volume/mute/touch setting actions and persisted preferences, backups/mode gates, install/language guidance, native map navigation and Clear waypoint. Campaign snapshot stays identical while reading/changing device settings. All five keyboard shortcuts still work. Existing onboarding/Barracks shell flow, menus and input suites pass; build/format/diff pass. Shared shell mock extracted once to avoid rerunning unrelated flow in game-menu checks. Impacted original browser/phone/camera/FPS and old UI route expectations updated; broad browser matrices/CI not run. Known old whole-UI Treasury fixture issue remains outside scope, as recorded in dev.148/149.
+
+Next authorized task: same pass for skill-instructor menus across Mage, Paladin and Ranger, including capped/locked training. Screenshot supplied by owner is Mage.
+
+Publication pending.

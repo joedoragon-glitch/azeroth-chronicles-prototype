@@ -486,9 +486,7 @@
           });
       openMenu(
         'Skill journal',
-        'Notes on skills you already know. Visit an instructor to learn or train. Tap for normal · hold ' +
-          Campaign.rules.chargedSkills.holdSeconds +
-          's for charged. Damage can interrupt preparation. One rank, one cooldown slot; damaging skills gain +15% base damage per rank.',
+        'Choose a skill for its effects and controls. Instructors teach new ranks.',
         [
           ...choices,
           action(
@@ -548,17 +546,20 @@
             );
           }),
         companionAdvanced = getGame().companionSecondSkillUnlocked(),
+        companionDescription = companionAdvanced
+          ? 'Soldier: Power Strike (8s) + Holy Cleave (12s) · Ranger: Triple Shot (8s) + Piercing Volley (12s). Expedition 4: Soldier Power Strike grants 20% self-protection for 2s; Ranger Triple Shot’s first arrow Slows for 1s if fired within 150 units and it hits. Rangers use it while falling back when ready.'
+          : 'Soldier: Power Strike · Archer: Triple Shot · Learn hero Skill 2 Rank 1 to unlock Holy Cleave and Piercing Volley',
         companionLine = action(
           'Companion combat skills · ' + (companionAdvanced ? 'Advanced' : 'Core'),
-          () => {},
-          companionAdvanced
-            ? 'Soldier: Power Strike (8s) + Holy Cleave (12s) · Ranger: Triple Shot (8s) + Piercing Volley (12s). Expedition 4: Soldier Power Strike grants 20% self-protection for 2s; Ranger Triple Shot’s first arrow Slows for 1s if fired within 150 units and it hits. Rangers use it while falling back when ready.'
-            : 'Soldier: Power Strike · Archer: Triple Shot · Learn hero Skill 2 Rank 1 to unlock Holy Cleave and Piercing Volley',
-          true,
+          () =>
+            openMenu('Companion combat skills', companionDescription, [], () =>
+              skillTrainingOverview(back),
+            ),
+          'View automatic combat skills.',
         );
       openMenu(
         'Training and companions',
-        'Rescued specialists teach skills and higher ranks. Skills use crowns; Expedition training is free.',
+        'Rescued specialists teach skills and higher ranks. Skills use crowns; Expedition training is free.\nDamaging skills gain +15% base damage per rank.',
         [
           action('Expedition Skill · Rank ' + rank, () => {}, expDetail, true),
           ...support,
@@ -1937,65 +1938,81 @@
         back,
       );
     }
-    function inventory(back = closeMenu) {
-      const rangers = getGame()
-          .activeLivingParty()
-          .filter((u) => u.type === 'archer'),
-        heal = getGame().rangerSupportAmount('health'),
-        mana = getGame().rangerSupportAmount('mana'),
-        hero = getGame().hero,
+    function inventory(back = closeMenu, fromCharacter = false) {
+      const returnHere = () => inventory(back, fromCharacter);
+      openMenu(
+        'Inventory',
+        'Crowns ' + Math.floor(getGame().hero.gold),
+        [
+          action('Equipment', () => inventoryEquipment(returnHere), 'Weapons, armor and reforges.'),
+          action(
+            'Ranger support',
+            () => {
+              const g = getGame(),
+                rangers = g.activeLivingParty().filter((u) => u.type === 'archer');
+              openMenu(
+                'Ranger support',
+                rangers.length
+                  ? rangers.length +
+                      ' active · Heal ' +
+                      g.rangerSupportAmount('health') +
+                      ' HP.\nUse the Ranger Heal button. During cooldown, tap to queue hero healing. Automatic healing stays active.' +
+                      (Campaign.rules.resourceMode.manaEnabled
+                        ? '\nMana Recovery ' + g.rangerSupportAmount('mana') + ' MP.'
+                        : '')
+                  : 'Recruit a Ranger to unlock field Heal.',
+                [],
+                returnHere,
+              );
+            },
+            'Automatic healing and your Heal command.',
+          ),
+          action(
+            'Preparation Tonics',
+            () => {
+              const g = getGame();
+              openMenu(
+                'Preparation Tonics',
+                'Stored: ' +
+                  g.preparationTonicStock() +
+                  '\n' +
+                  (g.hero.tonic
+                    ? 'ACTIVE · +10% maximum HP until rest or defeat.'
+                    : '+10% maximum HP until rest or defeat. Use at a completed Barracks.') +
+                  (!g.s.rescued.archive ? '\nRescue Neri to buy tonics.' : ''),
+                [],
+                returnHere,
+              );
+            },
+            'Temporary maximum HP boost.',
+          ),
+          ...(openCharacter && !fromCharacter
+            ? [action('Character and identity', openCharacter)]
+            : []),
+        ],
+        back,
+      );
+    }
+    function inventoryEquipment(back) {
+      const hero = getGame().hero,
         equipped =
           (hero.customWeaponName ? hero.customWeaponName + ' · ' : '') +
           (hero.legacyEquipped ? hero.legacyWeaponName : 'tier ' + hero.weapon);
       openMenu(
-        'Inventory',
-        'Crowns ' +
-          Math.floor(getGame().hero.gold) +
-          ' · Weapon tier ' +
-          getGame().hero.weapon +
-          ' · Armor tier ' +
-          getGame().hero.armorTier +
-          '\nEquipped weapon: ' +
+        'Equipment',
+        'Equipped weapon: ' +
           equipped +
           '\nEquipped armor: ' +
           (hero.customArmorName || 'tier ' + hero.armorTier) +
-          ' · Weapon reforge: ' +
+          '\nWeapon reforge: ' +
           (hero.reforges['weapon:' + hero.weapon]
             ? hero.legacyEquipped
               ? 'owned (inactive while legacy weapon equipped)'
               : 'active'
             : 'none') +
           ' · Armor reforge: ' +
-          (hero.reforges['armor:' + hero.armorTier] ? 'active' : 'none') +
-          '\nPreparation Tonics: ' +
-          getGame().preparationTonicStock() +
-          ' stored · ' +
-          (hero.tonic
-            ? 'ACTIVE on hero only (+10% maximum HP until rest or defeat)'
-            : 'inactive · use at a completed Barracks') +
-          '\nRanger support: ' +
-          (rangers.length
-            ? rangers.length +
-              ' active · Heal ' +
-              heal +
-              ' HP (H)' +
-              (Campaign.rules.resourceMode.manaEnabled
-                ? ' · Mana Recovery ' + mana + ' MP (M)'
-                : '') +
-              '. Automatic support remains active.'
-            : 'Recruit a Ranger to unlock field Heal' +
-              (Campaign.rules.resourceMode.manaEnabled ? ' and Mana Recovery.' : '.')) +
-          '\nChoose equipment below when available.',
+          (hero.reforges['armor:' + hero.armorTier] ? 'active' : 'none'),
         [
-          ...(openCharacter
-            ? [
-                action(
-                  'Character and identity',
-                  openCharacter,
-                  'View character details and edit your name',
-                ),
-              ]
-            : []),
           ...Object.keys(Campaign.legacyWeapons)
             .filter((name) => getGame().s.legacyInventory?.includes(name))
             .map((name) =>
@@ -2003,7 +2020,7 @@
                 'Equip ' + name,
                 () => {
                   if (getGame().equipLegacy(name)) status(name + ' equipped.');
-                  inventory(back);
+                  inventoryEquipment(back);
                 },
                 'Saved weapon · +' + Campaign.legacyWeapons[name] + ' power',
               ),
@@ -2013,7 +2030,7 @@
                 action('Equip current weapon tier ' + getGame().hero.weapon, () => {
                   if (getGame().equipTierWeapon())
                     status('Weapon tier ' + getGame().hero.weapon + ' equipped.');
-                  inventory(back);
+                  inventoryEquipment(back);
                 }),
               ]
             : []),
@@ -2318,7 +2335,7 @@
         entries = game.storyReadings();
       openMenu(
         'Announcements',
-        'Earned lore and recent announcements. Select an entry to read the full text.',
+        'Read unlocked stories and notices.',
         [...entries]
           .reverse()
           .map((n) =>
@@ -2347,9 +2364,7 @@
               );
           openMenu(
             atBoard ? 'Quest board' : 'Quest journal',
-            'Story objectives · ' +
-              summary +
-              '\nChoose an objective to track it. Optional board tasks are in Side Quests.',
+            summary + '\nTap an objective to track it.',
             [
               ...(tutorial
                 ? [
@@ -2371,6 +2386,7 @@
                 'Optional tasks, exploration and extra rewards.',
               ),
               action('Completed quests', () => quests(atBoard, returnHere, true, true)),
+              ...(!atBoard ? [action('Announcements', () => announcements(returnHere))] : []),
             ],
             back,
           );
@@ -2391,7 +2407,9 @@
           );
       openMenu(
         completed ? 'Completed quests' : 'Side Quests',
-        'Tap a pending quest to track its next objective. The waypoint remains during combat. Rewards are delivered automatically.',
+        completed
+          ? 'Finished quests and rewards.'
+          : 'Tap a quest to track it. Rewards arrive automatically.',
         [
           ...local.map((q) =>
             action(

@@ -58,6 +58,7 @@ const server = http.createServer((req, res) => {
         await page.locator('#menu-button').click();
         await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
         await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
+        await page.getByRole('button', { name: 'Frame rate', exact: true }).click();
       };
       await openSettings();
       for (const [value, label] of [
@@ -66,7 +67,7 @@ const server = http.createServer((req, res) => {
         ['auto', 'Auto'],
       ]) {
         const before = await page.evaluate(() => JSON.stringify(Prototype.game.snapshot()));
-        await page.getByRole('button', { name: new RegExp('Frame rate · ' + label) }).click();
+        await page.getByRole('button', { name: new RegExp('^' + label) }).click();
         assert.deepEqual(
           await page.evaluate(() => ({
             preference: Prototype.fps.preference,
@@ -81,7 +82,7 @@ const server = http.createServer((req, res) => {
           'Changing rendering preferences cannot mutate a paused campaign',
         );
       }
-      await page.getByRole('button', { name: /Frame rate · 60 FPS/ }).click();
+      await page.getByRole('button', { name: /^60 FPS/ }).click();
       await page.reload();
       await page.waitForFunction(() => !!window.Prototype);
       assert.equal(
@@ -91,7 +92,7 @@ const server = http.createServer((req, res) => {
       );
       await page.evaluate(() => Prototype.closeMenu());
       await openSettings();
-      await page.getByRole('button', { name: /Frame rate · 30 FPS/ }).click();
+      await page.getByRole('button', { name: /^30 FPS/ }).click();
       await page.evaluate(() => {
         Prototype.closeMenu();
         window.__fpsCounts = { ticks: 0, updates: 0, observations: 0, draws: 0 };
@@ -161,7 +162,11 @@ const server = http.createServer((req, res) => {
       }));
       assert.equal(optimized.canvas, optimized.viewport, 'optimized boot caps internal DPR at 1');
       assert.equal(optimized.materials.optimizationMode, true);
-      assert.equal(optimized.materials.definitions, 0, 'no texture manifest fetched on optimized cold boot');
+      assert.equal(
+        optimized.materials.definitions,
+        0,
+        'no texture manifest fetched on optimized cold boot',
+      );
       assert.equal(optimized.audio.optimizationMode, true);
       assert.equal(optimized.renderer.optimizationMode, 'on');
       await hi.evaluate(() => localStorage.setItem('azeroth-optimization-mode-v1', 'off'));
