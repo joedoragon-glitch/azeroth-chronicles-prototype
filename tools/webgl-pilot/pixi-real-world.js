@@ -203,9 +203,12 @@
        isReducedMotion:()=>matchMedia('(prefers-reduced-motion: reduce)').matches
      });
      const textureLoads=new Map(),proceduralBakes=new Map();
+     let measuredResourcesLocked=false;
      const counters={proceduralBakes:0,authoredTextures:0,missingProcedural:0,
        unsupportedDynamicOverlays:0};
      async function ensureTexture(src){
+       if(measuredResourcesLocked&&!textureLoads.has(src))
+         throw Error('New sprite artwork entered measured frames without preloading: '+src);
        if(!textureLoads.has(src)){
          textureLoads.set(src,(async()=>{
            const t=await PIXI.Assets.load(src);
@@ -239,6 +242,8 @@
            counters.unsupportedDynamicOverlays++;
          }else if(selected.reason==='original-game-procedural-art'){
            if(!proceduralBakes.has(key)){
+             if(measuredResourcesLocked)
+               throw Error('New procedural actor entered measured frames without preparation: '+key);
              const baked=drawProceduralEntity(visual,game);
              const id='prepared-procedural:'+key;
              const texture=PIXI.Texture.from(baked.image);
@@ -301,6 +306,7 @@
      }
      await Promise.all([...urls].map(ensureTexture));
      await buildFrame();scene.draw();
+     measuredResourcesLocked=true;
      const prepMs=now()-prepStarted;
      const canvasTimes=[],gpuTimes=[],pixels=[],rounds=14,warmup=3;
      let lastCounts={visible:0,nightLights:0};
