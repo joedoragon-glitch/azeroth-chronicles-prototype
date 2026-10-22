@@ -74,6 +74,8 @@ if (site) {
     // the game, added to the PWA offline manifest, or enabled in production.
     'tools/webgl-pilot/index.html',
     'tools/webgl-pilot/pilot.js',
+    'tools/webgl-pilot/full-world.html',
+    'tools/webgl-pilot/full-world.js',
     ...spriteResources.map((e) => e.src?.replace(/^\.\//, '')).filter(Boolean),
   ])) {
     const dest = path.join(target, file);

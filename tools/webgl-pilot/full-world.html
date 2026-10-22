@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<base href="../../"><title>Azeroth full-world GPU experiment</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:18px;background:#111c1b;color:#e8eede;font:15px system-ui}
+main{max-width:1350px;margin:auto}h1{margin-bottom:5px}p{line-height:1.5}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+label{display:flex;flex-direction:column;gap:4px}button,select{border:1px solid #76968c;background:#253b38;border-radius:6px;color:white;padding:9px;font:inherit}
+button{cursor:pointer}button:disabled{opacity:.65}
+.pictures{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px}
+canvas{width:100%;height:auto;background:#0c1913;border:1px solid #617c71}
+pre{white-space:pre-wrap;word-break:break-word;background:#1d302b;border-radius:6px;padding:14px;max-height:580px;overflow:auto}
+.note{font-size:13px;color:#bbcec2}
+@media(max-width:650px){.pictures{grid-template-columns:1fr}body{padding:11px}}
+</style></head>
+<body><main>
+<h1>Azeroth Chronicles — complete world-frame experiment</h1>
+<p>All real game world drawing is included: terrain, roads, structures, procedural scenery, moving characters,
+lighting, shadows, occlusion and any active combat cues. The left view uses the original Canvas renderer;
+the right presents the <strong>same complete frame</strong> through WebGL2.</p>
+<p class="note"><strong>Important:</strong> WebGL currently receives a fully painted Canvas frame.
+This tests full-scene visual compatibility and measures GPU upload/display overhead.
+It does <strong>not</strong> replace the expensive Canvas painting or establish an FPS boost.</p>
+<div class="controls">
+<label>Region<select id="region">
+<option value="vale">Greenwood Vale</option><option value="march">Whispering Marches</option>
+<option value="highlands">Ironroot Highlands</option><option value="frontier">Ashen Frontier</option>
+<option value="crown" selected>Dark Crown</option></select></label>
+<label>Lighting<select id="timeofday"><option value="night" selected>Night · original lamps</option><option value="day">Day</option></select></label>
+<label>Viewport<select id="resolution"><option value="960x540">960 × 540</option>
+<option value="1600x900" selected>1600 × 900</option>
+<option value="2403x1248">2403 × 1248 · Chromebook</option></select></label>
+<label>Camera<select id="zoom"><option value="1">100%</option><option value="1.5">150%</option>
+<option value="1.75" selected>175%</option></select></label>
+<button id="run" type="button">Run complete-world comparison</button>
+</div>
+<p id="status">Preparing the isolated diagnostic. No campaign save is read or changed.</p>
+<div class="pictures"><section><h3>Original Canvas — full scene</h3><canvas id="native" width="1600" height="900"></canvas></section>
+<section><h3>WebGL — full scene displayed</h3><canvas id="gpu" width="1600" height="900"></canvas></section></div>
+<h3>Measurements</h3><pre id="results">No results yet.</pre>
+<p class="note">The game HUD is HTML outside the world canvas and is not part of this image.
+This isolated page does not load the playable app, touch your saves or change any lamp or other game artwork.
+Movement is scripted for repeatability; gameplay and full FPS are not tested.
+<a style="color:#c2e0d2" href="./tools/webgl-pilot/index.html">Original procedural-object experiment</a>.</p>
+</main>
+<script src="./tools/webgl-pilot/full-world.js?v=1"></script>
+</body></html>

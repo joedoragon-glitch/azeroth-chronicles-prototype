@@ -22,9 +22,9 @@ jobs:
     outputs:
       reuse: ${{ steps.reuse.outputs.reuse || 'false' }}
       run_id: ${{ steps.reuse.outputs.run_id }}
-      # One-time isolated procedural GPU demo publication. No gameplay checks.
+      # One-time standalone complete-world GPU bridge diagnostic publication. No gameplay checks.
       # Exact parent SHA limits this exception to the next main push.
-      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == 'cd78c685d5b433acd888706896fc43fcb493aea1' }}
+      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == 'a12ad6528ba140374caa76547f2e02f686553190' }}
     steps:
       - uses: actions/checkout@v4
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -347,7 +347,7 @@ jobs:
       - name: Run full game checks
         if: needs.release-plan.outputs.reuse != 'true' && needs.release-plan.outputs.hotkey_fast != 'true'
         uses: ./.github/actions/check-game
-      - name: Publish standalone GPU demo without game tests
+      - name: Publish standalone full-world GPU diagnostic without game tests
         if: needs.release-plan.outputs.hotkey_fast == 'true'
         run: echo 'One-time demo page publication; gameplay and phone suites skipped.'
       - uses: actions/upload-artifact@v4
