@@ -7,6 +7,7 @@ function shell(language) {
   const elements = new Map(),
     events = {},
     storage = new Map();
+  let nextFrame;
   const ctx = new Proxy({}, { get: (o, k) => o[k] || (() => {}) });
   function el() {
     const classes = new Set();
@@ -72,7 +73,9 @@ function shell(language) {
       addEventListener() {},
     },
     addEventListener: (name, fn) => (events[name] ??= []).push(fn),
-    requestAnimationFrame() {},
+    requestAnimationFrame(fn) {
+      nextFrame = fn;
+    },
     setTimeout() {},
     Blob,
     URL: { createObjectURL: () => '', revokeObjectURL() {} },
@@ -96,10 +99,11 @@ function shell(language) {
   scope.window = scope;
   vm.createContext(scope);
   vm.runInContext(fs.readFileSync(require.resolve('../src/prototype/app'), 'utf8'), scope);
-  return { scope, elements, storage, events };
+  scope.Prototype.renderer.draw = () => {};
+  return { scope, elements, storage, events, frame: (now) => nextFrame(now) };
 }
 for (const language of ['en', 'es']) {
-  const { scope: s, elements: e, storage, events } = shell(language),
+  const { scope: s, elements: e, storage, events, frame } = shell(language),
     g = s.Prototype.game;
   const npc = g.zone().npcs.find((n) => n.kind === 'recruiter');
   const click = (prefix) => {
@@ -144,6 +148,18 @@ for (const language of ['en', 'es']) {
   assert(!g.s.quests['quest-barracks'].recallPracticed);
   assert(!g.s.recallActive);
   assert(!JSON.parse(storage.get('azeroth-v4-normal')).quests['quest-barracks'].recallPracticed);
+  // Keep the real active frame loop running before the learner presses Recall.
+  events.keydown.forEach((fn) => fn({ code: 'ArrowRight', preventDefault() {} }));
+  for (let i = 1; i <= 120; i++) {
+    frame(i * 17);
+    if (i === 4) events.keyup.forEach((fn) => fn({ code: 'ArrowRight', preventDefault() {} }));
+    assert(
+      e.get('recall-button').classList.contains('tutorial-highlight'),
+      'Recall stays highlighted through active frames',
+    );
+    assert(!g.s.quests['quest-barracks'].recallPracticed);
+  }
+
   const health = g.s.party.map((u) => u.hp);
   g.s.party.forEach((u) => (u.hp = 0));
   e.get('recall-button').click();
