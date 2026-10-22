@@ -65,8 +65,12 @@
     const sourceUrl = URL.createObjectURL(new Blob([source], { type: 'text/javascript' }));
     try { await loadScript(sourceUrl); }
     finally { URL.revokeObjectURL(sourceUrl); }
-    hybridRendererClass = need(window.PrototypeHybridTestRenderer?.create,
-      'Hybrid diagnostic renderer could not initialize');
+    // Keep the renderer API object, not its create function. Previously
+    // assigning ".create" here caused the later ".create(...)" to fail.
+    const experimentalRenderer = window.PrototypeHybridTestRenderer;
+    need(typeof experimentalRenderer?.create === 'function',
+      'Hybrid diagnostic renderer API has no create function');
+    hybridRendererClass = experimentalRenderer;
     loaded = true;
   }
 
