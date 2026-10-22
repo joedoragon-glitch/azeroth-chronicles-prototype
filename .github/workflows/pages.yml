@@ -24,7 +24,7 @@ jobs:
       run_id: ${{ steps.reuse.outputs.run_id }}
       # One-time owner-authorized manual-resolution release: focused tests and packaging only.
       # Parent guard expires immediately after the intended main push.
-      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == 'e296b113a61487f36af0cc681a3eecc41c6ac475' }}
+      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == '114217643b950492744dea96701c3a67769965cf' }}
     steps:
       - uses: actions/checkout@v4
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

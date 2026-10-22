@@ -2406,7 +2406,7 @@
             Math.round(innerHeight * fixed / 100)
           : '';
         return action(
-          label + pixels + (renderResolution.preference === value ? ' ✓' : ''),
+          tr(label) + pixels + (renderResolution.preference === value ? ' ✓' : ''),
           () => {
             renderResolution.select(value);
             resize();
