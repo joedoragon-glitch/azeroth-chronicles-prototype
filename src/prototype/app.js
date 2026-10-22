@@ -968,6 +968,18 @@
     'When isolated, fire 2 normal or 3 charged arrows at one foe. No piercing.':
       'Contra un solo enemigo, dispara dos flechas normales o tres cargadas. No atraviesan defensa.',
   });
+  Object.assign(spanishText, {
+    'Rest here to heal you and living companions.':
+      'Descansa aquí para curarte a ti y a tus compañeros vivos.',
+    'Sets your death recovery point. Both refuges share a 90s cooldown.':
+      'Fija tu punto de regreso tras morir. Ambos refugios comparten 90 s de recuperación.',
+    'Fallen companions: Captain or Barracks.': 'Compañeros caídos: Capitán o Cuartel.',
+    'End nearby combat first.': 'Termina el combate cercano primero.',
+    'Rest now': 'Descansar ahora',
+    'Heal and set your recovery point.': 'Cúrate y fija tu punto de regreso.',
+    'Got it': 'Entendido',
+    'Close without resting.': 'Cerrar sin descansar.',
+  });
   function translateSegment(piece) {
     const ferryPassage = Campaign.rules.tidalFerryPassage;
     if (ferryPassage && piece.startsWith(ferryPassage))
@@ -1386,6 +1398,7 @@
     quests,
     announcements,
     transport,
+    refugeIntro,
     dungeonEntranceMenu,
   } = PrototypeMenus.create({
     getGame: () => game,
@@ -2642,6 +2655,14 @@
     const n = nearestNPC();
     if (!n) {
       status('Nothing nearby to interact with.');
+      return;
+    }
+    if (
+      n.kind === 'rest' &&
+      game.zoneId === 'vale' &&
+      !game.s.discovered['vale:refuge-help:' + n.id]
+    ) {
+      refugeIntro(n);
       return;
     }
     if (n.kind === 'dungeon' && !game.sideDungeon(n.family)) {

@@ -17,6 +17,47 @@
     requestName = () => {},
     openCharacter = null,
   }) {
+    function refugeIntro(site) {
+      const owner = getGame(),
+        zone = owner.zoneId,
+        current = owner.zone().npcs.find((n) => n.id === site.id && n.kind === 'rest');
+      if (!current || zone !== 'vale' || owner.interactionDistance(current) > 115)
+        return closeMenu();
+      const reason = owner.refugeThreat()
+        ? 'End nearby combat first.'
+        : owner.s.restCooldown > 0 && !owner.peace
+          ? 'Rest ready in ' + Math.ceil(owner.s.restCooldown) + 's.'
+          : '';
+      openMenu(
+        current.name,
+        'Rest here to heal you and living companions.\nSets your death recovery point. Both refuges share a 90s cooldown.\nFallen companions: Captain or Barracks.',
+        [
+          action(
+            'Rest now',
+            () => {
+              const game = getGame();
+              if (game !== owner || game.zoneId !== zone) return closeMenu();
+              const target = game.zone().npcs.find((n) => n.id === site.id && n.kind === 'rest');
+              if (target && game.interact(target)) {
+                game.acknowledgeRefuge(target);
+                closeMenu();
+              } else refugeIntro(site);
+            },
+            reason || 'Heal and set your recovery point.',
+            !!reason,
+          ),
+          action(
+            'Got it',
+            () => {
+              const game = getGame();
+              if (game === owner && game.zoneId === zone) game.acknowledgeRefuge(current);
+              closeMenu();
+            },
+            'Close without resting.',
+          ),
+        ],
+      );
+    }
     function dungeonEntranceMenu(ref, back = closeMenu) {
       const game = getGame(),
         entrance = game.dungeonEntrance(ref);
@@ -2450,6 +2491,7 @@
       );
     }
     return {
+      refugeIntro,
       dungeonEntranceMenu,
       transport,
       teacher,

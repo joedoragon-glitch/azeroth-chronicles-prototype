@@ -7404,6 +7404,17 @@
     snapshotPassives,
     rangedEnemyCombat,
     chargedSkills,
+    millhavenOnboarding: {
+      version: 1,
+      refugeHouse: 'settlement-major-0',
+      orchardHouse: 'settlement-major-6',
+      refugeDoorOffset: { x: 35, y: 100 },
+      orchardDoor: { x: 240, y: 1420 },
+      orchardTrail: [
+        { x: 275, y: 725 },
+        { x: 200, y: 1020 },
+      ],
+    },
     heroTactics,
     advancedCharges,
     heroAreaTargetCaps,

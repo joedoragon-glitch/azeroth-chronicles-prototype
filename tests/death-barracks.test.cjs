@@ -176,6 +176,7 @@ const ui = Menus.create({
   finaleMenu() {},
 });
 ui.barracksMenu(camp);
+menu.actions.find((a) => a.label === 'Recovery').action();
 let choice = menu.actions.find((a) => a.label.includes('death recovery point'));
 assert(choice && !choice.disabled, 'completed Basic menu offers respawn selection');
 choice.action();
@@ -214,7 +215,9 @@ for (const mode of ['normal', 'nightmare']) {
   assert(successionMenu.description.includes('Succession deaths never cost crowns'));
   b.full = false;
   successionUi.barracksMenu(b);
-  assert(successionMenu.description.includes('Succession deaths never cost crowns'));
+  successionMenu.actions.find((a) => a.label === 'Recovery').action();
+  assert(!successionMenu.actions.some((a) => a.label.includes('death recovery point')));
+  assert(successionMenu.description.includes('Succession: class loss replaces crown loss.'));
   b.full = true;
   assert.equal(
     c.deathPenaltyFraction(),
