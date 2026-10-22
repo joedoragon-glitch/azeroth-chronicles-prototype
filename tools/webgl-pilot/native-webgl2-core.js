@@ -64,7 +64,7 @@
     if (hero) cmds.push({
       kind: 'screenGlow', x: hero.x, y: hero.y, radius: 145,
       rgb: region === 4 ? [215, 191, 231] : [235, 221, 184],
-      alpha: 0.18
+      alpha: 0.18 * clamp(darkness, 0, 1)
     });
     for (const lamp of lights.slice(0, 36)) {
       const carried = lamp.kind === 'carried-lantern',
@@ -78,11 +78,11 @@
         kind: 'screenGlow', x: lamp.x, y, radius,
         rgb: region === 1 ? [245, 208, 150] :
           region === 4 ? [247, 194, 147] : [255, 207, 132],
-        alpha: window ? 0.27 : fire ? 0.30 : 0.25
+        alpha: (window ? 0.27 : fire ? 0.30 : 0.25) * clamp(darkness, 0, 1)
       });
       if (carried) cmds.push({
         kind: 'screenGlow', x: lamp.x, y, radius: 10,
-        rgb: [255, 221, 150], alpha: 0.5
+        rgb: [255, 221, 150], alpha: 0.5 * clamp(darkness, 0, 1)
       });
     }
     return cmds;
