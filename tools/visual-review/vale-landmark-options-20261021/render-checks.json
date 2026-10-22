@@ -1,0 +1,116 @@
+{
+  "previewOnly": true,
+  "runtimeImports": 0,
+  "campaignStatePure": true,
+  "base": "0f5bf0212dacab5c1551e3ae36915a0bfbf8ca4a",
+  "options": [
+    {
+      "id": "refuge",
+      "variant": "A",
+      "reference": "refuge-A.png",
+      "bytes": 33930
+    },
+    {
+      "id": "refuge",
+      "variant": "B",
+      "reference": "refuge-B.png",
+      "bytes": 39198
+    },
+    {
+      "id": "refuge",
+      "variant": "C",
+      "reference": "refuge-C.png",
+      "bytes": 40694
+    },
+    {
+      "id": "orchard",
+      "variant": "A",
+      "reference": "orchard-A.png",
+      "bytes": 41911
+    },
+    {
+      "id": "orchard",
+      "variant": "B",
+      "reference": "orchard-B.png",
+      "bytes": 46071
+    },
+    {
+      "id": "orchard",
+      "variant": "C",
+      "reference": "orchard-C.png",
+      "bytes": 37092
+    },
+    {
+      "id": "captain",
+      "variant": "A",
+      "reference": "captain-A.png",
+      "bytes": 36831
+    },
+    {
+      "id": "captain",
+      "variant": "B",
+      "reference": "captain-B.png",
+      "bytes": 31554
+    },
+    {
+      "id": "captain",
+      "variant": "C",
+      "reference": "captain-C.png",
+      "bytes": 38850
+    },
+    {
+      "id": "supplies",
+      "variant": "A",
+      "reference": "supplies-A.png",
+      "bytes": 35971
+    },
+    {
+      "id": "supplies",
+      "variant": "B",
+      "reference": "supplies-B.png",
+      "bytes": 34020
+    },
+    {
+      "id": "supplies",
+      "variant": "C",
+      "reference": "supplies-C.png",
+      "bytes": 40112
+    },
+    {
+      "id": "mill",
+      "variant": "A",
+      "reference": "mill-A.png",
+      "bytes": 51021
+    },
+    {
+      "id": "mill",
+      "variant": "B",
+      "reference": "mill-B.png",
+      "bytes": 48916
+    },
+    {
+      "id": "mill",
+      "variant": "C",
+      "reference": "mill-C.png",
+      "bytes": 44986
+    },
+    {
+      "id": "treasury",
+      "variant": "A",
+      "reference": "treasury-A.png",
+      "bytes": 36057
+    },
+    {
+      "id": "treasury",
+      "variant": "B",
+      "reference": "treasury-B.png",
+      "bytes": 46284
+    },
+    {
+      "id": "treasury",
+      "variant": "C",
+      "reference": "treasury-C.png",
+      "bytes": 41156
+    }
+  ]
+}

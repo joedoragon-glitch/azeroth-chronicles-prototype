@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-options-awaiting-owner-choice",
+  "designId": "vale-refuge-options-20261021",
+  "name": "Millhaven Refuge",
+  "kind": "structure",
+  "nextAction": "Owner selects or revises A/B/C. Do not activate or publish; implementation batch is on hold.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Owner requested procedural A/B/C designs and a bounded regional landmark assessment; no option accepted and no implementation authorized.",
+    "decisionDate": "2026-10-21",
+    "repositoryIssueOrPR": null,
+    "contentDocuments": [
+      "docs/VALE_LANDMARK_OPTIONS_20261021.md"
+    ],
+    "locationAndLore": "Greenwood Vale; exact native NPC id rest"
+  },
+  "decisions": {
+    "conceptAcceptance": "Alternatives requested only.",
+    "proceduralDesignAcceptance": null,
+    "spriteProductionAuthorization": null,
+    "generatedAppearanceAcceptance": null,
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "0f5bf0212dacab5c1551e3ae36915a0bfbf8ca4a",
+    "ownerFilesAndBranches": [
+      "tools/visual-review/vale-landmark-options-20261021/designs.cjs",
+      "design/vale-landmark-options"
+    ],
+    "exactEntityState": {
+      "zone": "vale",
+      "id": "rest",
+      "choices": [
+        "A",
+        "B",
+        "C"
+      ],
+      "drawBranch": "refuge"
+    },
+    "isolatedReferencePath": "tools/visual-review/vale-landmark-options-20261021/refuge-options.png",
+    "isolatedReferenceHash": "f57ab2f837a95def993a4eac5765ba84ac9c411c77f9795ef00afe7739dc8b5d",
+    "gameplayContextPaths": [
+      "tools/visual-review/vale-landmark-options-20261021/refuge-current-context.webp"
+    ],
+    "traitsToPreserve": [
+      "terracotta tile",
+      "warm plaster and timber",
+      "mossy stone",
+      "local shallow three-quarter perspective",
+      "recognizable service silhouette"
+    ],
+    "assetSpecificDependencies": [
+      "src/prototype/visuals.js",
+      "src/prototype/renderer.js",
+      "src/prototype/world.js",
+      "src/prototype/rules.js"
+    ],
+    "previewSourceSha256": "409cabbe721e6dddb44e23581805e0d0615ffe74c5770ef09d945fdcd6de8033",
+    "contextLimit": "Native 150% current geometry, procedural fallback only. Alternatives are isolated previews, not integrated gameplay screenshots."
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [
+      "vale:rest"
+    ],
+    "requiredVisibleAssets": [
+      "Millhaven Refuge"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Three independent options; no selection inferred"
+    ],
+    "proceduralOwnersAndReasons": [
+      "Preview-only canvas definitions. Selected design would later enter visuals.js after native footprint/door/label/occlusion review."
+    ]
+  },
+  "animationRequirements": {
+    "status": "undecided",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      {
+        "option": "A",
+        "name": "Hearth Hall",
+        "description": "A broad public hall with a sheltered entrance.",
+        "referencePath": "tools/visual-review/vale-landmark-options-20261021/refuge-A.png",
+        "referenceSha256": "b1d7ecfda1eb9ff4d7f1e292e2b32eaa8c8892eff50213a058216a2183f6cfcb",
+        "accepted": false
+      },
+      {
+        "option": "B",
+        "name": "Shelter Court",
+        "description": "Two wings around an open, welcoming courtyard.",
+        "referencePath": "tools/visual-review/vale-landmark-options-20261021/refuge-B.png",
+        "referenceSha256": "bdc53b25a43d1b020e51d4aaa0ed8bde8b339057b3a50f42c186811d67d560ea",
+        "accepted": false
+      },
+      {
+        "option": "C",
+        "name": "Lantern House",
+        "description": "A civic refuge marked by a tall lantern cupola.",
+        "referencePath": "tools/visual-review/vale-landmark-options-20261021/refuge-C.png",
+        "referenceSha256": "58055140a4e8ddce84655b1ff1fecb1604725299a488326a29e30df6a703c9a0",
+        "accepted": false
+      }
+    ],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-options-awaiting-owner-choice",
+  "designId": "vale-treasury-options-20261021",
+  "name": "Thornfang’s Treasury",
+  "kind": "structure",
+  "nextAction": "Owner selects or revises A/B/C. Do not activate or publish; implementation batch is on hold.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Owner requested procedural A/B/C designs and a bounded regional landmark assessment; no option accepted and no implementation authorized.",
+    "decisionDate": "2026-10-21",
+    "repositoryIssueOrPR": null,
+    "contentDocuments": [
+      "docs/VALE_LANDMARK_OPTIONS_20261021.md"
+    ],
+    "locationAndLore": "Greenwood Vale; exact native NPC id supply-entrance"
+  },
+  "decisions": {
+    "conceptAcceptance": "Alternatives requested only.",
+    "proceduralDesignAcceptance": null,
+    "spriteProductionAuthorization": null,
+    "generatedAppearanceAcceptance": null,
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "0f5bf0212dacab5c1551e3ae36915a0bfbf8ca4a",
+    "ownerFilesAndBranches": [
+      "tools/visual-review/vale-landmark-options-20261021/designs.cjs",
+      "design/vale-landmark-options"
+    ],
+    "exactEntityState": {
+      "zone": "vale",
+      "id": "supply-entrance",
+      "choices": [
+        "A",
+        "B",
+        "C"
+      ],
+      "drawBranch": "treasury"
+    },
+    "isolatedReferencePath": "tools/visual-review/vale-landmark-options-20261021/treasury-options.png",
+    "isolatedReferenceHash": "801e094b7c1877d16ffec5edb2a606f0cac269ffd3f5a66bde28740680cfcf4a",
+    "gameplayContextPaths": [
+      "tools/visual-review/vale-landmark-options-20261021/treasury-current-context.webp"
+    ],
+    "traitsToPreserve": [
+      "terracotta tile",
+      "warm plaster and timber",
+      "mossy stone",
+      "local shallow three-quarter perspective",
+      "recognizable service silhouette"
+    ],
+    "assetSpecificDependencies": [
+      "src/prototype/visuals.js",
+      "src/prototype/renderer.js",
+      "src/prototype/world.js",
+      "src/prototype/rules.js"
+    ],
+    "previewSourceSha256": "409cabbe721e6dddb44e23581805e0d0615ffe74c5770ef09d945fdcd6de8033",
+    "contextLimit": "Native 150% current geometry, procedural fallback only. Alternatives are isolated previews, not integrated gameplay screenshots."
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [
+      "vale:supply-entrance"
+    ],
+    "requiredVisibleAssets": [
+      "Thornfang’s Treasury"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Three independent options; no selection inferred"
+    ],
+    "proceduralOwnersAndReasons": [
+      "Preview-only canvas definitions. Selected design would later enter visuals.js after native footprint/door/label/occlusion review."
+    ]
+  },
+  "animationRequirements": {
+    "status": "undecided",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      {
+        "option": "A",
+        "name": "Thorn Lodge",
+        "description": "A fortified timber lodge with a tusk-framed threshold.",
+        "referencePath": "tools/visual-review/vale-landmark-options-20261021/treasury-A.png",
+        "referenceSha256": "277651b8f0607bd69a6b7ab552b4dd897dc5e23e43ad8cc5f1a17fbb8701b122",
+        "accepted": false
+      },
+      {
+        "option": "B",
+        "name": "Root Vault",
+        "description": "An earthen store vault held within living roots.",
+        "referencePath": "tools/visual-review/vale-landmark-options-20261021/treasury-B.png",
+        "referenceSha256": "563b20bb99353dff7f6f8694257fbfed7a30a181149bd3d6f62e6b851ded10ce",
+        "accepted": false
+      },
+      {
+        "option": "C",
+        "name": "Stockade Counting House",
+        "description": "A palisade storehouse with a guarded counting hatch.",
+        "referencePath": "tools/visual-review/vale-landmark-options-20261021/treasury-C.png",
+        "referenceSha256": "163214ec3aaede09d1c64b3b1f2fefe3632fa182d951b40838e777e524034169",
+        "accepted": false
+      }
+    ],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

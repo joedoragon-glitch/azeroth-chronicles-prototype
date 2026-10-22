@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-options-awaiting-owner-choice",
+  "designId": "vale-captain-options-20261021",
+  "name": "Millhaven Captain",
+  "kind": "structure",
+  "nextAction": "Owner selects or revises A/B/C. Do not activate or publish; implementation batch is on hold.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Owner requested procedural A/B/C designs and a bounded regional landmark assessment; no option accepted and no implementation authorized.",
+    "decisionDate": "2026-10-21",
+    "repositoryIssueOrPR": null,
+    "contentDocuments": [
+      "docs/VALE_LANDMARK_OPTIONS_20261021.md"
+    ],
+    "locationAndLore": "Greenwood Vale; exact native NPC id recruiter"
+  },
+  "decisions": {
+    "conceptAcceptance": "Alternatives requested only.",
+    "proceduralDesignAcceptance": null,
+    "spriteProductionAuthorization": null,
+    "generatedAppearanceAcceptance": null,
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "0f5bf0212dacab5c1551e3ae36915a0bfbf8ca4a",
+    "ownerFilesAndBranches": [
+      "tools/visual-review/vale-landmark-options-20261021/designs.cjs",
+      "design/vale-landmark-options"
+    ],
+    "exactEntityState": {
+      "zone": "vale",
+      "id": "recruiter",
+      "choices": [
+        "A",
+        "B",
+        "C"
+      ],
+      "drawBranch": "captain"
+    },
+    "isolatedReferencePath": "tools/visual-review/vale-landmark-options-20261021/captain-options.png",
+    "isolatedReferenceHash": "f1c82a4311511dac893a69d6dc470bb6a6fc452d0b8dc904c7a34d4e06e5875e",
+    "gameplayContextPaths": [
+      "tools/visual-review/vale-landmark-options-20261021/captain-current-context.webp"
+    ],
+    "traitsToPreserve": [
+      "terracotta tile",
+      "warm plaster and timber",
+      "mossy stone",
+      "local shallow three-quarter perspective",
+      "recognizable service silhouette"
+    ],
+    "assetSpecificDependencies": [
+      "src/prototype/visuals.js",
+      "src/prototype/renderer.js",
+      "src/prototype/world.js",
+      "src/prototype/rules.js"
+    ],
+    "previewSourceSha256": "409cabbe721e6dddb44e23581805e0d0615ffe74c5770ef09d945fdcd6de8033",
+    "contextLimit": "Native 150% current geometry, procedural fallback only. Alternatives are isolated previews, not integrated gameplay screenshots."
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [
+      "vale:recruiter"
+    ],
+    "requiredVisibleAssets": [
+      "Millhaven Captain"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Three independent options; no selection inferred"
+    ],
+    "proceduralOwnersAndReasons": [
+      "Preview-only canvas definitions. Selected design would later enter visuals.js after native footprint/door/label/occlusion review."
+    ]
+  },
+  "animationRequirements": {
+    "status": "undecided",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      {
+        "option": "A",
+        "name": "Watch House",
+        "description": "A compact guardhouse with a lookout balcony.",
+        "referencePath": "tools/visual-review/vale-landmark-options-20261021/captain-A.png",
+        "referenceSha256": "f1a5eaed9fa228516d119867771414afb9a158590968d772a9a4339b1ea1f67f",
+        "accepted": false
+      },
+      {
+        "option": "B",
+        "name": "Company Lodge",
+        "description": "An orderly timber hall with an open equipment bay.",
+        "referencePath": "tools/visual-review/vale-landmark-options-20261021/captain-B.png",
+        "referenceSha256": "688eb0cffff49b884663abda891622196eb65b87956a8c6a411823aa358da543",
+        "accepted": false
+      },
+      {
+        "option": "C",
+        "name": "Captain’s Gate",
+        "description": "An open command gateway with a shield crest.",
+        "referencePath": "tools/visual-review/vale-landmark-options-20261021/captain-C.png",
+        "referenceSha256": "3f0d7934ce8d9c0f0aaeeaed2316c0fcf0e16a6d0c8265828bc809eeafdc9c4f",
+        "accepted": false
+      }
+    ],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

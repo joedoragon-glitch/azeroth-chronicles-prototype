@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-options-awaiting-owner-choice",
+  "designId": "vale-supplies-options-20261021",
+  "name": "Millhaven Supplies",
+  "kind": "structure",
+  "nextAction": "Owner selects or revises A/B/C. Do not activate or publish; implementation batch is on hold.",
+  "context": {
+    "originConversation": null,
+    "decisionSummary": "Owner requested procedural A/B/C designs and a bounded regional landmark assessment; no option accepted and no implementation authorized.",
+    "decisionDate": "2026-10-21",
+    "repositoryIssueOrPR": null,
+    "contentDocuments": [
+      "docs/VALE_LANDMARK_OPTIONS_20261021.md"
+    ],
+    "locationAndLore": "Greenwood Vale; exact native NPC id supplier"
+  },
+  "decisions": {
+    "conceptAcceptance": "Alternatives requested only.",
+    "proceduralDesignAcceptance": null,
+    "spriteProductionAuthorization": null,
+    "generatedAppearanceAcceptance": null,
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "0f5bf0212dacab5c1551e3ae36915a0bfbf8ca4a",
+    "ownerFilesAndBranches": [
+      "tools/visual-review/vale-landmark-options-20261021/designs.cjs",
+      "design/vale-landmark-options"
+    ],
+    "exactEntityState": {
+      "zone": "vale",
+      "id": "supplier",
+      "choices": [
+        "A",
+        "B",
+        "C"
+      ],
+      "drawBranch": "supplies"
+    },
+    "isolatedReferencePath": "tools/visual-review/vale-landmark-options-20261021/supplies-options.png",
+    "isolatedReferenceHash": "c6c1779609b5efd602b33bddfef898c584d31a58ce141690d6beb462043ec33a",
+    "gameplayContextPaths": [
+      "tools/visual-review/vale-landmark-options-20261021/supplies-current-context.webp"
+    ],
+    "traitsToPreserve": [
+      "terracotta tile",
+      "warm plaster and timber",
+      "mossy stone",
+      "local shallow three-quarter perspective",
+      "recognizable service silhouette"
+    ],
+    "assetSpecificDependencies": [
+      "src/prototype/visuals.js",
+      "src/prototype/renderer.js",
+      "src/prototype/world.js",
+      "src/prototype/rules.js"
+    ],
+    "previewSourceSha256": "409cabbe721e6dddb44e23581805e0d0615ffe74c5770ef09d945fdcd6de8033",
+    "contextLimit": "Native 150% current geometry, procedural fallback only. Alternatives are isolated previews, not integrated gameplay screenshots."
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [
+      "vale:supplier"
+    ],
+    "requiredVisibleAssets": [
+      "Millhaven Supplies"
+    ],
+    "reusedDesignIds": [],
+    "variantRequirements": [
+      "Three independent options; no selection inferred"
+    ],
+    "proceduralOwnersAndReasons": [
+      "Preview-only canvas definitions. Selected design would later enter visuals.js after native footprint/door/label/occlusion review."
+    ]
+  },
+  "animationRequirements": {
+    "status": "undecided",
+    "gameplayStates": [],
+    "directions": [],
+    "pivotContract": null,
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [
+      {
+        "option": "A",
+        "name": "Provision Store",
+        "description": "A hoist-front storehouse with an open stock bay.",
+        "referencePath": "tools/visual-review/vale-landmark-options-20261021/supplies-A.png",
+        "referenceSha256": "9502a3abe81c1307634738c8277f1dbb5ffe9b1cb34536328bbc5a7dd82dac8f",
+        "accepted": false
+      },
+      {
+        "option": "B",
+        "name": "Market Arcade",
+        "description": "Two covered counters beneath a broad tiled roof.",
+        "referencePath": "tools/visual-review/vale-landmark-options-20261021/supplies-B.png",
+        "referenceSha256": "6b284a4a9c893d2e6f3349bfb8e6b7c0cdb9e603f2e0f366d3c58836619f0229",
+        "accepted": false
+      },
+      {
+        "option": "C",
+        "name": "Wagon Store",
+        "description": "A tall stock barn with a sheltered loading porch.",
+        "referencePath": "tools/visual-review/vale-landmark-options-20261021/supplies-C.png",
+        "referenceSha256": "6da3423e92fd6e7dacd81cef5ff80d86d24e010ad3b5fae1d8df084b4ece8555",
+        "accepted": false
+      }
+    ],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}
