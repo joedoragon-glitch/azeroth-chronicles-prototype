@@ -821,7 +821,9 @@
               continue;
             }
             const victim = this.combatTargets().find(
-              (u) => this.distanceToSegment(u, before, p) < (p.style === 'cargo' ? 34 : 22),
+              (u) =>
+                this.distanceToSegment(u, before, p) <
+                (p.hitRadius ?? (p.style === 'cargo' ? 34 : 22)),
             );
             if (victim) {
               const landed = this.hitParty(victim, p.damage, p.manaDrain || 0, p.sourceId);

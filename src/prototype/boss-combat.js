@@ -2278,6 +2278,8 @@
               dy: Math.sin(angle),
               speed: 490,
               life: (a.radius - 7) / 490, // The last fragment stays inside its actual warning.
+              preserveFootprint: true,
+              hitRadius: R.combatGeometry.canisterHalfWidth,
               damage: this.weakenedEnemyDamage(e) / 9, // At close range nine fragments cap at one raw boss hit.
               manaDrain: 0,
               source: 'enemy',

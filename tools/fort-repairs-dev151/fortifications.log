@@ -1,0 +1,4 @@
+PASS regional/compound/interior fort coverage, AI range/wall aim, real impact/dodge, 40% damage, exit/piercing, obstacles and lifecycle
+PASS enemy-only low props/screens in fields, dungeons and other interiors; friendly sight and movement preserved
+PASS fixed landing point, dodge, short/long ticks, one ground impact and no continued arc flight
+PASS fort-only 30% projectile speed, fixed footprint/lifetime and idempotent launch preparation

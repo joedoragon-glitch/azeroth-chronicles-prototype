@@ -82,7 +82,7 @@
         return capsulePoints(
           from,
           { x: from.x + Math.cos(angle) * a.radius, y: from.y + Math.sin(angle) * a.radius },
-          6,
+          G.canisterHalfWidth,
         );
       });
     }

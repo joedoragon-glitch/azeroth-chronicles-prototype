@@ -2,6 +2,7 @@
 (function (root) {
   'use strict';
   const combatGeometry = {
+    canisterHalfWidth: 6,
     chargeHalfWidth: 55,
     lineHalfWidth: 45,
     dualLineHalfWidth: 35,

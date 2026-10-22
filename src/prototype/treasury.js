@@ -209,8 +209,9 @@
         if (this.peace) state.unlocked = true;
         else if (captain?.hp <= 0) {
           if (
-            z.enemies.some((e) => e !== captain && !e.neutral && e.hp > 0) ||
-            Object.values(this.s.pending).some((p) => p.kind === 'mob' && p.zone === z.id)
+            this.supplyRoom(z.id) &&
+            (z.enemies.some((e) => e !== captain && !e.neutral && e.hp > 0) ||
+              Object.values(this.s.pending).some((p) => p.kind === 'mob' && p.zone === z.id))
           )
             this.emptyDungeonDefenders(captain);
           // Existing v4 saves can already contain a defeated captain.
