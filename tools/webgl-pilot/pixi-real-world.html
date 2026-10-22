@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<base href="../../"><title>Azeroth — PixiJS real game GPU scene (development only)</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0f1f1b;color:#f0f2e7;font:15px/1.5 system-ui;padding:17px}
+main{max-width:1500px;margin:auto}h1{font-size:1.5rem}h2{font-size:1.05rem}
+.flex{display:flex;flex-wrap:wrap;gap:12px}.flex section{flex:1 1 390px}
+canvas{display:block;width:100%;height:auto;background:#0b1a14;border:1px solid #718477}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#1e302a;padding:16px;max-height:560px;overflow:auto}
+label{display:inline-flex;flex-direction:column;gap:4px;margin:4px}
+select,button{font:inherit;background:#314c41;border:1px solid #8bad97;color:#fff;padding:8px;border-radius:5px}
+button:disabled{opacity:.6}.note{color:#cbdbc9;font-size:.9rem}a{color:#a5dfbf}
+</style></head><body><main>
+<h1>Azeroth Chronicles · Real PixiJS WebGL2 world pilot</h1>
+<p><b>Sandbox only—not the game's graphics selector.</b> The Canvas side draws the original live game.
+The WebGL2 side uses PixiJS to draw an independent scene graph: a once-prepared
+terrain/roads image, individual approved actor textures (with animated atlas frames),
+and GPU-generated lamp glows. Procedural entities are prepared as separate,
+moving GPU textures. No completed game frame is uploaded during timed WebGL2 drawing.</p>
+<p class="note"><b>Known differences:</b> Individual procedural body paintings are currently static after
+their initial bake; detailed outlines, combat overlays, certain lamp fixtures, world
+labels and visual effects have not yet been ported. These omissions are recorded, not hidden.
+Any timing advantage is provisional until full scene parity passes. This branch is not deployed
+to the playable GitHub Pages game.</p>
+<label>Region<select id="region"><option value="vale">Greenwood Vale</option><option value="march">Whispering Marches</option>
+<option value="highlands">Ironroot Highlands</option><option value="frontier">Ashen Frontier</option>
+<option value="crown">Dark Crown</option></select></label>
+<label>Light<select id="lighting"><option value="night">Night / real lamps</option><option value="day">Day</option></select></label>
+<label>Zoom<select id="zoom"><option value="1">100%</option><option value="1.5" selected>150%</option>
+<option value="1.75">175%</option></select></label>
+<label>Viewport<select id="size"><option value="960x540">960 × 540</option>
+<option value="1600x900" selected>1600 × 900</option>
+<option value="2403x1248">Chromebook 2403 × 1248</option></select></label>
+<button id="run" type="button">Compare real Canvas vs live PixiJS GPU scene</button>
+<p id="status" role="status">Development pilot — not yet hardware-validated.</p>
+<div class="flex"><section><h2>Original Canvas 2D (reference)</h2>
+<canvas id="reference" width="1600" height="900"></canvas></section>
+<section><h2>PixiJS WebGL2 (actors + scene + GPU lamps)</h2><div id="pixi-output"></div></section></div>
+<h2>Visual parity and performance</h2><pre id="results">Run the experiment to inspect counts and pixel differences.</pre>
+</main>
+<script defer src="https://cdn.jsdelivr.net/npm/pixi.js@8.22.0/dist/pixi.min.js"></script>
+<script defer src="./tools/webgl-pilot/native-webgl2-core.js"></script>
+<script defer src="./tools/webgl-pilot/native-sprite-adapter.js"></script>
+<script defer src="./tools/webgl-pilot/pixi-scene-bridge.js"></script>
+<script defer src="./tools/webgl-pilot/pixi-real-world.js?v=1"></script>
+</body></html>
