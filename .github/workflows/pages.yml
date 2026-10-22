@@ -22,9 +22,9 @@ jobs:
     outputs:
       reuse: ${{ steps.reuse.outputs.reuse || 'false' }}
       run_id: ${{ steps.reuse.outputs.run_id }}
-      # One-time isolated four-strategy graphics diagnostic publication. No gameplay checks.
-      # Exact parent SHA limits this exception to the next main push.
-      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == '4c3536391ce7ef0088113ba4433bce91373745e1' }}
+      # One-time owner-authorized manual-resolution release: focused tests and packaging only.
+      # Parent guard expires immediately after the intended main push.
+      hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == 'e296b113a61487f36af0cc681a3eecc41c6ac475' }}
     steps:
       - uses: actions/checkout@v4
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -347,9 +347,11 @@ jobs:
       - name: Run full game checks
         if: needs.release-plan.outputs.reuse != 'true' && needs.release-plan.outputs.hotkey_fast != 'true'
         uses: ./.github/actions/check-game
-      - name: Publish standalone graphics diagnostic without game tests
+      - name: Run focused manual-resolution and settings checks only
         if: needs.release-plan.outputs.hotkey_fast == 'true'
-        run: echo 'One-time demo page publication; gameplay and phone suites skipped.'
+        run: |
+          node tests/render-resolution.test.cjs
+          node tests/game-menu-ui.test.cjs
       - uses: actions/upload-artifact@v4
         if: always() && needs.release-plan.outputs.reuse != 'true' && needs.release-plan.outputs.hotkey_fast != 'true'
         with:

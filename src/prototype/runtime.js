@@ -183,9 +183,12 @@
   // simulation remain independent of this device-local presentation policy.
   const resolutionPreferenceKey = 'azeroth-render-resolution-v1';
   function createResolution(storage) {
+    // Manual density is relative to CSS viewport size, never device resolution.
+    const fixedRatios = Object.freeze({ '100': 1, '80': 0.8, '60': 0.6, '50': 0.5 });
     let preference = 'auto';
     try {
-      if (storage?.getItem(resolutionPreferenceKey) === 'native') preference = 'native';
+      const saved = storage?.getItem(resolutionPreferenceKey);
+      if (saved === 'native' || Object.hasOwn(fixedRatios, saved)) preference = saved;
     } catch (_) {}
     let maximum = 1,
       ratio = 1,
@@ -193,6 +196,9 @@
       checkAt = null,
       changedAt = null,
       changes = 0;
+    function selectedRatio() {
+      return Object.hasOwn(fixedRatios, preference) ? fixedRatios[preference] : maximum;
+    }
     function suspend() {
       samples = [];
       checkAt = null;
@@ -205,14 +211,17 @@
         return ratio;
       },
       configure(value) {
-        if (!Number.isFinite(value) || value <= 0 || value === maximum) return;
-        maximum = ratio = value;
+        if (!Number.isFinite(value) || value <= 0) return;
+        if (value === maximum && ratio === selectedRatio()) return;
+        maximum = value;
+        ratio = selectedRatio();
         suspend();
       },
       select(value) {
-        if (!['auto', 'native'].includes(value)) return false;
+        if (value !== 'auto' && value !== 'native' && !Object.hasOwn(fixedRatios, value))
+          return false;
         preference = value;
-        ratio = maximum;
+        ratio = selectedRatio();
         changedAt = null;
         suspend();
         try {

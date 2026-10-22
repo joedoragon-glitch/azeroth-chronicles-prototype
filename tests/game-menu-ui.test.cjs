@@ -88,11 +88,23 @@ for (const language of ['en', 'es']) {
   short();
   click('Optimization Mode');
   assert.equal(storage.get('azeroth-optimization-mode-v1'), 'on');
+  click(t('Rendering resolution', 'Resolución de renderizado'));
   click(t('Maximum sharpness', 'Nitidez máxima'));
   assert.equal(s.Prototype.renderResolution.preference, 'native');
   assert.equal(storage.get(s.PrototypeRuntime.resolutionPreferenceKey), 'native');
   click(t('Automatic sharpness', 'Nitidez automática'));
   assert.equal(s.Prototype.renderResolution.preference, 'auto');
+  for (const [percent, label] of [
+    ['100', t('100% · Standard', '100% · Estándar')],
+    ['80', t('80% · Balanced', '80% · Equilibrado')],
+    ['60', t('60% · Performance', '60% · Rendimiento')],
+    ['50', t('50% · Maximum speed', '50% · Máxima velocidad')],
+  ]) {
+    click(label);
+    assert.equal(s.Prototype.renderResolution.preference, percent);
+    assert.equal(storage.get(s.PrototypeRuntime.resolutionPreferenceKey), percent);
+  }
+  back();
   click('Optimization Mode');
   assert.equal(storage.get('azeroth-optimization-mode-v1'), 'off');
   back();

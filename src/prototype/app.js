@@ -715,6 +715,13 @@
     'Simpler scenery and lower resolution.': 'Escenario más simple y menor resolución.',
     'Automatic sharpness': 'Nitidez automática',
     'Automatic sharpness ✓': 'Nitidez automática ✓',
+    'Rendering resolution': 'Resolución de renderizado',
+    'Choose world detail without changing screen size or controls.':
+      'Ajusta la resolución del mundo sin cambiar la pantalla ni los controles.',
+    '100% · Standard': '100% · Estándar',
+    '80% · Balanced': '80% · Equilibrado',
+    '60% · Performance': '60% · Rendimiento',
+    '50% · Maximum speed': '50% · Máxima velocidad',
     'Maximum sharpness': 'Nitidez máxima',
     'Maximum sharpness ✓': 'Nitidez máxima ✓',
     'Adjusts resolution to keep play smooth.': 'Ajusta la resolución para mantener la fluidez.',
@@ -2373,23 +2380,43 @@
           },
           'Simpler scenery and lower resolution.',
         ),
-        ...[
-          ['auto', 'Automatic sharpness', 'Adjusts resolution to keep play smooth.'],
-          ['native', 'Maximum sharpness', 'Sharper image; more graphics work.'],
-        ].map(([value, label, detail]) =>
-          action(
-            label + (renderResolution.preference === value ? ' ✓' : ''),
-            () => {
-              renderResolution.select(value);
-              resize();
-              runtime.reset();
-              fps.suspend();
-              graphicsMenu(back);
-            },
-            detail,
-          ),
-        ),
+        action('Rendering resolution', () => renderingResolutionMenu(() => graphicsMenu(back))),
       ],
+      back,
+    );
+  }
+  function renderingResolutionMenu(back) {
+    const choices = [
+      ['auto', 'Automatic sharpness', 'Adjusts resolution to keep play smooth.'],
+      ['native', 'Maximum sharpness', 'Sharper image; more graphics work.'],
+      ['100', '100% · Standard', ''],
+      ['80', '80% · Balanced', ''],
+      ['60', '60% · Performance', ''],
+      ['50', '50% · Maximum speed', ''],
+    ];
+    openMenu(
+      'Rendering resolution',
+      'Choose world detail without changing screen size or controls.',
+      choices.map(([value, label, detail]) => {
+        const fixed = Number(value);
+        const pixels = Number.isFinite(fixed)
+          ? ' · ' +
+            Math.round(innerWidth * fixed / 100) +
+            ' × ' +
+            Math.round(innerHeight * fixed / 100)
+          : '';
+        return action(
+          label + pixels + (renderResolution.preference === value ? ' ✓' : ''),
+          () => {
+            renderResolution.select(value);
+            resize();
+            runtime.reset();
+            fps.suspend();
+            renderingResolutionMenu(back);
+          },
+          detail,
+        );
+      }),
       back,
     );
   }
