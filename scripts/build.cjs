@@ -84,6 +84,11 @@ if (site) {
     'tools/webgl-pilot/real-world-gpu.js',
     'tools/webgl-pilot/canvas-vs-webgl.html',
     'tools/webgl-pilot/canvas-vs-webgl.js',
+    'tools/webgl-pilot/pixi-real-world.html',
+    'tools/webgl-pilot/pixi-real-world.js',
+    'tools/webgl-pilot/pixi-scene-bridge.js',
+    'tools/webgl-pilot/native-webgl2-core.js',
+    'tools/webgl-pilot/native-sprite-adapter.js',
     ...spriteResources.map((e) => e.src?.replace(/^\.\//, '')).filter(Boolean),
   ])) {
     const dest = path.join(target, file);
