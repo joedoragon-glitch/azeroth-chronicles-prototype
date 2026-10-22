@@ -39,6 +39,20 @@ The GPU core **does not yet** cover dynamic command extraction from all producti
 
 For this foundation's focused checks only: `node --test tools/webgl-pilot/native-webgl2-core.test.cjs`. The old readiness gate remains mandatory and **NOT_READY**.
 
+## Second GPU-native foundation: live sprite selection and bounded asset residency
+
+The staging branch now includes three additional isolated files:
+
+- `tools/webgl-pilot/native-sprite-adapter.js` — reads the **existing `PrototypeSprites` catalog** through `definitionFor`, `variant`, `frameFor`, `entityScale` and `timeMs`, and translates its original images and clip-frame rectangles into native GPU sprite commands. It tracks the same kinds of actor motion/clip directions, hurt/death, explicit clips and presentation events without mutating the game simulation. Its focused checks use the **real manifest** (including actual goblin animation atlases and ranger art). Reduced-motion support uses the game's original static resource. Assets excluded by current production art policy (including the paladin's procedurally authored body) are explicit `original-game-procedural-art` blockers, not invisible omissions. This adapter is not installed into `PrototypeSprites` or the playable game.
+- `tools/webgl-pilot/native-asset-residency.js` — accepts only canonical relative PNG/WebP sprite asset paths, verifies decoded dimensions against the approved manifest, deduplicates concurrent requests, limits decoding concurrency and queue length, and implements a bounded **64 MiB default GPU texture residency with LRU eviction** and frame pinning. A missing or incorrect original image rejects; it is never silently replaced. Resource generation cancellation rejects stale jobs before they upload new art into an invalidated GPU context.
+- `tools/webgl-pilot/native-webgl2-core.js` now validates a **complete ordered frame display list before clearing or drawing any pixels**. Unsupported effects, invalid lamp/grade values and unavailable textures fail atomically rather than producing a partly painted frame. Existing sprite, lamp-glow, night-grade and context-loss GPU primitives remain staging-only.
+
+Corresponding narrow tests: `native-sprite-adapter.test.cjs` (8 cases), `native-asset-residency.test.cjs` (9), `native-webgl2-core.test.cjs` (9), and `renderer-release-contract.test.cjs` (5). **All 31 checks passed in an isolated JavaScript test harness using mocked GPU interfaces and source files from this branch.** There were *no actual WebGL shader/hardware visual comparisons, game/browser suites, CI runs, or deployments for this work*. These checks validate logic and guards, not frame fidelity, usable FPS or game readiness.
+
+**Known necessary engineering work:** The production Canvas renderer owns complex original actor overlays, newer procedural paladin/mage/armor bodies, terrain and road clipping, scene fixture geometry, animated glows, combat effects, occlusion, camera labels, dungeons, and the exact original night screen-blending order. They are not yet emitted as native WebGL commands. Some animations and presentation behavior are private to the Canvas implementation, so independent per-frame command extraction and side-by-side hardware parity need further work. The 64 MiB sprite budget is a starting bound, not an approved Chromebook memory allocation; sustained resource pressure must be measured on hardware. Shader source compilation and actual lighting/alpha parity remain unverified on real hardware.
+
+**Readiness stays `NOT_READY`**, and no graphics Settings selector is installed. When integration is explicitly approved after full parity, the only two options will remain **Canvas 2D (default)** and **WebGL2**. Light fixture artwork, lamp glow, original grading and visual effects may all be GPU-generated in WebGL2; they must faithfully match their existing approved designs, not remain Canvas-only.
+
 ## Required genuine WebGL implementation work
 
 1. Native GPU batching for sprites and procedural bodies with original per-actor frame selection, artwork pivots, zoom, facing and depth order. Do not replace quality artwork with generic polygons.
