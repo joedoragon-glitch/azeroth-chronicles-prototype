@@ -20,6 +20,9 @@ for (let i = 0; i < 190; i++) p.record({
 const r = p.report();
 assert.equal(r.activeFrames, 180);
 assert.equal(r.drawnFrames, 90);
+assert.equal(r.callbackFps, 16.7);
+assert.equal(r.displayedFps, 8.3);
+assert.equal(r.adaptiveSkippedDraws, 0);
 assert.equal(r.stages.simulationMs.meanMs, 20);
 assert.equal(r.stages.enemyAIMs.p95Ms, 7);
 assert.equal(r.stages.renderMs.samples, 90);

@@ -117,6 +117,13 @@ for (const language of ['en', 'es']) {
   assert.equal(s.Prototype.fps.preference, '30');
   click('Auto');
   assert.equal(s.Prototype.fps.preference, 'auto');
+  assert.equal(s.Prototype.frameSkip.enabled, false, 'Off by default');
+  click(t('Adaptive frame skip', 'Salto adaptativo de fotogramas'));
+  assert.equal(s.Prototype.frameSkip.enabled, true);
+  assert.equal(storage.get(s.PrototypeRuntime.frameSkipPreferenceKey), 'on');
+  click(t('Adaptive frame skip', 'Salto adaptativo de fotogramas'));
+  assert.equal(s.Prototype.frameSkip.enabled, false);
+  assert.equal(storage.get(s.PrototypeRuntime.frameSkipPreferenceKey), 'off');
   back();
   click(t('Performance details', 'Detalles de rendimiento'));
   click(t('Reset performance sample', 'Reiniciar muestra de rendimiento'));

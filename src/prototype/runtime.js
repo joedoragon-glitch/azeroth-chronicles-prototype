@@ -179,6 +179,76 @@
       suspend: reset,
     };
   }
+
+  // Opt-in presentation-only reduction. Never skips simulation or input.
+  const frameSkipPreferenceKey = 'azeroth-adaptive-frame-skip-v1';
+  function createFrameSkip(storage) {
+    let enabled = false;
+    try {
+      enabled = storage?.getItem(frameSkipPreferenceKey) === 'on';
+    } catch (_) {}
+    let drawWork = null,
+      renderWork = null,
+      drawnSamples = 0,
+      lastSkipped = false,
+      lastDrawAt = null,
+      protectUntil = -Infinity,
+      skippedDraws = 0;
+    function suspend() {
+      drawWork = renderWork = null;
+      drawnSamples = 0;
+      lastSkipped = false;
+      lastDrawAt = null;
+      protectUntil = -Infinity;
+    }
+    return {
+      get enabled() { return enabled; },
+      select(value) {
+        if (typeof value !== 'boolean') return false;
+        enabled = value;
+        skippedDraws = 0;
+        suspend();
+        try { storage?.setItem(frameSkipPreferenceKey, enabled ? 'on' : 'off'); } catch (_) {}
+        return true;
+      },
+      protect(now) {
+        if (enabled && Number.isFinite(now))
+          protectUntil = Math.max(protectUntil, now + 300);
+      },
+      // Called only for a drawing already permitted by the regular FPS limiter.
+      shouldSkip(now, target) {
+        if (!enabled || !Number.isFinite(now) || ![30, 60].includes(target)) return false;
+        const stressed =
+          drawnSamples >= 6 &&
+          drawWork > (1000 / target) * 1.12 &&
+          renderWork >= 5;
+        const skip = stressed && !lastSkipped && lastDrawAt !== null &&
+          now - lastDrawAt < 110 && now >= protectUntil;
+        lastSkipped = skip;
+        if (skip) skippedDraws++;
+        return skip;
+      },
+      observe(now, workMs, renderMs, drawn) {
+        if (!enabled || !drawn || !Number.isFinite(now) ||
+          !Number.isFinite(workMs) || workMs < 0 ||
+          !Number.isFinite(renderMs) || renderMs < 0) return;
+        // Skipped callbacks never count as artificially cheap drawings.
+        const weight = 0.25;
+        drawWork = drawWork === null ? workMs : drawWork * (1 - weight) + workMs * weight;
+        renderWork = renderWork === null ? renderMs : renderWork * (1 - weight) + renderMs * weight;
+        drawnSamples++;
+        lastDrawAt = now;
+      },
+      suspend,
+      status() {
+        return {
+          enabled, skippedDraws, drawnSamples,
+          estimatedDrawWorkMs: drawWork === null ? null : Math.round(drawWork * 100) / 100,
+          estimatedRenderWorkMs: renderWork === null ? null : Math.round(renderWork * 100) / 100,
+        };
+      },
+    };
+  }
   // Adapt only the backing-store density. CSS coordinates, camera, input and
   // simulation remain independent of this device-local presentation policy.
   const resolutionPreferenceKey = 'azeroth-render-resolution-v1';
@@ -300,17 +370,25 @@
       const stages = {};
       for (const key of keys)
         stages[key] = summary(samples.filter(s => key !== 'renderMs' || s.drawn).map(s => s[key]));
+      const durationMs = samples.slice(1).reduce((total, sample) => total + sample.intervalMs, 0);
+      const activeFrames = samples.length;
+      const drawnFrames = samples.filter(s => s.drawn).length;
+      const actualDraws = samples.slice(1).filter(s => s.drawn).length;
+      const rate = count => durationMs > 0
+        ? Math.round(count * 10000 / durationMs) / 10 : 0;
       return {
-        activeFrames: samples.length,
-        drawnFrames: samples.filter(s => s.drawn).length,
+        activeFrames, drawnFrames,
+        adaptiveSkippedDraws: samples.filter(s => s.adaptiveSkipped).length,
+        callbackFps: rate(Math.max(0, activeFrames - 1)),
+        displayedFps: rate(actualDraws),
         stages,
-        note: 'AI is included within simulation, and other simulation excludes measured AI. Render uses drawn frames only. Separate p95 values cannot be added as a frame total.'
+        note: 'Callback FPS counts game-update opportunities; displayed FPS counts world drawings. AI is included in simulation. Renderer data uses drawn frames only; separate p95 values cannot be added.'
       };
     }
     return {
       record(row) {
         if (!row || !Number.isFinite(row.frameWorkMs) || row.frameWorkMs < 0) return;
-        const sample = { drawn: !!row.drawn };
+        const sample = { drawn: !!row.drawn, adaptiveSkipped: !!row.adaptiveSkipped };
         for (const key of keys) sample[key] = Number.isFinite(row[key]) ? Math.max(0, row[key]) : 0;
         samples.push(sample);
         if (samples.length > 180) samples.shift();
@@ -321,7 +399,9 @@
         const r = report();
         if (!r.activeFrames) return 'Frame stages: no active gameplay sampled.';
         const print = (label, key) => label + ': ' + r.stages[key].meanMs + ' / ' + r.stages[key].p95Ms + ' ms';
-        return 'Frame stages · mean / p95 (' + r.activeFrames + ' active, ' + r.drawnFrames + ' drawn)\n' +
+        return 'Game updates ' + r.callbackFps + '/s · displayed ' + r.displayedFps +
+          '/s · adaptive skips ' + r.adaptiveSkippedDraws + '\n' +
+          'Frame stages · mean / p95 (' + r.activeFrames + ' active, ' + r.drawnFrames + ' drawn)\n' +
           [print('Simulation total', 'simulationMs'), print('  Companion AI', 'companionAIMs'),
             print('  Enemy AI', 'enemyAIMs'), print('  Other simulation', 'otherSimulationMs'),
             print('Audio update', 'audioUpdateMs'), print('Event dispatch + audio effects', 'eventDispatchMs'),
@@ -336,6 +416,8 @@
     create,
     createFrameRate,
     fpsPreferenceKey,
+    createFrameSkip,
+    frameSkipPreferenceKey,
     createResolution,
     resolutionPreferenceKey,
   };

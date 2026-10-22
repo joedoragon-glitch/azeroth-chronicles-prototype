@@ -703,6 +703,9 @@
     'Camera zoom': 'Zoom de cámara',
     'Graphics quality': 'Calidad gráfica',
     'Frame rate': 'Fotogramas por segundo',
+    'Adaptive frame skip': 'Salto adaptativo de fotogramas',
+    'Skips some world drawings under load; gameplay and warnings continue.':
+      'Omite algunos dibujos del mundo bajo carga; el juego y los avisos continúan.',
     'Performance details': 'Detalles de rendimiento',
     'Choose what to adjust.': 'Elige qué ajustar.',
     'Choose phone or desktop controls. Your save stays the same.':
@@ -1394,6 +1397,7 @@
   const runtime = PrototypeRuntime.create();
   const frameProfile = PrototypeRuntime.createFrameProfile();
   const fps = PrototypeRuntime.createFrameRate(localStorage);
+  const frameSkip = PrototypeRuntime.createFrameSkip(localStorage);
   const renderResolution = PrototypeRuntime.createResolution(localStorage);
 
   const {
@@ -1442,6 +1446,7 @@
     frameProfile,
     renderResolution,
     fps,
+    frameSkip,
     input,
     save,
     openMenu,
@@ -2244,6 +2249,7 @@
                 frameProfile: frameProfile.report(),
                 frameRatePreference: fps.preference,
                 frameRateTarget: fps.target,
+                frameSkip: frameSkip.status(),
                 renderResolution: renderResolution.status(),
                 optimizationMode: optimizationMode ? 'on' : 'off',
                 devicePixelRatio: window.devicePixelRatio || 1,
@@ -2440,12 +2446,24 @@
             label + (fps.preference === value ? ' ✓' : ''),
             () => {
               fps.select(value);
+              frameSkip.suspend();
               runtime.reset();
-      frameProfile.reset();
+              frameProfile.reset();
               frameRateMenu(back);
             },
             detail,
           ),
+        ),
+        action(
+          'Adaptive frame skip · ' + (frameSkip.enabled ? 'On ✓' : 'Off ✓'),
+          () => {
+            frameSkip.select(!frameSkip.enabled);
+            fps.suspend();
+            runtime.reset();
+            frameProfile.reset();
+            frameRateMenu(back);
+          },
+          'Skips some world drawings under load; gameplay and warnings continue.',
         ),
       ],
       back,
@@ -4906,6 +4924,7 @@
   function frame(now) {
     syncPartyChargeClock();
     if (document.hidden) {
+      frameSkip.suspend();
       renderResolution.suspend();
       runtime.suspend();
       fps.suspend();
@@ -5072,7 +5091,13 @@
       if (stageTimes) stageTimes.hudMs = performance.now() - hudAt;
     }
     if (!frozen) {
-      const draw = fps.shouldDraw(now);
+      // Protect urgent cues even when the ordinary FPS limiter skips this callback.
+      if (events.some(e => e.type === 'warning' || e.type === 'eliteWarning' ||
+          e.type === 'chargeInterrupted' || e.type === 'death'))
+        frameSkip.protect(now);
+      const eligibleDraw = fps.shouldDraw(now);
+      const adaptiveSkipped = eligibleDraw && frameSkip.shouldSkip(now, fps.target);
+      const draw = eligibleDraw && !adaptiveSkipped;
       if (draw) {
         const sample = runtime.record(now, frameStart, () => renderer.draw());
         stageTimes.renderMs += sample.renderMs;
@@ -5087,8 +5112,9 @@
         }
       }
       fps.observe(now, performance.now() - frameStart, draw);
-      const frameWorkMs = performance.now() - frameStart,
-        otherSimulationMs = Math.max(0,
+      const frameWorkMs = performance.now() - frameStart;
+      frameSkip.observe(now, frameWorkMs, stageTimes.renderMs, draw);
+      const otherSimulationMs = Math.max(0,
           stageTimes.simulationMs - stageTimes.companionAIMs - stageTimes.enemyAIMs),
         accounted = stageTimes.simulationMs + stageTimes.hudMs + stageTimes.audioUpdateMs +
           stageTimes.eventDispatchMs + stageTimes.renderMs;
@@ -5096,9 +5122,10 @@
         ...stageTimes,
         otherSimulationMs, frameWorkMs, intervalMs,
         otherJsMs: Math.max(0, frameWorkMs - accounted),
-        drawn: draw,
+        drawn: draw, adaptiveSkipped,
       });
     } else {
+      frameSkip.suspend();
       renderResolution.suspend();
       fps.suspend();
       runtime.suspend();
