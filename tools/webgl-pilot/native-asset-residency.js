@@ -130,10 +130,13 @@
     }
     function clear() {
       epoch++;
-      for(const task of queue.splice(0)) {
-        pending.delete(task.id);
-        task.reject(Error('GPU assets invalidated before decode'));
-      }
+      // Reject pending AND actively decoding jobs immediately. Old results
+      // can no longer register images after this generation is invalidated.
+      const cancelled=[...pending.values()];
+      pending.clear();
+      queue.length=0;
+      for(const task of cancelled)
+        task.reject(Error('GPU assets invalidated before decode finished'));
       for(const id of resident.keys()) gpu.releaseTexture(id);
       resident.clear();pinned.clear();used=0;
     }
