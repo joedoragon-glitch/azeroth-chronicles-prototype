@@ -226,6 +226,20 @@
      }
      effectsStage.addChildAt(grade,0);
    }
+   // Outside measured frames: compare GPU lights independently from actors.
+   async function captureLightingOnly() {
+     const prior=actorsStage.visible;
+     actorsStage.visible=false;
+     try {
+       const raw=await app.renderer.extract.pixels({
+         target:app.stage,frame:new PIXI.Rectangle(0,0,width,height)
+       });
+       return raw?.pixels||raw;
+     } finally {
+       actorsStage.visible=prior;
+       app.render();
+     }
+   }
    // Outside timed frames: capture only the retained real terrain/roads texture.
    async function captureBackgroundOnly() {
      const a=actorsStage.visible,e=effectsStage.visible;
@@ -259,7 +273,7 @@
    }
    return Object.freeze({
      setBackground,moveBackground,registerTexture,hasTexture,
-     syncActors,syncLamps,setAtmosphere,captureBackgroundOnly,draw,metrics,destroy
+     syncActors,syncLamps,setAtmosphere,captureBackgroundOnly,captureLightingOnly,draw,metrics,destroy
    });
  }
  const api=Object.freeze({create,atmosphereLayers});

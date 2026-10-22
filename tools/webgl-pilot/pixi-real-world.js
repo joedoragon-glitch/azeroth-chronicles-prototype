@@ -241,6 +241,7 @@
        unsupportedDynamicOverlays:0,intentionallyBodyless:0,
        unexpectedEmptyArtwork:0};
      const skippedArtwork=new Map();
+     let referenceLightSources=[];
      async function ensureTexture(src){
        if(measuredResourcesLocked&&!textureLoads.has(src))
          throw Error('New sprite artwork entered measured frames without preloading: '+src);
@@ -339,13 +340,26 @@
                'smith','teacher','alchemist'].includes(n.kind)&&!n.interactionOnly)
              sourceLights.push({...pointOf(n),kind:'lantern',id:n.id});
        }
-       sourceLights.sort((a,b)=>{
+       // The Canvas renderer computes fixture offsets and radial gradients
+       // in unzoomed units, then applies camera zoom to the whole scene.
+       const orderedLights=sourceLights.filter(p=>
+         p.x>-140*zoom&&p.x<width+140*zoom&&
+         p.y>-160*zoom&&p.y<height+140*zoom
+       ).sort((a,b)=>{
          const ax=a.x-width/2,ay=a.y-height/2,
            bx=b.x-width/2,by=b.y-height/2;
-         return (ax*ax+ay*ay)-(bx*bx+by*by);
-       });
-       const lamps=window.AzerothNativeWebGLCore.lampGlowCommands(sourceLights.slice(0,36),
-         i,{darkness,hero:pointOf(game.hero)});
+         return ax*ax+ay*ay-(bx*bx+by*by)||
+           String(a.id).localeCompare(String(b.id));
+       }).slice(0,44);
+       referenceLightSources=orderedLights.slice(0,36);
+       const heroPos=pointOf(game.hero);
+       const localLights=referenceLightSources.map(p=>({
+         ...p,x:p.x/zoom,y:p.y/zoom
+       }));
+       const lamps=window.AzerothNativeWebGLCore.lampGlowCommands(
+         localLights,i,{
+           darkness,hero:{x:heroPos.x/zoom,y:heroPos.y/zoom}
+         }).map(p=>({...p,x:p.x*zoom,y:p.y*zoom,radius:p.radius*zoom}));
        scene.syncLamps(lamps);
        const lightState=game.daylightPhase?.() || {};
        scene.setAtmosphere({
@@ -426,11 +440,37 @@
              const gpuStatic=await scene.captureBackgroundOnly();
              need(gpuStatic?.length===sourceStatic.length,
                'Pixi static-only extraction size is wrong');
+             // Original Canvas lighting on identical original ground.
+             // For this diagnostic, source-light coordinates are converted
+             // back into the renderer's unzoomed Canvas units.
+             staticCtx.save();
+             staticCtx.scale(zoom,zoom);
+             const heroAt=pointOf(game.hero);
+             PrototypeVisuals.atmosphere(
+               staticCtx,{width:width/zoom,height:height/zoom},
+               game.regionIndex(),{
+                 night:game.night(),
+                 daylight:game.daylightPhase?.(),
+                 peace:game.peace,dungeon:game.isDungeon(),
+                 room:false,optimized:false,
+                 hero:{x:heroAt.x/zoom,y:heroAt.y/zoom},
+                 lights:referenceLightSources.map(p=>({
+                   ...p,x:p.x/zoom,y:p.y/zoom
+                 }))
+               }
+             );
+             staticCtx.restore();
+             const sourceLighting=staticCtx.getImageData(0,0,width,height).data;
+             const gpuLighting=await scene.captureLightingOnly();
+             need(gpuLighting?.length===sourceLighting.length,
+               'Pixi light-only extraction size is wrong');
              pixels.push({
                frame,parity:reportDiff(source,actual),
                regions:compareByArea(source,actual,width,height),
                backgroundOnlyParity:reportDiff(sourceStatic,gpuStatic),
-               backgroundOnlyRegions:compareByArea(sourceStatic,gpuStatic,width,height)
+               backgroundOnlyRegions:compareByArea(sourceStatic,gpuStatic,width,height),
+               lightingOnlyParity:reportDiff(sourceLighting,gpuLighting),
+               lightingOnlyRegions:compareByArea(sourceLighting,gpuLighting,width,height)
              });
            }
            else pixels.push({frame,error:'Pixi extraction returned unexpected dimensions'});
@@ -458,7 +498,7 @@
          'Some original entities painted no standalone sprite. See skippedArtDetails; image parity remains a release blocker.':
          'Known bodyless landmarks are already drawn in original terrain.',
        dependency:'PixiJS 8.22.0 pinned external development CDN (requires connectivity)',
-       diagnostics:'Full-scene and background-only comparisons now independently isolate original baked terrain GPU sampling from missing moving actors, lighting and effects, with nine screen regions; extra GPU readbacks excluded from recorded frame times.',
+       diagnostics:'Full scene, background-only and original-Canvas-vs-GPU lighting-only comparisons separate missing actors/effects from lamp and color differences in nine screen regions. Lamp positions, fixture offsets and glow radii scale with camera zoom. Readbacks excluded from timed frames.',
        incompleteFeatures:[
          'Procedural actor bodies currently use one-time original art textures, not live art state',
          'Full original day/night screen-blend grading and lamp fixtures are not yet parity verified',
