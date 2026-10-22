@@ -43,3 +43,11 @@ Official references:
 The isolated Pixi scene bridge's five focused JavaScript/mock-Pixi tests passed: moving/reusing actor sprites, caching atlas frames, rejecting missing imagery atomically, dynamically moving screen-blended lamp gradients, and correct isometric actor depth order. Original renderer patch anchors and diagnostic HTML script/ID references matched the shipping source in a static check. **No actual PixiJS GPU hardware, runtime asset loading, or visual parity result has yet been established.**
 
 The staged readiness receipt remains `NOT_READY`, and no live game, Settings, service worker, site inventory or main branch file has been modified by this work.
+
+## Pilot runtime fix (diagnostic v2)
+
+The first actual user browser run stopped at `Original procedural art had no painted pixels: npc`. The production painter has **intentionally bodyless world entities**, including `landmark` bridge markers whose full geometry belongs to terrain/bridge rendering. The pilot incorrectly required every NPC entry to yield nonempty individual sprite art.
+
+Version 2 now excludes explicit `interactionOnly` entries and intentional bridge landmark bodies from individual sprite baking. It reports their reasons as expected in `skippedArtDetails`. If any *other* original procedural entity produces no pixels, the diagnostic records the exact entity/kind and increments `unexpectedEmptyArtwork`, allowing the test to continue **without claiming that entity is visually represented**. The test stays **not ready** for integration while any required art differs. The full camera route is prewarmed before timing to avoid encountering previously unprepared sprites mid-benchmark, and non-unique prop structure names cannot collide as GPU actor IDs.
+
+No production renderer, user Settings, original art, or sacred lamps were touched. Further Chromebook GPU validation and visual parity are still required.
