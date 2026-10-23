@@ -18,14 +18,30 @@
   - Preserves English/Spanish translations, existing settings defaults, and navigation to Game & Settings.
   - The old sound-menu navigation assertion in the shared foundation test now exercises the unchanged Controls → Touch and mouse options flow.
 
+- **Step 4: Controls — implemented on this continuing project branch; awaiting owner review.**
+  - Put editable sections first in the Controls hub while leaving Movement and menus, Skills and targeting, and Companion commands references accessible.
+  - Replace the long flat keyboard list with three manageable binding groups (Movement/menu, Skills/combat, Companion/utility); all native action IDs remain included exactly once, with optional legacy Mana Recovery retained only when active.
+  - Keep all original right-handed, classic and left-handed presets, their explicit confirmation, default restoration and key-conflict rejection.
+  - Keep the selected binding when returning from key capture, even though its displayed key changes; parent category, scroll position and Back navigation are preserved.
+  - Change the existing single Touch & mouse page to a labelled phone-layout dropdown plus inline touch-to-move and mouse-to-move switches; the original `input.select` persistence and device layout updates remain authoritative.
+  - English/Spanish headings and descriptions are translated; no default bindings or game mechanics change.
+
 ## Remaining milestone order (do not implement without next owner turn)
 
-4. Controls — organized keyboard, touch and mouse configuration.
 5. Barracks — align Basic/Full Barracks top-level service organization.
 6. Character & services — shorten redundant informational routes and clarify merchants.
 7. Maps, quests and remaining menus — targeted changes only where warranted by evidence.
 
 Each milestone gets its own focused commits, applicable regression tests, explicit source notes, and review. All work continues **on this same branch and PR**, not fresh branches or PRs. The project branch is the source for the next milestone; do not reset to old main between steps.
+
+## Step 4 validation gates
+
+- `tests/game-menu-ui.test.cjs`: all keyboard bindings appear in exactly one section, existing preset confirmations/gates and bindings remain intact, safe rebind and restore round-trip, phone-layout selection, both touch/mouse toggles, bilingual navigation and saved preferences.
+- `tests/menu-foundation-ui.test.cjs`: keyboard category Back, restored selected item, and scroll preservation.
+- `tests/app.test.cjs`: unchanged app integrations and touch input primitives.
+- Focused-only PR checks and reproducible build verification, not broad gameplay or browser/phone matrices.
+
+No claim of physical-device, real-keyboard/browser-focus or screen-reader certification is made by the production-shell mock tests.
 
 ## Step 3 validation gates
 
