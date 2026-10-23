@@ -215,6 +215,13 @@ for (const language of ['en', 'es']) {
   click(t('Mute all sound', 'Silenciar todo'));
   assert(!s.Prototype.audio.settings.muted);
   assert.equal(JSON.parse(storage.get(s.PrototypePersistence.profileKey)).audio.muted, false);
+  // 5 channels × (0%, 100%, 37%, restored) plus two mute changes:
+  // each persists the small audio profile, none serializes the campaign.
+  assert.equal(writes.filter((key) => key === s.PrototypePersistence.profileKey).length, 22,
+    'every audio adjustment persists its own profile change');
+  assert.equal(writes.filter((key) => key === 'azeroth-v4-normal').length, 0,
+    'sound sliders and mute must not trigger full-campaign saves');
+  storage.set = originalSet;
   back();
   title('Game and settings', 'Juego y ajustes');
   click(t('Sound settings', 'Ajustes de sonido'));
@@ -223,13 +230,6 @@ for (const language of ['en', 'es']) {
     const slider = soundSlider(en, es);
     assert.equal(slider.output.textContent, Math.round(originalVolumes[key] * 100) + '%');
   }
-  // 5 channels × (0%, 100%, 37%, restored) plus two mute changes:
-  // each persists the small audio profile, none serializes the campaign.
-  assert.equal(writes.filter((key) => key === s.PrototypePersistence.profileKey).length, 22,
-    'every audio adjustment persists its own profile change');
-  assert.equal(writes.filter((key) => key === 'azeroth-v4-normal').length, 0,
-    'sound sliders and mute must not trigger full-campaign saves');
-  storage.set = originalSet;
   back();
   click(t('Install on phone', 'Instalar en el teléfono'));
   short();
