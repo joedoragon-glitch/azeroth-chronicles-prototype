@@ -1554,8 +1554,7 @@
       const returnHere = () => barracksCompanyMenu(b, back),
         rank = getGame().s.expeditionRank || 1,
         active = getGame().activeParty().length,
-        cap = getGame().barracksFieldCap(b),
-        fallen = getGame().s.party.filter((u) => u.hp <= 0).length;
+        cap = getGame().barracksFieldCap(b);
       openMenu(
         'Company',
         'Choose who travels with you.',
@@ -1591,17 +1590,6 @@
                 'Rescue Mira and train Expedition to Rank 2',
                 true,
               ),
-          ...(b.full
-            ? [
-                action(
-                  'Recovery',
-                  () => barracksRecoveryMenu(b, returnHere),
-                  fallen
-                    ? fallen + ' fallen · treat wounded or recover fallen'
-                    : 'Treat wounded · recover fallen',
-                ),
-              ]
-            : []),
         ],
         back,
       );
@@ -1706,6 +1694,15 @@
         [
           action('Local objectives', () => quests(true, returnHere)),
           barracksGatherAction(b, returnHere),
+          ...(b.full
+            ? [
+                action(
+                  'Resource expeditions',
+                  () => resourceExpeditionsMenu(b, returnHere),
+                  'Send a companion to recover leftover tribute from earlier cleared regions',
+                ),
+              ]
+            : []),
         ],
         back,
       );
@@ -1843,28 +1840,19 @@
       }
       const rank = getGame().s.expeditionRank || 1,
         returnHere = () => barracksMenu(b, back),
-        specialists = getGame().barracksSpecialists(),
-        exp = expeditionBarracksAction(b, back),
         tonic = barracksTonicAction(b, back),
-        respawnActions = barracksRespawnActions(b, () => barracksMenu(b, back)),
-        baseActions = [
-          ...barracksRecoveryActions(returnHere, b.id),
-          barracksGatherAction(b, returnHere),
-          ...(b.full
-            ? [
-                action(
-                  'Resource expeditions',
-                  () => resourceExpeditionsMenu(b, returnHere),
-                  'Send one companion to recover leftover tribute from earlier cleared regions',
-                ),
-              ]
-            : []),
+        // Both completed Barracks types share one service hierarchy.
+        // Full-only services remain discoverable in their matching category.
+        services = [
+          action('Company', () => barracksCompanyMenu(b, returnHere), 'Group, recruits and pets.'),
+          action('Recovery', () => barracksRecoveryMenu(b, returnHere), 'Heal or recover companions.'),
           action(
-            'Rescued specialists',
-            () => barracksSpecialistMenu(b, returnHere),
-            (specialists.length ? specialists.length + ' available here · ' : '') +
-              regionalSpecialistBarracksDetail(),
+            'Training',
+            () => barracksTrainingMenu(b, returnHere),
+            'Skills and rescued specialists.',
           ),
+          action('Operations', () => barracksOperationsMenu(b, returnHere), 'Quests and resources.'),
+          ...(tonic ? [tonic] : []),
           ...(getGame().peace && !getGame().s.finalRestCompleted
             ? [
                 action(
@@ -1876,33 +1864,14 @@
                 ),
               ]
             : []),
-          exp,
-          action(
-            'Skill journal',
-            () => skillBook(returnHere),
-            'Tap / charged effects and cooldowns',
-          ),
-          ...(tonic ? [tonic] : []),
-          ...respawnActions,
-          action(
-            'Company',
-            () => barracksCompanyMenu(b, returnHere),
-            'Recruit · active group · recovery',
-          ),
-          action(
-            'Operations',
-            () => barracksOperationsMenu(b, returnHere),
-            'Local objectives · resources and labor',
-          ),
         ];
       if (!b.full) {
         const upgrading = getGame()
             .activeLivingParty()
             .some((u) => u.order?.type === 'upgrade' && u.order.id === b.id),
-          canUpgrade = rank >= 4;
-        if (canUpgrade)
-          baseActions.push(
-            upgrading
+          canUpgrade = rank >= 4,
+          upgrade = canUpgrade
+            ? upgrading
               ? action(
                   'Full Barracks upgrade in progress',
                   () => {},
@@ -1920,48 +1889,17 @@
                   'Larger active groups and a supply deposit.',
                   !getGame().availableLabor().length ||
                     (!b.upgradePaid && getGame().hero.gold < getGame().barracksUpgradeCost()),
-                ),
-          );
-        else
-          baseActions.push(
-            action(
-              'Full Barracks — Expedition 4',
-              () => {},
-              'Larger active groups and a supply deposit.',
-              true,
-            ),
-          );
-        const upgrade = baseActions.at(-1);
+                )
+            : action(
+                'Full Barracks — Expedition 4',
+                () => {},
+                'Larger active groups and a supply deposit.',
+                true,
+              );
         openMenu(
           'Basic Barracks',
           'Your field base. Choose a service.',
-          [
-            action(
-              'Company',
-              () => barracksCompanyMenu(b, returnHere),
-              'Group, recruits and pets.',
-            ),
-            action(
-              'Recovery',
-              () => barracksRecoveryMenu(b, returnHere),
-              'Heal or recover companions.',
-            ),
-            action(
-              'Training',
-              () => barracksTrainingMenu(b, returnHere),
-              'Skills and rescued specialists.',
-            ),
-            action(
-              'Operations',
-              () => barracksOperationsMenu(b, returnHere),
-              'Quests and resources.',
-            ),
-            ...(tonic ? [tonic] : []),
-            ...(getGame().peace && !getGame().s.finalRestCompleted
-              ? [baseActions.find((a) => a.label === 'Rest here · Complete the journey')]
-              : []),
-            upgrade,
-          ],
+          [...services, upgrade],
           back,
         );
         return;
@@ -1979,7 +1917,7 @@
           (getGame().s.challenge.succession
             ? 'Succession deaths never cost crowns; class loss is the penalty.'
             : 'Local death loss drops to 5%, including regional dungeons.'),
-        baseActions,
+        services,
         back,
       );
     }
