@@ -29,6 +29,9 @@ jobs:
       # Only the first push from the exact current main parent is eligible;
       # later pushes always use the normal full validation gates.
       pixi_playtest: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == '869049797d5e29270886871c89068f648c1f2a6c' && contains(github.event.head_commit.message, 'Release experimental PixiJS playtest') }}
+      # One-time owner-approved report-only update; normal full gates resume
+      # on all later commits.
+      renderer_report_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == '0ec9a0821d3322405ea1616400b306c3a2478f54' && contains(github.event.head_commit.message, 'Release renderer status in playtest reports') }}
     steps:
       - uses: actions/checkout@v4
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -84,7 +87,7 @@ jobs:
 
   phone-webkit:
     needs: release-plan
-    if: needs.release-plan.outputs.hotkey_fast != 'true' && needs.release-plan.outputs.pixi_playtest != 'true'
+    if: needs.release-plan.outputs.hotkey_fast != 'true' && needs.release-plan.outputs.pixi_playtest != 'true' && needs.release-plan.outputs.renderer_report_fast != 'true'
     runs-on: ubuntu-latest
     outputs:
       full_validation: ${{ steps.full.outputs.validated }}
@@ -350,7 +353,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        if: needs.release-plan.outputs.reuse == 'true' || needs.release-plan.outputs.pixi_playtest == 'true'
+        if: needs.release-plan.outputs.reuse == 'true' || needs.release-plan.outputs.pixi_playtest == 'true' || needs.release-plan.outputs.renderer_report_fast == 'true'
         with:
           node-version: '22'
       - name: Reuse successful full regression validation
@@ -359,8 +362,14 @@ jobs:
           VALIDATED_RUN: ${{ needs.release-plan.outputs.run_id }}
         run: echo "Exact tree already passed full checks in run $VALIDATED_RUN; rebuilding the release package."
       - name: Run full game checks
-        if: needs.release-plan.outputs.reuse != 'true' && needs.release-plan.outputs.hotkey_fast != 'true' && needs.release-plan.outputs.pixi_playtest != 'true'
+        if: needs.release-plan.outputs.reuse != 'true' && needs.release-plan.outputs.hotkey_fast != 'true' && needs.release-plan.outputs.pixi_playtest != 'true' && needs.release-plan.outputs.renderer_report_fast != 'true'
         uses: ./.github/actions/check-game
+      - name: Verify renderer report and package (one-time owner approval)
+        if: needs.release-plan.outputs.renderer_report_fast == 'true'
+        run: |
+          node --check src/prototype/app.js
+          node -e 'const s=require("fs").readFileSync("src/prototype/app.js","utf8");if(!s.includes("graphicsRenderer: {")||!s.includes("activeRenderer:"))process.exit(1)'
+          node scripts/build.cjs --check --site
       - name: Run focused experimental PixiJS playtest checks (one-time owner authorization)
         if: needs.release-plan.outputs.pixi_playtest == 'true'
         run: |
@@ -383,7 +392,7 @@ jobs:
           node tests/frame-skip.test.cjs
           node tests/game-menu-ui.test.cjs
       - uses: actions/upload-artifact@v4
-        if: always() && needs.release-plan.outputs.reuse != 'true' && needs.release-plan.outputs.hotkey_fast != 'true' && needs.release-plan.outputs.pixi_playtest != 'true'
+        if: always() && needs.release-plan.outputs.reuse != 'true' && needs.release-plan.outputs.hotkey_fast != 'true' && needs.release-plan.outputs.pixi_playtest != 'true' && needs.release-plan.outputs.renderer_report_fast != 'true'
         with:
           name: app-screenshots
           retention-days: 3
@@ -400,7 +409,7 @@ jobs:
       ${{ always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' &&
           needs.main-test.result == 'success' &&
           (needs.phone-webkit.result == 'success' ||
-           ((needs.release-plan.outputs.hotkey_fast == 'true' || needs.release-plan.outputs.pixi_playtest == 'true') && needs.phone-webkit.result == 'skipped')) }}
+           ((needs.release-plan.outputs.hotkey_fast == 'true' || needs.release-plan.outputs.pixi_playtest == 'true' || needs.release-plan.outputs.renderer_report_fast == 'true') && needs.phone-webkit.result == 'skipped')) }}
     needs: [release-plan, main-test, phone-webkit]
     runs-on: ubuntu-latest
     permissions:
@@ -448,20 +457,20 @@ jobs:
           echo "Published site did not reach commit ${GITHUB_SHA} in time."
           exit 1
       - name: Verify published desktop and phone smoke paths
-        if: needs.release-plan.outputs.hotkey_fast != 'true' && needs.release-plan.outputs.pixi_playtest != 'true'
+        if: needs.release-plan.outputs.hotkey_fast != 'true' && needs.release-plan.outputs.pixi_playtest != 'true' && needs.release-plan.outputs.renderer_report_fast != 'true'
         env:
           PLAYTEST_URL: ${{ steps.deployment.outputs.page_url }}
           BROWSER_SMOKE: '1'
         run: node tests/prototype-browser.test.cjs
       - name: Verify published original-master actor idles and roads
-        if: needs.release-plan.outputs.hotkey_fast != 'true' && needs.release-plan.outputs.pixi_playtest != 'true'
+        if: needs.release-plan.outputs.hotkey_fast != 'true' && needs.release-plan.outputs.pixi_playtest != 'true' && needs.release-plan.outputs.renderer_report_fast != 'true'
         env:
           PLAYTEST_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
           node scripts/sprite-production-browser-review.cjs "$PLAYTEST_URL" test-results/sprite-pilot-live chromium
           node scripts/sprite-nature-browser-review.cjs "$PLAYTEST_URL" test-results/sprite-nature-live chromium
       - name: Verify published quest completion and Keeper Archive
-        if: needs.release-plan.outputs.hotkey_fast != 'true' && needs.release-plan.outputs.pixi_playtest != 'true'
+        if: needs.release-plan.outputs.hotkey_fast != 'true' && needs.release-plan.outputs.pixi_playtest != 'true' && needs.release-plan.outputs.renderer_report_fast != 'true'
         env:
           PLAYTEST_URL: ${{ steps.deployment.outputs.page_url }}
         run: node tests/quest-archive-browser.test.cjs
