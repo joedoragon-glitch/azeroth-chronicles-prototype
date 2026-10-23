@@ -2614,198 +2614,164 @@
       saveMenu,
     );
   }
+  // Menu audit Step 2: one window for every display, renderer and frame option.
+  // This is a presentation-only reorganization; each setter is the existing one.
+  let performanceDetailsExpanded = false;
   function platformMenu(back = systemMenu) {
-    const returnHere = () => platformMenu(back);
-    openMenu(
-      'Screen and performance',
-      'Choose what to adjust.',
-      [
-        action('Screen layout', () => screenLayoutMenu(returnHere)),
-        action('Camera zoom', () => cameraMenu(returnHere)),
-        action('Graphics quality', () => graphicsMenu(returnHere)),
-        action('Graphics renderer', () => graphicsRendererMenu(returnHere)),
-        action('Frame rate', () => frameRateMenu(returnHere)),
-        action('Performance details', () => performanceMenu(returnHere)),
-      ],
-      back,
-    );
-  }
-  function screenLayoutMenu(back) {
-    openMenu(
-      'Screen layout',
-      'Choose phone or desktop controls. Your save stays the same.',
-      [
-        action('Automatic screen', () => {
-          platform.select('auto');
-          closeMenu();
-        }),
-        action('Chromebook / desktop screen', () => {
-          platform.select('desktop');
-          closeMenu();
-        }),
-        action('Phone / touch screen', () => {
-          platform.select('phone');
-          closeMenu();
-        }),
-      ],
-      back,
-    );
-  }
-  function cameraMenu(back) {
-    openMenu(
-      'Camera zoom',
-      'Zoom changes your view only.',
-      [1, 1.5, 1.75].map((scale) =>
-        action(
-          'Camera ' + Math.round(scale * 100) + '%' + (scale === platform.cameraZoom ? ' ✓' : ''),
-          () => {
-            clearInput();
-            platform.selectCameraZoom(scale);
-            closeMenu();
-          },
-        ),
+    const resolutions = [
+      ['auto', 'Automatic sharpness'],
+      ['native', 'Maximum sharpness'],
+      ['100', '100% · Standard'],
+      ['80', '80% · Balanced'],
+      ['60', '60% · Performance'],
+      ['50', '50% · Maximum speed'],
+    ];
+    const frameRates = [
+      ['auto', 'Auto 20–30 FPS · Default'],
+      ['auto60', 'Auto 30–60 FPS'],
+      ['20', '20 FPS'],
+      ['30', '30 FPS'],
+      ['60', '60 FPS'],
+    ];
+    const choices = (values) => values.map(([value, label]) => ({ value, label }));
+    const items = [
+      menuControls.section('Display'),
+      menuControls.select(
+        'Screen layout',
+        platform.preference,
+        choices([
+          ['auto', 'Automatic screen'],
+          ['desktop', 'Chromebook / desktop screen'],
+          ['phone', 'Phone / touch screen'],
+        ]),
+        (value) => {
+          platform.select(value);
+          // Each screen type remembers its own camera zoom; update the
+          // adjacent selector without navigating away from this window.
+          const camera = Array.from($('modal-actions').querySelectorAll?.('select') || [])
+            .find((control) => control.getAttribute?.('aria-label') === tr('Camera zoom'));
+          if (camera) camera.value = String(platform.cameraZoom);
+        },
+        'Choose phone or desktop controls. Your save stays the same.',
       ),
-      back,
-    );
-  }
-  function graphicsRendererMenu(back) {
-    const selected = graphicsController.status().mode;
-    openMenu(
-      'Graphics renderer',
-      'Canvas 2D is the safe default. PixiJS WebGL2 is experimental; you can revert at any time.',
-      [
-        action(tr('Canvas 2D · Default') + (selected === 'canvas2d' ? ' ✓' : ''), () => {
-          graphicsController.revert();
-          graphicsRendererMenu(back);
-        }),
-        action('PixiJS WebGL2 · Experimental' + (selected === 'webgl2' ? ' ✓' : ''), () => {
+      menuControls.select(
+        'Camera zoom',
+        String(platform.cameraZoom),
+        choices([
+          ['1', 'Camera 100%'],
+          ['1.5', 'Camera 150%'],
+          ['1.75', 'Camera 175%'],
+        ]),
+        (value) => {
+          clearInput();
+          platform.selectCameraZoom(Number(value));
+        },
+        'Zoom changes your view only.',
+      ),
+      menuControls.section('Graphics'),
+      menuControls.toggle(
+        'Optimization Mode',
+        optimizationMode,
+        (enabled) => {
+          optimizationMode = enabled;
+          try {
+            localStorage.setItem(optimizationKey, enabled ? 'on' : 'off');
+          } catch (_) {}
+          if (typeof PrototypeMaterials !== 'undefined')
+            PrototypeMaterials.setOptimizationMode(enabled);
+          audio.setOptimizationMode(enabled);
+          renderer.setOptimizationMode(enabled);
+          resize();
+          runtime.reset();
+          frameProfile.reset();
+          fps.suspend();
+        },
+        'Simpler scenery and lower resolution.',
+      ),
+      menuControls.select(
+        'Rendering resolution',
+        renderResolution.preference,
+        choices(resolutions),
+        (value) => {
+          renderResolution.select(value);
+          resize();
+          runtime.reset();
+          frameProfile.reset();
+          fps.suspend();
+        },
+        'Choose world detail without changing screen size or controls.',
+      ),
+      menuControls.section('Frame rate'),
+      menuControls.select(
+        'Frame rate',
+        fps.preference,
+        choices(frameRates),
+        (value) => {
+          fps.select(value);
+          frameSkip.suspend();
+          runtime.reset();
+          frameProfile.reset();
+        },
+        'Choose a target for smoother motion or lower graphics load.',
+      ),
+      menuControls.toggle(
+        'Adaptive frame skip',
+        frameSkip.enabled,
+        (enabled) => {
+          frameSkip.select(enabled);
+          fps.suspend();
+          runtime.reset();
+          frameProfile.reset();
+        },
+        'Optional experimental setting. Off for baseline tests; simulation and input continue.',
+      ),
+      menuControls.section('Graphics renderer'),
+      menuControls.select(
+        'Graphics renderer',
+        graphicsController.status().mode,
+        choices([
+          ['canvas2d', 'Canvas 2D · Default'],
+          ['webgl2', 'PixiJS WebGL2 · Experimental'],
+        ]),
+        (value) => {
+          if (value === 'canvas2d') {
+            graphicsController.revert();
+            return;
+          }
+          // The existing independent 15-second Keep/Revert panel must be
+          // visible over the live game, never obscured by a settings dialog.
           closeMenu();
           status('Preparing real campaign artwork in PixiJS…');
           graphicsController.requestWebGL().then((ready) => {
             if (!ready) status('PixiJS unavailable; Canvas 2D remains active.');
           });
-        }),
-      ],
-      back,
-    );
-  }
-  function graphicsMenu(back) {
-    openMenu(
-      'Graphics quality',
-      'Lower graphics can improve frame rate.',
-      [
-        action(
-          'Optimization Mode · ' + (optimizationMode ? 'On ✓' : 'Off ✓'),
-          () => {
-            optimizationMode = !optimizationMode;
-            try {
-              localStorage.setItem(optimizationKey, optimizationMode ? 'on' : 'off');
-            } catch (_) {}
-            if (typeof PrototypeMaterials !== 'undefined')
-              PrototypeMaterials.setOptimizationMode(optimizationMode);
-            audio.setOptimizationMode(optimizationMode);
-            renderer.setOptimizationMode(optimizationMode);
-            resize();
-            runtime.reset();
-            frameProfile.reset();
-            fps.suspend();
-            graphicsMenu(back);
-          },
-          'Simpler scenery and lower resolution.',
-        ),
-        action('Rendering resolution', () => renderingResolutionMenu(() => graphicsMenu(back))),
-      ],
-      back,
-    );
-  }
-  function renderingResolutionMenu(back) {
-    const choices = [
-      ['auto', 'Automatic sharpness', 'Adjusts resolution to keep play smooth.'],
-      ['native', 'Maximum sharpness', 'Sharper image; more graphics work.'],
-      ['100', '100% · Standard', ''],
-      ['80', '80% · Balanced', ''],
-      ['60', '60% · Performance', ''],
-      ['50', '50% · Maximum speed', ''],
+        },
+        'Canvas 2D is the safe default. WebGL2 starts a 15-second Keep/Revert trial.',
+      ),
+      menuControls.section('Diagnostics'),
+      action(
+        performanceDetailsExpanded ? 'Hide performance details' : 'Show performance details',
+        () => {
+          performanceDetailsExpanded = !performanceDetailsExpanded;
+          platformMenu(back);
+        },
+        'Local samples are diagnostic estimates, not verified display FPS.',
+      ),
     ];
-    openMenu(
-      'Rendering resolution',
-      'Choose world detail without changing screen size or controls.',
-      choices.map(([value, label, detail]) => {
-        const fixed = Number(value);
-        const pixels = Number.isFinite(fixed)
-          ? ' · ' +
-            Math.round((innerWidth * fixed) / 100) +
-            ' × ' +
-            Math.round((innerHeight * fixed) / 100)
-          : '';
-        return action(
-          tr(label) + pixels + (renderResolution.preference === value ? ' ✓' : ''),
-          () => {
-            renderResolution.select(value);
-            resize();
-            runtime.reset();
-            frameProfile.reset();
-            fps.suspend();
-            renderingResolutionMenu(back);
-          },
-          detail,
-        );
-      }),
-      back,
-    );
-  }
-  function frameRateMenu(back) {
-    openMenu(
-      'Frame rate',
-      'Choose a target for smoother motion or lower graphics load.',
-      [
-        ...[
-          ['auto', 'Auto 20–30 FPS · Default', 'Starts at 30 FPS; falls back to 20 under load.'],
-          ['auto60', 'Auto 30–60 FPS', 'Starts at 30 FPS and tries 60.'],
-          ['20', '20 FPS', 'Lowest graphics load.'],
-          ['30', '30 FPS', 'Lower graphics load.'],
-          ['60', '60 FPS', 'Smoother motion.'],
-        ].map(([value, label, detail]) =>
-          action(
-            label + (fps.preference === value ? ' ✓' : ''),
-            () => {
-              fps.select(value);
-              frameSkip.suspend();
-              runtime.reset();
-              frameProfile.reset();
-              frameRateMenu(back);
-            },
-            detail,
-          ),
+    if (performanceDetailsExpanded) {
+      items.push(
+        menuControls.section(
+          'Performance details',
+          runtime.describe(renderer.metrics()) + '\n\n' + frameProfile.describe(),
         ),
-        action(
-          'Adaptive frame skip · ' + (frameSkip.enabled ? 'On ✓' : 'Off ✓'),
-          () => {
-            frameSkip.select(!frameSkip.enabled);
-            fps.suspend();
-            runtime.reset();
-            frameProfile.reset();
-            frameRateMenu(back);
-          },
-          'Skips some world drawings under load; gameplay and warnings continue.',
-        ),
-      ],
-      back,
-    );
-  }
-  function performanceMenu(back) {
-    openMenu(
-      'Performance details',
-      runtime.describe(renderer.metrics()) + '\n\n' + frameProfile.describe(),
-      [
         action('Reset performance sample', () => {
           runtime.reset();
           frameProfile.reset();
-          performanceMenu(back);
+          platformMenu(back);
         }),
-      ],
-      back,
-    );
+      );
+    }
+    openMenu('Screen and performance', 'Adjust everything here without leaving this screen.', items, back);
   }
   function systemMenu() {
     openMenu(
