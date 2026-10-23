@@ -56,7 +56,7 @@ for (const language of ['en', 'es']) {
   const children = elements.get('modal-actions').children;
   assert.equal(children[0].textContent, 'Display');
   children[1].click();
-  assert.equal(children[1].getAttribute?.('aria-checked') === 'true', false);
+  assert(children[1].textContent.includes('On'), 'toggle updates its visible state');
   const select = children[2].children.find((element) => element.className === 'menu-setting-input');
   select.value = 'b';
   select.onchange();
