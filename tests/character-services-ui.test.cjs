@@ -77,6 +77,12 @@ for (const language of ['en', 'es']) {
   assert.equal(findButton('Upgrade Ranger Heal').disabled, false);
   scope.Prototype.closeMenu();
   game.hero.gold = 0;
-  assert.equal(JSON.stringify(game.snapshot()), before, 'catalog viewing changes no campaign state');
+  const after = JSON.stringify(game.snapshot());
+  if (after !== before) {
+    const was = JSON.parse(before), now = JSON.parse(after);
+    const changed = Object.keys(was).filter((key) =>
+      JSON.stringify(was[key]) !== JSON.stringify(now[key]));
+    assert.deepEqual(changed, [], 'inspection changed campaign keys: ' + changed.join(', '));
+  }
 }
 console.log('PASS bilingual smith/alchemist groups, native action availability, and read-only navigation');
