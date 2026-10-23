@@ -44,6 +44,9 @@ for (const language of ['en', 'es']) {
   );
   elements.get('close-button').click();
   elements.get('close-button').click();
+  // Controls → Game settings → Adventure menu → closed.
+  elements.get('close-button').click();
+  assert(elements.get('modal').hidden, 'the root Adventure menu is fully closed');
 
   let returnedFocus = false;
   scope.document.activeElement = { focus: () => { returnedFocus = true; } };
