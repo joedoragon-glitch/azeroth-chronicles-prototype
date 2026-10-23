@@ -17,21 +17,31 @@ for (const language of ['en', 'es']) {
   byLabel(language === 'en' ? 'Controls' : 'Controles').click();
   const controlsMenu = elements.get('modal-content');
   controlsMenu.scrollTop = 85;
-  byLabel(language === 'en' ? 'Touch and mouse options' : 'Opciones táctiles y de ratón').click();
-  byLabel(language === 'en' ? 'Touch tap-to-move' : 'Tocar para moverse').click();
-  assert(
-    elements.get('modal-title').textContent ===
-      (language === 'en' ? 'Touch and mouse options' : 'Opciones táctiles y de ratón'),
-    'changing a touch option keeps the controls subpage open',
+  byLabel(language === 'en' ? 'Customize keyboard' : 'Personalizar teclado').click();
+  const keyboardMenu = elements.get('modal-content');
+  keyboardMenu.scrollTop = 110;
+  byLabel(
+    language === 'en' ? 'Movement and menu keys' : 'Teclas de movimiento y menú',
+  ).click();
+  assert.equal(
+    elements.get('modal-title').textContent,
+    language === 'en' ? 'Movement and menu keys' : 'Teclas de movimiento y menú',
   );
   elements.get('close-button').click();
-  assert.equal(controlsMenu.scrollTop, 85, 'Back restores parent scroll');
+  assert.equal(keyboardMenu.scrollTop, 110, 'Back restores keyboard settings scroll');
   assert(
-    byLabel(language === 'en' ? 'Touch and mouse options' : 'Opciones táctiles y de ratón')
+    byLabel(
+      language === 'en' ? 'Movement and menu keys' : 'Teclas de movimiento y menú',
+    ).classList.contains('selected'),
+    'Back restores keyboard category selection',
+  );
+  elements.get('close-button').click();
+  assert.equal(controlsMenu.scrollTop, 85, 'Back restores parent Controls scroll');
+  assert(
+    byLabel(language === 'en' ? 'Customize keyboard' : 'Personalizar teclado')
       .classList.contains('selected'),
-    'Back restores the parent choice',
+    'Back restores the selected Controls item',
   );
-  elements.get('close-button').click();
   elements.get('close-button').click();
   elements.get('close-button').click();
 
