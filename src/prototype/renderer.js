@@ -2276,8 +2276,13 @@
         for (const e of list) {
           stats.entitiesConsidered++;
           if (renderKind === 'enemy' && e.hp <= 0) continue;
-          const visualEntity = presentEntity(e, renderKind),
-            p = screen(visualEntity),
+          // Keep culling cheap; resolve and scale sprite artwork only for
+          // visible entities, just as the original Canvas renderer did.
+          const vessel =
+              renderKind === 'npc' && e.harbor && e.kind === 'transport'
+                ? Campaign.rules?.harbors?.[game.zoneId]?.vessel
+                : null,
+            p = screen(vessel ? { ...e, ...vessel } : e),
             margin = e.harbor ? Math.max(180, 240 * zoom()) : 180;
           if (
             p.x < -margin ||
@@ -2295,7 +2300,7 @@
             (p.x < -20 || p.x > canvas.width + 20 || p.y < -40 || p.y > canvas.height + 30)
           )
             continue;
-          entities.push(visualEntity);
+          entities.push(presentEntity(e, renderKind));
         }
       }
       add(z.props, 'prop');
