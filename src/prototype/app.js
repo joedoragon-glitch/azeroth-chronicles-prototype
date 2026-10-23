@@ -2829,7 +2829,11 @@
       items.push(
         menuControls.section(
           'Performance details',
-          runtime.describe(renderer.metrics()) + '\n\n' + frameProfile.describe(),
+          runtime.describe({
+            ...renderer.metrics(),
+            measuredLayer: graphicsController.status().mode === 'webgl2'
+              ? 'canvas-combat-overlay' : 'canvas-full-world',
+          }) + '\n\n' + frameProfile.describe(),
         ),
         action('Reset performance sample', () => {
           runtime.reset();
