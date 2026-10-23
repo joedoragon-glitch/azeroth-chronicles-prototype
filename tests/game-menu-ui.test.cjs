@@ -241,34 +241,119 @@ for (const language of ['en', 'es']) {
   short();
   back();
   click(t('Customize keyboard', 'Personalizar teclado'));
-  assert.equal(e.get('modal-actions').children.length, s.Prototype.input.actions.length + 4);
+  title('Customize keyboard', 'Personalizar teclado');
   assert.equal(s.Prototype.input.preferences.preset, 'right');
+  assert.equal(
+    e.get('modal-actions').children.filter((node) => node.className === 'menu-section').length,
+    2,
+  );
+  const groupPaths = [
+    ['Movement and menu keys', 'Teclas de movimiento y menú',
+      ['up', 'down', 'left', 'right', 'confirm']],
+    ['Skills and combat keys', 'Teclas de habilidades y combate',
+      ['skill1', 'skill2', 'skill3', 'skill4', 'skill5', 'skill6', 'skill7', 'skill8', 'target', 'heal', 'mana']],
+    ['Companion and utility keys', 'Teclas de compañeros y utilidades',
+      ['doctrine', 'recall', 'map', 'training', 'skills', 'pause', 'help']],
+  ];
+  for (const [en, es, ids] of groupPaths) {
+    click(t(en, es));
+    title(en, es);
+    assert.equal(
+      e.get('modal-actions').children.length,
+      s.Prototype.input.actions.filter(([id]) => ids.includes(id)).length,
+      'each editable keyboard action appears in exactly one category',
+    );
+    back();
+    title('Customize keyboard', 'Personalizar teclado');
+    assert(
+      e.get('modal-actions').children.some((node) => node.textContent.startsWith(t(en, es))),
+      'keyboard root stays available',
+    );
+  }
   click(t('Classic · number keys', 'Clásico · teclas numéricas'));
   title('Apply keyboard preset', 'Aplicar distribución de teclado');
   click(t('Keep current keys', 'Conservar teclas actuales'));
-  assert.equal(s.Prototype.input.preferences.preset, 'right','cancelling keeps defaults');
+  assert.equal(s.Prototype.input.preferences.preset, 'right', 'cancel keeps defaults');
   click(t('Classic · number keys', 'Clásico · teclas numéricas'));
   click(t('Apply preset', 'Aplicar distribución'));
-  assert.equal(s.Prototype.input.actionFor('Digit1'),'skill1');
-  assert.equal(s.Prototype.input.actionFor('KeyI'),null,'Classic has no Inventory shortcut');
-  assert.equal(s.Prototype.input.actionFor('KeyJ'),null,'Classic has no Journal shortcut');
+  assert.equal(s.Prototype.input.actionFor('Digit1'), 'skill1');
+  assert.equal(s.Prototype.input.actionFor('KeyI'), null);
+  assert.equal(s.Prototype.input.actionFor('KeyJ'), null);
   click(t('Left-hand skills (IJKL)', 'Habilidades con mano izquierda (IJKL)'));
   click(t('Apply preset', 'Aplicar distribución'));
-  assert.equal(s.Prototype.input.actionFor('KeyI'),'up');
-  assert.equal(s.Prototype.input.actionFor('KeyR'),'skill8');
+  assert.equal(s.Prototype.input.actionFor('KeyI'), 'up');
+  assert.equal(s.Prototype.input.actionFor('KeyR'), 'skill8');
   click(t('Right-hand skills (WASD) · Default', 'Habilidades con mano derecha (WASD) · Predeterminado'));
   click(t('Apply preset', 'Aplicar distribución'));
-  assert.equal(s.Prototype.input.actionFor('KeyJ'),'skill1');
-  assert.equal(s.Prototype.input.actionFor('Space'),'skill6');
-  assert.equal(s.Prototype.input.actionFor('KeyR'),null);
-  assert.equal(s.Prototype.input.actionFor('KeyT'),null);
+  assert.equal(s.Prototype.input.actionFor('KeyJ'), 'skill1');
+  assert.equal(s.Prototype.input.actionFor('Space'), 'skill6');
+  assert.equal(s.Prototype.input.actionFor('KeyR'), null);
+  assert.equal(s.Prototype.input.actionFor('KeyT'), null);
+
+  click(t('Companion and utility keys', 'Teclas de compañeros y utilidades'));
+  title('Companion and utility keys', 'Teclas de compañeros y utilidades');
+  const mapBind = e.get('modal-actions').children.find(
+    (button) => button.textContent.endsWith(' · Z'),
+  );
+  assert(mapBind, 'Map binding should be visible');
+  mapBind.click();
+  assert(e.get('modal-title').textContent.startsWith('Bind '), 'binding prompt is preserved');
+  events.keydown.forEach((fn) => fn({ code: 'F9', preventDefault() {} }));
+  assert.equal(s.Prototype.input.actionFor('F9'), 'map');
+  title('Companion and utility keys', 'Teclas de compañeros y utilidades');
+  const updated = e.get('modal-actions').children.find(
+    (button) => button.textContent.endsWith(' · F9'),
+  );
+  assert(updated?.classList.contains('selected'), 'key capture returns to selected action');
+  updated.click();
+  events.keydown.forEach((fn) => fn({ code: 'KeyZ', preventDefault() {} }));
+  assert.equal(s.Prototype.input.actionFor('KeyZ'), 'map');
+  assert.equal(s.Prototype.input.preferences.preset, 'right');
   back();
+  title('Customize keyboard', 'Personalizar teclado');
+  back();
+  title('Controls', 'Controles');
+
   click(t('Touch and mouse options', 'Opciones táctiles y de ratón'));
-  short();
-  const beforeMove = s.Prototype.input.preferences.touchMove;
-  click(t('Touch tap-to-move', 'Tocar para moverse'));
-  assert.equal(s.Prototype.input.preferences.touchMove, !beforeMove);
+  title('Touch and mouse options', 'Opciones táctiles y de ratón');
+  const controls = e.get('modal-actions').children;
+  assert.equal(controls.filter((node) => node.className === 'menu-section').length, 2);
+  const phoneRow = controls.find(
+    (node) => node.className === 'menu-setting' &&
+      node.children.some((child) => child.textContent === t('Phone layout', 'Disposición táctil')),
+  );
+  assert(phoneRow, 'phone layout dropdown is visible');
+  const phoneSelect = phoneRow.children.find((child) => child.className === 'menu-setting-input');
+  const initialPhoneLayout = s.Prototype.input.preferences.phoneLayout;
+  phoneSelect.value = 'left-hand';
+  phoneSelect.onchange();
+  assert.equal(s.Prototype.input.preferences.phoneLayout, 'left-hand');
+  assert.equal(JSON.parse(storage.get(s.PrototypeInput.preferenceKey)).phoneLayout, 'left-hand');
+  phoneSelect.value = initialPhoneLayout;
+  phoneSelect.onchange();
+
+  const toggle = (en, es) => {
+    const node = e.get('modal-actions').children.find(
+      (item) => item.textContent.startsWith(t(en, es)),
+    );
+    assert(node && node.className === 'menu-setting-toggle', 'missing inline toggle ' + en);
+    return node;
+  };
+  for (const [key, en, es] of [
+    ['touchMove', 'Touch tap-to-move', 'Tocar para moverse'],
+    ['mouseMove', 'Mouse click-to-move', 'Clic para moverse'],
+  ]) {
+    const before = s.Prototype.input.preferences[key];
+    toggle(en, es).click();
+    assert.equal(s.Prototype.input.preferences[key], !before);
+    assert.equal(JSON.parse(storage.get(s.PrototypeInput.preferenceKey))[key], !before);
+    title('Touch and mouse options', 'Opciones táctiles y de ratón');
+    assert(!e.get('modal').hidden, 'touch/mouse toggles never close settings');
+    toggle(en, es).click();
+    assert.equal(s.Prototype.input.preferences[key], before);
+  }
   back();
+  title('Controls', 'Controles');
   back();
   title('Game and settings', 'Juego y ajustes');
   click(t('Save and game management', 'Partidas guardadas'));
