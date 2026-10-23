@@ -78,6 +78,7 @@ const core = [
   'manifest.webmanifest',
   'icons/icon-192.png',
   'icons/icon-512.png',
+  'assets/vendor/pixi-8.22.0.min.js',
   'assets/sprites/manifest.json',
   'assets/vfx/manifest.json',
   'assets/materials/manifest.json',

@@ -1437,6 +1437,12 @@
       status('WebGL2 returned to Canvas: ' + reason);
     },
   });
+  // Fan out presentation events without editing the protected simulation loop.
+  const queueOriginalVisuals = renderer.queue;
+  renderer.queue = (events) => {
+    queueOriginalVisuals(events);
+    pixiGame.noteEvents(events);
+  };
   function updateGpuTrial(snapshot) {
     const trial = snapshot.phase === 'trial';
     gpuTrialPanel.hidden = !trial;
@@ -1446,6 +1452,7 @@
     gpuKeep.textContent = tr('Keep WebGL2');
     gpuRevert.textContent = tr('Revert to Canvas');
   }
+  const previousRendererChoice = AzerothRendererSwitchGuard.startupChoice(localStorage);
   graphicsController = AzerothRendererSwitchGuard.create({
     storage: localStorage,
     prepareWebGL: () => pixiGame.prepare(),
@@ -1458,6 +1465,8 @@
       pixiGame.deactivate();
       renderer.setRenderLayer('full');
       renderer.draw();
+      // Only release GPU resources after the reliable Canvas is visible.
+      pixiGame.release();
     },
     notify: updateGpuTrial,
   });
@@ -1465,8 +1474,15 @@
   gpuRevert.onclick = () => graphicsController.revert();
   addEventListener('visibilitychange',
     () => graphicsController.visibilityChanged(document.hidden));
-  // No automatic WebGL boot until its offline dependency and recovery path
-  // have been certified. A saved choice never suppresses reliable Canvas.
+  // Canvas always boots first. A previously confirmed GPU preference may
+  // reappear only after its first complete frame and recovery marker clear.
+  if (previousRendererChoice.renderer === 'webgl2') {
+    requestAnimationFrame(() => {
+      graphicsController.resumeConfirmedWebGL().then((ready) => {
+        if (!ready) status('Previous WebGL2 choice unavailable; Canvas is active.');
+      });
+    });
+  }
   function drawWorld() {
     if (graphicsController.status().mode === 'webgl2') {
       try { pixiGame.draw(); }
@@ -5142,7 +5158,6 @@
     const eventAt = stageTimes ? performance.now() : 0;
     const events = game.effects.splice(0);
     renderer.queue(events);
-    pixiGame.noteEvents(events);
     renderer.update(frozen ? 0 : dt);
     for (const e of events) {
       audio.effect(e);

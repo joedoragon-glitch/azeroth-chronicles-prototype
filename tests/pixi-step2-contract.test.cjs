@@ -25,5 +25,7 @@ assert(pixi.includes('getGame()'), 'GPU path must use live Campaign');
 assert(pixi.includes('scene.syncActors(records)'));
 assert(pixi.includes('syncBackground()'));
 assert(!pixi.includes('new Campaign('));
-assert(pixi.includes('pixi.js@8.22.0'));
+assert(pixi.includes('./assets/vendor/pixi-8.22.0.min.js'));
+assert(!pixi.includes('cdn.jsdelivr.net'));
+assert(assets.core.includes('assets/vendor/pixi-8.22.0.min.js'));
 console.log('PixiJS Step 2 source contract passes (not a browser test)');

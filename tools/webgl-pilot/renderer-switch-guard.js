@@ -1,5 +1,5 @@
-/* STAGING ONLY: renderer choice safety controller, NOT loaded by playable PWA.
- * The 15-second choice is a TRIAL, not a persisted setting.
+/* Optional graphics renderer controller. Keep the original Canvas safe.
+ * The 15-second selection is a TRIAL until confirmed.
  * A dedicated Canvas surface must remain alive beneath/alongside WebGL2.
  * This module does NOT assert that a complete WebGL renderer exists.
  */
@@ -13,10 +13,10 @@
     try{return storage?.getItem(key)??null;}catch(_){return null;}
   };
   const write=(storage,key,value)=>{
-    try{storage?.setItem(key,value);return true;}catch(_){return false;}
+    try{if(!storage?.setItem)return false;storage.setItem(key,value);return true;}catch(_){return false;}
   };
   const remove=(storage,key)=>{
-    try{storage?.removeItem(key);return true;}catch(_){return false;}
+    try{if(!storage?.removeItem)return false;storage.removeItem(key);return true;}catch(_){return false;}
   };
   function startupChoice(storage){
     // Interrupted trial or crash: discard WebGL preference before initializing
@@ -117,6 +117,34 @@
         return false;
       }
     }
+
+    // Only a PREVIOUSLY confirmed choice can resume without a new countdown.
+    // Keep Canvas live until its first completed GPU scene and visible controls.
+    async function resumeConfirmedWebGL(){
+      if(closed||phase!=='canvas'||!armConfirmedBoot(storage))return false;
+      const own=++serial;
+      phase='preparing';mode=defaultMode;
+      announce('restoring-confirmed-webgl');
+      try{
+        if(await prepareWebGL()!==true){
+          if(own===serial&&!closed)fallback('confirmed-webgl-preparation-failed');
+          return false;
+        }
+        if(closed||own!==serial||phase!=='preparing')return false;
+        showWebGL();
+        // Setting mode before committing allows the usual fallback on failure.
+        mode='webgl2';
+        if(!finishConfirmedBoot(storage)){
+          fallback('confirmed-webgl-boot-not-acknowledged');
+          return false;
+        }
+        phase='confirmed';announce('confirmed-webgl-restored');
+        return true;
+      }catch(_){
+        if(!closed&&own===serial)fallback('confirmed-webgl-error');
+        return false;
+      }
+    }
     function confirm(){
       if(closed||phase!=='trial')return false;
       if(now()>=deadline){fallback('confirmation-timeout');return false;}
@@ -155,7 +183,7 @@
     }
     announce('canvas-default');
     return Object.freeze({
-      requestWebGL,confirm,revert:()=>fallback('user-chose-canvas'),
+      requestWebGL,resumeConfirmedWebGL,confirm,revert:()=>fallback('user-chose-canvas'),
       check,visibilityChanged,webglFailed,dispose,status:()=>snapshot()
     });
   }

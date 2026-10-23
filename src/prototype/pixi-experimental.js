@@ -5,7 +5,7 @@
 (function(root) {
   'use strict';
 
-  const PIXI_CDN = 'https://cdn.jsdelivr.net/npm/pixi.js@8.22.0/dist/pixi.min.js';
+  const PIXI_SCRIPT = './assets/vendor/pixi-8.22.0.min.js';
   const BG_MARGIN = 220;
   const iso = (point) => ({
     x: (point.x - point.y) * 0.76,
@@ -28,12 +28,12 @@
     if (!libraryRequest) {
       libraryRequest = new Promise((resolve, reject) => {
         const script = document.createElement('script');
-        script.src = PIXI_CDN;
+        script.src = PIXI_SCRIPT;
         script.async = true;
         script.onload = () => root.PIXI?.Application
           ? resolve(root.PIXI)
           : reject(Error('PixiJS did not initialize'));
-        script.onerror = () => reject(Error('PixiJS CDN unavailable (offline use is not yet supported)'));
+        script.onerror = () => reject(Error('Local PixiJS runtime unavailable; Canvas remains active'));
         document.head.append(script);
       }).catch((error) => {
         libraryRequest = null;
@@ -318,7 +318,7 @@
     }
     function dispose(){disposed=true;disposeResources();}
     function noteEvents(events){adapter?.noteEvents?.(events);}
-    return Object.freeze({prepare,draw,activate,deactivate,dispose,noteEvents,
+    return Object.freeze({prepare,draw,activate,deactivate,release:disposeResources,dispose,noteEvents,
       status:()=>({active,lastError,loadedTextures:loaded.size,proceduralBytes:imageBytes})});
   }
   const api=Object.freeze({create});

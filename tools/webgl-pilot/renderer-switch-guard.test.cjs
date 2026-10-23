@@ -210,3 +210,34 @@ test('if crash-marker storage is unavailable, automatic WebGL boot must be refus
  assert.equal(Guard.startupChoice(f.storage).renderer,'canvas2d');
  f.run.dispose();
 });
+
+test('a saved WebGL2 choice resumes after a verified frame without a countdown',async()=>{
+ const f=fixture();
+ f.storage.setItem(Guard.PREFERENCE_KEY,'webgl2');
+ assert.equal(await f.run.resumeConfirmedWebGL(),true);
+ assert.equal(f.visible,'webgl2');
+ assert.equal(f.run.status().phase,'confirmed');
+ assert.equal(f.storage.getItem(Guard.PENDING_KEY),null);
+ assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),'webgl2');
+ f.run.dispose();
+});
+test('failed confirmed startup reverts the saved device choice to Canvas',async()=>{
+ const f=fixture({prepareWebGL:async()=>false});
+ f.storage.setItem(Guard.PREFERENCE_KEY,'webgl2');
+ assert.equal(await f.run.resumeConfirmedWebGL(),false);
+ assert.equal(f.visible,'canvas');
+ assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),'canvas2d');
+ f.run.dispose();
+});
+test('a hidden tab while preparing confirmed WebGL cannot later reveal the GPU',async()=>{
+ let done;
+ const f=fixture({prepareWebGL:()=>new Promise(resolve=>done=resolve)});
+ f.storage.setItem(Guard.PREFERENCE_KEY,'webgl2');
+ const pending=f.run.resumeConfirmedWebGL();
+ f.run.visibilityChanged(true);
+ done(true);
+ assert.equal(await pending,false);
+ assert.equal(f.visible,'canvas');
+ assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),'canvas2d');
+ f.run.dispose();
+});
