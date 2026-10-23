@@ -104,6 +104,27 @@ async function run() {
         assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.phase), 'confirmed');
         assert.equal(await page.evaluate(() => localStorage.getItem('azeroth-renderer-choice-v1')),
           'webgl2');
+        // Exercise the real game loop through sunset, night and sunrise.
+        // Restore the clock afterward: renderer testing must not change saves.
+        const lightAudit = await page.evaluate(async () => {
+          const game = Prototype.game, original = game.s.clock, audit = [];
+          try {
+            for (const clock of [0,345,359.99,360,570,585,599.99]) {
+              game.s.clock = clock;
+              await new Promise(resolve => setTimeout(resolve, 120));
+              audit.push({
+                phase:game.daylightPhase().phase,
+                mode:Prototype.experimentalGraphics.mode,
+                error:Prototype.experimentalGraphics.lastError,
+              });
+              if (Prototype.experimentalGraphics.mode !== 'webgl2') break;
+            }
+          } finally {game.s.clock = original;}
+          return audit;
+        });
+        assert.equal(lightAudit.length,7,'All lighting transitions must remain in WebGL');
+        assert(lightAudit.every(x => x.mode === 'webgl2'),
+          'Unexpected Pixi fallback during daylight transitions: '+JSON.stringify(lightAudit));
         await page.reload();
         await page.waitForFunction(() => window.Prototype?.experimentalGraphics);
         await page.waitForFunction(() =>
@@ -123,6 +144,10 @@ async function run() {
             });
           }
           await page.waitForFunction(() => Prototype.experimentalGraphics.mode === 'canvas2d');
+          assert.equal(await page.evaluate(() =>
+            Prototype.experimentalGraphics.lastFallbackReason),
+            'webgl-context-or-render-failure',
+            'A WebGL failure must be diagnosed in the exported playtest report');
           assert.equal(await page.evaluate(() =>
             localStorage.getItem('azeroth-renderer-choice-v1')), 'canvas2d',
           'Graphics failure or viewport resize must restore Canvas and clear the device preference');
