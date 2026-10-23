@@ -83,6 +83,47 @@ for (const language of ['en', 'es']) {
   assert(!scope.Prototype.navigationState.active);
   assert(cancel.hidden);
 
+  // Pausing is not a directional takeover: the trip remains ready to resume.
+  startMapRoute();
+  const pauseOrder = game.hero.order;
+  moveKey('KeyP');
+  upKey('KeyP');
+  assert.equal(game.hero.order, pauseOrder, 'pause preserves the active trip');
+  moveKey('KeyP');
+  upKey('KeyP');
+  assert.equal(game.hero.order, pauseOrder, 'resuming does not create a new order');
+  cancel.click();
+
+  // The phone joystick claims control as soon as its pointer begins.
+  startMapRoute();
+  const joystick = elements.get('joystick');
+  const bounds = joystick.getBoundingClientRect();
+  joystick.onpointerdown({
+    pointerType: 'touch',
+    pointerId: 901,
+    isPrimary: true,
+    clientX: bounds.left + bounds.width / 2,
+    clientY: bounds.top + bounds.height / 2,
+    preventDefault() {},
+  });
+  assert.equal(game.hero.order, null, 'neutral joystick contact immediately stops autopilot');
+  assert.equal(scope.Prototype.navigationState.autopilot, false);
+  assert(scope.Prototype.trackedWaypoint?.points.length, 'manual joystick leaves guidance active');
+  joystick.onpointerup({ pointerId: 901 });
+  cancel.click();
+
+  // A deliberate world tap also takes over, even if the tapped ground is blocked.
+  startMapRoute();
+  const canvas = elements.get('world');
+  const touch = { pointerType: 'touch', button: 0, pointerId: 902,
+    clientX: 190, clientY: 510, preventDefault() {} };
+  canvas.onpointerdown(touch);
+  canvas.onpointerup(touch);
+  assert.equal(scope.Prototype.navigationState.autopilot, false,
+    'world tap takes over the navigation session');
+  assert(scope.Prototype.trackedWaypoint, 'new manual move does not dismiss the selected guide');
+  cancel.click();
+
   // Contextual Cancel stops an actively owned move, too.
   startMapRoute();
   cancel.click();
