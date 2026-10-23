@@ -1507,7 +1507,11 @@
     : fallbackController;
   gpuKeep.onclick = () => graphicsController.confirm();
   gpuRevert.onclick = () => graphicsController.revert();
-  addEventListener('visibilitychange', () => graphicsController.visibilityChanged(document.hidden));
+  // iOS Home Screen PWAs dispatch visibilitychange on document, not window.
+  document.addEventListener('visibilitychange', () =>
+    graphicsController.visibilityChanged(document.hidden),
+  );
+  addEventListener('pagehide', () => graphicsController.visibilityChanged(true));
   // Canvas always boots first. A previously confirmed GPU preference may
   // reappear only after its first complete frame and recovery marker clear.
   if (previousRendererChoice.renderer === 'webgl2') {
