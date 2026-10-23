@@ -18,8 +18,8 @@ const view={width:912,height:420}, platform={
   cameraZoom:1.5,cameraAnchor:()=>({x:456,y:210})
 };
 const sprites={
-  definitionFor:e=>({entry:{width:e.structure==='vale-cottage'?816:192,
-    height:e.structure==='vale-cottage'?816:192,displayWidth:192,displayHeight:192}}),
+  definitionFor:e=>({entry:{width:e.id==='home'?816:192,
+    height:e.id==='home'?816:192,displayWidth:192,displayHeight:192}}),
   timeMs:()=>1000
 };
 const painter=Renderer.create({
