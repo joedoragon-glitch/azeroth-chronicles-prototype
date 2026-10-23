@@ -1,10 +1,14 @@
-name: Test and deploy app
+name: Full game and WebKit certification (manual only)
+# Owner approval is required before running expensive, game-wide CI.
+# Normal PRs and pushes use focused-deploy.yml instead.
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main, perf/v09-integration-20261010]
   workflow_dispatch:
+    inputs:
+      approve_full_suite:
+        description: 'I authorize the complete game, Chromium and WebKit test suites'
+        type: boolean
+        required: true
+        default: false
 
 permissions:
   contents: read
@@ -15,6 +19,7 @@ concurrency:
 
 jobs:
   release-plan:
+    if: ${{ inputs.approve_full_suite == true }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -87,7 +92,7 @@ jobs:
 
   phone-webkit:
     needs: release-plan
-    if: needs.release-plan.outputs.hotkey_fast != 'true' && needs.release-plan.outputs.pixi_playtest != 'true' && needs.release-plan.outputs.renderer_report_fast != 'true'
+    if: inputs.approve_full_suite == true
     runs-on: ubuntu-latest
     outputs:
       full_validation: ${{ steps.full.outputs.validated }}
@@ -347,7 +352,7 @@ jobs:
           if-no-files-found: error
 
   main-test:
-    if: github.event_name != 'pull_request'
+    if: inputs.approve_full_suite == true && github.event_name == 'workflow_dispatch'
     needs: release-plan
     runs-on: ubuntu-latest
     steps:
@@ -406,8 +411,8 @@ jobs:
 
   deploy:
     if: >-
-      ${{ always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' &&
-          needs.main-test.result == 'success' &&
+      ${{ always() && inputs.approve_full_suite == true && github.ref == 'refs/heads/main' &&
+          github.event_name == 'workflow_dispatch' && needs.main-test.result == 'success' &&
           (needs.phone-webkit.result == 'success' ||
            ((needs.release-plan.outputs.hotkey_fast == 'true' || needs.release-plan.outputs.pixi_playtest == 'true' || needs.release-plan.outputs.renderer_report_fast == 'true') && needs.phone-webkit.result == 'skipped')) }}
     needs: [release-plan, main-test, phone-webkit]
