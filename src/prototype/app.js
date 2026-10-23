@@ -1427,7 +1427,20 @@
   gpuTrialPanel.append(gpuTrialMessage, gpuKeep, gpuRevert);
   document.body.append(gpuTrialPanel);
   let graphicsController = null;
-  const pixiGame = PrototypePixiExperimental.create({
+  // Some isolated gameplay test shells intentionally omit optional rendering
+  // modules. Never make their absence stop the original Canvas game.
+  const pixiUnavailable = {
+    prepare: async () => false,
+    noteEvents() {},
+    draw() {},
+    activate() {},
+    deactivate() {},
+    release() {},
+    status: () => ({ active: false, available: false }),
+  };
+  const pixiGame = typeof PrototypePixiExperimental === 'undefined'
+    ? pixiUnavailable
+    : PrototypePixiExperimental.create({
     worldCanvas: canvas, viewport, platform,
     getGame: () => game, canvasRenderer: renderer,
     getRendererOptions: () => rendererSetup,
@@ -1452,8 +1465,22 @@
     gpuKeep.textContent = tr('Keep WebGL2');
     gpuRevert.textContent = tr('Revert to Canvas');
   }
-  const previousRendererChoice = AzerothRendererSwitchGuard.startupChoice(localStorage);
-  graphicsController = AzerothRendererSwitchGuard.create({
+  const fallbackController = {
+    status: () => ({ mode: 'canvas2d', phase: 'canvas', secondsRemaining: 0 }),
+    requestWebGL: async () => false,
+    resumeConfirmedWebGL: async () => false,
+    confirm: () => false,
+    revert: () => false,
+    webglFailed: () => false,
+    visibilityChanged() {},
+  };
+  const graphicsGuard = typeof AzerothRendererSwitchGuard === 'undefined'
+    ? null
+    : AzerothRendererSwitchGuard;
+  const previousRendererChoice = graphicsGuard
+    ? graphicsGuard.startupChoice(localStorage)
+    : { renderer: 'canvas2d' };
+  graphicsController = graphicsGuard ? graphicsGuard.create({
     storage: localStorage,
     prepareWebGL: () => pixiGame.prepare(),
     showWebGL: () => {
@@ -1469,7 +1496,7 @@
       pixiGame.release();
     },
     notify: updateGpuTrial,
-  });
+  }) : fallbackController;
   gpuKeep.onclick = () => graphicsController.confirm();
   gpuRevert.onclick = () => graphicsController.revert();
   addEventListener('visibilitychange',
