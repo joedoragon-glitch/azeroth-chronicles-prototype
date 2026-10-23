@@ -10,8 +10,7 @@ const version = '8.22.0';
 const url = 'https://cdn.jsdelivr.net/npm/pixi.js@8.22.0/dist/pixi.min.js';
 const target = path.resolve(__dirname, '../assets/vendor/pixi-8.22.0.min.js');
 // SHA-256 confirmed by GitHub's pinned 8.22.0 build. Fail closed on drift.
-const expectedSha256 =
-  '06d9ef9823e743518793083c296d801e752db128cb1f519fbabe37e1259567ea';
+const expectedSha256 = '06d9ef9823e743518793083c296d801e752db128cb1f519fbabe37e1259567ea';
 const bytesMin = 750000,
   bytesMax = 1000000;
 
