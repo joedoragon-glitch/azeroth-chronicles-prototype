@@ -101,15 +101,17 @@ if (site) {
     fs.mkdirSync(path.dirname(dest), { recursive: true });
     fs.copyFileSync(path.join(root, file), dest);
   }
-  fs.writeFileSync(
-    path.join(target, 'build.txt'),
-    (process.env.GITHUB_SHA ||
-      cp.execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim()) + '\n',
-  );
-  // Always publish a new worker when game code changes, even between package
-  // version bumps. Only the release copy is stamped; the source is unchanged.
-  if (/^[a-f0-9]{40}$/.test(process.env.GITHUB_SHA || ''))
-    require('./pwa-release-id.cjs').stampSite(target, process.env.GITHUB_SHA, pkg.version);
+  // GitHub Actions provides GITHUB_SHA; local site builds resolve HEAD.
+  // Every deployable site must have one valid commit ID: never silently ship
+  // a source-version-only worker that cannot signal an installed PWA update.
+  const releaseCommit = process.env.GITHUB_SHA ||
+    cp.execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
+  const { validCommit, stampSite } = require('./pwa-release-id.cjs');
+  if (!validCommit(releaseCommit))
+    throw Error('A complete Git commit SHA is required for a deployable PWA site');
+  fs.writeFileSync(path.join(target, 'build.txt'), releaseCommit + '\n');
+  // Stamp only the published worker, not the reproducible generated source.
+  stampSite(target, releaseCommit, pkg.version);
 }
 console.log(
   'PASS ' +
