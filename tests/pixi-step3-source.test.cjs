@@ -43,7 +43,6 @@ assert(!pixi.includes('new Campaign('), 'Do not create a parallel game');
 assert(canvas.includes("if (renderLayer !== 'background')"), 'Transient telegraphs must not be frozen in GPU terrain');
 assert(canvas.includes("if (renderLayer === 'background') return;"));
 assert(canvas.includes("renderLayer === 'overlay'"));
-console.log('PixiJS Step 3 source and generated-asset contract passed');
 
 assert(pixi.includes('resolution: effectiveRatio()'), 'GPU display resolution must match Canvas');
 assert(pixi.includes('createBackgroundPainter()'), 'Background must be rendered at the same density');
@@ -51,3 +50,4 @@ assert(pixi.includes('canvasRenderer.presentEntity'), 'GPU actors must share Can
 assert(pixi.includes('backingRatio * zoom'), 'Procedural art must bake at physical display density');
 assert(canvas.includes('presentEntity,'), 'Canvas must expose its shared asset-safe visual contract');
 assert(canvas.includes('drawPixiNameplates();'), 'World labels and recruitment cues must remain visible');
+console.log('PixiJS Step 3 source and generated-asset contract passed');
