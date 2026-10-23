@@ -1586,6 +1586,9 @@
     save,
     openMenu,
     closeMenu,
+    get menuControls() {
+      return menuControls;
+    },
     updateHUD,
     labelVisible: worldLabelVisible,
     chargePresentation,
@@ -1869,10 +1872,54 @@
     releaseJoystick();
     cancelTravel();
   }
+  // Shared presentation controls. Gameplay menus still use action() unchanged.
+  const menuControls = Object.freeze({
+    section: (label, detail = '') => ({ kind: 'section', label, detail }),
+    toggle: (label, value, onChange, detail = '') => ({
+      kind: 'toggle', label, value: !!value, onChange, detail,
+    }),
+    slider: (label, value, min, max, step, onChange, detail = '') => ({
+      kind: 'slider', label, value, min, max, step, onChange, detail,
+    }),
+    select: (label, value, options, onChange, detail = '') => ({
+      kind: 'select', label, value, options, onChange, detail,
+    }),
+  });
+  const menuHistory = [];
+  let menuReturnFocus = null;
+  let menuKeys = [];
+  function menuPosition(title, back) {
+    if (!menu) {
+      menuHistory.length = 0;
+      const focused = document.activeElement;
+      menuReturnFocus =
+        focused && focused !== document.body && focused !== $('modal') ? focused : null;
+      return null;
+    }
+    const previous = {
+      title: menu.title,
+      back: menu.back,
+      index: menuIndex,
+      key: menuKeys[menuIndex],
+      scrollTop: $('modal-content').scrollTop || 0,
+    };
+    if (previous.title === title && previous.back === back) return previous;
+    // A rebuilt ancestor is a Back transition, even when its caller is a
+    // skill/service confirmation rather than the physical Back button.
+    for (let i = menuHistory.length - 1; i >= 0; i--) {
+      if (menuHistory[i].title !== title || menuHistory[i].back !== back) continue;
+      const restored = menuHistory[i];
+      menuHistory.length = i;
+      return restored;
+    }
+    menuHistory.push(previous);
+    return null;
+  }
   function action(label, fn, detail = '', disabled = false, tutorialHighlight = false) {
     return { label, action: fn, detail, disabled, tutorialHighlight };
   }
   function openMenu(title, description = '', actions = [], back = closeMenu) {
+    const restored = menuPosition(title, back);
     bindingCapture = null;
     clearInput();
     gateDismissed = false;
@@ -1889,14 +1936,16 @@
     );
     // Small interactions need a small dialog; longer service catalogs keep a readable width.
     const structured = Array.isArray(description?.sections);
+    const hasControls = actions.some((entry) => !!entry.kind);
     const compact =
       !structured &&
+      !hasControls &&
       actions.length <= 2 &&
       description.length <= 180 &&
       actions.every((a) => a.label.length <= 46 && (a.detail || '').length <= 95);
     const regular =
       structured ||
-      (actions.length <= 5 &&
+      (!hasControls && actions.length <= 5 &&
         description.length <= 340 &&
         actions.every((a) => a.label.length <= 68 && (a.detail || '').length <= 160));
     $('modal').setAttribute('data-dialog-size', compact ? 'compact' : regular ? 'regular' : 'wide');
@@ -1941,43 +1990,138 @@
     }
     $('modal-content').scrollTop = 0;
     renderActions();
+    if (restored) {
+      const match = menuKeys.indexOf(restored.key);
+      menuIndex = match >= 0 ? match : Math.min(restored.index, buttons.length - 1);
+      highlight();
+      $('modal-content').scrollTop = restored.scrollTop;
+    }
     // Give keyboard and assistive-technology users a reliable dialog focus entry.
     $('modal').tabIndex = -1;
-    $('modal').focus?.({ preventScroll: true });
+    if (restored && buttons[menuIndex] && !buttons[menuIndex].disabled)
+      buttons[menuIndex].focus?.({ preventScroll: true });
+    else $('modal').focus?.({ preventScroll: true });
   }
   function renderActions() {
     const host = $('modal-actions');
     host.replaceChildren();
     buttons = [];
+    menuKeys = [];
+    const commit = (entry, value) => {
+      entry.value = value;
+      entry.onChange(value);
+      if (started) save();
+      updateHUD();
+    };
+    const details = (hostElement, entry) => {
+      if (!entry.detail) return;
+      const span = document.createElement('span');
+      span.className = 'detail';
+      span.textContent = tr(entry.detail);
+      hostElement.append(span);
+    };
     for (const [index, a] of menu.actions.entries()) {
-      const b = document.createElement('button');
-      b.textContent = tr(a.label);
-      b.disabled = a.disabled === true;
-      b.classList.toggle('tutorial-highlight', !!a.tutorialHighlight);
-      if (a.detail) {
-        const span = document.createElement('span');
-        span.className = 'detail';
-        span.textContent = tr(a.detail);
-        b.append(span);
-      }
-      b.onclick = (e) => {
-        // A mouse/touch choice must become the keyboard-confirmed choice too.
-        if (buttons[index] === b && menuIndex !== index) {
-          menuIndex = index;
-          highlight();
+      if (a.kind === 'section') {
+        const heading = document.createElement('h3');
+        heading.className = 'menu-section';
+        heading.textContent = tr(a.label);
+        host.append(heading);
+        if (a.detail) {
+          const note = document.createElement('p');
+          note.className = 'menu-section-detail';
+          note.textContent = tr(a.detail);
+          host.append(note);
         }
-        audio.unlock().then(() => audio.interfaceSound('confirm'));
-        a.action();
-        if (started) save();
-        updateHUD();
+        continue;
+      }
+      let b;
+      if (a.kind === 'toggle') {
+        b = document.createElement('button');
+        b.className = 'menu-setting-toggle';
+        const update = () => {
+          b.textContent = tr(a.label) + ' · ' + tr(a.value ? 'On' : 'Off');
+          b.setAttribute('aria-checked', String(a.value));
+          details(b, a);
+        };
+        b.setAttribute('role', 'switch');
+        b.disabled = a.disabled === true;
+        b.onclick = () => {
+          commit(a, !a.value);
+          update();
+        };
+        update();
+      } else if (a.kind === 'slider' || a.kind === 'select') {
+        const row = document.createElement('label');
+        row.className = 'menu-setting';
+        const heading = document.createElement('span');
+        heading.className = 'menu-setting-label';
+        heading.textContent = tr(a.label);
+        row.append(heading);
+        b = document.createElement(a.kind === 'slider' ? 'input' : 'select');
+        b.className = 'menu-setting-input';
+        b.setAttribute('aria-label', tr(a.label));
+        b.disabled = a.disabled === true;
+        if (a.kind === 'slider') {
+          b.type = 'range';
+          b.min = a.min;
+          b.max = a.max;
+          b.step = a.step;
+          b.value = a.value;
+          const output = document.createElement('output');
+          output.textContent = String(a.value);
+          b.oninput = () => {
+            commit(a, Number(b.value));
+            output.textContent = String(a.value);
+          };
+          row.append(b, output);
+        } else {
+          for (const option of a.options) {
+            const item = document.createElement('option');
+            item.value = String(option.value);
+            item.textContent = tr(option.label);
+            b.append(item);
+          }
+          b.value = String(a.value);
+          b.onchange = () => commit(a, b.value);
+          row.append(b);
+        }
+        details(row, a);
+        host.append(row);
+      } else {
+        b = document.createElement('button');
+        b.textContent = tr(a.label);
+        b.disabled = a.disabled === true;
+        b.classList.toggle('tutorial-highlight', !!a.tutorialHighlight);
+        details(b, a);
+        b.onclick = () => {
+          audio.unlock().then(() => audio.interfaceSound('confirm'));
+          a.action();
+          if (started) save();
+          updateHUD();
+        };
+      }
+      if (a.kind !== 'slider' && a.kind !== 'select') host.append(b);
+      const buttonIndex = buttons.length;
+      b.onfocus = () => {
+        if (menuIndex === buttonIndex) return;
+        menuIndex = buttonIndex;
+        highlight();
       };
-      host.append(b);
+      if (a.kind !== 'slider' && a.kind !== 'select') {
+        const invoke = b.onclick;
+        b.onclick = (event) => {
+          menuIndex = buttonIndex;
+          invoke(event);
+        };
+      }
       buttons.push(b);
+      menuKeys.push(a.key || (a.kind || 'action') + ':' + a.label);
     }
     const back = $('close-button');
     back.hidden = false;
     back.innerHTML = tr('Back') + ' <small>' + input.key('confirm') + ' / Esc</small>';
     buttons.push(back);
+    menuKeys.push('__back__');
     highlight();
   }
   function highlight(moveFocus = false) {
@@ -1993,9 +2137,13 @@
     bindingCapture = null;
     if (game.s.challenge.pending || game.s.challenge.gameOver) gateDismissed = true;
     menu = null;
+    menuHistory.length = 0;
+    menuKeys = [];
     $('modal').hidden = true;
     document.body.classList.remove('menu-open');
     clearInput();
+    if (menuReturnFocus?.focus) menuReturnFocus.focus({ preventScroll: true });
+    menuReturnFocus = null;
   }
   function appendNameField(initialValue = '') {
     const label = document.createElement('label'),
@@ -4205,7 +4353,8 @@
       e.ctrlKey ||
       e.metaKey ||
       e.altKey ||
-      /^(INPUT|TEXTAREA|SELECT)$/.test(e.target?.tagName || '')
+      (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target?.tagName || '') &&
+        !(menu && ['Tab', 'Escape'].includes(e.code)))
     )
       return;
     audio.unlock();
@@ -4248,14 +4397,24 @@
       if (code === 'Tab' && !['up', 'down', 'left', 'right', 'confirm'].includes(actionId)) {
         e.preventDefault();
         if (e.repeat) return;
-        const available = buttons.filter((b) => !b.disabled);
+        // Include temporary name fields and native settings controls. Do not
+        // let keyboard focus escape to the game underneath the open dialog.
+        const descendants = Array.from(
+          $('modal').querySelectorAll?.('button, input, select, textarea') || [],
+        ).filter((element) => !element.disabled && !element.hidden);
+        const available = descendants.length
+          ? descendants
+          : buttons.filter((button) => !button.disabled);
         if (!available.length) return;
         const focusedIndex = available.indexOf(document.activeElement);
         const from = focusedIndex < 0 ? (e.shiftKey ? 0 : -1) : focusedIndex;
         const next =
           available[(from + (e.shiftKey ? -1 : 1) + available.length) % available.length];
-        menuIndex = buttons.indexOf(next);
-        highlight(true);
+        const nextIndex = buttons.indexOf(next);
+        if (nextIndex >= 0) {
+          menuIndex = nextIndex;
+          highlight(true);
+        } else next.focus?.({ preventScroll: true });
         return;
       }
       if (e.repeat) return;
