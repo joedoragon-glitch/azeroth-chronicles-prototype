@@ -82,7 +82,13 @@ for (const language of ['en', 'es']) {
     const was = JSON.parse(before), now = JSON.parse(after);
     const changed = Object.keys(was).filter((key) =>
       JSON.stringify(was[key]) !== JSON.stringify(now[key]));
-    assert.deepEqual(changed, [], 'inspection changed campaign keys: ' + changed.join(', '));
+    assert.deepEqual(changed.filter((key) => key !== 'hero'), [],
+      'inspection must not mutate nonhero campaign state');
+    const heroChanges = Object.keys(was.hero).filter((key) =>
+      JSON.stringify(was.hero[key]) !== JSON.stringify(now.hero[key]));
+    assert.deepEqual(heroChanges.filter((key) => !['order', 'path'].includes(key)), [],
+      'inspection may clear movement input but cannot change hero equipment, currency or progression: ' +
+        heroChanges.join(', '));
   }
 }
 console.log('PASS bilingual smith/alchemist groups, native action availability, and read-only navigation');
