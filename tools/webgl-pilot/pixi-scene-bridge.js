@@ -11,7 +11,10 @@
    [32,20,35,.52],[27,19,43,.54]];
  const DAY=[[213,229,163,.045],[150,206,205,.05],[221,219,184,.045],
    [215,157,120,.05],[166,146,196,.05]];
- const rgba=(rgb,a)=>'rgba('+rgb.slice(0,3).join(',')+','+Number(a.toFixed(6))+')';
+ // PixiJS color parsing rejects tiny RGB floats in scientific notation near nightfall.
+ // Use integer CSS RGB channels while retaining the original 0..1 alpha precision.
+ const rgba=(rgb,a)=>'rgba('+rgb.slice(0,3).map(c=>Math.round(clamp(c,0,255))).join(',')+
+   ','+Number(clamp(a,0,1).toFixed(6))+')';
  function atmosphereLayers({region=0,darkness=0,peaceBlend=0,
                             optimized=false,warmth=0,phase='day'}={}) {
    const i=Math.max(0,Math.min(4,Math.trunc(region)||0));
