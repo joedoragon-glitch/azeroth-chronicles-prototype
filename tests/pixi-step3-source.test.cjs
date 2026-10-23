@@ -50,4 +50,12 @@ assert(pixi.includes('canvasRenderer.presentEntity'), 'GPU actors must share Can
 assert(pixi.includes('backingRatio * zoom'), 'Procedural art must bake at physical display density');
 assert(canvas.includes('presentEntity,'), 'Canvas must expose its shared asset-safe visual contract');
 assert(canvas.includes('drawPixiNameplates();'), 'World labels and recruitment cues must remain visible');
+assert(app.includes("document.addEventListener('visibilitychange'"),
+  'iOS PWA visibility changes must be handled on document');
+assert(app.includes("addEventListener('pagehide'"),
+  'Interrupted PWA trials must be cancelled on pagehide');
+assert(pixi.includes('scene.unregisterTexture(body.id)'),
+  'Area transitions must free obsolete Pixi textures');
+assert(pixi.includes('bakeZone !== current.zoneId'),
+  'Zone changes must invalidate outdated procedural artwork');
 console.log('PixiJS Step 3 source and generated-asset contract passed');

@@ -246,3 +246,20 @@ test('high-DPI Pixi backdrop retains the same logical geometry as Canvas',()=>{
   assert.equal(node.height,860,'logical terrain height must not inherit 1.5x bitmap height');
   scene.destroy();
 });
+
+
+test('discarded procedural artwork unregisters after old scene actors are released',()=>{
+  const {PIXI,app}=pixiFixture();
+  const scene=Bridge.create({PIXI,app,width:912,height:420});
+  scene.registerTexture('procedural:vale',picture());
+  scene.syncActors([{key:'cottage',textureId:'procedural:vale',
+    x:40,y:50,width:100,height:120,depth:1,opacity:1}]);
+  assert.equal(scene.metrics().actors,1);
+  scene.syncActors([]);
+  assert.equal(scene.metrics().actors,0);
+  assert.equal(scene.unregisterTexture('procedural:vale'),true);
+  assert.equal(scene.hasTexture('procedural:vale'),false);
+  assert.equal(scene.metrics().textureSources,0,'old GPU resources must not persist');
+  assert.equal(scene.unregisterTexture('procedural:vale'),false,'double release is safe');
+  scene.destroy();
+});

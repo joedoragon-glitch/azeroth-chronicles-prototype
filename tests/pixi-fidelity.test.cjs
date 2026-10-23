@@ -9,7 +9,7 @@ const Visuals = require('../src/prototype/visuals.js');
 const game = {
   hero: {id:'hero',x:334,y:298}, zoneId:'vale',
   s:{rescued:{},throneClaimed:false,statistics:{deaths:0}},
-  zone:()=>({props:[],enemies:[],buildings:[]}),
+  zone:()=>({props:game.props||[],enemies:[],buildings:[]}),
   visibleNPCs:()=>[],visibleResourceNodes:()=>[],activeLivingParty:()=>[],
   regionIndex:()=>0,isDungeon:()=>false,supplyRoom:()=>false,
   sideDungeon:()=>false,night:()=>false,daylightPhase:()=>({darkness:0})
@@ -18,8 +18,8 @@ const view={width:912,height:420}, platform={
   cameraZoom:1.5,cameraAnchor:()=>({x:456,y:210})
 };
 const sprites={
-  definitionFor:e=>({entry:{width:e.structure==='vale-cottage'?816:192,
-    height:e.structure==='vale-cottage'?816:192,displayWidth:192,displayHeight:192}}),
+  definitionFor:e=>({entry:{width:e.id==='home'?816:192,
+    height:e.id==='home'?816:192,displayWidth:192,displayHeight:192}}),
   timeMs:()=>1000
 };
 const painter=Renderer.create({
@@ -37,16 +37,21 @@ assert.equal(image.spriteIdentity,cottage);
 const oldImage=painter.presentEntity({structure:'vale-cottage'},'prop');
 assert.equal(oldImage.visualScale,1,'low-density art must not be blindly enlarged');
 
-const inits=[],draws=[],resizes=[],frames=[];
+const inits=[],draws=[],resizes=[],frames=[],resources=new Set();
 function canvas() {
-  return {
+  const surface={
     width:0,height:0,style:{},
     getContext(type) {
       if(type!=='2d')return null;
-      return {setTransform(ratio){this.ratio=ratio}};
+      return {setTransform(ratio){this.ratio=ratio},drawImage(){},
+        getImageData(){const data=new Uint8ClampedArray(surface.width*surface.height*4);
+          const x=Math.floor(surface.width/2),y=Math.floor(surface.height*.8);
+          data[(y*surface.width+x)*4+3]=255;return {data}}
+      };
     },
     setAttribute(){},addEventListener(){},remove(){}
   };
+  return surface;
 }
 class Application {
   constructor(){
@@ -81,14 +86,17 @@ const runtime={
   PrototypeVisuals:{draw(){}},
   AzerothNativeWebGLCore:{lampGlowCommands:()=>[]},
   AzerothGpuSpriteAdapter:{create:()=>({
-    commandFor:(entity,point)=>({
+    commandFor:(entity,point)=>entity.renderKind==='prop'
+      ? {supported:false,reason:'original-game-procedural-art'} : ({
       supported:true,texture:{src:'./assets/sprites/test.png'},
       command:{x:point.x,y:point.y,width:120,height:100,
         opacity:1,flipX:false,sourceRect:null}
     })
   })},
   AzerothPixiSceneBridge:{create:()=>({
-    registerTexture(){},hasTexture:()=>true,
+    registerTexture(id){resources.add(id)},
+    hasTexture:id=>resources.has(id),
+    unregisterTexture:id=>resources.delete(id),
     setBackground(){},moveBackground(){},
     syncActors(list){frames.push(list)},
     syncLamps(){},setAtmosphere(){},setVignette(){},draw(){},destroy(){}
@@ -125,6 +133,22 @@ const gpu=runtime.PrototypePixiExperimental.create({
   assert.equal(gpu.status().pixelRatio,1);
   assert.deepEqual(resizes,[1.5,1],'quality change resizes GPU in place');
   assert.equal(draws.at(-1).ratio,1,'background raster follows changed quality');
+  // Simulate region travel without altering saved combat state. Procedural
+  // GPU textures from the previous region must be released before rebuilding.
+  game.props=[{id:'post',x:game.hero.x+10,y:game.hero.y+5,structure:'lumber-pile'}];
+  game.zoneId='highlands';
+  gpu.draw();
+  assert.equal(gpu.status().proceduralTextures,1,'procedural body must be generated in new region');
+  assert(gpu.status().proceduralBytes>0);
+  const proceduralBefore=resources.size;
+  for(const zone of ['vale','highlands','vale','highlands']){
+    game.zoneId=zone;
+    gpu.draw();
+    assert.equal(gpu.status().proceduralTextures,1,'old zone body must be evicted');
+    assert.equal(resources.size,proceduralBefore,'old registered textures must not accumulate');
+  }
+  assert(gpu.status().proceduralEvictions>=4,'region changes should release procedural rasters');
+  assert.equal(gpu.status().loadedTextures,1,'canonical original sprite remains warmed');
   gpu.release();
-  console.log('PASS Pixi/Canvas sharpness, sizing and quality-transition parity');
+  console.log('PASS Pixi/Canvas sharpness, sizing, region travel and quality-transition parity');
 })().catch(error=>{console.error(error);process.exitCode=1});
