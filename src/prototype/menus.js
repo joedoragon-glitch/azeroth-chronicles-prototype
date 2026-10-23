@@ -737,6 +737,7 @@
             ? 'Neri sells Preparation Tonics and trains permanent Ranger field support.'
             : 'Neri sells Preparation Tonics and trains permanent Ranger Heal, companion vitality and discipline resets.',
         [
+          { kind: 'section', label: 'Preparation Tonics' },
           action(
             getGame().preparationTonicStock() >= 10000
               ? 'Preparation Tonics · STORAGE FULL'
@@ -750,6 +751,7 @@
             getGame().hero.gold < getGame().preparationTonicCost() ||
               getGame().preparationTonicStock() >= 10000,
           ),
+          { kind: 'section', label: 'Ranger support' },
           action(
             healRank >= 2
               ? 'Ranger Heal · Rank 2 · MAX'
@@ -780,6 +782,7 @@
                 ),
               ]
             : []),
+          { kind: 'section', label: 'Training and resets' },
           action(
             'Train Companion Vitality · Rank ' +
               (vitalityRank + 1) +
@@ -847,29 +850,7 @@
             ? ' This specialist also teaches companion equipment inheritance.'
             : ''),
         [
-          ...supportActions,
-          ...['weapon', 'armor'].map((slot) =>
-            action(
-              'Name ' + slot,
-              () =>
-                requestName({
-                  title: 'Name your ' + slot,
-                  description:
-                    'Give your equipped ' +
-                    slot +
-                    ' a personal name. Its upgrades and statistics stay the same.',
-                  initialValue:
-                    getGame().hero[slot === 'weapon' ? 'customWeaponName' : 'customArmorName'] ||
-                    '',
-                  permanent: false,
-                  onSubmit: (name) => getGame().nameEquipment(n.family, slot, name),
-                  onSkip: () => smith(n, back),
-                  onDone: () => smith(n, back),
-                }),
-              getGame().hero[slot === 'weapon' ? 'customWeaponName' : 'customArmorName'] ||
-                'Optional · cosmetic · free',
-            ),
-          ),
+          { kind: 'section', label: 'Equipment upgrades' },
           action(
             weaponOwned
               ? 'Weapon tier ' + tier + ' · ' + (currentWeapon === tier ? 'OWNED' : 'SURPASSED')
@@ -910,6 +891,7 @@
               (armorOwned ? ' · one-time purchase already satisfied' : ''),
             armorOwned || getGame().hero.gold < armor,
           ),
+          { kind: 'section', label: 'Reforging' },
           action(
             currentWeapon === tier && weaponReforged
               ? 'Reforge weapon · DONE'
@@ -952,6 +934,32 @@
               armorReforged ||
               getGame().hero.gold < getGame().equipmentCost('armor', tier, true),
           ),
+          { kind: 'section', label: 'Appearance' },
+          ...['weapon', 'armor'].map((slot) =>
+            action(
+              'Name ' + slot,
+              () =>
+                requestName({
+                  title: 'Name your ' + slot,
+                  description:
+                    'Give your equipped ' +
+                    slot +
+                    ' a personal name. Its upgrades and statistics stay the same.',
+                  initialValue:
+                    getGame().hero[slot === 'weapon' ? 'customWeaponName' : 'customArmorName'] ||
+                    '',
+                  permanent: false,
+                  onSubmit: (name) => getGame().nameEquipment(n.family, slot, name),
+                  onSkip: () => smith(n, back),
+                  onDone: () => smith(n, back),
+                }),
+              getGame().hero[slot === 'weapon' ? 'customWeaponName' : 'customArmorName'] ||
+                'Optional · cosmetic · free',
+            ),
+          ),
+          ...(supportActions.length
+            ? [{ kind: 'section', label: 'Expedition support' }, ...supportActions]
+            : []),
         ],
         back,
       );
