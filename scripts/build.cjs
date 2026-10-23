@@ -106,6 +106,10 @@ if (site) {
     (process.env.GITHUB_SHA ||
       cp.execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim()) + '\n',
   );
+  // Always publish a new worker when game code changes, even between package
+  // version bumps. Only the release copy is stamped; the source is unchanged.
+  if (/^[a-f0-9]{40}$/.test(process.env.GITHUB_SHA || ''))
+    require('./pwa-release-id.cjs').stampSite(target, process.env.GITHUB_SHA, pkg.version);
 }
 console.log(
   'PASS ' +
