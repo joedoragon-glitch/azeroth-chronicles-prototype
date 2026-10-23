@@ -661,6 +661,8 @@
       status: () => ({
         active,
         lastError,
+        // Actual Pixi scene counters; Canvas overlay counters are separate.
+        sceneMetrics: scene?.metrics?.() || null,
         loadedTextures: loaded.size,
         proceduralBytes: imageBytes,
         proceduralTextures: baked.size,
