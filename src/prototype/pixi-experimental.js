@@ -42,7 +42,7 @@
     }
     return libraryRequest;
   }
-  function candidates(game, project, width, height) {
+  function candidates(game, project, width, height, presentEntity) {
     const zone = game.zone();
     const result = [],
       used = new Map();
@@ -59,8 +59,7 @@
         const stem = kind + ':' + identity;
         const count = used.get(stem) || 0;
         used.set(stem, count + 1);
-        const visual = { ...entity, renderKind: kind, spriteIdentity: entity };
-        if (kind === 'hero' && game.s.throneClaimed) visual.crowned = true;
+        const visual = presentEntity(entity, kind);
         result.push({ entity, visual, kind, point, key: count ? stem + '#' + count : stem });
       }
     }
@@ -122,6 +121,7 @@
       basePosition = null,
       baseZone = null,
       baseZoom = null,
+      backingRatio = 1,
       active = false,
       lastError = null;
     const baked = new Map(),
@@ -132,6 +132,48 @@
       baseGame = null;
     function project(entity) {
       return canvasRenderer.screen(entity);
+    }
+    function effectiveRatio() {
+      // Use the same device-specific backing-pixel density as Canvas.
+      return worldCanvas.width / Math.max(1, viewport.width);
+    }
+    function createBackgroundPainter() {
+      const width = viewport.width + BG_MARGIN * 2,
+        height = viewport.height + BG_MARGIN * 2;
+      backdrop = makeCanvas(Math.round(width * backingRatio), Math.round(height * backingRatio));
+      const bgContext = requireValue(backdrop.getContext('2d'), 'Background canvas unsupported');
+      // Keep the same logical camera coordinates while rasterizing more sharply.
+      bgContext.setTransform(backingRatio, 0, 0, backingRatio, 0, 0);
+      const bgViewport = { width, height };
+      const bgPlatform = {
+        get cameraZoom() {
+          return platform.cameraZoom;
+        },
+        cameraAnchor() {
+          const a = platform.cameraAnchor(viewport.width, viewport.height);
+          return { x: a.x + BG_MARGIN, y: a.y + BG_MARGIN };
+        },
+      };
+      backgroundRenderer = root.PrototypeRenderer.create({
+        ...getRendererOptions(),
+        canvas: bgViewport,
+        ctx: bgContext,
+        platform: bgPlatform,
+        renderLayer: 'background',
+      });
+      basePosition = null;
+    }
+    function syncResolution() {
+      const next = effectiveRatio();
+      if (Math.abs(next - backingRatio) < 0.001) return;
+      // Change resolution without falling back or changing the camera zoom.
+      app.renderer.resize(viewport.width, viewport.height, next);
+      backingRatio = next;
+      const previous = backing;
+      backing = null;
+      createBackgroundPainter();
+      drawBackground();
+      previous?.destroy?.(false);
     }
     function game() {
       return getGame();
@@ -156,11 +198,13 @@
       backgroundRenderer.draw();
       if (backing) {
         backing.source.update?.();
-        scene.setBackground(backing, -BG_MARGIN, -BG_MARGIN);
+        scene.setBackground(backing, -BG_MARGIN, -BG_MARGIN, viewport.width + BG_MARGIN * 2,
+          viewport.height + BG_MARGIN * 2);
       } else {
         backing = root.PIXI.Texture.from(backdrop);
         backing.source.scaleMode = 'nearest';
-        scene.setBackground(backing, -BG_MARGIN, -BG_MARGIN);
+        scene.setBackground(backing, -BG_MARGIN, -BG_MARGIN, viewport.width + BG_MARGIN * 2,
+          viewport.height + BG_MARGIN * 2);
       }
     }
     function syncBackground() {
@@ -188,6 +232,7 @@
         project,
         viewport.width,
         viewport.height,
+        canvasRenderer.presentEntity,
       )) {
         if (
           entity.interactionOnly ||
@@ -352,7 +397,8 @@
           height: viewport.height,
           preference: ['webgl'],
           preferWebGLVersion: 2,
-          resolution: 1,
+          resolution: effectiveRatio(),
+          autoDensity: true,
           autoStart: false,
           antialias: false,
           background: 0x0c1913,
@@ -381,25 +427,8 @@
           isReducedMotion: () =>
             root.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches || false,
         });
-        backdrop = makeCanvas(viewport.width + BG_MARGIN * 2, viewport.height + BG_MARGIN * 2);
-        const bgContext = requireValue(backdrop.getContext('2d'), 'Background canvas unsupported');
-        const bgViewport = { width: backdrop.width, height: backdrop.height };
-        const bgPlatform = {
-          get cameraZoom() {
-            return platform.cameraZoom;
-          },
-          cameraAnchor() {
-            const a = platform.cameraAnchor(viewport.width, viewport.height);
-            return { x: a.x + BG_MARGIN, y: a.y + BG_MARGIN };
-          },
-        };
-        backgroundRenderer = root.PrototypeRenderer.create({
-          ...getRendererOptions(),
-          canvas: bgViewport,
-          ctx: bgContext,
-          platform: bgPlatform,
-          renderLayer: 'background',
-        });
+        backingRatio = effectiveRatio();
+        createBackgroundPainter();
         // Warm all canonical sprites once (~46 MiB decoded across 38 files).
         // Otherwise entering any previously unseen neighborhood forces fallback.
         const response = await fetch('./assets/sprites/manifest.json');
@@ -446,6 +475,7 @@
       try {
         if (app.screen.width !== viewport.width || app.screen.height !== viewport.height)
           throw Error('Viewport changed: return to Canvas');
+        syncResolution();
         syncBackground();
         actorFrame();
         syncAtmosphere();
@@ -482,6 +512,7 @@
       backdrop = null;
       basePosition = null;
       baseGame = null;
+      backingRatio = 1;
     }
     function dispose() {
       disposed = true;
@@ -503,6 +534,9 @@
         lastError,
         loadedTextures: loaded.size,
         proceduralBytes: imageBytes,
+        pixelRatio: backingRatio,
+        backdropWidth: backdrop?.width || 0,
+        backdropHeight: backdrop?.height || 0,
       }),
     });
   }
