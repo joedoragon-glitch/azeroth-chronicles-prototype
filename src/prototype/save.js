@@ -86,9 +86,10 @@
         out.squadEngagement = null;
         out.squadBoss = false;
         out.heroTarget = null;
-        // A queued skill approach is a live tactical instruction, not a
-        // persistent path or permission to cast after a save/import.
-        if (out.hero.order?.type === 'skill-approach') out.hero.order = null;
+        // Movement paths and queued skill approaches are live instructions, not
+        // saved permission to resume an invisible autopilot after loading.
+        if (['skill-approach', 'move'].includes(out.hero.order?.type)) out.hero.order = null;
+        delete out.hero.path;
         delete out.holdFire;
         out.projectiles = [];
         out.hazards = [];
@@ -407,7 +408,8 @@
           throw Error('Invalid cooldown');
         // Strip transient fields from historical or interrupted exports.
         // Existing learned ranks and charged cooldowns remain in v4.
-        if (s.hero.order?.type === 'skill-approach') s.hero.order = null;
+        if (['skill-approach', 'move'].includes(s.hero.order?.type)) s.hero.order = null;
+        delete s.hero.path;
         if ((s.hero.shieldStance || 0) > 0)
           s.hero.cd[2] = Math.max(
             s.hero.cd[2],
