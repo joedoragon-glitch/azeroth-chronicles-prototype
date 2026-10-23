@@ -16,6 +16,7 @@ const registryFiles = [
 const Sprites = require('../src/prototype/sprites.js');
 const Format = require('../src/prototype/sprite-format.js');
 const visualSandbox = {
+  PrototypeHighlands: require('../src/prototype/highlands.js'),
   PrototypeRules: require('../src/prototype/rules.js'),
   performance: { now: () => 16000 },
 };

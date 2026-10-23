@@ -255,10 +255,12 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
 
+  # Temporary PR #407 audit: obtain exact Prettier patch without weakening release gates.
+  # Historical PR #300 implementation below remains otherwise unchanged.
   # Draft PR #300 only: obtain a reproducible formatter correction while
   # independently preserving the strict pr-check/release certificate gate.
   snapshot-format-audit:
-    if: github.event_name == 'pull_request' && github.event.pull_request.number == 300
+    if: github.event_name == 'pull_request' && (github.event.pull_request.number == 300 || github.event.pull_request.number == 407)
     runs-on: ubuntu-latest
     permissions:
       contents: read
