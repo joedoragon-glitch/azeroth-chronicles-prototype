@@ -394,6 +394,8 @@ These later requested procedural designs supplement the historical census withou
 | Family | Current classification |
 | --- | --- |
 | `crown-orrery` | PROCEDURAL — native bronze survey landmark replacing the old obsidian circle; handoff `tools/sprites/design-handoffs/crown-orrery.json`. Implementation authorized; exact appearance awaits owner play feedback. |
+| `crown-coin-vault` | PROCEDURAL — existing Crown currency-vault cabinet and coin storage; retain native authored drawing and current placement. No raster replacement authorized. |
+| `treasury-audit-counter` | PROCEDURAL — existing Treasury accounting work surface, papers and weighing/coin details. No raster replacement authorized. |
 | Crown contained heat raceways | PROCEDURAL — existing lava collision rectangles with masonry containment/dry aprons; handoff `tools/sprites/design-handoffs/crown-heat-raceways.json`. No new raster authorization. |
 
 Watchpost catalog 096 retains its identity and future raster classification. Its old exact procedural reference is superseded by the owner-requested supported tower overhaul in `tools/sprites/design-handoffs/approved-art-decoration-watchpost.json`; this new appearance does not inherit the 19 October exact-art acceptance.

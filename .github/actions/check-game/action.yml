@@ -68,6 +68,11 @@ runs:
       continue-on-error: true
       shell: bash
       run: node tests/prototype-browser.test.cjs
+    - name: Exercise optional PixiJS renderer and safe Canvas fallback
+      id: pixi_renderer
+      continue-on-error: true
+      shell: bash
+      run: node tests/pixi-renderer-browser.test.cjs
     - name: Verify FPS settings and rendering-only scheduling
       id: fps_check
       continue-on-error: true
@@ -164,7 +169,7 @@ runs:
       run: |
         node <<'NODE'
         const states = JSON.parse(process.env.SNAPSHOT_CHECK_STATES || '{}');
-        const essential = ['formatting', 'source_checks', 'node_regressions'];
+        const essential = ['formatting', 'source_checks', 'node_regressions', 'pixi_renderer'];
         const failed = Object.entries(states)
           .filter(([name, value]) => value.outcome === 'failure')
           .map(([name]) => name);

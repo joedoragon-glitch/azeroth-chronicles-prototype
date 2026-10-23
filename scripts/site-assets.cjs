@@ -57,11 +57,15 @@ const scripts = [
     'runtime',
     'ground-cache',
     'renderer',
-    'archive',
-    'skill-reference',
-    'menus',
-    'app',
   ].map((name) => 'src/prototype/' + name + '.js'),
+  // GPU helpers must initialize BEFORE the experimental adapter and app.
+  'tools/webgl-pilot/native-webgl2-core.js',
+  'tools/webgl-pilot/native-sprite-adapter.js',
+  'tools/webgl-pilot/pixi-scene-bridge.js',
+  'tools/webgl-pilot/renderer-switch-guard.js',
+  ...['pixi-experimental', 'archive', 'skill-reference', 'menus', 'app'].map(
+    (name) => 'src/prototype/' + name + '.js',
+  ),
 ];
 const core = [
   'index.html',
@@ -74,6 +78,7 @@ const core = [
   'manifest.webmanifest',
   'icons/icon-192.png',
   'icons/icon-512.png',
+  'assets/vendor/pixi-8.22.0.min.js',
   'assets/sprites/manifest.json',
   'assets/vfx/manifest.json',
   'assets/materials/manifest.json',

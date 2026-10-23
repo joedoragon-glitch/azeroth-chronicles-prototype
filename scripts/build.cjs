@@ -6,6 +6,12 @@ const SpriteFormat = require('../src/prototype/sprite-format.js');
 const root = path.resolve(__dirname, '..'),
   { scripts, core, legacy } = require('./site-assets.cjs'),
   pkg = require('../package.json');
+// Locally bundle the pinned PixiJS dependency before generating the PWA.
+// Clean checkouts, including CI --check runs, prepare this build-only dependency.
+// The running PWA loads ONLY its same-origin copy.
+cp.execFileSync(process.execPath, [path.join(__dirname, 'vendor-pixi.cjs'), '--ensure'], {
+  stdio: 'inherit',
+});
 const check = process.argv.includes('--check'),
   site = process.argv.includes('--site'),
   read = (file) => fs.readFileSync(path.join(root, file), 'utf8');

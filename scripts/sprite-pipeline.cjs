@@ -16,6 +16,7 @@ const registryFiles = [
 const Sprites = require('../src/prototype/sprites.js');
 const Format = require('../src/prototype/sprite-format.js');
 const visualSandbox = {
+  PrototypeHighlands: require('../src/prototype/highlands.js'),
   PrototypeRules: require('../src/prototype/rules.js'),
   performance: { now: () => 16000 },
 };
@@ -710,6 +711,24 @@ async function checkProduction(options = {}) {
     unique = new Map(),
     prepared = contracts(),
     byKey = new Map(prepared.map((c) => [c.key, c]));
+  // Report ALL obsolete approvals in a single read-only audit, not one at
+  // a time. This does not approve new art, ignore provenance, or mutate bytes.
+  const staleApprovals = Object.entries(approved.assets)
+    .filter(([key, record]) => {
+      if ((options.allowStaleKeys || []).includes(key)) return false;
+      const contract = byKey.get(key);
+      return (
+        !contract ||
+        record.canonHash !==
+          (record.version === 1 ? contract.canonSnapshotHash : contract.canonHash) ||
+        record.catalogHash !== contract.catalog.sourceHash
+      );
+    })
+    .map(([key]) => key);
+  fail(
+    staleApprovals.length === 0,
+    'Stale canonical reference; compare again before publication: ' + staleApprovals.join(', '),
+  );
   for (const [key, record] of Object.entries(approved.assets)) {
     const contract = byKey.get(key),
       stale = (options.allowStaleKeys || []).includes(key);

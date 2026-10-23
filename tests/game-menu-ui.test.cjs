@@ -67,7 +67,17 @@ for (const language of ['en', 'es']) {
   click(t('Game and settings', 'Juego y ajustes'));
   click(t('Screen and performance', 'Pantalla y rendimiento'));
   short();
-  assert.equal(e.get('modal-actions').children.length, 5);
+  assert.equal(e.get('modal-actions').children.length, 6);
+  click(t('Graphics renderer', 'Motor gráfico'));
+  title('Graphics renderer', 'Motor gráfico');
+  assert.equal(e.get('modal-actions').children.length, 2);
+  assert(e.get('modal-actions').children.some((b) =>
+    b.textContent.startsWith(t('Canvas 2D · Default', 'Canvas 2D · Predeterminado'))));
+  assert(e.get('modal-actions').children.some((b) =>
+    b.textContent.startsWith('PixiJS WebGL2 · Experimental')));
+  assert.equal(s.Prototype.experimentalGraphics.mode, 'canvas2d');
+  back();
+  title('Screen and performance', 'Pantalla y rendimiento');
   click(t('Screen layout', 'Disposición de pantalla'));
   short();
   click(t('Phone / touch screen', 'Pantalla de teléfono / táctil'));

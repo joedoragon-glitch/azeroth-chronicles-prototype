@@ -702,6 +702,13 @@
     'Screen layout': 'Disposición de pantalla',
     'Camera zoom': 'Zoom de cámara',
     'Graphics quality': 'Calidad gráfica',
+    'Graphics renderer': 'Motor gráfico',
+    'Canvas 2D is the safe default. PixiJS WebGL2 is experimental; you can revert at any time.':
+      'Canvas 2D es la opción predeterminada segura. PixiJS WebGL2 es experimental; puedes volver a Canvas cuando quieras.',
+    'Canvas 2D · Default': 'Canvas 2D · Predeterminado',
+    'PixiJS WebGL2 · Experimental': 'PixiJS WebGL2 · Experimental',
+    'Keep WebGL2': 'Conservar WebGL2',
+    'Revert to Canvas': 'Volver a Canvas',
     'Frame rate': 'Fotogramas por segundo',
     'Adaptive frame skip': 'Salto adaptativo de fotogramas',
     'Skips some world drawings under load; gameplay and warnings continue.':
@@ -1376,9 +1383,7 @@
     gatheringGuideRequest = null,
     recallPractice = null;
   const viewport = { width: innerWidth, height: innerHeight };
-  const renderer = PrototypeRenderer.create({
-    canvas: viewport,
-    ctx,
+  const rendererSetup = {
     getGame: () => game,
     platform,
     chargePresentation,
@@ -1395,7 +1400,8 @@
     PrototypeCombatVisuals,
     PrototypeSprites: typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites,
     PrototypeMaterials: typeof PrototypeMaterials === 'undefined' ? null : PrototypeMaterials,
-  });
+  };
+  const renderer = PrototypeRenderer.create({ ...rendererSetup, canvas: viewport, ctx });
   renderer.setOptimizationMode(optimizationMode);
   const { world } = renderer,
     worldLabelVisible = renderer.labelVisible;
@@ -1404,6 +1410,123 @@
   const fps = PrototypeRuntime.createFrameRate(localStorage);
   const frameSkip = PrototypeRuntime.createFrameSkip(localStorage);
   const renderResolution = PrototypeRuntime.createResolution(localStorage);
+
+  // Opt-in renderer pilot; one live Campaign, no saved graphics state.
+  // Canvas is retained as an independent, always-available presentation surface.
+  const gpuTrialPanel = document.createElement('section');
+  gpuTrialPanel.id = 'gpu-renderer-trial';
+  gpuTrialPanel.hidden = true;
+  gpuTrialPanel.setAttribute('role', 'region');
+  gpuTrialPanel.setAttribute('aria-live', 'polite');
+  gpuTrialPanel.style.cssText =
+    'position:fixed;top:10%;left:50%;transform:translateX(-50%);' +
+    'z-index:30;background:#172b35f5;color:#f4f1dc;border:2px solid #ebc875;' +
+    'border-radius:12px;padding:12px;max-width:calc(100vw - 24px);width:310px;' +
+    'box-shadow:0 8px 24px #000a;pointer-events:auto';
+  const gpuTrialMessage = document.createElement('p');
+  const gpuKeep = document.createElement('button');
+  const gpuRevert = document.createElement('button');
+  gpuKeep.style.marginRight = '8px';
+  gpuTrialPanel.append(gpuTrialMessage, gpuKeep, gpuRevert);
+  document.body.append(gpuTrialPanel);
+  let graphicsController = null;
+  // Some isolated gameplay test shells intentionally omit optional rendering
+  // modules. Never make their absence stop the original Canvas game.
+  const pixiUnavailable = {
+    prepare: async () => false,
+    noteEvents() {},
+    draw() {},
+    activate() {},
+    deactivate() {},
+    release() {},
+    status: () => ({ active: false, available: false }),
+  };
+  const pixiGame =
+    typeof PrototypePixiExperimental === 'undefined'
+      ? pixiUnavailable
+      : PrototypePixiExperimental.create({
+          worldCanvas: canvas,
+          viewport,
+          platform,
+          getGame: () => game,
+          canvasRenderer: renderer,
+          getRendererOptions: () => rendererSetup,
+          getOptimizationMode: () => optimizationMode,
+          onFailure: (reason) => {
+            graphicsController?.webglFailed();
+            status('WebGL2 returned to Canvas: ' + reason);
+          },
+        });
+  // Fan out presentation events without editing the protected simulation loop.
+  const queueOriginalVisuals = renderer.queue;
+  renderer.queue = (events) => {
+    queueOriginalVisuals(events);
+    pixiGame.noteEvents(events);
+  };
+  function updateGpuTrial(snapshot) {
+    const trial = snapshot.phase === 'trial';
+    gpuTrialPanel.hidden = !trial;
+    if (!trial) return;
+    gpuTrialMessage.textContent =
+      tr('PixiJS WebGL2 · Experimental') + ' · ' + snapshot.secondsRemaining + 's';
+    gpuKeep.textContent = tr('Keep WebGL2');
+    gpuRevert.textContent = tr('Revert to Canvas');
+  }
+  const fallbackController = {
+    status: () => ({ mode: 'canvas2d', phase: 'canvas', secondsRemaining: 0 }),
+    requestWebGL: async () => false,
+    resumeConfirmedWebGL: async () => false,
+    confirm: () => false,
+    revert: () => false,
+    webglFailed: () => false,
+    visibilityChanged() {},
+  };
+  const graphicsGuard =
+    typeof AzerothRendererSwitchGuard === 'undefined' ? null : AzerothRendererSwitchGuard;
+  const previousRendererChoice = graphicsGuard
+    ? graphicsGuard.startupChoice(localStorage)
+    : { renderer: 'canvas2d' };
+  graphicsController = graphicsGuard
+    ? graphicsGuard.create({
+        storage: localStorage,
+        prepareWebGL: () => pixiGame.prepare(),
+        showWebGL: () => {
+          renderer.setRenderLayer('overlay');
+          pixiGame.activate();
+          renderer.draw();
+        },
+        showCanvas: () => {
+          pixiGame.deactivate();
+          renderer.setRenderLayer('full');
+          renderer.draw();
+          // Only release GPU resources after the reliable Canvas is visible.
+          pixiGame.release();
+        },
+        notify: updateGpuTrial,
+      })
+    : fallbackController;
+  gpuKeep.onclick = () => graphicsController.confirm();
+  gpuRevert.onclick = () => graphicsController.revert();
+  addEventListener('visibilitychange', () => graphicsController.visibilityChanged(document.hidden));
+  // Canvas always boots first. A previously confirmed GPU preference may
+  // reappear only after its first complete frame and recovery marker clear.
+  if (previousRendererChoice.renderer === 'webgl2') {
+    requestAnimationFrame(() => {
+      graphicsController.resumeConfirmedWebGL().then((ready) => {
+        if (!ready) status('Previous WebGL2 choice unavailable; Canvas is active.');
+      });
+    });
+  }
+  function drawWorld() {
+    if (graphicsController.status().mode === 'webgl2') {
+      try {
+        pixiGame.draw();
+      } catch (_) {
+        graphicsController.webglFailed();
+      }
+    }
+    renderer.draw();
+  }
 
   const {
     teacher,
@@ -1446,6 +1569,9 @@
     },
     audio,
     renderer,
+    get experimentalGraphics() {
+      return { ...graphicsController.status(), ...pixiGame.status() };
+    },
     platform,
     runtime,
     frameProfile,
@@ -1481,6 +1607,14 @@
     },
   };
   function resize() {
+    // Zoom only changes the live scene projection. Keep the validated GPU
+    // surface; its terrain refreshes when cameraZoom changes. Only a genuine
+    // viewport resize needs the conservative separate-Canvas fallback.
+    if (
+      graphicsController?.status().mode === 'webgl2' &&
+      (viewport.width !== innerWidth || viewport.height !== innerHeight)
+    )
+      graphicsController.webglFailed();
     viewport.width = innerWidth;
     viewport.height = innerHeight;
     // Below the supported 375x800 portrait / 800x375 landscape layout,
@@ -2328,6 +2462,7 @@
         action('Screen layout', () => screenLayoutMenu(returnHere)),
         action('Camera zoom', () => cameraMenu(returnHere)),
         action('Graphics quality', () => graphicsMenu(returnHere)),
+        action('Graphics renderer', () => graphicsRendererMenu(returnHere)),
         action('Frame rate', () => frameRateMenu(returnHere)),
         action('Performance details', () => performanceMenu(returnHere)),
       ],
@@ -2372,6 +2507,27 @@
       back,
     );
   }
+  function graphicsRendererMenu(back) {
+    const selected = graphicsController.status().mode;
+    openMenu(
+      'Graphics renderer',
+      'Canvas 2D is the safe default. PixiJS WebGL2 is experimental; you can revert at any time.',
+      [
+        action(tr('Canvas 2D · Default') + (selected === 'canvas2d' ? ' ✓' : ''), () => {
+          graphicsController.revert();
+          graphicsRendererMenu(back);
+        }),
+        action('PixiJS WebGL2 · Experimental' + (selected === 'webgl2' ? ' ✓' : ''), () => {
+          closeMenu();
+          status('Preparing real campaign artwork in PixiJS…');
+          graphicsController.requestWebGL().then((ready) => {
+            if (!ready) status('PixiJS unavailable; Canvas 2D remains active.');
+          });
+        }),
+      ],
+      back,
+    );
+  }
   function graphicsMenu(back) {
     openMenu(
       'Graphics quality',
@@ -2390,7 +2546,7 @@
             renderer.setOptimizationMode(optimizationMode);
             resize();
             runtime.reset();
-      frameProfile.reset();
+            frameProfile.reset();
             fps.suspend();
             graphicsMenu(back);
           },
@@ -2417,9 +2573,9 @@
         const fixed = Number(value);
         const pixels = Number.isFinite(fixed)
           ? ' · ' +
-            Math.round(innerWidth * fixed / 100) +
+            Math.round((innerWidth * fixed) / 100) +
             ' × ' +
-            Math.round(innerHeight * fixed / 100)
+            Math.round((innerHeight * fixed) / 100)
           : '';
         return action(
           tr(label) + pixels + (renderResolution.preference === value ? ' ✓' : ''),
@@ -2427,7 +2583,7 @@
             renderResolution.select(value);
             resize();
             runtime.reset();
-      frameProfile.reset();
+            frameProfile.reset();
             fps.suspend();
             renderingResolutionMenu(back);
           },
@@ -2483,7 +2639,7 @@
       [
         action('Reset performance sample', () => {
           runtime.reset();
-      frameProfile.reset();
+          frameProfile.reset();
           performanceMenu(back);
         }),
       ],
@@ -4962,8 +5118,15 @@
       }
     }
     const stageTimes = !frozen
-      ? { simulationMs: 0, companionAIMs: 0, enemyAIMs: 0, hudMs: 0,
-          audioUpdateMs: 0, eventDispatchMs: 0, renderMs: 0 }
+      ? {
+          simulationMs: 0,
+          companionAIMs: 0,
+          enemyAIMs: 0,
+          hudMs: 0,
+          audioUpdateMs: 0,
+          eventDispatchMs: 0,
+          renderMs: 0,
+        }
       : null;
     const audioAt = stageTimes ? performance.now() : 0;
     audio.update(game, paused || !focused || document.hidden, {
@@ -4991,10 +5154,15 @@
           deaths: game.s.statistics.deaths,
           order: !!movingHero.order,
         };
-      const simulationAt = performance.now(), marks = {};
+      const simulationAt = performance.now(),
+        marks = {};
       game.tick(dt, {
-        x, y, speedFactor,
-        performanceMark: (stage) => { marks[stage] = performance.now(); },
+        x,
+        y,
+        speedFactor,
+        performanceMark: (stage) => {
+          marks[stage] = performance.now();
+        },
       });
       stageTimes.simulationMs = performance.now() - simulationAt;
       if (marks.partyStart !== undefined && marks.partyEnd !== undefined)
@@ -5099,44 +5267,60 @@
     }
     if (!frozen) {
       // Protect urgent cues even when the ordinary FPS limiter skips this callback.
-      if (events.some(e => e.type === 'warning' || e.type === 'eliteWarning' ||
-          e.type === 'chargeInterrupted' || e.type === 'death'))
+      if (
+        events.some(
+          (e) =>
+            e.type === 'warning' ||
+            e.type === 'eliteWarning' ||
+            e.type === 'chargeInterrupted' ||
+            e.type === 'death',
+        )
+      )
         frameSkip.protect(now);
       const eligibleDraw = fps.shouldDraw(now);
       const adaptiveSkipped = eligibleDraw && frameSkip.shouldSkip(now, fps.target);
       const draw = eligibleDraw && !adaptiveSkipped;
       if (draw) {
-        const sample = runtime.record(now, frameStart, () => renderer.draw());
+        const sample = runtime.record(now, frameStart, () => drawWorld());
         stageTimes.renderMs += sample.renderMs;
         if (renderResolution.observe(now, sample.renderMs, fps.target, sample.preRenderMs)) {
           resize();
           const redrawAt = performance.now();
-          renderer.draw();
+          drawWorld();
           stageTimes.renderMs += performance.now() - redrawAt;
           runtime.reset();
-      frameProfile.reset();
+          frameProfile.reset();
           fps.suspend();
         }
       }
       fps.observe(now, performance.now() - frameStart, draw);
       const frameWorkMs = performance.now() - frameStart;
       frameSkip.observe(now, frameWorkMs, stageTimes.renderMs, draw);
-      const otherSimulationMs = Math.max(0,
-          stageTimes.simulationMs - stageTimes.companionAIMs - stageTimes.enemyAIMs),
-        accounted = stageTimes.simulationMs + stageTimes.hudMs + stageTimes.audioUpdateMs +
-          stageTimes.eventDispatchMs + stageTimes.renderMs;
+      const otherSimulationMs = Math.max(
+          0,
+          stageTimes.simulationMs - stageTimes.companionAIMs - stageTimes.enemyAIMs,
+        ),
+        accounted =
+          stageTimes.simulationMs +
+          stageTimes.hudMs +
+          stageTimes.audioUpdateMs +
+          stageTimes.eventDispatchMs +
+          stageTimes.renderMs;
       frameProfile.record({
         ...stageTimes,
-        otherSimulationMs, frameWorkMs, intervalMs,
+        otherSimulationMs,
+        frameWorkMs,
+        intervalMs,
         otherJsMs: Math.max(0, frameWorkMs - accounted),
-        drawn: draw, adaptiveSkipped,
+        drawn: draw,
+        adaptiveSkipped,
       });
     } else {
       frameSkip.suspend();
       renderResolution.suspend();
       fps.suspend();
       runtime.suspend();
-      if (runtime.shouldDrawIdle(now)) renderer.draw();
+      if (runtime.shouldDrawIdle(now)) drawWorld();
     }
     requestAnimationFrame(frame);
   }
@@ -5154,7 +5338,7 @@
     clearInput();
     resize();
     runtime.reset();
-      frameProfile.reset();
+    frameProfile.reset();
     fps.suspend();
   });
   updateHUD();

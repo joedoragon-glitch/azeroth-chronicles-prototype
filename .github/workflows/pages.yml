@@ -25,6 +25,10 @@ jobs:
       # One-time owner-approved FPS-settings publication; focused tests only.
       # This shortcut expires after the exact parent commit below is pushed.
       hotkey_fast: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == '43d26166f64153d49c911ccc191167e8245bf5f8' }}
+      # OWNER-AUTHORIZED ONE-TIME experimental playtest publication.
+      # Only the first push from the exact current main parent is eligible;
+      # later pushes always use the normal full validation gates.
+      pixi_playtest: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before == '869049797d5e29270886871c89068f648c1f2a6c' && contains(github.event.head_commit.message, 'Release experimental PixiJS playtest') }}
     steps:
       - uses: actions/checkout@v4
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -80,7 +84,7 @@ jobs:
 
   phone-webkit:
     needs: release-plan
-    if: needs.release-plan.outputs.hotkey_fast != 'true'
+    if: needs.release-plan.outputs.hotkey_fast != 'true' && needs.release-plan.outputs.pixi_playtest != 'true'
     runs-on: ubuntu-latest
     outputs:
       full_validation: ${{ steps.full.outputs.validated }}
@@ -109,6 +113,9 @@ jobs:
       - name: Install locked development tools
         if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         run: npm ci --ignore-scripts
+      - name: Prepare pinned local PixiJS for offline-capable PWA browser tests
+        if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
+        run: node scripts/vendor-pixi.cjs --ensure
       - name: Install WebKit and browser dependencies
         if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         timeout-minutes: 5
@@ -125,6 +132,13 @@ jobs:
         continue-on-error: true
         if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         run: node tests/phone-webkit-browser.test.cjs
+      - name: Verify optional PixiJS WebGL2 fallback in WebKit
+        id: webkit_pixi
+        continue-on-error: true
+        if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
+        env:
+          BROWSER_ENGINE: webkit
+        run: node tests/pixi-renderer-browser.test.cjs
       - name: Verify WebKit cooldown charge queues and save upgrade
         id: webkit_saves
         continue-on-error: true
@@ -231,7 +245,7 @@ jobs:
         run: |
           node <<'NODE'
           const states = JSON.parse(process.env.WEBKIT_CHECK_STATES || '{}');
-          const required = ['webkit_phone', 'webkit_saves', 'webkit_archive', 'webkit_rogue', 'webkit_audio', 'webkit_vfx', 'webkit_sprites', 'webkit_terrain', 'webkit_visuals', 'webkit_community'];
+          const required = ['webkit_phone', 'webkit_pixi', 'webkit_saves', 'webkit_archive', 'webkit_rogue', 'webkit_audio', 'webkit_vfx', 'webkit_sprites', 'webkit_terrain', 'webkit_visuals', 'webkit_community'];
           const failed = Object.entries(states).filter(([, value]) => value.outcome === 'failure').map(([name]) => name);
           for (const name of required) if (states[name]?.outcome !== 'success' && !failed.includes(name)) failed.push(name);
           if (failed.length) { console.error('WebKit certification blocked by: ' + failed.join(', ')); process.exit(1); }
@@ -336,7 +350,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        if: needs.release-plan.outputs.reuse == 'true'
+        if: needs.release-plan.outputs.reuse == 'true' || needs.release-plan.outputs.pixi_playtest == 'true'
         with:
           node-version: '22'
       - name: Reuse successful full regression validation
@@ -345,8 +359,23 @@ jobs:
           VALIDATED_RUN: ${{ needs.release-plan.outputs.run_id }}
         run: echo "Exact tree already passed full checks in run $VALIDATED_RUN; rebuilding the release package."
       - name: Run full game checks
-        if: needs.release-plan.outputs.reuse != 'true' && needs.release-plan.outputs.hotkey_fast != 'true'
+        if: needs.release-plan.outputs.reuse != 'true' && needs.release-plan.outputs.hotkey_fast != 'true' && needs.release-plan.outputs.pixi_playtest != 'true'
         uses: ./.github/actions/check-game
+      - name: Run focused experimental PixiJS playtest checks (one-time owner authorization)
+        if: needs.release-plan.outputs.pixi_playtest == 'true'
+        run: |
+          npm ci --ignore-scripts
+          node scripts/build.cjs --check --site
+          node tools/webgl-pilot/renderer-switch-guard.test.cjs
+          node tests/pixi-step2-contract.test.cjs
+          node tests/pixi-step3-source.test.cjs
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || true)"
+          if [ -n "$CHROME" ]; then
+            export CHROMIUM_EXECUTABLE="$CHROME"
+          else
+            npx playwright install chromium
+          fi
+          node tests/pixi-renderer-browser.test.cjs
       - name: Run focused FPS controller and settings checks only
         if: needs.release-plan.outputs.hotkey_fast == 'true'
         run: |
@@ -354,7 +383,7 @@ jobs:
           node tests/frame-skip.test.cjs
           node tests/game-menu-ui.test.cjs
       - uses: actions/upload-artifact@v4
-        if: always() && needs.release-plan.outputs.reuse != 'true' && needs.release-plan.outputs.hotkey_fast != 'true'
+        if: always() && needs.release-plan.outputs.reuse != 'true' && needs.release-plan.outputs.hotkey_fast != 'true' && needs.release-plan.outputs.pixi_playtest != 'true'
         with:
           name: app-screenshots
           retention-days: 3
@@ -371,7 +400,7 @@ jobs:
       ${{ always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' &&
           needs.main-test.result == 'success' &&
           (needs.phone-webkit.result == 'success' ||
-           (needs.release-plan.outputs.hotkey_fast == 'true' && needs.phone-webkit.result == 'skipped')) }}
+           ((needs.release-plan.outputs.hotkey_fast == 'true' || needs.release-plan.outputs.pixi_playtest == 'true') && needs.phone-webkit.result == 'skipped')) }}
     needs: [release-plan, main-test, phone-webkit]
     runs-on: ubuntu-latest
     permissions:
@@ -419,23 +448,28 @@ jobs:
           echo "Published site did not reach commit ${GITHUB_SHA} in time."
           exit 1
       - name: Verify published desktop and phone smoke paths
-        if: needs.release-plan.outputs.hotkey_fast != 'true'
+        if: needs.release-plan.outputs.hotkey_fast != 'true' && needs.release-plan.outputs.pixi_playtest != 'true'
         env:
           PLAYTEST_URL: ${{ steps.deployment.outputs.page_url }}
           BROWSER_SMOKE: '1'
         run: node tests/prototype-browser.test.cjs
       - name: Verify published original-master actor idles and roads
-        if: needs.release-plan.outputs.hotkey_fast != 'true'
+        if: needs.release-plan.outputs.hotkey_fast != 'true' && needs.release-plan.outputs.pixi_playtest != 'true'
         env:
           PLAYTEST_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
           node scripts/sprite-production-browser-review.cjs "$PLAYTEST_URL" test-results/sprite-pilot-live chromium
           node scripts/sprite-nature-browser-review.cjs "$PLAYTEST_URL" test-results/sprite-nature-live chromium
       - name: Verify published quest completion and Keeper Archive
-        if: needs.release-plan.outputs.hotkey_fast != 'true'
+        if: needs.release-plan.outputs.hotkey_fast != 'true' && needs.release-plan.outputs.pixi_playtest != 'true'
         env:
           PLAYTEST_URL: ${{ steps.deployment.outputs.page_url }}
         run: node tests/quest-archive-browser.test.cjs
+      - name: Verify published experimental PixiJS selector and fallback
+        if: needs.release-plan.outputs.pixi_playtest == 'true'
+        env:
+          PLAYTEST_URL: ${{ steps.deployment.outputs.page_url }}
+        run: node tests/pixi-renderer-browser.test.cjs
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
