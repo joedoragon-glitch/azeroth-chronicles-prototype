@@ -720,6 +720,10 @@
       'Canvas 2D es la opción segura. WebGL2 inicia una prueba de 15 segundos para conservar o revertir.',
     'Local samples are diagnostic estimates, not verified display FPS.':
       'Las muestras locales son estimaciones diagnósticas, no FPS reales verificados.',
+    'Towns and camps': 'Pueblos y campamentos',
+    'Travel routes': 'Rutas de viaje',
+    'Dungeon entrances': 'Entradas de mazmorras',
+    'Places and threats': 'Lugares y amenazas',
     'Screen layout': 'Disposición de pantalla',
     'Camera zoom': 'Zoom de cámara',
     'Graphics quality': 'Calidad gráfica',
@@ -3425,6 +3429,21 @@
 
     let selected = null;
     let route = null;
+    // Preserve the native nearest-first order within each category while
+    // giving long map lists predictable landmarks. This never reveals hidden
+    // bosses or services: only mapDestinations() supplies the entries.
+    const groupFor = (place) =>
+      place.kind === 'transport' || place.kind === 'exit'
+        ? 'Travel routes'
+        : place.kind === 'dungeon' || place.sideDungeon
+          ? 'Dungeon entrances'
+          : place.kind === 'rest' || place.kind === 'barracks'
+            ? 'Towns and camps'
+            : 'Places and threats';
+    const groups = ['Towns and camps', 'Travel routes', 'Dungeon entrances', 'Places and threats'];
+    const orderedPlaces = groups.flatMap((name) =>
+      destinations.filter((place) => groupFor(place) === name),
+    );
     const choices = [
       action(
         'Navigate to selected',
@@ -3438,7 +3457,7 @@
             return;
           }
           closeMenu();
-          questGuide=null;
+          questGuide = null;
           if (PrototypeInput.requestMove(game, latest.point)) {
             storyRouteActive = true;
             status('Walking to ' + selected.name + '.');
@@ -3447,18 +3466,47 @@
         '',
         true,
       ),
-      ...destinations.map((place) =>
-        action((place.icon || '•') + ' ' + place.name, () => choose(place), place.kind === 'transport' ? 'Walk to the travel service; choose your journey there.' : place.kind === 'dungeon' || place.sideDungeon ? 'Walk to the entrance, then interact to enter.' : ''),
-      ),
-      ...(questGuide ? [action('Clear waypoint', () => {
-        if (questGuide?.kind === 'gathering') game.s.gatheringTarget = null;
-        questGuide = null; closeMenu();
-      })] : []),
+      ...groups.flatMap((group) => {
+        const places = orderedPlaces.filter((place) => groupFor(place) === group);
+        return places.length
+          ? [
+              menuControls.section(group),
+              ...places.map((place) =>
+                action(
+                  (place.icon || '•') + ' ' + place.name,
+                  () => choose(place),
+                  place.kind === 'transport'
+                    ? 'Walk to the travel service; choose your journey there.'
+                    : place.kind === 'dungeon' || place.sideDungeon
+                      ? 'Walk to the entrance, then interact to enter.'
+                      : '',
+                ),
+              ),
+            ]
+          : [];
+      }),
+      ...(questGuide
+        ? [
+            action('Clear waypoint', () => {
+              if (questGuide?.kind === 'gathering') game.s.gatheringTarget = null;
+              questGuide = null;
+              closeMenu();
+            }),
+          ]
+        : []),
     ];
     openMenu((room?.name || side?.name || region.name) + ' map', 'Choose a place, then select Navigate.', choices, back);
     $('modal').setAttribute('data-view', 'map');
-    const go = $('modal-actions').children[0];
+    // Section headings do not participate in keyboard action indices.
+    const mapButtons = Array.from($('modal-actions').children).filter(
+      (node) => typeof node.onclick === 'function',
+    );
+    const go = mapButtons[0];
     go.classList.add('route-go');
+    go.setAttribute('aria-live', 'polite');
+    orderedPlaces.forEach((_, index) =>
+      mapButtons[index + 1].setAttribute('aria-pressed', 'false'),
+    );
     const map = document.createElement('canvas');
     map.width = 480;
     map.height = 320;
@@ -3560,10 +3608,13 @@
       route = findRoute(place);
       go.disabled = !route;
       go.textContent = tr(route ? 'Navigate · ' + place.name : 'No route · ' + place.name);
-      Array.from($('modal-actions').children).forEach((button, index) =>
-        button.classList.toggle('route-picked', destinations[index - 1] === place),
-      );
-      menuIndex = destinations.indexOf(place) + 1;
+      orderedPlaces.forEach((candidate, index) => {
+        const button = mapButtons[index + 1];
+        const picked = candidate === place;
+        button.classList.toggle('route-picked', picked);
+        button.setAttribute('aria-pressed', String(picked));
+      });
+      menuIndex = orderedPlaces.indexOf(place) + 1;
       highlight();
       drawMap();
     }
