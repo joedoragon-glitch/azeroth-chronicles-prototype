@@ -1468,9 +1468,9 @@
           canvasRenderer: renderer,
           getRendererOptions: () => rendererSetup,
           getOptimizationMode: () => optimizationMode,
-          onFailure: (reason) => {
-            graphicsController?.webglFailed();
-            status('WebGL2 returned to Canvas: ' + reason);
+          onFailure: (failure) => {
+            graphicsController?.webglFailed(failure);
+            status('WebGL2 returned to Canvas: ' + failure.message);
           },
         });
   // Fan out presentation events without editing the protected simulation loop.
@@ -1506,6 +1506,7 @@
     ? graphicsGuard.create({
         storage: localStorage,
         prepareWebGL: () => pixiGame.prepare(),
+        getFailureDetails: () => pixiGame.failureDetails?.() || null,
         showWebGL: () => {
           renderer.setRenderLayer('overlay');
           pixiGame.activate();
@@ -1541,8 +1542,14 @@
     if (graphicsController.status().mode === 'webgl2') {
       try {
         pixiGame.draw();
-      } catch (_) {
-        graphicsController.webglFailed();
+      } catch (error) {
+        // Pixi normally reports an exact failure first; preserve it.
+        // This catches only otherwise unhandled wrapper exceptions.
+        graphicsController.webglFailed({
+          type: 'render-exception',
+          stage: 'draw-world',
+          message: String(error?.message || error),
+        });
       }
     }
     renderer.draw();
@@ -1636,8 +1643,19 @@
     if (
       graphicsController?.status().mode === 'webgl2' &&
       (viewport.width !== innerWidth || viewport.height !== innerHeight)
-    )
-      graphicsController.webglFailed();
+    ) {
+      const gpu = pixiGame.status();
+      graphicsController.webglFailed({
+        type: 'viewport-changed',
+        stage: 'resize',
+        message: 'Viewport dimensions changed; Canvas restored',
+        resources: {
+          loadedTextures: gpu.loadedTextures,
+          proceduralTextures: gpu.proceduralTextures,
+          proceduralBytes: gpu.proceduralBytes,
+        },
+      });
+    }
     viewport.width = innerWidth;
     viewport.height = innerHeight;
     // Below the supported 375x800 portrait / 800x375 landscape layout,
