@@ -58,4 +58,22 @@ assert(pixi.includes('scene.unregisterTexture(body.id)'),
   'Area transitions must free obsolete Pixi textures');
 assert(pixi.includes('bakeZone !== current.zoneId'),
   'Zone changes must invalidate outdated procedural artwork');
-console.log('PixiJS Step 3 source and generated-asset contract passed');
+// Performance instrumentation is presentation-only, not a new FPS policy.
+const runtimeSource = read('src/prototype/runtime.js');
+assert(app.includes('pixiAttempted: false'), 'Pixi draw samples must be explicitly identified');
+assert(app.includes('canvasOverlayDrawn: false'), 'Canvas overlay draws need their own samples');
+assert(app.includes('canvasWorldDrawn: false'), 'Canvas-only samples must remain distinct');
+assert(app.includes('addRenderStageTimes(stageTimes, drawTiming)'),
+  'World draw stages must be collected from actual drawing');
+assert(app.includes('addRenderStageTimes(stageTimes, redrawTiming)'),
+  'Resolution redraws must not silently lose renderer-stage timing');
+assert(app.includes('measuredLayer: graphicsController.status().mode'),
+  'Reported Canvas counters must identify their true rendering layer');
+assert(pixi.includes('sceneMetrics: scene?.metrics?.() || null'),
+  'Export actual Pixi scene counters, not Canvas overlay substitutes');
+assert(runtimeSource.includes("['pixiMs', 'pixiAttempted']"));
+assert(runtimeSource.includes("['canvasOverlayMs', 'canvasOverlayDrawn']"));
+assert(runtimeSource.includes("['canvasWorldMs', 'canvasWorldDrawn']"));
+assert(runtimeSource.includes('not monitor-presented frames'),
+  'Never report synchronous CPU call timings as hardware display FPS');
+console.log('PixiJS Step 3 source, asset and renderer-profile contract passed');
