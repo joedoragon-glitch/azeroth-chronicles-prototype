@@ -106,7 +106,7 @@ for (const language of ['en', 'es']) {
   assert.equal(s.Prototype.platform.cameraZoom, 1.5);
   assert.equal(JSON.parse(storage.get(s.PrototypePlatform.cameraPreferenceKey)).phone, 1.5);
 
-  click('Optimization Mode');
+  click(language === 'en' ? 'Optimization Mode' : 'Modo de optimización');
   assert.equal(storage.get('azeroth-optimization-mode-v1'), 'on');
   for (const resolution of ['native', 'auto', '100', '80', '60', '50']) {
     selectSetting('Rendering resolution', 'Resolución de renderizado', resolution);
@@ -114,7 +114,7 @@ for (const language of ['en', 'es']) {
     assert.equal(storage.get(s.PrototypeRuntime.resolutionPreferenceKey), resolution);
   }
   selectSetting('Rendering resolution', 'Resolución de renderizado', 'auto');
-  click('Optimization Mode');
+  click(language === 'en' ? 'Optimization Mode' : 'Modo de optimización');
   assert.equal(storage.get('azeroth-optimization-mode-v1'), 'off');
 
   assert.equal(s.Prototype.fps.preference, 'auto');
