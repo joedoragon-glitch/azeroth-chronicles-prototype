@@ -64,7 +64,7 @@ function selectTests(changed, exists = (file) => fs.existsSync(path.join(root,fi
     }
     if (!covered) uncovered.push(file);
   }
-  // The fallback remains focused. Never expand to npm test or browser matrices.
+  // The fallback remains a single lightweight architecture contract, never a suite.
   if (uncovered.length && exists(TEST+'architecture.test.cjs'))
     chosen.add(TEST+'architecture.test.cjs');
   return {tests: [...chosen].sort(), uncovered};
