@@ -66,74 +66,65 @@ for (const language of ['en', 'es']) {
   back();
   click(t('Game and settings', 'Juego y ajustes'));
   click(t('Screen and performance', 'Pantalla y rendimiento'));
-  short();
-  assert.equal(e.get('modal-actions').children.length, 6);
-  click(t('Graphics renderer', 'Motor gráfico'));
-  title('Graphics renderer', 'Motor gráfico');
-  assert.equal(e.get('modal-actions').children.length, 2);
-  assert(e.get('modal-actions').children.some((b) =>
-    b.textContent.startsWith(t('Canvas 2D · Default', 'Canvas 2D · Predeterminado'))));
-  assert(e.get('modal-actions').children.some((b) =>
-    b.textContent.startsWith('PixiJS WebGL2 · Experimental')));
-  assert.equal(s.Prototype.experimentalGraphics.mode, 'canvas2d');
-  back();
   title('Screen and performance', 'Pantalla y rendimiento');
-  click(t('Screen layout', 'Disposición de pantalla'));
   short();
-  click(t('Phone / touch screen', 'Pantalla de teléfono / táctil'));
+  const rows = () => e.get('modal-actions').children;
+  const setting = (en, es = en) => {
+    const label = t(en, es);
+    const row = rows().find((child) =>
+      child.className === 'menu-setting' &&
+      child.children.some((item) => item.textContent === label));
+    assert(row, 'missing inline setting ' + label);
+    return row.children.find((child) => child.className === 'menu-setting-input');
+  };
+  const selectSetting = (en, es, value) => {
+    const control = setting(en, es);
+    assert(control, 'missing control ' + en);
+    control.value = value;
+    control.onchange();
+    title('Screen and performance', 'Pantalla y rendimiento');
+    assert(!e.get('modal').hidden, 'setting should not close the unified window');
+  };
+  const section = (en, es = en) => {
+    assert(rows().some((node) => node.className === 'menu-section' && node.textContent === t(en, es)));
+  };
+  section('Display', 'Pantalla');
+  section('Graphics', 'Gráficos');
+  section('Frame rate', 'Fotogramas por segundo');
+  section('Graphics renderer', 'Motor gráfico');
+  section('Diagnostics', 'Diagnósticos');
+  assert.equal(rows().filter((r) => r.className === 'menu-setting').length, 5);
+  const canvas = setting('Graphics renderer', 'Motor gráfico');
+  assert(canvas.children.some((o) => o.value === 'canvas2d'));
+  assert(canvas.children.some((o) => o.value === 'webgl2'));
+  assert.equal(s.Prototype.experimentalGraphics.mode, 'canvas2d');
+
+  selectSetting('Screen layout', 'Disposición de pantalla', 'phone');
   assert.equal(s.Prototype.platform.mode, 'phone');
   assert.equal(storage.get(s.PrototypePlatform.preferenceKey), 'phone');
-  e.get('menu-button').click();
-  click(t('Game and settings', 'Juego y ajustes'));
-  click(t('Screen and performance', 'Pantalla y rendimiento'));
-  click(t('Camera zoom', 'Zoom de cámara'));
-  short();
-  click(t('Camera 150%', 'Cámara 150%'));
+  selectSetting('Camera zoom', 'Zoom de cámara', '1.5');
   assert.equal(s.Prototype.platform.cameraZoom, 1.5);
   assert.equal(JSON.parse(storage.get(s.PrototypePlatform.cameraPreferenceKey)).phone, 1.5);
-  e.get('menu-button').click();
-  click(t('Game and settings', 'Juego y ajustes'));
-  click(t('Screen and performance', 'Pantalla y rendimiento'));
-  click(t('Graphics quality', 'Calidad gráfica'));
-  short();
+
   click('Optimization Mode');
   assert.equal(storage.get('azeroth-optimization-mode-v1'), 'on');
-  click(t('Rendering resolution', 'Resolución de renderizado'));
-  click(t('Maximum sharpness', 'Nitidez máxima'));
-  assert.equal(s.Prototype.renderResolution.preference, 'native');
-  assert.equal(storage.get(s.PrototypeRuntime.resolutionPreferenceKey), 'native');
-  click(t('Automatic sharpness', 'Nitidez automática'));
-  assert.equal(s.Prototype.renderResolution.preference, 'auto');
-  for (const [percent, label] of [
-    ['100', t('100% · Standard', '100% · Estándar')],
-    ['80', t('80% · Balanced', '80% · Equilibrado')],
-    ['60', t('60% · Performance', '60% · Rendimiento')],
-    ['50', t('50% · Maximum speed', '50% · Máxima velocidad')],
-  ]) {
-    click(label);
-    assert.equal(s.Prototype.renderResolution.preference, percent);
-    assert.equal(storage.get(s.PrototypeRuntime.resolutionPreferenceKey), percent);
+  for (const resolution of ['native', 'auto', '100', '80', '60', '50']) {
+    selectSetting('Rendering resolution', 'Resolución de renderizado', resolution);
+    assert.equal(s.Prototype.renderResolution.preference, resolution);
+    assert.equal(storage.get(s.PrototypeRuntime.resolutionPreferenceKey), resolution);
   }
-  back();
+  selectSetting('Rendering resolution', 'Resolución de renderizado', 'auto');
   click('Optimization Mode');
   assert.equal(storage.get('azeroth-optimization-mode-v1'), 'off');
-  back();
-  click(t('Frame rate', 'Fotogramas por segundo'));
-  short();
-  assert.equal(s.Prototype.fps.preference, 'auto', 'New Auto is the default');
-  assert.equal(s.Prototype.fps.target, 30);
-  click('60 FPS');
-  assert.equal(s.Prototype.fps.preference, '60');
-  assert.equal(storage.get(s.PrototypeRuntime.fpsPreferenceKey), '60');
-  click('30 FPS');
-  assert.equal(s.Prototype.fps.preference, '30');
-  click('20 FPS');
-  assert.equal(s.Prototype.fps.preference, '20');
-  assert.equal(s.Prototype.fps.target, 20);
-  click('Auto 30–60 FPS');
-  assert.equal(s.Prototype.fps.preference, 'auto60');
-  click(t('Auto 20–30 FPS', 'Auto 20–30 FPS'));
+
   assert.equal(s.Prototype.fps.preference, 'auto');
+  assert.equal(s.Prototype.fps.target, 30);
+  for (const value of ['60', '30', '20', 'auto60', 'auto']) {
+    selectSetting('Frame rate', 'Fotogramas por segundo', value);
+    assert.equal(s.Prototype.fps.preference, value);
+    assert.equal(storage.get(s.PrototypeRuntime.fpsPreferenceKey), value);
+    if (value === '20') assert.equal(s.Prototype.fps.target, 20);
+  }
   assert.equal(s.Prototype.frameSkip.enabled, false, 'Off by default');
   click(t('Adaptive frame skip', 'Salto adaptativo de fotogramas'));
   assert.equal(s.Prototype.frameSkip.enabled, true);
@@ -141,10 +132,14 @@ for (const language of ['en', 'es']) {
   click(t('Adaptive frame skip', 'Salto adaptativo de fotogramas'));
   assert.equal(s.Prototype.frameSkip.enabled, false);
   assert.equal(storage.get(s.PrototypeRuntime.frameSkipPreferenceKey), 'off');
-  back();
-  click(t('Performance details', 'Detalles de rendimiento'));
+
+  click(t('Show performance details', 'Mostrar detalles de rendimiento'));
+  title('Screen and performance', 'Pantalla y rendimiento');
+  assert(rows().some((node) => node.textContent === t('Performance details', 'Detalles de rendimiento')));
   click(t('Reset performance sample', 'Reiniciar muestra de rendimiento'));
-  back();
+  title('Screen and performance', 'Pantalla y rendimiento');
+  click(t('Hide performance details', 'Ocultar detalles de rendimiento'));
+  assert(!rows().some((node) => node.textContent === t('Performance details', 'Detalles de rendimiento')));
   back();
   title('Game and settings', 'Juego y ajustes');
   click(t('Sound settings', 'Ajustes de sonido'));
