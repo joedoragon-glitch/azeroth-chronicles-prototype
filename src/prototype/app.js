@@ -2385,6 +2385,15 @@
               version: PrototypeBuild.version,
               performance: {
                 ...runtime.report(renderer.metrics(), platform.mode),
+                // Report the active surface, not just the saved preference.
+                graphicsRenderer: {
+                  activeRenderer:
+                    graphicsController.status().mode === 'webgl2' && pixiGame.status().active
+                      ? 'pixijs-webgl2'
+                      : 'canvas2d',
+                  ...graphicsController.status(),
+                  ...pixiGame.status(),
+                },
                 frameProfile: frameProfile.report(),
                 frameRatePreference: fps.preference,
                 frameRateTarget: fps.target,
