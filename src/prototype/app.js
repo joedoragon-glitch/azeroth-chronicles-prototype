@@ -1996,7 +1996,9 @@
     }
     // Give keyboard and assistive-technology users a reliable dialog focus entry.
     $('modal').tabIndex = -1;
-    $('modal').focus?.({ preventScroll: true });
+    if (restored && buttons[menuIndex] && !buttons[menuIndex].disabled)
+      buttons[menuIndex].focus?.({ preventScroll: true });
+    else $('modal').focus?.({ preventScroll: true });
   }
   function renderActions() {
     const host = $('modal-actions');
