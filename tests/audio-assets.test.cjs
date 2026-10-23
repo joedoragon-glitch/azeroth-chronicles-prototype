@@ -8,7 +8,8 @@ const assert = require('node:assert/strict'),
   vm = require('node:vm');
 const { publishedFiles, limits } = require('../scripts/audio-assets.cjs'),
   root = path.resolve(__dirname, '..'),
-  temp = fs.mkdtempSync(path.join(os.tmpdir(), 'azeroth-audio-'));
+  temp = fs.mkdtempSync(path.join(os.tmpdir(), 'azeroth-audio-')),
+  fixtureCommit = 'b'.repeat(40);
 // A silent PCM container is an isolated packaging fixture, never production sound.
 const wav = Buffer.alloc(64);
 wav.write('RIFF');
@@ -175,19 +176,22 @@ async function offlineContract(checkout) {
     let run = cp.spawnSync(process.execPath, ['scripts/build.cjs', '--site'], {
       cwd: checkout,
       encoding: 'utf8',
-      env: { ...process.env, GITHUB_SHA: 'audio-fixture' },
+      env: { ...process.env, GITHUB_SHA: fixtureCommit },
     });
     assert.equal(run.status, 0, run.stderr);
     assert(fs.readFileSync(path.join(checkout, '_site/assets/audio/fixture.wav')).equals(wav));
     assert.equal(
       fs.readFileSync(path.join(checkout, '_site/build.txt'), 'utf8').trim(),
-      'audio-fixture',
+      fixtureCommit,
     );
+    assert(fs.readFileSync(path.join(checkout, '_site/sw.js'), 'utf8')
+      .includes('-release-' + fixtureCommit.slice(0, 12)),
+      'audio-inclusive release packages must receive a unique PWA cache ID');
     fs.writeFileSync(path.join(checkout, 'assets/audio/unregistered.wav'), wav);
     run = cp.spawnSync(process.execPath, ['scripts/build.cjs', '--check', '--site'], {
       cwd: checkout,
       encoding: 'utf8',
-      env: { ...process.env, GITHUB_SHA: 'audio-fixture' },
+      env: { ...process.env, GITHUB_SHA: fixtureCommit },
     });
     assert.equal(run.status, 0, run.stderr);
     assert(!fs.existsSync(path.join(checkout, '_site/assets/audio/unregistered.wav')));
