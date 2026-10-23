@@ -699,6 +699,9 @@
     'Choose your layout and movement controls.':
       'Elige la disposición y los controles de movimiento.',
     'Tap reachable ground to move.': 'Toca terreno accesible para moverte.',
+    'Optimization Mode': 'Modo de optimización',
+    On: 'Activado',
+    Off: 'Desactivado',
     Display: 'Pantalla',
     Graphics: 'Gráficos',
     Diagnostics: 'Diagnósticos',
