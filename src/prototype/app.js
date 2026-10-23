@@ -692,6 +692,11 @@
     'Skill journal': 'Diario de habilidades',
     Controls: 'Controles',
     'Character and identity': 'Personaje e identidad',
+    'Equipment upgrades': 'Mejoras de equipo',
+    Reforging: 'Reforja',
+    Appearance: 'Apariencia',
+    'Expedition support': 'Apoyo de Expedición',
+    'Training and resets': 'Entrenamiento y reinicios',
     'Choose a topic or adjust your inputs.': 'Elige un tema o ajusta tus controles.',
     'Choose the control you want to learn.': 'Elige el control que quieres aprender.',
     'Choose an action, then press its new key. Esc cancels. Each key binds one action.':
@@ -2605,7 +2610,11 @@
               ),
             ]
           : []),
-        action('Inventory and support', () => inventory(characterMenu, true)),
+        action(
+          'Inventory and support',
+          () => inventory(characterMenu, true),
+          'Equipment, Ranger support and Preparation Tonics.',
+        ),
         action('Skill journal', () => skillBook(characterMenu)),
         action('Talents', () => talents(characterMenu)),
       ],
