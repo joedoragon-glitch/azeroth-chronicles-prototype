@@ -703,6 +703,8 @@
     'Camera zoom': 'Zoom de cámara',
     'Graphics quality': 'Calidad gráfica',
     'Graphics renderer': 'Motor gráfico',
+    'Canvas 2D is the safe default. PixiJS WebGL2 is experimental; you can revert at any time.':
+      'Canvas 2D es la opción predeterminada segura. PixiJS WebGL2 es experimental; puedes volver a Canvas cuando quieras.',
     'Canvas 2D · Default': 'Canvas 2D · Predeterminado',
     'PixiJS WebGL2 · Experimental': 'PixiJS WebGL2 · Experimental',
     'Keep WebGL2': 'Conservar WebGL2',
@@ -2509,9 +2511,9 @@
     const selected = graphicsController.status().mode;
     openMenu(
       'Graphics renderer',
-      'Canvas 2D is the safe default. PixiJS is unfinished and requires a connection.',
+      'Canvas 2D is the safe default. PixiJS WebGL2 is experimental; you can revert at any time.',
       [
-        action('Canvas 2D · Default' + (selected === 'canvas2d' ? ' ✓' : ''), () => {
+        action(tr('Canvas 2D · Default') + (selected === 'canvas2d' ? ' ✓' : ''), () => {
           graphicsController.revert();
           graphicsRendererMenu(back);
         }),
