@@ -56,14 +56,17 @@
       },
       describe(render) {
         const r = report(render);
+        const layerNote = render.measuredLayer === 'canvas-combat-overlay'
+          ? 'Canvas combat overlay only; Pixi world actor/tile counts are separate.\n'
+          : '';
         return (
           'Local sample: ' +
           r.fps +
-          ' frames/s · ' +
+          ' issued draws/s · ' +
           r.workP95Ms +
           ' ms at the 95th percentile. ' +
           r.sampleFrames +
-          ' recent frames.\nVisible objects: ' +
+          ' recent frames.\n' + layerNote + 'Canvas visible objects: ' +
           (render.entitiesDrawn || 0) +
           ' / ' +
           (render.entitiesConsidered || 0) +
@@ -71,7 +74,7 @@
           (render.tilesDrawn || 0) +
           ' / ' +
           (render.tileCandidates || 0) +
-          ' candidates.\nExport a playtest report to include this sample. Measurements describe this device and scene.'
+          ' candidates.\nExport a playtest report to include this sample. These are local synchronous estimates, not presented FPS.'
         );
       },
     };
