@@ -154,7 +154,9 @@
       loaded = new Set();
     let imageBytes = 0,
       disposed = false,
-      baseGame = null;
+      baseGame = null,
+      bakeZone = null,
+      proceduralEvictions = 0;
     function project(entity) {
       return canvasRenderer.screen(entity);
     }
@@ -206,10 +208,18 @@
       return getGame();
     }
     function clearBakes(keepLoaded = false) {
+      // Drop actors before their procedural source textures are destroyed.
+      // Keeping dead resources registered caused growth after zone transitions.
+      if (scene && baked.size) {
+        scene.syncActors([]);
+        for (const body of baked.values()) scene.unregisterTexture(body.id);
+      }
+      proceduralEvictions += baked.size;
       for (const texture of ownedTextures) texture.destroy?.(true);
       ownedTextures.length = 0;
       baked.clear();
       imageBytes = 0;
+      bakeZone = null;
       if (!keepLoaded) loaded.clear();
     }
     function drawBackground() {
@@ -253,10 +263,11 @@
     function actorFrame() {
       const current = game(),
         zoom = platform.cameraZoom || 1;
-      if (bakedZoom !== zoom) {
+      if (bakedZoom !== zoom || (bakeZone !== null && bakeZone !== current.zoneId)) {
         clearBakes(true);
         bakedZoom = zoom;
       }
+      bakeZone = current.zoneId;
       const records = [];
       for (const { entity, visual, point, key } of candidates(
         current,
@@ -556,6 +567,7 @@
       baseGame = null;
       backingRatio = 1;
       bakedZoom = null;
+      bakeZone = null;
     }
     function dispose() {
       disposed = true;
@@ -577,6 +589,8 @@
         lastError,
         loadedTextures: loaded.size,
         proceduralBytes: imageBytes,
+        proceduralTextures: baked.size,
+        proceduralEvictions,
         pixelRatio: backingRatio,
         backdropWidth: backdrop?.width || 0,
         backdropHeight: backdrop?.height || 0,
