@@ -43,11 +43,30 @@
   - English/Spanish section labels and the Inventory path are maintained. The existing `game-menu-ui.test.cjs` now tests inline Ranger/tonic information; a new `character-services-ui.test.cjs` exercises bilingual merchant groups and availability without purchases.
   - No new settings, game engine/economy logic, v4 save data, renderer choices, or sound behavior.
 
-## Remaining milestone order (do not implement without next owner turn)
+- **Step 7: Maps, quests and remaining menus — implemented and separately source-audited; awaiting integrated project review.**
+  - The same native map destinations appear once each under four bilingual groups: Towns and camps, Travel routes, Dungeon entrances, Places and threats. Places retain nearest-first order within each group.
+  - Interactive selection is indexed using only real action buttons, excluding headings. Picked location highlighting and accessible state reflect the current choice.
+  - **No** route solver, canvas pointer hit test, Navigate execution, Clear waypoint, quest progression, announcement, transport, dungeon camp, save or renderer logic was rewritten.
+  - New English/Spanish `tests/menu-map-quest-ui.test.cjs` checks group/list integrity, canvas selection, Navigate transition, quest and announcement Back paths, and state preservation. Existing `game-menu-ui` guards keep quest selection and Clear waypoint covered.
+  - A **separate read-only Step 7 audit** is recorded in `docs/MENU_STEP7_AUDIT_20261023.md` with source findings, focused evidence and device/accessibility limits.
+  - **Owner's distinct post-menu concern:** the underlying route solver, clickable map, Navigate and Clear waypoint may be buggy/suboptimal. These are *not* considered fixed by Step 7 and are explicitly deferred to a new-chat audit in `docs/MAP_WAYFINDING_FOLLOWUP.md`.
 
-7. Maps, quests and remaining menus — targeted changes only where warranted by evidence.
+## Remaining work: integrated review and owner-approved release
+
+All seven feature milestones have been implemented (Steps 1–2 published in PRs #413–414; Steps 3–7 isolated together in this draft PR #415). Review the complete Steps 3–7 diff and reconcile concurrent main changes before any merge or deployment. Run focused integration checks and a publishable-build check; request permission first for full-game/device test matrices. Merge/release only with explicit owner approval.
+
+**After closing the menu project:** Start the separate map routing and waypoint reliability audit in a new chat, using the documented follow-up contract.
 
 Each milestone gets its own focused commits, applicable regression tests, explicit source notes, and review. All work continues **on this same branch and PR**, not fresh branches or PRs. The project branch is the source for the next milestone; do not reset to old main between steps.
+
+## Step 7 validation and independent audit gates
+
+- Only map list grouping and menu selection presentation were changed; the native pathfinding, map pointer mapping, Navigate and Clear waypoint behaviors remain untouched for a separate audit.
+- Map list covers all returned destinations exactly once; sections are not navigable options; chosen rows and the sticky Navigate state follow the same destination.
+- Bilingual quest journal/side/completed/announcements traversal and campaign progression guards remain intact. Paid travel/dungeon camp/recovery routes were not modified.
+- Verify `tests/menu-map-quest-ui.test.cjs`, existing relevant menu regressions, changed-source syntax and reproducible build with the repository's focused-only PR CI. No broad game/device/graphics tests without separate owner approval.
+- Read and sign off `docs/MENU_STEP7_AUDIT_20261023.md`. Underlying routing and waypoints receive the separate audit defined in `docs/MAP_WAYFINDING_FOLLOWUP.md`.
+- No merge, deployment or version change on the draft branch until the owner approves the full project.
 
 ## Step 6 validation gates
 
