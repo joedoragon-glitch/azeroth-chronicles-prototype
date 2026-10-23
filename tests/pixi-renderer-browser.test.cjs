@@ -9,6 +9,11 @@ const cp = require('node:child_process');
 const playwright = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 
 const root = path.resolve(__dirname, '..');
+// An isolated browser smoke may run before the general build step. Ensure
+// the exact pinned local Pixi bundle exists, just like the actual PWA build.
+if (!fs.existsSync(path.join(root,'assets/vendor/pixi-8.22.0.min.js')))
+  cp.execFileSync(process.execPath,['scripts/vendor-pixi.cjs','--ensure'],
+    {cwd:root,stdio:'inherit'});
 const engine = process.env.BROWSER_ENGINE || 'chromium';
 const requireWebGL = process.env.REQUIRE_WEBGL2 === '1';
 // Use the runner's Chromium if available, including its software WebGL2
