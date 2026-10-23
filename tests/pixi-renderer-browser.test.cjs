@@ -29,7 +29,8 @@ const server = http.createServer((req, res) => {
 async function run() {
   let browser;
   try {
-    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+    if (!process.env.PLAYTEST_URL)
+      await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
     const options = engine === 'chromium' && process.env.CHROMIUM_EXECUTABLE
       ? {executablePath: process.env.CHROMIUM_EXECUTABLE,
         args: ['--no-sandbox', '--disable-dev-shm-usage']}
@@ -42,7 +43,9 @@ async function run() {
       });
       const page = await context.newPage(), errors = [];
       page.on('pageerror', (e) => errors.push(e.message));
-      const host = 'http://127.0.0.1:' + server.address().port + '/';
+      const host = process.env.PLAYTEST_URL
+        ? process.env.PLAYTEST_URL.replace(/\/?$/, '/')
+        : 'http://127.0.0.1:' + server.address().port + '/';
       await page.goto(host + (phone ? 'phone.html' : 'index.html'));
       await page.waitForFunction(() => !!window.Prototype && !!window.Prototype.renderer);
       assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'canvas2d');
@@ -132,7 +135,7 @@ async function run() {
     }
   } finally {
     await browser?.close();
-    await new Promise((resolve) => server.close(resolve));
+    if (server.listening) await new Promise((resolve) => server.close(resolve));
   }
 }
 run().catch((error) => {console.error(error); process.exitCode = 1;});
