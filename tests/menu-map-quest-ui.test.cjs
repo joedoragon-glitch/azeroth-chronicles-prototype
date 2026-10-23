@@ -19,8 +19,6 @@ for (const language of ['en', 'es']) {
     s.Prototype.closeMenu();
     e.get('menu-button').click();
   };
-  const baseline = JSON.stringify(g.snapshot());
-
   openRoot();
   click(tr('Map and travel routes', 'Mapa y rutas de viaje'));
   assert.match(title(), /map|mapa/);
@@ -43,6 +41,7 @@ for (const language of ['en', 'es']) {
     1,
     'only the current destination is highlighted',
   );
+  const selectedState = JSON.stringify(g.snapshot());
   const actualMap = e.get('modal-description').children.find((n) => n.width === 480);
   assert(actualMap?.onclick, 'interactive map canvas remains available');
   const size = g.zoneSize();
@@ -51,12 +50,14 @@ for (const language of ['en', 'es']) {
     clientY: 670 + (town.y / size) * 110,
   });
   assert(townButton.classList.contains('route-picked'), 'map coordinate selection matches the list');
+  assert.equal(JSON.stringify(g.snapshot()), selectedState, 'selecting a location is read-only');
   placeButtons[0].click();
   assert(e.get('modal').hidden, 'Navigate closes the map');
   assert.equal(g.hero.order?.type, 'move');
   assert(g.hero.path.length, 'native wayfinding still sets a route');
 
   openRoot();
+  const beforeJournal = JSON.stringify(g.snapshot());
   click(tr('Quest journal', 'Diario de misiones'));
   assert.equal(title(), tr('Quest journal', 'Diario de misiones'));
   click(tr('Side Quests', 'Misiones secundarias'));
@@ -83,8 +84,8 @@ for (const language of ['en', 'es']) {
   assert.equal(g.hero.order, null, 'reopening a menu cancels ongoing movement as before');
   assert.equal(
     JSON.stringify(g.snapshot()),
-    baseline,
-    'map and journal inspection preserve the campaign state and rewards',
+    beforeJournal,
+    'quest and announcement inspection preserve campaign progress after a route',
   );
 }
 console.log('PASS bilingual grouped map routes, canvas selection, quest navigation, Back and saved state');
