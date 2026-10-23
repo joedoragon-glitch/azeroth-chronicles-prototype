@@ -150,13 +150,22 @@
       active = false,
       lastError = null;
     const baked = new Map(),
-      ownedTextures = [],
       loaded = new Set();
+    // The old 64 MiB image budget preceded the procedural art expansion.
+    // Use 256 MiB as a strict image-data ceiling, with earlier LRU trimming
+    // to leave memory headroom for the original sprite, ground and audio caches.
+    const proceduralBudget = Number.isSafeInteger(options.proceduralTextureBudgetBytes)
+      ? Math.max(1, options.proceduralTextureBudgetBytes)
+      : 256 * 1024 * 1024;
+    const trimAt = Math.floor(proceduralBudget * 0.625);
+    const trimTo = Math.floor(proceduralBudget * 0.5);
     let imageBytes = 0,
       disposed = false,
       baseGame = null,
       bakeZone = null,
-      proceduralEvictions = 0;
+      actorFrameNumber = 0,
+      proceduralEvictions = 0,
+      proceduralCacheEvictions = 0;
     function project(entity) {
       return canvasRenderer.screen(entity);
     }
@@ -208,19 +217,44 @@
       return getGame();
     }
     function clearBakes(keepLoaded = false) {
-      // Drop actors before their procedural source textures are destroyed.
-      // Keeping dead resources registered caused growth after zone transitions.
+      // Remove actor references before destroying their GPU source textures.
       if (scene && baked.size) {
         scene.syncActors([]);
         for (const body of baked.values()) scene.unregisterTexture(body.id);
       }
       proceduralEvictions += baked.size;
-      for (const texture of ownedTextures) texture.destroy?.(true);
-      ownedTextures.length = 0;
+      for (const body of baked.values()) body.texture.destroy?.(true);
       baked.clear();
       imageBytes = 0;
       bakeZone = null;
       if (!keepLoaded) loaded.clear();
+    }
+    function revisionFor(entity, visual, key, current, zoom) {
+      return (
+        backingRatio + ':' + zoom + ':' + key + ':' + current.zoneId + ':' +
+        !!current.s.rescued[entity.family] + ':' + (entity.form || '') + ':' +
+        (entity.presentation || '') + ':' + !!visual.crowned
+      );
+    }
+    function evictUnused(protectedRevisions, bytesNeeded) {
+      if (bytesNeeded <= 0) return 0;
+      // Caller must have already synchronized the actor scene (or cleared
+      // its sprites): retired textures cannot be referenced by live actors.
+      const eligible = [...baked.entries()]
+        .filter(([revision]) => !protectedRevisions.has(revision))
+        .sort((a, b) => a[1].lastUsedFrame - b[1].lastUsedFrame);
+      let freed = 0;
+      for (const [revision, body] of eligible) {
+        if (freed >= bytesNeeded) break;
+        scene.unregisterTexture(body.id);
+        body.texture.destroy?.(true);
+        baked.delete(revision);
+        imageBytes -= body.bytes;
+        freed += body.bytes;
+        proceduralEvictions++;
+        proceduralCacheEvictions++;
+      }
+      return freed;
     }
     function drawBackground() {
       const current = game(),
@@ -268,19 +302,27 @@
         bakedZoom = zoom;
       }
       bakeZone = current.zoneId;
-      const records = [];
-      for (const { entity, visual, point, key } of candidates(
+      actorFrameNumber++;
+      const visible = candidates(
         current,
         project,
         viewport.width,
         viewport.height,
         canvasRenderer.presentEntity,
-      )) {
-        if (
-          entity.interactionOnly ||
-          (entity.kind === 'landmark' && String(entity.id || '').startsWith('bridge-'))
-        )
-          continue;
+      ).filter(({ entity }) =>
+        !entity.interactionOnly &&
+        !(entity.kind === 'landmark' && String(entity.id || '').startsWith('bridge-')),
+      );
+      // Protect ALL current-frame identities, including entries encountered
+      // later in the loop, from accidental eviction during a capacity trim.
+      const protectedRevisions = new Set(
+        visible.map(({ entity, visual, key }) =>
+          revisionFor(entity, visual, key, current, zoom),
+        ),
+      );
+      const records = [];
+      let detachedForEviction = false;
+      for (const { entity, visual, point, key } of visible) {
         // Canvas repaints these identities as their actual in-world objects.
         const painted = visual.kind === 'archive-record'
           ? { ...visual, renderKind: 'prop', structure: 'scroll-stack',
@@ -310,22 +352,7 @@
             depth: entity.x + entity.y,
           });
         } else if (chosen.reason === 'original-game-procedural-art') {
-          const revision =
-            backingRatio +
-            ':' +
-            zoom +
-            ':' +
-            key +
-            ':' +
-            current.zoneId +
-            ':' +
-            !!current.s.rescued[entity.family] +
-            ':' +
-            (entity.form || '') +
-            ':' +
-            (entity.presentation || '') +
-            ':' +
-            !!visual.crowned;
+          const revision = revisionFor(entity, visual, key, current, zoom);
           if (!baked.has(revision)) {
             const body = bake(painted, current, backingRatio * zoom);
             if (!body) {
@@ -333,17 +360,27 @@
               throw Error('Unrendered procedural entity: ' + key);
             }
             const bytes = body.image.width * body.image.height * 4;
-            if (imageBytes + bytes > 64 * 1024 * 1024)
-              throw Error('Procedural GPU memory limit reached');
-            imageBytes += bytes;
+            if (imageBytes + bytes > proceduralBudget) {
+              // Previously drawn actors may still point to offscreen GPU art.
+              // Drop those sprites before releasing texture sources. The full
+              // current scene will be rebuilt at the end of this same frame.
+              if (!detachedForEviction) {
+                scene.syncActors([]);
+                detachedForEviction = true;
+              }
+              evictUnused(protectedRevisions, imageBytes + bytes - trimTo);
+            }
+            if (imageBytes + bytes > proceduralBudget)
+              throw Error('Visible procedural artwork exceeds Pixi image budget');
             const id = 'pixi-procedural:' + revision;
             const texture = root.PIXI.Texture.from(body.image);
             texture.source.scaleMode = 'nearest';
             scene.registerTexture(id, texture);
-            ownedTextures.push(texture);
-            baked.set(revision, { ...body, id });
+            imageBytes += bytes;
+            baked.set(revision, { ...body, id, bytes, texture, lastUsedFrame: actorFrameNumber });
           }
           const b = baked.get(revision);
+          b.lastUsedFrame = actorFrameNumber;
           records.push({
             key,
             textureId: b.id,
@@ -358,6 +395,11 @@
         } else throw Error('Missing original game artwork: ' + key);
       }
       scene.syncActors(records);
+      // At this point all offscreen sprites have been removed; trim their
+      // original GPU sources only when above the soft watermark. This keeps
+      // a short return path warm, but bounds long walks through large towns.
+      if (imageBytes > trimAt)
+        evictUnused(protectedRevisions, imageBytes - trimTo);
     }
     function syncAtmosphere() {
       const current = game(),
@@ -591,6 +633,9 @@
         proceduralBytes: imageBytes,
         proceduralTextures: baked.size,
         proceduralEvictions,
+        proceduralCacheEvictions,
+        proceduralBudget,
+        proceduralTrimAt: trimAt,
         pixelRatio: backingRatio,
         backdropWidth: backdrop?.width || 0,
         backdropHeight: backdrop?.height || 0,
