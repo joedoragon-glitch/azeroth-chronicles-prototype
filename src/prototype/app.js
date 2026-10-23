@@ -1539,7 +1539,14 @@
     });
   }
   function drawWorld() {
+    // These measure synchronous draw calls, not completed GPU/presented frames.
+    const timing = {
+      pixiMs: 0, canvasOverlayMs: 0, canvasWorldMs: 0,
+      pixiAttempted: false, canvasOverlayDrawn: false, canvasWorldDrawn: false,
+    };
     if (graphicsController.status().mode === 'webgl2') {
+      const startedAt = performance.now();
+      timing.pixiAttempted = true;
       try {
         pixiGame.draw();
       } catch (error) {
@@ -1550,9 +1557,29 @@
           stage: 'draw-world',
           message: String(error?.message || error),
         });
+      } finally {
+        // An exception may include fallback cleanup inside the timed call.
+        timing.pixiMs = Math.max(0, performance.now() - startedAt);
       }
     }
+    const overlay = graphicsController.status().mode === 'webgl2';
+    const canvasStartedAt = performance.now();
     renderer.draw();
+    const canvasMs = Math.max(0, performance.now() - canvasStartedAt);
+    if (overlay) {
+      timing.canvasOverlayMs = canvasMs;
+      timing.canvasOverlayDrawn = true;
+    } else {
+      timing.canvasWorldMs = canvasMs;
+      timing.canvasWorldDrawn = true;
+    }
+    return timing;
+  }
+  function addRenderStageTimes(stageTimes, timing) {
+    for (const key of ['pixiMs', 'canvasOverlayMs', 'canvasWorldMs'])
+      stageTimes[key] += timing[key];
+    for (const key of ['pixiAttempted', 'canvasOverlayDrawn', 'canvasWorldDrawn'])
+      stageTimes[key] ||= timing[key];
   }
 
   const {
@@ -2570,7 +2597,13 @@
             {
               version: PrototypeBuild.version,
               performance: {
-                ...runtime.report(renderer.metrics(), platform.mode),
+                ...runtime.report({
+                  ...renderer.metrics(),
+                  // In WebGL mode these counters belong to the transparent
+                  // Canvas cues, NOT the Pixi world.
+                  measuredLayer: graphicsController.status().mode === 'webgl2'
+                    ? 'canvas-combat-overlay' : 'canvas-full-world',
+                }, platform.mode),
                 // Report the active surface, not just the saved preference.
                 graphicsRenderer: {
                   activeRenderer:
@@ -5298,6 +5331,12 @@
           audioUpdateMs: 0,
           eventDispatchMs: 0,
           renderMs: 0,
+          pixiMs: 0,
+          canvasOverlayMs: 0,
+          canvasWorldMs: 0,
+          pixiAttempted: false,
+          canvasOverlayDrawn: false,
+          canvasWorldDrawn: false,
         }
       : null;
     const audioAt = stageTimes ? performance.now() : 0;
@@ -5453,13 +5492,18 @@
       const adaptiveSkipped = eligibleDraw && frameSkip.shouldSkip(now, fps.target);
       const draw = eligibleDraw && !adaptiveSkipped;
       if (draw) {
-        const sample = runtime.record(now, frameStart, () => drawWorld());
+        let drawTiming;
+        const sample = runtime.record(now, frameStart, () => {
+          drawTiming = drawWorld();
+        });
         stageTimes.renderMs += sample.renderMs;
+        addRenderStageTimes(stageTimes, drawTiming);
         if (renderResolution.observe(now, sample.renderMs, fps.target, sample.preRenderMs)) {
           resize();
           const redrawAt = performance.now();
-          drawWorld();
+          const redrawTiming = drawWorld();
           stageTimes.renderMs += performance.now() - redrawAt;
+          addRenderStageTimes(stageTimes, redrawTiming);
           runtime.reset();
           frameProfile.reset();
           fps.suspend();
