@@ -150,6 +150,14 @@ for (const language of ['en', 'es']) {
   click(t('Sound settings', 'Ajustes de sonido'));
   title('Music and sound', 'Música y sonido');
   short();
+  // Instrument the actual shell's localStorage adapter. Audio already persists
+  // to its profile; dragging should never rewrite the entire campaign save.
+  const writes = [];
+  const originalSet = storage.set.bind(storage);
+  storage.set = (key, value) => {
+    writes.push(key);
+    return originalSet(key, value);
+  };
   const soundRows = () => e.get('modal-actions').children;
   const channels = [
     ['master', 'Master volume', 'Volumen general'],
@@ -215,6 +223,13 @@ for (const language of ['en', 'es']) {
     const slider = soundSlider(en, es);
     assert.equal(slider.output.textContent, Math.round(originalVolumes[key] * 100) + '%');
   }
+  // 5 channels × (0%, 100%, 37%, restored) plus two mute changes:
+  // each persists the small audio profile, none serializes the campaign.
+  assert.equal(writes.filter((key) => key === s.PrototypePersistence.profileKey).length, 22,
+    'every audio adjustment persists its own profile change');
+  assert.equal(writes.filter((key) => key === 'azeroth-v4-normal').length, 0,
+    'sound sliders and mute must not trigger full-campaign saves');
+  storage.set = originalSet;
   back();
   click(t('Install on phone', 'Instalar en el teléfono'));
   short();
