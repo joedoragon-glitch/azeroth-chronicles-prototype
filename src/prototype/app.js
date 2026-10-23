@@ -1442,7 +1442,7 @@
     queuedChargePresentation,
     isPaused: () => paused || !focused || document.hidden,
     getGuideRoute: () =>
-      navigationGuide?.zone === game.zoneId
+      navigationGuide?.campaign === game && navigationGuide.zone === game.zoneId
         ? navigationGuide.autopilot &&
           game.hero.order === navigationGuide.order &&
           game.hero.path?.length
@@ -1650,7 +1650,7 @@
     chargePresentation,
     queuedChargePresentation,
     get trackedWaypoint() {
-      return navigationGuide
+      return navigationGuide?.campaign === game
         ? {
             id: navigationGuide.destination.id || null,
             kind: 'navigation',
@@ -1993,7 +1993,7 @@
     joy = { x: 0, y: 0 };
     $('stick').style.transform = '';
   }
-  function clearInput(preserveNavigation = false) {
+  function clearInput(preserveNavigation = true) {
     syncPartyChargeClock();
     if (typeof Sprint !== 'undefined') Sprint.release();
     queuedCharges.clear();
@@ -5100,6 +5100,7 @@
     }
   }
   function updateHUD() {
+    if (navigationGuide && navigationGuide.campaign !== game) navigationGuide = null;
     const devActive = started && game.s.mode === 'developer';
     developerSummonButton.hidden = !devActive;
     developerCombatMonitor.hidden = !devActive;
