@@ -14,24 +14,19 @@ for (const language of ['en', 'es']) {
   };
   elements.get('menu-button').click();
   byLabel(language === 'en' ? 'Game and settings' : 'Juego y ajustes').click();
-  byLabel(language === 'en' ? 'Screen and performance' : 'Pantalla y rendimiento').click();
-  const performance = elements.get('modal-content');
-  performance.scrollTop = 85;
-  byLabel(language === 'en' ? 'Frame rate' : 'Fotogramas por segundo').click();
-  const rateActions = elements.get('modal-actions').children;
-  assert(rateActions.some((button) => button.textContent.startsWith('30 FPS')));
-  const target = rateActions.find((button) => button.textContent.startsWith('30 FPS'));
-  target.click();
-  assert(target !== elements.get('modal-actions').children[0]);
+  byLabel(language === 'en' ? 'Sound settings' : 'Ajustes de sonido').click();
+  const sound = elements.get('modal-content');
+  sound.scrollTop = 85;
+  byLabel(language === 'en' ? 'Music volume' : 'Volumen de música').click();
+  byLabel(language === 'en' ? 'Quieter' : 'Bajar volumen').click();
   assert(
-    elements.get('modal-actions').children.find((button) => button.textContent.startsWith('30 FPS'))
-      .classList.contains('selected'),
-    'refresh keeps the selected frame-rate action',
+    byLabel(language === 'en' ? 'Quieter' : 'Bajar volumen').classList.contains('selected'),
+    'refresh keeps the selected sound action',
   );
   elements.get('close-button').click();
-  assert.equal(performance.scrollTop, 85, 'Back restores parent scroll');
+  assert.equal(sound.scrollTop, 85, 'Back restores parent scroll');
   assert(
-    byLabel(language === 'en' ? 'Frame rate' : 'Fotogramas por segundo').classList.contains('selected'),
+    byLabel(language === 'en' ? 'Music volume' : 'Volumen de música').classList.contains('selected'),
     'Back restores the parent choice',
   );
   elements.get('close-button').click();
