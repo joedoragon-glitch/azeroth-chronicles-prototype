@@ -22,7 +22,7 @@ const back = () => {},
     showMap() {},
     finaleMenu() {},
   });
-const b = { id: 'priority-camp', x: 800, y: 800, progress: 4, queue: 0, full: false };
+const b = { id: 'priority-camp', kind: 'barracks', name: 'Barracks', x: 800, y: 800, progress: 4, queue: 0, full: false };
 game.zone().buildings.push(b);
 const click = (label) => {
   const entry = opened.actions.find((a) => a.label.startsWith(label));
