@@ -60,11 +60,12 @@
        typeof showCanvas!=='function')
       throw Error('WebGL preparation, atomic reveal, and reliable Canvas fallback hooks are required');
     let mode='canvas2d',phase='canvas',deadline=0,timer=null,serial=0,closed=false;
+    let lastFallbackReason='';
     function remaining(){
       return phase==='trial'?Math.max(0,Math.ceil((deadline-now())/1000)):0;
     }
     function snapshot(reason=''){
-      return Object.freeze({mode,phase,secondsRemaining:remaining(),reason});
+      return Object.freeze({mode,phase,secondsRemaining:remaining(),reason,lastFallbackReason});
     }
     function announce(reason=''){notify(snapshot(reason));}
     function clearTimer(){
@@ -82,6 +83,7 @@
       try{showCanvas(reason);}finally{
         persistCanvas();
         phase='canvas';mode=defaultMode;deadline=0;
+        lastFallbackReason=reason;
         announce(reason);
       }
       return true;
