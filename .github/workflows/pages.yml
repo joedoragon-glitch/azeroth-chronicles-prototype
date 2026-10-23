@@ -109,6 +109,9 @@ jobs:
       - name: Install locked development tools
         if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         run: npm ci --ignore-scripts
+      - name: Prepare pinned local PixiJS for offline-capable PWA browser tests
+        if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
+        run: node scripts/vendor-pixi.cjs --ensure
       - name: Install WebKit and browser dependencies
         if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         timeout-minutes: 5
