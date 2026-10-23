@@ -26,13 +26,29 @@
   - Change the existing single Touch & mouse page to a labelled phone-layout dropdown plus inline touch-to-move and mouse-to-move switches; the original `input.select` persistence and device layout updates remain authoritative.
   - English/Spanish headings and descriptions are translated; no default bindings or game mechanics change.
 
+- **Step 5: Barracks — implemented on this continuing project branch; review candidate.**
+  - Basic and Full Barracks now offer the same four primary service choices and order: Company, Recovery, Training, Operations. Existing optional tonic and peaceful-world final Rest remain on the root; only Basic retains its native gated Full upgrade.
+  - Full's former flat recovery/treatment/death point, Expedition training, specialist and skill-journal actions are available through the same respective Recovery and Training branches Basic already used. No pricing, combat, rank, saved data, or repair/recruitment policy changed.
+  - Full-only Resource expeditions moves into Operations, alongside local quests and gathering; expedition eligibility, worker selection and mission state remain native.
+  - Full's duplicate Recovery option inside Company is removed because Full now offers the same first-level Recovery category as Basic. All companion/roster/pet/recruitment services remain in Company.
+  - Completed versus under-construction Barracks remains a separate UI path; unchanged construction/assignment rules and native upgrade gating.
+  - Focused tests: `tests/menu-priorities.test.cjs` reconciles the formerly stale Full-flat/Basic-flat expectation to the actual native grouped design; `tests/companion-onboarding-ui.test.cjs` covers actual bilingual Basic-to-Full interaction and remote expeditions.
+
 ## Remaining milestone order (do not implement without next owner turn)
 
-5. Barracks — align Basic/Full Barracks top-level service organization.
 6. Character & services — shorten redundant informational routes and clarify merchants.
 7. Maps, quests and remaining menus — targeted changes only where warranted by evidence.
 
 Each milestone gets its own focused commits, applicable regression tests, explicit source notes, and review. All work continues **on this same branch and PR**, not fresh branches or PRs. The project branch is the source for the next milestone; do not reset to old main between steps.
+
+## Step 5 validation gates
+
+- Same native category order, both Barracks types, no service disappearance or duplicate Company recovery.
+- Recovery care/treatment and death-point/5% Full vs 15% Basic presentation retained; Succession removes ordinary death-point option.
+- Full Operations retains resource expeditions; Basic Operations retains quests/gathering only, including Expedition 2 gathering prerequisite.
+- Basic upgrade still requires Expedition 4, appropriate labor and crowns; optional tonic and final Rest still follow native state.
+- Bilingual production-shell path checked in updated `companion-onboarding-ui`; domain call/navigation regression checked in updated `menu-priorities`. Use the repository's scoped PR validation and publishable-build check only.
+- No broad/full CI, hardware-device or browser matrix without explicit owner approval; no merge, deployment, or version change.
 
 ## Step 4 validation gates
 
