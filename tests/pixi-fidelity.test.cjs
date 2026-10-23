@@ -38,6 +38,7 @@ const oldImage=painter.presentEntity({structure:'vale-cottage'},'prop');
 assert.equal(oldImage.visualScale,1,'low-density art must not be blindly enlarged');
 
 const inits=[],draws=[],resizes=[],frames=[],resources=new Set();
+let currentActorTextures = new Set(), destroyedProcedural = 0;
 function canvas() {
   const surface={
     width:0,height:0,style:{},
@@ -69,7 +70,9 @@ class Application {
   async init(options){inits.push(options);this.renderer.resize(options.width,options.height,options.resolution);}
   destroy(){}
 }
-const textureFrom=image=>({source:{width:image.width,height:image.height,update(){}},destroy(){}});
+const textureFrom=image=>({source:{width:image.width,height:image.height,update(){}},
+  destroy(releaseSource){if(releaseSource)destroyedProcedural++}
+});
 const runtime={
   Campaign:{rules:{terrain:[]}},
   PIXI:{
@@ -96,9 +99,17 @@ const runtime={
   AzerothPixiSceneBridge:{create:()=>({
     registerTexture(id){resources.add(id)},
     hasTexture:id=>resources.has(id),
-    unregisterTexture:id=>resources.delete(id),
+    unregisterTexture(id){
+      assert(!currentActorTextures.has(id),'cannot destroy texture still used by a live sprite');
+      return resources.delete(id);
+    },
     setBackground(){},moveBackground(){},
-    syncActors(list){frames.push(list)},
+    syncActors(list){
+      for(const actor of list)assert(resources.has(actor.textureId),
+        'an actor needs a registered texture before being drawn');
+      currentActorTextures=new Set(list.map(actor=>actor.textureId));
+      frames.push(list);
+    },
     syncLamps(){},setAtmosphere(){},setVignette(){},draw(){},destroy(){}
   })}
 };
@@ -110,14 +121,15 @@ vm.runInNewContext(pixiSource,{
   fetch:async()=>({ok:true,json:async()=>manifest})
 }, {filename:'pixi-experimental.js'});
 const canvasSurface={width:1368,height:630,parentNode:{insertBefore(){}}};
-const gpu=runtime.PrototypePixiExperimental.create({
+const gpuOptions={
   worldCanvas:canvasSurface,viewport:view,platform,getGame:()=>game,
   canvasRenderer:{
     screen:e=>({x:456+(e.x-game.hero.x)*1.5,y:210+(e.y-game.hero.y)*1.5}),
     presentEntity:painter.presentEntity
   },
   getRendererOptions:()=>({}),getOptimizationMode:()=>false,onFailure:()=>{}
-});
+};
+const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
 (async()=>{
   assert.equal(await gpu.prepare(),true,'retina Pixi scene must prepare');
   assert.equal(inits[0].resolution,1.5,'Pixi must use Canvas output ratio');
@@ -150,5 +162,53 @@ const gpu=runtime.PrototypePixiExperimental.create({
   assert(gpu.status().proceduralEvictions>=4,'region changes should release procedural rasters');
   assert.equal(gpu.status().loadedTextures,1,'canonical original sprite remains warmed');
   gpu.release();
-  console.log('PASS Pixi/Canvas sharpness, sizing, region travel and quality-transition parity');
+  // 160 pixel-bytes per miniature procedural texture is sufficient for the
+  // deterministic mock. This intentionally tiny *test-only* budget forces
+  // the same LRU path that real towns would take under sustained roaming.
+  resources.clear();
+  currentActorTextures.clear();
+  const tinyGpu=runtime.PrototypePixiExperimental.create({
+    ...gpuOptions,
+    proceduralTextureBudgetBytes:800
+  });
+  game.zoneId='vale';
+  game.props=[{id:'walk-0',x:game.hero.x+8,y:game.hero.y+6,structure:'lumber-pile'}];
+  assert.equal(await tinyGpu.prepare(),true);
+  tinyGpu.activate();
+  const baseline=tinyGpu.status();
+  assert(baseline.proceduralBytes>0 && baseline.proceduralBytes<=800);
+  const previousSceneTextures=destroyedProcedural;
+  const seen=[];
+  for(let i=1;i<=65;i++){
+    game.props=[
+      {id:'walk-'+i,x:game.hero.x+8,y:game.hero.y+6,structure:'lumber-pile'},
+      {id:'walk-'+(i-1),x:game.hero.x+20,y:game.hero.y+12,structure:'lumber-pile'}
+    ];
+    tinyGpu.draw();
+    const state=tinyGpu.status();
+    assert.equal(state.active,true);
+    assert(state.proceduralBytes<=state.proceduralBudget,
+      'long same-zone walks must stay under the hard procedural budget');
+    assert(state.proceduralTextures<=8,'same-zone cache must not grow indefinitely');
+    seen.push(state.proceduralBytes);
+  }
+  assert(tinyGpu.status().proceduralCacheEvictions>0,
+    'same-zone movement must evict old offscreen images');
+  assert(destroyedProcedural>previousSceneTextures,
+    'eviction must release actual GPU source textures');
+  // Revisiting an evicted identity must work and not leave dangling references.
+  game.props=[
+    {id:'walk-0',x:game.hero.x+8,y:game.hero.y+6,structure:'lumber-pile'},
+    {id:'walk-65',x:game.hero.x+20,y:game.hero.y+12,structure:'lumber-pile'}
+  ];
+  tinyGpu.draw();
+  assert.equal(tinyGpu.status().active,true);
+  assert(tinyGpu.status().proceduralBytes<=800);
+  // A zone change must still clear retained old-zone assets.
+  game.zoneId='highlands';
+  tinyGpu.draw();
+  assert.equal(tinyGpu.status().proceduralTextures,2,
+    'zone switching must preserve only the freshly visible scene');
+  tinyGpu.release();
+  console.log('PASS Pixi/Canvas sharpness, bounded same-zone cache, revisits and zone cleanup');
 })().catch(error=>{console.error(error);process.exitCode=1});
