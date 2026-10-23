@@ -1970,11 +1970,11 @@
   // Shared presentation controls. Gameplay menus still use action() unchanged.
   const menuControls = Object.freeze({
     section: (label, detail = '') => ({ kind: 'section', label, detail }),
-    toggle: (label, value, onChange, detail = '') => ({
-      kind: 'toggle', label, value: !!value, onChange, detail,
+    toggle: (label, value, onChange, detail = '', saveCampaign = true) => ({
+      kind: 'toggle', label, value: !!value, onChange, detail, saveCampaign,
     }),
-    slider: (label, value, min, max, step, onChange, detail = '', suffix = '') => ({
-      kind: 'slider', label, value, min, max, step, onChange, detail, suffix,
+    slider: (label, value, min, max, step, onChange, detail = '', suffix = '', saveCampaign = true) => ({
+      kind: 'slider', label, value, min, max, step, onChange, detail, suffix, saveCampaign,
     }),
     select: (label, value, options, onChange, detail = '') => ({
       kind: 'select', label, value, options, onChange, detail,
@@ -2105,7 +2105,9 @@
     const commit = (entry, value) => {
       entry.value = value;
       entry.onChange(value);
-      if (started) save();
+      // Profile-only controls already persist their preference on change.
+      // Avoid serializing the entire campaign on every volume-slider tick.
+      if (started && entry.saveCampaign !== false) save();
       updateHUD();
     };
     const details = (hostElement, entry) => {
@@ -3268,6 +3270,7 @@
           settings.muted,
           (muted) => apply({ muted }),
           'Switch sound off or on without resetting the sliders.',
+          false,
         ),
         menuControls.section('Volume levels'),
         ...['master', 'music', 'ambience', 'effects', 'interface'].map((key) =>
@@ -3280,6 +3283,7 @@
             (percent) => apply({ [key]: percent / 100 }),
             '',
             '%',
+            false,
           ),
         ),
       ],
