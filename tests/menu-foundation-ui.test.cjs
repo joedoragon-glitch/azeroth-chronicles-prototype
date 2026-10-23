@@ -20,9 +20,9 @@ for (const language of ['en', 'es']) {
   byLabel(language === 'en' ? 'Touch and mouse options' : 'Opciones táctiles y de ratón').click();
   byLabel(language === 'en' ? 'Touch tap-to-move' : 'Tocar para moverse').click();
   assert(
-    byLabel(language === 'en' ? 'Touch tap-to-move' : 'Tocar para moverse')
-      .classList.contains('selected'),
-    'refresh keeps the selected input action',
+    elements.get('modal-title').textContent ===
+      (language === 'en' ? 'Touch and mouse options' : 'Opciones táctiles y de ratón'),
+    'changing a touch option keeps the controls subpage open',
   );
   elements.get('close-button').click();
   assert.equal(controlsMenu.scrollTop, 85, 'Back restores parent scroll');
