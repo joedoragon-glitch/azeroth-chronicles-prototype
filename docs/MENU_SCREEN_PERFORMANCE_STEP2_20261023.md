@@ -32,3 +32,5 @@ Untested until a deliberately scoped later device check: real phone touch scroll
 ## Release boundary
 
 **No merge and no GitHub Pages deployment on this task.** After review of prerequisite Step 1 and this PR, proceed to Step 3 (Music & Sound) as its own scoped branch/change.
+
+Validation note: the focused PR job temporarily targets main to exercise the complete Step 1 + Step 2 dependency stack. After its result is recorded, the review PR is retargeted back to Step 1 so the final diff contains Step 2 only. PR validation is never a deployment.
