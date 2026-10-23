@@ -1435,6 +1435,30 @@
   };
   document.body.append(cancelNavigationButton);
   const viewport = { width: innerWidth, height: innerHeight };
+  // A route exists only while a valid chosen navigation session is visible.
+  // Quest and gathering guides do not create the contextual navigation HUD button.
+  function visibleNavigationRoute() {
+    const guide = navigationGuide;
+    if (
+      !guide ||
+      guide.campaign !== game ||
+      guide.hero !== game.hero ||
+      guide.deaths !== game.s.statistics.deaths ||
+      guide.zone !== game.zoneId ||
+      game.hero.hp <= 0 ||
+      Math.hypot(game.hero.x - guide.point.x, game.hero.y - guide.point.y) < 55
+    )
+      return null;
+    const points =
+      guide.autopilot && game.hero.order === guide.order && game.hero.path?.length
+        ? game.hero.path
+        : guide.route;
+    return points?.length ? points : null;
+  }
+  function mapKeyHint() {
+    const key = input.key('map');
+    return input.actionFor('KeyM') === 'map' && key !== 'M' ? key + ' / M' : key;
+  }
   const rendererSetup = {
     getGame: () => game,
     platform,
@@ -1442,15 +1466,7 @@
     queuedChargePresentation,
     isPaused: () => paused || !focused || document.hidden,
     getGuideRoute: () =>
-      navigationGuide?.campaign === game && navigationGuide.zone === game.zoneId
-        ? navigationGuide.autopilot &&
-          game.hero.order === navigationGuide.order &&
-          game.hero.path?.length
-          ? game.hero.path
-          : navigationGuide.route
-        : questGuide?.route?.length
-          ? questGuide.route
-          : null,
+      navigationGuide ? visibleNavigationRoute() : questGuide?.route?.length ? questGuide.route : null,
     Campaign,
     PrototypeVisuals,
     PrototypeCombatVisuals,
@@ -1650,18 +1666,15 @@
     chargePresentation,
     queuedChargePresentation,
     get trackedWaypoint() {
-      return navigationGuide?.campaign === game
+      const points = visibleNavigationRoute();
+      return points
         ? {
             id: navigationGuide.destination.id || null,
             kind: 'navigation',
             zone: navigationGuide.zone,
-            points: (navigationGuide.autopilot &&
-            game.hero.order === navigationGuide.order &&
-            game.hero.path?.length
-              ? game.hero.path
-              : navigationGuide.route).map((p) => ({ ...p })),
+            points: points.map((p) => ({ ...p })),
           }
-        : questGuide
+        : !navigationGuide && questGuide
           ? {
               id: questGuide.id || questGuide.nodeId,
               kind: questGuide.kind || 'quest',
@@ -1672,7 +1685,7 @@
     },
     cancelNavigation: clearWaypoint,
     get navigationState() {
-      return navigationGuide
+      return visibleNavigationRoute()
         ? { active: true, autopilot: navigationGuide.autopilot, zone: navigationGuide.zone }
         : { active: false, autopilot: false, zone: null };
     },
@@ -1757,6 +1770,8 @@
                   keys +
                   ' o palanca táctil. Interactuar: ' +
                   input.key('confirm') +
+                  '. Mapa: ' +
+                  mapKeyHint() +
                   '.\nMenú: Esc. Flechas para elegir, ' +
                   input.key('confirm') +
                   '/Enter para confirmar y Esc para volver.'
@@ -1764,6 +1779,8 @@
                   keys +
                   ' or joystick. Interact: ' +
                   input.key('confirm') +
+                  '. Map: ' +
+                  mapKeyHint() +
                   '.\nMenu: Esc. Arrows select, ' +
                   input.key('confirm') +
                   '/Enter confirms, Esc returns.',
@@ -2970,7 +2987,13 @@
           !game.hasAnyBarracks(),
       ),
       ...(appUpdateReady ? [action('Install available game update', updateApp)] : []),
-      action('Map and travel routes', () => showMap(openMain)),
+      action(
+        'Map and travel routes',
+        () => showMap(openMain),
+        language === 'es'
+          ? 'Elige un destino en el mapa · Tecla: ' + mapKeyHint()
+          : 'Choose a marked destination · Key: ' + mapKeyHint(),
+      ),
       action('Quest journal', () => quests(false, openMain)),
       action('Character', characterMenu),
       ...(game.s.phase === 'awakening'
@@ -3363,7 +3386,7 @@
       origin: { x: game.hero.x, y: game.hero.y },
       next: 0,
     };
-    cancelNavigationButton.hidden = false;
+    cancelNavigationButton.hidden = !visibleNavigationRoute();
   }
   function updateNavigationGuide(force = false) {
     const guide = navigationGuide;
@@ -5423,7 +5446,7 @@
       ' · ' +
       tr('Interact') +
       '   ' +
-      input.key('map') +
+      mapKeyHint() +
       ' · ' +
       tr('Map') +
       '   Esc · ' +
@@ -5465,7 +5488,7 @@
       : 'Tap to cycle visible enemies · hold for ' + (targetHoldMs / 1000).toFixed(2) + 's to lock';
     if (targetButton.querySelector('small'))
       targetButton.querySelector('small').textContent = input.key('target');
-    cancelNavigationButton.hidden = !navigationGuide && !questGuide;
+    cancelNavigationButton.hidden = !visibleNavigationRoute();
     cancelNavigationButton.textContent = tr('Cancel navigation');
     cancelNavigationButton.setAttribute('aria-label', tr('Cancel navigation'));
     updateCriticalNotice();
