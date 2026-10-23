@@ -400,23 +400,44 @@ for (const language of ['en', 'es']) {
   base.upgradePaid = true;
   openBase();
   assert.equal(e.get('modal-title').textContent, 'Full Barracks');
-  assert(
-    e
-      .get('modal-actions')
-      .children.some((b) =>
-        b.textContent.startsWith(text('Recover fallen companion', 'Recuperar compañero caído')),
-      ),
+  const fullRoot = e.get('modal-actions').children.map((b) => b.textContent);
+  assert.deepEqual(fullRoot.slice(0, 4), [
+    text('Company', 'Compañía'),
+    text('Recovery', 'Recuperación'),
+    text('Training', 'Entrenamiento'),
+    text('Operations', 'Operaciones'),
+  ], 'Full Barracks follows the same four categories as Basic Barracks');
+  assert(!fullRoot.some((label) =>
+    /Recover fallen|Rescued specialists|Skill journal|Expediciones de recursos|Resource expeditions/.test(label)),
+    'Full services are nested under their matching category',
   );
+  click(text('Recovery', 'Recuperación'));
   assert(
-    e
-      .get('modal-actions')
-      .children.some(
-        (b) => b.textContent === text('Resource expeditions', 'Expediciones de recursos'),
-      ),
+    e.get('modal-actions').children.some((b) =>
+      b.textContent.startsWith(text('Recover fallen companion', 'Recuperar compañero caído'))),
+    'Full recovery still offers companion care',
   );
+  assert(e.get('modal-description').textContent.includes(text('Local death loss: 5%', 'Pérdida local al caer: 5%')));
+  back();
+  click(text('Training', 'Entrenamiento'));
+  assert(e.get('modal-actions').children.some(
+    (b) => b.textContent === text('Rescued specialists', 'Especialistas rescatados')),
+  );
+  back();
+  click(text('Operations', 'Operaciones'));
+  assert(e.get('modal-actions').children.some(
+    (b) => b.textContent === text('Resource expeditions', 'Expediciones de recursos')),
+    'Full-only resource expeditions remain reachable',
+  );
+  click(text('Resource expeditions', 'Expediciones de recursos'));
+  assert.equal(e.get('modal-title').textContent, text('Resource expeditions', 'Expediciones de recursos'));
+  back();
+  assert.equal(e.get('modal-title').textContent, text('Operations', 'Operaciones'));
+  back();
   click(text('Company', 'Compañía'));
   assert(
-    e.get('modal-actions').children.some((b) => b.textContent === text('Recovery', 'Recuperación')),
+    !e.get('modal-actions').children.some((b) => b.textContent === text('Recovery', 'Recuperación')),
+    'the redundant Full Company recovery shortcut is removed',
   );
 }
 console.log(
