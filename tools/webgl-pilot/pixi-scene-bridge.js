@@ -88,12 +88,15 @@
      spritesUpdated=0, resources=new Map();
    let backdropTexture=null, discarded=0;
    const keyOf=entity=>String(entity.key);
-   function setBackground(texture,x,y) {
+   function setBackground(texture,x,y,width,height) {
      if(!background) {
        background=new PIXI.Sprite(texture);
        rootStage.addChildAt(background,0);
      } else background.texture=texture;
      background.position.set(x,y);
+     // The backing raster can be 1.5x high DPI while the world remains CSS-sized.
+     if(Number.isFinite(width)&&width>0)background.width=width;
+     if(Number.isFinite(height)&&height>0)background.height=height;
      backdropTexture=texture;
    }
    function moveBackground(x,y) {

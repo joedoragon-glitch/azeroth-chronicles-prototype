@@ -79,11 +79,16 @@ async function run() {
             visible: !!node && getComputedStyle(node).display !== 'none',
             loadedTextures: Prototype.experimentalGraphics.loadedTextures,
             canvasVisible: getComputedStyle(document.getElementById('world')).display !== 'none',
+            backingRatio: node.width / Math.max(1, node.getBoundingClientRect().width),
+            canvasRatio: document.getElementById('world').width /
+              Math.max(1, document.getElementById('world').getBoundingClientRect().width),
           };
         });
         assert(gpuSurface.visible && gpuSurface.canvasVisible,
           'PixiJS scene and transparent Canvas cues must coexist');
         assert(gpuSurface.loadedTextures > 0, 'Approved original sprite art must load');
+        assert(Math.abs(gpuSurface.backingRatio - gpuSurface.canvasRatio) < .02,
+          'GPU backing resolution must match Canvas sharpness');
         // Exercise live actor/camera updates, not merely successful GPU startup.
         await page.evaluate(() => {
           const hero = Prototype.game.hero;

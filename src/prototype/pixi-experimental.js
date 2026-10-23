@@ -42,7 +42,7 @@
     }
     return libraryRequest;
   }
-  function candidates(game, project, width, height) {
+  function candidates(game, project, width, height, presentEntity) {
     const zone = game.zone();
     const result = [],
       used = new Map();
@@ -59,24 +59,41 @@
         const stem = kind + ':' + identity;
         const count = used.get(stem) || 0;
         used.set(stem, count + 1);
-        const visual = { ...entity, renderKind: kind, spriteIdentity: entity };
-        if (kind === 'hero' && game.s.throneClaimed) visual.crowned = true;
+        const visual = presentEntity(entity, kind);
         result.push({ entity, visual, kind, point, key: count ? stem + '#' + count : stem });
       }
     }
     add(zone.props, 'prop');
+    // Same permanent civic features included by the Canvas depth sorter.
+    if (!game.isDungeon() && !game.supplyRoom?.(game.zoneId) &&
+        !game.sideDungeon?.(game.zoneId))
+      add((root.Campaign?.rules?.terrain?.[game.regionIndex()] || [])
+        .filter((p) => ['fountain', 'grain-silo', 'orrery'].includes(p.kind))
+        .map((p) => ({
+          id: p.kind === 'orrery' ? 'crown-orrery'
+            : p.kind === 'grain-silo' ? 'frontier-grain-silo' : 'frontier-civic-fountain',
+          x: p.x, y: p.y, r: p.r,
+          structure: p.kind === 'orrery' ? 'crown-orrery'
+            : p.kind === 'grain-silo' ? 'frontier-grain-silo' : 'frontier-civic-fountain',
+          decorative: true,
+        })), 'prop');
     add(game.visibleNPCs(), 'npc');
     add(game.visibleResourceNodes(), 'node');
     add(zone.buildings, 'building');
     add(zone.enemies, 'enemy');
     add(game.activeLivingParty(), 'ally');
     add([game.hero], 'hero');
+    if (zone.escort) add([{ ...zone.escort, icon: '🧑‍🌾', name: 'Supply escort' }], 'ally');
     return result.sort((a, b) => a.entity.x + a.entity.y - (b.entity.x + b.entity.y));
   }
-  function bake(visual, game) {
-    const work = makeCanvas(576, 576),
+  function bake(visual, game, density = 1) {
+    // The procedural artist draws vectors. Bake at the same final display
+    // density as Canvas (camera zoom × backing ratio), not a 1x bitmap.
+    const width = Math.round(576 * density),
+      work = makeCanvas(width, width),
       c = work.getContext('2d');
     requireValue(c, 'Original procedural artist is unavailable');
+    c.setTransform(density, 0, 0, density, 0, 0);
     const center = { x: 288, y: 460 };
     root.PrototypeVisuals.draw(
       c,
@@ -86,13 +103,13 @@
       !!game.s.rescued[visual.family],
     );
     const { data } = c.getImageData(0, 0, work.width, work.height);
-    let left = 576,
-      top = 576,
+    let left = width,
+      top = width,
       right = -1,
       bottom = -1;
-    for (let y = 0; y < 576; y++)
-      for (let x = 0; x < 576; x++) {
-        if (data[(y * 576 + x) * 4 + 3] > 0) {
+    for (let y = 0; y < width; y++)
+      for (let x = 0; x < width; x++) {
+        if (data[(y * width + x) * 4 + 3] > 0) {
           left = Math.min(left, x);
           right = Math.max(right, x);
           top = Math.min(top, y);
@@ -102,13 +119,19 @@
     if (right < left || bottom < top) return null;
     left = Math.max(0, left - 2);
     top = Math.max(0, top - 2);
-    right = Math.min(575, right + 2);
-    bottom = Math.min(575, bottom + 2);
+    right = Math.min(width - 1, right + 2);
+    bottom = Math.min(width - 1, bottom + 2);
     const image = makeCanvas(right - left + 1, bottom - top + 1);
     image
       .getContext('2d')
       .drawImage(work, left, top, image.width, image.height, 0, 0, image.width, image.height);
-    return { image, dx: left - center.x, dy: top - center.y };
+    return {
+      image,
+      dx: left / density - center.x,
+      dy: top / density - center.y,
+      logicalWidth: image.width / density,
+      logicalHeight: image.height / density,
+    };
   }
   function create(options) {
     const { worldCanvas, viewport, platform, getGame, canvasRenderer, getRendererOptions } =
@@ -122,6 +145,8 @@
       basePosition = null,
       baseZone = null,
       baseZoom = null,
+      backingRatio = 1,
+      bakedZoom = null,
       active = false,
       lastError = null;
     const baked = new Map(),
@@ -133,15 +158,59 @@
     function project(entity) {
       return canvasRenderer.screen(entity);
     }
+    function effectiveRatio() {
+      // Use the same device-specific backing-pixel density as Canvas.
+      return worldCanvas.width / Math.max(1, viewport.width);
+    }
+    function createBackgroundPainter() {
+      const width = viewport.width + BG_MARGIN * 2,
+        height = viewport.height + BG_MARGIN * 2;
+      backdrop = makeCanvas(Math.round(width * backingRatio), Math.round(height * backingRatio));
+      const bgContext = requireValue(backdrop.getContext('2d'), 'Background canvas unsupported');
+      // Keep the same logical camera coordinates while rasterizing more sharply.
+      bgContext.setTransform(backingRatio, 0, 0, backingRatio, 0, 0);
+      const bgViewport = { width, height };
+      const bgPlatform = {
+        get cameraZoom() {
+          return platform.cameraZoom;
+        },
+        cameraAnchor() {
+          const a = platform.cameraAnchor(viewport.width, viewport.height);
+          return { x: a.x + BG_MARGIN, y: a.y + BG_MARGIN };
+        },
+      };
+      backgroundRenderer = root.PrototypeRenderer.create({
+        ...getRendererOptions(),
+        canvas: bgViewport,
+        ctx: bgContext,
+        platform: bgPlatform,
+        renderLayer: 'background',
+      });
+      basePosition = null;
+    }
+    function syncResolution() {
+      const next = effectiveRatio();
+      if (Math.abs(next - backingRatio) < 0.001) return;
+      // Change resolution without falling back or changing the camera zoom.
+      app.renderer.resize(viewport.width, viewport.height, next);
+      backingRatio = next;
+      const previous = backing;
+      backing = null;
+      createBackgroundPainter();
+      drawBackground();
+      previous?.destroy?.(false);
+      // Stale procedural images were rasterized for the previous density.
+      clearBakes(true);
+    }
     function game() {
       return getGame();
     }
-    function clearBakes() {
+    function clearBakes(keepLoaded = false) {
       for (const texture of ownedTextures) texture.destroy?.(true);
       ownedTextures.length = 0;
       baked.clear();
       imageBytes = 0;
-      loaded.clear();
+      if (!keepLoaded) loaded.clear();
     }
     function drawBackground() {
       const current = game(),
@@ -156,11 +225,13 @@
       backgroundRenderer.draw();
       if (backing) {
         backing.source.update?.();
-        scene.setBackground(backing, -BG_MARGIN, -BG_MARGIN);
+        scene.setBackground(backing, -BG_MARGIN, -BG_MARGIN, viewport.width + BG_MARGIN * 2,
+          viewport.height + BG_MARGIN * 2);
       } else {
         backing = root.PIXI.Texture.from(backdrop);
         backing.source.scaleMode = 'nearest';
-        scene.setBackground(backing, -BG_MARGIN, -BG_MARGIN);
+        scene.setBackground(backing, -BG_MARGIN, -BG_MARGIN, viewport.width + BG_MARGIN * 2,
+          viewport.height + BG_MARGIN * 2);
       }
     }
     function syncBackground() {
@@ -182,20 +253,32 @@
     function actorFrame() {
       const current = game(),
         zoom = platform.cameraZoom || 1;
+      if (bakedZoom !== zoom) {
+        clearBakes(true);
+        bakedZoom = zoom;
+      }
       const records = [];
       for (const { entity, visual, point, key } of candidates(
         current,
         project,
         viewport.width,
         viewport.height,
+        canvasRenderer.presentEntity,
       )) {
         if (
           entity.interactionOnly ||
           (entity.kind === 'landmark' && String(entity.id || '').startsWith('bridge-'))
         )
           continue;
+        // Canvas repaints these identities as their actual in-world objects.
+        const painted = visual.kind === 'archive-record'
+          ? { ...visual, renderKind: 'prop', structure: 'scroll-stack',
+              decorative: true, sceneRole: 'dry-stacks' }
+          : visual.kind === 'keeper'
+            ? { ...visual, renderKind: 'enemy', type: 'boss', family: 'archive', form: 'normal' }
+            : visual;
         const chosen = adapter.commandFor(
-          visual,
+          painted,
           { x: point.x / zoom, y: point.y / zoom },
           { region: current.regionIndex(), rescued: !!current.s.rescued[entity.family] },
         );
@@ -217,6 +300,10 @@
           });
         } else if (chosen.reason === 'original-game-procedural-art') {
           const revision =
+            backingRatio +
+            ':' +
+            zoom +
+            ':' +
             key +
             ':' +
             current.zoneId +
@@ -229,7 +316,7 @@
             ':' +
             !!visual.crowned;
           if (!baked.has(revision)) {
-            const body = bake(visual, current);
+            const body = bake(painted, current, backingRatio * zoom);
             if (!body) {
               if (entity.renderKind === 'landmark' || entity.kind === 'landmark') continue;
               throw Error('Unrendered procedural entity: ' + key);
@@ -251,8 +338,8 @@
             textureId: b.id,
             x: point.x + b.dx * zoom,
             y: point.y + b.dy * zoom,
-            width: b.image.width * zoom,
-            height: b.image.height * zoom,
+            width: b.logicalWidth * zoom,
+            height: b.logicalHeight * zoom,
             opacity: 1,
             flipX: false,
             depth: entity.x + entity.y,
@@ -352,7 +439,8 @@
           height: viewport.height,
           preference: ['webgl'],
           preferWebGLVersion: 2,
-          resolution: 1,
+          resolution: effectiveRatio(),
+          autoDensity: true,
           autoStart: false,
           antialias: false,
           background: 0x0c1913,
@@ -381,25 +469,8 @@
           isReducedMotion: () =>
             root.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches || false,
         });
-        backdrop = makeCanvas(viewport.width + BG_MARGIN * 2, viewport.height + BG_MARGIN * 2);
-        const bgContext = requireValue(backdrop.getContext('2d'), 'Background canvas unsupported');
-        const bgViewport = { width: backdrop.width, height: backdrop.height };
-        const bgPlatform = {
-          get cameraZoom() {
-            return platform.cameraZoom;
-          },
-          cameraAnchor() {
-            const a = platform.cameraAnchor(viewport.width, viewport.height);
-            return { x: a.x + BG_MARGIN, y: a.y + BG_MARGIN };
-          },
-        };
-        backgroundRenderer = root.PrototypeRenderer.create({
-          ...getRendererOptions(),
-          canvas: bgViewport,
-          ctx: bgContext,
-          platform: bgPlatform,
-          renderLayer: 'background',
-        });
+        backingRatio = effectiveRatio();
+        createBackgroundPainter();
         // Warm all canonical sprites once (~46 MiB decoded across 38 files).
         // Otherwise entering any previously unseen neighborhood forces fallback.
         const response = await fetch('./assets/sprites/manifest.json');
@@ -446,6 +517,7 @@
       try {
         if (app.screen.width !== viewport.width || app.screen.height !== viewport.height)
           throw Error('Viewport changed: return to Canvas');
+        syncResolution();
         syncBackground();
         actorFrame();
         syncAtmosphere();
@@ -482,6 +554,8 @@
       backdrop = null;
       basePosition = null;
       baseGame = null;
+      backingRatio = 1;
+      bakedZoom = null;
     }
     function dispose() {
       disposed = true;
@@ -503,6 +577,9 @@
         lastError,
         loadedTextures: loaded.size,
         proceduralBytes: imageBytes,
+        pixelRatio: backingRatio,
+        backdropWidth: backdrop?.width || 0,
+        backdropHeight: backdrop?.height || 0,
       }),
     });
   }

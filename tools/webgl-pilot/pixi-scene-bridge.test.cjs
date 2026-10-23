@@ -233,3 +233,16 @@ test('scene accepts repeated day-night gradient rebuilds without triggering Pixi
   assert.equal(scene.metrics().vignetteActive,true);
   scene.destroy();
 });
+
+test('high-DPI Pixi backdrop retains the same logical geometry as Canvas',()=>{
+  const {PIXI,app}=pixiFixture();
+  const scene=Bridge.create({PIXI,app,width:912,height:420});
+  const backing=picture('high-density-ground',2028,1290);
+  scene.setBackground(backing,-220,-220,1352,860);
+  const node=app.stage.children[0].children[0];
+  assert.equal(node.position.x,-220);
+  assert.equal(node.position.y,-220);
+  assert.equal(node.width,1352,'logical terrain width must not inherit 1.5x bitmap width');
+  assert.equal(node.height,860,'logical terrain height must not inherit 1.5x bitmap height');
+  scene.destroy();
+});
