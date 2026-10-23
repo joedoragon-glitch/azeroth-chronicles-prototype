@@ -72,10 +72,14 @@
     add([game.hero], 'hero');
     return result.sort((a, b) => a.entity.x + a.entity.y - (b.entity.x + b.entity.y));
   }
-  function bake(visual, game) {
-    const work = makeCanvas(576, 576),
+  function bake(visual, game, density = 1) {
+    // The procedural artist draws vectors. Bake at the same final display
+    // density as Canvas (camera zoom × backing ratio), not a 1x bitmap.
+    const width = Math.round(576 * density),
+      work = makeCanvas(width, width),
       c = work.getContext('2d');
     requireValue(c, 'Original procedural artist is unavailable');
+    c.setTransform(density, 0, 0, density, 0, 0);
     const center = { x: 288, y: 460 };
     root.PrototypeVisuals.draw(
       c,
@@ -85,13 +89,13 @@
       !!game.s.rescued[visual.family],
     );
     const { data } = c.getImageData(0, 0, work.width, work.height);
-    let left = 576,
-      top = 576,
+    let left = width,
+      top = width,
       right = -1,
       bottom = -1;
-    for (let y = 0; y < 576; y++)
-      for (let x = 0; x < 576; x++) {
-        if (data[(y * 576 + x) * 4 + 3] > 0) {
+    for (let y = 0; y < width; y++)
+      for (let x = 0; x < width; x++) {
+        if (data[(y * width + x) * 4 + 3] > 0) {
           left = Math.min(left, x);
           right = Math.max(right, x);
           top = Math.min(top, y);
@@ -101,13 +105,19 @@
     if (right < left || bottom < top) return null;
     left = Math.max(0, left - 2);
     top = Math.max(0, top - 2);
-    right = Math.min(575, right + 2);
-    bottom = Math.min(575, bottom + 2);
+    right = Math.min(width - 1, right + 2);
+    bottom = Math.min(width - 1, bottom + 2);
     const image = makeCanvas(right - left + 1, bottom - top + 1);
     image
       .getContext('2d')
       .drawImage(work, left, top, image.width, image.height, 0, 0, image.width, image.height);
-    return { image, dx: left - center.x, dy: top - center.y };
+    return {
+      image,
+      dx: left / density - center.x,
+      dy: top / density - center.y,
+      logicalWidth: image.width / density,
+      logicalHeight: image.height / density,
+    };
   }
   function create(options) {
     const { worldCanvas, viewport, platform, getGame, canvasRenderer, getRendererOptions } =
@@ -174,16 +184,18 @@
       createBackgroundPainter();
       drawBackground();
       previous?.destroy?.(false);
+      // Stale procedural images were rasterized for the previous density.
+      clearBakes(true);
     }
     function game() {
       return getGame();
     }
-    function clearBakes() {
+    function clearBakes(keepLoaded = false) {
       for (const texture of ownedTextures) texture.destroy?.(true);
       ownedTextures.length = 0;
       baked.clear();
       imageBytes = 0;
-      loaded.clear();
+      if (!keepLoaded) loaded.clear();
     }
     function drawBackground() {
       const current = game(),
@@ -262,6 +274,10 @@
           });
         } else if (chosen.reason === 'original-game-procedural-art') {
           const revision =
+            backingRatio +
+            ':' +
+            zoom +
+            ':' +
             key +
             ':' +
             current.zoneId +
@@ -274,7 +290,7 @@
             ':' +
             !!visual.crowned;
           if (!baked.has(revision)) {
-            const body = bake(visual, current);
+            const body = bake(visual, current, backingRatio * zoom);
             if (!body) {
               if (entity.renderKind === 'landmark' || entity.kind === 'landmark') continue;
               throw Error('Unrendered procedural entity: ' + key);
@@ -296,8 +312,8 @@
             textureId: b.id,
             x: point.x + b.dx * zoom,
             y: point.y + b.dy * zoom,
-            width: b.image.width * zoom,
-            height: b.image.height * zoom,
+            width: b.logicalWidth * zoom,
+            height: b.logicalHeight * zoom,
             opacity: 1,
             flipX: false,
             depth: entity.x + entity.y,
