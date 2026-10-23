@@ -2111,7 +2111,7 @@
         };
       }
       buttons.push(b);
-      menuKeys.push(a.key || a.kind + ':' + a.label || 'action:' + index);
+      menuKeys.push(a.key || (a.kind || 'action') + ':' + a.label);
     }
     const back = $('close-button');
     back.hidden = false;
@@ -4349,7 +4349,8 @@
       e.ctrlKey ||
       e.metaKey ||
       e.altKey ||
-      /^(INPUT|TEXTAREA|SELECT)$/.test(e.target?.tagName || '')
+      (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target?.tagName || '') &&
+        !(menu && ['Tab', 'Escape'].includes(e.code)))
     )
       return;
     audio.unlock();
@@ -4392,14 +4393,24 @@
       if (code === 'Tab' && !['up', 'down', 'left', 'right', 'confirm'].includes(actionId)) {
         e.preventDefault();
         if (e.repeat) return;
-        const available = buttons.filter((b) => !b.disabled);
+        // Include temporary name fields and native settings controls. Do not
+        // let keyboard focus escape to the game underneath the open dialog.
+        const descendants = Array.from(
+          $('modal').querySelectorAll?.('button, input, select, textarea') || [],
+        ).filter((element) => !element.disabled && !element.hidden);
+        const available = descendants.length
+          ? descendants
+          : buttons.filter((button) => !button.disabled);
         if (!available.length) return;
         const focusedIndex = available.indexOf(document.activeElement);
         const from = focusedIndex < 0 ? (e.shiftKey ? 0 : -1) : focusedIndex;
         const next =
           available[(from + (e.shiftKey ? -1 : 1) + available.length) % available.length];
-        menuIndex = buttons.indexOf(next);
-        highlight(true);
+        const nextIndex = buttons.indexOf(next);
+        if (nextIndex >= 0) {
+          menuIndex = nextIndex;
+          highlight(true);
+        } else next.focus?.({ preventScroll: true });
         return;
       }
       if (e.repeat) return;
