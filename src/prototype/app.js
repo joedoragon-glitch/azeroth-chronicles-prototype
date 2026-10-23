@@ -769,6 +769,11 @@
     'Effects volume': 'Volumen de efectos',
     'Interface volume': 'Volumen de interfaz',
     'Music and sound': 'Música y sonido',
+    'Volume levels': 'Niveles de volumen',
+    'Adjust all five volumes here. Muting preserves your levels.':
+      'Ajusta aquí los cinco volúmenes. Silenciar conserva los niveles.',
+    'Switch sound off or on without resetting the sliders.':
+      'Activa o silencia el sonido sin reiniciar los controles de volumen.',
     'Choose a volume to adjust.': 'Elige el volumen que quieres ajustar.',
     'Mute all sound': 'Silenciar todo',
     'Unmute all sound': 'Activar todo el sonido',
@@ -1894,8 +1899,8 @@
     toggle: (label, value, onChange, detail = '') => ({
       kind: 'toggle', label, value: !!value, onChange, detail,
     }),
-    slider: (label, value, min, max, step, onChange, detail = '') => ({
-      kind: 'slider', label, value, min, max, step, onChange, detail,
+    slider: (label, value, min, max, step, onChange, detail = '', suffix = '') => ({
+      kind: 'slider', label, value, min, max, step, onChange, detail, suffix,
     }),
     select: (label, value, options, onChange, detail = '') => ({
       kind: 'select', label, value, options, onChange, detail,
@@ -2084,10 +2089,15 @@
           b.step = a.step;
           b.value = a.value;
           const output = document.createElement('output');
-          output.textContent = String(a.value);
+          const showValue = () => {
+            const formatted = String(a.value) + a.suffix;
+            output.textContent = formatted;
+            b.setAttribute('aria-valuetext', formatted);
+          };
+          showValue();
           b.oninput = () => {
             commit(a, Number(b.value));
-            output.textContent = String(a.value);
+            showValue();
           };
           row.append(b, output);
         } else {
@@ -3166,38 +3176,35 @@
   }
   function soundMenu(back = closeMenu) {
     const settings = audio.settings;
+    const apply = (value) => {
+      audio.setSettings(value);
+      profile.audio = { ...audio.settings };
+      persistProfile();
+    };
     openMenu(
       'Music and sound',
-      'Choose a volume to adjust.',
+      'Adjust all five volumes here. Muting preserves your levels.',
       [
-        action(settings.muted ? 'Unmute all sound' : 'Mute all sound', () => {
-          audio.setSettings({ muted: !settings.muted });
-          profile.audio = { ...audio.settings };
-          persistProfile();
-          soundMenu(back);
-        }),
+        menuControls.toggle(
+          'Mute all sound',
+          settings.muted,
+          (muted) => apply({ muted }),
+          'Switch sound off or on without resetting the sliders.',
+        ),
+        menuControls.section('Volume levels'),
         ...['master', 'music', 'ambience', 'effects', 'interface'].map((key) =>
-          action(
-            volumeLabel(key) + ' · ' + Math.round((settings[key] ?? settings.effects) * 100) + '%',
-            () => volumeMenu(key, () => soundMenu(back)),
+          menuControls.slider(
+            volumeLabel(key),
+            Math.round((settings[key] ?? settings.effects) * 100),
+            0,
+            100,
+            1,
+            (percent) => apply({ [key]: percent / 100 }),
+            '',
+            '%',
           ),
         ),
       ],
-      back,
-    );
-  }
-  function volumeMenu(key, back) {
-    const settings = audio.settings;
-    const adjust = (delta) => {
-      audio.setSettings({ [key]: (settings[key] ?? settings.effects) + delta });
-      profile.audio = { ...audio.settings };
-      persistProfile();
-      volumeMenu(key, back);
-    };
-    openMenu(
-      volumeLabel(key),
-      Math.round((settings[key] ?? settings.effects) * 100) + '%',
-      [action('Quieter · −10%', () => adjust(-0.1)), action('Louder · +10%', () => adjust(0.1))],
       back,
     );
   }
