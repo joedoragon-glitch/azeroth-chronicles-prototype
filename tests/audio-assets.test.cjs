@@ -139,7 +139,7 @@ async function offlineContract(checkout) {
   try {
     const checkout = path.join(temp, 'checkout');
     fs.mkdirSync(checkout);
-    for (const dir of ['src', 'scripts', 'styles', 'templates', 'icons', 'assets', 'tools/audio'])
+    for (const dir of ['src', 'scripts', 'styles', 'templates', 'icons', 'assets', 'tools/audio', 'tools/webgl-pilot'])
       fs.cpSync(path.join(root, dir), path.join(checkout, dir), { recursive: true });
     for (const file of [
       'package.json',

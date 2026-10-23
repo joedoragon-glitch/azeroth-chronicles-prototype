@@ -50,3 +50,9 @@ Added `tests/pixi-renderer-browser.test.cjs` to exercise Canvas default, optiona
 Restored the temporary formatter-audit workflow back to its original PR #300 condition. Standard PR/full-CI gates remain unchanged except for the new PixiJS-specific browser check.
 
 **Current release disposition:** No-Go until the complete *latest* PR CI passes or failures are explicitly reconciled against unchanged main, and real PixiJS mode/Canvas fallback has been shown to work on target browsers. No finished-GPU benchmark, visual parity certification, merge or deployment is claimed. Step 5 requires a new owner instruction.
+
+### Additional focused packaging regression (review continuation)
+
+The CI log revealed that two existing isolated packaging suites (`tests/asset-packaging.test.cjs` and `tests/audio-assets.test.cjs`) copy a minimal source fixture and omitted the newly registered `tools/webgl-pilot/` runtime helper directory. Their failure was `Missing published asset: tools/webgl-pilot/native-webgl2-core.js`, not a gameplay failure. Updated only those test checkouts to include the now-published directory; unchanged sprite/audio safety checks remain in force. No production sprites, audio, balance or saves were modified.
+
+The broader historic game suites still show numerous independent failures on untouched engine/content paths; do not infer that they were introduced or repaired by PixiJS without comparing against a matching main baseline. Main branch has not changed in this checkpoint.

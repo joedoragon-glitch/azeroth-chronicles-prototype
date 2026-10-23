@@ -21,6 +21,7 @@ try {
     'tests',
     'docs',
     'tools/audio',
+    'tools/webgl-pilot',
   ])
     fs.cpSync(path.join(root, name), path.join(checkout, name), { recursive: true });
   for (const name of [
