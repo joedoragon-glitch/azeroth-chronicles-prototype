@@ -33,8 +33,8 @@ for (const language of ['en', 'es']) {
     assert(found, 'Missing ' + prefix);
     return found;
   };
-  const shop = { kind: 'smith', family: 'thorn', name: 'Test Forge' };
-  const tier = Campaign.rules.balance.equipment.tiers.thorn;
+  const shop = { kind: 'smith', family: 'crypt', name: 'Test Forge' };
+  const tier = Campaign.rules.balance.equipment.tiers.crypt;
   game.hero.gold = 0;
   const before = JSON.stringify(game.snapshot());
   catalog.smith(shop);
