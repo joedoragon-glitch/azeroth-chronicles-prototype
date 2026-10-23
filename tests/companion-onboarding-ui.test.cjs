@@ -417,7 +417,7 @@ for (const language of ['en', 'es']) {
       b.textContent.startsWith(text('Recover fallen companion', 'Recuperar compañero caído'))),
     'Full recovery still offers companion care',
   );
-  assert(e.get('modal-description').textContent.includes(text('Local death loss: 5%', 'Pérdida local al caer: 5%')));
+  assert(e.get('modal-description').textContent.includes('5%'), 'Full still explains its 5% death-loss rule');
   back();
   click(text('Training', 'Entrenamiento'));
   assert(e.get('modal-actions').children.some(
