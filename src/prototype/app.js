@@ -1586,7 +1586,9 @@
     save,
     openMenu,
     closeMenu,
-    menuControls,
+    get menuControls() {
+      return menuControls;
+    },
     updateHUD,
     labelVisible: worldLabelVisible,
     chargePresentation,
