@@ -143,21 +143,73 @@ for (const language of ['en', 'es']) {
   back();
   title('Game and settings', 'Juego y ajustes');
   click(t('Sound settings', 'Ajustes de sonido'));
+  title('Music and sound', 'Música y sonido');
   short();
-  assert.equal(e.get('modal-actions').children.length, 6);
-  const volume = s.Prototype.audio.settings.music;
-  click(t('Music volume', 'Volumen de música'));
-  short();
-  click(t('Quieter', 'Bajar volumen'));
-  assert(Math.abs(s.Prototype.audio.settings.music - (volume - 0.1)) < 1e-9);
-  click(t('Louder', 'Subir volumen'));
-  assert(Math.abs(s.Prototype.audio.settings.music - volume) < 1e-9);
-  back();
+  const soundRows = () => e.get('modal-actions').children;
+  const channels = [
+    ['master', 'Master volume', 'Volumen general'],
+    ['music', 'Music volume', 'Volumen de música'],
+    ['ambience', 'Ambience volume', 'Volumen ambiental'],
+    ['effects', 'Effects volume', 'Volumen de efectos'],
+    ['interface', 'Interface volume', 'Volumen de interfaz'],
+  ];
+  const soundSlider = (en, es) => {
+    const row = soundRows().find(
+      (child) =>
+        child.className === 'menu-setting' &&
+        child.children.some((item) => item.textContent === t(en, es)),
+    );
+    assert(row, 'missing volume row: ' + en);
+    const input = row.children.find((child) => child.className === 'menu-setting-input');
+    const output = row.children.find((child) => child.tagName === 'OUTPUT');
+    assert(input && output, 'volume slider and current percentage are both visible');
+    return { input, output };
+  };
+  assert.equal(soundRows().filter((node) => node.className === 'menu-setting').length, 5);
+  assert(soundRows().some((node) => node.className === 'menu-section'));
+  const originalVolumes = Object.fromEntries(
+    channels.map(([key]) => [key, s.Prototype.audio.settings[key] ?? s.Prototype.audio.settings.effects]),
+  );
+  for (const [key, en, es] of channels) {
+    const { input, output } = soundSlider(en, es);
+    assert.equal(input.value, Math.round(originalVolumes[key] * 100));
+    assert.equal(output.textContent, Math.round(originalVolumes[key] * 100) + '%');
+    for (const percent of [0, 100, 37]) {
+      input.value = String(percent);
+      input.oninput();
+      assert(Math.abs(s.Prototype.audio.settings[key] - percent / 100) < 1e-9);
+      assert.equal(output.textContent, percent + '%', 'displayed percentage follows slider');
+      assert.equal(
+        JSON.parse(storage.get(s.PrototypePersistence.profileKey)).audio[key],
+        percent / 100,
+        'each audio channel persists immediately',
+      );
+      title('Music and sound', 'Música y sonido');
+      assert(!e.get('modal').hidden, 'adjusting any slider keeps the sound window open');
+    }
+    input.value = String(Math.round(originalVolumes[key] * 100));
+    input.oninput();
+  }
   click(t('Mute all sound', 'Silenciar todo'));
   assert(s.Prototype.audio.settings.muted);
-  click(t('Unmute all sound', 'Activar todo el sonido'));
+  assert.equal(
+    JSON.parse(storage.get(s.PrototypePersistence.profileKey)).audio.muted,
+    true,
+  );
+  for (const [key] of channels)
+    assert(Math.abs((s.Prototype.audio.settings[key] ?? s.Prototype.audio.settings.effects) - originalVolumes[key]) < 1e-9,
+      'mute preserves every saved channel level');
+  click(t('Mute all sound', 'Silenciar todo'));
   assert(!s.Prototype.audio.settings.muted);
   assert.equal(JSON.parse(storage.get(s.PrototypePersistence.profileKey)).audio.muted, false);
+  back();
+  title('Game and settings', 'Juego y ajustes');
+  click(t('Sound settings', 'Ajustes de sonido'));
+  title('Music and sound', 'Música y sonido');
+  for (const [key, en, es] of channels) {
+    const slider = soundSlider(en, es);
+    assert.equal(slider.output.textContent, Math.round(originalVolumes[key] * 100) + '%');
+  }
   back();
   click(t('Install on phone', 'Instalar en el teléfono'));
   short();
