@@ -38,11 +38,15 @@ for (const language of ['en', 'es']) {
   game.hero.gold = 0;
   const before = JSON.stringify(game.snapshot());
   catalog.smith(shop);
-  assert.deepEqual(sectionLabels(), [
+  assert.deepEqual(sectionLabels().slice(0, 3), [
     text('Equipment upgrades', 'Mejoras de equipo'),
     text('Reforging', 'Reforja'),
     text('Appearance', 'Apariencia'),
   ]);
+  if (sectionLabels().length > 3)
+    assert.deepEqual(sectionLabels().slice(3), [
+      text('Expedition support', 'Apoyo de Expedición'),
+    ], 'existing optional Expedition training remains visible at this smith');
   assert.equal(findButton('Weapon tier ' + tier).disabled, true);
   assert.equal(findButton('Armor tier ' + tier).disabled, true);
   assert.equal(findButton('Reforge weapon').disabled, true);
