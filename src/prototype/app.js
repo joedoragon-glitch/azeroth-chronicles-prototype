@@ -699,6 +699,19 @@
     'Choose your layout and movement controls.':
       'Elige la disposición y los controles de movimiento.',
     'Tap reachable ground to move.': 'Toca terreno accesible para moverte.',
+    Display: 'Pantalla',
+    Graphics: 'Gráficos',
+    Diagnostics: 'Diagnósticos',
+    'Show performance details': 'Mostrar detalles de rendimiento',
+    'Hide performance details': 'Ocultar detalles de rendimiento',
+    'Adjust everything here without leaving this screen.':
+      'Ajusta todo aquí sin salir de esta pantalla.',
+    'Optional experimental setting. Off for baseline tests; simulation and input continue.':
+      'Opción experimental. Desactivada para pruebas base; la simulación y los controles continúan.',
+    'Canvas 2D is the safe default. WebGL2 starts a 15-second Keep/Revert trial.':
+      'Canvas 2D es la opción segura. WebGL2 inicia una prueba de 15 segundos para conservar o revertir.',
+    'Local samples are diagnostic estimates, not verified display FPS.':
+      'Las muestras locales son estimaciones diagnósticas, no FPS reales verificados.',
     'Screen layout': 'Disposición de pantalla',
     'Camera zoom': 'Zoom de cámara',
     'Graphics quality': 'Calidad gráfica',
