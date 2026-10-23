@@ -376,6 +376,11 @@
   function createFrameProfile() {
     const keys = ['frameWorkMs', 'intervalMs', 'simulationMs', 'companionAIMs', 'enemyAIMs',
       'otherSimulationMs', 'hudMs', 'audioUpdateMs', 'eventDispatchMs', 'renderMs', 'otherJsMs'];
+    const rendererStages = [
+      ['pixiMs', 'pixiAttempted'],
+      ['canvasOverlayMs', 'canvasOverlayDrawn'],
+      ['canvasWorldMs', 'canvasWorldDrawn'],
+    ];
     let samples = [];
     function summary(values) {
       if (!values.length) return { samples: 0, meanMs: 0, p95Ms: 0 };
@@ -389,6 +394,10 @@
       const stages = {};
       for (const key of keys)
         stages[key] = summary(samples.filter(s => key !== 'renderMs' || s.drawn).map(s => s[key]));
+      // Subsets are independently sampled only on world draws that actually
+      // used the named surface. Never dilute a Pixi mean with Canvas-only frames.
+      for (const [key, flag] of rendererStages)
+        stages[key] = summary(samples.filter(s => s.drawn && s[flag]).map(s => s[key]));
       const durationMs = samples.slice(1).reduce((total, sample) => total + sample.intervalMs, 0);
       const activeFrames = samples.length;
       const drawnFrames = samples.filter(s => s.drawn).length;
@@ -401,7 +410,7 @@
         callbackFps: rate(Math.max(0, activeFrames - 1)),
         displayedFps: rate(actualDraws),
         stages,
-        note: 'Callback FPS counts game-update opportunities; displayed FPS counts world drawings. AI is included in simulation. Renderer data uses drawn frames only; separate p95 values cannot be added.'
+        note: 'Callback FPS counts game-update opportunities; displayed FPS counts issued world draws, not monitor-presented frames. RenderMs is the combined synchronous world draw call. Pixi/Canvas stages measure synchronous CPU call time only (not GPU completion); their sample counts are per active surface, and separate p95 values cannot be added. AI is included in simulation.'
       };
     }
     return {
@@ -409,6 +418,11 @@
         if (!row || !Number.isFinite(row.frameWorkMs) || row.frameWorkMs < 0) return;
         const sample = { drawn: !!row.drawn, adaptiveSkipped: !!row.adaptiveSkipped };
         for (const key of keys) sample[key] = Number.isFinite(row[key]) ? Math.max(0, row[key]) : 0;
+        for (const [key, flag] of rendererStages) {
+          sample[flag] = sample.drawn && row[flag] === true;
+          sample[key] = sample[flag] && Number.isFinite(row[key])
+            ? Math.max(0, row[key]) : 0;
+        }
         samples.push(sample);
         if (samples.length > 180) samples.shift();
       },
@@ -418,15 +432,21 @@
         const r = report();
         if (!r.activeFrames) return 'Frame stages: no active gameplay sampled.';
         const print = (label, key) => label + ': ' + r.stages[key].meanMs + ' / ' + r.stages[key].p95Ms + ' ms';
-        return 'Game updates ' + r.callbackFps + '/s · displayed ' + r.displayedFps +
+        const rendererLines = [
+          ['  Pixi world', 'pixiMs'],
+          ['  Canvas combat overlay', 'canvasOverlayMs'],
+          ['  Canvas full world', 'canvasWorldMs'],
+        ].filter(([, key]) => r.stages[key].samples)
+          .map(([label, key]) => print(label, key) + ' (' + r.stages[key].samples + ' draws)');
+        return 'Game updates ' + r.callbackFps + '/s · issued world draws ' + r.displayedFps +
           '/s · adaptive skips ' + r.adaptiveSkippedDraws + '\n' +
           'Frame stages · mean / p95 (' + r.activeFrames + ' active, ' + r.drawnFrames + ' drawn)\n' +
           [print('Simulation total', 'simulationMs'), print('  Companion AI', 'companionAIMs'),
             print('  Enemy AI', 'enemyAIMs'), print('  Other simulation', 'otherSimulationMs'),
             print('Audio update', 'audioUpdateMs'), print('Event dispatch + audio effects', 'eventDispatchMs'),
-            print('HUD', 'hudMs'), print('Canvas (drawn only)', 'renderMs'),
-            print('Other frame JS', 'otherJsMs')].join('\n') +
-          '\nAI is a subset of simulation. Sample in active play, not the menu.';
+            print('HUD', 'hudMs'), print('Combined world draw', 'renderMs'),
+            ...rendererLines, print('Other frame JS', 'otherJsMs')].join('\n') +
+          '\nAI is a subset of simulation. Renderer figures are synchronous CPU timings, not GPU/presented FPS. Sample in active play, not the menu.';
       },
     };
   }
