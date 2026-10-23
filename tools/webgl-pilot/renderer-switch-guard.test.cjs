@@ -241,3 +241,34 @@ test('a hidden tab while preparing confirmed WebGL cannot later reveal the GPU',
  assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),'canvas2d');
  f.run.dispose();
 });
+
+
+test('Home Screen interruption cancels a pending trial and preserves fallback diagnostics',async()=>{
+ const f=fixture();
+ assert.equal(await f.run.requestWebGL(),true);
+ f.run.visibilityChanged(true);
+ assert.equal(f.visible,'canvas');
+ assert.equal(f.run.status().lastFallbackReason,'trial-interrupted');
+ assert.equal(f.storage.getItem(Guard.PENDING_KEY),null);
+ f.run.dispose();
+});
+test('confirmed renderer survives temporary Home Screen backgrounding',async()=>{
+ const f=fixture();
+ assert.equal(await f.run.requestWebGL(),true);
+ assert.equal(f.run.confirm(),true);
+ f.run.visibilityChanged(true);
+ f.run.visibilityChanged(false);
+ assert.equal(f.visible,'webgl2');
+ assert.equal(f.run.status().phase,'confirmed');
+ assert.equal(f.run.status().lastFallbackReason,'');
+ f.run.dispose();
+});
+test('WebGL context failure exposes Canvas and retains precise last failure for reports',async()=>{
+ const f=fixture();
+ await f.run.requestWebGL();
+ f.run.confirm();
+ f.run.webglFailed();
+ assert.equal(f.run.status().lastFallbackReason,'webgl-context-or-render-failure');
+ assert.equal(f.run.status().mode,'canvas2d');
+ f.run.dispose();
+});
