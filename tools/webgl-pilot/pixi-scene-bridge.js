@@ -108,6 +108,19 @@
      resources.set(id,texture);
    }
    function hasTexture(id) {return resources.has(id);}
+   // Procedural textures are local to a scene/zoom. Remove their registrations
+   // before destroying their source images so long sessions do not leak GPU
+   // resource entries across regions and quality changes.
+   function unregisterTexture(id) {
+     if(!resources.has(id))return false;
+     resources.delete(id);
+     for(const [frameId,frame] of frameTextures)
+       if(frameId.startsWith(id+':')){
+         frame.destroy?.(false);
+         frameTextures.delete(frameId);
+       }
+     return true;
+   }
    function actorTexture(entity) {
      const texture=assert(resources.get(entity.textureId),
        'Missing Azeroth artwork: '+entity.textureId);
@@ -314,7 +327,7 @@
      rootStage.destroy({children:false});
    }
    return Object.freeze({
-     setBackground,moveBackground,registerTexture,hasTexture,
+     setBackground,moveBackground,registerTexture,hasTexture,unregisterTexture,
      syncActors,syncLamps,setAtmosphere,setVignette,
      captureBackgroundOnly,captureLightingOnly,draw,metrics,destroy
    });
