@@ -1,9 +1,9 @@
 # Menu usability overhaul — Step 2: one Screen & Performance window
 
 **Status:** Review candidate; not deployed.  
-**Dependent base:** Step 1 draft PR #413, branch `menu-foundation-step1-20261023` at `0087f63edb67e1e7851a396ad776edb84d6d286d`.  
+**Base reconciled:** Step 1 PR #413 merged into `main` as `3ad37c961d06c0b9b9339361df796deb8cd06041`. The merged commit's file tree matches the Step 1 head exactly (`e230841c04ee97b80a024fce2997813b267e97ca`).  
 **Scope:** Step 2 from the October 23 menu system audit — consolidate Screen & Performance only.  
-**Prerequisite:** Step 1 must be reviewed/accepted independently. This branch is not intended for direct merge into `main` while the prerequisite remains a draft.
+**Prerequisite:** Step 1 is merged and verified. This PR now targets `main` and contains Step 2 changes only.
 
 ## Changes
 
@@ -31,6 +31,6 @@ Untested until a deliberately scoped later device check: real phone touch scroll
 
 ## Release boundary
 
-**No merge and no GitHub Pages deployment on this task.** After review of prerequisite Step 1 and this PR, proceed to Step 3 (Music & Sound) as its own scoped branch/change.
+**Merge to `main` is separately authorized after focused validation; do not merge while checks are failing. GitHub's normal focused publisher may deploy after merge. No manual broad matrix.** After validation and merge of this PR, proceed to Step 3 (Music & Sound) as its own scoped branch/change.
 
-Validation note: the focused PR job temporarily targets main to exercise the complete Step 1 + Step 2 dependency stack. After its result is recorded, the review PR is retargeted back to Step 1 so the final diff contains Step 2 only. PR validation is never a deployment.
+Validation note: the initial focused run validated the Step 1 + Step 2 stack against the original main. After Step 1 merged, the diff against the updated main contains only five Step 2 files. The focused validation must still pass on the current proposed changes before Step 2 merges.
