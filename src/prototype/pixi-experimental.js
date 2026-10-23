@@ -64,12 +64,26 @@
       }
     }
     add(zone.props, 'prop');
+    // Same permanent civic features included by the Canvas depth sorter.
+    if (!game.isDungeon() && !game.supplyRoom?.(game.zoneId) &&
+        !game.sideDungeon?.(game.zoneId))
+      add((root.Campaign?.rules?.terrain?.[game.regionIndex()] || [])
+        .filter((p) => ['fountain', 'grain-silo', 'orrery'].includes(p.kind))
+        .map((p) => ({
+          id: p.kind === 'orrery' ? 'crown-orrery'
+            : p.kind === 'grain-silo' ? 'frontier-grain-silo' : 'frontier-civic-fountain',
+          x: p.x, y: p.y, r: p.r,
+          structure: p.kind === 'orrery' ? 'crown-orrery'
+            : p.kind === 'grain-silo' ? 'frontier-grain-silo' : 'frontier-civic-fountain',
+          decorative: true,
+        })), 'prop');
     add(game.visibleNPCs(), 'npc');
     add(game.visibleResourceNodes(), 'node');
     add(zone.buildings, 'building');
     add(zone.enemies, 'enemy');
     add(game.activeLivingParty(), 'ally');
     add([game.hero], 'hero');
+    if (zone.escort) add([{ ...zone.escort, icon: '🧑‍🌾', name: 'Supply escort' }], 'ally');
     return result.sort((a, b) => a.entity.x + a.entity.y - (b.entity.x + b.entity.y));
   }
   function bake(visual, game, density = 1) {
@@ -251,8 +265,15 @@
           (entity.kind === 'landmark' && String(entity.id || '').startsWith('bridge-'))
         )
           continue;
+        // Canvas repaints these identities as their actual in-world objects.
+        const painted = visual.kind === 'archive-record'
+          ? { ...visual, renderKind: 'prop', structure: 'scroll-stack',
+              decorative: true, sceneRole: 'dry-stacks' }
+          : visual.kind === 'keeper'
+            ? { ...visual, renderKind: 'enemy', type: 'boss', family: 'archive', form: 'normal' }
+            : visual;
         const chosen = adapter.commandFor(
-          visual,
+          painted,
           { x: point.x / zoom, y: point.y / zoom },
           { region: current.regionIndex(), rescued: !!current.s.rescued[entity.family] },
         );
@@ -290,7 +311,7 @@
             ':' +
             !!visual.crowned;
           if (!baked.has(revision)) {
-            const body = bake(visual, current, backingRatio * zoom);
+            const body = bake(painted, current, backingRatio * zoom);
             if (!body) {
               if (entity.renderKind === 'landmark' || entity.kind === 'landmark') continue;
               throw Error('Unrendered procedural entity: ' + key);
