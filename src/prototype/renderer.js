@@ -2018,13 +2018,15 @@
         PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000);
         PrototypeCombatVisuals.ground(ctx, screen, game, 'underlay-cue', game.s.time);
         PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx);
-        for (const e of [...z.enemies.filter((u) => u.hp > 0),
-          ...game.activeLivingParty(), game.hero]) {
+        for (const e of [
+          ...z.enemies.filter((u) => u.hp > 0),
+          ...game.activeLivingParty(),
+          game.hero,
+        ]) {
           if (e !== game.hero && e.hp <= 0) continue;
           if (e !== game.hero && e.neutral) continue;
           const p = screen(e);
-          if (p.x > -120 && p.x < canvas.width + 120 &&
-              p.y > -120 && p.y < canvas.height + 120)
+          if (p.x > -120 && p.x < canvas.width + 120 && p.y > -120 && p.y < canvas.height + 120)
             healthPlate(e, p);
         }
         PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx);

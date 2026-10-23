@@ -32,3 +32,21 @@ Owner selected minimal involvement: complete technical fixes and available check
 ## Disposition
 
 Pre-Step-4 source preparation is checkpointed; **hold Step 4 until build/browser evidence is available**. Do not merge or deploy. The owner does not need to run diagnostics or provide a personal campaign export at this checkpoint. When a playable candidate has passed checks, their only requested involvement is a brief real Chromebook/phone playtest and explicit release decision.
+
+## Step 4 follow-up audit — PR #407 (22 October 2026)
+
+PR: https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/407 (draft, no merge/deployment).
+
+The first CI iteration found a Canvas-only test-shell startup dependency: optional PixiJS classes were assumed globally available. The branch now supplies a no-op Canvas fallback if a source-only test harness omits optional modules. Actual confirmation must come from a new completed CI run.
+
+On the original PR check, the **generated-asset/script syntax step passed** and downloaded PixiJS 8.22.0 with SHA-256 `06d9ef9823e743518793083c296d801e752db128cb1f519fbabe37e1259567ea`; the candidate vendor script now enforces this digest.
+
+The source check failed in the sprite generator's isolated VM because `visuals.js` references `PrototypeHighlands`. Supplied this already-canonical dependency in `scripts/sprite-pipeline.cjs` without touching game rules.
+
+A temporary PR-only formatter audit collected the exact Prettier patch. Applied its hunks to **only the touched PixiJS application/renderer/module and vendor script**. The report additionally showed formatting drift in main's untouched `engine.js`, `runtime.js`, `save.js` and `tools/sprites/approved.json`. Those files are not changed merely to make unrelated checks green; preserving source-protected historical art/gameplay receipts is more important than a cosmetic mass rewrite.
+
+Added `tests/pixi-renderer-browser.test.cjs` to exercise Canvas default, optional GPU preparation, an unchanged Campaign identity, Keep WebGL2, reload safety and software-browser fallback. Existing Chromium and WebKit release workflows now invoke it as a **required** verification alongside, not instead of, their existing full checks. A browser without usable WebGL2 must keep Canvas. This test has not been executed yet and may expose additional issues.
+
+Restored the temporary formatter-audit workflow back to its original PR #300 condition. Standard PR/full-CI gates remain unchanged except for the new PixiJS-specific browser check.
+
+**Current release disposition:** No-Go until the complete *latest* PR CI passes or failures are explicitly reconciled against unchanged main, and real PixiJS mode/Canvas fallback has been shown to work on target browsers. No finished-GPU benchmark, visual parity certification, merge or deployment is claimed. Step 5 requires a new owner instruction.

@@ -128,6 +128,13 @@ jobs:
         continue-on-error: true
         if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         run: node tests/phone-webkit-browser.test.cjs
+      - name: Verify optional PixiJS WebGL2 fallback in WebKit
+        id: webkit_pixi
+        continue-on-error: true
+        if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
+        env:
+          BROWSER_ENGINE: webkit
+        run: node tests/pixi-renderer-browser.test.cjs
       - name: Verify WebKit cooldown charge queues and save upgrade
         id: webkit_saves
         continue-on-error: true
@@ -234,7 +241,7 @@ jobs:
         run: |
           node <<'NODE'
           const states = JSON.parse(process.env.WEBKIT_CHECK_STATES || '{}');
-          const required = ['webkit_phone', 'webkit_saves', 'webkit_archive', 'webkit_rogue', 'webkit_audio', 'webkit_vfx', 'webkit_sprites', 'webkit_terrain', 'webkit_visuals', 'webkit_community'];
+          const required = ['webkit_phone', 'webkit_pixi', 'webkit_saves', 'webkit_archive', 'webkit_rogue', 'webkit_audio', 'webkit_vfx', 'webkit_sprites', 'webkit_terrain', 'webkit_visuals', 'webkit_community'];
           const failed = Object.entries(states).filter(([, value]) => value.outcome === 'failure').map(([name]) => name);
           for (const name of required) if (states[name]?.outcome !== 'success' && !failed.includes(name)) failed.push(name);
           if (failed.length) { console.error('WebKit certification blocked by: ' + failed.join(', ')); process.exit(1); }
@@ -255,12 +262,10 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
 
-  # Temporary PR #407 audit: obtain exact Prettier patch without weakening release gates.
-  # Historical PR #300 implementation below remains otherwise unchanged.
   # Draft PR #300 only: obtain a reproducible formatter correction while
   # independently preserving the strict pr-check/release certificate gate.
   snapshot-format-audit:
-    if: github.event_name == 'pull_request' && (github.event.pull_request.number == 300 || github.event.pull_request.number == 407)
+    if: github.event_name == 'pull_request' && github.event.pull_request.number == 300
     runs-on: ubuntu-latest
     permissions:
       contents: read

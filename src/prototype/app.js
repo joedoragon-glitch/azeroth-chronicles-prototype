@@ -1416,7 +1416,8 @@
   gpuTrialPanel.hidden = true;
   gpuTrialPanel.setAttribute('role', 'region');
   gpuTrialPanel.setAttribute('aria-live', 'polite');
-  gpuTrialPanel.style.cssText = 'position:fixed;top:10%;left:50%;transform:translateX(-50%);' +
+  gpuTrialPanel.style.cssText =
+    'position:fixed;top:10%;left:50%;transform:translateX(-50%);' +
     'z-index:30;background:#172b35f5;color:#f4f1dc;border:2px solid #ebc875;' +
     'border-radius:12px;padding:12px;max-width:calc(100vw - 24px);width:310px;' +
     'box-shadow:0 8px 24px #000a;pointer-events:auto';
@@ -1438,18 +1439,22 @@
     release() {},
     status: () => ({ active: false, available: false }),
   };
-  const pixiGame = typeof PrototypePixiExperimental === 'undefined'
-    ? pixiUnavailable
-    : PrototypePixiExperimental.create({
-    worldCanvas: canvas, viewport, platform,
-    getGame: () => game, canvasRenderer: renderer,
-    getRendererOptions: () => rendererSetup,
-    getOptimizationMode: () => optimizationMode,
-    onFailure: (reason) => {
-      graphicsController?.webglFailed();
-      status('WebGL2 returned to Canvas: ' + reason);
-    },
-  });
+  const pixiGame =
+    typeof PrototypePixiExperimental === 'undefined'
+      ? pixiUnavailable
+      : PrototypePixiExperimental.create({
+          worldCanvas: canvas,
+          viewport,
+          platform,
+          getGame: () => game,
+          canvasRenderer: renderer,
+          getRendererOptions: () => rendererSetup,
+          getOptimizationMode: () => optimizationMode,
+          onFailure: (reason) => {
+            graphicsController?.webglFailed();
+            status('WebGL2 returned to Canvas: ' + reason);
+          },
+        });
   // Fan out presentation events without editing the protected simulation loop.
   const queueOriginalVisuals = renderer.queue;
   renderer.queue = (events) => {
@@ -1460,8 +1465,8 @@
     const trial = snapshot.phase === 'trial';
     gpuTrialPanel.hidden = !trial;
     if (!trial) return;
-    gpuTrialMessage.textContent = tr('PixiJS WebGL2 · Experimental') + ' · ' +
-      snapshot.secondsRemaining + 's';
+    gpuTrialMessage.textContent =
+      tr('PixiJS WebGL2 · Experimental') + ' · ' + snapshot.secondsRemaining + 's';
     gpuKeep.textContent = tr('Keep WebGL2');
     gpuRevert.textContent = tr('Revert to Canvas');
   }
@@ -1474,33 +1479,33 @@
     webglFailed: () => false,
     visibilityChanged() {},
   };
-  const graphicsGuard = typeof AzerothRendererSwitchGuard === 'undefined'
-    ? null
-    : AzerothRendererSwitchGuard;
+  const graphicsGuard =
+    typeof AzerothRendererSwitchGuard === 'undefined' ? null : AzerothRendererSwitchGuard;
   const previousRendererChoice = graphicsGuard
     ? graphicsGuard.startupChoice(localStorage)
     : { renderer: 'canvas2d' };
-  graphicsController = graphicsGuard ? graphicsGuard.create({
-    storage: localStorage,
-    prepareWebGL: () => pixiGame.prepare(),
-    showWebGL: () => {
-      renderer.setRenderLayer('overlay');
-      pixiGame.activate();
-      renderer.draw();
-    },
-    showCanvas: () => {
-      pixiGame.deactivate();
-      renderer.setRenderLayer('full');
-      renderer.draw();
-      // Only release GPU resources after the reliable Canvas is visible.
-      pixiGame.release();
-    },
-    notify: updateGpuTrial,
-  }) : fallbackController;
+  graphicsController = graphicsGuard
+    ? graphicsGuard.create({
+        storage: localStorage,
+        prepareWebGL: () => pixiGame.prepare(),
+        showWebGL: () => {
+          renderer.setRenderLayer('overlay');
+          pixiGame.activate();
+          renderer.draw();
+        },
+        showCanvas: () => {
+          pixiGame.deactivate();
+          renderer.setRenderLayer('full');
+          renderer.draw();
+          // Only release GPU resources after the reliable Canvas is visible.
+          pixiGame.release();
+        },
+        notify: updateGpuTrial,
+      })
+    : fallbackController;
   gpuKeep.onclick = () => graphicsController.confirm();
   gpuRevert.onclick = () => graphicsController.revert();
-  addEventListener('visibilitychange',
-    () => graphicsController.visibilityChanged(document.hidden));
+  addEventListener('visibilitychange', () => graphicsController.visibilityChanged(document.hidden));
   // Canvas always boots first. A previously confirmed GPU preference may
   // reappear only after its first complete frame and recovery marker clear.
   if (previousRendererChoice.renderer === 'webgl2') {
@@ -1512,8 +1517,11 @@
   }
   function drawWorld() {
     if (graphicsController.status().mode === 'webgl2') {
-      try { pixiGame.draw(); }
-      catch (_) { graphicsController.webglFailed(); }
+      try {
+        pixiGame.draw();
+      } catch (_) {
+        graphicsController.webglFailed();
+      }
     }
     renderer.draw();
   }
@@ -1559,7 +1567,9 @@
     },
     audio,
     renderer,
-    get experimentalGraphics() { return { ...graphicsController.status(), ...pixiGame.status() }; },
+    get experimentalGraphics() {
+      return { ...graphicsController.status(), ...pixiGame.status() };
+    },
     platform,
     runtime,
     frameProfile,
@@ -2494,19 +2504,17 @@
       'Graphics renderer',
       'Canvas 2D is the safe default. PixiJS is unfinished and requires a connection.',
       [
-        action('Canvas 2D · Default' + (selected === 'canvas2d' ? ' ✓' : ''),
-          () => {
-            graphicsController.revert();
-            graphicsRendererMenu(back);
-          }),
-        action('PixiJS WebGL2 · Experimental' + (selected === 'webgl2' ? ' ✓' : ''),
-          () => {
-            closeMenu();
-            status('Preparing real campaign artwork in PixiJS…');
-            graphicsController.requestWebGL().then((ready) => {
-              if (!ready) status('PixiJS unavailable; Canvas 2D remains active.');
-            });
-          }),
+        action('Canvas 2D · Default' + (selected === 'canvas2d' ? ' ✓' : ''), () => {
+          graphicsController.revert();
+          graphicsRendererMenu(back);
+        }),
+        action('PixiJS WebGL2 · Experimental' + (selected === 'webgl2' ? ' ✓' : ''), () => {
+          closeMenu();
+          status('Preparing real campaign artwork in PixiJS…');
+          graphicsController.requestWebGL().then((ready) => {
+            if (!ready) status('PixiJS unavailable; Canvas 2D remains active.');
+          });
+        }),
       ],
       back,
     );
@@ -2529,7 +2537,7 @@
             renderer.setOptimizationMode(optimizationMode);
             resize();
             runtime.reset();
-      frameProfile.reset();
+            frameProfile.reset();
             fps.suspend();
             graphicsMenu(back);
           },
@@ -2556,9 +2564,9 @@
         const fixed = Number(value);
         const pixels = Number.isFinite(fixed)
           ? ' · ' +
-            Math.round(innerWidth * fixed / 100) +
+            Math.round((innerWidth * fixed) / 100) +
             ' × ' +
-            Math.round(innerHeight * fixed / 100)
+            Math.round((innerHeight * fixed) / 100)
           : '';
         return action(
           tr(label) + pixels + (renderResolution.preference === value ? ' ✓' : ''),
@@ -2566,7 +2574,7 @@
             renderResolution.select(value);
             resize();
             runtime.reset();
-      frameProfile.reset();
+            frameProfile.reset();
             fps.suspend();
             renderingResolutionMenu(back);
           },
@@ -2622,7 +2630,7 @@
       [
         action('Reset performance sample', () => {
           runtime.reset();
-      frameProfile.reset();
+          frameProfile.reset();
           performanceMenu(back);
         }),
       ],
@@ -5101,8 +5109,15 @@
       }
     }
     const stageTimes = !frozen
-      ? { simulationMs: 0, companionAIMs: 0, enemyAIMs: 0, hudMs: 0,
-          audioUpdateMs: 0, eventDispatchMs: 0, renderMs: 0 }
+      ? {
+          simulationMs: 0,
+          companionAIMs: 0,
+          enemyAIMs: 0,
+          hudMs: 0,
+          audioUpdateMs: 0,
+          eventDispatchMs: 0,
+          renderMs: 0,
+        }
       : null;
     const audioAt = stageTimes ? performance.now() : 0;
     audio.update(game, paused || !focused || document.hidden, {
@@ -5130,10 +5145,15 @@
           deaths: game.s.statistics.deaths,
           order: !!movingHero.order,
         };
-      const simulationAt = performance.now(), marks = {};
+      const simulationAt = performance.now(),
+        marks = {};
       game.tick(dt, {
-        x, y, speedFactor,
-        performanceMark: (stage) => { marks[stage] = performance.now(); },
+        x,
+        y,
+        speedFactor,
+        performanceMark: (stage) => {
+          marks[stage] = performance.now();
+        },
       });
       stageTimes.simulationMs = performance.now() - simulationAt;
       if (marks.partyStart !== undefined && marks.partyEnd !== undefined)
@@ -5238,8 +5258,15 @@
     }
     if (!frozen) {
       // Protect urgent cues even when the ordinary FPS limiter skips this callback.
-      if (events.some(e => e.type === 'warning' || e.type === 'eliteWarning' ||
-          e.type === 'chargeInterrupted' || e.type === 'death'))
+      if (
+        events.some(
+          (e) =>
+            e.type === 'warning' ||
+            e.type === 'eliteWarning' ||
+            e.type === 'chargeInterrupted' ||
+            e.type === 'death',
+        )
+      )
         frameSkip.protect(now);
       const eligibleDraw = fps.shouldDraw(now);
       const adaptiveSkipped = eligibleDraw && frameSkip.shouldSkip(now, fps.target);
@@ -5253,22 +5280,31 @@
           drawWorld();
           stageTimes.renderMs += performance.now() - redrawAt;
           runtime.reset();
-      frameProfile.reset();
+          frameProfile.reset();
           fps.suspend();
         }
       }
       fps.observe(now, performance.now() - frameStart, draw);
       const frameWorkMs = performance.now() - frameStart;
       frameSkip.observe(now, frameWorkMs, stageTimes.renderMs, draw);
-      const otherSimulationMs = Math.max(0,
-          stageTimes.simulationMs - stageTimes.companionAIMs - stageTimes.enemyAIMs),
-        accounted = stageTimes.simulationMs + stageTimes.hudMs + stageTimes.audioUpdateMs +
-          stageTimes.eventDispatchMs + stageTimes.renderMs;
+      const otherSimulationMs = Math.max(
+          0,
+          stageTimes.simulationMs - stageTimes.companionAIMs - stageTimes.enemyAIMs,
+        ),
+        accounted =
+          stageTimes.simulationMs +
+          stageTimes.hudMs +
+          stageTimes.audioUpdateMs +
+          stageTimes.eventDispatchMs +
+          stageTimes.renderMs;
       frameProfile.record({
         ...stageTimes,
-        otherSimulationMs, frameWorkMs, intervalMs,
+        otherSimulationMs,
+        frameWorkMs,
+        intervalMs,
         otherJsMs: Math.max(0, frameWorkMs - accounted),
-        drawn: draw, adaptiveSkipped,
+        drawn: draw,
+        adaptiveSkipped,
       });
     } else {
       frameSkip.suspend();
@@ -5293,7 +5329,7 @@
     clearInput();
     resize();
     runtime.reset();
-      frameProfile.reset();
+    frameProfile.reset();
     fps.suspend();
   });
   updateHUD();
