@@ -102,20 +102,24 @@ async function run() {
           Prototype.experimentalGraphics.phase !== 'preparing', null, {timeout: 30000});
         const after = await page.evaluate(() => Prototype.experimentalGraphics);
         assert(['confirmed', 'canvas'].includes(after.phase), 'Restart must safely show a renderer');
-        // Context loss must restore the untouched Canvas even after Keep/reload.
+        // Exercise both real viewport resize and simulated GL context loss,
+        // without suppressing the existing production resize/UI routines.
         if (after.mode === 'webgl2') {
-          await page.evaluate(() => {
-            const node = document.getElementById('world-pixi-experimental');
-            assertGpuPresent(node);
-            function assertGpuPresent(canvas) {
-              if (!canvas) throw Error('Confirmed WebGL canvas missing');
-            }
-            node.dispatchEvent(new Event('webglcontextlost', {cancelable: true}));
-          });
+          if (phone) {
+            await page.setViewportSize({width: 375, height: 800});
+          } else {
+            await page.evaluate(() => {
+              const node = document.getElementById('world-pixi-experimental');
+              if (!node) throw Error('Confirmed WebGL canvas missing');
+              node.dispatchEvent(new Event('webglcontextlost', {cancelable: true}));
+            });
+          }
           await page.waitForFunction(() => Prototype.experimentalGraphics.mode === 'canvas2d');
           assert.equal(await page.evaluate(() =>
             localStorage.getItem('azeroth-renderer-choice-v1')), 'canvas2d',
-          'Context loss must clear the failed device preference');
+          'Graphics failure or viewport resize must restore Canvas and clear the device preference');
+          assert.equal(await page.evaluate(() =>
+            getComputedStyle(document.getElementById('world')).display !== 'none'), true);
         }
       } else {
         assert.equal(outcome.mode, 'canvas2d', 'Failed WebGL initialization must retain Canvas');

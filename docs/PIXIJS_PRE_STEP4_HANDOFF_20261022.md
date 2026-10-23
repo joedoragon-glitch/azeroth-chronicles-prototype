@@ -67,3 +67,12 @@ The broader historic game suites still show numerous independent failures on unt
 - New WebGL2 vendor remains SHA-256 pinned, and no runtime fetches PixiJS from the CDN. The PR stays **draft**, with no deployment.
 
 **Next gate:** Run normal CI on the exact revised tree, verify the new menu/packaging corrections, and track remaining inherited failures explicitly. Do not equate the targeted WebKit success with complete regression certification.
+
+## Further review checkpoint — exact failure identification and viewport safety
+
+- Reviewed latest head `03d9c09f394bba49909d2a20d993a650654bbd0c` on draft PR #407 against unchanged main `869049797d5e29270886871c89068f648c1f2a6c`.
+- Run [39889548577](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/39889548577) has no full release certificate: the aggregate WebKit check failed even though the **PixiJS-specific WebKit test passed** on both desktop and phone. Ordinary WebKit tests reported failures in phone, saves, archive, community, audio, VFX, sprites, performance and visuals. Its broad Node/Chromium job was cancelled; no all-green final tree exists.
+- Main's most recent successful workflow was for the release path and does **not** establish that every currently failing historical suite was rerun on main. Treat existing failures as `not attributed to PixiJS` pending a like-for-like baseline, not automatically as harmless legacy noise.
+- `scripts/sprite-pipeline.cjs` now reports **every** approval key that has drifted from current canonical art/catalog before continuing. It preserves the exact hash requirements and does not rewrite or accept stale approved sprite bytes. Use the next CI message to identify a bounded correction or explicitly defer the unrelated art authorization.
+- Expanded the existing experimental browser smoke test: phone WebGL2 selection followed by a genuine viewport resize must restore Canvas; desktop maintains the simulated GL context-loss recovery check. Original hero motion, 175% zoom, Keep/reload and artwork readiness checks stay intact.
+- The requested experimental integration remains partially layered: original Canvas renders critical combat cues; PixiJS handles its own selected GPU scene. No complete graphical parity, Chromebook speedup or production deployment has been established. **Do not merge PR #407 as Step 5 until gate results and missing evidence are reconciled.**
