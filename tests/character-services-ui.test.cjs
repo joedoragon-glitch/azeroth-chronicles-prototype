@@ -66,8 +66,15 @@ for (const language of ['en', 'es']) {
   ]);
   assert.equal(findButton('Buy Preparation Tonic').disabled, true, 'unaffordable tonic is gated');
   assert.equal(findButton('Upgrade Ranger Heal').disabled, true, 'unaffordable support is gated');
-  assert(findButton('Train Companion Vitality'));
-  assert(findButton('Reset discipline training'));
+  const trainingStart = entries().findIndex(
+    (node) => node.className === 'menu-section' &&
+      node.textContent === text('Training and resets', 'Entrenamiento y reinicios'),
+  );
+  const trainingActions = entries().slice(trainingStart + 1);
+  assert.equal(trainingActions.length, 2, 'vitality and discipline reset remain in their group');
+  assert(trainingActions.every((node) => typeof node.onclick === 'function'));
+  assert(trainingActions[0].disabled, 'unaffordable vitality training stays disabled');
+  assert(trainingActions[1].disabled, 'zero spent talents keep reset unavailable');
   assert(!buttons().some((node) => node.className === 'menu-setting'), 'no changes to purchase widgets');
   scope.Prototype.closeMenu();
 
