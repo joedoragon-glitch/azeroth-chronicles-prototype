@@ -2008,6 +2008,111 @@
       ctx.restore();
     }
 
+    // Shared Canvas/Pixi art preparation: preserve authored sizes, transport
+    // appearance and safe feature scaling without modifying campaign entities.
+    function presentEntity(e, renderKind) {
+      const vessel =
+        renderKind === 'npc' && e.harbor && e.kind === 'transport'
+          ? Campaign.rules?.harbors?.[game.zoneId]?.vessel
+          : null;
+      const presentation = vessel ? { ...e, ...vessel } : e;
+      const visual = {
+        ...presentation,
+        renderKind,
+        ...(renderKind === 'hero' && game.s.throneClaimed ? { crowned: true } : {}),
+        ...(Campaign.rules?.ambientLife?.[e.structure || e.id]
+          ? { ambientTime: (PrototypeSprites?.timeMs?.() ?? now()) / 1000 }
+          : {}),
+      };
+      const registered = PrototypeSprites?.definitionFor?.(
+        visual, game.regionIndex(), !!game.s.rescued[e.family],
+      );
+      if ((PrototypeVisuals.featureScale?.(visual) || 1) > 1)
+        visual.visualScale = PrototypeVisuals.assetSafeScale(visual, registered?.entry);
+      return { ...visual, spriteIdentity: e };
+    }
+    // Pixi paints sprites while Canvas retains readable in-world names and
+    // interaction symbols. Use the same asset-safe height and zoom contract.
+    function drawPixiNameplates() {
+      const zone = game.zone(), records = [];
+      const add = (list, kind) => {
+        for (const entity of list || []) {
+          if (entity.interactionOnly || (kind === 'enemy' && entity.hp <= 0)) continue;
+          const e = presentEntity(entity, kind);
+          if (e.presentation === 'scout-tracks' || !worldLabelVisible(e)) continue;
+          const p = screen(e);
+          if (p.x < -40 || p.x > canvas.width + 40 || p.y < -100 || p.y > canvas.height + 100)
+            continue;
+          const name = kind === 'npc'
+            ? e.presentation === 'mobile-captive' ? 'Mira · captive'
+              : e.presentation === 'mobile-forge' ? 'Vera · captive field engineer'
+              : e.name || ''
+            : kind === 'ally' ? game.companionDisplayName(e)
+              : kind === 'building' ? e.name || 'Barracks'
+              : kind === 'node' ? 'Dark Lord Tribute' : e.name || '';
+          records.push({ e, kind, p, name });
+        }
+      };
+      add(game.visibleNPCs(), 'npc');
+      add(game.visibleResourceNodes(), 'node');
+      add(zone.buildings, 'building');
+      add(zone.enemies, 'enemy');
+      add(game.activeLivingParty(), 'ally');
+      const priority = (r) => r.kind === 'npc' ? 0
+        : r.kind === 'enemy' && (r.e.type === 'boss' || r.e.captain || r.e.roomCaptain) ? 1
+          : r.kind === 'ally' ? 2 : r.kind === 'enemy' ? 3
+            : r.kind === 'building' ? 4 : 5;
+      const claimed = [];
+      ctx.save();
+      ctx.textAlign = 'center';
+      for (const { e, kind, p, name } of records.sort((a, b) => priority(a)-priority(b))) {
+        const width = Math.min(canvas.width-20, Math.max(62, name.length*6.7+10));
+        const baseY = kind === 'node' ? p.y-25 : p.y-spriteHeight(e)-5;
+        let slot = null;
+        if (name) for (const dy of [0,-20,-40,-60,-80,20,40,60,-100]) {
+          for (const dx of [0,-42,42,-84,84]) {
+            const x = Math.max(width/2+6,Math.min(canvas.width-width/2-6,p.x+dx)),
+              y = baseY+dy, box = { l:x-width/2-3,r:x+width/2+3,t:y-17,b:y+3 };
+            if (y<18 || y>canvas.height-8 ||
+                claimed.some(q => box.l<q.r && box.r>q.l && box.t<q.b && box.b>q.t)) continue;
+            slot={x,y,width};claimed.push(box);break;
+          }
+          if (slot) break;
+        }
+        if (slot) {
+          ctx.shadowColor = '#07140e';
+          ctx.shadowBlur = kind === 'enemy' ? 3 : 4;
+          if (kind === 'npc') {
+            ctx.font='bold 11px system-ui';ctx.fillStyle='#ffe4a2';
+            ctx.fillText(name,slot.x,slot.y,slot.width);
+          } else if (kind === 'building') {
+            ctx.font='bold 10px system-ui';ctx.fillStyle='#e8ddb8';
+            ctx.fillText(name,slot.x,slot.y,slot.width);
+          } else if (kind === 'node') {
+            ctx.font='10px system-ui';ctx.fillStyle='#f5e7b8';
+            ctx.fillText(name,slot.x,slot.y,slot.width);
+          } else if (kind === 'ally') {
+            ctx.font='10px system-ui';ctx.fillStyle='#dcebcf';
+            ctx.fillText(name,slot.x,slot.y,slot.width);
+          } else if (kind === 'enemy') {
+            ctx.font=e.type==='boss'?'bold 11px system-ui':'10px system-ui';
+            ctx.fillStyle=e.type==='boss'?'#ead58c':'#f8cebd';
+            ctx.fillText(name+' · Lv '+e.level,slot.x,slot.y,slot.width);
+          }
+          ctx.shadowBlur=0;
+        }
+        // The Millhaven captain's recruitment prompt was previously missing.
+        if (kind === 'npc' && e.kind === 'recruiter' && game.zoneId === 'vale' &&
+            game.s.party.length <= 2) {
+          ctx.fillStyle='#f9ce72';
+          ctx.beginPath();ctx.arc(p.x,p.y-80,16,0,Math.PI*2);ctx.fill();
+          ctx.strokeStyle='#fff1b4';ctx.lineWidth=2;ctx.stroke();
+          ctx.fillStyle='#19291e';ctx.font='bold 23px system-ui';
+          ctx.fillText('!',p.x,p.y-72);
+        }
+      }
+      ctx.restore();
+    }
     function render() {
       if (renderLayer === 'overlay') {
         // On the experimental PixiJS path, keep essential native combat cues
@@ -2029,6 +2134,7 @@
           if (p.x > -120 && p.x < canvas.width + 120 && p.y > -120 && p.y < canvas.height + 120)
             healthPlate(e, p);
         }
+        drawPixiNameplates();
         PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx);
         for (const projectile of game.s.projectiles) drawProjectile(projectile);
         drawVisualFx();
@@ -2170,12 +2276,8 @@
         for (const e of list) {
           stats.entitiesConsidered++;
           if (renderKind === 'enemy' && e.hp <= 0) continue;
-          const vessel =
-              renderKind === 'npc' && e.harbor && e.kind === 'transport'
-                ? Campaign.rules?.harbors?.[game.zoneId]?.vessel
-                : null,
-            presentation = vessel ? { ...e, ...vessel } : e,
-            p = screen(presentation),
+          const visualEntity = presentEntity(e, renderKind),
+            p = screen(visualEntity),
             margin = e.harbor ? Math.max(180, 240 * zoom()) : 180;
           if (
             p.x < -margin ||
@@ -2193,29 +2295,7 @@
             (p.x < -20 || p.x > canvas.width + 20 || p.y < -40 || p.y > canvas.height + 30)
           )
             continue;
-          // Calculate scale from the same authored rule used by procedural art.
-          // A registered sprite consumes visualScale itself; no source pixels change.
-          const visualEntity = {
-            ...presentation,
-            renderKind,
-            ...(renderKind === 'hero' && game.s.throneClaimed ? { crowned: true } : {}),
-            ...(Campaign.rules?.ambientLife?.[e.structure || e.id]
-              ? { ambientTime: (PrototypeSprites?.timeMs?.() ?? now()) / 1000 }
-              : {}),
-          };
-          const registered = PrototypeSprites?.definitionFor?.(
-            visualEntity,
-            game.regionIndex(),
-            !!game.s.rescued[e.family],
-          );
-          // Only attach a new feature multiplier to features. Actors retain
-          // their authored scale (including the procedural captain default).
-          if ((PrototypeVisuals.featureScale?.(visualEntity) || 1) > 1)
-            visualEntity.visualScale = PrototypeVisuals.assetSafeScale(
-              visualEntity,
-              registered?.entry,
-            );
-          entities.push({ ...visualEntity, spriteIdentity: e });
+          entities.push(visualEntity);
         }
       }
       add(z.props, 'prop');
@@ -2711,6 +2791,7 @@
     }
     return {
       draw,
+      presentEntity,
       // Presentation-only layer split for the opt-in PixiJS experiment.
       setRenderLayer: (layer) => {
         if (layer !== 'full' && layer !== 'overlay' && layer !== 'background')
