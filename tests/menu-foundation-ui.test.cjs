@@ -14,19 +14,21 @@ for (const language of ['en', 'es']) {
   };
   elements.get('menu-button').click();
   byLabel(language === 'en' ? 'Game and settings' : 'Juego y ajustes').click();
-  byLabel(language === 'en' ? 'Sound settings' : 'Ajustes de sonido').click();
-  const sound = elements.get('modal-content');
-  sound.scrollTop = 85;
-  byLabel(language === 'en' ? 'Music volume' : 'Volumen de música').click();
-  byLabel(language === 'en' ? 'Quieter' : 'Bajar volumen').click();
+  byLabel(language === 'en' ? 'Controls' : 'Controles').click();
+  const controlsMenu = elements.get('modal-content');
+  controlsMenu.scrollTop = 85;
+  byLabel(language === 'en' ? 'Touch and mouse options' : 'Opciones táctiles y de ratón').click();
+  byLabel(language === 'en' ? 'Touch tap-to-move' : 'Tocar para moverse').click();
   assert(
-    byLabel(language === 'en' ? 'Quieter' : 'Bajar volumen').classList.contains('selected'),
-    'refresh keeps the selected sound action',
+    byLabel(language === 'en' ? 'Touch tap-to-move' : 'Tocar para moverse')
+      .classList.contains('selected'),
+    'refresh keeps the selected input action',
   );
   elements.get('close-button').click();
-  assert.equal(sound.scrollTop, 85, 'Back restores parent scroll');
+  assert.equal(controlsMenu.scrollTop, 85, 'Back restores parent scroll');
   assert(
-    byLabel(language === 'en' ? 'Music volume' : 'Volumen de música').classList.contains('selected'),
+    byLabel(language === 'en' ? 'Touch and mouse options' : 'Opciones táctiles y de ratón')
+      .classList.contains('selected'),
     'Back restores the parent choice',
   );
   elements.get('close-button').click();
