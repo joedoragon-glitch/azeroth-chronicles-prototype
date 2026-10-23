@@ -29,17 +29,22 @@ for (const language of ['en', 'es']) {
   click(t('Inventory and support', 'Inventario y apoyo'));
   title('Inventory', 'Inventario');
   short();
-  assert.equal(e.get('modal-actions').children.length, 3);
+  const inventorySummary = e.get('modal-description');
+  assert.equal(e.get('modal-actions').children.length, 1, 'only actionable Equipment stays a button');
+  assert.equal(inventorySummary.children.length, 2, 'support and tonics render in the same Inventory view');
+  const info = (en, es) => {
+    const section = inventorySummary.children.find((section) =>
+      section.children[0]?.textContent === t(en, es));
+    assert(section, en + ' information visible without another screen');
+    return section.children[1]?.textContent || '';
+  };
+  assert(info('Ranger support', 'Apoyo del Ranger').includes(String(g.rangerSupportAmount('health'))));
+  assert(info('Preparation Tonics', 'Tónicos de preparación').includes(String(g.preparationTonicStock())));
   click(t('Equipment', 'Equipo'));
   short();
   back();
-  click(t('Ranger support', 'Apoyo del Ranger'));
-  short();
-  assert(e.get('modal-description').textContent.includes(String(g.rangerSupportAmount('health'))));
-  back();
-  click(t('Preparation Tonics', 'Tónicos de preparación'));
-  short();
-  back();
+  title('Inventory', 'Inventario');
+  assert.equal(inventorySummary.children.length, 2, 'returning from Equipment preserves the summaries');
   back();
   title('Character', 'Personaje');
   click(t('Skill journal', 'Diario de habilidades'));
