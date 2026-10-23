@@ -617,3 +617,7 @@ body[data-experience='phone'] #modal-actions .menu-setting-input {
 body[data-experience='phone'] #modal-actions .menu-section-detail {
   font-size: 11px;
 }
+
+/* Keep route cancellation above the thumb-control area in both phone layouts. */
+body[data-experience='phone'] #cancel-navigation-button{top:calc(max(8px,env(safe-area-inset-top)) + 108px);right:max(8px,env(safe-area-inset-right));min-height:44px;max-width:132px;padding:7px 9px;font-size:11px}
+@media(max-height:450px) and (min-width:601px){body[data-experience='phone'] #cancel-navigation-button{top:calc(max(8px,env(safe-area-inset-top)) + 62px)}}
