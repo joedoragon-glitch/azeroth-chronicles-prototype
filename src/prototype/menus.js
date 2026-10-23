@@ -1922,53 +1922,37 @@
       );
     }
     function inventory(back = closeMenu, fromCharacter = false) {
-      const returnHere = () => inventory(back, fromCharacter);
+      const g = getGame(),
+        rangers = g.activeLivingParty().filter((u) => u.type === 'archer'),
+        support = rangers.length
+          ? rangers.length +
+            ' active · Heal ' +
+            g.rangerSupportAmount('health') +
+            ' HP.\nUse the Ranger Heal button. During cooldown, tap to queue hero healing. Automatic healing stays active.' +
+            (Campaign.rules.resourceMode.manaEnabled
+              ? '\nMana Recovery ' + g.rangerSupportAmount('mana') + ' MP.'
+              : '')
+          : 'Recruit a Ranger to unlock field Heal.',
+        tonics =
+          'Stored: ' +
+          g.preparationTonicStock() +
+          '\n' +
+          (g.hero.tonic
+            ? 'ACTIVE · +10% maximum HP until rest or defeat.'
+            : '+10% maximum HP until rest or defeat. Use at a completed Barracks.') +
+          (!g.s.rescued.archive ? '\nRescue Neri to buy tonics.' : '');
       openMenu(
         'Inventory',
-        'Crowns ' + Math.floor(getGame().hero.gold),
+        {
+          summary: 'Crowns ' + Math.floor(g.hero.gold),
+          sections: [
+            { title: 'Ranger support', text: support },
+            { title: 'Preparation Tonics', text: tonics },
+          ],
+        },
         [
-          action('Equipment', () => inventoryEquipment(returnHere), 'Weapons, armor and reforges.'),
-          action(
-            'Ranger support',
-            () => {
-              const g = getGame(),
-                rangers = g.activeLivingParty().filter((u) => u.type === 'archer');
-              openMenu(
-                'Ranger support',
-                rangers.length
-                  ? rangers.length +
-                      ' active · Heal ' +
-                      g.rangerSupportAmount('health') +
-                      ' HP.\nUse the Ranger Heal button. During cooldown, tap to queue hero healing. Automatic healing stays active.' +
-                      (Campaign.rules.resourceMode.manaEnabled
-                        ? '\nMana Recovery ' + g.rangerSupportAmount('mana') + ' MP.'
-                        : '')
-                  : 'Recruit a Ranger to unlock field Heal.',
-                [],
-                returnHere,
-              );
-            },
-            'Automatic healing and your Heal command.',
-          ),
-          action(
-            'Preparation Tonics',
-            () => {
-              const g = getGame();
-              openMenu(
-                'Preparation Tonics',
-                'Stored: ' +
-                  g.preparationTonicStock() +
-                  '\n' +
-                  (g.hero.tonic
-                    ? 'ACTIVE · +10% maximum HP until rest or defeat.'
-                    : '+10% maximum HP until rest or defeat. Use at a completed Barracks.') +
-                  (!g.s.rescued.archive ? '\nRescue Neri to buy tonics.' : ''),
-                [],
-                returnHere,
-              );
-            },
-            'Temporary maximum HP boost.',
-          ),
+          action('Equipment', () => inventoryEquipment(() => inventory(back, fromCharacter)),
+            'Weapons, armor and reforges.'),
           ...(openCharacter && !fromCharacter
             ? [action('Character and identity', openCharacter)]
             : []),
