@@ -70,6 +70,28 @@ async function run() {
       if (outcome.mode === 'webgl2') {
         assert.equal(outcome.phase, 'trial', 'GPU must be opt-in and unconfirmed');
         assert.equal(await page.locator('#gpu-renderer-trial').isVisible(), true);
+        const gpuSurface = await page.evaluate(() => {
+          const node = document.getElementById('world-pixi-experimental');
+          return {
+            visible: !!node && getComputedStyle(node).display !== 'none',
+            loadedTextures: Prototype.experimentalGraphics.loadedTextures,
+            canvasVisible: getComputedStyle(document.getElementById('world')).display !== 'none',
+          };
+        });
+        assert(gpuSurface.visible && gpuSurface.canvasVisible,
+          'PixiJS scene and transparent Canvas cues must coexist');
+        assert(gpuSurface.loadedTextures > 0, 'Approved original sprite art must load');
+        // Exercise live actor/camera updates, not merely successful GPU startup.
+        await page.evaluate(() => {
+          const hero = Prototype.game.hero;
+          hero.x += 6;
+          hero.y += 4;
+          Prototype.platform.selectCameraZoom(1.75);
+        });
+        await page.waitForTimeout(200);
+        assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'webgl2',
+          'Camera zoom must not abandon an otherwise valid GPU scene');
+        assert.equal(await page.evaluate(() => Prototype.game === window.__gpuTestCampaign), true);
         await page.getByRole('button', {name: 'Keep WebGL2'}).click();
         assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.phase), 'confirmed');
         assert.equal(await page.evaluate(() => localStorage.getItem('azeroth-renderer-choice-v1')),
@@ -80,6 +102,21 @@ async function run() {
           Prototype.experimentalGraphics.phase !== 'preparing', null, {timeout: 30000});
         const after = await page.evaluate(() => Prototype.experimentalGraphics);
         assert(['confirmed', 'canvas'].includes(after.phase), 'Restart must safely show a renderer');
+        // Context loss must restore the untouched Canvas even after Keep/reload.
+        if (after.mode === 'webgl2') {
+          await page.evaluate(() => {
+            const node = document.getElementById('world-pixi-experimental');
+            assertGpuPresent(node);
+            function assertGpuPresent(canvas) {
+              if (!canvas) throw Error('Confirmed WebGL canvas missing');
+            }
+            node.dispatchEvent(new Event('webglcontextlost', {cancelable: true}));
+          });
+          await page.waitForFunction(() => Prototype.experimentalGraphics.mode === 'canvas2d');
+          assert.equal(await page.evaluate(() =>
+            localStorage.getItem('azeroth-renderer-choice-v1')), 'canvas2d',
+          'Context loss must clear the failed device preference');
+        }
       } else {
         assert.equal(outcome.mode, 'canvas2d', 'Failed WebGL initialization must retain Canvas');
         assert.equal(await page.evaluate(() => Prototype.renderer.draw !== undefined), true);

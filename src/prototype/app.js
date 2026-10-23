@@ -1605,7 +1605,14 @@
     },
   };
   function resize() {
-    if (graphicsController?.status().mode === 'webgl2') graphicsController.webglFailed();
+    // Zoom only changes the live scene projection. Keep the validated GPU
+    // surface; its terrain refreshes when cameraZoom changes. Only a genuine
+    // viewport resize needs the conservative separate-Canvas fallback.
+    if (
+      graphicsController?.status().mode === 'webgl2' &&
+      (viewport.width !== innerWidth || viewport.height !== innerHeight)
+    )
+      graphicsController.webglFailed();
     viewport.width = innerWidth;
     viewport.height = innerHeight;
     // Below the supported 375x800 portrait / 800x375 landscape layout,
