@@ -2,7 +2,8 @@
 const assert=require('node:assert/strict');
 const test=require('node:test');
 const Guard=require('./renderer-switch-guard.js');
-function fixture({prepareWebGL=async()=>true,failReveal=false,brokenStorage=false}={}){
+function fixture({prepareWebGL=async()=>true,failReveal=false,brokenStorage=false,
+  getFailureDetails=()=>null}={}){
  const values=new Map(),jobs=new Map(),notifications=[],events=[];
  let time=0,next=0,visible='canvas';
  const storage={
@@ -11,7 +12,7 @@ function fixture({prepareWebGL=async()=>true,failReveal=false,brokenStorage=fals
    removeItem:key=>{if(brokenStorage)throw Error('storage denied');values.delete(key);}
  };
  const run=Guard.create({
-   storage,prepareWebGL,
+   storage,prepareWebGL,getFailureDetails,
    showWebGL(){events.push('webgl-reveal');if(failReveal)throw Error('GPU reveal unavailable');visible='webgl2';},
    showCanvas(reason){events.push('canvas-reveal:'+reason);visible='canvas';},
    notify:status=>notifications.push(status),
@@ -271,4 +272,75 @@ test('WebGL context failure exposes Canvas and retains precise last failure for 
  assert.equal(f.run.status().lastFallbackReason,'webgl-context-or-render-failure');
  assert.equal(f.run.status().mode,'canvas2d');
  f.run.dispose();
+});
+
+test('reported context loss survives recovery with precise pre-cleanup resources',async()=>{
+  const f=fixture();
+  await f.run.requestWebGL();f.run.confirm();
+  const info={type:'context-loss',stage:'webglcontextlost',
+    message:'WebGL context lost',timestampMs:123456,
+    resources:{loadedTextures:38,proceduralTextures:694,proceduralBytes:51564024}};
+  assert.equal(f.run.webglFailed(info),true);
+  const result=f.run.status();
+  assert.equal(result.lastFallbackReason,'webgl-context-or-render-failure');
+  assert.equal(result.lastFailure.type,'context-loss');
+  assert.equal(result.lastFailure.stage,'webglcontextlost');
+  assert.equal(result.lastFailure.timestampMs,123456);
+  assert.equal(result.lastFailure.resources.proceduralTextures,694);
+  assert.equal(result.lastFailure.resources.proceduralBytes,51564024);
+  assert.equal(f.visible,'canvas');
+  assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),'canvas2d');
+  assert.equal(await f.run.requestWebGL(),true);
+  assert.equal(f.run.confirm(),true);
+  assert.equal(f.run.status().lastFailure.type,'context-loss',
+    'last real failure remains available after retry');
+  f.run.revert();
+  assert.equal(f.run.status().lastFailure.type,'context-loss',
+    'manual switching is not mislabeled as a GPU error');
+  f.run.dispose();
+});
+test('render, viewport and unexpected wrapper errors keep separate failure categories',async()=>{
+  const f=fixture();
+  await f.run.requestWebGL();f.run.confirm();
+  assert(f.run.webglFailed({type:'render-exception',stage:'scene-render',message:'Invalid texture'}));
+  assert.equal(f.run.status().lastFailure.type,'render-exception');
+  assert.equal(f.run.status().lastFailure.stage,'scene-render');
+  assert.equal(f.visible,'canvas');
+  await f.run.requestWebGL();f.run.confirm();
+  assert(f.run.webglFailed({type:'viewport-changed',stage:'resize',message:'Viewport changed'}));
+  assert.equal(f.run.status().lastFailure.type,'viewport-changed');
+  await f.run.requestWebGL();f.run.confirm();
+  assert(f.run.webglFailed());
+  assert.equal(f.run.status().lastFailure.type,'unknown-webgl-failure');
+  f.run.dispose();
+});
+test('failed preparation copies the Pixi root error before the scene is disposed',async()=>{
+  const info={type:'context-unavailable',stage:'webgl2-context',
+    message:'WebGL2 context not available',timestampMs:250,
+    resources:{loadedTextures:0,proceduralTextures:0,proceduralBytes:0}};
+  const f=fixture({prepareWebGL:async()=>false,getFailureDetails:()=>info});
+  assert.equal(await f.run.requestWebGL(),false);
+  assert.equal(f.run.status().lastFallbackReason,'webgl-preparation-failed');
+  assert.deepEqual(f.run.status().lastFailure,info);
+  assert.equal(f.visible,'canvas');
+  f.run.dispose();
+  const errors=fixture({failReveal:true});
+  assert.equal(await errors.run.requestWebGL(),false);
+  assert.equal(errors.run.status().lastFailure.type,'controller-error');
+  assert.equal(errors.run.status().lastFailure.stage,'reveal');
+  assert.match(errors.run.status().lastFailure.message,/GPU reveal unavailable/);
+  errors.run.dispose();
+});
+test('failed confirmed restore retains preparation details without exposing WebGL',async()=>{
+  const f=fixture({
+    prepareWebGL:async()=>false,
+    getFailureDetails:()=>({type:'preparation-failed',stage:'sprite-preload',
+      message:'approved sprite missing'})
+  });
+  f.storage.setItem(Guard.PREFERENCE_KEY,'webgl2');
+  assert.equal(await f.run.resumeConfirmedWebGL(),false);
+  assert.equal(f.run.status().lastFallbackReason,'confirmed-webgl-preparation-failed');
+  assert.equal(f.run.status().lastFailure.stage,'sprite-preload');
+  assert.equal(f.run.status().mode,'canvas2d');
+  f.run.dispose();
 });

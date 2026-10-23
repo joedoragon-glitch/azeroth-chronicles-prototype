@@ -7,6 +7,7 @@ const fs = require('node:fs'),
 const fixtures = require('./helpers/sprite-fixtures.cjs'),
   root = path.resolve(__dirname, '..');
 const production = fs.readFileSync(path.join(root, 'assets/sprites/manifest.json'));
+const fixtureCommit = 'a'.repeat(40);
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'azeroth-sprite-contract-'));
 try {
   const checkout = path.join(temp, 'checkout');
@@ -37,11 +38,11 @@ try {
     fs.copyFileSync(path.join(root, name), path.join(checkout, name));
   for (const [file, bytes] of fixtures.images) fs.writeFileSync(path.join(checkout, file), bytes);
   const manifestFile = path.join(checkout, 'assets/sprites/manifest.json');
-  const run = (manifest) => {
+  const run = (manifest, commit = fixtureCommit) => {
     fs.writeFileSync(manifestFile, JSON.stringify(manifest));
     return cp.spawnSync(process.execPath, ['scripts/build.cjs', '--check', '--site'], {
       cwd: checkout,
-      env: { ...process.env, GITHUB_SHA: 'isolated-fixture-revision' },
+      env: { ...process.env, GITHUB_SHA: commit },
       encoding: 'utf8',
     });
   };
@@ -65,9 +66,18 @@ try {
     }
     assert.equal(
       fs.readFileSync(path.join(checkout, '_site/build.txt'), 'utf8').trim(),
-      'isolated-fixture-revision',
+      fixtureCommit,
     );
+    const packagedWorker = fs.readFileSync(path.join(checkout, '_site/sw.js'), 'utf8');
+    assert(packagedWorker.includes('-release-' + fixtureCommit.slice(0, 12)),
+      'the packaged PWA must use a commit-specific cache, not just a game version');
+    assert.notEqual(packagedWorker, fs.readFileSync(path.join(checkout, 'sw.js'), 'utf8'),
+      'the published worker must change without modifying reproducible source');
   }
+  const invalidRevision = run(fixtures.manifest(false), 'isolated-fixture-revision');
+  assert.notEqual(invalidRevision.status, 0,
+    'an invalid Git SHA cannot silently ship an unversioned offline cache');
+  assert.match(invalidRevision.stderr, /complete Git commit SHA/);
   const animated = fixtures.animatedManifest();
   const animatedResult = run(animated);
   assert.equal(animatedResult.status, 0, animatedResult.stderr);

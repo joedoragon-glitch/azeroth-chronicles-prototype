@@ -45,6 +45,12 @@ function selectTests(changed, exists = (file) => fs.existsSync(path.join(root,fi
   for (const file of changed) {
     if (!relevant(file) || !eligible(file)) continue;
     let covered = false;
+    // One explicitly changed Pixi acceptance test may run as a focused
+    // browser smoke. Never select an entire browser matrix by subsystem.
+    if (file === TEST+'pixi-renderer-browser.test.cjs') {
+      if (exists(file)) chosen.add(file);
+      covered = true;
+    }
     if (file.startsWith('tests/') && file.endsWith('.test.cjs') && !file.includes('-browser')) {
       if (exists(file)) chosen.add(file);
       covered = true;
@@ -82,7 +88,13 @@ function diffPaths(base, head = 'HEAD') {
   return bytes.toString('utf8').split('\0').filter(Boolean);
 }
 function run(paths, invoke = (file) => {
-  const result = cp.spawnSync(process.execPath,[path.join(root,file)],{cwd:root,stdio:'inherit'});
+  const pixiBrowser = file === TEST+'pixi-renderer-browser.test.cjs';
+  const result = cp.spawnSync(process.execPath,[path.join(root,file)],{
+    cwd:root,stdio:'inherit',
+    // A single tested Chromium renderer journey, not the global browser suite.
+    env:pixiBrowser?{...process.env,BROWSER_ENGINE:'chromium',REQUIRE_WEBGL2:'1'}:process.env,
+    timeout:pixiBrowser?240000:undefined
+  });
   return result.status === 0;
 }) {
   const {tests,uncovered} = selectTests(paths);

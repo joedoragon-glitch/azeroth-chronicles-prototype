@@ -1492,9 +1492,9 @@
           canvasRenderer: renderer,
           getRendererOptions: () => rendererSetup,
           getOptimizationMode: () => optimizationMode,
-          onFailure: (reason) => {
-            graphicsController?.webglFailed();
-            status('WebGL2 returned to Canvas: ' + reason);
+          onFailure: (failure) => {
+            graphicsController?.webglFailed(failure);
+            status('WebGL2 returned to Canvas: ' + failure.message);
           },
         });
   // Fan out presentation events without editing the protected simulation loop.
@@ -1530,6 +1530,7 @@
     ? graphicsGuard.create({
         storage: localStorage,
         prepareWebGL: () => pixiGame.prepare(),
+        getFailureDetails: () => pixiGame.failureDetails?.() || null,
         showWebGL: () => {
           renderer.setRenderLayer('overlay');
           pixiGame.activate();
@@ -1562,14 +1563,47 @@
     });
   }
   function drawWorld() {
+    // These measure synchronous draw calls, not completed GPU/presented frames.
+    const timing = {
+      pixiMs: 0, canvasOverlayMs: 0, canvasWorldMs: 0,
+      pixiAttempted: false, canvasOverlayDrawn: false, canvasWorldDrawn: false,
+    };
     if (graphicsController.status().mode === 'webgl2') {
+      const startedAt = performance.now();
+      timing.pixiAttempted = true;
       try {
         pixiGame.draw();
-      } catch (_) {
-        graphicsController.webglFailed();
+      } catch (error) {
+        // Pixi normally reports an exact failure first; preserve it.
+        // This catches only otherwise unhandled wrapper exceptions.
+        graphicsController.webglFailed({
+          type: 'render-exception',
+          stage: 'draw-world',
+          message: String(error?.message || error),
+        });
+      } finally {
+        // An exception may include fallback cleanup inside the timed call.
+        timing.pixiMs = Math.max(0, performance.now() - startedAt);
       }
     }
+    const overlay = graphicsController.status().mode === 'webgl2';
+    const canvasStartedAt = performance.now();
     renderer.draw();
+    const canvasMs = Math.max(0, performance.now() - canvasStartedAt);
+    if (overlay) {
+      timing.canvasOverlayMs = canvasMs;
+      timing.canvasOverlayDrawn = true;
+    } else {
+      timing.canvasWorldMs = canvasMs;
+      timing.canvasWorldDrawn = true;
+    }
+    return timing;
+  }
+  function addRenderStageTimes(stageTimes, timing) {
+    for (const key of ['pixiMs', 'canvasOverlayMs', 'canvasWorldMs'])
+      stageTimes[key] += timing[key];
+    for (const key of ['pixiAttempted', 'canvasOverlayDrawn', 'canvasWorldDrawn'])
+      stageTimes[key] ||= timing[key];
   }
 
   const {
@@ -1660,8 +1694,19 @@
     if (
       graphicsController?.status().mode === 'webgl2' &&
       (viewport.width !== innerWidth || viewport.height !== innerHeight)
-    )
-      graphicsController.webglFailed();
+    ) {
+      const gpu = pixiGame.status();
+      graphicsController.webglFailed({
+        type: 'viewport-changed',
+        stage: 'resize',
+        message: 'Viewport dimensions changed; Canvas restored',
+        resources: {
+          loadedTextures: gpu.loadedTextures,
+          proceduralTextures: gpu.proceduralTextures,
+          proceduralBytes: gpu.proceduralBytes,
+        },
+      });
+    }
     viewport.width = innerWidth;
     viewport.height = innerHeight;
     // Below the supported 375x800 portrait / 800x375 landscape layout,
@@ -2642,7 +2687,13 @@
             {
               version: PrototypeBuild.version,
               performance: {
-                ...runtime.report(renderer.metrics(), platform.mode),
+                ...runtime.report({
+                  ...renderer.metrics(),
+                  // In WebGL mode these counters belong to the transparent
+                  // Canvas cues, NOT the Pixi world.
+                  measuredLayer: graphicsController.status().mode === 'webgl2'
+                    ? 'canvas-combat-overlay' : 'canvas-full-world',
+                }, platform.mode),
                 // Report the active surface, not just the saved preference.
                 graphicsRenderer: {
                   activeRenderer:
@@ -2868,7 +2919,11 @@
       items.push(
         menuControls.section(
           'Performance details',
-          runtime.describe(renderer.metrics()) + '\n\n' + frameProfile.describe(),
+          runtime.describe({
+            ...renderer.metrics(),
+            measuredLayer: graphicsController.status().mode === 'webgl2'
+              ? 'canvas-combat-overlay' : 'canvas-full-world',
+          }) + '\n\n' + frameProfile.describe(),
         ),
         action('Reset performance sample', () => {
           runtime.reset();
@@ -5416,6 +5471,12 @@
           audioUpdateMs: 0,
           eventDispatchMs: 0,
           renderMs: 0,
+          pixiMs: 0,
+          canvasOverlayMs: 0,
+          canvasWorldMs: 0,
+          pixiAttempted: false,
+          canvasOverlayDrawn: false,
+          canvasWorldDrawn: false,
         }
       : null;
     const audioAt = stageTimes ? performance.now() : 0;
@@ -5571,13 +5632,18 @@
       const adaptiveSkipped = eligibleDraw && frameSkip.shouldSkip(now, fps.target);
       const draw = eligibleDraw && !adaptiveSkipped;
       if (draw) {
-        const sample = runtime.record(now, frameStart, () => drawWorld());
+        let drawTiming;
+        const sample = runtime.record(now, frameStart, () => {
+          drawTiming = drawWorld();
+        });
         stageTimes.renderMs += sample.renderMs;
+        addRenderStageTimes(stageTimes, drawTiming);
         if (renderResolution.observe(now, sample.renderMs, fps.target, sample.preRenderMs)) {
           resize();
           const redrawAt = performance.now();
-          drawWorld();
+          const redrawTiming = drawWorld();
           stageTimes.renderMs += performance.now() - redrawAt;
+          addRenderStageTimes(stageTimes, redrawTiming);
           runtime.reset();
           frameProfile.reset();
           fps.suspend();

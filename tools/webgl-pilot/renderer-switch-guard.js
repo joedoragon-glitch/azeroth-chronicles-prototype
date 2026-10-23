@@ -52,6 +52,7 @@
     showWebGL,
     showCanvas,
     notify=()=>{},
+    getFailureDetails=()=>null,
     now=()=>performance.now(),
     schedule=(callback,ms)=>setTimeout(callback,ms),
     unschedule=timer=>clearTimeout(timer)
@@ -60,12 +61,41 @@
        typeof showCanvas!=='function')
       throw Error('WebGL preparation, atomic reveal, and reliable Canvas fallback hooks are required');
     let mode='canvas2d',phase='canvas',deadline=0,timer=null,serial=0,closed=false;
-    let lastFallbackReason='';
+    let lastFallbackReason='',lastFailure=null;
+    const failures=new Set([
+      'webgl-preparation-failed','confirmed-webgl-preparation-failed',
+      'webgl-error','confirmed-webgl-error','webgl-context-or-render-failure',
+      'confirmed-webgl-boot-not-acknowledged','webgl-persistence-unavailable'
+    ]);
+    function recordFailure(reason,detail){
+      if(!failures.has(reason))return;
+      const input=detail&&typeof detail==='object'?detail:{};
+      const defaults={
+        'webgl-preparation-failed':'preparation-failed',
+        'confirmed-webgl-preparation-failed':'preparation-failed',
+        'webgl-context-or-render-failure':'unknown-webgl-failure'
+      };
+      const bounded=(v,max)=>typeof v==='string'?v.slice(0,max):'';
+      const count=(n)=>Number.isFinite(n)&&n>=0?Math.round(n):0;
+      const resources=input.resources&&typeof input.resources==='object'
+        ? {
+            proceduralTextures:count(input.resources.proceduralTextures),
+            proceduralBytes:count(input.resources.proceduralBytes),
+            loadedTextures:count(input.resources.loadedTextures)
+          } : null;
+      lastFailure=Object.freeze({
+        type:bounded(input.type,64)||defaults[reason]||'renderer-failure',
+        stage:bounded(input.stage,64)||reason,
+        message:bounded(input.message,240)||reason,
+        timestampMs:Number.isFinite(input.timestampMs)?input.timestampMs:Date.now(),
+        resources
+      });
+    }
     function remaining(){
       return phase==='trial'?Math.max(0,Math.ceil((deadline-now())/1000)):0;
     }
     function snapshot(reason=''){
-      return Object.freeze({mode,phase,secondsRemaining:remaining(),reason,lastFallbackReason});
+      return Object.freeze({mode,phase,secondsRemaining:remaining(),reason,lastFallbackReason,lastFailure});
     }
     function announce(reason=''){notify(snapshot(reason));}
     function clearTimer(){
@@ -75,8 +105,9 @@
       write(storage,PREFERENCE_KEY,defaultMode);
       remove(storage,PENDING_KEY);
     }
-    function fallback(reason='manual-revert'){
+    function fallback(reason='manual-revert',details=null){
       if(closed) return false;
+      recordFailure(reason,details);
       ++serial;clearTimer();
       // Canvas owns an independent 2D surface. The integration hook MUST
       // expose it before destroying/hiding the failing GPU canvas.
@@ -103,19 +134,23 @@
       // confirmation forces Canvas on the next startup.
       write(storage,PENDING_KEY,'pending');
       announce('preparing-webgl');
+      let stage='preparation';
       try{
         const ready=await prepareWebGL();
         if(closed||own!==serial||phase!=='preparing')return false;
-        if(ready!==true){fallback('webgl-preparation-failed');return false;}
+        if(ready!==true){fallback('webgl-preparation-failed',getFailureDetails());return false;}
         // Preparation MUST occur on an invisible separate GPU canvas. Only
         // this synchronous hook may reveal it after resources are ready.
+        stage='reveal';
         showWebGL();
         phase='trial';mode='webgl2';deadline=now()+DURATION_MS;
         announce('awaiting-confirmation');
         timer=schedule(pulse,1000);
         return true;
-      }catch(_){
-        if(!closed&&own===serial)fallback('webgl-error');
+      }catch(error){
+        if(!closed&&own===serial)fallback('webgl-error',{
+          type:'controller-error',stage,message:String(error?.message||error)
+        });
         return false;
       }
     }
@@ -127,12 +162,15 @@
       const own=++serial;
       phase='preparing';mode=defaultMode;
       announce('restoring-confirmed-webgl');
+      let stage='preparation';
       try{
         if(await prepareWebGL()!==true){
-          if(own===serial&&!closed)fallback('confirmed-webgl-preparation-failed');
+          if(own===serial&&!closed)
+            fallback('confirmed-webgl-preparation-failed',getFailureDetails());
           return false;
         }
         if(closed||own!==serial||phase!=='preparing')return false;
+        stage='reveal';
         showWebGL();
         // Setting mode before committing allows the usual fallback on failure.
         mode='webgl2';
@@ -142,8 +180,10 @@
         }
         phase='confirmed';announce('confirmed-webgl-restored');
         return true;
-      }catch(_){
-        if(!closed&&own===serial)fallback('confirmed-webgl-error');
+      }catch(error){
+        if(!closed&&own===serial)fallback('confirmed-webgl-error',{
+          type:'controller-error',stage,message:String(error?.message||error)
+        });
         return false;
       }
     }
@@ -173,9 +213,10 @@
         fallback('trial-interrupted');
       else check();
     }
-    function webglFailed(){
+    function webglFailed(details=null){
       if(closed)return false;
-      if(mode==='webgl2'||phase==='preparing')return fallback('webgl-context-or-render-failure');
+      if(mode==='webgl2'||phase==='preparing')
+        return fallback('webgl-context-or-render-failure',details||getFailureDetails());
       return false;
     }
     function dispose(){

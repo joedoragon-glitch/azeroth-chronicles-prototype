@@ -41,7 +41,14 @@ const renderer = selectTests(['src/prototype/pixi-experimental.js'],exists);
 assert(renderer.tests.includes('tests/pixi-fidelity.test.cjs'));
 assert(renderer.tests.includes('tools/webgl-pilot/renderer-switch-guard.test.cjs'));
 assert(!renderer.tests.includes('tests/game.test.cjs'));
+assert(!renderer.tests.includes('tests/pixi-renderer-browser.test.cjs'),
+  'ordinary Pixi code changes must not launch a browser test automatically');
 assert.deepEqual(renderer.uncovered,[]);
+const singleBrowser=selectTests(['tests/pixi-renderer-browser.test.cjs'],exists);
+assert(singleBrowser.tests.includes('tests/pixi-renderer-browser.test.cjs'),
+  'the explicitly modified Pixi acceptance test must be exercised in focused CI');
+assert(!singleBrowser.tests.includes('tests/prototype-browser.test.cjs'),
+  'targeted Pixi acceptance must never pull in the general browser suite');
 const gameplay = selectTests(['src/prototype/engine.js'],exists);
 assert(gameplay.tests.includes('tests/game.test.cjs'));
 assert(!gameplay.tests.includes('tests/pixi-fidelity.test.cjs'));

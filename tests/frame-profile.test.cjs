@@ -31,4 +31,51 @@ p.record({frameWorkMs: NaN});
 assert.equal(p.report().activeFrames, 180);
 p.reset();
 assert.equal(p.report().activeFrames, 0);
-console.log('PASS focused frame-stage profiler: bounded samples, categories, draw counts, reset');
+assert.equal(p.report().stages.pixiMs.samples, 0);
+assert.equal(p.report().stages.canvasOverlayMs.samples, 0);
+// Pixi world + Canvas combat overlay are measured within the SAME world draw.
+p.record({
+  drawn: true, frameWorkMs: 18, intervalMs: 17, renderMs: 12,
+  pixiMs: 7, canvasOverlayMs: 4,
+  pixiAttempted: true, canvasOverlayDrawn: true
+});
+// A pure Canvas draw is a different sample population, not a Pixi zero.
+p.record({
+  drawn: true, frameWorkMs: 14, intervalMs: 17, renderMs: 8,
+  canvasWorldMs: 7, canvasWorldDrawn: true
+});
+// Skipped frames never dilute individual draw-stage means.
+p.record({
+  drawn: false, frameWorkMs: 4, intervalMs: 17, renderMs: 100,
+  pixiMs: 100, canvasOverlayMs: 100, canvasWorldMs: 100,
+  pixiAttempted: true, canvasOverlayDrawn: true, canvasWorldDrawn: true
+});
+// During a GPU failure, the same callback can attempt Pixi and finish
+// with full Canvas recovery rather than a transparent overlay.
+p.record({
+  drawn: true, frameWorkMs: 19, intervalMs: 17, renderMs: 15,
+  pixiMs: 6, canvasWorldMs: 8,
+  pixiAttempted: true, canvasWorldDrawn: true
+});
+const mixed = p.report();
+assert.equal(mixed.drawnFrames, 3);
+assert.equal(mixed.stages.renderMs.samples, 3, 'legacy combined timing remains');
+assert.equal(mixed.stages.renderMs.meanMs, 11.67);
+assert.equal(mixed.stages.pixiMs.samples, 2);
+assert.equal(mixed.stages.pixiMs.meanMs, 6.5);
+assert.equal(mixed.stages.canvasOverlayMs.samples, 1);
+assert.equal(mixed.stages.canvasOverlayMs.meanMs, 4);
+assert.equal(mixed.stages.canvasWorldMs.samples, 2);
+assert.equal(mixed.stages.canvasWorldMs.meanMs, 7.5);
+assert(p.describe().includes('Pixi world'));
+assert(p.describe().includes('Canvas combat overlay'));
+assert(p.describe().includes('Combined world draw'));
+assert(mixed.note.includes('not monitor-presented frames'));
+assert(mixed.note.includes('separate p95 values cannot be added'));
+assert(!p.describe().includes('Canvas (drawn only)'));
+p.reset();
+assert.equal(p.report().stages.pixiMs.samples, 0);
+const diagnostics = Runtime.create(()=>100);
+assert(diagnostics.describe({measuredLayer:'canvas-combat-overlay'})
+  .includes('Canvas combat overlay only'));
+console.log('PASS focused frame-stage profiler: bounded windows, split Pixi/Canvas, recovery and legacy combined timings');
