@@ -190,3 +190,46 @@ test('native vignette remains last after lamp updates and caches unchanged fill'
   assert.equal(scene.metrics().vignetteActive,false);
   scene.destroy();
 });
+
+function assertPixiRgba(color) {
+  const match=/^rgba\((\d{1,3}),(\d{1,3}),(\d{1,3}),(0(?:\.\d+)?|1(?:\.0+)?)\)$/.exec(color);
+  assert.ok(match,'PixiJS-compatible decimal rgba required: '+color);
+  for(const channel of match.slice(1,4))
+    assert.ok(Number(channel)<=255,'RGB channel exceeds 255: '+color);
+}
+test('near-nightfall vignette never emits scientific notation in RGB',()=>{
+  const darkness=1-2.999800030600852e-8;
+  const color=Bridge.vignetteDescription({darkness},912,420).colorStops[1].color;
+  assert.equal(color,'rgba(0,0,0,0.15)');
+  assertPixiRgba(color);
+});
+test('day-night and night-day transition gradients remain Pixi-compatible across regions',()=>{
+  const darknesses=[0,1e-10,.02,.25,.5,.75,1-2.999800030600852e-8,1];
+  for(const darkness of [...darknesses,...darknesses.slice().reverse()])
+    for(let region=0;region<5;region++)
+      for(const peaceBlend of [0,.23,.5,1]){
+        const spec={region,darkness,peaceBlend,warmth:.4,phase:'sunset'};
+        for(const layer of Bridge.atmosphereLayers(spec))
+          for(const stop of layer.colorStops||[])assertPixiRgba(stop.color);
+        for(const stop of Bridge.vignetteDescription(spec,912,420).colorStops)
+          assertPixiRgba(stop.color);
+      }
+});
+test('scene accepts repeated day-night gradient rebuilds without triggering Pixi color parse error',()=>{
+  const {PIXI,app}=pixiFixture();
+  const Gradient=PIXI.FillGradient;
+  PIXI.FillGradient=class extends Gradient {
+    constructor(options){
+      super(options);
+      for(const stop of options.colorStops||[])assertPixiRgba(stop.color);
+    }
+  };
+  const scene=Bridge.create({PIXI,app,width:912,height:420});
+  for(const darkness of [0,.3,.7,1-2.999800030600852e-8,1,.7,.3,0]){
+    scene.setAtmosphere({region:0,darkness,warmth:.5,phase:'sunset'});
+    scene.setVignette({darkness,optimized:false});
+    scene.draw();
+  }
+  assert.equal(scene.metrics().vignetteActive,true);
+  scene.destroy();
+});
