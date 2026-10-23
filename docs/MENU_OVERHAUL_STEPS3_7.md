@@ -34,12 +34,29 @@
   - Completed versus under-construction Barracks remains a separate UI path; unchanged construction/assignment rules and native upgrade gating.
   - Focused tests: `tests/menu-priorities.test.cjs` reconciles the formerly stale Full-flat/Basic-flat expectation to the actual native grouped design; `tests/companion-onboarding-ui.test.cjs` covers actual bilingual Basic-to-Full interaction and remote expeditions.
 
+- **Step 6: Character & services — implemented on this continuing project branch; focused review candidate.**
+  - Character still owns permanent naming, Inventory & support, Skill journal and Talents; the Inventory destination now explicitly describes its contents.
+  - Inventory displays **Ranger support and Preparation Tonics** as structured, read-only sections immediately. The former two separate informational-only pages are removed. Real Equipment actions retain their own screen for safe weapon selection, reforges, and stored legacy gear.
+  - The existing Equipment overview and action callbacks are unchanged; no equipment or tonic is purchased simply by inspecting Inventory.
+  - Smith service rows are organized **Equipment upgrades → Reforging → Appearance**, with **Expedition support** displayed only where the original smith exposes it. Weapon/armor prices, owned/surpassed states, reforge gates, cosmetics and training handlers are unchanged.
+  - Alchemist offerings are grouped **Preparation Tonics → Ranger support → Training and resets**, preserving native paid actions, existing disabled states, companion vitality costs and discipline reset rules. Non-alchemist suppliers still perform their ordinary cargo and support duties, without new screens.
+  - English/Spanish section labels and the Inventory path are maintained. The existing `game-menu-ui.test.cjs` now tests inline Ranger/tonic information; a new `character-services-ui.test.cjs` exercises bilingual merchant groups and availability without purchases.
+  - No new settings, game engine/economy logic, v4 save data, renderer choices, or sound behavior.
+
 ## Remaining milestone order (do not implement without next owner turn)
 
-6. Character & services — shorten redundant informational routes and clarify merchants.
 7. Maps, quests and remaining menus — targeted changes only where warranted by evidence.
 
 Each milestone gets its own focused commits, applicable regression tests, explicit source notes, and review. All work continues **on this same branch and PR**, not fresh branches or PRs. The project branch is the source for the next milestone; do not reset to old main between steps.
+
+## Step 6 validation gates
+
+- Character and Inventory menu routing, read-only Ranger support and tonic summaries, all Equipment actions still present and safe.
+- Smith's existing prices, owned/locked reforge states, naming and optional expedition inheritance services remain visible on one labelled service screen.
+- Alchemist's tonic purchase, Ranger field support, vitality training and paid talent reset actions retain original native availability checks and refresh handlers.
+- Bilingual production-shell navigation in `tests/game-menu-ui.test.cjs` and merchant/price guard tests in `tests/character-services-ui.test.cjs`.
+- Focused-only PR validation and reproducible build verification; no full-game, browser/device matrix or unapproved performance work. Device-specific layout and interactive merchant audio remain unverified.
+- This is an incremental draft-project milestone. Do not merge or publish until Step 7 is complete and final owner review is given.
 
 ## Step 5 validation gates
 
