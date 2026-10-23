@@ -148,7 +148,8 @@
       backingRatio = 1,
       bakedZoom = null,
       active = false,
-      lastError = null;
+      lastError = null,
+      lastFailure = null;
     const baked = new Map(),
       loaded = new Set();
     // The old 64 MiB image budget preceded the procedural art expansion.
@@ -166,6 +167,20 @@
       actorFrameNumber = 0,
       proceduralEvictions = 0,
       proceduralCacheEvictions = 0;
+    function noteFailure(type, stage, error) {
+      const message = String(error?.message || error).slice(0, 240);
+      lastError = message;
+      // Capture counts BEFORE Canvas fallback disposes the GPU scene.
+      lastFailure = Object.freeze({
+        type, stage, message, timestampMs: Date.now(),
+        resources: {
+          loadedTextures: loaded.size,
+          proceduralTextures: baked.size,
+          proceduralBytes: imageBytes,
+        },
+      });
+      return lastFailure;
+    }
     function project(entity) {
       return canvasRenderer.screen(entity);
     }
@@ -478,8 +493,10 @@
       if (disposed) throw Error('Experimental renderer disposed');
       // A second opt-in trial must release the previous GPU context and scene.
       if (app) disposeResources();
+      let stage = 'library-load';
       try {
         const PIXI = await loadPixi();
+        stage = 'application-init';
         requireValue(
           root.AzerothPixiSceneBridge &&
             root.AzerothGpuSpriteAdapter &&
@@ -498,6 +515,7 @@
           antialias: false,
           background: 0x0c1913,
         });
+        stage = 'webgl2-context';
         requireValue(app.canvas.getContext('webgl2'), 'WebGL2 context not available');
         app.canvas.id = 'world-pixi-experimental';
         app.canvas.setAttribute('aria-hidden', 'true');
@@ -507,8 +525,9 @@
         app.canvas.addEventListener('webglcontextlost', (event) => {
           event.preventDefault();
           active = false;
-          options.onFailure('WebGL context lost');
+          options.onFailure(noteFailure('context-loss', 'webglcontextlost', 'WebGL context lost'));
         });
+        stage = 'scene-setup';
         scene = root.AzerothPixiSceneBridge.create({
           PIXI,
           app,
@@ -526,6 +545,7 @@
         createBackgroundPainter();
         // Warm all canonical sprites once (~46 MiB decoded across 38 files).
         // Otherwise entering any previously unseen neighborhood forces fallback.
+        stage = 'sprite-manifest';
         const response = await fetch('./assets/sprites/manifest.json');
         requireValue(response.ok, 'Original sprite manifest unavailable');
         const manifest = await response.json(),
@@ -545,6 +565,7 @@
         collect(manifest.sprites);
         requireValue(urls.size > 0, 'Approved sprite manifest is empty');
         requireValue(urls.size <= 128, 'Unexpected sprite resource count');
+        stage = 'sprite-preload';
         await Promise.all(
           [...urls].map(async (src) => {
             const texture = await PIXI.Assets.load(src);
@@ -554,30 +575,40 @@
             loaded.add(src);
           }),
         );
+        stage = 'first-scene';
         drawBackground();
         actorFrame();
         syncAtmosphere();
         scene.draw();
         return true;
       } catch (error) {
-        lastError = String(error?.message || error);
+        noteFailure(stage === 'webgl2-context' ? 'context-unavailable' : 'preparation-failed',
+          stage, error);
         disposeResources();
         return false;
       }
     }
     function draw() {
-      if (!active || !scene) throw Error('Inactive PixiJS renderer');
+      let stage = 'active-check';
       try {
+        if (!active || !scene) throw Error('Inactive PixiJS renderer');
+        stage = 'viewport-check';
         if (app.screen.width !== viewport.width || app.screen.height !== viewport.height)
           throw Error('Viewport changed: return to Canvas');
+        stage = 'resolution';
         syncResolution();
+        stage = 'background';
         syncBackground();
+        stage = 'actors';
         actorFrame();
+        stage = 'atmosphere';
         syncAtmosphere();
+        stage = 'scene-render';
         scene.draw();
       } catch (error) {
-        lastError = String(error?.message || error);
-        options.onFailure(lastError);
+        const type = stage === 'viewport-check' ? 'viewport-changed' :
+          stage === 'active-check' ? 'inactive-renderer' : 'render-exception';
+        options.onFailure(noteFailure(type, stage, error));
         throw error;
       }
     }
@@ -626,6 +657,7 @@
       release: disposeResources,
       dispose,
       noteEvents,
+      failureDetails: () => lastFailure,
       status: () => ({
         active,
         lastError,
