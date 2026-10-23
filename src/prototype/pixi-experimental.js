@@ -146,6 +146,7 @@
       baseZone = null,
       baseZoom = null,
       backingRatio = 1,
+      bakedZoom = null,
       active = false,
       lastError = null;
     const baked = new Map(),
@@ -252,6 +253,10 @@
     function actorFrame() {
       const current = game(),
         zoom = platform.cameraZoom || 1;
+      if (bakedZoom !== zoom) {
+        clearBakes(true);
+        bakedZoom = zoom;
+      }
       const records = [];
       for (const { entity, visual, point, key } of candidates(
         current,
@@ -550,6 +555,7 @@
       basePosition = null;
       baseGame = null;
       backingRatio = 1;
+      bakedZoom = null;
     }
     function dispose() {
       disposed = true;
