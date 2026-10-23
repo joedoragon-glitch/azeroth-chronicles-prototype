@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const cp = require('node:child_process');
 const {stampWorker, stampSite, validCommit} = require('../scripts/pwa-release-id.cjs');
 const root = path.resolve(__dirname, '..');
 const version = require('../package.json').version;
@@ -36,4 +37,28 @@ try {
 } finally {fs.rmSync(folder,{recursive:true,force:true});}
 assert.equal(fs.readFileSync(path.join(root, 'sw.js'), 'utf8'), original,
   'release stamping never mutates the repository worker');
-console.log('PASS each deployed revision creates a discoverable PWA update without altering offline/install safety');
+
+// Exercise the real packaging branch without GITHUB_SHA rather than merely
+// testing stampSite() with a supplied fixture revision. GitHub PR checkouts
+// contain a real HEAD; a bad local/non-Git checkout must fail closed.
+const actualHead=cp.execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim();
+assert(validCommit(actualHead));
+const site=path.join(root,'_site');
+try {
+  const run=cp.spawnSync(process.execPath,['scripts/build.cjs','--check','--site'],{
+    cwd:root,encoding:'utf8',timeout:180000,
+    env:{...process.env,GITHUB_SHA:''}
+  });
+  assert.equal(run.status,0,run.stderr||run.stdout);
+  assert.equal(fs.readFileSync(path.join(site,'build.txt'),'utf8').trim(),actualHead);
+  const published=fs.readFileSync(path.join(site,'sw.js'),'utf8');
+  assert(published.includes('-release-'+actualHead.slice(0,12)),
+    'a local site package must use its Git HEAD even without GitHub Actions');
+  assert.notEqual(published,original,
+    'local publishable service worker must differ from unmodified generated source');
+  assert.equal(fs.readFileSync(path.join(root,'sw.js'),'utf8'),original,
+    'packaging must never stamp the tracked source worker');
+} finally {
+  fs.rmSync(site,{recursive:true,force:true});
+}
+console.log('PASS per-commit PWA revisions, real local Git-HEAD site packaging and offline safety');
