@@ -692,6 +692,11 @@
     'Skill journal': 'Diario de habilidades',
     Controls: 'Controles',
     'Character and identity': 'Personaje e identidad',
+    'Equipment upgrades': 'Mejoras de equipo',
+    Reforging: 'Reforja',
+    Appearance: 'Apariencia',
+    'Expedition support': 'Apoyo de Expedición',
+    'Training and resets': 'Entrenamiento y reinicios',
     'Choose a topic or adjust your inputs.': 'Elige un tema o ajusta tus controles.',
     'Choose the control you want to learn.': 'Elige el control que quieres aprender.',
     'Choose an action, then press its new key. Esc cancels. Each key binds one action.':
@@ -715,6 +720,10 @@
       'Canvas 2D es la opción segura. WebGL2 inicia una prueba de 15 segundos para conservar o revertir.',
     'Local samples are diagnostic estimates, not verified display FPS.':
       'Las muestras locales son estimaciones diagnósticas, no FPS reales verificados.',
+    'Towns and camps': 'Pueblos y campamentos',
+    'Travel routes': 'Rutas de viaje',
+    'Dungeon entrances': 'Entradas de mazmorras',
+    'Places and threats': 'Lugares y amenazas',
     'Screen layout': 'Disposición de pantalla',
     'Camera zoom': 'Zoom de cámara',
     'Graphics quality': 'Calidad gráfica',
@@ -769,6 +778,11 @@
     'Effects volume': 'Volumen de efectos',
     'Interface volume': 'Volumen de interfaz',
     'Music and sound': 'Música y sonido',
+    'Volume levels': 'Niveles de volumen',
+    'Adjust all five volumes here. Muting preserves your levels.':
+      'Ajusta aquí los cinco volúmenes. Silenciar conserva los niveles.',
+    'Switch sound off or on without resetting the sliders.':
+      'Activa o silencia el sonido sin reiniciar los controles de volumen.',
     'Choose a volume to adjust.': 'Elige el volumen que quieres ajustar.',
     'Mute all sound': 'Silenciar todo',
     'Unmute all sound': 'Activar todo el sonido',
@@ -817,6 +831,16 @@
     Language: 'Idioma',
     'On ✓': 'Activado ✓',
     'Off ✓': 'Desactivado ✓',
+    'Keyboard presets': 'Distribuciones de teclado',
+    'Key bindings': 'Teclas asignadas',
+    'Movement and menu keys': 'Teclas de movimiento y menú',
+    'Skills and combat keys': 'Teclas de habilidades y combate',
+    'Companion and utility keys': 'Teclas de compañeros y utilidades',
+    'Touch controls': 'Controles táctiles',
+    'Mouse controls': 'Controles del ratón',
+    'Choose an action to change its key. Esc cancels.':
+      'Elige una acción para cambiar su tecla. Esc cancela.',
+    'Restore default keys': 'Restaurar teclas predeterminadas',
     'Phone layout': 'Disposición táctil',
     'Touch tap-to-move': 'Tocar para moverse',
     'Mouse click-to-move': 'Clic para moverse',
@@ -1689,6 +1713,8 @@
       'Controls',
       'Choose a topic or adjust your inputs.',
       [
+        action('Customize keyboard', () => keyboardMenu(back)),
+        action('Touch and mouse options', () => pointerMenu(back)),
         action('Movement and menus', () => {
           const keys = ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('/');
           openMenu(
@@ -1731,8 +1757,6 @@
             returnHere,
           ),
         ),
-        action('Customize keyboard', () => keyboardMenu(back)),
-        action('Touch and mouse options', () => pointerMenu(back)),
       ],
       back,
     );
@@ -1796,6 +1820,52 @@
       () => keyboardMenu(back),
     );
   }
+  // Keep the parent Back route stable across previews and key binding edits,
+  // so the shared menu foundation can restore the highlighted category.
+  const keyboardBackRoutes = new WeakMap();
+  const keyboardGroups = [
+    {
+      id: 'movement',
+      title: 'Movement and menu keys',
+      ids: ['up', 'down', 'left', 'right', 'confirm'],
+    },
+    {
+      id: 'combat',
+      title: 'Skills and combat keys',
+      ids: ['skill1', 'skill2', 'skill3', 'skill4', 'skill5', 'skill6', 'skill7', 'skill8', 'target', 'heal', 'mana'],
+    },
+    {
+      id: 'commands',
+      title: 'Companion and utility keys',
+      ids: ['doctrine', 'recall', 'map', 'training', 'skills', 'pause', 'help'],
+    },
+  ];
+  function keyboardBindingsMenu(group, back, returnToKeyboard = () => keyboardMenu(back)) {
+    const returnHere = () => keyboardBindingsMenu(group, back, returnToKeyboard);
+    const entries = input.actions
+      .filter(([id]) => group.ids.includes(id))
+      .map(([id, name]) => {
+        const item = action(name + ' · ' + input.key(id), () => {
+          openMenu(
+            'Bind ' + name,
+            'Press a new key for ' + name + '. Esc cancels.',
+            [],
+            returnHere,
+          );
+          bindingCapture = id;
+        });
+        // Labels change after binding, but this stable identity preserves
+        // the selected action when the player returns from key capture.
+        item.key = 'binding:' + id;
+        return item;
+      });
+    openMenu(
+      group.title,
+      'Choose an action to change its key. Esc cancels.',
+      entries,
+      returnToKeyboard,
+    );
+  }
   function keyboardMenu(back = systemMenu) {
     bindingCapture = null;
     const presetNames = {
@@ -1804,26 +1874,27 @@
       left: language === 'es' ? 'Mano izquierda + IJKL' : 'Left-hand skills + IJKL',
       custom: language === 'es' ? 'Personalizado' : 'Custom',
     };
+    if (!keyboardBackRoutes.has(back)) keyboardBackRoutes.set(back, () => help(back));
+    const returnToHelp = keyboardBackRoutes.get(back);
     openMenu(
       'Customize keyboard',
       language === 'es'
         ? 'Distribución: ' + presetNames[input.preferences.preset] + '. Elige una o cambia teclas.'
         : 'Layout: ' + presetNames[input.preferences.preset] + '. Choose a preset or rebind keys.',
       [
+        menuControls.section('Keyboard presets'),
         action('Right-hand skills (WASD) · Default', () => chooseKeyboardPreset('right', back)),
         action('Classic · number keys', () => chooseKeyboardPreset('classic', back)),
         action('Left-hand skills (IJKL)', () => chooseKeyboardPreset('left', back)),
-        ...input.actions.map(([id, name]) =>
-          action(name + ' · ' + input.key(id), () => {
-            openMenu('Bind ' + name, 'Press a new key for ' + name + '. Esc cancels.', [], () =>
-              keyboardMenu(back),
-            );
-            bindingCapture = id;
-          }),
+        menuControls.section('Key bindings'),
+        ...keyboardGroups.map((group) =>
+          action(group.title, () => keyboardBindingsMenu(group, back),
+            group.ids.filter((id) => input.actions.some(([candidate]) => candidate === id)).length +
+              ' actions'),
         ),
         action('Restore default keys', () => chooseKeyboardPreset('right', back)),
       ],
-      () => help(back),
+      returnToHelp,
     );
   }
   function pointerMenu(back = systemMenu) {
@@ -1835,25 +1906,33 @@
       runtime.reset();
       frameProfile.reset();
       updateHUD();
-      pointerMenu(back);
     };
     openMenu(
       'Touch and mouse options',
       'Choose your layout and movement controls.',
       [
-        action(
-          'Phone layout · ' + (p.phoneLayout === 'two-thumb' ? 'Two thumbs' : 'Left hand'),
-          () => select('phoneLayout', p.phoneLayout === 'two-thumb' ? 'left-hand' : 'two-thumb'),
+        menuControls.section('Touch controls'),
+        menuControls.select(
+          'Phone layout',
+          p.phoneLayout,
+          [
+            { value: 'two-thumb', label: 'Two thumbs' },
+            { value: 'left-hand', label: 'Left hand' },
+          ],
+          (value) => select('phoneLayout', value),
           'Two thumbs: movement left, skills right. Left hand: skills above the joystick.',
         ),
-        action(
-          'Touch tap-to-move · ' + (p.touchMove ? 'ON' : 'OFF'),
-          () => select('touchMove', !p.touchMove),
+        menuControls.toggle(
+          'Touch tap-to-move',
+          p.touchMove,
+          (enabled) => select('touchMove', enabled),
           'Tap reachable ground to move.',
         ),
-        action(
-          'Mouse click-to-move · ' + (p.mouseMove ? 'ON' : 'OFF'),
-          () => select('mouseMove', !p.mouseMove),
+        menuControls.section('Mouse controls'),
+        menuControls.toggle(
+          'Mouse click-to-move',
+          p.mouseMove,
+          (enabled) => select('mouseMove', enabled),
           manaEnabled
             ? 'When off, left click in the world commands Ranger Heal. Right click commands Mana Recovery.'
             : 'When off, left click in the world commands Ranger Heal.',
@@ -1891,11 +1970,11 @@
   // Shared presentation controls. Gameplay menus still use action() unchanged.
   const menuControls = Object.freeze({
     section: (label, detail = '') => ({ kind: 'section', label, detail }),
-    toggle: (label, value, onChange, detail = '') => ({
-      kind: 'toggle', label, value: !!value, onChange, detail,
+    toggle: (label, value, onChange, detail = '', saveCampaign = true) => ({
+      kind: 'toggle', label, value: !!value, onChange, detail, saveCampaign,
     }),
-    slider: (label, value, min, max, step, onChange, detail = '') => ({
-      kind: 'slider', label, value, min, max, step, onChange, detail,
+    slider: (label, value, min, max, step, onChange, detail = '', suffix = '', saveCampaign = true) => ({
+      kind: 'slider', label, value, min, max, step, onChange, detail, suffix, saveCampaign,
     }),
     select: (label, value, options, onChange, detail = '') => ({
       kind: 'select', label, value, options, onChange, detail,
@@ -2026,7 +2105,9 @@
     const commit = (entry, value) => {
       entry.value = value;
       entry.onChange(value);
-      if (started) save();
+      // Profile-only controls already persist their preference on change.
+      // Avoid serializing the entire campaign on every volume-slider tick.
+      if (started && entry.saveCampaign !== false) save();
       updateHUD();
     };
     const details = (hostElement, entry) => {
@@ -2084,10 +2165,15 @@
           b.step = a.step;
           b.value = a.value;
           const output = document.createElement('output');
-          output.textContent = String(a.value);
+          const showValue = () => {
+            const formatted = String(a.value) + a.suffix;
+            output.textContent = formatted;
+            b.setAttribute('aria-valuetext', formatted);
+          };
+          showValue();
           b.oninput = () => {
             commit(a, Number(b.value));
-            output.textContent = String(a.value);
+            showValue();
           };
           row.append(b, output);
         } else {
@@ -2530,7 +2616,11 @@
               ),
             ]
           : []),
-        action('Inventory and support', () => inventory(characterMenu, true)),
+        action(
+          'Inventory and support',
+          () => inventory(characterMenu, true),
+          'Equipment, Ranger support and Preparation Tonics.',
+        ),
         action('Skill journal', () => skillBook(characterMenu)),
         action('Talents', () => talents(characterMenu)),
       ],
@@ -3166,38 +3256,37 @@
   }
   function soundMenu(back = closeMenu) {
     const settings = audio.settings;
+    const apply = (value) => {
+      audio.setSettings(value);
+      profile.audio = { ...audio.settings };
+      persistProfile();
+    };
     openMenu(
       'Music and sound',
-      'Choose a volume to adjust.',
+      'Adjust all five volumes here. Muting preserves your levels.',
       [
-        action(settings.muted ? 'Unmute all sound' : 'Mute all sound', () => {
-          audio.setSettings({ muted: !settings.muted });
-          profile.audio = { ...audio.settings };
-          persistProfile();
-          soundMenu(back);
-        }),
+        menuControls.toggle(
+          'Mute all sound',
+          settings.muted,
+          (muted) => apply({ muted }),
+          'Switch sound off or on without resetting the sliders.',
+          false,
+        ),
+        menuControls.section('Volume levels'),
         ...['master', 'music', 'ambience', 'effects', 'interface'].map((key) =>
-          action(
-            volumeLabel(key) + ' · ' + Math.round((settings[key] ?? settings.effects) * 100) + '%',
-            () => volumeMenu(key, () => soundMenu(back)),
+          menuControls.slider(
+            volumeLabel(key),
+            Math.round((settings[key] ?? settings.effects) * 100),
+            0,
+            100,
+            1,
+            (percent) => apply({ [key]: percent / 100 }),
+            '',
+            '%',
+            false,
           ),
         ),
       ],
-      back,
-    );
-  }
-  function volumeMenu(key, back) {
-    const settings = audio.settings;
-    const adjust = (delta) => {
-      audio.setSettings({ [key]: (settings[key] ?? settings.effects) + delta });
-      profile.audio = { ...audio.settings };
-      persistProfile();
-      volumeMenu(key, back);
-    };
-    openMenu(
-      volumeLabel(key),
-      Math.round((settings[key] ?? settings.effects) * 100) + '%',
-      [action('Quieter · −10%', () => adjust(-0.1)), action('Louder · +10%', () => adjust(0.1))],
       back,
     );
   }
@@ -3344,6 +3433,21 @@
 
     let selected = null;
     let route = null;
+    // Preserve the native nearest-first order within each category while
+    // giving long map lists predictable landmarks. This never reveals hidden
+    // bosses or services: only mapDestinations() supplies the entries.
+    const groupFor = (place) =>
+      place.kind === 'transport' || place.kind === 'exit'
+        ? 'Travel routes'
+        : place.kind === 'dungeon' || place.sideDungeon
+          ? 'Dungeon entrances'
+          : place.kind === 'rest' || place.kind === 'barracks'
+            ? 'Towns and camps'
+            : 'Places and threats';
+    const groups = ['Towns and camps', 'Travel routes', 'Dungeon entrances', 'Places and threats'];
+    const orderedPlaces = groups.flatMap((name) =>
+      destinations.filter((place) => groupFor(place) === name),
+    );
     const choices = [
       action(
         'Navigate to selected',
@@ -3357,7 +3461,7 @@
             return;
           }
           closeMenu();
-          questGuide=null;
+          questGuide = null;
           if (PrototypeInput.requestMove(game, latest.point)) {
             storyRouteActive = true;
             status('Walking to ' + selected.name + '.');
@@ -3366,18 +3470,47 @@
         '',
         true,
       ),
-      ...destinations.map((place) =>
-        action((place.icon || '•') + ' ' + place.name, () => choose(place), place.kind === 'transport' ? 'Walk to the travel service; choose your journey there.' : place.kind === 'dungeon' || place.sideDungeon ? 'Walk to the entrance, then interact to enter.' : ''),
-      ),
-      ...(questGuide ? [action('Clear waypoint', () => {
-        if (questGuide?.kind === 'gathering') game.s.gatheringTarget = null;
-        questGuide = null; closeMenu();
-      })] : []),
+      ...groups.flatMap((group) => {
+        const places = orderedPlaces.filter((place) => groupFor(place) === group);
+        return places.length
+          ? [
+              menuControls.section(group),
+              ...places.map((place) =>
+                action(
+                  (place.icon || '•') + ' ' + place.name,
+                  () => choose(place),
+                  place.kind === 'transport'
+                    ? 'Walk to the travel service; choose your journey there.'
+                    : place.kind === 'dungeon' || place.sideDungeon
+                      ? 'Walk to the entrance, then interact to enter.'
+                      : '',
+                ),
+              ),
+            ]
+          : [];
+      }),
+      ...(questGuide
+        ? [
+            action('Clear waypoint', () => {
+              if (questGuide?.kind === 'gathering') game.s.gatheringTarget = null;
+              questGuide = null;
+              closeMenu();
+            }),
+          ]
+        : []),
     ];
     openMenu((room?.name || side?.name || region.name) + ' map', 'Choose a place, then select Navigate.', choices, back);
     $('modal').setAttribute('data-view', 'map');
-    const go = $('modal-actions').children[0];
+    // Section headings do not participate in keyboard action indices.
+    const mapButtons = Array.from($('modal-actions').children).filter(
+      (node) => typeof node.onclick === 'function',
+    );
+    const go = mapButtons[0];
     go.classList.add('route-go');
+    go.setAttribute('aria-live', 'polite');
+    orderedPlaces.forEach((_, index) =>
+      mapButtons[index + 1].setAttribute('aria-pressed', 'false'),
+    );
     const map = document.createElement('canvas');
     map.width = 480;
     map.height = 320;
@@ -3479,10 +3612,13 @@
       route = findRoute(place);
       go.disabled = !route;
       go.textContent = tr(route ? 'Navigate · ' + place.name : 'No route · ' + place.name);
-      Array.from($('modal-actions').children).forEach((button, index) =>
-        button.classList.toggle('route-picked', destinations[index - 1] === place),
-      );
-      menuIndex = destinations.indexOf(place) + 1;
+      orderedPlaces.forEach((candidate, index) => {
+        const button = mapButtons[index + 1];
+        const picked = candidate === place;
+        button.classList.toggle('route-picked', picked);
+        button.setAttribute('aria-pressed', String(picked));
+      });
+      menuIndex = orderedPlaces.indexOf(place) + 1;
       highlight();
       drawMap();
     }

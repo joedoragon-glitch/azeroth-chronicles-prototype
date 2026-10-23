@@ -29,17 +29,22 @@ for (const language of ['en', 'es']) {
   click(t('Inventory and support', 'Inventario y apoyo'));
   title('Inventory', 'Inventario');
   short();
-  assert.equal(e.get('modal-actions').children.length, 3);
+  const inventorySummary = e.get('modal-description');
+  assert.equal(e.get('modal-actions').children.length, 1, 'only actionable Equipment stays a button');
+  assert.equal(inventorySummary.children.length, 2, 'support and tonics render in the same Inventory view');
+  const info = (en, es) => {
+    const section = inventorySummary.children.find((section) =>
+      section.children[0]?.textContent === t(en, es));
+    assert(section, en + ' information visible without another screen');
+    return section.children[1]?.textContent || '';
+  };
+  assert(info('Ranger support', 'Apoyo del Ranger').includes(String(g.rangerSupportAmount('health'))));
+  assert(info('Preparation Tonics', 'Tónicos de preparación').includes(String(g.preparationTonicStock())));
   click(t('Equipment', 'Equipo'));
   short();
   back();
-  click(t('Ranger support', 'Apoyo del Ranger'));
-  short();
-  assert(e.get('modal-description').textContent.includes(String(g.rangerSupportAmount('health'))));
-  back();
-  click(t('Preparation Tonics', 'Tónicos de preparación'));
-  short();
-  back();
+  title('Inventory', 'Inventario');
+  assert.equal(inventorySummary.children.length, 2, 'returning from Equipment preserves the summaries');
   back();
   title('Character', 'Personaje');
   click(t('Skill journal', 'Diario de habilidades'));
@@ -143,21 +148,88 @@ for (const language of ['en', 'es']) {
   back();
   title('Game and settings', 'Juego y ajustes');
   click(t('Sound settings', 'Ajustes de sonido'));
+  title('Music and sound', 'Música y sonido');
   short();
-  assert.equal(e.get('modal-actions').children.length, 6);
-  const volume = s.Prototype.audio.settings.music;
-  click(t('Music volume', 'Volumen de música'));
-  short();
-  click(t('Quieter', 'Bajar volumen'));
-  assert(Math.abs(s.Prototype.audio.settings.music - (volume - 0.1)) < 1e-9);
-  click(t('Louder', 'Subir volumen'));
-  assert(Math.abs(s.Prototype.audio.settings.music - volume) < 1e-9);
-  back();
+  // Instrument the actual shell's localStorage adapter. Audio already persists
+  // to its profile; dragging should never rewrite the entire campaign save.
+  const writes = [];
+  const originalSet = storage.set.bind(storage);
+  storage.set = (key, value) => {
+    writes.push(key);
+    return originalSet(key, value);
+  };
+  const soundRows = () => e.get('modal-actions').children;
+  const channels = [
+    ['master', 'Master volume', 'Volumen general'],
+    ['music', 'Music volume', 'Volumen de música'],
+    ['ambience', 'Ambience volume', 'Volumen ambiental'],
+    ['effects', 'Effects volume', 'Volumen de efectos'],
+    ['interface', 'Interface volume', 'Volumen de interfaz'],
+  ];
+  const soundSlider = (en, es) => {
+    const row = soundRows().find(
+      (child) =>
+        child.className === 'menu-setting' &&
+        child.children.some((item) => item.textContent === t(en, es)),
+    );
+    assert(row, 'missing volume row: ' + en);
+    const input = row.children.find((child) => child.className === 'menu-setting-input');
+    const output = row.children[2];
+    assert(input && output, 'volume slider and current percentage are both visible');
+    return { input, output };
+  };
+  assert.equal(soundRows().filter((node) => node.className === 'menu-setting').length, 5);
+  assert(soundRows().some((node) => node.className === 'menu-section'));
+  const originalVolumes = Object.fromEntries(
+    channels.map(([key]) => [key, s.Prototype.audio.settings[key] ?? s.Prototype.audio.settings.effects]),
+  );
+  for (const [key, en, es] of channels) {
+    const { input, output } = soundSlider(en, es);
+    assert.equal(input.value, Math.round(originalVolumes[key] * 100));
+    assert.equal(output.textContent, Math.round(originalVolumes[key] * 100) + '%');
+    for (const percent of [0, 100, 37]) {
+      input.value = String(percent);
+      input.oninput();
+      assert(Math.abs(s.Prototype.audio.settings[key] - percent / 100) < 1e-9);
+      assert.equal(output.textContent, percent + '%', 'displayed percentage follows slider');
+      assert.equal(
+        JSON.parse(storage.get(s.PrototypePersistence.profileKey)).audio[key],
+        percent / 100,
+        'each audio channel persists immediately',
+      );
+      title('Music and sound', 'Música y sonido');
+      assert(!e.get('modal').hidden, 'adjusting any slider keeps the sound window open');
+    }
+    input.value = String(Math.round(originalVolumes[key] * 100));
+    input.oninput();
+  }
   click(t('Mute all sound', 'Silenciar todo'));
   assert(s.Prototype.audio.settings.muted);
-  click(t('Unmute all sound', 'Activar todo el sonido'));
+  assert.equal(
+    JSON.parse(storage.get(s.PrototypePersistence.profileKey)).audio.muted,
+    true,
+  );
+  for (const [key] of channels)
+    assert(Math.abs((s.Prototype.audio.settings[key] ?? s.Prototype.audio.settings.effects) - originalVolumes[key]) < 1e-9,
+      'mute preserves every saved channel level');
+  click(t('Mute all sound', 'Silenciar todo'));
   assert(!s.Prototype.audio.settings.muted);
   assert.equal(JSON.parse(storage.get(s.PrototypePersistence.profileKey)).audio.muted, false);
+  // 5 channels × (0%, 100%, 37%, restored) plus two mute changes:
+  // each persists the small audio profile, none serializes the campaign.
+  assert.equal(writes.filter((key) => key === s.PrototypePersistence.profileKey).length, 22,
+    'every audio adjustment persists its own profile change');
+  assert.equal(writes.filter((key) => key === 'azeroth-v4-normal').length, 0,
+    'sound sliders and mute must not trigger full-campaign saves');
+  storage.set = originalSet;
+  back();
+  title('Game and settings', 'Juego y ajustes');
+  click(t('Sound settings', 'Ajustes de sonido'));
+  title('Music and sound', 'Música y sonido');
+  for (const [key, en, es] of channels) {
+    const slider = soundSlider(en, es);
+    assert.equal(slider.output.textContent, Math.round(originalVolumes[key] * 100) + '%');
+  }
   back();
   click(t('Install on phone', 'Instalar en el teléfono'));
   short();
@@ -189,34 +261,119 @@ for (const language of ['en', 'es']) {
   short();
   back();
   click(t('Customize keyboard', 'Personalizar teclado'));
-  assert.equal(e.get('modal-actions').children.length, s.Prototype.input.actions.length + 4);
+  title('Customize keyboard', 'Personalizar teclado');
   assert.equal(s.Prototype.input.preferences.preset, 'right');
+  assert.equal(
+    e.get('modal-actions').children.filter((node) => node.className === 'menu-section').length,
+    2,
+  );
+  const groupPaths = [
+    ['Movement and menu keys', 'Teclas de movimiento y menú',
+      ['up', 'down', 'left', 'right', 'confirm']],
+    ['Skills and combat keys', 'Teclas de habilidades y combate',
+      ['skill1', 'skill2', 'skill3', 'skill4', 'skill5', 'skill6', 'skill7', 'skill8', 'target', 'heal', 'mana']],
+    ['Companion and utility keys', 'Teclas de compañeros y utilidades',
+      ['doctrine', 'recall', 'map', 'training', 'skills', 'pause', 'help']],
+  ];
+  for (const [en, es, ids] of groupPaths) {
+    click(t(en, es));
+    title(en, es);
+    assert.equal(
+      e.get('modal-actions').children.length,
+      s.Prototype.input.actions.filter(([id]) => ids.includes(id)).length,
+      'each editable keyboard action appears in exactly one category',
+    );
+    back();
+    title('Customize keyboard', 'Personalizar teclado');
+    assert(
+      e.get('modal-actions').children.some((node) => node.textContent.startsWith(t(en, es))),
+      'keyboard root stays available',
+    );
+  }
   click(t('Classic · number keys', 'Clásico · teclas numéricas'));
   title('Apply keyboard preset', 'Aplicar distribución de teclado');
   click(t('Keep current keys', 'Conservar teclas actuales'));
-  assert.equal(s.Prototype.input.preferences.preset, 'right','cancelling keeps defaults');
+  assert.equal(s.Prototype.input.preferences.preset, 'right', 'cancel keeps defaults');
   click(t('Classic · number keys', 'Clásico · teclas numéricas'));
   click(t('Apply preset', 'Aplicar distribución'));
-  assert.equal(s.Prototype.input.actionFor('Digit1'),'skill1');
-  assert.equal(s.Prototype.input.actionFor('KeyI'),null,'Classic has no Inventory shortcut');
-  assert.equal(s.Prototype.input.actionFor('KeyJ'),null,'Classic has no Journal shortcut');
+  assert.equal(s.Prototype.input.actionFor('Digit1'), 'skill1');
+  assert.equal(s.Prototype.input.actionFor('KeyI'), null);
+  assert.equal(s.Prototype.input.actionFor('KeyJ'), null);
   click(t('Left-hand skills (IJKL)', 'Habilidades con mano izquierda (IJKL)'));
   click(t('Apply preset', 'Aplicar distribución'));
-  assert.equal(s.Prototype.input.actionFor('KeyI'),'up');
-  assert.equal(s.Prototype.input.actionFor('KeyR'),'skill8');
+  assert.equal(s.Prototype.input.actionFor('KeyI'), 'up');
+  assert.equal(s.Prototype.input.actionFor('KeyR'), 'skill8');
   click(t('Right-hand skills (WASD) · Default', 'Habilidades con mano derecha (WASD) · Predeterminado'));
   click(t('Apply preset', 'Aplicar distribución'));
-  assert.equal(s.Prototype.input.actionFor('KeyJ'),'skill1');
-  assert.equal(s.Prototype.input.actionFor('Space'),'skill6');
-  assert.equal(s.Prototype.input.actionFor('KeyR'),null);
-  assert.equal(s.Prototype.input.actionFor('KeyT'),null);
+  assert.equal(s.Prototype.input.actionFor('KeyJ'), 'skill1');
+  assert.equal(s.Prototype.input.actionFor('Space'), 'skill6');
+  assert.equal(s.Prototype.input.actionFor('KeyR'), null);
+  assert.equal(s.Prototype.input.actionFor('KeyT'), null);
+
+  click(t('Companion and utility keys', 'Teclas de compañeros y utilidades'));
+  title('Companion and utility keys', 'Teclas de compañeros y utilidades');
+  const mapBind = e.get('modal-actions').children.find(
+    (button) => button.textContent.endsWith(' · Z'),
+  );
+  assert(mapBind, 'Map binding should be visible');
+  mapBind.click();
+  assert(e.get('modal-title').textContent.startsWith('Bind '), 'binding prompt is preserved');
+  events.keydown.forEach((fn) => fn({ code: 'F9', preventDefault() {} }));
+  assert.equal(s.Prototype.input.actionFor('F9'), 'map');
+  title('Companion and utility keys', 'Teclas de compañeros y utilidades');
+  const updated = e.get('modal-actions').children.find(
+    (button) => button.textContent.endsWith(' · F9'),
+  );
+  assert(updated?.classList.contains('selected'), 'key capture returns to selected action');
+  updated.click();
+  events.keydown.forEach((fn) => fn({ code: 'KeyZ', preventDefault() {} }));
+  assert.equal(s.Prototype.input.actionFor('KeyZ'), 'map');
+  assert.equal(s.Prototype.input.preferences.preset, 'right');
   back();
+  title('Customize keyboard', 'Personalizar teclado');
+  back();
+  title('Controls', 'Controles');
+
   click(t('Touch and mouse options', 'Opciones táctiles y de ratón'));
-  short();
-  const beforeMove = s.Prototype.input.preferences.touchMove;
-  click(t('Touch tap-to-move', 'Tocar para moverse'));
-  assert.equal(s.Prototype.input.preferences.touchMove, !beforeMove);
+  title('Touch and mouse options', 'Opciones táctiles y de ratón');
+  const controls = e.get('modal-actions').children;
+  assert.equal(controls.filter((node) => node.className === 'menu-section').length, 2);
+  const phoneRow = controls.find(
+    (node) => node.className === 'menu-setting' &&
+      node.children.some((child) => child.textContent === t('Phone layout', 'Disposición táctil')),
+  );
+  assert(phoneRow, 'phone layout dropdown is visible');
+  const phoneSelect = phoneRow.children.find((child) => child.className === 'menu-setting-input');
+  const initialPhoneLayout = s.Prototype.input.preferences.phoneLayout;
+  phoneSelect.value = 'left-hand';
+  phoneSelect.onchange();
+  assert.equal(s.Prototype.input.preferences.phoneLayout, 'left-hand');
+  assert.equal(JSON.parse(storage.get(s.PrototypeInput.preferenceKey)).phoneLayout, 'left-hand');
+  phoneSelect.value = initialPhoneLayout;
+  phoneSelect.onchange();
+
+  const toggle = (en, es) => {
+    const node = e.get('modal-actions').children.find(
+      (item) => item.textContent.startsWith(t(en, es)),
+    );
+    assert(node && node.className === 'menu-setting-toggle', 'missing inline toggle ' + en);
+    return node;
+  };
+  for (const [key, en, es] of [
+    ['touchMove', 'Touch tap-to-move', 'Tocar para moverse'],
+    ['mouseMove', 'Mouse click-to-move', 'Clic para moverse'],
+  ]) {
+    const before = s.Prototype.input.preferences[key];
+    toggle(en, es).click();
+    assert.equal(s.Prototype.input.preferences[key], !before);
+    assert.equal(JSON.parse(storage.get(s.PrototypeInput.preferenceKey))[key], !before);
+    title('Touch and mouse options', 'Opciones táctiles y de ratón');
+    assert(!e.get('modal').hidden, 'touch/mouse toggles never close settings');
+    toggle(en, es).click();
+    assert.equal(s.Prototype.input.preferences[key], before);
+  }
   back();
+  title('Controls', 'Controles');
   back();
   title('Game and settings', 'Juego y ajustes');
   click(t('Save and game management', 'Partidas guardadas'));

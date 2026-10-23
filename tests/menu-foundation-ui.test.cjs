@@ -14,24 +14,39 @@ for (const language of ['en', 'es']) {
   };
   elements.get('menu-button').click();
   byLabel(language === 'en' ? 'Game and settings' : 'Juego y ajustes').click();
-  byLabel(language === 'en' ? 'Sound settings' : 'Ajustes de sonido').click();
-  const sound = elements.get('modal-content');
-  sound.scrollTop = 85;
-  byLabel(language === 'en' ? 'Music volume' : 'Volumen de música').click();
-  byLabel(language === 'en' ? 'Quieter' : 'Bajar volumen').click();
-  assert(
-    byLabel(language === 'en' ? 'Quieter' : 'Bajar volumen').classList.contains('selected'),
-    'refresh keeps the selected sound action',
+  byLabel(language === 'en' ? 'Controls' : 'Controles').click();
+  const controlsMenu = elements.get('modal-content');
+  controlsMenu.scrollTop = 85;
+  byLabel(language === 'en' ? 'Customize keyboard' : 'Personalizar teclado').click();
+  const keyboardMenu = elements.get('modal-content');
+  keyboardMenu.scrollTop = 110;
+  byLabel(
+    language === 'en' ? 'Movement and menu keys' : 'Teclas de movimiento y menú',
+  ).click();
+  assert.equal(
+    elements.get('modal-title').textContent,
+    language === 'en' ? 'Movement and menu keys' : 'Teclas de movimiento y menú',
   );
   elements.get('close-button').click();
-  assert.equal(sound.scrollTop, 85, 'Back restores parent scroll');
+  assert.equal(keyboardMenu.scrollTop, 110, 'Back restores keyboard settings scroll');
   assert(
-    byLabel(language === 'en' ? 'Music volume' : 'Volumen de música').classList.contains('selected'),
-    'Back restores the parent choice',
+    byLabel(
+      language === 'en' ? 'Movement and menu keys' : 'Teclas de movimiento y menú',
+    ).classList.contains('selected'),
+    'Back restores keyboard category selection',
+  );
+  elements.get('close-button').click();
+  assert.equal(controlsMenu.scrollTop, 85, 'Back restores parent Controls scroll');
+  assert(
+    byLabel(language === 'en' ? 'Customize keyboard' : 'Personalizar teclado')
+      .classList.contains('selected'),
+    'Back restores the selected Controls item',
   );
   elements.get('close-button').click();
   elements.get('close-button').click();
+  // Controls → Game settings → Adventure menu → closed.
   elements.get('close-button').click();
+  assert(elements.get('modal').hidden, 'the root Adventure menu is fully closed');
 
   let returnedFocus = false;
   scope.document.activeElement = { focus: () => { returnedFocus = true; } };

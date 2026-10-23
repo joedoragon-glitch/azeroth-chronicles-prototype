@@ -737,6 +737,7 @@
             ? 'Neri sells Preparation Tonics and trains permanent Ranger field support.'
             : 'Neri sells Preparation Tonics and trains permanent Ranger Heal, companion vitality and discipline resets.',
         [
+          { kind: 'section', label: 'Preparation Tonics' },
           action(
             getGame().preparationTonicStock() >= 10000
               ? 'Preparation Tonics · STORAGE FULL'
@@ -750,6 +751,7 @@
             getGame().hero.gold < getGame().preparationTonicCost() ||
               getGame().preparationTonicStock() >= 10000,
           ),
+          { kind: 'section', label: 'Ranger support' },
           action(
             healRank >= 2
               ? 'Ranger Heal · Rank 2 · MAX'
@@ -780,6 +782,7 @@
                 ),
               ]
             : []),
+          { kind: 'section', label: 'Training and resets' },
           action(
             'Train Companion Vitality · Rank ' +
               (vitalityRank + 1) +
@@ -847,29 +850,7 @@
             ? ' This specialist also teaches companion equipment inheritance.'
             : ''),
         [
-          ...supportActions,
-          ...['weapon', 'armor'].map((slot) =>
-            action(
-              'Name ' + slot,
-              () =>
-                requestName({
-                  title: 'Name your ' + slot,
-                  description:
-                    'Give your equipped ' +
-                    slot +
-                    ' a personal name. Its upgrades and statistics stay the same.',
-                  initialValue:
-                    getGame().hero[slot === 'weapon' ? 'customWeaponName' : 'customArmorName'] ||
-                    '',
-                  permanent: false,
-                  onSubmit: (name) => getGame().nameEquipment(n.family, slot, name),
-                  onSkip: () => smith(n, back),
-                  onDone: () => smith(n, back),
-                }),
-              getGame().hero[slot === 'weapon' ? 'customWeaponName' : 'customArmorName'] ||
-                'Optional · cosmetic · free',
-            ),
-          ),
+          { kind: 'section', label: 'Equipment upgrades' },
           action(
             weaponOwned
               ? 'Weapon tier ' + tier + ' · ' + (currentWeapon === tier ? 'OWNED' : 'SURPASSED')
@@ -910,6 +891,7 @@
               (armorOwned ? ' · one-time purchase already satisfied' : ''),
             armorOwned || getGame().hero.gold < armor,
           ),
+          { kind: 'section', label: 'Reforging' },
           action(
             currentWeapon === tier && weaponReforged
               ? 'Reforge weapon · DONE'
@@ -952,6 +934,32 @@
               armorReforged ||
               getGame().hero.gold < getGame().equipmentCost('armor', tier, true),
           ),
+          { kind: 'section', label: 'Appearance' },
+          ...['weapon', 'armor'].map((slot) =>
+            action(
+              'Name ' + slot,
+              () =>
+                requestName({
+                  title: 'Name your ' + slot,
+                  description:
+                    'Give your equipped ' +
+                    slot +
+                    ' a personal name. Its upgrades and statistics stay the same.',
+                  initialValue:
+                    getGame().hero[slot === 'weapon' ? 'customWeaponName' : 'customArmorName'] ||
+                    '',
+                  permanent: false,
+                  onSubmit: (name) => getGame().nameEquipment(n.family, slot, name),
+                  onSkip: () => smith(n, back),
+                  onDone: () => smith(n, back),
+                }),
+              getGame().hero[slot === 'weapon' ? 'customWeaponName' : 'customArmorName'] ||
+                'Optional · cosmetic · free',
+            ),
+          ),
+          ...(supportActions.length
+            ? [{ kind: 'section', label: 'Expedition support' }, ...supportActions]
+            : []),
         ],
         back,
       );
@@ -1554,8 +1562,7 @@
       const returnHere = () => barracksCompanyMenu(b, back),
         rank = getGame().s.expeditionRank || 1,
         active = getGame().activeParty().length,
-        cap = getGame().barracksFieldCap(b),
-        fallen = getGame().s.party.filter((u) => u.hp <= 0).length;
+        cap = getGame().barracksFieldCap(b);
       openMenu(
         'Company',
         'Choose who travels with you.',
@@ -1591,17 +1598,6 @@
                 'Rescue Mira and train Expedition to Rank 2',
                 true,
               ),
-          ...(b.full
-            ? [
-                action(
-                  'Recovery',
-                  () => barracksRecoveryMenu(b, returnHere),
-                  fallen
-                    ? fallen + ' fallen · treat wounded or recover fallen'
-                    : 'Treat wounded · recover fallen',
-                ),
-              ]
-            : []),
         ],
         back,
       );
@@ -1706,6 +1702,15 @@
         [
           action('Local objectives', () => quests(true, returnHere)),
           barracksGatherAction(b, returnHere),
+          ...(b.full
+            ? [
+                action(
+                  'Resource expeditions',
+                  () => resourceExpeditionsMenu(b, returnHere),
+                  'Send a companion to recover leftover tribute from earlier cleared regions',
+                ),
+              ]
+            : []),
         ],
         back,
       );
@@ -1843,28 +1848,19 @@
       }
       const rank = getGame().s.expeditionRank || 1,
         returnHere = () => barracksMenu(b, back),
-        specialists = getGame().barracksSpecialists(),
-        exp = expeditionBarracksAction(b, back),
         tonic = barracksTonicAction(b, back),
-        respawnActions = barracksRespawnActions(b, () => barracksMenu(b, back)),
-        baseActions = [
-          ...barracksRecoveryActions(returnHere, b.id),
-          barracksGatherAction(b, returnHere),
-          ...(b.full
-            ? [
-                action(
-                  'Resource expeditions',
-                  () => resourceExpeditionsMenu(b, returnHere),
-                  'Send one companion to recover leftover tribute from earlier cleared regions',
-                ),
-              ]
-            : []),
+        // Both completed Barracks types share one service hierarchy.
+        // Full-only services remain discoverable in their matching category.
+        services = [
+          action('Company', () => barracksCompanyMenu(b, returnHere), 'Group, recruits and pets.'),
+          action('Recovery', () => barracksRecoveryMenu(b, returnHere), 'Heal or recover companions.'),
           action(
-            'Rescued specialists',
-            () => barracksSpecialistMenu(b, returnHere),
-            (specialists.length ? specialists.length + ' available here · ' : '') +
-              regionalSpecialistBarracksDetail(),
+            'Training',
+            () => barracksTrainingMenu(b, returnHere),
+            'Skills and rescued specialists.',
           ),
+          action('Operations', () => barracksOperationsMenu(b, returnHere), 'Quests and resources.'),
+          ...(tonic ? [tonic] : []),
           ...(getGame().peace && !getGame().s.finalRestCompleted
             ? [
                 action(
@@ -1876,33 +1872,14 @@
                 ),
               ]
             : []),
-          exp,
-          action(
-            'Skill journal',
-            () => skillBook(returnHere),
-            'Tap / charged effects and cooldowns',
-          ),
-          ...(tonic ? [tonic] : []),
-          ...respawnActions,
-          action(
-            'Company',
-            () => barracksCompanyMenu(b, returnHere),
-            'Recruit · active group · recovery',
-          ),
-          action(
-            'Operations',
-            () => barracksOperationsMenu(b, returnHere),
-            'Local objectives · resources and labor',
-          ),
         ];
       if (!b.full) {
         const upgrading = getGame()
             .activeLivingParty()
             .some((u) => u.order?.type === 'upgrade' && u.order.id === b.id),
-          canUpgrade = rank >= 4;
-        if (canUpgrade)
-          baseActions.push(
-            upgrading
+          canUpgrade = rank >= 4,
+          upgrade = canUpgrade
+            ? upgrading
               ? action(
                   'Full Barracks upgrade in progress',
                   () => {},
@@ -1920,48 +1897,17 @@
                   'Larger active groups and a supply deposit.',
                   !getGame().availableLabor().length ||
                     (!b.upgradePaid && getGame().hero.gold < getGame().barracksUpgradeCost()),
-                ),
-          );
-        else
-          baseActions.push(
-            action(
-              'Full Barracks — Expedition 4',
-              () => {},
-              'Larger active groups and a supply deposit.',
-              true,
-            ),
-          );
-        const upgrade = baseActions.at(-1);
+                )
+            : action(
+                'Full Barracks — Expedition 4',
+                () => {},
+                'Larger active groups and a supply deposit.',
+                true,
+              );
         openMenu(
           'Basic Barracks',
           'Your field base. Choose a service.',
-          [
-            action(
-              'Company',
-              () => barracksCompanyMenu(b, returnHere),
-              'Group, recruits and pets.',
-            ),
-            action(
-              'Recovery',
-              () => barracksRecoveryMenu(b, returnHere),
-              'Heal or recover companions.',
-            ),
-            action(
-              'Training',
-              () => barracksTrainingMenu(b, returnHere),
-              'Skills and rescued specialists.',
-            ),
-            action(
-              'Operations',
-              () => barracksOperationsMenu(b, returnHere),
-              'Quests and resources.',
-            ),
-            ...(tonic ? [tonic] : []),
-            ...(getGame().peace && !getGame().s.finalRestCompleted
-              ? [baseActions.find((a) => a.label === 'Rest here · Complete the journey')]
-              : []),
-            upgrade,
-          ],
+          [...services, upgrade],
           back,
         );
         return;
@@ -1979,58 +1925,42 @@
           (getGame().s.challenge.succession
             ? 'Succession deaths never cost crowns; class loss is the penalty.'
             : 'Local death loss drops to 5%, including regional dungeons.'),
-        baseActions,
+        services,
         back,
       );
     }
     function inventory(back = closeMenu, fromCharacter = false) {
-      const returnHere = () => inventory(back, fromCharacter);
+      const g = getGame(),
+        rangers = g.activeLivingParty().filter((u) => u.type === 'archer'),
+        support = rangers.length
+          ? rangers.length +
+            ' active · Heal ' +
+            g.rangerSupportAmount('health') +
+            ' HP.\nUse the Ranger Heal button. During cooldown, tap to queue hero healing. Automatic healing stays active.' +
+            (Campaign.rules.resourceMode.manaEnabled
+              ? '\nMana Recovery ' + g.rangerSupportAmount('mana') + ' MP.'
+              : '')
+          : 'Recruit a Ranger to unlock field Heal.',
+        tonics =
+          'Stored: ' +
+          g.preparationTonicStock() +
+          '\n' +
+          (g.hero.tonic
+            ? 'ACTIVE · +10% maximum HP until rest or defeat.'
+            : '+10% maximum HP until rest or defeat. Use at a completed Barracks.') +
+          (!g.s.rescued.archive ? '\nRescue Neri to buy tonics.' : '');
       openMenu(
         'Inventory',
-        'Crowns ' + Math.floor(getGame().hero.gold),
+        {
+          summary: 'Crowns ' + Math.floor(g.hero.gold),
+          sections: [
+            { title: 'Ranger support', text: support },
+            { title: 'Preparation Tonics', text: tonics },
+          ],
+        },
         [
-          action('Equipment', () => inventoryEquipment(returnHere), 'Weapons, armor and reforges.'),
-          action(
-            'Ranger support',
-            () => {
-              const g = getGame(),
-                rangers = g.activeLivingParty().filter((u) => u.type === 'archer');
-              openMenu(
-                'Ranger support',
-                rangers.length
-                  ? rangers.length +
-                      ' active · Heal ' +
-                      g.rangerSupportAmount('health') +
-                      ' HP.\nUse the Ranger Heal button. During cooldown, tap to queue hero healing. Automatic healing stays active.' +
-                      (Campaign.rules.resourceMode.manaEnabled
-                        ? '\nMana Recovery ' + g.rangerSupportAmount('mana') + ' MP.'
-                        : '')
-                  : 'Recruit a Ranger to unlock field Heal.',
-                [],
-                returnHere,
-              );
-            },
-            'Automatic healing and your Heal command.',
-          ),
-          action(
-            'Preparation Tonics',
-            () => {
-              const g = getGame();
-              openMenu(
-                'Preparation Tonics',
-                'Stored: ' +
-                  g.preparationTonicStock() +
-                  '\n' +
-                  (g.hero.tonic
-                    ? 'ACTIVE · +10% maximum HP until rest or defeat.'
-                    : '+10% maximum HP until rest or defeat. Use at a completed Barracks.') +
-                  (!g.s.rescued.archive ? '\nRescue Neri to buy tonics.' : ''),
-                [],
-                returnHere,
-              );
-            },
-            'Temporary maximum HP boost.',
-          ),
+          action('Equipment', () => inventoryEquipment(() => inventory(back, fromCharacter)),
+            'Weapons, armor and reforges.'),
           ...(openCharacter && !fromCharacter
             ? [action('Character and identity', openCharacter)]
             : []),
