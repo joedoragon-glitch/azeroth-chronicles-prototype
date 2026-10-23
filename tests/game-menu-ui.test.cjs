@@ -161,7 +161,7 @@ for (const language of ['en', 'es']) {
     );
     assert(row, 'missing volume row: ' + en);
     const input = row.children.find((child) => child.className === 'menu-setting-input');
-    const output = row.children.find((child) => child.tagName === 'OUTPUT');
+    const output = row.children[2];
     assert(input && output, 'volume slider and current percentage are both visible');
     return { input, output };
   };
