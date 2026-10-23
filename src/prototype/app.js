@@ -822,6 +822,16 @@
     Language: 'Idioma',
     'On ✓': 'Activado ✓',
     'Off ✓': 'Desactivado ✓',
+    'Keyboard presets': 'Distribuciones de teclado',
+    'Key bindings': 'Teclas asignadas',
+    'Movement and menu keys': 'Teclas de movimiento y menú',
+    'Skills and combat keys': 'Teclas de habilidades y combate',
+    'Companion and utility keys': 'Teclas de compañeros y utilidades',
+    'Touch controls': 'Controles táctiles',
+    'Mouse controls': 'Controles del ratón',
+    'Choose an action to change its key. Esc cancels.':
+      'Elige una acción para cambiar su tecla. Esc cancela.',
+    'Restore default keys': 'Restaurar teclas predeterminadas',
     'Phone layout': 'Disposición táctil',
     'Touch tap-to-move': 'Tocar para moverse',
     'Mouse click-to-move': 'Clic para moverse',
@@ -1694,6 +1704,8 @@
       'Controls',
       'Choose a topic or adjust your inputs.',
       [
+        action('Customize keyboard', () => keyboardMenu(back)),
+        action('Touch and mouse options', () => pointerMenu(back)),
         action('Movement and menus', () => {
           const keys = ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('/');
           openMenu(
@@ -1736,8 +1748,6 @@
             returnHere,
           ),
         ),
-        action('Customize keyboard', () => keyboardMenu(back)),
-        action('Touch and mouse options', () => pointerMenu(back)),
       ],
       back,
     );
@@ -1801,6 +1811,52 @@
       () => keyboardMenu(back),
     );
   }
+  // Keep the parent Back route stable across previews and key binding edits,
+  // so the shared menu foundation can restore the highlighted category.
+  const keyboardBackRoutes = new WeakMap();
+  const keyboardGroups = [
+    {
+      id: 'movement',
+      title: 'Movement and menu keys',
+      ids: ['up', 'down', 'left', 'right', 'confirm'],
+    },
+    {
+      id: 'combat',
+      title: 'Skills and combat keys',
+      ids: ['skill1', 'skill2', 'skill3', 'skill4', 'skill5', 'skill6', 'skill7', 'skill8', 'target', 'heal', 'mana'],
+    },
+    {
+      id: 'commands',
+      title: 'Companion and utility keys',
+      ids: ['doctrine', 'recall', 'map', 'training', 'skills', 'pause', 'help'],
+    },
+  ];
+  function keyboardBindingsMenu(group, back, returnToKeyboard = () => keyboardMenu(back)) {
+    const returnHere = () => keyboardBindingsMenu(group, back, returnToKeyboard);
+    const entries = input.actions
+      .filter(([id]) => group.ids.includes(id))
+      .map(([id, name]) => {
+        const item = action(name + ' · ' + input.key(id), () => {
+          openMenu(
+            'Bind ' + name,
+            'Press a new key for ' + name + '. Esc cancels.',
+            [],
+            returnHere,
+          );
+          bindingCapture = id;
+        });
+        // Labels change after binding, but this stable identity preserves
+        // the selected action when the player returns from key capture.
+        item.key = 'binding:' + id;
+        return item;
+      });
+    openMenu(
+      group.title,
+      'Choose an action to change its key. Esc cancels.',
+      entries,
+      returnToKeyboard,
+    );
+  }
   function keyboardMenu(back = systemMenu) {
     bindingCapture = null;
     const presetNames = {
@@ -1809,26 +1865,27 @@
       left: language === 'es' ? 'Mano izquierda + IJKL' : 'Left-hand skills + IJKL',
       custom: language === 'es' ? 'Personalizado' : 'Custom',
     };
+    if (!keyboardBackRoutes.has(back)) keyboardBackRoutes.set(back, () => help(back));
+    const returnToHelp = keyboardBackRoutes.get(back);
     openMenu(
       'Customize keyboard',
       language === 'es'
         ? 'Distribución: ' + presetNames[input.preferences.preset] + '. Elige una o cambia teclas.'
         : 'Layout: ' + presetNames[input.preferences.preset] + '. Choose a preset or rebind keys.',
       [
+        menuControls.section('Keyboard presets'),
         action('Right-hand skills (WASD) · Default', () => chooseKeyboardPreset('right', back)),
         action('Classic · number keys', () => chooseKeyboardPreset('classic', back)),
         action('Left-hand skills (IJKL)', () => chooseKeyboardPreset('left', back)),
-        ...input.actions.map(([id, name]) =>
-          action(name + ' · ' + input.key(id), () => {
-            openMenu('Bind ' + name, 'Press a new key for ' + name + '. Esc cancels.', [], () =>
-              keyboardMenu(back),
-            );
-            bindingCapture = id;
-          }),
+        menuControls.section('Key bindings'),
+        ...keyboardGroups.map((group) =>
+          action(group.title, () => keyboardBindingsMenu(group, back),
+            group.ids.filter((id) => input.actions.some(([candidate]) => candidate === id)).length +
+              ' actions'),
         ),
         action('Restore default keys', () => chooseKeyboardPreset('right', back)),
       ],
-      () => help(back),
+      returnToHelp,
     );
   }
   function pointerMenu(back = systemMenu) {
@@ -1840,25 +1897,33 @@
       runtime.reset();
       frameProfile.reset();
       updateHUD();
-      pointerMenu(back);
     };
     openMenu(
       'Touch and mouse options',
       'Choose your layout and movement controls.',
       [
-        action(
-          'Phone layout · ' + (p.phoneLayout === 'two-thumb' ? 'Two thumbs' : 'Left hand'),
-          () => select('phoneLayout', p.phoneLayout === 'two-thumb' ? 'left-hand' : 'two-thumb'),
+        menuControls.section('Touch controls'),
+        menuControls.select(
+          'Phone layout',
+          p.phoneLayout,
+          [
+            { value: 'two-thumb', label: 'Two thumbs' },
+            { value: 'left-hand', label: 'Left hand' },
+          ],
+          (value) => select('phoneLayout', value),
           'Two thumbs: movement left, skills right. Left hand: skills above the joystick.',
         ),
-        action(
-          'Touch tap-to-move · ' + (p.touchMove ? 'ON' : 'OFF'),
-          () => select('touchMove', !p.touchMove),
+        menuControls.toggle(
+          'Touch tap-to-move',
+          p.touchMove,
+          (enabled) => select('touchMove', enabled),
           'Tap reachable ground to move.',
         ),
-        action(
-          'Mouse click-to-move · ' + (p.mouseMove ? 'ON' : 'OFF'),
-          () => select('mouseMove', !p.mouseMove),
+        menuControls.section('Mouse controls'),
+        menuControls.toggle(
+          'Mouse click-to-move',
+          p.mouseMove,
+          (enabled) => select('mouseMove', enabled),
           manaEnabled
             ? 'When off, left click in the world commands Ranger Heal. Right click commands Mana Recovery.'
             : 'When off, left click in the world commands Ranger Heal.',
