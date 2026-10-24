@@ -1013,6 +1013,54 @@
     ' Rangers can also restore your mana.':
       ' Los exploradores también pueden restaurar tu maná.',
   });
+  // Fixed skill descriptions are technical help rather than author-final lore.
+  // Their ranks, costs and cooldowns still come from the English live rule path.
+  const spanishSkillSummaries = Object.freeze({
+    'Three normal strikes on the same foe build a finishing splash. Changing foes or waiting too long breaks the sequence; charging delivers a stronger strike.':
+      'Tres golpes normales contra el mismo enemigo preparan un remate de área. Cambiar de objetivo o esperar demasiado rompe la secuencia; cargar el ataque produce un golpe más fuerte.',
+    'Tap Sundering Strike: hit and weaken one enemy. Charge Holy Cleave: weaken a frontal group.':
+      'Toque: Golpe Hendidor daña y debilita a un enemigo. Carga: Tajo Sagrado debilita a un grupo frontal.',
+    'Tap Shield Stance: guard for 8s; basic attacks stop and other damage drops. Tap again to lower. Charge Shield Bash: push nearby enemies.':
+      'Toque: Postura de Escudo protege durante 8 s; detiene los ataques básicos y reduce el resto del daño infligido. Toca de nuevo para bajar el escudo. Carga: Golpe de Escudo empuja a enemigos cercanos.',
+    'Tap Judgment: a dodgeable holy shot strikes and taunts one foe. Charge Grand Judgment: hit and taunt a group. Boss specials keep their own targets.':
+      'Toque: Juicio lanza un disparo sagrado esquivable que hiere y provoca a un enemigo. Carga: Gran Juicio golpea y provoca a un grupo. Los ataques especiales de los jefes conservan sus objetivos.',
+    'Tap: holy area damage to 6 enemies. Charge Consecrated Wave: stronger holy damage and weaken up to 8.':
+      'Toque: daño sagrado de área a hasta 6 enemigos. Carga: Ola Consagrada causa más daño sagrado y debilita a un máximo de 8.',
+    'Tap Vanguard Rush: approach and strike. Charge Vanguard Impact: rush, then push nearby enemies.':
+      'Toque: Avance de Vanguardia se acerca y golpea. Carga: Impacto de Vanguardia se abalanza y luego empuja a enemigos próximos.',
+    'Tap: holy damage to 6 enemies. Charge Oath Strike: stronger holy damage and weaken up to 8.':
+      'Toque: daño sagrado a hasta 6 enemigos. Carga: Golpe del Juramento causa más daño sagrado y debilita a un máximo de 8.',
+    'Tap Sanctuary Oath: heal 15% and protect nearby allies with a 20% ward. Charge Last Bastion: heal 20%, grant 30% ward and weaken enemies. No immunity.':
+      'Toque: Juramento del Santuario cura un 15 % y protege a aliados próximos con una barrera del 20 %. Carga: Último Bastión cura un 20 %, concede una barrera del 30 % y debilita a enemigos. No concede inmunidad.',
+    'Tap Frost Bolt: damage and slow one foe for 2–2.2s. Charge Frost Burst: slow nearby enemies for 3.2–4.2s.':
+      'Toque: Proyectil de Escarcha daña y ralentiza a un enemigo durante 2–2,2 s. Carga: Explosión de Escarcha ralentiza a los enemigos próximos durante 3,2–4,2 s.',
+    'Tap Spell Interrupt: a dodgeable bolt cancels one warned attack on contact. Charge Silence Field: block special skills for enemies, you and companions inside.':
+      'Toque: Interrupción de Hechizo lanza un proyectil esquivable que cancela un ataque advertido si impacta. Carga: Campo de Silencio bloquea las habilidades especiales dentro de su área, tanto de enemigos como tuyas y de compañeros.',
+    'Tap Arcane Fracture: a dodgeable bolt damages and increases incoming damage to one foe. Charge Arcane Rupture: stronger vulnerability on a group; no stacking.':
+      'Toque: Fractura Arcana lanza un proyectil esquivable que daña y aumenta el daño recibido por un enemigo. Carga: Ruptura Arcana aplica una vulnerabilidad más fuerte a un grupo, sin acumulación.',
+    'Tap Force Pulse: knock back up to 6 enemies. Charge Force Wave: stronger push on up to 8. Neither slows.':
+      'Toque: Pulso de Fuerza empuja a un máximo de 6 enemigos. Carga: Ola de Fuerza empuja con más fuerza a un máximo de 8. Ninguna ralentiza.',
+    'Tap: a slowing magic shot. Charge: stronger focused beam and longer slow.':
+      'Toque: disparo mágico ralentizador. Carga: haz concentrado más potente y ralentización más duradera.',
+    'Tap Arcane Chain: strike up to 3 foes. Charge Chainstorm: stronger chain against up to 5. No slow.':
+      'Toque: Cadena Arcana alcanza hasta 3 enemigos. Carga: Tormenta de Cadenas causa más daño a un máximo de 5. No ralentiza.',
+    'Tap Astral Detonation: targeted blast, up to 5 foes. Charge Arcane Cataclysm: stronger blast, up to 7, with brief 25–29% vulnerability. No immunity.':
+      'Toque: Detonación Astral causa una explosión dirigida a hasta 5 enemigos. Carga: Cataclismo Arcano causa una explosión más fuerte a hasta 7 y una vulnerabilidad breve del 25–29 %. No concede inmunidad.',
+    'Tap Pinning Shot: two slowing arrows. Charge Pinning Volley: slow enemies along a line.':
+      'Toque: Disparo Fijador lanza dos flechas ralentizadoras. Carga: Descarga Fijadora ralentiza a los enemigos alineados.',
+    'Tap: heal yourself. Charge: heal you and wounded living companions. Neither revives the fallen.':
+      'Toque: te curas. Carga: te curas y curas a compañeros vivos heridos. Ninguna versión resucita a los caídos.',
+    'Tap Movement Haste: move 25% faster. Charge Companion Rally: nearby allies move 15–19% faster and use basic attacks 8–12% faster briefly.':
+      'Toque: Celeridad de Movimiento aumenta tu velocidad un 25 %. Carga: Arenga de Compañeros acelera brevemente el movimiento de aliados cercanos un 15–19 % y sus ataques básicos un 8–12 %.',
+    'Tap: hit up to 6 nearby enemies. Charge Arrow Rain: fire stronger slowing arrows at up to 8.':
+      'Toque: golpea hasta 6 enemigos cercanos. Carga: Lluvia de Flechas dispara proyectiles ralentizadores más fuertes contra hasta 8 enemigos.',
+    'Tap Repelling Shot: push one enemy with an arrow. Charge Repelling Volley: three arrows and a stronger final push; no haste.':
+      'Toque: Disparo Repelente empuja a un enemigo con una flecha. Carga: Descarga Repelente lanza tres flechas y termina con un empujón más fuerte; no concede celeridad.',
+    'Tap Piercing Arrow: one guard-piercing strike. Charge: stronger piercing strike plus slow.':
+      'Toque: Flecha Perforante realiza un ataque que atraviesa la guardia. Carga: golpe perforante más fuerte que también ralentiza.',
+    'Tap Hunter’s Salvo: arrows at up to 3 foes. Charge Grand Hunt: two arrows each at up to 5. Extra arrow against a lone foe; no piercing.':
+      'Toque: Salva del Cazador alcanza hasta 3 enemigos. Carga: Gran Cacería dispara dos flechas por enemigo contra hasta 5. Añade una flecha si hay un solo objetivo; no perfora.',
+  });
   // Technical lines are generated from current rules. Preserve every numeric
   // token and formula while translating recurring labels and explanations.
   const technicalPhrases = [
@@ -1066,6 +1114,8 @@
     if (typeof value !== 'string') return value;
     if (Object.prototype.hasOwnProperty.call(spanishReference, value))
       return spanishReference[value];
+    if (Object.prototype.hasOwnProperty.call(spanishSkillSummaries, value))
+      return spanishSkillSummaries[value];
     let result = value;
     // The approved author translations must remain byte-for-byte unchanged,
     // including named people, punctuation and paragraph breaks.
@@ -1080,6 +1130,8 @@
       protectedText.push(pair.es);
     }
     // Whole technical paragraphs are translated before any numerical labels.
+    for (const [english, spanish] of Object.entries(spanishSkillSummaries))
+      if (result.includes(english)) result = result.replaceAll(english, spanish);
     for (const [english, spanish] of Object.entries(spanishReference)) {
       if (english.length > 55 && result.includes(english))
         result = result.replaceAll(english, spanish);
