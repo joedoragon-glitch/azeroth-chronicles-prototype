@@ -2,27 +2,19 @@
 (function (root) {
   'use strict';
   // Archive prose belongs to the Keeper; shared encounter briefs are not dialogue.
+  // Keeper history: verbatim EN manuscript passages; ES is paired in Narration.approved.
   const keeperHistories = {
-    thorn:
-      "Thornfang learned Greenwood's paths as a Crown wilderness scout. His professional K9 training covers canine handling, recall, scent-work and pack welfare. Now he patrols the approaches to the winter estate with Mira, a paid instructor who is forbidden to leave. His patrol returns to the den when a fight breaks off. The tracks through the woods reveal more of his movements than he would like.",
-    crypt:
-      'The Lifebinder and I traveled with the Dark Lord long before these garrisons were built. His fields are Mortuary Science and Thanatology, and Architectural Conservation and Adaptive Reuse. His bindings do not restore the fallen to life: he makes them into aware, enduring skeletons. Together those arts keep the unfinished winter estate running. Borin builds and repairs there under compulsion.',
-    mire: 'Mirejaw knows the wetland channels better than my maps can show. His own mud slows pursuers and helps his wounds close. The fishing villages still work the waters beyond his reach; not every boat on the Marches answers to him.',
-    archive:
-      "I traveled in the Dark Lord's old company before I settled among these shelves. I am a scholar, a councillor, and, when my duties permit, a fisherman. They call me the Drowned Keeper because I drowned long ago. That happened before the flood now threatening my books; its cause remains unknown to me. Neri has the skill to preserve the damaged records.",
-    ridge:
-      'Ridge Tyrant is a skilled economist. As Master of Coin, he argues that regular wages, maintained roads and circulating crowns vindicate the ruler who provides them. His hired ridge archers guard the payroll and mineral caravans. Their contracts can carry them beyond the Frontier. I keep his accounts among the council records; the figures explain his confidence, though they do not settle every objection to his rule.',
-    mine: "I knew Garun the Firstborn as the Ogre Bastion of our old company and as the architect of roads, strongholds and settlements suited to the many peoples who live here. During one expedition he held a collapsing mountain gate long enough to save us. He chose the fitted stone body around his luminous heartstone: the angular shell, golden eyes and diamond core are his own design. He still serves on the council, though he would rather inspect a bridge than sit through another meeting about a building assignment. At Colossus Mine, Ogre wardens and Crown riders on armored direwolves provide security. The riders' bunks and the wolves' kennels occupy the same working quarters. Ridge Tyrant, his captain and the crews handle the accounts, currency and routine production. Garun is comfortably paid but must meet the Mine's costs. He spends his spare crowns on charming junk, clever useless machines, striking geometric objects and stark architectural experiments. Dara receives fair payment for repairs and unusual commissions, and can negotiate freedom within the Mine, but Garun still controls whether the smith may leave. He regards the Mine as his workshop, refuge, gallery and a manageable post. He trusts our old friend. If that friend fell, Garun's roads, strongholds and labor force would give him considerable power. I would expect him to shelter people by directing where they may safely go; whether they wished to remain within those protected corridors is another question.",
-    warlord:
-      'The Ashen Warlord governs the occupied Frontier and commands its Orc warbands. His guarded caravans, repaired crossings and provisioned checkpoints keep Emberwatch and the military road functioning. The patrols also demand obedience from the people rebuilding Burned Hamlet. He guards the approach to the unfinished air works at Abyss Bastion. Cinder Warlord inspects the roads on his behalf. My reports describe better trade and safer passage alongside levies, captive labor and military rule.',
-    abyss:
-      'I remember Veyrith carrying the Dark Lord on our travels. He remains a proud, disciplined and loyal purple dragon, convinced that aerial patrols and military superiority can secure peace. The hatchery, harness stations and unfinished launch platform at Abyss Bastion are preparations for a royal air force. The fleet he wants does not yet exist.',
-    citadel:
-      'Marshal Veyra joined our company as a coastal road warden, cosmetologist and regimental drillmaster. She taught Goblins, Ogres, Humans and other irregular fighters to hold a common line, follow shared drills and care for their uniforms and equipment. She has exacting opinions on grooming, architecture and military equipment. Functional work, she insists, should also be beautiful. She and Garun are good friends; I have heard enough of their discussions of workmanship and proportion to fill a small volume. Veyra serves the Dark Lord loyally and dreads politics. She doubts that she could govern better than he does. Yet her officers and garrisons could place the five provinces under her command if his throne stood empty. I suspect her answer to disorder would resemble a barracks writ large.',
-    cindermaw:
-      'The Dark Lord personally elevated Cindermaw for his skill in organizing Ash beasts and administering territory. Crownwatch, Ash Refuge, the Ruined Foundry and the roads and supply network fall under his ministry. The Crown provides food, shelter and safer travel while making residents dependent on its services. Cindermaw and Dreadmaw co-manage the whole Treasury; Dreadmaw guards the Inner Vault. Vera is paid for her work as Master Smith, but remains a captive. Payment does not give her the right to depart.',
-    darklord:
-      "I crossed the provinces in his company, through victories that left more than one village grieving. Then came the day when no further command told us where to go. He forged a peace in which rival peoples could trade. He now maintains it through levies, garrisons and captive labor. 'Freedom has a price,' he says. I have preserved that phrase with the rest of our records.",
+    thorn: "Thornfang trained as a Crown wilderness scout in professional canine handling, recall, scent work and pack welfare. He patrols the approaches to the Dark Lord's winter estate. Mira has accompanied these patrols as a paid instructor, though her service came without the freedom to leave. When a fight breaks off, he leads his pack toward the den. His tracks remain visible along the woodland paths.",
+    crypt: "The Lifebinder and I traveled with the Dark Lord long before these garrisons. His work combines mortuary science and thanatology with the conservation and reuse of buildings. His skeletons endure and remain aware; they are not living people restored to life. I refuse to confuse the two, particularly when I record their names and allegiances. The Lifebinder’s bindings sustain work on the still-unfinished winter estate; Borin was compelled to contribute to its construction.",
+    mire: "My maps show the Marches' principal waterways. Mirejaw knows bends and shallow channels they do not. His mud slows pursuers and helps his wounds close. Reedport and Fisher Camp still fish outside his territory; not every boat answers to him.",
+    archive: "I belonged to the Dark Lord’s traveling company before I settled in the Archive. These days I keep records, sit on the council and fish when my duties allow. I drowned long ago; that is how I came by my name. The flooding of these shelves is a later calamity, and its cause remains unknown to me. Neri knows what can be done to preserve the damaged books.",
+    ridge: "Ridge Tyrant can produce a figure for almost anything he argues: wages, repaired roads, minted crowns, caravans delivered. His title is Master of Coin; in practice, he directs the Crown’s economy and finances. Paying the specialists pressed into service was his proposal. They receive wages even when they cannot refuse the assignment. His contracted archers protect payrolls and mineral shipments, sometimes far beyond Ironroot. I keep copies of his accounts. One advantage of figures is that you can check them.",
+    mine: "I knew Garun the Firstborn as our Ogre Bastion. During one expedition he held a collapsing mountain gate long enough to save the company. Garun has designed roads, bridges and fortresses, but perhaps his most remarkable work was himself. He designed his own stone body, fitted around a luminous heartstone, with golden eyes, an angular shell and a separate diamond core. All his own work. He would still rather inspect a bridge than endure another council meeting about construction.\nAt Colossus Mine, Ogre wardens and Crown riders on armored direwolves guard the site; the riders' bunks and their mounts' kennels share the working quarters. Ridge Tyrant, his captain and the crews manage the Mine’s accounts, wages and daily production. Garun is well paid, though the Mine has expenses he must meet. He spends spare crowns on little machines, strange ornaments and architectural experiments. I confess I enjoy seeing what he brings back.\nThe Mine’s records show fair payment for Dara’s repairs and unusual commissions, alongside the limited movement she could negotiate and Garun’s power to deny her departure while captive. Garun trusts the Dark Lord and is comfortable here; the Mine is his workshop and refuge as much as his post. Should the throne stand empty, the roads, strongholds and labor under his control could make him powerful. I suspect he would try to keep people safe by directing their movement. Whether they would welcome such protection is another matter.",
+    warlord: "The Ashen Warlord commands the Orc warbands occupying the Frontier. Reports arriving here describe repaired crossings, supplied checkpoints and caravans reaching Emberwatch again. His patrols inspect the roads, collect Crown taxes and enforce military orders in occupied settlements. Work is paid; specialists recruited by force cannot simply walk away from their posts. Cinder Warlord inspects those routes for him. The approaches to Abyss Bastion’s unfinished air works remain guarded. Trade has resumed under military supervision.",
+    abyss: "I remember Veyrith carrying the Dark Lord during our travels: a purple dragon, proud, disciplined and loyal. I see no reason to think the years have made him less so. He defends the proposed royal air force fiercely, convinced that control of the sky can secure the peace below. The hatchery, harness stations and launch platform at Abyss Bastion are being prepared for that purpose. The platform is unfinished, and there is no completed fleet yet.",
+    citadel: "Veyra guarded the coastal roads before joining our company. She trained Goblins, Ogres, Humans and other irregular troops to drill together, maintain their equipment and take pride in their uniforms. Even as marshal, she still trains Crown soldiers herself. She still practices cosmetology; in her view, something useful should also look right. Garun shares her interest in design. I have heard their conversations on workmanship and proportion at length. She is loyal to the Dark Lord and wary of politics. Yet if his throne stood empty, her officers and disciplined garrisons could put the provinces under her command. I doubt she would enjoy governing them; a military administration might nevertheless be the result.",
+    cindermaw: "The Dark Lord appointed Cindermaw because he could organize Ash beasts and administer territory. Crownwatch, Ash Refuge, the Ruined Foundry, roads and supply lines fall under his ministry. These services provide food and shelter and employ paid workers. Some specialists serve by conscription, not choice. Cindermaw co-manages the Treasury with Dreadmaw, who guards its Inner Vault. The Treasury accounts record Vera’s wages as Master Smith and the restrictions imposed on her while captive. Those wages did not give her permission to leave.",
+    darklord: "I traveled with the Dark Lord through victories that some towns celebrated and others mourned. There came a day when the last command from outside never received a successor. He made his own decisions then. Rival peoples began trading under his peace, and Crown roads now link more of the realm. Those roads also carry soldiers, tax revenues and specialists pressed into paid service.\nHe says, ‘Freedom has a price.’ I wrote that down. The accounts record wages for posts whose occupants cannot freely refuse the assignment.",
   };
   const keeperOffices = {
     'supply-crown':
@@ -35,13 +27,10 @@
       "Cinder Warlord inspects the Frontier on the Ashen Warlord's behalf. He visits roads, work details and occupied settlements, enforcing orders while markets and repair crews continue their work. His Mandatory Overtime can press up to seven nearby workers into a fight. Without workers present, there is no one for him to order forward.",
   };
   const keeperProvinces = {
-    vale: "My Greenwood records begin with Millhaven, Orchard Hamlet and the working mill: woodland and farmland, with settled communities along the roads. The Forest Crypt is becoming the Dark Lord's unfinished winter estate under the Lifebinder's care. He was one of my old companions. His bindings give the fallen an enduring awareness rather than life; some skeletons still keep their own names and allegiances.",
-    highlands:
-      "The Dark Lord seized Ironroot's silver-bearing and copper-bearing mountains long ago. I receive the Master of Coin's accounts for the separate ore workings, wages, escorted shipments and Stonecross mint. The mint strikes crowns bearing the Dark Lord's portrait. Quarry Outpost keeps its old name, but the Crown discovered silver and copper in its host rock. Its mine workings and sorting yards supply the metals from which Stonecross strikes crowns; I record the metal content of each load against the mint’s output. In Stonecross people trade and raise families; some welcome regular payday, while others resent the Crown's ownership of the mountains. Wolves hunt the wild valleys. Ogres cook, work stone and play at their own hearths.",
-    frontier:
-      "My Frontier reports describe an old battlefield becoming inhabited country again. Red poppies bloom in disturbed ground. Grass and young pale-trunk trees spread over cool ash and abandoned blast scars, while ruins remain beside gardens and repair works. The ravine and the old battle sites still bear their wounds. Emberwatch and Burned Hamlet recover under the Dark Lord's military governor. Repaired crossings, patrols and provisions bring safety and trade; inspections, levies and captive labor remain compulsory. The Ruined Shrine barracks, forts, the night Stalkers' hold and the guarded road to Abyss Bastion are part of the same occupation.",
-    crown:
-      "I keep the council records for a kingdom whose services and coercion are closely bound. Crownwatch houses workers and maintains roads and guarded transport. The Citadel, Cindermaw's ministry and the barracks enforce its hierarchy. Beside the lava channels, secure exchangers and insulated flues carry volcanic heat to glass and ceramic kilns, drying rooms, public washing and winter rooms. The ruined foundry, crystal shelf and fortress roads serve paid workers as well as compulsory labor, levies, captive specialists and military rule. The war's end allowed much to recover. Those who live here do not all enjoy that recovery on the same terms.",
+    vale: "My Greenwood records begin with Millhaven, Orchard Hamlet and the working mill, among farms and woodland roads. At the Forest Crypt, the Lifebinder—one of my old companions—oversees the Dark Lord’s unfinished winter residence. He works with skeletons who endure and remain aware, although they are not alive again. Every skeleton retains an identity; some still use their former names and loyalties.",
+    highlands: "The Dark Lord seized Ironroot's silver-bearing and copper-bearing mountains long ago. Quarry Outpost retains its old name, though its workings now sort the ore sent to Stonecross. Silver and copper move separately under guard; the mint strikes crowns with the Dark Lord's portrait, and the Master of Coin records the wages and shipments. I compare incoming ore with the mint's output. Some residents welcome the reliable work. Others resent Crown ownership. Away from the roads, wolves hunt while Ogre households cook, work stone and gather at their hearths.",
+    frontier: "Reports from the Ashen Frontier describe red poppies on disturbed earth and pale-trunk saplings rising among cooled ash and old blast scars. Gardens are returning beside damaged walls; the ravine and old battle sites remain scarred. Emberwatch and Burned Hamlet rebuild under the Warlord’s rule. The repaired crossings carry food and trade, while inspections and taxes remain enforced. Specialists pressed into Crown service receive wages, but cannot refuse their appointments. The Ruined Shrine barracks, the forts, the night Stalkers’ hold and the guarded route to Abyss Bastion remain parts of that occupation.",
+    crown: "Crownwatch maintains homes, guarded transport and roads. The Citadel, Cindermaw's ministry and the barracks enforce Crown authority. Near the lava channels, heat exchangers and insulated flues carry volcanic warmth to glass and ceramic kilns, drying rooms, public baths and rooms used in winter. The Ruined Foundry and the fortress roads employ paid crews. At the Crystal Deposit, workers extract valuable crystals and prepare them for shipment. These are all part of the Crown's functioning economy. The records also list taxes and wages paid to specialists conscripted into posts they cannot refuse.",
   };
   // Shared short definitions feed the optional quick reference; the third field
   // is expanded only by the Keeper's existing "Show me the figures" path.
@@ -137,6 +126,10 @@
     ];
   }
   function sections(game, { D, R }) {
+    const approvedNarrative =
+      (typeof PrototypeNarration !== 'undefined'
+        ? PrototypeNarration
+        : require('./narration.js')).approved;
     const number = (value) => Math.round(value * 100) / 100,
       percent = (value) => number(value * 100),
       mana = R.resourceMode?.manaEnabled !== false,
@@ -651,25 +644,25 @@
         ['Cinder Warlord — Frontier inspector', keeperOffices['frontier-overseer']],
         [
           'Garun — the old roads',
-          'I remember Garun planning roads and defensible settlements before he chose the fitted stone body around his heart. His bridges still carry food and trade between the provinces. Dara is paid for repairs inside the Mine, but Garun retains the power to refuse departure.',
+          keeperHistories.mine,
         ],
         [
           'Veyrith — the unfinished sky',
-          'I remember Veyrith carrying the Dark Lord on our journeys. Abyss Bastion now has harness stations and a training ground, but the royal air fleet is unfinished. He wants enough patrols overhead that no enemy can surprise the roads below.',
+          keeperHistories.abyss,
         ],
         [
           'Veyra — the common drill',
-          'I watched Veyra teach Goblins, Ogres and Crown soldiers to hold one line, obey the same commands and care for their equipment. She and Garun both take craft seriously. Her disciplined Citadel could command the provinces if the throne stood empty.',
+          keeperHistories.citadel,
         ],
         [
           'Whose peace?',
-          'Reedport fish can reach inland markets, and Ironroot miners receive regular crowns. Those same guarded roads move levies and captive workers. The trade works. The people who keep it working do not all get to choose.',
+          approvedNarrative.K05.en,
         ],
         ...(game.s.throneClaimed
           ? [
               [
                 'The last mark — remembered at the throne',
-                'The Greenwood ledger held six signatures. I recorded the last command our company received from outside. Both records left one adventurer unaccounted for. At the throne, the last of seven marks answered you: you were our missing sixth companion.',
+                approvedNarrative.Throne_Keeper.en,
               ],
             ]
           : []),
@@ -679,7 +672,7 @@
         ],
         [
           'The Lantern Wraiths’ migration',
-          'The Lantern Wraiths left Ironroot when mining and mint production became intolerable. They now study in my Archive and help me with the records. I remind them to mind their lanterns. They resent the flooding; its cause remains unknown. Cindermaw and Dreadmaw have grown fond of them, and the feeling is mutual. They visit one another when their duties permit.',
+          approvedNarrative.K06.en,
         ],
       ],
     });
@@ -881,10 +874,8 @@
       topics: D.regions.map((region) => [
         region.name,
         region.id === 'march'
-          ? 'Reedport and Fisher Camp live by fishing, while Mirejaw, Reed Beasts and night Wraiths keep their own territories. I tend the records here and serve on the council; I fish when my duties permit. My old drowning gave me my name. The flood threatening these shelves came later, and I do not yet know its cause. Neri’s craft can preserve the damaged books; the volumes and restoration supplies outside show how much work remains.' +
-            (game.s.keeperEvidence
-              ? ' You have read my seal: I proposed capturing the specialists, and I traded another captive for Neri’s skill.'
-              : '')
+          ? approvedNarrative.R05.en +
+            (game.s.keeperEvidence ? '\n\n' + approvedNarrative.R05_append.en : '')
           : keeperProvinces[region.id],
       ]),
     });
@@ -895,7 +886,7 @@
         topics: [
           [
             'A prisoner for the Archive',
-            '“Yes. I proposed taking the specialists. When the lower shelves flooded, I traded another captive for Neri’s skill. You have read my seal. Keep these records dry, and I will put what I know to better use.”',
+            approvedNarrative.P05.en,
           ],
         ],
       });

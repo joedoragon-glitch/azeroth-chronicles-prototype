@@ -119,6 +119,20 @@
         for (const side of R.sideDungeons || [])
           if (side.lore && this.s.discovered[side.region + ':side-lore:' + side.id])
             entries.push({ text: side.lore, region: side.region });
+        // Reconstruct earned descriptions from existing v4 exploration facts,
+        // including saves made before their text had a visible notice.
+        for (const [region, site, id] of [
+          ['vale', 'goblin-camp', 'L01'],
+          ['march', 'mire-nests', 'L02'],
+          ['highlands', 'ogre-hearth', 'L03'],
+        ])
+          if (this.s.discovered[region + ':' + site])
+            entries.push({ text: Narration.approved[id].en, region, kind: 'narration' });
+        // The identity is never visible before claiming the actual throne.
+        if (this.s.throneClaimed)
+          entries.push({ text: Narration.approved.M01.en, region: 'crown', kind: 'milestone' });
+        if (this.s.finalRestCompleted)
+          entries.push({ text: Narration.approved.M02.en, region: this.definition().id, kind: 'milestone' });
         if (this.s.keeperEvidence)
           entries.push({
             text: 'The orders bear the Keeper’s seal. The plan to seize the specialists began among these shelves.',

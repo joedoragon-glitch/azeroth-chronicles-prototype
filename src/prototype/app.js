@@ -22,6 +22,7 @@
   } catch (_) {}
   document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
   const spanishText = {
+    'Crystal Deposit': 'Yacimiento de Cristales',
     'Critically wounded companions are keeping their distance.':
       'Los compañeros con heridas críticas están manteniendo la distancia.',
     'Safe attacks and skills remain available; retreat comes first.':
@@ -1067,7 +1068,31 @@
     'Got it': 'Entendido',
     'Close without resting.': 'Cerrar sin descansar.',
   });
+  // N1: Only the author's approved bilingual Chronicle pairs may supply this copy.
+  const approvedNarrative =
+    typeof PrototypeNarration !== 'undefined' ? PrototypeNarration.approved : null;
+  const chronicleTranslations = new Map(
+    (typeof PrototypeNarration !== 'undefined' ? PrototypeNarration : [])
+      .filter((entry) => entry && entry.es)
+      .map((entry) => [entry.text, entry.es]),
+  );
+  const narrativeTranslations = new Map(
+    Object.values(approvedNarrative || {}).map((pair) => [pair.en, pair.es]),
+  );
   function translateSegment(piece) {
+    if (chronicleTranslations.has(piece)) return chronicleTranslations.get(piece);
+    // Announcement index titles use a 64-character preview of the original card.
+    const chroniclePreview =
+      typeof PrototypeNarration !== 'undefined'
+        ? PrototypeNarration.find((entry) => entry?.es && entry.text.slice(0, 64) === piece)
+        : null;
+    if (chroniclePreview) return chroniclePreview.es.slice(0, 64);
+    // Earned dungeon/interior/landmark and ending previews also use the
+    // manuscript's Spanish words rather than truncating English mid-sentence.
+    const approvedPreview = Object.values(approvedNarrative || {}).find(
+      (pair) => pair.en.slice(0, 64) === piece,
+    );
+    if (approvedPreview) return approvedPreview.es.slice(0, 64);
     const ferryPassage = Campaign.rules.tidalFerryPassage;
     if (ferryPassage && piece.startsWith(ferryPassage))
       return spanishText[ferryPassage] + piece.slice(ferryPassage.length);
@@ -1198,6 +1223,14 @@
   function tr(value) {
     if (language !== 'es' || typeof value !== 'string') return value;
     if (Object.prototype.hasOwnProperty.call(spanishText, value)) return spanishText[value];
+    if (chronicleTranslations.has(value)) return chronicleTranslations.get(value);
+    if (narrativeTranslations.has(value)) return narrativeTranslations.get(value);
+    // Archive answers can append live, rule-derived figures to an approved
+    // historical passage. Replace ONLY the exact authored substring.
+    let localized = value;
+    for (const [en, es] of narrativeTranslations)
+      if (localized.includes(en)) localized = localized.replace(en, es);
+    if (localized !== value) return localized;
     return value
       .split('\n')
       .map((line) => line.split(' · ').map(translateSegment).join(' · '))
@@ -3147,10 +3180,7 @@
       'THE FORMER GUARDIANS\n\n' +
       Campaign.dungeonIds.map((id) => game.boss(id).name).join(' · ') +
       '\n\n' +
-      'THE OLD WAR IS OVER\n\n' +
-      'The creatures return to their homes.\n\n' +
-      'So I Became the Dark Lord’s Problem\n\n' +
-      'Thank you for playing.';
+      (language === 'es' ? approvedNarrative.M03.es : approvedNarrative.M03.en);
     openMenu('The Crown · Credits', credits, [
       action('Continue in the peaceful world', () => {
         game.s.endingAck = true;
@@ -5218,10 +5248,12 @@
             };
           }
           if (n.kind === 'warning') card.setAttribute('role', 'alert');
-          const full = n.text + (n.detail ? ' ' + n.detail : ''),
+          const displayedText =
+            n.kind === 'narration' || n.kind === 'milestone' ? tr(n.text) : n.text;
+          const full = displayedText + (n.detail ? ' ' + n.detail : ''),
             limit = shortPhone ? 130 : platform.mode === 'phone' ? 170 : 240,
             compact = full.length > limit;
-          card.textContent = compact ? full.slice(0, limit - 1).trimEnd() + '…' : n.text;
+          card.textContent = compact ? full.slice(0, limit - 1).trimEnd() + '…' : displayedText;
           if (compact) {
             const hint = document.createElement('small');
             hint.className = 'notice-detail';
