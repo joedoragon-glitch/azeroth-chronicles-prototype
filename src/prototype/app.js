@@ -717,8 +717,8 @@
     'Hide performance details': 'Ocultar detalles de rendimiento',
     'Adjust everything here without leaving this screen.':
       'Ajusta todo aquí sin salir de esta pantalla.',
-    'On by default. Skips up to two drawings under load; gameplay and warnings continue.':
-      'Activado por defecto. Omite hasta dos dibujos con carga; el juego y los avisos continúan.',
+    'On by default. Skips drawings under load; briefly pauses combat during critical slowdowns.':
+      'Activado por defecto. Omite dibujos con carga; pausa brevemente el combate si el rendimiento es crítico.',
     'Canvas 2D is the safe default. WebGL2 starts a 15-second Keep/Revert trial.':
       'Canvas 2D es la opción segura. WebGL2 inicia una prueba de 15 segundos para conservar o revertir.',
     'Local samples are diagnostic estimates, not verified display FPS.':
@@ -2955,7 +2955,7 @@
           runtime.reset();
           frameProfile.reset();
         },
-        'On by default. Skips up to two drawings under load; gameplay and warnings continue.',
+        'On by default. Skips drawings under load; briefly pauses combat during critical slowdowns.',
       ),
       menuControls.section('Graphics renderer'),
       menuControls.select(
