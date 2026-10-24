@@ -75,6 +75,13 @@ function bootstrap(store) {
   const store = storage(), original = savedCampaign(store, { barracks: true });
   const guard = Persistence.createRestartGuard({ storage: store, Campaign });
   guard.arm(original);
+  const loadedBeforeRestart = Campaign.restore(JSON.parse(store.getItem('azeroth-v4-normal')));
+  console.log('BARRACKS RECOVERY DEBUG', JSON.stringify({
+    savedSelection: original.s.barracksRespawn,
+    persistedSelection: loadedBeforeRestart.s.barracksRespawn,
+    loadedChosen: loadedBeforeRestart.selectedBarracksRespawn()?.barracks?.id,
+    storedBuildings: loadedBeforeRestart.s.zones.vale.buildings.filter(b => b.id === 'recovery-camp-test'),
+  }));
   const app = bootstrap(store), g = app.scope.Prototype.game;
   const chosenLanding = original.safe(815, 750);
   assert.deepEqual(position(g), [chosenLanding.x, chosenLanding.y],
