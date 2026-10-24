@@ -2197,12 +2197,19 @@
   function action(label, fn, detail = '', disabled = false, tutorialHighlight = false) {
     return { label, action: fn, detail, disabled, tutorialHighlight };
   }
+  function translateMenu(value) {
+    const localized = tr(value);
+    if (language === 'es' && menu?.view?.startsWith('archive-') &&
+        typeof PrototypeArchive !== 'undefined')
+      return PrototypeArchive.translateArchive(localized);
+    return localized;
+  }
   function openMenu(title, description = '', actions = [], back = closeMenu, options = {}) {
     const restored = menuPosition(title, back);
     bindingCapture = null;
     clearInput(true);
     gateDismissed = false;
-    menu = { title, description, actions, back };
+    menu = { title, description, actions, back, view: options.view || 'default' };
     $('modal').setAttribute(
       'data-view',
       options.view || (title === 'The Crown · Credits'
@@ -2232,10 +2239,10 @@
     menuIndex = 0;
     document.body.classList.add('menu-open');
     $('modal').hidden = false;
-    $('modal-title').textContent = tr(title);
+    $('modal-title').textContent = translateMenu(title);
     const descriptionHost = $('modal-description');
     descriptionHost.classList.toggle('skill-reference', structured);
-    descriptionHost.textContent = tr(structured ? description.summary || '' : description);
+    descriptionHost.textContent = translateMenu(structured ? description.summary || '' : description);
     if (structured) {
       for (const block of description.sections) {
         const section = document.createElement('section'),
@@ -2298,19 +2305,19 @@
       if (!entry.detail) return;
       const span = document.createElement('span');
       span.className = 'detail';
-      span.textContent = tr(entry.detail);
+      span.textContent = translateMenu(entry.detail);
       hostElement.append(span);
     };
     for (const [index, a] of menu.actions.entries()) {
       if (a.kind === 'section') {
         const heading = document.createElement('h3');
         heading.className = 'menu-section';
-        heading.textContent = tr(a.label);
+        heading.textContent = translateMenu(a.label);
         host.append(heading);
         if (a.detail) {
           const note = document.createElement('p');
           note.className = 'menu-section-detail';
-          note.textContent = tr(a.detail);
+          note.textContent = translateMenu(a.detail);
           host.append(note);
         }
         continue;
@@ -2336,7 +2343,7 @@
         row.className = 'menu-setting';
         const heading = document.createElement('span');
         heading.className = 'menu-setting-label';
-        heading.textContent = tr(a.label);
+        heading.textContent = translateMenu(a.label);
         row.append(heading);
         b = document.createElement(a.kind === 'slider' ? 'input' : 'select');
         b.className = 'menu-setting-input';
@@ -2375,7 +2382,7 @@
         host.append(row);
       } else {
         b = document.createElement('button');
-        b.textContent = tr(a.label);
+        b.textContent = translateMenu(a.label);
         b.disabled = a.disabled === true;
         b.classList.toggle('tutorial-highlight', !!a.tutorialHighlight);
         details(b, a);
