@@ -40,6 +40,13 @@ assert.equal(shown.description, Approved.P03.en);
 assert.equal(shown.view, 'archive-index');
 assert.deepEqual(shown.actions.map((a) => a.label), primary,
   'Eight scannable top-level shelves retain the approved hierarchy');
+const catalog = Archive.sections(c, { D: Campaign.data, R: Campaign.rules });
+assert.equal(catalog.length, 8);
+for (const shelf of catalog) {
+  const listing = shown.actions.find((a) => a.label === shelf.title);
+  assert(listing?.detail.includes(String(shelf.topics.length) + ' questions'),
+    shelf.title + ' shows a live, accurate topic count');
+}
 const go = (title) => {
   const action = shown.actions.find((a) => a.label === title);
   assert(action, title + ' visible on ' + shown.title);
