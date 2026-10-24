@@ -30,7 +30,7 @@ for (const language of ['en', 'es']) {
   assert.equal(scope.Prototype.input.actionFor('KeyZ'), 'map');
   assert.equal(scope.Prototype.input.actionFor('Tab'), 'doctrine');
   moveKey('KeyM');
-  assert(e.get('modal').hidden === false, 'M opens the map directly');
+  assert(elements.get('modal').hidden === false, 'M opens the map directly');
   assert(elements.get('modal-title').textContent.endsWith(' map'));
   assert(cancel.hidden, 'merely opening the map must not display Cancel');
   scope.Prototype.closeMenu();
