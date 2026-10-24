@@ -23,8 +23,16 @@
 - The functioning signal visually glows but does not become a gameplay signal system; a future world mechanic must be separately approved.
 - P04's facing pose is not proof of hands-on animation quality on phones. Actual mobile hardware/screen-reader verification remains separately scoped.
 
-## Validation
+## N1a implementation audit and validation — 24 October 2026
 
-- New `tests/n1a-scene-reconciliation.test.cjs` probes all four inspection routes, exact D04 fact gating and restored reading, old side-dungeon prop migration without shifting coordinates, distinctive scenery assets, and Neri's voluntary book pose.
-- Run only relevant affected tests plus `node scripts/build.cjs --check`. The comprehensive Pages/Playwright/device matrix is not authorized.
-- Automatic focused validation runs only on PRs targeting `main`; to obtain CI evidence for the stacked draft, temporarily point the draft to `main` for a focused run, then restore its proper N1 branch base before handoff. No deploy, release or merge.
+**Code complete in draft [PR #430](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/430), subject to physical scene/hardware review, not a published game release.** All five separate correspondence obligations are represented by real scene props, Neri's book-facing presentation, an inspectable D04 viewpoint, and exact author-approved reading delivery.
+
+- [Focused workflow #40084942437](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40084942437) **PASSED 19 selected relevant test files and `node scripts/build.cjs --check`**. Publishing was skipped; no full game/Playwright or physical-device matrix was invoked.
+- Independent author copy tests preserved all **53 EN/ES entries and three conditional supplements**, 13 Chronicle cards and 17 silent quest slots. N1's evidence, pact and throne gating remain intact.
+- `tests/n1a-scene-reconciliation.test.cjs` verified four configured inspectable locations, D04's first-entry confidentiality and inspect-only full reading, v4 snapshot restoration, stable geometry/decor IDs on legacy scenes, meaningful graphical prop coverage, and Neri's voluntary book-oriented pose.
+- `tests/sprites.test.cjs`, `tests/occlusion.test.cjs`, `tests/terrain-effects.test.cjs` and `tests/world-proportions.test.cjs` passed with the new scenery. No collision or combat implementation changes were made.
+- Focused workflow was run while the **draft** temporarily targeted `main` because repository Actions run automatically only for PRs into `main`. Immediately afterward PR #430 was retargeted to `narrative/n1-editorial-master-integration-20261024`, verified **mergeable_state: clean**. Therefore N1a does not land ahead of N1; the code tested is the N1a branch head.
+- Later documentation-only edits do not alter validated runtime or test source. A real premerge CI run against the eventual full integration base remains appropriate if release is separately authorized.
+
+**Limits / next stage:** The signal station works as a **visible illuminated beacon**, not a new signal-alert mechanic. The Shrine papers can be inspected but are not Keeper ledger evidence. The historical Goblin wage record is supported by purchased goods and receipts, not a new wages simulation. Neri actually turns to local books at restorative pauses; quality on phones is not visually certified. D04 exposes the approved private-quarters text only when the dressing-station vicinity is inspected, never from first entrance. A2–A5 Archive menu modernization is separate. Neither PR #428 nor #430 is merged or deployed.
+
