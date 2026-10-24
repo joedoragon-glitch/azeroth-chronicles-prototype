@@ -582,7 +582,9 @@ body[data-experience='phone'] #modal[data-view='map'] #modal-description canvas 
     margin: 0;
   }
   body[data-experience='phone'] #modal[data-view='map'] #modal-description canvas {
+    width: 100%;
     max-height: none;
+    margin-inline: 0;
   }
   body[data-experience='phone'] #modal[data-view='map'] #modal-actions {
     min-height: 0;
