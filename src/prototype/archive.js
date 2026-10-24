@@ -894,6 +894,16 @@
   // A4: interface/reference localization, separate from the FINAL author-approved
   // narrative. Never translate or paraphrase the locked manuscript in this map.
   const spanishReference = Object.freeze({
+
+    'A wounded or outmatched foe may use rogue tactics: withdraw toward allies, slow a pursuer, shove attackers away or rally defenders. Chase blindly and you may gather a larger fight. Ordinary foes still show their marked Rogue warning. Guardians, ringleaders, captains and bosses instead show a moving cast bar: use real cover, or break pursuit if they draw in more enemies. Goblin dust breaks direct targeting, but area attacks can still reach the goblin.':
+      'Un enemigo herido o superado puede recurrir a tácticas de retirada: buscar aliados, ralentizar a quien lo persigue, empujar a sus atacantes o reunir defensores. Perseguirlo sin cuidado puede atraer a más enemigos. Los adversarios comunes conservan su aviso marcado de táctica rebelde; guardianes, cabecillas, capitanes y jefes muestran una barra de preparación mientras se mueven. Busca cobertura real o rompe la persecución si llaman refuerzos. El polvo goblin impide fijar un objetivo directamente, pero los ataques de área pueden alcanzarlo.',
+    'The Lifebinder and I were recruited from the Barracks too. Our disciplines belonged to different companion classes from the Soldiers and Rangers who enlist there today. You have not yet studied those disciplines.':
+      'El Vinculador de Vida y yo también fuimos reclutados en el cuartel. Nuestras disciplinas pertenecían a clases de compañeros distintas de las de los soldados y exploradores que se alistan hoy. Todavía no has estudiado esas disciplinas.',
+    'Field tyrants can return as TRUE after two qualifying defeats; the Dark Lord after one. A dungeon guardian has a one-in-three chance to return early, decided once after its normal defeat. Awakening calls the remaining undefeated dungeon guardians in their late TRUE form. Expect a warband as well as a stronger foe.':
+      'Los tiranos de campo pueden volver en forma TRUE tras dos derrotas que cumplan los requisitos; el Dark Lord, tras una. Un guardián de mazmorra tiene una probabilidad de una entre tres de regresar antes, decidida una sola vez tras su derrota normal. El Despertar convoca a los guardianes restantes que aún no han sido derrotados en su forma TRUE tardía. Prepárate tanto para una tropa enemiga como para un rival más poderoso.',
+    'These figures belong to the creatures in places you have visited. Compare their level, maximum health and damage; guards, ringleaders and ranged creatures can differ.\n\n':
+      'Estas cifras corresponden a criaturas de lugares que ya has visitado. Compara su nivel, salud máxima y daño: los guardianes, cabecillas y combatientes a distancia pueden diferir.\n\n',
+
     'The Keeper’s shelves': 'Los estantes del Guardián',
     'Battle and protection': 'Combate y protección',
     'Conditions and recovery': 'Estados y recuperación',
