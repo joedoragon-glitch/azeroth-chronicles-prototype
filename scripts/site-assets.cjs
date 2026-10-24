@@ -63,7 +63,7 @@ const scripts = [
   'tools/webgl-pilot/native-sprite-adapter.js',
   'tools/webgl-pilot/pixi-scene-bridge.js',
   'tools/webgl-pilot/renderer-switch-guard.js',
-  ...['pixi-experimental', 'archive', 'skill-reference', 'menus', 'app'].map(
+  ...['pixi-experimental', 'archive', 'archive-reading', 'skill-reference', 'menus', 'app'].map(
     (name) => 'src/prototype/' + name + '.js',
   ),
 ];

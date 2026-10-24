@@ -3,6 +3,10 @@
   'use strict';
   const R = typeof PrototypeRules !== 'undefined' ? PrototypeRules : require('./rules.js');
   const D = typeof PrototypeData !== 'undefined' ? PrototypeData : require('./data.js');
+  const AuthorCopy =
+    (typeof PrototypeNarration !== 'undefined'
+      ? PrototypeNarration
+      : require('./narration.js')).approved;
   const clone = (x) => JSON.parse(JSON.stringify(x)),
     clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
     dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
@@ -690,9 +694,18 @@
         archiveRestorationTrips.set(n, trip);
       }
       if (trip.wait > 0) {
+        // Neri actually turns to the nearby books while restoring them. This
+        // visual pose is unrelated to her stock, training, pact and pathing.
+        const volumes = this.zone().props.filter(
+          (prop) => ['shelf', 'scroll-stack'].includes(prop.structure),
+        );
+        const nearest = volumes.sort((a, b) => dist(n, a) - dist(n, b))[0];
+        n.bookRestoring = !!nearest;
+        n.bookFacing = nearest && nearest.x < n.x ? -1 : 1;
         trip.wait = Math.max(0, trip.wait - dt);
         return;
       }
+      n.bookRestoring = false;
       const target = archiveRepairSites[trip.index];
       if (dist(n, target) < 4) {
         trip.index = (trip.index + 1) % archiveRepairSites.length;
@@ -833,6 +846,20 @@
           (n.id !== 'cage-thorn' || !this.s.rescued.thorn),
       );
     }
+    // Each of these three approved landmark discoveries has a real, stable site ID.
+    // Read from the existing v4 discovered map; no new save flags.
+    landmarkNarrative(id) {
+      return ({
+        'goblin-camp': AuthorCopy.L01.en,
+        'mire-nests': AuthorCopy.L02.en,
+        'ogre-hearth': AuthorCopy.L03.en,
+      })[id] || null;
+    }
+    announceLandmark(n) {
+      const prose = this.landmarkNarrative(n.id);
+      if (prose)
+        this.notice(prose, 8, '', 'narration', { scope: 'region', region: this.definition().id });
+    }
     siteDescription(n) {
       const z = this.zone(),
         guards = z.enemies.filter((e) => e.site === n.id && e.hp > 0 && !e.neutral).length,
@@ -885,11 +912,11 @@
         parts.push('Visit after dark and defeat two Lantern wraiths for Shadows After Sundown.');
       if (n.id === 'goblin-camp')
         parts.push(
-          'A working goblin roadside camp: bedding, cookfire and stolen goods show a raiding community that lives here between attacks.',
+          AuthorCopy.L01.en,
         );
       if (n.id === 'mire-nests')
         parts.push(
-          'Mire creatures nest, feed and wallow along this bank; the territory is habitat first and a danger to travelers second.',
+          AuthorCopy.L02.en,
         );
       if (n.id === 'wolf-den')
         parts.push(
@@ -897,7 +924,7 @@
         );
       if (n.id === 'ogre-hearth')
         parts.push(
-          'A rough ogre home camp with a communal hearth, stone seats and scavenged mining gear.',
+          AuthorCopy.L03.en,
         );
       if (n.id === 'orc-bivouac')
         parts.push(
@@ -2167,8 +2194,9 @@
           u.supportEffects = [];
         }
       this.s.finalRestCompleted = true;
-      this.notice('THE JOURNEY IS COMPLETE · CREDITS', 7);
-      this.say('At last, you can rest. The Crown is yours, and the war is over.');
+      // One-time author-final text is visible and recoverable via earned stories.
+      this.notice(AuthorCopy.M02.en, 8, '', 'milestone');
+      this.say(AuthorCopy.M02.en);
       this.event('finalRest', { source });
       return true;
     }
@@ -2845,11 +2873,16 @@
       if (dungeonLore && !this.s.discovered[loreKey]) {
         this.s.discovered[loreKey] = true;
         this.say(dungeonLore);
+        // Region-scoped quiet narration: full text remains in earned stories.
+        this.notice(dungeonLore, 8, '', 'narration', { scope: 'region', region: this.definition().id });
       }
       const side = this.sideDungeon();
       if (side && !this.s.discovered[side.region + ':side-lore:' + side.id]) {
         this.s.discovered[side.region + ':side-lore:' + side.id] = true;
-        if (side.lore) this.say(side.lore);
+        if (side.lore) {
+          this.say(side.lore);
+          this.notice(side.lore, 8, '', 'narration', { scope: 'region', region: side.region });
+        }
         this.event('sideInteriorDiscovery', { id: side.id, region: side.region });
       }
       this.syncTreasuryRecovery(this.zone());
@@ -2970,6 +3003,22 @@
         return true;
       }
       switch (npc.kind) {
+        case 'scene-detail': {
+          const descriptor = R.narrativeSceneInspections?.[this.zoneId]?.find(
+            (item) => item.id === npc.id && item.narrativeId === npc.narrativeId,
+          );
+          if (!descriptor || !this.zone().npcs.includes(npc)) return false;
+          // D04's private-quarters claim requires actual inspectable furniture.
+          if (npc.id === 'veyra-private-quarters') {
+            const furnishings = this.zone().props.find(
+              (prop) => prop.structure === 'citadel-vanity-quarters' &&
+                dist(prop, npc) < 180,
+            );
+            if (!furnishings) return false;
+            this.s.discovered['citadel:veyra-private-quarters-inspected'] = true;
+          }
+          return true;
+        }
         case 'cage':
           if (
             (npc.lore || npc.context) &&
@@ -3015,18 +3064,18 @@
           }
           this.s.throneClaimed = true;
           const remaining = dungeonIds.filter((id) => !this.s.true[id]).length;
-          // The six-mark ledger and Keeper's last-command account resolve
-          // when the player claims the actual throne. Current class and
+          // The approved seven-mark throne recognition is revealed only here.
+          // Current class and
           // prior TRUE-dungeon order do not change the lost companion fact.
           this.say(
-            'Seven marks are cut into the throne: one for the ruler, six for those who traveled beside him. Your hand fits the last worn mark. You remember the road, and the company. You were the missing sixth companion.',
+            AuthorCopy.M01.en,
           );
           this.say(
             remaining
               ? 'You claim the crown. ' + remaining + ' old powers still hold their dungeons.'
               : 'You claim the crown. The five former powers have already fallen.',
           );
-          this.notice('THE CROWN IS YOURS', 6.5);
+          this.notice(AuthorCopy.M01.en, 8, '', 'milestone');
           this.event('throneClaimed', { remaining });
           this.checkEnding();
           return true;
@@ -3061,10 +3110,13 @@
           return true;
         case 'resource':
           return this.gather(npc.id);
-        case 'landmark':
+        case 'landmark': {
+          const first = !this.s.discovered[this.definition().id + ':' + npc.id];
           this.discover(npc.id);
           this.say(this.siteDescription(npc));
+          if (first) this.announceLandmark(npc);
           return true;
+        }
         case 'exit': {
           const room = this.supplyRoom(),
             side = this.sideDungeon();
@@ -4020,7 +4072,10 @@
           if (dist(h, n) < 120) {
             const first = !this.s.discovered[this.definition().id + ':' + n.id];
             this.discover(n.id);
-            if (first) this.say(this.siteDescription(n));
+            if (first) {
+              this.say(this.siteDescription(n));
+              this.announceLandmark(n);
+            }
           }
         const [px, py] = D.ports[this.regionIndex()];
         if (dist(h, { x: px, y: py }) < 140) this.discover('port');

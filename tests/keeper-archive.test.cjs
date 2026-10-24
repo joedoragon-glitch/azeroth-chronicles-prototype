@@ -2,6 +2,7 @@
 const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine.js');
 const Menus = require('../src/prototype/menus.js');
+const AuthorCopy = require('../src/prototype/narration.js').approved;
 
 function menusFor(c, getGame = () => c) {
   let shown;
@@ -65,15 +66,17 @@ assert(c.keeperAvailable(), 'Normal defeat produces a captive Keeper');
 assert.equal(c.visibleNPCs().filter((n) => n.id === 'keeper-captive').length, 1);
 ui.menus.keeper();
 assert.equal(ui.shown().title, 'The Drowned Keeper');
-assert(ui.shown().description.includes('Free Neri'), 'Neri is required for the pact');
+assert.equal(ui.shown().description, AuthorCopy.P01.en, 'Exact pre-rescue Keeper copy');
 assert(!c.promiseKeeper(), 'Pact cannot begin while alchemist remains captive');
 assert(c.s.keys.archive && c.rescue('archive'), 'Free the existing specialist normally');
 ui.menus.keeper();
+assert.equal(ui.shown().description, AuthorCopy.P02.en, 'Exact pact offer after rescue');
 const pact = ui.shown().actions.find((a) => a.label.includes('Promise to protect'));
 assert(pact);
 pact.action();
 assert(c.s.keeperPact, 'Cooperation recorded');
 assert.equal(ui.shown().title, 'The Keeper’s shelves');
+assert.equal(ui.shown().description, AuthorCopy.P03.en, 'Exact approved shelf invitation');
 ui.shown()
   .actions.find((a) => a.label === 'Experience and discipline')
   .action();
@@ -112,6 +115,7 @@ const barracks = {
 copy.zone().buildings.push(barracks);
 const remote = menusFor(copy);
 remote.menus.barracksMenu(barracks);
+remote.shown().actions.find((a) => a.label === 'Training').action();
 const specialists = remote.shown().actions.find((a) => a.label === 'Rescued specialists');
 assert(specialists);
 specialists.action();
@@ -139,6 +143,7 @@ const activeTrue = copy
 assert.equal(activeTrue.length, 1, 'Exactly one TRUE Keeper');
 copy.enter('vale');
 remote.menus.barracksMenu(barracks);
+remote.shown().actions.find((a) => a.label === 'Training').action();
 remote
   .shown()
   .actions.find((a) => a.label === 'Rescued specialists')
@@ -241,6 +246,7 @@ for (const mode of ['normal', 'nightmare']) {
       recaptured.zone().buildings.push(base);
       const service = menusFor(recaptured);
       service.menus.barracksMenu(base);
+      service.shown().actions.find((a) => a.label === 'Training').action();
       service
         .shown()
         .actions.find((a) => a.label === 'Rescued specialists')

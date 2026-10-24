@@ -10,7 +10,7 @@ const manual = read('.github/workflows/pages.yml');
 const policy = read('AGENTS.md');
 const runner = read('.github/scripts/focused-ci.cjs');
 
-assert.match(auto,/^on:\n  push:\n    branches: \[main\]\n  pull_request:\n    branches: \[main\]/m,
+assert.match(auto,/^on:\n  push:\n    branches: \[main\]\n  pull_request:\n    # [^\n]+\n    branches: \[main, 'archive\/\*\*', 'narrative\/\*\*'\]/m,
   'ordinary updates use the focused workflow');
 assert.match(auto,/node \.github\/scripts\/focused-ci\.cjs/,
   'automatic CI must use selective local tests');

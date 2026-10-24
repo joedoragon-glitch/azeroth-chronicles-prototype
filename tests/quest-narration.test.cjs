@@ -2,6 +2,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const { createHash } = require('node:crypto');
 const Campaign = require('../src/prototype/engine.js');
 const prose = require('../src/prototype/narration.js');
 
@@ -31,15 +32,23 @@ assert.equal(quests.length, 30);
 const polishedKeeps = new Map([
   [
     20,
-    'Now the checkpoint makes sense. The convoy brings supplies, the repair yards keep wagons rolling, and the guards hold the crossing.',
+    "Supplies arrive with the convoy. Repair crews keep its wagons moving, and soldiers guard the ravine crossing on the way to the Ashen Warlord's checkpoint.",
   ],
   [
     21,
-    'Eren is free. The dragons bred at Abyss Bastion are meant for an army. Veyrith, the loyal Air Marshal, believes aerial supremacy will secure lasting peace.',
+    'Eren is free. At Abyss Bastion, dragons are being raised for a royal air force that does not yet exist. Veyrith fiercely defends the plan as the way to secure peace from above.',
   ],
 ]);
 const authored = prose.filter(Boolean);
 assert.equal(authored.length, 13, 'Only approved events are announced');
+// Locked English/Spanish transcription fingerprint from the 24 October editorial master DOCX.
+// Recompute against the owner's document; never revise this to legitimize invented prose.
+const transcription = authored.map((entry) => [entry.id, entry.text, entry.es]);
+assert.equal(
+  createHash('sha256').update(JSON.stringify(transcription)).digest('hex'),
+  'd26c0d5a85ddaf6cdf964c9026e3063594fe6ace256cd8759b2b6dc884447d45',
+  'N1 Chronicle wording must match all thirteen approved EN/ES pairs verbatim',
+);
 assert.equal(new Set(authored.map((x) => x.text)).size, authored.length);
 for (let i = 0; i < prose.length; i++) {
   const number = i + 1;
@@ -52,6 +61,9 @@ for (let i = 0; i < prose.length; i++) {
   assert(entry && typeof entry === 'object', 'Selected quest has a typed announcement');
   assert.equal(entry.kind, disposition === 'milestone' ? 'milestone' : 'narration');
   assert.equal(typeof entry.text, 'string');
+  assert.equal(entry.id, 'C' + String(number).padStart(2, '0'));
+  assert.equal(typeof entry.es, 'string');
+  assert(entry.es.length <= 180 && entry.es.length >= 45, 'Approved Spanish card length');
   assert(
     entry.text.trim().length >= 45 && entry.text.length <= 180,
     'Selected quest ' + number + ' remains compact',
@@ -69,9 +81,12 @@ for (const [quest, fact] of [
   [23, 'Ashen Warlord'],
   [29, 'Cindermaw'],
 ]) assert(prose[quest - 1].text.includes(fact), 'Approved quest ' + quest + ' gains grounded new canon');
-assert(prose[3].text.includes('six signatures') && !/sixth companion/i.test(prose[3].text),
-  'quest clue does not prematurely reveal the sixth companion');
-assert(prose[28].text.includes('Levies'), 'Crown payoff includes the real cost of welfare');
+assert(!/six signatures|sixth companion/i.test(prose[3].text),
+  'Retired six-signature clue stays absent from C04');
+assert(prose[3].text.includes('Every skeleton the Lifebinder creates retains its identity.'),
+  'Approved C04 preserves the identity of every skeleton');
+assert(prose[28].text.includes('The Crown also pays specialists drafted into service.'),
+  'C29 preserves paid compulsory appointments');
 
 for (let i = 0; i < quests.length; i++) {
   const c = new Campaign('normal', 'paladin', () => 0.9);
@@ -112,6 +127,13 @@ assert.equal(
   0,
   'Barracks tutorial does not narrate',
 );
+
+const app = fs.readFileSync(path.join(__dirname, '../src/prototype/app.js'), 'utf8');
+assert(app.includes('chronicleTranslations.has(value)'), 'Exact EN/ES Chronicle lookup is wired');
+assert(app.includes("n.kind === 'narration' || n.kind === 'milestone' ? tr(n.text) : n.text"),
+  "Active Chronicle notice uses the player’s language");
+assert(app.includes('chroniclePreview.es.slice(0, 64)'),
+  'Announcement index preview can use approved Spanish copy');
 
 const css = fs.readFileSync(path.join(__dirname, '../styles/prototype.css'), 'utf8');
 assert(css.includes('.notice-card.notice-narration'), 'Narration retains subdued styling');

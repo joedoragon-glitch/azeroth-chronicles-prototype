@@ -17,6 +17,10 @@
     requestName = () => {},
     openCharacter = null,
   }) {
+    // Author-final bilingual copy is a fixed source of text, not a rewrite prompt.
+    const approvedNarrative = (
+      typeof PrototypeNarration !== 'undefined' ? PrototypeNarration : require('./narration.js')
+    ).approved;
     function refugeIntro(site) {
       const owner = getGame(),
         zone = owner.zoneId,
@@ -617,57 +621,111 @@
       if (!getGame().keeperReadLedger()) return;
       openMenu(
         'The Keeper’s ledger',
-        '“I propose that we take the land’s specialists into our custody.\n\nLater entry: I have traded another captive for Neri. Her craft is needed to save the soaked records.”\n\n— Drowned Keeper',
+        approvedNarrative.P06.en,
         [action('Close the ledger', back)],
         back,
       );
     }
+    // A2/A3 Archive navigation: one stable callback tree per game and entry route.
+    // The shared menu history compares back-function identity and title; recreating
+    // these callbacks on every Back used to lose both selection and scroll position.
+    const archiveSessions = new WeakMap();
     function keeperTopics(back = closeMenu) {
       const game = getGame();
       if (!game.s.keeperPact || !game.keeperAvailable()) return;
-      const archive =
-        typeof PrototypeArchive !== 'undefined' ? PrototypeArchive : require('./archive.js');
-      const sections = archive.sections(game, { D, R: Campaign.rules });
-      function currentSection(title) {
-        const current = getGame();
-        if (current !== game || !current.s.keeperPact || !current.keeperAvailable()) {
+      let routes = archiveSessions.get(game);
+      if (!routes) {
+        routes = new Map();
+        archiveSessions.set(game, routes);
+      }
+      let session = routes.get(back);
+      if (!session) {
+        const archive =
+          typeof PrototypeArchive !== 'undefined' ? PrototypeArchive : require('./archive.js');
+        const shelfBacks = new Map(),
+          answerBacks = new Map();
+        const available = () => getGame() === game && game.s.keeperPact && game.keeperAvailable();
+        const allSections = () => archive.sections(game, { D, R: Campaign.rules });
+        const sectionByTitle = (title) => allSections().find((item) => item.title === title);
+        const guarded = () => {
+          if (available()) return true;
           back();
+          return false;
+        };
+        // Headings are visual scan aids, not new lore or additional shelf levels.
+        // They never enter the keyboard button order and cannot hide a topic.
+        function groupName(section, topicTitle, index) {
+          if (section.title === 'Adversaries and their attacks') {
+            if (index === 0) return 'The TRUE adversaries';
+            if (topicTitle === 'Creatures encountered') return 'Creatures encountered';
+            const boss = D.bosses.find((b) => b.name === topicTitle);
+            return boss?.kind === 'field' ? 'Field adversaries' : 'Dungeon guardians';
+          }
+          if (section.title === 'The Crown and its institutions')
+            return index < 7 ? 'Offices and governors' : 'People and records';
           return null;
         }
-        return archive.sections(current, { D, R: Campaign.rules }).find((s) => s.title === title);
+        function answer(sectionTitle, topicTitle, figures = false) {
+          if (!guarded()) return;
+          const topic = sectionByTitle(sectionTitle)?.topics.find(
+            ([title]) => title === topicTitle,
+          );
+          if (!topic || (figures && !topic[2])) return shelf(sectionTitle);
+          const id = sectionTitle + ':' + topicTitle;
+          if (!shelfBacks.has(sectionTitle))
+            shelfBacks.set(sectionTitle, () => shelf(sectionTitle));
+          if (!answerBacks.has(id)) answerBacks.set(id, () => answer(sectionTitle, topicTitle));
+          const actions = [];
+          if (!figures && topic[2])
+            actions.push(
+              action('Show me the figures', () => answer(sectionTitle, topicTitle, true)),
+            );
+          if (figures) actions.push(action('Return to the answer', answerBacks.get(id)));
+          actions.push(action('Another question', shelfBacks.get(sectionTitle)));
+          actions.push(action('All shelves', index));
+          openMenu(
+            topicTitle,
+            topic[figures ? 2 : 1],
+            actions,
+            figures ? answerBacks.get(id) : shelfBacks.get(sectionTitle),
+            { view: 'archive-reading', archiveSection: sectionTitle, archiveFigures: figures },
+          );
+        }
+        function shelf(sectionTitle) {
+          if (!guarded()) return;
+          const section = sectionByTitle(sectionTitle);
+          if (!section) return index();
+          const actions = [];
+          let previousGroup;
+          for (const [position, [title]] of section.topics.entries()) {
+            const group = groupName(section, title, position);
+            if (group && group !== previousGroup) actions.push({ kind: 'section', label: group });
+            previousGroup = group;
+            actions.push(action(title, () => answer(sectionTitle, title)));
+          }
+          openMenu(section.title, section.intro, actions, index, { view: 'archive-shelf' });
+        }
+        function index() {
+          if (!guarded()) return;
+          const sections = allSections();
+          openMenu(
+            'The Keeper’s shelves',
+            approvedNarrative.P03.en,
+            sections.map((section) =>
+              action(
+                section.title,
+                () => shelf(section.title),
+                section.intro + ' · ' + section.topics.length + ' questions',
+              ),
+            ),
+            back,
+            { view: 'archive-index' },
+          );
+        }
+        session = { index };
+        routes.set(back, session);
       }
-      function shelf(section) {
-        section = currentSection(section.title);
-        if (!section) return;
-        openMenu(
-          section.title,
-          section.intro,
-          section.topics.map(([title]) =>
-            action(title, () => {
-              function answer(figures = false) {
-                const current = currentSection(section.title);
-                const topic = current?.topics.find(([name]) => name === title);
-                if (!topic || (figures && !topic[2])) return;
-                const actions = [];
-                if (!figures && topic[2])
-                  actions.push(action('Show me the figures', () => answer(true)));
-                actions.push(action('Another question', () => shelf(current)));
-                openMenu(title, topic[figures ? 2 : 1], actions, () =>
-                  figures ? answer() : shelf(current),
-                );
-              }
-              answer();
-            }),
-          ),
-          () => keeperTopics(back),
-        );
-      }
-      openMenu(
-        'The Keeper’s shelves',
-        '“Ask what you please. These volumes have survived worse than idle questions.”',
-        sections.map((section) => action(section.title, () => shelf(section), section.intro)),
-        back,
-      );
+      session.index();
     }
     function keeper(back = closeMenu) {
       const game = getGame();
@@ -676,9 +734,7 @@
         const ready = game.keeperPactReady();
         openMenu(
           'The Drowned Keeper',
-          ready
-            ? '“I have lost enough to the water. Promise me you will keep these shelves standing and let Neri tend the records. Then I will share what I know.”'
-            : '“The pages are drowning. Free Neri, and then we may talk of saving them.”',
+          ready ? approvedNarrative.P02.en : approvedNarrative.P01.en,
           ready
             ? [
                 action('Promise to protect the Archive', () => {
@@ -732,10 +788,10 @@
       openMenu(
         n.name,
         n.presentation === 'archive-restorer'
-          ? '“I return by choice. The soaked pages still need drying, and the damaged shelves need care.” Neri offers her usual tonics and training here.'
+          ? approvedNarrative.P04.en
           : manaEnabled
-            ? 'Neri sells Preparation Tonics and trains permanent Ranger field support.'
-            : 'Neri sells Preparation Tonics and trains permanent Ranger Heal, companion vitality and discipline resets.',
+            ? approvedNarrative.P07.en
+            : approvedNarrative.P07_nomana.en,
         [
           { kind: 'section', label: 'Preparation Tonics' },
           action(
@@ -1853,13 +1909,21 @@
         // Full-only services remain discoverable in their matching category.
         services = [
           action('Company', () => barracksCompanyMenu(b, returnHere), 'Group, recruits and pets.'),
-          action('Recovery', () => barracksRecoveryMenu(b, returnHere), 'Heal or recover companions.'),
+          action(
+            'Recovery',
+            () => barracksRecoveryMenu(b, returnHere),
+            'Heal or recover companions.',
+          ),
           action(
             'Training',
             () => barracksTrainingMenu(b, returnHere),
             'Skills and rescued specialists.',
           ),
-          action('Operations', () => barracksOperationsMenu(b, returnHere), 'Quests and resources.'),
+          action(
+            'Operations',
+            () => barracksOperationsMenu(b, returnHere),
+            'Quests and resources.',
+          ),
           ...(tonic ? [tonic] : []),
           ...(getGame().peace && !getGame().s.finalRestCompleted
             ? [
@@ -1959,8 +2023,11 @@
           ],
         },
         [
-          action('Equipment', () => inventoryEquipment(() => inventory(back, fromCharacter)),
-            'Weapons, armor and reforges.'),
+          action(
+            'Equipment',
+            () => inventoryEquipment(() => inventory(back, fromCharacter)),
+            'Weapons, armor and reforges.',
+          ),
           ...(openCharacter && !fromCharacter
             ? [action('Character and identity', openCharacter)]
             : []),
