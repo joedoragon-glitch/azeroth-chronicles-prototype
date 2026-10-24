@@ -995,13 +995,33 @@ body.menu-open #developer-summon {
   outline-offset: 2px;
 }
 
-
 /* Contextual navigation controls belong to the live game shell. */
 /* A contextual route cancel control: the map/quest owns the guide, not the HUD. */
-#cancel-navigation-button{position:fixed;top:calc(88px + env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right));z-index:9;min-height:44px;max-width:148px;padding:8px 12px;border:1px solid #7db5a5;border-radius:9px;background:#102a32e8;color:#d7f6eb;font-size:12px;line-height:1.2;cursor:pointer;box-shadow:0 2px 10px #0006}
-#cancel-navigation-button:focus-visible{outline:3px solid #ffe2a0;outline-offset:2px}
-#cancel-navigation-button[hidden],body.menu-open #cancel-navigation-button{display:none}
-
+#cancel-navigation-button {
+  position: fixed;
+  top: calc(88px + env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  z-index: 9;
+  min-height: 44px;
+  max-width: 148px;
+  padding: 8px 12px;
+  border: 1px solid #7db5a5;
+  border-radius: 9px;
+  background: #102a32e8;
+  color: #d7f6eb;
+  font-size: 12px;
+  line-height: 1.2;
+  cursor: pointer;
+  box-shadow: 0 2px 10px #0006;
+}
+#cancel-navigation-button:focus-visible {
+  outline: 3px solid #ffe2a0;
+  outline-offset: 2px;
+}
+#cancel-navigation-button[hidden],
+body.menu-open #cancel-navigation-button {
+  display: none;
+}
 
 /* A2/A3 Keeper Archive: the existing eight shelves remain primary navigation.
    Reading panes can show the complete, unchanged author-approved narrative. */
@@ -1036,4 +1056,66 @@ body.menu-open #developer-summon {
 }
 #modal[data-view='archive-index'] #modal-actions .detail {
   line-height: 1.5;
+}
+
+/* Reflow the existing Archive copy without adding or rewriting its prose. */
+#modal[data-view='archive-reading'] #modal-description.archive-reference {
+  white-space: normal;
+}
+#modal-description.archive-reference section {
+  margin: 0 0 0.75rem;
+  padding: 0.65rem 0;
+}
+#modal-description.archive-reference h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1em;
+  overflow-wrap: anywhere;
+}
+#modal-description.archive-reference dl {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 0.45rem 1rem;
+}
+#modal-description.archive-reference dt,
+#modal-description.archive-reference dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+#modal-description.archive-reference dt:empty {
+  display: none;
+}
+#modal-description.archive-reference dt:empty + dd {
+  grid-column: 1 / -1;
+}
+#modal-description.archive-reference details {
+  padding: 0.65rem 0.8rem;
+  border: 1px solid #607b86;
+  border-radius: 0.4rem;
+}
+#modal-description.archive-reference summary {
+  cursor: pointer;
+  color: #efd299;
+}
+#modal-description.archive-reference summary:focus-visible {
+  outline: 2px solid #efd299;
+  outline-offset: 3px;
+}
+#modal-description.archive-reference details p {
+  padding-top: 0.65rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+#modal-description.archive-reference dt:empty + dd {
+  text-align: left;
+}
+#modal-description.archive-reference section.archive-prose {
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+#modal-description.archive-reference summary.selected {
+  outline: 2px solid #efd299;
+  outline-offset: 3px;
 }

@@ -626,9 +626,19 @@ body[data-experience='phone'] #modal-actions .menu-section-detail {
 }
 
 /* Keep route cancellation above the thumb-control area in both phone layouts. */
-body[data-experience='phone'] #cancel-navigation-button{top:calc(max(8px,env(safe-area-inset-top)) + 108px);right:max(8px,env(safe-area-inset-right));min-height:44px;max-width:132px;padding:7px 9px;font-size:11px}
-@media(max-height:450px) and (min-width:601px){body[data-experience='phone'] #cancel-navigation-button{top:calc(max(8px,env(safe-area-inset-top)) + 62px)}}
-
+body[data-experience='phone'] #cancel-navigation-button {
+  top: calc(max(8px, env(safe-area-inset-top)) + 108px);
+  right: max(8px, env(safe-area-inset-right));
+  min-height: 44px;
+  max-width: 132px;
+  padding: 7px 9px;
+  font-size: 11px;
+}
+@media (max-height: 450px) and (min-width: 601px) {
+  body[data-experience='phone'] #cancel-navigation-button {
+    top: calc(max(8px, env(safe-area-inset-top)) + 62px);
+  }
+}
 
 /* A3: long Keeper answers remain legible and scroll within the available viewport. */
 body[data-experience='phone'] #modal[data-view='archive-reading'],
@@ -654,4 +664,18 @@ body[data-experience='phone'] #modal[data-view='archive-reading'] #modal-actions
     max-height: calc(100dvh - 16px);
     bottom: 8px;
   }
+}
+
+body[data-experience='phone'] #modal-description.archive-reference dl {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.2rem;
+}
+body[data-experience='phone'] #modal-description.archive-reference dt:not(:empty) {
+  margin-top: 0.5rem;
+}
+body[data-experience='phone'] #modal-description.archive-reference dd {
+  margin: 0 0 0.35rem;
+}
+body[data-experience='phone'] #modal-description.archive-reference dd {
+  text-align: left;
 }

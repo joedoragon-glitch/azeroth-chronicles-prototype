@@ -169,7 +169,9 @@ jobs:
         if: steps.scope.outputs.docs_only != 'true' && needs.release-plan.outputs.reuse != 'true'
         env:
           QUEST_BROWSER_ENGINE: webkit
-        run: node tests/quest-archive-browser.test.cjs
+        run: |
+          node tests/quest-archive-browser.test.cjs
+          node tests/archive-a5-browser.test.cjs
       - name: Verify Community Snapshot pets and native procedural scenes in WebKit
         id: webkit_community
         continue-on-error: true
