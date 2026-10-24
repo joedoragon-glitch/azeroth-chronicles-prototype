@@ -5669,6 +5669,13 @@
   const rescueEscalation = {
     entries: [], phase: 0, beganAt: null, resetAt: null, lastHealthyAt: null,
   };
+  function clearEmergencyEscalation() {
+    rescueEscalation.entries = [];
+    rescueEscalation.phase = 0;
+    rescueEscalation.beganAt = null;
+    rescueEscalation.resetAt = null;
+    rescueEscalation.lastHealthyAt = null;
+  }
   function emergencyRecoveryDecision(now, recovering, simulating) {
     const e = rescueEscalation;
     e.entries = e.entries.filter(stamp => now - stamp < 20000);
@@ -5680,11 +5687,14 @@
       // A persistent near-freeze or repeated failed releases justifies
       // intervention. A single spike never resets a legitimate encounter.
       if (e.phase === 0 && (now - e.beganAt >= 5000 || e.entries.length >= 3)) {
-        if (game.emergencyResetEncounter()) {
-          e.phase = 1;
-          e.resetAt = now;
+        const reset = game.emergencyResetEncounter();
+        // A critical freeze can also happen without engaged enemies (terrain,
+        // GPU/driver trouble, huge scenery). No enemy reset is possible then,
+        // but prolonged failure must still reach the refuge fallback.
+        e.phase = 1;
+        e.resetAt = now;
+        if (reset)
           status('Critical slowdown: enemies disengaged and companions are withdrawing.');
-        }
       } else if (e.phase === 1) {
         game.emergencyAdvanceWithdrawal();
         const repeated = e.entries.filter(stamp => stamp >= e.resetAt).length >= 2;
@@ -5701,15 +5711,16 @@
     } else if (simulating) {
       e.beganAt = null;
       e.lastHealthyAt ??= now;
-      if (now - e.lastHealthyAt >= 20000) {
-        e.phase = 0;
-        e.resetAt = null;
-        e.entries = [];
-      }
+      if (now - e.lastHealthyAt >= 20000) clearEmergencyEscalation();
+    } else {
+      // User-initiated pause, modal, unfocused window and interrupted
+      // simulation should not accumulate wall time toward a forced relocation.
+      clearEmergencyEscalation();
     }
   }
   function frame(now) {
     if (document.hidden) {
+      clearEmergencyEscalation();
       frameSkip.suspend();
       renderResolution.suspend();
       runtime.suspend();
