@@ -61,6 +61,7 @@ const end = make();
 assert(!end.storyReadings().some((n) => n.text === A.M01.en), 'Throne secret stays gated');
 end.enter('crown');
 end.s.true.darklord = true;
+end.refreshNPCs(); // Throne is spawned by the existing post-TRUE lifecycle.
 end.zone().enemies.forEach((e) => { e.hp = 0; });
 const throne = end.zone().npcs.find((n) => n.id === 'dark-crown-throne');
 assert(throne, 'Actual throne exists');
