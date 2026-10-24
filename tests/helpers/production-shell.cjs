@@ -101,6 +101,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
     PrototypeCombatVisuals: 'combat-visuals',
     PrototypeAudio: 'audio',
     PrototypeNarration: 'narration',
+    PrototypeArchive: 'archive',
     PrototypeRules: 'rules',
   }))
     scope[name] = require('../../src/prototype/' + file);
