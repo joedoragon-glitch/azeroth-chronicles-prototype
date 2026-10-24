@@ -715,10 +715,14 @@
     Diagnostics: 'Diagnósticos',
     'Show performance details': 'Mostrar detalles de rendimiento',
     'Hide performance details': 'Ocultar detalles de rendimiento',
+    'Start crowd profiling': 'Iniciar medición de multitudes',
+    'Stop crowd profiling': 'Detener medición de multitudes',
+    'Capture crowded gameplay only, then export a playtest report.':
+      'Mide el juego con multitudes y luego exporta un informe de prueba.',
     'Adjust everything here without leaving this screen.':
       'Ajusta todo aquí sin salir de esta pantalla.',
-    'Optional experimental setting. Off for baseline tests; simulation and input continue.':
-      'Opción experimental. Desactivada para pruebas base; la simulación y los controles continúan.',
+    'On by default. Skips drawings under load; briefly pauses combat during critical slowdowns.':
+      'Activado por defecto. Omite dibujos con carga; pausa brevemente el combate si el rendimiento es crítico.',
     'Canvas 2D is the safe default. WebGL2 starts a 15-second Keep/Revert trial.':
       'Canvas 2D es la opción segura. WebGL2 inicia una prueba de 15 segundos para conservar o revertir.',
     'Local samples are diagnostic estimates, not verified display FPS.':
@@ -741,6 +745,18 @@
     'Adaptive frame skip': 'Salto adaptativo de fotogramas',
     'Skips some world drawings under load; gameplay and warnings continue.':
       'Omite algunos dibujos del mundo bajo carga; el juego y los avisos continúan.',
+    'Critical slowdown: combat paused while performance recovers. You can lower graphics in Settings.':
+      'Ralentización crítica: combate en pausa durante la recuperación. Puedes bajar los gráficos en Ajustes.',
+    'Previous session stopped unexpectedly. Returned to your refuge safely.':
+      'La sesión anterior se cerró inesperadamente. Regresaste a tu refugio con seguridad.',
+    'Previous session stopped unexpectedly. Returned to your barracks safely.':
+      'La sesión anterior se cerró inesperadamente. Regresaste a tu cuartel con seguridad.',
+    'Performance recovered: combat resumed.':
+      'Rendimiento recuperado: combate reanudado.',
+    'Critical slowdown: enemies disengaged and companions are withdrawing.':
+      'Ralentización crítica: enemigos retirados y compañeros replegándose.',
+    'Critical slowdown persists: returned to your recovery point without a defeat.':
+      'La ralentización continúa: regreso al punto de recuperación sin derrota.',
     'Performance details': 'Detalles de rendimiento',
     'Choose what to adjust.': 'Elige qué ajustar.',
     'Choose phone or desktop controls. Your save stays the same.':
@@ -1204,6 +1220,7 @@
   }
 
   const persistence = PrototypePersistence.create({ storage: localStorage, Campaign, status });
+  const restartGuard = PrototypePersistence.createRestartGuard({ storage: localStorage, Campaign });
   let profile = {
       nightmareUnlocked: false,
       activeMode: 'normal',
@@ -1413,6 +1430,20 @@
       loaded = true;
       save();
     } else game = new Campaign();
+  }
+  // An unclean active-session marker indicates the previous browser stopped
+  // before its normal shutdown. Keep validated campaign progress, but never
+  // restart inside the potentially frozen encounter.
+  if (loaded) {
+    const recovered = restartGuard.recover(game);
+    if (recovered) {
+      game = recovered;
+      save();
+      status(recovered.selectedBarracksRespawn()
+        ? 'Previous session stopped unexpectedly. Returned to your barracks safely.'
+        : 'Previous session stopped unexpectedly. Returned to your refuge safely.');
+    }
+    restartGuard.arm(game);
   }
   // Older completed peaceful saves retain their already-earned Nightmare
   // entitlement even if the local profile record was reset or imported.
@@ -1802,6 +1833,7 @@
       started &&
       !paused &&
       !menu &&
+      !frameSkip.emergency &&
       focused &&
       !document.hidden &&
       !game.s.challenge.pending &&
@@ -2553,6 +2585,7 @@
   function start(mode, heroClass, succession, heroName = null) {
     if (mode === 'developer' && !developerEnabled) return;
     if (mode === 'nightmare' && !profile.nightmareUnlocked) return;
+    restartGuard.clean();
     game = new Campaign(mode, heroClass, Math.random, { succession });
     if (heroName) game.nameHero(heroName);
     started = true;
@@ -2560,6 +2593,7 @@
     paused = false;
     if (mode !== 'developer') profile.activeMode = mode;
     save();
+    restartGuard.arm(game);
     closeMenu();
     updateHUD();
   }
@@ -2774,6 +2808,7 @@
                   ...pixiGame.status(),
                 },
                 frameProfile: frameProfile.report(),
+                crowdDiagnostics: game.crowdDiagnosticsReport(),
                 frameRatePreference: fps.preference,
                 frameRateTarget: fps.target,
                 frameSkip: frameSkip.status(),
@@ -2950,7 +2985,7 @@
           runtime.reset();
           frameProfile.reset();
         },
-        'Optional experimental setting. Off for baseline tests; simulation and input continue.',
+        'On by default. Skips drawings under load; briefly pauses combat during critical slowdowns.',
       ),
       menuControls.section('Graphics renderer'),
       menuControls.select(
@@ -2993,7 +3028,16 @@
             ...renderer.metrics(),
             measuredLayer: graphicsController.status().mode === 'webgl2'
               ? 'canvas-combat-overlay' : 'canvas-full-world',
-          }) + '\n\n' + frameProfile.describe(),
+          }) + '\n\n' + frameProfile.describe() + '\n\n' + game.crowdDiagnosticsDescribe(),
+        ),
+        action(
+          game.crowdDiagnosticsReport().recording ? 'Stop crowd profiling' : 'Start crowd profiling',
+          () => {
+            if (game.crowdDiagnosticsReport().recording) game.stopCrowdDiagnostics();
+            else game.startCrowdDiagnostics();
+            platformMenu(back);
+          },
+          'Capture crowded gameplay only, then export a playtest report.',
         ),
         action('Reset performance sample', () => {
           runtime.reset();
@@ -3173,12 +3217,14 @@
       if (candidate.s.mode === 'developer' && !developerEnabled)
         throw Error('Developer import disabled');
       persistence.writeCandidate(candidate);
+      restartGuard.clean();
       game = candidate;
       started = true;
       if (game.s.mode !== 'developer') profile.activeMode = game.s.mode;
       if (game.peace && game.s.finalRestCompleted && game.s.mode !== 'developer')
         profile.nightmareUnlocked = true;
       persistProfile();
+      restartGuard.arm(game);
       closeMenu();
       status('Imported successfully.');
     } catch (_) {
@@ -4945,12 +4991,13 @@
   addEventListener('blur', () => {
     focused = false;
     clearInput();
-    save();
+    if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
     audio.setPaused(true);
   });
   addEventListener('focus', () => {
     focused = true;
     last = performance.now();
+    if (started && !paused && !document.hidden) restartGuard.arm(game);
     checkAppUpdate().catch(() => {});
   });
   addEventListener('online', () => checkAppUpdate(true).catch(() => {}));
@@ -4960,13 +5007,16 @@
     if (document.hidden) {
       game.observeCrowdFrame(0, false);
       renderResolution.suspend();
-      save();
+      if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
       audio.setPaused(true);
-    } else checkAppUpdate().catch(() => {});
+    } else {
+      if (started && !paused && focused) restartGuard.arm(game);
+      checkAppUpdate().catch(() => {});
+    }
   });
   addEventListener('pagehide', () => {
     clearInput();
-    save();
+    if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
     audio.setPaused(true);
   });
   function updateCriticalNotice() {
@@ -5612,13 +5662,70 @@
     cancelNavigationButton.setAttribute('aria-label', tr('Cancel navigation'));
     updateCriticalNotice();
   }
+  let emergencyShown = false;
+  // Preserve the abnormal-session marker through a critical freeze, even if
+  // a delayed blur/pagehide event eventually fires during the shutdown.
+  let crashRecoveryPending = false;
+  const rescueEscalation = {
+    entries: [], phase: 0, beganAt: null, resetAt: null, lastHealthyAt: null,
+  };
+  function clearEmergencyEscalation() {
+    rescueEscalation.entries = [];
+    rescueEscalation.phase = 0;
+    rescueEscalation.beganAt = null;
+    rescueEscalation.resetAt = null;
+    rescueEscalation.lastHealthyAt = null;
+  }
+  function emergencyRecoveryDecision(now, recovering, simulating) {
+    const e = rescueEscalation;
+    e.entries = e.entries.filter(stamp => now - stamp < 20000);
+    if (recovering && !emergencyShown) {
+      e.entries.push(now);
+      e.beganAt = now;
+    }
+    if (recovering) {
+      // A persistent near-freeze or repeated failed releases justifies
+      // intervention. A single spike never resets a legitimate encounter.
+      if (e.phase === 0 && (now - e.beganAt >= 5000 || e.entries.length >= 3)) {
+        const reset = game.emergencyResetEncounter();
+        // A critical freeze can also happen without engaged enemies (terrain,
+        // GPU/driver trouble, huge scenery). No enemy reset is possible then,
+        // but prolonged failure must still reach the refuge fallback.
+        e.phase = 1;
+        e.resetAt = now;
+        if (reset)
+          status('Critical slowdown: enemies disengaged and companions are withdrawing.');
+      } else if (e.phase === 1) {
+        game.emergencyAdvanceWithdrawal();
+        const repeated = e.entries.filter(stamp => stamp >= e.resetAt).length >= 2;
+        if (now - e.resetAt >= 8000 || repeated) {
+          if (game.emergencyReturnToSafety()) {
+            e.phase = 2;
+            if (save()) restartGuard.arm(game);
+            frameSkip.suspend();
+            status('Critical slowdown persists: returned to your recovery point without a defeat.');
+          }
+        }
+      }
+      e.lastHealthyAt = null;
+    } else if (simulating) {
+      e.beganAt = null;
+      e.lastHealthyAt ??= now;
+      if (now - e.lastHealthyAt >= 20000) clearEmergencyEscalation();
+    } else {
+      // User-initiated pause, modal, unfocused window and interrupted
+      // simulation should not accumulate wall time toward a forced relocation.
+      clearEmergencyEscalation();
+    }
+  }
   function frame(now) {
-    syncPartyChargeClock();
     if (document.hidden) {
+      clearEmergencyEscalation();
       frameSkip.suspend();
       renderResolution.suspend();
       runtime.suspend();
       fps.suspend();
+      emergencyShown = false;
       last = now;
       requestAnimationFrame(frame);
       return;
@@ -5634,9 +5741,21 @@
       document.hidden ||
       game.s.challenge.pending ||
       game.s.challenge.gameOver;
-    game.observeCrowdFrame(intervalMs, !frozen);
-    if (typeof PrototypeSprites !== 'undefined') PrototypeSprites.advance(dt * 1000, !!frozen);
-    if (!frozen) progressTargetPress();
+    const recovering = !frozen && frameSkip.beginFrame(now, intervalMs);
+    if (recovering) crashRecoveryPending = true;
+    const simulating = !frozen && !recovering;
+    emergencyRecoveryDecision(now, recovering, simulating);
+    if (recovering !== emergencyShown) {
+      emergencyShown = recovering;
+      status(recovering
+        ? 'Critical slowdown: combat paused while performance recovers. You can lower graphics in Settings.'
+        : 'Performance recovered: combat resumed.');
+    }
+    // Keep the combat charge clock paused together with the simulation.
+    syncPartyChargeClock();
+    game.observeCrowdFrame(intervalMs, simulating);
+    if (typeof PrototypeSprites !== 'undefined') PrototypeSprites.advance(dt * 1000, !simulating);
+    if (simulating) progressTargetPress();
     if (menu) {
       menuJoyTime -= dt;
       if (Math.abs(joy.y) > 0.4 && menuJoyTime <= 0 && buttons.length) {
@@ -5663,14 +5782,14 @@
         }
       : null;
     const audioAt = stageTimes ? performance.now() : 0;
-    audio.update(game, paused || !focused || document.hidden, {
+    audio.update(game, paused || !focused || document.hidden || recovering, {
       menu: !!menu,
       backgrounded: !focused || document.hidden,
-      paused,
+      paused: paused || recovering,
       started,
     });
     if (stageTimes) stageTimes.audioUpdateMs = performance.now() - audioAt;
-    if (!frozen) {
+    if (simulating) {
       let x = (keys.right ? 1 : 0) - (keys.left ? 1 : 0) + joy.x,
         y = (keys.down ? 1 : 0) - (keys.up ? 1 : 0) + joy.y;
       if (joy.x || joy.y) {
@@ -5690,6 +5809,7 @@
         };
       const simulationAt = performance.now(),
         marks = {};
+      game.crowdDiagnosticsBeginFrame();
       game.tick(dt, {
         x,
         y,
@@ -5698,6 +5818,7 @@
           marks[stage] = performance.now();
         },
       });
+      game.crowdDiagnosticsEndFrame();
       stageTimes.simulationMs = performance.now() - simulationAt;
       if (marks.partyStart !== undefined && marks.partyEnd !== undefined)
         stageTimes.companionAIMs = Math.max(0, marks.partyEnd - marks.partyStart);
@@ -5749,7 +5870,7 @@
     const eventAt = stageTimes ? performance.now() : 0;
     const events = game.effects.splice(0);
     renderer.queue(events);
-    renderer.update(frozen ? 0 : dt);
+    renderer.update(simulating ? dt : 0);
     for (const e of events) {
       audio.effect(e);
       if (e.type === 'chargeInterrupted' && e.target === 'hero')
@@ -5793,7 +5914,7 @@
       successionMenu();
     if (game.s.challenge.gameOver && !gateDismissed && !menu) gameOver();
     if (game.peace && game.s.finalRestCompleted && !game.s.endingAck && !menu) ending();
-    hudTimer += dt;
+    if (simulating) hudTimer += dt;
     if (hudTimer > 0.15) {
       hudTimer = 0;
       const hudAt = stageTimes ? performance.now() : 0;
@@ -5801,17 +5922,7 @@
       if (stageTimes) stageTimes.hudMs = performance.now() - hudAt;
     }
     if (!frozen) {
-      // Protect urgent cues even when the ordinary FPS limiter skips this callback.
-      if (
-        events.some(
-          (e) =>
-            e.type === 'warning' ||
-            e.type === 'eliteWarning' ||
-            e.type === 'chargeInterrupted' ||
-            e.type === 'death',
-        )
-      )
-        frameSkip.protect(now);
+      // Combat cues keep advancing; drawing eligibility never depends on warnings.
       const eligibleDraw = fps.shouldDraw(now);
       const adaptiveSkipped = eligibleDraw && frameSkip.shouldSkip(now, fps.target);
       const draw = eligibleDraw && !adaptiveSkipped;
@@ -5833,7 +5944,7 @@
           fps.suspend();
         }
       }
-      fps.observe(now, performance.now() - frameStart, draw);
+      fps.observe(now, performance.now() - frameStart, draw, adaptiveSkipped);
       const frameWorkMs = performance.now() - frameStart;
       frameSkip.observe(now, frameWorkMs, stageTimes.renderMs, draw);
       const otherSimulationMs = Math.max(
@@ -5857,11 +5968,15 @@
       });
     } else {
       frameSkip.suspend();
+      emergencyShown = false;
       renderResolution.suspend();
       fps.suspend();
       runtime.suspend();
       if (runtime.shouldDrawIdle(now)) drawWorld();
     }
+    // Only a successfully completed ordinary simulation frame clears the
+    // critical-recovery marker. Stale image probes alone cannot certify it.
+    if (simulating) crashRecoveryPending = false;
     requestAnimationFrame(frame);
   }
   if (Sprint.enabled) {

@@ -34,6 +34,10 @@ const groups = [
     TEST+'ci-focus-policy.test.cjs',TEST+'ci-scope.test.cjs'] },
   { match: /^scripts\/(?:build|site-assets|vendor-pixi)\.(?:cjs|js)$|^templates\//, tests: [
     TEST+'asset-packaging.test.cjs'] },
+  // Versioned PWA assets need the deployable package and offline cache
+  // regressions, not the generic architecture-only fallback.
+  { match: /^(?:package(?:-lock)?\.json|sw\.js|src\/prototype\/build-info\.js)$/, tests: [
+    TEST+'pwa-release-id.test.cjs', TEST+'service-worker.test.cjs'] },
 ];
 const eligible = (file) => /\.(?:js|cjs|mjs|json|css|html|webp|png|svg|mp3|ogg|yml|yaml)$/.test(file);
 const relevant = (file) => file.startsWith('src/') || file.startsWith('tools/') ||

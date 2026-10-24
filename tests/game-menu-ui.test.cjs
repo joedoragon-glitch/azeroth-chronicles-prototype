@@ -130,13 +130,13 @@ for (const language of ['en', 'es']) {
     assert.equal(storage.get(s.PrototypeRuntime.fpsPreferenceKey), value);
     if (value === '20') assert.equal(s.Prototype.fps.target, 20);
   }
-  assert.equal(s.Prototype.frameSkip.enabled, false, 'Off by default');
-  click(t('Adaptive frame skip', 'Salto adaptativo de fotogramas'));
-  assert.equal(s.Prototype.frameSkip.enabled, true);
-  assert.equal(storage.get(s.PrototypeRuntime.frameSkipPreferenceKey), 'on');
+  assert.equal(s.Prototype.frameSkip.enabled, true, 'On by default');
   click(t('Adaptive frame skip', 'Salto adaptativo de fotogramas'));
   assert.equal(s.Prototype.frameSkip.enabled, false);
   assert.equal(storage.get(s.PrototypeRuntime.frameSkipPreferenceKey), 'off');
+  click(t('Adaptive frame skip', 'Salto adaptativo de fotogramas'));
+  assert.equal(s.Prototype.frameSkip.enabled, true);
+  assert.equal(storage.get(s.PrototypeRuntime.frameSkipPreferenceKey), 'on');
 
   click(t('Show performance details', 'Mostrar detalles de rendimiento'));
   title('Screen and performance', 'Pantalla y rendimiento');

@@ -5,6 +5,35 @@
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     // Runtime-only broad phase and congestion clocks. Never persist crowd state.
     const crowds = new WeakMap();
+    // Opt-in and unsaved. Install wrappers on this campaign instance only so
+    // disabled diagnostics add zero overhead to production collision methods.
+    const diagnosticSessions = new WeakMap();
+    const diagnosticMetrics = [
+      'moveCalls', 'moveMs', 'moveSegmentCalls', 'segmentCalls', 'segmentMs',
+      'segmentPoints', 'blockedCalls', 'blockedMs', 'actorStepCalls', 'actorStepMs',
+      'nearbyActorHits', 'separationCalls', 'separationMs', 'separationBodies',
+      'separationSegments', 'routeCalls', 'routeMs', 'actors', 'maxCellBodies',
+    ];
+    const diagnosticNow = () => performance.now();
+    function diagnosticSummary(values) {
+      if (!values.length) return { samples: 0, mean: 0, p95: 0, max: 0 };
+      const sorted = values.slice().sort((a, b) => a - b);
+      const round = x => Math.round(x * 100) / 100;
+      return { samples: values.length,
+        mean: round(values.reduce((a, b) => a + b, 0) / values.length),
+        p95: round(sorted[Math.floor((values.length - 1) * 0.95)]),
+        max: round(sorted.at(-1)) };
+    }
+    const watchedMethods = [
+      ['move', 'moveCalls', 'moveMs'],
+      ['clearSegment', 'segmentCalls', 'segmentMs'],
+      ['blocked', 'blockedCalls', 'blockedMs'],
+      ['actorStepAllowed', 'actorStepCalls', 'actorStepMs'],
+      ['separateActors', 'separationCalls', 'separationMs'],
+      ['route', 'routeCalls', 'routeMs'],
+      ['nearbyActors', null, null],
+      ['actorCrowd', null, null],
+    ];
     const crowdPressure = new WeakMap(),
       terrainTrips = new WeakMap();
     const patrolResumes = new WeakMap();
@@ -13,6 +42,99 @@
       laborThreatFrames = new WeakMap(),
       unsupportedPursuits = new WeakSet();
     class Navigation {
+      startCrowdDiagnostics() {
+        const existing = diagnosticSessions.get(this);
+        if (existing?.recording) return;
+        const session = existing || { rows: [], originals: [] };
+        session.rows = [];
+        session.current = null;
+        session.recording = true;
+        diagnosticSessions.set(this, session);
+        for (const [name, count, elapsed] of watchedMethods) {
+          const hadOwn = Object.hasOwn(this, name),
+            original = this[name];
+          session.originals.push({ name, hadOwn, original });
+          // Capture the original implementation. No wrapper remains after Stop.
+          this[name] = function (...args) {
+            const row = session.current;
+            if (!row) return original.apply(this, args);
+            if (count) row[count]++;
+            const started = elapsed ? diagnosticNow() : 0;
+            const beforeSegments = row.segmentCalls;
+            const beforeBlocked = row.blockedCalls;
+            let result;
+            try { result = original.apply(this, args); }
+            finally {
+              if (elapsed) row[elapsed] += diagnosticNow() - started;
+              if (name === 'move') row.moveSegmentCalls += row.segmentCalls - beforeSegments;
+              if (name === 'clearSegment') row.segmentPoints += row.blockedCalls - beforeBlocked;
+              if (name === 'separateActors') row.separationSegments += row.segmentCalls - beforeSegments;
+            }
+            if (name === 'nearbyActors') row.nearbyActorHits += result.length;
+            if (name === 'actorCrowd') {
+              row.actors = Math.max(row.actors, result.bodies.length);
+              for (const bin of result.bins.values())
+                row.maxCellBodies = Math.max(row.maxCellBodies, bin.size);
+              // The number of collision bodies the separation phase evaluates.
+              // Only count the refresh that starts passive separation.
+              if (args[0] === true) row.separationBodies += result.bodies.length;
+            }
+            return result;
+          };
+        }
+      }
+      stopCrowdDiagnostics() {
+        const session = diagnosticSessions.get(this);
+        if (!session?.recording) return;
+        session.current = null;
+        session.recording = false;
+        for (const { name, hadOwn, original } of session.originals) {
+          if (hadOwn) this[name] = original;
+          else delete this[name];
+        }
+        session.originals = [];
+      }
+      crowdDiagnosticsBeginFrame() {
+        const session = diagnosticSessions.get(this);
+        if (!session?.recording) return;
+        session.current = Object.fromEntries(diagnosticMetrics.map(key => [key, 0]));
+      }
+      crowdDiagnosticsEndFrame() {
+        const session = diagnosticSessions.get(this);
+        if (!session?.current) return;
+        session.rows.push(session.current);
+        if (session.rows.length > 120) session.rows.shift();
+        session.current = null;
+      }
+      crowdDiagnosticsReport() {
+        const session = diagnosticSessions.get(this);
+        const rows = session?.rows || [], metrics = {};
+        for (const key of diagnosticMetrics)
+          metrics[key] = diagnosticSummary(rows.map(row => row[key]));
+        return {
+          recording: !!session?.recording,
+          sampledSimulationTicks: rows.length,
+          sampleLimit: 120,
+          metrics,
+          note: 'Opt-in, device-local only. Timed movement, blocked, route and separation calls are nested and include observation overhead; do not add these timings or treat them as physical FPS. Only active gameplay ticks are sampled.',
+        };
+      }
+      crowdDiagnosticsDescribe() {
+        const r = this.crowdDiagnosticsReport(), m = r.metrics;
+        if (!r.sampledSimulationTicks)
+          return 'Crowd diagnostics: no active gameplay ticks recorded. Start sampling, return to the game, and approach a crowded fight.';
+        return 'Crowd diagnostics · ' + r.sampledSimulationTicks + ' ticks' +
+          (r.recording ? ' (recording)' : '') +
+          '\\nMove ms mean/p95 ' + m.moveMs.mean + '/' + m.moveMs.p95 +
+          ' · separation ' + m.separationMs.mean + '/' + m.separationMs.p95 +
+          ' · route ' + m.routeMs.mean + '/' + m.routeMs.p95 +
+          '\\nCalls/tick mean: move ' + m.moveCalls.mean +
+          ', blocked ' + m.blockedCalls.mean +
+          ', segment samples ' + m.segmentPoints.mean +
+          ', nearby actors ' + m.nearbyActorHits.mean +
+          '; max actors in one grid cell ' + m.maxCellBodies.max +
+          '. Timings overlap; opt-in sampling has overhead.';
+      }
       observeCrowdFrame(intervalMs, active = true) {
         const zone = this.s.zones[this.zoneId],
           cfg = R.actorSpacing;
@@ -755,7 +877,11 @@
               p.kind === 'rain-pools'
                 ? R.rainPoolBlocked(p.pools, x, y, radius)
                 : p.r
-                  ? Math.hypot(x - p.x, y - p.y) < p.r + radius
+                  ? // Reject obstacles far outside the circle's bounding box
+                    // without invoking a square root.
+                    (Math.abs(x - p.x) < p.r + radius &&
+                      Math.abs(y - p.y) < p.r + radius &&
+                      Math.hypot(x - p.x, y - p.y) < p.r + radius)
                   : x > p.x1 - radius &&
                     x < p.x2 + radius &&
                     y > p.y1 - radius &&
@@ -792,14 +918,22 @@
                 : p.decorative
                   ? null
                   : p.r;
-              if (
-                r === null ||
-                (candidate && R.sceneryTraversal.radii[p.structure] === 0) ||
-                Math.hypot(x - p.x, y - p.y) >= r + radius
-              )
+              if (r === null || (candidate && R.sceneryTraversal.radii[p.structure] === 0))
                 return false;
+              const reach = r + radius,
+                dx = x - p.x,
+                dy = y - p.y;
+              // A circle never overlaps a point outside its enclosing square.
+              // Query current prop coordinates/radii every time: no stale cache.
+              if (Number.isFinite(reach) &&
+                  (Math.abs(dx) >= reach || Math.abs(dy) >= reach))
+                return false;
+              const distance = Math.hypot(dx, dy);
+              if (distance >= reach) return false;
               const body = candidate ? this.sceneryMovementRadius(p, z) : r;
-              return body !== null && Math.hypot(x - p.x, y - p.y) < body + radius;
+              // Reuse the precise distance. Authored collision rules and
+              // boundary handling remain unchanged.
+              return body !== null && distance < body + radius;
             })) ||
           false
         );
