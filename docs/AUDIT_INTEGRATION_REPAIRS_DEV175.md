@@ -62,11 +62,42 @@ No protected historical fixture or original hash is regenerated.
 
 ## Focused checkpoint and preservation
 
-Individual safety, Slow, writer, projectile/canister and original-fixture tests
-have passed during implementation. Final integrated focused selection, build,
-publication and any remaining failure are recorded in the repair PR. A source
-checkpoint is not a release claim. Broad game/browser matrices remain manual
-owner opt-in. Real-device/browser/PWA acceptance is not inferred from Node tests.
+The integrated focused selection passed **21 test files**, with no uncovered
+changed source paths or missing mapped regressions. It covers app/menu behavior,
+historical saves, restart and critical recovery, persistence and writer safety,
+onboarding, companion healing/support, combat conditions, projectile/canister
+boundaries, Slow debt, encounter lifecycle, resolution, PWA release/cache logic
+and CI selection policy. Encounter lifecycle includes 72 cases and six historical
+restores. After additional asynchronous ownership edge cases were repaired,
+the five affected app/menu/persistence/restart/writer suites were rerun successfully.
+The owner-refresh tests also retain Developer mode and earned Nightmare access;
+a fresh successful load dismisses an obsolete failed-load prompt.
+
+`node scripts/build.cjs --check` passes: dev.175, 217 campaign assets and 14 optional
+historical assets. Changed JavaScript/test files pass syntax, Prettier and
+`git diff --check`. Reproduce the focused selection after checking out this branch:
+
+```sh
+CI_BASE_SHA=2e22989252af7af232487f993fec39c24318ac07 node .github/scripts/focused-ci.cjs
+node scripts/build.cjs --check
+```
+
+The full `npm run check` is **not green**. The sprite checker reports a stale
+`prop:ore-sorting-bay:highlands` canonical reference; sprite-scope reports missing
+March terrain source evidence; the material checker reports `require is not defined`.
+Each failure also reproduces on an unchanged dev.174 checkout (its sprite check
+lists 17 stale references, including that prop). Enemy audio coverage passes:
+264 identities and 1,962 stage/variant decisions. Global formatting has 16 inherited
+warnings, down from 21 on unchanged dev.174; touched code is formatted. No art
+approval, source evidence, immutable fixture or unrelated source is rewritten to
+silence these checks. These inherited tooling failures remain separate work.
+
+The initial recoverable source checkpoint is `3585af1d`; this document and final
+source are retained on `fix/audit-integration-safety-20261024`. No PR, merge,
+deployment, comprehensive test suite or browser matrix is authorized by the
+original read-only audit mandate. The later instruction authorizes these scoped
+repairs; PR creation, merge and publication remain pending explicit approval.
+Real-device/browser/PWA acceptance is not inferred from Node tests.
 
 Preserve combat cadence, approved Slow strength/debt, first-kill onboarding,
 boss warnings, collision and fort permissions, progression, companion/pet roles,

@@ -1546,15 +1546,14 @@
       );
     }
     restartGuard.arm(game);
+    // Reconcile entitlement after ownership and the fresh campaign load.
+    // A pending window cannot persist this during its initial preview load.
+    if (game.peace && game.s.finalRestCompleted && !profile.nightmareUnlocked) {
+      profile.nightmareUnlocked = true;
+      persistProfile();
+    }
   }
   recoverLoadedSession();
-  // Older completed peaceful saves retain their already-earned Nightmare
-  // entitlement even if the local profile record was reset or imported.
-  if (game.peace && game.s.finalRestCompleted && !profile.nightmareUnlocked) {
-    profile.nightmareUnlocked = true;
-    persistProfile();
-  }
-  started = loaded;
   // Navigation is runtime-only and survives manual takeover as a visible guide.
   let navigationGuide = null,
     questGuide = null,
@@ -2918,6 +2917,7 @@
         action('Start a new Normal run', () => chooseLanguage('normal')),
       ],
       savedRunRecoveryMenu,
+      { view: 'save-recovery' },
     );
   }
   function savedRunConflictMenu() {
@@ -6415,7 +6415,10 @@
         }
         // Ownership may arrive after a previous window's final save. Read fresh
         // bytes before allowing input, recovery or any automatic write.
-        let refreshed = persistence.load(profile.activeMode);
+        profile = persistence.loadProfile(profile);
+        let refreshed =
+          (developerEnabled && persistence.load('developer')) ||
+          persistence.load(profile.activeMode);
         if (
           !refreshed &&
           !persistence.loadFailed(profile.activeMode) &&
@@ -6432,11 +6435,20 @@
           game = refreshed;
           loaded = started = true;
           recoverLoadedSession();
-          if (menu?.view === 'save-conflict' || menu?.title === 'Choose your language') closeMenu();
+          if (
+            menu?.view === 'save-conflict' ||
+            menu?.view === 'save-recovery' ||
+            menu?.title === 'Choose your language'
+          )
+            closeMenu();
         } else if (persistence.loadFailed(profile.activeMode)) {
           loaded = started = false;
           savedRunRecoveryMenu();
-        } else if (menu?.view === 'save-conflict') chooseLanguage('normal');
+        } else {
+          loaded = started = false;
+          game = new Campaign();
+          chooseLanguage(developerEnabled ? 'developer' : 'normal');
+        }
         updateHUD();
       })
       .catch(() => {

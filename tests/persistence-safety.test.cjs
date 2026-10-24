@@ -73,3 +73,69 @@ for (const original of ['{broken', JSON.stringify({ ...new C().snapshot(), versi
 console.log(
   'PASS protected failed-load originals, startup lifecycle, explicit replacement backup and rejected writes',
 );
+
+(async () => {
+  const original = '{broken';
+  const app = shell('en', 'paladin', { storage: new Map([[P.saveKey('normal'), original]]) });
+  const click = (prefix) => {
+    const button = app.elements
+      .get('modal-actions')
+      .children.find((item) => item.textContent.startsWith(prefix));
+    assert(button, prefix);
+    button.click();
+  };
+  let exported;
+  app.scope.URL.createObjectURL = (blob) => {
+    exported = blob;
+    return '';
+  };
+  click('Export original save');
+  assert.equal(await exported.text(), original, 'Export retains the exact unreadable bytes');
+  click('Start a new Normal run');
+  click('English');
+  click('Standard death');
+  app.scope.confirm = () => false;
+  click('🛡');
+  assert.equal(
+    app.storage.get(P.saveKey('normal')),
+    original,
+    'Cancelling replacement preserves the original',
+  );
+  app.scope.confirm = () => true;
+  const setItem = app.scope.localStorage.setItem;
+  app.scope.localStorage.setItem = (key, value) => {
+    if (key === P.saveKey('normal')) throw Error('quota');
+    setItem(key, value);
+  };
+  const before = app.scope.Prototype.game;
+  click('🛡');
+  assert.equal(
+    app.scope.Prototype.game,
+    before,
+    'A failed new-run write cannot replace the live run',
+  );
+  assert.equal(app.storage.get(P.saveKey('normal')), original);
+  const candidate = new C();
+  candidate.hero.gold = 321;
+  const input = {
+    files: [{ size: 100, text: async () => JSON.stringify(candidate.snapshot()) }],
+    value: 'import',
+  };
+  await app.elements.get('import-file').onchange({ target: input });
+  assert.equal(
+    app.scope.Prototype.game,
+    before,
+    'A failed import write also preserves the live run',
+  );
+  assert.equal(app.storage.get(P.saveKey('normal')), original);
+  app.scope.localStorage.setItem = setItem;
+  await app.elements.get('import-file').onchange({ target: input });
+  assert.equal(app.scope.Prototype.game.hero.gold, 321);
+  assert.equal(app.storage.get(P.saveKey('normal') + '-unreadable-backup'), original);
+  console.log(
+    'PASS original export, cancelled replacement, quota-safe new run/import and explicit recovery',
+  );
+})().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

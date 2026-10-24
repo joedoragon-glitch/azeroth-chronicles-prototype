@@ -99,6 +99,112 @@ function lockManager() {
   assert.equal(reloads, 1);
   assert.equal(app.scope.Prototype.save(), false);
   for (const listener of reopened.events.pagehide || []) listener();
+
+  // The prior owner can save a different active mode while acquisition waits.
+  const refreshedStorage = new Map([[P.saveKey('normal'), JSON.stringify(new C().snapshot())]]);
+  const pending = shell('en', 'paladin', {
+    storage: refreshedStorage,
+    navigator: { locks: lockManager() },
+  });
+  const nightmare = new C('nightmare');
+  nightmare.hero.gold = 789;
+  refreshedStorage.set(P.saveKey('nightmare'), JSON.stringify(nightmare.snapshot()));
+  refreshedStorage.set(
+    P.profileKey,
+    JSON.stringify({ activeMode: 'nightmare', nightmareUnlocked: true }),
+  );
+  await settle();
+  assert.equal(pending.scope.Prototype.game.s.mode, 'nightmare');
+  assert.equal(pending.scope.Prototype.game.hero.gold, 789);
+  for (const listener of pending.events.pagehide || []) listener();
+
+  const developer = new C('developer');
+  developer.hero.gold = 888;
+  const devApp = shell('en', 'paladin', {
+    storage: new Map([[P.saveKey('developer'), JSON.stringify(developer.snapshot())]]),
+    location: { protocol: 'https:', search: '?developer=1' },
+    navigator: { locks: lockManager() },
+  });
+  await settle();
+  assert.equal(devApp.scope.Prototype.game.s.mode, 'developer');
+  assert.equal(devApp.scope.Prototype.game.hero.gold, 888);
+  for (const listener of devApp.events.pagehide || []) listener();
+
+  const completed = new C();
+  // A completed run has passed the deferred level-2 field arrival. Use the
+  // native XP/admission owner before crediting the isolated ending fixture.
+  completed.grant(0, completed.xpRequired(1));
+  completed.syncThornArrival(completed.zone());
+  assert(!completed.zone().thornArrival);
+  for (const boss of C.data.bosses) completed.victory(boss.id, 'normal');
+  for (const id of ['darklord', ...C.dungeonIds]) completed.victory(id, 'true');
+  completed.checkEnding();
+  completed.enter('crown');
+  const throne = completed.zone().npcs.find((npc) => npc.kind === 'throne');
+  Object.assign(completed.hero, { x: throne.x, y: throne.y });
+  assert(completed.interact(throne));
+  const refuge = completed.zone().npcs.find((npc) => npc.kind === 'rest');
+  Object.assign(completed.hero, { x: refuge.x, y: refuge.y });
+  assert(completed.rest());
+  assert(completed.peace && completed.s.finalRestCompleted);
+  assert(C.restore(completed.snapshot()), 'The completion fixture is a valid real save');
+  const completedApp = shell('en', 'paladin', {
+    storage: new Map([
+      [P.saveKey('normal'), JSON.stringify(completed.snapshot())],
+      [P.profileKey, JSON.stringify({ activeMode: 'normal', nightmareUnlocked: false })],
+    ]),
+    navigator: { locks: lockManager() },
+  });
+  await settle();
+  assert.equal(
+    JSON.parse(completedApp.storage.get(P.profileKey)).nightmareUnlocked,
+    true,
+    'Earned Nightmare access is reconciled after the owning fresh load',
+  );
+  for (const listener of completedApp.events.pagehide || []) listener();
+
+  const repairedStorage = new Map([[P.saveKey('normal'), '{broken']]);
+  const repaired = shell('en', 'paladin', {
+    storage: repairedStorage,
+    navigator: { locks: lockManager() },
+  });
+  repairedStorage.set(P.saveKey('normal'), JSON.stringify(new C().snapshot()));
+  await settle();
+  assert.equal(
+    repaired.elements.get('modal').hidden,
+    true,
+    'A fresh successful load dismisses the obsolete unreadable-save prompt',
+  );
+  assert(repaired.scope.Prototype.save());
+  for (const listener of repaired.events.pagehide || []) listener();
+
+  const workerEvents = {};
+  let workerReloads = 0;
+  const workerApp = shell('en', 'paladin', {
+    location: { protocol: 'https:', reload: () => workerReloads++ },
+    navigator: {
+      locks: lockManager(),
+      serviceWorker: {
+        controller: {},
+        addEventListener: (name, listener) => {
+          workerEvents[name] = listener;
+        },
+        getRegistration: async () => ({ addEventListener() {}, update: async () => {} }),
+      },
+    },
+  });
+  await settle();
+  const workerSaved = workerApp.storage.get(P.saveKey('normal'));
+  workerApp.scope.Prototype.game.hero.cd[0] = Infinity;
+  workerEvents.controllerchange();
+  assert.equal(workerReloads, 0, 'Failed save prevents an update from discarding the live run');
+  assert.equal(workerApp.storage.get(P.saveKey('normal')), workerSaved);
+  workerApp.scope.Prototype.game.hero.cd[0] = 0;
+  workerApp.scope.Prototype.game.hero.gold = 567;
+  workerEvents.controllerchange();
+  assert.equal(workerReloads, 1);
+  assert.equal(JSON.parse(workerApp.storage.get(P.saveKey('normal'))).hero.gold, 567);
+  for (const listener of workerApp.events.pagehide || []) listener();
   console.log(
     'PASS cross-window ownership, stale-revision rejection, protected startup/shutdown, fresh takeover and bfcache reload',
   );
