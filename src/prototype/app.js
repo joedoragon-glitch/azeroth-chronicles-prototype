@@ -2246,6 +2246,14 @@
     $('modal').hidden = false;
     $('modal-title').textContent = translateMenu(title);
     const descriptionHost = $('modal-description');
+    const archiveReading = menu.view === 'archive-reading';
+    // A4: make a long answer separately reachable for keyboard and assistive
+    // technology without changing its full author-approved text or scroll.
+    descriptionHost.tabIndex = archiveReading ? 0 : -1;
+    descriptionHost.setAttribute('role', archiveReading ? 'document' : 'presentation');
+    if (archiveReading)
+      descriptionHost.setAttribute('aria-label',
+        language === 'es' ? 'Lectura del Archivo' : 'Archive reading');
     descriptionHost.classList.toggle('skill-reference', structured);
     descriptionHost.textContent = translateMenu(structured ? description.summary || '' : description);
     if (structured) {
@@ -4853,7 +4861,11 @@
         // Include temporary name fields and native settings controls. Do not
         // let keyboard focus escape to the game underneath the open dialog.
         const descendants = Array.from(
-          $('modal').querySelectorAll?.('button, input, select, textarea') || [],
+          $('modal').querySelectorAll?.(
+            menu.view === 'archive-reading'
+              ? 'button, input, select, textarea, [role="document"][tabindex="0"]'
+              : 'button, input, select, textarea',
+          ) || [],
         ).filter((element) => !element.disabled && !element.hidden);
         const available = descendants.length
           ? descendants
