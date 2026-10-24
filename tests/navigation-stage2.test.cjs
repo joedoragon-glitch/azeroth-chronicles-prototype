@@ -44,7 +44,7 @@ for (const language of ['en', 'es']) {
   const root = elements.get('modal-actions').children;
   assert(root[1].textContent.includes(t('Map and travel routes', 'Mapa y rutas de viaje')),
     'the map remains prominent in the phone-accessible Adventure menu');
-  assert(root[1].textContent.includes('Z / M'),
+  assert(root[1].children.some((child) => child.textContent.includes('Z / M')),
     'both available map keys are visible without changing bindings');
   menuButton(t('Quest journal', 'Diario de misiones')).click();
   menuButton(t('Your First Company', 'Tu primera compañía')).click();
