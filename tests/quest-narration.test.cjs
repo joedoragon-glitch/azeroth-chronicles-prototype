@@ -131,7 +131,7 @@ assert.equal(
 const app = fs.readFileSync(path.join(__dirname, '../src/prototype/app.js'), 'utf8');
 assert(app.includes('chronicleTranslations.has(value)'), 'Exact EN/ES Chronicle lookup is wired');
 assert(app.includes("n.kind === 'narration' || n.kind === 'milestone' ? tr(n.text) : n.text"),
-  'Active Chronicle notice uses the player's language');
+  "Active Chronicle notice uses the player’s language");
 assert(app.includes('chroniclePreview.es.slice(0, 64)'),
   'Announcement index preview can use approved Spanish copy');
 
