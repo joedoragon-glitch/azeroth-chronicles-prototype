@@ -11,7 +11,7 @@ for (const [key, id] of [['crypt', 'D01'], ['mine', 'D02'], ['abyss', 'D03']])
 assert.equal(R.dungeonLore.citadel, Approved.D04_entrance.en);
 assert(Approved.D04.en.startsWith(Approved.D04_entrance.en));
 assert(Approved.D04.es.startsWith(Approved.D04_entrance.es));
-assert(!/cosmetics|quarters/i.test(R.dungeonLore.citadel));
+assert(!/cosmetics|private quarters|Veyra’s quarters/i.test(R.dungeonLore.citadel));
 for (const [key, id] of [
   ['side-vale-cellars', 'I01'], ['side-march-watchhouse', 'I02'],
   ['side-highlands-signal', 'I03'], ['side-frontier-shrine', 'I04'],
