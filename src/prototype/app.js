@@ -715,6 +715,10 @@
     Diagnostics: 'Diagnósticos',
     'Show performance details': 'Mostrar detalles de rendimiento',
     'Hide performance details': 'Ocultar detalles de rendimiento',
+    'Start crowd profiling': 'Iniciar medición de multitudes',
+    'Stop crowd profiling': 'Detener medición de multitudes',
+    'Capture crowded gameplay only, then export a playtest report.':
+      'Mide el juego con multitudes y luego exporta un informe de prueba.',
     'Adjust everything here without leaving this screen.':
       'Ajusta todo aquí sin salir de esta pantalla.',
     'On by default. Skips drawings under load; briefly pauses combat during critical slowdowns.':
@@ -2804,6 +2808,7 @@
                   ...pixiGame.status(),
                 },
                 frameProfile: frameProfile.report(),
+                crowdDiagnostics: game.crowdDiagnosticsReport(),
                 frameRatePreference: fps.preference,
                 frameRateTarget: fps.target,
                 frameSkip: frameSkip.status(),
@@ -3023,7 +3028,16 @@
             ...renderer.metrics(),
             measuredLayer: graphicsController.status().mode === 'webgl2'
               ? 'canvas-combat-overlay' : 'canvas-full-world',
-          }) + '\n\n' + frameProfile.describe(),
+          }) + '\n\n' + frameProfile.describe() + '\n\n' + game.crowdDiagnosticsDescribe(),
+        ),
+        action(
+          game.crowdDiagnosticsReport().recording ? 'Stop crowd profiling' : 'Start crowd profiling',
+          () => {
+            if (game.crowdDiagnosticsReport().recording) game.stopCrowdDiagnostics();
+            else game.startCrowdDiagnostics();
+            platformMenu(back);
+          },
+          'Capture crowded gameplay only, then export a playtest report.',
         ),
         action('Reset performance sample', () => {
           runtime.reset();
@@ -5784,6 +5798,7 @@
         };
       const simulationAt = performance.now(),
         marks = {};
+      game.crowdDiagnosticsBeginFrame();
       game.tick(dt, {
         x,
         y,
@@ -5792,6 +5807,7 @@
           marks[stage] = performance.now();
         },
       });
+      game.crowdDiagnosticsEndFrame();
       stageTimes.simulationMs = performance.now() - simulationAt;
       if (marks.partyStart !== undefined && marks.partyEnd !== undefined)
         stageTimes.companionAIMs = Math.max(0, marks.partyEnd - marks.partyStart);
