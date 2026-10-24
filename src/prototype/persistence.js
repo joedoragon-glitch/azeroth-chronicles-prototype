@@ -2,15 +2,112 @@
 (function (root) {
   'use strict';
   const profileKey = 'azeroth-v4-profile',
-    saveKey = (mode) => 'azeroth-v4-' + mode;
-  function create({ storage, Campaign, status = () => {}, canWrite = () => true }) {
+    saveKey = (mode) => 'azeroth-v4-' + mode,
+    checkpointKey = (mode) => saveKey(mode) + '-checkpoints-v1';
+  const checkpointLimit = 3,
+    checkpointIntervalMs = 60000,
+    checkpointMaxChars = 500000;
+  function create({ storage, Campaign, status = () => {}, canWrite = () => true, now = Date.now }) {
     const failedLoads = new Map();
     const expected = new Map(),
       conflicts = new Set();
+    const previews = new Map(),
+      checkpointCache = new Map(),
+      validatedBytes = new Map();
+    let previewSequence = 0,
+      backupWarning = false;
     for (const mode of ['normal', 'nightmare', 'developer']) {
       try {
         expected.set(mode, storage.getItem(saveKey(mode)) ?? null);
       } catch (_) {}
+    }
+    function readCheckpoints(mode) {
+      try {
+        const raw = storage.getItem(checkpointKey(mode));
+        const cached = checkpointCache.get(mode);
+        if (cached && cached.raw === raw) return cached.entries.slice();
+        if (!raw || raw.length > checkpointMaxChars) return [];
+        const value = JSON.parse(raw);
+        if (value?.version !== 1 || !Array.isArray(value.entries)) return [];
+        const entries = value.entries
+          .slice(0, checkpointLimit)
+          .filter(
+            (entry) =>
+              entry &&
+              typeof entry.bytes === 'string' &&
+              entry.bytes.length <= checkpointMaxChars &&
+              Number.isFinite(entry.savedAt) &&
+              entry.savedAt >= 0 &&
+              entry.savedAt <= 8.64e15,
+          );
+        checkpointCache.set(mode, { raw, entries });
+        return entries.slice();
+      } catch (_) {
+        return [];
+      }
+    }
+    function restoreCandidate(bytes, mode) {
+      const data = JSON.parse(bytes),
+        candidate = data?.version === 2 ? Campaign.migrate(data) : Campaign.restore(data);
+      if (candidate.s.mode !== mode) throw Error('Mismatched recovery mode');
+      // Restoration can normalize runtime state. The resulting campaign must
+      // itself serialize into a valid, reloadable save before it is offered.
+      Campaign.validate(candidate.snapshot());
+      return candidate;
+    }
+    function remember(mode, bytes, force = false) {
+      if (!canWrite() || !bytes) return;
+      if (bytes.length > checkpointMaxChars) {
+        backupWarning = true;
+        return;
+      }
+      const entries = readCheckpoints(mode),
+        timestamp = now();
+      if (!Number.isFinite(timestamp) || timestamp < 0 || timestamp > 8.64e15) {
+        backupWarning = true;
+        return;
+      }
+      if (entries.some((entry) => entry.bytes === bytes)) return;
+      const age = timestamp - (entries[0]?.savedAt ?? -Infinity);
+      if (!force && age >= 0 && age < checkpointIntervalMs) return;
+      try {
+        if (validatedBytes.get(mode) !== bytes) restoreCandidate(bytes, mode);
+      } catch (_) {
+        return; // An invalid primary can never be promoted to a good checkpoint.
+      }
+      const next = [{ bytes, savedAt: timestamp }, ...entries].slice(0, checkpointLimit);
+      // Cap both count and encoded size. Quota pressure sheds oldest backups
+      // first; a failed atomic setItem leaves the previous bundle untouched.
+      while (next.length) {
+        const bundle = JSON.stringify({ version: 1, entries: next });
+        if (bundle.length <= checkpointMaxChars) {
+          try {
+            storage.setItem(checkpointKey(mode), bundle);
+            checkpointCache.set(mode, { raw: bundle, entries: next.slice() });
+            return;
+          } catch (_) {}
+        }
+        next.pop();
+      }
+      backupWarning = true;
+    }
+    function writePrimary(mode, bytes) {
+      try {
+        storage.setItem(saveKey(mode), bytes);
+      } catch (error) {
+        // Backup retention must not consume the space needed for normal saving.
+        // Keep at least one checkpoint while attempting to free older entries.
+        const entries = readCheckpoints(mode);
+        while (entries.length > 1) {
+          entries.pop();
+          try {
+            storage.setItem(checkpointKey(mode), JSON.stringify({ version: 1, entries }));
+            storage.setItem(saveKey(mode), bytes);
+            return;
+          } catch (_) {}
+        }
+        throw error;
+      }
     }
     function writeSnapshot(game, replace = false) {
       const mode = game.s.mode;
@@ -20,10 +117,24 @@
         conflicts.add(mode);
         throw Error('Campaign changed in another window');
       }
+      // Import/new-run can target a slot other than the one loaded at startup.
+      // Classify that previous primary before any automatic/explicit overwrite.
+      if (current && !failedLoads.has(mode) && validatedBytes.get(mode) !== current) {
+        try {
+          restoreCandidate(current, mode);
+          validatedBytes.set(mode, current);
+        } catch (_) {
+          failedLoads.set(mode, current);
+        }
+      }
       if (failedLoads.has(mode) && !replace) throw Error('Original unreadable save is protected');
       const snapshot = game.snapshot();
       Campaign.validate(snapshot);
       const bytes = JSON.stringify(snapshot);
+      backupWarning = false;
+      // Keep the preceding durable primary, never an uncommitted live state.
+      // Explicit import/new-run/recovery boundaries bypass the one-minute rate.
+      remember(mode, current, replace);
       if (replace && failedLoads.has(mode)) {
         const original = storage.getItem(saveKey(mode));
         if (original) {
@@ -35,9 +146,11 @@
             storage.setItem(saveKey(mode) + '-latest-unreadable-backup', original);
         }
       }
-      storage.setItem(saveKey(mode), bytes);
+      writePrimary(mode, bytes);
       expected.set(mode, bytes);
+      validatedBytes.set(mode, bytes);
       failedLoads.delete(mode);
+      if (!readCheckpoints(mode).length) remember(mode, bytes, true);
       return true;
     }
     function loadProfile(defaults) {
@@ -69,7 +182,11 @@
         if (game.s.mode !== 'developer') profile.activeMode = game.s.mode;
         if (game.peace && game.s.mode !== 'developer') profile.nightmareUnlocked = true;
         if (!saveProfile(profile)) return false;
-        status('Saved locally · export for a backup');
+        status(
+          backupWarning
+            ? 'Saved locally, but a recovery checkpoint could not be stored. Export a backup.'
+            : 'Saved locally · export for a backup',
+        );
         return true;
       } catch (_) {
         status('Saving failed. Export your run before closing.');
@@ -86,13 +203,87 @@
           const restored = Campaign.restore(JSON.parse(raw));
           if (restored.s.mode !== mode) throw Error('Mismatched save slot');
           failedLoads.delete(mode);
+          validatedBytes.set(mode, raw);
+          if (canWrite()) remember(mode, raw);
           return restored;
+        }
+        if (
+          storage.getItem(checkpointKey(mode)) ||
+          storage.getItem(saveKey(mode) + '-unreadable-backup') ||
+          storage.getItem(saveKey(mode) + '-latest-unreadable-backup')
+        ) {
+          failedLoads.set(mode, raw);
+          status('Saved run unavailable. Try recovery or import a backup.');
         }
       } catch (_) {
         failedLoads.set(mode, raw);
-        status('Saved run unavailable. Import a backup.');
+        status('Saved run unavailable. Try recovery or import a backup.');
       }
       return null;
+    }
+    function recoveryOptions(mode) {
+      previews.clear();
+      const original = storage.getItem(saveKey(mode)) ?? null,
+        sources = [
+          { bytes: original, source: 'compatible', savedAt: null },
+          ...readCheckpoints(mode).map((entry) => ({ ...entry, source: 'checkpoint' })),
+          {
+            bytes: storage.getItem(saveKey(mode) + '-latest-unreadable-backup'),
+            source: 'original',
+            savedAt: null,
+          },
+          {
+            bytes: storage.getItem(saveKey(mode) + '-unreadable-backup'),
+            source: 'original',
+            savedAt: null,
+          },
+          ...(mode === 'normal'
+            ? [
+                {
+                  bytes: storage.getItem('azeroth-chronicles-prototype-save-v2'),
+                  source: 'legacy',
+                  savedAt: null,
+                },
+                {
+                  bytes: storage.getItem('azeroth-v2-original-backup'),
+                  source: 'legacy',
+                  savedAt: null,
+                },
+              ]
+            : []),
+        ];
+      const options = [],
+        seen = new Set();
+      for (const entry of sources) {
+        if (!entry.bytes || seen.has(entry.bytes)) continue;
+        seen.add(entry.bytes);
+        try {
+          const candidate = restoreCandidate(entry.bytes, mode),
+            id = mode + ':' + ++previewSequence;
+          previews.set(id, { ...entry, mode, original });
+          options.push({
+            id,
+            source: entry.source,
+            savedAt: entry.savedAt,
+            heroClass: candidate.hero.class,
+            level: candidate.hero.level,
+            zone: candidate.zoneId,
+            gameTime: candidate.s.time,
+          });
+          if (options.length === checkpointLimit) break;
+        } catch (_) {}
+      }
+      return options;
+    }
+    function recover(mode, id) {
+      const preview = previews.get(id);
+      if (!preview || preview.mode !== mode) throw Error('Recovery option expired');
+      if ((storage.getItem(saveKey(mode)) ?? null) !== preview.original)
+        throw Error('Campaign changed since recovery preview');
+      const candidate = restoreCandidate(preview.bytes, mode);
+      writeSnapshot(candidate, true);
+      previews.clear();
+      return candidate;
     }
     function migrateLegacy() {
       if (!canWrite()) return null;
@@ -114,6 +305,8 @@
       save,
       load,
       migrateLegacy,
+      recoveryOptions,
+      recover,
       loadFailed: (mode) => failedLoads.has(mode),
       original: (mode) => failedLoads.get(mode) || '',
       conflicted: (mode) => conflicts.has(mode),
@@ -294,6 +487,10 @@
     createRestartGuard,
     profileKey,
     saveKey,
+    checkpointKey,
+    checkpointLimit,
+    checkpointIntervalMs,
+    checkpointMaxChars,
     recoveryMarkerKey,
   };
   if (typeof module !== 'undefined') module.exports = api;

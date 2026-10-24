@@ -68,7 +68,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
     };
   }
   const initial = new C('normal', heroClass, () => 0.5);
-  if (!storage.has('azeroth-v4-normal'))
+  if (options.seedSave !== false && !storage.has('azeroth-v4-normal'))
     storage.set('azeroth-v4-normal', JSON.stringify(initial.snapshot()));
   storage.set('azeroth-display-language-v1', language);
   const scope = {
