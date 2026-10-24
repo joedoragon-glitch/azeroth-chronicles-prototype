@@ -5,6 +5,17 @@
     const clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
       dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     const ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER = 0.5;
+    // Stable field lists: stacking adds debt on Slow impact, never by iterating stacks per tick.
+    const SLOW_COMPANION_COOLDOWNS = [
+      'cd', 'skill1Cd', 'skill2Cd', 'skillGlobalCd', 'healCd', 'manaCd', 'survivalCd',
+    ];
+    const SLOW_ENEMY_COOLDOWNS = [
+      'cd', 'specialCd', 'summonCd', 'healCd', 'supportHealCd', 'anastylosisCd', 'sabotageCd',
+    ];
+    const SLOW_ENEMY_DEADLINES = [
+      'royalPrerogativeReadyAt', 'passiveRepairReadyAt', 'passiveVeteranReadyAt',
+      'ledgerNextAt', 'ashNextAt',
+    ];
     class Combat {
       combatTargets() {
         const z = this.s.zones[this.s.zone];
@@ -407,15 +418,24 @@
         return depleted && (pressured || cunning);
       }
 
-      // A timed Slow slows cooldown recovery without changing base cooldowns.
-      // Split a frame at Slow's expiry so cooldown timing stays frame-rate stable.
+      // Slow stack strength is one scalar per actor. Each extra hit suppresses
+      // recovery with diminishing returns, without timers or work per stack.
+      // Split the final frame at Slow expiry to keep recovery frame-rate stable.
       cooldownRecoveryElapsed(unit, dt, enemy = false) {
         if (!Number.isFinite(dt) || dt <= 0) return 0;
         const slow = Number.isFinite(unit?.slow) ? Math.max(0, unit.slow) : 0;
-        const multiplier = enemy
+        if (!slow) return dt;
+        const base = enemy
           ? R.cooldownBalance.enemySlowRecoveryMultiplier
           : R.cooldownBalance.slowRecoveryMultiplier;
-        return dt - Math.min(dt, slow) * (1 - multiplier);
+        const perStack = enemy
+          ? R.cooldownBalance.enemySlowStackPenalty
+          : R.cooldownBalance.slowStackPenalty;
+        const stacks = Number.isFinite(unit?.slowStacks)
+          ? Math.max(1, Math.floor(unit.slowStacks))
+          : 1;
+        const recovery = base / (1 + (stacks - 1) * perStack);
+        return dt - Math.min(dt, slow) * (1 - recovery);
       }
 
       // Absolute encounter-clock readiness deadlines need the same recovery
@@ -429,8 +449,10 @@
         return this.s.time + Math.max(0, remaining - this.cooldownRecoveryElapsed(unit, dt, enemy));
       }
 
-      // One contract for the shared timed Slow condition: living, vulnerable
-      // targets only; repeat hits refresh duration but never shorten it.
+      // The shared Slow contract: valid hits refresh one duration window, while
+      // stacking strength and *lasting* debt reward repeated, coordinated hits.
+      // No timer or array is allocated per stack. Cooldown debt is applied once
+      // on each hit to already-recovering abilities, including absolute deadlines.
       applySlow(unit, seconds) {
         if (
           !unit ||
@@ -441,13 +463,43 @@
           seconds <= 0
         )
           return false;
-        unit.slow = Math.max(unit.slow || 0, seconds);
+        const duration = seconds + R.cooldownBalance.slowDurationBonusSeconds;
+        const alreadySlowed = Number.isFinite(unit.slow) && unit.slow > 0;
+        const priorStacks = Number.isFinite(unit.slowStacks)
+          ? Math.max(1, Math.floor(unit.slowStacks))
+          : 1;
+        unit.slowStacks = alreadySlowed ? priorStacks + 1 : 1;
+        unit.slow = Math.max(alreadySlowed ? unit.slow : 0, duration);
+
+        const isHero = unit === this.hero;
+        const isCompanion = !isHero && this.s.party.includes(unit);
+        const isEnemy = !isHero && !isCompanion;
+        const debt = duration * (isEnemy
+          ? R.cooldownBalance.enemySlowDebtFraction
+          : R.cooldownBalance.slowDebtFraction);
+        if (isHero) {
+          for (let i = 0; i < unit.cd.length; i++)
+            if (unit.cd[i] > 0) unit.cd[i] += debt;
+        } else {
+          for (const key of isEnemy ? SLOW_ENEMY_COOLDOWNS : SLOW_COMPANION_COOLDOWNS)
+            if (Number.isFinite(unit[key]) && unit[key] > 0) unit[key] += debt;
+        }
+        if (isEnemy) {
+          const rogueReady = this._tacticalRogueNext?.get(unit.id);
+          if (Number.isFinite(rogueReady) && rogueReady > this.s.time)
+            this._tacticalRogueNext.set(unit.id, rogueReady + debt);
+          for (const key of SLOW_ENEMY_DEADLINES)
+            if (Number.isFinite(unit[key]) && unit[key] > this.s.time) unit[key] += debt;
+        }
         return true;
       }
 
       applyRogueSlow(unit, seconds) {
         if (!this.applySlow(unit, seconds)) return false;
-        unit.rogueSlow = Math.max(unit.rogueSlow || 0, seconds);
+        unit.rogueSlow = Math.max(
+          unit.rogueSlow || 0,
+          seconds + R.cooldownBalance.slowDurationBonusSeconds,
+        );
         return true;
       }
 
