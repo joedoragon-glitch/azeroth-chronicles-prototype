@@ -1087,6 +1087,12 @@
         ? PrototypeNarration.find((entry) => entry?.es && entry.text.slice(0, 64) === piece)
         : null;
     if (chroniclePreview) return chroniclePreview.es.slice(0, 64);
+    // Earned dungeon/interior/landmark and ending previews also use the
+    // manuscript's Spanish words rather than truncating English mid-sentence.
+    const approvedPreview = Object.values(approvedNarrative || {}).find(
+      (pair) => pair.en.slice(0, 64) === piece,
+    );
+    if (approvedPreview) return approvedPreview.es.slice(0, 64);
     const ferryPassage = Campaign.rules.tidalFerryPassage;
     if (ferryPassage && piece.startsWith(ferryPassage))
       return spanishText[ferryPassage] + piece.slice(ferryPassage.length);
