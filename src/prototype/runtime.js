@@ -205,23 +205,25 @@
   // Opt-in presentation-only reduction. Never skips simulation or input.
   const frameSkipPreferenceKey = 'azeroth-adaptive-frame-skip-v1';
   function createFrameSkip(storage) {
-    let enabled = false;
+    // New installs use adaptive skipping. An explicit device-local Off wins.
+    let enabled = true;
     try {
-      enabled = storage?.getItem(frameSkipPreferenceKey) === 'on';
+      enabled = storage?.getItem(frameSkipPreferenceKey) !== 'off';
     } catch (_) {}
     let drawWork = null,
       renderWork = null,
       drawnSamples = 0,
-      lastSkipped = false,
+      consecutiveSkips = 0,
       lastDrawAt = null,
-      protectUntil = -Infinity,
       skippedDraws = 0;
+    // An already stale image must receive the next eligible world draw.
+    // This replaces the old 110 ms rule, which blocked recovery at low FPS.
+    const maximumDrawAgeMs = 350;
     function suspend() {
       drawWork = renderWork = null;
       drawnSamples = 0;
-      lastSkipped = false;
+      consecutiveSkips = 0;
       lastDrawAt = null;
-      protectUntil = -Infinity;
     }
     return {
       get enabled() { return enabled; },
@@ -233,20 +235,19 @@
         try { storage?.setItem(frameSkipPreferenceKey, enabled ? 'on' : 'off'); } catch (_) {}
         return true;
       },
-      protect(now) {
-        if (enabled && Number.isFinite(now))
-          protectUntil = Math.max(protectUntil, now + 300);
-      },
       // Called only for a drawing already permitted by the regular FPS limiter.
+      // Applies at every valid FPS target; warnings have no special exemption.
       shouldSkip(now, target) {
-        if (!enabled || !Number.isFinite(now) || ![30, 60].includes(target)) return false;
+        if (!enabled || !Number.isFinite(now) ||
+          !Number.isFinite(target) || target <= 0) return false;
         const stressed =
           drawnSamples >= 6 &&
           drawWork > (1000 / target) * 1.12 &&
           renderWork >= 5;
-        const skip = stressed && !lastSkipped && lastDrawAt !== null &&
-          now - lastDrawAt < 110 && now >= protectUntil;
-        lastSkipped = skip;
+        const drawAge = lastDrawAt === null ? Infinity : now - lastDrawAt;
+        const skip = stressed && consecutiveSkips < 2 &&
+          drawAge >= 0 && drawAge < maximumDrawAgeMs;
+        consecutiveSkips = skip ? consecutiveSkips + 1 : 0;
         if (skip) skippedDraws++;
         return skip;
       },
@@ -260,6 +261,7 @@
         renderWork = renderWork === null ? renderMs : renderWork * (1 - weight) + renderMs * weight;
         drawnSamples++;
         lastDrawAt = now;
+        consecutiveSkips = 0;
       },
       suspend,
       status() {
