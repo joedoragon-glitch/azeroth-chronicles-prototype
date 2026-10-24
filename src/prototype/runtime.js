@@ -202,7 +202,8 @@
     };
   }
 
-  // Opt-in presentation-only reduction. Never skips simulation or input.
+  // Device-local draw reduction with an emergency simulation-hold signal.
+  // Normal adaptive skips never interrupt simulation or input.
   const frameSkipPreferenceKey = 'azeroth-adaptive-frame-skip-v1';
   function createFrameSkip(storage) {
     // New installs use adaptive skipping. An explicit device-local Off wins.
@@ -215,25 +216,65 @@
       drawnSamples = 0,
       consecutiveSkips = 0,
       lastDrawAt = null,
-      skippedDraws = 0;
-    // An already stale image must receive the next eligible world draw.
-    // This replaces the old 110 ms rule, which blocked recovery at low FPS.
+      skippedDraws = 0,
+      emergency = false,
+      emergencyEntries = 0,
+      protectedCallbacks = 0,
+      criticalIntervals = 0,
+      criticalDraws = 0,
+      healthyDraws = 0,
+      lastIntervalMs = Infinity;
+    // Ordinary load: two skipped opportunities and a 350ms image-age guard.
+    // Critical load: more aggressive skipping, but still probe the renderer.
     const maximumDrawAgeMs = 350;
+    const emergencyMaximumDrawAgeMs = 650;
+    const criticalIntervalMs = 180;
+    const hardStallIntervalMs = 650;
+    function engageEmergency() {
+      if (emergency) return;
+      emergency = true;
+      emergencyEntries++;
+      healthyDraws = 0;
+      consecutiveSkips = 0;
+    }
     function suspend() {
       drawWork = renderWork = null;
       drawnSamples = 0;
       consecutiveSkips = 0;
       lastDrawAt = null;
+      emergency = false;
+      criticalIntervals = 0;
+      criticalDraws = 0;
+      healthyDraws = 0;
+      lastIntervalMs = Infinity;
     }
     return {
       get enabled() { return enabled; },
+      get emergency() { return enabled && emergency; },
       select(value) {
         if (typeof value !== 'boolean') return false;
         enabled = value;
         skippedDraws = 0;
+        emergencyEntries = 0;
+        protectedCallbacks = 0;
         suspend();
         try { storage?.setItem(frameSkipPreferenceKey, enabled ? 'on' : 'off'); } catch (_) {}
         return true;
+      },
+      // Detect sustained near-freeze callback timing *before* simulation, so
+      // the rescue callback cannot inflict combat damage while input is stale.
+      // A single ordinary spike is insufficient; a hard stall can trigger at once.
+      beginFrame(now, intervalMs) {
+        if (!enabled || !Number.isFinite(now) ||
+          !Number.isFinite(intervalMs) || intervalMs < 0) return false;
+        lastIntervalMs = intervalMs;
+        if (!emergency) {
+          criticalIntervals = intervalMs >= criticalIntervalMs ? criticalIntervals + 1 : 0;
+          if (intervalMs >= hardStallIntervalMs || criticalIntervals >= 2)
+            engageEmergency();
+        }
+        if (emergency) protectedCallbacks++;
+        return emergency;
       },
       // Called only for a drawing already permitted by the regular FPS limiter.
       // Applies at every valid FPS target; warnings have no special exemption.
@@ -245,8 +286,10 @@
           drawWork > (1000 / target) * 1.12 &&
           renderWork >= 5;
         const drawAge = lastDrawAt === null ? Infinity : now - lastDrawAt;
-        const skip = stressed && consecutiveSkips < 2 &&
-          drawAge >= 0 && drawAge < maximumDrawAgeMs;
+        const skip = (emergency || stressed) &&
+          consecutiveSkips < (emergency ? 5 : 2) &&
+          drawAge >= 0 &&
+          drawAge < (emergency ? emergencyMaximumDrawAgeMs : maximumDrawAgeMs);
         consecutiveSkips = skip ? consecutiveSkips + 1 : 0;
         if (skip) skippedDraws++;
         return skip;
@@ -262,11 +305,27 @@
         drawnSamples++;
         lastDrawAt = now;
         consecutiveSkips = 0;
+        if (emergency) {
+          // Require several healthy *actual draw probes* before unfreezing
+          // gameplay. Skipped draws cannot falsely satisfy recovery.
+          healthyDraws = lastIntervalMs < 110 && workMs < 90 && renderMs < 70
+            ? healthyDraws + 1 : 0;
+          if (healthyDraws >= 3) {
+            emergency = false;
+            criticalIntervals = 0;
+            criticalDraws = 0;
+            healthyDraws = 0;
+          }
+        } else {
+          criticalDraws = renderMs >= 140 || workMs >= 190 ? criticalDraws + 1 : 0;
+          if (criticalDraws >= 2) engageEmergency();
+        }
       },
       suspend,
       status() {
         return {
-          enabled, skippedDraws, drawnSamples,
+          enabled, skippedDraws, drawnSamples, emergencyActive: emergency,
+          emergencyEntries, protectedCallbacks,
           estimatedDrawWorkMs: drawWork === null ? null : Math.round(drawWork * 100) / 100,
           estimatedRenderWorkMs: renderWork === null ? null : Math.round(renderWork * 100) / 100,
         };
