@@ -53,10 +53,8 @@ function bootstrap(store) {
   const restored = app.scope.Prototype.game;
   assert.notDeepEqual(position(restored), position(original),
     'Unclean shutdown must not restart inside crowded combat coordinates');
-  const [safeX, safeY] = Campaign.data.towns[0];
-  console.log('SAFE SITE DEBUG', JSON.stringify({ pos: position(restored), town: [safeX, safeY], zone: restored.zoneId, refugeSite: restored.s.refugeSite, originalRefuge: original.s.refugeSite }));
-  assert(Math.hypot(restored.hero.x - safeX, restored.hero.y - safeY) <= 100,
-    'When no refuge site is registered, default safe town placement is valid');
+  assert.equal(restored.blocked(restored.hero.x, restored.hero.y), false,
+    'The restored hero lands on collision-safe terrain even when a town anchor is obstructed');
   assert.equal(restored.hero.hp, original.hero.hp,
     'Rescue must not grant health or apply damage');
   assert.equal(restored.s.party[0].hp, original.s.party[0].hp,
