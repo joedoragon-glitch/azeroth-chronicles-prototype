@@ -4,17 +4,26 @@
   // Archive prose belongs to the Keeper; shared encounter briefs are not dialogue.
   // Keeper history: verbatim EN manuscript passages; ES is paired in Narration.approved.
   const keeperHistories = {
-    thorn: "Thornfang trained as a Crown wilderness scout in professional canine handling, recall, scent work and pack welfare. He patrols the approaches to the Dark Lord's winter estate. Mira has accompanied these patrols as a paid instructor, though her service came without the freedom to leave. When a fight breaks off, he leads his pack toward the den. His tracks remain visible along the woodland paths.",
-    crypt: "The Lifebinder and I traveled with the Dark Lord long before these garrisons. His work combines mortuary science and thanatology with the conservation and reuse of buildings. His skeletons endure and remain aware; they are not living people restored to life. I refuse to confuse the two, particularly when I record their names and allegiances. The Lifebinder’s bindings sustain work on the still-unfinished winter estate; Borin was compelled to contribute to its construction.",
+    thorn:
+      "Thornfang trained as a Crown wilderness scout in professional canine handling, recall, scent work and pack welfare. He patrols the approaches to the Dark Lord's winter estate. Mira has accompanied these patrols as a paid instructor, though her service came without the freedom to leave. When a fight breaks off, he leads his pack toward the den. His tracks remain visible along the woodland paths.",
+    crypt:
+      'The Lifebinder and I traveled with the Dark Lord long before these garrisons. His work combines mortuary science and thanatology with the conservation and reuse of buildings. His skeletons endure and remain aware; they are not living people restored to life. I refuse to confuse the two, particularly when I record their names and allegiances. The Lifebinder’s bindings sustain work on the still-unfinished winter estate; Borin was compelled to contribute to its construction.',
     mire: "My maps show the Marches' principal waterways. Mirejaw knows bends and shallow channels they do not. His mud slows pursuers and helps his wounds close. Reedport and Fisher Camp still fish outside his territory; not every boat answers to him.",
-    archive: "I belonged to the Dark Lord’s traveling company before I settled in the Archive. These days I keep records, sit on the council and fish when my duties allow. I drowned long ago; that is how I came by my name. The flooding of these shelves is a later calamity, and its cause remains unknown to me. Neri knows what can be done to preserve the damaged books.",
-    ridge: "Ridge Tyrant can produce a figure for almost anything he argues: wages, repaired roads, minted crowns, caravans delivered. His title is Master of Coin; in practice, he directs the Crown’s economy and finances. Paying the specialists pressed into service was his proposal. They receive wages even when they cannot refuse the assignment. His contracted archers protect payrolls and mineral shipments, sometimes far beyond Ironroot. I keep copies of his accounts. One advantage of figures is that you can check them.",
+    archive:
+      'I belonged to the Dark Lord’s traveling company before I settled in the Archive. These days I keep records, sit on the council and fish when my duties allow. I drowned long ago; that is how I came by my name. The flooding of these shelves is a later calamity, and its cause remains unknown to me. Neri knows what can be done to preserve the damaged books.',
+    ridge:
+      'Ridge Tyrant can produce a figure for almost anything he argues: wages, repaired roads, minted crowns, caravans delivered. His title is Master of Coin; in practice, he directs the Crown’s economy and finances. Paying the specialists pressed into service was his proposal. They receive wages even when they cannot refuse the assignment. His contracted archers protect payrolls and mineral shipments, sometimes far beyond Ironroot. I keep copies of his accounts. One advantage of figures is that you can check them.',
     mine: "I knew Garun the Firstborn as our Ogre Bastion. During one expedition he held a collapsing mountain gate long enough to save the company. Garun has designed roads, bridges and fortresses, but perhaps his most remarkable work was himself. He designed his own stone body, fitted around a luminous heartstone, with golden eyes, an angular shell and a separate diamond core. All his own work. He would still rather inspect a bridge than endure another council meeting about construction.\nAt Colossus Mine, Ogre wardens and Crown riders on armored direwolves guard the site; the riders' bunks and their mounts' kennels share the working quarters. Ridge Tyrant, his captain and the crews manage the Mine’s accounts, wages and daily production. Garun is well paid, though the Mine has expenses he must meet. He spends spare crowns on little machines, strange ornaments and architectural experiments. I confess I enjoy seeing what he brings back.\nThe Mine’s records show fair payment for Dara’s repairs and unusual commissions, alongside the limited movement she could negotiate and Garun’s power to deny her departure while captive. Garun trusts the Dark Lord and is comfortable here; the Mine is his workshop and refuge as much as his post. Should the throne stand empty, the roads, strongholds and labor under his control could make him powerful. I suspect he would try to keep people safe by directing their movement. Whether they would welcome such protection is another matter.",
-    warlord: "The Ashen Warlord commands the Orc warbands occupying the Frontier. Reports arriving here describe repaired crossings, supplied checkpoints and caravans reaching Emberwatch again. His patrols inspect the roads, collect Crown taxes and enforce military orders in occupied settlements. Work is paid; specialists recruited by force cannot simply walk away from their posts. Cinder Warlord inspects those routes for him. The approaches to Abyss Bastion’s unfinished air works remain guarded. Trade has resumed under military supervision.",
-    abyss: "I remember Veyrith carrying the Dark Lord during our travels: a purple dragon, proud, disciplined and loyal. I see no reason to think the years have made him less so. He defends the proposed royal air force fiercely, convinced that control of the sky can secure the peace below. The hatchery, harness stations and launch platform at Abyss Bastion are being prepared for that purpose. The platform is unfinished, and there is no completed fleet yet.",
-    citadel: "Veyra guarded the coastal roads before joining our company. She trained Goblins, Ogres, Humans and other irregular troops to drill together, maintain their equipment and take pride in their uniforms. Even as marshal, she still trains Crown soldiers herself. She still practices cosmetology; in her view, something useful should also look right. Garun shares her interest in design. I have heard their conversations on workmanship and proportion at length. She is loyal to the Dark Lord and wary of politics. Yet if his throne stood empty, her officers and disciplined garrisons could put the provinces under her command. I doubt she would enjoy governing them; a military administration might nevertheless be the result.",
-    cindermaw: "The Dark Lord appointed Cindermaw because he could organize Ash beasts and administer territory. Crownwatch, Ash Refuge, the Ruined Foundry, roads and supply lines fall under his ministry. These services provide food and shelter and employ paid workers. Some specialists serve by conscription, not choice. Cindermaw co-manages the Treasury with Dreadmaw, who guards its Inner Vault. The Treasury accounts record Vera’s wages as Master Smith and the restrictions imposed on her while captive. Those wages did not give her permission to leave.",
-    darklord: "I traveled with the Dark Lord through victories that some towns celebrated and others mourned. There came a day when the last command from outside never received a successor. He made his own decisions then. Rival peoples began trading under his peace, and Crown roads now link more of the realm. Those roads also carry soldiers, tax revenues and specialists pressed into paid service.\nHe says, ‘Freedom has a price.’ I wrote that down. The accounts record wages for posts whose occupants cannot freely refuse the assignment.",
+    warlord:
+      'The Ashen Warlord commands the Orc warbands occupying the Frontier. Reports arriving here describe repaired crossings, supplied checkpoints and caravans reaching Emberwatch again. His patrols inspect the roads, collect Crown taxes and enforce military orders in occupied settlements. Work is paid; specialists recruited by force cannot simply walk away from their posts. Cinder Warlord inspects those routes for him. The approaches to Abyss Bastion’s unfinished air works remain guarded. Trade has resumed under military supervision.',
+    abyss:
+      'I remember Veyrith carrying the Dark Lord during our travels: a purple dragon, proud, disciplined and loyal. I see no reason to think the years have made him less so. He defends the proposed royal air force fiercely, convinced that control of the sky can secure the peace below. The hatchery, harness stations and launch platform at Abyss Bastion are being prepared for that purpose. The platform is unfinished, and there is no completed fleet yet.',
+    citadel:
+      'Veyra guarded the coastal roads before joining our company. She trained Goblins, Ogres, Humans and other irregular troops to drill together, maintain their equipment and take pride in their uniforms. Even as marshal, she still trains Crown soldiers herself. She still practices cosmetology; in her view, something useful should also look right. Garun shares her interest in design. I have heard their conversations on workmanship and proportion at length. She is loyal to the Dark Lord and wary of politics. Yet if his throne stood empty, her officers and disciplined garrisons could put the provinces under her command. I doubt she would enjoy governing them; a military administration might nevertheless be the result.',
+    cindermaw:
+      'The Dark Lord appointed Cindermaw because he could organize Ash beasts and administer territory. Crownwatch, Ash Refuge, the Ruined Foundry, roads and supply lines fall under his ministry. These services provide food and shelter and employ paid workers. Some specialists serve by conscription, not choice. Cindermaw co-manages the Treasury with Dreadmaw, who guards its Inner Vault. The Treasury accounts record Vera’s wages as Master Smith and the restrictions imposed on her while captive. Those wages did not give her permission to leave.',
+    darklord:
+      'I traveled with the Dark Lord through victories that some towns celebrated and others mourned. There came a day when the last command from outside never received a successor. He made his own decisions then. Rival peoples began trading under his peace, and Crown roads now link more of the realm. Those roads also carry soldiers, tax revenues and specialists pressed into paid service.\nHe says, ‘Freedom has a price.’ I wrote that down. The accounts record wages for posts whose occupants cannot freely refuse the assignment.',
   };
   const keeperOffices = {
     'supply-crown':
@@ -27,17 +36,31 @@
       "Cinder Warlord inspects the Frontier on the Ashen Warlord's behalf. He visits roads, work details and occupied settlements, enforcing orders while markets and repair crews continue their work. His Mandatory Overtime can press up to seven nearby workers into a fight. Without workers present, there is no one for him to order forward.",
   };
   const keeperProvinces = {
-    vale: "My Greenwood records begin with Millhaven, Orchard Hamlet and the working mill, among farms and woodland roads. At the Forest Crypt, the Lifebinder—one of my old companions—oversees the Dark Lord’s unfinished winter residence. He works with skeletons who endure and remain aware, although they are not alive again. Every skeleton retains an identity; some still use their former names and loyalties.",
-    highlands: "The Dark Lord seized Ironroot's silver-bearing and copper-bearing mountains long ago. Quarry Outpost retains its old name, though its workings now sort the ore sent to Stonecross. Silver and copper move separately under guard; the mint strikes crowns with the Dark Lord's portrait, and the Master of Coin records the wages and shipments. I compare incoming ore with the mint's output. Some residents welcome the reliable work. Others resent Crown ownership. Away from the roads, wolves hunt while Ogre households cook, work stone and gather at their hearths.",
-    frontier: "Reports from the Ashen Frontier describe red poppies on disturbed earth and pale-trunk saplings rising among cooled ash and old blast scars. Gardens are returning beside damaged walls; the ravine and old battle sites remain scarred. Emberwatch and Burned Hamlet rebuild under the Warlord’s rule. The repaired crossings carry food and trade, while inspections and taxes remain enforced. Specialists pressed into Crown service receive wages, but cannot refuse their appointments. The Ruined Shrine barracks, the forts, the night Stalkers’ hold and the guarded route to Abyss Bastion remain parts of that occupation.",
-    crown: "Crownwatch maintains homes, guarded transport and roads. The Citadel, Cindermaw's ministry and the barracks enforce Crown authority. Near the lava channels, heat exchangers and insulated flues carry volcanic warmth to glass and ceramic kilns, drying rooms, public baths and rooms used in winter. The Ruined Foundry and the fortress roads employ paid crews. At the Crystal Deposit, workers extract valuable crystals and prepare them for shipment. These are all part of the Crown's functioning economy. The records also list taxes and wages paid to specialists conscripted into posts they cannot refuse.",
+    vale: 'My Greenwood records begin with Millhaven, Orchard Hamlet and the working mill, among farms and woodland roads. At the Forest Crypt, the Lifebinder—one of my old companions—oversees the Dark Lord’s unfinished winter residence. He works with skeletons who endure and remain aware, although they are not alive again. Every skeleton retains an identity; some still use their former names and loyalties.',
+    highlands:
+      "The Dark Lord seized Ironroot's silver-bearing and copper-bearing mountains long ago. Quarry Outpost retains its old name, though its workings now sort the ore sent to Stonecross. Silver and copper move separately under guard; the mint strikes crowns with the Dark Lord's portrait, and the Master of Coin records the wages and shipments. I compare incoming ore with the mint's output. Some residents welcome the reliable work. Others resent Crown ownership. Away from the roads, wolves hunt while Ogre households cook, work stone and gather at their hearths.",
+    frontier:
+      'Reports from the Ashen Frontier describe red poppies on disturbed earth and pale-trunk saplings rising among cooled ash and old blast scars. Gardens are returning beside damaged walls; the ravine and old battle sites remain scarred. Emberwatch and Burned Hamlet rebuild under the Warlord’s rule. The repaired crossings carry food and trade, while inspections and taxes remain enforced. Specialists pressed into Crown service receive wages, but cannot refuse their appointments. The Ruined Shrine barracks, the forts, the night Stalkers’ hold and the guarded route to Abyss Bastion remain parts of that occupation.',
+    crown:
+      "Crownwatch maintains homes, guarded transport and roads. The Citadel, Cindermaw's ministry and the barracks enforce Crown authority. Near the lava channels, heat exchangers and insulated flues carry volcanic warmth to glass and ceramic kilns, drying rooms, public baths and rooms used in winter. The Ruined Foundry and the fortress roads employ paid crews. At the Crystal Deposit, workers extract valuable crystals and prepare them for shipment. These are all part of the Crown's functioning economy. The records also list taxes and wages paid to specialists conscripted into posts they cannot refuse.",
   };
   // Shared short definitions feed the optional quick reference; the third field
   // is expanded only by the Keeper's existing "Show me the figures" path.
+  function slowDuration(R, seconds) {
+    return Math.round((seconds + (R.cooldownBalance.slowDurationBonusSeconds || 0)) * 100) / 100;
+  }
+  function petReference(game, family, slot, R) {
+    const def = game.petSkillDefinition({ petFamily: family }, slot);
+    const text = game.petSkillSummary(family, slot, true);
+    return def?.slow
+      ? text.replace(' · Slow ' + def.slow + 's', ' · Slow ' + slowDuration(R, def.slow) + 's')
+      : text;
+  }
   function conditionTopics(R) {
     const percent = (value) => Math.round(value * 10000) / 100,
       charge = R.chargedSkills,
-      heal = R.enemySupportHealing;
+      heal = R.enemySupportHealing,
+      stackedSlow = Number.isFinite(R.cooldownBalance.slowStackPenalty);
     return [
       [
         'Fortified enemies and covering fire',
@@ -50,14 +73,35 @@
       ],
       [
         'Slow',
-        'Move and recover skill cooldowns more slowly, including skills used while already slowed.',
-        'Heroes and companions recover cooldowns at ' +
+        stackedSlow
+          ? 'Move and recover skill cooldowns more slowly. Repeated Slow hits suppress recovery further and add lasting cooldown debt.'
+          : 'Move and recover skill cooldowns more slowly, including skills used while already slowed.',
+        (stackedSlow
+          ? 'On the first Slow hit, heroes and companions recover cooldowns at '
+          : 'Heroes and companions recover cooldowns at ') +
           percent(R.cooldownBalance.slowRecoveryMultiplier) +
           '% of normal speed; enemies, captains and bosses at ' +
           percent(R.cooldownBalance.enemySlowRecoveryMultiplier) +
           '%. Allied movement is normally 65%, or ' +
           percent(R.tacticalFoundation.rogueSlowMovementFactor) +
-          '% under stronger Rogue snares; ordinary enemy pursuit is 50%. The longest remaining Slow wins. Recovery returns to normal when Slow ends. Slow does not lengthen charge preparation, warnings or healing pulses, and does not prevent skills.',
+          '% under stronger Rogue snares; ordinary enemy pursuit is 50%. ' +
+          (stackedSlow
+            ? 'Each successful Slow hit adds ' +
+              R.cooldownBalance.slowDurationBonusSeconds +
+              's to its authored duration. The longest remaining duration wins, not the sum. ' +
+              'Recovery speed is the first-hit rate / (1 + (stacks - 1) × stack penalty): ' +
+              R.cooldownBalance.slowStackPenalty +
+              ' for allies; ' +
+              R.cooldownBalance.enemySlowStackPenalty +
+              ' for enemies. ' +
+              'Each hit also adds its full adjusted duration × ' +
+              percent(R.cooldownBalance.slowDebtFraction) +
+              '% to eligible recovering allied cooldowns, or ' +
+              percent(R.cooldownBalance.enemySlowDebtFraction) +
+              '% for enemies. Ready skills gain no debt. ' +
+              'Stack strength clears when Slow expires; accumulated cooldown debt remains. ' +
+              'Preparation, warnings and healing pulses are not delayed, and skills are never outright blocked by Slow.'
+            : 'The longest remaining Slow wins. Recovery returns to normal when Slow ends. Slow does not lengthen charge preparation, warnings or healing pulses, and does not prevent skills.'),
       ],
       [
         'Silence',
@@ -124,10 +168,9 @@
     ];
   }
   function sections(game, { D, R }) {
-    const approvedNarrative =
-      (typeof PrototypeNarration !== 'undefined'
-        ? PrototypeNarration
-        : require('./narration.js')).approved;
+    const approvedNarrative = (
+      typeof PrototypeNarration !== 'undefined' ? PrototypeNarration : require('./narration.js')
+    ).approved;
     const number = (value) => Math.round(value * 100) / 100,
       percent = (value) => number(value * 100),
       mana = R.resourceMode?.manaEnabled !== false,
@@ -177,7 +220,11 @@
           pc(p.ridge.baseline.normal) +
           ' + ' +
           pc(p.ridge.perArcher.normal) +
-          ' per living Archer under his command, max three (TRUE ' +
+          ' per engaged summoned Archer within ' +
+          p.ridge.radius +
+          ' paces, max ' +
+          p.ridge.maxArchers +
+          ' (TRUE ' +
           pc(p.ridge.baseline.true) +
           ' + ' +
           pc(p.ridge.perArcher.true) +
@@ -199,7 +246,11 @@
           pc(p.warlord.baseline.normal) +
           ' + ' +
           pc(p.warlord.perOrc.normal) +
-          ' per nearby Orc under his command; those Orcs deal +' +
+          ' per engaged summoned Orc within ' +
+          p.warlord.radius +
+          ' paces, max ' +
+          p.warlord.maxOrcs +
+          '; those Orcs deal +' +
           pc(p.warlord.orcDamage.normal) +
           ' (TRUE ' +
           pc(p.warlord.baseline.true) +
@@ -259,7 +310,7 @@
           pc(p.darklord.reduction.true) +
           '); cooldown ' +
           p.darklord.cooldown +
-          's.',
+          's. With living field companions, at least two distinct attackers must contribute.',
       },
       captainPassives = {
         'supply-vale':
@@ -343,7 +394,7 @@
         ],
         [
           'Openings and stubborn defenders',
-          'The Ash Sentinel takes 65% damage while its armor is closed; the Stone Colossus takes 125% while its core is exposed. Some captains gain protection from their followers. Clear the warning, then strike during the opening.',
+          'The Ash Sentinel’s closed-armor multiplier is 65%; the Stone Colossus’s exposed-core multiplier is 125%. These apply before other passive defenses and burst compression, so they are not final damage percentages. Some captains gain protection from their followers. Clear the warning, then strike during the opening.',
         ],
         [
           'Enemies under pressure',
@@ -433,7 +484,16 @@
         8: 'Tap Sanctuary Oath: heal 15% and protect nearby allies with a 20% ward. Charge Last Bastion: heal 20%, grant 30% ward and weaken enemies. No immunity.',
       },
       mage: {
-        2: 'Tap Frost Bolt: damage and slow one foe for 2–2.2s. Charge Frost Burst: slow nearby enemies for 3.2–4.2s.',
+        2:
+          'Tap Frost Bolt: damage and slow one foe for ' +
+          slowDuration(R, 2) +
+          '–' +
+          slowDuration(R, 2 + 4 * 0.05) +
+          's. Charge Frost Burst: slow nearby enemies for ' +
+          slowDuration(R, R.chargedSkills.second.mage.slow) +
+          '–' +
+          slowDuration(R, R.chargedSkills.second.mage.slow + 4 * 0.25) +
+          's.',
         3: 'Tap Spell Interrupt: a dodgeable bolt cancels one warned attack on contact. Charge Silence Field: block special skills for enemies, you and companions inside.',
         4: 'Tap Arcane Fracture: a dodgeable bolt damages and increases incoming damage to one foe. Charge Arcane Rupture: stronger vulnerability on a group; no stacking.',
         5: 'Tap Force Pulse: knock back up to 6 enemies. Charge Force Wave: stronger push on up to 8. Neither slows.',
@@ -511,7 +571,7 @@
             ' · Rank ' +
             rank +
             (game.hero.skills[slot - 1] ? '' : ' (not learned)') +
-            ': recovery ' +
+            ': base recovery ' +
             number(cooldown(false)) +
             ' seconds' +
             (mana ? '; cost ' + game.skillManaCost(slot, rank, false) + ' MP' : '') +
@@ -519,7 +579,7 @@
             (slot === 1
               ? '\nCombo expires after ' +
                 R.basicAttackCombo.resetSeconds +
-                ' seconds. Charged damage: ×' +
+                ' seconds. Charged total damage: ×' +
                 R.chargedSkills.basicDamageMultiplier +
                 ' before defenses.'
               : '') +
@@ -531,7 +591,25 @@
                   ? 'reach ' + (shape.range + 5 * milestones)
                   : 'radius ' + (shape.radius + 5 * milestones)) +
                 ' paces.' +
-                (shape.slow ? ' Slow lasts ' + (shape.slow + 0.25 * milestones) + ' seconds.' : '')
+                (game.hero.class === 'mage' || game.hero.class === 'ranger'
+                  ? ' Tap Slow: ' +
+                    slowDuration(
+                      R,
+                      game.hero.class === 'mage'
+                        ? 2 + milestones * 0.05
+                        : R.heroTactics.ranger.pin.slow +
+                            milestones * R.heroTactics.ranger.pin.slowStep,
+                    ) +
+                    ' seconds; charged Slow: ' +
+                    slowDuration(
+                      R,
+                      game.hero.class === 'mage'
+                        ? shape.slow + 0.25 * milestones
+                        : R.heroTactics.ranger.volley.slow +
+                            milestones * R.heroTactics.ranger.volley.slowStep,
+                    ) +
+                    ' seconds on a fresh hit.'
+                  : '')
               : '') +
             (slot >= 1 && slot <= 8
               ? '\nCharged recovery: ' +
@@ -554,15 +632,15 @@
             percent(R.companionSkills.veteran.soldierWard) +
             '% ward for ' +
             R.companionSkills.veteran.soldierWardSeconds +
-            ' seconds; it never stacks with a stronger Paladin ward. Soldier emergency immunity remains 2.5 seconds below half health, with 14-second recovery. A Ranger may launch its ready Triple Shot before falling back from an enemy within ' +
+            ' seconds; it never stacks with a stronger Paladin ward. Soldier emergency immunity remains 2.5 seconds at half health or less, with 14-second recovery. A Ranger may launch its ready Triple Shot before falling back from an enemy within ' +
             R.companionSkills.veteran.coveringRange +
             ' units; only the first arrow applies ' +
-            R.companionSkills.veteran.coveringSlow +
-            ' second of Slow on a real hit. Normal cooldown, Silence, line of sight and terrain still apply. Ranger care and charged second attacks have their own recovery and interruption rules.',
+            slowDuration(R, R.companionSkills.veteran.coveringSlow) +
+            ' seconds of Slow on a real hit. Normal cooldown, Silence, line of sight and terrain still apply. Ranger care and charged second attacks have their own recovery and interruption rules.',
         ],
         [
           'TRUE boss pets',
-          'Each TRUE boss victory permanently unlocks a miniature companion in Barracks → Company → Boss pet collection. Each pet replaces a normal companion slot; no pet summons or performs labor.',
+          'Each TRUE boss victory permanently unlocks a miniature companion in Barracks → Company → Boss pet collection. Each pet replaces a normal companion slot; pets do not summon. Little Treasurer alone can gather tribute and join resource expeditions; other pets do not perform labor.',
           'Recruitment is free, with one individual per boss. Resting and fallen pets remain in your company, retaining their health. Treat or recover them with the normal Barracks services; recruiting the same pet again cannot replace treatment. Pets inherit hero-level health, Companion Vitality and Expedition bonuses like troops. Ranged pets keep their distance when space permits and can attack while repositioning. Attacks need a clear line. Their first skill needs no further lessons. Learning your second hero skill from Mira in Millhaven also unlocks their charged second skill. Charge preparation, interruption, Slow and Silence affect them as they affect other companions. Pets share your company’s field limit.',
         ],
         ...game
@@ -573,11 +651,11 @@
             'A miniature companion inspired by ' + boss.name + '.',
             def.first.name +
               ': ' +
-              game.petSkillSummary(boss.id, 1, true) +
+              petReference(game, boss.id, 1, R) +
               '\n' +
               def.second.name +
               ': ' +
-              game.petSkillSummary(boss.id, 2, true),
+              petReference(game, boss.id, 2, R),
           ]),
         [
           'Shared lessons and equipment',
@@ -603,7 +681,7 @@
           'A Ranger’s care',
           'A Ranger treats one wounded living member of the company at a time, with you first when you need it. Recall brings companions back to your side; Barracks recovery brings back the fallen.' +
             (mana ? ' Rangers can also restore your mana.' : ''),
-          'Healing begins at ' +
+          'Automatic healing in combat begins at ' +
             percent(support.healThreshold) +
             '% HP or less. Heal Rank ' +
             game.rangerSupportRank('health') +
@@ -613,7 +691,7 @@
             support.duration +
             ' seconds; recovery ' +
             support.cooldown +
-            ' seconds per Ranger.' +
+            ' seconds per Ranger. Outside combat, any wounded living ally can receive care. Manual care can treat any wounded living ally.' +
             (mana
               ? '\nMana recovery begins at ' +
                 percent(support.manaThreshold) +
@@ -640,38 +718,18 @@
         ['Crag Tyrant — Treasury captain', keeperOffices['supply-highlands']],
         ['Ashen Warlord — Frontier governor', keeperHistories.warlord],
         ['Cinder Warlord — Frontier inspector', keeperOffices['frontier-overseer']],
-        [
-          'Garun — the old roads',
-          keeperHistories.mine,
-        ],
-        [
-          'Veyrith — the unfinished sky',
-          keeperHistories.abyss,
-        ],
-        [
-          'Veyra — the common drill',
-          keeperHistories.citadel,
-        ],
-        [
-          'Whose peace?',
-          approvedNarrative.K05.en,
-        ],
+        ['Garun — the old roads', keeperHistories.mine],
+        ['Veyrith — the unfinished sky', keeperHistories.abyss],
+        ['Veyra — the common drill', keeperHistories.citadel],
+        ['Whose peace?', approvedNarrative.K05.en],
         ...(game.s.throneClaimed
-          ? [
-              [
-                'The last mark — remembered at the throne',
-                approvedNarrative.Throne_Keeper.en,
-              ],
-            ]
+          ? [['The last mark — remembered at the throne', approvedNarrative.Throne_Keeper.en]]
           : []),
         [
           'Companions from the Barracks',
           'The Lifebinder and I were recruited from the Barracks too. Our disciplines belonged to different companion classes from the Soldiers and Rangers who enlist there today. You have not yet studied those disciplines.',
         ],
-        [
-          'The Lantern Wraiths’ migration',
-          approvedNarrative.K06.en,
-        ],
+        ['The Lantern Wraiths’ migration', approvedNarrative.K06.en],
       ],
     });
     shelves.push({
@@ -764,18 +822,21 @@
                     '.',
                 )
                 .join('\n') +
-              (!mana && recovery
+              ((!mana || boss.id === 'darklord') && recovery
                 ? '\n\n' +
                   recovery.name +
                   ': below ' +
-                  percent(R.bossRecovery.threshold) +
+                  percent(recovery.threshold || R.bossRecovery.threshold) +
                   '% HP, warning ' +
                   recovery.warning +
                   's; restores ' +
                   percent(recovery.healFraction) +
-                  '% of maximum HP, up to missing health; recovery ' +
-                  recovery.cooldown +
-                  's.'
+                  '% of maximum HP, up to missing health' +
+                  (boss.id === 'darklord'
+                    ? '; once per encounter. A hit from behind interrupts this recovery. Incoming damage multiplier while preparing: ' +
+                      percent(recovery.damageMultiplier) +
+                      '%.'
+                    : '; recovery ' + recovery.cooldown + 's.')
                 : '') +
               '\n\nSummon limit: ' +
               game.bossSummonCap({ family: boss.id, form: 'normal' }) +
@@ -881,12 +942,7 @@
       shelves.push({
         title: 'The orders among the shelves',
         intro: 'My part in the capture.',
-        topics: [
-          [
-            'A prisoner for the Archive',
-            approvedNarrative.P05.en,
-          ],
-        ],
+        topics: [['A prisoner for the Archive', approvedNarrative.P05.en]],
       });
     return shelves;
   }
@@ -1463,16 +1519,109 @@
     ['at your level', 'a tu nivel'],
   ];
   const archiveTechnicalCopy = [
+    ['Automatic healing in combat begins at ', 'La curación automática en combate comienza al '],
+    [
+      ' Manual care can treat any wounded living ally.',
+      ' La curación manual puede atender a cualquier aliado vivo herido.',
+    ],
+    [
+      'On the first Slow hit, heroes and companions recover cooldowns at ',
+      'En el primer impacto de Ralentización, héroes y compañeros recuperan sus habilidades al ',
+    ],
+    ['Each successful Slow hit adds ', 'Cada impacto efectivo de Ralentización añade '],
+    [
+      's to its authored duration. The longest remaining duration wins, not the sum.',
+      ' s a su duración prevista. Prevalece la mayor duración restante; no se suman.',
+    ],
+    [
+      'Recovery speed is the first-hit rate / (1 + (stacks - 1) × stack penalty): ',
+      'La velocidad de recuperación es la tasa del primer impacto / (1 + (acumulaciones - 1) × penalización por acumulación): ',
+    ],
+    [' for allies; ', ' para aliados; '],
+    [' for enemies. ', ' para enemigos. '],
+    [
+      'Each hit also adds its full adjusted duration × ',
+      'Cada impacto también añade toda su duración ajustada × ',
+    ],
+    [
+      '% to eligible recovering allied cooldowns, or ',
+      '% a los tiempos de reutilización aliados aplicables que aún se recuperan, o un ',
+    ],
+    [
+      '% for enemies. Ready skills gain no debt.',
+      '% para enemigos. Las habilidades ya listas no reciben deuda.',
+    ],
+    [
+      'The Ash Sentinel’s closed-armor multiplier is 65%; the Stone Colossus’s exposed-core multiplier is 125%. These apply before other passive defenses and burst compression, so they are not final damage percentages. Some captains gain protection from their followers. Clear the warning, then strike during the opening.',
+      'El multiplicador de armadura cerrada de Ash Sentinel es del 65 %; el del núcleo expuesto de Stone Colossus es del 125 %. Se aplican antes de otras defensas pasivas y de la compresión de daño acumulado, así que no representan porcentajes finales de daño. Algunos capitanes reciben protección de sus seguidores. Esquiva la advertencia y golpea durante la oportunidad.',
+    ],
+    [' per engaged summoned Archer within ', ' por arquero invocado en combate dentro de '],
+    [' per engaged summoned Orc within ', ' por orco invocado en combate dentro de '],
+    [' paces, max ', ' pasos, máximo '],
+    ['; those Orcs deal +', '; esos orcos causan un +'],
+    [
+      's. With living field companions, at least two distinct attackers must contribute.',
+      ' s. Con compañeros vivos en el campo, deben participar al menos dos atacantes distintos.',
+    ],
+    [
+      'Tap Frost Bolt: damage and slow one foe for ',
+      'Toque: Proyectil de Escarcha daña y ralentiza a un enemigo durante ',
+    ],
+    [
+      's. Charge Frost Burst: slow nearby enemies for ',
+      ' s. Carga: Explosión de Escarcha ralentiza a los enemigos próximos durante ',
+    ],
+    [': base recovery ', ': reutilización básica '],
+    [' seconds. Charged total damage: ×', ' segundos. Daño cargado total: ×'],
+    [' Tap Slow: ', ' Ralentización al toque: '],
+    [' seconds; charged Slow: ', ' segundos; ralentización cargada: '],
+    [' seconds on a fresh hit.', ' segundos en un impacto sin ralentización previa.'],
+    [
+      'Each TRUE boss victory permanently unlocks a miniature companion in Barracks → Company → Boss pet collection. Each pet replaces a normal companion slot; pets do not summon. Little Treasurer alone can gather tribute and join resource expeditions; other pets do not perform labor.',
+      'Cada victoria contra un jefe TRUE desbloquea permanentemente un compañero en miniatura en Cuartel → Compañía → Colección de mascotas de jefes. Cada mascota ocupa una plaza normal y no invoca criaturas. Solo Little Treasurer puede recoger tributos y participar en expediciones de recursos; las demás mascotas no realizan trabajos.',
+    ],
+    [
+      ' seconds of Slow on a real hit. Normal cooldown, Silence, line of sight and terrain still apply. Ranger care and charged second attacks have their own recovery and interruption rules.',
+      ' segundos de Ralentización al impactar. Siguen vigentes la reutilización normal, Silencio, línea de visión y terreno. Los cuidados del explorador y los segundos ataques cargados tienen reglas propias de recuperación e interrupción.',
+    ],
+    ['In combat, healing begins at ', 'En combate, la curación comienza al '],
+    [
+      ' seconds per Ranger. Outside combat, any wounded living ally can receive care.',
+      ' segundos por explorador. Fuera de combate se puede atender a cualquier aliado vivo herido.',
+    ],
+    ['% of maximum HP, up to missing health', '% de los PV máximos, hasta la salud que falta'],
+    [
+      '; once per encounter. A hit from behind interrupts this recovery. Incoming damage multiplier while preparing: ',
+      '; una vez por encuentro. Un impacto por detrás interrumpe esta recuperación. Multiplicador del daño recibido durante la preparación: ',
+    ],
     ['Charged circle', 'Carga circular'],
     ['Charged cone', 'Carga en cono'],
     ['Charged line', 'Carga en línea'],
     [' · up to 1 target(s)', ' · hasta 1 objetivo'],
-    ["Move and recover skill cooldowns more slowly. Repeated Slow hits suppress recovery further and add lasting cooldown debt.", "El movimiento y la recuperación de habilidades se ralentizan. Los impactos repetidos de Ralentización reducen aún más la recuperación y añaden una deuda de reutilización que persiste."],
-    ["% under stronger Rogue snares; ordinary enemy pursuit is 50%. Every Slow hit adds ", "% bajo las trampas de pícaro más fuertes; la persecución enemiga normal queda al 50 %. Cada impacto de Ralentización añade "],
-    ["s to its authored duration; Ringleader Rogue snares last 2.95s.", " s a su duración prevista; las trampas de pícaro de los cabecillas duran 2.95 s."],
-    ["The longest remaining duration wins, but overlapping hits increase recovery suppression and add debt to unfinished skill cooldowns.", "Prevalece la mayor duración restante, pero los impactos superpuestos reducen más la recuperación y añaden deuda a los tiempos de reutilización aún pendientes."],
-    ["Stack strength clears when Slow expires; accumulated cooldown debt remains.", "La intensidad acumulada se borra cuando termina la Ralentización; la deuda de reutilización acumulada permanece."],
-    ["Preparation, warnings and healing pulses are not delayed, and skills are never outright blocked by Slow.", "La preparación, las advertencias y los pulsos de curación no se retrasan, y la Ralentización nunca bloquea por completo las habilidades."],
+    [
+      'Move and recover skill cooldowns more slowly. Repeated Slow hits suppress recovery further and add lasting cooldown debt.',
+      'El movimiento y la recuperación de habilidades se ralentizan. Los impactos repetidos de Ralentización reducen aún más la recuperación y añaden una deuda de reutilización que persiste.',
+    ],
+    [
+      '% under stronger Rogue snares; ordinary enemy pursuit is 50%. Every Slow hit adds ',
+      '% bajo las trampas de pícaro más fuertes; la persecución enemiga normal queda al 50 %. Cada impacto de Ralentización añade ',
+    ],
+    [
+      's to its authored duration; Ringleader Rogue snares last 2.95s.',
+      ' s a su duración prevista; las trampas de pícaro de los cabecillas duran 2.95 s.',
+    ],
+    [
+      'The longest remaining duration wins, but overlapping hits increase recovery suppression and add debt to unfinished skill cooldowns.',
+      'Prevalece la mayor duración restante, pero los impactos superpuestos reducen más la recuperación y añaden deuda a los tiempos de reutilización aún pendientes.',
+    ],
+    [
+      'Stack strength clears when Slow expires; accumulated cooldown debt remains.',
+      'La intensidad acumulada se borra cuando termina la Ralentización; la deuda de reutilización acumulada permanece.',
+    ],
+    [
+      'Preparation, warnings and healing pulses are not delayed, and skills are never outright blocked by Slow.',
+      'La preparación, las advertencias y los pulsos de curación no se retrasan, y la Ralentización nunca bloquea por completo las habilidades.',
+    ],
     ['Active', 'Activo'],
     [', self-regeneration ', ', regeneración propia del '],
     [
@@ -1517,8 +1666,8 @@
     ['Power Strike grants a self-only ', 'Golpe de Poder concede solo al soldado una barrera del '],
     ['% ward for ', '% durante '],
     [
-      ' seconds; it never stacks with a stronger Paladin ward. Soldier emergency immunity remains 2.5 seconds below half health, with 14-second recovery. A Ranger may launch its ready Triple Shot before falling back from an enemy within ',
-      ' segundos; nunca se acumula con una barrera más fuerte de paladín. La inmunidad de emergencia del soldado sigue durando 2.5 segundos por debajo de la mitad de salud, con 14 segundos de recuperación. Un explorador puede usar Disparo Triple si está listo antes de retirarse de un enemigo situado a menos de ',
+      ' seconds; it never stacks with a stronger Paladin ward. Soldier emergency immunity remains 2.5 seconds at half health or less, with 14-second recovery. A Ranger may launch its ready Triple Shot before falling back from an enemy within ',
+      ' segundos; nunca se acumula con una barrera más fuerte de paladín. La inmunidad de emergencia del soldado sigue durando 2.5 segundos con la mitad de salud o menos, con 14 segundos de recuperación. Un explorador puede usar Disparo Triple si está listo antes de retirarse de un enemigo situado a menos de ',
     ],
     [' units; only the first arrow applies ', ' unidades; solo la primera flecha aplica '],
     [
@@ -1729,7 +1878,8 @@
   // glossary, or partially translate an English sentence before matching it.
   // A healing amount is not a duration. Capture the live figures as one
   // clause so the generic duration word "for" cannot change their meaning.
-  const petHealPattern = / · heals one wounded ally within (\d+(?:\.\d+)?) for (\d+(?:\.\d+)?)% of the pet’s maximum HP; clear line required/;
+  const petHealPattern =
+    / · heals one wounded ally within (\d+(?:\.\d+)?) for (\d+(?:\.\d+)?)% of the pet’s maximum HP; clear line required/;
   let archiveTranslation;
   let namedTranslation;
   function namedCatalog(names) {
@@ -1746,14 +1896,16 @@
     const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const keys = [...entries.keys()].sort((a, b) => b.length - a.length);
     return new RegExp(
-      petHealPattern.source + '|' + keys
-        .map(
-          (key) =>
-            (/^[A-Za-z]/.test(key) ? '(?<![A-Za-zÁ-ÿ])' : '') +
-            escape(key) +
-            (/[A-Za-z]$/.test(key) ? '(?![A-Za-zÁ-ÿ])' : ''),
-        )
-        .join('|'),
+      petHealPattern.source +
+        '|' +
+        keys
+          .map(
+            (key) =>
+              (/^[A-Za-z]/.test(key) ? '(?<![A-Za-zÁ-ÿ])' : '') +
+              escape(key) +
+              (/[A-Za-z]$/.test(key) ? '(?![A-Za-zÁ-ÿ])' : ''),
+          )
+          .join('|'),
       'g',
     );
   }
@@ -1800,10 +1952,14 @@
   function translateArchive(value, names = []) {
     if (typeof value !== 'string') return value;
     const { entries, pattern } = namedCatalog(names);
-    return value.replace(pattern, (source) => entries.has(source)
-      ? entries.get(source)
-      : source.replace(petHealPattern,
-        ' · cura a un aliado herido dentro de $1 por una cantidad equivalente al $2% de los PV máximos de la mascota; requiere una línea despejada'));
+    return value.replace(pattern, (source) =>
+      entries.has(source)
+        ? entries.get(source)
+        : source.replace(
+            petHealPattern,
+            ' · cura a un aliado herido dentro de $1 por una cantidad equivalente al $2% de los PV máximos de la mascota; requiere una línea despejada',
+          ),
+    );
   }
   const api = {
     translationNames,

@@ -5,7 +5,12 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const path = require('node:path');
-const C = require('../src/prototype/engine.js');
+const C = require(
+  path.join(
+    process.env.ARCHIVE_MECHANICS_ROOT || path.resolve(__dirname, '..'),
+    'src/prototype/engine.js',
+  ),
+);
 const A = require('../src/prototype/archive.js');
 const approved = require('../src/prototype/narration.js').approved;
 const { shell } = require('./helpers/production-shell.cjs');
@@ -145,12 +150,20 @@ for (const text of currentSlow.topic) {
   assert.deepEqual(gapsFor(text, []), [], 'New main Slow copy has complete technical translation');
   assert.deepEqual(numbers(A.translateArchive(text)), numbers(text));
 }
-assert(A.translateArchive(currentSlow.topic[2]).includes('la deuda de reutilización acumulada permanece'),
-  'The new main Slow translation retains lasting cooldown debt');
+assert(
+  A.translateArchive(currentSlow.topic[2]).includes(
+    'la deuda de reutilización acumulada permanece',
+  ),
+  'The new main Slow translation retains lasting cooldown debt',
+);
 
-assert.equal(A.translateArchive(' · heals one wounded ally within 333 for 12.75% of the pet’s maximum HP; clear line required'),
+assert.equal(
+  A.translateArchive(
+    ' · heals one wounded ally within 333 for 12.75% of the pet’s maximum HP; clear line required',
+  ),
   ' · cura a un aliado herido dentro de 333 por una cantidad equivalente al 12.75% de los PV máximos de la mascota; requiere una línea despejada',
-  'Pet healing translates a live amount, not a duration');
+  'Pet healing translates a live amount, not a duration',
+);
 console.log(
   'PASS Archive technical-copy coverage: ' +
     checked +

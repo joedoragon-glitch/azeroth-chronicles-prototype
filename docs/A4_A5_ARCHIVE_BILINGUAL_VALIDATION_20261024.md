@@ -1,3 +1,5 @@
+> **Later mechanical audit:** The earlier A4 checks below prove translation integrity, not original numerical correctness. The owner subsequently requested a separate latest-main numerical audit. Its findings, reference repairs, native probes and dev.172 candidate supersede the earlier technical wording where necessary: [Keeper Archive mechanics audit](KEEPER_ARCHIVE_MECHANICS_AUDIT_20261024.md). Approved literary copy remains unchanged.
+
 # A4–A5 — Archive bilingual copy and focused acceptance
 
 **Current state, 24 October 2026:** A4's final technical-copy audit is complete. A5's focused Chromium/keyboard/layout/save acceptance has passed. Comprehensive cross-browser, real-device and screen-reader certification remains unperformed. **This is still draft PR #433, not approved for merge or publication.**
