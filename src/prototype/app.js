@@ -3370,6 +3370,9 @@
   }
   function startNavigation(destination, label, choice) {
     if (game.hero.order?.type !== 'move') return;
+    // Only this explicitly selected map journey has automatic-travel priority.
+    // A targeted but out-of-range skill must not replace it with a chase order.
+    game.hero.order.navigation = true;
     questGuide = null;
     if (game.s.gatheringTarget) gatheringGuideRequest = game.s.gatheringTarget;
     navigationGuide = {
