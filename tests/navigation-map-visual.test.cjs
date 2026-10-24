@@ -128,12 +128,22 @@ async function exercise(page, mode, tag) {
     browser=await chromium.launch(launch);
     for(const {mode,width,height,tag} of [
       {mode:'desktop',width:1280,height:800,tag:'desktop'},
-      {mode:'phone',width:375,height:800,tag:'portrait'},
-      {mode:'phone',width:800,height:375,tag:'landscape'},
+      {mode:'phone',width:375,height:800,tag:'portrait two-thumb'},
+      {mode:'phone',width:800,height:375,tag:'landscape left-hand'},
     ]){
       const {page,context}=await startPage(browser,mode,width,height);
-      try { await exercise(page,mode,tag); }
-      finally { await context.close(); }
+      try {
+        if(mode==='phone' && width>height) {
+          // Exercise the alternative compact layout without changing the
+          // playable campaign, including navigation controls at the right.
+          await page.evaluate(()=>{
+            Prototype.input.select('phoneLayout','left-hand');
+            document.body.setAttribute('data-phone-layout','left-hand');
+            Prototype.updateHUD();
+          });
+        }
+        await exercise(page,mode,tag);
+      } finally { await context.close(); }
     }
   } catch(e) { console.error(e); process.exitCode=1; }
   finally { await browser?.close(); await new Promise(res=>server.close(res)); }
