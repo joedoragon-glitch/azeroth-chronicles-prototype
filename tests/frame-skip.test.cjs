@@ -97,7 +97,7 @@ assert.equal(blocked.select(false), true, 'Storage errors do not block manual Of
 const app = fs.readFileSync(path.join(__dirname, '../src/prototype/app.js'), 'utf8');
 const frame = app.slice(app.indexOf('  function frame(now) {'));
 const simulation = frame.indexOf('game.tick(dt,');
-const effectUpdate = frame.indexOf('renderer.update(frozen ? 0 : dt)');
+const effectUpdate = frame.indexOf('renderer.update(simulating ? dt : 0)');
 const drawGate = frame.indexOf('frameSkip.shouldSkip(now, fps.target)');
 assert(simulation >= 0 && simulation < drawGate, 'Simulation precedes any adaptive skip');
 assert(effectUpdate >= 0 && effectUpdate < drawGate,
@@ -106,4 +106,102 @@ assert(!frame.includes('frameSkip.protect('),
   'Warning, elite-warning, interruption and death events no longer block skipping');
 assert(frame.includes('const eligibleDraw = fps.shouldDraw(now);'),
   'Ordinary FPS limiter remains independently in charge of drawing eligibility');
-console.log('PASS adaptive frame skip: default On, all FPS targets, two skips, stale-image safeguard, combat continuity, recovery and overrides');
+// Two slow callbacks (or one hard stall) activate emergency protection before
+// the game's simulation tick, not after a lethal damage event can happen.
+const emergency = createFrameSkip();
+assert.equal(emergency.beginFrame(100, 210), false);
+assert.equal(emergency.beginFrame(310, 210), true);
+assert.equal(emergency.status().emergencyActive, true);
+assert.equal(emergency.status().protectedCallbacks, 1);
+const protectedBefore = emergency.status().protectedCallbacks;
+assert.equal(emergency.beginFrame(1010, 700), true, 'Hard stalls retain existing protection');
+assert.equal(emergency.status().protectedCallbacks, protectedBefore + 1);
+
+// Real recent drawings are required to leave protection. Skipped opportunities
+// never provide false evidence that the browser is now responsive.
+let emergencySkipped = 0;
+for (let i = 0; i < 24; i++) {
+  const now = 1100 + i * 25;
+  emergency.beginFrame(now, 25);
+  const drop = emergency.shouldSkip(now, 30);
+  if (drop) emergencySkipped++;
+  else emergency.observe(now, 20, 6, true);
+  if (!emergency.emergency) break;
+}
+assert(emergencySkipped > 0, 'Emergency mode skips more drawings than ordinary load');
+assert.equal(emergency.emergency, false, 'Healthy actual draw probes release protection');
+assert.equal(emergency.status().emergencyEntries, 1);
+
+const hard = createFrameSkip();
+assert.equal(hard.beginFrame(800, 800), true, 'One extreme callback stall activates instantly');
+let streak = 0, longest = 0, counted = 0;
+for (let i = 0; i < 17; i++) {
+  const now = 800 + i * 33;
+  const drop = hard.shouldSkip(now, 30);
+  if (drop) { counted++; streak++; }
+  else {
+    streak = 0;
+    // Keep the critical rendering work too expensive for recovery.
+    hard.observe(now, 190, 145, true);
+  }
+  longest = Math.max(longest, streak);
+}
+assert(longest > 2 && longest <= 5,
+  'Near-freeze mode may skip up to five eligible draws, then probes again');
+assert(counted > 5);
+assert(hard.emergency, 'Unhealthy drawing probes must not release protection');
+hard.suspend();
+assert(!hard.emergency, 'Pausing, menu opening or hiding suspends emergency state');
+
+const offEmergency = createFrameSkip({ getItem: () => 'off' });
+assert.equal(offEmergency.beginFrame(1000, 1000), false, 'User Off disables emergency too');
+assert(!offEmergency.emergency);
+
+// The emergency path is intentionally outside campaign damage/save rules: no
+// battle simulation takes place until the device proves it can render again.
+assert(frame.includes('const recovering = !frozen && frameSkip.beginFrame(now, intervalMs);'));
+assert(frame.includes('const simulating = !frozen && !recovering;'));
+assert(frame.includes('if (simulating) {\\n      let x ='),
+  'Hero movement, party AI and hostile combat run only outside emergency mode');
+assert(frame.includes('renderer.update(simulating ? dt : 0);'),
+  'Timed combat effects do not silently expire while combat is protected');
+assert(frame.includes('if (simulating) hudTimer += dt;'),
+  'Paused emergency state does not consume game HUD timing');
+assert(frame.includes('syncPartyChargeClock();'));
+assert(app.includes('!frameSkip.emergency &&'),
+  'Wall-clock charged abilities also stop progressing during recovery');
+
+// Exercise the actual app callback with the real campaign. Even if a boss
+// would kill a hero or companion inside tick, that tick must not run during
+// emergency and the same living instances must survive without fake HP refill.
+const { shell } = require('./helpers/production-shell.cjs');
+const production = shell('en');
+const game = production.scope.Prototype.game;
+const ally = game.s.party.find((u) => u.hp > 0);
+assert(ally, 'A live companion is needed for the rescue contract');
+let simulationCalls = 0;
+const originalTick = game.tick.bind(game);
+game.tick = (dt, input) => {
+  simulationCalls++;
+  return originalTick(dt, input);
+};
+production.frame(0);
+const callsBefore = simulationCalls, heroHp = game.hero.hp, allyHp = ally.hp;
+production.frame(800);
+assert.equal(production.scope.Prototype.frameSkip.emergency, true);
+assert.equal(simulationCalls, callsBefore, 'Hard stall does not advance hostile simulation');
+assert.equal(game.hero.hp, heroHp, 'Hero remains alive without changing HP');
+assert.equal(ally.hp, allyHp, 'Companion remains alive without changing HP');
+assert.equal(game.s.statistics.deaths, 0, 'No death records or penalties on rescue');
+assert.equal(game.s.challenge.pending, false, 'Succession death cannot trigger on rescue');
+assert.equal(game.s.challenge.gameOver, false, 'Critical lag cannot create game over');
+assert.equal(production.scope.Prototype.frameSkip.status().protectedCallbacks, 1);
+for (let i = 1; i < 70 && production.scope.Prototype.frameSkip.emergency; i++)
+  production.frame(800 + i * 33.3333);
+assert.equal(production.scope.Prototype.frameSkip.emergency, false,
+  'Live app automatically recovers after inexpensive visual probes');
+const recoveredCalls = simulationCalls;
+production.frame(800 + 70 * 33.3333);
+assert(simulationCalls > recoveredCalls, 'Live combat resumes after recovery');
+
+console.log('PASS adaptive frame skip: default On, all FPS targets, critical recovery and protected combat, overrides');
