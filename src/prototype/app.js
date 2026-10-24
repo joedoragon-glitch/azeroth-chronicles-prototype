@@ -80,6 +80,8 @@
     'No completed quests': 'No hay misiones completadas',
     'Clear waypoint': 'Quitar ruta',
     'Cancel navigation': 'Cancelar ruta',
+    'Map of the current area. Select a place to navigate.':
+      'Mapa de la zona actual. Selecciona un lugar para navegar.',
     'Tap a pending quest to track its next objective. The waypoint remains during combat. Rewards are delivered automatically.':
       'Toca una misión pendiente para seguir su próximo objetivo. La ruta permanece durante el combate. Las recompensas se entregan automáticamente.',
     'Rescued specialists': 'Especialistas rescatados',
@@ -1423,6 +1425,7 @@
   let navigationGuide = null,
     questGuide = null,
     gatheringGuideRequest = null,
+    suspendedGatheringGuide = null,
     recallPractice = null;
   const cancelNavigationButton = document.createElement('button');
   cancelNavigationButton.id = 'cancel-navigation-button';
@@ -1435,6 +1438,13 @@
   };
   document.body.append(cancelNavigationButton);
   const viewport = { width: innerWidth, height: innerHeight };
+  // Arrival is complete only after the navigation-owned move has stopped
+  // (or the player manually reaches the same destination). A 55-unit visual
+  // cutoff previously hid Cancel while the engine was still walking to 25.
+  function navigationArrived(guide) {
+    return Math.hypot(game.hero.x - guide.point.x, game.hero.y - guide.point.y) <= 25 &&
+      (!guide.autopilot || game.hero.order !== guide.order);
+  }
   // A route exists only while a valid chosen navigation session is visible.
   // Quest and gathering guides do not create the contextual navigation HUD button.
   function visibleNavigationRoute() {
@@ -1446,7 +1456,7 @@
       guide.deaths !== game.s.statistics.deaths ||
       guide.zone !== game.zoneId ||
       game.hero.hp <= 0 ||
-      Math.hypot(game.hero.x - guide.point.x, game.hero.y - guide.point.y) < 55
+      navigationArrived(guide)
     )
       return null;
     const points =
@@ -3363,6 +3373,9 @@
       game.hero.path = [];
     }
     navigationGuide = null;
+    // Explicit Cancel/Clear dismisses all visible guides. The companion's
+    // saved gathering order continues, but we don't automatically re-track it.
+    suspendedGatheringGuide = null;
     // Dismissing a gathering waypoint never cancels saved companion work.
     if (questGuide?.kind === 'gathering') gatheringGuideRequest = game.s.gatheringTarget;
     questGuide = null;
@@ -3373,8 +3386,19 @@
     // Only this explicitly selected map journey has automatic-travel priority.
     // A targeted but out-of-range skill must not replace it with a chase order.
     game.hero.order.navigation = true;
+    // Map navigation temporarily takes visual priority over a gathering guide.
+    // Restore the earlier guide only on natural arrival (not explicit Cancel).
+    const gathering = game.s.gatheringTarget;
+    if (
+      questGuide?.kind === 'gathering' &&
+      questGuide.campaign === game &&
+      questGuide.nodeId === gathering?.id &&
+      questGuide.sourceZone === gathering.zone
+    ) suspendedGatheringGuide = gathering;
+    else if (!navigationGuide || suspendedGatheringGuide !== gathering)
+      suspendedGatheringGuide = null;
     questGuide = null;
-    if (game.s.gatheringTarget) gatheringGuideRequest = game.s.gatheringTarget;
+    if (gathering) gatheringGuideRequest = gathering;
     navigationGuide = {
       campaign: game,
       hero: game.hero,
@@ -3403,15 +3427,24 @@
       game.hero.hp <= 0
     ) {
       navigationGuide = null;
+      suspendedGatheringGuide = null;
       cancelNavigationButton.hidden = true;
+      return;
+    }
+    if (navigationArrived(guide)) {
+      navigationGuide = null;
+      cancelNavigationButton.hidden = true;
+      const gathering = suspendedGatheringGuide;
+      suspendedGatheringGuide = null;
+      // A still-active task regains its passive waypoint after arrival.
+      // This never issues hero movement or changes a companion's work order.
+      if (gathering && gathering === game.s.gatheringTarget) {
+        gatheringGuideRequest = null;
+        updateQuestGuide(true);
+      }
       return;
     }
     if (guide.autopilot && game.hero.order !== guide.order) guide.autopilot = false;
-    if (Math.hypot(game.hero.x - guide.point.x, game.hero.y - guide.point.y) < 55) {
-      navigationGuide = null;
-      cancelNavigationButton.hidden = true;
-      return;
-    }
     if (guide.autopilot) return; // Follow the live hero route without new plans.
     if (
       !force &&
@@ -3631,7 +3664,7 @@
     const map = document.createElement('canvas');
     map.width = 480;
     map.height = 320;
-    map.setAttribute('aria-label', 'Map of the current area. Select a place to navigate.');
+    map.setAttribute('aria-label', tr('Map of the current area. Select a place to navigate.'));
     $('modal-description').append(map);
     const ctx = map.getContext('2d');
     const size = game.zoneSize();
