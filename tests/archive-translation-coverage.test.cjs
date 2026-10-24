@@ -36,6 +36,7 @@ for (const heroClass of ['paladin', 'mage', 'ranger']) {
     g.s.true[boss.id] = true;
   }
   for (const region of C.data.regions) g.enter(region.id);
+  for (const room of [...C.rules.supplyRooms, ...C.rules.sideDungeons]) g.enter(room.id);
   // All unlocked pet states have identical technical templates, but distinct
   // on-screen labels; exercise active, resting and fallen roster states too.
   for (const [i, boss] of C.data.bosses.entries()) {
