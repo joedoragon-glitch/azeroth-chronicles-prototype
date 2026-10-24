@@ -270,7 +270,7 @@
       ['bridge-north', 'Lava ridge bridge', 1350, 1000],
       ['bridge-south', 'Southern stone crossing', 1350, 2400],
       ['foundry', 'Ruined Foundry', 1850, 2700],
-      ['shelf', 'Crystal shelf', 1250, 2350],
+      ['shelf', 'Crystal Deposit', 1250, 2350],
       ['siege', 'Siege camp', 2700, 2250],
       ['fortress-gate', 'Dark fortress gate', 3060, 3040],
       ['crown-barracks', 'Crown field barracks', 3000, 1180],
