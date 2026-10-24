@@ -745,6 +745,8 @@
       'Ralentización crítica: combate en pausa durante la recuperación. Puedes bajar los gráficos en Ajustes.',
     'Previous session stopped unexpectedly. Returned to your refuge safely.':
       'La sesión anterior se cerró inesperadamente. Regresaste a tu refugio con seguridad.',
+    'Previous session stopped unexpectedly. Returned to your barracks safely.':
+      'La sesión anterior se cerró inesperadamente. Regresaste a tu cuartel con seguridad.',
     'Performance recovered: combat resumed.':
       'Rendimiento recuperado: combate reanudado.',
     'Performance details': 'Detalles de rendimiento',
@@ -1429,7 +1431,9 @@
     if (recovered) {
       game = recovered;
       save();
-      status('Previous session stopped unexpectedly. Returned to your refuge safely.');
+      status(recovered.selectedBarracksRespawn()
+        ? 'Previous session stopped unexpectedly. Returned to your barracks safely.'
+        : 'Previous session stopped unexpectedly. Returned to your refuge safely.');
     }
     restartGuard.arm(game);
   }
