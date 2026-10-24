@@ -474,30 +474,83 @@ await check('Amber notices stack two at once without hiding a third event '+tag,
 await check('Prototype art palette and resource display '+tag,async()=>{assert.equal(await page.locator('#hero-stats .resource-line').count(),1);assert(await page.locator('#hero-stats .resource-line i').first().isVisible());if(smoke||v.width!==1280&&v.width!==375)return;const before=await page.evaluate(()=>Prototype.game.snapshot());for(const region of ['vale','march','highlands','frontier','crown']){await page.evaluate(id=>Prototype.game.enter(id),region);await page.waitForTimeout(45);await page.screenshot({path:path.join(results,'visual-town-'+region+'-'+tag+'.png')});}await page.evaluate(()=>Prototype.game.enter('supply-vale'));await page.waitForTimeout(45);await page.screenshot({path:path.join(results,'visual-storehouse-'+tag+'.png')});await page.evaluate(state=>{Prototype.game.s=state;},before);await page.keyboard.press('Escape');await page.screenshot({path:path.join(results,'visual-menu-'+tag+'.png')});await page.keyboard.press('Escape');});
 await check('Talents shows rank caps, per-rank gains and free resets without interrupting level-ups '+tag,async()=>{await beginQuietNoticeProbe(page);try{assert.equal(await page.locator('#talent-button').isVisible(),false,'unneeded Training is hidden until there are available points');await page.evaluate(()=>{const c=Prototype.game;c.hero.xp=0;c.hero.talentPoints=0;c.xp(120*c.hero.level);});await page.waitForFunction(()=>document.querySelector('#talent-button').classList.contains('talent-ready'));assert.equal(await page.locator('#talent-button').isVisible(),!v.touch,'desktop Training appears when points are ready; phone uses Character menu');assert.equal(await page.locator('#talent-count').textContent(),'1');assert(await page.locator('#modal').isHidden(),'level-up reminder does not interrupt play');await page.waitForFunction(()=>[...document.querySelectorAll('#message .notice-card')].some(n=>n.textContent.includes('Training point')),null,{timeout:60000});assert((await page.locator('#message').textContent()).includes('Training point'));await page.locator('#talent-button').evaluate(el=>el.click());assert.equal(await page.locator('#modal-title').textContent(),'Talents');assert.equal(await page.locator('#modal-description').textContent(),'Available training points 1 · One point raises one discipline by one rank.');const actions=await page.locator('#modal-actions button').allTextContents();for(const label of ['Power Training · Rank 0/5','Each rank: +7 Power','Cooldown Training · Rank 0/5','Each rank: -4% to skill cooldowns · up to 20% at Rank 5','Health Training · Rank 0/5','Each rank: +33 maximum HP','Movement Training · Rank 0/3','Each rank: +38 movement speed','Reset discipline training · FREE · 2 left'])assert(actions.some(x=>x.includes(label)),label);await page.keyboard.press('Escape');}finally{await endQuietNoticeProbe(page);}});
 await check('World labels stay quiet until combat or proximity '+tag,async()=>{const state=await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');const enemy=c.zone().enemies.find(e=>e.type==='mob'&&e.hp>0),npc=c.zone().npcs.find(n=>n.kind==='quests');Object.assign(c.hero,c.safe(npc.x+520,npc.y+520));const building={id:'barracks-test',x:c.hero.x+400,y:c.hero.y+400,renderKind:'building'};const idle=Prototype.labelVisible({...enemy,renderKind:'enemy'}),farNpc=Prototype.labelVisible({...npc,renderKind:'npc'}),farBuilding=Prototype.labelVisible(building);c.engage(enemy);const aggro=Prototype.labelVisible({...enemy,renderKind:'enemy'});Object.assign(c.hero,c.safe(npc.x,npc.y));const nearNpc=Prototype.labelVisible({...npc,renderKind:'npc'});building.x=c.hero.x+100;building.y=c.hero.y;const nearBuilding=Prototype.labelVisible(building);return {idle,aggro,farNpc,nearNpc,farBuilding,nearBuilding};});assert.equal(state.idle,false);assert.equal(state.aggro,true);assert.equal(state.farNpc,false);assert.equal(state.nearNpc,true);assert.equal(state.farBuilding,false);assert.equal(state.nearBuilding,true);});
-await check('Movement basic uses per-class switches and keeps manual skill 1 '+tag,async()=>{
- assert.deepEqual(errors,[],'renderer errors before movement-basic test '+tag);
- const heartbeat=await page.evaluate(()=>({time:Prototype.game.s.time,paused:Prototype.paused,modal:document.querySelector('#modal').hidden,zone:Prototype.game.zoneId}));await page.waitForTimeout(120);const heartbeat2=await page.evaluate(()=>Prototype.game.s.time);assert(heartbeat2>heartbeat.time,'animation loop active before movement-basic test '+JSON.stringify(heartbeat));
+await check('Basic autoattacks work while stationary and moving '+tag,async()=>{
+ assert.deepEqual(errors,[],'renderer errors before autoattack test '+tag); 
+ const heartbeat=await page.evaluate(()=>({time:Prototype.game.s.time,paused:Prototype.paused,modal:document.querySelector('#modal').hidden,zone:Prototype.game.zoneId}));
+ await page.waitForTimeout(120);
+ const heartbeat2=await page.evaluate(()=>Prototype.game.s.time);
+ assert(heartbeat2>heartbeat.time,'simulation is running before autoattack checks '+JSON.stringify(heartbeat));
  const saved=await page.evaluate(()=>Prototype.game.snapshot());
- await page.evaluate(()=>{const c=Prototype.game;c.enter('vale');c.zone().props=[];c.zone().enemies=[];c.s.party=[];Object.assign(c.hero,{x:600,y:900,order:null});const e=c.makeEnemy({species:'goblin',name:'Training target',level:1,hp:10000,damage:0,gold:0,xp:0},{x:680,y:900});c.zone().enemies=[e];});
- const reset=await page.evaluate(()=>{const c=Prototype.game,e=c.zone().enemies[0];e.aggro=false;e.hp=10000;Object.assign(e,{x:680,y:900,home:{x:680,y:900}});Object.assign(c.hero,{x:600,y:900,order:null});c.hero.cd[0]=0;return c.hero.x;});
- await page.waitForTimeout(80);assert.equal(await page.evaluate(()=>Prototype.game.zone().enemies[0].hp),10000,'no idle passive attack');
- await page.keyboard.down('d');await page.waitForFunction(start=>Prototype.game.hero.x>start,reset,{timeout:1500});await page.waitForFunction(()=>Prototype.game.zone().enemies[0].hp<10000,null,{timeout:1500});await page.keyboard.up('d');
- const moved=await page.evaluate(()=>({x:Prototype.game.hero.x,hp:Prototype.game.zone().enemies[0].hp}));assert(moved.x>reset&&moved.hp<10000,'Paladin attacks during actual movement');
- await page.evaluate(()=>{const c=Prototype.game,e=c.zone().enemies[0];Object.assign(c.hero,{x:600,y:900,order:null});c.hero.cd[0]=0;c.s.projectiles=[];e.hp=10000;e.aggro=false;Object.assign(e,{x:680,y:900,home:{x:680,y:900}});});
- await page.keyboard.press('j');assert(await page.evaluate(()=>Prototype.game.zone().enemies[0].hp)<10000,'Paladin can still attack manually while still');
- for(const role of ['mage','ranger']){
-  await page.evaluate(role=>{const c=Prototype.game,e=c.zone().enemies[0];Object.assign(c.hero,{class:role,x:600,y:900,order:null});c.hero.cd[0]=0;c.s.projectiles=[];e.hp=10000;e.aggro=false;Object.assign(e,{x:680,y:900,home:{x:680,y:900}});},role);
-  await page.keyboard.down('d');await page.waitForTimeout(110);await page.keyboard.up('d');await page.waitForFunction(()=>Prototype.game.zone().enemies[0].hp<10000);
-  await page.evaluate(role=>{const c=Prototype.game,e=c.zone().enemies[0];PrototypeRules.movementBasicClasses[role]=false;Object.assign(c.hero,{x:600,y:900,order:null});c.hero.cd[0]=0;c.s.projectiles=[];e.hp=10000;e.aggro=false;Object.assign(e,{x:680,y:900,home:{x:680,y:900}});},role);
-  await page.keyboard.down('d');await page.waitForTimeout(110);await page.keyboard.up('d');assert.equal(await page.evaluate(()=>Prototype.game.zone().enemies[0].hp),10000,role+' flag independently disables movement attack');
-  await page.evaluate(role=>{const c=Prototype.game,e=c.zone().enemies[0];PrototypeRules.movementBasicClasses[role]=true;Object.assign(c.hero,{x:600,y:900,order:null});c.hero.cd[0]=0;c.s.projectiles=[];e.hp=10000;e.aggro=false;Object.assign(e,{x:680,y:900,home:{x:680,y:900}});},role);
-  await page.keyboard.press('j');await page.waitForFunction(()=>Prototype.game.zone().enemies[0].hp<10000);assert(await page.evaluate(()=>Prototype.game.zone().enemies[0].hp)<10000,role+' manual skill remains');
+ try{
+  await page.evaluate(()=>{
+   const c=Prototype.game;c.enter('vale');c.zone().props=[];c.zone().enemies=[];c.s.party=[];
+   c.s.mercyTime=0;c.s.valeFieldAwakened=true;
+   Object.assign(c.hero,{x:600,y:900,order:null,hp:c.hero.maxHp});
+   const e=c.makeEnemy({species:'goblin',name:'Stationary test target',level:1,hp:10000,damage:0,gold:0,xp:0},{x:680,y:900});
+   e.speed=0;c.zone().enemies=[e];
+  });
+  for(const role of ['paladin','mage','ranger']){
+   await page.evaluate(role=>{
+    const c=Prototype.game,e=c.zone().enemies[0];PrototypeRules.movementBasicClasses[role]=true;
+    Object.assign(c.hero,{class:role,x:600,y:900,order:null,shieldStance:0});
+    c.hero.cd[0]=0;c.hero.skills[0]=1;c.s.projectiles=[];c.s.heroTarget=null;
+    c.manualHeroTargetId=null;c.manualHeroTargetLocked=false;e.hp=10000;e.aggro=false;e.returning=false;
+    Object.assign(e,{x:680,y:900,home:{x:680,y:900},speed:0});
+   },role);
+   await page.waitForFunction(()=>Prototype.game.zone().enemies[0].hp<10000,null,{timeout:2500});
+   const idle=await page.evaluate(()=>({x:Prototype.game.hero.x,y:Prototype.game.hero.y,hp:Prototype.game.zone().enemies[0].hp,order:Prototype.game.hero.order}));
+   assert.equal(idle.x,600,role+' strikes while standing still (x)');
+   assert.equal(idle.y,900,role+' strikes while standing still (y)');
+   assert.equal(idle.order,null,role+' does not initiate pursuit');
+   await page.evaluate(()=>{
+    const c=Prototype.game,e=c.zone().enemies[0];c.hero.cd[0]=10;c.s.projectiles=[];e.hp=10000;
+   });
+   await page.waitForTimeout(200);
+   assert.equal(await page.evaluate(()=>Prototype.game.zone().enemies[0].hp),10000,role+' honors the ordinary basic cooldown');
+   await page.evaluate(role=>{
+    const c=Prototype.game,e=c.zone().enemies[0];PrototypeRules.movementBasicClasses[role]=false;
+    c.hero.cd[0]=0;c.s.projectiles=[];e.hp=10000;
+   },role);
+   await page.waitForTimeout(220);
+   assert.equal(await page.evaluate(()=>Prototype.game.zone().enemies[0].hp),10000,role+' class toggle disables automatic attacks');
+   await page.keyboard.press('j');
+   await page.waitForFunction(()=>Prototype.game.zone().enemies[0].hp<10000,null,{timeout:2500});
+   await page.evaluate(role=>{
+    const c=Prototype.game,e=c.zone().enemies[0];PrototypeRules.movementBasicClasses[role]=true;
+    c.hero.cd[0]=0;c.s.projectiles=[];e.hp=10000;
+    e.x=600+c.heroSkillRange(1)+120;e.home={x:e.x,y:e.y};e.aggro=false;
+   },role);
+   await page.waitForTimeout(220);
+   const distant=await page.evaluate(()=>({x:Prototype.game.hero.x,hp:Prototype.game.zone().enemies[0].hp,order:Prototype.game.hero.order}));
+   assert.equal(distant.hp,10000,role+' does not autoattack out of range');
+   assert.equal(distant.x,600,role+' does not autochase out of range');
+   assert.equal(distant.order,null,role+' leaves movement orders alone');
+  }
+  await page.evaluate(()=>{
+   const c=Prototype.game,e=c.zone().enemies[0];
+   Object.assign(c.hero,{class:'paladin',x:600,y:900,order:null,shieldStance:3});
+   c.hero.cd[0]=0;c.s.projectiles=[];e.hp=10000;
+   Object.assign(e,{x:680,y:900,home:{x:680,y:900},aggro:false});
+  });
+  await page.waitForTimeout(220);
+  assert.equal(await page.evaluate(()=>Prototype.game.zone().enemies[0].hp),10000,'Paladin Shield Stance suppresses basic autoattack');
+  await page.evaluate(()=>{Prototype.game.hero.shieldStance=0;});
+  await page.waitForFunction(()=>Prototype.game.zone().enemies[0].hp<10000,null,{timeout:2500});
+  await page.evaluate(()=>{
+   const c=Prototype.game,e=c.zone().enemies[0];Object.assign(c.hero,{x:600,y:900,order:null});
+   c.hero.cd[0]=0;c.s.projectiles=[];e.hp=10000;e.aggro=false;
+  });
+  await page.keyboard.down('d');
+  try{
+   await page.waitForFunction(()=>Prototype.game.hero.x>600,null,{timeout:1500});
+   await page.waitForFunction(()=>Prototype.game.zone().enemies[0].hp<10000,null,{timeout:2500});
+  }finally{await page.keyboard.up('d');}
+ }finally{
+  await page.evaluate(state=>{
+   for(const role of ['paladin','mage','ranger'])PrototypeRules.movementBasicClasses[role]=true;
+   Prototype.game.s=state;
+  },saved);
  }
- await page.evaluate(()=>{const c=Prototype.game,e=c.zone().enemies[0];Object.assign(c.hero,{class:'paladin',x:1145,y:1200,order:null});c.hero.cd[0]=0;c.s.projectiles=[];e.hp=10000;e.aggro=false;Object.assign(e,{x:1100,y:1200,home:{x:1100,y:1200}});});
- await page.keyboard.down('d');await page.waitForTimeout(110);await page.keyboard.up('d');assert.equal(await page.evaluate(()=>Prototype.game.zone().enemies[0].hp),10000,'pressing against the river cannot autoattack');
- await page.evaluate(()=>{const c=Prototype.game,e=c.zone().enemies[0];Object.assign(c.hero,{x:600,y:900,order:null});c.hero.cd[0]=0;c.s.projectiles=[];e.hp=10000;e.aggro=false;Object.assign(e,{x:670,y:850,home:{x:670,y:850}});});
- const r=await page.locator('#joystick').boundingBox();if(v.touch){await page.evaluate(()=>{const j=document.querySelector('#joystick'),r=j.getBoundingClientRect();j.setPointerCapture=()=>{};j.onpointerdown({pointerType:'touch',pointerId:77,clientX:r.left+r.width*.8,clientY:r.top+r.height*.5,preventDefault(){}});});await page.waitForTimeout(130);await page.evaluate(()=>document.querySelector('#joystick').onpointerup({pointerId:77}));assert(await page.evaluate(()=>Prototype.game.zone().enemies[0].hp)<10000,'touch joystick movement activates Paladin basic');}else{const before=await page.evaluate(()=>[Prototype.game.hero.x,Prototype.game.hero.y]);assert.equal(r,null,'Desktop has no joystick');await page.mouse.move(60,v.height-60);await page.mouse.down();await page.waitForTimeout(130);await page.mouse.up();assert.deepEqual(await page.evaluate(()=>[Prototype.game.hero.x,Prototype.game.hero.y]),before,'desktop mouse cannot drive the joystick');}
- await page.evaluate(state=>{Prototype.game.s=state;},saved);
 });
 
 await check('Joystick recovers missing releases without breaking two-thumb control '+tag,async()=>{
