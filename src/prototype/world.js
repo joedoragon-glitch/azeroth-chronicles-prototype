@@ -1042,7 +1042,38 @@
         delete z.roadLampVersion;
         delete z.environmentCoherenceVersion;
       }
+      // N1a migrates visual evidence and the inspection points independently
+      // of interiorCoherenceVersion 3: replaying that migration would shift walls
+      // and guards in established v4 saves.
+      narrativeSceneReconciliation(z) {
+        const inspection = R.narrativeSceneInspections?.[z.id];
+        if (!inspection || z.narrativeSceneVersion === 1) return;
+        const side = this.sideDungeon(z.id);
+        if (side) {
+          // Keep historical 'side-decor-N' IDs and all blocking geometry stable.
+          for (const [j, [x, y, structure]] of side.decor.entries()) {
+            const id = 'side-decor-' + j;
+            const previous = z.props.find((p) => p.id === id);
+            if (previous) previous.structure = structure;
+            else z.props.push({
+              id, ...this.safe(x, y, z.id), r: 0,
+              decorative: true, structure,
+              sceneRole: side.species + '-household-life',
+            });
+          }
+        }
+        for (const item of inspection) {
+          if (z.npcs.some((n) => n.id === item.id)) continue;
+          const point = this.safe(item.x, item.y, z.id);
+          z.npcs.push({
+            id: item.id, name: item.name, kind: 'scene-detail',
+            narrativeId: item.narrativeId, ...point, icon: item.icon,
+          });
+        }
+        z.narrativeSceneVersion = 1;
+      }
       interiorCoherence(z) {
+        this.narrativeSceneReconciliation(z);
         const side = this.sideDungeon(z.id),
           room = this.supplyRoom(z.id);
         if ((!side && !room && !dungeonIds.includes(z.id)) || z.interiorCoherenceVersion === 3)
