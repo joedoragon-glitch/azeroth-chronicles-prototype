@@ -48,3 +48,9 @@ A severe stall **without engaged enemies** previously had no path from the first
 ## New chat handoff
 
 The authoritative combined candidate is **draft [PR #426](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/426)**, branch `integration/performance-resilience-20261024`; `main` was not merged or deployed during this work. Prior drafts #422–#425 stay open as history. First review latest PR #426 focused checks, then complete the boss-reset safety audit and release/version checklist before presenting a merge-ready recommendation. Keep implementation changes small and ask before broader test matrices.
+
+## Focused boss-reset repair after independent audit (24 October 2026)
+
+The first independently confirmed release blocker is corrected in this **draft only**: emergency disengagement now calls the exact same completed-disengage cleanup as normal enemy leashes, instead of maintaining a shorter copy that left Frenzy, Dark Lord Second Wind/royal modifiers, cooldowns and participation state behind. Native Garun temporary and preview obstacles are removed when its live encounter is interrupted, and roaming Thornfang/Cindermaw return flags and captured patrol metadata are reconciled before the shared cleanup. Boss-owned summons are still cancelled by the existing encounter hooks. The same hero HP, crowns, save schema, death/Succession and normal combat rules remain in place.
+
+The focused regression is in `tests/critical-restart-recovery.test.cjs`, covering normal/TRUE Dark Lord state, captain phases, mine props, roam-patrol return data and the ordinary disengage path. This does **not** authorize a merge or deployment. Restart-marker checkpoint identity, device-level crowded-combat verification, PWA version/cache and final owner sign-off remain separate gates.

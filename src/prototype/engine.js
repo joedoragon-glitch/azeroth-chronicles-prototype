@@ -6455,86 +6455,92 @@
           !(e.veraEscort && this.zoneId === 'crown' && this.veraHeld())
         )
           Object.assign(e, e.home);
-        e.aggro = false;
-        delete e.ashCloud;
-        delete e.ashNextAt;
-        delete e.ledgerOpen;
-        delete e.ledgerMarkedId;
-        delete e.ledgerMarkUntil;
-        e.telegraph = null;
-        e.sequence = [];
-        e.motion = null;
-        e.rangedAim = null;
-        e.hp = e.baseHp;
-        e.maxHp = e.baseHp;
-        delete e.supportHeal;
-        e.supportHealCd = 0;
-        e.damage = e.baseDamage;
-        e.returning = 0;
-        e.heroParticipated = false;
-        e.mercyProvoked = false;
-        e.noProgress = 0;
-        e.pursuitBurstUsed = false;
-        delete e.pursuitBurstReadyAt;
-        e.frozen = false;
-        e.frenzy = false;
-        for (const key of [
-          'passiveAerialUntil',
-          'passiveRepairReadyAt',
-          'passiveVeteranUntil',
-          'passiveVeteranReadyAt',
-          'passiveVeteranHits',
-          'passiveRegenTotal',
-          'passiveViolationUntil',
-          'passiveViolationStacks',
-        ])
-          delete e[key];
-        e.captainPhase = false;
-        e.captainPhaseMove = 1;
-        e.captainAttackRate = 1;
-        e.captainGuard = 0;
-        if (e.captain || e.roomCaptain) {
-          e.captainReflect = 0;
-          e.captainPursuit = 0;
-          e.captainOvertimeCd = 0;
-        }
-        e.quotaOvertime = 0;
-        e.captainOpeningSummon = false;
-        if (e.family === 'darklord') {
-          // A complete leash return starts a genuinely new encounter.
-          delete e.secondWindUsed;
-          delete e.secondWindCancelled;
-          delete e.secondWindFacing;
-          delete e.royalTaxation;
-          delete e.royalTaxShield;
-          delete e.royalPrerogativeReadyAt;
-          delete e.crownDecreeZone;
-          e.healCd = 0;
-        }
-        delete e.quotaTarget;
-        delete e.idleWanderTarget;
-        e.idleWanderWait = 1.5;
-        e.specialCd = e.captain || e.roomCaptain ? 1.25 : e.nightOnly ? 1.5 : 0;
-        e.summonCd = 0;
-        e.sabotageCd = 0;
-        delete e.mireLowestHpRatio;
-        if (e.hookedVictim) {
-          const held =
-            e.hookedVictim === 'hero'
-              ? this.hero
-              : this.s.party.find((u) => u.id === e.hookedVictim);
-          if (held) held.keeperHeld = null;
-          e.hookedVictim = null;
-        }
-        if (e.captain || e.roomCaptain)
-          this.zone().enemies = this.zone().enemies.filter((u) => !(u.summon && u.owner === e.id));
-        if (e.type === 'boss' && e.form === 'true') {
-          this.zone().enemies = this.zone().enemies.filter((u) => !(u.summon && u.owner === e.id));
-          e.trueEntourageSpawned = false;
-          e.trueHalfSummonWave = false;
-        }
-        this.releasePatrolResume(e);
+        this.finishDisengage(e);
       }
+    }
+
+    // Shared post-return combat reset: ordinary leashes and emergency rescue
+    // must retire identical cooldowns, boss phases and summon flags.
+    finishDisengage(e) {
+      e.aggro = false;
+      delete e.ashCloud;
+      delete e.ashNextAt;
+      delete e.ledgerOpen;
+      delete e.ledgerMarkedId;
+      delete e.ledgerMarkUntil;
+      e.telegraph = null;
+      e.sequence = [];
+      e.motion = null;
+      e.rangedAim = null;
+      e.hp = e.baseHp;
+      e.maxHp = e.baseHp;
+      delete e.supportHeal;
+      e.supportHealCd = 0;
+      e.damage = e.baseDamage;
+      e.returning = 0;
+      e.heroParticipated = false;
+      e.mercyProvoked = false;
+      e.noProgress = 0;
+      e.pursuitBurstUsed = false;
+      delete e.pursuitBurstReadyAt;
+      e.frozen = false;
+      e.frenzy = false;
+      for (const key of [
+        'passiveAerialUntil',
+        'passiveRepairReadyAt',
+        'passiveVeteranUntil',
+        'passiveVeteranReadyAt',
+        'passiveVeteranHits',
+        'passiveRegenTotal',
+        'passiveViolationUntil',
+        'passiveViolationStacks',
+      ])
+        delete e[key];
+      e.captainPhase = false;
+      e.captainPhaseMove = 1;
+      e.captainAttackRate = 1;
+      e.captainGuard = 0;
+      if (e.captain || e.roomCaptain) {
+        e.captainReflect = 0;
+        e.captainPursuit = 0;
+        e.captainOvertimeCd = 0;
+      }
+      e.quotaOvertime = 0;
+      e.captainOpeningSummon = false;
+      if (e.family === 'darklord') {
+        // A complete leash return starts a genuinely new encounter.
+        delete e.secondWindUsed;
+        delete e.secondWindCancelled;
+        delete e.secondWindFacing;
+        delete e.royalTaxation;
+        delete e.royalTaxShield;
+        delete e.royalPrerogativeReadyAt;
+        delete e.crownDecreeZone;
+        e.healCd = 0;
+      }
+      delete e.quotaTarget;
+      delete e.idleWanderTarget;
+      e.idleWanderWait = 1.5;
+      e.specialCd = e.captain || e.roomCaptain ? 1.25 : e.nightOnly ? 1.5 : 0;
+      e.summonCd = 0;
+      e.sabotageCd = 0;
+      delete e.mireLowestHpRatio;
+      if (e.hookedVictim) {
+        const held =
+          e.hookedVictim === 'hero'
+            ? this.hero
+            : this.s.party.find((u) => u.id === e.hookedVictim);
+        if (held) held.keeperHeld = null;
+        e.hookedVictim = null;
+      }
+      if (e.captain || e.roomCaptain)
+        this.zone().enemies = this.zone().enemies.filter((u) => !(u.summon && u.owner === e.id));
+      if (e.type === 'boss' && e.form === 'true') {
+        this.zone().enemies = this.zone().enemies.filter((u) => !(u.summon && u.owner === e.id));
+        e.trueEntourageSpawned = false;
+        e.trueHalfSummonWave = false;
+      }
+      this.releasePatrolResume(e);
     }
 
     fieldTrueSpawnPoint(base) {

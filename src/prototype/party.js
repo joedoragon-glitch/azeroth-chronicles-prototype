@@ -48,22 +48,29 @@
       this._tacticalRepositions?.clear();
       this._tacticalPartyTargets?.clear();
       for (const e of engaged) {
-        // Existing encounter cancellation is responsible for boss-specific
-        // spell, capture, summon and scripted-action cleanup.
+        // Finish the same combat lifecycle as an ordinary completed leash
+        // return. Cancel specialist spells/summons first, then use the shared
+        // reset for HP, phase flags, frenzy and authored cooldowns.
+        const resume = this.patrolResume(e);
+        if (e.family === 'mine' && e.type === 'boss')
+          z.props = z.props.filter(p => !p.garunTemporary && !p.garunPreview);
         this.cancelEncounter(e);
-        this.clearEncounterState(e);
+        if (this.thornPatroller(e)) {
+          e.thornLeg = resume?.leg ?? R.thornPatrol.startLeg;
+          e.thornPause = resume?.pause ?? R.thornPatrol.pause;
+          delete e.thornReturn;
+        } else if (this.cinderPatroller(e)) {
+          if (resume?.destination) e.cinderDestination = { ...resume.destination };
+          else delete e.cinderDestination;
+          e.cinderStop = resume?.stop ?? 0;
+          e.cinderInspectionPause = resume?.inspectionPause ?? R.cinderInspection.pauseMin;
+          delete e.cinderReturn;
+        }
         if (e.home) Object.assign(e, e.home);
-        e.aggro = false;
-        e.returning = 0;
-        e.telegraph = null;
-        e.sequence = [];
-        e.motion = null;
-        e.rangedAim = null;
         e.path = [];
-        e.hp = e.baseHp;
-        e.maxHp = e.baseHp;
-        e.damage = e.baseDamage;
-        e.noProgress = 0;
+        e.pursuitBurst = 0;
+        delete e.rogueDustCoverUntil;
+        this.finishDisengage(e);
       }
       z.enemies = z.enemies.filter(e => !e.summon ||
         !(e.aggro || owners.has(e.owner) || owners.has(e.id)));
