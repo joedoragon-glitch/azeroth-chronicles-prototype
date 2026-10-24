@@ -1463,6 +1463,10 @@
     ['at your level', 'a tu nivel'],
   ];
   const archiveTechnicalCopy = [
+    ['Charged circle', 'Carga circular'],
+    ['Charged cone', 'Carga en cono'],
+    ['Charged line', 'Carga en línea'],
+    [' · up to 1 target(s)', ' · hasta 1 objetivo'],
     ["Move and recover skill cooldowns more slowly. Repeated Slow hits suppress recovery further and add lasting cooldown debt.", "El movimiento y la recuperación de habilidades se ralentizan. Los impactos repetidos de Ralentización reducen aún más la recuperación y añaden una deuda de reutilización que persiste."],
     ["% under stronger Rogue snares; ordinary enemy pursuit is 50%. Every Slow hit adds ", "% bajo las trampas de pícaro más fuertes; la persecución enemiga normal queda al 50 %. Cada impacto de Ralentización añade "],
     ["s to its authored duration; Ringleader Rogue snares last 2.95s.", " s a su duración prevista; las trampas de pícaro de los cabecillas duran 2.95 s."],
@@ -1723,6 +1727,9 @@
   }
   // Match source text once. Never feed Spanish output back through an English
   // glossary, or partially translate an English sentence before matching it.
+  // A healing amount is not a duration. Capture the live figures as one
+  // clause so the generic duration word "for" cannot change their meaning.
+  const petHealPattern = / · heals one wounded ally within (\d+(?:\.\d+)?) for (\d+(?:\.\d+)?)% of the pet’s maximum HP; clear line required/;
   let archiveTranslation;
   let namedTranslation;
   function namedCatalog(names) {
@@ -1739,7 +1746,7 @@
     const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const keys = [...entries.keys()].sort((a, b) => b.length - a.length);
     return new RegExp(
-      keys
+      petHealPattern.source + '|' + keys
         .map(
           (key) =>
             (/^[A-Za-z]/.test(key) ? '(?<![A-Za-zÁ-ÿ])' : '') +
@@ -1793,7 +1800,10 @@
   function translateArchive(value, names = []) {
     if (typeof value !== 'string') return value;
     const { entries, pattern } = namedCatalog(names);
-    return value.replace(pattern, (source) => entries.get(source));
+    return value.replace(pattern, (source) => entries.has(source)
+      ? entries.get(source)
+      : source.replace(petHealPattern,
+        ' · cura a un aliado herido dentro de $1 por una cantidad equivalente al $2% de los PV máximos de la mascota; requiere una línea despejada'));
   }
   const api = {
     translationNames,

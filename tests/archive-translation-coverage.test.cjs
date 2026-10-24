@@ -147,6 +147,9 @@ for (const text of currentSlow.topic) {
 assert(A.translateArchive(currentSlow.topic[2]).includes('la deuda de reutilización acumulada permanece'),
   'The new main Slow translation retains lasting cooldown debt');
 
+assert.equal(A.translateArchive(' · heals one wounded ally within 333 for 12.75% of the pet’s maximum HP; clear line required'),
+  ' · cura a un aliado herido dentro de 333 por una cantidad equivalente al 12.75% de los PV máximos de la mascota; requiere una línea despejada',
+  'Pet healing translates a live amount, not a duration');
 console.log(
   'PASS Archive technical-copy coverage: ' +
     checked +
