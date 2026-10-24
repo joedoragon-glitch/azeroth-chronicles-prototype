@@ -84,7 +84,13 @@ const invalidPeace = Object.entries(end.s.zones).flatMap(([zone, state]) =>
     .map((e) => ({ zone, family: e.family, type: e.type, neutral: e.neutral,
       summon: e.summon, guard: e.guard, habitat: state.habitat })));
 assert.deepEqual(invalidPeace, [], 'Peaceful save must have only neutral habitat creatures');
-const throneRestored = Campaign.restore(end.snapshot(), () => 0.9);
+const peaceSnapshot = end.snapshot();
+const invalidSnapshot = Object.entries(peaceSnapshot.zones).flatMap(([zone, state]) =>
+  state.enemies.filter((e) => !e.neutral || e.summon || e.guard || e.family === 'darklord')
+    .map((e) => ({ zone, family: e.family, type: e.type, neutral: e.neutral,
+      summon: e.summon, guard: e.guard, habitat: state.habitat })));
+assert.deepEqual(invalidSnapshot, [], 'A v4 peaceful snapshot must preserve neutral enemies');
+const throneRestored = Campaign.restore(peaceSnapshot, () => 0.9);
 assert(throneRestored.storyReadings().some((n) => n.text === A.M01.en), 'Restored throne secret stays earned');
 assert(end.peace, 'Native throne checkEnding transitions completed TRUE campaign to peace');
 const refuge = end.zone().npcs.find((n) => n.kind === 'rest');
