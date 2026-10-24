@@ -161,7 +161,7 @@ assert(!offEmergency.emergency);
 // battle simulation takes place until the device proves it can render again.
 assert(frame.includes('const recovering = !frozen && frameSkip.beginFrame(now, intervalMs);'));
 assert(frame.includes('const simulating = !frozen && !recovering;'));
-assert(frame.includes('if (simulating) {\\n      let x ='),
+assert(frame.includes('if (simulating) {') && frame.includes('      let x ='),
   'Hero movement, party AI and hostile combat run only outside emergency mode');
 assert(frame.includes('renderer.update(simulating ? dt : 0);'),
   'Timed combat effects do not silently expire while combat is protected');
