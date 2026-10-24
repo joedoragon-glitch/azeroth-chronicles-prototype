@@ -23,6 +23,7 @@ New **`tests/navigation-route-stage4.test.cjs`** validates:
 - `road:true` also connects the same fixture, including the authored start and requested end and validating each reconstructed edge.
 - A previously successful route produces its **exact historical road vertices**, plus unchanged direct-line movement.
 - An actual full-height impermeable blocker returns no route in walking **and** `road:true` mode; no disconnected-pocket teleport.
+- A **real Campaign actor** uses the production `follow()` method to reach a destination around a circular physical obstacle; every path segment passes the shared swept-collision check. This checks one direct simulation consumer, not every enemy or companion behavior.
   
 Existing Stage 3 **`tests/map-navigation.test.cjs`** still checks all five outdoor regions, authored service/harbor frontages, collision, historic migrations and state purity. Existing movement, skill targeting, save and map-control code is untouched. Existing `tests/roads.test.cjs` contains a broader road-journey/migration integration contract but is deliberately **not** launched as a lengthy, unrelated matrix by this stage without owner authorization.
 
