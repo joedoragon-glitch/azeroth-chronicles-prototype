@@ -79,6 +79,11 @@ onlyNotice(end, A.M01.en, 'M01 throne');
 end.interact(throne);
 assert.equal(end.notices.filter((n) => n.text === A.M01.en).length, 1, 'Throne one-time delivery');
 assert(!end.storyReadings().some((n) => n.text === A.M02.en), 'Final rest not yet unlocked');
+const invalidPeace = Object.entries(end.s.zones).flatMap(([zone, state]) =>
+  state.enemies.filter((e) => !e.neutral || e.summon || e.guard || e.family === 'darklord')
+    .map((e) => ({ zone, family: e.family, type: e.type, neutral: e.neutral,
+      summon: e.summon, guard: e.guard, habitat: state.habitat })));
+assert.deepEqual(invalidPeace, [], 'Peaceful save must have only neutral habitat creatures');
 const throneRestored = Campaign.restore(end.snapshot(), () => 0.9);
 assert(throneRestored.storyReadings().some((n) => n.text === A.M01.en), 'Restored throne secret stays earned');
 assert(end.peace, 'Native throne checkEnding transitions completed TRUE campaign to peace');
