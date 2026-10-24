@@ -25,6 +25,19 @@ A critically slow active animation callback can mean the player has no practical
 - An explicit local Adaptive Frame Skip **Off** disables both normal adaptive skipping and this associated emergency protection. Closing a menu or hiding/pausing resets recent load evidence. The new diagnostic status includes emergency activation count and protected-callback count.
 - The thresholds are provisional and require physical-device observation. A browser that stops issuing callbacks entirely cannot be made to render by Javascript, and these guards do not diagnose GPU hangs. A persistently slow device may remain in recovery until resources improve or the player changes settings. Critical protection frames also contaminate general frame-profile averages if compared as ordinary combat data.
 
+## Abnormal browser termination and next-launch recovery
+
+When the browser entirely stops executing JavaScript, no in-session timer can rescue an already-frozen page. The application now arms a **small device-local marker** on active saved-game launch and after focus returns. A normal successful save on blur, hidden-page transition or `pagehide` removes that marker. If the next startup finds an unmatched clean-exit signal (an active marker from the previous session), it validates the existing latest campaign save and **relocates a copy** to the established recovery destination:
+
+- Selected completed local Barracks, when available under existing recovery rules; otherwise the saved refuge site for the current region (or its ordinary regional refuge).
+- Uses existing `enter()` and `arriveRefuge()` to clear active combat, summoned pressure, projectiles, hazards, transient movement and telegraphs. It never calls `die()`, awards resources, resets quests or alters deaths/gold/companion HP.
+- Saves the successfully recovered candidate immediately, then marks the new session active. A failed or invalid recovery retains the original valid game rather than overwriting it. Storage permission failures are tolerated.
+- **Normal clean exit and relaunch stays at the exact saved location.** The marker stores mode/class/basic save identity only; it never duplicates a campaign or enters the v4 save schema.
+- A browser/OS that kills the process without a lifecycle event can leave a marker even if the user was not experiencing lag. In that unusual case the next launch favors player safety by returning to the recovery point while preserving progression. If both JavaScript and persistent browser storage fail entirely, no local program can guarantee automated recovery. A genuinely invalid main save still needs an existing valid backup/export.
+- Successor selection/game-over and an already-dead hero are not overridden. No attempt is made to undo a legitimate defeat or death penalty.
+
+Focused acceptance uses the actual production app boot path against shared persisted storage: unclean close at a hazardous location, barracks priority, exact HP/crowns/kill statistics, current zone encounter cleanup, normal clean-pagehide reload at exact coordinates, invalid markers and unavailable storage.
+
 ## Why retain a stale-image guard?
 
 At a target of 20 FPS, two eligible skips can produce approximately 150 ms between actual drawings if callbacks arrive normally. At very low active callback rates, two skipped callbacks could otherwise leave the screen visually stale for much longer. The 350 ms bound allows a skip in a roughly 5 FPS stress scenario, but forces the next eligible drawing when the retained image is already old. It cannot eliminate stalls caused by browser scheduling or simulation overload.
