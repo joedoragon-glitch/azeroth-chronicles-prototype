@@ -155,7 +155,11 @@ assert(creatures.includes('Greenwood Vale'));
 const battle = reference.find((s) => s.title === 'Battle and protection').topics;
 const rogue = battle.find((t) => t[0] === 'Enemies under pressure');
 assert(rogue[1].includes('rogue tactics') && rogue[1].includes('break pursuit'));
-assert(rogue[2].includes('below 30% HP') && rogue[2].includes('half damage'));
+assert(
+  rogue[2].includes('below ' + Math.round(C.rules.tacticalFoundation.woundedThreshold * 100) + '% HP') &&
+    rogue[2].includes('half damage'),
+  'Live tactical pressure figures, not a stale fixed percentage',
+);
 assert(!battle.find((t) => t[0] === 'Why a great volley loses force')[1].includes('ln('));
 assert(battle.find((t) => t[0] === 'Why a great volley loses force')[2].includes('67.5%'));
 assert(
