@@ -34,9 +34,18 @@
 
 D04 (Veyra quarters/viewpoint), P04 (Neri turns to books), I01 (paid Goblin workers and purchased preserves), I03 (operational Signal Keep / Crown equipment), I04 (protected Shrine furniture / memoranda). Crystal Deposit / Yacimiento de Cristales is the approved display name for R04; preserve existing internal ID `shelf` and saved progress.
 
-## Focused verification and remaining release gate
+## N1 delivery audit closure — 24 October 2026
 
-- **Candidate SHA and evidence:** [Focused validation #40076587725](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40076587725) passed 12 selected Node/source/production-shell test files, including Archive, Keeper lifecycle, bilingual modal text, exact-copy fingerprint, existing quest save/payoffs and syntax. `node scripts/build.cjs --check` passed for `0.9.1+snapshot.dev.169`. This is not the full cross-device test matrix.
-- Actual English/Spanish production-shell modal rendering was asserted for approved copy, a composite live boss history and the evidence append. It is not certification of native device typography, every input method, or long-form browser scroll behavior.
-- **Still to verify before final N1 acceptance:** D04's private-quarters detail may appear only after inspecting those quarters; the five N1a scenery/animation holds remain outside this narrative branch. Device-dependent Chronicle display truncation (130/170 characters) still needs a separate legibility/interaction decision; 180-character editorial compliance is not a guarantee.
-- Review full PR diff against refreshed `main` and record approval separately. **No merge, deploy, A2 bookshelf project or broad CI authorization is implied by passing focused tests.**
+The earlier PR #428 delivery audit identified five gaps. All five now have implementation and focused source/native/production-shell evidence:
+
+1. **M01/M02 throne/final Rest:** real gated progress queues the complete approved text as a non-urgent milestone, not only `say()`. `Rewards.storyReadings()` reconstructs each only when `throneClaimed` / `finalRestCompleted` already exists; no new save fields or early identity leak.
+2. **L01/L02/L03 landmarks:** native first discovery/interaction queues each exact approved passage once; earned readings reconstruct from the existing `vale:goblin-camp`, `march:mire-nests`, and `highlands:ogre-hearth` discovery facts. Reinteraction and reload do not replay the notice.
+3. **D01–D03, D04 entrance excerpt, I01–I05:** first-entry story is now queued as quiet region-scoped narration and can be recovered from existing discovery facts. Combat defers, rather than destroys, the queued text. The private-quarters part of D04 is still intentionally withheld.
+4. **Spanish earned-story previews:** the existing 64-character Announcements index now selects the approved Spanish excerpt for dungeon/interior/landmark/endgame text, not only Chronicles; full answer view remains exact EN/ES manuscript text.
+5. **Actual delivery tests:** `tests/n1-delivery.test.cjs` drives native first entry, native landmarks, the real throne interaction and Rest, once-only/no-early-leak, v4 save/reload and English/Spanish Announcements clicks. It also exercises phone-mode portrait 170-character and landscape 130-character excerpt/hint behavior while asserting the complete approved text remains accessible in Announcements. Existing Keeper, Chronicle and approved-copy checks still run.
+
+**Latest focused evidence:** [GitHub Actions #40081688607](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40081688607) passed 16 selected impacted test files and `node scripts/build.cjs --check` for the multi-file PWA snapshot `0.9.1+snapshot.dev.169`. The publishing job was intentionally skipped for the draft PR. All 53 EN/ES core entries and three supplementary pairs remain fingerprint-verified; the 17 silent quests remain silent.
+
+**N1 assessment:** the game-wide author-copy integration and the five delivery findings are implemented and focused-tested on the draft branch. This is not hardware/assistive-device certification, a live Pages verification, or authority to proceed automatically to A2. The five separately authorized N1a scene correspondences (especially D04's full private-quarters observation) remain outstanding. The phone excerpt is intentionally short with an explicit full-text journal path; any long-form layout improvements belong to the subsequent Archive/user-interface stage.
+
+**Release gate:** PR #428 must remain a draft until separate owner authorization. No merge, deployment, complete cross-browser matrix, or broad CI suite is implied by these focused results.
