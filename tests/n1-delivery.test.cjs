@@ -144,4 +144,30 @@ for (const language of ['en', 'es']) {
     elements.get('close-button').click();
   }
 }
-console.log('PASS native N1 delivery/once-only, discovered-story reload, EN/ES journal entry and exact copy');
+// The actual small phone notice intentionally offers a short excerpt plus a
+// route to the exact full manuscript in the already-tested Announcements menu.
+for (const language of ['en', 'es']) {
+  const { scope, elements } = shell(language);
+  scope.Prototype.platform.select('phone');
+  const game = scope.Prototype.game;
+  game.enter('mine');
+  scope.Prototype.updateHUD();
+  const expected = language === 'es' ? A.D02.es : A.D02.en;
+  const host = elements.get('message');
+  assert.equal(host.children.length, 1, 'First dungeon discovery appears as one quiet notice');
+  let card = host.children[0];
+  assert.equal(card.textContent, expected.slice(0, 169).trimEnd() + '…',
+    'Portrait phone shows authored-language 170-character excerpt');
+  assert(card.children.some((child) => child.textContent ===
+    (language === 'es' ? 'Texto completo: Menú · Anuncios' : 'Full text: Menu · Announcements')),
+    'Portrait truncation identifies the full-story access path');
+  scope.innerWidth = 852;
+  scope.innerHeight = 393;
+  scope.Prototype.updateHUD();
+  card = host.children[0];
+  assert.equal(card.textContent, expected.slice(0, 129).trimEnd() + '…',
+    'Landscape phone uses the smaller 130-character excerpt');
+  assert(game.storyReadings().some((n) => n.text === A.D02.en),
+    'Neither phone excerpt changes or loses the complete approved passage');
+}
+console.log('PASS native N1 delivery, EN/ES journal, phone notice excerpts and full-story access');
