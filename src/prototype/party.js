@@ -72,6 +72,9 @@
       this.s.squadEngagement = null;
       this.s.squadBoss = false;
       this.s.heroTarget = null;
+      // Existing Recall logic continues the protected withdrawal after
+      // normal simulation safely resumes.
+      this.s.recallActive = true;
       this.hero.order = null;
       // Give living companions a physical, terrain-safe withdrawal goal behind
       // the hero, opposite the nearest engaged enemy. Never teleport them.
