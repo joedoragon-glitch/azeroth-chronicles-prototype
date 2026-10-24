@@ -1067,7 +1067,20 @@
     'Got it': 'Entendido',
     'Close without resting.': 'Cerrar sin descansar.',
   });
+  // N1: Only the author's approved bilingual Chronicle pairs may supply this copy.
+  const chronicleTranslations = new Map(
+    (typeof PrototypeNarration !== 'undefined' ? PrototypeNarration : [])
+      .filter((entry) => entry && entry.es)
+      .map((entry) => [entry.text, entry.es]),
+  );
   function translateSegment(piece) {
+    if (chronicleTranslations.has(piece)) return chronicleTranslations.get(piece);
+    // Announcement index titles use a 64-character preview of the original card.
+    const chroniclePreview =
+      typeof PrototypeNarration !== 'undefined'
+        ? PrototypeNarration.find((entry) => entry?.es && entry.text.slice(0, 64) === piece)
+        : null;
+    if (chroniclePreview) return chroniclePreview.es.slice(0, 64);
     const ferryPassage = Campaign.rules.tidalFerryPassage;
     if (ferryPassage && piece.startsWith(ferryPassage))
       return spanishText[ferryPassage] + piece.slice(ferryPassage.length);
@@ -1198,6 +1211,7 @@
   function tr(value) {
     if (language !== 'es' || typeof value !== 'string') return value;
     if (Object.prototype.hasOwnProperty.call(spanishText, value)) return spanishText[value];
+    if (chronicleTranslations.has(value)) return chronicleTranslations.get(value);
     return value
       .split('\n')
       .map((line) => line.split(' · ').map(translateSegment).join(' · '))
@@ -5218,10 +5232,12 @@
             };
           }
           if (n.kind === 'warning') card.setAttribute('role', 'alert');
-          const full = n.text + (n.detail ? ' ' + n.detail : ''),
+          const displayedText =
+            n.kind === 'narration' || n.kind === 'milestone' ? tr(n.text) : n.text;
+          const full = displayedText + (n.detail ? ' ' + n.detail : ''),
             limit = shortPhone ? 130 : platform.mode === 'phone' ? 170 : 240,
             compact = full.length > limit;
-          card.textContent = compact ? full.slice(0, limit - 1).trimEnd() + '…' : n.text;
+          card.textContent = compact ? full.slice(0, limit - 1).trimEnd() + '…' : displayedText;
           if (compact) {
             const hint = document.createElement('small');
             hint.className = 'notice-detail';
