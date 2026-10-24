@@ -114,7 +114,16 @@
         });
         for (const [zone, text] of Object.entries(R.dungeonLore || {})) {
           const region = D.regions[this.regionIndex(zone)]?.id;
-          if (this.s.discovered[region + ':dungeon-lore:' + zone]) entries.push({ text, region });
+          if (this.s.discovered[region + ':dungeon-lore:' + zone])
+            entries.push({
+              // A full D04 reading becomes eligible only after the actual
+              // private-quarters furniture has been inspected in the Citadel.
+              text: zone === 'citadel' &&
+                  this.s.discovered['citadel:veyra-private-quarters-inspected']
+                ? Narration.approved.D04.en
+                : text,
+              region,
+            });
         }
         for (const side of R.sideDungeons || [])
           if (side.lore && this.s.discovered[side.region + ':side-lore:' + side.id])
