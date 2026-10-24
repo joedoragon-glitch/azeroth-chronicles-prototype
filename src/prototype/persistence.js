@@ -3,7 +3,37 @@
   'use strict';
   const profileKey = 'azeroth-v4-profile',
     saveKey = (mode) => 'azeroth-v4-' + mode;
+  // Device-local crash sentinel; never embedded in a v4 campaign snapshot.
+  const encounterRiskKey = 'azeroth-encounter-risk-v1';
   function create({ storage, Campaign, status = () => {} }) {
+    function armEncounterRisk(game) {
+      if (!game || game.hero.hp <= 0 || game.s.challenge.pending ||
+        game.s.challenge.gameOver) return false;
+      try {
+        storage.setItem(encounterRiskKey, JSON.stringify({
+          v: 1, mode: game.s.mode, heroClass: game.hero.class,
+          zone: game.zoneId, seenAt: Date.now(),
+        }));
+        return true;
+      } catch (_) { return false; }
+    }
+    function clearEncounterRisk() {
+      try {
+        storage.setItem(encounterRiskKey, '');
+        return true;
+      } catch (_) { return false; }
+    }
+    function needsCrashRescue(game) {
+      if (!game || game.hero.hp <= 0 || game.s.challenge.pending ||
+        game.s.challenge.gameOver) return false;
+      try {
+        const marker = JSON.parse(storage.getItem(encounterRiskKey) || 'null');
+        return !!(marker && marker.v === 1 && marker.mode === game.s.mode &&
+          marker.heroClass === game.hero.class && marker.zone === game.zoneId &&
+          Number.isFinite(marker.seenAt) && marker.seenAt <= Date.now() + 60000 &&
+          Date.now() - marker.seenAt < 30 * 86400000);
+      } catch (_) { return false; }
+    }
     function loadProfile(defaults) {
       try {
         const p = JSON.parse(storage.getItem(profileKey) || 'null');
@@ -66,6 +96,9 @@
       saveProfile,
       save,
       load,
+      armEncounterRisk,
+      clearEncounterRisk,
+      needsCrashRescue,
       migrateLegacy,
       exists(mode) {
         try {
