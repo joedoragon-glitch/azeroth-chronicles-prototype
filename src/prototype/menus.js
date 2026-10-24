@@ -17,6 +17,11 @@
     requestName = () => {},
     openCharacter = null,
   }) {
+    // Author-final bilingual copy is a fixed source of text, not a rewrite prompt.
+    const approvedNarrative =
+      (typeof PrototypeNarration !== 'undefined'
+        ? PrototypeNarration
+        : require('./narration.js')).approved;
     function refugeIntro(site) {
       const owner = getGame(),
         zone = owner.zoneId,
@@ -617,7 +622,7 @@
       if (!getGame().keeperReadLedger()) return;
       openMenu(
         'The Keeper’s ledger',
-        '“I propose that we take the land’s specialists into our custody.\n\nLater entry: I have traded another captive for Neri. Her craft is needed to save the soaked records.”\n\n— Drowned Keeper',
+        approvedNarrative.P06.en,
         [action('Close the ledger', back)],
         back,
       );
@@ -664,7 +669,7 @@
       }
       openMenu(
         'The Keeper’s shelves',
-        '“Ask what you please. These volumes have survived worse than idle questions.”',
+        approvedNarrative.P03.en,
         sections.map((section) => action(section.title, () => shelf(section), section.intro)),
         back,
       );
@@ -677,8 +682,8 @@
         openMenu(
           'The Drowned Keeper',
           ready
-            ? '“I have lost enough to the water. Promise me you will keep these shelves standing and let Neri tend the records. Then I will share what I know.”'
-            : '“The pages are drowning. Free Neri, and then we may talk of saving them.”',
+            ? approvedNarrative.P02.en
+            : approvedNarrative.P01.en,
           ready
             ? [
                 action('Promise to protect the Archive', () => {
@@ -732,10 +737,10 @@
       openMenu(
         n.name,
         n.presentation === 'archive-restorer'
-          ? '“I return by choice. The soaked pages still need drying, and the damaged shelves need care.” Neri offers her usual tonics and training here.'
+          ? approvedNarrative.P04.en
           : manaEnabled
-            ? 'Neri sells Preparation Tonics and trains permanent Ranger field support.'
-            : 'Neri sells Preparation Tonics and trains permanent Ranger Heal, companion vitality and discipline resets.',
+            ? approvedNarrative.P07.en
+            : approvedNarrative.P07_nomana.en,
         [
           { kind: 'section', label: 'Preparation Tonics' },
           action(
