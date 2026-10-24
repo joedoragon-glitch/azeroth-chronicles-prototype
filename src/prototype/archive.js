@@ -1463,6 +1463,12 @@
     ['at your level', 'a tu nivel'],
   ];
   const archiveTechnicalCopy = [
+    ["Move and recover skill cooldowns more slowly. Repeated Slow hits suppress recovery further and add lasting cooldown debt.", "El movimiento y la recuperación de habilidades se ralentizan. Los impactos repetidos de Ralentización reducen aún más la recuperación y añaden una deuda de reutilización que persiste."],
+    ["% under stronger Rogue snares; ordinary enemy pursuit is 50%. Every Slow hit adds ", "% bajo las trampas de pícaro más fuertes; la persecución enemiga normal queda al 50 %. Cada impacto de Ralentización añade "],
+    ["s to its authored duration; Ringleader Rogue snares last 2.95s.", " s a su duración prevista; las trampas de pícaro de los cabecillas duran 2.95 s."],
+    ["The longest remaining duration wins, but overlapping hits increase recovery suppression and add debt to unfinished skill cooldowns.", "Prevalece la mayor duración restante, pero los impactos superpuestos reducen más la recuperación y añaden deuda a los tiempos de reutilización aún pendientes."],
+    ["Stack strength clears when Slow expires; accumulated cooldown debt remains.", "La intensidad acumulada se borra cuando termina la Ralentización; la deuda de reutilización acumulada permanece."],
+    ["Preparation, warnings and healing pulses are not delayed, and skills are never outright blocked by Slow.", "La preparación, las advertencias y los pulsos de curación no se retrasan, y la Ralentización nunca bloquea por completo las habilidades."],
     ['Active', 'Activo'],
     [', self-regeneration ', ', regeneración propia del '],
     [

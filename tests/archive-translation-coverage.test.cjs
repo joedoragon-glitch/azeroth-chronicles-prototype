@@ -137,6 +137,16 @@ for (const lang of ['en', 'es']) {
     'Reading metadata cannot leak to other menus',
   );
 }
+// Main has moved independently (#429/#431). Translate its exact Slow copy
+// already, without importing or reverting those mechanics on this stacked PR.
+const currentSlow = require('./fixtures/archive-slow-main-20261024.json');
+for (const text of currentSlow.topic) {
+  assert.deepEqual(gapsFor(text, []), [], 'New main Slow copy has complete technical translation');
+  assert.deepEqual(numbers(A.translateArchive(text)), numbers(text));
+}
+assert(A.translateArchive(currentSlow.topic[2]).includes('la deuda de reutilización acumulada permanece'),
+  'The new main Slow translation retains lasting cooldown debt');
+
 console.log(
   'PASS Archive technical-copy coverage: ' +
     checked +
