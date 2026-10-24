@@ -55,6 +55,12 @@ for (const language of ['en', 'es']) {
     [{ label: 'All shelves', action() {} }], 'archive-reading');
   assert.equal(approved.description, language === 'es' ? Approved.P05.es : Approved.P05.en,
     'Author-approved truth remains byte-for-byte unchanged');
+  assert.equal(elements.get('modal-description').getAttribute('role'), 'document',
+    'Long answers expose a reader-friendly document landmark');
+  assert.equal(elements.get('modal-description').tabIndex, 0,
+    'The full answer is available in keyboard Tab order');
+  assert.equal(elements.get('modal-description').getAttribute('aria-label'),
+    language === 'es' ? 'Lectura del Archivo' : 'Archive reading');
   assert.equal(approved.actions[0].textContent, language === 'es' ? 'Todos los estantes' : 'All shelves');
   const technical = sections.find((s) => s.title === 'Battle and protection').topics[0];
   const technicalAnswer = opened(technical[0], technical[1],
