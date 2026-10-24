@@ -3,6 +3,10 @@
   'use strict';
   const R = typeof PrototypeRules !== 'undefined' ? PrototypeRules : require('./rules.js');
   const D = typeof PrototypeData !== 'undefined' ? PrototypeData : require('./data.js');
+  const AuthorCopy =
+    (typeof PrototypeNarration !== 'undefined'
+      ? PrototypeNarration
+      : require('./narration.js')).approved;
   const clone = (x) => JSON.parse(JSON.stringify(x)),
     clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
     dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
@@ -885,11 +889,11 @@
         parts.push('Visit after dark and defeat two Lantern wraiths for Shadows After Sundown.');
       if (n.id === 'goblin-camp')
         parts.push(
-          'A working goblin roadside camp: bedding, cookfire and stolen goods show a raiding community that lives here between attacks.',
+          AuthorCopy.L01.en,
         );
       if (n.id === 'mire-nests')
         parts.push(
-          'Mire creatures nest, feed and wallow along this bank; the territory is habitat first and a danger to travelers second.',
+          AuthorCopy.L02.en,
         );
       if (n.id === 'wolf-den')
         parts.push(
@@ -897,7 +901,7 @@
         );
       if (n.id === 'ogre-hearth')
         parts.push(
-          'A rough ogre home camp with a communal hearth, stone seats and scavenged mining gear.',
+          AuthorCopy.L03.en,
         );
       if (n.id === 'orc-bivouac')
         parts.push(
@@ -2168,7 +2172,7 @@
         }
       this.s.finalRestCompleted = true;
       this.notice('THE JOURNEY IS COMPLETE · CREDITS', 7);
-      this.say('At last, you can rest. The Crown is yours, and the war is over.');
+      this.say(AuthorCopy.M02.en);
       this.event('finalRest', { source });
       return true;
     }
@@ -3015,11 +3019,11 @@
           }
           this.s.throneClaimed = true;
           const remaining = dungeonIds.filter((id) => !this.s.true[id]).length;
-          // The six-mark ledger and Keeper's last-command account resolve
-          // when the player claims the actual throne. Current class and
+          // The approved seven-mark throne recognition is revealed only here.
+          // Current class and
           // prior TRUE-dungeon order do not change the lost companion fact.
           this.say(
-            'Seven marks are cut into the throne: one for the ruler, six for those who traveled beside him. Your hand fits the last worn mark. You remember the road, and the company. You were the missing sixth companion.',
+            AuthorCopy.M01.en,
           );
           this.say(
             remaining
