@@ -85,7 +85,14 @@ const server = http.createServer((req, res) => {
           name: lang === 'es' ? 'Acero, heridas y armadura' : 'Steel, wounds and armor', exact: true,
         }).click();
         assert.equal(await page.locator('#modal').getAttribute('data-view'), 'archive-reading');
-        const answer = await page.locator('#modal-description').textContent();
+        const reader = page.locator('#modal-description');
+        assert.equal(await reader.getAttribute('role'), 'document',
+          'Complete Archive answer has an assistive-technology document landmark');
+        assert.equal(await reader.getAttribute('tabindex'), '0',
+          'Keyboard users can focus the full answer separately from its actions');
+        assert.equal(await reader.getAttribute('aria-label'),
+          lang === 'es' ? 'Lectura del Archivo' : 'Archive reading');
+        const answer = await reader.textContent();
         assert(answer.length > 95);
         if (lang === 'es') assert(answer.includes('La armadura amortigua los golpes'));
         const content = page.locator('#modal-content');
