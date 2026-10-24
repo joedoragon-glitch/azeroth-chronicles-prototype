@@ -26,7 +26,8 @@ function savedCampaign(store, opts = {}) {
   if (opts.barracks) {
     g.zone().buildings.push({
       id: 'recovery-camp-test', name: 'Test Barracks', kind: 'barracks',
-      x: 730, y: 700, progress: 4, full: false,
+      theme: 'vale', x: 730, y: 700, progress: 4, queue: 0, queueType: null,
+      full: false, upgradeProgress: 0, upgradePaid: false,
     });
     g.s.barracksRespawn = { zone: 'vale', id: 'recovery-camp-test' };
   }
@@ -76,12 +77,8 @@ function bootstrap(store) {
   const guard = Persistence.createRestartGuard({ storage: store, Campaign });
   guard.arm(original);
   const loadedBeforeRestart = Campaign.restore(JSON.parse(store.getItem('azeroth-v4-normal')));
-  console.log('BARRACKS RECOVERY DEBUG', JSON.stringify({
-    savedSelection: original.s.barracksRespawn,
-    persistedSelection: loadedBeforeRestart.s.barracksRespawn,
-    loadedChosen: loadedBeforeRestart.selectedBarracksRespawn()?.barracks?.id,
-    storedBuildings: loadedBeforeRestart.s.zones.vale.buildings.filter(b => b.id === 'recovery-camp-test'),
-  }));
+  assert.equal(loadedBeforeRestart.selectedBarracksRespawn()?.barracks.id, 'recovery-camp-test',
+    'Selected complete barracks survives strict v4 save validation');
   const app = bootstrap(store), g = app.scope.Prototype.game;
   const chosenLanding = original.safe(815, 750);
   assert.deepEqual(position(g), [chosenLanding.x, chosenLanding.y],
