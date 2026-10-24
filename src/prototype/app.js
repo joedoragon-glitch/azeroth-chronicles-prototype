@@ -48,6 +48,11 @@
   } catch (_) {}
   document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
   const spanishText = {
+    'Crystal Deposit': 'Yacimiento de Cristales',
+    'Veyra’s private quarters': 'Aposentos privados de Veyra',
+    'Purchased preserves': 'Conservas compradas',
+    'Working signal station': 'Estación de señales en servicio',
+    'Scornfang memoranda': 'Memorandos de Scornfang',
     'Critically wounded companions are keeping their distance.':
       'Los compañeros con heridas críticas están manteniendo la distancia.',
     'Safe attacks and skills remain available; retreat comes first.':
@@ -781,8 +786,7 @@
       'La sesión anterior se cerró inesperadamente. Regresaste a tu refugio con seguridad.',
     'Previous session stopped unexpectedly. Returned to your barracks safely.':
       'La sesión anterior se cerró inesperadamente. Regresaste a tu cuartel con seguridad.',
-    'Performance recovered: combat resumed.':
-      'Rendimiento recuperado: combate reanudado.',
+    'Performance recovered: combat resumed.': 'Rendimiento recuperado: combate reanudado.',
     'Critical slowdown: enemies disengaged and companions are withdrawing.':
       'Ralentización crítica: enemigos retirados y compañeros replegándose.',
     'Critical slowdown persists: returned to your recovery point without a defeat.':
@@ -1097,7 +1101,31 @@
     'Got it': 'Entendido',
     'Close without resting.': 'Cerrar sin descansar.',
   });
+  // N1: Only the author's approved bilingual Chronicle pairs may supply this copy.
+  const approvedNarrative =
+    typeof PrototypeNarration !== 'undefined' ? PrototypeNarration.approved : null;
+  const chronicleTranslations = new Map(
+    (typeof PrototypeNarration !== 'undefined' ? PrototypeNarration : [])
+      .filter((entry) => entry && entry.es)
+      .map((entry) => [entry.text, entry.es]),
+  );
+  const narrativeTranslations = new Map(
+    Object.values(approvedNarrative || {}).map((pair) => [pair.en, pair.es]),
+  );
   function translateSegment(piece) {
+    if (chronicleTranslations.has(piece)) return chronicleTranslations.get(piece);
+    // Announcement index titles use a 64-character preview of the original card.
+    const chroniclePreview =
+      typeof PrototypeNarration !== 'undefined'
+        ? PrototypeNarration.find((entry) => entry?.es && entry.text.slice(0, 64) === piece)
+        : null;
+    if (chroniclePreview) return chroniclePreview.es.slice(0, 64);
+    // Earned dungeon/interior/landmark and ending previews also use the
+    // manuscript's Spanish words rather than truncating English mid-sentence.
+    const approvedPreview = Object.values(approvedNarrative || {}).find(
+      (pair) => pair.en.slice(0, 64) === piece,
+    );
+    if (approvedPreview) return approvedPreview.es.slice(0, 64);
     const ferryPassage = Campaign.rules.tidalFerryPassage;
     if (ferryPassage && piece.startsWith(ferryPassage))
       return spanishText[ferryPassage] + piece.slice(ferryPassage.length);
@@ -1228,6 +1256,14 @@
   function tr(value) {
     if (language !== 'es' || typeof value !== 'string') return value;
     if (Object.prototype.hasOwnProperty.call(spanishText, value)) return spanishText[value];
+    if (chronicleTranslations.has(value)) return chronicleTranslations.get(value);
+    if (narrativeTranslations.has(value)) return narrativeTranslations.get(value);
+    // Archive answers can append live, rule-derived figures to an approved
+    // historical passage. Replace ONLY the exact authored substring.
+    let localized = value;
+    for (const [en, es] of narrativeTranslations)
+      if (localized.includes(en)) localized = localized.replace(en, es);
+    if (localized !== value) return localized;
     return value
       .split('\n')
       .map((line) => line.split(' · ').map(translateSegment).join(' · '))
@@ -1471,9 +1507,11 @@
       recoveredOnStartup = true;
       game = recovered;
       save();
-      status(recovered.selectedBarracksRespawn()
-        ? 'Previous session stopped unexpectedly. Returned to your barracks safely.'
-        : 'Previous session stopped unexpectedly. Returned to your refuge safely.');
+      status(
+        recovered.selectedBarracksRespawn()
+          ? 'Previous session stopped unexpectedly. Returned to your barracks safely.'
+          : 'Previous session stopped unexpectedly. Returned to your refuge safely.',
+      );
     }
     restartGuard.arm(game);
   }
@@ -1505,8 +1543,10 @@
   // (or the player manually reaches the same destination). A 55-unit visual
   // cutoff previously hid Cancel while the engine was still walking to 25.
   function navigationArrived(guide) {
-    return Math.hypot(game.hero.x - guide.point.x, game.hero.y - guide.point.y) <= 25 &&
-      (!guide.autopilot || game.hero.order !== guide.order);
+    return (
+      Math.hypot(game.hero.x - guide.point.x, game.hero.y - guide.point.y) <= 25 &&
+      (!guide.autopilot || game.hero.order !== guide.order)
+    );
   }
   // A route exists only while a valid chosen navigation session is visible.
   // Quest and gathering guides do not create the contextual navigation HUD button.
@@ -1539,7 +1579,11 @@
     queuedChargePresentation,
     isPaused: () => paused || !focused || document.hidden,
     getGuideRoute: () =>
-      navigationGuide ? visibleNavigationRoute() : questGuide?.route?.length ? questGuide.route : null,
+      navigationGuide
+        ? visibleNavigationRoute()
+        : questGuide?.route?.length
+          ? questGuide.route
+          : null,
     Campaign,
     PrototypeVisuals,
     PrototypeCombatVisuals,
@@ -1574,9 +1618,12 @@
   gpuTrialMessage.style.cssText = 'margin:0 0 8px;font-size:16px;font-weight:700;line-height:1.4';
   const gpuTrialHint = document.createElement('p');
   gpuTrialHint.style.cssText = 'margin:0;font-size:13px;line-height:1.5;color:#d4e1dc';
-  gpuTrialHint.textContent = tr('WebGL2 may run faster on your device. If it feels slower or looks wrong, return to Canvas.');
+  gpuTrialHint.textContent = tr(
+    'WebGL2 may run faster on your device. If it feels slower or looks wrong, return to Canvas.',
+  );
   const gpuTrialActions = document.createElement('div');
-  gpuTrialActions.style.cssText = 'display:grid;grid-template-columns:minmax(0,1fr);gap:14px;margin-top:20px';
+  gpuTrialActions.style.cssText =
+    'display:grid;grid-template-columns:minmax(0,1fr);gap:14px;margin-top:20px';
   const gpuKeep = document.createElement('button');
   const gpuRevert = document.createElement('button');
   gpuKeep.style.cssText =
@@ -1688,8 +1735,12 @@
   function drawWorld() {
     // These measure synchronous draw calls, not completed GPU/presented frames.
     const timing = {
-      pixiMs: 0, canvasOverlayMs: 0, canvasWorldMs: 0,
-      pixiAttempted: false, canvasOverlayDrawn: false, canvasWorldDrawn: false,
+      pixiMs: 0,
+      canvasOverlayMs: 0,
+      canvasWorldMs: 0,
+      pixiAttempted: false,
+      canvasOverlayDrawn: false,
+      canvasWorldDrawn: false,
     };
     if (graphicsController.status().mode === 'webgl2') {
       const startedAt = performance.now();
@@ -2019,7 +2070,19 @@
     {
       id: 'combat',
       title: 'Skills and combat keys',
-      ids: ['skill1', 'skill2', 'skill3', 'skill4', 'skill5', 'skill6', 'skill7', 'skill8', 'target', 'heal', 'mana'],
+      ids: [
+        'skill1',
+        'skill2',
+        'skill3',
+        'skill4',
+        'skill5',
+        'skill6',
+        'skill7',
+        'skill8',
+        'target',
+        'heal',
+        'mana',
+      ],
     },
     {
       id: 'commands',
@@ -2075,9 +2138,12 @@
         action('Left-hand skills (IJKL)', () => chooseKeyboardPreset('left', back)),
         menuControls.section('Key bindings'),
         ...keyboardGroups.map((group) =>
-          action(group.title, () => keyboardBindingsMenu(group, back),
+          action(
+            group.title,
+            () => keyboardBindingsMenu(group, back),
             group.ids.filter((id) => input.actions.some(([candidate]) => candidate === id)).length +
-              ' actions'),
+              ' actions',
+          ),
         ),
         action('Restore default keys', () => chooseKeyboardPreset('right', back)),
       ],
@@ -2161,20 +2227,50 @@
       preserveNavigation &&
       navigationGuide?.autopilot &&
       game?.hero.order === navigationGuide.order
-    ) worldPointer = null;
+    )
+      worldPointer = null;
     else cancelTravel();
   }
   // Shared presentation controls. Gameplay menus still use action() unchanged.
   const menuControls = Object.freeze({
     section: (label, detail = '') => ({ kind: 'section', label, detail }),
     toggle: (label, value, onChange, detail = '', saveCampaign = true) => ({
-      kind: 'toggle', label, value: !!value, onChange, detail, saveCampaign,
+      kind: 'toggle',
+      label,
+      value: !!value,
+      onChange,
+      detail,
+      saveCampaign,
     }),
-    slider: (label, value, min, max, step, onChange, detail = '', suffix = '', saveCampaign = true) => ({
-      kind: 'slider', label, value, min, max, step, onChange, detail, suffix, saveCampaign,
+    slider: (
+      label,
+      value,
+      min,
+      max,
+      step,
+      onChange,
+      detail = '',
+      suffix = '',
+      saveCampaign = true,
+    ) => ({
+      kind: 'slider',
+      label,
+      value,
+      min,
+      max,
+      step,
+      onChange,
+      detail,
+      suffix,
+      saveCampaign,
     }),
     select: (label, value, options, onChange, detail = '') => ({
-      kind: 'select', label, value, options, onChange, detail,
+      kind: 'select',
+      label,
+      value,
+      options,
+      onChange,
+      detail,
     }),
   });
   const menuHistory = [];
@@ -2210,24 +2306,57 @@
   function action(label, fn, detail = '', disabled = false, tutorialHighlight = false) {
     return { label, action: fn, detail, disabled, tutorialHighlight };
   }
-  function openMenu(title, description = '', actions = [], back = closeMenu) {
+  function translateMenu(value) {
+    if (
+      language === 'es' &&
+      menu?.view?.startsWith('archive-') &&
+      typeof PrototypeArchive !== 'undefined'
+    ) {
+      // Exact UI labels must be resolved before the generic translator turns
+      // "Return to the answer" into a partly translated "Regresar a ..." label.
+      // Author-final prose deliberately bypasses this exact-UI-only lookup.
+      const label = PrototypeArchive.translateArchiveLabel(value);
+      if (label !== value) return label;
+      return PrototypeArchive.translateArchive(
+        value,
+        PrototypeArchive.translationNames(game, { D, R: Campaign.rules }),
+      );
+    }
+    return tr(value);
+  }
+  function openMenu(title, description = '', actions = [], back = closeMenu, options = {}) {
     const restored = menuPosition(title, back);
     bindingCapture = null;
     clearInput(true);
     gateDismissed = false;
-    menu = { title, description, actions, back };
+    menu = { title, description, actions, back, view: options.view || 'default' };
     $('modal').setAttribute(
       'data-view',
-      title === 'The Crown · Credits'
-        ? 'credits'
-        : title === 'Adventure menu'
-          ? 'adventure'
-          : title === 'Game and settings'
-            ? 'settings'
-            : 'default',
+      options.view ||
+        (title === 'The Crown · Credits'
+          ? 'credits'
+          : title === 'Adventure menu'
+            ? 'adventure'
+            : title === 'Game and settings'
+              ? 'settings'
+              : 'default'),
     );
     // Small interactions need a small dialog; longer service catalogs keep a readable width.
-    const structured = Array.isArray(description?.sections);
+    const archiveLayout =
+      options.view === 'archive-reading' &&
+      !!options.archiveSection &&
+      typeof PrototypeArchiveReading !== 'undefined';
+    const display = archiveLayout
+      ? PrototypeArchiveReading.present({
+          title,
+          text: translateMenu(description),
+          section: options.archiveSection,
+          figures: options.archiveFigures,
+        })
+      : description;
+    const structured = Array.isArray(display?.sections);
+    // Localize the complete audited string once, then only arrange its fragments.
+    const renderedText = archiveLayout ? (value) => value : translateMenu;
     const hasControls = actions.some((entry) => !!entry.kind);
     const compact =
       !structured &&
@@ -2237,7 +2366,8 @@
       actions.every((a) => a.label.length <= 46 && (a.detail || '').length <= 95);
     const regular =
       structured ||
-      (!hasControls && actions.length <= 5 &&
+      (!hasControls &&
+        actions.length <= 5 &&
         description.length <= 340 &&
         actions.every((a) => a.label.length <= 68 && (a.detail || '').length <= 160));
     $('modal').setAttribute('data-dialog-size', compact ? 'compact' : regular ? 'regular' : 'wide');
@@ -2245,19 +2375,36 @@
     menuIndex = 0;
     document.body.classList.add('menu-open');
     $('modal').hidden = false;
-    $('modal-title').textContent = tr(title);
+    $('modal-title').textContent = translateMenu(title);
     const descriptionHost = $('modal-description');
+    const archiveReading = menu.view === 'archive-reading';
+    // A4: make a long answer separately reachable for keyboard and assistive
+    // technology without changing its full author-approved text or scroll.
+    descriptionHost.tabIndex = archiveReading ? 0 : -1;
+    if (archiveReading) descriptionHost.setAttribute('role', 'document');
+    else {
+      descriptionHost.removeAttribute('role');
+      descriptionHost.removeAttribute('aria-label');
+    }
+    if (archiveReading)
+      descriptionHost.setAttribute(
+        'aria-label',
+        language === 'es' ? 'Lectura del Archivo' : 'Archive reading',
+      );
     descriptionHost.classList.toggle('skill-reference', structured);
-    descriptionHost.textContent = tr(structured ? description.summary || '' : description);
+    descriptionHost.classList.toggle('archive-reference', structured && archiveReading);
+    descriptionHost.textContent = renderedText(structured ? display.summary || '' : display);
     if (structured) {
-      for (const block of description.sections) {
+      for (const block of display.sections) {
         const section = document.createElement('section'),
           heading = document.createElement('h3');
-        heading.textContent = tr(block.title);
-        section.append(heading);
+        if (archiveLayout && !block.title && block.rows?.length === 1 && !block.rows[0].label)
+          section.className = 'archive-prose';
+        heading.textContent = renderedText(block.title);
+        if (block.title) section.append(heading);
         if (block.text) {
           const text = document.createElement('p');
-          text.textContent = tr(block.text);
+          text.textContent = renderedText(block.text);
           section.append(text);
         }
         if (block.rows?.length) {
@@ -2265,18 +2412,32 @@
           for (const row of block.rows) {
             const term = document.createElement('dt'),
               value = document.createElement('dd');
-            term.textContent = tr(row.label);
-            value.textContent = tr(row.value);
+            term.textContent = renderedText(row.label);
+            value.textContent = renderedText(row.value);
             list.append(term, value);
           }
           section.append(list);
         }
+        for (const paragraph of block.paragraphs || []) {
+          const p = document.createElement('p');
+          p.textContent = renderedText(paragraph);
+          section.append(p);
+        }
+        if (archiveReading && block.formula) {
+          const details = document.createElement('details'),
+            summary = document.createElement('summary'),
+            formula = document.createElement('p');
+          summary.textContent = translateMenu('Exact calculation');
+          formula.textContent = renderedText(block.formula);
+          details.append(summary, formula);
+          section.append(details);
+        }
         descriptionHost.append(section);
       }
-      if (description.note) {
+      if (display.note) {
         const note = document.createElement('p');
         note.className = 'skill-note';
-        note.textContent = tr(description.note);
+        note.textContent = renderedText(display.note);
         descriptionHost.append(note);
       }
     }
@@ -2299,6 +2460,21 @@
     host.replaceChildren();
     buttons = [];
     menuKeys = [];
+    if (menu.view === 'archive-reading') {
+      for (const summary of $('modal-description').querySelectorAll?.('summary') || []) {
+        const index = buttons.length;
+        summary.onfocus = () => {
+          menuIndex = index;
+          highlight();
+        };
+        summary.onclick = () => {
+          menuIndex = index;
+          highlight();
+        };
+        buttons.push(summary);
+        menuKeys.push('__archive_formula_' + index);
+      }
+    }
     const commit = (entry, value) => {
       entry.value = value;
       entry.onChange(value);
@@ -2311,19 +2487,19 @@
       if (!entry.detail) return;
       const span = document.createElement('span');
       span.className = 'detail';
-      span.textContent = tr(entry.detail);
+      span.textContent = translateMenu(entry.detail);
       hostElement.append(span);
     };
     for (const [index, a] of menu.actions.entries()) {
       if (a.kind === 'section') {
         const heading = document.createElement('h3');
         heading.className = 'menu-section';
-        heading.textContent = tr(a.label);
+        heading.textContent = translateMenu(a.label);
         host.append(heading);
         if (a.detail) {
           const note = document.createElement('p');
           note.className = 'menu-section-detail';
-          note.textContent = tr(a.detail);
+          note.textContent = translateMenu(a.detail);
           host.append(note);
         }
         continue;
@@ -2349,7 +2525,7 @@
         row.className = 'menu-setting';
         const heading = document.createElement('span');
         heading.className = 'menu-setting-label';
-        heading.textContent = tr(a.label);
+        heading.textContent = translateMenu(a.label);
         row.append(heading);
         b = document.createElement(a.kind === 'slider' ? 'input' : 'select');
         b.className = 'menu-setting-input';
@@ -2388,7 +2564,7 @@
         host.append(row);
       } else {
         b = document.createElement('button');
-        b.textContent = tr(a.label);
+        b.textContent = translateMenu(a.label);
         b.disabled = a.disabled === true;
         b.classList.toggle('tutorial-highlight', !!a.tutorialHighlight);
         details(b, a);
@@ -2429,7 +2605,9 @@
     const selected = buttons[menuIndex];
     if (moveFocus && selected)
       (selected.disabled ? $('modal') : selected).focus?.({ preventScroll: true });
-    selected?.scrollIntoView({ block: 'nearest' });
+    // Never jump an answer down to the first action as its text opens.
+    // Explicit keyboard/joystick navigation still scrolls a chosen action into view.
+    if (moveFocus) selected?.scrollIntoView({ block: 'nearest' });
   }
   function closeMenu() {
     audio.interfaceSound('close');
@@ -2841,13 +3019,18 @@
             {
               version: PrototypeBuild.version,
               performance: {
-                ...runtime.report({
-                  ...renderer.metrics(),
-                  // In WebGL mode these counters belong to the transparent
-                  // Canvas cues, NOT the Pixi world.
-                  measuredLayer: graphicsController.status().mode === 'webgl2'
-                    ? 'canvas-combat-overlay' : 'canvas-full-world',
-                }, platform.mode),
+                ...runtime.report(
+                  {
+                    ...renderer.metrics(),
+                    // In WebGL mode these counters belong to the transparent
+                    // Canvas cues, NOT the Pixi world.
+                    measuredLayer:
+                      graphicsController.status().mode === 'webgl2'
+                        ? 'canvas-combat-overlay'
+                        : 'canvas-full-world',
+                  },
+                  platform.mode,
+                ),
                 // Report the active surface, not just the saved preference.
                 graphicsRenderer: {
                   activeRenderer:
@@ -2960,8 +3143,9 @@
           platform.select(value);
           // Each screen type remembers its own camera zoom; update the
           // adjacent selector without navigating away from this window.
-          const camera = Array.from($('modal-actions').querySelectorAll?.('select') || [])
-            .find((control) => control.getAttribute?.('aria-label') === tr('Camera zoom'));
+          const camera = Array.from($('modal-actions').querySelectorAll?.('select') || []).find(
+            (control) => control.getAttribute?.('aria-label') === tr('Camera zoom'),
+          );
           if (camera) camera.value = String(platform.cameraZoom);
         },
         'Choose phone or desktop controls. Your save stays the same.',
@@ -3076,12 +3260,20 @@
           'Performance details',
           runtime.describe({
             ...renderer.metrics(),
-            measuredLayer: graphicsController.status().mode === 'webgl2'
-              ? 'canvas-combat-overlay' : 'canvas-full-world',
-          }) + '\n\n' + frameProfile.describe() + '\n\n' + game.crowdDiagnosticsDescribe(),
+            measuredLayer:
+              graphicsController.status().mode === 'webgl2'
+                ? 'canvas-combat-overlay'
+                : 'canvas-full-world',
+          }) +
+            '\n\n' +
+            frameProfile.describe() +
+            '\n\n' +
+            game.crowdDiagnosticsDescribe(),
         ),
         action(
-          game.crowdDiagnosticsReport().recording ? 'Stop crowd profiling' : 'Start crowd profiling',
+          game.crowdDiagnosticsReport().recording
+            ? 'Stop crowd profiling'
+            : 'Start crowd profiling',
           () => {
             if (game.crowdDiagnosticsReport().recording) game.stopCrowdDiagnostics();
             else game.startCrowdDiagnostics();
@@ -3096,7 +3288,12 @@
         }),
       );
     }
-    openMenu('Screen and performance', 'Adjust everything here without leaving this screen.', items, back);
+    openMenu(
+      'Screen and performance',
+      'Adjust everything here without leaving this screen.',
+      items,
+      back,
+    );
   }
   function systemMenu() {
     openMenu(
@@ -3197,10 +3394,7 @@
       'THE FORMER GUARDIANS\n\n' +
       Campaign.dungeonIds.map((id) => game.boss(id).name).join(' · ') +
       '\n\n' +
-      'THE OLD WAR IS OVER\n\n' +
-      'The creatures return to their homes.\n\n' +
-      'So I Became the Dark Lord’s Problem\n\n' +
-      'Thank you for playing.';
+      (language === 'es' ? approvedNarrative.M03.es : approvedNarrative.M03.en);
     openMenu('The Crown · Credits', credits, [
       action('Continue in the peaceful world', () => {
         game.s.endingAck = true;
@@ -3422,7 +3616,19 @@
     else if (n.kind === 'smith') smith(n);
     else if (n.kind === 'keeper') keeper();
     else if (n.kind === 'archive-record') keeperLedger();
-    else if (n.kind === 'supplier' || n.kind === 'alchemist') {
+    else if (n.kind === 'scene-detail') {
+      // Source-checked interaction is required: merely entering the Citadel
+      // cannot reveal Veyra's private quarters.
+      if (game.interact(n) && approvedNarrative?.[n.narrativeId]) {
+        save();
+        openMenu(
+          n.name,
+          approvedNarrative[n.narrativeId].en,
+          [action('Back', closeMenu)],
+          closeMenu,
+        );
+      }
+    } else if (n.kind === 'supplier' || n.kind === 'alchemist') {
       supplier(n);
       save();
       updateHUD();
@@ -3545,7 +3751,8 @@
       questGuide.campaign === game &&
       questGuide.nodeId === gathering?.id &&
       questGuide.sourceZone === gathering.zone
-    ) suspendedGatheringGuide = gathering;
+    )
+      suspendedGatheringGuide = gathering;
     else if (!navigationGuide || suspendedGatheringGuide !== gathering)
       suspendedGatheringGuide = null;
     questGuide = null;
@@ -3601,7 +3808,8 @@
       !force &&
       game.s.time < guide.next &&
       Math.hypot(game.hero.x - guide.origin.x, game.hero.y - guide.origin.y) < 100
-    ) return;
+    )
+      return;
     guide.next = game.s.time + 1;
     guide.origin = { x: game.hero.x, y: game.hero.y };
     const choice = game.navigationTarget(guide.destination);
@@ -4824,6 +5032,31 @@
       menu.back();
       return;
     }
+    if (
+      menu?.view === 'archive-reading' &&
+      document.activeElement?.tagName === 'SUMMARY' &&
+      ['Enter', 'Space'].includes(code)
+    )
+      return;
+    // Reading text owns its native scrolling keys. Tab/Escape still use the
+    // dialog route; Enter must never activate an action behind focused prose.
+    if (
+      menu?.view === 'archive-reading' &&
+      document.activeElement === $('modal-description') &&
+      [
+        'ArrowUp',
+        'ArrowDown',
+        'ArrowLeft',
+        'ArrowRight',
+        'PageUp',
+        'PageDown',
+        'Home',
+        'End',
+        'Space',
+        'Enter',
+      ].includes(code)
+    )
+      return;
     const actionId = input.actionFor(code);
     if (actionId || code === 'Escape' || (menu && ['Enter', 'Space'].includes(code)))
       e.preventDefault();
@@ -4846,7 +5079,11 @@
         // Include temporary name fields and native settings controls. Do not
         // let keyboard focus escape to the game underneath the open dialog.
         const descendants = Array.from(
-          $('modal').querySelectorAll?.('button, input, select, textarea') || [],
+          $('modal').querySelectorAll?.(
+            menu.view === 'archive-reading'
+              ? 'button, input, select, textarea, summary, [role="document"][tabindex="0"]'
+              : 'button, input, select, textarea',
+          ) || [],
         ).filter((element) => !element.disabled && !element.hidden);
         const available = descendants.length
           ? descendants
@@ -4860,7 +5097,10 @@
         if (nextIndex >= 0) {
           menuIndex = nextIndex;
           highlight(true);
-        } else next.focus?.({ preventScroll: true });
+        } else {
+          next.focus?.({ preventScroll: true });
+          if (next.tagName === 'SUMMARY') next.scrollIntoView?.({ block: 'nearest' });
+        }
         return;
       }
       if (e.repeat) return;
@@ -5268,10 +5508,12 @@
             };
           }
           if (n.kind === 'warning') card.setAttribute('role', 'alert');
-          const full = n.text + (n.detail ? ' ' + n.detail : ''),
+          const displayedText =
+            n.kind === 'narration' || n.kind === 'milestone' ? tr(n.text) : n.text;
+          const full = displayedText + (n.detail ? ' ' + n.detail : ''),
             limit = shortPhone ? 130 : platform.mode === 'phone' ? 170 : 240,
             compact = full.length > limit;
-          card.textContent = compact ? full.slice(0, limit - 1).trimEnd() + '…' : n.text;
+          card.textContent = compact ? full.slice(0, limit - 1).trimEnd() + '…' : displayedText;
           if (compact) {
             const hint = document.createElement('small');
             hint.className = 'notice-detail';
@@ -5717,7 +5959,11 @@
   // a delayed blur/pagehide event eventually fires during the shutdown.
   let crashRecoveryPending = false;
   const rescueEscalation = {
-    entries: [], phase: 0, beganAt: null, resetAt: null, lastHealthyAt: null,
+    entries: [],
+    phase: 0,
+    beganAt: null,
+    resetAt: null,
+    lastHealthyAt: null,
   };
   function clearEmergencyEscalation() {
     rescueEscalation.entries = [];
@@ -5728,7 +5974,7 @@
   }
   function emergencyRecoveryDecision(now, recovering, simulating) {
     const e = rescueEscalation;
-    e.entries = e.entries.filter(stamp => now - stamp < 20000);
+    e.entries = e.entries.filter((stamp) => now - stamp < 20000);
     if (recovering && !emergencyShown) {
       e.entries.push(now);
       e.beganAt = now;
@@ -5743,11 +5989,10 @@
         // but prolonged failure must still reach the refuge fallback.
         e.phase = 1;
         e.resetAt = now;
-        if (reset)
-          status('Critical slowdown: enemies disengaged and companions are withdrawing.');
+        if (reset) status('Critical slowdown: enemies disengaged and companions are withdrawing.');
       } else if (e.phase === 1) {
         game.emergencyAdvanceWithdrawal();
-        const repeated = e.entries.filter(stamp => stamp >= e.resetAt).length >= 2;
+        const repeated = e.entries.filter((stamp) => stamp >= e.resetAt).length >= 2;
         if (now - e.resetAt >= 8000 || repeated) {
           if (game.emergencyReturnToSafety()) {
             e.phase = 2;
@@ -5797,9 +6042,11 @@
     emergencyRecoveryDecision(now, recovering, simulating);
     if (recovering !== emergencyShown) {
       emergencyShown = recovering;
-      status(recovering
-        ? 'Critical slowdown: combat paused while performance recovers. You can lower graphics in Settings.'
-        : 'Performance recovered: combat resumed.');
+      status(
+        recovering
+          ? 'Critical slowdown: combat paused while performance recovers. You can lower graphics in Settings.'
+          : 'Performance recovered: combat resumed.',
+      );
     }
     // Keep the combat charge clock paused together with the simulation.
     syncPartyChargeClock();
@@ -5810,7 +6057,7 @@
       menuJoyTime -= dt;
       if (Math.abs(joy.y) > 0.4 && menuJoyTime <= 0 && buttons.length) {
         menuIndex = (menuIndex + (joy.y > 0 ? 1 : -1) + buttons.length) % buttons.length;
-        highlight();
+        highlight(true);
         menuJoyTime = 0.3;
       }
     }
@@ -6050,7 +6297,9 @@
   if (!loaded) chooseLanguage(developerEnabled ? 'developer' : 'normal');
   else setLanguage(language);
   if (loaded && performanceBaselineUpgraded && !recoveredOnStartup)
-    status('Performance settings updated to recommended defaults. You can change them in Settings.');
+    status(
+      'Performance settings updated to recommended defaults. You can change them in Settings.',
+    );
   requestAnimationFrame(frame);
   addEventListener('beforeinstallprompt', (event) => {
     event.preventDefault();

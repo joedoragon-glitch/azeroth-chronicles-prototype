@@ -13076,6 +13076,50 @@
             1.2,
           );
           break;
+        // N1a civilian and institutional props retain their own readable
+        // silhouettes; these don't change world collision or combat.
+        case 'purchased-preserves':
+          boards(-30, 0, 60, 12, '#8f7354', true);
+          for (const [x, color] of [[-21, '#ae9568'], [-3, '#8eaa7b'], [15, '#b88767']]) {
+            softRect(x, -22, 14, 20, color, 4);
+            softRect(x - 1, -24, 16, 5, '#d7d1ad', 2);
+            line([[x + 2, -14], [x + 12, -14]], '#f2e8cf', 1.2);
+          }
+          paper(26, 3, 16); // The grocer's paid receipt, not a stolen cache.
+          break;
+        case 'active-signal-beacon':
+          blockwork(-30, 0, 60, 18, '#89918b', 6);
+          timber([-24, -1], [-24, -70], 5);
+          timber([24, -1], [24, -70], 5);
+          boards(-30, -56, 60, 9, '#b9a68b', true);
+          for (const x of [-13, 0, 13]) flame(x, -60, 0.85);
+          // Signal faces remain bright even in daylight.
+          line([[-28, -46], [28, -46]], '#e6c98a', 2);
+          break;
+        case 'crown-maintained-tools':
+          rack(true);
+          softRect(-24, -12, 48, 6, '#a7b4b2', 2);
+          for (const x of [-17, 2, 18])
+            line([[x, -29], [x + 3, -9]], '#dde1d2', 2);
+          softRect(20, 4, 13, 8, '#cbb89d', 2);
+          break;
+        case 'scornfang-memoranda':
+          boards(-31, 0, 62, 10, '#8c7056', true);
+          for (const [x, y] of [[-22, -17], [-2, -25], [14, -13]]) {
+            softRect(x, y, 26, 19, '#ddd1b1', 2);
+            line([[x + 3, y + 6], [x + 19, y + 6]], '#747b6b', 1.1);
+            line([[x + 3, y + 11], [x + 15, y + 11]], '#747b6b', 0.8);
+          }
+          oval(12, 3, 6, 4, '#9d635a');
+          break;
+        case 'protected-ritual-furnishings':
+          blockwork(-28, -2, 56, 21, '#919688', 6);
+          softRect(-30, -17, 60, 10, '#aaad98', 4);
+          softPoly([[-20, -19], [-7, -35], [8, -25], [21, -19]], '#b9a58c', 1);
+          for (const x of [-24, 24]) {
+            restingObject(x, -18, 4, () => rimBowl(0, -10, 5, '#c7bba3', '#7e7364'));
+          }
+          break;
         case 'stolen-goods':
           crateBody(-12, 2, 0.8);
           sack(16, 4, 0.9, '#b6a487');

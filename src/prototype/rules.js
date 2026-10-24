@@ -270,7 +270,7 @@
       ['bridge-north', 'Lava ridge bridge', 1350, 1000],
       ['bridge-south', 'Southern stone crossing', 1350, 2400],
       ['foundry', 'Ruined Foundry', 1850, 2700],
-      ['shelf', 'Crystal shelf', 1250, 2350],
+      ['shelf', 'Crystal Deposit', 1250, 2350],
       ['siege', 'Siege camp', 2700, 2250],
       ['fortress-gate', 'Dark fortress gate', 3060, 3040],
       ['crown-barracks', 'Crown field barracks', 3000, 1180],
@@ -2326,11 +2326,11 @@
       enemyCount: 6,
       theme: 'cellar',
       species: 'goblin',
-      lore: 'Goblin households have turned the abandoned fruit cellars into a warm communal hideout: sleeping rolls, stolen preserves, games and pup nests occupy the rooms the farmers once used for winter stores.',
+      lore: "These were once fruit cellars. Scornfang’s Goblin workers now have bedrolls, games and nests for their young here, having been displaced by the winter-estate project and the changes at the Crypt. Their preserves were bought with wages, not stolen.",
       decor: [
         [190, 210, 'crate'],
         [300, 230, 'ration'],
-        [430, 190, 'stolen-goods'],
+        [430, 190, 'purchased-preserves'],
         [670, 220, 'root-table'],
         [830, 240, 'thorn-bed'],
         [230, 520, 'sleep-roll'],
@@ -2367,7 +2367,7 @@
       enemyCount: 8,
       theme: 'flooded',
       species: 'reedbeast',
-      lore: 'Reed beasts have claimed the half-flooded watchhouse as a dry nesting structure. Fish racks and shell piles matter to them more than whatever military purpose the building once had.',
+      lore: "The watchhouse is partly flooded. Reed Beasts nest above the waterline, among fish racks and piles of shells. They have made shelter of the old military building.",
       decor: [
         [180, 210, 'fish-rack'],
         [300, 220, 'fishing-net'],
@@ -2406,7 +2406,7 @@
       enemyCount: 10,
       theme: 'keep',
       species: 'ogre',
-      lore: 'Ogres have rebuilt the dead signal keep around a communal hearth. Stone seats, scavenged mining tools and a game table make the ruin look less like a battlefield and more like a rough household.',
+      lore: "The Old Signal Keep is old, but its warning station still works. Ogre households gather around the hearth after their shifts. The mining gear is professional equipment, well maintained and supplied through the Crown; the stone seats and game table are theirs to use when work is done.",
       decor: [
         [180, 215, 'ridge-hearth'],
         [305, 210, 'weapon-rack'],
@@ -2421,6 +2421,9 @@
         [720, 825, 'supply-stack'],
         [170, 755, 'sleep-roll'],
         [835, 735, 'ration'],
+        // An active warning beacon and Crown-serviced mining instruments.
+        [785, 315, 'active-signal-beacon'],
+        [785, 660, 'crown-maintained-tools'],
       ],
       walls: [
         [430, 180, 30],
@@ -2446,12 +2449,12 @@
       enemyCount: 12,
       theme: 'shrine',
       species: 'orc',
-      lore: 'Orcs have converted the old shrine into a barracks without bothering to erase all of its former identity. Cooking, sleeping, drills and gambling now share space with the broken ritual furniture.',
+      lore: "The Orcs use the old shrine as a barracks, yet they continue to care for its surviving ritual furniture. They cook, drill and play games around it. Among the papers here are memoranda bearing Scornfang’s name, suggesting someone beyond the Frontier has taken an interest in preserving the site.",
       decor: [
         [180, 215, 'ritual-table'],
         [315, 210, 'field-kitchen'],
         [455, 220, 'weapon-rack'],
-        [690, 210, 'stolen-goods'],
+        [690, 210, 'scornfang-memoranda'],
         [835, 235, 'training-dummy'],
         [210, 550, 'sleep-roll'],
         [390, 555, 'game-table'],
@@ -2461,6 +2464,8 @@
         [720, 825, 'cookfire'],
         [170, 755, 'bunk'],
         [835, 760, 'bunk'],
+        // Maintained shrine furniture is deliberately distinct from war stores.
+        [240, 305, 'protected-ritual-furnishings'],
       ],
       walls: [
         [445, 180, 30],
@@ -2486,7 +2491,7 @@
       enemyCount: 14,
       theme: 'foundry',
       species: 'crownguard',
-      lore: 'Crown soldiers use the damaged foundry as a working barracks and repair hall. Bunks and meals sit beside active forge space; the place exists for their daily work, not as a treasure room for adventurers.',
+      lore: "The foundry's walls are damaged, but the forge is working. Crown soldiers eat and sleep near the repair benches, with weapons and equipment on racks between duties.",
       decor: [
         [180, 215, 'forge'],
         [315, 210, 'supply-stack'],
@@ -2519,6 +2524,27 @@
       ],
     },
   ];
+
+  // N1a: inspectable evidence belongs to real scene positions, not generic
+  // dungeon entrances. IDs do not replace quests, loot or mechanical triggers.
+  const narrativeSceneInspections = {
+    citadel: [
+      { id: 'veyra-private-quarters', name: 'Veyra’s private quarters', x: 1060, y: 1225,
+        icon: '🪞', narrativeId: 'D04' },
+    ],
+    'side-vale-cellars': [
+      { id: 'goblin-paid-preserves', name: 'Purchased preserves', x: 425, y: 245,
+        icon: '🍯', narrativeId: 'I01' },
+    ],
+    'side-highlands-signal': [
+      { id: 'signal-working-beacon', name: 'Working signal station', x: 770, y: 350,
+        icon: '🔥', narrativeId: 'I03' },
+    ],
+    'side-frontier-shrine': [
+      { id: 'scornfang-shrine-records', name: 'Scornfang memoranda', x: 690, y: 275,
+        icon: '📜', narrativeId: 'I04' },
+    ],
+  };
 
   const miniPlans = [
     { field: 'Orchard den stockade', resource: 'Woodland cache ruins', theme: 'stockade' },
@@ -5027,14 +5053,13 @@
       [780, 1180, 'spikes'],
     ],
   }; // Curated occupied spaces: each dungeon has an entrance, work/ritual zone, command markers and a boss approach.
+  // D04 private-quarter sentence is withheld until a verified quarters-inspection route exists.
+  // The entrance below uses an exact, unaltered two-sentence excerpt of approved D04.
   const dungeonLore = {
-    mine: 'The interregional roads and relocated settlements bear Garun the Firstborn’s geometric maker mark. The Dark Lord’s old companion inspects this Mine’s wardens and supports; the Ridge Tyrant handles wages. Past the forge, little machines and angular ornaments clutter his quiet workshop.',
-    crypt:
-      'An old ossuary opens onto unfinished Crown guest rooms. A building plan shows six seats at the winter table; the memorial stones give the dead names, not numbers.',
-    abyss:
-      'Abyss Bastion is the Dark Lord’s air-superiority project. His purple dragon is his personal flying mount; the hatchery will grow his future air force. Riders prepare harnesses, supplies arrive, and the royal launch platform is still being built.',
-    citadel:
-      "The Citadel of Ashes is Marshal Veyra's academy and the headquarters of the Dark Lord's professional army. Its officers turn diverse irregulars into regiments. Her private quarters hold polished mirrors, cosmetic brushes and carefully arranged complexion jars beside her parade uniform.",
+    mine: "Garun's geometric mark appears on roads and settlements he helped design. At Colossus Mine, he inspects the Ogre wardens and structural supports; Ridge Tyrant handles the wages. Beyond the forge, small machines and angular ornaments fill Garun's workshop.",
+    crypt: "An old ossuary opens onto guest rooms still under construction. A building plan shows six places set at the winter table.",
+    abyss: "Abyss Bastion is preparing equipment for dragon riders and maintains a hatchery for the planned royal air force. The launch platform is unfinished. Veyrith, the Dark Lord's purple personal mount, has no completed fleet to command yet.",
+    citadel: "The Citadel of Ashes is Marshal Veyra’s academy and the headquarters of the Crown’s professional army. Its officers train soldiers from different peoples to follow the same drill.",
   };
   const dungeonDecor = {
     crypt: [
@@ -7506,6 +7531,7 @@
     treasuryDecor,
     creatureStrongholds,
     sideDungeons,
+    narrativeSceneInspections,
     sideDungeonTrapTuning,
     tributeTotal,
     legacyResourceTotals,
