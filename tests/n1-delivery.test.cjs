@@ -60,13 +60,17 @@ for (const [region, site, approvedId] of [
 const end = make();
 assert(!end.storyReadings().some((n) => n.text === A.M01.en), 'Throne secret stays gated');
 end.enter('crown');
-for (const id of [...Campaign.dungeonIds, 'darklord']) {
+end.s.normal.darklord = end.s.true.darklord = true;
+end.awaken();
+end.refreshNPCs(); // Throne is spawned by the existing post-TRUE lifecycle.
+for (const id of Campaign.dungeonIds) {
   end.s.normal[id] = true;
   end.s.true[id] = true;
 }
-end.s.phase = 'awakening';
-end.refreshNPCs(); // Throne is spawned by the existing post-TRUE lifecycle.
-end.zone().enemies.forEach((e) => { e.hp = 0; });
+end.checkEnding();
+assert(!end.peace, 'Old TRUE results never skip the actual coronation');
+for (const enemy of end.zone().enemies)
+  if (enemy.family === 'darklord') enemy.hp = 0;
 const throne = end.zone().npcs.find((n) => n.id === 'dark-crown-throne');
 assert(throne, 'Actual throne exists');
 end.hero.x = throne.x; end.hero.y = throne.y;
@@ -92,12 +96,13 @@ const earned = make();
 earned.s.discovered['vale:dungeon-lore:crypt'] = true;
 earned.s.discovered['vale:side-lore:side-vale-cellars'] = true;
 earned.s.discovered['vale:goblin-camp'] = true;
-for (const id of [...Campaign.dungeonIds, 'darklord']) {
-  earned.s.normal[id] = true;
-  earned.s.true[id] = true;
-}
-earned.s.phase = 'peace';
+earned.s.normal.darklord = earned.s.true.darklord = true;
+for (const id of Campaign.dungeonIds)
+  earned.s.normal[id] = earned.s.true[id] = true;
 earned.s.throneClaimed = true;
+earned.s.phase = 'awakening';
+earned.checkEnding();
+assert(earned.peace, 'Earned story UI fixture follows native peace preparation');
 earned.s.finalRestCompleted = true;
 for (const language of ['en', 'es']) {
   const storage = new Map([['azeroth-v4-normal', JSON.stringify(earned.snapshot())]]);
