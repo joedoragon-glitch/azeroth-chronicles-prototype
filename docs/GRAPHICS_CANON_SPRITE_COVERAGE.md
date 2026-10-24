@@ -104,7 +104,7 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `citadel-barracks-bay` | PROCEDURAL — composed Citadel barracks/training station |
 | `citadel-forge-bay` | PROCEDURAL — composed Citadel forge/supply station |
 | `citadel-boss-approach` | PROCEDURAL — composed Citadel final-approach station |
-| `citadel-vanity-quarters` | PROCEDURAL — original approved Marshal Veyra dressing station, mirrored cosmetics and pressed uniform; no collision or interaction |
+| `citadel-vanity-quarters` | PROCEDURAL — original Marshal Veyra dressing station, mirrored cosmetics and pressed uniform; nonblocking visual prop now supports separate nearby N1a inspection |
 | `animal-pen` | GENERATE 194 |
 | `drying-rack` | GENERATE 195/196 by region |
 | `tax-post` | GENERATE 219–223 by region |
@@ -113,6 +113,11 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `sleep-roll` | GENERATE 198 |
 | `game-table` | PROCEDURAL — region-sensitive repeated furniture |
 | `stolen-goods` | GENERATE 199 |
+| `purchased-preserves` | PROCEDURAL — Goblin family's bought jars and wage receipt; non-loot, no collision |
+| `active-signal-beacon` | PROCEDURAL — operating illuminated warning station in Old Signal Keep; scenery only |
+| `crown-maintained-tools` | PROCEDURAL — polished service tools supplied by the Crown, no equipment pickup |
+| `scornfang-memoranda` | PROCEDURAL — identifiable signed papers in Shrine; inspected separately from Keeper evidence |
+| `protected-ritual-furnishings` | PROCEDURAL — preserved shrine altar furnishings distinct from military stores |
 | `training-dummy` | PROCEDURAL — region-sensitive repeated prop |
 | `bone-pile` | GENERATE 200 base; Frontier/Abyss scattered-remains variation remains procedural |
 | `grave-marker` | GENERATE 201 |

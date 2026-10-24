@@ -114,7 +114,16 @@
         });
         for (const [zone, text] of Object.entries(R.dungeonLore || {})) {
           const region = D.regions[this.regionIndex(zone)]?.id;
-          if (this.s.discovered[region + ':dungeon-lore:' + zone]) entries.push({ text, region });
+          if (this.s.discovered[region + ':dungeon-lore:' + zone])
+            entries.push({
+              // A full D04 reading becomes eligible only after the actual
+              // private-quarters furniture has been inspected in the Citadel.
+              text: zone === 'citadel' &&
+                  this.s.discovered['citadel:veyra-private-quarters-inspected']
+                ? Narration.approved.D04.en
+                : text,
+              region,
+            });
         }
         for (const side of R.sideDungeons || [])
           if (side.lore && this.s.discovered[side.region + ':side-lore:' + side.id])
@@ -138,8 +147,16 @@
             text: 'The orders bear the Keeper’s seal. The plan to seize the specialists began among these shelves.',
             region: 'march',
           });
-        for (const n of this.noticeHistory || [])
+        for (const n of this.noticeHistory || []) {
+          // Once inspected, the full approved D04 supersedes the earlier
+          // entrance excerpt in the journal. Its historical notice may still
+          // exist in memory, but it must not create a duplicate reading.
+          if (
+            this.s.discovered['citadel:veyra-private-quarters-inspected'] &&
+            n.text === R.dungeonLore.citadel
+          ) continue;
           if (!entries.some((e) => e.text === n.text && e.detail === n.detail)) entries.push(n);
+        }
         return entries;
       }
       reward(gold, xp, level) {

@@ -2330,7 +2330,7 @@
       decor: [
         [190, 210, 'crate'],
         [300, 230, 'ration'],
-        [430, 190, 'stolen-goods'],
+        [430, 190, 'purchased-preserves'],
         [670, 220, 'root-table'],
         [830, 240, 'thorn-bed'],
         [230, 520, 'sleep-roll'],
@@ -2421,6 +2421,9 @@
         [720, 825, 'supply-stack'],
         [170, 755, 'sleep-roll'],
         [835, 735, 'ration'],
+        // An active warning beacon and Crown-serviced mining instruments.
+        [785, 315, 'active-signal-beacon'],
+        [785, 660, 'crown-maintained-tools'],
       ],
       walls: [
         [430, 180, 30],
@@ -2451,7 +2454,7 @@
         [180, 215, 'ritual-table'],
         [315, 210, 'field-kitchen'],
         [455, 220, 'weapon-rack'],
-        [690, 210, 'stolen-goods'],
+        [690, 210, 'scornfang-memoranda'],
         [835, 235, 'training-dummy'],
         [210, 550, 'sleep-roll'],
         [390, 555, 'game-table'],
@@ -2461,6 +2464,8 @@
         [720, 825, 'cookfire'],
         [170, 755, 'bunk'],
         [835, 760, 'bunk'],
+        // Maintained shrine furniture is deliberately distinct from war stores.
+        [240, 305, 'protected-ritual-furnishings'],
       ],
       walls: [
         [445, 180, 30],
@@ -2519,6 +2524,27 @@
       ],
     },
   ];
+
+  // N1a: inspectable evidence belongs to real scene positions, not generic
+  // dungeon entrances. IDs do not replace quests, loot or mechanical triggers.
+  const narrativeSceneInspections = {
+    citadel: [
+      { id: 'veyra-private-quarters', name: 'Veyra’s private quarters', x: 1060, y: 1225,
+        icon: '🪞', narrativeId: 'D04' },
+    ],
+    'side-vale-cellars': [
+      { id: 'goblin-paid-preserves', name: 'Purchased preserves', x: 425, y: 245,
+        icon: '🍯', narrativeId: 'I01' },
+    ],
+    'side-highlands-signal': [
+      { id: 'signal-working-beacon', name: 'Working signal station', x: 770, y: 350,
+        icon: '🔥', narrativeId: 'I03' },
+    ],
+    'side-frontier-shrine': [
+      { id: 'scornfang-shrine-records', name: 'Scornfang memoranda', x: 690, y: 275,
+        icon: '📜', narrativeId: 'I04' },
+    ],
+  };
 
   const miniPlans = [
     { field: 'Orchard den stockade', resource: 'Woodland cache ruins', theme: 'stockade' },
@@ -7495,6 +7521,7 @@
     treasuryDecor,
     creatureStrongholds,
     sideDungeons,
+    narrativeSceneInspections,
     sideDungeonTrapTuning,
     tributeTotal,
     legacyResourceTotals,

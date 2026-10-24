@@ -694,9 +694,18 @@
         archiveRestorationTrips.set(n, trip);
       }
       if (trip.wait > 0) {
+        // Neri actually turns to the nearby books while restoring them. This
+        // visual pose is unrelated to her stock, training, pact and pathing.
+        const volumes = this.zone().props.filter(
+          (prop) => ['shelf', 'scroll-stack'].includes(prop.structure),
+        );
+        const nearest = volumes.sort((a, b) => dist(n, a) - dist(n, b))[0];
+        n.bookRestoring = !!nearest;
+        n.bookFacing = nearest && nearest.x < n.x ? -1 : 1;
         trip.wait = Math.max(0, trip.wait - dt);
         return;
       }
+      n.bookRestoring = false;
       const target = archiveRepairSites[trip.index];
       if (dist(n, target) < 4) {
         trip.index = (trip.index + 1) % archiveRepairSites.length;
@@ -2994,6 +3003,22 @@
         return true;
       }
       switch (npc.kind) {
+        case 'scene-detail': {
+          const descriptor = R.narrativeSceneInspections?.[this.zoneId]?.find(
+            (item) => item.id === npc.id && item.narrativeId === npc.narrativeId,
+          );
+          if (!descriptor || !this.zone().npcs.includes(npc)) return false;
+          // D04's private-quarters claim requires actual inspectable furniture.
+          if (npc.id === 'veyra-private-quarters') {
+            const furnishings = this.zone().props.find(
+              (prop) => prop.structure === 'citadel-vanity-quarters' &&
+                dist(prop, npc) < 180,
+            );
+            if (!furnishings) return false;
+            this.s.discovered['citadel:veyra-private-quarters-inspected'] = true;
+          }
+          return true;
+        }
         case 'cage':
           if (
             (npc.lore || npc.context) &&
