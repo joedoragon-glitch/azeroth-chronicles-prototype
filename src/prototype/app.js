@@ -22,6 +22,7 @@
   } catch (_) {}
   document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
   const spanishText = {
+    'Crystal Deposit': 'Yacimiento de Cristales',
     'Critically wounded companions are keeping their distance.':
       'Los compañeros con heridas críticas están manteniendo la distancia.',
     'Safe attacks and skills remain available; retreat comes first.':
