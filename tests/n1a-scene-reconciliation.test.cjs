@@ -104,5 +104,5 @@ assert(worker.bookRestoring && [-1, 1].includes(worker.bookFacing),
 assert(renderer.includes("e.presentation === 'archive-restorer'") &&
   renderer.includes('e.bookRestoring && e.bookFacing === -1'),
   'The Neri book-facing state is actually painted, not only narrated');
-assert.equal(n.s.keeperEvidence, false, 'Restoration pose does not disclose signed evidence');
+assert(!n.s.keeperEvidence, 'Restoration pose does not disclose signed evidence');
 console.log('PASS four inspectable N1a world scenes, old v4 prop/position stability and Neri pose');
