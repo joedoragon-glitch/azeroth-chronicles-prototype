@@ -2197,7 +2197,7 @@
   function action(label, fn, detail = '', disabled = false, tutorialHighlight = false) {
     return { label, action: fn, detail, disabled, tutorialHighlight };
   }
-  function openMenu(title, description = '', actions = [], back = closeMenu) {
+  function openMenu(title, description = '', actions = [], back = closeMenu, options = {}) {
     const restored = menuPosition(title, back);
     bindingCapture = null;
     clearInput(true);
@@ -2205,13 +2205,13 @@
     menu = { title, description, actions, back };
     $('modal').setAttribute(
       'data-view',
-      title === 'The Crown · Credits'
+      options.view || (title === 'The Crown · Credits'
         ? 'credits'
         : title === 'Adventure menu'
           ? 'adventure'
           : title === 'Game and settings'
             ? 'settings'
-            : 'default',
+            : 'default'),
     );
     // Small interactions need a small dialog; longer service catalogs keep a readable width.
     const structured = Array.isArray(description?.sections);
@@ -2416,7 +2416,9 @@
     const selected = buttons[menuIndex];
     if (moveFocus && selected)
       (selected.disabled ? $('modal') : selected).focus?.({ preventScroll: true });
-    selected?.scrollIntoView({ block: 'nearest' });
+    // Never jump an answer down to the first action as its text opens.
+    // Explicit keyboard/joystick navigation still scrolls a chosen action into view.
+    if (moveFocus) selected?.scrollIntoView({ block: 'nearest' });
   }
   function closeMenu() {
     audio.interfaceSound('close');
@@ -5805,7 +5807,7 @@
       menuJoyTime -= dt;
       if (Math.abs(joy.y) > 0.4 && menuJoyTime <= 0 && buttons.length) {
         menuIndex = (menuIndex + (joy.y > 0 ? 1 : -1) + buttons.length) % buttons.length;
-        highlight();
+        highlight(true);
         menuJoyTime = 0.3;
       }
     }
