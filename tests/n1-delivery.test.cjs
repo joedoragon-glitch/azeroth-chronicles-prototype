@@ -1,0 +1,173 @@
+'use strict';
+const assert = require('node:assert/strict');
+const Campaign = require('../src/prototype/engine.js');
+const A = require('../src/prototype/narration.js').approved;
+const { shell } = require('./helpers/production-shell.cjs');
+const make = () => new Campaign('normal', 'paladin', () => 0.9);
+const onlyNotice = (game, expected, label) => {
+  assert.equal(game.notices.filter((n) => n.text === expected).length, 1, label + ' notices once');
+  assert(game.notices.some((n) => n.text === expected && n.kind === 'narration' ||
+    n.text === expected && n.kind === 'milestone'), label + ' displays through the quiet notice queue');
+  assert(game.storyReadings().some((n) => n.text === expected), label + ' has full earned story');
+};
+for (const [zone, approvedId] of [['crypt', 'D01'], ['mine', 'D02'],
+  ['abyss', 'D03'], ['citadel', 'D04_entrance']]) {
+  const g = make();
+  assert(g.enter(zone), zone + ' first entry');
+  onlyNotice(g, A[approvedId].en, zone);
+  g.enter('vale');
+  g.enter(zone);
+  assert.equal(g.notices.filter((n) => n.text === A[approvedId].en).length, 1,
+    zone + ' never repeats once discovered');
+  const restored = Campaign.restore(g.snapshot(), () => 0.9);
+  assert(restored.storyReadings().some((n) => n.text === A[approvedId].en),
+    zone + ' full text survives reload');
+  assert(!g.notices.some((n) => n.text === A.D04.en), 'Private quarters never leak at entrance');
+}
+for (const [zone, approvedId] of [
+  ['side-vale-cellars', 'I01'], ['side-march-watchhouse', 'I02'],
+  ['side-highlands-signal', 'I03'], ['side-frontier-shrine', 'I04'],
+  ['side-crown-foundry', 'I05'],
+]) {
+  const g = make();
+  assert(g.enter(zone), zone + ' first entry');
+  onlyNotice(g, A[approvedId].en, zone);
+  const count = g.notices.length;
+  g.enter('vale');
+  g.enter(zone);
+  assert.equal(g.notices.length, count, zone + ' must not repeat its narration');
+  assert(Campaign.restore(g.snapshot(), () => 0.9).storyReadings()
+    .some((n) => n.text === A[approvedId].en), zone + ' old-save reconstruction');
+}
+for (const [region, site, approvedId] of [
+  ['vale', 'goblin-camp', 'L01'], ['march', 'mire-nests', 'L02'],
+  ['highlands', 'ogre-hearth', 'L03'],
+]) {
+  const g = make();
+  assert(g.enter(region), region);
+  const n = g.zone().npcs.find((candidate) => candidate.id === site);
+  assert(n, site + ' real landmark present');
+  g.hero.x = n.x; g.hero.y = n.y;
+  assert(g.interact(n), site + ' native interaction');
+  onlyNotice(g, A[approvedId].en, site);
+  g.interact(n);
+  assert.equal(g.notices.filter((x) => x.text === A[approvedId].en).length, 1,
+    site + ' interaction does not duplicate its discovery');
+  const restored = Campaign.restore(g.snapshot(), () => 0.9);
+  assert(restored.storyReadings().some((x) => x.text === A[approvedId].en),
+    site + ' can be revisited via Announcements after reload');
+}
+const end = make();
+assert(!end.storyReadings().some((n) => n.text === A.M01.en), 'Throne secret stays gated');
+end.enter('crown');
+end.s.normal.darklord = end.s.true.darklord = true;
+end.awaken();
+end.refreshNPCs(); // Throne is spawned by the existing post-TRUE lifecycle.
+for (const id of Campaign.dungeonIds) {
+  end.s.normal[id] = true;
+  end.s.true[id] = true;
+}
+// Artificially credited victories imply Thornfang's deferred opening encounter
+// has already resolved; a real victory clears that captive actor.
+delete end.s.zones.vale.thornArrival;
+end.checkEnding();
+assert(!end.peace, 'Old TRUE results never skip the actual coronation');
+for (const enemy of end.zone().enemies)
+  if (enemy.family === 'darklord') enemy.hp = 0;
+const throne = end.zone().npcs.find((n) => n.id === 'dark-crown-throne');
+assert(throne, 'Actual throne exists');
+end.hero.x = throne.x; end.hero.y = throne.y;
+assert(end.interact(throne), 'Claim the throne through the native interaction');
+onlyNotice(end, A.M01.en, 'M01 throne');
+end.interact(throne);
+assert.equal(end.notices.filter((n) => n.text === A.M01.en).length, 1, 'Throne one-time delivery');
+assert(!end.storyReadings().some((n) => n.text === A.M02.en), 'Final rest not yet unlocked');
+const invalidPeace = Object.entries(end.s.zones).flatMap(([zone, state]) =>
+  state.enemies.filter((e) => !e.neutral || e.summon || e.guard || e.family === 'darklord')
+    .map((e) => ({ zone, family: e.family, type: e.type, neutral: e.neutral,
+      summon: e.summon, guard: e.guard, habitat: state.habitat })));
+assert.deepEqual(invalidPeace, [], 'Peaceful save must have only neutral habitat creatures');
+const peaceSnapshot = end.snapshot();
+const invalidSnapshot = Object.entries(peaceSnapshot.zones).flatMap(([zone, state]) =>
+  [...state.enemies, ...(state.thornArrival ? [state.thornArrival.boss] : [])]
+    .filter((e) => !e.neutral || e.summon || e.guard || e.family === 'darklord')
+    .map((e) => ({ zone, family: e.family, type: e.type, neutral: e.neutral,
+      summon: e.summon, guard: e.guard, habitat: state.habitat,
+      thornArrival: e === state.thornArrival?.boss })));
+assert.deepEqual(invalidSnapshot, [], 'A v4 peaceful snapshot must preserve neutral enemies');
+const throneRestored = Campaign.restore(peaceSnapshot, () => 0.9);
+assert(throneRestored.storyReadings().some((n) => n.text === A.M01.en), 'Restored throne secret stays earned');
+assert(end.peace, 'Native throne checkEnding transitions completed TRUE campaign to peace');
+const refuge = end.zone().npcs.find((n) => n.kind === 'rest');
+assert(refuge, 'Final rest refuge exists');
+end.hero.x = refuge.x; end.hero.y = refuge.y;
+assert(end.completeFinalRest('refuge', refuge), 'Final rest occurs only at the refuge');
+onlyNotice(end, A.M02.en, 'M02 final rest');
+assert(!end.completeFinalRest('refuge', refuge), 'Final rest is once only');
+assert(Campaign.restore(end.snapshot(), () => 0.9).storyReadings()
+  .some((n) => n.text === A.M02.en), 'Final-rest text survives v4 reload');
+
+// Real Announcements traversal from a restored earned-story save, in both languages.
+const earned = make();
+earned.s.discovered['vale:dungeon-lore:crypt'] = true;
+earned.s.discovered['vale:side-lore:side-vale-cellars'] = true;
+earned.s.discovered['vale:goblin-camp'] = true;
+earned.s.normal.darklord = earned.s.true.darklord = true;
+for (const id of Campaign.dungeonIds)
+  earned.s.normal[id] = earned.s.true[id] = true;
+delete earned.s.zones.vale.thornArrival;
+earned.s.throneClaimed = true;
+earned.s.phase = 'awakening';
+earned.checkEnding();
+assert(earned.peace, 'Earned story UI fixture follows native peace preparation');
+earned.s.finalRestCompleted = true;
+for (const language of ['en', 'es']) {
+  const storage = new Map([['azeroth-v4-normal', JSON.stringify(earned.snapshot())]]);
+  const { scope, elements } = shell(language, 'paladin', { storage });
+  const click = (prefix) => {
+    const target = elements.get('modal-actions').children
+      .find((button) => button.textContent.startsWith(prefix));
+    assert(target, 'Missing ' + prefix + ' in ' + elements.get('modal-title').textContent);
+    target.click();
+  };
+  elements.get('menu-button').click();
+  click(language === 'es' ? 'Diario de misiones' : 'Quest journal');
+  click(language === 'es' ? 'Anuncios' : 'Announcements');
+  for (const id of ['D01', 'I01', 'L01', 'M01', 'M02']) {
+    const phrase = language === 'es' ? A[id].es : A[id].en;
+    const target = elements.get('modal-actions').children.find((item) =>
+      item.textContent.includes(phrase.slice(0, 28)));
+    assert(target, id + ' has author-approved ' + language + ' index preview');
+    target.click();
+    assert.equal(elements.get('modal-description').textContent, phrase,
+      id + ' full ' + language + ' journal entry matches master verbatim');
+    elements.get('close-button').click();
+  }
+}
+// The actual small phone notice intentionally offers a short excerpt plus a
+// route to the exact full manuscript in the already-tested Announcements menu.
+for (const language of ['en', 'es']) {
+  const { scope, elements } = shell(language);
+  scope.Prototype.platform.select('phone');
+  const game = scope.Prototype.game;
+  game.enter('mine');
+  scope.Prototype.updateHUD();
+  const expected = language === 'es' ? A.D02.es : A.D02.en;
+  const host = elements.get('message');
+  assert.equal(host.children.length, 1, 'First dungeon discovery appears as one quiet notice');
+  let card = host.children[0];
+  assert.equal(card.textContent, expected.slice(0, 169).trimEnd() + '…',
+    'Portrait phone shows authored-language 170-character excerpt');
+  assert(card.children.some((child) => child.textContent ===
+    (language === 'es' ? 'Texto completo: Menú · Anuncios' : 'Full text: Menu · Announcements')),
+    'Portrait truncation identifies the full-story access path');
+  scope.innerWidth = 852;
+  scope.innerHeight = 393;
+  scope.Prototype.updateHUD();
+  card = host.children[0];
+  assert.equal(card.textContent, expected.slice(0, 129).trimEnd() + '…',
+    'Landscape phone uses the smaller 130-character excerpt');
+  assert(game.storyReadings().some((n) => n.text === A.D02.en),
+    'Neither phone excerpt changes or loses the complete approved passage');
+}
+console.log('PASS native N1 delivery, EN/ES journal, phone notice excerpts and full-story access');

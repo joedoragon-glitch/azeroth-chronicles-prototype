@@ -250,6 +250,7 @@
   // The sorted draw order remains authoritative: an obstacle only hides an actor
   // when it is actually painted after that actor.
   function nightLightKind(structure) {
+    if (structure === 'active-signal-beacon') return 'work-fire';
     const domestic =
       /(?:^|[-_])(?:house|cottage|workshop|boathouse|smithy|forgehouse|watchhouse|hut|lodge|longhouse|dwelling)(?:$|[-_])/i;
     const fires =
@@ -526,6 +527,10 @@
     // tails. Idle social/wilderness actors retain their last visible heading.
     const actorFacingMemory = new WeakMap();
     function paintedFacing(e) {
+      // Neri turns toward actual bookcases while restoring pages; the other
+      // NPCs keep their existing neutral presentation and combat AI is untouched.
+      if (e.renderKind === 'npc' && e.presentation === 'archive-restorer')
+        return e.bookRestoring && e.bookFacing === -1 ? -1 : 1;
       if (!['hero', 'ally', 'enemy'].includes(e.renderKind)) return 1;
       const owner = e.spriteIdentity || e,
         old = actorFacingMemory.get(owner) || { x: e.x, y: e.y, side: 1 };
