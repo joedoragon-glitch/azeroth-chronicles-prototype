@@ -2236,6 +2236,7 @@
         this._partyChargeRecovery?.delete(dead);
         this.tacticalClearScatter(dead);
         Object.assign(dead, u, { id, active, slow: 0 });
+        delete dead.slowStacks;
         delete dead.rogueSlow;
         this.say('Companion recovered.');
         this.notice('Companion recovered', 4, this.companionDisplayName(dead), 'feedback');
@@ -2791,6 +2792,7 @@
         for (const u of living) {
           const recovery = this.cooldownRecoveryElapsed(u, dt);
           u.slow = Math.max(0, (u.slow || 0) - dt);
+          if (!u.slow) delete u.slowStacks;
           if (u.rogueSlow > 0) {
             u.rogueSlow = Math.max(0, u.rogueSlow - dt);
             if (!u.rogueSlow) delete u.rogueSlow;
