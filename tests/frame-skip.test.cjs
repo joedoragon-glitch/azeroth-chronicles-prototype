@@ -196,12 +196,15 @@ assert.equal(game.s.statistics.deaths, 0, 'No death records or penalties on resc
 assert.equal(game.s.challenge.pending, false, 'Succession death cannot trigger on rescue');
 assert.equal(game.s.challenge.gameOver, false, 'Critical lag cannot create game over');
 assert.equal(production.scope.Prototype.frameSkip.status().protectedCallbacks, 1);
-for (let i = 1; i < 70 && production.scope.Prototype.frameSkip.emergency; i++)
-  production.frame(800 + i * 33.3333);
+let recoveryNow = 800;
+for (let i = 1; i < 70 && production.scope.Prototype.frameSkip.emergency; i++) {
+  recoveryNow = 800 + i * 33.3333;
+  production.frame(recoveryNow);
+}
 assert.equal(production.scope.Prototype.frameSkip.emergency, false,
   'Live app automatically recovers after inexpensive visual probes');
 const recoveredCalls = simulationCalls;
-production.frame(800 + 70 * 33.3333);
-assert(simulationCalls > recoveredCalls, 'Live combat resumes after recovery');
+production.frame(recoveryNow + 33.3333);
+assert(simulationCalls > recoveredCalls, 'Live combat resumes on the next normal callback');
 
 console.log('PASS adaptive frame skip: default On, all FPS targets, critical recovery and protected combat, overrides');
