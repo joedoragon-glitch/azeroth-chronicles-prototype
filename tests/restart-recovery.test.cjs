@@ -53,7 +53,9 @@ function bootstrap(store) {
   const restored = app.scope.Prototype.game;
   assert.notDeepEqual(position(restored), position(original),
     'Unclean shutdown must not restart inside crowded combat coordinates');
-  assert(restored.s.refugeSite, 'Chosen region refuge remains a real site');
+  assert.equal(restored.zoneId, 'vale', 'Restart arrives in the saved campaign region');
+  assert(restored.zone().npcs.some(n => n.kind === 'rest'),
+    'A regional refuge exists even when a fresh run has not selected one');
   assert.equal(restored.hero.hp, original.hero.hp,
     'Rescue must not grant health or apply damage');
   assert.equal(restored.s.party[0].hp, original.s.party[0].hp,
