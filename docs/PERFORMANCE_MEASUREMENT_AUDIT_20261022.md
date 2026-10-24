@@ -1,9 +1,9 @@
-> **23 October 2026 change in owner direction:** The 22 October default-Off/one-frame constraints and paused frame-skip work described below are a historical baseline. A specific new request now authorizes a focused default-On, two-frame/all-FPS candidate with no combat-warning exemption. The instrumentation limitations and lack of demonstrated hardware FPS gains in this audit remain valid. See [the isolated 23 October candidate](ADAPTIVE_FRAME_SKIP_TWO_FRAME_20261023.md). No full-suite or deployment authorization is implied.
+> **SUPERSEDED AS CURRENT ASSESSMENT — 24 OCTOBER 2026:** This is a **historical audit of dev.165/dev.166**, not a present-day audit or a defect certificate for released dev.169. Current [main `35bc942a`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/35bc942a541017eb634f0c00789746ccd2aac57d) merged and published [PR #426](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/426), including **default-On two-frame adaptive skipping**, critical emergency hold/recovery, Auto FPS pressure safeguards, optional crowd diagnostics and collision fast rejection. The renderer also has PixiJS WebGL2/Canvas overlay timing. Therefore old **one-skip/default-Off**, warning-event exemptions, `dev.166 is current`, `no aggressive skip authorized`, and `performance work paused` statements below are **dated observations superseded by later owner authorization and release**. The earlier counter-window cautions require re-evaluation against current reports; no newer measured hardware FPS gain is certified by this document. **Use [current dev.169 performance status](CURRENT_PERFORMANCE_STATUS_DEV169_20261024.md) for guidance.** Retain the original audit findings below strictly for provenance of the earlier build and sample.
 
 # Performance measurements and adaptive frame skip — audit, 22 October 2026
 
-**Status: audit complete; performance tuning paused at the owner's direction.** This is the
-maintained entrypoint for interpreting existing performance reports. The measurements are
+**Historical status, 22 October only:** This was the assessment for dev.166,
+not the maintained entrypoint after dev.169. The measurements are
 useful for identifying broad costly stages, **not certified for precise before/after FPS
 or time-saved claims**. No gameplay, renderer, AI, input, save or frame-skip behavior was
 changed by the audit or this documentation update.
