@@ -79,6 +79,9 @@
     'No pending quests': 'No hay misiones pendientes',
     'No completed quests': 'No hay misiones completadas',
     'Clear waypoint': 'Quitar ruta',
+    'Cancel navigation': 'Cancelar ruta',
+    'Map of the current area. Select a place to navigate.':
+      'Mapa de la zona actual. Selecciona un lugar para navegar.',
     'Tap a pending quest to track its next objective. The waypoint remains during combat. Rewards are delivered automatically.':
       'Toca una misión pendiente para seguir su próximo objetivo. La ruta permanece durante el combate. Las recompensas se entregan automáticamente.',
     'Rescued specialists': 'Especialistas rescatados',
@@ -1418,11 +1421,54 @@
     persistProfile();
   }
   let started = loaded;
-  let storyRouteActive = false,
+  // Navigation is runtime-only and survives manual takeover as a visible guide.
+  let navigationGuide = null,
     questGuide = null,
     gatheringGuideRequest = null,
+    suspendedGatheringGuide = null,
     recallPractice = null;
+  const cancelNavigationButton = document.createElement('button');
+  cancelNavigationButton.id = 'cancel-navigation-button';
+  cancelNavigationButton.type = 'button';
+  cancelNavigationButton.hidden = true;
+  cancelNavigationButton.onclick = () => {
+    clearWaypoint();
+    status(language === 'es' ? 'Ruta cancelada.' : 'Navigation cleared.');
+    updateHUD();
+  };
+  document.body.append(cancelNavigationButton);
   const viewport = { width: innerWidth, height: innerHeight };
+  // Arrival is complete only after the navigation-owned move has stopped
+  // (or the player manually reaches the same destination). A 55-unit visual
+  // cutoff previously hid Cancel while the engine was still walking to 25.
+  function navigationArrived(guide) {
+    return Math.hypot(game.hero.x - guide.point.x, game.hero.y - guide.point.y) <= 25 &&
+      (!guide.autopilot || game.hero.order !== guide.order);
+  }
+  // A route exists only while a valid chosen navigation session is visible.
+  // Quest and gathering guides do not create the contextual navigation HUD button.
+  function visibleNavigationRoute() {
+    const guide = navigationGuide;
+    if (
+      !guide ||
+      guide.campaign !== game ||
+      guide.hero !== game.hero ||
+      guide.deaths !== game.s.statistics.deaths ||
+      guide.zone !== game.zoneId ||
+      game.hero.hp <= 0 ||
+      navigationArrived(guide)
+    )
+      return null;
+    const points =
+      guide.autopilot && game.hero.order === guide.order && game.hero.path?.length
+        ? game.hero.path
+        : guide.route;
+    return points?.length ? points : null;
+  }
+  function mapKeyHint() {
+    const key = input.key('map');
+    return input.actionFor('KeyM') === 'map' && key !== 'M' ? key + ' / M' : key;
+  }
   const rendererSetup = {
     getGame: () => game,
     platform,
@@ -1430,11 +1476,7 @@
     queuedChargePresentation,
     isPaused: () => paused || !focused || document.hidden,
     getGuideRoute: () =>
-      questGuide?.route?.length
-        ? questGuide.route
-        : storyRouteActive && game.hero.order?.type === 'move'
-          ? game.hero.path
-          : null,
+      navigationGuide ? visibleNavigationRoute() : questGuide?.route?.length ? questGuide.route : null,
     Campaign,
     PrototypeVisuals,
     PrototypeCombatVisuals,
@@ -1668,14 +1710,28 @@
     chargePresentation,
     queuedChargePresentation,
     get trackedWaypoint() {
-      return questGuide
+      const points = visibleNavigationRoute();
+      return points
         ? {
-            id: questGuide.id || questGuide.nodeId,
-            kind: questGuide.kind || 'quest',
-            zone: questGuide.zone,
-            points: questGuide.route.map((p) => ({ ...p })),
+            id: navigationGuide.destination.id || null,
+            kind: 'navigation',
+            zone: navigationGuide.zone,
+            points: points.map((p) => ({ ...p })),
           }
-        : null;
+        : !navigationGuide && questGuide
+          ? {
+              id: questGuide.id || questGuide.nodeId,
+              kind: questGuide.kind || 'quest',
+              zone: questGuide.zone,
+              points: questGuide.route.map((p) => ({ ...p })),
+            }
+          : null;
+    },
+    cancelNavigation: clearWaypoint,
+    get navigationState() {
+      return visibleNavigationRoute()
+        ? { active: true, autopilot: navigationGuide.autopilot, zone: navigationGuide.zone }
+        : { active: false, autopilot: false, zone: null };
     },
     get trackedQuest() {
       return questGuide?.id || null;
@@ -1769,6 +1825,8 @@
                   keys +
                   ' o palanca táctil. Interactuar: ' +
                   input.key('confirm') +
+                  '. Mapa: ' +
+                  mapKeyHint() +
                   '.\nMenú: Esc. Flechas para elegir, ' +
                   input.key('confirm') +
                   '/Enter para confirmar y Esc para volver.'
@@ -1776,6 +1834,8 @@
                   keys +
                   ' or joystick. Interact: ' +
                   input.key('confirm') +
+                  '. Map: ' +
+                  mapKeyHint() +
                   '.\nMenu: Esc. Arrows select, ' +
                   input.key('confirm') +
                   '/Enter confirms, Esc returns.',
@@ -1989,6 +2049,10 @@
   function cancelTravel() {
     worldPointer = null;
     if (game) {
+      if (navigationGuide?.autopilot && game.hero.order === navigationGuide.order) {
+        navigationGuide.autopilot = false;
+        navigationGuide.next = 0;
+      }
       game.hero.order = null;
       game.hero.path = [];
     }
@@ -2001,7 +2065,7 @@
     joy = { x: 0, y: 0 };
     $('stick').style.transform = '';
   }
-  function clearInput() {
+  function clearInput(preserveNavigation = true) {
     syncPartyChargeClock();
     if (typeof Sprint !== 'undefined') Sprint.release();
     queuedCharges.clear();
@@ -2010,7 +2074,13 @@
     cancelTargetPress();
     keys = {};
     releaseJoystick();
-    cancelTravel();
+    // Modal input cleanup must not cancel a still-owned walking order.
+    if (
+      preserveNavigation &&
+      navigationGuide?.autopilot &&
+      game?.hero.order === navigationGuide.order
+    ) worldPointer = null;
+    else cancelTravel();
   }
   // Shared presentation controls. Gameplay menus still use action() unchanged.
   const menuControls = Object.freeze({
@@ -2061,7 +2131,7 @@
   function openMenu(title, description = '', actions = [], back = closeMenu) {
     const restored = menuPosition(title, back);
     bindingCapture = null;
-    clearInput();
+    clearInput(true);
     gateDismissed = false;
     menu = { title, description, actions, back };
     $('modal').setAttribute(
@@ -2288,7 +2358,7 @@
     menuKeys = [];
     $('modal').hidden = true;
     document.body.classList.remove('menu-open');
-    clearInput();
+    clearInput(true);
     if (menuReturnFocus?.focus) menuReturnFocus.focus({ preventScroll: true });
     menuReturnFocus = null;
   }
@@ -2982,7 +3052,13 @@
           !game.hasAnyBarracks(),
       ),
       ...(appUpdateReady ? [action('Install available game update', updateApp)] : []),
-      action('Map and travel routes', () => showMap(openMain)),
+      action(
+        'Map and travel routes',
+        () => showMap(openMain),
+        language === 'es'
+          ? 'Elige un destino en el mapa · Tecla: ' + mapKeyHint()
+          : 'Choose a marked destination · Key: ' + mapKeyHint(),
+      ),
       action('Quest journal', () => quests(false, openMain)),
       action('Character', characterMenu),
       ...(game.s.phase === 'awakening'
@@ -3346,6 +3422,95 @@
     );
   }
 
+  function clearWaypoint() {
+    if (navigationGuide?.autopilot && game.hero.order === navigationGuide.order) {
+      game.hero.order = null;
+      game.hero.path = [];
+    }
+    navigationGuide = null;
+    // Explicit Cancel/Clear dismisses all visible guides. The companion's
+    // saved gathering order continues, but we don't automatically re-track it.
+    suspendedGatheringGuide = null;
+    // Dismissing a gathering waypoint never cancels saved companion work.
+    if (questGuide?.kind === 'gathering') gatheringGuideRequest = game.s.gatheringTarget;
+    questGuide = null;
+    cancelNavigationButton.hidden = true;
+  }
+  function startNavigation(destination, label, choice) {
+    if (game.hero.order?.type !== 'move') return;
+    // Only this explicitly selected map journey has automatic-travel priority.
+    // A targeted but out-of-range skill must not replace it with a chase order.
+    game.hero.order.navigation = true;
+    // Map navigation temporarily takes visual priority over a gathering guide.
+    // Restore the earlier guide only on natural arrival (not explicit Cancel).
+    const gathering = game.s.gatheringTarget;
+    if (
+      questGuide?.kind === 'gathering' &&
+      questGuide.campaign === game &&
+      questGuide.nodeId === gathering?.id &&
+      questGuide.sourceZone === gathering.zone
+    ) suspendedGatheringGuide = gathering;
+    else if (!navigationGuide || suspendedGatheringGuide !== gathering)
+      suspendedGatheringGuide = null;
+    questGuide = null;
+    if (gathering) gatheringGuideRequest = gathering;
+    navigationGuide = {
+      campaign: game,
+      hero: game.hero,
+      deaths: game.s.statistics.deaths,
+      zone: game.zoneId,
+      destination,
+      label,
+      point: choice.point,
+      // Own a stable guidance copy; movement consumes/mutates hero.path.
+      route: choice.path.map((point) => ({ x: point.x, y: point.y })),
+      order: game.hero.order,
+      autopilot: true,
+      origin: { x: game.hero.x, y: game.hero.y },
+      next: 0,
+    };
+    cancelNavigationButton.hidden = !visibleNavigationRoute();
+  }
+  function updateNavigationGuide(force = false) {
+    const guide = navigationGuide;
+    if (!guide) return;
+    if (
+      guide.campaign !== game ||
+      guide.hero !== game.hero ||
+      guide.deaths !== game.s.statistics.deaths ||
+      guide.zone !== game.zoneId ||
+      game.hero.hp <= 0
+    ) {
+      navigationGuide = null;
+      suspendedGatheringGuide = null;
+      cancelNavigationButton.hidden = true;
+      return;
+    }
+    if (navigationArrived(guide)) {
+      navigationGuide = null;
+      cancelNavigationButton.hidden = true;
+      const gathering = suspendedGatheringGuide;
+      suspendedGatheringGuide = null;
+      // A still-active task regains its passive waypoint after arrival.
+      // This never issues hero movement or changes a companion's work order.
+      if (gathering && gathering === game.s.gatheringTarget) {
+        gatheringGuideRequest = null;
+        updateQuestGuide(true);
+      }
+      return;
+    }
+    if (guide.autopilot && game.hero.order !== guide.order) guide.autopilot = false;
+    if (guide.autopilot) return; // Follow the live hero route without new plans.
+    if (
+      !force &&
+      game.s.time < guide.next &&
+      Math.hypot(game.hero.x - guide.origin.x, game.hero.y - guide.origin.y) < 100
+    ) return;
+    guide.next = game.s.time + 1;
+    guide.origin = { x: game.hero.x, y: game.hero.y };
+    const choice = game.navigationTarget(guide.destination);
+    guide.route = choice ? choice.path : [];
+  }
   function updateQuestGuide(force = false) {
     const gathering = game.s.gatheringTarget;
     if (gathering && gathering !== gatheringGuideRequest) {
@@ -3361,7 +3526,7 @@
         route: [],
         next: 0,
       };
-      storyRouteActive = false;
+      // A gathering guide can remain secondary to a chosen navigation destination.
     } else if (!gathering) {
       gatheringGuideRequest = null;
       if (questGuide?.kind === 'gathering') questGuide = null;
@@ -3432,7 +3597,7 @@
   function storyNavigate(destination, label, questId = null) {
     if (questId) {
       closeMenu();
-      storyRouteActive = false;
+      clearWaypoint();
       questGuide = {
         id: questId,
         campaign: game,
@@ -3450,7 +3615,6 @@
       );
       return;
     }
-    questGuide = null;
     if (!destination || !Number.isFinite(destination.x) || !Number.isFinite(destination.y)) {
       status('Destination unavailable.');
       return;
@@ -3462,18 +3626,7 @@
     }
     closeMenu();
     if (PrototypeInput.requestMove(game, choice)) {
-      storyRouteActive = false;
-      questGuide = {
-        id: null,
-        destination,
-        campaign: game,
-        hero: game.hero,
-        deaths: game.s.statistics.deaths,
-        zone: null,
-        route: [],
-        next: 0,
-      };
-      updateQuestGuide(true);
+      startNavigation(destination, label, { point: choice, path: game.hero.path });
       status('Following path to ' + label + '.');
     } else status('Route unavailable. Try again nearby.');
   }
@@ -3508,17 +3661,15 @@
         'Navigate to selected',
         () => {
           if (!selected) return;
-          // Closing the dialog clears input and cancels the previous movement order.
-          // Start the route only AFTER closing, or selection silently does nothing.
+          // Begin the new order after the dialog releases its held input.
           const latest = findRoute(selected);
           if (!latest) {
             status('No walkable route to ' + selected.name + '.');
             return;
           }
           closeMenu();
-          questGuide = null;
           if (PrototypeInput.requestMove(game, latest.point)) {
-            storyRouteActive = true;
+            startNavigation(selected, selected.name, latest);
             status('Walking to ' + selected.name + '.');
           } else status('Route blocked. Choose another destination.');
         },
@@ -3544,11 +3695,10 @@
             ]
           : [];
       }),
-      ...(questGuide
+      ...(navigationGuide || questGuide
         ? [
             action('Clear waypoint', () => {
-              if (questGuide?.kind === 'gathering') game.s.gatheringTarget = null;
-              questGuide = null;
+              clearWaypoint();
               closeMenu();
             }),
           ]
@@ -3569,7 +3719,7 @@
     const map = document.createElement('canvas');
     map.width = 480;
     map.height = 320;
-    map.setAttribute('aria-label', 'Map of the current area. Select a place to navigate.');
+    map.setAttribute('aria-label', tr('Map of the current area. Select a place to navigate.'));
     $('modal-description').append(map);
     const ctx = map.getContext('2d');
     const size = game.zoneSize();
@@ -3673,19 +3823,46 @@
         button.classList.toggle('route-picked', picked);
         button.setAttribute('aria-pressed', String(picked));
       });
-      menuIndex = orderedPlaces.indexOf(place) + 1;
+      // Section headings are DOM siblings, not keyboard menu actions.
+      // Match the selected real action, including grouped destination lists.
+      menuIndex = buttons.indexOf(mapButtons[orderedPlaces.indexOf(place) + 1]);
       highlight();
       drawMap();
     }
 
+    // A canvas tap selects ONLY a listed destination, never an arbitrary
+    // ground coordinate. Compare distances in displayed CSS pixels, not
+    // intrinsic map pixels, so narrow/landscape layouts have equal accuracy.
+    // A close tie is intentionally left unselected: use the named list row.
+    let touchMapContact = false;
+    map.style.touchAction = 'manipulation';
+    map.onpointerdown = (event) => {
+      touchMapContact = event.pointerType === 'touch' || event.pointerType === 'pen';
+    };
+    map.onpointercancel = () => { touchMapContact = false; };
     map.onclick = (event) => {
+      const touch = touchMapContact ||
+        event.pointerType === 'touch' || event.pointerType === 'pen';
+      touchMapContact = false;
       const rect = map.getBoundingClientRect();
-      const x = ((event.clientX - rect.left) / rect.width) * map.width;
-      const y = ((event.clientY - rect.top) / rect.height) * map.height;
-      const nearest = destinations
-        .map((place) => ({ place, distance: Math.hypot(sx(place.x) - x, sy(place.y) - y) }))
-        .sort((a, b) => a.distance - b.distance)[0];
-      if (nearest && nearest.distance < 16) choose(nearest.place);
+      if (!rect.width || !rect.height || !Number.isFinite(event.clientX) ||
+          !Number.isFinite(event.clientY)) return;
+      const x = event.clientX - rect.left, y = event.clientY - rect.top;
+      if (x < 0 || y < 0 || x > rect.width || y > rect.height) return;
+      const radius = touch ? 22 : 12;
+      const nearby = destinations
+        .map((place) => ({
+          place,
+          distance: Math.hypot(
+            sx(place.x) * rect.width / map.width - x,
+            sy(place.y) * rect.height / map.height - y,
+          ),
+        }))
+        .sort((a, b) => a.distance - b.distance);
+      if (!nearby.length || nearby[0].distance > radius) return;
+      if (nearby[1] && nearby[1].distance <= radius &&
+          nearby[1].distance - nearby[0].distance < 8) return;
+      choose(nearby[0].place);
     };
     drawMap();
   }
@@ -4751,6 +4928,8 @@
       Math.hypot(e.clientX - tap.x, e.clientY - tap.y) > 12
     )
       return;
+    // Intentional world movement takes over even when the tapped spot is blocked.
+    cancelTravel();
     if (!PrototypeInput.requestMove(game, tap.target)) status('Path blocked.');
   };
   canvas.onpointercancel = canvas.onlostpointercapture = (e) => {
@@ -5063,6 +5242,7 @@
     }
   }
   function updateHUD() {
+    if (navigationGuide && navigationGuide.campaign !== game) navigationGuide = null;
     const devActive = started && game.s.mode === 'developer';
     developerSummonButton.hidden = !devActive;
     developerCombatMonitor.hidden = !devActive;
@@ -5385,7 +5565,7 @@
       ' · ' +
       tr('Interact') +
       '   ' +
-      input.key('map') +
+      mapKeyHint() +
       ' · ' +
       tr('Map') +
       '   Esc · ' +
@@ -5427,6 +5607,9 @@
       : 'Tap to cycle visible enemies · hold for ' + (targetHoldMs / 1000).toFixed(2) + 's to lock';
     if (targetButton.querySelector('small'))
       targetButton.querySelector('small').textContent = input.key('target');
+    cancelNavigationButton.hidden = !visibleNavigationRoute();
+    cancelNavigationButton.textContent = tr('Cancel navigation');
+    cancelNavigationButton.setAttribute('aria-label', tr('Cancel navigation'));
     updateCriticalNotice();
   }
   function frame(now) {
@@ -5524,6 +5707,7 @@
         stageTimes.enemyAIMs += Math.max(0, marks.enemyExtraEnd - marks.enemyExtraStart);
       selectQueuedCharge();
       updateQuestGuide();
+      updateNavigationGuide();
       syncChargeReady();
       // A held charged skill must not secretly resume after a damaging hit.
       // A genuine sub-0.2s tap is still an ordinary, immediate skill.

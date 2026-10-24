@@ -860,6 +860,11 @@
           // Covering fire during movement never authorizes pursuit, even when
           // an old selected/combo target remains valid beyond attack range.
           if (automatic) return false;
+          // A manually targeted out-of-range skill cannot hijack an explicitly
+          // selected map journey. No chase, mana use or cooldown; keep walking.
+          // Outside navigation the original deliberate skill approach applies.
+          if (this.hero.order?.type === 'move' && this.hero.order.navigation === true)
+            return false;
           // A deliberate targeted skill is an approach-and-release order.
           // Never consume mana or cooldown merely because the selected enemy
           // is beyond reach; targeting itself still does not move the hero.

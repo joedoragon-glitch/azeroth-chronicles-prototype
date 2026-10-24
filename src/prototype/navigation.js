@@ -405,7 +405,33 @@
       navigationTarget(place) {
         if (!place || !Number.isFinite(place.x) || !Number.isFinite(place.y)) return null;
         const size = this.zoneSize(),
-          anchor = place.servicePoint || place;
+          anchor = place.servicePoint || place,
+          harbor = place.kind === 'transport' && place.harbor ? R.harbors?.[this.zoneId] : null;
+        // The authored ferry vessel floats offshore. Its ordinary offsets can
+        // all land in water even when the adjacent *existing dock* is walkable.
+        // This point is navigation-only: do not move the ferry, widen boarding
+        // interaction range or mutate any saved NPC/service coordinates.
+        if (harbor?.dock && dist(place, harbor.boat) < 1) {
+          const dock = harbor.dock,
+            clearance = 16, // A radius-15 actor stays strictly inside the dock.
+            point = {
+              x: Math.max(dock.x1 + clearance, Math.min(place.x, dock.x2 - clearance)),
+              y: Math.max(dock.y1 + clearance, Math.min(place.y, dock.y2 - clearance)),
+            };
+          // The move order stops within 20 units: its final position must still
+          // be within the transport's unchanged 115-unit interact radius.
+          if (
+            point.x >= 0 &&
+            point.y >= 0 &&
+            point.x <= size &&
+            point.y <= size &&
+            dist(point, place) + 20 < 115 &&
+            !this.blocked(point.x, point.y)
+          ) {
+            const path = this.route(this.hero, point);
+            if (path.length) return { point, path };
+          }
+        }
         for (const [dx, dy] of [
           [0, 0],
           [0, 65],
@@ -842,81 +868,87 @@
         const starts = nearby(a),
           ends = nearby(target);
         if (!starts.length || !ends.length) return [];
-        const start = starts[0],
-          end = ends[0],
-          queue = [start],
-          parents = new Map([[start, null]]),
-          valid = new Map();
-        const free = (id) => {
-          if (!valid.has(id)) {
-            const p = point(id);
-            valid.set(id, !this.blocked(p.x, p.y, this.s.zone, 15, terrainOnly));
+        const search = (sources, goals) => {
+          const queue = [...sources],
+            parents = new Map(sources.map((id) => [id, null])),
+            destinations = new Set(goals),
+            valid = new Map();
+          const free = (id) => {
+            if (!valid.has(id)) {
+              const p = point(id);
+              valid.set(id, !this.blocked(p.x, p.y, this.s.zone, 15, terrainOnly));
+            }
+            return valid.get(id);
+          };
+          for (let at = 0; at < queue.length; at++) {
+            const id = queue[at];
+            if (destinations.has(id)) {
+              let path = [target];
+              for (let j = id; j !== null; j = parents.get(j)) path.push(point(j));
+              path.reverse();
+              if (options.road) {
+                const compact = [{ x: a.x, y: a.y }];
+                for (let j = 0; j < path.length; j++) {
+                  const prev = compact.at(-1),
+                    q = path[j],
+                    next = path[j + 1];
+                  if (
+                    next &&
+                    ((prev.x === q.x && q.x === next.x) || (prev.y === q.y && q.y === next.y))
+                  )
+                    continue;
+                  compact.push(q);
+                }
+                return compact;
+              }
+              const smooth = [];
+              let current = a,
+                j = 0;
+              while (j < path.length) {
+                let far = j;
+                for (let k = j + 1; k < path.length; k++) {
+                  if (!this.clearSegment(current, path[k], 15, terrainOnly)) break;
+                  far = k;
+                }
+                smooth.push(path[far]);
+                current = path[far];
+                j = far + 1;
+              }
+              return smooth;
+            }
+            const x = id % n,
+              y = Math.floor(id / n),
+              from = point(id);
+            for (const [dx, dy] of [
+              [1, 0],
+              [-1, 0],
+              [0, 1],
+              [0, -1],
+            ]) {
+              const xx = x + dx,
+                yy = y + dy,
+                j = yy * n + xx;
+              if (
+                xx < 0 ||
+                yy < 0 ||
+                xx >= n ||
+                yy >= n ||
+                parents.has(j) ||
+                !free(j) ||
+                !this.clearSegment(from, point(j), 15, terrainOnly)
+              )
+                continue;
+              parents.set(j, id);
+              queue.push(j);
+            }
           }
-          return valid.get(id);
+          return [];
         };
-        for (let at = 0; at < queue.length; at++) {
-          const id = queue[at];
-          if (id === end) {
-            let path = [target];
-            for (let j = id; j !== null; j = parents.get(j)) path.push(point(j));
-            path.reverse();
-            if (options.road) {
-              const compact = [{ x: a.x, y: a.y }];
-              for (let j = 0; j < path.length; j++) {
-                const prev = compact.at(-1),
-                  q = path[j],
-                  next = path[j + 1];
-                if (
-                  next &&
-                  ((prev.x === q.x && q.x === next.x) || (prev.y === q.y && q.y === next.y))
-                )
-                  continue;
-                compact.push(q);
-              }
-              return compact;
-            }
-            const smooth = [];
-            let current = a,
-              j = 0;
-            while (j < path.length) {
-              let far = j;
-              for (let k = j + 1; k < path.length; k++) {
-                if (!this.clearSegment(current, path[k], 15, terrainOnly)) break;
-                far = k;
-              }
-              smooth.push(path[far]);
-              current = path[far];
-              j = far + 1;
-            }
-            return smooth;
-          }
-          const x = id % n,
-            y = Math.floor(id / n),
-            from = point(id);
-          for (const [dx, dy] of [
-            [1, 0],
-            [-1, 0],
-            [0, 1],
-            [0, -1],
-          ]) {
-            const xx = x + dx,
-              yy = y + dy,
-              j = yy * n + xx;
-            if (
-              xx < 0 ||
-              yy < 0 ||
-              xx >= n ||
-              yy >= n ||
-              parents.has(j) ||
-              !free(j) ||
-              !this.clearSegment(from, point(j), 15, terrainOnly)
-            )
-              continue;
-            parents.set(j, id);
-            queue.push(j);
-          }
-        }
-        return [];
+        // Preserve all successful legacy routes and generated road geometry.
+        // Only a false no-route retries with the other collision-validated
+        // nearby anchors. Each seed and goal already has a clear end segment.
+        const primary = search([starts[0]], [ends[0]]);
+        return primary.length ? primary : search(starts, ends);
       }
       move(entity, target, speed, dt, stop = 0, forced = false) {
         const d = dist(entity, target);

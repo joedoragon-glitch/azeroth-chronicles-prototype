@@ -9,7 +9,7 @@ function shell(language, heroClass = 'paladin') {
   let nextFrame;
   const ctx = new Proxy({}, { get: (o, k) => o[k] || (() => {}) });
   function el() {
-    const classes = new Set();
+    const classes = new Set(), attributes = new Map();
     let content = '';
     return {
       firstChild: { textContent: '' },
@@ -43,7 +43,8 @@ function shell(language, heroClass = 'paladin') {
       replaceChildren(...x) {
         this.children = x;
       },
-      setAttribute() {},
+      setAttribute(name, value) { attributes.set(name, String(value)); },
+      getAttribute(name) { return attributes.get(name) ?? null; },
       querySelector: () => ({ textContent: '' }),
       scrollIntoView() {},
       click() {

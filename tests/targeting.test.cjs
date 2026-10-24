@@ -6,6 +6,9 @@ function encounter() {
   const game = new Campaign('normal', 'paladin', () => 0.9);
   game.zone().props = [];
   game.s.mercyTime = 0;
+  // This suite tests ordinary targeting, not the level-1 field opening
+  // that intentionally prevents automatic first attacks.
+  game.s.valeFieldAwakened = true;
   Object.assign(game.hero, { x: 500, y: 500 });
   const a = game.makeEnemy(
     { species: 'goblin', name: 'Near foe', level: 1, hp: 10000, damage: 0, gold: 0, xp: 0 },
@@ -311,6 +314,45 @@ for (const heroClass of ['paladin', 'mage', 'ranger']) {
   );
   assert.equal(game.hero.order?.type, 'skill-approach');
   assert.equal(game.hero.order.id, b.id);
+}
+
+
+for (const heroClass of ['paladin', 'mage', 'ranger']) {
+  const game = new Campaign('normal', heroClass, () => 0.9);
+  game.zone().props = [];
+  game.s.mercyTime = 0;
+  Object.assign(game.hero, { x: 500, y: 500 });
+  const reach = game.heroSkillRange(1);
+  const distant = game.makeEnemy(
+    { species: 'goblin', name: 'Distant target', level: 1, hp: 10000, damage: 0, gold: 0, xp: 0 },
+    { x: 500 + reach + 45, y: 500 },
+  );
+  game.zone().enemies = [distant];
+  game.manualHeroTargetId = distant.id;
+  game.manualHeroTargetZone = game.zoneId;
+  game.s.heroTarget = distant.id;
+  assert.equal(game.selectedHeroTarget()?.id, distant.id, heroClass + ' keeps selected foe');
+
+  // A map-owned move must never be replaced by a skill approach, even when
+  // a deliberately selected out-of-range target would ordinarily be chased.
+  const path = [{ x: 600, y: 650 }];
+  const travel = { type: 'move', x: 600, y: 650, navigation: true };
+  game.hero.order = travel;
+  game.hero.path = path;
+  const mp = game.hero.mp, cd = game.hero.cd[0], hp = distant.hp;
+  assert.equal(game.cast(1), false, heroClass + ' out-of-range cast is not queued during Map travel');
+  assert.equal(game.hero.order, travel, 'map travel keeps the original order');
+  assert.equal(game.hero.path, path, 'map travel keeps the route');
+  assert.equal(game.hero.mp, mp, 'out-of-range cast does not consume mana');
+  assert.equal(game.hero.cd[0], cd, 'out-of-range cast does not start cooldown');
+  assert.equal(distant.hp, hp, 'no remote hit');
+  assert.equal(game.cast(1, distant.id), false, 'explicit target ID is also non-interrupting');
+  assert.equal(game.hero.order, travel, 'explicit target cannot hijack map autopilot');
+  assert.equal(game.castMovementBasic(), false, 'automatic basic never chases the distant foe');
+  assert.equal(game.hero.order, travel);
+
+  // Existing targeting and movement-basic fixtures above separately
+  // assert in-range attacking and normal deliberate skill-approach behavior.
 }
 
 console.log(
