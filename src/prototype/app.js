@@ -4969,7 +4969,7 @@
   addEventListener('blur', () => {
     focused = false;
     clearInput();
-    if (save()) restartGuard.clean();
+    if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
     audio.setPaused(true);
   });
   addEventListener('focus', () => {
@@ -4985,7 +4985,7 @@
     if (document.hidden) {
       game.observeCrowdFrame(0, false);
       renderResolution.suspend();
-      if (save()) restartGuard.clean();
+      if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
       audio.setPaused(true);
     } else {
       if (started && !paused && focused) restartGuard.arm(game);
@@ -4994,7 +4994,7 @@
   });
   addEventListener('pagehide', () => {
     clearInput();
-    if (save()) restartGuard.clean();
+    if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
     audio.setPaused(true);
   });
   function updateCriticalNotice() {
@@ -5641,6 +5641,9 @@
     updateCriticalNotice();
   }
   let emergencyShown = false;
+  // Preserve the abnormal-session marker through a critical freeze, even if
+  // a delayed blur/pagehide event eventually fires during the shutdown.
+  let crashRecoveryPending = false;
   function frame(now) {
     if (document.hidden) {
       frameSkip.suspend();
@@ -5664,6 +5667,7 @@
       game.s.challenge.pending ||
       game.s.challenge.gameOver;
     const recovering = !frozen && frameSkip.beginFrame(now, intervalMs);
+    if (recovering) crashRecoveryPending = true;
     const simulating = !frozen && !recovering;
     if (recovering !== emergencyShown) {
       emergencyShown = recovering;
@@ -5892,6 +5896,9 @@
       runtime.suspend();
       if (runtime.shouldDrawIdle(now)) drawWorld();
     }
+    // Only a successfully completed ordinary simulation frame clears the
+    // critical-recovery marker. Stale image probes alone cannot certify it.
+    if (simulating) crashRecoveryPending = false;
     requestAnimationFrame(frame);
   }
   if (Sprint.enabled) {
