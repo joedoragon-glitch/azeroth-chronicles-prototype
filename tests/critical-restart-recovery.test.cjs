@@ -84,101 +84,37 @@ function fixture(succession = false) {
   assert.equal(hero.gold, gold);
 }
 
-const storage = new Map();
-const store = {
-  getItem: k => storage.get(k) ?? null,
-  setItem: (k, v) => storage.set(k, v),
-};
-const persist = Persistence.create({ storage: store, Campaign: C });
+
+// The core restart sentinel is already supplied by PR #422 and tested in
+// restart-recovery.test.cjs. This follow-up covers only live escalation.
 {
-  const { g } = fixture();
-  assert(persist.save(g, { activeMode: 'normal', nightmareUnlocked: false, audio: {} }));
-  const raw = storage.get(Persistence.saveKey('normal'));
-  assert(persist.armEncounterRisk(g));
-  const restored = persist.load('normal');
-  assert(persist.needsCrashRescue(restored));
-  assert.equal(raw, storage.get(Persistence.saveKey('normal')),
-    'The marker never changes the latest validated v4 save');
-  const originalHp = restored.hero.hp, deaths = restored.s.statistics.deaths,
-    gold = restored.hero.gold;
-  assert(restored.emergencyReturnToSafety());
-  assert.equal(restored.hero.hp, originalHp);
-  assert.equal(restored.hero.gold, gold);
-  assert.equal(restored.s.statistics.deaths, deaths);
-  assert(persist.save(restored, { activeMode: 'normal', audio: {} }));
-  assert(persist.clearEncounterRisk());
-  assert(!persist.needsCrashRescue(restored));
-}
-{
-  const { g } = fixture(true);
-  g.s.challenge.pending = true;
-  assert.equal(g.emergencyReturnToSafety(), false);
-  assert.equal(persist.armEncounterRisk(g), false);
-  g.s.challenge.pending = false;
-  g.hero.hp = 0;
-  assert.equal(g.emergencyReturnToSafety(), false, 'Legitimate death remains untouched');
-  assert.equal(persist.armEncounterRisk(g), false);
-}
-{
-  // A previously saved active encounter + unclean marker boots at the refuge.
-  const { g } = fixture();
-  const originalHp = g.hero.hp, originalGold = g.hero.gold;
-  const sessionStorage = new Map([
-    [Persistence.saveKey('normal'), JSON.stringify(g.snapshot())],
-    [Persistence.encounterRiskKey, JSON.stringify({
-      v: 1, mode: 'normal', heroClass: 'paladin', zone: 'vale', seenAt: Date.now(),
-    })],
-  ]);
-  const restarted = shell('en', 'paladin', { storage: sessionStorage });
-  const reloaded = restarted.scope.Prototype.game;
-  assert(!reloaded.manaCombatActive(), 'Interrupted encounter is not rejoined on boot');
-  assert.equal(reloaded.hero.hp, originalHp);
-  assert.equal(reloaded.hero.gold, originalGold);
-  assert.equal(reloaded.s.statistics.deaths, 0);
-  assert.equal(sessionStorage.get(Persistence.encounterRiskKey), '',
-    'Successful safe recovery consumes the crash marker');
-  assert.equal(
-    JSON.parse(sessionStorage.get(Persistence.saveKey('normal'))).hero.hp,
-    originalHp, 'Latest campaign save is kept and rewritten at the safe location');
-}
-{
-  // A clean close explicitly disarms the marker, permitting ordinary in-place
-  // resume, while a total JS freeze cannot execute that clean-close handler.
-  const app = shell('en');
-  const game = app.scope.Prototype.game;
-  const e = game.zone().enemies.find(x => x.hp > 0 && !x.neutral);
-  assert(e);
-  e.aggro = true;
-  e.x = game.hero.x + 50;
-  e.y = game.hero.y;
-  app.frame(33);
-  assert(app.storage.get(Persistence.encounterRiskKey), 'Active encounter arms restart guard');
-  const pagehide = app.events.pagehide;
-  assert(pagehide?.length);
-  pagehide[0]();
-  assert.equal(app.storage.get(Persistence.encounterRiskKey), '',
-    'Clean close does not falsely redirect the next launch');
-}
-{
-  // Repeated sustained emergency frames escalate to encounter reset and then
-  // safe refuge, without any actual death transition or save-format changes.
   const { g } = fixture();
   const saved = new Map([[Persistence.saveKey('normal'), JSON.stringify(g.snapshot())]]);
   const app = shell('en', 'paladin', { storage: saved });
   const running = app.scope.Prototype.game;
-  let reset = 0, returnHome = 0;
+  // Restoring a saved encounter may clear transient aggro: ensure a live
+  // enemy exists so this deterministic stress fixture exercises reset.
+  const enemy = running.zone().enemies.find(e => e.hp > 0 && !e.neutral);
+  assert(enemy);
+  enemy.aggro = true;
+  enemy.telegraph = { kind: 'circle', timer: 20, total: 20 };
+  let resets = 0, relocations = 0;
   const originalReset = running.emergencyResetEncounter.bind(running),
     originalReturn = running.emergencyReturnToSafety.bind(running);
-  running.emergencyResetEncounter = () => { reset++; return originalReset(); };
-  running.emergencyReturnToSafety = () => { returnHome++; return originalReturn(); };
+  running.emergencyResetEncounter = () => { resets++; return originalReset(); };
+  running.emergencyReturnToSafety = () => { relocations++; return originalReturn(); };
   app.frame(0);
-  for (let now = 700; now <= 18000; now += 200) app.frame(now);
-  assert.equal(reset, 1, 'Encounter is reset once after sustained critical trouble');
-  assert.equal(returnHome, 1, 'Persistent failure then uses last-resort refuge');
+  app.frame(700);
+  assert(app.scope.Prototype.frameSkip.emergency);
+  for (let now = 900; now <= 18000; now += 200) app.frame(now);
+  assert.equal(resets, 1, 'A sustained near-freeze resets encounter once');
+  assert.equal(relocations, 1, 'Continued near-freeze triggers one refuge fallback');
   assert.equal(running.s.statistics.deaths, 0);
-  assert.equal(running.hero.gold, g.hero.gold);
   assert.equal(running.hero.hp, g.hero.hp);
-  assert.equal(saved.get(Persistence.encounterRiskKey), '',
-    'Last-resort relocation is saved and the restart marker cleared');
+  assert.equal(running.hero.gold, g.hero.gold);
+  assert.equal(running.s.challenge.pending, false);
+  const latest = JSON.parse(saved.get(Persistence.saveKey('normal')));
+  assert.equal(latest.hero.hp, g.hero.hp);
+  assert.equal(latest.statistics.deaths, 0);
 }
-console.log('PASS critical restart: legitimate death/succession preserved, clean close, unclean reboot, encounter reset, withdrawal and refuge fallback');
+console.log('PASS critical escalation: no combat death, no HP loss, enemy reset, physical retreat and persistent-failure refuge fallback');
