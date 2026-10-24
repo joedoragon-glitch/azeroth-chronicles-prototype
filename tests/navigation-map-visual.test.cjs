@@ -61,7 +61,7 @@ async function exercise(page, mode, tag) {
   const rect=await canvas.boundingBox();
   assert(rect && Math.abs(rect.width/rect.height-1.5)<0.035,
     tag+' displayed map keeps intrinsic 3:2 aspect ratio, including phone');
-  const picked=await page.evaluate(({left,top,width,height})=>{
+  const picked=await page.evaluate(({x:left,y:top,width,height})=>{
     const g=Prototype.game, list=g.mapDestinations(), size=g.zoneSize(),
       options=list.filter(p=>g.navigationTarget(p) &&
         Math.hypot(p.x-g.hero.x,p.y-g.hero.y)>250);
