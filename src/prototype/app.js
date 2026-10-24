@@ -1430,7 +1430,7 @@
   cancelNavigationButton.hidden = true;
   cancelNavigationButton.onclick = () => {
     clearWaypoint();
-    status('Navigation cleared.');
+    status(language === 'es' ? 'Ruta cancelada.' : 'Navigation cleared.');
     updateHUD();
   };
   document.body.append(cancelNavigationButton);
@@ -3380,7 +3380,8 @@
       destination,
       label,
       point: choice.point,
-      route: choice.path,
+      // Own a stable guidance copy; movement consumes/mutates hero.path.
+      route: choice.path.map((point) => ({ x: point.x, y: point.y })),
       order: game.hero.order,
       autopilot: true,
       origin: { x: game.hero.x, y: game.hero.y },
