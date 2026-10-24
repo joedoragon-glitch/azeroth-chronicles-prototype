@@ -743,6 +743,8 @@
       'Omite algunos dibujos del mundo bajo carga; el juego y los avisos continúan.',
     'Critical slowdown: combat paused while performance recovers. You can lower graphics in Settings.':
       'Ralentización crítica: combate en pausa durante la recuperación. Puedes bajar los gráficos en Ajustes.',
+    'Previous session stopped unexpectedly. Returned to your refuge safely.':
+      'La sesión anterior se cerró inesperadamente. Regresaste a tu refugio con seguridad.',
     'Performance recovered: combat resumed.':
       'Rendimiento recuperado: combate reanudado.',
     'Performance details': 'Detalles de rendimiento',
@@ -1208,6 +1210,7 @@
   }
 
   const persistence = PrototypePersistence.create({ storage: localStorage, Campaign, status });
+  const restartGuard = PrototypePersistence.createRestartGuard({ storage: localStorage, Campaign });
   let profile = {
       nightmareUnlocked: false,
       activeMode: 'normal',
@@ -1417,6 +1420,18 @@
       loaded = true;
       save();
     } else game = new Campaign();
+  }
+  // An unclean active-session marker indicates the previous browser stopped
+  // before its normal shutdown. Keep validated campaign progress, but never
+  // restart inside the potentially frozen encounter.
+  if (loaded) {
+    const recovered = restartGuard.recover(game);
+    if (recovered) {
+      game = recovered;
+      save();
+      status('Previous session stopped unexpectedly. Returned to your refuge safely.');
+    }
+    restartGuard.arm(game);
   }
   // Older completed peaceful saves retain their already-earned Nightmare
   // entitlement even if the local profile record was reset or imported.
@@ -2558,6 +2573,7 @@
   function start(mode, heroClass, succession, heroName = null) {
     if (mode === 'developer' && !developerEnabled) return;
     if (mode === 'nightmare' && !profile.nightmareUnlocked) return;
+    restartGuard.clean();
     game = new Campaign(mode, heroClass, Math.random, { succession });
     if (heroName) game.nameHero(heroName);
     started = true;
@@ -2565,6 +2581,7 @@
     paused = false;
     if (mode !== 'developer') profile.activeMode = mode;
     save();
+    restartGuard.arm(game);
     closeMenu();
     updateHUD();
   }
@@ -3178,12 +3195,14 @@
       if (candidate.s.mode === 'developer' && !developerEnabled)
         throw Error('Developer import disabled');
       persistence.writeCandidate(candidate);
+      restartGuard.clean();
       game = candidate;
       started = true;
       if (game.s.mode !== 'developer') profile.activeMode = game.s.mode;
       if (game.peace && game.s.finalRestCompleted && game.s.mode !== 'developer')
         profile.nightmareUnlocked = true;
       persistProfile();
+      restartGuard.arm(game);
       closeMenu();
       status('Imported successfully.');
     } catch (_) {
@@ -4950,12 +4969,13 @@
   addEventListener('blur', () => {
     focused = false;
     clearInput();
-    save();
+    if (save()) restartGuard.clean();
     audio.setPaused(true);
   });
   addEventListener('focus', () => {
     focused = true;
     last = performance.now();
+    if (started && !paused && !document.hidden) restartGuard.arm(game);
     checkAppUpdate().catch(() => {});
   });
   addEventListener('online', () => checkAppUpdate(true).catch(() => {}));
@@ -4965,13 +4985,16 @@
     if (document.hidden) {
       game.observeCrowdFrame(0, false);
       renderResolution.suspend();
-      save();
+      if (save()) restartGuard.clean();
       audio.setPaused(true);
-    } else checkAppUpdate().catch(() => {});
+    } else {
+      if (started && !paused && focused) restartGuard.arm(game);
+      checkAppUpdate().catch(() => {});
+    }
   });
   addEventListener('pagehide', () => {
     clearInput();
-    save();
+    if (save()) restartGuard.clean();
     audio.setPaused(true);
   });
   function updateCriticalNotice() {
