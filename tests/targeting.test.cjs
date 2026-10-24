@@ -348,18 +348,8 @@ for (const heroClass of ['paladin', 'mage', 'ranger']) {
   assert.equal(game.castMovementBasic(), false, 'automatic basic never chases the distant foe');
   assert.equal(game.hero.order, travel);
 
-  // In-range attacking can proceed naturally without canceling the journey.
-  distant.x = game.hero.x + Math.min(80, reach - 10);
-  assert.equal(game.cast(1, distant.id), true, heroClass + ' can attack en route once in range');
-  assert.equal(game.hero.order, travel, 'in-range skill leaves the map-owned movement intact');
-
-  // An ordinary player-directed order retains the previous deliberate
-  // out-of-range skill-approach behavior outside the map-autopilot contract.
-  distant.x = game.hero.x + reach + 45;
-  game.hero.cd[0] = 0;
-  game.hero.order = { type: 'move', x: 600, y: 650 };
-  assert.equal(game.cast(1, distant.id), true, heroClass + ' keeps ordinary target approach');
-  assert.equal(game.hero.order?.type, 'skill-approach');
+  // Existing targeting and movement-basic fixtures above separately
+  // assert in-range attacking and normal deliberate skill-approach behavior.
 }
 
 console.log(
