@@ -30,9 +30,19 @@ The portrait phone stylesheet no longer applies a height-only canvas clamp that 
 
 ### Evidence and limitations
 
-The source tests are automated, not a physical iPhone, Safari/WebKit, ChromeOS, accessibility assistive-technology session, entire-campaign run or all-mode save-corpus. **Do not claim physical device certification** even if the single focused Chromium acceptance check passes. Actual iOS safe-area notches, text zoom and hardware interaction should be observed with owner hardware before release when available. The new browser smoke must pass on the current PR head to count; a queued or canceled CI run is not a passing receipt.
+The source tests are automated, not a physical iPhone, Safari/WebKit, ChromeOS, accessibility assistive-technology session, entire-campaign run or all-mode save-corpus. **Do not claim physical device certification** even if the single focused Chromium acceptance check passes. Actual iOS safe-area notches, text zoom and hardware interaction should be observed with owner hardware before release when available. The targeted Chrome browser smoke **passed** on the integrated Stage 5 code head, but this does not certify actual physical devices or Safari/WebKit. The accepted focused workflow evidence is [GitHub Actions run 40049004577](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40049004577): **11 focused test files passed**, including the EN/ES production-shell map cases, real Chromium desktop (1280×800), phone portrait two-thumb (375×800) and phone landscape left-hand (800×375) rendered UI cases, and the reproducible multi-file Pages/PWA build. The deploy job was explicitly skipped.
 
 No PixiJS rendering change, enemy AI balance, terrain authoring, save-v4 format expansion, performance cache, asset packaging or single-HTML architecture constraint is introduced by Stage 5.
+
+## Stage 5 rendered-browser corrections and final focused evidence
+
+The first desktop browser smoke exposed that the Stage 2 Cancel styling had been appended to `styles/app.css`, which is **not loaded by the actual game HTML entry points**. The button therefore was not being hidden during menus. The base button styling, menu-open hiding and keyboard focus ring now live in the loaded `styles/prototype.css`. Inactive CSS rules were removed from `styles/app.css`.
+
+The next rendered-browser smoke found the newly styled button overlapping the desktop right-side information HUD. A desktop-only offset in `styles/desktop.css` now positions the small Cancel control immediately to the left of the existing HUD; both desktop HUD widths are accounted for. The phone-specific safe-area positions remain in `styles/phone.css`.
+
+**Validated rendered cases:** desktop (1280×800); portrait phone two-thumb (375×800); landscape phone left-hand (800×375). Every case checks the actual DOM canvas aspect, marker click/tap identity, accessibly selected list action, explicit Navigate, contextual Cancel disappearing during menus and after dismissal, absence of intersection with the visible HUD and movement/combat controls, and immediate keyboard manual takeover preserving guidance. Earlier shell tests additionally cover EN/ES, close markers/empty terrain, control shortcuts, quest/gathering ownership, range-aware combat, region/death invalidation, saved orders and authored ferry/solver contracts. This evidence is focused, not an exhaustive all-regions live journey or physical WebKit/device certification.
+
+**Stage 5 implementation status:** complete for owner review. **Final whole-PR audit:** deliberately separate and still outstanding. **Merge/deployment:** not authorized.
 
 ## Release discipline
 
@@ -41,7 +51,7 @@ No PixiJS rendering change, enemy AI balance, terrain authoring, save-v4 format 
 - [x] Stage 3 ferry/service approaches
 - [x] Stage 4 fallback for false no-route
 - [x] Stage 5 map/interaction implementation and focused test definitions
-- [ ] **Final current-head Stage 5 CI outcome** — record actual pass/fail rather than infer
+- [x] **Stage 5 focused CI outcome** — 11 relevant suites and real rendered Chromium smoke passed; publication skipped (see run 40049004577)
 - [ ] **Separate final cumulative technical audit** — entire PR diff against current `main`, focused evidence, risks, localization, accessibility, phone CSS, fallback renderer, historical saves and GitHub release safety
 - [ ] **Explicit owner authorization** to merge and publish, never presumed by Stage 5 completion
 
