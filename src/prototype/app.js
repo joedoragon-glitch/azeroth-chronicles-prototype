@@ -3735,19 +3735,46 @@
         button.classList.toggle('route-picked', picked);
         button.setAttribute('aria-pressed', String(picked));
       });
-      menuIndex = orderedPlaces.indexOf(place) + 1;
+      // Section headings are DOM siblings, not keyboard menu actions.
+      // Match the selected real action, including grouped destination lists.
+      menuIndex = buttons.indexOf(mapButtons[orderedPlaces.indexOf(place) + 1]);
       highlight();
       drawMap();
     }
 
+    // A canvas tap selects ONLY a listed destination, never an arbitrary
+    // ground coordinate. Compare distances in displayed CSS pixels, not
+    // intrinsic map pixels, so narrow/landscape layouts have equal accuracy.
+    // A close tie is intentionally left unselected: use the named list row.
+    let touchMapContact = false;
+    map.style.touchAction = 'manipulation';
+    map.onpointerdown = (event) => {
+      touchMapContact = event.pointerType === 'touch' || event.pointerType === 'pen';
+    };
+    map.onpointercancel = () => { touchMapContact = false; };
     map.onclick = (event) => {
       const rect = map.getBoundingClientRect();
-      const x = ((event.clientX - rect.left) / rect.width) * map.width;
-      const y = ((event.clientY - rect.top) / rect.height) * map.height;
-      const nearest = destinations
-        .map((place) => ({ place, distance: Math.hypot(sx(place.x) - x, sy(place.y) - y) }))
-        .sort((a, b) => a.distance - b.distance)[0];
-      if (nearest && nearest.distance < 16) choose(nearest.place);
+      if (!rect.width || !rect.height || !Number.isFinite(event.clientX) ||
+          !Number.isFinite(event.clientY)) return;
+      const x = event.clientX - rect.left, y = event.clientY - rect.top;
+      if (x < 0 || y < 0 || x > rect.width || y > rect.height) return;
+      const touch = touchMapContact ||
+        event.pointerType === 'touch' || event.pointerType === 'pen';
+      touchMapContact = false;
+      const radius = touch ? 22 : 12;
+      const nearby = destinations
+        .map((place) => ({
+          place,
+          distance: Math.hypot(
+            sx(place.x) * rect.width / map.width - x,
+            sy(place.y) * rect.height / map.height - y,
+          ),
+        }))
+        .sort((a, b) => a.distance - b.distance);
+      if (!nearby.length || nearby[0].distance > radius) return;
+      if (nearby[1] && nearby[1].distance <= radius &&
+          nearby[1].distance - nearby[0].distance < 8) return;
+      choose(nearby[0].place);
     };
     drawMap();
   }
