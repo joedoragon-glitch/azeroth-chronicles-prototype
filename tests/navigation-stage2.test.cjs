@@ -24,6 +24,35 @@ for (const language of ['en', 'es']) {
     for (const handler of events.keyup || []) handler({ code, target: {} });
   };
 
+  // M is the existing map alias; Z remains the configurable default.
+  // Tab is already Squad Doctrine and must never be hijacked for Map.
+  assert.equal(scope.Prototype.input.actionFor('KeyM'), 'map');
+  assert.equal(scope.Prototype.input.actionFor('KeyZ'), 'map');
+  assert.equal(scope.Prototype.input.actionFor('Tab'), 'doctrine');
+  moveKey('KeyM');
+  assert(e.get('modal').hidden === false, 'M opens the map directly');
+  assert(elements.get('modal-title').textContent.endsWith(' map'));
+  assert(cancel.hidden, 'merely opening the map must not display Cancel');
+  scope.Prototype.closeMenu();
+  moveKey('KeyZ');
+  assert(!elements.get('modal').hidden, 'the original Z map hotkey remains available');
+  assert(cancel.hidden, 'Z map inspection alone does not create navigation');
+  scope.Prototype.closeMenu();
+
+  // A quest waypoint is optional guidance, not an active map-navigation session.
+  elements.get('menu-button').click();
+  const root = elements.get('modal-actions').children;
+  assert(root[1].textContent.includes(t('Map and travel routes', 'Mapa y rutas de viaje')),
+    'the map remains prominent in the phone-accessible Adventure menu');
+  assert(root[1].textContent.includes('Z / M'),
+    'both available map keys are visible without changing bindings');
+  menuButton(t('Quest journal', 'Diario de misiones')).click();
+  menuButton(t('Your First Company', 'Tu primera compañía')).click();
+  scope.Prototype.updateHUD();
+  assert.equal(scope.Prototype.trackedQuest, 'quest-barracks');
+  assert(cancel.hidden, 'quest-only guidance must not display navigation Cancel');
+  scope.Prototype.closeMenu();
+
   const startMapRoute = () => {
     scope.Prototype.closeMenu();
     elements.get('menu-button').click();
@@ -71,6 +100,7 @@ for (const language of ['en', 'es']) {
   upKey('KeyW');
   assert.equal(game.hero.order, null, 'manual key movement immediately releases autopilot');
   assert.equal(scope.Prototype.navigationState.autopilot, false);
+  assert(!cancel.hidden, 'manual control keeps Cancel for the remaining navigation guide');
   assert(scope.Prototype.trackedWaypoint?.points.length > 0,
     'waypoint remains after manual takeover');
   assert.deepEqual(
@@ -124,6 +154,17 @@ for (const language of ['en', 'es']) {
   assert(scope.Prototype.trackedWaypoint, 'new manual move does not dismiss the selected guide');
   cancel.click();
 
+  // Arrival hides the control as soon as the destination is reached.
+  startMapRoute();
+  const last = scope.Prototype.trackedWaypoint.points.at(-1);
+  const wasAt = { x: game.hero.x, y: game.hero.y };
+  Object.assign(game.hero, last);
+  scope.Prototype.updateHUD();
+  assert(cancel.hidden, 'arrival never leaves a useless Cancel button on screen');
+  assert.equal(scope.Prototype.navigationState.active, false);
+  scope.Prototype.cancelNavigation();
+  Object.assign(game.hero, wasAt);
+
   // Contextual Cancel stops an actively owned move, too.
   startMapRoute();
   cancel.click();
@@ -137,6 +178,12 @@ for (const language of ['en', 'es']) {
   menuButton(t('Clear waypoint', 'Quitar ruta')).click();
   assert.equal(game.hero.order, null);
   assert.equal(scope.Prototype.trackedWaypoint, null);
+
+  // Custom keybindings outrank the M convenience alias; no collisions.
+  const bindError = scope.Prototype.input.rebind('skill5', 'KeyM');
+  assert.equal(bindError, null);
+  assert.equal(scope.Prototype.input.actionFor('KeyM'), 'skill5');
+  assert.equal(scope.Prototype.input.actionFor('KeyZ'), 'map');
 
   // Guide cancellation cannot erase the saved gathering work assignment.
   const node = game.zone().nodes.find((n) => n.amount > 0);
