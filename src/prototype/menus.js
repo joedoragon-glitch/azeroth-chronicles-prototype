@@ -627,52 +627,97 @@
         back,
       );
     }
+    // A2/A3 Archive navigation: one stable callback tree per game and entry route.
+    // The shared menu history compares back-function identity and title; recreating
+    // these callbacks on every Back used to lose both selection and scroll position.
+    const archiveSessions = new WeakMap();
     function keeperTopics(back = closeMenu) {
       const game = getGame();
       if (!game.s.keeperPact || !game.keeperAvailable()) return;
-      const archive =
-        typeof PrototypeArchive !== 'undefined' ? PrototypeArchive : require('./archive.js');
-      const sections = archive.sections(game, { D, R: Campaign.rules });
-      function currentSection(title) {
-        const current = getGame();
-        if (current !== game || !current.s.keeperPact || !current.keeperAvailable()) {
+      let routes = archiveSessions.get(game);
+      if (!routes) {
+        routes = new Map();
+        archiveSessions.set(game, routes);
+      }
+      let session = routes.get(back);
+      if (!session) {
+        const archive =
+          typeof PrototypeArchive !== 'undefined' ? PrototypeArchive : require('./archive.js');
+        const shelfBacks = new Map(), answerBacks = new Map();
+        const available = () =>
+          getGame() === game && game.s.keeperPact && game.keeperAvailable();
+        const allSections = () => archive.sections(game, { D, R: Campaign.rules });
+        const sectionByTitle = (title) => allSections().find((item) => item.title === title);
+        const guarded = () => {
+          if (available()) return true;
           back();
+          return false;
+        };
+        // Headings are visual scan aids, not new lore or additional shelf levels.
+        // They never enter the keyboard button order and cannot hide a topic.
+        function groupName(section, topicTitle, index) {
+          if (section.title === 'Adversaries and their attacks') {
+            if (index === 0) return 'The TRUE adversaries';
+            if (topicTitle === 'Creatures encountered') return 'Creatures encountered';
+            const boss = D.bosses.find((b) => b.name === topicTitle);
+            return boss?.kind === 'field' ? 'Field adversaries' : 'Dungeon guardians';
+          }
+          if (section.title === 'The Crown and its institutions')
+            return index < 7 ? 'Offices and governors' : 'People and records';
           return null;
         }
-        return archive.sections(current, { D, R: Campaign.rules }).find((s) => s.title === title);
+        function answer(sectionTitle, topicTitle, figures = false) {
+          if (!guarded()) return;
+          const topic = sectionByTitle(sectionTitle)?.topics.find(([title]) => title === topicTitle);
+          if (!topic || (figures && !topic[2])) return shelf(sectionTitle);
+          const id = sectionTitle + ':' + topicTitle;
+          if (!shelfBacks.has(sectionTitle))
+            shelfBacks.set(sectionTitle, () => shelf(sectionTitle));
+          if (!answerBacks.has(id))
+            answerBacks.set(id, () => answer(sectionTitle, topicTitle));
+          const actions = [];
+          if (!figures && topic[2])
+            actions.push(action('Show me the figures', () => answer(sectionTitle, topicTitle, true)));
+          if (figures)
+            actions.push(action('Return to the answer', answerBacks.get(id)));
+          actions.push(action('Another question', shelfBacks.get(sectionTitle)));
+          actions.push(action('All shelves', index));
+          openMenu(
+            topicTitle, topic[figures ? 2 : 1], actions,
+            figures ? answerBacks.get(id) : shelfBacks.get(sectionTitle),
+            { view: 'archive-reading' },
+          );
+        }
+        function shelf(sectionTitle) {
+          if (!guarded()) return;
+          const section = sectionByTitle(sectionTitle);
+          if (!section) return index();
+          const actions = [];
+          let previousGroup;
+          for (const [position, [title]] of section.topics.entries()) {
+            const group = groupName(section, title, position);
+            if (group && group !== previousGroup)
+              actions.push({ kind: 'section', label: group });
+            previousGroup = group;
+            actions.push(action(title, () => answer(sectionTitle, title)));
+          }
+          openMenu(section.title, section.intro, actions, index, { view: 'archive-shelf' });
+        }
+        function index() {
+          if (!guarded()) return;
+          const sections = allSections();
+          openMenu(
+            'The Keeper’s shelves', approvedNarrative.P03.en,
+            sections.map((section) =>
+              action(section.title, () => shelf(section.title),
+                section.intro + ' · ' + section.topics.length + ' questions')),
+            back, { view: 'archive-index' },
+          );
+        }
+        session = { index };
+        routes.set(back, session);
       }
-      function shelf(section) {
-        section = currentSection(section.title);
-        if (!section) return;
-        openMenu(
-          section.title,
-          section.intro,
-          section.topics.map(([title]) =>
-            action(title, () => {
-              function answer(figures = false) {
-                const current = currentSection(section.title);
-                const topic = current?.topics.find(([name]) => name === title);
-                if (!topic || (figures && !topic[2])) return;
-                const actions = [];
-                if (!figures && topic[2])
-                  actions.push(action('Show me the figures', () => answer(true)));
-                actions.push(action('Another question', () => shelf(current)));
-                openMenu(title, topic[figures ? 2 : 1], actions, () =>
-                  figures ? answer() : shelf(current),
-                );
-              }
-              answer();
-            }),
-          ),
-          () => keeperTopics(back),
-        );
-      }
-      openMenu(
-        'The Keeper’s shelves',
-        approvedNarrative.P03.en,
-        sections.map((section) => action(section.title, () => shelf(section), section.intro)),
-        back,
-      );
+      session.index();
     }
     function keeper(back = closeMenu) {
       const game = getGame();
