@@ -890,7 +890,189 @@
       });
     return shelves;
   }
-  const api = { sections, conditionTopics };
+
+  // A4: interface/reference localization, separate from the FINAL author-approved
+  // narrative. Never translate or paraphrase the locked manuscript in this map.
+  const spanishReference = Object.freeze({
+    'The Keeper’s shelves': 'Los estantes del Guardián',
+    'Battle and protection': 'Combate y protección',
+    'Conditions and recovery': 'Estados y recuperación',
+    'Experience and discipline': 'Experiencia y disciplina',
+    'Your skills': 'Tus habilidades',
+    'Companions and field bases': 'Compañeros y bases de campaña',
+    'The Crown and its institutions': 'La Corona y sus instituciones',
+    'Adversaries and their attacks': 'Adversarios y sus ataques',
+    'The provinces': 'Las provincias',
+    'The orders among the shelves': 'Las órdenes entre los estantes',
+    'Armor, openings and rogue tactics.': 'Armadura, oportunidades de ataque y tácticas de retirada.',
+    'Choose an effect; ask for figures when you want the full rule.':
+      'Elige un efecto y solicita las cifras cuando quieras consultar la regla completa.',
+    'Level gains and training.': 'Subidas de nivel y entrenamiento.',
+    'Quick effects here; select a skill, then ask for figures. Hero Skills is also in the Adventure menu.':
+      'Aquí encontrarás los efectos resumidos. Elige una habilidad y solicita sus cifras. Las habilidades del héroe también están en el menú de aventura.',
+    'Shared bonuses, Ranger care and TRUE boss pets.':
+      'Bonificaciones compartidas, cuidados de los exploradores y mascotas de jefes TRUE.',
+    'My records of the ministries, my former companions and the people living under Crown Peace.':
+      'Mis registros sobre los ministerios, mis antiguos compañeros y quienes viven bajo la Paz de la Corona.',
+    'My accounts of the great adversaries, their attacks and the creatures you have encountered.':
+      'Mis relatos sobre los grandes adversarios, sus ataques y las criaturas que has encontrado.',
+    'My notes on the five provinces.': 'Mis notas sobre las cinco provincias.',
+    'My part in the capture.': 'Mi participación en la captura.',
+    'The TRUE adversaries': 'Los adversarios TRUE',
+    'Creatures encountered': 'Criaturas encontradas',
+    'Field adversaries': 'Adversarios de campo',
+    'Dungeon guardians': 'Guardianes de mazmorra',
+    'Offices and governors': 'Cargos y gobernadores',
+    'People and records': 'Personas y registros',
+    'Show me the figures': 'Muéstrame las cifras',
+    'Return to the answer': 'Volver a la respuesta',
+    'Another question': 'Otra pregunta',
+    'All shelves': 'Todos los estantes',
+    'Fortified enemies and covering fire': 'Enemigos fortificados y fuego de cobertura',
+    'Slow': 'Ralentización',
+    'Silence': 'Silencio',
+    'Interrupted charges': 'Cargas interrumpidas',
+    'Weaken and Fracture': 'Debilitar y Fractura',
+    'Taunt': 'Provocación',
+    'Haste and Companion Rally': 'Celeridad y arenga de compañeros',
+    'Shields, wards and immunity': 'Escudos, protecciones e inmunidad',
+    'Dust and displacement': 'Polvo y desplazamiento',
+    'Healing in battle': 'Curación en combate',
+    'Steel, wounds and armor': 'Acero, heridas y armadura',
+    'Why a great volley loses force': 'Por qué una gran descarga pierde fuerza',
+    'Openings and stubborn defenders': 'Oportunidades y defensores tenaces',
+    'Enemies under pressure': 'Enemigos bajo presión',
+    'Why old enemies teach little': 'Por qué los enemigos inferiores enseñan poco',
+    'The next lesson': 'La siguiente lección',
+    'Veteran troop techniques': 'Técnicas de tropas veteranas',
+    'TRUE boss pets': 'Mascotas de jefes TRUE',
+    'Shared lessons and equipment': 'Enseñanzas y equipo compartidos',
+    'A Ranger’s care': 'Los cuidados de un explorador',
+    'Cindermaw — Interior and Welfare': 'Cindermaw — Interior y Bienestar',
+    'Dreadmaw — Agriculture': 'Dreadmaw — Agricultura',
+    'Scornfang — Reclamation': 'Scornfang — Recuperación',
+    'Ridge Tyrant — Master of Coin': 'Ridge Tyrant — Maestro de la Moneda',
+    'Crag Tyrant — Treasury captain': 'Crag Tyrant — capitán del Tesoro',
+    'Ashen Warlord — Frontier governor': 'Ashen Warlord — gobernador de la Frontera',
+    'Cinder Warlord — Frontier inspector': 'Cinder Warlord — inspector de la Frontera',
+    'Garun — the old roads': 'Garun — los caminos antiguos',
+    'Veyrith — the unfinished sky': 'Veyrith — el cielo inacabado',
+    'Veyra — the common drill': 'Veyra — el entrenamiento común',
+    'Whose peace?': '¿La paz de quién?',
+    'The last mark — remembered at the throne': 'La última marca — recordada ante el trono',
+    'Companions from the Barracks': 'Compañeros del cuartel',
+    'The Lantern Wraiths’ migration': 'La migración de los espectros de Lantern',
+    'A prisoner for the Archive': 'Un prisionero para el Archivo',
+    'The TRUE adversaries': 'Los adversarios TRUE',
+    'Normal daytime': 'Normal de día',
+    'No visited encounter yet. These base figures change with night and TRUE form.':
+      'Aún no has visitado este encuentro. Estas cifras base cambian de noche y en forma TRUE.',
+    'Visited encounters:': 'Encuentros visitados:',
+    'A miniature companion inspired by ': 'Un compañero en miniatura inspirado en ',
+    'Steel, wounds and armor': 'Acero, heridas y armadura',
+    'The Ash Sentinel takes 65% damage while its armor is closed; the Stone Colossus takes 125% while its core is exposed. Some captains gain protection from their followers. Clear the warning, then strike during the opening.':
+      'El Centinela de Ceniza recibe el 65 % del daño con su armadura cerrada; el Coloso de Piedra recibe el 125 % con el núcleo expuesto. Algunos capitanes reciben protección de sus seguidores. Esquiva la advertencia y golpea cuando se abra una oportunidad.',
+    'Fighting beneath your level brings less experience and fewer crowns. Ordinary creatures also give less experience than their listed value. If you want to grow, seek a stronger opponent.':
+      'Enfrentarte a enemigos de nivel inferior concede menos experiencia y coronas. Las criaturas comunes también otorgan menos experiencia que su valor indicado. Para progresar, busca rivales más fuertes.',
+    'Each level gives you a discipline point and more health. Strength, vitality and movement training improve different parts of your fighting ability.':
+      'Cada nivel concede un punto de disciplina y más salud. El entrenamiento de fuerza, vitalidad y movimiento mejora distintas capacidades de combate.',
+    ' Mana training improves recovery, not the size of your reserves.':
+      ' El entrenamiento de maná mejora la recuperación, no la capacidad de tus reservas.',
+    ' Cooldown training shortens the wait between skills.':
+      ' El entrenamiento de recuperación reduce la espera entre habilidades.',
+    'Armor takes the edge off a blow. Even a well-armored fighter can be wounded; immunity is what stops the hit entirely. Your companions rely on their own armor and any bonuses your training passes to them.':
+      'La armadura amortigua los golpes, pero incluso un combatiente bien protegido puede resultar herido. Solo la inmunidad bloquea completamente un impacto. Tus compañeros dependen de su propia armadura y de las bonificaciones que les transmite tu entrenamiento.',
+    'Landing every blow at once gives less damage than you might expect. Your company’s blows are counted together against each foe, so another attacker does not bypass the reduction. Save your strongest volley for an exposed opening.':
+      'Golpear todos a la vez puede causar menos daño del esperado. Los impactos de tu compañía se acumulan por enemigo, así que otro atacante no evita esa reducción. Reserva la descarga más fuerte para una oportunidad clara.',
+    'Move and recover skill cooldowns more slowly, including skills used while already slowed.':
+      'El movimiento y la recuperación de las habilidades se ralentizan, incluso si la habilidad se utiliza bajo ese efecto.',
+    'Blocks special skills for enemies, you and companions inside the field; movement and ordinary attacks still work.':
+      'Bloquea las habilidades especiales de enemigos, héroe y compañeros dentro del campo; el movimiento y los ataques normales siguen funcionando.',
+    'HP damage can cancel an unfinished charged skill; brief retry recovery replaces its full cooldown.':
+      'El daño a la salud puede interrumpir una habilidad cargada antes de completarse; una breve recuperación sustituye al tiempo completo de reutilización.',
+    'Weaken lowers an enemy’s damage; Fracture increases the damage it takes.':
+      'Debilitar reduce el daño que causa un enemigo; Fractura aumenta el daño que recibe.',
+    'Judgment draws ordinary enemy attacks toward the Paladin; scripted boss specials keep their targets.':
+      'Juicio atrae los ataques ordinarios hacia el paladín; las habilidades especiales de los jefes mantienen sus objetivos previstos.',
+    'Haste speeds your movement; Rally speeds nearby companions’ movement and ordinary attacks, not their specials.':
+      'Celeridad acelera tu movimiento; Arenga acelera el movimiento y los ataques normales de los compañeros cercanos, no sus habilidades especiales.',
+    'Shields and wards reduce damage; immunity blocks hits. Paladin protection is not invulnerability.':
+      'Los escudos y las protecciones reducen el daño; la inmunidad bloquea los impactos. La protección del paladín no es invulnerabilidad.',
+    'Goblin dust blocks direct targeting; area attacks still work. Shoves move you without a lasting stun.':
+      'El polvo goblin impide fijar el objetivo directamente, pero no bloquea ataques de área. Los empujones desplazan sin aturdir de forma duradera.',
+    'Healing restores living actors; it does not revive fallen companions. Some enemies can heal their allies too.':
+      'La curación recupera a quienes siguen vivos; no resucita a los compañeros caídos. Algunos enemigos también curan a sus aliados.',
+    'At Expedition Rank 4, troop training deepens: Soldiers protect themselves after a successful Power Strike; Rangers cover a close retreat with Triple Shot.':
+      'En el rango 4 de Expedición, las tropas mejoran sus técnicas: los soldados se protegen tras un Golpe de Poder acertado y los exploradores cubren una retirada cercana con Disparo Triple.',
+    'Each TRUE boss victory permanently unlocks a miniature companion in Barracks → Company → Boss pet collection. Each pet replaces a normal companion slot; no pet summons or performs labor.':
+      'Cada victoria contra un jefe TRUE desbloquea permanentemente un compañero en miniatura en Cuartel → Compañía → Colección de mascotas de jefes. Cada mascota ocupa una plaza normal y no invoca criaturas ni trabaja.',
+    'Shared Training passes your discipline bonuses to companions. Shared Strength passes other health and damage bonuses, plus armor and reforges. Each lesson passes more of its own bonuses as its rank rises.':
+      'Entrenamiento compartido transmite a los compañeros tus bonificaciones de disciplina. Fuerza compartida transmite otras bonificaciones de salud y daño, además de armadura y reforjas. Cada mejora aumenta la proporción transmitida.',
+    'A Ranger treats one wounded living member of the company at a time, with you first when you need it. Recall brings companions back to your side; Barracks recovery brings back the fallen.':
+      'Un explorador atiende a un integrante vivo y herido de la compañía por vez, dándote prioridad cuando lo necesitas. Reagrupar acerca a los compañeros; la recuperación del cuartel devuelve a los caídos.',
+    ' Rangers can also restore your mana.':
+      ' Los exploradores también pueden restaurar tu maná.',
+  });
+  // Technical lines are generated from current rules. Preserve every numeric
+  // token and formula while translating recurring labels and explanations.
+  const technicalPhrases = [
+    [' · ', ' · '],
+    ['Skill ', 'Habilidad '],
+    [' questions', ' preguntas'],
+    ['Your ', 'Tu '], ['Normal daytime: Level ', 'Normal de día: nivel '],
+    ['Level ', 'Nivel '], ['Rank ', 'Rango '], [' (not learned)', ' (sin aprender)'],
+    ['HP', 'PV'], [' MP', ' PM'], ['damage', 'daño'], ['maximum health', 'salud máxima'],
+    ['maximum HP', 'PV máximos'], ['max HP', 'PV máximos'],
+    ['base damage', 'daño base'], ['recovery ', 'recuperación '],
+    ['Charged recovery:', 'Recuperación cargada:'],
+    ['Charge ', 'Carga '], ['Charged ', 'Cargado '],
+    ['Tap ', 'Toque '], [' seconds', ' segundos'], [' second', ' segundo'],
+    [' paces', ' pasos'], ['radius ', 'radio '], ['reach ', 'alcance '],
+    ['cooldown', 'tiempo de reutilización'], ['warning ', 'advertencia '],
+    ['Summon limit:', 'Límite de invocación:'], [' normal / ', ' normal / '],
+    [' (TRUE ', ' (TRUE '], ['normal speed', 'velocidad normal'],
+    [' below ', ' por debajo de '], [' above ', ' por encima de '],
+    [' allies', ' aliados'], [' enemies', ' enemigos'], ['companion', 'compañero'],
+    ['attack', 'ataque'], ['healing', 'curación'], ['Armor ', 'Armadura '],
+    ['before defenses', 'antes de las defensas'], [' per rank', ' por rango'],
+    ['No visited encounter yet.', 'Aún no has visitado este encuentro.'],
+    ['These base figures change with night and TRUE form.',
+      'Estas cifras base cambian de noche y en forma TRUE.'],
+    ['Visited encounters:', 'Encuentros visitados:'],
+    ['Ordinary', 'Común'], ['Guardian', 'Guardián'], ['Ringleader', 'Cabecilla'],
+    ['Captain', 'Capitán'], ['Normal boss', 'Jefe normal'], ['TRUE boss', 'Jefe TRUE'],
+    ['Passive — ', 'Pasiva — '], ['Support — ', 'Apoyo — '],
+    ['Attacks:', 'Ataques:'], ['Attack ', 'Ataque '],
+    ['threshold ', 'umbral '], ['tail ', 'cola '],
+    ['frontal arc', 'arco frontal'], ['circular area', 'área circular'],
+    ['straight lane', 'línea recta'], ['reinforcements', 'refuerzos'],
+    ['projectile volley', 'descarga de proyectiles'], ['expanding ring', 'anillo expansivo'],
+    ['scattered canisters', 'recipientes dispersos'],
+    ['defensive formation', 'formación defensiva'], ['linked charge lanes', 'carriles de carga enlazados'],
+    ['alternating marked ground', 'suelo marcado alternado'], ['sweeping arc', 'arco de barrido'],
+    ['marked area', 'área marcada'], ['slow', 'ralentizar'], ['immunity', 'inmunidad'],
+    ['summons', 'invocaciones'], ['ranged', 'a distancia'], ['melee', 'cuerpo a cuerpo'],
+    ['ordinary', 'común'], ['ringleader', 'cabecilla'], ['captain', 'capitán'],
+    ['guardian', 'guardián'], ['damage ×', 'daño ×'], ['heals ', 'cura '],
+    ['HP or less', 'PV o menos'], ['MP or less', 'PM o menos'],
+    ['over ', 'durante '], ['per living', 'por cada '], ['at your level', 'a tu nivel'],
+  ];
+  function translateArchive(value) {
+    if (typeof value !== 'string') return value;
+    if (Object.prototype.hasOwnProperty.call(spanishReference, value))
+      return spanishReference[value];
+    let result = value;
+    // Whole paragraph translation first: keep approved author text untouched.
+    // Technical interpolation comes afterward and cannot alter numeric inputs.
+    for (const [english, spanish] of Object.entries(spanishReference)) {
+      if (english.length > 55 && result.includes(english))
+        result = result.replaceAll(english, spanish);
+    }
+    for (const [english, spanish] of technicalPhrases)
+      if (english !== spanish) result = result.replaceAll(english, spanish);
+    return result;
+  }
+  const api = { sections, conditionTopics, translateArchive };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeArchive = api;
 })(typeof window !== 'undefined' ? window : globalThis);
