@@ -101,6 +101,12 @@ normalBad.nightmareIntroRemaining = 1;
 assert.throws(() => C.validate(normalBad));
 // Earlier victories do not start the ending sunrise.
 const victory = new C('nightmare', 'paladin', () => 0.73);
+// The ending is post-progression, not the protected level-one Vale opening.
+// Reconcile the hidden Thornfang arrival before constructing peaceful habitat.
+victory.hero.level = 2;
+victory.zone();
+assert.equal(victory.zone().thornArrival, undefined,
+  'Endgame fixture cannot retain a protected opening boss');
 victory.s.nightmareIntroRemaining = 0;
 victory.s.normal.darklord = true;
 victory.s.true.darklord = true;
