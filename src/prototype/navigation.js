@@ -405,7 +405,33 @@
       navigationTarget(place) {
         if (!place || !Number.isFinite(place.x) || !Number.isFinite(place.y)) return null;
         const size = this.zoneSize(),
-          anchor = place.servicePoint || place;
+          anchor = place.servicePoint || place,
+          harbor = place.kind === 'transport' && place.harbor ? R.harbors?.[this.zoneId] : null;
+        // The authored ferry vessel floats offshore. Its ordinary offsets can
+        // all land in water even when the adjacent *existing dock* is walkable.
+        // This point is navigation-only: do not move the ferry, widen boarding
+        // interaction range or mutate any saved NPC/service coordinates.
+        if (harbor?.dock && dist(place, harbor.boat) < 1) {
+          const dock = harbor.dock,
+            clearance = 16, // A radius-15 actor stays strictly inside the dock.
+            point = {
+              x: Math.max(dock.x1 + clearance, Math.min(place.x, dock.x2 - clearance)),
+              y: Math.max(dock.y1 + clearance, Math.min(place.y, dock.y2 - clearance)),
+            };
+          // The move order stops within 20 units: its final position must still
+          // be within the transport's unchanged 115-unit interact radius.
+          if (
+            point.x >= 0 &&
+            point.y >= 0 &&
+            point.x <= size &&
+            point.y <= size &&
+            dist(point, place) + 20 < 115 &&
+            !this.blocked(point.x, point.y)
+          ) {
+            const path = this.route(this.hero, point);
+            if (path.length) return { point, path };
+          }
+        }
         for (const [dx, dy] of [
           [0, 0],
           [0, 65],
