@@ -741,6 +741,10 @@
     'Adaptive frame skip': 'Salto adaptativo de fotogramas',
     'Skips some world drawings under load; gameplay and warnings continue.':
       'Omite algunos dibujos del mundo bajo carga; el juego y los avisos continúan.',
+    'Critical slowdown: combat paused while performance recovers. You can lower graphics in Settings.':
+      'Ralentización crítica: combate en pausa durante la recuperación. Puedes bajar los gráficos en Ajustes.',
+    'Performance recovered: combat resumed.':
+      'Rendimiento recuperado: combate reanudado.',
     'Performance details': 'Detalles de rendimiento',
     'Choose what to adjust.': 'Elige qué ajustar.',
     'Choose phone or desktop controls. Your save stays the same.':
@@ -1802,6 +1806,7 @@
       started &&
       !paused &&
       !menu &&
+      !frameSkip.emergency &&
       focused &&
       !document.hidden &&
       !game.s.challenge.pending &&
@@ -5612,13 +5617,14 @@
     cancelNavigationButton.setAttribute('aria-label', tr('Cancel navigation'));
     updateCriticalNotice();
   }
+  let emergencyShown = false;
   function frame(now) {
-    syncPartyChargeClock();
     if (document.hidden) {
       frameSkip.suspend();
       renderResolution.suspend();
       runtime.suspend();
       fps.suspend();
+      emergencyShown = false;
       last = now;
       requestAnimationFrame(frame);
       return;
@@ -5634,9 +5640,19 @@
       document.hidden ||
       game.s.challenge.pending ||
       game.s.challenge.gameOver;
-    game.observeCrowdFrame(intervalMs, !frozen);
-    if (typeof PrototypeSprites !== 'undefined') PrototypeSprites.advance(dt * 1000, !!frozen);
-    if (!frozen) progressTargetPress();
+    const recovering = !frozen && frameSkip.beginFrame(now, intervalMs);
+    const simulating = !frozen && !recovering;
+    if (recovering !== emergencyShown) {
+      emergencyShown = recovering;
+      status(recovering
+        ? 'Critical slowdown: combat paused while performance recovers. You can lower graphics in Settings.'
+        : 'Performance recovered: combat resumed.');
+    }
+    // Keep the combat charge clock paused together with the simulation.
+    syncPartyChargeClock();
+    game.observeCrowdFrame(intervalMs, simulating);
+    if (typeof PrototypeSprites !== 'undefined') PrototypeSprites.advance(dt * 1000, !simulating);
+    if (simulating) progressTargetPress();
     if (menu) {
       menuJoyTime -= dt;
       if (Math.abs(joy.y) > 0.4 && menuJoyTime <= 0 && buttons.length) {
@@ -5663,14 +5679,14 @@
         }
       : null;
     const audioAt = stageTimes ? performance.now() : 0;
-    audio.update(game, paused || !focused || document.hidden, {
+    audio.update(game, paused || !focused || document.hidden || recovering, {
       menu: !!menu,
       backgrounded: !focused || document.hidden,
-      paused,
+      paused: paused || recovering,
       started,
     });
     if (stageTimes) stageTimes.audioUpdateMs = performance.now() - audioAt;
-    if (!frozen) {
+    if (simulating) {
       let x = (keys.right ? 1 : 0) - (keys.left ? 1 : 0) + joy.x,
         y = (keys.down ? 1 : 0) - (keys.up ? 1 : 0) + joy.y;
       if (joy.x || joy.y) {
@@ -5749,7 +5765,7 @@
     const eventAt = stageTimes ? performance.now() : 0;
     const events = game.effects.splice(0);
     renderer.queue(events);
-    renderer.update(frozen ? 0 : dt);
+    renderer.update(simulating ? dt : 0);
     for (const e of events) {
       audio.effect(e);
       if (e.type === 'chargeInterrupted' && e.target === 'hero')
@@ -5793,7 +5809,7 @@
       successionMenu();
     if (game.s.challenge.gameOver && !gateDismissed && !menu) gameOver();
     if (game.peace && game.s.finalRestCompleted && !game.s.endingAck && !menu) ending();
-    hudTimer += dt;
+    if (simulating) hudTimer += dt;
     if (hudTimer > 0.15) {
       hudTimer = 0;
       const hudAt = stageTimes ? performance.now() : 0;
@@ -5847,6 +5863,7 @@
       });
     } else {
       frameSkip.suspend();
+      emergencyShown = false;
       renderResolution.suspend();
       fps.suspend();
       runtime.suspend();
