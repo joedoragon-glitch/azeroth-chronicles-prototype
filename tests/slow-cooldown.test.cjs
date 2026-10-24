@@ -220,6 +220,7 @@ console.log(
     { x: 585, y: 500 },
   );
   g.zone().enemies = [foe];
+  g.engage(foe);
   assert(g.companionUseSecondSkill(u, foe), 'already slowed companion begins its real preparation');
   now = 0.65;
   g.resolveCompanionCharges();
