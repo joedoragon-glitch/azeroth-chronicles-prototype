@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 const { shell } = require('./helpers/production-shell.cjs');
 
 for (const language of ['en', 'es']) {
-  const { scope, elements, frame } = shell(language);
+  const { scope, elements, frame, events } = shell(language);
   const game = scope.Prototype.game;
   const tr = (en, es) => language === 'es' ? es : en;
   const cancel = scope.document.body.children.find(el=>el.id === 'cancel-navigation-button');
@@ -88,6 +88,27 @@ for (const language of ['en', 'es']) {
     'A-02: the interrupted gathering guide returns after natural arrival');
   assert.equal(game.s.gatheringTarget, task,
     'gathering work and its saved task identity are never affected');
+
+  // Deliberate manual takeover near the endpoint does not lose Cancel or
+  // discard the destination. Reaching it manually restores passive guidance.
+  Object.assign(game.hero, old);
+  const manualGoal = navigate();
+  Object.assign(game.hero, { x: manualGoal.x - 40, y: manualGoal.y });
+  for (const handler of events.keydown || [])
+    handler({ code: 'KeyW', target: {}, preventDefault() {}, repeat: false });
+  for (const handler of events.keyup || [])
+    handler({ code: 'KeyW', target: {} });
+  scope.Prototype.updateHUD();
+  assert(scope.Prototype.navigationState.active &&
+    !scope.Prototype.navigationState.autopilot,
+    'manual movement at 40 units switches to guidance-only');
+  assert(!cancel.hidden, 'manual travel still offers Cancel near the destination');
+  Object.assign(game.hero, { x: manualGoal.x - 20, y: manualGoal.y });
+  frame(350);
+  scope.Prototype.updateHUD();
+  assert(cancel.hidden, 'manual arrival ends the guidance-only session');
+  assert.equal(scope.Prototype.trackedWaypoint?.kind, 'gathering',
+    'a successful manual arrival also restores the earlier gathering guide');
 
   // Explicit Cancel means dismiss guidance, NOT silently resume the old
   // gathering waypoint. The companion's gathering assignment stays intact.
