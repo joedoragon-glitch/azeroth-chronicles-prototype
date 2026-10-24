@@ -71,4 +71,24 @@ function safeSegments(game, from, path) {
   assert.equal(g.route(from, to, { road: true }).length, 0,
     'truly disconnected terrain never receives an invented road');
 }
+{
+  // One production actor consumer: following an obstacle-aware route still
+  // reaches its goal without changing the simulation's movement contract.
+  // This narrow check is intentionally not the broad roads/AI test matrix.
+  const Campaign = require('../src/prototype/engine.js');
+  const campaign = new Campaign('normal', 'paladin', () => 0.73);
+  campaign.zone().props.push({
+    id: 'stage4-follow-obstacle', x: 350, y: 350, r: 24, icon: 'rock',
+  });
+  const origin = { x: 300, y: 350 };
+  const destination = { x: 400, y: 350 };
+  const route = campaign.route(origin, destination);
+  assert(route.length, 'production actor still receives an obstacle-aware route');
+  safeSegments(campaign, origin, route);
+  const actor = { ...origin };
+  for (let frame = 0; frame < 160 && distance(actor, destination) > 10; frame++)
+    campaign.follow(actor, destination, 300, 0.1, 10);
+  assert(distance(actor, destination) <= 10 + 1e-6,
+    'a real actor completes movement around its blocker');
+}
 console.log('PASS Stage 4 solver: alternate clear grid anchors, unchanged legacy roads, collision-safe edges and disconnected terrain');
