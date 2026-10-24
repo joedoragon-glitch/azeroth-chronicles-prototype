@@ -1057,6 +1057,11 @@
     ['HP or less', 'PV o menos'], ['MP or less', 'PM o menos'],
     ['over ', 'durante '], ['per living', 'por cada '], ['at your level', 'a tu nivel'],
   ];
+  function translateArchiveLabel(value) {
+    if (typeof value !== 'string') return value;
+    return Object.prototype.hasOwnProperty.call(spanishReference, value)
+      ? spanishReference[value] : value;
+  }
   function translateArchive(value) {
     if (typeof value !== 'string') return value;
     if (Object.prototype.hasOwnProperty.call(spanishReference, value))
@@ -1085,7 +1090,7 @@
       result = result.replaceAll('\\uE000' + i + '\\uE001', protectedText[i]);
     return result;
   }
-  const api = { sections, conditionTopics, translateArchive };
+  const api = { sections, conditionTopics, translateArchive, translateArchiveLabel };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeArchive = api;
 })(typeof window !== 'undefined' ? window : globalThis);
