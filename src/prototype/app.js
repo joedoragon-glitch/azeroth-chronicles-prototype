@@ -7,6 +7,32 @@
     D = Campaign.data,
     manaEnabled = PrototypeRules.resourceMode.manaEnabled,
     developerEnabled = /(?:^|[?&])developer=1(?:&|$)/.test(window.location?.search || '');
+  // Dev.170 is a one-time upgrade to the recommended performance baseline.
+  // Deliberately supersede earlier device choices once, before any controllers
+  // read them. Never touch campaigns, audio, language, controls or renderer.
+  const performanceBaselineKey = 'azeroth-performance-defaults-dev170-v1';
+  function applyPerformanceBaseline(storage) {
+    try {
+      if (storage.getItem(performanceBaselineKey) === 'applied') return false;
+      for (const [key, value] of [
+        ['azeroth-fps-v1', 'auto'],
+        ['azeroth-adaptive-frame-skip-v1', 'on'],
+        ['azeroth-render-resolution-v1', 'auto'],
+        ['azeroth-optimization-mode-v1', 'off'],
+        ['azeroth-camera-v2', JSON.stringify({ desktop: 1.5, phone: 1.5 })],
+      ])
+        storage.setItem(key, value);
+      // The marker is written LAST, only after the baseline is durable.
+      // Later player adjustments must remain their own choices.
+      storage.setItem(performanceBaselineKey, 'applied');
+      return true;
+    } catch (_) {
+      // Restricted storage keeps the game's existing safe in-memory defaults.
+      return false;
+    }
+  }
+  const performanceBaselineUpgraded = applyPerformanceBaseline(localStorage);
+
   // A device-only display preference: never part of the campaign or profile export.
   const optimizationKey = 'azeroth-optimization-mode-v1';
   let optimizationMode = false;
@@ -723,8 +749,12 @@
       'Ajusta todo aquí sin salir de esta pantalla.',
     'On by default. Skips drawings under load; briefly pauses combat during critical slowdowns.':
       'Activado por defecto. Omite dibujos con carga; pausa brevemente el combate si el rendimiento es crítico.',
-    'Canvas 2D is the safe default. WebGL2 starts a 15-second Keep/Revert trial.':
-      'Canvas 2D es la opción segura. WebGL2 inicia una prueba de 15 segundos para conservar o revertir.',
+    'WebGL2 may run faster on some devices. Try it for 15 seconds; keep it or return to Canvas.':
+      'WebGL2 puede acelerar el juego en algunos dispositivos. Pruébalo 15 segundos; consérvalo o vuelve a Canvas.',
+    'WebGL2 may run faster on your device. If it feels slower or looks wrong, return to Canvas.':
+      'WebGL2 puede acelerar el juego en tu dispositivo. Si va más lento o se ve mal, vuelve a Canvas.',
+    'Performance settings updated to recommended defaults. You can change them in Settings.':
+      'Ajustes de rendimiento actualizados a los valores recomendados. Puedes cambiarlos en Ajustes.',
     'Local samples are diagnostic estimates, not verified display FPS.':
       'Las muestras locales son estimaciones diagnósticas, no FPS reales verificados.',
     'Towns and camps': 'Pueblos y campamentos',
@@ -1423,6 +1453,7 @@
     game = restored;
     return true;
   }
+  let recoveredOnStartup = false;
   let loaded = (developerEnabled && load('developer')) || load(profile.activeMode);
   if (!loaded) {
     game = persistence.migrateLegacy();
@@ -1437,6 +1468,7 @@
   if (loaded) {
     const recovered = restartGuard.recover(game);
     if (recovered) {
+      recoveredOnStartup = true;
       game = recovered;
       save();
       status(recovered.selectedBarracksRespawn()
@@ -1532,15 +1564,31 @@
   gpuTrialPanel.setAttribute('role', 'region');
   gpuTrialPanel.setAttribute('aria-live', 'polite');
   gpuTrialPanel.style.cssText =
-    'position:fixed;top:10%;left:50%;transform:translateX(-50%);' +
-    'z-index:30;background:#172b35f5;color:#f4f1dc;border:2px solid #ebc875;' +
-    'border-radius:12px;padding:12px;max-width:calc(100vw - 24px);width:310px;' +
-    'box-shadow:0 8px 24px #000a;pointer-events:auto';
+    'position:fixed;top:clamp(24px,10vh,96px);left:50%;transform:translateX(-50%);' +
+    'z-index:30;box-sizing:border-box;width:360px;max-width:calc(100vw - 32px);' +
+    'max-height:calc(100dvh - 48px);overflow-y:auto;pointer-events:auto;' +
+    'background:linear-gradient(160deg,#213944,#13252e);color:#f4f1dc;' +
+    'border:1px solid #d8bb7d;border-radius:18px;padding:20px;' +
+    'box-shadow:0 18px 48px #000b;text-align:center;font-family:inherit';
   const gpuTrialMessage = document.createElement('p');
+  gpuTrialMessage.style.cssText = 'margin:0 0 8px;font-size:16px;font-weight:700;line-height:1.4';
+  const gpuTrialHint = document.createElement('p');
+  gpuTrialHint.style.cssText = 'margin:0;font-size:13px;line-height:1.5;color:#d4e1dc';
+  gpuTrialHint.textContent = tr('WebGL2 may run faster on your device. If it feels slower or looks wrong, return to Canvas.');
+  const gpuTrialActions = document.createElement('div');
+  gpuTrialActions.style.cssText = 'display:grid;grid-template-columns:minmax(0,1fr);gap:14px;margin-top:20px';
   const gpuKeep = document.createElement('button');
   const gpuRevert = document.createElement('button');
-  gpuKeep.style.marginRight = '8px';
-  gpuTrialPanel.append(gpuTrialMessage, gpuKeep, gpuRevert);
+  gpuKeep.style.cssText =
+    'display:block;box-sizing:border-box;width:100%;min-height:52px;padding:12px 16px;' +
+    'border:2px solid #edd08b;border-radius:12px;background:#caaa68;color:#162730;' +
+    'font:700 15px/1.3 inherit;cursor:pointer;touch-action:manipulation';
+  gpuRevert.style.cssText =
+    'display:block;box-sizing:border-box;width:100%;min-height:52px;padding:12px 16px;' +
+    'border:2px solid #849ba6;border-radius:12px;background:#294551;color:#f4f1dc;' +
+    'font:700 15px/1.3 inherit;cursor:pointer;touch-action:manipulation';
+  gpuTrialActions.append(gpuKeep, gpuRevert);
+  gpuTrialPanel.append(gpuTrialMessage, gpuTrialHint, gpuTrialActions);
   document.body.append(gpuTrialPanel);
   let graphicsController = null;
   // Some isolated gameplay test shells intentionally omit optional rendering
@@ -3008,7 +3056,7 @@
             if (!ready) status('PixiJS unavailable; Canvas 2D remains active.');
           });
         },
-        'Canvas 2D is the safe default. WebGL2 starts a 15-second Keep/Revert trial.',
+        'WebGL2 may run faster on some devices. Try it for 15 seconds; keep it or return to Canvas.',
       ),
       menuControls.section('Diagnostics'),
       action(
@@ -5999,6 +6047,8 @@
   updateHUD();
   if (!loaded) chooseLanguage(developerEnabled ? 'developer' : 'normal');
   else setLanguage(language);
+  if (loaded && performanceBaselineUpgraded && !recoveredOnStartup)
+    status('Performance settings updated to recommended defaults. You can change them in Settings.');
   requestAnimationFrame(frame);
   addEventListener('beforeinstallprompt', (event) => {
     event.preventDefault();
