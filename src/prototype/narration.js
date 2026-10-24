@@ -327,6 +327,10 @@
     "Throne_Keeper": {
       "en": "I kept a record of the last command our company received from outside. The seven marks on the throne belong to the Dark Lord and the six companions who traveled with him. One of those marks is yours.",
       "es": "Conservé un registro de la última orden que recibió nuestra compañía desde fuera. Las siete marcas del trono corresponden al Dark Lord y a los seis compañeros que viajamos con él. Una de esas marcas te pertenece."
+    },
+    "D04_entrance": {
+      "en": "The Citadel of Ashes is Marshal Veyra’s academy and the headquarters of the Crown’s professional army. Its officers train soldiers from different peoples to follow the same drill.",
+      "es": "La Ciudadela de las Cenizas es la academia de la mariscal Veyra y el cuartel general del ejército profesional de la Corona. Sus oficiales instruyen a soldados de distintos pueblos en una misma disciplina."
     }
   });
   if (typeof module !== 'undefined') module.exports = lines;
