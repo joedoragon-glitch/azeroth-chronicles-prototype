@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine');
 const Archive = require('../src/prototype/archive');
 const Input = require('../src/prototype/input');
+const AuthorCopy = require('../src/prototype/narration.js').approved;
 for (const mode of ['normal', 'nightmare'])
   for (const heroClass of Object.keys(C.classes)) {
     const c = new C(mode, heroClass, () => 0.9);
@@ -15,10 +16,11 @@ for (const mode of ['normal', 'nightmare'])
     const institutions = sections.find(s => s.title === 'The Crown and its institutions');
     assert.equal(institutions.topics.length, 13, 'nine prior institutions plus four grounded dossiers');
     const record = institutions.topics.map(t => t.join(' ')).join(' ');
-    for (const fact of ['personally elevated', 'Interior and Welfare', 'all five Crown provinces',
+    for (const fact of ['appointed Cindermaw', 'Interior and Welfare', 'all five Crown provinces',
       'co-manages the whole Treasury', 'Superintendent', 'decommissioning',
-      'different companion classes', 'cause remains unknown', 'mint production',
-      'mind their lanterns', 'feeling is mutual']) {
+      'different companion classes', 'whose cause I cannot explain',
+      'mines and mint became intolerable', 'watch their lanterns',
+      'return that affection']) {
       // Titles and office records may use their concise professional names.
       assert(record.includes(fact) || (fact === 'Superintendent' && C.rules.roomCaptains['supply-vale'].office.includes(fact)), fact);
     }
@@ -29,6 +31,16 @@ for (const mode of ['normal', 'nightmare'])
       'Veyra — the common drill',
       'Whose peace?',
     ]) assert(institutions.topics.some(([name]) => name === topic), topic + ' available');
+    const who = institutions.topics.find(([title]) => title === 'Whose peace?');
+    assert.equal(who[1], AuthorCopy.K05.en);
+    const wraiths = institutions.topics.find(([title]) => title === 'The Lantern Wraiths’ migration');
+    assert.equal(wraiths[1], AuthorCopy.K06.en);
+    const provinces = sections.find((section) => section.title === 'The provinces').topics;
+    const march = provinces.find(([label]) => label === 'Flooded Marches');
+    assert.equal(march[1], AuthorCopy.R05.en, 'Public R05 is not an evidence confession');
+    const historical = sections.find((section) => section.title === 'Adversaries and their attacks').topics;
+    const mirejaw = historical.find(([label]) => label === 'Mirejaw');
+    assert(mirejaw[1].includes(AuthorCopy.K01.en), 'Current combat reference embeds approved history');
     assert(!institutions.topics.some(([name]) => name.includes('last mark')),
       'unclaimed throne cannot reveal the missing companion');
     assert.deepEqual(Object.keys(C.classes).sort(), ['mage', 'paladin', 'ranger']);
@@ -42,6 +54,17 @@ for (const mode of ['normal', 'nightmare'])
       'optional lore must not bypass unread evidence',
     );
     c.s.keeperEvidence = true;
+    const unlocked = Archive.sections(c, { D: C.data, R: C.rules });
+    const unlockedMarch = unlocked.find((section) => section.title === 'The provinces')
+      .topics.find(([label]) => label === 'Flooded Marches')[1];
+    assert.equal(unlockedMarch, AuthorCopy.R05.en + '\n\n' + AuthorCopy.R05_append.en);
+    assert.equal(unlocked.find((section) => section.title === 'The orders among the shelves')
+      .topics[0][1], AuthorCopy.P05.en);
+    c.s.throneClaimed = true;
+    const throne = Archive.sections(c, { D: C.data, R: C.rules });
+    assert.equal(throne.find((section) => section.title === 'The Crown and its institutions')
+      .topics.find(([label]) => label.includes('The last mark'))[1], AuthorCopy.Throne_Keeper.en);
+    c.s.throneClaimed = false;
     assert(
       Archive.sections(c, { D: C.data, R: C.rules }).some(
         (s) => s.title === 'The orders among the shelves',
