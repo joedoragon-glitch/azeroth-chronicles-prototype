@@ -6007,6 +6007,14 @@
     // hinders enemy skills; both use the same temporary recovery mechanic.
     slowRecoveryMultiplier: 0.65,
     enemySlowRecoveryMultiplier: 0.85,
+    // Flat duration adjustment applies to every successful Slow application.
+    slowDurationBonusSeconds: 0.25,
+    // Diminishing returns: each overlapping hit strengthens recovery suppression.
+    slowStackPenalty: 0.35,
+    enemySlowStackPenalty: 0.15,
+    // Hit-time debt survives Slow expiry, but never starts an already-ready cooldown.
+    slowDebtFraction: 0.35,
+    enemySlowDebtFraction: 0.15,
     // Charged attacks are repeatable without MP; preserve a meaningful burst/heal interval.
     chargedSeconds: Object.freeze({ 1: 3, 2: 6, 3: 20, 4: 20, 5: 18, 6: 12, 7: 25, 8: 40 }),
   });
@@ -6892,7 +6900,7 @@
         effect: 'pivot',
         warning: 1.1,
         radius: 115,
-        slowSeconds: 2.45,
+        slowSeconds: 2.7,
         sidestep: 115,
         coefficient: 0.09,
       },
@@ -6909,7 +6917,7 @@
         effect: 'pivot',
         warning: 1.25,
         radius: 125,
-        slowSeconds: 2.6,
+        slowSeconds: 2.7,
         sidestep: 125,
         coefficient: 0.09,
       },
@@ -6926,7 +6934,7 @@
         effect: 'bind',
         warning: 1.25,
         radius: 125,
-        slowSeconds: 2.6,
+        slowSeconds: 2.7,
         coefficient: 0.09,
       },
       reedbeast: {
@@ -6984,7 +6992,7 @@
         effect: 'pivot',
         warning: 1.2,
         radius: 145,
-        slowSeconds: 2.45,
+        slowSeconds: 2.7,
         sidestep: 135,
         coefficient: 0.08,
       },
@@ -6993,7 +7001,7 @@
         effect: 'bind',
         warning: 1.2,
         radius: 140,
-        slowSeconds: 2.6,
+        slowSeconds: 2.7,
         coefficient: 0.09,
       },
       skeleton: {
@@ -7001,7 +7009,7 @@
         effect: 'bind',
         warning: 1.35,
         radius: 145,
-        slowSeconds: 2.6,
+        slowSeconds: 2.7,
         coefficient: 0.09,
       },
       wraith: {
@@ -7009,7 +7017,7 @@
         effect: 'pivot',
         warning: 1.35,
         radius: 150,
-        slowSeconds: 2.6,
+        slowSeconds: 2.7,
         sidestep: 145,
         coefficient: 0.09,
       },
@@ -7018,7 +7026,7 @@
         effect: 'pivot',
         warning: 1.2,
         radius: 150,
-        slowSeconds: 2.45,
+        slowSeconds: 2.7,
         sidestep: 145,
         coefficient: 0.08,
       },
@@ -7027,7 +7035,7 @@
         effect: 'bind',
         warning: 1.3,
         radius: 145,
-        slowSeconds: 2.6,
+        slowSeconds: 2.7,
         coefficient: 0.09,
       },
       reedbeast: {
@@ -7035,7 +7043,7 @@
         effect: 'bind',
         warning: 1.3,
         radius: 145,
-        slowSeconds: 2.6,
+        slowSeconds: 2.7,
         coefficient: 0.09,
       },
       archer: {
@@ -7043,7 +7051,7 @@
         effect: 'pivot',
         warning: 1.25,
         radius: 150,
-        slowSeconds: 2.6,
+        slowSeconds: 2.7,
         sidestep: 140,
         coefficient: 0.09,
       },
@@ -7052,7 +7060,7 @@
         effect: 'bind',
         warning: 1.4,
         radius: 155,
-        slowSeconds: 2.6,
+        slowSeconds: 2.7,
         coefficient: 0.1,
       },
       ashbeast: {
@@ -7060,7 +7068,7 @@
         effect: 'pivot',
         warning: 1.35,
         radius: 155,
-        slowSeconds: 2.6,
+        slowSeconds: 2.7,
         sidestep: 125,
         coefficient: 0.09,
       },
@@ -7069,7 +7077,7 @@
         effect: 'bind',
         warning: 1.25,
         radius: 145,
-        slowSeconds: 2.6,
+        slowSeconds: 2.7,
         coefficient: 0.09,
       },
       ogre: {
@@ -7077,7 +7085,7 @@
         effect: 'bind',
         warning: 1.4,
         radius: 160,
-        slowSeconds: 2.6,
+        slowSeconds: 2.7,
         coefficient: 0.1,
       },
     },
@@ -7290,8 +7298,10 @@
     presenceRadius: 540,
     moveCooldownSeconds: 3,
     // Rogue disruption must create an escape edge even against baseline sprint.
-    // Durations remain authored per move; ordinary non-Rogue Slow stays unchanged.
+    // Elite Ringleader slowing basics use the same 2.95s effective duration as
+    // their slowing signatures and the strongest Rogue signature (2.7 + 0.25).
     rogueSlowMovementFactor: 0.4,
+    eliteRogueSlowSeconds: 2.7,
     thinkingSeconds: 0.3,
     initialAssessmentSeconds: 0.4,
     escapeSeconds: 5.5,
