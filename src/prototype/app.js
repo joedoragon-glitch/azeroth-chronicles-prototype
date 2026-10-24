@@ -5834,7 +5834,7 @@
           ? ' · Same-target combo: 100% → 110% → 120% · third hit adds 55% frontal splash'
           : '') +
         (i === 0 && PrototypeRules.movementBasicClasses[h.class]
-          ? ' · Movement auto-attacks pause while Skill 1 is held'
+          ? ' · Auto-attacks pause while Skill 1 is held'
           : '') +
         (slot === 2 ? ' · Charged target locks when charging begins' : '');
       b.setAttribute(
@@ -5955,6 +5955,8 @@
     updateCriticalNotice();
   }
   let emergencyShown = false;
+  // Throttle unsuccessful idle autoattack probes without throttling real attacks.
+  let nextAutoBasicProbeAt = 0;
   // Preserve the abnormal-session marker through a critical freeze, even if
   // a delayed blur/pagehide event eventually fires during the shutdown.
   let crashRecoveryPending = false;
@@ -6102,7 +6104,6 @@
           y: movingHero.y,
           zone: game.zoneId,
           deaths: game.s.statistics.deaths,
-          order: !!movingHero.order,
         };
       const simulationAt = performance.now(),
         marks = {};
@@ -6140,17 +6141,20 @@
       }
       observeChargeFeedback();
       releaseQueuedCharge();
+      // Basic attacks depend on an eligible enemy and cooldown, never on hero movement.
+      // Failed probes are capped at 10 per second to avoid scanning idle crowds every frame.
       if (
         game.s.mode !== 'developer' &&
-        (x || y || was.order) &&
         charge?.slot !== 1 &&
         game.hero === movingHero &&
         PrototypeRules.movementBasicClasses[movingHero.class] &&
         game.zoneId === was.zone &&
         game.s.statistics.deaths === was.deaths &&
-        Math.hypot(movingHero.x - was.x, movingHero.y - was.y) > 0.25
-      )
-        game.castMovementBasic();
+        game.hero.cd[0] <= 0 &&
+        now >= nextAutoBasicProbeAt
+      ) {
+        nextAutoBasicProbeAt = game.castMovementBasic() ? now : now + 100;
+      }
       if (
         game.hero === movingHero &&
         game.zoneId === was.zone &&
