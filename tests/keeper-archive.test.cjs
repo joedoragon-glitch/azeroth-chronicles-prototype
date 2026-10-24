@@ -115,6 +115,7 @@ const barracks = {
 copy.zone().buildings.push(barracks);
 const remote = menusFor(copy);
 remote.menus.barracksMenu(barracks);
+remote.shown().actions.find((a) => a.label === 'Training').action();
 const specialists = remote.shown().actions.find((a) => a.label === 'Rescued specialists');
 assert(specialists);
 specialists.action();
@@ -142,6 +143,7 @@ const activeTrue = copy
 assert.equal(activeTrue.length, 1, 'Exactly one TRUE Keeper');
 copy.enter('vale');
 remote.menus.barracksMenu(barracks);
+remote.shown().actions.find((a) => a.label === 'Training').action();
 remote
   .shown()
   .actions.find((a) => a.label === 'Rescued specialists')
@@ -244,6 +246,7 @@ for (const mode of ['normal', 'nightmare']) {
       recaptured.zone().buildings.push(base);
       const service = menusFor(recaptured);
       service.menus.barracksMenu(base);
+      service.shown().actions.find((a) => a.label === 'Training').action();
       service
         .shown()
         .actions.find((a) => a.label === 'Rescued specialists')
