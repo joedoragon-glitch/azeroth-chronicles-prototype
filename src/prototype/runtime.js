@@ -360,7 +360,7 @@
       if (saved === 'native' || Object.hasOwn(fixedRatios, saved)) preference = saved;
     } catch (_) {}
     let maximum = 1,
-      ratio = 1,
+      ratio = selectedRatio(),
       samples = [],
       checkAt = null,
       changedAt = null,
@@ -381,7 +381,9 @@
       },
       configure(value) {
         if (!Number.isFinite(value) || value <= 0) return;
-        if (value === maximum && ratio === selectedRatio()) return;
+        // The shell resizes immediately after adaptation. Reapplying the same
+        // device ceiling must retain the chosen ratio and recovery history.
+        if (value === maximum) return;
         maximum = value;
         ratio = selectedRatio();
         suspend();
@@ -406,7 +408,7 @@
           renderMs < 0 ||
           !Number.isFinite(preRenderMs) ||
           preRenderMs < 0 ||
-          ![30, 60].includes(target)
+          ![20, 30, 60].includes(target)
         )
           return false;
         if (samples.length && now <= samples.at(-1).now) suspend();

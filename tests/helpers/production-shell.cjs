@@ -63,7 +63,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
   const scope = {
     Campaign: C,
     console,
-    performance: { now: () => 0 },
+    performance: { now: options.now || (() => 0) },
     innerWidth: 393,
     innerHeight: 852,
     Sprint: { enabled: false, press() {}, release() {}, tick: () => 1 },
@@ -107,6 +107,12 @@ function shell(language, heroClass = 'paladin', options = {}) {
     PrototypeRules: 'rules',
   }))
     scope[name] = require('../../src/prototype/' + file);
+  if (options.now) {
+    // CommonJS runtime helpers otherwise use the host's performance clock.
+    // A supplied clock keeps shell and measured draw stages on one timeline.
+    const runtime = scope.PrototypeRuntime;
+    scope.PrototypeRuntime = { ...runtime, create: () => runtime.create(options.now) };
+  }
   scope.PrototypeVisuals = { draw() {}, roads() {}, height: () => 40 };
   scope.window = scope;
   vm.createContext(scope);

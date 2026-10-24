@@ -3,6 +3,25 @@ const assert = require('node:assert/strict');
 const Runtime = require('../src/prototype/runtime');
 const values = new Map();
 const storage = { getItem: (k) => values.get(k), setItem: (k, v) => values.set(k, v) };
+// All supported drawing targets must retain Auto density, including the
+// default Auto FPS controller's pressure fallback and manual 20 FPS.
+for (const target of [20, 30, 60]) {
+  const density = Runtime.createResolution();
+  density.configure(1.5);
+  for (let now = 0; now <= 9000; now += 100) density.observe(now, 80, target, 10);
+  assert.equal(density.ratio, 0.75, 'Rendering pressure lowers density at ' + target + ' FPS');
+  density.configure(1.5);
+  assert.equal(density.ratio, 0.75, 'Reapplying the same device ceiling preserves adaptation');
+  for (let now = 10000; now <= 100000; now += 50) density.observe(now, 1, target, 10);
+  assert.equal(density.ratio, 1.5, 'Sustained headroom restores sharpness at ' + target + ' FPS');
+}
+for (const target of [0, -1, 10, 120, NaN, Infinity]) {
+  const density = Runtime.createResolution();
+  density.configure(1.5);
+  for (let now = 0; now <= 9000; now += 100)
+    assert.equal(density.observe(now, 80, target, 10), false, 'Reject unsupported targets');
+  assert.equal(density.ratio, 1.5);
+}
 const r = Runtime.createResolution(storage);
 r.configure(1.501875);
 assert.equal(r.ratio, 1.501875);
@@ -50,8 +69,8 @@ for (const [setting, expected] of [
   assert(manual.select(setting));
   assert.equal(manual.ratio, expected);
   assert.equal(manual.preference, setting);
-  for (let i = 0; i <= 100; i++)
-    assert.equal(manual.observe(i * 200, 90, 30, 8), false);
+  for (const target of [20, 30, 60])
+    for (let i = 0; i <= 100; i++) assert.equal(manual.observe(i * 200, 90, target, 8), false);
   assert.equal(manual.ratio, expected, 'Manual density never adapts: ' + setting);
   const reopened = Runtime.createResolution(storage);
   assert.equal(reopened.preference, setting, 'Persist ' + setting);
@@ -119,6 +138,56 @@ slowReport.suspend();
 slowClock = 100000;
 slowReport.record(slowClock, slowClock, () => {});
 assert.equal(slowReport.report().sampledWindowMs, 4800, 'suspended time is excluded');
+
+// Exercise the production frame -> observe -> resize -> backing-store path.
+// Synthetic draw costs test control behavior, not physical-device performance.
+const { shell } = require('./helpers/production-shell.cjs');
+for (const [preference, skipping] of [
+  ['20', false],
+  ['20', true],
+  ['auto', false],
+  ['auto', true],
+]) {
+  let clock = 0,
+    renderCost = 80,
+    tickCount = 0;
+  const app = shell('en', 'paladin', { now: () => clock });
+  const api = app.scope.Prototype;
+  api.fps.select(preference);
+  api.frameSkip.select(skipping);
+  app.scope.devicePixelRatio = 1.5;
+  for (const resize of app.events.resize) resize();
+  api.renderer.draw = () => {
+    clock += renderCost;
+  };
+  const tick = api.game.tick;
+  api.game.tick = function (dt, input) {
+    if (dt > 0) tickCount++;
+    return tick.call(this, dt, input);
+  };
+  for (let now = 0; now <= 15000; now += 100) {
+    clock = now;
+    app.frame(now);
+  }
+  assert.equal(api.fps.target, 20, preference + ' reaches or retains the 20 FPS target');
+  assert.equal(api.renderResolution.ratio, 0.75, 'Live resize retains the adaptive density');
+  assert.equal(
+    app.elements.get('world').width,
+    Math.round(app.scope.innerWidth * 0.75),
+    'The actual backing store uses the reduced density',
+  );
+  assert.equal(tickCount, 150, 'Resolution changes do not skip simulation ticks');
+  assert(Math.abs(api.game.s.time - 15) < 1e-8, 'Simulation cadence is preserved');
+  api.fps.select('20');
+  renderCost = 1;
+  for (let now = 15100; now <= 110000; now += 100) {
+    clock = now;
+    app.frame(now);
+  }
+  assert.equal(api.fps.target, 20, 'Manual 20 stays manual through recovery');
+  assert.equal(api.renderResolution.ratio, 1.5, 'Live sharpness recovers at 20 FPS');
+  assert.equal(app.elements.get('world').width, Math.round(app.scope.innerWidth * 1.5));
+}
 console.log(
-  'PASS adaptive density: sparse slowdown, mixed/CPU budgets, spike rejection, stalls, pause and persistence',
+  'PASS adaptive density: 20/30/60 FPS, live resize/recovery, Auto FPS and skip coupling, cadence, fixed preferences and existing guards',
 );

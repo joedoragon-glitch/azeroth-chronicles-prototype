@@ -21,6 +21,7 @@ const groups = [
     TEST+'app.test.cjs',TEST+'game-menu-ui.test.cjs'] },
   { match: /^src\/prototype\/(?:platform|runtime|frame-rate)\.js$/, tests: [
     TEST+'platform-runtime.test.cjs',TEST+'frame-rate.test.cjs'] },
+  { match: /^src\/prototype\/runtime\.js$/, tests: [TEST+'render-resolution.test.cjs'] },
   { match: /^src\/prototype\/(?:audio[^/]*\.js)$|^assets\/audio\//, tests: [
     TEST+'audio-catalog.test.cjs',TEST+'audio-scheduler.test.cjs'] },
   { match: /^src\/prototype\/sprites\.js$|^assets\/sprites\/|^tools\/sprites\//, tests: [
