@@ -76,6 +76,8 @@ for (const language of ['en', 'es']) {
     go.click();
     assert(elements.get('modal').hidden);
     assert.equal(game.hero.order?.type, 'move');
+    assert.equal(game.hero.order.navigation, true,
+      'only explicit Navigate marks this move as navigation-owned');
     assert(scope.Prototype.trackedWaypoint?.points.length > 0, 'the visible guide is owned');
     assert.equal(scope.Prototype.trackedWaypoint.kind, 'navigation');
     assert(scope.Prototype.navigationState.autopilot);
