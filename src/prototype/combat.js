@@ -810,6 +810,7 @@
         }
         if (u.hp === 0) {
           u.slow = 0;
+          delete u.slowStacks;
           this.tacticalClearScatter(u);
           if (u === this.hero)
             this.die({ source: rangedSourceId, damage: mitigated, hpBefore: oldHp });
