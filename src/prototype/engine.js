@@ -3433,6 +3433,8 @@
       this.tacticalClearRogueRegroup(e);
       this._tacticalScatterLeash?.delete(e.id);
       this._tacticalRepositions?.delete(e.id);
+      e.slow = 0;
+      delete e.slowStacks;
       delete e.rogueDustCoverUntil;
       const victoryLevel = this.hero.level;
       this.cancelEncounter(e);
