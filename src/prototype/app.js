@@ -1582,11 +1582,13 @@
   gpuKeep.style.cssText =
     'display:block;box-sizing:border-box;width:100%;min-height:52px;padding:12px 16px;' +
     'border:2px solid #edd08b;border-radius:12px;background:#caaa68;color:#162730;' +
-    'font:700 15px/1.3 inherit;cursor:pointer;touch-action:manipulation';
+    'font-size:15px;font-weight:700;line-height:1.3;font-family:inherit;' +
+    'cursor:pointer;touch-action:manipulation';
   gpuRevert.style.cssText =
     'display:block;box-sizing:border-box;width:100%;min-height:52px;padding:12px 16px;' +
     'border:2px solid #849ba6;border-radius:12px;background:#294551;color:#f4f1dc;' +
-    'font:700 15px/1.3 inherit;cursor:pointer;touch-action:manipulation';
+    'font-size:15px;font-weight:700;line-height:1.3;font-family:inherit;' +
+    'cursor:pointer;touch-action:manipulation';
   gpuTrialActions.append(gpuKeep, gpuRevert);
   gpuTrialPanel.append(gpuTrialMessage, gpuTrialHint, gpuTrialActions);
   document.body.append(gpuTrialPanel);
