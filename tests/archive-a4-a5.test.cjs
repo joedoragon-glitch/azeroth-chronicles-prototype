@@ -18,6 +18,7 @@ sections = A.sections(game, { D: C.data, R: C.rules });
 assert.equal(sections.length, 9, 'Signed ledger alone enables ninth bookshelf');
 assert.equal(sections[8].topics[0][1], Approved.P05.en);
 game.s.keeperEvidence = false;
+game.s.keeperPact = false;
 assert.equal(A.sections(game, { D: C.data, R: C.rules }).length, 8);
 assert.equal(A.translateArchive(Approved.P05.es), Approved.P05.es,
   'Approved Spanish prose is immutable even with the technical glossary');
@@ -68,6 +69,6 @@ for (const language of ['en', 'es']) {
   assert.equal(figures.actions[0].textContent, language === 'es' ?
     'Volver a la respuesta' : 'Return to the answer');
 }
-assert.equal(JSON.stringify(game.snapshot()), base.replace('"keeperPact":false', '"keeperPact":false'),
+assert.equal(JSON.stringify(game.snapshot()), base,
   'Consulting localizations never changes save facts beyond explicit test gates');
 console.log('PASS A4 language controls, author-final copy integrity, technical rule values and A5 shelf gates');
