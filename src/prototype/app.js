@@ -745,14 +745,14 @@
       'Ralentización crítica: combate en pausa durante la recuperación. Puedes bajar los gráficos en Ajustes.',
     'Previous session stopped unexpectedly. Returned to your refuge safely.':
       'La sesión anterior se cerró inesperadamente. Regresaste a tu refugio con seguridad.',
+    'Previous session stopped unexpectedly. Returned to your barracks safely.':
+      'La sesión anterior se cerró inesperadamente. Regresaste a tu cuartel con seguridad.',
     'Performance recovered: combat resumed.':
       'Rendimiento recuperado: combate reanudado.',
     'Critical slowdown: enemies disengaged and companions are withdrawing.':
       'Ralentización crítica: enemigos retirados y compañeros replegándose.',
     'Critical slowdown persists: returned to your recovery point without a defeat.':
       'La ralentización continúa: regreso al punto de recuperación sin derrota.',
-    'Interrupted encounter detected: returned safely to your recovery point.':
-      'Se detectó un combate interrumpido: regreso seguro al punto de recuperación.',
     'Performance details': 'Detalles de rendimiento',
     'Choose what to adjust.': 'Elige qué ajustar.',
     'Choose phone or desktop controls. Your save stays the same.':
@@ -1435,22 +1435,11 @@
     if (recovered) {
       game = recovered;
       save();
-      status('Previous session stopped unexpectedly. Returned to your refuge safely.');
+      status(recovered.selectedBarracksRespawn()
+        ? 'Previous session stopped unexpectedly. Returned to your barracks safely.'
+        : 'Previous session stopped unexpectedly. Returned to your refuge safely.');
     }
     restartGuard.arm(game);
-  }
-  // A crashed/force-closed browser cannot run rescue logic until restart.
-  // Recovery consumes the latest valid campaign save and uses normal refuge
-  // placement without calling die(), changing HP or applying death penalties.
-  if (loaded && persistence.needsCrashRescue(game)) {
-    try {
-      if (game.emergencyReturnToSafety()) {
-        if (save()) persistence.clearEncounterRisk();
-        status('Interrupted encounter detected: returned safely to your recovery point.');
-      }
-    } catch (_) {
-      status('Saved run unavailable. Import a backup.');
-    }
   }
   // Older completed peaceful saves retain their already-earned Nightmare
   // entitlement even if the local profile record was reset or imported.
@@ -2594,7 +2583,6 @@
     if (mode === 'nightmare' && !profile.nightmareUnlocked) return;
     restartGuard.clean();
     game = new Campaign(mode, heroClass, Math.random, { succession });
-    persistence.clearEncounterRisk();
     if (heroName) game.nameHero(heroName);
     started = true;
     if (typeof Sprint !== 'undefined') Sprint.reset();
@@ -4988,9 +4976,8 @@
   $('hero-stats').onclick = (e) => e?.stopPropagation?.();
   addEventListener('blur', () => {
     focused = false;
-    if (!frameSkip.emergency) persistence.clearEncounterRisk();
     clearInput();
-    if (save()) restartGuard.clean();
+    if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
     audio.setPaused(true);
   });
   addEventListener('focus', () => {
@@ -5004,10 +4991,9 @@
     clearInput();
     last = performance.now();
     if (document.hidden) {
-      if (!frameSkip.emergency) persistence.clearEncounterRisk();
       game.observeCrowdFrame(0, false);
       renderResolution.suspend();
-      if (save()) restartGuard.clean();
+      if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
       audio.setPaused(true);
     } else {
       if (started && !paused && focused) restartGuard.arm(game);
@@ -5015,9 +5001,8 @@
     }
   });
   addEventListener('pagehide', () => {
-    if (!frameSkip.emergency) persistence.clearEncounterRisk();
     clearInput();
-    if (save()) restartGuard.clean();
+    if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
     audio.setPaused(true);
   });
   function updateCriticalNotice() {
@@ -5663,8 +5648,10 @@
     cancelNavigationButton.setAttribute('aria-label', tr('Cancel navigation'));
     updateCriticalNotice();
   }
-  let emergencyShown = false,
-    riskLastArmedAt = -Infinity;
+  let emergencyShown = false;
+  // Preserve the abnormal-session marker through a critical freeze, even if
+  // a delayed blur/pagehide event eventually fires during the shutdown.
+  let crashRecoveryPending = false;
   const rescueEscalation = {
     entries: [], phase: 0, beganAt: null, resetAt: null, lastHealthyAt: null,
   };
@@ -5690,7 +5677,7 @@
         if (now - e.resetAt >= 8000 || repeated) {
           if (game.emergencyReturnToSafety()) {
             e.phase = 2;
-            if (save()) persistence.clearEncounterRisk();
+            if (save()) restartGuard.arm(game);
             frameSkip.suspend();
             status('Critical slowdown persists: returned to your recovery point without a defeat.');
           }
@@ -5730,18 +5717,8 @@
       game.s.challenge.pending ||
       game.s.challenge.gameOver;
     const recovering = !frozen && frameSkip.beginFrame(now, intervalMs);
+    if (recovering) crashRecoveryPending = true;
     const simulating = !frozen && !recovering;
-    // A tiny pre-armed marker makes force-close recoverable even when a hard
-    // browser freeze prevents one more JS callback from being delivered.
-    if (simulating && game.hero.hp > 0 && game.manaCombatActive() &&
-        now - riskLastArmedAt >= 2000) {
-      if (persistence.armEncounterRisk(game)) riskLastArmedAt = now;
-    } else if (simulating && !game.manaCombatActive() &&
-        !rescueEscalation.phase) {
-      persistence.clearEncounterRisk();
-      riskLastArmedAt = -Infinity;
-    }
-    if (recovering) persistence.armEncounterRisk(game);
     emergencyRecoveryDecision(now, recovering, simulating);
     if (recovering !== emergencyShown) {
       emergencyShown = recovering;
@@ -5970,6 +5947,9 @@
       runtime.suspend();
       if (runtime.shouldDrawIdle(now)) drawWorld();
     }
+    // Only a successfully completed ordinary simulation frame clears the
+    // critical-recovery marker. Stale image probes alone cannot certify it.
+    if (simulating) crashRecoveryPending = false;
     requestAnimationFrame(frame);
   }
   if (Sprint.enabled) {
