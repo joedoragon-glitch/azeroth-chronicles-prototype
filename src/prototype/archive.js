@@ -1519,6 +1519,7 @@
     ['at your level', 'a tu nivel'],
   ];
   const archiveTechnicalCopy = [
+    ['Exact calculation', 'Cálculo exacto'],
     ['Automatic healing in combat begins at ', 'La curación automática en combate comienza al '],
     [
       ' Manual care can treat any wounded living ally.',

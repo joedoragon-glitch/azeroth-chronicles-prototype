@@ -63,7 +63,7 @@ assert(A.translateArchive(skillHelp[1][1]).startsWith('Toque:'),
   'Full Paladin skill effects have authored technical Spanish UI translations');
 const slowRule = sections.find((entry) => entry.title === 'Conditions and recovery')
   .topics.find(([name]) => name === 'Slow');
-assert(A.translateArchive(slowRule[2]).includes('Los héroes y compañeros'),
+assert(A.translateArchive(slowRule[2]).includes('héroes y compañeros'),
   'Rule-derived cooldown figures include Spanish explanatory sentences');
 for (const number of slowRule[2].match(/\d+(?:\.\d+)?/g) || [])
   assert(A.translateArchive(slowRule[2]).includes(number),

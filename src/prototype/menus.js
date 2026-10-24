@@ -18,10 +18,9 @@
     openCharacter = null,
   }) {
     // Author-final bilingual copy is a fixed source of text, not a rewrite prompt.
-    const approvedNarrative =
-      (typeof PrototypeNarration !== 'undefined'
-        ? PrototypeNarration
-        : require('./narration.js')).approved;
+    const approvedNarrative = (
+      typeof PrototypeNarration !== 'undefined' ? PrototypeNarration : require('./narration.js')
+    ).approved;
     function refugeIntro(site) {
       const owner = getGame(),
         zone = owner.zoneId,
@@ -643,9 +642,9 @@
       if (!session) {
         const archive =
           typeof PrototypeArchive !== 'undefined' ? PrototypeArchive : require('./archive.js');
-        const shelfBacks = new Map(), answerBacks = new Map();
-        const available = () =>
-          getGame() === game && game.s.keeperPact && game.keeperAvailable();
+        const shelfBacks = new Map(),
+          answerBacks = new Map();
+        const available = () => getGame() === game && game.s.keeperPact && game.keeperAvailable();
         const allSections = () => archive.sections(game, { D, R: Campaign.rules });
         const sectionByTitle = (title) => allSections().find((item) => item.title === title);
         const guarded = () => {
@@ -668,24 +667,28 @@
         }
         function answer(sectionTitle, topicTitle, figures = false) {
           if (!guarded()) return;
-          const topic = sectionByTitle(sectionTitle)?.topics.find(([title]) => title === topicTitle);
+          const topic = sectionByTitle(sectionTitle)?.topics.find(
+            ([title]) => title === topicTitle,
+          );
           if (!topic || (figures && !topic[2])) return shelf(sectionTitle);
           const id = sectionTitle + ':' + topicTitle;
           if (!shelfBacks.has(sectionTitle))
             shelfBacks.set(sectionTitle, () => shelf(sectionTitle));
-          if (!answerBacks.has(id))
-            answerBacks.set(id, () => answer(sectionTitle, topicTitle));
+          if (!answerBacks.has(id)) answerBacks.set(id, () => answer(sectionTitle, topicTitle));
           const actions = [];
           if (!figures && topic[2])
-            actions.push(action('Show me the figures', () => answer(sectionTitle, topicTitle, true)));
-          if (figures)
-            actions.push(action('Return to the answer', answerBacks.get(id)));
+            actions.push(
+              action('Show me the figures', () => answer(sectionTitle, topicTitle, true)),
+            );
+          if (figures) actions.push(action('Return to the answer', answerBacks.get(id)));
           actions.push(action('Another question', shelfBacks.get(sectionTitle)));
           actions.push(action('All shelves', index));
           openMenu(
-            topicTitle, topic[figures ? 2 : 1], actions,
+            topicTitle,
+            topic[figures ? 2 : 1],
+            actions,
             figures ? answerBacks.get(id) : shelfBacks.get(sectionTitle),
-            { view: 'archive-reading' },
+            { view: 'archive-reading', archiveSection: sectionTitle, archiveFigures: figures },
           );
         }
         function shelf(sectionTitle) {
@@ -696,8 +699,7 @@
           let previousGroup;
           for (const [position, [title]] of section.topics.entries()) {
             const group = groupName(section, title, position);
-            if (group && group !== previousGroup)
-              actions.push({ kind: 'section', label: group });
+            if (group && group !== previousGroup) actions.push({ kind: 'section', label: group });
             previousGroup = group;
             actions.push(action(title, () => answer(sectionTitle, title)));
           }
@@ -707,11 +709,17 @@
           if (!guarded()) return;
           const sections = allSections();
           openMenu(
-            'The Keeper’s shelves', approvedNarrative.P03.en,
+            'The Keeper’s shelves',
+            approvedNarrative.P03.en,
             sections.map((section) =>
-              action(section.title, () => shelf(section.title),
-                section.intro + ' · ' + section.topics.length + ' questions')),
-            back, { view: 'archive-index' },
+              action(
+                section.title,
+                () => shelf(section.title),
+                section.intro + ' · ' + section.topics.length + ' questions',
+              ),
+            ),
+            back,
+            { view: 'archive-index' },
           );
         }
         session = { index };
@@ -726,9 +734,7 @@
         const ready = game.keeperPactReady();
         openMenu(
           'The Drowned Keeper',
-          ready
-            ? approvedNarrative.P02.en
-            : approvedNarrative.P01.en,
+          ready ? approvedNarrative.P02.en : approvedNarrative.P01.en,
           ready
             ? [
                 action('Promise to protect the Archive', () => {
@@ -1903,13 +1909,21 @@
         // Full-only services remain discoverable in their matching category.
         services = [
           action('Company', () => barracksCompanyMenu(b, returnHere), 'Group, recruits and pets.'),
-          action('Recovery', () => barracksRecoveryMenu(b, returnHere), 'Heal or recover companions.'),
+          action(
+            'Recovery',
+            () => barracksRecoveryMenu(b, returnHere),
+            'Heal or recover companions.',
+          ),
           action(
             'Training',
             () => barracksTrainingMenu(b, returnHere),
             'Skills and rescued specialists.',
           ),
-          action('Operations', () => barracksOperationsMenu(b, returnHere), 'Quests and resources.'),
+          action(
+            'Operations',
+            () => barracksOperationsMenu(b, returnHere),
+            'Quests and resources.',
+          ),
           ...(tonic ? [tonic] : []),
           ...(getGame().peace && !getGame().s.finalRestCompleted
             ? [
@@ -2009,8 +2023,11 @@
           ],
         },
         [
-          action('Equipment', () => inventoryEquipment(() => inventory(back, fromCharacter)),
-            'Weapons, armor and reforges.'),
+          action(
+            'Equipment',
+            () => inventoryEquipment(() => inventory(back, fromCharacter)),
+            'Weapons, armor and reforges.',
+          ),
           ...(openCharacter && !fromCharacter
             ? [action('Character and identity', openCharacter)]
             : []),

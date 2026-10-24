@@ -756,8 +756,7 @@
       'La sesión anterior se cerró inesperadamente. Regresaste a tu refugio con seguridad.',
     'Previous session stopped unexpectedly. Returned to your barracks safely.':
       'La sesión anterior se cerró inesperadamente. Regresaste a tu cuartel con seguridad.',
-    'Performance recovered: combat resumed.':
-      'Rendimiento recuperado: combate reanudado.',
+    'Performance recovered: combat resumed.': 'Rendimiento recuperado: combate reanudado.',
     'Critical slowdown: enemies disengaged and companions are withdrawing.':
       'Ralentización crítica: enemigos retirados y compañeros replegándose.',
     'Critical slowdown persists: returned to your recovery point without a defeat.':
@@ -1476,9 +1475,11 @@
     if (recovered) {
       game = recovered;
       save();
-      status(recovered.selectedBarracksRespawn()
-        ? 'Previous session stopped unexpectedly. Returned to your barracks safely.'
-        : 'Previous session stopped unexpectedly. Returned to your refuge safely.');
+      status(
+        recovered.selectedBarracksRespawn()
+          ? 'Previous session stopped unexpectedly. Returned to your barracks safely.'
+          : 'Previous session stopped unexpectedly. Returned to your refuge safely.',
+      );
     }
     restartGuard.arm(game);
   }
@@ -1510,8 +1511,10 @@
   // (or the player manually reaches the same destination). A 55-unit visual
   // cutoff previously hid Cancel while the engine was still walking to 25.
   function navigationArrived(guide) {
-    return Math.hypot(game.hero.x - guide.point.x, game.hero.y - guide.point.y) <= 25 &&
-      (!guide.autopilot || game.hero.order !== guide.order);
+    return (
+      Math.hypot(game.hero.x - guide.point.x, game.hero.y - guide.point.y) <= 25 &&
+      (!guide.autopilot || game.hero.order !== guide.order)
+    );
   }
   // A route exists only while a valid chosen navigation session is visible.
   // Quest and gathering guides do not create the contextual navigation HUD button.
@@ -1544,7 +1547,11 @@
     queuedChargePresentation,
     isPaused: () => paused || !focused || document.hidden,
     getGuideRoute: () =>
-      navigationGuide ? visibleNavigationRoute() : questGuide?.route?.length ? questGuide.route : null,
+      navigationGuide
+        ? visibleNavigationRoute()
+        : questGuide?.route?.length
+          ? questGuide.route
+          : null,
     Campaign,
     PrototypeVisuals,
     PrototypeCombatVisuals,
@@ -1675,8 +1682,12 @@
   function drawWorld() {
     // These measure synchronous draw calls, not completed GPU/presented frames.
     const timing = {
-      pixiMs: 0, canvasOverlayMs: 0, canvasWorldMs: 0,
-      pixiAttempted: false, canvasOverlayDrawn: false, canvasWorldDrawn: false,
+      pixiMs: 0,
+      canvasOverlayMs: 0,
+      canvasWorldMs: 0,
+      pixiAttempted: false,
+      canvasOverlayDrawn: false,
+      canvasWorldDrawn: false,
     };
     if (graphicsController.status().mode === 'webgl2') {
       const startedAt = performance.now();
@@ -2006,7 +2017,19 @@
     {
       id: 'combat',
       title: 'Skills and combat keys',
-      ids: ['skill1', 'skill2', 'skill3', 'skill4', 'skill5', 'skill6', 'skill7', 'skill8', 'target', 'heal', 'mana'],
+      ids: [
+        'skill1',
+        'skill2',
+        'skill3',
+        'skill4',
+        'skill5',
+        'skill6',
+        'skill7',
+        'skill8',
+        'target',
+        'heal',
+        'mana',
+      ],
     },
     {
       id: 'commands',
@@ -2062,9 +2085,12 @@
         action('Left-hand skills (IJKL)', () => chooseKeyboardPreset('left', back)),
         menuControls.section('Key bindings'),
         ...keyboardGroups.map((group) =>
-          action(group.title, () => keyboardBindingsMenu(group, back),
+          action(
+            group.title,
+            () => keyboardBindingsMenu(group, back),
             group.ids.filter((id) => input.actions.some(([candidate]) => candidate === id)).length +
-              ' actions'),
+              ' actions',
+          ),
         ),
         action('Restore default keys', () => chooseKeyboardPreset('right', back)),
       ],
@@ -2148,20 +2174,50 @@
       preserveNavigation &&
       navigationGuide?.autopilot &&
       game?.hero.order === navigationGuide.order
-    ) worldPointer = null;
+    )
+      worldPointer = null;
     else cancelTravel();
   }
   // Shared presentation controls. Gameplay menus still use action() unchanged.
   const menuControls = Object.freeze({
     section: (label, detail = '') => ({ kind: 'section', label, detail }),
     toggle: (label, value, onChange, detail = '', saveCampaign = true) => ({
-      kind: 'toggle', label, value: !!value, onChange, detail, saveCampaign,
+      kind: 'toggle',
+      label,
+      value: !!value,
+      onChange,
+      detail,
+      saveCampaign,
     }),
-    slider: (label, value, min, max, step, onChange, detail = '', suffix = '', saveCampaign = true) => ({
-      kind: 'slider', label, value, min, max, step, onChange, detail, suffix, saveCampaign,
+    slider: (
+      label,
+      value,
+      min,
+      max,
+      step,
+      onChange,
+      detail = '',
+      suffix = '',
+      saveCampaign = true,
+    ) => ({
+      kind: 'slider',
+      label,
+      value,
+      min,
+      max,
+      step,
+      onChange,
+      detail,
+      suffix,
+      saveCampaign,
     }),
     select: (label, value, options, onChange, detail = '') => ({
-      kind: 'select', label, value, options, onChange, detail,
+      kind: 'select',
+      label,
+      value,
+      options,
+      onChange,
+      detail,
     }),
   });
   const menuHistory = [];
@@ -2223,16 +2279,31 @@
     menu = { title, description, actions, back, view: options.view || 'default' };
     $('modal').setAttribute(
       'data-view',
-      options.view || (title === 'The Crown · Credits'
-        ? 'credits'
-        : title === 'Adventure menu'
-          ? 'adventure'
-          : title === 'Game and settings'
-            ? 'settings'
-            : 'default'),
+      options.view ||
+        (title === 'The Crown · Credits'
+          ? 'credits'
+          : title === 'Adventure menu'
+            ? 'adventure'
+            : title === 'Game and settings'
+              ? 'settings'
+              : 'default'),
     );
     // Small interactions need a small dialog; longer service catalogs keep a readable width.
-    const structured = Array.isArray(description?.sections);
+    const archiveLayout =
+      options.view === 'archive-reading' &&
+      !!options.archiveSection &&
+      typeof PrototypeArchiveReading !== 'undefined';
+    const display = archiveLayout
+      ? PrototypeArchiveReading.present({
+          title,
+          text: translateMenu(description),
+          section: options.archiveSection,
+          figures: options.archiveFigures,
+        })
+      : description;
+    const structured = Array.isArray(display?.sections);
+    // Localize the complete audited string once, then only arrange its fragments.
+    const renderedText = archiveLayout ? (value) => value : translateMenu;
     const hasControls = actions.some((entry) => !!entry.kind);
     const compact =
       !structured &&
@@ -2242,7 +2313,8 @@
       actions.every((a) => a.label.length <= 46 && (a.detail || '').length <= 95);
     const regular =
       structured ||
-      (!hasControls && actions.length <= 5 &&
+      (!hasControls &&
+        actions.length <= 5 &&
         description.length <= 340 &&
         actions.every((a) => a.label.length <= 68 && (a.detail || '').length <= 160));
     $('modal').setAttribute('data-dialog-size', compact ? 'compact' : regular ? 'regular' : 'wide');
@@ -2267,16 +2339,19 @@
         language === 'es' ? 'Lectura del Archivo' : 'Archive reading',
       );
     descriptionHost.classList.toggle('skill-reference', structured);
-    descriptionHost.textContent = translateMenu(structured ? description.summary || '' : description);
+    descriptionHost.classList.toggle('archive-reference', structured && archiveReading);
+    descriptionHost.textContent = renderedText(structured ? display.summary || '' : display);
     if (structured) {
-      for (const block of description.sections) {
+      for (const block of display.sections) {
         const section = document.createElement('section'),
           heading = document.createElement('h3');
-        heading.textContent = tr(block.title);
-        section.append(heading);
+        if (archiveLayout && !block.title && block.rows?.length === 1 && !block.rows[0].label)
+          section.className = 'archive-prose';
+        heading.textContent = renderedText(block.title);
+        if (block.title) section.append(heading);
         if (block.text) {
           const text = document.createElement('p');
-          text.textContent = tr(block.text);
+          text.textContent = renderedText(block.text);
           section.append(text);
         }
         if (block.rows?.length) {
@@ -2284,18 +2359,32 @@
           for (const row of block.rows) {
             const term = document.createElement('dt'),
               value = document.createElement('dd');
-            term.textContent = tr(row.label);
-            value.textContent = tr(row.value);
+            term.textContent = renderedText(row.label);
+            value.textContent = renderedText(row.value);
             list.append(term, value);
           }
           section.append(list);
         }
+        for (const paragraph of block.paragraphs || []) {
+          const p = document.createElement('p');
+          p.textContent = renderedText(paragraph);
+          section.append(p);
+        }
+        if (archiveReading && block.formula) {
+          const details = document.createElement('details'),
+            summary = document.createElement('summary'),
+            formula = document.createElement('p');
+          summary.textContent = translateMenu('Exact calculation');
+          formula.textContent = renderedText(block.formula);
+          details.append(summary, formula);
+          section.append(details);
+        }
         descriptionHost.append(section);
       }
-      if (description.note) {
+      if (display.note) {
         const note = document.createElement('p');
         note.className = 'skill-note';
-        note.textContent = tr(description.note);
+        note.textContent = renderedText(display.note);
         descriptionHost.append(note);
       }
     }
@@ -2318,6 +2407,21 @@
     host.replaceChildren();
     buttons = [];
     menuKeys = [];
+    if (menu.view === 'archive-reading') {
+      for (const summary of $('modal-description').querySelectorAll?.('summary') || []) {
+        const index = buttons.length;
+        summary.onfocus = () => {
+          menuIndex = index;
+          highlight();
+        };
+        summary.onclick = () => {
+          menuIndex = index;
+          highlight();
+        };
+        buttons.push(summary);
+        menuKeys.push('__archive_formula_' + index);
+      }
+    }
     const commit = (entry, value) => {
       entry.value = value;
       entry.onChange(value);
@@ -2862,13 +2966,18 @@
             {
               version: PrototypeBuild.version,
               performance: {
-                ...runtime.report({
-                  ...renderer.metrics(),
-                  // In WebGL mode these counters belong to the transparent
-                  // Canvas cues, NOT the Pixi world.
-                  measuredLayer: graphicsController.status().mode === 'webgl2'
-                    ? 'canvas-combat-overlay' : 'canvas-full-world',
-                }, platform.mode),
+                ...runtime.report(
+                  {
+                    ...renderer.metrics(),
+                    // In WebGL mode these counters belong to the transparent
+                    // Canvas cues, NOT the Pixi world.
+                    measuredLayer:
+                      graphicsController.status().mode === 'webgl2'
+                        ? 'canvas-combat-overlay'
+                        : 'canvas-full-world',
+                  },
+                  platform.mode,
+                ),
                 // Report the active surface, not just the saved preference.
                 graphicsRenderer: {
                   activeRenderer:
@@ -2981,8 +3090,9 @@
           platform.select(value);
           // Each screen type remembers its own camera zoom; update the
           // adjacent selector without navigating away from this window.
-          const camera = Array.from($('modal-actions').querySelectorAll?.('select') || [])
-            .find((control) => control.getAttribute?.('aria-label') === tr('Camera zoom'));
+          const camera = Array.from($('modal-actions').querySelectorAll?.('select') || []).find(
+            (control) => control.getAttribute?.('aria-label') === tr('Camera zoom'),
+          );
           if (camera) camera.value = String(platform.cameraZoom);
         },
         'Choose phone or desktop controls. Your save stays the same.',
@@ -3097,12 +3207,20 @@
           'Performance details',
           runtime.describe({
             ...renderer.metrics(),
-            measuredLayer: graphicsController.status().mode === 'webgl2'
-              ? 'canvas-combat-overlay' : 'canvas-full-world',
-          }) + '\n\n' + frameProfile.describe() + '\n\n' + game.crowdDiagnosticsDescribe(),
+            measuredLayer:
+              graphicsController.status().mode === 'webgl2'
+                ? 'canvas-combat-overlay'
+                : 'canvas-full-world',
+          }) +
+            '\n\n' +
+            frameProfile.describe() +
+            '\n\n' +
+            game.crowdDiagnosticsDescribe(),
         ),
         action(
-          game.crowdDiagnosticsReport().recording ? 'Stop crowd profiling' : 'Start crowd profiling',
+          game.crowdDiagnosticsReport().recording
+            ? 'Stop crowd profiling'
+            : 'Start crowd profiling',
           () => {
             if (game.crowdDiagnosticsReport().recording) game.stopCrowdDiagnostics();
             else game.startCrowdDiagnostics();
@@ -3117,7 +3235,12 @@
         }),
       );
     }
-    openMenu('Screen and performance', 'Adjust everything here without leaving this screen.', items, back);
+    openMenu(
+      'Screen and performance',
+      'Adjust everything here without leaving this screen.',
+      items,
+      back,
+    );
   }
   function systemMenu() {
     openMenu(
@@ -3445,11 +3568,14 @@
       // cannot reveal Veyra's private quarters.
       if (game.interact(n) && approvedNarrative?.[n.narrativeId]) {
         save();
-        openMenu(n.name, approvedNarrative[n.narrativeId].en,
-          [action('Back', closeMenu)], closeMenu);
+        openMenu(
+          n.name,
+          approvedNarrative[n.narrativeId].en,
+          [action('Back', closeMenu)],
+          closeMenu,
+        );
       }
-    }
-    else if (n.kind === 'supplier' || n.kind === 'alchemist') {
+    } else if (n.kind === 'supplier' || n.kind === 'alchemist') {
       supplier(n);
       save();
       updateHUD();
@@ -3572,7 +3698,8 @@
       questGuide.campaign === game &&
       questGuide.nodeId === gathering?.id &&
       questGuide.sourceZone === gathering.zone
-    ) suspendedGatheringGuide = gathering;
+    )
+      suspendedGatheringGuide = gathering;
     else if (!navigationGuide || suspendedGatheringGuide !== gathering)
       suspendedGatheringGuide = null;
     questGuide = null;
@@ -3628,7 +3755,8 @@
       !force &&
       game.s.time < guide.next &&
       Math.hypot(game.hero.x - guide.origin.x, game.hero.y - guide.origin.y) < 100
-    ) return;
+    )
+      return;
     guide.next = game.s.time + 1;
     guide.origin = { x: game.hero.x, y: game.hero.y };
     const choice = game.navigationTarget(guide.destination);
@@ -4851,6 +4979,12 @@
       menu.back();
       return;
     }
+    if (
+      menu?.view === 'archive-reading' &&
+      document.activeElement?.tagName === 'SUMMARY' &&
+      ['Enter', 'Space'].includes(code)
+    )
+      return;
     // Reading text owns its native scrolling keys. Tab/Escape still use the
     // dialog route; Enter must never activate an action behind focused prose.
     if (
@@ -4894,7 +5028,7 @@
         const descendants = Array.from(
           $('modal').querySelectorAll?.(
             menu.view === 'archive-reading'
-              ? 'button, input, select, textarea, [role="document"][tabindex="0"]'
+              ? 'button, input, select, textarea, summary, [role="document"][tabindex="0"]'
               : 'button, input, select, textarea',
           ) || [],
         ).filter((element) => !element.disabled && !element.hidden);
@@ -4910,7 +5044,10 @@
         if (nextIndex >= 0) {
           menuIndex = nextIndex;
           highlight(true);
-        } else next.focus?.({ preventScroll: true });
+        } else {
+          next.focus?.({ preventScroll: true });
+          if (next.tagName === 'SUMMARY') next.scrollIntoView?.({ block: 'nearest' });
+        }
         return;
       }
       if (e.repeat) return;
@@ -5769,7 +5906,11 @@
   // a delayed blur/pagehide event eventually fires during the shutdown.
   let crashRecoveryPending = false;
   const rescueEscalation = {
-    entries: [], phase: 0, beganAt: null, resetAt: null, lastHealthyAt: null,
+    entries: [],
+    phase: 0,
+    beganAt: null,
+    resetAt: null,
+    lastHealthyAt: null,
   };
   function clearEmergencyEscalation() {
     rescueEscalation.entries = [];
@@ -5780,7 +5921,7 @@
   }
   function emergencyRecoveryDecision(now, recovering, simulating) {
     const e = rescueEscalation;
-    e.entries = e.entries.filter(stamp => now - stamp < 20000);
+    e.entries = e.entries.filter((stamp) => now - stamp < 20000);
     if (recovering && !emergencyShown) {
       e.entries.push(now);
       e.beganAt = now;
@@ -5795,11 +5936,10 @@
         // but prolonged failure must still reach the refuge fallback.
         e.phase = 1;
         e.resetAt = now;
-        if (reset)
-          status('Critical slowdown: enemies disengaged and companions are withdrawing.');
+        if (reset) status('Critical slowdown: enemies disengaged and companions are withdrawing.');
       } else if (e.phase === 1) {
         game.emergencyAdvanceWithdrawal();
-        const repeated = e.entries.filter(stamp => stamp >= e.resetAt).length >= 2;
+        const repeated = e.entries.filter((stamp) => stamp >= e.resetAt).length >= 2;
         if (now - e.resetAt >= 8000 || repeated) {
           if (game.emergencyReturnToSafety()) {
             e.phase = 2;
@@ -5849,9 +5989,11 @@
     emergencyRecoveryDecision(now, recovering, simulating);
     if (recovering !== emergencyShown) {
       emergencyShown = recovering;
-      status(recovering
-        ? 'Critical slowdown: combat paused while performance recovers. You can lower graphics in Settings.'
-        : 'Performance recovered: combat resumed.');
+      status(
+        recovering
+          ? 'Critical slowdown: combat paused while performance recovers. You can lower graphics in Settings.'
+          : 'Performance recovered: combat resumed.',
+      );
     }
     // Keep the combat charge clock paused together with the simulation.
     syncPartyChargeClock();
