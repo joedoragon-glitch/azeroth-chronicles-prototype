@@ -6673,7 +6673,7 @@
       },
     },
   };
-  // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
+  // Existing per-class switches now control all automatic basics, whether moving or still.
   const movementBasicClasses = { paladin: true, mage: true, ranger: true };
 
   // Live balance ownership. Arrays retain their original slot/tier indices and fallbacks.
