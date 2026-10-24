@@ -77,8 +77,9 @@ function bootstrap(store) {
   const guard = Persistence.createRestartGuard({ storage: store, Campaign });
   guard.arm(original);
   const app = bootstrap(store), g = app.scope.Prototype.game;
-  assert(Math.hypot(g.hero.x - 815, g.hero.y - 750) < 120,
-    'An explicitly selected completed barracks takes precedence over refuge');
+  const expectedBarracksLanding = original.safe(815, 750);
+  assert.deepEqual(position(g), [expectedBarracksLanding.x, expectedBarracksLanding.y],
+    'Selected completed barracks takes priority, using real terrain-safe arrival');
   assert.equal(g.s.barracksRespawn.id, 'recovery-camp-test');
   assert.equal(g.hero.gold, original.hero.gold);
   assert.equal(g.s.statistics.deaths, 0);
