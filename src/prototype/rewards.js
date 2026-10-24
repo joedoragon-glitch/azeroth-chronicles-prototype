@@ -147,8 +147,16 @@
             text: 'The orders bear the Keeper’s seal. The plan to seize the specialists began among these shelves.',
             region: 'march',
           });
-        for (const n of this.noticeHistory || [])
+        for (const n of this.noticeHistory || []) {
+          // Once inspected, the full approved D04 supersedes the earlier
+          // entrance excerpt in the journal. Its historical notice may still
+          // exist in memory, but it must not create a duplicate reading.
+          if (
+            this.s.discovered['citadel:veyra-private-quarters-inspected'] &&
+            n.text === R.dungeonLore.citadel
+          ) continue;
           if (!entries.some((e) => e.text === n.text && e.detail === n.detail)) entries.push(n);
+        }
         return entries;
       }
       reward(gold, xp, level) {
