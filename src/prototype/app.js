@@ -3173,10 +3173,7 @@
       'THE FORMER GUARDIANS\n\n' +
       Campaign.dungeonIds.map((id) => game.boss(id).name).join(' · ') +
       '\n\n' +
-      'THE OLD WAR IS OVER\n\n' +
-      'The creatures return to their homes.\n\n' +
-      'So I Became the Dark Lord’s Problem\n\n' +
-      'Thank you for playing.';
+      (language === 'es' ? approvedNarrative.M03.es : approvedNarrative.M03.en);
     openMenu('The Crown · Credits', credits, [
       action('Continue in the peaceful world', () => {
         game.s.endingAck = true;
