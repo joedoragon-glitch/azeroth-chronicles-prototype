@@ -39,7 +39,12 @@ const e = nm.makeEnemy(
   { x: nm.hero.x + 80, y: nm.hero.y },
 );
 nm.zone().enemies = [e];
+// The Vale opening deliberately blocks combat until the hero initiates it.
+// Make this a genuine engaged Nightmare fight before testing sunset scaling.
+assert(nm.awaitsHeroAttack(e), 'Fresh Vale enemies wait for hero initiation');
+nm.admitOpeningHeroAttack(e);
 nm.engage(e);
+assert(e.aggro, 'Nightmare fixture must actually enter combat');
 e.hp = e.maxHp * 0.4;
 e.telegraph = { timer: 5, style: 'fixture' };
 e.cd = 6;
@@ -141,7 +146,11 @@ const ne = n.makeEnemy(
   { x: n.hero.x + 80, y: n.hero.y },
 );
 n.zone().enemies = [ne];
+// Test Normal active-combat locking with an actually engaged enemy, too.
+assert(n.awaitsHeroAttack(ne), 'Normal Vale opening also requires hero initiation');
+n.admitOpeningHeroAttack(ne);
 n.engage(ne);
+assert(ne.aggro, 'Normal fixture must actually enter combat');
 n.tick(0.1);
 assert(n.night());
 near(ne.maxHp / ne.baseHp, 1);
