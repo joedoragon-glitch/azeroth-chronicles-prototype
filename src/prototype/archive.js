@@ -1062,14 +1062,27 @@
     if (Object.prototype.hasOwnProperty.call(spanishReference, value))
       return spanishReference[value];
     let result = value;
-    // Whole paragraph translation first: keep approved author text untouched.
-    // Technical interpolation comes afterward and cannot alter numeric inputs.
+    // The approved author translations must remain byte-for-byte unchanged,
+    // including named people, punctuation and paragraph breaks.
+    const approved =
+      (typeof PrototypeNarration !== 'undefined'
+        ? PrototypeNarration : require('./narration.js')).approved;
+    const protectedText = [];
+    for (const pair of Object.values(approved).sort((a, b) => b.es.length - a.es.length)) {
+      if (!pair.es || !result.includes(pair.es)) continue;
+      const marker = '\\uE000' + protectedText.length + '\\uE001';
+      result = result.replaceAll(pair.es, marker);
+      protectedText.push(pair.es);
+    }
+    // Whole technical paragraphs are translated before any numerical labels.
     for (const [english, spanish] of Object.entries(spanishReference)) {
       if (english.length > 55 && result.includes(english))
         result = result.replaceAll(english, spanish);
     }
     for (const [english, spanish] of technicalPhrases)
       if (english !== spanish) result = result.replaceAll(english, spanish);
+    for (let i = 0; i < protectedText.length; i++)
+      result = result.replaceAll('\\uE000' + i + '\\uE001', protectedText[i]);
     return result;
   }
   const api = { sections, conditionTopics, translateArchive };
