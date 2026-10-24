@@ -837,6 +837,20 @@
           (n.id !== 'cage-thorn' || !this.s.rescued.thorn),
       );
     }
+    // Each of these three approved landmark discoveries has a real, stable site ID.
+    // Read from the existing v4 discovered map; no new save flags.
+    landmarkNarrative(id) {
+      return ({
+        'goblin-camp': AuthorCopy.L01.en,
+        'mire-nests': AuthorCopy.L02.en,
+        'ogre-hearth': AuthorCopy.L03.en,
+      })[id] || null;
+    }
+    announceLandmark(n) {
+      const prose = this.landmarkNarrative(n.id);
+      if (prose)
+        this.notice(prose, 8, '', 'narration', { scope: 'region', region: this.definition().id });
+    }
     siteDescription(n) {
       const z = this.zone(),
         guards = z.enemies.filter((e) => e.site === n.id && e.hp > 0 && !e.neutral).length,
@@ -2171,7 +2185,8 @@
           u.supportEffects = [];
         }
       this.s.finalRestCompleted = true;
-      this.notice('THE JOURNEY IS COMPLETE · CREDITS', 7);
+      // One-time author-final text is visible and recoverable via earned stories.
+      this.notice(AuthorCopy.M02.en, 8, '', 'milestone');
       this.say(AuthorCopy.M02.en);
       this.event('finalRest', { source });
       return true;
@@ -2849,11 +2864,16 @@
       if (dungeonLore && !this.s.discovered[loreKey]) {
         this.s.discovered[loreKey] = true;
         this.say(dungeonLore);
+        // Region-scoped quiet narration: full text remains in earned stories.
+        this.notice(dungeonLore, 8, '', 'narration', { scope: 'region', region: this.definition().id });
       }
       const side = this.sideDungeon();
       if (side && !this.s.discovered[side.region + ':side-lore:' + side.id]) {
         this.s.discovered[side.region + ':side-lore:' + side.id] = true;
-        if (side.lore) this.say(side.lore);
+        if (side.lore) {
+          this.say(side.lore);
+          this.notice(side.lore, 8, '', 'narration', { scope: 'region', region: side.region });
+        }
         this.event('sideInteriorDiscovery', { id: side.id, region: side.region });
       }
       this.syncTreasuryRecovery(this.zone());
@@ -3030,7 +3050,7 @@
               ? 'You claim the crown. ' + remaining + ' old powers still hold their dungeons.'
               : 'You claim the crown. The five former powers have already fallen.',
           );
-          this.notice('THE CROWN IS YOURS', 6.5);
+          this.notice(AuthorCopy.M01.en, 8, '', 'milestone');
           this.event('throneClaimed', { remaining });
           this.checkEnding();
           return true;
@@ -3065,10 +3085,13 @@
           return true;
         case 'resource':
           return this.gather(npc.id);
-        case 'landmark':
+        case 'landmark': {
+          const first = !this.s.discovered[this.definition().id + ':' + npc.id];
           this.discover(npc.id);
           this.say(this.siteDescription(npc));
+          if (first) this.announceLandmark(npc);
           return true;
+        }
         case 'exit': {
           const room = this.supplyRoom(),
             side = this.sideDungeon();
@@ -4020,7 +4043,10 @@
           if (dist(h, n) < 120) {
             const first = !this.s.discovered[this.definition().id + ':' + n.id];
             this.discover(n.id);
-            if (first) this.say(this.siteDescription(n));
+            if (first) {
+              this.say(this.siteDescription(n));
+              this.announceLandmark(n);
+            }
           }
         const [px, py] = D.ports[this.regionIndex()];
         if (dist(h, { x: px, y: py }) < 140) this.discover('port');
