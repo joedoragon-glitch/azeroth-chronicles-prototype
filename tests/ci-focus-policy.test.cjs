@@ -50,6 +50,8 @@ assert(singleBrowser.tests.includes('tests/pixi-renderer-browser.test.cjs'),
 assert(!singleBrowser.tests.includes('tests/prototype-browser.test.cjs'),
   'targeted Pixi acceptance must never pull in the general browser suite');
 const gameplay = selectTests(['src/prototype/engine.js'],exists);
+assert(selectTests(['src/prototype/runtime.js'],exists).tests.includes('tests/render-resolution.test.cjs'),
+  'later runtime-only changes must retain the live adaptive-resolution regression');
 assert(gameplay.tests.includes('tests/game.test.cjs'));
 assert(!gameplay.tests.includes('tests/pixi-fidelity.test.cjs'));
 const ci = selectTests(['.github/workflows/pages.yml'],exists);
