@@ -26,9 +26,12 @@ function savedCampaign(store, opts = {}) {
   if (opts.barracks) {
     g.zone().buildings.push({
       id: 'recovery-camp-test', name: 'Test Barracks', kind: 'barracks',
-      x: 730, y: 700, progress: 4, full: false,
+      theme: 'vale', x: 730, y: 700, progress: 4,
+      queue: 0, queueType: null, full: false,
+      upgradeProgress: 0, upgradePaid: false,
     });
-    g.s.barracksRespawn = { zone: 'vale', id: 'recovery-camp-test' };
+    assert.equal(g.setBarracksRespawn('recovery-camp-test'), true,
+      'Fixture must select a valid completed local barracks');
   }
   const p = Persistence.create({ storage: store, Campaign });
   assert.equal(p.save(g, { activeMode: 'normal', audio: {} }), true);
@@ -76,6 +79,9 @@ function bootstrap(store) {
   const store = storage(), original = savedCampaign(store, { barracks: true });
   const guard = Persistence.createRestartGuard({ storage: store, Campaign });
   guard.arm(original);
+  const persisted = Campaign.restore(JSON.parse(store.getItem('azeroth-v4-normal')));
+  assert.equal(persisted.selectedBarracksRespawn()?.barracks.id, 'recovery-camp-test',
+    'Barracks selection must survive save and validation');
   const app = bootstrap(store), g = app.scope.Prototype.game;
   const expectedBarracksLanding = original.safe(815, 750);
   assert.deepEqual(position(g), [expectedBarracksLanding.x, expectedBarracksLanding.y],
