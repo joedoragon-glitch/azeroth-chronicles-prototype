@@ -2198,11 +2198,16 @@
     return { label, action: fn, detail, disabled, tutorialHighlight };
   }
   function translateMenu(value) {
-    const localized = tr(value);
     if (language === 'es' && menu?.view?.startsWith('archive-') &&
-        typeof PrototypeArchive !== 'undefined')
-      return PrototypeArchive.translateArchive(localized);
-    return localized;
+        typeof PrototypeArchive !== 'undefined') {
+      // Exact UI labels must be resolved before the generic translator turns
+      // "Return to the answer" into a partly translated "Regresar a ..." label.
+      // Author-final prose deliberately bypasses this exact-UI-only lookup.
+      const label = PrototypeArchive.translateArchiveLabel(value);
+      if (label !== value) return label;
+      return PrototypeArchive.translateArchive(tr(value));
+    }
+    return tr(value);
   }
   function openMenu(title, description = '', actions = [], back = closeMenu, options = {}) {
     const restored = menuPosition(title, back);
