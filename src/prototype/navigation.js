@@ -755,7 +755,11 @@
               p.kind === 'rain-pools'
                 ? R.rainPoolBlocked(p.pools, x, y, radius)
                 : p.r
-                  ? Math.hypot(x - p.x, y - p.y) < p.r + radius
+                  ? // Reject obstacles far outside the circle's bounding box
+                    // without invoking a square root.
+                    (Math.abs(x - p.x) < p.r + radius &&
+                      Math.abs(y - p.y) < p.r + radius &&
+                      Math.hypot(x - p.x, y - p.y) < p.r + radius)
                   : x > p.x1 - radius &&
                     x < p.x2 + radius &&
                     y > p.y1 - radius &&
@@ -792,14 +796,22 @@
                 : p.decorative
                   ? null
                   : p.r;
-              if (
-                r === null ||
-                (candidate && R.sceneryTraversal.radii[p.structure] === 0) ||
-                Math.hypot(x - p.x, y - p.y) >= r + radius
-              )
+              if (r === null || (candidate && R.sceneryTraversal.radii[p.structure] === 0))
                 return false;
+              const reach = r + radius,
+                dx = x - p.x,
+                dy = y - p.y;
+              // A circle never overlaps a point outside its enclosing square.
+              // Query current prop coordinates/radii every time: no stale cache.
+              if (Number.isFinite(reach) &&
+                  (Math.abs(dx) >= reach || Math.abs(dy) >= reach))
+                return false;
+              const distance = Math.hypot(dx, dy);
+              if (distance >= reach) return false;
               const body = candidate ? this.sceneryMovementRadius(p, z) : r;
-              return body !== null && Math.hypot(x - p.x, y - p.y) < body + radius;
+              // Reuse the precise distance. Authored collision rules and
+              // boundary handling remain unchanged.
+              return body !== null && distance < body + radius;
             })) ||
           false
         );
