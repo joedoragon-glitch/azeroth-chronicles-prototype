@@ -76,6 +76,61 @@ function bootstrap(store) {
     'After recovery the current active session is armed again');
 }
 {
+  const store = storage(), live = savedCampaign(store);
+  const checkpoint = Campaign.restore(JSON.parse(store.getItem(Persistence.saveKey('normal'))));
+  // A real crash can happen between autosaves. The marker must refer to
+  // this saved state, never to a future unsaved frame or new actor ID.
+  live.s.time = checkpoint.s.time + 0.4;
+  live.s.nextId = checkpoint.s.nextId + 1;
+  const guard = Persistence.createRestartGuard({ storage: store, Campaign });
+  assert.equal(guard.arm(live), true);
+  assert.equal(guard.read().gameTime, checkpoint.s.time,
+    'Marker clock must be anchored to the last durable save');
+  assert.equal(guard.read().nextId, checkpoint.s.nextId,
+    'Marker ID must be anchored to the last durable save');
+  const restored = bootstrap(store).scope.Prototype.game;
+  assert.notDeepEqual(position(restored), position(checkpoint),
+    'Crash after unsaved play still recovers to refuge');
+  assert.equal(restored.s.time, checkpoint.s.time,
+    'Crash recovery resumes saved progress, not unsaved frames');
+  assert.equal(restored.s.nextId, checkpoint.s.nextId,
+    'Crash recovery does not fabricate lost actor IDs');
+  assert.equal(restored.hero.hp, checkpoint.hero.hp);
+  assert.equal(restored.hero.gold, checkpoint.hero.gold);
+  assert.equal(restored.s.statistics.deaths, checkpoint.s.statistics.deaths);
+}
+{
+  const store = storage(), game = savedCampaign(store);
+  const guard = Persistence.createRestartGuard({ storage: store, Campaign });
+  assert.equal(guard.arm(game), true);
+  const marker = guard.read();
+  game.s.time += 6.25;
+  game.s.nextId += 3;
+  const persistence = Persistence.create({ storage: store, Campaign });
+  assert.equal(persistence.save(game, { activeMode: 'normal', audio: {} }), true);
+  assert.deepEqual([guard.read().gameTime, guard.read().nextId],
+    [marker.gameTime, marker.nextId],
+    'Autosave can advance ahead of a previously armed marker');
+  const restored = bootstrap(store).scope.Prototype.game;
+  assert.notDeepEqual(position(restored), position(game),
+    'Newer valid autosave remains eligible for refuge recovery');
+  assert.equal(restored.s.time, game.s.time);
+  assert.equal(restored.s.nextId, game.s.nextId);
+}
+{
+  const store = storage();
+  const saved = savedCampaign(store);
+  const guard = Persistence.createRestartGuard({ storage: store, Campaign });
+  assert.equal(guard.arm(new Campaign('normal', 'mage', () => 0.73)), false,
+    'Wrong-class live campaign must never claim another saved checkpoint');
+  assert.equal(guard.arm(new Campaign('normal', 'paladin', () => 0.73)), false,
+    'A newly started lower-ID run cannot claim the preceding run\'s save');
+  assert.equal(guard.read(), null);
+  const noSave = storage();
+  assert.equal(Persistence.createRestartGuard({ storage: noSave, Campaign }).arm(saved), false,
+    'Unsaved games must not arm false crash-recovery markers');
+}
+{
   const store = storage(), original = savedCampaign(store, { barracks: true });
   const guard = Persistence.createRestartGuard({ storage: store, Campaign });
   guard.arm(original);

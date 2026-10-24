@@ -93,11 +93,23 @@
     function arm(game) {
       if (!game?.s || game.s.mode === 'developer') return false;
       try {
-        storage?.setItem(recoveryMarkerKey, JSON.stringify({
+        // The live campaign can advance between five-second autosaves.
+        // Anchor recovery to the checkpoint actually written to storage,
+        // not newer game time/IDs which the next launch cannot restore.
+        const raw = storage?.getItem(saveKey(game.s.mode));
+        if (!raw) return false;
+        const saved = JSON.parse(raw);
+        if (saved?.mode !== game.s.mode || saved.hero?.class !== game.hero.class ||
+            !Number.isFinite(saved.time) || !Number.isFinite(saved.nextId) ||
+            !Number.isFinite(game.s.time) || !Number.isFinite(game.s.nextId) ||
+            saved.time > game.s.time + 1e-6 || saved.nextId > game.s.nextId)
+          return false;
+        storage.setItem(recoveryMarkerKey, JSON.stringify({
           version: 1, active: true, mode: game.s.mode,
           heroClass: game.hero.class,
-          // Disallow accidentally applying another, freshly restarted run's marker.
-          nextId: game.s.nextId, gameTime: game.s.time,
+          // Refuse a different/older run without rejecting legitimate
+          // unsaved play after the last durable checkpoint.
+          nextId: saved.nextId, gameTime: saved.time,
         }));
         return true;
       } catch (_) { return false; }
