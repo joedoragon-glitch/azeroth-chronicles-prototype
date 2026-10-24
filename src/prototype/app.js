@@ -5933,7 +5933,7 @@
           fps.suspend();
         }
       }
-      fps.observe(now, performance.now() - frameStart, draw);
+      fps.observe(now, performance.now() - frameStart, draw, adaptiveSkipped);
       const frameWorkMs = performance.now() - frameStart;
       frameSkip.observe(now, frameWorkMs, stageTimes.renderMs, draw);
       const otherSimulationMs = Math.max(
