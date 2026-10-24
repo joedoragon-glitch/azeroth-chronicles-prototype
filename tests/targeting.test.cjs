@@ -6,6 +6,9 @@ function encounter() {
   const game = new Campaign('normal', 'paladin', () => 0.9);
   game.zone().props = [];
   game.s.mercyTime = 0;
+  // This suite tests ordinary targeting, not the level-1 field opening
+  // that intentionally prevents automatic first attacks.
+  game.s.valeFieldAwakened = true;
   Object.assign(game.hero, { x: 500, y: 500 });
   const a = game.makeEnemy(
     { species: 'goblin', name: 'Near foe', level: 1, hp: 10000, damage: 0, gold: 0, xp: 0 },
