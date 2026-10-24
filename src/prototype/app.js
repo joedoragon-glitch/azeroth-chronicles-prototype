@@ -717,8 +717,8 @@
     'Hide performance details': 'Ocultar detalles de rendimiento',
     'Adjust everything here without leaving this screen.':
       'Ajusta todo aquí sin salir de esta pantalla.',
-    'Optional experimental setting. Off for baseline tests; simulation and input continue.':
-      'Opción experimental. Desactivada para pruebas base; la simulación y los controles continúan.',
+    'On by default. Skips up to two drawings under load; gameplay and warnings continue.':
+      'Activado por defecto. Omite hasta dos dibujos con carga; el juego y los avisos continúan.',
     'Canvas 2D is the safe default. WebGL2 starts a 15-second Keep/Revert trial.':
       'Canvas 2D es la opción segura. WebGL2 inicia una prueba de 15 segundos para conservar o revertir.',
     'Local samples are diagnostic estimates, not verified display FPS.':
@@ -2950,7 +2950,7 @@
           runtime.reset();
           frameProfile.reset();
         },
-        'Optional experimental setting. Off for baseline tests; simulation and input continue.',
+        'On by default. Skips up to two drawings under load; gameplay and warnings continue.',
       ),
       menuControls.section('Graphics renderer'),
       menuControls.select(
@@ -5801,17 +5801,7 @@
       if (stageTimes) stageTimes.hudMs = performance.now() - hudAt;
     }
     if (!frozen) {
-      // Protect urgent cues even when the ordinary FPS limiter skips this callback.
-      if (
-        events.some(
-          (e) =>
-            e.type === 'warning' ||
-            e.type === 'eliteWarning' ||
-            e.type === 'chargeInterrupted' ||
-            e.type === 'death',
-        )
-      )
-        frameSkip.protect(now);
+      // Combat cues keep advancing; drawing eligibility never depends on warnings.
       const eligibleDraw = fps.shouldDraw(now);
       const adaptiveSkipped = eligibleDraw && frameSkip.shouldSkip(now, fps.target);
       const draw = eligibleDraw && !adaptiveSkipped;
