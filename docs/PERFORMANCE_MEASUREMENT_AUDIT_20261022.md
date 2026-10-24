@@ -1,3 +1,5 @@
+> **23 October 2026 change in owner direction:** The 22 October default-Off/one-frame constraints and paused frame-skip work described below are a historical baseline. A specific new request now authorizes a focused default-On, two-frame/all-FPS candidate with no combat-warning exemption. The instrumentation limitations and lack of demonstrated hardware FPS gains in this audit remain valid. See [the isolated 23 October candidate](ADAPTIVE_FRAME_SKIP_TWO_FRAME_20261023.md). No full-suite or deployment authorization is implied.
+
 # Performance measurements and adaptive frame skip — audit, 22 October 2026
 
 **Status: audit complete; performance tuning paused at the owner's direction.** This is the
