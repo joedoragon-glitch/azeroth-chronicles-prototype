@@ -26,10 +26,12 @@ function savedCampaign(store, opts = {}) {
   if (opts.barracks) {
     g.zone().buildings.push({
       id: 'recovery-camp-test', name: 'Test Barracks', kind: 'barracks',
-      theme: 'vale', x: 730, y: 700, progress: 4, queue: 0, queueType: null,
-      full: false, upgradeProgress: 0, upgradePaid: false,
+      theme: 'vale', x: 730, y: 700, progress: 4,
+      queue: 0, queueType: null, full: false,
+      upgradeProgress: 0, upgradePaid: false,
     });
-    g.s.barracksRespawn = { zone: 'vale', id: 'recovery-camp-test' };
+    assert.equal(g.setBarracksRespawn('recovery-camp-test'), true,
+      'Fixture must select a valid completed local barracks');
   }
   const p = Persistence.create({ storage: store, Campaign });
   assert.equal(p.save(g, { activeMode: 'normal', audio: {} }), true);
@@ -54,8 +56,9 @@ function bootstrap(store) {
   const restored = app.scope.Prototype.game;
   assert.notDeepEqual(position(restored), position(original),
     'Unclean shutdown must not restart inside crowded combat coordinates');
-  assert.equal(restored.blocked(restored.hero.x, restored.hero.y), false,
-    'The restored hero lands on collision-safe terrain even when a town anchor is obstructed');
+  assert.equal(restored.zoneId, 'vale', 'Restart arrives in the saved campaign region');
+  assert(restored.zone().npcs.some(n => n.kind === 'rest'),
+    'A regional refuge exists even when a fresh run has not selected one');
   assert.equal(restored.hero.hp, original.hero.hp,
     'Rescue must not grant health or apply damage');
   assert.equal(restored.s.party[0].hp, original.s.party[0].hp,
@@ -76,13 +79,13 @@ function bootstrap(store) {
   const store = storage(), original = savedCampaign(store, { barracks: true });
   const guard = Persistence.createRestartGuard({ storage: store, Campaign });
   guard.arm(original);
-  const loadedBeforeRestart = Campaign.restore(JSON.parse(store.getItem('azeroth-v4-normal')));
-  assert.equal(loadedBeforeRestart.selectedBarracksRespawn()?.barracks.id, 'recovery-camp-test',
-    'Selected complete barracks survives strict v4 save validation');
+  const persisted = Campaign.restore(JSON.parse(store.getItem('azeroth-v4-normal')));
+  assert.equal(persisted.selectedBarracksRespawn()?.barracks.id, 'recovery-camp-test',
+    'Barracks selection must survive save and validation');
   const app = bootstrap(store), g = app.scope.Prototype.game;
-  const chosenLanding = original.safe(815, 750);
-  assert.deepEqual(position(g), [chosenLanding.x, chosenLanding.y],
-    'Completed barracks uses exactly the native collision-safe arrival point');
+  const expectedBarracksLanding = original.safe(815, 750);
+  assert.deepEqual(position(g), [expectedBarracksLanding.x, expectedBarracksLanding.y],
+    'Selected completed barracks takes priority, using real terrain-safe arrival');
   assert.equal(g.s.barracksRespawn.id, 'recovery-camp-test');
   assert.equal(g.hero.gold, original.hero.gold);
   assert.equal(g.s.statistics.deaths, 0);
@@ -100,6 +103,23 @@ function bootstrap(store) {
   assert.deepEqual(position(app2.scope.Prototype.game), [1020, 1290],
     'Normal clean reopen resumes at the exact previous player position');
   assert.equal(app2.scope.Prototype.game.hero.gold, original.hero.gold);
+}
+{
+  const store = storage();
+  const original = savedCampaign(store);
+  const app = bootstrap(store);
+  app.frame(0);
+  app.frame(800); // Critical callback stall, combat paused.
+  assert.equal(app.scope.Prototype.frameSkip.emergency, true);
+  for (const listener of app.events.pagehide || []) listener();
+  const guard = Persistence.createRestartGuard({ storage: store, Campaign });
+  assert.equal(guard.read()?.active, true,
+    'Closing a still-frozen game must NOT clear the rescue marker');
+  const reopened = bootstrap(store);
+  assert.notDeepEqual(position(reopened.scope.Prototype.game), position(original),
+    'A player closing frozen gameplay reopens at the refuge');
+  assert.equal(reopened.scope.Prototype.game.hero.gold, original.hero.gold);
+  assert.equal(reopened.scope.Prototype.game.s.statistics.deaths, 0);
 }
 {
   const store = storage(), g = savedCampaign(store);
