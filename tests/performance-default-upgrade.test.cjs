@@ -54,6 +54,7 @@ for (const language of ['en', 'es']) {
   storage.set('azeroth-render-resolution-v1', '80');
   storage.set('azeroth-optimization-mode-v1', 'on');
   storage.set('azeroth-camera-v2', JSON.stringify({ desktop: 1, phone: 1.75 }));
+  storage.set('azeroth-screen-v1', 'phone');
   const second = shell(language, 'paladin', { storage });
   assert.equal(second.scope.Prototype.fps.preference, '60');
   assert.equal(second.scope.Prototype.frameSkip.enabled, false);
