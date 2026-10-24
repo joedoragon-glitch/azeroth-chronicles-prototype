@@ -39,6 +39,14 @@ for (const language of ['en', 'es']) {
   assert(cancel.hidden, 'Z map inspection alone does not create navigation');
   scope.Prototype.closeMenu();
 
+  // An ordinary independent tap-to-move order is not a chosen map route.
+  game.hero.order = { type: 'move', x: game.hero.x + 120, y: game.hero.y + 40 };
+  game.hero.path = [{ x: game.hero.x + 120, y: game.hero.y + 40 }];
+  scope.Prototype.updateHUD();
+  assert(cancel.hidden, 'ordinary world movement does not invent navigation UI');
+  game.hero.order = null;
+  game.hero.path = [];
+
   // A quest waypoint is optional guidance, not an active map-navigation session.
   elements.get('menu-button').click();
   const root = elements.get('modal-actions').children;
