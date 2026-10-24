@@ -7,7 +7,7 @@ The package and PWA cache are version `0.9.1+snapshot.dev.169`.
 [Focused validation and GitHub Pages deployment #40072160124](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40072160124)
 completed successfully on 24 October. This confirms publication of the integrated build, **not** a measured Chromebook FPS increase or complete hardware certification.
 
-This document **supersedes the 22 October performance audit as a current status guide**.
+This document **supersedes the 22 October performance audit as a current status guide**, **not as its evidence record**. The original dev.164–166 Chromebook measurements remain preserved, and the newer independent integration reviews, focused regressions and release checks provide a second body of evidence. The [cumulative 22–24 October performance evidence register](PERFORMANCE_EVIDENCE_REGISTER_20261024.md) identifies what each audit and test actually establishes.
 The old [dev.166 measurement audit](PERFORMANCE_MEASUREMENT_AUDIT_20261022.md)
 remains historical for that build; do not silently apply its one-frame,
 default-Off, warning-exemption or release-pause conclusions to dev.169.
@@ -50,6 +50,8 @@ PR #425 and integration #426 are merged.
 - No skipped draw's counterfactual CPU cost is directly observed; multiplying skips by average draw time is an **estimate**, not independently measured time saved.
 
 ## Evidence and remaining confidence boundaries
+
+The [cumulative audit and test register](PERFORMANCE_EVIDENCE_REGISTER_20261024.md) separates three evidence layers: the original dev.164–166 device reports and timing audit; the later dev.169 independent Auto FPS, boss-reset, restart and collision reviews with specific regression tests; and successful integrated/build/publication workflows. It is inaccurate to describe the original audit as the **only** available performance evidence, or to treat later CI results as a controlled device benchmark.
 
 The [integrated focused runs](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40062622171)
 and the final published [focused run](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40072160124)
