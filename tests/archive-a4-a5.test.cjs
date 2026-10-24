@@ -27,6 +27,23 @@ assert.equal(A.sections(game, { D: C.data, R: C.rules }).length, 8);
 assert.equal(A.translateArchive(Approved.P05.es), Approved.P05.es,
   'Approved Spanish prose is immutable even with the technical glossary');
 assert.equal(A.translateArchive(Approved.K03.es), Approved.K03.es);
+for (const id of ['D04', 'P05', 'K03', 'K10', 'R05', 'M01']) {
+  const original = Approved[id].es;
+  assert.equal(A.translateArchive(original), original,
+    id + ' exact approved Spanish cannot be changed by technical labels');
+}
+const mixed = Approved.K03.es + '\nSupport — heals 12.5% of max HP.';
+const mixedLocalized = A.translateArchive(mixed);
+assert(mixedLocalized.startsWith(Approved.K03.es),
+  'A bilingual Archive answer protects its complete approved paragraph');
+assert(mixedLocalized.includes('12.5%'),
+  'Mixed technical material preserves the live numeric value');
+for (const label of ['Return to the answer', 'Show me the figures',
+  'Another question', 'All shelves']) {
+  const translated = A.translateArchiveLabel(label);
+  assert(translated !== label && !/^(Return|Show|Another|All) /.test(translated),
+    'Archive navigation controls have complete Spanish labels: ' + label);
+}
 const skillHelp = sections.find((entry) => entry.title === 'Your skills').topics;
 assert(skillHelp.every(([title, answer]) => title.startsWith('Skill ') && answer.length > 30));
 assert(A.translateArchive(skillHelp[1][1]).startsWith('Toque:'),
