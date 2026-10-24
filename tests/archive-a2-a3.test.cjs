@@ -105,7 +105,8 @@ assert.equal(dismissed, 0, 'Opening disallowed Archive creates no dialogue');
 // and ancestor scroll without treating buttons as the beginning of an answer.
 const { scope, elements } = shell('en');
 const prototype = scope.Prototype;
-const modal = elements.get('modal'), content = elements.get('modal-content');
+const modal = scope.document.getElementById('modal'),
+  content = scope.document.getElementById('modal-content');
 const pick = (label) => {
   const button = elements.get('modal-actions').children.find((b) => b.textContent.startsWith(label));
   assert(button, label + ' action exists');
