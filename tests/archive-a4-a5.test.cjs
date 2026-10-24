@@ -44,6 +44,19 @@ for (const label of ['Return to the answer', 'Show me the figures',
   assert(translated !== label && !/^(Return|Show|Another|All) /.test(translated),
     'Archive navigation controls have complete Spanish labels: ' + label);
 }
+const encounters = sections.find((entry) =>
+  entry.title === 'Adversaries and their attacks').topics;
+const trueOverview = encounters.find(([name]) => name === 'The TRUE adversaries')[1];
+assert(A.translateArchive(trueOverview).startsWith('Los tiranos de campo'),
+  'The complete TRUE encounter overview is available in Spanish');
+const rogueOverview = sections.find((entry) =>
+  entry.title === 'Battle and protection').topics
+  .find(([name]) => name === 'Enemies under pressure')[1];
+assert(A.translateArchive(rogueOverview).startsWith('Un enemigo herido'),
+  'The long tactical overview is translated as an intact paragraph');
+const creatures = encounters.find(([name]) => name === 'Creatures encountered')[1];
+assert(A.translateArchive(creatures).startsWith('Estas cifras corresponden'),
+  'Dynamic creature tables retain a translated Spanish introduction');
 const skillHelp = sections.find((entry) => entry.title === 'Your skills').topics;
 assert(skillHelp.every(([title, answer]) => title.startsWith('Skill ') && answer.length > 30));
 assert(A.translateArchive(skillHelp[1][1]).startsWith('Toque:'),
