@@ -220,6 +220,8 @@ console.log(
     { x: 585, y: 500 },
   );
   g.zone().enemies = [foe];
+  // Fresh Vale foes await a hero-initiated opening; that is unrelated to Slow.
+  g.admitOpeningHeroAttack(foe);
   g.engage(foe);
   assert(g.companionUseSecondSkill(u, foe), 'already slowed companion begins its real preparation');
   now = 0.65;
