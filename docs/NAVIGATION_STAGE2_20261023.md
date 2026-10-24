@@ -27,8 +27,24 @@ The existing **Marches ferry approach failure** and **single-start/single-end BF
 ### Stage checkpoints
 
 - [x] Stage 1: source audit and user contract — #420
-- [x] Stage 2: authored implementation and focused test definitions (pending focused PR CI results and owner acceptance)
+- [x] Stage 2: implementation and focused checks, including contextual UI/shortcut audit; owner acceptance and final cross-stage audit remain outstanding
 - [ ] Stage 3: real service-frontage resolution including both ferries
 - [ ] Stage 4: bounded route solver correction with collision and road safety
 - [ ] Stage 5: marker interaction and end-to-end integrated verification
 - [ ] Final combined audit and **explicit owner permission** before merging
+
+## Stage 2 targeted audit addendum — 23 October 2026
+
+Owner feedback: the on-screen Cancel control must **not** clutter the HUD when no actual map-destination journey is active. The map must remain easy to discover on phones and through an existing keyboard shortcut, without new key collisions.
+
+**Audit finding repaired:** Previously, `updateHUD()` showed the Cancel button whenever `questGuide` was truthy—even if it was merely an unrelated tracked quest or gathering objective, or the route was empty. The control now requires a **valid current navigation session with a nonempty visible route**, matching campaign, hero, zone and death count, living hero, and not-yet-reached destination. It hides when the player is idle, simply opens the map, tracks a quest without navigation, arrives, loses route validity, changes zone/dies/loads a different campaign, cancels explicitly, or has a menu open (the latter also via CSS). It **stays visible during manual takeover while destination guidance remains active**: the waypoint still exists and the player still needs a way to dismiss it. Map → Clear waypoint remains available for quest/gathering guide removal without canceling companion work.
+
+**Keyboard investigation:** `PrototypeInput` already binds Map to **Z** and supports **M** as a safe alias while mana mode is retired (`resourceMode.manaEnabled=false`). Custom assigned M keys take priority; the alias never steals a custom skill key. **Tab** remains bound to Squad Doctrine, so no controls were reassigned. Map shortcut hints now show the actual `map` binding plus M only when that alias is available, in desktop hints and bilingual Controls information. The Adventure menu retains **Map and travel routes** as its prominent second ordinary action (after the tutorial-oriented Barracks item), adding a short EN/ES shortcut hint instead of new phone HUD clutter.
+
+**Guide isolation correction:** `startNavigation()` owns a copied set of guide waypoints so the engine consuming `hero.path` does not mutate a guide created from a story destination. A canceled navigation status also uses the correct Spanish phrase.
+
+**Focused regression additions:** No Cancel on initial idle/map inspection or quest-only guide; Cancel appears only after Navigate; persists for guided manual takeover; disappears on arrival and explicit Clear; M and Z open Map; Tab is unchanged; M assigned to a custom skill overrides the map alias; Map remains near the top of the Adventure menu with correct dynamic key label; test also covers joystick, keyboard, world tap, pause, gathering conservation, old-save movement sanitization and EN/ES.
+
+**Evidence bounds:** GitHub's existing focused PR workflow verifies changed-source syntax, relevant Node/UI shell checks and the reproducible Pages/PWA build. This is **not** actual phone/landscape browser or physical-device certification. Stage 5 still owns screenshot/touch-target/overlay review. A separately documented combat edge remains: deliberately targeting a distant enemy may cause the existing `skill-approach` order to supersede navigation's auto-walking. Passive auto-attacks and in-range/failed skill attempts do not do so. Resolve the exact priority contract through focused integration evidence before final acceptance; never add blanket skill-button cancellation.
+
+**Release boundary:** Cumulative draft PR #421 stays unmerged and undeployed. Later Stages 3–5 and one final combined audit precede any explicit merge authorization.
