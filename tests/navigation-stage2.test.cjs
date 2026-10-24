@@ -170,7 +170,13 @@ for (const language of ['en', 'es']) {
   const wasAt = { x: game.hero.x, y: game.hero.y };
   Object.assign(game.hero, last);
   scope.Prototype.updateHUD();
-  assert(cancel.hidden, 'arrival never leaves a useless Cancel button on screen');
+  assert(!cancel.hidden,
+    'reaching the endpoint cannot hide Cancel while the owned move is still active');
+  assert(scope.Prototype.navigationState.active);
+  game.hero.order = null;
+  game.hero.path = [];
+  scope.Prototype.updateHUD();
+  assert(cancel.hidden, 'completed movement never leaves a useless Cancel button on screen');
   assert.equal(scope.Prototype.navigationState.active, false);
   scope.Prototype.cancelNavigation();
   Object.assign(game.hero, wasAt);
