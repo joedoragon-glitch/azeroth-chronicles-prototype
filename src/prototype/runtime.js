@@ -123,7 +123,7 @@
       if (nextDraw <= now) nextDraw = now + period;
       return true;
     }
-    function observe(now, workMs, drawn) {
+    function observe(now, workMs, drawn, adaptiveSkipped = false) {
       if (!Number.isFinite(now) || !Number.isFinite(workMs)) return;
       if (lastFrame !== null) {
         const interval = now - lastFrame;
@@ -132,7 +132,11 @@
         if (interval <= 0) {
           reset();
         } else {
-          samples.push({ now, interval, workMs, drawn: !!drawn });
+          // A deliberately skipped drawing saved work; that cheaper callback
+          // is NOT proof of spare rendering headroom. Keep this signal separate
+          // from the ordinary frame-rate limiter's undrawn opportunities.
+          samples.push({ now, interval, workMs, drawn: !!drawn,
+            adaptiveSkipped: !!adaptiveSkipped && !drawn });
           while (samples.length && samples[0].now < now - 6000) samples.shift();
         }
       }
@@ -152,16 +156,27 @@
           frames.length > 1
             ? ((frames.length - 1) * 1000) / (frames.at(-1).now - frames[0].now)
             : 0,
-        p95 = work[Math.floor((work.length - 1) * 0.95)] || Infinity;
+        p95 = work[Math.floor((work.length - 1) * 0.95)] || Infinity,
+        skipped = samples.filter((s) => s.adaptiveSkipped).length,
+        eligible = frames.length + skipped,
+        // Three or more adaptive omissions making up >=5% of eligible world
+        // drawings demonstrate sustained pressure even if drawn-only timings
+        // now look artificially comfortable.
+        adaptivePressure = skipped >= 3 && eligible > 0 &&
+          skipped / eligible >= 0.05,
+        // Promotion requires a genuinely stable draw window, not one made
+        // deceptively cheap by frame skipping.
+        cleanPromotionWindow = skipped === 0;
       if (preference === 'auto') {
         // New default: start at 30, use 20 during sustained pressure, and
         // cautiously recover to 30 after measured headroom returns.
-        if (target === 30 && (drawRate < 25 || p95 > 33)) {
+        if (target === 30 && (drawRate < 25 || p95 > 33 || adaptivePressure)) {
           target = 20;
           nextDraw = null;
           lastSwitch = now;
         } else if (
           target === 20 &&
+          cleanPromotionWindow &&
           samples.length >= 90 &&
           meanInterval <= 35 &&
           drawRate >= 18 &&
@@ -174,6 +189,7 @@
       } else if (
         // Preserve the previous Auto 30–60 policy as an explicit setting.
         target === 30 &&
+        cleanPromotionWindow &&
         samples.length >= 90 &&
         meanInterval <= 19 &&
         drawRate >= 27 &&
@@ -182,7 +198,7 @@
         target = 60;
         nextDraw = null;
         lastSwitch = now;
-      } else if (target === 60 && (drawRate < 49 || p95 > 18)) {
+      } else if (target === 60 && (drawRate < 49 || p95 > 18 || adaptivePressure)) {
         target = 30;
         nextDraw = null;
         lastSwitch = now;
