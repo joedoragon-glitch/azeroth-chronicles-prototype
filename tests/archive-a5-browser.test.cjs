@@ -1,5 +1,5 @@
 'use strict';
-// A5 opt-in browser matrix. Never run from the automatic focused workflow.
+// A5 focused Archive-only browser check; never launches another game suite.
 // Example: QUEST_BROWSER_ENGINE=chromium node tests/archive-a5-browser.test.cjs
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -7,6 +7,9 @@ const path = require('node:path');
 const http = require('node:http');
 const pw = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = path.resolve(__dirname, '..');
+const approved = require('../src/prototype/narration.js').approved;
+const out = path.join(root, 'test-results', 'archive-a5');
+fs.mkdirSync(out, { recursive: true });
 const mime = {
   '.html': 'text/html', '.js': 'application/javascript', '.css': 'text/css',
   '.json': 'application/json', '.png': 'image/png', '.webp': 'image/webp',
@@ -38,11 +41,13 @@ const server = http.createServer((req, res) => {
     for (const viewport of [
       { width: 1280, height: 800 },
       { width: 375, height: 800 },
-      { width: 844, height: 390 },
+      { width: 393, height: 852 },
+      { width: 800, height: 375 },
     ]) for (const lang of ['en', 'es']) {
       const phone = viewport.width < 1000;
       const page = await browser.newPage({ viewport, isMobile: phone, hasTouch: phone });
       const errors = [];
+      page.setDefaultTimeout(10000);
       page.on('pageerror', (e) => errors.push(e.message));
       try {
         await page.goto('http://127.0.0.1:' + server.address().port +
@@ -111,6 +116,44 @@ const server = http.createServer((req, res) => {
         assert.equal(await page.locator('#modal').getAttribute('data-view'), 'archive-shelf');
         await page.keyboard.press('Escape');
         assert.equal(await page.locator('#modal-title').textContent(), rootTitle);
+        // A genuinely long approved history, not only the short armor answer.
+        await page.getByRole('button', { name: new RegExp(lang === 'es'
+          ? 'La Corona y sus instituciones' : 'The Crown and its institutions') }).click();
+        const longButton = page.getByRole('button', { name: lang === 'es'
+          ? 'Garun — los caminos antiguos' : 'Garun — the old roads', exact: true });
+        await longButton.scrollIntoViewIfNeeded();
+        const shelfScroll = await content.evaluate((n) => n.scrollTop);
+        await longButton.click();
+        assert.equal(await reader.textContent(), lang === 'es' ? approved.K10.es : approved.K10.en);
+        assert((await content.evaluate((n) => n.scrollTop)) <= 5);
+        await page.screenshot({ path: path.join(out, engine + '-' + lang + '-' +
+          viewport.width + 'x' + viewport.height + '-top.png') });
+        await reader.focus();
+        await page.keyboard.press('PageDown');
+        await page.waitForFunction(() => document.querySelector('#modal-content').scrollTop > 5);
+        await page.keyboard.press('Enter');
+        assert.equal(await reader.textContent(), lang === 'es' ? approved.K10.es : approved.K10.en,
+          'Reading Enter never activates an action');
+        await page.keyboard.press('Shift+Tab');
+        assert(await page.locator('#modal').evaluate((n) => n.contains(document.activeElement)),
+          'Reverse Tab stays inside the dialog');
+        await reader.focus();
+        await page.keyboard.press('Tab');
+        assert.equal(await page.evaluate(() => document.activeElement.tagName), 'BUTTON');
+        const bounds = await page.locator('#modal').boundingBox();
+        assert(bounds.x >= -1 && bounds.y >= -1 &&
+          bounds.x + bounds.width <= viewport.width + 1 &&
+          bounds.y + bounds.height <= viewport.height + 1, 'Dialog stays inside viewport');
+        assert((await reader.evaluate((n) => parseFloat(getComputedStyle(n).fontSize))) >= 15,
+          'Archive text remains at least 15 CSS pixels');
+        assert(await content.evaluate((n) => n.scrollWidth <= n.clientWidth + 1),
+          'Long reading needs no horizontal scrolling');
+        await page.screenshot({ path: path.join(out, engine + '-' + lang + '-' +
+          viewport.width + 'x' + viewport.height + '.png') });
+        await page.keyboard.press('Escape');
+        assert(Math.abs((await content.evaluate((n) => n.scrollTop)) - shelfScroll) <= 1,
+          'Back restores long shelf scroll');
+        await page.keyboard.press('Escape');
         await page.evaluate(() => {
           Prototype.game.s.keeperEvidence = true;
           Prototype.closeMenu();
@@ -122,13 +165,53 @@ const server = http.createServer((req, res) => {
         await page.getByRole('button', {
           name: lang === 'es' ? 'Un prisionero para el Archivo' : 'A prisoner for the Archive', exact: true,
         }).click();
-        assert((await page.locator('#modal-description').textContent()).length > 100);
+        assert.equal(await reader.textContent(), lang === 'es' ? approved.P05.es : approved.P05.en);
+        await page.evaluate(() => Prototype.save());
+        await page.reload();
+        await page.waitForFunction(() => !!window.Prototype && Prototype.game.s.keeperEvidence);
+        const facts = await page.evaluate(() => {
+          Prototype.game.tick = () => {};
+          const c = Campaign.restore(Prototype.game.snapshot());
+          return { pact: c.s.keeperPact, evidence: c.s.keeperEvidence, throne: !!c.s.throneClaimed };
+        });
+        assert.deepEqual(facts, { pact: true, evidence: true, throne: false },
+          'Existing v4 facts survive reload without revealing throne lore');
+        // Native world interaction → Basic and Full Barracks → Training → Keeper.
+        for (const full of [false, true]) {
+          await page.evaluate((full) => {
+            const g = Prototype.game;
+            g.enter('vale');
+            const p = g.safe(450, 450);
+            const b = { id: 'a5-counsel', kind: 'barracks', name: 'Barracks',
+              ...p, progress: 4, full, upgradeProgress: full ? 4 : 0, queue: 0 };
+            g.zone().buildings = g.zone().buildings.filter((x) => x.id !== b.id);
+            g.zone().buildings.push(b);
+            Object.assign(g.hero, p);
+            Prototype.closeMenu();
+            Prototype.updateHUD();
+          }, full);
+          await page.keyboard.press('f');
+          await page.getByRole('button', { name: lang === 'es' ? /^Entrenamiento/ : /^Training/ }).click();
+          await page.getByRole('button', { name: lang === 'es'
+            ? /^Especialistas rescatados/ : /^Rescued specialists/ }).click();
+          const specialistTitle = await page.locator('#modal-title').textContent();
+          await page.getByRole('button', { name: /Drowned Keeper.*(Archive|Archivo)/ }).click();
+          assert.equal(await page.locator('#modal-title').textContent(), rootTitle);
+          await page.getByRole('button', { name: new RegExp(label) }).click();
+          await page.getByRole('button', { name: lang === 'es'
+            ? 'Acero, heridas y armadura' : 'Steel, wounds and armor', exact: true }).click();
+          await page.keyboard.press('Escape');
+          await page.keyboard.press('Escape');
+          await page.keyboard.press('Escape');
+          assert.equal(await page.locator('#modal-title').textContent(), specialistTitle,
+            'Back returns to the actual Basic/Full entry route');
+        }
         assert.deepEqual(errors, [], 'No browser JavaScript errors');
       } finally {
         await page.close();
       }
     }
-    console.log('PASS A5 browser Archive EN/ES navigation, gate, answer, figures and three viewport modes');
+    console.log('PASS A5 browser Archive EN/ES navigation, gate, answer, figures and four viewports, long-copy scrolling/focus, v4 reload and Basic/Full routes');
   } finally {
     if (browser) await browser.close();
     await new Promise((resolve) => server.close(resolve));

@@ -36,7 +36,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
       prepend(...x) {
         this.children.unshift(...x);
       },
-      focus() {},
+      focus() { scope.document.activeElement = this; this.onfocus?.(); },
       append(...x) {
         this.children.push(...x);
       },
@@ -44,6 +44,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
         this.children = x;
       },
       setAttribute(name, value) { attributes.set(name, String(value)); },
+      removeAttribute(name) { attributes.delete(name); },
       getAttribute(name) { return attributes.get(name) ?? null; },
       querySelector: () => ({ textContent: '' }),
       scrollIntoView() {},

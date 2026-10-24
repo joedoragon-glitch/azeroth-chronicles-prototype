@@ -894,7 +894,6 @@
   // A4: interface/reference localization, separate from the FINAL author-approved
   // narrative. Never translate or paraphrase the locked manuscript in this map.
   const spanishReference = Object.freeze({
-
     'A wounded or outmatched foe may use rogue tactics: withdraw toward allies, slow a pursuer, shove attackers away or rally defenders. Chase blindly and you may gather a larger fight. Ordinary foes still show their marked Rogue warning. Guardians, ringleaders, captains and bosses instead show a moving cast bar: use real cover, or break pursuit if they draw in more enemies. Goblin dust breaks direct targeting, but area attacks can still reach the goblin.':
       'Un enemigo herido o superado puede recurrir a tácticas de retirada: buscar aliados, ralentizar a quien lo persigue, empujar a sus atacantes o reunir defensores. Perseguirlo sin cuidado puede atraer a más enemigos. Los adversarios comunes conservan su aviso marcado de táctica rebelde; guardianes, cabecillas, capitanes y jefes muestran una barra de preparación mientras se mueven. Busca cobertura real o rompe la persecución si llaman refuerzos. El polvo goblin impide fijar un objetivo directamente, pero los ataques de área pueden alcanzarlo.',
     'The Lifebinder and I were recruited from the Barracks too. Our disciplines belonged to different companion classes from the Soldiers and Rangers who enlist there today. You have not yet studied those disciplines.':
@@ -914,7 +913,8 @@
     'Adversaries and their attacks': 'Adversarios y sus ataques',
     'The provinces': 'Las provincias',
     'The orders among the shelves': 'Las órdenes entre los estantes',
-    'Armor, openings and rogue tactics.': 'Armadura, oportunidades de ataque y tácticas de retirada.',
+    'Armor, openings and rogue tactics.':
+      'Armadura, oportunidades de ataque y tácticas de retirada.',
     'Choose an effect; ask for figures when you want the full rule.':
       'Elige un efecto y solicita las cifras cuando quieras consultar la regla completa.',
     'Level gains and training.': 'Subidas de nivel y entrenamiento.',
@@ -939,11 +939,11 @@
     'Another question': 'Otra pregunta',
     'All shelves': 'Todos los estantes',
     'Fortified enemies and covering fire': 'Enemigos fortificados y fuego de cobertura',
-    'Slow': 'Ralentización',
-    'Silence': 'Silencio',
+    Slow: 'Ralentización',
+    Silence: 'Silencio',
     'Interrupted charges': 'Cargas interrumpidas',
     'Weaken and Fracture': 'Debilitar y Fractura',
-    'Taunt': 'Provocación',
+    Taunt: 'Provocación',
     'Haste and Companion Rally': 'Celeridad y arenga de compañeros',
     'Shields, wards and immunity': 'Escudos, protecciones e inmunidad',
     'Dust and displacement': 'Polvo y desplazamiento',
@@ -1020,8 +1020,7 @@
       'Entrenamiento compartido transmite a los compañeros tus bonificaciones de disciplina. Fuerza compartida transmite otras bonificaciones de salud y daño, además de armadura y reforjas. Cada mejora aumenta la proporción transmitida.',
     'A Ranger treats one wounded living member of the company at a time, with you first when you need it. Recall brings companions back to your side; Barracks recovery brings back the fallen.':
       'Un explorador atiende a un integrante vivo y herido de la compañía por vez, dándote prioridad cuando lo necesitas. Reagrupar acerca a los compañeros; la recuperación del cuartel devuelve a los caídos.',
-    ' Rangers can also restore your mana.':
-      ' Los exploradores también pueden restaurar tu maná.',
+    ' Rangers can also restore your mana.': ' Los exploradores también pueden restaurar tu maná.',
   });
   // Fixed skill descriptions are technical help rather than author-final lore.
   // Their ranks, costs and cooldowns still come from the English live rule path.
@@ -1043,7 +1042,7 @@
     'Tap Sanctuary Oath: heal 15% and protect nearby allies with a 20% ward. Charge Last Bastion: heal 20%, grant 30% ward and weaken enemies. No immunity.':
       'Toque: Juramento del Santuario cura un 15 % y protege a aliados próximos con una barrera del 20 %. Carga: Último Bastión cura un 20 %, concede una barrera del 30 % y debilita a enemigos. No concede inmunidad.',
     'Tap Frost Bolt: damage and slow one foe for 2–2.2s. Charge Frost Burst: slow nearby enemies for 3.2–4.2s.':
-      'Toque: Proyectil de Escarcha daña y ralentiza a un enemigo durante 2–2,2 s. Carga: Explosión de Escarcha ralentiza a los enemigos próximos durante 3,2–4,2 s.',
+      'Toque: Proyectil de Escarcha daña y ralentiza a un enemigo durante 2–2.2 s. Carga: Explosión de Escarcha ralentiza a los enemigos próximos durante 3.2–4.2 s.',
     'Tap Spell Interrupt: a dodgeable bolt cancels one warned attack on contact. Charge Silence Field: block special skills for enemies, you and companions inside.':
       'Toque: Interrupción de Hechizo lanza un proyectil esquivable que cancela un ataque advertido si impacta. Carga: Campo de Silencio bloquea las habilidades especiales dentro de su área, tanto de enemigos como tuyas y de compañeros.',
     'Tap Arcane Fracture: a dodgeable bolt damages and increases incoming damage to one foe. Charge Arcane Rupture: stronger vulnerability on a group; no stacking.':
@@ -1076,237 +1075,727 @@
   // Fixed explanatory fragments flank numbers derived at runtime. Translate
   // the clauses around those numbers; never copy a cached combat value.
   const technicalClauses = [
-    ['Enemies sheltered inside a defended fort take ', 'Los enemigos protegidos dentro de un fuerte defendido reciben un '],
-    ['% less damage. Ranged garrisons gain ', '% menos de daño. Las guarniciones a distancia obtienen un '],
-    ['% reach and fire over their own walls.', '% más de alcance y disparan por encima de sus propios muros.'],
-    ['The shield beside an enemy’s health bar marks fort protection; leaving the defended area ends it.',
-      'El escudo junto a la barra de salud enemiga indica protección del fuerte; esta termina al salir de la zona defendida.'],
-    ['Enemy ranged shots can arc over low fences, carts, supplies, logs and interior screens.',
-      'Los disparos a distancia del enemigo pueden superar cercas bajas, carros, provisiones, troncos y separadores interiores.'],
-    ['Tall obstacles, cliffs, room boundaries and unrelated fort walls remain solid.',
-      'Los obstáculos altos, acantilados, límites de salas y muros de otros fuertes siguen bloqueando los disparos.'],
-    ['Fort protection applies to ordinary troops, officers and bosses inside the area; explicit piercing attacks bypass it.',
-      'La protección del fuerte se aplica a tropas, oficiales y jefes dentro de la zona; los ataques perforantes indicados la atraviesan.'],
-    ['Aiming warnings and dodgeable flight remain.', 'Permanecen las advertencias de apuntado y los proyectiles esquivables.'],
-    ['Hero and companion shots still use their normal obstruction rules.',
-      'Los disparos del héroe y de sus compañeros siguen sus reglas normales de obstrucción.'],
-    ['Heroes and companions recover cooldowns at ', 'Los héroes y compañeros recuperan sus reutilizaciones al '],
-    ['% of normal speed; enemies, captains and bosses at ', '% de la velocidad normal; enemigos, capitanes y jefes al '],
-    ['%. Allied movement is normally 65%, or ', '%. El movimiento aliado suele quedar al 65 %, o al '],
-    ['% under stronger Rogue snares; ordinary enemy pursuit is 50%.',
-      '% bajo las trampas de pícaro más fuertes; la persecución enemiga normal queda al 50 %.'],
+    [
+      'Enemies sheltered inside a defended fort take ',
+      'Los enemigos protegidos dentro de un fuerte defendido reciben un ',
+    ],
+    [
+      '% less damage. Ranged garrisons gain ',
+      '% menos de daño. Las guarniciones a distancia obtienen un ',
+    ],
+    [
+      '% reach and fire over their own walls.',
+      '% más de alcance y disparan por encima de sus propios muros.',
+    ],
+    [
+      'The shield beside an enemy’s health bar marks fort protection; leaving the defended area ends it.',
+      'El escudo junto a la barra de salud enemiga indica protección del fuerte; esta termina al salir de la zona defendida.',
+    ],
+    [
+      'Enemy ranged shots can arc over low fences, carts, supplies, logs and interior screens.',
+      'Los disparos a distancia del enemigo pueden superar cercas bajas, carros, provisiones, troncos y separadores interiores.',
+    ],
+    [
+      'Tall obstacles, cliffs, room boundaries and unrelated fort walls remain solid.',
+      'Los obstáculos altos, acantilados, límites de salas y muros de otros fuertes siguen bloqueando los disparos.',
+    ],
+    [
+      'Fort protection applies to ordinary troops, officers and bosses inside the area; explicit piercing attacks bypass it.',
+      'La protección del fuerte se aplica a tropas, oficiales y jefes dentro de la zona; los ataques perforantes indicados la atraviesan.',
+    ],
+    [
+      'Aiming warnings and dodgeable flight remain.',
+      'Permanecen las advertencias de apuntado y los proyectiles esquivables.',
+    ],
+    [
+      'Hero and companion shots still use their normal obstruction rules.',
+      'Los disparos del héroe y de sus compañeros siguen sus reglas normales de obstrucción.',
+    ],
+    [
+      'Heroes and companions recover cooldowns at ',
+      'Los héroes y compañeros recuperan sus reutilizaciones al ',
+    ],
+    [
+      '% of normal speed; enemies, captains and bosses at ',
+      '% de la velocidad normal; enemigos, capitanes y jefes al ',
+    ],
+    [
+      '%. Allied movement is normally 65%, or ',
+      '%. El movimiento aliado suele quedar al 65 %, o al ',
+    ],
+    [
+      '% under stronger Rogue snares; ordinary enemy pursuit is 50%.',
+      '% bajo las trampas de pícaro más fuertes; la persecución enemiga normal queda al 50 %.',
+    ],
     ['The longest remaining Slow wins.', 'Prevalece la ralentización de mayor duración restante.'],
-    ['Recovery returns to normal when Slow ends.', 'La recuperación vuelve a la normalidad cuando termina la ralentización.'],
-    ['Slow does not lengthen charge preparation, warnings or healing pulses, and does not prevent skills.',
-      'La ralentización no alarga la preparación de cargas, las advertencias ni los pulsos de curación, y no impide usar habilidades.'],
-    ['The Mage’s Silence Field stays where cast for ', 'El Campo de Silencio del mago permanece donde se lanzó durante '],
-    [' seconds by rank. It suppresses new specials, support-heal activation and unfinished companion charged releases.',
-      ' segundos según el rango. Suprime nuevas habilidades especiales, el inicio de curación de apoyo y las cargas inacabadas de compañeros.'],
-    ['The warnings remain visible: enemy specials already being prepared wait rather than disappearing;',
-      'Las advertencias siguen visibles: los especiales enemigos que ya se preparaban esperan en lugar de desaparecer;'],
-    ['projectiles, hazards, healing pulses and committed movement continue.',
-      'los proyectiles, peligros, pulsos de curación y movimientos ya iniciados continúan.'],
-    ['It neither adds Slow nor freezes cooldown recovery.',
-      'No aplica ralentización ni detiene la recuperación de habilidades.'],
-    ['Leaving the field or its expiry ends Silence; damage immunity does not erase the field.',
-      'El Silencio termina al salir del campo o cuando expira; la inmunidad al daño no elimina el campo.'],
-    ['Heroes and companions prepare charged skills for ', 'Héroes y compañeros preparan habilidades cargadas durante '],
-    [' seconds. HP actually lost during preparation adds up: interruption needs at least ',
-      ' segundos. El daño real a los PV durante la preparación se acumula: la interrupción exige al menos un '],
+    [
+      'Recovery returns to normal when Slow ends.',
+      'La recuperación vuelve a la normalidad cuando termina la ralentización.',
+    ],
+    [
+      'Slow does not lengthen charge preparation, warnings or healing pulses, and does not prevent skills.',
+      'La ralentización no alarga la preparación de cargas, las advertencias ni los pulsos de curación, y no impide usar habilidades.',
+    ],
+    [
+      'The Mage’s Silence Field stays where cast for ',
+      'El Campo de Silencio del mago permanece donde se lanzó durante ',
+    ],
+    [
+      ' seconds by rank. It suppresses new specials, support-heal activation and unfinished companion charged releases.',
+      ' segundos según el rango. Suprime nuevas habilidades especiales, el inicio de curación de apoyo y las cargas inacabadas de compañeros.',
+    ],
+    [
+      'The warnings remain visible: enemy specials already being prepared wait rather than disappearing;',
+      'Las advertencias siguen visibles: los especiales enemigos que ya se preparaban esperan en lugar de desaparecer;',
+    ],
+    [
+      'projectiles, hazards, healing pulses and committed movement continue.',
+      'los proyectiles, peligros, pulsos de curación y movimientos ya iniciados continúan.',
+    ],
+    [
+      'It neither adds Slow nor freezes cooldown recovery.',
+      'No aplica ralentización ni detiene la recuperación de habilidades.',
+    ],
+    [
+      'Leaving the field or its expiry ends Silence; damage immunity does not erase the field.',
+      'El Silencio termina al salir del campo o cuando expira; la inmunidad al daño no elimina el campo.',
+    ],
+    [
+      'Heroes and companions prepare charged skills for ',
+      'Héroes y compañeros preparan habilidades cargadas durante ',
+    ],
+    [
+      ' seconds. HP actually lost during preparation adds up: interruption needs at least ',
+      ' segundos. El daño real a los PV durante la preparación se acumula: la interrupción exige al menos un ',
+    ],
     ['% of maximum HP, with a minimum of ', '% de los PV máximos, con un mínimo de '],
-    [' HP. Immunity and zero HP loss contribute nothing; lethal damage cancels an unreleased action.',
-      ' PV. La inmunidad y una pérdida nula de PV no contribuyen; el daño letal cancela una acción aún no ejecutada.'],
-    ['A failed preparation spends no full skill cooldown and has ',
-      'Una preparación fallida no consume el tiempo completo de reutilización y tiene '],
+    [
+      ' HP. Immunity and zero HP loss contribute nothing; lethal damage cancels an unreleased action.',
+      ' PV. La inmunidad y una pérdida nula de PV no contribuyen; el daño letal cancela una acción aún no ejecutada.',
+    ],
+    [
+      'A failed preparation spends no full skill cooldown and has ',
+      'Una preparación fallida no consume el tiempo completo de reutilización y tiene ',
+    ],
     [' seconds of charged retry recovery.', ' segundos de recuperación antes de volver a cargar.'],
-    ['Damage after completed preparation cannot retroactively interrupt it.',
-      'El daño posterior a una preparación completa no puede interrumpirla retroactivamente.'],
-    ['The Mage’s Spell Interrupt instead cancels one current enemy warned or aimed attack, leaving later queued attacks intact.',
-      'Interrupción de Hechizo del mago cancela, en cambio, un ataque enemigo advertido o apuntado, sin afectar a los posteriores en cola.'],
-    ['Paladin weakening reduces the affected enemy’s outgoing damage for its actual duration.',
-      'Debilitar del paladín reduce el daño infligido por el enemigo durante su duración real.'],
-    ['Mage Fracture is vulnerability, not Slow or Silence:',
-      'Fractura del mago es vulnerabilidad, no Ralentización ni Silencio:'],
-    ['the strongest active vulnerability applies once, helping hero and companion hits.',
-      'la vulnerabilidad activa más fuerte se aplica una sola vez y mejora los golpes del héroe y sus compañeros.'],
-    ['Fracture never adds multiple percentages together.',
-      'Fractura nunca suma varios porcentajes entre sí.'],
-    ['Judgment and Grand Judgment redirect ordinary target choice only while the Paladin is alive, reachable and visible.',
-      'Juicio y Gran Juicio redirigen la elección de objetivos ordinarios solo mientras el paladín está vivo, es alcanzable y visible.'],
-    ['Boss attention is capped at 2.5 seconds.', 'La atención de los jefes se limita a 2,5 segundos.'],
-    ['Taunt does not remove warnings, rewrite boss phases, or bypass terrain and arena limits.',
-      'La provocación no elimina advertencias, altera las fases de los jefes ni ignora los límites del terreno o la arena.'],
-    ['Ranger Skill 4 tap gives 25% hero movement haste.',
-      'El toque de la habilidad 4 del explorador concede un 25 % de celeridad de movimiento al héroe.'],
-    ['Its charged Companion Rally needs living nearby allies with line of sight; with none it spends no cooldown.',
-      'La Arenga cargada necesita aliados vivos cercanos con línea de visión; sin ellos no consume reutilización.'],
-    ['Rally raises companion movement 15–19% and ordinary attack speed 8–12% by rank.',
-      'Arenga aumenta el movimiento de los compañeros un 15–19 % y la velocidad de ataques ordinarios un 8–12 %, según el rango.'],
-    ['It does not accelerate special preparation, special/healing cooldowns or grant a dash.',
-      'No acelera la preparación de especiales ni la recuperación de estos o de curación, ni concede una embestida.'],
-    ['Slow still reduces movement and recovery independently.',
-      'La ralentización sigue reduciendo por separado el movimiento y la recuperación.'],
+    [
+      'Damage after completed preparation cannot retroactively interrupt it.',
+      'El daño posterior a una preparación completa no puede interrumpirla retroactivamente.',
+    ],
+    [
+      'The Mage’s Spell Interrupt instead cancels one current enemy warned or aimed attack, leaving later queued attacks intact.',
+      'Interrupción de Hechizo del mago cancela, en cambio, un ataque enemigo advertido o apuntado, sin afectar a los posteriores en cola.',
+    ],
+    [
+      'Paladin weakening reduces the affected enemy’s outgoing damage for its actual duration.',
+      'Debilitar del paladín reduce el daño infligido por el enemigo durante su duración real.',
+    ],
+    [
+      'Mage Fracture is vulnerability, not Slow or Silence:',
+      'Fractura del mago es vulnerabilidad, no Ralentización ni Silencio:',
+    ],
+    [
+      'the strongest active vulnerability applies once, helping hero and companion hits.',
+      'la vulnerabilidad activa más fuerte se aplica una sola vez y mejora los golpes del héroe y sus compañeros.',
+    ],
+    [
+      'Fracture never adds multiple percentages together.',
+      'Fractura nunca suma varios porcentajes entre sí.',
+    ],
+    [
+      'Judgment and Grand Judgment redirect ordinary target choice only while the Paladin is alive, reachable and visible.',
+      'Juicio y Gran Juicio redirigen la elección de objetivos ordinarios solo mientras el paladín está vivo, es alcanzable y visible.',
+    ],
+    [
+      'Boss attention is capped at 2.5 seconds.',
+      'La atención de los jefes se limita a 2.5 segundos.',
+    ],
+    [
+      'Taunt does not remove warnings, rewrite boss phases, or bypass terrain and arena limits.',
+      'La provocación no elimina advertencias, altera las fases de los jefes ni ignora los límites del terreno o la arena.',
+    ],
+    [
+      'Ranger Skill 4 tap gives 25% hero movement haste.',
+      'El toque de la habilidad 4 del explorador concede un 25 % de celeridad de movimiento al héroe.',
+    ],
+    [
+      'Its charged Companion Rally needs living nearby allies with line of sight; with none it spends no cooldown.',
+      'La Arenga cargada necesita aliados vivos cercanos con línea de visión; sin ellos no consume reutilización.',
+    ],
+    [
+      'Rally raises companion movement 15–19% and ordinary attack speed 8–12% by rank.',
+      'Arenga aumenta el movimiento de los compañeros un 15–19 % y la velocidad de ataques ordinarios un 8–12 %, según el rango.',
+    ],
+    [
+      'It does not accelerate special preparation, special/healing cooldowns or grant a dash.',
+      'No acelera la preparación de especiales ni la recuperación de estos o de curación, ni concede una embestida.',
+    ],
+    [
+      'Slow still reduces movement and recovery independently.',
+      'La ralentización sigue reduciendo por separado el movimiento y la recuperación.',
+    ],
     ['Armor applies first.', 'La armadura se aplica primero.'],
-    ['Paladin Shield Stance and a party ward use only the stronger reduction, never both multiplied.',
-      'Postura de Escudo del paladín y una barrera de grupo aplican solo la reducción más fuerte, nunca ambas multiplicadas.'],
-    ['Stance stops Skill 1 and reduces other outgoing damage to 60%; its cooldown starts when lowered or expired.',
-      'La postura detiene la habilidad 1 y reduce al 60 % el resto del daño infligido; su reutilización empieza al bajar o terminar la postura.'],
-    ['Soldier survival guard grants actual immunity while active.',
-      'La guardia de supervivencia del soldado concede inmunidad real mientras está activa.'],
-    ['Immunity blocks damage and on-hit Slow, but not solid terrain, or the area-based Silence restriction.',
-      'La inmunidad bloquea daño y ralentización por impacto, pero no terreno sólido ni el Silencio de área.'],
+    [
+      'Paladin Shield Stance and a party ward use only the stronger reduction, never both multiplied.',
+      'Postura de Escudo del paladín y una barrera de grupo aplican solo la reducción más fuerte, nunca ambas multiplicadas.',
+    ],
+    [
+      'Stance stops Skill 1 and reduces other outgoing damage to 60%; its cooldown starts when lowered or expired.',
+      'La postura detiene la habilidad 1 y reduce al 60 % el resto del daño infligido; su reutilización empieza al bajar o terminar la postura.',
+    ],
+    [
+      'Soldier survival guard grants actual immunity while active.',
+      'La guardia de supervivencia del soldado concede inmunidad real mientras está activa.',
+    ],
+    [
+      'Immunity blocks damage and on-hit Slow, but not solid terrain, or the area-based Silence restriction.',
+      'La inmunidad bloquea daño y ralentización por impacto, pero no terreno sólido ni el Silencio de área.',
+    ],
     ['No class’s Skill 8 grants immunity.', 'La habilidad 8 de ninguna clase concede inmunidad.'],
-    ['Dust cover protects the caster from selection and incoming targeted shots, not area damage.',
-      'La cobertura de polvo impide seleccionar al lanzador como objetivo y recibir disparos dirigidos, pero no daño de área.'],
+    [
+      'Dust cover protects the caster from selection and incoming targeted shots, not area damage.',
+      'La cobertura de polvo impide seleccionar al lanzador como objetivo y recibir disparos dirigidos, pero no daño de área.',
+    ],
     ['A shove obeys terrain collision.', 'Un empujón respeta las colisiones del terreno.'],
-    ['Thornfang’s forced scatter briefly overrides movement commands;',
-      'La dispersión forzada de Thornfang anula brevemente las órdenes de movimiento;'],
-    ['ordinary shoves do not create a general stun.', 'los empujones ordinarios no causan aturdimiento general.'],
-    ['Ground warning shapes show the affected area, while their label follows the caster;',
-      'Las marcas de advertencia en el suelo muestran el área afectada y su etiqueta sigue al lanzador;'],
-    ['a warning alone applies no damage or condition.', 'una advertencia por sí sola no causa daño ni estados.'],
-    ['Hero skill healing is separate from Ranger support over time.',
-      'La curación por habilidades del héroe es independiente del apoyo gradual de exploradores.'],
-    ['Eligible ranged enemies and selected captains/bosses treat injured living allies in an area, with eligible leaders included.',
-      'Los enemigos a distancia habilitados y ciertos capitanes o jefes curan a aliados vivos heridos dentro de un área, incluidos líderes que cumplen las condiciones.'],
+    [
+      'Thornfang’s forced scatter briefly overrides movement commands;',
+      'La dispersión forzada de Thornfang anula brevemente las órdenes de movimiento;',
+    ],
+    [
+      'ordinary shoves do not create a general stun.',
+      'los empujones ordinarios no causan aturdimiento general.',
+    ],
+    [
+      'Ground warning shapes show the affected area, while their label follows the caster;',
+      'Las marcas de advertencia en el suelo muestran el área afectada y su etiqueta sigue al lanzador;',
+    ],
+    [
+      'a warning alone applies no damage or condition.',
+      'una advertencia por sí sola no causa daño ni estados.',
+    ],
+    [
+      'Hero skill healing is separate from Ranger support over time.',
+      'La curación por habilidades del héroe es independiente del apoyo gradual de exploradores.',
+    ],
+    [
+      'Eligible ranged enemies and selected captains/bosses treat injured living allies in an area, with eligible leaders included.',
+      'Los enemigos a distancia habilitados y ciertos capitanes o jefes curan a aliados vivos heridos dentro de un área, incluidos líderes que cumplen las condiciones.',
+    ],
     ['Base enemy support restores ', 'El apoyo enemigo básico restaura un '],
     ['% of the recipient’s maximum HP over ', '% de los PV máximos del destinatario durante '],
-    [' seconds, with their strength varying by encounter, beginning at ',
-      ' segundos, con potencia variable por encuentro, a partir de '],
+    [
+      ' seconds, with their strength varying by encounter, beginning at ',
+      ' segundos, con potencia variable por encuentro, a partir de ',
+    ],
     ['% HP or less on a ', '% de PV o menos, con una reutilización de '],
-    ['s cooldown. Allies arriving to regroup can receive care at ',
-      ' s. Los aliados que llegan a reagruparse pueden recibir curación a '],
-    ['% HP or less, even before the healer joins combat.',
-      '% de PV o menos, incluso antes de que el sanador entre en combate.'],
-    ['Slow delays the next skill, not ongoing healing pulses.',
-      'La ralentización retrasa la siguiente habilidad, no los pulsos de curación en curso.'],
-    ['Siphon instead heals from HP actually taken;',
-      'Drenar cura según los PV realmente arrebatados;'],
-    ['each leader’s own recovery techniques work separately.',
-      'las técnicas de recuperación de cada líder actúan por separado.'],
+    [
+      's cooldown. Allies arriving to regroup can receive care at ',
+      ' s. Los aliados que llegan a reagruparse pueden recibir curación a ',
+    ],
+    [
+      '% HP or less, even before the healer joins combat.',
+      '% de PV o menos, incluso antes de que el sanador entre en combate.',
+    ],
+    [
+      'Slow delays the next skill, not ongoing healing pulses.',
+      'La ralentización retrasa la siguiente habilidad, no los pulsos de curación en curso.',
+    ],
+    [
+      'Siphon instead heals from HP actually taken;',
+      'Drenar cura según los PV realmente arrebatados;',
+    ],
+    [
+      'each leader’s own recovery techniques work separately.',
+      'las técnicas de recuperación de cada líder actúan por separado.',
+    ],
     ['Ordinary enemies give ', 'Los enemigos comunes conceden el '],
     ['% of listed XP.', '% de la experiencia indicada.'],
-    ['A level advantage of 0 / 1 / 2 / 3 / 4 or more leaves ',
-      'Una ventaja de nivel de 0 / 1 / 2 / 3 / 4 o más deja un '],
-    ['% of XP and crowns. Crowns do not take the ordinary-XP reduction.',
-      '% de experiencia y coronas. Las coronas no reciben la reducción propia de XP de enemigos comunes.'],
+    [
+      'A level advantage of 0 / 1 / 2 / 3 / 4 or more leaves ',
+      'Una ventaja de nivel de 0 / 1 / 2 / 3 / 4 o más deja un ',
+    ],
+    [
+      '% of XP and crowns. Crowns do not take the ordinary-XP reduction.',
+      '% de experiencia y coronas. Las coronas no reciben la reducción propia de XP de enemigos comunes.',
+    ],
     ['Both rewards round down.', 'Ambas recompensas se redondean hacia abajo.'],
     ['Next level: ', 'Siguiente nivel: '],
     [' × current level).', ' × nivel actual).'],
     ['Per level: 1 discipline point and ', 'Por nivel: 1 punto de disciplina y '],
     [' maximum HP.', ' PV máximos.'],
-    ['strength +', 'fuerza +'], ['power; vitality +', 'poder; vitalidad +'],
+    ['strength +', 'fuerza +'],
+    ['power; vitality +', 'poder; vitalidad +'],
     [' HP; movement +', ' PV; movimiento +'],
     [' speed per rank. Rank limits: ', ' velocidad por rango. Límites de rango: '],
     ['Cooldown training: ', 'Entrenamiento de recuperación: '],
-    ['% of the original wait per rank, up to ', '% de la espera original por rango, hasta una reducción del '],
+    [
+      '% of the original wait per rank, up to ',
+      '% de la espera original por rango, hasta una reducción del ',
+    ],
     ['% reduction.', '%.'],
     ['Your armor: ', 'Tu armadura: '],
     ['including equipment and reforges.', 'incluidos equipo y reforjas.'],
-    ['Shield Stance and wards then use only the stronger reduction;',
-      'Postura de Escudo y barreras aplican solo la reducción más fuerte;'],
+    [
+      'Shield Stance and wards then use only the stronger reduction;',
+      'Postura de Escudo y barreras aplican solo la reducción más fuerte;',
+    ],
     ['immunity stops the hit.', 'la inmunidad detiene el impacto.'],
     ['Hits share a rolling ', 'Los impactos comparten una ventana móvil de '],
     ['-second total for each target.', ' segundos por objetivo.'],
     ['Below the threshold, damage is unchanged.', 'Por debajo del umbral, el daño no cambia.'],
-    ['Above it: threshold + tail × ln(1 + (raw damage − threshold) / tail).',
-      'Por encima: umbral + cola × ln(1 + (daño bruto − umbral) / cola).'],
-    ['Each hit deals the increase in that total.',
-      'Cada impacto inflige el incremento correspondiente de ese total.'],
-    ['During an opening, both figures are multiplied by ',
-      'Durante una oportunidad, ambas cifras se multiplican por '],
-    ['Ordinary creatures, guardians and ringleaders can seek help below ',
-      'Criaturas comunes, guardianes y cabecillas pueden solicitar ayuda por debajo de '],
+    [
+      'Above it: threshold + tail × ln(1 + (raw damage − threshold) / tail).',
+      'Por encima: umbral + cola × ln(1 + (daño bruto − umbral) / cola).',
+    ],
+    [
+      'Each hit deals the increase in that total.',
+      'Cada impacto inflige el incremento correspondiente de ese total.',
+    ],
+    [
+      'During an opening, both figures are multiplied by ',
+      'Durante una oportunidad, ambas cifras se multiplican por ',
+    ],
+    [
+      'Ordinary creatures, guardians and ringleaders can seek help below ',
+      'Criaturas comunes, guardianes y cabecillas pueden solicitar ayuda por debajo de ',
+    ],
     ['A retreat seeks reachable allies within ', 'Una retirada busca aliados alcanzables en '],
-    ['Continued pursuit can lead to another local retreat and more allies.',
-      'Perseguirlos puede provocar otra retirada local y atraer más aliados.'],
-    ['The foe takes half damage while preparing to withdraw, withdrawing or making a tactical escape;',
-      'El enemigo recibe la mitad del daño al prepararse para retirarse, retirarse o escapar tácticamente;'],
-    ['that protection ends when it settles or abandons the retreat.',
-      'esa protección termina al detenerse o abandonar la retirada.'],
+    [
+      'Continued pursuit can lead to another local retreat and more allies.',
+      'Perseguirlos puede provocar otra retirada local y atraer más aliados.',
+    ],
+    [
+      'The foe takes half damage while preparing to withdraw, withdrawing or making a tactical escape;',
+      'El enemigo recibe la mitad del daño al prepararse para retirarse, retirarse o escapar tácticamente;',
+    ],
+    [
+      'that protection ends when it settles or abandons the retreat.',
+      'esa protección termina al detenerse o abandonar la retirada.',
+    ],
   ];
   const technicalPhrases = [
     [' · ', ' · '],
     ['Skill ', 'Habilidad '],
     [' questions', ' preguntas'],
-    ['Your ', 'Tu '], ['Normal daytime: Level ', 'Normal de día: nivel '],
-    ['Level ', 'Nivel '], ['Rank ', 'Rango '], [' (not learned)', ' (sin aprender)'],
-    ['HP', 'PV'], [' MP', ' PM'], ['damage', 'daño'], ['maximum health', 'salud máxima'],
-    ['maximum HP', 'PV máximos'], ['max HP', 'PV máximos'],
-    ['base damage', 'daño base'], ['recovery ', 'recuperación '],
+    ['Your ', 'Tu '],
+    ['Normal daytime: Level ', 'Normal de día: nivel '],
+    ['Level ', 'Nivel '],
+    ['Rank ', 'Rango '],
+    [' (not learned)', ' (sin aprender)'],
+    ['HP', 'PV'],
+    [' MP', ' PM'],
+    ['damage', 'daño'],
+    ['maximum health', 'salud máxima'],
+    ['maximum HP', 'PV máximos'],
+    ['max HP', 'PV máximos'],
+    ['base damage', 'daño base'],
+    ['recovery ', 'recuperación '],
     ['Charged recovery:', 'Recuperación cargada:'],
-    ['Charge ', 'Carga '], ['Charged ', 'Cargado '],
-    ['Tap ', 'Toque '], [' seconds', ' segundos'], [' second', ' segundo'],
-    [' paces', ' pasos'], ['radius ', 'radio '], ['reach ', 'alcance '],
-    ['cooldown', 'tiempo de reutilización'], ['warning ', 'advertencia '],
-    ['Summon limit:', 'Límite de invocación:'], [' normal / ', ' normal / '],
-    [' (TRUE ', ' (TRUE '], ['normal speed', 'velocidad normal'],
-    [' below ', ' por debajo de '], [' above ', ' por encima de '],
-    [' allies', ' aliados'], [' enemies', ' enemigos'], ['companion', 'compañero'],
-    ['attack', 'ataque'], ['healing', 'curación'], ['Armor ', 'Armadura '],
-    ['before defenses', 'antes de las defensas'], [' per rank', ' por rango'],
+    ['Charge ', 'Carga '],
+    ['Charged ', 'Cargado '],
+    ['Tap ', 'Toque '],
+    [' seconds', ' segundos'],
+    [' second', ' segundo'],
+    [' paces', ' pasos'],
+    ['radius ', 'radio '],
+    ['reach ', 'alcance '],
+    ['cooldown', 'tiempo de reutilización'],
+    ['warning ', 'advertencia '],
+    ['Summon limit:', 'Límite de invocación:'],
+    [' normal / ', ' normal / '],
+    [' (TRUE ', ' (TRUE '],
+    ['normal speed', 'velocidad normal'],
+    [' below ', ' por debajo de '],
+    [' above ', ' por encima de '],
+    [' allies', ' aliados'],
+    [' enemies', ' enemigos'],
+    ['companion', 'compañero'],
+    ['attack', 'ataque'],
+    ['healing', 'curación'],
+    ['Armor ', 'Armadura '],
+    ['before defenses', 'antes de las defensas'],
+    [' per rank', ' por rango'],
     ['No visited encounter yet.', 'Aún no has visitado este encuentro.'],
-    ['These base figures change with night and TRUE form.',
-      'Estas cifras base cambian de noche y en forma TRUE.'],
+    [
+      'These base figures change with night and TRUE form.',
+      'Estas cifras base cambian de noche y en forma TRUE.',
+    ],
     ['Visited encounters:', 'Encuentros visitados:'],
-    ['Ordinary', 'Común'], ['Guardian', 'Guardián'], ['Ringleader', 'Cabecilla'],
-    ['Captain', 'Capitán'], ['Normal boss', 'Jefe normal'], ['TRUE boss', 'Jefe TRUE'],
-    ['Passive — ', 'Pasiva — '], ['Support — ', 'Apoyo — '],
-    ['Attacks:', 'Ataques:'], ['Attack ', 'Ataque '],
-    ['threshold ', 'umbral '], ['tail ', 'cola '],
-    ['frontal arc', 'arco frontal'], ['circular area', 'área circular'],
-    ['straight lane', 'línea recta'], ['reinforcements', 'refuerzos'],
-    ['projectile volley', 'descarga de proyectiles'], ['expanding ring', 'anillo expansivo'],
+    ['Ordinary', 'Común'],
+    ['Guardian', 'Guardián'],
+    ['Ringleader', 'Cabecilla'],
+    ['Captain', 'Capitán'],
+    ['Normal boss', 'Jefe normal'],
+    ['TRUE boss', 'Jefe TRUE'],
+    ['Passive — ', 'Pasiva — '],
+    ['Support — ', 'Apoyo — '],
+    ['Attacks:', 'Ataques:'],
+    ['Attack ', 'Ataque '],
+    ['threshold ', 'umbral '],
+    ['tail ', 'cola '],
+    ['frontal arc', 'arco frontal'],
+    ['circular area', 'área circular'],
+    ['straight lane', 'línea recta'],
+    ['reinforcements', 'refuerzos'],
+    ['projectile volley', 'descarga de proyectiles'],
+    ['expanding ring', 'anillo expansivo'],
     ['scattered canisters', 'recipientes dispersos'],
-    ['defensive formation', 'formación defensiva'], ['linked charge lanes', 'carriles de carga enlazados'],
-    ['alternating marked ground', 'suelo marcado alternado'], ['sweeping arc', 'arco de barrido'],
-    ['marked area', 'área marcada'], ['slow', 'ralentizar'], ['immunity', 'inmunidad'],
-    ['summons', 'invocaciones'], ['ranged', 'a distancia'], ['melee', 'cuerpo a cuerpo'],
-    ['ordinary', 'común'], ['ringleader', 'cabecilla'], ['captain', 'capitán'],
-    ['guardian', 'guardián'], ['damage ×', 'daño ×'], ['heals ', 'cura '],
-    ['HP or less', 'PV o menos'], ['MP or less', 'PM o menos'],
-    ['over ', 'durante '], ['per living', 'por cada '], ['at your level', 'a tu nivel'],
+    ['defensive formation', 'formación defensiva'],
+    ['linked charge lanes', 'carriles de carga enlazados'],
+    ['alternating marked ground', 'suelo marcado alternado'],
+    ['sweeping arc', 'arco de barrido'],
+    ['marked area', 'área marcada'],
+    ['slow', 'ralentizar'],
+    ['immunity', 'inmunidad'],
+    ['summons', 'invocaciones'],
+    ['ranged', 'a distancia'],
+    ['melee', 'cuerpo a cuerpo'],
+    ['ordinary', 'común'],
+    ['ringleader', 'cabecilla'],
+    ['captain', 'capitán'],
+    ['guardian', 'guardián'],
+    ['damage ×', 'daño ×'],
+    ['heals ', 'cura '],
+    ['HP or less', 'PV o menos'],
+    ['MP or less', 'PM o menos'],
+    ['over ', 'durante '],
+    ['per living', 'por cada '],
+    ['at your level', 'a tu nivel'],
+  ];
+  const archiveTechnicalCopy = [
+    ['Active', 'Activo'],
+    [', self-regeneration ', ', regeneración propia del '],
+    [
+      'Before shields and wards: max(3, incoming damage − armor × 0.35). ',
+      'Antes de escudos y barreras: max(3, daño recibido − armadura × 0.35). ',
+    ],
+    ['% of maximum HP; tail ', '% de los PV máximos; cola '],
+    [
+      'Charged Cataclysm gives a stronger but shorter burst window than the longer Skill 4 vulnerability.',
+      'Cataclismo cargado ofrece una oportunidad más intensa pero más breve que la vulnerabilidad prolongada de la habilidad 4.',
+    ],
+    ['% HP. A foe at least ', '% de PV. Un enemigo al menos '],
+    [
+      ' level below you can react to that disadvantage; otherwise ',
+      ' nivel por debajo de ti puede reaccionar a esa desventaja; de lo contrario, ',
+    ],
+    [
+      ' living attackers must focus it. Nearby companions do not count unless they are actually attacking that foe. Enemies ',
+      ' atacantes vivos deben concentrarse en él. Los compañeros cercanos solo cuentan si realmente atacan a ese enemigo. Los enemigos ',
+    ],
+    [
+      ' or more levels above you do not use rogue tactics.',
+      ' o más niveles por encima de ti no usan tácticas de pícaro.',
+    ],
+    [
+      'At your level, summoning bosses and captains need at most ',
+      'A tu nivel, los jefes y capitanes invocadores necesitan como máximo ',
+    ],
+    [
+      ' living summoned ally, with the next summoning not yet ready.',
+      ' aliado invocado vivo, con la siguiente invocación aún en recuperación.',
+    ],
+    [
+      ' and Dreadmaw can also act cunningly under that same summon condition.',
+      ' y Dreadmaw también pueden actuar con astucia bajo esa misma condición de invocación.',
+    ],
+    [' paces; one ally is enough.', ' pasos; basta con un aliado.'],
+    [
+      'Ringleaders, captains and bosses have distinct basic maneuvers and stronger situational tricks. Watch the cast progress while they move: these are choices, not an automatic pair of attacks. Some commanders rally living troops or refill nearby defeated guard posts; their usual summoned creatures remain separate.',
+      'Cabecillas, capitanes y jefes tienen maniobras básicas propias y recursos situacionales más potentes. Observa la preparación mientras se mueven: son decisiones, no una pareja automática de ataques. Algunos mandos reúnen tropas vivas o reponen puestos cercanos de guardias derrotados; sus criaturas invocadas habituales siguen siendo independientes.',
+    ],
+    ['Power Strike grants a self-only ', 'Golpe de Poder concede solo al soldado una barrera del '],
+    ['% ward for ', '% durante '],
+    [
+      ' seconds; it never stacks with a stronger Paladin ward. Soldier emergency immunity remains 2.5 seconds below half health, with 14-second recovery. A Ranger may launch its ready Triple Shot before falling back from an enemy within ',
+      ' segundos; nunca se acumula con una barrera más fuerte de paladín. La inmunidad de emergencia del soldado sigue durando 2.5 segundos por debajo de la mitad de salud, con 14 segundos de recuperación. Un explorador puede usar Disparo Triple si está listo antes de retirarse de un enemigo situado a menos de ',
+    ],
+    [' units; only the first arrow applies ', ' unidades; solo la primera flecha aplica '],
+    [
+      ' second of Slow on a real hit. Normal cooldown, Silence, line of sight and terrain still apply. Ranger care and charged second attacks have their own recovery and interruption rules.',
+      ' segundo de Ralentización al impactar. Siguen vigentes la reutilización normal, Silencio, línea de visión y terreno. Los cuidados del explorador y los segundos ataques cargados tienen reglas propias de recuperación e interrupción.',
+    ],
+    [
+      'Recruitment is free, with one individual per boss. Resting and fallen pets remain in your company, retaining their health. Treat or recover them with the normal Barracks services; recruiting the same pet again cannot replace treatment. Pets inherit hero-level health, Companion Vitality and Expedition bonuses like troops. Ranged pets keep their distance when space permits and can attack while repositioning. Attacks need a clear line. Their first skill needs no further lessons. Learning your second hero skill from Mira in Millhaven also unlocks their charged second skill. Charge preparation, interruption, Slow and Silence affect them as they affect other companions. Pets share your company’s field limit.',
+      'El reclutamiento es gratuito, con un individuo por jefe. Las mascotas en descanso o caídas siguen en tu compañía y conservan su salud. Trátalas o recupéralas mediante los servicios normales del cuartel; volver a reclutar la misma mascota no sustituye el tratamiento. Heredan salud según el nivel del héroe, Vitalidad de Compañeros y bonificaciones de Expedición, como las tropas. Las mascotas a distancia se separan del enemigo cuando hay espacio y pueden atacar mientras se recolocan. Sus ataques requieren una línea despejada. La primera habilidad no necesita más lecciones. Aprender tu segunda habilidad con Mira en Millhaven también desbloquea su segunda habilidad cargada. Preparación, interrupción, Ralentización y Silencio les afectan como a los demás compañeros. Comparten el límite de integrantes en el campo de tu compañía.',
+    ],
+    ['A miniature companion inspired by ', 'Un compañero en miniatura inspirado en '],
+    ['Shared Training', 'Entrenamiento compartido'],
+    ['Shared Strength', 'Fuerza compartida'],
+    [' passes ', ' transmite un '],
+    ['% of those bonuses.', '% de esas bonificaciones.'],
+    ['Companion Vitality adds ', 'Vitalidad de Compañeros añade un '],
+    ['% of base companion HP per rank.', '% de los PV básicos del compañero por rango.'],
+    ['Healing begins at ', 'La curación comienza al '],
+    ['% HP or less. Heal Rank ', '% de PV o menos. Rango de curación '],
+    [' seconds per Ranger.', ' segundos por explorador.'],
+    ['Mana recovery begins at ', 'La recuperación de maná comienza al '],
+    ['% MP or less. Rank ', '% de PM o menos. Rango '],
+    [' HP over ', ' PV durante '],
+    [' MP over ', ' PM durante '],
+    ['; cost ', '; coste '],
+    [' MP, rounded up', ' PM, redondeado hacia arriba'],
+    ['Combo expires after ', 'El combo caduca tras '],
+    [' seconds. Charged damage: ×', ' segundos. Daño cargado: ×'],
+    [' Slow lasts ', ' La Ralentización dura '],
+    ['Sword Combo', 'Combo de Espada'],
+    ['Sundering Strike', 'Golpe Hendidor'],
+    ['Shield Stance / Shield Bash', 'Postura de Escudo / Golpe de Escudo'],
+    ['Judgment', 'Juicio'],
+    ['Holy Area / Consecrated Wave', 'Área Sagrada / Ola Consagrada'],
+    ['Vanguard Rush', 'Avance de Vanguardia'],
+    ['Holy Assault / Oath Strike', 'Asalto Sagrado / Golpe del Juramento'],
+    ['Sanctuary Oath / Last Bastion', 'Juramento del Santuario / Último Bastión'],
+    ['Arcane Combo', 'Combo Arcano'],
+    ['Frost Bolt', 'Proyectil de Escarcha'],
+    ['Spell Interrupt / Silence Field', 'Interrupción de Hechizo / Campo de Silencio'],
+    ['Arcane Fracture', 'Fractura Arcana'],
+    ['Force Pulse / Force Wave', 'Pulso de Fuerza / Ola de Fuerza'],
+    ['Magic Shot', 'Disparo Mágico'],
+    ['Arcane Chain / Chainstorm', 'Cadena Arcana / Tormenta de Cadenas'],
+    ['Astral Detonation / Arcane Cataclysm', 'Detonación Astral / Cataclismo Arcano'],
+    ['Bow Combo', 'Combo de Arco'],
+    ['Pinning Shot', 'Disparo Inmovilizador'],
+    ['Self-Heal / Party Heal', 'Curación Propia / Curación de Grupo'],
+    ['Movement Haste / Rally', 'Celeridad de Movimiento / Arenga'],
+    ['Arrow Volley / Arrow Rain', 'Descarga de Flechas / Lluvia de Flechas'],
+    ['Repelling Shot / Volley', 'Disparo Repulsivo / Descarga'],
+    ['Piercing Arrow', 'Flecha Perforante'],
+    ['Hunter’s Salvo / Grand Hunt', 'Salva del Cazador / Gran Cacería'],
+    ['Rapid Deployment: Wolves move +', 'Despliegue Rápido: los lobos se mueven un +'],
+    ['Structural Consolidation: reduction ', 'Consolidación Estructural: reducción del '],
+    ['Groundwater Recharge: heals ', 'Recarga Subterránea: cura un '],
+    [' max HP/s on own live mud', ' de los PV máximos/s sobre su propio lodo activo'],
+    [
+      'Emergency Stabilization: once below half HP, mitigation ',
+      'Estabilización de Emergencia: al bajar por primera vez de la mitad de PV, mitigación del ',
+    ],
+    ['Contractual Protection: base mitigation ', 'Protección Contractual: mitigación básica del '],
+    [
+      ' per living Archer under his command, max three',
+      ' por arquero vivo bajo su mando, máximo tres',
+    ],
+    [' each).', ' cada uno).'],
+    [
+      'Self-Assembly: core-closed mitigation ',
+      'Autoensamblaje: mitigación con el núcleo cerrado del ',
+    ],
+    ['); core relock heals ', '); volver a cerrar el núcleo cura un '],
+    [' max HP (TRUE ', ' de los PV máximos (TRUE '],
+    ['Chain of Command: base mitigation ', 'Cadena de Mando: mitigación básica del '],
+    [
+      ' per nearby Orc under his command; those Orcs deal +',
+      ' por orco cercano bajo su mando; esos orcos causan un +',
+    ],
+    [' per Orc, +', ' por orco, +'],
+    [' Orc damage).', ' de daño de orco).'],
+    ['Aerial Superiority: base mitigation ', 'Superioridad Aérea: mitigación básica del '],
+    ['; after completed offensive flight ', '; tras completar un vuelo ofensivo, '],
+    ['Regimental Cohesion: base mitigation ', 'Cohesión del Regimiento: mitigación básica del '],
+    ['; with active guarded Dress Ranks ', '; con formación protegida activa de Dress Ranks, '],
+    ['Emergency Provisioning: below ', 'Aprovisionamiento de Emergencia: por debajo de '],
+    [' HP, self-regeneration ', ' PV, regeneración propia del '],
+    [' max HP/s alone or ', ' de los PV máximos/s en solitario o '],
+    ['/s near Ash beasts, total cap ', '/s cerca de bestias de ceniza, límite total del '],
+    ['/s, cap ', '/s, límite del '],
+    ['); heals injured nearby Ash beasts.', '); cura a bestias de ceniza heridas cercanas.'],
+    ["Veteran's Instinct: ", 'Instinto de Veterano: '],
+    [' damaging hits within ', ' impactos dañinos en '],
+    ['s grant ', ' s conceden una mitigación del '],
+    [' mitigation for ', ' durante '],
+    [' for ', ' durante '],
+    ['); cooldown ', '); reutilización de '],
+    ['s cooldown.', ' s de reutilización.'],
+    ['Prolonged Exposure: regular Slow +', 'Exposición Prolongada: Ralentización regular +'],
+    [', phase +', ', en fase +'],
+    ['Strain Hardening: ', 'Endurecimiento por Esfuerzo: '],
+    [' mitigation per damaging hit, up to ', ' de mitigación por impacto dañino, hasta '],
+    [', refreshed for ', ', renovada durante '],
+    ['Hazard Pay: ', 'Pago por Riesgo: '],
+    [' base protection plus ', ' de protección básica más '],
+    [
+      ' with living nearby Treasury guards; guards deal +',
+      ' con guardias del Tesoro vivos cercanos; los guardias causan un +',
+    ],
+    ['Escalating Enforcement: ', 'Imposición Creciente: '],
+    [' mitigation per real hit, max ', ' de mitigación por impacto real, máximo '],
+    ['; full stacks deal +', '; con todas las acumulaciones causa un +'],
+    ['Broodward: ', 'Protección de la Prole: '],
+    [' protection per living broodling, max ', ' de protección por cría viva, máximo '],
+    [' — calls drowned echoes', ' — invoca ecos ahogados'],
+    [' — calls wolves', ' — invoca lobos'],
+    [' — calls mirelings', ' — invoca criaturas del lodazal'],
+    [' — calls Wraiths', ' — invoca espectros'],
+    [' — calls archers', ' — invoca arqueros'],
+    [' — calls Crown soldiers', ' — invoca soldados de la Corona'],
+    [' — calls Ogre wardens', ' — invoca guardianes ogros'],
+    [' — calls Orc guards', ' — invoca guardias orcos'],
+    [' — calls Ash beasts', ' — invoca bestias de ceniza'],
+    [' — calls reinforcements', ' — llama refuerzos'],
+    [' — leaves danger on the ground', ' — deja un peligro en el suelo'],
+    [' — slows its victims', ' — ralentiza a sus víctimas'],
+    [': gradual healing of injured living allies.', ': curación gradual de aliados vivos heridos.'],
+    ['; draws back ', '; recupera un '],
+    ['% of HP actually taken', '% de los PV realmente arrebatados'],
+    ['; drains ', '; drena un '],
+    ['% of the hero’s maximum mana', '% del maná máximo del héroe'],
+    ['s; restores ', ' s; restaura un '],
+    [
+      '% of maximum HP, up to missing health; recovery ',
+      '% de los PV máximos, hasta la salud que falta; reutilización de ',
+    ],
+    ['TRUE', 'TRUE'],
+    ['normal', 'normal'],
+    ['paladin', 'paladín'],
+    ['mage', 'mago'],
+    ['ranger', 'explorador'],
+    ['Recruitable', 'Disponible para reclutar'],
+    ['With you', 'Contigo'],
+    ['Resting', 'En descanso'],
+    ['Fallen', 'Caído'],
+    ['single target', 'objetivo único'],
+    ['circle', 'círculo'],
+    ['cone', 'cono'],
+    ['line', 'línea'],
+    [' reach', ' de alcance'],
+    ['× companion attack', '× ataque de compañero'],
+    ['% damage against targets at or below ', '% de daño contra objetivos al '],
+    ['% HP', '% de PV'],
+    [' · up to ', ' · hasta '],
+    [' target(s)', ' objetivos'],
+    ['s recovery', ' s de recuperación'],
+    [' · Slow ', ' · Ralentización '],
+    [' · self-heal ', ' · curación propia del '],
+    [' · self-ward ', ' · barrera propia del '],
+    [' · heals one wounded ally within ', ' · cura a un aliado herido a menos de '],
+    [
+      '% of the pet’s maximum HP; clear line required',
+      '% de los PV máximos de la mascota; requiere una línea despejada',
+    ],
+    ['-radius splash around the aimed enemy', ' de radio de área alrededor del enemigo elegido'],
+    [
+      '° fan from the pet toward the aimed enemy',
+      '° de abanico desde la mascota hacia el enemigo elegido',
+    ],
+    [
+      '-wide strip from the pet through the aimed enemy',
+      ' de ancho de franja desde la mascota a través del enemigo elegido',
+    ],
+    [' · hits the aimed enemy only', ' · solo golpea al enemigo elegido'],
+    [
+      ' · dodgeable shot; effects require contact',
+      ' · disparo esquivable; los efectos requieren contacto',
+    ],
+    [
+      ' · clear line required; aim stays locked during the second skill’s 0.65s interruptible hold',
+      ' · requiere una línea despejada; la puntería queda fijada durante los 0.65 s de preparación interrumpible de la segunda habilidad',
+    ],
+    ['Visited chamber', 'Sala visitada'],
+    ['XP', 'XP'],
+    [
+      "Cindermaw's devoted disciple administers crops, livestock, meat, dairy, poultry, fisheries and their distribution across all five Crown provinces. He co-manages the whole Treasury with the Interior ministry and guards its Inner Vault. Ridge Tyrant oversees coin and accounts. I keep the records. The Lantern Wraiths have grown fond of Dreadmaw, and he returns their affection.",
+      'El devoto discípulo de Cindermaw administra los cultivos, el ganado, la carne, los lácteos, las aves de corral, la pesca y su distribución en las cinco provincias de la Corona. Comparte la gestión de todo el Tesoro con el ministerio del Interior y protege su Cámara Interior. Ridge Tyrant supervisa las monedas y las cuentas. Yo conservo los registros. Los Lantern Wraiths le han tomado cariño a Dreadmaw, y él les corresponde.',
+    ],
+    [
+      "Scornfang is Thornfang's Goblin disciple and Greenwood's Superintendent of Reclamation. He oversees decommissioning, remediation, salvage and relocation for the estate works. His authority belongs to that local office. The materials he recovers find their way into the estate's construction accounts.",
+      'Scornfang es el discípulo goblin de Thornfang y el superintendente de Recuperación de Greenwood. Supervisa el desmantelamiento, la restauración del terreno, el rescate de materiales y los traslados para las obras de la residencia. Su autoridad pertenece a ese cargo local. Los materiales recuperados figuran en las cuentas de construcción de la residencia.',
+    ],
+    [
+      "Crag Tyrant is a horned humanoid mountain tyrant like his mentor, Ridge Tyrant. He guards the Treasury household, paid accounts, coin stores and its three separate caches. Crown riders on armored direwolves form his household security, with bunks, wolf bedding and saddle racks in their shared quarters. Wild Highland wolves keep their own dens. Crag regards steady wages and guarded shipments as sufficient reason for strict control. He answers to the Master of Coin; the mint and the province's government lie beyond his household duties.",
+      'Crag Tyrant es un tirano montañés humanoide con cuernos, como su mentor, Ridge Tyrant. Protege a los residentes del Tesoro, las cuentas pagadas, las reservas de monedas y sus tres depósitos separados. Jinetes de la Corona sobre lobos gigantes acorazados forman su guardia, con literas, lechos para lobos y soportes de monturas en los alojamientos compartidos. Los lobos salvajes de las Highlands mantienen sus propias guaridas. Crag considera los salarios estables y los cargamentos protegidos razones suficientes para imponer un control estricto. Responde ante el Maestro de la Moneda; la ceca y el gobierno provincial quedan fuera de sus funciones domésticas.',
+    ],
+    [
+      "Cinder Warlord inspects the Frontier on the Ashen Warlord's behalf. He visits roads, work details and occupied settlements, enforcing orders while markets and repair crews continue their work. His Mandatory Overtime can press up to seven nearby workers into a fight. Without workers present, there is no one for him to order forward.",
+      'Cinder Warlord inspecciona la Frontier en nombre de Ashen Warlord. Recorre caminos, grupos de trabajo y asentamientos ocupados, imponiendo órdenes mientras mercados y cuadrillas de reparación siguen trabajando. Mandatory Overtime puede obligar a hasta siete trabajadores cercanos a combatir. Sin trabajadores presentes, no tiene a quién ordenar avanzar.',
+    ],
   ];
   function translateArchiveLabel(value) {
     if (typeof value !== 'string') return value;
     return Object.prototype.hasOwnProperty.call(spanishReference, value)
-      ? spanishReference[value] : value;
+      ? spanishReference[value]
+      : value;
   }
-  function translateArchive(value) {
+  // Match source text once. Never feed Spanish output back through an English
+  // glossary, or partially translate an English sentence before matching it.
+  let archiveTranslation;
+  let namedTranslation;
+  function namedCatalog(names) {
+    const base = translationCatalog();
+    if (!names.length) return base;
+    const key = [...new Set(names)].filter(Boolean).sort().join('\0');
+    if (namedTranslation?.key === key) return namedTranslation;
+    const entries = new Map(base.entries);
+    for (const name of key.split('\0')) entries.set(name, name);
+    namedTranslation = { key, entries, pattern: translationPattern(entries) };
+    return namedTranslation;
+  }
+  function translationPattern(entries) {
+    const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const keys = [...entries.keys()].sort((a, b) => b.length - a.length);
+    return new RegExp(
+      keys
+        .map(
+          (key) =>
+            (/^[A-Za-z]/.test(key) ? '(?<![A-Za-zÁ-ÿ])' : '') +
+            escape(key) +
+            (/[A-Za-z]$/.test(key) ? '(?![A-Za-zÁ-ÿ])' : ''),
+        )
+        .join('|'),
+      'g',
+    );
+  }
+  // Proper names are source identities, not technical sentence fragments.
+  function translationNames(game, { D, R }) {
+    return [
+      ...D.bosses.flatMap((b) => [b.name, b.place, ...b.attacks.map((a) => a.split(':')[0])]),
+      ...D.regions.map((r) => r.name),
+      ...Object.values(R.petCompanions).flatMap((p) => [p.name, p.first.name, p.second.name]),
+      ...Object.values(R.bossRecovery)
+        .map((p) => p.name)
+        .filter(Boolean),
+      ...['species', 'captains', 'bosses'].flatMap((key) =>
+        Object.values(R.enemySupportHealing[key]),
+      ),
+      ...Object.entries(game.s.zones)
+        .flatMap(([id, z]) => [
+          game.supplyRoom?.(id)?.name,
+          game.sideDungeon?.(id)?.name,
+          ...z.enemies.map((e) => e.name),
+        ])
+        .filter(Boolean),
+    ];
+  }
+  function translationCatalog() {
+    if (archiveTranslation) return archiveTranslation;
+    const approved = (
+      typeof PrototypeNarration !== 'undefined' ? PrototypeNarration : require('./narration.js')
+    ).approved;
+    const entries = new Map([
+      ...technicalPhrases,
+      ...technicalClauses,
+      ...Object.entries(spanishReference),
+      ...Object.entries(spanishSkillSummaries),
+      ...archiveTechnicalCopy,
+    ]);
+    for (const pair of Object.values(approved)) {
+      entries.set(pair.en, pair.es);
+      entries.set(pair.es, pair.es);
+    }
+    archiveTranslation = { entries, pattern: translationPattern(entries) };
+    return archiveTranslation;
+  }
+  function translateArchive(value, names = []) {
     if (typeof value !== 'string') return value;
-    if (Object.prototype.hasOwnProperty.call(spanishReference, value))
-      return spanishReference[value];
-    if (Object.prototype.hasOwnProperty.call(spanishSkillSummaries, value))
-      return spanishSkillSummaries[value];
-    let result = value;
-    // The approved author translations must remain byte-for-byte unchanged,
-    // including named people, punctuation and paragraph breaks.
-    const approved =
-      (typeof PrototypeNarration !== 'undefined'
-        ? PrototypeNarration : require('./narration.js')).approved;
-    const protectedText = [];
-    for (const pair of Object.values(approved).sort((a, b) => b.es.length - a.es.length)) {
-      if (!pair.es || !result.includes(pair.es)) continue;
-      const marker = '\\uE000' + protectedText.length + '\\uE001';
-      result = result.replaceAll(pair.es, marker);
-      protectedText.push(pair.es);
-    }
-    // Whole technical paragraphs are translated before any numerical labels.
-    for (const [english, spanish] of Object.entries(spanishSkillSummaries))
-      if (result.includes(english)) result = result.replaceAll(english, spanish);
-    for (const [english, spanish] of Object.entries(spanishReference)) {
-      if (english.length > 55 && result.includes(english))
-        result = result.replaceAll(english, spanish);
-    }
-    for (const [english, spanish] of technicalClauses)
-      if (result.includes(english)) result = result.replaceAll(english, spanish);
-    for (const [english, spanish] of technicalPhrases)
-      if (english !== spanish) result = result.replaceAll(english, spanish);
-    for (let i = 0; i < protectedText.length; i++)
-      result = result.replaceAll('\\uE000' + i + '\\uE001', protectedText[i]);
-    return result;
+    const { entries, pattern } = namedCatalog(names);
+    return value.replace(pattern, (source) => entries.get(source));
   }
-  const api = { sections, conditionTopics, translateArchive, translateArchiveLabel };
+  const api = {
+    translationNames,
+    sections,
+    conditionTopics,
+    translateArchive,
+    translateArchiveLabel,
+  };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeArchive = api;
 })(typeof window !== 'undefined' ? window : globalThis);

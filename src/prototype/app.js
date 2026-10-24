@@ -2198,14 +2198,20 @@
     return { label, action: fn, detail, disabled, tutorialHighlight };
   }
   function translateMenu(value) {
-    if (language === 'es' && menu?.view?.startsWith('archive-') &&
-        typeof PrototypeArchive !== 'undefined') {
+    if (
+      language === 'es' &&
+      menu?.view?.startsWith('archive-') &&
+      typeof PrototypeArchive !== 'undefined'
+    ) {
       // Exact UI labels must be resolved before the generic translator turns
       // "Return to the answer" into a partly translated "Regresar a ..." label.
       // Author-final prose deliberately bypasses this exact-UI-only lookup.
       const label = PrototypeArchive.translateArchiveLabel(value);
       if (label !== value) return label;
-      return PrototypeArchive.translateArchive(tr(value));
+      return PrototypeArchive.translateArchive(
+        value,
+        PrototypeArchive.translationNames(game, { D, R: Campaign.rules }),
+      );
     }
     return tr(value);
   }
@@ -2250,10 +2256,16 @@
     // A4: make a long answer separately reachable for keyboard and assistive
     // technology without changing its full author-approved text or scroll.
     descriptionHost.tabIndex = archiveReading ? 0 : -1;
-    descriptionHost.setAttribute('role', archiveReading ? 'document' : 'presentation');
+    if (archiveReading) descriptionHost.setAttribute('role', 'document');
+    else {
+      descriptionHost.removeAttribute('role');
+      descriptionHost.removeAttribute('aria-label');
+    }
     if (archiveReading)
-      descriptionHost.setAttribute('aria-label',
-        language === 'es' ? 'Lectura del Archivo' : 'Archive reading');
+      descriptionHost.setAttribute(
+        'aria-label',
+        language === 'es' ? 'Lectura del Archivo' : 'Archive reading',
+      );
     descriptionHost.classList.toggle('skill-reference', structured);
     descriptionHost.textContent = translateMenu(structured ? description.summary || '' : description);
     if (structured) {
@@ -4839,6 +4851,25 @@
       menu.back();
       return;
     }
+    // Reading text owns its native scrolling keys. Tab/Escape still use the
+    // dialog route; Enter must never activate an action behind focused prose.
+    if (
+      menu?.view === 'archive-reading' &&
+      document.activeElement === $('modal-description') &&
+      [
+        'ArrowUp',
+        'ArrowDown',
+        'ArrowLeft',
+        'ArrowRight',
+        'PageUp',
+        'PageDown',
+        'Home',
+        'End',
+        'Space',
+        'Enter',
+      ].includes(code)
+    )
+      return;
     const actionId = input.actionFor(code);
     if (actionId || code === 'Escape' || (menu && ['Enter', 'Space'].includes(code)))
       e.preventDefault();
