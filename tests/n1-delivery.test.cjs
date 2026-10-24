@@ -67,6 +67,9 @@ for (const id of Campaign.dungeonIds) {
   end.s.normal[id] = true;
   end.s.true[id] = true;
 }
+// Artificially credited victories imply Thornfang's deferred opening encounter
+// has already resolved; a real victory clears that captive actor.
+delete end.s.zones.vale.thornArrival;
 end.checkEnding();
 assert(!end.peace, 'Old TRUE results never skip the actual coronation');
 for (const enemy of end.zone().enemies)
@@ -112,6 +115,7 @@ earned.s.discovered['vale:goblin-camp'] = true;
 earned.s.normal.darklord = earned.s.true.darklord = true;
 for (const id of Campaign.dungeonIds)
   earned.s.normal[id] = earned.s.true[id] = true;
+delete earned.s.zones.vale.thornArrival;
 earned.s.throneClaimed = true;
 earned.s.phase = 'awakening';
 earned.checkEnding();
