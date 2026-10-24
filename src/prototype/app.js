@@ -1068,10 +1068,15 @@
     'Close without resting.': 'Cerrar sin descansar.',
   });
   // N1: Only the author's approved bilingual Chronicle pairs may supply this copy.
+  const approvedNarrative =
+    typeof PrototypeNarration !== 'undefined' ? PrototypeNarration.approved : null;
   const chronicleTranslations = new Map(
     (typeof PrototypeNarration !== 'undefined' ? PrototypeNarration : [])
       .filter((entry) => entry && entry.es)
       .map((entry) => [entry.text, entry.es]),
+  );
+  const narrativeTranslations = new Map(
+    Object.values(approvedNarrative || {}).map((pair) => [pair.en, pair.es]),
   );
   function translateSegment(piece) {
     if (chronicleTranslations.has(piece)) return chronicleTranslations.get(piece);
@@ -1212,6 +1217,13 @@
     if (language !== 'es' || typeof value !== 'string') return value;
     if (Object.prototype.hasOwnProperty.call(spanishText, value)) return spanishText[value];
     if (chronicleTranslations.has(value)) return chronicleTranslations.get(value);
+    if (narrativeTranslations.has(value)) return narrativeTranslations.get(value);
+    // Archive answers can append live, rule-derived figures to an approved
+    // historical passage. Replace ONLY the exact authored substring.
+    let localized = value;
+    for (const [en, es] of narrativeTranslations)
+      if (localized.includes(en)) localized = localized.replace(en, es);
+    if (localized !== value) return localized;
     return value
       .split('\n')
       .map((line) => line.split(' · ').map(translateSegment).join(' · '))
