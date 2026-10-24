@@ -554,7 +554,12 @@ body[data-experience='phone'] #modal[data-view='map'] {
   max-height: min(82dvh, 650px);
 }
 body[data-experience='phone'] #modal[data-view='map'] #modal-description canvas {
-  max-height: 150px;
+  /* Keep the real 480:320 canvas ratio when fitting portrait phone space.
+     A height-only clamp creates letterboxing and incorrect marker hit zones. */
+  width: min(100%, 270px);
+  height: auto;
+  max-height: 180px;
+  margin-inline: auto;
 }
 @media (max-height: 500px) and (min-width: 480px) {
   body[data-experience='phone'] #modal {
