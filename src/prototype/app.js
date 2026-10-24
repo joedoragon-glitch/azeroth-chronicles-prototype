@@ -3753,14 +3753,14 @@
     };
     map.onpointercancel = () => { touchMapContact = false; };
     map.onclick = (event) => {
+      const touch = touchMapContact ||
+        event.pointerType === 'touch' || event.pointerType === 'pen';
+      touchMapContact = false;
       const rect = map.getBoundingClientRect();
       if (!rect.width || !rect.height || !Number.isFinite(event.clientX) ||
           !Number.isFinite(event.clientY)) return;
       const x = event.clientX - rect.left, y = event.clientY - rect.top;
       if (x < 0 || y < 0 || x > rect.width || y > rect.height) return;
-      const touch = touchMapContact ||
-        event.pointerType === 'touch' || event.pointerType === 'pen';
-      touchMapContact = false;
       const radius = touch ? 22 : 12;
       const nearby = destinations
         .map((place) => ({
