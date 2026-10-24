@@ -313,7 +313,7 @@
         )
           throw Error('Invalid Ranger support training');
         const finite = (v, min, max) => {
-          if (!Number.isFinite(v) || v < min || v > max) throw Error('Invalid save number: ' + String(v) + ' expected ' + min + '..' + max);
+          if (!Number.isFinite(v) || v < min || v > max) throw Error('Invalid save number');
         };
         if (s.treasuryRecovery === undefined) s.treasuryRecovery = {};
         if (
