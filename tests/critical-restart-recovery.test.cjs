@@ -117,4 +117,56 @@ function fixture(succession = false) {
   assert.equal(latest.hero.hp, g.hero.hp);
   assert.equal(latest.statistics.deaths, 0);
 }
+// Severe freezes unrelated to combat still need an eventual last-resort
+// fallback. With no engaged enemy, do not fabricate an encounter reset.
+{
+  const { g } = fixture();
+  g.zone().enemies = [];
+  const saved = new Map([[Persistence.saveKey('normal'), JSON.stringify(g.snapshot())]]);
+  const app = shell('en', 'paladin', { storage: saved });
+  const running = app.scope.Prototype.game;
+  running.zone().enemies = [];
+  let attempts = 0, relocations = 0;
+  const reset = running.emergencyResetEncounter.bind(running),
+    returnSafe = running.emergencyReturnToSafety.bind(running);
+  running.emergencyResetEncounter = () => { attempts++; return reset(); };
+  running.emergencyReturnToSafety = () => { relocations++; return returnSafe(); };
+  app.frame(0);
+  app.frame(700);
+  for (let now = 900; now <= 17000; now += 200) app.frame(now);
+  assert.equal(attempts, 1, 'One reset attempt, with no hostile targets');
+  assert.equal(relocations, 1, 'Unresolved rendering-only stall reaches safe arrival');
+  assert.equal(running.s.statistics.deaths, 0);
+  assert.equal(running.hero.hp, g.hero.hp);
+  assert.equal(running.hero.gold, g.hero.gold);
+}
+// Paused/menu time must not advance a still-pending emergency escalation.
+// Resuming requires a new full interval of measured critical trouble.
+{
+  const { g } = fixture();
+  const saved = new Map([[Persistence.saveKey('normal'), JSON.stringify(g.snapshot())]]);
+  const app = shell('en', 'paladin', { storage: saved });
+  const running = app.scope.Prototype.game;
+  const enemy = running.zone().enemies.find(e => e.hp > 0 && !e.neutral);
+  assert(enemy);
+  enemy.aggro = true;
+  let resetCalls = 0, relocations = 0;
+  const originalReset = running.emergencyResetEncounter.bind(running),
+    originalReturn = running.emergencyReturnToSafety.bind(running);
+  running.emergencyResetEncounter = () => { resetCalls++; return originalReset(); };
+  running.emergencyReturnToSafety = () => { relocations++; return originalReturn(); };
+  app.frame(0);
+  app.frame(700);
+  for (let now = 900; now <= 6300; now += 200) app.frame(now);
+  assert.equal(resetCalls, 1, 'First sustained episode already reset the encounter');
+  app.elements.get('menu-button').click();
+  app.frame(30000);
+  assert.equal(relocations, 0, 'Time spent in menu is not an active freeze');
+  app.elements.get('close-button').click();
+  app.frame(30016);
+  app.frame(30216);
+  app.frame(30416);
+  assert.equal(relocations, 0, 'A fresh brief stall after a menu does not teleport the party');
+  assert.equal(running.s.statistics.deaths, 0);
+}
 console.log('PASS critical escalation: no combat death, no HP loss, enemy reset, physical retreat and persistent-failure refuge fallback');
