@@ -48,6 +48,16 @@
   } catch (_) {}
   document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
   const spanishText = {
+    'Saved run could not be opened': 'No se pudo abrir la partida guardada',
+    'Your original save is protected. Import a backup or export the original before starting a new run.':
+      'Tu partida original está protegida. Importa una copia de seguridad o exporta el original antes de empezar una partida nueva.',
+    'Export original save': 'Exportar partida original',
+    'Saved game is protected': 'La partida guardada está protegida',
+    'Open the game in an updated browser to continue safely. You can still export this run.':
+      'Abre el juego en un navegador actualizado para continuar de forma segura. Aún puedes exportar esta partida.',
+    'Another window may have newer progress. Close the other game window, then reload here to continue. Export this run first to keep its unsaved progress.':
+      'Otra ventana puede tener avances más recientes. Cierra la otra ventana del juego y recarga esta para continuar. Exporta primero esta partida para conservar sus avances sin guardar.',
+    'Reload this window': 'Recargar esta ventana',
     'Crystal Deposit': 'Yacimiento de Cristales',
     'Veyra’s private quarters': 'Aposentos privados de Veyra',
     'Purchased preserves': 'Conservas compradas',
@@ -1285,14 +1295,28 @@
     updateHUD();
   }
 
-  const persistence = PrototypePersistence.create({ storage: localStorage, Campaign, status });
-  const restartGuard = PrototypePersistence.createRestartGuard({ storage: localStorage, Campaign });
+  const writerGuard = PrototypePersistence.createWriterGuard({
+    locks: navigator.locks,
+    required: location.protocol === 'https:',
+  });
+  const persistence = PrototypePersistence.create({
+    storage: localStorage,
+    Campaign,
+    status,
+    canWrite: writerGuard.canWrite,
+  });
+  const restartGuard = PrototypePersistence.createRestartGuard({
+    storage: localStorage,
+    Campaign,
+    canWrite: writerGuard.canWrite,
+  });
   let profile = {
       nightmareUnlocked: false,
       activeMode: 'normal',
       audio: { ...PrototypeAudio.defaults },
     },
     game,
+    started = false,
     menu = null,
     menuIndex = 0,
     buttons = [],
@@ -1481,7 +1505,7 @@
     return persistence.saveProfile(profile);
   }
   function save() {
-    return persistence.save(game, profile);
+    return started && persistence.save(game, profile);
   }
   function load(mode) {
     const restored = persistence.load(mode);
@@ -1492,16 +1516,24 @@
   let recoveredOnStartup = false;
   let loaded = (developerEnabled && load('developer')) || load(profile.activeMode);
   if (!loaded) {
-    game = persistence.migrateLegacy();
+    game =
+      persistence.loadFailed(profile.activeMode) ||
+      persistence.exists('normal') ||
+      persistence.exists('nightmare')
+        ? null
+        : persistence.migrateLegacy();
     if (game) {
       loaded = true;
+      started = true;
       save();
     } else game = new Campaign();
   }
   // An unclean active-session marker indicates the previous browser stopped
   // before its normal shutdown. Keep validated campaign progress, but never
   // restart inside the potentially frozen encounter.
-  if (loaded) {
+  started = loaded;
+  function recoverLoadedSession() {
+    if (!loaded || !writerGuard.canWrite()) return;
     const recovered = restartGuard.recover(game);
     if (recovered) {
       recoveredOnStartup = true;
@@ -1514,14 +1546,14 @@
       );
     }
     restartGuard.arm(game);
+    // Reconcile entitlement after ownership and the fresh campaign load.
+    // A pending window cannot persist this during its initial preview load.
+    if (game.peace && game.s.finalRestCompleted && !profile.nightmareUnlocked) {
+      profile.nightmareUnlocked = true;
+      persistProfile();
+    }
   }
-  // Older completed peaceful saves retain their already-earned Nightmare
-  // entitlement even if the local profile record was reset or imported.
-  if (game.peace && game.s.finalRestCompleted && !profile.nightmareUnlocked) {
-    profile.nightmareUnlocked = true;
-    persistProfile();
-  }
-  let started = loaded;
+  recoverLoadedSession();
   // Navigation is runtime-only and survives manual takeover as a visible guide.
   let navigationGuide = null,
     questGuide = null,
@@ -1932,6 +1964,8 @@
   function activePlay() {
     return (
       started &&
+      writerGuard.canWrite() &&
+      !persistence.conflicted(game.s.mode) &&
       !paused &&
       !menu &&
       !frameSkip.emergency &&
@@ -2304,7 +2338,19 @@
     return null;
   }
   function action(label, fn, detail = '', disabled = false, tutorialHighlight = false) {
-    return { label, action: fn, detail, disabled, tutorialHighlight };
+    return {
+      label,
+      action: (...args) => {
+        if (!writerGuard.canWrite() || persistence.conflicted(game.s.mode)) {
+          savedRunConflictMenu();
+          return;
+        }
+        return fn(...args);
+      },
+      detail,
+      disabled,
+      tutorialHighlight,
+    };
   }
   function translateMenu(value) {
     if (
@@ -2610,6 +2656,10 @@
     if (moveFocus) selected?.scrollIntoView({ block: 'nearest' });
   }
   function closeMenu() {
+    if (!writerGuard.canWrite() || persistence.conflicted(game.s.mode)) {
+      savedRunConflictMenu();
+      return;
+    }
     audio.interfaceSound('close');
     bindingCapture = null;
     if (game.s.challenge.pending || game.s.challenge.gameOver) gateDismissed = true;
@@ -2802,7 +2852,10 @@
     menu?.back();
   };
   function exportJSON(data, name) {
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }),
+    exportSaveText(JSON.stringify(data, null, 2), name);
+  }
+  function exportSaveText(text, name) {
+    const blob = new Blob([text], { type: 'application/json' }),
       url = URL.createObjectURL(blob),
       a = document.createElement('a');
     a.href = url;
@@ -2813,9 +2866,16 @@
   function start(mode, heroClass, succession, heroName = null) {
     if (mode === 'developer' && !developerEnabled) return;
     if (mode === 'nightmare' && !profile.nightmareUnlocked) return;
+    const candidate = new Campaign(mode, heroClass, Math.random, { succession });
+    if (heroName) candidate.nameHero(heroName);
+    try {
+      persistence.writeCandidate(candidate);
+    } catch (_) {
+      status('Saving failed. Export your run before closing.');
+      return;
+    }
     restartGuard.clean();
-    game = new Campaign(mode, heroClass, Math.random, { succession });
-    if (heroName) game.nameHero(heroName);
+    game = candidate;
     started = true;
     if (typeof Sprint !== 'undefined') Sprint.reset();
     paused = false;
@@ -2840,6 +2900,41 @@
         }),
       ],
       () => (started ? openMain() : chooseClass(mode)),
+    );
+  }
+  function savedRunRecoveryMenu() {
+    openMenu(
+      'Saved run could not be opened',
+      'Your original save is protected. Import a backup or export the original before starting a new run.',
+      [
+        action('Export original save', () =>
+          exportSaveText(
+            persistence.original(profile.activeMode),
+            'Azeroth_Original_' + profile.activeMode + '.json',
+          ),
+        ),
+        action('Import save', () => $('import-file').click()),
+        action('Start a new Normal run', () => chooseLanguage('normal')),
+      ],
+      savedRunRecoveryMenu,
+      { view: 'save-recovery' },
+    );
+  }
+  function savedRunConflictMenu() {
+    openMenu(
+      'Saved game is protected',
+      writerGuard.status() === 'unsupported'
+        ? 'Open the game in an updated browser to continue safely. You can still export this run.'
+        : 'Another window may have newer progress. Close the other game window, then reload here to continue. Export this run first to keep its unsaved progress.',
+      [
+        {
+          label: 'Export save',
+          action: () => exportJSON(game.snapshot(), 'Azeroth_Unsaved_Run.json'),
+        },
+        { label: 'Reload this window', action: () => location.reload() },
+      ],
+      savedRunConflictMenu,
+      { view: 'save-conflict' },
     );
   }
   function languageMenu(back = systemMenu) {
@@ -5308,6 +5403,10 @@
     clearInput();
     if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
     audio.setPaused(true);
+    writerGuard.release();
+  });
+  addEventListener('pageshow', (event) => {
+    if (event.persisted) location.reload();
   });
   function updateCriticalNotice() {
     const host = $('message'),
@@ -6014,6 +6113,8 @@
     }
   }
   function frame(now) {
+    if (persistence.conflicted(game.s.mode) && menu?.view !== 'save-conflict')
+      savedRunConflictMenu();
     if (document.hidden) {
       clearEmergencyEscalation();
       frameSkip.suspend();
@@ -6030,6 +6131,8 @@
     const dt = Math.min(0.1, Math.max(0, (now - last) / 1000));
     last = now;
     const frozen =
+      !writerGuard.canWrite() ||
+      persistence.conflicted(game.s.mode) ||
       paused ||
       menu ||
       !focused ||
@@ -6294,13 +6397,66 @@
     fps.suspend();
   });
   updateHUD();
-  if (!loaded) chooseLanguage(developerEnabled ? 'developer' : 'normal');
-  else setLanguage(language);
+  if (!loaded) {
+    if (persistence.loadFailed(profile.activeMode)) savedRunRecoveryMenu();
+    else chooseLanguage(developerEnabled ? 'developer' : 'normal');
+  } else setLanguage(language);
   if (loaded && performanceBaselineUpgraded && !recoveredOnStartup)
     status(
       'Performance settings updated to recommended defaults. You can change them in Settings.',
     );
   requestAnimationFrame(frame);
+  if (writerGuard.pending)
+    writerGuard.ready
+      .then((state) => {
+        if (state !== 'owner') {
+          savedRunConflictMenu();
+          return;
+        }
+        // Ownership may arrive after a previous window's final save. Read fresh
+        // bytes before allowing input, recovery or any automatic write.
+        profile = persistence.loadProfile(profile);
+        let refreshed =
+          (developerEnabled && persistence.load('developer')) ||
+          persistence.load(profile.activeMode);
+        if (
+          !refreshed &&
+          !persistence.loadFailed(profile.activeMode) &&
+          !persistence.exists('normal') &&
+          !persistence.exists('nightmare')
+        ) {
+          refreshed = persistence.migrateLegacy();
+          if (refreshed) {
+            persistence.writeCandidate(refreshed);
+            profile.activeMode = refreshed.s.mode;
+          }
+        }
+        if (refreshed) {
+          game = refreshed;
+          loaded = started = true;
+          recoverLoadedSession();
+          if (
+            menu?.view === 'save-conflict' ||
+            menu?.view === 'save-recovery' ||
+            menu?.title === 'Choose your language'
+          )
+            closeMenu();
+        } else if (persistence.loadFailed(profile.activeMode)) {
+          loaded = started = false;
+          savedRunRecoveryMenu();
+        } else {
+          loaded = started = false;
+          game = new Campaign();
+          chooseLanguage(developerEnabled ? 'developer' : 'normal');
+        }
+        updateHUD();
+      })
+      .catch(() => {
+        writerGuard.release();
+        status('Saving failed. Export your run before closing.');
+        savedRunConflictMenu();
+      });
+  else if (!writerGuard.canWrite()) savedRunConflictMenu();
   addEventListener('beforeinstallprompt', (event) => {
     event.preventDefault();
     installPrompt = event;
@@ -6320,7 +6476,11 @@
         if (hadServiceWorkerController) {
           appReloadRequested = false;
           appControllerReloaded = true;
-          if (started) save();
+          if (started && writerGuard.canWrite() && !save()) {
+            appControllerReloaded = false;
+            status('Saving failed. Export your run before closing.');
+            return;
+          }
           location.reload();
         } else hadServiceWorkerController = true;
       });

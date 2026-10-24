@@ -32,12 +32,21 @@ for (const cls of ['paladin', 'mage', 'ranger'])
         c.attackPatches(built.first),
         before.map((p) => ({ ...p, name: built.first.name })),
       );
-      assert(before.every((p) => p.radius === 72));
+      // Dev.96's accepted reach change applies to Groundwork too. Keep an
+      // independent reviewed number here instead of copying the resolver.
+      assert(before.every((p) => Math.abs(p.radius - 86.4) < 1e-8));
       // Committed arenaPatches deliberately survive display/metadata changes.
       // Probe family dispatch with a fresh, unsnapshotted ordinary radius.
-      const unrelated = { ...built.first, family: 'cindermaw', arenaPatches: undefined, radius: 123 };
+      const unrelated = {
+        ...built.first,
+        family: 'cindermaw',
+        arenaPatches: undefined,
+        radius: 123,
+      };
       assert(
-        c.attackPatches(unrelated).every((p) => p.radius === 75 * C.rules.bossCadence.areaRangeMultiplier),
+        c
+          .attackPatches(unrelated)
+          .every((p) => p.radius === 75 * C.rules.bossCadence.areaRangeMultiplier),
         'another family cannot inherit Groundwork geometry',
       );
       for (const action of ['disengage', 'travel', 'death', 'snapshot', 'restore']) {

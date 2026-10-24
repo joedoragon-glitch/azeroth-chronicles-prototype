@@ -378,9 +378,9 @@
         // Old v4 campaigns did not store the first-kill boundary. Preserve
         // their established field behavior; new campaigns save an explicit fact.
         if (s.valeFieldAwakened === undefined)
-          s.valeFieldAwakened = (s.statistics?.kills || 0) > 0 || s.hero.level >= R.fieldOnboarding.spawnLevel;
-        if (typeof s.valeFieldAwakened !== 'boolean')
-          throw Error('Invalid Vale first-kill state');
+          s.valeFieldAwakened =
+            (s.statistics?.kills || 0) > 0 || s.hero.level >= R.fieldOnboarding.spawnLevel;
+        if (typeof s.valeFieldAwakened !== 'boolean') throw Error('Invalid Vale first-kill state');
         for (const id of ['rest', 'minor']) {
           const value = s.discovered?.['vale:refuge-help:' + id];
           if (value !== undefined && typeof value !== 'boolean')
@@ -403,7 +403,9 @@
         if (
           !Array.isArray(s.hero.cd) ||
           s.hero.cd.length !== 8 ||
-          s.hero.cd.some((v) => !Number.isFinite(v) || v < 0 || v > 60)
+          // Lasting Slow debt can legitimately exceed the base 60s window.
+          // Use the same finite numeric ceiling as other persisted actor timers.
+          s.hero.cd.some((v) => !Number.isFinite(v) || v < 0 || v > 1e9)
         )
           throw Error('Invalid cooldown');
         // Strip transient fields from historical or interrupted exports.

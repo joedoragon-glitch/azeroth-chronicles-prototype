@@ -1,5 +1,12 @@
 # Runtime architecture
 
+**Dev.175 persistence integration:** The shell gates title/lifecycle writes and
+restart recovery on campaign write ownership. `persistence.js` validates outgoing
+snapshots, retains failed-load originals, fences stale bytes and coordinates one
+browser/PWA writer through a Web Lock; `save.js` remains the v4 schema owner.
+The cross-system regression dependency map is executable in focused CI. Details
+and preservation boundaries: [audit repairs](AUDIT_INTEGRATION_REPAIRS_DEV175.md).
+
 The browser is the current desktop playtest target, especially Chromebook keyboard/trackpad use. The phone target is an installable PWA with dedicated touch presentation. They share campaign logic and content, rather than keeping two copies of the game. A future desktop executable or native phone wrapper can host those same boundaries; no wrapper or engine migration is part of this housekeeping pass.
 
 ## Ownership

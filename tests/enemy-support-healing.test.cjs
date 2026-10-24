@@ -2,6 +2,7 @@
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine');
 const R = Campaign.rules;
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 
 function fixture(region = 'vale', mode = 'normal') {
   const g = new Campaign(mode, 'paladin', () => 0.9);
@@ -11,6 +12,7 @@ function fixture(region = 'vale', mode = 'normal') {
   const z = g.zone();
   z.enemies = [];
   g.line = () => true; // deterministic clear sight for targeting, not production geometry
+  completeFieldOpening(g);
   let sequence = 0;
   function mob(species, options = {}) {
     const e = g.makeEnemy(

@@ -3,6 +3,36 @@ const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
 
 const R = Campaign.rules;
+const Persistence = require('../src/prototype/persistence');
+for (const mode of ['normal', 'nightmare']) {
+  const game = new Campaign(mode, 'mage', () => 0.9);
+  game.hero.cd[7] = 40;
+  for (let hit = 0; hit < 20; hit++)
+    assert(game.applyRogueSlow(game.hero, R.tacticalFoundation.eliteRogueSlowSeconds));
+  assert(game.hero.cd[7] > 60, 'Native accumulated debt crosses the former save ceiling');
+  const values = new Map(),
+    p = Persistence.create({
+      Campaign,
+      storage: {
+        getItem: (k) => values.get(k),
+        setItem: (k, v) => values.set(k, v),
+      },
+    });
+  assert(p.save(game, {}));
+  const restored = p.load(mode);
+  assert(restored, 'A successful debt-bearing save loads in ' + mode);
+  assert.equal(restored.hero.cd[7], game.hero.cd[7], 'Do not cap or erase authorized debt');
+  for (const value of [60, 60.001, 500, 1e9]) {
+    const snapshot = game.snapshot();
+    snapshot.hero.cd[7] = value;
+    assert.equal(Campaign.restore(snapshot).hero.cd[7], value);
+  }
+  for (const value of [-1, Infinity, NaN, 1e9 + 1]) {
+    const snapshot = game.snapshot();
+    snapshot.hero.cd[7] = value;
+    assert.throws(() => Campaign.restore(snapshot), /Invalid cooldown/);
+  }
+}
 assert.equal(R.cooldownBalance.slowRecoveryMultiplier, 0.65);
 assert.equal(R.cooldownBalance.enemySlowRecoveryMultiplier, 0.85);
 const close = (value, expected, label) =>
@@ -239,7 +269,6 @@ console.log(
   );
 }
 
-
 // Stacking is one scalar per target, with impact-time debt and no per-stack timers.
 {
   const g = new Campaign('normal', 'paladin', () => 0.9);
@@ -291,8 +320,15 @@ console.log(
 {
   const g = new Campaign('normal', 'mage', () => 0.9);
   const e = g.makeEnemy(
-    { species: 'goblin', name: 'Stacking cooldown foe', level: 1,
-      hp: 1000, damage: 0, gold: 0, xp: 0 },
+    {
+      species: 'goblin',
+      name: 'Stacking cooldown foe',
+      level: 1,
+      hp: 1000,
+      damage: 0,
+      gold: 0,
+      xp: 0,
+    },
     { x: 2100, y: 2100 },
   );
   g.zone().enemies = [e];
@@ -308,10 +344,16 @@ console.log(
   close(e.specialCd, 9 + debt, 'enemy special pays accumulated cooldown debt');
   close(e.supportHealCd, 6 + debt, 'enemy healer cooldown pays accumulated debt');
   close(e.royalPrerogativeReadyAt, g.s.time + 7 + debt, 'enemy passive deadline pays debt');
-  close(g._tacticalRogueNext.get(e.id), g.s.time + 4 + debt,
-    'enemy Rogue readiness deadline pays debt');
-  close(g.cooldownRecoveryElapsed(e, 1, true), 0.85 / 1.15,
-    'second enemy stack suppresses recovery');
+  close(
+    g._tacticalRogueNext.get(e.id),
+    g.s.time + 4 + debt,
+    'enemy Rogue readiness deadline pays debt',
+  );
+  close(
+    g.cooldownRecoveryElapsed(e, 1, true),
+    0.85 / 1.15,
+    'second enemy stack suppresses recovery',
+  );
   const before = e.cd;
   e.immune = 1;
   assert.equal(g.applySlow(e, 2.7), false, 'immune targets cannot gain more stacks');
@@ -326,18 +368,26 @@ console.log(
   assert.equal(h.slowStacks, 100, 'repeated Slow has no arbitrary stack cap');
   assert(Number.isFinite(h.slowStacks), 'stack storage remains a scalar');
   assert(g.cooldownRecoveryElapsed(h, 1) > 0, 'diminishing recovery never hard-stuns');
-  assert.equal(h.cd.filter((c) => c > 0).length, 0,
-    'even extensive stacking never starts completed cooldowns');
+  assert.equal(
+    h.cd.filter((c) => c > 0).length,
+    0,
+    'even extensive stacking never starts completed cooldowns',
+  );
 }
 {
   const signatures = R.tacticalFoundation.rogueRingleaderSignatures;
   for (const role of ['melee', 'ranged'])
     for (const signature of Object.values(signatures[role]))
       if (signature.slowSeconds)
-        close(signature.slowSeconds + R.cooldownBalance.slowDurationBonusSeconds, 2.95,
-          role + ' elite signature matches stronger Rogue Slow');
-  close(R.tacticalFoundation.eliteRogueSlowSeconds +
-    R.cooldownBalance.slowDurationBonusSeconds, 2.95,
-    'elite Rogue basics share signature Slow duration');
+        close(
+          signature.slowSeconds + R.cooldownBalance.slowDurationBonusSeconds,
+          2.95,
+          role + ' elite signature matches stronger Rogue Slow',
+        );
+  close(
+    R.tacticalFoundation.eliteRogueSlowSeconds + R.cooldownBalance.slowDurationBonusSeconds,
+    2.95,
+    'elite Rogue basics share signature Slow duration',
+  );
 }
 console.log('PASS stacked Slow, hit-time debt, legacy readiness, expiry and elite durations');
