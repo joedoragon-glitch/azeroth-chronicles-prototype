@@ -27,6 +27,18 @@ assert.equal(A.sections(game, { D: C.data, R: C.rules }).length, 8);
 assert.equal(A.translateArchive(Approved.P05.es), Approved.P05.es,
   'Approved Spanish prose is immutable even with the technical glossary');
 assert.equal(A.translateArchive(Approved.K03.es), Approved.K03.es);
+const skillHelp = sections.find((entry) => entry.title === 'Your skills').topics;
+assert(skillHelp.every(([title, answer]) => title.startsWith('Skill ') && answer.length > 30));
+assert(A.translateArchive(skillHelp[1][1]).startsWith('Toque:'),
+  'Full Paladin skill effects have authored technical Spanish UI translations');
+const slowRule = sections.find((entry) => entry.title === 'Conditions and recovery')
+  .topics.find(([name]) => name === 'Slow');
+assert(A.translateArchive(slowRule[2]).includes('Los héroes y compañeros'),
+  'Rule-derived cooldown figures include Spanish explanatory sentences');
+for (const number of slowRule[2].match(/\d+(?:\.\d+)?/g) || [])
+  assert(A.translateArchive(slowRule[2]).includes(number),
+    'Translating condition figures does not change source number ' + number);
+
 
 for (const language of ['en', 'es']) {
   const { scope, elements } = shell(language);
