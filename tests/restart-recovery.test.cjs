@@ -105,6 +105,23 @@ function bootstrap(store) {
   assert.equal(app2.scope.Prototype.game.hero.gold, original.hero.gold);
 }
 {
+  const store = storage();
+  const original = savedCampaign(store);
+  const app = bootstrap(store);
+  app.frame(0);
+  app.frame(800); // Critical callback stall, combat paused.
+  assert.equal(app.scope.Prototype.frameSkip.emergency, true);
+  for (const listener of app.events.pagehide || []) listener();
+  const guard = Persistence.createRestartGuard({ storage: store, Campaign });
+  assert.equal(guard.read()?.active, true,
+    'Closing a still-frozen game must NOT clear the rescue marker');
+  const reopened = bootstrap(store);
+  assert.notDeepEqual(position(reopened.scope.Prototype.game), position(original),
+    'A player closing frozen gameplay reopens at the refuge');
+  assert.equal(reopened.scope.Prototype.game.hero.gold, original.hero.gold);
+  assert.equal(reopened.scope.Prototype.game.s.statistics.deaths, 0);
+}
+{
   const store = storage(), g = savedCampaign(store);
   const guard = Persistence.createRestartGuard({ storage: store, Campaign });
   guard.arm(g);
