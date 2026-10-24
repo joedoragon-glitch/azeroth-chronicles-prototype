@@ -61,14 +61,16 @@
       ],
       [
         'Slow',
-        'Move and recover skill cooldowns more slowly, including skills used while already slowed.',
+        'Move and recover skill cooldowns more slowly. Repeated Slow hits suppress recovery further and add lasting cooldown debt.',
         'Heroes and companions recover cooldowns at ' +
           percent(R.cooldownBalance.slowRecoveryMultiplier) +
           '% of normal speed; enemies, captains and bosses at ' +
           percent(R.cooldownBalance.enemySlowRecoveryMultiplier) +
           '%. Allied movement is normally 65%, or ' +
           percent(R.tacticalFoundation.rogueSlowMovementFactor) +
-          '% under stronger Rogue snares; ordinary enemy pursuit is 50%. The longest remaining Slow wins. Recovery returns to normal when Slow ends. Slow does not lengthen charge preparation, warnings or healing pulses, and does not prevent skills.',
+          '% under stronger Rogue snares; ordinary enemy pursuit is 50%. Every Slow hit adds ' +
+          R.cooldownBalance.slowDurationBonusSeconds +
+          's to its authored duration; Ringleader Rogue snares last 2.95s. The longest remaining duration wins, but overlapping hits increase recovery suppression and add debt to unfinished skill cooldowns. Stack strength clears when Slow expires; accumulated cooldown debt remains. Preparation, warnings and healing pulses are not delayed, and skills are never outright blocked by Slow.',
       ],
       [
         'Silence',

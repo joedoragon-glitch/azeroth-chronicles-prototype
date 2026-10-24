@@ -3341,6 +3341,7 @@
       this.hero.tonic = false;
       this.hero.immune = 0;
       this.hero.slow = 0;
+      delete this.hero.slowStacks;
       delete this.hero.rogueSlow;
       this.hero.haste = 0;
       const chosen = this.selectedBarracksRespawn();
@@ -3432,6 +3433,8 @@
       this.tacticalClearRogueRegroup(e);
       this._tacticalScatterLeash?.delete(e.id);
       this._tacticalRepositions?.delete(e.id);
+      e.slow = 0;
+      delete e.slowStacks;
       delete e.rogueDustCoverUntil;
       const victoryLevel = this.hero.level;
       this.cancelEncounter(e);
@@ -3896,6 +3899,7 @@
       )
         delete h.silenceField;
       for (const f of ['immune', 'haste', 'potionCd', 'slow']) h[f] = Math.max(0, h[f] - dt);
+      if (!h.slow) delete h.slowStacks;
       if (h.rogueSlow > 0) {
         h.rogueSlow = Math.max(0, h.rogueSlow - dt);
         if (!h.rogueSlow) delete h.rogueSlow;
@@ -5607,7 +5611,11 @@
               };
             this.move(victim, point, 220, 0.25);
           } else {
-            this.applyRogueSlow(victim, move.slowSeconds || 2);
+            this.applyRogueSlow(
+              victim,
+              move.slowSeconds ||
+                (e.form === 'ringleader' ? R.tacticalFoundation.eliteRogueSlowSeconds : 2),
+            );
           }
         }
         if (!landedAny) return;
@@ -5788,6 +5796,7 @@
             ])
               if (e[key] > this.s.time - dt) e[key] = this.slowCooldownReadyAt(e, e[key], dt, true);
           if (e.slow > 0) e.slow = Math.max(0, e.slow - dt);
+          if (!(e.slow > 0)) delete e.slowStacks;
         }
         // Advance existing restorative pulses even if a boss is holding a
         // board, scripted movement or other early-continuation state.
