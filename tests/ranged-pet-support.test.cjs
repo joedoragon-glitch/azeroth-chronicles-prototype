@@ -1,11 +1,13 @@
 'use strict';
 const assert = require('node:assert/strict'),
   C = require('../src/prototype/engine');
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 function scene(family = 'crypt') {
   const g = new C('normal', 'paladin', () => 0.9),
     z = g.zone();
   for (const key of ['props', 'npcs', 'nodes', 'buildings', 'enemies']) z[key] = [];
   g.s.mercyTime = 0;
+  completeFieldOpening(g);
   g.s.expeditionRank = 6;
   g.s.companionCombatTraining = 2;
   g.hero.level = 20;
@@ -147,8 +149,8 @@ for (const family of ['archive', 'abyss']) {
   const hits = g.zone().enemies.filter((e, i) => e.hp < before[i]);
   assert.equal(hits.length, def.cap, 'bounded expanded area hits the authored cap');
   assert(
-    hits.every((e) => e.slow === def.slow),
-    'actual slow matches the rule',
+    hits.every((e) => e.slow === { archive: 2.25, abyss: 1.25 }[family]),
+    'contact Slow includes the shared duration bonus',
   );
   const event = events.find((e) => e.type === 'petSkill' && e.stage === 'release' && e.slot === 2);
   assert.equal(event.range, def.range);

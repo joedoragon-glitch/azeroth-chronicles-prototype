@@ -27,3 +27,13 @@ The later rogue audit found lifecycle gaps despite 99 basic and 51 signature cas
 | Travel, defender replacement or encounter cleanup    | Lifecycle sections in both specialist suites; check the actual active roster after reset                                                                                                                                                                                               |
 
 This is an impact map for focused selection, not a requirement to run every suite for every update. Expand it when a newly found dependency belongs here.
+
+The executable source-to-regression map is `.github/scripts/focused-ci.cjs`.
+Its policy test protects persistence/restore, Slow/save, runtime/skip, native
+opening/support and boss-geometry dependencies. A mapped test that is renamed or
+removed now produces an explicit failure. Post-opening isolated fixtures use
+`tests/helpers/field-opening.cjs` to perform the real first kill and assert
+admission; direct level/aggro assignments do not establish that prerequisite.
+Reviewed numeric expectations should retain their source decision rather than
+being regenerated from the resolver under test. See
+`AUDIT_INTEGRATION_REPAIRS_DEV175.md` for the concrete recurring-drift diagnosis.

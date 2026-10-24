@@ -5,11 +5,13 @@ const fs = require('node:fs'),
 function shell(language, heroClass = 'paladin', options = {}) {
   const elements = new Map(),
     events = {},
+    documentEvents = {},
     storage = options.storage || new Map();
   let nextFrame;
   const ctx = new Proxy({}, { get: (o, k) => o[k] || (() => {}) });
   function el() {
-    const classes = new Set(), attributes = new Map();
+    const classes = new Set(),
+      attributes = new Map();
     let content = '';
     return {
       firstChild: { textContent: '' },
@@ -36,16 +38,25 @@ function shell(language, heroClass = 'paladin', options = {}) {
       prepend(...x) {
         this.children.unshift(...x);
       },
-      focus() { scope.document.activeElement = this; this.onfocus?.(); },
+      focus() {
+        scope.document.activeElement = this;
+        this.onfocus?.();
+      },
       append(...x) {
         this.children.push(...x);
       },
       replaceChildren(...x) {
         this.children = x;
       },
-      setAttribute(name, value) { attributes.set(name, String(value)); },
-      removeAttribute(name) { attributes.delete(name); },
-      getAttribute(name) { return attributes.get(name) ?? null; },
+      setAttribute(name, value) {
+        attributes.set(name, String(value));
+      },
+      removeAttribute(name) {
+        attributes.delete(name);
+      },
+      getAttribute(name) {
+        return attributes.get(name) ?? null;
+      },
       querySelector: () => ({ textContent: '' }),
       scrollIntoView() {},
       click() {
@@ -68,8 +79,8 @@ function shell(language, heroClass = 'paladin', options = {}) {
     innerHeight: 852,
     Sprint: { enabled: false, press() {}, release() {}, tick: () => 1 },
     localStorage: { getItem: (k) => storage.get(k), setItem: (k, v) => storage.set(k, v) },
-    location: { protocol: 'file:', hostname: '' },
-    navigator: {},
+    location: options.location || { protocol: 'file:', hostname: '' },
+    navigator: options.navigator || {},
     document: {
       documentElement: {},
       hidden: false,
@@ -79,7 +90,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
         return elements.get(id);
       },
       createElement: el,
-      addEventListener() {},
+      addEventListener: (name, fn) => (documentEvents[name] ??= []).push(fn),
     },
     addEventListener: (name, fn) => (events[name] ??= []).push(fn),
     requestAnimationFrame(fn) {
@@ -118,7 +129,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
   vm.createContext(scope);
   vm.runInContext(fs.readFileSync(require.resolve('../../src/prototype/app'), 'utf8'), scope);
   scope.Prototype.renderer.draw = () => {};
-  return { scope, elements, storage, events, frame: (now) => nextFrame(now) };
+  return { scope, elements, storage, events, documentEvents, frame: (now) => nextFrame(now) };
 }
 
 module.exports = { shell };

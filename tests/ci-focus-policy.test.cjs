@@ -3,64 +3,148 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { selectTests } = require('../.github/scripts/focused-ci.cjs');
-const root = path.resolve(__dirname,'..');
-const read = file => fs.readFileSync(path.join(root,file),'utf8');
+const root = path.resolve(__dirname, '..');
+const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 const auto = read('.github/workflows/focused-deploy.yml');
 const manual = read('.github/workflows/pages.yml');
 const policy = read('AGENTS.md');
 const runner = read('.github/scripts/focused-ci.cjs');
 
-assert.match(auto,/^on:\n  push:\n    branches: \[main\]\n  pull_request:\n    # [^\n]+\n    branches: \[main, 'archive\/\*\*', 'narrative\/\*\*'\]/m,
-  'ordinary updates use the focused workflow');
-assert.match(auto,/node \.github\/scripts\/focused-ci\.cjs/,
-  'automatic CI must use selective local tests');
-assert.match(auto,/node scripts\/build\.cjs --check --site/,
-  'releases still verify the deployable package');
-assert.match(auto,/needs: focused/, 'the publisher must depend on focused verification');
-assert.doesNotMatch(auto,/npm test|\.github\/actions\/check-game|playwright install|full browser matrix/i,
-  'automatic updates must never invoke expensive test matrices');
-assert.match(manual,/^on:\n  workflow_dispatch:\n    inputs:\n      approve_full_suite:/m,
-  'game-wide suites must only be available through explicit manual dispatch');
-assert.match(manual,/type: boolean\n        required: true\n        default: false/,
-  'manual approval must be unchecked by default');
-assert.doesNotMatch(manual,/^  push:|^  pull_request:/m,
-  'full suites must not trigger on pushes or pull requests');
-assert.match(manual,/  release-plan:\n    if: \$\{\{ inputs\.approve_full_suite == true \}\}/,
-  'unapproved manual runs must not start any full-suite prerequisites');
-assert.match(manual,/  main-test:\n    if: inputs\.approve_full_suite == true/,
-  'the full Node/Chromium suite must require approval');
-assert.match(manual,/  phone-webkit:\n    needs: release-plan\n    if: inputs\.approve_full_suite == true/,
-  'the full WebKit suite must require approval');
-assert.match(policy,/Never launch or trigger full-game test runs/,
-  'contributors must follow the standing owner permission rule');
-assert.doesNotMatch(runner,/npm test|prototype-browser\.test\.cjs|playwright install/,
-  'focused selector must never escalate to full game or browser tests');
+assert.match(
+  auto,
+  /^on:\n  push:\n    branches: \[main\]\n  pull_request:\n    # [^\n]+\n    branches: \[main, 'archive\/\*\*', 'narrative\/\*\*'\]/m,
+  'ordinary updates use the focused workflow',
+);
+assert.match(
+  auto,
+  /node \.github\/scripts\/focused-ci\.cjs/,
+  'automatic CI must use selective local tests',
+);
+assert.match(
+  auto,
+  /node scripts\/build\.cjs --check --site/,
+  'releases still verify the deployable package',
+);
+assert.match(auto, /needs: focused/, 'the publisher must depend on focused verification');
+assert.doesNotMatch(
+  auto,
+  /npm test|\.github\/actions\/check-game|playwright install|full browser matrix/i,
+  'automatic updates must never invoke expensive test matrices',
+);
+assert.match(
+  manual,
+  /^on:\n  workflow_dispatch:\n    inputs:\n      approve_full_suite:/m,
+  'game-wide suites must only be available through explicit manual dispatch',
+);
+assert.match(
+  manual,
+  /type: boolean\n        required: true\n        default: false/,
+  'manual approval must be unchecked by default',
+);
+assert.doesNotMatch(
+  manual,
+  /^  push:|^  pull_request:/m,
+  'full suites must not trigger on pushes or pull requests',
+);
+assert.match(
+  manual,
+  /  release-plan:\n    if: \$\{\{ inputs\.approve_full_suite == true \}\}/,
+  'unapproved manual runs must not start any full-suite prerequisites',
+);
+assert.match(
+  manual,
+  /  main-test:\n    if: inputs\.approve_full_suite == true/,
+  'the full Node/Chromium suite must require approval',
+);
+assert.match(
+  manual,
+  /  phone-webkit:\n    needs: release-plan\n    if: inputs\.approve_full_suite == true/,
+  'the full WebKit suite must require approval',
+);
+assert.match(
+  policy,
+  /Never launch or trigger full-game test runs/,
+  'contributors must follow the standing owner permission rule',
+);
+assert.doesNotMatch(
+  runner,
+  /npm test|prototype-browser\.test\.cjs|playwright install/,
+  'focused selector must never escalate to full game or browser tests',
+);
 
 const exists = () => true;
-const renderer = selectTests(['src/prototype/pixi-experimental.js'],exists);
+const renderer = selectTests(['src/prototype/pixi-experimental.js'], exists);
 assert(renderer.tests.includes('tests/pixi-fidelity.test.cjs'));
 assert(renderer.tests.includes('tools/webgl-pilot/renderer-switch-guard.test.cjs'));
 assert(!renderer.tests.includes('tests/game.test.cjs'));
-assert(!renderer.tests.includes('tests/pixi-renderer-browser.test.cjs'),
-  'ordinary Pixi code changes must not launch a browser test automatically');
-assert.deepEqual(renderer.uncovered,[]);
-const singleBrowser=selectTests(['tests/pixi-renderer-browser.test.cjs'],exists);
-assert(singleBrowser.tests.includes('tests/pixi-renderer-browser.test.cjs'),
-  'the explicitly modified Pixi acceptance test must be exercised in focused CI');
-assert(!singleBrowser.tests.includes('tests/prototype-browser.test.cjs'),
-  'targeted Pixi acceptance must never pull in the general browser suite');
-const gameplay = selectTests(['src/prototype/engine.js'],exists);
-assert(selectTests(['src/prototype/runtime.js'],exists).tests.includes('tests/render-resolution.test.cjs'),
-  'later runtime-only changes must retain the live adaptive-resolution regression');
+assert(
+  !renderer.tests.includes('tests/pixi-renderer-browser.test.cjs'),
+  'ordinary Pixi code changes must not launch a browser test automatically',
+);
+assert.deepEqual(renderer.uncovered, []);
+const singleBrowser = selectTests(['tests/pixi-renderer-browser.test.cjs'], exists);
+assert(
+  singleBrowser.tests.includes('tests/pixi-renderer-browser.test.cjs'),
+  'the explicitly modified Pixi acceptance test must be exercised in focused CI',
+);
+assert(
+  !singleBrowser.tests.includes('tests/prototype-browser.test.cjs'),
+  'targeted Pixi acceptance must never pull in the general browser suite',
+);
+const gameplay = selectTests(['src/prototype/engine.js'], exists);
+assert(
+  selectTests(['src/prototype/runtime.js'], exists).tests.includes(
+    'tests/render-resolution.test.cjs',
+  ),
+  'later runtime-only changes must retain the live adaptive-resolution regression',
+);
 assert(gameplay.tests.includes('tests/game.test.cjs'));
 assert(!gameplay.tests.includes('tests/pixi-fidelity.test.cjs'));
-const ci = selectTests(['.github/workflows/pages.yml'],exists);
+const ci = selectTests(['.github/workflows/pages.yml'], exists);
 assert(ci.tests.includes('tests/ci-focus-policy.test.cjs'));
 assert(!ci.tests.includes('tests/game.test.cjs'));
-assert.deepEqual(selectTests(['README.md'],exists).tests,[]);
-assert.deepEqual(selectTests(['docs/arbitrary.md'],exists).tests,[]);
-const unclassified = selectTests(['src/prototype/new-future-system.js'],
-  file => file==='tests/architecture.test.cjs');
-assert.deepEqual(unclassified.uncovered,['src/prototype/new-future-system.js']);
-assert.deepEqual(unclassified.tests,['tests/architecture.test.cjs']);
+assert.deepEqual(selectTests(['README.md'], exists).tests, []);
+assert.deepEqual(selectTests(['docs/arbitrary.md'], exists).tests, []);
+const unclassified = selectTests(
+  ['src/prototype/new-future-system.js'],
+  (file) => file === 'tests/architecture.test.cjs',
+);
+assert.deepEqual(unclassified.uncovered, ['src/prototype/new-future-system.js']);
+assert.deepEqual(unclassified.tests, ['tests/architecture.test.cjs']);
+for (const [source, expected] of [
+  ['runtime', ['frame-skip', 'auto-fps-adaptive-coupling', 'render-resolution']],
+  ['persistence', ['persistence-safety', 'save-writer', 'restart-recovery']],
+  [
+    'save',
+    ['persistence-safety', 'slow-cooldown', 'beta-historical', 'snapshot-encounter-lifecycle'],
+  ],
+  ['navigation', ['navigation-route-stage4', 'crowd-collision-fast-reject']],
+  [
+    'rules',
+    [
+      'slow-cooldown',
+      'ranged-pet-support',
+      'enemy-support-healing',
+      'snapshot-encounter-lifecycle',
+    ],
+  ],
+  ['field-onboarding', ['field-onboarding', 'ranged-pet-support', 'enemy-support-healing']],
+  ['combat', ['projectile-order', 'ranged-pet-support', 'slow-cooldown']],
+]) {
+  const selection = selectTests(['src/prototype/' + source + '.js']);
+  for (const test of expected)
+    assert(selection.tests.includes(TEST_PATH(test)), source + ' must protect ' + test);
+  assert.deepEqual(selection.uncovered, []);
+  assert.deepEqual(selection.missing, []);
+}
+function TEST_PATH(name) {
+  return 'tests/' + name + '.test.cjs';
+}
+assert(
+  selectTests(
+    ['src/prototype/persistence.js'],
+    (file) => file !== TEST_PATH('save-writer'),
+  ).missing.includes(TEST_PATH('save-writer')),
+  'Renaming a mapped regression must not silently remove protection',
+);
 console.log('PASS owner-approved full CI and focused-only automatic policy');

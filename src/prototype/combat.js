@@ -7,15 +7,45 @@
     const ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER = 0.5;
     // Stable field lists: stacking adds debt on Slow impact, never by iterating stacks per tick.
     const SLOW_COMPANION_COOLDOWNS = [
-      'cd', 'skill1Cd', 'skill2Cd', 'skillGlobalCd', 'healCd', 'manaCd', 'survivalCd',
+      'cd',
+      'skill1Cd',
+      'skill2Cd',
+      'skillGlobalCd',
+      'healCd',
+      'manaCd',
+      'survivalCd',
     ];
     const SLOW_ENEMY_COOLDOWNS = [
-      'cd', 'specialCd', 'summonCd', 'healCd', 'supportHealCd', 'anastylosisCd', 'sabotageCd',
+      'cd',
+      'specialCd',
+      'summonCd',
+      'healCd',
+      'supportHealCd',
+      'anastylosisCd',
+      'sabotageCd',
     ];
     const SLOW_ENEMY_DEADLINES = [
-      'royalPrerogativeReadyAt', 'passiveRepairReadyAt', 'passiveVeteranReadyAt',
-      'ledgerNextAt', 'ashNextAt',
+      'royalPrerogativeReadyAt',
+      'passiveRepairReadyAt',
+      'passiveVeteranReadyAt',
+      'ledgerNextAt',
+      'ashNextAt',
     ];
+    function sweptCircleEntry(unit, from, to, radius) {
+      const dx = to.x - from.x,
+        dy = to.y - from.y,
+        ox = from.x - unit.x,
+        oy = from.y - unit.y,
+        a = dx * dx + dy * dy,
+        c = ox * ox + oy * oy - radius * radius;
+      if (c < 0) return 0;
+      if (!a) return Infinity;
+      const b = 2 * (ox * dx + oy * dy),
+        discriminant = b * b - 4 * a * c;
+      if (discriminant <= 0) return Infinity;
+      const entry = (-b - Math.sqrt(discriminant)) / (2 * a);
+      return entry >= 0 && entry <= 1 ? entry : Infinity;
+    }
     class Combat {
       combatTargets() {
         const z = this.s.zones[this.s.zone];
@@ -474,12 +504,11 @@
         const isHero = unit === this.hero;
         const isCompanion = !isHero && this.s.party.includes(unit);
         const isEnemy = !isHero && !isCompanion;
-        const debt = duration * (isEnemy
-          ? R.cooldownBalance.enemySlowDebtFraction
-          : R.cooldownBalance.slowDebtFraction);
+        const debt =
+          duration *
+          (isEnemy ? R.cooldownBalance.enemySlowDebtFraction : R.cooldownBalance.slowDebtFraction);
         if (isHero) {
-          for (let i = 0; i < unit.cd.length; i++)
-            if (unit.cd[i] > 0) unit.cd[i] += debt;
+          for (let i = 0; i < unit.cd.length; i++) if (unit.cd[i] > 0) unit.cd[i] += debt;
         } else {
           for (const key of isEnemy ? SLOW_ENEMY_COOLDOWNS : SLOW_COMPANION_COOLDOWNS)
             if (Number.isFinite(unit[key]) && unit[key] > 0) unit[key] += debt;
@@ -849,25 +878,52 @@
             const before = { x: p.x, y: p.y };
             p.x += p.dx * p.speed * elapsed;
             p.y += p.dy * p.speed * elapsed;
+            let terrainContact = null,
+              terrainFraction = Infinity;
             if (!(fort ? this.fortShotClear(before, p, fort) : this.clearSegment(before, p, 0))) {
               // Report the actual first obstruction, rather than the previous frame's origin.
               const steps = Math.max(1, Math.ceil(dist(before, p) / 4));
-              let contact = before;
-              for (let j = 1; j <= steps; j++) {
+              const blocked = (point) =>
+                fort
+                  ? this.fortShotBlocked(point, fort)
+                  : this.blocked(point.x, point.y, this.zoneId, 0);
+              const pointAt = (t) => ({
+                x: before.x + (p.x - before.x) * t,
+                y: before.y + (p.y - before.y) * t,
+              });
+              for (let j = 0; j <= steps; j++) {
                 const point = {
                   x: before.x + ((p.x - before.x) * j) / steps,
                   y: before.y + ((p.y - before.y) * j) / steps,
                 };
-                if (
-                  fort
-                    ? this.fortShotBlocked(point, fort)
-                    : this.blocked(point.x, point.y, this.zoneId, 0)
-                ) {
-                  contact = point;
+                if (blocked(point)) {
+                  let low = Math.max(0, (j - 1) / steps),
+                    high = j / steps;
+                  // Refine only an actual obstruction; ordinary flights retain
+                  // their existing inexpensive segment/collision checks.
+                  for (let k = 0; k < 12; k++) {
+                    const middle = (low + high) / 2;
+                    if (blocked(pointAt(middle))) high = middle;
+                    else low = middle;
+                  }
+                  terrainFraction = high;
+                  terrainContact = pointAt(high);
                   break;
                 }
               }
-              this.enemyVfxProjectileImpact?.(p, { ...contact, terrain: true });
+              // A conservative failure to localize a rejected segment must
+              // never turn it into permission to shoot through terrain.
+              terrainContact ||= before;
+              if (terrainFraction === Infinity) terrainFraction = 0;
+            }
+            const radius = p.hitRadius ?? (p.style === 'cargo' ? 34 : 22);
+            const victim = this.combatTargets().find(
+              (u) =>
+                this.distanceToSegment(u, before, p) < radius &&
+                sweptCircleEntry(u, before, p, radius) < terrainFraction,
+            );
+            if (terrainContact && !victim) {
+              this.enemyVfxProjectileImpact?.(p, { ...terrainContact, terrain: true });
               if (p.style === 'cargo')
                 this.event('projectileImpact', {
                   actor: 'enemy',
@@ -875,17 +931,12 @@
                   species: 'cargo',
                   style: 'cargo',
                   terrain: true,
-                  x: contact.x,
-                  y: contact.y,
+                  x: terrainContact.x,
+                  y: terrainContact.y,
                 });
               this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
               continue;
             }
-            const victim = this.combatTargets().find(
-              (u) =>
-                this.distanceToSegment(u, before, p) <
-                (p.hitRadius ?? (p.style === 'cargo' ? 34 : 22)),
-            );
             if (victim) {
               const landed = this.hitParty(victim, p.damage, p.manaDrain || 0, p.sourceId);
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
