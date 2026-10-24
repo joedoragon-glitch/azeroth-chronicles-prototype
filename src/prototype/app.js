@@ -23,6 +23,10 @@
   document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
   const spanishText = {
     'Crystal Deposit': 'Yacimiento de Cristales',
+    'Veyra’s private quarters': 'Aposentos privados de Veyra',
+    'Purchased preserves': 'Conservas compradas',
+    'Working signal station': 'Estación de señales en servicio',
+    'Scornfang memoranda': 'Memorandos de Scornfang',
     'Critically wounded companions are keeping their distance.':
       'Los compañeros con heridas críticas están manteniendo la distancia.',
     'Safe attacks and skills remain available; retreat comes first.':
@@ -3402,6 +3406,15 @@
     else if (n.kind === 'smith') smith(n);
     else if (n.kind === 'keeper') keeper();
     else if (n.kind === 'archive-record') keeperLedger();
+    else if (n.kind === 'scene-detail') {
+      // Source-checked interaction is required: merely entering the Citadel
+      // cannot reveal Veyra's private quarters.
+      if (game.interact(n) && approvedNarrative?.[n.narrativeId]) {
+        save();
+        openMenu(n.name, approvedNarrative[n.narrativeId].en,
+          [action('Back', closeMenu)], closeMenu);
+      }
+    }
     else if (n.kind === 'supplier' || n.kind === 'alchemist') {
       supplier(n);
       save();
