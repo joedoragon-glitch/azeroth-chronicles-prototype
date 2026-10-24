@@ -21,6 +21,118 @@
     const rangerHealRequests = new WeakMap();
 
     class Party {
+    // Exceptional recovery is not a death. Preserve health, crowns, quest
+    // progress, and Succession rules. Reset only the current live encounter.
+    emergencyResetEncounter() {
+      if (this.hero.hp <= 0 || this.s.challenge.pending || this.s.challenge.gameOver) return false;
+      const z = this.zone(),
+        engaged = z.enemies.filter(e => e.hp > 0 && !e.neutral &&
+          (e.aggro || e.returning || e.telegraph || e.motion || e.rangedAim));
+      if (!engaged.length) return false;
+      const owners = new Set(engaged.map(e => e.id)),
+        hero = this.hero,
+        closest = engaged.reduce((best, e) =>
+          !best || Math.hypot(hero.x - e.x, hero.y - e.y) <
+            Math.hypot(hero.x - best.x, hero.y - best.y) ? e : best, null),
+        dx = hero.x - closest.x,
+        dy = hero.y - closest.y,
+        distance = Math.hypot(dx, dy) || 1,
+        awayX = dx / distance,
+        awayY = dy / distance;
+      this.clearPartyCharges();
+      this.tacticalClearThreat();
+      this.tacticalClearBurst();
+      this.tacticalClearRogueRegroup();
+      this._tacticalScatter?.clear();
+      this._tacticalScatterLeash?.clear();
+      this._tacticalRepositions?.clear();
+      this._tacticalPartyTargets?.clear();
+      for (const e of engaged) {
+        // Existing encounter cancellation is responsible for boss-specific
+        // spell, capture, summon and scripted-action cleanup.
+        this.cancelEncounter(e);
+        this.clearEncounterState(e);
+        if (e.home) Object.assign(e, e.home);
+        e.aggro = false;
+        e.returning = 0;
+        e.telegraph = null;
+        e.sequence = [];
+        e.motion = null;
+        e.rangedAim = null;
+        e.path = [];
+        e.hp = e.baseHp;
+        e.maxHp = e.baseHp;
+        e.damage = e.baseDamage;
+        e.noProgress = 0;
+      }
+      z.enemies = z.enemies.filter(e => !e.summon ||
+        !(e.aggro || owners.has(e.owner) || owners.has(e.id)));
+      this.s.projectiles = [];
+      this.s.hazards = [];
+      this.s.squadEngagement = null;
+      this.s.squadBoss = false;
+      this.s.heroTarget = null;
+      this.hero.order = null;
+      // Give living companions a physical, terrain-safe withdrawal goal behind
+      // the hero, opposite the nearest engaged enemy. Never teleport them.
+      const living = this.activeLivingParty();
+      const destinations = [];
+      for (let i = 0; i < living.length; i++) {
+        const u = living[i],
+          side = (i - (living.length - 1) / 2) * 38,
+          desired = { x: hero.x + awayX * (100 + Math.floor(i / 4) * 40) - awayY * side,
+            y: hero.y + awayY * (100 + Math.floor(i / 4) * 40) + awayX * side };
+        this.clearCompanionJudgment(u);
+        this.clearCompanionTravel(u);
+        u.order = null;
+        let point;
+        try { point = this.safe(desired.x, desired.y); }
+        catch (_) { point = { x: u.x, y: u.y }; }
+        destinations.push({ unit: u, point });
+      }
+      this._emergencyWithdraw = destinations;
+      this.say('Critical slowdown: the encounter disengages while your company withdraws.');
+      return true;
+    }
+    emergencyAdvanceWithdrawal(dt = 0.05) {
+      const list = this._emergencyWithdraw;
+      if (!list?.length) return false;
+      let pending = false;
+      // Bounded work: at most two companions move per callback while the
+      // hostile simulation is paused. Terrain and body collision still apply.
+      const start = this._emergencyWithdrawCursor || 0;
+      for (let n = 0; n < Math.min(2, list.length); n++) {
+        const item = list[(start + n) % list.length];
+        if (item.unit.hp <= 0 || Math.hypot(item.unit.x - item.point.x,
+            item.unit.y - item.point.y) <= 12) continue;
+        this.followCompanion(item.unit, item.point, 210, Math.min(dt, 0.05), 12);
+      }
+      this._emergencyWithdrawCursor = (start + 2) % list.length;
+      pending = list.some(item => item.unit.hp > 0 &&
+        Math.hypot(item.unit.x - item.point.x, item.unit.y - item.point.y) > 12);
+      if (!pending) this._emergencyWithdraw = null;
+      return pending;
+    }
+    // Last resort, including after an unclean browser restart: use established
+    // safe-zone entry and configured recovery placement, never die().
+    emergencyReturnToSafety() {
+      if (this.hero.hp <= 0 || this.s.challenge.pending || this.s.challenge.gameOver) return false;
+      const selected = this.selectedBarracksRespawn(),
+        region = this.definition().id,
+        refuge = this.s.refugeSite?.zone === region ? this.s.refugeSite
+          : { zone: region, id: 'rest' };
+      if (selected) {
+        if (!this.enter(selected.zone,
+          { x: selected.barracks.x + 85, y: selected.barracks.y + 50 })) return false;
+      } else {
+        if (!this.enter(refuge.zone)) return false;
+        this.arriveRefuge(refuge);
+      }
+      this._emergencyWithdraw = null;
+      this._emergencyWithdrawCursor = 0;
+      this.say('Performance recovery: returned safely without a defeat penalty.');
+      return true;
+    }
       clearCompanionJudgment(u) {
         companionJudgments.delete(u);
       }
