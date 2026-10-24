@@ -1,6 +1,6 @@
 # Adaptive frame skip — default-on, two-frame revision (23 October 2026)
 
-**Status:** Focused implementation candidate on a draft pull request; not a published release. Supersedes the dev.166 skip-intensity/default constraints upon merge. No change to the normal FPS limiter, combat calculations, campaign saves, or graphics backend selection.
+**Status:** Focused implementation candidate on a draft pull request, including critical-load protection; not a published release. Supersedes the dev.166 skip-intensity/default constraints upon merge. No change to the normal FPS limiter, combat damage formulas, campaign saves, or graphics backend selection. The added critical protection temporarily pauses gameplay updates when responsiveness is lost.
 
 ## Owner-approved behavior
 
@@ -12,6 +12,18 @@
 - **No special frame-skip suppression for warning, elite-warning, charge-interrupted, or death events.** Combat warnings, telegraphs, AI, simulation, audio, input and visual effect state still advance on active callbacks before the draw decision. If a draw is skipped, the next image uses current simulation/cue state.
 - Pausing or hiding resets the short-term load estimate; cumulative skip count remains session-scoped. Pressure subsiding automatically stops skipping.
 - Canvas 2D and PixiJS WebGL2 still share the same outer draw gate. The Pixi world and Canvas combat overlay are skipped together when a drawing is adaptively suppressed.
+
+## Critical slowdowns: emergency recovery and party protection
+
+A critically slow active animation callback can mean the player has no practical opportunity to react to enemy attacks. **The emergency mode freezes gameplay rather than granting permanent immunity or rewriting hit/death rules.** The same hero and companions retain their exact current HP, positions and campaign state while the frame-loop continues testing whether rendering has recovered.
+
+- Activation: one active callback interval of **650 ms or more**, two consecutive active intervals of **180 ms or more**, or two actual drawn-frame samples of **140 ms or more rendering** / **190 ms or more total synchronous work**. Detection runs **before** `game.tick` for callback-gap triggers; draw-work triggers protect the *next* active callback. Paused/hidden/menu frames do not count.
+- Emergency skip: up to **five consecutive FPS-eligible drawings**. Draw-age guard is relaxed to **650 ms** to spend more opportunities catching up, then the next available eligible frame must render. Both Canvas and Pixi world + Canvas combat overlay are treated equally.
+- Party protection: while recovery is active, the main `game.tick` loop—including enemy attacks, boss damage, player and companion HP changes, cooldowns and simulation clocks—is not run. Combat effect lifetimes and the separate charged-ability wall clock also stop. No extra regeneration, death interception, reward grants, save schema mutation or global invulnerability flag is introduced.
+- Recovery: at least **three genuinely issued rendering probes** must each show an active callback interval under **110 ms**, total work under **90 ms**, and render work under **70 ms**. Skipped drawings do not count. Once satisfied, gameplay resumes on the following callback, with the existing `dt <= 0.1` cap preventing fast-forward catch-up damage.
+- A player-facing English/Spanish message explains that combat is paused due to critical slowdown, and a recovery notice appears when it ends. The Settings menu is still accessible so the player can lower graphics quality.
+- An explicit local Adaptive Frame Skip **Off** disables both normal adaptive skipping and this associated emergency protection. Closing a menu or hiding/pausing resets recent load evidence. The new diagnostic status includes emergency activation count and protected-callback count.
+- The thresholds are provisional and require physical-device observation. A browser that stops issuing callbacks entirely cannot be made to render by Javascript, and these guards do not diagnose GPU hangs. A persistently slow device may remain in recovery until resources improve or the player changes settings. Critical protection frames also contaminate general frame-profile averages if compared as ordinary combat data.
 
 ## Why retain a stale-image guard?
 
