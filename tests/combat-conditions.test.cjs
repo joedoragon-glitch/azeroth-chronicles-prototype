@@ -57,11 +57,11 @@ for (const mode of ['normal', 'nightmare']) {
   hero.slow = 0;
   patch.tick = 0;
   game.updateProjectiles(0.1);
-  assert.equal(hero.slow, 3, 'a vulnerable actor receives the authored hazard Slow');
+  assert.equal(hero.slow, 3.25, 'the authored hazard gains the universal quarter-second Slow bonus');
 
   assert(game.applySlow(hero, 7));
   assert(game.applySlow(hero, 2));
-  assert.equal(hero.slow, 7, 'Slow duration uses longest-remaining stacking');
+  assert.equal(hero.slow, 7.25, 'Slow refresh retains the longest duration plus its hit bonus');
   assert.equal(game.applySlow(hero, -2), false, 'negative durations are rejected');
   assert.equal(game.applySlow(hero, NaN), false, 'non-finite durations are rejected');
 
@@ -102,7 +102,8 @@ for (const mode of ['normal', 'nightmare']) {
   seal.cycle = 3;
   hero.slow = 0;
   game.updateTraps(0.1);
-  assert.equal(hero.slow, seal.slowSeconds, 'unprotected trap seal applies its duration');
+  assert.equal(hero.slow, seal.slowSeconds + Campaign.rules.cooldownBalance.slowDurationBonusSeconds,
+    'unprotected trap seal also receives the shared Slow duration bonus');
 }
 
 {
