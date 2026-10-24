@@ -2,10 +2,10 @@
 const fs = require('node:fs'),
   vm = require('node:vm'),
   C = require('../../src/prototype/engine');
-function shell(language, heroClass = 'paladin') {
+function shell(language, heroClass = 'paladin', options = {}) {
   const elements = new Map(),
     events = {},
-    storage = new Map();
+    storage = options.storage || new Map();
   let nextFrame;
   const ctx = new Proxy({}, { get: (o, k) => o[k] || (() => {}) });
   function el() {
@@ -56,7 +56,8 @@ function shell(language, heroClass = 'paladin') {
     };
   }
   const initial = new C('normal', heroClass, () => 0.5);
-  storage.set('azeroth-v4-normal', JSON.stringify(initial.snapshot()));
+  if (!storage.has('azeroth-v4-normal'))
+    storage.set('azeroth-v4-normal', JSON.stringify(initial.snapshot()));
   storage.set('azeroth-display-language-v1', language);
   const scope = {
     Campaign: C,
