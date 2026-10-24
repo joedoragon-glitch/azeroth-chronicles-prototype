@@ -20,6 +20,16 @@
 - Keep the **Show me the figures** optional action for topics with live dynamic statistics, with a **Return to the answer** action. Current rule-derived figures are re-evaluated when figures are opened; no historical values are invented or hardcoded in the Archive.
 - Long boss/history and province answers retain their complete exact source contents rather than shortening prose. Richer bilingual controls and exhaustive dynamic translation are intentionally reserved for A4.
 
+## Focused implementation audit — 24 October 2026
+
+**A2 and A3 source implementation complete on [draft PR #432](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/432)**. Four areas changed: Archive navigation callbacks and noninteractive headings; scoped Archive reading view in the shared menu host; desktop/phone reading typography; and the new regression test. No approved literary text, Archive topic source, gameplay rules, save serialization or PWA packaging was edited.
+
+**[Focused workflow #40086907650](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40086907650) PASSED 20 selected relevant test files**, including the new A2–A3 hierarchy, topic counts, optional figures, stable Back, reader-mode and restored-scroll assertions. `node scripts/build.cjs --check` passed for `0.9.1+snapshot.dev.169`. The publishing job was skipped. The workflow-tested code head is `e55b019b17bb7e729b83b79da20e750c19b3e596`.
+
+The draft temporarily targeted `main` only to trigger the existing focused workflow. It is now retargeted to `narrative/n1a-world-scene-reconciliation-20261024` (N1a PR #430) and verified **clean and mergeable**. The final documentation-only commit made after that successful workflow does not change tested code or tests. Both upstream PRs #428/#430 remain unmerged; no release authorization.
+
+**Limits:** This is focused static/Node production-shell validation, not hands-on phone, real-screen-reader, full browser matrix or full-system certification. A4 covers complete translated Archive controls, dynamic text and bilingual index headings. A5 covers comprehensive end-to-end/browsers, accessibility and save gate acceptance. Neither phase has started.
+
 ## Verification / boundaries
 
 - `tests/archive-a2-a3.test.cjs` checks all 8 + gated 9 shelves, topic/group coverage, preserved official prose, optional live figures, stable/back/scroll hierarchy, dedicated reader view and CSS.
