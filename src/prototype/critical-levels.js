@@ -116,6 +116,9 @@
   register('world/captain/frontier-overseer/0', 'world', 'damage');
   // Scornfang's 4-shot tracking salvo is one original activation.
   register('world/captain/supply-vale/3', 'world', 'damage');
+  // Scornfang Encapsulation: single original patch, real hit and unchanged
+  // persistent hazard pulses. Critical applies only to the initial hit.
+  register('world/captain/supply-vale/1', 'world', 'damage');
   Object.freeze(registry);
 
   function validatedLevel(level) {

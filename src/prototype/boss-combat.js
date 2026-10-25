@@ -2112,16 +2112,21 @@
           this.tacticalResolveRogueMove(e, a);
           return;
         }
-        // Only these four reviewed native captain cones have a World receipt.
-        // Do not roll at warning creation, nor infer that the other 17
-        // captain special actions and Dreadmaw share this simple release.
+        // Explicit conventional captain owners only. A one-patch
+        // Encapsulation release affects its initial hit, not the original
+        // hazard duration/ticks. Multi-beat, delegated and summon skills
+        // are deliberately excluded until their own receipt review.
         const nativeCaptainCone =
           a.captainSkill && a.kind === 'cone' &&
           ((a.captainProfile === 'supply-vale' && a.index === 2) ||
             (a.captainProfile === 'supply-march' && a.index === 1) ||
             (a.captainProfile === 'supply-highlands' && a.index === 2) ||
             (a.captainProfile === 'frontier-overseer' && a.index === 0));
-        if (nativeCaptainCone) {
+        const nativeEncapsulation =
+          a.captainSkill && a.captainProfile === 'supply-vale' && a.index === 1 &&
+          a.kind === 'circle' && !!a.persistent && !a.arenaSequential &&
+          a.arenaPatches?.length === 1;
+        if (nativeCaptainCone || nativeEncapsulation) {
           const receipt = this.worldCriticalAction(
             e, 'world/captain/' + a.captainProfile + '/' + a.index,
           );
@@ -2598,7 +2603,7 @@
                 : this.hitParty(
                     u,
                     (a.nightSkill === 'pounce' ||
-                      (a.captainSkill && a.kind === 'cone' && !!a.criticalExecution))
+                      (a.captainSkill && !!a.criticalExecution))
                       ? this.worldCriticalDamage(
                           a.criticalExecution, this.weakenedEnemyDamage(e) * a.coefficient,
                         )
