@@ -406,7 +406,7 @@
           (healer.type !== 'boss' && (healer.captain || healer.roomCaptain)))
       )
         return u.hp > 0 && u.maxHp > 0 && u.hp < u.maxHp;
-      if (healer && u.type !== 'boss' && this.enemyHealLeader(u))
+      if (healer && healer.type !== 'boss' && u.type !== 'boss' && this.enemyHealLeader(u))
         return u.hp > 0 && u.hp / u.maxHp <= cfg.captain.threshold;
       return (
         u.hp / u.maxHp <= (this.tacticalRogueRegroup(u) ? cfg.regroupThreshold : cfg.threshold)
@@ -482,7 +482,8 @@
           // A captain patient receives half its missing HP from another
           // healer, never the boss's 5%-of-max budget or the ordinary full heal.
           // Self-recovery remains a separate 5%-of-max captain clock.
-          captainRecipient = leader && target.type !== 'boss' && target !== e,
+          captainRecipient =
+            leader && target.type !== 'boss' && target !== e && (ordinaryHealer || captainHealer),
           amount = buffed
             ? target.maxHp - target.hp
             : captainRecipient
