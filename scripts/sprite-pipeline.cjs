@@ -716,6 +716,17 @@ async function checkProduction(options = {}) {
   const staleApprovals = Object.entries(approved.assets)
     .filter(([key, record]) => {
       if ((options.allowStaleKeys || []).includes(key)) return false;
+      // The owner selected the procedural ore bay. Its previously approved
+      // raster remains registered solely for comparison/rollback, not as the
+      // current canonical appearance. Still validate its binary provenance,
+      // manifest and source below; never silently refresh an approval hash.
+      if (key === 'prop:ore-sorting-bay:highlands') {
+        const decisions = json(path.join(root, 'tools/sprites/current-design-decisions.json'));
+        const decision = decisions.assets?.[key] || decisions.decisions?.[key] || decisions[key];
+        if (decision?.selectedRepresentation === 'procedural' &&
+            fs.readFileSync(path.join(root, 'src/prototype/sprites.js'), 'utf8')
+              .includes("'prop:ore-sorting-bay:highlands'")) return false;
+      }
       const contract = byKey.get(key);
       return (
         !contract ||
