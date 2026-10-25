@@ -4966,7 +4966,7 @@
           territory
         );
       return (
-        ['anchored', 'thinking', 'escape'].includes(state.phase) &&
+        ['anchored', 'thinking', 'escape', 'defend'].includes(state.phase) &&
         dist(target, state.anchor || e) <= separationLimit
       );
     }
@@ -5048,6 +5048,15 @@
         if (radius && (dist(destination, post) > radius - 55 ||
             path.some((point) => dist(point, post) > radius - 25)))
           continue;
+        // Leaders may seek any living ally, including another boss/captain,
+        // but their retreat must remain a modest local reposition, not a
+        // cross-map chase hidden inside the larger native encounter leash.
+        if (radius) {
+          const budget = e.type === 'boss' ? 340 : 400;
+          if (dist(destination, e) > budget || length > budget * 1.6 ||
+              path.some((point) => dist(point, e) > budget))
+            continue;
+        }
         if (!safe || length > cfg.extendedRouteMaxLength) continue;
         visited.add(ally.pack || ally.id);
         this._tacticalTerritorialVisited.set(e.id, visited);
@@ -5237,11 +5246,19 @@
           });
           return true;
         }
-        // Everyone else, including roaming bosses and captains, withdraws
-        // within the existing territorial leash if help is unavailable.
-        // Out of nearby/distant allies, and unable to summon help: withdraw.
-        // A defensive Rogue cast may cover escape, but never replace escape
-        // with a standing cast/reassessment loop, even at two-second reuse.
+        // No support is not a license to reset a boss/captain encounter.
+        // Nor should an ordinary enemy flee solely because the hero outlevels
+        // it. Stand and fight until real numerical/wound pressure warrants
+        // withdrawal or fresh support makes a counteroffensive viable.
+        if (this.tacticalDefenderTerritory(e) ||
+            !(this.tacticalRogueOutnumbered(e) || this.tacticalRogueWounded(e))) {
+          this._tacticalRegroups.set(e.id, {
+            phase: 'defend', anchor: { x: e.x, y: e.y }, holdRemaining: 6,
+          });
+          return true;
+        }
+        // Truly overwhelmed ordinary monsters get a finite escape, with
+        // optional defensive covering casts that never replace locomotion.
         this._tacticalRegroups.set(e.id, {
           phase: 'escape',
           anchor: { x: e.x, y: e.y },
@@ -5251,6 +5268,16 @@
         });
         this.tacticalRogueMove(e, target, true);
         return true;
+      }
+      if (state.phase === 'defend') {
+        // Rejoin the native attack AI every frame: this is a fighting stance,
+        // not an inert retreat or a two-second stationary Rogue-cast loop.
+        // Periodically reconsider the situation, and react immediately if
+        // allied support makes the fight favorable again.
+        state.holdRemaining -= dt;
+        if (!this.tacticalNeedsMoreSupport(e) || state.holdRemaining <= 0)
+          this.tacticalStopRogueRegroup(e);
+        return false;
       }
       if (state.phase === 'guard-captive') {
         const captive = this.tacticalGuardedSpecialist(e);
@@ -5274,6 +5301,14 @@
         return true;
       }
       if (state.phase === 'escape') {
+        // Defensive compatibility for a retreat already underway when a
+        // leader is reassessed. An elite cannot transition into a reset loop.
+        if (this.tacticalDefenderTerritory(e)) {
+          this._tacticalRegroups.set(e.id, {
+            phase: 'defend', anchor: { x: e.x, y: e.y }, holdRemaining: 6,
+          });
+          return false;
+        }
         state.fleeRemaining -= dt;
         state.seekDelay -= dt;
         if (!committed && state.seekDelay <= 0) {
@@ -5378,6 +5413,12 @@
         if (dist(target, e) > 280) {
           state.holdRemaining -= dt;
           if (state.holdRemaining <= 0) {
+            if (this.tacticalDefenderTerritory(e)) {
+              // The normal encounter leash, not Rogue regroup expiry,
+              // decides whether a boss/captain may truly disengage.
+              this.tacticalStopRogueRegroup(e);
+              return false;
+            }
             this.disengage(e, dt);
             return true;
           }
@@ -5490,7 +5531,7 @@
           !!signature &&
           wantsSignature &&
           (!['scatter', 'sweep'].includes(signature.effect) || closeTargets.length > 0),
-        profile = isSignature
+        chosenProfile = isSignature
           ? signature
           : e.mountedCrownRider && crownDoctrineSpecies !== 'crownguard'
             ? {
@@ -5500,6 +5541,12 @@
                 radius: 165 * R.balance.enemySpecialReachMultiplier,
               }
             : basic,
+        coveringRetreat = ['extended', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase),
+        // Gap-closing dashes belong to a supported counteroffensive, not a
+        // withdrawal. Retain the authored attack roster outside retreat.
+        profile = coveringRetreat && chosenProfile.style === 'dash'
+          ? (ranged && profiles.ranged[crownDoctrineSpecies]) || profiles.ordinary
+          : chosenProfile,
         target =
           isSignature && closeTargets.length
             ? closeTargets.includes(threat)
@@ -5522,6 +5569,7 @@
       e.telegraph = {
         rogueMove: true,
         rogueSignature: isSignature,
+        defensiveCover: coveringRetreat,
         // Elite basic/signature Rogue actions show only a mobile actor cast,
         // while ordinary non-guardian monsters keep their original footprint.
         mobileRogueCast:
@@ -6035,7 +6083,8 @@
         const startingHero = this.hero,
           startingZone = this.zoneId,
           startingDeaths = this.s.statistics.deaths;
-        if (move.style === 'dash' && dist(e, contactTarget) > 95) {
+        if (move.style === 'dash' && !move.defensiveCover &&
+            dist(e, contactTarget) > 95) {
           const previous = { x: e.x, y: e.y };
           this.move(
             e,
@@ -6094,7 +6143,11 @@
               x: e.x + ((e.x - contactTarget.x) / d) * move.retreat,
               y: e.y + ((e.y - contactTarget.y) / d) * move.retreat,
             };
-          if (this.clearSegment(e, point, 12)) this.move(e, point, 350, 0.35);
+          const defendedRadius = this.tacticalDefenderTerritory(e);
+          if (this.clearSegment(e, point, 12) &&
+              (!move.defensiveCover || !defendedRadius ||
+                dist(point, this.tacticalDefenderPost(e)) < defendedRadius - 25))
+            this.move(e, point, 350, 0.35);
         }
         return;
       }
