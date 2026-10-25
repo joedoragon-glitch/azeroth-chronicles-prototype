@@ -19,6 +19,10 @@ const zone = game.zone();
 zone.enemies = []; zone.props = []; zone.buildings = [];
 zone.npcs = []; zone.nodes = []; game.s.party = [];
 game.s.mercyTime = 0;
+// A fresh Normal campaign begins with Vale's first-hero-hit admission gate.
+// Enter the naturally reachable post-first-kill field state before attempting
+// to ENGAGE this unrelated Ridge boss; never bypass engage() or fake aggro.
+game.s.valeFieldAwakened = true;
 Object.assign(game.hero, { x: 1480, y: 1700, hp: 100000, maxHp: 100000 });
 game.line = () => true;
 // Earn the actual native opening admission before invoking engage(); direct
