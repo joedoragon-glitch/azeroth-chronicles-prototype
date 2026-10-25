@@ -193,13 +193,16 @@ console.log('PASS hostile healing excludes wounded hero, both troop types and al
   assert(g.enemySupportHeal(leader), 'Scornfang healer can act through authored ranged volley');
   assert(ally.supportHeal, 'area heal includes the wounded companion');
   assert(leader.supportHeal, 'area heal also includes an eligible wounded captain');
-  near(leader.supportHealCd, 10, 'captain has same per-actor cooldown');
+  near(leader.supportHealCd, 7, 'captain has fast ordinary-ally recovery');
+  near(ally.supportHeal.remaining, ally.maxHp - ally.hp, 'captain fully restores ally');
+  near(ally.supportHeal.seconds, 3, 'captain support finishes in three seconds');
+  near(leader.supportHeal.remaining, leader.maxHp * 0.05 * g.enemyHealMultiplier(leader), 'captain self-heal remains at 5%');
   leader.supportHealCd = 0;
   delete leader.supportHeal;
   delete ally.supportHeal;
   ally.hp = ally.maxHp;
-  assert(g.enemySupportHeal(leader), 'captain can self-heal when no companion needs care');
-  assert(leader.supportHeal, 'self recovery is a real timed effect');
+  assert(!g.enemySupportHeal(leader), 'captain cannot bypass its independent self recovery immediately');
+  assert(!leader.supportHeal, 'premature self restoration remains blocked');
 }
 {
   const { g, mob } = fixture('crown');
@@ -214,6 +217,10 @@ console.log('PASS hostile healing excludes wounded hero, both troop types and al
   assert.equal(g.enemyHealProfile(leader), 'Grafting');
   assert(g.enemySupportHeal(leader), 'Dreadmaw prioritizes his wounded brood');
   assert(ally.supportHeal && leader.supportHeal);
+  near(ally.supportHeal.remaining, ally.maxHp - ally.hp, 'Grafting fully repairs injured brood');
+  near(ally.supportHeal.seconds, 3, 'Grafting brood repair duration');
+  near(leader.supportHeal.seconds, 5, 'Grafting self budget stays independently slow');
+  near(leader.supportHealCd, 7, 'Grafting ordinary-support recovery');
 }
 {
   const { g, mob } = fixture('march');
@@ -231,7 +238,7 @@ console.log('PASS hostile healing excludes wounded hero, both troop types and al
   delete direjaw.supportHeal;
   delete wounded.supportHeal;
   wounded.hp = wounded.maxHp;
-  assert(g.enemySupportHeal(direjaw), 'Direjaw may treat his own wounds');
+  assert(!g.enemySupportHeal(direjaw), 'Direjaw self cooldown cannot be bypassed by resetting the ally clock');
 }
 for (const profile of ['supply-highlands', 'frontier-overseer']) {
   const { g, mob } = fixture();
