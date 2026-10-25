@@ -1478,10 +1478,38 @@
       visualFx = PrototypeCombatVisuals.queue(events, game, visualFx, effectRecorder);
       effectRecorder?.filtered(previous, visualFx);
     }
+    // One bounded first-paint opportunity for an essential hero cue that would
+    // otherwise die between scheduled draws. This NEVER requests a new draw,
+    // changes the 40-effect budget, or prolongs an already-painted cue.
+    // Deliberately silent cast stages (projectiles/other effects own the art)
+    // are excluded rather than holding invisible work in the transient queue.
+    function firstPaintEssential(f) {
+      if (f.type !== 'heroSkill') return false;
+      if (f.stage === 'cast')
+        return f.charged ||
+          (f.class === 'paladin' && [1, 2, 6].includes(f.slot)) ||
+          (['mage', 'ranger'].includes(f.class) && [3, 4].includes(f.slot));
+      return ['area', 'impact', 'chain', 'cancel', 'displace', 'skill1-cross'].includes(f.stage);
+    }
+    const firstPaintGraceSeconds = 0.12;
+    const firstPaintMinimumLife = 0.075;
     function updateVisualFx(dt) {
       for (const f of visualFx) {
-        if (effectRecorder && f.life <= dt) effectRecorder.expiry(f);
-        f.life -= dt;
+        if (f._firstPaintOvertime !== undefined) {
+          // The drawn cue receives no post-paint extension. Time spent waiting
+          // for a permitted draw is bounded by simulated time, even at 20 FPS.
+          f._firstPaintOvertime += dt;
+          f.life = !f._firstPaintPresented && f._firstPaintOvertime < firstPaintGraceSeconds
+            ? Math.min(f.max, firstPaintMinimumLife)
+            : 0;
+        } else if (
+          dt > 0 && f.life - dt <= 0 && !f._firstPaintPresented &&
+          firstPaintEssential(f) && dt - f.life < firstPaintGraceSeconds
+        ) {
+          f._firstPaintOvertime = Math.max(0, dt - f.life);
+          f.life = Math.min(f.max, firstPaintMinimumLife);
+        } else f.life -= dt;
+        if (effectRecorder && f.life <= 0) effectRecorder.expiry(f);
       }
       visualFx = visualFx.filter((f) => f.life > 0);
     }
@@ -1578,6 +1606,9 @@
             width: canvas.width,
             height: canvas.height,
           });
+          // A painter call is not pixel certification. This flag solely limits
+          // first-paint grace; the developer recorder retains its own semantics.
+          f._firstPaintPresented = true;
           effectRecorder?.painted(f);
           continue;
         }
