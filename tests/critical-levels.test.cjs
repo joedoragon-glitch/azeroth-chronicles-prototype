@@ -69,8 +69,10 @@ for(const key of ['world/captain/supply-vale/2','world/captain/supply-march/1',
   'world/captain/supply-highlands/1','world/captain/frontier-overseer/1',
   'world/captain/supply-crown/2','world/captain/supply-crown/0',
   'world/captain/supply-crown/6','world/captain/supply-crown/1',
-  'world/captain/supply-crown/4','world/captain/supply-crown/3'])
+  'world/captain/supply-crown/4'])
   assert.equal(Levels.ACTIONS[key].lever,'damage',key);
+assert.equal(Levels.ACTIONS['world/captain/supply-crown/3'].lever,'summonVitality',
+  'Nucleus Herd strengthens only successful new brood HP, not damage');
 for (const cls of ['paladin', 'mage', 'ranger']) {
   assert(Levels.ACTIONS['hero/' + cls + '/auto']);
   for (let slot=1;slot<=8;slot++)
