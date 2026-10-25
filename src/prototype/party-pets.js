@@ -240,7 +240,10 @@
         if (!projectile) this.petSkillContact(u, target, slot, hits);
         return true;
       }
-      petSkillContact(u, target, slot, hits = 1, launchPoint = null) {
+      // Keep the fifth argument separate for the independent, opt-in
+      // critical-receipt stream (#440). This branch does not enable criticals.
+      // The real projectile's cosmetic launchPoint owns the sixth argument.
+      petSkillContact(u, target, slot, hits = 1, criticalReceipt = null, launchPoint = null) {
         const def = this.petSkillDefinition(u, slot);
         if (!def || u.hp <= 0 || u.active === false) return false;
         if (u.hp > 0 && def.heal) {

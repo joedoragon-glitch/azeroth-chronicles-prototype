@@ -51,6 +51,16 @@ for (const family of physicalFirst) {
     approx(p.launchX, original.x, family + ' records physical release X');
     approx(p.launchY, original.y, family + ' records physical release Y');
     const direction = { x: p.dx, y: p.dy };
+    // Isolate the critical-receipt slot from the independent visual origin.
+    // The sentinel never grants a critical effect on this OFF-gated branch.
+    const receipt = family === 'crypt' && dt === 1 / 30 ? { critical: false } : null;
+    if (receipt) p.criticalExecution = receipt;
+    const contactArgs = [];
+    const originalContact = game.petSkillContact;
+    game.petSkillContact = function (...args) {
+      contactArgs.push(args);
+      return originalContact.apply(this, args);
+    };
     pet.x += 75;
     pet.y += 135;
     game.s.time += dt;
@@ -64,6 +74,10 @@ for (const family of physicalFirst) {
     }
     assert(enemy.hp < enemy.maxHp, family + ' eventually hits on physical contact');
     assert(!game.s.projectiles.includes(p), family + ' removes spent projectile');
+    assert.equal(contactArgs.length, 1, family + ' contact handler runs once');
+    assert.equal(contactArgs[0][4], receipt, family + ' fifth argument holds only receipt');
+    assert.deepEqual(contactArgs[0][5], original,
+      family + ' sixth argument separately preserves the real visual origin');
     const impact = events.find((e) =>
       e.type === 'petSkill' && e.stage === 'impact' && e.slot === 1);
     assert(impact, family + ' emits contact material at actual hit');
