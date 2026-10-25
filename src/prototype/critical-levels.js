@@ -104,6 +104,10 @@
   // Warned hostile night skills; no rollout to unreviewed special moves.
   register('world/night/wraith-drain', 'world', 'damage');
   register('world/night/stalker-pounce', 'world', 'damage');
+  // Actual non-boss/non-captain Rogue resolver owners. Elite signatures
+  // remain distinct from basics; named captains/bosses require their own gates.
+  register('world/rogue/basic', 'world', 'damage');
+  register('world/rogue/signature', 'world', 'damage');
   Object.freeze(registry);
 
   function validatedLevel(level) {

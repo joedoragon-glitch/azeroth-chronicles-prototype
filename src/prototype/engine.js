@@ -6097,6 +6097,14 @@
           move.y = target.y;
         }
       }
+      // The actual resolved maneuver owns one World decision. Invalid
+      // mobile/reach/LOS casts returned above without sampling. Boss and
+      // captain Rogue specials use separate delegated release owners later.
+      const criticalReceipt =
+        e.type !== 'boss' && !e.captain && !e.roomCaptain
+          ? this.worldCriticalAction(e,
+              move.rogueSignature ? 'world/rogue/signature' : 'world/rogue/basic')
+          : null;
       if (!move.rogueSignature) {
         // The slab is a physical lane: dodging the originally marked target
         // must not cancel contact with other party members still inside it.
@@ -6116,7 +6124,9 @@
             const destination = { x: unit.x + side * 100, y: unit.y };
             const landed = this.hitParty(
               unit,
-              this.weakenedEnemyDamage(e) * move.coefficient,
+              this.worldCriticalDamage(
+                criticalReceipt, this.weakenedEnemyDamage(e) * move.coefficient,
+              ),
               0,
               e.family === 'cindermaw' ? e.id : undefined,
             );
@@ -6157,7 +6167,9 @@
         }
         let landedAny = false;
         for (const victim of victims) {
-          if (!this.hitParty(victim, this.weakenedEnemyDamage(e) * move.coefficient, 0, e.id))
+          if (!this.hitParty(victim, this.worldCriticalDamage(
+            criticalReceipt, this.weakenedEnemyDamage(e) * move.coefficient,
+          ), 0, e.id))
             continue;
           landedAny = true;
           if (
@@ -6226,7 +6238,9 @@
         if (
           !this.hitParty(
             unit,
-            this.weakenedEnemyDamage(e) * move.coefficient,
+            this.worldCriticalDamage(
+              criticalReceipt, this.weakenedEnemyDamage(e) * move.coefficient,
+            ),
             0,
             e.family === 'cindermaw' ? e.id : undefined,
           )
