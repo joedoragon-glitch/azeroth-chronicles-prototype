@@ -109,6 +109,58 @@ function elapsed(g, dt) {
   captain.hp = captain.maxHp * 0.6;
   assert(g.enemySupportHeal(healer), 'independent leader eligibility returns at ten seconds');
 }
+// Distinct ranged guardians retain independent leader clocks: the captain
+// can receive a later cast from another guard while the first one cools down.
+{
+  const { g, actor } = scene();
+  const first = actor('wolf', 300, { ranged: true });
+  const second = actor('ashbeast', 350, { ranged: true });
+  const captain = actor('ogre', 325, {
+    captain: true, roomCaptain: true,
+    captainProfile: 'supply-highlands', hp: 300,
+  });
+  assert(g.enemySupportHeal(first), 'first guard starts healing wounded idle captain');
+  near(captain.supportHeal.remaining, 700 * rules.captain.missingFraction,
+    'first independent healer restores half the captain deficit');
+  g.advanceEnemySupportHeal(captain, 5);
+  near(captain.hp, 650, 'first guard finishes its five-second treatment');
+  first.supportHealCd = 0; // Isolate the separate ten-second leader source clock.
+  assert(!g.enemySupportHeal(first), 'first guard still has leader-specific cooldown');
+  assert(g.enemySupportHeal(second), 'second guard can treat captain during first cooldown');
+  near(captain.supportHeal.remaining, 350 * rules.captain.missingFraction,
+    'second guard heals half of remaining wounds');
+  g.advanceEnemySupportHeal(captain, 5);
+  near(captain.hp, 825, 'sequential independent healers improve captain survival');
+}
+// Grafting treats four eligible owned ordinary broodlings in one area cast,
+// each for its own full deficit; the captain's own heal stays on the slower budget.
+{
+  const { g, actor } = scene();
+  const dreadmaw = actor('ashbeast', 300, {
+    captain: true, roomCaptain: true,
+    captainProfile: 'supply-crown', hp: 400,
+  });
+  const brood = [100, 200, 300, 400].map((hp, index) =>
+    actor('ashbeast', 310 + index * 15, {
+      hp, summon: true, owner: dreadmaw.id,
+      ranged: index === 3,
+    }),
+  );
+  assert.equal(brood.length, 4);
+  assert.equal(brood.filter(u => u.ranged).length, 1);
+  assert(g.enemySupportHeal(dreadmaw), 'Grafting includes all four wounded broodlings');
+  for (const u of brood) {
+    assert(u.supportHeal, 'every wounded broodling receives its own area pulse');
+    near(u.supportHeal.remaining, u.maxHp - u.hp, 'full per-broodling deficit');
+    near(u.supportHeal.seconds, 3, 'every broodling has three-second treatment');
+    g.advanceEnemySupportHeal(u, 3);
+    near(u.hp, u.maxHp, 'every broodling is fully restored without stacking');
+  }
+  near(dreadmaw.supportHeal.remaining, 50 * g.enemyHealMultiplier(dreadmaw),
+    'Grafting self-heal remains original five-percent-of-max budget');
+  near(dreadmaw.supportHeal.seconds, 5, 'Dreadmaw self-treatment stays five seconds');
+  near(dreadmaw.supportHealCd, 7, 'ordinary brood support recharges in seven seconds');
+}
 {
   const g = new Campaign('normal', 'mage', () => 0.9);
   g.enter('supply-march');
