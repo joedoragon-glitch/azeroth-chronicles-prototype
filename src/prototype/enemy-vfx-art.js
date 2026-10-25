@@ -686,7 +686,7 @@
     }
     ctx.restore();
   }
-  function ground(ctx, screen, game, effects) {
+  function ground(ctx, screen, game, effects, observer = null) {
     if (!active(game)) return;
     if (
       !effects.some((f) => f.type === 'enemyVfx' && f.stage === 'impact' && !f.target) &&
@@ -730,6 +730,7 @@
       ) {
         if (!stageAsset(ctx, screen, f, 'impact', f.max - f.life))
           footprint(ctx, screen, f, game, 1 - f.life / f.max, density);
+        observer?.painted(f);
       }
     for (const h of game.s.hazards) {
       const m = game.enemyVfxHazard?.(h);
@@ -780,7 +781,7 @@
       }
     ctx.restore();
   }
-  function actors(ctx, screen, game, effects) {
+  function actors(ctx, screen, game, effects, observer = null) {
     if (!active(game)) return;
     for (const e of game.zone().enemies)
       if (
@@ -815,6 +816,7 @@
         if (!stageAsset(ctx, screen, f, f.stage, f.max - f.life))
           local(ctx, screen, f, rec, 1 - f.life / f.max, f.stage);
         ctx.restore();
+        observer?.painted(f);
       }
   }
   function projectile(ctx, screen, p, game) {
