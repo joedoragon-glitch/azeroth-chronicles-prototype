@@ -149,6 +149,15 @@ for (const level of [1, 2, 3]) {
     {x: 590, y: 500},
   );
   a.g.zone().enemies = [other]; b.g.zone().enemies = [enemy];
+  // Isolate the reactive guard owner, not simultaneous Soldier/Archer attacks.
+  a.g.s.party = [a.soldier];
+  b.g.s.party = [b.soldier];
+  for (const unit of [a.soldier, b.soldier]) {
+    unit.cd = 999;
+    unit.skillGlobalCd = 999;
+    unit.skill1Cd = 999;
+    unit.skill2Cd = 999;
+  }
   a.g.engage(other); b.g.engage(enemy);
   const counter = attach(b.g, {level});
   a.g.updateParty(0.1);
@@ -165,6 +174,11 @@ for (const level of [1, 2, 3]) {
 }
 {
   const {g, soldier} = arena(), counter = attach(g);
+  g.s.party = [soldier];
+  soldier.cd = 999;
+  soldier.skillGlobalCd = 999;
+  soldier.skill1Cd = 999;
+  soldier.skill2Cd = 999;
   g.updateParty(0.1);
   assert.equal(counter.count(), 0, 'out of combat Guard never fires');
   assert.equal(soldier.survivalCd, 0);
