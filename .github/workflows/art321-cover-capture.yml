@@ -29,7 +29,9 @@ jobs:
       - name: Actual scenery plus approved coin in both renderer modes
         run: |
           mkdir -p "$RUNNER_TEMP/art321-cover"
-          ART321_COVER_BROWSER=1 ART321_OUTPUT="$RUNNER_TEMP/art321-cover" node tools/visual-review/art321-crown-loot-browser.cjs
+          mkdir -p "$RUNNER_TEMP/art321-cover/day" "$RUNNER_TEMP/art321-cover/night"
+          ART321_COVER_BROWSER=1 ART321_OUTPUT="$RUNNER_TEMP/art321-cover/day" node tools/visual-review/art321-crown-loot-browser.cjs
+          ART321_COVER_BROWSER=1 ART321_SCENE_CLOCK=420 ART321_OUTPUT="$RUNNER_TEMP/art321-cover/night" node tools/visual-review/art321-crown-loot-browser.cjs
       - name: Archive paired composed-frame screenshots
         if: always()
         uses: actions/upload-artifact@v4
