@@ -40,6 +40,22 @@ c.s.expeditionSkills.sharedTraining = 3;
 assert(Math.abs(c.criticalPartyChance('codex-test-soldier') - .13) < 1e-10);
 assert(Math.abs(c.criticalPartyChance('codex-test-pet') - .13) < 1e-10);
 assert.equal(c.criticalPartyChance('unknown'), .1, 'unrelated actor gets no book bonus');
+// Pre-feature saves may already contain every optional interior. Restore
+// inserts its missing book without rebuilding that saved inhabitant roster.
+{
+  const visited = new Campaign('normal', 'mage', () => .91);
+  const side = Campaign.rules.sideDungeons[0];
+  assert(visited.enter(side.id));
+  const historical = visited.snapshot();
+  delete historical.criticalCodices;
+  historical.zones[side.id].npcs =
+    historical.zones[side.id].npcs.filter((n) => n.kind !== 'critical-codex');
+  const oldCount = historical.zones[side.id].enemies.length;
+  const again = Campaign.restore(historical, () => .91);
+  const patched = again.s.zones[side.id];
+  assert.equal(patched.npcs.filter((n) => n.kind === 'critical-codex').length, 1);
+  assert.equal(patched.enemies.length, oldCount, 'no extra old-zone population');
+}
 const legacy = new Campaign('normal', 'mage', () => .9).snapshot();
 delete legacy.criticalCodices;
 assert.equal(Campaign.restore(legacy, () => .9).criticalCodexCount(), 0,

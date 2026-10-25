@@ -1250,6 +1250,7 @@
           for (const n of [...z.npcs, ...z.nodes, ...z.buildings])
             if (c.blocked(n.x, n.y, z.id)) Object.assign(n, c.safe(n.x, n.y, z.id));
           c.authoredPlaces(z);
+          c.ensureCriticalCodex(z);
           c.migrateThornPatrol(z);
           c.migrateCinderInspection(z);
           c.clearVeraRepairs(z);
