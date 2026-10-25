@@ -423,7 +423,7 @@
     }
     ctx.restore();
   }
-  function ground(ctx, screen, game, pass = 'fill', time = 0) {
+  function ground(ctx, screen, game, pass = 'fill', time = 0, frameWarningShapes = null) {
     const cue = pass === 'cue' || pass === 'underlay-cue';
     ctx.save();
     ctx.lineJoin = 'round';
@@ -595,7 +595,13 @@
           !(e.family === 'ridge' && e.ledgerOpen),
       )) {
       const a = e.telegraph;
-      const shapes = warningShapes(a, game.attackPatches(a));
+      // These two presentation passes use the same telegraph state within one
+      // renderer draw. Reuse only that draw's exact geometry, never a later
+      // gameplay tick: moving warnings must still track their live hitboxes.
+      const frameEntry = frameWarningShapes?.get(a);
+      const patches = frameEntry?.patches ?? game.attackPatches(a);
+      const shapes = frameEntry?.shapes ?? warningShapes(a, patches);
+      if (frameWarningShapes && !frameEntry) frameWarningShapes.set(a, { patches, shapes });
       // Rogue warnings need an identity distinct from ordinary boss attacks:
       // cool outlines for basic disruption, brighter double-width for signature.
       ctx.strokeStyle = a.bossHeal
@@ -622,10 +628,14 @@
       if (a.royalTerritory && a.kind === 'sector') {
         // Opposite geometry is safe from this sector strike, not from
         // all surrounding Crown soldiers or other attacks.
-        const protectedShapes = warningShapes(
-          { ...a, angle: a.protectedAngle },
-          game.attackPatches(a),
-        );
+        // The safe sector must use the very same attack patches as the danger
+        // sector. A moving target still gets a fresh cache on the next draw.
+        let protectedShapes = frameWarningShapes?.get(a)?.protectedShapes;
+        if (!protectedShapes) {
+          protectedShapes = warningShapes({ ...a, angle: a.protectedAngle }, patches);
+          const entry = frameWarningShapes?.get(a);
+          if (entry) entry.protectedShapes = protectedShapes;
+        }
         for (const points of protectedShapes) {
           polygon(ctx, screen, points);
           ctx.fillStyle = '#4c9f6730';
@@ -1068,7 +1078,7 @@
     ctx.fillText('Interrupted', p.x, p.y - 37 - (1 - fade) * 5);
     ctx.restore();
   }
-  function queue(events, game, current = []) {
+  function queue(events, game, current = [], observer = null) {
     const art =
       root.PrototypeEnemyVfxArt ||
       (typeof require === 'function' ? require('./enemy-vfx-art.js') : null);
@@ -1138,12 +1148,43 @@
       else if (e.type === 'chargedArea') push(e, e.type, 0.7, 5);
       else if (e.type === 'chargedImpact') push(e, e.type, 0.3, 3);
     }
-    // Bound transient work while retaining ability and recovery cues during crowds of small hits.
-    while (next.length > 40) {
-      let index = 0;
-      for (let j = 1; j < next.length; j++)
-        if ((next[j].priority || 1) < (next[index].priority || 1)) index = j;
-      next.splice(index, 1);
+    // Only an opted-in developer recorder scans candidates.
+    observer?.candidates(next, current);
+    // The 40-slot budget still wins under overload. Reserve at most ONE
+    // newest hero execution and ONE player/ally recovery receipt so a burst
+    // of tier-5 accents cannot erase both before their first permitted draw.
+    // This runs ONLY on actual overflow; all other priority/eviction behavior
+    // remains unchanged. Warnings and physical projectiles are state-owned,
+    // outside this transient queue. No additional frame is requested.
+    if (next.length > 40) {
+      // Some NORMAL cast stages intentionally paint nothing: their
+      // projectile, area or living status owns the real art. Do not reserve a
+      // scarce slot for one of those deliberately silent receipts.
+      const visibleHeroCue = (f) =>
+        f.type === 'heroSkill' && (
+          f.stage !== 'cast' ||
+          f.charged ||
+          (f.class === 'paladin' && [1, 2, 3, 4, 6].includes(f.slot)) ||
+          (['mage', 'ranger'].includes(f.class) && [3, 4].includes(f.slot))
+        );
+      let hero = null, recovery = null;
+      for (let j = next.length - 1; j >= 0 && (!hero || !recovery); j--) {
+        if (!hero && visibleHeroCue(next[j])) hero = next[j];
+        if (!recovery && next[j].type === 'heal' && next[j].actor !== 'enemy')
+          recovery = next[j];
+      }
+      while (next.length > 40) {
+        let index = -1;
+        for (let j = 0; j < next.length; j++) {
+          if (next[j] === hero || next[j] === recovery) continue;
+          if (index < 0 || (next[j].priority || 1) < (next[index].priority || 1))
+            index = j;
+        }
+        // At most two cues are protected, so a >40-item list always has
+        // evictable transients. Keep diagnostic drop receipts exact.
+        observer?.overflow(next[index]);
+        next.splice(index, 1);
+      }
     }
     return next;
   }

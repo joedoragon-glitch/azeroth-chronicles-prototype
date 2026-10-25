@@ -1,6 +1,14 @@
-# Current development state — 24 October 2026
+# Current development state
 
-**Published build and branch:** `main` at [`35bc942a541017eb634f0c00789746ccd2aac57d`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/35bc942a541017eb634f0c00789746ccd2aac57d), package `0.9.1+snapshot.dev.169`. [PR #426](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/426) is **merged, not a draft**; [focused validation and GitHub Pages deployment #40072160124](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40072160124) both succeeded. Prior statements about awaiting owner merge approval, “unpublished dev.169” or “maintain dev.166 unchanged” described **earlier checkpoints** and are superseded. All published behavior remains subject to actual owner/device acceptance rather than assumed smoothness.
+**Verified repository checkpoint — 25 October 2026 (after low-risk Batch A):** `main` at [`d64b182b991a`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/d64b182b991a02f02aa5f384c12f1960fb559a35), package `0.9.1+snapshot.dev.185`. [Exact-commit focused validation and GitHub Pages deployment](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40235196259) both succeeded. Six approved low-impact PRs — #447, #449, #456, #468, #473, #474 — have merged. This does **not** certify integrated audio runtime fixes, physical-device acceptance, client cache refresh, or unrelated draft work; always recheck current `main` and [Recovery Desk #297](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297).
+
+**Work authorization:** A draft PR is not a release. Keep documentation maintenance independent of runtime/test changes; do not merge or deploy without separate owner approval. For unresolved work and pending acceptance, see [Recovery Desk #297](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297) and [merged PR #449 governance audit](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/449).
+
+## Historical release-status ledger
+
+### Development-state checkpoint recorded 24 October 2026
+
+**Previously published dev.169 checkpoint:** `main` at [`35bc942a541017eb634f0c00789746ccd2aac57d`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/35bc942a541017eb634f0c00789746ccd2aac57d), package `0.9.1+snapshot.dev.169`. [PR #426](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/426) is **merged, not a draft**; [focused validation and GitHub Pages deployment #40072160124](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40072160124) both succeeded. Prior statements about awaiting owner merge approval, “unpublished dev.169” or “maintain dev.166 unchanged” described **earlier checkpoints** and are superseded. All published behavior remains subject to actual owner/device acceptance rather than assumed smoothness.
 
 **Performance evidence reconciliation — 24 October 2026:** The **22 October timing audit is one historical layer**, not the complete audit record. Later independently reviewed Auto FPS/frame-skip coupling, critical reset/restart safeguards, crowd diagnostics, synthetic collision equivalence checks and successful focused CI add **substantive new evidence**. The [22–24 October performance evidence register](PERFORMANCE_EVIDENCE_REGISTER_20261024.md) distinguishes these validations from the original Chromebook measurements and from real-device FPS gains that are still unverified. Keep both the historical [22 October audit](PERFORMANCE_MEASUREMENT_AUDIT_20261022.md) and the [current dev.169 interpretation guide](CURRENT_PERFORMANCE_STATUS_DEV169_20261024.md); neither should be presented alone as the entire evidence base.
 
@@ -142,7 +150,9 @@
 
 **Prepared dev.110 — Crown, companion safety and arc landing:** Owner-authorized complete audit/repair/merge. Coherent town/roads/banks, contained heat raceways, orrery and shared watchpost; wider Citadel gates. All three companion findings repaired; dodged arcs now end at their original landing point. Focused checks/native/save audit pass; package-only publication and exact-live verification pending. Scope: `docs/CROWN_COMPANIONS_20261020.md`. Veyra stays preview-only.
 
-# Current development state — 20 October 2026
+### Current development state — 20 October 2026
+
+**Historical snapshot only:** This 20 October checkpoint is retained as evidence of prior decisions and tests, not as today's source/deployment status or authorization to resume its tasks.
 
 **20 October companion audit — dev.109, no runtime changes:** Joel requested a group-update draft and an audit of reckless companion behavior. Existing idle-targeting/Recall/regroup/gather checks pass, but three remaining defects are reproduced: critical solo wounds do not trigger retreat; close targets can require unsupported ~570-unit detours; resource/regroup threat envelopes miss fort ranged reach (321 vs 400.4). Audit/evidence: `docs/COMPANION_BEHAVIOR_AUDIT_20261020.md`; `tools/visual-review/companion-behavior-audit-20261020/`. Repairs pending; live build remains dev.109, no CI/release or group message.
 
@@ -267,7 +277,7 @@ The dev.79 publisher packaged the exact merge `23d951092ea5dff806c460c62ca71eece
 
 #300, #308, #313, #315–#318 and #319 are merged. Earlier instructions to resume or merge #300/#308/#313 are historical. The 42 previously open old PRs were closed without merging on 18 October EDT; their source branches remain preserved. #217 (sprites), #198 (isolated co-op) and #296 (process policy) are indexed under #319; closure does not mean their code shipped or their useful ideas were cancelled.
 
-## Historical 19 October break closeout and broader future work
+### Historical 19 October break closeout and broader future work
 
 The repository-wide [documentation audit](DOCUMENTATION_AUDIT_20261019.md) and [per-file index](DOCUMENTATION_INDEX.md) complete the current housekeeping scope on #319. The owner authorized merging #319 with the narrow Developer Mode fix; both documentation and dev.79 are now published. The audit report itself retains the facts and limits of its earlier documentation-only checkpoint.
 
@@ -275,13 +285,15 @@ The broader future quality plan remains a **full independent whole-game audit / 
 
 Future visual notes are retained in [the unified reconciliation ledger](NEXT_UPDATE_RECONCILIATION_20261018.md): Frontier captain/boss-species resemblance, stronger creature anatomy and identity, terrain-appropriate ranged uniforms, and optional poppies/red flowers. They are not break blockers.
 
-## Narrow owner-authorized exception — Developer Mode Skill 1
+### Narrow owner-authorized exception — Developer Mode Skill 1
 
 The owner requested this repair before the break: manual Skill 1 (tap and charged, keyboard/mouse/touch) must work in Developer Mode; movement auto-attack stays disabled. Build `0.9.1+snapshot.dev.79` was subsequently merged and published through #319 under the owner’s explicit no-further-testing instruction. This does not resume other deferred work or grant authority for another release.
 
 **Release-line policy:** stay on **0.9.1** through the owner's post-break series of existing-content repairs and refinement. Individual build identifiers may advance; 0.9.2 requires a separate owner decision. The planned complete playthrough will collect screenshots/notes of problems; Developer Mode supports inspection but does not certify normal-mode difficulty or death consequences. No new-content phase is authorized by this plan.
 
-## Current playable contracts
+### Current playable contracts
+
+**Historical dev.79 contract snapshot, not independently recertified dev.185 gameplay guidance.** Check current source and maintained reference guides for live behavior.
 
 - Canonical multi-file GitHub Pages/PWA, shared Campaign engine, separate desktop and phone presentation, browser/device-local saves. No multiplayer transport or playable Host/Join mode.
 - Five-region campaign; Standard/Succession and Normal/Nightmare; eight class-specific skills with tap/charged forms, cooldown-only combat, companions and eleven pet families. Legacy MP fields remain recovery data behind the dormant mana flag.
@@ -289,7 +301,7 @@ The owner requested this repair before the break: manual Skill 1 (tap and charge
 - Default camera 150%, optional 100%/175%; supported phone size begins at 375×800 CSS pixels or rotation. Narrow desktop windows remain desktop.
 - Current manifests: 33 retained approved sprite identities (22 currently selected raster, 11 selected procedural), seven materials, 127 registered audio assets (83 music, 14 ambience, 30 effects). The 296-entry old prompt catalog and 426 renderer-contract census are historical inventories, not unique required sprite counts.
 
-## Evidence limits and normal future workflow
+### Evidence limits and normal future workflow
 
 PR #308 has full validation/publication evidence. #313 retains focused and WebKit evidence and an owner-directed early merge; later dev.76–79 publication used explicit no-CI/no-further-test waivers. Neither successful publication nor this documentation audit certifies a new complete gameplay, balance, native-device, visual or audio pass. Preserve failures, stopped runs and source-specific results in the release handoff; do not relabel them as passes or create an urgent defect from an old pending checklist.
 

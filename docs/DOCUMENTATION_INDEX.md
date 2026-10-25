@@ -1,4 +1,24 @@
-**Current documentation index — 24 October 2026:** Published `0.9.1+snapshot.dev.169` at [merged PR #426](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/426), [successful focused Pages release #40072160124](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40072160124). The earlier 22 October default-Off/one-skip performance status and its audit were superseded by released default-On adaptive skipping, emergency recovery, Auto FPS safeguards, collision and crowd diagnostics. Use [current development state](DEVELOPMENT_STATE.md) and [dev.169 current performance status](CURRENT_PERFORMANCE_STATUS_DEV169_20261024.md). [The original 22 October audit](PERFORMANCE_MEASUREMENT_AUDIT_20261022.md), [dev.165 profiler](FRAME_PROFILER_DEV165.md), [dev.166 frame skip](ADAPTIVE_FRAME_SKIP_DEV166.md) and [dev.169 integration handoff](PERFORMANCE_RESILIENCE_INTEGRATION_20261024.md) retain dated evidence, not present-tense instructions. Recent merged menu, PixiJS, navigation, PWA and focused-CI work must be read from main, not frozen inventories.
+# Documentation index and current-source routing
+
+**Verified repository checkpoint — 25 October 2026 (after low-risk Batch A):** `main` at [`d64b182b991a`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/d64b182b991a02f02aa5f384c12f1960fb559a35), package `0.9.1+snapshot.dev.185`. [Exact-commit focused validation and GitHub Pages deployment](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40235196259) both succeeded. Six approved low-impact PRs — #447, #449, #456, #468, #473, #474 — have merged. This does **not** certify integrated audio runtime fixes, physical-device acceptance, client cache refresh, or unrelated draft work; always recheck current `main` and [Recovery Desk #297](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297).
+
+**Use now:** [Development state](DEVELOPMENT_STATE.md) for the verified checkpoint and governance boundaries; [architecture](ARCHITECTURE.md) for code owners; [Recovery Desk #297](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297) for outstanding work; [PR #449 governance audit](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/449) for the **merged historical documentation-governance audit**; its proposed test-governance implementation remains separately gated. Historical reports retain their original dated evidence.
+
+**Agent policy vs. historical tasks:** [Current `AGENTS.md` operating rules](../AGENTS.md) are the applicable consent and development instructions; [AGENTS historical development ledger](../AGENTS_HISTORY_20261025.md) preserves dated work orders, approvals, progress notes and source evidence **without re-authorizing them**.
+
+**Documentation coverage (25 October; triaged, not certified):** [Coverage and authority notes](DOCUMENTATION_COVERAGE_NOTES_20261025.md) link the [machine-readable Markdown census](DOCUMENTATION_COVERAGE_REGISTER_20261025.json). This supplement lists the 152 `docs/` paths outside the original October 19 census and marks 74 lacking direct index links at the pinned checkpoint; file coverage is not full review or permission to resume older work.
+
+**How to read older “current” guides (as verified for dev.185):** The title or an old candidate status describes a document's **own checkpoint**, not automatically the latest playable build or permission to execute its old next steps. Recheck live source and the newest owner authorization before starting work.
+
+| Topic | Present-day authority to consult | Dated context, not an open work order |
+| --- | --- | --- |
+| Sprite and art selections | [Sprite manifest](../assets/sprites/manifest.json), relevant procedural source, [per-design decision overlay](../tools/sprites/current-design-decisions.json) and later owner rulings; [sprite workflow](DESIGN_TO_SPRITE_WORKFLOW.md) explains how to preserve original masters and accepted design scope | [20 October dev.118 sprite restart](SPRITE_RESTART_20261020.md) and [8–20 October production journal](SPRITE_PRODUCTION_CURRENT_CONTEXT.md) are historical checkpoints; the overlay itself is dated and is not automatic production consent |
+| Performance and returning-player settings | Actual runtime/settings source, [verified development state](DEVELOPMENT_STATE.md) and exact Pages validation; real-device FPS remains a separate evidence question | [Published dev.169 performance assessment](CURRENT_PERFORMANCE_STATUS_DEV169_20261024.md) and [dev.170 implementation candidate](PERFORMANCE_BASELINE_DEV170_20261024.md) retain their own period-specific claims and instructions, not an unmerged task to restart |
+| Snapshot release history | [Verified current release state](DEVELOPMENT_STATE.md) for the same, continually updated live PWA | [October Community Snapshot notes (dev.119)](V09_RELEASE_NOTES.md) cover that earlier published milestone, not the entire subsequent update history |
+
+## Earlier status and historical inventory (retained)
+
+**Historical dev.169 documentation checkpoint — 24 October 2026:** Published `0.9.1+snapshot.dev.169` at [merged PR #426](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/426), [successful focused Pages release #40072160124](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40072160124). The earlier 22 October default-Off/one-skip performance status and its audit were superseded by released default-On adaptive skipping, emergency recovery, Auto FPS safeguards, collision and crowd diagnostics. Use [current development state](DEVELOPMENT_STATE.md) and [dev.169 current performance status](CURRENT_PERFORMANCE_STATUS_DEV169_20261024.md). [The original 22 October audit](PERFORMANCE_MEASUREMENT_AUDIT_20261022.md), [dev.165 profiler](FRAME_PROFILER_DEV165.md), [dev.166 frame skip](ADAPTIVE_FRAME_SKIP_DEV166.md) and [dev.169 integration handoff](PERFORMANCE_RESILIENCE_INTEGRATION_20261024.md) retain dated evidence, not present-tense instructions. Recent merged menu, PixiJS, navigation, PWA and focused-CI work must be read from main, not frozen inventories.
 
 **Published dev.161 — protected field opening:** Vale monsters stay present but wait for deliberate hero contact below level 2; automatic basics and companions cannot initiate. Thornfang/Mira appear silently at level 2. Thornfang waits for his first personal hero hit once per run; companion contact causes physical withdrawal/reset with Mira. Later native combat and v4 saves retained. Nine class/mode cases, original 18 patrol/lifecycle circuits, witness and existing town/recovery/onboarding checks pass; build/generated/format/syntax/diff pass. PR #400/package-only run 39709717929 succeeded; public build verified. Original workflow restored and temporary publisher removed; no broad CI/device matrix. [Scope](FIELD_ONBOARDING_DEV161.md).
 
@@ -80,7 +100,9 @@ Published dev.120: [scenery and announcement batch #354](SCENERY_NOTIFICATIONS_B
 
 - [Crown planning, companion safety and arc landing — dev.110](CROWN_COMPANIONS_20261020.md): native day/night/save/access audits, three companion repairs and one-impact arc expiry.
 
-# Documentation index — 20 October 2026
+### Documentation index — 20 October 2026
+
+**Archived 20 October routing snapshot:** Headings and historical “current” claims below refer to their original checkpoint, not the latest document-authority map. Follow this page's opening links for today's source and consent. The October 19 classification table and frozen hashes remain unchanged.
 
 - [Pet visual identity correction — published dev.115](PET_VISUAL_IDENTITY_20261020.md): Veyra miniature and exact boss weapons; comparison and native scene.
 
@@ -88,7 +110,9 @@ Published dev.120: [scenery and announcement batch #354](SCENERY_NOTIFICATIONS_B
 
 - [Treasurer money bag — dev.118](TREASURER_MONEYBAG_20261020.md): shared silver-Crown pouch at unchanged grips.
 
-## Start here
+#### Start here
+
+**Historical 20 October navigation advice; the older version links below are not today's source or release authority.**
 
 The current game also includes the merged [PixiJS WebGL2 experimental renderer (#407, stabilized in #419)](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/419), [menu usability integrations #413–#415](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/415), [navigation #421](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/421), and [focused-only CI #412](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/412). The dated frozen hash inventory is not a current source census.
 
@@ -140,7 +164,7 @@ Current state owns present-tense status. Executable source/config/registries own
 
 **Frozen receipts require special care.** The files marked “frozen bytes” below intentionally retain old candidate/next-action text because their exact bytes are evidence. Their historical imperatives are superseded by this index and current state. Never use a frozen #300/#308/#313 handoff as a live resume instruction. The old 296-entry prompt catalog is also parser-owned input: it retains stable IDs, not authority for 280 new generation jobs. The 426-contract art census is not a unique-sprite requirement.
 
-## Complete incoming inventory
+### Complete incoming inventory
 
 The audited checkpoint is `ff67135d0de07e7da76f882a3287294edfef7a73`. The table covers every tracked Markdown file, all seven JSON evidence files in `docs/`, and all four tracked text fixtures/generation prompts. Source/config/workflows were separately inspected where needed to reconcile current claims; their entire codebase is not included in this documentation census. Each hash identifies the incoming bytes, not a new test certificate.
 
@@ -322,7 +346,7 @@ The audited checkpoint is `ff67135d0de07e7da76f882a3287294edfef7a73`. The table 
 | [tools/sprites/batches/2026-10-09-07/prop-ridge-supper-highlands/prompt.txt](../tools/sprites/batches/2026-10-09-07/prop-ridge-supper-highlands/prompt.txt)                 | Preserved fixture / generation prompt   | Preserve exact evidence; no replay, regeneration or new acceptance            | `ffb832c88b28d1dbfc483ee8ac34ceb3f5457d22f59bd0d1e212e5c9d2bc364b` |
 | [tools/sprites/batches/2026-10-09-07/prop-royal-flight-standard-frontier/prompt.txt](../tools/sprites/batches/2026-10-09-07/prop-royal-flight-standard-frontier/prompt.txt) | Preserved fixture / generation prompt   | Preserve exact evidence; no replay, regeneration or new acceptance            | `c6167424916a04f804dd43c7fb8d8ee11322846ed1834b0b13ad820bf9c43720` |
 
-## Files added by this audit
+### Files added by this audit
 
 - [This index](DOCUMENTATION_INDEX.md): maintained authority map and complete incoming inventory.
 - [Audit report](DOCUMENTATION_AUDIT_20261019.md): concrete findings, static verification and PR closure/source preservation inventory.

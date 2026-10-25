@@ -225,7 +225,8 @@ function selectTests(changed, exists = (file) => fs.existsSync(path.join(root, f
     // One explicitly changed Pixi acceptance test may run as a focused
     // browser smoke. Never select an entire browser matrix by subsystem.
     if (file === TEST + 'pixi-renderer-browser.test.cjs' ||
-        file === TEST + 'frame-rate-browser.test.cjs') {
+        file === TEST + 'frame-rate-browser.test.cjs' ||
+        file === TEST + 'effect-diagnostics-stage5-browser.test.cjs') {
       // Two explicit narrow Chromium acceptance files; never a browser matrix.
       if (exists(file)) chosen.add(file);
       covered = true;
@@ -281,7 +282,8 @@ function run(
   paths,
   invoke = (file) => {
     const pixiBrowser = file === TEST + 'pixi-renderer-browser.test.cjs';
-    const narrowBrowser = pixiBrowser || file === TEST + 'frame-rate-browser.test.cjs';
+    const narrowBrowser = pixiBrowser || file === TEST + 'frame-rate-browser.test.cjs' ||
+      file === TEST + 'effect-diagnostics-stage5-browser.test.cjs';
     const result = cp.spawnSync(process.execPath, [path.join(root, file)], {
       cwd: root,
       stdio: 'inherit',
