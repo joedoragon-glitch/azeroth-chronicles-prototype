@@ -37,7 +37,7 @@ function observe(game) {
     ward: game.hero.wardUntil,
     ally: [troop.hp, troop.rangerRallyUntil, troop.wardUntil],
     enemy: [enemy.hp, enemy.x, enemy.y, enemy.cd, enemy.specialCd, enemy.weakenUntil,
-      enemy.slowUntil, enemy.tauntUntil, enemy.fractureUntil],
+      enemy.slow, enemy.slowStacks, enemy.tauntUntil, enemy.fractureUntil],
     shots: game.s.projectiles.map(p => [
       p.slot, p.damage, p.slow, p.push, p.tauntDuration, p.fractureDuration
     ])
