@@ -4,6 +4,12 @@
 
 **Scope:** Preserve the 513-case review and its completed procedural improvements; give a future, separately authorized audit a reproducible answer for **each stable catalog identity/state**: how it actually appears in Canvas 2D, how it actually appears in experimental PixiJS WebGL2, whether each route retains the intended art and gameplay cues, and what correction (if any) is needed. No game code, sprites, materials, tests, workflows, camera settings, saves, PR merges or deployments are changed by this addendum.
 
+## Verified audit outputs added after this initial plan
+
+The independent [source execution audit](ART_CATALOG_321_SOURCE_EXECUTION_AUDIT_20261025.md) cross-checked current rendering call paths, identified nine focused fidelity/integration findings, and verified the complete derived [513-row source crosswalk plus ten new source families](evidence/ART_CATALOG_321_SOURCE_CROSSWALK_20261025.json). **Source inventory and source-code gaps are assessed; actual paired Canvas/Pixi visual certification remains outstanding.**
+
+**Approval correction:** the original 513-row assessment *does* record Joel's approval of the completed procedural design set dated 19 October 2026, and the published art pass records subsequent approval. The future visual-parity audit is a different acceptance dimension: preserve historical accepted art, but do not assert that its WebGL presentation has already been accepted. Do not restart the 465 implemented refinements.
+
 ## 1. The historical records are complementary, not contradictory
 
 1. [Issue #321](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321) delivered the illustrated *assessment* on 19 October: **513 review entries** based on 426 earlier procedural-renderer contracts, 605 distinct source/state images, 621 before-image references, 66 substantial rebuild recommendations, 399 targeted refinements, 47 retain/protect recommendations and one shared effects context. Review entries are **not** 513 unique sprites. The portable `Procedural_Art_Review.html` and `Procedural_Art_Review_Package.zip` were delivered in the owner's ChatGPT files; issue text is not a replacement for their individual plans and images. Issue #321 was closed 25 October for completion of this assessment, **not** for end-to-end WebGL fidelity certification.
