@@ -1,113 +1,141 @@
 'use strict';
+// #463: arrows leave the moving Ranger's current bow, then remain independent.
+// The same physical coordinates drive native hits and both Canvas/Pixi-overlay art.
 const assert = require('node:assert/strict');
+const Campaign = require('../src/prototype/engine.js');
 const HeroArt = require('../src/prototype/hero-presentation.js');
 
-const screen = (point) => ({ x: point.x, y: point.y });
-function drawReceipt(receipt, elapsed, options = {}) {
-  const originals = JSON.parse(JSON.stringify(receipt));
-  const queued = [];
-  HeroArt.queue([receipt], (effect, kind, duration) =>
-    queued.push({ ...effect, kind, life: duration, max: duration }),
+const near = (a, b, message) =>
+  assert(Math.abs(a - b) < 1e-6, message + ': ' + a + ' vs ' + b);
+
+function arena(cls = 'ranger') {
+  const game = new Campaign('normal', cls, () => 0.9);
+  game.zone().props = [];
+  game.zone().buildings = [];
+  game.zone().npcs = [];
+  game.zone().enemies = [];
+  game.s.party = [];
+  Object.assign(game.hero, {
+    x: 500, y: 500, hp: 1000, maxHp: 1000, mp: 10000,
+    skills: Array(8).fill(8),
+    cd: Array(8).fill(0), chargedCd: Array(8).fill(0), order: null,
+  });
+  game.s.mercyTime = 0;
+  const enemy = game.makeEnemy(
+    { species: 'goblin', name: 'Flight target', level: 1, hp: 1000000, damage: 0, gold: 0, xp: 0 },
+    { x: 780, y: 500 },
   );
-  assert.equal(queued.length, 1, 'hero effect has one presentation receipt');
-  const effect = queued[0];
-  effect.life = Math.max(0.001, effect.max - elapsed);
-  const calls = [];
-  const ctx = {
-    save() {},
-    restore() {},
-    beginPath() {},
-    closePath() {},
-    stroke() {},
-    fill() {},
-    arc() {},
-    moveTo(x, y) { calls.push({ op: 'move', x, y }); },
-    lineTo(x, y) { calls.push({ op: 'line', x, y }); },
-  };
-  HeroArt.draw(ctx, screen, effect, options);
-  assert.deepEqual(receipt, originals, 'presentation does not change combat event');
-  return { effect, calls };
-}
-function hasShaftTo(calls, x, y, length = 17) {
-  return calls.some((call, index) =>
-    call.op === 'line' &&
-    Math.abs(call.x - x) < 0.01 &&
-    Math.abs(call.y - y) < 0.01 &&
-    index > 0 &&
-    calls[index - 1].op === 'move' &&
-    Math.abs(Math.hypot(x - calls[index - 1].x, y - calls[index - 1].y) - length) < 0.2,
-  );
+  enemy.hp = enemy.maxHp = 1000000;
+  game.zone().enemies.push(enemy);
+  game.engage(enemy);
+  return { game, enemy };
 }
 
-// Charged Pinning Volley has already hit every legal target by this receipt.
-// Full-distance shafts must appear immediately, not traverse the corridor
-// after damage (in either normal or reduced-motion presentation).
-const pinning = {
-  type: 'chargedArea',
-  actor: 'hero',
-  class: 'ranger',
-  slot: 2,
-  effect: 'pinning-volley',
-  charged: true,
-  shape: 'line',
-  x: 120,
-  y: 100,
-  fromX: 100,
-  fromY: 100,
-  angle: 0,
-  range: 200,
-  halfWidth: 20,
-};
-for (const options of [{}, { reduced: true }, { optimized: true }]) {
-  for (const elapsed of [0.001, 0.1]) {
-    const { effect, calls } = drawReceipt(pinning, elapsed, options);
-    assert.equal(effect.max, 0.2, 'instant corridor cue should be brief');
-    for (const y of [88, 100, 112]) {
-      assert(
-        hasShaftTo(calls, 300, y),
-        'Pinning Volley shafts show the complete immediate lane at ' + elapsed,
-      );
-    }
+let verified = 0;
+for (const dt of [1 / 20, 1 / 30, 1 / 60]) {
+  for (const { slot, charged, name } of [
+    { slot: 1, charged: false, name: 'Rapid Arrows' },
+    { slot: 2, charged: false, name: 'Pinning Shot' },
+    { slot: 6, charged: true, name: 'Repelling Volley' },
+    { slot: 8, charged: false, name: "Hunter's Salvo" },
+    { slot: 8, charged: true, name: 'Grand Hunt' },
+  ]) {
+    const { game, enemy } = arena();
+    assert(game.cast(slot, enemy.id, charged), name + ' must cast');
+    const delayed = game.s.projectiles.filter(p => p.delay > 0 && p.style === 'arrow');
+    assert(delayed.length > 0, name + ' contains one or more staggered arrows');
+    assert(delayed.every(p => p.rangerDelayedLaunch), name + ' carries a real deferred bow release');
+
+    // Keep one of the later arrows pending while hero and target move.
+    const p = delayed.reduce((latest, next) => next.delay > latest.delay ? next : latest);
+    const old = { x: p.x, y: p.y };
+    game.hero.x = 500 + (slot * 3);
+    game.hero.y = 565;
+    enemy.x = 770;
+    enemy.y = 530;
+    let ticks = 0;
+    while (p.delay > 0 && ticks++ < 40) game.updateProjectiles(dt);
+    assert(ticks < 40, name + ' delay eventually reaches launch');
+    near(p.x, old.x, name + ' collider stays dormant until its real release');
+    near(p.y, old.y, name + ' dormant location not used for visible arrow');
+    assert(p.rangerDelayedLaunch, name + ' stays non-rendered at zero delay');
+    assert(
+      HeroArt.projectile({ save() { throw Error('premature visible arrow'); } },
+        point => point, p, 'ranger'),
+      name + ' must not draw its bow origin until the collider has launched',
+    );
+
+    const live = { x: game.hero.x, y: game.hero.y };
+    const aim = { x: enemy.x - live.x, y: enemy.y - live.y };
+    const length = Math.hypot(aim.x, aim.y);
+    game.updateProjectiles(dt);
+    assert.equal(p.rangerDelayedLaunch, undefined, name + ' really released');
+    near(p.dx, aim.x / length, name + ' aims from the current Ranger');
+    near(p.dy, aim.y / length, name + ' release vector uses current target');
+    near(p.x, live.x + p.dx * p.speed * dt, name + ' actual collider starts at live bow X');
+    near(p.y, live.y + p.dy * p.speed * dt, name + ' actual collider starts at live bow Y');
+    const flight = game.effects.filter(e => e.type === 'heroProjectileFlight' && e.slot === slot).at(-1);
+    assert(flight, name + ' has a real physical launch receipt');
+    near(flight.x, live.x, name + ' visual release X matches collider');
+    near(flight.y, live.y, name + ' visual release Y matches collider');
+    const released = { x: p.x, y: p.y, dx: p.dx, dy: p.dy };
+    // Once fired, a sidestep does not teleport or tether the arrow.
+    game.hero.x += 180;
+    game.hero.y -= 90;
+    enemy.x += 10; // Ordinary arrows do not reacquire a moving target.
+    game.updateProjectiles(dt);
+    near(p.dx, released.dx, name + ' holds its independent trajectory');
+    near(p.dy, released.dy, name + ' holds its independent heading');
+    near(p.x, released.x + released.dx * p.speed * dt, name + ' flies independently X');
+    near(p.y, released.y + released.dy * p.speed * dt, name + ' flies independently Y');
+    verified++;
   }
 }
 
-// Normal Arrow Volley is also immediate. Its world-space streak belongs only
-// to the release frame; hit glints can persist briefly after the Ranger moves.
-const volley = {
-  type: 'spell',
-  actor: 'hero',
-  source: 'hero',
-  class: 'ranger',
-  slot: 5,
-  x: 100,
-  y: 100,
-  radius: 350,
-  contacts: [{ x: 260, y: 120 }],
-};
-for (const options of [{}, { reduced: true }, { optimized: true }]) {
-  const initial = drawReceipt(volley, 0.01, options);
-  const afterward = drawReceipt(volley, 0.12, options);
-  assert.equal(initial.effect.max, 0.2, 'instant volley tail is short-lived');
-  assert(hasShaftTo(initial.calls, 260, 110), 'first release flash shows a real contact path');
-  assert(!hasShaftTo(afterward.calls, 260, 110), 'old bow position stops firing visible shafts');
-  assert(afterward.calls.length > 0, 'the real contact glint may briefly remain');
+// A target lost during the windup cannot cause an unexplained projectile
+// to launch at empty ground, or resurrect an invalid hit.
+{
+  const { game, enemy } = arena();
+  assert(game.cast(2, enemy.id, false));
+  const delayed = game.s.projectiles.find(p => p.rangerDelayedLaunch);
+  assert(delayed);
+  game.zone().enemies = [];
+  game.updateProjectiles(0.2);
+  assert(delayed.rangerDelayedLaunch);
+  game.updateProjectiles(0.05);
+  assert(!game.s.projectiles.includes(delayed), 'cancel abandoned unreleased shot');
+  assert(!game.effects.some(e => e.type === 'heroProjectileFlight' && e.slot === 2),
+    'never show a launch after target is lost');
 }
 
-// This task is visual-only. Planted Paladin cross keeps its authored second
-// damage pulse, and the Ranger's actual launched projectiles stay independent.
-const paladin = drawReceipt({
-  type: 'heroSkillArea',
-  actor: 'hero',
-  class: 'paladin',
-  slot: 1,
-  phase: 'launch',
-  x: 100,
-  y: 100,
-  angle: 0,
-  reach: 180,
-  halfWidth: 16,
-}, 0.01);
-assert.equal(paladin.effect.stage, 'skill1-cross');
-assert.equal(paladin.effect.max, 0.36, 'Paladin fixed cross cue remains unchanged');
+// Original collision rules remain authoritative after release.
+{
+  const { game, enemy } = arena();
+  assert(game.cast(2, enemy.id, false));
+  const p = game.s.projectiles.find(p => p.rangerDelayedLaunch);
+  game.hero.y = 550;
+  game.updateProjectiles(0.2);
+  game.clearSegment = () => false;
+  const beforeHp = enemy.hp;
+  game.updateProjectiles(0.05);
+  assert(!game.s.projectiles.includes(p), 'terrain blocks the physical launched arrow');
+  assert.equal(enemy.hp, beforeHp, 'blocked arrow never creates phantom damage');
+}
 
-console.log('PASS #463 Ranger instant-cast visual timing and fixed Paladin cross');
+// The two other heroes must not acquire the Ranger-only bow behavior.
+{
+  for (const cls of ['paladin', 'mage']) {
+    const { game, enemy } = arena(cls);
+    assert(game.cast(1, enemy.id, false));
+    assert(game.s.projectiles.every(p => !p.rangerDelayedLaunch));
+  }
+  const cross = [];
+  HeroArt.queue([{
+    type: 'heroSkillArea', actor: 'hero', class: 'paladin', slot: 1,
+    phase: 'launch', x: 500, y: 500, angle: 0, reach: 200, halfWidth: 20,
+  }], (effect, type, life) => cross.push({ effect, type, life }));
+  assert.equal(cross[0].effect.stage, 'skill1-cross');
+  assert.equal(cross[0].life, 0.36, 'fixed Paladin cross stays unchanged');
+}
+
+console.log('PASS #463 real Ranger bow origins, independent arrows, target/terrain safety, 20/30/60 FPS (' + verified + ' cases)');
