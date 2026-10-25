@@ -65,6 +65,15 @@
           ? this._criticalPartyNative.enhance(receipt, amount, 'damage')
           : amount;
       }
+      // Apply at casting, never per five-second support tick. The original
+      // support cap remains full HP/MP; the authored multiplier tops at 1.45.
+      troopCriticalSupportAmount(receipt, amount) {
+        return receipt?.critical
+          ? this._criticalPartyNative.enhance(receipt, amount, 'healAmount', {
+              max: amount * 1.45,
+            })
+          : amount;
+      }
 
       // Read only the existing unit and judgment state. Active samples include
       // companions and boss pets; the full current roster includes benched units.
@@ -2122,7 +2131,9 @@
                   ? this.hero
                   : injured.sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0],
             ranger = rangers[0],
-            amount = this.rangerSupportAmount(type);
+            originalAmount = this.rangerSupportAmount(type),
+            criticalReceipt = this.troopCriticalRelease(ranger, 'heal'),
+            amount = this.troopCriticalSupportAmount(criticalReceipt, originalAmount);
           ranger[key] = R.rangerSupport.cooldown;
           this.addSupportEffect(target, type, amount);
           this.say(
@@ -2158,7 +2169,9 @@
           return false;
         }
         const ranger = rangers[0],
-          amount = this.rangerSupportAmount(type);
+          originalAmount = this.rangerSupportAmount(type),
+          criticalReceipt = this.troopCriticalRelease(ranger, 'mana'),
+          amount = this.troopCriticalSupportAmount(criticalReceipt, originalAmount);
         ranger[key] = R.rangerSupport.cooldown;
         this.addSupportEffect(this.hero, type, amount);
         this.say(
@@ -3050,8 +3063,14 @@
             !this.mageSilenceActive(u) &&
             (u.survivalCd || 0) <= 0
           ) {
+            // This survival trigger is its own action: no basic-attack roll,
+            // no new activation, no cooldown or immunity bypass.
+            const guardReceipt = this.troopCriticalRelease(u, 'guard');
             u.survivalCd = 14;
-            u.immune = Math.max(u.immune || 0, 2.5);
+            const protection = guardReceipt?.critical
+              ? this._criticalPartyNative.enhance(guardReceipt, 2.5, 'guardDuration', { max: 3 })
+              : 2.5;
+            u.immune = Math.max(u.immune || 0, protection);
             this.event('spell', { x: u.x, y: u.y, target: u.id, kind: 'soldierGuard' });
           }
         // Recall is a standing defensive order. Reaching formation never
