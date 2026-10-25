@@ -13,7 +13,7 @@ A physical arrow or thrown weapon is visually attached to its living shooter *un
 | Slot | Tap | Charged | Ownership and reviewed behavior |
 | --- | --- | --- | --- |
 | 1 | Rapid Arrows | Hawk Interception | Staggered delayed members now physically start at live moving bow on sub-release, then travel independently. Hawk is a genuinely autonomous moving entity, not tethered. |
-| 2 | Pinning Shot | Pinning Volley | Normal delayed second arrow launches from live bow. Charged corridor preserves originally selected foes but now launches real arrows; damage and both authored slow applications wait for physical contact rather than false instant arrow front. |
+| 2 | Pinning Shot | Pinning Volley | Normal delayed second arrow launches from live bow. Charged corridor preserves originally selected foes but now launches real arrows; damage and the one authored Ranger Volley Slow application wait for physical contact rather than false instant arrow front. |
 | 3 | Self-Heal | Party Heal | Instant restorative magic / release glint is permitted; health effects belong to actual recipients. Do not render as literal thrown arrows. |
 | 4 | Movement Haste | Companion Rally | The active status belongs to each relevant moving recipient; existing live statuses already track actors. |
 | 5 | Arrow Volley | Arrow Rain | Normal selects existing radius/target count but now releases real contact-resolved arrows instead of instant damage plus disconnected cast-origin shafts. Charged already creates independent arrows and remains untouched. |
@@ -56,7 +56,7 @@ Soldier's basic sword, counterattacks, Power Strike, and Holy Cleave are immedia
 ## Regression gates, integration and known limits
 
 - Native updateProjectiles at 20/30/60-step timing: delayed hero arrows and Archer Triple Shot release from the current source, retain independent direction afterward, and cancel prelaunch when the target or archer disappears.
-- Real arrows: no damage before flight; contacts use existing hit radius/blocked segment/target eligibility; original multi-target cast selection and area/dust semantics are preserved except for deliberate physical obstruction/miss changes; Ranger Pinning Volley must retain both Slow contributions.
+- Real arrows: no damage before flight; contacts use existing hit radius/blocked segment/target eligibility; original multi-target cast selection and area/dust semantics are preserved except for deliberate physical obstruction/miss changes; Ranger Pinning Volley must retain its **one effective** Ranger Volley Slow application at physical contact (the generic charged-second `def.slow` is absent for Ranger in current and pre-PR rules; never invent a second stack).
 - Paladin and Soldier: planted cross/cones remain at actual damage origin, ongoing stances/wards remain actor-based, sword strikes do not generate fictitious projectiles.
 - Existing v4 restore discards transient projectiles, as before; no persistent format change or PWA metadata edits.
 - Focused CI and deterministic package verification only. **Human sight/feel on actual desktop and phone remains unverified**; automated Canvas/X simulation cannot certify beautiful arc spacing, readability at smaller scales, or optional experimental WebGL2 trial/recovery.

@@ -349,4 +349,63 @@ for (const cause of ['source-dead', 'target-gone']) {
     'crowd generates native physical impact receipts, not merely synthetic test effects');
 }
 
-console.log('PASS #463 real Ranger bow origins, independent arrows, target/terrain safety, 20/30/60 FPS (' + verified + ' cases), truthful delayed release receipts and native crowd queue');
+
+// Regression against documentation drift: in all historical and current
+// configs the charged Ranger Pinning Volley has ONE authored active Slow
+// source. The generic def.slow path is dormant for Ranger's charged Skill 2.
+// Never invent a second Slow/debt stack while migrating impact to flight.
+for (const dt of [1 / 20, 1 / 30, 1 / 60]) {
+  for (const priorStacks of [0, 2]) {
+    const { game, enemy } = arena();
+    const recorded = [];
+    const apply = game.applySlow;
+    game.applySlow = function (...args) {
+      recorded.push({ unit: args[0], seconds: args[1] });
+      return apply.apply(this, args);
+    };
+    if (priorStacks) {
+      enemy.slow = 0.5;
+      enemy.slowStacks = priorStacks;
+    }
+    const oldHp = enemy.hp;
+    assert(game.cast(2, enemy.id, true), 'charged Pinning Volley enters real corridor');
+    const arrow = game.s.projectiles.find(p => p.source === 'hero' && p.slot === 2);
+    assert(arrow, 'charged Pinning Volley must create physical arrow');
+    assert.equal(arrow.slow, 0, 'Ranger charged Skill 2 has no generic second Slow');
+    const duration = Campaign.rules.heroTactics.ranger.volley.slow +
+      game.tacticMilestones(game.hero.skills[1]) *
+      Campaign.rules.heroTactics.ranger.volley.slowStep;
+    near(arrow.rangerVolleySlow, duration, 'one authored Ranger Volley Slow value');
+    assert.equal(recorded.length, 0, 'no Slow until arrow collision');
+    game.updateProjectiles(dt);
+    assert.equal(recorded.length, 0, 'no Slow in the first flight step');
+    for (let i = 0; i < 65 && game.s.projectiles.includes(arrow); i++)
+      game.updateProjectiles(dt);
+    assert(!game.s.projectiles.includes(arrow), 'charged arrow finishes real physical flight');
+    assert(enemy.hp < oldHp, 'physical impact dealt damage before its Slow');
+    assert.equal(recorded.length, 1, 'exactly one Slow applied on real contact');
+    assert.equal(recorded[0].unit, enemy);
+    near(recorded[0].seconds, duration, 'same authored slow duration as baseline main');
+    assert.equal(enemy.slowStacks, priorStacks ? priorStacks + 1 : 1,
+      'prior Slow stacks gain only one additional contact, not a phantom second');
+  }
+}
+// A solid wall must block both damage and the one valid Slow at all tested
+// timestep sizes; an effect may not silently jump ahead of the arrow.
+for (const dt of [1 / 20, 1 / 30, 1 / 60]) {
+  const { game, enemy } = arena();
+  const before = enemy.hp;
+  const originalSlow = game.applySlow;
+  let slowingCalls = 0;
+  game.applySlow = function (...args) {
+    slowingCalls++;
+    return originalSlow.apply(this, args);
+  };
+  assert(game.cast(2, enemy.id, true));
+  game.clearSegment = () => false;
+  for (let i = 0; i < 15; i++) game.updateProjectiles(dt);
+  assert.equal(enemy.hp, before, 'wall prevents Pinning Volley physical damage');
+  assert.equal(slowingCalls, 0, 'wall prevents Pinning Volley slow');
+}
+
+console.log('PASS #463 real Ranger bow origins, independent arrows, target/terrain safety, 20/30/60 FPS (' + verified + ' cases), truthful delayed release receipts, one authored Pinning Volley Slow and native crowd queue');
