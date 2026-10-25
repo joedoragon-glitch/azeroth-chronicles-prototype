@@ -119,10 +119,17 @@ const directState = [
   'active-hazard-footprint', 'trap-active-area', 'actual-projectile-flight',
   'projectile-contact-timing', 'cast-progress-clock',
   'silence-status', 'taunt-status', 'slow-status', 'selected-target-status',
-  'ward-status', 'rally-status', 'healing-recipient-feedback',
+  'ward-status', 'rally-status',
 ];
 for (const identity of directState)
   protect('state/' + identity, 'direct-state-information', { source: 'combat state' });
+// Recovery visuals are important but unlike the channels above, a heal
+// receipt enters the 40-item transient queue (currently priority 4) and can
+// be displaced by equally/higher-priority congestion. Do not misclassify
+// this as a guaranteed independent live-state renderer.
+protect('result/healing-recipient-feedback', 'queued-essential-result', {
+  source: 'CombatVisuals.queue: heal receipt, priority 4, no reserved slot',
+});
 
 // Prospective policy must be conservative: an unknown cue is not decorative,
 // and neither a lower event priority nor its owner is permission to suppress.
@@ -156,6 +163,7 @@ const count = (prefix) => [...registered.keys()].filter(x => x.startsWith(prefix
 assert.equal(count('hero/'), 48);
 assert.equal(count('pet/'), 22);
 assert.equal(count('state/'), directState.length);
+assert.equal(count('result/'), 1);
 assert.equal(count('enemy/'), 12);
 assert([...registered.keys()].some(s => s.startsWith('captain/')));
 assert([...registered.keys()].some(s => s.startsWith('boss/')));
@@ -167,6 +175,7 @@ console.log('PASS Stage 5.2 Phase B source identity protection baseline ' +
     captainVisualFormsBasicsAndPhases: count('captain/'),
     ordinaryBasicSpecies: count('enemy/'),
     directStateChannels: count('state/'),
+    queuedEssentialResultChannels: count('result/'),
     totalProtected: registered.size,
     optionalWholeEffectsApproved: 0,
     unrecognizedPolicy: 'protected-until-reviewed',
