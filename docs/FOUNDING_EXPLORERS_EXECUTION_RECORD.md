@@ -91,3 +91,14 @@ Continue on draft PR #456 for documentation and Explorer-only work. Check curren
 - **Decision: NO LAUNCH YET** (insufficient evidence and unapproved forum destination). This is a readiness hold, not a finding that the game is broken.
 
 **Next safe action:** obtain a verified checkout for the three focused tests or use already-existing matching SHA CI evidence with clearly labeled limitations; then check actual Pages build, EN/es-419 first-session routes and forum options. Escalate only specific observed blockers to conditional checkpoint 2. No new gameplay changes are justified by this documentation audit.
+
+
+## 9. Existing GitHub CI evidence — 2026-10-25
+
+**Correction to the prior “BLOCKED” wording:** The **three Explorer-specific local test executions** remain blocked in this session, not the game or its overall test pipeline. An attempted `git ls-remote https://github.com/joedoragon-glitch/azeroth-chronicles-prototype.git HEAD` from the available local container failed with `Could not resolve host: github.com`. This does **not** indicate a repository outage; the connected GitHub API remains accessible. Do not claim a local checkout was created or that any Node tests ran here.
+
+**Newly independently checked CI evidence:** GitHub Actions workflow [#40208508280](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40208508280), `Focused checks and deploy`, was triggered by a push at `2026-10-25T15:46:12Z` for exact main SHA `e3c78266b28f3325d2afdcb76ae849fcff306deb`. It concluded **success**. Its **Focused validation** job succeeded, including `Check only impacted subsystems`, `Verify reproducible, offline-ready build`, and `Upload validated Pages package`. Its **Publish focused update** job succeeded, including `Deploy focused, verified build` and `Report published commit`.
+
+**Evidence grade:** successful GitHub CI **and deployment workflow** at the exact baseline SHA; **not** a direct visit to the public Pages URL, not a human phone/desktop acceptance, and not proof that the three Explorer-specific test scripts ran. The workflow's “impacted subsystems” step may omit Explorer tests depending on changed files; inspect the exact job log before crediting individual scripts. Existing first-session acceptance entries remain NOT RUN. The current public page's cache/service-worker version is not independently established by workflow success alone.
+
+**Practical result:** No need to request or trigger a new full test run just to establish that the dev.185 focused build/deployment pipeline was green. The next bounded technical evidence task is inspecting the existing workflow step logs to determine whether any Explorer-specific tests were included, then testing the real first-session paths when browser/device access is available.
