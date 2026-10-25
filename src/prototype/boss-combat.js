@@ -1112,8 +1112,8 @@
           dt,
         );
         if (dist(before,e) > 0.1) {
-          this._hawkBackpedalAt ||= new Map();
-          this._hawkBackpedalAt.set(this.zoneId + ':' + e.id, this.s.time);
+          this._hawkBackpedalAt ||= new WeakMap();
+          this._hawkBackpedalAt.set(e, this.s.time);
         }
         return true;
       }
