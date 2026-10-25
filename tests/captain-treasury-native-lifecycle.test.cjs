@@ -174,6 +174,29 @@ for (const id of ['supply-vale', 'supply-march']) {
     id + ': original distant lookout eventually makes a real treatment cast');
 }
 
+// Two *native* command-side ranged guardians can sequentially support one
+// captain on separate leader-eligibility clocks, without stacking the effect.
+{
+  const { game, captain, ranged } = nativeRoom('supply-vale', 'normal');
+  captain.hp = captain.maxHp * 0.5;
+  const nearby = ranged.filter((e) =>
+    Math.hypot(e.x - captain.x, e.y - captain.y) <= cfg.range &&
+    game.line(e, captain));
+  assert(nearby.length >= 2, 'Scornfang has two native command-side healers in reach');
+  const [first, second] = nearby;
+  assert(game.enemySupportHeal(first), 'first native guard treats its captain');
+  const budget = (captain.maxHp - captain.hp) * cfg.captain.missingFraction;
+  near(captain.supportHeal.remaining, budget, 'first native guard missing-HP budget');
+  assert(!game.enemySupportHeal(second), 'second guard cannot stack over active pulse');
+  game.advanceEnemySupportHeal(captain, 5);
+  assert(!captain.supportHeal, 'first pulse finishes before second guard');
+  assert(game.enemySupportHeal(second), 'different native guard has independent leader clock');
+  assert(captain.supportHeal.remaining > 0, 'second native guard creates its own pulse');
+  assert(!game.enemySupportHeal(first), 'first native guard still recovering');
+  game.advanceEnemySupportHeal(captain, 5);
+  assert(captain.hp > captain.maxHp * 0.8, 'two guards meaningfully restore captain HP');
+}
+
 // Native silence and engagement transitions remain separate from geometry:
  // an incapacitated ranged guard cannot begin treatment; once released, the
  // captain's timed restoration survives a change of aggro state.
