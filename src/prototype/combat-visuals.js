@@ -1164,7 +1164,7 @@
         f.type === 'heroSkill' && (
           f.stage !== 'cast' ||
           f.charged ||
-          (f.class === 'paladin' && [1, 2, 6].includes(f.slot)) ||
+          (f.class === 'paladin' && [1, 2, 3, 4, 6].includes(f.slot)) ||
           (['mage', 'ranger'].includes(f.class) && [3, 4].includes(f.slot))
         );
       let hero = null, recovery = null;
