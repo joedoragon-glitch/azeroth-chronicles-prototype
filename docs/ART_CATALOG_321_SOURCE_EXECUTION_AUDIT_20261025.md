@@ -48,6 +48,8 @@ Direct code anchors (all against `e3c78266b28f3325d2afdcb76ae849fcff306deb`):
 
 **Subsequent deeper source work:** This initial execution-audit report was extended by the [18-finding assessment](ART_CATALOG_321_DEEP_RENDERER_ASSESSMENT_20261025.md) and [513+10 source triage ledger](evidence/ART_CATALOG_321_DEEP_SOURCE_TRIAGE_20261025.json). The extension corrects the initial over-broad "missing TRUE crown" implication: the body painter can bake the accepted crown, while separate live aura/TRUE badge layers still differ. The draft PR now contains five documentation/evidence files (not merely the original three).
 
+**Native selector checkpoint after first audit:** [focused source-integrity test](../tests/art-catalog-321-source-integrity.test.cjs) passed on [GitHub run #40221076269](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40221076269). All 513 legacy IDs and ten new source decorations reconcile; the game's actual `PrototypeSprites.definitionFor` returned expected dispatch on 20 named fixtures and across all **33 registered image keys**. **23/33** are eligible in deliberately simplified synthetic input; **10/33** are bypassed for owner-selected procedural presentation. This does *not* prove the 23 are reachable in actual authored game scenes or displayed correctly in either renderer. None of the 513 live Canvas/Pixi images was newly certified.
+
 ## 4. Audit completion and promotion gates
 
 **Completed now:** independent original-data integrity check, manifest membership delta, current scope-case crosswalk including all 513 historical IDs and 10 new cases, actual renderer call-path comparison, explicit source-level gap register, pinned source/version, outstanding evidence limits.
