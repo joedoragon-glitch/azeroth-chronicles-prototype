@@ -1,7 +1,7 @@
 'use strict';
 /*
  * Art #321: executable integration check against competing unmerged PR heads.
- * No GitHub merge, push, branch update, worktree modification or deployment.
+ * No GitHub merge, push, branch update, active checkout mutation or deployment.
  * git merge-tree makes a tree object; an ephemeral local commit/worktree is
  * created solely to execute selected Node tests and then deleted.
  * Separate from both the canonical game suite and the PR's screenshot capture.
@@ -27,6 +27,21 @@ const PRS = [
   {pr:458,scope:'TRUE-form regional boss movement and engine safety',
     tests:['tests/art321-pixi-loot.test.cjs','tests/pixi-fidelity.test.cjs',
       'tests/true-field-boss-hunt.test.cjs']},
+  {pr:470,scope:'Audio recovery, startup gesture and app integration',
+    tests:['tests/art321-pixi-loot.test.cjs','tests/pixi-fidelity.test.cjs',
+      'tests/audio-stage2-recovery.test.cjs']},
+  {pr:472,scope:'Combat action-to-sound routing and roster continuity',
+    tests:['tests/art321-pixi-loot.test.cjs','tests/pixi-fidelity.test.cjs',
+      'tests/audio-stage3-action-audit.test.cjs','tests/roster-skill-update.test.cjs']},
+  {pr:445,scope:'Artwork scope/pipeline repair and original accepted art registry',
+    tests:['tests/art321-pixi-loot.test.cjs','tests/art-catalog-321-source-integrity.test.cjs',
+      'tests/sprite-scope.test.cjs']},
+  {pr:465,scope:'Documentation and release governance entry points',
+    tests:['tests/art321-pixi-loot.test.cjs','tests/architecture.test.cjs',
+      'tests/ci-scope.test.cjs']},
+  {pr:468,scope:'Read-only combat-audio source coverage observations',
+    tests:['tests/art321-pixi-loot.test.cjs',
+      'tests/audio-stage1-coverage.test.cjs']},
 ];
 function git(args, allowFailure=false) {
   const v=cp.spawnSync('git',args,{cwd:root,encoding:'utf8',
