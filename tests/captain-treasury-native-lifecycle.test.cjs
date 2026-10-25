@@ -50,13 +50,6 @@ for (const mode of ['normal', 'nightmare']) {
       assert(!game.blocked(e.home.x, e.home.y, id, 12),
         mode + '/' + id + ': authored guard home is collision-clear: ' + e.name);
     }
-    for (const e of ranged) {
-      const inRange = Math.hypot(e.x - captain.x, e.y - captain.y) <= cfg.range;
-      if (inRange && game.line(e, captain)) {
-        assert(game.route(e, captain).length > 0 || inRange,
-          id + ': guardian has a native reachable support position');
-      }
-    }
     if (id === 'supply-vale' || id === 'supply-march') {
       const added = ranged.filter((e) => /command lookout|rear lookout/.test(e.name));
       assert.equal(added.length, 2, mode + '/' + id + ': two new command-side guards');
@@ -108,8 +101,9 @@ for (const mode of ['normal', 'nightmare']) {
       e.type === 'heal' && e.target === captain.id && sources.has(e.source));
     assert(first, mode + '/' + id + ': real idle guard treats native idle captain');
     assert(captain.supportHeal, mode + '/' + id + ': actual timed captain pulse began');
-    near(captain.supportHeal.seconds, cfg.duration,
-      mode + '/' + id + ': captain gets original five-second pulse');
+    assert(captain.supportHeal.seconds <= cfg.duration &&
+      captain.supportHeal.seconds >= cfg.duration - 0.11,
+      mode + '/' + id + ': native five-second pulse may advance in same tick');
     assert(captain.supportHeal.allowIdle, mode + '/' + id + ': pulse is idle safe');
 
     const saved = game.snapshot();
