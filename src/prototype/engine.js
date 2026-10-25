@@ -3821,7 +3821,7 @@
       if (
         !this.s.paid['clear:' + id] &&
         this.s.normal[id] &&
-        !z.enemies.some((e) => e.guard && !e.summon && e.hp > 0) &&
+        !z.enemies.some((e) => e.guard && e.hp > 0) &&
         !Object.values(this.s.pending).some(
           (p) => p.kind === 'mob' && p.zone === id && p.base.guard,
         )
