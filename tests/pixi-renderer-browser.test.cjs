@@ -67,7 +67,9 @@ async function keepPixiTrial(page, phone, checkpoint) {
   if (phone)
     await page.touchscreen.tap(target.x, target.y);
   else
-    await page.getByRole('button', {name: 'Keep WebGL2'}).click();
+    // A coordinate click does not auto-scroll the fixed safety panel or
+    // accidentally change the viewport during the 15-second trial.
+    await page.mouse.click(target.x, target.y);
   const result = await page.evaluate(() => Prototype.experimentalGraphics);
   assert.equal(result.phase, 'confirmed',
     checkpoint + ': the real Keep action must confirm, not time out or revert: ' +
@@ -311,22 +313,49 @@ async function run() {
         await page.locator('#menu-button').click();
         await page.getByRole('button', {name:'Game and settings', exact:true}).click();
         await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
-        const pixiOptimization = page.locator('select[aria-label="Optimization Mode"]');
-        await pixiOptimization.selectOption('on');
+        // Settings intentionally pauses world drawing. A preference change must
+        // be observed only after normal gameplay resumes, not while the menu is open.
+        // Preserve the existing 15-second WebGL2 Keep/Revert trial unchanged.
+        await page.locator('select[aria-label="Optimization Mode"]').selectOption('on');
+        assert.equal(await page.evaluate(() =>
+          localStorage.getItem('azeroth-optimization-mode-v1')), 'on');
+        await page.evaluate(() => Prototype.closeMenu());
         await page.waitForFunction(() =>
           Prototype.experimentalGraphics.backgroundOptimized === true,
           null, {timeout:15000});
         assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'webgl2');
-        await pixiOptimization.selectOption('off');
+
+        await page.locator('#menu-button').click();
+        await page.getByRole('button', {name:'Game and settings', exact:true}).click();
+        await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
+        await page.locator('select[aria-label="Optimization Mode"]').selectOption('off');
+        assert.equal(await page.evaluate(() =>
+          localStorage.getItem('azeroth-optimization-mode-v1')), 'off');
+        await page.evaluate(() => Prototype.closeMenu());
         await page.waitForFunction(() =>
           Prototype.experimentalGraphics.backgroundOptimized === false,
           null, {timeout:15000});
-        await pixiOptimization.selectOption('auto');
+
+        await page.locator('#menu-button').click();
+        await page.getByRole('button', {name:'Game and settings', exact:true}).click();
+        await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
+        await page.locator('select[aria-label="Optimization Mode"]').selectOption('auto');
         assert.equal(await page.evaluate(() =>
           localStorage.getItem('azeroth-optimization-mode-v1')), 'auto');
         await page.evaluate(() => Prototype.closeMenu());
         assert.equal(await page.evaluate(() => localStorage.getItem('azeroth-renderer-choice-v1')),
           'webgl2');
+        // Auto may legitimately change the active optimization tier under a
+        // loaded headless runner, resetting the bounded timing buffer.
+        // Profile in a fixed user-selectable tier, after testing Auto itself.
+        await page.locator('#menu-button').click();
+        await page.getByRole('button', {name:'Game and settings', exact:true}).click();
+        await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
+        await page.locator('select[aria-label="Optimization Mode"]').selectOption('on');
+        await page.evaluate(() => Prototype.closeMenu());
+        await page.waitForFunction(() =>
+          Prototype.experimentalGraphics.backgroundOptimized === true &&
+          Prototype.experimentalGraphics.mode === 'webgl2', null, {timeout:15000});
         await page.waitForFunction(() => {
           const r=Prototype.frameProfile.report();
           return r.stages.pixiMs.samples>0 && r.stages.canvasOverlayMs.samples>0;
@@ -374,6 +403,11 @@ async function run() {
           'Inspect a representative daylight sequence before any fallback');
         const firstCanvas = lightAudit.findIndex(x => x.mode !== 'webgl2');
         if (firstCanvas >= 0) {
+          // ANGLE may dispatch webglcontextlost one task after an earlier
+          // draw exception. Require the final typed cause, not just Canvas.
+          await page.waitForFunction(() =>
+            Prototype.experimentalGraphics.lastFailure?.type === 'context-loss',
+            null, {timeout:3000});
           assert(lightAudit.slice(0, firstCanvas).every(x => x.mode === 'webgl2'),
             'The GPU scene must remain coherent until the actual context loss');
           assert.equal(lightAudit[firstCanvas].mode, 'canvas2d');
