@@ -22,7 +22,7 @@ for (const [zone, place] of Object.entries(director.places)) {
   for (const peace of [false, true]) {
     const s = scene({
       region: outdoor ? zone : 'vale', zone,
-      interior: outdoor ? 'outdoors' : 'dungeon', peace,
+      interior: outdoor ? 'outdoors' : zone.startsWith('supply-') ? 'treasury' : 'dungeon', peace,
     });
     const cue = a.productionCue(s);
     assert.equal(cue.id, peace ? (place.peace || place.base) : place.base, zone);
