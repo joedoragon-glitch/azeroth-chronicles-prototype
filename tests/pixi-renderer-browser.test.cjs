@@ -182,7 +182,6 @@ async function run() {
       await page.keyboard.press('f');
       await page.waitForFunction(() => document.querySelector('#modal').hidden);
       await page.evaluate(() => {window.__gpuTestCampaign = Prototype.game;});
-      await inspectMageBeamOverlay(page, 'canvas2d');
       // Canvas remains functional under the new three-way optimization policy.
       assert.equal(await page.evaluate(() =>
         localStorage.getItem('azeroth-optimization-mode-v1')), 'auto');
@@ -238,24 +237,7 @@ async function run() {
         assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'webgl2',
           'Camera zoom must not abandon an otherwise valid GPU scene');
         assert.equal(await page.evaluate(() => Prototype.game === window.__gpuTestCampaign), true);
-        // Software-WebGL phone emulation can reposition/hide this temporary
-        // trial banner mid-click; confirm its real handler directly without
-        // pretending this certifies touch accessibility on a physical phone.
-        if (phone) {
-          await page.evaluate(() => {
-            if (Prototype.experimentalGraphics.phase !== 'trial')
-              throw Error('WebGL confirmation trial was no longer active');
-            const button = [...document.querySelectorAll('button')]
-              .find(node => node.textContent.trim() === 'Keep WebGL2');
-            if (!button) throw Error('WebGL confirmation control is missing');
-            button.click();
-          });
-        } else {
-          await page.getByRole('button', {name: 'Keep WebGL2'}).click();
-        }
-        assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.phase),
-          'confirmed', 'The real Keep control must confirm PixiJS');
-        await inspectMageBeamOverlay(page, 'webgl2');
+        await page.getByRole('button', {name: 'Keep WebGL2'}).click();
         assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.phase), 'confirmed');
         // The retained Pixi background must immediately reflect presentation
         // transitions without walking, zooming or a zone transition.
@@ -398,6 +380,29 @@ async function run() {
       console.log('PASS PixiJS graphics selection ' + engine + '/' + (phone ? 'phone' : 'desktop')
         + ' (' + outcome.mode + ')');
       await context.close();
+      // Separate graphics acceptance context: exercising synthetic beam
+      // geometry must never contaminate the renderer recovery journey above.
+      const beamContext = await browser.newContext({
+        viewport: phone ? {width: 393, height: 852} : {width: 1280, height: 800},
+        isMobile: phone, hasTouch: phone,
+      });
+      try {
+        const beamPage = await beamContext.newPage();
+        await beamPage.goto(host + (phone ? 'phone.html' : 'index.html'));
+        await beamPage.waitForFunction(() => !!window.Prototype?.renderer);
+        await require('./helpers/language-browser.cjs').selectEnglish(beamPage);
+        await beamPage.keyboard.press('f');
+        await beamPage.keyboard.press('f');
+        await beamPage.waitForFunction(() => document.querySelector('#modal').hidden);
+        await inspectMageBeamOverlay(beamPage, 'canvas2d');
+        const mageGpu = await selectPixi(beamPage);
+        if (mageGpu.mode === 'webgl2')
+          await inspectMageBeamOverlay(beamPage, 'webgl2');
+        else
+          assert(!requireWebGL, 'Mage beam overlay needs the required WebGL2 scene');
+      } finally {
+        await beamContext.close();
+      }
     }
   } finally {
     await browser?.close();
