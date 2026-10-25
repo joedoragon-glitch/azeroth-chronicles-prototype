@@ -39,10 +39,13 @@ function advance(g, seconds, step = 0.05) {
 }
 {
   const { g, enemies: [first, second] } = arena([[620, 500], [830, 500]]);
-  const hp1 = first.hp, hp2 = second.hp;
   assert(g.cast(1, first.id, true));
-  assert.equal(first.hp, hp1, 'charged Mage Skill 1 never hits on release');
-  assert.equal(second.hp, hp2);
+  // First engagement may apply ordinary monster HP scaling at cast time.
+  // Verify an actual absence of impact, then measure subsequent travel from
+  // the encounter-adjusted baseline instead of the pre-engagement HP.
+  assert.equal(g.effects.filter(e => e.type === 'hit').length, 0,
+    'charged Mage Skill 1 never damages an enemy on release');
+  const hp1 = first.hp, hp2 = second.hp;
   assert.equal(g._heroSkillEffects[0]?.kind, 'wide-beam');
   const initial = g.effects.find(e => e.type === 'heroSkillArea' && e.phase === 'launch');
   assert(initial && Math.abs(initial.travelSeconds - 0.75) < 0.001);
@@ -59,8 +62,8 @@ function advance(g, seconds, step = 0.05) {
 }
 {
   const { g, enemies: [target, moving] } = arena([[620, 500], [820, 500]]);
-  const oldHp = moving.hp;
   assert(g.cast(1, target.id, true));
+  const oldHp = moving.hp;
   moving.y = 660;
   advance(g, 1);
   assert.equal(moving.hp, oldHp, 'charged beam never turns to follow escaping foes');
@@ -70,8 +73,8 @@ function advance(g, seconds, step = 0.05) {
   // the player sidesteps. It may catch a previously off-axis enemy, but it
   // cannot become a parallel beam that simply slides sideways.
   const { g, enemies: [primary, newlyAligned] } = arena([[620, 500], [650, 610]]);
-  const oldHp = newlyAligned.hp;
   assert(g.cast(1, primary.id, true));
+  const oldHp = newlyAligned.hp;
   const beam = g._heroSkillEffects[0];
   assert.equal(beam.aim.x, 940);
   assert.equal(beam.aim.y, 500);
@@ -96,8 +99,10 @@ function advance(g, seconds, step = 0.05) {
 }
 {
   const { g, enemies: [e] } = arena([[780, 500]]);
-  const hp = e.hp;
   assert(g.cast(1, e.id, false));
+  assert.equal(g.effects.filter(e => e.type === 'hit').length, 0,
+    'ordinary beam must not hit on release');
+  const hp = e.hp;
   const p = g.s.projectiles.find(p => p.style === 'beam');
   assert(p?.mageSkill1Homing, 'only ordinary Skill 1 has homing');
   assert.equal(p.beamWidthScale, 2.5, '150% thicker means 2.5x original width');
@@ -117,9 +122,9 @@ function advance(g, seconds, step = 0.05) {
 }
 {
   const { g, enemies: [first, extra, missed] } = arena([[620, 500], [820, 565], [820, 650]]);
+  assert(g.cast(1, first.id, true));
   const missedHp = missed.hp;
   const firstHp = first.hp, extraHp = extra.hp;
-  assert(g.cast(1, first.id, true));
   advance(g, 0.25);
   assert(first.hp < firstHp, 'charged beam reaches the first aligned enemy');
   assert.equal(extra.hp, extraHp, 'second enemy begins outside the locked angle');
@@ -167,8 +172,8 @@ function advance(g, seconds, step = 0.05) {
 }
 {
   const { g, enemies: [e] } = arena([[620, 500]]);
-  const before = e.hp;
   assert(g.cast(1, e.id, true));
+  const before = e.hp;
   g.enter('march');
   advance(g, 1);
   assert.equal(e.hp, before, 'zone transitions cancel in-flight charged beam damage');
