@@ -94,10 +94,30 @@ for (const kind of ['captain', 'boss', 'field-captain']) {
   near(source.supportHealCd, 0, 'ordinary clock recovered in seven seconds');
   assert(!leader.supportHeal, 'leader must not receive seven-second recast: ' + JSON.stringify({ sourceCd: source.supportHealCd, sourceAggro: source.aggro, leaderAggro: leader.aggro, heal: leader.supportHeal, time: g.s.time }));
   g.updateEnemies(3);
-  // The long native tick may postpone the idle AI decision; whether auto-cast
-  // or explicitly retried, the original ten-second eligibility must be ready.
-  if (!leader.supportHeal)
-    assert(g.enemySupportHeal(source), 'leader is eligible for a fresh cast after ten seconds');
+  // Only test the per-source leader clock here. A long world update can put an
+  // actor into ordinary return/aim/motion, which blocks the *action* even
+  // after the clock has expired; those behavior gates are tested separately.
+  source.returning = 0;
+  source.motion = null;
+  source.telegraph = null;
+  source.rangedAim = null;
+  source.supportHealCd = 0;
+  leader.returning = 0;
+  leader.hp = leader.maxHp * 0.4;
+  delete leader.supportHeal;
+  assert(
+    g.enemySupportHeal(source),
+    'leader interval expires after ten recovered seconds: ' +
+      JSON.stringify({
+        sourceHp: source.hp,
+        leaderHp: leader.hp,
+        inRoster: g.zone().enemies.includes(source) && g.zone().enemies.includes(leader),
+        sourceAggro: source.aggro,
+        sourceNeutral: source.neutral,
+        sourceSkill: g.enemyHealProfile(source),
+        silenced: g.mageSilenceActive(source),
+      }),
+  );
   assert(leader.supportHeal, 'leader receives its next legal ten-second treatment');
   near(leader.supportHeal.remaining, leader.maxHp * 0.05 * g.enemyHealMultiplier(source), 'leader remains on original budget');
   cases++;
