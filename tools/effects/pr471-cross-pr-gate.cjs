@@ -178,24 +178,31 @@ function main() {
     }
     report.cumulative = {status: allStagesClean ? 'CLEAN' : 'BLOCKED',
       staged, tip: allStagesClean ? cumulative : null};
-    if (allStagesClean) {
-      // A real staged many-PR tree; still only a narrow smoke.
+    const cleanPrefix = staged.filter(x => x.status === 'CLEAN').map(x => x.pr);
+    if (cleanPrefix.length) {
+      // Even when a later PR conflicts, validate the MAXIMAL clean prefix in
+      // one actual temporary tree, not just pairwise combinations.
       const files = ['tests/effect-queue-hero-recovery-reservation.test.cjs',
         'tests/hero-postcast-visuals.test.cjs',
         'tests/art321-pixi-loot.test.cjs',
         'tests/audio-stage2-recovery.test.cjs',
         'tests/effect-warning-frame-reuse.test.cjs'];
       const fullTree = git(['rev-parse', cumulative + '^{tree}']).stdout.trim();
-      report.cumulative.native = selectedNativeTests(fullTree,
-        cumulative, mainSha, files);
+      const native = selectedNativeTests(fullTree, cumulative, mainSha, files);
+      report.cumulative.prefix = {prs: cleanPrefix, native};
+      if (allStagesClean) report.cumulative.native = native;
+      console.log('PR471_CUMULATIVE_PREFIX ' + JSON.stringify({
+        prs: cleanPrefix, passed: native.passed,
+        tests: native.tests.map(x => ({file: x.file, status: x.status})),
+      }));
     }
   }
   fs.mkdirSync(path.dirname(output), {recursive: true});
   fs.writeFileSync(output, JSON.stringify(report, null, 2) + '\n');
   const failures = report.comparisons.filter(x =>
     x.merge.status === 'INDETERMINATE' || (x.native && !x.native.passed));
-  if (report.cumulative.native && !report.cumulative.native.passed)
-    failures.push({pr: 'multi', native: report.cumulative.native});
+  if (report.cumulative.prefix?.native && !report.cumulative.prefix.native.passed)
+    failures.push({pr: 'clean-prefix', native: report.cumulative.prefix.native});
   console.log('PR471_SUMMARY ' + JSON.stringify({
     ours, mainSha, baseline: base.status,
     cleanPairs: report.comparisons.filter(x => x.merge.status === 'CLEAN').length,
@@ -204,6 +211,8 @@ function main() {
     nativeFailures: failures.map(x => x.pr),
     cumulative: report.cumulative.status,
     firstCumulativeBlocker: report.cumulative.staged?.find(x => x.status !== 'CLEAN')?.pr,
+    cleanPrefix: report.cumulative.prefix?.prs,
+    cleanPrefixNativePassed: report.cumulative.prefix?.native.passed,
   }));
   // Conflicts are honest integration blockers; a test or tooling failure is red.
   // An unresolved conflict cannot be labelled a successful combined candidate.
