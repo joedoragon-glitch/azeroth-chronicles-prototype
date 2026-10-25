@@ -17,7 +17,8 @@ Object.assign(game.hero, { x: 1480, y: 1700, hp: 100000, maxHp: 100000 });
 game.line = () => true;
 const boss = game.bossEnemy(game.boss('ridge'), 'normal', { x: 1400, y: 1700 });
 zone.enemies.push(boss);
-assert(game.engage(boss, true), 'real Ridge engagement did not start');
+game.engage(boss, true);
+assert(boss.aggro, 'real Ridge engagement did not start');
 assert(boss.ledgerOpen, 'engagement did not enter its real Ledger of Losses phase');
 assert(game.startAttack(boss, game.hero, 0),
   'authored Ridge attack did not start inside the Ledger phase');
