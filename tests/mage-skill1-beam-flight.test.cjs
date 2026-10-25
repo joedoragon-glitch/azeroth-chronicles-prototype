@@ -140,7 +140,7 @@ function advance(g, seconds, step = 0.05) {
   advance(g, 0.1);
   const f = g._heroSkillEffects?.[0];
   assert.equal(f.from.x, 530, 'charged beam base tracks the moving Mage');
-  assert.equal(f.castFrom.x, 500, 'committed original head trajectory never moves');
+  assert.equal(f.aim.x, 940, 'world-space aim endpoint stays fixed despite hero movement');
   assert(Math.abs(f.endY - 500) < 1e-6, 'the head stays on its original direction');
   assert(f.endX > f.from.x, 'the fixed world-space head keeps advancing');
 }
