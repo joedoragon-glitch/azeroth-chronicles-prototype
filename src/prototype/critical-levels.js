@@ -19,6 +19,9 @@
     silenceDuration: Object.freeze({ operation: 'addSeconds', values: Object.freeze([0.15, 0.35, 0.65]) }),
     hasteDuration: Object.freeze({ operation: 'addSeconds', values: Object.freeze([0.30, 0.75, 1.40]) }),
     wardDuration: Object.freeze({ operation: 'addSeconds', values: Object.freeze([0.30, 0.75, 1.40]) }),
+    // Soldier Guard is genuine invulnerability, not a damage-reduction ward.
+    // It receives a separate small capped extension to its existing 2.5s window.
+    guardDuration: Object.freeze({ operation: 'addSeconds', values: Object.freeze([0.15, 0.30, 0.50]) }),
     wardStrength: Object.freeze({ operation: 'addFraction', values: Object.freeze([0.015, 0.035, 0.060]) }),
     pushDistance: Object.freeze({ operation: 'multiply', values: Object.freeze([1.08, 1.18, 1.30]) }),
     retreatLockDuration: Object.freeze({ operation: 'addSeconds', values: Object.freeze([0.20, 0.50, 1.00]) }),
@@ -63,7 +66,7 @@
     });
   }
   const troops = Object.freeze({
-    soldier: Object.freeze({ basic: 'damage', first: 'damage', second: 'damage' }),
+    soldier: Object.freeze({ basic: 'damage', first: 'damage', second: 'damage', guard: 'guardDuration' }),
     archer: Object.freeze({ basic: 'damage', first: 'damage', second: 'damage', heal: 'healAmount', mana: 'healAmount' }),
   });
   for (const [type, entries] of Object.entries(troops))
