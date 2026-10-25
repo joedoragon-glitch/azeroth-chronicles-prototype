@@ -326,6 +326,138 @@
       .slice(0, 24);
   }
 
+
+  // Constructed ONLY when the developer explicitly enables effect recording.
+  // Regular players have no recorder, sampling loops, timers or report storage.
+  function createEffectDiagnostics() {
+    const limit = 512;
+    const rows = new Map();
+    const tracked = new WeakMap();
+    const receipts = Object.create(null);
+    const decisions = { eligibleDraws: 0, fpsLimited: 0, adaptiveSkipped: 0 };
+    const stateDraws = { projectiles: 0, telegraphs: 0, motions: 0, hazards: 0, charges: 0 };
+    const frames = [];
+    let drawNumber = 0, eventsSeen = 0, excessIdentityRecords = 0, sceneResets = 0;
+    function key(f) {
+      if (f.type === 'enemyVfx')
+        return (f.skillId || f.identity?.id || 'enemy/unknown') + ':' + (f.stage || 'unknown');
+      if (f.type === 'heroSkill')
+        return 'hero/' + (f.class || '?') + '/' + (f.slot || '?') + '/' +
+          (f.charged ? 'charged' : 'normal') + ':' + (f.stage || 'cast');
+      if (f.type === 'petSkill')
+        return 'pet/' + (f.petFamily || '?') + '/' + (f.slot || '?') + ':' +
+          (f.stage || 'release');
+      if (f.companion) return 'companion/' + (f.role || '?') + ':' + f.type;
+      return f.type + (f.actor ? ':' + f.actor : '') + (f.slot ? ':' + f.slot : '');
+    }
+    function entry(f) {
+      const id = key(f);
+      let row = rows.get(id);
+      if (!row) {
+        if (rows.size >= limit) {
+          excessIdentityRecords++;
+          row = rows.get('[additional-identities]');
+          if (!row) {
+            row = { id: '[additional-identities]', queued: 0, overflowDropped: 0,
+              filtered: 0, expiredWithoutDraw: 0, painted: 0, drawnFrames: 0 };
+            rows.set(row.id, row);
+          }
+        } else {
+          row = { id, queued: 0, overflowDropped: 0, filtered: 0,
+            expiredWithoutDraw: 0, painted: 0, drawnFrames: 0 };
+          rows.set(id, row);
+        }
+      }
+      return row;
+    }
+    function finish(f, reason) {
+      const meta = tracked.get(f);
+      if (!meta || meta.retired) return;
+      meta.retired = true;
+      if (reason === 'overflow') meta.row.overflowDropped++;
+      else if (reason === 'filtered') meta.row.filtered++;
+      else if (reason === 'expiry' && !meta.drawn) meta.row.expiredWithoutDraw++;
+    }
+    return {
+      receipts(events) {
+        // Only known feedback events; not the entire general gameplay log.
+        const types = ['heroSkillCast', 'heroHawk', 'heroSkillArea', 'heroProjectileFlight',
+          'enemyVfx', 'petSkill', 'companionSkill', 'projectileLaunch',
+          'projectileImpact', 'chargedArea', 'chargedImpact', 'chargeInterrupted',
+          'hit', 'hurt', 'heal', 'spell', 'swing', 'basicComboFinisher'];
+        for (const e of events) {
+          if (!types.includes(e.type)) continue;
+          eventsSeen++;
+          const label = e.type === 'enemyVfx' && e.audioOnly ? 'enemyVfx:audioOnly' : e.type;
+          receipts[label] = (receipts[label] || 0) + 1;
+        }
+      },
+      candidates(next, previous) {
+        const prior = new Set(previous);
+        for (const f of next) {
+          if (prior.has(f)) continue;
+          const row = entry(f);
+          row.queued++;
+          tracked.set(f, { row, drawn: false, retired: false });
+        }
+      },
+      overflow(f) { finish(f, 'overflow'); },
+      filtered(previous, next) {
+        const retained = new Set(next);
+        for (const f of previous) if (!retained.has(f)) finish(f, 'filtered');
+      },
+      expiry(f) { finish(f, 'expiry'); },
+      painted(f) {
+        const meta = tracked.get(f);
+        if (!meta || meta.retired) return;
+        meta.row.drawnFrames++;
+        if (!meta.drawn) {
+          meta.drawn = true;
+          meta.row.painted++;
+        }
+      },
+      draw(game) {
+        drawNumber++;
+        const enemies = game.zone().enemies;
+        const sample = {
+          frame: drawNumber,
+          gameTime: Math.round(game.s.time * 100) / 100,
+          projectiles: game.s.projectiles.length,
+          telegraphs: enemies.filter((e) => e.hp > 0 && !!e.telegraph).length,
+          motions: enemies.filter((e) => e.hp > 0 && !!e.motion).length,
+          hazards: game.s.hazards.length,
+          charges: Number(!!game.heroChargeState?.()) + (game._companionCharges?.size || 0),
+        };
+        for (const field of Object.keys(stateDraws)) stateDraws[field] += sample[field];
+        frames.push(sample);
+        if (frames.length > 120) frames.shift();
+      },
+      decision(eligible, skipped) {
+        if (!eligible) decisions.fpsLimited++;
+        else if (skipped) decisions.adaptiveSkipped++;
+        else decisions.eligibleDraws++;
+      },
+      sceneReset(current) {
+        sceneResets++;
+        for (const f of current) finish(f, 'filtered');
+      },
+      report(recording) {
+        return {
+          version: 1, recording,
+          scope: 'Developer Mode opt-in, in-memory, no campaign-save changes',
+          proof: 'Painter calls; not nontransparent pixels or player visibility',
+          interpretation: 'Direct-state counts are not independently queued effects',
+          limits: { identities: limit, recentDrawFrames: 120 },
+          drawFrames: drawNumber, eventsSeen,
+          receipts: { ...receipts }, drawDecisions: { ...decisions },
+          directStateAtDraw: { ...stateDraws },
+          recentDrawFrames: frames.slice(), sceneResets, excessIdentityRecords,
+          identities: [...rows.values()].map((row) => ({ ...row })),
+        };
+      },
+    };
+  }
+
   function create({
     canvas: viewport,
     ctx,
@@ -361,6 +493,8 @@
     let game = getGame(),
       visualFx = [],
       origin = null;
+    let effectRecorder = null;
+    let retainedEffectRecorder = null;
     const heroArt =
       root.PrototypeHeroPresentation ||
       (typeof require === 'function' ? require('./hero-presentation.js') : null);
@@ -453,6 +587,7 @@
     }
     function draw() {
       game = getGame();
+      if (effectRecorder && renderLayer !== 'background') effectRecorder.draw(game);
       phaseSample = ++drawCount % 12 === 0 ? {} : null;
       phaseAt = phaseSample ? now() : 0;
       for (const key of Object.keys(stats)) stats[key] = 0;
@@ -1314,13 +1449,21 @@
         visualScene.zone !== game.zoneId ||
         visualScene.deaths !== game.s.statistics.deaths
       ) {
+        effectRecorder?.sceneReset(visualFx);
         visualFx = [];
         visualScene = { game, zone: game.zoneId, deaths: game.s.statistics.deaths };
       }
-      visualFx = PrototypeCombatVisuals.queue(events, game, visualFx);
+      if (effectRecorder && game.s.mode !== 'developer') effectRecorder = null;
+      effectRecorder?.receipts(events);
+      const previous = visualFx;
+      visualFx = PrototypeCombatVisuals.queue(events, game, visualFx, effectRecorder);
+      effectRecorder?.filtered(previous, visualFx);
     }
     function updateVisualFx(dt) {
-      for (const f of visualFx) f.life -= dt;
+      for (const f of visualFx) {
+        if (effectRecorder && f.life <= dt) effectRecorder.expiry(f);
+        f.life -= dt;
+      }
       visualFx = visualFx.filter((f) => f.life > 0);
     }
     function drawPetSkillGeometry(f) {
@@ -1383,8 +1526,10 @@
         if (
           f.type === 'basicComboFinisher' &&
           heroArt?.basicFinisher(ctx, screen, f, { reduced: reducedMotion(), optimized })
-        )
+        ) {
+          effectRecorder?.painted(f);
           continue;
+        }
         if (f.type === 'heroSkill') {
           let presented = f;
           if (f.stage === 'skill1-wide-beam') {
@@ -1414,6 +1559,7 @@
             width: canvas.width,
             height: canvas.height,
           });
+          effectRecorder?.painted(f);
           continue;
         }
         ctx.save();
@@ -1756,6 +1902,7 @@
           ctx.fill();
         }
         ctx.restore();
+        effectRecorder?.painted(f);
       }
       const guard = (q, r, cls = 'paladin') => {
         ctx.save();
@@ -2149,7 +2296,7 @@
         const z = game.zone();
         PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000);
         PrototypeCombatVisuals.ground(ctx, screen, game, 'underlay-cue', game.s.time);
-        PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx);
+        PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx, effectRecorder);
         for (const e of [
           ...z.enemies.filter((u) => u.hp > 0),
           ...game.activeLivingParty(),
@@ -2162,7 +2309,7 @@
             healthPlate(e, p);
         }
         drawPixiNameplates();
-        PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx);
+        PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx, effectRecorder);
         for (const projectile of game.s.projectiles) drawProjectile(projectile);
         drawVisualFx();
         heroArt?.statuses(ctx, screen, game, canvas.width, canvas.height);
@@ -2798,10 +2945,10 @@
           ctx.stroke();
           ctx.restore();
         }
-      PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx);
+      PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx, effectRecorder);
       drawOcclusionOutlines(entities);
       // Critical outlines and transient effects retain contrast through the night grade.
-      PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx);
+      PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx, effectRecorder);
       for (const p of game.s.projectiles) drawProjectile(p);
       drawVisualFx();
       heroArt?.statuses(ctx, screen, game, canvas.width, canvas.height);
@@ -2823,6 +2970,24 @@
     }
     return {
       draw,
+      // No diagnostic object is constructed outside an explicit developer opt-in.
+      setEffectDiagnostics(enabled) {
+        if (enabled && getGame().s.mode === 'developer') {
+          retainedEffectRecorder ||= createEffectDiagnostics();
+          effectRecorder = retainedEffectRecorder;
+        } else effectRecorder = null;
+        return !!effectRecorder;
+      },
+      resetEffectDiagnostics() {
+        effectRecorder = null;
+        retainedEffectRecorder = null;
+      },
+      effectDiagnosticsReport: () => retainedEffectRecorder
+        ? retainedEffectRecorder.report(!!effectRecorder)
+        : { version: 1, recording: false, captured: false, identities: [] },
+      noteEffectDrawDecision(eligible, skipped) {
+        effectRecorder?.decision(eligible, skipped);
+      },
       presentEntity,
       // Presentation-only layer split for the opt-in PixiJS experiment.
       setRenderLayer: (layer) => {
@@ -2879,6 +3044,7 @@
   }
   const api = {
     create,
+    createEffectDiagnostics,
     nightLightKind,
     bodyFacingSide,
     drawAbyssFlightCues,
