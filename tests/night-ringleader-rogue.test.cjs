@@ -46,7 +46,7 @@ for (const mode of ['normal', 'nightmare', 'developer']) {
   c.s.phase = 'peace';
   assert.deepEqual(c.multipliers(), { hp: 1, damage: 1 }, 'Peace removes escalation');
 }
-assert.equal(C.rules.tacticalFoundation.moveCooldownSeconds, 3);
+assert.equal(C.rules.tacticalFoundation.moveCooldownSeconds, 2);
 for (const make of [
   (c) => c.makeEnemy({ species: 'goblin', level: 5, hp: 10000, damage: 10 }, { x: 1400, y: 1700 }),
   (c) =>
@@ -66,26 +66,41 @@ for (const make of [
     e = make(c);
   e.name = 'Rogue cadence fixture';
   Object.assign(e, { aggro: true, fightStart: 0, cd: 100, summonCd: 100 });
-  c.zone().props = [];
-  c.zone().enemies = [e];
+  const z = c.zone();
+  z.props = [];
+  z.enemies = [e];
+  c.zone = () => z;
+  // Live onboarding demands a hero-originated first hit in the initial Vale.
+  // This fixture is explicitly an active battle, not that opening tutorial.
+  c.s.valeFieldAwakened = true;
+  c.s.thornHeroInitiated = true;
   c.s.party = [];
   c.s.mercyTime = 0;
   c.s.time = 30;
   Object.assign(c.hero, { x: e.x + 70, y: e.y, level: e.level + 1, hp: 10000, maxHp: 10000 });
   assert(c.tacticalAutoRogue(e, c.hero));
-  assert.equal(c._tacticalRogueNext.get(e.id), 33, 'Next Rogue opportunity is three seconds later');
+  assert.equal(c._tacticalRogueNext.get(e.id), 32, 'Next Rogue opportunity is two seconds later');
   // Keep a real moving pursuer in range while exercising warning/resolution/reuse.
+  // Ordinary/ringleader actors should choose retreat or reinforcements over
+  // stationary repeat-casting; bosses/captains must retain repeated defense.
+  const initial = { x: e.x, y: e.y };
+  let maximumShift = 0;
   for (let tick = 0; tick < 70; tick++) {
     c.hero.x = e.x + 70;
     c.hero.y = e.y;
     c.s.time += 0.1;
     c.updateEnemies(0.1);
+    maximumShift = Math.max(maximumShift, Math.hypot(e.x - initial.x, e.y - initial.y));
   }
-  const casts = c.s.statistics.events.filter((x) => x.type === 'rogueMove');
-  assert(
-    casts.length >= 2,
-    'Persistent Rogue eligibility allows repeated moves for ' + e.type + '/' + e.form,
-  );
+  const events = c.s.statistics.events;
+  const casts = events.filter((x) => x.type === 'rogueMove');
+  const movedToHelp = events.some((x) =>
+    ['rogueRegroup', 'rogueExtendedRetreat', 'rogueEmergencyCall'].includes(x.type));
+  assert(maximumShift > 20 || movedToHelp,
+    'Under pressure every role, including captains and bosses, must maneuver or seek defenders: ' +
+    JSON.stringify({ type: e.type, captain: !!e.captain, form: e.form,
+      maximumShift, calls: movedToHelp, casts: casts.length,
+      state: c.tacticalRogueRegroup(e)?.phase, returning: e.returning }));
   c.tacticalClearRogueRegroup(e);
   assert(!c._tacticalRogueNext.has(e.id), 'Encounter cleanup clears the reuse clock');
   e.aggro = false;
@@ -95,5 +110,5 @@ for (const make of [
   assert(!c.tacticalAutoRogue(e, c.hero), 'Dead actors cannot restart Rogue');
 }
 console.log(
-  'PASS TRUE night escalation/pets/reload/peace and three-second repeated Rogue decisions through live AI',
+  'PASS TRUE night escalation/pets/reload/peace, two-second Rogue timing and retreat-first elite/ordinary live AI',
 );

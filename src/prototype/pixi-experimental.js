@@ -145,6 +145,7 @@
       basePosition = null,
       baseZone = null,
       baseZoom = null,
+      baseOptimization = null,
       backingRatio = 1,
       bakedZoom = null,
       active = false,
@@ -280,7 +281,8 @@
       basePosition = { x: current.hero.x, y: current.hero.y };
       baseZone = current.zoneId;
       baseZoom = zoom;
-      backgroundRenderer.setOptimizationMode(!!options.getOptimizationMode());
+      baseOptimization = !!options.getOptimizationMode();
+      backgroundRenderer.setOptimizationMode(baseOptimization);
       backgroundRenderer.draw();
       if (backing) {
         backing.source.update?.();
@@ -298,7 +300,10 @@
         zoom = platform.cameraZoom || 1;
       if (baseGame && baseGame !== current)
         throw Error('Campaign changed; reset to Canvas before switching again');
-      if (!basePosition || baseZone !== current.zoneId || baseZoom !== zoom) drawBackground();
+      // A presentation-quality transition must invalidate the retained
+      // background even when the hero has not moved or changed zoom.
+      if (!basePosition || baseZone !== current.zoneId || baseZoom !== zoom ||
+          baseOptimization !== !!options.getOptimizationMode()) drawBackground();
       const d = iso({ x: current.hero.x - basePosition.x, y: current.hero.y - basePosition.y });
       let dx = -d.x * zoom,
         dy = -d.y * zoom;
@@ -589,6 +594,9 @@
       }
     }
     function draw() {
+      // A WebGL context-loss event already initiated Canvas recovery. A
+      // late callback must not replace that precise failure with "inactive".
+      if (!active && lastFailure?.type === 'context-loss') return;
       let stage = 'active-check';
       try {
         if (!active || !scene) throw Error('Inactive PixiJS renderer');
@@ -606,10 +614,23 @@
         stage = 'scene-render';
         scene.draw();
       } catch (error) {
-        const type = stage === 'viewport-check' ? 'viewport-changed' :
-          stage === 'active-check' ? 'inactive-renderer' : 'render-exception';
+        // Pixi/ANGLE can signal context loss through its draw exception
+        // BEFORE the browser fires webglcontextlost. Preserve that cause
+        // and avoid a second failure after the event released the scene.
+        if (!active && lastFailure?.type === 'context-loss') return;
+        const message = String(error?.message || error),
+          contextLost =
+            /WebGL context lost/i.test(message) ||
+            app?.canvas?.getContext?.('webgl2')?.isContextLost?.() === true,
+          type = contextLost
+            ? 'context-loss'
+            : stage === 'viewport-check'
+              ? 'viewport-changed'
+              : stage === 'active-check'
+                ? 'inactive-renderer'
+                : 'render-exception';
         options.onFailure(noteFailure(type, stage, error));
-        throw error;
+        if (!contextLost) throw error;
       }
     }
     function activate() {
@@ -637,6 +658,7 @@
       backgroundRenderer = null;
       backdrop = null;
       basePosition = null;
+      baseOptimization = null;
       baseGame = null;
       backingRatio = 1;
       bakedZoom = null;
@@ -673,6 +695,7 @@
         pixelRatio: backingRatio,
         backdropWidth: backdrop?.width || 0,
         backdropHeight: backdrop?.height || 0,
+        backgroundOptimized: baseOptimization,
       }),
     });
   }

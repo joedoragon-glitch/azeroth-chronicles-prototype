@@ -76,22 +76,6 @@ function audit(options = {}) {
       throw Error('Unclassified authored nature family: ' + family);
   const terrain = JSON.parse(read('tools/sprites/terrain-specifications.json'));
   const terrainCatalog = read('docs/GRAPHICS_CANON_TERRAIN_TEXTURE_CANDIDATES.md');
-  // These four material candidates retain their original reviewed palettes
-  // (and dependency hashes). The live floor renderer subsequently changed its
-  // regional palettes. Verify BOTH the historical candidate identity and the
-  // current renderer source rather than rewriting approved material inputs.
-  const retainedPalettes = {
-    'terrain:ground:march': {
-      candidate: ['#26444b', '#31535a', '#203b42', '#85ada6'],
-      current: ['#3e5544', '#4b614b', '#30483c', '#a2b48e'],
-    },
-    'terrain:ground:highlands': {
-      candidate: ['#485447', '#56614d', '#3b493f', '#b1b59a'],
-      current: ['#4a593b', '#74734b', '#3b4d36', '#c6b079'],
-    },
-  };
-  retainedPalettes['terrain:floor:side-march-watchhouse'] = retainedPalettes['terrain:ground:march'];
-  retainedPalettes['terrain:floor:side-highlands-signal'] = retainedPalettes['terrain:ground:highlands'];
   const textureKeys = new Set();
   for (const [index, item] of terrain.candidates.entries()) {
     if (item.id !== 'T' + String(index + 1).padStart(3, '0') || textureKeys.has(item.resourceKey))
@@ -99,11 +83,7 @@ function audit(options = {}) {
     textureKeys.add(item.resourceKey);
     if (!terrainCatalog.includes('**Resource key:** `' + item.resourceKey + '`'))
       throw Error('Unclassified terrain material: ' + item.resourceKey);
-    const retained = retainedPalettes[item.resourceKey];
-    if (retained && JSON.stringify(item.palette) !== JSON.stringify(retained.candidate))
-      throw Error('Retained terrain candidate palette changed without review: ' + item.resourceKey);
-    const currentPalette = retained ? retained.current : item.palette;
-    if (!currentPalette.every((color) => source.includes("'" + color + "'")))
+    if (!item.palette.every((color) => source.includes("'" + color + "'")))
       throw Error('Terrain palette lacks current source evidence: ' + item.resourceKey);
   }
   const observed = new Map(),

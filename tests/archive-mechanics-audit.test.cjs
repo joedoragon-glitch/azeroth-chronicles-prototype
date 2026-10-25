@@ -55,9 +55,14 @@ for (const cls of ['paladin', 'mage', 'ranger'])
         const before = JSON.stringify(g.snapshot());
         const card = catalog(g).find((s) => s.title === 'Your skills').topics[slot - 1];
         assert.equal(JSON.stringify(g.snapshot()), before, 'Reference remains read-only');
-        const wait = Number(
-          card[2].match(charged ? /Charged recovery: ([\d.]+)/ : /base recovery ([\d.]+)/)[1],
+        // Skill 1's charged recovery is taught through its dedicated form
+        // figures, not the separate Skills 2–8 'Charged recovery' sentence.
+        const shown = card[2].match(
+          charged ? /Charged recovery: ([\d.]+)/ : /base recovery ([\d.]+)/,
         );
+        if (slot === 1 && charged) assert(card[2].includes('\nCharged: '));
+        else assert(shown, 'The Archive exposes the selected cooldown');
+        const wait = shown ? Number(shown[1]) : g.skillCooldown(1, true);
         const raw = [];
         g.damage = (e, amount) => {
           raw.push(amount);
@@ -67,8 +72,15 @@ for (const cls of ['paladin', 'mage', 'ranger'])
         if (cls === 'paladin' && slot === 3 && !charged) {
           near(g.hero.shieldStance, R.heroTactics.paladin.shield.duration, 'Shield duration');
           has(card[1], 'for ' + g.hero.shieldStance + 's');
+        } else if (charged) {
+          near(
+            n(g.hero.cd[slot - 1]),
+            n(g.skillCooldown(slot, false)),
+            'Charged execution starts the independent normal recovery',
+          );
+          near(n(g.hero.chargedCd[slot - 1]), wait, 'Charged recovery matches Archive figures');
         } else
-          near(n(g.hero.cd[slot - 1]), wait, 'Native spent cooldown vs rounded Archive figure');
+          near(n(g.hero.cd[slot - 1]), wait, 'Native normal recovery vs Archive figure');
         if (slot === 2 && cls !== 'paladin') {
           if (!charged) {
             for (const p of g.s.projectiles) if (p.slow) g.applySlow(target, p.slow);
@@ -523,13 +535,16 @@ for (const manual of [false, true]) {
   assert(g.enemySupportHeal(healer));
   near(
     patient.supportHeal.remaining,
-    patient.maxHp * cfg.fraction * g.enemyHealMultiplier(healer),
+    patient.maxHp - patient.hp,
     'Native support amount',
   );
-  near(patient.supportHeal.seconds, cfg.duration, 'Support duration');
-  near(healer.supportHealCd, cfg.cooldown, 'Support cooldown');
+  near(patient.supportHeal.seconds, cfg.ordinary.duration, 'Support duration');
+  near(healer.supportHealCd, cfg.ordinary.cooldown, 'Support cooldown');
   const text = topic(g, 'Healing in battle')[2];
   for (const fragment of [
+    'all missing HP',
+    cfg.ordinary.duration + ' seconds',
+    cfg.ordinary.cooldown + 's',
     pc(cfg.fraction) + '%',
     cfg.duration + ' seconds',
     cfg.cooldown + 's',

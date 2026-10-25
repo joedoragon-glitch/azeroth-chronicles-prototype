@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { createFrameSkip, frameSkipPreferenceKey } = require('../src/prototype/runtime');
+const { createFrameSkip, createAutoOptimization, frameSkipPreferenceKey } = require('../src/prototype/runtime');
 
 const saved = new Map();
 const storage = { getItem: k => saved.get(k), setItem: (k, v) => saved.set(k, v) };
@@ -154,8 +154,27 @@ hard.suspend();
 assert(!hard.emergency, 'Pausing, menu opening or hiding suspends emergency state');
 
 const offEmergency = createFrameSkip({ getItem: () => 'off' });
-assert.equal(offEmergency.beginFrame(1000, 1000), false, 'User Off disables emergency too');
-assert(!offEmergency.emergency);
+assert.equal(offEmergency.enabled, false);
+for (let i = 0; i < 6; i++) {
+  const now = i * 30;
+  offEmergency.observe(now, 85, 25, true);
+}
+assert.equal(offEmergency.shouldSkip(180, 30), false,
+  'Manual Off continues to prevent routine adaptive omissions');
+assert.equal(offEmergency.beginFrame(1000, 1000), true,
+  'Hard stalls must override manual Off before hostile simulation');
+assert(offEmergency.emergency, 'Critical protection is independent of the skip preference');
+let offProbes = 0, offSkips = 0;
+for (let i = 0; i < 40 && offEmergency.emergency; i++) {
+  const now = 1030 + i * 30;
+  offEmergency.beginFrame(now, 30);
+  if (offEmergency.shouldSkip(now, 30)) offSkips++;
+  else { offEmergency.observe(now, 20, 5, true); offProbes++; }
+}
+assert(offSkips > 0 && offProbes >= 3, 'Emergency Off override still probes safely');
+assert.equal(offEmergency.emergency, false, 'Healthy probes restore ordinary Off');
+assert.equal(offEmergency.shouldSkip(3000, 30), false,
+  'Manual Off remains persistent after the emergency');
 
 // The emergency path is intentionally outside campaign damage/save rules: no
 // battle simulation takes place until the device proves it can render again.
@@ -207,4 +226,70 @@ const recoveredCalls = simulationCalls;
 production.frame(recoveryNow + 33.3333);
 assert(simulationCalls > recoveredCalls, 'Live combat resumes on the next normal callback');
 
-console.log('PASS adaptive frame skip: default On, all FPS targets, critical recovery and protected combat, overrides');
+// The actual app must protect combat and turn on temporary simplified
+// presentation during a hard stall, even with both preferences stored Off.
+const overrideStorage = new Map([
+  ['azeroth-performance-defaults-dev170-v1', 'applied'],
+  ['azeroth-optimization-auto-default-v1', 'applied'],
+  ['azeroth-adaptive-frame-skip-v1', 'off'],
+  ['azeroth-optimization-mode-v1', 'off'],
+]);
+const forced = shell('en', 'paladin', { storage: overrideStorage });
+assert.equal(forced.scope.Prototype.frameSkip.enabled, false);
+forced.frame(0);
+const forcedHp = forced.scope.Prototype.game.hero.hp;
+forced.frame(800);
+assert(forced.scope.Prototype.frameSkip.emergency, 'Actual app emergency overrides frame-skip Off');
+assert.equal(forced.scope.Prototype.game.hero.hp, forcedHp, 'No emergency damage');
+assert.equal(forced.scope.Prototype.renderer.metrics().optimizationMode, 'on',
+  'Critical recovery activates lightweight presentation even under Optimization Off');
+assert.equal(overrideStorage.get('azeroth-optimization-mode-v1'), 'off',
+  'Temporary emergency override must not rewrite the manual preference');
+
+// Auto optimization uses callback workload, including actual adaptive skipped
+// frames, rather than confusing the intentional 20 FPS draw cap with lag.
+const auto = createAutoOptimization();
+let optimized = false;
+for (let i = 0; i < 420; i++) {
+  const decision = auto.observe(i * (1000 / 60), {
+    activePlay: true, preference: 'auto', optimized, intervalMs: 1000 / 60,
+    workMs: 9, target: 20,
+  });
+  assert.equal(decision, null, 'Healthy callbacks at target 20 are not pressure');
+}
+const slowStart = 420 * (1000 / 60);
+for (let i = 0; i < 90; i++) {
+  const decision = auto.observe(slowStart + i * 80, {
+    activePlay: true, preference: 'auto', optimized, intervalMs: 80,
+    workMs: 60, target: 20, adaptiveSkipped: i % 3 === 0,
+  });
+  if (decision !== null) optimized = decision;
+}
+assert(optimized, 'Sustained active lag enables Optimization Auto');
+const recoveryStart = slowStart + 90 * 80;
+let disabled = false;
+for (let i = 0; i < 4500; i++) {
+  const decision = auto.observe(recoveryStart + i * (1000 / 60), {
+    activePlay: true, preference: 'auto', optimized, intervalMs: 1000 / 60,
+    workMs: 9, target: 20,
+  });
+  if (decision === false) { optimized = false; disabled = true; break; }
+}
+assert(disabled && !optimized, 'Extended healthy play restores full graphics without oscillation');
+
+const manualOff = createAutoOptimization();
+for (let i = 0; i < 90; i++) {
+  assert.equal(manualOff.observe(i * 80, {
+    activePlay: true, preference: 'off', optimized: false,
+    intervalMs: 80, workMs: 85, target: 30,
+  }), null, 'Routine load respects explicit Off');
+}
+assert.equal(manualOff.observe(7300, {
+  activePlay: true, preference: 'off', optimized: false, emergency: true,
+}), true, 'Emergency overrides explicit Optimization Off');
+manualOff.observe(8000, { activePlay: false, preference: 'off', optimized: true });
+assert.equal(manualOff.observe(9000, {
+  activePlay: true, preference: 'off', optimized: true, intervalMs: 20,
+  workMs: 10, target: 20,
+}), null, 'Pause cannot be counted as a healthy active recovery');
+console.log('PASS adaptive frame skip: manual Off preserves critical recovery, Auto Optimization, protected combat');

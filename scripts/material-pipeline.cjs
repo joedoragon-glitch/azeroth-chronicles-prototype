@@ -45,7 +45,8 @@ function reference(key) {
       regions.findIndex((r) => name === r || name.includes('-' + r + '-')),
     ),
     rules = require('../src/prototype/rules.js');
-  // Match the existing sprite reference sandbox without exposing require to the VM.
+  // The renderer imports both rules and Highlands when evaluated outside Node's module wrapper.
+  // Supply the same dependencies as the sprite pipeline; keep the sandbox without require.
   const sandbox = {
     PrototypeRules: rules,
     PrototypeHighlands: require('../src/prototype/highlands.js'),

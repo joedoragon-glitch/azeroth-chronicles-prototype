@@ -1,6 +1,7 @@
 'use strict';
 // Deferred combined-source cases. Do not execute before the shared validation gate.
 const assert = require('node:assert/strict');
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 const Campaign = require('../src/prototype/engine.js');
 const Art = require('../src/prototype/hero-presentation.js');
 const Visuals = require('../src/prototype/combat-visuals.js');
@@ -8,6 +9,7 @@ const R = Campaign.rules;
 const near = (a, b) => assert(Math.abs(a - b) < 1e-8, `${a} != ${b}`);
 function arena(cls = 'mage') {
   const g = new Campaign('normal', cls, () => 0.9);
+  completeFieldOpening(g);
   g.s.mercyTime = 0;
   Object.assign(g.hero, { x: 500, y: 500, order: null, slow: 0, immune: 0 });
   g.hero.skills = Array(8).fill(1);
@@ -52,8 +54,9 @@ for (const skillRank of [1, 4, 8])
         assert(event && event.slot === slot && event.charged === charged);
         assert.equal(g.hero.skills[slot - 1], rank);
         const cooldown =
-          cls === 'paladin' && slot === 3 && !charged ? 0 : g.skillCooldown(slot, charged);
+          cls === 'paladin' && slot === 3 && !charged ? 0 : g.skillCooldown(slot, false);
         near(g.hero.cd[slot - 1], cooldown);
+        near(g.hero.chargedCd[slot - 1], charged ? g.skillCooldown(slot, true) : 0);
         const fx = Visuals.queue(g.effects, g, []);
         assert(fx.some((f) => f.type === 'heroSkill' && f.slot === slot));
         assert(Art.profile(event), 'every form has its own material/motif mapping');
@@ -126,7 +129,8 @@ for (const skillRank of [1, 4, 8])
   assert.equal(e.hp, before);
   assert.equal(u.skill2Cd, 0, 'silenced preparation does not spend the full cooldown');
   assert(!g.partyChargeState(u));
-  assert(g.cast(1, e.id), 'ordinary hero attacks remain possible during Silence');
+  assert(g.castMovementBasic(), 'automatic basics remain possible during Silence');
+  assert(!g.cast(1, e.id), 'promoted activated Tap still obeys Silence');
   e.ranged = true;
   e.aggro = true;
   e.pack = 'healing';

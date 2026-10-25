@@ -711,19 +711,11 @@ async function checkProduction(options = {}) {
     unique = new Map(),
     prepared = contracts(),
     byKey = new Map(prepared.map((c) => [c.key, c]));
-  const retainedProceduralRaster = (key) => {
-    if (key !== 'prop:ore-sorting-bay:highlands') return false;
-    const decisions = json(path.join(root, 'tools/sprites/current-design-decisions.json'));
-    return decisions.assets?.[key]?.selectedRepresentation === 'procedural' &&
-      fs.readFileSync(path.join(root, 'src/prototype/sprites.js'), 'utf8')
-        .includes("'prop:ore-sorting-bay:highlands'");
-  };
   // Report ALL obsolete approvals in a single read-only audit, not one at
   // a time. This does not approve new art, ignore provenance, or mutate bytes.
   const staleApprovals = Object.entries(approved.assets)
     .filter(([key, record]) => {
       if ((options.allowStaleKeys || []).includes(key)) return false;
-      if (retainedProceduralRaster(key)) return false;
       const contract = byKey.get(key);
       return (
         !contract ||
@@ -739,7 +731,7 @@ async function checkProduction(options = {}) {
   );
   for (const [key, record] of Object.entries(approved.assets)) {
     const contract = byKey.get(key),
-      stale = (options.allowStaleKeys || []).includes(key) || retainedProceduralRaster(key);
+      stale = (options.allowStaleKeys || []).includes(key);
     validateRecord(record, contract, true, stale);
     const report = await inspect(safeFile(path.join(root, 'assets/sprites'), record.output.file));
     const source = await inspect(
