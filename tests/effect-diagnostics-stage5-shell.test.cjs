@@ -12,7 +12,9 @@ function harness({ developerFlag = false, developerSave = false } = {}) {
     storage.set('azeroth-v4-developer', JSON.stringify(game.snapshot()));
   }
   const location = {
-    protocol: 'https:', hostname: 'localhost',
+    // Local in-memory shell has no Web Locks API. HTTP localhost exercises
+    // developer URL opt-in without pretending to own a production HTTPS lock.
+    protocol: 'http:', hostname: 'localhost',
     search: developerFlag ? '?developer=1' : '',
   };
   const h = shell('en', 'paladin', { storage, location });
