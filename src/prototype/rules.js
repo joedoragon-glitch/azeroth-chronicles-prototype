@@ -6133,6 +6133,10 @@
     // Ordinary ranged healers treating ordinary monsters: more timely aid.
     // Leader recipients and leader casters retain the original baseline.
     ordinary: Object.freeze({ fullRecovery: true, cooldown: 7, duration: 3 }),
+    // Captains sit between ordinary monsters and bosses as support patients.
+    // Each eligible ranged ally may refill half the missing captain HP over
+    // five seconds, on its own ten-second captain-support eligibility.
+    captain: Object.freeze({ missingFraction: 0.5, duration: 5, threshold: 0.9 }),
     // Ranged troops should assist substantially wounded allies before they
     // collapse, rather than waiting until half their HP has disappeared.
     // Ordinary-to-ordinary healing treats any missing HP. Leaders and leader
