@@ -1,0 +1,40 @@
+name: Art 321 authored scenery Crown coin capture
+# One source-pinned 1280x800 Chromium real-WebGL2 A/B near an actual authored
+# visible Vale prop. Verifies original Canvas "loot after actors" ordering.
+# No artificial scenery, gameplay mutation, default promotion or deploy.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tools/visual-review/art321-crown-loot-browser.cjs'
+      - '.github/workflows/art321-cover-capture.yml'
+permissions:
+  contents: read
+concurrency:
+  group: art321-cover-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  one-authored-cover:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked browser test dependencies
+        run: npm ci --ignore-scripts
+      - name: Actual scenery plus approved coin in both renderer modes
+        run: |
+          mkdir -p "$RUNNER_TEMP/art321-cover"
+          ART321_COVER_BROWSER=1 ART321_OUTPUT="$RUNNER_TEMP/art321-cover" node tools/visual-review/art321-crown-loot-browser.cjs
+      - name: Archive paired composed-frame screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: art321-author-scene-${{ github.sha }}
+          path: ${{ runner.temp }}/art321-cover/
+          if-no-files-found: warn
+          retention-days: 14
