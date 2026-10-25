@@ -5,6 +5,12 @@ const rules = Campaign.rules.enemySupportHealing;
 const near = (actual, wanted, name) =>
   assert(Math.abs(actual - wanted) < 1e-6, name + ': ' + actual + ' !== ' + wanted);
 
+// Director signed off Phase 5: captain-recipient midpoint is not provisional.
+assert.equal(rules.captain.missingFraction, 0.5, 'approved captain recipient missing-HP fraction');
+assert.equal(rules.captain.duration, 5, 'approved captain recipient treatment seconds');
+assert.equal(rules.captain.threshold, 0.9, 'approved captain recipient eligibility gate');
+assert.equal(rules.cooldown, 10, 'approved independent per-source leader eligibility');
+
 function scene() {
   const g = new Campaign('normal', 'mage', () => 0.9);
   g.enter('supply-vale');
@@ -109,6 +115,23 @@ function elapsed(g, dt) {
   captain.hp = captain.maxHp * 0.6;
   assert(g.enemySupportHeal(healer), 'independent leader eligibility returns at ten seconds');
 }
+// The signed-off 90% eligibility gate is inclusive; 90.1% must not trigger
+// a source's separate 10-second captain-support clock.
+{
+  const { g, actor } = scene();
+  const healer = actor('wolf', 300, { ranged: true });
+  const captain = actor('ogre', 330, {
+    captain: true, roomCaptain: true, captainProfile: 'supply-highlands', hp: 901,
+  });
+  assert(!g.enemySupportHeal(healer), '90.1%-HP captain is above approved treatment gate');
+  captain.hp = 900;
+  assert(g.enemySupportHeal(healer), '90%-HP captain meets inclusive treatment gate');
+  near(captain.supportHeal.remaining, 50, 'approved half of 100 missing HP');
+  near(captain.supportHeal.seconds, 5, 'approved five-second captain pulse');
+  g.advanceEnemySupportHeal(captain, 5);
+  near(captain.hp, 950, 'signed-off captain budget completes without full restoration');
+}
+
 // Distinct ranged guardians retain independent leader clocks: the captain
 // can receive a later cast from another guard while the first one cools down.
 {
