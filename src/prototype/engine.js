@@ -6822,6 +6822,7 @@
       for (const p of [...this.s.projectiles, ...this.s.hazards]) {
         retain(p.sourceId);
         retain(p.targetId);
+        retain(p.target);
         retain(p.owner);
       }
       for (const p of Object.values(this.s.pending)) retain(p.base?.id);

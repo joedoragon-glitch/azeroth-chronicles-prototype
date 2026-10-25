@@ -101,7 +101,8 @@ assert(store.exists('normal'));
 assert(!store.exists('nightmare'));
 items.set(Store.saveKey('nightmare'), '{broken');
 assert.equal(store.load('nightmare'), null);
-assert(messages.at(-1).includes('Import a backup'));
+assert.match(messages.at(-1), /Try recovery/);
+assert.match(messages.at(-1), /import a backup/i);
 assert.equal(items.get(Store.saveKey('nightmare')), '{broken', 'Corrupt original is retained');
 const blocked = Store.create({
   storage: {

@@ -26,6 +26,46 @@ for (const [kind, methods] of Object.entries(frozen)) {
   delete descriptors.constructor;
   Object.defineProperties(B.prototype, descriptors);
 }
+// Different native dungeon rosters plus actual hero-participation elite receipts.
+for (const id of C.dungeonIds) {
+  const p = pair(id),
+    originals = p.a.zone().enemies.map((e) => e.id);
+  for (let wave = 0; wave < 3; wave++) {
+    for (const g of [p.a, p.b]) {
+      for (const e of [...g.zone().enemies])
+        if (e.guard && e.hp > 0) {
+          e.heroParticipated = !!e.reinforcement;
+          e.hp = 0;
+          g.kill(e);
+        }
+      g.updateGuardianReinforcements(18.01);
+      g.updateElites(2.01);
+    }
+    const ids = new Set(p.a.zone().enemies.map((e) => e.id)),
+      old = structuredClone(p.b.s);
+    for (const original of originals) assert(ids.has(original), id + ' keeps original ' + original);
+    assert.deepEqual(
+      p.a
+        .zone()
+        .enemies.filter((e) => e.hp > 0)
+        .map((e) => e.id),
+      p.b
+        .zone()
+        .enemies.filter((e) => e.hp > 0)
+        .map((e) => e.id),
+      id + ' living/elite roster',
+    );
+    old.zones[id].enemies = old.zones[id].enemies.filter((e) => ids.has(e.id));
+    assert.deepEqual(p.a.s, old, id + ' actual elite/kill/spawn state');
+    assert.deepEqual(p.a.effects, p.b.effects, id + ' actual elite events');
+    assert.equal(p.ra.calls(), p.rb.calls(), id + ' random stream');
+    p.a.effects.length = 0;
+    p.b.effects.length = 0;
+  }
+}
+console.log(
+  'PASS all native dungeon rosters: paid hero kills, elite arrivals, original bodies and live waves preserved',
+);
 function rng() {
   let s = 731,
     n = 0;
@@ -228,6 +268,10 @@ function geometry(K) {
 {
   const p = pair('crypt'),
     rows = [];
+  const nativeIds = p.a
+    .zone()
+    .enemies.filter((e) => !e.reinforcement)
+    .map((e) => e.id);
   for (let wave = 0; wave < 30; wave++) {
     for (const g of [p.a, p.b]) {
       for (const e of [...g.zone().enemies])
@@ -241,6 +285,18 @@ function geometry(K) {
       ids = new Set(p.a.s.zones.crypt.enemies.map((e) => e.id));
     old.zones.crypt.enemies = old.zones.crypt.enemies.filter((e) => ids.has(e.id));
     assert.deepEqual(p.a.s, old, 'wave ' + wave + ' surviving mechanics');
+    for (const id of nativeIds) assert(ids.has(id), 'every original body remains: ' + id);
+    assert.deepEqual(
+      p.a
+        .zone()
+        .enemies.filter((e) => e.hp > 0)
+        .map((e) => e.id),
+      p.b
+        .zone()
+        .enemies.filter((e) => e.hp > 0)
+        .map((e) => e.id),
+      'all living actors remain',
+    );
     assert.deepEqual(p.a.effects, p.b.effects);
     assert.equal(p.ra.calls(), p.rb.calls());
     p.a.effects.length = 0;
@@ -257,13 +313,14 @@ function geometry(K) {
     e = z.enemies.find((e) => e.reinforcement);
   e.hp = 0;
   g.kill(e);
-  for (const ref of ['projectile', 'hazard', 'pending', 'order', 'healing']) {
+  for (const ref of ['projectile', 'target-projectile', 'hazard', 'pending', 'order', 'healing']) {
     g.s.projectiles = [];
     g.s.hazards = [];
     g.s.pending = {};
     g.hero.order = null;
     delete g.hero.supportHeal;
     if (ref === 'projectile') g.s.projectiles.push({ sourceId: e.id });
+    if (ref === 'target-projectile') g.s.projectiles.push({ target: e.id });
     if (ref === 'hazard') g.s.hazards.push({ sourceId: e.id });
     if (ref === 'pending') g.s.pending.probe = { base: { id: e.id } };
     if (ref === 'order') g.hero.order = { type: 'attack', id: e.id };
@@ -276,11 +333,47 @@ function geometry(K) {
   g.s.pending = {};
   g.hero.order = null;
   delete g.hero.supportHeal;
+  for (const [key, value] of Object.entries({
+    reinforcement: false,
+    guard: false,
+    deathPaid: false,
+    type: 'boss',
+    form: 'ringleader',
+    neutral: true,
+    summon: true,
+    captain: true,
+    roomCaptain: true,
+    family: 'crypt',
+    owner: 'owner',
+    respawn: 1,
+    supportHeal: {},
+  })) {
+    const owned = Object.hasOwn(e, key),
+      before = e[key];
+    e[key] = value;
+    g.retireSpentReinforcements(z);
+    assert(z.enemies.includes(e), 'excluded record: ' + key);
+    if (owned) e[key] = before;
+    else delete e[key];
+  }
   e.species = 'wolf';
-  const commander = { id: 'commander', type: 'boss', family: 'ridge' };
+  const commander = g.makeEnemy(
+    { species: 'wolf', name: 'Revival audit', level: 5, hp: 100, damage: 1, gold: 0, xp: 0 },
+    e.home,
+  );
+  Object.assign(commander, { type: 'boss', family: 'ridge' });
   z.enemies.push(commander);
   g.retireSpentReinforcements(z);
   assert(z.enemies.includes(e), 'revival preservation');
+  g.tacticalRogueCommanderSupport(commander, {
+    reinforceSpecies: 'wolf',
+    reinforceCap: 1,
+    reinforceBelow: 0,
+    rallySeconds: 2,
+  });
+  assert(e.hp > 0, 'the preserved body can actually return through native commander support');
+  e.hp = 0;
+  g.kill(e);
   z.enemies.splice(z.enemies.indexOf(commander), 1);
   assert.equal(g.retireSpentReinforcements(z), 1);
   assert(

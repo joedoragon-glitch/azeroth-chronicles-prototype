@@ -1,9 +1,11 @@
 'use strict';
 const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine');
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 const near = (a, b, text) => assert(Math.abs(a - b) < 1e-8, text + ': ' + a + ' vs ' + b);
 function scene(clock, points = 0, ranged = false, distance = 50) {
   const g = new C('normal', 'paladin', () => 0.9);
+  completeFieldOpening(g);
   g.s.clock = clock;
   for (const b of C.data.bosses.filter((b) => b.id !== 'darklord')) {
     if (points-- > 0) g.victory(b.id, 'normal');

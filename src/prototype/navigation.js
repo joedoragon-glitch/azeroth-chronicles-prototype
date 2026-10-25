@@ -1453,6 +1453,14 @@
       methods[name].value = function (...args) {
         if (propQueries.has(this)) return original.apply(this, args);
         const [a, b] = args;
+        // Sparse interiors, tiny moves and terrain-only sweeps cannot benefit
+        // from this shortlist. Leave their original cheap path allocation-free.
+        if (
+          (this.s.zones?.[this.s.zone]?.props.length || 0) < 80 ||
+          (name === 'clearSegment' && args[3]) ||
+          Math.abs(a.x - b.x) + Math.abs(a.y - b.y) <= 48
+        )
+          return original.apply(this, args);
         propQueries.set(this, {
           left: Math.min(a.x, b.x),
           right: Math.max(a.x, b.x),

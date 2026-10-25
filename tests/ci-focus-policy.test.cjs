@@ -113,12 +113,17 @@ assert.deepEqual(unclassified.uncovered, ['src/prototype/new-future-system.js'])
 assert.deepEqual(unclassified.tests, ['tests/architecture.test.cjs']);
 for (const [source, expected] of [
   ['runtime', ['frame-skip', 'auto-fps-adaptive-coupling', 'render-resolution']],
-  ['persistence', ['persistence-safety', 'save-writer', 'restart-recovery']],
+  [
+    'persistence',
+    ['persistence-safety', 'save-writer', 'restart-recovery', 'save-recovery-checkpoints'],
+  ],
   [
     'save',
     ['persistence-safety', 'slow-cooldown', 'beta-historical', 'snapshot-encounter-lifecycle'],
   ],
-  ['navigation', ['navigation-route-stage4', 'crowd-collision-fast-reject']],
+  ['navigation', ['navigation-route-stage4', 'crowd-collision-fast-reject', 'runtime-workload']],
+  ['world', ['runtime-workload']],
+  ['engine', ['runtime-workload', 'night-tempo']],
   [
     'rules',
     [
@@ -140,6 +145,12 @@ for (const [source, expected] of [
 function TEST_PATH(name) {
   return 'tests/' + name + '.test.cjs';
 }
+assert(
+  selectTests(['tests/fixtures/runtime-workload-dev175.json']).tests.includes(
+    TEST_PATH('runtime-workload'),
+  ),
+  'fixture edits must run the preservation comparison',
+);
 assert(
   selectTests(
     ['src/prototype/persistence.js'],
