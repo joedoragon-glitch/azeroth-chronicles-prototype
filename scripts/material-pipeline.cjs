@@ -45,14 +45,10 @@ function reference(key) {
       regions.findIndex((r) => name === r || name.includes('-' + r + '-')),
     ),
     rules = require('../src/prototype/rules.js');
-  const highlandsSandbox = {};
-  vm.runInNewContext(
-    fs.readFileSync(path.join(root, 'src/prototype/highlands.js'), 'utf8'),
-    highlandsSandbox,
-  );
+  // Match the existing sprite reference sandbox without exposing require to the VM.
   const sandbox = {
     PrototypeRules: rules,
-    PrototypeHighlands: highlandsSandbox.PrototypeHighlands,
+    PrototypeHighlands: require('../src/prototype/highlands.js'),
     performance: { now: () => 16000 },
   };
   vm.runInNewContext(fs.readFileSync(path.join(root, 'src/prototype/visuals.js'), 'utf8'), sandbox);
