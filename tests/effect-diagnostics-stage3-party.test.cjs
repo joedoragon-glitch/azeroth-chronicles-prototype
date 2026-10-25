@@ -7,6 +7,7 @@ const Art = require('../src/prototype/enemy-vfx-art.js');
 const HeroArt = require('../src/prototype/hero-presentation.js');
 const Fx = require('../src/prototype/combat-visuals.js');
 const Renderer = require('../src/prototype/renderer.js');
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 const project = ({ x, y }) => ({ x: 300 + (x - 500) * 0.7 - (y - 500) * 0.28,
   y: 250 + (x - 500) * 0.17 + (y - 500) * 0.3 });
 function pixels(canvas) {
@@ -17,6 +18,8 @@ function pixels(canvas) {
 }
 function scene(type, family = null) {
   const g = new Campaign('developer', 'paladin', () => 0.9);
+  // Complete the real tutorial gate, which blocks uninitiated companion hits.
+  completeFieldOpening(g);
   const z = g.zone();
   z.props = []; z.buildings = []; z.nodes = []; z.npcs = []; z.enemies = [];
   Object.assign(g.hero, { x: 500, y: 500, gold: 10000, hp: 1000, maxHp: 1000 });
