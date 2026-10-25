@@ -145,6 +145,35 @@ for (const mode of ['normal', 'nightmare']) {
   }
 }
 
+
+// Native idle approach must cover the older, distant ranged sentry, rather
+// than passing only because the two newly added command-side guards can cast
+// without moving. Keep the real route solver and AI; isolate other healers by
+// their existing cooldown rather than altering line-of-sight or collision.
+for (const id of ['supply-vale', 'supply-march']) {
+  const { game, captain, ranged } = nativeRoom(id, 'normal');
+  captain.hp = captain.maxHp * 0.82;
+  captain.idleWanderWait = 1000;
+  const distant = ranged.find((e) =>
+    Math.hypot(e.x - captain.x, e.y - captain.y) > cfg.range);
+  assert(distant, id + ': original outer lookout begins beyond healing reach');
+  for (const guard of ranged)
+    if (guard !== distant) guard.supportHealCd = 100;
+  assert(game.route(distant, captain).length > 0,
+    id + ': outer ranged guardian has a collision-safe approach path');
+  const start = { x: distant.x, y: distant.y };
+  tick(game, 1);
+  assert(Math.hypot(distant.x - start.x, distant.y - start.y) > 0.1,
+    id + ': idle ranged lookout begins to approach the wounded captain');
+  assert(!distant.aggro, id + ': healing approach does not engage hero');
+  for (let i = 0; i < 70 && !game.s.statistics.events.some((e) =>
+    e.type === 'heal' && e.source === distant.id && e.target === captain.id); i++)
+    tick(game, 1);
+  assert(game.s.statistics.events.some((e) =>
+    e.type === 'heal' && e.source === distant.id && e.target === captain.id),
+    id + ': original distant lookout eventually makes a real treatment cast');
+}
+
 // Native silence and engagement transitions remain separate from geometry:
  // an incapacitated ranged guard cannot begin treatment; once released, the
  // captain's timed restoration survives a change of aggro state.
