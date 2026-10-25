@@ -68,7 +68,7 @@ assert.throws(() => tuning.effectFor('hero/paladin/1-tap','companion'), /mismatc
 assert.equal(tuning.effectFor('hero/paladin/1-charged','hero').level, 2);
 assert.equal(tuning.effectFor('pet/crypt/1','companion').lever,'healAmount');
 assert.equal(tuning.effectFor('hero/ranger/1-charged','hero').lever,'damage');
-assert.equal(tuning.effectFor('hero/paladin/3-tap','hero').lever,'wardStrength');
+assert.equal(tuning.effectFor('hero/paladin/3-tap','hero').lever,'wardDuration');
 assert.equal(tuning.effectFor('troop/archer/heal','companion').lever,'healAmount');
 assert.equal(tuning.effectFor('troop/archer/first','companion').lever,'slowDuration');
 for (const [lever, rule] of Object.entries(Levels.LEVERS)) {
