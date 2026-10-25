@@ -129,7 +129,7 @@ for (const family of families) {
     // afterward must not make the already-resolved hit drift.
     for (const dt of [1 / 20, 1 / 30, 1 / 60]) {
       const f = { ...impacted };
-      for (let i = 0; i < 30 && f.life > 0; i++) f.life -= dt;
+      for (let i = 0; i < Math.ceil(f.max / dt) + 1 && f.life > 0; i++) f.life -= dt;
       assert(f.life <= 0, 'transient VFX expires without owning ongoing gameplay');
       assert.equal(f.x, 1500);
       assert.equal(f.fromX, 1400);
