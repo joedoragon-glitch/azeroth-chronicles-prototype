@@ -392,7 +392,7 @@
             'Rank ' +
             info.rank +
             (info.rank === 8 ? ' · Maximum rank' : ' · Automatic basics, Tap and Charged use this rank.') +
-            (slot === 1 ? ' · Rank 1 is self-taught; rescued specialists refine it.' : ''),
+            (slot === 1 ? ' · Self-taught from Rank 1; rescued specialists refine it.' : ''),
           sections: skillSections(info),
           note: info.note,
         },
