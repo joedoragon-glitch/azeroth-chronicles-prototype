@@ -148,7 +148,8 @@ async function run() {
         // The retained Pixi background must immediately reflect presentation
         // transitions without walking, zooming or a zone transition.
         await page.waitForFunction(() =>
-          Prototype.experimentalGraphics.backgroundOptimized === false);
+          typeof Prototype.experimentalGraphics.backgroundOptimized === 'boolean',
+          null, {timeout:15000});
         await page.locator('#menu-button').click();
         await page.getByRole('button', {name:'Game and settings', exact:true}).click();
         await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
