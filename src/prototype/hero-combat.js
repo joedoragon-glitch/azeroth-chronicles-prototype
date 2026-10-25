@@ -275,10 +275,11 @@
             for (let n = 0; n < arrowsPerTarget; n++) {
               this.launchHuntArrow(
                 foe,
-                power * cfg.damagePerArrow * scale,
+                this.criticalHeroValue(criticalReceipt, power * cfg.damagePerArrow * scale, 'damage'),
                 charged,
                 index * 0.04 + n * 0.1,
                 receipt,
+                criticalReceipt,
               );
               hits++;
             }
@@ -323,7 +324,7 @@
               this.fractureEnemy(
                 foe,
                 cfg.fracture + steps * cfg.fractureStep,
-                cfg.fractureDuration,
+                this.criticalHeroValue(criticalReceipt, cfg.fractureDuration, 'vulnerabilityDuration'),
               );
             if (hero.class === 'paladin' && charged && cfg.weaken)
               this.weakenEnemy(foe, hero.skills[7]);
@@ -478,13 +479,13 @@
             if (hero.class === 'ranger') {
               launch(enemy, power * cfg.damage * scale, 'arrow', {
                 area: true,
-                slow: cfg.slow + cfg.slowStep * steps,
+                slow: this.criticalHeroValue(criticalReceipt, cfg.slow + cfg.slowStep * steps, 'slowDuration'),
               });
               hits++;
             } else if (deal(enemy, power * cfg.damage * scale, true)) {
-              if (hero.class === 'paladin' && cfg.weaken) this.weakenEnemy(enemy, rank);
+              if (hero.class === 'paladin' && cfg.weaken) this.weakenEnemy(enemy, rank, criticalReceipt);
               if (hero.class === 'mage' && enemy.hp > 0)
-                this.shieldPush(enemy, cfg.push + cfg.pushStep * steps);
+                this.shieldPush(enemy, this.criticalHeroValue(criticalReceipt, cfg.push + cfg.pushStep * steps, 'pushDistance'));
               hits++;
             }
           }
@@ -505,14 +506,14 @@
               .enemies.filter((e) => eligible(e, hero, cfg.radius + cfg.radiusStep * steps))
               .sort((a, b) => this.idOrder(a, b))) {
               if (deal(enemy, power * cfg.damage * scale, true)) {
-                if (enemy.hp > 0) this.shieldPush(enemy, cfg.push + cfg.pushStep * steps);
+                if (enemy.hp > 0) this.shieldPush(enemy, this.criticalHeroValue(criticalReceipt, cfg.push + cfg.pushStep * steps, 'pushDistance'));
                 hits++;
               }
             }
             pulse('vanguard-impact', hits, start.x, start.y, cfg.radius + cfg.radiusStep * steps);
           } else if (hero.class === 'mage') {
             launch(target, power * cfg.damage * scale, 'beam', {
-              slow: cfg.slow + cfg.slowStep * steps,
+              slow: this.criticalHeroValue(criticalReceipt, cfg.slow + cfg.slowStep * steps, 'slowDuration'),
             });
             this.event('charged', {
               actor: 'hero',
@@ -529,7 +530,9 @@
                 delay: j * 0.08,
                 rapid: true,
                 chargedBurst: j === cfg.arrows - 1,
-                push: j === cfg.arrows - 1 ? cfg.push + cfg.pushStep * steps : 0,
+                push: j === cfg.arrows - 1
+                  ? this.criticalHeroValue(criticalReceipt, cfg.push + cfg.pushStep * steps, 'pushDistance')
+                  : 0,
               });
             this.event('charged', {
               actor: 'hero',
@@ -549,13 +552,13 @@
           if (hero.class === 'ranger') {
             launch(target, power * cfg.damage * scale, 'arrow', {
               piercing: true,
-              slow: cfg.slow + cfg.slowStep * steps,
+              slow: this.criticalHeroValue(criticalReceipt, cfg.slow + cfg.slowStep * steps, 'slowDuration'),
             });
           } else {
             let hits = 0;
             for (const enemy of foes)
               if (deal(enemy, power * cfg.damage * scale, true)) {
-                if (hero.class === 'paladin') this.weakenEnemy(enemy, rank);
+                if (hero.class === 'paladin') this.weakenEnemy(enemy, rank, criticalReceipt);
                 hits++;
               }
             pulse(hero.class === 'paladin' ? 'oath-strike' : 'sigil-storm', hits);
