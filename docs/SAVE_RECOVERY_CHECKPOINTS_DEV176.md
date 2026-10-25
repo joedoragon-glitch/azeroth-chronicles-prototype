@@ -57,10 +57,31 @@ Recovery is for consistency/compatibility, with no accusation of cheating.
 
 ## Verification and handoff
 
-Focused checkpoint/recovery tests pass during implementation: retention,
+Focused checkpoint/recovery tests pass: retention,
 ordinary-save throttling and restart interval, count/size/mode boundaries,
 invalid entry rejection, documented migration, preview/cancel/accept, exact
 original retention, stale/non-owner fencing and quota failures. Existing
-persistence-safety and writer tests also passed before the final focused pass.
-Final focused results and remaining limitations are recorded before handoff.
-No full-game suite, browser matrix, PR, merge or deployment follows automatically.
+persistence-safety and writer tests also pass. The selected integrated pass
+covered 15 test files: 14 passed immediately; `platform-runtime` retained an
+old status-copy assertion. It now verifies both recovery and backup-import
+guidance while preserving its corrupt-original assertion, and passes. The
+checkpoint suite passed again after adding clock-rollback and no-extra-world-
+restoration checks. All 15 selected files pass on the final source; no changed
+source is unmapped and no declared regression is missing.
+
+Reproducible build/generated syntax, touched-file Prettier and diff checks pass:
+dev.176, 217 campaign assets and 14 optional historical assets. Existing broader
+art/tooling/format warnings remain documented in the dev.175 audit record; they
+are not changed or claimed fixed here. No full-game suite, browser matrix or
+physical-device storage/PWA certification was performed.
+
+Initial remote source checkpoint: `db200cdf`. Final candidate is on
+`fix/save-recovery-checkpoints-20261024`; no PR, merge or publication has been
+performed for this follow-up. The approved dev.175 release remains live. The
+earlier merge approval applied to PR #438, so this candidate awaits its own
+publication approval. Reproduce after checking out the branch:
+
+```sh
+CI_BASE_SHA=e4e8234b5f784ddc9492fe79d956fd0a696b12af node .github/scripts/focused-ci.cjs
+node scripts/build.cjs --check
+```

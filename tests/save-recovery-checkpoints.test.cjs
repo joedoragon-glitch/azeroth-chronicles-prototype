@@ -102,6 +102,48 @@ for (const mode of ['normal', 'nightmare']) {
   assert.equal(options.length, 1);
   assert(p.recover('normal', options[0].id));
 }
+// Device-clock rollback must not suspend the checkpoint cadence indefinitely.
+{
+  const f = fixture();
+  f.advance(-1000);
+  f.g.hero.gold = 1;
+  assert(f.p.save(f.g, {}));
+  f.g.hero.gold = 2;
+  assert(f.p.save(f.g, {}));
+  assert.equal(
+    f.bundle().entries[0].savedAt,
+    1699999999000,
+    'A backwards device clock does not freeze future checkpoint rotation',
+  );
+}
+// Routine backup work reuses already validated primaries instead of rebuilding worlds.
+{
+  const values = new Map();
+  let clock = 1700000000000,
+    restores = 0;
+  const p = P.create({
+    storage: { getItem: (key) => values.get(key), setItem: (key, bytes) => values.set(key, bytes) },
+    now: () => clock,
+    Campaign: {
+      validate: C.validate,
+      migrate: C.migrate,
+      restore(...args) {
+        restores++;
+        return C.restore(...args);
+      },
+    },
+  });
+  const g = new C();
+  assert(p.save(g, {}));
+  for (let i = 1; i <= 5; i++) {
+    clock += 60000;
+    g.hero.gold = i;
+    assert(p.save(g, {}));
+  }
+  assert.equal(restores, 0, 'Ordinary validated autosaves never restore another Campaign');
+  assert.equal(p.recoveryOptions('normal').length, 3);
+  assert.equal(restores, 3, 'Candidate worlds are built only for explicit bounded inspection');
+}
 // An existing, documented v2 migration can rescue a misplaced old-format primary.
 {
   const values = new Map([
