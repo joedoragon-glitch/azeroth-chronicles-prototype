@@ -12,6 +12,10 @@
   const LEVERS = Object.freeze({
     damage: Object.freeze({ operation: 'multiply', values: Object.freeze([1.08, 1.20, 1.40]) }),
     healAmount: Object.freeze({ operation: 'multiply', values: Object.freeze([1.10, 1.25, 1.45]) }),
+    // Existing hostile healing can already restore 100% of an ordinary ally's
+    // missing HP. Critical support executes that SAME budget more promptly,
+    // without inventing extra healing, recipients or cooldown reductions.
+    healTempo: Object.freeze({ operation: 'divide', values: Object.freeze([1.10, 1.25, 1.45]) }),
     slowDuration: Object.freeze({ operation: 'addSeconds', values: Object.freeze([0.20, 0.50, 1.00]) }),
     weakenDuration: Object.freeze({ operation: 'addSeconds', values: Object.freeze([0.20, 0.50, 1.00]) }),
     vulnerabilityDuration: Object.freeze({ operation: 'addSeconds', values: Object.freeze([0.20, 0.50, 1.00]) }),
@@ -96,6 +100,7 @@
   // authored abilities. Unregistered world moves still fail closed.
   register('world/basic/melee', 'world', 'damage');
   register('world/basic/ranged', 'world', 'damage');
+  register('world/support/heal', 'world', 'healTempo');
   Object.freeze(registry);
 
   function validatedLevel(level) {
@@ -182,7 +187,12 @@
     const effect = receipt.effect;
     if (effect.lever !== lever) throw Error('Critical effect applied to wrong action consequence');
     if (!Number.isFinite(current) || current < 0) throw Error('Invalid existing action consequence');
-    const proposed = effect.operation === 'multiply' ? current * effect.value : current + effect.value;
+    const proposed =
+      effect.operation === 'multiply'
+        ? current * effect.value
+        : effect.operation === 'divide'
+          ? current / effect.value
+          : current + effect.value;
     if (!Number.isFinite(proposed)) throw Error('Critical enhancement overflow');
     const min = bounds.min === undefined ? 0 : bounds.min;
     const max = bounds.max === undefined ? Infinity : bounds.max;

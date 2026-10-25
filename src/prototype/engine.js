@@ -469,6 +469,7 @@
       if (!targets.length) return false;
       const multiplier = this.enemyHealMultiplier(e);
       let healed = 0,
+        criticalReceipt = null,
         allyTreated = false,
         selfTreated = false,
         leaderTreated = false;
@@ -494,11 +495,15 @@
               ? (target.maxHp - target.hp) * cfg.captain.missingFraction
               : Math.min(target.maxHp - target.hp, target.maxHp * cfg.fraction * multiplier);
         if (!(amount > 0) || !Number.isFinite(amount)) continue;
+        // The first actual eligible treatment commits the whole cast.
+        // A single immutable World decision is shared by every original
+        // recipient; neither another recipient nor an HoT tick rerolls.
+        if (healed === 0) criticalReceipt = this.worldCriticalRelease(e, 'heal');
         target.supportHeal = {
           source: e.id,
           skill,
           remaining: amount,
-          seconds: duration,
+          seconds: this.worldCriticalHealSeconds(criticalReceipt, duration),
           // Captain healing never requires engagement: a captain can be
           // wounded while idle, enter combat, or leave combat mid-treatment.
           // Captain-origin ordinary healing likewise finishes without aggro.

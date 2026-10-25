@@ -48,13 +48,14 @@ assert.throws(() => Levels.createTuning({ modes: { nightmare: { enemy: 3 } } }),
 assert.throws(() => Levels.createTuning({ modes: { normal: { world: 3 } } }), /Normal/);
 
 const ids = Object.keys(Levels.ACTIONS);
-assert.equal(ids.length, 51 + 33 + 9 + 2, '93 party actions + 2 explicitly authored world basics');
+assert.equal(ids.length, 51 + 33 + 9 + 3, '93 party actions + 3 native World basics/support keys');
 assert.equal(ids.filter(k=>k.startsWith('hero/')).length, 51);
 assert.equal(ids.filter(k=>k.startsWith('pet/')).length, 33);
 assert.equal(ids.filter(k=>k.startsWith('troop/')).length, 9);
-assert.equal(ids.filter(k=>k.startsWith('world/')).length, 2);
+assert.equal(ids.filter(k=>k.startsWith('world/')).length, 3);
 assert.equal(Levels.ACTIONS['world/basic/melee'].lever, 'damage');
 assert.equal(Levels.ACTIONS['world/basic/ranged'].lever, 'damage');
+assert.equal(Levels.ACTIONS['world/support/heal'].lever, 'healTempo');
 for (const cls of ['paladin', 'mage', 'ranger']) {
   assert(Levels.ACTIONS['hero/' + cls + '/auto']);
   for (let slot=1;slot<=8;slot++)
@@ -78,7 +79,7 @@ assert.equal(tuning.effectFor('troop/soldier/guard','companion').lever,'guardDur
 for (const [lever, rule] of Object.entries(Levels.LEVERS)) {
   assert.equal(rule.values.length, 3, lever);
   assert(rule.values[0] < rule.values[1] && rule.values[1] < rule.values[2], lever);
-  assert(['multiply','addSeconds','addFraction'].includes(rule.operation), lever);
+  assert(['multiply','divide','addSeconds','addFraction'].includes(rule.operation), lever);
 }
 const src = Crit.seededStream(33);
 const resolver = Crit.createResolver({enabled: true, stream:src});

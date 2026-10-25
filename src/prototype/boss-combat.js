@@ -1181,12 +1181,19 @@
       worldCriticalRelease(e, move) {
         const session = this._criticalWorldNative;
         if (!session?.enabled || !e?.id) return null;
-        return session.release(this, 'world/basic/' + move, e.id);
+        return session.release(
+          this, move === 'heal' ? 'world/support/heal' : 'world/basic/' + move, e.id,
+        );
       }
       worldCriticalDamage(receipt, value) {
         return receipt?.critical
           ? this._criticalWorldNative.enhance(receipt, value, 'damage')
           : value;
+      }
+      worldCriticalHealSeconds(receipt, seconds) {
+        return receipt?.critical
+          ? this._criticalWorldNative.enhance(receipt, seconds, 'healTempo')
+          : seconds;
       }
       enemyStartBasic(e, target, ranged) {
         const nightTempo = this.nightTempo();
