@@ -79,3 +79,15 @@ Decision: **PENDING**. Approver: **PENDING**. Date: **PENDING**. Evidence links:
 ## 7. Safe future-agent instructions
 
 Continue on draft PR #456 for documentation and Explorer-only work. Check current GitHub state every time. Keep other audio, VFX, renderer, critical and boss work independent. Run only narrowly scoped tests permitted by the standing project policy. Avoid broad test matrices, merging, deployment, public posts, competitive tracks, telemetry or player-credit commitments without separate approval. Do not mark an acceptance item PASS unless its evidence exists.
+
+
+## 8. Audit execution checkpoint — 2026-10-25
+
+- Reverified `main`: `e3c78266b28f3325d2afdcb76ae849fcff306deb`; PR #456 remains **open/draft**.
+- Reconciled all three Explorer documents. The handoff's original EN/ES guide is superseded for publishing by the launch kit; owner decisions still control scope. Historical charter was recovered in project workspace, **not archived in full** on GitHub.
+- The concurrent open-PR list now includes #473 (audio mix policy), in addition to #472/#471/#470/#469/#468/#465/#464/#458/#449/#447/#445/#440/#401. No draft is treated as shipped or as an automatic Explorer prerequisite.
+- **Automated checks: BLOCKED — no verified local repository checkout is present in this session.** The source files and test definitions can be read through GitHub, but that is not execution. No tests were run and no results are claimed. Do not trigger remote CI merely to satisfy this worksheet without first checking project test/release policy.
+- **Browser/phone checks: NOT RUN.** No browser session or physical device acceptance was conducted. **Forum route: NOT VERIFIED.** The owner has not supplied an approved forum URL in this project handoff.
+- **Decision: NO LAUNCH YET** (insufficient evidence and unapproved forum destination). This is a readiness hold, not a finding that the game is broken.
+
+**Next safe action:** obtain a verified checkout for the three focused tests or use already-existing matching SHA CI evidence with clearly labeled limitations; then check actual Pages build, EN/es-419 first-session routes and forum options. Escalate only specific observed blockers to conditional checkpoint 2. No new gameplay changes are justified by this documentation audit.
