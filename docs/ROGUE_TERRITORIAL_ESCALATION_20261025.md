@@ -45,3 +45,10 @@ This PR **reuses**, rather than rebuilds, the following already-shipped contract
 - Existing `tests/snapshot-thorn-patrol.test.cjs`, `tests/snapshot-vera-inspection.test.cjs`, `tests/roaming-boss-interception.test.cjs` and `tests/field-onboarding.test.cjs` already lock these contracts.
 
 The narrow addition is decision authority under pressure: elite field defenders may rally ordinary native monsters inside a bounded area centered on their actual defensive post (a patrol interception point for a roaming boss), and captive guardians with no help may physically return to the extant static cage position. Existing NPC movement, damage immunity, save/respawn semantics, boss mechanics and quest release scripts must not be replaced. The 2-second Rogue ability opportunity is a covering option, not a standing combat loop or a substitute for the captive-defense goal.
+
+
+### TRUE field boss circuit — director clarification
+
+A living TRUE-form **field** boss that is not fighting visits the existing regional landmarks in a repeating outdoor circuit: **secondary dungeon entrance → Treasury entrance (if this region has one) → main dungeon entrance → original field boss spawn/compound**. The Frontier has no authored boss Treasury entrance, so that stage is skipped. It is an actual collision-aware walking route; no dungeon-instance transfers, invented entrances, instant travel or new captive instances. Normal-form field boss routes and all original captive-follow and rescue systems stay in place.
+
+TRUE bosses are **eager hunters, not tour guides**. Hero detection uses a somewhat longer (380-unit minimum) legal acquisition radius, always subject to real line-of-sight and protected-settlement safety. Nearby hero awareness immediately suspends travel, active aggro overrides the circuit entirely, and each encounter gets an interception anchor so a fight away from the original compound does not instantly reset. After legitimate disengagement, the boss resumes the same waypoint stage; it is not teleported to the original compound. Route choice is independent of defensive Rogue and reinforcement decisions during live combat.
