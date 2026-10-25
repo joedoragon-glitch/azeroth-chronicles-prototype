@@ -1,8 +1,10 @@
 'use strict';
 const assert = require('node:assert/strict');
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 const C = require('../src/prototype/engine');
 function scene() {
   const g = new C('normal', 'paladin', () => 0.9);
+  completeFieldOpening(g);
   Object.assign(g.hero, { x: 1400, y: 1700, gold: 10000 });
   g.s.mercyTime = 0;
   g.s.time = 30;

@@ -9,6 +9,34 @@ const TEST = 'tests/';
 const PILOT = 'tools/webgl-pilot/';
 const groups = [
   {
+    match: /^src\/prototype\/hero-combat\.js$/,
+    tests: [
+      TEST + 'cooldown-only.test.cjs',
+      TEST + 'hero-skills-consolidation.test.cjs',
+      TEST + 'charged-opener.test.cjs',
+    ],
+  },
+  {
+    match: /^src\/prototype\/(?:combat|hero-combat|party|party-pets)\.js$/,
+    tests: [TEST + 'charge-interruption.test.cjs', TEST + 'pet-skill-activation.test.cjs'],
+  },
+  {
+    match: /^src\/prototype\/(?:app|input)\.js$/,
+    tests: [TEST + 'hero-skill1-area3-input.test.cjs'],
+  },
+  {
+    match: /^src\/prototype\/(?:hero-combat|combat|rules|save|engine)\.js$/,
+    tests: [TEST + 'hero-skill1-stage1.test.cjs', TEST + 'hero-skill1-integration.test.cjs'],
+  },
+  {
+    match: /^src\/prototype\/(?:boss-combat|hero-combat|engine)\.js$/,
+    tests: [TEST + 'hero-skill1-retreats.test.cjs'],
+  },
+  {
+    match: /^src\/prototype\/(?:hero-presentation|audio-hero|skill-reference|menus)\.js$/,
+    tests: [TEST + 'hero-skill1-area2.test.cjs'],
+  },
+  {
     match:
       /(?:^|\/)(?:pixi-experimental\.js|pixi-scene-bridge\.js|native-sprite-adapter\.js|renderer-switch-guard\.js|native-webgl2-core\.js)$|^tests\/pixi-|^tools\/webgl-pilot\//,
     tests: [

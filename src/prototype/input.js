@@ -214,7 +214,58 @@
     game.hero.routeAge = 1.3;
     return true;
   }
-  const api = { create, actions, defaults, presets, preferenceKey, requestMove };
+  // Transient intent only. Gameplay, cooldowns and target legality stay in Campaign.
+  function createSkillQueue(capacity = 16) {
+    const entries = new Map();
+    let nextId = 0;
+    return {
+      capacity,
+      get size() {
+        return entries.size;
+      },
+      append(request) {
+        if (entries.size >= capacity) return false;
+        request.id = ++nextId;
+        entries.set(request.id, request);
+        return true;
+      },
+      get(slot) {
+        return [...entries.values()].find((r) => r.slot === slot);
+      },
+      has(slot) {
+        return !!this.get(slot);
+      },
+      contains(request) {
+        return entries.get(request?.id) === request;
+      },
+      values() {
+        return entries.values();
+      },
+      forSlot(slot) {
+        return [...entries.values()].filter((r) => r.slot === slot);
+      },
+      heads() {
+        const seen = new Set();
+        return [...entries.values()].filter((r) => {
+          if (seen.has(r.slot)) return false;
+          seen.add(r.slot);
+          return true;
+        });
+      },
+      contact(slot, source, pointerId) {
+        return [...entries.values()].find(
+          (r) => r.slot === slot && r.input?.source === source && r.input.pointerId === pointerId,
+        );
+      },
+      remove(request) {
+        return entries.delete(request?.id);
+      },
+      clear() {
+        entries.clear();
+      },
+    };
+  }
+  const api = { create, createSkillQueue, actions, defaults, presets, preferenceKey, requestMove };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeInput = api;
 })(typeof window !== 'undefined' ? window : globalThis);
