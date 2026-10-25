@@ -175,3 +175,45 @@ Changed files at this head:
 
 
 **Post-checkpoint fixture correction:** A partial, isolated V8 module-loader exercise (not the official Node runner) caught a test-only defect: placing the hero at `(-2000,-2000)` made native `Campaign.restore` correctly reject a saved negative coordinate as `Invalid save number`. The test fixture now uses the legal distant position `(100,100)` in commit `a8930a0307cee18048bee705fedc8e6cddf1d9c0`. An additional isolated attempt successfully passed the new eight room/mode guard-and-legacy-roster assertions before the partial loader encountered missing gameplay module dependencies; these attempts are **not** evidence of successful full Node execution or in-game idle healing. Only the checked-in focused run can establish complete Phase 2/3 acceptance. This fixture change affects no production game code.
+
+---
+
+## Latest Phase 2–3 source-execution checkpoint — 25 October 2026
+
+**Purpose:** Protect Phase 4 entry: both Phase 2 and Phase 3 must satisfy their evidence gates first. This is a source-level execution checkpoint, **not** a green exact-head Actions/build checkpoint. The user expressly requested no Phase 4 work until both phases have been completed.
+
+### Source/test changes since phase handoff
+
+GitHub compare against `9fc9b680` shows **only** this decision log and two test files changed; `src/prototype/engine.js` and `src/prototype/rules.js` were **not** changed during these Phase 2–3 fixes. The mounted rider test was repaired to use `165 * Campaign.rules.balance.enemySpecialReachMultiplier` (=198). After exercising the test beyond that assertion, the source execution exposed a missing `ctx.rotate()` on its intentionally minimal Canvas mock; `b32cd12ae069cd0f781afa4f7abe276419b30ce8` added that method to the mock, without altering the renderer or rider combat.
+
+The Phase 3 native test (`tests/captain-treasury-native-lifecycle.test.cjs`) was extended in `19f59cc1e7b25bf769c8779d4ad55e012a25e478` with actual idle **out-of-range approach → cast** tests for both original Greenwood and Marsh lookouts, and in `d237f1e2f1a7f803064430ca71a7a799e09598a9` with **two independent native guardians' sequential treatment** of a wounded Scornfang, including the no-stacking guard.
+
+### Executed isolated JavaScript source checks
+
+The exact GitHub files were loaded and their committed test scripts executed in an isolated V8 JavaScript runtime, using the genuine `Campaign` source, rules, map, save, navigation, fortifications, boss/hero combat and Treasury implementation. Selected presentation/unrelated modules were substituted by minimal loaders where full Node repository packaging was unavailable. **These are not official Node/test-runner or GitHub Actions results**, and cannot certify the build, all affected tests, desktop/phone or release readiness.
+
+1. `tests/snapshot-guardian-density-direwolf-riders.test.cjs`: **PASS** after adding the missing Canvas rotation mock. Output: `PASS four proportionate Treasuries, legacy no-revive, main Mine riders, roles, dash, mixed camps and art`. The real mounted radius was 198. Source check excludes the optional Dreadmaw-specialist module and unrelated presentation modules.
+2. `tests/captain-healing-independent.test.cjs`: **PASS**. Output: `PASS captain support: area/full ordinary repair, independent 7s/10s readiness, idle pulses, midpoint ally healing, Direjaw phase, Treasury formations`. This tests the provisional middle-ground budget as *existing draft code*, not final numerical approval.
+3. `tests/captain-treasury-native-lifecycle.test.cjs`: **PASS**. Eight Normal/Nightmare Treasury roster/save-restoration pairs succeeded, as did eight native idle-captain five-second treatments, idle long-distance guard approach on both Greenwood/Marsh original lookouts, independent sequential treatment by two native guards, death/return cancellation, Silence gating, idle↔engaged healing pulses, and transient-save cleanup. The test uses actual collision, navigation, line of sight and enemy update methods rather than overriding them.
+
+Dreadmaw's **five original ranged guards** at native starting posts yielded this measured source geometry relative to their captain (350-unit treatment range):
+
+| Ranged guardian | Initial gap | In cast range | Initial line of sight | Route to captain |
+| --- | ---: | --- | --- | --- |
+| Ash beast cinder guardian | 602.1 | No | Yes | Yes |
+| Ash beast hoard sentry | 715.9 | No | No | Yes |
+| Ash beast distribution sentry | 406.7 | No | Yes | Yes |
+| Ash beast granary sentry | 475.2 | No | Yes | Yes |
+| Ash beast inner-vault sentry | 241.5 | **Yes** | **Yes** | Yes |
+
+This establishes **only one initially in casting range** and does not promise that others naturally converge during combat. Dreadmaw specialist pressure, regroup and attacks remain reserved for Phase 4 after Phase 2/3 acceptance.
+
+### Unmet acceptance gates — mandatory before Phase 4
+
+**Phase 2 remains formally OPEN**: obtain an actual focused GitHub Actions CI run on the corrected current branch head, including affected selected regressions and a **successful reproducible `node scripts/build.cjs --check`**; separately confirm required formatter check. Previous GitHub Actions [40181275514](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40181275514) is old-head and failed, even though sprite scope and 16/17 earlier focused files were green.
+
+**Phase 3 remains formally OPEN** until the new native Treasury test is executed in the actual Node CI environment on the exact candidate and the additional movement/lifecycle assertions are accepted, with all unexpected regressions repaired and logged. Isolated source success alone is insufficient for this committed plan.
+
+**Current infrastructure blocker:** GitHub API shows no newer workflow runs for the GitHub-App-authored PR updates; the linked tools cannot dispatch an owner-originated fresh Actions run. The repository owner can trigger a PR synchronize event with an owner-originated push (such as a harmless empty commit) to the existing feature branch, then we can inspect the new run and fix any failures. No new PR, game source nerfs, merge or deployment was performed.
+
+**STOP AT THESE GATES. Do not proceed to Phase 4 until both phases' mandatory execution evidence is verified.**
