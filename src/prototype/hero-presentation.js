@@ -203,18 +203,7 @@
       else if (e.chain) emit('chain', 0.38 + e.chain.length * 0.04);
       else if (e.type === 'chargedArea' || e.type === 'spell') {
         if (e.effect === 'shield-lowered') emit('cancel', 0.18);
-        else {
-          // These Ranger hits resolve on release. Keep their world-space
-          // receipts, but do not imply arrows continue launching afterward.
-          const instantRangerRelease =
-            e.class === 'ranger' &&
-            ((e.slot === 2 && e.charged && e.shape === 'line') ||
-              (e.slot === 5 && !e.charged && e.type === 'spell' && e.contacts));
-          emit(
-            e.radius || e.shape ? 'area' : 'impact',
-            instantRangerRelease ? 0.2 : e.slot === 8 ? 0.65 : 0.45,
-          );
-        }
+        else emit(e.radius || e.shape ? 'area' : 'impact', e.slot === 8 ? 0.65 : 0.45);
       }
     }
   }
@@ -647,11 +636,7 @@
               y: end.y + Math.cos(f.angle) * side,
             });
           ctx.globalAlpha = fade * 0.85;
-          // Pinning Volley applies its corridor damage immediately. The
-          // decorative shafts must snap to the full hit corridor, not advance
-          // as if a second, delayed hit were still traveling toward enemies.
-          const instantPinning = f.class === 'ranger' && f.slot === 2 && f.charged;
-          const flight = instantPinning ? 1 : reduced ? 0.65 : Math.min(1, t * 3);
+          const flight = reduced ? 0.65 : Math.min(1, t * 3);
           arrow(ctx, a, { x: a.x + (b.x - a.x) * flight, y: a.y + (b.y - a.y) * flight });
         }
       } else if (radius && !(f.class === 'ranger' && [5, 8].includes(f.slot))) {
@@ -675,17 +660,12 @@
         }
       }
       if (f.class === 'ranger' && f.slot === 5 && f.contacts) {
-        // The real volley hits instantly. Show a split-second cast-origin
-        // streak, then only the contact glints; an old-position bow must not
-        // appear to fire fresh arrows while its Ranger is already moving.
-        const releaseGlint = Math.max(0, 1 - age / 0.09);
+        // Existing tap damage is instant. These brief streaks visualize its actual
+        // contacts and never become simulated projectiles or delay the damage.
         for (const hit of f.contacts.slice(0, 8)) {
           const q = screen(hit);
-          if (releaseGlint > 0) {
-            ctx.globalAlpha = fade * releaseGlint * 0.7;
-            arrow(ctx, { x: p.x, y: p.y - 14 }, { x: q.x, y: q.y - 10 });
-          }
           ctx.globalAlpha = fade * 0.7;
+          arrow(ctx, { x: p.x, y: p.y - 14 }, { x: q.x, y: q.y - 10 });
           glyph(ctx, q.x, q.y - 10, 'arrow', 5);
         }
       }
