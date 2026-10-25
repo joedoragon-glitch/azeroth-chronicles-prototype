@@ -4225,7 +4225,7 @@
     }
     trueFieldBossCircuit(e) {
       return e?.type === 'boss' && e.form === 'true' && !this.isDungeon() &&
-        this.boss(e.family)?.kind === 'field';
+        !this.roamingBoss(e) && this.boss(e.family)?.kind === 'field';
     }
     trueFieldBossCircuitStops(e) {
       if (!this.trueFieldBossCircuit(e)) return [];
@@ -4236,7 +4236,7 @@
         treasury = npcs.find((n) =>
           n.kind === 'dungeon' && n.treasury && n.treasuryBoss === e.family),
         main = npcs.find((n) => n.kind === 'dungeon' && !n.sideDungeon && !n.treasury),
-        home = this.fieldCenter(this.regionIndex());
+        home = e.trueCircuitOrigin || e.home;
       return [
         side && { key: 'side', x: side.x, y: side.y },
         treasury && { key: 'treasury', x: treasury.x, y: treasury.y },
@@ -4252,7 +4252,7 @@
       // Combat is always higher priority than a visit. The usual encounter
       // loop acquires targets later this tick; hold position in its awareness.
       if (this.hero.hp > 0 &&
-          dist(this.hero, e) < Math.max(380, this.enemyAcquisitionRange(e)) &&
+          dist(this.hero, e) < Math.max(850, this.enemyAcquisitionRange(e)) &&
           this.enemyRangedLine(e, this.hero) &&
           dist(this.hero, { x: D.towns[this.regionIndex()][0],
             y: D.towns[this.regionIndex()][1] }) >= 170) return true;
@@ -6626,14 +6626,20 @@
           if (screenFor && dist(this.hero, screenFor) < R.rangedEnemyCombat.guardianScreenRange)
             target = this.hero;
         }
+        // TRUE-form field hunters notice the hero farther away and interrupt
+        // their route. Keep the existing safe-town and mercy restrictions.
+        if (!e.aggro && this.trueFieldBossCircuit(e) && !e.returning &&
+            this.hero.hp > 0 && dist(e, this.hero) < 850 &&
+            dist(this.hero, { x: D.towns[this.regionIndex()][0],
+              y: D.towns[this.regionIndex()][1] }) >= 170 &&
+            this.enemyRangedLine(e, this.hero))
+          this.engage(e, false);
         if (
           !e.aggro &&
           // Reject distant targets before tracing through every intervening
           // obstacle. The same range and visibility rules still gate aggro.
           dist(e, target) <
-            (this.trueFieldBossCircuit(e)
-              ? Math.max(380, this.enemyAcquisitionRange(e))
-              : this.enemyAcquisitionRange(e)) &&
+            this.enemyAcquisitionRange(e) &&
           this.enemyRangedLine(e, target) &&
           (!this.isDungeon() &&
           dist(target, { x: D.towns[this.regionIndex()][0], y: D.towns[this.regionIndex()][1] }) <
@@ -7023,7 +7029,7 @@
           !mobilityReturn &&
           !(e.veraEscort && this.zoneId === 'crown' && this.veraHeld())
         )
-          Object.assign(e, e.home);
+          Object.assign(e, e.trueCircuitCombatAnchor || e.home);
         this.finishDisengage(e);
       }
     }
@@ -7273,6 +7279,8 @@
             e.maxHp = e.hp = e.baseHp * bonus.hp;
             e.damage = e.baseDamage * bonus.damage;
           }
+          if (p.kind === 'field' && !['thorn', 'cindermaw'].includes(key))
+            e.trueCircuitOrigin = { x: point.x, y: point.y };
           if (key === 'thorn' && p.kind === 'field') e.home = { ...this.fieldCenter(0) };
           if (key === 'cindermaw' && p.kind === 'field') e.home = { ...this.fieldCenter(4) };
           this.zone().enemies.push(e);
