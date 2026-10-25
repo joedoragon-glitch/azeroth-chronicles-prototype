@@ -376,7 +376,7 @@ console.log('PASS field bosses and captains recruit ordinary regional defenders 
   assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.1));
   assert(a.x < before && ordered === captive,
     'the final stand physically travels toward the existing captive NPC');
-  assert.equal(c.s.rescued.ridge, false,
+  assert(!c.s.rescued.ridge && !c.s.keys.ridge,
     'regrouping cannot free the specialist or award its skill benefits');
   assert(!c.combatTargets().includes(captive),
     'the civilian specialist remains outside combat targets');
