@@ -36,7 +36,7 @@
   const heroSkills = Object.freeze({
     paladin: [
       ['damage', 'damage'], ['weakenDuration', 'weakenDuration'],
-      ['wardStrength', 'pushDistance'], ['tauntDuration', 'tauntDuration'],
+      ['wardDuration', 'pushDistance'], ['tauntDuration', 'tauntDuration'],
       ['damage', 'weakenDuration'], ['damage', 'pushDistance'],
       ['damage', 'weakenDuration'], ['healAmount', 'wardDuration'],
     ],
