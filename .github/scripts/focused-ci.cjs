@@ -146,6 +146,12 @@ const groups = [
     tests: [TEST + 'snapshot-encounter-lifecycle.test.cjs'],
   },
   {
+    // A rules edit can alter the source fingerprints in the sprite census.
+    // Validate its checked-in evidence even when the graphics stay identical.
+    match: /^src\/prototype\/rules\.js$|^docs\/evidence\/SPRITE_SCOPE_RECONCILIATION\.json$/,
+    tests: [TEST + 'sprite-scope.test.cjs'],
+  },
+  {
     match: /^src\/prototype\/(?:combat|boss-combat|fortifications)\.js$/,
     tests: [TEST + 'projectile-order.test.cjs'],
   },
