@@ -10,6 +10,11 @@ const Combat = require('../src/prototype/combat-visuals.js');
 const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 
 const game = new Campaign('normal', 'paladin', () => 0.5);
+// Spawn in the boss's authored region. Vale's level-1 first-contact shield
+// intentionally forbids engagement even when the test uses a foreign boss.
+game.enter(game.boss('ridge').region, { x: 1480, y: 1700 });
+assert.equal(game.zoneId, game.boss('ridge').region,
+  'fixture did not enter the real Ridge region');
 const zone = game.zone();
 zone.enemies = []; zone.props = []; zone.buildings = [];
 zone.npcs = []; zone.nodes = []; game.s.party = [];
