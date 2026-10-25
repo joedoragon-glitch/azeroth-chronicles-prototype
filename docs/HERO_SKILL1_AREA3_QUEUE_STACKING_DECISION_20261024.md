@@ -1,0 +1,57 @@
+**Implementation status:** The approved contract below is implemented and covered by focused shell/native tests. Historical references to unimplemented single-request storage describe the pre-Area-3 source; see [Area 3 implementation](HERO_SKILL1_AREA3_IMPLEMENTATION_20261024.md) and [current review](HERO_SKILL1_AREA4_FINAL_REVIEW_20261024.md).
+
+# PR #439 — Owner Decision: Stacked Normal and Charged Skill Requests (Area 3)
+
+**24 October 2026 · owner-approved behavior clarification · authoritative Area 3 queue contract.**
+**Scope:** hero **Skills 1–8**, keyboard, pointer, and touch, including Skill 1's promoted normal Tap and new charged class actions. **Documented here, not yet implemented or tested as a stacked queue.** Area 3 must change actual code and then run focused input/queue tests before declaring this requirement complete.
+
+## The owner's decision — replaces cancel/replace proposal
+
+> If Charged Skill 2 is already queued, pressing normal Skill 2 while its Tap is also cooling down should **add a separate Normal Skill 2 request**. It must **not cancel, replace, or overwrite** the existing Charged Skill 2 request. Charged Skill 2 resolves first. The queued normal Skill 2 is then executed when permitted by the established cooldown rules.
+
+**Two forms of the same skill may coexist as distinct, sequential queued actions.** Queue operations must preserve **the order requests were accepted**, particularly within the same skill slot: **first queued, first attempted**, with actual execution subject to readiness and legal cast/preparation. Merely tapping/holding another form must not silently remove, mutate, or replace the prior request.
+
+This explicitly **supersedes** the earlier assistant-proposed "fresh normal Tap replaces queued Charged" behavior, including its current partial source implementation in `src/prototype/app.js`, and any wording in PR documents claiming that cancellation is the desired Area 3 rule. The old replacement behavior was **not** approved. Do not retain it as a fallback for the user's example.
+
+### Worked Skill 2 example (without Slow or Cooldown Training)
+
+- At t=0, player has an outstanding **Charged Skill 2** cooldown (**6s base**), queues **Charged Skill 2** and receives an unambiguous *Charged #1* queue receipt.
+- While normal Skill 2 is also unavailable (**3s base**), player taps the same Skill 2 button. This creates a **second entry, Normal Skill 2 #2**, *behind* the Charged request.
+- The **first entry** remains Charged throughout. When **both** Skill 2 readiness clocks permit, the game starts actual Charged preparation (**0.65s**) and commits the valid charged attack on release. Charged use starts normal recovery **3s** and charged-only recovery **6s**.
+- **Normal #2 stays queued** (it is not discarded upon Charged release). Once its normal timer recovers and other native legal conditions permit, the game executes the normal action, **without waiting for the 6s charged-only lock**. Normal use resets only normal recovery, never charged-only recovery.
+- Timing is measured relative to the **actual action releases**, not simply the original button presses. The charged launch may be delayed by target legality, an interruption, Slow, recovery, or an input state. Thus do **not** promise a fixed wall-clock time for the queued normal cast.
+- If normal has already become ready before the queued charged request can run, a *new normal press still must not erase or jump ahead of that older queued charged request*. It joins the same-slot queue in order unless the player explicitly chooses a supported cancellation/reprioritization action. There is **no implicit normal-Tap precedence**.
+
+### Cooldown and scheduling invariants
+
+1. **Per-form entries, same slot:** Each queue entry stores at minimum `slot`, `form = normal|charged`, stable enqueue order/identity, and its intended input/target policy. A second queued request is an **append**, not an assignment into the slot's sole map value. Preserve multiple entries **even when both are the same form**; limits must be user-visible and must never silently evict older entries.
+2. **FIFO for the same skill:** Queue the first eligible *head* of a skill's backlog. A later request for the **same slot** cannot overtake the earlier head merely because its form recovers sooner. If the head cannot yet execute, later entries wait for it to release, fail legally, or be explicitly cancelled. This preserves the user's stated sequence and is an intentional **queue-order wait** distinct from the independent form cooldown timers.
+3. **Different skill slots:** Preserve existing independent cooldowns and the established cross-slot queue dispatcher/fairness; do not invent a new global skill cooldown or allow a blocked Skill 2 head to arbitrarily prevent all unrelated Skills 1, 3–8. The exact current cross-slot ordering should be regression-tested rather than rewritten without need. Only one hero skill charge preparation is active at a time, as before.
+4. **Normal readiness:** Normal only needs `hero.cd[slot-1] <= 0` (plus ordinary combat/target/stance restrictions); charged-only `hero.chargedCd[slot-1]` never independently prevents **a head-of-queue normal** from releasing. However, the queued normal still waits **behind older queued actions on that same slot**.
+5. **Charged readiness:** Charged requires **both** the normal and charged timers ready, then a genuine **0.65s hold/release** (and existing interrupt/cancel/target policies). No auto-conversion of a queued Charged into Tap, and no charged impact until actual legal release.
+6. **On execution:** Charged starts both timers. Normal starts only the normal timer and does not restart, shorten or replace the charged-only lock. Slow, elapsed recovery, Cooldown Training, menus/pauses and Shield Stance's special Skill 3 timing remain authoritative.
+7. **Consumption and failure:** Only remove the **specific request that completed or was explicitly cancelled**. Failed target legality, forgotten/invalid target, interrupted preparation, menu/zone/death/Recall and other lifecycle policies require a clearly described outcome in the Area 3 implementation; **do not silently clear the entire queue, and do not get permanently stuck retrying an impossible head**. No cooldown starts from merely adding an entry.
+8. **Intent classification:** Preserve short normal Tap versus queued Charged hold thresholds and explicit release/cancel transitions for mouse, keyboard and touch. A button pressed while requests are already stacked must still classify the **new** intent, rather than mutating the form of a previous queue entry.
+9. **Bounded runtime:** Use a small, performant finite pending-request capacity and visible "queue full"/rejection feedback if necessary for frame-rate safety. Any limit and whether repeated identical presses deduplicate must be **explicitly resolved and tested** in Area 3; **do not assume a cap or silently discard** actions in this document. Pending input is transient (not serialized in v4 saves).
+10. **Transparent UI:** Show **order and form for each queued entry**, e.g., `1. Skill 2 CHARGED → 2. Skill 2 NORMAL`; offer distinct blue/normal and gold/charged cues and an accessible English/Spanish reading of the backlog. The HUD must not misleadingly show only a single pending item while another remains stacked. Sound/visual charge cues occur on real charge preparation, not whenever an entry is appended.
+11. **Special skills:** Paladin Skill 3 **tap-to-lower** Shield Stance must continue obeying its existing immediate stance interaction and recovery exception without unintentionally deleting already queued Charged Shield Bash. Ranger healing/support actions must retain native no-target/no-heal/companion availability checks. Skill 1 automatic basics are **never** queued as activated skills and remain independently scheduled.
+
+### Minimum executable test sequences before claiming Area 3 complete
+
+- **Owner's exact sequence:** Skill 2 charged-only lock active + normal lock active; queue `[Charged 2]`, then tap again to obtain `[Charged 2, Normal 2]`. Neither entry disappears. Upon charged eligibility, charged fully prepares and fires first; queued Normal 2 remains; when its 3-second normal recovery has finished, normal fires; charged lock remains unaffected by normal.
+- **Normal ready early, charged still blocked:** Queue `[Charged 2]`; normal timer reaches zero; player adds Normal 2; queue stays `[Charged 2, Normal 2]`. The new normal does not jump ahead, and the original charged request is not cancelled.
+- **Multiple alternating entries:** `[Charged 2, Normal 2, Charged 2, Normal 2]` maintains stable order, readiness and only the appropriate per-form cooldown updates, or explicit capacity feedback where a limit applies.
+- **Independence:** A pending Skill 2 backlog does not erase or merge unrelated Skill 3 or Skill 8 requests, change their timers or suppress independent Skill 1 basics. Verify existing cross-slot scheduling.
+- **Inputs:** short tap (`<0.20s`), 0.20–0.25s ambiguous release, queued Charged (`>=0.25s`), genuine 0.65s charged preparation, interrupted hold, duplicate presses, touch release, keyboard cancellation and pointer cancellation.
+- **Effects, safety and accessibility:** Slow stacks and Cooldown Training, target loss/range/LOS, Mage Silence, Paladin Shield Stance, Ranger no-heal/no-allies, menus/paused/hidden page/Recall, defeat/zone transfer/reload, accessible English/Spanish two-entry HUD and visible queue full/rejection where applicable.
+- **Historical save:** No queued actions persist across save import unless explicitly designed later; existing `hero.cd`, `hero.chargedCd`, `hero.basicCd` and companion timers are preserved exactly by the migration contract.
+
+## Implementation pointer and staged work
+
+**Current code mismatch needing Area 3 changes:** `src/prototype/app.js` uses `queuedCharges = new Map()`, with `queuedCharges.set(slot, request)` and `queuedCharges.has(slot)`; the Area 1 path includes a branch in `startCharge` that **cancels or deletes the queued Charged request when a new normal press arrives while charged-only recovery remains**. A single `Map<slot,request>` cannot represent `[Charged 2, Normal 2]`. Replace the single-request-per-slot data path with an ordered multi-request model and update `syncQueuedInput`, `queuedChargePresentation`, `finishQueuedInput`, `cancelQueuedInput`, `selectQueuedCharge`, HUD labels, input handlers, lifecycle cleanup and focused tests together. Preserve the existing separate-cooldown state in `hero-combat.js`.
+
+**Not yet implemented:** The current PR runtime may still cancel/overwrite queued forms. Do not mark this decision as a passing feature until code, tests, and English/Spanish UI match the contract.
+
+**Remaining Area 3 task alongside this decision:** Analyze Ranger Hawk versus genuine *optional* boss/captain retreat actions, while preserving scripted/TRUE safety returns, authored telegraphs and protected encounter states. This is a separate mechanical audit, not something settled by the queue clarification.
+
+**Resume reference:** Read [PR #439 independent handoff](PR439_INDEPENDENT_WORK_HANDOFF_20261024.md) and [asymmetric cooldown contract](ASYMMETRIC_TAP_CHARGED_COOLDOWNS_20261024.md). Keep this rule on the **same** draft PR and do not merge, deploy, mark ready for review or push `main` without the owner's later approval.

@@ -79,21 +79,19 @@ for (const species of [
   assert(g.enemySupportHeal(healer), species + ' heals a wounded companion');
   // The live zone may normalize ally max HP as its ordinary population
   // migrates; assert against the recipient's actual post-normalization values.
-  const budget = Math.min(
-    ally.maxHp - ally.hp,
-    ally.maxHp * R.enemySupportHealing.fraction * g.enemyHealMultiplier(healer),
-  );
+  const budget = ally.maxHp - ally.hp;
   const before = ally.hp;
-  near(ally.supportHeal.remaining, budget, species + ' 5% of recipient maximum HP');
-  near(healer.supportHealCd, 10, species + ' ten-second cooldown');
+  near(ally.supportHeal.remaining, budget, species + ' full missing ordinary HP');
+  near(ally.supportHeal.seconds, 3, species + ' three-second treatment');
+  near(healer.supportHealCd, 7, species + ' seven-second ordinary cooldown');
   assert(!g.enemySupportHeal(healer), species + ' cannot duplicate the cast');
+  g.advanceEnemySupportHeal(ally, 1);
+  near(ally.hp, before + budget / 3, species + ' partial three-second heal');
   g.advanceEnemySupportHeal(ally, 2);
-  near(ally.hp, before + (budget * 2) / 5, species + ' partial five-second heal');
-  g.advanceEnemySupportHeal(ally, 3);
   near(ally.hp, before + budget, species + ' full heal');
   assert(!ally.supportHeal, species + ' effect completes');
 }
-console.log('PASS twelve ranged species use individual identity and the Archer healing interval');
+console.log('PASS twelve ranged species independently restore missing ordinary HP in three seconds');
 
 // Enemy support must ignore injured player actors even when they are closer
 // and much more wounded than the intended hostile recipient.
@@ -177,8 +175,9 @@ console.log('PASS hostile healing excludes wounded hero, both troop types and al
 {
   const { g, mob } = fixture();
   const healer = mob('goblin', { ranged: true });
-  mob('goblin', { hp: 900 });
-  assert(!g.enemySupportHeal(healer), 'support healing retains a 75-percent cutoff');
+  const scratched = mob('goblin', { hp: 900 });
+  assert(g.enemySupportHeal(healer), 'ordinary support can heal a lightly injured ordinary ally');
+  assert.equal(scratched.supportHeal.remaining, scratched.maxHp - scratched.hp);
 }
 {
   const { g, mob } = fixture();
@@ -194,13 +193,16 @@ console.log('PASS hostile healing excludes wounded hero, both troop types and al
   assert(g.enemySupportHeal(leader), 'Scornfang healer can act through authored ranged volley');
   assert(ally.supportHeal, 'area heal includes the wounded companion');
   assert(leader.supportHeal, 'area heal also includes an eligible wounded captain');
-  near(leader.supportHealCd, 10, 'captain has same per-actor cooldown');
+  near(leader.supportHealCd, 7, 'captain has fast ordinary-ally recovery');
+  near(ally.supportHeal.remaining, ally.maxHp - ally.hp, 'captain fully restores ally');
+  near(ally.supportHeal.seconds, 3, 'captain support finishes in three seconds');
+  near(leader.supportHeal.remaining, leader.maxHp * 0.05 * g.enemyHealMultiplier(leader), 'captain self-heal remains at 5%');
   leader.supportHealCd = 0;
   delete leader.supportHeal;
   delete ally.supportHeal;
   ally.hp = ally.maxHp;
-  assert(g.enemySupportHeal(leader), 'captain can self-heal when no companion needs care');
-  assert(leader.supportHeal, 'self recovery is a real timed effect');
+  assert(!g.enemySupportHeal(leader), 'captain cannot bypass its independent self recovery immediately');
+  assert(!leader.supportHeal, 'premature self restoration remains blocked');
 }
 {
   const { g, mob } = fixture('crown');
@@ -215,6 +217,10 @@ console.log('PASS hostile healing excludes wounded hero, both troop types and al
   assert.equal(g.enemyHealProfile(leader), 'Grafting');
   assert(g.enemySupportHeal(leader), 'Dreadmaw prioritizes his wounded brood');
   assert(ally.supportHeal && leader.supportHeal);
+  near(ally.supportHeal.remaining, ally.maxHp - ally.hp, 'Grafting fully repairs injured brood');
+  near(ally.supportHeal.seconds, 3, 'Grafting brood repair duration');
+  near(leader.supportHeal.seconds, 5, 'Grafting self budget stays independently slow');
+  near(leader.supportHealCd, 7, 'Grafting ordinary-support recovery');
 }
 {
   const { g, mob } = fixture('march');
@@ -232,7 +238,7 @@ console.log('PASS hostile healing excludes wounded hero, both troop types and al
   delete direjaw.supportHeal;
   delete wounded.supportHeal;
   wounded.hp = wounded.maxHp;
-  assert(g.enemySupportHeal(direjaw), 'Direjaw may treat his own wounds');
+  assert(!g.enemySupportHeal(direjaw), 'Direjaw self cooldown cannot be bypassed by resetting the ally clock');
 }
 for (const profile of ['supply-highlands', 'frontier-overseer']) {
   const { g, mob } = fixture();
@@ -400,7 +406,7 @@ console.log(
   const healer = mob('goblin', { ranged: true });
   const ally = mob('goblin', { hp: 400 });
   g.updateEnemies(0.1);
-  assert(healer.supportHealCd > 9, 'live updateEnemies invokes automatic support healing');
+  assert(healer.supportHealCd > 6, 'live updateEnemies invokes automatic seven-second support healing');
   assert(ally.supportHeal || ally.hp > 400, 'the live combat tick starts gradual ally healing');
 }
 {

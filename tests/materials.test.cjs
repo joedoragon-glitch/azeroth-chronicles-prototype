@@ -2,7 +2,8 @@
 const assert = require('node:assert/strict'),
   fs = require('node:fs'),
   path = require('node:path'),
-  os = require('node:os');
+  os = require('node:os'),
+  sharp = require('sharp');
 const { createCanvas, loadImage } = require('@napi-rs/canvas');
 const Materials = require('../src/prototype/materials.js'),
   Contract = require('../src/prototype/material-contract.js'),
@@ -142,8 +143,22 @@ const entry = (n) => ({
           );
     assert.deepEqual([...a.subarray(0, 4)], [17, 34, 51, 255], 'clip leaves void untouched');
     const before = JSON.stringify(require('../assets/materials/manifest.json'));
+    const referenceBytes = Pipeline.reference('terrain:ground:march');
+    const referenceMetadata = await sharp(referenceBytes).metadata();
+    assert.deepEqual([referenceMetadata.width, referenceMetadata.height], [256, 256]);
     await Pipeline.check();
     assert.equal(JSON.stringify(require('../assets/materials/manifest.json')), before);
+    const stored = require('../tools/sprites/materials/approved.json');
+    assert(!stored.assets['terrain:ground:march'], 'obsolete March palette is not published');
+    assert(!stored.assets['terrain:ground:highlands'], 'superseded Highlands texture is not reapproved');
+    assert(
+      stored.history['terrain:ground:highlands'].some((r) => r.review?.status === 'approved'),
+      'the earlier Highlands texture and its review remain historically available',
+    );
+    assert(
+      stored.history['terrain:ground:march'].some((r) => r.review?.status === 'approved'),
+      'approved earlier March material stays verifiable as rollback history',
+    );
     // Exercise real registration and retained revisions in a disposable checkout.
     const checkout = path.join(dir, 'checkout'),
       root = path.resolve(__dirname, '..');

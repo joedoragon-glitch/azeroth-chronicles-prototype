@@ -67,7 +67,10 @@ assert(app.includes('addRenderStageTimes(stageTimes, drawTiming)'),
   'World draw stages must be collected from actual drawing');
 assert(app.includes('addRenderStageTimes(stageTimes, redrawTiming)'),
   'Resolution redraws must not silently lose renderer-stage timing');
-assert(app.includes('measuredLayer: graphicsController.status().mode'),
+assert(app.includes('measuredLayer:') &&
+  app.includes("graphicsController.status().mode === 'webgl2'") &&
+  app.includes("'canvas-combat-overlay'") &&
+  app.includes("'canvas-full-world'"),
   'Reported Canvas counters must identify their true rendering layer');
 assert(pixi.includes('sceneMetrics: scene?.metrics?.() || null'),
   'Export actual Pixi scene counters, not Canvas overlay substitutes');

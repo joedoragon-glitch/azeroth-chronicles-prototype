@@ -33,12 +33,27 @@
   }
   const performanceBaselineUpgraded = applyPerformanceBaseline(localStorage);
 
-  // A device-only display preference: never part of the campaign or profile export.
+  // One-time device upgrade: Auto is the new optimization default, including
+  // for previously saved On/Off choices. Subsequent user choices persist.
+  // Campaign saves, FPS choices and other settings are not touched.
   const optimizationKey = 'azeroth-optimization-mode-v1';
-  let optimizationMode = false;
+  const optimizationAutoUpgradeKey = 'azeroth-optimization-auto-default-v1';
+  function upgradeOptimizationAuto(storage) {
+    try {
+      if (storage.getItem(optimizationAutoUpgradeKey) === 'applied') return false;
+      storage.setItem(optimizationKey, 'auto');
+      storage.setItem(optimizationAutoUpgradeKey, 'applied');
+      return true;
+    } catch (_) { return false; }
+  }
+  const optimizationAutoUpgraded = upgradeOptimizationAuto(localStorage);
+  let optimizationPreference = 'auto';
   try {
-    optimizationMode = localStorage.getItem(optimizationKey) === 'on';
+    const saved = localStorage.getItem(optimizationKey);
+    if (['off', 'auto', 'on'].includes(saved)) optimizationPreference = saved;
   } catch (_) {}
+  // Runtime state is distinct from the stored preference and never a save field.
+  let optimizationMode = optimizationPreference === 'on';
 
   // Presentation-only community localization; campaign IDs and names never change.
   const languageKey = 'azeroth-display-language-v1';
@@ -48,6 +63,32 @@
   } catch (_) {}
   document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
   const spanishText = {
+    'Try recovery': 'Intentar recuperar',
+    'Recovery options': 'Opciones de recuperación',
+    'Choose a recoverable run to review. Nothing is replaced until you confirm.':
+      'Elige una partida recuperable para revisarla. Nada se reemplaza hasta que confirmes.',
+    'No usable local checkpoint was found. Import a backup, or export the original for investigation.':
+      'No se encontró un punto de recuperación local utilizable. Importa una copia de seguridad o exporta el original para investigarlo.',
+    'The main save is missing. Try a recovery checkpoint or import a backup.':
+      'Falta la partida principal. Intenta recuperarla desde un punto guardado o importa una copia de seguridad.',
+    'Review recovery': 'Revisar recuperación',
+    'Recover this run': 'Recuperar esta partida',
+    Checkpoint: 'Punto de recuperación',
+    'Compatible saved run': 'Partida compatible',
+    'Preserved original': 'Original conservado',
+    'Legacy saved run': 'Partida antigua',
+    Saved: 'Guardado',
+    'Date unavailable': 'Fecha no disponible',
+    Level: 'Nivel',
+    'Saved run unavailable. Try recovery or import a backup.':
+      'Partida guardada no disponible. Intenta recuperarla o importa una copia de seguridad.',
+    'Restoring this run may lose progress made after this checkpoint. Your unreadable original will remain preserved.':
+      'Recuperar esta partida puede perder avances posteriores a este punto. Se conservará el original que no se pudo abrir.',
+    'Run recovered successfully.': 'Partida recuperada correctamente.',
+    'Recovery failed. Your original save was kept. Export it before closing.':
+      'La recuperación falló. Se conservó tu partida original. Expórtala antes de cerrar.',
+    'Saved locally, but a recovery checkpoint could not be stored. Export a backup.':
+      'Partida guardada localmente, pero no se pudo guardar un punto de recuperación. Exporta una copia de seguridad.',
     'Saved run could not be opened': 'No se pudo abrir la partida guardada',
     'Your original save is protected. Import a backup or export the original before starting a new run.':
       'Tu partida original está protegida. Importa una copia de seguridad o exporta el original antes de empezar una partida nueva.',
@@ -749,6 +790,11 @@
       'Elige la disposición y los controles de movimiento.',
     'Tap reachable ground to move.': 'Toca terreno accesible para moverte.',
     'Optimization Mode': 'Modo de optimización',
+    'Auto · Recommended': 'Auto · Recomendado',
+    'Auto lowers graphics under sustained load. Emergencies can override Off.':
+      'Auto reduce los gráficos cuando hay mucha carga. Las emergencias pueden anular Desactivado.',
+    'Off disables ordinary skips, not emergency combat protection.':
+      'Desactivado evita los saltos habituales, no la protección de combate en emergencias.',
     On: 'Activado',
     Off: 'Desactivado',
     Display: 'Pantalla',
@@ -770,6 +816,8 @@
       'WebGL2 puede acelerar el juego en tu dispositivo. Si va más lento o se ve mal, vuelve a Canvas.',
     'Performance settings updated to recommended defaults. You can change them in Settings.':
       'Ajustes de rendimiento actualizados a los valores recomendados. Puedes cambiarlos en Ajustes.',
+    'Optimization Mode now defaults to Auto. You can change it in Settings.':
+      'El modo de optimización ahora usa Auto por defecto. Puedes cambiarlo en Ajustes.',
     'Local samples are diagnostic estimates, not verified display FPS.':
       'Las muestras locales son estimaciones diagnósticas, no FPS reales verificados.',
     'Towns and camps': 'Pueblos y campamentos',
@@ -913,8 +961,6 @@
   Object.assign(spanishText, {
     'iPhone / iPad: Safari → Share → Add to Home Screen → Add.\nAndroid / Chrome: browser menu → Install app or Add to Home screen.':
       'iPhone / iPad: Safari → Compartir → Añadir a pantalla de inicio → Añadir.\nAndroid / Chrome: menú del navegador → Instalar app o Añadir a pantalla de inicio.',
-    'Normal and charged forms share a cooldown.':
-      'Las versiones normal y cargada comparten recuperación.',
   });
   Object.assign(spanishText, {
     'Choose your training.': 'Elige tu entrenamiento.',
@@ -967,8 +1013,6 @@
     'Tap for the normal form. Hold to prepare the charged form.':
       'Toca para la versión normal. Mantén pulsado para preparar la cargada.',
     Controls: 'Controles',
-    'Both forms share a cooldown. On cooldown, tap to queue normal; briefly hold to queue charged. A strong hit can interrupt charging.':
-      'Ambas versiones comparten recuperación. Durante ella, toca para poner la normal en cola; mantén brevemente para la cargada. Un golpe fuerte puede interrumpir la carga.',
     'Reading effects': 'Leer los efectos',
     'Damage figures use your current Power, before enemy defenses and situational bonuses. Healing cannot exceed maximum health. Distances use map units.':
       'El daño usa tu Poder actual, antes de defensas y bonificaciones de combate. La curación no supera la salud máxima. Las distancias usan unidades del mapa.',
@@ -1110,6 +1154,60 @@
     'Heal and set your recovery point.': 'Cúrate y fija tu punto de regreso.',
     'Got it': 'Entendido',
     'Close without resting.': 'Cerrar sin descansar.',
+  });
+  // New player mechanics copy; locked Chronicle passages remain unchanged.
+  Object.assign(spanishText, {
+    'Radiant Strike': 'Golpe radiante',
+    'Radiant Strike / Radiant Cross': 'Golpe radiante / Cruz radiante',
+    'Arcane Beam / Wide Arcane Beam': 'Rayo arcano / Rayo arcano amplio',
+    'Rapid Arrows / Hawk Interception': 'Flechas rápidas / Intercepción del halcón',
+    'Self-taught from Rank 1; rescued specialists refine it.':
+      'Aprendido por tu cuenta desde el rango 1; los especialistas rescatados lo perfeccionan.',
+    'Radiant Cross': 'Cruz radiante',
+    'Arcane Beam': 'Rayo arcano',
+    'Wide Arcane Beam': 'Rayo arcano amplio',
+    'Rapid Arrows': 'Flechas rápidas',
+    'Hawk Interception': 'Intercepción del halcón',
+    'Automatic basics': 'Ataques básicos automáticos',
+    'Automatic sword combo / holy projectile / Radiant Cross':
+      'Combo de espada automático / proyectil sagrado / Cruz radiante',
+    'Automatic magic combo / narrow beam / wide beam':
+      'Combo mágico automático / rayo estrecho / rayo amplio',
+    'Automatic bow combo / rapid arrows / hunting hawk':
+      'Combo de arco automático / flechas rápidas / halcón cazador',
+    'Fire one focused holy projectile': 'Lanza un proyectil sagrado concentrado',
+    'Radiant Cross: two holy pulses along four arms':
+      'Cruz radiante: dos pulsos sagrados en cuatro brazos',
+    'Fire one narrow Arcane Beam': 'Lanza un rayo arcano estrecho',
+    'Wide Arcane Beam: hit every enemy along the broad line':
+      'Rayo arcano amplio: golpea a todos los enemigos en la línea ancha',
+    'Fire three rapid arrows at one foe': 'Dispara tres flechas rápidas a un enemigo',
+    'Hawk Interception: pursue one foe and stop an active retreat':
+      'Intercepción del halcón: persigue a un enemigo e interrumpe una retirada activa',
+    'Attacks independently while moving or standing. Three same-target hits build a finishing splash; Skill 1 Tap and Charged do not reset the combo.':
+      'Ataca independientemente en movimiento o en reposo. Tres golpes al mismo enemigo culminan en daño de área; las formas normal y cargada no reinician el combo.',
+    'Automatic Skill 1 basics attack independently. Tap for the normal technique. Hold to prepare the charged technique.':
+      'Los ataques básicos automáticos de la habilidad 1 funcionan aparte. Toca para la técnica normal; mantén para preparar la cargada.',
+    'Charged starts both recovery timers: short Tap and longer Charged. Tap returns after its own cooldown, even while Charged is still recovering. Tapping does not restart the charged lock. Charged needs both timers ready. On cooldown, tap to queue normal or briefly hold to queue charged. A strong hit can interrupt preparation.':
+      'La cargada inicia las recuperaciones normal corta y cargada larga. La normal vuelve al acabar su recuperación, incluso si la cargada sigue ocupada. Usar normal no reinicia cargada; para cargar ambas deben estar listas. Toca para poner normal en cola o mantén brevemente para cargada. Un golpe fuerte interrumpe la preparación.',
+    'Automatic basics, Tap and Charged use this rank.':
+      'Los ataques básicos, la normal y la cargada usan el mismo rango.',
+    'Rank 1 is self-taught; rescued specialists refine it.':
+      'El rango 1 lo aprendiste por tu cuenta; los especialistas rescatados lo perfeccionan.',
+    'Choose a skill. View automatic Skill 1 basics, Tap and Charged effects with independent recovery.':
+      'Elige una habilidad. Consulta los ataques básicos automáticos, la normal y la cargada, con recuperaciones independientes.',
+    'Also improves automatic basics.': 'También mejora los ataques básicos automáticos.',
+    'Basic attack interval': 'Intervalo de ataque básico',
+    'Damage per pulse': 'Daño por pulso',
+    Pulses: 'Pulsos',
+    'Damage per enemy': 'Daño por enemigo',
+    'Initial target range': 'Alcance inicial del objetivo',
+    'Maximum flight path': 'Recorrido máximo del halcón',
+    'Flight lifetime': 'Duración del vuelo',
+    'Retreat lockout': 'Bloqueo de retirada',
+    'Tap ready': 'Normal lista',
+    'Charged ready': 'Cargada lista',
+    'Retreat interrupted': 'Retirada interrumpida',
   });
   // N1: Only the author's approved bilingual Chronicle pairs may supply this copy.
   const approvedNarrative =
@@ -1328,7 +1426,7 @@
     focused = true,
     paused = false,
     charge = null,
-    queuedCharges = new Map(),
+    queuedCharges = PrototypeInput.createSkillQueue(),
     chargeClockGame = null,
     gateDismissed = false,
     criticalNotices = {
@@ -1491,7 +1589,7 @@
     if (text === 'Saved locally · export for a backup') return;
     $('status').textContent = tr(text);
     const important =
-      /storage unavailable|Saving failed|Saved run unavailable|Legacy save|Invalid import|Imported successfully/i.test(
+      /storage unavailable|Saving failed|Saved run unavailable|Legacy save|Invalid import|Imported successfully|Recovery failed|recovery checkpoint/i.test(
         text,
       );
     statusUntil = performance.now() + (important ? 6000 : 2800);
@@ -1631,6 +1729,21 @@
   const fps = PrototypeRuntime.createFrameRate(localStorage);
   const frameSkip = PrototypeRuntime.createFrameSkip(localStorage);
   const renderResolution = PrototypeRuntime.createResolution(localStorage);
+  const autoOptimization = PrototypeRuntime.createAutoOptimization();
+  function setOptimizationActive(enabled) {
+    const next = !!enabled;
+    if (optimizationMode === next) return false;
+    optimizationMode = next;
+    if (typeof PrototypeMaterials !== 'undefined')
+      PrototypeMaterials.setOptimizationMode(next);
+    audio.setOptimizationMode(next);
+    renderer.setOptimizationMode(next);
+    resize();
+    runtime.reset();
+    frameProfile.reset();
+    fps.suspend();
+    return true;
+  }
 
   // Opt-in renderer pilot; one live Campaign, no saved graphics state.
   // Canvas is retained as an independent, always-available presentation surface.
@@ -2045,16 +2158,16 @@
           'Using skills',
           explain(
             'Using skills',
-            'Tap a skill to use it. Hold until CHARGED, then release.\nTaking damage can interrupt preparation. Normal and charged forms share a cooldown. Read Skill journal for each skill’s effects.',
-            'Toca una habilidad para usarla. Mantén hasta CHARGED y suelta.\nRecibir daño puede interrumpir la preparación. Ambas versiones comparten recuperación. Consulta sus efectos en el Diario de habilidades.',
+            'Tap for normal, hold until CHARGED and release. Charged starts the short Tap cooldown and its own longer one; Tap returns earlier without extending Charged. Automatic Skill 1 basics continue separately. See the Skill journal.',
+            'Toca para normal o mantén hasta CARGADA y suelta. La cargada inicia ambas recuperaciones; normal vuelve antes y no prolonga cargada. Los ataques básicos de la habilidad 1 siguen aparte. Consulta el Diario.',
           ),
         ),
         action(
           'Queued skills',
           explain(
             'Queued skills',
-            'During cooldown: tap to queue normal, or hold briefly to queue charged.\nBlue numbers beside the hero mean normal; gold means charged.',
-            'Durante la recuperación: toca para poner la versión normal en cola o mantén brevemente para la cargada.\nNúmeros azules: normal; dorados: cargada.',
+            'During Tap recovery, tap to queue normal. Hold briefly to queue Charged until both timers are ready. A ready Tap can be used while Charged recovers. Blue numbers mean normal; gold means charged.',
+            'Mientras normal se recupera, tócala para ponerla en cola. Mantén brevemente para poner cargada en cola hasta que ambas recuperaciones terminen. Normal puede usarse aunque cargada siga en recuperación. Azul: normal; dorado: cargada.',
           ),
         ),
         action(
@@ -2250,6 +2363,8 @@
   function clearInput(preserveNavigation = true) {
     syncPartyChargeClock();
     if (typeof Sprint !== 'undefined') Sprint.release();
+    if (queuedCharges.size)
+      status(language === 'es' ? 'Cola de habilidades cancelada.' : 'Skill queue cancelled.');
     queuedCharges.clear();
     game?.cancelRangerHealRequest();
     cancelCharge();
@@ -2905,19 +3020,101 @@
   function savedRunRecoveryMenu() {
     openMenu(
       'Saved run could not be opened',
-      'Your original save is protected. Import a backup or export the original before starting a new run.',
+      persistence.original(profile.activeMode)
+        ? 'Your original save is protected. Import a backup or export the original before starting a new run.'
+        : 'The main save is missing. Try a recovery checkpoint or import a backup.',
       [
-        action('Export original save', () =>
-          exportSaveText(
-            persistence.original(profile.activeMode),
-            'Azeroth_Original_' + profile.activeMode + '.json',
-          ),
+        action('Try recovery', savedRunRecoveryOptions),
+        action(
+          'Export original save',
+          () =>
+            exportSaveText(
+              persistence.original(profile.activeMode),
+              'Azeroth_Original_' + profile.activeMode + '.json',
+            ),
+          '',
+          !persistence.original(profile.activeMode),
         ),
         action('Import save', () => $('import-file').click()),
         action('Start a new Normal run', () => chooseLanguage('normal')),
       ],
       savedRunRecoveryMenu,
       { view: 'save-recovery' },
+    );
+  }
+  function recoverySummary(option) {
+    const place =
+      D.regions.find((region) => region.id === option.zone)?.name ||
+      D.bosses.find((boss) => boss.id === option.zone)?.place ||
+      option.zone;
+    const heroClass =
+      language === 'es'
+        ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador' }[option.heroClass]
+        : option.heroClass;
+    return tr('Level') + ' ' + option.level + ' · ' + heroClass + ' · ' + place;
+  }
+  function savedRunRecoveryOptions() {
+    let options;
+    try {
+      options = persistence.recoveryOptions(profile.activeMode);
+    } catch (_) {
+      status('Recovery failed. Your original save was kept. Export it before closing.');
+      return;
+    }
+    openMenu(
+      'Recovery options',
+      options.length
+        ? 'Choose a recoverable run to review. Nothing is replaced until you confirm.'
+        : 'No usable local checkpoint was found. Import a backup, or export the original for investigation.',
+      options.map((option, index) =>
+        action(
+          tr(
+            {
+              checkpoint: 'Checkpoint',
+              compatible: 'Compatible saved run',
+              original: 'Preserved original',
+              legacy: 'Legacy saved run',
+            }[option.source],
+          ) +
+            ' ' +
+            (index + 1),
+          () => reviewSavedRunRecovery(option),
+          recoverySummary(option),
+        ),
+      ),
+      savedRunRecoveryMenu,
+      { view: 'save-recovery-options' },
+    );
+  }
+  function reviewSavedRunRecovery(option) {
+    const date =
+      option.savedAt === null
+        ? tr('Date unavailable')
+        : tr('Saved') +
+          ' ' +
+          new Date(option.savedAt).toLocaleString(language === 'es' ? 'es-US' : 'en-US');
+    openMenu(
+      'Review recovery',
+      recoverySummary(option) +
+        '\n' +
+        date +
+        '\n\n' +
+        tr(
+          'Restoring this run may lose progress made after this checkpoint. Your unreadable original will remain preserved.',
+        ),
+      [
+        action('Recover this run', () => {
+          try {
+            const candidate = persistence.recover(profile.activeMode, option.id);
+            resumeSavedRun(candidate);
+            status('Run recovered successfully.');
+          } catch (_) {
+            status('Recovery failed. Your original save was kept. Export it before closing.');
+          }
+        }),
+      ],
+      savedRunRecoveryOptions,
+      { view: 'save-recovery-review' },
     );
   }
   function savedRunConflictMenu() {
@@ -3142,6 +3339,9 @@
                 frameSkip: frameSkip.status(),
                 renderResolution: renderResolution.status(),
                 optimizationMode: optimizationMode ? 'on' : 'off',
+                optimizationPreference,
+                emergencyGraphicsOverride: optimizationMode &&
+                  optimizationPreference === 'off',
                 devicePixelRatio: window.devicePixelRatio || 1,
                 backingPixelRatio: canvas.width / Math.max(1, viewport.width),
                 backingWidth: canvas.width,
@@ -3155,6 +3355,7 @@
               mode: game.s.mode,
               phase: game.s.phase,
               hero: game.hero,
+              partyDiagnostics: game.partyDiagnosticsReport(),
               statistics: game.s.statistics,
             },
             'Azeroth_Playtest_Report.json',
@@ -3260,24 +3461,23 @@
         'Zoom changes your view only.',
       ),
       menuControls.section('Graphics'),
-      menuControls.toggle(
+      menuControls.select(
         'Optimization Mode',
-        optimizationMode,
-        (enabled) => {
-          optimizationMode = enabled;
-          try {
-            localStorage.setItem(optimizationKey, enabled ? 'on' : 'off');
-          } catch (_) {}
-          if (typeof PrototypeMaterials !== 'undefined')
-            PrototypeMaterials.setOptimizationMode(enabled);
-          audio.setOptimizationMode(enabled);
-          renderer.setOptimizationMode(enabled);
-          resize();
-          runtime.reset();
-          frameProfile.reset();
-          fps.suspend();
+        optimizationPreference,
+        choices([
+          ['off', 'Off'],
+          ['auto', 'Auto · Recommended'],
+          ['on', 'On'],
+        ]),
+        (value) => {
+          if (!['off', 'auto', 'on'].includes(value)) return;
+          optimizationPreference = value;
+          try { localStorage.setItem(optimizationKey, value); } catch (_) {}
+          autoOptimization.reset();
+          // Critical recovery is not an opt-out, even if Off is chosen now.
+          setOptimizationActive(value === 'on' || frameSkip.emergency);
         },
-        'Simpler scenery and lower resolution.',
+        'Auto lowers graphics under sustained load. Emergencies can override Off.',
       ),
       menuControls.select(
         'Rendering resolution',
@@ -3314,7 +3514,7 @@
           runtime.reset();
           frameProfile.reset();
         },
-        'On by default. Skips drawings under load; briefly pauses combat during critical slowdowns.',
+        'Off disables ordinary skips, not emergency combat protection.',
       ),
       menuControls.section('Graphics renderer'),
       menuControls.select(
@@ -3556,21 +3756,25 @@
       if (candidate.s.mode === 'developer' && !developerEnabled)
         throw Error('Developer import disabled');
       persistence.writeCandidate(candidate);
-      restartGuard.clean();
-      game = candidate;
-      started = true;
-      if (game.s.mode !== 'developer') profile.activeMode = game.s.mode;
-      if (game.peace && game.s.finalRestCompleted && game.s.mode !== 'developer')
-        profile.nightmareUnlocked = true;
-      persistProfile();
-      restartGuard.arm(game);
-      closeMenu();
+      resumeSavedRun(candidate);
       status('Imported successfully.');
     } catch (_) {
       status('Invalid import. Your current run was kept intact.');
     }
     e.target.value = '';
   };
+  function resumeSavedRun(candidate) {
+    restartGuard.clean();
+    game = candidate;
+    loaded = started = true;
+    if (game.s.mode !== 'developer') profile.activeMode = game.s.mode;
+    if (game.peace && game.s.finalRestCompleted && game.s.mode !== 'developer')
+      profile.nightmareUnlocked = true;
+    persistProfile();
+    restartGuard.arm(game);
+    closeMenu();
+    updateHUD();
+  }
   function nearestNPC() {
     return [
       ...game.visibleNPCs(),
@@ -3762,6 +3966,8 @@
     $('recall-button').focus?.({ preventScroll: true });
   }
   function recallSquad() {
+    if (queuedCharges.size)
+      status(language === 'es' ? 'Cola de habilidades cancelada.' : 'Skill queue cancelled.');
     queuedCharges.clear();
     if (charge?.autoRelease) cancelCharge();
     const recalled = game.recallParty();
@@ -4381,6 +4587,7 @@
   const skillLabel = (slot) => {
     const labels = {
       paladin: {
+        1: 'Radiant Strike / Radiant Cross',
         2: 'Sundering Strike',
         3: 'Shield Stance',
         4: 'Judgment',
@@ -4390,6 +4597,7 @@
         8: 'Sanctuary Oath / Last Bastion',
       },
       mage: {
+        1: 'Arcane Beam / Wide Arcane Beam',
         2: 'Frost Bolt',
         3: 'Spell Interrupt',
         4: 'Arcane Fracture',
@@ -4399,6 +4607,7 @@
         8: 'Astral Detonation / Arcane Cataclysm',
       },
       ranger: {
+        1: 'Rapid Arrows / Hawk Interception',
         2: 'Pinning Shot',
         3: 'Self-Heal',
         4: 'Movement Haste / Rally',
@@ -4408,7 +4617,7 @@
         8: 'Hunters Salvo / Grand Hunt',
       },
     };
-    return labels[game.hero.class]?.[slot] || skillNames[slot - 1];
+    return tr(labels[game.hero.class]?.[slot] || skillNames[slot - 1]);
   };
   function chargeSeconds() {
     return PrototypeRules.chargedSkills?.holdSeconds || 0.65;
@@ -4446,20 +4655,39 @@
     request.input = { source, pointerId, pressedAt: game.partyChargeNow() };
   }
   function finishQueuedInput(slot, source, pointerId = null) {
-    const request = queuedCharges.get(slot),
+    const request = queuedCharges.contact(slot, source, pointerId),
       contact = request?.input;
     if (!contact || contact.source !== source || contact.pointerId !== pointerId) return false;
+    const held = game.partyChargeNow() - contact.pressedAt;
     syncQueuedInput(request);
     request.input = null;
+    // Match manual input's deliberate no-action gap, rather than upgrading
+    // an ambiguous release into an accidental normal cast.
+    if (!request.charged && held >= chargeTapSeconds()) {
+      if (charge === request) cancelCharge(false);
+      else queuedCharges.remove(request);
+      status(language === 'es' ? 'Entrada cancelada.' : 'Input cancelled.');
+    } else if (
+      !request.charged &&
+      slot === 3 &&
+      game.hero.class === 'paladin' &&
+      game.hero.shieldStance > 0
+    ) {
+      // Lowering an active stance is an immediate exception, not a queue jump
+      // for an attack. Leave every older Shield Bash request untouched.
+      if (charge === request) cancelCharge(false);
+      else queuedCharges.remove(request);
+      game.cast(3, undefined, false);
+    }
     updateHUD();
     return true;
   }
   function cancelQueuedInput(slot, source, pointerId) {
-    const request = queuedCharges.get(slot),
+    const request = queuedCharges.contact(slot, source, pointerId),
       contact = request?.input;
     if (!contact || contact.source !== source || contact.pointerId !== pointerId) return;
     if (charge === request) cancelCharge();
-    else queuedCharges.delete(slot);
+    else queuedCharges.remove(request);
     updateHUD();
   }
   function chargedManaPercent(slot) {
@@ -4576,6 +4804,7 @@
   function startChargeClock() {
     if (!charge || charge.started !== null) return false;
     syncPartyChargeClock();
+    if ((game.hero.chargedCd?.[charge.slot - 1] || 0) > 0) return false;
     if (!game.beginPartyCharge(game.hero, charge.slot)) return false;
     charge.started = game.partyChargeState(game.hero).started;
     // Record which protected encounters were active at the instant charging began.
@@ -4601,17 +4830,27 @@
     }
     if (charge.started !== null || !activePlay()) return false;
     if (charge.autoRelease && (!queuedInputReady(charge) || !charge.charged)) return false;
-    if (game.hero.cd[charge.slot - 1] <= 0 && game.partyChargeRecovery(game.hero) <= 0)
+    if (
+      game.hero.cd[charge.slot - 1] <= 0 &&
+      (game.hero.chargedCd?.[charge.slot - 1] || 0) <= 0 &&
+      game.partyChargeRecovery(game.hero) <= 0
+    )
       return startChargeClock();
     return false;
   }
   function queuedChargePresentation() {
-    return [...queuedCharges.values()].map((request) => {
+    return [...queuedCharges.values()].map((request, index) => {
       syncQueuedInput(request);
       return {
+        id: request.id,
+        order: index + 1,
         slot: request.slot,
         charged: request.charged,
-        ready: game.hero.cd[request.slot - 1] <= 0,
+        ready:
+          queuedInputReady(request) &&
+          queuedCharges.get(request.slot) === request &&
+          game.hero.cd[request.slot - 1] <= 0 &&
+          (!request.charged || (game.hero.chargedCd?.[request.slot - 1] || 0) <= 0),
         charging: charge === request && request.started !== null,
         color: request.charged ? '#f6d77a' : '#9dc6dd',
       };
@@ -4653,7 +4892,11 @@
         progress: 0,
         ready: false,
         waiting: true,
-        cooldown: Math.max(game.hero.cd[charge.slot - 1], game.partyChargeRecovery(game.hero)),
+        cooldown: Math.max(
+          game.hero.cd[charge.slot - 1],
+          charge.charged ? game.hero.chargedCd?.[charge.slot - 1] || 0 : 0,
+          game.partyChargeRecovery(game.hero),
+        ),
         cost,
         enoughMana,
         targetId: charge.targetId ?? null,
@@ -4749,12 +4992,26 @@
     const rank = game.hero.skills[slot - 1];
     if (!canChargeSlot(slot) || !activePlay() || !rank || game.peace) return false;
     syncPartyChargeClock();
-    if (queuedCharges.has(slot)) {
-      beginQueuedInput(queuedCharges.get(slot), source, pointerId);
-      updateHUD();
-      return true;
+    // A new contact always creates a new intent, even for the same form.
+    if (
+      queuedCharges.contact(slot, source, pointerId) ||
+      (charge?.source === source && charge.slot === slot && charge.pointerId === pointerId)
+    )
+      return false;
+    const queued =
+      queuedCharges.has(slot) ||
+      charge?.slot === slot ||
+      game.hero.cd[slot - 1] > 0 ||
+      (game.hero.chargedCd?.[slot - 1] || 0) > 0 ||
+      game.partyChargeRecovery(game.hero) > 0;
+    if (queued && queuedCharges.size >= queuedCharges.capacity) {
+      status(
+        language === 'es'
+          ? 'Cola llena (16). Entrada rechazada.'
+          : 'Queue full (16). Input rejected.',
+      );
+      return false;
     }
-    const queued = game.hero.cd[slot - 1] > 0 || game.partyChargeRecovery(game.hero) > 0;
     if (!queued && charge) cancelCharge(true, true);
     const request = {
       slot,
@@ -4776,7 +5033,7 @@
       request.source = 'queued';
       request.pointerId = null;
       beginQueuedInput(request, source, pointerId);
-      queuedCharges.set(slot, request);
+      queuedCharges.append(request);
       if (!charge) charge = request;
     } else {
       charge = request;
@@ -4873,7 +5130,11 @@
     if (charge.started === null) {
       const quickTap =
           !charge.queued && game.partyChargeNow() - charge.pressedAt < chargeTapSeconds(),
-        remaining = Math.max(game.hero.cd[slot - 1], game.partyChargeRecovery(game.hero));
+        remaining = Math.max(
+          game.hero.cd[slot - 1],
+          game.hero.chargedCd?.[slot - 1] || 0,
+          game.partyChargeRecovery(game.hero),
+        );
       cancelCharge();
       if (quickTap) {
         const cast = activePlay() && game.cast(slot, undefined, false);
@@ -4940,7 +5201,8 @@
     return cast;
   }
   function selectQueuedCharge() {
-    for (const [slot, request] of queuedCharges)
+    let invalidated = false;
+    for (const request of queuedCharges.values())
       if (
         request.campaign !== game ||
         request.unit !== game.hero ||
@@ -4948,22 +5210,29 @@
         request.deaths !== game.s.statistics.deaths ||
         game.hero.hp <= 0 ||
         game.peace ||
-        !game.hero.skills[slot - 1] ||
+        !game.hero.skills[request.slot - 1] ||
         game.hero.deathRollHeld ||
         game.hero.keeperHeld ||
         game._tacticalScatter?.has('hero')
-      )
-        queuedCharges.delete(slot);
-    if (charge?.autoRelease && !queuedCharges.has(charge.slot)) cancelCharge(false);
+      ) {
+        queuedCharges.remove(request);
+        invalidated = true;
+      }
+    if (invalidated)
+      status(language === 'es' ? 'Cola de habilidades cancelada.' : 'Skill queue cancelled.');
+    if (charge?.autoRelease && !queuedCharges.contains(charge)) cancelCharge(false);
     // A manual cast or a running charge keeps its normal preparation. Other
     // skills retain independent requests and wait for their own cooldown.
     if (charge && (!charge.autoRelease || charge.started !== null)) return;
-    const ready = [...queuedCharges.values()].find(
-      (request) =>
-        queuedInputReady(request) &&
-        game.hero.cd[request.slot - 1] <= 0 &&
-        game.partyChargeRecovery(game.hero) <= 0,
-    );
+    const ready = queuedCharges
+      .heads()
+      .find(
+        (request) =>
+          queuedInputReady(request) &&
+          game.hero.cd[request.slot - 1] <= 0 &&
+          (!request.charged || (game.hero.chargedCd?.[request.slot - 1] || 0) <= 0) &&
+          (!request.charged || game.partyChargeRecovery(game.hero) <= 0),
+      );
     if (ready) charge = ready;
     else if (!charge) charge = queuedCharges.values().next().value || null;
   }
@@ -4971,12 +5240,7 @@
     if (!charge?.autoRelease || !activePlay()) return;
     syncQueuedInput(charge);
     if (!charge.charged) {
-      if (
-        !queuedInputReady(charge) ||
-        game.hero.cd[charge.slot - 1] > 0 ||
-        game.partyChargeRecovery(game.hero) > 0
-      )
-        return;
+      if (!queuedInputReady(charge) || game.hero.cd[charge.slot - 1] > 0) return;
       // A normal request has no preparation, but obeys the same no-chase rule.
       const slot = charge.slot,
         target = chargeTarget(slot, null, false);
@@ -4992,6 +5256,7 @@
       updateHUD();
       return;
     }
+    if ((game.hero.chargedCd?.[charge.slot - 1] || 0) > 0) return;
     const state = chargePresentation();
     if (!charge || !state || state.state === 'waiting' || state.state === 'charging') return;
     const slot = charge.slot,
@@ -5029,7 +5294,7 @@
         charge.avBuildup = charge.avRise = charge.avReady = false;
         charge.targetId = null;
         delete charge.encountersAtStart;
-      } else queuedCharges.delete(charge.slot);
+      } else queuedCharges.remove(charge);
     }
     charge = null;
     if (started) updateHUD();
@@ -5902,10 +6167,14 @@
       const slot = i + 1,
         b = $('skill-' + slot),
         rank = h.skills[i],
-        queuedRequest = queuedCharges.get(slot),
+        backlog = queuedCharges.forSlot(slot),
+        queuedRequest = backlog[0],
         cast = charge?.slot === slot ? chargePresentation() : null,
         charging = !!cast;
-      if (queuedRequest) syncQueuedInput(queuedRequest);
+      for (const request of backlog) syncQueuedInput(request);
+      const backlogLabel = backlog
+        .map((request, index) => index + 1 + '. ' + queuedSkillLabel(request))
+        .join(' → ');
       b.disabled = false;
       b.classList.toggle('locked', !rank || b.disabled);
       b.classList.toggle('charging', charging);
@@ -5913,13 +6182,34 @@
       b.classList.toggle('skill-queued', !!queuedRequest);
       b.dataset.queuedForm = queuedRequest ? (queuedRequest.charged ? 'charged' : 'normal') : '';
       const revealed = game.skillRevealed(slot),
+        normalWait = h.cd[i] || 0,
+        chargedWait = h.chargedCd?.[i] || 0,
         chargeTip = canChargeSlot(slot)
           ? ' · Tap under ' +
             chargeTapSeconds().toFixed(2) +
             's for normal · hold ' +
             chargeSeconds().toFixed(2) +
             's for charged' +
-            ' · During cooldown: tap queues normal; briefly hold queues charged' +
+            (language === 'es'
+              ? ' · La cargada inicia ambas recuperaciones; la normal vuelve antes'
+              : ' · Charged starts both recoveries; Tap returns sooner without extending Charged') +
+            ' · ' +
+            (language === 'es' ? 'Normal ' : 'Tap ') +
+            (normalWait > 0
+              ? cooldownText(normalWait) + 's'
+              : language === 'es'
+                ? 'lista'
+                : 'ready') +
+            ' · ' +
+            (language === 'es' ? 'Cargada ' : 'Charged ') +
+            (Math.max(normalWait, chargedWait) > 0
+              ? cooldownText(Math.max(normalWait, chargedWait)) + 's'
+              : language === 'es'
+                ? 'lista'
+                : 'ready') +
+            (language === 'es'
+              ? ' · Toca para poner normal en cola; mantén brevemente para cargada'
+              : ' · During cooldown: tap queues normal; briefly hold queues charged') +
             (manaEnabled
               ? ' · Charged cost ' + chargedManaPercent(slot) + '% max MP'
               : ' · charged cooldown ' + game.skillCooldown(slot, true).toFixed(1) + 's')
@@ -5933,9 +6223,13 @@
           ? ' · Same-target combo: 100% → 110% → 120% · third hit adds 55% frontal splash'
           : '') +
         (i === 0 && PrototypeRules.movementBasicClasses[h.class]
-          ? ' · Movement auto-attacks pause while Skill 1 is held'
+          ? language === 'es'
+            ? ' · Los ataques automáticos continúan durante la carga si el combate lo permite'
+            : ' · Automatic basics continue during charge when combat allows'
           : '') +
-        (slot === 2 ? ' · Charged target locks when charging begins' : '');
+        (slot === 2 ? ' · Charged target locks when charging begins' : '') +
+        (backlogLabel ? ' · ' + backlogLabel : '') +
+        (language === 'es' ? ' · Menú/Retirada: cancelar cola' : ' · Menu/Recall: clear queue');
       b.setAttribute(
         'aria-label',
         'Skill ' +
@@ -5943,10 +6237,23 @@
           ' ' +
           (revealed ? skillLabel(slot) : 'Undiscovered') +
           (canChargeSlot(slot)
-            ? ' · tap for normal or hold to charge' +
-              (manaEnabled ? ' · charged cost ' + chargedManaPercent(slot) + ' percent max MP' : '')
+            ? (language === 'es'
+                ? ' · Toca para normal, mantén para cargar'
+                : ' · tap for normal or hold to charge') +
+              (language === 'es' ? ' · Normal ' : ' · Tap ') +
+              (normalWait > 0
+                ? cooldownText(normalWait) + 's'
+                : language === 'es'
+                  ? 'lista'
+                  : 'ready') +
+              (language === 'es' ? ' · Cargada ' : ' · Charged ') +
+              (Math.max(normalWait, chargedWait) > 0
+                ? cooldownText(Math.max(normalWait, chargedWait)) + 's'
+                : language === 'es'
+                  ? 'lista'
+                  : 'ready')
             : '') +
-          (queuedRequest ? ' · ' + queuedSkillLabel(queuedRequest) : ''),
+          (queuedRequest ? ' · ' + backlogLabel : ''),
       );
       if (b.firstChild?.nodeType === 3)
         b.firstChild.textContent =
@@ -5979,14 +6286,23 @@
                         ? 'NO ALLIES'
                         : 'CHARGED'
           : queuedCharges.has(slot)
-            ? queuedSkillLabel(queuedRequest).replace(' ', '\n') + ' ' + cooldownText(h.cd[i]) + 's'
+            ? queuedSkillLabel(queuedRequest).replace(' ', '\n') +
+              ' ' +
+              cooldownText(Math.max(h.cd[i], queuedRequest?.charged ? chargedWait : 0)) +
+              's'
             : slot === 3 && h.class === 'paladin' && h.shieldStance > 0
               ? 'SHIELD ' + cooldownText(h.shieldStance)
               : !rank
                 ? 'Locked'
                 : h.cd[i] > 0
                   ? cooldownText(h.cd[i])
-                  : skillKeys()[i];
+                  : chargedWait > 0
+                    ? skillKeys()[i] + ' C' + cooldownText(chargedWait)
+                    : skillKeys()[i];
+      if (backlog.length > 1)
+        b.querySelector('small').textContent +=
+          '\n' + backlog.map((r, index) => index + 1 + (r.charged ? 'C' : 'N')).join(' → ');
+      b.dataset.queue = backlog.map((r) => (r.charged ? 'charged' : 'normal')).join(',');
     }
     const n = nearestNPC();
     $('touch-interact-button').hidden = !n || !activePlay();
@@ -6053,6 +6369,8 @@
     cancelNavigationButton.setAttribute('aria-label', tr('Cancel navigation'));
     updateCriticalNotice();
   }
+  // Idle probes are rate-limited but successful basic attacks keep native cadence.
+  let nextAutoBasicProbeAt = 0;
   let emergencyShown = false;
   // Preserve the abnormal-session marker through a critical freeze, even if
   // a delayed blur/pagehide event eventually fires during the shutdown.
@@ -6082,6 +6400,7 @@
       // A persistent near-freeze or repeated failed releases justifies
       // intervention. A single spike never resets a legitimate encounter.
       if (e.phase === 0 && (now - e.beganAt >= 5000 || e.entries.length >= 3)) {
+        game.partyDiagnosticsRecoveryAction('encounter-reset-attempt');
         const reset = game.emergencyResetEncounter();
         // A critical freeze can also happen without engaged enemies (terrain,
         // GPU/driver trouble, huge scenery). No enemy reset is possible then,
@@ -6093,6 +6412,7 @@
         game.emergencyAdvanceWithdrawal();
         const repeated = e.entries.filter((stamp) => stamp >= e.resetAt).length >= 2;
         if (now - e.resetAt >= 8000 || repeated) {
+          game.partyDiagnosticsRecoveryAction('refuge-return-attempt');
           if (game.emergencyReturnToSafety()) {
             e.phase = 2;
             if (save()) restartGuard.arm(game);
@@ -6118,6 +6438,7 @@
     if (document.hidden) {
       clearEmergencyEscalation();
       frameSkip.suspend();
+      autoOptimization.reset();
       renderResolution.suspend();
       runtime.suspend();
       fps.suspend();
@@ -6140,7 +6461,22 @@
       game.s.challenge.pending ||
       game.s.challenge.gameOver;
     const recovering = !frozen && frameSkip.beginFrame(now, intervalMs);
-    if (recovering) crashRecoveryPending = true;
+    if (!frozen)
+      game.partyDiagnosticsObserveEmergency(
+        recovering, intervalMs, frameSkip.status().emergencyEntries,
+      );
+    if (recovering) {
+      crashRecoveryPending = true;
+      // Act before further expensive rendering; never require the player to
+      // reach Settings while hostile simulation is critically stalled.
+      if (!optimizationMode) {
+        const override = autoOptimization.observe(now, {
+          activePlay: true, emergency: true,
+          preference: optimizationPreference, optimized: optimizationMode,
+        });
+        if (override === true) setOptimizationActive(true);
+      }
+    }
     const simulating = !frozen && !recovering;
     emergencyRecoveryDecision(now, recovering, simulating);
     if (recovering !== emergencyShown) {
@@ -6219,6 +6555,7 @@
         },
       });
       game.crowdDiagnosticsEndFrame();
+      game.partyDiagnosticsObserveTick();
       stageTimes.simulationMs = performance.now() - simulationAt;
       if (marks.partyStart !== undefined && marks.partyEnd !== undefined)
         stageTimes.companionAIMs = Math.max(0, marks.partyEnd - marks.partyStart);
@@ -6245,15 +6582,15 @@
       releaseQueuedCharge();
       if (
         game.s.mode !== 'developer' &&
-        (x || y || was.order) &&
-        charge?.slot !== 1 &&
+        true &&
         game.hero === movingHero &&
         PrototypeRules.movementBasicClasses[movingHero.class] &&
         game.zoneId === was.zone &&
         game.s.statistics.deaths === was.deaths &&
-        Math.hypot(movingHero.x - was.x, movingHero.y - was.y) > 0.25
+        game.hero.basicCd <= 0 &&
+        now >= nextAutoBasicProbeAt
       )
-        game.castMovementBasic();
+        nextAutoBasicProbeAt = game.castMovementBasic() ? now : now + 100;
       if (
         game.hero === movingHero &&
         game.zoneId === was.zone &&
@@ -6275,6 +6612,8 @@
       audio.effect(e);
       if (e.type === 'chargeInterrupted' && e.target === 'hero')
         status('Charged skill interrupted.');
+      if (e.type === 'hawkRetreatInterrupted')
+        status(language === 'es' ? 'Retirada interrumpida.' : 'Retreat interrupted.');
       if (e.type === 'actionFailed' && e.reason === 'crowns')
         status('Need ' + e.needed + ' crowns.');
     }
@@ -6347,6 +6686,13 @@
       fps.observe(now, performance.now() - frameStart, draw, adaptiveSkipped);
       const frameWorkMs = performance.now() - frameStart;
       frameSkip.observe(now, frameWorkMs, stageTimes.renderMs, draw);
+      const optimizationDecision = autoOptimization.observe(now, {
+        activePlay: simulating || recovering,
+        emergency: recovering || frameSkip.emergency,
+        preference: optimizationPreference, optimized: optimizationMode,
+        intervalMs, workMs: frameWorkMs, adaptiveSkipped, target: fps.target,
+      });
+      if (optimizationDecision !== null) setOptimizationActive(optimizationDecision);
       const otherSimulationMs = Math.max(
           0,
           stageTimes.simulationMs - stageTimes.companionAIMs - stageTimes.enemyAIMs,
@@ -6368,6 +6714,7 @@
       });
     } else {
       frameSkip.suspend();
+      autoOptimization.reset();
       emergencyShown = false;
       renderResolution.suspend();
       fps.suspend();
@@ -6401,9 +6748,11 @@
     if (persistence.loadFailed(profile.activeMode)) savedRunRecoveryMenu();
     else chooseLanguage(developerEnabled ? 'developer' : 'normal');
   } else setLanguage(language);
-  if (loaded && performanceBaselineUpgraded && !recoveredOnStartup)
+  if (loaded && (performanceBaselineUpgraded || optimizationAutoUpgraded) && !recoveredOnStartup)
     status(
-      'Performance settings updated to recommended defaults. You can change them in Settings.',
+      performanceBaselineUpgraded
+        ? 'Performance settings updated to recommended defaults. You can change them in Settings.'
+        : 'Optimization Mode now defaults to Auto. You can change it in Settings.',
     );
   requestAnimationFrame(frame);
   if (writerGuard.pending)

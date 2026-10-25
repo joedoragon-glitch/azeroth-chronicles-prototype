@@ -1,9 +1,11 @@
 'use strict';
 const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine');
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 const near = (a, b, text) => assert(Math.abs(a - b) < 1e-8, text + ': ' + a + ' vs ' + b);
 function scene(clock, points = 0, ranged = false, distance = 50) {
   const g = new C('normal', 'paladin', () => 0.9);
+  completeFieldOpening(g);
   g.s.clock = clock;
   for (const b of C.data.bosses.filter((b) => b.id !== 'darklord')) {
     if (points-- > 0) g.victory(b.id, 'normal');
@@ -84,7 +86,7 @@ for (const clock of [100, 500]) {
 assert(travel[0] > 0);
 near(travel[1] / travel[0], 1.25, 'Real collision-aware enemy pursuit moves 25% faster');
 assert.equal(C.rules.enemySupportHealing.cooldown, 10);
-assert.equal(C.rules.tacticalFoundation.moveCooldownSeconds, 3);
+assert.equal(C.rules.tacticalFoundation.moveCooldownSeconds, 2);
 console.log(
   'PASS night tempo 10–25%, counter/day/peace/Nightmare, real melee/ranged cadence, unchanged aim and pursuit movement',
 );

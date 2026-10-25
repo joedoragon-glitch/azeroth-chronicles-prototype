@@ -9,6 +9,38 @@ const TEST = 'tests/';
 const PILOT = 'tools/webgl-pilot/';
 const groups = [
   {
+    match: /^src\/prototype\/hero-combat\.js$/,
+    tests: [
+      TEST + 'cooldown-only.test.cjs',
+      TEST + 'hero-skills-consolidation.test.cjs',
+      TEST + 'charged-opener.test.cjs',
+    ],
+  },
+  {
+    match: /^src\/prototype\/(?:combat|hero-combat|party|party-pets)\.js$/,
+    tests: [
+      TEST + 'charge-interruption.test.cjs',
+      TEST + 'pet-skill-activation.test.cjs',
+      TEST + 'pet-skill-priority.test.cjs',
+    ],
+  },
+  {
+    match: /^src\/prototype\/(?:app|input)\.js$/,
+    tests: [TEST + 'hero-skill1-area3-input.test.cjs'],
+  },
+  {
+    match: /^src\/prototype\/(?:hero-combat|combat|rules|save|engine)\.js$/,
+    tests: [TEST + 'hero-skill1-stage1.test.cjs', TEST + 'hero-skill1-integration.test.cjs'],
+  },
+  {
+    match: /^src\/prototype\/(?:boss-combat|hero-combat|engine)\.js$/,
+    tests: [TEST + 'hero-skill1-retreats.test.cjs'],
+  },
+  {
+    match: /^src\/prototype\/(?:hero-presentation|audio-hero|skill-reference|menus)\.js$/,
+    tests: [TEST + 'hero-skill1-area2.test.cjs'],
+  },
+  {
     match:
       /(?:^|\/)(?:pixi-experimental\.js|pixi-scene-bridge\.js|native-sprite-adapter\.js|renderer-switch-guard\.js|native-webgl2-core\.js)$|^tests\/pixi-|^tools\/webgl-pilot\//,
     tests: [
@@ -57,6 +89,7 @@ const groups = [
     match: /^src\/prototype\/(?:persistence|save)\.js$/,
     tests: [
       TEST + 'persistence-safety.test.cjs',
+      TEST + 'save-recovery-checkpoints.test.cjs',
       TEST + 'save-writer.test.cjs',
       TEST + 'platform-runtime.test.cjs',
       TEST + 'restart-recovery.test.cjs',
@@ -69,6 +102,7 @@ const groups = [
     match: /^src\/prototype\/app\.js$/,
     tests: [
       TEST + 'persistence-safety.test.cjs',
+      TEST + 'save-recovery-checkpoints.test.cjs',
       TEST + 'save-writer.test.cjs',
       TEST + 'restart-recovery.test.cjs',
     ],
@@ -84,10 +118,18 @@ const groups = [
   {
     match: /^src\/prototype\/(?:field-onboarding|engine)\.js$|^tests\/helpers\/field-opening\.cjs$/,
     tests: [
+      TEST + 'night-tempo.test.cjs',
       TEST + 'field-onboarding.test.cjs',
       TEST + 'ranged-pet-support.test.cjs',
       TEST + 'enemy-support-healing.test.cjs',
+      TEST + 'enemy-ordinary-heal-balance.test.cjs',
+      TEST + 'enemy-cross-species-idle-healing.test.cjs',
     ],
+  },
+  {
+    match:
+      /^src\/prototype\/(?:engine|world|navigation)\.js$|^tests\/fixtures\/runtime-workload-dev175\.json$/,
+    tests: [TEST + 'runtime-workload.test.cjs'],
   },
   {
     match: /^src\/prototype\/(?:rules|combat)\.js$/,
@@ -95,11 +137,19 @@ const groups = [
       TEST + 'slow-cooldown.test.cjs',
       TEST + 'ranged-pet-support.test.cjs',
       TEST + 'enemy-support-healing.test.cjs',
+      TEST + 'enemy-ordinary-heal-balance.test.cjs',
+      TEST + 'enemy-cross-species-idle-healing.test.cjs',
     ],
   },
   {
     match: /^src\/prototype\/(?:rules|save|boss-combat)\.js$/,
     tests: [TEST + 'snapshot-encounter-lifecycle.test.cjs'],
+  },
+  {
+    // A rules edit can alter the source fingerprints in the sprite census.
+    // Validate its checked-in evidence even when the graphics stay identical.
+    match: /^src\/prototype\/rules\.js$|^docs\/evidence\/SPRITE_SCOPE_RECONCILIATION\.json$/,
+    tests: [TEST + 'sprite-scope.test.cjs'],
   },
   {
     match: /^src\/prototype\/(?:combat|boss-combat|fortifications)\.js$/,
@@ -109,6 +159,7 @@ const groups = [
     match: /^tests\/helpers\/production-shell\.cjs$/,
     tests: [
       TEST + 'persistence-safety.test.cjs',
+      TEST + 'save-recovery-checkpoints.test.cjs',
       TEST + 'save-writer.test.cjs',
       TEST + 'render-resolution.test.cjs',
     ],
@@ -124,6 +175,10 @@ const groups = [
   {
     match: /^src\/prototype\/(?:materials|ground-cache)\.js$|^assets\/materials\//,
     tests: [TEST + 'materials.test.cjs', TEST + 'ground-cache.test.cjs'],
+  },
+  {
+    match: /^scripts\/(?:sprite-pipeline|sprite-scope-audit|material-pipeline)\.cjs$|^tools\/sprites\/(?:terrain-specifications\.json|approved\.json|materials\/approved\.json)$|^assets\/(?:sprites|materials)\/manifest\.json$/,
+    tests: [TEST + 'artwork-pipeline-checks.test.cjs'],
   },
   { match: /^src\/prototype\/input\.js$/, tests: [TEST + 'input.test.cjs'] },
   {
@@ -169,7 +224,9 @@ function selectTests(changed, exists = (file) => fs.existsSync(path.join(root, f
     let covered = false;
     // One explicitly changed Pixi acceptance test may run as a focused
     // browser smoke. Never select an entire browser matrix by subsystem.
-    if (file === TEST + 'pixi-renderer-browser.test.cjs') {
+    if (file === TEST + 'pixi-renderer-browser.test.cjs' ||
+        file === TEST + 'frame-rate-browser.test.cjs') {
+      // Two explicit narrow Chromium acceptance files; never a browser matrix.
       if (exists(file)) chosen.add(file);
       covered = true;
     }
@@ -224,14 +281,16 @@ function run(
   paths,
   invoke = (file) => {
     const pixiBrowser = file === TEST + 'pixi-renderer-browser.test.cjs';
+    const narrowBrowser = pixiBrowser || file === TEST + 'frame-rate-browser.test.cjs';
     const result = cp.spawnSync(process.execPath, [path.join(root, file)], {
       cwd: root,
       stdio: 'inherit',
       // A single tested Chromium renderer journey, not the global browser suite.
-      env: pixiBrowser
-        ? { ...process.env, BROWSER_ENGINE: 'chromium', REQUIRE_WEBGL2: '1' }
+      env: narrowBrowser
+        ? { ...process.env, BROWSER_ENGINE: 'chromium',
+            ...(pixiBrowser ? { REQUIRE_WEBGL2: '1' } : {}) }
         : process.env,
-      timeout: pixiBrowser ? 240000 : undefined,
+      timeout: narrowBrowser ? 240000 : undefined,
     });
     return result.status === 0;
   },

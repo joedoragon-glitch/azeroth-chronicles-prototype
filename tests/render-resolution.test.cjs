@@ -151,7 +151,16 @@ for (const [preference, skipping] of [
   let clock = 0,
     renderCost = 80,
     tickCount = 0;
-  const app = shell('en', 'paladin', { now: () => clock });
+  // Isolate the automatic-resolution controller: this synthetic 10 Hz test
+  // intentionally holds a slow callback cadence even after draw work recovers.
+  // Auto Optimization would legitimately choose a lighter graphics mode.
+  // A player-selected Off remains respected outside true critical emergencies.
+  const storage = new Map([
+    ['azeroth-performance-defaults-dev170-v1', 'applied'],
+    ['azeroth-optimization-auto-default-v1', 'applied'],
+    ['azeroth-optimization-mode-v1', 'off'],
+  ]);
+  const app = shell('en', 'paladin', { now: () => clock, storage });
   const api = app.scope.Prototype;
   api.fps.select(preference);
   api.frameSkip.select(skipping);
