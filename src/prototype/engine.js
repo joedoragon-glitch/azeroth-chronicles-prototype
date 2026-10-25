@@ -3542,6 +3542,8 @@
         e.deathRoll = null;
       }
       e.sequence = [];
+      if (e.rogueEmergencyReinforcement) this._tacticalEmergencyCleanupPending = true;
+      if (e.form === 'ringleader') this.tacticalRetireEmergencyGuards(e);
       if (e.summon) {
         if (e.developerSummon)
           this.zone().enemies.forEach((add) => {
@@ -4649,7 +4651,7 @@
     hawkRetreatKind(e) {
       if (!e || e.hp <= 0 || !e.aggro || e.returning || this.attackResetProtected(e)) return null;
       const regroup = this.tacticalRogueRegroup(e);
-      if (regroup && ['thinking', 'travel', 'escape'].includes(regroup.phase)) return 'regroup';
+      if (regroup && ['thinking', 'travel', 'escape', 'extended'].includes(regroup.phase)) return 'regroup';
       if (e.telegraph?.rogueMove && e.telegraph.style === 'withdraw') return 'withdraw';
       if (this._hawkBackpedalAt?.get(e) === this.s.time) return 'backpedal';
       if (e.rangedAim?.withdrawal || e.telegraph?.withdrawal) return 'backpedal';
@@ -4699,11 +4701,19 @@
         this._tacticalRogueNext?.delete(e.id);
         this._tacticalVisitedAllies?.delete(e.id);
         this._tacticalWoundedUsed?.delete(e.id);
+        this._tacticalTerritorialVisited?.delete(e.id);
+        this._tacticalExtendedSearchAfter?.delete(e.id);
+        this._tacticalRogueLastCast?.delete(e.id);
+        this._tacticalEmergencyNext?.delete(e.id);
       } else {
         this._tacticalRegroups?.clear();
         this._tacticalRogueNext?.clear();
         this._tacticalVisitedAllies?.clear();
         this._tacticalWoundedUsed?.clear();
+        this._tacticalTerritorialVisited?.clear();
+        this._tacticalExtendedSearchAfter?.clear();
+        this._tacticalRogueLastCast?.clear();
+        this._tacticalEmergencyNext?.clear();
       }
     }
     tacticalStopRogueRegroup(e) {
@@ -4712,6 +4722,16 @@
         e.path = [];
         e.routeAge = 0;
       }
+    }
+    tacticalRetireEmergencyGuards(owner) {
+      let retired = false;
+      for (const add of this.zone().enemies) {
+        if (add.summon && add.rogueEmergencyReinforcement && add.owner === owner.id) {
+          add.hp = 0;
+          retired = true;
+        }
+      }
+      if (retired) this._tacticalEmergencyCleanupPending = true;
     }
     tacticalBeginRogueRegroup(e, ally, activeTargetCount = 0) {
       const prior = this.tacticalRogueRegroup(e),
@@ -4903,6 +4923,8 @@
       const state = this.tacticalRogueRegroup(e);
       if (!state) return dist(target, home) <= territory;
       if (state.phase === 'thinking' && !state.anchor) return dist(target, home) <= territory;
+      if (state.phase === 'extended')
+        return dist(target, e) <= R.tacticalFoundation.extendedEncounterSeparation;
       const separationLimit = R.tacticalFoundation.awarenessRadius + 200;
       if (dist(target, e) > separationLimit) return false;
       if (state.phase === 'travel')
@@ -4914,6 +4936,203 @@
         ['anchored', 'thinking', 'escape'].includes(state.phase) &&
         dist(target, state.anchor || e) <= separationLimit
       );
+    }
+    // A local ally is useful, but reaching one does not necessarily fix the odds.
+    // Distinguish need for support from basic Rogue eligibility (including level gap).
+    tacticalNeedsMoreSupport(e) {
+      const opponents = this.tacticalPresentOpponents(e);
+      return opponents > 0 &&
+        this.tacticalLocalSupport(e) <
+          opponents + (this.hero.level > e.level ? 1 : 0);
+    }
+    tacticalBeginExtendedRetreat(e) {
+      if (
+        this.isDungeon() || e.type === 'boss' || e.captain || e.roomCaptain ||
+        e.summon || !this.tacticalNeedsMoreSupport(e)
+      ) return false;
+      const cfg = R.tacticalFoundation, z = this.zone();
+      // Avoid repeated expensive route probing against blocked outposts.
+      if ((this._tacticalExtendedSearchAfter?.get(e.id) || 0) > this.s.time)
+        return false;
+      if (!this._tacticalExtendedSearchAfter) this._tacticalExtendedSearchAfter = new Map();
+      this._tacticalExtendedSearchAfter.set(e.id, this.s.time + 5);
+      if (!this._tacticalRegroups) this._tacticalRegroups = new Map();
+      if (!this._tacticalTerritorialVisited) this._tacticalTerritorialVisited = new Map();
+      const visited = this._tacticalTerritorialVisited.get(e.id) || new Set();
+      // Do not mistake the same nearby ally already tried at Level 1 for
+      // genuinely new territorial support.
+      const localVisited = this._tacticalVisitedAllies?.get(e.id);
+      // Homes/posts, not magically acquired line-of-sight targets: inhabitants
+      // know where the region's defenders usually live, even over the horizon.
+      const candidates = z.enemies.filter((ally) =>
+        ally !== e && ally.hp > 0 && !ally.neutral && !ally.returning &&
+        !ally.summon && dist(ally, e) > cfg.supportRadius + 35 &&
+        dist(ally, ally.home || ally) <= cfg.supportRadius &&
+        dist(ally.home || ally, e) <= cfg.extendedAwarenessRadius &&
+        !localVisited?.has(ally.pack || ally.id) &&
+        !visited.has(ally.pack || ally.id)
+      ).sort((a, b) => dist(e, a.home || a) - dist(e, b.home || b) || this.idOrder(a, b));
+      // Regrouped defenders should follow the same distant refuge rather than
+      // independently scattering to different outposts.
+      const traveling = z.enemies.find((ally) =>
+        ally !== e && ally.hp > 0 &&
+        dist(e, ally) <= cfg.supportRadius + 35 &&
+        this.tacticalRogueRegroup(ally)?.phase === 'extended'
+      );
+      if (traveling) {
+        const idx = candidates.indexOf(traveling);
+        if (idx >= 0) candidates.splice(idx, 1);
+        candidates.unshift(traveling);
+      }
+      for (const ally of candidates.slice(0, 8)) {
+        const fellow = this.tacticalRogueRegroup(ally);
+        // A guide is not the refuge: retain the living defender at the post
+        // so defeating the guide cannot cancel another actor's withdrawal.
+        const refuge = fellow?.phase === 'extended'
+          ? z.enemies.find((unit) =>
+              unit.id === fellow.allyId && unit.hp > 0 &&
+              !unit.neutral && !unit.returning
+            )
+          : ally;
+        if (!refuge) continue;
+        const destination = fellow?.phase === 'extended'
+          ? fellow.destination : refuge.home || refuge;
+        const path = this.route(e, destination);
+        if (!path.length) continue;
+        let length = 0, previous = e, safe = true;
+        for (const point of path) {
+          length += dist(previous, point);
+          if (!this.isDungeon()) {
+            const town = D.towns[this.regionIndex()];
+            if (town && this.distanceToSegment(
+              { x: town[0], y: town[1] }, previous, point
+            ) < 185) safe = false;
+          }
+          previous = point;
+        }
+        if (!safe || length > cfg.extendedRouteMaxLength) continue;
+        visited.add(ally.pack || ally.id);
+        this._tacticalTerritorialVisited.set(e.id, visited);
+        this._tacticalRegroups.set(e.id, {
+          phase: 'extended', allyId: refuge.id,
+          destination: { x: destination.x, y: destination.y },
+          anchor: { x: e.x, y: e.y }, travelRemaining: Math.max(15, length / 210 + 5),
+          stalled: 0,
+        });
+        this.event('rogueExtendedRetreat', { actor: e.id, ally: ally.id });
+        e.path = [];
+        e.routeAge = 0;
+        return true;
+      }
+      return false;
+    }
+    tacticalAdvanceExtendedRetreat(e, target, dt) {
+      const state = this.tacticalRogueRegroup(e);
+      if (state?.phase !== 'extended') return false;
+      const ally = this.zone().enemies.find((unit) => unit.id === state.allyId);
+      const replan = () => {
+        this._tacticalRegroups.set(e.id, {
+          phase: 'thinking', anchor: { x: e.x, y: e.y },
+          thinkRemaining: R.tacticalFoundation.thinkingSeconds,
+        });
+        e.path = [];
+        e.routeAge = 0;
+      };
+      if (!this.tacticalNeedsMoreSupport(e)) {
+        this._tacticalRegroups.set(e.id, {
+          phase: 'anchored', anchor: { x: e.x, y: e.y },
+          holdRemaining: 12, moveUsed: true, recruited: false,
+        });
+        return false;
+      }
+      state.travelRemaining -= dt;
+      if (!ally || ally.hp <= 0 || ally.neutral || ally.returning ||
+          state.travelRemaining <= 0) {
+        replan();
+        return true;
+      }
+      if (dist(e, state.destination) <= 65) {
+        this._tacticalRegroups.set(e.id, {
+          phase: 'anchored', anchor: { x: e.x, y: e.y },
+          holdRemaining: 12, moveUsed: true, recruited: false,
+        });
+        return true;
+      }
+      const before = { x: e.x, y: e.y };
+      this.follow(
+        e, state.destination,
+        (e.type === 'boss' ? 145 : 175) * 1.5 *
+          this.mountedMovementFactor(e) * this.nightTempo(), dt, 55
+      );
+      state.stalled = dist(before, e) > Math.max(0.1, dt * 10)
+        ? 0 : state.stalled + dt;
+      if (state.stalled >= 2.5) { replan(); return true; }
+      e.noProgress = 0;
+      // A covering move must not replace the travel order or aim at the pursuer
+      // instead of the destination. Existing warnings still resolve normally.
+      if (!e.telegraph && !e.motion && !e.rangedAim &&
+          (this._tacticalRogueNext?.get(e.id) || 0) <= this.s.time &&
+          dist(e, target) <= 320 && this.line(e, target))
+        this.tacticalRogueMove(e, target, true);
+      return true;
+    }
+    tacticalEmergencyCall(e) {
+      if (e.form !== 'ringleader' || e.type === 'boss' ||
+          e.captain || e.roomCaptain || e.summon ||
+          !this.tacticalNeedsMoreSupport(e)) return false;
+      const cfg = R.tacticalFoundation;
+      if ((this._tacticalEmergencyNext?.get(e.id) || 0) > this.s.time) return false;
+      const z = this.zone(),
+        owned = z.enemies.filter((u) =>
+          u.hp > 0 && u.summon && u.rogueEmergencyReinforcement && u.owner === e.id
+        );
+      if (owned.length >= cfg.emergencyLivingCap) return false;
+      const roll = this.random() < 0.5 ? 2 : 3,
+        count = Math.min(roll, cfg.emergencyLivingCap - owned.length);
+      let made = 0;
+      for (let i = 0; i < count; i++) {
+        let point = null;
+        for (let n = 0; n < 30; n++) {
+          const angle = (i + n) * Math.PI / 3,
+            radius = 105 + Math.floor(n / 6) * 40,
+            candidate = {
+              x: e.x + Math.cos(angle) * radius,
+              y: e.y + Math.sin(angle) * radius,
+            };
+          if (this.blocked(candidate.x, candidate.y, z.id, 12) ||
+              this.combatTargets().some((u) => u.hp > 0 && dist(u, candidate) < 80) ||
+              z.enemies.some((u) => u.hp > 0 && dist(u, candidate) < 37))
+            continue;
+          point = candidate;
+          break;
+        }
+        if (!point) break;
+        const baseHp = e.baseHp / R.ringleaderScaling.hp,
+          baseDamage = e.baseDamage / R.ringleaderScaling.damage;
+        const add = this.makeEnemy({
+          species: e.species, name: 'Called ' + e.species + ' guardian',
+          icon: e.icon, level: Math.max(1, e.level - 2),
+          hp: baseHp, damage: baseDamage, gold: 0, xp: 0,
+        }, point);
+        add.guard = true;
+        add.owner = e.id;
+        add.rogueEmergencyReinforcement = true;
+        add.pack = e.id + '-emergency';
+        if (e.ranged) add.forcedRole = 'ranged';
+        // Native role assignment has to precede summon admission: the
+        // shared configurator intentionally skips already-summoned actors.
+        this.configureEnemy(add, i);
+        add.summon = true;
+        add.summonBalanceVersion = 1;
+        z.enemies.push(add);
+        this.engage(add, true, false);
+        made++;
+      }
+      if (!made) return false;
+      if (!this._tacticalEmergencyNext) this._tacticalEmergencyNext = new Map();
+      this._tacticalEmergencyNext.set(e.id, this.s.time + cfg.emergencyCooldownSeconds);
+      this.event('rogueEmergencyCall', { actor: e.id, count: made });
+      return true;
     }
     tacticalSeekRogueSupport(e, pressure) {
       let attempts = 0;
@@ -4956,6 +5175,18 @@
           return false;
         }
         if (this.tacticalSeekRogueSupport(e, totalPressure)) return true;
+        // Exhausting local support is not a reason to spam an attack.
+        // Field inhabitants seek remembered, more distant occupied posts.
+        if (this.tacticalBeginExtendedRetreat(e)) return true;
+        // Dungeon/side-dungeon leaders, or field leaders with no viable post,
+        // can call temporary guards without altering native population.
+        if (this.tacticalEmergencyCall(e)) {
+          this._tacticalRegroups.set(e.id, {
+            phase: 'anchored', anchor: { x: e.x, y: e.y },
+            holdRemaining: 12, moveUsed: true, recruited: true,
+          });
+          return true;
+        }
         this.tacticalStopRogueRegroup(e);
         if (this.tacticalRogueMove(e, target, !!state.anchor)) {
           if (state.anchor) {
@@ -5093,7 +5324,9 @@
         const wounded = this.tacticalRogueWounded(e);
         const freshWound = wounded && !this._tacticalWoundedUsed?.has(e.id);
         const pressureRemains =
-          this.tacticalRogueOutnumbered(e) &&
+          (this.tacticalRogueOutnumbered(e) ||
+            (!(e.type === 'boss' || e.captain || e.roomCaptain) &&
+              this.tacticalNeedsMoreSupport(e))) &&
           this.tacticalRogueEligibility(e, Math.max(pressure, 2)) &&
           (this._tacticalRogueNext?.get(e.id) || 0) <= this.s.time &&
           !this.hawkRetreatLocked(e, 'regroup');
@@ -5123,6 +5356,12 @@
     // elite signatures are authored for the species AND its actual combat role.
     tacticalRogueMove(e, fallback, fromRegroupAnchor = false) {
       if (e.hp <= 0 || e.returning || e.telegraph || e.motion || e.rangedAim) return false;
+      // Enforce cast-to-cast cadence across initial, anchored, and interrupted
+      // regroup paths; the decision cooldown alone cannot enforce this.
+      const lastCast = this._tacticalRogueLastCast?.get(e.id);
+      if (lastCast !== undefined &&
+          this.s.time - lastCast < R.tacticalFoundation.moveCooldownSeconds - 1e-7)
+        return false;
       const tier = this.tacticalProtectionTier(e),
         cfg = R.tacticalFoundation,
         profiles = cfg.rogueMoves,
@@ -5273,6 +5512,13 @@
         style: effect || profile.style,
         signature: isSignature,
       });
+      if (!this._tacticalRogueLastCast) this._tacticalRogueLastCast = new Map();
+      if (!this._tacticalRogueNext) this._tacticalRogueNext = new Map();
+      this._tacticalRogueLastCast.set(e.id, this.s.time);
+      this._tacticalRogueNext.set(e.id, Math.max(
+        this._tacticalRogueNext.get(e.id) || 0,
+        this.s.time + cfg.moveCooldownSeconds
+      ));
       if (e.crownTroop && e.crownAncestry) e.crownRogueTurn = ((e.crownRogueTurn || 0) + 1) % 2;
       if (!isSignature && namedBasic && speciesBasic)
         e.rogueBasicTurn = ((e.rogueBasicTurn || 0) + 1) % 2;
@@ -5887,6 +6133,7 @@
         !e?.aggro ||
         e.hp <= 0 ||
         e.returning ||
+        e.rogueEmergencyReinforcement ||
         e.telegraph ||
         e.motion ||
         e.rangedAim ||
@@ -5918,6 +6165,19 @@
       return true;
     }
     updateEnemies(dt) {
+      // Called guards are not persistent dungeon slots. Reap dead bodies
+      // after combat (not inside kill), without a per-frame roster scan.
+      if (this._tacticalEmergencyCleanupPending) {
+        this._tacticalEmergencyCleanupPending = false;
+        for (const zone of Object.values(this.s.zones)) {
+          if (!Array.isArray(zone.enemies)) continue;
+          for (let i = zone.enemies.length - 1; i >= 0; i--) {
+            const add = zone.enemies[i];
+            if (add.rogueEmergencyReinforcement && add.hp <= 0)
+              zone.enemies.splice(i, 1);
+          }
+        }
+      }
       this.syncTreasuryRecovery(this.zone());
       const z = this.zone(),
         deaths = this.s.statistics.deaths,
@@ -6300,11 +6560,17 @@
           continue;
         if (!this.mageSilenceActive(e) && this.tacticalAutoRogue(e, target)) continue;
         const covering = !!(e.telegraph?.withdrawal || e.rangedAim?.withdrawal),
-          regroup = this.tacticalRogueRegroup(e);
-        if (regroup && !e.motion && ((!e.telegraph && !e.rangedAim) || covering)) {
-          const held = this.tacticalAdvanceRogueRegroup(e, target, dt, covering);
+          regroup = this.tacticalRogueRegroup(e),
+          extendedCover = regroup?.phase === 'extended' && !!e.telegraph?.rogueMove;
+        if (regroup && !e.motion &&
+            ((!e.telegraph && !e.rangedAim) || covering || extendedCover)) {
+          const held = regroup.phase === 'extended'
+            ? this.tacticalAdvanceExtendedRetreat(e, target, dt)
+            : this.tacticalAdvanceRogueRegroup(e, target, dt, covering);
           if (e.returning || !e.aggro) continue;
-          if (covering) this.enemyWithdrawalCastPosition(e);
+          if (extendedCover) {
+            // Traveling remains authoritative while its cast timer advances.
+          } else if (covering) this.enemyWithdrawalCastPosition(e);
           else if (held) {
             if (['travel', 'escape', 'anchored'].includes(this.tacticalRogueRegroup(e)?.phase))
               this.enemyWithdrawalAction(e, target, scriptedBossTarget);
@@ -6319,7 +6585,8 @@
           continue;
         }
         if (e.telegraph) {
-          if (e.telegraph.rogueMove && e.telegraph.mobileRogueCast) {
+          if (e.telegraph.rogueMove && e.telegraph.mobileRogueCast &&
+              this.tacticalRogueRegroup(e)?.phase !== 'extended') {
             // Cast preparation does not create an extra strike or freeze the
             // elite actor. Reuse ordinary collision-aware, leash-bounded travel.
             const castTarget =
@@ -6556,6 +6823,7 @@
         this.tacticalClearThreat(e);
         this.tacticalClearBurst(e);
         this.tacticalClearRogueRegroup(e);
+        if (e.form === 'ringleader') this.tacticalRetireEmergencyGuards(e);
         this._tacticalScatterLeash?.delete(e.id);
         this._tacticalRepositions?.delete(e.id);
         delete e.rogueDustCoverUntil;

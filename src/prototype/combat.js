@@ -364,7 +364,7 @@
               ally.hp > 0 &&
               !ally.neutral &&
               !ally.returning &&
-              !['travel', 'escape'].includes(this.tacticalRogueRegroup(ally)?.phase) &&
+              !['travel', 'escape', 'extended'].includes(this.tacticalRogueRegroup(ally)?.phase) &&
               dist(ally, e) <= radius,
           )
           .sort((a, b) => dist(a, e) - dist(b, e) || a.id.localeCompare(b.id));
@@ -407,7 +407,7 @@
             ally.hp > 0 &&
             !ally.neutral &&
             !ally.returning &&
-            !['travel', 'escape'].includes(this.tacticalRogueRegroup(ally)?.phase) &&
+            !['travel', 'escape', 'extended'].includes(this.tacticalRogueRegroup(ally)?.phase) &&
             dist(ally, e) <= R.tacticalFoundation.supportRadius + 35,
         ).length;
       }
@@ -711,11 +711,12 @@
         if (!piercing) amount *= this.snapshotBossIncomingFactor(e);
         // All hero/companion damage sources use this same resolver. This
         // reduction is exclusive to active travel; it ends on arrival or abort.
-        if (
-          !piercing &&
-          ['thinking', 'travel', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase)
-        )
-          amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
+        if (!piercing) {
+          const retreat = this.tacticalRogueRegroup(e)?.phase;
+          if (retreat === 'extended') amount *= 0.35;
+          else if (['thinking', 'travel', 'escape'].includes(retreat))
+            amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
+        }
         if (!piercing) amount = this.tacticalCompressDamage(e, amount);
         // Existing Royal Tax shields absorb first. A hit wholly stopped by
         // that shield does NOT count as another qualifying taxation hit.
