@@ -67,7 +67,7 @@ function inspectCombinedTree(tree,pr){
       renderer.includes('for (const projectile of game.s.projectiles) drawProjectile(projectile);'),
   };
   if(pr===471){
-    contracts.effectDiagnosticsRetained=renderer.includes('effectRecorder?.draw(game);') &&
+    contracts.effectDiagnosticsRetained=renderer.includes('effectRecorder.draw(game);') &&
       renderer.includes('effectRecorder?.painted(f);') &&
       renderer.includes('const warningFrameShapes = new Map();');
     contracts.firstPaintProtectionRetained=renderer.includes('function firstPaintEssential(f)') &&
