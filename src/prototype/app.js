@@ -4576,6 +4576,7 @@
   function startChargeClock() {
     if (!charge || charge.started !== null) return false;
     syncPartyChargeClock();
+    if ((game.hero.chargedCd?.[charge.slot - 1] || 0) > 0) return false;
     if (!game.beginPartyCharge(game.hero, charge.slot)) return false;
     charge.started = game.partyChargeState(game.hero).started;
     // Record which protected encounters were active at the instant charging began.
@@ -4600,8 +4601,21 @@
       return false;
     }
     if (charge.started !== null || !activePlay()) return false;
+    // A tap remains available during charged-only cooldown. A true hold
+    // queues Charged; it does not force a ready normal skill to wait.
+    if (!charge.autoRelease && (game.hero.chargedCd?.[charge.slot - 1] || 0) > 0 &&
+        game.partyChargeNow() - charge.pressedAt >= queueInputRule().holdSeconds) {
+      const request = charge;
+      beginQueuedInput(request, request.source, request.pointerId);
+      request.queued = request.autoRelease = request.charged = true;
+      request.source = 'queued';
+      request.pointerId = null;
+      queuedCharges.set(request.slot,request);
+    }
     if (charge.autoRelease && (!queuedInputReady(charge) || !charge.charged)) return false;
-    if (game.hero.cd[charge.slot - 1] <= 0 && game.partyChargeRecovery(game.hero) <= 0)
+    if (game.hero.cd[charge.slot - 1] <= 0 &&
+        (game.hero.chargedCd?.[charge.slot - 1] || 0) <= 0 &&
+        game.partyChargeRecovery(game.hero) <= 0)
       return startChargeClock();
     return false;
   }
@@ -4611,7 +4625,8 @@
       return {
         slot: request.slot,
         charged: request.charged,
-        ready: game.hero.cd[request.slot - 1] <= 0,
+        ready: game.hero.cd[request.slot - 1] <= 0 &&
+          (!request.charged || (game.hero.chargedCd?.[request.slot - 1] || 0) <= 0),
         charging: charge === request && request.started !== null,
         color: request.charged ? '#f6d77a' : '#9dc6dd',
       };
@@ -4653,7 +4668,9 @@
         progress: 0,
         ready: false,
         waiting: true,
-        cooldown: Math.max(game.hero.cd[charge.slot - 1], game.partyChargeRecovery(game.hero)),
+        cooldown: Math.max(game.hero.cd[charge.slot - 1],
+          charge.charged ? (game.hero.chargedCd?.[charge.slot - 1] || 0) : 0,
+          game.partyChargeRecovery(game.hero)),
         cost,
         enoughMana,
         targetId: charge.targetId ?? null,
@@ -4750,9 +4767,16 @@
     if (!canChargeSlot(slot) || !activePlay() || !rank || game.peace) return false;
     syncPartyChargeClock();
     if (queuedCharges.has(slot)) {
-      beginQueuedInput(queuedCharges.get(slot), source, pointerId);
-      updateHUD();
-      return true;
+      // A pending charged request cannot monopolize a ready Tap.
+      if (game.hero.cd[slot - 1] <= 0 &&
+          (game.hero.chargedCd?.[slot - 1] || 0) > 0) {
+        if (charge?.slot === slot) cancelCharge(false);
+        else queuedCharges.delete(slot);
+      } else {
+        beginQueuedInput(queuedCharges.get(slot), source, pointerId);
+        updateHUD();
+        return true;
+      }
     }
     const queued = game.hero.cd[slot - 1] > 0 || game.partyChargeRecovery(game.hero) > 0;
     if (!queued && charge) cancelCharge(true, true);
@@ -4873,7 +4897,8 @@
     if (charge.started === null) {
       const quickTap =
           !charge.queued && game.partyChargeNow() - charge.pressedAt < chargeTapSeconds(),
-        remaining = Math.max(game.hero.cd[slot - 1], game.partyChargeRecovery(game.hero));
+        remaining = Math.max(game.hero.cd[slot - 1],
+          game.hero.chargedCd?.[slot - 1] || 0,game.partyChargeRecovery(game.hero));
       cancelCharge();
       if (quickTap) {
         const cast = activePlay() && game.cast(slot, undefined, false);
@@ -4962,6 +4987,7 @@
       (request) =>
         queuedInputReady(request) &&
         game.hero.cd[request.slot - 1] <= 0 &&
+        (!request.charged || (game.hero.chargedCd?.[request.slot - 1] || 0) <= 0) &&
         game.partyChargeRecovery(game.hero) <= 0,
     );
     if (ready) charge = ready;
@@ -4992,6 +5018,7 @@
       updateHUD();
       return;
     }
+    if ((game.hero.chargedCd?.[charge.slot - 1] || 0) > 0) return;
     const state = chargePresentation();
     if (!charge || !state || state.state === 'waiting' || state.state === 'charging') return;
     const slot = charge.slot,
@@ -6053,6 +6080,8 @@
     cancelNavigationButton.setAttribute('aria-label', tr('Cancel navigation'));
     updateCriticalNotice();
   }
+  // Idle probes are rate-limited but successful basic attacks keep native cadence.
+  let nextAutoBasicProbeAt = 0;
   let emergencyShown = false;
   // Preserve the abnormal-session marker through a critical freeze, even if
   // a delayed blur/pagehide event eventually fires during the shutdown.
@@ -6245,15 +6274,15 @@
       releaseQueuedCharge();
       if (
         game.s.mode !== 'developer' &&
-        (x || y || was.order) &&
-        charge?.slot !== 1 &&
+        true &&
         game.hero === movingHero &&
         PrototypeRules.movementBasicClasses[movingHero.class] &&
         game.zoneId === was.zone &&
         game.s.statistics.deaths === was.deaths &&
-        Math.hypot(movingHero.x - was.x, movingHero.y - was.y) > 0.25
+        game.hero.basicCd <= 0 &&
+        now >= nextAutoBasicProbeAt
       )
-        game.castMovementBasic();
+        nextAutoBasicProbeAt = game.castMovementBasic() ? now : now + 100;
       if (
         game.hero === movingHero &&
         game.zoneId === was.zone &&
