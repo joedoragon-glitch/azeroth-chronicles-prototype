@@ -68,7 +68,8 @@ async function capture(page,backend){
       graphics=Prototype.experimentalGraphics,rect=world.getBoundingClientRect();
     if(!world.getContext('2d')||rect.width<300||rect.height<300)
       throw Error('World backing Canvas or viewport missing');
-    const worldPt=r.world(rect.width*.68,rect.height*.48);
+    // Keep the coin clear of the retained Paused label centered at 65%/45%.
+    const worldPt=r.world(rect.width*.74,rect.height*.66);
     const fixture={id:'art321-visual-coin',zone:g.zoneId,x:worldPt.x,y:worldPt.y,gold:1};
     const screen=r.screen(fixture);
     const x=rect.left+screen.x,y=rect.top+screen.y;
@@ -83,7 +84,8 @@ async function capture(page,backend){
       sceneActors:graphics.sceneMetrics?.actors??null,
       textureSources:graphics.sceneMetrics?.textureSources??null,
       viewport:win,worldBacking:{width:world.width,height:world.height},
-      screen:{x,y},clip,fixture
+      screen:{x,y},clip,fixture,
+      pauseOverlayAlpha:world.getContext('2d').getImageData(12,12,1,1).data[3]
     };
   });
   assert.equal(info.mode,backend,'Capture must come from the requested actual backend');
@@ -91,6 +93,9 @@ async function capture(page,backend){
     assert.equal(info.phase,'confirmed','WebGL must be retained and confirmed');
     assert(info.sceneActors>0&&info.textureSources>0,'GPU scene did not draw actors/textures');
   }
+  if(backend==='webgl2')
+    assert(info.pauseOverlayAlpha>=80,
+      'Pixi Canvas overlay must retain the same paused-screen tint as Canvas 2D');
   const before=path.join(out,backend+'-empty-crop.png');
   const after=path.join(out,backend+'-coin-crop.png');
   const full=path.join(out,backend+'-coin-full.png');
@@ -100,11 +105,16 @@ async function capture(page,backend){
   await page.screenshot({path:before,clip:info.clip,animations:'disabled'});
   await page.evaluate((object)=>{
     Prototype.game.s.loot.push(object);
-    // Full Canvas uses its native draw; Pixi keeps its rendered world and
-    // the renderer only paints the transparent cue overlay.
+    // The Canvas path can be redrawn synchronously. Pixi owns a SEPARATE
+    // scene and runs during the game's paused idle renderer cadence.
     Prototype.renderer.draw();
   },info.fixture);
   try{
+    if(backend==='webgl2')
+      await page.waitForFunction((previous)=>
+        Prototype.experimentalGraphics.mode==='webgl2' &&
+        Prototype.experimentalGraphics.sceneMetrics.actors===previous+1,
+        info.sceneActors,{timeout:30000});
     await page.screenshot({path:after,clip:info.clip,animations:'disabled'});
     await page.screenshot({path:full,animations:'disabled'});
     const pixels=await compareImages(before,after);
@@ -113,6 +123,7 @@ async function capture(page,backend){
     return {
       backend,zone:info.zone,simulationTime:info.time,hero:info.hero,
       zoom:info.zoom,viewport:info.viewport,worldBacking:info.worldBacking,
+      pauseOverlayAlpha:info.pauseOverlayAlpha,
       gpuActors:info.sceneActors,textureSources:info.textureSources,
       screen:info.screen,clip:info.clip,pixels,
       images:[before,after,full].map(file=>({
@@ -154,6 +165,8 @@ async function start(){
       const canvas=await capture(page,'canvas2d');
       assert(canvas.pixels.changedPixels>25&&canvas.pixels.pixelDifference>2000,
         'Canvas Crown coin must change real composed screenshot pixels');
+      // Both renderers must now draw real Crown loot; the original baseline
+      // for Pixi was exactly zero changed pixels at the same camera and state.
       await page.locator('#menu-button').click();
       await page.getByRole('button',{name:'Game and settings',exact:true}).click();
       await page.getByRole('button',{name:'Screen and performance',exact:true}).click();
@@ -172,6 +185,8 @@ async function start(){
       await page.evaluate(()=>Prototype.closeMenu());
       await page.waitForFunction(()=>document.querySelector('#modal').hidden);
       const pixi=await capture(page,'webgl2');
+      assert(pixi.pixels.changedPixels>25&&pixi.pixels.pixelDifference>2000,
+        'Pixi Crown coin must visibly change actual composed frame pixels');
       assert.equal(canvas.zone,pixi.zone);
       assert.equal(canvas.zoom,pixi.zoom,'Camera zoom changed across renderer captures');
       assert.deepEqual(canvas.viewport,pixi.viewport);
