@@ -42,7 +42,7 @@
     ],
     mage: [
       ['damage', 'damage'], ['slowDuration', 'slowDuration'],
-      ['damage', 'silenceDuration'], ['vulnerabilityDuration', 'vulnerabilityDuration'],
+      ['cooldownDebt', 'silenceDuration'], ['vulnerabilityDuration', 'vulnerabilityDuration'],
       ['pushDistance', 'pushDistance'], ['slowDuration', 'slowDuration'],
       ['damage', 'damage'], ['damage', 'vulnerabilityDuration'],
     ],
