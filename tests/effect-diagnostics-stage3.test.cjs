@@ -174,9 +174,10 @@ let fullSceneDifference = 0;
 }
 console.log('STAGE3 FULL CANVAS natural Paladin cast changed RGB pixels=' + fullSceneDifference);
 
-// Controlled missed-draw reproduction using an actual game-cast cue and the
-// existing renderer.update BEFORE draw. This deliberately starves draw calls,
-// not a measurement of how often real adaptive skipping behaves on hardware.
+// Stage 4 regression of the Stage 3 missed-draw reproduction. Under the same
+// forced draw starvation, the original first eligible scheduled draw can paint
+// an essential cue; the renderer does not request an additional draw.
+// This is not a mobile hardware performance measurement.
 const starvation = [];
 for (const rate of [20, 30, 60]) {
   const { g, e } = arena('paladin');
@@ -196,9 +197,13 @@ for (const rate of [20, 30, 60]) {
   renderer.draw();
   const report = renderer.effectDiagnosticsReport();
   const row = report.identities.find((r) => r.id === 'hero/paladin/1/normal:cast');
-  assert.equal(row.expiredWithoutDraw, 1, rate + ' Hz withheld draw not identified');
-  assert.equal(row.painted, 0, 'should not mark expired, never painted cue as painted');
-  starvation.push({ hz: rate, withheldCallbacks: intervals, expiredBeforeFirstPaint: row.expiredWithoutDraw });
+  assert.equal(row.expiredWithoutDraw, 0, rate + ' Hz essential cue lost before first draw');
+  assert.equal(row.painted, 1, 'scheduled first draw must paint the protected cue');
+  renderer.update(1 / rate);
+  assert.equal(renderer.metrics().transientEffects, 0,
+    'protected cue must expire after its one first-paint opportunity');
+  starvation.push({ hz: rate, withheldCallbacks: intervals,
+    rescuedFirstPaint: row.painted, extraScheduledDraws: 0 });
 }
 console.log('STAGE3 STARVATION controlled scheduling ' + JSON.stringify(starvation));
 
@@ -221,8 +226,8 @@ console.log('STAGE3 STARVATION controlled scheduling ' + JSON.stringify(starvati
     cues.length + '; overflowDropped=' + dropped + '; critical heal retained=true');
 }
 
-// Actual status painter: adding fourth/fifth statuses must produce *no*
-// additional pixel changes under today's explicit three-icon cap.
+// Stage 4: a compact +N marker must reveal the otherwise hidden status stack
+// while preserving the same three per-enemy marker slots.
 {
   const { g, e } = arena('mage');
   g.s.time = 5;
@@ -237,9 +242,9 @@ console.log('STAGE3 STARVATION controlled scheduling ' + JSON.stringify(starvati
   e.slow = 3;
   e.testSilenced = true;
   const allFive = make();
-  assert(firstThree.equals(allFive),
-    'adding fourth/fifth status unexpectedly changes three-slot painter');
+  assert(!firstThree.equals(allFive),
+    'Silence/Slow priority and overflow marker must change the three-slot image');
   assert(firstThree.some((n, i) => i % 4 === 3 && n > 0));
-  console.log('STAGE3 STATUS all five active on enemy; first-three and five-status pixels identical=true');
+  console.log('STAGE4 STATUS all five active; prioritized glyphs and overflow visibly differ=true');
 }
 console.log('PASS Stage 3 natural producer-to-pixel and opt-in queue/skip/stress investigation');
