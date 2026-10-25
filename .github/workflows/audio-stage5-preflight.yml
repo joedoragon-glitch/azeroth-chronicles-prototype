@@ -25,6 +25,8 @@ jobs:
           cache: npm
       - name: Install locked build dependencies
         run: npm ci --ignore-scripts
+      - name: Prepare pinned same-origin PixiJS asset for existing offline fixtures
+        run: node scripts/vendor-pixi.cjs --ensure
       - name: Stage 5 inventory-only report (release remains blocked)
         run: node tests/audio-stage5-release-preflight.test.cjs
       - name: Recorded audio packaging, hash and offline cache regression
