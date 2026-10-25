@@ -46,8 +46,10 @@
       ['pushDistance', 'pushDistance'], ['slowDuration', 'slowDuration'],
       ['damage', 'damage'], ['damage', 'vulnerabilityDuration'],
     ],
+    // Hawk damages the legal contact even if no retreat is active. Its crit
+    // therefore strengthens existing damage; interruption rules stay unchanged.
     ranger: [
-      ['damage', 'retreatLockDuration'], ['slowDuration', 'slowDuration'],
+      ['damage', 'damage'], ['slowDuration', 'slowDuration'],
       ['healAmount', 'healAmount'], ['hasteDuration', 'hasteDuration'],
       ['damage', 'slowDuration'], ['pushDistance', 'pushDistance'],
       ['damage', 'slowDuration'], ['damage', 'damage'],
