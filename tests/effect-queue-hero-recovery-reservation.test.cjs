@@ -77,6 +77,33 @@ assert.deepEqual(withoutProtected.map(f => f.source),
   high.slice(-40).map(f => f.source),
   'existing non-player overflow semantics changed');
 
+// Stage 4 established that this NORMAL Paladin area-skill cast stage is
+// deliberately blank: the state/area owner paints it later. A saturated
+// queue should never sacrifice meaningful high-priority work just to hold
+// that silent cast-stage receipt.
+const silent = {
+  type: 'heroSkill', class: 'paladin', slot: 5, charged: false,
+  stage: 'cast', life: 0.22, max: 0.22, priority: 4,
+};
+const silentBurst = check([], [...high, silent], false, false,
+  'deliberately silent area cast under high-priority pressure');
+assert.equal(silentBurst.some(f => f === silent), false,
+  'intentionally silent cast stole a reserved hero slot');
+assert.deepEqual(silentBurst.map(f => f.source),
+  high.slice(-40).map(f => f.source),
+  'silence guard changed baseline high-priority survival');
+
+// Hostile healing already has its own recipient/cue treatment; do not
+// prioritize it as PLAYER recovery under a high-priority burst.
+const hostile = {
+  type: 'heal', actor: 'enemy', target: 'hostile',
+  x: 1400, y: 1700, life: 0.55, max: 0.55, priority: 4,
+};
+const hostileBurst = check([], [...high, hostile], false, false,
+  'hostile recovery retains ordinary priority');
+assert.equal(hostileBurst.some(f => f === hostile), false,
+  'hostile recovery was incorrectly given the protected player slot');
+
 // Low-priority hit bursts already preserved real hero/heal; no regression.
 const low = Array.from({ length: 100 }, (_, i) => ({
   type: 'impact', source: 'low-' + i, x: 1400 + i, y: 1700,
