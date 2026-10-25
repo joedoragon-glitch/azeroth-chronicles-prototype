@@ -296,6 +296,22 @@
                 next.criticalExecution = receipt;
           }
         }
+        // The original three Evapotranspiration ground warnings are one
+        // activation. Roll at real first impact; later marks inherit the same
+        // frozen level. Steam vapor ticks are separate native consequences.
+        if (a.dreadMechanic === 'steam' && a.captainSkill &&
+            a.captainProfile === 'supply-crown' && a.index === 6 &&
+            a.stage === 1 && a.kind === 'circle' && !a.criticalExecution) {
+          const receipt = this.worldCriticalAction(e, 'world/captain/supply-crown/6');
+          if (receipt) {
+            a.criticalExecution = receipt;
+            for (const next of e.sequence || [])
+              if (next.captainSkill && next.captainProfile === 'supply-crown' &&
+                  next.index === 6 && next.dreadMechanic === 'steam' &&
+                  next.kind === 'circle' && next.stage > 1)
+                next.criticalExecution = receipt;
+          }
+        }
         // Explicit specialist release owner, after the real cone warning.
         // The original direct contact may crit; delegated vapor-over-time
         // and its Slow remain wholly native and never carry this receipt.
