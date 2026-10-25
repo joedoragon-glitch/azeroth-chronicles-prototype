@@ -93,6 +93,10 @@ for (const kind of ['captain', 'boss', 'field-captain']) {
   g.updateEnemies(7);
   near(source.supportHealCd, 0, 'ordinary clock recovered in seven seconds');
   assert(!leader.supportHeal, 'leader must not receive seven-second recast: ' + JSON.stringify({ sourceCd: source.supportHealCd, sourceAggro: source.aggro, leaderAggro: leader.aggro, heal: leader.supportHeal, time: g.s.time }));
+  // Isolate the per-source leader clock from the live AI: a freely available
+  // ordinary cast can automatically heal this leader at the ten-second tick,
+  // consuming the very opportunity the manual assertion intends to test.
+  source.supportHealCd = 4;
   g.updateEnemies(3);
   // Only test the per-source leader clock here. A long world update can put an
   // actor into ordinary return/aim/motion, which blocks the *action* even
