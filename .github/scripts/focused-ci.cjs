@@ -178,7 +178,9 @@ function selectTests(changed, exists = (file) => fs.existsSync(path.join(root, f
     let covered = false;
     // One explicitly changed Pixi acceptance test may run as a focused
     // browser smoke. Never select an entire browser matrix by subsystem.
-    if (file === TEST + 'pixi-renderer-browser.test.cjs') {
+    if (file === TEST + 'pixi-renderer-browser.test.cjs' ||
+        file === TEST + 'frame-rate-browser.test.cjs') {
+      // Two explicit narrow Chromium acceptance files; never a browser matrix.
       if (exists(file)) chosen.add(file);
       covered = true;
     }
@@ -233,14 +235,16 @@ function run(
   paths,
   invoke = (file) => {
     const pixiBrowser = file === TEST + 'pixi-renderer-browser.test.cjs';
+    const narrowBrowser = pixiBrowser || file === TEST + 'frame-rate-browser.test.cjs';
     const result = cp.spawnSync(process.execPath, [path.join(root, file)], {
       cwd: root,
       stdio: 'inherit',
       // A single tested Chromium renderer journey, not the global browser suite.
-      env: pixiBrowser
-        ? { ...process.env, BROWSER_ENGINE: 'chromium', REQUIRE_WEBGL2: '1' }
+      env: narrowBrowser
+        ? { ...process.env, BROWSER_ENGINE: 'chromium',
+            ...(pixiBrowser ? { REQUIRE_WEBGL2: '1' } : {}) }
         : process.env,
-      timeout: pixiBrowser ? 240000 : undefined,
+      timeout: narrowBrowser ? 240000 : undefined,
     });
     return result.status === 0;
   },
