@@ -64,9 +64,15 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
 {
   const { g, enemies } = arena('mage', 3);
   assert(g.cast(1, enemies[0].id, true));
+  assert.equal(g.effects.filter(f => f.type === 'hit').length, 0, 'no instant corridor damage');
+  assert.equal(g._heroSkillEffects?.[0]?.kind, 'wide-beam', 'charged corridor advances over time');
+  for (let i = 0; i < 10 && g._heroSkillEffects.length; i++) {
+    g.s.time += 0.1;
+    g.advanceHeroSkillEffects(0.1);
+  }
   const beamHits = g.effects.filter(f => f.type === 'hit');
-  assert.equal(beamHits.length, enemies.length, 'beam hits each line enemy exactly once');
-  assert.equal(g._heroSkillEffects?.length || 0, 0, 'single beam event, no extra pulses');
+  assert.equal(beamHits.length, enemies.length, 'beam hits each line enemy exactly once on arrival');
+  assert.equal(g._heroSkillEffects?.length || 0, 0, 'single traveling beam, no extra pulses');
 }
 
 {
