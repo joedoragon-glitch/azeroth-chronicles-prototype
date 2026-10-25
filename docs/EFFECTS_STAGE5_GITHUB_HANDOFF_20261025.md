@@ -1,113 +1,47 @@
-# Azeroth Chronicles — GitHub-only continuation and Stage 5 entrypoint
+# Effects PR #471 — review and release handoff
 
-**Date:** 25 October 2026  
-**Repository:** [joedoragon-glitch/azeroth-chronicles-prototype](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype)  
-**Workstream:** effect visibility, performance-safe instrumentation and presentation correction  
-**Single candidate PR:** [#471 — opt-in developer diagnostics, verified visibility and bounded corrections](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/471)  
-**Branch:** `feature/dev-effect-tracing-stage2-20261025`  
-**Verified Stage 4 source head, before this handoff:** `d4f2ae2f4b203e1161eb4c83eed18bd5274872cb`  
-**Pinned main/base as of handoff:** `e3c78266b28f3325d2afdcb76ae849fcff306deb`  
-**State:** PR #471 open, **draft, unmerged, undeployed**. Stage 4 implemented; Stage 5 **automated browser and menu/export acceptance passed** on code/test commit `9782970d1af25261b6b5386759ac5d28c780dcc0` ([run 40222498065](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40222498065), 24 focused suites). **Actual-device/thermal performance acceptance and owner release approval are still NOT granted.** This handoff was originally committed before Stage 5 began and was refreshed afterward with the completed automated evidence.
+**Status:** Focused effects candidate. **Scope frozen.** This is the **single current instructions document** for [draft PR #471](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/471). All other October 25 notes were consolidated in [technical evidence](EFFECTS_PR471_VERIFICATION_20261025.md) or are preserved in [Git history before housekeeping](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/tree/07530ef5355aa82769b511778a62cb0e116885c0/docs). Old stage numbers, work plans and cross-PR audit snapshots are **not active instructions**.
 
-> **New-chat instruction:** This file and linked repository documents are the durable source of truth. Do not rely on previous conversation context, local attachments or a remembered model summary. Fetch **current GitHub state first**, including the latest main SHA, PR #471 head/diff, checks, any ongoing related PRs, then reconcile this handoff with the live repository before acting.
+## Decision in one paragraph
 
-## Most recent post-handoff continuation — Stage 5.1–5.2 / Phase A
+The original aim was to investigate and improve essential combat-effect visibility at low FPS without replacing existing optimization. That work has a bounded implementation and focused automated proof. **Stop adding feature stages, synthetic matrices and integration workflows to this PR.** Finish only independently reproduced regressions in its five changed runtime files, then review the candidate through the normal PR/release process. Cross-stream conflict in another *draft* is not a #471 acceptance failure.
 
-The original Stage 5 automated release-readiness gate below **remains valid but is not the end of the draft's work**. Later work has advanced **only the audit/test candidate**, not published gameplay:
+## Shipped-on-merge candidate — what changes
 
-- [Stage 5.1 warning prominence and resource audit](EFFECT_WARNING_PROMINENCE_PERFORMANCE_AUDIT_20261025.md): verified warning fill/outline and actor-caption layering, measured 11 real boss first-telegraph footprints in a CI-native observational test; no warning restyle, GPU device claim or changed hit geometry.
-- [Stage 5.2 quality/FPS reconciliation](EFFECT_GRAPHICS_TIERS_FPS_RECONCILIATION_20261025.md): source-confirmed **Auto 20–30 FPS default**, separate manual 20/30/60 and Auto 30–60, adaptive skip/emergency protections, unchanged **40** transient/ **3 per enemy** / **24 enemies** budgets, and existing optimized switch's limited effect on decoration. Owner's **Ultra / Balanced default / Performance** quality direction remains a *proposal*, with **no new selector, quality filtering or changes to FPS policy**.
-- **Phase A first actual source test:** [commit `93ca6688`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/93ca6688bfe2a21e44979f32b4efc5f699a79e6e), [exact-head focused CI 40226243579](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40226243579) **passed 25 files, offline-ready build; deployment skipped**. Real Paladin first-cast paint stayed alpha-positive with optimized false/true and reduced motion false/true; its coverage was **89 pixels** normal motion and **78 pixels** reduced motion for either optimized setting in this isolated native sample. Do not generalize to all spells/devices or claim a quality/performance improvement.
+- **Opt-in developer effects recorder:** Start/Stop/Clear in Developer Mode's Screen and performance controls, bounded in memory, exported inside the existing playtest JSON. Nothing sampled or persisted in normal gameplay. Counts document painter attempts, **not proof of visible pixels**.
+- **Essential cue first-paint grace:** Up to **0.12 simulated seconds** of bounded eligibility for a narrow set of hero effects otherwise expiring between permitted draws. No new frame request or change to FPS/skip policy. Deliberately blank cast stages remain blank.
+- **Combat status legibility:** Silence, Taunt and Slow take priority; selected target, boss and captain status-bearing actors get precedence. At most **3 status positions** on each of **24 enemies**; a small +N glyph uses an existing position for overflow.
+- **Warning geometry reuse:** Share current enemy attack polygon construction between immediately adjacent fill/outline painting in the *same draw*. Includes Dark Lord protected-side sector and both Canvas and experimental Pixi Canvas overlay. No inter-frame cache, collision change or warning omission.
+- **Transient queue admission:** Still **40 total effects**; only when already overloaded, preserve at most one recent visible hero cue and one player/ally recovery. Deliberately silent normal casts and hostile heals are not protected. Visible Paladin normal Skills 3/4 were reconciled against real Canvas ink.
+- **Minor Mage finisher ornament:** The existing optimization reduces optional spark/streak drawing while keeping the advancing arc and real combat identity.
 
-**Next safe independent phase:** extend Phase A *without production changes* to actual 20/30/60 FPS-preference and mixed crowded warning/impact/actor-label same-scene comparators; classify presentation-only protected identities before any tier filtering; preserve source and GPU/physical-device proof distinctions. Record true passed head CI after the documentation commit. Do not merge, deploy, mark ready, modify parallel PRs, change mandatory telegraph geometry, disable hero cues or lift budgets without approval.
+These are candidate changes in this draft, **not a claim they are live on GitHub Pages**. No Ultra/Balanced/Performance quality-menu implementation and no rewrite of existing Off/Auto/On optimization.
 
-## 1. Operating requirements — nonnegotiable
+## What has actually been checked
 
-1. Azeroth Chronicles is a **multi-file GitHub Pages/PWA**. Separate JS/CSS/images/audio/data/assets are fully supported. Do **not** resurrect the old portable-single-HTML constraint; CI actively protects the multi-file architecture.
-2. No changes to normal/Nightmare player gameplay through background collectors, timers, logging loops, pixel readbacks, polling, network diagnostics or saved-game telemetry. Developer effect recording must require **explicit manual Start**, be **off by default**, be in-memory and bounded, and reuse the existing playtest-report export.
-3. Keep gameplay combat outcomes, projectile contacts/travel, cooldowns, damage, target eligibility, save semantics and FPS/adaptive-frame-skip policies unchanged. Preserve **40 transient effects, 3 status markers/enemy, 24 status-bearing enemies** until real evidence justifies an independently authorized policy change.
-4. All work for this effects candidate stays **inside the existing draft PR #471**. Do not create a parallel PR, merge, publish, deploy or switch it out of draft without explicit owner authorization. Do not modify unrelated draft streams, especially PR #440 (Critical Executions), PR #449 (documentation/test governance), or other active combat/rendering PRs.
-5. Do not assign owner/player homework merely to complete an automated test or repo audit. Run achievable headless/CI/source checks independently. Real-device acceptance and any release/merge decision are **gates**, not permission to infer hardware performance.
-6. Preserve accurate proof labels: `painted` = a painter call, not verified nontransparent pixels; synthetic delay/pressure = controlled failure mechanism, not field frequency; native Canvas pixel evidence does not certify Pixi/WebGL/GPU completion or real devices.
+- 48 native hero cast forms, intentional silent stages, companion/boss warnings and statuses; software Canvas tests at desktop/phone-emulated sizes; simulated 20/30/60 drawing; identity and save-purity assertions.
+- At the pre-housekeeping head `07530ef5355aa82769b511778a62cb0e116885c0`, [focused GitHub Actions #40238780331](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40238780331) **passed 46 affected test files**, reproducible build/syntax; publishing **skipped**. The new housekeeping head requires its **own** final check.
+- Some queue tests inject intentionally exaggerated effect pressure; their passing does **not** establish how often that condition arises naturally.
+- Per-draw pixel fidelity checks do **not** certify actual phone/Chromebook FPS, thermal behavior, readability in a crowded battle, or full Pixi GPU composition.
 
-## 2. Source-of-truth documents (read in this order)
+See [technical verification](EFFECTS_PR471_VERIFICATION_20261025.md) for exact test paths, old evidence archive, and integration limitations.
 
-- **This handoff** — standalone scope, chronology, exact version boundary, next actions and required gates.
-- [Stage 2 recorder specification](EFFECT_DIAGNOSTICS_STAGE2_20261025.md) — opt-in Developer Mode recording, bounded report schema, export controls and no-player-background-work safeguards.
-- [Stage 3 investigation/evidence](EFFECT_DIAGNOSTICS_STAGE3_FINDINGS_20261025.md) — real gameplay event→queue→Canvas-painter evidence, deliberately silent cast stages, observed limits, and clear synthetic-vs-natural caveats.
-- [Stage 4 code changes and constraints](EFFECT_DIAGNOSTICS_STAGE4_FIXES_20261025.md) — first-paint grace, status ordering and overflow indicators, invariants, regression tests and release boundaries.
-- [Stage 5 automated browser/UI acceptance and outstanding release gates](EFFECT_DIAGNOSTICS_STAGE5_ACCEPTANCE_20261025.md) — exact validated commit, passing CI, desktop/phone-emulated Chromium evidence, actual Developer Mode menu/export checks, held-target regression, and physical-device limitations.
-- Source-level inventory generator [`scripts/enemy-vfx-inventory.cjs`](../scripts/enemy-vfx-inventory.cjs), its [regression test](../tests/enemy-vfx-inventory.test.cjs), and visual owner sources `src/prototype/hero-presentation.js`, `src/prototype/enemy-vfx-events.js`, `src/prototype/enemy-vfx-art.js`, `src/prototype/combat-visuals.js`, `src/prototype/renderer.js`, `src/prototype/party-pets.js`, `src/prototype/party.js`, `src/prototype/app.js`.
-- [Focused PR CI workflow](../.github/workflows/focused-deploy.yml) and [focused test selection](../.github/scripts/focused-ci.cjs). Full/browser/production release checks are **not** implied by passing these focused checks.
+## Boundaries: what NOT to do in this PR
 
-### Stage 1 — read-only effect map (source-derived, not live visual certification)
+1. **Do not add a Stage 5.7, another broad audit, another monitoring/checker workflow, or new graphics presets.**
+2. **Do not integrate #440 Critical Executions, #464 real projectile travel, #469 Pixi parity, #470/#472 audio, #458 boss pursuit, or #476 HUD.** Their maintainers own their changes. If joint integration is later needed, validate it separately on the integration candidate; do not make it a release-blocking task for effects alone.
+3. Keep existing game architecture: multi-file GitHub Pages/PWA; Canvas default/Pixi optional; saved Auto 20–30 FPS, adaptive skipping, adaptive resolution, emergency rescue and accessibility reduced-motion preference unchanged.
+4. **Do not describe independent draft CI, historical logs or temporary synthetic fixtures as device-certified gameplay.** No further test expansion absent a specific reproducible regression.
+5. No automatic transition to ready/merge/deploy merely because this document exists.
 
-The initial inventory traced **48 normal/charged hero skill forms (3 × 8 × 2)**, three automatic combo profiles, **22 pet skills across 11 families**, four named Soldier/Archer skills, **54 boss visual IDs, 21 captain attacks and five captain phases**, plus ordinary/night/Rogue projectile/contact/signature identities. The repository inventory script is the canonical programmatic source for enemy IDs (prior source audit counted 264 distinct IDs); recompute against the latest branch rather than trust stale counts. Persistent charge/warning/projectile/hazard/status visuals are direct game-state drawings, not necessarily entries in the short-lived effect queue. Mana Recovery can be intentionally disabled by rules; silent cast handoffs are not automatically defects.
+## Short completion checklist
 
-### Stage 2 — opt-in developer-only effect recorder: implemented
+- [x] Focused implementation and targeted regression coverage.
+- [x] Historical findings retained in Git history; no duplicate active handoffs.
+- [ ] Latest **housekeeping commit**: focused CI and offline-ready build green.
+- [ ] Human visual acceptance where essential telegraphs and hero cues are visible on a **real** phone/Chromebook, or an explicit owner decision to accept that release risk.
+- [ ] Explicit **release/deployment** decision. **Merging this repository's PR into `main` automatically triggers the focused GitHub Pages deployment workflow.** Do not silently conflate PR merge with an unpublished code consolidation.
 
-- Developer-enabled Developer Mode campaign: **Game and settings → Screen and performance → Show performance details → Developer effect diagnostics**. Start/Stop/Clear explicitly; recording OFF initially.
-- Existing **Save and game management → Export playtest report** downloads `Azeroth_Playtest_Report.json`; Developer Mode export includes `performance.effectDiagnostics` (receipts, attempted queue, overflow, filtered, expiredWithoutDraw, painter calls, FPS/adaptive gating, direct-state draws, last 120 callback timings).
-- No separate export, background observer, network recorder, ordinary-player sampling or saved-campaign persistence. Report is bounded in RAM. Do not mistake painter attempts for alpha/pixel proof.
-- Implementation `src/prototype/app.js`, `renderer.js`, `combat-visuals.js`, `enemy-vfx-art.js`; regression `tests/effect-diagnostics.test.cjs`.
+If that final release bar isn't met, **leave this stable draft as a review candidate** rather than grow it; close it only if superseded by a clearly identified successor. Owner permission to merge when ready does not make missing device acceptance data appear.
 
-### Stage 3 — source-backed automated natural evidence: completed
-
-- 48/48 real successful hero casts produced receipts; **33** cast-stage painters produced nontransparent pixels while **15 deliberately silent NORMAL cast stages** rely on projectile/area/chain/displace/etc. See Stage 3 table before reporting a missing effect.
-- 11/11 representative first boss attacks produced alpha-positive VFX; **28** real queued stages. All **22 pet skills** had genuine first/charged skill execution and alpha-positive pet artwork; all **four companion skills** resolved and Triple Shot spawned three moving arrows at 20/30/60 simulation steps/s.
-- Synthetic withheld draws reproduced expiry before first paint on 0.22s cast cue; synthetic 100 hits+heal triggered queue budget 40 and 61 low-priority visual drops while retaining heal; stacked statuses / a 25th status-bearing enemy hid valid mechanics in the old painter. These are **controlled scenarios**, not hardware frequency/latency measurements.
-- Source tests `tests/effect-diagnostics-stage3.test.cjs` and `tests/effect-diagnostics-stage3-party.test.cjs`; Stage 3 passing CI run [40219018261](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40219018261). These tests were **updated** by Stage 4 to assert corrected expectations.
-
-### Stage 4 — constrained corrections: implemented and CI passing
-
-- `src/prototype/renderer.js`: only selected essential visible hero cues gain up to **0.12s** simulated first-paint eligibility beyond their normal lifetime if never handed to a painter; no extra forced frames or indefinite late animation; intentionally blank cast stages excluded.
-- `src/prototype/hero-presentation.js`: Silence/Taunt/Slow outrank older lower-priority status glyphs; **+N** occupies the third marker position when >3 statuses; late hero selected target/boss/captain can replace a lower-priority status-bearing enemy within **24** slots.
-- No changed damage/cooldown/AI/projectile/hitbox/simulation; queue cap **40**; statuses max **3/24**; player diagnostics remain off.
-- Focused validation [run 40221147441](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40221147441) for head `d4f2ae2...`: **20 relevant test files passed**, reproducible build/syntax passed; **Publish focused update skipped**. New `tests/effect-diagnostics-stage4.test.cjs`: 6 rescued first paints, 3 expected bounded expiries, no extra draws, deliberately silent cast unextended, normal mode recorder disabled. These tests are simulated/native Canvas, not physical-device performance claims.
-- **Not fixed intentionally**: transient queue limit/priority policy beyond status selection, natural crowd-related transient drops without critical evidence, and unmeasured performance/visibility on physical devices.
-
-### Stage 5 automated acceptance — completed, release blocked
-
-- The same draft PR added `tests/effect-diagnostics-stage5-browser.test.cjs`, a **single explicitly scoped Chromium browser smoke**, and `tests/effect-diagnostics-stage5-shell.test.cjs`, a production-shell journey through the real Developer Mode Start/Stop/Clear menu and existing JSON export. A narrow focused-CI selector was added only for this one browser smoke; the expensive full/browser matrices remain owner-approved only.
-- **Verified on code/test SHA `9782970d1af25261b6b5386759ac5d28c780dcc0`: 24/24 focused test files passed** ([run 40222498065](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40222498065)); reproducible/offline build passed; deployment skipped. Desktop and phone-sized *Chromium emulation* passed first-paint native-pixel checks in normal/reduced motion at 20/30/60 simulation-step schedules. These are not physical phone measurements.
-- Stage 5 source review also corrected selected-target priority to honor a valid-zone manually held target (`manualHeroTargetId` / `manualHeroTargetZone`) without changing any combat rule; a 25th held target still displaces an ordinary status-bearing enemy within **24**, not 25, markers.
-- **Release remains blocked:** actual hardware CPU/frame pacing, optional Pixi overlay/crowded gameplay, real touch/zoom/reduced-motion legibility, PWA compatibility and owner approval have not been certified. A full or manually approved test suite is not silently authorized by this automated run.
-
-## 3. Stage 5 — next permitted independent work
-
-**The owner authorized continuation if no manual help is necessary, but explicitly did not authorize a merge or deployment.** Do all safe read-only/repo/CI work before requesting a decision.
-
-1. **Re-verify latest GitHub state**: main, PR #471 head/base/diff, checks, open related drafts and scope conflicts. Do not trust this date's SHA after new pushes.
-2. **Pre-release code review** for normal-player CPU overhead and instrumentation isolation (a regular renderer should not instantiate the recorder or sample frames), visibility of developer menu/export, observer lifecycle, first-paint bounds and status prioritization (including late boss/selected target), branch/release packaging, deterministic save purity, and Canvas/Pixi overlay parity. Flag or fix **actual demonstrated** issues on PR #471 only; don't invent runtime performance measurements.
-3. **Run focused regressions and reproducible builds**. If safely available, run a narrow **CI-only headless browser smoke** for Developer Mode UI/export and Canvas/Pixi overlays without deploying a game or modifying runtime player workloads. Existing browser suites include `tests/hero-skills-browser.test.cjs`, `tests/enemy-vfx-browser.test.cjs`, `tests/pixi-renderer-browser.test.cjs`; see repo and assess execution cost/availability first. Do not start a heavyweight unrestricted full-game/browser matrix automatically; repo owner policy reserves comprehensive certification for manual opt-in.
-4. **Create a Stage 5 release-readiness record in GitHub**, including exact tested SHA and workflow URLs, pass/fail/unknown matrix, regressions or outstanding blockers, and a clean handoff for a separate future chat. A passing headless test proves neither natural play frequency nor physical hardware performance.
-5. **STOP BEFORE RELEASE.** Physical-device visual acceptance (especially phone/Chromebook under crowded battle, Pixi/Canvas parity, zoom, reduced motion and device CPU overhead) and final owner approval are still required before merge/deploy. If no accessible device/test report exists, mark **not verified** and explicitly leave the gate open; do not assign the owner immediate homework or pretend this was performed.
-
-## 4. Practical GitHub verification entrypoints
-
-- PR state and files: `GET /repos/joedoragon-glitch/azeroth-chronicles-prototype/pulls/471` and `/pulls/471/files`.
-- Current main: `GET /repos/joedoragon-glitch/azeroth-chronicles-prototype/branches/main`.
-- PR current checks: `GET /repos/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs?branch=feature/dev-effect-tracing-stage2-20261025`, match **current head SHA**.
-- Review `src/prototype/app.js` for menu and export; `src/prototype/renderer.js` for observer, queue/update/draw gate and grace; `src/prototype/hero-presentation.js` for status cap/priority; `tests/effect-diagnostics-*.test.cjs` for proof boundaries.
-- Existing visual packaging uses an **offline multi-file** build; never use a single-HTML portability check to block development.
-
-## 5. Risk register and release decision
-
-| Gate | Last known | Action before release |
-|---|---|---|
-| PR scoped and draft | Verified on 25 October 2026 | Re-verify against GitHub |
-| Focused CI / offline build | **Stage 5 passed: 24 files**, run 40222498065 on code SHA 9782970d… | Check CI for the latest documentation-only head; rerun if source changes |
-| Automatic deployment prevented | Passed: deploy job skipped | Keep draft; don't push main |
-| First-paint bounded, no extra draw | **Native + Chromium desktop/phone-emulated Canvas checks passed** | Actual-device visibility still open |
-| Status priority / 3+24 limit | Passed native Canvas tests | Check overlap/legibility in real screen |
-| 40 transient cap | Preserved | No increase without new evidence |
-| Developer-only recorder | **Actual Developer Mode production-shell UI/export smoke passed**, Stage 5 | Retain Normal/Nightmare isolation; real-device overhead still unknown |
-| Player CPU and physical-device FPS delta | **UNKNOWN / not measured** | Release gate; no assumed performance claim |
-| Actual Pixi/Canvas parity under crowd | **UNKNOWN for this PR's real-device acceptance** | Release gate |
-| Owner approval to merge/deploy | **NOT GIVEN** | Explicit approval required |
-
-### Suggested first message for a new chat
-
-> In `joedoragon-glitch/azeroth-chronicles-prototype`, read the GitHub file `docs/EFFECTS_STAGE5_GITHUB_HANDOFF_20261025.md` on draft PR #471's branch. Read the linked Stage 2–4 GitHub docs, independently fetch the latest main/PR head/checks, then continue only the Stage 5 independent acceptance/readiness work. Do not rely on past chat context, change unrelated PRs, ask me to run tests, merge, or deploy. Preserve the multi-file PWA and player CPU protections. Record any findings and next-chat handoff in GitHub.
-
-**All links and source references in this file are intentionally GitHub-native; a future assistant needs no access to this conversation to proceed.**
+**Stop here.** Future work needs a concrete user-visible defect, separate scope, and owner-directed priority—not another inherited continuation plan.
