@@ -598,8 +598,10 @@
       // These two presentation passes use the same telegraph state within one
       // renderer draw. Reuse only that draw's exact geometry, never a later
       // gameplay tick: moving warnings must still track their live hitboxes.
-      const shapes = frameWarningShapes?.get(a) ?? warningShapes(a, game.attackPatches(a));
-      frameWarningShapes?.set(a, shapes);
+      const frameEntry = frameWarningShapes?.get(a);
+      const patches = frameEntry?.patches ?? game.attackPatches(a);
+      const shapes = frameEntry?.shapes ?? warningShapes(a, patches);
+      if (frameWarningShapes && !frameEntry) frameWarningShapes.set(a, { patches, shapes });
       // Rogue warnings need an identity distinct from ordinary boss attacks:
       // cool outlines for basic disruption, brighter double-width for signature.
       ctx.strokeStyle = a.bossHeal
@@ -626,10 +628,14 @@
       if (a.royalTerritory && a.kind === 'sector') {
         // Opposite geometry is safe from this sector strike, not from
         // all surrounding Crown soldiers or other attacks.
-        const protectedShapes = warningShapes(
-          { ...a, angle: a.protectedAngle },
-          game.attackPatches(a),
-        );
+        // The safe sector must use the very same attack patches as the danger
+        // sector. A moving target still gets a fresh cache on the next draw.
+        let protectedShapes = frameWarningShapes?.get(a)?.protectedShapes;
+        if (!protectedShapes) {
+          protectedShapes = warningShapes({ ...a, angle: a.protectedAngle }, patches);
+          const entry = frameWarningShapes?.get(a);
+          if (entry) entry.protectedShapes = protectedShapes;
+        }
         for (const points of protectedShapes) {
           polygon(ctx, screen, points);
           ctx.fillStyle = '#4c9f6730';
