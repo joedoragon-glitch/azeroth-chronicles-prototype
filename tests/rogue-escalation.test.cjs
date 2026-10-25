@@ -243,3 +243,20 @@ console.log('PASS emergency guards retain ranged combat identity');
     'piercing still bypasses the temporary extended-retreat protection');
 }
 console.log('PASS temporary 65% protection and piercing preserve the combat contract');
+
+{
+  const { c, z, a, add } = encounter();
+  const third = add(1365, 'normal');
+  z.enemies.push(third);
+  assert(!c.tacticalRogueOutnumbered(a), 'three defenders match three opponents numerically');
+  assert(c.tacticalNeedsMoreSupport(a), 'their lower level still makes reinforcement useful');
+  c._tacticalRegroups = new Map([[a.id, {
+    phase: 'anchored', anchor: { x: a.x, y: a.y },
+    holdRemaining: 12, moveUsed: true, recruited: true,
+  }]]);
+  c._tacticalRogueNext = new Map([[a.id, 0]]);
+  c.tacticalAdvanceRogueRegroup(a, c.hero, 0.1);
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'thinking',
+    'equal-sized but lower-level group must keep reasoning beyond its current anchor');
+}
+console.log('PASS equal-sized lower-level monster groups continue the regroup chain');
