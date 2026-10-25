@@ -1080,7 +1080,7 @@
             if (guard) e.royalPrerogativeReadyAt = this.s.time + 18;
             const landed =
               p.effect === 'interrupt'
-                ? this.interruptEnemyAction(victim, p.interruptAction)
+                ? this.interruptEnemyAction(victim, p.interruptAction, p.criticalExecution)
                 : this.damage(
                     victim,
                     p.damage,
