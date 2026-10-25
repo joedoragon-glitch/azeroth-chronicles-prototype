@@ -124,8 +124,8 @@ for (const mode of ['normal', 'nightmare']) {
           const recent = c.tacticalActiveTargetCount(e);
           const eligible = c.tacticalRogueEligibility(e, recent);
           const selected = c.tacticalHighestThreatTarget(e, target) === target;
-          assert.equal(selected, distance <= 360,
-            'actual incoming hit does not waive the independent 360-unit selection gate');
+          assert.equal(selected, distance <= 408,
+            'recent native hit reconciles selection only inside existing 408-unit Rogue reach');
           // A fully healthy equal-level isolated actor does not automatically
           // gain a Rogue action; a wounded actor can reconsider tactics.
           if (!wounded && recent === 1) assert(!eligible, 'solo healthy pressure gate');

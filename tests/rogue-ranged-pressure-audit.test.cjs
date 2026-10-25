@@ -80,7 +80,7 @@ function setup(role, attacker, distance) {
 }
 
 let evaluated = 0;
-let selectionGapCells = 0;
+let reconciledRecentHits = 0;
 for (const role of roles) {
   for (const attacker of attackers) {
     const results = [];
@@ -105,9 +105,9 @@ for (const role of roles) {
       if (distance <= 480)
         assert(levelAdvantage, 'eligible under level disadvantage independent of cast reach');
       const selected = c.tacticalHighestThreatTarget(e, target) === target;
-      const expectedSelected = distance <= role.selection;
+      const expectedSelected = distance <= Math.max(role.selection, role.initiation);
       assert.equal(selected, expectedSelected,
-        role.name + '/' + attacker + '/' + distance + ': current target-selection gate');
+        role.name + '/' + attacker + '/' + distance + ': recent hit selected only within existing Rogue reach');
       const nominallyLegal = distance <= role.initiation;
       const started = c.tacticalRogueMove(e, target);
       assert.equal(started, expectedSelected && nominallyLegal,
@@ -117,7 +117,7 @@ for (const role of roles) {
         assert.equal(c._tacticalRogueLastCast.get(e.id), c.s.time,
           'released two-second cast timestamp is retained');
       }
-      if (!selected && nominallyLegal) selectionGapCells++;
+      if (distance > role.selection && nominallyLegal && selected) reconciledRecentHits++;
       results.push({
         d: distance, pressure, healthySolo, woundedSolo, levelAdvantage,
         selected, nominallyLegal, started,
@@ -130,10 +130,10 @@ for (const role of roles) {
   }
 }
 assert.equal(evaluated, roles.length * attackers.length * distances.length);
-assert(selectionGapCells > 0, 'detect at least one target-selection/nominal-initiation mismatch');
-console.log('PASS read-only Rogue range matrix: ' + evaluated +
-  ' cells; ' + selectionGapCells +
-  ' nominally legal casts blocked upstream; no AI range or balance changes');
+assert.equal(reconciledRecentHits, 27, 'repair the 27 verified recent-hit targeting gaps');
+console.log('PASS Rogue range matrix: ' + evaluated +
+  ' cells; ' + reconciledRecentHits +
+  ' recently hit targets selectable within existing move reach; no reach or eligibility buff');
 
 // The group-pressure gate is separate from distance. Seed an active Archer
 // and Ranger against the same equal-level healthy mob without altering health.
@@ -149,7 +149,23 @@ for (const distance of [350, 400, 450, 480]) {
   assert(c.tacticalRogueEligibility(e, c.tacticalActiveTargetCount(e)),
     'healthy equal-level ordinary target becomes Rogue-eligible with two active attackers');
   const chosen = c.tacticalHighestThreatTarget(e, c.hero);
-  assert.equal(chosen === c.hero, distance <= 360,
-    'two pressure sources do not remove the original distance gate');
+  assert.equal(chosen === c.hero, distance <= 408,
+    'two pressure sources do not extend the authored 408-unit move reach');
 }
-console.log('PASS active two-source pressure is eligible but does not extend threat selection');
+console.log('PASS active two-source pressure is eligible; Rogue move reach remains 408');
+
+
+// Non-attacking and stale attackers must NOT inherit the expanded window.
+// These checks protect the original 360-unit passive/default threat selection.
+for (const role of [roles[0], roles[3], roles[4]]) {
+  const distance = role.name === 'boss' ? 520 : 400;
+  const { c, e, target } = setup(role, 'ranger', distance);
+  assert.equal(c.tacticalHighestThreatTarget(e, target), target,
+    'recent verified ranged damage is selectable within existing move reach');
+  c.s.time += 2.21;
+  assert.equal(c.tacticalHighestThreatTarget(e, target), null,
+    'a stale hit does not extend original target selection');
+  assert.equal(c.tacticalRogueMove(e, target), false,
+    'no new long-distance cast against a merely ordered attacker');
+}
+console.log('PASS expired damage cannot enlarge Rogue selection or passive casts');

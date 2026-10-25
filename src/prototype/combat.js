@@ -297,17 +297,31 @@
         );
       }
       tacticalHighestThreatTarget(e, fallback = this.hero) {
-        const candidates = this.combatTargets().filter(
-          (u) =>
-            u.hp > 0 &&
-            dist(e, u) <=
-              Math.max(
-                e.type === 'boss' ? 500 : 360,
-                this.enemyRanged(e) && this.enemyFort(e) ? this.enemyRangedRange(e) : 0,
-              ) &&
-            this.enemyRangedLine(e, u),
-        );
-        const ledger = this.tacticalThreatSnapshot(e);
+        const ledger = this.tacticalThreatSnapshot(e),
+          now = this.s.time || 0,
+          // Only a real, recent HP hit can expand a Rogue cast's target
+          // selection. An idle or merely ordered ranged actor still uses the
+          // original 360/500 range, so this does not enlarge passive aggro.
+          recentAttackers = new Set(
+            ledger.filter((hit) => now - hit.lastHit <= 2.2).map((hit) => hit.source),
+          ),
+          baseRange = Math.max(
+            e.type === 'boss' ? 500 : 360,
+            this.enemyRanged(e) && this.enemyFort(e) ? this.enemyRangedRange(e) : 0,
+          ),
+          // Match the existing Rogue move's legal reach; do not increase it.
+          moveRange =
+            (e.type === 'boss' ? 500 : e.captain || e.roomCaptain ? 440 : 340) *
+            R.balance.enemySpecialReachMultiplier,
+          candidates = this.combatTargets().filter(
+            (u) =>
+              u.hp > 0 &&
+              dist(e, u) <=
+                (e.aggro && recentAttackers.has(u === this.hero ? 'hero' : u.id)
+                  ? Math.max(baseRange, moveRange)
+                  : baseRange) &&
+              this.enemyRangedLine(e, u),
+          );
         for (const record of ledger) {
           const found = candidates.find((u) => (u === this.hero ? 'hero' : u.id) === record.source);
           if (found) return found;

@@ -91,6 +91,8 @@ for (const mode of modes) for (const cls of ['ranger', 'mage'])
         cls + '/' + charged + '/' + d + ' projectile/effect must deliver contact');
       assert(g.tacticalThreatSnapshot(e).some(hit => hit.source === 'hero' && hit.damage > 0),
         'actual projectile/Skill 1 hit is recorded as real hero pressure');
+      assert.equal(g.tacticalHighestThreatTarget(e, g.hero) === g.hero, d <= 408,
+        'actual Ranger/Mage damage widens selection only up to the existing 408-unit Rogue move');
       legalCasts++;
     }
     console.log('ROGUE_REAL_HERO_SKILL ' + JSON.stringify({
