@@ -1,6 +1,6 @@
 # Captain restorative support — design decisions, implementation draft, and Treasury audit
 
-Status: **draft for review only**. Branch: `feature/captain-healing-independent-idle-20261025`, based on `main` after PR #448 (merge `1312082b4bd5d216c0c2bc641dbaab6c13daf778`). No approval to merge or deploy has been given. This document preserves the director's decisions and separates them from suggested implementation details. Source changes are on this branch; local/CI and device acceptance are **not yet verified**.
+Status: **draft for review only**. Branch: `feature/captain-healing-independent-idle-20261025`, based on `main` after PR #448 (merge `1312082b4bd5d216c0c2bc641dbaab6c13daf778`). No approval to merge or deploy has been given. This document preserves the director's decisions and separates them from suggested implementation details. Source changes are on this branch; local/CI and device acceptance are **not yet verified**. **Canonical ongoing decision-and-change ledger:** [Captain Healing and Treasury Guards, 25 October 2026](CAPTAIN_HEALING_AND_TREASURY_GUARDS_20261025.md). This audit retains the *pre-addition* formation table for historical comparison.
 
 ## Director decisions, 25 October 2026
 
@@ -11,10 +11,10 @@ Status: **draft for review only**. Branch: `feature/captain-healing-independent-
 5. Preserve **no resurrection**, no stacking or overwriting an in-progress recipient heal, line-of-sight/range checks, Silence/action locks, faction exclusions, no treatment of returning/resetting/dead enemies, and healing cancellation on actual encounter cleanup. Engagement transitions alone are not reasons to cancel healing. Timers and pulses remain transient rather than saved in v4.
 6. **Dreadmaw** gets its own assessment: `Grafting` is an authored **restorative area support identity**, separate from the seven attack slots, which include `Nucleus Herd` and `Creep Feeding`. `Brood Call` can provide four living broodlings (three melee, one ranged). Dreadmaw can heal wounded broodlings; the ranged broodling can heal Dreadmaw. `Broodward` gives up to 25% reduction per living owned broodling (100% at four). Fully repairing ordinary broodlings may restore that shield's effectiveness by keeping them alive. Measure this interaction rather than nerfing preemptively.
 7. **Direjaw** should remain formidable. The director explicitly does **not** want nerfs to its newly combined support/phase survivability. `Elastic Rebound` is a separate one-time phase heal: native code triggers at <=55% max HP and adds **50% of maximum HP**, capped at full, plus 20% movement speed. The director recalled a 60% heal; the currently implemented heal is 50% (verify source before suggesting any further adjustment). Keep the one-time phase effect and its interaction with `Silt Pulse` and external ranged-guard healing under review, without lowering it based solely on anticipated difficulty.
-8. **Treasury formations** must be audited individually rather than expanded automatically. Survivability is not just the number of healers but whether a ranged guard remains alive, can reach the captain, can see it, and has a free cast amid attack pressure. The director accepted Dreadmaw's five ranged defenders and considers the existing challenging encounter appropriate. Do not add guardians or redistribute existing ones without a separate evidence-backed decision.
+8. **Treasury formations** must be audited individually rather than expanded automatically. Survivability is not just the number of healers but whether a ranged guard remains alive, can reach the captain, can see it, and has a free cast amid attack pressure. The director accepted Dreadmaw's five ranged defenders and considers the existing challenging encounter appropriate. The director explicitly authorized **two additional ranged posts each** for Scornfang's Greenwood Vale and Direjaw's Flooded Marches Treasury, bringing both from one to three ranged guardians; these posts are now authored on the draft branch. Do not change Dreadmaw or Crag Tyrant formations without another evidence-backed decision.
 9. **Rogue withdrawal** may naturally bring pressured ranged guards into a commander's area. Do not treat starting positions as permanent positions. However, the native selector does *not* yet prioritize the captain: `tacticalRegroupGroups` in `combat.js` sorts by **nearest group** with group size as a tiebreaker, and `tacticalBeginRogueRegroup` route-checks the specific candidate. The claim that all retreating guards preferentially return to Dreadmaw is unproven. Test the emergent behavior before changing retreat targeting.
 
-## Treasury-by-Treasury authored starting roster (excluding summons)
+## Treasury-by-Treasury original authored starting roster (before this draft's two new posts per Vale/March, excluding summons)
 
 Based on `R.treasuryGuardFormations` in `src/prototype/rules.js`; distances are approximate Euclidean distances from the authored captain slot to authored ranged-guard slots, *not* guaranteed runtime travel distances or visibility.
 
@@ -27,7 +27,7 @@ Based on `R.treasuryGuardFormations` in `src/prototype/rules.js`; distances are 
 
 The Frontier Cinder Warlord is a roaming **field captain**, not a fifth Treasury room. It has no authored restorative caster skill; captain-recipient support can still apply to eligible ranged allies in its area.
 
-### Testing needed before guardian changes
+### Testing needed before acceptance of the drafted guardian changes
 
 - Native spawned/current and historical v4 Treasury rosters: actual healer flags/forced roles, captain proximity and line-of-sight after `safe` placement and reconciliation.
 - A wounded idle captain and an idle ranged guardian at initial posts: does the guard move within 350 range (search envelope up to 560), then cast and **complete** a full five-second pulse without aggro?
@@ -39,7 +39,7 @@ The Frontier Cinder Warlord is a roaming **field captain**, not a fifth Treasury
 
 ## Source implementation (current draft branch)
 
-- `src/prototype/rules.js`: draft captain-recipient midpoint tuning, separate from boss restoration baseline.
+- `src/prototype/rules.js`: draft captain-recipient midpoint tuning, separate from boss restoration baseline, **plus two additional ranged zero-reward guardian posts in each of Vale and March**. The new candidate totals are Vale **3**, March **3**, Highlands **3**, Crown **5** ranged guardians.
 - `src/prototype/engine.js`: captain full ordinary-ally area healing, 7s ally cooldown; independent 10s self-cooldown using a transient WeakMap; per-caster 10s leader-recipient protection; idle captain healing pulses/guard approach; preservation of ordinary and boss paths.
 - `tests/enemy-ordinary-heal-balance.test.cjs`, `tests/enemy-cross-species-idle-healing.test.cjs`, `tests/enemy-support-healing.test.cjs`, `tests/captain-healing-independent.test.cjs`: updated and added test cases. Validation results are **not yet recorded**. No new timed physical playtest is claimed.
 
@@ -53,4 +53,4 @@ The Frontier Cinder Warlord is a roaming **field captain**, not a fifth Treasury
 
 ## Change log
 
-- **25 Oct 2026**: Director specified captain full ordinary-ally support and separate self-heal, then clarified that captain treatment and pulses must not depend on engagement. Requested case-by-case guardian availability audit; approved Dreadmaw's existing ranged guardian count and Direjaw's strong survivability. Branch created and source/test work started. GitHub documentation and explicit PR review requested so project memory is not dependent on chat transcripts.
+- **25 Oct 2026**: Director specified captain full ordinary-ally support and separate self-heal, then clarified that captain treatment and pulses must not depend on engagement. Requested case-by-case guardian availability audit; explicitly authorized two added Vale and March ranged guards apiece, approved Dreadmaw's existing five ranged guardians and Direjaw's strong survivability. Branch code/tests and draft [PR #454](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/454) created. GitHub records remain authoritative; tests and deployment are not yet accepted.
