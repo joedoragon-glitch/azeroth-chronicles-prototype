@@ -74,41 +74,13 @@ const root = path.resolve(__dirname, '..'),
         await page.goto(
           'http://127.0.0.1:' + server.address().port + prefix + 'tools/audio/index.html',
         );
-        await page.waitForFunction(() => window.AudioAudition?.audio.recordingManifest).catch(async (error) => {
-          const diagnostics = await page.evaluate(() => ({
-            ready: !!window.AudioAudition,
-            manifest: !!window.AudioAudition?.audio?.recordingManifest,
-            message: document.querySelector('#message')?.textContent,
-            secure: window.isSecureContext,
-            crypto: !!window.crypto?.subtle,
-            scripts: [...document.scripts].map((s) => s.src).slice(-8),
-          }));
-          throw Error('Audio audition initialization failed: ' + JSON.stringify({ diagnostics, pageErrors: errors }) + '\n' + error.message);
-        });
+        await page.waitForFunction(() => window.AudioAudition?.audio.recordingManifest);
         assert.equal(await page.evaluate(() => AudioAudition.audio.ctx), null);
         assert.equal(await page.locator('#boss option').count(), 12);
         const saved = await page.evaluate(() => JSON.stringify(localStorage));
         assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
         await press('#stem-play');
-        await page.waitForTimeout(1500);
-        console.log('Stage 4 first-play observation', await page.evaluate(() => ({
-          message: document.querySelector('#message')?.textContent,
-          state: AudioAudition.audio.ctx?.state,
-          sources: AudioAudition.audio.voices.size,
-          recording: AudioAudition.audio.recordedScore?.id || null,
-          failure: AudioAudition.audio.recordingError,
-          assets: AudioAudition.audio.recordingAssets?.status(),
-        })));
-        await page.waitForFunction(() => AudioAudition.audio.recordedScore?.voices.length === 2).catch(async (error) => {
-          const detail = await page.evaluate(() => ({
-            message: document.querySelector('#message')?.textContent,
-            source: document.querySelector('#source')?.value,
-            stemDisabled: document.querySelector('#stem-play')?.disabled,
-            status: window.AudioAudition?.audio.status(),
-            assetIds: Object.keys(window.AudioAudition?.audio.recordingManifest?.assets || {}),
-          }));
-          throw Error('Diagnostic stem playback did not start: ' + JSON.stringify(detail) + '\n' + error.message);
-        });
+        await page.waitForFunction(() => AudioAudition.audio.recordedScore?.voices.length === 2);
         const initial = await page.evaluate(() => {
           const a = AudioAudition.audio,
             v = a.recordedScore.voices;
