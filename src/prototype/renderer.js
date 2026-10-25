@@ -2140,6 +2140,19 @@
       }
       ctx.restore();
     }
+    // One paint-only pause cue shared by Canvas and the experimental Pixi
+    // overlay. Neither branch owns pause state or simulation timing.
+    function drawPausePresentation() {
+      if (!isPaused()) return;
+      ctx.save();
+      ctx.fillStyle = '#0006';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.font = 'bold 25px system-ui';
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center';
+      ctx.fillText('Paused', canvas.width * 0.65, canvas.height * 0.45);
+      ctx.restore();
+    }
     function render() {
       if (renderLayer === 'overlay') {
         // On the experimental PixiJS path, keep essential native combat cues
@@ -2172,6 +2185,7 @@
         PrototypeCombatVisuals.actorCues?.(ctx, screen, game, spriteHeight);
         targetGuidance();
         drawNavigationRoute();
+        drawPausePresentation();
         finishPhase('effects');
         return;
       }
@@ -2811,14 +2825,7 @@
       PrototypeCombatVisuals.actorCues?.(ctx, screen, game, spriteHeight);
       targetGuidance();
       drawNavigationRoute();
-      if (isPaused()) {
-        ctx.fillStyle = '#0006';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.font = 'bold 25px system-ui';
-        ctx.fillStyle = '#fff';
-        ctx.textAlign = 'center';
-        ctx.fillText('Paused', canvas.width * 0.65, canvas.height * 0.45);
-      }
+      drawPausePresentation();
       finishPhase('effects');
     }
     return {
