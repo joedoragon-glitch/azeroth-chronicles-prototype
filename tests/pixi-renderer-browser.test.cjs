@@ -74,6 +74,82 @@ async function keepPixiTrial(page, phone, checkpoint) {
       JSON.stringify({before: target.graphics, after: result}));
   return result;
 }
+// Real-browser, read-only presentation probe for Art Catalog #321.
+// Uses the production world renderer and the same current Campaign in each mode.
+// A temporary Crown-coin scene fixture lives in this disposable test page only.
+// This is diagnostic pixel evidence, NOT a golden-image approval.
+async function inspectCrownLootPixels(page, expectedMode) {
+  const data = await page.evaluate(() => {
+    const game = Prototype.game, renderer = Prototype.renderer,
+      world = document.getElementById('world'),
+      graphics = Prototype.experimentalGraphics,
+      canvas = world.getContext('2d');
+    if (!canvas) throw Error('Missing actual world Canvas 2D context');
+    const w = world.getBoundingClientRect().width,
+      h = world.getBoundingClientRect().height;
+    if (w < 300 || h < 300) throw Error('Viewport too small to sample live coins');
+    // A world point well away from the hero and outside fixed screen controls.
+    const location = renderer.world(w * .68, h * .48);
+    const marker = 'audit-321-coin-' + Math.round(performance.now());
+    const coin = {
+      id: marker, zone: game.zoneId, x: location.x, y: location.y, gold: 1,
+    };
+    const point = renderer.screen(coin);
+    const ratioX = world.width / w, ratioY = world.height / h;
+    const zoom = Prototype.platform.cameraZoom || 1;
+    const radius = Math.max(18, Math.ceil(16 * zoom * Math.max(ratioX, ratioY)));
+    const left = Math.max(0, Math.floor(point.x * ratioX - radius)),
+      top = Math.max(0, Math.floor(point.y * ratioY - radius)),
+      width = Math.min(world.width - left, radius * 2 + 1),
+      height = Math.min(world.height - top, radius * 2 + 1);
+    if (width < 20 || height < 20) throw Error('Coin test point outside renderer surface');
+    const take = () => {
+      renderer.draw();
+      return canvas.getImageData(left, top, width, height).data;
+    };
+    const before = take();
+    game.s.loot.push(coin);
+    try {
+      const after = take();
+      let changed = 0, alphaChanged = 0, sum = 0;
+      for (let i = 0; i < before.length; i += 4) {
+        const delta = Math.abs(before[i] - after[i]) +
+          Math.abs(before[i + 1] - after[i + 1]) +
+          Math.abs(before[i + 2] - after[i + 2]) +
+          Math.abs(before[i + 3] - after[i + 3]);
+        if (delta >= 32) changed++;
+        if (before[i + 3] !== after[i + 3]) alphaChanged++;
+        sum += delta;
+      }
+      return {
+        mode: graphics.mode, phase: graphics.phase,
+        gpuActors: graphics.sceneMetrics?.actors ?? null,
+        gpuTextures: graphics.sceneMetrics?.textureSources ?? null,
+        point: {x: Math.round(point.x), y: Math.round(point.y)},
+        viewport: {w, h, backingW: world.width, backingH: world.height},
+        pixels: width * height, changed, alphaChanged, pixelDifference: sum,
+        marker, zone: game.zoneId, sampledCoinSource: 'real Campaign.s.loot',
+      };
+    } finally {
+      const index = game.s.loot.indexOf(coin);
+      if (index >= 0) game.s.loot.splice(index, 1);
+      renderer.draw();
+    }
+  });
+  assert.equal(data.mode, expectedMode,
+    'Art Catalog #321 sample must identify its actual rendering backend');
+  assert(data.point.x > 0 && data.point.y > 0 && data.pixels > 400);
+  if (expectedMode === 'webgl2') {
+    assert(data.gpuActors > 0 && data.gpuTextures > 0,
+      'An automatic Canvas fallback is not visual WebGL evidence');
+  } else {
+    assert(data.changed > 25 && data.pixelDifference > 2000,
+      'Real Canvas Crown-coin drawing must alter actual screen pixels');
+  }
+  console.log('ART321_PIXELS ' + JSON.stringify(data));
+  return data;
+}
+
 // One narrowly scoped, real Chromium drawing check on BOTH the Canvas path
 // and the PixiJS Canvas-combat overlay. Simulation timing is tested separately.
 async function inspectMageBeamOverlay(page, expectedMode) {
@@ -263,6 +339,8 @@ async function run() {
         localStorage.getItem('azeroth-optimization-mode-v1')), 'auto');
       await page.evaluate(() => Prototype.closeMenu());
       assert.equal(await page.evaluate(() => Prototype.game === window.__gpuTestCampaign), true);
+      const art321CanvasCoin = !phone
+        ? await inspectCrownLootPixels(page, 'canvas2d') : null;
       await selectPixi(page);
       const outcome = await page.evaluate(() => ({
         ...Prototype.experimentalGraphics,
@@ -303,6 +381,16 @@ async function run() {
           'Camera zoom must not abandon an otherwise valid GPU scene');
         assert.equal(await page.evaluate(() => Prototype.game === window.__gpuTestCampaign), true);
         await keepPixiTrial(page, phone, 'initial graphics trial');
+        if (!phone) {
+          const pixiCoin = await inspectCrownLootPixels(page, 'webgl2');
+          console.log('ART321_CROWN_LOOT_COMPARISON ' + JSON.stringify({
+            canvasChangedPixels: art321CanvasCoin.changed,
+            pixiOverlayChangedPixels: pixiCoin.changed,
+            pixiMode: pixiCoin.mode,
+            sameRegion: art321CanvasCoin.zone === pixiCoin.zone,
+            status: 'measured-real-browser-not-owner-accepted',
+          }));
+        }
         // The retained Pixi background must immediately reflect presentation
         // transitions without walking, zooming or a zone transition.
         await page.waitForFunction(() =>
