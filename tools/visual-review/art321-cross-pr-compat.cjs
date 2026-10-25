@@ -49,19 +49,26 @@ function probe(ours,theirs){
 }
 function main(){
   const ours=fetch('469','refs/pull/469/head');
+  const mainSha=fetch('main','refs/heads/main');
   const results=[];
   for(const check of checks){
     let theirs;
     try {
       theirs=fetch(String(check.pr),'refs/pull/'+check.pr+'/head');
-      results.push({...check,ours,theirs,...probe(ours,theirs)});
+      const againstAudit=probe(ours,theirs);
+      const againstMain=probe(mainSha,theirs);
+      results.push({...check,ours,theirs,...againstAudit,
+        mainStatus:againstMain.status,mainMergeBase:againstMain.mergeBase,
+        inheritedFromMain:againstAudit.status==='CONFLICT'&&againstMain.status==='CONFLICT',
+        mainConflictDetails:againstMain.status==='CONFLICT'
+          ?againstMain.conflictDetails.slice(0,4000):undefined});
     }catch(e){
       results.push({...check,ours,theirs:theirs||null,status:'INDETERMINATE',
         reason:String(e.message).slice(0,900)});
     }
   }
   const report={schema:'art321-cross-pr-source-merge-audit-v1',
-    createdUtc:new Date().toISOString(),ours,method:'read-only git merge-tree --write-tree',
+    createdUtc:new Date().toISOString(),ours,mainSha,method:'read-only git merge-tree --write-tree',
     doesNot:['merge','checkout modification','deploy','full-game testing'],
     results};
   fs.mkdirSync(path.dirname(output),{recursive:true});
@@ -69,7 +76,8 @@ function main(){
   for(const r of results)
     console.log('ART321_CROSS_PR '+JSON.stringify({
       pr:r.pr,status:r.status,ours:r.ours,theirs:r.theirs,
-      mergeBase:r.mergeBase,overlap:r.overlap,
+      mergeBase:r.mergeBase,mainStatus:r.mainStatus,mainMergeBase:r.mainMergeBase,
+      inheritedFromMain:r.inheritedFromMain,overlap:r.overlap,
       conflicts:r.status==='CONFLICT'?r.conflictDetails.slice(0,1400):undefined,
       reason:r.reason
     }));
