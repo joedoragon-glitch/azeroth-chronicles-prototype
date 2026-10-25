@@ -2115,9 +2115,10 @@
         // First narrowly authored boss World owner: real released Thornfang
         // cone, after its original warning and before native area contact.
         // No boss-wide fallback, AI-planning roll or changed attack geometry.
-        if (e.type === 'boss' && e.family === 'thorn' && !a.captainSkill &&
-            a.index === 0 && a.kind === 'cone' && !a.criticalExecution) {
-          const receipt = this.worldCriticalAction(e, 'world/boss/thorn/0');
+        if (e.type === 'boss' && (e.family === 'thorn' || e.family === 'ridge') &&
+            !a.captainSkill && a.index === 0 && a.kind === 'cone' &&
+            !a.criticalExecution) {
+          const receipt = this.worldCriticalAction(e, 'world/boss/' + e.family + '/0');
           if (receipt) a.criticalExecution = receipt;
         }
         // Explicit conventional captain owners only. A one-patch
@@ -2642,7 +2643,8 @@
                     u,
                     (a.nightSkill === 'pounce' ||
                       (a.captainSkill && !!a.criticalExecution) ||
-                      (e.type === 'boss' && e.family === 'thorn' &&
+                      (e.type === 'boss' &&
+                        (e.family === 'thorn' || e.family === 'ridge') &&
                         a.index === 0 && a.kind === 'cone' &&
                         !!a.criticalExecution))
                       ? this.worldCriticalDamage(

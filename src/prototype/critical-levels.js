@@ -155,6 +155,9 @@
   // Boss catalog begins with Thornfang's original immediate cone only.
   // Other Thorn moves (landing, Slow line, summon) are separate owners.
   register('world/boss/thorn/0', 'world', 'damage');
+  // Ridge Tyrant's native initial cone is also immediate lawful contact.
+  // His cargo, charge and summon remain separate unreviewed owners.
+  register('world/boss/ridge/0', 'world', 'damage');
   Object.freeze(registry);
 
   function validatedLevel(level) {
