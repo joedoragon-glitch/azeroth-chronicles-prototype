@@ -48,7 +48,7 @@ function advance(g, seconds, step = 0.05) {
   const hp1 = first.hp, hp2 = second.hp;
   assert.equal(g._heroSkillEffects[0]?.kind, 'wide-beam');
   const initial = g.effects.find(e => e.type === 'heroSkillArea' && e.phase === 'launch');
-  assert(initial && Math.abs(initial.travelSeconds - 0.75) < 0.001);
+  assert(initial && Math.abs(initial.travelSeconds - 0.625) < 0.001);
   advance(g, 0.1);
   assert.equal(first.hp, hp1, 'near foe not hit before traveling front reaches it');
   advance(g, 0.18);
@@ -93,7 +93,7 @@ function advance(g, seconds, step = 0.05) {
   const hp = behindWall.hp;
   const clear = g.clearSegment.bind(g);
   g.clearSegment = (a, b, ...rest) => b.x <= 700 && clear(a, b, ...rest);
-  advance(g, 0.75);
+  advance(g, 0.65);
   assert(g.effects.some(e => e.type === 'heroSkillArea' && e.phase === 'complete'));
   assert(behindWall.hp === hp, 'the caster-connected beam never hits through an obstruction');
 }
@@ -105,7 +105,9 @@ function advance(g, seconds, step = 0.05) {
   const hp = e.hp;
   const p = g.s.projectiles.find(p => p.style === 'beam');
   assert(p?.mageSkill1Homing, 'only ordinary Skill 1 has homing');
-  assert.equal(p.beamWidthScale, 2.5, '150% thicker means 2.5x original width');
+  assert.equal(p.beamWidthScale, 2, 'regular beam is 20% thinner than previous 2.5x width');
+  assert.equal(p.speed, 1.2 * Math.max(170, Math.min(535, 280 / 0.75)),
+    'regular Mage beam flies 20% faster than its original speed');
   assert(p.speed < 1000, 'slower than former laser');
   assert.equal(p.travelBudget, 540, 'homing flight remains finite');
   g.hero.x = 470;
@@ -162,13 +164,66 @@ function advance(g, seconds, step = 0.05) {
   const p = {
     source: 'hero', style: 'beam', slot: 1, charged: false,
     originX: 500, originY: 500, x: 610, y: 500,
-    dx: 1, dy: 0, beamWidthScale: 2.5, mageSkill1Homing: true,
+    dx: 1, dy: 0, beamWidthScale: 2, mageSkill1Homing: true,
     trailPoints: [{x:500, y:500}, {x:550, y:500}],
   };
   assert(art.projectile(ctx, point => point, p, 'mage', false, {x:530, y:575, hp:100}));
   const start = calls.find(c => c[0] === 'moveTo');
   assert.deepEqual(start, ['moveTo', 530, 575], 'ordinary luminous tail starts at Mage live position');
   assert.equal(p.originX, 500, 'presenting the tail never relocates gameplay head or cast origin');
+}
+// Chosen Alt B appearance is entirely procedural and runs on the Canvas
+// 2D combat overlay in both the default Canvas and Pixi WebGL2 renderers.
+{
+  const art = require('../src/prototype/hero-presentation.js');
+  function capture(draw) {
+    const calls = [];
+    const ctx = new Proxy({}, {
+      get(target, key) {
+        if (!(key in target)) target[key] = (...args) => calls.push([key, ...args]);
+        return target[key];
+      },
+    });
+    draw(ctx);
+    return {
+      calls,
+      count: (method) => calls.filter((item) => item[0] === method).length,
+    };
+  }
+  const screen = (point) => ({x: point.x, y: point.y});
+  const charged = {
+    stage: 'skill1-wide-beam', x: 500, y: 500,
+    endX: 840, endY: 500, halfWidth: 48,
+    simulatedFront: true, max: 0.705, life: 0.35,
+  };
+  const wide = capture(ctx => art.draw(ctx, screen, charged,
+    {reduced: false, optimized: false}));
+  assert(wide.count('lineTo') >= 35, 'charged Arcane Lance includes two procedural helix strands and runes');
+  assert(wide.count('arc') >= 2, 'charged Arcane Lance has bounded source sigil rings');
+  assert(wide.count('fill') >= 1, 'wide gameplay footprint remains visible but translucent');
+  assert(wide.count('lineTo') < 110, 'charged effect geometry is bounded each draw');
+  const wideReduced = capture(ctx => art.draw(ctx, screen, charged,
+    {reduced: true, optimized: true}));
+  assert(wideReduced.count('lineTo') < wide.count('lineTo'),
+    'reduced motion and optimization omit animated helix and extra runes');
+  const p = {
+    source: 'hero', style: 'beam', slot: 1, charged: false,
+    originX: 500, originY: 500, x: 765, y: 540, dx: 1, dy: 0,
+    beamWidthScale: 2, mageSkill1Homing: true, traveled: 280,
+    trailPoints: [{x:500,y:500},{x:570,y:500},{x:660,y:520}],
+  };
+  const snapshot = JSON.stringify(p);
+  const regular = capture(ctx => art.projectile(ctx, screen, p, 'mage', false,
+    {x: 530, y: 565, hp: 100}));
+  assert(regular.count('lineTo') >= 35,
+    'normal Arcane Lance also shows procedural helix and diamonds');
+  assert(regular.count('arc') >= 1, 'normal Arcane Lance sigil attaches to Mage');
+  assert.equal(JSON.stringify(p), snapshot,
+    'rendering Alt B does not change physical projectile path or gameplay state');
+  const regularReduced = capture(ctx => art.projectile(ctx, screen, p, 'mage', true,
+    {x: 530, y: 565, hp: 100}));
+  assert(regularReduced.count('lineTo') < regular.count('lineTo'),
+    'normal beam reduced-motion setting omits spiral animation');
 }
 {
   const { g, enemies: [e] } = arena([[620, 500]]);
@@ -184,7 +239,7 @@ function advance(g, seconds, step = 0.05) {
     'no charged-beam hit receipt survives the transition');
   assert.equal(g._heroSkillEffects?.length || 0, 0);
 }
-// Frame-size equivalence: the same 0.75-second cast must not change its
+// Frame-size equivalence: the faster 0.625-second cast must not change its
 // contact count or target ownership at manual 20/30/60 FPS simulation steps.
 for (const fps of [20, 30, 60]) {
   const { g, enemies: [first, second] } = arena([[620, 500], [840, 500]]);
@@ -192,10 +247,10 @@ for (const fps of [20, 30, 60]) {
   const hp1 = first.hp, hp2 = second.hp;
   advance(g, 0.1, 1 / fps);
   assert.equal(first.hp, hp1, fps + ' FPS must not damage a near target prematurely');
-  advance(g, 0.65, 1 / fps);
+  advance(g, 0.55, 1 / fps);
   assert(first.hp < hp1, fps + ' FPS must contact near target');
   assert(second.hp < hp2, fps + ' FPS must contact far target');
-  assert.equal(g._heroSkillEffects.length, 0, fps + ' FPS must finish one beam in 0.75s');
+  assert.equal(g._heroSkillEffects.length, 0, fps + ' FPS must finish one beam by 0.65s');
   assert.equal(g.effects.filter(e => e.type === 'heroSkillArea' && e.phase === 'complete').at(-1)?.hits,
     2, fps + ' FPS must resolve each enemy once');
 }

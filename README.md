@@ -1,6 +1,6 @@
 # So I Became the Dark Lord's Problem
 
-**Verified repository checkpoint — 25 October 2026:** `main` at [`72ef6a551153`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/72ef6a551153eeb75d40156b91564db00195ac02), package `0.9.1+snapshot.dev.185`; [exact-commit focused validation and GitHub Pages deployment](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40201677521) both succeeded. This records the checked release, **not** a claim that every installed client refreshed, that physical-device acceptance occurred, or that all game/browser suites passed. Recheck `main`, its workflow result, and [Recovery Desk #297](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297) before treating this dated status as the latest.
+**Verified repository checkpoint — 25 October 2026:** `main` at [`e3c78266b28f`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/e3c78266b28f3325d2afdcb76ae849fcff306deb), package `0.9.1+snapshot.dev.185`; [exact-commit focused validation and GitHub Pages deployment](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40208508280) both succeeded. This records the checked release, **not** a claim that every installed client refreshed, that physical-device acceptance occurred, or that all game/browser suites passed. Recheck `main`, its workflow result, and [Recovery Desk #297](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297) before treating this dated status as the latest.
 
 For active instructions, use [development state](docs/DEVELOPMENT_STATE.md), [documentation index](docs/DOCUMENTATION_INDEX.md), and [PR #449 governance audit](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/449); older dated status text below is reference evidence.
 
@@ -16,7 +16,7 @@ Existing GitHub Pages links and installed-app identity remain unchanged. Current
 
 ## Release status
 
-This project is in the **v0.9.1 beta maintenance line**. The published snapshot includes Optimization Mode, revised hero skills, pets, worldbuilding and later limited hotfixes. Publication and gameplay certification have separate evidence. [Release notes and evidence limits](docs/V09_RELEASE_NOTES.md) distinguish implemented features, verified evidence and open checks; [Current development state](docs/DEVELOPMENT_STATE.md) records the production baseline and release workflow. The version in an exported playtest report identifies the build actually running on your device. A merged PR is not proof of publication or completed human playtesting.
+This project is in the **v0.9.1 beta maintenance line**. The published snapshot includes Optimization Mode, revised hero skills, pets, worldbuilding and later limited hotfixes. Publication and gameplay certification have separate evidence. [Historical 20 October Community Snapshot release notes and evidence limits](docs/V09_RELEASE_NOTES.md) distinguish implemented features, verified evidence and open checks; [Current development state](docs/DEVELOPMENT_STATE.md) records the production baseline and release workflow. The version in an exported playtest report identifies the build actually running on your device. A merged PR is not proof of publication or completed human playtesting.
 
 ## Play
 

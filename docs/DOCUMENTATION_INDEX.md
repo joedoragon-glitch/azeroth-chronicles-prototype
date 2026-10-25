@@ -1,6 +1,6 @@
 # Documentation index and current-source routing
 
-**Verified repository checkpoint — 25 October 2026:** `main` at [`72ef6a551153`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/72ef6a551153eeb75d40156b91564db00195ac02), package `0.9.1+snapshot.dev.185`; [exact-commit focused validation and GitHub Pages deployment](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40201677521) both succeeded. This records the checked release, **not** a claim that every installed client refreshed, that physical-device acceptance occurred, or that all game/browser suites passed. Recheck `main`, its workflow result, and [Recovery Desk #297](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297) before treating this dated status as the latest.
+**Verified repository checkpoint — 25 October 2026:** `main` at [`e3c78266b28f`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/e3c78266b28f3325d2afdcb76ae849fcff306deb), package `0.9.1+snapshot.dev.185`; [exact-commit focused validation and GitHub Pages deployment](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40208508280) both succeeded. This records the checked release, **not** a claim that every installed client refreshed, that physical-device acceptance occurred, or that all game/browser suites passed. Recheck `main`, its workflow result, and [Recovery Desk #297](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297) before treating this dated status as the latest.
 
 **Use now:** [Development state](DEVELOPMENT_STATE.md) for the verified checkpoint and governance boundaries; [architecture](ARCHITECTURE.md) for code owners; [Recovery Desk #297](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297) for outstanding work; [PR #449 governance audit](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/449) for the still-draft documentation/test-governance audit. Historical reports retain their original dated evidence.
 
@@ -88,7 +88,9 @@ Published dev.120: [scenery and announcement batch #354](SCENERY_NOTIFICATIONS_B
 
 - [Crown planning, companion safety and arc landing — dev.110](CROWN_COMPANIONS_20261020.md): native day/night/save/access audits, three companion repairs and one-impact arc expiry.
 
-# Documentation index — 20 October 2026
+### Documentation index — 20 October 2026
+
+**Archived 20 October routing snapshot:** Headings and historical “current” claims below refer to their original checkpoint, not the latest document-authority map. Follow this page's opening links for today's source and consent. The October 19 classification table and frozen hashes remain unchanged.
 
 - [Pet visual identity correction — published dev.115](PET_VISUAL_IDENTITY_20261020.md): Veyra miniature and exact boss weapons; comparison and native scene.
 
@@ -96,7 +98,9 @@ Published dev.120: [scenery and announcement batch #354](SCENERY_NOTIFICATIONS_B
 
 - [Treasurer money bag — dev.118](TREASURER_MONEYBAG_20261020.md): shared silver-Crown pouch at unchanged grips.
 
-## Start here
+#### Start here
+
+**Historical 20 October navigation advice; the older version links below are not today's source or release authority.**
 
 The current game also includes the merged [PixiJS WebGL2 experimental renderer (#407, stabilized in #419)](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/419), [menu usability integrations #413–#415](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/415), [navigation #421](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/421), and [focused-only CI #412](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/412). The dated frozen hash inventory is not a current source census.
 
@@ -148,7 +152,7 @@ Current state owns present-tense status. Executable source/config/registries own
 
 **Frozen receipts require special care.** The files marked “frozen bytes” below intentionally retain old candidate/next-action text because their exact bytes are evidence. Their historical imperatives are superseded by this index and current state. Never use a frozen #300/#308/#313 handoff as a live resume instruction. The old 296-entry prompt catalog is also parser-owned input: it retains stable IDs, not authority for 280 new generation jobs. The 426-contract art census is not a unique-sprite requirement.
 
-## Complete incoming inventory
+### Complete incoming inventory
 
 The audited checkpoint is `ff67135d0de07e7da76f882a3287294edfef7a73`. The table covers every tracked Markdown file, all seven JSON evidence files in `docs/`, and all four tracked text fixtures/generation prompts. Source/config/workflows were separately inspected where needed to reconcile current claims; their entire codebase is not included in this documentation census. Each hash identifies the incoming bytes, not a new test certificate.
 
@@ -330,7 +334,7 @@ The audited checkpoint is `ff67135d0de07e7da76f882a3287294edfef7a73`. The table 
 | [tools/sprites/batches/2026-10-09-07/prop-ridge-supper-highlands/prompt.txt](../tools/sprites/batches/2026-10-09-07/prop-ridge-supper-highlands/prompt.txt)                 | Preserved fixture / generation prompt   | Preserve exact evidence; no replay, regeneration or new acceptance            | `ffb832c88b28d1dbfc483ee8ac34ceb3f5457d22f59bd0d1e212e5c9d2bc364b` |
 | [tools/sprites/batches/2026-10-09-07/prop-royal-flight-standard-frontier/prompt.txt](../tools/sprites/batches/2026-10-09-07/prop-royal-flight-standard-frontier/prompt.txt) | Preserved fixture / generation prompt   | Preserve exact evidence; no replay, regeneration or new acceptance            | `c6167424916a04f804dd43c7fb8d8ee11322846ed1834b0b13ad820bf9c43720` |
 
-## Files added by this audit
+### Files added by this audit
 
 - [This index](DOCUMENTATION_INDEX.md): maintained authority map and complete incoming inventory.
 - [Audit report](DOCUMENTATION_AUDIT_20261019.md): concrete findings, static verification and PR closure/source preservation inventory.
