@@ -88,7 +88,7 @@ for (const cls of ['paladin', 'mage', 'ranger'])
         if (rank === 8) assert.deepEqual(preview, []);
         else {
           const next = Ref.describe(g, slot, rank + 1);
-          for (const [i, name] of ['tap', 'charge'].entries()) {
+          for (const [i, name] of (slot === 1 ? ['auto', 'tap', 'charge'] : ['tap', 'charge']).entries()) {
             const changed = next[name].metrics.filter(
               (v, j) => JSON.stringify(v.value) !== JSON.stringify(info[name].metrics[j].value),
             );
