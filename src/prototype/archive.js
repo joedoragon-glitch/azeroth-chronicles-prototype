@@ -99,9 +99,9 @@
               '% to eligible recovering allied cooldowns, or ' +
               percent(R.cooldownBalance.enemySlowDebtFraction) +
               '% for enemies. Ready skills gain no debt. ' +
-              'Slow stops accumulating at ' + R.cooldownBalance.slowMaxStacks +
+              'For heroes and companions, Slow stops accumulating at ' + R.cooldownBalance.partySlowMaxStacks +
               ' stacks: later hits refresh duration but do not increase the stack or add cooldown debt. ' +
-              'Stack strength clears when Slow expires; accumulated cooldown debt remains. ' +
+              'Enemy Slow has no stack ceiling. Stack strength clears when Slow expires; accumulated cooldown debt remains. ' +
               'Preparation, warnings and healing pulses are not delayed, and skills are never outright blocked by Slow.'
             : 'The longest remaining Slow wins. Recovery returns to normal when Slow ends. Slow does not lengthen charge preparation, warnings or healing pulses, and does not prevent skills.'),
       ],
@@ -1609,8 +1609,8 @@
       ' acumulaciones: los impactos posteriores renuevan la duración sin aumentar las acumulaciones ni añadir demora a las habilidades. ',
     ],
     [
-      'Slow stops accumulating at ',
-      'La Ralentización deja de acumularse al llegar a ',
+      'For heroes and companions, Slow stops accumulating at ',
+      'Para héroes y compañeros, la Ralentización deja de acumularse al llegar a ',
     ],
     [
       'Enemy Slow has no stack ceiling. ',
