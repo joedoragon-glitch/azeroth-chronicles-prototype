@@ -154,6 +154,53 @@ for (const type of ['soldier', 'archer']) {
     assert.equal(result.damage, a.g.s.projectiles[0].damage);
   }
 }
+// Non-special basics have multiple genuine release owners. Check ordinary
+// combat and gathering self-defense explicitly, not only covering fire.
+for (const type of ['soldier', 'archer']) {
+  for (const owner of ['combat', 'gathering']) {
+    const baseline = arena(type), enhanced = arena(type);
+    const counter = critical(enhanced.g);
+    const prepare = ({g, unit, target}) => {
+      unit.cd = 0;
+      if (owner === 'combat') {
+        unit.skillGlobalCd = 9; // Ordinary attack, not a ready first special.
+        g._tacticalPartyTargets = new Map();
+        if (type === 'archer') {
+          unit.x = 450;
+          g.partyFollowPoint = () => ({ x: unit.x, y: unit.y });
+        }
+      } else {
+        // Only the gather-intent predicate is fixture-supplied. Native attack,
+        // counterattack receipt storage and range/damage owners are unmodified.
+        g.gatheringUnit = () => true;
+        g.noteGatheringAttack(unit, target);
+      }
+    };
+    prepare(baseline);
+    prepare(enhanced);
+    if (owner === 'combat') {
+      baseline.g.companionFight(baseline.unit, baseline.target, [baseline.unit], 0.05);
+      enhanced.g.companionFight(enhanced.unit, enhanced.target, [enhanced.unit], 0.05);
+    } else {
+      baseline.g.gatheringCounterattack(baseline.unit);
+      enhanced.g.gatheringCounterattack(enhanced.unit);
+    }
+    assert.equal(counter.count(), 1, type + ' ' + owner + ' rolls at genuine basic release');
+    assert.equal(baseline.unit.cd, enhanced.unit.cd, 'original attack clock retained');
+    if (type === 'soldier') {
+      assert(enhanced.target.hp < baseline.target.hp,
+        'native Soldier ' + owner + ' improves the original sword hit');
+    } else {
+      assert.equal(baseline.g.s.projectiles.length, 1, owner + ' ordinary arrow exists');
+      assert.equal(enhanced.g.s.projectiles.length, 1, owner + ' has no extra arrow');
+      const shot = enhanced.g.s.projectiles[0];
+      assert.equal(shot.criticalExecution.key, 'troop/archer/basic');
+      assert(Math.abs(shot.damage -
+        baseline.g.s.projectiles[0].damage * damageMultiplier) < 1e-7,
+      'native Archer ' + owner + ' improves original arrow');
+    }
+  }
+}
 assert.equal(releases, 6);
 assert.equal(Campaign.prototype._criticalPartyNative, undefined,
   'native criticals remain test-attached, never installed in production');
