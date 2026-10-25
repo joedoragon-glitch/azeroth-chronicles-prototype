@@ -112,13 +112,13 @@ async function inspectMageBeamOverlay(page, expectedMode) {
         id: 'beam-overlay-smoke', source: 'hero', style: 'beam',
         slot: 1, charged: false, x: from.x + 65, y: from.y,
         originX: from.x, originY: from.y, dx: 1, dy: 0,
-        beamWidthScale: 2.5, mageSkill1Homing: true, delay: 0,
+        beamWidthScale: 2, mageSkill1Homing: true, delay: 0,
         trailPoints: [from, {x: from.x + 30, y: from.y}],
       }];
       renderer.queue([{type: 'heroSkillArea', actor: 'hero', class: 'mage',
         slot: 1, effect: 'wide-arcane-beam', phase: 'launch',
         x: from.x, y: from.y, endX: beam.endX, endY: beam.endY,
-        halfWidth: beam.halfWidth, travelSeconds: 0.75, hits: 0}]);
+        halfWidth: beam.halfWidth, travelSeconds: 0.625, hits: 0}]);
       renderer.draw();
       game.hero.x += 24;
       game.hero.y += 16;
@@ -160,7 +160,7 @@ async function inspectMageBeamOverlay(page, expectedMode) {
     'Charged near end follows the moving caster');
   assert.equal(result.charged[0].endX, result.charged.at(-1).endX,
     'Charged far world aim remains fixed');
-  assert.equal(result.normal[0].visualWidth, 2.5);
+  assert.equal(result.normal[0].visualWidth, 2);
   assert.equal(result.normal[0].x, result.normal.at(-1).x,
     'Normal damaging projectile head does not teleport with caster');
   assert.equal(result.normal[0].casterX + 24, result.normal.at(-1).casterX,
