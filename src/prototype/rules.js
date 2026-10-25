@@ -7393,7 +7393,9 @@
     cunningEnemies: ['thorn', 'warlord', 'supply-crown', 'darklord'],
     supportRadius: 195,
     presenceRadius: 540,
-    moveCooldownSeconds: 3,
+    // Two-second decision and cast floor: repeatable even for isolated enemies,
+    // while actual casts cannot overlap through regroup or retreat transitions.
+    moveCooldownSeconds: 2,
     // Rogue disruption must create an escape edge even against baseline sprint.
     // Elite Ringleader slowing basics use the same 2.95s effective duration as
     // their slowing signatures and the strongest Rogue signature (2.7 + 0.25).
