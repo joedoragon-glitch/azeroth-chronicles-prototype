@@ -93,7 +93,8 @@ for (const cls of ['paladin','mage','ranger'])
       assert(metrics.procedural>0, cls + '/' + slot + '/' + charged + ': no procedural source from real cast/flight/impact');
       hero.push({class:cls,slot,charged,skill:Art.profile(cast).name,...metrics,
         heardTypes:[...new Set(rows.filter((r)=>r.route==='procedural').map((r)=>r.type))],
-        silentTypes:[...new Set(rows.filter((r)=>r.route==='bookkeeping_or_owned_elsewhere').map((r)=>r.type))]});
+        silentTypes:[...new Set(rows.filter((r)=>r.route==='bookkeeping_or_owned_elsewhere').map((r)=>r.type))],
+        noSourceTypes:[...new Set(rows.filter((r)=>r.route==='no_source_observed').map((r)=>r.type+':'+(r.stage||'-')))]});
     }
 console.log('PASS Stage 3 hero: 48 actual casts (3 classes × 8 skills × tap/charged) reach procedural source attempts');
 
@@ -159,7 +160,8 @@ for(const [type,family] of [
   assert(metrics.procedural>0,type+'/'+family+': no combat source for actual action stream');
   companions.push({type,family,...metrics,
     heardTypes:[...new Set(rows.filter((r)=>r.route==='procedural').map((r)=>r.type))],
-    bookkeepingTypes:[...new Set(rows.filter((r)=>r.route==='bookkeeping_or_owned_elsewhere').map((r)=>r.type))]});
+    bookkeepingTypes:[...new Set(rows.filter((r)=>r.route==='bookkeeping_or_owned_elsewhere').map((r)=>r.type))],
+    noSourceTypes:[...new Set(rows.filter((r)=>r.route==='no_source_observed').map((r)=>r.type+':'+(r.stage||'-')))]});
 }
 console.log('PASS Stage 3 companions: Soldier, Archer and 11 boss-pet families use two autonomous skills with combat-source attempts');
 
