@@ -239,7 +239,7 @@ for (const cls of ['paladin', 'ranger']) {
     'the released hawk flies independently rather than teleporting with Ranger');
 }
 {
-  const { g, enemies: [target] } = arena([[760, 500]]);
+  const { g, enemies: [target] } = arena([[620, 500]]);
   g.hero.skills[5] = 1;
   assert(g.cast(6, target.id, true), 'Mage charged Focused Beam');
   const shot = g.s.projectiles.find(p => p.source === 'hero' && p.slot === 6);
