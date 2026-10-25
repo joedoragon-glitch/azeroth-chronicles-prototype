@@ -21,6 +21,7 @@ function arena(cls = 'paladin', count = 1) {
     );
     e.aggro = true;
     e.returning = false;
+    e.home = { x: e.x, y: e.y };
     return e;
   });
   g.zone().enemies = enemies;
