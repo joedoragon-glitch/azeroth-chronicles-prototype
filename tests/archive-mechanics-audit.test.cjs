@@ -72,8 +72,15 @@ for (const cls of ['paladin', 'mage', 'ranger'])
         if (cls === 'paladin' && slot === 3 && !charged) {
           near(g.hero.shieldStance, R.heroTactics.paladin.shield.duration, 'Shield duration');
           has(card[1], 'for ' + g.hero.shieldStance + 's');
+        } else if (charged) {
+          near(
+            n(g.hero.cd[slot - 1]),
+            n(g.skillCooldown(slot, false)),
+            'Charged execution starts the independent normal recovery',
+          );
+          near(n(g.hero.chargedCd[slot - 1]), wait, 'Charged recovery matches Archive figures');
         } else
-          near(n(g.hero.cd[slot - 1]), wait, 'Native spent cooldown vs rounded Archive figure');
+          near(n(g.hero.cd[slot - 1]), wait, 'Native normal recovery vs Archive figure');
         if (slot === 2 && cls !== 'paladin') {
           if (!charged) {
             for (const p of g.s.projectiles) if (p.slow) g.applySlow(target, p.slow);
