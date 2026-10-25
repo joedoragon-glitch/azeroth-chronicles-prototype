@@ -115,6 +115,11 @@ function selectedNativeTests(tree, a, b, paths) {
 function main() {
   // GitHub Actions checks out the PR-event source; leave the checkout alone.
   const ours = git(['rev-parse', 'HEAD']).stdout.trim();
+  // checkout@v4 starts with a depth-1 shallow source SHA; fetching the
+  // independent main ref alone does not unshallow PR471 history.
+  // Fetch THIS exact checked-out SHA (never silently substitute a newer tip).
+  const confirmed = fetchRef('checked-out-471', ours);
+  if (confirmed !== ours) throw Error('Fetched checkout commit does not match PR event SHA');
   const mainSha = fetchRef('main', 'refs/heads/main');
   const base = combination(mainSha, ours);
   const report = {
@@ -197,6 +202,6 @@ function main() {
   }));
   // Conflicts are honest integration blockers; a test or tooling failure is red.
   // An unresolved conflict cannot be labelled a successful combined candidate.
-  if (failures.length) process.exitCode = 1;
+  if (base.status !== 'CLEAN' || failures.length) process.exitCode = 1;
 }
 main();
