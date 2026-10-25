@@ -1,5 +1,9 @@
 # Runtime architecture
 
+**Dev.176 prepared recovery:** bounded mode-specific checkpoints and the
+review/accept recovery flow live in the same persistence/shell owners. No v4
+schema or gameplay change. [Retention, recovery and evidence](SAVE_RECOVERY_CHECKPOINTS_DEV176.md).
+
 **Dev.175 persistence integration:** The shell gates title/lifecycle writes and
 restart recovery on campaign write ownership. `persistence.js` validates outgoing
 snapshots, retains failed-load originals, fences stale bytes and coordinates one

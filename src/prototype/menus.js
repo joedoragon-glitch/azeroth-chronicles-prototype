@@ -375,11 +375,13 @@
       return SkillReference.card(getGame(), slot);
     }
     function skillSections(info) {
-      return (info.auto ? [info.auto, info.tap, info.charge] : [info.tap, info.charge]).map((form) => ({
-        title: form.title,
-        text: form.effect,
-        rows: form.metrics.map((m) => ({ label: m.label, value: SkillReference.value(m) })),
-      }));
+      return (info.auto ? [info.auto, info.tap, info.charge] : [info.tap, info.charge]).map(
+        (form) => ({
+          title: form.title,
+          text: form.effect,
+          rows: form.metrics.map((m) => ({ label: m.label, value: SkillReference.value(m) })),
+        }),
+      );
     }
     function skillDetail(slot, back) {
       const g = getGame(),
@@ -391,7 +393,9 @@
           summary:
             'Rank ' +
             info.rank +
-            (info.rank === 8 ? ' · Maximum rank' : ' · Automatic basics, Tap and Charged use this rank.') +
+            (info.rank === 8
+              ? ' · Maximum rank'
+              : ' · Automatic basics, Tap and Charged use this rank.') +
             (slot === 1 ? ' · Self-taught from Rank 1; rescued specialists refine it.' : ''),
           sections: skillSections(info),
           note: info.note,
@@ -419,7 +423,8 @@
       openMenu(
         'Using skills',
         {
-          summary: 'Automatic Skill 1 basics attack independently. Tap for the normal technique. Hold to prepare the charged technique.',
+          summary:
+            'Automatic Skill 1 basics attack independently. Tap for the normal technique. Hold to prepare the charged technique.',
           sections: [
             {
               title: 'Controls',
@@ -501,7 +506,9 @@
                   ? 'Training unavailable here.'
                   : g.hero.gold < cost
                     ? 'Need more crowns.'
-                    : slot === 1 ? 'Also improves automatic basics.' : 'Applies to Tap and Charged.',
+                    : slot === 1
+                      ? 'Also improves automatic basics.'
+                      : 'Applies to Tap and Charged.',
                 !ready || g.hero.gold < cost,
               ),
             ],

@@ -1085,7 +1085,7 @@
         }
       }
       enemyBackpedal(e, target, dt, territory) {
-        if (this.hawkRetreatLocked(e,'backpedal')) return false;
+        if (this.hawkRetreatLocked(e, 'backpedal')) return false;
         const gap = dist(e, target),
           range = this.enemyRangedRange(e);
         if (
@@ -1100,7 +1100,7 @@
           y: e.y + ((e.y - target.y) / Math.max(1, gap)) * 95,
         };
         if (dist(away, e.home) >= territory || !this.clearSegment(e, away)) return false;
-        const before = { x:e.x,y:e.y };
+        const before = { x: e.x, y: e.y };
         this.move(
           e,
           away,
@@ -1111,7 +1111,7 @@
             this.nightTempo(),
           dt,
         );
-        if (dist(before,e) > 0.1) {
+        if (dist(before, e) > 0.1) {
           this._hawkBackpedalAt ||= new WeakMap();
           this._hawkBackpedalAt.set(e, this.s.time);
         }

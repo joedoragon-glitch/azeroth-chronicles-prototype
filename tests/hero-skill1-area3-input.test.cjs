@@ -178,6 +178,47 @@ for (const language of ['en', 'es']) {
   assert(q.contains(a));
   assert(q.contains(c));
 }
+{
+  const h = arena();
+  h.g.hero.cd[1] = 0.3;
+  h.press();
+  h.g.zone().enemies = [];
+  h.step(0.4);
+  assert.equal(h.queue().length, 0, 'impossible target is consumed instead of blocking forever');
+  assert.equal(h.casts.filter((c) => c.slot !== 1).length, 0);
+}
+{
+  const h = arena();
+  h.g.hero.chargedCd[1] = 0.3;
+  h.press(2, 0.3);
+  h.press();
+  h.step(0.1);
+  assert(h.api.chargePresentation()?.state === 'charging');
+  h.g.hitParty(h.g.hero, 100, 0, null, true);
+  h.step(0.2);
+  assert.deepEqual(h.queue(), [], 'interruption removes only charged; ready normal can release');
+  assert.deepEqual(
+    h.casts.filter((c) => c.slot === 2).map((c) => c.charged),
+    [false],
+  );
+}
+{
+  const h = arena('es', 'ranger');
+  h.g.hero.cd[2] = 0.3;
+  h.press(3);
+  h.g.hero.hp = h.g.hero.maxHp;
+  h.step(0.4);
+  assert.equal(h.queue().length, 0, 'no-heal request fails once and leaves no stuck head');
+  assert.equal(h.casts.filter((c) => c.slot !== 1).length, 0);
+}
+{
+  const h = arena();
+  h.g.hero.cd[1] = 10;
+  h.press();
+  h.g.enter('march');
+  h.step(0.05);
+  assert.equal(h.queue().length, 0, 'zone transfer invalidates transient input');
+}
 console.log(
   'PASS Area 3 bilingual live-shell FIFO, cooldown sequencing, input boundaries, independent slots, capacity, cancellation and stance',
 );

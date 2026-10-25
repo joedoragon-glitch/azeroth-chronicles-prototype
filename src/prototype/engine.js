@@ -3,10 +3,9 @@
   'use strict';
   const R = typeof PrototypeRules !== 'undefined' ? PrototypeRules : require('./rules.js');
   const D = typeof PrototypeData !== 'undefined' ? PrototypeData : require('./data.js');
-  const AuthorCopy =
-    (typeof PrototypeNarration !== 'undefined'
-      ? PrototypeNarration
-      : require('./narration.js')).approved;
+  const AuthorCopy = (
+    typeof PrototypeNarration !== 'undefined' ? PrototypeNarration : require('./narration.js')
+  ).approved;
   const clone = (x) => JSON.parse(JSON.stringify(x)),
     clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
     dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
@@ -698,8 +697,8 @@
       if (trip.wait > 0) {
         // Neri actually turns to the nearby books while restoring them. This
         // visual pose is unrelated to her stock, training, pact and pathing.
-        const volumes = this.zone().props.filter(
-          (prop) => ['shelf', 'scroll-stack'].includes(prop.structure),
+        const volumes = this.zone().props.filter((prop) =>
+          ['shelf', 'scroll-stack'].includes(prop.structure),
         );
         const nearest = volumes.sort((a, b) => dist(n, a) - dist(n, b))[0];
         n.bookRestoring = !!nearest;
@@ -851,11 +850,13 @@
     // Each of these three approved landmark discoveries has a real, stable site ID.
     // Read from the existing v4 discovered map; no new save flags.
     landmarkNarrative(id) {
-      return ({
-        'goblin-camp': AuthorCopy.L01.en,
-        'mire-nests': AuthorCopy.L02.en,
-        'ogre-hearth': AuthorCopy.L03.en,
-      })[id] || null;
+      return (
+        {
+          'goblin-camp': AuthorCopy.L01.en,
+          'mire-nests': AuthorCopy.L02.en,
+          'ogre-hearth': AuthorCopy.L03.en,
+        }[id] || null
+      );
     }
     announceLandmark(n) {
       const prose = this.landmarkNarrative(n.id);
@@ -912,22 +913,13 @@
         );
       if (n.id === 'night-site')
         parts.push('Visit after dark and defeat two Lantern wraiths for Shadows After Sundown.');
-      if (n.id === 'goblin-camp')
-        parts.push(
-          AuthorCopy.L01.en,
-        );
-      if (n.id === 'mire-nests')
-        parts.push(
-          AuthorCopy.L02.en,
-        );
+      if (n.id === 'goblin-camp') parts.push(AuthorCopy.L01.en);
+      if (n.id === 'mire-nests') parts.push(AuthorCopy.L02.en);
       if (n.id === 'wolf-den')
         parts.push(
           'Tracks, bedding and old kills mark a real hunting ground used by the highland wolf packs.',
         );
-      if (n.id === 'ogre-hearth')
-        parts.push(
-          AuthorCopy.L03.en,
-        );
+      if (n.id === 'ogre-hearth') parts.push(AuthorCopy.L03.en);
       if (n.id === 'orc-bivouac')
         parts.push(
           'A long-term occupation bivouac: soldiers cook, sleep, drill and repair equipment here between patrol quotas.',
@@ -1648,14 +1640,14 @@
       if (!cfg) return;
       const eligible = (e) =>
         e &&
+        !e.meleeBalanceVersion &&
         e.type === 'mob' &&
         e.form !== 'true' &&
         !e.guard &&
         !e.summon &&
         !e.neutral &&
         !e.nightOnly &&
-        !e.ranged &&
-        !e.meleeBalanceVersion;
+        !e.ranged;
       const scale = (e) => {
         if (!eligible(e)) return;
         const alive = e.hp > 0,
@@ -1680,14 +1672,14 @@
       if (!cfg) return;
       const eligible = (e) =>
         e &&
+        !e.rangedBalanceVersion &&
         e.type === 'mob' &&
         e.form === 'normal' &&
         !e.guard &&
         !e.summon &&
         !e.neutral &&
         !e.nightOnly &&
-        e.ranged &&
-        !e.rangedBalanceVersion;
+        e.ranged;
       const scale = (e) => {
         if (!eligible(e)) return;
         const alive = e.hp > 0,
@@ -2876,7 +2868,10 @@
         this.s.discovered[loreKey] = true;
         this.say(dungeonLore);
         // Region-scoped quiet narration: full text remains in earned stories.
-        this.notice(dungeonLore, 8, '', 'narration', { scope: 'region', region: this.definition().id });
+        this.notice(dungeonLore, 8, '', 'narration', {
+          scope: 'region',
+          region: this.definition().id,
+        });
       }
       const side = this.sideDungeon();
       if (side && !this.s.discovered[side.region + ':side-lore:' + side.id]) {
@@ -3013,8 +3008,7 @@
           // D04's private-quarters claim requires actual inspectable furniture.
           if (npc.id === 'veyra-private-quarters') {
             const furnishings = this.zone().props.find(
-              (prop) => prop.structure === 'citadel-vanity-quarters' &&
-                dist(prop, npc) < 180,
+              (prop) => prop.structure === 'citadel-vanity-quarters' && dist(prop, npc) < 180,
             );
             if (!furnishings) return false;
             this.s.discovered['citadel:veyra-private-quarters-inspected'] = true;
@@ -3069,9 +3063,7 @@
           // The approved seven-mark throne recognition is revealed only here.
           // Current class and
           // prior TRUE-dungeon order do not change the lost companion fact.
-          this.say(
-            AuthorCopy.M01.en,
-          );
+          this.say(AuthorCopy.M01.en);
           this.say(
             remaining
               ? 'You claim the crown. ' + remaining + ' old powers still hold their dungeons.'
@@ -3940,7 +3932,7 @@
       }
       const heroRecovery = this.cooldownRecoveryElapsed(h, dt);
       h.cd = h.cd.map((c) => Math.max(0, c - heroRecovery));
-      h.chargedCd = h.chargedCd.map(c => Math.max(0,c - heroRecovery));
+      h.chargedCd = h.chargedCd.map((c) => Math.max(0, c - heroRecovery));
       h.basicCd = Math.max(0, h.basicCd - heroRecovery);
       if ((h.shieldStance || 0) > 0) {
         h.shieldStance = Math.max(0, h.shieldStance - dt);
@@ -4090,7 +4082,8 @@
         }
       }
       // Optional presentation timing marks, without exposing a browser clock to rules.
-      const performanceMark = typeof input.performanceMark === 'function' ? input.performanceMark : null;
+      const performanceMark =
+        typeof input.performanceMark === 'function' ? input.performanceMark : null;
       performanceMark?.('partyStart');
       this.updateParty(dt);
       performanceMark?.('partyEnd');
@@ -4621,10 +4614,9 @@
       return (this._hawkRetreatLocks?.get(e)?.[family] || 0) > this.s.time;
     }
     hawkRetreatKind(e) {
-      if (!e || e.hp <= 0 || !e.aggro || e.returning || this.attackResetProtected(e))
-        return null;
+      if (!e || e.hp <= 0 || !e.aggro || e.returning || this.attackResetProtected(e)) return null;
       const regroup = this.tacticalRogueRegroup(e);
-      if (regroup && ['thinking','travel','escape'].includes(regroup.phase)) return 'regroup';
+      if (regroup && ['thinking', 'travel', 'escape'].includes(regroup.phase)) return 'regroup';
       if (e.telegraph?.rogueMove && e.telegraph.style === 'withdraw') return 'withdraw';
       if (this._hawkBackpedalAt?.get(e) === this.s.time) return 'backpedal';
       if (e.rangedAim?.withdrawal || e.telegraph?.withdrawal) return 'backpedal';
@@ -4635,24 +4627,36 @@
       if (!this._hawkRetreatLocks) this._hawkRetreatLocks = new WeakMap();
       const current = this._hawkRetreatLocks.get(e) || {};
       current[family] = Math.max(current[family] || 0, this.s.time + seconds);
-      this._hawkRetreatLocks.set(e,current);
+      this._hawkRetreatLocks.set(e, current);
       if (family === 'regroup') {
         // Keep combat and a local temporary leash rather than resetting home.
         this._tacticalRegroups ||= new Map();
-        this._tacticalRegroups.set(e.id, { phase:'anchored',
-          anchor:{ x:e.x, y:e.y }, holdRemaining:12,
-          moveUsed:true, recruited:true });
-        e.path = []; e.routeAge = 0; e.noProgress = 0;
+        this._tacticalRegroups.set(e.id, {
+          phase: 'anchored',
+          anchor: { x: e.x, y: e.y },
+          holdRemaining: 12,
+          moveUsed: true,
+          recruited: true,
+        });
+        e.path = [];
+        e.routeAge = 0;
+        e.noProgress = 0;
       } else if (family === 'withdraw') {
         // A warned attack remains committed: suppress only its retreat motion.
-        e.path = []; e.routeAge = 0;
+        e.path = [];
+        e.routeAge = 0;
       } else if (family === 'backpedal') {
         this._hawkBackpedalAt?.delete(e);
         if (e.rangedAim) e.rangedAim.withdrawal = false;
         if (e.telegraph?.withdrawal) e.telegraph.withdrawal = false;
       }
-      this.event('hawkRetreatInterrupted',{ actor:'hero', class:'ranger',
-        target:e.id, family, seconds });
+      this.event('hawkRetreatInterrupted', {
+        actor: 'hero',
+        class: 'ranger',
+        target: e.id,
+        family,
+        seconds,
+      });
       return true;
     }
     tacticalClearRogueRegroup(e = null) {
@@ -4688,7 +4692,7 @@
         e.motion ||
         e.rangedAim ||
         (prior && !preparing) ||
-        this.hawkRetreatLocked(e,'regroup') ||
+        this.hawkRetreatLocked(e, 'regroup') ||
         (!preparing && (this._tacticalRogueNext?.get(e.id) || 0) > this.s.time) ||
         !this.tacticalRogueEligibility(e, activeTargetCount) ||
         !this.tacticalRegroupCandidates(e).includes(ally)
@@ -5059,9 +5063,11 @@
           this.tacticalRogueOutnumbered(e) &&
           this.tacticalRogueEligibility(e, Math.max(pressure, 2)) &&
           (this._tacticalRogueNext?.get(e.id) || 0) <= this.s.time &&
-          !this.hawkRetreatLocked(e,'regroup');
-        if (!this.hawkRetreatLocked(e,'regroup') &&
-          ((freshWound && this.tacticalRogueEligibility(e, pressure)) || pressureRemains)) {
+          !this.hawkRetreatLocked(e, 'regroup');
+        if (
+          !this.hawkRetreatLocked(e, 'regroup') &&
+          ((freshWound && this.tacticalRogueEligibility(e, pressure)) || pressureRemains)
+        ) {
           if (freshWound) {
             if (!this._tacticalWoundedUsed) this._tacticalWoundedUsed = new Set();
             this._tacticalWoundedUsed.add(e.id);
@@ -5162,7 +5168,7 @@
           (e.type === 'boss' ? 500 : e.captain || e.roomCaptain ? 440 : 340) *
           R.balance.enemySpecialReachMultiplier;
       if (!target || dist(e, target) > maxRange || !this.line(e, target)) return false;
-      if (profile.style === 'withdraw' && this.hawkRetreatLocked(e,'withdraw')) return false;
+      if (profile.style === 'withdraw' && this.hawkRetreatLocked(e, 'withdraw')) return false;
       const effect = isSignature ? profile.effect : null,
         centered = effect === 'scatter' || effect === 'sweep',
         warning =
@@ -5728,8 +5734,11 @@
           // Break locked attacks immediately; party AI can pick another threat.
           this.tacticalDropDustTarget(e);
         }
-        if (move.style === 'withdraw' && move.retreat > 0 &&
-          !this.hawkRetreatLocked(e,'withdraw')) {
+        if (
+          move.style === 'withdraw' &&
+          move.retreat > 0 &&
+          !this.hawkRetreatLocked(e, 'withdraw')
+        ) {
           const d = Math.max(1, dist(e, contactTarget)),
             point = {
               x: e.x + ((e.x - contactTarget.x) / d) * move.retreat,
@@ -5848,7 +5857,7 @@
         e.motion ||
         e.rangedAim ||
         this.tacticalRogueRegroup(e) ||
-        this.hawkRetreatLocked(e,'regroup') ||
+        this.hawkRetreatLocked(e, 'regroup') ||
         (!newWound && (this._tacticalRogueNext?.get(e.id) || 0) > this.s.time) ||
         (!newWound &&
           Number.isFinite(e.fightStart) &&
@@ -6640,9 +6649,7 @@
       delete e.mireLowestHpRatio;
       if (e.hookedVictim) {
         const held =
-          e.hookedVictim === 'hero'
-            ? this.hero
-            : this.s.party.find((u) => u.id === e.hookedVictim);
+          e.hookedVictim === 'hero' ? this.hero : this.s.party.find((u) => u.id === e.hookedVictim);
         if (held) held.keeperHeld = null;
         e.hookedVictim = null;
       }
@@ -6848,10 +6855,65 @@
         )
           delete this.s.pending[key];
     }
+    retireSpentReinforcements(z) {
+      // Native corpses still anchor respawns and specialist revivals. Only
+      // paid, ordinary dungeon reinforcement deaths are candidates for retirement.
+      if (!dungeonIds.includes(z.id)) return 0;
+      const disposable = (e) =>
+        e.reinforcement === true &&
+        e.guard &&
+        e.type === 'mob' &&
+        e.form === 'normal' &&
+        e.hp <= 0 &&
+        e.deathPaid &&
+        !e.neutral &&
+        !e.summon &&
+        !e.captain &&
+        !e.roomCaptain &&
+        !e.family &&
+        !e.owner &&
+        !(e.respawn > 0) &&
+        !e.supportHeal;
+      if (!z.enemies.some(disposable)) return 0;
+      const commander = z.enemies.some(
+        (e) =>
+          (e.type === 'boss' && e.family === 'ridge') ||
+          ['supply-highlands', 'frontier-overseer'].includes(e.captainProfile),
+      );
+      const referenced = new Set();
+      const retain = (v) => {
+        if (typeof v === 'string') referenced.add(v);
+      };
+      for (const p of [...this.s.projectiles, ...this.s.hazards]) {
+        retain(p.sourceId);
+        retain(p.targetId);
+        retain(p.target);
+        retain(p.owner);
+      }
+      for (const p of Object.values(this.s.pending)) retain(p.base?.id);
+      retain(this.s.heroTarget);
+      for (const u of [this.hero, ...this.s.party, ...z.enemies]) {
+        retain(u.owner);
+        retain(u.order?.id);
+        retain(u.targetId);
+        retain(u.supportHeal?.source);
+        retain(u.telegraph?.targetId);
+        retain(u.rangedAim?.targetId);
+      }
+      const count = z.enemies.length;
+      z.enemies = z.enemies.filter(
+        (e) =>
+          !disposable(e) ||
+          referenced.has(e.id) ||
+          (commander && ['wolf', 'ogre', 'archer'].includes(e.species)),
+      );
+      return count - z.enemies.length;
+    }
     updateGuardianReinforcements(dt) {
       if (this.peace || !dungeonIds.includes(this.s.zone)) return;
-      const z = this.zone(),
-        boss = z.enemies.find((e) => e.type === 'boss' && e.hp > 0 && !e.neutral),
+      const z = this.zone();
+      this.retireSpentReinforcements(z);
+      const boss = z.enemies.find((e) => e.type === 'boss' && e.hp > 0 && !e.neutral),
         cfg = R.dungeonReinforcement;
       if (!boss) {
         z.guardianReinforcementTimer = 0;

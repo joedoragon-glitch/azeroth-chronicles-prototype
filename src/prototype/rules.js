@@ -2326,7 +2326,7 @@
       enemyCount: 6,
       theme: 'cellar',
       species: 'goblin',
-      lore: "These were once fruit cellars. Scornfang’s Goblin workers now have bedrolls, games and nests for their young here, having been displaced by the winter-estate project and the changes at the Crypt. Their preserves were bought with wages, not stolen.",
+      lore: 'These were once fruit cellars. Scornfang’s Goblin workers now have bedrolls, games and nests for their young here, having been displaced by the winter-estate project and the changes at the Crypt. Their preserves were bought with wages, not stolen.',
       decor: [
         [190, 210, 'crate'],
         [300, 230, 'ration'],
@@ -2367,7 +2367,7 @@
       enemyCount: 8,
       theme: 'flooded',
       species: 'reedbeast',
-      lore: "The watchhouse is partly flooded. Reed Beasts nest above the waterline, among fish racks and piles of shells. They have made shelter of the old military building.",
+      lore: 'The watchhouse is partly flooded. Reed Beasts nest above the waterline, among fish racks and piles of shells. They have made shelter of the old military building.',
       decor: [
         [180, 210, 'fish-rack'],
         [300, 220, 'fishing-net'],
@@ -2406,7 +2406,7 @@
       enemyCount: 10,
       theme: 'keep',
       species: 'ogre',
-      lore: "The Old Signal Keep is old, but its warning station still works. Ogre households gather around the hearth after their shifts. The mining gear is professional equipment, well maintained and supplied through the Crown; the stone seats and game table are theirs to use when work is done.",
+      lore: 'The Old Signal Keep is old, but its warning station still works. Ogre households gather around the hearth after their shifts. The mining gear is professional equipment, well maintained and supplied through the Crown; the stone seats and game table are theirs to use when work is done.',
       decor: [
         [180, 215, 'ridge-hearth'],
         [305, 210, 'weapon-rack'],
@@ -2449,7 +2449,7 @@
       enemyCount: 12,
       theme: 'shrine',
       species: 'orc',
-      lore: "The Orcs use the old shrine as a barracks, yet they continue to care for its surviving ritual furniture. They cook, drill and play games around it. Among the papers here are memoranda bearing Scornfang’s name, suggesting someone beyond the Frontier has taken an interest in preserving the site.",
+      lore: 'The Orcs use the old shrine as a barracks, yet they continue to care for its surviving ritual furniture. They cook, drill and play games around it. Among the papers here are memoranda bearing Scornfang’s name, suggesting someone beyond the Frontier has taken an interest in preserving the site.',
       decor: [
         [180, 215, 'ritual-table'],
         [315, 210, 'field-kitchen'],
@@ -2529,20 +2529,44 @@
   // dungeon entrances. IDs do not replace quests, loot or mechanical triggers.
   const narrativeSceneInspections = {
     citadel: [
-      { id: 'veyra-private-quarters', name: 'Veyra’s private quarters', x: 1060, y: 1225,
-        icon: '🪞', narrativeId: 'D04' },
+      {
+        id: 'veyra-private-quarters',
+        name: 'Veyra’s private quarters',
+        x: 1060,
+        y: 1225,
+        icon: '🪞',
+        narrativeId: 'D04',
+      },
     ],
     'side-vale-cellars': [
-      { id: 'goblin-paid-preserves', name: 'Purchased preserves', x: 425, y: 245,
-        icon: '🍯', narrativeId: 'I01' },
+      {
+        id: 'goblin-paid-preserves',
+        name: 'Purchased preserves',
+        x: 425,
+        y: 245,
+        icon: '🍯',
+        narrativeId: 'I01',
+      },
     ],
     'side-highlands-signal': [
-      { id: 'signal-working-beacon', name: 'Working signal station', x: 770, y: 350,
-        icon: '🔥', narrativeId: 'I03' },
+      {
+        id: 'signal-working-beacon',
+        name: 'Working signal station',
+        x: 770,
+        y: 350,
+        icon: '🔥',
+        narrativeId: 'I03',
+      },
     ],
     'side-frontier-shrine': [
-      { id: 'scornfang-shrine-records', name: 'Scornfang memoranda', x: 690, y: 275,
-        icon: '📜', narrativeId: 'I04' },
+      {
+        id: 'scornfang-shrine-records',
+        name: 'Scornfang memoranda',
+        x: 690,
+        y: 275,
+        icon: '📜',
+        narrativeId: 'I04',
+      },
     ],
   };
 
@@ -5057,9 +5081,12 @@
   // The entrance below uses an exact, unaltered two-sentence excerpt of approved D04.
   const dungeonLore = {
     mine: "Garun's geometric mark appears on roads and settlements he helped design. At Colossus Mine, he inspects the Ogre wardens and structural supports; Ridge Tyrant handles the wages. Beyond the forge, small machines and angular ornaments fill Garun's workshop.",
-    crypt: "An old ossuary opens onto guest rooms still under construction. A building plan shows six places set at the winter table.",
-    abyss: "Abyss Bastion is preparing equipment for dragon riders and maintains a hatchery for the planned royal air force. The launch platform is unfinished. Veyrith, the Dark Lord's purple personal mount, has no completed fleet to command yet.",
-    citadel: "The Citadel of Ashes is Marshal Veyra’s academy and the headquarters of the Crown’s professional army. Its officers train soldiers from different peoples to follow the same drill.",
+    crypt:
+      'An old ossuary opens onto guest rooms still under construction. A building plan shows six places set at the winter table.',
+    abyss:
+      "Abyss Bastion is preparing equipment for dragon riders and maintains a hatchery for the planned royal air force. The launch platform is unfinished. Veyrith, the Dark Lord's purple personal mount, has no completed fleet to command yet.",
+    citadel:
+      'The Citadel of Ashes is Marshal Veyra’s academy and the headquarters of the Crown’s professional army. Its officers train soldiers from different peoples to follow the same drill.',
   };
   const dungeonDecor = {
     crypt: [
@@ -6241,9 +6268,28 @@
       basicSeconds: 0.85,
       normalSeconds: 3,
       chargedSeconds: { paladin: 8, mage: 7, ranger: 8 },
-      paladin: { reach: 190, reachStep: 10, halfWidth: 35, halfWidthStep: 4, pulses: 2, pulseGap: 0.35, damagePerPulse: 1.5, maxTargets: 8 },
+      paladin: {
+        reach: 190,
+        reachStep: 10,
+        halfWidth: 35,
+        halfWidthStep: 4,
+        pulses: 2,
+        pulseGap: 0.35,
+        damagePerPulse: 1.5,
+        maxTargets: 8,
+      },
       mage: { reach: 440, reachStep: 10, halfWidth: 48, halfWidthStep: 4, damage: 2.4 },
-      ranger: { launchRange: 450, speed: 650, pathBudget: 560, pathStep: 15, lifetime: 1.25, hitRadius: 22, damage: 2.25, retreatLock: 4, retreatStep: 0.15 },
+      ranger: {
+        launchRange: 450,
+        speed: 650,
+        pathBudget: 560,
+        pathStep: 15,
+        lifetime: 1.25,
+        hitRadius: 22,
+        damage: 2.25,
+        retreatLock: 4,
+        retreatStep: 0.15,
+      },
     },
     manaFractions: { 1: 0.2, 2: 0.3, 3: 0.35 },
     third: { effect: 'party-heal' },

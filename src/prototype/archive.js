@@ -581,17 +581,24 @@
             '.' +
             (slot === 1
               ? (() => {
-                  const reference = typeof PrototypeSkillReference !== 'undefined'
-                    ? PrototypeSkillReference
-                    : require('./skill-reference.js');
-                  const info = reference.describe(game,slot,rank);
-                  const show = (form) => form.metrics
-                    .map(m=>m.label + ': ' + reference.value(m)).join(' · ');
-                  return '\nAutomatic basics: '+show(info.auto)+
-                    '\nTap: '+show(info.tap)+
-                    '\nCharged: '+show(info.charge)+
-                    '\nCombo resets after '+R.basicAttackCombo.resetSeconds+
-                    ' seconds without a compatible target.';
+                  const reference =
+                    typeof PrototypeSkillReference !== 'undefined'
+                      ? PrototypeSkillReference
+                      : require('./skill-reference.js');
+                  const info = reference.describe(game, slot, rank);
+                  const show = (form) =>
+                    form.metrics.map((m) => m.label + ': ' + reference.value(m)).join(' · ');
+                  return (
+                    '\nAutomatic basics: ' +
+                    show(info.auto) +
+                    '\nTap: ' +
+                    show(info.tap) +
+                    '\nCharged: ' +
+                    show(info.charge) +
+                    '\nCombo resets after ' +
+                    R.basicAttackCombo.resetSeconds +
+                    ' seconds without a compatible target.'
+                  );
                 })()
               : '') +
             (slot === 2
@@ -997,12 +1004,12 @@
     'Maximum flight path': 'Distancia máxima del halcón',
     'Flight lifetime': 'Duración del vuelo',
     'Retreat lockout': 'Bloqueo de retirada',
-    'Pulses': 'Pulsos',
-    'Width': 'Anchura',
-    'Reach': 'Alcance',
+    Pulses: 'Pulsos',
+    Width: 'Anchura',
+    Reach: 'Alcance',
     'Max targets': 'Máximo de objetivos',
-    'Arrows': 'Flechas',
-    'Cooldown': 'Recuperación',
+    Arrows: 'Flechas',
+    Cooldown: 'Recuperación',
     'Battle and protection': 'Combate y protección',
     'Conditions and recovery': 'Estados y recuperación',
     'Experience and discipline': 'Experiencia y disciplina',

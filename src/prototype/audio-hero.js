@@ -18,44 +18,71 @@
           return true;
         // New Skill 1 gameplay receipts sound only at their actual mechanical
         // stages. Bounded single-voice accents prevent crowd hit multiplication.
-        if (e.slot === 1 && ['heroSkillArea','heroHawk'].includes(e.type)) {
-          if (e.type === 'heroHawk' && (e.phase === 'flight' || e.phase === 'expire'))
+        if (e.slot === 1 && ['heroSkillArea', 'heroHawk'].includes(e.type)) {
+          if (e.type === 'heroHawk' && (e.phase === 'flight' || e.phase === 'expire')) return true;
+          if (
+            !this.allowSfx(
+              'skill1:' +
+                e.class +
+                ':' +
+                (e.type === 'heroSkillArea' ? (e.pulse ?? 'beam') : e.phase),
+              this.ctx.currentTime,
+              0.05,
+            )
+          )
             return true;
-          if (!this.allowSfx('skill1:' + e.class + ':' +
-            (e.type === 'heroSkillArea' ? e.pulse ?? 'beam' : e.phase),
-            this.ctx.currentTime, 0.05)) return true;
           if (this.voices.size > 38) return true;
-          const now=this.ctx.currentTime,
-            quiet=now-this.lastWarning<0.4?0.4:1,
-            old=this.sourcePriority;
-          this.sourcePriority=1;
+          const now = this.ctx.currentTime,
+            quiet = now - this.lastWarning < 0.4 ? 0.4 : 1,
+            old = this.sourcePriority;
+          this.sourcePriority = 1;
           try {
-            const phase = e.type === 'heroSkillArea'
-              ? e.class === 'paladin' ? 'pulse'+e.pulse : 'wideBeam'
-              : e.phase;
-            if (this.playSoundEvent('hero.'+e.class+'.1.charged.'+phase,e)) return true;
-            if(e.class==='paladin'){
-              this.tone(e.pulse===0?57:61,now,0.13,0.026*quiet,'triangle','effects',0.004);
-              this.tone(e.pulse===0?76:80,now+0.02,0.17,0.016*quiet,'sine','effects',0.005);
-              this.noiseBurst(now,0.06,0.012*quiet,'bandpass',1200,0.7);
-            } else if(e.class==='mage'){
-              this.sweep(48,86,now,0.22,0.032*quiet,'sine');
-              this.noiseBurst(now+0.03,0.16,0.026*quiet,'bandpass',1250,0.8);
-              this.tone(62,now+0.025,0.2,0.019*quiet,'triangle','effects',0.006);
-            } else if(e.phase==='launch'){
-              this.sweep(83,67,now,0.09,0.014*quiet,'triangle');
-              this.noiseBurst(now,0.08,0.011*quiet,'highpass',2300,0.8);
-            } else if(e.phase==='impact'&&e.landed){
-              this.noiseBurst(now,0.05,0.026*quiet,'bandpass',1500,0.75);
-              this.tone(65,now,0.08,0.021*quiet,'triangle','effects',0.003);
-              if(e.interrupted)
-                this.tone(88,now+0.04,0.13,0.018*quiet,'sine','effects',0.005);
+            const phase =
+              e.type === 'heroSkillArea'
+                ? e.class === 'paladin'
+                  ? 'pulse' + e.pulse
+                  : 'wideBeam'
+                : e.phase;
+            if (this.playSoundEvent('hero.' + e.class + '.1.charged.' + phase, e)) return true;
+            if (e.class === 'paladin') {
+              this.tone(
+                e.pulse === 0 ? 57 : 61,
+                now,
+                0.13,
+                0.026 * quiet,
+                'triangle',
+                'effects',
+                0.004,
+              );
+              this.tone(
+                e.pulse === 0 ? 76 : 80,
+                now + 0.02,
+                0.17,
+                0.016 * quiet,
+                'sine',
+                'effects',
+                0.005,
+              );
+              this.noiseBurst(now, 0.06, 0.012 * quiet, 'bandpass', 1200, 0.7);
+            } else if (e.class === 'mage') {
+              this.sweep(48, 86, now, 0.22, 0.032 * quiet, 'sine');
+              this.noiseBurst(now + 0.03, 0.16, 0.026 * quiet, 'bandpass', 1250, 0.8);
+              this.tone(62, now + 0.025, 0.2, 0.019 * quiet, 'triangle', 'effects', 0.006);
+            } else if (e.phase === 'launch') {
+              this.sweep(83, 67, now, 0.09, 0.014 * quiet, 'triangle');
+              this.noiseBurst(now, 0.08, 0.011 * quiet, 'highpass', 2300, 0.8);
+            } else if (e.phase === 'impact' && e.landed) {
+              this.noiseBurst(now, 0.05, 0.026 * quiet, 'bandpass', 1500, 0.75);
+              this.tone(65, now, 0.08, 0.021 * quiet, 'triangle', 'effects', 0.003);
+              if (e.interrupted)
+                this.tone(88, now + 0.04, 0.13, 0.018 * quiet, 'sine', 'effects', 0.005);
             }
-          } finally { this.sourcePriority=old; }
+          } finally {
+            this.sourcePriority = old;
+          }
           return true;
         }
-        if (e.type === 'hawkRetreatInterrupted' || e.type === 'skill1Tap')
-          return true;
+        if (e.type === 'hawkRetreatInterrupted' || e.type === 'skill1Tap') return true;
         const event = { ...e, charged: e.charged || e.type === 'chargedArea' },
           def = art.profile(event);
         if (!def) return true;

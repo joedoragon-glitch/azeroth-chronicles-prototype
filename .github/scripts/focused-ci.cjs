@@ -9,6 +9,22 @@ const TEST = 'tests/';
 const PILOT = 'tools/webgl-pilot/';
 const groups = [
   {
+    match: /^src\/prototype\/(?:app|input)\.js$/,
+    tests: [TEST + 'hero-skill1-area3-input.test.cjs'],
+  },
+  {
+    match: /^src\/prototype\/(?:hero-combat|combat|rules|save|engine)\.js$/,
+    tests: [TEST + 'hero-skill1-stage1.test.cjs', TEST + 'hero-skill1-integration.test.cjs'],
+  },
+  {
+    match: /^src\/prototype\/(?:boss-combat|hero-combat|engine)\.js$/,
+    tests: [TEST + 'hero-skill1-retreats.test.cjs'],
+  },
+  {
+    match: /^src\/prototype\/(?:hero-presentation|audio-hero|skill-reference|menus)\.js$/,
+    tests: [TEST + 'hero-skill1-area2.test.cjs'],
+  },
+  {
     match:
       /(?:^|\/)(?:pixi-experimental\.js|pixi-scene-bridge\.js|native-sprite-adapter\.js|renderer-switch-guard\.js|native-webgl2-core\.js)$|^tests\/pixi-|^tools\/webgl-pilot\//,
     tests: [
@@ -57,6 +73,7 @@ const groups = [
     match: /^src\/prototype\/(?:persistence|save)\.js$/,
     tests: [
       TEST + 'persistence-safety.test.cjs',
+      TEST + 'save-recovery-checkpoints.test.cjs',
       TEST + 'save-writer.test.cjs',
       TEST + 'platform-runtime.test.cjs',
       TEST + 'restart-recovery.test.cjs',
@@ -69,6 +86,7 @@ const groups = [
     match: /^src\/prototype\/app\.js$/,
     tests: [
       TEST + 'persistence-safety.test.cjs',
+      TEST + 'save-recovery-checkpoints.test.cjs',
       TEST + 'save-writer.test.cjs',
       TEST + 'restart-recovery.test.cjs',
     ],
@@ -84,10 +102,16 @@ const groups = [
   {
     match: /^src\/prototype\/(?:field-onboarding|engine)\.js$|^tests\/helpers\/field-opening\.cjs$/,
     tests: [
+      TEST + 'night-tempo.test.cjs',
       TEST + 'field-onboarding.test.cjs',
       TEST + 'ranged-pet-support.test.cjs',
       TEST + 'enemy-support-healing.test.cjs',
     ],
+  },
+  {
+    match:
+      /^src\/prototype\/(?:engine|world|navigation)\.js$|^tests\/fixtures\/runtime-workload-dev175\.json$/,
+    tests: [TEST + 'runtime-workload.test.cjs'],
   },
   {
     match: /^src\/prototype\/(?:rules|combat)\.js$/,
@@ -109,6 +133,7 @@ const groups = [
     match: /^tests\/helpers\/production-shell\.cjs$/,
     tests: [
       TEST + 'persistence-safety.test.cjs',
+      TEST + 'save-recovery-checkpoints.test.cjs',
       TEST + 'save-writer.test.cjs',
       TEST + 'render-resolution.test.cjs',
     ],

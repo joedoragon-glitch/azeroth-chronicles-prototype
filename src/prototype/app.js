@@ -48,6 +48,32 @@
   } catch (_) {}
   document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
   const spanishText = {
+    'Try recovery': 'Intentar recuperar',
+    'Recovery options': 'Opciones de recuperación',
+    'Choose a recoverable run to review. Nothing is replaced until you confirm.':
+      'Elige una partida recuperable para revisarla. Nada se reemplaza hasta que confirmes.',
+    'No usable local checkpoint was found. Import a backup, or export the original for investigation.':
+      'No se encontró un punto de recuperación local utilizable. Importa una copia de seguridad o exporta el original para investigarlo.',
+    'The main save is missing. Try a recovery checkpoint or import a backup.':
+      'Falta la partida principal. Intenta recuperarla desde un punto guardado o importa una copia de seguridad.',
+    'Review recovery': 'Revisar recuperación',
+    'Recover this run': 'Recuperar esta partida',
+    Checkpoint: 'Punto de recuperación',
+    'Compatible saved run': 'Partida compatible',
+    'Preserved original': 'Original conservado',
+    'Legacy saved run': 'Partida antigua',
+    Saved: 'Guardado',
+    'Date unavailable': 'Fecha no disponible',
+    Level: 'Nivel',
+    'Saved run unavailable. Try recovery or import a backup.':
+      'Partida guardada no disponible. Intenta recuperarla o importa una copia de seguridad.',
+    'Restoring this run may lose progress made after this checkpoint. Your unreadable original will remain preserved.':
+      'Recuperar esta partida puede perder avances posteriores a este punto. Se conservará el original que no se pudo abrir.',
+    'Run recovered successfully.': 'Partida recuperada correctamente.',
+    'Recovery failed. Your original save was kept. Export it before closing.':
+      'La recuperación falló. Se conservó tu partida original. Expórtala antes de cerrar.',
+    'Saved locally, but a recovery checkpoint could not be stored. Export a backup.':
+      'Partida guardada localmente, pero no se pudo guardar un punto de recuperación. Exporta una copia de seguridad.',
     'Saved run could not be opened': 'No se pudo abrir la partida guardada',
     'Your original save is protected. Import a backup or export the original before starting a new run.':
       'Tu partida original está protegida. Importa una copia de seguridad o exporta el original antes de empezar una partida nueva.',
@@ -1541,7 +1567,7 @@
     if (text === 'Saved locally · export for a backup') return;
     $('status').textContent = tr(text);
     const important =
-      /storage unavailable|Saving failed|Saved run unavailable|Legacy save|Invalid import|Imported successfully/i.test(
+      /storage unavailable|Saving failed|Saved run unavailable|Legacy save|Invalid import|Imported successfully|Recovery failed|recovery checkpoint/i.test(
         text,
       );
     statusUntil = performance.now() + (important ? 6000 : 2800);
@@ -2957,19 +2983,101 @@
   function savedRunRecoveryMenu() {
     openMenu(
       'Saved run could not be opened',
-      'Your original save is protected. Import a backup or export the original before starting a new run.',
+      persistence.original(profile.activeMode)
+        ? 'Your original save is protected. Import a backup or export the original before starting a new run.'
+        : 'The main save is missing. Try a recovery checkpoint or import a backup.',
       [
-        action('Export original save', () =>
-          exportSaveText(
-            persistence.original(profile.activeMode),
-            'Azeroth_Original_' + profile.activeMode + '.json',
-          ),
+        action('Try recovery', savedRunRecoveryOptions),
+        action(
+          'Export original save',
+          () =>
+            exportSaveText(
+              persistence.original(profile.activeMode),
+              'Azeroth_Original_' + profile.activeMode + '.json',
+            ),
+          '',
+          !persistence.original(profile.activeMode),
         ),
         action('Import save', () => $('import-file').click()),
         action('Start a new Normal run', () => chooseLanguage('normal')),
       ],
       savedRunRecoveryMenu,
       { view: 'save-recovery' },
+    );
+  }
+  function recoverySummary(option) {
+    const place =
+      D.regions.find((region) => region.id === option.zone)?.name ||
+      D.bosses.find((boss) => boss.id === option.zone)?.place ||
+      option.zone;
+    const heroClass =
+      language === 'es'
+        ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador' }[option.heroClass]
+        : option.heroClass;
+    return tr('Level') + ' ' + option.level + ' · ' + heroClass + ' · ' + place;
+  }
+  function savedRunRecoveryOptions() {
+    let options;
+    try {
+      options = persistence.recoveryOptions(profile.activeMode);
+    } catch (_) {
+      status('Recovery failed. Your original save was kept. Export it before closing.');
+      return;
+    }
+    openMenu(
+      'Recovery options',
+      options.length
+        ? 'Choose a recoverable run to review. Nothing is replaced until you confirm.'
+        : 'No usable local checkpoint was found. Import a backup, or export the original for investigation.',
+      options.map((option, index) =>
+        action(
+          tr(
+            {
+              checkpoint: 'Checkpoint',
+              compatible: 'Compatible saved run',
+              original: 'Preserved original',
+              legacy: 'Legacy saved run',
+            }[option.source],
+          ) +
+            ' ' +
+            (index + 1),
+          () => reviewSavedRunRecovery(option),
+          recoverySummary(option),
+        ),
+      ),
+      savedRunRecoveryMenu,
+      { view: 'save-recovery-options' },
+    );
+  }
+  function reviewSavedRunRecovery(option) {
+    const date =
+      option.savedAt === null
+        ? tr('Date unavailable')
+        : tr('Saved') +
+          ' ' +
+          new Date(option.savedAt).toLocaleString(language === 'es' ? 'es-US' : 'en-US');
+    openMenu(
+      'Review recovery',
+      recoverySummary(option) +
+        '\n' +
+        date +
+        '\n\n' +
+        tr(
+          'Restoring this run may lose progress made after this checkpoint. Your unreadable original will remain preserved.',
+        ),
+      [
+        action('Recover this run', () => {
+          try {
+            const candidate = persistence.recover(profile.activeMode, option.id);
+            resumeSavedRun(candidate);
+            status('Run recovered successfully.');
+          } catch (_) {
+            status('Recovery failed. Your original save was kept. Export it before closing.');
+          }
+        }),
+      ],
+      savedRunRecoveryOptions,
+      { view: 'save-recovery-review' },
     );
   }
   function savedRunConflictMenu() {
@@ -3608,21 +3716,25 @@
       if (candidate.s.mode === 'developer' && !developerEnabled)
         throw Error('Developer import disabled');
       persistence.writeCandidate(candidate);
-      restartGuard.clean();
-      game = candidate;
-      started = true;
-      if (game.s.mode !== 'developer') profile.activeMode = game.s.mode;
-      if (game.peace && game.s.finalRestCompleted && game.s.mode !== 'developer')
-        profile.nightmareUnlocked = true;
-      persistProfile();
-      restartGuard.arm(game);
-      closeMenu();
+      resumeSavedRun(candidate);
       status('Imported successfully.');
     } catch (_) {
       status('Invalid import. Your current run was kept intact.');
     }
     e.target.value = '';
   };
+  function resumeSavedRun(candidate) {
+    restartGuard.clean();
+    game = candidate;
+    loaded = started = true;
+    if (game.s.mode !== 'developer') profile.activeMode = game.s.mode;
+    if (game.peace && game.s.finalRestCompleted && game.s.mode !== 'developer')
+      profile.nightmareUnlocked = true;
+    persistProfile();
+    restartGuard.arm(game);
+    closeMenu();
+    updateHUD();
+  }
   function nearestNPC() {
     return [
       ...game.visibleNPCs(),
@@ -4695,6 +4807,7 @@
         slot: request.slot,
         charged: request.charged,
         ready:
+          queuedInputReady(request) &&
           queuedCharges.get(request.slot) === request &&
           game.hero.cd[request.slot - 1] <= 0 &&
           (!request.charged || (game.hero.chargedCd?.[request.slot - 1] || 0) <= 0),
@@ -5048,6 +5161,7 @@
     return cast;
   }
   function selectQueuedCharge() {
+    let invalidated = false;
     for (const request of queuedCharges.values())
       if (
         request.campaign !== game ||
@@ -5060,8 +5174,12 @@
         game.hero.deathRollHeld ||
         game.hero.keeperHeld ||
         game._tacticalScatter?.has('hero')
-      )
+      ) {
         queuedCharges.remove(request);
+        invalidated = true;
+      }
+    if (invalidated)
+      status(language === 'es' ? 'Cola de habilidades cancelada.' : 'Skill queue cancelled.');
     if (charge?.autoRelease && !queuedCharges.contains(charge)) cancelCharge(false);
     // A manual cast or a running charge keeps its normal preparation. Other
     // skills retain independent requests and wait for their own cooldown.

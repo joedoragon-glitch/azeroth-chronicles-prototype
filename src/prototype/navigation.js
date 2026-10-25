@@ -9,20 +9,37 @@
     // disabled diagnostics add zero overhead to production collision methods.
     const diagnosticSessions = new WeakMap();
     const diagnosticMetrics = [
-      'moveCalls', 'moveMs', 'moveSegmentCalls', 'segmentCalls', 'segmentMs',
-      'segmentPoints', 'blockedCalls', 'blockedMs', 'actorStepCalls', 'actorStepMs',
-      'nearbyActorHits', 'separationCalls', 'separationMs', 'separationBodies',
-      'separationSegments', 'routeCalls', 'routeMs', 'actors', 'maxCellBodies',
+      'moveCalls',
+      'moveMs',
+      'moveSegmentCalls',
+      'segmentCalls',
+      'segmentMs',
+      'segmentPoints',
+      'blockedCalls',
+      'blockedMs',
+      'actorStepCalls',
+      'actorStepMs',
+      'nearbyActorHits',
+      'separationCalls',
+      'separationMs',
+      'separationBodies',
+      'separationSegments',
+      'routeCalls',
+      'routeMs',
+      'actors',
+      'maxCellBodies',
     ];
     const diagnosticNow = () => performance.now();
     function diagnosticSummary(values) {
       if (!values.length) return { samples: 0, mean: 0, p95: 0, max: 0 };
       const sorted = values.slice().sort((a, b) => a - b);
-      const round = x => Math.round(x * 100) / 100;
-      return { samples: values.length,
+      const round = (x) => Math.round(x * 100) / 100;
+      return {
+        samples: values.length,
         mean: round(values.reduce((a, b) => a + b, 0) / values.length),
         p95: round(sorted[Math.floor((values.length - 1) * 0.95)]),
-        max: round(sorted.at(-1)) };
+        max: round(sorted.at(-1)),
+      };
     }
     const watchedMethods = [
       ['move', 'moveCalls', 'moveMs'],
@@ -38,6 +55,44 @@
       terrainTrips = new WeakMap();
     const patrolResumes = new WeakMap();
     const sceneryReady = new WeakSet();
+    // This shortlist exists only during one synchronous line/segment query.
+    // No cache survives the return, so subsequent in-place geometry edits are fresh.
+    const propQueries = new WeakMap();
+    function collisionProps(game, z, x, y, radius) {
+      const query = propQueries.get(game),
+        props = z?.props;
+      if (
+        !query ||
+        !props ||
+        props.length < 80 ||
+        !Number.isFinite(radius) ||
+        radius < 0 ||
+        !Number.isFinite(x) ||
+        !Number.isFinite(y)
+      )
+        return props;
+      if (query.props !== props || query.length !== props.length) {
+        query.props = props;
+        query.length = props.length;
+        query.reads = 0;
+        query.candidates = null;
+      }
+      // Early obstructions and short moves don't pay for a shortlist.
+      if (++query.reads <= 8) return props;
+      if (!query.candidates)
+        query.candidates = props.filter((p) => {
+          const r =
+            Math.max(0, p.r || 0, R.sceneryTraversal.radii[p.structure] || 0) + query.padding;
+          return (
+            ![r, p.x, p.y, p.r].every(Number.isFinite) ||
+            (p.x + r >= query.left &&
+              p.x - r <= query.right &&
+              p.y + r >= query.top &&
+              p.y - r <= query.bottom)
+          );
+        });
+      return query.candidates;
+    }
     const companionTrips = new WeakMap(),
       laborThreatFrames = new WeakMap(),
       unsupportedPursuits = new WeakSet();
@@ -63,12 +118,14 @@
             const beforeSegments = row.segmentCalls;
             const beforeBlocked = row.blockedCalls;
             let result;
-            try { result = original.apply(this, args); }
-            finally {
+            try {
+              result = original.apply(this, args);
+            } finally {
               if (elapsed) row[elapsed] += diagnosticNow() - started;
               if (name === 'move') row.moveSegmentCalls += row.segmentCalls - beforeSegments;
               if (name === 'clearSegment') row.segmentPoints += row.blockedCalls - beforeBlocked;
-              if (name === 'separateActors') row.separationSegments += row.segmentCalls - beforeSegments;
+              if (name === 'separateActors')
+                row.separationSegments += row.segmentCalls - beforeSegments;
             }
             if (name === 'nearbyActors') row.nearbyActorHits += result.length;
             if (name === 'actorCrowd') {
@@ -97,7 +154,7 @@
       crowdDiagnosticsBeginFrame() {
         const session = diagnosticSessions.get(this);
         if (!session?.recording) return;
-        session.current = Object.fromEntries(diagnosticMetrics.map(key => [key, 0]));
+        session.current = Object.fromEntries(diagnosticMetrics.map((key) => [key, 0]));
       }
       crowdDiagnosticsEndFrame() {
         const session = diagnosticSessions.get(this);
@@ -108,9 +165,10 @@
       }
       crowdDiagnosticsReport() {
         const session = diagnosticSessions.get(this);
-        const rows = session?.rows || [], metrics = {};
+        const rows = session?.rows || [],
+          metrics = {};
         for (const key of diagnosticMetrics)
-          metrics[key] = diagnosticSummary(rows.map(row => row[key]));
+          metrics[key] = diagnosticSummary(rows.map((row) => row[key]));
         return {
           recording: !!session?.recording,
           sampledSimulationTicks: rows.length,
@@ -120,20 +178,39 @@
         };
       }
       crowdDiagnosticsDescribe() {
-        const r = this.crowdDiagnosticsReport(), m = r.metrics;
+        const r = this.crowdDiagnosticsReport(),
+          m = r.metrics;
         if (!r.sampledSimulationTicks)
           return 'Crowd diagnostics: no active gameplay ticks recorded. Start sampling, return to the game, and approach a crowded fight.';
-        return 'Crowd diagnostics · ' + r.sampledSimulationTicks + ' ticks' +
+        return (
+          'Crowd diagnostics · ' +
+          r.sampledSimulationTicks +
+          ' ticks' +
           (r.recording ? ' (recording)' : '') +
-          '\\nMove ms mean/p95 ' + m.moveMs.mean + '/' + m.moveMs.p95 +
-          ' · separation ' + m.separationMs.mean + '/' + m.separationMs.p95 +
-          ' · route ' + m.routeMs.mean + '/' + m.routeMs.p95 +
-          '\\nCalls/tick mean: move ' + m.moveCalls.mean +
-          ', blocked ' + m.blockedCalls.mean +
-          ', segment samples ' + m.segmentPoints.mean +
-          ', nearby actors ' + m.nearbyActorHits.mean +
-          '; max actors in one grid cell ' + m.maxCellBodies.max +
-          '. Timings overlap; opt-in sampling has overhead.';
+          '\\nMove ms mean/p95 ' +
+          m.moveMs.mean +
+          '/' +
+          m.moveMs.p95 +
+          ' · separation ' +
+          m.separationMs.mean +
+          '/' +
+          m.separationMs.p95 +
+          ' · route ' +
+          m.routeMs.mean +
+          '/' +
+          m.routeMs.p95 +
+          '\\nCalls/tick mean: move ' +
+          m.moveCalls.mean +
+          ', blocked ' +
+          m.blockedCalls.mean +
+          ', segment samples ' +
+          m.segmentPoints.mean +
+          ', nearby actors ' +
+          m.nearbyActorHits.mean +
+          '; max actors in one grid cell ' +
+          m.maxCellBodies.max +
+          '. Timings overlap; opt-in sampling has overhead.'
+        );
       }
       observeCrowdFrame(intervalMs, active = true) {
         const zone = this.s.zones[this.zoneId],
@@ -879,9 +956,9 @@
                 : p.r
                   ? // Reject obstacles far outside the circle's bounding box
                     // without invoking a square root.
-                    (Math.abs(x - p.x) < p.r + radius &&
-                      Math.abs(y - p.y) < p.r + radius &&
-                      Math.hypot(x - p.x, y - p.y) < p.r + radius)
+                    Math.abs(x - p.x) < p.r + radius &&
+                    Math.abs(y - p.y) < p.r + radius &&
+                    Math.hypot(x - p.x, y - p.y) < p.r + radius
                   : x > p.x1 - radius &&
                     x < p.x2 + radius &&
                     y > p.y1 - radius &&
@@ -902,7 +979,7 @@
         const z = this.s.zones[zone];
         return (
           (!terrainOnly &&
-            z?.props.some((p) => {
+            collisionProps(this, z, x, y, radius)?.some((p) => {
               if (fort?.props.has(p.id)) return false;
               // Zero-radius queries are the existing LOS/projectile contract.
               // Only positive-radius outdoor movement receives this first pass.
@@ -925,8 +1002,7 @@
                 dy = y - p.y;
               // A circle never overlaps a point outside its enclosing square.
               // Query current prop coordinates/radii every time: no stale cache.
-              if (Number.isFinite(reach) &&
-                  (Math.abs(dx) >= reach || Math.abs(dy) >= reach))
+              if (Number.isFinite(reach) && (Math.abs(dx) >= reach || Math.abs(dy) >= reach))
                 return false;
               const distance = Math.hypot(dx, dy);
               if (distance >= reach) return false;
@@ -1372,6 +1448,34 @@
       }
     }
     const methods = Object.getOwnPropertyDescriptors(Navigation.prototype);
+    for (const name of ['line', 'clearSegment']) {
+      const original = methods[name].value;
+      methods[name].value = function (...args) {
+        if (propQueries.has(this)) return original.apply(this, args);
+        const [a, b] = args;
+        // Sparse interiors, tiny moves and terrain-only sweeps cannot benefit
+        // from this shortlist. Leave their original cheap path allocation-free.
+        if (
+          (this.s.zones?.[this.s.zone]?.props.length || 0) < 80 ||
+          (name === 'clearSegment' && args[3]) ||
+          Math.abs(a.x - b.x) + Math.abs(a.y - b.y) <= 48
+        )
+          return original.apply(this, args);
+        propQueries.set(this, {
+          left: Math.min(a.x, b.x),
+          right: Math.max(a.x, b.x),
+          top: Math.min(a.y, b.y),
+          bottom: Math.max(a.y, b.y),
+          padding: name === 'line' ? 0 : (args[2] ?? 15),
+          reads: 0,
+        });
+        try {
+          return original.apply(this, args);
+        } finally {
+          propQueries.delete(this);
+        }
+      };
+    }
     delete methods.constructor;
     Object.defineProperties(Campaign.prototype, methods);
   }
