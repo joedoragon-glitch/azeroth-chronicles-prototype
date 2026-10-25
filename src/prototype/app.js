@@ -6369,6 +6369,8 @@
       audio.effect(e);
       if (e.type === 'chargeInterrupted' && e.target === 'hero')
         status('Charged skill interrupted.');
+      if (e.type === 'hawkRetreatInterrupted')
+        status(language === 'es' ? 'Retirada interrumpida.' : 'Retreat interrupted.');
       if (e.type === 'actionFailed' && e.reason === 'crowns')
         status('Need ' + e.needed + ' crowns.');
     }
