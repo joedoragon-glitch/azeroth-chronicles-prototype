@@ -1,5 +1,8 @@
 # PR #440 — Stage 3 native World special-action checkpoint
 
+> **LATEST CROSS-PR AUDIT / STAGE 3 CHECKPOINT (25 Oct 2026):** [PR440_STAGE3_CROSS_PR_COMPATIBILITY_AUDIT_20261025.md](PR440_STAGE3_CROSS_PR_COMPATIBILITY_AUDIT_20261025.md). Stage 3 now has **13** explicit World native owners; Scornfang tracking 4-shot one-receipt and one-patch Encapsulation/hazard separation passed [CI #40228319164](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40228319164) (38 tests+build) and [CI #40229006095](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40229006095) (39 tests+build). Only two other open PRs share source filenames: **#464 (four combat/party files; semantic merge REQUIRED)** and **#458 (engine.js; context-clean source patch but not jointly tested)**. No drafts combined, merged or published, no features enabled. Earlier 11-key counts below are historical.
+
+
 **25 October 2026.** This is the current authoritative handoff for the resumed Stage 3 work, superseding the earlier [Stage 2 → Stage 3 baseline](PR440_STAGE2_GATE_STAGE3_NATIVE_HANDOFF_20261025.md) only as to additional source progress. All work is consolidated in **[draft PR #440](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/440)** on `design/critical-executions-codices-20261024`. **No release, merge, publication, broad matrix or feature activation is authorized.** The old single-HTML portability constraint does not apply to this multi-file PWA.
 
 ## Exact source status

@@ -1,5 +1,8 @@
 # PR #440 — Critical Executions: independent development / Work-mode handoff
 
+> **LATEST CROSS-PR AUDIT / STAGE 3 CHECKPOINT (25 Oct 2026):** [PR440_STAGE3_CROSS_PR_COMPATIBILITY_AUDIT_20261025.md](PR440_STAGE3_CROSS_PR_COMPATIBILITY_AUDIT_20261025.md). Stage 3 now has **13** explicit World native owners; Scornfang tracking 4-shot one-receipt and one-patch Encapsulation/hazard separation passed [CI #40228319164](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40228319164) (38 tests+build) and [CI #40229006095](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40229006095) (39 tests+build). Only two other open PRs share source filenames: **#464 (four combat/party files; semantic merge REQUIRED)** and **#458 (engine.js; context-clean source patch but not jointly tested)**. No drafts combined, merged or published, no features enabled. Earlier 11-key counts below are historical.
+
+
 > **Active latest checkpoint (25 Oct 2026):** [Stage 3 World native specials and captain cone handoff](PR440_STAGE3_SPECIAL_ACTIONS_NATIVE_CHECKPOINT_20261025.md). World registry expanded from 3 to **11** explicit native keys; source commits for night skills, non-boss Rogue, and four captain cones all passed their respective focused GitHub Actions + reproducible build. The older Stage 3 status below remains the historically verified starting point, not the current total. The Stage 3 World catalog is still PARTIAL. Critical gameplay remains OFF; draft/unmerged/unpublished.
 
 
