@@ -2,7 +2,8 @@
 const assert = require('node:assert/strict'),
   fs = require('node:fs'),
   path = require('node:path'),
-  os = require('node:os');
+  os = require('node:os'),
+  sharp = require('sharp');
 const { createCanvas, loadImage } = require('@napi-rs/canvas');
 const Materials = require('../src/prototype/materials.js'),
   Contract = require('../src/prototype/material-contract.js'),
@@ -149,6 +150,11 @@ const entry = (n) => ({
     assert.equal(JSON.stringify(require('../assets/materials/manifest.json')), before);
     const stored = require('../tools/sprites/materials/approved.json');
     assert(!stored.assets['terrain:ground:march'], 'obsolete March palette is not published');
+    assert(!stored.assets['terrain:ground:highlands'], 'superseded Highlands texture is not reapproved');
+    assert(
+      stored.history['terrain:ground:highlands'].some((r) => r.review?.status === 'approved'),
+      'the earlier Highlands texture and its review remain historically available',
+    );
     assert(
       stored.history['terrain:ground:march'].some((r) => r.review?.status === 'approved'),
       'approved earlier March material stays verifiable as rollback history',

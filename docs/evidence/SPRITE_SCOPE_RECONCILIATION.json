@@ -470,10 +470,10 @@
       "key": "terrain:ground:highlands",
       "owner": "floor/groundDetail/terrain",
       "palette": [
-        "#485447",
-        "#56614d",
-        "#3b493f",
-        "#b1b59a"
+        "#4a593b",
+        "#74734b",
+        "#3b4d36",
+        "#c6b079"
       ]
     },
     {

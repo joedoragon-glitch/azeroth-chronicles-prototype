@@ -48,8 +48,8 @@
       "name": "Ironroot Highlands ground",
       "status": "candidate",
       "sourceOwner": "floor/groundDetail/terrain",
-      "palette": ["#485447", "#56614d", "#3b493f", "#b1b59a"],
-      "cues": "Muted gray-green quarry earth with subdued dust and fine mineral grit."
+      "palette": ["#4a593b", "#74734b", "#3b4d36", "#c6b079"],
+      "cues": "Current olive and ochre Highlands earth with subdued mineral grit; preserve the existing ground palette."
     },
     {
       "id": "T004",

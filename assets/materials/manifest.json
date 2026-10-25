@@ -10,15 +10,6 @@
       "opacity": 0.28,
       "revision": "b8bbf9f365d240dad6bb42ac87b2e3fdc96b639fd0366fcfe8b87bf6f5166556"
     },
-    "terrain:ground:highlands": {
-      "src": "./assets/materials/e108c18f0c95bcd577a0cf6a802a33847162af9276d3336be5d9f3b9abbae09d.png",
-      "hash": "e108c18f0c95bcd577a0cf6a802a33847162af9276d3336be5d9f3b9abbae09d",
-      "width": 256,
-      "height": 256,
-      "worldSpan": 320,
-      "opacity": 0.28,
-      "revision": "e5748ee4dde27452f02f4ed40da717fd1c8d7fce4fdfc88c1b3e45cf9fbb0104"
-    },
     "terrain:ground:frontier": {
       "src": "./assets/materials/bf8577c52fb47274c71ce2e8c73c98c66a2515d5b62a89120156e5749c3a4ba7.png",
       "hash": "bf8577c52fb47274c71ce2e8c73c98c66a2515d5b62a89120156e5749c3a4ba7",

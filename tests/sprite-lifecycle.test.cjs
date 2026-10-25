@@ -55,7 +55,8 @@ const entry = (name, extra = {}) => ({
   ...extra,
 });
 const manifest = (sprites) => ({ version: 3, sprites });
-const hero = { renderKind: 'hero', class: 'paladin', x: 0, y: 0, hp: 100 };
+// Ranger remains a raster-selected hero; Paladin was intentionally switched to procedural.
+const hero = { renderKind: 'hero', class: 'ranger', x: 0, y: 0, hp: 100 };
 function context() {
   const draws = [];
   return {
@@ -117,8 +118,8 @@ function context() {
       displayWidth: 192,
       displayHeight: 192,
     });
-    f.sprites.installManifest(manifest({ 'hero:paladin': legacy }));
-    let warm = f.sprites.warm(['hero:paladin']);
+    f.sprites.installManifest(manifest({ 'hero:ranger': legacy }));
+    let warm = f.sprites.warm(['hero:ranger']);
     await f.settle(f.pending.shift(), true, 192, 192);
     await warm;
     assert(f.sprites.draw(c.ctx, hero, point));
@@ -145,8 +146,8 @@ function context() {
         },
       },
     });
-    f.sprites.installManifest(manifest({ 'hero:paladin': dense }));
-    warm = f.sprites.warm(['hero:paladin']);
+    f.sprites.installManifest(manifest({ 'hero:ranger': dense }));
+    warm = f.sprites.warm(['hero:ranger']);
     await f.settle(f.pending.shift(), true, 576, 576);
     await warm;
     assert(f.sprites.draw(c.ctx, hero, point));
@@ -177,11 +178,11 @@ function context() {
       digest = 'a'.repeat(64);
     f.sprites.installManifest(
       manifest({
-        'hero:paladin': entry('one', { hash: digest }),
+        'hero:ranger': entry('one', { hash: digest }),
         'boss:thorn': entry('two', { hash: digest }),
       }),
     );
-    const warm = f.sprites.warm(['hero:paladin', 'boss:thorn']);
+    const warm = f.sprites.warm(['hero:ranger', 'boss:thorn']);
     assert.equal(f.requests.length, 1, 'equal content at distinct paths shares one decode');
     await f.drain();
     await warm;
@@ -191,8 +192,8 @@ function context() {
         resolveFetch = resolve;
       });
     const pending = f.sprites.preload();
-    f.sprites.installManifest(manifest({ 'hero:paladin': entry('current') }));
-    resolveFetch({ ok: true, json: async () => manifest({ 'hero:paladin': entry('stale') }) });
+    f.sprites.installManifest(manifest({ 'hero:ranger': entry('current') }));
+    resolveFetch({ ok: true, json: async () => manifest({ 'hero:ranger': entry('stale') }) });
     await pending;
     assert.equal(
       f.sprites.definitionFor(hero).entry.src,
@@ -292,17 +293,17 @@ function context() {
     const f = fresh(),
       c = context();
     f.sprites.installManifest(
-      manifest({ 'hero:paladin': entry('old'), 'boss:thorn': entry('old') }),
+      manifest({ 'hero:ranger': entry('old'), 'boss:thorn': entry('old') }),
     );
     assert.equal(f.requests.length, 0, 'install is lazy');
-    const warm = f.sprites.warm(['hero:paladin', 'boss:thorn']);
+    const warm = f.sprites.warm(['hero:ranger', 'boss:thorn']);
     assert.equal(f.requests.length, 1, 'same content shares decoding');
     await f.drain();
     await warm;
     assert.equal(f.sprites.status().decodedBytes, 64);
     assert(f.sprites.draw(c.ctx, hero, { x: 10, y: 20 }));
     assert.equal(c.draws.at(-1)[0].url, entry('old').src);
-    f.sprites.installManifest(manifest({ 'hero:paladin': entry('new') }));
+    f.sprites.installManifest(manifest({ 'hero:ranger': entry('new') }));
     assert.equal(
       f.sprites.draw(c.ctx, hero, { x: 10, y: 20 }),
       false,
@@ -319,24 +320,24 @@ function context() {
   {
     const f = fresh(),
       c = context();
-    f.sprites.installManifest(manifest({ 'hero:paladin': entry('late-old') }));
+    f.sprites.installManifest(manifest({ 'hero:ranger': entry('late-old') }));
     f.sprites.draw(c.ctx, hero, { x: 0, y: 0 });
     const old = f.pending.shift();
-    f.sprites.installManifest(manifest({ 'hero:paladin': entry('late-new') }));
+    f.sprites.installManifest(manifest({ 'hero:ranger': entry('late-new') }));
     f.sprites.draw(c.ctx, hero, { x: 0, y: 0 });
     await f.settle(f.pending.shift());
     await f.settle(old);
     assert(f.sprites.draw(c.ctx, hero, { x: 0, y: 0 }));
     assert.equal(c.draws.at(-1)[0].url, entry('late-new').src);
     assert.equal(f.sprites.status().staleLoads, 1);
-    f.sprites.installManifest(manifest({ 'hero:paladin': entry('broken') }));
+    f.sprites.installManifest(manifest({ 'hero:ranger': entry('broken') }));
     f.sprites.draw(c.ctx, hero, { x: 0, y: 0 });
     await f.settle(f.pending.shift(), false);
     assert.equal(f.sprites.draw(c.ctx, hero, { x: 0, y: 0 }), false);
     assert.equal(f.sprites.status().failed, 1);
     assert.equal(
       f.sprites.installManifest(
-        manifest({ 'hero:paladin': entry('unsafe', { src: 'https://other.test/a.png' }) }),
+        manifest({ 'hero:ranger': entry('unsafe', { src: 'https://other.test/a.png' }) }),
       ),
       false,
     );
@@ -391,8 +392,8 @@ function context() {
         walk: { loop: true, frames },
       },
     });
-    f.sprites.installManifest(manifest({ 'hero:paladin': value }));
-    const warm = f.sprites.warm(['hero:paladin']);
+    f.sprites.installManifest(manifest({ 'hero:ranger': value }));
+    const warm = f.sprites.warm(['hero:ranger']);
     await f.drain();
     await warm;
     assert(f.sprites.draw(c.ctx, actor, { x: 10, y: 20 }), 'unloaded clip uses static fallback');
@@ -421,7 +422,7 @@ function context() {
     const malformed = entry('static', {
       clips: { idle: { loop: true, frames: [{ ...frames[0], rect: [7, 0, 4, 4] }] } },
     });
-    assert(f.sprites.installManifest(manifest({ 'hero:paladin': malformed })));
+    assert(f.sprites.installManifest(manifest({ 'hero:ranger': malformed })));
     assert.equal(
       f.sprites.definitionFor(hero).entry.clips,
       undefined,
