@@ -2,6 +2,12 @@
 
 **25 October 2026.** Follow-up to [Art Catalog #321 deep audit](ART_CATALOG_321_DEEP_RENDERER_ASSESSMENT_20261025.md). Evidence pin: `befb8349c48b36e9f0e047a6162f08a1db16e214` (PR #469 capture, based on main `e3c78266...`). This document is a **concrete implementation specification**, not an implementation, production approval, owner art reapproval, or renderer-default change. Preserve the existing unmerged draft and accepted artwork.
 
+## Further acceptance: native reward and pickup proven in disposable WebGL browser
+
+The initial synthetic Crown coin was followed by an [actual Campaign death/reward/browser check](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40233872865): `Campaign.kill` generated the unique saved `loot-37` Crown item, the actual GPU scene showed it in a composed screenshot (**919 changed pixels**), and `Campaign.tick` proximity pickup removed and credited 23 Crowns **exactly once**. Nine image hashes independently checked. [Source-pinned proof](evidence/ART_CATALOG_321_EARNED_LOOT_CHROMIUM_20261025.json).
+
+The test explicitly resumed normal graphics frames between paused captures to avoid a stale **previous test fixture** remaining in Pixi's last buffer. The original two failed runs were a **test setup/measurement error**, not a demonstrated new game bug. This is **not** proof of a live combat projectile strike/death animation, real device hardware, cover-specific occlusion or all other assets.
+
 ## Follow-up: fixes implemented and first acceptance gate passed in draft
 
 This document originally specified future repair work. **A subsequent candidate implementation is now on the same unmerged draft PR #469.** Changes are restricted to `src/prototype/pixi-experimental.js` (shared GPU Crown-coin stamp before atmosphere) and `src/prototype/renderer.js` (identical paint-only pause cue for full Canvas and transparent GPU overlay), plus a bounded native regression and a stronger existing one-scene screenshot collector. The original specification remains below to preserve the decision trail.
