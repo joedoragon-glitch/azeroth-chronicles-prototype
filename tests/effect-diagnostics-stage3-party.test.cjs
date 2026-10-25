@@ -175,7 +175,13 @@ console.log('STAGE3 ARCHER real projectile movement across simulation rates=' + 
   g.s.heroTarget = enemies[24].id;
   const priorityTarget = paint();
   assert(!twentyFour.equals(priorityTarget),
-    'late hero-selected enemy must displace ordinary status');
-  console.log('STAGE4 STATUS 24/25 budget intact; late boss and hero target prioritized=true');
+    'late squad-focus enemy must displace ordinary status');
+  g.s.heroTarget = null;
+  g.manualHeroTargetId = enemies[24].id;
+  g.manualHeroTargetZone = g.zoneId;
+  const heldTarget = paint();
+  assert(!twentyFour.equals(heldTarget),
+    'late explicitly held target must displace ordinary status even without squad focus');
+  console.log('STAGE4 STATUS 24/25 budget intact; late boss, squad-focus and held target prioritized=true');
 }
 console.log('PASS Stage 3 natural pets, companions, arrow flight and status culling');
