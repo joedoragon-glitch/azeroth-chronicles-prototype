@@ -88,7 +88,7 @@ for (const kind of ['captain', 'boss', 'field-captain']) {
   delete leader.supportHeal;
   g.updateEnemies(7);
   near(source.supportHealCd, 0, 'ordinary clock recovered in seven seconds');
-  assert(!leader.supportHeal, 'leader does not receive a seven-second recast');
+  assert(!leader.supportHeal, 'leader must not receive seven-second recast: ' + JSON.stringify({ sourceCd: source.supportHealCd, sourceAggro: source.aggro, leaderAggro: leader.aggro, heal: leader.supportHeal, time: g.s.time }));
   g.updateEnemies(3);
   assert(leader.supportHeal, 'leader receives its next legal ten-second treatment');
   near(leader.supportHeal.remaining, leader.maxHp * 0.05 * g.enemyHealMultiplier(source), 'leader remains on original budget');

@@ -1,13 +1,11 @@
 'use strict';
 const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine');
-const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 
 const near = (a, b, message) =>
   assert(Math.abs(a - b) < 1e-7, message + ': ' + a + ' vs ' + b);
 function scene() {
   const g = new C('normal', 'mage', () => 0.9);
-  completeFieldOpening(g);
   g.enter('supply-vale');
   const z = g.zone();
   g.zone = () => z; // Keep the real AI but exclude Treasury replacement spawns.
@@ -48,7 +46,7 @@ for (const [healerAggro, targetAggro] of [[false, false], [false, true], [true, 
     g.enemyAcquisitionRange = () => 0;
   }
   step();
-  assert(patient.supportHeal, 'automatic cross-species cast begins');
+  assert(patient.supportHeal, 'automatic cross-species cast begins (' + healerAggro + '/' + targetAggro + '), healer ' + JSON.stringify({ aggro: healer.aggro, alive: healer.hp, cooldown: healer.supportHealCd, type: healer.type, peace: g.peace, target: patient.hp }) + ')');
   assert(patient.supportHeal.allowIdle, 'ordinary-only effect survives idle state');
   near(healer.supportHealCd, 7, 'new support cooldown');
   for (let n = 0; n < 30; n++) step(0.1);
