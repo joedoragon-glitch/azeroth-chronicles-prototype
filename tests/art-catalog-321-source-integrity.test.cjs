@@ -111,6 +111,49 @@ for (const [structure, region] of [
 ]) cases.push(check('owner-selected procedural ' + structure,
   { renderKind: 'prop', structure }, region, null));
 
+
+// Probe EVERY currently registered sprite against the game's real resolver, using
+// simple synthetic identities. A positive here means eligible for this fixture,
+// NOT proven spawned or displayed in an authored world scene.
+const regions = { vale: 0, march: 1, highlands: 2, frontier: 3, crown: 4 };
+function representativeFor(key) {
+  const parts = key.split(':');
+  if (parts[0] === 'hero') return [fixture({ renderKind: 'hero', class: parts[1] }), 0];
+  if (parts[0] === 'ally') return [fixture({ renderKind: 'ally', class: parts[1] }), 0];
+  if (parts[0] === 'enemy')
+    return [fixture({ renderKind: 'enemy', species: parts[1], type: 'normal' }), 0];
+  if (key === 'transport:ferry')
+    return [fixture({ renderKind: 'npc', kind: 'transport', icon: '⛵' }), 1];
+  if (parts[0] === 'prop' && regions[parts.at(-1)] !== undefined)
+    return [fixture({ renderKind: 'prop', structure: parts.slice(1, -1).join(':') }),
+      regions[parts.at(-1)]];
+  throw Error('No independent representative fixture for active registry identity ' + key);
+}
+const syntheticRoutes = Object.keys(sprites.sprites).sort().map((key) => {
+  const [entity, region] = representativeFor(key);
+  const selected = selector.definitionFor(entity, region, false)?.key || null;
+  assert(selected === key || selected === null,
+    'Synthetic registry key resolves to an unexpected canonical identity: ' + key);
+  return { key, syntheticEligible: selected === key };
+});
+const bypassed = syntheticRoutes.filter((r) => !r.syntheticEligible).map((r) => r.key);
+assert.deepEqual(bypassed, [
+  'ally:soldier',
+  'hero:mage',
+  'hero:paladin',
+  'prop:alpine-scrub:highlands',
+  'prop:caravan-loading-bay:highlands',
+  'prop:cattails:march',
+  'prop:heather:highlands',
+  'prop:mint-workbench:highlands',
+  'prop:vale-cottage:vale',
+  'prop:wildflowers:vale',
+]);
+assert.equal(syntheticRoutes.filter((r) => r.syntheticEligible).length, 23);
+// These are NOT a live-reachability denominator. Some real-world prop instances
+// have extra authored flags (e.g., highlandsNature) that override these fixtures.
+
 console.log('PASS Art Catalog #321 source integrity · 513 unique historic IDs · ' +
   extraDecoration.length + ' post-catalog decorations · ' + cases.length +
-  ' native selector fixtures · NO visual parity certification');
+  ' named selector fixtures · ' + syntheticRoutes.length + ' registry probes (' +
+  bypassed.length + ' owner-procedural bypasses) · NO live-scene or visual parity certification');
