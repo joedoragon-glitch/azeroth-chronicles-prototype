@@ -96,6 +96,8 @@ See [the canonical stop/handoff](PR440_CRITICAL_STAGE2_STOP_CHECKPOINT_20261025.
 
 ## Gate C — Stage 3: world hostiles, specialists and TRUE forms
 
+**Current partial implementation:** [Stage 3 11-key native checkpoint](PR440_STAGE3_SPECIAL_ACTIONS_NATIVE_CHECKPOINT_20261025.md). Basics, support healing, Wraith Drain, Stalker Pounce, non-boss Rogue basic/signatures and four conventional captain cone entries pass focused CI (latest source run #40226016079, 37 selected tests). Remaining 17 captain attack entries and all boss-authored specials still open; Gate C **not** complete.
+
 - [ ] Reconcile latest world/mob/boss/TRUE/captain attack tables and the actual old presentation inventory generator against current source; check the historic count mismatch and any new #439 boss retreat paths.
 - [ ] Add explicit **world** action keys/three-level original-effect levers. **PARTIAL:** two original basic-action keys and one native support-heal key now implemented/tested; remaining specials still unregistered. Separate World 10% source and Level 1–3 verified in these focused native slices, no universal fallback.
 - [x] Shared native ordinary melee/ranged owner (including actor variants that use this exact shared owner): one roll per swing/actual shot at release. **Basic-owner-only PASS** in CI #40221182545; all specialized attacks still pending.

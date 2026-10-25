@@ -1,5 +1,8 @@
 # PR #440 — Critical Executions: independent development / Work-mode handoff
 
+> **Active latest checkpoint (25 Oct 2026):** [Stage 3 World native specials and captain cone handoff](PR440_STAGE3_SPECIAL_ACTIONS_NATIVE_CHECKPOINT_20261025.md). World registry expanded from 3 to **11** explicit native keys; source commits for night skills, non-boss Rogue, and four captain cones all passed their respective focused GitHub Actions + reproducible build. The older Stage 3 status below remains the historically verified starting point, not the current total. The Stage 3 World catalog is still PARTIAL. Critical gameplay remains OFF; draft/unmerged/unpublished.
+
+
 ## ACTIVE CHECKPOINT — Stage 2 native transition / Stage 3 World beginnings (25 October 2026)
 
 **Read [PR440_STAGE2_GATE_STAGE3_NATIVE_HANDOFF_20261025.md](PR440_STAGE2_GATE_STAGE3_NATIVE_HANDOFF_20261025.md) FIRST.** Stage 2's 93 registered native party owners have passed focused tests; the draft has been reconciled with then-main `e3c78266` by merge `2946ba00` (green CI #40220734461). Stage 3 is **PARTIAL**, with opt-in world melee/ranged and hostile healing on source head `979efc05`; focused CI [#40221740964](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40221740964) PASS (34 selected tests + reproducible build). Remaining world abilities and final Stage 2/5/6 save/RNG/FPS gates are not certified. Criticals remain OFF, PR #440 is DRAFT, unmerged and not published. Historical STOP instructions below are superseded by the owner's authorization to continue.

@@ -2519,10 +2519,6 @@
         }
       }
       resolveArea(e, a) {
-        // Receipt only exists for an explicitly registered, resolved captain
-        // cone. This predicate does not grant coverage to other specials.
-        const nativeCaptainCriticalContact = (action) =>
-          action.captainSkill && action.kind === 'cone' && !!action.criticalExecution;
         const hero = this.hero,
           zone = this.zoneId,
           deaths = this.s.statistics.deaths;
@@ -2584,7 +2580,8 @@
                 ? true
                 : this.hitParty(
                     u,
-                    (a.nightSkill === 'pounce' || nativeCaptainCriticalContact(a))
+                    (a.nightSkill === 'pounce' ||
+                      (a.captainSkill && a.kind === 'cone' && !!a.criticalExecution))
                       ? this.worldCriticalDamage(
                           a.criticalExecution, this.weakenedEnemyDamage(e) * a.coefficient,
                         )

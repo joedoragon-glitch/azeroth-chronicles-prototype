@@ -1,5 +1,8 @@
 # PR #440 — Stage 2 engineering transition and Stage 3 native World checkpoint
 
+> **Active latest checkpoint (25 Oct 2026):** [Stage 3 World native specials and captain cone handoff](PR440_STAGE3_SPECIAL_ACTIONS_NATIVE_CHECKPOINT_20261025.md). World registry expanded from 3 to **11** explicit native keys; source commits for night skills, non-boss Rogue, and four captain cones all passed their respective focused GitHub Actions + reproducible build. The older Stage 3 status below remains the historically verified starting point, not the current total. The Stage 3 World catalog is still PARTIAL. Critical gameplay remains OFF; draft/unmerged/unpublished.
+
+
 **25 October 2026.** This independent GitHub handoff supersedes older STOP instructions (not their historical test evidence). Work continues in the **same [draft PR #440](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/440)**, branch `design/critical-executions-codices-20261024`. **No merge, publication, live feature activation, full browser matrix or hardware certification.** Read this before advancing the critical workstream.
 
 ## Reconciled references and Stage 2 readiness boundary
