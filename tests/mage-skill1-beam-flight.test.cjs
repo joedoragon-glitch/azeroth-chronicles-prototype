@@ -87,7 +87,8 @@ function advance(g, seconds, step = 0.05) {
   assert(e.hp < hp, 'homing normal beam strikes only when it physically arrives');
 }
 {
-  const { g, enemies: [first, extra] } = arena([[620, 500], [820, 600]]);
+  const { g, enemies: [first, extra, missed] } = arena([[620, 500], [820, 565], [820, 650]]);
+  const missedHp = missed.hp;
   const firstHp = first.hp, extraHp = extra.hp;
   assert(g.cast(1, first.id, true));
   advance(g, 0.25);
@@ -96,7 +97,8 @@ function advance(g, seconds, step = 0.05) {
   // Translation alone steers the beam: facing stays fixed from its release.
   g.hero.y = 575;
   advance(g, 0.5);
-  assert(extra.hp < extraHp, 'sidestepping Mage sweeps the still-active beam onto an extra foe');
+  assert(extra.hp < extraHp, 'angled beam catches an additional enemy on its real corridor');
+  assert.equal(missed.hp, missedHp, 'moving the caster does not translate the whole corridor sideways');
   assert.equal(g._heroSkillEffects?.length || 0, 0);
   const result = g.effects.find(e => e.type === 'heroSkillArea' && e.phase === 'complete');
   assert.equal(result?.hits, 2, 'each distinct foe struck only once while sweeping');
@@ -108,8 +110,10 @@ function advance(g, seconds, step = 0.05) {
   g.hero.x = 530;
   advance(g, 0.1);
   const f = g._heroSkillEffects?.[0];
-  assert.equal(f.from.x, 530, 'simulation shifts charged origin with Mage');
-  assert(f.endX > 530, 'advancing head tracks moved origin');
+  assert.equal(f.from.x, 530, 'charged beam base tracks the moving Mage');
+  assert.equal(f.castFrom.x, 500, 'committed original head trajectory never moves');
+  assert(Math.abs(f.endY - 500) < 1e-6, 'the head stays on its original direction');
+  assert(f.endX > f.from.x, 'the fixed world-space head keeps advancing');
 }
 {
   const art = require('../src/prototype/hero-presentation.js');
