@@ -1026,6 +1026,32 @@
             p.dy = (e.y - hero.y) / distance;
             delete p.rangerDelayedLaunch;
           }
+          if (p.companionDelayedLaunch) {
+            // Delayed Triple Shot members do not materialize at the Archer's
+            // former coordinates. Release them from the living companion's
+            // current bow and keep that real flight path independent thereafter.
+            const caster = this.s.party.find((u) => u.id === p.source && u.type === 'archer');
+            if (!caster || caster.hp <= 0 || caster.active === false) {
+              this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
+              continue;
+            }
+            const distance = Math.max(1, dist(caster, e));
+            p.x = caster.x;
+            p.y = caster.y;
+            p.dx = (e.x - caster.x) / distance;
+            p.dy = (e.y - caster.y) / distance;
+            delete p.companionDelayedLaunch;
+            this.event('projectileLaunch', {
+              actor: 'companion',
+              role: 'archer',
+              source: caster.id,
+              style: 'arrow',
+              special: 'triple-shot',
+              x: caster.x,
+              y: caster.y,
+              target: e.id,
+            });
+          }
           // Additive transient observation, after the existing stagger delay.
           if (p.source === 'hero' && !p.heroFlightPresented) {
             p.heroFlightPresented = true;
