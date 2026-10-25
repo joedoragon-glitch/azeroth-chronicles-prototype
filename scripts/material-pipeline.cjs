@@ -45,7 +45,16 @@ function reference(key) {
       regions.findIndex((r) => name === r || name.includes('-' + r + '-')),
     ),
     rules = require('../src/prototype/rules.js');
-  const sandbox = { PrototypeRules: rules, performance: { now: () => 16000 } };
+  const highlandsSandbox = {};
+  vm.runInNewContext(
+    fs.readFileSync(path.join(root, 'src/prototype/highlands.js'), 'utf8'),
+    highlandsSandbox,
+  );
+  const sandbox = {
+    PrototypeRules: rules,
+    PrototypeHighlands: highlandsSandbox.PrototypeHighlands,
+    performance: { now: () => 16000 },
+  };
   vm.runInNewContext(fs.readFileSync(path.join(root, 'src/prototype/visuals.js'), 'utf8'), sandbox);
   const V = sandbox.PrototypeVisuals,
     canvas = createCanvas(256, 256),
