@@ -6061,7 +6061,10 @@
     enemySlowRecoveryMultiplier: 0.85,
     // Flat duration adjustment applies to every successful Slow application.
     slowDurationBonusSeconds: 0.25,
-    // Diminishing returns: each overlapping hit strengthens recovery suppression.
+    // Protect hero, companion and pet skill recovery from continuous Rogue
+    // pressure. Enemy Slow behavior is preserved for offensive Mage tactics.
+    partySlowMaxStacks: 4,
+    // Diminishing returns on each overlapping hit, with a party-only cap.
     slowStackPenalty: 0.35,
     enemySlowStackPenalty: 0.15,
     // Hit-time debt survives Slow expiry, but never starts an already-ready cooldown.

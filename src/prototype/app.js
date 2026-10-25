@@ -3355,6 +3355,7 @@
               mode: game.s.mode,
               phase: game.s.phase,
               hero: game.hero,
+              partyDiagnostics: game.partyDiagnosticsReport(),
               statistics: game.s.statistics,
             },
             'Azeroth_Playtest_Report.json',
@@ -6399,6 +6400,7 @@
       // A persistent near-freeze or repeated failed releases justifies
       // intervention. A single spike never resets a legitimate encounter.
       if (e.phase === 0 && (now - e.beganAt >= 5000 || e.entries.length >= 3)) {
+        game.partyDiagnosticsRecoveryAction('encounter-reset-attempt');
         const reset = game.emergencyResetEncounter();
         // A critical freeze can also happen without engaged enemies (terrain,
         // GPU/driver trouble, huge scenery). No enemy reset is possible then,
@@ -6410,6 +6412,7 @@
         game.emergencyAdvanceWithdrawal();
         const repeated = e.entries.filter((stamp) => stamp >= e.resetAt).length >= 2;
         if (now - e.resetAt >= 8000 || repeated) {
+          game.partyDiagnosticsRecoveryAction('refuge-return-attempt');
           if (game.emergencyReturnToSafety()) {
             e.phase = 2;
             if (save()) restartGuard.arm(game);
@@ -6458,6 +6461,10 @@
       game.s.challenge.pending ||
       game.s.challenge.gameOver;
     const recovering = !frozen && frameSkip.beginFrame(now, intervalMs);
+    if (!frozen)
+      game.partyDiagnosticsObserveEmergency(
+        recovering, intervalMs, frameSkip.status().emergencyEntries,
+      );
     if (recovering) {
       crashRecoveryPending = true;
       // Act before further expensive rendering; never require the player to
@@ -6548,6 +6555,7 @@
         },
       });
       game.crowdDiagnosticsEndFrame();
+      game.partyDiagnosticsObserveTick();
       stageTimes.simulationMs = performance.now() - simulationAt;
       if (marks.partyStart !== undefined && marks.partyEnd !== undefined)
         stageTimes.companionAIMs = Math.max(0, marks.partyEnd - marks.partyStart);

@@ -4,12 +4,18 @@ const Campaign = require('../src/prototype/engine.js');
 
 const R = Campaign.rules;
 const Persistence = require('../src/prototype/persistence');
+const closeBound = (value, expected, label) =>
+  assert(Math.abs(value - expected) < 1e-8, label + ': expected ' + expected + ', got ' + value);
 for (const mode of ['normal', 'nightmare']) {
   const game = new Campaign(mode, 'mage', () => 0.9);
   game.hero.cd[7] = 40;
   for (let hit = 0; hit < 20; hit++)
     assert(game.applyRogueSlow(game.hero, R.tacticalFoundation.eliteRogueSlowSeconds));
-  assert(game.hero.cd[7] > 60, 'Native accumulated debt crosses the former save ceiling');
+  const expectedDebt = R.cooldownBalance.partySlowMaxStacks *
+    (R.tacticalFoundation.eliteRogueSlowSeconds + R.cooldownBalance.slowDurationBonusSeconds) *
+    R.cooldownBalance.slowDebtFraction;
+  closeBound(game.hero.cd[7], 40 + expectedDebt, 'Rogue debt stops at the finite stack ceiling');
+  assert.equal(game.hero.slowStacks, R.cooldownBalance.partySlowMaxStacks);
   const values = new Map(),
     p = Persistence.create({
       Campaign,
@@ -365,9 +371,14 @@ console.log(
   const h = g.hero;
   h.cd.fill(0);
   for (let i = 0; i < 100; i++) assert(g.applySlow(h, 1));
-  assert.equal(h.slowStacks, 100, 'repeated Slow has no arbitrary stack cap');
+  assert.equal(h.slowStacks, R.cooldownBalance.partySlowMaxStacks, 'even 100 overlapping Slows cap stack strength');
   assert(Number.isFinite(h.slowStacks), 'stack storage remains a scalar');
-  assert(g.cooldownRecoveryElapsed(h, 1) > 0, 'diminishing recovery never hard-stuns');
+  close(
+    g.cooldownRecoveryElapsed(h, 1),
+    R.cooldownBalance.slowRecoveryMultiplier /
+      (1 + (R.cooldownBalance.partySlowMaxStacks - 1) * R.cooldownBalance.slowStackPenalty),
+    'perpetual Slow cannot suppress recovery past the stack ceiling',
+  );
   assert.equal(
     h.cd.filter((c) => c > 0).length,
     0,
@@ -390,4 +401,55 @@ console.log(
     'elite Rogue basics share signature Slow duration',
   );
 }
-console.log('PASS stacked Slow, hit-time debt, legacy readiness, expiry and elite durations');
+// Sustained overlapping Rogue hits cannot continue increasing cooldown debt.
+// Both a regular ally and a boss pet share the protection; further strikes
+// still refresh the timed Slow without becoming permanent skill lockouts.
+{
+  const g = new Campaign('normal', 'mage', () => 0.9);
+  const ally = g.unit('soldier', g.hero.x, g.hero.y);
+  const pet = g.unit('pet', g.hero.x, g.hero.y, 'thorn');
+  g.s.party = [ally, pet];
+  for (const unit of [g.hero, ally, pet]) {
+    if (unit === g.hero) unit.cd[0] = 10;
+    else unit.skill1Cd = 10;
+    for (let i = 0; i < 80; i++) assert(g.applyRogueSlow(unit, 2.7));
+    const actual = unit === g.hero ? unit.cd[0] : unit.skill1Cd;
+    close(actual, 10 + R.cooldownBalance.partySlowMaxStacks * 2.95 * 0.35,
+      unit === g.hero ? 'hero capped' : unit.type + ' capped');
+    assert.equal(unit.slowStacks, R.cooldownBalance.partySlowMaxStacks);
+    assert.equal(unit.rogueSlow, 2.95);
+    assert.equal(g.slowMovementFactor(unit), R.tacticalFoundation.rogueSlowMovementFactor);
+    const before = actual;
+    assert(g.applyRogueSlow(unit, 2.7));
+    close(unit === g.hero ? unit.cd[0] : unit.skill1Cd, before,
+      'extra impacts refresh Slow without extending a cooldown');
+    if (unit !== g.hero) {
+      const latest = g.partyDiagnosticsReport().slowApplications.at(-1);
+      assert.equal(latest.targetId, unit.id);
+      assert.equal(latest.cooldownDebtSeconds, 0,
+        'At the ceiling, the report must not invent cooldown debt');
+    }
+  }
+  // Older saved snapshots may contain uncapped stacks. Clamp their effective
+  // recovery and the next real hit, without altering unrelated saved timers.
+  const old = g.hero;
+  old.slow = 2;
+  old.slowStacks = 100;
+  close(g.cooldownRecoveryElapsed(old, 1),
+    R.cooldownBalance.slowRecoveryMultiplier /
+      (1 + (R.cooldownBalance.partySlowMaxStacks - 1) * R.cooldownBalance.slowStackPenalty),
+    'legacy inflated stacks are bounded at consumption');
+  assert(g.applyRogueSlow(old, 2.7));
+  assert.equal(old.slowStacks, R.cooldownBalance.partySlowMaxStacks);
+  // Do not silently nerf the Mage's existing hostile Slow mechanics.
+  const enemy = g.makeEnemy(
+    { species: 'goblin', name: 'Offense control', level: 1, hp: 500, damage: 0 },
+    { x: 950, y: 700 },
+  );
+  enemy.cd = 10;
+  for (let i = 0; i < 8; i++) assert(g.applySlow(enemy, 2));
+  assert.equal(enemy.slowStacks, 8, 'enemy Slow stacking remains unchanged');
+  close(enemy.cd, 10 + 8 * 2.25 * R.cooldownBalance.enemySlowDebtFraction,
+    'enemy cooldown debt still responds to every successful hit');
+}
+console.log('PASS capped party Slow, preserved enemy Slow, legacy readiness, expiry and elite durations');
