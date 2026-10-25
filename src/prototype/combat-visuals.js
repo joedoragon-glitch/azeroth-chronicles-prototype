@@ -1135,7 +1135,13 @@
       else if (e.type === 'basicComboFinisher') push(e, e.type, 0.45, 4);
       else if (e.type === 'petSkill')
         push(e, e.type, e.slot === 2 ? 0.85 : 0.65, e.slot === 2 ? 5 : 4);
-      else if (e.type === 'chargedArea') push(e, e.type, 0.7, 5);
+      else if (e.type === 'chargedArea')
+        push(
+          e,
+          e.type,
+          e.projectileVolley ? 0.16 : e.companion && e.role === 'soldier' ? 0.24 : 0.7,
+          5,
+        );
       else if (e.type === 'chargedImpact') push(e, e.type, 0.3, 3);
     }
     // Bound transient work while retaining ability and recovery cues during crowds of small hits.
