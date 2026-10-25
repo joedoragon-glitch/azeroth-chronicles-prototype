@@ -17,6 +17,14 @@
   },
   "verifiedPrStates": [
     {
+      "number": 324,
+      "state": "merged"
+    },
+    {
+      "number": 341,
+      "state": "merged"
+    },
+    {
       "number": 346,
       "state": "merged"
     },
@@ -281,7 +289,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": null,
+        "integratedByPr": 426,
+        "disposition": "historical_evidence_with_later_merge",
+        "caution": "Released dev.166 opt-in one-skip/110ms/Off-default historical contract explicitly superseded by merged dev.169 #426 default-On two-skips and emergency holds, and subsequent #443 auto optimization. No original source PR identified in file; do not invent."
+      }
     },
     {
       "path": "docs/ADAPTIVE_FRAME_SKIP_TWO_FRAME_20261023.md",
@@ -754,7 +769,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 324,
+        "integratedByPr": 324,
+        "disposition": "merged_directly",
+        "caution": "Original dev.90 rendering/occlusion and Frontier fixes merged in #324, with actual owner dev.88 Chromebook reports: ~7 FPS earlier, 22 Crown/15 Frontier different night windows. Candidate synthetic Node/Chromium improvements are not later Chromebook FPS proof; large audio cache traffic not same as frame time."
+      }
     },
     {
       "path": "docs/COASTAL_MARCHES_DEV134.md",
@@ -1131,7 +1153,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 341,
+        "integratedByPr": 341,
+        "disposition": "merged_directly",
+        "caution": "Merged #341 dev.107 collision escape/temporary body passage and planner call caps; original source tests prove bounded planning and actor escape, not device FPS. Later #421 navigation and #426 crowd collision exist; current source owners control exact interaction."
+      }
     },
     {
       "path": "docs/CROWD_MOVEMENT_DIAGNOSTICS_20261023.md",
@@ -1303,7 +1332,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_COVERAGE_NOTES_20261025.md",
-      "gitBlobSha": "dad2f0ff6938492c7133f041d9879df22ba360d2",
+      "gitBlobSha": "cf20ce12a5ea56a17c18efb767a3bee19e106ab1",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -1548,7 +1577,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": null,
+        "integratedByPr": 426,
+        "disposition": "historical_evidence_with_later_merge",
+        "caution": "Original dev.165 180-active-callback stage timing/report metrics, no implementing PR number claimed by report; later merged #426 adds different per-active-surface and emergency instrumentation. AI labels nested in simulation and independently measured p95 must not be summed or promoted to user FPS."
+      }
     },
     {
       "path": "docs/FRONTIER_ABYSS_LAYOUT_20261020.md",
