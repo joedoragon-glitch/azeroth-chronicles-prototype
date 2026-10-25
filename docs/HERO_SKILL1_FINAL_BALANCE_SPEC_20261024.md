@@ -141,6 +141,17 @@ All damages below are *before defense*; `B = P+12` and damage uses `M(r)` once a
 
 **Important throughput finding:** decoupling basic and Tap allows sustained **basic hits plus a separate 3s normal attack**. With P=20 at rank 1, rough ideal primary-target output is **`32*(1+1.1+1.2)/(3*0.85) = 41.41 raw DPS`** from full three-beat basic cycles **plus** **32.00 raw DPS** from repeated perfect Tap attacks, before action-time costs, combo reset, misses, projectile travel and protections; **73.41** combined is *not* an encounter DPS measurement. This is substantially more than the old shared-cooldown behavior. **Do not adjust boss HP or independently weaken companions to hide this change**; run focused play/fixture validation before merge and report whether the owner wants a separate balancing pass.
 
+## 6A. Execution order and rule-table compatibility
+
+This design intentionally changes the **meaning of slot 1 normal versus charged**, which the current runtime rule tables cannot express simply by changing the old `chargedSeconds[1] = 3`.
+
+- Existing `R.balance.skills.cooldowns[1] = 0.85` belongs to the **old manual/basic shared resolver**. Migrate that original 0.85s baseline to the new automatic-basic timer. Set **activated normal Skill 1 to 3s** explicitly, rather than accidentally retaining the old 0.85s tap.
+- Existing `R.cooldownBalance.chargedSeconds[1] = 3` is **one universal slot value**. Implement **class-specific** charged Skill 1 cooldown resolution for **Paladin 8s / Mage 7s / Ranger 8s** while preserving all other slot cooldowns and Cooldown Training. This requires an explicit class+slot choice, not a universal overwrite of the old `chargedSeconds[1]`.
+- On valid charged release, store a **snapshot of class, rank, computed Power, zone and cast origin** where needed. Cross damage remains tied to cast-time Power over both pulses; hawk damage remains tied to launch-time Power when it later impacts. Cancel expired/pending temporary hit effects on target death, unsafe target state, zone switch, defeated/game-over state or save/load transition. Never serialize a live hawk/cross projectile into an old campaign as a hidden delayed hit.
+- Charge cooldown is spent **once on successful cast launch/release**. Later misses, lawful hawk expiration or enemies leaving cross arms do not refund cooldown (same principle as other attacks). Invalid initial targets/path/cast eligibility fail **without** a cooldown charge. Delay does not rerun the normal Tap form.
+- **Hawk hit order:** validate legal contact and native hit eligibility **while the retreat state is still present**; apply normal damage/protections (including current Rogue-regroup half-damage mitigation), and then atomically interrupt the eligible retreat + set its same-family lockout. Do not first erase `thinking/travel/escape` and accidentally grant the hawk undeserved full damage. Do not suppress a retreat on an ineligible/immune actor; legal contact into an ordinary absorb shield still counts for interruption as specified.
+- **Clocking:** Cross 0.35s follow-up and hawk 1.25s flight use game simulation elapsed time. Paused/menu/hidden/emergency frames do not create free late hits or run offscreen pathfinding. A bounded, deterministic effect update step keeps draw/frame-skip distinct from combat simulation.
+
 ## 7. Mechanically precise regression and save-compatibility contract
 
 ### Hero timer split and v4 imports
