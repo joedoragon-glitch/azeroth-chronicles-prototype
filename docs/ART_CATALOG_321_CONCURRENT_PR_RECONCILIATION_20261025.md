@@ -2,6 +2,12 @@
 
 **25 October 2026. Current status of this report:** independent cross-branch source/selected-regression integration checkpoint, not an integration merge, production deployment, full-game matrix, physical-device approval, or a replacement of the prior art catalog. The approved Canonical Canvas 2D game and multi-file GitHub Pages/PWA remain authoritative. PixiJS/WebGL2 remains opt-in experimental. **All tests described below were executed on transient test trees and the actual draft candidate, never merged into `main`.**
 
+## Fresh head-pinned integration update — PR #447 forward-port verified
+
+**Supersedes the old #447 conflict verdict in the historical table below.** [Cross-draft run #40234173245](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40234173245) tested this audit head `49e606d2607209b4565181341a6743aff9b7433b` against **new PR #447 head `03203750ed2fa5989dd595592c385953c70b63d2`**. The three-way merge is now **CLEAN** and all **4/4** selected source syntax/Pixi regression checks passed in the temporary combined worktree. PR #447 was updated independently; no edits to its branch or to the canonical old Pixi browser test were made from #469. It remains draft/unmerged. The earlier conflict correctly described its **old** head and is retained for provenance, not as today's blocker.
+
+PR **#445** remains an inherited conflict in `scripts/material-pipeline.cjs` against current `main`; #469 does not touch that pipeline. The exact present-ten-workstream result is **nine clean passing pairwise combinations and one inherited upstream conflict**. This is not simultaneous full-PR certification or a merge authorization.
+
 ## Subsequent native earned-drop presentation checkpoint
 
 [Chromium earned-loot run #40233872865](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40233872865) **passed** as an additional bounded runtime acceptance, beyond the earlier source-combination tests. It verifies the production `Campaign.kill` death handler creates `Campaign.s.loot`, the candidate Pixi world presents the earned portrait coin in its composed GPU frame (919 changed pixels), and `Campaign.tick(0.01)` collects and credits it once (30 → 53 Crowns). [Nine independently verified PNG hashes and precise limitations](evidence/ART_CATALOG_321_EARNED_LOOT_CHROMIUM_20261025.json). The final hero strike was not simulated; this was a directly invoked **real death/reward/pickup** path in a disposable browser. No other unmerged PR code was modified.
