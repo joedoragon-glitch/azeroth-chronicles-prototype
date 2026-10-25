@@ -202,7 +202,7 @@ for (const fps of [20, 30, 60]) {
 // Other heroes keep independent launched projectiles and authored ground
 // effects. They must not inherit Mage Skill 1 homing or caster tethering.
 for (const cls of ['paladin', 'ranger']) {
-  const { g, enemies: [target] } = arena([[760, 500]], cls);
+  const { g, enemies: [target] } = arena([[620, 500]], cls);
   assert(g.cast(1, target.id, false), cls + ' normal Skill 1');
   const shots = g.s.projectiles.filter(p => p.source === 'hero');
   assert.equal(shots.length, cls === 'ranger' ? 3 : 1);
