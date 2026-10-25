@@ -60,6 +60,9 @@
         if (type === 'cargoWindup') return 'rollingCargoWindup';
         if (type === 'projectileImpact') {
           if (e.style === 'cargo') return 'rollingCargoImpact';
+          // Ranged pet projectiles use the gameplay-only "pet" travel style;
+          // their existing magic launch must have its matching contact foley.
+          if (e.style === 'pet') return 'magicImpact';
           if (e.style === 'beam') return 'arcaneBeamImpact';
           if (e.style === 'arrow') return 'arrowImpact';
           if (['axe', 'stone'].includes(e.style)) return 'heavyProjectileImpact';
