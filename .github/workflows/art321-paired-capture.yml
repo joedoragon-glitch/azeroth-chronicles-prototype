@@ -31,6 +31,10 @@ jobs:
           cache: npm
       - name: Install locked test tooling
         run: npm ci --ignore-scripts
+      - name: Check draft renderer compatibility without merging
+        run: |
+          mkdir -p "$RUNNER_TEMP/art321-pair"
+          node tools/visual-review/art321-cross-pr-compat.cjs "$RUNNER_TEMP/art321-pair/cross-pr-audit.json"
       - name: Capture one paused Campaign in Canvas and real WebGL2
         run: |
           mkdir -p "$RUNNER_TEMP/art321-pair"
