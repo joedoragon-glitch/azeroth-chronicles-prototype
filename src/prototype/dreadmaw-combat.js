@@ -281,6 +281,15 @@
           e.dreadClosure = { ...a, age: 0, radius: a.initialRadius, tick: 0 };
           return;
         }
+        // Explicit specialist release owner, after the real cone warning.
+        // The original direct contact may crit; delegated vapor-over-time
+        // and its Slow remain wholly native and never carry this receipt.
+        if (a.dreadMechanic === 'ensiling' && a.captainSkill &&
+            a.captainProfile === 'supply-crown' && a.index === 2 &&
+            a.kind === 'cone' && !a.criticalExecution) {
+          const receipt = this.worldCriticalAction(e, 'world/captain/supply-crown/2');
+          if (receipt) a.criticalExecution = receipt;
+        }
         const hero = this.hero,
           zone = this.zoneId,
           deaths = this.s.statistics.deaths;

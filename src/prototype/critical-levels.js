@@ -132,6 +132,9 @@
   register('world/captain/supply-march/2', 'world', 'damage');
   register('world/captain/supply-highlands/1', 'world', 'damage');
   register('world/captain/frontier-overseer/1', 'world', 'damage');
+  // Dreadmaw is delegated separately: Ensiling's real warned cone initial
+  // contact is independent of its native periodic vapor/slow ticks.
+  register('world/captain/supply-crown/2', 'world', 'damage');
   Object.freeze(registry);
 
   function validatedLevel(level) {
