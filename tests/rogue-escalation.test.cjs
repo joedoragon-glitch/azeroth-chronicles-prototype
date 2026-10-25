@@ -54,6 +54,13 @@ function encounter(region = 'vale', roll = 0.25) {
   assert.equal(state.destination.x, far.home.x);
   assert(c.tacticalBeginExtendedRetreat(b), 'second defender can choose same distant ally');
   assert.equal(c.tacticalRogueRegroup(b).destination.x, far.home.x);
+  assert.equal(c.tacticalRogueRegroup(b).allyId, far.id,
+    'coordination keeps the actual living refuge, not the guiding Ringleader');
+  a.hp = 0;
+  const before = b.x;
+  assert(c.tacticalAdvanceExtendedRetreat(b, c.hero, 0.1),
+    'guide death does not invalidate the distant living defender');
+  assert(b.x > before, 'second leader can keep following the refuge after guide defeat');
 }
 console.log('PASS paired ringleaders can reach an occupied outpost beyond 750');
 
@@ -260,3 +267,67 @@ console.log('PASS temporary 65% protection and piercing preserve the combat cont
     'equal-sized but lower-level group must keep reasoning beyond its current anchor');
 }
 console.log('PASS equal-sized lower-level monster groups continue the regroup chain');
+
+
+{
+  const { c, z, a, add } = encounter();
+  const visitor = add(2400, 'normal');
+  visitor.home = { x: 2150, y: 1300 };
+  z.enemies.push(visitor);
+  assert.equal(c.tacticalBeginExtendedRetreat(a), false,
+    'an abandoned post does not count as an occupied refuge');
+  assert.equal(c.tacticalRogueRegroup(a), null);
+}
+console.log('PASS only occupied posts can serve as territorial refuge');
+
+{
+  const { c, z, a, add } = encounter();
+  z.enemies.push(add(2400, 'normal'));
+  let probes = 0;
+  c.route = () => { probes++; return []; };
+  assert.equal(c.tacticalBeginExtendedRetreat(a), false, 'unreachable post rejected');
+  assert(probes > 0);
+  const first = probes;
+  assert.equal(c.tacticalBeginExtendedRetreat(a), false);
+  assert.equal(probes, first, 'blocked route probing is rate-limited');
+  c.s.time += 5.1;
+  assert.equal(c.tacticalBeginExtendedRetreat(a), false);
+  assert(probes > first, 'new route may be considered after bounded pause');
+}
+console.log('PASS unreachable territorial paths do not trigger unbounded route probes');
+
+{
+  const { c, z, a, add } = encounter();
+  z.enemies.push(add(2400, 'normal'));
+  assert(c.tacticalBeginExtendedRetreat(a));
+  assert.equal(c.hawkRetreatKind(a), 'regroup',
+    'extended withdrawal remains interruptible by the established Ranger counter');
+  assert(c.hawkInterruptRetreat(a, 'regroup', 2));
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'anchored',
+    'Hawk interrupts extended movement without resetting the encounter');
+}
+console.log('PASS Ranger Hawk can interrupt territorial retreat');
+
+{
+  const { c, z, a } = encounter();
+  let maximum = z.enemies.length;
+  for (let wave = 0; wave < 12; wave++) {
+    assert(c.tacticalEmergencyCall(a), 'replacements remain available after losses');
+    const guards = z.enemies.filter(u =>
+      u.rogueEmergencyReinforcement && u.owner === a.id && u.hp > 0
+    );
+    assert(guards.length >= 2 && guards.length <= 3);
+    for (const add of guards) {
+      add.hp = 0;
+      c.kill(add);
+    }
+    c.updateEnemies(0.01);
+    maximum = Math.max(maximum, z.enemies.length);
+    assert(!z.enemies.some(u => u.rogueEmergencyReinforcement && u.hp <= 0),
+      'dead emergency actors are reclaimed on the next update');
+    c.s.time += 17;
+  }
+  assert(maximum <= 5, 'roster stays bounded despite repeated casualty/reinforcement cycles');
+  assert.equal(c.s.statistics.kills, 0, 'temporary guards never inflate permanent kill count');
+}
+console.log('PASS repeated guardian replenishment remains bounded in memory and rewards');
