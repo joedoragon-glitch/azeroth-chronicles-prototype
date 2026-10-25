@@ -136,11 +136,12 @@ function advance(g, seconds, step = 0.05) {
 {
   const { g, enemies: [e] } = arena([[680, 500]]);
   assert(g.cast(1, e.id, true));
+  const fixedAim = { ...g._heroSkillEffects[0].aim };
   g.hero.x = 530;
   advance(g, 0.1);
   const f = g._heroSkillEffects?.[0];
   assert.equal(f.from.x, 530, 'charged beam base tracks the moving Mage');
-  assert.equal(f.aim.x, 940, 'world-space aim endpoint stays fixed despite hero movement');
+  assert.deepEqual(f.aim, fixedAim, 'world-space aim endpoint stays fixed despite hero movement');
   assert(Math.abs(f.endY - 500) < 1e-6, 'the head stays on its original direction');
   assert(f.endX > f.from.x, 'the fixed world-space head keeps advancing');
 }
