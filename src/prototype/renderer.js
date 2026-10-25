@@ -1386,7 +1386,29 @@
         )
           continue;
         if (f.type === 'heroSkill') {
-          heroArt?.draw(ctx, screen, f, {
+          let presented = f;
+          if (f.stage === 'skill1-wide-beam') {
+            // Charged Mage Skill 1 uses the live, wall-clipped gameplay
+            // corridor even while the caster repositions. The launch receipt
+            // only owns duration and styling, never independent geometry.
+            const beam = game._heroSkillEffects?.find(
+              (effect) =>
+                effect.kind === 'wide-beam' &&
+                effect.zone === game.zoneId &&
+                effect.deaths === game.s.statistics.deaths,
+            );
+            if (!beam) continue;
+            presented = {
+              ...f,
+              x: beam.from.x,
+              y: beam.from.y,
+              endX: beam.endX,
+              endY: beam.endY,
+              halfWidth: beam.halfWidth,
+              simulatedFront: true,
+            };
+          }
+          heroArt?.draw(ctx, screen, presented, {
             reduced: reducedMotion(),
             optimized,
             width: canvas.width,
