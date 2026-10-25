@@ -113,6 +113,10 @@ for (const kind of ['boss', 'captain']) {
   near(leader.supportHeal.seconds, 5, 'leader duration remains five seconds');
   assert.equal(!!leader.supportHeal.allowIdle, kind === 'captain', 'only captain heal persists while idle');
   if (kind === 'captain') {
+    // Maintain a legal engagement distance without auto-aggro on the
+    // subsequent idle phase, isolating transitions from leash resets.
+    Object.assign(g.hero, { x: 600, y: 300 });
+    g.enemyAcquisitionRange = () => 0;
     const start = leader.hp;
     step(1);
     assert(leader.hp > start, 'idle captain receives real healing ticks');
