@@ -1,0 +1,80 @@
+# Independent continuation handoff — Issue #463 / one draft PR #464
+
+**Checkpoint:** 25 October 2026. This is a safe STOP / RESTART point, NOT a claim that gameplay work is finished.
+
+**Repository:** https://github.com/joedoragon-glitch/azeroth-chronicles-prototype  
+**Issue (open):** https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/463  
+**Only implementation PR (open draft, unmerged, undeployed):** https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/464  
+**PR branch:** fix/issue463-ranger-postcast-vfx-20261025, targeting main  
+**Last confirmed implementation/test source head before committing this handoff:** acd8d5f2a55bb4d68270f3c93e99e3ff843b878d. The head advances when this handoff is committed. Re-fetch it.  
+**Last confirmed main:** 72ef6a551153eeb75d40156b91564db00195ac02 (Rogue #462 already merged). Re-fetch it.  
+**Separate concurrent draft PR #440 — Critical Executions:** https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/440. Head last checked 968a192e836dcf5c50956e0669ebfa13a9b09fc4; OFF and unmerged. Overlapping combat/party sources may conflict. Re-fetch its latest head.
+
+## Owner's explicitly approved work contract
+
+The game is a multi-file GitHub Pages/PWA project; never enforce old portable single-HTML constraints. Preserve save version 4, Canvas fallback, Pixi/WebGL2 trial/recovery safety, cooldowns, role identities and unrelated Mage/Paladin mechanics.
+
+Arrows/throws must physically start at the acting character's **current location at real release**, not their earlier pre-delay location. The actual gameplay collider and the drawn shaft must agree. After release, each shot travels independently instead of tethering to the caster. A physical arrow should only inflict impact consequences when the arrow reaches its target. No instantly painted full-distance arrow corridor masquerading as lasers: the owner specifically rejected an earlier such experiment, and it was reverted. Magical beams, actor-bound status/wards, autonomous creatures and planted ground pulses have DISTINCT motion rules. The owner particularly wants believable, enjoyable fantasy aesthetics rather than mechanically logical but visually awkward arrows.
+
+Finish Ranger and Paladin, then review/fix companion Archer (called Ranger in the UI) and Soldier. Review each pet separately afterward. **ONE PR ONLY — continue inside existing draft #464**, with reviewable commits; do not proliferate new PRs for skills, companions or the related pet phase without explicit owner direction.
+
+No merge, Pages deploy, release bump, full-game suites or browser/hardware matrices without separate owner authorization. Ordinary draft CI may run targeted tests and reproducible offline-ready build. Follow AGENTS.md (especially manual pages.yml restrictions).
+
+## Source state in draft PR #464 at checkpoint
+
+Nine changed files before this handoff:
+
+1. src/prototype/hero-combat.js — marked Ranger delayed arrows (normal Skills 1 and 2, charged 6, normal/charged 8) for real live-position sub-release. Charged Skill 2 **Pinning Volley** changed from instant hit plus illusion of traveling lanes into real target-selected arrows, with the TWO separately authored Slow effects preserved. Normal Skill 5 **Arrow Volley** now selects same area targets and launches physical area-flagged arrows with actual contact damage instead of instant damage plus decorative cast-origin shafts. Real target movement/terrain obstruction can now cause misses. Power/cost/cooldowns targeted to remain unchanged.
+2. src/prototype/combat.js — delayed Ranger and Archer projectiles get the actual current actor origin + once-only target direction immediately before their first simulated flight. After that, normal collision, terrain and independent trajectory apply; no Mage beam tether. Additional Ranger volley Slow applied at real impact.
+3. src/prototype/hero-presentation.js — suppresses Ranger shot until real delayed release; special physical-volley cast glint avoids fake full-corridor arrow art.
+4. src/prototype/party.js — companion Archer **Triple Shot** delayed members have live-origin marker; actual sub-release in combat.js. Companion charged **Piercing Volley** still respects its original 0.65-second charge/interrupt, then releases area-flagged real arrows. The skill name does NOT justify inventing a new defense-piercing property; the initial accidental piercing flag was removed. Soldier source skill logic untouched.
+5. src/prototype/renderer.js — pending-arrow rendering suppressed for both Ranger and Archer; a brief Archer bow-release mark replaces filled laser-shaped Piercing Volley corridor. Canvas and Pixi Canvas combat overlay share rendering.
+6. tests/hero-postcast-visuals.test.cjs — new native tests for Ranger staggered origins across 20/30/60 stepping, live moving source/target, collision/terrain, independent flight, Ranger volley hit timing, Archer Triple Shot and charged Piercing Volley, and unchanged Soldier melee and Paladin planted Cross.
+7. tests/hero-skill-repairs.test.cjs — updates Ranger normal Arrow Volley regression for real flight and calls the pre-existing completeFieldOpening fixture to test Paladin Skill 6 past protected Vale opening.
+8. tests/charge-interruption.test.cjs — updates charged Archer test to require release at 0.65s but DAMAGE only on later physical impact; Soldier still instantly hits with its sword on charge completion.
+9. docs/ISSUE463_HERO_COMPANION_PROJECTILE_AUDIT_20261025.md — durable eight-slot hero and companion source audit, fantasy rules, tradeoffs, integration constraints, and unfinished visual acceptance.
+
+**Paladin audit:** all eight normal/charged slots source-reviewed. No Paladin gameplay changes warranted from the reported symptom: Radiant Cross MUST remain planted because it has a second pulse, normal holy bolts already physically fly independently, sword cleaves/dash contacts are release-site history, Shield Stance/wards follow living recipients. Do not automatically move world-fixed damage rings because hero moved afterward. Tests include Cross and late-game skill fixture.
+
+**Archer audit:** ordinary, Recall defensive and gathering defensive single shots already spawn at current companion location, independent after release; only Triple Shot sub-releases and charged Piercing Volley had misleading timing/origin. Support Heal and Mana Recovery are magical recipient effects rather than arrows.
+
+**Soldier audit:** basic/counterattack sword, Power Strike, Holy Cleave are melee or immediate cones. Veteran ward/Guard are actor-bound status. No invented Soldier thrown weapon or projectile required; do not impose Ranger behavior on Soldier.
+
+**Remaining pet phase:** not yet audited individually. Existing pet CI tests do not establish a full skill-by-skill fantasy visual audit. When authorized to proceed, do it inside #464 in separate reviewable commits, not a new PR.
+
+## CI evidence: carefully distinguish OLD GREEN from CURRENT
+
+- Earlier limited delayed-Ranger-only implementation SHA bb54c0fdf2c7df42e9d7d1a325f7967ac53073b8 **PASSED** focused CI https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40202578215 (21 selected suites and offline build; publishing skipped). This does **not** validate later physical Ranger and Archer volley changes.
+- Expanded source at SHA cd93f936b0b69e394479df27bb2322fa8e5fea1f **FAILED** focused CI https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40203941305, 3 assertions, package verification skipped:
+  (a) charge-interruption.test.cjs expected Archer DAMAGE at charge completion 0.65s, but new physical projectile is only RELEASED then;
+  (b) hero-postcast-visuals.test.cjs measured enemy pre-engagement HP before game normalized encounter maxHp (1,000,000 to 1,250,000), wrongly interpreted normalization as instant damage;
+  (c) hero-skill-repairs.test.cjs Paladin Skill 6 had a fixture fighting before native Vale opening first-kill admission.
+- The three test corrections were committed on later head acd8d5f2a55bb4d68270f3c93e99e3ff843b878d. Its focused run https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40204241302 was **still in progress when this checkpoint started**. RE-FETCH its conclusion and, after this handoff commit, latest exact-head CI. If red, read job logs before any further edits. Do not claim the branch passes yet.
+- No human sight/feel playtest on phone/desktop or crowded battle, no FPS benchmark, no published release. Render tests and code inspection do not establish the owner's aesthetic acceptance.
+- Repeated draft commits may cancel previous run and restart CI. Source SHA + run ID are essential.
+
+## Restart instructions for an independent new ChatGPT conversation
+
+1. Fetch THIS FILE and docs/ISSUE463_HERO_COMPANION_PROJECTILE_AUDIT_20261025.md **from branch fix/issue463-ranger-postcast-vfx-20261025**, not main. Read the open issue, draft PR body/files/diff, AGENTS.md, latest main and independently evolving PR #440.
+2. Identify newest PR #464 HEAD, latest head-specific focused CI and full job logs. Determine actual PASS/FAIL/PENDING. If failing, correct the underlying simulation or obsolete tests appropriately, without skipping assertions to make a badge green. Keep the SAME PR.
+3. Independently re-check Ranger normal/charged eight-skill semantics, especially delayed bow release, normal Skill 5 radius/dust/target cap, charged Skill 2 dual Slow semantics and line admission, wall/target loss, homing versus straight trajectory, mitigation/area tags. Test 20/30/60 FPS updates, HP before-vs-after normalization, collision and live actor death/target change. Physical contact may alter balance; inspect range/life and crowded-performance implications.
+4. Re-check companion Archer Triple Shot during veteran backpedal, canceled/benched/removed caster, charged 0.65-second Piercing Volley and real arrow impact. Test Soldier sword impact/ward actor-bound status and Paladin Cross second fixed pulse, dash collision and existing holy bolts. No fake arrow/laser visual cue.
+5. Visually assess arrow origins, silhouette, orientation, distribution, hit glints and low-resolution readability in Canvas / experimental Pixi overlay, reduced-motion and optimized modes. Real device visual playtesting is still pending; don't declare it already done. The owner insists on natural fantasy, not merely CI green.
+6. Cross-check latest main and dormant Critical Executions #440 before proposing any merge; do not transfer unfinished #440 critical execution changes, interfere with its work, or alter live deployments.
+7. Document verified status/remaining issues in this handoff and PR #464/Issue #463. Proceed to individual pets only after hero/companion safety gate, within SAME #464 if maintaining this approved workstream. **Do not merge/deploy or run manual complete matrices without owner approval**.
+
+## Known subtleties worthy of special review
+
+- Delayed projectile delay reaches <=0 one simulation step before actual release. The presentation deliberately hides still-marked projectiles during that gap.
+- A cast-level projectileLaunch visual receipt may exist even though physical per-arrow releases are represented later (heroProjectileFlight or companion projectileLaunch). Ensure no duplicated old-bow flash.
+- Real area arrows can now miss a moving target or collide with terrain, while previous damage was instantaneous. This is a deliberate but gameplay-affecting interpretation of owner's fantasy standard; evaluate balance honestly.
+- Ranger charged Pinning Volley originally applied TWO Slows on immediate hit; now both must apply on real contact. Archer charged Piercing Volley preserves area mitigation; do not set a new piercing bypass because the ability name says 'Piercing'.
+- v4 restore intentionally discards transient projectiles; no save schema change should be necessary.
+- The distinct Mage Skill 1 gently homing bolt / moving charged beam already have their own mechanics and must not get Archer/Ranger release rules.
+- Hardware proof of animation quality, full performance under a wide fan of projectiles, and merged integration with independently progressing PR #440 are NOT established by ordinary draft CI.
+
+## New chat starter (copy verbatim)
+
+Read GitHub repository joedoragon-glitch/azeroth-chronicles-prototype draft PR #464 and Issue #463. First read the branch documents docs/ISSUE463_PR464_INDEPENDENT_CONTINUATION_HANDOFF_20261025.md and docs/ISSUE463_HERO_COMPANION_PROJECTILE_AUDIT_20261025.md, plus AGENTS.md, latest main and independent PR #440. The prior chat was interrupted; verify latest exact-head focused CI before changing anything. Continue and validate Ranger and Paladin then companion Archer and Soldier fantasy-real projectile/cast reviews ONLY within existing draft #464 (no new PR), respecting natural bow release, real impact timing, moving-caster logic and planted-pulse exceptions. Pets are subsequent one-by-one phase, not yet done. Never merge, deploy, run full test/browser matrices or alter Critical Executions without explicit approval. Update this handoff and the PR/Issue with truthful evidence.
+
+**Availability:** This checkpoint is version-controlled only on PR #464's branch until the owner authorizes a merge. New chat does not need this conversation.
