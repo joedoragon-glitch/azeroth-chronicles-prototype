@@ -226,3 +226,36 @@ The director asked that mounted Crown direwolf archers/lancers **face left or ri
 The earlier `ctx.rotate is not a function` error was **only a test Canvas stub omission**, not evidence that mounted enemies were unable to turn. Test-only commit `b32cd12ae069cd0f781afa4f7abe276419b30ce8` supplied the mock `rotate()` method. Test-only commit `6530b0818f3cd0ee2585fac43faee5005ed2edcd` strengthens `tests/snapshot-actor-facing.test.cjs` with real native Normal/Nightmare Mine-mounted archers/lancers, projected-left/projected-right facing and idle-direction persistence, plus verification that the native enemy path reaches the shared mirroring transform. **No production renderer or gameplay code needed changing**; do not add a separate riding-specific rotation system.
 
 **Isolated V8 regression execution on this branch:** `snapshot-actor-facing.test.cjs` passed with its real engine and renderer modules and source-contract checks. Also passed independently in the same isolated environment: `captain-healing-independent.test.cjs`, `captain-treasury-native-lifecycle.test.cjs` (including distant idle-guard approach and two native independent guards), and `snapshot-guardian-density-direwolf-riders.test.cjs`. These are valuable executed regressions, but **not an official Node CI run or the reproducible PWA build**. The formal gates above remain open. Return immediately to Phases 2–3; do not begin Phase 4 until exact-head CI/build evidence passes.
+
+
+---
+
+## Phase 2–3 continuation — deeper native lifecycle and support regression (25 October 2026)
+
+The original delivery constraint remains: **Phase 4 cannot start until Phase 2 and Phase 3 have actual current-head CI/build acceptance.** Work remained on the existing draft, unmerged, undeployed PR #454; this checkpoint adds *test coverage and verified isolated execution only*.
+
+### Change committed this continuation
+
+In `175d715dfb5439692a8fe8b53c3048f8e04d470f`, `tests/captain-treasury-native-lifecycle.test.cjs` gained three real native-update cases asserting an already-running guardian pulse advances while Scornfang has a held **telegraph warning**, **motion**, or **rangedAim**. Each case uses `Campaign.updateEnemies` and live Treasury guards; no fake healing implementation, line of sight or navigation. All three passed together with the full existing native test in isolated V8 execution.
+
+### Isolated test execution observed
+
+All results below used GitHub source from the same exact feature head `175d715d`, loaded directly into an isolated JS VM. Core `Campaign`, rules, world/navigation, combat, save, Treasury and relevant runtime implementation were real repository sources; missing unrelated modules were represented by minimal no-op loaders as necessary. This is a **different execution environment from Node with full dependencies installed**, and cannot confer CI, formatter, Canvas, browser or PWA build green status.
+
+| Focused source regression | Isolated outcome | Evidence / limit |
+| --- | --- | --- |
+| `captain-treasury-native-lifecycle.test.cjs` | **PASS** | All eight Normal/Nightmare native Treasury rosters/legacy save pairs, eight idle-guard captain heals, returning/death/Silence, original out-of-range Greenwood/Marsh lookout approach, independent native guardian pulses and three new held-action continuity cases. Includes initial Dreadmaw guard geometry diagnostics only. |
+| `enemy-cross-species-idle-healing.test.cjs` | **PASS** | `PASS 18 cross-species enemy healing cases: idle pulses, live approach, combat variants, complete recovery, old leader limits and safeguards` |
+| `enemy-ordinary-heal-balance.test.cjs` | **PASS** | `PASS 19 full ordinary healing: 12 species, cross-species support, leader isolation, three-second recovery and save shape` |
+| `enemy-support-healing.test.cjs` | **PARTIAL (gameplay sections passed)** | Passed 12 ranged-species 3-second missing-HP checks, player/faction exclusion, captain support and Grafting, region/night/TRUE scaling, boss support priority, and v4 save compatibility. Its final **phone-renderer Canvas** section requires native `@napi-rs/canvas`, unavailable in this V8 harness, so this full file is **NOT a verified pass**. |
+| `captain-healing-independent.test.cjs` / `snapshot-guardian-density-direwolf-riders.test.cjs` / `snapshot-actor-facing.test.cjs` | **Previously passed isolated source execution on the same core code** | The earlier recorded checkpoint provides those exact outputs and visual-facing context. Phase 2's mounted-lance test harness was repaired without changing mounted attack geometry or actual two-sided facing. |
+
+The real `src/prototype/renderer.js` already mirrors Crown direwolf mounts left/right using the same `paintedFacing` and `bodyFacingSide` logic as other enemy families; no double-flip or game-state facing field was introduced. The director requested returning immediately to Phase 2/3.
+
+### Explicit phase decision
+
+- **Phase 2: OPEN — awaiting exact-head green GitHub focused CI, full Node assertions, formatting and reproducible `node scripts/build.cjs --check`.** No new PR head Actions/check runs were found after GitHub-App-authored commits. The last genuine workflow run is old-head **failure** [40181275514](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40181275514), not a passing new run.
+- **Phase 3: OPEN — isolated Treasury gameplay/lifecycle coverage now stronger and passing, but `@napi-rs/canvas` visual contract, complete Node run, current-head CI and integration acceptance have not been witnessed.** Preserve the two-caster and idle healing results; investigate only actual reported failures once GitHub Actions runs.
+- **Phase 4: NOT STARTED.** No game-source mechanics changed in this continuation, no provisional captain balance was finalized, no merge or deploy.
+
+**Exact unblock:** A repository-owner-originated commit/push to the existing PR branch is required to generate a new `pull_request: synchronize` Actions event; GitHub App commits have not produced one. Run the currently configured `Focused checks and deploy` PR checks and build, inspect the native Treasury, support healing, rider and sprite-scope test logs, then record the result SHA. Do not declare green based on isolated VM test results or an old-head rerun.
