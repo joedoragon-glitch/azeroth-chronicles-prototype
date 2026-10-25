@@ -124,6 +124,9 @@
   register('world/captain/supply-march/0', 'world', 'damage');
   register('world/captain/supply-highlands/0', 'world', 'damage');
   register('world/captain/frontier-overseer/2', 'world', 'damage');
+  // Scornfang's paired Hot Zone: two warned impact pairs are one cast.
+  // Persistent floor hazards keep their original tick damage and duration.
+  register('world/captain/supply-vale/4', 'world', 'damage');
   Object.freeze(registry);
 
   function validatedLevel(level) {

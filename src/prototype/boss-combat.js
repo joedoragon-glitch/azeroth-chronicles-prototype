@@ -2140,6 +2140,21 @@
           );
           if (receipt) a.criticalExecution = receipt;
         }
+        // One authored Hot Zone activation produces two paired warnings.
+        // The first physical area release owns one World decision, inherited
+        // by the second pair. Neither pair rolls per patch or floor tick.
+        if (a.captainSkill && a.kind === 'circle' && a.paired &&
+            a.captainProfile === 'supply-vale' && a.index === 4 &&
+            !a.criticalExecution) {
+          const receipt = this.worldCriticalAction(e, 'world/captain/supply-vale/4');
+          if (receipt) {
+            a.criticalExecution = receipt;
+            for (const next of e.sequence || [])
+              if (next.captainSkill && next.captainProfile === 'supply-vale' &&
+                  next.index === 4 && next.kind === 'circle' && next.paired)
+                next.criticalExecution = receipt;
+          }
+        }
         if (a.bossHeal && e.family === 'abyss') {
           const point = this.abyssGoAroundPoint(e);
           // A blocked retreat can never grant free healing. The next recovery
