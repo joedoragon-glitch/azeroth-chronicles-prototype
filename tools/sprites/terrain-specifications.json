@@ -39,8 +39,8 @@
       "name": "Flooded Marches ground",
       "status": "candidate",
       "sourceOwner": "floor/groundDetail/terrain",
-      "palette": ["#26444b", "#31535a", "#203b42", "#85ada6"],
-      "cues": "Muted teal-green marsh earth with darker damp mud and restrained reed/grass grain. No puddles."
+      "palette": ["#3e5544", "#4b614b", "#30483c", "#a2b48e"],
+      "cues": "Muted wet green marsh earth with darker damp soil and restrained reed/grass grain. No puddles."
     },
     {
       "id": "T003",
@@ -48,8 +48,8 @@
       "name": "Ironroot Highlands ground",
       "status": "candidate",
       "sourceOwner": "floor/groundDetail/terrain",
-      "palette": ["#485447", "#56614d", "#3b493f", "#b1b59a"],
-      "cues": "Muted gray-green quarry earth with subdued dust and fine mineral grit."
+      "palette": ["#4a593b", "#74734b", "#3b4d36", "#c6b079"],
+      "cues": "Current olive and ochre Highlands earth with subdued mineral grit; preserve the existing ground palette."
     },
     {
       "id": "T004",
@@ -210,7 +210,7 @@
       "name": "Flooded Marches side-interior floor material",
       "status": "candidate",
       "sourceOwner": "floor/regional-interior-fallback",
-      "palette": ["#26444b", "#31535a", "#203b42", "#85ada6"],
+      "palette": ["#3e5544", "#4b614b", "#30483c", "#a2b48e"],
       "cues": "Current regional interior floor palette with subdued worn mineral grain and fine chips. Use the existing interior treatment, not outdoor grass, foliage, mud puddles or a newly invented architectural style. Keep drawn slab joints and room edges procedural."
     },
     {
@@ -219,7 +219,7 @@
       "name": "Ironroot Highlands side-interior floor material",
       "status": "candidate",
       "sourceOwner": "floor/regional-interior-fallback",
-      "palette": ["#485447", "#56614d", "#3b493f", "#b1b59a"],
+      "palette": ["#4a593b", "#74734b", "#3b4d36", "#c6b079"],
       "cues": "Current regional interior floor palette with subdued worn mineral grain and fine chips. Use the existing interior treatment, not outdoor grass, foliage, mud puddles or a newly invented architectural style. Keep drawn slab joints and room edges procedural."
     },
     {

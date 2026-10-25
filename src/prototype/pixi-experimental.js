@@ -594,6 +594,9 @@
       }
     }
     function draw() {
+      // A WebGL context-loss event already initiated Canvas recovery. A
+      // late callback must not replace that precise failure with "inactive".
+      if (!active && lastFailure?.type === 'context-loss') return;
       let stage = 'active-check';
       try {
         if (!active || !scene) throw Error('Inactive PixiJS renderer');
@@ -611,10 +614,23 @@
         stage = 'scene-render';
         scene.draw();
       } catch (error) {
-        const type = stage === 'viewport-check' ? 'viewport-changed' :
-          stage === 'active-check' ? 'inactive-renderer' : 'render-exception';
+        // Pixi/ANGLE can signal context loss through its draw exception
+        // BEFORE the browser fires webglcontextlost. Preserve that cause
+        // and avoid a second failure after the event released the scene.
+        if (!active && lastFailure?.type === 'context-loss') return;
+        const message = String(error?.message || error),
+          contextLost =
+            /WebGL context lost/i.test(message) ||
+            app?.canvas?.getContext?.('webgl2')?.isContextLost?.() === true,
+          type = contextLost
+            ? 'context-loss'
+            : stage === 'viewport-check'
+              ? 'viewport-changed'
+              : stage === 'active-check'
+                ? 'inactive-renderer'
+                : 'render-exception';
         options.onFailure(noteFailure(type, stage, error));
-        throw error;
+        if (!contextLost) throw error;
       }
     }
     function activate() {

@@ -145,6 +145,9 @@
           unit,
           this.partyChargeNow() + R.chargedSkills.interrupt.recoverySeconds,
         );
+        // This marks the next legal first-special opportunity; it never
+        // changes the 8/12-second clocks or the interruption recovery.
+        this.rememberFailedPetCharge?.(unit);
       }
       recordPartyChargeDamage(unit, actualLostHp) {
         const cast = this.partyChargeState(unit);
@@ -294,17 +297,31 @@
         );
       }
       tacticalHighestThreatTarget(e, fallback = this.hero) {
-        const candidates = this.combatTargets().filter(
-          (u) =>
-            u.hp > 0 &&
-            dist(e, u) <=
-              Math.max(
-                e.type === 'boss' ? 500 : 360,
-                this.enemyRanged(e) && this.enemyFort(e) ? this.enemyRangedRange(e) : 0,
-              ) &&
-            this.enemyRangedLine(e, u),
-        );
-        const ledger = this.tacticalThreatSnapshot(e);
+        const ledger = this.tacticalThreatSnapshot(e),
+          now = this.s.time || 0,
+          // Only a real, recent HP hit can expand a Rogue cast's target
+          // selection. An idle or merely ordered ranged actor still uses the
+          // original 360/500 range, so this does not enlarge passive aggro.
+          recentAttackers = new Set(
+            ledger.filter((hit) => now - hit.lastHit <= 2.2).map((hit) => hit.source),
+          ),
+          baseRange = Math.max(
+            e.type === 'boss' ? 500 : 360,
+            this.enemyRanged(e) && this.enemyFort(e) ? this.enemyRangedRange(e) : 0,
+          ),
+          // Match the existing Rogue move's legal reach; do not increase it.
+          moveRange =
+            (e.type === 'boss' ? 500 : e.captain || e.roomCaptain ? 440 : 340) *
+            R.balance.enemySpecialReachMultiplier,
+          candidates = this.combatTargets().filter(
+            (u) =>
+              u.hp > 0 &&
+              dist(e, u) <=
+                (e.aggro && recentAttackers.has(u === this.hero ? 'hero' : u.id)
+                  ? Math.max(baseRange, moveRange)
+                  : baseRange) &&
+              this.enemyRangedLine(e, u),
+          );
         for (const record of ledger) {
           const found = candidates.find((u) => (u === this.hero ? 'hero' : u.id) === record.source);
           if (found) return found;
@@ -361,7 +378,7 @@
               ally.hp > 0 &&
               !ally.neutral &&
               !ally.returning &&
-              !['travel', 'escape'].includes(this.tacticalRogueRegroup(ally)?.phase) &&
+              !['travel', 'escape', 'extended'].includes(this.tacticalRogueRegroup(ally)?.phase) &&
               dist(ally, e) <= radius,
           )
           .sort((a, b) => dist(a, e) - dist(b, e) || a.id.localeCompare(b.id));
@@ -404,7 +421,7 @@
             ally.hp > 0 &&
             !ally.neutral &&
             !ally.returning &&
-            !['travel', 'escape'].includes(this.tacticalRogueRegroup(ally)?.phase) &&
+            !['travel', 'escape', 'extended'].includes(this.tacticalRogueRegroup(ally)?.phase) &&
             dist(ally, e) <= R.tacticalFoundation.supportRadius + 35,
         ).length;
       }
@@ -461,9 +478,12 @@
         const perStack = enemy
           ? R.cooldownBalance.enemySlowStackPenalty
           : R.cooldownBalance.slowStackPenalty;
-        const stacks = Number.isFinite(unit?.slowStacks)
+        const recordedStacks = Number.isFinite(unit?.slowStacks)
           ? Math.max(1, Math.floor(unit.slowStacks))
           : 1;
+        const stacks = enemy
+          ? recordedStacks
+          : Math.min(R.cooldownBalance.partySlowMaxStacks, recordedStacks);
         const recovery = base / (1 + (stacks - 1) * perStack);
         return dt - Math.min(dt, slow) * (1 - recovery);
       }
@@ -481,9 +501,9 @@
 
       // The shared Slow contract: valid hits refresh one duration window, while
       // stacking strength and *lasting* debt reward repeated, coordinated hits.
-      // No timer or array is allocated per stack. Cooldown debt is applied once
-      // on each hit to already-recovering abilities, including absolute deadlines.
-      applySlow(unit, seconds) {
+      // No timer or array is allocated per stack. For heroes, companions and pets,
+      // cooldown debt stops at the party cap. Enemy Slow remains unchanged.
+      applySlow(unit, seconds, diagnostic = null) {
         if (
           !unit ||
           unit.hp <= 0 ||
@@ -498,15 +518,19 @@
         const priorStacks = Number.isFinite(unit.slowStacks)
           ? Math.max(1, Math.floor(unit.slowStacks))
           : 1;
-        unit.slowStacks = alreadySlowed ? priorStacks + 1 : 1;
-        unit.slow = Math.max(alreadySlowed ? unit.slow : 0, duration);
-
         const isHero = unit === this.hero;
         const isCompanion = !isHero && this.s.party.includes(unit);
         const isEnemy = !isHero && !isCompanion;
-        const debt =
-          duration *
-          (isEnemy ? R.cooldownBalance.enemySlowDebtFraction : R.cooldownBalance.slowDebtFraction);
+        const maxStacks = isEnemy ? Infinity : R.cooldownBalance.partySlowMaxStacks;
+        // An uninterrupted party Slow episode has finite stack/debt pressure.
+        // Enemy Slow stacking retains the existing offensive control behavior.
+        const earnsDebt = !alreadySlowed || priorStacks < maxStacks;
+        unit.slowStacks = alreadySlowed ? Math.min(maxStacks, priorStacks + 1) : 1;
+        unit.slow = Math.max(alreadySlowed ? unit.slow : 0, duration);
+        const debt = earnsDebt
+          ? duration *
+            (isEnemy ? R.cooldownBalance.enemySlowDebtFraction : R.cooldownBalance.slowDebtFraction)
+          : 0;
         if (isHero) {
           for (const timers of [unit.cd, unit.chargedCd || []])
             for (let i = 0; i < timers.length; i++) if (timers[i] > 0) timers[i] += debt;
@@ -522,14 +546,22 @@
           for (const key of SLOW_ENEMY_DEADLINES)
             if (Number.isFinite(unit[key]) && unit[key] > this.s.time) unit[key] += debt;
         }
+        // Preserve the actual earned amount for source-attributed Rogue reports.
+        if (diagnostic) diagnostic.appliedDebt = debt;
+        if (!diagnostic?.deferPartyDiagnostic)
+          this.partyDiagnosticsRecordSlow?.(unit, diagnostic, duration, debt);
         return true;
       }
 
-      applyRogueSlow(unit, seconds) {
-        if (!this.applySlow(unit, seconds)) return false;
-        unit.rogueSlow = Math.max(
-          unit.rogueSlow || 0,
-          seconds + R.cooldownBalance.slowDurationBonusSeconds,
+      applyRogueSlow(unit, seconds, sourceId = null, moveName = null) {
+        // Wait until rogueSlow is updated so the reported post-hit state is exact.
+        const diagnostic = { deferPartyDiagnostic: true };
+        if (!this.applySlow(unit, seconds, diagnostic)) return false;
+        const duration = seconds + R.cooldownBalance.slowDurationBonusSeconds;
+        unit.rogueSlow = Math.max(unit.rogueSlow || 0, duration);
+        this.partyDiagnosticsRecordSlow?.(
+          unit, { kind: 'rogue', sourceId, moveName },
+          duration, diagnostic.appliedDebt,
         );
         return true;
       }
@@ -693,11 +725,12 @@
         if (!piercing) amount *= this.snapshotBossIncomingFactor(e);
         // All hero/companion damage sources use this same resolver. This
         // reduction is exclusive to active travel; it ends on arrival or abort.
-        if (
-          !piercing &&
-          ['thinking', 'travel', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase)
-        )
-          amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
+        if (!piercing) {
+          const retreat = this.tacticalRogueRegroup(e)?.phase;
+          if (retreat === 'extended') amount *= 0.35;
+          else if (['thinking', 'travel', 'escape'].includes(retreat))
+            amount *= ROGUE_REGROUP_INCOMING_DAMAGE_MULTIPLIER;
+        }
         if (!piercing) amount = this.tacticalCompressDamage(e, amount);
         // Existing Royal Tax shields absorb first. A hit wholly stopped by
         // that shield does NOT count as another qualifying taxation hit.
@@ -1011,15 +1044,39 @@
               effect: p.effect,
             });
           }
-          // Friendly shots keep their launch direction, just like enemy arrows.
-          // Sweep the whole frame segment so fast beams cannot skip a contact.
+          // Ordinary Mage Skill 1 alone steers gently toward its ORIGINAL
+          // target. Other projectiles and the charged wide corridor stay fixed.
+          if (p.mageSkill1Homing) {
+            const desired = Math.atan2(e.y - p.y, e.x - p.x),
+              current = Math.atan2(p.dy, p.dx),
+              delta = Math.atan2(Math.sin(desired - current), Math.cos(desired - current)),
+              turn = Math.max(-8 * dt, Math.min(8 * dt, delta)),
+              heading = current + turn;
+            p.dx = Math.cos(heading);
+            p.dy = Math.sin(heading);
+          }
+          // Sweep the physical frame segment, including every curved-flight
+          // step, so damage never precedes the actual visible front.
           const flight = R.balance.friendlyProjectiles,
             elapsed = Math.min(dt, p.life ?? flight.lifeSeconds),
             before = { x: p.x, y: p.y },
-            step = p.speed * elapsed;
+            step = Math.min(
+              p.speed * elapsed,
+              p.mageSkill1Homing ? Math.max(0, p.travelBudget - (p.traveled || 0)) : Infinity,
+            );
           p.life = (p.life ?? flight.lifeSeconds) - elapsed;
           p.x += p.dx * step;
           p.y += p.dy * step;
+          if (p.mageSkill1Homing) {
+            p.traveled = (p.traveled || 0) + step;
+            const points = (p.trailPoints ||= [{ x: p.originX, y: p.originY }]),
+              last = points[points.length - 1];
+            if (Math.hypot(p.x - last.x, p.y - last.y) >= 8) {
+              points.push({ x: p.x, y: p.y });
+              // Preserve the caster origin and bound save/rendering work.
+              if (points.length > 64) points.splice(1, points.length - 64);
+            }
+          }
           if (!this.clearSegment(before, p, 0)) {
             if (p.source === 'hero')
               this.event('projectileImpact', {
@@ -1129,7 +1186,10 @@
                 class: this.hero.class,
               });
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
-          } else if (p.life <= 0) {
+          } else if (
+            p.life <= 0 ||
+            (p.mageSkill1Homing && p.traveled >= p.travelBudget)
+          ) {
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
           }
         }

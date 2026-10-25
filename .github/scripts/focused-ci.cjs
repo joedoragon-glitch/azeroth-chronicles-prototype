@@ -18,7 +18,11 @@ const groups = [
   },
   {
     match: /^src\/prototype\/(?:combat|hero-combat|party|party-pets)\.js$/,
-    tests: [TEST + 'charge-interruption.test.cjs', TEST + 'pet-skill-activation.test.cjs'],
+    tests: [
+      TEST + 'charge-interruption.test.cjs',
+      TEST + 'pet-skill-activation.test.cjs',
+      TEST + 'pet-skill-priority.test.cjs',
+    ],
   },
   {
     match: /^src\/prototype\/(?:app|input)\.js$/,
@@ -118,6 +122,8 @@ const groups = [
       TEST + 'field-onboarding.test.cjs',
       TEST + 'ranged-pet-support.test.cjs',
       TEST + 'enemy-support-healing.test.cjs',
+      TEST + 'enemy-ordinary-heal-balance.test.cjs',
+      TEST + 'enemy-cross-species-idle-healing.test.cjs',
     ],
   },
   {
@@ -131,11 +137,19 @@ const groups = [
       TEST + 'slow-cooldown.test.cjs',
       TEST + 'ranged-pet-support.test.cjs',
       TEST + 'enemy-support-healing.test.cjs',
+      TEST + 'enemy-ordinary-heal-balance.test.cjs',
+      TEST + 'enemy-cross-species-idle-healing.test.cjs',
     ],
   },
   {
     match: /^src\/prototype\/(?:rules|save|boss-combat)\.js$/,
     tests: [TEST + 'snapshot-encounter-lifecycle.test.cjs'],
+  },
+  {
+    // A rules edit can alter the source fingerprints in the sprite census.
+    // Validate its checked-in evidence even when the graphics stay identical.
+    match: /^src\/prototype\/rules\.js$|^docs\/evidence\/SPRITE_SCOPE_RECONCILIATION\.json$/,
+    tests: [TEST + 'sprite-scope.test.cjs'],
   },
   {
     match: /^src\/prototype\/(?:combat|boss-combat|fortifications)\.js$/,
@@ -161,6 +175,10 @@ const groups = [
   {
     match: /^src\/prototype\/(?:materials|ground-cache)\.js$|^assets\/materials\//,
     tests: [TEST + 'materials.test.cjs', TEST + 'ground-cache.test.cjs'],
+  },
+  {
+    match: /^scripts\/(?:sprite-pipeline|sprite-scope-audit|material-pipeline)\.cjs$|^tools\/sprites\/(?:terrain-specifications\.json|approved\.json|materials\/approved\.json)$|^assets\/(?:sprites|materials)\/manifest\.json$/,
+    tests: [TEST + 'artwork-pipeline-checks.test.cjs'],
   },
   { match: /^src\/prototype\/input\.js$/, tests: [TEST + 'input.test.cjs'] },
   {

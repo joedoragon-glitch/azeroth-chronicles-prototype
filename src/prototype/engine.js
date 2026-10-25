@@ -30,6 +30,12 @@
     mercyStartRadius = R.balance.pursuit.mercyStartRadius;
   // Civilian restoration routes are runtime-only; only the worker's position saves.
   const archiveRestorationTrips = new WeakMap();
+  // Per-caster leader-heal cadence is independent of buffed ordinary casts.
+  // Runtime-only WeakMap: no additional fields on saved enemy actors.
+  const enemyLeaderHealRecovery = new WeakMap();
+  // A healing captain can restore its own HP every ten recovered seconds
+  // independently of its seven-second support spell. Never serialized.
+  const captainSelfHealRecovery = new WeakMap();
   const archiveRepairSites = [
     { x: 1130, y: 560 },
     { x: 790, y: 430 },
@@ -385,15 +391,38 @@
       // are checked by the support cast itself, not by formation membership.
       return !!(this.enemyHealingActor(e) && this.enemyHealingActor(u) && u !== e && !u.returning);
     }
-    enemyNeedsSupportHeal(u) {
+    enemyHealLeader(u) {
+      return !!(u && (u.type === 'boss' || u.captain || u.roomCaptain || u.fieldCaptain));
+    }
+    enemyNeedsSupportHeal(u, healer = null) {
       const cfg = R.enemySupportHealing;
+      // A wounded ordinary monster is an eligible patient for any ordinary
+      // ranged healer, including one from a different species or pack.
+      // Bosses/captains keep their original 75% / regroup 90% threshold.
+      if (
+        healer &&
+        !this.enemyHealLeader(u) &&
+        (!this.enemyHealLeader(healer) ||
+          (healer.type !== 'boss' && (healer.captain || healer.roomCaptain)))
+      )
+        return u.hp > 0 && u.maxHp > 0 && u.hp < u.maxHp;
+      if (healer && healer.type !== 'boss' && u.type !== 'boss' && this.enemyHealLeader(u))
+        return u.hp > 0 && u.hp / u.maxHp <= cfg.captain.threshold;
       return (
         u.hp / u.maxHp <= (this.tacticalRogueRegroup(u) ? cfg.regroupThreshold : cfg.threshold)
       );
     }
     enemySupportHeal(e) {
       const cfg = R.enemySupportHealing,
-        skill = this.enemyHealProfile(e);
+        skill = this.enemyHealProfile(e),
+        captainHealer = !!(skill && e && e.type !== 'boss' && (e.captain || e.roomCaptain)),
+        ordinaryHealer = !this.enemyHealLeader(e),
+        allyReady = (e?.supportHealCd || 0) <= 0,
+        selfReady = !captainHealer || (captainSelfHealRecovery.get(e) || 0) <= 0,
+        // Leader eligibility is a separate ten-second clock for every caster.
+        // The short ordinary-ally cast never refreshes another leader early.
+        leaderRecovery =
+          ordinaryHealer || captainHealer ? enemyLeaderHealRecovery.get(e) || 0 : 0;
       if (
         !skill ||
         !this.enemyHealingActor(e) ||
@@ -403,7 +432,8 @@
         e.motion ||
         e.telegraph ||
         e.rangedAim ||
-        (e.supportHealCd || 0) > 0
+        (!captainHealer && !allyReady) ||
+        (captainHealer && !allyReady && !selfReady)
       )
         return false;
       const inReach = (u) =>
@@ -412,12 +442,17 @@
           !u.supportHeal &&
           dist(e, u) <= cfg.range &&
           (e === u || this.line(e, u)),
-        injured = this.zone().enemies.filter(
-          (u) => this.enemyHealTeammate(e, u) && inReach(u) && this.enemyNeedsSupportHeal(u),
-        ),
-        // Do not add a duplicate self-restoration route to a boss that
-        // already has authored recovery, vitality siphon, or self-restoring mud.
-        // Those bosses can still use this skill to treat their living followers.
+        injured = allyReady
+          ? this.zone().enemies.filter(
+              (u) =>
+                this.enemyHealTeammate(e, u) &&
+                inReach(u) &&
+                this.enemyNeedsSupportHeal(u, e) &&
+                !((ordinaryHealer || captainHealer) && this.enemyHealLeader(u) && leaderRecovery > 0),
+            )
+          : [],
+        // Existing boss self-recovery, vitality siphon and mud recovery remain
+        // authoritative: support must never duplicate them.
         establishedBossRecovery =
           e.type === 'boss' &&
           (Boolean(R.bossRecovery[e.family]) ||
@@ -428,20 +463,55 @@
           e.captain ||
           e.roomCaptain ||
           e.form === 'ringleader',
-        self = selfAllowed && inReach(e) && e.hp / e.maxHp <= cfg.threshold ? e : null,
+        self =
+          selfReady && selfAllowed && inReach(e) && e.hp / e.maxHp <= cfg.threshold ? e : null,
         targets = self ? [...injured, self] : injured;
       if (!targets.length) return false;
       const multiplier = this.enemyHealMultiplier(e);
-      let healed = 0;
+      let healed = 0,
+        allyTreated = false,
+        selfTreated = false,
+        leaderTreated = false;
       for (const target of targets) {
-        const amount = Math.min(target.maxHp - target.hp, target.maxHp * cfg.fraction * multiplier);
+        const leader = this.enemyHealLeader(target),
+          // Captains are now as effective as ordinary ranged monsters when
+          // healing ordinary allies. Their own HP and other leaders retain
+          // the original 5%-over-five-seconds budget.
+          // A captain patient receives half its missing HP from another
+          // healer, never the boss's 5%-of-max budget or the ordinary full heal.
+          // Self-recovery remains a separate 5%-of-max captain clock.
+          captainRecipient =
+            leader && target.type !== 'boss' && target !== e && (ordinaryHealer || captainHealer),
+          buffed = !leader && (ordinaryHealer || captainHealer),
+          duration = buffed
+            ? cfg.ordinary.duration
+            : captainRecipient
+              ? cfg.captain.duration
+              : cfg.duration,
+          amount = buffed
+            ? target.maxHp - target.hp
+            : captainRecipient
+              ? (target.maxHp - target.hp) * cfg.captain.missingFraction
+              : Math.min(target.maxHp - target.hp, target.maxHp * cfg.fraction * multiplier);
         if (!(amount > 0) || !Number.isFinite(amount)) continue;
         target.supportHeal = {
           source: e.id,
           skill,
           remaining: amount,
-          seconds: cfg.duration,
+          seconds: duration,
+          // Captain healing never requires engagement: a captain can be
+          // wounded while idle, enter combat, or leave combat mid-treatment.
+          // Captain-origin ordinary healing likewise finishes without aggro.
+          allowIdle:
+            buffed ||
+            (target.type !== 'boss' &&
+              (captainHealer || !!(target.captain || target.roomCaptain || target.fieldCaptain))),
         };
+        if (target === e) selfTreated = true;
+        else {
+          allyTreated = true;
+          if (leader && (ordinaryHealer || captainHealer)) leaderTreated = true;
+        }
         healed++;
         this.event('heal', {
           x: target.x,
@@ -463,11 +533,19 @@
         });
       }
       if (!healed) return false;
-      // One area cast spends one unchanged cooldown, regardless of recipients.
-      e.supportHealCd = cfg.cooldown;
+      // Treating allies never spends the captain's independent self clock.
+      // Healing only self never spends its ordinary-ally support clock.
+      if (allyTreated) {
+        e.supportHealCd =
+          ordinaryHealer || captainHealer ? cfg.ordinary.cooldown : cfg.cooldown;
+        if (leaderTreated) enemyLeaderHealRecovery.set(e, cfg.cooldown);
+      }
+      if (selfTreated) {
+        if (captainHealer) captainSelfHealRecovery.set(e, cfg.cooldown);
+        else if (!allyTreated)
+          e.supportHealCd = ordinaryHealer ? cfg.ordinary.cooldown : cfg.cooldown;
+      }
       e.noProgress = 0;
-      // Named leaders and Ringleaders announce the skill; ordinary ranged
-      // healers retain the green recovery cue without flooding combat messages.
       if (e.type === 'boss' || e.captain || e.roomCaptain || e.form === 'ringleader')
         this.say(e.name + ' uses ' + skill + ' in an area.');
       return true;
@@ -486,13 +564,18 @@
         (e.supportHealCd || 0) > 0
       )
         return false;
+      const leaderRecovery = enemyLeaderHealRecovery.get(e) || 0;
       const ally = this.zone()
         .enemies.filter(
           (u) =>
             this.enemyHealTeammate(e, u) &&
             !u.supportHeal &&
-            this.enemyNeedsSupportHeal(u) &&
-            (e.aggro || !!this.tacticalRogueRegroup(u)) &&
+            this.enemyNeedsSupportHeal(u, e) &&
+            !(this.enemyHealLeader(u) && !this.enemyHealLeader(e) && leaderRecovery > 0) &&
+            (e.aggro ||
+              !!this.tacticalRogueRegroup(u) ||
+              (!this.enemyHealLeader(e) &&
+                (!this.enemyHealLeader(u) || u.captain || u.roomCaptain || u.fieldCaptain))) &&
             dist(e, u) > cfg.range &&
             dist(e, u) <= cfg.range + 210,
         )
@@ -516,7 +599,7 @@
       if (
         this.peace ||
         !this.enemyHealingActor(e) ||
-        !e.aggro ||
+        (!e.aggro && !h.allowIdle) ||
         e.returning ||
         !Number.isFinite(h.seconds) ||
         h.seconds <= 0 ||
@@ -3509,6 +3592,8 @@
         e.deathRoll = null;
       }
       e.sequence = [];
+      if (e.rogueEmergencyReinforcement) this._tacticalEmergencyCleanupPending = true;
+      if (e.form === 'ringleader') this.tacticalRetireEmergencyGuards(e);
       if (e.summon) {
         if (e.developerSummon)
           this.zone().enemies.forEach((add) => {
@@ -4616,7 +4701,7 @@
     hawkRetreatKind(e) {
       if (!e || e.hp <= 0 || !e.aggro || e.returning || this.attackResetProtected(e)) return null;
       const regroup = this.tacticalRogueRegroup(e);
-      if (regroup && ['thinking', 'travel', 'escape'].includes(regroup.phase)) return 'regroup';
+      if (regroup && ['thinking', 'travel', 'escape', 'extended'].includes(regroup.phase)) return 'regroup';
       if (e.telegraph?.rogueMove && e.telegraph.style === 'withdraw') return 'withdraw';
       if (this._hawkBackpedalAt?.get(e) === this.s.time) return 'backpedal';
       if (e.rangedAim?.withdrawal || e.telegraph?.withdrawal) return 'backpedal';
@@ -4666,11 +4751,19 @@
         this._tacticalRogueNext?.delete(e.id);
         this._tacticalVisitedAllies?.delete(e.id);
         this._tacticalWoundedUsed?.delete(e.id);
+        this._tacticalTerritorialVisited?.delete(e.id);
+        this._tacticalExtendedSearchAfter?.delete(e.id);
+        this._tacticalRogueLastCast?.delete(e.id);
+        this._tacticalEmergencyNext?.delete(e.id);
       } else {
         this._tacticalRegroups?.clear();
         this._tacticalRogueNext?.clear();
         this._tacticalVisitedAllies?.clear();
         this._tacticalWoundedUsed?.clear();
+        this._tacticalTerritorialVisited?.clear();
+        this._tacticalExtendedSearchAfter?.clear();
+        this._tacticalRogueLastCast?.clear();
+        this._tacticalEmergencyNext?.clear();
       }
     }
     tacticalStopRogueRegroup(e) {
@@ -4679,6 +4772,16 @@
         e.path = [];
         e.routeAge = 0;
       }
+    }
+    tacticalRetireEmergencyGuards(owner) {
+      let retired = false;
+      for (const add of this.zone().enemies) {
+        if (add.summon && add.rogueEmergencyReinforcement && add.owner === owner.id) {
+          add.hp = 0;
+          retired = true;
+        }
+      }
+      if (retired) this._tacticalEmergencyCleanupPending = true;
     }
     tacticalBeginRogueRegroup(e, ally, activeTargetCount = 0) {
       const prior = this.tacticalRogueRegroup(e),
@@ -4712,6 +4815,11 @@
         previous = waypoint;
       }
       if (length > R.tacticalFoundation.awarenessRadius * 1.8) return false;
+      const radius = this.tacticalDefenderTerritory(e),
+        post = this.tacticalDefenderPost(e);
+      if (radius && (dist(destination, post) > radius - 55 ||
+          path.some((point) => dist(point, post) > radius - 25)))
+        return false;
       // Keep the established major-town protection; ordinary monster patrols
       // elsewhere in occupied regions remain legal.
       if (!this.isDungeon()) {
@@ -4827,6 +4935,26 @@
         until: this.s.time + 4,
       });
     }
+    tacticalDefenderPost(e) {
+      // An interrupted patrol remains responsible for the interception area,
+      // not its distant den. Captive movement already belongs to patrol code.
+      if (this.thornPatroller(e)) return e.thornFightAnchor || e;
+      if (this.cinderPatroller(e)) return e.cinderFightAnchor || e;
+      return e.home || e;
+    }
+    tacticalDefenderTerritory(e) {
+      if (e.type === 'boss') return this.isDungeon() ? 650 : 700;
+      if (e.fieldCaptain || e.captain || e.roomCaptain)
+        return this.isDungeon() ? 600 : 900;
+      return null;
+    }
+    tacticalGuardedSpecialist(e) {
+      // Mobile captives already follow Thornfang/Cindermaw during combat.
+      // Only static captive posts need this final-stand destination.
+      if (e.type !== 'boss' || this.roamingBoss(e) ||
+          this.s.keys[e.family] || this.s.rescued[e.family]) return null;
+      return this.zone().npcs.find((n) => n.kind === 'cage' && n.family === e.family) || null;
+    }
     tacticalRogueLeashAllows(e, target, territory) {
       const response = this._tacticalCinderResponses?.get(e?.id);
       if (response?.joined && response.zone === this.zoneId) {
@@ -4870,17 +4998,243 @@
       const state = this.tacticalRogueRegroup(e);
       if (!state) return dist(target, home) <= territory;
       if (state.phase === 'thinking' && !state.anchor) return dist(target, home) <= territory;
+      if (state.phase === 'extended') {
+        const radius = this.tacticalDefenderTerritory(e),
+          post = this.tacticalDefenderPost(e);
+        return dist(target, e) <= R.tacticalFoundation.extendedEncounterSeparation &&
+          (!radius || (dist(e, post) <= radius + 40 &&
+            dist(target, post) <= radius + 250));
+      }
+      // A defensive leader resumes the original encounter leash, including
+      // larger dungeon rooms; a fallback tactical state grants no new roam
+      // radius and cannot arbitrarily shorten the existing boss encounter.
+      if (state.phase === 'defend' && this.tacticalDefenderTerritory(e))
+        return dist(target, home) <= territory;
       const separationLimit = R.tacticalFoundation.awarenessRadius + 200;
       if (dist(target, e) > separationLimit) return false;
+      if (state.phase === 'guard-captive')
+        return dist(e, this.tacticalDefenderPost(e)) <= territory + 100 &&
+          dist(target, state.destination) <= separationLimit;
       if (state.phase === 'travel')
         return (
           this.distanceToSegment(target, state.retreatOrigin || home, state.destination) <=
           territory
         );
       return (
-        ['anchored', 'thinking', 'escape'].includes(state.phase) &&
+        ['anchored', 'thinking', 'escape', 'defend'].includes(state.phase) &&
         dist(target, state.anchor || e) <= separationLimit
       );
+    }
+    // A local ally is useful, but reaching one does not necessarily fix the odds.
+    // Distinguish need for support from basic Rogue eligibility (including level gap).
+    tacticalNeedsMoreSupport(e) {
+      const opponents = this.tacticalPresentOpponents(e);
+      return opponents > 0 &&
+        this.tacticalLocalSupport(e) <
+          opponents + (this.hero.level > e.level ? 1 : 0);
+    }
+    tacticalBeginExtendedRetreat(e) {
+      // Dungeon bosses hold their rooms; field leaders can seek native
+      // monsters within their existing territorial defense envelope.
+      if (this.isDungeon() || e.summon || !this.tacticalNeedsMoreSupport(e))
+        return false;
+      const cfg = R.tacticalFoundation, z = this.zone();
+      // Avoid repeated expensive route probing against blocked outposts.
+      if ((this._tacticalExtendedSearchAfter?.get(e.id) || 0) > this.s.time)
+        return false;
+      if (!this._tacticalExtendedSearchAfter) this._tacticalExtendedSearchAfter = new Map();
+      this._tacticalExtendedSearchAfter.set(e.id, this.s.time + 5);
+      if (!this._tacticalRegroups) this._tacticalRegroups = new Map();
+      if (!this._tacticalTerritorialVisited) this._tacticalTerritorialVisited = new Map();
+      const visited = this._tacticalTerritorialVisited.get(e.id) || new Set();
+      // Do not mistake the same nearby ally already tried at Level 1 for
+      // genuinely new territorial support.
+      const localVisited = this._tacticalVisitedAllies?.get(e.id);
+      // Homes/posts, not magically acquired line-of-sight targets: inhabitants
+      // know where the region's defenders usually live, even over the horizon.
+      const candidates = z.enemies.filter((ally) =>
+        ally !== e && ally.hp > 0 && !ally.neutral && !ally.returning &&
+        !ally.summon && dist(ally, e) > cfg.supportRadius + 35 &&
+        dist(ally, ally.home || ally) <= cfg.supportRadius &&
+        dist(ally.home || ally, e) <= cfg.extendedAwarenessRadius &&
+        !localVisited?.has(ally.pack || ally.id) &&
+        !visited.has(ally.pack || ally.id)
+      ).sort((a, b) => dist(e, a.home || a) - dist(e, b.home || b) || this.idOrder(a, b));
+      // Regrouped defenders should follow the same distant refuge rather than
+      // independently scattering to different outposts.
+      const traveling = z.enemies.find((ally) =>
+        ally !== e && ally.hp > 0 &&
+        dist(e, ally) <= cfg.supportRadius + 35 &&
+        this.tacticalRogueRegroup(ally)?.phase === 'extended'
+      );
+      if (traveling) {
+        const idx = candidates.indexOf(traveling);
+        if (idx >= 0) candidates.splice(idx, 1);
+        candidates.unshift(traveling);
+      }
+      for (const ally of candidates.slice(0, 8)) {
+        const fellow = this.tacticalRogueRegroup(ally);
+        // A guide is not the refuge: retain the living defender at the post
+        // so defeating the guide cannot cancel another actor's withdrawal.
+        const refuge = fellow?.phase === 'extended'
+          ? z.enemies.find((unit) =>
+              unit.id === fellow.allyId && unit.hp > 0 &&
+              !unit.neutral && !unit.returning
+            )
+          : ally;
+        if (!refuge) continue;
+        const destination = fellow?.phase === 'extended'
+          ? fellow.destination : refuge.home || refuge;
+        const path = this.route(e, destination);
+        if (!path.length) continue;
+        let length = 0, previous = e, safe = true;
+        for (const point of path) {
+          length += dist(previous, point);
+          if (!this.isDungeon()) {
+            const town = D.towns[this.regionIndex()];
+            if (town && this.distanceToSegment(
+              { x: town[0], y: town[1] }, previous, point
+            ) < 185) safe = false;
+          }
+          previous = point;
+        }
+        const radius = this.tacticalDefenderTerritory(e),
+          post = this.tacticalDefenderPost(e);
+        if (radius && (dist(destination, post) > radius - 55 ||
+            path.some((point) => dist(point, post) > radius - 25)))
+          continue;
+        // Leaders may seek any living ally, including another boss/captain,
+        // but their retreat must remain a modest local reposition, not a
+        // cross-map chase hidden inside the larger native encounter leash.
+        if (radius) {
+          const budget = e.type === 'boss' ? 340 : 400;
+          if (dist(destination, e) > budget || length > budget * 1.6 ||
+              path.some((point) => dist(point, e) > budget))
+            continue;
+        }
+        if (!safe || length > cfg.extendedRouteMaxLength) continue;
+        visited.add(ally.pack || ally.id);
+        this._tacticalTerritorialVisited.set(e.id, visited);
+        this._tacticalRegroups.set(e.id, {
+          phase: 'extended', allyId: refuge.id,
+          destination: { x: destination.x, y: destination.y },
+          anchor: { x: e.x, y: e.y }, travelRemaining: Math.max(15, length / 210 + 5),
+          stalled: 0,
+        });
+        this.event('rogueExtendedRetreat', { actor: e.id, ally: ally.id });
+        e.path = [];
+        e.routeAge = 0;
+        return true;
+      }
+      return false;
+    }
+    tacticalAdvanceExtendedRetreat(e, target, dt) {
+      const state = this.tacticalRogueRegroup(e);
+      if (state?.phase !== 'extended') return false;
+      const ally = this.zone().enemies.find((unit) => unit.id === state.allyId);
+      const replan = () => {
+        this._tacticalRegroups.set(e.id, {
+          phase: 'thinking', anchor: { x: e.x, y: e.y },
+          thinkRemaining: R.tacticalFoundation.thinkingSeconds,
+        });
+        e.path = [];
+        e.routeAge = 0;
+      };
+      if (!this.tacticalNeedsMoreSupport(e)) {
+        this._tacticalRegroups.set(e.id, {
+          phase: 'anchored', anchor: { x: e.x, y: e.y },
+          holdRemaining: 12, moveUsed: true, recruited: false,
+        });
+        return false;
+      }
+      state.travelRemaining -= dt;
+      if (!ally || ally.hp <= 0 || ally.neutral || ally.returning ||
+          state.travelRemaining <= 0) {
+        replan();
+        return true;
+      }
+      if (dist(e, state.destination) <= 65) {
+        this._tacticalRegroups.set(e.id, {
+          phase: 'anchored', anchor: { x: e.x, y: e.y },
+          holdRemaining: 12, moveUsed: true, recruited: false,
+        });
+        return true;
+      }
+      const before = { x: e.x, y: e.y };
+      this.follow(
+        e, state.destination,
+        (e.type === 'boss' ? 145 : 175) * 1.5 *
+          this.mountedMovementFactor(e) * this.nightTempo(), dt, 55
+      );
+      state.stalled = dist(before, e) > Math.max(0.1, dt * 10)
+        ? 0 : state.stalled + dt;
+      if (state.stalled >= 2.5) { replan(); return true; }
+      e.noProgress = 0;
+      // A covering move must not replace the travel order or aim at the pursuer
+      // instead of the destination. Existing warnings still resolve normally.
+      if (!e.telegraph && !e.motion && !e.rangedAim &&
+          (this._tacticalRogueNext?.get(e.id) || 0) <= this.s.time &&
+          dist(e, target) <= 320 && this.line(e, target))
+        this.tacticalRogueMove(e, target, true);
+      return true;
+    }
+    tacticalEmergencyCall(e) {
+      if (e.form !== 'ringleader' || e.type === 'boss' ||
+          e.captain || e.roomCaptain || e.summon ||
+          !this.tacticalNeedsMoreSupport(e)) return false;
+      const cfg = R.tacticalFoundation;
+      if ((this._tacticalEmergencyNext?.get(e.id) || 0) > this.s.time) return false;
+      const z = this.zone(),
+        owned = z.enemies.filter((u) =>
+          u.hp > 0 && u.summon && u.rogueEmergencyReinforcement && u.owner === e.id
+        );
+      if (owned.length >= cfg.emergencyLivingCap) return false;
+      const roll = this.random() < 0.5 ? 2 : 3,
+        count = Math.min(roll, cfg.emergencyLivingCap - owned.length);
+      let made = 0;
+      for (let i = 0; i < count; i++) {
+        let point = null;
+        for (let n = 0; n < 30; n++) {
+          const angle = (i + n) * Math.PI / 3,
+            radius = 105 + Math.floor(n / 6) * 40,
+            candidate = {
+              x: e.x + Math.cos(angle) * radius,
+              y: e.y + Math.sin(angle) * radius,
+            };
+          if (this.blocked(candidate.x, candidate.y, z.id, 12) ||
+              this.combatTargets().some((u) => u.hp > 0 && dist(u, candidate) < 80) ||
+              z.enemies.some((u) => u.hp > 0 && dist(u, candidate) < 37))
+            continue;
+          point = candidate;
+          break;
+        }
+        if (!point) break;
+        const baseHp = e.baseHp / R.ringleaderScaling.hp,
+          baseDamage = e.baseDamage / R.ringleaderScaling.damage;
+        const add = this.makeEnemy({
+          species: e.species, name: 'Called ' + e.species + ' guardian',
+          icon: e.icon, level: Math.max(1, e.level - 2),
+          hp: baseHp, damage: baseDamage, gold: 0, xp: 0,
+        }, point);
+        add.guard = true;
+        add.owner = e.id;
+        add.rogueEmergencyReinforcement = true;
+        add.pack = e.id + '-emergency';
+        if (e.ranged) add.forcedRole = 'ranged';
+        // Native role assignment has to precede summon admission: the
+        // shared configurator intentionally skips already-summoned actors.
+        this.configureEnemy(add, i);
+        add.summon = true;
+        add.summonBalanceVersion = 1;
+        z.enemies.push(add);
+        this.engage(add, true, false);
+        made++;
+      }
+      if (!made) return false;
+      if (!this._tacticalEmergencyNext) this._tacticalEmergencyNext = new Map();
+      this._tacticalEmergencyNext.set(e.id, this.s.time + cfg.emergencyCooldownSeconds);
+      this.event('rogueEmergencyCall', { actor: e.id, count: made });
+      return true;
     }
     tacticalSeekRogueSupport(e, pressure) {
       let attempts = 0;
@@ -4923,26 +5277,43 @@
           return false;
         }
         if (this.tacticalSeekRogueSupport(e, totalPressure)) return true;
-        this.tacticalStopRogueRegroup(e);
-        if (this.tacticalRogueMove(e, target, !!state.anchor)) {
-          if (state.anchor) {
-            this._tacticalRegroups.set(e.id, {
-              phase: 'anchored',
-              anchor: state.anchor,
-              holdRemaining: 12,
-              moveUsed: true,
-              recruited: true,
-            });
-          }
+        // Exhausting local support is not a reason to spam an attack.
+        // Field inhabitants seek remembered, more distant occupied posts.
+        if (this.tacticalBeginExtendedRetreat(e)) return true;
+        // Dungeon/side-dungeon leaders, or field leaders with no viable post,
+        // can call temporary guards without altering native population.
+        if (this.tacticalEmergencyCall(e)) {
+          this._tacticalRegroups.set(e.id, {
+            phase: 'anchored', anchor: { x: e.x, y: e.y },
+            holdRemaining: 12, moveUsed: true, recruited: true,
+          });
           return true;
         }
-        // Bosses and captains defend their lairs/command posts. If a lone
-        // defender cannot use its rogue maneuver, normal combat continues:
-        // repeatedly fleeing home would make prepared ranged victories impossible.
-        if (e.type === 'boss' || e.captain || e.roomCaptain) {
-          return false;
+        // With no live reinforcements, a stationary captive guardian stands
+        // near its captive rather than abandoning the encounter post.
+        const captive = this.tacticalGuardedSpecialist(e);
+        if (captive) {
+          this._tacticalRegroups.set(e.id, {
+            phase: 'guard-captive',
+            destination: { x: captive.x, y: captive.y },
+            travelRemaining: Math.max(12, dist(e, captive) / 150 + 5),
+            stalled: 0,
+          });
+          return true;
         }
-        // Isolated ordinary enemies may refuse the fight and flee quickly.
+        // No support is not a license to reset a boss/captain encounter.
+        // Nor should an ordinary enemy flee solely because the hero outlevels
+        // it. Stand and fight until real numerical/wound pressure warrants
+        // withdrawal or fresh support makes a counteroffensive viable.
+        if (this.tacticalDefenderTerritory(e) ||
+            !(this.tacticalRogueOutnumbered(e) || this.tacticalRogueWounded(e))) {
+          this._tacticalRegroups.set(e.id, {
+            phase: 'defend', anchor: { x: e.x, y: e.y }, holdRemaining: 6,
+          });
+          return true;
+        }
+        // Truly overwhelmed ordinary monsters get a finite escape, with
+        // optional defensive covering casts that never replace locomotion.
         this._tacticalRegroups.set(e.id, {
           phase: 'escape',
           anchor: { x: e.x, y: e.y },
@@ -4950,14 +5321,62 @@
           seekDelay: 0.9,
           stalled: 0,
         });
+        this.tacticalRogueMove(e, target, true);
+        return true;
+      }
+      if (state.phase === 'defend') {
+        // Rejoin the native attack AI every frame: this is a fighting stance,
+        // not an inert retreat or a two-second stationary Rogue-cast loop.
+        // Periodically reconsider the situation, and react immediately if
+        // allied support makes the fight favorable again.
+        state.holdRemaining -= dt;
+        if (!this.tacticalNeedsMoreSupport(e) || state.holdRemaining <= 0)
+          this.tacticalStopRogueRegroup(e);
+        return false;
+      }
+      if (state.phase === 'guard-captive') {
+        const captive = this.tacticalGuardedSpecialist(e);
+        state.travelRemaining -= dt;
+        if (!captive || state.travelRemaining <= 0) {
+          this.tacticalStopRogueRegroup(e);
+          return false;
+        }
+        if (dist(e, captive) > 85) {
+          const before = { x: e.x, y: e.y };
+          this.follow(e, captive, 190 * this.mountedMovementFactor(e) * this.nightTempo(), dt, 70);
+          state.stalled = dist(before, e) > Math.max(0.1, dt * 10)
+            ? 0 : state.stalled + dt;
+          e.noProgress = 0;
+          if (state.stalled <= 2.5) return true;
+        }
+        this._tacticalRegroups.set(e.id, {
+          phase: 'anchored', anchor: { x: e.x, y: e.y },
+          holdRemaining: 12, moveUsed: false, recruited: true,
+        });
         return true;
       }
       if (state.phase === 'escape') {
+        // Defensive compatibility for a retreat already underway when a
+        // leader is reassessed. An elite cannot transition into a reset loop.
+        if (this.tacticalDefenderTerritory(e)) {
+          this._tacticalRegroups.set(e.id, {
+            phase: 'defend', anchor: { x: e.x, y: e.y }, holdRemaining: 6,
+          });
+          return false;
+        }
         state.fleeRemaining -= dt;
         state.seekDelay -= dt;
         if (!committed && state.seekDelay <= 0) {
           state.seekDelay = 1;
           if (this.tacticalSeekRogueSupport(e, this.tacticalActiveTargetCount(e))) return true;
+          if (this.tacticalBeginExtendedRetreat(e)) return true;
+        }
+        const radius = this.tacticalDefenderTerritory(e);
+        if (radius && dist(e, this.tacticalDefenderPost(e)) >= radius - 55) {
+          // A roaming or field leader may regroup, but must not desert its
+          // defended encounter area when no help exists.
+          this.disengage(e, dt);
+          return true;
         }
         const before = { x: e.x, y: e.y },
           d = Math.max(1, dist(e, target)),
@@ -4976,7 +5395,13 @@
         e.noProgress = 0;
         if (dist(target, e) > 480 || state.fleeRemaining <= 0 || state.stalled > 1.8) {
           this.disengage(e, dt);
+          return true;
         }
+        // Covering casts are optional; movement remains authoritative.
+        if (!committed && !e.telegraph && !e.motion && !e.rangedAim &&
+            (this._tacticalRogueNext?.get(e.id) || 0) <= this.s.time &&
+            dist(e, target) <= 320 && this.line(e, target))
+          this.tacticalRogueMove(e, target, true);
         return true;
       }
       if (state.phase === 'travel') {
@@ -5043,6 +5468,12 @@
         if (dist(target, e) > 280) {
           state.holdRemaining -= dt;
           if (state.holdRemaining <= 0) {
+            if (this.tacticalDefenderTerritory(e)) {
+              // The normal encounter leash, not Rogue regroup expiry,
+              // decides whether a boss/captain may truly disengage.
+              this.tacticalStopRogueRegroup(e);
+              return false;
+            }
             this.disengage(e, dt);
             return true;
           }
@@ -5060,7 +5491,8 @@
         const wounded = this.tacticalRogueWounded(e);
         const freshWound = wounded && !this._tacticalWoundedUsed?.has(e.id);
         const pressureRemains =
-          this.tacticalRogueOutnumbered(e) &&
+          (this.tacticalRogueOutnumbered(e) ||
+            this.tacticalNeedsMoreSupport(e)) &&
           this.tacticalRogueEligibility(e, Math.max(pressure, 2)) &&
           (this._tacticalRogueNext?.get(e.id) || 0) <= this.s.time &&
           !this.hawkRetreatLocked(e, 'regroup');
@@ -5090,6 +5522,12 @@
     // elite signatures are authored for the species AND its actual combat role.
     tacticalRogueMove(e, fallback, fromRegroupAnchor = false) {
       if (e.hp <= 0 || e.returning || e.telegraph || e.motion || e.rangedAim) return false;
+      // Enforce cast-to-cast cadence across initial, anchored, and interrupted
+      // regroup paths; the decision cooldown alone cannot enforce this.
+      const lastCast = this._tacticalRogueLastCast?.get(e.id);
+      if (lastCast !== undefined &&
+          this.s.time - lastCast < R.tacticalFoundation.moveCooldownSeconds - 1e-7)
+        return false;
       const tier = this.tacticalProtectionTier(e),
         cfg = R.tacticalFoundation,
         profiles = cfg.rogueMoves,
@@ -5148,7 +5586,7 @@
           !!signature &&
           wantsSignature &&
           (!['scatter', 'sweep'].includes(signature.effect) || closeTargets.length > 0),
-        profile = isSignature
+        chosenProfile = isSignature
           ? signature
           : e.mountedCrownRider && crownDoctrineSpecies !== 'crownguard'
             ? {
@@ -5158,6 +5596,12 @@
                 radius: 165 * R.balance.enemySpecialReachMultiplier,
               }
             : basic,
+        coveringRetreat = ['extended', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase),
+        // Gap-closing dashes belong to a supported counteroffensive, not a
+        // withdrawal. Retain the authored attack roster outside retreat.
+        profile = coveringRetreat && chosenProfile.style === 'dash'
+          ? (ranged && profiles.ranged[crownDoctrineSpecies]) || profiles.ordinary
+          : chosenProfile,
         target =
           isSignature && closeTargets.length
             ? closeTargets.includes(threat)
@@ -5180,6 +5624,7 @@
       e.telegraph = {
         rogueMove: true,
         rogueSignature: isSignature,
+        defensiveCover: coveringRetreat,
         // Elite basic/signature Rogue actions show only a mobile actor cast,
         // while ordinary non-guardian monsters keep their original footprint.
         mobileRogueCast:
@@ -5240,6 +5685,13 @@
         style: effect || profile.style,
         signature: isSignature,
       });
+      if (!this._tacticalRogueLastCast) this._tacticalRogueLastCast = new Map();
+      if (!this._tacticalRogueNext) this._tacticalRogueNext = new Map();
+      this._tacticalRogueLastCast.set(e.id, this.s.time);
+      this._tacticalRogueNext.set(e.id, Math.max(
+        this._tacticalRogueNext.get(e.id) || 0,
+        this.s.time + cfg.moveCooldownSeconds
+      ));
       if (e.crownTroop && e.crownAncestry) e.crownRogueTurn = ((e.crownRogueTurn || 0) + 1) % 2;
       if (!isSignature && namedBasic && speciesBasic)
         e.rogueBasicTurn = ((e.rogueBasicTurn || 0) + 1) % 2;
@@ -5686,7 +6138,8 @@
         const startingHero = this.hero,
           startingZone = this.zoneId,
           startingDeaths = this.s.statistics.deaths;
-        if (move.style === 'dash' && dist(e, contactTarget) > 95) {
+        if (move.style === 'dash' && !move.defensiveCover &&
+            dist(e, contactTarget) > 95) {
           const previous = { x: e.x, y: e.y };
           this.move(
             e,
@@ -5723,6 +6176,7 @@
               victim,
               move.slowSeconds ||
                 (e.form === 'ringleader' ? R.tacticalFoundation.eliteRogueSlowSeconds : 2),
+              e.id, move.name,
             );
           }
         }
@@ -5744,7 +6198,11 @@
               x: e.x + ((e.x - contactTarget.x) / d) * move.retreat,
               y: e.y + ((e.y - contactTarget.y) / d) * move.retreat,
             };
-          if (this.clearSegment(e, point, 12)) this.move(e, point, 350, 0.35);
+          const defendedRadius = this.tacticalDefenderTerritory(e);
+          if (this.clearSegment(e, point, 12) &&
+              (!move.defensiveCover || !defendedRadius ||
+                dist(point, this.tacticalDefenderPost(e)) < defendedRadius - 25))
+            this.move(e, point, 350, 0.35);
         }
         return;
       }
@@ -5790,7 +6248,7 @@
               y: unit.y + ((unit.y - e.y) / d) * push,
             };
           this.move(unit, point, 250, 0.36);
-        } else this.applyRogueSlow(unit, move.slowSeconds || 2.4);
+        } else this.applyRogueSlow(unit, move.slowSeconds || 2.4, e.id, move.name);
       }
       if (
         move.rallySeconds > 0 &&
@@ -5853,6 +6311,7 @@
         !e?.aggro ||
         e.hp <= 0 ||
         e.returning ||
+        e.rogueEmergencyReinforcement ||
         e.telegraph ||
         e.motion ||
         e.rangedAim ||
@@ -5884,6 +6343,19 @@
       return true;
     }
     updateEnemies(dt) {
+      // Called guards are not persistent dungeon slots. Reap dead bodies
+      // after combat (not inside kill), without a per-frame roster scan.
+      if (this._tacticalEmergencyCleanupPending) {
+        this._tacticalEmergencyCleanupPending = false;
+        for (const zone of Object.values(this.s.zones)) {
+          if (!Array.isArray(zone.enemies)) continue;
+          for (let i = zone.enemies.length - 1; i >= 0; i--) {
+            const add = zone.enemies[i];
+            if (add.rogueEmergencyReinforcement && add.hp <= 0)
+              zone.enemies.splice(i, 1);
+          }
+        }
+      }
       this.syncTreasuryRecovery(this.zone());
       const z = this.zone(),
         deaths = this.s.statistics.deaths,
@@ -5918,6 +6390,18 @@
           // deterministic non-healer simulation: don't create idle cooldown
           // fields for every monster during each ordinary combat tick.
           if ((e.supportHealCd || 0) > 0) e.supportHealCd = Math.max(0, e.supportHealCd - recovery);
+          const leaderHealCd = enemyLeaderHealRecovery.get(e) || 0;
+          if (leaderHealCd > 0) {
+            const left = Math.max(0, leaderHealCd - recovery);
+            if (left > 0) enemyLeaderHealRecovery.set(e, left);
+            else enemyLeaderHealRecovery.delete(e);
+          }
+          const selfHealCd = captainSelfHealRecovery.get(e) || 0;
+          if (selfHealCd > 0) {
+            const left = Math.max(0, selfHealCd - recovery);
+            if (left > 0) captainSelfHealRecovery.set(e, left);
+            else captainSelfHealRecovery.delete(e);
+          }
           if (e.supportHeal) this.advanceEnemySupportHeal(e, dt);
         } else if (e.supportHeal) delete e.supportHeal;
         if (e.hp <= 0) {
@@ -6260,13 +6744,20 @@
           continue;
         if (!this.mageSilenceActive(e) && this.tacticalAutoRogue(e, target)) continue;
         const covering = !!(e.telegraph?.withdrawal || e.rangedAim?.withdrawal),
-          regroup = this.tacticalRogueRegroup(e);
-        if (regroup && !e.motion && ((!e.telegraph && !e.rangedAim) || covering)) {
-          const held = this.tacticalAdvanceRogueRegroup(e, target, dt, covering);
+          regroup = this.tacticalRogueRegroup(e),
+          extendedCover = regroup?.phase === 'extended' && !!e.telegraph?.rogueMove,
+          escapeCover = regroup?.phase === 'escape' && !!e.telegraph?.rogueMove;
+        if (regroup && !e.motion &&
+            ((!e.telegraph && !e.rangedAim) || covering || extendedCover || escapeCover)) {
+          const held = regroup.phase === 'extended'
+            ? this.tacticalAdvanceExtendedRetreat(e, target, dt)
+            : this.tacticalAdvanceRogueRegroup(e, target, dt, covering || escapeCover);
           if (e.returning || !e.aggro) continue;
-          if (covering) this.enemyWithdrawalCastPosition(e);
+          if (extendedCover || escapeCover) {
+            // Defensive casting does not override ongoing outward locomotion.
+          } else if (covering) this.enemyWithdrawalCastPosition(e);
           else if (held) {
-            if (['travel', 'escape', 'anchored'].includes(this.tacticalRogueRegroup(e)?.phase))
+            if (['travel', 'escape', 'anchored', 'guard-captive'].includes(this.tacticalRogueRegroup(e)?.phase))
               this.enemyWithdrawalAction(e, target, scriptedBossTarget);
             continue;
           }
@@ -6279,7 +6770,8 @@
           continue;
         }
         if (e.telegraph) {
-          if (e.telegraph.rogueMove && e.telegraph.mobileRogueCast) {
+          if (e.telegraph.rogueMove && e.telegraph.mobileRogueCast &&
+              !['extended', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase)) {
             // Cast preparation does not create an extra strike or freeze the
             // elite actor. Reuse ordinary collision-aware, leash-bounded travel.
             const castTarget =
@@ -6516,6 +7008,7 @@
         this.tacticalClearThreat(e);
         this.tacticalClearBurst(e);
         this.tacticalClearRogueRegroup(e);
+        if (e.form === 'ringleader') this.tacticalRetireEmergencyGuards(e);
         this._tacticalScatterLeash?.delete(e.id);
         this._tacticalRepositions?.delete(e.id);
         delete e.rogueDustCoverUntil;
@@ -6584,6 +7077,8 @@
     // Shared post-return combat reset: ordinary leashes and emergency rescue
     // must retire identical cooldowns, boss phases and summon flags.
     finishDisengage(e) {
+      enemyLeaderHealRecovery.delete(e);
+      captainSelfHealRecovery.delete(e);
       e.aggro = false;
       delete e.ashCloud;
       delete e.ashNextAt;

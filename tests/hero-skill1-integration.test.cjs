@@ -93,8 +93,16 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
 {
   const { g, enemies } = arena('mage', 8, 0, 12);
   assert(g.cast(1, enemies[0].id, true));
+  const launch = g.effects.filter((x) => x.type === 'heroSkillArea' && x.class === 'mage').at(-1);
+  assert.equal(launch.phase, 'launch');
+  assert.equal(launch.hits, 0, 'charged beam cannot damage before the front arrives');
+  for (let i = 0; i < 10 && g._heroSkillEffects.length; i++) {
+    g.s.time += 0.1;
+    g.advanceHeroSkillEffects(0.1);
+  }
   const hits = g.effects.filter((x) => x.type === 'heroSkillArea' && x.class === 'mage').at(-1);
-  assert.equal(hits.hits, 12, 'wide beam has no arbitrary target cap');
+  assert.equal(hits.phase, 'complete');
+  assert.equal(hits.hits, 12, 'traveling wide beam has no arbitrary target cap');
 }
 {
   const { g, enemies } = arena('paladin', 8, 0, 12);

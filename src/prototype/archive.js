@@ -94,12 +94,14 @@
               ' for allies; ' +
               R.cooldownBalance.enemySlowStackPenalty +
               ' for enemies. ' +
-              'Each hit also adds its full adjusted duration × ' +
+              'Eligible Slow hits add their adjusted duration × ' +
               percent(R.cooldownBalance.slowDebtFraction) +
               '% to eligible recovering allied cooldowns, or ' +
               percent(R.cooldownBalance.enemySlowDebtFraction) +
               '% for enemies. Ready skills gain no debt. ' +
-              'Stack strength clears when Slow expires; accumulated cooldown debt remains. ' +
+              'For heroes and companions, Slow stops accumulating at ' + R.cooldownBalance.partySlowMaxStacks +
+              ' stacks: later hits refresh duration but do not increase the stack or add cooldown debt. ' +
+              'Enemy Slow has no stack ceiling. Stack strength clears when Slow expires; accumulated cooldown debt remains. ' +
               'Preparation, warnings and healing pulses are not delayed, and skills are never outright blocked by Slow.'
             : 'The longest remaining Slow wins. Recovery returns to normal when Slow ends. Slow does not lengthen charge preparation, warnings or healing pulses, and does not prevent skills.'),
       ],
@@ -153,15 +155,19 @@
       [
         'Healing in battle',
         'Healing restores living actors; it does not revive fallen companions. Some enemies can heal their allies too.',
-        'Hero skill healing is separate from Ranger support over time. Eligible ranged enemies and selected captains/bosses treat injured living allies in an area, with eligible leaders included. Base enemy support restores ' +
+        'Hero skill healing is separate from Ranger support over time. Ordinary ranged enemies restore all missing HP of an eligible ordinary monster over ' +
+          heal.ordinary.duration +
+          ' seconds on a ' +
+          heal.ordinary.cooldown +
+          's cooldown, whenever the ordinary patient is wounded. This is a full heal measured from wounds present when treatment begins; fresh damage requires further treatment. They can still heal captains and bosses, but those leaders receive the original ' +
           percent(heal.fraction) +
-          '% of the recipient’s maximum HP over ' +
+          '% over ' +
           heal.duration +
-          ' seconds, with their strength varying by encounter, beginning at ' +
-          percent(heal.threshold) +
-          '% HP or less on a ' +
+          ' seconds, with a ' +
           heal.cooldown +
-          's cooldown. Allies arriving to regroup can receive care at ' +
+          's per-healer leader interval. Captains and bosses retain their own original healing strength and cooldowns. Encounter scaling still applies to leader healing. Treatment begins at ' +
+          percent(heal.threshold) +
+          '% HP or less for leaders and leader-sourced treatment. Allies arriving to regroup can receive care at ' +
           percent(heal.regroupThreshold) +
           '% HP or less, even before the healer joins combat. Slow delays the next skill, not ongoing healing pulses. Siphon instead heals from HP actually taken; each leader’s own recovery techniques work separately.',
       ],
@@ -1591,8 +1597,8 @@
     [' for allies; ', ' para aliados; '],
     [' for enemies. ', ' para enemigos. '],
     [
-      'Each hit also adds its full adjusted duration × ',
-      'Cada impacto también añade toda su duración ajustada × ',
+      'Eligible Slow hits add their adjusted duration × ',
+      'Los impactos de Ralentización que cumplen los requisitos añaden su duración ajustada × ',
     ],
     [
       '% to eligible recovering allied cooldowns, or ',
@@ -1601,6 +1607,18 @@
     [
       '% for enemies. Ready skills gain no debt.',
       '% para enemigos. Las habilidades ya listas no reciben deuda.',
+    ],
+    [
+      ' stacks: later hits refresh duration but do not increase the stack or add cooldown debt. ',
+      ' acumulaciones: los impactos posteriores renuevan la duración sin aumentar las acumulaciones ni añadir demora a las habilidades. ',
+    ],
+    [
+      'For heroes and companions, Slow stops accumulating at ',
+      'Para héroes y compañeros, la Ralentización deja de acumularse al llegar a ',
+    ],
+    [
+      'Enemy Slow has no stack ceiling. ',
+      'La Ralentización aplicada a los enemigos no tiene límite de acumulaciones. ',
     ],
     [
       'The Ash Sentinel’s closed-armor multiplier is 65%; the Stone Colossus’s exposed-core multiplier is 125%. These apply before other passive defenses and burst compression, so they are not final damage percentages. Some captains gain protection from their followers. Clear the warning, then strike during the opening.',

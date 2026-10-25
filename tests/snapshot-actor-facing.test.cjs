@@ -54,6 +54,32 @@ for (const family of families) {
       family + ' profile faces the real isometric target, not a static east pose');
   }
 }
+// Mounted riders inherit both target-facing projections from the same renderer
+// used by ordinary monsters. Exercise native Mine units, not just named labels.
+const Campaign = require('../src/prototype/engine.js');
+for (const mode of ['normal', 'nightmare']) {
+  const game = new Campaign(mode, 'paladin', () => 0.9);
+  game.enter('mine');
+  const riders = game.zone().enemies.filter((e) => e.mountedCrownRider && e.hp > 0);
+  assert(riders.some((e) => e.ranged) && riders.some((e) => !e.ranged),
+    mode + ': both native mounted archer and lancer profiles exist');
+  for (const rider of riders) {
+    const toRight = { x: rider.x + 80, y: rider.y };
+    const toLeft = { x: rider.x - 80, y: rider.y };
+    assert.equal(Painter.bodyFacingSide(rider, toRight, -1), 1,
+      mode + ': ' + rider.name + ' faces projected-right target');
+    assert.equal(Painter.bodyFacingSide(rider, toLeft, 1), -1,
+      mode + ': ' + rider.name + ' mirrors toward projected-left target');
+    assert.equal(Painter.bodyFacingSide(rider, null, -1), -1,
+      mode + ': stationary rider keeps previous direction');
+  }
+}
+assert(source.includes("add(z.enemies, 'enemy')") &&
+  source.includes('entities.push(presentEntity(e, renderKind))') &&
+  source.includes('const facing = paintedFacing(e)') &&
+  source.includes('PrototypeVisuals.draw(target, e, q, game.regionIndex(), rescued)'),
+  'native mounted enemies pass through the shared combat-facing sprite transform');
+
 const visualSource = fs.readFileSync(path.join(__dirname, '../src/prototype/visuals.js'), 'utf8');
 const spriteSource = fs.readFileSync(path.join(__dirname, '../src/prototype/sprites.js'), 'utf8');
 assert(visualSource.includes("case 'mireling':") && visualSource.includes("crocodile('#687a61')"),

@@ -1816,6 +1816,22 @@
         group: 'stores',
         name: 'Greenwood treasury guardian',
       },
+      // Additional non-reward ranged posts guard Scornfang's command side
+      // of the stores divider; never alter the first four legacy identities.
+      {
+        x: 705,
+        y: 385,
+        role: 'ranged',
+        group: 'command',
+        name: 'Greenwood command lookout',
+      },
+      {
+        x: 705,
+        y: 735,
+        role: 'ranged',
+        group: 'command',
+        name: 'Greenwood rear lookout',
+      },
     ],
     'supply-march': [
       {
@@ -1856,6 +1872,21 @@
         role: 'melee',
         group: 'stores',
         name: 'Marsh treasury guardian',
+      },
+      // Protect Direjaw on the captain's side of the flood divider.
+      {
+        x: 700,
+        y: 735,
+        role: 'ranged',
+        group: 'command',
+        name: 'Marsh command lookout',
+      },
+      {
+        x: 840,
+        y: 650,
+        role: 'ranged',
+        group: 'command',
+        name: 'Marsh rear lookout',
       },
     ],
     'supply-highlands': [
@@ -6061,7 +6092,10 @@
     enemySlowRecoveryMultiplier: 0.85,
     // Flat duration adjustment applies to every successful Slow application.
     slowDurationBonusSeconds: 0.25,
-    // Diminishing returns: each overlapping hit strengthens recovery suppression.
+    // Protect hero, companion and pet skill recovery from continuous Rogue
+    // pressure. Enemy Slow behavior is preserved for offensive Mage tactics.
+    partySlowMaxStacks: 4,
+    // Diminishing returns on each overlapping hit, with a party-only cap.
     slowStackPenalty: 0.35,
     enemySlowStackPenalty: 0.15,
     // Hit-time debt survives Slow expiry, but never starts an already-ready cooldown.
@@ -6127,8 +6161,17 @@
     fraction: 0.05,
     cooldown: rangerSupport.cooldown,
     duration: rangerSupport.duration,
+    // Ordinary ranged healers treating ordinary monsters: more timely aid.
+    // Leader recipients and leader casters retain the original baseline.
+    ordinary: Object.freeze({ fullRecovery: true, cooldown: 7, duration: 3 }),
+    // Captains sit between ordinary monsters and bosses as support patients.
+    // Each eligible ranged ally may refill half the missing captain HP over
+    // five seconds, on its own ten-second captain-support eligibility.
+    captain: Object.freeze({ missingFraction: 0.5, duration: 5, threshold: 0.9 }),
     // Ranged troops should assist substantially wounded allies before they
     // collapse, rather than waiting until half their HP has disappeared.
+    // Ordinary-to-ordinary healing treats any missing HP. Leaders and leader
+    // casters keep their existing threshold and 90% regroup exception.
     // One area cast treats every eligible recipient in the existing range.
     threshold: 0.75,
     regroupThreshold: 0.9,
@@ -7374,11 +7417,20 @@
     woundedThreshold: 0.5,
     summonSupportThreshold: 1,
     awarenessRadius: 750,
+    // Escalation searches known occupied monster homes rather than extending
+    // universal acquisition/aggro across the region.
+    extendedAwarenessRadius: 1800,
+    extendedRouteMaxLength: 3000,
+    extendedEncounterSeparation: 950,
+    emergencyLivingCap: 3,
+    emergencyCooldownSeconds: 16,
     threatWindowSeconds: 6,
     cunningEnemies: ['thorn', 'warlord', 'supply-crown', 'darklord'],
     supportRadius: 195,
     presenceRadius: 540,
-    moveCooldownSeconds: 3,
+    // Two-second decision and cast floor: repeatable even for isolated enemies,
+    // while actual casts cannot overlap through regroup or retreat transitions.
+    moveCooldownSeconds: 2,
     // Rogue disruption must create an escape edge even against baseline sprint.
     // Elite Ringleader slowing basics use the same 2.95s effective duration as
     // their slowing signatures and the strongest Rogue signature (2.7 + 0.25).

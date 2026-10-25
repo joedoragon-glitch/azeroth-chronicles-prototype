@@ -19,8 +19,188 @@
     const companionJudgments = new WeakMap();
     const heroGuidance = new WeakMap();
     const rangerHealRequests = new WeakMap();
+    // A charge fizzle earns the pet's ready first special one brief turn.
+    // Kept outside unit/save state; never shared across pets or campaigns.
+    const petFirstAfterFailedCharge = new WeakMap();
+
+    // Diagnostic-only, transient and bounded. Never serialize, modify tactics,
+    // or examine paths/nearby actors while taking these observations.
+    const partyDiagnosticSessions = new WeakMap();
+    const partyDiagnosticCooldownKeys = [
+      'cd', 'skill1Cd', 'skill2Cd', 'skillGlobalCd', 'healCd', 'manaCd',
+      'survivalCd', 'supportCd', 'potionCd',
+    ];
+    const partyDiagnosticRound = (value) =>
+      Number.isFinite(value) ? Math.round(value * 100) / 100 : null;
+    function partyDiagnosticBounded(rows, value, limit, session, droppedKey) {
+      rows.push(value);
+      if (rows.length > limit) {
+        rows.shift();
+        session[droppedKey]++;
+      }
+    }
+    function partyDiagnosticSession(game) {
+      let session = partyDiagnosticSessions.get(game);
+      if (!session) {
+        session = {
+          samples: [], slowApplications: [], emergencyTransitions: [],
+          recoveryActions: [], nextSampleAt: -Infinity, simulationTicks: 0,
+          emergencyActive: false, droppedSamples: 0, droppedSlowApplications: 0,
+          droppedEmergencyTransitions: 0, droppedRecoveryActions: 0,
+        };
+        partyDiagnosticSessions.set(game, session);
+      }
+      return session;
+    }
+
 
     class Party {
+
+      // Read only the existing unit and judgment state. Active samples include
+      // companions and boss pets; the full current roster includes benched units.
+      partyDiagnosticUnit(u) {
+        const judgment = companionJudgments.get(u),
+          cooldowns = {};
+        for (const key of partyDiagnosticCooldownKeys)
+          if (Number.isFinite(u[key])) cooldowns[key] = partyDiagnosticRound(u[key]);
+        return {
+          id: u.id,
+          name: u.name || null,
+          type: u.type,
+          kind: u.type === 'pet' ? 'pet' : 'companion',
+          petFamily: u.type === 'pet' ? u.petFamily || null : null,
+          active: u.active !== false,
+          hp: partyDiagnosticRound(u.hp),
+          maxHp: partyDiagnosticRound(u.maxHp),
+          x: partyDiagnosticRound(u.x),
+          y: partyDiagnosticRound(u.y),
+          slow: {
+            remainingSeconds: partyDiagnosticRound(u.slow || 0),
+            stacks: u.slow > 0 ? Math.max(1, Math.floor(u.slowStacks || 1)) : 0,
+            rogueSeconds: partyDiagnosticRound(u.rogueSlow || 0),
+            movementFactor: partyDiagnosticRound(this.slowMovementFactor(u)),
+            cooldownRecoveryFactor: partyDiagnosticRound(
+              this.cooldownRecoveryElapsed(u, 0.05) / 0.05,
+            ),
+          },
+          cooldowns,
+          tactical: {
+            order: u.order?.type || null,
+            targetId: this._tacticalPartyTargets?.get(u.id) || null,
+            charging: !!this._companionCharges?.has(u.id),
+            regrouping: !!judgment?.regrouping,
+            critical: u.hp > 0 && u.hp <= u.maxHp * R.companionJudgment.criticalFraction,
+            recallActive: !!this.s.recallActive,
+            deathRollHeld: !!u.deathRollHeld,
+            keeperHeld: !!u.keeperHeld,
+          },
+        };
+      }
+      partyDiagnosticsCurrent() {
+        const units = (this.s.party || []).map((u) => this.partyDiagnosticUnit(u));
+        return {
+          gameSeconds: partyDiagnosticRound(this.s.time),
+          zone: this.zoneId,
+          rosterSize: units.length,
+          activeCount: units.filter((u) => u.active).length,
+          petCount: units.filter((u) => u.kind === 'pet').length,
+          units,
+        };
+      }
+      // Called after completed simulation ticks, never during a paused/menu frame.
+      // At most two small party snapshots per game second, retaining one minute.
+      partyDiagnosticsObserveTick() {
+        const session = partyDiagnosticSession(this);
+        session.simulationTicks++;
+        if (this.s.time < session.nextSampleAt) return;
+        session.nextSampleAt = this.s.time + 0.5;
+        const current = this.partyDiagnosticsCurrent();
+        partyDiagnosticBounded(
+          session.samples,
+          {
+            gameSeconds: current.gameSeconds,
+            zone: current.zone,
+            units: current.units.filter((u) => u.active),
+          },
+          120, session, 'droppedSamples',
+        );
+      }
+      // A successful Slow event records the *actual* post-hit stacks and
+      // cooldowns. Attribution is known for Rogue attacks; other sources are
+      // explicitly labeled unknown rather than guessing from nearby warnings.
+      partyDiagnosticsRecordSlow(u, diagnostic, duration, debt) {
+        if (!this.s.party?.includes(u)) return;
+        const session = partyDiagnosticSession(this);
+        partyDiagnosticBounded(
+          session.slowApplications,
+          {
+            gameSeconds: partyDiagnosticRound(this.s.time),
+            zone: this.zoneId,
+            targetId: u.id,
+            targetKind: u.type === 'pet' ? 'pet' : 'companion',
+            kind: diagnostic?.kind || 'other',
+            sourceId: diagnostic?.sourceId || null,
+            moveName: diagnostic?.moveName || null,
+            durationSeconds: partyDiagnosticRound(duration),
+            cooldownDebtSeconds: partyDiagnosticRound(debt),
+            after: this.partyDiagnosticUnit(u),
+          },
+          128, session, 'droppedSlowApplications',
+        );
+      }
+      // The emergency loop still runs while combat simulation is suspended.
+      // Record only transitions so these markers are inexpensive even on phones.
+      partyDiagnosticsObserveEmergency(active, intervalMs, entries) {
+        const session = partyDiagnosticSession(this);
+        if (!!active === session.emergencyActive) return;
+        session.emergencyActive = !!active;
+        partyDiagnosticBounded(
+          session.emergencyTransitions,
+          {
+            phase: active ? 'entered' : 'recovered',
+            gameSeconds: partyDiagnosticRound(this.s.time),
+            zone: this.zoneId,
+            callbackIntervalMs: partyDiagnosticRound(intervalMs),
+            emergencyEntries: entries,
+            party: this.partyDiagnosticsCurrent(),
+          },
+          16, session, 'droppedEmergencyTransitions',
+        );
+      }
+      partyDiagnosticsRecoveryAction(action) {
+        const session = partyDiagnosticSession(this);
+        partyDiagnosticBounded(
+          session.recoveryActions,
+          {
+            action,
+            gameSeconds: partyDiagnosticRound(this.s.time),
+            zone: this.zoneId,
+            party: this.partyDiagnosticsCurrent(),
+          },
+          12, session, 'droppedRecoveryActions',
+        );
+      }
+      partyDiagnosticsReport() {
+        const session = partyDiagnosticSessions.get(this);
+        return {
+          version: 1,
+          current: this.partyDiagnosticsCurrent(),
+          simulationTicksObserved: session?.simulationTicks || 0,
+          sampleIntervalSeconds: 0.5,
+          retainedSampleLimit: 120,
+          samples: session?.samples.slice() || [],
+          slowApplications: session?.slowApplications.slice() || [],
+          emergencyTransitions: session?.emergencyTransitions.slice() || [],
+          recoveryActions: session?.recoveryActions.slice() || [],
+          dropped: {
+            samples: session?.droppedSamples || 0,
+            slowApplications: session?.droppedSlowApplications || 0,
+            emergencyTransitions: session?.droppedEmergencyTransitions || 0,
+            recoveryActions: session?.droppedRecoveryActions || 0,
+          },
+          note: 'Session-local observations only, not saved-game data. History is bounded (up to 60 game seconds at 0.5-second sampling), includes active companions and pets, and only advances on completed gameplay ticks. Emergency markers can be captured while simulation is paused. Slow sources are identified only when the caller supplies them. CompanionAIMs measures the entire party update, not CPU time for individual allies. No per-unit CPU attribution is claimed.',
+        };
+      }
     // Exceptional recovery is not a death. Preserve health, crowns, quest
     // progress, and Succession rules. Reset only the current live encounter.
     emergencyResetEncounter() {
@@ -1526,6 +1706,50 @@
           }
         }
       }
+      // Only meaningful support takes priority over the usual multi-target charge.
+      // Lifebinder heals on contact, so check reachable wounded recipients.
+      // A live stronger ward is never overwritten simply to refresh it.
+      petSupportSkillNeeded(u, slot) {
+        if (u.type !== 'pet') return false;
+        const def = this.petSkillDefinition(u, slot);
+        if (!def) return false;
+        if (def.ward) {
+          const existing = (u.wardReduction || 0),
+            remaining = (u.wardUntil || 0) - this.s.time;
+          // The impact handler preserves a stronger active ward. Only renew
+          // an equal ward near expiry, or upgrade a weaker/expired ward.
+          if (remaining <= 0 || existing < def.ward || (existing === def.ward && remaining <= 0.5))
+            return true;
+        }
+        if (def.heal && u.maxHp - u.hp >= u.maxHp * def.heal * 0.5) return true;
+        if (!def.allyHeal) return false;
+        const worthwhile = u.maxHp * def.allyHeal * 0.5;
+        return [this.hero, ...this.activeLivingParty()].some(
+          (a) =>
+            a !== u &&
+            a.hp > 0 &&
+            a.maxHp - a.hp >= worthwhile &&
+            dist(u, a) <= def.healRange &&
+            this.line(u, a),
+        );
+      }
+      rememberFailedPetCharge(u) {
+        if (u?.type === 'pet' && (u.skill1Cd || 0) <= 0)
+          petFirstAfterFailedCharge.set(u, { zone: this.zoneId, until: this.s.time + 3 });
+      }
+      petFirstDueAfterFailedCharge(u) {
+        const retry = petFirstAfterFailedCharge.get(u);
+        if (!retry) return false;
+        if (
+          retry.zone !== this.zoneId ||
+          this.s.time > retry.until ||
+          (u.skill1Cd || 0) > 0
+        ) {
+          petFirstAfterFailedCharge.delete(u);
+          return false;
+        }
+        return true;
+      }
       companionTrySkill(u, target) {
         if (
           !target ||
@@ -1534,15 +1758,38 @@
           this._companionCharges?.has(u.id)
         )
           return false;
-        const secondReady = this.companionSecondSkillUnlocked() && (u.skill2Cd || 0) <= 0,
+        const firstReady = (u.skill1Cd || 0) <= 0,
+          secondReady = this.companionSecondSkillUnlocked() && (u.skill2Cd || 0) <= 0,
           secondTargets = secondReady ? this.companionSecondSkillTargets(u, target) : [];
+        // The normal area preference must not starve a useful heal/ward, or
+        // retry another easily interrupted charge before a ready first special.
         if (
+          u.type === 'pet' &&
+          firstReady &&
+          (this.petSupportSkillNeeded(u, 1) || this.petFirstDueAfterFailedCharge(u)) &&
+          this.companionUseFirstSkill(u, target)
+        ) {
+          petFirstAfterFailedCharge.delete(u);
+          return true;
+        }
+        // Cinder Cub's protective ward belongs to its charged second skill.
+        if (
+          u.type === 'pet' &&
           secondReady &&
-          (secondTargets.length >= 2 || (u.skill1Cd || 0) > 0) &&
+          this.petSupportSkillNeeded(u, 2) &&
           this.companionUseSecondSkill(u, target, secondTargets)
         )
           return true;
-        if ((u.skill1Cd || 0) <= 0 && this.companionUseFirstSkill(u, target)) return true;
+        if (
+          secondReady &&
+          (secondTargets.length >= 2 || !firstReady) &&
+          this.companionUseSecondSkill(u, target, secondTargets)
+        )
+          return true;
+        if (firstReady && this.companionUseFirstSkill(u, target)) {
+          if (u.type === 'pet') petFirstAfterFailedCharge.delete(u);
+          return true;
+        }
         if (secondReady && this.companionUseSecondSkill(u, target, secondTargets)) return true;
         return false;
       }

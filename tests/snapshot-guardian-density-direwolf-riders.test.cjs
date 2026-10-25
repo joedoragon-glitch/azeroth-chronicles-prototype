@@ -5,8 +5,8 @@ const Visuals = require('../src/prototype/visuals.js');
 
 // A population review, not a substitute for the final campaign/gameplay audit.
 const targets = [
-  ['supply-vale', 6, 0],
-  ['supply-march', 6, 0],
+  ['supply-vale', 8, 0],
+  ['supply-march', 8, 0],
   ['supply-highlands', 7, 6],
   ['supply-crown', 11, 0],
 ];
@@ -26,6 +26,20 @@ for (const [id, expected, riders] of targets) {
     id + ' has a working ranged line');
   assert(ordinary.some((e) => !e.ranged && e.forcedRole === 'melee'),
     id + ' has working melee screening');
+  if (id === 'supply-vale' || id === 'supply-march') {
+    const captain = captains[0];
+    const rangedGuards = ordinary.filter((e) => e.ranged && e.forcedRole === 'ranged');
+    assert.equal(rangedGuards.length, 3, id + ' has exactly three independent ranged healers');
+    const commandGuards = rangedGuards.filter((e) =>
+      ['Greenwood command lookout', 'Greenwood rear lookout',
+        'Marsh command lookout', 'Marsh rear lookout'].includes(e.name));
+    assert.equal(commandGuards.length, 2, id + ' keeps two newly authored command guards');
+    for (const guard of commandGuards) {
+      assert(Math.hypot(guard.x - captain.x, guard.y - captain.y) <= 350,
+        id + ' command healer is physically within treatment range');
+      assert(game.line(guard, captain), id + ' command healer has line of sight');
+    }
+  }
   assert.equal(posts.filter((e) => e.mountedCrownRider).length, riders);
   for (const e of posts) {
     assert(!game.blocked(e.home.x, e.home.y, id, 12),
@@ -83,8 +97,12 @@ for (const mode of ['normal', 'nightmare']) {
   assert(game.tacticalRogueMove(mount, game.hero), 'mounted rider can start real Rogue move');
   assert.equal(mount.telegraph.style, 'dash');
   assert(mount.telegraph.mobileRogueCast, 'rider uses the authorized mobile cast bar');
-  assert.equal(mount.telegraph.radius, 165, 'longer-mounted-lunge reach, not extra damage');
   const basic = Campaign.rules.tacticalFoundation.rogueMoves.species.wolf;
+  assert.equal(
+    mount.telegraph.radius,
+    165 * Campaign.rules.balance.enemySpecialReachMultiplier,
+    'mounted lance keeps the authored scaled mounted-Rogue dash reach',
+  );
   assert.equal(mount.telegraph.coefficient, basic.coefficient,
     'direwolf dash keeps the original guardian damage coefficient');
 
@@ -108,7 +126,7 @@ for (const kind of ['direwolf-kennel','rider-tack-rack','rider-bunk']) {
 for (const ranged of [false, true]) {
   let fills = 0, strokes = 0;
   const canvas = {
-    save() {}, restore() {}, translate() {}, scale() {}, beginPath() {}, closePath() {},
+    save() {}, restore() {}, translate() {}, scale() {}, rotate() {}, beginPath() {}, closePath() {},
     moveTo() {}, lineTo() {}, bezierCurveTo() {}, quadraticCurveTo() {}, ellipse() {}, arc() {},
     fill() { fills++; }, stroke() { strokes++; },
   };

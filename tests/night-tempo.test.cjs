@@ -86,7 +86,7 @@ for (const clock of [100, 500]) {
 assert(travel[0] > 0);
 near(travel[1] / travel[0], 1.25, 'Real collision-aware enemy pursuit moves 25% faster');
 assert.equal(C.rules.enemySupportHealing.cooldown, 10);
-assert.equal(C.rules.tacticalFoundation.moveCooldownSeconds, 3);
+assert.equal(C.rules.tacticalFoundation.moveCooldownSeconds, 2);
 console.log(
   'PASS night tempo 10–25%, counter/day/peace/Nightmare, real melee/ranged cadence, unchanged aim and pursuit movement',
 );

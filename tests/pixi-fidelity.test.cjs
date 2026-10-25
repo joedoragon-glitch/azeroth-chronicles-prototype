@@ -115,7 +115,7 @@ const runtime={
       frames.push(list);
     },
     syncLamps(){},setAtmosphere(){},setVignette(){},
-    draw(){if(failSceneDraw)throw Error('Synthetic Pixi scene draw error')},
+    draw(){if(failSceneDraw)throw Error(failSceneDraw==='context' ? 'WebGL context lost' : 'Synthetic Pixi scene draw error')},
     destroy(){}
   })}
 };
@@ -231,6 +231,30 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(failedDrawGpu.failureDetails().type,'render-exception');
   assert.equal(failedDrawGpu.status().lastError,failures.at(-1).message);
   failedDrawGpu.release();
+  // Some WebGL drivers report context loss by throwing from Pixi's draw
+  // loop before dispatching webglcontextlost. The first failure is still
+  // context-loss, and the ensuing Canvas release must not be overwritten.
+  const contextDrawFailures=[];
+  let contextDrawGpu;
+  contextDrawGpu=runtime.PrototypePixiExperimental.create({
+    ...gpuOptions,onFailure:(detail)=>{
+      contextDrawFailures.push(detail);
+      contextDrawGpu.release();
+    }
+  });
+  assert.equal(await contextDrawGpu.prepare(),true);
+  contextDrawGpu.activate();
+  failSceneDraw='context';
+  assert.doesNotThrow(()=>contextDrawGpu.draw(),
+    'a lost context must recover safely without rethrowing a drawing fault');
+  failSceneDraw=false;
+  assert.equal(contextDrawFailures.length,1,'report one root context failure');
+  assert.equal(contextDrawFailures[0].type,'context-loss');
+  assert.equal(contextDrawFailures[0].stage,'scene-render');
+  assert.equal(contextDrawFailures[0].resources.loadedTextures,1);
+  assert.equal(contextDrawGpu.failureDetails().type,'context-loss');
+  assert.doesNotThrow(()=>contextDrawGpu.draw(),'late draw after context loss is ignored');
+  assert.equal(contextDrawFailures.length,1,'late render cannot replace the original loss');
   const lostGpu=runtime.PrototypePixiExperimental.create({
     ...gpuOptions,onFailure:(detail)=>failures.push(detail)
   });
