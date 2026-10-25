@@ -1,4 +1,7 @@
 # PR #440 — Actionable Remaining-Stage Gates, Regression Matrix and Evidence Ledger
+> **CURRENT BASELINE UPDATE — 25 October 2026:** PR #439 **merged** on 25 October 2026 (merge commit `7d9649151bbff578ecb34c01edfb2e14abb9d9ea`), so the Stage 2 reconciliation target is **CURRENT MAIN including #439**, not a still-open #439 branch. Main package version observed: **dev.183**. Read the [updated PR #440 handoff](PR440_INDEPENDENT_WORK_HANDOFF_20261024.md); preserve FIFO Skill 1 controls and three-form/timer mechanics. Any old "PR #439 open" instructions below are dated historical checkpoints. **PR #440 remains draft and its gameplay remains OFF.**
+
+
 
 **24 October 2026 (America/New_York) — ongoing handoff checklist.**
 Read [the independent PR handoff FIRST](PR440_INDEPENDENT_WORK_HANDOFF_20261024.md). This file is the **execution checklist**, not a second design authority. Owner's newer three-Level **strength architecture** supersedes earlier free-form per-move critical balancing proposals. The seven **implementation stages 0–6** remain separate.
