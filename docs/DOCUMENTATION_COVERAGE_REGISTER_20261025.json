@@ -13,9 +13,13 @@
     "reviewDepth": "Full-body review is not claimed by header_screened or path_only; full_body_pr_disposition_checked means its text and indicated PR disposition were checked, NOT a comprehensive current-runtime or every-claim recertification",
     "authority": "Only current_entrypoint is routing authority; source and owner consent always prevail",
     "gitBlobSha": "Git blob SHA of the exact candidate document bytes",
-    "verifiedPrRouting": "Disposition expresses verified GitHub PR merge path, not current runtime recertification. merged_directly means the source PR merged; merged_via_integration means source PR closed unmerged and selected work was subsequently merged by integratedByPr."
+    "verifiedPrRouting": "GitHub PR disposition checked at the recorded publishedMainSha, NOT today's live implementation or user-device certification. merged_directly means the source PR merged; merged_via_integration means source PR closed unmerged and selected work later merged through integratedByPr. historical_evidence_with_later_merge marks a version-pinned evidence report with no individual implementing source PR; sourcePr is null."
   },
   "verifiedPrStates": [
+    {
+      "number": 346,
+      "state": "merged"
+    },
     {
       "number": 407,
       "state": "merged"
@@ -26,6 +30,22 @@
     },
     {
       "number": 421,
+      "state": "merged"
+    },
+    {
+      "number": 422,
+      "state": "closed_unmerged"
+    },
+    {
+      "number": 423,
+      "state": "closed_unmerged"
+    },
+    {
+      "number": 424,
+      "state": "closed_unmerged"
+    },
+    {
+      "number": 425,
       "state": "merged"
     },
     {
@@ -66,6 +86,10 @@
     },
     {
       "number": 442,
+      "state": "merged"
+    },
+    {
+      "number": 443,
       "state": "merged"
     },
     {
@@ -224,7 +248,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 422,
+        "integratedByPr": 426,
+        "disposition": "merged_via_integration",
+        "caution": "Initial #422 closed without merging separately; selected default-On/two-skip emergency logic reconciled into merged #426. Later emergency Off policy further changed through #443."
+      }
     },
     {
       "path": "docs/ADAPTIVE_RESOLUTION_20261020.md",
@@ -462,7 +493,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 443,
+        "integratedByPr": 443,
+        "disposition": "merged_directly",
+        "caution": "Auto Optimization Off/Auto/On and emergency override shipped through #443; former draft/CI/release gate is not standing permission or proof of hardware gains."
+      }
     },
     {
       "path": "docs/AUTO_RESOLUTION_20FPS_DEV174.md",
@@ -974,7 +1012,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 425,
+        "integratedByPr": 425,
+        "disposition": "merged_directly",
+        "caution": "Nonlethal critical freeze/restart rescue PR #425 merged and was incorporated into larger dev.169 #426; historical unmerged statement is not current. Browser crash recovery remains best effort."
+      }
     },
     {
       "path": "docs/CRITICAL_SAFE_CONTRIBUTIONS_DEV143.md",
@@ -996,7 +1041,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 424,
+        "integratedByPr": 426,
+        "disposition": "merged_via_integration",
+        "caution": "Original #424 closed unmerged; collision fast-reject integrated via merged #426. Local synthetic Math.hypot savings, not a measured player-FPS increase."
+      }
     },
     {
       "path": "docs/CROWD_ESCAPE_20261020.md",
@@ -1018,7 +1070,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 423,
+        "integratedByPr": 426,
+        "disposition": "merged_via_integration",
+        "caution": "Original diagnostics #423 closed unmerged; source-level bounded 120-tick crowd profiler integrated via merged #426. Synthetic reports are not user-device FPS."
+      }
     },
     {
       "path": "docs/CROWN_COMPANIONS_20261020.md",
@@ -1172,7 +1231,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_COVERAGE_NOTES_20261025.md",
-      "gitBlobSha": "8ed8c2c5b821e8ef5a043a3ecd5cde0df913b20d",
+      "gitBlobSha": "c24533d67afe03996f422116b2fdc2c9a26204f0",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2372,7 +2431,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 346,
+        "integratedByPr": 346,
+        "disposition": "merged_directly",
+        "caution": "Earlier dev.112 cache/slow-frame fixes merged #346. Its original settings/defaults/one-scene benchmark values predate #426/#431/#437/#443 and cannot be assumed current."
+      }
     },
     {
       "path": "docs/ORCHARD_WITNESS_DEV147.md",
@@ -2500,7 +2566,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": null,
+        "integratedByPr": 426,
+        "disposition": "historical_evidence_with_later_merge",
+        "caution": "Cumulative dev.164–169 and Chromebook observations, later merged #426; evidence chronology is not a new device FPS or latest dev.185 certificate."
+      }
     },
     {
       "path": "docs/PERFORMANCE_MEASUREMENT_AUDIT_20261022.md",
@@ -2511,7 +2584,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": null,
+        "integratedByPr": 426,
+        "disposition": "historical_evidence_with_later_merge",
+        "caution": "Dev.165/166 measurement and original default-Off/one-eligible-skip assumptions, later superseded by #426 dev.169. Original samples remain immutable prior-version measurements."
+      }
     },
     {
       "path": "docs/PERFORMANCE_RESILIENCE_INTEGRATION_20261024.md",
@@ -3071,7 +3151,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 442,
+        "integratedByPr": 442,
+        "disposition": "merged_directly",
+        "caution": "Independent premerge native fixture/provenance audit of #442, now merged; inherited unrelated art/test failures require separate evidence, not a new unrelated work order."
+      }
     },
     {
       "path": "docs/RUNTIME_WORKLOAD_DEV177.md",
@@ -3082,7 +3169,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 442,
+        "integratedByPr": 442,
+        "disposition": "merged_directly",
+        "caution": "World/collision/guard-reference preservation repairs in dev.177 PR #442 merged. Historical local Node gains and premerge checklists not present-tense benchmark or approval."
+      }
     },
     {
       "path": "docs/SAVE_RECOVERY_CHECKPOINTS_DEV176.md",
