@@ -76,6 +76,13 @@ function occupied(data) {
     if (data[i]) count++;
   return count;
 }
+function overlapAlpha(a, b) {
+  assert.equal(a.length, b.length);
+  let n = 0;
+  for (let i = 3; i < a.length; i += 4)
+    if (a[i] && b[i]) n++;
+  return n;
+}
 function changed(a, b) {
   assert.equal(a.length, b.length);
   let count = 0;
@@ -132,6 +139,7 @@ function inspect(fixture, opts) {
     zoom, reduced: !!opts.reduced, optimized: !!opts.optimized,
     warningPixels: occupied(warning),
     isolatedHeroPixels: occupied(effectOnly),
+    warningHeroOverlapPixels: overlapAlpha(warning, effectOnly),
     captionsPixels: occupied(captionsOnly),
     statusPixels: occupied(statusesOnly),
     heroAgainstWarning: changed(warning, warningEffect),
@@ -156,12 +164,20 @@ const viewports = [{ width: 900, height: 600 }, { width: 393, height: 852 }];
 const comparisons = [];
 for (const viewport of viewports) {
   for (const zoom of [1, 1.5, 1.75]) {
-    const opts = { ...viewport, zoom, optimized: false, reduced: false };
-    const item = inspect(fixture, opts);
-    comparisons.push(item.output);
+    // At the common 150% zoom, additionally cover each detail/motion
+    // combination without constructing a different gameplay scene.
+    const variants = zoom === 1.5
+      ? [[false, false], [false, true], [true, false], [true, true]]
+      : [[false, false]];
+    for (const [optimized, reduced] of variants) {
+      const opts = { ...viewport, zoom, optimized, reduced };
+      comparisons.push(inspect(fixture, opts).output);
+    }
   }
 }
-assert.equal(comparisons.length, 6);
+assert.equal(comparisons.length, 12);
+assert(comparisons.some(c => c.warningHeroOverlapPixels > 0),
+  'crowd layout never put actual warning pixels behind a real hero effect');
 assert.equal(JSON.stringify(fixture.game.snapshot()), snapshot,
   'static layered visual audit mutated gameplay/save data');
 
@@ -208,4 +224,4 @@ console.log('STAGE5.2 CROWD native Canvas only; synthetic stacked real producers
   'not a natural fight/device benchmark: ' +
   JSON.stringify({ comparisons, fpsMatrix, bosses: fixture.bosses }));
 console.log('PASS crowded warning/hero/caption/status compositing at 2 canvas sizes ' +
-  'and 3 zoom levels; native 20/30/60/Auto FPS draw-gate baseline, pure gameplay');
+  'and 3 zoom levels plus detail/motion pairs; native 20/30/60/Auto gate, pure gameplay');
