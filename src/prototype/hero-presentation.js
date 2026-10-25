@@ -148,7 +148,9 @@
   function queue(events, push) {
     for (const original of events) {
       if (!owns(original)) continue;
-      const e = { ...original, charged: original.charged || original.type === 'chargedArea' },
+      const e = { ...original, charged: original.charged ||
+        (original.slot === 1 && ['heroSkillArea','heroHawk'].includes(original.type)) ||
+        original.type === 'chargedArea' || original.type === 'heroCharge' },
         p = profile(e);
       if (!p) continue;
       const emit = (stage, life, extra = {}) =>
@@ -352,7 +354,15 @@
       ctx.globalAlpha = fade * (f.pulse ? 0.55 : 0.43);
       ctx.fillStyle = '#dfb45b';
       for (const pair of endpoints) {
-        C.polygon(ctx,screen,C.capsulePoints(pair[0],pair[1],half));
+        const dx=pair[1].x-pair[0].x, dy=pair[1].y-pair[0].y,
+          len=Math.max(1,Math.hypot(dx,dy)),
+          nx=-dy/len*half, ny=dx/len*half;
+        C.polygon(ctx,screen,[
+          {x:pair[0].x+nx,y:pair[0].y+ny},
+          {x:pair[1].x+nx,y:pair[1].y+ny},
+          {x:pair[1].x-nx,y:pair[1].y-ny},
+          {x:pair[0].x-nx,y:pair[0].y-ny}
+        ]);
         ctx.fill();
       }
       ctx.globalAlpha = fade * 0.83;
@@ -375,7 +385,14 @@
         y:from.y+f.halfWidth*Math.cos(Math.atan2(to.y-from.y,to.x-from.x))};
       ctx.globalAlpha = fade*0.4;
       ctx.fillStyle='#9368db';
-      C.polygon(ctx,screen,C.capsulePoints(from,to,f.halfWidth));
+      const dx=to.x-from.x,dy=to.y-from.y,len=Math.max(1,Math.hypot(dx,dy)),
+        nx=-dy/len*f.halfWidth,ny=dx/len*f.halfWidth;
+      C.polygon(ctx,screen,[
+        {x:from.x+nx,y:from.y+ny},
+        {x:to.x+nx,y:to.y+ny},
+        {x:to.x-nx,y:to.y-ny},
+        {x:from.x-nx,y:from.y-ny}
+      ]);
       ctx.fill();
       ctx.globalAlpha=fade*0.78;
       ctx.strokeStyle='#e9ceff';
