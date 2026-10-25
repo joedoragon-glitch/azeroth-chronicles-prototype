@@ -42,6 +42,8 @@ const PRS = [
   {pr:468,scope:'Read-only combat-audio source coverage observations',
     tests:['tests/art321-pixi-loot.test.cjs',
       'tests/audio-stage1-coverage.test.cjs']},
+  {pr:447,scope:'Older Pixi optimization/resume browser gate',
+    tests:['tests/art321-pixi-loot.test.cjs','tests/pixi-fidelity.test.cjs']},
 ];
 function git(args, allowFailure=false) {
   const v=cp.spawnSync('git',args,{cwd:root,encoding:'utf8',
@@ -56,6 +58,16 @@ function fetchPR(n){
   git(['fetch','--quiet','--no-tags','--depth=320','origin',
     '+refs/pull/'+n+'/head:'+ref]);
   return git(['rev-parse',ref]).stdout.trim();
+}
+function fetchMain(){
+  const ref='refs/art321-integrate/main';
+  git(['fetch','--quiet','--no-tags','--depth=320','origin',
+    '+refs/heads/main:'+ref]);
+  return git(['rev-parse',ref]).stdout.trim();
+}
+function conflictedPaths(details){
+  return [...new Set([...String(details||'').matchAll(
+    /^100644 [a-f0-9]{40} [123]\s+(.+)$/gm)].map(x=>x[1]))];
 }
 function mergeTree(ours,theirs){
   const mb=git(['merge-base',ours,theirs],true);
@@ -109,16 +121,27 @@ function runTemporaryTree(merge,ours,theirs,tests){
 }
 function main(){
   const ours=fetchPR(469);
+  const mainSha=fetchMain();
+  const oursDelta=new Set(git(['diff','--name-only',mainSha,ours]).stdout
+    .trim().split('\n').filter(Boolean));
   const results=[];
   for(const item of PRS){
     let theirs;
     try {
       theirs=fetchPR(item.pr);
       const combo=mergeTree(ours,theirs);
+      const baseline=combo.status==='CONFLICT'?mergeTree(mainSha,theirs):null;
+      const overlap=combo.status==='CONFLICT'
+        ?conflictedPaths(combo.details):[];
+      const inheritedFromMain=combo.status==='CONFLICT'&&
+        baseline?.status==='CONFLICT'&&
+        overlap.every(file=>!oursDelta.has(file));
       const regression=combo.status==='CLEAN'
         ?runTemporaryTree(combo,ours,theirs,item.tests):null;
       results.push({pr:item.pr,scope:item.scope,ours,theirs,
-        ...combo,regression});
+        ...combo,regression,mainSha,mainStatus:baseline?.status||'NOT_NEEDED',
+        inheritedFromMain,conflictedPaths:overlap,
+        updatedByArt321:overlap.filter(file=>oursDelta.has(file))});
     }catch(e){
       results.push({pr:item.pr,scope:item.scope,ours,
         theirs:theirs||null,status:'INDETERMINATE',error:String(e.message).slice(0,2200)});
@@ -128,13 +151,15 @@ function main(){
     generatedAtUtc:new Date().toISOString(),
     method:'git merge-tree + transient non-pushed local commit/worktree + selected native Node tests',
     mutations:['NO GitHub merge','NO branch update','NO game or save edit','NO deploy'],
-    ours,results};
+    ours,mainSha,results};
   fs.mkdirSync(path.dirname(output),{recursive:true});
   fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n');
   for(const r of results)console.log('ART321_INTEGRATION '+JSON.stringify({
     pr:r.pr,ours:r.ours,theirs:r.theirs,status:r.status,
     tests:r.regression?.tests.map(x=>({file:x.file,status:x.status})),
-    passed:r.regression?.passed,error:r.error}));
+    passed:r.regression?.passed,error:r.error,
+    mainStatus:r.mainStatus,inheritedFromMain:r.inheritedFromMain,
+    conflictedPaths:r.conflictedPaths,updatedByArt321:r.updatedByArt321}));
   // Preserve useful failed/conflict evidence in the uploaded artifact; fail
   // only on actual executed-regression failures or unavailable verification.
   if(results.some(x=>x.status==='INDETERMINATE'||
