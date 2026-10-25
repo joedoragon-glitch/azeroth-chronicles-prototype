@@ -21,7 +21,19 @@
       "state": "merged"
     },
     {
+      "number": 396,
+      "state": "merged"
+    },
+    {
       "number": 407,
+      "state": "merged"
+    },
+    {
+      "number": 413,
+      "state": "merged"
+    },
+    {
+      "number": 414,
       "state": "merged"
     },
     {
@@ -1291,7 +1303,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_COVERAGE_NOTES_20261025.md",
-      "gitBlobSha": "b8207bb73b8991d38873ce06a56615ec52288680",
+      "gitBlobSha": "6accd59a4200ac8f1d9320dedec74b5b62aac73b",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -1613,7 +1625,14 @@
       "topic": "menus_and_ux",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 396,
+        "integratedByPr": 396,
+        "disposition": "merged_directly",
+        "caution": "Dev.157 five-root concise menu integration merged/published by #396; its 'next instructor menus' sentence is dated and later work exists. Does not establish present seven-step menu state or route correctness."
+      }
     },
     {
       "path": "docs/GATHERING_ESCORT_DEV130.md",
@@ -2288,7 +2307,14 @@
       "topic": "menus_and_ux",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 413,
+        "integratedByPr": 413,
+        "disposition": "merged_directly",
+        "caution": "Foundational menu descriptors, focus, selection and scroll preservation merged via #413 despite original review-candidate label; unchanged current gameplay/rules and no hardware screen-reader acceptance."
+      }
     },
     {
       "path": "docs/MENU_OVERHAUL_STEPS3_7.md",
@@ -2299,7 +2325,14 @@
       "topic": "menus_and_ux",
       "role": "other_reference",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 415,
+        "integratedByPr": 415,
+        "disposition": "merged_directly",
+        "caution": "The five remaining menu milestones shipped via merged #415 after #413/#414; step-by-step draft merge gates in document are history, not permission to rerun. Map Step 7 only reorganizes destinations and never claimed native route solver repair."
+      }
     },
     {
       "path": "docs/MENU_SCREEN_PERFORMANCE_STEP2_20261023.md",
@@ -2310,7 +2343,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 414,
+        "integratedByPr": 414,
+        "disposition": "merged_directly",
+        "caution": "Step 2 unified Screen & Performance merged via #414; historical default Adaptive Frame Skip Off is superseded by later merged #426/#443 rules. Pixi Keep/Revert and Canvas fallback remain actual renderer owners; no measured FPS gains from UI."
+      }
     },
     {
       "path": "docs/MENU_STEP7_AUDIT_20261023.md",
@@ -2321,7 +2361,14 @@
       "topic": "menus_and_ux",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 415,
+        "integratedByPr": 415,
+        "disposition": "merged_directly",
+        "caution": "Step 7 map and quest grouping included in merged #415; a source-only/production-shell review, not all navigation correctness or physical touch/canvas hit-target certification. Preserve separate MAP_WAYFINDING_FOLLOWUP audit, no automatic gameplay code change."
+      }
     },
     {
       "path": "docs/MILLHAVEN_ONBOARDING_DEV160.md",
