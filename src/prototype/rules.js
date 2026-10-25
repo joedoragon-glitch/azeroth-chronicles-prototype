@@ -6041,7 +6041,8 @@
     slowDebtFraction: 0.35,
     enemySlowDebtFraction: 0.15,
     // Charged attacks are repeatable without MP; preserve a meaningful burst/heal interval.
-    chargedSeconds: Object.freeze({ 1: 3, 2: 6, 3: 20, 4: 20, 5: 18, 6: 12, 7: 25, 8: 40 }),
+    // Skill 1 is class-specific at chargedSkills.first; these are slots 2–8.
+    chargedSeconds: Object.freeze({ 2: 6, 3: 20, 4: 20, 5: 18, 6: 12, 7: 25, 8: 40 }),
   });
   // When MP is dormant, Ash-beast ranged hits feed their ember core using real HP loss.
   const ashFeeding = Object.freeze({ healFraction: 0.15 });
