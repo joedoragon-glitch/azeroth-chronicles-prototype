@@ -31,15 +31,16 @@ function findCorridor(c, distance) {
     for (const vector of directions) {
       const b = { x: a.x + vector.x * distance, y: a.y + vector.y * distance };
       if (c.blocked(b.x, b.y, 'vale', 12)) continue;
-      if (!c.line(a, b) || !c.clearSegment(a, b, 12)) continue;
+      if (!c.line(a, b) || !c.clearSegment(a, b, 15)) continue;
       // The first probe could mistake an obstacle directly behind the enemy
-      // for a retreat failure. Certify an independent 200-unit escape lane.
+      // for a retreat failure. Match move()'s *actual* 15-unit collision
+      // radius, not the earlier 12-unit point/home probe.
       const back = {
         x: a.x - vector.x * 200,
         y: a.y - vector.y * 200,
       };
       if (c.blocked(back.x, back.y, 'vale', 12) ||
-          !c.clearSegment(a, back, 12)) continue;
+          !c.clearSegment(a, back, 15)) continue;
       return { a, b, back };
     }
   }

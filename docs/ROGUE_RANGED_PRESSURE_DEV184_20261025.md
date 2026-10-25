@@ -50,3 +50,8 @@ The first matrix has passed exact-head [focused CI #40198253231](https://github.
 ### Withdrawal geometry reconciliation
 
 The first native delivered-hit run passed 96 cases and produced 64 tactical responses, but showed some wounded 450/480-unit actors entering an `escape` phase without physical movement within 1.6 seconds. The initial fixture certified only the *incoming attack line*, not space for the enemy to retreat. The next exact-head iteration additionally requires a collision-clear 200-unit lane **behind** the enemy and reports the observed motion; do not assert an engine defect from the earlier inconclusive fixture.
+
+
+### Exact movement-collision gate
+
+The retreat-corridor selection now uses the **15-unit radius actually passed by `navigation.move` → `clearSegment`**, rather than the earlier 12-unit position check. This resolves a test-fixture mismatch before drawing conclusions about any 450/480-unit escape immobility. If a valid native 15-unit rear corridor still produces no progress, retain that as a separate AI investigation rather than silently relaxing territory or crowd collision.
