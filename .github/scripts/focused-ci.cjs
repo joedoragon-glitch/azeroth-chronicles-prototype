@@ -134,6 +134,11 @@ const groups = [
     match: /^src\/prototype\/(?:materials|ground-cache)\.js$|^assets\/materials\//,
     tests: [TEST + 'materials.test.cjs', TEST + 'ground-cache.test.cjs'],
   },
+  {
+    match:
+      /^scripts\/(?:sprite-pipeline|sprite-scope-audit|material-pipeline)\.cjs$|^tools\/sprites\/(?:terrain-specifications\.json|approved\.json|materials\/approved\.json)$|^assets\/(?:sprites|materials)\/manifest\.json$/,
+    tests: [TEST + 'artwork-pipeline-checks.test.cjs'],
+  },
   { match: /^src\/prototype\/input\.js$/, tests: [TEST + 'input.test.cjs'] },
   {
     match: /^src\/prototype\/.*(?:combat|enemy|pet|skills).*\.js$/,
