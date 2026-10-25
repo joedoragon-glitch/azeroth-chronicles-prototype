@@ -423,7 +423,7 @@
     }
     ctx.restore();
   }
-  function ground(ctx, screen, game, pass = 'fill', time = 0) {
+  function ground(ctx, screen, game, pass = 'fill', time = 0, frameWarningShapes = null) {
     const cue = pass === 'cue' || pass === 'underlay-cue';
     ctx.save();
     ctx.lineJoin = 'round';
@@ -595,7 +595,11 @@
           !(e.family === 'ridge' && e.ledgerOpen),
       )) {
       const a = e.telegraph;
-      const shapes = warningShapes(a, game.attackPatches(a));
+      // These two presentation passes use the same telegraph state within one
+      // renderer draw. Reuse only that draw's exact geometry, never a later
+      // gameplay tick: moving warnings must still track their live hitboxes.
+      const shapes = frameWarningShapes?.get(a) ?? warningShapes(a, game.attackPatches(a));
+      frameWarningShapes?.set(a, shapes);
       // Rogue warnings need an identity distinct from ordinary boss attacks:
       // cool outlines for basic disruption, brighter double-width for signature.
       ctx.strokeStyle = a.bossHeal
