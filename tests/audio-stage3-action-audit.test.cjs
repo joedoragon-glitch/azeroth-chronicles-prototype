@@ -137,7 +137,11 @@ for(const [type,family] of [
   ['soldier',null],['archer',null],
   ...Campaign.data.bosses.map((b)=>['pet',b.id]),
 ]) {
-  const {g,u,e}=companionArena(type,family);
+  // Match the actual persisted companion lifecycle used by roster regression:
+  // real combat skills are rehydrated into the active game on restore.
+  const {g: original}=companionArena(type,family);
+  const g=Campaign.restore(original.snapshot(),()=>0.9);
+  const u=g.s.party[0],e=g.zone().enemies[0];
   g.updateEnemies=()=>{};
   g.updateNight=g.updatePacks=g.updateGuardianReinforcements=g.updateElites=()=>{};
   g.engage(e);
