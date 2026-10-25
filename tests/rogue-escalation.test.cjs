@@ -512,8 +512,13 @@ console.log('PASS boss and captain no-support/anchor cases never force an encoun
     if (actor === a && destination === c.hero) inbound++;
     return originalMove(actor, destination, ...args);
   };
+  const startX = a.x, startY = a.y;
   c.tacticalResolveRogueMove(a, a.telegraph);
   assert.equal(inbound, 1, 'supported Rogue dash still attempts its attack at release');
+  // Return to identical legal reach so the second assertion cannot pass just
+  // because the first dash already closed the gap.
+  a.x = startX;
+  a.y = startY;
   const cover = { ...a.telegraph, defensiveCover: true };
   inbound = 0;
   c.tacticalResolveRogueMove(a, cover);
