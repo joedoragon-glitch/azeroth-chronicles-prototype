@@ -145,6 +145,24 @@ async function run() {
         assert.equal(await page.evaluate(() => Prototype.game === window.__gpuTestCampaign), true);
         await page.getByRole('button', {name: 'Keep WebGL2'}).click();
         assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.phase), 'confirmed');
+        // Open the real export menu: verify the user-facing playtest JSON,
+        // not merely an internal profiler object or a static source assertion.
+        await page.locator('#menu-button').click();
+        await page.getByRole('button', {name:'Game and settings', exact:true}).click();
+        await page.getByRole('button', {name:'Save and game management', exact:true}).click();
+        const downloadPromise=page.waitForEvent('download');
+        await page.getByRole('button', {name:'Export playtest report', exact:true}).click();
+        const download=await downloadPromise;
+        const exported=JSON.parse(fs.readFileSync(await download.path(),'utf8'));
+        assert.equal(exported.performance.graphicsRenderer.activeRenderer, 'pixijs-webgl2');
+        assert(exported.performance.graphicsRenderer.sceneMetrics.actors>0);
+        assert.equal(exported.performance.render.measuredLayer,'canvas-combat-overlay');
+        assert(exported.performance.frameProfile.stages.pixiMs.samples>0);
+        assert(exported.performance.frameProfile.stages.canvasOverlayMs.samples>0);
+        assert(exported.performance.frameProfile.stages.renderMs.samples>0,
+          'Legacy combined render timing must remain available');
+        console.log('PASS exported Pixi actor counts and separate Pixi/Canvas draw timings');
+        await page.evaluate(() => Prototype.closeMenu());
         // The retained Pixi background must immediately reflect presentation
         // transitions without walking, zooming or a zone transition.
         await page.waitForFunction(() =>
@@ -187,24 +205,6 @@ async function run() {
           const r=Prototype.frameProfile.report();
           return r.stages.pixiMs.samples>0 && r.stages.canvasOverlayMs.samples>0;
         }, null, {timeout:30000});
-        // Open the real export menu: verify the user-facing playtest JSON,
-        // not merely an internal profiler object or a static source assertion.
-        await page.locator('#menu-button').click();
-        await page.getByRole('button', {name:'Game and settings', exact:true}).click();
-        await page.getByRole('button', {name:'Save and game management', exact:true}).click();
-        const downloadPromise=page.waitForEvent('download');
-        await page.getByRole('button', {name:'Export playtest report', exact:true}).click();
-        const download=await downloadPromise;
-        const exported=JSON.parse(fs.readFileSync(await download.path(),'utf8'));
-        assert.equal(exported.performance.graphicsRenderer.activeRenderer, 'pixijs-webgl2');
-        assert(exported.performance.graphicsRenderer.sceneMetrics.actors>0);
-        assert.equal(exported.performance.render.measuredLayer,'canvas-combat-overlay');
-        assert(exported.performance.frameProfile.stages.pixiMs.samples>0);
-        assert(exported.performance.frameProfile.stages.canvasOverlayMs.samples>0);
-        assert(exported.performance.frameProfile.stages.renderMs.samples>0,
-          'Legacy combined render timing must remain available');
-        console.log('PASS exported Pixi actor counts and separate Pixi/Canvas draw timings');
-        await page.evaluate(() => Prototype.closeMenu());
         // Exercise the real game loop through sunset, night and sunrise.
         // Restore the clock afterward: renderer testing must not change saves.
         const lightAudit = await page.evaluate(async () => {
