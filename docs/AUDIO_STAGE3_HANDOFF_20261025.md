@@ -6,6 +6,12 @@
 **Primary draft:** PR **#472**, branch `audit/audio-stage3-real-action-coverage-20261025`, base `main`.  
 **Strict owner constraints:** No automatic merge, Pages deployment, push to main, production gameplay/balance changes, or unrelated PR modifications. No player action required for the current automated review. Stage 4 and Stage 5 remain distinct authorizations.
 
+## Final narrow acceptance status (confirmed)
+
+At Stage 3 code/CI commit `954ce9bd6ec04e895ffb1db03022b667af1d2518`, the **PR-only Stage 3 combat audio acceptance passed**: https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40224103718 . All SIX steps passed: real combat audio action matrix, established hero skill timing, restored Soldier/Archer/11-pet activation, enemy identity/stage catalog integrity, live projectile/captain audio bridge, and recorded-WAV decoding/fallback. The separate focused checks/build also **passed** at the same code SHA: https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40224103649 . The Pages/publish job was skipped. This is an accepted **narrow Stage 3 technical gate**, **not** the full-game/manual/physical-speaker certification. Subsequent documentation-only commits do not change what that run tested; always re-check the current PR head and changed-file diff.
+
+The standalone historical `tests/enemy-audio.test.cjs` regression remains separately unresolved, even though the more targeted enemy identity, bridge, and WAV regressions passed. Do not describe the complete historical suite as green.
+
 ## 1. Why this work exists
 
 The owner noticed some sounds and visual effects appeared to exist in game files without always being experienced in play and also requested that the **game soundtrack begin on the initial game-entry tap/key gesture, not on first hero movement or attack**. The audio work has been separated into five stages:
