@@ -66,7 +66,13 @@ for (const kind of ['captain', 'boss', 'field-captain']) {
   assert(g.enemySupportHeal(healer), kind + ' remains eligible for ordinary healer');
   near(ordinary.supportHeal.remaining, ordinary.maxHp - ordinary.hp, 'ordinary full recovery still applies');
   near(ordinary.supportHeal.seconds, 3, 'ordinary rapid duration');
-  near(leader.supportHeal.remaining, leader.maxHp * 0.05 * g.enemyHealMultiplier(healer), kind + ' original 5%');
+  near(
+    leader.supportHeal.remaining,
+    kind === 'boss'
+      ? leader.maxHp * 0.05 * g.enemyHealMultiplier(healer)
+      : (leader.maxHp - leader.hp) * R.captain.missingFraction,
+    kind + ' recipient class recovery',
+  );
   near(leader.supportHeal.seconds, 5, kind + ' original five-second duration');
   near(healer.supportHealCd, 7, 'ordinary healer remains on 7 second cycle');
   g.advanceEnemySupportHeal(ordinary, 3);
@@ -152,11 +158,11 @@ for (const kind of ['captain', 'boss', 'field-captain']) {
       }),
   );
   assert(leader.supportHeal, 'leader receives its next legal ten-second treatment');
-  near(leader.supportHeal.remaining, leader.maxHp * 0.05 * g.enemyHealMultiplier(source), 'leader remains on original budget');
+  near(leader.supportHeal.remaining, (leader.maxHp - leader.hp) * R.captain.missingFraction, 'captain receives half its missing HP');
   cases++;
 }
-// Boss and captain CASTERS themselves stay at the original 5% / 5s / 10s,
-// even when treating an ordinary wounded monster.
+// Boss casters retain 5% / 5s / 10s; captain casters upgrade ordinary
+// recipients to full missing HP / 3s / 7s while keeping self-healing separate.
 for (const kind of ['captain', 'boss']) {
   const { g, z, mob } = scene();
   const ally = mob('wolf', 320, { hp: 400 });
@@ -167,9 +173,13 @@ for (const kind of ['captain', 'boss']) {
     z.enemies.push(source);
   } else source = mob('goblin', 300, { roomCaptain: true, captain: true, captainProfile: 'supply-vale' });
   assert(g.enemySupportHeal(source), kind + ' authored healer still works');
-  near(ally.supportHeal.remaining, ally.maxHp * 0.05 * g.enemyHealMultiplier(source), 'leader caster original budget');
-  near(ally.supportHeal.seconds, 5, 'leader caster original duration');
-  near(source.supportHealCd, 10, 'leader caster original cooldown');
+  near(
+    ally.supportHeal.remaining,
+    kind === 'captain' ? ally.maxHp - ally.hp : ally.maxHp * 0.05 * g.enemyHealMultiplier(source),
+    'captain caster gives ordinary allies complete recovery',
+  );
+  near(ally.supportHeal.seconds, kind === 'captain' ? 3 : 5, 'leader support duration');
+  near(source.supportHealCd, kind === 'captain' ? 7 : 10, 'leader support cast cooldown');
   cases++;
 }
 // Ordinary melee sources remain non-healers; no new persisted fields.
