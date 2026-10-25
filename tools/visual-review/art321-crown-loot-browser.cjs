@@ -147,6 +147,89 @@ async function capture(page,backend){
     },info.fixture.id);
   }
 }
+// Optional end-to-end proof uses the REAL Campaign.kill() and Campaign.tick()
+// paths. The page is disposable; no real user's save is written.
+async function verifyEarnedLoot(page) {
+  const scene=await page.evaluate(()=>{
+    const g=Prototype.game,r=Prototype.renderer,rect=document.getElementById('world').getBoundingClientRect();
+    const where=r.world(rect.width*.74,rect.height*.66);
+    const screen=r.screen(where),px=rect.left+screen.x,py=rect.top+screen.y;
+    const clip={x:Math.round(px-58),y:Math.round(py-58),width:116,height:116};
+    if(clip.x<0||clip.y<0||clip.x+116>innerWidth||clip.y+116>innerHeight)
+      throw Error('Actual reward crop is not fully visible');
+    if(Math.hypot(where.x-g.hero.x,where.y-g.hero.y)<=100)
+      throw Error('Earned reward location must be outside automatic pickup radius');
+    return {where,clip,clock:g.s.clock,phase:g.daylightPhase().phase,
+      time:g.s.time,zone:g.zoneId,gold:g.hero.gold,
+      gpuActors:Prototype.experimentalGraphics.sceneMetrics.actors};
+  });
+  const empty=path.join(out,'earned-loot-before.png'),
+    earned=path.join(out,'earned-loot-visible.png'),
+    gone=path.join(out,'earned-loot-collected.png');
+  await page.screenshot({path:empty,clip:scene.clip,animations:'disabled'});
+  const drop=await page.evaluate(location=>{
+    const g=Prototype.game;
+    const before={loot:g.s.loot.length,kills:g.s.statistics.kills,nextId:g.s.nextId,
+      crowns:g.hero.gold};
+    const e=g.makeEnemy({
+      species:'goblin',type:'mob',name:'Audit earned coin',level:1,
+      hp:1,damage:0,gold:23,xp:0,
+    },location);
+    e.heroParticipated=true;
+    g.zone().enemies.push(e);
+    e.hp=0;
+    const expected=g.enemyReward(e).gold;
+    g.kill(e); // authoritative death→awardEnemyReward path
+    const result=g.s.loot.find(l=>l.id==='loot-'+before.nextId);
+    if(!result||result.gold!==expected||result.zone!==g.zoneId||
+       g.s.statistics.kills!==before.kills+1||g.hero.gold!==before.crowns)
+      throw Error('Production kill did not produce exactly one unpaid world reward');
+    const snapshot=g.snapshot();
+    if(!snapshot.loot?.some(l=>l.id===result.id))
+      throw Error('Earned coin absent from canonical v4 snapshot');
+    return {id:result.id,gold:result.gold,zone:result.zone,x:result.x,y:result.y,
+      previousGold:before.crowns,previousLootCount:before.loot,
+      previousActors:Prototype.experimentalGraphics.sceneMetrics.actors,
+      kills:g.s.statistics.kills,snapshotRetainsCoin:true};
+  },scene.where);
+  await page.waitForFunction(previous=>
+    Prototype.experimentalGraphics.mode==='webgl2'&&
+    Prototype.experimentalGraphics.phase==='confirmed'&&
+    Prototype.experimentalGraphics.sceneMetrics.actors>=previous+1,
+    drop.previousActors,{timeout:30000});
+  await page.screenshot({path:earned,clip:scene.clip,animations:'disabled'});
+  const pixelDiff=await compareImages(empty,earned);
+  assert(pixelDiff.changedPixels>25&&pixelDiff.pixelDifference>2000,
+    'Native earned Crown loot must appear in the actual WebGL page composite');
+  const collected=await page.evaluate(id=>{
+    const g=Prototype.game,l=g.s.loot.find(x=>x.id===id);
+    if(!l)throw Error('Award vanished before real pickup');
+    g.hero.x=l.x;g.hero.y=l.y;
+    const before=g.hero.gold;
+    g.tick(.01); // authoritative proximity-based reward grant
+    const after=g.hero.gold;
+    const exists=g.s.loot.some(x=>x.id===id);
+    if(exists||after!==before+l.gold)
+      throw Error('Canonical Campaign pickup did not remove and credit the earned coin');
+    g.tick(.01);
+    if(g.hero.gold!==after)throw Error('Claimed earned coin double-paid');
+    return {goldBeforePickup:before,goldAfterPickup:after,earnedGold:l.gold,
+      lootRemoved:!exists,paidOnce:true,
+      sceneClock:g.s.clock,scenePhase:g.daylightPhase().phase};
+  },drop.id);
+  // Move camera back to its original location while the scene has no loot:
+  // never use a changed camera to claim before/after pixel parity.
+  await page.screenshot({path:gone,animations:'disabled'});
+  return {
+    stateBefore:scene,producedBy:'Campaign.kill -> awardEnemyReward',
+    collectedBy:'Campaign.tick(.01) proximity pickup',
+    coin:drop,visibleCompositeDiff:pixelDiff,pickup:collected,
+    pngs:[empty,earned,gone].map(file=>({
+      filename:path.basename(file),sha256:hash(fs.readFileSync(file))
+    }))
+  };
+}
+
 async function start(){
   let browser;
   try{
@@ -220,6 +303,8 @@ async function start(){
         assert.equal(canvas.daylightPhase,overrideClock>=360&&overrideClock<570?'night':
           overrideClock>=570?'sunrise':overrideClock>=330?'sunset':'day');
       }
+      const earnedLifecycle=process.env.ART321_EARNED_BROWSER==='1'
+        ?await verifyEarnedLoot(page):null;
       assert.deepEqual(errors,[],'Uncaught browser page errors');
       const report={
         schema:'art321-real-composed-paired-pixel-capture-v2',
@@ -228,7 +313,7 @@ async function start(){
         engine:'Chromium ANGLE SwiftShader WebGL2 (software renderer)',
         source:'disposable game Campaign and temporary native-shaped Crown loot object',
         test:'one 1280x800 Chromium context; game paused; same Campaign, hero, zone, zoom, clock',
-        canvas,pixi,
+        canvas,pixi,earnedLifecycle,
         interpretation:{
           visualDeltaMeasured:'real Chromium page composite crop, before/after Crown coin',
           webglVerified:'active confirmed scene with nonzero actor/texture metrics',
@@ -249,6 +334,15 @@ async function start(){
         canvasPixels:canvas.pixels.changedPixels,pixiPixels:pixi.pixels.changedPixels,
         pixiMode:pixi.backend,actors:pixi.gpuActors,textures:pixi.textureSources,
         output:out,report:'evidence.json'}));
+      if(earnedLifecycle)console.log('ART321_EARNED_LOOT ' + JSON.stringify({
+        backend:'webgl2',
+        changedPixels:earnedLifecycle.visibleCompositeDiff.changedPixels,
+        originalGold:earnedLifecycle.coin.previousGold,
+        earnedGold:earnedLifecycle.coin.gold,
+        paidOnce:earnedLifecycle.pickup.paidOnce,
+        lootRemoved:earnedLifecycle.pickup.lootRemoved,
+        authoredPhase:earnedLifecycle.stateBefore.phase,
+      }));
       console.log('PASS focused real Chromium Canvas/Pixi paired capture');
     }finally{
       await context.close();
