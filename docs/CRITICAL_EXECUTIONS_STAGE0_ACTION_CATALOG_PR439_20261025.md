@@ -1,4 +1,6 @@
 # Stage 0 — Critical Action Inventory and PR #439 Reconciliation
+
+> **UPDATED HANDOFF AUTHORITY (24 October local / 25 October UTC):** This is the historical Stage 0 catalog against an earlier PR #439 SHA. #439 has continued editing combat, inputs, audio and its self-contained FIFO queue handoff. PR #440 now also contains a dormant critical kernel, Stage 2 review-only release adapter and three-tier intensity registry. **Use [PR440 independent handoff](PR440_INDEPENDENT_WORK_HANDOFF_20261024.md) and [stage gates](PR440_STAGE_GATES_AND_REGRESSION_MATRIX_20261024.md) for current status and re-fetch the latest #439 before integration.** The action catalog is a source inventory, not native verified critical effects.
 **25 October 2026 · Draft design PR #440 · documentation only**
 
 **Status: source-grounded inventory assembled; authorial effect signoff and executable enumeration remain pending.** This catalog is **not** a claim that all actions have approved effects, that the current historic enemy presentation register has been regenerated, or that Stage 1 may be merged. The proposed critical improvements below are **candidate directions** only. Nothing here changes gameplay, cooldowns, audio/VFX, save fields or published builds.
