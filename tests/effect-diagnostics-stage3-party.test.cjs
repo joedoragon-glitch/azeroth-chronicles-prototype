@@ -166,7 +166,16 @@ console.log('STAGE3 ARCHER real projectile movement across simulation rates=' + 
   g.zone().enemies = enemies;
   const twentyFive = paint();
   assert(twentyFour.equals(twentyFive),
-    '25th status icon unexpectedly paints beyond source-defined 24-enemy limit');
-  console.log('STAGE3 STATUS 24/25 eligible enemies: same image=true (25th intentionally hidden)');
+    'ordinary 25th status must not raise the draw budget');
+  enemies[24].type = 'boss';
+  const priorityBoss = paint();
+  assert(!twentyFour.equals(priorityBoss),
+    'late boss must displace ordinary status from 24-slot budget');
+  delete enemies[24].type;
+  g.s.heroTarget = enemies[24].id;
+  const priorityTarget = paint();
+  assert(!twentyFour.equals(priorityTarget),
+    'late hero-selected enemy must displace ordinary status');
+  console.log('STAGE4 STATUS 24/25 budget intact; late boss and hero target prioritized=true');
 }
 console.log('PASS Stage 3 natural pets, companions, arrow flight and status culling');
