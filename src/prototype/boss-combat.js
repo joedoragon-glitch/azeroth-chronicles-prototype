@@ -2689,7 +2689,10 @@
               return;
           }
         if (a.persistent)
-          for (const p of patches)
+          for (const p of patches) {
+            // This is a separate native over-time hazard, not a second
+            // critical strike. Do not persist its parent's release receipt.
+            if (p.criticalExecution) delete p.criticalExecution;
             this.s.hazards.push({
               ...p,
               family: e.family,
@@ -2700,6 +2703,7 @@
               tick: 1,
               damage: this.weakenedEnemyDamage(e) * 0.25,
             });
+          }
       }
       advanceMotion(e, dt) {
         const a = e.motion;
