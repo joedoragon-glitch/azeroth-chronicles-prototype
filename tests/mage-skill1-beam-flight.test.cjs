@@ -172,6 +172,59 @@ function advance(g, seconds, step = 0.05) {
   assert.deepEqual(start, ['moveTo', 530, 575], 'ordinary luminous tail starts at Mage live position');
   assert.equal(p.originX, 500, 'presenting the tail never relocates gameplay head or cast origin');
 }
+// Chosen Alt B appearance is entirely procedural and runs on the Canvas
+// 2D combat overlay in both the default Canvas and Pixi WebGL2 renderers.
+{
+  const art = require('../src/prototype/hero-presentation.js');
+  function capture(draw) {
+    const calls = [];
+    const ctx = new Proxy({}, {
+      get(target, key) {
+        if (!(key in target)) target[key] = (...args) => calls.push([key, ...args]);
+        return target[key];
+      },
+    });
+    draw(ctx);
+    return {
+      calls,
+      count: (method) => calls.filter((item) => item[0] === method).length,
+    };
+  }
+  const screen = (point) => ({x: point.x, y: point.y});
+  const charged = {
+    stage: 'skill1-wide-beam', x: 500, y: 500,
+    endX: 840, endY: 500, halfWidth: 48,
+    simulatedFront: true, max: 0.705, life: 0.35,
+  };
+  const wide = capture(ctx => art.draw(ctx, screen, charged,
+    {reduced: false, optimized: false}));
+  assert(wide.count('lineTo') >= 35, 'charged Arcane Lance includes two procedural helix strands and runes');
+  assert(wide.count('arc') >= 2, 'charged Arcane Lance has bounded source sigil rings');
+  assert(wide.count('fill') >= 1, 'wide gameplay footprint remains visible but translucent');
+  assert(wide.count('lineTo') < 110, 'charged effect geometry is bounded each draw');
+  const wideReduced = capture(ctx => art.draw(ctx, screen, charged,
+    {reduced: true, optimized: true}));
+  assert(wideReduced.count('lineTo') < wide.count('lineTo'),
+    'reduced motion and optimization omit animated helix and extra runes');
+  const p = {
+    source: 'hero', style: 'beam', slot: 1, charged: false,
+    originX: 500, originY: 500, x: 765, y: 540, dx: 1, dy: 0,
+    beamWidthScale: 2, mageSkill1Homing: true, traveled: 280,
+    trailPoints: [{x:500,y:500},{x:570,y:500},{x:660,y:520}],
+  };
+  const snapshot = JSON.stringify(p);
+  const regular = capture(ctx => art.projectile(ctx, screen, p, 'mage', false,
+    {x: 530, y: 565, hp: 100}));
+  assert(regular.count('lineTo') >= 35,
+    'normal Arcane Lance also shows procedural helix and diamonds');
+  assert(regular.count('arc') >= 1, 'normal Arcane Lance sigil attaches to Mage');
+  assert.equal(JSON.stringify(p), snapshot,
+    'rendering Alt B does not change physical projectile path or gameplay state');
+  const regularReduced = capture(ctx => art.projectile(ctx, screen, p, 'mage', true,
+    {x: 530, y: 565, hp: 100}));
+  assert(regularReduced.count('lineTo') < regular.count('lineTo'),
+    'normal beam reduced-motion setting omits spiral animation');
+}
 {
   const { g, enemies: [e] } = arena([[620, 500]]);
   assert(g.cast(1, e.id, true));
