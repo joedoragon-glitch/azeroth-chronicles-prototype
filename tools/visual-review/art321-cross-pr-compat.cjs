@@ -6,6 +6,7 @@
  */
 const cp = require('node:child_process');
 const fs = require('node:fs');
+const vm = require('node:vm');
 const path = require('node:path');
 const root = path.resolve(__dirname,'../..');
 const output = process.argv[2] || path.join(root,'art321-cross-pr-audit.json');
@@ -47,6 +48,39 @@ function probe(ours,theirs){
   return {status:'INDETERMINATE',mergeBase:mb,
     reason:'merge-tree error '+r.status+': '+r.stderr.slice(0,900)};
 }
+// Verify the composed tree actually retains both sides' source contracts.
+// The real merge-tree result is read, parsed, and inspected without checking
+// out, committing, merging or modifying any branch.
+function inspectCombinedTree(tree,pr){
+  const source=(path)=>run(['show',tree+':'+path]).stdout;
+  const renderer=source('src/prototype/renderer.js'),
+    pixi=source('src/prototype/pixi-experimental.js');
+  new vm.Script(renderer,{filename:'combined-renderer.js'});
+  new vm.Script(pixi,{filename:'combined-pixi-experimental.js'});
+  const contracts={
+    canonicalCrownPainter:renderer.includes('function drawCrownLoot(ctx, p)'),
+    pixiCrownActor:pixi.includes('appendCrownLoot(records, current, zoom);'),
+    sharedPauseHelper:renderer.includes('function drawPausePresentation()'),
+    canvasAndPixiPauseCalls:(renderer.match(/drawPausePresentation\(\);/g)||[]).length===2,
+    trueRendererSplit:renderer.includes("renderLayer === 'overlay'"),
+    retainedCombatOverlay:renderer.includes('drawVisualFx();') &&
+      renderer.includes('for (const projectile of game.s.projectiles) drawProjectile(projectile);'),
+  };
+  if(pr===471){
+    contracts.effectDiagnosticsRetained=renderer.includes('effectRecorder?.draw(game);') &&
+      renderer.includes('effectRecorder?.painted(f);') &&
+      renderer.includes('const warningFrameShapes = new Map();');
+    contracts.firstPaintProtectionRetained=renderer.includes('function firstPaintEssential(f)') &&
+      renderer.includes('firstPaintGraceSeconds');
+  }
+  if(pr===464){
+    contracts.delayedProjectileReleaseRetained=renderer.includes('p.rangerDelayedLaunch') &&
+      renderer.includes('p.companionDelayedLaunch');
+    contracts.noDuplicatePetFlightRetained=renderer.includes('!f.physicalProjectile');
+    contracts.archerVolleyCueRetained=renderer.includes('f.projectileVolley');
+  }
+  return {status:Object.values(contracts).every(Boolean)?'PASS':'FAIL',contracts};
+}
 function main(){
   const ours=fetch('469','refs/pull/469/head');
   const mainSha=fetch('main','refs/heads/main');
@@ -57,7 +91,9 @@ function main(){
       theirs=fetch(String(check.pr),'refs/pull/'+check.pr+'/head');
       const againstAudit=probe(ours,theirs);
       const againstMain=probe(mainSha,theirs);
-      results.push({...check,ours,theirs,...againstAudit,
+      const semantic=againstAudit.status==='CLEAN'
+        ?inspectCombinedTree(againstAudit.resultTree,check.pr):null;
+      results.push({...check,ours,theirs,...againstAudit,semantic,
         mainStatus:againstMain.status,mainMergeBase:againstMain.mergeBase,
         inheritedFromMain:againstAudit.status==='CONFLICT'&&againstMain.status==='CONFLICT',
         mainConflictDetails:againstMain.status==='CONFLICT'
@@ -77,10 +113,10 @@ function main(){
     console.log('ART321_CROSS_PR '+JSON.stringify({
       pr:r.pr,status:r.status,ours:r.ours,theirs:r.theirs,
       mergeBase:r.mergeBase,mainStatus:r.mainStatus,mainMergeBase:r.mainMergeBase,
-      inheritedFromMain:r.inheritedFromMain,overlap:r.overlap,
+      inheritedFromMain:r.inheritedFromMain,semantic:r.semantic,overlap:r.overlap,
       conflicts:r.status==='CONFLICT'?r.conflictDetails.slice(0,1400):undefined,
       reason:r.reason
     }));
-  if(results.some(r=>r.status==='INDETERMINATE'))process.exitCode=1;
+  if(results.some(r=>r.status==='INDETERMINATE'||r.semantic?.status==='FAIL'))process.exitCode=1;
 }
 main();
