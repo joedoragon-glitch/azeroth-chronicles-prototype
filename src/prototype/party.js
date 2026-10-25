@@ -1622,7 +1622,6 @@
               speed: 650,
               style: 'arrow',
               area: true,
-              piercing: true,
               companionSkill: 'piercing-volley',
             });
             hits++;
