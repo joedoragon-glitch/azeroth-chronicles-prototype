@@ -184,7 +184,7 @@
         if (e.phase !== 'complete')
           emit(
             e.class === 'paladin' ? 'skill1-cross' : 'skill1-wide-beam',
-            e.class === 'paladin' ? 0.36 : (e.travelSeconds || 0.75) + 0.08,
+            e.class === 'paladin' ? 0.36 : (e.travelSeconds || 0.625) + 0.08,
           );
       }
       else if (e.type === 'heroHawk' && e.slot === 1)
@@ -426,7 +426,7 @@
       const from = { x: f.x, y: f.y },
         // Render the same advancing front that simulation uses for contact.
         // Reduced motion removes decorative shimmer, never the travel delay.
-        progress = Math.min(1, age / Math.max(0.01, f.travelSeconds || 0.75)),
+        progress = Math.min(1, age / Math.max(0.01, f.travelSeconds || 0.625)),
         to = f.simulatedFront
           ? { x: f.endX, y: f.endY }
           : {

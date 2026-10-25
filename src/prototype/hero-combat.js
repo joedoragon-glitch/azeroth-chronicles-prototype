@@ -923,7 +923,7 @@
           angle: f.angle,
           reach: f.reach,
           halfWidth: f.halfWidth,
-          travelSeconds: 0.75,
+          travelSeconds: 0.625,
           hits: 0,
         });
       }
@@ -942,13 +942,13 @@
             // changes the beam angle, not a translated parallel lane.
             // The normal range limit still applies if the Mage backs away.
             // A changed angle may contact additional foes, once each.
-            f.elapsed = Math.min(0.75, (f.elapsed || 0) + dt);
+            f.elapsed = Math.min(0.625, (f.elapsed || 0) + dt);
             const from = { x: this.hero.x, y: this.hero.y },
               gap = dist(from, f.aim),
               range = Math.min(f.reach, gap),
               ux = gap > 0 ? (f.aim.x - from.x) / gap : Math.cos(f.angle),
               uy = gap > 0 ? (f.aim.y - from.y) / gap : Math.sin(f.angle);
-            f.traveled = range * (f.elapsed / 0.75);
+            f.traveled = range * (f.elapsed / 0.625);
             let visibleLength = 0,
               previous = from;
             // Reclip the CURRENT angled corridor to solid terrain. Never
@@ -997,7 +997,7 @@
               )
                 f.hits++;
             }
-            if (f.elapsed < 0.75) return true;
+            if (f.elapsed < 0.625) return true;
             this.event('heroSkillArea', {
               actor: 'hero',
               class: 'mage',
@@ -1378,13 +1378,13 @@
               target: target.id,
               damage,
               source: 'hero',
-              // A full-range shot is roughly 0.75s; nearer targets remain responsive.
-              speed: Math.max(170, Math.min(535, d / 0.75)),
+              // A full-range shot is roughly 0.625s; nearer targets remain responsive.
+              speed: 1.2 * Math.max(170, Math.min(535, d / 0.75)),
               life: 1.5,
               travelBudget: 540,
               traveled: 0,
               mageSkill1Homing: true,
-              beamWidthScale: 2.5,
+              beamWidthScale: 2,
               trailPoints: [{ x: this.hero.x, y: this.hero.y }],
               delay: 0,
               style: 'beam',
