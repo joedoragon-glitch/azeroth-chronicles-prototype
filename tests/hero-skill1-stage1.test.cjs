@@ -21,6 +21,7 @@ function arena(cls = 'paladin', count = 1) {
     );
     e.aggro = true;
     e.returning = false;
+    e.hp = e.maxHp; // Native engage may refill authored scaling on initial contact.
     e.home = { x: e.x, y: e.y };
     return e;
   });
