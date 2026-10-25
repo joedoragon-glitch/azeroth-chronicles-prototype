@@ -153,6 +153,79 @@ for (const family of families) {
 }
 assert.equal(lineCases, 4 * 3, 'all four line skills verified at 20/30/60 steps');
 
+
+// Integration beyond isolated art smoke: drive a REAL pet arrow through the
+// Campaign contact handler, queue only its resulting impact receipt into the
+// actual renderer, and let the native Canvas/Pixi-overlay scene paint it.
+// Both rendering modes use the same combat-effect queue and must expire it
+// after the authored 0.65-second target skill receipt, not follow a moved pet.
+// This is a deterministic headless painter-call proof, NOT phone visibility.
+{
+  const Renderer = require('../src/prototype/renderer.js');
+  const Visuals = require('../src/prototype/visuals.js');
+  const Art = require('../src/prototype/enemy-vfx-art.js');
+  const { createCanvas } = require('@napi-rs/canvas');
+  for (const mode of ['overlay', 'full']) {
+    const { game, pet, enemy, events } = arena('crypt', 210);
+    const from = { x: pet.x, y: pet.y };
+    assert(game.usePetSkill(pet, enemy, 1));
+    const arrow = game.s.projectiles.find(p => p.petSkillSlot === 1 && p.source === pet.id);
+    assert(arrow, 'actual Crypt pet Skill 1 owns a simulated projectile');
+    pet.x += 95;
+    pet.y += 70;
+    for (let i = 0; i < 60 && game.s.projectiles.includes(arrow); i++)
+      game.updateProjectiles(1 / 30);
+    assert(!game.s.projectiles.includes(arrow), 'true projectile impact completed');
+    const impact = events.find(e => e.type === 'petSkill' && e.stage === 'impact' && e.slot === 1);
+    assert(impact && impact.physicalProjectile, 'true physical impact has no false tether');
+    const surface = createCanvas(mode === 'overlay' ? 375 : 900, mode === 'overlay' ? 270 : 550);
+    const painted = [];
+    const renderer = Renderer.create({
+      canvas: surface,
+      ctx: surface.getContext('2d'),
+      getGame: () => game,
+      platform: {
+        cameraZoom: 1,
+        cameraAnchor: (w, h) => ({ x: w / 2, y: h / 2 }),
+      },
+      chargePresentation: () => null,
+      isPaused: () => false,
+      Campaign,
+      PrototypeVisuals: Visuals,
+      PrototypeCombatVisuals: Fx,
+      PrototypeEnemyVfxArt: {
+        ...Art,
+        petSkill(ctx, screen, effect, options) {
+          painted.push({ stage: effect.stage, fromX: effect.fromX,
+            fromY: effect.fromY, x: effect.x, y: effect.y,
+            physicalProjectile: effect.physicalProjectile });
+          return Art.petSkill(ctx, screen, effect, options);
+        },
+      },
+      PrototypeGroundCache: null,
+      renderLayer: mode,
+      now: () => 1000,
+    });
+    renderer.queue([impact]);
+    assert.equal(renderer.metrics().transientEffects, 1,
+      mode + ' queues one real contact effect');
+    renderer.draw();
+    assert.equal(painted.length, 1, mode + ' paints real queued contact at first draw');
+    assert.equal(painted[0].physicalProjectile, true);
+    approx(painted[0].fromX, from.x, mode + ' uses original physical release X');
+    approx(painted[0].fromY, from.y, mode + ' uses original physical release Y');
+    assert.notEqual(painted[0].fromY, pet.y, mode + ' never follows moved caster');
+    renderer.update(0.3);
+    renderer.draw();
+    assert.equal(painted.length, 2, mode + ' draws still-live contact at 0.3s');
+    renderer.update(0.4);
+    renderer.draw();
+    assert.equal(painted.length, 2, mode + ' ceases drawing expired impact');
+    assert.equal(renderer.metrics().transientEffects, 0,
+      mode + ' retires the actual queue effect without an extra frame');
+  }
+}
+
 console.log('PASS all 11 pet families: ' + flightCases +
   ' stepped physical first shots, independent travel, correct cast-origin impacts, ' +
   'eight nonflight first skills, eleven charged holds and ' + lineCases +
