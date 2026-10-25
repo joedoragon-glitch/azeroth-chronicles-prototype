@@ -66,6 +66,8 @@ The conditional rendering path and **which layer owns an image** must be include
 
 **DR-18 — Combat visual universe is broader than a single 513-case shared effects entry.** Rendering is split across [renderer](../src/prototype/renderer.js), [combat-visuals](../src/prototype/combat-visuals.js), [hero-presentation](../src/prototype/hero-presentation.js) and [enemy-vfx-art](../src/prototype/enemy-vfx-art.js). A distinct future *event/state matrix* is needed for heroes, eight skills each, charged/normal, ranged flight/contact, companions/pets, status states, hazards, the 11 boss families and TRUE phases. The existing shared `shared:combat-effects` context is a historical review unit, **not proof every effect is emitted in live gameplay**. Unmerged drafts #464 (Ranger/Paladin/Archer projectile/impact work) and #440 (critical-action design) are **not** part of this pinned main or current parity verdict. Re-pin affected event rows when those branches merge.
 
+The companion [523-case source triage ledger](evidence/ART_CATALOG_321_DEEP_SOURCE_TRIAGE_20261025.json) preserves the **513 original IDs plus 10 post-catalog source identities** and maps each one to conservative **review checks** corresponding to this document's findings. It is a deterministic prioritization index, **not** an observation that any particular asset visibly fails. All 523 case records explicitly lack verified current Canvas/Pixi images and live reachability data. The counts of tagged rows are not counts of defects.
+
 ## 3. Source-to-acceptance examples — without manufacturing live observations
 
 | Existing review ID or stable cohort | Source-based question / expected failure mode | Paired target state |
