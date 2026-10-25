@@ -39,6 +39,135 @@ async function selectPixi(page) {
   }, null, {timeout:45000});
   return page.evaluate(() => Prototype.experimentalGraphics);
 }
+// Use a real screen-coordinate touch on phone. Playwright locator.click() may
+// scroll the fixed 15-second trial panel during mobile restart, potentially
+// changing the visual viewport and invalidating the graphics trial itself.
+// Never bypass the user-facing button or extend/disable the safety deadline.
+async function keepPixiTrial(page, phone, checkpoint) {
+  const target = await page.evaluate(() => {
+    const panel = document.querySelector('#gpu-renderer-trial');
+    const button = panel?.querySelector('button');
+    const rect = button?.getBoundingClientRect();
+    const x = rect ? rect.left + rect.width / 2 : -1;
+    const y = rect ? rect.top + rect.height / 2 : -1;
+    const top = document.elementFromPoint(x, y);
+    return {
+      x, y, width: rect?.width || 0, height: rect?.height || 0,
+      hit: !!button && (top === button || button.contains(top)),
+      panelVisible: !!panel && !panel.hidden,
+      graphics: Prototype.experimentalGraphics,
+    };
+  });
+  assert.equal(target.graphics.phase, 'trial',
+    checkpoint + ': confirmation requires an active, unexpired trial: ' + JSON.stringify(target));
+  assert(target.graphics.secondsRemaining > 0 && target.panelVisible,
+    checkpoint + ': Keep prompt disappeared before user confirmation: ' + JSON.stringify(target));
+  assert(target.hit && target.width >= 44 && target.height >= 44,
+    checkpoint + ': Keep must be touchable at its visible center: ' + JSON.stringify(target));
+  if (phone)
+    await page.touchscreen.tap(target.x, target.y);
+  else
+    await page.getByRole('button', {name: 'Keep WebGL2'}).click();
+  const result = await page.evaluate(() => Prototype.experimentalGraphics);
+  assert.equal(result.phase, 'confirmed',
+    checkpoint + ': the real Keep action must confirm, not time out or revert: ' +
+      JSON.stringify({before: target.graphics, after: result}));
+  return result;
+}
+// One narrowly scoped, real Chromium drawing check on BOTH the Canvas path
+// and the PixiJS Canvas-combat overlay. Simulation timing is tested separately.
+async function inspectMageBeamOverlay(page, expectedMode) {
+  const result = await page.evaluate(() => {
+    const game = Prototype.game, renderer = Prototype.renderer,
+      art = window.PrototypeHeroPresentation;
+    const saved = {
+      cls: game.hero.class, x: game.hero.x, y: game.hero.y,
+      shots: game.s.projectiles, effects: game._heroSkillEffects,
+      draw: art.draw, projectile: art.projectile,
+    };
+    const charged = [], normal = [];
+    try {
+      game.hero.class = 'mage';
+      art.draw = function (ctx, screen, effect, opts) {
+        if (effect.stage === 'skill1-wide-beam')
+          charged.push({x: effect.x, y: effect.y, endX: effect.endX,
+            endY: effect.endY, width: effect.halfWidth, live: effect.simulatedFront});
+        return saved.draw.call(this, ctx, screen, effect, opts);
+      };
+      art.projectile = function (ctx, screen, shot, cls, reduced, caster) {
+        if (shot.mageSkill1Homing)
+          normal.push({x: shot.x, y: shot.y, casterX: caster?.x,
+            casterY: caster?.y, visualWidth: shot.beamWidthScale});
+        return saved.projectile.call(this, ctx, screen, shot, cls, reduced, caster);
+      };
+      const from = {x: saved.x, y: saved.y};
+      const beam = {
+        kind: 'wide-beam', zone: game.zoneId,
+        deaths: game.s.statistics.deaths, from,
+        endX: from.x + 90, endY: from.y,
+        halfWidth: 20,
+      };
+      game._heroSkillEffects = [...(saved.effects || []), beam];
+      game.s.projectiles = [...saved.shots, {
+        id: 'beam-overlay-smoke', source: 'hero', style: 'beam',
+        slot: 1, charged: false, x: from.x + 65, y: from.y,
+        originX: from.x, originY: from.y, dx: 1, dy: 0,
+        beamWidthScale: 2, mageSkill1Homing: true, delay: 0,
+        trailPoints: [from, {x: from.x + 30, y: from.y}],
+      }];
+      renderer.queue([{type: 'heroSkillArea', actor: 'hero', class: 'mage',
+        slot: 1, effect: 'wide-arcane-beam', phase: 'launch',
+        x: from.x, y: from.y, endX: beam.endX, endY: beam.endY,
+        halfWidth: beam.halfWidth, travelSeconds: 0.625, hits: 0}]);
+      renderer.draw();
+      game.hero.x += 24;
+      game.hero.y += 16;
+      beam.from = {x: game.hero.x, y: game.hero.y};
+      beam.endX = from.x + 90;
+      beam.endY = from.y;
+      renderer.draw();
+      // Verify actual raster drawing, not only that callbacks were reached.
+      const surface = document.createElement('canvas');
+      surface.width = 300; surface.height = 180;
+      const ctx = surface.getContext('2d');
+      saved.draw(ctx, point => point, {
+        stage: 'skill1-wide-beam', x: 30, y: 80,
+        endX: 180, endY: 110, halfWidth: 20,
+        simulatedFront: true, max: 0.83, life: 0.55,
+      }, {reduced: false, width: 300, height: 180});
+      const pixels = ctx.getImageData(0, 0, 300, 180).data;
+      let painted = 0;
+      for (let i = 3; i < pixels.length; i += 4)
+        if (pixels[i]) painted++;
+      return {mode: Prototype.experimentalGraphics.mode, charged, normal, painted};
+    } finally {
+      art.draw = saved.draw;
+      art.projectile = saved.projectile;
+      game.hero.class = saved.cls;
+      game.hero.x = saved.x;
+      game.hero.y = saved.y;
+      game.s.projectiles = saved.shots;
+      game._heroSkillEffects = saved.effects;
+      renderer.update(1);
+    }
+  });
+  assert.equal(result.mode, expectedMode, 'Renderer mode should not switch during beam drawing');
+  assert(result.charged.length >= 2, 'Both real renderer draws must show the charged beam');
+  assert(result.normal.length >= 2, 'Both real renderer draws must show the normal beam');
+  assert.equal(result.charged[0].live, true, 'Charged art uses simulation-owned geometry');
+  assert.equal(result.charged[0].width, 20);
+  assert.equal(result.charged[0].x + 24, result.charged.at(-1).x,
+    'Charged near end follows the moving caster');
+  assert.equal(result.charged[0].endX, result.charged.at(-1).endX,
+    'Charged far world aim remains fixed');
+  assert.equal(result.normal[0].visualWidth, 2);
+  assert.equal(result.normal[0].x, result.normal.at(-1).x,
+    'Normal damaging projectile head does not teleport with caster');
+  assert.equal(result.normal[0].casterX + 24, result.normal.at(-1).casterX,
+    'Normal trail attaches to live caster');
+  assert(result.painted > 250, 'Charged art must actually paint a readable beam corridor');
+  console.log('PASS Mage Skill 1 Canvas combat-overlay drawing (' + expectedMode + ')');
+}
 const types = {
   '.html': 'text/html', '.js': 'application/javascript',
   '.json': 'application/json', '.css': 'text/css',
@@ -70,6 +199,38 @@ async function run() {
         }
       : {};
     browser = await playwright[engine].launch(options);
+    const host = process.env.PLAYTEST_URL
+      ? process.env.PLAYTEST_URL.replace(/\/?$/, '/')
+      : 'http://127.0.0.1:' + server.address().port + '/';
+    // Complete Mage-specific desktop and phone presentation first. A failure in
+    // the separate generic WebGL recovery journey must not prevent recording
+    // whether Mage Skill 1 itself draws on Canvas and the Pixi combat overlay.
+    // The original recovery journey below remains unchanged and is not waived.
+    for (const phone of [false, true]) {
+      // Separate graphics acceptance context: exercising synthetic beam
+      // geometry must never contaminate the renderer recovery journey above.
+      const beamContext = await browser.newContext({
+        viewport: phone ? {width: 393, height: 852} : {width: 1280, height: 800},
+        isMobile: phone, hasTouch: phone,
+      });
+      try {
+        const beamPage = await beamContext.newPage();
+        await beamPage.goto(host + (phone ? 'phone.html' : 'index.html'));
+        await beamPage.waitForFunction(() => !!window.Prototype?.renderer);
+        await require('./helpers/language-browser.cjs').selectEnglish(beamPage);
+        await beamPage.keyboard.press('f');
+        await beamPage.keyboard.press('f');
+        await beamPage.waitForFunction(() => document.querySelector('#modal').hidden);
+        await inspectMageBeamOverlay(beamPage, 'canvas2d');
+        const mageGpu = await selectPixi(beamPage);
+        if (mageGpu.mode === 'webgl2')
+          await inspectMageBeamOverlay(beamPage, 'webgl2');
+        else
+          assert(!requireWebGL, 'Mage beam overlay needs the required WebGL2 scene');
+      } finally {
+        await beamContext.close();
+      }
+    }
     for (const phone of [false, true]) {
       const context = await browser.newContext({
         viewport: phone ? {width: 393, height: 852} : {width: 1280, height: 800},
@@ -77,9 +238,7 @@ async function run() {
       });
       const page = await context.newPage(), errors = [];
       page.on('pageerror', (e) => errors.push(e.message));
-      const host = process.env.PLAYTEST_URL
-        ? process.env.PLAYTEST_URL.replace(/\/?$/, '/')
-        : 'http://127.0.0.1:' + server.address().port + '/';
+
       await page.goto(host + (phone ? 'phone.html' : 'index.html'));
       await page.waitForFunction(() => !!window.Prototype && !!window.Prototype.renderer);
       assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'canvas2d');
@@ -143,8 +302,7 @@ async function run() {
         assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'webgl2',
           'Camera zoom must not abandon an otherwise valid GPU scene');
         assert.equal(await page.evaluate(() => Prototype.game === window.__gpuTestCampaign), true);
-        await page.getByRole('button', {name: 'Keep WebGL2'}).click();
-        assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.phase), 'confirmed');
+        await keepPixiTrial(page, phone, 'initial graphics trial');
         // The retained Pixi background must immediately reflect presentation
         // transitions without walking, zooming or a zone transition.
         await page.waitForFunction(() =>
@@ -245,8 +403,7 @@ async function run() {
         if (after.mode !== 'webgl2' && requireWebGL) {
           const retry = await selectPixi(page);
           assert.equal(retry.mode,'webgl2','WebGL2 must work after safe restart');
-          await page.getByRole('button', {name:'Keep WebGL2'}).click();
-          after = await page.evaluate(() => Prototype.experimentalGraphics);
+          after = await keepPixiTrial(page, phone, 'post-restart graphics trial');
         }
         // Exercise both real viewport resize and simulated GL context loss,
         // without suppressing the existing production resize/UI routines.
@@ -286,6 +443,7 @@ async function run() {
       console.log('PASS PixiJS graphics selection ' + engine + '/' + (phone ? 'phone' : 'desktop')
         + ' (' + outcome.mode + ')');
       await context.close();
+
     }
   } finally {
     await browser?.close();

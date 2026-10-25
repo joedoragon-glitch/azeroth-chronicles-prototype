@@ -19,6 +19,9 @@
         // New Skill 1 gameplay receipts sound only at their actual mechanical
         // stages. Bounded single-voice accents prevent crowd hit multiplication.
         if (e.slot === 1 && ['heroSkillArea', 'heroHawk'].includes(e.type)) {
+          // The wide beam finishes over time; its bookkeeping completion
+          // must not trigger a second launch sound.
+          if (e.type === 'heroSkillArea' && e.phase === 'complete') return true;
           if (e.type === 'heroHawk' && (e.phase === 'flight' || e.phase === 'expire')) return true;
           if (
             !this.allowSfx(
