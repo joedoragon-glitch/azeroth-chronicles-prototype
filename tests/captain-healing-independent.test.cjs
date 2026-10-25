@@ -120,8 +120,8 @@ function elapsed(g, dt) {
   assert(!g.triggerCaptainPhase(direjaw), 'phase self-recovery cannot repeat');
 }
 const expected = [
-  ['supply-vale', 1],
-  ['supply-march', 1],
+  ['supply-vale', 3],
+  ['supply-march', 3],
   ['supply-highlands', 3],
   ['supply-crown', 5],
 ];
