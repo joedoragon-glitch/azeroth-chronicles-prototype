@@ -102,6 +102,13 @@ for (const kind of ['captain', 'boss', 'field-captain']) {
   source.telegraph = null;
   source.rangedAim = null;
   source.supportHealCd = 0;
+  // World-level aggression can move the caster far from this stationary
+  // captain during a long simulated tick. Restore cast geometry so this
+  // assertion measures the ten-second leader clock rather than range.
+  source.x = 300;
+  source.y = 300;
+  leader.x = 320;
+  leader.y = 300;
   leader.returning = 0;
   leader.hp = leader.maxHp * 0.4;
   delete leader.supportHeal;
@@ -116,6 +123,13 @@ for (const kind of ['captain', 'boss', 'field-captain']) {
         sourceNeutral: source.neutral,
         sourceSkill: g.enemyHealProfile(source),
         silenced: g.mageSilenceActive(source),
+        gap: Math.hypot(source.x - leader.x, source.y - leader.y),
+        visible: g.line(source, leader),
+        recovery: source.supportHealCd,
+        slow: source.slow,
+        returning: source.returning,
+        leaderReturning: leader.returning,
+        zone: g.zoneId,
       }),
   );
   assert(leader.supportHeal, 'leader receives its next legal ten-second treatment');
