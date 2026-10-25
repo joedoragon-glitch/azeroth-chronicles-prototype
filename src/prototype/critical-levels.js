@@ -152,9 +152,10 @@
   // Creep Feeding only extends the ORIGINAL eligible brood haste window,
   // remaining strictly shorter than its own fixed 10-second cooldown.
   register('world/captain/supply-crown/5', 'world', 'hasteDuration');
-  // Boss catalog begins with Thornfang's original immediate cone only.
-  // Other Thorn moves (landing, Slow line, summon) are separate owners.
+  // Explicit Thornfang boss owners: original cone damage and the distinct
+  // direct Slow-line contact. Delayed landing and summon remain unreviewed.
   register('world/boss/thorn/0', 'world', 'damage');
+  register('world/boss/thorn/2', 'world', 'slowDuration');
   // Ridge Tyrant's native initial cone is also immediate lawful contact.
   // His cargo, charge and summon remain separate unreviewed owners.
   register('world/boss/ridge/0', 'world', 'damage');

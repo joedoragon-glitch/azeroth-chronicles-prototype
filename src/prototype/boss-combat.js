@@ -1197,6 +1197,11 @@
           ? this._criticalWorldNative.enhance(receipt, seconds, 'healTempo')
           : seconds;
       }
+      worldCriticalSlowSeconds(receipt, seconds) {
+        return receipt?.critical
+          ? this._criticalWorldNative.enhance(receipt, seconds, 'slowDuration')
+          : seconds;
+      }
       enemyStartBasic(e, target, ranged) {
         const nightTempo = this.nightTempo();
         e.cd =
@@ -2112,13 +2117,18 @@
           this.tacticalResolveRogueMove(e, a);
           return;
         }
-        // First narrowly authored boss World owner: real released Thornfang
-        // cone, after its original warning and before native area contact.
-        // No boss-wide fallback, AI-planning roll or changed attack geometry.
-        if (e.type === 'boss' && (e.family === 'thorn' || e.family === 'ridge') &&
-            !a.captainSkill && a.index === 0 && a.kind === 'cone' &&
-            !a.criticalExecution) {
-          const receipt = this.worldCriticalAction(e, 'world/boss/' + e.family + '/0');
+        // Explicit boss-family releases after warning, before legal contact.
+        // The Thorn Slow line has an independent receipt and only enhances
+        // its existing Slow; landing, summons, and other boss moves stay OFF.
+        const nativeBossCone =
+          e.type === 'boss' && !a.captainSkill && a.index === 0 &&
+          a.kind === 'cone' && (e.family === 'thorn' || e.family === 'ridge');
+        const nativeThornSlowLine =
+          e.type === 'boss' && e.family === 'thorn' && !a.captainSkill &&
+          a.index === 2 && a.kind === 'line' && !!a.slow &&
+          !a.charge && !a.landing && !a.persistent;
+        if ((nativeBossCone || nativeThornSlowLine) && !a.criticalExecution) {
+          const receipt = this.worldCriticalAction(e, 'world/boss/' + e.family + '/' + a.index);
           if (receipt) a.criticalExecution = receipt;
         }
         // Explicit conventional captain owners only. A one-patch
@@ -2726,8 +2736,15 @@
                 y: u.y,
                 target: u === this.hero ? 'hero' : u.id,
               });
-            if (landed && (a.slow || a.slowDuration))
-              this.applySlow(u, this.regularSlowDuration(e, a, a.slowDuration || 4));
+            if (landed && (a.slow || a.slowDuration)) {
+              const seconds = this.regularSlowDuration(e, a, a.slowDuration || 4);
+              this.applySlow(
+                u,
+                a.criticalExecution?.key === 'world/boss/thorn/2'
+                  ? this.worldCriticalSlowSeconds(a.criticalExecution, seconds)
+                  : seconds,
+              );
+            }
             if (party[0] !== this.hero || this.s.challenge.pending || this.s.challenge.gameOver)
               return;
           }

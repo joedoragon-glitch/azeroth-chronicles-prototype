@@ -1,7 +1,7 @@
 'use strict';
-// First boss-family native World slice: Thornfang's genuine warned cone only.
-// Do not register his delayed landing, Slow line or summon without their own
-// release owners. Never change the hero-first Level 2 field protection rules.
+// Native Thornfang cone remains an independently released damage action.
+// His Slow line has its own separate focused suite; landing and summon remain
+// fail-closed. Never change the hero-first Level 2 field protection rules.
 const assert=require('node:assert/strict');
 const Campaign=require('../src/prototype/engine.js');
 const Crit=require('../src/prototype/critical-executions.js');
@@ -87,9 +87,9 @@ for(const context of ['normal','nightmare-night']){
  assert.equal(a.g.hero.hp,hp,'native immunity cannot be bypassed');
 }
 {
- const a=scene('normal','normal',2),t=attach(a.g,1);
+ const a=scene('normal','normal',1),t=attach(a.g,1);
  a.g.resolveAttack(a.e);
- assert.equal(t.count(),0,'Thornfang Slow line remains unreviewed and fail-closed');
+ assert.equal(t.count(),0,'Thornfang delayed landing remains unreviewed and fail-closed');
 }
 {
  const a=scene(),t=attach(a.g,2);

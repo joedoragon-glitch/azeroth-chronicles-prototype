@@ -48,11 +48,11 @@ assert.throws(() => Levels.createTuning({ modes: { nightmare: { enemy: 3 } } }),
 assert.throws(() => Levels.createTuning({ modes: { normal: { world: 3 } } }), /Normal/);
 
 const ids = Object.keys(Levels.ACTIONS);
-assert.equal(ids.length, 51 + 33 + 9 + 30, '93 party actions + 30 native World keys');
+assert.equal(ids.length, 51 + 33 + 9 + 31, '93 party actions + 31 native World keys');
 assert.equal(ids.filter(k=>k.startsWith('hero/')).length, 51);
 assert.equal(ids.filter(k=>k.startsWith('pet/')).length, 33);
 assert.equal(ids.filter(k=>k.startsWith('troop/')).length, 9);
-assert.equal(ids.filter(k=>k.startsWith('world/')).length, 30);
+assert.equal(ids.filter(k=>k.startsWith('world/')).length, 31);
 assert.equal(Levels.ACTIONS['world/basic/melee'].lever, 'damage');
 assert.equal(Levels.ACTIONS['world/basic/ranged'].lever, 'damage');
 assert.equal(Levels.ACTIONS['world/support/heal'].lever, 'healTempo');
@@ -76,6 +76,8 @@ assert.equal(Levels.ACTIONS['world/captain/supply-crown/3'].lever,'summonVitalit
 assert.equal(Levels.ACTIONS['world/captain/supply-crown/5'].lever,'hasteDuration',
   'Creep Feeding extends only the existing brood haste window');
 assert.equal(Levels.ACTIONS['world/boss/thorn/0'].lever,'damage');
+assert.equal(Levels.ACTIONS['world/boss/thorn/2'].lever,'slowDuration',
+  'Thornfang Slow line only extends the existing status, not its damage');
 assert.equal(Levels.ACTIONS['world/boss/ridge/0'].lever,'damage',
   'Ridge Tyrant authored immediate cone remains separate from cargo/charge/summon');
 for (const cls of ['paladin', 'mage', 'ranger']) {
