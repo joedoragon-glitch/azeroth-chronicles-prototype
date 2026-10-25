@@ -1,5 +1,7 @@
 # PR #440 — Stage 2 pet families: native continuation checkpoint
 
+> **Later current status:** Stage 2's owner implementation has been merged with newer main *within this draft* and bounded Stage 3 native World basics/healing have begun. Read [current handoff](PR440_STAGE2_GATE_STAGE3_NATIVE_HANDOFF_20261025.md) before following dated next steps below. No deployment.
+
 **25 October 2026 — active source and testing record.** The owner expressly authorized resuming after the Ranger Heal/dormant Mana and Soldier Guard stop checkpoint. The original [STOP checkpoint](PR440_CRITICAL_STAGE2_STOP_CHECKPOINT_20261025.md) is retained as history, not erased. This report stands independently of any earlier chat.
 
 ## Scope and refs

@@ -1,5 +1,10 @@
 # PR #440 — Critical Executions: independent development / Work-mode handoff
 
+## ACTIVE CHECKPOINT — Stage 2 native transition / Stage 3 World beginnings (25 October 2026)
+
+**Read [PR440_STAGE2_GATE_STAGE3_NATIVE_HANDOFF_20261025.md](PR440_STAGE2_GATE_STAGE3_NATIVE_HANDOFF_20261025.md) FIRST.** Stage 2's 93 registered native party owners have passed focused tests; the draft has been reconciled with then-main `e3c78266` by merge `2946ba00` (green CI #40220734461). Stage 3 is **PARTIAL**, with opt-in world melee/ranged and hostile healing on source head `979efc05`; focused CI [#40221740964](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40221740964) PASS (34 selected tests + reproducible build). Remaining world abilities and final Stage 2/5/6 save/RNG/FPS gates are not certified. Criticals remain OFF, PR #440 is DRAFT, unmerged and not published. Historical STOP instructions below are superseded by the owner's authorization to continue.
+
+
 ## CURRENT CONTINUATION — Stage 2 pet-family integration (25 October 2026)
 
 **The owner has now explicitly authorized continuing beyond the earlier STOP checkpoint.** The earlier “stop before pets” paragraphs below are historical instructions, not a present hold. [Read the new pet-family checkpoint](PR440_STAGE2_PETS_NATIVE_CHECKPOINT_20261025.md) before relying on the dated material below. Same open **draft PR #440**, still OFF, unmerged and unpublished. Source commit `704d479fdf78db03d1e5a75270208188d5b07814` adds direct owners for all 33 pet action keys. Its native pet test passed **99 family/action/level combinations** in [focused run #40218283495](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40218283495); **workflow failed only at the independent Pixi browser context-loss diagnostic**, so no successful exact-head build is claimed. An additional ordinary-basic and multi-target coverage update follows that source commit and requires its own validation.

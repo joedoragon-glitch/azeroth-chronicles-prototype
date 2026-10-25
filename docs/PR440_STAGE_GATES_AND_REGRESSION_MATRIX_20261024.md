@@ -1,5 +1,10 @@
 # PR #440 — Actionable Remaining-Stage Gates, Regression Matrix and Evidence Ledger
 
+## ACTIVE CHECKPOINT — Stage 2 native transition / Stage 3 World beginnings (25 October 2026)
+
+**Read [PR440_STAGE2_GATE_STAGE3_NATIVE_HANDOFF_20261025.md](PR440_STAGE2_GATE_STAGE3_NATIVE_HANDOFF_20261025.md) FIRST.** Stage 2's 93 registered native party owners have passed focused tests; the draft has been reconciled with then-main `e3c78266` by merge `2946ba00` (green CI #40220734461). Stage 3 is **PARTIAL**, with opt-in world melee/ranged and hostile healing on source head `979efc05`; focused CI [#40221740964](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40221740964) PASS (34 selected tests + reproducible build). Remaining world abilities and final Stage 2/5/6 save/RNG/FPS gates are not certified. Criticals remain OFF, PR #440 is DRAFT, unmerged and not published. Historical STOP instructions below are superseded by the owner's authorization to continue.
+
+
 ## CURRENT CONTINUATION — Stage 2 pet-family integration (25 October 2026)
 
 **The owner has now explicitly authorized continuing beyond the earlier STOP checkpoint.** The earlier “stop before pets” paragraphs below are historical instructions, not a present hold. [Read the new pet-family checkpoint](PR440_STAGE2_PETS_NATIVE_CHECKPOINT_20261025.md) before relying on the dated material below. Same open **draft PR #440**, still OFF, unmerged and unpublished. Source commit `704d479fdf78db03d1e5a75270208188d5b07814` adds direct owners for all 33 pet action keys. Its native pet test passed **99 family/action/level combinations** in [focused run #40218283495](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40218283495); **workflow failed only at the independent Pixi browser context-loss diagnostic**, so no successful exact-head build is claimed. An additional ordinary-basic and multi-target coverage update follows that source commit and requires its own validation.
@@ -92,8 +97,8 @@ See [the canonical stop/handoff](PR440_CRITICAL_STAGE2_STOP_CHECKPOINT_20261025.
 ## Gate C — Stage 3: world hostiles, specialists and TRUE forms
 
 - [ ] Reconcile latest world/mob/boss/TRUE/captain attack tables and the actual old presentation inventory generator against current source; check the historic count mismatch and any new #439 boss retreat paths.
-- [ ] Add explicit **world** action keys/three-level original-effect levers. Preserve native authored names and cases; no universal damage fallback. Separate hostile/world 10% source and World intensity 1–3.
-- [ ] Ordinary melee/ranged for all species/roles and ranged force/guardian/ringleader variants: one roll per swing/shot at release, not per hit/target/AI-think tick.
+- [ ] Add explicit **world** action keys/three-level original-effect levers. **PARTIAL:** two original basic-action keys and one native support-heal key now implemented/tested; remaining specials still unregistered. Separate World 10% source and Level 1–3 verified in these focused native slices, no universal fallback.
+- [x] Shared native ordinary melee/ranged owner (including actor variants that use this exact shared owner): one roll per swing/actual shot at release. **Basic-owner-only PASS** in CI #40221182545; all specialized attacks still pending.
 - [ ] Tactical Rogue basic/signature/retreat, night Wraith drain/Stalker pounce, enemy support healing, ringleader Frenzy trigger distinction; inspect real Goblin dust recipient-versus-attacker semantics and direct-target protection.
 - [ ] Five captains (including specialist Dreadmaw), 11 boss families in normal and TRUE variants (including Cindermaw custom owner), summon/area/motion/recurring damage/ward/self-recovery.
 - [ ] Define whether each multi-stage authored move is one activation or genuinely separate actions. Keep emitted warning, recovery, hazard count, target cap, phase reset, one-time final returns and boss healing mechanisms unchanged.
