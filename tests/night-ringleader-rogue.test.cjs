@@ -75,17 +75,26 @@ for (const make of [
   assert(c.tacticalAutoRogue(e, c.hero));
   assert.equal(c._tacticalRogueNext.get(e.id), 32, 'Next Rogue opportunity is two seconds later');
   // Keep a real moving pursuer in range while exercising warning/resolution/reuse.
+  // Ordinary/ringleader actors should choose retreat or reinforcements over
+  // stationary repeat-casting; bosses/captains must retain repeated defense.
+  const initial = { x: e.x, y: e.y };
   for (let tick = 0; tick < 70; tick++) {
     c.hero.x = e.x + 70;
     c.hero.y = e.y;
     c.s.time += 0.1;
     c.updateEnemies(0.1);
   }
-  const casts = c.s.statistics.events.filter((x) => x.type === 'rogueMove');
-  assert(
-    casts.length >= 2,
-    'Persistent Rogue eligibility allows repeated moves for ' + e.type + '/' + e.form,
-  );
+  const events = c.s.statistics.events;
+  const casts = events.filter((x) => x.type === 'rogueMove');
+  if (e.type === 'boss' || e.captain || e.roomCaptain) {
+    assert(casts.length >= 2,
+      'Bosses/captains retain repeatable Rogue defense without abandoning posts');
+  } else {
+    const shifted = Math.hypot(e.x - initial.x, e.y - initial.y);
+    const reinforced = events.some(x => ['rogueRegroup', 'rogueExtendedRetreat', 'rogueEmergencyCall'].includes(x.type));
+    assert(shifted > 20 || reinforced || e.returning,
+      'Ordinary/ringleader actors must withdraw or seek help, not stand waiting to recast');
+  }
   c.tacticalClearRogueRegroup(e);
   assert(!c._tacticalRogueNext.has(e.id), 'Encounter cleanup clears the reuse clock');
   e.aggro = false;
@@ -95,5 +104,5 @@ for (const make of [
   assert(!c.tacticalAutoRogue(e, c.hero), 'Dead actors cannot restart Rogue');
 }
 console.log(
-  'PASS TRUE night escalation/pets/reload/peace and three-second repeated Rogue decisions through live AI',
+  'PASS TRUE night escalation/pets/reload/peace, two-second Rogue timing and retreat-first live AI',
 );
