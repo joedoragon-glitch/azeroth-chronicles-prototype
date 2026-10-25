@@ -751,7 +751,9 @@
   }
   function projectile(ctx, screen, p, heroClass, reduced = false, caster = null) {
     if (p.source !== 'hero') return false;
-    if (p.delay > 0) return true;
+    // Crossing the delay threshold does not release a staggered arrow until
+    // simulation places its actual collider at the moving Ranger's bow.
+    if (p.delay > 0 || p.rangerDelayedLaunch) return true;
     const def = profile({ class: heroClass, slot: p.slot || 1, charged: p.charged });
     if (!def) return false;
     const q = screen(p),
