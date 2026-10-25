@@ -401,6 +401,79 @@ console.log('PASS overwhelmed captive guardians return to existing civilians for
 console.log('PASS mobile captives remain controlled by existing native patrol-follow systems');
 
 {
+  // TRUE field bosses roam among REAL authored outdoor entrances, but an
+  // encounter always takes precedence. A roaming boss must not reset back
+  // to its original compound merely because it met the player elsewhere.
+  const regions = [
+    ['vale', 'thorn', true], ['march', 'mire', true],
+    ['highlands', 'ridge', true], ['frontier', 'warlord', false],
+    ['crown', 'cindermaw', true],
+  ];
+  for (const [region, family, hasTreasury] of regions) {
+    const g = new Campaign('normal', 'paladin', () => 0.4);
+    g.s.zone = region;
+    const z = g.zone();
+    const boss = g.bossEnemy(g.boss(family), 'true', g.fieldCenter(g.regionIndex()));
+    boss.aggro = false;
+    const stops = g.trueFieldBossCircuitStops(boss);
+    const expected = hasTreasury
+      ? ['side', 'treasury', 'dungeon', 'home']
+      : ['side', 'dungeon', 'home'];
+    assert.deepEqual(stops.map((p) => p.key), expected,
+      region + ' TRUE circuit visits only authored regional landmarks');
+    for (const stop of stops) {
+      assert(Number.isFinite(stop.x) && Number.isFinite(stop.y),
+        region + ' circuit never fabricates a missing map entrance');
+    }
+    assert.equal(g.trueFieldBossCircuitStops({ ...boss, form: 'normal' }).length, 0,
+      'normal field bosses retain their native patrols');
+    if (region !== 'highlands') continue;
+    z.enemies = [boss];
+    // A remote patrol interception must not be treated as an escape from the
+    // original stronghold's 700-unit home leash.
+    Object.assign(boss, { x: 2450, y: 2310, trueCircuitLeg: 0 });
+    boss.home = { ...g.fieldCenter(g.regionIndex()) };
+    Object.assign(g.hero, { x: 120, y: 120, hp: g.hero.maxHp });
+    g.s.mercyTime = 0;
+    const first = stops[0], before = { x: boss.x, y: boss.y };
+    let patrolTarget = null;
+    const originalFollow = g.follow;
+    g.follow = (actor, point) => {
+      patrolTarget = { x: point.x, y: point.y };
+      actor.x -= 8;
+      return true;
+    };
+    assert(g.updateTrueFieldBossCircuit(boss, 0.1));
+    assert.deepEqual(patrolTarget, { x: first.x, y: first.y },
+      'TRUE form walks toward its secondary dungeon, without instance teleport');
+    assert(boss.x < before.x, 'physical patrol movement occurs');
+    g.follow = originalFollow;
+    Object.assign(g.hero, { x: boss.x + 160, y: boss.y, hp: g.hero.maxHp });
+    const leg = boss.trueCircuitLeg, heldX = boss.x;
+    assert(g.updateTrueFieldBossCircuit(boss, 0.1),
+      'hero awareness suspends roaming until the combat loop acquires the player');
+    assert.equal(boss.x, heldX, 'TRUE patrol does not sidestep the nearby player');
+    assert(g.engage(boss, true, false) !== false,
+      'TRUE field boss actively engages instead of continuing the route');
+    assert(g.roamingBoss(boss) && boss.trueCircuitCombatAnchor,
+      'interception captures a temporary real fight anchor');
+    assert(g.tacticalRogueLeashAllows(boss, g.hero, 700),
+      'combat remains valid away from the original field compound');
+    assert.equal(g.updateTrueFieldBossCircuit(boss, 0.1), false,
+      'an engaged TRUE boss cannot follow any tour waypoint');
+    assert.equal(boss.trueCircuitLeg, leg, 'combat never advances the patrol stage');
+    g.disengage(boss, 0.1);
+    for (let tick = 0; tick < 8 && boss.returning; tick++) g.disengage(boss, 0.2);
+    assert(Math.hypot(boss.x - heldX, boss.y - before.y) < 15,
+      'real patrol encounter reset does not snap boss to distant home');
+    assert(!boss.trueCircuitCombatAnchor && boss.trueCircuitLeg === leg,
+      'completed reset clears fight priority while retaining patrol route');
+  }
+}
+console.log('PASS TRUE field boss circuits use native secondary/Treasury/main entrances and hero-first combat');
+
+
+{
   const sideId = Campaign.rules.sideDungeons[0].id;
   const { c, z, a, b } = encounter(sideId);
   assert(c.isDungeon() && c.sideDungeon(), 'side-dungeon identity');
