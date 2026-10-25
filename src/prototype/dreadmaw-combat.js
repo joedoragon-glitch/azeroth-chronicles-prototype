@@ -258,6 +258,22 @@
         if (!dread(e) || !a?.dreadMechanic || a.rogueMove)
           return previous.resolveAttack.call(this, e);
         if (a.dreadMechanic === 'rush') {
+          // Only the actual first movement release draws a World decision.
+          // The native second warned perpendicular leg, if lawful, inherits
+          // the frozen cast receipt; collisions remain authoritative.
+          if (a.captainSkill && a.captainProfile === 'supply-crown' &&
+              a.index === 1 && a.dreadLeg === 1 && a.stage === 1 &&
+              !a.criticalExecution) {
+            const receipt = this.worldCriticalAction(e, 'world/captain/supply-crown/1');
+            if (receipt) {
+              a.criticalExecution = receipt;
+              for (const next of e.sequence || [])
+                if (next.captainSkill && next.captainProfile === 'supply-crown' &&
+                    next.index === 1 && next.dreadMechanic === 'rush' &&
+                    next.dreadLeg === 2 && next.stage === 2)
+                  next.criticalExecution = receipt;
+            }
+          }
           e.motion = {
             ...a,
             dreadMotion: true,
@@ -393,7 +409,11 @@
           )
             continue;
           m.hits.push(key);
-          this.hitParty(u, e.damage * m.coefficient, 0, e.id);
+          this.hitParty(
+            u,
+            this.worldCriticalDamage(m.criticalExecution, e.damage * m.coefficient),
+            0, e.id,
+          );
           if (interrupted(this, hero, zone, deaths)) return;
         }
         if (distance <= step + 1e-7 || m.life <= 0) {

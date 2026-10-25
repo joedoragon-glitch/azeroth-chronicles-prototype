@@ -140,6 +140,9 @@
   // Three warned Evapotranspiration impacts share one cast decision; its
   // separately timed vapor clouds remain unmodified and unsampled.
   register('world/captain/supply-crown/6', 'world', 'damage');
+  // Dreadmaw Transhumance: one legal two-leg rush activation. Preserve
+  // two original perpendicular physical paths, clearance and impact owners.
+  register('world/captain/supply-crown/1', 'world', 'damage');
   Object.freeze(registry);
 
   function validatedLevel(level) {
