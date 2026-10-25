@@ -129,6 +129,10 @@
       "state": "merged"
     },
     {
+      "number": 453,
+      "state": "merged"
+    },
+    {
       "number": 454,
       "state": "closed_unmerged"
     },
@@ -360,7 +364,14 @@
       "topic": "narrative_and_archive",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 433,
+        "integratedByPr": 434,
+        "disposition": "merged_via_integration",
+        "caution": "Archive reading format/726 EN/ES view and narrow browser evidence on original #433, closed unmerged; combined stack merged/published via #434. Prior premerge gates are historical; real hardware/WebKit remain distinct."
+      }
     },
     {
       "path": "docs/ARCHIVE_INTEGRATION_REVIEW_20261024.md",
@@ -389,7 +400,14 @@
       "topic": "art_and_sprites",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 444,
+        "integratedByPr": 444,
+        "disposition": "merged_directly",
+        "caution": "Dev.179 inherited sprite-canon/source-evidence/material VM fixes merged via #444, despite this doc's premerge candidate caveats. Current #445 is a separate unmerged tools-only repair candidate with overlapping intentions; verify exact source/tree before any future merge, do not replay or overwrite owner-approved art."
+      }
     },
     {
       "path": "docs/ASHEN_FRONTIER_OCCUPATION_LAYOUT.md",
@@ -1273,7 +1291,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_COVERAGE_NOTES_20261025.md",
-      "gitBlobSha": "e7f7ef116a893c307b41c0f066866cd4b36e2a98",
+      "gitBlobSha": "b8207bb73b8991d38873ce06a56615ec52288680",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2376,7 +2394,14 @@
       "topic": "general_or_unresolved",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 430,
+        "integratedByPr": 434,
+        "disposition": "merged_via_integration",
+        "caution": "Original N1a #430 closed unmerged but its five world/scene obligations and author-final N1 copy included through merged #434. Do not rerun draft on main, modify protected manuscript, or infer mobile certification from its 19 focused suites."
+      }
     },
     {
       "path": "docs/NATIVE_RANGE_FORT_AUDIT_DEV145.md",
@@ -3266,7 +3291,14 @@
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 453,
+        "integratedByPr": 453,
+        "disposition": "merged_directly",
+        "caution": "Original 750 local/1800 regional/3,000-route regroup, 2–3 guards and initial 3s cast floor merged #453; its later director 2s/retreat-first follow-up came from closed-unmerged #455 through merged #459, not #453 alone. TRUE patrol work #458 remains open unmerged."
+      }
     },
     {
       "path": "docs/RUNTIME_WORKLOAD_DEV177_AUDIT.md",
