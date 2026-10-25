@@ -48,10 +48,10 @@ assert.throws(() => Levels.createTuning({ modes: { nightmare: { enemy: 3 } } }),
 assert.throws(() => Levels.createTuning({ modes: { normal: { world: 3 } } }), /Normal/);
 
 const ids = Object.keys(Levels.ACTIONS);
-assert.equal(ids.length, 51 + 33 + 8, '51 hero + 33 pet + 8 troop actions');
+assert.equal(ids.length, 51 + 33 + 9, '51 hero + 33 pet + 9 troop actions');
 assert.equal(ids.filter(k=>k.startsWith('hero/')).length, 51);
 assert.equal(ids.filter(k=>k.startsWith('pet/')).length, 33);
-assert.equal(ids.filter(k=>k.startsWith('troop/')).length, 8);
+assert.equal(ids.filter(k=>k.startsWith('troop/')).length, 9);
 for (const cls of ['paladin', 'mage', 'ranger']) {
   assert(Levels.ACTIONS['hero/' + cls + '/auto']);
   for (let slot=1;slot<=8;slot++)
@@ -71,6 +71,7 @@ assert.equal(tuning.effectFor('hero/ranger/1-charged','hero').lever,'damage');
 assert.equal(tuning.effectFor('hero/paladin/3-tap','hero').lever,'wardDuration');
 assert.equal(tuning.effectFor('troop/archer/heal','companion').lever,'healAmount');
 assert.equal(tuning.effectFor('troop/archer/first','companion').lever,'damage');
+assert.equal(tuning.effectFor('troop/soldier/guard','companion').lever,'guardDuration');
 for (const [lever, rule] of Object.entries(Levels.LEVERS)) {
   assert.equal(rule.values.length, 3, lever);
   assert(rule.values[0] < rule.values[1] && rule.values[1] < rule.values[2], lever);
