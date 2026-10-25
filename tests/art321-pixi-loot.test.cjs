@@ -19,17 +19,24 @@ function makeCanvas() {
       if(type !== '2d')return null;
       return {setTransform(){},drawImage(){},getImageData(){
         // One opaque pixel satisfies the unrelated baked-actor contract.
-        const data = new Uint8ClampedArray(files.at(-1).width*files.at(-1).height*4);
+        const w=files.at(-1).width,h=files.at(-1).height,
+          data = new Uint8ClampedArray(w*h*4);
+        // Tiny asymmetric visible painted body, sufficient to test a
+        // cropped procedural texture's foot-anchor mirroring math.
+        data[(Math.floor(h*.75)*w+Math.floor(w*.58))*4+3]=255;
         return {data};
       }};
     }
   };
 }
+const zoneFixture={props:[],enemies:[],buildings:[]};
+let desiredFacing=1;
+const faceArguments=[];
 const game = {
   hero:{id:'hero',x:300,y:350,class:'ranger'},
   zoneId:'vale',
   s:{rescued:{},loot:[],time:0},
-  zone:()=>({props:[],enemies:[],buildings:[]}),
+  zone:()=>zoneFixture,
   visibleNPCs:()=>[],visibleResourceNodes:()=>[],activeLivingParty:()=>[],
   isDungeon:()=>false,supplyRoom:()=>false,sideDungeon:()=>false,
   regionIndex:()=>0,night:()=>false,
@@ -67,10 +74,16 @@ const api = {
   PrototypeVisuals:{draw(){}},
   AzerothNativeWebGLCore:{lampGlowCommands:()=>[]},
   AzerothGpuSpriteAdapter:{create:()=>({
-    commandFor:(_entity,point)=>({
-      supported:true,texture:{src:'./assets/sprites/test.png'},
-      command:{x:point.x,y:point.y,width:64,height:64,opacity:1,flipX:false}
-    })
+    commandFor:(entity,point,{facing=1}={})=>{
+      faceArguments.push({id:entity.id,facing});
+      if(entity.species==='orc')
+        return {supported:false,reason:'original-game-procedural-art'};
+      return {
+        supported:true,texture:{src:'./assets/sprites/test.png'},
+        command:{x:point.x,y:point.y,width:64,height:64,
+          opacity:1,flipX:facing<0}
+      };
+    }
   })},
   AzerothPixiSceneBridge:{create:()=>({
     registerTexture:(id,texture)=>registered.set(id,texture),
@@ -92,7 +105,8 @@ const world=makeCanvas();world.width=800;world.height=600;
 const renderer={
   screen:e=>({x:(e.x-game.hero.x)*zoom.current+400,
     y:(e.y-game.hero.y)*zoom.current+280}),
-  presentEntity:(e,kind)=>({...e,renderKind:kind})
+  presentEntity:(e,kind)=>({...e,renderKind:kind,spriteIdentity:e}),
+  facingFor:()=>desiredFacing
 };
 const gpu=api.PrototypePixiExperimental.create({
   worldCanvas:world,viewport:{width:800,height:600},platform,
@@ -143,6 +157,35 @@ function lastCoins(){return batches.at(-1).filter(x=>String(x.key).startsWith('c
   assert.equal(stampPaints,2,'Zoom rebuilds the shared stamped texture once');
   assert.equal(registered.size,initialResources+1,'Old zoom texture is released');
   assert(destroyed.includes(true),'Old GPU coin texture must be disposed');
+  // Raster hero and owner-selected procedural Orc must share the SAME
+  // presentation-facing value. No procedural rebake is needed on turn.
+  zoneFixture.enemies.push({id:'art321-procedural-orc',species:'orc',type:'mob',
+    x:380,y:400,hp:100,maxHp:100,gold:0,xp:0});
+  desiredFacing=1;
+  gpu.draw();
+  const eastOrc=batches.at(-1).find(r=>r.key==='enemy:art321-procedural-orc');
+  const eastHero=batches.at(-1).find(r=>r.key==='hero:hero');
+  assert(eastOrc&&eastHero,'Both raster and procedural models are visible');
+  assert.equal(eastOrc.flipX,false);
+  assert.equal(eastHero.flipX,false);
+  const stampPaintCount=files.length;
+  desiredFacing=-1;
+  gpu.draw();
+  const westOrc=batches.at(-1).find(r=>r.key==='enemy:art321-procedural-orc');
+  const westHero=batches.at(-1).find(r=>r.key==='hero:hero');
+  assert.equal(westOrc.flipX,true,'Procedural Orc must change live-facing without re-bake');
+  assert.equal(westHero.flipX,true,'Raster Ranger must get the Canvas-facing direction');
+  assert.equal(westOrc.width,eastOrc.width);
+  assert.equal(westOrc.y,eastOrc.y);
+  const foot=eastOrc.x+eastOrc.width/2;
+  assert(Math.abs((eastOrc.x+westOrc.x+eastOrc.width)-2*foot)<.01,
+    'GPU mirror must use stable original foot coordinate, not texture center');
+  assert.equal(files.length,stampPaintCount,'A facing turn cannot allocate new procedural image');
+  assert(faceArguments.some(x=>x.facing===-1),
+    'Raster adapter must receive actual negative Canvas facing');
+  desiredFacing=1;
+  gpu.draw();
+  assert.equal(batches.at(-1).find(r=>r.key==='enemy:art321-procedural-orc').flipX,false);
   gpu.release();
   assert.equal(game.s.loot.length,3,'No pickup or reward mechanic was touched');
   console.log('PASS Art321 Pixi Crown loot: approved stamp, two drops, zoom, zone, pickup removal, stable registry and simulation');
