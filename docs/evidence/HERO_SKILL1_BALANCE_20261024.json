@@ -1,0 +1,424 @@
+{
+  "seconds": 12,
+  "dt": 0.05,
+  "rank": 1,
+  "training": 0,
+  "party": 0,
+  "limits": "Isolated admitted high-HP targets, automatic-basic permission, disabled enemy/party AI, identical deterministic RNG, no defense or companion retuning. Mixed uses 0.65s preparation. This observes action economy, not battle time, survival, device FPS or player acceptance.",
+  "rows": [
+    {
+      "class": "paladin",
+      "enemies": 1,
+      "policy": "basic",
+      "before": {
+        "class": "paladin",
+        "enemies": 1,
+        "policy": "basic",
+        "damage": 495,
+        "basics": 15,
+        "taps": 0,
+        "charged": 0
+      },
+      "after": {
+        "class": "paladin",
+        "enemies": 1,
+        "policy": "basic",
+        "damage": 495,
+        "basics": 15,
+        "taps": 0,
+        "charged": 0
+      }
+    },
+    {
+      "class": "paladin",
+      "enemies": 1,
+      "policy": "tap",
+      "before": {
+        "class": "paladin",
+        "enemies": 1,
+        "policy": "tap",
+        "damage": 495,
+        "basics": 15,
+        "taps": 0,
+        "charged": 0
+      },
+      "after": {
+        "class": "paladin",
+        "enemies": 1,
+        "policy": "tap",
+        "damage": 855,
+        "basics": 15,
+        "taps": 4,
+        "charged": 0
+      }
+    },
+    {
+      "class": "paladin",
+      "enemies": 1,
+      "policy": "mixed",
+      "before": {
+        "class": "paladin",
+        "enemies": 1,
+        "policy": "mixed",
+        "damage": 360,
+        "basics": 0,
+        "taps": 0,
+        "charged": 4
+      },
+      "after": {
+        "class": "paladin",
+        "enemies": 1,
+        "policy": "mixed",
+        "damage": 855,
+        "basics": 15,
+        "taps": 2,
+        "charged": 2
+      }
+    },
+    {
+      "class": "paladin",
+      "enemies": 4,
+      "policy": "basic",
+      "before": {
+        "class": "paladin",
+        "enemies": 4,
+        "policy": "basic",
+        "damage": 660,
+        "basics": 15,
+        "taps": 0,
+        "charged": 0
+      },
+      "after": {
+        "class": "paladin",
+        "enemies": 4,
+        "policy": "basic",
+        "damage": 660,
+        "basics": 15,
+        "taps": 0,
+        "charged": 0
+      }
+    },
+    {
+      "class": "paladin",
+      "enemies": 4,
+      "policy": "tap",
+      "before": {
+        "class": "paladin",
+        "enemies": 4,
+        "policy": "tap",
+        "damage": 660,
+        "basics": 15,
+        "taps": 0,
+        "charged": 0
+      },
+      "after": {
+        "class": "paladin",
+        "enemies": 4,
+        "policy": "tap",
+        "damage": 1020,
+        "basics": 15,
+        "taps": 4,
+        "charged": 0
+      }
+    },
+    {
+      "class": "paladin",
+      "enemies": 4,
+      "policy": "mixed",
+      "before": {
+        "class": "paladin",
+        "enemies": 4,
+        "policy": "mixed",
+        "damage": 360,
+        "basics": 0,
+        "taps": 0,
+        "charged": 4
+      },
+      "after": {
+        "class": "paladin",
+        "enemies": 4,
+        "policy": "mixed",
+        "damage": 1560,
+        "basics": 15,
+        "taps": 2,
+        "charged": 2
+      }
+    },
+    {
+      "class": "mage",
+      "enemies": 1,
+      "policy": "basic",
+      "before": {
+        "class": "mage",
+        "enemies": 1,
+        "policy": "basic",
+        "damage": 520.2,
+        "basics": 15,
+        "taps": 0,
+        "charged": 0
+      },
+      "after": {
+        "class": "mage",
+        "enemies": 1,
+        "policy": "basic",
+        "damage": 520.2,
+        "basics": 15,
+        "taps": 0,
+        "charged": 0
+      }
+    },
+    {
+      "class": "mage",
+      "enemies": 1,
+      "policy": "tap",
+      "before": {
+        "class": "mage",
+        "enemies": 1,
+        "policy": "tap",
+        "damage": 520.2,
+        "basics": 15,
+        "taps": 0,
+        "charged": 0
+      },
+      "after": {
+        "class": "mage",
+        "enemies": 1,
+        "policy": "tap",
+        "damage": 928.2,
+        "basics": 15,
+        "taps": 4,
+        "charged": 0
+      }
+    },
+    {
+      "class": "mage",
+      "enemies": 1,
+      "policy": "mixed",
+      "before": {
+        "class": "mage",
+        "enemies": 1,
+        "policy": "mixed",
+        "damage": 408,
+        "basics": 0,
+        "taps": 0,
+        "charged": 4
+      },
+      "after": {
+        "class": "mage",
+        "enemies": 1,
+        "policy": "mixed",
+        "damage": 887.4,
+        "basics": 15,
+        "taps": 2,
+        "charged": 2
+      }
+    },
+    {
+      "class": "mage",
+      "enemies": 4,
+      "policy": "basic",
+      "before": {
+        "class": "mage",
+        "enemies": 4,
+        "policy": "basic",
+        "damage": 744.6,
+        "basics": 15,
+        "taps": 0,
+        "charged": 0
+      },
+      "after": {
+        "class": "mage",
+        "enemies": 4,
+        "policy": "basic",
+        "damage": 744.6,
+        "basics": 15,
+        "taps": 0,
+        "charged": 0
+      }
+    },
+    {
+      "class": "mage",
+      "enemies": 4,
+      "policy": "tap",
+      "before": {
+        "class": "mage",
+        "enemies": 4,
+        "policy": "tap",
+        "damage": 744.6,
+        "basics": 15,
+        "taps": 0,
+        "charged": 0
+      },
+      "after": {
+        "class": "mage",
+        "enemies": 4,
+        "policy": "tap",
+        "damage": 1152.6,
+        "basics": 15,
+        "taps": 4,
+        "charged": 0
+      }
+    },
+    {
+      "class": "mage",
+      "enemies": 4,
+      "policy": "mixed",
+      "before": {
+        "class": "mage",
+        "enemies": 4,
+        "policy": "mixed",
+        "damage": 408,
+        "basics": 0,
+        "taps": 0,
+        "charged": 4
+      },
+      "after": {
+        "class": "mage",
+        "enemies": 4,
+        "policy": "mixed",
+        "damage": 1601.4,
+        "basics": 15,
+        "taps": 2,
+        "charged": 2
+      }
+    },
+    {
+      "class": "ranger",
+      "enemies": 1,
+      "policy": "basic",
+      "before": {
+        "class": "ranger",
+        "enemies": 1,
+        "policy": "basic",
+        "damage": 489.6,
+        "basics": 15,
+        "taps": 0,
+        "charged": 0
+      },
+      "after": {
+        "class": "ranger",
+        "enemies": 1,
+        "policy": "basic",
+        "damage": 489.6,
+        "basics": 15,
+        "taps": 0,
+        "charged": 0
+      }
+    },
+    {
+      "class": "ranger",
+      "enemies": 1,
+      "policy": "tap",
+      "before": {
+        "class": "ranger",
+        "enemies": 1,
+        "policy": "tap",
+        "damage": 489.6,
+        "basics": 15,
+        "taps": 0,
+        "charged": 0
+      },
+      "after": {
+        "class": "ranger",
+        "enemies": 1,
+        "policy": "tap",
+        "damage": 873.6,
+        "basics": 15,
+        "taps": 4,
+        "charged": 0
+      }
+    },
+    {
+      "class": "ranger",
+      "enemies": 1,
+      "policy": "mixed",
+      "before": {
+        "class": "ranger",
+        "enemies": 1,
+        "policy": "mixed",
+        "damage": 352,
+        "basics": 0,
+        "taps": 0,
+        "charged": 4
+      },
+      "after": {
+        "class": "ranger",
+        "enemies": 1,
+        "policy": "mixed",
+        "damage": 825.6,
+        "basics": 15,
+        "taps": 2,
+        "charged": 2
+      }
+    },
+    {
+      "class": "ranger",
+      "enemies": 4,
+      "policy": "basic",
+      "before": {
+        "class": "ranger",
+        "enemies": 4,
+        "policy": "basic",
+        "damage": 700.8,
+        "basics": 15,
+        "taps": 0,
+        "charged": 0
+      },
+      "after": {
+        "class": "ranger",
+        "enemies": 4,
+        "policy": "basic",
+        "damage": 700.8,
+        "basics": 15,
+        "taps": 0,
+        "charged": 0
+      }
+    },
+    {
+      "class": "ranger",
+      "enemies": 4,
+      "policy": "tap",
+      "before": {
+        "class": "ranger",
+        "enemies": 4,
+        "policy": "tap",
+        "damage": 700.8,
+        "basics": 15,
+        "taps": 0,
+        "charged": 0
+      },
+      "after": {
+        "class": "ranger",
+        "enemies": 4,
+        "policy": "tap",
+        "damage": 1084.8,
+        "basics": 15,
+        "taps": 4,
+        "charged": 0
+      }
+    },
+    {
+      "class": "ranger",
+      "enemies": 4,
+      "policy": "mixed",
+      "before": {
+        "class": "ranger",
+        "enemies": 4,
+        "policy": "mixed",
+        "damage": 352,
+        "basics": 0,
+        "taps": 0,
+        "charged": 4
+      },
+      "after": {
+        "class": "ranger",
+        "enemies": 4,
+        "policy": "mixed",
+        "damage": 1036.8,
+        "basics": 15,
+        "taps": 2,
+        "charged": 2
+      }
+    }
+  ]
+}

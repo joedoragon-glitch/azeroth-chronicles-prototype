@@ -1,6 +1,6 @@
 # Automatic Optimization and Non-Optional Emergency Safety — draft review
 
-Date: 24 October 2026. Baseline: published source main at `ae0c0084` (dev.177). Draft only; no merge, version bump, PWA publication or physical-device FPS claim.
+Date: 25 October 2026. Integrates `main` at `7d964915` (released dev.178) while preserving hero Skill 1, FIFO skill queues and asymmetric cooldowns. Candidate `0.9.1+snapshot.dev.179`. Draft only; no merge, deployment or hardware FPS claim.
 
 ## Owner decisions
 
