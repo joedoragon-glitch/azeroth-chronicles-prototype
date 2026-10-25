@@ -1,0 +1,42 @@
+name: Stage 4 music and mix acceptance
+
+# Stage 4-only focused policy checks. No speaker claims, no deployment.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tests/audio-stage4-mix-matrix.test.cjs'
+      - '.github/workflows/audio-stage4-acceptance.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: audio-stage4-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  music-mix:
+    if: github.event.pull_request.head.ref == 'audit/audio-stage4-music-mix-20261025'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked tools
+        run: npm ci --ignore-scripts
+      - name: Stage 4 scene, music, bus and optimization policy matrix
+        run: node tests/audio-stage4-mix-matrix.test.cjs
+      - name: Existing authored soundtrack selection and stem behavior
+        run: node tests/audio-production.test.cjs
+      - name: Existing environmental source transitions
+        run: node tests/audio-environment.test.cjs
+      - name: Existing recording and fallback integrity
+        run: node tests/audio-recordings.test.cjs
+      - name: Existing optimization source suppression and restoration
+        run: node tests/optimization-mode.test.cjs
+      - name: Existing procedural scheduling regressions
+        run: node tests/audio-scheduler.test.cjs
