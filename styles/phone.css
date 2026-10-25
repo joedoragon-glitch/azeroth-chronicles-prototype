@@ -640,6 +640,60 @@ body[data-experience='phone'] #cancel-navigation-button {
   }
 }
 
+
+/* Option B (phone): the original Menu action stays one tap away. It is
+   independently visible at the top right, not a second invented control.
+   Movement, targeting, charged skills, and alternate handedness are untouched. */
+body[data-experience='phone'] #hud {
+  width: min(186px, calc(100vw - 118px));
+  grid-template-columns: minmax(0, 1fr);
+  padding: 6px 8px;
+  background: #152b37df;
+  box-shadow: 0 3px 10px #07120d55;
+}
+body[data-experience='phone'] #location {
+  display: none;
+}
+body[data-experience='phone'] #hero-stats {
+  grid-column: 1;
+}
+body[data-experience='phone'] #hud #menu-button {
+  position: fixed;
+  top: max(8px, env(safe-area-inset-top));
+  right: max(8px, env(safe-area-inset-right));
+  left: auto;
+  width: 94px;
+  min-height: 46px;
+  padding: 8px 6px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1.15;
+  text-align: center;
+  background: linear-gradient(155deg, #2b4957, #1c3441);
+  border-color: #a5b5a5a8;
+  touch-action: manipulation;
+}
+body[data-experience='phone'] #hud #menu-button::before {
+  content: none;
+}
+/* The update prompt retains its own click target; never stack it over Menu.
+   In landscape it shares the top edge, in portrait it falls below Menu. */
+body[data-experience='phone'] #update-button:not([hidden]) {
+  top: calc(max(8px, env(safe-area-inset-top)) + 54px);
+  right: max(8px, env(safe-area-inset-right));
+  width: 94px;
+  max-width: 94px;
+}
+@media (orientation: landscape) and (min-width: 601px) {
+  body[data-experience='phone'] #update-button:not([hidden]) {
+    top: max(8px, env(safe-area-inset-top));
+    right: calc(max(8px, env(safe-area-inset-right)) + 104px);
+    width: 105px;
+    max-width: 105px;
+  }
+}
+
 /* A3: long Keeper answers remain legible and scroll within the available viewport. */
 body[data-experience='phone'] #modal[data-view='archive-reading'],
 body[data-experience='phone'] #modal[data-view='archive-shelf'],
