@@ -149,6 +149,7 @@ for (const family of Object.keys(C.rules.petCompanions)) {
   const { g, u, e, enemies } = scene('thorn', 3);
   second(g, u, e, 'initial target-loss charge');
   g.zone().enemies = enemies.slice(1);
+  enemies[1].x = u.x + 80; // Replacement target must be legal for the first skill.
   g.advancePartyChargeClock(0.65);
   g.resolveCompanionCharges();
   assert.equal(u.skill2Cd, 0, 'target-loss fizzle does not spend charged cooldown');
