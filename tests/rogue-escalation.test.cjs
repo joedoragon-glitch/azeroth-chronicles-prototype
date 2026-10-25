@@ -219,6 +219,12 @@ console.log('PASS two-second Rogue cast floor prevents spam without retaining a 
   let approachOrders = 0;
   c.follow = () => { approachOrders++; return false; };
   const originalX = a.x;
+  let resetOrigin = null;
+  const disengage = c.disengage.bind(c);
+  c.disengage = (...args) => {
+    if (args[0] === a) resetOrigin = new Error('unexpected reset').stack;
+    return disengage(...args);
+  };
   c.s.time += 0.1;
   c.updateEnemies(0.1);
   assert(a.x < originalX,
@@ -226,6 +232,7 @@ console.log('PASS two-second Rogue cast floor prevents spam without retaining a 
       before: originalX, after: a.x, phase: c.tacticalRogueRegroup(a)?.phase,
       returning: a.returning, aggro: a.aggro, motion: a.motion?.kind,
       warning: a.telegraph?.name, heroX: c.hero.x, calls: approachOrders,
+      resetOrigin,
     }));
   assert.equal(approachOrders, 0,
     'a covering Rogue cast must never reverse the withdrawal toward the hero');
