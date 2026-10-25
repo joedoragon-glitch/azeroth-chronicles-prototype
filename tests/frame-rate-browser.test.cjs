@@ -148,6 +148,9 @@ const server = http.createServer((req, res) => {
         // Seed only the first load; subsequent reloads must honor saved changes.
         if (!sessionStorage.getItem('optimization-seeded')) {
           localStorage.setItem('azeroth-optimization-mode-v1', 'on');
+          // This test exercises deliberate user choices after the one-time
+          // upgrade, not the first-launch preference migration.
+          localStorage.setItem('azeroth-optimization-auto-default-v1', 'applied');
           sessionStorage.setItem('optimization-seeded', 'true');
         }
       });
