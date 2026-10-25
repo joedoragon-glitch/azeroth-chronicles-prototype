@@ -93,6 +93,21 @@ for (const kind of ['captain', 'boss', 'field-captain']) {
   g.updateEnemies(7);
   near(source.supportHealCd, 0, 'ordinary clock recovered in seven seconds');
   assert(!leader.supportHeal, 'leader must not receive seven-second recast: ' + JSON.stringify({ sourceCd: source.supportHealCd, sourceAggro: source.aggro, leaderAggro: leader.aggro, heal: leader.supportHeal, time: g.s.time }));
+  // Prove the leader's own interval still blocks a direct cast at seven
+  // seconds, with the ordinary caster ready and all geometry/action gates open.
+  source.returning = 0;
+  source.motion = null;
+  source.telegraph = null;
+  source.rangedAim = null;
+  source.x = 300;
+  source.y = 300;
+  leader.x = 320;
+  leader.y = 300;
+  leader.returning = 0;
+  leader.hp = leader.maxHp * 0.4;
+  assert(g.enemyHealTeammate(source, leader) && g.enemyNeedsSupportHeal(leader, source) && g.line(source, leader), 'leader is otherwise eligible at seven seconds');
+  assert(!g.enemySupportHeal(source), 'separate ten-second leader interval blocks an otherwise legal cast at seven seconds');
+  assert(!leader.supportHeal, 'no premature leader treatment is queued');
   // Isolate the per-source leader clock from the live AI: a freely available
   // ordinary cast can automatically heal this leader at the ten-second tick,
   // consuming the very opportunity the manual assertion intends to test.
