@@ -426,7 +426,10 @@ function concurrentBirths(enabled, family, form = 'true', captain = false, range
   assert.equal(
     e.telegraph,
     pending,
-    'reinforcement cannot resolve or replace the active telegraph',
+    'reinforcement cannot resolve or replace the active telegraph: ' +
+      JSON.stringify({ family, form, captain, ranged, hero: [c.hero.x,c.hero.y],
+        enemy: [e.x,e.y], home: e.home, returning: e.returning, aggro: e.aggro,
+        hp: e.hp, time: c.s.time, before: pending?.kind, after: e.telegraph?.kind }),
   );
   assert.equal(c.hero.hp, hp, 'automatic births do not inflict attack damage');
   return { c, e, snapshot: c.snapshot(), births: c.effects.filter((f) => f.stage === 'spawn') };
