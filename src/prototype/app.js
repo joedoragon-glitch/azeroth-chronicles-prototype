@@ -33,12 +33,27 @@
   }
   const performanceBaselineUpgraded = applyPerformanceBaseline(localStorage);
 
-  // A device-only display preference: never part of the campaign or profile export.
+  // One-time device upgrade: Auto is the new optimization default, including
+  // for previously saved On/Off choices. Subsequent user choices persist.
+  // Campaign saves, FPS choices and other settings are not touched.
   const optimizationKey = 'azeroth-optimization-mode-v1';
-  let optimizationMode = false;
+  const optimizationAutoUpgradeKey = 'azeroth-optimization-auto-default-v1';
+  function upgradeOptimizationAuto(storage) {
+    try {
+      if (storage.getItem(optimizationAutoUpgradeKey) === 'applied') return false;
+      storage.setItem(optimizationKey, 'auto');
+      storage.setItem(optimizationAutoUpgradeKey, 'applied');
+      return true;
+    } catch (_) { return false; }
+  }
+  const optimizationAutoUpgraded = upgradeOptimizationAuto(localStorage);
+  let optimizationPreference = 'auto';
   try {
-    optimizationMode = localStorage.getItem(optimizationKey) === 'on';
+    const saved = localStorage.getItem(optimizationKey);
+    if (['off', 'auto', 'on'].includes(saved)) optimizationPreference = saved;
   } catch (_) {}
+  // Runtime state is distinct from the stored preference and never a save field.
+  let optimizationMode = optimizationPreference === 'on';
 
   // Presentation-only community localization; campaign IDs and names never change.
   const languageKey = 'azeroth-display-language-v1';
@@ -775,6 +790,11 @@
       'Elige la disposición y los controles de movimiento.',
     'Tap reachable ground to move.': 'Toca terreno accesible para moverte.',
     'Optimization Mode': 'Modo de optimización',
+    'Auto · Recommended': 'Auto · Recomendado',
+    'Auto lowers graphics under sustained load. Emergencies can override Off.':
+      'Auto reduce los gráficos cuando hay mucha carga. Las emergencias pueden anular Desactivado.',
+    'Off disables ordinary skips, not emergency combat protection.':
+      'Desactivado evita los saltos habituales, no la protección de combate en emergencias.',
     On: 'Activado',
     Off: 'Desactivado',
     Display: 'Pantalla',
@@ -796,6 +816,8 @@
       'WebGL2 puede acelerar el juego en tu dispositivo. Si va más lento o se ve mal, vuelve a Canvas.',
     'Performance settings updated to recommended defaults. You can change them in Settings.':
       'Ajustes de rendimiento actualizados a los valores recomendados. Puedes cambiarlos en Ajustes.',
+    'Optimization Mode now defaults to Auto. You can change it in Settings.':
+      'El modo de optimización ahora usa Auto por defecto. Puedes cambiarlo en Ajustes.',
     'Local samples are diagnostic estimates, not verified display FPS.':
       'Las muestras locales son estimaciones diagnósticas, no FPS reales verificados.',
     'Towns and camps': 'Pueblos y campamentos',
@@ -1707,6 +1729,21 @@
   const fps = PrototypeRuntime.createFrameRate(localStorage);
   const frameSkip = PrototypeRuntime.createFrameSkip(localStorage);
   const renderResolution = PrototypeRuntime.createResolution(localStorage);
+  const autoOptimization = PrototypeRuntime.createAutoOptimization();
+  function setOptimizationActive(enabled) {
+    const next = !!enabled;
+    if (optimizationMode === next) return false;
+    optimizationMode = next;
+    if (typeof PrototypeMaterials !== 'undefined')
+      PrototypeMaterials.setOptimizationMode(next);
+    audio.setOptimizationMode(next);
+    renderer.setOptimizationMode(next);
+    resize();
+    runtime.reset();
+    frameProfile.reset();
+    fps.suspend();
+    return true;
+  }
 
   // Opt-in renderer pilot; one live Campaign, no saved graphics state.
   // Canvas is retained as an independent, always-available presentation surface.
@@ -3302,6 +3339,9 @@
                 frameSkip: frameSkip.status(),
                 renderResolution: renderResolution.status(),
                 optimizationMode: optimizationMode ? 'on' : 'off',
+                optimizationPreference,
+                emergencyGraphicsOverride: optimizationMode &&
+                  optimizationPreference === 'off',
                 devicePixelRatio: window.devicePixelRatio || 1,
                 backingPixelRatio: canvas.width / Math.max(1, viewport.width),
                 backingWidth: canvas.width,
@@ -3420,24 +3460,23 @@
         'Zoom changes your view only.',
       ),
       menuControls.section('Graphics'),
-      menuControls.toggle(
+      menuControls.select(
         'Optimization Mode',
-        optimizationMode,
-        (enabled) => {
-          optimizationMode = enabled;
-          try {
-            localStorage.setItem(optimizationKey, enabled ? 'on' : 'off');
-          } catch (_) {}
-          if (typeof PrototypeMaterials !== 'undefined')
-            PrototypeMaterials.setOptimizationMode(enabled);
-          audio.setOptimizationMode(enabled);
-          renderer.setOptimizationMode(enabled);
-          resize();
-          runtime.reset();
-          frameProfile.reset();
-          fps.suspend();
+        optimizationPreference,
+        choices([
+          ['off', 'Off'],
+          ['auto', 'Auto · Recommended'],
+          ['on', 'On'],
+        ]),
+        (value) => {
+          if (!['off', 'auto', 'on'].includes(value)) return;
+          optimizationPreference = value;
+          try { localStorage.setItem(optimizationKey, value); } catch (_) {}
+          autoOptimization.reset();
+          // Critical recovery is not an opt-out, even if Off is chosen now.
+          setOptimizationActive(value === 'on' || frameSkip.emergency);
         },
-        'Simpler scenery and lower resolution.',
+        'Auto lowers graphics under sustained load. Emergencies can override Off.',
       ),
       menuControls.select(
         'Rendering resolution',
@@ -3474,7 +3513,7 @@
           runtime.reset();
           frameProfile.reset();
         },
-        'On by default. Skips drawings under load; briefly pauses combat during critical slowdowns.',
+        'Off disables ordinary skips, not emergency combat protection.',
       ),
       menuControls.section('Graphics renderer'),
       menuControls.select(
@@ -6396,6 +6435,7 @@
     if (document.hidden) {
       clearEmergencyEscalation();
       frameSkip.suspend();
+      autoOptimization.reset();
       renderResolution.suspend();
       runtime.suspend();
       fps.suspend();
@@ -6418,7 +6458,18 @@
       game.s.challenge.pending ||
       game.s.challenge.gameOver;
     const recovering = !frozen && frameSkip.beginFrame(now, intervalMs);
-    if (recovering) crashRecoveryPending = true;
+    if (recovering) {
+      crashRecoveryPending = true;
+      // Act before further expensive rendering; never require the player to
+      // reach Settings while hostile simulation is critically stalled.
+      if (!optimizationMode) {
+        const override = autoOptimization.observe(now, {
+          activePlay: true, emergency: true,
+          preference: optimizationPreference, optimized: optimizationMode,
+        });
+        if (override === true) setOptimizationActive(true);
+      }
+    }
     const simulating = !frozen && !recovering;
     emergencyRecoveryDecision(now, recovering, simulating);
     if (recovering !== emergencyShown) {
@@ -6627,6 +6678,13 @@
       fps.observe(now, performance.now() - frameStart, draw, adaptiveSkipped);
       const frameWorkMs = performance.now() - frameStart;
       frameSkip.observe(now, frameWorkMs, stageTimes.renderMs, draw);
+      const optimizationDecision = autoOptimization.observe(now, {
+        activePlay: simulating || recovering,
+        emergency: recovering || frameSkip.emergency,
+        preference: optimizationPreference, optimized: optimizationMode,
+        intervalMs, workMs: frameWorkMs, adaptiveSkipped, target: fps.target,
+      });
+      if (optimizationDecision !== null) setOptimizationActive(optimizationDecision);
       const otherSimulationMs = Math.max(
           0,
           stageTimes.simulationMs - stageTimes.companionAIMs - stageTimes.enemyAIMs,
@@ -6648,6 +6706,7 @@
       });
     } else {
       frameSkip.suspend();
+      autoOptimization.reset();
       emergencyShown = false;
       renderResolution.suspend();
       fps.suspend();
@@ -6681,9 +6740,11 @@
     if (persistence.loadFailed(profile.activeMode)) savedRunRecoveryMenu();
     else chooseLanguage(developerEnabled ? 'developer' : 'normal');
   } else setLanguage(language);
-  if (loaded && performanceBaselineUpgraded && !recoveredOnStartup)
+  if (loaded && (performanceBaselineUpgraded || optimizationAutoUpgraded) && !recoveredOnStartup)
     status(
-      'Performance settings updated to recommended defaults. You can change them in Settings.',
+      performanceBaselineUpgraded
+        ? 'Performance settings updated to recommended defaults. You can change them in Settings.'
+        : 'Optimization Mode now defaults to Auto. You can change it in Settings.',
     );
   requestAnimationFrame(frame);
   if (writerGuard.pending)

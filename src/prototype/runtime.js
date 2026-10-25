@@ -218,7 +218,7 @@
     };
   }
 
-  // Device-local draw reduction with an emergency simulation-hold signal.
+  // Device-local ordinary draw reduction, with non-optional emergency protection.
   // Normal adaptive skips never interrupt simulation or input.
   const frameSkipPreferenceKey = 'azeroth-adaptive-frame-skip-v1';
   function createFrameSkip(storage) {
@@ -266,7 +266,8 @@
     }
     return {
       get enabled() { return enabled; },
-      get emergency() { return enabled && emergency; },
+      // Manual Off disables routine skipping, never critical combat safety.
+      get emergency() { return emergency; },
       select(value) {
         if (typeof value !== 'boolean') return false;
         enabled = value;
@@ -281,7 +282,7 @@
       // the rescue callback cannot inflict combat damage while input is stale.
       // A single ordinary spike is insufficient; a hard stall can trigger at once.
       beginFrame(now, intervalMs) {
-        if (!enabled || !Number.isFinite(now) ||
+        if (!Number.isFinite(now) ||
           !Number.isFinite(intervalMs) || intervalMs < 0) return false;
         lastIntervalMs = intervalMs;
         if (!emergency) {
@@ -295,7 +296,7 @@
       // Called only for a drawing already permitted by the regular FPS limiter.
       // Applies at every valid FPS target; warnings have no special exemption.
       shouldSkip(now, target) {
-        if (!enabled || !Number.isFinite(now) ||
+        if ((!enabled && !emergency) || !Number.isFinite(now) ||
           !Number.isFinite(target) || target <= 0) return false;
         const stressed =
           drawnSamples >= 6 &&
@@ -311,7 +312,7 @@
         return skip;
       },
       observe(now, workMs, renderMs, drawn) {
-        if (!enabled || !drawn || !Number.isFinite(now) ||
+        if (!drawn || !Number.isFinite(now) ||
           !Number.isFinite(workMs) || workMs < 0 ||
           !Number.isFinite(renderMs) || renderMs < 0) return;
         // Skipped callbacks never count as artificially cheap drawings.
@@ -348,6 +349,79 @@
       },
     };
   }
+  // Presentation-only relief. Normal Off is respected outside true emergencies;
+  // confirmed near-freeze recovery temporarily overrides even manual Off.
+  // A separate active-time gate prevents stale/paused samples from triggering it.
+  function createAutoOptimization() {
+    const windowMs = 6000;
+    let samples = [], enabledAt = null, healthySince = null;
+    function reset() {
+      samples = [];
+      enabledAt = null;
+      healthySince = null;
+    }
+    function observe(now, input = {}) {
+      if (!Number.isFinite(now) || !input.activePlay) {
+        samples = [];
+        healthySince = null;
+        return null;
+      }
+      const { preference = 'auto', optimized = false, emergency = false,
+        intervalMs, workMs, adaptiveSkipped = false, target = 30 } = input;
+      if (preference === 'on') return optimized ? null : true;
+      if (emergency) {
+        samples = [];
+        healthySince = null;
+        if (!optimized) {
+          enabledAt = now;
+          return true;
+        }
+        if (enabledAt === null) enabledAt = now;
+        return null;
+      }
+      if (!Number.isFinite(intervalMs) || intervalMs < 0 ||
+          !Number.isFinite(workMs) || workMs < 0) return null;
+      if (samples.length && now <= samples.at(-1).now) {
+        samples = [];
+        healthySince = null;
+      }
+      const budget = 1000 / ([20, 30, 60].includes(target) ? target : 30);
+      samples.push({ now,
+        late: intervalMs >= 80,
+        veryLate: intervalMs >= 180,
+        busy: workMs > Math.max(45, budget * 1.3),
+        skipped: !!adaptiveSkipped });
+      while (samples.length > 900 || (samples.length > 2 && now - samples[0].now > windowMs))
+        samples.shift();
+      const span = now - samples[0].now,
+        late = samples.filter(s => s.late).length,
+        veryLate = samples.filter(s => s.veryLate).length,
+        busy = samples.filter(s => s.busy).length,
+        skipped = samples.filter(s => s.skipped).length,
+        heavy = veryLate >= 2 ||
+          (late >= 3 && late / samples.length >= 0.2) ||
+          (busy >= 3 && busy / samples.length >= 0.2) ||
+          (skipped >= 3 && skipped / samples.length >= 0.05);
+      if (!optimized) {
+        if (preference !== 'auto' || span < 4000 || samples.length < 2 || !heavy) return null;
+        enabledAt = now;
+        healthySince = null;
+        samples = [];
+        return true;
+      }
+      if (enabledAt === null) enabledAt = now;
+      const healthy = span >= 5000 && samples.length >= 20 &&
+        veryLate === 0 && late <= 1 && busy <= 1 && skipped === 0;
+      if (healthy) healthySince ??= now;
+      else healthySince = null;
+      if (now - enabledAt < 60000 || healthySince === null || now - healthySince < 60000)
+        return null;
+      reset();
+      return false;
+    }
+    return { observe, reset };
+  }
+
   // Adapt only the backing-store density. CSS coordinates, camera, input and
   // simulation remain independent of this device-local presentation policy.
   const resolutionPreferenceKey = 'azeroth-render-resolution-v1';
@@ -539,6 +613,7 @@
     fpsPreferenceKey,
     createFrameSkip,
     frameSkipPreferenceKey,
+    createAutoOptimization,
     createResolution,
     resolutionPreferenceKey,
   };
