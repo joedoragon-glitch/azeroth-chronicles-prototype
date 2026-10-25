@@ -5086,14 +5086,16 @@
           icon: e.icon, level: Math.max(1, e.level - 2),
           hp: baseHp, damage: baseDamage, gold: 0, xp: 0,
         }, point);
-        add.summon = true;
-        add.summonBalanceVersion = 1;
         add.guard = true;
         add.owner = e.id;
         add.rogueEmergencyReinforcement = true;
         add.pack = e.id + '-emergency';
         if (e.ranged) add.forcedRole = 'ranged';
+        // Native role assignment has to precede summon admission: the
+        // shared configurator intentionally skips already-summoned actors.
         this.configureEnemy(add, i);
+        add.summon = true;
+        add.summonBalanceVersion = 1;
         z.enemies.push(add);
         this.engage(add, true, false);
         made++;
