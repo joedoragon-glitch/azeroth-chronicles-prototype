@@ -1,6 +1,6 @@
 'use strict';
 // Ridge Tyrant: real original warned cone across Normal/TRUE and both modes.
-// No critical on different authored cargo projectile, charged line or summons.
+// Separate authored cargo, charge and summons now receive their own World keys.
 const assert=require('node:assert/strict');
 const Campaign=require('../src/prototype/engine.js');
 const Crit=require('../src/prototype/critical-executions.js');
@@ -77,7 +77,9 @@ for(const context of ['normal','nightmare-night']){
 {
  const a=scene('normal','normal',1),t=attach(a.g);
  a.g.resolveAttack(a.e);
- assert.equal(t.count(),0,'cargo is separate original special and cannot inherit cone key');
+ assert.equal(t.count(),1,'cargo is its own legal released action');
+ assert.equal(a.g.s.projectiles.length,1);
+ assert.equal(a.g.s.projectiles[0].criticalExecution.key,'world/boss/ridge/1');
 }
 {
  const a=scene(),t=attach(a.g);

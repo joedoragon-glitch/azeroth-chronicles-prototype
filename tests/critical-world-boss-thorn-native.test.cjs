@@ -1,7 +1,7 @@
 'use strict';
 // Native Thornfang cone remains an independently released damage action.
-// His Slow line has its own separate focused suite; landing and summon remain
-// fail-closed. Never change the hero-first Level 2 field protection rules.
+// Slow line, landing and actual summoned units have separate release owners.
+// Protect the hero-first Level 2 field-opening rules.
 const assert=require('node:assert/strict');
 const Campaign=require('../src/prototype/engine.js');
 const Crit=require('../src/prototype/critical-executions.js');
@@ -89,7 +89,8 @@ for(const context of ['normal','nightmare-night']){
 {
  const a=scene('normal','normal',1),t=attach(a.g,1);
  a.g.resolveAttack(a.e);
- assert.equal(t.count(),0,'Thornfang delayed landing remains unreviewed and fail-closed');
+ assert.equal(t.count(),1,'one lawful landing launch, no per-contact sample');
+ assert.equal(a.e.motion.criticalExecution.key,'world/boss/thorn/1');
 }
 {
  const a=scene(),t=attach(a.g,2);

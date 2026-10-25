@@ -23,6 +23,8 @@
     silenceDuration: Object.freeze({ operation: 'addSeconds', values: Object.freeze([0.15, 0.35, 0.65]) }),
     hasteDuration: Object.freeze({ operation: 'addSeconds', values: Object.freeze([0.30, 0.75, 1.40]) }),
     wardDuration: Object.freeze({ operation: 'addSeconds', values: Object.freeze([0.30, 0.75, 1.40]) }),
+    // Increases only the original Royal Taxation opportunity window.
+    markDuration: Object.freeze({ operation: 'addSeconds', values: Object.freeze([0.20, 0.50, 1.00]) }),
     // Soldier Guard is genuine invulnerability, not a damage-reduction ward.
     // It receives a separate small capped extension to its existing 2.5s window.
     guardDuration: Object.freeze({ operation: 'addSeconds', values: Object.freeze([0.15, 0.30, 0.50]) }),
@@ -159,6 +161,52 @@
   // Ridge Tyrant's native initial cone is also immediate lawful contact.
   // His cargo, charge and summon remain separate unreviewed owners.
   register('world/boss/ridge/0', 'world', 'damage');
+  // Exact normal/TRUE boss action identities. Cindermaw delegates remain
+  // separate because their real consequences have specialist owners.
+  register('world/boss/thorn/1', 'world', 'damage');
+  register('world/boss/thorn/3', 'world', 'summonVitality');
+  register('world/boss/crypt/0', 'world', 'pushDistance');
+  register('world/boss/crypt/1', 'world', 'damage');
+  register('world/boss/crypt/2', 'world', 'summonVitality');
+  register('world/boss/crypt/3', 'world', 'damage');
+  register('world/boss/crypt/4', 'world', 'slowDuration');
+  register('world/boss/crypt/5', 'world', 'wardDuration');
+  register('world/boss/mire/0', 'world', 'damage');
+  register('world/boss/mire/1', 'world', 'damage');
+  register('world/boss/mire/2', 'world', 'damage');
+  register('world/boss/mire/3', 'world', 'summonVitality');
+  register('world/boss/archive/0', 'world', 'damage');
+  register('world/boss/archive/1', 'world', 'damage');
+  register('world/boss/archive/2', 'world', 'slowDuration');
+  register('world/boss/archive/3', 'world', 'summonVitality');
+  register('world/boss/archive/4', 'world', 'cooldownDebt');
+  register('world/boss/ridge/1', 'world', 'damage');
+  register('world/boss/ridge/2', 'world', 'damage');
+  register('world/boss/ridge/3', 'world', 'summonVitality');
+  register('world/boss/mine/0', 'world', 'damage');
+  register('world/boss/mine/1', 'world', 'damage');
+  register('world/boss/mine/2', 'world', 'slowDuration');
+  register('world/boss/mine/3', 'world', 'damage');
+  register('world/boss/mine/4', 'world', 'summonVitality');
+  register('world/boss/warlord/0', 'world', 'damage');
+  register('world/boss/warlord/1', 'world', 'damage');
+  register('world/boss/warlord/2', 'world', 'summonVitality');
+  register('world/boss/warlord/3', 'world', 'damage');
+  register('world/boss/abyss/0', 'world', 'damage');
+  register('world/boss/abyss/1', 'world', 'damage');
+  register('world/boss/abyss/2', 'world', 'damage');
+  register('world/boss/abyss/3', 'world', 'summonVitality');
+  register('world/boss/citadel/0', 'world', 'damage');
+  register('world/boss/citadel/1', 'world', 'hasteDuration');
+  register('world/boss/citadel/2', 'world', 'damage');
+  register('world/boss/citadel/3', 'world', 'damage');
+  register('world/boss/citadel/4', 'world', 'summonVitality');
+  register('world/boss/darklord/0', 'world', 'damage');
+  register('world/boss/darklord/1', 'world', 'damage');
+  register('world/boss/darklord/2', 'world', 'summonVitality');
+  register('world/boss/darklord/3', 'world', 'damage');
+  register('world/boss/darklord/4', 'world', 'damage');
+  register('world/boss/darklord/5', 'world', 'markDuration');
   Object.freeze(registry);
 
   function validatedLevel(level) {

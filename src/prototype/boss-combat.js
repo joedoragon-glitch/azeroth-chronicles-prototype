@@ -1010,7 +1010,9 @@
               )
             )
               continue;
-            const landed = this.hitParty(u, this.weakenedEnemyDamage(e), 0, e.id);
+            const landed = this.hitParty(
+              u, this.worldBossEffect(b, this.weakenedEnemyDamage(e), 'damage'), 0, e.id,
+            );
             if (
               this.hero !== hero ||
               this.zoneId !== zone ||
@@ -1201,6 +1203,34 @@
         return receipt?.critical
           ? this._criticalWorldNative.enhance(receipt, seconds, 'slowDuration')
           : seconds;
+      }
+      worldBossEffect(a, current, lever, bounds) {
+        const receipt = a?.criticalExecution;
+        return receipt?.critical && receipt.effect?.lever === lever
+          ? this._criticalWorldNative.enhance(receipt, current, lever, bounds)
+          : current;
+      }
+      worldBossRelease(e, a) {
+        if (!this._criticalWorldNative?.enabled || !e?.id ||
+            e.type !== 'boss' || !a || a.captainSkill || a.rogueMove ||
+            a.family !== e.family || !Number.isInteger(a.index) ||
+            !R.attacks[e.family]?.[a.index] || e.family === 'cindermaw')
+          return null;
+        if (a.criticalExecution) return a.criticalExecution;
+        // Actual summon admissions own their releases after the spawn action;
+        // every other authored attack commits only at genuine execution.
+        if (a.kind === 'summon') return null;
+        const receipt = this.worldCriticalAction(e, 'world/boss/' + e.family + '/' + a.index);
+        if (receipt) {
+          a.criticalExecution = receipt;
+          // An individual multi-beat action has one frozen decision. A queued
+          // combo with a DIFFERENT index remains a separate legal action.
+          for (const next of e.sequence || []) {
+            if (next.family !== a.family || next.index !== a.index) break;
+            if (!next.criticalExecution) next.criticalExecution = receipt;
+          }
+        }
+        return receipt;
       }
       enemyStartBasic(e, target, ranged) {
         const nightTempo = this.nightTempo();
@@ -2109,7 +2139,8 @@
         const a = e.telegraph;
         if (!a) return;
         if (a.selfDefense && e.family === 'crypt' && a.index === 5) {
-          e.anastylosis = a.defenseDuration;
+          this.worldBossRelease(e, a);
+          e.anastylosis = this.worldBossEffect(a, a.defenseDuration, 'wardDuration');
           e.anastylosisCd = a.defenseCooldown;
           return;
         }
@@ -2117,20 +2148,14 @@
           this.tacticalResolveRogueMove(e, a);
           return;
         }
-        // Explicit boss-family releases after warning, before legal contact.
-        // The Thorn Slow line has an independent receipt and only enhances
-        // its existing Slow; landing, summons, and other boss moves stay OFF.
-        const nativeBossCone =
-          e.type === 'boss' && !a.captainSkill && a.index === 0 &&
-          a.kind === 'cone' && (e.family === 'thorn' || e.family === 'ridge');
-        const nativeThornSlowLine =
-          e.type === 'boss' && e.family === 'thorn' && !a.captainSkill &&
-          a.index === 2 && a.kind === 'line' && !!a.slow &&
-          !a.charge && !a.landing && !a.persistent;
-        if ((nativeBossCone || nativeThornSlowLine) && !a.criticalExecution) {
-          const receipt = this.worldCriticalAction(e, 'world/boss/' + e.family + '/' + a.index);
-          if (receipt) a.criticalExecution = receipt;
-        }
+        // Boss families share a narrow explicit action-release gate, not an
+        // attack-wide fallback. Conditional utility commits at its own owner.
+        const deferredBossSupport =
+          (e.family === 'archive' && a.sabotage) ||
+          (e.family === 'darklord' && a.royalTaxation) ||
+          (e.family === 'citadel' &&
+            ['formation', 'checkerboard', 'pattern-charge'].includes(a.kind));
+        if (!deferredBossSupport) this.worldBossRelease(e, a);
         // Explicit conventional captain owners only. A one-patch
         // Encapsulation release affects its initial hit, not the original
         // hazard duration/ticks. Multi-beat, delegated and summon skills
@@ -2266,7 +2291,11 @@
           // Four damaging strikes during the ten-second levy: each marked
           // living contributor must participate if fewer than four were
           // targetable. A complete four-character party must hit from all four.
-          e.royalTaxation = { marked, expires: this.s.time + 10, sources: [], hits: 0 };
+          if (marked.length) this.worldBossRelease(e, a);
+          e.royalTaxation = {
+            marked, expires: this.s.time + this.worldBossEffect(a, 10, 'markDuration'),
+            sources: [], hits: 0,
+          };
           return;
         }
         if (e.family === 'darklord' && a.royalSidestep) {
@@ -2325,7 +2354,10 @@
             dy: (a.y - e.y) / d,
             speed: 260,
             life: 2,
-            damage: this.weakenedEnemyDamage(e) * a.coefficient,
+            damage: this.worldBossEffect(
+              a, this.weakenedEnemyDamage(e) * a.coefficient, 'damage',
+            ),
+            ...(a.criticalExecution ? { criticalExecution: a.criticalExecution } : {}),
             source: 'enemy',
             sourceId: e.id,
             species: 'cargo',
@@ -2350,13 +2382,19 @@
           const victim =
             victims.find((u) => u.type === 'archer') || victims.find((u) => u === this.hero);
           if (victim) {
-            if (victim.type === 'archer') victim.healCd = (victim.healCd || 0) + 3;
-            else {
+            if (victim.type === 'archer') {
+              this.worldBossRelease(e, a);
+              victim.healCd = (victim.healCd || 0) +
+                this.worldBossEffect(a, 3, 'cooldownDebt');
+            } else {
               const choices = victim.cd
                 .map((time, i) => ({ time, i }))
                 .filter((x) => this.hero.skills[x.i] > 0)
                 .sort((x, y) => y.time - x.time);
-              if (choices.length) victim.cd[choices[0].i] += 3;
+              if (choices.length) {
+                this.worldBossRelease(e, a);
+                victim.cd[choices[0].i] += this.worldBossEffect(a, 3, 'cooldownDebt');
+              }
             }
             this.event('warning', { family: 'archive', cooldownSabotageHit: true });
           }
@@ -2364,17 +2402,25 @@
         }
         if (e.family === 'citadel' && a.kind === 'checkerboard') {
           if (!a.boardPlan) return;
-          if (!e.board) e.board = { ...a.boardPlan, beat: 0, phase: 'warn', timer: 1.45 };
+          if (!e.board) {
+            this.worldBossRelease(e, a);
+            e.board = {
+              ...a.boardPlan, beat: 0, phase: 'warn', timer: 1.45,
+              ...(a.criticalExecution ? { criticalExecution: a.criticalExecution } : {}),
+            };
+          }
           return;
         }
         if (e.family === 'citadel' && a.kind === 'formation') {
           const orders = this.sentinelFormationOrders(e);
+          if (orders.length) this.worldBossRelease(e, a);
+          const duration = this.worldBossEffect(a, 5, 'hasteDuration');
           for (const { unit, post } of orders) {
             // Orders remain movement, never teleportation or invented guards.
-            unit.dressPost = { ...post, owner: e.id, expires: this.s.time + 5 };
+            unit.dressPost = { ...post, owner: e.id, expires: this.s.time + duration };
             unit.aggro = true;
           }
-          e.dressUntil = orders.length ? this.s.time + 5 : 0;
+          e.dressUntil = orders.length ? this.s.time + duration : 0;
           return;
         }
         if (e.family === 'citadel' && a.kind === 'canister') {
@@ -2390,7 +2436,8 @@
               life: (a.radius - 7) / 490, // The last fragment stays inside its actual warning.
               preserveFootprint: true,
               hitRadius: R.combatGeometry.canisterHalfWidth,
-              damage: this.weakenedEnemyDamage(e) / 9, // At close range nine fragments cap at one raw boss hit.
+              damage: this.worldBossEffect(a, this.weakenedEnemyDamage(e) / 9, 'damage'),
+              ...(a.criticalExecution ? { criticalExecution: a.criticalExecution } : {}),
               manaDrain: 0,
               source: 'enemy',
               sourceId: e.id,
@@ -2413,6 +2460,7 @@
         }
         if (e.family === 'citadel' && a.kind === 'pattern-charge') {
           if (!a.path?.length) return;
+          this.worldBossRelease(e, a);
           e.motion = {
             ...a,
             target: { ...a.path[0] },
@@ -2431,10 +2479,8 @@
               this.captainProfile(e)?.summon || { species: a.species, cap: a.summonCap || 3 },
             );
           else {
-            const priorGuards =
-              e.family === 'darklord'
-                ? new Set(this.bossOwnedSummons(e).map((unit) => unit.id))
-                : null;
+            const priorOwned = new Set(this.bossOwnedSummons(e).map((unit) => unit.id));
+            const priorGuards = e.family === 'darklord' ? priorOwned : null;
             this.summonBossAdds(
               e,
               {
@@ -2446,6 +2492,21 @@
               },
               this.bossSummonCap(e),
             );
+            const born = this.bossOwnedSummons(e).filter((unit) => !priorOwned.has(unit.id));
+            if (born.length && e.type === 'boss' && !a.captainSkill &&
+                this._criticalWorldNative?.enabled && e.family !== 'cindermaw') {
+              const receipt = this.worldCriticalAction(e,
+                'world/boss/' + e.family + '/' + a.index);
+              if (receipt?.critical)
+                for (const unit of born) {
+                  const hp = unit.maxHp;
+                  const enhanced = Math.max(hp, Math.round(
+                    this._criticalWorldNative.enhance(receipt, hp, 'summonVitality'),
+                  ));
+                  unit.maxHp = enhanced;
+                  unit.hp = Math.min(enhanced, unit.hp + enhanced - hp);
+                }
+            }
             if (priorGuards)
               for (const guard of this.bossOwnedSummons(e))
                 if (!priorGuards.has(guard.id) && guard.hp > 0)
@@ -2516,7 +2577,8 @@
               dy: Math.sin(a.angle + delta),
               speed: 260 * R.enemyProjectileMultiplier,
               life: (2.5 * R.balance.enemySpecialReachMultiplier) / R.enemyProjectileMultiplier,
-              damage: this.weakenedEnemyDamage(e),
+              damage: this.worldBossEffect(a, this.weakenedEnemyDamage(e), 'damage'),
+              ...(a.criticalExecution ? { criticalExecution: a.criticalExecution } : {}),
               manaDrain: a.manaDrain || 0,
               source: 'enemy',
               sourceId: e.id,
@@ -2554,7 +2616,12 @@
               ? a.waveLife
               : R.combatGeometry.ringLife * R.bossCadence.areaRangeMultiplier,
             tick: 0,
-            damage: a.slowOnly ? 0 : this.weakenedEnemyDamage(e),
+            damage: a.slowOnly ? 0 : this.worldBossEffect(
+              a, this.weakenedEnemyDamage(e), 'damage',
+            ),
+            slowDuration: a.slowDuration
+              ? this.worldBossEffect(a, a.slowDuration, 'slowDuration')
+              : a.slowDuration,
             radius: 0,
             age: 0,
             hit: [],
@@ -2651,16 +2718,16 @@
                 ? true
                 : this.hitParty(
                     u,
-                    (a.nightSkill === 'pounce' ||
-                      (a.captainSkill && !!a.criticalExecution) ||
-                      (e.type === 'boss' &&
-                        (e.family === 'thorn' || e.family === 'ridge') &&
-                        a.index === 0 && a.kind === 'cone' &&
-                        !!a.criticalExecution))
-                      ? this.worldCriticalDamage(
-                          a.criticalExecution, this.weakenedEnemyDamage(e) * a.coefficient,
+                    a.criticalExecution?.key?.startsWith('world/boss/')
+                      ? this.worldBossEffect(
+                          a, this.weakenedEnemyDamage(e) * a.coefficient, 'damage',
                         )
-                      : this.weakenedEnemyDamage(e) * a.coefficient,
+                      : (a.nightSkill === 'pounce' ||
+                          (a.captainSkill && !!a.criticalExecution))
+                        ? this.worldCriticalDamage(
+                            a.criticalExecution, this.weakenedEnemyDamage(e) * a.coefficient,
+                          )
+                        : this.weakenedEnemyDamage(e) * a.coefficient,
                     a.manaDrain || 0,
                     e.id,
                   );
@@ -2672,7 +2739,7 @@
                 victim: u === this.hero ? 'hero' : u.id,
                 // Calculate the original single-hit loss once. Each of the
                 // three roll ticks is already mitigated; armor must not apply thrice.
-                totalDamage: Math.max(
+                totalDamage: this.worldBossEffect(a, Math.max(
                   3,
                   this.weakenedEnemyDamage(e) * a.coefficient -
                     (u === this.hero
@@ -2681,7 +2748,7 @@
                         ? this.companionArmor(u.type)
                         : 5 + this.hero.level * 0.5) *
                       0.35,
-                ),
+                ), 'damage'),
                 life: 1.5,
                 elapsed: 0,
                 hits: 0,
@@ -2701,8 +2768,11 @@
               const d = Math.max(1, dist(u, e));
               this.move(
                 u,
-                { x: u.x + ((u.x - e.x) * a.push) / d, y: u.y + ((u.y - e.y) * a.push) / d },
-                a.push / 0.15,
+                {
+                  x: u.x + ((u.x - e.x) * this.worldBossEffect(a, a.push, 'pushDistance')) / d,
+                  y: u.y + ((u.y - e.y) * this.worldBossEffect(a, a.push, 'pushDistance')) / d,
+                },
+                this.worldBossEffect(a, a.push, 'pushDistance') / 0.15,
                 0.15,
               );
             }
@@ -2740,8 +2810,8 @@
               const seconds = this.regularSlowDuration(e, a, a.slowDuration || 4);
               this.applySlow(
                 u,
-                a.criticalExecution?.key === 'world/boss/thorn/2'
-                  ? this.worldCriticalSlowSeconds(a.criticalExecution, seconds)
+                a.criticalExecution?.key?.startsWith('world/boss/')
+                  ? this.worldBossEffect(a, seconds, 'slowDuration')
                   : seconds,
               );
             }
@@ -2787,11 +2857,13 @@
               a.hit.push(id);
               const landed = this.hitParty(
                 u,
-                a.captainSkill && a.charge
-                  ? this.worldCriticalDamage(
-                      a.criticalExecution, this.weakenedEnemyDamage(e) * a.coefficient,
-                    )
-                  : this.weakenedEnemyDamage(e) * a.coefficient,
+                a.criticalExecution?.key?.startsWith('world/boss/')
+                  ? this.worldBossEffect(a, this.weakenedEnemyDamage(e) * a.coefficient, 'damage')
+                  : a.captainSkill && a.charge
+                    ? this.worldCriticalDamage(
+                        a.criticalExecution, this.weakenedEnemyDamage(e) * a.coefficient,
+                      )
+                    : this.weakenedEnemyDamage(e) * a.coefficient,
                 a.manaDrain || 0,
                 e.id,
               );
