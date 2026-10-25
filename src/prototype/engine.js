@@ -4618,7 +4618,7 @@
       return this._tacticalRegroups?.get(e?.id) || null;
     }
     hawkRetreatLocked(e, family) {
-      return (this._hawkRetreatLocks?.get(this.zoneId + ':' + e?.id)?.[family] || 0) > this.s.time;
+      return (this._hawkRetreatLocks?.get(e)?.[family] || 0) > this.s.time;
     }
     hawkRetreatKind(e) {
       if (!e || e.hp <= 0 || !e.aggro || e.returning || this.attackResetProtected(e))
@@ -4626,17 +4626,16 @@
       const regroup = this.tacticalRogueRegroup(e);
       if (regroup && ['thinking','travel','escape'].includes(regroup.phase)) return 'regroup';
       if (e.telegraph?.rogueMove && e.telegraph.style === 'withdraw') return 'withdraw';
-      if (this._hawkBackpedalAt?.get(this.zoneId + ':' + e.id) === this.s.time) return 'backpedal';
+      if (this._hawkBackpedalAt?.get(e) === this.s.time) return 'backpedal';
       if (e.rangedAim?.withdrawal || e.telegraph?.withdrawal) return 'backpedal';
       return null;
     }
     hawkInterruptRetreat(e, family, seconds) {
       if (!family || !this.hawkRetreatKind(e)) return false;
-      if (!this._hawkRetreatLocks) this._hawkRetreatLocks = new Map();
-      const key = this.zoneId + ':' + e.id;
-      const current = this._hawkRetreatLocks.get(key) || {};
+      if (!this._hawkRetreatLocks) this._hawkRetreatLocks = new WeakMap();
+      const current = this._hawkRetreatLocks.get(e) || {};
       current[family] = Math.max(current[family] || 0, this.s.time + seconds);
-      this._hawkRetreatLocks.set(key,current);
+      this._hawkRetreatLocks.set(e,current);
       if (family === 'regroup') {
         // Keep combat and a local temporary leash rather than resetting home.
         this._tacticalRegroups ||= new Map();
@@ -4648,7 +4647,7 @@
         // A warned attack remains committed: suppress only its retreat motion.
         e.path = []; e.routeAge = 0;
       } else if (family === 'backpedal') {
-        this._hawkBackpedalAt?.delete(key);
+        this._hawkBackpedalAt?.delete(e);
         if (e.rangedAim) e.rangedAim.withdrawal = false;
         if (e.telegraph?.withdrawal) e.telegraph.withdrawal = false;
       }
