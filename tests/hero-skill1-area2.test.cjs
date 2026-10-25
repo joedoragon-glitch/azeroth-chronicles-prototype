@@ -7,6 +7,9 @@ const Skills = require('../src/prototype/skill-reference.js');
 const HeroArt = require('../src/prototype/hero-presentation.js');
 const Audio = require('../src/prototype/audio.js');
 const Visuals = require('../src/prototype/combat-visuals.js');
+const Archive = require('../src/prototype/archive.js');
+const fs = require('node:fs');
+const path = require('node:path');
 
 function near(a,b){assert(Math.abs(a-b)<1e-7,`${a} vs ${b}`);}
 for(const cls of ['paladin','mage','ranger']){
@@ -67,6 +70,40 @@ HeroArt.queue(events,(e,type,life,priority)=>pushed.push({...e,type,life,max:lif
 assert.deepEqual(pushed.map(f=>f.stage),[
   'skill1-cross','skill1-cross','skill1-wide-beam',
   'skill1-hawk-launch','skill1-hawk-flight','skill1-hawk-impact','skill1-hawk-expire']);
+// Keeper translations and game-shell localization stay separate from
+// historical Chronicle manuscript text.
+assert.equal(
+  Archive.translateArchive('Radiant Strike / Radiant Cross'),
+  'Golpe radiante / Cruz radiante',
+);
+assert.equal(
+  Archive.translateArchive('Arcane Beam / Wide Arcane Beam'),
+  'Rayo arcano / Rayo arcano amplio',
+);
+assert.equal(
+  Archive.translateArchive('Rapid Arrows / Hawk Interception'),
+  'Flechas rápidas / Intercepción del halcón',
+);
+const shell=fs.readFileSync(path.join(__dirname,'../src/prototype/app.js'),'utf8');
+const menu=fs.readFileSync(path.join(__dirname,'../src/prototype/menus.js'),'utf8');
+for(const phrase of ['Retirada interrumpida.','Golpe radiante / Cruz radiante',
+  'Rayo arcano amplio','Intercepción del halcón'])
+  assert(shell.includes(phrase),'bilingual shell must include '+phrase);
+assert(menu.includes('info.auto'), 'journal shows separate automatic basics');
+
+{
+  const g = new C('normal','paladin',()=>0.9), from={x:g.hero.x,y:g.hero.y};
+  g.s.mercyTime=0;
+  g.zone().enemies=[];
+  g.clearSegment=(a,b)=>b.x<=from.x+55;
+  g.resolveHeroCrossPulse({
+    zone:g.zoneId,deaths:g.s.statistics.deaths,from,angle:0,
+    reach:190,halfWidth:35,damage:40,admitted:[],targetId:'none',
+  },0);
+  const pulse=g.effects.find(e=>e.type==='heroSkillArea');
+  assert(pulse && pulse.arms.length===4,'four clipped arms have actual endpoints');
+  assert(pulse.arms[0].x<=from.x+56,'east arm stops at authoritative wall');
+}
 const drawn=[];
 const ctx=new Proxy({}, {get(target,property){
   if(property==='createLinearGradient'||property==='createRadialGradient')
