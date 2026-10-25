@@ -217,6 +217,20 @@
       if(closed)return false;
       if(mode==='webgl2'||phase==='preparing')
         return fallback('webgl-context-or-render-failure',details||getFailureDetails());
+      // ANGLE can throw during a draw before the browser dispatches its
+      // asynchronous webglcontextlost event. Canvas is already safe by then;
+      // refine the diagnosis, but never reveal WebGL or run fallback twice.
+      if(phase==='canvas'&&mode==='canvas2d'&&
+         lastFallbackReason==='webgl-context-or-render-failure'&&
+         lastFailure?.type==='render-exception'&&details?.type==='context-loss'){
+        const oldResources=lastFailure.resources;
+        const freshResources=details.resources;
+        recordFailure('webgl-context-or-render-failure',{
+          ...details,
+          resources:freshResources?.loadedTextures>0||freshResources?.proceduralTextures>0
+            ? freshResources : oldResources
+        });
+      }
       return false;
     }
     function dispose(){
