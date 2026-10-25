@@ -1086,7 +1086,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_COVERAGE_NOTES_20261025.md",
-      "gitBlobSha": "55ebe5b4a33a53ccde8396a2354d572ec48c0c5f",
+      "gitBlobSha": "f78166735069c45310c7085ad11c331da56fec8b",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -1966,14 +1966,14 @@
     },
     {
       "path": "docs/MECHANIC_DEVELOPMENT.md",
-      "gitBlobSha": "1a1ca288b604b509f3e4fb2a2ee64bb5b8f8b6d4",
+      "gitBlobSha": "ca17f8257babab5425862789e05ea255d156021d",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
       "topic": "general_or_unresolved",
       "role": "subject_workflow_or_contract",
       "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
+      "reviewDepth": "current_entrypoint_checked"
     },
     {
       "path": "docs/MECHANICS_AUDIT_V081.md",
