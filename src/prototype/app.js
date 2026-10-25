@@ -6717,6 +6717,19 @@
       }
       fps.observe(now, performance.now() - frameStart, draw, adaptiveSkipped);
       const frameWorkMs = performance.now() - frameStart;
+      if (effectRecording)
+        renderer.noteEffectFrame({
+          gameTime: game.s.time,
+          intervalMs,
+          frameWorkMs,
+          simulationMs: stageTimes.simulationMs,
+          renderMs: stageTimes.renderMs,
+          drawn: draw,
+          simulating,
+          recovering,
+          fpsLimited: !eligibleDraw,
+          adaptiveSkipped,
+        });
       frameSkip.observe(now, frameWorkMs, stageTimes.renderMs, draw);
       const optimizationDecision = autoOptimization.observe(now, {
         activePlay: simulating || recovering,
