@@ -41,7 +41,12 @@ for (const [healerAggro, targetAggro] of [[false, false], [false, true], [true, 
   const patient = mob('wolf', 350, { hp: 400, aggro: targetAggro, pack: 'western-wolves' });
   // Keep actual combat targeting alive without a distant pursuit disrupting
   // this focused restorative clock.
-  if (healerAggro || targetAggro) g.hero.x = 600;
+  if (healerAggro || targetAggro) {
+    // Hold the intended combat-state matrix stable. Target acquisition is
+    // unrelated to the healing test; both engaged actors stay in leash range.
+    g.hero.x = 600;
+    g.enemyAcquisitionRange = () => 0;
+  }
   step();
   assert(patient.supportHeal, 'automatic cross-species cast begins');
   assert(patient.supportHeal.allowIdle, 'ordinary-only effect survives idle state');
