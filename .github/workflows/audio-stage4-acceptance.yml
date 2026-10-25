@@ -53,8 +53,16 @@ jobs:
           cache: npm
       - name: Install locked tools
         run: npm ci --ignore-scripts
-      - name: Install Chromium for narrow audio audition
-        run: npx playwright install --with-deps chromium
+      - name: Prepare Chromium for narrow audio audition
+        shell: bash
+        run: |
+          if [ -x /usr/bin/google-chrome ]; then
+            echo 'CHROMIUM_EXECUTABLE=/usr/bin/google-chrome' >> "$GITHUB_ENV"
+          elif [ -x /usr/bin/chromium ]; then
+            echo 'CHROMIUM_EXECUTABLE=/usr/bin/chromium' >> "$GITHUB_ENV"
+          else
+            npx playwright install --with-deps chromium
+          fi
       - name: Verify real recorded PCM, offline-rendered sample mix, desktop and phone-sized behavior
         run: node tests/audio-audition-browser.test.cjs
       - name: Upload audio audition failure evidence
