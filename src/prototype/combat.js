@@ -364,7 +364,7 @@
               ally.hp > 0 &&
               !ally.neutral &&
               !ally.returning &&
-              !['travel', 'escape'].includes(this.tacticalRogueRegroup(ally)?.phase) &&
+              !['travel', 'escape', 'extended'].includes(this.tacticalRogueRegroup(ally)?.phase) &&
               dist(ally, e) <= radius,
           )
           .sort((a, b) => dist(a, e) - dist(b, e) || a.id.localeCompare(b.id));
@@ -407,7 +407,7 @@
             ally.hp > 0 &&
             !ally.neutral &&
             !ally.returning &&
-            !['travel', 'escape'].includes(this.tacticalRogueRegroup(ally)?.phase) &&
+            !['travel', 'escape', 'extended'].includes(this.tacticalRogueRegroup(ally)?.phase) &&
             dist(ally, e) <= R.tacticalFoundation.supportRadius + 35,
         ).length;
       }
