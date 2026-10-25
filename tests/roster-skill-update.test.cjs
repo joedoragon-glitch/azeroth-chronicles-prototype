@@ -1,8 +1,12 @@
 'use strict';
 const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine.js');
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 function scene(type, family, distance) {
   const g = new C('normal', 'paladin', () => 0.9);
+  // Today's tutorial requires a hero-led first engagement. A trained roster
+  // test must complete that gate before observing autonomous companion casts.
+  completeFieldOpening(g);
   const z = g.zone();
   z.props = [];
   z.npcs = [];
