@@ -10,23 +10,11 @@
   "semantics": {
     "role": "Routing-only classification, not correctness or renewed authorization",
     "censusSource": "Old table membership, not commit-creation date",
-    "reviewDepth": "Full-body review is not claimed by header_screened or path_only",
+    "reviewDepth": "Full-body review is not claimed by header_screened or path_only; full_body_pr_disposition_checked means its text and indicated PR disposition were checked, NOT a comprehensive current-runtime or every-claim recertification",
     "authority": "Only current_entrypoint is routing authority; source and owner consent always prevail",
     "gitBlobSha": "Git blob SHA of the exact candidate document bytes"
   },
   "verifiedPrStates": [
-    {
-      "number": 421,
-      "state": "merged"
-    },
-    {
-      "number": 426,
-      "state": "merged"
-    },
-    {
-      "number": 439,
-      "state": "merged"
-    },
     {
       "number": 407,
       "state": "merged"
@@ -36,7 +24,11 @@
       "state": "merged"
     },
     {
-      "number": 442,
+      "number": 421,
+      "state": "merged"
+    },
+    {
+      "number": 426,
       "state": "merged"
     },
     {
@@ -56,8 +48,32 @@
       "state": "closed_unmerged"
     },
     {
+      "number": 434,
+      "state": "merged"
+    },
+    {
+      "number": 439,
+      "state": "merged"
+    },
+    {
+      "number": 442,
+      "state": "merged"
+    },
+    {
+      "number": 448,
+      "state": "merged"
+    },
+    {
       "number": 454,
       "state": "closed_unmerged"
+    },
+    {
+      "number": 455,
+      "state": "closed_unmerged"
+    },
+    {
+      "number": 459,
+      "state": "merged"
     }
   ],
   "documents": [
@@ -114,7 +130,14 @@
       "topic": "narrative_and_archive",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 432,
+        "integratedByPr": 434,
+        "disposition": "merged_via_integration",
+        "caution": "Archive bookshelf/reader candidate based on N1/N1a; #432 closed unmerged; A2–A3 included in merged #434."
+      }
     },
     {
       "path": "docs/A4_A5_ARCHIVE_BILINGUAL_VALIDATION_20261024.md",
@@ -125,7 +148,14 @@
       "topic": "narrative_and_archive",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 433,
+        "integratedByPr": 434,
+        "disposition": "merged_via_integration",
+        "caution": "Bilingual reference and focused browser tests on draft #433; closed unmerged but reconciled as part of merged #434; historical main-versus-stack blocker is not a present release gate."
+      }
     },
     {
       "path": "docs/ABYSS_AIR_SUPERIORITY_CANON.md",
@@ -257,7 +287,14 @@
       "topic": "narrative_and_archive",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 434,
+        "integratedByPr": 434,
+        "disposition": "merged_via_integration",
+        "caution": "Integrated dev.173 Archive/approved-narrative candidate; #434 merged and published; premerge authorization checklist is historical."
+      }
     },
     {
       "path": "docs/ART_CHECK_DEV177_REPAIR_20261025.md",
@@ -961,7 +998,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 426,
+        "integratedByPr": 426,
+        "disposition": "merged_via_integration",
+        "caution": "Published dev.169 performance reference after #426 merge; later dev.185 remains current release; synthetic collision numbers do not establish hardware FPS gain."
+      }
     },
     {
       "path": "docs/DARK_CROWN_REGIME_LAYOUT.md",
@@ -1086,7 +1130,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_COVERAGE_NOTES_20261025.md",
-      "gitBlobSha": "f78166735069c45310c7085ad11c331da56fec8b",
+      "gitBlobSha": "071813b0b4d1c17fcdf1ed676ba04f7a56c2fec4",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -1192,7 +1236,14 @@
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 448,
+        "integratedByPr": 448,
+        "disposition": "merged_via_integration",
+        "caution": "Ordinary cross-species healing implementation record originating on dev.180/181 candidate; PR #448 subsequently merged for dev.182; detailed rates are snapshot-specific and must be checked against present engine."
+      }
     },
     {
       "path": "docs/ENEMY_SKILL_VFX_AUDIT.md",
@@ -1863,7 +1914,14 @@
       "topic": "narrative_and_archive",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 433,
+        "integratedByPr": 434,
+        "disposition": "merged_via_integration",
+        "caution": "Dev.170 rule/reference audit on stacked #433; its reconciled numerical/Archive changes traveled through #434; exact figures remain date-bound, not independently verified against current dev.185 rules."
+      }
     },
     {
       "path": "docs/KEEPER_REFERENCE_WRITING.md",
@@ -2083,7 +2141,14 @@
       "topic": "narrative_and_archive",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 428,
+        "integratedByPr": 434,
+        "disposition": "merged_via_integration",
+        "caution": "Author-approved bilingual text and draft N1 delivery tests; source PR #428 closed unmerged, combined work published through #434; implementation proof comes from merged integration, not standalone draft CI."
+      }
     },
     {
       "path": "docs/N1A_SCENE_RECONCILIATION_20261024.md",
@@ -2116,7 +2181,14 @@
       "topic": "navigation_and_map",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 421,
+        "integratedByPr": 421,
+        "disposition": "merged_via_integration",
+        "caution": "Dated Stage 2 navigation ownership/cancel checkpoint; stages 2–5 merged together in #421; Stage 2 TODOs are not currently pending."
+      }
     },
     {
       "path": "docs/NAVIGATION_STAGE3_20261023.md",
@@ -2127,7 +2199,14 @@
       "topic": "navigation_and_map",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 421,
+        "integratedByPr": 421,
+        "disposition": "merged_via_integration",
+        "caution": "Dated ferry-frontage and representative route probe; merged via #421; 44/44 synthetic route checks do not prove all-device route usability."
+      }
     },
     {
       "path": "docs/NAVIGATION_STAGE4_20261023.md",
@@ -2149,7 +2228,14 @@
       "topic": "navigation_and_map",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 421,
+        "integratedByPr": 421,
+        "disposition": "merged_via_integration",
+        "caution": "Dated Stage 5 marker/touch/navigation evidence; merged via #421; historical unchecked final-audit and merge items should not be resurrected."
+      }
     },
     {
       "path": "docs/NERI_PROJECTILE_PET_20261020.md",
@@ -2776,7 +2862,14 @@
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 459,
+        "integratedByPr": 459,
+        "disposition": "merged_via_integration",
+        "caution": "Premerge integration plan for #454/#455; their selected changes reached main through merged #459, despite source PRs being closed unmerged. Unchecked historical release gates are not present authorization."
+      }
     },
     {
       "path": "docs/RESOURCE_DISCOVERY_DEV132.md",
