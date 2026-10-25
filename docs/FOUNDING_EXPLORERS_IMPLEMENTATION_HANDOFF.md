@@ -105,6 +105,19 @@ Founding Legends/Pathfinders competition, first-to-clear races, milestone/achiev
 
 **Evidence limits:** GitHub main/package, PR statuses/bodies, and listed files were read live. PR body statements are contributor claims, not independent acceptance. No new native tests, browser tests, phone tests, real-player study, Pages URL inspection, forum access, or public post were performed. The original charter rev.3.0 remains referenced but not committed in full. Any agent continuing must re-evaluate this audit against the then-current repository.
 
+
+## Original charter recovered for review — 2026-10-25
+
+The original uploaded `Founding_Adventurers_Program_Audited_Proposal_2026-10-22.docx` was located in the current project workspace and inspected directly. It identifies itself as **“Founding Adventurers Program — Audited Project Proposal and Implementation Charter,” revision 3.0, prepared 22 October 2026**, source checkpoint `869049797d5e29270886871c89068f648c1f2a6c`. It has 204 document paragraphs and 10 tables. **The DOCX itself has NOT been committed to GitHub, and this note is not a full transcription.** Future chats that cannot access the project attachment must still obtain the original before claiming verbatim archival.
+
+**Source-derived scope distinctions:** The original proposed *three* separate tracks: **E — Founding Explorers**, **P — Founding Pathfinders**, and **L — Founding Legends**. The Explorer track accepts genuine first-session feedback (including inability to start), asks where the player reached, what was enjoyable/confusing, and what should change; no boss clear, technical file, discovered bug, praise or public identity is required. Its original suggested recognition included optional credits/forum thanks, but **the owner's later decision narrows the launch to optional forum acknowledgment only**; in-game credits are separately deferred. The original recommended broader milestone ledger, claim validator, es-419 parity and competition fairness rules as future gated work, **not current Explorer prerequisites**.
+
+**Unapproved owner decisions in the original:** seven challenge categories, prize caps, legacy-save competition fairness, evidence/privacy fields, bilingual glossary review, UTC contest start, appeals/ties and response cadence. The current Explorer-only owner decisions supersede the charter's suggested implementation sequencing where they differ; do not accidentally reopen the competitive track or infer consent.
+
+**Source history warning:** The charter describes dev.166 and an unmerged PixiJS #407 as of 22 October; both are historical. This project's latest verified source baseline is dev.185 `e3c78266b28f` as of the afternoon audit, and must be checked anew before use.
+
+**Outstanding archival task:** if the owner wants the complete source charter accessible to future GitHub-only agents, commit a faithful archival copy (ideally the original binary DOCX via an approved binary-capable workflow, or a reviewed full text extraction preserving its ten tables) in a separate clearly labeled historical-source location. Do not substitute an abbreviated summary or silently represent the extracted text as the original document.
+
 ## Mandatory handoff instruction
 
 In a new chat, read this file and the linked PR, fetch latest main and relevant PRs, update the reconciliation log, then continue **only the next unaccepted checkpoint**. Never silently promote source audit to passed testing or draft copy to a published invitation. Owner must approve feature scope, public commitments, merging and deployment separately.
