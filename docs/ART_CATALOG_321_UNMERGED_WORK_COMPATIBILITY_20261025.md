@@ -2,6 +2,12 @@
 
 **25 October 2026 · PR #469 remains draft · no merge or deployment.** This record complements the [deep art/parity assessment](ART_CATALOG_321_DEEP_RENDERER_ASSESSMENT_20261025.md) and [successful first Crown-loot repair evidence](evidence/ART_CATALOG_321_CROWN_LOOT_FIX_VERIFICATION_20261025.json). The purpose is to preserve **prior development decisions**, not overwrite prior branches or treat a passing check as a complete release certification.
 
+## Fresh head-pinned integration update — PR #447 forward-port verified
+
+**Supersedes the old #447 conflict verdict in the historical table below.** [Cross-draft run #40234173245](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40234173245) tested this audit head `49e606d2607209b4565181341a6743aff9b7433b` against **new PR #447 head `03203750ed2fa5989dd595592c385953c70b63d2`**. The three-way merge is now **CLEAN** and all **4/4** selected source syntax/Pixi regression checks passed in the temporary combined worktree. PR #447 was updated independently; no edits to its branch or to the canonical old Pixi browser test were made from #469. It remains draft/unmerged. The earlier conflict correctly described its **old** head and is retained for provenance, not as today's blocker.
+
+PR **#445** remains an inherited conflict in `scripts/material-pipeline.cjs` against current `main`; #469 does not touch that pipeline. The exact present-ten-workstream result is **nine clean passing pairwise combinations and one inherited upstream conflict**. This is not simultaneous full-PR certification or a merge authorization.
+
 ## Scope and independent evidence
 
 The [PR-only, isolated cross-draft test](../tools/visual-review/art321-cross-draft-regression.cjs) uses real Git three-way `merge-tree --write-tree` against the **exact live GitHub pull-request heads**, builds a **temporary local, unpushed commit/worktree** for clean results, syntax-checks the combined Canvas and Pixi renderers, and runs narrowly selected native Node regressions **inside the combined source tree**. Each temporary worktree is deleted after use. No GitHub PR, remote branch, active game, save, artwork, deployment or normal CI workflow is altered.
