@@ -145,6 +145,9 @@
           unit,
           this.partyChargeNow() + R.chargedSkills.interrupt.recoverySeconds,
         );
+        // This marks the next legal first-special opportunity; it never
+        // changes the 8/12-second clocks or the interruption recovery.
+        this.rememberFailedPetCharge?.(unit);
       }
       recordPartyChargeDamage(unit, actualLostHp) {
         const cast = this.partyChargeState(unit);
