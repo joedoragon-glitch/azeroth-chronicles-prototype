@@ -55,6 +55,16 @@
 
 
     class Party {
+      // Stage 2: only six Soldier/Archer combat moves; feature gate is absent in production.
+      troopCriticalRelease(u, move) {
+        if (!this._criticalPartyNative || !['soldier', 'archer'].includes(u?.type)) return null;
+        return this._criticalPartyNative.release(this, 'troop/' + u.type + '/' + move, u.id);
+      }
+      troopCriticalDamage(receipt, amount) {
+        return receipt?.critical
+          ? this._criticalPartyNative.enhance(receipt, amount, 'damage')
+          : amount;
+      }
 
       // Read only the existing unit and judgment state. Active samples include
       // companions and boss pets; the full current roster includes benched units.
@@ -1074,6 +1084,7 @@
           return false;
         if (u.type === 'pet') return this.petDefensiveCounter(u, e);
         u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+        const criticalReceipt = this.troopCriticalRelease(u, 'basic');
         if (u.type === 'archer') {
           const d = Math.max(1, dist(u, e));
           this.s.projectiles.push({
@@ -1083,14 +1094,17 @@
             dx: (e.x - u.x) / d,
             dy: (e.y - u.y) / d,
             target: e.id,
-            damage: this.companionAttackDamage(u),
+            damage: this.troopCriticalDamage(criticalReceipt, this.companionAttackDamage(u)),
             source: u.id,
+            ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             speed: 450,
             style: 'arrow',
           });
           return true;
         }
-        const hit = this.damage(e, this.companionAttackDamage(u), u.id);
+        const hit = this.damage(
+          e, this.troopCriticalDamage(criticalReceipt, this.companionAttackDamage(u)), u.id,
+        );
         if (hit)
           this.event('melee', {
             actor: 'companion',
@@ -1312,6 +1326,7 @@
         if (!e || dist(e, u) > reach || !this.line(u, e) || !this.tacticalDirectTargetable(e))
           return;
         u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+        const criticalReceipt = this.troopCriticalRelease(u, 'basic');
         if (u.type === 'archer') {
           const d = Math.max(1, dist(u, e));
           this.s.projectiles.push({
@@ -1321,12 +1336,15 @@
             dx: (e.x - u.x) / d,
             dy: (e.y - u.y) / d,
             target: e.id,
-            damage: this.companionAttackDamage(u),
+            damage: this.troopCriticalDamage(criticalReceipt, this.companionAttackDamage(u)),
             source: u.id,
+            ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             speed: 450,
             style: 'arrow',
           });
-        } else if (this.damage(e, this.companionAttackDamage(u), u.id))
+        } else if (this.damage(e, this.troopCriticalDamage(
+          criticalReceipt, this.companionAttackDamage(u),
+        ), u.id))
           this.event('melee', {
             actor: 'companion',
             role: 'soldier',
@@ -1445,7 +1463,10 @@
         const base = this.companionAttackDamage(u);
         if (u.type === 'soldier') {
           if (dist(u, target) > 80 || !this.line(u, target)) return false;
-          if (!this.damage(target, base * cfg.multiplier, u.id)) return false;
+          const criticalReceipt = this.troopCriticalRelease(u, 'first');
+          if (!this.damage(
+            target, this.troopCriticalDamage(criticalReceipt, base * cfg.multiplier), u.id,
+          )) return false;
           const veteran = R.companionSkills.veteran;
           if (
             (this.s.expeditionRank || 1) >= veteran.expeditionRank &&
@@ -1488,6 +1509,7 @@
           return true;
         }
         if (dist(u, target) > 320 || !this.line(u, target)) return false;
+        const criticalReceipt = this.troopCriticalRelease(u, 'first');
         u.skill1Cd = cfg.cooldown;
         u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
         u.cd = Math.max(u.cd, 0.4);
@@ -1500,8 +1522,9 @@
             dx: (target.x - u.x) / shot,
             dy: (target.y - u.y) / shot,
             target: target.id,
-            damage: base,
+            damage: this.troopCriticalDamage(criticalReceipt, base),
             source: u.id,
+            ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             speed: 520,
             delay: j * 0.08,
             style: 'arrow',
@@ -1599,8 +1622,9 @@
           !targets.length
         )
           return false;
+        const criticalReceipt = this.troopCriticalRelease(u, 'second');
         const base = this.companionAttackDamage(u),
-          damage = base * def.multiplier,
+          damage = this.troopCriticalDamage(criticalReceipt, base * def.multiplier),
           angle = Math.atan2(target.y - u.y, target.x - u.x);
         let hits = 0;
         for (const e of targets) if (this.damage(e, damage, u.id, { area: true })) hits++;
@@ -2934,6 +2958,7 @@
           if (this.companionTrySkill(u, e)) return;
           if (u.cd <= 0) {
             u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+            const criticalReceipt = this.troopCriticalRelease(u, 'basic');
             const shot = Math.max(1, d);
             this.s.projectiles.push({
               id: 'projectile-' + this.s.nextId++,
@@ -2942,8 +2967,9 @@
               dx: (e.x - u.x) / shot,
               dy: (e.y - u.y) / shot,
               target: e.id,
-              damage: this.companionAttackDamage(u),
+              damage: this.troopCriticalDamage(criticalReceipt, this.companionAttackDamage(u)),
               source: u.id,
+              ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               speed: 450,
               style: 'arrow',
             });
@@ -2974,7 +3000,10 @@
           );
         else if (u.cd <= 0) {
           u.cd = 0.85 / this.companionRallyAttackSpeed(u);
-          if (this.damage(e, this.companionAttackDamage(u), u.id))
+          const criticalReceipt = this.troopCriticalRelease(u, 'basic');
+          if (this.damage(e, this.troopCriticalDamage(
+            criticalReceipt, this.companionAttackDamage(u),
+          ), u.id))
             this.event('melee', {
               actor: 'companion',
               role: 'soldier',
@@ -3291,6 +3320,7 @@
                   continue;
                 }
                 u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+                const criticalReceipt = this.troopCriticalRelease(u, 'basic');
                 if (u.type === 'archer') {
                   const d = Math.max(1, dist(u, pursuer));
                   this.s.projectiles.push({
@@ -3300,12 +3330,15 @@
                     dx: (pursuer.x - u.x) / d,
                     dy: (pursuer.y - u.y) / d,
                     target: pursuer.id,
-                    damage: this.companionAttackDamage(u),
+                    damage: this.troopCriticalDamage(criticalReceipt, this.companionAttackDamage(u)),
                     source: u.id,
+                    ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
                     speed: 450,
                     style: 'arrow',
                   });
-                } else if (this.damage(pursuer, this.companionAttackDamage(u), u.id))
+                } else if (this.damage(pursuer, this.troopCriticalDamage(
+                  criticalReceipt, this.companionAttackDamage(u),
+                ), u.id))
                   this.event('melee', {
                     actor: 'companion',
                     role: 'soldier',
