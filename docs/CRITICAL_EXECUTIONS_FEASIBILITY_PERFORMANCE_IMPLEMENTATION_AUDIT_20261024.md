@@ -1,4 +1,6 @@
 # Critical Executions — Feasibility, Performance, and Implementation Audit
+
+> **CURRENT CONTINUATION RULE (24 October 2026):** This source-only report records an earlier planning snapshot. The owner subsequently required **all stages to remain in the same continuing draft PR #440**; the recommendation below for separate PRs is superseded. Stage 1 code and a Stage 2 opt-in adapter/tier registry now exist, but no gameplay is enabled. **Read [PR440 independent Work handoff](PR440_INDEPENDENT_WORK_HANDOFF_20261024.md) and [stage gates](PR440_STAGE_GATES_AND_REGRESSION_MATRIX_20261024.md) FIRST** for up-to-date status, owner decisions and safe continuation. Do not mistake older no-code or estimated-FPS language for current measured results.
 **24 October 2026 · PR #440 · Source-only audit against current main at PR base `e4e8234b5f784ddc9492fe79d956fd0a696b12af`**  
 **Disposition:** Technically feasible; predicted incremental *per-action* runtime cost low if designed as described. Integration and balance risks are substantial. **No FPS/CPU/memory benchmark, native hardware playtest, automated test execution or implementation has been performed for this document.** This report is a plan, not a test certificate or authorization to merge/deploy.
 
