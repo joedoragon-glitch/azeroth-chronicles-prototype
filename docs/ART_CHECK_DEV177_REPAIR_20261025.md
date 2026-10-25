@@ -10,6 +10,8 @@ Base: main `ae0c0084c90a397738376f851d1d22c902c67279`. Draft review only; no gam
 
 3. `scripts/material-pipeline.cjs`: its VM loads the renderer with `PrototypeRules` but without `PrototypeHighlands`. The renderer's CommonJS fallback therefore tries `require('./highlands.js')` in the reference VM, which provides no `require` function. Supply the concrete Highlands module explicitly, as the sprite pipeline already does. Keep the VM restricted and the material checks intact.
 
+The full 28-candidate source-evidence sweep also found two unregistered side-interior candidates (`terrain:floor:side-march-watchhouse`, T021; `terrain:floor:side-highlands-signal`, T022) still carrying their respective obsolete regional palette literals. Their future catalog/specification/evidence entries now reference the actual regional floor owners. Neither candidate had an active material registration, and no new artwork or approval is created.
+
 ## Acceptance and limitations
 
 Verify `node scripts/sprite-pipeline.cjs check`, `node scripts/sprite-scope-audit.cjs --check`, and `node scripts/material-pipeline.cjs check`, together with focused sprite/scope/material tests, reproducible packaging and changed-file formatting. Approval is never inferred from the passage of tests, nor can a historic image's canon/dependency hash be silently rewritten. All active materials remain subject to strict provenance checks; historical revisions remain byte-verifiable. All original approved PNG and source files, test decisions, game rules, save schema and Canvas renderer remain unchanged.

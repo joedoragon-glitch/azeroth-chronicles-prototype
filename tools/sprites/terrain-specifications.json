@@ -210,7 +210,7 @@
       "name": "Flooded Marches side-interior floor material",
       "status": "candidate",
       "sourceOwner": "floor/regional-interior-fallback",
-      "palette": ["#26444b", "#31535a", "#203b42", "#85ada6"],
+      "palette": ["#3e5544", "#4b614b", "#30483c", "#a2b48e"],
       "cues": "Current regional interior floor palette with subdued worn mineral grain and fine chips. Use the existing interior treatment, not outdoor grass, foliage, mud puddles or a newly invented architectural style. Keep drawn slab joints and room edges procedural."
     },
     {
@@ -219,7 +219,7 @@
       "name": "Ironroot Highlands side-interior floor material",
       "status": "candidate",
       "sourceOwner": "floor/regional-interior-fallback",
-      "palette": ["#485447", "#56614d", "#3b493f", "#b1b59a"],
+      "palette": ["#4a593b", "#74734b", "#3b4d36", "#c6b079"],
       "cues": "Current regional interior floor palette with subdued worn mineral grain and fine chips. Use the existing interior treatment, not outdoor grass, foliage, mud puddles or a newly invented architectural style. Keep drawn slab joints and room edges procedural."
     },
     {

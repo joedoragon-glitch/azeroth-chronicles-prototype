@@ -668,10 +668,10 @@
       "key": "terrain:floor:side-march-watchhouse",
       "owner": "floor/regional-interior-fallback",
       "palette": [
-        "#26444b",
-        "#31535a",
-        "#203b42",
-        "#85ada6"
+        "#3e5544",
+        "#4b614b",
+        "#30483c",
+        "#a2b48e"
       ]
     },
     {
@@ -679,10 +679,10 @@
       "key": "terrain:floor:side-highlands-signal",
       "owner": "floor/regional-interior-fallback",
       "palette": [
-        "#485447",
-        "#56614d",
-        "#3b493f",
-        "#b1b59a"
+        "#4a593b",
+        "#74734b",
+        "#3b4d36",
+        "#c6b079"
       ]
     },
     {
