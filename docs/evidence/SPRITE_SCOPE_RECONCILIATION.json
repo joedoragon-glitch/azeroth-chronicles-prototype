@@ -459,10 +459,10 @@
       "key": "terrain:ground:march",
       "owner": "floor/groundDetail/terrain",
       "palette": [
-        "#26444b",
-        "#31535a",
-        "#203b42",
-        "#85ada6"
+        "#3e5544",
+        "#4b614b",
+        "#30483c",
+        "#a2b48e"
       ]
     },
     {

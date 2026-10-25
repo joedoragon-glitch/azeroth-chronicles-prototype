@@ -456,18 +456,6 @@
       "anchorY": 0.75,
       "labelHeight": 64
     },
-    "prop:ore-sorting-bay:highlands": {
-      "src": "./assets/sprites/prop-ore-sorting-bay-highlands-68526686bb7fc6528740e51dfe60c72a86d6200f4b71eadfb36a0eab6dc61b9f.png",
-      "width": 192,
-      "height": 192,
-      "hash": "68526686bb7fc6528740e51dfe60c72a86d6200f4b71eadfb36a0eab6dc61b9f",
-      "revision": "fc28aea01a3d1a73429ea214403d44e56b354e03d8715021f569f4b9db3ad305",
-      "displayWidth": 192,
-      "displayHeight": 192,
-      "anchorX": 0.5,
-      "anchorY": 0.75,
-      "labelHeight": 64
-    },
     "prop:caravan-loading-bay:highlands": {
       "src": "./assets/sprites/prop-caravan-loading-bay-highlands-1302399f4bf539674742f3e074b4d8c94df75bd2865c2029450b5816c85b92d6.png",
       "width": 192,

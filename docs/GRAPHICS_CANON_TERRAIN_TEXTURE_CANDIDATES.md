@@ -63,13 +63,15 @@ Generate exactly one opaque, seamless square material texture per call, flat top
 
 **Current renderer owner:** `floor/groundDetail/terrain`
 
-**Palette reference:** #26444b, #31535a, #203b42, #85ada6
+**Palette reference:** #3e5544, #4b614b, #30483c, #a2b48e
 
-**Canonical cues:** Muted teal-green marsh earth with darker damp mud and restrained reed/grass grain. No puddles.
+**Canonical cues:** Muted wet green marsh earth with darker damp soil and restrained reed/grass grain. No puddles.
 
 **Image-generation prompt:**
 
-> Create exactly one opaque seamless square 2D game material texture for Azeroth Chronicles, flat top-down, neutral unlit material, no baked perspective or shadows. Preserve the current procedural reference and these palette relationships: #26444b, #31535a, #203b42, #85ada6. Muted teal-green marsh earth with darker damp mud and restrained reed/grass grain. No puddles. Add only restrained fine material detail with small-gameplay-scale readability. Tile continuously on both axes. No labels, UI, scene, objects, hard borders, repeated emblem or map geometry.
+> Create exactly one opaque seamless square 2D game material texture for Azeroth Chronicles, flat top-down, neutral unlit material, no baked perspective or shadows. Preserve the current procedural reference and these palette relationships: #3e5544, #4b614b, #30483c, #a2b48e. Muted wet green marsh earth with darker damp soil and restrained reed/grass grain. No puddles. Add only restrained fine material detail with small-gameplay-scale readability. Tile continuously on both axes. No labels, UI, scene, objects, hard borders, repeated emblem or map geometry.
+
+**Current status:** The previous T002 texture and approval are preserved in material rollback history because they were made for the superseded teal palette. The current procedural palette above is the sole source for future material candidates; new raster appearance requires ordinary native/wrap review and recorded approval. The current outdoor March floor does not paint a terrain material.
 
 ### T003 — Ironroot Highlands ground
 

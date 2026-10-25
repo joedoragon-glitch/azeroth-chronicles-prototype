@@ -45,7 +45,13 @@ function reference(key) {
       regions.findIndex((r) => name === r || name.includes('-' + r + '-')),
     ),
     rules = require('../src/prototype/rules.js');
-  const sandbox = { PrototypeRules: rules, performance: { now: () => 16000 } };
+  // The renderer imports both rules and Highlands when evaluated outside Node's module wrapper.
+  // Supply the same dependencies as the sprite pipeline; keep the sandbox without require.
+  const sandbox = {
+    PrototypeRules: rules,
+    PrototypeHighlands: require('../src/prototype/highlands.js'),
+    performance: { now: () => 16000 },
+  };
   vm.runInNewContext(fs.readFileSync(path.join(root, 'src/prototype/visuals.js'), 'utf8'), sandbox);
   const V = sandbox.PrototypeVisuals,
     canvas = createCanvas(256, 256),

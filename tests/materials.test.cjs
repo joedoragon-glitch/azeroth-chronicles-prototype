@@ -142,8 +142,17 @@ const entry = (n) => ({
           );
     assert.deepEqual([...a.subarray(0, 4)], [17, 34, 51, 255], 'clip leaves void untouched');
     const before = JSON.stringify(require('../assets/materials/manifest.json'));
+    const referenceBytes = Pipeline.reference('terrain:ground:march');
+    const referenceMetadata = await sharp(referenceBytes).metadata();
+    assert.deepEqual([referenceMetadata.width, referenceMetadata.height], [256, 256]);
     await Pipeline.check();
     assert.equal(JSON.stringify(require('../assets/materials/manifest.json')), before);
+    const stored = require('../tools/sprites/materials/approved.json');
+    assert(!stored.assets['terrain:ground:march'], 'obsolete March palette is not published');
+    assert(
+      stored.history['terrain:ground:march'].some((r) => r.review?.status === 'approved'),
+      'approved earlier March material stays verifiable as rollback history',
+    );
     // Exercise real registration and retained revisions in a disposable checkout.
     const checkout = path.join(dir, 'checkout'),
       root = path.resolve(__dirname, '..');

@@ -10,15 +10,6 @@
       "opacity": 0.28,
       "revision": "b8bbf9f365d240dad6bb42ac87b2e3fdc96b639fd0366fcfe8b87bf6f5166556"
     },
-    "terrain:ground:march": {
-      "src": "./assets/materials/b1782a435760ed6bce0e5b1b5ad87ae8709ac22ae21c880e0b6a70bf13712276.png",
-      "hash": "b1782a435760ed6bce0e5b1b5ad87ae8709ac22ae21c880e0b6a70bf13712276",
-      "width": 256,
-      "height": 256,
-      "worldSpan": 320,
-      "opacity": 0.28,
-      "revision": "dd5826a20283d1dd38157ef69dcff8017d89bfcc120c59bcf8179d2fd16cdb90"
-    },
     "terrain:ground:highlands": {
       "src": "./assets/materials/e108c18f0c95bcd577a0cf6a802a33847162af9276d3336be5d9f3b9abbae09d.png",
       "hash": "e108c18f0c95bcd577a0cf6a802a33847162af9276d3336be5d9f3b9abbae09d",

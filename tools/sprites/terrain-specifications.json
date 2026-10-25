@@ -39,8 +39,8 @@
       "name": "Flooded Marches ground",
       "status": "candidate",
       "sourceOwner": "floor/groundDetail/terrain",
-      "palette": ["#26444b", "#31535a", "#203b42", "#85ada6"],
-      "cues": "Muted teal-green marsh earth with darker damp mud and restrained reed/grass grain. No puddles."
+      "palette": ["#3e5544", "#4b614b", "#30483c", "#a2b48e"],
+      "cues": "Muted wet green marsh earth with darker damp soil and restrained reed/grass grain. No puddles."
     },
     {
       "id": "T003",
