@@ -882,6 +882,9 @@
         const beam = {
           ...f,
           kind: 'wide-beam',
+          // Keep the world-space head's original trajectory independent of
+          // caster movement. Only the tail follows the live Mage.
+          castFrom: { ...f.from },
           traveled: 0,
           hitIds: [],
           hits: 0,
@@ -918,17 +921,25 @@
             return false;
           }
           if (f.kind === 'wide-beam') {
-            // The live Mage position translates the corridor, allowing the
-            // player to sweep it into moving/new enemies. Aim stays fixed.
-            // Clip from the CURRENT caster position to prevent wall piercing.
+            // The tip proceeds along its ORIGINAL world-space bearing. The
+            // freely moving Mage anchors the other end. This pivots the
+            // beam naturally, allowing only enemies actually intersected
+            // by its current angled corridor to receive a single hit.
             f.traveled = Math.min(f.reach, f.traveled + (f.reach / 0.75) * dt);
-            const ux = Math.cos(f.angle),
-              uy = Math.sin(f.angle),
-              from = { x: this.hero.x, y: this.hero.y };
+            const head = {
+              x: f.castFrom.x + Math.cos(f.angle) * f.traveled,
+              y: f.castFrom.y + Math.sin(f.angle) * f.traveled,
+            };
+            const from = { x: this.hero.x, y: this.hero.y },
+              distance = Math.hypot(head.x - from.x, head.y - from.y),
+              ux = distance > 1e-6 ? (head.x - from.x) / distance : Math.cos(f.angle),
+              uy = distance > 1e-6 ? (head.y - from.y) / distance : Math.sin(f.angle);
+            // Re-clip the newly angled connector against solid terrain; Mage
+            // movement must not make a magic column pierce a wall.
             let visibleLength = 0,
               previous = from;
-            for (let step = 8; step < f.traveled + 8; step += 8) {
-              const at = Math.min(step, f.traveled),
+            for (let step = 8; step < distance + 8; step += 8) {
+              const at = Math.min(step, distance),
                 point = { x: from.x + ux * at, y: from.y + uy * at };
               if (!this.clearSegment(previous, point, 0)) break;
               visibleLength = at;
@@ -938,8 +949,8 @@
               x: from.x + ux * visibleLength,
               y: from.y + uy * visibleLength,
             };
-            // Presentation reads this simulation-owned footprint, rather than
-            // separately guessing how far the corridor should have traveled.
+            // Renderer consumes the same physical corridor as contact checks,
+            // including movement-induced angles and terrain clipping.
             f.from = from;
             f.endX = end.x;
             f.endY = end.y;
