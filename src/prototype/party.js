@@ -1536,11 +1536,14 @@
         if (u.type !== 'pet') return false;
         const def = this.petSkillDefinition(u, slot);
         if (!def) return false;
-        if (
-          def.ward &&
-          ((u.wardUntil || 0) <= this.s.time + 0.5 || (u.wardReduction || 0) < def.ward)
-        )
-          return true;
+        if (def.ward) {
+          const existing = (u.wardReduction || 0),
+            remaining = (u.wardUntil || 0) - this.s.time;
+          // The impact handler preserves a stronger active ward. Only renew
+          // an equal ward near expiry, or upgrade a weaker/expired ward.
+          if (remaining <= 0 || existing < def.ward || (existing === def.ward && remaining <= 0.5))
+            return true;
+        }
         if (def.heal && u.maxHp - u.hp >= u.maxHp * def.heal * 0.5) return true;
         if (!def.allyHeal) return false;
         const worthwhile = u.maxHp * def.allyHeal * 0.5;

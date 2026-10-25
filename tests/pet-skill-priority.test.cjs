@@ -107,6 +107,12 @@ for (const family of Object.keys(C.rules.petCompanions)) {
 }
 {
   const { g, u, e } = scene('mine');
+  u.wardUntil = g.s.time + 0.3;
+  u.wardReduction = 0.6;
+  second(g, u, e, 'expiring stronger ward must not waste the first special');
+}
+{
+  const { g, u, e } = scene('mine');
   e.x = u.x + 99; // First reach 90; charged reach 100.
   assert(!g.petSkillTargets(u, e, 1).length);
   second(g, u, e, 'first out of range cannot block legal charge');
