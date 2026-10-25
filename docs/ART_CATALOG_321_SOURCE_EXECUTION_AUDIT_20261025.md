@@ -46,6 +46,8 @@ Direct code anchors (all against `e3c78266b28f3325d2afdcb76ae849fcff306deb`):
 
 **Interpretation:** these are **code-path findings**, not proof from fresh live paired captures that a human sees a defect in every listed scene. Separate intentional design differences, conditional state, and potential visual compensation in a baked source. Do not equate absence of a named function call with absent gameplay mechanics. The known source gaps are sufficiently concrete to prioritize targeted real-browser investigation; **none has been falsely marked as a passed native comparison**.
 
+**Subsequent deeper source work:** This initial execution-audit report was extended by the [18-finding assessment](ART_CATALOG_321_DEEP_RENDERER_ASSESSMENT_20261025.md) and [513+10 source triage ledger](evidence/ART_CATALOG_321_DEEP_SOURCE_TRIAGE_20261025.json). The extension corrects the initial over-broad "missing TRUE crown" implication: the body painter can bake the accepted crown, while separate live aura/TRUE badge layers still differ. The draft PR now contains five documentation/evidence files (not merely the original three).
+
 ## 4. Audit completion and promotion gates
 
 **Completed now:** independent original-data integrity check, manifest membership delta, current scope-case crosswalk including all 513 historical IDs and 10 new cases, actual renderer call-path comparison, explicit source-level gap register, pinned source/version, outstanding evidence limits.
