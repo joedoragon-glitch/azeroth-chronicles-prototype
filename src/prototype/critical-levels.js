@@ -149,6 +149,9 @@
   // Nucleus Herd may only strengthen the original newly admitted brood HP;
   // never create extra summons, change roles or bypass the four-owned cap.
   register('world/captain/supply-crown/3', 'world', 'summonVitality');
+  // Creep Feeding only extends the ORIGINAL eligible brood haste window,
+  // remaining strictly shorter than its own fixed 10-second cooldown.
+  register('world/captain/supply-crown/5', 'world', 'hasteDuration');
   Object.freeze(registry);
 
   function validatedLevel(level) {

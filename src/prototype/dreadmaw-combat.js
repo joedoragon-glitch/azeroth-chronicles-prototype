@@ -285,10 +285,25 @@
           return;
         }
         if (a.dreadMechanic === 'feeding') {
+          const eligible = this.captainOwnedSummons(e).filter(
+            u => alive(u) && !(u.dreadFeedUntil > this.s.time),
+          );
+          // Roll only when at least one original living servant actually
+          // receives this cast. Keep the source cooldown, recipient count,
+          // movement factor, readiness factor and initial cd unchanged.
+          const receipt =
+            a.captainSkill && a.captainProfile === 'supply-crown' &&
+            a.index === 5 && a.kind === 'circle' && eligible.length
+              ? this.worldCriticalAction(e, 'world/captain/supply-crown/5')
+              : null;
+          const duration = receipt?.critical
+            ? this._criticalWorldNative.enhance(
+                receipt, a.duration, 'hasteDuration', { max: a.cooldown },
+              )
+            : a.duration;
           e.dreadFeedCd = a.cooldown;
-          for (const u of this.captainOwnedSummons(e)) {
-            if (!alive(u) || u.dreadFeedUntil > this.s.time) continue;
-            u.dreadFeedUntil = this.s.time + a.duration;
+          for (const u of eligible) {
+            u.dreadFeedUntil = this.s.time + duration;
             u.cd = Math.min(u.cd, 0.25);
           }
           return;
