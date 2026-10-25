@@ -4945,12 +4945,16 @@
       if (!this._tacticalRegroups) this._tacticalRegroups = new Map();
       if (!this._tacticalTerritorialVisited) this._tacticalTerritorialVisited = new Map();
       const visited = this._tacticalTerritorialVisited.get(e.id) || new Set();
+      // Do not mistake the same nearby ally already tried at Level 1 for
+      // genuinely new territorial support.
+      const localVisited = this._tacticalVisitedAllies?.get(e.id);
       // Homes/posts, not magically acquired line-of-sight targets: inhabitants
       // know where the region's defenders usually live, even over the horizon.
       const candidates = z.enemies.filter((ally) =>
         ally !== e && ally.hp > 0 && !ally.neutral && !ally.returning &&
         !ally.summon && dist(ally, e) > cfg.supportRadius + 35 &&
         dist(ally.home || ally, e) <= cfg.extendedAwarenessRadius &&
+        !localVisited?.has(ally.pack || ally.id) &&
         !visited.has(ally.pack || ally.id)
       ).sort((a, b) => dist(e, a.home || a) - dist(e, b.home || b) || this.idOrder(a, b));
       // Regrouped defenders should follow the same distant refuge rather than
