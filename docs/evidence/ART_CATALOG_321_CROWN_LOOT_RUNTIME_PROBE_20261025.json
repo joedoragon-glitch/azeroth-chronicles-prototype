@@ -1,0 +1,92 @@
+{
+  "schema": "art-catalog-321-realtime-pixel-probe-v1",
+  "date": "2026-10-25",
+  "catalogId": "shared:loot",
+  "sourceBaselineMain": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+  "testHead": "f8812d135cf7055bb675f9271d9b5be99ed1b766",
+  "testRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40221978087",
+  "testStatus": "overall CI failed later in pre-existing context-loss recovery assertion; art pixel probe successfully produced both observations",
+  "browser": "Chromium with ANGLE SwiftShader software WebGL2",
+  "pixelCaptureType": "In-memory native world Canvas surface getImageData before/after adding the same-shaped temporary Campaign.s.loot object",
+  "viewportCss": {
+    "width": 1280,
+    "height": 800
+  },
+  "testScene": "Vale, user-visible game running; synthetic world loot at displayed (870,384)",
+  "sample": {
+    "canvas": {
+      "backend": "canvas2d",
+      "phase": "canvas",
+      "zone": "vale",
+      "viewportCss": {
+        "width": 1280,
+        "height": 800
+      },
+      "canvasBacking": {
+        "width": 1280,
+        "height": 800
+      },
+      "renderPoint": {
+        "x": 870,
+        "y": 384
+      },
+      "samplePixels": 2401,
+      "changedPixels": 870,
+      "alphaChangedPixels": 0,
+      "totalPixelDifference": 168712
+    },
+    "pixi": {
+      "backend": "webgl2",
+      "phase": "confirmed",
+      "zone": "vale",
+      "viewportCss": {
+        "width": 1280,
+        "height": 800
+      },
+      "canvasBacking": {
+        "width": 1280,
+        "height": 800
+      },
+      "renderPoint": {
+        "x": 870,
+        "y": 384
+      },
+      "samplePixels": 3249,
+      "changedPixels": 0,
+      "alphaChangedPixels": 0,
+      "totalPixelDifference": 0,
+      "sceneMetrics": {
+        "actors": 95,
+        "textureSources": 115
+      }
+    }
+  },
+  "interpretation": {
+    "observed": "A temporary Crown loot coin changes 870 pixels of the full Canvas world surface; the same-shaped coin changes zero pixels in the Pixi mode's Canvas cue overlay while the GPU scene is active.",
+    "sourceCorroboration": "Full Canvas renderer calls drawCrownLoot for game.s.loot; Pixi candidates do not enumerate loot and its Canvas overlay omits drawCrownLoot.",
+    "status": "HIGH_CONFIDENCE_VISIBILITY_DEFECT_CANDIDATE (source-confirmed omission plus real-browser overlay pixel evidence)",
+    "visualAcceptance": "NOT_CERTIFIED",
+    "gpuFramebufferDirectDiff": "NOT_CAPTURED_IN_THIS_RUN",
+    "snapshotEvidence": "NOT_RETAINED_IN_FAILED_CI_RUN",
+    "pairedSceneCameraEquality": "NOT_ESTABLISHED; the pre-existing test changed zoom before the Pixi sample. Each within-backend before/after comparison used its own identical camera state."
+  },
+  "safety": {
+    "temporaryCoinRemovedAfterMeasure": true,
+    "simulationCodeChanged": false,
+    "playerSaveChanged": false,
+    "merged": false,
+    "deployed": false
+  },
+  "runnerAnomalies": [
+    {
+      "run": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40221978087",
+      "failure": "Existing WebGL context-loss recovery check later observed render-exception rather than context-loss after the additional probe."
+    },
+    {
+      "run": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40222201465",
+      "failure": "Existing optimization/background refresh assertion timed out before the isolated art probe ran; does not invalidate pixel data from previous run."
+    }
+  ],
+  "reproductionTool": "tools/visual-review/art321-crown-loot-browser.cjs",
+  "nextAction": "Use standalone tool on exact source pin to collect two composed PNGs and backend-confirmed pixel metadata, then review GPU framebuffer and correct only the missing presentation layer in an independently approved implementation task."
+}
