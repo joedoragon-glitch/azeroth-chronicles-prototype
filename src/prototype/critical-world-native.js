@@ -20,6 +20,11 @@
       const sample = resolver.release({
         action: {}, key, domain: 'world', released: true,
       });
+      // The UI owns a bounded actor-following !, not any combat consequence.
+      // Do not record cosmetic events in saved combat statistics.
+      if (sample.critical && Array.isArray(game.effects))
+        game.effects.push({ type: 'criticalExecutionRelease', source, group: 'world',
+          zone: game.zoneId, deaths: game.s.statistics?.deaths });
       const intensity = tuning.effectFor(key, 'world', game.s.mode || 'normal');
       return Object.freeze({
         ...sample, source, group: 'world', intensity: intensity.level,

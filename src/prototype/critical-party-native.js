@@ -29,6 +29,11 @@
         action: {}, key, domain: 'party', released: true,
         bonuses: { partyBonus: game.criticalPartyBonus?.(source) || 0 },
       });
+      // Presentation-only cue, never a gameplay/statistics event or save item.
+      // The renderer resolves the actor's live position on its next paint.
+      if (sample.critical && Array.isArray(game.effects))
+        game.effects.push({ type: 'criticalExecutionRelease', source, group,
+          zone: game.zoneId, deaths: game.s.statistics?.deaths });
       const intensity = tuning.effectFor(key, group, game.s.mode || 'normal');
       return Object.freeze({
         ...sample, source, group, intensity: intensity.level,

@@ -360,6 +360,9 @@
     };
     let game = getGame(),
       visualFx = [],
+      // A separate tiny queue: critical cues must not evict 40 existing combat
+      // effects or disappear unseen during normal renderer frame skipping.
+      criticalCues = [],
       origin = null;
     const heroArt =
       root.PrototypeHeroPresentation ||
@@ -1315,13 +1318,70 @@
         visualScene.deaths !== game.s.statistics.deaths
       ) {
         visualFx = [];
+        criticalCues = [];
         visualScene = { game, zone: game.zoneId, deaths: game.s.statistics.deaths };
       }
       visualFx = PrototypeCombatVisuals.queue(events, game, visualFx);
+      for (const event of events) {
+        if (event.type !== 'criticalExecutionRelease' ||
+            !event.source || event.zone !== game.zoneId ||
+            event.deaths !== game.s.statistics.deaths) continue;
+        // At most ten simultaneous actor cues; retain newest commitments.
+        // In-flight source IDs follow the actor instead of locking a cast point.
+        criticalCues = criticalCues.filter((c) => c.source !== event.source);
+        criticalCues.push({ source: event.source, life: 0.7, drawn: false });
+        if (criticalCues.length > 10) criticalCues.shift();
+      }
     }
     function updateVisualFx(dt) {
       for (const f of visualFx) f.life -= dt;
       visualFx = visualFx.filter((f) => f.life > 0);
+      // A cue remains pending until it has actually been painted once.
+      // This does not force rendering or add a recurring simulation timer.
+      for (const cue of criticalCues)
+        if (cue.drawn) cue.life -= Math.max(0, dt);
+      criticalCues = criticalCues.filter((c) => c.life > 0);
+    }
+    function drawCriticalCues() {
+      if (!criticalCues.length) return;
+      const enemies = game.zone().enemies;
+      const party = game.s.party;
+      ctx.save();
+      ctx.textAlign = 'center';
+      for (const cue of criticalCues) {
+        const actor = cue.source === 'hero' ? game.hero
+          : party.find((u) => u.id === cue.source) ||
+            enemies.find((u) => u.id === cue.source);
+        if (!actor || actor.hp <= 0 || actor.active === false) {
+          cue.life = 0;
+          continue;
+        }
+        const pos = screen(actor);
+        if (pos.x < -28 || pos.x > canvas.width + 28 ||
+            pos.y < -80 || pos.y > canvas.height + 80) continue;
+        const x = Math.max(16, Math.min(canvas.width - 16, pos.x)),
+          y = Math.max(30, Math.min(canvas.height - 30,
+            pos.y - spriteHeight(actor) - 33));
+        ctx.globalAlpha = Math.min(1, cue.life / 0.25);
+        ctx.fillStyle = '#172b2a';
+        ctx.strokeStyle = '#fff2b1';
+        ctx.lineWidth = 1.7;
+        ctx.beginPath();
+        ctx.moveTo(x - 10, y - 13);
+        ctx.lineTo(x + 10, y - 13);
+        ctx.lineTo(x + 10, y + 8);
+        ctx.lineTo(x, y + 16);
+        ctx.lineTo(x - 10, y + 8);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#fff4bb';
+        ctx.font = 'bold 21px system-ui';
+        ctx.fillText('!', x, y + 7);
+        cue.drawn = true;
+      }
+      ctx.restore();
+      criticalCues = criticalCues.filter((c) => c.life > 0);
     }
     function drawPetSkillGeometry(f) {
       const from = { x: f.fromX, y: f.fromY },
@@ -2170,6 +2230,7 @@
         heroArt?.queued(ctx, screen, game.hero, queuedChargePresentation());
         PrototypeCombatVisuals.enemySupportStatus?.(ctx, screen, game);
         PrototypeCombatVisuals.actorCues?.(ctx, screen, game, spriteHeight);
+        drawCriticalCues();
         targetGuidance();
         drawNavigationRoute();
         finishPhase('effects');
@@ -2809,6 +2870,7 @@
       heroArt?.queued(ctx, screen, game.hero, queuedChargePresentation());
       PrototypeCombatVisuals.enemySupportStatus?.(ctx, screen, game);
       PrototypeCombatVisuals.actorCues?.(ctx, screen, game, spriteHeight);
+      drawCriticalCues();
       targetGuidance();
       drawNavigationRoute();
       if (isPaused()) {
@@ -2867,6 +2929,7 @@
         cameraZoom: zoom(),
         optimizationMode: optimized ? 'on' : 'off',
         transientEffects: visualFx.length,
+        criticalCues: criticalCues.length,
         enemyVfxEffects: visualFx.filter((f) => f.type === 'enemyVfx').length,
         groundCache: groundCache?.status() || null,
         outlineBuffers: {
