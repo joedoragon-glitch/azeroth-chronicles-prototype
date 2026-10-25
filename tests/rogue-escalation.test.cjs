@@ -221,7 +221,12 @@ console.log('PASS two-second Rogue cast floor prevents spam without retaining a 
   const originalX = a.x;
   c.s.time += 0.1;
   c.updateEnemies(0.1);
-  assert(a.x < originalX, 'escape continues away from the pursuer during the warning');
+  assert(a.x < originalX,
+    'escape continues away from pursuer during warning: ' + JSON.stringify({
+      before: originalX, after: a.x, phase: c.tacticalRogueRegroup(a)?.phase,
+      returning: a.returning, aggro: a.aggro, motion: a.motion?.kind,
+      warning: a.telegraph?.name, heroX: c.hero.x, calls: approachOrders,
+    }));
   assert.equal(approachOrders, 0,
     'a covering Rogue cast must never reverse the withdrawal toward the hero');
   assert.equal(c.tacticalRogueRegroup(a).phase, 'escape');
@@ -269,7 +274,7 @@ console.log('PASS isolated Ringleader summons first instead of standing and repe
 {
   const { c, z, a } = encounter();
   z.enemies = [a];
-  c.blocked = () => true; // No legal placement for emergency reinforcements.
+  c.tacticalEmergencyCall = () => false; // Every reinforcement attempt is unavailable.
   assert(c.tacticalAutoRogue(a, c.hero));
   c.s.time += 0.31;
   assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.31));
