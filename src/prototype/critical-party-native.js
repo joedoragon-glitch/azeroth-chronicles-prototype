@@ -27,6 +27,7 @@
       // Never invoke this from projectile impact, Cross pulse, HoT tick or update.
       const sample = resolver.release({
         action: {}, key, domain: 'party', released: true,
+        bonuses: { partyBonus: game.criticalPartyBonus?.(source) || 0 },
       });
       const intensity = tuning.effectFor(key, group, game.s.mode || 'normal');
       return Object.freeze({

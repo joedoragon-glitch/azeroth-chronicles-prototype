@@ -195,6 +195,15 @@
         validateName(s.hero.regnalName);
         validateName(s.hero.customWeaponName);
         validateName(s.hero.customArmorName);
+        // Legacy v4 saves simply start with no collected Codices. Claimed
+        // entries cannot be injected for other dungeons or overwritten by bad
+        // types; the original save version remains exactly 4.
+        s.criticalCodices ??= {};
+        if (!s.criticalCodices || typeof s.criticalCodices !== 'object' ||
+            Array.isArray(s.criticalCodices) ||
+            Object.entries(s.criticalCodices).some(([id, claimed]) =>
+              !Object.hasOwn(R.criticalCodices, id) || claimed !== true))
+          throw Error('Invalid critical Codex claims');
         if (s.hero.regnalName !== undefined && !s.throneClaimed)
           throw Error('Dark Lord name before claiming the throne');
         if (s.talentBalanceVersion === undefined) {

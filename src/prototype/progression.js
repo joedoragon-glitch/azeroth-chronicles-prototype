@@ -55,6 +55,25 @@
       heroEquipmentArmorBonus() {
         return Math.max(0, this.armor() - this.hero.armor);
       }
+      // Knowledge is claimed once per campaign, and every party actor reads
+      // the currently earned bonus instead of copying permanent extra stats.
+      criticalCodexCount() {
+        return Object.keys(R.criticalCodices || {}).filter(
+          (id) => this.s.criticalCodices?.[id] === true,
+        ).length;
+      }
+      criticalPartyBonus(source = 'hero') {
+        const balance = R.criticalCodexBalance;
+        const earned = Math.min(balance.maxBookBonus,
+          this.criticalCodexCount() * balance.perBook);
+        if (source === 'hero') return earned;
+        if (!this.s.party.some((u) => u.id === source &&
+            ['soldier', 'archer', 'pet'].includes(u.type))) return 0;
+        return earned * this.expeditionSupportFraction('sharedTraining');
+      }
+      criticalPartyChance(source = 'hero') {
+        return Math.max(0, Math.min(1, 0.10 + this.criticalPartyBonus(source)));
+      }
       expeditionSupportRank(id) {
         return this.s.expeditionSkills?.[id] || 0;
       }

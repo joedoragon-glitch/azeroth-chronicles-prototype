@@ -2347,6 +2347,23 @@
   ];
 
   // Optional occupied interiors consolidate weak overlapping landmarks. They intentionally have no boss, captive, quest reward or gatherable resource yet.
+  // Five optional, one-time collectible combat manuals. No new side bosses,
+  // objectives, population edits or resource gathering. Names/copy stay easy
+  // to revise without touching critical gameplay ownership.
+  const criticalCodices = Object.freeze({
+    'side-vale-cellars': Object.freeze({ name: "The Art of Misdirection", nameEs: "El arte del engaño",
+      x: 710, y: 630, description: "Goblin notes on distractions and the decisive opening.", descriptionEs: "Apuntes goblin sobre distracciones y el instante decisivo." }),
+    'side-march-watchhouse': Object.freeze({ name: "The Waterline Gambit", nameEs: "La táctica de la línea de agua",
+      x: 735, y: 635, description: "A damaged watch manual on footing and timing in wet combat.", descriptionEs: "Un manual de guardia deteriorado sobre equilibrio y ritmo en terrenos inundados." }),
+    'side-highlands-signal': Object.freeze({ name: "The Measured Blow", nameEs: "El golpe medido",
+      x: 665, y: 640, description: "A working ledger on weight, timing and leverage.", descriptionEs: "Un cuaderno práctico sobre peso, ritmo y palanca." }),
+    'side-frontier-shrine': Object.freeze({ name: "The Feigned Opening", nameEs: "La apertura fingida",
+      x: 680, y: 640, description: "A field-training folio kept among garrison drills.", descriptionEs: "Un folio de adiestramiento guardado entre los ejercicios de la guarnición." }),
+    'side-crown-foundry': Object.freeze({ name: "The Final Adjustment", nameEs: "El último ajuste",
+      x: 680, y: 650, description: "An armorer's manual beside the foundry repair benches.", descriptionEs: "Un manual de armería junto a los bancos de reparación de la fundición." }),
+  });
+  // Provisional tuning, dormant until player-critical sessions are enabled.
+  const criticalCodexBalance = Object.freeze({ perBook: 0.01, maxBookBonus: 0.05 });
   const sideDungeons = [
     {
       id: 'side-vale-cellars',
@@ -7640,6 +7657,8 @@
     treasuryDecor,
     creatureStrongholds,
     sideDungeons,
+    criticalCodices,
+    criticalCodexBalance,
     narrativeSceneInspections,
     sideDungeonTrapTuning,
     tributeTotal,

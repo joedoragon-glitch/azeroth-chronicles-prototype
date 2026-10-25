@@ -97,6 +97,9 @@
         treasuryRecovery: {},
         quests: {},
         discovered: {},
+        // Earned optional manuals are permanent campaign knowledge, not items.
+        // Crit chance stays OFF without an explicit native Party session.
+        criticalCodices: {},
         gathered: {},
         tributeRemainder: 0,
         gatheringTarget: null,
@@ -3122,6 +3125,24 @@
             return false;
           }
           return this.rescue(npc.family);
+        case 'critical-codex': {
+          const side = this.sideDungeon();
+          const def = R.criticalCodices?.[npc.sideCodex];
+          if (!side || side.id !== npc.sideCodex || !def ||
+              npc.id !== 'critical-codex-' + side.id ||
+              !this.zone().npcs.includes(npc)) return false;
+          this.s.criticalCodices ||= {};
+          if (this.s.criticalCodices[side.id] === true) {
+            this.say(def.name + ' has already been studied.');
+            return true;
+          }
+          this.s.criticalCodices[side.id] = true;
+          const learned = this.criticalCodexCount();
+          this.say('Learned ' + def.name + ' · ' + learned + '/5 Codices of the Unforeseen.');
+          this.notice(def.name + ' · critical mastery learned', 5.5);
+          this.event('criticalCodex', { id: side.id, count: learned, name: def.name });
+          return true;
+        }
         case 'supplier':
           return this.unloadCompanyTribute(npc) !== null;
         case 'rest':

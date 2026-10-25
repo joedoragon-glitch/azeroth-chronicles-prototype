@@ -2151,6 +2151,20 @@
             y: 150,
             icon: '🚪',
           });
+          const codex = R.criticalCodices?.[side.id];
+          if (codex) {
+            // A visible inspectable object in the existing inhabited interior.
+            // No guard-clear, additional boss, trap, wall or loot reset.
+            const point = this.safe(codex.x, codex.y, side.id);
+            z.npcs.push({
+              id: 'critical-codex-' + side.id,
+              kind: 'critical-codex',
+              sideCodex: side.id,
+              name: codex.name,
+              nameEs: codex.nameEs,
+              x: point.x, y: point.y, icon: '📖',
+            });
+          }
           for (const [j, [x, y, structure]] of (side.decor || []).entries())
             z.props.push({ id: 'side-decor-' + j, x, y, r: 0, decorative: true, structure });
           for (const [j, [x, y, radius]] of (side.walls || []).entries())
