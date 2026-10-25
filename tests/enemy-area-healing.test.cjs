@@ -19,7 +19,7 @@ const first = add('wolf', 330);
 const second = add('ogre', 400, 500);
 const outside = add('goblin', 651);
 const covered = add('goblin', 340);
-const healthy = add('goblin', 340, 900);
+const healthy = add('goblin', 340, 1000);
 const dead = add('goblin', 340, 0);
 const returning = add('goblin', 340, 400, { returning: 1 });
 g.line = (_, target) => target !== covered;

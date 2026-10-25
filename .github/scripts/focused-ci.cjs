@@ -123,6 +123,7 @@ const groups = [
       TEST + 'ranged-pet-support.test.cjs',
       TEST + 'enemy-support-healing.test.cjs',
       TEST + 'enemy-ordinary-heal-balance.test.cjs',
+      TEST + 'enemy-cross-species-idle-healing.test.cjs',
     ],
   },
   {

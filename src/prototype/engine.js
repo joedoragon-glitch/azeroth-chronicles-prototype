@@ -391,8 +391,13 @@
     enemyHealLeader(u) {
       return !!(u && (u.type === 'boss' || u.captain || u.roomCaptain || u.fieldCaptain));
     }
-    enemyNeedsSupportHeal(u) {
+    enemyNeedsSupportHeal(u, healer = null) {
       const cfg = R.enemySupportHealing;
+      // A wounded ordinary monster is an eligible patient for any ordinary
+      // ranged healer, including one from a different species or pack.
+      // Bosses/captains keep their original 75% / regroup 90% threshold.
+      if (healer && !this.enemyHealLeader(healer) && !this.enemyHealLeader(u))
+        return u.hp > 0 && u.maxHp > 0 && u.hp < u.maxHp;
       return (
         u.hp / u.maxHp <= (this.tacticalRogueRegroup(u) ? cfg.regroupThreshold : cfg.threshold)
       );
@@ -424,7 +429,7 @@
           (u) =>
             this.enemyHealTeammate(e, u) &&
             inReach(u) &&
-            this.enemyNeedsSupportHeal(u) &&
+            this.enemyNeedsSupportHeal(u, e) &&
             !(ordinaryHealer && this.enemyHealLeader(u) && leaderRecovery > 0),
         ),
         // Do not add a duplicate self-restoration route to a boss that
@@ -461,6 +466,9 @@
           skill,
           remaining: amount,
           seconds: duration,
+          // Only ordinary-to-ordinary support can finish out of combat.
+          // This is transient and is deliberately never serialized.
+          allowIdle: buffed,
         };
         if (ordinaryHealer && leader) leaderTreated = true;
         healed++;
@@ -515,9 +523,9 @@
           (u) =>
             this.enemyHealTeammate(e, u) &&
             !u.supportHeal &&
-            this.enemyNeedsSupportHeal(u) &&
+            this.enemyNeedsSupportHeal(u, e) &&
             !(this.enemyHealLeader(u) && !this.enemyHealLeader(e) && leaderRecovery > 0) &&
-            (e.aggro || !!this.tacticalRogueRegroup(u)) &&
+            (e.aggro || !!this.tacticalRogueRegroup(u) || (!this.enemyHealLeader(e) && !this.enemyHealLeader(u))) &&
             dist(e, u) > cfg.range &&
             dist(e, u) <= cfg.range + 210,
         )
@@ -541,7 +549,7 @@
       if (
         this.peace ||
         !this.enemyHealingActor(e) ||
-        !e.aggro ||
+        (!e.aggro && !h.allowIdle) ||
         e.returning ||
         !Number.isFinite(h.seconds) ||
         h.seconds <= 0 ||

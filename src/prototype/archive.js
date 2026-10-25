@@ -157,7 +157,7 @@
           heal.ordinary.duration +
           ' seconds on a ' +
           heal.ordinary.cooldown +
-          's cooldown. This is a full heal measured from wounds present when treatment begins; fresh damage requires further treatment. They can still heal captains and bosses, but those leaders receive the original ' +
+          's cooldown, whenever the ordinary patient is wounded. This is a full heal measured from wounds present when treatment begins; fresh damage requires further treatment. They can still heal captains and bosses, but those leaders receive the original ' +
           percent(heal.fraction) +
           '% over ' +
           heal.duration +
@@ -165,7 +165,7 @@
           heal.cooldown +
           's per-healer leader interval. Captains and bosses retain their own original healing strength and cooldowns. Encounter scaling still applies to leader healing. Treatment begins at ' +
           percent(heal.threshold) +
-          '% HP or less. Allies arriving to regroup can receive care at ' +
+          '% HP or less for leaders and leader-sourced treatment. Allies arriving to regroup can receive care at ' +
           percent(heal.regroupThreshold) +
           '% HP or less, even before the healer joins combat. Slow delays the next skill, not ongoing healing pulses. Siphon instead heals from HP actually taken; each leader’s own recovery techniques work separately.',
       ],

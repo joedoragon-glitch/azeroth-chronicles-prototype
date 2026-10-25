@@ -175,8 +175,9 @@ console.log('PASS hostile healing excludes wounded hero, both troop types and al
 {
   const { g, mob } = fixture();
   const healer = mob('goblin', { ranged: true });
-  mob('goblin', { hp: 900 });
-  assert(!g.enemySupportHeal(healer), 'support healing retains a 75-percent cutoff');
+  const scratched = mob('goblin', { hp: 900 });
+  assert(g.enemySupportHeal(healer), 'ordinary support can heal a lightly injured ordinary ally');
+  assert.equal(scratched.supportHeal.remaining, scratched.maxHp - scratched.hp);
 }
 {
   const { g, mob } = fixture();
