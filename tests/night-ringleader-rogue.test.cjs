@@ -46,7 +46,7 @@ for (const mode of ['normal', 'nightmare', 'developer']) {
   c.s.phase = 'peace';
   assert.deepEqual(c.multipliers(), { hp: 1, damage: 1 }, 'Peace removes escalation');
 }
-assert.equal(C.rules.tacticalFoundation.moveCooldownSeconds, 3);
+assert.equal(C.rules.tacticalFoundation.moveCooldownSeconds, 2);
 for (const make of [
   (c) => c.makeEnemy({ species: 'goblin', level: 5, hp: 10000, damage: 10 }, { x: 1400, y: 1700 }),
   (c) =>
@@ -73,7 +73,7 @@ for (const make of [
   c.s.time = 30;
   Object.assign(c.hero, { x: e.x + 70, y: e.y, level: e.level + 1, hp: 10000, maxHp: 10000 });
   assert(c.tacticalAutoRogue(e, c.hero));
-  assert.equal(c._tacticalRogueNext.get(e.id), 33, 'Next Rogue opportunity is three seconds later');
+  assert.equal(c._tacticalRogueNext.get(e.id), 32, 'Next Rogue opportunity is two seconds later');
   // Keep a real moving pursuer in range while exercising warning/resolution/reuse.
   for (let tick = 0; tick < 70; tick++) {
     c.hero.x = e.x + 70;
