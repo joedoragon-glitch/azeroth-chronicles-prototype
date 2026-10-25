@@ -331,3 +331,21 @@ console.log('PASS Ranger Hawk can interrupt territorial retreat');
   assert.equal(c.s.statistics.kills, 0, 'temporary guards never inflate permanent kill count');
 }
 console.log('PASS repeated guardian replenishment remains bounded in memory and rewards');
+
+
+{
+  const { c, z, a, b, add } = encounter();
+  const third = add(1370, 'normal');
+  const far = add(2400, 'normal');
+  z.enemies.push(third, far);
+  assert.equal(c.tacticalLocalSupport(b), 3, 'three local bodies before withdrawal');
+  assert(c.tacticalBeginExtendedRetreat(a));
+  assert.equal(c.tacticalLocalSupport(b), 2,
+    'a retreating defender is no longer counted as stationary local support');
+  assert(!c.tacticalRegroupCandidates(b).includes(a),
+    'a moving Ringleader cannot be mistaken for ordinary local regroup support');
+  assert(c.tacticalBeginExtendedRetreat(b),
+    'explicit distant coordination remains available despite local exclusion');
+  assert.equal(c.tacticalRogueRegroup(b).allyId, far.id);
+}
+console.log('PASS distant withdrawal does not falsely inflate local group strength');
