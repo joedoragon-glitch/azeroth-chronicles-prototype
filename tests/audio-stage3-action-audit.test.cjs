@@ -158,6 +158,12 @@ for(const [type,family] of [
   assert(u.skill2Cd>0, type+'/'+family+': autonomous second skill');
   const rows=observe(receipts),metrics=sum(rows);
   assert(metrics.procedural>0,type+'/'+family+': no combat source for actual action stream');
+  if (type === 'pet' && g.petDefinition(u).role === 'ranged') {
+    const impacts = rows.filter((row) => row.type === 'projectileImpact');
+    assert(impacts.length > 0, family + ': actual ranged pet contact receipts');
+    assert(impacts.every((row) => row.route === 'procedural'),
+      family + ': ranged pet contact must not be silent');
+  }
   companions.push({type,family,...metrics,
     heardTypes:[...new Set(rows.filter((r)=>r.route==='procedural').map((r)=>r.type))],
     bookkeepingTypes:[...new Set(rows.filter((r)=>r.route==='bookkeeping_or_owned_elsewhere').map((r)=>r.type))],
