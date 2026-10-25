@@ -4,6 +4,17 @@
 // counts gameplay-derived patch reconstructions. No timing/FPS claims.
 const assert = require('node:assert/strict');
 const { createCanvas } = require('@napi-rs/canvas');
+const fs = require('node:fs');
+const path = require('node:path');
+const rendererSource = fs.readFileSync(path.resolve(__dirname, '../src/prototype/renderer.js'), 'utf8');
+// Full Canvas and optional Pixi transparent Canvas overlay must both use the
+// one-draw warning geometry scope, not merely expose an unused API parameter.
+assert.equal((rendererSource.match(/new Map\\(\\);\\n      if \\(renderLayer === 'overlay'\\)/g) || []).length, 1,
+  'warning shape lifetime must be one renderer draw');
+assert.equal(rendererSource.split("PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000, warningFrameShapes);").length - 1, 2,
+  'warning fill must reuse frame geometry in Canvas and Pixi overlay');
+assert.equal(rendererSource.split("PrototypeCombatVisuals.ground(ctx, screen, game, 'underlay-cue', game.s.time, warningFrameShapes);").length - 1, 2,
+  'warning outline must reuse frame geometry in Canvas and Pixi overlay');
 const Campaign = require('../src/prototype/engine.js');
 const Combat = require('../src/prototype/combat-visuals.js');
 
