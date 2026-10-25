@@ -486,7 +486,7 @@
       // stacking strength and *lasting* debt reward repeated, coordinated hits.
       // No timer or array is allocated per stack. Cooldown debt is applied once
       // on each hit to already-recovering abilities, including absolute deadlines.
-      applySlow(unit, seconds) {
+      applySlow(unit, seconds, diagnostic = null) {
         if (
           !unit ||
           unit.hp <= 0 ||
@@ -525,14 +525,19 @@
           for (const key of SLOW_ENEMY_DEADLINES)
             if (Number.isFinite(unit[key]) && unit[key] > this.s.time) unit[key] += debt;
         }
+        if (!diagnostic?.deferPartyDiagnostic)
+          this.partyDiagnosticsRecordSlow?.(unit, diagnostic, duration, debt);
         return true;
       }
 
-      applyRogueSlow(unit, seconds) {
-        if (!this.applySlow(unit, seconds)) return false;
-        unit.rogueSlow = Math.max(
-          unit.rogueSlow || 0,
-          seconds + R.cooldownBalance.slowDurationBonusSeconds,
+      applyRogueSlow(unit, seconds, sourceId = null, moveName = null) {
+        // Wait until rogueSlow is updated so the reported post-hit state is exact.
+        if (!this.applySlow(unit, seconds, { deferPartyDiagnostic: true })) return false;
+        const duration = seconds + R.cooldownBalance.slowDurationBonusSeconds;
+        unit.rogueSlow = Math.max(unit.rogueSlow || 0, duration);
+        this.partyDiagnosticsRecordSlow?.(
+          unit, { kind: 'rogue', sourceId, moveName },
+          duration, duration * R.cooldownBalance.slowDebtFraction,
         );
         return true;
       }

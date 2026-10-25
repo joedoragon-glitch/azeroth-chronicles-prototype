@@ -5723,6 +5723,7 @@
               victim,
               move.slowSeconds ||
                 (e.form === 'ringleader' ? R.tacticalFoundation.eliteRogueSlowSeconds : 2),
+              e.id, move.name,
             );
           }
         }
@@ -5790,7 +5791,7 @@
               y: unit.y + ((unit.y - e.y) / d) * push,
             };
           this.move(unit, point, 250, 0.36);
-        } else this.applyRogueSlow(unit, move.slowSeconds || 2.4);
+        } else this.applyRogueSlow(unit, move.slowSeconds || 2.4, e.id, move.name);
       }
       if (
         move.rallySeconds > 0 &&
