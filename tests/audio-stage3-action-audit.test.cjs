@@ -105,6 +105,7 @@ function companionArena(type,family) {
   g.s.mercyTime=0;
   g.s.expeditionRank=6;
   g.s.companionCombatTraining=2;
+  Object.assign(g.hero, g.safe(1500, 1500), { order: null });
   g.hero.skills[1]=1;
   if(family)g.s.normal[family]=g.s.true[family]=true;
   if(family==='darklord')g.s.phase='awakening';
