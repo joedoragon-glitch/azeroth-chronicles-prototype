@@ -423,6 +423,12 @@ console.log(
     assert(g.applyRogueSlow(unit, 2.7));
     close(unit === g.hero ? unit.cd[0] : unit.skill1Cd, before,
       'extra impacts refresh Slow without extending a cooldown');
+    if (unit !== g.hero) {
+      const latest = g.partyDiagnosticsReport().slowApplications.at(-1);
+      assert.equal(latest.targetId, unit.id);
+      assert.equal(latest.cooldownDebtSeconds, 0,
+        'At the ceiling, the report must not invent cooldown debt');
+    }
   }
   // Older saved snapshots may contain uncapped stacks. Clamp their effective
   // recovery and the next real hit, without altering unrelated saved timers.

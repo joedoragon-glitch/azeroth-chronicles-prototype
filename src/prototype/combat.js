@@ -530,6 +530,8 @@
           for (const key of SLOW_ENEMY_DEADLINES)
             if (Number.isFinite(unit[key]) && unit[key] > this.s.time) unit[key] += debt;
         }
+        // Preserve the actual earned amount for source-attributed Rogue reports.
+        if (diagnostic) diagnostic.appliedDebt = debt;
         if (!diagnostic?.deferPartyDiagnostic)
           this.partyDiagnosticsRecordSlow?.(unit, diagnostic, duration, debt);
         return true;
@@ -537,12 +539,13 @@
 
       applyRogueSlow(unit, seconds, sourceId = null, moveName = null) {
         // Wait until rogueSlow is updated so the reported post-hit state is exact.
-        if (!this.applySlow(unit, seconds, { deferPartyDiagnostic: true })) return false;
+        const diagnostic = { deferPartyDiagnostic: true };
+        if (!this.applySlow(unit, seconds, diagnostic)) return false;
         const duration = seconds + R.cooldownBalance.slowDurationBonusSeconds;
         unit.rogueSlow = Math.max(unit.rogueSlow || 0, duration);
         this.partyDiagnosticsRecordSlow?.(
           unit, { kind: 'rogue', sourceId, moveName },
-          duration, duration * R.cooldownBalance.slowDebtFraction,
+          duration, diagnostic.appliedDebt,
         );
         return true;
       }
