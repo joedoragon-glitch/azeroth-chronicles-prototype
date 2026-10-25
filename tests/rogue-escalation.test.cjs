@@ -8,6 +8,10 @@ function encounter(region = 'vale', roll = 0.25) {
   const z = c.zone();
   z.props = [];
   c.s.time = 30;
+  // These actors are deliberately already fighting; Vale's original
+  // first-hero-hit onboarding must not erase synthetic engagements.
+  c.s.valeFieldAwakened = true;
+  c.s.thornHeroInitiated = true;
   // Main and side dungeons have smaller maps than the Vale field.
   const interior = region !== 'vale';
   const offset = interior ? 850 : 0;
@@ -220,12 +224,6 @@ console.log('PASS two-second Rogue cast floor prevents spam without retaining a 
   c.follow = () => { approachOrders++; return false; };
   const originalX = a.x;
   assert(!a.returning, 'active synthetic Rogue fixture must not start its escape in returning state');
-  let resetOrigin = null;
-  const disengage = c.disengage.bind(c);
-  c.disengage = (...args) => {
-    if (args[0] === a) resetOrigin = new Error('unexpected reset').stack;
-    return disengage(...args);
-  };
   c.s.time += 0.1;
   c.updateEnemies(0.1);
   assert(a.x < originalX,
@@ -233,7 +231,6 @@ console.log('PASS two-second Rogue cast floor prevents spam without retaining a 
       before: originalX, after: a.x, phase: c.tacticalRogueRegroup(a)?.phase,
       returning: a.returning, aggro: a.aggro, motion: a.motion?.kind,
       warning: a.telegraph?.name, heroX: c.hero.x, calls: approachOrders,
-      resetOrigin,
     }));
   assert.equal(approachOrders, 0,
     'a covering Rogue cast must never reverse the withdrawal toward the hero');
