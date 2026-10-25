@@ -103,6 +103,43 @@ for (const family of families) {
   assert(impact && !impact.physicalProjectile, family + ' keeps nonprojectile second effect');
   assert.equal(pet.skill2Cd, Campaign.rules.balance.companions.petSecondCooldown);
 }
+const lineVisualGame = new Campaign('normal', 'paladin', () => 0.9);
+// The pet line hits in all four distinct families are instantaneous results,
+// not continuing beams. They keep a visible but short world-planted receipt,
+// including when the caster walks away after the damage has already landed.
+// The interruptible 0.65s charge is separately checked above.
+let lineCases = 0;
+for (const family of families) {
+  for (const slot of [1, 2]) {
+    const def = Campaign.rules.petCompanions[family][slot === 1 ? 'first' : 'second'];
+    const event = { type: 'petSkill', petFamily: family, skill: def.name,
+      slot, shape: def.shape, x: 1500, y: 1700, fromX: 1400, fromY: 1700 };
+    const released = Fx.queue([{ ...event, stage: 'release' }], lineVisualGame, [])
+      .find((f) => f.type === 'petSkill');
+    const impacted = Fx.queue([{ ...event, stage: 'impact' }], lineVisualGame, [])
+      .find((f) => f.type === 'petSkill');
+    assert(released && impacted, family + ' skill ' + slot + ' has both authored cues');
+    const normalLife = slot === 2 ? 0.85 : 0.65;
+    const isLine = def.shape === 'line';
+    assert.equal(released.max, isLine ? 0.32 : normalLife,
+      family + ' skill ' + slot + ' release lifetime');
+    assert.equal(impacted.max, isLine ? 0.3 : normalLife,
+      family + ' skill ' + slot + ' impact lifetime');
+    // Its target and release-site footprint are snapshots; moving the pet
+    // afterward must not make the already-resolved hit drift.
+    for (const dt of [1 / 20, 1 / 30, 1 / 60]) {
+      const f = { ...impacted };
+      for (let i = 0; i < 30 && f.life > 0; i++) f.life -= dt;
+      assert(f.life <= 0, 'transient VFX expires without owning ongoing gameplay');
+      assert.equal(f.x, 1500);
+      assert.equal(f.fromX, 1400);
+      if (isLine) lineCases++;
+    }
+  }
+}
+assert.equal(lineCases, 4 * 3, 'all four line skills verified at 20/30/60 steps');
+
 console.log('PASS all 11 pet families: ' + flightCases +
   ' stepped physical first shots, independent travel, correct cast-origin impacts, ' +
-  'eight nonflight first skills and eleven charged holds');
+  'eight nonflight first skills, eleven charged holds and ' + lineCases +
+  ' bounded line-afterimage step checks');

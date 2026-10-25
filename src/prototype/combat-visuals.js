@@ -1133,8 +1133,21 @@
       else if (e.type === 'swing')
         push(e, 'swing', e.combo === 3 ? 0.32 : e.combo ? 0.25 : 0.18, 2);
       else if (e.type === 'basicComboFinisher') push(e, e.type, 0.45, 4);
-      else if (e.type === 'petSkill')
-        push(e, e.type, e.slot === 2 ? 0.85 : 0.65, e.slot === 2 ? 5 : 4);
+      else if (e.type === 'petSkill') {
+        // Ranged roles do not turn their instant line skills into traveling
+        // beams/cargo. Their hit is already complete at cast/charge release,
+        // so keep the full-line afterimage brief (the separate 0.65s windup
+        // remains unchanged). Circle/cone/local skills retain their cadence.
+        const lineAfterimage = e.shape === 'line' && (e.stage === 'release' || e.stage === 'impact');
+        const life = lineAfterimage
+          ? e.stage === 'release'
+            ? 0.32
+            : 0.3
+          : e.slot === 2
+            ? 0.85
+            : 0.65;
+        push(e, e.type, life, e.slot === 2 ? 5 : 4);
+      }
       else if (e.type === 'chargedArea')
         push(
           e,
