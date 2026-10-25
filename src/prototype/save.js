@@ -204,6 +204,17 @@
             Object.entries(s.criticalCodices).some(([id, claimed]) =>
               !Object.hasOwn(R.criticalCodices, id) || claimed !== true))
           throw Error('Invalid critical Codex claims');
+        // Independent Party and World streams are optional until opt-in.
+        // Saving a game mid-combat stores RNG state, not transient receipts.
+        if (s.criticalStreams !== undefined) {
+          const state = s.criticalStreams;
+          if (!state || typeof state !== 'object' || Array.isArray(state) ||
+              Object.keys(state).length !== 2 ||
+              !Object.hasOwn(state, 'party') || !Object.hasOwn(state, 'world') ||
+              Object.values(state).some((v) =>
+                !Number.isInteger(v) || v < 0 || v > 0xffffffff))
+            throw Error('Invalid independent critical RNG state');
+        }
         if (s.hero.regnalName !== undefined && !s.throneClaimed)
           throw Error('Dark Lord name before claiming the throne');
         if (s.talentBalanceVersion === undefined) {

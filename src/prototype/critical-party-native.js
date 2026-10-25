@@ -46,7 +46,43 @@
     });
   }
 
-  const API = Object.freeze({ createSession });
+  // An explicit development/feature-gate attachment; never installed on a
+  // normal Campaign implicitly. Both domains persist independent RNG state
+  // in the existing v4 snapshot and never borrow Campaign.random().
+  function attachCampaign(game, Critical, Levels, World, options = {}) {
+    if (options.enabled !== true) return null;
+    if (!game?.s || !Critical?.seededStream || !World?.createSession)
+      throw Error('Critical campaign attachment needs live Campaign and contracts');
+    if (game._criticalPartyNative?.enabled || game._criticalWorldNative?.enabled)
+      throw Error('Critical sessions already attached');
+    const seeds = game.s.criticalStreams || {
+      party: options.partySeed ?? 0x3c6ef372,
+      world: options.worldSeed ?? 0xa54ff53a,
+    };
+    // Validate through the same isolated stream constructor used for rolls.
+    const party = Critical.seededStream(seeds.party);
+    const world = Critical.seededStream(seeds.world);
+    game.s.criticalStreams = { party: party.snapshot(), world: world.snapshot() };
+    function persistent(domain, stream) {
+      return {
+        next() {
+          const value = stream.next();
+          game.s.criticalStreams[domain] = stream.snapshot();
+          return value;
+        },
+      };
+    }
+    const partySession = createSession(Critical, Levels, {
+      enabled: true, stream: persistent('party', party),
+    });
+    const worldSession = World.createSession(Critical, Levels, {
+      enabled: true, stream: persistent('world', world),
+    });
+    game._criticalPartyNative = partySession;
+    game._criticalWorldNative = worldSession;
+    return Object.freeze({ party: partySession, world: worldSession });
+  }
+  const API = Object.freeze({ createSession, attachCampaign });
   if (typeof module !== 'undefined') module.exports = API;
   else root.PrototypeCriticalPartyNative = API;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
