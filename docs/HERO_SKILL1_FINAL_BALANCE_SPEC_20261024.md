@@ -1,6 +1,6 @@
 # Hero Skill 1 — consolidated numerical and implementation-ready design specification
 
-**24 October 2026 · Draft PR #439 · design decisions authorized by owner, **not yet implemented**.**
+**24 October 2026 · Draft PR #439 · owner-approved first-pass balance; Area 1 gameplay implementation now present on draft branch, not merged/deployed.**
 **Baseline:** `main` at `e4e8234b5f784ddc9492fe79d956fd0a696b12af`, existing [design/companion audit](HERO_SKILL1_SELF_TAUGHT_COMBAT_DESIGN_20261024.md), [companion dependency matrix](HERO_SKILL1_COMPANION_DEPENDENCIES_20261024.md), and [hero damage/cooldown source audit](HERO_SKILLS_COOLDOWN_ROTATION_DAMAGE_AUDIT_20261015.md). Values below are the **chosen first-implementation specification**, rather than vague candidate ranges. Numerical effectiveness is **not certified** by a simulation or playtest; any actual adjustment requires reported focused evidence and owner review.
 
 ## One discipline, three actions, no additional rank or specialist
@@ -178,4 +178,4 @@ This design intentionally changes the **meaning of slot 1 normal versus charged*
 8. Player documentation: readable bilingual Journal, training/teacher preview, Keeper archive, normal/charged figures, upgraded geometry/lockout, HUD action descriptions and first-combat guidance reflect the exact **live** rules, no invented specialist/lore or extra skill slot.
 9. Manual/focused combat study against 1/3/5/8/12 foes, normal/TRUE boss, all companion counts and ranger retreat patterns; report sustained DPS and role utility before any merge/publish.
 
-**No tests or browser suites ran for this documentation-only numerical specification.** It neither implements gameplay nor authorizes merge/deployment. The existing draft PR remains the one integration surface; reconcile open stationary-autoattack PR #436 there when gameplay coding is explicitly authorized.
+**Area 1 gameplay code now implements these first-pass rules in PR #439.** A focused native-campaign smoke test passed in a reduced-service harness; full Node/browser suites, balance validation, art and in-game descriptions remain pending. See [Area 1 checkpoint](HERO_SKILL1_AREA1_IMPLEMENTATION_20261024.md). No merge/deployment authorization. The existing draft PR remains the one integration surface; reconcile open stationary-autoattack PR #436 there when gameplay coding is explicitly authorized.
