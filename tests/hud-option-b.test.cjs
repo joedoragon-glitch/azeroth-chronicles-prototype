@@ -69,3 +69,16 @@ test('Option B leaves the existing two-thumb, left-hand and full phone grid rule
   assert.match(phone, /#touch-interact-button/);
   assert.match(phone, /#squad-button/);
 });
+
+test('Option B targeted real-shell captures (desktop and two landscape sizes)', () => {
+  if (!process.env.GITHUB_ACTIONS) return;
+  const { spawnSync } = require('node:child_process');
+  const result = spawnSync(process.execPath, [path.join(__dirname, 'hud-option-b-visual.cjs')], {
+    cwd: root,
+    stdio: 'inherit',
+    timeout: 180000,
+    env: process.env,
+  });
+  assert.equal(result.error, undefined, result.error?.message);
+  assert.equal(result.status, 0, 'real-shell visual geometry and menu smoke failed');
+});
