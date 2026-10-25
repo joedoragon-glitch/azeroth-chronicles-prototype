@@ -3,8 +3,8 @@ const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
 const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 
-function arena(positions) {
-  const g = new Campaign('normal', 'mage', () => 0.9);
+function arena(positions, cls = 'mage') {
+  const g = new Campaign('normal', cls, () => 0.9);
   completeFieldOpening(g);
   g.zone().props = [];
   g.zone().buildings = [];
@@ -202,8 +202,7 @@ for (const fps of [20, 30, 60]) {
 // Other heroes keep independent launched projectiles and authored ground
 // effects. They must not inherit Mage Skill 1 homing or caster tethering.
 for (const cls of ['paladin', 'ranger']) {
-  const { g, enemies: [target] } = arena([[760, 500]]);
-  g.hero.class = cls;
+  const { g, enemies: [target] } = arena([[760, 500]], cls);
   assert(g.cast(1, target.id, false), cls + ' normal Skill 1');
   const shots = g.s.projectiles.filter(p => p.source === 'hero');
   assert.equal(shots.length, cls === 'ranger' ? 3 : 1);
@@ -218,8 +217,7 @@ for (const cls of ['paladin', 'ranger']) {
   }
 }
 {
-  const { g, enemies: [target] } = arena([[620, 500]]);
-  g.hero.class = 'paladin';
+  const { g, enemies: [target] } = arena([[620, 500]], 'paladin');
   assert(g.cast(1, target.id, true));
   const cross = g._heroSkillEffects.find(effect => effect.kind === 'cross');
   assert(cross, 'Paladin charged cross retains authored world-space geometry');
@@ -230,8 +228,7 @@ for (const cls of ['paladin', 'ranger']) {
   assert.equal(cross.from.y, castY);
 }
 {
-  const { g, enemies: [target] } = arena([[780, 500]]);
-  g.hero.class = 'ranger';
+  const { g, enemies: [target] } = arena([[780, 500]], 'ranger');
   assert(g.cast(1, target.id, true));
   const hawk = g._heroSkillEffects.find(effect => effect.kind === 'hawk');
   assert(hawk, 'Ranger charged hawk is an independent pursuit entity');
