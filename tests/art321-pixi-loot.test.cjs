@@ -177,8 +177,8 @@ function lastCoins(){return batches.at(-1).filter(x=>String(x.key).startsWith('c
   assert.equal(westHero.flipX,true,'Raster Ranger must get the Canvas-facing direction');
   assert.equal(westOrc.width,eastOrc.width);
   assert.equal(westOrc.y,eastOrc.y);
-  const foot=eastOrc.x+eastOrc.width/2;
-  assert(Math.abs((eastOrc.x+westOrc.x+eastOrc.width)-2*foot)<.01,
+  const originalFoot=renderer.screen(zoneFixture.enemies[0]).x;
+  assert(Math.abs((eastOrc.x+westOrc.x+eastOrc.width)-2*originalFoot)<.01,
     'GPU mirror must use stable original foot coordinate, not texture center');
   assert.equal(files.length,stampPaintCount,'A facing turn cannot allocate new procedural image');
   assert(faceArguments.some(x=>x.facing===-1),
