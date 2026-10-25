@@ -113,6 +113,7 @@ for (const mode of modes) for (const d of distances) {
   const u = g.unit('archer', 1400 + d, 1700);
   Object.assign(u, { hp: 10000, maxHp: 10000, cd: 0, order: null });
   g.s.party = [u];
+  g._tacticalPartyTargets = new Map();
   g.hero.x = u.x + 35;
   assert(!g.companionCoverAttack(u, e, true),
     'Archer basic cannot instantly fire at ' + d + ' units');
