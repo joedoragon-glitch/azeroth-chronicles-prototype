@@ -39,6 +39,100 @@ async function selectPixi(page) {
   }, null, {timeout:45000});
   return page.evaluate(() => Prototype.experimentalGraphics);
 }
+// One narrowly scoped, real Chromium drawing check on BOTH the Canvas path
+// and the PixiJS Canvas-combat overlay. Simulation timing is tested separately.
+async function inspectMageBeamOverlay(page, expectedMode) {
+  const result = await page.evaluate(() => {
+    const game = Prototype.game, renderer = Prototype.renderer,
+      art = window.PrototypeHeroPresentation;
+    const saved = {
+      cls: game.hero.class, x: game.hero.x, y: game.hero.y,
+      shots: game.s.projectiles, effects: game._heroSkillEffects,
+      draw: art.draw, projectile: art.projectile,
+    };
+    const charged = [], normal = [];
+    try {
+      game.hero.class = 'mage';
+      art.draw = function (ctx, screen, effect, opts) {
+        if (effect.stage === 'skill1-wide-beam')
+          charged.push({x: effect.x, y: effect.y, endX: effect.endX,
+            endY: effect.endY, width: effect.halfWidth, live: effect.simulatedFront});
+        return saved.draw.call(this, ctx, screen, effect, opts);
+      };
+      art.projectile = function (ctx, screen, shot, cls, reduced, caster) {
+        if (shot.mageSkill1Homing)
+          normal.push({x: shot.x, y: shot.y, casterX: caster?.x,
+            casterY: caster?.y, visualWidth: shot.beamWidthScale});
+        return saved.projectile.call(this, ctx, screen, shot, cls, reduced, caster);
+      };
+      const from = {x: saved.x, y: saved.y};
+      const beam = {
+        kind: 'wide-beam', zone: game.zoneId,
+        deaths: game.s.statistics.deaths, from,
+        endX: from.x + 90, endY: from.y,
+        halfWidth: 20,
+      };
+      game._heroSkillEffects = [...(saved.effects || []), beam];
+      game.s.projectiles = [...saved.shots, {
+        id: 'beam-overlay-smoke', source: 'hero', style: 'beam',
+        slot: 1, charged: false, x: from.x + 65, y: from.y,
+        originX: from.x, originY: from.y, dx: 1, dy: 0,
+        beamWidthScale: 2.5, mageSkill1Homing: true, delay: 0,
+        trailPoints: [from, {x: from.x + 30, y: from.y}],
+      }];
+      renderer.queue([{type: 'heroSkillArea', actor: 'hero', class: 'mage',
+        slot: 1, effect: 'wide-arcane-beam', phase: 'launch',
+        x: from.x, y: from.y, endX: beam.endX, endY: beam.endY,
+        halfWidth: beam.halfWidth, travelSeconds: 0.75, hits: 0}]);
+      renderer.draw();
+      game.hero.x += 24;
+      game.hero.y += 16;
+      beam.from = {x: game.hero.x, y: game.hero.y};
+      beam.endX = from.x + 90;
+      beam.endY = from.y;
+      renderer.draw();
+      // Verify actual raster drawing, not only that callbacks were reached.
+      const surface = document.createElement('canvas');
+      surface.width = 300; surface.height = 180;
+      const ctx = surface.getContext('2d');
+      saved.draw(ctx, point => point, {
+        stage: 'skill1-wide-beam', x: 30, y: 80,
+        endX: 180, endY: 110, halfWidth: 20,
+        simulatedFront: true, max: 0.83, life: 0.55,
+      }, {reduced: false, width: 300, height: 180});
+      const pixels = ctx.getImageData(0, 0, 300, 180).data;
+      let painted = 0;
+      for (let i = 3; i < pixels.length; i += 4)
+        if (pixels[i]) painted++;
+      return {mode: Prototype.experimentalGraphics.mode, charged, normal, painted};
+    } finally {
+      art.draw = saved.draw;
+      art.projectile = saved.projectile;
+      game.hero.class = saved.cls;
+      game.hero.x = saved.x;
+      game.hero.y = saved.y;
+      game.s.projectiles = saved.shots;
+      game._heroSkillEffects = saved.effects;
+      renderer.update(1);
+    }
+  });
+  assert.equal(result.mode, expectedMode, 'Renderer mode should not switch during beam drawing');
+  assert(result.charged.length >= 2, 'Both real renderer draws must show the charged beam');
+  assert(result.normal.length >= 2, 'Both real renderer draws must show the normal beam');
+  assert.equal(result.charged[0].live, true, 'Charged art uses simulation-owned geometry');
+  assert.equal(result.charged[0].width, 20);
+  assert.equal(result.charged[0].x + 24, result.charged.at(-1).x,
+    'Charged near end follows the moving caster');
+  assert.equal(result.charged[0].endX, result.charged.at(-1).endX,
+    'Charged far world aim remains fixed');
+  assert.equal(result.normal[0].visualWidth, 2.5);
+  assert.equal(result.normal[0].x, result.normal.at(-1).x,
+    'Normal damaging projectile head does not teleport with caster');
+  assert.equal(result.normal[0].casterX + 24, result.normal.at(-1).casterX,
+    'Normal trail attaches to live caster');
+  assert(result.painted > 250, 'Charged art must actually paint a readable beam corridor');
+  console.log('PASS Mage Skill 1 Canvas combat-overlay drawing (' + expectedMode + ')');
+}
 const types = {
   '.html': 'text/html', '.js': 'application/javascript',
   '.json': 'application/json', '.css': 'text/css',
@@ -88,6 +182,7 @@ async function run() {
       await page.keyboard.press('f');
       await page.waitForFunction(() => document.querySelector('#modal').hidden);
       await page.evaluate(() => {window.__gpuTestCampaign = Prototype.game;});
+      await inspectMageBeamOverlay(page, 'canvas2d');
       // Canvas remains functional under the new three-way optimization policy.
       assert.equal(await page.evaluate(() =>
         localStorage.getItem('azeroth-optimization-mode-v1')), 'auto');
@@ -144,6 +239,7 @@ async function run() {
           'Camera zoom must not abandon an otherwise valid GPU scene');
         assert.equal(await page.evaluate(() => Prototype.game === window.__gpuTestCampaign), true);
         await page.getByRole('button', {name: 'Keep WebGL2'}).click();
+        await inspectMageBeamOverlay(page, 'webgl2');
         assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.phase), 'confirmed');
         // The retained Pixi background must immediately reflect presentation
         // transitions without walking, zooming or a zone transition.
