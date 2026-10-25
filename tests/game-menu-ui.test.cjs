@@ -98,7 +98,7 @@ for (const language of ['en', 'es']) {
   section('Frame rate', 'Fotogramas por segundo');
   section('Graphics renderer', 'Motor gráfico');
   section('Diagnostics', 'Diagnósticos');
-  assert.equal(rows().filter((r) => r.className === 'menu-setting').length, 5);
+  assert.equal(rows().filter((r) => r.className === 'menu-setting').length, 6);
   const canvas = setting('Graphics renderer', 'Motor gráfico');
   assert(canvas.children.some((o) => o.value === 'canvas2d'));
   assert(canvas.children.some((o) => o.value === 'webgl2'));
