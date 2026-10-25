@@ -482,6 +482,22 @@ console.log('PASS field leaders may rally other elites but their retreat stays l
 console.log('PASS boss and captain no-support/anchor cases never force an encounter reset');
 
 {
+  const { c, z, a } = encounter('crypt');
+  z.enemies = [a];
+  a.type = 'boss';
+  a.family = 'crypt';
+  const farRoomTarget = { ...c.hero, x: a.home.x + 1100, y: a.home.y };
+  assert(c.tacticalRogueLeashAllows(a, farRoomTarget, 1800),
+    'original dungeon boss reach must support this player position');
+  c._tacticalRegroups = new Map([[a.id, {
+    phase: 'defend', anchor: { x: a.x, y: a.y }, holdRemaining: 6,
+  }]]);
+  assert(c.tacticalRogueLeashAllows(a, farRoomTarget, 1800),
+    'new defensive fallback cannot shorten existing dungeon boss leash');
+}
+console.log('PASS the defensive boss stance preserves existing dungeon encounter reach');
+
+{
   // The cast RELEASE, not merely the warning, must keep withdrawing actors
   // from closing the gap. Supported counteroffensive dash remains intact.
   const { c, z, a } = encounter();
