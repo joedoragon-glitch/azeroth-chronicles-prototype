@@ -93,21 +93,62 @@ console.log('PASS extended movement survives ability cooldown');
 console.log('PASS repeatable 50/50 reinforcements, per-owner cap, rewards, non-recursion');
 
 {
-  const { c, z, a } = encounter('crypt');
+  const { c, z, a, b } = encounter('crypt');
   assert(c.isDungeon());
+  // A real dungeon Ringleader inherits guardian identity from the slain guard.
+  a.guard = true;
+  b.guard = true;
   assert(c.tacticalEmergencyCall(a));
+  const owned = z.enemies.filter(u => u.rogueEmergencyReinforcement && u.hp > 0);
+  assert(owned.length > 0);
+  assert(owned.every(u => u.guard && u.summon), 'temporary guardians are living defenders');
   c.s.normal.crypt = true;
   c.s.paid['clear:crypt'] = false;
   c.s.pending = {};
+  // Kill the native defenders but leave the summoned guards alive.
+  a.hp = 0;
+  b.hp = 0;
   c.checkClear();
-  assert(c.s.paid['clear:crypt'], 'summoned guardian does not block permanent dungeon clear');
+  assert(!c.s.paid['clear:crypt'],
+    'main dungeon stays contested as long as emergency guardians survive');
+  for (const u of owned) u.hp = 0;
+  c.checkClear();
+  assert(c.s.paid['clear:crypt'],
+    'normal boss victory plus removal of all guardians earns the normal first-clear reward');
+}
+console.log('PASS main dungeon remains contested while summoned guardians defend it');
+
+{
+  const { c, z, a, b } = encounter('crypt');
+  a.guard = true;
+  b.guard = true;
+  assert(c.tacticalEmergencyCall(a));
   const owned = z.enemies.filter(u => u.rogueEmergencyReinforcement && u.hp > 0);
-  assert(owned.length > 0);
+  c.s.normal.crypt = true;
+  c.s.paid['clear:crypt'] = false;
+  c.s.pending = {};
+  b.hp = 0;
   a.hp = 0;
   c.kill(a);
-  assert(owned.every(u => u.hp === 0), 'owner death retires emergency defenders');
+  assert(owned.every(u => u.hp === 0),
+    'defeating the Ringleader dismisses only its emergency guardians');
+  assert(c.s.paid['clear:crypt'],
+    'last Ringleader death can complete the dungeon when no defenders remain');
 }
-console.log('PASS dungeon-clear separation and owner death cleanup');
+console.log('PASS Ringleader defeat is an effective way to end its summoned defense');
+
+{
+  const { c, z, a } = encounter('crypt');
+  a.guard = true;
+  c.s.normal.crypt = false;
+  c.s.paid['clear:crypt'] = false;
+  c.s.pending = {};
+  a.hp = 0;
+  c.checkClear();
+  assert(!c.s.paid['clear:crypt'],
+    'no dungeon first-clear reward without the existing normal boss victory');
+}
+console.log('PASS original boss-victory condition remains required');
 
 {
   const { c, a } = encounter();
@@ -141,10 +182,26 @@ console.log('PASS the three-defender branch of the 50/50 roll');
 
 {
   const sideId = Campaign.rules.sideDungeons[0].id;
-  const { c, z, a } = encounter(sideId);
+  const { c, z, a, b } = encounter(sideId);
   assert(c.isDungeon() && c.sideDungeon(), 'side-dungeon identity');
+  a.guard = true;
+  b.guard = true;
   assert.equal(c.tacticalBeginExtendedRetreat(a), false, 'no regional roaming inside interiors');
   assert(c.tacticalEmergencyCall(a), 'side-dungeon fallback has the same emergency call');
-  assert(z.enemies.some(u => u.owner === a.id && u.rogueEmergencyReinforcement));
+  const owned = z.enemies.filter(u => u.owner === a.id && u.rogueEmergencyReinforcement);
+  assert(owned.length > 0);
+  assert(owned.every(u => u.hp > 0 && u.guard),
+    'summoned guards remain actual secondary-dungeon defenders');
+  const before = JSON.stringify(c.s.paid);
+  a.hp = 0;
+  b.hp = 0;
+  c.checkClear();
+  assert.equal(JSON.stringify(c.s.paid), before,
+    'no premature secondary-dungeon reward/clear flag introduced');
+  assert(owned.some(u => u.hp > 0),
+    'side-dungeon reinforcements remain alive until defeated or the caller is killed');
+  c.kill(a);
+  assert(owned.every(u => u.hp <= 0),
+    'defeating side-dungeon Ringleader retires its summoned defenders');
 }
-console.log('PASS side dungeons use the contained fallback instead of field movement');
+console.log('PASS side dungeons preserve live defenders without inventing early clearance');
