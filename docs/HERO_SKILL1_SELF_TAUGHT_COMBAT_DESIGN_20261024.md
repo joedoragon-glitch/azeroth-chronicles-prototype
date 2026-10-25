@@ -194,11 +194,11 @@ See [companion audit](HERO_SKILL1_COMPANION_DEPENDENCIES_20261024.md) for the ex
 
 ### Decisions remaining before implementation
 
-- [ ] Choose original skill name, hawk silhouette, summoning effect, flight/impact feedback and lore wording (no imported Ragnarok branding).
+- [ ] Choose final skill name, original hawk silhouette, summoning effect, flight/impact feedback and lore wording (no imported Ragnarok branding).
 - [ ] Set **launch range**, path/lifetime budget, finite flight speed, collision/obstacle rules, valid obstacle-navigation costs and despawn handling. Clarify whether the bird can route around limited terrain or simply expires when flight is blocked; no through-wall attack.
-- [ ] Confirm whether **damage always applies to a legally hit nonretreating target** (recommended, described above) and whether a preemptive anti-retreat mark is desired (not currently selected).
+- [x] On legal contact the hawk damages a nonretreating target too; there is **no preemptive anti-retreat mark** without an active retreat. A damage-absorbing shield may reduce HP loss without automatically voiding valid retreat contact control (see balance contract).
 - [x] Specify 4.0–4.6s same-family suppression, 2.25(P+12)M(rank) damage, 8s charged cooldown, +15 flight budget each even rank, same rank/track and no extra resource. [ ] Validate cross-class encounter balance.
-- [ ] Decide whether boss healing/escape aerials like Go-Around are cancellable **only where technically safe**, and audit other bespoke motions, boss/TRUE protections and leash recovery. Avoid a blanket immunity that silently defeats the user's anti-retreat request; enumerate exceptional noncombat safety returns.
+- [x] Decide semantic rule: **cancel authored tactical escape components only where state can safely terminate**, never safety returns or scripted resets, and never award movement-completion healing on abort. [ ] Verify each boss-specific state path in native tests; document any genuine non-cancellable exception.
 - [ ] Test a moving retreat target whose hawk catches it; a fast target that **outruns finite pursuit**; a blocked path; target death/zone change; protected field reset; airborne boss; no pursuit into towns or across room boundaries; and hit against an enemy **not** retreating.
 - [ ] Test each separate system: Rogue regroup/escape, Rogue withdrawal maneuver, ordinary ranged backpedal, boss/captain tactical withdrawal, permitted boss-specific retreat. Confirm same-family restart blocked temporarily, **other combat still works**, and valid new retreat after expiry.
 - [ ] Assert hero autoattacks and combo remain independent throughout charged hold/hawk flight; promoted triple-arrow tap and new hawk share **only activated Skill 1 cooldown**; no companion skill timers are reused.
