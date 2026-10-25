@@ -33,6 +33,8 @@ assert(
   Object.values(oldOre.history[oreKey]).some((record) => record.review?.status === 'approved'),
   'ore-bay original and prior creative approval must remain available for re-review',
 );
+// Temporary source-drift diagnostic: capture the exact computed audit, not inferred counts.
+console.log('SPRITE_SCOPE_SNAPSHOT_BEGIN' + JSON.stringify(current) + 'SPRITE_SCOPE_SNAPSHOT_END');
 assert.deepEqual(
   current,
   JSON.parse(read('docs/evidence/SPRITE_SCOPE_RECONCILIATION.json')),
