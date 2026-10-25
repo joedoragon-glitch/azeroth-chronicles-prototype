@@ -194,11 +194,29 @@ async function verifyEarnedLoot(page) {
       previousActors:Prototype.experimentalGraphics.sceneMetrics.actors,
       kills:g.s.statistics.kills,snapshotRetainsCoin:true};
   },scene.where);
-  await page.waitForFunction(previous=>
+  // A boss/quest death may also remove or add different scene actors.
+  // The count need not be baseline+1; measure the actual page-composited coin
+  // instead, while enforcing a live, retained GPU backend.
+  await page.waitForFunction(()=>
     Prototype.experimentalGraphics.mode==='webgl2'&&
     Prototype.experimentalGraphics.phase==='confirmed'&&
-    Prototype.experimentalGraphics.sceneMetrics.actors>=previous+1,
-    drop.previousActors,{timeout:30000});
+    Prototype.experimentalGraphics.sceneMetrics.actors>0,
+    null,{timeout:15000});
+  // Idle rendering is deliberately throttled while the Campaign is paused.
+  await page.waitForTimeout(1300);
+  const renderState=await page.evaluate(id=>({
+    mode:Prototype.experimentalGraphics.mode,
+    phase:Prototype.experimentalGraphics.phase,
+    metrics:Prototype.experimentalGraphics.sceneMetrics,
+    coinStillPresent:Prototype.game.s.loot.some(x=>x.id===id),
+    paused:Prototype.paused,
+    zone:Prototype.game.zoneId,
+    modalHidden:document.querySelector('#modal').hidden
+  }),drop.id);
+  console.log('ART321_EARNED_PRECAPTURE '+JSON.stringify(renderState));
+  assert.equal(renderState.coinStillPresent,true);
+  assert.equal(renderState.mode,'webgl2');
+  assert.equal(renderState.phase,'confirmed');
   await page.screenshot({path:earned,clip:scene.clip,animations:'disabled'});
   const pixelDiff=await compareImages(empty,earned);
   assert(pixelDiff.changedPixels>25&&pixelDiff.pixelDifference>2000,
