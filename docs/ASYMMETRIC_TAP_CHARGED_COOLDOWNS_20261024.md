@@ -1,7 +1,7 @@
 # Tap/Charged Skill Cooldowns — Owner-Directed Asymmetric Recovery Contract
 
 **24 October 2026 · Draft PR #439 · owner-requested correction for hero Skills 1–8**
-**Status:** precise new combat behavior agreed as design direction; not yet implemented or playtested. This **supersedes** the older "one shared cooldown where either form blocks both for the full last-used duration" rule wherever that rule appears in the other PR documents. The owner has been the practical solo playtester and has reported that the former design makes charged skills unduly punish access to practical normal taps. The goal is to preserve tactical charged cooldowns while **never making a normal tap wait longer solely because charged was used**.
+**Status:** new combat behavior implemented on PR #439's Area 1 draft branch and covered by a focused native smoke test, not merged, published, or fully playtested. This **supersedes** the older "one shared cooldown where either form blocks both for the full last-used duration" rule wherever that rule appears in the other PR documents. The owner has been the practical solo playtester and has reported that the former design makes charged skills unduly punish access to practical normal taps. The goal is to preserve tactical charged cooldowns while **never making a normal tap wait longer solely because charged was used**.
 
 ## 1. Exact gameplay rule
 
@@ -83,4 +83,4 @@ Numerical durations listed below are the **unmodified base** across Paladin, Mag
 6. Safe v4 migration with legacy `hero.cd` remaining from normal or charged, positive numbers, interrupted/cancelled charge, shield; no companion timer/rank resets; verify roundtrip persist of both new arrays and new basic timer, reject malformed data.
 7. Skill 1 Paladin two-hit cross, Mage every-enemy line, Ranger hawk contact/retreat break preserve charged and normal timer separation; 11 pets and Soldier/Archer first/second skills remain independently scheduled. Do not alter existing sound effects, boss return safety or player instructions about true current cooldowns.
 
-**Implementation boundary:** This is a **new owner-directed behavior change** that updates the integration requirements for draft PR #439. It is not yet executable. Integrate with the same PR's visuals, sound and bilingual in-game descriptions when source-code work is separately authorized; run only focused tests, and do not merge/deploy without permission.
+**Implementation boundary:** This owner-directed behavior now has an executable initial implementation in draft PR #439. See [Area 1 checkpoint](HERO_SKILL1_AREA1_IMPLEMENTATION_20261024.md). Integrate with the same PR's visuals, sound and bilingual in-game descriptions when source-code work is separately authorized; run only focused tests, and do not merge/deploy without permission.
