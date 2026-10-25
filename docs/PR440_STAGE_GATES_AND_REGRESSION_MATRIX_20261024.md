@@ -159,3 +159,12 @@ Single next step:
 ~~~
 
 **No task box is a claim of live readiness unless source, tests and owner review support it.**
+
+
+## 25 October gate ledger — reconciled dev.184 / native Skill 1 checkpoint
+
+**Gate B1 dependency reconciliation:** [x] Resolved #439 merge, source inspected on current dev.184 `main`, merged it safely into the existing draft branch at `cae15e6`; no current main combat sources were discarded. **Gate B2 partial:** [x] direct native release hook for hero Skill 1 across three classes (automatic beat, Tap, charged) now exists in `hero-combat.js`, with new opt-in `critical-party-native.js`. ONE action receipt per Tap 3 arrows / Cross pulses / Mage beam / Hawk flight-contact / automatic beat finisher; Hawk's authored critical lever is always-applicable contact damage rather than conditional retreat lock. [ ] Hero slots 2–8 remain unintegrated; none of B3 troop/pet or B4 92 real-effect validation is accepted as complete.
+
+**Focused evidence ledger:** new `tests/critical-party-native.test.cjs` uses actual `engine.js` Campaign, tests action release, inheritance and tiers (N *when run*); `tests/critical-levels.test.cjs` updated (F). Automatic focused workflow at source head `0f878130861fd9aa6820c473f56bb573d319140a`: [run 40197864695](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40197864695), **pending at initial documentation**. No verified pass is asserted until retrieved. Existing Stage 1 and fixture test history predates this checkpoint. No independent device/performance/save acceptance. This is not permission to use full manual suites, publish, merge or activate mechanics.
+
+**Safety:** `site-assets.cjs` does not load the new critical modules and Campaign does not attach opt-in critical session. No production rolls or buffs; no per-tick observer installed. PR #440 stays OPEN DRAFT, unmerged. Remaining Stage 2 work: finish 2–8 hero effect paths with real caps, then companion/pet direct action owners; investigate original conditional effects and native negative/baseline regressions. Stage 3–6 are still pending.
