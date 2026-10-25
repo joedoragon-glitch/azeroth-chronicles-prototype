@@ -5,11 +5,14 @@ const assert = require('node:assert/strict'),
   P = require('../src/prototype/enemy-presentation.js'),
   B = require('../src/prototype/enemy-vfx-events.js'),
   coverage = require('../scripts/enemy-audio-coverage.cjs'),
+  { completeFieldOpening } = require('./helpers/field-opening.cjs'),
   { audio } = require('./helpers/audio-context.cjs');
 const report = coverage.audit();
 assert(report.identities >= 172);
 const fresh = () => {
   const c = new C('normal', 'paladin', () => 0.5);
+  completeFieldOpening(c);
+  c.effects = [];
   c.s.party = [];
   c.zone().enemies = [];
   Object.assign(c.hero, { x: 1480, y: 1700, hp: 100000, maxHp: 100000 });
