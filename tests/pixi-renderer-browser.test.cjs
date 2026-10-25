@@ -238,7 +238,19 @@ async function run() {
         assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'webgl2',
           'Camera zoom must not abandon an otherwise valid GPU scene');
         assert.equal(await page.evaluate(() => Prototype.game === window.__gpuTestCampaign), true);
-        await page.getByRole('button', {name: 'Keep WebGL2'}).click();
+        // On slower phone emulation the opt-in confirmation countdown may
+        // expire while Chromium is preparing the software WebGL scene.
+        // Retry the real opt-in UI once, rather than treating an expired
+        // approval button as a beam/renderer regression.
+        try {
+          await page.getByRole('button', {name: 'Keep WebGL2'}).click({timeout: 4000});
+        } catch (error) {
+          const state = await page.evaluate(() => Prototype.experimentalGraphics);
+          if (state.mode !== 'canvas2d') throw error;
+          const retry = await selectPixi(page);
+          assert.equal(retry.mode, 'webgl2', 'WebGL2 must support a fresh opt-in');
+          await page.getByRole('button', {name: 'Keep WebGL2'}).click({timeout: 6000});
+        }
         await inspectMageBeamOverlay(page, 'webgl2');
         assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.phase), 'confirmed');
         // The retained Pixi background must immediately reflect presentation
