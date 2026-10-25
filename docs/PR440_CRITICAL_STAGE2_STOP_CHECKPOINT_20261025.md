@@ -1,4 +1,6 @@
-# PR #440 — Stage 2 stop checkpoint: independent next-chat handoff
+# PR #440 — Stage 2 stop checkpoint: historical handoff
+
+> **SUPERSEDED AS A STOP INSTRUCTION (25 Oct 2026).** The owner subsequently authorized continuing to the eleven pet families. [Read the later pet implementation checkpoint](PR440_STAGE2_PETS_NATIVE_CHECKPOINT_20261025.md). The original STOP and pet-unimplemented statements below remain unchanged as dated historical evidence, NOT current instructions. PR #440 remains draft and dormant.
 
 **Verified 25 October 2026 · CURRENT source-of-truth checkpoint for this workstream.** Older dated checkpoints in [the independent handoff](PR440_INDEPENDENT_WORK_HANDOFF_20261024.md) and [stage-gate checklist](PR440_STAGE_GATES_AND_REGRESSION_MATRIX_20261024.md) preserve history and original requirements; older “remaining” lists are superseded by this file. **Stop before implementing ANY of the eleven pet families.** This stop is expressly requested by the owner. A future chat can proceed only with a newly authorized scope and fresh GitHub verification.
 

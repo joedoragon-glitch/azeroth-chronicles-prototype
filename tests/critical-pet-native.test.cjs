@@ -114,6 +114,15 @@ for (const family of families) {
       settle(b.g);
       assert.equal(counter.count(), 1, key + ' projectile contact does not re-roll');
       inspect(a, b, lever, level, key);
+      if (slot !== 'basic') {
+        const def = b.g.petSkillDefinition(b.unit, Number(slot));
+        if (def.shape !== 'target') {
+          if (lever === 'damage')
+            assert(b.extra.hp < a.extra.hp, key + ' preserves multi-target shared critical');
+          if (lever === 'slowDuration')
+            assert(b.extra.slow > a.extra.slow, key + ' preserves group Slow sharing');
+        }
+      }
       validated++;
     }
   }
@@ -155,6 +164,24 @@ for (const family of families) {
   close(b.unit.hp - a.unit.hp, b.unit.maxHp * 0.1 * 0.10,
     'delayed contact retains Level 1 heal boost');
   assert.equal(tally.count(), 1);
+}
+// Both the ordinary combat owner and Recall defense owner must sample at release.
+// Ordinary pet attack must not secretly fall back to a Soldier action.
+for (const family of families) {
+  const a = arena(family), b = arena(family), counter = attach(b.g);
+  for (const u of [a.unit, b.unit]) {
+    u.cd = 0;
+    u.skill1Cd = 20;
+    u.skill2Cd = 20;
+    u.skillGlobalCd = 20;
+  }
+  a.g.updatePetCombat(a.unit, a.target, [a.unit], 0.016);
+  b.g.updatePetCombat(b.unit, b.target, [b.unit], 0.016);
+  assert.equal(counter.count(), 1, family + ' ordinary basic rolls at its own owner');
+  settle(a.g);
+  settle(b.g);
+  assert(b.target.hp < a.target.hp, family + ' ordinary basic gains native potency');
+  assert.equal(a.unit.cd, b.unit.cd, family + ' ordinary basic cooldown unchanged');
 }
 assert.equal(validated, 99);
 assert.equal(Campaign.prototype._criticalPartyNative, undefined,

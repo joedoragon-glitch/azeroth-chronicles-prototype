@@ -1,5 +1,12 @@
 # PR #440 — Critical Executions: independent development / Work-mode handoff
 
+## CURRENT CONTINUATION — Stage 2 pet-family integration (25 October 2026)
+
+**The owner has now explicitly authorized continuing beyond the earlier STOP checkpoint.** The earlier “stop before pets” paragraphs below are historical instructions, not a present hold. [Read the new pet-family checkpoint](PR440_STAGE2_PETS_NATIVE_CHECKPOINT_20261025.md) before relying on the dated material below. Same open **draft PR #440**, still OFF, unmerged and unpublished. Source commit `704d479fdf78db03d1e5a75270208188d5b07814` adds direct owners for all 33 pet action keys. Its native pet test passed **99 family/action/level combinations** in [focused run #40218283495](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40218283495); **workflow failed only at the independent Pixi browser context-loss diagnostic**, so no successful exact-head build is claimed. An additional ordinary-basic and multi-target coverage update follows that source commit and requires its own validation.
+
+At the start of the pet slice, live `main` was `e3c78266b28f3325d2afdcb76ae849fcff306deb`, **46 commits ahead of the draft's merge base**. `party-pets.js` was identical on main and PR before editing; `combat.js` overlaps newer main work, so **no full current-main integration/rebase is claimed**. Full Stage 2 OFF/ON/save/RNG/performance acceptance and current-main reconciliation are still open; stages 3–6 are untouched. Do not merge, publish, enable or run a broad full suite without separate approval.
+
+
 ## CURRENT STOP CHECKPOINT — 25 October 2026
 
 **Owner-directed STOP before pet-family integration.** [Read this self-contained, current source-verified GitHub handoff FIRST](PR440_CRITICAL_STAGE2_STOP_CHECKPOINT_20261025.md). Historical status notes and old `main`/PR SHAs below are NOT current instructions. Ranger Heal, dormant Mana, and standalone Soldier Guard native sources and tests are checkpointed; their native tests passed in [run #40204460034](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40204460034), but **the overall workflow was RED due to an unrelated Pixi browser viewport-change/Keep-Revert failure**. PR #440 stays DRAFT, unmerged, unpublished and production feature OFF. Do not start pets until explicit new authorization.
