@@ -10,12 +10,12 @@ That is a confirmed rules-level unbounded accumulation mechanism. Whether it dir
 
 ## New exact rules
 
-- `cooldownBalance.slowMaxStacks = 4` for allied and hostile Slow alike. Each successful hit still refreshes the existing maximum-duration window. It does not add a second per-stack timer.
-- The first **four** hits in one uninterrupted Slow window still increase stacks and apply each hit's existing adjusted-duration × hit-time debt fraction to eligible active cooldowns. Hits while already at four stacks add **zero** additional debt and no additional stack strength; damage, movement effects, warning, target eligibility, hit detection and healing remain unchanged.
-- Allied cooldown recovery is always at least `0.65/(1+3×0.35) ≈ 0.317` of unimpeded recovery during Slow; enemy cooldown recovery at least `0.85/(1+3×0.15) ≈ 0.586`. The existing Rogue movement factor is still 0.4. Normal Slow duration expires normally unless a subsequent successful hit refreshes it.
+- `cooldownBalance.partySlowMaxStacks = 4` for the hero, companions and pets. Hostile targets remain on their existing Slow rules, preserving the Mage’s enemy-control balance. Each successful hit still refreshes the existing maximum-duration window. It does not add a second per-stack timer.
+- The first **four** hits against a party member in one uninterrupted Slow window still increase stacks and apply each hit's existing adjusted-duration × hit-time debt fraction to eligible active cooldowns. Hits while already at four stacks add **zero** additional debt and no additional stack strength; damage, movement effects, warning, target eligibility, hit detection and healing remain unchanged.
+- Allied cooldown recovery is always at least `0.65/(1+3×0.35) ≈ 0.317` of unimpeded recovery during Slow; enemy cooldown recovery and stacking retain their existing unlimited behavior. The existing Rogue movement factor is still 0.4. Normal Slow duration expires normally unless a subsequent successful hit refreshes it.
 - Skills already ready never accrue debt. When Slow expires the stack resets. Cooldown debt already legitimately accrued remains and recovers normally. Existing saved cooldown numbers, even those above the new per-episode ceiling, are **not rewritten**.
-- Historical saves containing stack counts above four are interpreted with a four-stack recovery ceiling and their count is normalized on the next successful Slow application. This does not require a save migration.
-- Enemy tactical decisions, Rogue action cadence, avoidance, Blinding Dust direct-target exclusion and all companion/pet behavior are unchanged.
+- Historical **party** saves containing stack counts above four are interpreted with a four-stack recovery ceiling and their count is normalized on the next successful Slow application. This does not require a save migration.
+- Enemy tactical decisions, Rogue action cadence, avoidance, Blinding Dust direct-target exclusion, hostile Slow mechanics, and all companion/pet behavior are unchanged.
 
 ## Reporting and verification
 

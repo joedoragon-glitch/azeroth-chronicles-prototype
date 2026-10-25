@@ -464,9 +464,12 @@
         const perStack = enemy
           ? R.cooldownBalance.enemySlowStackPenalty
           : R.cooldownBalance.slowStackPenalty;
-        const stacks = Number.isFinite(unit?.slowStacks)
-          ? Math.min(R.cooldownBalance.slowMaxStacks, Math.max(1, Math.floor(unit.slowStacks)))
+        const recordedStacks = Number.isFinite(unit?.slowStacks)
+          ? Math.max(1, Math.floor(unit.slowStacks))
           : 1;
+        const stacks = enemy
+          ? recordedStacks
+          : Math.min(R.cooldownBalance.partySlowMaxStacks, recordedStacks);
         const recovery = base / (1 + (stacks - 1) * perStack);
         return dt - Math.min(dt, slow) * (1 - recovery);
       }
@@ -484,8 +487,8 @@
 
       // The shared Slow contract: valid hits refresh one duration window, while
       // stacking strength and *lasting* debt reward repeated, coordinated hits.
-      // No timer or array is allocated per stack. Cooldown debt is applied only
-      // while building up to the finite stack cap (also for absolute deadlines).
+      // No timer or array is allocated per stack. For heroes, companions and pets,
+      // cooldown debt stops at the party cap. Enemy Slow remains unchanged.
       applySlow(unit, seconds, diagnostic = null) {
         if (
           !unit ||
@@ -501,16 +504,15 @@
         const priorStacks = Number.isFinite(unit.slowStacks)
           ? Math.max(1, Math.floor(unit.slowStacks))
           : 1;
-        const maxStacks = R.cooldownBalance.slowMaxStacks;
-        // An uninterrupted Slow episode has a finite stack and cooldown-debt
-        // budget; later hits still refresh its duration and can deal damage.
-        const earnsDebt = !alreadySlowed || priorStacks < maxStacks;
-        unit.slowStacks = alreadySlowed ? Math.min(maxStacks, priorStacks + 1) : 1;
-        unit.slow = Math.max(alreadySlowed ? unit.slow : 0, duration);
-
         const isHero = unit === this.hero;
         const isCompanion = !isHero && this.s.party.includes(unit);
         const isEnemy = !isHero && !isCompanion;
+        const maxStacks = isEnemy ? Infinity : R.cooldownBalance.partySlowMaxStacks;
+        // An uninterrupted party Slow episode has finite stack/debt pressure.
+        // Enemy Slow stacking retains the existing offensive control behavior.
+        const earnsDebt = !alreadySlowed || priorStacks < maxStacks;
+        unit.slowStacks = alreadySlowed ? Math.min(maxStacks, priorStacks + 1) : 1;
+        unit.slow = Math.max(alreadySlowed ? unit.slow : 0, duration);
         const debt = earnsDebt
           ? duration *
             (isEnemy ? R.cooldownBalance.enemySlowDebtFraction : R.cooldownBalance.slowDebtFraction)

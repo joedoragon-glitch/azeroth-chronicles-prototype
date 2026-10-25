@@ -94,7 +94,7 @@
               ' for allies; ' +
               R.cooldownBalance.enemySlowStackPenalty +
               ' for enemies. ' +
-              'Until the stack ceiling, each hit adds its adjusted duration × ' +
+              'Eligible Slow hits add their adjusted duration × ' +
               percent(R.cooldownBalance.slowDebtFraction) +
               '% to eligible recovering allied cooldowns, or ' +
               percent(R.cooldownBalance.enemySlowDebtFraction) +
@@ -1593,8 +1593,8 @@
     [' for allies; ', ' para aliados; '],
     [' for enemies. ', ' para enemigos. '],
     [
-      'Until the stack ceiling, each hit adds its adjusted duration × ',
-      'Hasta alcanzar el límite de acumulaciones, cada impacto añade su duración ajustada × ',
+      'Eligible Slow hits add their adjusted duration × ',
+      'Los impactos de Ralentización que cumplen los requisitos añaden su duración ajustada × ',
     ],
     [
       '% to eligible recovering allied cooldowns, or ',
@@ -1611,6 +1611,10 @@
     [
       'Slow stops accumulating at ',
       'La Ralentización deja de acumularse al llegar a ',
+    ],
+    [
+      'Enemy Slow has no stack ceiling. ',
+      'La Ralentización aplicada a los enemigos no tiene límite de acumulaciones. ',
     ],
     [
       'The Ash Sentinel’s closed-armor multiplier is 65%; the Stone Colossus’s exposed-core multiplier is 125%. These apply before other passive defenses and burst compression, so they are not final damage percentages. Some captains gain protection from their followers. Clear the warning, then strike during the opening.',
