@@ -7090,6 +7090,9 @@
       }
       delete e.quotaTarget;
       delete e.idleWanderTarget;
+      // Keep the authored TRUE circuit leg, but not the old fight's leash
+      // anchor. An interrupted roaming encounter resumes its original tour.
+      delete e.trueCircuitCombatAnchor;
       e.idleWanderWait = 1.5;
       e.specialCd = e.captain || e.roomCaptain ? 1.25 : e.nightOnly ? 1.5 : 0;
       e.summonCd = 0;
