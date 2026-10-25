@@ -1,25 +1,40 @@
 # Option B HUD refinement — PC and landscape phone
 
-Date: 25 October 2026. Draft source-only candidate; not merged or deployed.
+Date: 25 October 2026. **Owner-selected, review-ready candidate; unmerged and undeployed.**
 
 ## Owner-selected design
 
-The owner selected **Option B** on both desktop and landscape phone after reviewing comparisons against Azeroth Chronicles' existing game art. The direction is reduced persistent visual weight, **not** a HUD replacement.
+The owner selected **Option B** for both PC and landscape phone after comparing the real game's appearance. The goal is less persistent UI covering the world, not a new HUD or changes to controls, combat, camera, rendering, or gameplay.
 
-## Implementation in this candidate
+## Scope (only two runtime CSS files)
 
-- **PC:** compress the existing right-side dock from 214 to 188 CSS px, reduce opaque framing and hide its permanent location/objective preview and wallet/XP row. They remain available in existing game menus. Keep hero class/level, HP, contextual status, unlocked training, native Menu, Recall and Target. Preserve the complete eight-slot hero hotbar and conditional Ranger Heal button.
-- **Phone:** keep a compact top-left class/level/HP dock. Reposition the **same** localized Menu button as a labeled 94 × 46 CSS px top-right target, eliminating the redundant icon-only treatment. Preserve all native skills, their tap/hold charge behavior, both handedness layouts, joystick, contextual Interact, Recall, Target, Squad, queued feedback and navigation cancellation. The transient update button is offset from Menu, beside it in landscape and beneath it in portrait.
-- No minimap, quest tracker, extra quick-action or invented skill. Map and quest journal remain in the existing menu.
+- **PC:** narrow the existing 214px right-side HUD to 188px and reduce its opaque background. Keep native Menu, class/level, HP, contextual status, training when available, Recall and Target. Remove persistent location/objective preview and wallet/XP line from the HUD *only*; the source data and existing menu access are unchanged. Keep all eight skill slots, charge information, and contextual Ranger Heal.
+- **Phone:** retain the top-left HP/class/level dock. Place the **same existing localized Menu action** in a separate clearly labeled top-right 94 × 46px control; this is not an additional Menu button. Keep the joystick, all eight native skill forms, Ranger support, Recall, Target, Squad, contextual Interact, and normal/alternate handedness. Prevent the app-update control from occupying the Menu touch target: beside it in landscape, below in portrait.
+- No permanent minimap, quest card, extra resource bar, invented action, skill pagination, or separate navigation widget.
 
-Only `styles/desktop.css` and `styles/phone.css` affect runtime. No DOM reparenting, input mapping, gameplay, audio, Canvas/Pixi draw logic or save schema changes.
+Changed runtime sources are `styles/desktop.css` and `styles/phone.css` only. No changes to hero engine, renderer (Canvas or Pixi), navigation, input routing, audio, persistence, save compatibility, offline assets, or local settings.
 
-## Focused verification
+## Completed focused verification
 
-- `node --test tests/hud-option-b.test.cjs`
-- `node scripts/build.cjs --check` via normal focused PR workflow.
-- Source checks also cover the original eight-skill renderer and both touch control layouts.
+The scoped source assertions in `tests/hud-option-b.test.cjs` include native Menu and eight-skill routing, permanent vs contextual dock elements, touch target size and placement, update separation, and alternate handedness.
 
-## Acceptance still required
+The Chromium real-shell smoke in `tests/hud-option-b-visual.cjs` uses the game runtime and draws **actual world art and production HUD**, not a reconstructed mockup. It initializes eight unlocked Ranger skills plus one Ranger Heal support action, checks visibility/collisions, then opens the existing Menu and English Quest journal. Screenshots are written to local `test-results/hud-option-b-*.png` when explicitly rerun. Browser images are **not** embedded as base64 into CI logs.
 
-This is **not** physical-device or browser-visual certification. Before any merge, inspect actual running desktop and landscape phone captures and verify: all eight unlocked skills and charged feedback, contextual Ranger Heal, full quest access through Menu, menu EN/ES text, update-ready plus Menu, safe areas, 800 × 375 and 844 × 390 landscape, 375 × 800 portrait, alternate handedness, 44px+ touch targets, and no overlap with active navigation cancellation, warning notices or critical combat. If a previously important onboard objective is insufficiently discoverable via Menu, refine within this draft rather than silently removing its information. No merge or deploy without owner approval.
+Validated viewports:
+- PC: 1280 × 800, keyboard/mouse.
+- Landscape phone: 800 × 375, two-thumb.
+- Landscape phone: 844 × 390, alternate left-hand.
+- Portrait fallback: 375 × 800, **Spanish Menú** label.
+
+At all four sizes the localized Menu control was visible and inside the viewport; on phone its target stayed at least 94 × 46px, the update prompt did not cover Menu, the skill cluster did not overlap the joystick, Recall or Target, and no page exceptions were observed. Each of the eight skills and Ranger Heal was displayed. English Quest journal access through Menu was verified.
+
+Latest synchronized branch: `main` incorporated as a second parent of the dedicated UI merge commit, leaving **five changed files** and zero unrelated changes. Focused GitHub Actions completed successfully with six HUD tests (including the browser smoke), the architecture contract and reproducible build.
+
+- [Focused CI validation](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40240847113)
+- [Review PR #476](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/476)
+
+## Merge and release boundaries
+
+This is **ready for owner code review**, not a claim of physical-device certification. In particular, no real Android/iOS thumb-play or full browser matrix was authorized; charged hold feedback, interact and navigation warning coexistence, small-screen on-device readability, rare app-update notifications, and first-run tutorial discoverability should still be checked in a real play session. Screenshot/geometry validation does not guarantee subjective aesthetics or performance on actual hardware.
+
+**Do not auto-merge or deploy.** A merge into `main` starts the automatic focused Pages pipeline, so obtain the owner's separate merge/release approval. The existing published game is unchanged until then.
