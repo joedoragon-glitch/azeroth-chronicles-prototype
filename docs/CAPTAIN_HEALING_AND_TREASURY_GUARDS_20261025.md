@@ -344,3 +344,25 @@ The main branch's generated PWA version and service-worker artifacts have advanc
 ### Phase 6 exit / remaining gate
 
 **Phase 6 scoped integration preflight: COMPLETE.** The diff and automated test mapping are accounted for; no unrelated source expansion was made and the known integration collision is documented. This is **NOT merge/readiness certification**: the PR currently has a mergeability blocker and lacks a green current-head Actions run, full native Node/Canvas test matrix, formatter, reproducible PWA build and hands-on browser/phone/save compatibility validation. Those checks, conflict resolution and final release decision belong to the director-requested **Phase 7 final audit**, not an additional feature change here. **Phase 7 not started.** PR #454 remains **draft, unmerged and undeployed**.
+
+
+---
+
+## Focused merge-preparation audit and corrective commits — 25 October 2026
+
+**Review record:** PR #454 GitHub review `5643165170`; this review was limited to healing contracts, related established boss/Rogue/save behaviors, source changes and the current-main conflict. No complete GitHub Actions matrix, PWA build, full Node run, browser/phone pass or gameplay-wide test was launched.
+
+### Two narrow source corrections committed
+
+1. `160188f1` — `enemySupportHeal()` now preserves the older combat-only idle gate **for boss recipients**, rather than letting `captainHealer` mark a boss patient's pulse as idle-safe. Ordinary allies and non-boss captains retain the newly authorized idle support. Isolated source comparison reproduced the unwanted pre-fix change: for a boss at 700/1000 HP treated by an idle captain, baseline `main` canceled the 5%-max pulse without healing; pre-fix PR #454 continued it to 710 HP after one second. The corrected method once again cancels it at 700 HP while retaining a captain-recipient pulse.
+2. `160188f1` — the **captain-recipient** path now actually uses `rules.enemySupportHealing.captain.duration`, rather than accidentally using the generic `cfg.duration`. Both are approved as five seconds today, so this does **not** retune the balance; it prevents configuration/test drift. An isolated source-method check with a synthetic four-second captain-duration configuration confirmed that the emitted captain pulse follows that specific knob while a boss pulse retains its distinct five-second duration.
+3. `18002b52` — added a focused source regression to `tests/captain-healing-independent.test.cjs` for captain-origin boss support: its original scaled budget and duration persist, but an idle boss cannot complete that pulse. Syntax parsed successfully; **full Node execution of the new test has not been claimed**.
+
+Existing native tests still cover the approved 50%-missing/5s/≤90% captain threshold, 7s ally versus 10s self and per-source leader clocks, Normal/Nightmare Treasury guard rosters, preserved original dead guards and IDs, directional movement/line of sight, Direjaw Elastic Rebound and Dreadmaw Brood Call/Grafting/Broodward. The *code-level* scope also includes field captains as non-boss leader recipients, which should be preserved consciously during future integration rather than silently narrowed.
+
+### Remaining merge gate — not satisfied
+
+- **Current main:** `968f3493a48e1bcaf17ce6f70f9790ff9b8ed8be` (PR #453 Rogue territorial mechanics); this healing branch is one merge behind, and GitHub reports it non-mergeable. Resolve the combined `engine.js` and `rules.js` semantics without overwriting the current Rogue behavior; regenerate the shared `docs/evidence/SPRITE_SCOPE_RECONCILIATION.json` rules-source fingerprint. Pending PR #455 and #458 remain separate work, not hidden cherry-picks.
+- **Targeted acceptance, not a whole-game sweep:** run the changed `captain-healing-independent`, `captain-treasury-native-lifecycle`, `captain-specialist-encounter-interactions` tests; immediately relevant ordinary/idle enemy-support, original Treasury snapshot, Slow-cooldown and current-main Rogue tests; source formatting, fingerprint verification, and a targeted reproducible multi-file Pages/PWA build check only where needed for merge compatibility. A short representative Direjaw/Dreadmaw combat smoke is appropriate if gameplay execution is available.
+- **Verification boundary:** source comparison, focused method execution and syntax verification **passed** for the two fixes, but there is no verified **current-head official Node/Actions or browser/device** result. A source-only attempt to load the complete module graph exceeded the available connector-call budget and produced **no test result**; do not count it as a passing or failing game test.
+- Leave this PR **draft, unmerged and undeployed** until a clean current-main integrated candidate and proportionate exact-head regression evidence are available. Explicit director authorization is still required for merge/deployment.
