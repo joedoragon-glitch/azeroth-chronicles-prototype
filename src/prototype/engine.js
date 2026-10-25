@@ -6863,6 +6863,9 @@
               angle = Math.atan2(a.y - e.y, a.x - e.x),
               pace = R.rangedEnemyCombat;
             if (this.enemyRangedLine(e, a)) {
+              // Aim is not a release. Sample once here, only when the real
+              // ranged shot launches; collision, dodges and armor stay native.
+              const criticalReceipt = this.worldCriticalRelease(e, 'ranged');
               const style = e.projectileStyle || 'arrow';
               const shot = {
                 id: 'projectile-' + this.s.nextId++,
@@ -6872,7 +6875,10 @@
                 dy: Math.sin(angle),
                 speed: (e.shotSpeed || 260) * pace.projectileMultiplier,
                 life: 2.5 / pace.projectileMultiplier,
-                damage: this.weakenedEnemyDamage(e) * (e.hybrid ? 0.85 : 1),
+                damage: this.worldCriticalDamage(
+                  criticalReceipt, this.weakenedEnemyDamage(e) * (e.hybrid ? 0.85 : 1),
+                ),
+                ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
                 style,
                 slow: e.projectileSlow || 0,
                 manaDrain: R.manaBalance.rangedDrain[e.species] || 0,

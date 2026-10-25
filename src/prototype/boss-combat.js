@@ -1176,6 +1176,18 @@
         if (e.rangedAim) e.rangedAim.withdrawal = true;
         return true;
       }
+      // Stage 3 opt-in: World has its own chance resolver and intensity dial.
+      // This source does not auto-install it in any production Campaign.
+      worldCriticalRelease(e, move) {
+        const session = this._criticalWorldNative;
+        if (!session?.enabled || !e?.id) return null;
+        return session.release(this, 'world/basic/' + move, e.id);
+      }
+      worldCriticalDamage(receipt, value) {
+        return receipt?.critical
+          ? this._criticalWorldNative.enhance(receipt, value, 'damage')
+          : value;
+      }
       enemyStartBasic(e, target, ranged) {
         const nightTempo = this.nightTempo();
         e.cd =
@@ -1197,6 +1209,7 @@
             total: aimTime,
           };
         } else {
+          const criticalReceipt = this.worldCriticalRelease(e, 'melee');
           const equipment = R.enemyMeleeEquipment(e);
           this.event('swing', {
             actor: 'enemy',
@@ -1208,7 +1221,12 @@
             x: e.x,
             y: e.y,
           });
-          if (this.hitParty(target, this.weakenedEnemyDamage(e), 0, e.id))
+          if (this.hitParty(
+            target,
+            this.worldCriticalDamage(criticalReceipt, this.weakenedEnemyDamage(e)),
+            0,
+            e.id,
+          ))
             this.event('melee', {
               actor: 'enemy',
               source: e.id,

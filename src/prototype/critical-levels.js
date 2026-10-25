@@ -91,9 +91,11 @@
     ['basic', '1', '2'].forEach((slot, index) =>
       register('pet/' + family + '/' + slot, 'companion', levers[index]));
 
-  // World keys are intentionally a Stage 3 integration problem. The global
-  // world intensity dial exists now; unknown moves FAIL CLOSED (no effect).
-  // Never silently give every monster a default damage multiplier.
+  // Stage 3 first native world slice: these two are real shared basic-action
+  // owners, not a fallback for specials, traps, telegraphs, ticks or bosses'
+  // authored abilities. Unregistered world moves still fail closed.
+  register('world/basic/melee', 'world', 'damage');
+  register('world/basic/ranged', 'world', 'damage');
   Object.freeze(registry);
 
   function validatedLevel(level) {
