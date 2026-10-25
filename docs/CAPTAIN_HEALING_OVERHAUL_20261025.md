@@ -1,0 +1,56 @@
+# Captain restorative support — design decisions, implementation draft, and Treasury audit
+
+Status: **draft for review only**. Branch: `feature/captain-healing-independent-idle-20261025`, based on `main` after PR #448 (merge `1312082b4bd5d216c0c2bc641dbaab6c13daf778`). No approval to merge or deploy has been given. This document preserves the director's decisions and separates them from suggested implementation details. Source changes are on this branch; local/CI and device acceptance are **not yet verified**.
+
+## Director decisions, 25 October 2026
+
+1. **Captain → ordinary monster**, including ordinary summons: all missing HP at cast time restored over **3 seconds**, on a **7-second allied-support cooldown**. Area restoration treats every eligible ordinary monster; cross-species and cross-pack allies remain eligible. This applies to healing-eligible named captains, not to every captain indiscriminately and not to bosses.
+2. **Captain → self**: retain the baseline **5% of captain max HP over 5 seconds** (subject to the existing caster multiplier), on an **independent 10-second self-restoration cooldown**. Treating ordinary allies must not delay captain self-healing, nor vice versa. The two actions can share an area cast when both are eligible and ready.
+3. **Ordinary ranged monster/summoned ranged guardian → captain**: maintain an **individual per-caster captain-treatment cooldown of 10 seconds**. Multiple surviving healers can help in succession; there is no global captain heal cooldown. However, the director additionally rejected the existing weak captain received treatment and wants captains *between* ordinary monsters and bosses in survivability. **Draft proposal, not a final approved tuning value:** restore **50% of a captain's missing HP over 5 seconds** per eligible cast, with an entry threshold at or below **90% HP**. Re-evaluate numerically after real Treasury encounters and healer access are measured. The boss-recipient baseline remains 5% max HP over 5 seconds and is not part of this midpoint proposal. Do not silently apply the captain rate to bosses.
+4. **Idle/engagement independence**: an ordinary ranged monster must be able to notice, approach and heal a wounded living captain while both are idle. A captain's ongoing healing must **continue across idle → engaged → idle transitions**, just as buffed ordinary-to-ordinary pulses do. Starting and advancing the treatment must both be supported. No forced aggro from restorative triage.
+5. Preserve **no resurrection**, no stacking or overwriting an in-progress recipient heal, line-of-sight/range checks, Silence/action locks, faction exclusions, no treatment of returning/resetting/dead enemies, and healing cancellation on actual encounter cleanup. Engagement transitions alone are not reasons to cancel healing. Timers and pulses remain transient rather than saved in v4.
+6. **Dreadmaw** gets its own assessment: `Grafting` is an authored **restorative area support identity**, separate from the seven attack slots, which include `Nucleus Herd` and `Creep Feeding`. `Brood Call` can provide four living broodlings (three melee, one ranged). Dreadmaw can heal wounded broodlings; the ranged broodling can heal Dreadmaw. `Broodward` gives up to 25% reduction per living owned broodling (100% at four). Fully repairing ordinary broodlings may restore that shield's effectiveness by keeping them alive. Measure this interaction rather than nerfing preemptively.
+7. **Direjaw** should remain formidable. The director explicitly does **not** want nerfs to its newly combined support/phase survivability. `Elastic Rebound` is a separate one-time phase heal: native code triggers at <=55% max HP and adds **50% of maximum HP**, capped at full, plus 20% movement speed. The director recalled a 60% heal; the currently implemented heal is 50% (verify source before suggesting any further adjustment). Keep the one-time phase effect and its interaction with `Silt Pulse` and external ranged-guard healing under review, without lowering it based solely on anticipated difficulty.
+8. **Treasury formations** must be audited individually rather than expanded automatically. Survivability is not just the number of healers but whether a ranged guard remains alive, can reach the captain, can see it, and has a free cast amid attack pressure. The director accepted Dreadmaw's five ranged defenders and considers the existing challenging encounter appropriate. Do not add guardians or redistribute existing ones without a separate evidence-backed decision.
+9. **Rogue withdrawal** may naturally bring pressured ranged guards into a commander's area. Do not treat starting positions as permanent positions. However, the native selector does *not* yet prioritize the captain: `tacticalRegroupGroups` in `combat.js` sorts by **nearest group** with group size as a tiebreaker, and `tacticalBeginRogueRegroup` route-checks the specific candidate. The claim that all retreating guards preferentially return to Dreadmaw is unproven. Test the emergent behavior before changing retreat targeting.
+
+## Treasury-by-Treasury authored starting roster (excluding summons)
+
+Based on `R.treasuryGuardFormations` in `src/prototype/rules.js`; distances are approximate Euclidean distances from the authored captain slot to authored ranged-guard slots, *not* guaranteed runtime travel distances or visibility.
+
+| Treasury | Captain | Ranged guardians / non-captain guards | Ranged inside 350 at authored positions | Authored concern |
+| --- | --- | --- | --- | --- |
+| Greenwood Vale (`supply-vale`) | Scornfang | 1 / 5 | 0 | Lookout around 441 units away; may need independent approach or retreat before supporting captain |
+| Flooded Marches (`supply-march`) | Direjaw | 1 / 5 | 0 | Watch around 448 units away; assess path and line-of-sight and preserve strong Elastic Rebound |
+| Ironroot Highlands (`supply-highlands`) | Crag Tyrant | 3 / 6 | 3 | Mounted archers start within range, but actual walls/geometry and combat survival govern treatment |
+| Dark Crown (`supply-crown`) | Dreadmaw | 5 / 10 | 1 | Distributed guards over large Treasury; potential Rogue return and healer approach must be verified |
+
+The Frontier Cinder Warlord is a roaming **field captain**, not a fifth Treasury room. It has no authored restorative caster skill; captain-recipient support can still apply to eligible ranged allies in its area.
+
+### Testing needed before guardian changes
+
+- Native spawned/current and historical v4 Treasury rosters: actual healer flags/forced roles, captain proximity and line-of-sight after `safe` placement and reconciliation.
+- A wounded idle captain and an idle ranged guardian at initial posts: does the guard move within 350 range (search envelope up to 560), then cast and **complete** a full five-second pulse without aggro?
+- Ordinary engagement and multiple simultaneous healers: cooldown belongs to each **source**, overlapping recipient pulses don't stack, guard may still choose attacks, and captain remains alive long enough to benefit.
+- Rogue retreat with actual player/party pressure: percentage of guards that choose the captain rather than another nearby ally, successful collision routes, leash/reset outcomes and newly obtained healing opportunities.
+- Dreadmaw: Grafting repairs all wounded living broodlings across species/roles, caster self-heal unaffected by allied heals, one ranged owned broodling can treat captain, and Broodward durability remains consistent. Existing scripted seven attack slots, brood caps and Creep Feeding must stay intact.
+- Direjaw: real one-time Elastic Rebound below 55%, no retrigger, support spells before/after phase, concurrent guard aid, no erroneous heal cancellation.
+- All captain profiles vs five boss healing profiles, unusual field captains, ringleaders and mixed area targets; Silence, Slow-based cooldown progression, death/return, save/load isolation and prior ordinary-healing regressions.
+
+## Source implementation (current draft branch)
+
+- `src/prototype/rules.js`: draft captain-recipient midpoint tuning, separate from boss restoration baseline.
+- `src/prototype/engine.js`: captain full ordinary-ally area healing, 7s ally cooldown; independent 10s self-cooldown using a transient WeakMap; per-caster 10s leader-recipient protection; idle captain healing pulses/guard approach; preservation of ordinary and boss paths.
+- `tests/enemy-ordinary-heal-balance.test.cjs`, `tests/enemy-cross-species-idle-healing.test.cjs`, `tests/enemy-support-healing.test.cjs`, `tests/captain-healing-independent.test.cjs`: updated and added test cases. Validation results are **not yet recorded**. No new timed physical playtest is claimed.
+
+## Open engineering risks and release gate
+
+- New self-healing clock and support clock must not interfere with one another and must honor Slow, interrupted casts, death and reset. The captain healing method must not consume cooldown on an empty cast.
+- Confirm the idle captain movement/engagement transition passes with a *real* world update, not only directly advancing a queued heal. Ensure that actor lifecycle/returning semantics are preserved.
+- The 50%-of-missing captain-recipient rate is **provisional** and should be tuned only after the Treasury-specific evidence is available. The director's core position is captains should benefit from **both** their own healing and allied healing, more strongly than bosses but without the ordinary monster's 100%-of-missing instant support.
+- Update historical tests/documentation that still assert old 10-second ordinary-ally healing or old captain self/support shared cooldown before claiming the suite is green.
+- Run focused Node tests, existing full regression/build/format/CI and phone-device encounter playtesting. Review in draft PR; **do not merge, deploy, or claim a green result** absent actual evidence and director approval.
+
+## Change log
+
+- **25 Oct 2026**: Director specified captain full ordinary-ally support and separate self-heal, then clarified that captain treatment and pulses must not depend on engagement. Requested case-by-case guardian availability audit; approved Dreadmaw's existing ranged guardian count and Direjaw's strong survivability. Branch created and source/test work started. GitHub documentation and explicit PR review requested so project memory is not dependent on chat transcripts.
