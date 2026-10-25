@@ -9,6 +9,30 @@ const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 const source = read('src/prototype/visuals.js');
 const coverage = read('docs/GRAPHICS_CANON_SPRITE_COVERAGE.md');
 const current = audit();
+const terrain = require('../tools/sprites/terrain-specifications.json');
+const march = terrain.candidates.find((entry) => entry.resourceKey === 'terrain:ground:march');
+const floorSection = source.match(/const floorPalettes = \[([\s\S]*?)\n  \];/);
+assert(floorSection, 'the source must still declare outdoor floor palettes');
+assert(
+  floorSection[1].includes("['#3e5544', '#4b614b', '#30483c', '#a2b48e']"),
+  'Flooded Marches current palette must be sourced from the outdoor floor owner',
+);
+assert.deepEqual(march.palette, ['#3e5544', '#4b614b', '#30483c', '#a2b48e']);
+const highlands = terrain.candidates.find(
+  (entry) => entry.resourceKey === 'terrain:ground:highlands',
+);
+assert.deepEqual(highlands.palette, ['#4a593b', '#74734b', '#3b4d36', '#c6b079']);
+assert(
+  floorSection[1].includes("['#4a593b', '#74734b', '#3b4d36', '#c6b079']"),
+  'Highlands palette must stay grounded in the current renderer',
+);
+const oldOre = require('../tools/sprites/approved.json');
+const oreKey = 'prop:ore-sorting-bay:highlands';
+assert(!oldOre.assets[oreKey], 'owner-selected procedural ore bay cannot carry stale active raster approval');
+assert(
+  Object.values(oldOre.history[oreKey]).some((record) => record.review?.status === 'approved'),
+  'ore-bay original and prior creative approval must remain available for re-review',
+);
 assert.deepEqual(
   current,
   JSON.parse(read('docs/evidence/SPRITE_SCOPE_RECONCILIATION.json')),

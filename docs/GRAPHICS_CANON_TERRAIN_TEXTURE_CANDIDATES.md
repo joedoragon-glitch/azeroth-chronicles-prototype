@@ -63,13 +63,15 @@ Generate exactly one opaque, seamless square material texture per call, flat top
 
 **Current renderer owner:** `floor/groundDetail/terrain`
 
-**Palette reference:** #26444b, #31535a, #203b42, #85ada6
+**Palette reference:** #3e5544, #4b614b, #30483c, #a2b48e
 
-**Canonical cues:** Muted teal-green marsh earth with darker damp mud and restrained reed/grass grain. No puddles.
+**Canonical cues:** Muted wet green marsh earth with darker damp soil and restrained reed/grass grain. No puddles.
 
 **Image-generation prompt:**
 
-> Create exactly one opaque seamless square 2D game material texture for Azeroth Chronicles, flat top-down, neutral unlit material, no baked perspective or shadows. Preserve the current procedural reference and these palette relationships: #26444b, #31535a, #203b42, #85ada6. Muted teal-green marsh earth with darker damp mud and restrained reed/grass grain. No puddles. Add only restrained fine material detail with small-gameplay-scale readability. Tile continuously on both axes. No labels, UI, scene, objects, hard borders, repeated emblem or map geometry.
+> Create exactly one opaque seamless square 2D game material texture for Azeroth Chronicles, flat top-down, neutral unlit material, no baked perspective or shadows. Preserve the current procedural reference and these palette relationships: #3e5544, #4b614b, #30483c, #a2b48e. Muted wet green marsh earth with darker damp soil and restrained reed/grass grain. No puddles. Add only restrained fine material detail with small-gameplay-scale readability. Tile continuously on both axes. No labels, UI, scene, objects, hard borders, repeated emblem or map geometry.
+
+**Current status:** The previous T002 texture and approval are preserved in material rollback history because they were made for the superseded teal palette. The current procedural palette above is the sole source for future material candidates; new raster appearance requires ordinary native/wrap review and recorded approval. The current outdoor March floor does not paint a terrain material.
 
 ### T003 — Ironroot Highlands ground
 
@@ -77,13 +79,15 @@ Generate exactly one opaque, seamless square material texture per call, flat top
 
 **Current renderer owner:** `floor/groundDetail/terrain`
 
-**Palette reference:** #485447, #56614d, #3b493f, #b1b59a
+**Palette reference:** #4a593b, #74734b, #3b4d36, #c6b079
 
-**Canonical cues:** Muted gray-green quarry earth with subdued dust and fine mineral grit.
+**Canonical cues:** Current olive and ochre Highlands earth with subdued mineral grit; preserve the existing ground palette.
 
 **Image-generation prompt:**
 
-> Create exactly one opaque seamless square 2D game material texture for Azeroth Chronicles, flat top-down, neutral unlit material, no baked perspective or shadows. Preserve the current procedural reference and these palette relationships: #485447, #56614d, #3b493f, #b1b59a. Muted gray-green quarry earth with subdued dust and fine mineral grit. Add only restrained fine material detail with small-gameplay-scale readability. Tile continuously on both axes. No labels, UI, scene, objects, hard borders, repeated emblem or map geometry.
+> Create exactly one opaque seamless square 2D game material texture for Azeroth Chronicles, flat top-down, neutral unlit material, no baked perspective or shadows. Preserve the current procedural reference and these palette relationships: #4a593b, #74734b, #3b4d36, #c6b079. Current olive and ochre Highlands earth with subdued mineral grit; preserve the existing ground palette. Add only restrained fine material detail with small-gameplay-scale readability. Tile continuously on both axes. No labels, UI, scene, objects, hard borders, repeated emblem or map geometry.
+
+**Current status:** The earlier T003 material is retained in rollback history because its palette predates the current Highlands ground owner. The live material registration is retired pending a genuinely current-canon texture and native/wrap review; until then ground uses the procedural source. This changes the visible layer, not map geometry, gameplay or collisions.
 
 ### T004 — Ashen Frontier ground
 
@@ -329,13 +333,13 @@ Generate exactly one opaque, seamless square material texture per call, flat top
 
 **Current renderer owner:** `floor/regional-interior-fallback`
 
-**Palette reference:** #26444b, #31535a, #203b42, #85ada6
+**Palette reference:** #3e5544, #4b614b, #30483c, #a2b48e
 
 **Canonical cues:** Current regional interior floor palette with subdued worn mineral grain and fine chips. Use the existing interior treatment, not outdoor grass, foliage, mud puddles or a newly invented architectural style. Keep drawn slab joints and room edges procedural.
 
 **Image-generation prompt:**
 
-> Create exactly one opaque seamless square 2D game material texture for Azeroth Chronicles, flat top-down, neutral unlit material, no baked perspective or shadows. Preserve the current procedural reference and these palette relationships: #26444b, #31535a, #203b42, #85ada6. Current regional interior floor palette with subdued worn mineral grain and fine chips. Use the existing interior treatment, not outdoor grass, foliage, mud puddles or a newly invented architectural style. Keep drawn slab joints and room edges procedural. Add only restrained fine material detail with small-gameplay-scale readability. Tile continuously on both axes. No labels, UI, scene, objects, hard borders, repeated emblem or map geometry.
+> Create exactly one opaque seamless square 2D game material texture for Azeroth Chronicles, flat top-down, neutral unlit material, no baked perspective or shadows. Preserve the current procedural reference and these palette relationships: #3e5544, #4b614b, #30483c, #a2b48e. Current regional interior floor palette with subdued worn mineral grain and fine chips. Use the existing interior treatment, not outdoor grass, foliage, mud puddles or a newly invented architectural style. Keep drawn slab joints and room edges procedural. Add only restrained fine material detail with small-gameplay-scale readability. Tile continuously on both axes. No labels, UI, scene, objects, hard borders, repeated emblem or map geometry.
 
 ### T022 — Ironroot Highlands side-interior floor material
 
@@ -343,13 +347,13 @@ Generate exactly one opaque, seamless square material texture per call, flat top
 
 **Current renderer owner:** `floor/regional-interior-fallback`
 
-**Palette reference:** #485447, #56614d, #3b493f, #b1b59a
+**Palette reference:** #4a593b, #74734b, #3b4d36, #c6b079
 
 **Canonical cues:** Current regional interior floor palette with subdued worn mineral grain and fine chips. Use the existing interior treatment, not outdoor grass, foliage, mud puddles or a newly invented architectural style. Keep drawn slab joints and room edges procedural.
 
 **Image-generation prompt:**
 
-> Create exactly one opaque seamless square 2D game material texture for Azeroth Chronicles, flat top-down, neutral unlit material, no baked perspective or shadows. Preserve the current procedural reference and these palette relationships: #485447, #56614d, #3b493f, #b1b59a. Current regional interior floor palette with subdued worn mineral grain and fine chips. Use the existing interior treatment, not outdoor grass, foliage, mud puddles or a newly invented architectural style. Keep drawn slab joints and room edges procedural. Add only restrained fine material detail with small-gameplay-scale readability. Tile continuously on both axes. No labels, UI, scene, objects, hard borders, repeated emblem or map geometry.
+> Create exactly one opaque seamless square 2D game material texture for Azeroth Chronicles, flat top-down, neutral unlit material, no baked perspective or shadows. Preserve the current procedural reference and these palette relationships: #4a593b, #74734b, #3b4d36, #c6b079. Current regional interior floor palette with subdued worn mineral grain and fine chips. Use the existing interior treatment, not outdoor grass, foliage, mud puddles or a newly invented architectural style. Keep drawn slab joints and room edges procedural. Add only restrained fine material detail with small-gameplay-scale readability. Tile continuously on both axes. No labels, UI, scene, objects, hard borders, repeated emblem or map geometry.
 
 ### T023 — Ashen Frontier side-interior floor material
 
