@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - 'tests/audio-stage4-mix-matrix.test.cjs'
+      - 'tests/audio-stage4-browser-smoke.test.cjs'
+      - 'tools/audio/index.html'
       - '.github/workflows/audio-stage4-acceptance.yml'
 
 permissions:
@@ -63,8 +65,8 @@ jobs:
           else
             npx playwright install --with-deps chromium
           fi
-      - name: Verify real recorded PCM, offline-rendered sample mix, desktop and phone-sized behavior
-        run: node tests/audio-audition-browser.test.cjs
+      - name: Verify real decoded PCM and authored MP3 mix on desktop and phone-sized Chromium
+        run: node tests/audio-stage4-browser-smoke.test.cjs
       - name: Upload audio audition failure evidence
         if: failure()
         uses: actions/upload-artifact@v4
