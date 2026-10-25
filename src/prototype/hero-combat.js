@@ -792,9 +792,12 @@
         const within = (e) => {
           const x = e.x - f.from.x, y = e.y - f.from.y,
             along = Math.abs(x * cos + y * sin),
-            across = Math.abs(y * cos - x * sin);
-          return (along <= f.reach && across <= f.halfWidth) ||
-            (across <= f.reach && along <= f.halfWidth);
+            across = Math.abs(y * cos - x * sin),
+            radius = this.actorRadius(e);
+          // The luminous arms measure from centerline; an enemy's body
+          // intersects them even when its center stands just outside an edge.
+          return (along <= f.reach + radius && across <= f.halfWidth + radius) ||
+            (across <= f.reach + radius && along <= f.halfWidth + radius);
         };
         const candidates = this.zone().enemies.filter(e =>
           e.hp > 0 && !e.neutral && !e.returning && !this.attackResetProtected(e) &&
@@ -832,7 +835,7 @@
           if (e.hp <= 0 || e.neutral || e.returning || this.attackResetProtected(e)) continue;
           const forward = (e.x - f.from.x)*ux + (e.y - f.from.y)*uy;
           if (forward < 0 || forward > limit ||
-            this.distanceToSegment(e, f.from, end) > f.halfWidth ||
+            this.distanceToSegment(e, f.from, end) > f.halfWidth + this.actorRadius(e) ||
             !this.line(f.from,e)) continue;
           if (this.damage(e, f.damage * R.chargedSkills.first.mage.damage, 'hero',
             { area: true, encountersAtStart: f.encountersAtStart })) hits++;
@@ -855,15 +858,17 @@
           const target = this.zone().enemies.find(e => e.id === f.targetId);
           if (!target || target.hp <= 0 || target.neutral || target.returning ||
               this.attackResetProtected(target) || !this.tacticalDirectTargetable(target)) return false;
-          const gap = dist(f,target), available = Math.min(cfg.speed*dt, f.budget-f.traveled);
+          const gap = dist(f,target),
+            contact = cfg.hitRadius + this.actorRadius(target),
+            available = Math.min(cfg.speed*dt, f.budget-f.traveled);
           f.elapsed += dt;
-          if (gap > cfg.hitRadius && available <= 0) return false;
-          const travel = Math.min(Math.max(0,gap-cfg.hitRadius), available);
+          if (gap > contact && available <= 0) return false;
+          const travel = Math.min(Math.max(0,gap-contact), available);
           const next = gap > 0 ? { x:f.x+(target.x-f.x)/gap*travel,
             y:f.y+(target.y-f.y)/gap*travel } : { x:f.x,y:f.y };
           if (!this.clearSegment(f,next,0)) return false;
           f.x = next.x; f.y = next.y; f.traveled += travel;
-          if (dist(f,target) <= cfg.hitRadius) {
+          if (dist(f,target) <= contact) {
             // Check active retreat before damage mutates regroup and threat.
             const retreat = this.hawkRetreatKind(target);
             const landed = this.damage(target, f.damage*cfg.damage, 'hero',
