@@ -4765,6 +4765,11 @@
         previous = waypoint;
       }
       if (length > R.tacticalFoundation.awarenessRadius * 1.8) return false;
+      const radius = this.tacticalDefenderTerritory(e),
+        post = this.tacticalDefenderPost(e);
+      if (radius && (dist(destination, post) > radius - 55 ||
+          path.some((point) => dist(point, post) > radius - 25)))
+        return false;
       // Keep the established major-town protection; ordinary monster patrols
       // elsewhere in occupied regions remain legal.
       if (!this.isDungeon()) {
@@ -4880,6 +4885,26 @@
         until: this.s.time + 4,
       });
     }
+    tacticalDefenderPost(e) {
+      // An interrupted patrol remains responsible for the interception area,
+      // not its distant den. Captive movement already belongs to patrol code.
+      if (this.thornPatroller(e)) return e.thornFightAnchor || e;
+      if (this.cinderPatroller(e)) return e.cinderFightAnchor || e;
+      return e.home || e;
+    }
+    tacticalDefenderTerritory(e) {
+      if (e.type === 'boss') return this.isDungeon() ? 650 : 700;
+      if (e.fieldCaptain || e.captain || e.roomCaptain)
+        return this.isDungeon() ? 600 : 900;
+      return null;
+    }
+    tacticalGuardedSpecialist(e) {
+      // Mobile captives already follow Thornfang/Cindermaw during combat.
+      // Only static captive posts need this final-stand destination.
+      if (e.type !== 'boss' || this.roamingBoss(e) ||
+          this.s.keys[e.family] || this.s.rescued[e.family]) return null;
+      return this.zone().npcs.find((n) => n.kind === 'cage' && n.family === e.family) || null;
+    }
     tacticalRogueLeashAllows(e, target, territory) {
       const response = this._tacticalCinderResponses?.get(e?.id);
       if (response?.joined && response.zone === this.zoneId) {
@@ -4923,10 +4948,18 @@
       const state = this.tacticalRogueRegroup(e);
       if (!state) return dist(target, home) <= territory;
       if (state.phase === 'thinking' && !state.anchor) return dist(target, home) <= territory;
-      if (state.phase === 'extended')
-        return dist(target, e) <= R.tacticalFoundation.extendedEncounterSeparation;
+      if (state.phase === 'extended') {
+        const radius = this.tacticalDefenderTerritory(e),
+          post = this.tacticalDefenderPost(e);
+        return dist(target, e) <= R.tacticalFoundation.extendedEncounterSeparation &&
+          (!radius || (dist(e, post) <= radius + 40 &&
+            dist(target, post) <= radius + 250));
+      }
       const separationLimit = R.tacticalFoundation.awarenessRadius + 200;
       if (dist(target, e) > separationLimit) return false;
+      if (state.phase === 'guard-captive')
+        return dist(e, this.tacticalDefenderPost(e)) <= territory + 100 &&
+          dist(target, state.destination) <= separationLimit;
       if (state.phase === 'travel')
         return (
           this.distanceToSegment(target, state.retreatOrigin || home, state.destination) <=
@@ -4946,10 +4979,10 @@
           opponents + (this.hero.level > e.level ? 1 : 0);
     }
     tacticalBeginExtendedRetreat(e) {
-      if (
-        this.isDungeon() || e.type === 'boss' || e.captain || e.roomCaptain ||
-        e.summon || !this.tacticalNeedsMoreSupport(e)
-      ) return false;
+      // Dungeon bosses hold their rooms; field leaders can seek native
+      // monsters within their existing territorial defense envelope.
+      if (this.isDungeon() || e.summon || !this.tacticalNeedsMoreSupport(e))
+        return false;
       const cfg = R.tacticalFoundation, z = this.zone();
       // Avoid repeated expensive route probing against blocked outposts.
       if ((this._tacticalExtendedSearchAfter?.get(e.id) || 0) > this.s.time)
@@ -5010,6 +5043,11 @@
           }
           previous = point;
         }
+        const radius = this.tacticalDefenderTerritory(e),
+          post = this.tacticalDefenderPost(e);
+        if (radius && (dist(destination, post) > radius - 55 ||
+            path.some((point) => dist(point, post) > radius - 25)))
+          continue;
         if (!safe || length > cfg.extendedRouteMaxLength) continue;
         visited.add(ally.pack || ally.id);
         this._tacticalTerritorialVisited.set(e.id, visited);
@@ -5187,19 +5225,20 @@
           });
           return true;
         }
-        // Bosses/captains must protect their authored posts, not abandon them.
-        // They retain their established last-resort Rogue action.
-        if (e.type === 'boss' || e.captain || e.roomCaptain) {
-          this.tacticalStopRogueRegroup(e);
-          if (this.tacticalRogueMove(e, target, !!state.anchor)) {
-            if (state.anchor) this._tacticalRegroups.set(e.id, {
-              phase: 'anchored', anchor: state.anchor,
-              holdRemaining: 12, moveUsed: true, recruited: true,
-            });
-            return true;
-          }
-          return false;
+        // With no live reinforcements, a stationary captive guardian stands
+        // near its captive rather than abandoning the encounter post.
+        const captive = this.tacticalGuardedSpecialist(e);
+        if (captive) {
+          this._tacticalRegroups.set(e.id, {
+            phase: 'guard-captive',
+            destination: { x: captive.x, y: captive.y },
+            travelRemaining: Math.max(12, dist(e, captive) / 150 + 5),
+            stalled: 0,
+          });
+          return true;
         }
+        // Everyone else, including roaming bosses and captains, withdraws
+        // within the existing territorial leash if help is unavailable.
         // Out of nearby/distant allies, and unable to summon help: withdraw.
         // A defensive Rogue cast may cover escape, but never replace escape
         // with a standing cast/reassessment loop, even at two-second reuse.
@@ -5213,6 +5252,27 @@
         this.tacticalRogueMove(e, target, true);
         return true;
       }
+      if (state.phase === 'guard-captive') {
+        const captive = this.tacticalGuardedSpecialist(e);
+        state.travelRemaining -= dt;
+        if (!captive || state.travelRemaining <= 0) {
+          this.tacticalStopRogueRegroup(e);
+          return false;
+        }
+        if (dist(e, captive) > 85) {
+          const before = { x: e.x, y: e.y };
+          this.follow(e, captive, 190 * this.mountedMovementFactor(e) * this.nightTempo(), dt, 70);
+          state.stalled = dist(before, e) > Math.max(0.1, dt * 10)
+            ? 0 : state.stalled + dt;
+          e.noProgress = 0;
+          if (state.stalled <= 2.5) return true;
+        }
+        this._tacticalRegroups.set(e.id, {
+          phase: 'anchored', anchor: { x: e.x, y: e.y },
+          holdRemaining: 12, moveUsed: false, recruited: true,
+        });
+        return true;
+      }
       if (state.phase === 'escape') {
         state.fleeRemaining -= dt;
         state.seekDelay -= dt;
@@ -5220,6 +5280,13 @@
           state.seekDelay = 1;
           if (this.tacticalSeekRogueSupport(e, this.tacticalActiveTargetCount(e))) return true;
           if (this.tacticalBeginExtendedRetreat(e)) return true;
+        }
+        const radius = this.tacticalDefenderTerritory(e);
+        if (radius && dist(e, this.tacticalDefenderPost(e)) >= radius - 55) {
+          // A roaming or field leader may regroup, but must not desert its
+          // defended encounter area when no help exists.
+          this.disengage(e, dt);
+          return true;
         }
         const before = { x: e.x, y: e.y },
           d = Math.max(1, dist(e, target)),
@@ -5329,8 +5396,7 @@
         const freshWound = wounded && !this._tacticalWoundedUsed?.has(e.id);
         const pressureRemains =
           (this.tacticalRogueOutnumbered(e) ||
-            (!(e.type === 'boss' || e.captain || e.roomCaptain) &&
-              this.tacticalNeedsMoreSupport(e))) &&
+            this.tacticalNeedsMoreSupport(e)) &&
           this.tacticalRogueEligibility(e, Math.max(pressure, 2)) &&
           (this._tacticalRogueNext?.get(e.id) || 0) <= this.s.time &&
           !this.hawkRetreatLocked(e, 'regroup');
@@ -6577,7 +6643,7 @@
             // Defensive casting does not override ongoing outward locomotion.
           } else if (covering) this.enemyWithdrawalCastPosition(e);
           else if (held) {
-            if (['travel', 'escape', 'anchored'].includes(this.tacticalRogueRegroup(e)?.phase))
+            if (['travel', 'escape', 'anchored', 'guard-captive'].includes(this.tacticalRogueRegroup(e)?.phase))
               this.enemyWithdrawalAction(e, target, scriptedBossTarget);
             continue;
           }
