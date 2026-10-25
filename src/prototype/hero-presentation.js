@@ -179,11 +179,14 @@
       if (!p) continue;
       const emit = (stage, life, extra = {}) =>
         push({ ...e, ...extra, stage, ...p }, 'heroSkill', life, 4);
-      if (e.type === 'heroSkillArea' && e.slot === 1)
-        emit(
-          e.class === 'paladin' ? 'skill1-cross' : 'skill1-wide-beam',
-          e.class === 'paladin' ? 0.36 : 0.24,
-        );
+      if (e.type === 'heroSkillArea' && e.slot === 1) {
+        // Completion documents real impacts but must not restart the visual.
+        if (e.phase !== 'complete')
+          emit(
+            e.class === 'paladin' ? 'skill1-cross' : 'skill1-wide-beam',
+            e.class === 'paladin' ? 0.36 : (e.travelSeconds || 0.75) + 0.08,
+          );
+      }
       else if (e.type === 'heroHawk' && e.slot === 1)
         emit('skill1-hawk-' + e.phase, e.phase === 'flight' ? 0.13 : 0.28);
       else if (e.type === 'hawkRetreatInterrupted') {
@@ -421,7 +424,15 @@
       glyph(ctx, p.x, p.y - 5, 'lance', reduced ? 8 : 12 + 4 * grow);
     } else if (f.stage === 'skill1-wide-beam') {
       const from = { x: f.x, y: f.y },
-        to = { x: f.endX, y: f.endY },
+        // Render the same advancing front that simulation uses for contact.
+        // Reduced motion removes decorative shimmer, never the travel delay.
+        progress = Math.min(1, age / Math.max(0.01, f.travelSeconds || 0.75)),
+        to = f.simulatedFront
+          ? { x: f.endX, y: f.endY }
+          : {
+              x: f.x + (f.endX - f.x) * progress,
+              y: f.y + (f.endY - f.y) * progress,
+            },
         start = screen(from),
         end = screen(to),
         shift = {
@@ -738,7 +749,7 @@
     ctx.restore();
     return true;
   }
-  function projectile(ctx, screen, p, heroClass, reduced = false) {
+  function projectile(ctx, screen, p, heroClass, reduced = false, caster = null) {
     if (p.source !== 'hero') return false;
     if (p.delay > 0) return true;
     const def = profile({ class: heroClass, slot: p.slot || 1, charged: p.charged });
@@ -769,15 +780,46 @@
         glyph(ctx, tail.x, tail.y, 'arrow', 3);
       }
     } else if (p.style === 'beam') {
-      const origin = screen({ x: p.originX ?? p.x, y: p.originY ?? p.y });
+      const start = {
+          x: p.originX ?? p.x,
+          y: p.originY ?? p.y,
+        },
+        attached = p.mageSkill1Homing && caster && caster.hp > 0,
+        origin = attached ? caster : start,
+        width = p.beamWidthScale || 1,
+        path = p.mageSkill1Homing ? p.trailPoints || [] : [];
+      // The spell's damaging head follows its physical homing flight, while
+      // its luminous tail is visually tethered to the moving caster.
+      // Old flight breadcrumbs bend proportionally toward the live origin;
+      // the distant head stays fixed, so it never teleports with the hero.
+      const strokeBeam = () => {
+        const o = screen(origin);
+        ctx.beginPath();
+        ctx.moveTo(o.x, o.y);
+        for (let i = 1; i < path.length; i++) {
+          const fraction = i / Math.max(1, path.length),
+            pull = attached ? (1 - fraction) ** 2 : 0,
+            point = path[i],
+            warped = {
+              x: point.x + (origin.x - start.x) * pull,
+              y: point.y + (origin.y - start.y) * pull,
+            },
+            v = screen(warped);
+          ctx.lineTo(v.x, v.y);
+        }
+        ctx.lineTo(q.x, q.y);
+        ctx.stroke();
+      };
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
       ctx.globalAlpha = 0.25;
-      ctx.lineWidth = reduced ? 4 : 7;
-      line(ctx, origin, q);
+      ctx.lineWidth = (reduced ? 4 : 7) * width;
+      strokeBeam();
       ctx.globalAlpha = 0.9;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 2 * width;
       ctx.strokeStyle = def.colors[1];
-      line(ctx, origin, q);
-      glyph(ctx, q.x, q.y, 'orb', 6);
+      strokeBeam();
+      glyph(ctx, q.x, q.y, 'orb', 6 * Math.sqrt(width));
     } else if (p.style === 'holy') {
       ctx.translate(q.x, q.y);
       ctx.rotate(angle);

@@ -60,3 +60,10 @@ The retreat-corridor selection now uses the **15-unit radius actually passed by 
 ### Bounded native-collision diagnostic disposition
 
 The stricter 15-unit full-corridor *search* proved inappropriately costly for the narrow 96-case gate. The test now retains the already-passing 12-unit hit/retreat-corridor selection and **records**, but does not require, whether the same rear lane meets the actual 15-unit movement radius. This keeps observation separate from acceptance, while preserving the diagnostic that long-range wounded enemies may enter escape without progressing. A dedicated movement collision/pursuit test, with a smaller fixed native fixture, should resolve this before any AI code change. Do not infer successful physical withdrawal merely from an `escape` phase.
+
+
+## Dev.185 reconciliation (25 October 2026)
+
+**Current audited main:** `fec4b6701b5d2e4487658638752ee1d3504c2f57` / package `0.9.1+snapshot.dev.185`. PR #452 **has now merged** Mage Skill 1 traveling/homing beam and 0.75-second charged beam into live main; the earlier description of #452 as an unmerged draft is historical, not present-tense. Mage tap Skill 1 reaches 400 units (target validation), charged Mage Skill 1 reaches 450 units at rank 1; Ranger tap/charged Skill 1 reaches 450, and the ordinary Archer companion basic shot requires 185 units. A 480-unit start cannot be treated as an immediate Skill 1 or Archer basic launch. Real skill-input and projectile tests must record the legal approach/nonlaunch where appropriate, never inject impossible 480-unit casts to manufacture Rogue findings.
+
+Reconciled branch tree from the exact current dev.185 main while retaining original read-only matrix and native delivered-hit tests. Mage source code remains taken from the released main, not copied from #452's historical branch. The old dev.184 reports remain labeled by their run/commit. The PR remains **audit-only, draft, unmerged**; no combat edits or release permission.

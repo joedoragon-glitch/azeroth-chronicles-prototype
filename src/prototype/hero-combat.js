@@ -874,53 +874,57 @@
           hits,
         });
       }
+      // Lock a far-world aiming point at release. The Mage stays mobile:
+      // the near end follows the caster, changing the angle toward that point.
+      // This is neither a homing beam nor a parallel sideways sweep.
       resolveWideArcaneBeam(f) {
         if (!this.heroSkillEffectLive(f)) return;
         const ux = Math.cos(f.angle),
           uy = Math.sin(f.angle),
           step = 8;
-        let limit = f.reach,
+        let castLimit = f.reach,
           previous = f.from;
-        for (let d = step; d <= f.reach + step; d += step) {
-          const at = Math.min(d, f.reach),
-            point = { x: f.from.x + ux * at, y: f.from.y + uy * at };
+        for (let distance = step; distance <= f.reach + step; distance += step) {
+          const along = Math.min(distance, f.reach),
+            point = { x: f.from.x + ux * along, y: f.from.y + uy * along };
           if (!this.clearSegment(previous, point, 0)) {
-            limit = Math.max(0, at - step);
+            castLimit = Math.max(0, along - step);
             break;
           }
           previous = point;
         }
-        const end = { x: f.from.x + ux * limit, y: f.from.y + uy * limit };
-        let hits = 0;
-        for (const e of this.zone().enemies) {
-          if (e.hp <= 0 || e.neutral || e.returning || this.attackResetProtected(e)) continue;
-          const forward = (e.x - f.from.x) * ux + (e.y - f.from.y) * uy;
-          if (
-            forward < 0 ||
-            forward > limit ||
-            this.distanceToSegment(e, f.from, end) > f.halfWidth + this.actorRadius(e) ||
-            !this.line(f.from, e)
-          )
-            continue;
-          if (
-            this.damage(e, f.damage * R.chargedSkills.first.mage.damage, 'hero', {
-              area: true,
-              encountersAtStart: f.encountersAtStart,
-            })
-          )
-            hits++;
-        }
+        const aim = {
+          x: f.from.x + ux * castLimit,
+          y: f.from.y + uy * castLimit,
+        };
+        const beam = {
+          ...f,
+          kind: 'wide-beam',
+          aim,
+          elapsed: 0,
+          traveled: 0,
+          hitIds: [],
+          hits: 0,
+          endX: f.from.x,
+          endY: f.from.y,
+          visibleLength: 0,
+        };
+        (this._heroSkillEffects ||= []).push(beam);
         this.event('heroSkillArea', {
           actor: 'hero',
           class: 'mage',
           slot: 1,
           effect: 'wide-arcane-beam',
+          phase: 'launch',
           x: f.from.x,
           y: f.from.y,
-          endX: end.x,
-          endY: end.y,
+          endX: aim.x,
+          endY: aim.y,
+          angle: f.angle,
+          reach: f.reach,
           halfWidth: f.halfWidth,
-          hits,
+          travelSeconds: 0.75,
+          hits: 0,
         });
       }
       advanceHeroSkillEffects(dt) {
@@ -931,6 +935,82 @@
           if (f.kind === 'cross') {
             if (this.s.time < f.due) return true;
             this.resolveHeroCrossPulse(f, 1);
+            return false;
+          }
+          if (f.kind === 'wide-beam') {
+            // Live source, fixed WORLD-SPACE aim point. Sideways movement
+            // changes the beam angle, not a translated parallel lane.
+            // The normal range limit still applies if the Mage backs away.
+            // A changed angle may contact additional foes, once each.
+            f.elapsed = Math.min(0.75, (f.elapsed || 0) + dt);
+            const from = { x: this.hero.x, y: this.hero.y },
+              gap = dist(from, f.aim),
+              range = Math.min(f.reach, gap),
+              ux = gap > 0 ? (f.aim.x - from.x) / gap : Math.cos(f.angle),
+              uy = gap > 0 ? (f.aim.y - from.y) / gap : Math.sin(f.angle);
+            f.traveled = range * (f.elapsed / 0.75);
+            let visibleLength = 0,
+              previous = from;
+            // Reclip the CURRENT angled corridor to solid terrain. Never
+            // let a cosmetic tether grant damage through a newly crossed wall.
+            for (let step = 8; step < f.traveled + 8; step += 8) {
+              const along = Math.min(step, f.traveled),
+                point = { x: from.x + ux * along, y: from.y + uy * along };
+              if (!this.clearSegment(previous, point, 0)) break;
+              visibleLength = along;
+              previous = point;
+            }
+            const end = {
+              x: from.x + ux * visibleLength,
+              y: from.y + uy * visibleLength,
+            };
+            // Both Canvas and Pixi overlays use this SAME simulation-owned
+            // footprint, so rendering never invents additional damage reach.
+            f.from = from;
+            f.endX = end.x;
+            f.endY = end.y;
+            f.visibleLength = visibleLength;
+            for (const e of this.zone().enemies) {
+              if (
+                f.hitIds.includes(e.id) ||
+                e.hp <= 0 ||
+                e.neutral ||
+                e.returning ||
+                this.attackResetProtected(e)
+              )
+                continue;
+              const radius = this.actorRadius(e),
+                forward = (e.x - from.x) * ux + (e.y - from.y) * uy;
+              if (
+                forward < 0 ||
+                forward > visibleLength + radius ||
+                this.distanceToSegment(e, from, end) > f.halfWidth + radius ||
+                !this.line(from, e)
+              )
+                continue;
+              f.hitIds.push(e.id);
+              if (
+                this.damage(e, f.damage * R.chargedSkills.first.mage.damage, 'hero', {
+                  area: true,
+                  encountersAtStart: f.encountersAtStart,
+                })
+              )
+                f.hits++;
+            }
+            if (f.elapsed < 0.75) return true;
+            this.event('heroSkillArea', {
+              actor: 'hero',
+              class: 'mage',
+              slot: 1,
+              effect: 'wide-arcane-beam',
+              phase: 'complete',
+              x: from.x,
+              y: from.y,
+              endX: end.x,
+              endY: end.y,
+              halfWidth: f.halfWidth,
+              hits: f.hits,
+            });
             return false;
           }
           if (f.kind !== 'hawk') return false;
@@ -1298,7 +1378,14 @@
               target: target.id,
               damage,
               source: 'hero',
-              speed: 1000,
+              // A full-range shot is roughly 0.75s; nearer targets remain responsive.
+              speed: Math.max(170, Math.min(535, d / 0.75)),
+              life: 1.5,
+              travelBudget: 540,
+              traveled: 0,
+              mageSkill1Homing: true,
+              beamWidthScale: 2.5,
+              trailPoints: [{ x: this.hero.x, y: this.hero.y }],
               delay: 0,
               style: 'beam',
               slot,
