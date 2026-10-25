@@ -122,13 +122,12 @@
     // normal Tap skill. Keep original sword/orb/bow silhouettes and foley.
     if ((e.slot || 1) === 1 && (e.automaticBasic || e.combo) && !e.charged) {
       const basics = {
-        paladin: ['Sword Combo','slash','steel'],
-        mage: ['Arcane Combo','orb','arcane'],
-        ranger: ['Bow Combo','arrow','arrow'],
+        paladin: ['Sword Combo', 'slash', 'steel'],
+        mage: ['Arcane Combo', 'orb', 'arcane'],
+        ranger: ['Bow Combo', 'arrow', 'arrow'],
       };
       const row = basics[e.class];
-      if (row) return { name:row[0],motif:row[1],material:row[2],
-        colors:palettes[row[2]] };
+      if (row) return { name: row[0], motif: row[1], material: row[2], colors: palettes[row[2]] };
     }
     const row = catalog[e.class]?.[(e.slot || 1) - 1]?.[e.charged ? 1 : 0];
     return row ? { name: row[0], motif: row[1], material: row[2], colors: palettes[row[2]] } : null;
@@ -152,33 +151,46 @@
   ]);
   function owns(e) {
     return (
-      ['heroSkillCast', 'heroProjectileFlight', 'heroCharge', 'heroDisplace',
-        'heroSkillArea', 'heroHawk', 'hawkRetreatInterrupted', 'skill1Tap'].includes(e.type) ||
+      [
+        'heroSkillCast',
+        'heroProjectileFlight',
+        'heroCharge',
+        'heroDisplace',
+        'heroSkillArea',
+        'heroHawk',
+        'hawkRetreatInterrupted',
+        'skill1Tap',
+      ].includes(e.type) ||
       (isHero(e) && legacyTypes.has(e.type))
     );
   }
   function queue(events, push) {
     for (const original of events) {
       if (!owns(original)) continue;
-      const e = { ...original, charged: original.charged ||
-        (original.slot === 1 && ['heroSkillArea','heroHawk'].includes(original.type)) ||
-        original.type === 'chargedArea' || original.type === 'heroCharge' },
+      const e = {
+          ...original,
+          charged:
+            original.charged ||
+            (original.slot === 1 && ['heroSkillArea', 'heroHawk'].includes(original.type)) ||
+            original.type === 'chargedArea' ||
+            original.type === 'heroCharge',
+        },
         p = profile(e);
       if (!p) continue;
       const emit = (stage, life, extra = {}) =>
         push({ ...e, ...extra, stage, ...p }, 'heroSkill', life, 4);
       if (e.type === 'heroSkillArea' && e.slot === 1)
-        emit(e.class === 'paladin' ? 'skill1-cross' : 'skill1-wide-beam',
-          e.class === 'paladin' ? 0.36 : 0.24);
+        emit(
+          e.class === 'paladin' ? 'skill1-cross' : 'skill1-wide-beam',
+          e.class === 'paladin' ? 0.36 : 0.24,
+        );
       else if (e.type === 'heroHawk' && e.slot === 1)
         emit('skill1-hawk-' + e.phase, e.phase === 'flight' ? 0.13 : 0.28);
       else if (e.type === 'hawkRetreatInterrupted') {
         // Contact already shows the interruption marker; avoid duplicate flashes.
-      }
-      else if (e.type === 'skill1Tap') {
+      } else if (e.type === 'skill1Tap') {
         // Prior charged projectile now carries its own normal launch/contact.
-      }
-      else if (e.type === 'heroSkillCast') emit('cast', e.charged ? 0.3 : 0.22);
+      } else if (e.type === 'heroSkillCast') emit('cast', e.charged ? 0.3 : 0.22);
       else if (e.type === 'heroCharge' && e.stage === 'cancel') emit('cancel', 0.18);
       else if (e.type === 'heroDisplace') emit('displace', 0.22);
       else if (e.type === 'heroProjectileFlight') emit('launch', 0.12);
@@ -208,27 +220,30 @@
       ctx.lineTo(x - size * 0.6, y);
       ctx.closePath();
     } else if (motif === 'holy-cross') {
-      ctx.moveTo(x-size,y);ctx.lineTo(x+size,y);
-      ctx.moveTo(x,y-size);ctx.lineTo(x,y+size);
-      ctx.moveTo(x-size*0.38,y-size*0.36);
-      ctx.lineTo(x+size*0.38,y+size*0.36);
-      ctx.moveTo(x-size*0.38,y+size*0.36);
-      ctx.lineTo(x+size*0.38,y-size*0.36);
+      ctx.moveTo(x - size, y);
+      ctx.lineTo(x + size, y);
+      ctx.moveTo(x, y - size);
+      ctx.lineTo(x, y + size);
+      ctx.moveTo(x - size * 0.38, y - size * 0.36);
+      ctx.lineTo(x + size * 0.38, y + size * 0.36);
+      ctx.moveTo(x - size * 0.38, y + size * 0.36);
+      ctx.lineTo(x + size * 0.38, y - size * 0.36);
     } else if (motif === 'wide-beam') {
-      ctx.moveTo(x-size*0.9,y-size*0.65);
-      ctx.lineTo(x+size*0.9,y-size*0.32);
-      ctx.moveTo(x-size*0.9,y+size*0.65);
-      ctx.lineTo(x+size*0.9,y+size*0.32);
-      ctx.moveTo(x-size*0.9,y);
-      ctx.lineTo(x+size*0.9,y);
+      ctx.moveTo(x - size * 0.9, y - size * 0.65);
+      ctx.lineTo(x + size * 0.9, y - size * 0.32);
+      ctx.moveTo(x - size * 0.9, y + size * 0.65);
+      ctx.lineTo(x + size * 0.9, y + size * 0.32);
+      ctx.moveTo(x - size * 0.9, y);
+      ctx.lineTo(x + size * 0.9, y);
     } else if (motif === 'hawk') {
-      ctx.moveTo(x+size,y);ctx.lineTo(x+size*0.25,y-size*0.12);
-      ctx.lineTo(x-size*0.65,y-size);
-      ctx.lineTo(x-size*0.37,y-size*0.18);
-      ctx.lineTo(x-size*0.75,y);
-      ctx.lineTo(x-size*0.37,y+size*0.18);
-      ctx.lineTo(x-size*0.65,y+size);
-      ctx.lineTo(x+size*0.25,y+size*0.12);
+      ctx.moveTo(x + size, y);
+      ctx.lineTo(x + size * 0.25, y - size * 0.12);
+      ctx.lineTo(x - size * 0.65, y - size);
+      ctx.lineTo(x - size * 0.37, y - size * 0.18);
+      ctx.lineTo(x - size * 0.75, y);
+      ctx.lineTo(x - size * 0.37, y + size * 0.18);
+      ctx.lineTo(x - size * 0.65, y + size);
+      ctx.lineTo(x + size * 0.25, y + size * 0.12);
       ctx.closePath();
     } else if (motif === 'restore') {
       ctx.moveTo(x - size, y);
@@ -354,96 +369,130 @@
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     if (f.stage === 'skill1-cross') {
-      const center = { x: f.x, y: f.y }, reach = f.reach,
-        half = f.halfWidth, a = f.angle,
-        ca = Math.cos(a), sa = Math.sin(a),
-        endpoints = Array.isArray(f.arms) && f.arms.length === 4
-          ? f.arms.map(to => [center,to])
-          : [
-              [{ x:center.x-ca*reach, y:center.y-sa*reach },{ x:center.x+ca*reach, y:center.y+sa*reach }],
-              [{ x:center.x+sa*reach, y:center.y-ca*reach },{ x:center.x-sa*reach, y:center.y+ca*reach }],
-            ];
+      const center = { x: f.x, y: f.y },
+        reach = f.reach,
+        half = f.halfWidth,
+        a = f.angle,
+        ca = Math.cos(a),
+        sa = Math.sin(a),
+        endpoints =
+          Array.isArray(f.arms) && f.arms.length === 4
+            ? f.arms.map((to) => [center, to])
+            : [
+                [
+                  { x: center.x - ca * reach, y: center.y - sa * reach },
+                  { x: center.x + ca * reach, y: center.y + sa * reach },
+                ],
+                [
+                  { x: center.x + sa * reach, y: center.y - ca * reach },
+                  { x: center.x - sa * reach, y: center.y + ca * reach },
+                ],
+              ];
       ctx.globalAlpha = fade * (f.pulse ? 0.55 : 0.43);
       ctx.fillStyle = '#dfb45b';
       for (const pair of endpoints) {
-        const dx=pair[1].x-pair[0].x, dy=pair[1].y-pair[0].y,
-          len=Math.max(1,Math.hypot(dx,dy)),
-          nx=-dy/len*half, ny=dx/len*half;
-        C.polygon(ctx,screen,[
-          {x:pair[0].x+nx,y:pair[0].y+ny},
-          {x:pair[1].x+nx,y:pair[1].y+ny},
-          {x:pair[1].x-nx,y:pair[1].y-ny},
-          {x:pair[0].x-nx,y:pair[0].y-ny}
+        const dx = pair[1].x - pair[0].x,
+          dy = pair[1].y - pair[0].y,
+          len = Math.max(1, Math.hypot(dx, dy)),
+          nx = (-dy / len) * half,
+          ny = (dx / len) * half;
+        C.polygon(ctx, screen, [
+          { x: pair[0].x + nx, y: pair[0].y + ny },
+          { x: pair[1].x + nx, y: pair[1].y + ny },
+          { x: pair[1].x - nx, y: pair[1].y - ny },
+          { x: pair[0].x - nx, y: pair[0].y - ny },
         ]);
         ctx.fill();
       }
       ctx.globalAlpha = fade * 0.83;
       ctx.strokeStyle = '#fff1b8';
       for (const pair of endpoints) {
-        const one=screen(pair[0]), two=screen(pair[1]);
-        const thickness=Math.hypot(
-          screen({x:center.x+half*sa,y:center.y-half*ca}).x-screen(center).x,
-          screen({x:center.x+half*sa,y:center.y-half*ca}).y-screen(center).y
+        const one = screen(pair[0]),
+          two = screen(pair[1]);
+        const thickness = Math.hypot(
+          screen({ x: center.x + half * sa, y: center.y - half * ca }).x - screen(center).x,
+          screen({ x: center.x + half * sa, y: center.y - half * ca }).y - screen(center).y,
         );
-        ctx.lineWidth = Math.max(1.5,thickness*0.19);
-        line(ctx,one,two);
+        ctx.lineWidth = Math.max(1.5, thickness * 0.19);
+        line(ctx, one, two);
       }
-      const p=screen(center);
-      ctx.lineWidth=2;
-      glyph(ctx,p.x,p.y-5,'lance',reduced?8:12+4*grow);
+      const p = screen(center);
+      ctx.lineWidth = 2;
+      glyph(ctx, p.x, p.y - 5, 'lance', reduced ? 8 : 12 + 4 * grow);
     } else if (f.stage === 'skill1-wide-beam') {
-      const from={x:f.x,y:f.y},to={x:f.endX,y:f.endY},
-        start=screen(from),end=screen(to),shift={x:from.x-f.halfWidth*Math.sin(Math.atan2(to.y-from.y,to.x-from.x)),
-        y:from.y+f.halfWidth*Math.cos(Math.atan2(to.y-from.y,to.x-from.x))};
-      ctx.globalAlpha = fade*0.4;
-      ctx.fillStyle='#9368db';
-      const dx=to.x-from.x,dy=to.y-from.y,len=Math.max(1,Math.hypot(dx,dy)),
-        nx=-dy/len*f.halfWidth,ny=dx/len*f.halfWidth;
-      C.polygon(ctx,screen,[
-        {x:from.x+nx,y:from.y+ny},
-        {x:to.x+nx,y:to.y+ny},
-        {x:to.x-nx,y:to.y-ny},
-        {x:from.x-nx,y:from.y-ny}
+      const from = { x: f.x, y: f.y },
+        to = { x: f.endX, y: f.endY },
+        start = screen(from),
+        end = screen(to),
+        shift = {
+          x: from.x - f.halfWidth * Math.sin(Math.atan2(to.y - from.y, to.x - from.x)),
+          y: from.y + f.halfWidth * Math.cos(Math.atan2(to.y - from.y, to.x - from.x)),
+        };
+      ctx.globalAlpha = fade * 0.4;
+      ctx.fillStyle = '#9368db';
+      const dx = to.x - from.x,
+        dy = to.y - from.y,
+        len = Math.max(1, Math.hypot(dx, dy)),
+        nx = (-dy / len) * f.halfWidth,
+        ny = (dx / len) * f.halfWidth;
+      C.polygon(ctx, screen, [
+        { x: from.x + nx, y: from.y + ny },
+        { x: to.x + nx, y: to.y + ny },
+        { x: to.x - nx, y: to.y - ny },
+        { x: from.x - nx, y: from.y - ny },
       ]);
       ctx.fill();
-      ctx.globalAlpha=fade*0.78;
-      ctx.strokeStyle='#e9ceff';
-      ctx.lineWidth=Math.max(2,Math.hypot(screen(shift).x-start.x,screen(shift).y-start.y)*0.35);
-      line(ctx,start,end);
-      ctx.lineWidth=1.5;
-      ctx.strokeStyle='#fff7fd';
-      line(ctx,start,end);
+      ctx.globalAlpha = fade * 0.78;
+      ctx.strokeStyle = '#e9ceff';
+      ctx.lineWidth = Math.max(
+        2,
+        Math.hypot(screen(shift).x - start.x, screen(shift).y - start.y) * 0.35,
+      );
+      line(ctx, start, end);
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = '#fff7fd';
+      line(ctx, start, end);
     } else if (f.stage.startsWith('skill1-hawk-')) {
-      const p=screen(f),a=f.angle||0;
-      ctx.translate(p.x,p.y-12);
+      const p = screen(f),
+        a = f.angle || 0;
+      ctx.translate(p.x, p.y - 12);
       ctx.rotate(a);
-      ctx.globalAlpha=fade*(f.phase==='expire'?0.25:0.9);
-      ctx.strokeStyle=f.phase==='impact'?'#f2ecb0':'#d9e4ac';
-      ctx.fillStyle='#b9d29f';
-      ctx.lineWidth=reduced?1.8:2.5;
-      if(f.phase==='flight'&&!reduced){
-        const q=screen({x:f.fromX??f.x,y:f.fromY??f.y});
+      ctx.globalAlpha = fade * (f.phase === 'expire' ? 0.25 : 0.9);
+      ctx.strokeStyle = f.phase === 'impact' ? '#f2ecb0' : '#d9e4ac';
+      ctx.fillStyle = '#b9d29f';
+      ctx.lineWidth = reduced ? 1.8 : 2.5;
+      if (f.phase === 'flight' && !reduced) {
+        const q = screen({ x: f.fromX ?? f.x, y: f.fromY ?? f.y });
         ctx.beginPath();
-        ctx.moveTo(0,0);
-        ctx.lineTo(q.x-p.x,q.y-p.y);
+        ctx.moveTo(0, 0);
+        ctx.lineTo(q.x - p.x, q.y - p.y);
         ctx.stroke();
       }
       // Original top-down angular raptor silhouette: head, swept wings,
       // feathers and tapered tail, oriented in the actual chase direction.
       ctx.beginPath();
-      ctx.moveTo(13,0);ctx.lineTo(5,-3);
-      ctx.quadraticCurveTo(-4,-17,-17,-18);
-      ctx.lineTo(-9,-6);ctx.lineTo(-14,-2);
-      ctx.lineTo(-9,0);ctx.lineTo(-14,2);
-      ctx.lineTo(-9,6);ctx.lineTo(-17,18);
-      ctx.quadraticCurveTo(-4,17,5,3);
-      ctx.closePath();ctx.fill();ctx.stroke();
-      if(f.phase==='impact'){
-        ctx.strokeStyle='#fff5bd';ctx.lineWidth=2;
-        for(const side of [-1,1]) line(ctx,{x:0,y:0},{x:16,y:side*13});
-        if(f.interrupted){
-          ctx.beginPath();ctx.arc(0,0,20,0,Math.PI*2);ctx.stroke();
-          line(ctx,{x:-7,y:12},{x:8,y:-12});
+      ctx.moveTo(13, 0);
+      ctx.lineTo(5, -3);
+      ctx.quadraticCurveTo(-4, -17, -17, -18);
+      ctx.lineTo(-9, -6);
+      ctx.lineTo(-14, -2);
+      ctx.lineTo(-9, 0);
+      ctx.lineTo(-14, 2);
+      ctx.lineTo(-9, 6);
+      ctx.lineTo(-17, 18);
+      ctx.quadraticCurveTo(-4, 17, 5, 3);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      if (f.phase === 'impact') {
+        ctx.strokeStyle = '#fff5bd';
+        ctx.lineWidth = 2;
+        for (const side of [-1, 1]) line(ctx, { x: 0, y: 0 }, { x: 16, y: side * 13 });
+        if (f.interrupted) {
+          ctx.beginPath();
+          ctx.arc(0, 0, 20, 0, Math.PI * 2);
+          ctx.stroke();
+          line(ctx, { x: -7, y: 12 }, { x: 8, y: -12 });
         }
       }
     }
@@ -795,24 +844,25 @@
   function queued(ctx, screen, hero, requests) {
     if (!requests?.length) return;
     const p = screen(hero),
-      firstX = p.x - ((requests.length - 1) * 17) / 2;
+      columns = Math.min(8, requests.length),
+      firstX = p.x - ((columns - 1) * 25) / 2;
     ctx.save();
     ctx.font = 'bold 9px system-ui';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     for (let i = 0; i < requests.length; i++) {
       const request = requests[i],
-        x = firstX + i * 17,
-        y = p.y + 15;
+        x = firstX + (i % columns) * 25,
+        y = p.y + 15 + Math.floor(i / columns) * 19;
       ctx.fillStyle = request.ready ? request.color : '#14232de8';
       ctx.strokeStyle = request.color;
       ctx.lineWidth = request.charging ? 2 : 1;
       ctx.beginPath();
-      ctx.arc(x, y, 6.5, 0, Math.PI * 2);
+      ctx.arc(x, y, 10, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
       ctx.fillStyle = request.ready ? '#14232d' : request.color;
-      ctx.fillText(String(request.slot), x, y + 0.5);
+      ctx.fillText(request.slot + (request.charged ? 'C' : 'N'), x, y + 0.5);
     }
     ctx.restore();
   }

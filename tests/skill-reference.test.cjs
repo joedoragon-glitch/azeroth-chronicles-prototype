@@ -54,12 +54,24 @@ for (const cls of ['paladin', 'mage', 'ranger'])
         };
         assert(g.cast(slot, enemy.id, charged), `${cls} ${slot} ${rank} ${charged}`);
         if (!(slot === 3 && cls === 'paladin' && !charged))
-          near(g.hero.cd[slot - 1], m('cooldown'));
+          near(g.hero.cd[slot - 1], info.tap.metrics.find((x) => x.key === 'cooldown').value);
+        near(g.hero.chargedCd[slot - 1], charged ? m('cooldown') : 0);
+        // Hawk damage occurs on actual contact, never at launch.
+        if (cls === 'ranger' && slot === 1 && charged) g.advanceHeroSkillEffects(0.2);
         const output = raw.length ? raw : g.s.projectiles.map((p) => p.damage);
         if (m('damage') !== undefined)
           near(output[0], Array.isArray(m('damage')) ? m('damage')[0] : m('damage'));
         if (m('healing') !== undefined) near(g.hero.hp - 1, m('healing'));
-        if (m('slow') !== undefined) near(g.s.projectiles[0]?.slow || enemy.slow, m('slow'));
+        if (m('slow') !== undefined) {
+          const shot = g.s.projectiles[0];
+          const actual = shot?.slow
+            ? shot.slow + C.rules.cooldownBalance.slowDurationBonusSeconds
+            : enemy.slow;
+          assert(
+            Math.abs(actual - m('slow')) < 1e-7,
+            `${cls} slot ${slot} rank ${rank} charged ${charged}: Slow ${actual} vs ${m('slow')}`,
+          );
+        }
         if (m('weaken') !== undefined) {
           near(enemy.weakenFraction * 100, m('weaken'));
           near(enemy.weakenUntil - g.s.time, m('weakenDuration'));
@@ -88,7 +100,10 @@ for (const cls of ['paladin', 'mage', 'ranger'])
         if (rank === 8) assert.deepEqual(preview, []);
         else {
           const next = Ref.describe(g, slot, rank + 1);
-          for (const [i, name] of (slot === 1 ? ['auto', 'tap', 'charge'] : ['tap', 'charge']).entries()) {
+          for (const [i, name] of (slot === 1
+            ? ['auto', 'tap', 'charge']
+            : ['tap', 'charge']
+          ).entries()) {
             const changed = next[name].metrics.filter(
               (v, j) => JSON.stringify(v.value) !== JSON.stringify(info[name].metrics[j].value),
             );
@@ -102,7 +117,7 @@ const mage = new C('normal', 'mage');
 mage.hero.skills[1] = 2;
 assert.equal(
   Ref.describe(mage, 2).tap.metrics.find((m) => m.key === 'slow').value,
-  2.05,
+  2.3,
   'show exact current slow, not a rank range',
 );
 assert.equal(

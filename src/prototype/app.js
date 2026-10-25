@@ -1109,44 +1109,57 @@
   });
   // New player mechanics copy; locked Chronicle passages remain unchanged.
   Object.assign(spanishText, {
-    "Radiant Strike": "Golpe radiante",
-    "Radiant Strike / Radiant Cross": "Golpe radiante / Cruz radiante",
-    "Arcane Beam / Wide Arcane Beam": "Rayo arcano / Rayo arcano amplio",
-    "Rapid Arrows / Hawk Interception": "Flechas rápidas / Intercepción del halcón",
-    "Self-taught from Rank 1; rescued specialists refine it.": "Aprendido por tu cuenta desde el rango 1; los especialistas rescatados lo perfeccionan.",
-    "Radiant Cross": "Cruz radiante",
-    "Arcane Beam": "Rayo arcano",
-    "Wide Arcane Beam": "Rayo arcano amplio",
-    "Rapid Arrows": "Flechas rápidas",
-    "Hawk Interception": "Intercepción del halcón",
-    "Automatic basics": "Ataques básicos automáticos",
-    "Automatic sword combo / holy projectile / Radiant Cross": "Combo de espada automático / proyectil sagrado / Cruz radiante",
-    "Automatic magic combo / narrow beam / wide beam": "Combo mágico automático / rayo estrecho / rayo amplio",
-    "Automatic bow combo / rapid arrows / hunting hawk": "Combo de arco automático / flechas rápidas / halcón cazador",
-    "Fire one focused holy projectile": "Lanza un proyectil sagrado concentrado",
-    "Radiant Cross: two holy pulses along four arms": "Cruz radiante: dos pulsos sagrados en cuatro brazos",
-    "Fire one narrow Arcane Beam": "Lanza un rayo arcano estrecho",
-    "Wide Arcane Beam: hit every enemy along the broad line": "Rayo arcano amplio: golpea a todos los enemigos en la línea ancha",
-    "Fire three rapid arrows at one foe": "Dispara tres flechas rápidas a un enemigo",
-    "Hawk Interception: pursue one foe and stop an active retreat": "Intercepción del halcón: persigue a un enemigo e interrumpe una retirada activa",
-    "Attacks independently while moving or standing. Three same-target hits build a finishing splash; Skill 1 Tap and Charged do not reset the combo.": "Ataca independientemente en movimiento o en reposo. Tres golpes al mismo enemigo culminan en daño de área; las formas normal y cargada no reinician el combo.",
-    "Automatic Skill 1 basics attack independently. Tap for the normal technique. Hold to prepare the charged technique.": "Los ataques básicos automáticos de la habilidad 1 funcionan aparte. Toca para la técnica normal; mantén para preparar la cargada.",
-    "Charged starts both recovery timers: short Tap and longer Charged. Tap returns after its own cooldown, even while Charged is still recovering. Tapping does not restart the charged lock. Charged needs both timers ready. On cooldown, tap to queue normal or briefly hold to queue charged. A strong hit can interrupt preparation.": "La cargada inicia las recuperaciones normal corta y cargada larga. La normal vuelve al acabar su recuperación, incluso si la cargada sigue ocupada. Usar normal no reinicia cargada; para cargar ambas deben estar listas. Toca para poner normal en cola o mantén brevemente para cargada. Un golpe fuerte interrumpe la preparación.",
-    "Automatic basics, Tap and Charged use this rank.": "Los ataques básicos, la normal y la cargada usan el mismo rango.",
-    "Rank 1 is self-taught; rescued specialists refine it.": "El rango 1 lo aprendiste por tu cuenta; los especialistas rescatados lo perfeccionan.",
-    "Choose a skill. View automatic Skill 1 basics, Tap and Charged effects with independent recovery.": "Elige una habilidad. Consulta los ataques básicos automáticos, la normal y la cargada, con recuperaciones independientes.",
-    "Also improves automatic basics.": "También mejora los ataques básicos automáticos.",
-    "Basic attack interval": "Intervalo de ataque básico",
-    "Damage per pulse": "Daño por pulso",
-    "Pulses": "Pulsos",
-    "Damage per enemy": "Daño por enemigo",
-    "Initial target range": "Alcance inicial del objetivo",
-    "Maximum flight path": "Recorrido máximo del halcón",
-    "Flight lifetime": "Duración del vuelo",
-    "Retreat lockout": "Bloqueo de retirada",
-    "Tap ready": "Normal lista",
-    "Charged ready": "Cargada lista",
-    "Retreat interrupted": "Retirada interrumpida",
+    'Radiant Strike': 'Golpe radiante',
+    'Radiant Strike / Radiant Cross': 'Golpe radiante / Cruz radiante',
+    'Arcane Beam / Wide Arcane Beam': 'Rayo arcano / Rayo arcano amplio',
+    'Rapid Arrows / Hawk Interception': 'Flechas rápidas / Intercepción del halcón',
+    'Self-taught from Rank 1; rescued specialists refine it.':
+      'Aprendido por tu cuenta desde el rango 1; los especialistas rescatados lo perfeccionan.',
+    'Radiant Cross': 'Cruz radiante',
+    'Arcane Beam': 'Rayo arcano',
+    'Wide Arcane Beam': 'Rayo arcano amplio',
+    'Rapid Arrows': 'Flechas rápidas',
+    'Hawk Interception': 'Intercepción del halcón',
+    'Automatic basics': 'Ataques básicos automáticos',
+    'Automatic sword combo / holy projectile / Radiant Cross':
+      'Combo de espada automático / proyectil sagrado / Cruz radiante',
+    'Automatic magic combo / narrow beam / wide beam':
+      'Combo mágico automático / rayo estrecho / rayo amplio',
+    'Automatic bow combo / rapid arrows / hunting hawk':
+      'Combo de arco automático / flechas rápidas / halcón cazador',
+    'Fire one focused holy projectile': 'Lanza un proyectil sagrado concentrado',
+    'Radiant Cross: two holy pulses along four arms':
+      'Cruz radiante: dos pulsos sagrados en cuatro brazos',
+    'Fire one narrow Arcane Beam': 'Lanza un rayo arcano estrecho',
+    'Wide Arcane Beam: hit every enemy along the broad line':
+      'Rayo arcano amplio: golpea a todos los enemigos en la línea ancha',
+    'Fire three rapid arrows at one foe': 'Dispara tres flechas rápidas a un enemigo',
+    'Hawk Interception: pursue one foe and stop an active retreat':
+      'Intercepción del halcón: persigue a un enemigo e interrumpe una retirada activa',
+    'Attacks independently while moving or standing. Three same-target hits build a finishing splash; Skill 1 Tap and Charged do not reset the combo.':
+      'Ataca independientemente en movimiento o en reposo. Tres golpes al mismo enemigo culminan en daño de área; las formas normal y cargada no reinician el combo.',
+    'Automatic Skill 1 basics attack independently. Tap for the normal technique. Hold to prepare the charged technique.':
+      'Los ataques básicos automáticos de la habilidad 1 funcionan aparte. Toca para la técnica normal; mantén para preparar la cargada.',
+    'Charged starts both recovery timers: short Tap and longer Charged. Tap returns after its own cooldown, even while Charged is still recovering. Tapping does not restart the charged lock. Charged needs both timers ready. On cooldown, tap to queue normal or briefly hold to queue charged. A strong hit can interrupt preparation.':
+      'La cargada inicia las recuperaciones normal corta y cargada larga. La normal vuelve al acabar su recuperación, incluso si la cargada sigue ocupada. Usar normal no reinicia cargada; para cargar ambas deben estar listas. Toca para poner normal en cola o mantén brevemente para cargada. Un golpe fuerte interrumpe la preparación.',
+    'Automatic basics, Tap and Charged use this rank.':
+      'Los ataques básicos, la normal y la cargada usan el mismo rango.',
+    'Rank 1 is self-taught; rescued specialists refine it.':
+      'El rango 1 lo aprendiste por tu cuenta; los especialistas rescatados lo perfeccionan.',
+    'Choose a skill. View automatic Skill 1 basics, Tap and Charged effects with independent recovery.':
+      'Elige una habilidad. Consulta los ataques básicos automáticos, la normal y la cargada, con recuperaciones independientes.',
+    'Also improves automatic basics.': 'También mejora los ataques básicos automáticos.',
+    'Basic attack interval': 'Intervalo de ataque básico',
+    'Damage per pulse': 'Daño por pulso',
+    Pulses: 'Pulsos',
+    'Damage per enemy': 'Daño por enemigo',
+    'Initial target range': 'Alcance inicial del objetivo',
+    'Maximum flight path': 'Recorrido máximo del halcón',
+    'Flight lifetime': 'Duración del vuelo',
+    'Retreat lockout': 'Bloqueo de retirada',
+    'Tap ready': 'Normal lista',
+    'Charged ready': 'Cargada lista',
+    'Retreat interrupted': 'Retirada interrumpida',
   });
   // N1: Only the author's approved bilingual Chronicle pairs may supply this copy.
   const approvedNarrative =
@@ -1365,7 +1378,7 @@
     focused = true,
     paused = false,
     charge = null,
-    queuedCharges = new Map(),
+    queuedCharges = PrototypeInput.createSkillQueue(),
     chargeClockGame = null,
     gateDismissed = false,
     criticalNotices = {
@@ -2287,6 +2300,8 @@
   function clearInput(preserveNavigation = true) {
     syncPartyChargeClock();
     if (typeof Sprint !== 'undefined') Sprint.release();
+    if (queuedCharges.size)
+      status(language === 'es' ? 'Cola de habilidades cancelada.' : 'Skill queue cancelled.');
     queuedCharges.clear();
     game?.cancelRangerHealRequest();
     cancelCharge();
@@ -3799,6 +3814,8 @@
     $('recall-button').focus?.({ preventScroll: true });
   }
   function recallSquad() {
+    if (queuedCharges.size)
+      status(language === 'es' ? 'Cola de habilidades cancelada.' : 'Skill queue cancelled.');
     queuedCharges.clear();
     if (charge?.autoRelease) cancelCharge();
     const recalled = game.recallParty();
@@ -4486,20 +4503,39 @@
     request.input = { source, pointerId, pressedAt: game.partyChargeNow() };
   }
   function finishQueuedInput(slot, source, pointerId = null) {
-    const request = queuedCharges.get(slot),
+    const request = queuedCharges.contact(slot, source, pointerId),
       contact = request?.input;
     if (!contact || contact.source !== source || contact.pointerId !== pointerId) return false;
+    const held = game.partyChargeNow() - contact.pressedAt;
     syncQueuedInput(request);
     request.input = null;
+    // Match manual input's deliberate no-action gap, rather than upgrading
+    // an ambiguous release into an accidental normal cast.
+    if (!request.charged && held >= chargeTapSeconds()) {
+      if (charge === request) cancelCharge(false);
+      else queuedCharges.remove(request);
+      status(language === 'es' ? 'Entrada cancelada.' : 'Input cancelled.');
+    } else if (
+      !request.charged &&
+      slot === 3 &&
+      game.hero.class === 'paladin' &&
+      game.hero.shieldStance > 0
+    ) {
+      // Lowering an active stance is an immediate exception, not a queue jump
+      // for an attack. Leave every older Shield Bash request untouched.
+      if (charge === request) cancelCharge(false);
+      else queuedCharges.remove(request);
+      game.cast(3, undefined, false);
+    }
     updateHUD();
     return true;
   }
   function cancelQueuedInput(slot, source, pointerId) {
-    const request = queuedCharges.get(slot),
+    const request = queuedCharges.contact(slot, source, pointerId),
       contact = request?.input;
     if (!contact || contact.source !== source || contact.pointerId !== pointerId) return;
     if (charge === request) cancelCharge();
-    else queuedCharges.delete(slot);
+    else queuedCharges.remove(request);
     updateHUD();
   }
   function chargedManaPercent(slot) {
@@ -4641,31 +4677,26 @@
       return false;
     }
     if (charge.started !== null || !activePlay()) return false;
-    // A tap remains available during charged-only cooldown. A true hold
-    // queues Charged; it does not force a ready normal skill to wait.
-    if (!charge.autoRelease && (game.hero.chargedCd?.[charge.slot - 1] || 0) > 0 &&
-        game.partyChargeNow() - charge.pressedAt >= queueInputRule().holdSeconds) {
-      const request = charge;
-      beginQueuedInput(request, request.source, request.pointerId);
-      request.queued = request.autoRelease = request.charged = true;
-      request.source = 'queued';
-      request.pointerId = null;
-      queuedCharges.set(request.slot,request);
-    }
     if (charge.autoRelease && (!queuedInputReady(charge) || !charge.charged)) return false;
-    if (game.hero.cd[charge.slot - 1] <= 0 &&
-        (game.hero.chargedCd?.[charge.slot - 1] || 0) <= 0 &&
-        game.partyChargeRecovery(game.hero) <= 0)
+    if (
+      game.hero.cd[charge.slot - 1] <= 0 &&
+      (game.hero.chargedCd?.[charge.slot - 1] || 0) <= 0 &&
+      game.partyChargeRecovery(game.hero) <= 0
+    )
       return startChargeClock();
     return false;
   }
   function queuedChargePresentation() {
-    return [...queuedCharges.values()].map((request) => {
+    return [...queuedCharges.values()].map((request, index) => {
       syncQueuedInput(request);
       return {
+        id: request.id,
+        order: index + 1,
         slot: request.slot,
         charged: request.charged,
-        ready: game.hero.cd[request.slot - 1] <= 0 &&
+        ready:
+          queuedCharges.get(request.slot) === request &&
+          game.hero.cd[request.slot - 1] <= 0 &&
           (!request.charged || (game.hero.chargedCd?.[request.slot - 1] || 0) <= 0),
         charging: charge === request && request.started !== null,
         color: request.charged ? '#f6d77a' : '#9dc6dd',
@@ -4708,9 +4739,11 @@
         progress: 0,
         ready: false,
         waiting: true,
-        cooldown: Math.max(game.hero.cd[charge.slot - 1],
-          charge.charged ? (game.hero.chargedCd?.[charge.slot - 1] || 0) : 0,
-          game.partyChargeRecovery(game.hero)),
+        cooldown: Math.max(
+          game.hero.cd[charge.slot - 1],
+          charge.charged ? game.hero.chargedCd?.[charge.slot - 1] || 0 : 0,
+          game.partyChargeRecovery(game.hero),
+        ),
         cost,
         enoughMana,
         targetId: charge.targetId ?? null,
@@ -4806,19 +4839,26 @@
     const rank = game.hero.skills[slot - 1];
     if (!canChargeSlot(slot) || !activePlay() || !rank || game.peace) return false;
     syncPartyChargeClock();
-    if (queuedCharges.has(slot)) {
-      // A pending charged request cannot monopolize a ready Tap.
-      if (game.hero.cd[slot - 1] <= 0 &&
-          (game.hero.chargedCd?.[slot - 1] || 0) > 0) {
-        if (charge?.slot === slot) cancelCharge(false);
-        else queuedCharges.delete(slot);
-      } else {
-        beginQueuedInput(queuedCharges.get(slot), source, pointerId);
-        updateHUD();
-        return true;
-      }
+    // A new contact always creates a new intent, even for the same form.
+    if (
+      queuedCharges.contact(slot, source, pointerId) ||
+      (charge?.source === source && charge.slot === slot && charge.pointerId === pointerId)
+    )
+      return false;
+    const queued =
+      queuedCharges.has(slot) ||
+      charge?.slot === slot ||
+      game.hero.cd[slot - 1] > 0 ||
+      (game.hero.chargedCd?.[slot - 1] || 0) > 0 ||
+      game.partyChargeRecovery(game.hero) > 0;
+    if (queued && queuedCharges.size >= queuedCharges.capacity) {
+      status(
+        language === 'es'
+          ? 'Cola llena (16). Entrada rechazada.'
+          : 'Queue full (16). Input rejected.',
+      );
+      return false;
     }
-    const queued = game.hero.cd[slot - 1] > 0 || game.partyChargeRecovery(game.hero) > 0;
     if (!queued && charge) cancelCharge(true, true);
     const request = {
       slot,
@@ -4840,7 +4880,7 @@
       request.source = 'queued';
       request.pointerId = null;
       beginQueuedInput(request, source, pointerId);
-      queuedCharges.set(slot, request);
+      queuedCharges.append(request);
       if (!charge) charge = request;
     } else {
       charge = request;
@@ -4937,8 +4977,11 @@
     if (charge.started === null) {
       const quickTap =
           !charge.queued && game.partyChargeNow() - charge.pressedAt < chargeTapSeconds(),
-        remaining = Math.max(game.hero.cd[slot - 1],
-          game.hero.chargedCd?.[slot - 1] || 0,game.partyChargeRecovery(game.hero));
+        remaining = Math.max(
+          game.hero.cd[slot - 1],
+          game.hero.chargedCd?.[slot - 1] || 0,
+          game.partyChargeRecovery(game.hero),
+        );
       cancelCharge();
       if (quickTap) {
         const cast = activePlay() && game.cast(slot, undefined, false);
@@ -5005,7 +5048,7 @@
     return cast;
   }
   function selectQueuedCharge() {
-    for (const [slot, request] of queuedCharges)
+    for (const request of queuedCharges.values())
       if (
         request.campaign !== game ||
         request.unit !== game.hero ||
@@ -5013,23 +5056,25 @@
         request.deaths !== game.s.statistics.deaths ||
         game.hero.hp <= 0 ||
         game.peace ||
-        !game.hero.skills[slot - 1] ||
+        !game.hero.skills[request.slot - 1] ||
         game.hero.deathRollHeld ||
         game.hero.keeperHeld ||
         game._tacticalScatter?.has('hero')
       )
-        queuedCharges.delete(slot);
-    if (charge?.autoRelease && !queuedCharges.has(charge.slot)) cancelCharge(false);
+        queuedCharges.remove(request);
+    if (charge?.autoRelease && !queuedCharges.contains(charge)) cancelCharge(false);
     // A manual cast or a running charge keeps its normal preparation. Other
     // skills retain independent requests and wait for their own cooldown.
     if (charge && (!charge.autoRelease || charge.started !== null)) return;
-    const ready = [...queuedCharges.values()].find(
-      (request) =>
-        queuedInputReady(request) &&
-        game.hero.cd[request.slot - 1] <= 0 &&
-        (!request.charged || (game.hero.chargedCd?.[request.slot - 1] || 0) <= 0) &&
-        game.partyChargeRecovery(game.hero) <= 0,
-    );
+    const ready = queuedCharges
+      .heads()
+      .find(
+        (request) =>
+          queuedInputReady(request) &&
+          game.hero.cd[request.slot - 1] <= 0 &&
+          (!request.charged || (game.hero.chargedCd?.[request.slot - 1] || 0) <= 0) &&
+          (!request.charged || game.partyChargeRecovery(game.hero) <= 0),
+      );
     if (ready) charge = ready;
     else if (!charge) charge = queuedCharges.values().next().value || null;
   }
@@ -5037,12 +5082,7 @@
     if (!charge?.autoRelease || !activePlay()) return;
     syncQueuedInput(charge);
     if (!charge.charged) {
-      if (
-        !queuedInputReady(charge) ||
-        game.hero.cd[charge.slot - 1] > 0 ||
-        game.partyChargeRecovery(game.hero) > 0
-      )
-        return;
+      if (!queuedInputReady(charge) || game.hero.cd[charge.slot - 1] > 0) return;
       // A normal request has no preparation, but obeys the same no-chase rule.
       const slot = charge.slot,
         target = chargeTarget(slot, null, false);
@@ -5096,7 +5136,7 @@
         charge.avBuildup = charge.avRise = charge.avReady = false;
         charge.targetId = null;
         delete charge.encountersAtStart;
-      } else queuedCharges.delete(charge.slot);
+      } else queuedCharges.remove(charge);
     }
     charge = null;
     if (started) updateHUD();
@@ -5969,10 +6009,14 @@
       const slot = i + 1,
         b = $('skill-' + slot),
         rank = h.skills[i],
-        queuedRequest = queuedCharges.get(slot),
+        backlog = queuedCharges.forSlot(slot),
+        queuedRequest = backlog[0],
         cast = charge?.slot === slot ? chargePresentation() : null,
         charging = !!cast;
-      if (queuedRequest) syncQueuedInput(queuedRequest);
+      for (const request of backlog) syncQueuedInput(request);
+      const backlogLabel = backlog
+        .map((request, index) => index + 1 + '. ' + queuedSkillLabel(request))
+        .join(' → ');
       b.disabled = false;
       b.classList.toggle('locked', !rank || b.disabled);
       b.classList.toggle('charging', charging);
@@ -5991,13 +6035,22 @@
             (language === 'es'
               ? ' · La cargada inicia ambas recuperaciones; la normal vuelve antes'
               : ' · Charged starts both recoveries; Tap returns sooner without extending Charged') +
-            ' · ' + (language === 'es' ? 'Normal ' : 'Tap ') +
-              (normalWait > 0 ? cooldownText(normalWait) + 's' : (language === 'es' ? 'lista' : 'ready')) +
-            ' · ' + (language === 'es' ? 'Cargada ' : 'Charged ') +
-              (Math.max(normalWait, chargedWait) > 0
-                ? cooldownText(Math.max(normalWait, chargedWait)) + 's'
-                : (language === 'es' ? 'lista' : 'ready')) +
-            (language === 'es' ? ' · Toca para poner normal en cola; mantén brevemente para cargada'
+            ' · ' +
+            (language === 'es' ? 'Normal ' : 'Tap ') +
+            (normalWait > 0
+              ? cooldownText(normalWait) + 's'
+              : language === 'es'
+                ? 'lista'
+                : 'ready') +
+            ' · ' +
+            (language === 'es' ? 'Cargada ' : 'Charged ') +
+            (Math.max(normalWait, chargedWait) > 0
+              ? cooldownText(Math.max(normalWait, chargedWait)) + 's'
+              : language === 'es'
+                ? 'lista'
+                : 'ready') +
+            (language === 'es'
+              ? ' · Toca para poner normal en cola; mantén brevemente para cargada'
               : ' · During cooldown: tap queues normal; briefly hold queues charged') +
             (manaEnabled
               ? ' · Charged cost ' + chargedManaPercent(slot) + '% max MP'
@@ -6016,7 +6069,9 @@
             ? ' · Los ataques automáticos continúan durante la carga si el combate lo permite'
             : ' · Automatic basics continue during charge when combat allows'
           : '') +
-        (slot === 2 ? ' · Charged target locks when charging begins' : '');
+        (slot === 2 ? ' · Charged target locks when charging begins' : '') +
+        (backlogLabel ? ' · ' + backlogLabel : '') +
+        (language === 'es' ? ' · Menú/Retirada: cancelar cola' : ' · Menu/Recall: clear queue');
       b.setAttribute(
         'aria-label',
         'Skill ' +
@@ -6025,17 +6080,22 @@
           (revealed ? skillLabel(slot) : 'Undiscovered') +
           (canChargeSlot(slot)
             ? (language === 'es'
-              ? ' · Toca para normal, mantén para cargar'
-              : ' · tap for normal or hold to charge') +
+                ? ' · Toca para normal, mantén para cargar'
+                : ' · tap for normal or hold to charge') +
               (language === 'es' ? ' · Normal ' : ' · Tap ') +
-              (normalWait > 0 ? cooldownText(normalWait) + 's'
-                : (language === 'es' ? 'lista' : 'ready')) +
+              (normalWait > 0
+                ? cooldownText(normalWait) + 's'
+                : language === 'es'
+                  ? 'lista'
+                  : 'ready') +
               (language === 'es' ? ' · Cargada ' : ' · Charged ') +
-              (Math.max(normalWait,chargedWait) > 0
-                ? cooldownText(Math.max(normalWait,chargedWait)) + 's'
-                : (language === 'es' ? 'lista' : 'ready'))
+              (Math.max(normalWait, chargedWait) > 0
+                ? cooldownText(Math.max(normalWait, chargedWait)) + 's'
+                : language === 'es'
+                  ? 'lista'
+                  : 'ready')
             : '') +
-          (queuedRequest ? ' · ' + queuedSkillLabel(queuedRequest) : ''),
+          (queuedRequest ? ' · ' + backlogLabel : ''),
       );
       if (b.firstChild?.nodeType === 3)
         b.firstChild.textContent =
@@ -6068,8 +6128,10 @@
                         ? 'NO ALLIES'
                         : 'CHARGED'
           : queuedCharges.has(slot)
-            ? queuedSkillLabel(queuedRequest).replace(' ', '\n') + ' ' +
-              cooldownText(Math.max(h.cd[i], queuedRequest?.charged ? chargedWait : 0)) + 's'
+            ? queuedSkillLabel(queuedRequest).replace(' ', '\n') +
+              ' ' +
+              cooldownText(Math.max(h.cd[i], queuedRequest?.charged ? chargedWait : 0)) +
+              's'
             : slot === 3 && h.class === 'paladin' && h.shieldStance > 0
               ? 'SHIELD ' + cooldownText(h.shieldStance)
               : !rank
@@ -6079,6 +6141,10 @@
                   : chargedWait > 0
                     ? skillKeys()[i] + ' C' + cooldownText(chargedWait)
                     : skillKeys()[i];
+      if (backlog.length > 1)
+        b.querySelector('small').textContent +=
+          '\n' + backlog.map((r, index) => index + 1 + (r.charged ? 'C' : 'N')).join(' → ');
+      b.dataset.queue = backlog.map((r) => (r.charged ? 'charged' : 'normal')).join(',');
     }
     const n = nearestNPC();
     $('touch-interact-button').hidden = !n || !activePlay();

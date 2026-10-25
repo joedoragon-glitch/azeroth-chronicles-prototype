@@ -183,6 +183,8 @@
     const tap = { title: 'Tap', effect: c.tap, metrics: [] },
       charge = { title: 'Charged', effect: c.charge, metrics: [] };
     function add(form, key, label, value, unit = '') {
+      // Slow's shared application owner adds this duration to every landed effect.
+      if (key === 'slow') value += R.cooldownBalance.slowDurationBonusSeconds;
       form.metrics.push({ key, label, value, unit });
     }
     const damage = (f, coefficient, label = 'Base damage', key = 'damage') =>
@@ -221,39 +223,50 @@
     if (slot === 1) {
       const base = (power + 12) * scale,
         first = R.chargedSkills.first;
-      auto = { title:'Automatic basics',
-        effect:'Attacks independently while moving or standing. Three same-target hits build a finishing splash; Skill 1 Tap and Charged do not reset the combo.',
-        metrics:[] };
-      add(auto,'basicInterval','Basic attack interval',game.basicSkillCooldown(),'s');
-      add(auto,'comboDamage','Combo damage',R.basicAttackCombo.multipliers.map(v=>base*v));
-      add(auto,'splashDamage','Third-hit splash',
-        base*R.basicAttackCombo.finisher.secondaryMultiplier);
-      add(auto,'reach','Reach',game.heroSkillRange(1,false));
+      auto = {
+        title: 'Automatic basics',
+        effect:
+          'Attacks independently while moving or standing. Three same-target hits build a finishing splash; Skill 1 Tap and Charged do not reset the combo.',
+        metrics: [],
+      };
+      add(auto, 'basicInterval', 'Basic attack interval', game.basicSkillCooldown(), 's');
+      add(
+        auto,
+        'comboDamage',
+        'Combo damage',
+        R.basicAttackCombo.multipliers.map((v) => base * v),
+      );
+      add(
+        auto,
+        'splashDamage',
+        'Third-hit splash',
+        base * R.basicAttackCombo.finisher.secondaryMultiplier,
+      );
+      add(auto, 'reach', 'Reach', game.heroSkillRange(1, false));
       if (cls === 'ranger') {
-        add(tap,'damage','Damage per arrow',base);
-        add(tap,'arrows','Arrows',3);
-      } else add(tap,'damage','Base damage',base*R.chargedSkills.basicDamageMultiplier);
-      add(tap,'reach','Reach',game.heroSkillRange(1,false));
+        add(tap, 'damage', 'Damage per arrow', base);
+        add(tap, 'arrows', 'Arrows', 3);
+      } else add(tap, 'damage', 'Base damage', base * R.chargedSkills.basicDamageMultiplier);
+      add(tap, 'reach', 'Reach', game.heroSkillRange(1, false));
       if (cls === 'paladin') {
-        const c=first.paladin;
-        add(charge,'damage','Damage per pulse',base*c.damagePerPulse);
-        add(charge,'pulses','Pulses',c.pulses);
-        add(charge,'reach','Reach',c.reach+c.reachStep*steps);
-        add(charge,'width','Width',2*(c.halfWidth+c.halfWidthStep*steps));
-        add(charge,'targets','Max targets',c.maxTargets);
+        const c = first.paladin;
+        add(charge, 'damage', 'Damage per pulse', base * c.damagePerPulse);
+        add(charge, 'pulses', 'Pulses', c.pulses);
+        add(charge, 'reach', 'Reach', c.reach + c.reachStep * steps);
+        add(charge, 'width', 'Width', 2 * (c.halfWidth + c.halfWidthStep * steps));
+        add(charge, 'targets', 'Max targets', c.maxTargets);
       } else if (cls === 'mage') {
-        const c=first.mage;
-        add(charge,'damage','Damage per enemy',base*c.damage);
-        add(charge,'reach','Reach',c.reach+c.reachStep*steps);
-        add(charge,'width','Width',2*(c.halfWidth+c.halfWidthStep*steps));
+        const c = first.mage;
+        add(charge, 'damage', 'Damage per enemy', base * c.damage);
+        add(charge, 'reach', 'Reach', c.reach + c.reachStep * steps);
+        add(charge, 'width', 'Width', 2 * (c.halfWidth + c.halfWidthStep * steps));
       } else {
-        const c=first.ranger;
-        add(charge,'damage','Base damage',base*c.damage);
-        add(charge,'reach','Initial target range',c.launchRange);
-        add(charge,'flight','Maximum flight path',c.pathBudget+c.pathStep*steps);
-        add(charge,'flightLife','Flight lifetime',c.lifetime,'s');
-        add(charge,'retreatLock','Retreat lockout',
-          c.retreatLock+c.retreatStep*steps,'s');
+        const c = first.ranger;
+        add(charge, 'damage', 'Base damage', base * c.damage);
+        add(charge, 'reach', 'Initial target range', c.launchRange);
+        add(charge, 'flight', 'Maximum flight path', c.pathBudget + c.pathStep * steps);
+        add(charge, 'flightLife', 'Flight lifetime', c.lifetime, 's');
+        add(charge, 'retreatLock', 'Retreat lockout', c.retreatLock + c.retreatStep * steps, 's');
       }
     } else if (slot === 2) {
       damage(
@@ -463,7 +476,7 @@
     if (rank < 1 || rank >= 8) return [];
     const before = describe(game, slot, rank),
       after = describe(game, slot, rank + 1);
-    return (slot === 1 ? ['auto','tap','charge'] : ['tap','charge']).map((form) => ({
+    return (slot === 1 ? ['auto', 'tap', 'charge'] : ['tap', 'charge']).map((form) => ({
       title: before[form].title,
       rows: after[form].metrics.flatMap((m) => {
         const old = before[form].metrics.find((p) => p.key === m.key);
