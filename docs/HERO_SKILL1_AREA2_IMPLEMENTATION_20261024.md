@@ -22,7 +22,7 @@ Area 2 is the **actual source implementation** of original Skill 1 art, sound, n
 
 ## Remaining gates
 
-**Area 3:** queued Charged vs newly ready Tap conflict choices and optional boss retreat motion safety; do not disguise these as audiovisual bugs.
+**Area 3 — resolved owner input design, not yet implemented:** Queued Normal and Charged requests **coexist as ordered entries**. Example: `[Charged Skill 2, Normal Skill 2]`; Charged executes first when allowed, then Normal after its usual normal recovery. No silent cancellation/replacement or later-form overtaking. See [owner-approved stacking contract](HERO_SKILL1_AREA3_QUEUE_STACKING_DECISION_20261024.md). Implement per-slot multi-entry input and bilingual queue-order HUD in Area 3; separately audit optional boss retreat motion safety. Neither belongs to the completed Area 2 design implementation.
 
 **Area 4:** deeper native + browser checks (reduced motion/Canvas/WebGL fallback, 8-slot cooldowns + Slow/save migration, companions/pets and boss phases), focused balancing driven by playtest results, and final PR review.
 
