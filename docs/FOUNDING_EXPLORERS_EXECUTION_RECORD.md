@@ -1,0 +1,111 @@
+# Founding Explorers — execution record and go/no-go worksheet
+
+**Draft-only working protocol.** Prepared 2026-10-25. Related: `FOUNDING_EXPLORERS_IMPLEMENTATION_HANDOFF.md` and `FOUNDING_EXPLORERS_LAUNCH_PREP_KIT_20261025.md`. Do not interpret unchecked items as passed. Do not merge, deploy, publish an invitation, or run a full test suite based on this document.
+
+## 1. Rebaseline before any test
+
+- Date/time/time zone:
+- `main` commit SHA:
+- PR #456 head SHA:
+- Any relevant merged changes since last review:
+- Relevant unmerged PRs and integration choice:
+- `package.json` dev version:
+- Actual GitHub Pages version/build verified separately:
+- Test device(s), OS/browser/version:
+- First-run vs existing save:
+- EN/es-419 selection:
+
+The prior source baseline was `e3c78266b28f3325d2afdcb76ae849fcff306deb` (dev.185). **Do not reuse as proof of the latest state.**
+
+## 2. Bounded automated checks (only if checkout and runner are available)
+
+From the root of a **verified matching checkout**, inspect `package.json` and any `AGENTS.md` test policy first. Suggested individually scoped commands:
+
+```sh
+node tests/companion-onboarding-ui.test.cjs
+node tests/game-menu-ui.test.cjs
+node tests/field-onboarding.test.cjs
+```
+
+| Check | SHA / environment | Exit status | Assertions or observed failures | Evidence |
+| --- | --- | --- | --- | --- |
+| Companion onboarding EN/es-419 | NOT RUN | NOT RUN | — | — |
+| Game menu EN/es-419 | NOT RUN | NOT RUN | — | — |
+| First field encounter | NOT RUN | NOT RUN | — | — |
+
+These tests are not a substitute for first-session usability or phone/browser acceptance. Do not infer a green result from the mere existence of test files. If tests are unavailable, record **BLOCKED** and the reason.
+
+## 3. Player-path walkthrough — record actual observations
+
+| Gate | English desktop | Español desktop | English phone | Español phone |
+| --- | --- | --- | --- | --- |
+| Fresh first launch and language choice | NOT RUN | NOT RUN | NOT RUN | NOT RUN |
+| Choose class and Normal/Standard | NOT RUN | NOT RUN | NOT RUN | NOT RUN |
+| Find Captain and understand next objective | NOT RUN | NOT RUN | NOT RUN | NOT RUN |
+| Meet companions and practice Recall | NOT RUN | NOT RUN | NOT RUN | NOT RUN |
+| Move, interact and try a first field encounter | NOT RUN | NOT RUN | NOT RUN | NOT RUN |
+| Recover or exit without unintended save loss | NOT RUN | NOT RUN | NOT RUN | NOT RUN |
+| Find forum reply/optional PM route | NOT RUN | NOT RUN | NOT RUN | NOT RUN |
+
+For each failure, record: exact steps, expected vs actual, device/browser, language, build SHA, severity (**blocker**, **major**, **minor**, **cosmetic**), sanitized evidence, and issue owner. Do not collect a participant's save, personal details, screenshot or diagnostics by default.
+
+## 4. First-player script (not published)
+
+“Please try the game for about 10–20 minutes. Choose whichever class you like and Normal/Standard difficulty. Explore naturally. If you get stuck, you can stop; that itself is useful feedback. You do not need to win, share a screenshot, export a report, or give us personal details. Tell us where you reached, what you liked or found confusing, and what you would change.”
+
+Only explain controls that have been checked against the currently deployed version. Do not direct a returning player to overwrite an existing save.
+
+## 5. Forum preflight (owner-supplied destination required)
+
+- Forum URL and thread title: **PENDING OWNER**
+- Posting account/permissions and whether public replies work: **NOT VERIFIED**
+- Whether optional private messages exist: **NOT VERIFIED**
+- Whether EN/es-419 in one thread is appropriate for forum norms: **PENDING**
+- Approved invitation text and language order: **PENDING OWNER**
+- Links verified against actual deployed Pages version: **NOT VERIFIED**
+- Public acknowledgment is separately opt-in: **DRAFTED, NOT OPERATIONAL**
+- Response expectation (~twice weekly) and moderator escalation: **DRAFTED, NOT OPERATIONAL**
+
+**Never publish on behalf of the owner without explicit authorization.**
+
+## 6. Launch decision record
+
+- **GO** only when the owner has approved the forum destination and final copy, the actual public build and device walkthrough have sufficient evidence, and any first-session blocker has been fixed or explicitly accepted by the owner.
+- **NO-GO** if the public link fails, core first-session navigation or phone controls are unusable, an existing save is at risk, or the feedback route is not available.
+- **CONDITIONAL** for cosmetic/localization polish that does not prevent honest feedback, with explicit owner acceptance and clear player-facing limitations.
+
+Decision: **PENDING**. Approver: **PENDING**. Date: **PENDING**. Evidence links: **PENDING**.
+
+## 7. Safe future-agent instructions
+
+Continue on draft PR #456 for documentation and Explorer-only work. Check current GitHub state every time. Keep other audio, VFX, renderer, critical and boss work independent. Run only narrowly scoped tests permitted by the standing project policy. Avoid broad test matrices, merging, deployment, public posts, competitive tracks, telemetry or player-credit commitments without separate approval. Do not mark an acceptance item PASS unless its evidence exists.
+
+
+## 8. Audit execution checkpoint — 2026-10-25
+
+- Reverified `main`: `e3c78266b28f3325d2afdcb76ae849fcff306deb`; PR #456 remains **open/draft**.
+- Reconciled all three Explorer documents. The handoff's original EN/ES guide is superseded for publishing by the launch kit; owner decisions still control scope. Historical charter was recovered in project workspace, **not archived in full** on GitHub.
+- The concurrent open-PR list now includes #473 (audio mix policy), in addition to #472/#471/#470/#469/#468/#465/#464/#458/#449/#447/#445/#440/#401. No draft is treated as shipped or as an automatic Explorer prerequisite.
+- **Automated checks: BLOCKED — no verified local repository checkout is present in this session.** The source files and test definitions can be read through GitHub, but that is not execution. No tests were run and no results are claimed. Do not trigger remote CI merely to satisfy this worksheet without first checking project test/release policy.
+- **Browser/phone checks: NOT RUN.** No browser session or physical device acceptance was conducted. **Forum route: NOT VERIFIED.** The owner has not supplied an approved forum URL in this project handoff.
+- **Decision: NO LAUNCH YET** (insufficient evidence and unapproved forum destination). This is a readiness hold, not a finding that the game is broken.
+
+**Next safe action:** obtain a verified checkout for the three focused tests or use already-existing matching SHA CI evidence with clearly labeled limitations; then check actual Pages build, EN/es-419 first-session routes and forum options. Escalate only specific observed blockers to conditional checkpoint 2. No new gameplay changes are justified by this documentation audit.
+
+
+## 9. Existing GitHub CI evidence — 2026-10-25
+
+**Correction to the prior “BLOCKED” wording:** The **three Explorer-specific local test executions** remain blocked in this session, not the game or its overall test pipeline. An attempted `git ls-remote https://github.com/joedoragon-glitch/azeroth-chronicles-prototype.git HEAD` from the available local container failed with `Could not resolve host: github.com`. This does **not** indicate a repository outage; the connected GitHub API remains accessible. Do not claim a local checkout was created or that any Node tests ran here.
+
+**Newly independently checked CI evidence:** GitHub Actions workflow [#40208508280](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40208508280), `Focused checks and deploy`, was triggered by a push at `2026-10-25T15:46:12Z` for exact main SHA `e3c78266b28f3325d2afdcb76ae849fcff306deb`. It concluded **success**. Its **Focused validation** job succeeded, including `Check only impacted subsystems`, `Verify reproducible, offline-ready build`, and `Upload validated Pages package`. Its **Publish focused update** job succeeded, including `Deploy focused, verified build` and `Report published commit`.
+
+**Evidence grade:** successful GitHub CI **and deployment workflow** at the exact baseline SHA; **not** a direct visit to the public Pages URL, not a human phone/desktop acceptance, and not proof that the three Explorer-specific test scripts ran. The workflow's “impacted subsystems” step may omit Explorer tests depending on changed files; inspect the exact job log before crediting individual scripts. Existing first-session acceptance entries remain NOT RUN. The current public page's cache/service-worker version is not independently established by workflow success alone.
+
+**Practical result:** No need to request or trigger a new full test run just to establish that the dev.185 focused build/deployment pipeline was green. The next bounded technical evidence task is inspecting the existing workflow step logs to determine whether any Explorer-specific tests were included, then testing the real first-session paths when browser/device access is available.
+
+
+### 9.1 Focused validation log inspection
+
+The existing workflow's **Focused validation** job ID `121214509649` was inspected through its actual GitHub Actions log (551 lines). It reports **`PASS focused validation (4 relevant test files); no full-game CI`** and a successful build check with **`0.9.1+snapshot.dev.185`** and **215 campaign assets + 14 optional historical assets**. The logged passes concern the changed artwork/renderer/Mage-skill paths; there is **no logged successful execution of** `tests/companion-onboarding-ui.test.cjs`, `tests/game-menu-ui.test.cjs`, or `tests/field-onboarding.test.cjs`. Therefore **none** of the three Explorer-specific test rows can be marked PASS from this run. This is a coverage distinction, **not a failure**.
+
+The focused CI and deployment evidence is confirmed at its recorded SHA. Next testing should be narrowly scoped to the Explorer scripts on a runnable checkout, with actual EN/es-419 and device acceptance separately recorded. Do not rerun broad CI simply to cover the missing three tests.
