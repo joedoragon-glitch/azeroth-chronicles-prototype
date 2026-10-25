@@ -988,7 +988,7 @@
       drawProjectileBody(p, project);
     }
     function drawProjectileBody(p, project) {
-      if (heroArt?.projectile(ctx, project, p, game.hero.class, reducedMotion())) return;
+      if (heroArt?.projectile(ctx, project, p, game.hero.class, reducedMotion(), game.hero)) return;
       if (p.style !== 'cargo' && PrototypeEnemyVfxArt?.projectile(ctx, project, p, game)) return;
       const { q, ux, uy, px, py } = projectileVector(p, project),
         style = p.style || 'magic',
