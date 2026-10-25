@@ -85,7 +85,15 @@
       "state": "merged"
     },
     {
+      "number": 438,
+      "state": "merged"
+    },
+    {
       "number": 439,
+      "state": "merged"
+    },
+    {
+      "number": 441,
       "state": "merged"
     },
     {
@@ -97,7 +105,23 @@
       "state": "merged"
     },
     {
+      "number": 444,
+      "state": "merged"
+    },
+    {
+      "number": 446,
+      "state": "merged"
+    },
+    {
       "number": 448,
+      "state": "merged"
+    },
+    {
+      "number": 450,
+      "state": "merged"
+    },
+    {
+      "number": 451,
       "state": "merged"
     },
     {
@@ -493,7 +517,14 @@
       "topic": "general_or_unresolved",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 438,
+        "integratedByPr": 438,
+        "disposition": "merged_directly",
+        "caution": "Earlier save writer, Web Locks, projectile ordering and dev.175 integration fixture repairs merged via #438; old 'PR/merge pending' prose is historical. Its inherited art checker failures later changed through merged #444; still-open #445 is a separate art pipeline repair, not proof #438 broke art."
+      }
     },
     {
       "path": "docs/AUTO_OPTIMIZATION_EMERGENCY_OVERRIDE_20261024.md",
@@ -1242,7 +1273,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_COVERAGE_NOTES_20261025.md",
-      "gitBlobSha": "8074b56e6fce3f18fb06a2a37d768d42d08afe52",
+      "gitBlobSha": "e7f7ef116a893c307b41c0f066866cd4b36e2a98",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2545,7 +2576,14 @@
       "topic": "art_and_sprites",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 450,
+        "integratedByPr": 450,
+        "disposition": "merged_directly",
+        "caution": "Dev.181 diagnostics in exported playtest reports merged #450, bounded transient samples in WeakMap and no save change. Original owner's future reproduction suggestion is not a fresh test mandate or proof the later #451 cap solved device FPS."
+      }
     },
     {
       "path": "docs/PERF_WS2_BROWSER_CANVAS_CONTROLS.md",
@@ -2727,7 +2765,14 @@
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 446,
+        "integratedByPr": 446,
+        "disposition": "merged_directly",
+        "caution": "Pet first-skill scheduling priority fixed through merged #446. Existing 11-family priority and charged/first timings are historical protected rules; does not authorize changing unmerged #440 critical pets or #464 pet impact receipts."
+      }
     },
     {
       "path": "docs/PET_VISUAL_IDENTITY_20261020.md",
@@ -3268,7 +3313,14 @@
       "topic": "saves_and_recovery",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 441,
+        "integratedByPr": 441,
+        "disposition": "merged_directly",
+        "caution": "Dev.176 protected bounded 3-per-mode/500,000-char recovery checkpoints and bilingual Try Recovery path merged via #441. Original 'candidate not published' status is dated; physical multi-window/device acceptance remains a different evidence level."
+      }
     },
     {
       "path": "docs/SCENERY_NOTIFICATIONS_BATCH_354.md",
@@ -3323,7 +3375,14 @@
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 451,
+        "integratedByPr": 451,
+        "disposition": "merged_directly",
+        "caution": "Four-stack cap on party Slow strength/debt merged through #451, without limiting hostile Slow. Reported real-device goblin stalls were not causally proven or physically cleared by this focused change; #450 monitoring is independent."
+      }
     },
     {
       "path": "docs/SLOW_COOLDOWN_INTERACTION_20261015.md",
