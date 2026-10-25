@@ -98,7 +98,7 @@ for (const language of ['en', 'es']) {
   section('Frame rate', 'Fotogramas por segundo');
   section('Graphics renderer', 'Motor gráfico');
   section('Diagnostics', 'Diagnósticos');
-  assert.equal(rows().filter((r) => r.className === 'menu-setting').length, 5);
+  assert.equal(rows().filter((r) => r.className === 'menu-setting').length, 6);
   const canvas = setting('Graphics renderer', 'Motor gráfico');
   assert(canvas.children.some((o) => o.value === 'canvas2d'));
   assert(canvas.children.some((o) => o.value === 'webgl2'));
@@ -111,7 +111,8 @@ for (const language of ['en', 'es']) {
   assert.equal(s.Prototype.platform.cameraZoom, 1.5);
   assert.equal(JSON.parse(storage.get(s.PrototypePlatform.cameraPreferenceKey)).phone, 1.5);
 
-  click(language === 'en' ? 'Optimization Mode' : 'Modo de optimización');
+  assert.equal(storage.get('azeroth-optimization-mode-v1'), 'auto');
+  selectSetting('Optimization Mode', 'Modo de optimización', 'on');
   assert.equal(storage.get('azeroth-optimization-mode-v1'), 'on');
   for (const resolution of ['native', 'auto', '100', '80', '60', '50']) {
     selectSetting('Rendering resolution', 'Resolución de renderizado', resolution);
@@ -119,8 +120,10 @@ for (const language of ['en', 'es']) {
     assert.equal(storage.get(s.PrototypeRuntime.resolutionPreferenceKey), resolution);
   }
   selectSetting('Rendering resolution', 'Resolución de renderizado', 'auto');
-  click(language === 'en' ? 'Optimization Mode' : 'Modo de optimización');
+  selectSetting('Optimization Mode', 'Modo de optimización', 'off');
   assert.equal(storage.get('azeroth-optimization-mode-v1'), 'off');
+  selectSetting('Optimization Mode', 'Modo de optimización', 'auto');
+  assert.equal(storage.get('azeroth-optimization-mode-v1'), 'auto');
 
   assert.equal(s.Prototype.fps.preference, 'auto');
   assert.equal(s.Prototype.fps.target, 30);

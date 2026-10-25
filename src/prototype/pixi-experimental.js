@@ -145,6 +145,7 @@
       basePosition = null,
       baseZone = null,
       baseZoom = null,
+      baseOptimization = null,
       backingRatio = 1,
       bakedZoom = null,
       active = false,
@@ -280,7 +281,8 @@
       basePosition = { x: current.hero.x, y: current.hero.y };
       baseZone = current.zoneId;
       baseZoom = zoom;
-      backgroundRenderer.setOptimizationMode(!!options.getOptimizationMode());
+      baseOptimization = !!options.getOptimizationMode();
+      backgroundRenderer.setOptimizationMode(baseOptimization);
       backgroundRenderer.draw();
       if (backing) {
         backing.source.update?.();
@@ -298,7 +300,10 @@
         zoom = platform.cameraZoom || 1;
       if (baseGame && baseGame !== current)
         throw Error('Campaign changed; reset to Canvas before switching again');
-      if (!basePosition || baseZone !== current.zoneId || baseZoom !== zoom) drawBackground();
+      // A presentation-quality transition must invalidate the retained
+      // background even when the hero has not moved or changed zoom.
+      if (!basePosition || baseZone !== current.zoneId || baseZoom !== zoom ||
+          baseOptimization !== !!options.getOptimizationMode()) drawBackground();
       const d = iso({ x: current.hero.x - basePosition.x, y: current.hero.y - basePosition.y });
       let dx = -d.x * zoom,
         dy = -d.y * zoom;
@@ -637,6 +642,7 @@
       backgroundRenderer = null;
       backdrop = null;
       basePosition = null;
+      baseOptimization = null;
       baseGame = null;
       backingRatio = 1;
       bakedZoom = null;
@@ -673,6 +679,7 @@
         pixelRatio: backingRatio,
         backdropWidth: backdrop?.width || 0,
         backdropHeight: backdrop?.height || 0,
+        backgroundOptimized: baseOptimization,
       }),
     });
   }
