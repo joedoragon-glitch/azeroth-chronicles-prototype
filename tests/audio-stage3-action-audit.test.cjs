@@ -199,5 +199,8 @@ const result={
     enemyIdentities:enemyCoverage.identities,enemyStageVariants:enemyCoverage.stageVariants},
   hero,companions,bosses,
 };
-if(process.argv.includes('--json'))console.log(JSON.stringify(result,null,2));
-else console.log('PASS Stage 3 audio action audit '+JSON.stringify(result.counts));
+if(process.argv.includes('--json')) console.log(JSON.stringify(result,null,2));
+else {
+  console.log('STAGE3_ACTION_MATRIX '+JSON.stringify({hero,companions,bosses}));
+  console.log('PASS Stage 3 audio action audit '+JSON.stringify(result.counts));
+}
