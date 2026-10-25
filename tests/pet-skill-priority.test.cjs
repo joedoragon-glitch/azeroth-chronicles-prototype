@@ -48,8 +48,12 @@ for (const family of Object.keys(C.rules.petCompanions)) {
     u.wardReduction = 0.25;
   }
   if (family === 'cindermaw') {
+    // Its second is single-target, unlike the other ten families.
+    // An active ward means the ordinary first remains the preferred action.
     u.wardUntil = g.s.time + 4;
     u.wardReduction = 0.35;
+    first(g, u, e, family + ': non-area second retains first priority');
+    continue;
   }
   second(g, u, e, family + ': ordinary multi-target priority');
 }
