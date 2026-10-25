@@ -154,6 +154,10 @@ function main() {
           const stage = combination(cumulative, row.theirs);
           staged.push({pr: item.pr, status: stage.status,
             conflicts: stage.conflicts, reason: stage.reason});
+          console.log('PR471_CUMULATIVE_STAGE ' + JSON.stringify({
+            pr: item.pr, status: stage.status,
+            conflicts: stage.conflicts?.slice(0, 1800), reason: stage.reason,
+          }));
           if (stage.status === 'CLEAN')
             cumulative = transientCommit(stage.tree, cumulative, row.theirs);
           else allStagesClean = false;
@@ -199,6 +203,7 @@ function main() {
       .map(x => x.pr),
     nativeFailures: failures.map(x => x.pr),
     cumulative: report.cumulative.status,
+    firstCumulativeBlocker: report.cumulative.staged?.find(x => x.status !== 'CLEAN')?.pr,
   }));
   // Conflicts are honest integration blockers; a test or tooling failure is red.
   // An unresolved conflict cannot be labelled a successful combined candidate.
