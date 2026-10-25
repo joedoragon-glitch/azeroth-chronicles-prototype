@@ -80,12 +80,37 @@ jobs:
           node tests/pwa-release-id.test.cjs
       - name: Reproducible multi-file bundle and offline-ready build
         run: node scripts/build.cjs --check --site
-      - name: Install narrow Chromium only (no cross-engine full suite)
-        run: npx playwright install --with-deps chromium
+      - name: Prepare one local Chromium browser (no cross-engine suite)
+        shell: bash
+        run: |
+          if [ -x /usr/bin/google-chrome ]; then
+            echo 'CHROMIUM_EXECUTABLE=/usr/bin/google-chrome' >> "$GITHUB_ENV"
+          elif [ -x /usr/bin/chromium ]; then
+            echo 'CHROMIUM_EXECUTABLE=/usr/bin/chromium' >> "$GITHUB_ENV"
+          else
+            npx playwright install --with-deps chromium
+          fi
       - name: First gesture and bounded score recovery on phone and desktop emulation
-        run: node tests/audio-stage2-start-browser.test.cjs
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const pw = require('playwright');
+          if (process.env.CHROMIUM_EXECUTABLE) {
+            const original = pw.chromium.launch.bind(pw.chromium);
+            // Only choose the installed test browser; leave the original assertions unchanged.
+            pw.chromium.launch = (opts = {}) => original({
+              ...opts, executablePath: process.env.CHROMIUM_EXECUTABLE,
+              args: [...(opts.args || []), '--no-sandbox', '--disable-dev-shm-usage'],
+            });
+          }
+          require('./tests/audio-stage2-start-browser.test.cjs');
+          NODE
       - name: Stage 4 PCM and recorded MP3 Chromium smoke on phone and desktop emulation
         run: node tests/audio-stage4-browser-smoke.test.cjs
+      - name: Focused installed-worker offline audio audition in Chromium only
+        env:
+          AUDIO_BROWSER_ENGINE: chromium
+        run: node tests/audio-audition-browser.test.cjs
       - name: Upload focused failure-only browser evidence
         if: failure()
         uses: actions/upload-artifact@v4
