@@ -7417,6 +7417,13 @@
     woundedThreshold: 0.5,
     summonSupportThreshold: 1,
     awarenessRadius: 750,
+    // Escalation searches known occupied monster homes rather than extending
+    // universal acquisition/aggro across the region.
+    extendedAwarenessRadius: 1800,
+    extendedRouteMaxLength: 3000,
+    extendedEncounterSeparation: 950,
+    emergencyLivingCap: 3,
+    emergencyCooldownSeconds: 16,
     threatWindowSeconds: 6,
     cunningEnemies: ['thorn', 'warlord', 'supply-crown', 'darklord'],
     supportRadius: 195,
