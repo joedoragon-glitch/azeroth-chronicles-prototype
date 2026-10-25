@@ -127,6 +127,11 @@
   // Scornfang's paired Hot Zone: two warned impact pairs are one cast.
   // Persistent floor hazards keep their original tick damage and duration.
   register('world/captain/supply-vale/4', 'world', 'damage');
+  // Remaining conventional captain circle skills. Four original marks or
+  // individually warned sequential marks still belong to ONE authored cast.
+  register('world/captain/supply-march/2', 'world', 'damage');
+  register('world/captain/supply-highlands/1', 'world', 'damage');
+  register('world/captain/frontier-overseer/1', 'world', 'damage');
   Object.freeze(registry);
 
   function validatedLevel(level) {

@@ -2143,15 +2143,22 @@
         // One authored Hot Zone activation produces two paired warnings.
         // The first physical area release owns one World decision, inherited
         // by the second pair. Neither pair rolls per patch or floor tick.
-        if (a.captainSkill && a.kind === 'circle' && a.paired &&
-            a.captainProfile === 'supply-vale' && a.index === 4 &&
-            !a.criticalExecution) {
-          const receipt = this.worldCriticalAction(e, 'world/captain/supply-vale/4');
+        const nativeConventionalCaptainArea =
+          a.captainSkill && a.kind === 'circle' &&
+          ((a.paired && a.captainProfile === 'supply-vale' && a.index === 4) ||
+            (a.captainSpread && a.captainProfile === 'supply-march' && a.index === 2) ||
+            (a.captainSpread && a.captainProfile === 'supply-highlands' && a.index === 1) ||
+            (a.sequential && a.captainProfile === 'frontier-overseer' && a.index === 1));
+        if (nativeConventionalCaptainArea && !a.criticalExecution) {
+          const receipt = this.worldCriticalAction(
+            e, 'world/captain/' + a.captainProfile + '/' + a.index,
+          );
           if (receipt) {
             a.criticalExecution = receipt;
             for (const next of e.sequence || [])
-              if (next.captainSkill && next.captainProfile === 'supply-vale' &&
-                  next.index === 4 && next.kind === 'circle' && next.paired)
+              if (next.captainSkill && next.captainProfile === a.captainProfile &&
+                  next.index === a.index && next.kind === 'circle' &&
+                  (next.paired || next.captainSpread || next.sequential))
                 next.criticalExecution = receipt;
           }
         }
