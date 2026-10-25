@@ -5,8 +5,8 @@ const Visuals = require('../src/prototype/visuals.js');
 
 // A population review, not a substitute for the final campaign/gameplay audit.
 const targets = [
-  ['supply-vale', 6, 0],
-  ['supply-march', 6, 0],
+  ['supply-vale', 8, 0],
+  ['supply-march', 8, 0],
   ['supply-highlands', 7, 6],
   ['supply-crown', 11, 0],
 ];
@@ -26,6 +26,20 @@ for (const [id, expected, riders] of targets) {
     id + ' has a working ranged line');
   assert(ordinary.some((e) => !e.ranged && e.forcedRole === 'melee'),
     id + ' has working melee screening');
+  if (id === 'supply-vale' || id === 'supply-march') {
+    const captain = captains[0];
+    const rangedGuards = ordinary.filter((e) => e.ranged && e.forcedRole === 'ranged');
+    assert.equal(rangedGuards.length, 3, id + ' has exactly three independent ranged healers');
+    const commandGuards = rangedGuards.filter((e) =>
+      ['Greenwood command lookout', 'Greenwood rear lookout',
+        'Marsh command lookout', 'Marsh rear lookout'].includes(e.name));
+    assert.equal(commandGuards.length, 2, id + ' keeps two newly authored command guards');
+    for (const guard of commandGuards) {
+      assert(Math.hypot(guard.x - captain.x, guard.y - captain.y) <= 350,
+        id + ' command healer is physically within treatment range');
+      assert(game.line(guard, captain), id + ' command healer has line of sight');
+    }
+  }
   assert.equal(posts.filter((e) => e.mountedCrownRider).length, riders);
   for (const e of posts) {
     assert(!game.blocked(e.home.x, e.home.y, id, 12),
