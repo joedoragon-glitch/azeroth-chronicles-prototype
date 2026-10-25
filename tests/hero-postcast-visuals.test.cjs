@@ -4,12 +4,16 @@
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
 const HeroArt = require('../src/prototype/hero-presentation.js');
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 
 const near = (a, b, message) =>
   assert(Math.abs(a - b) < 1e-6, message + ': ' + a + ' vs ' + b);
 
 function arena(cls = 'ranger') {
   const game = new Campaign('normal', cls, () => 0.9);
+  // Ranger/Archer combat must occur after the actual protected Vale opening.
+  // A companion cannot legally initiate damage while that intro is active.
+  completeFieldOpening(game);
   game.zone().props = [];
   game.zone().buildings = [];
   game.zone().npcs = [];
