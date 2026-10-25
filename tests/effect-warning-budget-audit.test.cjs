@@ -106,17 +106,34 @@ const art = createCanvas(WIDTH, HEIGHT);
 const ps = ({ x, y }) => ({ x: 450 + (x - 600) * 0.68 - (y - 900) * 0.3,
   y: 315 + (x - 600) * 0.17 + (y - 900) * 0.3 });
 const original = JSON.stringify(g.snapshot());
-const timings = [];
-for (let i = 0; i < 5; i++) {
-  const ctx = art.getContext('2d');
-  ctx.clearRect(0, 0, WIDTH, HEIGHT);
-  const start = performance.now();
-  HeroArt.draw(ctx, ps, cue, { width: WIDTH, height: HEIGHT, reduced: false, optimized: false });
-  timings.push(performance.now() - start);
+// Stage 5.2 Phase A: observe the SAME naturally released hero cue with the
+// existing presentation detail switch and reduced-motion preference. No new
+// graphics-tier setting or game change: these are renderer input permutations.
+// Keep this observational: differing alpha coverage does not establish quality
+// or hardware speed, and identical images may simply mean this motif has no
+// optional ornament to suppress.
+const heroVariants = [];
+for (const optimized of [false, true]) {
+  for (const reduced of [false, true]) {
+    const timings = [];
+    const ctx = art.getContext('2d');
+    for (let i = 0; i < 5; i++) {
+      ctx.clearRect(0, 0, WIDTH, HEIGHT);
+      const start = performance.now();
+      HeroArt.draw(ctx, ps, cue, { width: WIDTH, height: HEIGHT, reduced, optimized });
+      timings.push(performance.now() - start);
+    }
+    const variant = { optimized, reduced, area: coverage(art), medianMs: median(timings) };
+    assert(variant.area.visible > 0,
+      'real Paladin cast disappeared with optimized=' + optimized + '/reduced=' + reduced);
+    assert(Number.isFinite(variant.medianMs));
+    heroVariants.push(variant);
+  }
 }
-const hero = { area: coverage(art), medianMs: median(timings) };
-assert(hero.area.visible > 0, 'real Paladin effect has no visible Canvas pixels');
-assert.equal(JSON.stringify(g.snapshot()), original, 'hero effect rendering changed gameplay');
+assert.equal(heroVariants.length, 4);
+assert.equal(JSON.stringify(g.snapshot()), original,
+  'quality/motion presentation toggles mutated gameplay');
+const hero = heroVariants[0]; // prior baseline: full detail, normal motion
 console.log('STAGE5 WARNINGS measured native Canvas, no perceptual or device claim: ' +
-  JSON.stringify({ bossWarnings: results, hero }));
-console.log('PASS 11 real boss warning surfaces, fill/outline instrumentation and natural hero painter; no gameplay mutation');
+  JSON.stringify({ bossWarnings: results, hero, heroVariants }));
+console.log('PASS 11 real boss warning surfaces and 4 natural Paladin detail/motion combinations; no gameplay mutation');
