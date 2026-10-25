@@ -343,10 +343,12 @@
       const center = { x: f.x, y: f.y }, reach = f.reach,
         half = f.halfWidth, a = f.angle,
         ca = Math.cos(a), sa = Math.sin(a),
-        endpoints = [
-          [{ x:center.x-ca*reach, y:center.y-sa*reach },{ x:center.x+ca*reach, y:center.y+sa*reach }],
-          [{ x:center.x+sa*reach, y:center.y-ca*reach },{ x:center.x-sa*reach, y:center.y+ca*reach }],
-        ];
+        endpoints = Array.isArray(f.arms) && f.arms.length === 4
+          ? f.arms.map(to => [center,to])
+          : [
+              [{ x:center.x-ca*reach, y:center.y-sa*reach },{ x:center.x+ca*reach, y:center.y+sa*reach }],
+              [{ x:center.x+sa*reach, y:center.y-ca*reach },{ x:center.x-sa*reach, y:center.y+ca*reach }],
+            ];
       ctx.globalAlpha = fade * (f.pulse ? 0.55 : 0.43);
       ctx.fillStyle = '#dfb45b';
       for (const pair of endpoints) {
