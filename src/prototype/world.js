@@ -7,6 +7,48 @@
     // normally fixed; reuse their geometric distance, never the mutable roster
     // eligibility/order/roles. Reassignment of a home invalidates immediately.
     const crownPostDistances = new WeakMap();
+    const crownLineages = ['crownguard', 'goblin', 'orc', 'archer', 'ogre'];
+    const crownAnchors = {
+      highlands: [
+        [1050, 1360],
+        [1850, 1160],
+        [2950, 720],
+      ],
+      frontier: [
+        [155, 615],
+        [2600, 1650],
+        [3000, 2700],
+        [1700, 1250],
+      ],
+      crown: [
+        [720, 900],
+        [2580, 900],
+        [3050, 2320],
+        [3200, 2860],
+      ],
+    };
+    function reconcileMilitaryRole(game, e, index) {
+      // Reapply only when configureEnemy's exact forced-role outputs differ.
+      if (e.type !== 'mob' || e.summon || e.neutral) return;
+      if (
+        e.forcedRole === 'ranged' &&
+        e.ranged === true &&
+        e.shotRange === 280 &&
+        e.shotSpeed === 260 &&
+        e.projectileStyle === (e.species === 'wraith' ? 'spectral' : 'arrow')
+      )
+        return;
+      if (
+        e.forcedRole === 'melee' &&
+        e.ranged === false &&
+        !Object.hasOwn(e, 'hybrid') &&
+        !Object.hasOwn(e, 'shotRange') &&
+        !Object.hasOwn(e, 'shotSpeed') &&
+        !Object.hasOwn(e, 'projectileStyle')
+      )
+        return;
+      game.configureEnemy(e, index);
+    }
     const clone = (x) => JSON.parse(JSON.stringify(x)),
       clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
       dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y),
@@ -1055,19 +1097,27 @@
             const id = 'side-decor-' + j;
             const previous = z.props.find((p) => p.id === id);
             if (previous) previous.structure = structure;
-            else z.props.push({
-              id, ...this.safe(x, y, z.id), r: 0,
-              decorative: true, structure,
-              sceneRole: side.species + '-household-life',
-            });
+            else
+              z.props.push({
+                id,
+                ...this.safe(x, y, z.id),
+                r: 0,
+                decorative: true,
+                structure,
+                sceneRole: side.species + '-household-life',
+              });
           }
         }
         for (const item of inspection) {
           if (z.npcs.some((n) => n.id === item.id)) continue;
           const point = this.safe(item.x, item.y, z.id);
           z.npcs.push({
-            id: item.id, name: item.name, kind: 'scene-detail',
-            narrativeId: item.narrativeId, ...point, icon: item.icon,
+            id: item.id,
+            name: item.name,
+            kind: 'scene-detail',
+            narrativeId: item.narrativeId,
+            ...point,
+            icon: item.icon,
           });
         }
         z.narrativeSceneVersion = 1;
@@ -3425,7 +3475,7 @@
         // Ironroot's relocation preserves the already assigned soldiery. New
         // distances must not recruit another native Wolf into a mounted slot.
         if (z.id === 'highlands' && z.appalachianVersion) return;
-        const lineages = ['crownguard', 'goblin', 'orc', 'archer', 'ogre'];
+        const lineages = crownLineages;
         const label = (e) =>
           'Crown ' +
           (e.crownAncestry === 'crownguard' ? 'shield' : e.crownAncestry) +
@@ -3442,25 +3492,7 @@
           }
           return;
         }
-        const anchors = {
-          highlands: [
-            [1050, 1360],
-            [1850, 1160],
-            [2950, 720],
-          ],
-          frontier: [
-            [155, 615],
-            [2600, 1650],
-            [3000, 2700],
-            [1700, 1250],
-          ],
-          crown: [
-            [720, 900],
-            [2580, 900],
-            [3050, 2320],
-            [3200, 2860],
-          ],
-        }[z.id];
+        const anchors = crownAnchors[z.id];
         if (!anchors) return;
         const distance = (e) => {
           const x = e.home?.x,
@@ -3499,7 +3531,7 @@
             e.crownAncestry = 'wolf';
             e.name = j % 2 ? 'Crown direwolf mounted archer' : 'Crown direwolf lance patrol';
             e.forcedRole = j % 2 ? 'ranged' : 'melee';
-            this.configureEnemy(e, j);
+            reconcileMilitaryRole(this, e, j);
             // Military posts use the no-farm contract while retaining the
             // original Wolf HP, damage, level and patrol/quest identity.
             e.gold = 0;
@@ -3537,7 +3569,7 @@
             // Existing open-capital troops had all defaulted to archery;
             // half now screen the rest with shields without stat inflation.
             e.forcedRole = j % 2 === 0 ? 'melee' : 'ranged';
-            this.configureEnemy(e, j);
+            reconcileMilitaryRole(this, e, j);
           }
           e.name = label(e);
         }
@@ -3653,7 +3685,9 @@
               this.configureEnemy(e, j);
             }
           }
-          for (const e of z.enemies) this.upgradeRingleader(e);
+          for (const e of z.enemies)
+            if (e.form === 'ringleader' && e.ringleaderHealthVersion !== 3)
+              this.upgradeRingleader(e);
           this.guardianPopulation(z);
           this.guardianRewards(z);
           this.crownMilitaryRoster(z);
@@ -3699,7 +3733,8 @@
         this.ordinaryRangedPopulation(z);
         this.guardianPopulation(z);
         this.summonPopulation(z);
-        for (const e of z.enemies) this.upgradeRingleader(e);
+        for (const e of z.enemies)
+          if (e.form === 'ringleader' && e.ringleaderHealthVersion !== 3) this.upgradeRingleader(e);
         this.fieldCaptainPopulation(z);
         this.finalBossPopulation(z);
         this.regionalHandoffLife(z);
