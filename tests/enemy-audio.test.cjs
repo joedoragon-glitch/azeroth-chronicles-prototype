@@ -5,14 +5,11 @@ const assert = require('node:assert/strict'),
   P = require('../src/prototype/enemy-presentation.js'),
   B = require('../src/prototype/enemy-vfx-events.js'),
   coverage = require('../scripts/enemy-audio-coverage.cjs'),
-  { completeFieldOpening } = require('./helpers/field-opening.cjs'),
   { audio } = require('./helpers/audio-context.cjs');
 const report = coverage.audit();
 assert(report.identities >= 172);
 const fresh = () => {
   const c = new C('normal', 'paladin', () => 0.5);
-  completeFieldOpening(c);
-  c.effects = [];
   c.s.party = [];
   c.zone().enemies = [];
   Object.assign(c.hero, { x: 1480, y: 1700, hp: 100000, maxHp: 100000 });
@@ -402,10 +399,7 @@ function concurrentBirths(enabled, family, form = 'true', captain = false, range
       )
     : c.bossEnemy(c.boss(family), form, { x: 1400, y: 1700 });
   if (captain) Object.assign(e, { captain: true, captainProfile: family, ranged });
-  // A 30-second boss encounter must already include real hero participation;
-  // otherwise today's no-progress/return policy can legitimately retire it.
-  Object.assign(e, { aggro: true, hp: e.maxHp * 0.4, cd: 100,
-    summonCd: 100, fightStart: 0, heroParticipated: true });
+  Object.assign(e, { aggro: true, hp: e.maxHp * 0.4, cd: 100, summonCd: 100, fightStart: 0 });
   c.zone().enemies = [e];
   c.s.time = 30;
   if (captain) c.startCaptainAttack(e, c.hero);
@@ -414,22 +408,10 @@ function concurrentBirths(enabled, family, form = 'true', captain = false, range
   assert(pending && pending.kind !== 'summon');
   const hp = c.hero.hp;
   c.updateEnemies(0.01);
-  if (e.telegraph !== pending)
-    console.error('STAGE3_ENEMY_FIXTURE', JSON.stringify({
-      family, form, captain, ranged, enabled,
-      time: c.s.time, pending: pending?.kind, pendingTimer: pending?.timer,
-      activeTimer: e.telegraph?.timer ?? null, hp: e.hp, aggro: e.aggro,
-      returning: e.returning, noProgress: e.noProgress, heroParticipated: e.heroParticipated,
-      target: c.hero && {x:c.hero.x,y:c.hero.y},
-      enemy: {x:e.x,y:e.y},
-    }));
   assert.equal(
     e.telegraph,
     pending,
-    'reinforcement cannot resolve or replace the active telegraph: ' +
-      JSON.stringify({ family, form, captain, ranged, hero: [c.hero.x,c.hero.y],
-        enemy: [e.x,e.y], home: e.home, returning: e.returning, aggro: e.aggro,
-        hp: e.hp, time: c.s.time, before: pending?.kind, after: e.telegraph?.kind }),
+    'reinforcement cannot resolve or replace the active telegraph',
   );
   assert.equal(c.hero.hp, hp, 'automatic births do not inflict attack damage');
   return { c, e, snapshot: c.snapshot(), births: c.effects.filter((f) => f.stage === 'spawn') };
