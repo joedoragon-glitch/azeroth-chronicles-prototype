@@ -24,7 +24,7 @@ function nativeRoom(id, mode) {
   game.s.time = 30;
   // Keep the hero away from the authored room without stubbing the AI,
   // healing, route solver, line-of-sight or native collision.
-  Object.assign(game.hero, { x: -2000, y: -2000, hp: 10000, maxHp: 10000 });
+  Object.assign(game.hero, { x: 100, y: 100, hp: 10000, maxHp: 10000 });
   return { game, zone, guards, captain, ranged };
 }
 
