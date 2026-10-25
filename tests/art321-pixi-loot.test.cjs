@@ -126,11 +126,11 @@ function lastCoins(){return batches.at(-1).filter(x=>String(x.key).startsWith('c
   gpu.draw();
   assert.equal(lastCoins().length,2);
   assert.equal(stampPaints,1,'Multiple drops reuse the same approved image');
-  assert.deepEqual(lastCoins().map(x=>x.textureId),
+  assert.deepEqual(Array.from(lastCoins(),x=>x.textureId),
     ['pixi-world-crown-loot','pixi-world-crown-loot']);
   game.s.loot.splice(0,1);
   gpu.draw();
-  assert.deepEqual(lastCoins().map(x=>x.key),['crown-loot:loot-102'],
+  assert.deepEqual(Array.from(lastCoins(),x=>x.key),['crown-loot:loot-102'],
     'Claimed coins disappear from the GPU scene immediately');
   game.zoneId='march';
   gpu.draw();
