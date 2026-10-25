@@ -1,6 +1,6 @@
 # Hero Skill 1 redesign — companion dependency audit
 
-**24 October 2026 · Read-only code trace of `main` `e4e8234`.** This is a supporting analysis for [the three-action Skill 1 contract](HERO_SKILL1_SELF_TAUGHT_COMBAT_DESIGN_20261024.md); **no companion or hero gameplay source has changed**.
+**24 October 2026 · Original read-only dependency trace of `main` `e4e8234`.** Area 1 hero gameplay source has since changed on draft PR #439, while **companion source files remain untouched**. This serves as the companion regression baseline for [the new three-action Skill 1 implementation](HERO_SKILL1_AREA1_IMPLEMENTATION_20261024.md).
 
 ## Conclusion
 
