@@ -5296,7 +5296,9 @@
         const wounded = this.tacticalRogueWounded(e);
         const freshWound = wounded && !this._tacticalWoundedUsed?.has(e.id);
         const pressureRemains =
-          this.tacticalRogueOutnumbered(e) &&
+          (this.tacticalRogueOutnumbered(e) ||
+            (!(e.type === 'boss' || e.captain || e.roomCaptain) &&
+              this.tacticalNeedsMoreSupport(e))) &&
           this.tacticalRogueEligibility(e, Math.max(pressure, 2)) &&
           (this._tacticalRogueNext?.get(e.id) || 0) <= this.s.time &&
           !this.hawkRetreatLocked(e, 'regroup');
