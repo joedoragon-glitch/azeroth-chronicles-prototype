@@ -51,7 +51,7 @@ No Paladin geometry/timer/cooldown changes are made in this PR: moving planted g
 
 ## Companion Soldier
 
-Soldier's basic sword, counterattacks, Power Strike, and Holy Cleave are immediate *melee* blows, not ranged shots; their actual hit/arc is a cast-release location, correctly independent of subsequent movement. Veteran ward and defensive Guard apply to the moving recipient and should read as live actor status, not a planted damaging circle. No unexplained delayed throw or bolt was found among Soldier's native actions; adding one would fabricate a new skill. No Soldier gameplay modifications in this PR.
+Soldier's basic sword, counterattacks, Power Strike, and Holy Cleave are immediate *melee* blows, not ranged shots; their actual hit/arc is a cast-release location, correctly independent of subsequent movement. Veteran ward and defensive Guard apply to the moving recipient and should read as live actor status, not a planted damaging circle. No unexplained delayed throw or bolt was found among Soldier's native actions; adding one would fabricate a new skill. No Soldier gameplay modifications in this PR. The charged Holy Cleave cast-origin afterimage is shortened to 0.24s (from 0.70s), so a moving Soldier does not leave a long-lived sword-impact fan behind. That is presentation-only; hit timing, radius, damage and charge interruption remain unchanged.
 
 ## Regression gates, integration and known limits
 
