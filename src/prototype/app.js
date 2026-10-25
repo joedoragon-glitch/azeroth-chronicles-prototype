@@ -1114,6 +1114,10 @@
   // New player mechanics copy; locked Chronicle passages remain unchanged.
   Object.assign(spanishText, {
     "Radiant Strike": "Golpe radiante",
+    "Radiant Strike / Radiant Cross": "Golpe radiante / Cruz radiante",
+    "Arcane Beam / Wide Arcane Beam": "Rayo arcano / Rayo arcano amplio",
+    "Rapid Arrows / Hawk Interception": "Flechas rápidas / Intercepción del halcón",
+    "Self-taught from Rank 1; rescued specialists refine it.": "Aprendido por tu cuenta desde el rango 1; los especialistas rescatados lo perfeccionan.",
     "Radiant Cross": "Cruz radiante",
     "Arcane Beam": "Rayo arcano",
     "Wide Arcane Beam": "Rayo arcano amplio",
@@ -4448,7 +4452,7 @@
         8: 'Hunters Salvo / Grand Hunt',
       },
     };
-    return labels[game.hero.class]?.[slot] || skillNames[slot - 1];
+    return tr(labels[game.hero.class]?.[slot] || skillNames[slot - 1]);
   };
   function chargeSeconds() {
     return PrototypeRules.chargedSkills?.holdSeconds || 0.65;
