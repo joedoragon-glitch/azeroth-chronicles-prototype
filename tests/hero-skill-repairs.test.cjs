@@ -1,9 +1,13 @@
 'use strict';
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 
 function arena(cls = 'paladin') {
   const game = new Campaign('normal', cls, () => 0.9);
+  // The actual Vale opening has required a native first kill since dev.161.
+  // Exercise later skills past that protected opening, not against waiting mobs.
+  completeFieldOpening(game);
   game.zone().props = [];
   game.zone().enemies = [];
   game.s.party = [];
