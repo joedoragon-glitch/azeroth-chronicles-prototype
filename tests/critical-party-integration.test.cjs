@@ -93,7 +93,7 @@ let start=g.s.projectiles.length;
 assert(g.companionUseFirstSkill(archer)); assert.equal(reads, 4);
 assert(g.s.projectiles.slice(start).every(p=>p.criticalExecution.key==='troop/archer/first'));
 assert.equal(g.s.projectiles[start].criticalExecution.intensity, 2);
-assert.equal(g.s.projectiles[start].criticalExecution.effect.lever, 'slowDuration');
+assert.equal(g.s.projectiles[start].criticalExecution.effect.lever, 'damage');
 assert(g.resolveCompanionSecondSkill(archer)); assert.equal(reads,5);
 const pet={type:'pet',id:'p',petFamily:'crypt',ranged:true}; start=g.s.projectiles.length;
 assert(g.companionUseFirstSkill(pet)); assert.equal(reads,6,'delegated pet skill is one release, not two');
