@@ -64,7 +64,7 @@
   }
   const troops = Object.freeze({
     soldier: Object.freeze({ basic: 'damage', first: 'damage', second: 'damage' }),
-    archer: Object.freeze({ basic: 'damage', first: 'slowDuration', second: 'damage', heal: 'healAmount', mana: 'healAmount' }),
+    archer: Object.freeze({ basic: 'damage', first: 'damage', second: 'damage', heal: 'healAmount', mana: 'healAmount' }),
   });
   for (const [type, entries] of Object.entries(troops))
     for (const [slot, lever] of Object.entries(entries))
