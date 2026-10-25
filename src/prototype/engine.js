@@ -4942,6 +4942,7 @@
         e.summon || !this.tacticalNeedsMoreSupport(e)
       ) return false;
       const cfg = R.tacticalFoundation, z = this.zone();
+      if (!this._tacticalRegroups) this._tacticalRegroups = new Map();
       if (!this._tacticalTerritorialVisited) this._tacticalTerritorialVisited = new Map();
       const visited = this._tacticalTerritorialVisited.get(e.id) || new Set();
       // Homes/posts, not magically acquired line-of-sight targets: inhabitants

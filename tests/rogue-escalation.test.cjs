@@ -84,7 +84,10 @@ console.log('PASS extended movement survives ability cooldown');
   guards = z.enemies.filter(u => u.rogueEmergencyReinforcement && u.owner === a.id && u.hp > 0);
   assert.equal(guards.length, 3, 'per-ringleader simultaneous cap');
   assert(!c.tacticalEmergencyCall(a), 'cannot exceed three living');
-  assert(c.tacticalEmergencyCall(b), 'independent second owner can summon');
+  assert(!c.tacticalEmergencyCall(b), 'adequate group support prevents unnecessary extra calls');
+  guards[0].hp = 0;
+  guards[1].hp = 0;
+  assert(c.tacticalEmergencyCall(b), 'second owner can call after the group loses its advantage');
   assert(z.enemies.filter(u => u.rogueEmergencyReinforcement && u.hp > 0).length <= 6);
 }
 console.log('PASS repeatable 50/50 reinforcements, per-owner cap, rewards, non-recursion');
@@ -128,3 +131,20 @@ console.log('PASS Rogue cast-to-cast cadence cannot be bypassed');
     .every(u => u.hp === 0), 'reset retires emergency defenders');
 }
 console.log('PASS retreat reset cleans up emergency reinforcements');
+
+{
+  const { c, z, a } = encounter('vale', 0.75);
+  assert(c.tacticalEmergencyCall(a), 'second coin flip permits three defenders');
+  assert.equal(z.enemies.filter(u => u.rogueEmergencyReinforcement && u.hp > 0).length, 3);
+}
+console.log('PASS the three-defender branch of the 50/50 roll');
+
+{
+  const sideId = Campaign.rules.sideDungeons[0].id;
+  const { c, z, a } = encounter(sideId);
+  assert(c.isDungeon() && c.sideDungeon(), 'side-dungeon identity');
+  assert.equal(c.tacticalBeginExtendedRetreat(a), false, 'no regional roaming inside interiors');
+  assert(c.tacticalEmergencyCall(a), 'side-dungeon fallback has the same emergency call');
+  assert(z.enemies.some(u => u.owner === a.id && u.rogueEmergencyReinforcement));
+}
+console.log('PASS side dungeons use the contained fallback instead of field movement');
