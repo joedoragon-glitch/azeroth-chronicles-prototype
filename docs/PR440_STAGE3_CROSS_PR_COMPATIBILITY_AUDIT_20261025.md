@@ -2,6 +2,8 @@
 
 **Audit recorded 25 October 2026, against exact draft #440 head `f9823dd952734d884e27a063b189365e3c218bbe`.** Current authoritative GitHub source is always the live PR head; reconfirm after another chat or contributor pushes. The project is a **multi-file GitHub Pages/PWA**. Never merge, publish, activate Critical Executions, run the comprehensive game/browser matrix or change other workstreams on the authority of this document. This is a source-level/focused-CI audit, not physical-device/balance/save certification.
 
+> **VERIFIED Stage 3 continuation — 25 Oct 2026, source `1f155215`:** The four conventional captain line-charge owners (Scornfang Selective Deconstruction, Direjaw Flow Sliding, Crag Tyrant Hostile Takeover, and Cinder Warlord Compliance Charge) are now implemented in the SAME dormant draft. [Exact-head focused CI #40230018273](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40230018273) **PASS: 40 relevant test files + reproducible offline-ready build**, including real path/contact with two victims, all three levels, immunities, cancelled casts and no-critical parity. This raises the verified explicit World registry from 13 to **17 keys**, and conventional captain coverage from 6/21 to **10/21 entries**. **11 captain entries remain:** Scornfang Hot Zone (#4), Direjaw Mud Pumping (#2), Crag Tyrant Margin Call (#1), Cinder Warlord Violation Marker (#1), and all seven Dreadmaw specialist attacks. All 11 boss families' authored specials also remain. **Crits OFF, PR draft, unmerged, not deployed.** The dated tables below are historical snapshots and must not replace this newer checkpoint.
+
 ## Native evidence and progress
 
 - Stage 2 preserves **93 registered Party actions** and the prior accepted native integration; then-main `e3c78266` reconciled into #440 at `2946ba00` without overwriting newer combat changes.
@@ -40,6 +42,17 @@ For #458, no text collision is predicted; still require its `true-field-boss-hun
 `worldCriticalAction` and `worldCriticalDamage` are dormant unless test code attaches a session. The World 10% stream is separate from Party; a World release is never an AI planning roll, warning creation roll, VFX event, per-victim/child shot roll, environment trap or passive tick. When another PR moves action admission/impact timing, **refresh critical release ownership against its physical action owner** instead of preserving a now-invalid old timestamp.
 
 Potential future save vulnerability: held `e.telegraph`/`e.motion` states may carry an immutable critical receipt while a test session is enabled. This feature is not production-active or promised to restore from existing saves. Stage 5 must explicitly decide and test midflight persistence/restore or safe cancellation, with deterministic independent RNG streams and v4 save compatibility; do **not** pretend today's focused CI certified it.
+
+### Additional cross-PR overlap found between the other drafts (not direct #440 file conflicts)
+
+The 14 non-#440 branches are also **not mutually independent**. Their changed-file sets intersect as follows, which matters before introducing Stage 4 critical indicators or declaring any future performance and event safety result:
+
+- **#469 vs #471 and #464:** all modify `src/prototype/renderer.js`. Render/Canvas/Pixi parity, visual quality and accurate projectile timing must be intentionally reconciled and tested together.
+- **#471 vs #464:** additionally share `src/prototype/combat-visuals.js` and `src/prototype/hero-presentation.js`. Neither set of presentation rules may be overwritten by a future Stage 4 glyph implementation, especially under frame skips, visibility-protected effects and warning prioritization.
+- **#471 vs #470:** share `src/prototype/app.js` (effect/control and audio lifecycle coordination required).
+- **#465 vs very stale #401:** share `AGENTS.md`, `docs/DEVELOPMENT_STATE.md`, `docs/DOCUMENTATION_INDEX.md`; do not resurrect historical single-file/old governance through stale merges.
+
+These intersections are **changed-file-level risk flags, not proof of behavioral failure**. Their underlying PRs remain unmerged, and none of their changes was copied into #440. The Stage 4 source of truth must be the eventual reconciled Canvas/Pixi implementation, not any one active overlapping draft.
 
 ## Safe Stage 3 next work
 
