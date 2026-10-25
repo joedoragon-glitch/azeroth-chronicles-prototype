@@ -52,3 +52,11 @@ No new event is emitted, no extra projectile/attack/geometry/summon is created, 
 - No new hero skill art/sound/HP balancing has been imported from PR #439 and no gameplay feature has shipped.
 
 **Review decision:** This is a useful Stage 2 code checkpoint for action-identity mapping and integration contract validation, **not a Stage 2 completion certificate**. Proceed with direct hooks only after PR #439 reconciliation and per-skill critical semantics are established.
+
+## 24 October owner-directed refinement — three pre-authored strengths
+
+Following this checkpoint, the owner approved a simpler **Level 1/2/3 effect-intensity architecture**, with **independent global Hero, Companion/Pet, and World** adjustment, all Level 1 by default and optional Nightmare-only World Level 3. This does **not** change the existing 10% roll probabilities or mean the Stage 2 review adapter is safe to activate. The separate [strength policy](CRITICAL_EXECUTIONS_THREE_LEVEL_STRENGTH_POLICY_20261024.md) is now the controlling design for effect authoring.
+
+New `critical-levels.js` maps **all 51 current PR #439 hero action identities**, **33 pet actions**, and **8 core companion/heal actions** to an explicit existing-effect lever with three central initial values. The Stage 2 optional adapter now stamps an immutable `intensity` and `effect` descriptor onto a successful critical receipt. It does **not** actually increase skill damage, heal, ward or Slow: direct pre-consequence native hooks and caps are still blocking the finish of Stage 2. No World actions are routed through the party adapter; Stage 3 will own their activation and effects.
+
+The Stage 0/2 PR #439 source checks are now superseded by the newly inspected open draft head `7b8ac015d777b8cb60a560e80032bf3705e46f25`. All source rebase and implementation gates remain in force.
