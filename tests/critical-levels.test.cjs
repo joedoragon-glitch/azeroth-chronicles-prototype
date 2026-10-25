@@ -88,7 +88,7 @@ assert.equal(Levels.enhanceExisting(null, 100, 'damage'), 100);
 assert.throws(() => Levels.enhanceExisting(critical,100,'healAmount'), /wrong action/);
 assert.throws(() => Levels.enhanceExisting(critical,-1,'damage'), /existing/);
 assert.throws(() => Levels.enhanceExisting(critical,100,'damage',{min:11,max:10}), /bounds/);
-const slow = {critical:true,effect:tuning.effectFor('troop/archer/first','companion')};
+const slow = {critical:true,effect:tuning.effectFor('pet/thorn/2','companion')};
 assert.equal(Levels.enhanceExisting(slow, 2, 'slowDuration'), 3.0);
 const stance = {critical:true,effect:tuning.effectFor('hero/paladin/3-tap','hero')};
 assert.equal(Levels.enhanceExisting(stance,8,'wardDuration',{max:9}),8.75);
