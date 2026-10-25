@@ -857,17 +857,34 @@
           if (f.kind !== 'hawk') return false;
           const target = this.zone().enemies.find(e => e.id === f.targetId);
           if (!target || target.hp <= 0 || target.neutral || target.returning ||
-              this.attackResetProtected(target) || !this.tacticalDirectTargetable(target)) return false;
+              this.attackResetProtected(target) || !this.tacticalDirectTargetable(target)) {
+            this.event('heroHawk', { actor:'hero', class:'ranger', slot:1,
+              phase:'expire', x:f.x, y:f.y, targetId:f.targetId });
+            return false;
+          }
           const gap = dist(f,target),
             contact = cfg.hitRadius + this.actorRadius(target),
             available = Math.min(cfg.speed*dt, f.budget-f.traveled);
           f.elapsed += dt;
-          if (gap > contact && available <= 0) return false;
+          if (gap > contact && available <= 0) {
+            this.event('heroHawk', { actor:'hero', class:'ranger', slot:1,
+              phase:'expire', x:f.x, y:f.y, targetId:f.targetId });
+            return false;
+          }
           const travel = Math.min(Math.max(0,gap-contact), available);
           const next = gap > 0 ? { x:f.x+(target.x-f.x)/gap*travel,
             y:f.y+(target.y-f.y)/gap*travel } : { x:f.x,y:f.y };
-          if (!this.clearSegment(f,next,0)) return false;
+          if (!this.clearSegment(f,next,0)) {
+            this.event('heroHawk', { actor:'hero', class:'ranger', slot:1,
+              phase:'expire', x:f.x, y:f.y, targetId:f.targetId });
+            return false;
+          }
+          const old = { x:f.x, y:f.y };
           f.x = next.x; f.y = next.y; f.traveled += travel;
+          this.event('heroHawk', { actor:'hero', class:'ranger', slot:1,
+            phase:'flight', x:f.x, y:f.y, fromX:old.x, fromY:old.y,
+            angle: Math.atan2(target.y-f.y,target.x-f.x),
+            targetId:f.targetId });
           if (dist(f,target) <= contact) {
             // Check active retreat before damage mutates regroup and threat.
             const retreat = this.hawkRetreatKind(target);
@@ -880,7 +897,10 @@
               targetId:target.id, landed, interrupted });
             return false;
           }
-          return f.elapsed < cfg.lifetime && f.traveled < f.budget;
+          const alive = f.elapsed < cfg.lifetime && f.traveled < f.budget;
+          if (!alive) this.event('heroHawk', { actor:'hero', class:'ranger',
+            slot:1, phase:'expire', x:f.x, y:f.y, targetId:f.targetId });
+          return alive;
         });
       }
       castMovementBasic() {
