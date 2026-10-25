@@ -184,4 +184,78 @@ function advance(g, seconds, step = 0.05) {
     'no charged-beam hit receipt survives the transition');
   assert.equal(g._heroSkillEffects?.length || 0, 0);
 }
+// Frame-size equivalence: the same 0.75-second cast must not change its
+// contact count or target ownership at manual 20/30/60 FPS simulation steps.
+for (const fps of [20, 30, 60]) {
+  const { g, enemies: [first, second] } = arena([[620, 500], [840, 500]]);
+  assert(g.cast(1, first.id, true));
+  const hp1 = first.hp, hp2 = second.hp;
+  advance(g, 0.1, 1 / fps);
+  assert.equal(first.hp, hp1, fps + ' FPS must not damage a near target prematurely');
+  advance(g, 0.65, 1 / fps);
+  assert(first.hp < hp1, fps + ' FPS must contact near target');
+  assert(second.hp < hp2, fps + ' FPS must contact far target');
+  assert.equal(g._heroSkillEffects.length, 0, fps + ' FPS must finish one beam in 0.75s');
+  assert.equal(g.effects.filter(e => e.type === 'heroSkillArea' && e.phase === 'complete').at(-1)?.hits,
+    2, fps + ' FPS must resolve each enemy once');
+}
+// Other heroes keep independent launched projectiles and authored ground
+// effects. They must not inherit Mage Skill 1 homing or caster tethering.
+for (const cls of ['paladin', 'ranger']) {
+  const { g, enemies: [target] } = arena([[760, 500]]);
+  g.hero.class = cls;
+  assert(g.cast(1, target.id, false), cls + ' normal Skill 1');
+  const shots = g.s.projectiles.filter(p => p.source === 'hero');
+  assert.equal(shots.length, cls === 'ranger' ? 3 : 1);
+  for (const shot of shots) {
+    assert(!shot.mageSkill1Homing && !shot.beamWidthScale,
+      cls + ' normal projectile remains independent');
+    const direction = {dx: shot.dx, dy: shot.dy};
+    g.hero.y += 12;
+    g.updateProjectiles(0.02);
+    assert.equal(shot.dx, direction.dx, 'caster movement must not turn launched ' + cls + ' projectile');
+    assert.equal(shot.dy, direction.dy);
+  }
+}
+{
+  const { g, enemies: [target] } = arena([[620, 500]]);
+  g.hero.class = 'paladin';
+  assert(g.cast(1, target.id, true));
+  const cross = g._heroSkillEffects.find(effect => effect.kind === 'cross');
+  assert(cross, 'Paladin charged cross retains authored world-space geometry');
+  const castX = cross.from.x, castY = cross.from.y;
+  g.hero.x += 120;
+  advance(g, 0.5);
+  assert.equal(cross.from.x, castX);
+  assert.equal(cross.from.y, castY);
+}
+{
+  const { g, enemies: [target] } = arena([[780, 500]]);
+  g.hero.class = 'ranger';
+  assert(g.cast(1, target.id, true));
+  const hawk = g._heroSkillEffects.find(effect => effect.kind === 'hawk');
+  assert(hawk, 'Ranger charged hawk is an independent pursuit entity');
+  const hx = hawk.x, hy = hawk.y;
+  g.hero.y += 100;
+  advance(g, 0.05);
+  assert(Math.hypot(hawk.x - hx, hawk.y - hy) < 150,
+    'the released hawk flies independently rather than teleporting with Ranger');
+}
+{
+  const { g, enemies: [target] } = arena([[760, 500]]);
+  g.hero.skills[5] = 1;
+  assert(g.cast(6, target.id, true), 'Mage charged Focused Beam');
+  const shot = g.s.projectiles.find(p => p.source === 'hero' && p.slot === 6);
+  assert(shot && shot.style === 'beam', 'Mage Skill 6 remains the authored projectile');
+  assert(!shot.mageSkill1Homing && !shot.beamWidthScale,
+    'Mage Skill 6 must not inherit Skill 1 travel/homing/thickness changes');
+  const from = {x: shot.originX, y: shot.originY, dx: shot.dx, dy: shot.dy};
+  g.hero.y += 100;
+  g.updateProjectiles(0.02);
+  assert.equal(shot.originX, from.x);
+  assert.equal(shot.originY, from.y);
+  assert.equal(shot.dx, from.dx);
+  assert.equal(shot.dy, from.dy);
+}
+
 console.log('PASS Mage Skill 1 travel, delayed contact, caster-angled charged corridor, homing normal cast and 2.5x visual width');
