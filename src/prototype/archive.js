@@ -153,19 +153,17 @@
       [
         'Healing in battle',
         'Healing restores living actors; it does not revive fallen companions. Some enemies can heal their allies too.',
-        'Hero skill healing is separate from Ranger support over time. Ordinary ranged enemies restore ' +
-          percent(heal.ordinary.fraction) +
-          '% of an ordinary monster’s maximum HP over ' +
+        'Hero skill healing is separate from Ranger support over time. Ordinary ranged enemies restore all missing HP of an eligible ordinary monster over ' +
           heal.ordinary.duration +
           ' seconds on a ' +
           heal.ordinary.cooldown +
-          's cooldown. They can still heal captains and bosses, but those leaders receive the original ' +
+          's cooldown. This is a full heal measured from wounds present when treatment begins; fresh damage requires further treatment. They can still heal captains and bosses, but those leaders receive the original ' +
           percent(heal.fraction) +
           '% over ' +
           heal.duration +
           ' seconds, with a ' +
           heal.cooldown +
-          's per-healer leader interval. Captains and bosses retain their own original healing strength and cooldowns. Encounter scaling still applies. Treatment begins at ' +
+          's per-healer leader interval. Captains and bosses retain their own original healing strength and cooldowns. Encounter scaling still applies to leader healing. Treatment begins at ' +
           percent(heal.threshold) +
           '% HP or less. Allies arriving to regroup can receive care at ' +
           percent(heal.regroupThreshold) +

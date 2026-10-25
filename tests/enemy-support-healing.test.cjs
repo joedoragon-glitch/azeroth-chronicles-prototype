@@ -79,12 +79,9 @@ for (const species of [
   assert(g.enemySupportHeal(healer), species + ' heals a wounded companion');
   // The live zone may normalize ally max HP as its ordinary population
   // migrates; assert against the recipient's actual post-normalization values.
-  const budget = Math.min(
-    ally.maxHp - ally.hp,
-    ally.maxHp * R.enemySupportHealing.ordinary.fraction * g.enemyHealMultiplier(healer),
-  );
+  const budget = ally.maxHp - ally.hp;
   const before = ally.hp;
-  near(ally.supportHeal.remaining, budget, species + ' 10% ordinary recipient heal');
+  near(ally.supportHeal.remaining, budget, species + ' full missing ordinary HP');
   near(ally.supportHeal.seconds, 3, species + ' three-second treatment');
   near(healer.supportHealCd, 7, species + ' seven-second ordinary cooldown');
   assert(!g.enemySupportHeal(healer), species + ' cannot duplicate the cast');
@@ -94,7 +91,7 @@ for (const species of [
   near(ally.hp, before + budget, species + ' full heal');
   assert(!ally.supportHeal, species + ' effect completes');
 }
-console.log('PASS twelve ranged species use individual identity and the Archer healing interval');
+console.log('PASS twelve ranged species independently restore missing ordinary HP in three seconds');
 
 // Enemy support must ignore injured player actors even when they are closer
 // and much more wounded than the intended hostile recipient.

@@ -24,7 +24,7 @@ function scene() {
   }
   return { g, z, mob };
 }
-assert.equal(R.ordinary.fraction, 0.1);
+assert.equal(R.ordinary.fullRecovery, true);
 assert.equal(R.ordinary.duration, 3);
 assert.equal(R.ordinary.cooldown, 7);
 assert.equal(R.fraction, 0.05);
@@ -35,14 +35,14 @@ for (const species of Object.keys(R.species)) {
   const healer = mob(species, 300, { ranged: true, hp: 1000 });
   const friend = mob('wolf', 330, { hp: 400, pack: 'other-pack' });
   assert(g.enemySupportHeal(healer), species + ' treats other hostile species');
-  near(friend.supportHeal.remaining, friend.maxHp * 0.1 * g.enemyHealMultiplier(healer), species + ' new amount');
+  near(friend.supportHeal.remaining, friend.maxHp - friend.hp, species + ' all missing HP queued');
   near(friend.supportHeal.seconds, 3, species + ' rapid pulses');
   near(healer.supportHealCd, 7, species + ' faster cast cadence');
   const before = friend.hp;
   g.advanceEnemySupportHeal(friend, 1);
-  near(friend.hp - before, friend.maxHp * 0.1 * g.enemyHealMultiplier(healer) / 3, 'first second');
+  near(friend.hp - before, (friend.maxHp - before) / 3, 'one third of missing HP in first second');
   g.advanceEnemySupportHeal(friend, 2);
-  near(friend.hp - before, friend.maxHp * 0.1 * g.enemyHealMultiplier(healer), 'full three seconds');
+  near(friend.hp, friend.maxHp, '100% HP after three seconds');
   cases++;
 }
 // Mixed-species area cast preserves separate base leader and buffed ordinary effects.
@@ -60,7 +60,7 @@ for (const kind of ['captain', 'boss', 'field-captain']) {
     leader = mob('orc', 340, { hp: 400, captain: true, roomCaptain: kind === 'captain', fieldCaptain: kind === 'field-captain', captainProfile: 'supply-vale' });
   }
   assert(g.enemySupportHeal(healer), kind + ' remains eligible for ordinary healer');
-  near(ordinary.supportHeal.remaining, ordinary.maxHp * 0.1 * g.enemyHealMultiplier(healer), 'ordinary buff still applies');
+  near(ordinary.supportHeal.remaining, ordinary.maxHp - ordinary.hp, 'ordinary full recovery still applies');
   near(ordinary.supportHeal.seconds, 3, 'ordinary rapid duration');
   near(leader.supportHeal.remaining, leader.maxHp * 0.05 * g.enemyHealMultiplier(healer), kind + ' original 5%');
   near(leader.supportHeal.seconds, 5, kind + ' original five-second duration');
@@ -83,7 +83,9 @@ for (const kind of ['captain', 'boss', 'field-captain']) {
   const source = mob('skeleton', 300, { ranged: true, aggro: false });
   const leader = mob('orc', 320, { hp: 400, captain: true, roomCaptain: true, captainProfile: 'fixture-no-healing-profile', aggro: false });
   assert(g.enemySupportHeal(source));
-  g.advanceEnemySupportHeal(leader, 5); // direct resolver: isolate cooldown cadence.
+  // The original pulse is transient; this case tests the separate leader
+  // eligibility interval, not the previously audited idle-recipient defect.
+  delete leader.supportHeal;
   g.updateEnemies(7);
   near(source.supportHealCd, 0, 'ordinary clock recovered in seven seconds');
   assert(!leader.supportHeal, 'leader does not receive a seven-second recast');
@@ -119,4 +121,4 @@ for (const kind of ['captain', 'boss']) {
   assert(snapshot.zones[snapshot.zone].enemies.every(u => !('supportHeal' in u) && !('supportHealCd' in u) && !('leaderSupportHealCd' in u)));
   cases++;
 }
-console.log('PASS ' + cases + ' ordinary enemy healing: 12 species, cross-species support, independent leader treatment, cast cadence, boss/captain preservation and save shape');
+console.log('PASS ' + cases + ' full ordinary healing: 12 species, cross-species support, leader isolation, three-second recovery and save shape');

@@ -32,10 +32,10 @@ assert.equal(healer.supportHealCd, 7, 'Ordinary area cast spends seven seconds')
 assert.equal(first.supportHeal.seconds, 3);
 assert.equal(
   first.supportHeal.remaining,
-  100,
-  'Each target retains the same per-target restoration',
+  600,
+  'Each target receives all HP missing at cast time',
 );
-assert.equal(second.supportHeal.remaining, 100);
+assert.equal(second.supportHeal.remaining, 500);
 assert.equal(
   g.effects.filter((e) => e.type === 'heal').length,
   2,
@@ -48,17 +48,20 @@ assert.equal(healer.supportHealCd, 0, 'No eligible recipients means no spent coo
 for (const e of [first, second]) {
   const hp = e.hp;
   g.advanceEnemySupportHeal(e, 1);
-  assert(Math.abs(e.hp - hp - 100 / 3) < 1e-8, 'Both receive faster pulses');
+  assert(Math.abs(e.hp - hp - (e.maxHp - hp) / 3) < 1e-8, 'Both receive proportional full-heal pulses');
   g.advanceEnemySupportHeal(e, 2);
-  assert.equal(e.hp, hp + 100);
+  assert.equal(e.hp, e.maxHp);
   assert(!e.supportHeal);
 }
 // A leader's area includes its eligible self without creating new self-healing roles.
+// Earlier full treatments ended, so these ordinary recipients must be wounded again.
+first.hp = 400;
+second.hp = 500;
 Object.assign(healer, { form: 'ringleader', ringleaderHealthVersion: 3, hp: 400 });
 assert(g.enemySupportHeal(healer));
 assert(healer.supportHeal && first.supportHeal && second.supportHeal);
 assert.equal(healer.supportHealCd, 7);
-assert.equal(healer.supportHeal.remaining, 150, 'Ringleader gets ordinary-recipient boost and scaling once');
+assert.equal(healer.supportHeal.remaining, 600, 'Ringleader receives full missing-health treatment');
 const saved = g.snapshot();
 assert(saved.zones[saved.zone].enemies.every((e) => !e.supportHeal && !e.supportHealCd));
 assert(C.restore(saved), 'Area healing keeps the existing v4 transient-state policy');

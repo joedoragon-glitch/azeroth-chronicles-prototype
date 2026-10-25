@@ -449,9 +449,12 @@
       for (const target of targets) {
         const leader = this.enemyHealLeader(target),
           buffed = ordinaryHealer && !leader,
-          fraction = buffed ? cfg.ordinary.fraction : cfg.fraction,
           duration = buffed ? cfg.ordinary.duration : cfg.duration,
-          amount = Math.min(target.maxHp - target.hp, target.maxHp * fraction * multiplier);
+          // Full restoration is the missing HP at cast time, delivered over
+          // three seconds. No encounter multiplier reduces the full amount.
+          amount = buffed
+            ? target.maxHp - target.hp
+            : Math.min(target.maxHp - target.hp, target.maxHp * cfg.fraction * multiplier);
         if (!(amount > 0) || !Number.isFinite(amount)) continue;
         target.supportHeal = {
           source: e.id,
