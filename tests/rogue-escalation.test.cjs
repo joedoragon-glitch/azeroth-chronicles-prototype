@@ -321,6 +321,85 @@ console.log('PASS retreat reset cleans up emergency reinforcements');
 }
 console.log('PASS the three-defender branch of the 50/50 roll');
 
+
+{
+  // Field elites may seek ORDINARY monsters, not only elite followers. Their
+  // territorial responsibility bounds movement but does not pin them in place.
+  for (const role of ['boss', 'captain']) {
+    const { c, z, a, add } = encounter();
+    z.enemies = [a];
+    if (role === 'boss') { a.type = 'boss'; a.family = 'ridge'; }
+    else { a.captain = true; a.captainProfile = 'supply-vale'; }
+    const ordinary = add(1780, 'normal');
+    z.enemies.push(ordinary);
+    assert(c.tacticalBeginExtendedRetreat(a),
+      role + ' must be able to seek an occupied post held by an ordinary monster');
+    const state = c.tacticalRogueRegroup(a);
+    assert.equal(state.allyId, ordinary.id);
+    assert(c.tacticalRogueLeashAllows(a, c.hero, 700),
+      'moving field elite remains in its live territorial encounter');
+    let destination = null;
+    c.follow = (u, point) => { destination = point; u.x += 10; return true; };
+    const before = a.x;
+    assert(c.tacticalAdvanceExtendedRetreat(a, c.hero, 0.1));
+    assert(a.x > before && destination.x === ordinary.home.x,
+      role + ' makes physical progress toward its ordinary defender');
+    const { c: limited, z: local, a: leader, add: addFar } = encounter();
+    local.enemies = [leader];
+    if (role === 'boss') { leader.type = 'boss'; leader.family = 'ridge'; }
+    else { leader.captain = true; leader.captainProfile = 'supply-vale'; }
+    local.enemies.push(addFar(2300, 'normal'));
+    assert(!limited.tacticalBeginExtendedRetreat(leader),
+      role + ' cannot desert its territory for a distant post');
+  }
+}
+console.log('PASS field bosses and captains recruit ordinary regional defenders without deserting their posts');
+
+{
+  const { c, z, a } = encounter();
+  z.enemies = [a];
+  a.type = 'boss';
+  a.family = 'ridge';
+  const captive = { id: 'cage-ridge', kind: 'cage', family: 'ridge', x: 1050, y: 1300 };
+  z.npcs = [captive];
+  assert.equal(c.tacticalGuardedSpecialist(a), captive,
+    'stationary captive specialist is a valid final-defense objective');
+  assert(c.tacticalAutoRogue(a, c.hero));
+  c.s.time += 0.31;
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.31));
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'guard-captive',
+    'isolated guardian must stand near captive instead of casting in place');
+  assert(!a.telegraph?.rogueMove);
+  let ordered = null;
+  c.follow = (u, point) => { ordered = point; u.x -= 12; return true; };
+  const before = a.x;
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.1));
+  assert(a.x < before && ordered === captive,
+    'the final stand physically travels toward the existing captive NPC');
+  assert.equal(c.s.rescued.ridge, false,
+    'regrouping cannot free the specialist or award its skill benefits');
+  assert(!c.combatTargets().includes(captive),
+    'the civilian specialist remains outside combat targets');
+}
+console.log('PASS overwhelmed captive guardians return to existing civilians for their final stand');
+
+{
+  const { c, z, a } = encounter();
+  a.type = 'boss';
+  a.family = 'thorn';
+  z.enemies = [a];
+  z.npcs = [{ id: 'cage-thorn', kind: 'cage', family: 'thorn', x: 1300, y: 1280 }];
+  assert(c.thornCaptiveFollowing(), 'the existing mobile-captive contract is active');
+  assert.equal(c.tacticalGuardedSpecialist(a), null,
+    'mobile specialists retain the existing patrol-follow implementation');
+  assert(c.tacticalAutoRogue(a, c.hero));
+  c.s.time += 0.31;
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.31));
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'escape',
+    'mobile specialist guardians regroup without reclassifying the captive as a static cage');
+}
+console.log('PASS mobile captives remain controlled by existing native patrol-follow systems');
+
 {
   const sideId = Campaign.rules.sideDungeons[0].id;
   const { c, z, a, b } = encounter(sideId);
