@@ -76,6 +76,42 @@ See [companion audit](HERO_SKILL1_COMPANION_DEPENDENCIES_20261024.md) for the ex
 
 For Paladin, Mage and Ranger, later append to this **same PR** an owner-reviewable **new charged Skill 1** proposal: distinct combat role, mechanic/target geometry, visuals, interaction with class Skills 2–8, 0.65s charge and interrupt behavior, rank/milestone scaling, normal-vs-charged cooldown comparison, potential boss/TRUE exploits, damage throughput and companion synergy. Do **not** invent new specialist lore, independent skill trees, spell-resource bars or global lockouts. **No class technique, cooldown duration, name, or balance value is selected in this initial draft.**
 
+## 8. Paladin charged Skill 1 — Grand Cross-inspired candidate (owner brainstorming; **NOT approved**)
+
+**Origin:** The owner cited the Crusader/Paladin *Grand Cross* from *Ragnarok Online* as inspiration **without copying that named skill or its entire ruleset**: Holy attack centered on the caster, cross-shaped area, up to three hits dependent on positioning and movement, approximately 0.9s active duration, immobilization, noninterruptible cast, a 20%-of-current-HP cost, and reductions to hit counts when creatures crowd particular cells. These are **reference mechanics only**, not approved Azeroth Chronicles behavior.
+
+**Working placeholder name:** **Radiant Cross** (not owner-approved; must be renamed/approved before implementation).
+
+### Core visual/combat concept to evaluate
+
+- The Paladin raises the blade and, on a valid **charged Skill 1** release, four arms of brilliant holy light project from the Paladin's location to form a cross. The art, animation, exact orientation and name must be original to Azeroth Chronicles.
+- **Directional/positional encounter:** The cross is **anchored at the release position** rather than following the Paladin. Consider orienting one arm toward the chosen/locked enemy and the opposite/perpendicular arms around the Paladin, instead of enforcing map-grid cardinal directions. Such aim-based orientation still requires validation against touch targeting, line of sight, hero-size collision and sprite readability.
+- **Suggested two discrete pulses**, spaced over a brief total window, as a first design hypothesis. Every eligible enemy can receive at most one hit from each pulse; crossing arms must **not** double-hit the same enemy within a pulse. Enemies moving into/out of a lit arm can change their hit count. Avoid the original's monster-population-dependent penalty to nearby hit counts: crowding should not unpredictably reduce individual attacks.
+- Use the existing hero Power / Skill 1 **rank** and normal charged damage protections, not a new Holy-vs-Hybrid damage system or new class-specific resource. Preserve the same Skill 1 shared-rank progression as automatic basic and promoted normal. Proposed total damage, area length/width, target cap, persistence, pulse spacing, cooldown and rank-milestone geometry are **NOT selected**. The charged cooldown should be evaluated against the promoted tap's 3s starting recovery plus the independent automatic-basic output.
+- **No 20% HP cost, extra immobilization or uninterruptible cast in this first candidate.** Existing ~0.65s hold, charged interruption and queued-input rules stay intact; the melee positional commitment, target selection and delayed hit opportunities supply tactical risk. A different risk/cost tradeoff can be reviewed later, but is not selected.
+- This is a **deliberate activated hero attack**, never an automatic basic, and must not advance or erase the automatic three-beat combo. It must obey current protected-boss opening constraints for genuine charged skill releases; no precharged boss opening exploits, and no cross hit admitted through walls or protected leash geometry. Allies and the hero are not damage targets by default; never add accidental companion damage.
+- **No imported status effects in this candidate:** no weaken, taunt, crowd push, Slow, ward or healing. Those belong to other Paladin abilities and make the cross mechanically indistinct if grafted on.
+
+### Distinguish from current Paladin Skills 2–8
+
+- **Skill 2:** Sundering Strike/Holy Cleave is frontal and **weakens**; cross is four narrow directional arms and relies on positioning rather than a weaken debuff.
+- **Skill 3:** Shield Stance/Shield Bash handles mitigation and cone push; charged cross neither guards nor pushes.
+- **Skill 4:** Judgment/Grand Judgment causes taunt; charged cross does not affect threat selection.
+- **Skills 5 and 7:** Holy Area/Consecrated Wave and Holy Assault/Oath Strike are wide **area damage + stronger weakening** choices. Charged cross trades broad coverage for **narrow line geometry and multiple time-separated hit opportunities**, no weaken.
+- **Skill 6:** Vanguard Rush/Impact is movement/gap closing; cross stays anchored and provides no dash.
+- **Skill 8:** Sanctuary Oath/Last Bastion heals/wards nearby allies; cross is pure offense.
+
+### Owner decisions still required
+
+- [ ] Confirm whether caster-centered, potentially **aim-rotated** cross is the right visual/combat identity.
+- [ ] Confirm one, two or three pulses, their total active period and whether the light persists visibly between pulses.
+- [ ] Choose whether the Paladin can move normally through the release and recovery, versus any **brief** authored commitment that does not replicate the reference's 0.9s root.
+- [ ] Set reach, width, target cap, rank scaling, raw power per pulse, visual warning/readability and **charged cooldown** after first-pass solo/group/boss balance comparison.
+- [ ] Approve a distinctive final name and original FX/audio for both English and Spanish.
+- [ ] Check independent hero-basic cadence, Paladin Shield Stance restrictions, companions/AI, protected openings, collision and performance (bounded hit tests, 2 pulses at most initially).
+
+**Status:** proposal captured because the owner shared Grand Cross as inspiration; **no implementation, numerical balance, class-skill selection or approval implied**. Mage and Ranger charged Skill 1 remain **entirely undesigned**.
+
 ## Reference code (baseline)
 
 - [`src/prototype/hero-combat.js`](../src/prototype/hero-combat.js): `castMovementBasic`, `cast`, `skillCooldown`, charged slot-1 forms, combo, damage and projectile flags.
