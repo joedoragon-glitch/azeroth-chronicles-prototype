@@ -311,17 +311,33 @@ async function run() {
         await page.locator('#menu-button').click();
         await page.getByRole('button', {name:'Game and settings', exact:true}).click();
         await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
-        const pixiOptimization = page.locator('select[aria-label="Optimization Mode"]');
-        await pixiOptimization.selectOption('on');
+        // Settings intentionally pauses world drawing. A preference change must
+        // be observed only after normal gameplay resumes, not while the menu is open.
+        // Preserve the existing 15-second WebGL2 Keep/Revert trial unchanged.
+        await page.locator('select[aria-label="Optimization Mode"]').selectOption('on');
+        assert.equal(await page.evaluate(() =>
+          localStorage.getItem('azeroth-optimization-mode-v1')), 'on');
+        await page.evaluate(() => Prototype.closeMenu());
         await page.waitForFunction(() =>
           Prototype.experimentalGraphics.backgroundOptimized === true,
           null, {timeout:15000});
         assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'webgl2');
-        await pixiOptimization.selectOption('off');
+
+        await page.locator('#menu-button').click();
+        await page.getByRole('button', {name:'Game and settings', exact:true}).click();
+        await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
+        await page.locator('select[aria-label="Optimization Mode"]').selectOption('off');
+        assert.equal(await page.evaluate(() =>
+          localStorage.getItem('azeroth-optimization-mode-v1')), 'off');
+        await page.evaluate(() => Prototype.closeMenu());
         await page.waitForFunction(() =>
           Prototype.experimentalGraphics.backgroundOptimized === false,
           null, {timeout:15000});
-        await pixiOptimization.selectOption('auto');
+
+        await page.locator('#menu-button').click();
+        await page.getByRole('button', {name:'Game and settings', exact:true}).click();
+        await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
+        await page.locator('select[aria-label="Optimization Mode"]').selectOption('auto');
         assert.equal(await page.evaluate(() =>
           localStorage.getItem('azeroth-optimization-mode-v1')), 'auto');
         await page.evaluate(() => Prototype.closeMenu());
