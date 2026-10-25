@@ -221,6 +221,29 @@ for (const id of ['supply-vale', 'supply-march']) {
   assert(captain.hp > engaged, 'restoration continues when captain becomes idle');
 }
 
+// Native pending-action restoration continuity: restorative pulses advance
+// before attack warnings, motions and ranged aiming can early-continue the
+// enemy update. Do not simulate the healing method separately.
+for (const state of ['telegraph', 'motion', 'rangedAim']) {
+  const { game, captain } = nativeRoom('supply-vale', 'normal');
+  captain.hp = captain.maxHp * 0.82;
+  tick(game, 1);
+  assert(captain.supportHeal,
+    'native captain has an active guardian pulse before holding ' + state);
+  const startingHp = captain.hp;
+  const remaining = captain.supportHeal.seconds;
+  captain[state] = state === 'telegraph'
+    ? { kind: 'circle', timer: 12, radius: 30, x: captain.x, y: captain.y }
+    : state === 'motion'
+      ? { kind: 'circle', life: 12, target: { x: captain.x, y: captain.y }, hit: [] }
+      : { timer: 12, targetId: 'hero', x: game.hero.x, y: game.hero.y };
+  tick(game, 1);
+  assert(captain.hp > startingHp,
+    'guard treatment advances through held ' + state);
+  assert(captain.supportHeal && captain.supportHeal.seconds < remaining,
+    'held ' + state + ' does not freeze restorative time');
+}
+
 // Observe real approach conditions for Dreadmaw's dispersed guardians. These
 // are diagnostics, not an assertion that all five will reach the captain:
 // actual combat pressure and regroup priorities are Phase 4 questions.
