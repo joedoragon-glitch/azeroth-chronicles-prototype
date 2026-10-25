@@ -18,7 +18,11 @@ const groups = [
   },
   {
     match: /^src\/prototype\/(?:combat|hero-combat|party|party-pets)\.js$/,
-    tests: [TEST + 'charge-interruption.test.cjs', TEST + 'pet-skill-activation.test.cjs'],
+    tests: [
+      TEST + 'charge-interruption.test.cjs',
+      TEST + 'pet-skill-activation.test.cjs',
+      TEST + 'pet-skill-priority.test.cjs',
+    ],
   },
   {
     match: /^src\/prototype\/(?:app|input)\.js$/,
