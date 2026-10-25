@@ -138,4 +138,101 @@ for (const dt of [1 / 20, 1 / 30, 1 / 60]) {
   assert.equal(cross[0].life, 0.36, 'fixed Paladin cross stays unchanged');
 }
 
+// Bow volleys should not teleport their damage to their targets before the
+// arrows arrive. The real collider and its trajectory own every contact.
+for (const dt of [1 / 20, 1 / 30, 1 / 60]) {
+  for (const { slot, charged } of [
+    { slot: 2, charged: true }, // charged Pinning Volley corridor
+    { slot: 5, charged: false }, // normal Arrow Volley
+  ]) {
+    const { game, enemy } = arena();
+    const hp = enemy.hp;
+    assert(game.cast(slot, enemy.id, charged), 'Ranger volley must cast ' + slot);
+    const arrows = game.s.projectiles.filter(p => p.source === 'hero' && p.slot === slot);
+    assert(arrows.length > 0, 'Volley must emit real arrows for slot ' + slot);
+    assert.equal(enemy.hp, hp, 'no phantom instant arrow damage for slot ' + slot);
+    assert(arrows.every(p => p.style === 'arrow' && p.area), 'use real arrow colliders');
+    assert(game.effects.some(e =>
+      e.slot === slot && e.projectileVolley && (e.type === 'chargedArea' || e.type === 'spell')),
+      'presentation must suppress fake flying shafts'
+    );
+    const first = arrows[0];
+    const dx = first.dx, dy = first.dy;
+    game.hero.y += 140; // independent arrow remains where originally released
+    for (let step = 0; step < 30 && game.s.projectiles.includes(first); step++) {
+      game.updateProjectiles(dt);
+    }
+    assert(enemy.hp < hp, 'physical arrow must eventually contact enemy for slot ' + slot);
+    near(first.dx, dx, 'volley did not tether to displaced Ranger');
+    near(first.dy, dy, 'volley did not turn into homing beam');
+    verified++;
+  }
+}
+// Blocked shots may show a wall impact, never phantom target damage.
+for (const slot of [2, 5]) {
+  const { game, enemy } = arena();
+  assert(game.cast(slot, enemy.id, slot === 2));
+  const hp = enemy.hp;
+  game.clearSegment = () => false;
+  game.updateProjectiles(0.05);
+  assert.equal(enemy.hp, hp, 'terrain obstruction protects enemy for slot ' + slot);
+  assert(!game.s.projectiles.some(p => p.slot === slot), 'the blocked arrow is removed');
+}
+
+// Companion Archer Triple Shot uses the same real release rule as Ranger,
+// but checks its own living actor rather than incorrectly following the hero.
+for (const dt of [1 / 20, 1 / 30, 1 / 60]) {
+  const { game, enemy } = arena();
+  const archer = game.unit('archer', 500, 510);
+  game.s.party = [archer];
+  assert(game.companionUseFirstSkill(archer, enemy), 'Archer Triple Shot activates');
+  const pending = game.s.projectiles.filter(p => p.companionDelayedLaunch);
+  assert.equal(pending.length, 2, 'only the second/third shots await bow release');
+  const p = pending[0];
+  archer.x = 525;
+  archer.y = 570;
+  enemy.y = 540;
+  while (p.delay > 0) game.updateProjectiles(dt);
+  assert(p.companionDelayedLaunch, 'the delayed shaft remains physically unreleased');
+  const x = archer.x, y = archer.y;
+  game.updateProjectiles(dt);
+  assert.equal(p.companionDelayedLaunch, undefined, 'Archer released its real arrow');
+  near(p.x, x + p.dx * p.speed * dt, 'Archer moving release x');
+  near(p.y, y + p.dy * p.speed * dt, 'Archer moving release y');
+  const launched = { x: p.x, y: p.y, dx: p.dx, dy: p.dy };
+  archer.x += 100;
+  archer.y -= 50;
+  game.updateProjectiles(dt);
+  near(p.x, launched.x + launched.dx * p.speed * dt, 'Archer arrow flies independently x');
+  near(p.y, launched.y + launched.dy * p.speed * dt, 'Archer arrow flies independently y');
+  verified++;
+}
+{
+  const { game, enemy } = arena();
+  const archer = game.unit('archer', 500, 510);
+  game.s.party = [archer];
+  assert(game.resolveCompanionSecondSkill(archer, enemy, [enemy]),
+    'Archer charged Piercing Volley releases after its existing charge');
+  const hp = enemy.hp;
+  const arrow = game.s.projectiles.find(p => p.companionSkill === 'piercing-volley');
+  assert(arrow?.area, 'charged Archer uses one real area-compatible arrow');
+  assert.equal(enemy.hp, hp, 'no damage before the companion arrow hits');
+  assert(game.effects.some(e => e.type === 'chargedArea' && e.projectileVolley),
+    'companion presentation must avoid fake full-corridor shafts');
+  for (let i = 0; i < 20 && game.s.projectiles.includes(arrow); i++) {
+    game.updateProjectiles(0.05);
+  }
+  assert(enemy.hp < hp, 'Archer charged arrow damages on physical contact');
+}
+{
+  const { game, enemy } = arena();
+  const soldier = game.unit('soldier', 705, 500);
+  game.s.party = [soldier];
+  const hp = enemy.hp;
+  assert(game.resolveCompanionSecondSkill(soldier, enemy, [enemy]), 'Soldier Holy Cleave');
+  assert(enemy.hp < hp, 'Soldier sword melee strike legitimately resolves at impact');
+  assert(!game.s.projectiles.some(p => p.source === soldier.id),
+    'Soldier has no invented sword or spell projectile');
+}
+
 console.log('PASS #463 real Ranger bow origins, independent arrows, target/terrain safety, 20/30/60 FPS (' + verified + ' cases)');
