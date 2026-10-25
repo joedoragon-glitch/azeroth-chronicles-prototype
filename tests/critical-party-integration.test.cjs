@@ -2,18 +2,7 @@
 const assert = require('node:assert/strict');
 const Integration = require('../src/prototype/critical-party-integration.js');
 let reads = 0;
-const Crit = { createResolver({ enabled, stream }) {
-  assert.equal(enabled, true);
-  assert.equal(typeof stream.next, 'function');
-  const seen = new WeakMap();
-  return { release({ action, key, domain, released }) {
-    assert.equal(domain, 'party');
-    assert.equal(released, true);
-    let prior = seen.get(action);
-    if (!prior) { prior = Object.freeze({ key, domain, critical: stream.next() < .1 }); seen.set(action, prior); }
-    return prior;
-  }};
-}};
+const Crit = require('../src/prototype/critical-executions.js');
 class Campaign {
   constructor() {
     this.hero = { class: 'paladin' };
