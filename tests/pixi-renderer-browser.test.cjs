@@ -88,6 +88,22 @@ async function run() {
       await page.keyboard.press('f');
       await page.waitForFunction(() => document.querySelector('#modal').hidden);
       await page.evaluate(() => {window.__gpuTestCampaign = Prototype.game;});
+      // Canvas remains functional under the new three-way optimization policy.
+      assert.equal(await page.evaluate(() =>
+        localStorage.getItem('azeroth-optimization-mode-v1')), 'auto');
+      await page.locator('#menu-button').click();
+      await page.getByRole('button', {name: 'Game and settings', exact: true}).click();
+      await page.getByRole('button', {name: 'Screen and performance', exact: true}).click();
+      const optimization = page.locator('select[aria-label="Optimization Mode"]');
+      await optimization.selectOption('on');
+      assert.equal(await page.evaluate(() => Prototype.renderer.metrics().optimizationMode), 'on');
+      await optimization.selectOption('off');
+      assert.equal(await page.evaluate(() => Prototype.renderer.metrics().optimizationMode), 'off');
+      await optimization.selectOption('auto');
+      assert.equal(await page.evaluate(() =>
+        localStorage.getItem('azeroth-optimization-mode-v1')), 'auto');
+      await page.evaluate(() => Prototype.closeMenu());
+      assert.equal(await page.evaluate(() => Prototype.game === window.__gpuTestCampaign), true);
       await selectPixi(page);
       const outcome = await page.evaluate(() => ({
         ...Prototype.experimentalGraphics,
@@ -129,6 +145,27 @@ async function run() {
         assert.equal(await page.evaluate(() => Prototype.game === window.__gpuTestCampaign), true);
         await page.getByRole('button', {name: 'Keep WebGL2'}).click();
         assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.phase), 'confirmed');
+        // The retained Pixi background must immediately reflect presentation
+        // transitions without walking, zooming or a zone transition.
+        await page.waitForFunction(() =>
+          Prototype.experimentalGraphics.backgroundOptimized === false);
+        await page.locator('#menu-button').click();
+        await page.getByRole('button', {name:'Game and settings', exact:true}).click();
+        await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
+        const pixiOptimization = page.locator('select[aria-label="Optimization Mode"]');
+        await pixiOptimization.selectOption('on');
+        await page.waitForFunction(() =>
+          Prototype.experimentalGraphics.backgroundOptimized === true,
+          null, {timeout:15000});
+        assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'webgl2');
+        await pixiOptimization.selectOption('off');
+        await page.waitForFunction(() =>
+          Prototype.experimentalGraphics.backgroundOptimized === false,
+          null, {timeout:15000});
+        await pixiOptimization.selectOption('auto');
+        assert.equal(await page.evaluate(() =>
+          localStorage.getItem('azeroth-optimization-mode-v1')), 'auto');
+        await page.evaluate(() => Prototype.closeMenu());
         assert.equal(await page.evaluate(() => localStorage.getItem('azeroth-renderer-choice-v1')),
           'webgl2');
         await page.waitForFunction(() => {
