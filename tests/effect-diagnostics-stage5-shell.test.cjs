@@ -44,9 +44,21 @@ function harness({ developerFlag = false, developerSave = false } = {}) {
 }
 (async () => {
   {
-    const h = harness({ developerFlag: true, developerSave: true });
+    const h = harness({ developerFlag: true });
+    // Enter the real Developer Mode creation flow. Directly seeding a raw save
+    // bypasses the game's writer-ownership envelope and triggers protection.
+    h.elements.get('menu-button').click();
+    h.click('Game and settings');
+    h.click('Save and game management');
+    h.click('New game');
+    h.click('New Developer Mode run');
+    h.click('English');
+    const paladin = h.elements.get('modal-actions').children.find((b) =>
+      b.textContent.includes('paladin'));
+    assert(paladin, 'Developer hero selection not available');
+    paladin.click();
     const g = h.scope.Prototype.game;
-    assert.equal(g.s.mode, 'developer', 'Developer Mode campaign must actually be loaded');
+    assert.equal(g.s.mode, 'developer', 'Developer Mode campaign must actually be created');
     h.elements.get('menu-button').click();
     h.click('Game and settings');
     h.click('Screen and performance');
