@@ -3,6 +3,7 @@
 // The same physical coordinates drive native hits and both Canvas/Pixi-overlay art.
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
+const Audio = require('../src/prototype/audio.js');
 const HeroArt = require('../src/prototype/hero-presentation.js');
 const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 
@@ -213,6 +214,8 @@ for (const dt of [1 / 20, 1 / 30, 1 / 60]) {
   assert.equal(initial[0].count, 3, 'legacy triple-shot sound remains intact');
   assert.equal(initial[0].releasedCount, 1, 'only first Archer arrow actually leaves immediately');
   assert.equal(initial[0].pendingCount, 2, 'two Archer arrows remain pending');
+  assert.equal(new Audio().soundKind(initial[0]), 'tripleShot',
+    'the original single planned volley retains its three-shot sound');
   archer.x = 525;
   archer.y = 570;
   enemy.y = 540;
@@ -229,6 +232,10 @@ for (const dt of [1 / 20, 1 / 30, 1 / 60]) {
   near(archerLaunches[0].x, x, 'Archer actual launch receipt X');
   near(archerLaunches[0].y, y, 'Archer actual launch receipt Y');
   assert.equal(archerLaunches[0].releasedCount, 1);
+  assert.equal(archerLaunches[0].presentationHandled, true,
+    'actual Archer subrelease must not schedule another whole-volley foley');
+  assert.equal(new Audio().soundKind(archerLaunches[0]), null,
+    'existing audio router suppresses bookkeeping-only later departures');
   near(p.x, x + p.dx * p.speed * dt, 'Archer moving release x');
   near(p.y, y + p.dy * p.speed * dt, 'Archer moving release y');
   const launched = { x: p.x, y: p.y, dx: p.dx, dy: p.dy };

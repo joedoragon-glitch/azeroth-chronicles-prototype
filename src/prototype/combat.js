@@ -1063,6 +1063,10 @@
               source: caster.id,
               style: 'arrow',
               special: 'triple-shot',
+              // The initial legacy three-shot sound has already scheduled
+              // the volley. A real later subrelease is an observable event,
+              // NOT a second full three-shot audio/performance cue.
+              presentationHandled: true,
               projectileId: p.id,
               releasedCount: 1,
               x: caster.x,
