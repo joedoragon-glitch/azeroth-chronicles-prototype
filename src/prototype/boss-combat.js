@@ -2112,6 +2112,14 @@
           this.tacticalResolveRogueMove(e, a);
           return;
         }
+        // First narrowly authored boss World owner: real released Thornfang
+        // cone, after its original warning and before native area contact.
+        // No boss-wide fallback, AI-planning roll or changed attack geometry.
+        if (e.type === 'boss' && e.family === 'thorn' && !a.captainSkill &&
+            a.index === 0 && a.kind === 'cone' && !a.criticalExecution) {
+          const receipt = this.worldCriticalAction(e, 'world/boss/thorn/0');
+          if (receipt) a.criticalExecution = receipt;
+        }
         // Explicit conventional captain owners only. A one-patch
         // Encapsulation release affects its initial hit, not the original
         // hazard duration/ticks. Multi-beat, delegated and summon skills
@@ -2633,7 +2641,10 @@
                 : this.hitParty(
                     u,
                     (a.nightSkill === 'pounce' ||
-                      (a.captainSkill && !!a.criticalExecution))
+                      (a.captainSkill && !!a.criticalExecution) ||
+                      (e.type === 'boss' && e.family === 'thorn' &&
+                        a.index === 0 && a.kind === 'cone' &&
+                        !!a.criticalExecution))
                       ? this.worldCriticalDamage(
                           a.criticalExecution, this.weakenedEnemyDamage(e) * a.coefficient,
                         )

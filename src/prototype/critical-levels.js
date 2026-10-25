@@ -152,6 +152,9 @@
   // Creep Feeding only extends the ORIGINAL eligible brood haste window,
   // remaining strictly shorter than its own fixed 10-second cooldown.
   register('world/captain/supply-crown/5', 'world', 'hasteDuration');
+  // Boss catalog begins with Thornfang's original immediate cone only.
+  // Other Thorn moves (landing, Slow line, summon) are separate owners.
+  register('world/boss/thorn/0', 'world', 'damage');
   Object.freeze(registry);
 
   function validatedLevel(level) {
