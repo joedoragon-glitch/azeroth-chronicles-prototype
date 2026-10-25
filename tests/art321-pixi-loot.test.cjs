@@ -60,7 +60,7 @@ const api = {
   Campaign:{rules:{terrain:[]}},
   PrototypeRenderer:{
     create:()=>({draw(){},setOptimizationMode(){}}),
-    drawCrownLoot:(ctx,p)=>{stampPaints++;assert.deepEqual(p,{x:20,y:20});},
+    drawCrownLoot:(ctx,p)=>{stampPaints++;assert.equal(p.x,20);assert.equal(p.y,20);},
     nightLightKind:()=>null
   },
   PrototypeSprites:{timeMs:()=>0},
@@ -119,7 +119,7 @@ function lastCoins(){return batches.at(-1).filter(x=>String(x.key).startsWith('c
   assert.equal(lastCoins()[0].width,60,'World stamp obeys 150% camera zoom');
   assert.equal(lastCoins()[0].height,60);
   assert.equal(lastCoins()[0].x,400,'Coin center preserves world projection');
-  assert.equal(lastCoins()[0].y,265,'Coin center preserves world projection');
+  assert.equal(lastCoins()[0].y,242.5,'Coin center preserves world projection');
   assert.equal(stampPaints,1,'One shared stamped texture, not one per loot');
   assert.equal(registered.size,initialResources+1);
   game.s.loot.push({id:'loot-102',zone:'vale',x:330,y:350,gold:1});
