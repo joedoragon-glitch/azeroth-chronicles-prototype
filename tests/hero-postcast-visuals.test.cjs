@@ -224,7 +224,10 @@ for (const dt of [1 / 20, 1 / 30, 1 / 60]) {
   for (let i = 0; i < 20 && game.s.projectiles.includes(arrow); i++) {
     game.updateProjectiles(0.05);
   }
-  assert(enemy.hp < hp, 'Archer charged arrow damages on physical contact');
+  assert(enemy.hp < enemy.maxHp, 'Archer charged arrow damages on physical contact');
+  assert(game.effects.some(e =>
+    e.type === 'projectileImpact' && e.source === archer.id && e.landed === true),
+    'the Archer skill requires an actual registered projectile impact');
 }
 {
   const { game, enemy } = arena();
