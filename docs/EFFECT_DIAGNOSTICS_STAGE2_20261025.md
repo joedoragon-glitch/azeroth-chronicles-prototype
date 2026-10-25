@@ -19,7 +19,9 @@ Choose **Save and game management → Export playtest report** to download the s
 
 ## Export schema and caveats
 
-The effect section includes `recording`, `eventsSeen`, selected `receipts` (including `enemyVfx:audioOnly`), `drawDecisions` (FPS gate/adaptive/draw), `identities` (queued, overflowDropped, filtered, expiredWithoutDraw, painted, drawnFrames), `directStateAtDraw`, the bounded `recentDrawFrames` history and scene transitions. Identity keys preserve hero class/slot/charged/stage, pet family/slot/stage and enemy skillId/stage where available.
+The effect section includes `recording`, `eventsSeen`, selected `receipts` (including `enemyVfx:audioOnly`), `drawDecisions` (FPS gate/adaptive/draw), `identities` (queued, overflowDropped, filtered, expiredWithoutDraw, painted, drawnFrames), `directStateAtDraw`, the bounded `recentDrawFrames` scene-state history, 120 most recent `recentCallbacks` with time-aligned existing frame-work/render/simulation durations and transient-queue size, and scene transitions. Identity keys preserve hero class/slot/charged/stage, pet family/slot/stage and enemy skillId/stage where available.
+
+A `recentCallbacks` record is generated after the existing frame timing measurement, only while recording. It includes game time, elapsed callback interval, total frame work, simulation time, render time, whether the draw was issued/FPS-limited/adaptively skipped, recovery mode and transient queue size. This lets an exported slowdown be considered alongside recent effect lifetimes; it does not require extra sampling from regular players.
 
 **Critical:** `painted` means a corresponding painter function was invoked; it does *not* certify alpha pixels, visual prominence or that a player noticed the effect. Live enemy telegraphs/projectiles/motion/hazards/charges are drawn from current game state and must be interpreted separately from short-lived queued effects. Audio-only receipts are not missing visuals.
 
