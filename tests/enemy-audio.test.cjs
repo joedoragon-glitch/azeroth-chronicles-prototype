@@ -402,7 +402,10 @@ function concurrentBirths(enabled, family, form = 'true', captain = false, range
       )
     : c.bossEnemy(c.boss(family), form, { x: 1400, y: 1700 });
   if (captain) Object.assign(e, { captain: true, captainProfile: family, ranged });
-  Object.assign(e, { aggro: true, hp: e.maxHp * 0.4, cd: 100, summonCd: 100, fightStart: 0 });
+  // A 30-second boss encounter must already include real hero participation;
+  // otherwise today's no-progress/return policy can legitimately retire it.
+  Object.assign(e, { aggro: true, hp: e.maxHp * 0.4, cd: 100,
+    summonCd: 100, fightStart: 0, heroParticipated: true });
   c.zone().enemies = [e];
   c.s.time = 30;
   if (captain) c.startCaptainAttack(e, c.hero);
@@ -411,6 +414,15 @@ function concurrentBirths(enabled, family, form = 'true', captain = false, range
   assert(pending && pending.kind !== 'summon');
   const hp = c.hero.hp;
   c.updateEnemies(0.01);
+  if (e.telegraph !== pending)
+    console.error('STAGE3_ENEMY_FIXTURE', JSON.stringify({
+      family, form, captain, ranged, enabled,
+      time: c.s.time, pending: pending?.kind, pendingTimer: pending?.timer,
+      activeTimer: e.telegraph?.timer ?? null, hp: e.hp, aggro: e.aggro,
+      returning: e.returning, noProgress: e.noProgress, heroParticipated: e.heroParticipated,
+      target: c.hero && {x:c.hero.x,y:c.hero.y},
+      enemy: {x:e.x,y:e.y},
+    }));
   assert.equal(
     e.telegraph,
     pending,
