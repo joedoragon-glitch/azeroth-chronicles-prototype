@@ -34,6 +34,8 @@ function scene(type, family = null) {
     hp: 100000, damage: 0, gold: 0, xp: 0,
   }, { x: 550, y: 500 });
   z.enemies = [e];
+  // Controlled unobstructed line of sight; skill eligibility and damage are real.
+  g.line = () => true;
   g.engage(e);
   g.effects = [];
   return { g, u, e };
@@ -42,6 +44,7 @@ let producedPetForms = 0, paintedPetForms = 0, petInkPixels = 0;
 const petKeys = [];
 for (const boss of Campaign.data.bosses) {
   const { g, u, e } = scene('pet', boss.id);
+  assert(g.petSkillTargets(u, e, 1).length, boss.id + ' eligible real first target');
   assert(g.companionUseFirstSkill(u, e), boss.id + ' first actual cast');
   const first = g.effects.splice(0);
   u.skillGlobalCd = 0;
