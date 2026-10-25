@@ -1029,15 +1029,39 @@
               effect: p.effect,
             });
           }
-          // Friendly shots keep their launch direction, just like enemy arrows.
-          // Sweep the whole frame segment so fast beams cannot skip a contact.
+          // Ordinary Mage Skill 1 alone steers gently toward its ORIGINAL
+          // target. Other projectiles and the charged wide corridor stay fixed.
+          if (p.mageSkill1Homing) {
+            const desired = Math.atan2(e.y - p.y, e.x - p.x),
+              current = Math.atan2(p.dy, p.dx),
+              delta = Math.atan2(Math.sin(desired - current), Math.cos(desired - current)),
+              turn = Math.max(-8 * dt, Math.min(8 * dt, delta)),
+              heading = current + turn;
+            p.dx = Math.cos(heading);
+            p.dy = Math.sin(heading);
+          }
+          // Sweep the physical frame segment, including every curved-flight
+          // step, so damage never precedes the actual visible front.
           const flight = R.balance.friendlyProjectiles,
             elapsed = Math.min(dt, p.life ?? flight.lifeSeconds),
             before = { x: p.x, y: p.y },
-            step = p.speed * elapsed;
+            step = Math.min(
+              p.speed * elapsed,
+              p.mageSkill1Homing ? Math.max(0, p.travelBudget - (p.traveled || 0)) : Infinity,
+            );
           p.life = (p.life ?? flight.lifeSeconds) - elapsed;
           p.x += p.dx * step;
           p.y += p.dy * step;
+          if (p.mageSkill1Homing) {
+            p.traveled = (p.traveled || 0) + step;
+            const points = (p.trailPoints ||= [{ x: p.originX, y: p.originY }]),
+              last = points[points.length - 1];
+            if (Math.hypot(p.x - last.x, p.y - last.y) >= 8) {
+              points.push({ x: p.x, y: p.y });
+              // Preserve the caster origin and bound save/rendering work.
+              if (points.length > 64) points.splice(1, points.length - 64);
+            }
+          }
           if (!this.clearSegment(before, p, 0)) {
             if (p.source === 'hero')
               this.event('projectileImpact', {
@@ -1147,7 +1171,10 @@
                 class: this.hero.class,
               });
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
-          } else if (p.life <= 0) {
+          } else if (
+            p.life <= 0 ||
+            (p.mageSkill1Homing && p.traveled >= p.travelBudget)
+          ) {
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
           }
         }
