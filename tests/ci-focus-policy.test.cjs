@@ -121,7 +121,9 @@ for (const [source, expected] of [
     'save',
     ['persistence-safety', 'slow-cooldown', 'beta-historical', 'snapshot-encounter-lifecycle'],
   ],
-  ['navigation', ['navigation-route-stage4', 'crowd-collision-fast-reject']],
+  ['navigation', ['navigation-route-stage4', 'crowd-collision-fast-reject', 'runtime-workload']],
+  ['world', ['runtime-workload']],
+  ['engine', ['runtime-workload', 'night-tempo']],
   [
     'rules',
     [
@@ -143,6 +145,12 @@ for (const [source, expected] of [
 function TEST_PATH(name) {
   return 'tests/' + name + '.test.cjs';
 }
+assert(
+  selectTests(['tests/fixtures/runtime-workload-dev175.json']).tests.includes(
+    TEST_PATH('runtime-workload'),
+  ),
+  'fixture edits must run the preservation comparison',
+);
 assert(
   selectTests(
     ['src/prototype/persistence.js'],

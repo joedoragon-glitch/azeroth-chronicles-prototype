@@ -18,7 +18,9 @@ function restore(source, start, end, original) {
 }
 const legacyTerrain = `                  ? Math.hypot(x - p.x, y - p.y) < p.r + radius`;
 const terrainStart = '                  ? // Reject obstacles far outside the circle';
-const terrainEnd = 'Math.hypot(x - p.x, y - p.y) < p.r + radius)';
+// Accept the locked formatter's optional parentheses around the ternary arm.
+const terrainEnd = /Math\.hypot\(x - p\.x, y - p\.y\) < p\.r \+ radius\)?/.exec(updated)?.[0];
+assert(terrainEnd, 'Terrain distance predicate must be present');
 const legacyScenery = `              if (
                 r === null ||
                 (candidate && R.sceneryTraversal.radii[p.structure] === 0) ||

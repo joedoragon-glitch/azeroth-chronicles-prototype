@@ -86,10 +86,16 @@ const groups = [
   {
     match: /^src\/prototype\/(?:field-onboarding|engine)\.js$|^tests\/helpers\/field-opening\.cjs$/,
     tests: [
+      TEST + 'night-tempo.test.cjs',
       TEST + 'field-onboarding.test.cjs',
       TEST + 'ranged-pet-support.test.cjs',
       TEST + 'enemy-support-healing.test.cjs',
     ],
+  },
+  {
+    match:
+      /^src\/prototype\/(?:engine|world|navigation)\.js$|^tests\/fixtures\/runtime-workload-dev175\.json$/,
+    tests: [TEST + 'runtime-workload.test.cjs'],
   },
   {
     match: /^src\/prototype\/(?:rules|combat)\.js$/,

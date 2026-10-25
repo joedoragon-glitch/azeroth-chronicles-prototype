@@ -1,0 +1,28 @@
+{
+  "baseline": "e4e8234b5f784ddc9492fe79d956fd0a696b12af",
+  "scope": "Local Node synchronous simulation only. Two alternating-order rounds per scene; 30 warmup/90 timed ticks at 60Hz. Not hardware FPS.",
+  "scenes": [
+    {
+      "id": "frontier",
+      "baselineMs": [
+        17.303431744444442,
+        16.841886999999993
+      ],
+      "candidateMs": [
+        10.446585766666663,
+        10.300067899999997
+      ]
+    },
+    {
+      "id": "crown",
+      "baselineMs": [
+        23.022929055555547,
+        22.190485777777777
+      ],
+      "candidateMs": [
+        15.635020511111097,
+        15.349202155555556
+      ]
+    }
+  ]
+}
