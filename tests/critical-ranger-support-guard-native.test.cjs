@@ -96,7 +96,11 @@ for (const level of [1, 2, 3]) {
   archer.healCd = 0;
   g.hero.hp = 200;
   g.hero.supportEffects = [{type: 'health', remaining: 50, seconds: 5}];
-  assert.equal(g.rangerSupport('health', false), false, 'existing HoT denies recast');
+  // Heal may legitimately select another wounded companion. To check the
+  // duplicate/no-roll boundary, every other party recipient must be full.
+  g.s.party.find(u => u.type === 'soldier').hp =
+    g.s.party.find(u => u.type === 'soldier').maxHp;
+  assert.equal(g.rangerSupport('health', false), false, 'all eligible recipients already covered');
   assert.equal(counter.count(), 0);
   g.hero.supportEffects = [];
   g.hero.hp = g.hero.maxHp;
