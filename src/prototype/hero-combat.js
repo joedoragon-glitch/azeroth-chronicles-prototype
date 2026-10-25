@@ -1568,6 +1568,58 @@
                     ? this.distanceToSegment(e, from, end) <= def.halfWidth
                     : false;
           this.engage(target);
+          if (this.hero.class === 'ranger') {
+            // Pinning Volley is a bow volley, not a laser. The original
+            // corridor chooses the same eligible foes, but each selected foe
+            // now receives a real arrow which can only hit after traversing
+            // its physical flight and passing ordinary wall/contact checks.
+            const foes = this.zone()
+              .enemies.filter((e) => e.hp > 0 && !e.neutral && inside(e) && this.line(this.hero, e))
+              .sort((a, b) => this.idOrder(a, b));
+            for (const foe of foes) {
+              const distance = Math.max(1, dist(from, foe));
+              this.s.projectiles.push({
+                id: 'projectile-' + this.s.nextId++,
+                x: from.x,
+                y: from.y,
+                dx: (foe.x - from.x) / distance,
+                dy: (foe.y - from.y) / distance,
+                target: foe.id,
+                damage,
+                source: 'hero',
+                speed: 650,
+                style: 'arrow',
+                slot: 2,
+                charged: true,
+                area: true,
+                slow: Math.max(
+                  def.slow || 0,
+                  R.heroTactics.ranger.volley.slow +
+                    steps * R.heroTactics.ranger.volley.slowStep,
+                ),
+                ...(encountersAtStart ? { encountersAtStart } : {}),
+              });
+            }
+            this.event('chargedArea', {
+              slot,
+              class: 'ranger',
+              actor: 'hero',
+              source: 'hero',
+              effect: def.effect,
+              shape: 'line',
+              projectileVolley: true,
+              x: from.x,
+              y: from.y,
+              fromX: from.x,
+              fromY: from.y,
+              angle,
+              range: def.range || 0,
+              halfWidth: def.halfWidth || 0,
+              hits: 0,
+              arrows: foes.length,
+            });
+            return true;
+          }
           let hits = 0;
           for (const e of this.zone()
             .enemies.filter((e) => e.hp > 0 && !e.neutral && inside(e) && this.line(this.hero, e))
@@ -1943,6 +1995,27 @@
                 this.idOrder(a, b),
             )
             .slice(0, areaLimit)) {
+            if (this.hero.class === 'ranger' && slot === 5) {
+              // Arrow Volley selects its customary targets immediately but
+              // does not deal phantom pre-flight damage. Every real arrow
+              // starts at the bow and uses the ordinary terrain/hit resolver.
+              const d = Math.max(1, dist(this.hero, e));
+              this.s.projectiles.push({
+                id: 'projectile-' + this.s.nextId++,
+                x: this.hero.x,
+                y: this.hero.y,
+                dx: (e.x - this.hero.x) / d,
+                dy: (e.y - this.hero.y) / d,
+                target: e.id,
+                damage: power * 2.3 * scale,
+                source: 'hero',
+                speed: 650,
+                style: 'arrow',
+                slot: 5,
+                area: true,
+              });
+              continue;
+            }
             const landed = this.damage(e, (slot === 7 ? power * 6 : power * 2.3) * scale, 'hero', {
               area: true,
             });
@@ -1957,6 +2030,9 @@
             slot,
             radius: slot === 5 ? 350 : 500,
             contacts,
+            ...(this.hero.class === 'ranger' && slot === 5
+              ? { projectileVolley: true }
+              : {}),
             x: this.hero.x,
             y: this.hero.y,
           });
