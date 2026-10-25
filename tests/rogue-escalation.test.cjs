@@ -8,6 +8,10 @@ function encounter(region = 'vale', roll = 0.25) {
   const z = c.zone();
   z.props = [];
   c.s.time = 30;
+  // These actors are deliberately already fighting; Vale's original
+  // first-hero-hit onboarding must not erase synthetic engagements.
+  c.s.valeFieldAwakened = true;
+  c.s.thornHeroInitiated = true;
   // Main and side dungeons have smaller maps than the Vale field.
   const interior = region !== 'vale';
   const offset = interior ? 850 : 0;
@@ -187,13 +191,117 @@ console.log('PASS original boss-victory condition remains required');
   const { c, a } = encounter();
   assert(c.tacticalRogueMove(a, c.hero));
   assert.equal(a.telegraph.name, 'Gang Boss Smoke Trick');
+  const first = c.s.time;
+  assert.equal(c._tacticalRogueNext.get(a.id), first + 2,
+    'decision timer agrees with the two-second cast floor');
   a.telegraph = null;
-  c.s.time += 1.4;
-  assert(!c.tacticalRogueMove(a, c.hero), 'cannot bypass three-second cast cadence');
-  c.s.time += 1.7;
-  assert(c.tacticalRogueMove(a, c.hero), 'later cast permitted');
+  c.s.time = first + 1.99;
+  assert(!c.tacticalRogueMove(a, c.hero), 'no cast before two seconds, even through a new tactical path');
+  c.s.time = first + 2.01;
+  assert(c.tacticalRogueMove(a, c.hero), 'a new cast is available just after two seconds');
+  assert.equal(c._tacticalRogueNext.get(a.id), c.s.time + 2);
 }
-console.log('PASS Rogue cast-to-cast cadence cannot be bypassed');
+console.log('PASS two-second Rogue cast floor prevents spam without retaining a three-second gate');
+
+{
+  const { c, z, a } = encounter();
+  z.enemies = [a]; // No available nearby or distant support.
+  a.form = 'normal';
+  assert(c.tacticalAutoRogue(a, c.hero), 'isolated defender considers withdrawal');
+  assert.equal(c._tacticalRogueNext.get(a.id), c.s.time + 2);
+  c.s.time += 0.31;
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.31));
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'escape',
+    'no-help decision prioritizes physical withdrawal, not a standing Rogue loop');
+  assert(a.telegraph?.rogueMove, 'eligible Rogue action can cover escape');
+  const firstCast = c.s.time;
+  const moveAway = (actor, destination) => {
+    actor.x += Math.sign(destination.x - actor.x) * 8;
+    return true;
+  };
+  c.move = moveAway;
+  let approachOrders = 0;
+  c.follow = () => { approachOrders++; return false; };
+  const originalX = a.x;
+  assert(!a.returning, 'active synthetic Rogue fixture must not start its escape in returning state');
+  c.s.time += 0.1;
+  c.updateEnemies(0.1);
+  assert(a.x < originalX,
+    'escape continues away from pursuer during warning: ' + JSON.stringify({
+      before: originalX, after: a.x, phase: c.tacticalRogueRegroup(a)?.phase,
+      returning: a.returning, aggro: a.aggro, motion: a.motion?.kind,
+      warning: a.telegraph?.name, heroX: c.hero.x, calls: approachOrders,
+    }));
+  assert.equal(approachOrders, 0,
+    'a covering Rogue cast must never reverse the withdrawal toward the hero');
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'escape');
+  a.telegraph = null; // Simulate a completed legal warning before the next window.
+  c.s.time = firstCast + 1.99;
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.1));
+  assert(!a.telegraph, 'escape cannot cast before the two-second limit');
+  c.s.time = firstCast + 2.01;
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.1));
+  assert(a.telegraph?.rogueMove, 'another covering cast is available while escaping');
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'escape',
+    'repeatable Rogue defense never replaces the escape state');
+}
+console.log('PASS isolated monsters withdraw while optional two-second Rogue cover remains available');
+
+{
+  const { c, z, a, add } = encounter();
+  const far = add(2400, 'normal');
+  z.enemies = [a, far];
+  assert(c.tacticalAutoRogue(a, c.hero));
+  c.s.time += 0.31;
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.31));
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'extended',
+    'living distant defenders take priority over Smoke Trick fallback');
+  assert.equal(c.tacticalRogueRegroup(a).allyId, far.id);
+  assert(!a.telegraph, 'retreat decision does not require a covering cast');
+  assert(!z.enemies.some(u => u.rogueEmergencyReinforcement),
+    'a valid refuge does not need emergency replacements');
+}
+console.log('PASS Ringleader chooses distant occupied refuge before Rogue cast or emergency call');
+
+{
+  const { c, z, a } = encounter();
+  z.enemies = [a];
+  assert(c.tacticalAutoRogue(a, c.hero));
+  c.s.time += 0.31;
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.31));
+  const guards = z.enemies.filter(u => u.rogueEmergencyReinforcement && u.hp > 0);
+  assert(guards.length >= 2, 'unsupported Ringleader calls real reinforcements first');
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'anchored');
+  assert(!a.telegraph?.rogueMove, 'reinforcement precedes a standalone Smoke Trick');
+}
+console.log('PASS isolated Ringleader summons first instead of standing and repeating Smoke Trick');
+
+{
+  const { c, z, a } = encounter();
+  z.enemies = [a];
+  c.tacticalEmergencyCall = () => false; // Every reinforcement attempt is unavailable.
+  assert(c.tacticalAutoRogue(a, c.hero));
+  c.s.time += 0.31;
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.31));
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'escape',
+    'Ringleader with no possible refuge or summon follows finite withdrawal');
+  assert(!z.enemies.some(u => u.rogueEmergencyReinforcement));
+  assert(a.telegraph?.rogueMove && a.telegraph.mobileRogueCast,
+    'Ringleader still has its original mobile defensive Smoke Trick');
+  let inbound = 0;
+  c.follow = () => { inbound++; return true; };
+  c.move = (actor, destination) => {
+    actor.x += Math.sign(destination.x - actor.x) * 9;
+    return true;
+  };
+  const before = a.x;
+  c.s.time += 0.1;
+  c.updateEnemies(0.1);
+  assert(a.x < before, 'Ringleader physically withdraws during Smoke Trick warning');
+  assert.equal(inbound, 0, 'mobile Smoke Trick does not turn escaping Ringleader toward hero');
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'escape');
+}
+console.log('PASS blocked Ringleader reinforcement causes moving, not stationary Smoke Trick fallback');
 
 {
   const { c, z, a } = encounter();
@@ -212,6 +320,258 @@ console.log('PASS retreat reset cleans up emergency reinforcements');
   assert.equal(z.enemies.filter(u => u.rogueEmergencyReinforcement && u.hp > 0).length, 3);
 }
 console.log('PASS the three-defender branch of the 50/50 roll');
+
+
+{
+  // Field elites may seek ORDINARY monsters, not only elite followers. Their
+  // territorial responsibility bounds movement but does not pin them in place.
+  for (const role of ['boss', 'captain']) {
+    const { c, z, a, add } = encounter();
+    z.enemies = [a];
+    if (role === 'boss') { a.type = 'boss'; a.family = 'ridge'; }
+    else { a.captain = true; a.captainProfile = 'supply-vale'; }
+    const ordinary = add(1580, 'normal');
+    z.enemies.push(ordinary);
+    assert(c.tacticalBeginExtendedRetreat(a),
+      role + ' must be able to seek an occupied post held by an ordinary monster');
+    const state = c.tacticalRogueRegroup(a);
+    assert.equal(state.allyId, ordinary.id);
+    assert(c.tacticalRogueLeashAllows(a, c.hero, 700),
+      'moving field elite remains in its live territorial encounter');
+    let destination = null;
+    c.follow = (u, point) => { destination = point; u.x += 10; return true; };
+    const before = a.x;
+    assert(c.tacticalAdvanceExtendedRetreat(a, c.hero, 0.1));
+    assert(a.x > before && destination.x === ordinary.home.x,
+      role + ' makes physical progress toward its ordinary defender');
+    const { c: limited, z: local, a: leader, add: addFar } = encounter();
+    local.enemies = [leader];
+    if (role === 'boss') { leader.type = 'boss'; leader.family = 'ridge'; }
+    else { leader.captain = true; leader.captainProfile = 'supply-vale'; }
+    local.enemies.push(addFar(2300, 'normal'));
+    assert(!limited.tacticalBeginExtendedRetreat(leader),
+      role + ' cannot desert its territory for a distant post');
+  }
+}
+console.log('PASS field bosses and captains recruit ordinary regional defenders without deserting their posts');
+
+{
+  const { c, z, a } = encounter();
+  z.enemies = [a];
+  a.type = 'boss';
+  a.family = 'ridge';
+  const captive = { id: 'cage-ridge', kind: 'cage', family: 'ridge', x: 1050, y: 1300 };
+  z.npcs = [captive];
+  assert.equal(c.tacticalGuardedSpecialist(a), captive,
+    'stationary captive specialist is a valid final-defense objective');
+  assert(c.tacticalAutoRogue(a, c.hero));
+  c.s.time += 0.31;
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.31));
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'guard-captive',
+    'isolated guardian must stand near captive instead of casting in place');
+  assert(!a.telegraph?.rogueMove);
+  let ordered = null;
+  c.follow = (u, point) => { ordered = point; u.x -= 12; return true; };
+  const before = a.x;
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.1));
+  assert(a.x < before && ordered === captive,
+    'the final stand physically travels toward the existing captive NPC');
+  assert(!c.s.rescued.ridge && !c.s.keys.ridge,
+    'regrouping cannot free the specialist or award its skill benefits');
+  assert(!c.combatTargets().includes(captive),
+    'the civilian specialist remains outside combat targets');
+}
+console.log('PASS overwhelmed captive guardians return to existing civilians for their final stand');
+
+{
+  const { c, z, a } = encounter();
+  a.type = 'boss';
+  a.family = 'thorn';
+  z.enemies = [a];
+  z.npcs = [{ id: 'cage-thorn', kind: 'cage', family: 'thorn', x: 1300, y: 1280 }];
+  assert(c.thornCaptiveFollowing(), 'the existing mobile-captive contract is active');
+  assert.equal(c.tacticalGuardedSpecialist(a), null,
+    'mobile specialists retain the existing patrol-follow implementation');
+  assert(c.tacticalAutoRogue(a, c.hero));
+  c.s.time += 0.31;
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.31));
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'defend',
+    'mobile specialist guardians hold their existing combat instead of resetting a captive patrol');
+}
+console.log('PASS mobile captives remain controlled by existing native patrol-follow systems');
+
+{
+  // A level disparity alone may prompt tactical assessment, not endless
+  // escape from every solo hero walking past an otherwise healthy monster.
+  const { c, z, a } = encounter();
+  z.enemies = [a];
+  c.s.party = [];
+  a.form = 'normal';
+  c.hero.level = 30;
+  assert(c.tacticalAutoRogue(a, c.hero));
+  c.s.time += 0.31;
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.31));
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'defend');
+  assert(!a.telegraph, 'outleveling by itself does not start an escape covering cast');
+  const hp = a.hp;
+  for (let i = 0; i < 35; i++) {
+    c.s.time += 0.2;
+    assert.equal(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.2), false,
+      'defensive stance yields to established ordinary fighting');
+  }
+  assert.equal(a.hp, hp);
+  assert(!a.returning, 'repeated reconsideration cannot turn level difference into a reset');
+}
+console.log('PASS healthy monsters do not flee a solo hero solely because of level disparity');
+
+{
+  // Leaders may seek other elites (rare, but valid), subject to a short
+  // local movement budget rather than the entire native leash distance.
+  const { c, z, a, add } = encounter();
+  z.enemies = [a];
+  a.type = 'boss';
+  a.family = 'ridge';
+  const otherBoss = add(1580, 'normal');
+  otherBoss.type = 'boss';
+  otherBoss.family = 'mire';
+  z.enemies.push(otherBoss);
+  assert(c.tacticalBeginExtendedRetreat(a), 'another living boss may be a nearby refuge');
+  assert.equal(c.tacticalRogueRegroup(a).allyId, otherBoss.id);
+  const { c: distant, z: area, a: leader, add: make } = encounter();
+  area.enemies = [leader];
+  leader.type = 'boss';
+  leader.family = 'ridge';
+  area.enemies.push(make(1780, 'normal'));
+  assert(!distant.tacticalBeginExtendedRetreat(leader),
+    'a refuge inside the broad boss leash is still too far for tactical retreat');
+}
+console.log('PASS field leaders may rally other elites but their retreat stays local');
+
+{
+  for (const role of ['boss', 'captain']) {
+    const { c, z, a } = encounter();
+    z.enemies = [a];
+    if (role === 'boss') { a.type = 'boss'; a.family = 'ridge'; }
+    else { a.captain = true; a.captainProfile = 'supply-vale'; }
+    a.hp = a.maxHp * 0.7;
+    const hp = a.hp;
+    assert(c.tacticalAutoRogue(a, c.hero));
+    c.s.time += 0.31;
+    assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.31));
+    assert.equal(c.tacticalRogueRegroup(a).phase, 'defend',
+      role + ' with no allies must fight, not enter finite escape');
+    for (let i = 0; i < 25; i++) {
+      c.s.time += 0.2;
+      assert.equal(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.2), false);
+    }
+    assert.equal(a.hp, hp, role + ' must not heal via a tactical reset');
+    assert(!a.returning && a.aggro, role + ' retains its live encounter');
+    // Even the pre-existing reached-refuge anchor may not time out into an
+    // elite's full-health disengage while the hero stays within native leash.
+    c._tacticalRegroups.set(a.id, {
+      phase: 'anchored', anchor: { x: a.x, y: a.y },
+      holdRemaining: 0.01, moveUsed: true, recruited: true,
+    });
+    c.hero.x = a.x + 400;
+    assert.equal(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.2), false);
+    assert.equal(c.tacticalRogueRegroup(a), null);
+    assert(!a.returning && a.hp === hp,
+      role + ' anchor timeout returns control without resetting its health');
+  }
+}
+console.log('PASS boss and captain no-support/anchor cases never force an encounter reset');
+
+{
+  const { c, z, a } = encounter('crypt');
+  z.enemies = [a];
+  a.type = 'boss';
+  a.family = 'crypt';
+  const farRoomTarget = { ...c.hero, x: a.home.x + 1100, y: a.home.y };
+  assert(c.tacticalRogueLeashAllows(a, farRoomTarget, 1800),
+    'original dungeon boss reach must support this player position');
+  c._tacticalRegroups = new Map([[a.id, {
+    phase: 'defend', anchor: { x: a.x, y: a.y }, holdRemaining: 6,
+  }]]);
+  assert(c.tacticalRogueLeashAllows(a, farRoomTarget, 1800),
+    'new defensive fallback cannot shorten existing dungeon boss leash');
+}
+console.log('PASS the defensive boss stance preserves existing dungeon encounter reach');
+
+{
+  // The cast RELEASE, not merely the warning, must keep withdrawing actors
+  // from closing the gap. Supported counteroffensive dash remains intact.
+  const { c, z, a } = encounter();
+  z.enemies = [a];
+  c.s.party = [];
+  a.form = 'normal';
+  a.species = 'wolf';
+  c.hero.x = a.x + 100;
+  c._tacticalRegroups = new Map([[a.id, {
+    phase: 'escape', anchor: { x: a.x, y: a.y },
+    fleeRemaining: 5, seekDelay: 1, stalled: 0,
+  }]]);
+  assert(c.tacticalRogueMove(a, c.hero, true));
+  assert.equal(a.telegraph.style, 'snare',
+    'wolf retreat substitutes a defensive move for Flanking Snap dash');
+  assert(a.telegraph.defensiveCover);
+  a.telegraph = null;
+  a.type = 'boss';
+  a.family = 'ridge';
+  c.tacticalStopRogueRegroup(a);
+  c.s.time += 2.01;
+  a.rogueBasicTurn = 0;
+  assert(c.tacticalRogueMove(a, c.hero));
+  assert.equal(a.telegraph.style, 'dash', 'the normal counteroffensive dash remains usable');
+  let inbound = 0;
+  const originalMove = c.move.bind(c);
+  c.move = (actor, destination, ...args) => {
+    if (actor === a && destination === c.hero) inbound++;
+    return originalMove(actor, destination, ...args);
+  };
+  const startX = a.x, startY = a.y;
+  c.tacticalResolveRogueMove(a, a.telegraph);
+  assert.equal(inbound, 1, 'supported Rogue dash still attempts its attack at release');
+  // Return to identical legal reach so the second assertion cannot pass just
+  // because the first dash already closed the gap.
+  a.x = startX;
+  a.y = startY;
+  const cover = { ...a.telegraph, defensiveCover: true };
+  inbound = 0;
+  c.tacticalResolveRogueMove(a, cover);
+  assert.equal(inbound, 0, 'a committed covering cast can never dash inward at release');
+}
+console.log('PASS withdrawal covering actions and supported dash releases stay distinct');
+
+{
+  // Exercise the actual world router and follower at a reachable native
+  // Vale position rather than treating every straight line as a legal path.
+  const { c, z, a, add } = encounter();
+  c.route = Campaign.prototype.route.bind(c);
+  c.follow = Campaign.prototype.follow.bind(c);
+  z.enemies = [a];
+  let chosen = null;
+  for (const x of [1560, 1600, 1620, 1540]) {
+    const occupant = add(x, 'normal');
+    z.enemies = [a, occupant];
+    c._tacticalExtendedSearchAfter?.delete(a.id);
+    if (c.tacticalBeginExtendedRetreat(a)) {
+      chosen = occupant;
+      break;
+    }
+  }
+  assert(chosen, 'at least one occupied local post must have a native route');
+  const start = Math.hypot(a.x - chosen.home.x, a.y - chosen.home.y);
+  for (let i = 0; i < 8; i++) {
+    c.s.time += 0.1;
+    c.tacticalAdvanceExtendedRetreat(a, c.hero, 0.1);
+  }
+  assert(Math.hypot(a.x - chosen.home.x, a.y - chosen.home.y) < start,
+    'native follower physically approaches the occupied post');
+  assert(!a.returning, 'native reposition remains part of the same fight');
+}
+console.log('PASS extended refuge makes real navigation progress without disengaging');
+
+
 
 {
   const sideId = Campaign.rules.sideDungeons[0].id;
