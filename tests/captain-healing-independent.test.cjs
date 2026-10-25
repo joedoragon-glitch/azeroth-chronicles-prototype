@@ -194,6 +194,30 @@ function elapsed(g, dt) {
   near(direjaw.hp, direjaw.maxHp, 'one-time 50%-of-max recovery remains intact');
   assert(!g.triggerCaptainPhase(direjaw), 'phase self-recovery cannot repeat');
 }
+// Keep boss restoration on its established combat-only baseline even when
+// the source is a healing-skilled captain. Idle eligibility is for ordinary
+// allies and captain recipients, not an accidental boss-support upgrade.
+{
+  const { g, actor } = scene();
+  const healer = actor('goblin', 300, {
+    captain: true, roomCaptain: true, captainProfile: 'supply-vale',
+  });
+  const boss = actor('wolf', 330, {
+    type: 'boss', family: 'test-boss-only', hp: 700, aggro: false,
+  });
+  assert(g.enemySupportHeal(healer), 'captain may still apply baseline boss support');
+  near(boss.supportHeal.remaining,
+    boss.maxHp * rules.fraction * g.enemyHealMultiplier(healer),
+    'boss support budget stays at its original scaled five-percent limit');
+  near(boss.supportHeal.seconds, rules.duration, 'boss duration is unchanged');
+  assert.equal(boss.supportHeal.allowIdle, false,
+    'captain-origin boss support must not gain idle continuity');
+  const before = boss.hp;
+  g.advanceEnemySupportHeal(boss, 1);
+  near(boss.hp, before, 'idle boss must not gain health from this pulse');
+  assert(!boss.supportHeal, 'combat-only boss pulse cancels while idle');
+}
+
 const expected = [
   ['supply-vale', 3],
   ['supply-march', 3],
