@@ -1921,12 +1921,15 @@
                 this.idOrder(a, b),
             )
             .slice(0, areaLimit)) {
-            const landed = this.damage(e, (slot === 7 ? power * 6 : power * 2.3) * scale, 'hero', {
+            const landed = this.damage(e, this.criticalHeroValue(
+              this.hero.class !== 'mage' ? criticalReceipt : null,
+              (slot === 7 ? power * 6 : power * 2.3) * scale, 'damage',
+            ), 'hero', {
               area: true,
             });
             if (landed) contacts.push({ x: e.x, y: e.y, target: e.id });
             if (landed && this.hero.class === 'mage' && slot === 5 && e.hp > 0)
-              this.shieldPush(e, 30 + steps * 3);
+              this.shieldPush(e, this.criticalHeroValue(criticalReceipt, 30 + steps * 3, 'pushDistance'));
           }
           this.event('spell', {
             actor: 'hero',
@@ -1949,9 +1952,12 @@
                     : power * 10) * scale,
             comboState = slot === 1 ? this.nextBasicCombo(target.id) : null,
             combo = comboState?.step || 0,
-            criticalBasicDamage = slot === 1 && criticalReceipt?.critical
-              ? this._criticalPartyNative.enhance(criticalReceipt, baseDmg, 'damage')
-              : baseDmg,
+            criticalBasicDamage =
+              (slot === 1 ||
+                (this.hero.class === 'paladin' && slot === 6) ||
+                (this.hero.class === 'ranger' && slot === 7)) && criticalReceipt?.critical
+                ? this._criticalPartyNative.enhance(criticalReceipt, baseDmg, 'damage')
+                : baseDmg,
             dmg = criticalBasicDamage * (comboState?.multiplier || 1);
           if (this.hero.class === 'paladin') {
             const landed = this.damage(
@@ -1961,7 +1967,7 @@
               automatic ? { automaticBasic: true } : null,
             );
             if (landed) {
-              if (slot === 2) this.weakenEnemy(target, rank);
+              if (slot === 2) this.weakenEnemy(target, rank, criticalReceipt);
               this.event('melee', {
                 actor: 'hero',
                 class: 'paladin',
@@ -2015,7 +2021,9 @@
                 style: this.hero.class === 'ranger' ? 'arrow' : 'magic',
                 slot,
                 ...(this.hero.class === 'ranger' && slot === 7 ? { piercing: true } : {}),
-                ...(this.hero.class === 'ranger' && slot === 6 ? { push: 45 + 5 * steps } : {}),
+                ...(this.hero.class === 'ranger' && slot === 6
+                  ? { push: this.criticalHeroValue(criticalReceipt, 45 + 5 * steps, 'pushDistance') }
+                  : {}),
                 effect:
                   this.hero.class === 'mage' && slot === 2
                     ? 'frost'
@@ -2028,10 +2036,14 @@
                 slow:
                   this.hero.class === 'mage' && [2, 6].includes(slot)
                     ? slot === 2
-                      ? 2 + steps * 0.05
-                      : 2
+                      ? this.criticalHeroValue(criticalReceipt, 2 + steps * 0.05, 'slowDuration')
+                      : this.criticalHeroValue(criticalReceipt, 2, 'slowDuration')
                     : this.hero.class === 'ranger' && slot === 2
-                      ? R.heroTactics.ranger.pin.slow + steps * R.heroTactics.ranger.pin.slowStep
+                      ? this.criticalHeroValue(
+                          criticalReceipt,
+                          R.heroTactics.ranger.pin.slow + steps * R.heroTactics.ranger.pin.slowStep,
+                          'slowDuration',
+                        )
                       : 0,
                 ...(slot === 1 && combo === 3
                   ? {
