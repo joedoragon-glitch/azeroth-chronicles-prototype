@@ -114,6 +114,8 @@
   register('world/captain/supply-march/1', 'world', 'damage');
   register('world/captain/supply-highlands/2', 'world', 'damage');
   register('world/captain/frontier-overseer/0', 'world', 'damage');
+  // Scornfang's 4-shot tracking salvo is one original activation.
+  register('world/captain/supply-vale/3', 'world', 'damage');
   Object.freeze(registry);
 
   function validatedLevel(level) {

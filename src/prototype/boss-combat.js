@@ -2410,6 +2410,20 @@
             e.sequence = [];
             return;
           }
+          // Cradle-to-Grave Tracking is ONE committed four-shot activation.
+          // First shot owns the single World roll; queued warnings/shots and
+          // actual projectile impacts inherit the frozen same-level receipt.
+          // If the target dies before the first shot, nothing is released.
+          if (a.shotNumber === 1 && !a.criticalExecution) {
+            const receipt = this.worldCriticalAction(e, 'world/captain/supply-vale/3');
+            if (receipt) {
+              a.criticalExecution = receipt;
+              for (const next of e.sequence || [])
+                if (next.tracking && next.captainSkill &&
+                    next.captainProfile === 'supply-vale' && next.index === 3)
+                  next.criticalExecution = receipt;
+            }
+          }
           this.s.projectiles.push({
             id: 'projectile-' + this.s.nextId++,
             x: e.x,
@@ -2418,7 +2432,10 @@
             dy: Math.sin(a.angle),
             speed: a.shotSpeed,
             life: a.shotLife,
-            damage: this.weakenedEnemyDamage(e) * a.coefficient,
+            damage: this.worldCriticalDamage(
+              a.criticalExecution, this.weakenedEnemyDamage(e) * a.coefficient,
+            ),
+            ...(a.criticalExecution ? { criticalExecution: a.criticalExecution } : {}),
             source: 'enemy',
             sourceId: e.id,
             species: e.species,
