@@ -9,6 +9,12 @@
       tacticMilestones(rank) {
         return Math.floor(Math.max(1, rank || 1) / 2);
       }
+      // Opt-in action-specific critical enhancement; unchanged OFF mechanics.
+      criticalHeroValue(receipt, original, lever, bounds) {
+        return receipt?.critical
+          ? this._criticalPartyNative.enhance(receipt, original, lever, bounds)
+          : original;
+      }
       mageSilenceActive(unit) {
         const field = this.hero.silenceField;
         return (
@@ -18,13 +24,13 @@
           dist(unit, field) <= field.radius
         );
       }
-      weakenEnemy(e, rank) {
+      weakenEnemy(e, rank, criticalReceipt = null) {
         const cfg = R.heroTactics.paladin.weaken,
           steps = this.tacticMilestones(rank);
         const stillWeakened = (e.weakenUntil || 0) > this.s.time;
         e.weakenUntil = Math.max(
           stillWeakened ? e.weakenUntil : 0,
-          this.s.time + cfg.duration + steps * cfg.durationStep,
+          this.s.time + this.criticalHeroValue(criticalReceipt, cfg.duration + steps * cfg.durationStep, 'weakenDuration'),
         );
         e.weakenFraction = Math.max(
           stillWeakened ? e.weakenFraction || 0 : 0,
@@ -89,7 +95,7 @@
           .sort((a, b) => dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b));
         return targets.find((e) => e.id === selected?.id) || targets[0] || null;
       }
-      interruptEnemyAction(enemy, action) {
+      interruptEnemyAction(enemy, action, criticalReceipt = null) {
         const cfg = R.heroTactics.mage.interrupt;
         if (!enemy.telegraph && !enemy.rangedAim) return false;
         if (action && enemy.telegraph !== action && enemy.rangedAim !== action) return false;
@@ -109,12 +115,13 @@
                 : { family: enemy.family },
             );
           } else {
-            enemy.cd = Math.max(enemy.cd || 0, cfg.enemyRecovery);
-            enemy.specialCd = Math.max(enemy.specialCd || 0, cfg.enemyRecovery);
+            const recovery = this.criticalHeroValue(criticalReceipt, cfg.enemyRecovery, 'cooldownDebt');
+            enemy.cd = Math.max(enemy.cd || 0, recovery);
+            enemy.specialCd = Math.max(enemy.specialCd || 0, recovery);
           }
         } else if (enemy.rangedAim) {
           enemy.rangedAim = null;
-          enemy.cd = Math.max(enemy.cd || 0, cfg.enemyRecovery);
+          enemy.cd = Math.max(enemy.cd || 0, this.criticalHeroValue(criticalReceipt, cfg.enemyRecovery, 'cooldownDebt'));
         }
         return true;
       }
@@ -149,7 +156,7 @@
       }
       // Ranger ultimates distribute real arrows across a bounded number of
       // enemies rather than recreating the former shared immunity attack.
-      launchHuntArrow(enemy, damage, charged = false, delay = 0, receipt = null) {
+      launchHuntArrow(enemy, damage, charged = false, delay = 0, receipt = null, criticalReceipt = null) {
         const hero = this.hero,
           distance = Math.max(1, dist(hero, enemy));
         this.s.projectiles.push({
@@ -162,6 +169,7 @@
           damage,
           source: 'hero',
           slot: 8,
+          ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
           style: 'arrow',
           speed: 650,
           delay,
@@ -197,7 +205,7 @@
             .sort((a, b) => dist(a, target) - dist(b, target) || this.idOrder(a, b)),
         ].slice(0, count);
       }
-      castMageChain(target, scale, steps, power, charged = false, receipt = null) {
+      castMageChain(target, scale, steps, power, charged = false, receipt = null, criticalReceipt = null) {
         if (!target) return false;
         const cfg = charged ? R.classUltimates.mage.chargedChain : R.classUltimates.mage.chain;
         const radius = cfg.radius + (cfg.radiusStep || 0) * steps;
@@ -212,7 +220,7 @@
                 ? cfg.secondaryDamage
                 : cfg.tertiaryDamage || cfg.extraDamage;
           if (
-            this.damage(enemy, power * coefficient * scale, 'hero', {
+            this.damage(enemy, this.criticalHeroValue(criticalReceipt, power * coefficient * scale, 'damage'), 'hero', {
               area: true,
               ...(receipt ? { encountersAtStart: receipt } : {}),
             })
@@ -252,7 +260,7 @@
           });
         return true;
       }
-      castHeroUltimate(target, scale, steps, power, charged = false, receipt = null) {
+      castHeroUltimate(target, scale, steps, power, charged = false, receipt = null, criticalReceipt = null) {
         const hero = this.hero;
         const cfg = R.classUltimates[hero.class][charged ? 'charged' : 'normal'];
         const radius = cfg.radius + (cfg.radiusStep || 0) * steps;
@@ -305,7 +313,7 @@
                   ? cfg.primaryDamage
                   : cfg.splashDamage;
             if (
-              !this.damage(foe, power * coefficient * scale, 'hero', {
+              !this.damage(foe, this.criticalHeroValue(hero.class === 'mage' && !charged ? criticalReceipt : null, power * coefficient * scale, 'damage'), 'hero', {
                 area: true,
                 ...(receipt ? { encountersAtStart: receipt } : {}),
               })
@@ -322,7 +330,7 @@
             hits++;
           }
           if (hero.class === 'paladin') {
-            hero.hp = Math.min(hero.maxHp, hero.hp + hero.maxHp * cfg.heal);
+            hero.hp = Math.min(hero.maxHp, hero.hp + this.criticalHeroValue(charged ? null : criticalReceipt, hero.maxHp * cfg.heal, 'healAmount'));
             const living = [
               hero,
               ...this.activeLivingParty().filter(
@@ -330,7 +338,7 @@
               ),
             ];
             for (const ally of living) {
-              const until = this.s.time + cfg.wardDuration + cfg.wardStep * steps;
+              const until = this.s.time + this.criticalHeroValue(charged ? criticalReceipt : null, cfg.wardDuration + cfg.wardStep * steps, 'wardDuration');
               const stillActive = (ally.wardUntil || 0) > this.s.time;
               ally.wardUntil = Math.max(ally.wardUntil || 0, until);
               ally.wardReduction = Math.max(
@@ -380,7 +388,7 @@
           });
         return true;
       }
-      castChargedAdvanced(slot, target, rank, scale, steps, power, encountersAtStart) {
+      castChargedAdvanced(slot, target, rank, scale, steps, power, encountersAtStart, criticalReceipt = null) {
         const cfg = R.advancedCharges?.[slot]?.[this.hero.class];
         if (!cfg) return false;
         const hero = this.hero;
@@ -446,6 +454,7 @@
             speed: style === 'beam' ? 1000 : 620,
             style,
             charged: true,
+            ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             ...(style === 'beam' ? { originX: hero.x, originY: hero.y } : {}),
             ...(encountersAtStart ? { encountersAtStart } : {}),
             ...extra,
@@ -536,7 +545,7 @@
         }
         if (slot === 7) {
           if (hero.class === 'mage')
-            return this.castMageChain(target, scale, steps, power, true, encountersAtStart);
+            return this.castMageChain(target, scale, steps, power, true, encountersAtStart, criticalReceipt);
           if (hero.class === 'ranger') {
             launch(target, power * cfg.damage * scale, 'arrow', {
               piercing: true,
@@ -554,7 +563,7 @@
           return true;
         }
         if (slot === 8)
-          return this.castHeroUltimate(target, scale, steps, power, true, encountersAtStart);
+          return this.castHeroUltimate(target, scale, steps, power, true, encountersAtStart, criticalReceipt);
         return false;
       }
       nextBasicCombo(targetId) {
@@ -1255,11 +1264,11 @@
         // No hook exists in production until an explicit, tested session is
         // attached; queued/cancelled attempts return before this commitment.
         const criticalReceipt =
-          slot === 1 && this._criticalPartyNative
+          slot >= 1 && slot <= 8 && this._criticalPartyNative
             ? this._criticalPartyNative.release(
                 this,
                 'hero/' + this.hero.class + '/' +
-                  (automatic ? 'auto' : isCharged ? '1-charged' : '1-tap'),
+                  (automatic ? 'auto' : slot + (isCharged ? '-charged' : '-tap')),
                 'hero',
               )
             : null;
@@ -1279,9 +1288,9 @@
           targetY: target?.y,
           rank,
         });
-        if (!isCharged && slot === 8) return this.castHeroUltimate(target, scale, steps, power);
+        if (!isCharged && slot === 8) return this.castHeroUltimate(target, scale, steps, power, false, null, criticalReceipt);
         if (!isCharged && slot === 7 && this.hero.class === 'mage')
-          return this.castMageChain(target, scale, steps, power);
+          return this.castMageChain(target, scale, steps, power, false, null, criticalReceipt);
         if (isCharged && slot >= 5 && slot <= 8)
           return this.castChargedAdvanced(
             slot,
@@ -1291,6 +1300,7 @@
             steps,
             power,
             encountersAtStart,
+            criticalReceipt,
           );
         if (!isCharged && slot === 1 && !automatic) {
           const d = Math.max(1, dist(this.hero, target)),
