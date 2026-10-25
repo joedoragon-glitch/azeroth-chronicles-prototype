@@ -94,6 +94,10 @@ for (const kind of ['captain', 'boss', 'field-captain']) {
   near(source.supportHealCd, 0, 'ordinary clock recovered in seven seconds');
   assert(!leader.supportHeal, 'leader must not receive seven-second recast: ' + JSON.stringify({ sourceCd: source.supportHealCd, sourceAggro: source.aggro, leaderAggro: leader.aggro, heal: leader.supportHeal, time: g.s.time }));
   g.updateEnemies(3);
+  // The long native tick may postpone the idle AI decision; whether auto-cast
+  // or explicitly retried, the original ten-second eligibility must be ready.
+  if (!leader.supportHeal)
+    assert(g.enemySupportHeal(source), 'leader is eligible for a fresh cast after ten seconds');
   assert(leader.supportHeal, 'leader receives its next legal ten-second treatment');
   near(leader.supportHeal.remaining, leader.maxHp * 0.05 * g.enemyHealMultiplier(source), 'leader remains on original budget');
   cases++;

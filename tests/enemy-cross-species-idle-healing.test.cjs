@@ -64,7 +64,7 @@ for (const [healerAggro, targetAggro] of [[false, false], [false, true], [true, 
   const ally = mob('skeleton', 330, { hp: 990 });
   step();
   assert(ally.supportHeal, 'ordinary cross-species triage does not require severe injury');
-  near(ally.supportHeal.remaining, 10, 'only missing HP is budgeted');
+  near(ally.supportHeal.remaining + ally.hp - 990, 10, 'cast budget accounts for first real healing pulse');
   cases++;
 }
 {
