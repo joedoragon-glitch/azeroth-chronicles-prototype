@@ -475,7 +475,7 @@
     // The Adventure → Hero Skills menu is the primary quick reference.
     const skills = {
       paladin: {
-        1: 'I learned to handle my sword before these specialists were freed. Ordinary blows flow automatically; tap Radiant Strike for a focused holy shot, or hold Radiant Cross for two cross-shaped pulses. Both techniques improve with the same rank.',
+        1: 'You learned to handle your sword before these specialists were freed. Ordinary blows flow automatically; tap Radiant Strike for a focused holy shot, or hold Radiant Cross for two cross-shaped pulses. Both techniques improve with the same rank.',
         2: 'Tap Sundering Strike: hit and weaken one enemy. Charge Holy Cleave: weaken a frontal group.',
         3: 'Tap Shield Stance: guard for 8s; basic attacks stop and other damage drops. Tap again to lower. Charge Shield Bash: push nearby enemies.',
         4: 'Tap Judgment: a dodgeable holy shot strikes and taunts one foe. Charge Grand Judgment: hit and taunt a group. Boss specials keep their own targets.',
@@ -976,7 +976,7 @@
     'Rapid Arrows / Hawk Interception': 'Flechas rápidas / Intercepción del halcón',
     'Automatic attacks build a same-target three-hit combo and finishing splash. Tap is an immediate focused attack. Charging uses the longer class technique, but Tap returns after its shorter cooldown; using Tap never extends Charged.':
       'Los ataques automáticos forman un combo de tres golpes al mismo objetivo y daño de área final. Tocar ejecuta una técnica inmediata. La versión cargada tiene una recuperación más larga, pero la normal vuelve antes y usarla no retrasa la cargada.',
-    'I learned to handle my sword before these specialists were freed. Ordinary blows flow automatically; tap Radiant Strike for a focused holy shot, or hold Radiant Cross for two cross-shaped pulses. Both techniques improve with the same rank.':
+    'You learned to handle your sword before these specialists were freed. Ordinary blows flow automatically; tap Radiant Strike for a focused holy shot, or hold Radiant Cross for two cross-shaped pulses. Both techniques improve with the same rank.':
       'Aprendiste a manejar la espada antes de rescatar a estos especialistas. Los golpes básicos son automáticos; toca Golpe radiante para un disparo sagrado o mantén Cruz radiante para dos pulsos en forma de cruz. Ambas técnicas mejoran con el mismo rango.',
     'I see you already know the fundamentals of arcane combat. Your automatic attacks form a three-beat sequence; tap Arcane Beam to focus on one enemy, or hold Wide Arcane Beam to strike every foe along a broad, obstacle-limited line.':
       'Veo que ya conoces los fundamentos del combate arcano. Los ataques automáticos forman una secuencia de tres golpes; toca Rayo arcano para concentrarte en un enemigo o mantén Rayo arcano amplio para alcanzar a todos los enemigos en una línea ancha limitada por obstáculos.',
