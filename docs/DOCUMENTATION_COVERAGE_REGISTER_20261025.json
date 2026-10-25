@@ -183,7 +183,7 @@
     },
     {
       "path": "AGENTS.md",
-      "gitBlobSha": "0ac36265ae6c97ee4c50688a10c461db6e739d98",
+      "gitBlobSha": "98e6d2311ac78561972ddf55564c6546b6d27cc3",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1259,7 +1259,7 @@
     },
     {
       "path": "docs/DEVELOPMENT_STATE.md",
-      "gitBlobSha": "6937e63cb40a745aba928c60e379c296ef804aa7",
+      "gitBlobSha": "e7643a28c75eb33e0b2a481f65f2f458fc27884d",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1303,7 +1303,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_COVERAGE_NOTES_20261025.md",
-      "gitBlobSha": "6accd59a4200ac8f1d9320dedec74b5b62aac73b",
+      "gitBlobSha": "dad2f0ff6938492c7133f041d9879df22ba360d2",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -1314,7 +1314,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "961034bcc6c63e471240041676aca8bb3913ee66",
+      "gitBlobSha": "6777828d513cae4708017e98b5404acb9bbdaa9e",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -4059,7 +4059,7 @@
     },
     {
       "path": "README.md",
-      "gitBlobSha": "7ad18fd02400cbd9b81913c566bfc6bac8a04e19",
+      "gitBlobSha": "4e0ca0dbf470e2f8d98a6ae05f89c8801e6b55c0",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
