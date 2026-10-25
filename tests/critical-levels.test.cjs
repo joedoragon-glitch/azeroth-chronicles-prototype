@@ -70,7 +70,7 @@ assert.equal(tuning.effectFor('pet/crypt/1','companion').lever,'healAmount');
 assert.equal(tuning.effectFor('hero/ranger/1-charged','hero').lever,'damage');
 assert.equal(tuning.effectFor('hero/paladin/3-tap','hero').lever,'wardDuration');
 assert.equal(tuning.effectFor('troop/archer/heal','companion').lever,'healAmount');
-assert.equal(tuning.effectFor('troop/archer/first','companion').lever,'slowDuration');
+assert.equal(tuning.effectFor('troop/archer/first','companion').lever,'damage');
 for (const [lever, rule] of Object.entries(Levels.LEVERS)) {
   assert.equal(rule.values.length, 3, lever);
   assert(rule.values[0] < rule.values[1] && rule.values[1] < rule.values[2], lever);
