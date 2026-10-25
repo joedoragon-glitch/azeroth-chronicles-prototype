@@ -4618,7 +4618,7 @@
       return this._tacticalRegroups?.get(e?.id) || null;
     }
     hawkRetreatLocked(e, family) {
-      return (this._hawkRetreatLocks?.get(e?.id)?.[family] || 0) > this.s.time;
+      return (this._hawkRetreatLocks?.get(this.zoneId + ':' + e?.id)?.[family] || 0) > this.s.time;
     }
     hawkRetreatKind(e) {
       if (!e || e.hp <= 0 || !e.aggro || e.returning || this.attackResetProtected(e))
@@ -4626,16 +4626,17 @@
       const regroup = this.tacticalRogueRegroup(e);
       if (regroup && ['thinking','travel','escape'].includes(regroup.phase)) return 'regroup';
       if (e.telegraph?.rogueMove && e.telegraph.style === 'withdraw') return 'withdraw';
-      if (e._hawkBackpedalAt === this.s.time) return 'backpedal';
+      if (this._hawkBackpedalAt?.get(this.zoneId + ':' + e.id) === this.s.time) return 'backpedal';
       if (e.rangedAim?.withdrawal || e.telegraph?.withdrawal) return 'backpedal';
       return null;
     }
     hawkInterruptRetreat(e, family, seconds) {
       if (!family || !this.hawkRetreatKind(e)) return false;
       if (!this._hawkRetreatLocks) this._hawkRetreatLocks = new Map();
-      const current = this._hawkRetreatLocks.get(e.id) || {};
+      const key = this.zoneId + ':' + e.id;
+      const current = this._hawkRetreatLocks.get(key) || {};
       current[family] = Math.max(current[family] || 0, this.s.time + seconds);
-      this._hawkRetreatLocks.set(e.id,current);
+      this._hawkRetreatLocks.set(key,current);
       if (family === 'regroup') {
         // Keep combat and a local temporary leash rather than resetting home.
         this._tacticalRegroups ||= new Map();
@@ -4645,10 +4646,9 @@
         e.path = []; e.routeAge = 0; e.noProgress = 0;
       } else if (family === 'withdraw') {
         // A warned attack remains committed: suppress only its retreat motion.
-        e._hawkWithdrawSuppressedUntil = this.s.time + seconds;
         e.path = []; e.routeAge = 0;
       } else if (family === 'backpedal') {
-        e._hawkBackpedalAt = -1;
+        this._hawkBackpedalAt?.delete(key);
         if (e.rangedAim) e.rangedAim.withdrawal = false;
         if (e.telegraph?.withdrawal) e.telegraph.withdrawal = false;
       }
