@@ -4,6 +4,17 @@
   function install(Campaign, { D, R }) {
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     class PartyPets {
+      // Action-owner-only opt-in roll. Never sample on frame, target, impact or tick.
+      petCriticalRelease(u, slot) {
+        const session = this._criticalPartyNative;
+        if (!session?.enabled || u?.type !== 'pet') return null;
+        return session.release(this, 'pet/' + u.petFamily + '/' + slot, u.id);
+      }
+      petCriticalConsequence(receipt, amount, lever) {
+        return receipt?.critical && receipt.effect?.lever === lever
+          ? this._criticalPartyNative.enhance(receipt, amount, lever)
+          : amount;
+      }
       petDefinition(unitOrFamily) {
         const family = typeof unitOrFamily === 'string' ? unitOrFamily : unitOrFamily?.petFamily;
         return D.bosses.some((b) => b.id === family) && Object.hasOwn(R.petCompanions, family)
@@ -183,6 +194,7 @@
           !targets.length
         )
           return false;
+        const criticalReceipt = this.petCriticalRelease(u, String(slot));
         const projectile = this.petDefinition(u).role === 'ranged' && def.shape === 'target';
         let hits = 0;
         if (projectile) {
@@ -197,10 +209,15 @@
             source: u.id,
             style: 'pet',
             petFamily: u.petFamily,
-            damage: this.companionAttackDamage(u) * def.multiplier,
+            damage: this.petCriticalConsequence(
+              criticalReceipt,
+              this.companionAttackDamage(u) * def.multiplier,
+              'damage',
+            ),
             speed: R.balance.friendlyProjectiles.skillSpeed,
-            slow: def.slow || 0,
+            slow: this.petCriticalConsequence(criticalReceipt, def.slow || 0, 'slowDuration'),
             petSkillSlot: slot,
+            ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
           });
           this.event('projectileLaunch', {
             actor: 'companion',
@@ -217,13 +234,24 @@
             const woundedBonus =
               def.woundedBonus && e.hp / e.maxHp <= def.woundedThreshold ? 1 + def.woundedBonus : 1;
             if (
-              !this.damage(e, this.companionAttackDamage(u) * def.multiplier * woundedBonus, u.id, {
-                area: def.shape !== 'target',
-              })
+              !this.damage(
+                e,
+                this.petCriticalConsequence(
+                  criticalReceipt,
+                  this.companionAttackDamage(u) * def.multiplier * woundedBonus,
+                  'damage',
+                ),
+                u.id,
+                { area: def.shape !== 'target' },
+              )
             )
               continue;
             hits++;
-            if (def.slow) this.applySlow(e, def.slow);
+            if (def.slow)
+              this.applySlow(
+                e,
+                this.petCriticalConsequence(criticalReceipt, def.slow, 'slowDuration'),
+              );
           }
         }
         if (!projectile && !hits) return false;
@@ -234,14 +262,17 @@
         u.skillGlobalCd = R.companionSkills.globalCooldown;
         u.cd = Math.max(u.cd, 0.5);
         this.petSkillEvent(u, target, slot, 0, 'release');
-        if (!projectile) this.petSkillContact(u, target, slot, hits);
+        if (!projectile) this.petSkillContact(u, target, slot, hits, criticalReceipt);
         return true;
       }
-      petSkillContact(u, target, slot, hits = 1) {
+      petSkillContact(u, target, slot, hits = 1, criticalReceipt = null) {
         const def = this.petSkillDefinition(u, slot);
         if (!def || u.hp <= 0 || u.active === false) return false;
         if (u.hp > 0 && def.heal) {
-          u.hp = Math.min(u.maxHp, u.hp + u.maxHp * def.heal);
+          u.hp = Math.min(
+            u.maxHp,
+            u.hp + this.petCriticalConsequence(criticalReceipt, u.maxHp * def.heal, 'healAmount'),
+          );
           this.event('heal', { x: u.x, y: u.y, target: u.id, resource: 'health' });
         }
         if (def.allyHeal) {
@@ -258,7 +289,11 @@
           if (ally) {
             // One ally per contact, based on the pet's HP rather than the
             // recipient's pool; large hero HP cannot inflate the heal.
-            ally.hp = Math.min(ally.maxHp, ally.hp + u.maxHp * def.allyHeal);
+            ally.hp = Math.min(
+              ally.maxHp,
+              ally.hp +
+                this.petCriticalConsequence(criticalReceipt, u.maxHp * def.allyHeal, 'healAmount'),
+            );
             this.event('heal', {
               x: ally.x,
               y: ally.y,
@@ -272,7 +307,8 @@
         if (u.hp > 0 && def.ward) {
           // Self-only, strongest ward wins; never stacks with Paladin protection.
           if ((u.wardUntil || 0) <= this.s.time || (u.wardReduction || 0) <= def.ward) {
-            u.wardUntil = this.s.time + def.duration;
+            u.wardUntil =
+              this.s.time + this.petCriticalConsequence(criticalReceipt, def.duration, 'wardDuration');
             u.wardReduction = def.ward;
           }
         }
@@ -356,6 +392,7 @@
         const distance = dist(u, target);
         if (distance > (ranged ? R.balance.companions.petBasicRange : 70) || !this.line(u, target))
           return false;
+        const criticalReceipt = this.petCriticalRelease(u, 'basic');
         u.cd = R.balance.companions.petBasicInterval / this.companionRallyAttackSpeed(u);
         if (ranged) {
           this.s.projectiles.push({
@@ -365,11 +402,16 @@
             dx: (target.x - u.x) / Math.max(1, distance),
             dy: (target.y - u.y) / Math.max(1, distance),
             target: target.id,
-            damage: this.companionAttackDamage(u),
+            damage: this.petCriticalConsequence(
+              criticalReceipt,
+              this.companionAttackDamage(u),
+              'damage',
+            ),
             source: u.id,
             speed: 450,
             style: 'pet',
             petFamily: u.petFamily,
+            ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
           });
           this.event('projectileLaunch', {
             actor: 'companion',
@@ -380,7 +422,13 @@
             y: u.y,
             target: target.id,
           });
-        } else if (this.damage(target, this.companionAttackDamage(u), u.id)) {
+        } else if (
+          this.damage(
+            target,
+            this.petCriticalConsequence(criticalReceipt, this.companionAttackDamage(u), 'damage'),
+            u.id,
+          )
+        ) {
           this.event('melee', {
             actor: 'companion',
             role: 'pet',
@@ -458,6 +506,7 @@
         if (attackDistance > (ranged ? cfg.petBasicRange : 70) || !this.line(u, target)) return;
         if (this.companionTrySkill(u, target)) return;
         if (u.cd > 0) return;
+        const criticalReceipt = this.petCriticalRelease(u, 'basic');
         u.cd = R.balance.companions.petBasicInterval / this.companionRallyAttackSpeed(u);
         if (ranged) {
           this.s.projectiles.push({
@@ -467,11 +516,16 @@
             dx: (target.x - u.x) / Math.max(1, attackDistance),
             dy: (target.y - u.y) / Math.max(1, attackDistance),
             target: target.id,
-            damage: this.companionAttackDamage(u),
+            damage: this.petCriticalConsequence(
+              criticalReceipt,
+              this.companionAttackDamage(u),
+              'damage',
+            ),
             source: u.id,
             speed: 450,
             style: 'pet',
             petFamily: u.petFamily,
+            ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
           });
           this.event('projectileLaunch', {
             actor: 'companion',
@@ -482,7 +536,13 @@
             y: u.y,
             target: target.id,
           });
-        } else if (this.damage(target, this.companionAttackDamage(u), u.id)) {
+        } else if (
+          this.damage(
+            target,
+            this.petCriticalConsequence(criticalReceipt, this.companionAttackDamage(u), 'damage'),
+            u.id,
+          )
+        ) {
           this.event('melee', {
             actor: 'companion',
             role: 'pet',

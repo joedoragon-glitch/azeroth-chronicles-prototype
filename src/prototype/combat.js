@@ -1110,7 +1110,8 @@
               );
             if (landed && p.petSkillSlot) {
               const pet = this.s.party.find((unit) => unit.id === p.source && unit.type === 'pet');
-              if (pet) this.petSkillContact(pet, victim, p.petSkillSlot);
+              if (pet)
+                this.petSkillContact(pet, victim, p.petSkillSlot, 1, p.criticalExecution || null);
             }
             if (landed && p.fractureFraction)
               this.fractureEnemy(victim, p.fractureFraction, p.fractureDuration);
