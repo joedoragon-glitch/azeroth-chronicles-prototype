@@ -25,7 +25,11 @@ const directions = [
   { x: 0, y: 1 }, { x: 0, y: -1 },
 ];
 
+// All fixtures share the same deterministic authored Vale geometry.
+// Cache the chosen unmodified, fully collision-tested lane per distance.
+const corridorCache = new Map();
 function findCorridor(c, distance) {
+  if (corridorCache.has(distance)) return corridorCache.get(distance);
   for (const a of anchorCandidates) {
     if (c.blocked(a.x, a.y, 'vale', 12)) continue;
     for (const vector of directions) {
@@ -41,7 +45,9 @@ function findCorridor(c, distance) {
       };
       if (c.blocked(back.x, back.y, 'vale', 12) ||
           !c.clearSegment(a, back, 15)) continue;
-      return { a, b, back };
+      const corridor = { a, b, back };
+      corridorCache.set(distance, corridor);
+      return corridor;
     }
   }
   return null;
