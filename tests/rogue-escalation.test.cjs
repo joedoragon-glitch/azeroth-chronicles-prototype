@@ -61,10 +61,18 @@ function encounter(region = 'vale', roll = 0.25) {
   assert.equal(c.tacticalRogueRegroup(b).allyId, far.id,
     'coordination keeps the actual living refuge, not the guiding Ringleader');
   a.hp = 0;
+  let movementOrder = null;
+  c.follow = (actor, destination) => {
+    movementOrder = { ...destination };
+    actor.x += 5;
+    return true;
+  };
   const before = b.x;
   assert(c.tacticalAdvanceExtendedRetreat(b, c.hero, 0.1),
     'guide death does not invalidate the distant living defender');
-  assert(b.x > before, 'second leader can keep following the refuge after guide defeat');
+  assert.equal(movementOrder?.x, far.home.x,
+    'travel remains ordered toward the living refuge even after the guide dies');
+  assert(b.x > before, 'second leader can continue its refuge movement');
 }
 console.log('PASS paired ringleaders can reach an occupied outpost beyond 750');
 
@@ -73,9 +81,16 @@ console.log('PASS paired ringleaders can reach an occupied outpost beyond 750');
   z.enemies.push(add(250, 'normal'));
   assert(c.tacticalBeginExtendedRetreat(a));
   c._tacticalRogueNext = new Map([[a.id, c.s.time + 20]]);
+  let moveGoal = null;
+  c.follow = (actor, destination) => {
+    moveGoal = { ...destination };
+    actor.x -= 5;
+    return true;
+  };
   const before = a.x, time = c.tacticalRogueRegroup(a).travelRemaining;
   c.tacticalAdvanceExtendedRetreat(a, c.hero, 0.2);
   assert(c.tacticalRogueRegroup(a).travelRemaining < time, 'travel clock advances');
+  assert.equal(moveGoal?.x, 250, 'retreat locomotion retains the distant destination');
   assert(a.x < before, 'withdrawal moves toward outpost instead of target');
   assert(!a.telegraph, 'movement does not require a Rogue cast');
 }
