@@ -88,8 +88,12 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
     assert.equal(tally.count(), 1, 'second Cross pulse never rerolls');
     assert(first >= 0);
   } else if (cls === 'mage') {
-    assert(a.enemies.every((e, i) => b.enemies[i].hp < e.hp),
-      'one wide beam critical enhances admitted native targets');
+    const baselineArea = a.g.effects.filter(x => x.type === 'heroSkillArea' && x.class === 'mage').at(-1);
+    const criticalArea = b.g.effects.filter(x => x.type === 'heroSkillArea' && x.class === 'mage').at(-1);
+    assert(baselineArea?.hits > 0, 'ordinary wide beam must land on a legal target');
+    assert.equal(criticalArea?.hits, baselineArea.hits,
+      'critical cannot invent extra beam targets or bypass protections');
+    assert(b.e.hp < a.e.hp, 'critical strengthens the original selected-target beam hit');
     assert.equal(tally.count(), 1, 'beam never rerolls per victim');
   } else {
     const f = b.g._heroSkillEffects[0];
