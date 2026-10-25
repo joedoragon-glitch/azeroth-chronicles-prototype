@@ -75,6 +75,50 @@ for (const family of ['thorn', 'cindermaw'])
   assert(g.attackResetProtected(e));
   assert(!g.damage(e, 1), 'stationary reset protection remains');
 }
+// Regional TRUE bosses use the appearance point, not the normal field boss den.
+// Existing captive-bearing roamers retain their own scripted circuits.
+{
+  const g = new C('normal', 'paladin', () => 0.73);
+  g.enter('march');
+  g.s.mercyTime = 0;
+  g.s.time = 35;
+  g.s.party = [];
+  const appear = g.safe(1640, 620, 'march'),
+    e = g.bossEnemy(g.boss('mire'), 'true', appear),
+    z = g.zone();
+  z.enemies = [e];
+  assert(g.trueFieldBossCircuit(e));
+  assert(!g.trueFieldBossCircuit(g.bossEnemy(g.boss('mire'), 'normal', appear)));
+  const stops = g.trueFieldBossCircuitStops(e);
+  assert.deepEqual(stops.map((p) => p.key), ['side', 'treasury', 'dungeon', 'home']);
+  assert.deepEqual({ x: stops[3].x, y: stops[3].y }, appear);
+  assert.notDeepEqual(appear, g.fieldCenter(g.regionIndex()),
+    'TRUE appearance is distinct from the normal field boss den');
+  assert(stops.slice(0, 3).every((p) => z.npcs.some(
+    (n) => n.x === p.x && n.y === p.y && n.kind === 'dungeon')),
+    'patrol uses existing outdoor entrances');
+
+  // The established acquisition/combat path takes priority over the visit.
+  Object.assign(g.hero, { x: appear.x + 500, y: appear.y, hp: g.hero.maxHp });
+  g.enemyRangedLine = () => true;
+  g.updateEnemies(0.05);
+  assert(e.aggro, 'TRUE hunter proactively engages a visible hero at 500 range');
+  const anchor = { ...e.trueCircuitCombatAnchor };
+  assert.deepEqual(anchor, appear);
+  const leg = e.trueCircuitLeg || 0;
+  g.disengage(e, 1.1);
+  assert(!e.returning, 'hunter disengages without a long trek to its spawn');
+  assert.deepEqual({ x: e.x, y: e.y }, anchor,
+    'interrupted hunt returns to fight location, not normal boss den');
+  assert.equal(e.trueCircuitLeg || 0, leg, 'hunter resumes the interrupted route');
+  assert.equal(e.trueCircuitCombatAnchor, undefined, 'fight anchor is retired');
+}
+for (const family of ['thorn', 'cindermaw']) {
+  const g = new C();
+  g.enter(family === 'thorn' ? 'vale' : 'crown');
+  const e = g.bossEnemy(g.boss(family), 'true', g.safe(1400, 1200));
+  assert(!g.trueFieldBossCircuit(e), family + ' keeps its existing captive patrol');
+}
 console.log(
   'PASS ' +
     checks +
