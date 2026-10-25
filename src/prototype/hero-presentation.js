@@ -1027,7 +1027,12 @@
     // enemies per draw. Reserve those slots for consequential active statuses
     // and the selected target / bosses rather than raw world-array order.
     const now = game.s.time;
-    const selectedId = game.s.heroTarget || game.hero.order?.id || null;
+    // The held Target button is tracked separately from the squad focus.
+    // Read its current-zone id without calling selectedHeroTarget(), which
+    // can mutate stale selection and must not run as a rendering side effect.
+    const selectedId =
+      (game.manualHeroTargetZone === game.zoneId && game.manualHeroTargetId) ||
+      game.s.heroTarget || game.hero.order?.id || null;
     const chosen = [];
     const limit = 24;
     for (const e of game.zone().enemies) {
