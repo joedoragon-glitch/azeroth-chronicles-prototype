@@ -45,3 +45,8 @@ A second focused test, `tests/rogue-ranged-pressure-hitpath.test.cjs`, chooses l
 **Critical limitation:** this uses a controlled native **delivered hit**, not the actual Ranger/Mage skill input or the Archer arrow flight; it does not assert that each class can fire its ability at all four tested distances. Nor is it a human playtest. The later projectile/input-specific probe remains necessary before any balance change.
 
 The first matrix has passed exact-head [focused CI #40198253231](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40198253231): 90 controlled tactical gate cells, 27 nominally legal Rogue moves blocked by upstream selection, and preservation of the 2-second cadence. This is **code-level evidence**, not a gameplay dissatisfaction verdict. Phase 2A requires its own new exact-head focused CI check.
+
+
+### Withdrawal geometry reconciliation
+
+The first native delivered-hit run passed 96 cases and produced 64 tactical responses, but showed some wounded 450/480-unit actors entering an `escape` phase without physical movement within 1.6 seconds. The initial fixture certified only the *incoming attack line*, not space for the enemy to retreat. The next exact-head iteration additionally requires a collision-clear 200-unit lane **behind** the enemy and reports the observed motion; do not assert an engine defect from the earlier inconclusive fixture.

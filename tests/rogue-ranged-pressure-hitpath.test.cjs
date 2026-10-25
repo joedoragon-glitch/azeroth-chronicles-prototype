@@ -15,6 +15,10 @@ const anchorCandidates = [
   { x: 2300, y: 2200 },
   { x: 2600, y: 1500 },
   { x: 1300, y: 2500 },
+  { x: 1900, y: 2600 },
+  { x: 2800, y: 2200 },
+  { x: 3000, y: 1800 },
+  { x: 1100, y: 2000 },
 ];
 const directions = [
   { x: 1, y: 0 }, { x: -1, y: 0 },
@@ -28,7 +32,15 @@ function findCorridor(c, distance) {
       const b = { x: a.x + vector.x * distance, y: a.y + vector.y * distance };
       if (c.blocked(b.x, b.y, 'vale', 12)) continue;
       if (!c.line(a, b) || !c.clearSegment(a, b, 12)) continue;
-      return { a, b };
+      // The first probe could mistake an obstacle directly behind the enemy
+      // for a retreat failure. Certify an independent 200-unit escape lane.
+      const back = {
+        x: a.x - vector.x * 200,
+        y: a.y - vector.y * 200,
+      };
+      if (c.blocked(back.x, back.y, 'vale', 12) ||
+          !c.clearSegment(a, back, 12)) continue;
+      return { a, b, back };
     }
   }
   return null;
@@ -97,7 +109,7 @@ for (const mode of ['normal', 'nightmare']) {
     for (const attacker of attackers) {
       for (const distance of distances) {
         for (const wounded of [false, true]) {
-          const { c, e, target, source } = scene(mode, kind, attacker, distance, wounded);
+          const { c, e, target, source, corridor } = scene(mode, kind, attacker, distance, wounded);
           const initial = { x: e.x, y: e.y, hp: e.hp };
           const recent = c.tacticalActiveTargetCount(e);
           const eligible = c.tacticalRogueEligibility(e, recent);
@@ -128,6 +140,8 @@ for (const mode of ['normal', 'nightmare']) {
             'native opponent health stays bounded after a confirmed distant hit');
           console.log('ROGUE_NATIVE_HIT ' + JSON.stringify({
             mode, kind, attacker, distance, wounded, source,
+            escapeLane: Math.round(Math.hypot(corridor.back.x - corridor.a.x,
+              corridor.back.y - corridor.a.y)),
             pressure: recent, eligible, selected,
             actorMoved: Number(Math.hypot(e.x - initial.x, e.y - initial.y).toFixed(2)),
             hp: Number(e.hp.toFixed(2)), phase, didWarn, didRetreat,
