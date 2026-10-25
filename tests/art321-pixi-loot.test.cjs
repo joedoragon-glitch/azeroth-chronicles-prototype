@@ -134,7 +134,7 @@ function lastCoins(){return batches.at(-1).filter(x=>String(x.key).startsWith('c
     'Claimed coins disappear from the GPU scene immediately');
   game.zoneId='march';
   gpu.draw();
-  assert.deepEqual(lastCoins().map(x=>x.key),['crown-loot:loot-far-region'],
+  assert.deepEqual(Array.from(lastCoins(),x=>x.key),['crown-loot:loot-far-region'],
     'Travel switches to only the new zone loot');
   game.zoneId='vale';
   zoom.current=2;
