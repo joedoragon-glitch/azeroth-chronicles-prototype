@@ -1,9 +1,14 @@
 'use strict';
-// Art Catalog #321 — isolated, opt-in real-browser paired evidence capture.
-// Run: node tools/visual-review/art321-crown-loot-browser.cjs
-// Requires repo devDependencies and real Chromium with WebGL2 (software WebGL2
-// is valid for correctness; this does NOT establish phone/hardware performance).
-// Never alters saved user data, source assets, CI workflows or game rules.
+/*
+ * Art Catalog #321 — ONE real Chromium/SwiftShader 2D vs PixiJS paired capture.
+ * AUDIT ONLY. No simulation, renderer, visual asset, save schema, or gameplay code edits.
+ * Browser uses fresh, disposable storage; work stays inside a draft PR.
+ *
+ * Four screenshot conditions are saved: Canvas no coin/coin, and Pixi no coin/coin.
+ * Both pixel-difference tests use actual Chromium PAGE COMPOSITES, not only the
+ * Canvas cue overlay. Backend is asserted; fallback never counts as a Pixi pass.
+ * Output is in ART321_OUTPUT (or temporary directory), not the game's repo.
+ */
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -11,146 +16,202 @@ const os = require('node:os');
 const http = require('node:http');
 const cp = require('node:child_process');
 const crypto = require('node:crypto');
+const sharp = require('sharp');
 const playwright = require('playwright');
 const root = path.resolve(__dirname, '../..');
-const sourceSha = cp.execFileSync('git', ['rev-parse', 'HEAD'], {cwd:root,encoding:'utf8'}).trim();
-const out = path.resolve(process.env.ART321_OUTPUT || path.join(os.tmpdir(),'azeroth-art321-crown-loot-'+sourceSha.slice(0,12)));
+const sourceSha = cp.execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim();
+const out = path.resolve(process.env.ART321_OUTPUT ||
+  path.join(os.tmpdir(),'azeroth-art321-crown-loot-'+sourceSha.slice(0,12)));
 fs.mkdirSync(out,{recursive:true});
-const types = {'.html':'text/html','.js':'application/javascript','.json':'application/json',
-  '.css':'text/css','.png':'image/png','.webp':'image/webp','.mp3':'audio/mpeg',
-  '.ogg':'audio/ogg'};
-const server = http.createServer((req,res)=>{
+const types={'.html':'text/html','.js':'application/javascript','.json':'application/json',
+  '.css':'text/css','.png':'image/png','.webp':'image/webp','.mp3':'audio/mpeg','.ogg':'audio/ogg'};
+const server=http.createServer((req,res)=>{
   let filename;
-  try {filename=path.resolve(root,decodeURIComponent(new URL(req.url,'http://localhost').pathname).replace(/^\/+/, '')||'index.html');}
-  catch {res.writeHead(400);res.end('Invalid path');return;}
-  if(!filename.startsWith(root+path.sep)||!fs.existsSync(filename)||!fs.statSync(filename).isFile()){
-    res.writeHead(404);res.end('Not found');return;
-  }
-  res.writeHead(200,{'Content-Type':types[path.extname(filename)]||'application/octet-stream'});
+  try{filename=path.resolve(root,decodeURIComponent(new URL(req.url,'http://localhost').pathname)
+    .replace(/^\/+/,'')||'index.html');}
+  catch{res.writeHead(400);res.end('Invalid path');return;}
+  if(!filename.startsWith(root+path.sep)||!fs.existsSync(filename)||
+     !fs.statSync(filename).isFile()){res.writeHead(404);res.end('Not found');return;}
+  res.writeHead(200,{'Content-Type':types[path.extname(filename)]||'application/octet-stream',
+    'Cache-Control':'no-store'});
   fs.createReadStream(filename).pipe(res);
 });
-function installedChromium(){
+function chromiumBinary(){
   if(process.env.CHROMIUM_EXECUTABLE)return process.env.CHROMIUM_EXECUTABLE;
-  for(const binary of ['google-chrome','google-chrome-stable','chromium','chromium-browser'])
-    try{return cp.execFileSync('which',[binary],{encoding:'utf8'}).trim()}catch{}
+  for(const cmd of ['google-chrome','google-chrome-stable','chromium','chromium-browser'])
+    try{return cp.execFileSync('which',[cmd],{encoding:'utf8'}).trim()}catch{}
   return null;
 }
-function sha256(file){return crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');}
-async function probe(page,backend,png){
-  const evidence=await page.evaluate(()=>{
-    const g=Prototype.game,r=Prototype.renderer,world=document.getElementById('world');
-    const gpu=Prototype.experimentalGraphics,ctx=world.getContext('2d');
-    const rect=world.getBoundingClientRect(),w=rect.width,h=rect.height;
-    if(!ctx||w<300||h<300)throw Error('Real world Canvas unavailable');
-    const at=r.world(w*.68,h*.48);
-    const loot={id:'art321-crown-loot-fixture',zone:g.zoneId,x:at.x,y:at.y,gold:1};
-    const point=r.screen(loot),ratioX=world.width/w,ratioY=world.height/h;
-    const radius=Math.max(18,Math.ceil(16*(Prototype.platform.cameraZoom||1)*Math.max(ratioX,ratioY)));
-    const x=Math.max(0,Math.floor(point.x*ratioX-radius)),y=Math.max(0,Math.floor(point.y*ratioY-radius));
-    const sampleWidth=Math.min(world.width-x,radius*2+1),
-      sampleHeight=Math.min(world.height-y,radius*2+1);
-    if(sampleWidth<20||sampleHeight<20)throw Error('Invalid pixel crop');
-    const take=()=>{r.draw();return ctx.getImageData(x,y,sampleWidth,sampleHeight).data;};
-    const before=take();
-    g.s.loot.push(loot);
-    const after=take();
-    let changed=0,sum=0;
-    for(let i=0;i<before.length;i+=4){
-      const d=Math.abs(before[i]-after[i])+Math.abs(before[i+1]-after[i+1])+
-        Math.abs(before[i+2]-after[i+2])+Math.abs(before[i+3]-after[i+3]);
-      if(d>=32)changed++;sum+=d;
-    }
-    window.__art321Cleanup=()=>{
-      const index=g.s.loot.indexOf(loot);
-      if(index>=0)g.s.loot.splice(index,1);
-      delete window.__art321Cleanup;
-      r.draw();
-    };
+const hash=(buffer)=>crypto.createHash('sha256').update(buffer).digest('hex');
+async function compareImages(beforePath,afterPath){
+  const a=await sharp(beforePath).ensureAlpha().raw().toBuffer({resolveWithObject:true});
+  const b=await sharp(afterPath).ensureAlpha().raw().toBuffer({resolveWithObject:true});
+  assert.equal(a.info.width,b.info.width);
+  assert.equal(a.info.height,b.info.height);
+  assert.equal(a.data.length,b.data.length);
+  let changed=0,deltaTotal=0,alphaChanged=0;
+  for(let i=0;i<a.data.length;i+=4){
+    const delta=Math.abs(a.data[i]-b.data[i])+
+      Math.abs(a.data[i+1]-b.data[i+1])+
+      Math.abs(a.data[i+2]-b.data[i+2])+
+      Math.abs(a.data[i+3]-b.data[i+3]);
+    if(delta>=32)changed++;
+    if(a.data[i+3]!==b.data[i+3])alphaChanged++;
+    deltaTotal+=delta;
+  }
+  return {totalPixels:a.info.width*a.info.height,changedPixels:changed,
+    pixelDifference:deltaTotal,alphaChangedPixels:alphaChanged};
+}
+async function capture(page,backend){
+  const info=await page.evaluate(()=>{
+    const g=Prototype.game,r=Prototype.renderer,world=document.getElementById('world'),
+      graphics=Prototype.experimentalGraphics,rect=world.getBoundingClientRect();
+    if(!world.getContext('2d')||rect.width<300||rect.height<300)
+      throw Error('World backing Canvas or viewport missing');
+    const worldPt=r.world(rect.width*.68,rect.height*.48);
+    const fixture={id:'art321-visual-coin',zone:g.zoneId,x:worldPt.x,y:worldPt.y,gold:1};
+    const screen=r.screen(fixture);
+    const x=rect.left+screen.x,y=rect.top+screen.y;
+    const clip={x:Math.max(0,Math.round(x-58)),y:Math.max(0,Math.round(y-58)),
+      width:116,height:116};
+    const win={width:window.innerWidth,height:window.innerHeight};
+    if(clip.x+clip.width>win.width||clip.y+clip.height>win.height)
+      throw Error('Clip is not inside the actual visual viewport');
     return {
-      renderer:gpu.mode,phase:gpu.phase,zone:g.zoneId,point:{x:point.x,y:point.y},
-      cameraZoom:Prototype.platform.cameraZoom,viewport:{width:w,height:h},
-      backing:{width:world.width,height:world.height},
-      gpuActors:gpu.sceneMetrics?.actors??null,
-      gpuTextures:gpu.sceneMetrics?.textureSources??null,
-      samplePixels:sampleWidth*sampleHeight,changedPixels:changed,pixelDifference:sum,
-      state:'deterministic temporary Campaign.s.loot fixture',
+      mode:graphics.mode,phase:graphics.phase,zone:g.zoneId,time:g.s.time,
+      hero:{x:g.hero.x,y:g.hero.y},zoom:Prototype.platform.cameraZoom,
+      sceneActors:graphics.sceneMetrics?.actors??null,
+      textureSources:graphics.sceneMetrics?.textureSources??null,
+      viewport:win,worldBacking:{width:world.width,height:world.height},
+      screen:{x,y},clip,fixture
     };
   });
-  try {
-    assert.equal(evidence.renderer,backend,
-      'Pixel evidence must be attributed to actual renderer, never Canvas fallback');
-    if(backend==='webgl2')
-      assert(evidence.gpuActors>0&&evidence.gpuTextures>0,'WebGL actors/textures not drawn');
-    if(backend==='canvas2d')
-      assert(evidence.changedPixels>25&&evidence.pixelDifference>2000,
-        'Actual canvas coin pixels must differ from the same image without loot');
-    await page.screenshot({path:png,animations:'disabled'});
-    return {...evidence,screenshot:path.basename(png),screenshotSha256:sha256(png)};
-  } finally {
-    await page.evaluate(()=>window.__art321Cleanup?.());
+  assert.equal(info.mode,backend,'Capture must come from the requested actual backend');
+  if(backend==='webgl2'){
+    assert.equal(info.phase,'confirmed','WebGL must be retained and confirmed');
+    assert(info.sceneActors>0&&info.textureSources>0,'GPU scene did not draw actors/textures');
+  }
+  const before=path.join(out,backend+'-empty-crop.png');
+  const after=path.join(out,backend+'-coin-crop.png');
+  const full=path.join(out,backend+'-coin-full.png');
+  // The pause guarantees the campaign world is identical before/after each coin.
+  assert.equal(await page.evaluate(()=>Prototype.paused),true,
+    'Paused Campaign required to prevent pixel-diff confounders');
+  await page.screenshot({path:before,clip:info.clip,animations:'disabled'});
+  await page.evaluate((object)=>{
+    Prototype.game.s.loot.push(object);
+    // Full Canvas uses its native draw; Pixi keeps its rendered world and
+    // the renderer only paints the transparent cue overlay.
+    Prototype.renderer.draw();
+  },info.fixture);
+  try{
+    await page.screenshot({path:after,clip:info.clip,animations:'disabled'});
+    await page.screenshot({path:full,animations:'disabled'});
+    const pixels=await compareImages(before,after);
+    assert.equal(await page.evaluate(()=>Prototype.experimentalGraphics.mode),backend,
+      'Renderer switched/fell back during the actual screenshot');
+    return {
+      backend,zone:info.zone,simulationTime:info.time,hero:info.hero,
+      zoom:info.zoom,viewport:info.viewport,worldBacking:info.worldBacking,
+      gpuActors:info.sceneActors,textureSources:info.textureSources,
+      screen:info.screen,clip:info.clip,pixels,
+      images:[before,after,full].map(file=>({
+        path:path.basename(file),sha256:hash(fs.readFileSync(file))
+      }))
+    };
+  }finally{
+    await page.evaluate((id)=>{
+      const list=Prototype.game.s.loot,idx=list.findIndex(x=>x.id===id);
+      if(idx!==-1)list.splice(idx,1);
+      Prototype.renderer.draw();
+    },info.fixture.id);
   }
 }
-async function run(){
+async function start(){
   let browser;
   try{
     if(!fs.existsSync(path.join(root,'assets/vendor/pixi-8.22.0.min.js')))
-      cp.execFileSync(process.execPath,['scripts/vendor-pixi.cjs','--ensure'],{cwd:root,stdio:'inherit'});
+      cp.execFileSync(process.execPath,['scripts/vendor-pixi.cjs','--ensure'],
+        {cwd:root,stdio:'inherit'});
     await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
-    const binary=installedChromium();
+    const binary=chromiumBinary();
     browser=await playwright.chromium.launch({...(binary?{executablePath:binary}:{}),
-      args:['--no-sandbox','--disable-dev-shm-usage','--enable-webgl','--use-gl=angle',
-        '--use-angle=swiftshader','--enable-unsafe-swiftshader']});
-    const context=await browser.newContext({viewport:{width:1280,height:800}});
-    const page=await context.newPage(),errors=[];
-    page.on('pageerror',error=>errors.push(error.message));
-    await page.goto('http://127.0.0.1:'+server.address().port+'/index.html');
-    await page.waitForFunction(()=>!!window.Prototype?.renderer);
-    await require('../../tests/helpers/language-browser.cjs').selectEnglish(page);
-    await page.keyboard.press('f');
-    await page.keyboard.press('f');
-    await page.waitForFunction(()=>document.querySelector('#modal').hidden);
-    const canvas=await probe(page,'canvas2d',path.join(out,'canvas-with-coin.png'));
-    await page.locator('#menu-button').click();
-    await page.getByRole('button',{name:'Game and settings',exact:true}).click();
-    await page.getByRole('button',{name:'Screen and performance',exact:true}).click();
-    await page.locator('select[aria-label="Graphics renderer"]').selectOption('webgl2');
-    await page.waitForFunction(()=>{
-      const g=Prototype.experimentalGraphics;
-      return g.phase==='trial'||(g.phase==='canvas'&&!!g.lastError);
-    },null,{timeout:45000});
-    let state=await page.evaluate(()=>Prototype.experimentalGraphics);
-    assert.equal(state.mode,'webgl2','Pixi did not actually initialize: '+JSON.stringify(state.lastFailure));
-    await page.getByRole('button',{name:'Keep WebGL2'}).click();
-    state=await page.evaluate(()=>Prototype.experimentalGraphics);
-    assert.equal(state.phase,'confirmed','WebGL2 trial was not confirmed');
-    const pixi=await probe(page,'webgl2',path.join(out,'pixi-with-coin.png'));
-    assert.equal(canvas.zone,pixi.zone,'Capture used different region');
-    assert.equal(canvas.cameraZoom,pixi.cameraZoom,'Capture used different camera zoom');
-    assert.deepEqual(canvas.viewport,pixi.viewport,'Capture used different viewport');
-    const report={
-      kind:'art-catalog-321-crown-loot-paired-evidence-v1',
-      sourceCommit:sourceSha,engine:'chromium',captureType:'real software WebGL2',
-      gameSimulation:'one disposable browser Campaign',
-      canvas,pixi,
-      limitations:[
-        'Test fixture injected using the real game.s.loot object shape; not a recorded enemy kill.',
-        'Pixel differences measure world Canvas 2D surface; in Pixi that surface is the transparent cue overlay.',
-        'PNG files are composed page captures at each mode, not owner-accepted visual golden masters.',
-        'A zero Pixi overlay delta cannot independently rule out a separate GPU sprite; verify source candidates.',
-        'No device hardware performance or pixel-perfect equivalence is claimed.'
-      ],
-      errors
-    };
-    assert.deepEqual(errors,[]);
-    fs.writeFileSync(path.join(out,'evidence.json'),JSON.stringify(report,null,2)+'\n');
-    console.log('PASS Art321 real paired browser capture '+JSON.stringify({
-      sourceCommit:sourceSha,canvasChanged:canvas.changedPixels,pixiOverlayChanged:pixi.changedPixels,
-      activeMode:pixi.renderer,output:out,
-    }));
-    await context.close();
+      args:['--no-sandbox','--disable-dev-shm-usage','--enable-webgl',
+        '--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+    const context=await browser.newContext({viewport:{width:1280,height:800},deviceScaleFactor:1});
+    try{
+      const page=await context.newPage(),errors=[];
+      page.on('pageerror',e=>errors.push(e.message));
+      await page.goto('http://127.0.0.1:'+server.address().port+'/index.html');
+      await page.waitForFunction(()=>!!window.Prototype?.renderer);
+      await require('../../tests/helpers/language-browser.cjs').selectEnglish(page);
+      await page.keyboard.press('f');
+      await page.keyboard.press('f');
+      await page.waitForFunction(()=>document.querySelector('#modal').hidden);
+      // The game can safely be paused while the settings/trial are inspected.
+      await page.keyboard.press('p');
+      assert.equal(await page.evaluate(()=>Prototype.paused),true);
+      const canvas=await capture(page,'canvas2d');
+      assert(canvas.pixels.changedPixels>25&&canvas.pixels.pixelDifference>2000,
+        'Canvas Crown coin must change real composed screenshot pixels');
+      await page.locator('#menu-button').click();
+      await page.getByRole('button',{name:'Game and settings',exact:true}).click();
+      await page.getByRole('button',{name:'Screen and performance',exact:true}).click();
+      await page.locator('select[aria-label="Graphics renderer"]').selectOption('webgl2');
+      await page.waitForFunction(()=>{
+        const status=Prototype.experimentalGraphics;
+        return status.phase==='trial'||(status.phase==='canvas'&&!!status.lastError);
+      },null,{timeout:45000});
+      let status=await page.evaluate(()=>Prototype.experimentalGraphics);
+      assert.equal(status.mode,'webgl2',
+        'A Canvas fallback is not WebGL2 evidence: '+JSON.stringify(status.lastFailure));
+      // Do not extend the timed trial. Use its actual player-facing Keep button.
+      await page.getByRole('button',{name:'Keep WebGL2'}).click();
+      status=await page.evaluate(()=>Prototype.experimentalGraphics);
+      assert.equal(status.phase,'confirmed','WebGL trial not confirmed');
+      await page.evaluate(()=>Prototype.closeMenu());
+      await page.waitForFunction(()=>document.querySelector('#modal').hidden);
+      const pixi=await capture(page,'webgl2');
+      assert.equal(canvas.zone,pixi.zone);
+      assert.equal(canvas.zoom,pixi.zoom,'Camera zoom changed across renderer captures');
+      assert.deepEqual(canvas.viewport,pixi.viewport);
+      assert.deepEqual(canvas.hero,pixi.hero,'Hero moved between captures');
+      assert.equal(canvas.simulationTime,pixi.simulationTime,'Campaign clock moved between captures');
+      assert.deepEqual(errors,[],'Uncaught browser page errors');
+      const report={
+        schema:'art321-real-composed-paired-pixel-capture-v2',
+        sourceSha,runTimeUtc:new Date().toISOString(),
+        engine:'Chromium ANGLE SwiftShader WebGL2 (software renderer)',
+        source:'disposable game Campaign and temporary native-shaped Crown loot object',
+        test:'one 1280x800 Chromium context; game paused; same Campaign, hero, zone, zoom, clock',
+        canvas,pixi,
+        interpretation:{
+          visualDeltaMeasured:'real Chromium page composite crop, before/after Crown coin',
+          webglVerified:'active confirmed scene with nonzero actor/texture metrics',
+          ownerArtAcceptance:'NOT PERFORMED',
+          hardwarePerformance:'NOT MEASURED'
+        },
+        limitations:[
+          'One synthetic loot object with real runtime shape, not an authored combat reward.',
+          'Full and crop PNGs are retained; they are not approved golden images.',
+          'A software GPU correctness trial cannot establish real-device performance.',
+          'This tests only shared:loot, not any other catalog asset.'
+        ]
+      };
+      const evidencePath=path.join(out,'evidence.json');
+      fs.writeFileSync(evidencePath,JSON.stringify(report,null,2)+'\n');
+      console.log('ART321_CAPTURE '+JSON.stringify({
+        sha:sourceSha,zone:canvas.zone,zoom:canvas.zoom,
+        canvasPixels:canvas.pixels.changedPixels,pixiPixels:pixi.pixels.changedPixels,
+        pixiMode:pixi.backend,actors:pixi.gpuActors,textures:pixi.textureSources,
+        output:out,report:'evidence.json'}));
+      console.log('PASS focused real Chromium Canvas/Pixi paired capture');
+    }finally{
+      await context.close();
+    }
   }finally{
     await browser?.close();
     if(server.listening)await new Promise(resolve=>server.close(resolve));
   }
 }
-run().catch(err=>{console.error(err);process.exitCode=1});
+start().catch(e=>{console.error(e);process.exitCode=1});
