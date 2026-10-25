@@ -477,13 +477,17 @@
           // Captains are now as effective as ordinary ranged monsters when
           // healing ordinary allies. Their own HP and other leaders retain
           // the original 5%-over-five-seconds budget.
-          buffed = !leader && (ordinaryHealer || captainHealer),
-          duration = buffed ? cfg.ordinary.duration : cfg.duration,
           // A captain patient receives half its missing HP from another
           // healer, never the boss's 5%-of-max budget or the ordinary full heal.
           // Self-recovery remains a separate 5%-of-max captain clock.
           captainRecipient =
             leader && target.type !== 'boss' && target !== e && (ordinaryHealer || captainHealer),
+          buffed = !leader && (ordinaryHealer || captainHealer),
+          duration = buffed
+            ? cfg.ordinary.duration
+            : captainRecipient
+              ? cfg.captain.duration
+              : cfg.duration,
           amount = buffed
             ? target.maxHp - target.hp
             : captainRecipient
@@ -500,8 +504,8 @@
           // Captain-origin ordinary healing likewise finishes without aggro.
           allowIdle:
             buffed ||
-            captainHealer ||
-            !!(target.captain || target.roomCaptain || target.fieldCaptain),
+            (target.type !== 'boss' &&
+              (captainHealer || !!(target.captain || target.roomCaptain || target.fieldCaptain))),
         };
         if (target === e) selfTreated = true;
         else {
