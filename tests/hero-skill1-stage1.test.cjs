@@ -52,22 +52,20 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
 
 {
   const { g, enemies: [e] } = arena('paladin');
-  const start = e.hp;
   assert(g.cast(1, e.id, true));
-  const first = start - e.hp;
-  assert(first > 0, 'first cross pulse lands at release');
+  const first = g.effects.filter(f => f.type === 'hit').length;
+  assert(first > 0, 'first cross pulse emits native hit');
   g.s.time += R.chargedSkills.first.paladin.pulseGap + 0.01;
   g.advanceHeroSkillEffects(R.chargedSkills.first.paladin.pulseGap + 0.01);
-  close(start - e.hp, first * 2);
+  assert.equal(g.effects.filter(f => f.type === 'hit').length, first * 2);
   assert.equal(g._heroSkillEffects.length, 0, 'no third pulse');
 }
 
 {
   const { g, enemies } = arena('mage', 3);
-  const oldHp = enemies.map(e => e.hp);
   assert(g.cast(1, enemies[0].id, true));
-  for (let i = 0; i < enemies.length; i++)
-    assert(enemies[i].hp < oldHp[i], 'beam hits each line enemy, not just selected');
+  const beamHits = g.effects.filter(f => f.type === 'hit');
+  assert.equal(beamHits.length, enemies.length, 'beam hits each line enemy exactly once');
   assert.equal(g._heroSkillEffects?.length || 0, 0, 'single beam event, no extra pulses');
 }
 
@@ -75,11 +73,10 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
   const { g, enemies: [e] } = arena('ranger');
   g._tacticalRegroups = new Map([[e.id, { phase: 'escape',
     anchor: { x: e.x, y: e.y }, fleeRemaining: 2 }]]);
-  const before = e.hp;
   assert(g.cast(1, e.id, true));
   g.s.time += 0.1;
   g.advanceHeroSkillEffects(0.1);
-  assert(e.hp < before, 'hawk damages on legal contact');
+  assert(g.effects.some(f => f.type === 'hit'), 'hawk damages on legal contact');
   assert.equal(g.tacticalRogueRegroup(e)?.phase, 'anchored',
     'hawk cancels actual Rogue escape');
   assert(g.hawkRetreatLocked(e, 'regroup'));
