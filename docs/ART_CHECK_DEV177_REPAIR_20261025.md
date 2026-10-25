@@ -14,6 +14,10 @@ The full 28-candidate source-evidence sweep also found two unregistered side-int
 
 The checked-in scope snapshot was also behind the current non-art gameplay sources. An actual `sprite-scope-audit.cjs` execution against PR #444 discovered 198 decoration families (rather than 188), 75 prepared contracts (rather than 74), and 45 observed enemy keys (rather than 46), with `boss:thorn` absent from that deterministic sample. The latter does **not** establish that the Thornfang boss is removed from the game. Six renderer/data/rules/world/sprite source hashes changed since the older snapshot. The scope evidence is replaced with the audit's emitted JSON (captured from focused GitHub CI run 40161362835), not fabricated by editing classifications. All 28 material candidate keys remain present, including the updated T021/T022 palettes.
 
+## Reproducible PWA package
+
+The artwork manifest changes alter the offline asset inventory. The generated service worker is rebuilt from the unchanged template and sprite-format contract, removing only the two retired material cache entries. The source/package/lock/build-info cache identity advances together from dev.177 to **dev.178 candidate** to avoid reusing the old PWA cache identity. The prior service worker was independently reproduced exactly from its original builder inputs before deriving the new asset inventory. A package check is required before this can merge or deploy; only the candidate branch is changed.
+
 ## Acceptance and limitations
 
 Verify `node scripts/sprite-pipeline.cjs check`, `node scripts/sprite-scope-audit.cjs --check`, and `node scripts/material-pipeline.cjs check`, together with focused sprite/scope/material tests, reproducible packaging and changed-file formatting. Approval is never inferred from the passage of tests, nor can a historic image's canon/dependency hash be silently rewritten. All active materials remain subject to strict provenance checks; historical revisions remain byte-verifiable. All original approved PNG and source files, test decisions, game rules, save schema and Canvas renderer remain unchanged.
