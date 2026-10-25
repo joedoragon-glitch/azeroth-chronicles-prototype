@@ -146,6 +146,9 @@
   // Purse-Seine Closure: leave every contracting ring tick, safe gap, and
   // escape route native; only the original delayed center blast may crit.
   register('world/captain/supply-crown/4', 'world', 'damage');
+  // Nucleus Herd may only strengthen the original newly admitted brood HP;
+  // never create extra summons, change roles or bypass the four-owned cap.
+  register('world/captain/supply-crown/3', 'world', 'summonVitality');
   Object.freeze(registry);
 
   function validatedLevel(level) {

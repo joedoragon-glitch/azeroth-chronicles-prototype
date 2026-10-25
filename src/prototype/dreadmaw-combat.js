@@ -345,11 +345,38 @@
           const receipt = this.worldCriticalAction(e, 'world/captain/supply-crown/2');
           if (receipt) a.criticalExecution = receipt;
         }
+        // Summon vitality is applied only AFTER the original summon owner
+        // physically admits new broodlings. Never roll on a full summon cap,
+        // warning setup, reused broodling, or a failed spawn attempt.
+        const herdBefore =
+          a.dreadMechanic === 'herd' && a.captainSkill &&
+          a.captainProfile === 'supply-crown' && a.index === 3 &&
+          a.kind === 'summon'
+            ? new Set(this.captainOwnedSummons(e).map(u => u.id))
+            : null;
         const hero = this.hero,
           zone = this.zoneId,
           deaths = this.s.statistics.deaths;
         previous.resolveAttack.call(this, e);
         if (interrupted(this, hero, zone, deaths) || !alive(e) || !e.aggro) return;
+        if (herdBefore) {
+          const born = this.captainOwnedSummons(e).filter(u => !herdBefore.has(u.id));
+          if (born.length) {
+            // All lawful broodlings from ONE Nucleus Herd cast share one World
+            // release. Their base HP, damage, ownership and spawn geometry
+            // remain native on misses and when the opt-in session is absent.
+            const receipt = this.worldCriticalAction(e, 'world/captain/supply-crown/3');
+            if (receipt?.critical)
+              for (const u of born) {
+                const existing = u.maxHp;
+                const vitality = Math.max(existing, Math.round(
+                  this._criticalWorldNative.enhance(receipt, existing, 'summonVitality'),
+                ));
+                u.maxHp = vitality;
+                u.hp = Math.min(vitality, u.hp + vitality - existing);
+              }
+          }
+        }
         if (a.dreadMechanic === 'ensiling' || a.dreadMechanic === 'steam') {
           e.dreadVapors ||= [];
           e.dreadVapors.push({
