@@ -4765,10 +4765,6 @@
         previous = waypoint;
       }
       if (length > R.tacticalFoundation.awarenessRadius * 1.8) return false;
-      const defense = this.tacticalDefenderTerritory(e);
-      if (defense && (dist(destination, e.home) > defense - 55 ||
-          path.some((point) => dist(point, e.home) > defense - 25)))
-        return false;
       // Keep the established major-town protection; ordinary monster patrols
       // elsewhere in occupied regions remain legal.
       if (!this.isDungeon()) {
@@ -4884,15 +4880,6 @@
         until: this.s.time + 4,
       });
     }
-    // Tactical territorial authority is a patrol radius, never a command to
-    // stand motionless at home. Field leaders may seek ordinary nearby defenders
-    // while still remaining responsible for their original encounter area.
-    tacticalDefenderTerritory(e) {
-      if (e.type === 'boss') return this.isDungeon() ? 650 : 700;
-      if (e.fieldCaptain || e.captain || e.roomCaptain)
-        return this.isDungeon() ? 600 : 900;
-      return null;
-    }
     tacticalRogueLeashAllows(e, target, territory) {
       const response = this._tacticalCinderResponses?.get(e?.id);
       if (response?.joined && response.zone === this.zoneId) {
@@ -4936,12 +4923,8 @@
       const state = this.tacticalRogueRegroup(e);
       if (!state) return dist(target, home) <= territory;
       if (state.phase === 'thinking' && !state.anchor) return dist(target, home) <= territory;
-      if (state.phase === 'extended') {
-        const defense = this.tacticalDefenderTerritory(e);
-        return dist(target, e) <= R.tacticalFoundation.extendedEncounterSeparation &&
-          (!defense || (dist(e, home) <= defense + 40 &&
-            dist(target, home) <= defense + 250));
-      }
+      if (state.phase === 'extended')
+        return dist(target, e) <= R.tacticalFoundation.extendedEncounterSeparation;
       const separationLimit = R.tacticalFoundation.awarenessRadius + 200;
       if (dist(target, e) > separationLimit) return false;
       if (state.phase === 'travel')
@@ -4963,10 +4946,10 @@
           opponents + (this.hero.level > e.level ? 1 : 0);
     }
     tacticalBeginExtendedRetreat(e) {
-      // Dungeon leaders defend their room. Field bosses and captains can
-      // reinforce their post by moving toward ordinary regional defenders.
-      if (this.isDungeon() || e.summon || !this.tacticalNeedsMoreSupport(e))
-        return false;
+      if (
+        this.isDungeon() || e.type === 'boss' || e.captain || e.roomCaptain ||
+        e.summon || !this.tacticalNeedsMoreSupport(e)
+      ) return false;
       const cfg = R.tacticalFoundation, z = this.zone();
       // Avoid repeated expensive route probing against blocked outposts.
       if ((this._tacticalExtendedSearchAfter?.get(e.id) || 0) > this.s.time)
@@ -5027,10 +5010,6 @@
           }
           previous = point;
         }
-        const defense = this.tacticalDefenderTerritory(e);
-        if (defense && (dist(destination, e.home) > defense - 55 ||
-            path.some((point) => dist(point, e.home) > defense - 25)))
-          continue;
         if (!safe || length > cfg.extendedRouteMaxLength) continue;
         visited.add(ally.pack || ally.id);
         this._tacticalTerritorialVisited.set(e.id, visited);
@@ -5208,9 +5187,20 @@
           });
           return true;
         }
+        // Bosses/captains must protect their authored posts, not abandon them.
+        // They retain their established last-resort Rogue action.
+        if (e.type === 'boss' || e.captain || e.roomCaptain) {
+          this.tacticalStopRogueRegroup(e);
+          if (this.tacticalRogueMove(e, target, !!state.anchor)) {
+            if (state.anchor) this._tacticalRegroups.set(e.id, {
+              phase: 'anchored', anchor: state.anchor,
+              holdRemaining: 12, moveUsed: true, recruited: true,
+            });
+            return true;
+          }
+          return false;
+        }
         // Out of nearby/distant allies, and unable to summon help: withdraw.
-        // Bosses/captains also maneuver when overwhelmed, but their territory
-        // limits the fallback rather than forcing stationary Rogue recasts.
         // A defensive Rogue cast may cover escape, but never replace escape
         // with a standing cast/reassessment loop, even at two-second reuse.
         this._tacticalRegroups.set(e.id, {
@@ -5230,13 +5220,6 @@
           state.seekDelay = 1;
           if (this.tacticalSeekRogueSupport(e, this.tacticalActiveTargetCount(e))) return true;
           if (this.tacticalBeginExtendedRetreat(e)) return true;
-        }
-        const defense = this.tacticalDefenderTerritory(e);
-        if (defense && dist(e, e.home) >= defense - 55) {
-          // Rallying failed and the leader reached the edge of its protected
-          // territory. Return to defend rather than dragging its boss arena.
-          this.disengage(e, dt);
-          return true;
         }
         const before = { x: e.x, y: e.y },
           d = Math.max(1, dist(e, target)),
@@ -5346,7 +5329,8 @@
         const freshWound = wounded && !this._tacticalWoundedUsed?.has(e.id);
         const pressureRemains =
           (this.tacticalRogueOutnumbered(e) ||
-            this.tacticalNeedsMoreSupport(e)) &&
+            (!(e.type === 'boss' || e.captain || e.roomCaptain) &&
+              this.tacticalNeedsMoreSupport(e))) &&
           this.tacticalRogueEligibility(e, Math.max(pressure, 2)) &&
           (this._tacticalRogueNext?.get(e.id) || 0) <= this.s.time &&
           !this.hawkRetreatLocked(e, 'regroup');
