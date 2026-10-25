@@ -31,6 +31,9 @@ const { validateCatalog } = require('../src/prototype/audio-contract.js');
   };
   const silenceDetails = (a) => {
     a.sceneDetails = () => {};
+    // The mock Web Audio context has no buffer renderer; preserve its source
+    // loading behavior while excluding unrelated noise synthesis.
+    a.ambient = () => {};
     a.cue = { id: 'vale', region: 'vale', peace: false };
   };
   const flush = () => new Promise((resolve) => setImmediate(resolve));
