@@ -1,0 +1,40 @@
+name: Art 321 unmerged-draft integration smoke
+
+# Proof that selected PRs coexist after a temporary three-way tree merge.
+# No branch ref update, PR merge, deploy, full game/browser suite or upload to Pages.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tools/visual-review/art321-cross-draft-regression.cjs'
+      - '.github/workflows/art321-cross-draft-regression.yml'
+permissions:
+  contents: read
+concurrency:
+  group: art321-cross-draft-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  selected-native-regressions:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install already locked dependencies
+        run: npm ci --ignore-scripts
+      - name: Test exact remote PR heads in disposable local worktrees
+        run: |
+          mkdir -p "$RUNNER_TEMP/art321-integration"
+          node tools/visual-review/art321-cross-draft-regression.cjs "$RUNNER_TEMP/art321-integration/integration.json"
+      - name: Preserve immutable SHA-based compatibility findings
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: art321-unmerged-combos-${{ github.sha }}
+          path: ${{ runner.temp }}/art321-integration/
+          retention-days: 14
+          if-no-files-found: warn
