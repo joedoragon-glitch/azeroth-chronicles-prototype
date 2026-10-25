@@ -193,6 +193,29 @@
       ctx.lineTo(x, y + size * 0.8);
       ctx.lineTo(x - size * 0.6, y);
       ctx.closePath();
+    } else if (motif === 'holy-cross') {
+      ctx.moveTo(x-size,y);ctx.lineTo(x+size,y);
+      ctx.moveTo(x,y-size);ctx.lineTo(x,y+size);
+      ctx.moveTo(x-size*0.38,y-size*0.36);
+      ctx.lineTo(x+size*0.38,y+size*0.36);
+      ctx.moveTo(x-size*0.38,y+size*0.36);
+      ctx.lineTo(x+size*0.38,y-size*0.36);
+    } else if (motif === 'wide-beam') {
+      ctx.moveTo(x-size*0.9,y-size*0.65);
+      ctx.lineTo(x+size*0.9,y-size*0.32);
+      ctx.moveTo(x-size*0.9,y+size*0.65);
+      ctx.lineTo(x+size*0.9,y+size*0.32);
+      ctx.moveTo(x-size*0.9,y);
+      ctx.lineTo(x+size*0.9,y);
+    } else if (motif === 'hawk') {
+      ctx.moveTo(x+size,y);ctx.lineTo(x+size*0.25,y-size*0.12);
+      ctx.lineTo(x-size*0.65,y-size);
+      ctx.lineTo(x-size*0.37,y-size*0.18);
+      ctx.lineTo(x-size*0.75,y);
+      ctx.lineTo(x-size*0.37,y+size*0.18);
+      ctx.lineTo(x-size*0.65,y+size);
+      ctx.lineTo(x+size*0.25,y+size*0.12);
+      ctx.closePath();
     } else if (motif === 'restore') {
       ctx.moveTo(x - size, y);
       ctx.lineTo(x + size, y);
