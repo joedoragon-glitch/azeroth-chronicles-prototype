@@ -88,7 +88,11 @@ for (const make of [
   const casts = events.filter((x) => x.type === 'rogueMove');
   if (e.type === 'boss' || e.captain || e.roomCaptain) {
     assert(casts.length >= 2,
-      'Bosses/captains retain repeatable Rogue defense without abandoning posts');
+      'Bosses/captains retain repeatable Rogue defense: ' +
+      JSON.stringify({type:e.type,form:e.form,captain:!!e.captain,
+        casts:casts.length,remaining:e.returning,aggro:e.aggro,
+        position:[e.x,e.y],hero:[c.hero.x,c.hero.y],
+        state:c.tacticalRogueRegroup(e)?.phase,next:c._tacticalRogueNext?.get(e.id)}));
   } else {
     const shifted = Math.hypot(e.x - initial.x, e.y - initial.y);
     const reinforced = events.some(x => ['rogueRegroup', 'rogueExtendedRetreat', 'rogueEmergencyCall'].includes(x.type));
