@@ -236,6 +236,18 @@ for (const dt of [1 / 20, 1 / 30, 1 / 60]) {
     'actual Archer subrelease must not schedule another whole-volley foley');
   assert.equal(new Audio().soundKind(archerLaunches[0]), null,
     'existing audio router suppresses bookkeeping-only later departures');
+  // Exercise the actual audio consumer, not merely its static type mapping:
+  // original batch can sound once, subrelease is diagnostic-only.
+  const audio = new Audio();
+  const heard = [];
+  audio.ctx = { currentTime: 1, state: 'running' };
+  audio.playSoundEvent = () => false;
+  audio.rapidBow = (_time, heroic, count) => heard.push({ heroic, count });
+  audio.effect(initial[0]);
+  audio.ctx.currentTime += 0.1;
+  audio.effect(archerLaunches[0]);
+  assert.deepEqual(heard, [{ heroic: false, count: 3 }],
+    'actual audio.effect dispatch plays one original triple volley only');
   near(p.x, x + p.dx * p.speed * dt, 'Archer moving release x');
   near(p.y, y + p.dy * p.speed * dt, 'Archer moving release y');
   const launched = { x: p.x, y: p.y, dx: p.dx, dy: p.dy };
