@@ -36,6 +36,7 @@
       invalidateEnvironment() {
         this.environmentRequest = (this.environmentRequest || 0) + 1;
         this.environmentKey = null;
+        this.environmentRetry = null;
       }
       stopEnvironment(seconds = 0) {
         this.invalidateEnvironment();
@@ -87,15 +88,30 @@
         if (this.environmentVoice?.environmentKey === key) this.environmentKey = key;
         if (key !== this.environmentKey) {
           this.environmentKey = key;
-          const request = (this.environmentRequest || 0) + 1;
-          this.environmentRequest = request;
-          const ctx = this.ctx,
-            epoch = this.recordingEpoch || 0;
-          // Leaving a place never leaves its water/machinery playing while the next file loads.
+          this.environmentRetry = { attempts: 0, nextAt: this.ctx.currentTime, pending: false };
+          // Only a genuine scene transition fades the previous bed. Retries must
+          // not repeatedly cut or restart an outgoing environment source.
           this.stopRecording(this.environmentOutgoing, 0);
           this.environmentOutgoing = this.environmentVoice;
           this.environmentVoice = null;
           this.stopRecording(this.environmentOutgoing, rule.fade);
+        }
+        const retry = this.environmentRetry;
+        if (
+          !this.environmentVoice &&
+          retry &&
+          !retry.pending &&
+          retry.attempts < 3 &&
+          this.ctx.currentTime >= retry.nextAt
+        ) {
+          retry.pending = true;
+          retry.attempts++;
+          const request = (this.environmentRequest || 0) + 1;
+          this.environmentRequest = request;
+          const ctx = this.ctx,
+            epoch = this.recordingEpoch || 0;
+          // The first load starts immediately; failed loads retry after 1s and
+          // then 4s on the running audio clock, up to three total attempts.
           this.environmentPending = (async () => {
             try {
               const assets = await this.assetsForRecordings(),
@@ -119,6 +135,8 @@
               if (!voice) throw Error('Environmental source unavailable');
               voice.environmentKey = key;
               this.environmentVoice = voice;
+              retry.pending = false;
+              retry.nextAt = Infinity;
               this.environmentFallback = false;
               this.environmentError = null;
               this.ambient();
@@ -129,6 +147,8 @@
                 request === this.environmentRequest &&
                 epoch === (this.recordingEpoch || 0)
               ) {
+                retry.pending = false;
+                retry.nextAt = ctx.currentTime + (retry.attempts === 1 ? 1 : 4);
                 this.environmentError = error.message;
                 this.environmentFallback = true;
                 this.ambient();
