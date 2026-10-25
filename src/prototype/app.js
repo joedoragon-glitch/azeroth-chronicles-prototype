@@ -5980,13 +5980,25 @@
       b.classList.toggle('skill-queued', !!queuedRequest);
       b.dataset.queuedForm = queuedRequest ? (queuedRequest.charged ? 'charged' : 'normal') : '';
       const revealed = game.skillRevealed(slot),
+        normalWait = h.cd[i] || 0,
+        chargedWait = h.chargedCd?.[i] || 0,
         chargeTip = canChargeSlot(slot)
           ? ' · Tap under ' +
             chargeTapSeconds().toFixed(2) +
             's for normal · hold ' +
             chargeSeconds().toFixed(2) +
             's for charged' +
-            ' · During cooldown: tap queues normal; briefly hold queues charged' +
+            (language === 'es'
+              ? ' · La cargada inicia ambas recuperaciones; la normal vuelve antes'
+              : ' · Charged starts both recoveries; Tap returns sooner without extending Charged') +
+            ' · ' + (language === 'es' ? 'Normal ' : 'Tap ') +
+              (normalWait > 0 ? cooldownText(normalWait) + 's' : (language === 'es' ? 'lista' : 'ready')) +
+            ' · ' + (language === 'es' ? 'Cargada ' : 'Charged ') +
+              (Math.max(normalWait, chargedWait) > 0
+                ? cooldownText(Math.max(normalWait, chargedWait)) + 's'
+                : (language === 'es' ? 'lista' : 'ready')) +
+            (language === 'es' ? ' · Toca para poner normal en cola; mantén brevemente para cargada'
+              : ' · During cooldown: tap queues normal; briefly hold queues charged') +
             (manaEnabled
               ? ' · Charged cost ' + chargedManaPercent(slot) + '% max MP'
               : ' · charged cooldown ' + game.skillCooldown(slot, true).toFixed(1) + 's')
@@ -6000,7 +6012,9 @@
           ? ' · Same-target combo: 100% → 110% → 120% · third hit adds 55% frontal splash'
           : '') +
         (i === 0 && PrototypeRules.movementBasicClasses[h.class]
-          ? ' · Movement auto-attacks pause while Skill 1 is held'
+          ? language === 'es'
+            ? ' · Los ataques automáticos continúan durante la carga si el combate lo permite'
+            : ' · Automatic basics continue during charge when combat allows'
           : '') +
         (slot === 2 ? ' · Charged target locks when charging begins' : '');
       b.setAttribute(
@@ -6010,8 +6024,16 @@
           ' ' +
           (revealed ? skillLabel(slot) : 'Undiscovered') +
           (canChargeSlot(slot)
-            ? ' · tap for normal or hold to charge' +
-              (manaEnabled ? ' · charged cost ' + chargedManaPercent(slot) + ' percent max MP' : '')
+            ? (language === 'es'
+              ? ' · Toca para normal, mantén para cargar'
+              : ' · tap for normal or hold to charge') +
+              (language === 'es' ? ' · Normal ' : ' · Tap ') +
+              (normalWait > 0 ? cooldownText(normalWait) + 's'
+                : (language === 'es' ? 'lista' : 'ready')) +
+              (language === 'es' ? ' · Cargada ' : ' · Charged ') +
+              (Math.max(normalWait,chargedWait) > 0
+                ? cooldownText(Math.max(normalWait,chargedWait)) + 's'
+                : (language === 'es' ? 'lista' : 'ready'))
             : '') +
           (queuedRequest ? ' · ' + queuedSkillLabel(queuedRequest) : ''),
       );
@@ -6046,14 +6068,17 @@
                         ? 'NO ALLIES'
                         : 'CHARGED'
           : queuedCharges.has(slot)
-            ? queuedSkillLabel(queuedRequest).replace(' ', '\n') + ' ' + cooldownText(h.cd[i]) + 's'
+            ? queuedSkillLabel(queuedRequest).replace(' ', '\n') + ' ' +
+              cooldownText(Math.max(h.cd[i], queuedRequest?.charged ? chargedWait : 0)) + 's'
             : slot === 3 && h.class === 'paladin' && h.shieldStance > 0
               ? 'SHIELD ' + cooldownText(h.shieldStance)
               : !rank
                 ? 'Locked'
                 : h.cd[i] > 0
                   ? cooldownText(h.cd[i])
-                  : skillKeys()[i];
+                  : chargedWait > 0
+                    ? skillKeys()[i] + ' C' + cooldownText(chargedWait)
+                    : skillKeys()[i];
     }
     const n = nearestNPC();
     $('touch-interact-button').hidden = !n || !activePlay();
