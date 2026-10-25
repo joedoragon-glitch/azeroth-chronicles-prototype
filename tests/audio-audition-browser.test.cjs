@@ -80,7 +80,16 @@ const root = path.resolve(__dirname, '..'),
         const saved = await page.evaluate(() => JSON.stringify(localStorage));
         assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
         await press('#stem-play');
-        await page.waitForFunction(() => AudioAudition.audio.recordedScore?.voices.length === 2);
+        await page.waitForFunction(() => AudioAudition.audio.recordedScore?.voices.length === 2).catch(async (error) => {
+          const detail = await page.evaluate(() => ({
+            message: document.querySelector('#message')?.textContent,
+            source: document.querySelector('#source')?.value,
+            stemDisabled: document.querySelector('#stem-play')?.disabled,
+            status: window.AudioAudition?.audio.status(),
+            assetIds: Object.keys(window.AudioAudition?.audio.recordingManifest?.assets || {}),
+          }));
+          throw Error('Diagnostic stem playback did not start: ' + JSON.stringify(detail) + '\n' + error.message);
+        });
         const initial = await page.evaluate(() => {
           const a = AudioAudition.audio,
             v = a.recordedScore.voices;
