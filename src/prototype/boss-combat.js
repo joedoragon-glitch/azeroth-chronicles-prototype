@@ -1111,7 +1111,10 @@
             this.nightTempo(),
           dt,
         );
-        if (dist(before,e) > 0.1) e._hawkBackpedalAt = this.s.time;
+        if (dist(before,e) > 0.1) {
+          this._hawkBackpedalAt ||= new Map();
+          this._hawkBackpedalAt.set(this.zoneId + ':' + e.id, this.s.time);
+        }
         return true;
       }
       enemyWithdrawalAction(e, target, bossTarget = target) {
