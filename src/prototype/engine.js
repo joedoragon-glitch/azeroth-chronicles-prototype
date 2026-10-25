@@ -4955,6 +4955,11 @@
           (!radius || (dist(e, post) <= radius + 40 &&
             dist(target, post) <= radius + 250));
       }
+      // A defensive leader resumes the original encounter leash, including
+      // larger dungeon rooms; a fallback tactical state grants no new roam
+      // radius and cannot arbitrarily shorten the existing boss encounter.
+      if (state.phase === 'defend' && this.tacticalDefenderTerritory(e))
+        return dist(target, home) <= territory;
       const separationLimit = R.tacticalFoundation.awarenessRadius + 200;
       if (dist(target, e) > separationLimit) return false;
       if (state.phase === 'guard-captive')
