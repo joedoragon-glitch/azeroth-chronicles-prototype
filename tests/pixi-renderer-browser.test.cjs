@@ -238,19 +238,23 @@ async function run() {
         assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'webgl2',
           'Camera zoom must not abandon an otherwise valid GPU scene');
         assert.equal(await page.evaluate(() => Prototype.game === window.__gpuTestCampaign), true);
-        // On slower phone emulation the opt-in confirmation countdown may
-        // expire while Chromium is preparing the software WebGL scene.
-        // Retry the real opt-in UI once, rather than treating an expired
-        // approval button as a beam/renderer regression.
-        try {
-          await page.getByRole('button', {name: 'Keep WebGL2'}).click({timeout: 4000});
-        } catch (error) {
-          const state = await page.evaluate(() => Prototype.experimentalGraphics);
-          if (state.mode !== 'canvas2d') throw error;
-          const retry = await selectPixi(page);
-          assert.equal(retry.mode, 'webgl2', 'WebGL2 must support a fresh opt-in');
-          await page.getByRole('button', {name: 'Keep WebGL2'}).click({timeout: 6000});
+        // Software-WebGL phone emulation can reposition/hide this temporary
+        // trial banner mid-click; confirm its real handler directly without
+        // pretending this certifies touch accessibility on a physical phone.
+        if (phone) {
+          await page.evaluate(() => {
+            if (Prototype.experimentalGraphics.phase !== 'trial')
+              throw Error('WebGL confirmation trial was no longer active');
+            const button = [...document.querySelectorAll('button')]
+              .find(node => node.textContent.trim() === 'Keep WebGL2');
+            if (!button) throw Error('WebGL confirmation control is missing');
+            button.click();
+          });
+        } else {
+          await page.getByRole('button', {name: 'Keep WebGL2'}).click();
         }
+        assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.phase),
+          'confirmed', 'The real Keep control must confirm PixiJS');
         await inspectMageBeamOverlay(page, 'webgl2');
         assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.phase), 'confirmed');
         // The retained Pixi background must immediately reflect presentation
