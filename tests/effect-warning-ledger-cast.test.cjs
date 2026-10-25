@@ -7,6 +7,7 @@ const assert = require('node:assert/strict');
 const { createCanvas } = require('@napi-rs/canvas');
 const Campaign = require('../src/prototype/engine.js');
 const Combat = require('../src/prototype/combat-visuals.js');
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 
 const game = new Campaign('normal', 'paladin', () => 0.5);
 const zone = game.zone();
@@ -15,6 +16,9 @@ zone.npcs = []; zone.nodes = []; game.s.party = [];
 game.s.mercyTime = 0;
 Object.assign(game.hero, { x: 1480, y: 1700, hp: 100000, maxHp: 100000 });
 game.line = () => true;
+// Earn the actual native opening admission before invoking engage(); direct
+// boss.aggro assignment would bypass the Ridge Ledger phase transition.
+completeFieldOpening(game);
 const boss = game.bossEnemy(game.boss('ridge'), 'normal', { x: 1400, y: 1700 });
 zone.enemies.push(boss);
 game.engage(boss, true);
