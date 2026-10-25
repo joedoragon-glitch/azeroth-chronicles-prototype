@@ -1,4 +1,9 @@
 # PR #440 — Critical Executions: independent development / Work-mode handoff
+
+## CURRENT STOP CHECKPOINT — 25 October 2026
+
+**Owner-directed STOP before pet-family integration.** [Read this self-contained, current source-verified GitHub handoff FIRST](PR440_CRITICAL_STAGE2_STOP_CHECKPOINT_20261025.md). Historical status notes and old `main`/PR SHAs below are NOT current instructions. Ranger Heal, dormant Mana, and standalone Soldier Guard native sources and tests are checkpointed; their native tests passed in [run #40204460034](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40204460034), but **the overall workflow was RED due to an unrelated Pixi browser viewport-change/Keep-Revert failure**. PR #440 stays DRAFT, unmerged, unpublished and production feature OFF. Do not start pets until explicit new authorization.
+
 > **LIVE STATUS CORRECTION — 25 October 2026 (verified after the handoff was written):** [PR #439](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/439) is now **MERGED and CLOSED**, not an open draft. GitHub reports merge time **2026-10-25 04:21:03 UTC**, final head `be3662e953bb85be51a4c15de18b48102ee330d1` and merge commit `7d9649151bbff578ecb34c01edfb2e14abb9d9ea`. Its exact-head [focused checks #40160551845](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40160551845) succeeded. Current `main` reports package version **dev.183**. **Next Work session must re-fetch current main and rebase/reconcile PR #440 against merged #439 skill logic and FIFO queue**, then pursue the still-unfinished native Stage 2 release hooks. Do NOT treat old references below to "#439 open draft" or dev.175 main as current fact. #440 itself is **open draft, unmerged and disabled**. No critical-gameplay activation or deployment of #440 has occurred.
 
 

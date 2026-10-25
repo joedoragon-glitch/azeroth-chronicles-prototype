@@ -1,4 +1,9 @@
 # PR #440 — Actionable Remaining-Stage Gates, Regression Matrix and Evidence Ledger
+
+## CURRENT STOP CHECKPOINT — 25 October 2026
+
+**Owner-directed STOP before pet-family integration.** [Read this self-contained, current source-verified GitHub handoff FIRST](PR440_CRITICAL_STAGE2_STOP_CHECKPOINT_20261025.md). Historical status notes and old `main`/PR SHAs below are NOT current instructions. Ranger Heal, dormant Mana, and standalone Soldier Guard native sources and tests are checkpointed; their native tests passed in [run #40204460034](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40204460034), but **the overall workflow was RED due to an unrelated Pixi browser viewport-change/Keep-Revert failure**. PR #440 stays DRAFT, unmerged, unpublished and production feature OFF. Do not start pets until explicit new authorization.
+
 > **CURRENT BASELINE UPDATE — 25 October 2026:** PR #439 **merged** on 25 October 2026 (merge commit `7d9649151bbff578ecb34c01edfb2e14abb9d9ea`), so the Stage 2 reconciliation target is **CURRENT MAIN including #439**, not a still-open #439 branch. Main package version observed: **dev.183**. Read the [updated PR #440 handoff](PR440_INDEPENDENT_WORK_HANDOFF_20261024.md); preserve FIFO Skill 1 controls and three-form/timer mechanics. Any old "PR #439 open" instructions below are dated historical checkpoints. **PR #440 remains draft and its gameplay remains OFF.**
 
 
@@ -40,16 +45,24 @@ Read [the independent PR handoff FIRST](PR440_INDEPENDENT_WORK_HANDOFF_20261024.
 - [ ] Shield Stance rolling on stance-raise only, no extra roll for toggling OFF and no repair of original cooldowns by the critical resolver.
 
 ### B3. Direct companion and pet release hooks
-- [ ] Soldier basic, Archer basic, Soldier Power Strike, Archer Triple Shot, Soldier Holy Cleave, Archer Piercing Volley: legal released attack only, charged second roll after complete cast, not at charge start.
+- [x] Soldier basic, Archer basic, Soldier Power Strike, Archer Triple Shot, Soldier Holy Cleave, Archer Piercing Volley (**native owners implemented; current-main reconciliation and full Stage 2 acceptance still open**): legal released attack only, charged second roll after complete cast, not at charge start.
 - [ ] All 11 pet families: basic, first and second actions; no delegated double roll from party.js into party-pets.js; ranged shots carry immutable receipt.
-- [ ] Ranger HP support: actual caster, one cast and one total heal budget distributed by native five-second HoT, never new rolls per tick. Mana support currently gated/dormant: no phantom chance until legal mana skill use.
+- [x] Ranger HP support (**native owner implemented; feature OFF, complete acceptance still open**): actual caster, one cast and one total heal budget distributed by native five-second HoT, never new rolls per tick. Mana support currently gated/dormant: no phantom chance until legal mana skill use.
 - [ ] Original pet self-heal, single-ally heal and ward: apply consequence only on valid contact and with original caps; no ability to revive fallen units or stack strongest-only protections.
 - [ ] Recall troop and pet defensive counters use an explicit committed release, **including failed/missed melee**; do not rely on hit events alone.
 - [ ] Slow, Veteran cover, silence, companion charge holds, death/recovery, group stance/formation and neutral/protected actor rules retain original semantics.
 
+### B3 latest stop gate (25 October; supersedes historical pending wording)
+
+- [x] `troop/archer/heal` and dormant `troop/archer/mana` use their real cast owners, one heal budget, no tick/request reroll, original cooldown; three-level native source suite **PASS** in CI #40204460034.
+- [x] `troop/soldier/guard` is a separate action with +0.15/+0.30/+0.50s bounded by 3.0s immunity; the original 14s trigger clock and eligibility survive; three-level native test **PASS** in same run.
+- [ ] **DO NOT start eleven pet families before next explicit owner authorization.** No pet native release hooks were integrated, and 33 pet registry keys are authoring placeholders.
+- [ ] Overall CI on final source + main reconciliation are NOT green: Pixi browser Keep/Revert failed; exact-head build skipped. No manual device/full game or FPS evidence. This remains HOLD.
+See [the canonical stop/handoff](PR440_CRITICAL_STAGE2_STOP_CHECKPOINT_20261025.md).
+
 ### B4. Apply authored three-tier critical consequences correctly
-- [x] [centralized Level 1/2/3 registry](../src/prototype/critical-levels.js) contains **92 keys**: hero 51 + troops 8 (6 attacks + heal/mana) + pets 33. Independent Hero, Companion, World controls with all default Level 1; Nightmare World Level 3 is merely opt-in. Separate from crit chance.
-- [ ] Review each of 92 registry levers against REAL current-native effects and choose an existing meaningful fallback where needed. Known problems: Hawk retreat lock without retreat; Paladin stance toggle; Archer first Slow only in some Veteran situations; conditional heal/ward; dormant mana. Explicit mapping must not silently yield an invisible crit.
+- [x] [centralized Level 1/2/3 registry](../src/prototype/critical-levels.js) contains **93 keys**: hero 51 + troops 9 (6 attacks + heal/mana + Soldier Guard) + pets 33. Independent Hero, Companion, World controls with all default Level 1; Nightmare World Level 3 is merely opt-in. Separate from crit chance.
+- [ ] Review each of 93 registry levers against REAL current-native effects and choose an existing meaningful fallback where needed. Known problems: Hawk retreat lock without retreat; Paladin stance toggle; Archer first Slow only in some Veteran situations; conditional heal/ward; dormant mana. Explicit mapping must not silently yield an invisible crit.
 - [ ] Apply one typed/verified enhancement **before** owning damage/heal/status resolution and pass original method-specific bounds. Do not augment a result twice through projectile+target handlers. Stronger healing cannot exceed maxHP; mitigation can't grant unauthorized immunity; Slow/Fracture stack rules unchanged.
 - [ ] Check any new tuning API does not accidentally change chance. If developer intensity changes while missiles fly, existing receipt retains its sampled tier.
 - [ ] Establish no unknown party action silently falls back to ×2 damage or gets a spurious crit icon.
