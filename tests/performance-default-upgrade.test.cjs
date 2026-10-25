@@ -4,6 +4,7 @@ const Campaign = require('../src/prototype/engine');
 const { shell } = require('./helpers/production-shell.cjs');
 
 const migrationKey = 'azeroth-performance-defaults-dev170-v1';
+const optimizationMigrationKey = 'azeroth-optimization-auto-default-v1';
 for (const language of ['en', 'es']) {
   const storage = new Map();
   const original = new Campaign('normal', 'mage', () => 0.5).snapshot();
@@ -19,11 +20,13 @@ for (const language of ['en', 'es']) {
 
   const first = shell(language, 'paladin', { storage });
   assert.equal(storage.get(migrationKey), 'applied', 'Upgrade is recorded once');
+  assert.equal(storage.get(optimizationMigrationKey), 'applied', 'Optimization upgrade runs once');
   assert.equal(first.scope.Prototype.fps.preference, 'auto');
   assert.equal(first.scope.Prototype.fps.target, 30);
   assert.equal(first.scope.Prototype.frameSkip.enabled, true);
   assert.equal(first.scope.Prototype.renderResolution.preference, 'auto');
-  assert.equal(storage.get('azeroth-optimization-mode-v1'), 'off');
+  assert.equal(storage.get('azeroth-optimization-mode-v1'), 'auto',
+    'Optimization Auto supersedes older stored On/Off on this update');
   assert.equal(first.scope.Prototype.platform.preference, 'phone');
   assert.equal(first.scope.Prototype.platform.cameraZoom, 1.5);
   first.scope.Prototype.platform.select('desktop');
@@ -67,5 +70,26 @@ for (const language of ['en', 'es']) {
   assert.equal(second.scope.Prototype.platform.cameraZoom, 1);
   assert.equal(storage.get('azeroth-v4-normal'), savedCampaign);
   assert.equal(storage.get(migrationKey), 'applied');
+  assert.equal(storage.get(optimizationMigrationKey), 'applied');
 }
+
+// A returning dev.170 user already has the old migration marker. Only
+// Optimization Mode changes on the next update; other preferences survive.
+const returning = new Map([
+  [migrationKey, 'applied'],
+  ['azeroth-optimization-mode-v1', 'off'],
+  ['azeroth-fps-v1', '60'],
+  ['azeroth-adaptive-frame-skip-v1', 'off'],
+  ['azeroth-render-resolution-v1', 'native'],
+]);
+const reloaded = shell('en', 'paladin', { storage: returning });
+assert.equal(returning.get(optimizationMigrationKey), 'applied');
+assert.equal(returning.get('azeroth-optimization-mode-v1'), 'auto');
+assert.equal(reloaded.scope.Prototype.fps.preference, '60');
+assert.equal(reloaded.scope.Prototype.frameSkip.enabled, false);
+assert.equal(reloaded.scope.Prototype.renderResolution.preference, 'native');
+returning.set('azeroth-optimization-mode-v1', 'off');
+shell('en', 'paladin', { storage: returning });
+assert.equal(returning.get('azeroth-optimization-mode-v1'), 'off',
+  'Post-upgrade explicit Off must persist through relaunch');
 console.log('PASS one-time returning-player performance baseline, v4 save safety and WebGL2 trial touch layout');
