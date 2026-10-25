@@ -59,3 +59,11 @@ Effects never resurrect, never stack on one recipient, and are runtime-only (sav
 - Reassess Direjaw's `Elastic Rebound` **without weakening it upfront**; assess how it interacts with the three ranged guards and new middle-ground healing.
 - A 50%-of-missing-HP captain recipient heal and ≤90%-HP entry are **provisional draft numbers** subject to director review; do not represent them as already authorized exact tuning.
 - Do not merge, ship or modify the live `main` without explicit director review and validation.
+
+## GitHub change record and verification checkpoints
+
+- **Draft PR:** [#454 — Captain support healing, idle recovery and Treasury guard reinforcement](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/454), head `feature/captain-healing-independent-idle-20261025`, base `main`; status **open / draft, not merged**.
+- **GitHub base:** `1312082b4bd5d216c0c2bc641dbaab6c13daf778`, ordinary healing PR #448. The captain work is isolated to the draft branch.
+- **Discussion continuity:** The director specifically reiterated that all gameplay choices, GitHub edits, implementation findings, testing status and remaining balance uncertainties need to be documented in the repository rather than existing only in conversation. Keep this document and the PR description in sync as changes are made. Do not mark a numerical tuning recommendation as final without an explicit director decision.
+- **Last verified workflow check (25 Oct 2026):** `Focused checks and deploy` showed **pending** for the then-current PR head. A skipped `Community balance input provenance` run was also present. This is **not evidence of passed tests**. Re-check against the latest head after each commit.
+- **Documentation consolidation:** this file is the authoritative dated decision log for PR #454; a duplicate similarly named draft was retired to avoid contradictory inventories or proposed guard totals. All four Treasury formations are described above by both previous and draft guard counts.
