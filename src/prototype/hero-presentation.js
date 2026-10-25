@@ -118,6 +118,18 @@
     ],
   };
   function profile(e) {
+    // Automatic combo receipts are their own basic attack, not the promoted
+    // normal Tap skill. Keep original sword/orb/bow silhouettes and foley.
+    if ((e.slot || 1) === 1 && (e.automaticBasic || e.combo) && !e.charged) {
+      const basics = {
+        paladin: ['Sword Combo','slash','steel'],
+        mage: ['Arcane Combo','orb','arcane'],
+        ranger: ['Bow Combo','arrow','arrow'],
+      };
+      const row = basics[e.class];
+      if (row) return { name:row[0],motif:row[1],material:row[2],
+        colors:palettes[row[2]] };
+    }
     const row = catalog[e.class]?.[(e.slot || 1) - 1]?.[e.charged ? 1 : 0];
     return row ? { name: row[0], motif: row[1], material: row[2], colors: palettes[row[2]] } : null;
   }
