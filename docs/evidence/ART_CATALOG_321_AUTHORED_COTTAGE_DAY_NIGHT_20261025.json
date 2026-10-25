@@ -1,0 +1,47 @@
+{
+  "schema": "art321-authored-cottage-overlap-day-night-v1",
+  "date": "2026-10-25",
+  "status": "PASS_TWO_PAIRED_COIN_VISIBILITY_TRIALS__BACKGROUND_PARITY_NOT_CERTIFIED",
+  "sourceCommit": "688fba97abdbf1275c8d55f0b2c9a1935b8e4857",
+  "ciMergeSha": "08a1b9a366d720e72a4bb12b7f7674b42c481c43",
+  "workflowRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40236756504",
+  "sixPlusSixScreenshots": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40236756504/artifacts/12615441595",
+  "comparison": "Same disposable Vale Campaign, same camera/hero/viewport, real author-selected settlement-major-0 Vale cottage at world (300,130), camera projection (773.8,263.9). Temporary approved Crown coin projected 19 screen pixels above prop anchor.",
+  "rendererOrder": "Canonical Canvas draws all current-zone Crown loot after world entities; candidate Pixi records draw Crown loot with maximum actor scene depth before atmosphere.",
+  "nightClock": 420,
+  "result": {
+    "day": {
+      "canvasChangedPixels": 881,
+      "pixiChangedPixels": 866,
+      "maskIntersectionOverUnion": 0.94543,
+      "crossRendererFullCropChangedPixels": 772,
+      "cropPixels": 13456,
+      "coinVisibleBoth": true
+    },
+    "night": {
+      "canvasChangedPixels": 525,
+      "pixiChangedPixels": 525,
+      "maskIntersectionOverUnion": 0.91606,
+      "crossRendererFullCropChangedPixels": 1841,
+      "cropPixels": 13456,
+      "coinVisibleBoth": true,
+      "authoredNight": true
+    }
+  },
+  "independentVerification": {
+    "archiveDownloaded": true,
+    "screenshotsAndHashes": "All 12 PNG SHA-256 hashes verified against two reports (six day, six night).",
+    "pixelDiffRecalculated": true,
+    "screenshotReviewed": true,
+    "visualSummary": "Approved stamped Crown coin visibly overlays the actual Vale cottage facade in both modes, including authored night grade.",
+    "broaderSceneryDifferences": "The day and night final composed crops still differ outside the coin masks (772 day, 1,841 night pixels at sum abs RGBA >=32), so the result is a coin-visibility and layering checkpoint, not a background/foreground art parity certificate."
+  },
+  "limitations": [
+    "One Vale cottage and one location at day/night; not a diversity of large foreground occluders.",
+    "Software-WebGL2 Chromium, not mobile/Chromebook performance.",
+    "Temporary coin object in this test; separate prior browser run proves Campaign.kill->reward and tick pickup.",
+    "The Crown coin should be rendered after standing world entities to preserve existing Canvas placement rather than inventing an obscured-coin behavior.",
+    "Other per-asset Pixi pictures and entity/lighting/occlusion cues remain unverified.",
+    "No default renderer change, PR merge, deployment or author artwork reapproval."
+  ]
+}
