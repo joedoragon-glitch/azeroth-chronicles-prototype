@@ -1237,6 +1237,16 @@
     const ferryPassage = Campaign.rules.tidalFerryPassage;
     if (ferryPassage && piece.startsWith(ferryPassage))
       return spanishText[ferryPassage] + piece.slice(ferryPassage.length);
+    // The optional Codices carry author-supplied English and Spanish copy.
+    for (const book of Object.values(Campaign.rules.criticalCodices || {})) {
+      if (piece === book.name) return book.nameEs;
+      if (piece === book.name + ' has already been studied.')
+        return book.nameEs + ' ya se ha estudiado.';
+      const prefix = 'Learned ' + book.name + ' · ';
+      if (piece.startsWith(prefix))
+        return 'Aprendido ' + book.nameEs + ' · ' +
+          piece.slice(prefix.length).replace('Codices of the Unforeseen', 'Códices de lo Imprevisto');
+    }
     if (/^Search /.test(piece)) return piece.replace('Search ', 'Investigar ');
     if (/^(Learn|Train) /.test(piece) && !spanishText[piece])
       return piece
@@ -3617,6 +3627,28 @@
       openMain,
     );
   }
+  function codexCollectionMenu() {
+    const books = Campaign.rules.criticalCodices || {},
+      claims = game.s.criticalCodices || {},
+      count = game.criticalCodexCount(),
+      hero = game.criticalPartyChance('hero'),
+      rank = game.expeditionSupportFraction('sharedTraining'),
+      companion = 0.10 + (hero - 0.10) * rank,
+      localeEs = language === 'es';
+    const lines = [
+      localeEs ? 'Códices aprendidos: ' + count + '/5'
+               : 'Codices learned: ' + count + '/5',
+      localeEs ? 'Probabilidad del héroe: ' + (hero * 100).toFixed(1) + '%'
+               : 'Hero chance: ' + (hero * 100).toFixed(1) + '%',
+      localeEs ? 'Compañeros y mascotas: ' + (companion * 100).toFixed(1) + '%'
+               : 'Companions and pets: ' + (companion * 100).toFixed(1) + '%',
+      '',
+      ...Object.entries(books).map(([id, book]) =>
+        (claims[id] ? '✓ ' : '○ ') + (localeEs ? book.nameEs : book.name)),
+    ];
+    openMenu(localeEs ? 'Códices de lo Imprevisto' : 'Codices of the Unforeseen',
+      lines.join('\n'), [], openMain);
+  }
   function openMain() {
     const canBuild = !game.isDungeon() && game.availableLabor().length > 0,
       cost = game.barracksBuildCost(),
@@ -3646,6 +3678,11 @@
           : 'Choose a marked destination · Key: ' + mapKeyHint(),
       ),
       action('Quest journal', () => quests(false, openMain)),
+      action(
+        language === 'es' ? 'Códices de lo Imprevisto' : 'Codices of the Unforeseen',
+        codexCollectionMenu,
+        game.criticalCodexCount() + '/5',
+      ),
       action('Character', characterMenu),
       ...(game.s.phase === 'awakening'
         ? [
