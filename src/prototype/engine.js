@@ -3542,11 +3542,8 @@
         e.deathRoll = null;
       }
       e.sequence = [];
-      if (e.form === 'ringleader')
-        this.zone().enemies.forEach((add) => {
-          if (add.summon && add.rogueEmergencyReinforcement && add.owner === e.id)
-            add.hp = 0;
-        });
+      if (e.rogueEmergencyReinforcement) this._tacticalEmergencyCleanupPending = true;
+      if (e.form === 'ringleader') this.tacticalRetireEmergencyGuards(e);
       if (e.summon) {
         if (e.developerSummon)
           this.zone().enemies.forEach((add) => {
@@ -4654,7 +4651,7 @@
     hawkRetreatKind(e) {
       if (!e || e.hp <= 0 || !e.aggro || e.returning || this.attackResetProtected(e)) return null;
       const regroup = this.tacticalRogueRegroup(e);
-      if (regroup && ['thinking', 'travel', 'escape'].includes(regroup.phase)) return 'regroup';
+      if (regroup && ['thinking', 'travel', 'escape', 'extended'].includes(regroup.phase)) return 'regroup';
       if (e.telegraph?.rogueMove && e.telegraph.style === 'withdraw') return 'withdraw';
       if (this._hawkBackpedalAt?.get(e) === this.s.time) return 'backpedal';
       if (e.rangedAim?.withdrawal || e.telegraph?.withdrawal) return 'backpedal';
@@ -4705,6 +4702,7 @@
         this._tacticalVisitedAllies?.delete(e.id);
         this._tacticalWoundedUsed?.delete(e.id);
         this._tacticalTerritorialVisited?.delete(e.id);
+        this._tacticalExtendedSearchAfter?.delete(e.id);
         this._tacticalRogueLastCast?.delete(e.id);
         this._tacticalEmergencyNext?.delete(e.id);
       } else {
@@ -4713,6 +4711,7 @@
         this._tacticalVisitedAllies?.clear();
         this._tacticalWoundedUsed?.clear();
         this._tacticalTerritorialVisited?.clear();
+        this._tacticalExtendedSearchAfter?.clear();
         this._tacticalRogueLastCast?.clear();
         this._tacticalEmergencyNext?.clear();
       }
@@ -4723,6 +4722,16 @@
         e.path = [];
         e.routeAge = 0;
       }
+    }
+    tacticalRetireEmergencyGuards(owner) {
+      let retired = false;
+      for (const add of this.zone().enemies) {
+        if (add.summon && add.rogueEmergencyReinforcement && add.owner === owner.id) {
+          add.hp = 0;
+          retired = true;
+        }
+      }
+      if (retired) this._tacticalEmergencyCleanupPending = true;
     }
     tacticalBeginRogueRegroup(e, ally, activeTargetCount = 0) {
       const prior = this.tacticalRogueRegroup(e),
@@ -4942,6 +4951,11 @@
         e.summon || !this.tacticalNeedsMoreSupport(e)
       ) return false;
       const cfg = R.tacticalFoundation, z = this.zone();
+      // Avoid repeated expensive route probing against blocked outposts.
+      if ((this._tacticalExtendedSearchAfter?.get(e.id) || 0) > this.s.time)
+        return false;
+      if (!this._tacticalExtendedSearchAfter) this._tacticalExtendedSearchAfter = new Map();
+      this._tacticalExtendedSearchAfter.set(e.id, this.s.time + 5);
       if (!this._tacticalRegroups) this._tacticalRegroups = new Map();
       if (!this._tacticalTerritorialVisited) this._tacticalTerritorialVisited = new Map();
       const visited = this._tacticalTerritorialVisited.get(e.id) || new Set();
@@ -4953,6 +4967,7 @@
       const candidates = z.enemies.filter((ally) =>
         ally !== e && ally.hp > 0 && !ally.neutral && !ally.returning &&
         !ally.summon && dist(ally, e) > cfg.supportRadius + 35 &&
+        dist(ally, ally.home || ally) <= cfg.supportRadius &&
         dist(ally.home || ally, e) <= cfg.extendedAwarenessRadius &&
         !localVisited?.has(ally.pack || ally.id) &&
         !visited.has(ally.pack || ally.id)
@@ -4971,8 +4986,17 @@
       }
       for (const ally of candidates.slice(0, 8)) {
         const fellow = this.tacticalRogueRegroup(ally);
+        // A guide is not the refuge: retain the living defender at the post
+        // so defeating the guide cannot cancel another actor's withdrawal.
+        const refuge = fellow?.phase === 'extended'
+          ? z.enemies.find((unit) =>
+              unit.id === fellow.allyId && unit.hp > 0 &&
+              !unit.neutral && !unit.returning
+            )
+          : ally;
+        if (!refuge) continue;
         const destination = fellow?.phase === 'extended'
-          ? fellow.destination : ally.home || ally;
+          ? fellow.destination : refuge.home || refuge;
         const path = this.route(e, destination);
         if (!path.length) continue;
         let length = 0, previous = e, safe = true;
@@ -4990,7 +5014,7 @@
         visited.add(ally.pack || ally.id);
         this._tacticalTerritorialVisited.set(e.id, visited);
         this._tacticalRegroups.set(e.id, {
-          phase: 'extended', allyId: ally.id,
+          phase: 'extended', allyId: refuge.id,
           destination: { x: destination.x, y: destination.y },
           anchor: { x: e.x, y: e.y }, travelRemaining: Math.max(15, length / 210 + 5),
           stalled: 0,
@@ -6141,6 +6165,19 @@
       return true;
     }
     updateEnemies(dt) {
+      // Called guards are not persistent dungeon slots. Reap dead bodies
+      // after combat (not inside kill), without a per-frame roster scan.
+      if (this._tacticalEmergencyCleanupPending) {
+        this._tacticalEmergencyCleanupPending = false;
+        for (const zone of Object.values(this.s.zones)) {
+          if (!Array.isArray(zone.enemies)) continue;
+          for (let i = zone.enemies.length - 1; i >= 0; i--) {
+            const add = zone.enemies[i];
+            if (add.rogueEmergencyReinforcement && add.hp <= 0)
+              zone.enemies.splice(i, 1);
+          }
+        }
+      }
       this.syncTreasuryRecovery(this.zone());
       const z = this.zone(),
         deaths = this.s.statistics.deaths,
@@ -6786,11 +6823,7 @@
         this.tacticalClearThreat(e);
         this.tacticalClearBurst(e);
         this.tacticalClearRogueRegroup(e);
-        if (e.form === 'ringleader')
-          this.zone().enemies.forEach((add) => {
-            if (add.summon && add.rogueEmergencyReinforcement && add.owner === e.id)
-              add.hp = 0;
-          });
+        if (e.form === 'ringleader') this.tacticalRetireEmergencyGuards(e);
         this._tacticalScatterLeash?.delete(e.id);
         this._tacticalRepositions?.delete(e.id);
         delete e.rogueDustCoverUntil;
