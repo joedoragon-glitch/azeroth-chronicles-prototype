@@ -100,8 +100,8 @@ for (const mode of ['normal', 'nightmare']) {
   const basic = Campaign.rules.tacticalFoundation.rogueMoves.species.wolf;
   assert.equal(
     mount.telegraph.radius,
-    basic.radius,
-    'mounted lance follows the already-scaled canonical Wolf Rogue dash reach',
+    165 * Campaign.rules.balance.enemySpecialReachMultiplier,
+    'mounted lance keeps the authored scaled mounted-Rogue dash reach',
   );
   assert.equal(mount.telegraph.coefficient, basic.coefficient,
     'direwolf dash keeps the original guardian damage coefficient');
