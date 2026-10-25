@@ -747,7 +747,7 @@
     ctx.restore();
     return true;
   }
-  function projectile(ctx, screen, p, heroClass, reduced = false) {
+  function projectile(ctx, screen, p, heroClass, reduced = false, caster = null) {
     if (p.source !== 'hero') return false;
     if (p.delay > 0) return true;
     const def = profile({ class: heroClass, slot: p.slot || 1, charged: p.charged });
@@ -778,16 +778,31 @@
         glyph(ctx, tail.x, tail.y, 'arrow', 3);
       }
     } else if (p.style === 'beam') {
-      const origin = screen({ x: p.originX ?? p.x, y: p.originY ?? p.y }),
+      const start = {
+          x: p.originX ?? p.x,
+          y: p.originY ?? p.y,
+        },
+        attached = p.mageSkill1Homing && caster && caster.hp > 0,
+        origin = attached ? caster : start,
         width = p.beamWidthScale || 1,
         path = p.mageSkill1Homing ? p.trailPoints || [] : [];
-      // Follow recorded world-space flight positions; a moving Mage doesn't
-      // drag the origin and a moving foe produces a genuine curved column.
+      // The spell's damaging head follows its physical homing flight, while
+      // its luminous tail is visually tethered to the moving caster.
+      // Old flight breadcrumbs bend proportionally toward the live origin;
+      // the distant head stays fixed, so it never teleports with the hero.
       const strokeBeam = () => {
+        const o = screen(origin);
         ctx.beginPath();
-        ctx.moveTo(origin.x, origin.y);
-        for (const point of path.slice(1)) {
-          const v = screen(point);
+        ctx.moveTo(o.x, o.y);
+        for (let i = 1; i < path.length; i++) {
+          const fraction = i / Math.max(1, path.length),
+            pull = attached ? (1 - fraction) ** 2 : 0,
+            point = path[i],
+            warped = {
+              x: point.x + (origin.x - start.x) * pull,
+              y: point.y + (origin.y - start.y) * pull,
+            },
+            v = screen(warped);
           ctx.lineTo(v.x, v.y);
         }
         ctx.lineTo(q.x, q.y);
