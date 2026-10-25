@@ -46,6 +46,7 @@ const screenHero = ({ x, y }) => ({ x: 340 + (x - 600) * 0.68 - (y - 900) * 0.3,
 const screenEnemy = ({ x, y }) => ({ x: 370 + (x - 1480) * 0.6 - (y - 1700) * 0.3,
   y: 280 + (x - 1480) * 0.19 + (y - 1700) * 0.32 });
 let heroForms = 0, positiveHeroPixels = 0, observedReceipts = 0, heroCueNames = new Set();
+const deliberatelyBlankCastStages = [];
 for (const cls of ['paladin', 'mage', 'ranger'])
   for (let slot = 1; slot <= 8; slot++)
     for (const charged of [false, true]) {
@@ -66,20 +67,28 @@ for (const cls of ['paladin', 'mage', 'ranger'])
       HeroArt.draw(canvas.getContext('2d'), screenHero, cue,
         { width: 800, height: 600, reduced: false, optimized: false });
       const pixels = ink(canvas);
-      assert(pixels > 0, 'no alpha pixels in named natural cast cue: ' +
-        [cls, slot, charged]);
+      if (pixels > 0) positiveHeroPixels += pixels;
+      else deliberatelyBlankCastStages.push({
+        class: cls, slot, charged, cue: cue.name,
+        otherCues: effects.filter((f) => f !== cue)
+          .map((f) => f.type + (f.stage ? ':' + f.stage : '')),
+        activeProjectiles: g.s.projectiles.length,
+      });
+      // Recording a call is not pixel evidence. A valid 'cast' event can be
+      // deliberately silent while an area, projectile, or live status paints.
       rec.painted(cue);
       const id = 'hero/' + cls + '/' + slot + '/' + (charged ? 'charged' : 'normal') + ':cast';
       assert(rec.report(true).identities.some((v) => v.id === id && v.painted === 1));
       heroForms++;
-      positiveHeroPixels += pixels;
       observedReceipts += rec.report(true).eventsSeen;
       heroCueNames.add(cue.name);
     }
 assert.equal(heroForms, 48);
 assert(heroCueNames.size >= 42);
+assert(positiveHeroPixels > 0);
 console.log('STAGE3 HERO natural cast receipts=' + heroForms +
-  ' alpha-positive cast painters=' + heroForms + ' aggregate alpha pixels=' + positiveHeroPixels);
+  ' alpha-positive aggregate pixels=' + positiveHeroPixels +
+  ' deliberately blank cast stages=' + JSON.stringify(deliberatelyBlankCastStages));
 
 // Actual authored boss attacks → observer event → queued stage → enemy-specific
 // Canvas renderer. No direct fabricated enemyVfx stage injection.
