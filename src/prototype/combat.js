@@ -508,7 +508,9 @@
           duration *
           (isEnemy ? R.cooldownBalance.enemySlowDebtFraction : R.cooldownBalance.slowDebtFraction);
         if (isHero) {
-          for (let i = 0; i < unit.cd.length; i++) if (unit.cd[i] > 0) unit.cd[i] += debt;
+          for (const timers of [unit.cd, unit.chargedCd || []])
+            for (let i = 0; i < timers.length; i++) if (timers[i] > 0) timers[i] += debt;
+          if (unit.basicCd > 0) unit.basicCd += debt;
         } else {
           for (const key of isEnemy ? SLOW_ENEMY_COOLDOWNS : SLOW_COMPANION_COOLDOWNS)
             if (Number.isFinite(unit[key]) && unit[key] > 0) unit[key] += debt;

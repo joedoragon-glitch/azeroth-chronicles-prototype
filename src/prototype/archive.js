@@ -475,6 +475,7 @@
     // The Adventure → Hero Skills menu is the primary quick reference.
     const skills = {
       paladin: {
+        1: 'You learned to handle your sword before these specialists were freed. Ordinary blows flow automatically; tap Radiant Strike for a focused holy shot, or hold Radiant Cross for two cross-shaped pulses. Both techniques improve with the same rank.',
         2: 'Tap Sundering Strike: hit and weaken one enemy. Charge Holy Cleave: weaken a frontal group.',
         3: 'Tap Shield Stance: guard for 8s; basic attacks stop and other damage drops. Tap again to lower. Charge Shield Bash: push nearby enemies.',
         4: 'Tap Judgment: a dodgeable holy shot strikes and taunts one foe. Charge Grand Judgment: hit and taunt a group. Boss specials keep their own targets.',
@@ -484,6 +485,7 @@
         8: 'Tap Sanctuary Oath: heal 15% and protect nearby allies with a 20% ward. Charge Last Bastion: heal 20%, grant 30% ward and weaken enemies. No immunity.',
       },
       mage: {
+        1: 'I see you already know the fundamentals of arcane combat. Your automatic attacks form a three-beat sequence; tap Arcane Beam to focus on one enemy, or hold Wide Arcane Beam to strike every foe along a broad, obstacle-limited line.',
         2:
           'Tap Frost Bolt: damage and slow one foe for ' +
           slowDuration(R, 2) +
@@ -502,6 +504,7 @@
         8: 'Tap Astral Detonation: targeted blast, up to 5 foes. Charge Arcane Cataclysm: stronger blast, up to 7, with brief 25–29% vulnerability. No immunity.',
       },
       ranger: {
+        1: 'A Ranger does not need a rescued instructor for the first lesson: arrows fly automatically in combat. Tap Rapid Arrows for three focused shots, or hold Hawk Interception. The bird pursues one foe, and a successful catch can stop an active tactical retreat for a brief time; it cannot override a protected return.',
         2: 'Tap Pinning Shot: two slowing arrows. Charge Pinning Volley: slow enemies along a line.',
         3: 'Tap: heal yourself. Charge: heal you and wounded living companions. Neither revives the fallen.',
         4: 'Tap Movement Haste: move 25% faster. Charge Companion Rally: nearby allies move 15–19% faster and use basic attacks 8–12% faster briefly.',
@@ -525,7 +528,7 @@
           milestones = Math.floor(rank / 2),
           labels = {
             paladin: {
-              1: 'Sword Combo',
+              1: 'Radiant Strike / Radiant Cross',
               2: 'Sundering Strike',
               3: 'Shield Stance / Shield Bash',
               4: 'Judgment',
@@ -535,7 +538,7 @@
               8: 'Sanctuary Oath / Last Bastion',
             },
             mage: {
-              1: 'Arcane Combo',
+              1: 'Arcane Beam / Wide Arcane Beam',
               2: 'Frost Bolt',
               3: 'Spell Interrupt / Silence Field',
               4: 'Arcane Fracture',
@@ -545,7 +548,7 @@
               8: 'Astral Detonation / Arcane Cataclysm',
             },
             ranger: {
-              1: 'Bow Combo',
+              1: 'Rapid Arrows / Hawk Interception',
               2: 'Pinning Shot',
               3: 'Self-Heal / Party Heal',
               4: 'Movement Haste / Rally',
@@ -556,7 +559,7 @@
             },
           },
           effects = {
-            1: 'Three normal strikes on the same foe build a finishing splash. Changing foes or waiting too long breaks the sequence; charging delivers a stronger strike.',
+            1: 'Automatic attacks build a same-target three-hit combo and finishing splash. Tap is an immediate focused attack. Charging uses the longer class technique, but Tap returns after its shorter cooldown; using Tap never extends Charged.',
             2:
               'Charge this attack to spread it through a ' +
               shape.shape +
@@ -577,11 +580,26 @@
             (mana ? '; cost ' + game.skillManaCost(slot, rank, false) + ' MP' : '') +
             '.' +
             (slot === 1
-              ? '\nCombo expires after ' +
-                R.basicAttackCombo.resetSeconds +
-                ' seconds. Charged total damage: ×' +
-                R.chargedSkills.basicDamageMultiplier +
-                ' before defenses.'
+              ? (() => {
+                  const reference =
+                    typeof PrototypeSkillReference !== 'undefined'
+                      ? PrototypeSkillReference
+                      : require('./skill-reference.js');
+                  const info = reference.describe(game, slot, rank);
+                  const show = (form) =>
+                    form.metrics.map((m) => m.label + ': ' + reference.value(m)).join(' · ');
+                  return (
+                    '\nAutomatic basics: ' +
+                    show(info.auto) +
+                    '\nTap: ' +
+                    show(info.tap) +
+                    '\nCharged: ' +
+                    show(info.charge) +
+                    '\nCombo resets after ' +
+                    R.basicAttackCombo.resetSeconds +
+                    ' seconds without a compatible target.'
+                  );
+                })()
               : '') +
             (slot === 2
               ? '\nCharged ' +
@@ -611,7 +629,7 @@
                     ' seconds on a fresh hit.'
                   : '')
               : '') +
-            (slot >= 1 && slot <= 8
+            (slot >= 2 && slot <= 8
               ? '\nCharged recovery: ' +
                 number(cooldown(true)) +
                 ' seconds' +
@@ -960,6 +978,38 @@
       'Estas cifras corresponden a criaturas de lugares que ya has visitado. Compara su nivel, salud máxima y daño: los guardianes, cabecillas y combatientes a distancia pueden diferir.\n\n',
 
     'The Keeper’s shelves': 'Los estantes del Guardián',
+    'Radiant Strike / Radiant Cross': 'Golpe radiante / Cruz radiante',
+    'Arcane Beam / Wide Arcane Beam': 'Rayo arcano / Rayo arcano amplio',
+    'Rapid Arrows / Hawk Interception': 'Flechas rápidas / Intercepción del halcón',
+    'Automatic attacks build a same-target three-hit combo and finishing splash. Tap is an immediate focused attack. Charging uses the longer class technique, but Tap returns after its shorter cooldown; using Tap never extends Charged.':
+      'Los ataques automáticos forman un combo de tres golpes al mismo objetivo y daño de área final. Tocar ejecuta una técnica inmediata. La versión cargada tiene una recuperación más larga, pero la normal vuelve antes y usarla no retrasa la cargada.',
+    'You learned to handle your sword before these specialists were freed. Ordinary blows flow automatically; tap Radiant Strike for a focused holy shot, or hold Radiant Cross for two cross-shaped pulses. Both techniques improve with the same rank.':
+      'Aprendiste a manejar la espada antes de rescatar a estos especialistas. Los golpes básicos son automáticos; toca Golpe radiante para un disparo sagrado o mantén Cruz radiante para dos pulsos en forma de cruz. Ambas técnicas mejoran con el mismo rango.',
+    'I see you already know the fundamentals of arcane combat. Your automatic attacks form a three-beat sequence; tap Arcane Beam to focus on one enemy, or hold Wide Arcane Beam to strike every foe along a broad, obstacle-limited line.':
+      'Veo que ya conoces los fundamentos del combate arcano. Los ataques automáticos forman una secuencia de tres golpes; toca Rayo arcano para concentrarte en un enemigo o mantén Rayo arcano amplio para alcanzar a todos los enemigos en una línea ancha limitada por obstáculos.',
+    'A Ranger does not need a rescued instructor for the first lesson: arrows fly automatically in combat. Tap Rapid Arrows for three focused shots, or hold Hawk Interception. The bird pursues one foe, and a successful catch can stop an active tactical retreat for a brief time; it cannot override a protected return.':
+      'Un explorador no necesita un instructor rescatado para la primera lección: sus flechas atacan automáticamente en combate. Toca Flechas rápidas para tres disparos o mantén Intercepción del halcón. El ave persigue a un enemigo y puede interrumpir una retirada táctica durante un breve tiempo, pero no una vuelta protegida.',
+    'Automatic basics: ': 'Ataques básicos automáticos: ',
+    'Tap: ': 'Normal: ',
+    'Charged: ': 'Cargada: ',
+    'Combo resets after ': 'El combo se reinicia tras ',
+    ' seconds without a compatible target.': ' segundos sin un objetivo compatible.',
+    'Basic attack interval': 'Intervalo del ataque básico',
+    'Combo damage': 'Daño del combo',
+    'Third-hit splash': 'Daño de área del tercer golpe',
+    'Base damage': 'Daño base',
+    'Damage per pulse': 'Daño por pulso',
+    'Damage per enemy': 'Daño por enemigo',
+    'Initial target range': 'Alcance inicial',
+    'Maximum flight path': 'Distancia máxima del halcón',
+    'Flight lifetime': 'Duración del vuelo',
+    'Retreat lockout': 'Bloqueo de retirada',
+    Pulses: 'Pulsos',
+    Width: 'Anchura',
+    Reach: 'Alcance',
+    'Max targets': 'Máximo de objetivos',
+    Arrows: 'Flechas',
+    Cooldown: 'Recuperación',
     'Battle and protection': 'Combate y protección',
     'Conditions and recovery': 'Estados y recuperación',
     'Experience and discipline': 'Experiencia y disciplina',

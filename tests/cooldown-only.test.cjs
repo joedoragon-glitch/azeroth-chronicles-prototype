@@ -1,5 +1,6 @@
 'use strict';
 const assert = require('node:assert/strict');
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 const Campaign = require('../src/prototype/engine');
 const R = Campaign.rules;
 
@@ -10,6 +11,7 @@ const classes = ['paladin', 'mage', 'ranger'];
 
 function targetArena(cls) {
   const g = new Campaign('normal', cls, () => 0.9);
+  completeFieldOpening(g);
   g.s.party = [g.unit('soldier', 510, 500)];
   g.zone().props = [];
   g.hero.skills = Array(8).fill(1);
@@ -47,9 +49,14 @@ for (const cls of classes) {
     ]) {
       const { g, foe } = targetArena(cls);
       g.hero.talents[1] = talentRank;
-      const nominal = charged
-        ? R.cooldownBalance.chargedSeconds[slot]
-        : R.balance.skills.cooldowns[slot];
+      const nominal =
+        slot === 1
+          ? charged
+            ? { paladin: 8, mage: 7, ranger: 8 }[cls]
+            : 3
+          : charged
+            ? R.cooldownBalance.chargedSeconds[slot]
+            : R.balance.skills.cooldowns[slot];
       const expected = nominal * ratio;
       assert(
         Math.abs(g.skillCooldown(slot, charged) - expected) < 1e-9,
@@ -64,7 +71,15 @@ for (const cls of classes) {
         assert.equal(g.hero.cd[2], 0, 'stance cooldown waits for lowering');
         assert(g.cast(3));
       }
-      assert(Math.abs(g.hero.cd[slot - 1] - expected) < 1e-9, 'cooldown begins with correct value');
+      const normalExpected = (slot === 1 ? 3 : R.balance.skills.cooldowns[slot]) * ratio;
+      assert(
+        Math.abs(g.hero.cd[slot - 1] - normalExpected) < 1e-9,
+        'normal cooldown begins with correct value',
+      );
+      assert(
+        Math.abs(g.hero.chargedCd[slot - 1] - (charged ? expected : 0)) < 1e-9,
+        'independent charged lock',
+      );
       assert(!g.cast(slot, foe.id, charged), 'cooldown rejects immediate repeat');
     }
   }
@@ -363,7 +378,7 @@ for (const slot of [5, 7]) {
   assert(g.cast(2, foe.id), 'Mage frost projectile launches');
   g.updateProjectiles(0.2);
   assert.equal(g.s.projectiles.length, 0);
-  assert.equal(foe.slow, 2, 'landed frost projectile applies slow');
+  assert.equal(foe.slow, 2.25, 'landed frost projectile includes the shared Slow duration bonus');
 }
 {
   const { g, foe } = targetArena('mage');

@@ -408,6 +408,33 @@
           s.hero.cd.some((v) => !Number.isFinite(v) || v < 0 || v > 1e9)
         )
           throw Error('Invalid cooldown');
+        // Legacy v4 kept a single last-used-form cooldown. Preserve its remaining
+        // charged lock, but never force a promoted normal Tap to wait that long.
+        // Capture Skill 1's old timer before converting it into three forms.
+        const legacyBasicRemaining = s.hero.cd[0];
+        if (s.hero.chargedCd === undefined) {
+          s.hero.chargedCd = s.hero.cd.slice();
+          const reduction =
+            1 -
+            (R.resourceMode.manaEnabled
+              ? 0
+              : Math.min(5, s.hero.talents?.[1] || 0) * R.cooldownBalance.reductionPerTalentRank);
+          s.hero.cd = s.hero.cd.map((remaining, i) =>
+            Math.min(
+              remaining,
+              (i === 0 ? R.chargedSkills.first.normalSeconds : R.balance.skills.cooldowns[i + 1]) *
+                reduction,
+            ),
+          );
+        }
+        if (
+          !Array.isArray(s.hero.chargedCd) ||
+          s.hero.chargedCd.length !== 8 ||
+          s.hero.chargedCd.some((v) => !Number.isFinite(v) || v < 0 || v > 1e9)
+        )
+          throw Error('Invalid charged cooldowns');
+        if (s.hero.basicCd === undefined) s.hero.basicCd = legacyBasicRemaining;
+        finite(s.hero.basicCd, 0, 1e9);
         // Strip transient fields from historical or interrupted exports.
         // Existing learned ranks and charged cooldowns remain in v4.
         if (['skill-approach', 'move'].includes(s.hero.order?.type)) s.hero.order = null;

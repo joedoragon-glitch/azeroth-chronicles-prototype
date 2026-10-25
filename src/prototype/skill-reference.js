@@ -5,10 +5,10 @@
   const skillCards = {
     paladin: [
       [
-        'Sword Combo',
-        'Basic attack / holy burst',
-        'Sword combo; third hit cleaves',
-        'Fire a holy projectile',
+        'Radiant Strike',
+        'Automatic sword combo / holy projectile / Radiant Cross',
+        'Fire one focused holy projectile',
+        'Radiant Cross: two holy pulses along four arms',
       ],
       [
         'Sundering Strike',
@@ -58,10 +58,10 @@
     ],
     mage: [
       [
-        'Arcane Combo',
-        'Magic combo / beam',
-        'Magic combo; third hit splashes',
-        'Arcane Beam: fire a powerful beam',
+        'Arcane Beam',
+        'Automatic magic combo / narrow beam / wide beam',
+        'Fire one narrow Arcane Beam',
+        'Wide Arcane Beam: hit every enemy along the broad line',
       ],
       [
         'Frost Bolt',
@@ -111,10 +111,10 @@
     ],
     ranger: [
       [
-        'Bow Combo',
-        'Arrow combo / rapid triple',
-        'Arrow combo; third hit fans out',
-        'Rapid Triple Shot: fire three arrows',
+        'Rapid Arrows',
+        'Automatic bow combo / rapid arrows / hunting hawk',
+        'Fire three rapid arrows at one foe',
+        'Hawk Interception: pursue one foe and stop an active retreat',
       ],
       [
         'Pinning Shot',
@@ -183,6 +183,8 @@
     const tap = { title: 'Tap', effect: c.tap, metrics: [] },
       charge = { title: 'Charged', effect: c.charge, metrics: [] };
     function add(form, key, label, value, unit = '') {
+      // Slow's shared application owner adds this duration to every landed effect.
+      if (key === 'slow') value += R.cooldownBalance.slowDurationBonusSeconds;
       form.metrics.push({ key, label, value, unit });
     }
     const damage = (f, coefficient, label = 'Base damage', key = 'damage') =>
@@ -217,27 +219,55 @@
       [charge, true],
     ])
       add(f, 'cooldown', 'Cooldown', game.skillCooldown(slot, charged), 's');
+    let auto = null;
     if (slot === 1) {
-      const base = (power + 12) * scale;
+      const base = (power + 12) * scale,
+        first = R.chargedSkills.first;
+      auto = {
+        title: 'Automatic basics',
+        effect:
+          'Attacks independently while moving or standing. Three same-target hits build a finishing splash; Skill 1 Tap and Charged do not reset the combo.',
+        metrics: [],
+      };
+      add(auto, 'basicInterval', 'Basic attack interval', game.basicSkillCooldown(), 's');
       add(
-        tap,
-        'damage',
+        auto,
+        'comboDamage',
         'Combo damage',
         R.basicAttackCombo.multipliers.map((v) => base * v),
       );
       add(
-        tap,
+        auto,
         'splashDamage',
         'Third-hit splash',
         base * R.basicAttackCombo.finisher.secondaryMultiplier,
       );
-      add(
-        charge,
-        'damage',
-        cls === 'ranger' ? 'Damage per arrow' : 'Base damage',
-        (base * R.chargedSkills.basicDamageMultiplier) / (cls === 'ranger' ? 3 : 1),
-      );
-      if (cls === 'ranger') add(charge, 'arrows', 'Arrows', 3);
+      add(auto, 'reach', 'Reach', game.heroSkillRange(1, false));
+      if (cls === 'ranger') {
+        add(tap, 'damage', 'Damage per arrow', base);
+        add(tap, 'arrows', 'Arrows', 3);
+      } else add(tap, 'damage', 'Base damage', base * R.chargedSkills.basicDamageMultiplier);
+      add(tap, 'reach', 'Reach', game.heroSkillRange(1, false));
+      if (cls === 'paladin') {
+        const c = first.paladin;
+        add(charge, 'damage', 'Damage per pulse', base * c.damagePerPulse);
+        add(charge, 'pulses', 'Pulses', c.pulses);
+        add(charge, 'reach', 'Reach', c.reach + c.reachStep * steps);
+        add(charge, 'width', 'Width', 2 * (c.halfWidth + c.halfWidthStep * steps));
+        add(charge, 'targets', 'Max targets', c.maxTargets);
+      } else if (cls === 'mage') {
+        const c = first.mage;
+        add(charge, 'damage', 'Damage per enemy', base * c.damage);
+        add(charge, 'reach', 'Reach', c.reach + c.reachStep * steps);
+        add(charge, 'width', 'Width', 2 * (c.halfWidth + c.halfWidthStep * steps));
+      } else {
+        const c = first.ranger;
+        add(charge, 'damage', 'Base damage', base * c.damage);
+        add(charge, 'reach', 'Initial target range', c.launchRange);
+        add(charge, 'flight', 'Maximum flight path', c.pathBudget + c.pathStep * steps);
+        add(charge, 'flightLife', 'Flight lifetime', c.lifetime, 's');
+        add(charge, 'retreatLock', 'Retreat lockout', c.retreatLock + c.retreatStep * steps, 's');
+      }
     } else if (slot === 2) {
       damage(
         tap,
@@ -431,7 +461,7 @@
         }
       }
     }
-    return { ...c, rank, tap, charge };
+    return { ...c, rank, auto, tap, charge };
   }
   function number(value) {
     return String(Math.round((value + Number.EPSILON) * 100) / 100);
@@ -446,7 +476,7 @@
     if (rank < 1 || rank >= 8) return [];
     const before = describe(game, slot, rank),
       after = describe(game, slot, rank + 1);
-    return ['tap', 'charge'].map((form) => ({
+    return (slot === 1 ? ['auto', 'tap', 'charge'] : ['tap', 'charge']).map((form) => ({
       title: before[form].title,
       rows: after[form].metrics.flatMap((m) => {
         const old = before[form].metrics.find((p) => p.key === m.key);

@@ -1,5 +1,6 @@
 'use strict';
 const assert = require('node:assert/strict');
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 const Campaign = require('../src/prototype/engine.js');
 const R = Campaign.rules;
 
@@ -13,6 +14,7 @@ function advanceCast(game, dt) {
 
 function arena(type = 'soldier') {
   const game = new Campaign('normal', 'paladin', () => 0.9);
+  completeFieldOpening(game);
   game.s.mercyTime = 0;
   game.zone().props = [];
   game.zone().buildings = [];

@@ -638,16 +638,33 @@
         return Math.ceil(costs[slot] * (1 + R.manaBalance.rankCostGrowth * Math.max(0, rank - 1)));
       }
       skillCooldown(slot, charged = false) {
+        const first = R.chargedSkills.first;
         const base =
-          !R.resourceMode.manaEnabled && charged
-            ? R.cooldownBalance.chargedSeconds[slot] || cooldowns[slot]
-            : cooldowns[slot];
+          slot === 1
+            ? charged
+              ? first.chargedSeconds[this.hero.class]
+              : first.normalSeconds
+            : !R.resourceMode.manaEnabled && charged
+              ? R.cooldownBalance.chargedSeconds[slot] || cooldowns[slot]
+              : cooldowns[slot];
         return (
           base *
           (1 -
             Math.min(5, this.hero.talents[1] || 0) *
               (R.resourceMode.manaEnabled ? 0 : R.cooldownBalance.reductionPerTalentRank))
         );
+      }
+      basicSkillCooldown() {
+        return (
+          R.chargedSkills.first.basicSeconds *
+          (1 -
+            Math.min(5, this.hero.talents[1] || 0) *
+              (R.resourceMode.manaEnabled ? 0 : R.cooldownBalance.reductionPerTalentRank))
+        );
+      }
+      skillReady(slot, charged = false) {
+        const i = slot - 1;
+        return (this.hero.cd[i] || 0) <= 0 && (!charged || (this.hero.chargedCd?.[i] || 0) <= 0);
       }
       // Target selection is transient: no changes to campaign saves or difficulty.
       // A held Target locks the current foe even while dodging beyond selection range.
@@ -744,6 +761,14 @@
       heroSkillRange(slot, charged = false) {
         const second = charged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null,
           steps = this.tacticMilestones(this.hero.skills[slot - 1]);
+        if (slot === 1 && charged) {
+          const cfg = R.chargedSkills.first;
+          return this.hero.class === 'paladin'
+            ? cfg.paladin.reach + cfg.paladin.reachStep * steps
+            : this.hero.class === 'mage'
+              ? cfg.mage.reach + cfg.mage.reachStep * steps
+              : cfg.ranger.launchRange;
+        }
         if (slot === 4 && this.hero.class === 'paladin')
           return charged
             ? R.heroTactics.paladin.grandJudgment.range
@@ -760,6 +785,268 @@
                 ? 400
                 : 450
               : 480;
+      }
+      // Gameplay-only transient Skill 1 effects; not saved, not driven by art or sound.
+      heroSkillEffectLive(f) {
+        return (
+          f.zone === this.zoneId &&
+          f.deaths === this.s.statistics.deaths &&
+          this.hero.hp > 0 &&
+          !this.peace &&
+          !this.s.challenge?.pending &&
+          !this.s.challenge?.gameOver
+        );
+      }
+      resolveHeroCrossPulse(f, pulse) {
+        if (!this.heroSkillEffectLive(f)) return;
+        const cfg = R.chargedSkills.first.paladin,
+          angles = [f.angle, f.angle + Math.PI / 2, f.angle + Math.PI, f.angle + Math.PI * 1.5],
+          // Four independent solid-terrain limits ensure the visible cross
+          // never projects an arm through a wall beyond its legal collision.
+          arms = angles.map((angle) => {
+            const dx = Math.cos(angle),
+              dy = Math.sin(angle);
+            let legal = 0,
+              previous = f.from;
+            for (let step = 8; step <= f.reach + 8; step += 8) {
+              const next = Math.min(f.reach, step),
+                point = { x: f.from.x + dx * next, y: f.from.y + dy * next };
+              if (!this.clearSegment(previous, point, 0)) break;
+              legal = next;
+              previous = point;
+            }
+            return { angle, length: legal, x: f.from.x + dx * legal, y: f.from.y + dy * legal };
+          });
+        const within = (e) =>
+          arms.some((arm) => {
+            const dx = e.x - f.from.x,
+              dy = e.y - f.from.y,
+              ca = Math.cos(arm.angle),
+              sa = Math.sin(arm.angle),
+              along = dx * ca + dy * sa,
+              cross = Math.abs(dy * ca - dx * sa),
+              radius = this.actorRadius(e);
+            return (
+              along >= -radius && along <= arm.length + radius && cross <= f.halfWidth + radius
+            );
+          });
+        const candidates = this.zone().enemies.filter(
+          (e) =>
+            e.hp > 0 &&
+            !e.neutral &&
+            !e.returning &&
+            !this.attackResetProtected(e) &&
+            within(e) &&
+            this.line(f.from, e),
+        );
+        candidates.sort(
+          (a, b) =>
+            (a.id === f.targetId ? -1 : b.id === f.targetId ? 1 : 0) ||
+            dist(f.from, a) - dist(f.from, b) ||
+            this.idOrder(a, b),
+        );
+        let hits = 0;
+        for (const e of candidates) {
+          if (!f.admitted.includes(e.id)) {
+            if (f.admitted.length >= cfg.maxTargets) continue;
+            f.admitted.push(e.id);
+          }
+          if (
+            this.damage(e, f.damage * cfg.damagePerPulse, 'hero', {
+              area: true,
+              encountersAtStart: f.encountersAtStart,
+            })
+          )
+            hits++;
+        }
+        this.event('heroSkillArea', {
+          actor: 'hero',
+          class: 'paladin',
+          slot: 1,
+          effect: 'radiant-cross',
+          x: f.from.x,
+          y: f.from.y,
+          angle: f.angle,
+          reach: f.reach,
+          halfWidth: f.halfWidth,
+          arms: arms.map((arm) => ({ x: arm.x, y: arm.y })),
+          pulse,
+          hits,
+        });
+      }
+      resolveWideArcaneBeam(f) {
+        if (!this.heroSkillEffectLive(f)) return;
+        const ux = Math.cos(f.angle),
+          uy = Math.sin(f.angle),
+          step = 8;
+        let limit = f.reach,
+          previous = f.from;
+        for (let d = step; d <= f.reach + step; d += step) {
+          const at = Math.min(d, f.reach),
+            point = { x: f.from.x + ux * at, y: f.from.y + uy * at };
+          if (!this.clearSegment(previous, point, 0)) {
+            limit = Math.max(0, at - step);
+            break;
+          }
+          previous = point;
+        }
+        const end = { x: f.from.x + ux * limit, y: f.from.y + uy * limit };
+        let hits = 0;
+        for (const e of this.zone().enemies) {
+          if (e.hp <= 0 || e.neutral || e.returning || this.attackResetProtected(e)) continue;
+          const forward = (e.x - f.from.x) * ux + (e.y - f.from.y) * uy;
+          if (
+            forward < 0 ||
+            forward > limit ||
+            this.distanceToSegment(e, f.from, end) > f.halfWidth + this.actorRadius(e) ||
+            !this.line(f.from, e)
+          )
+            continue;
+          if (
+            this.damage(e, f.damage * R.chargedSkills.first.mage.damage, 'hero', {
+              area: true,
+              encountersAtStart: f.encountersAtStart,
+            })
+          )
+            hits++;
+        }
+        this.event('heroSkillArea', {
+          actor: 'hero',
+          class: 'mage',
+          slot: 1,
+          effect: 'wide-arcane-beam',
+          x: f.from.x,
+          y: f.from.y,
+          endX: end.x,
+          endY: end.y,
+          halfWidth: f.halfWidth,
+          hits,
+        });
+      }
+      advanceHeroSkillEffects(dt) {
+        if (!this._heroSkillEffects?.length) return;
+        const cfg = R.chargedSkills.first.ranger;
+        this._heroSkillEffects = this._heroSkillEffects.filter((f) => {
+          if (!this.heroSkillEffectLive(f)) return false;
+          if (f.kind === 'cross') {
+            if (this.s.time < f.due) return true;
+            this.resolveHeroCrossPulse(f, 1);
+            return false;
+          }
+          if (f.kind !== 'hawk') return false;
+          const target = this.zone().enemies.find((e) => e.id === f.targetId);
+          if (
+            !target ||
+            target.hp <= 0 ||
+            target.neutral ||
+            target.returning ||
+            this.attackResetProtected(target) ||
+            !this.tacticalDirectTargetable(target)
+          ) {
+            this.event('heroHawk', {
+              actor: 'hero',
+              class: 'ranger',
+              slot: 1,
+              phase: 'expire',
+              x: f.x,
+              y: f.y,
+              targetId: f.targetId,
+            });
+            return false;
+          }
+          const gap = dist(f, target),
+            contact = cfg.hitRadius + this.actorRadius(target),
+            available = Math.min(cfg.speed * dt, f.budget - f.traveled);
+          f.elapsed += dt;
+          if (gap > contact && available <= 0) {
+            this.event('heroHawk', {
+              actor: 'hero',
+              class: 'ranger',
+              slot: 1,
+              phase: 'expire',
+              x: f.x,
+              y: f.y,
+              targetId: f.targetId,
+            });
+            return false;
+          }
+          const travel = Math.min(Math.max(0, gap - contact), available);
+          const next =
+            gap > 0
+              ? {
+                  x: f.x + ((target.x - f.x) / gap) * travel,
+                  y: f.y + ((target.y - f.y) / gap) * travel,
+                }
+              : { x: f.x, y: f.y };
+          if (!this.clearSegment(f, next, 0)) {
+            this.event('heroHawk', {
+              actor: 'hero',
+              class: 'ranger',
+              slot: 1,
+              phase: 'expire',
+              x: f.x,
+              y: f.y,
+              targetId: f.targetId,
+            });
+            return false;
+          }
+          const old = { x: f.x, y: f.y };
+          f.x = next.x;
+          f.y = next.y;
+          f.traveled += travel;
+          this.event('heroHawk', {
+            actor: 'hero',
+            class: 'ranger',
+            slot: 1,
+            phase: 'flight',
+            x: f.x,
+            y: f.y,
+            fromX: old.x,
+            fromY: old.y,
+            angle: Math.atan2(target.y - f.y, target.x - f.x),
+            targetId: f.targetId,
+          });
+          // Projection can leave a sub-pixel rounding residue at exact contact.
+          if (dist(f, target) <= contact + 1e-7) {
+            // Check active retreat before damage mutates regroup and threat.
+            const retreat = this.hawkRetreatKind(target);
+            const landed = this.damage(target, f.damage * cfg.damage, 'hero', {
+              encountersAtStart: f.encountersAtStart,
+            });
+            const interrupted =
+              landed && retreat
+                ? this.hawkInterruptRetreat(
+                    target,
+                    retreat,
+                    cfg.retreatLock + this.tacticMilestones(f.rank) * cfg.retreatStep,
+                  )
+                : false;
+            this.event('heroHawk', {
+              actor: 'hero',
+              class: 'ranger',
+              slot: 1,
+              phase: 'impact',
+              x: target.x,
+              y: target.y,
+              targetId: target.id,
+              landed,
+              interrupted,
+            });
+            return false;
+          }
+          const alive = f.elapsed < cfg.lifetime && f.traveled < f.budget;
+          if (!alive)
+            this.event('heroHawk', {
+              actor: 'hero',
+              class: 'ranger',
+              slot: 1,
+              phase: 'expire',
+              x: f.x,
+              y: f.y,
+              targetId: f.targetId,
+            });
+          return alive;
+        });
       }
       castMovementBasic() {
         // A released skill owns its approach. Passive covering fire must not
@@ -801,12 +1088,18 @@
           });
           return true;
         }
-        if (!rank || this.hero.cd[i] > 0 || this.peace) {
+        if (
+          !rank ||
+          (automatic && slot === 1
+            ? (this.hero.basicCd || 0) > 0
+            : !this.skillReady(slot, isCharged)) ||
+          this.peace
+        ) {
           if (!rank) this.say('This skill must be learned from a rescued instructor.');
           return false;
         }
         if (isCharged && this.partyChargeRecovery(this.hero) > 0) return false;
-        if (this.mageSilenceActive(this.hero) && (slot !== 1 || isCharged)) return false;
+        if (this.mageSilenceActive(this.hero) && !automatic) return false;
         if (
           this.hero.class === 'paladin' &&
           (this.hero.shieldStance || 0) > 0 &&
@@ -863,8 +1156,7 @@
           // A manually targeted out-of-range skill cannot hijack an explicitly
           // selected map journey. No chase, mana use or cooldown; keep walking.
           // Outside navigation the original deliberate skill approach applies.
-          if (this.hero.order?.type === 'move' && this.hero.order.navigation === true)
-            return false;
+          if (this.hero.order?.type === 'move' && this.hero.order.navigation === true) return false;
           // A deliberate targeted skill is an approach-and-release order.
           // Never consume mana or cooldown merely because the selected enemy
           // is beyond reach; targeting itself still does not move the hero.
@@ -947,10 +1239,15 @@
             (this.hero.class === 'mage' || (this.hero.class === 'paladin' && isCharged)));
         // Passive covering fire is not a new squad engagement order.
         if (offensive && !automatic) this.releaseRecallForCombat();
-        this.hero.cd[i] =
-          slot === 3 && this.hero.class === 'paladin' && !isCharged
-            ? 0
-            : this.skillCooldown(slot, isCharged);
+        if (automatic && slot === 1) {
+          this.hero.basicCd = this.basicSkillCooldown();
+        } else if (slot === 3 && this.hero.class === 'paladin' && !isCharged) {
+          this.hero.cd[i] = 0; // Shield Stance begins recovery when lowered.
+        } else {
+          // Charged starts both recoveries. Tap changes only normal readiness.
+          this.hero.cd[i] = this.skillCooldown(slot, false);
+          if (isCharged) this.hero.chargedCd[i] = this.skillCooldown(slot, true);
+        }
         if (target && requiresTarget) this.s.heroTarget = selected?.id || target.id;
         if (dashTo) this.move(this.hero, dashTo, dist(this.hero, dashTo) + 1, 1);
         const power = this.power();
@@ -960,6 +1257,7 @@
           class: this.hero.class,
           slot,
           charged: isCharged,
+          automaticBasic: automatic && slot === 1,
           x: this.hero.x,
           y: this.hero.y,
           fromX: dashFrom?.x ?? this.hero.x,
@@ -982,8 +1280,7 @@
             power,
             encountersAtStart,
           );
-        if (isCharged && slot === 1) {
-          this.resetBasicCombo();
+        if (!isCharged && slot === 1 && !automatic) {
           const d = Math.max(1, dist(this.hero, target)),
             damage = (power + 12) * scale * R.chargedSkills.basicDamageMultiplier,
             dx = (target.x - this.hero.x) / d,
@@ -1005,7 +1302,7 @@
               delay: 0,
               style: 'beam',
               slot,
-              charged: true,
+              charged: false,
               ...(encountersAtStart ? { encountersAtStart } : {}),
             });
             this.event('projectileLaunch', {
@@ -1014,7 +1311,7 @@
               source: 'hero',
               style: 'magic',
               slot,
-              charged: true,
+              charged: false,
               beam: true,
               x: this.hero.x,
               y: this.hero.y,
@@ -1035,10 +1332,10 @@
                 delay: j * 0.08,
                 style: 'arrow',
                 slot,
-                charged: true,
+                charged: false,
                 ...(encountersAtStart ? { encountersAtStart } : {}),
                 rapid: true,
-                chargedBurst: j === 2,
+                chargedBurst: false,
               });
             this.event('projectileLaunch', {
               actor: 'hero',
@@ -1046,7 +1343,7 @@
               source: 'hero',
               style: 'arrow',
               slot,
-              charged: true,
+              charged: false,
               count: 3,
               rapid: true,
               x: this.hero.x,
@@ -1067,7 +1364,7 @@
               delay: 0,
               style: 'holy',
               slot,
-              charged: true,
+              charged: false,
               ...(encountersAtStart ? { encountersAtStart } : {}),
             });
             this.event('projectileLaunch', {
@@ -1076,13 +1373,13 @@
               source: 'hero',
               style: 'holy',
               slot,
-              charged: true,
+              charged: false,
               x: this.hero.x,
               y: this.hero.y,
               target: target.id,
             });
           }
-          this.event('charged', {
+          this.event('skill1Tap', {
             slot,
             class: this.hero.class,
             actor: 'hero',
@@ -1093,6 +1390,64 @@
             targetY: target.y,
             targetId: target.id,
           });
+          return true;
+        }
+        if (isCharged && slot === 1) {
+          const from = { x: this.hero.x, y: this.hero.y },
+            angle = Math.atan2(target.y - from.y, target.x - from.x),
+            cfg = R.chargedSkills.first,
+            snapshot = {
+              class: this.hero.class,
+              zone: this.zoneId,
+              deaths: this.s.statistics.deaths,
+              from,
+              angle,
+              targetId: target.id,
+              damage: (power + 12) * scale,
+              encountersAtStart,
+            };
+          this.engage(target);
+          if (this.hero.class === 'paladin') {
+            const cross = {
+              ...snapshot,
+              kind: 'cross',
+              rank,
+              reach: cfg.paladin.reach + steps * cfg.paladin.reachStep,
+              halfWidth: cfg.paladin.halfWidth + steps * cfg.paladin.halfWidthStep,
+              admitted: [],
+              remaining: 1,
+              due: this.s.time + cfg.paladin.pulseGap,
+            };
+            this.resolveHeroCrossPulse(cross, 0);
+            (this._heroSkillEffects ||= []).push(cross);
+          } else if (this.hero.class === 'mage') {
+            this.resolveWideArcaneBeam({
+              ...snapshot,
+              rank,
+              reach: cfg.mage.reach + steps * cfg.mage.reachStep,
+              halfWidth: cfg.mage.halfWidth + steps * cfg.mage.halfWidthStep,
+            });
+          } else {
+            (this._heroSkillEffects ||= []).push({
+              ...snapshot,
+              kind: 'hawk',
+              x: from.x,
+              y: from.y,
+              elapsed: 0,
+              traveled: 0,
+              rank,
+              budget: cfg.ranger.pathBudget + steps * cfg.ranger.pathStep,
+            });
+            this.event('heroHawk', {
+              actor: 'hero',
+              class: 'ranger',
+              slot: 1,
+              phase: 'launch',
+              x: from.x,
+              y: from.y,
+              targetId: target.id,
+            });
+          }
           return true;
         }
         if (isCharged && slot === 2) {
