@@ -968,7 +968,9 @@
       return { q, ux: vx / len, uy: vy / len, px: -vy / len, py: vx / len };
     }
     function drawProjectile(p) {
-      if (p.delay > 0) return;
+      // A delay reaching zero is not yet a bow release. The simulation first
+      // moves pending Ranger/Archer colliders to their live release origins.
+      if (p.delay > 0 || p.rangerDelayedLaunch || p.companionDelayedLaunch) return;
       const lift = game.fortProjectileLift(p);
       if (lift > 0) {
         const q = screen(p);
