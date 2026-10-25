@@ -1157,9 +1157,19 @@
     // remains unchanged. Warnings and physical projectiles are state-owned,
     // outside this transient queue. No additional frame is requested.
     if (next.length > 40) {
+      // Some NORMAL cast stages intentionally paint nothing: their
+      // projectile, area or living status owns the real art. Do not reserve a
+      // scarce slot for one of those deliberately silent receipts.
+      const visibleHeroCue = (f) =>
+        f.type === 'heroSkill' && (
+          f.stage !== 'cast' ||
+          f.charged ||
+          (f.class === 'paladin' && [1, 2, 6].includes(f.slot)) ||
+          (['mage', 'ranger'].includes(f.class) && [3, 4].includes(f.slot))
+        );
       let hero = null, recovery = null;
       for (let j = next.length - 1; j >= 0 && (!hero || !recovery); j--) {
-        if (!hero && next[j].type === 'heroSkill') hero = next[j];
+        if (!hero && visibleHeroCue(next[j])) hero = next[j];
         if (!recovery && next[j].type === 'heal' && next[j].actor !== 'enemy')
           recovery = next[j];
       }
