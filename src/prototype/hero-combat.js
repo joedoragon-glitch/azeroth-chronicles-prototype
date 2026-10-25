@@ -1121,6 +1121,7 @@
           class: this.hero.class,
           slot,
           charged: isCharged,
+          automaticBasic: automatic && slot === 1,
           x: this.hero.x,
           y: this.hero.y,
           fromX: dashFrom?.x ?? this.hero.x,
