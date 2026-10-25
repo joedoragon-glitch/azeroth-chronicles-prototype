@@ -31,10 +31,7 @@ function scene(cls = 'paladin', slot = 1, charged = false, mode = 'developer') {
     PrototypeSprites: null, PrototypeMaterials: null, now: () => 1000,
   });
   r.setGroundReuse(false);
-  assert(g.cast(slot, e.id, charged), 'real cast failed admission');
-  const events = g.effects.splice(0);
-  r.queue(events);
-  return { g, r, surface };
+  return { g, r, surface, e };
 }
 function identity(report, slot, charged) {
   return report.identities.find((row) =>
@@ -46,14 +43,10 @@ for (const rate of [20, 30, 60]) {
   for (const charged of [false, true]) {
     const { g, r } = scene('paladin', 1, charged);
     assert(r.setEffectDiagnostics(true));
-    // Enable BEFORE the queue event when identity counters are needed;
-    // a new natural cast after enabling is the observed subject.
-    const before = g.snapshot();
-    // Initial queued cast happened before recorder; create another real cast.
-    g.hero.cd.fill(0);
-    g.hero.chargedCd.fill(0);
+    // The recorder observes the actual admitted cast, not an injected cue.
     assert(g.cast(1, g.zone().enemies[0].id, charged));
     r.queue(g.effects.splice(0));
+    const before = g.snapshot();
     const baseline = r.effectDiagnosticsReport().drawFrames;
     // First-paint grace is 120ms beyond the existing effect lifetime.
     const seconds = charged ? 0.35 : 0.25;
@@ -78,7 +71,6 @@ for (const rate of [20, 30, 60]) {
   }
   const { g, r } = scene();
   r.setEffectDiagnostics(true);
-  g.hero.cd.fill(0);
   assert(g.cast(1, g.zone().enemies[0].id));
   r.queue(g.effects.splice(0));
   // Extended starvation exceeds the hard grace; no late deceptive flash.
@@ -93,7 +85,6 @@ for (const rate of [20, 30, 60]) {
   // This cast-stage is intentionally blank: its AREA owns the visible cue.
   const { g, r } = scene('paladin', 5);
   r.setEffectDiagnostics(true);
-  g.hero.cd.fill(0);
   assert(g.cast(5, g.zone().enemies[0].id));
   r.queue(g.effects.splice(0));
   for (let i = 0; i < 6; i++) r.update(0.05);
