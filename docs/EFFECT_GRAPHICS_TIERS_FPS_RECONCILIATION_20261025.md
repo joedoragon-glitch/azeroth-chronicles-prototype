@@ -61,6 +61,25 @@ One understandable **Graphics quality** selector, independent of FPS and render-
 - **Stability:** never disable adaptive skip emergency, freeze rescue, PWA offline/save protections, reduced-motion choices or Canvas fallback.
 - **No performance claim before matched device measurement.** Native Canvas alpha, simulation skip tests and automated renderer p95 are bounded evidence, not physical thermal/GPU FPS.
 
+## Phase A initial CI-native baseline (25 October 2026)
+
+**Test-only follow-up:** [commit `93ca6688`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/93ca6688bfe2a21e44979f32b4efc5f699a79e6e) updated `tests/effect-warning-budget-audit.test.cjs` to paint the *same real Paladin normal Skill 1 cast* in four existing rendering combinations: optimized false/true × reduced motion false/true. The test requires nontransparent cue pixels in every case and a byte-identical gameplay snapshot before/after drawing; it does not add a setting, quality filter, telemetry or new player workload.
+
+**Exact source test CI:** [focused run 40226243579](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40226243579) — **SUCCESS** on source commit `93ca6688bfe2a21e44979f32b4efc5f699a79e6e`; **25 impacted test files passed**, reproducible offline-ready build passed; Publish focused update **SKIPPED**.
+
+CI-native 900×600 isolated positive-alpha sample of the same cue:
+
+| Presentational flags | Positive-alpha pixels | Scope of inference |
+|---|---:|---|
+| Full detail; normal motion | 89 | Baseline for this single Paladin cast stage |
+| Full detail; reduced motion | 78 | Cue remains painted |
+| Optimized; normal motion | 89 | Existing optimized flag did not change this specific cue's pixel coverage |
+| Optimized; reduced motion | 78 | Cue remains painted |
+
+The five-call timing medians are deliberately **not** treated as matched hardware costs, quality rankings or FPS gains; sample sizes/CI software rasterization are too small for that. The unchanged 11-real-boss footprint sample stays in this same test. No representative mixed crowd, camera/zoom, actor-caption occlusion, actual 20/30/60 FPS *preference* comparisons, Pixi overlay parity, or physical-device cost was certified by this new matrix. They remain subsequent Phase A / Stage 5 release gates.
+
+**Interpretation:** The result supports keeping this Paladin cue protected across existing detail/motion switches. It also confirms that the existing optimized boolean is not sufficient evidence for an `Ultra`/ `Balanced`/ `Performance` distinction: a credible future quality level must visibly change genuinely optional visual detail without sacrificing the cue.
+
 ## Status
 
 **Stage 5.2 audit and recommended policy documented.** No Ultra/Balanced/Performance implementation, effect cap change, or warning restyle has been shipped. Hardware release gate remains open. Continue independent correctness/performance research within PR #471. Do not require owner playtesting merely to proceed with automated source and browser work.

@@ -11,6 +11,16 @@
 
 > **New-chat instruction:** This file and linked repository documents are the durable source of truth. Do not rely on previous conversation context, local attachments or a remembered model summary. Fetch **current GitHub state first**, including the latest main SHA, PR #471 head/diff, checks, any ongoing related PRs, then reconcile this handoff with the live repository before acting.
 
+## Most recent post-handoff continuation — Stage 5.1–5.2 / Phase A
+
+The original Stage 5 automated release-readiness gate below **remains valid but is not the end of the draft's work**. Later work has advanced **only the audit/test candidate**, not published gameplay:
+
+- [Stage 5.1 warning prominence and resource audit](EFFECT_WARNING_PROMINENCE_PERFORMANCE_AUDIT_20261025.md): verified warning fill/outline and actor-caption layering, measured 11 real boss first-telegraph footprints in a CI-native observational test; no warning restyle, GPU device claim or changed hit geometry.
+- [Stage 5.2 quality/FPS reconciliation](EFFECT_GRAPHICS_TIERS_FPS_RECONCILIATION_20261025.md): source-confirmed **Auto 20–30 FPS default**, separate manual 20/30/60 and Auto 30–60, adaptive skip/emergency protections, unchanged **40** transient/ **3 per enemy** / **24 enemies** budgets, and existing optimized switch's limited effect on decoration. Owner's **Ultra / Balanced default / Performance** quality direction remains a *proposal*, with **no new selector, quality filtering or changes to FPS policy**.
+- **Phase A first actual source test:** [commit `93ca6688`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/93ca6688bfe2a21e44979f32b4efc5f699a79e6e), [exact-head focused CI 40226243579](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40226243579) **passed 25 files, offline-ready build; deployment skipped**. Real Paladin first-cast paint stayed alpha-positive with optimized false/true and reduced motion false/true; its coverage was **89 pixels** normal motion and **78 pixels** reduced motion for either optimized setting in this isolated native sample. Do not generalize to all spells/devices or claim a quality/performance improvement.
+
+**Next safe independent phase:** extend Phase A *without production changes* to actual 20/30/60 FPS-preference and mixed crowded warning/impact/actor-label same-scene comparators; classify presentation-only protected identities before any tier filtering; preserve source and GPU/physical-device proof distinctions. Record true passed head CI after the documentation commit. Do not merge, deploy, mark ready, modify parallel PRs, change mandatory telegraph geometry, disable hero cues or lift budgets without approval.
+
 ## 1. Operating requirements — nonnegotiable
 
 1. Azeroth Chronicles is a **multi-file GitHub Pages/PWA**. Separate JS/CSS/images/audio/data/assets are fully supported. Do **not** resurrect the old portable-single-HTML constraint; CI actively protects the multi-file architecture.
