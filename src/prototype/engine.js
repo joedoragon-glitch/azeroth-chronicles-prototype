@@ -5191,7 +5191,14 @@
         // They retain their established last-resort Rogue action.
         if (e.type === 'boss' || e.captain || e.roomCaptain) {
           this.tacticalStopRogueRegroup(e);
-          return this.tacticalRogueMove(e, target, !!state.anchor);
+          if (this.tacticalRogueMove(e, target, !!state.anchor)) {
+            if (state.anchor) this._tacticalRegroups.set(e.id, {
+              phase: 'anchored', anchor: state.anchor,
+              holdRemaining: 12, moveUsed: true, recruited: true,
+            });
+            return true;
+          }
+          return false;
         }
         // Out of nearby/distant allies, and unable to summon help: withdraw.
         // A defensive Rogue cast may cover escape, but never replace escape
