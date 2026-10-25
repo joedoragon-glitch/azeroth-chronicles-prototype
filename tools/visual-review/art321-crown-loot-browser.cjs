@@ -20,6 +20,7 @@ const sharp = require('sharp');
 const playwright = require('playwright');
 const root = path.resolve(__dirname, '../..');
 const sourceSha = cp.execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim();
+const coverMode = process.env.ART321_COVER_BROWSER === '1';
 const overrideClock = process.env.ART321_SCENE_CLOCK === undefined
   ? null : Number(process.env.ART321_SCENE_CLOCK);
 if (overrideClock!==null)
@@ -73,8 +74,34 @@ async function capture(page,backend){
       graphics=Prototype.experimentalGraphics,rect=world.getBoundingClientRect();
     if(!world.getContext('2d')||rect.width<300||rect.height<300)
       throw Error('World backing Canvas or viewport missing');
-    // Keep the coin clear of the retained Paused label centered at 65%/45%.
-    const worldPt=r.world(rect.width*.74,rect.height*.66);
+    // The cover variant uses an ACTUAL current-zone scenery object, not a
+    // guessed sprite or dynamically created replacement asset. Crown loot is
+    // canonically overlaid after all standing Canvas world entities.
+    let cover=null;
+    if(coverMode) {
+      const options=(g.zone().props||[]).filter(p=>
+        p && Number.isFinite(p.x)&&Number.isFinite(p.y) &&
+        (p.structure||p.kind||p.name) && !p.interactionOnly)
+        .map(p=>({p,screen:r.screen(p)}))
+        .filter(item=>item.screen.x>175&&item.screen.x<rect.width-175&&
+          item.screen.y>170&&item.screen.y<rect.height-160)
+        .sort((a,b)=>{
+          const quality=v=>
+            /cottage|tower|tree|hut|barn|statue|arch|tent|shrine/i.test(
+              String(v.p.structure||v.p.kind||v.p.name||'')) ? 0:1;
+          return quality(a)-quality(b) ||
+            Math.abs(a.screen.x-rect.width*.62)-Math.abs(b.screen.x-rect.width*.62);
+        });
+      if(!options.length)throw Error('No authored scenery is available in the stable viewport');
+      const chosen=options[0],p=chosen.p;
+      cover={id:p.id??null,structure:p.structure??null,
+        kind:p.kind??null,name:p.name??null,
+        world:{x:p.x,y:p.y},
+        projected:{x:chosen.screen.x,y:chosen.screen.y}};
+    }
+    const worldPt=cover
+      ?r.world(cover.projected.x,cover.projected.y-19)
+      :r.world(rect.width*.74,rect.height*.66);
     const fixture={id:'art321-visual-coin',zone:g.zoneId,x:worldPt.x,y:worldPt.y,gold:1};
     const screen=r.screen(fixture);
     const x=rect.left+screen.x,y=rect.top+screen.y;
@@ -91,7 +118,7 @@ async function capture(page,backend){
       sceneActors:graphics.sceneMetrics?.actors??null,
       textureSources:graphics.sceneMetrics?.textureSources??null,
       viewport:win,worldBacking:{width:world.width,height:world.height},
-      screen:{x,y},clip,fixture,
+      screen:{x,y},clip,fixture,cover,
       pauseOverlayAlpha:world.getContext('2d').getImageData(12,12,1,1).data[3]
     };
   });
@@ -134,7 +161,7 @@ async function capture(page,backend){
       zoom:info.zoom,viewport:info.viewport,worldBacking:info.worldBacking,
       pauseOverlayAlpha:info.pauseOverlayAlpha,
       gpuActors:info.sceneActors,textureSources:info.textureSources,
-      screen:info.screen,clip:info.clip,pixels,
+      screen:info.screen,clip:info.clip,cover:info.cover,pixels,
       images:[before,after,full].map(file=>({
         path:path.basename(file),sha256:hash(fs.readFileSync(file))
       }))
@@ -334,6 +361,13 @@ async function start(){
       const pixi=await capture(page,'webgl2');
       assert(pixi.pixels.changedPixels>25&&pixi.pixels.pixelDifference>2000,
         'Pixi Crown coin must visibly change actual composed frame pixels');
+      if(coverMode) {
+        assert(canvas.cover&&pixi.cover,'Both captures must have authored cover');
+        assert.deepEqual(canvas.cover,pixi.cover,
+          'Coin must be over the SAME actual authored scenery in both renderer modes');
+        assert(canvas.pixels.changedPixels>25&&pixi.pixels.changedPixels>25,
+          'Coin must remain visible in front of authored world scenery');
+      }
       assert.equal(canvas.zone,pixi.zone);
       assert.equal(canvas.zoom,pixi.zoom,'Camera zoom changed across renderer captures');
       assert.deepEqual(canvas.viewport,pixi.viewport);
@@ -357,6 +391,7 @@ async function start(){
         schema:'art321-real-composed-paired-pixel-capture-v2',
         sourceSha,runTimeUtc:new Date().toISOString(),
         requestedSceneClock:overrideClock,
+        authoredCoverMode:coverMode,
         engine:'Chromium ANGLE SwiftShader WebGL2 (software renderer)',
         source:'disposable game Campaign and temporary native-shaped Crown loot object',
         test:'one 1280x800 Chromium context; game paused; same Campaign, hero, zone, zoom, clock',
@@ -380,6 +415,7 @@ async function start(){
         sha:sourceSha,zone:canvas.zone,zoom:canvas.zoom,
         canvasPixels:canvas.pixels.changedPixels,pixiPixels:pixi.pixels.changedPixels,
         pixiMode:pixi.backend,actors:pixi.gpuActors,textures:pixi.textureSources,
+        authoredCover:coverMode?pixi.cover:null,
         output:out,report:'evidence.json'}));
       if(earnedLifecycle)console.log('ART321_EARNED_LOOT ' + JSON.stringify({
         backend:'webgl2',
