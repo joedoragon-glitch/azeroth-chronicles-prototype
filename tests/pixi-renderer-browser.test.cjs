@@ -339,8 +339,6 @@ async function run() {
         localStorage.getItem('azeroth-optimization-mode-v1')), 'auto');
       await page.evaluate(() => Prototype.closeMenu());
       assert.equal(await page.evaluate(() => Prototype.game === window.__gpuTestCampaign), true);
-      const art321CanvasCoin = !phone
-        ? await inspectCrownLootPixels(page, 'canvas2d') : null;
       await selectPixi(page);
       const outcome = await page.evaluate(() => ({
         ...Prototype.experimentalGraphics,
@@ -381,16 +379,6 @@ async function run() {
           'Camera zoom must not abandon an otherwise valid GPU scene');
         assert.equal(await page.evaluate(() => Prototype.game === window.__gpuTestCampaign), true);
         await keepPixiTrial(page, phone, 'initial graphics trial');
-        if (!phone) {
-          const pixiCoin = await inspectCrownLootPixels(page, 'webgl2');
-          console.log('ART321_CROWN_LOOT_COMPARISON ' + JSON.stringify({
-            canvasChangedPixels: art321CanvasCoin.changed,
-            pixiOverlayChangedPixels: pixiCoin.changed,
-            pixiMode: pixiCoin.mode,
-            sameRegion: art321CanvasCoin.zone === pixiCoin.zone,
-            status: 'measured-real-browser-not-owner-accepted',
-          }));
-        }
         // The retained Pixi background must immediately reflect presentation
         // transitions without walking, zooming or a zone transition.
         await page.waitForFunction(() =>
@@ -532,6 +520,41 @@ async function run() {
         + ' (' + outcome.mode + ')');
       await context.close();
 
+    }
+    // Art #321 gets a disposable EXTRA page: do not alter the original WebGL
+    // recovery, context-loss and mobile resize acceptance journeys above.
+    // This runs once at desktop resolution, not a second browser matrix.
+    const artContext = await browser.newContext({
+      viewport: {width: 1280, height: 800},
+    });
+    try {
+      const artPage = await artContext.newPage();
+      await artPage.goto(host + 'index.html');
+      await artPage.waitForFunction(() => !!window.Prototype?.renderer);
+      await require('./helpers/language-browser.cjs').selectEnglish(artPage);
+      await artPage.keyboard.press('f');
+      await artPage.keyboard.press('f');
+      await artPage.waitForFunction(() => document.querySelector('#modal').hidden);
+      const art321CanvasCoin = await inspectCrownLootPixels(artPage, 'canvas2d');
+      const artPixiTrial = await selectPixi(artPage);
+      if (artPixiTrial.mode !== 'webgl2') {
+        assert(!requireWebGL, 'Art #321 needs an actual WebGL2 backend, not Canvas fallback');
+        console.log('ART321_UNVERIFIED no real GPU frame in this browser environment');
+      } else {
+        await keepPixiTrial(artPage, false, 'isolated Art Catalog #321');
+        const pixiCoin = await inspectCrownLootPixels(artPage, 'webgl2');
+        assert.equal(art321CanvasCoin.zone, pixiCoin.zone,
+          'Canvas/Pixi fixture must use the identical game zone');
+        console.log('ART321_CROWN_LOOT_COMPARISON ' + JSON.stringify({
+          canvasChangedPixels: art321CanvasCoin.changed,
+          pixiOverlayChangedPixels: pixiCoin.changed,
+          pixiMode: pixiCoin.mode,
+          sameRegion: true,
+          status: 'measured-real-browser-not-owner-accepted',
+        }));
+      }
+    } finally {
+      await artContext.close();
     }
   } finally {
     await browser?.close();
