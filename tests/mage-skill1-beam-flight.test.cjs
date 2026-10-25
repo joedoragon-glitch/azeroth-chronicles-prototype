@@ -173,10 +173,15 @@ function advance(g, seconds, step = 0.05) {
 {
   const { g, enemies: [e] } = arena([[620, 500]]);
   assert(g.cast(1, e.id, true));
-  const before = e.hp;
   g.enter('march');
+  // Crossing regions can legitimately normalize the old zone's enemy HP.
+  // Compare only AFTER transition, so this checks for late beam damage.
+  const before = e.hp;
+  const hitsBefore = g.effects.filter(effect => effect.type === 'hit').length;
   advance(g, 1);
-  assert.equal(e.hp, before, 'zone transitions cancel in-flight charged beam damage');
+  assert.equal(e.hp, before, 'no delayed charged-beam damage after zone transition');
+  assert.equal(g.effects.filter(effect => effect.type === 'hit').length, hitsBefore,
+    'no charged-beam hit receipt survives the transition');
   assert.equal(g._heroSkillEffects?.length || 0, 0);
 }
 console.log('PASS Mage Skill 1 travel, delayed contact, caster-angled charged corridor, homing normal cast and 2.5x visual width');
