@@ -66,6 +66,35 @@ function advance(g, seconds, step = 0.05) {
   assert.equal(moving.hp, oldHp, 'charged beam never turns to follow escaping foes');
 }
 {
+  // The charged spell tilts toward the SAME world-space cast endpoint when
+  // the player sidesteps. It may catch a previously off-axis enemy, but it
+  // cannot become a parallel beam that simply slides sideways.
+  const { g, enemies: [primary, newlyAligned] } = arena([[620, 500], [650, 610]]);
+  const oldHp = newlyAligned.hp;
+  assert(g.cast(1, primary.id, true));
+  const beam = g._heroSkillEffects[0];
+  assert.equal(beam.aim.x, 940);
+  assert.equal(beam.aim.y, 500);
+  g.hero.y = 670;
+  advance(g, 0.42);
+  assert.equal(beam.from.y, 670, 'charged effect remains attached to the moving Mage');
+  assert.equal(beam.aim.y, 500, 'original far aiming point is fixed');
+  assert(beam.endY < 670, 'the direction tilts back toward the original aim');
+  assert(newlyAligned.hp < oldHp, 'new off-axis enemy can be collected by the tilted corridor');
+}
+{
+  // Moving the Mage to a different angle cannot make the new corridor
+  // pass through terrain. Rendered end and legal damage extent agree.
+  const { g, enemies: [target, behindWall] } = arena([[620, 500], [850, 500]]);
+  assert(g.cast(1, target.id, true));
+  const hp = behindWall.hp;
+  const clear = g.clearSegment.bind(g);
+  g.clearSegment = (a, b, ...rest) => b.x <= 700 && clear(a, b, ...rest);
+  advance(g, 0.75);
+  assert(g.effects.some(e => e.type === 'heroSkillArea' && e.phase === 'complete'));
+  assert(behindWall.hp === hp, 'the caster-connected beam never hits through an obstruction');
+}
+{
   const { g, enemies: [e] } = arena([[780, 500]]);
   const hp = e.hp;
   assert(g.cast(1, e.id, false));
@@ -144,4 +173,4 @@ function advance(g, seconds, step = 0.05) {
   assert.equal(e.hp, before, 'zone transitions cancel in-flight charged beam damage');
   assert.equal(g._heroSkillEffects?.length || 0, 0);
 }
-console.log('PASS Mage Skill 1 travel, delayed contact, fixed charged corridor, homing normal cast and 2.5x visual width');
+console.log('PASS Mage Skill 1 travel, delayed contact, caster-angled charged corridor, homing normal cast and 2.5x visual width');
