@@ -199,6 +199,38 @@ async function run() {
         }
       : {};
     browser = await playwright[engine].launch(options);
+    const host = process.env.PLAYTEST_URL
+      ? process.env.PLAYTEST_URL.replace(/\/?$/, '/')
+      : 'http://127.0.0.1:' + server.address().port + '/';
+    // Complete Mage-specific desktop and phone presentation first. A failure in
+    // the separate generic WebGL recovery journey must not prevent recording
+    // whether Mage Skill 1 itself draws on Canvas and the Pixi combat overlay.
+    // The original recovery journey below remains unchanged and is not waived.
+    for (const phone of [false, true]) {
+      // Separate graphics acceptance context: exercising synthetic beam
+      // geometry must never contaminate the renderer recovery journey above.
+      const beamContext = await browser.newContext({
+        viewport: phone ? {width: 393, height: 852} : {width: 1280, height: 800},
+        isMobile: phone, hasTouch: phone,
+      });
+      try {
+        const beamPage = await beamContext.newPage();
+        await beamPage.goto(host + (phone ? 'phone.html' : 'index.html'));
+        await beamPage.waitForFunction(() => !!window.Prototype?.renderer);
+        await require('./helpers/language-browser.cjs').selectEnglish(beamPage);
+        await beamPage.keyboard.press('f');
+        await beamPage.keyboard.press('f');
+        await beamPage.waitForFunction(() => document.querySelector('#modal').hidden);
+        await inspectMageBeamOverlay(beamPage, 'canvas2d');
+        const mageGpu = await selectPixi(beamPage);
+        if (mageGpu.mode === 'webgl2')
+          await inspectMageBeamOverlay(beamPage, 'webgl2');
+        else
+          assert(!requireWebGL, 'Mage beam overlay needs the required WebGL2 scene');
+      } finally {
+        await beamContext.close();
+      }
+    }
     for (const phone of [false, true]) {
       const context = await browser.newContext({
         viewport: phone ? {width: 393, height: 852} : {width: 1280, height: 800},
@@ -206,9 +238,7 @@ async function run() {
       });
       const page = await context.newPage(), errors = [];
       page.on('pageerror', (e) => errors.push(e.message));
-      const host = process.env.PLAYTEST_URL
-        ? process.env.PLAYTEST_URL.replace(/\/?$/, '/')
-        : 'http://127.0.0.1:' + server.address().port + '/';
+
       await page.goto(host + (phone ? 'phone.html' : 'index.html'));
       await page.waitForFunction(() => !!window.Prototype && !!window.Prototype.renderer);
       assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'canvas2d');
@@ -413,29 +443,7 @@ async function run() {
       console.log('PASS PixiJS graphics selection ' + engine + '/' + (phone ? 'phone' : 'desktop')
         + ' (' + outcome.mode + ')');
       await context.close();
-      // Separate graphics acceptance context: exercising synthetic beam
-      // geometry must never contaminate the renderer recovery journey above.
-      const beamContext = await browser.newContext({
-        viewport: phone ? {width: 393, height: 852} : {width: 1280, height: 800},
-        isMobile: phone, hasTouch: phone,
-      });
-      try {
-        const beamPage = await beamContext.newPage();
-        await beamPage.goto(host + (phone ? 'phone.html' : 'index.html'));
-        await beamPage.waitForFunction(() => !!window.Prototype?.renderer);
-        await require('./helpers/language-browser.cjs').selectEnglish(beamPage);
-        await beamPage.keyboard.press('f');
-        await beamPage.keyboard.press('f');
-        await beamPage.waitForFunction(() => document.querySelector('#modal').hidden);
-        await inspectMageBeamOverlay(beamPage, 'canvas2d');
-        const mageGpu = await selectPixi(beamPage);
-        if (mageGpu.mode === 'webgl2')
-          await inspectMageBeamOverlay(beamPage, 'webgl2');
-        else
-          assert(!requireWebGL, 'Mage beam overlay needs the required WebGL2 scene');
-      } finally {
-        await beamContext.close();
-      }
+
     }
   } finally {
     await browser?.close();
