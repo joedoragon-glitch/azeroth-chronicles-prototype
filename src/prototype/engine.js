@@ -3301,8 +3301,6 @@
         e.path = [];
         e.routeAge = 0;
       }
-      if (this.trueFieldBossCircuit(e))
-        e.trueCircuitCombatAnchor = { x: e.x, y: e.y };
       e.aggro = true;
       if (this.thornPatroller(e)) e.thornFightAnchor = { x: e.x, y: e.y };
       if (this.cinderPatroller(e)) e.cinderFightAnchor = { x: e.x, y: e.y };
@@ -4223,65 +4221,6 @@
       if (e?.ranged) return R.idleWander.ranged;
       return R.idleWander.ordinary;
     }
-    trueFieldBossCircuit(e) {
-      return e?.type === 'boss' && e.form === 'true' && !this.isDungeon() &&
-        this.boss(e.family)?.kind === 'field';
-    }
-    trueFieldBossCircuitStops(e) {
-      if (!this.trueFieldBossCircuit(e)) return [];
-      const npcs = this.zone().npcs;
-      // All locations already exist as outdoor entrance NPCs. Never place a
-      // boss inside a separate dungeon instance or synthesize missing sites.
-      const side = npcs.find((n) => n.kind === 'dungeon' && n.sideDungeon),
-        treasury = npcs.find((n) =>
-          n.kind === 'dungeon' && n.treasury && n.treasuryBoss === e.family),
-        main = npcs.find((n) => n.kind === 'dungeon' && !n.sideDungeon && !n.treasury),
-        home = e.trueCircuitOrigin || e.home;
-      return [
-        side && { key: 'side', x: side.x, y: side.y },
-        treasury && { key: 'treasury', x: treasury.x, y: treasury.y },
-        main && { key: 'dungeon', x: main.x, y: main.y },
-        { key: 'home', x: home.x, y: home.y },
-      ].filter(Boolean);
-    }
-    updateTrueFieldBossCircuit(e, dt) {
-      if (!this.trueFieldBossCircuit(e) || e.aggro || e.returning ||
-          e.neutral || this.peace || e.hp <= 0) return false;
-      const stops = this.trueFieldBossCircuitStops(e);
-      if (stops.length < 2) return false;
-      // Combat is always higher priority than a visit. The usual encounter
-      // loop acquires targets later this tick; hold position in its awareness.
-      if (this.hero.hp > 0 &&
-          dist(this.hero, e) < Math.max(560, this.enemyAcquisitionRange(e)) &&
-          this.enemyRangedLine(e, this.hero) &&
-          dist(this.hero, { x: D.towns[this.regionIndex()][0],
-            y: D.towns[this.regionIndex()][1] }) >= 170) return true;
-      const stage = Math.max(0, Math.floor(e.trueCircuitLeg || 0)) % stops.length,
-        destination = stops[stage];
-      e.trueCircuitPause = Math.max(0, (e.trueCircuitPause || 0) - dt);
-      if (e.trueCircuitPause > 0) return true;
-      if (dist(e, destination) <= 42) {
-        e.trueCircuitLeg = (stage + 1) % stops.length;
-        e.trueCircuitPause = 1.8;
-        e.trueCircuitStuck = 0;
-        delete e.path;
-        return true;
-      }
-      const before = { x: e.x, y: e.y };
-      this.follow(e, destination,
-        110 * this.mountedMovementFactor(e) * this.nightTempo(), dt, 32);
-      const moved = dist(e, before);
-      e.trueCircuitStuck = moved > Math.max(0.1, dt * 6)
-        ? 0 : (e.trueCircuitStuck || 0) + dt;
-      if (e.trueCircuitStuck > 3) {
-        // Skip a temporarily blocked site instead of freezing the TRUE boss.
-        e.trueCircuitLeg = (stage + 1) % stops.length;
-        e.trueCircuitStuck = 0;
-        e.trueCircuitPause = 0.8;
-        delete e.path;
-      }
-      return true;
-    }
     updateIdleWander(e, dt) {
       if (!e || e.aggro || e.returning || e.neutral || e.hp <= 0 || e.fieldCaptain) return false;
       if (e.family === 'mine' && e.type === 'boss' && this.s.zone === 'mine') {
@@ -4949,7 +4888,6 @@
     tacticalDefenderPost(e) {
       // An interrupted patrol remains responsible for the interception area,
       // not its distant den. Captive movement already belongs to patrol code.
-      if (this.trueFieldBossCircuit(e)) return e.trueCircuitCombatAnchor || e;
       if (this.thornPatroller(e)) return e.thornFightAnchor || e;
       if (this.cinderPatroller(e)) return e.cinderFightAnchor || e;
       return e.home || e;
@@ -4978,9 +4916,7 @@
         ? e.thornFightAnchor || e
         : this.cinderPatroller(e)
           ? e.cinderFightAnchor || e
-          : this.trueFieldBossCircuit(e)
-            ? e.trueCircuitCombatAnchor || e
-            : e.home;
+          : e.home;
       const shift = this._tacticalRepositions?.get(e?.id);
       if (
         shift &&
@@ -6601,7 +6537,6 @@
         else if (
           !e.aggro &&
           !e.veraEscort &&
-          !this.updateTrueFieldBossCircuit(e, dt) &&
           !this.updateThornPatrol(e, dt) &&
           !this.updateCinderInspection(e, dt) &&
           !this.updateVeraEscort(e, dt)
@@ -6626,20 +6561,11 @@
           if (screenFor && dist(this.hero, screenFor) < R.rangedEnemyCombat.guardianScreenRange)
             target = this.hero;
         }
-        // TRUE-form field hunters notice the hero farther away and interrupt
-        // their route. Keep the existing safe-town and mercy restrictions.
-        if (!e.aggro && this.trueFieldBossCircuit(e) && !e.returning &&
-            this.hero.hp > 0 && dist(e, this.hero) < 560 &&
-            dist(this.hero, { x: D.towns[this.regionIndex()][0],
-              y: D.towns[this.regionIndex()][1] }) >= 170 &&
-            this.enemyRangedLine(e, this.hero))
-          this.engage(e, false);
         if (
           !e.aggro &&
           // Reject distant targets before tracing through every intervening
           // obstacle. The same range and visibility rules still gate aggro.
-          dist(e, target) <
-            this.enemyAcquisitionRange(e) &&
+          dist(e, target) < this.enemyAcquisitionRange(e) &&
           this.enemyRangedLine(e, target) &&
           (!this.isDungeon() &&
           dist(target, { x: D.towns[this.regionIndex()][0], y: D.towns[this.regionIndex()][1] }) <
@@ -7029,7 +6955,7 @@
           !mobilityReturn &&
           !(e.veraEscort && this.zoneId === 'crown' && this.veraHeld())
         )
-          Object.assign(e, e.trueCircuitCombatAnchor || e.home);
+          Object.assign(e, e.home);
         this.finishDisengage(e);
       }
     }
@@ -7096,9 +7022,6 @@
       }
       delete e.quotaTarget;
       delete e.idleWanderTarget;
-      // Keep the authored TRUE circuit leg, but not the old fight's leash
-      // anchor. An interrupted roaming encounter resumes its original tour.
-      delete e.trueCircuitCombatAnchor;
       e.idleWanderWait = 1.5;
       e.specialCd = e.captain || e.roomCaptain ? 1.25 : e.nightOnly ? 1.5 : 0;
       e.summonCd = 0;
@@ -7279,9 +7202,6 @@
             e.maxHp = e.hp = e.baseHp * bonus.hp;
             e.damage = e.baseDamage * bonus.damage;
           }
-          if (p.kind === 'field')
-            // Actual TRUE appearance point (not normal-form boss compound).
-            e.trueCircuitOrigin = { x: point.x, y: point.y };
           if (key === 'thorn' && p.kind === 'field') e.home = { ...this.fieldCenter(0) };
           if (key === 'cindermaw' && p.kind === 'field') e.home = { ...this.fieldCenter(4) };
           this.zone().enemies.push(e);
