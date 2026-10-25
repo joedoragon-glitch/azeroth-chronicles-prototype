@@ -40,12 +40,12 @@ This is an audit of current direct code references, **not a claim that changing 
 ## Focused companion regression plan for implementation stage
 
 - [ ] Hero Skill 1 Rank 1 versus Rank 8: Soldier/Archer/pet **ordinary attack** interval and first special stay unchanged at equivalent hero stats (isolated skill rank only).
-- [ ] Hero `cd[0]` busy/ready and new basic timer busy/ready: existing Soldiers/Archers/pets continue attacking and casting their own specials.
+- [ ] Hero **normal `cd[0]`**, **charged-only `chargedCd[0]`** and separate basic timer independently busy/ready: existing Soldiers/Archers/pets continue attacking/casting their own specials without inheriting hero cooldowns.
 - [ ] Hero Skill 2 still locked/unlocked: each companion's second-special eligibility behaves exactly as before; v4 imports repair stale `companionCombatTraining` without resetting `u.skill2Cd`.
 - [ ] Soldier melee + Power Strike and Archer arrows + Triple Shot retain 8s first and 12s second separate timers, own shared special lockout and automatic AI priority.
 - [ ] Each of the eleven pet families retains ordinary attacks, family first skill, learned/charged second skill, contact requirement, family VFX, healing and debuff effects.
 - [ ] Slow/stack debt, Mage Silence, Paladin stance, Ranger Rally, Recall, veteran enhancement, wounded/retreating companions and protected Vale/Thornfang opening are regression-tested.
-- [ ] Save/reload with `hero.cd[0]>0`, `u.cd>0`, `u.skill1Cd>0`, `u.skill2Cd>0`: neither hero nor companion gains an unintended free ability; existing companion states persist.
+- [ ] Save/reload with `hero.cd[0]>0`, `hero.chargedCd[0]>0`, `u.cd>0`, `u.skill1Cd>0`, `u.skill2Cd>0`: hero Tap can recover independently while charged is still cooling; companion states persist without unintended resets.
 - [ ] Hero + 0/1/3/6 companions against solo and multiple hostiles in normal/TRUE contexts: measure **total party output**, not just per-companion attack numbers.
 - [ ] English/Spanish companion and Keeper wording makes clear **hero Skill 1** is not **companion first skill** and that Hero Skill 2 governs advanced companion skills.
 
