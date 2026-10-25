@@ -205,3 +205,34 @@ console.log('PASS the three-defender branch of the 50/50 roll');
     'defeating side-dungeon Ringleader retires its summoned defenders');
 }
 console.log('PASS side dungeons preserve live defenders without inventing early clearance');
+
+{
+  const { c, z, a } = encounter();
+  a.ranged = true;
+  assert(c.tacticalEmergencyCall(a));
+  const guards = z.enemies.filter(u => u.owner === a.id && u.rogueEmergencyReinforcement);
+  assert(guards.length > 0 && guards.every(u => u.ranged && u.shotRange > 0),
+    'called ranged guardians retain their native projectile combat profile');
+}
+console.log('PASS emergency guards retain ranged combat identity');
+
+{
+  const sample = (phase, piercing = false) => {
+    const { c, a } = encounter();
+    if (phase) c._tacticalRegroups = new Map([[
+      a.id, { phase: 'extended', allyId: 'destination',
+        destination: { x: 100, y: 1300 }, travelRemaining: 12, stalled: 0 }
+    ]]);
+    const hp = a.hp;
+    assert(c.damage(a, 20, 'hero', piercing ? { piercing: true } : null));
+    return hp - a.hp;
+  };
+  const normal = sample(null);
+  const covered = sample('extended');
+  const piercing = sample('extended', true);
+  assert(covered > 0 && covered < normal * 0.5 && covered > normal * 0.2,
+    '65% withdrawal reduction replaces, not stacks with, prior protection');
+  assert(piercing > normal * 0.95,
+    'piercing still bypasses the temporary extended-retreat protection');
+}
+console.log('PASS temporary 65% protection and piercing preserve the combat contract');
