@@ -16,8 +16,8 @@
   const catalog = {
     paladin: [
       [
-        ['Sword Combo', 'slash', 'steel'],
         ['Radiant Strike', 'lance', 'holy'],
+        ['Radiant Cross', 'holy-cross', 'holy'],
       ],
       [
         ['Sundering Strike', 'sunder', 'holy'],
@@ -50,8 +50,8 @@
     ],
     mage: [
       [
-        ['Arcane Combo', 'orb', 'arcane'],
         ['Arcane Beam', 'beam', 'arcane'],
+        ['Wide Arcane Beam', 'wide-beam', 'arcane'],
       ],
       [
         ['Frost Bolt', 'ice', 'frost'],
@@ -84,8 +84,8 @@
     ],
     ranger: [
       [
-        ['Bow Combo', 'arrow', 'arrow'],
         ['Rapid Arrows', 'arrow', 'arrow'],
+        ['Hawk Interception', 'hawk', 'nature'],
       ],
       [
         ['Pinning Shot', 'pin', 'arrow'],
@@ -140,7 +140,8 @@
   ]);
   function owns(e) {
     return (
-      ['heroSkillCast', 'heroProjectileFlight', 'heroCharge', 'heroDisplace'].includes(e.type) ||
+      ['heroSkillCast', 'heroProjectileFlight', 'heroCharge', 'heroDisplace',
+        'heroSkillArea', 'heroHawk', 'hawkRetreatInterrupted', 'skill1Tap'].includes(e.type) ||
       (isHero(e) && legacyTypes.has(e.type))
     );
   }
@@ -152,7 +153,18 @@
       if (!p) continue;
       const emit = (stage, life, extra = {}) =>
         push({ ...e, ...extra, stage, ...p }, 'heroSkill', life, 4);
-      if (e.type === 'heroSkillCast') emit('cast', e.charged ? 0.3 : 0.22);
+      if (e.type === 'heroSkillArea' && e.slot === 1)
+        emit(e.class === 'paladin' ? 'skill1-cross' : 'skill1-wide-beam',
+          e.class === 'paladin' ? 0.36 : 0.24);
+      else if (e.type === 'heroHawk' && e.slot === 1)
+        emit('skill1-hawk-' + e.phase, e.phase === 'flight' ? 0.13 : 0.28);
+      else if (e.type === 'hawkRetreatInterrupted') {
+        // Contact already shows the interruption marker; avoid duplicate flashes.
+      }
+      else if (e.type === 'skill1Tap') {
+        // Prior charged projectile now carries its own normal launch/contact.
+      }
+      else if (e.type === 'heroSkillCast') emit('cast', e.charged ? 0.3 : 0.22);
       else if (e.type === 'heroCharge' && e.stage === 'cancel') emit('cancel', 0.18);
       else if (e.type === 'heroDisplace') emit('displace', 0.22);
       else if (e.type === 'heroProjectileFlight') emit('launch', 0.12);
@@ -295,12 +307,104 @@
       } else line(ctx, { x, y }, { x: x + Math.cos(angle) * 5, y: y + Math.sin(angle) * 5 });
     }
   }
+  // Class Skill 1 physical spell geometry is supplied by simulation receipts,
+  // not inferred from cosmetic particles or a separate targeting resolver.
+  function skill1Signature(ctx, screen, f, reduced = false) {
+    const age = f.max - f.life,
+      fade = Math.min(1, f.life / Math.min(f.max, 0.17)),
+      grow = reduced ? 1 : Math.min(1, age / 0.12);
+    ctx.save();
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    if (f.stage === 'skill1-cross') {
+      const center = { x: f.x, y: f.y }, reach = f.reach,
+        half = f.halfWidth, a = f.angle,
+        ca = Math.cos(a), sa = Math.sin(a),
+        endpoints = [
+          [{ x:center.x-ca*reach, y:center.y-sa*reach },{ x:center.x+ca*reach, y:center.y+sa*reach }],
+          [{ x:center.x+sa*reach, y:center.y-ca*reach },{ x:center.x-sa*reach, y:center.y+ca*reach }],
+        ];
+      ctx.globalAlpha = fade * (f.pulse ? 0.55 : 0.43);
+      ctx.fillStyle = '#dfb45b';
+      for (const pair of endpoints) {
+        C.polygon(ctx,screen,C.capsulePoints(pair[0],pair[1],half));
+        ctx.fill();
+      }
+      ctx.globalAlpha = fade * 0.83;
+      ctx.strokeStyle = '#fff1b8';
+      for (const pair of endpoints) {
+        const one=screen(pair[0]), two=screen(pair[1]);
+        const thickness=Math.hypot(
+          screen({x:center.x+half*sa,y:center.y-half*ca}).x-screen(center).x,
+          screen({x:center.x+half*sa,y:center.y-half*ca}).y-screen(center).y
+        );
+        ctx.lineWidth = Math.max(1.5,thickness*0.19);
+        line(ctx,one,two);
+      }
+      const p=screen(center);
+      ctx.lineWidth=2;
+      glyph(ctx,p.x,p.y-5,'lance',reduced?8:12+4*grow);
+    } else if (f.stage === 'skill1-wide-beam') {
+      const from={x:f.x,y:f.y},to={x:f.endX,y:f.endY},
+        start=screen(from),end=screen(to),shift={x:from.x-f.halfWidth*Math.sin(Math.atan2(to.y-from.y,to.x-from.x)),
+        y:from.y+f.halfWidth*Math.cos(Math.atan2(to.y-from.y,to.x-from.x))};
+      ctx.globalAlpha = fade*0.4;
+      ctx.fillStyle='#9368db';
+      C.polygon(ctx,screen,C.capsulePoints(from,to,f.halfWidth));
+      ctx.fill();
+      ctx.globalAlpha=fade*0.78;
+      ctx.strokeStyle='#e9ceff';
+      ctx.lineWidth=Math.max(2,Math.hypot(screen(shift).x-start.x,screen(shift).y-start.y)*0.35);
+      line(ctx,start,end);
+      ctx.lineWidth=1.5;
+      ctx.strokeStyle='#fff7fd';
+      line(ctx,start,end);
+    } else if (f.stage.startsWith('skill1-hawk-')) {
+      const p=screen(f),a=f.angle||0;
+      ctx.translate(p.x,p.y-12);
+      ctx.rotate(a);
+      ctx.globalAlpha=fade*(f.phase==='expire'?0.25:0.9);
+      ctx.strokeStyle=f.phase==='impact'?'#f2ecb0':'#d9e4ac';
+      ctx.fillStyle='#b9d29f';
+      ctx.lineWidth=reduced?1.8:2.5;
+      if(f.phase==='flight'&&!reduced){
+        const q=screen({x:f.fromX??f.x,y:f.fromY??f.y});
+        ctx.beginPath();
+        ctx.moveTo(0,0);
+        ctx.lineTo(q.x-p.x,q.y-p.y);
+        ctx.stroke();
+      }
+      // Original top-down angular raptor silhouette: head, swept wings,
+      // feathers and tapered tail, oriented in the actual chase direction.
+      ctx.beginPath();
+      ctx.moveTo(13,0);ctx.lineTo(5,-3);
+      ctx.quadraticCurveTo(-4,-17,-17,-18);
+      ctx.lineTo(-9,-6);ctx.lineTo(-14,-2);
+      ctx.lineTo(-9,0);ctx.lineTo(-14,2);
+      ctx.lineTo(-9,6);ctx.lineTo(-17,18);
+      ctx.quadraticCurveTo(-4,17,5,3);
+      ctx.closePath();ctx.fill();ctx.stroke();
+      if(f.phase==='impact'){
+        ctx.strokeStyle='#fff5bd';ctx.lineWidth=2;
+        for(const side of [-1,1]) line(ctx,{x:0,y:0},{x:16,y:side*13});
+        if(f.interrupted){
+          ctx.beginPath();ctx.arc(0,0,20,0,Math.PI*2);ctx.stroke();
+          line(ctx,{x:-7,y:12},{x:8,y:-12});
+        }
+      }
+    }
+    ctx.restore();
+  }
   function draw(
     ctx,
     screen,
     f,
     { reduced = false, optimized = false, width = 1280, height = 800 } = {},
   ) {
+    if (f.stage?.startsWith('skill1-')) {
+      skill1Signature(ctx, screen, f, reduced);
+      return;
+    }
     const p = screen(f),
       age = f.max - f.life,
       fade = Math.max(0, Math.min(1, f.life / 0.15)),
