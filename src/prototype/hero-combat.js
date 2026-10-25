@@ -1879,7 +1879,10 @@
                 this.fractureEnemy(
                   enemy,
                   advanced.fraction + steps * advanced.fractionStep,
-                  advanced.duration + steps * advanced.durationStep,
+                  this.criticalHeroValue(
+                    criticalReceipt, advanced.duration + steps * advanced.durationStep,
+                    'vulnerabilityDuration',
+                  ),
                 );
                 hits++;
               }
