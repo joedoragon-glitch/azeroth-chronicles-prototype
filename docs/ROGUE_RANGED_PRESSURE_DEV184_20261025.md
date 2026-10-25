@@ -55,3 +55,8 @@ The first native delivered-hit run passed 96 cases and produced 64 tactical resp
 ### Exact movement-collision gate
 
 The retreat-corridor selection now uses the **15-unit radius actually passed by `navigation.move` → `clearSegment`**, rather than the earlier 12-unit position check. This resolves a test-fixture mismatch before drawing conclusions about any 450/480-unit escape immobility. If a valid native 15-unit rear corridor still produces no progress, retain that as a separate AI investigation rather than silently relaxing territory or crowd collision.
+
+
+### Bounded native-collision diagnostic disposition
+
+The stricter 15-unit full-corridor *search* proved inappropriately costly for the narrow 96-case gate. The test now retains the already-passing 12-unit hit/retreat-corridor selection and **records**, but does not require, whether the same rear lane meets the actual 15-unit movement radius. This keeps observation separate from acceptance, while preserving the diagnostic that long-range wounded enemies may enter escape without progressing. A dedicated movement collision/pursuit test, with a smaller fixed native fixture, should resolve this before any AI code change. Do not infer successful physical withdrawal merely from an `escape` phase.

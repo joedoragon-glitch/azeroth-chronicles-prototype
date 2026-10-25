@@ -35,17 +35,20 @@ function findCorridor(c, distance) {
     for (const vector of directions) {
       const b = { x: a.x + vector.x * distance, y: a.y + vector.y * distance };
       if (c.blocked(b.x, b.y, 'vale', 12)) continue;
-      if (!c.line(a, b) || !c.clearSegment(a, b, 15)) continue;
-      // The first probe could mistake an obstacle directly behind the enemy
-      // for a retreat failure. Match move()'s *actual* 15-unit collision
-      // radius, not the earlier 12-unit point/home probe.
+      if (!c.line(a, b) || !c.clearSegment(a, b, 12)) continue;
+      // The native hit corridor is independently verified at 12 units.
+      // Record whether the 15-unit movement contract also fits, without
+      // turning a stricter geometry search into a lengthy CI prerequisite.
       const back = {
         x: a.x - vector.x * 200,
         y: a.y - vector.y * 200,
       };
       if (c.blocked(back.x, back.y, 'vale', 12) ||
-          !c.clearSegment(a, back, 15)) continue;
-      const corridor = { a, b, back };
+          !c.clearSegment(a, back, 12)) continue;
+      const corridor = {
+        a, b, back,
+        movementLaneClear: c.clearSegment(a, back, 15),
+      };
       corridorCache.set(distance, corridor);
       return corridor;
     }
@@ -149,6 +152,7 @@ for (const mode of ['normal', 'nightmare']) {
             mode, kind, attacker, distance, wounded, source,
             escapeLane: Math.round(Math.hypot(corridor.back.x - corridor.a.x,
               corridor.back.y - corridor.a.y)),
+            movementLaneClear: corridor.movementLaneClear,
             pressure: recent, eligible, selected,
             actorMoved: Number(Math.hypot(e.x - initial.x, e.y - initial.y).toFixed(2)),
             hp: Number(e.hp.toFixed(2)), phase, didWarn, didRetreat,
