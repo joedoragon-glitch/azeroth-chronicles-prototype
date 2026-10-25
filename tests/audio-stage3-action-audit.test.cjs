@@ -146,12 +146,11 @@ for(const [type,family] of [
   g.updateEnemies=()=>{};
   g.updateNight=g.updatePacks=g.updateGuardianReinforcements=g.updateElites=()=>{};
   g.engage(e);
-  const receipts=[];
-  for(let tick=0;tick<100;tick++) {
-    g.tick(0.05);
-    receipts.push(...g.effects.splice(0));
-  }
-  assert(u.skill1Cd>0, type+'/'+family+': autonomous first skill');
+  // Preserve the established game's 100-tick autonomous skill acceptance
+  // fixture; inspect its emitted receipts after the combat decision loop.
+  for(let tick=0;tick<100;tick++) g.tick(0.05);
+  const receipts=[...g.effects];
+  assert(u.skill1Cd>0, type+'/'+family+': autonomous first skill (cd='+u.skill1Cd+', effects='+receipts.length+')');
   assert(u.skill2Cd>0, type+'/'+family+': autonomous second skill');
   const rows=observe(receipts),metrics=sum(rows);
   assert(metrics.procedural>0,type+'/'+family+': no combat source for actual action stream');
