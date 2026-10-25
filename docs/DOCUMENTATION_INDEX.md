@@ -6,6 +6,8 @@
 
 **Agent policy vs. historical tasks:** [Current `AGENTS.md` operating rules](../AGENTS.md) are the applicable consent and development instructions; [AGENTS historical development ledger](../AGENTS_HISTORY_20261025.md) preserves dated work orders, approvals, progress notes and source evidence **without re-authorizing them**.
 
+**Documentation coverage (25 October; triaged, not certified):** [Coverage and authority notes](DOCUMENTATION_COVERAGE_NOTES_20261025.md) link the [machine-readable Markdown census](DOCUMENTATION_COVERAGE_REGISTER_20261025.json). This supplement lists the 152 `docs/` paths outside the original October 19 census and marks 74 lacking direct index links at the pinned checkpoint; file coverage is not full review or permission to resume older work.
+
 **How to read older “current” guides (as verified for dev.185):** The title or an old candidate status describes a document's **own checkpoint**, not automatically the latest playable build or permission to execute its old next steps. Recheck live source and the newest owner authorization before starting work.
 
 | Topic | Present-day authority to consult | Dated context, not an open work order |
