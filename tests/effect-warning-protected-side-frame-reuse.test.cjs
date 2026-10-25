@@ -16,6 +16,9 @@ Object.assign(game.hero, { x: 1480, y: 1700, hp: 100000, maxHp: 100000 });
 game.line = () => true;
 const boss = game.bossEnemy(game.boss('darklord'), 'normal', { x: 1400, y: 1700 });
 boss.aggro = true;
+// Sector is the authored low-HP form. Above half health the same action
+// deliberately becomes a cone, so the real protected-side path cannot run.
+boss.hp = Math.floor(boss.maxHp * 0.45);
 zone.enemies.push(boss);
 // Actual fourth authored Dark Lord attack, not an invented stand-in sector.
 game.startAttack(boss, game.hero, 3);
