@@ -406,6 +406,8 @@
           (healer.type !== 'boss' && (healer.captain || healer.roomCaptain)))
       )
         return u.hp > 0 && u.maxHp > 0 && u.hp < u.maxHp;
+      if (healer && u.type !== 'boss' && this.enemyHealLeader(u))
+        return u.hp > 0 && u.hp / u.maxHp <= cfg.captain.threshold;
       return (
         u.hp / u.maxHp <= (this.tacticalRogueRegroup(u) ? cfg.regroupThreshold : cfg.threshold)
       );
@@ -477,9 +479,15 @@
           // the original 5%-over-five-seconds budget.
           buffed = !leader && (ordinaryHealer || captainHealer),
           duration = buffed ? cfg.ordinary.duration : cfg.duration,
+          // A captain patient receives half its missing HP from another
+          // healer, never the boss's 5%-of-max budget or the ordinary full heal.
+          // Self-recovery remains a separate 5%-of-max captain clock.
+          captainRecipient = leader && target.type !== 'boss' && target !== e,
           amount = buffed
             ? target.maxHp - target.hp
-            : Math.min(target.maxHp - target.hp, target.maxHp * cfg.fraction * multiplier);
+            : captainRecipient
+              ? (target.maxHp - target.hp) * cfg.captain.missingFraction
+              : Math.min(target.maxHp - target.hp, target.maxHp * cfg.fraction * multiplier);
         if (!(amount > 0) || !Number.isFinite(amount)) continue;
         target.supportHeal = {
           source: e.id,
