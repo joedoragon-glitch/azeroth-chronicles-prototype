@@ -40,7 +40,7 @@ Nine changed files before this handoff:
 
 **Soldier audit:** basic/counterattack sword, Power Strike, Holy Cleave are melee or immediate cones. Veteran ward/Guard are actor-bound status. No invented Soldier thrown weapon or projectile required; do not impose Ranger behavior on Soldier.
 
-**Remaining pet phase:** not yet audited individually. Existing pet CI tests do not establish a full skill-by-skill fantasy visual audit. When authorized to proceed, do it inside #464 in separate reviewable commits, not a new PR.
+**Pet phase update (25 October 2026):** All eleven families have now been inspected by skill identity and contact semantics. See [individual pet audit](ISSUE463_PET_FAMILY_RELEASE_IMPACT_AUDIT_20261025.md). The draft candidate removes a false full-length post-impact line for the real ranged first-skill bolts of Crypt/Archive/Abyss and remembers each bolt's launch coordinates; all other pet skills retain distinct immediate/area/charged semantics. Focused test `tests/pet-postcast-visuals.test.cjs` was added, but consult *latest exact-head CI* before calling it green. Real phone/desktop and potential instant Rolling Cargo afterimage remain a separate visual-acceptance gate. This is still the SAME draft #464, not merged or deployed.
 
 ## CI evidence: carefully distinguish OLD GREEN from CURRENT
 

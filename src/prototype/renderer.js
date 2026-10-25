@@ -1421,7 +1421,10 @@
         ctx.save();
         ctx.globalAlpha = a;
         if (f.type === 'petSkill') {
-          if (f.stage !== 'release') drawPetSkillGeometry(f);
+          // A ranged pet shot already traveled on its visible collider.
+          // Only its local impact material should remain; do not redraw a
+          // full-length line to the pet's later position after the shot lands.
+          if (f.stage !== 'release' && !f.physicalProjectile) drawPetSkillGeometry(f);
           PrototypeEnemyVfxArt?.petSkill?.(ctx, screen, f, { reduced: reducedMotion(), optimized });
         } else if (f.type === 'ability') {
           PrototypeCombatVisuals.ability(ctx, screen, f);
