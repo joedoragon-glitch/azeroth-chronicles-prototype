@@ -169,12 +169,14 @@ async function verifyEarnedLoot(page) {
   await page.screenshot({path:empty,clip:scene.clip,animations:'disabled'});
   const drop=await page.evaluate(location=>{
     const g=Prototype.game;
-    const before={loot:g.s.loot.length,kills:g.s.statistics.kills,nextId:g.s.nextId,
-      crowns:g.hero.gold};
     const e=g.makeEnemy({
       species:'goblin',type:'mob',name:'Audit earned coin',level:1,
       hp:1,damage:0,gold:23,xp:0,
     },location);
+    // makeEnemy itself allocates a native entity ID. Record the loot ID
+    // allocator AFTER that allocation, not before the enemy was created.
+    const before={loot:g.s.loot.length,kills:g.s.statistics.kills,nextId:g.s.nextId,
+      crowns:g.hero.gold};
     e.heroParticipated=true;
     g.zone().enemies.push(e);
     e.hp=0;
