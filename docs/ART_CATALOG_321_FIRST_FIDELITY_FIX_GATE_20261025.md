@@ -8,6 +8,16 @@ The initial synthetic Crown coin was followed by an [actual Campaign death/rewar
 
 The test explicitly resumed normal graphics frames between paused captures to avoid a stale **previous test fixture** remaining in Pixi's last buffer. The original two failed runs were a **test setup/measurement error**, not a demonstrated new game bug. This is **not** proof of a live combat projectile strike/death animation, real device hardware, cover-specific occlusion or all other assets.
 
+## Authored Vale cottage overlap — actual day and night Chromium captures
+
+A new paired [PR-only browser run #40236756504](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40236756504) **passed** using the **existing** author-approved `settlement-major-0` / `vale-cottage` prop at world (300,130), not an invented replacement cover asset. The coin sits 19 screen pixels above the cottage foot anchor, matching the canonical Canvas convention that loot paints **after standing world entities** but **before** atmosphere. Every capture had a real, confirmed WebGL2 scene, unchanged hero/zoom/viewport, and the same prop/coin placement.
+
+- **Day:** coin appearance modified **881 Canvas** vs **866 Pixi** pixels (of 13,456 sampled); 94.5% overlap of the localized coin-change masks.
+- **Authored night at clock 420:** **525 vs 525**, with 91.6% overlap of the localized coin-change masks.
+- The actual ZIP containing 12 PNGs and two `evidence.json` reports was downloaded and **all 12 image hashes and all pixel calculations independently reverified**. [Permanent measured case record](evidence/ART_CATALOG_321_AUTHORED_COTTAGE_DAY_NIGHT_20261025.json).
+
+**Critical limit:** final-composite crops still differ at **772/13,456 pixels by day** and **1,841/13,456 by night** under the conservative RGBA threshold, including surrounding scenery. These are **not** claims of absolute scenery/occlusion parity or a pass for generic foreground-cover visibility. This closes the **coin-over-one-authored-cottage** gate only. Additional translucent cover, mob silhouettes, source-facing parity and real devices remain untested. No gameplay/art/default-renderer code was changed in this follow-up.
+
 ## Follow-up: fixes implemented and first acceptance gate passed in draft
 
 This document originally specified future repair work. **A subsequent candidate implementation is now on the same unmerged draft PR #469.** Changes are restricted to `src/prototype/pixi-experimental.js` (shared GPU Crown-coin stamp before atmosphere) and `src/prototype/renderer.js` (identical paint-only pause cue for full Canvas and transparent GPU overlay), plus a bounded native regression and a stronger existing one-scene screenshot collector. The original specification remains below to preserve the decision trail.
