@@ -14,6 +14,7 @@ const checks = [
   {pr:471,scope:'Renderer diagnostics + protected visual effects',overlap:['src/prototype/renderer.js']},
   {pr:464,scope:'Ranger/Archer/Paladin projectile rendering',overlap:['src/prototype/renderer.js']},
   {pr:447,scope:'Pixi browser recovery acceptance',overlap:[]},
+  {pr:445,scope:'Artwork/material-pipeline maintenance; upstream conflict attribution',overlap:[]},
 ];
 const run=(args,{allowFailure=false}={})=>{
   const r=cp.spawnSync('git',args,{cwd:root,encoding:'utf8',maxBuffer:4*1024*1024});
