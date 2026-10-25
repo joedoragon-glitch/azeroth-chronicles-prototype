@@ -159,6 +159,48 @@ for (const mode of ['normal', 'nightmare']) {
     ' reachable native brood recipients, independent self-treatment intact');
 }
 
+// Measure first guard-to-captain treatment time when the one initial
+// in-range Inner Vault healer is ready, holding a shot, or defeated. Distant
+// healers use their real route solver; this is an observation of their native
+// behavior, not a promise they always arrive under human combat pressure.
+const responseTimes = {};
+for (const state of ['ready', 'aiming', 'defeated']) {
+  const { g, captain: dread, ranged } = nativeRoom('supply-crown', 'normal', true);
+  dread.hp = dread.maxHp * 0.82;
+  dread.idleWanderWait = 1000;
+  const inner = ranged.find((u) =>
+    distance(u, dread) < support.range && g.line(u, dread));
+  assert(inner, 'Inner Vault treatment source exists in true Crown geometry');
+  if (state === 'aiming')
+    inner.rangedAim = { timer: 1.5, total: 1.5,
+      x: g.hero.x, y: g.hero.y, targetId: 'hero' };
+  if (state === 'defeated') inner.hp = 0;
+  const sources = new Set(ranged.filter((u) => u.hp > 0).map((u) => u.id));
+  let elapsed = null;
+  for (let step = 1; step <= 120; step++) {
+    advance(g);
+    if (healingEvents(g, dread, sources).length) {
+      elapsed = step / 10;
+      break;
+    }
+    if (g.s.challenge.pending || g.s.challenge.gameOver) break;
+  }
+  responseTimes[state] = elapsed;
+  if (state === 'defeated') {
+    assert.equal(inner.hp, 0, 'missing guardian stays defeated throughout observation');
+    assert(!healingEvents(g, dread).some((ev) => ev.source === inner.id),
+      'a dead Inner Vault guardian must never cast');
+  }
+  console.log('SPECIALIST Dreadmaw guard-response/' + state + ': ' +
+    (elapsed === null ? 'no cast within 12s' : elapsed.toFixed(1) + 's'));
+}
+assert(responseTimes.ready !== null && responseTimes.ready <= 0.2,
+  'an uncommitted in-range guardian promptly treats its captain');
+assert(responseTimes.aiming === null || responseTimes.aiming > responseTimes.ready,
+  'committed ranged aim must delay, not accelerate, guard support');
+assert(responseTimes.defeated === null || responseTimes.defeated > responseTimes.ready,
+  'defeating the only initially in-range healer delays the remaining guards');
+
 // Bounded native combat pressure, not a claimed human playtest or global DPS
 // recommendation. Targets include real hero, Soldier and Archer so captain AI
 // can choose warning/aim/support while independent guards make decisions.
