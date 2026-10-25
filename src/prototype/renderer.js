@@ -2338,14 +2338,17 @@
       ctx.restore();
     }
     function render() {
+      // Bounded by this one permitted draw. Never cache mutable attack shapes
+      // between simulation steps or change warning/damage geometry.
+      const warningFrameShapes = new Map();
       if (renderLayer === 'overlay') {
         // On the experimental PixiJS path, keep essential native combat cues
         // above the independent GPU world instead of hiding player warnings.
         // The full normal Canvas path below is unchanged.
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const z = game.zone();
-        PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000);
-        PrototypeCombatVisuals.ground(ctx, screen, game, 'underlay-cue', game.s.time);
+        PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000, warningFrameShapes);
+        PrototypeCombatVisuals.ground(ctx, screen, game, 'underlay-cue', game.s.time, warningFrameShapes);
         PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx, effectRecorder);
         for (const e of [
           ...z.enemies.filter((u) => u.hp > 0),
@@ -2488,8 +2491,8 @@
       // Moving combat warnings cannot be frozen into the PixiJS cached terrain.
       // Their real, current state is drawn by the transparent 2D cue overlay.
       if (renderLayer !== 'background') {
-        PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000);
-        PrototypeCombatVisuals.ground(ctx, screen, game, 'underlay-cue', game.s.time);
+        PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000, warningFrameShapes);
+        PrototypeCombatVisuals.ground(ctx, screen, game, 'underlay-cue', game.s.time, warningFrameShapes);
       }
       finishPhase('terrain');
       if (renderLayer === 'background') return;
