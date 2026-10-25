@@ -1028,6 +1028,66 @@
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
             continue;
           }
+          if (p.rangerDelayedLaunch && p.source === 'hero' && hero.class === 'ranger') {
+            // Each bow release is a physical event, not a snapshot from the
+            // original button press. Move the REAL projectile to the living
+            // Ranger and aim at the foe's position at this sub-launch only.
+            // Once fired it follows the ordinary independent collision path.
+            const distance = Math.max(1, dist(hero, e));
+            p.x = hero.x;
+            p.y = hero.y;
+            p.dx = (e.x - hero.x) / distance;
+            p.dy = (e.y - hero.y) / distance;
+            delete p.rangerDelayedLaunch;
+            // This receipt belongs to the actual moving bow, not the
+            // earlier event that scheduled several delayed shafts.
+            this.event('projectileLaunch', {
+              actor: 'hero',
+              class: 'ranger',
+              source: 'hero',
+              slot: p.slot || 1,
+              style: p.style || 'arrow',
+              charged: !!p.charged,
+              rapid: !!p.rapid,
+              projectileId: p.id,
+              releasedCount: 1,
+              x: p.x,
+              y: p.y,
+              target: e.id,
+            });
+          }
+          if (p.companionDelayedLaunch) {
+            // Delayed Triple Shot members do not materialize at the Archer's
+            // former coordinates. Release them from the living companion's
+            // current bow and keep that real flight path independent thereafter.
+            const caster = this.s.party.find((u) => u.id === p.source && u.type === 'archer');
+            if (!caster || caster.hp <= 0 || caster.active === false) {
+              this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
+              continue;
+            }
+            const distance = Math.max(1, dist(caster, e));
+            p.x = caster.x;
+            p.y = caster.y;
+            p.dx = (e.x - caster.x) / distance;
+            p.dy = (e.y - caster.y) / distance;
+            delete p.companionDelayedLaunch;
+            this.event('projectileLaunch', {
+              actor: 'companion',
+              role: 'archer',
+              source: caster.id,
+              style: 'arrow',
+              special: 'triple-shot',
+              // The initial legacy three-shot sound has already scheduled
+              // the volley. A real later subrelease is an observable event,
+              // NOT a second full three-shot audio/performance cue.
+              presentationHandled: true,
+              projectileId: p.id,
+              releasedCount: 1,
+              x: caster.x,
+              y: caster.y,
+              target: e.id,
+            });
+          }
           // Additive transient observation, after the existing stagger delay.
           if (p.source === 'hero' && !p.heroFlightPresented) {
             p.heroFlightPresented = true;
@@ -1148,7 +1208,15 @@
               );
             if (landed && p.petSkillSlot) {
               const pet = this.s.party.find((unit) => unit.id === p.source && unit.type === 'pet');
-              if (pet) this.petSkillContact(pet, victim, p.petSkillSlot);
+              if (pet)
+                this.petSkillContact(
+                  pet,
+                  victim,
+                  p.petSkillSlot,
+                  1,
+                  p.criticalExecution || null,
+                  { x: p.launchX ?? pet.x, y: p.launchY ?? pet.y },
+                );
             }
             if (landed && p.fractureFraction)
               this.fractureEnemy(victim, p.fractureFraction, p.fractureDuration);
@@ -1158,6 +1226,7 @@
               victim.tauntUntil = Math.max(victim.tauntUntil || 0, this.s.time + duration);
             }
             if (landed && p.slow) this.applySlow(victim, p.slow);
+            if (landed && p.rangerVolleySlow) this.applySlow(victim, p.rangerVolleySlow);
             if (landed && p.push && victim.hp > 0 && p.source === 'hero')
               this.shieldPush(victim, p.push);
             this.event('projectileImpact', {

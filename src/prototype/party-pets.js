@@ -201,6 +201,9 @@
             speed: R.balance.friendlyProjectiles.skillSpeed,
             slow: def.slow || 0,
             petSkillSlot: slot,
+            // Preserve the actual release point for an impact flash after the pet moves.
+            launchX: u.x,
+            launchY: u.y,
           });
           this.event('projectileLaunch', {
             actor: 'companion',
@@ -237,7 +240,10 @@
         if (!projectile) this.petSkillContact(u, target, slot, hits);
         return true;
       }
-      petSkillContact(u, target, slot, hits = 1) {
+      // Keep the fifth argument separate for the independent, opt-in
+      // critical-receipt stream (#440). This branch does not enable criticals.
+      // The real projectile's cosmetic launchPoint owns the sixth argument.
+      petSkillContact(u, target, slot, hits = 1, criticalReceipt = null, launchPoint = null) {
         const def = this.petSkillDefinition(u, slot);
         if (!def || u.hp <= 0 || u.active === false) return false;
         if (u.hp > 0 && def.heal) {
@@ -276,7 +282,7 @@
             u.wardReduction = def.ward;
           }
         }
-        this.petSkillEvent(u, target, slot, hits, 'impact');
+        this.petSkillEvent(u, target, slot, hits, 'impact', launchPoint);
         this.event('spell', {
           actor: 'companion',
           role: 'pet',
@@ -287,7 +293,7 @@
         });
         return true;
       }
-      petSkillEvent(u, target, slot, hits, stage) {
+      petSkillEvent(u, target, slot, hits, stage, launchPoint = null) {
         const def = this.petSkillDefinition(u, slot);
         const pet = this.petDefinition(u);
         this.event('petSkill', {
@@ -297,8 +303,11 @@
           skill: def.name,
           x: target.x,
           y: target.y,
-          fromX: u.x,
-          fromY: u.y,
+          fromX: launchPoint?.x ?? u.x,
+          fromY: launchPoint?.y ?? u.y,
+          // Real ranged pet shots have already flown on their own collider.
+          // Never draw a second full-range line from the pet at impact time.
+          physicalProjectile: !!launchPoint,
           color: pet.color,
           shape: def.shape,
           radius: def.radius || 0,

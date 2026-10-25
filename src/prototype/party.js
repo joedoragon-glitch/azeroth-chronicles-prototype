@@ -1504,6 +1504,7 @@
             source: u.id,
             speed: 520,
             delay: j * 0.08,
+            ...(j > 0 ? { companionDelayedLaunch: true } : {}),
             style: 'arrow',
             rapid: true,
             companionSkill: 'triple-shot',
@@ -1518,7 +1519,9 @@
           role: 'archer',
           source: u.id,
           style: 'arrow',
-          count: 3,
+          count: 3, // Retain existing three-shot audio contract.
+          releasedCount: 1,
+          pendingCount: 2,
           special: 'triple-shot',
           x: u.x,
           y: u.y,
@@ -1603,7 +1606,31 @@
           damage = base * def.multiplier,
           angle = Math.atan2(target.y - u.y, target.x - u.x);
         let hits = 0;
-        for (const e of targets) if (this.damage(e, damage, u.id, { area: true })) hits++;
+        if (u.type === 'archer') {
+          // Piercing Volley releases only after the charged stance completes.
+          // Physical shafts must reach their selected foes before applying
+          // damage, rather than painting an instant filled arrow corridor.
+          for (const e of targets) {
+            const distance = Math.max(1, dist(u, e));
+            this.s.projectiles.push({
+              id: 'projectile-' + this.s.nextId++,
+              x: u.x,
+              y: u.y,
+              dx: (e.x - u.x) / distance,
+              dy: (e.y - u.y) / distance,
+              target: e.id,
+              damage,
+              source: u.id,
+              speed: 650,
+              style: 'arrow',
+              area: true,
+              companionSkill: 'piercing-volley',
+            });
+            hits++;
+          }
+        } else {
+          for (const e of targets) if (this.damage(e, damage, u.id, { area: true })) hits++;
+        }
         if (!hits) return false;
         u.skill2Cd = cfg.cooldown;
         u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
@@ -1641,6 +1668,7 @@
           targetId: target.id,
           effect: def.effect,
           shape: def.shape,
+          ...(u.type === 'archer' ? { projectileVolley: true } : {}),
           x: target.x,
           y: target.y,
           fromX: u.x,
@@ -1650,14 +1678,16 @@
           range: def.range || 0,
           halfAngle: def.halfAngle || 0,
           halfWidth: def.halfWidth || 0,
-          hits,
+          hits: u.type === 'archer' ? 0 : hits,
+          ...(u.type === 'archer' ? { arrows: hits } : {}),
         });
         this.event('companionSkill', {
           source: u.id,
           unitType: u.type,
           skill: u.type === 'soldier' ? 'holy-cleave' : 'piercing-volley',
           targetId: target.id,
-          hits,
+          hits: u.type === 'archer' ? 0 : hits,
+          ...(u.type === 'archer' ? { arrows: hits } : {}),
         });
         return true;
       }

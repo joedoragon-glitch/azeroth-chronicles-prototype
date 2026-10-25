@@ -1122,7 +1122,9 @@
       return { q, ux: vx / len, uy: vy / len, px: -vy / len, py: vx / len };
     }
     function drawProjectile(p) {
-      if (p.delay > 0) return;
+      // A delay reaching zero is not yet a bow release. The simulation first
+      // moves pending Ranger/Archer colliders to their live release origins.
+      if (p.delay > 0 || p.rangerDelayedLaunch || p.companionDelayedLaunch) return;
       const lift = game.fortProjectileLift(p);
       if (lift > 0) {
         const q = screen(p);
@@ -1615,7 +1617,10 @@
         ctx.save();
         ctx.globalAlpha = a;
         if (f.type === 'petSkill') {
-          if (f.stage !== 'release') drawPetSkillGeometry(f);
+          // A ranged pet shot already traveled on its visible collider.
+          // Only its local impact material should remain; do not redraw a
+          // full-length line to the pet's later position after the shot lands.
+          if (f.stage !== 'release' && !f.physicalProjectile) drawPetSkillGeometry(f);
           PrototypeEnemyVfxArt?.petSkill?.(ctx, screen, f, { reduced: reducedMotion(), optimized });
         } else if (f.type === 'ability') {
           PrototypeCombatVisuals.ability(ctx, screen, f);
@@ -1851,7 +1856,15 @@
           ctx.strokeStyle = color;
           ctx.fillStyle = color + '28';
           ctx.lineWidth = 3;
-          if (f.shape === 'circle') {
+          if (f.projectileVolley) {
+            // The companion Archer's actual traveling shafts and hits come
+            // exclusively from simulated arrows. A short bow-release cue is
+            // enough; never leave a full-length laser-shaped corridor behind.
+            ctx.globalAlpha = a * 0.55;
+            ctx.beginPath();
+            ctx.arc(from.x, from.y - 15, 10, -0.9, 1.1);
+            ctx.stroke();
+          } else if (f.shape === 'circle') {
             PrototypeCombatVisuals.circlePath(ctx, screen, f, f.radius);
             ctx.fill();
             ctx.stroke();
