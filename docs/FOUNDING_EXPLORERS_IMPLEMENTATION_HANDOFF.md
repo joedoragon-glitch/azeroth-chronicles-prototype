@@ -1,0 +1,78 @@
+# Founding Explorers — living implementation handoff
+
+**Status:** Draft documentation only; no implementation, merge, deployment, or forum publication authorized.  
+**Created:** 2026-10-25. **Initial reconciliation baseline:** main `968f3493a48e1bcaf17ce6f70f9790ff9b8ed8be`.  
+**Game:** So I Became the Dark Lord's Problem. **Repository:** joedoragon-glitch/azeroth-chronicles-prototype.
+
+## Purpose and source authority
+
+Make it easy for the first independently confirmed player to try the game for 10–20 minutes, provide useful firsthand feedback, and receive appropriate voluntary acknowledgment. Views and likes do not count as confirmed gameplay. The owner enjoys development as a hobby; this is not a popularity, revenue, or competition program.
+
+Original reference: **Founding Adventurers Program — Audited Project Proposal and Implementation Charter, rev. 3.0, 2026-10-22**. That original charter was supplied in a previous development conversation; its complete text has **not** been independently recovered or committed here. Do not treat this handoff as a verbatim substitute. Its Explorer safeguards and explicitly approved owner decisions are captured below; retrieve the original before expanding into deferred features.
+
+**Approved and fixed:**
+- Launch only noncompetitive Founding Explorers, not Founding Legends.
+- Any currently available hero class, normal campaign, approximately 10–20 minutes. No boss clear, finished campaign, complex proof, or technical report requirement.
+- Welcome criticism, confusion, bug reports, accessibility issues, and positive impressions equally.
+- English retained; prioritize natural Latin American Spanish (es-419) in first-session onboarding and reporting. Full campaign translation parity is deferred.
+- Feedback through **public forum replies with optional private messages**.
+- Recognition through **voluntary forum acknowledgment initially**; in-game Founding Credits **later**, only after separate approval and implementation. No permanent-credit promise before delivery.
+- Developer reviews substantive feedback **about twice weekly**; do not guarantee a fix or instant response.
+- No automatic telemetry, accounts, uploads, mandatory personal information, or mandatory diagnostic attachments.
+- Protect existing gameplay, version-4 saves, published links, and multi-file offline-capable GitHub Pages/PWA. Never reinstate single-HTML constraints.
+- No changes to independent renderer, performance, menu, navigation, combat, art, or other projects under this initiative. In particular, do not modify or assume completion of experimental PixiJS PR #407.
+
+## Critical freshness rule for every new chat or agent
+
+**Never rely on the recorded baseline as current.** At the start of *each* checkpoint and before *each* implementation, fetch current `main` SHA, package/build information, AGENTS.md, architecture/current-state documentation, affected source files and tests, and all relevant open/merged PRs. Compare against the checkpoint's last verified SHA. Record new findings and whether they supersede prior assumptions. Recheck again before opening/updating a PR, testing, merging, or publishing. Do not assume PR numbers or old code paths are still current.
+
+This file is the durable scope/decision/checkpoint ledger. Source-specific claims below are **historical audit findings**, not automatic certification of the latest code or public release.
+
+## Four independent checkpoints
+
+### 1. First-session accessibility, localization, and feedback readiness
+**State: source audit and bilingual draft prepared in chat; acceptance NOT COMPLETE.**
+
+Historical source inspection at `869049797d5e29270886871c89068f648c1f2a6c` found: language selection and es-419 document language; Standard/Normal plus Paladin/Mage/Ranger; opening Captain, Recall and Barracks guidance; desktop and phone control paths; optional JSON report export under Save and game management. Existing tests include `tests/companion-onboarding-ui.test.cjs`, `tests/game-menu-ui.test.cjs`, `tests/field-onboarding.test.cjs`. These tests were **inspected, not freshly executed**. The existing `CONTROLES.md` described older dev.79 and mixed some English menu labels; verify whether since updated. Report export contains hero, statistics, performance/device diagnostics and must not be demanded publicly.
+
+**Next action:** Reconcile these claims with the *latest* main and PRs. Audit actual first-session menu and control labels in both languages, desktop/phone at supported viewport (at least 375 × 800 CSS px), clarity of starting campaign and leaving town, access to optional reporting, privacy messaging, and current public build. Prepare/revise a short bilingual guide and forum submission wording. Identify only confirmed gaps.
+
+**Acceptance:** Accurate es-419/English instructions for any class; understandable first 10–20 minutes without boss requirements; realistic desktop and phone walkthroughs; readable labels and navigation; no forced file export or account; approved forum reply/optional PM route; documented tested build and limitations. Distinguish code inspection, automated tests, browser test, and real-human comprehension. If a test cannot run in chat, mark pending, never pass.
+
+### 2. Minimal verified corrections (conditional)
+**State: NOT STARTED.** Only fix issues demonstrated in checkpoint 1. A new feedback system is not presumed necessary. Prefer a focused documentation correction if sufficient. If code changes are necessary, propose exact file/test scope for owner approval, make one small reviewable PR, and run targeted bilingual desktop/phone/menu/PWA/save regressions. Preserve mechanics and unrelated PRs.
+
+**Acceptance:** Confirmed issues addressed; focused tests documented with commands/results and environment; existing saves, links and offline assets unaffected; PR unmerged until explicit owner authorization. Skip this checkpoint if no correction is required.
+
+### 3. Explorer-only forum invitation and operation
+**State: NOT STARTED.** Owner approves Spanish-first invitation plus English equivalent, official verified game URLs, 10–20-minute noncompetitive task, three questions, and reply/optional PM instructions. Three questions: Where did you reach? What did you enjoy or find confusing? What would you change or improve? A player unable to start may still report useful feedback.
+
+**Acceptance:** Forum rules and available PM channel checked; privacy wording approved; public text reply accepted without files; private diagnostics requested only if necessary and voluntarily shared; manual minimal register records handle, date, reported firsthand experience, response status, and separately obtained acknowledgment consent; substantive replies reviewed about twice weekly. Forum views/likes are not gameplay proof. Do not post without owner authorization.
+
+### 4. Optional accessible in-game Founding Credits
+**State: DEFERRED / NOT STARTED.** Only after separately approved scope, consent mechanism and working delivery. Prefer a small accessible bilingual credits section/data list of opted-in pseudonyms, not a bespoke NPC or asset per participant.
+
+**Acceptance:** Explicit opt-in; correct names and accents; accessibility without finishing campaign; mobile/desktop/offline tests; clear correction/removal procedure; no save migration or gameplay impact; owner approves merge and publication before announcing in-game recognition.
+
+## Explicitly deferred charter features
+
+Founding Legends/Pathfinders competition, first-to-clear races, milestone/achievement ledger, validator, exclusive titles, UTC competition rules, substantial creative rewards, complex diagnostic evidence, and full competitive localization parity. No implementation without separate authorization.
+
+## Step 1 draft: short forum/player guide (not published or certified)
+
+**ES-419:** ¿Te animas a explorar durante 10–20 minutos? Abre el juego desde el enlace oficial, elige Español, una partida Normal con la opción Estándar y cualquier clase (Paladín, Mago o Explorador). Recorre el pueblo inicial, habla con el Capitán, prueba Reagrupar y explora si quieres. No necesitas derrotar a ningún jefe. En computadora, usa WASD para moverte, F para interactuar, J para la primera habilidad y Q para Reagrupar; en teléfono usa la palanca o toca un destino y utiliza los botones en pantalla. Cuéntanos: ¿Hasta dónde llegaste? ¿Qué te gustó o te confundió? ¿Qué cambiarías o mejorarías? Responde en el hilo o por mensaje privado si lo prefieres. No hacen falta archivos ni datos personales. No publiques informes técnicos o partidas con información que quieras mantener privada. Si deseas que te agradezcamos públicamente con tu seudónimo, indícalo; no se promete reconocimiento permanente dentro del juego. Revisaremos comentarios sustantivos aproximadamente dos veces por semana.
+
+**EN:** Would you like to explore for 10–20 minutes? Open the official game link, choose English, a Normal/Standard game and any class (Paladin, Mage, Ranger). Explore the starting town, meet the Captain, try Recall, and optionally explore outside. No boss defeat is required. On desktop use WASD to move, F to interact, J for your first skill, and Q for Recall; on phone use the joystick or tap a destination and the on-screen buttons. Tell us: How far did you get? What did you enjoy or find confusing? What would you change or improve? Reply in the thread or by private message. No attachments or personal information are required. Avoid publicly sharing technical reports or saves with information you'd prefer private. You may opt into a forum thank-you under your pseudonym; permanent in-game recognition is not promised. Substantive feedback will be reviewed approximately twice weekly.
+
+**Official links to verify before publication:** desktop https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/ ; phone https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html .
+
+## Operating log
+
+- 2026-10-22: Reference charter rev. 3.0 established (not stored verbatim here).
+- 2026-10-24: Initial chat source audit used main `869049797d5e`. No fresh runtime test or GitHub record created then.
+- 2026-10-25: Owner confirmed public forum replies + optional PMs, voluntary forum acknowledgment first, and approximately twice-weekly review.
+- 2026-10-25: Current main fetched as `968f3493a48e1bcaf17ce6f70f9790ff9b8ed8be` before this documentation branch. This **is not a fresh source-level reconciliation** of all intervening changes. All Step 1 behavioral findings require revalidation against this or newer main.
+
+## Mandatory handoff instruction
+
+In a new chat, read this file and the linked PR, fetch latest main and relevant PRs, update the reconciliation log, then continue **only the next unaccepted checkpoint**. Never silently promote source audit to passed testing or draft copy to a published invitation. Owner must approve feature scope, public commitments, merging and deployment separately.
