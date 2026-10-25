@@ -81,7 +81,7 @@ for (const kind of ['captain', 'boss', 'field-captain']) {
 {
   const { g, mob } = scene();
   const source = mob('skeleton', 300, { ranged: true, aggro: false });
-  const leader = mob('orc', 320, { hp: 400, captain: true, roomCaptain: true, captainProfile: 'supply-vale', aggro: false });
+  const leader = mob('orc', 320, { hp: 400, captain: true, roomCaptain: true, captainProfile: 'fixture-no-healing-profile', aggro: false });
   assert(g.enemySupportHeal(source));
   g.advanceEnemySupportHeal(leader, 5); // direct resolver: isolate cooldown cadence.
   g.updateEnemies(7);

@@ -401,7 +401,7 @@ console.log(
   const healer = mob('goblin', { ranged: true });
   const ally = mob('goblin', { hp: 400 });
   g.updateEnemies(0.1);
-  assert(healer.supportHealCd > 9, 'live updateEnemies invokes automatic support healing');
+  assert(healer.supportHealCd > 6, 'live updateEnemies invokes automatic seven-second support healing');
   assert(ally.supportHeal || ally.hp > 400, 'the live combat tick starts gradual ally healing');
 }
 {

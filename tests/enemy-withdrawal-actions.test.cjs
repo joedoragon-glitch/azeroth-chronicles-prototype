@@ -1,6 +1,7 @@
 'use strict';
 const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine');
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 let passed = 0;
 function test(name, run) {
   run();
@@ -10,6 +11,7 @@ function test(name, run) {
 function arena(make, gap = 200) {
   const c = new C('normal', 'paladin', () => 0.5),
     p = { x: 1400, y: 1700 };
+  completeFieldOpening(c); // Native first-kill admission precedes isolated retreat fixtures.
   c.zone().props = [];
   c.s.party = [];
   c.s.time = 30;

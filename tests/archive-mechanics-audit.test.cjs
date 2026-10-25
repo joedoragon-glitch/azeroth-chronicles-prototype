@@ -55,9 +55,14 @@ for (const cls of ['paladin', 'mage', 'ranger'])
         const before = JSON.stringify(g.snapshot());
         const card = catalog(g).find((s) => s.title === 'Your skills').topics[slot - 1];
         assert.equal(JSON.stringify(g.snapshot()), before, 'Reference remains read-only');
-        const wait = Number(
-          card[2].match(charged ? /Charged recovery: ([\d.]+)/ : /base recovery ([\d.]+)/)[1],
+        // Skill 1's charged recovery is taught through its dedicated form
+        // figures, not the separate Skills 2–8 'Charged recovery' sentence.
+        const shown = card[2].match(
+          charged ? /Charged recovery: ([\d.]+)/ : /base recovery ([\d.]+)/,
         );
+        if (slot === 1 && charged) assert(card[2].includes('\nCharged: '));
+        else assert(shown, 'The Archive exposes the selected cooldown');
+        const wait = shown ? Number(shown[1]) : g.skillCooldown(1, true);
         const raw = [];
         g.damage = (e, amount) => {
           raw.push(amount);
