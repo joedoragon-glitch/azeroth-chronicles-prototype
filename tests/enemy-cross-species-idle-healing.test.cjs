@@ -89,10 +89,11 @@ for (const [healerAggro, targetAggro] of [[false, false], [false, true], [true, 
   assert(ally.supportHeal, 'arriving wounded ordinary ally is eventually treated');
   cases++;
 }
-// Bosses/captains are still allied recipients, but only under their old
-// threshold, 5%-over-5s heal, and ordinary-source 10s leader eligibility.
+// Captains occupy the midpoint: 90% entry, half missing HP in five seconds,
+// ten-second per-healer leader clock, and no engagement requirement for pulses.
+// Bosses retain their original more restrictive combat-only support budget.
 for (const kind of ['boss', 'captain']) {
-  const { g, z, mob } = scene();
+  const { g, z, mob, step } = scene();
   const healer = mob('goblin', 300, { ranged: true });
   let leader;
   if (kind === 'boss') {
@@ -100,13 +101,38 @@ for (const kind of ['boss', 'captain']) {
     leader.aggro = true;
     z.enemies.push(leader);
   } else leader = mob('ogre', 335, { captain: true, roomCaptain: true, captainProfile: 'fixture-no-healing-profile' });
-  leader.hp = leader.maxHp * 0.9;
-  assert(!g.enemySupportHeal(healer), 'leader at 90% keeps old eligibility threshold');
-  leader.hp = leader.maxHp * 0.5;
+  leader.hp = leader.maxHp * 0.92;
+  assert(!g.enemySupportHeal(healer), 'a nearly healthy captain or boss does not need treatment');
+  leader.hp = leader.maxHp * (kind === 'boss' ? 0.5 : 0.9);
   assert(g.enemySupportHeal(healer), 'cross-species leader remains healable');
-  near(leader.supportHeal.remaining, leader.maxHp * 0.05 * g.enemyHealMultiplier(healer), 'leader amount unchanged');
-  near(leader.supportHeal.seconds, 5, 'leader duration unchanged');
-  assert(!leader.supportHeal.allowIdle, 'leader does not inherit new idle pulse exemption');
+  const amount =
+    kind === 'captain'
+      ? (leader.maxHp - leader.hp) * C.rules.enemySupportHealing.captain.missingFraction
+      : leader.maxHp * 0.05 * g.enemyHealMultiplier(healer);
+  near(leader.supportHeal.remaining, amount, 'leader class-specific amount');
+  near(leader.supportHeal.seconds, 5, 'leader duration remains five seconds');
+  assert.equal(!!leader.supportHeal.allowIdle, kind === 'captain', 'only captain heal persists while idle');
+  if (kind === 'captain') {
+    // Maintain a legal engagement distance without auto-aggro on the
+    // subsequent idle phase, isolating transitions from leash resets.
+    Object.assign(g.hero, { x: 600, y: 300 });
+    g.enemyAcquisitionRange = () => 0;
+    const start = leader.hp;
+    step(1);
+    assert(leader.hp > start, 'idle captain receives real healing ticks');
+    leader.aggro = true;
+    const engaged = leader.hp;
+    step(1);
+    assert(leader.hp > engaged, 'captain heals after entering combat');
+    leader.aggro = false;
+    const idleAgain = leader.hp;
+    step(1);
+    assert(leader.hp > idleAgain, 'captain heals after leaving combat again');
+    // End the remaining pulse without advancing other AI decisions.
+    g.advanceEnemySupportHeal(leader, 2);
+    near(leader.hp, leader.maxHp * 0.9 + amount, 'captain completes interrupted-state treatment');
+    assert(!leader.supportHeal);
+  }
   cases++;
 }
 // The existing no-heal safeguards still win over the ordinary full recovery.
