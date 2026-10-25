@@ -59,6 +59,8 @@ Automatic attacks are not a ninth button or an independent training tree. Their 
 | **English/Spanish parity** | Equivalent mechanics and accurate terms, localizable ability labels, staged hit/retreat cues, numeric figures, skill comparisons and accessibility screen-reader labels. Dynamic localized values must match current rules at runtime; no English-only inserted tooltip. |
 | **README/player instructions and controls reference** | Reflect multi-file architecture and normal/charged/automatic skill ownership; separate explanatory design docs do **not** substitute for text visible to the player in the game. |
 
+**Area 3 superseding queued-input decision:** The owner requires distinct normal/charged requests to **stack without automatically cancelling/replacing one another**, in FIFO order for a skill. The HUD and English/Spanish queue labels must show each pending form and its order. The current single-entry-per-slot input implementation must be upgraded and tested in Area 3; see [stacked queue contract](HERO_SKILL1_AREA3_QUEUE_STACKING_DECISION_20261024.md).
+
 **Mandatory source alignment:** `src/prototype/skill-reference.js` owns read-only, rules-projected ability text/numbers; `src/prototype/app.js` owns HUD/controls/queue/instructor/Journal display; `src/prototype/archive.js` owns Keeper guidance and bilingual variants. Update accompanying presentation catalogs (`hero-presentation.js`, class labels) **only after actual code mechanics**. Keep *all* class Skills 2–8 unaffected aside from correcting explicit Skill 1 references or general instructions about shared per-slot cooldowns.
 
 ## E. Acceptance proof, focused only
