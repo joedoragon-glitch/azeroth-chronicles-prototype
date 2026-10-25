@@ -40,3 +40,27 @@ jobs:
         run: node tests/optimization-mode.test.cjs
       - name: Existing procedural scheduling regressions
         run: node tests/audio-scheduler.test.cjs
+
+  recorded-audition-browser:
+    if: github.event.pull_request.head.ref == 'audit/audio-stage4-music-mix-20261025'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked tools
+        run: npm ci --ignore-scripts
+      - name: Install Chromium for narrow audio audition
+        run: npx playwright install --with-deps chromium
+      - name: Verify real recorded PCM, offline-rendered sample mix, desktop and phone-sized behavior
+        run: node tests/audio-audition-browser.test.cjs
+      - name: Upload audio audition failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: audio-stage4-browser-failure-${{ github.run_id }}
+          path: test-results/
+          if-no-files-found: ignore
