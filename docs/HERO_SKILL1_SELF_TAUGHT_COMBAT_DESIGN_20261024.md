@@ -1,6 +1,6 @@
 # Hero Skill 1: self-taught combat — design contract (24 October 2026)
 
-> **Status: design / dependency review only. No gameplay implementation, numerical retuning, class charged-technique proposals, merge, or deployment is authorized by this document.**
+> **Status: design / dependency review only. The Paladin's cross-shaped holy attack and the Mage's wide, multi-enemy arcane beam are accepted *in concept* by the owner; exact timing, hit numbers, range, width, visuals, balance, cooldowns and final names are still undecided. Ranger charged Skill 1 is not designed. No gameplay implementation, numerical retuning, merge, or deployment is authorized by this document.**
 >
 > **Audit baseline:** `main` at `e4e8234b5f784ddc9492fe79d956fd0a696b12af`. [Unmerged prerequisite PR #436](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/436) removes the hero's movement requirement for automatic attacks. When this draft eventually becomes an implementation candidate, reconcile that work into the same proposed integration, do not assume #436 is deployed, and re-audit against then-current `main`.
 
@@ -12,7 +12,7 @@ There remain **eight hero skill slots**. Within the existing Skill 1 discipline,
 
 1. **Automatic basic attack (not a numbered UI skill):** operates by itself while stationary or moving when normal eligibility permits; retains the class's existing same-target three-beat combo and its third-beat secondary finisher. Uses its **own basic-attack cadence**, not the Skill 1 activated-technique cooldown.
 2. **Skill 1 tap / normal:** inherit the exact attack currently implemented as **charged Skill 1** (Paladin focused holy projectile, Mage arcane beam, Ranger focused three-arrow burst), but it is now a **normal, immediate tap skill**. No 0.65-second charge preparation, charge snapshot, or charge-specific interruption for this promoted attack. It receives its own normal Skill 1 cooldown, independent of basic attacks.
-3. **Skill 1 hold / charged:** an **unassigned design opportunity** for one new charged class-specific technique for Paladin, Mage, and Ranger. **Do not implement a placeholder attack or invent names, figures, shapes, buffs, or damage.** Design proposals and owner selection come next **within this same draft PR**.
+3. **Skill 1 hold / charged:** a new class-specific technique on the same skill slot. **Paladin:** caster-centered cross-shaped holy attack, accepted in concept (§8). **Mage:** much thicker arcane beam passing through and striking all eligible enemies in its line to maximum effective range, accepted in concept (§9). **Ranger:** still to design. Do not implement an unapproved placeholder, set unchosen numerical balance, or add a new rank/slot.
 
 All three derive their rank and unlocked/progression status from the **single existing `hero.skills[0]`**. Do not create another hero skill slot, learning track, trainer, curriculum requirement, upgrade currency, or separate skill rank. Skill 1 starts at Rank 1 and may advance through the existing rescued-specialist **upgrade** pathway; self-taught **initial acquisition** does not mean specialists are forbidden from refining it later.
 
@@ -72,15 +72,15 @@ See [companion audit](HERO_SKILL1_COMPANION_DEPENDENCIES_20261024.md) for the ex
 - [ ] Verify Skill Journal, instructor training, Keeper Archive, button tips, README/controls and concise English/Spanish language against **real code output** for all three classes.
 - [ ] Run only targeted native, input and relevant browser checks when implementation exists; **no comprehensive matrix, merge, main push or deployment without separate authorization**. Preserve multi-file GitHub Pages/PWA assets, service-worker stability and Canvas/Pixi fallback.
 
-## 7. Reserved next design stage — no proposals approved yet
+## 7. Charged class-identity design stage — in progress
 
-For Paladin, Mage and Ranger, later append to this **same PR** an owner-reviewable **new charged Skill 1** proposal: distinct combat role, mechanic/target geometry, visuals, interaction with class Skills 2–8, 0.65s charge and interrupt behavior, rank/milestone scaling, normal-vs-charged cooldown comparison, potential boss/TRUE exploits, damage throughput and companion synergy. Do **not** invent new specialist lore, independent skill trees, spell-resource bars or global lockouts. **No class technique, cooldown duration, name, or balance value is selected in this initial draft.**
+**Accepted in principle:** Paladin's cross-shaped holy attack (§8) and Mage's substantially widened, enemy-penetrating arcane beam (§9). This is approval of their **core identities**, not of a particular final name, dimensions, pulses, damage, cooldown, hold-interruption exception, special status effect, or numerical scaling. **Ranger is the remaining class to design.** Continue all charged Skill 1 design and eventual implementation through **this same draft PR**. Before coding, review role distinctness versus Skills 2–8, targeting geometry, visuals, ~0.65s charged hold/release/interruption, the shared activated Skill 1 cooldown, separate automatic-basic cadence, Skill 1 rank scaling, existing companion behaviors, TRUE boss protections and aggregate combat balance. No new specialist lore, separate progression, spell resource or global lockout.
 
-## 8. Paladin charged Skill 1 — Grand Cross-inspired candidate (owner brainstorming; **NOT approved**)
+## 8. Paladin charged Skill 1 — Grand Cross-inspired concept (**core identity approved; detailed mechanics pending**)
 
 **Origin:** The owner cited the Crusader/Paladin *Grand Cross* from *Ragnarok Online* as inspiration **without copying that named skill or its entire ruleset**: Holy attack centered on the caster, cross-shaped area, up to three hits dependent on positioning and movement, approximately 0.9s active duration, immobilization, noninterruptible cast, a 20%-of-current-HP cost, and reductions to hit counts when creatures crowd particular cells. These are **reference mechanics only**, not approved Azeroth Chronicles behavior.
 
-**Working placeholder name:** **Radiant Cross** (not owner-approved; must be renamed/approved before implementation).
+**Working placeholder name:** **Radiant Cross** (not owner-approved; final English/Spanish name pending). **Owner acceptance:** the cross-shaped holy charged attack concept is approved for this update; the illustrative two pulses and other numerical/mechanical details remain open for later selection.
 
 ### Core visual/combat concept to evaluate
 
@@ -110,7 +110,46 @@ For Paladin, Mage and Ranger, later append to this **same PR** an owner-reviewab
 - [ ] Approve a distinctive final name and original FX/audio for both English and Spanish.
 - [ ] Check independent hero-basic cadence, Paladin Shield Stance restrictions, companions/AI, protected openings, collision and performance (bounded hit tests, 2 pulses at most initially).
 
-**Status:** proposal captured because the owner shared Grand Cross as inspiration; **no implementation, numerical balance, class-skill selection or approval implied**. Mage and Ranger charged Skill 1 remain **entirely undesigned**.
+**Status:** Paladin charged Skill 1 **cross concept accepted** by the owner. Exact pulse count, duration, geometry, target cap, cooldown, damage, rank scaling and final name are **not yet approved**. No runtime implementation.
+
+## 9. Mage charged Skill 1 — amplified, wide, enemy-penetrating arcane beam (**core identity approved; details pending**)
+
+**Owner direction:** The existing Mage thin, focused **single-target Arcane Beam** is promoted to **normal tap Skill 1** as documented above. On a **charged hold of Skill 1**, the Mage instead projects a **significantly thicker, more visually imposing beam**. It sweeps **straight down the aimed line** from the Mage and **strikes every eligible enemy intersected by its broad corridor**, continuing through their bodies **until the beam reaches its maximum effective range**. A first target must never absorb or terminate the beam; neither a target's death nor two enemies overlapping cancels the remaining line. **Do not impose a low arbitrary enemy count cap** in conflict with the owner's all-enemies-in-path intent.
+
+**Creative inspiration supplied by owner:** *Zoltraak* from *Frieren*: an adaptable, concentrated offensive magic blast whose width/size and energy density can vary. Adopt only the high-level creative principle of **concentrated arcane energy released at a different scale**, not its names, origin story, distinct fictional taxonomy, named anti-demon variant, six-petaled casting circle, signature FX, automatic defensive penetration, special matchup or kill properties. The Mage should look and feel like Azeroth Chronicles' own class.
+
+### Conceptual cast and collision contract
+
+1. **Normal tap:** one thin, swift, focused arcane projectile/beam directed at a **single** target, immediately released on tap with starting **3s activated Skill 1 base cooldown**; this is the former charged Mage Skill 1. It does not automatically widen or acquire a group strike.
+2. **Charged hold:** after the game's established roughly **0.65s** charge input, the Mage projects a **visibly much thicker, luminous, dense arcane beam** in the aimed direction. This is a **line/corridor area attack** (not a radius explosion, chain jump, homing projectile or circular area around a foe).
+3. **Enemy penetration:** the beam's **full width counts as a hit region**, not just its visual centerline. Evaluate every eligible enemy whose collision body intersects that swept line between the Mage and its maximum legal reach. **Each enemy takes one resolved hit per cast** unless the owner later explicitly requests sustained/multiple pulses. An enemy is never counted multiple times just because the beam overlaps several hit-test samples.
+4. **Range and terrain:** the broad beam must continue through enemies and not stop at the selected target, **but must respect walls, impassable terrain and existing line-of-sight / protected-boss admission rules**. Maximum range, width and whether/how world obstacles visibly truncate the beam must be grounded in engine geometry before implementation. Do not attack unseen foes through rock/walls, across forbidden leashes, or beyond actual reach.
+5. **Target/aim:** a chosen/locked enemy supplies beam orientation when valid, with existing fallbacks for no active selection. Enemy bodies do not redirect the beam; do not auto-seek a second enemy or aim at every individual foe. Manual navigation/pursuit and the regular charged pre-engagement protections remain intact.
+6. **Cooldown and training:** like the other new charged versions, use the **single activated Skill 1 slot timer**, shared by normal tap and charged, **independent of the separate automatic-basic timer**. Reuse Skill 1 rank, attack modifiers and existing Cooldown Training/Slow rules. **Do not select charged cooldown, damage multiplier, range, width or rank steps yet.**
+7. **Visual language:** contrast the thin normal beam with a **substantially broader, brighter, high-density stream/column of arcane energy** whose *visible thickness accurately matches its damaging corridor*. Clear origin-to-end alignment, sufficiently brief/readable intensity on small screens, and bounded target iteration/rendering are essential. No extra button or forced new casting animation pipeline.
+8. **Effects policy:** keep its primary identity **pure line damage with enemy-through penetration**. **No automatic bypass of armor, damage mitigation, magic resistance or boss defenses**, and no new Slow, silence, vulnerability, knockback, area explosion, healing or summons; those are other skills' roles. Not automatically an instant kill or lore-derived 'demon-killing' mechanic.
+
+### Distinction from Mage Skills 2–8
+
+- **Skill 2 Frost Bolt/Burst:** slow + clustered-area frost effect; the charged beam has **no Slow**.
+- **Skill 3 Interrupt/Silence Field:** precision interruption and suppression; the charged beam **does not silence**.
+- **Skill 4 Arcane Fracture/Rupture:** vulnerability debuff; the charged beam **does not increase future damage**.
+- **Skill 5 Force Pulse/Wave:** caster-area push; the charged beam is an **aimed line that does not knock back**.
+- **Skill 6 Magic Shot/Focused Beam:** separate **slowing** magic projectile/focused single-target beam; charged Skill 1 is specifically the **thick, unobstructed-through-enemies, multi-hit-target corridor without slow**, and the names/FX must help players tell them apart.
+- **Skill 7 Arcane Chain/Chainstorm:** finds nearby secondary foes with chaining; the charged beam **hits only those geometrically in its corridor**, with no seeking/bouncing.
+- **Skill 8 Astral Detonation/Cataclysm:** target-centered blast and vulnerability; the charged beam has **line geometry** and no area explosion or fracture.
+
+### Details still awaiting design/balance approval
+
+- [ ] Choose final English/Spanish skill name and original beam visual treatment; **working descriptor only: Wide Arcane Beam**.
+- [ ] Establish charged width (should be **significantly** thicker than normal), exact reach, screen readability and precise per-enemy hitbox intersection.
+- [ ] Choose base charged cooldown and damage per foe relative to 3s thin tap, independent automatic DPS, other class charged Skill 1 moves, Mage area skills and normal/TRUE boss phases.
+- [ ] Specify rank milestones (possibly width/length or damage progression) without introducing a new track or changing rank costs.
+- [ ] Verify one-hit-per-target-per-cast semantics, targeting/no-target fallbacks, collision/wall endpoints, protected boss admission and line-of-sight in native automated checks.
+- [ ] Verify stationary and moving automatic basics continue independently while Mage charges; preserve legitimate Silence/interrupt limitations, Recall, map navigation, save/import behavior and companion AI.
+- [ ] Verify implementation and presentation distinguish **Mage Skill 1 wide charged line** from **Mage Skill 6 Focused Beam slow** and updates to Journal, Keeper's Archive, training and English/Spanish HUD descriptions.
+
+**Status:** Mage's **thick, wide, every-enemy-in-path penetrating beam** is approved in principle by the owner. Zoltraak is **inspiration, not a copied spell**. Numerical/gameplay implementation and final name are pending.
 
 ## Reference code (baseline)
 
