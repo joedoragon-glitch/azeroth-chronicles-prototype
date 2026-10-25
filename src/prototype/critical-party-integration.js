@@ -13,6 +13,11 @@
     if (!proto || METHODS.some((name) => typeof proto[name] !== 'function'))
       throw Error('Critical party integration requires complete native action owners');
     if (active.has(proto)) throw Error('Critical party integration already installed');
+    const Levels = options.levels ||
+      (typeof require === 'function' ? require('./critical-levels.js') : root.PrototypeCriticalLevels);
+    if (!Levels || typeof Levels.createTuning !== 'function')
+      throw Error('Critical intensity authoring module missing');
+    const tuning = options.tuning || Levels.createTuning();
     const resolver = Critical.createResolver({ enabled: true, stream: options.stream });
     const originals = Object.fromEntries(METHODS.map((name) => [name, proto[name]]));
     const current = new WeakMap();
@@ -26,7 +31,16 @@
       return s;
     }
     function record(game, key, source) {
-      const receipt = resolver.release({ action: {}, key, domain: 'party', released: true });
+      const original = resolver.release({ action: {}, key, domain: 'party', released: true });
+      const group = key.startsWith('hero/') ? 'hero' : 'companion';
+      const authored = tuning.effectFor(key, group, game.s?.mode || 'normal');
+      if (!authored) throw Error('Critical action has no authored effect: ' + key);
+      // Level is sampled at RELEASE: changing a developer dial cannot mutate
+      // an already-released arrow/DoT or a delayed Radiant Cross pulse.
+      const receipt = Object.freeze({
+        ...original, group, intensity: authored.level,
+        effect: original.critical ? authored : null,
+      });
       const observation = Object.freeze({ ...receipt, source, sequence: ++state(game).sequence });
       const releases = state(game).releases;
       if (releases.length === MAX_OBSERVATIONS) releases.shift();
@@ -153,6 +167,10 @@
     const controller = Object.freeze({
       installed: true,
       releases(game) { return [...state(game).releases]; },
+      criticalLevels() { return tuning.snapshot(); },
+      setCriticalLevel(group, level, mode = 'normal') {
+        return tuning.setLevel(group, level, mode);
+      },
       uninstall() {
         for (const method of METHODS)
           if (proto[method] === wrappers[method]) proto[method] = originals[method];
