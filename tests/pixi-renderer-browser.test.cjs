@@ -39,6 +39,41 @@ async function selectPixi(page) {
   }, null, {timeout:45000});
   return page.evaluate(() => Prototype.experimentalGraphics);
 }
+// Use a real screen-coordinate touch on phone. Playwright locator.click() may
+// scroll the fixed 15-second trial panel during mobile restart, potentially
+// changing the visual viewport and invalidating the graphics trial itself.
+// Never bypass the user-facing button or extend/disable the safety deadline.
+async function keepPixiTrial(page, phone, checkpoint) {
+  const target = await page.evaluate(() => {
+    const panel = document.querySelector('#gpu-renderer-trial');
+    const button = panel?.querySelector('button');
+    const rect = button?.getBoundingClientRect();
+    const x = rect ? rect.left + rect.width / 2 : -1;
+    const y = rect ? rect.top + rect.height / 2 : -1;
+    const top = document.elementFromPoint(x, y);
+    return {
+      x, y, width: rect?.width || 0, height: rect?.height || 0,
+      hit: !!button && (top === button || button.contains(top)),
+      panelVisible: !!panel && !panel.hidden,
+      graphics: Prototype.experimentalGraphics,
+    };
+  });
+  assert.equal(target.graphics.phase, 'trial',
+    checkpoint + ': confirmation requires an active, unexpired trial: ' + JSON.stringify(target));
+  assert(target.graphics.secondsRemaining > 0 && target.panelVisible,
+    checkpoint + ': Keep prompt disappeared before user confirmation: ' + JSON.stringify(target));
+  assert(target.hit && target.width >= 44 && target.height >= 44,
+    checkpoint + ': Keep must be touchable at its visible center: ' + JSON.stringify(target));
+  if (phone)
+    await page.touchscreen.tap(target.x, target.y);
+  else
+    await page.getByRole('button', {name: 'Keep WebGL2'}).click();
+  const result = await page.evaluate(() => Prototype.experimentalGraphics);
+  assert.equal(result.phase, 'confirmed',
+    checkpoint + ': the real Keep action must confirm, not time out or revert: ' +
+      JSON.stringify({before: target.graphics, after: result}));
+  return result;
+}
 // One narrowly scoped, real Chromium drawing check on BOTH the Canvas path
 // and the PixiJS Canvas-combat overlay. Simulation timing is tested separately.
 async function inspectMageBeamOverlay(page, expectedMode) {
@@ -237,8 +272,7 @@ async function run() {
         assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'webgl2',
           'Camera zoom must not abandon an otherwise valid GPU scene');
         assert.equal(await page.evaluate(() => Prototype.game === window.__gpuTestCampaign), true);
-        await page.getByRole('button', {name: 'Keep WebGL2'}).click();
-        assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.phase), 'confirmed');
+        await keepPixiTrial(page, phone, 'initial graphics trial');
         // The retained Pixi background must immediately reflect presentation
         // transitions without walking, zooming or a zone transition.
         await page.waitForFunction(() =>
@@ -339,8 +373,7 @@ async function run() {
         if (after.mode !== 'webgl2' && requireWebGL) {
           const retry = await selectPixi(page);
           assert.equal(retry.mode,'webgl2','WebGL2 must work after safe restart');
-          await page.getByRole('button', {name:'Keep WebGL2'}).click();
-          after = await page.evaluate(() => Prototype.experimentalGraphics);
+          after = await keepPixiTrial(page, phone, 'post-restart graphics trial');
         }
         // Exercise both real viewport resize and simulated GL context loss,
         // without suppressing the existing production resize/UI routines.
