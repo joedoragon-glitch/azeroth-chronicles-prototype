@@ -1378,8 +1378,9 @@
               target: target.id,
               damage,
               source: 'hero',
-              // A full-range shot is roughly 0.625s; nearer targets remain responsive.
-              speed: 1.2 * Math.max(170, Math.min(535, d / 0.75)),
+              // Normal Mage Skill 1 travels 10% faster than the prior 1.2x tuning.
+              // A full-range shot is roughly 0.57s; nearer targets remain responsive.
+              speed: 1.32 * Math.max(170, Math.min(535, d / 0.75)),
               life: 1.5,
               travelBudget: 540,
               traveled: 0,
