@@ -24,6 +24,10 @@ function encounter(region = 'vale', roll = 0.25) {
   };
   const a = add(1300), b = add(1340);
   z.enemies = [a, b];
+  // This is a controlled synthetic encounter, not the authored Vale layout.
+  // Reading the live zone accessor reapplies legacy placement migrations that
+  // can reposition fixture actors to existing native homes.
+  c.zone = () => z;
   c.s.party = [
     c.unit('soldier', 1390 - offset, floorY + 15),
     c.unit('archer', 1390 - offset, floorY - 15),
