@@ -6234,6 +6234,16 @@
     // A strong hit or several small hits can interrupt, but grazing damage cannot.
     interrupt: { hpFraction: 0.07, minimumHp: 6, recoverySeconds: 0.5 },
     basicDamageMultiplier: 3,
+    // Skill 1's three forms use the same rank but independent basic and
+    // asymmetric normal/charged readiness; Skills 2–8 keep original figures.
+    first: {
+      basicSeconds: 0.85,
+      normalSeconds: 3,
+      chargedSeconds: { paladin: 8, mage: 7, ranger: 8 },
+      paladin: { reach: 190, reachStep: 10, halfWidth: 35, halfWidthStep: 4, pulses: 2, pulseGap: 0.35, damagePerPulse: 1.5, maxTargets: 8 },
+      mage: { reach: 440, reachStep: 10, halfWidth: 48, halfWidthStep: 4, damage: 2.4 },
+      ranger: { launchRange: 450, speed: 650, pathBudget: 560, pathStep: 15, lifetime: 1.25, hitRadius: 22, damage: 2.25, retreatLock: 4, retreatStep: 0.15 },
+    },
     manaFractions: { 1: 0.2, 2: 0.3, 3: 0.35 },
     third: { effect: 'party-heal' },
     second: {
@@ -6673,7 +6683,7 @@
       },
     },
   };
-  // Flip Mage or Ranger independently if movement attacks prove too strong in playtests.
+  // Per-class switches control automatic basics whether moving or stationary.
   const movementBasicClasses = { paladin: true, mage: true, ranger: true };
 
   // Live balance ownership. Arrays retain their original slot/tier indices and fallbacks.
