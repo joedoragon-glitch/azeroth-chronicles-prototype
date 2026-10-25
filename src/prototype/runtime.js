@@ -391,7 +391,7 @@
         veryLate: intervalMs >= 180,
         busy: workMs > Math.max(45, budget * 1.3),
         skipped: !!adaptiveSkipped });
-      while (samples.length > 360 || (samples.length > 2 && now - samples[0].now > windowMs))
+      while (samples.length > 900 || (samples.length > 2 && now - samples[0].now > windowMs))
         samples.shift();
       const span = now - samples[0].now,
         late = samples.filter(s => s.late).length,
