@@ -1,11 +1,14 @@
 # PR #440 — Critical Executions: independent development / Work-mode handoff
+> **LIVE STATUS CORRECTION — 25 October 2026 (verified after the handoff was written):** [PR #439](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/439) is now **MERGED and CLOSED**, not an open draft. GitHub reports merge time **2026-10-25 04:21:03 UTC**, final head `be3662e953bb85be51a4c15de18b48102ee330d1` and merge commit `7d9649151bbff578ecb34c01edfb2e14abb9d9ea`. Its exact-head [focused checks #40160551845](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40160551845) succeeded. Current `main` reports package version **dev.183**. **Next Work session must re-fetch current main and rebase/reconcile PR #440 against merged #439 skill logic and FIFO queue**, then pursue the still-unfinished native Stage 2 release hooks. Do NOT treat old references below to "#439 open draft" or dev.175 main as current fact. #440 itself is **open draft, unmerged and disabled**. No critical-gameplay activation or deployment of #440 has occurred.
+
+
 
 **READ FIRST in every new ChatGPT chat, Work session, or developer handoff.**
 **Date of verified snapshot:** 24 October 2026 (America/New_York).
 **Repository:** [joedoragon-glitch/azeroth-chronicles-prototype](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype)
 **ONE continuing pull request:** [#440](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/440)
 **Continuing branch:** design/critical-executions-codices-20261024
-**Related open draft:** [#439 — Self-taught Hero Skill 1](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/439), branch design/hero-skill1-self-taught-combat-20261024
+**Related merged PR:** [#439 — Self-taught Hero Skill 1](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/439), branch design/hero-skill1-self-taught-combat-20261024
 **Other relevant intent:** #439 already incorporates the stationary-auto objective of unmerged #436; do not stack #436 on top.
 
 ## 1. Mission and autonomy: the GitHub PR is the source of truth
