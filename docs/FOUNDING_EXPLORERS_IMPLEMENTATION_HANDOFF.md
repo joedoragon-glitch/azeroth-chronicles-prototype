@@ -73,6 +73,38 @@ Founding Legends/Pathfinders competition, first-to-clear races, milestone/achiev
 - 2026-10-25: Owner confirmed public forum replies + optional PMs, voluntary forum acknowledgment first, and approximately twice-weekly review.
 - 2026-10-25: Current main fetched as `968f3493a48e1bcaf17ce6f70f9790ff9b8ed8be` before this documentation branch. This **is not a fresh source-level reconciliation** of all intervening changes. All Step 1 behavioral findings require revalidation against this or newer main.
 
+
+## Freshness audit — 2026-10-25, afternoon (documentation-only)
+
+**Observed main:** `e3c78266b28f3325d2afdcb76ae849fcff306deb`; **package:** `0.9.1+snapshot.dev.185`. This supersedes the 10:15 UTC baseline `968f3493a48e`. A separate active documentation PR (#465) reports successful focused Pages deployment #40208508280 for this baseline; this audit has **not independently inspected that run or the public build**. Treat `main` source version, claimed Pages deployment, and physical-device acceptance as different evidence levels.
+
+**Important governance/documentation drift:** `README.md`, `AGENTS.md`, `docs/DEVELOPMENT_STATE.md` and `CONTROLES.md` still contain prominent dev.169 or dev.79 historical wording; do not assume their lead sections describe dev.185. Documentation governance drafts #449 and #465 are active and may correct these. Coordinate rather than duplicating their edits.
+
+**Current main changes relevant to Explorer onboarding:**
+- The default Canvas 2D game now has an optional PixiJS WebGL2 renderer with Keep/Revert; no longer describe PR #407 as an *open independent draft*. It was merged earlier according to current development state; always verify actual current implementation.
+- Main contains the unified Screen and Performance menu, revised menu navigation, a one-time dev.170 performance preference migration, performance emergency pause/recovery and diagnostics, navigation improvements, and changed PWA update behavior. Historical first-session walkthrough and menu labels need a new reality check.
+- `tests/companion-onboarding-ui.test.cjs` still explicitly tests English and Spanish Captain/Recall/Barracks onboarding; `tests/game-menu-ui.test.cjs` still tests bilingual menu routes. Files inspected, **not executed** in this audit.
+- `CONTROLES.md` still opens with dev.79 and a development-pause statement and mixes old English menu names. Confirmed documentation freshness defect, **not proof that current in-game Spanish fails**.
+- Current `src/prototype/app.js` contains dev.170 preference migration; its interaction with a fresh install/first-session should be tested without changing game settings on behalf of Explorers.
+
+**Open PR inventory observed (metadata, not all diffs validated):**
+- #471 **draft** effects visibility/recorder/browser gate: optional developer-only diagnostic feature, not a required Explorer report.
+- #470 **draft** audio recovery and gesture unlock; #468 **draft** audio audit/probe. Potential newcomer audio behavior differs if these merge.
+- #469 **draft** artwork/Canvas/Pixi parity audit.
+- #465 **draft** documentation authority/Markdown governance; #449 **draft** broader documentation and test governance. Coordinate source-of-truth updates.
+- #464 **draft** Ranger/Paladin/companion projectile and VFX corrections. Its PR body reports a failing overall focused CI due to Pixi browser behavior despite passing pet-focused regressions; do not claim release readiness.
+- #458 **open non-draft** TRUE-form outdoor boss hunt; potentially changes later encounters, not required for 10–20-minute trial.
+- #447 **draft** Pixi regression/release-gate correction; #445 **draft** art tooling validation fixes.
+- #440 **draft** disabled Critical Executions work (Stage 3 active); never imply criticals are live or add them to Explorer onboarding.
+- #401 **draft** Vale landmark previews; not implemented in current main.
+- #456 **draft** this Founding Explorers record; no gameplay changes.
+
+**Risk triage for Founding Explorers:** HIGH: accurate English/es-419 start/menus, existing save versus clean profile, keyboard and phone controls, current public link/build, forum/PM route. MEDIUM: whether audio starts after a gesture, combat visual readability, renderer Keep/Revert and emergency recovery if a novice encounters them. LOW/defer: later TRUE boss circuits, full artwork parity, critical system, competitive milestones. Do not wait for unrelated draft PRs to finish if a safe minimal Explorer session can be validated; equally, do not assume their draft behavior is present on main.
+
+**Updated next Step 1 acceptance work:** (1) fetch a *new* main SHA and open PR list at the start of next session; (2) verify the actual first-start sequence and short bilingual guide against current UI and any newly merged changes; (3) perform focused tests only with explicit record of execution/results, plus targeted desktop/phone walkthrough if tools permit; (4) confirm current public build and the chosen forum's PM capability; (5) document any confirmed first-session defects and owner decisions. Step 1 remains **NOT ACCEPTED**. Step 2 remains conditional; Steps 3–4 remain unstarted/deferred. No new gameplay features, publication, merges or full test suite authorized.
+
+**Evidence limits:** GitHub main/package, PR statuses/bodies, and listed files were read live. PR body statements are contributor claims, not independent acceptance. No new native tests, browser tests, phone tests, real-player study, Pages URL inspection, forum access, or public post were performed. The original charter rev.3.0 remains referenced but not committed in full. Any agent continuing must re-evaluate this audit against the then-current repository.
+
 ## Mandatory handoff instruction
 
 In a new chat, read this file and the linked PR, fetch latest main and relevant PRs, update the reconciliation log, then continue **only the next unaccepted checkpoint**. Never silently promote source audit to passed testing or draft copy to a published invitation. Owner must approve feature scope, public commitments, merging and deployment separately.
