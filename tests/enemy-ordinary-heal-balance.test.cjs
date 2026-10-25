@@ -8,6 +8,10 @@ function scene() {
   const g = new Campaign('normal', 'paladin', () => 0.9);
   g.enter('supply-vale');
   const z = g.zone();
+  // Treasury replacement spawns may be wounded ranged captains; keep this
+  // cooldown fixture's roster closed while retaining native healing AI.
+  g.zone = () => z;
+  g.syncTreasuryRecovery = () => {};
   for (const key of ['props', 'npcs', 'nodes', 'buildings', 'enemies']) z[key] = [];
   g.s.time = 30;
   g.s.clock = 120;

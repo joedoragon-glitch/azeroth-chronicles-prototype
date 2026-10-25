@@ -43,6 +43,7 @@ for (const [healerAggro, targetAggro] of [[false, false], [false, true], [true, 
     // Hold the intended combat-state matrix stable. Target acquisition is
     // unrelated to the healing test; both engaged actors stay in leash range.
     g.hero.x = 600;
+    g.hero.y = 300; // Both engaged actors remain inside their ordinary leash.
     g.enemyAcquisitionRange = () => 0;
   }
   step();
