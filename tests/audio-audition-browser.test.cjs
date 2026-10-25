@@ -80,6 +80,15 @@ const root = path.resolve(__dirname, '..'),
         const saved = await page.evaluate(() => JSON.stringify(localStorage));
         assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
         await press('#stem-play');
+        await page.waitForTimeout(1500);
+        console.log('Stage 4 first-play observation', await page.evaluate(() => ({
+          message: document.querySelector('#message')?.textContent,
+          state: AudioAudition.audio.ctx?.state,
+          sources: AudioAudition.audio.voices.size,
+          recording: AudioAudition.audio.recordedScore?.id || null,
+          failure: AudioAudition.audio.recordingError,
+          assets: AudioAudition.audio.recordingAssets?.status(),
+        })));
         await page.waitForFunction(() => AudioAudition.audio.recordedScore?.voices.length === 2).catch(async (error) => {
           const detail = await page.evaluate(() => ({
             message: document.querySelector('#message')?.textContent,
