@@ -204,8 +204,13 @@ assert(responseTimes.defeated === null || responseTimes.defeated > responseTimes
 // Bounded native combat pressure, not a claimed human playtest or global DPS
 // recommendation. Targets include real hero, Soldier and Archer so captain AI
 // can choose warning/aim/support while independent guards make decisions.
-for (const id of ['supply-march', 'supply-crown']) {
+for (const id of ['supply-vale', 'supply-march', 'supply-highlands', 'supply-crown']) {
   const { g, captain, ranged } = nativeRoom(id, 'normal', true);
+  const originalDistances = ranged.map((u) => distance(u, captain));
+  if (id === 'supply-highlands')
+    assert(!g.enemyHealProfile(captain), 'Crag Tyrant is a supported captain, not a new healer');
+  if (id === 'supply-vale')
+    assert(g.enemyHealProfile(captain), 'Scornfang retains its own ordinary-ally support role');
   captain.hp = captain.maxHp * 0.78;
   g.engage(captain, true, false);
   const begin = g.s.statistics.events.length;
@@ -225,6 +230,10 @@ for (const id of ['supply-march', 'supply-crown']) {
     ev.type === 'heal' && ev.target === captain.id && rangerIds.has(ev.source));
   const specials = emitted.filter((ev) =>
     ev.type === 'warning' && ev.captain === id);
+  const rogueMoves = emitted.filter((ev) =>
+    ['rogueRegroup', 'rogueMove', 'rogueSupport'].includes(ev.type));
+  const movedCloser = ranged.filter((u, i) =>
+    u.hp > 0 && distance(u, captain) + 1 < originalDistances[i]).length;
   assert(captain.hp >= 0 && captain.hp <= captain.maxHp,
     id + ': battle HP remains bounded');
   assert(captain.captainProfile === id && !captain.neutral,
@@ -233,6 +242,8 @@ for (const id of ['supply-march', 'supply-crown']) {
     'hero damage=' + incoming.toFixed(2) +
     ', guard captain-heals=' + treatments.length +
     ', named specials=' + specials.length +
+    ', rogue events=' + rogueMoves.length +
+    ', guards moving closer=' + movedCloser + '/' + ranged.length +
     ', captainHP=' + captain.hp.toFixed(2));
 }
 
