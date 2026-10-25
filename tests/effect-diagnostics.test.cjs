@@ -34,6 +34,11 @@ assert.deepEqual([generic.queued, generic.overflowDropped], [1, 1]);
 trace.decision(false, false);
 trace.decision(true, true);
 trace.decision(true, false);
+trace.callback({
+  gameTime: 2, intervalMs: 200, frameWorkMs: 160,
+  simulationMs: 18, renderMs: 120, drawn: false,
+  simulating: true, fpsLimited: false, adaptiveSkipped: true,
+}, 2);
 const game = {
   s: { time: 2, projectiles: [{}], hazards: [1, 2] },
   zone: () => ({ enemies: [{ hp: 5, telegraph: {}, motion: {} }] }),
@@ -47,8 +52,17 @@ assert.equal(result.drawFrames, 1);
 assert.equal(result.recentDrawFrames[0].telegraphs, 1);
 assert.equal(result.recentDrawFrames[0].charges, 1);
 assert.equal(result.drawDecisions.adaptiveSkipped, 1);
-for (let i = 0; i < 200; i++) trace.draw(game);
+assert.deepEqual(
+  [result.recentCallbacks[0].frameWorkMs, result.recentCallbacks[0].effectQueueSize],
+  [160, 2],
+);
+assert.equal(result.recentCallbacks[0].adaptiveSkipped, true);
+for (let i = 0; i < 200; i++) {
+  trace.draw(game);
+  trace.callback({ gameTime: i, frameWorkMs: i }, i);
+}
 assert.equal(trace.report(false).recentDrawFrames.length, 120);
+assert.equal(trace.report(false).recentCallbacks.length, 120);
 
 const source = (name) =>
   fs.readFileSync(path.join(__dirname, '../src/prototype/' + name), 'utf8');
@@ -60,6 +74,7 @@ assert(app.includes("developerEnabled && game.s.mode === 'developer'"));
 assert(app.includes('renderer.effectDiagnosticsReport()'));
 assert(app.includes('Start effect recording'));
 assert(app.includes('if (effectRecording) renderer.noteEffectDrawDecision'));
+assert(app.includes('renderer.noteEffectFrame({'));
 assert(renderer.includes('let effectRecorder = null'));
 assert(renderer.includes("getGame().s.mode === 'developer'"));
 assert(queue.includes('observer?.candidates(next, current)'));
