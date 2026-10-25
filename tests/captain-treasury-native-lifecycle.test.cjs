@@ -145,4 +145,45 @@ for (const mode of ['normal', 'nightmare']) {
   }
 }
 
+// Native silence and engagement transitions remain separate from geometry:
+ // an incapacitated ranged guard cannot begin treatment; once released, the
+ // captain's timed restoration survives a change of aggro state.
+{
+  const { game, captain, ranged } = nativeRoom('supply-vale', 'normal');
+  captain.hp = captain.maxHp * 0.82;
+  const guard = ranged.find((e) => e.name === 'Greenwood command lookout');
+  assert(guard, 'native command-side healer exists');
+  game.hero.silenceField = {
+    x: guard.x, y: guard.y, radius: 90, zone: game.zoneId, until: game.s.time + 100,
+  };
+  assert(!game.enemySupportHeal(guard), 'silenced native guardian cannot cast');
+  delete game.hero.silenceField;
+  assert(game.enemySupportHeal(guard), 'native guardian can cast after silence lifts');
+  const prior = captain.hp;
+  captain.aggro = true;
+  game.advanceEnemySupportHeal(captain, 1);
+  assert(captain.hp > prior, 'restoration advances while captain is engaged');
+  const engaged = captain.hp;
+  captain.aggro = false;
+  game.advanceEnemySupportHeal(captain, 1);
+  assert(captain.hp > engaged, 'restoration continues when captain becomes idle');
+}
+
+// Observe real approach conditions for Dreadmaw's dispersed guardians. These
+// are diagnostics, not an assertion that all five will reach the captain:
+// actual combat pressure and regroup priorities are Phase 4 questions.
+{
+  const { game, captain, ranged } = nativeRoom('supply-crown', 'normal');
+  captain.hp = captain.maxHp * 0.82;
+  for (const guard of ranged) {
+    const gap = Math.hypot(guard.x - captain.x, guard.y - captain.y);
+    const inReach = gap <= cfg.range;
+    const path = inReach ? true : game.route(guard, captain).length > 0;
+    const sight = game.line(guard, captain);
+    console.log('Dreadmaw guard geometry: ' + guard.name +
+      ', gap=' + gap.toFixed(1) + ', castRange=' + inReach +
+      ', line=' + sight + ', route=' + path);
+  }
+}
+
 console.log('PASS ' + visited + ' native Treasury save restorations, idle captain healing and lifecycle cancellation');
