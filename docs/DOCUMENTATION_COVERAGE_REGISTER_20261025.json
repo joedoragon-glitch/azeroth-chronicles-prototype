@@ -77,6 +77,10 @@
       "state": "merged"
     },
     {
+      "number": 436,
+      "state": "closed_unmerged"
+    },
+    {
       "number": 437,
       "state": "merged"
     },
@@ -405,7 +409,14 @@
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 439,
+        "integratedByPr": 439,
+        "disposition": "merged_directly",
+        "caution": "Owner-approved Skills 1–8 two-clock rule implemented and published via merged #439. Normal Tap never extends charged lock and Charged requires both; hero basicCd is independent. Old draft validation requests are provenance, not a new active implementation order; v4 save preservation still required."
+      }
     },
     {
       "path": "docs/AUDIO_AUTHORING.md",
@@ -1231,7 +1242,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_COVERAGE_NOTES_20261025.md",
-      "gitBlobSha": "c144b2a56bb8dd84fafcc0be111936552d50135e",
+      "gitBlobSha": "8074b56e6fce3f18fb06a2a37d768d42d08afe52",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -1751,7 +1762,14 @@
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 439,
+        "integratedByPr": 439,
+        "disposition": "merged_directly",
+        "caution": "Area 1's original preliminary single-request replacement behavior was explicitly superseded by owner-approved FIFO in Area 3 and merged #439. Stationary basics originated in separately closed-unmerged #436, absorbed into #439. Its old 3-class initial beam was later modified by merged #452/#466/#467; no runtime reimplementation authorized."
+      }
     },
     {
       "path": "docs/HERO_SKILL1_AREA2_IMPLEMENTATION_20261024.md",
@@ -1762,7 +1780,14 @@
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 439,
+        "integratedByPr": 439,
+        "disposition": "merged_directly",
+        "caution": "Area 2 audio scheduler and skill reference CI failures are dated interim receipts; Area 3 and #439 final review record repairs, and #439 eventually merged. Do not rerun earlier draft blockers or conflate hero sound with unmerged audio Stage 1–4 work."
+      }
     },
     {
       "path": "docs/HERO_SKILL1_AREA3_IMPLEMENTATION_20261024.md",
@@ -1773,7 +1798,14 @@
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 439,
+        "integratedByPr": 439,
+        "disposition": "merged_directly",
+        "caution": "Area 3 FIFO (16 pending entries, duplicate forms, native 0.65s charged prep, English/Spanish feedback) implemented in merged #439; read release source before modifying queues. Distinguish later independently unmerged effects/projectile and Criticals branches."
+      }
     },
     {
       "path": "docs/HERO_SKILL1_AREA3_QUEUE_STACKING_DECISION_20261024.md",
@@ -1784,7 +1816,14 @@
       "topic": "governance_or_reference",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 439,
+        "integratedByPr": 439,
+        "disposition": "merged_directly",
+        "caution": "An owner-authorized normative FIFO contract, already implemented by merged #439 despite historical embedded 'not yet implemented' paragraphs. Preserve precise same-slot non-overtaking and independent other-slot behavior; no consent for fresh queue changes."
+      }
     },
     {
       "path": "docs/HERO_SKILL1_AREA4_FINAL_REVIEW_20261024.md",
@@ -1795,7 +1834,14 @@
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 439,
+        "integratedByPr": 439,
+        "disposition": "merged_directly",
+        "caution": "Final dev.178 draft review and 38-file intermediate focused run precede exact-head #439 passing 43-file run 40160551845 and subsequent merge. Native/DOM/synthetic evidence does not certify physical touch, visual comfort or devices; inherited art-tool claims are dated."
+      }
     },
     {
       "path": "docs/HERO_SKILL1_AV_AND_IN_GAME_GUIDANCE_SCOPE_20261024.md",
@@ -1806,7 +1852,14 @@
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 439,
+        "integratedByPr": 439,
+        "disposition": "merged_directly",
+        "caution": "Owner-approved class-specific graphics/audio/player-guidance design for #439; later source implementation and merge fulfilled code-scope, while real-device visual/listening acceptance remains separate and other audio/VFX drafts unmerged. Original stage checklist is historical, not active authorization."
+      }
     },
     {
       "path": "docs/HERO_SKILL1_COMPANION_DEPENDENCIES_20261024.md",
@@ -1817,7 +1870,14 @@
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 439,
+        "integratedByPr": 439,
+        "disposition": "merged_directly",
+        "caution": "Original source trace based on dev.175 main: u.skill1Cd refers to companion first special, unlike hero.skills[0]; the separation is preserved through merged #439. Baseline's original 'hero.cd[0] still owns basic' became obsolete once hero.basicCd split. Current unmerged #440/#464 could affect party and need separate integration."
+      }
     },
     {
       "path": "docs/HERO_SKILL1_FINAL_BALANCE_SPEC_20261024.md",
@@ -1828,7 +1888,14 @@
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 439,
+        "integratedByPr": 439,
+        "disposition": "merged_directly",
+        "caution": "Approved first-pass Skill 1 three-form values and independent 1–8 cooldown model implemented via #439; do not reset or retune as if never shipped. Charged Mage traveling presentation/timing and normal beam changed in merged #452/#466/#467; old instantaneous beam appearance and visual numbers are not necessarily present current timing."
+      }
     },
     {
       "path": "docs/HERO_SKILL1_SELF_TAUGHT_COMBAT_DESIGN_20261024.md",
@@ -1839,7 +1906,14 @@
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 439,
+        "integratedByPr": 439,
+        "disposition": "merged_directly",
+        "caution": "Owner's accepted initial Paladin cross, wide Mage line and Ranger bounded hawk concepts originated before runtime; #439 merged their original forms. Its unchecked implementation boxes and 'no code yet' wording are dated. Subsequent #452/#466/#467 refined Mage motion/design; protected encounter returns stay excluded."
+      }
     },
     {
       "path": "docs/HERO_SKILLS_CONSOLIDATION_20261015.md",
@@ -2828,7 +2902,14 @@
       "topic": "general_or_unresolved",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 439,
+        "integratedByPr": 439,
+        "disposition": "merged_directly",
+        "caution": "The original draft continuation record explicitly says dev.178 unpublished; historical only now that #439 merged and later main reached dev.185. Its completed Area 1–4 evidence and native/DOM/browser acceptance boundaries remain useful. Never revive closed-unmerged #436 as a second merge."
+      }
     },
     {
       "path": "docs/PRE_BREAK_DOCUMENTATION_HISTORY_20261019.md",
