@@ -166,6 +166,7 @@
           speed: 650,
           delay,
           charged,
+          ...(delay > 0 ? { rangerDelayedLaunch: true } : {}),
           ...(receipt ? { encountersAtStart: receipt } : {}),
         });
         this.event('projectileLaunch', {
@@ -449,6 +450,7 @@
             ...(style === 'beam' ? { originX: hero.x, originY: hero.y } : {}),
             ...(encountersAtStart ? { encountersAtStart } : {}),
             ...extra,
+            ...(style === 'arrow' && extra.delay > 0 ? { rangerDelayedLaunch: true } : {}),
           });
           this.event('projectileLaunch', {
             actor: 'hero',
@@ -1417,6 +1419,7 @@
                 source: 'hero',
                 speed: 620,
                 delay: j * 0.08,
+                ...(j > 0 ? { rangerDelayedLaunch: true } : {}),
                 style: 'arrow',
                 slot,
                 charged: false,
@@ -2028,6 +2031,9 @@
                 source: 'hero',
                 speed: 550,
                 delay: j * 0.12,
+                ...(this.hero.class === 'ranger' && j > 0
+                  ? { rangerDelayedLaunch: true }
+                  : {}),
                 style: this.hero.class === 'ranger' ? 'arrow' : 'magic',
                 slot,
                 ...(this.hero.class === 'ranger' && slot === 7 ? { piercing: true } : {}),
