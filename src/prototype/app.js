@@ -1111,6 +1111,43 @@
     'Got it': 'Entendido',
     'Close without resting.': 'Cerrar sin descansar.',
   });
+  // New player mechanics copy; locked Chronicle passages remain unchanged.
+  Object.assign(spanishText, {
+    "Radiant Strike": "Golpe radiante",
+    "Radiant Cross": "Cruz radiante",
+    "Arcane Beam": "Rayo arcano",
+    "Wide Arcane Beam": "Rayo arcano amplio",
+    "Rapid Arrows": "Flechas rápidas",
+    "Hawk Interception": "Intercepción del halcón",
+    "Automatic basics": "Ataques básicos automáticos",
+    "Automatic sword combo / holy projectile / Radiant Cross": "Combo de espada automático / proyectil sagrado / Cruz radiante",
+    "Automatic magic combo / narrow beam / wide beam": "Combo mágico automático / rayo estrecho / rayo amplio",
+    "Automatic bow combo / rapid arrows / hunting hawk": "Combo de arco automático / flechas rápidas / halcón cazador",
+    "Fire one focused holy projectile": "Lanza un proyectil sagrado concentrado",
+    "Radiant Cross: two holy pulses along four arms": "Cruz radiante: dos pulsos sagrados en cuatro brazos",
+    "Fire one narrow Arcane Beam": "Lanza un rayo arcano estrecho",
+    "Wide Arcane Beam: hit every enemy along the broad line": "Rayo arcano amplio: golpea a todos los enemigos en la línea ancha",
+    "Fire three rapid arrows at one foe": "Dispara tres flechas rápidas a un enemigo",
+    "Hawk Interception: pursue one foe and stop an active retreat": "Intercepción del halcón: persigue a un enemigo e interrumpe una retirada activa",
+    "Attacks independently while moving or standing. Three same-target hits build a finishing splash; Skill 1 Tap and Charged do not reset the combo.": "Ataca independientemente en movimiento o en reposo. Tres golpes al mismo enemigo culminan en daño de área; las formas normal y cargada no reinician el combo.",
+    "Automatic Skill 1 basics attack independently. Tap for the normal technique. Hold to prepare the charged technique.": "Los ataques básicos automáticos de la habilidad 1 funcionan aparte. Toca para la técnica normal; mantén para preparar la cargada.",
+    "Charged starts both recovery timers: short Tap and longer Charged. Tap returns after its own cooldown, even while Charged is still recovering. Tapping does not restart the charged lock. Charged needs both timers ready. On cooldown, tap to queue normal or briefly hold to queue charged. A strong hit can interrupt preparation.": "La cargada inicia las recuperaciones normal corta y cargada larga. La normal vuelve al acabar su recuperación, incluso si la cargada sigue ocupada. Usar normal no reinicia cargada; para cargar ambas deben estar listas. Toca para poner normal en cola o mantén brevemente para cargada. Un golpe fuerte interrumpe la preparación.",
+    "Automatic basics, Tap and Charged use this rank.": "Los ataques básicos, la normal y la cargada usan el mismo rango.",
+    "Rank 1 is self-taught; rescued specialists refine it.": "El rango 1 lo aprendiste por tu cuenta; los especialistas rescatados lo perfeccionan.",
+    "Choose a skill. View automatic Skill 1 basics, Tap and Charged effects with independent recovery.": "Elige una habilidad. Consulta los ataques básicos automáticos, la normal y la cargada, con recuperaciones independientes.",
+    "Also improves automatic basics.": "También mejora los ataques básicos automáticos.",
+    "Basic attack interval": "Intervalo de ataque básico",
+    "Damage per pulse": "Daño por pulso",
+    "Pulses": "Pulsos",
+    "Damage per enemy": "Daño por enemigo",
+    "Initial target range": "Alcance inicial del objetivo",
+    "Maximum flight path": "Recorrido máximo del halcón",
+    "Flight lifetime": "Duración del vuelo",
+    "Retreat lockout": "Bloqueo de retirada",
+    "Tap ready": "Normal lista",
+    "Charged ready": "Cargada lista",
+    "Retreat interrupted": "Retirada interrumpida",
+  });
   // N1: Only the author's approved bilingual Chronicle pairs may supply this copy.
   const approvedNarrative =
     typeof PrototypeNarration !== 'undefined' ? PrototypeNarration.approved : null;
@@ -2045,16 +2082,16 @@
           'Using skills',
           explain(
             'Using skills',
-            'Tap a skill to use it. Hold until CHARGED, then release.\nTaking damage can interrupt preparation. Normal and charged forms share a cooldown. Read Skill journal for each skill’s effects.',
-            'Toca una habilidad para usarla. Mantén hasta CHARGED y suelta.\nRecibir daño puede interrumpir la preparación. Ambas versiones comparten recuperación. Consulta sus efectos en el Diario de habilidades.',
+            'Tap for normal, hold until CHARGED and release. Charged starts the short Tap cooldown and its own longer one; Tap returns earlier without extending Charged. Automatic Skill 1 basics continue separately. See the Skill journal.',
+            'Toca para normal o mantén hasta CARGADA y suelta. La cargada inicia ambas recuperaciones; normal vuelve antes y no prolonga cargada. Los ataques básicos de la habilidad 1 siguen aparte. Consulta el Diario.',
           ),
         ),
         action(
           'Queued skills',
           explain(
             'Queued skills',
-            'During cooldown: tap to queue normal, or hold briefly to queue charged.\nBlue numbers beside the hero mean normal; gold means charged.',
-            'Durante la recuperación: toca para poner la versión normal en cola o mantén brevemente para la cargada.\nNúmeros azules: normal; dorados: cargada.',
+            'During Tap recovery, tap to queue normal. Hold briefly to queue Charged until both timers are ready. A ready Tap can be used while Charged recovers. Blue numbers mean normal; gold means charged.',
+            'Mientras normal se recupera, tócala para ponerla en cola. Mantén brevemente para poner cargada en cola hasta que ambas recuperaciones terminen. Normal puede usarse aunque cargada siga en recuperación. Azul: normal; dorado: cargada.',
           ),
         ),
         action(
@@ -4381,6 +4418,7 @@
   const skillLabel = (slot) => {
     const labels = {
       paladin: {
+        1: 'Radiant Strike / Radiant Cross',
         2: 'Sundering Strike',
         3: 'Shield Stance',
         4: 'Judgment',
@@ -4390,6 +4428,7 @@
         8: 'Sanctuary Oath / Last Bastion',
       },
       mage: {
+        1: 'Arcane Beam / Wide Arcane Beam',
         2: 'Frost Bolt',
         3: 'Spell Interrupt',
         4: 'Arcane Fracture',
@@ -4399,6 +4438,7 @@
         8: 'Astral Detonation / Arcane Cataclysm',
       },
       ranger: {
+        1: 'Rapid Arrows / Hawk Interception',
         2: 'Pinning Shot',
         3: 'Self-Heal',
         4: 'Movement Haste / Rally',
