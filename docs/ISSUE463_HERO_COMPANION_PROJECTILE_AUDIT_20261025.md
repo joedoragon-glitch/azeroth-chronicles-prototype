@@ -61,6 +61,6 @@ Soldier's basic sword, counterattacks, Power Strike, and Holy Cleave are immedia
 - Existing v4 restore discards transient projectiles, as before; no persistent format change or PWA metadata edits.
 - Focused CI and deterministic package verification only. **Human sight/feel on actual desktop and phone remains unverified**; automated Canvas/X simulation cannot certify beautiful arc spacing, readability at smaller scales, or optional experimental WebGL2 trial/recovery.
 - PR #440 simultaneously changes combat.js/hero-combat.js/party.js; reconcile the **entire** diff against its new head and newer main before any authorized merge. Do not merge #440 into this task.
-- Future **pets one-by-one** are explicitly outside #464's current examined hero/companion scope; their physical/spell/area/support moves need the same individualized audit when this candidate is safe. Keep #463 or a linked follow-up open until that separate phase is undertaken.
+- **Later status (25 October): the pets one-by-one phase is complete at source and focused-test level**, not device acceptance. See [ISSUE463_PET_FAMILY_RELEASE_IMPACT_AUDIT_20261025.md](ISSUE463_PET_FAMILY_RELEASE_IMPACT_AUDIT_20261025.md), [postcast integration readiness](ISSUE463_POSTCAST_INTEGRATION_READINESS_20261025.md), and the live PR #464 handoff. The earlier hero-only scope and future-pet wording were a historical checkpoint, not a remaining instruction.
 
 **Release state:** open draft PR #464; unmerged, undeployed. No full suite, hardware certification or production claim.

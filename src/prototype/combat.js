@@ -1025,6 +1025,22 @@
             p.dx = (e.x - hero.x) / distance;
             p.dy = (e.y - hero.y) / distance;
             delete p.rangerDelayedLaunch;
+            // This receipt belongs to the actual moving bow, not the
+            // earlier event that scheduled several delayed shafts.
+            this.event('projectileLaunch', {
+              actor: 'hero',
+              class: 'ranger',
+              source: 'hero',
+              slot: p.slot || 1,
+              style: p.style || 'arrow',
+              charged: !!p.charged,
+              rapid: !!p.rapid,
+              projectileId: p.id,
+              releasedCount: 1,
+              x: p.x,
+              y: p.y,
+              target: e.id,
+            });
           }
           if (p.companionDelayedLaunch) {
             // Delayed Triple Shot members do not materialize at the Archer's
@@ -1047,6 +1063,8 @@
               source: caster.id,
               style: 'arrow',
               special: 'triple-shot',
+              projectileId: p.id,
+              releasedCount: 1,
               x: caster.x,
               y: caster.y,
               target: e.id,

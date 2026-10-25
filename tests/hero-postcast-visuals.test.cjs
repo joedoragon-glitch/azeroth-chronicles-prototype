@@ -53,6 +53,8 @@ for (const dt of [1 / 20, 1 / 30, 1 / 60]) {
     // Keep one of the later arrows pending while hero and target move.
     const p = delayed.reduce((latest, next) => next.delay > latest.delay ? next : latest);
     const old = { x: p.x, y: p.y };
+    assert(!game.effects.some(e => e.type === 'projectileLaunch' && e.projectileId === p.id),
+      name + ' must not create a launch receipt for a still-pending missile');
     game.hero.x = 500 + (slot * 3);
     game.hero.y = 565;
     enemy.x = 770;
@@ -63,6 +65,8 @@ for (const dt of [1 / 20, 1 / 30, 1 / 60]) {
     near(p.x, old.x, name + ' collider stays dormant until its real release');
     near(p.y, old.y, name + ' dormant location not used for visible arrow');
     assert(p.rangerDelayedLaunch, name + ' stays non-rendered at zero delay');
+    assert(!game.effects.some(e => e.type === 'projectileLaunch' && e.projectileId === p.id),
+      name + ' crossing the delay deadline is not an actual bow release');
     assert(
       HeroArt.projectile({ save() { throw Error('premature visible arrow'); } },
         point => point, p, 'ranger'),
@@ -74,6 +78,12 @@ for (const dt of [1 / 20, 1 / 30, 1 / 60]) {
     const length = Math.hypot(aim.x, aim.y);
     game.updateProjectiles(dt);
     assert.equal(p.rangerDelayedLaunch, undefined, name + ' really released');
+    const realLaunch = game.effects.filter(e =>
+      e.type === 'projectileLaunch' && e.projectileId === p.id);
+    assert.equal(realLaunch.length, 1, name + ' reports exactly one actual delayed departure');
+    near(realLaunch[0].x, live.x, name + ' real launch event X matches living bow');
+    near(realLaunch[0].y, live.y, name + ' real launch event Y matches living bow');
+    assert.equal(realLaunch[0].releasedCount, 1);
     near(p.dx, aim.x / length, name + ' aims from the current Ranger');
     near(p.dy, aim.y / length, name + ' release vector uses current target');
     near(p.x, live.x + p.dx * p.speed * dt, name + ' actual collider starts at live bow X');
@@ -110,6 +120,8 @@ for (const dt of [1 / 20, 1 / 30, 1 / 60]) {
   assert(!game.s.projectiles.includes(delayed), 'cancel abandoned unreleased shot');
   assert(!game.effects.some(e => e.type === 'heroProjectileFlight' && e.slot === 2),
     'never show a launch after target is lost');
+  assert(!game.effects.some(e => e.type === 'projectileLaunch' && e.projectileId === delayed.id),
+    'a canceled arrow must never claim an actual launch');
 }
 
 // Original collision rules remain authoritative after release.
@@ -195,14 +207,28 @@ for (const dt of [1 / 20, 1 / 30, 1 / 60]) {
   const pending = game.s.projectiles.filter(p => p.companionDelayedLaunch);
   assert.equal(pending.length, 2, 'only the second/third shots await bow release');
   const p = pending[0];
+  const initial = game.effects.filter(e =>
+    e.type === 'projectileLaunch' && e.actor === 'companion' && e.source === archer.id);
+  assert.equal(initial.length, 1, 'one first Archer arrow/volley sound receipt at admission');
+  assert.equal(initial[0].count, 3, 'legacy triple-shot sound remains intact');
+  assert.equal(initial[0].releasedCount, 1, 'only first Archer arrow actually leaves immediately');
+  assert.equal(initial[0].pendingCount, 2, 'two Archer arrows remain pending');
   archer.x = 525;
   archer.y = 570;
   enemy.y = 540;
   while (p.delay > 0) game.updateProjectiles(dt);
   assert(p.companionDelayedLaunch, 'the delayed shaft remains physically unreleased');
+  assert(!game.effects.some(e => e.type === 'projectileLaunch' && e.projectileId === p.id),
+    'no pre-release individual Archer receipt');
   const x = archer.x, y = archer.y;
   game.updateProjectiles(dt);
   assert.equal(p.companionDelayedLaunch, undefined, 'Archer released its real arrow');
+  const archerLaunches = game.effects.filter(e =>
+    e.type === 'projectileLaunch' && e.projectileId === p.id);
+  assert.equal(archerLaunches.length, 1, 'exactly one independent Archer subrelease receipt');
+  near(archerLaunches[0].x, x, 'Archer actual launch receipt X');
+  near(archerLaunches[0].y, y, 'Archer actual launch receipt Y');
+  assert.equal(archerLaunches[0].releasedCount, 1);
   near(p.x, x + p.dx * p.speed * dt, 'Archer moving release x');
   near(p.y, y + p.dy * p.speed * dt, 'Archer moving release y');
   const launched = { x: p.x, y: p.y, dx: p.dx, dy: p.dy };
@@ -244,4 +270,64 @@ for (const dt of [1 / 20, 1 / 30, 1 / 60]) {
     'Soldier has no invented sword or spell projectile');
 }
 
-console.log('PASS #463 real Ranger bow origins, independent arrows, target/terrain safety, 20/30/60 FPS (' + verified + ' cases)');
+
+// Delayed companions and Ranger ultimates must not leave false departure
+// receipts if the source dies or target becomes invalid before subrelease.
+for (const cause of ['source-dead', 'target-gone']) {
+  const { game, enemy } = arena();
+  const archer = game.unit('archer', 500, 510);
+  game.s.party = [archer];
+  assert(game.companionUseFirstSkill(archer, enemy));
+  const delayed = game.s.projectiles.find(p => p.companionDelayedLaunch);
+  assert(delayed);
+  if (cause === 'source-dead') archer.hp = 0;
+  else game.zone().enemies = [];
+  game.updateProjectiles(0.2);
+  game.updateProjectiles(0.05);
+  assert(!game.s.projectiles.includes(delayed), cause + ' discards unreleased Archer arrow');
+  assert(!game.effects.some(e => e.type === 'projectileLaunch' && e.projectileId === delayed.id),
+    cause + ' never emits a phantom launch');
+}
+{
+  const { game, enemy } = arena();
+  assert(game.cast(8, enemy.id, false), 'Hunter\'s Salvo schedules its authored volley');
+  const delayed = game.s.projectiles.find(p => p.rangerDelayedLaunch);
+  assert(delayed, 'Hunt includes pending independent arrows');
+  const before = game.effects.filter(e => e.type === 'projectileLaunch' && e.slot === 8);
+  assert(!before.some(e => e.projectileId === delayed.id), 'no early individual Hunt arrow release');
+  game.zone().enemies = [];
+  for (let i = 0; i < 20; i++) game.updateProjectiles(0.05);
+  assert(!game.effects.some(e => e.type === 'projectileLaunch' && e.projectileId === delayed.id),
+    'abandoned Hunt missile never announces a release');
+}
+// Native pack load checks both real moving entities and the unchanged
+// 40-effect visual queue budget; this does not claim device FPS certification.
+{
+  const { game, enemy } = arena();
+  const crowd = [enemy];
+  for (let i = 0; i < 28; i++) {
+    const foe = game.makeEnemy(
+      { species: 'goblin', name: 'Corridor foe ' + i, level: 1,
+        hp: 1000000, damage: 0, gold: 0, xp: 0 },
+      { x: 585 + (i % 15) * 19, y: 500 + (Math.floor(i / 15) ? 18 : -18) },
+    );
+    foe.hp = foe.maxHp = 1000000;
+    crowd.push(foe);
+    game.zone().enemies.push(foe);
+  }
+  assert(game.cast(2, enemy.id, true), 'charged Ranger releases the native crowded corridor');
+  const arrows = game.s.projectiles.filter(p => p.source === 'hero' && p.slot === 2);
+  assert(arrows.length > 20, 'crowd emits physical arrows rather than replacing them with a beam');
+  assert(crowd.every(e => e.hp === e.maxHp), 'none of the crowded foes suffers pre-flight damage');
+  for (let i = 0; i < 40 && arrows.some(p => game.s.projectiles.includes(p)); i++)
+    game.updateProjectiles(1 / 30);
+  assert(arrows.every(p => !game.s.projectiles.includes(p)),
+    'crowd removes completed physical missiles within their authored lifetime');
+  assert(crowd.some(e => e.hp < e.maxHp), 'at least one physical crowded hit resolves');
+  const effects = require('../src/prototype/combat-visuals.js').queue(game.effects, game, []);
+  assert(effects.length <= 40, 'many real arrow impacts obey the original transient VFX budget');
+  assert(game.effects.filter(e => e.type === 'projectileImpact' && e.landed).length > 20,
+    'crowd generates native physical impact receipts, not merely synthetic test effects');
+}
+
+console.log('PASS #463 real Ranger bow origins, independent arrows, target/terrain safety, 20/30/60 FPS (' + verified + ' cases), truthful delayed release receipts and native crowd queue');

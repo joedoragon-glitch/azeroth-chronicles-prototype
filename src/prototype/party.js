@@ -1519,7 +1519,9 @@
           role: 'archer',
           source: u.id,
           style: 'arrow',
-          count: 3,
+          count: 3, // Retain existing three-shot audio contract.
+          releasedCount: 1,
+          pendingCount: 2,
           special: 'triple-shot',
           x: u.x,
           y: u.y,

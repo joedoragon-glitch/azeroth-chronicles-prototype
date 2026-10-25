@@ -169,7 +169,9 @@
           ...(delay > 0 ? { rangerDelayedLaunch: true } : {}),
           ...(receipt ? { encountersAtStart: receipt } : {}),
         });
-        this.event('projectileLaunch', {
+        // A queued delayed Hunt arrow has not left the Ranger yet.
+        // Record its launch only when updateProjectiles releases its collider.
+        if (delay <= 0) this.event('projectileLaunch', {
           actor: 'hero',
           class: 'ranger',
           source: 'hero',
@@ -452,7 +454,8 @@
             ...extra,
             ...(style === 'arrow' && extra.delay > 0 ? { rangerDelayedLaunch: true } : {}),
           });
-          this.event('projectileLaunch', {
+          // Do not report a delayed arrow as launched at burst admission.
+          if (!(style === 'arrow' && extra.delay > 0)) this.event('projectileLaunch', {
             actor: 'hero',
             class: hero.class,
             source: 'hero',
@@ -1434,7 +1437,9 @@
               style: 'arrow',
               slot,
               charged: false,
-              count: 3,
+              count: 3, // Legacy three-shot sound/presentation identity.
+              releasedCount: 1,
+              pendingCount: 2,
               rapid: true,
               x: this.hero.x,
               y: this.hero.y,
@@ -2147,6 +2152,9 @@
               style: this.hero.class === 'ranger' ? 'arrow' : 'magic',
               slot,
               count,
+              ...(this.hero.class === 'ranger' && count > 1
+                ? { releasedCount: 1, pendingCount: count - 1 }
+                : {}),
               combo,
               x: this.hero.x,
               y: this.hero.y,
