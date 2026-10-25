@@ -4225,7 +4225,7 @@
     }
     trueFieldBossCircuit(e) {
       return e?.type === 'boss' && e.form === 'true' && !this.isDungeon() &&
-        !this.roamingBoss(e) && this.boss(e.family)?.kind === 'field';
+        this.boss(e.family)?.kind === 'field';
     }
     trueFieldBossCircuitStops(e) {
       if (!this.trueFieldBossCircuit(e)) return [];
@@ -4252,7 +4252,7 @@
       // Combat is always higher priority than a visit. The usual encounter
       // loop acquires targets later this tick; hold position in its awareness.
       if (this.hero.hp > 0 &&
-          dist(this.hero, e) < Math.max(850, this.enemyAcquisitionRange(e)) &&
+          dist(this.hero, e) < Math.max(560, this.enemyAcquisitionRange(e)) &&
           this.enemyRangedLine(e, this.hero) &&
           dist(this.hero, { x: D.towns[this.regionIndex()][0],
             y: D.towns[this.regionIndex()][1] }) >= 170) return true;
@@ -6629,7 +6629,7 @@
         // TRUE-form field hunters notice the hero farther away and interrupt
         // their route. Keep the existing safe-town and mercy restrictions.
         if (!e.aggro && this.trueFieldBossCircuit(e) && !e.returning &&
-            this.hero.hp > 0 && dist(e, this.hero) < 850 &&
+            this.hero.hp > 0 && dist(e, this.hero) < 560 &&
             dist(this.hero, { x: D.towns[this.regionIndex()][0],
               y: D.towns[this.regionIndex()][1] }) >= 170 &&
             this.enemyRangedLine(e, this.hero))
@@ -7279,7 +7279,8 @@
             e.maxHp = e.hp = e.baseHp * bonus.hp;
             e.damage = e.baseDamage * bonus.damage;
           }
-          if (p.kind === 'field' && !['thorn', 'cindermaw'].includes(key))
+          if (p.kind === 'field')
+            // Actual TRUE appearance point (not normal-form boss compound).
             e.trueCircuitOrigin = { x: point.x, y: point.y };
           if (key === 'thorn' && p.kind === 'field') e.home = { ...this.fieldCenter(0) };
           if (key === 'cindermaw' && p.kind === 'field') e.home = { ...this.fieldCenter(4) };
