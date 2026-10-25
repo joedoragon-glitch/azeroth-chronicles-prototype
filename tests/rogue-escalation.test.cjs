@@ -201,28 +201,83 @@ console.log('PASS two-second Rogue cast floor prevents spam without retaining a 
 
 {
   const { c, z, a } = encounter();
-  z.enemies = [a]; // No other ally and no distant refuge.
+  z.enemies = [a]; // No available nearby or distant support.
   a.form = 'normal';
-  assert(c.tacticalAutoRogue(a, c.hero),
-    'isolated eligible monster starts its first Rogue opportunity');
+  assert(c.tacticalAutoRogue(a, c.hero), 'isolated defender considers withdrawal');
   assert.equal(c._tacticalRogueNext.get(a.id), c.s.time + 2);
   c.s.time += 0.31;
   assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.31));
-  assert(a.telegraph?.rogueMove, 'isolated monster can cast without an ally');
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'escape',
+    'no-help decision prioritizes physical withdrawal, not a standing Rogue loop');
+  assert(a.telegraph?.rogueMove, 'eligible Rogue action can cover escape');
   const firstCast = c.s.time;
-  a.telegraph = null; // Simulate the completed legal warning.
+  const moveAway = (actor, destination) => {
+    actor.x += Math.sign(destination.x - actor.x) * 8;
+    return true;
+  };
+  c.move = moveAway;
+  let approachOrders = 0;
+  c.follow = () => { approachOrders++; return false; };
+  const originalX = a.x;
+  c.s.time += 0.1;
+  c.updateEnemies(0.1);
+  assert(a.x < originalX, 'escape continues away from the pursuer during the warning');
+  assert.equal(approachOrders, 0,
+    'a covering Rogue cast must never reverse the withdrawal toward the hero');
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'escape');
+  a.telegraph = null; // Simulate a completed legal warning before the next window.
   c.s.time = firstCast + 1.99;
-  assert.equal(c.tacticalAutoRogue(a, c.hero), false,
-    'reassessment cannot produce a pre-two-second cast cycle');
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.1));
+  assert(!a.telegraph, 'escape cannot cast before the two-second limit');
   c.s.time = firstCast + 2.01;
-  assert(c.tacticalAutoRogue(a, c.hero),
-    'the same isolated monster can initiate another Rogue response in two seconds');
-  assert.equal(c.tacticalRogueRegroup(a).phase, 'thinking');
-  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.31));
-  assert(a.telegraph?.rogueMove,
-    'repeated solo Rogue opportunity leads to another actual attack');
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.1));
+  assert(a.telegraph?.rogueMove, 'another covering cast is available while escaping');
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'escape',
+    'repeatable Rogue defense never replaces the escape state');
 }
-console.log('PASS isolated enemies keep repeatable two-second Rogue decisions and real attacks');
+console.log('PASS isolated monsters withdraw while optional two-second Rogue cover remains available');
+
+{
+  const { c, z, a, add } = encounter();
+  const far = add(2400, 'normal');
+  z.enemies = [a, far];
+  assert(c.tacticalAutoRogue(a, c.hero));
+  c.s.time += 0.31;
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.31));
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'extended',
+    'living distant defenders take priority over Smoke Trick fallback');
+  assert.equal(c.tacticalRogueRegroup(a).allyId, far.id);
+  assert(!a.telegraph, 'retreat decision does not require a covering cast');
+  assert(!z.enemies.some(u => u.rogueEmergencyReinforcement),
+    'a valid refuge does not need emergency replacements');
+}
+console.log('PASS Ringleader chooses distant occupied refuge before Rogue cast or emergency call');
+
+{
+  const { c, z, a } = encounter();
+  z.enemies = [a];
+  assert(c.tacticalAutoRogue(a, c.hero));
+  c.s.time += 0.31;
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.31));
+  const guards = z.enemies.filter(u => u.rogueEmergencyReinforcement && u.hp > 0);
+  assert(guards.length >= 2, 'unsupported Ringleader calls real reinforcements first');
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'anchored');
+  assert(!a.telegraph?.rogueMove, 'reinforcement precedes a standalone Smoke Trick');
+}
+console.log('PASS isolated Ringleader summons first instead of standing and repeating Smoke Trick');
+
+{
+  const { c, z, a } = encounter();
+  z.enemies = [a];
+  c.blocked = () => true; // No legal placement for emergency reinforcements.
+  assert(c.tacticalAutoRogue(a, c.hero));
+  c.s.time += 0.31;
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.31));
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'escape',
+    'Ringleader with no possible refuge or summon follows finite withdrawal');
+  assert(!z.enemies.some(u => u.rogueEmergencyReinforcement));
+}
+console.log('PASS Ringleader does not fall into a standing Smoke Trick loop when summoning is blocked');
 
 {
   const { c, z, a } = encounter();
