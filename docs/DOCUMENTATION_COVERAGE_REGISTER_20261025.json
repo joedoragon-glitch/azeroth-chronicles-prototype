@@ -41,6 +41,10 @@
       "state": "closed_unmerged"
     },
     {
+      "number": 431,
+      "state": "merged"
+    },
+    {
       "number": 432,
       "state": "closed_unmerged"
     },
@@ -50,6 +54,10 @@
     },
     {
       "number": 434,
+      "state": "merged"
+    },
+    {
+      "number": 437,
       "state": "merged"
     },
     {
@@ -78,6 +86,10 @@
     },
     {
       "number": 459,
+      "state": "merged"
+    },
+    {
+      "number": 462,
       "state": "merged"
     },
     {
@@ -461,7 +473,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 437,
+        "integratedByPr": 437,
+        "disposition": "merged_directly",
+        "caution": "20-FPS Auto resolution and unchanged-ceiling adapted-density preservation released through #437 at dev.174. Source/fixture success is not a physical-device FPS performance certificate."
+      }
     },
     {
       "path": "docs/BACKLOG_HOUSEKEEPING_20261010.md",
@@ -593,7 +612,17 @@
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 454,
+        "integratedByPr": 459,
+        "disposition": "merged_via_integration",
+        "relatedSourcePrs": [
+          455
+        ],
+        "caution": "Complete captain/Treasury historical development log: #454 closed unmerged, approved selected work integrated through merged #459 together with #455 Rogue. Later Phase 5 director approval supersedes earlier 50%-missing / 5s / 90%-threshold provisional wording. V8 source probes do not establish whole-game or physical-device acceptance."
+      }
     },
     {
       "path": "docs/CHARGE_SLOW_CONSOLIDATION_20261015.md",
@@ -1143,7 +1172,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_COVERAGE_NOTES_20261025.md",
-      "gitBlobSha": "2ed8ffd05199fe8f5a6782748744194be9747c66",
+      "gitBlobSha": "65020801767fdbb27597a0e1924dd24ae17eb654",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2453,7 +2482,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 431,
+        "integratedByPr": 431,
+        "disposition": "merged_directly",
+        "caution": "Dev.170 one-time device-local performance-preference migration shipped through #431, not a pending PR. Historical first-launch overrides are not permission to reset preferences on every future update."
+      }
     },
     {
       "path": "docs/PERFORMANCE_EVIDENCE_REGISTER_20261024.md",
@@ -2486,7 +2522,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 426,
+        "integratedByPr": 426,
+        "disposition": "merged_directly",
+        "caution": "Report contains its own superseding merged/published banner. #422-425 historical integration occurred in #426 (dev.169). Original pre-merge checklists remain historical; focused CI/build does not certify physical hardware FPS/feel."
+      }
     },
     {
       "path": "docs/PERFORMANCE_V09_PROJECT.md",
@@ -2998,7 +3041,15 @@
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 462,
+        "integratedByPr": 462,
+        "disposition": "merged_directly",
+        "priorIntegratedByPr": 459,
+        "caution": "Phase 2 historic audit began at dev.184; subsequent director-approved #462 merged to main. Recent actual HP hit <=2.2s may enter selection up to existing Rogue initiation reach (ordinary 408, captain 528, boss 600); not a 520 universal buff. Historic #452-draft and #462-not-released language is superseded."
+      }
     },
     {
       "path": "docs/ROGUE_TERRITORIAL_ESCALATION_20261025.md",
