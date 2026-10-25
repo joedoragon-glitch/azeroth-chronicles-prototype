@@ -203,7 +203,11 @@
       else if (e.chain) emit('chain', 0.38 + e.chain.length * 0.04);
       else if (e.type === 'chargedArea' || e.type === 'spell') {
         if (e.effect === 'shield-lowered') emit('cancel', 0.18);
-        else emit(e.radius || e.shape ? 'area' : 'impact', e.slot === 8 ? 0.65 : 0.45);
+        else if (e.projectileVolley && e.class === 'ranger') {
+          // Only the physical arrow objects may travel and announce contact.
+          // Never display pre-hit or detached full-corridor decorative arrows.
+          emit('cast', 0.16);
+        } else emit(e.radius || e.shape ? 'area' : 'impact', e.slot === 8 ? 0.65 : 0.45);
       }
     }
   }
@@ -568,7 +572,12 @@
       const physical = f.class === 'ranger';
       glyph(ctx, p.x, p.y - 15, physical ? 'repel' : f.motif, f.charged ? 8 : 5);
     } else if (f.stage === 'cast') {
-      if (f.class === 'paladin' && [1, 2, 6].includes(f.slot) && !(f.charged && f.slot === 1)) {
+      if (f.projectileVolley && f.class === 'ranger') {
+        // A bow-release glint only. Real shafts are drawn by the projectile
+        // renderer using the same coordinates as their collision segments.
+        ctx.globalAlpha = fade * 0.55;
+        glyph(ctx, p.x, p.y - 16, 'arrow', 8);
+      } else if (f.class === 'paladin' && [1, 2, 6].includes(f.slot) && !(f.charged && f.slot === 1)) {
         const target = screen({ x: f.targetX ?? f.x + 50, y: f.targetY ?? f.y }),
           a = Math.atan2(target.y - p.y, target.x - p.x),
           swing = reduced ? 0 : (t - 0.5) * 1.6;
