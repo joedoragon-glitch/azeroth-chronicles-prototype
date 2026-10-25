@@ -20,6 +20,11 @@ const sharp = require('sharp');
 const playwright = require('playwright');
 const root = path.resolve(__dirname, '../..');
 const sourceSha = cp.execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim();
+const overrideClock = process.env.ART321_SCENE_CLOCK === undefined
+  ? null : Number(process.env.ART321_SCENE_CLOCK);
+if (overrideClock!==null)
+  assert(Number.isFinite(overrideClock)&&overrideClock>=0&&overrideClock<600,
+    'Night/daylight audit clock must be within the current 600-second authored cycle');
 const out = path.resolve(process.env.ART321_OUTPUT ||
   path.join(os.tmpdir(),'azeroth-art321-crown-loot-'+sourceSha.slice(0,12)));
 fs.mkdirSync(out,{recursive:true});
@@ -80,6 +85,8 @@ async function capture(page,backend){
       throw Error('Clip is not inside the actual visual viewport');
     return {
       mode:graphics.mode,phase:graphics.phase,zone:g.zoneId,time:g.s.time,
+      sceneClock:g.s.clock,daylightPhase:g.daylightPhase().phase,
+      darkness:g.daylightPhase().darkness,night:g.night(),
       hero:{x:g.hero.x,y:g.hero.y},zoom:Prototype.platform.cameraZoom,
       sceneActors:graphics.sceneMetrics?.actors??null,
       textureSources:graphics.sceneMetrics?.textureSources??null,
@@ -122,6 +129,8 @@ async function capture(page,backend){
       'Renderer switched/fell back during the actual screenshot');
     return {
       backend,zone:info.zone,simulationTime:info.time,hero:info.hero,
+      sceneClock:info.sceneClock,daylightPhase:info.daylightPhase,
+      darkness:info.darkness,night:info.night,
       zoom:info.zoom,viewport:info.viewport,worldBacking:info.worldBacking,
       pauseOverlayAlpha:info.pauseOverlayAlpha,
       gpuActors:info.sceneActors,textureSources:info.textureSources,
@@ -159,6 +168,14 @@ async function start(){
       await page.keyboard.press('f');
       await page.keyboard.press('f');
       await page.waitForFunction(()=>document.querySelector('#modal').hidden);
+      // Every capture still uses the SAME disposable Campaign and remains
+      // paused in both renderers. The night mode changes presentation clock
+      // only, not combat events, AI, loot, saves or the published default.
+      if (overrideClock!==null) {
+        await page.evaluate(clock=>{Prototype.game.s.clock=clock;},overrideClock);
+        await page.waitForFunction(clock=>
+          Math.abs(Prototype.game.s.clock-clock)<.15,overrideClock);
+      }
       // The game can safely be paused while the settings/trial are inspected.
       await page.keyboard.press('p');
       assert.equal(await page.evaluate(()=>Prototype.paused),true);
@@ -192,10 +209,22 @@ async function start(){
       assert.deepEqual(canvas.viewport,pixi.viewport);
       assert.deepEqual(canvas.hero,pixi.hero,'Hero moved between captures');
       assert.equal(canvas.simulationTime,pixi.simulationTime,'Campaign clock moved between captures');
+      assert.equal(canvas.daylightPhase,pixi.daylightPhase,
+        'Day/night appearance must match the pinned paused campaign');
+      assert.equal(canvas.night,pixi.night,'Night state changed with rendering backend');
+      assert(Math.abs(canvas.sceneClock-pixi.sceneClock)<.001,
+        'Authored world daylight clock must stay frozen while paused');
+      if (overrideClock!==null) {
+        assert.equal(canvas.night,overrideClock>=360&&overrideClock<600,
+          'The optional snapshot must actually exercise the desired night state');
+        assert.equal(canvas.daylightPhase,overrideClock>=360&&overrideClock<570?'night':
+          overrideClock>=570?'sunrise':overrideClock>=330?'sunset':'day');
+      }
       assert.deepEqual(errors,[],'Uncaught browser page errors');
       const report={
         schema:'art321-real-composed-paired-pixel-capture-v2',
         sourceSha,runTimeUtc:new Date().toISOString(),
+        requestedSceneClock:overrideClock,
         engine:'Chromium ANGLE SwiftShader WebGL2 (software renderer)',
         source:'disposable game Campaign and temporary native-shaped Crown loot object',
         test:'one 1280x800 Chromium context; game paused; same Campaign, hero, zone, zoom, clock',
