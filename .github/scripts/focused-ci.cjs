@@ -122,6 +122,8 @@ const groups = [
       TEST + 'field-onboarding.test.cjs',
       TEST + 'ranged-pet-support.test.cjs',
       TEST + 'enemy-support-healing.test.cjs',
+      TEST + 'enemy-ordinary-heal-balance.test.cjs',
+      TEST + 'enemy-cross-species-idle-healing.test.cjs',
     ],
   },
   {
@@ -135,11 +137,19 @@ const groups = [
       TEST + 'slow-cooldown.test.cjs',
       TEST + 'ranged-pet-support.test.cjs',
       TEST + 'enemy-support-healing.test.cjs',
+      TEST + 'enemy-ordinary-heal-balance.test.cjs',
+      TEST + 'enemy-cross-species-idle-healing.test.cjs',
     ],
   },
   {
     match: /^src\/prototype\/(?:rules|save|boss-combat)\.js$/,
     tests: [TEST + 'snapshot-encounter-lifecycle.test.cjs'],
+  },
+  {
+    // A rules edit can alter the source fingerprints in the sprite census.
+    // Validate its checked-in evidence even when the graphics stay identical.
+    match: /^src\/prototype\/rules\.js$|^docs\/evidence\/SPRITE_SCOPE_RECONCILIATION\.json$/,
+    tests: [TEST + 'sprite-scope.test.cjs'],
   },
   {
     match: /^src\/prototype\/(?:combat|boss-combat|fortifications)\.js$/,

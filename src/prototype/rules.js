@@ -6130,8 +6130,13 @@
     fraction: 0.05,
     cooldown: rangerSupport.cooldown,
     duration: rangerSupport.duration,
+    // Ordinary ranged healers treating ordinary monsters: more timely aid.
+    // Leader recipients and leader casters retain the original baseline.
+    ordinary: Object.freeze({ fullRecovery: true, cooldown: 7, duration: 3 }),
     // Ranged troops should assist substantially wounded allies before they
     // collapse, rather than waiting until half their HP has disappeared.
+    // Ordinary-to-ordinary healing treats any missing HP. Leaders and leader
+    // casters keep their existing threshold and 90% regroup exception.
     // One area cast treats every eligible recipient in the existing range.
     threshold: 0.75,
     regroupThreshold: 0.9,

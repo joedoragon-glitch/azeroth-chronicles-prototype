@@ -79,21 +79,19 @@ for (const species of [
   assert(g.enemySupportHeal(healer), species + ' heals a wounded companion');
   // The live zone may normalize ally max HP as its ordinary population
   // migrates; assert against the recipient's actual post-normalization values.
-  const budget = Math.min(
-    ally.maxHp - ally.hp,
-    ally.maxHp * R.enemySupportHealing.fraction * g.enemyHealMultiplier(healer),
-  );
+  const budget = ally.maxHp - ally.hp;
   const before = ally.hp;
-  near(ally.supportHeal.remaining, budget, species + ' 5% of recipient maximum HP');
-  near(healer.supportHealCd, 10, species + ' ten-second cooldown');
+  near(ally.supportHeal.remaining, budget, species + ' full missing ordinary HP');
+  near(ally.supportHeal.seconds, 3, species + ' three-second treatment');
+  near(healer.supportHealCd, 7, species + ' seven-second ordinary cooldown');
   assert(!g.enemySupportHeal(healer), species + ' cannot duplicate the cast');
+  g.advanceEnemySupportHeal(ally, 1);
+  near(ally.hp, before + budget / 3, species + ' partial three-second heal');
   g.advanceEnemySupportHeal(ally, 2);
-  near(ally.hp, before + (budget * 2) / 5, species + ' partial five-second heal');
-  g.advanceEnemySupportHeal(ally, 3);
   near(ally.hp, before + budget, species + ' full heal');
   assert(!ally.supportHeal, species + ' effect completes');
 }
-console.log('PASS twelve ranged species use individual identity and the Archer healing interval');
+console.log('PASS twelve ranged species independently restore missing ordinary HP in three seconds');
 
 // Enemy support must ignore injured player actors even when they are closer
 // and much more wounded than the intended hostile recipient.
@@ -177,8 +175,9 @@ console.log('PASS hostile healing excludes wounded hero, both troop types and al
 {
   const { g, mob } = fixture();
   const healer = mob('goblin', { ranged: true });
-  mob('goblin', { hp: 900 });
-  assert(!g.enemySupportHeal(healer), 'support healing retains a 75-percent cutoff');
+  const scratched = mob('goblin', { hp: 900 });
+  assert(g.enemySupportHeal(healer), 'ordinary support can heal a lightly injured ordinary ally');
+  assert.equal(scratched.supportHeal.remaining, scratched.maxHp - scratched.hp);
 }
 {
   const { g, mob } = fixture();
@@ -400,7 +399,7 @@ console.log(
   const healer = mob('goblin', { ranged: true });
   const ally = mob('goblin', { hp: 400 });
   g.updateEnemies(0.1);
-  assert(healer.supportHealCd > 9, 'live updateEnemies invokes automatic support healing');
+  assert(healer.supportHealCd > 6, 'live updateEnemies invokes automatic seven-second support healing');
   assert(ally.supportHeal || ally.hp > 400, 'the live combat tick starts gradual ally healing');
 }
 {

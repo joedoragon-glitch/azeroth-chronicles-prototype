@@ -129,7 +129,7 @@ for (const block of [null, 'cooldown', 'silence', 'wall', 'returning']) {
   assert.equal(!!wounded.supportHeal, block === null, 'idle triage retains ' + block + ' gate');
   if (!block) {
     assert.equal(healer.aggro, false);
-    assert.equal(healer.supportHealCd, 10);
+    assert.equal(healer.supportHealCd, 7);
     const hp = wounded.hp;
     g.advanceEnemySupportHeal(wounded, 1);
     assert(wounded.hp > hp);
