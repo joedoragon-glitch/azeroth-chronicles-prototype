@@ -94,11 +94,13 @@
               ' for allies; ' +
               R.cooldownBalance.enemySlowStackPenalty +
               ' for enemies. ' +
-              'Each hit also adds its full adjusted duration × ' +
+              'Until the stack ceiling, each hit adds its adjusted duration × ' +
               percent(R.cooldownBalance.slowDebtFraction) +
               '% to eligible recovering allied cooldowns, or ' +
               percent(R.cooldownBalance.enemySlowDebtFraction) +
               '% for enemies. Ready skills gain no debt. ' +
+              'Slow stops accumulating at ' + R.cooldownBalance.slowMaxStacks +
+              ' stacks: later hits refresh duration but do not increase the stack or add cooldown debt. ' +
               'Stack strength clears when Slow expires; accumulated cooldown debt remains. ' +
               'Preparation, warnings and healing pulses are not delayed, and skills are never outright blocked by Slow.'
             : 'The longest remaining Slow wins. Recovery returns to normal when Slow ends. Slow does not lengthen charge preparation, warnings or healing pulses, and does not prevent skills.'),
@@ -1591,8 +1593,8 @@
     [' for allies; ', ' para aliados; '],
     [' for enemies. ', ' para enemigos. '],
     [
-      'Each hit also adds its full adjusted duration × ',
-      'Cada impacto también añade toda su duración ajustada × ',
+      'Until the stack ceiling, each hit adds its adjusted duration × ',
+      'Hasta alcanzar el límite de acumulaciones, cada impacto añade su duración ajustada × ',
     ],
     [
       '% to eligible recovering allied cooldowns, or ',
@@ -1601,6 +1603,14 @@
     [
       '% for enemies. Ready skills gain no debt.',
       '% para enemigos. Las habilidades ya listas no reciben deuda.',
+    ],
+    [
+      ' stacks: later hits refresh duration but do not increase the stack or add cooldown debt. ',
+      ' acumulaciones: los impactos posteriores renuevan la duración sin aumentar las acumulaciones ni añadir demora a las habilidades. ',
+    ],
+    [
+      'Slow stops accumulating at ',
+      'La Ralentización deja de acumularse al llegar a ',
     ],
     [
       'The Ash Sentinel’s closed-armor multiplier is 65%; the Stone Colossus’s exposed-core multiplier is 125%. These apply before other passive defenses and burst compression, so they are not final damage percentages. Some captains gain protection from their followers. Clear the warning, then strike during the opening.',

@@ -6061,7 +6061,11 @@
     enemySlowRecoveryMultiplier: 0.85,
     // Flat duration adjustment applies to every successful Slow application.
     slowDurationBonusSeconds: 0.25,
-    // Diminishing returns: each overlapping hit strengthens recovery suppression.
+    // After four overlapping Slow hits, refresh duration but do not increase
+    // recovery suppression or add further hit-time cooldown debt. This prevents
+    // persistent Rogue crowds from locking all hero/companion skills indefinitely.
+    slowMaxStacks: 4,
+    // Diminishing returns on the first four overlapping hits only.
     slowStackPenalty: 0.35,
     enemySlowStackPenalty: 0.15,
     // Hit-time debt survives Slow expiry, but never starts an already-ready cooldown.

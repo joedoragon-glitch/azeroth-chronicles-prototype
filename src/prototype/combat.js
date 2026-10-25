@@ -465,7 +465,7 @@
           ? R.cooldownBalance.enemySlowStackPenalty
           : R.cooldownBalance.slowStackPenalty;
         const stacks = Number.isFinite(unit?.slowStacks)
-          ? Math.max(1, Math.floor(unit.slowStacks))
+          ? Math.min(R.cooldownBalance.slowMaxStacks, Math.max(1, Math.floor(unit.slowStacks)))
           : 1;
         const recovery = base / (1 + (stacks - 1) * perStack);
         return dt - Math.min(dt, slow) * (1 - recovery);
@@ -484,8 +484,8 @@
 
       // The shared Slow contract: valid hits refresh one duration window, while
       // stacking strength and *lasting* debt reward repeated, coordinated hits.
-      // No timer or array is allocated per stack. Cooldown debt is applied once
-      // on each hit to already-recovering abilities, including absolute deadlines.
+      // No timer or array is allocated per stack. Cooldown debt is applied only
+      // while building up to the finite stack cap (also for absolute deadlines).
       applySlow(unit, seconds, diagnostic = null) {
         if (
           !unit ||
@@ -501,15 +501,20 @@
         const priorStacks = Number.isFinite(unit.slowStacks)
           ? Math.max(1, Math.floor(unit.slowStacks))
           : 1;
-        unit.slowStacks = alreadySlowed ? priorStacks + 1 : 1;
+        const maxStacks = R.cooldownBalance.slowMaxStacks;
+        // An uninterrupted Slow episode has a finite stack and cooldown-debt
+        // budget; later hits still refresh its duration and can deal damage.
+        const earnsDebt = !alreadySlowed || priorStacks < maxStacks;
+        unit.slowStacks = alreadySlowed ? Math.min(maxStacks, priorStacks + 1) : 1;
         unit.slow = Math.max(alreadySlowed ? unit.slow : 0, duration);
 
         const isHero = unit === this.hero;
         const isCompanion = !isHero && this.s.party.includes(unit);
         const isEnemy = !isHero && !isCompanion;
-        const debt =
-          duration *
-          (isEnemy ? R.cooldownBalance.enemySlowDebtFraction : R.cooldownBalance.slowDebtFraction);
+        const debt = earnsDebt
+          ? duration *
+            (isEnemy ? R.cooldownBalance.enemySlowDebtFraction : R.cooldownBalance.slowDebtFraction)
+          : 0;
         if (isHero) {
           for (const timers of [unit.cd, unit.chargedCd || []])
             for (let i = 0; i < timers.length; i++) if (timers[i] > 0) timers[i] += debt;
