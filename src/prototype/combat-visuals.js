@@ -1150,13 +1150,31 @@
     }
     // Only an opted-in developer recorder scans candidates.
     observer?.candidates(next, current);
-    // Bound transient work while retaining ability and recovery cues during crowds of small hits.
-    while (next.length > 40) {
-      let index = 0;
-      for (let j = 1; j < next.length; j++)
-        if ((next[j].priority || 1) < (next[index].priority || 1)) index = j;
-      observer?.overflow(next[index]);
-      next.splice(index, 1);
+    // The 40-slot budget still wins under overload. Reserve at most ONE
+    // newest hero execution and ONE player/ally recovery receipt so a burst
+    // of tier-5 accents cannot erase both before their first permitted draw.
+    // This runs ONLY on actual overflow; all other priority/eviction behavior
+    // remains unchanged. Warnings and physical projectiles are state-owned,
+    // outside this transient queue. No additional frame is requested.
+    if (next.length > 40) {
+      let hero = null, recovery = null;
+      for (let j = next.length - 1; j >= 0 && (!hero || !recovery); j--) {
+        if (!hero && next[j].type === 'heroSkill') hero = next[j];
+        if (!recovery && next[j].type === 'heal' && next[j].actor !== 'enemy')
+          recovery = next[j];
+      }
+      while (next.length > 40) {
+        let index = -1;
+        for (let j = 0; j < next.length; j++) {
+          if (next[j] === hero || next[j] === recovery) continue;
+          if (index < 0 || (next[j].priority || 1) < (next[index].priority || 1))
+            index = j;
+        }
+        // At most two cues are protected, so a >40-item list always has
+        // evictable transients. Keep diagnostic drop receipts exact.
+        observer?.overflow(next[index]);
+        next.splice(index, 1);
+      }
     }
     return next;
   }
