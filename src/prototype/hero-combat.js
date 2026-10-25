@@ -874,17 +874,34 @@
           hits,
         });
       }
-      // Direction is committed on release, but its source remains the moving
-      // Mage. The front advances through live terrain-clipped geometry.
-      // No root or movement lock is created by this effect.
+      // Lock a far-world aiming point at release. The Mage stays mobile:
+      // the near end follows the caster, changing the angle toward that point.
+      // This is neither a homing beam nor a parallel sideways sweep.
       resolveWideArcaneBeam(f) {
         if (!this.heroSkillEffectLive(f)) return;
+        const ux = Math.cos(f.angle),
+          uy = Math.sin(f.angle),
+          step = 8;
+        let castLimit = f.reach,
+          previous = f.from;
+        for (let distance = step; distance <= f.reach + step; distance += step) {
+          const along = Math.min(distance, f.reach),
+            point = { x: f.from.x + ux * along, y: f.from.y + uy * along };
+          if (!this.clearSegment(previous, point, 0)) {
+            castLimit = Math.max(0, along - step);
+            break;
+          }
+          previous = point;
+        }
+        const aim = {
+          x: f.from.x + ux * castLimit,
+          y: f.from.y + uy * castLimit,
+        };
         const beam = {
           ...f,
           kind: 'wide-beam',
-          // Keep the world-space head's original trajectory independent of
-          // caster movement. Only the tail follows the live Mage.
-          castFrom: { ...f.from },
+          aim,
+          elapsed: 0,
           traveled: 0,
           hitIds: [],
           hits: 0,
@@ -901,8 +918,8 @@
           phase: 'launch',
           x: f.from.x,
           y: f.from.y,
-          endX: f.from.x,
-          endY: f.from.y,
+          endX: aim.x,
+          endY: aim.y,
           angle: f.angle,
           reach: f.reach,
           halfWidth: f.halfWidth,
@@ -921,36 +938,34 @@
             return false;
           }
           if (f.kind === 'wide-beam') {
-            // The tip proceeds along its ORIGINAL world-space bearing. The
-            // freely moving Mage anchors the other end. This pivots the
-            // beam naturally, allowing only enemies actually intersected
-            // by its current angled corridor to receive a single hit.
-            f.traveled = Math.min(f.reach, f.traveled + (f.reach / 0.75) * dt);
-            const head = {
-              x: f.castFrom.x + Math.cos(f.angle) * f.traveled,
-              y: f.castFrom.y + Math.sin(f.angle) * f.traveled,
-            };
+            // Live source, fixed WORLD-SPACE aim point. Sideways movement
+            // changes the beam angle, not a translated parallel lane.
+            // The normal range limit still applies if the Mage backs away.
+            // A changed angle may contact additional foes, once each.
+            f.elapsed = Math.min(0.75, (f.elapsed || 0) + dt);
             const from = { x: this.hero.x, y: this.hero.y },
-              distance = Math.hypot(head.x - from.x, head.y - from.y),
-              ux = distance > 1e-6 ? (head.x - from.x) / distance : Math.cos(f.angle),
-              uy = distance > 1e-6 ? (head.y - from.y) / distance : Math.sin(f.angle);
-            // Re-clip the newly angled connector against solid terrain; Mage
-            // movement must not make a magic column pierce a wall.
+              gap = dist(from, f.aim),
+              range = Math.min(f.reach, gap),
+              ux = gap > 0 ? (f.aim.x - from.x) / gap : Math.cos(f.angle),
+              uy = gap > 0 ? (f.aim.y - from.y) / gap : Math.sin(f.angle);
+            f.traveled = range * (f.elapsed / 0.75);
             let visibleLength = 0,
               previous = from;
-            for (let step = 8; step < distance + 8; step += 8) {
-              const at = Math.min(step, distance),
-                point = { x: from.x + ux * at, y: from.y + uy * at };
+            // Reclip the CURRENT angled corridor to solid terrain. Never
+            // let a cosmetic tether grant damage through a newly crossed wall.
+            for (let step = 8; step < f.traveled + 8; step += 8) {
+              const along = Math.min(step, f.traveled),
+                point = { x: from.x + ux * along, y: from.y + uy * along };
               if (!this.clearSegment(previous, point, 0)) break;
-              visibleLength = at;
+              visibleLength = along;
               previous = point;
             }
             const end = {
               x: from.x + ux * visibleLength,
               y: from.y + uy * visibleLength,
             };
-            // Renderer consumes the same physical corridor as contact checks,
-            // including movement-induced angles and terrain clipping.
+            // Both Canvas and Pixi overlays use this SAME simulation-owned
+            // footprint, so rendering never invents additional damage reach.
             f.from = from;
             f.endX = end.x;
             f.endY = end.y;
@@ -982,7 +997,7 @@
               )
                 f.hits++;
             }
-            if (f.traveled < f.reach) return true;
+            if (f.elapsed < 0.75) return true;
             this.event('heroSkillArea', {
               actor: 'hero',
               class: 'mage',
