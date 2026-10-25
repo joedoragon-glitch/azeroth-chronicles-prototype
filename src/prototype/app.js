@@ -913,8 +913,6 @@
   Object.assign(spanishText, {
     'iPhone / iPad: Safari → Share → Add to Home Screen → Add.\nAndroid / Chrome: browser menu → Install app or Add to Home screen.':
       'iPhone / iPad: Safari → Compartir → Añadir a pantalla de inicio → Añadir.\nAndroid / Chrome: menú del navegador → Instalar app o Añadir a pantalla de inicio.',
-    'Normal and charged forms share a cooldown.':
-      'Las versiones normal y cargada comparten recuperación.',
   });
   Object.assign(spanishText, {
     'Choose your training.': 'Elige tu entrenamiento.',
@@ -967,8 +965,6 @@
     'Tap for the normal form. Hold to prepare the charged form.':
       'Toca para la versión normal. Mantén pulsado para preparar la cargada.',
     Controls: 'Controles',
-    'Both forms share a cooldown. On cooldown, tap to queue normal; briefly hold to queue charged. A strong hit can interrupt charging.':
-      'Ambas versiones comparten recuperación. Durante ella, toca para poner la normal en cola; mantén brevemente para la cargada. Un golpe fuerte puede interrumpir la carga.',
     'Reading effects': 'Leer los efectos',
     'Damage figures use your current Power, before enemy defenses and situational bonuses. Healing cannot exceed maximum health. Distances use map units.':
       'El daño usa tu Poder actual, antes de defensas y bonificaciones de combate. La curación no supera la salud máxima. Las distancias usan unidades del mapa.',
