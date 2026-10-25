@@ -5,9 +5,11 @@
     "alias": 0,
     "procedural": 16
   },
-  "preparedContracts": 74,
+  "preparedContracts": 75,
   "families": {
     "decoration": [
+      "frontier-grain-silo",
+      "frontier-civic-fountain",
       "direwolf-kennel",
       "rider-tack-rack",
       "flight-harness-station",
@@ -55,6 +57,8 @@
       "silver-sort-samples",
       "silver-die-tray",
       "silver-refining-hearth",
+      "crown-coin-vault",
+      "treasury-audit-counter",
       "sealed-crown-consignment",
       "highland-pay-station",
       "ore-sorting-bay",
@@ -100,6 +104,11 @@
       "lean-to",
       "cookfire",
       "sleep-roll",
+      "purchased-preserves",
+      "active-signal-beacon",
+      "crown-maintained-tools",
+      "scornfang-memoranda",
+      "protected-ritual-furnishings",
       "stolen-goods",
       "training-dummy",
       "grave-marker",
@@ -178,6 +187,7 @@
       "feed-trough",
       "feeding-trough",
       "watchpost",
+      "crown-orrery",
       "barricade",
       "replacement-stakes",
       "road-ruts",
@@ -855,14 +865,6 @@
       "hybrid": false
     },
     {
-      "key": "boss:thorn",
-      "species": "thorn",
-      "captain": false,
-      "guard": false,
-      "ranged": false,
-      "hybrid": false
-    },
-    {
       "key": "boss:warlord",
       "species": "warlord",
       "captain": false,
@@ -1160,12 +1162,12 @@
     }
   ],
   "sources": {
-    "src/prototype/visuals.js": "aae32feb8934dbe5ab3f524e60b4de3a033ef22797faed1d87f4b272576fbd8d",
-    "src/prototype/world.js": "73c1d580baae1c874ab59b433ecdcbc66cf12869d22af82b8ce6e8175dc5f180",
-    "src/prototype/rules.js": "915a309d5f28d3678a06f66b6112ff254e5f66f74fa44b7b4df983e8d89e291c",
-    "src/prototype/data.js": "1991ed3ef2149c034dfa9c8b2e67d210a7628f9562a219da7d55cfb6d9f157ca",
-    "src/prototype/sprites.js": "42e164528b7b893a91dc90a384c0d488973f3f500e2ce8e4da9a80c252b49c17",
-    "src/prototype/renderer.js": "78ebe529a89b8b32199eb6158385a5b484c0eb432c0122a7889fb2c00899b1c9"
+    "src/prototype/visuals.js": "473872caea3e3462e3b011d5e3176d9ac1c81d4969438dbcd6ae949146b55c1e",
+    "src/prototype/world.js": "74200c6b100afe7d965bb33a0a8413e479fdaef54b981884c31d8063c5e878ed",
+    "src/prototype/rules.js": "c7a20630b106197e89235881efcfa403d0dc2e6f620a06a611e5b6b6fb02c359",
+    "src/prototype/data.js": "010daccf3b0a7a1f93527b0f900e56a2ce482429bfccfc178ddc3b29a208fee0",
+    "src/prototype/sprites.js": "7285847b152fd6476b107f515b5ff6ae64de88aee0b921a5dbd804862d8434d9",
+    "src/prototype/renderer.js": "05acd58a2732df20672529b71740020d840563f34f746cd51a2424fb97d3e144"
   },
   "limits": "Deterministic normal/Nightmare world samples support source-case classification; every actual art job still requires its exact current state/reference. Future summon/night/seed additions are not inferred from these samples."
 }
