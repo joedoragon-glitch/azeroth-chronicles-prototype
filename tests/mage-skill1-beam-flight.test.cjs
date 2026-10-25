@@ -87,6 +87,51 @@ function advance(g, seconds, step = 0.05) {
   assert(e.hp < hp, 'homing normal beam strikes only when it physically arrives');
 }
 {
+  const { g, enemies: [first, extra] } = arena([[620, 500], [820, 600]]);
+  const firstHp = first.hp, extraHp = extra.hp;
+  assert(g.cast(1, first.id, true));
+  advance(g, 0.25);
+  assert(first.hp < firstHp, 'charged beam reaches the first aligned enemy');
+  assert.equal(extra.hp, extraHp, 'second enemy begins outside the locked angle');
+  // Translation alone steers the beam: facing stays fixed from its release.
+  g.hero.y = 575;
+  advance(g, 0.5);
+  assert(extra.hp < extraHp, 'sidestepping Mage sweeps the still-active beam onto an extra foe');
+  assert.equal(g._heroSkillEffects?.length || 0, 0);
+  const result = g.effects.find(e => e.type === 'heroSkillArea' && e.phase === 'complete');
+  assert.equal(result?.hits, 2, 'each distinct foe struck only once while sweeping');
+  assert.equal(result?.y, 575, 'charged effect finishes at current caster source position');
+}
+{
+  const { g, enemies: [e] } = arena([[680, 500]]);
+  assert(g.cast(1, e.id, true));
+  g.hero.x = 530;
+  advance(g, 0.1);
+  const f = g._heroSkillEffects?.[0];
+  assert.equal(f.from.x, 530, 'simulation shifts charged origin with Mage');
+  assert(f.endX > 530, 'advancing head tracks moved origin');
+}
+{
+  const art = require('../src/prototype/hero-presentation.js');
+  const calls = [];
+  const ctx = new Proxy({}, {
+    get(o, k) {
+      if (!(k in o)) o[k] = (...args) => { calls.push([k, ...args]); };
+      return o[k];
+    },
+  });
+  const p = {
+    source: 'hero', style: 'beam', slot: 1, charged: false,
+    originX: 500, originY: 500, x: 610, y: 500,
+    dx: 1, dy: 0, beamWidthScale: 2.5, mageSkill1Homing: true,
+    trailPoints: [{x:500, y:500}, {x:550, y:500}],
+  };
+  assert(art.projectile(ctx, point => point, p, 'mage', false, {x:530, y:575, hp:100}));
+  const start = calls.find(c => c[0] === 'moveTo');
+  assert.deepEqual(start, ['moveTo', 530, 575], 'ordinary luminous tail starts at Mage live position');
+  assert.equal(p.originX, 500, 'presenting the tail never relocates gameplay head or cast origin');
+}
+{
   const { g, enemies: [e] } = arena([[620, 500]]);
   const before = e.hp;
   assert(g.cast(1, e.id, true));
