@@ -74,7 +74,17 @@ const root = path.resolve(__dirname, '..'),
         await page.goto(
           'http://127.0.0.1:' + server.address().port + prefix + 'tools/audio/index.html',
         );
-        await page.waitForFunction(() => window.AudioAudition?.audio.recordingManifest);
+        await page.waitForFunction(() => window.AudioAudition?.audio.recordingManifest).catch(async (error) => {
+          const diagnostics = await page.evaluate(() => ({
+            ready: !!window.AudioAudition,
+            manifest: !!window.AudioAudition?.audio?.recordingManifest,
+            message: document.querySelector('#message')?.textContent,
+            secure: window.isSecureContext,
+            crypto: !!window.crypto?.subtle,
+            scripts: [...document.scripts].map((s) => s.src).slice(-8),
+          }));
+          throw Error('Audio audition initialization failed: ' + JSON.stringify({ diagnostics, pageErrors: errors }) + '\n' + error.message);
+        });
         assert.equal(await page.evaluate(() => AudioAudition.audio.ctx), null);
         assert.equal(await page.locator('#boss option').count(), 12);
         const saved = await page.evaluate(() => JSON.stringify(localStorage));
