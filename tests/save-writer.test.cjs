@@ -68,6 +68,7 @@ function lockManager() {
   app.scope.Prototype.game.hero.gold = 432;
   assert(app.scope.Prototype.save());
   const saved = storage.get(P.saveKey('normal'));
+  const checkpoint = storage.get(P.checkpointKey('normal'));
   const marker = storage.get(P.recoveryMarkerKey);
   const second = shell('en', 'paladin', { storage, navigator: { locks: liveLocks } });
   await settle();
@@ -85,6 +86,11 @@ function lockManager() {
     storage.get(P.recoveryMarkerKey),
     marker,
     'Non-owner shutdown cannot clean the owner recovery marker',
+  );
+  assert.equal(
+    storage.get(P.checkpointKey('normal')),
+    checkpoint,
+    'A non-owner cannot rotate the owner recovery checkpoints',
   );
   for (const listener of app.events.pagehide || []) listener();
   await settle();

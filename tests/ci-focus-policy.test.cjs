@@ -113,7 +113,10 @@ assert.deepEqual(unclassified.uncovered, ['src/prototype/new-future-system.js'])
 assert.deepEqual(unclassified.tests, ['tests/architecture.test.cjs']);
 for (const [source, expected] of [
   ['runtime', ['frame-skip', 'auto-fps-adaptive-coupling', 'render-resolution']],
-  ['persistence', ['persistence-safety', 'save-writer', 'restart-recovery']],
+  [
+    'persistence',
+    ['persistence-safety', 'save-writer', 'restart-recovery', 'save-recovery-checkpoints'],
+  ],
   [
     'save',
     ['persistence-safety', 'slow-cooldown', 'beta-historical', 'snapshot-encounter-lifecycle'],

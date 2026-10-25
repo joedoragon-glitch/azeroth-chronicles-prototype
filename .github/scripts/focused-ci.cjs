@@ -57,6 +57,7 @@ const groups = [
     match: /^src\/prototype\/(?:persistence|save)\.js$/,
     tests: [
       TEST + 'persistence-safety.test.cjs',
+      TEST + 'save-recovery-checkpoints.test.cjs',
       TEST + 'save-writer.test.cjs',
       TEST + 'platform-runtime.test.cjs',
       TEST + 'restart-recovery.test.cjs',
@@ -69,6 +70,7 @@ const groups = [
     match: /^src\/prototype\/app\.js$/,
     tests: [
       TEST + 'persistence-safety.test.cjs',
+      TEST + 'save-recovery-checkpoints.test.cjs',
       TEST + 'save-writer.test.cjs',
       TEST + 'restart-recovery.test.cjs',
     ],
@@ -109,6 +111,7 @@ const groups = [
     match: /^tests\/helpers\/production-shell\.cjs$/,
     tests: [
       TEST + 'persistence-safety.test.cjs',
+      TEST + 'save-recovery-checkpoints.test.cjs',
       TEST + 'save-writer.test.cjs',
       TEST + 'render-resolution.test.cjs',
     ],
