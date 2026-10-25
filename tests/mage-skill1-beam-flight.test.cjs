@@ -48,7 +48,7 @@ function advance(g, seconds, step = 0.05) {
   const hp1 = first.hp, hp2 = second.hp;
   assert.equal(g._heroSkillEffects[0]?.kind, 'wide-beam');
   const initial = g.effects.find(e => e.type === 'heroSkillArea' && e.phase === 'launch');
-  assert(initial && Math.abs(initial.travelSeconds - 0.75) < 0.001);
+  assert(initial && Math.abs(initial.travelSeconds - 0.625) < 0.001);
   advance(g, 0.1);
   assert.equal(first.hp, hp1, 'near foe not hit before traveling front reaches it');
   advance(g, 0.18);
@@ -93,7 +93,7 @@ function advance(g, seconds, step = 0.05) {
   const hp = behindWall.hp;
   const clear = g.clearSegment.bind(g);
   g.clearSegment = (a, b, ...rest) => b.x <= 700 && clear(a, b, ...rest);
-  advance(g, 0.75);
+  advance(g, 0.65);
   assert(g.effects.some(e => e.type === 'heroSkillArea' && e.phase === 'complete'));
   assert(behindWall.hp === hp, 'the caster-connected beam never hits through an obstruction');
 }
@@ -105,7 +105,9 @@ function advance(g, seconds, step = 0.05) {
   const hp = e.hp;
   const p = g.s.projectiles.find(p => p.style === 'beam');
   assert(p?.mageSkill1Homing, 'only ordinary Skill 1 has homing');
-  assert.equal(p.beamWidthScale, 2.5, '150% thicker means 2.5x original width');
+  assert.equal(p.beamWidthScale, 2, 'regular beam is 20% thinner than previous 2.5x width');
+  assert.equal(p.speed, 1.2 * Math.max(170, Math.min(535, 280 / 0.75)),
+    'regular Mage beam flies 20% faster than its original speed');
   assert(p.speed < 1000, 'slower than former laser');
   assert.equal(p.travelBudget, 540, 'homing flight remains finite');
   g.hero.x = 470;
@@ -162,7 +164,7 @@ function advance(g, seconds, step = 0.05) {
   const p = {
     source: 'hero', style: 'beam', slot: 1, charged: false,
     originX: 500, originY: 500, x: 610, y: 500,
-    dx: 1, dy: 0, beamWidthScale: 2.5, mageSkill1Homing: true,
+    dx: 1, dy: 0, beamWidthScale: 2, mageSkill1Homing: true,
     trailPoints: [{x:500, y:500}, {x:550, y:500}],
   };
   assert(art.projectile(ctx, point => point, p, 'mage', false, {x:530, y:575, hp:100}));
@@ -184,7 +186,7 @@ function advance(g, seconds, step = 0.05) {
     'no charged-beam hit receipt survives the transition');
   assert.equal(g._heroSkillEffects?.length || 0, 0);
 }
-// Frame-size equivalence: the same 0.75-second cast must not change its
+// Frame-size equivalence: the faster 0.625-second cast must not change its
 // contact count or target ownership at manual 20/30/60 FPS simulation steps.
 for (const fps of [20, 30, 60]) {
   const { g, enemies: [first, second] } = arena([[620, 500], [840, 500]]);
@@ -192,10 +194,10 @@ for (const fps of [20, 30, 60]) {
   const hp1 = first.hp, hp2 = second.hp;
   advance(g, 0.1, 1 / fps);
   assert.equal(first.hp, hp1, fps + ' FPS must not damage a near target prematurely');
-  advance(g, 0.65, 1 / fps);
+  advance(g, 0.55, 1 / fps);
   assert(first.hp < hp1, fps + ' FPS must contact near target');
   assert(second.hp < hp2, fps + ' FPS must contact far target');
-  assert.equal(g._heroSkillEffects.length, 0, fps + ' FPS must finish one beam in 0.75s');
+  assert.equal(g._heroSkillEffects.length, 0, fps + ' FPS must finish one beam by 0.65s');
   assert.equal(g.effects.filter(e => e.type === 'heroSkillArea' && e.phase === 'complete').at(-1)?.hits,
     2, fps + ' FPS must resolve each enemy once');
 }
