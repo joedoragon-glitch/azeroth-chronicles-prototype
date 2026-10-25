@@ -207,6 +207,14 @@
   register('world/boss/darklord/3', 'world', 'damage');
   register('world/boss/darklord/4', 'world', 'damage');
   register('world/boss/darklord/5', 'world', 'markDuration');
+  // Cindermaw has independent specialist release and contact owners.
+  register('world/boss/cindermaw/0', 'world', 'damage'); // cordon final blast
+  register('world/boss/cindermaw/1', 'world', 'damage'); // distraint original physical contact
+  register('world/boss/cindermaw/2', 'world', 'wardDuration'); // protection cast
+  register('world/boss/cindermaw/3', 'world', 'damage'); // seals warned areas
+  register('world/boss/cindermaw/4', 'world', 'damage'); // equalisation lawful contact
+  register('world/boss/cindermaw/5', 'world', 'damage'); // delegation original casts
+  register('world/boss/cindermaw/6', 'world', 'summonVitality'); // actually admitted ministry responders
   Object.freeze(registry);
 
   function validatedLevel(level) {

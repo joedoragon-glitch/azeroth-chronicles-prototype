@@ -48,11 +48,11 @@ assert.throws(() => Levels.createTuning({ modes: { nightmare: { enemy: 3 } } }),
 assert.throws(() => Levels.createTuning({ modes: { normal: { world: 3 } } }), /Normal/);
 
 const ids = Object.keys(Levels.ACTIONS);
-assert.equal(ids.length, 51 + 33 + 9 + 75, '93 party actions + 75 native World keys');
+assert.equal(ids.length, 51 + 33 + 9 + 82, '93 party actions + 82 native World keys');
 assert.equal(ids.filter(k=>k.startsWith('hero/')).length, 51);
 assert.equal(ids.filter(k=>k.startsWith('pet/')).length, 33);
 assert.equal(ids.filter(k=>k.startsWith('troop/')).length, 9);
-assert.equal(ids.filter(k=>k.startsWith('world/')).length, 75);
+assert.equal(ids.filter(k=>k.startsWith('world/')).length, 82);
 assert.equal(Levels.ACTIONS['world/basic/melee'].lever, 'damage');
 assert.equal(Levels.ACTIONS['world/basic/ranged'].lever, 'damage');
 assert.equal(Levels.ACTIONS['world/support/heal'].lever, 'healTempo');
@@ -84,6 +84,8 @@ const authoredBossLevers = {"thorn":["damage","damage","slowDuration","summonVit
 for (const [family, levers] of Object.entries(authoredBossLevers))
   for (let index = 0; index < levers.length; index++)
     assert.equal(Levels.ACTIONS['world/boss/' + family + '/' + index].lever, levers[index]);
+for (const [index, lever] of ['damage','damage','wardDuration','damage','damage','damage','summonVitality'].entries())
+  assert.equal(Levels.ACTIONS['world/boss/cindermaw/' + index].lever, lever);
 for (const cls of ['paladin', 'mage', 'ranger']) {
   assert(Levels.ACTIONS['hero/' + cls + '/auto']);
   for (let slot=1;slot<=8;slot++)
