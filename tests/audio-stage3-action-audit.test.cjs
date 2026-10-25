@@ -147,7 +147,8 @@ for(const [type,family] of [
   g.updateEnemies=()=>{};
   g.updateNight=g.updatePacks=g.updateGuardianReinforcements=g.updateElites=()=>{};
   assert(!g.awaitsHeroAttack(e), 'companion fixture must not be tutorial protected');
-  assert(g.engage(e), 'companion fixture must enter a real encounter');
+  g.engage(e);
+  assert(e.aggro === true, 'companion fixture must enter a real encounter');
   // Preserve the established game's 100-tick autonomous skill acceptance
   // fixture; inspect its emitted receipts after the combat decision loop.
   for(let tick=0;tick<100;tick++) g.tick(0.05);
