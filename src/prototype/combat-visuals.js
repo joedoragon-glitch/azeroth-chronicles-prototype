@@ -1068,7 +1068,7 @@
     ctx.fillText('Interrupted', p.x, p.y - 37 - (1 - fade) * 5);
     ctx.restore();
   }
-  function queue(events, game, current = []) {
+  function queue(events, game, current = [], observer = null) {
     const art =
       root.PrototypeEnemyVfxArt ||
       (typeof require === 'function' ? require('./enemy-vfx-art.js') : null);
@@ -1138,11 +1138,14 @@
       else if (e.type === 'chargedArea') push(e, e.type, 0.7, 5);
       else if (e.type === 'chargedImpact') push(e, e.type, 0.3, 3);
     }
+    // Only an opted-in developer recorder scans candidates.
+    observer?.candidates(next, current);
     // Bound transient work while retaining ability and recovery cues during crowds of small hits.
     while (next.length > 40) {
       let index = 0;
       for (let j = 1; j < next.length; j++)
         if ((next[j].priority || 1) < (next[index].priority || 1)) index = j;
+      observer?.overflow(next[index]);
       next.splice(index, 1);
     }
     return next;
