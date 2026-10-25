@@ -184,7 +184,7 @@
         if (e.phase !== 'complete')
           emit(
             e.class === 'paladin' ? 'skill1-cross' : 'skill1-wide-beam',
-            e.class === 'paladin' ? 0.36 : (e.travelSeconds || 0.75) + 0.08,
+            e.class === 'paladin' ? 0.36 : (e.travelSeconds || 0.625) + 0.08,
           );
       }
       else if (e.type === 'heroHawk' && e.slot === 1)
@@ -366,9 +366,102 @@
       } else line(ctx, { x, y }, { x: x + Math.cos(angle) * 5, y: y + Math.sin(angle) * 5 });
     }
   }
+  // Alt B: Arcane Lance Helix. All curves are drawn with the same Canvas 2D
+  // primitives used by the other hero VFX (including the Pixi Canvas overlay).
+  // Never owns hit detection, saved state, random particles, or a new asset.
+  function arcaneLanceHelix(ctx, points, width, phase, reduced, optimized, wide) {
+    if (points.length < 2) return;
+    const lengths = [0];
+    for (let i = 1; i < points.length; i++)
+      lengths.push(lengths[i - 1] + Math.hypot(
+        points[i].x - points[i - 1].x, points[i].y - points[i - 1].y,
+      ));
+    const total = lengths[lengths.length - 1];
+    if (!(total > 5) || !Number.isFinite(total)) return;
+    const origin = points[0],
+      amplitude = wide ? Math.max(3, Math.min(18, width * 0.55))
+        : Math.max(2, Math.min(6, width * 0.65)),
+      turns = Math.max(1, Math.min(3.25, total / (wide ? 145 : 125))),
+      samples = reduced ? 0 : optimized ? 10 : 18,
+      diamonds = reduced ? 0 : optimized ? (wide ? 2 : 1) : (wide ? 4 : 3);
+    // Samples move monotonically along the REAL rendered path. This retains
+    // the ordinary homing bend and the charged beam's wall-clipped head.
+    let segment = 1;
+    const sample = (distance) => {
+      while (segment < lengths.length - 1 && lengths[segment] < distance)
+        segment++;
+      const before = points[segment - 1], after = points[segment],
+        length = Math.max(0.0001, lengths[segment] - lengths[segment - 1]),
+        fraction = Math.max(0, Math.min(1, (distance - lengths[segment - 1]) / length));
+      return {
+        x: before.x + (after.x - before.x) * fraction,
+        y: before.y + (after.y - before.y) * fraction,
+        nx: -(after.y - before.y) / length,
+        ny: (after.x - before.x) / length,
+      };
+    };
+    ctx.save();
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    if (samples) {
+      for (const side of [-1, 1]) {
+        segment = 1;
+        ctx.beginPath();
+        for (let i = 0; i <= samples; i++) {
+          const t = i / samples,
+            center = sample(t * total),
+            // Opposing strands wind around the core; they cannot widen
+            // the actual charged hit corridor.
+            wave = side * Math.sin(t * turns * Math.PI * 2 + phase)
+              * amplitude * Math.sin(Math.PI * t),
+            x = center.x + center.nx * wave,
+            y = center.y + center.ny * wave;
+          i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        }
+        ctx.strokeStyle = side < 0 ? '#bb8af5' : '#e3b5ff';
+        ctx.globalAlpha = wide ? 0.72 : 0.67;
+        ctx.lineWidth = wide ? 1.65 : 1.3;
+        ctx.stroke();
+      }
+    }
+    ctx.strokeStyle = '#eed4ff';
+    ctx.globalAlpha = 0.82;
+    ctx.lineWidth = 1.1;
+    for (let j = 0; j < diamonds; j++) {
+      segment = 1;
+      const t = (j + 0.7) / (diamonds + 0.5),
+        center = sample(t * total),
+        offset = (j % 2 ? -1 : 1) * amplitude * 0.7,
+        x = center.x + center.nx * offset,
+        y = center.y + center.ny * offset,
+        r = wide ? 3.8 : 2.9;
+      ctx.beginPath();
+      ctx.moveTo(x, y - r);
+      ctx.lineTo(x + r * 0.68, y);
+      ctx.lineTo(x, y + r);
+      ctx.lineTo(x - r * 0.68, y);
+      ctx.closePath();
+      ctx.stroke();
+    }
+    // An open, bounded casting sigil follows the live Mage, never the old
+    // projectile launch coordinate. Reduced motion keeps this static cue.
+    ctx.globalAlpha = 0.75;
+    ctx.strokeStyle = '#d9aaff';
+    ctx.lineWidth = wide ? 1.5 : 1.2;
+    ctx.beginPath();
+    ctx.arc(origin.x, origin.y, wide ? 12 : 8, 0, Math.PI * 2);
+    ctx.stroke();
+    if (!optimized && !reduced) {
+      ctx.globalAlpha = 0.4;
+      ctx.beginPath();
+      ctx.arc(origin.x, origin.y, wide ? 17 : 12, -0.75, Math.PI + 0.75);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
   // Class Skill 1 physical spell geometry is supplied by simulation receipts,
   // not inferred from cosmetic particles or a separate targeting resolver.
-  function skill1Signature(ctx, screen, f, reduced = false) {
+  function skill1Signature(ctx, screen, f, reduced = false, optimized = false) {
     const age = f.max - f.life,
       fade = Math.min(1, f.life / Math.min(f.max, 0.17)),
       grow = reduced ? 1 : Math.min(1, age / 0.12);
@@ -430,7 +523,7 @@
       const from = { x: f.x, y: f.y },
         // Render the same advancing front that simulation uses for contact.
         // Reduced motion removes decorative shimmer, never the travel delay.
-        progress = Math.min(1, age / Math.max(0.01, f.travelSeconds || 0.75)),
+        progress = Math.min(1, age / Math.max(0.01, f.travelSeconds || 0.625)),
         to = f.simulatedFront
           ? { x: f.endX, y: f.endY }
           : {
@@ -443,7 +536,10 @@
           x: from.x - f.halfWidth * Math.sin(Math.atan2(to.y - from.y, to.x - from.x)),
           y: from.y + f.halfWidth * Math.cos(Math.atan2(to.y - from.y, to.x - from.x)),
         };
-      ctx.globalAlpha = fade * 0.4;
+      // The low-opacity wash still marks the FULL gameplay hit corridor.
+      // Concentrated light and two procedural helix strands replace the old
+      // solid-looking violet slab without changing width, range or contacts.
+      ctx.globalAlpha = fade * 0.16;
       ctx.fillStyle = '#9368db';
       const dx = to.x - from.x,
         dy = to.y - from.y,
@@ -457,16 +553,24 @@
         { x: from.x - nx, y: from.y - ny },
       ]);
       ctx.fill();
-      ctx.globalAlpha = fade * 0.78;
-      ctx.strokeStyle = '#e9ceff';
-      ctx.lineWidth = Math.max(
-        2,
-        Math.hypot(screen(shift).x - start.x, screen(shift).y - start.y) * 0.35,
+      const visibleHalfWidth = Math.hypot(
+        screen(shift).x - start.x, screen(shift).y - start.y,
       );
+      ctx.globalAlpha = fade * 0.35;
+      ctx.strokeStyle = '#a46de7';
+      ctx.lineWidth = Math.max(5, Math.min(15, visibleHalfWidth * 0.27));
       line(ctx, start, end);
-      ctx.lineWidth = 1.5;
-      ctx.strokeStyle = '#fff7fd';
+      ctx.globalAlpha = fade * 0.93;
+      ctx.strokeStyle = '#ead0ff';
+      ctx.lineWidth = Math.max(2.4, Math.min(5.5, visibleHalfWidth * 0.095));
       line(ctx, start, end);
+      ctx.strokeStyle = '#fff7ff';
+      ctx.lineWidth = 1.25;
+      line(ctx, start, end);
+      arcaneLanceHelix(
+        ctx, [start, end], visibleHalfWidth, age * 8,
+        reduced, optimized, true,
+      );
     } else if (f.stage.startsWith('skill1-hawk-')) {
       const p = screen(f),
         a = f.angle || 0;
@@ -520,7 +624,7 @@
     { reduced = false, optimized = false, width = 1280, height = 800 } = {},
   ) {
     if (f.stage?.startsWith('skill1-')) {
-      skill1Signature(ctx, screen, f, reduced);
+      skill1Signature(ctx, screen, f, reduced, optimized);
       return;
     }
     const p = screen(f),
@@ -803,22 +907,23 @@
       // its luminous tail is visually tethered to the moving caster.
       // Old flight breadcrumbs bend proportionally toward the live origin;
       // the distant head stays fixed, so it never teleports with the hero.
+      const beamPoints = [screen(origin)],
+        stride = Math.max(1, Math.ceil(path.length / 18));
+      for (let i = 1; i < path.length; i += stride) {
+        const fraction = i / Math.max(1, path.length),
+          pull = attached ? (1 - fraction) ** 2 : 0,
+          point = path[i];
+        beamPoints.push(screen({
+          x: point.x + (origin.x - start.x) * pull,
+          y: point.y + (origin.y - start.y) * pull,
+        }));
+      }
+      beamPoints.push(q);
       const strokeBeam = () => {
-        const o = screen(origin);
         ctx.beginPath();
-        ctx.moveTo(o.x, o.y);
-        for (let i = 1; i < path.length; i++) {
-          const fraction = i / Math.max(1, path.length),
-            pull = attached ? (1 - fraction) ** 2 : 0,
-            point = path[i],
-            warped = {
-              x: point.x + (origin.x - start.x) * pull,
-              y: point.y + (origin.y - start.y) * pull,
-            },
-            v = screen(warped);
-          ctx.lineTo(v.x, v.y);
-        }
-        ctx.lineTo(q.x, q.y);
+        ctx.moveTo(beamPoints[0].x, beamPoints[0].y);
+        for (let i = 1; i < beamPoints.length; i++)
+          ctx.lineTo(beamPoints[i].x, beamPoints[i].y);
         ctx.stroke();
       };
       ctx.lineCap = 'round';
@@ -826,11 +931,20 @@
       ctx.globalAlpha = 0.25;
       ctx.lineWidth = (reduced ? 4 : 7) * width;
       strokeBeam();
-      ctx.globalAlpha = 0.9;
+      ctx.globalAlpha = 0.94;
       ctx.lineWidth = 2 * width;
-      ctx.strokeStyle = def.colors[1];
+      ctx.strokeStyle = '#ead0ff';
       strokeBeam();
-      glyph(ctx, q.x, q.y, 'orb', 6 * Math.sqrt(width));
+      // Only Mage Skill 1 is caster-tethered; Skill 6 keeps its distinct art.
+      if (p.mageSkill1Homing)
+        arcaneLanceHelix(
+          ctx, beamPoints, (reduced ? 4 : 7) * width * 0.55,
+          (p.traveled || 0) * 0.03, reduced, false, false,
+        );
+      ctx.strokeStyle = '#fff7ff';
+      ctx.lineWidth = 1.05;
+      strokeBeam();
+      glyph(ctx, q.x, q.y, 'orb', 5.2 * Math.sqrt(width));
     } else if (p.style === 'holy') {
       ctx.translate(q.x, q.y);
       ctx.rotate(angle);
@@ -920,25 +1034,51 @@
     ctx.restore();
   }
   function statuses(ctx, screen, game, width, height) {
-    // Actual status lifetimes only; no guessed invulnerability or control windows.
+    // Preserve the existing budgets: at most three markers per enemy and 24
+    // enemies per draw. Reserve those slots for consequential active statuses
+    // and the selected target / bosses rather than raw world-array order.
     const now = game.s.time;
-    const enemies = game.zone().enemies;
-    let shown = 0;
-    ctx.save();
-    ctx.lineWidth = 1.6;
-    for (const e of enemies) {
+    // The held Target button is tracked separately from the squad focus.
+    // Read its current-zone id without calling selectedHeroTarget(), which
+    // can mutate stale selection and must not run as a rendering side effect.
+    const selectedId =
+      (game.manualHeroTargetZone === game.zoneId && game.manualHeroTargetId) ||
+      game.s.heroTarget || game.hero.order?.id || null;
+    const chosen = [];
+    const limit = 24;
+    for (const e of game.zone().enemies) {
       if (e.hp <= 0 || e.returning) continue;
+      const priority = e.id === selectedId ? 4 :
+        e.type === 'boss' ? 3 : e.captain || e.roomCaptain ? 2 : 0;
+      // Once the budget is full, normal enemies cannot replace another
+      // normal enemy. Keep scanning cheaply for a late boss or hero target.
+      if (chosen.length >= limit && !priority) continue;
       const p = screen(e);
       if (p.x < -35 || p.x > width + 35 || p.y < -70 || p.y > height + 35) continue;
-      const statuses = [];
-      if ((e.weakenUntil || 0) > now) statuses.push(['sunder', palettes.holy[0]]);
-      if ((e.fractureUntil || 0) > now) statuses.push(['fracture', palettes.arcane[0]]);
-      if ((e.tauntUntil || 0) > now) statuses.push(['judgment', palettes.holy[0]]);
-      if (e.slow > 0) statuses.push(['ice', palettes.frost[0]]);
-      if (game.mageSilenceActive(e)) statuses.push(['silence', palettes.arcane[0]]);
-      if (!statuses.length) continue;
-      for (let i = 0; i < Math.min(3, statuses.length); i++) {
-        const [motif, color] = statuses[i],
+      const marks = [];
+      // Control effects must not be hidden behind older debuff glyphs.
+      if (game.mageSilenceActive(e)) marks.push(['silence', palettes.arcane[0]]);
+      if ((e.tauntUntil || 0) > now) marks.push(['judgment', palettes.holy[0]]);
+      if (e.slow > 0) marks.push(['ice', palettes.frost[0]]);
+      if ((e.fractureUntil || 0) > now) marks.push(['fracture', palettes.arcane[0]]);
+      if ((e.weakenUntil || 0) > now) marks.push(['sunder', palettes.holy[0]]);
+      if (!marks.length) continue;
+      const item = { p, marks, priority };
+      if (chosen.length < limit) {
+        chosen.push(item);
+      } else {
+        let lowest = 0;
+        for (let i = 1; i < chosen.length; i++)
+          if (chosen[i].priority < chosen[lowest].priority) lowest = i;
+        if (priority > chosen[lowest].priority) chosen[lowest] = item;
+      }
+    }
+    ctx.save();
+    ctx.lineWidth = 1.6;
+    for (const { p, marks } of chosen) {
+      const visible = marks.length > 3 ? 2 : marks.length;
+      for (let i = 0; i < visible; i++) {
+        const [motif, color] = marks[i],
           x = p.x + 25,
           y = p.y - 17 + i * 13;
         ctx.strokeStyle = '#17242b';
@@ -948,7 +1088,18 @@
         ctx.lineWidth = 1.5;
         glyph(ctx, x, y, motif, 4);
       }
-      if (++shown >= 24) break;
+      if (marks.length > 3) {
+        // One overflow marker replaces the third full-size glyph. No extra
+        // icon slot, screen-wide aura or additional per-enemy drawing pass.
+        const x = p.x + 25, y = p.y + 9;
+        ctx.fillStyle = '#17242be8';
+        ctx.fillRect(x - 8, y - 7, 16, 12);
+        ctx.fillStyle = '#f4f6e5';
+        ctx.font = 'bold 9px system-ui';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('+' + (marks.length - 2), x, y - 1);
+      }
     }
     for (const ally of [game.hero, ...game.activeLivingParty()]) {
       const p = screen(ally);

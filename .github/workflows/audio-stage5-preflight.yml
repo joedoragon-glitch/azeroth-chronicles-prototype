@@ -1,0 +1,37 @@
+name: Stage 5 audio PWA inventory preflight
+
+# Inventory and offline mechanics only. Not a combined release/physical audio gate.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tests/audio-stage5-release-preflight.test.cjs'
+      - '.github/workflows/audio-stage5-preflight.yml'
+permissions:
+  contents: read
+concurrency:
+  group: audio-stage5-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  offline-preflight:
+    if: github.event.pull_request.head.ref == 'audit/audio-stage5-release-preflight-20261025'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked build dependencies
+        run: npm ci --ignore-scripts
+      - name: Prepare pinned same-origin PixiJS asset for existing offline fixtures
+        run: node scripts/vendor-pixi.cjs --ensure
+      - name: Stage 5 inventory-only report (release remains blocked)
+        run: node tests/audio-stage5-release-preflight.test.cjs
+      - name: Recorded audio packaging, hash and offline cache regression
+        run: node tests/audio-assets.test.cjs
+      - name: Service worker update and rollback regression
+        run: node tests/service-worker.test.cjs
+      - name: Commit-stamped PWA cache identity and safe packaging
+        run: node tests/pwa-release-id.test.cjs

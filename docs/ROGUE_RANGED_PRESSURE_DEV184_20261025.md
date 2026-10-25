@@ -1,0 +1,88 @@
+# Azeroth Chronicles — Rogue ranged-pressure investigation, dev.184
+
+**Date:** 25 October 2026  
+**Branch base:** published `main` `8215ab0f301a88cf3b4a55659001cae6ef05db0b` / `0.9.1+snapshot.dev.184`  
+**Status:** Independent investigation — no change to combat rules, tuning, assets, save contracts or PWA version.
+
+## Why this is separate
+
+PR #459 has **already shipped** the director-approved captain/guardian healing and the two-second retreat-first Rogue follow-up (#454 + #455). Do not cherry-pick those commits, revert them, or reopen their implementation. Prior merged #429/#451 Slow protection and #453 territorial retreat/emergency support are the authoritative baseline.
+
+The historic suggestion to raise ordinary Rogue initiation to 520 units is **not accepted**. It would not address an upstream target-selection gate and would change many matchups without proving a defect. This audit must demonstrate whether an attacked enemy with actual ranged pressure is still unfairly passive after the shipped retreat-first behavior.
+
+## Verified source boundaries at dev.184
+
+- `combat.js:tacticalHighestThreatTarget`: unfortified ordinary, guardian, Ringleader **and captain** target selection normally ends at 360 units. Boss target selection ends at 500. Fortified ranged enemies may use their own shot range; do not generalize these numbers to them.
+- `engine.js:tacticalRogueMove`: legal distance is 340/440/500 multiplied by `balance.enemySpecialReachMultiplier = 1.2`, yielding ordinary/guardian/Ringleader **408**, captain **528**, boss **600**. Move initiation still needs the upstream selected target and line of sight.
+- `combat.js:tacticalRogueEligibility`: a healthy equally leveled ordinary enemy facing one actual attacker ordinarily fails the two-source pressure threshold. Wounding below the threshold, hero level advantage, or a second active attacker can change eligibility. Boss/captain summon and cunning exceptions remain separate. Do not bypass these protections blindly.
+- `fortifications.js:enemyAcquisitionRange`: ordinary passive aggro uses `260 × 1.1 = 286` unless ranged fortification rules enlarge it. An actual successful incoming attack instead triggers existing `combat.damage` engagement; passive acquisition range and Rogue response are different contracts.
+- `engine.js:tacticalAutoRogue`: requires an engaged actor, no committed attack, the already-shipped cooldown/warning safeguards, and Rogue eligibility. The thinking/regroup/escape decision has its own timing and territory restrictions.
+
+## Focused Phase 2, first commit: diagnostic matrix
+
+The new `tests/rogue-ranged-pressure-audit.test.cjs` uses native actor types, real threat-recording, actual eligibility and threat-selection functions, and actual tactical-move creation. It records **Ranger, Mage and Archer** sources at **350, 400, 450, 480** and additional 520/560 boundary probes for ordinary, guardian, Ringleader, captain and boss roles. It asserts established rules and reports structured matrix rows. A separate two-attacker comparison tests the independent eligibility threshold.
+
+**Evidence limitation:** the initial matrix intentionally supplies unobstructed sightlines and seeds a recent damage record using the game's genuine threat ledger. It does **not** launch a class-specific projectile, simulate a full frame-by-frame pursuit/escape, prove a legal input at every displayed distance, or certify actual contact/damage or human fairness. It is a deterministic gate-mapping checkpoint, not a balance change or a claim of completed gameplay testing.
+
+## Next independently gated investigations
+
+1. **Source/CI gate:** run only the new diagnostic and repository-selected focused architecture checks on the exact PR head. Record matrix and verify no surprise regression.
+2. **Native encounter gate:** add a second narrow test that uses actual unobstructed world locations and actual Ranger Skill 1, Mage Skill 1, and Archer companion projectile/attack flows. At 350/400/450/480 log hit, aggro, eligibility, chosen target, warned maneuver, retreat/reinforcement, and hit/miss or interrupted retreat over bounded frames. Distinguish game-wide territorial leash effects from a true Rogue range gap. Compare with dev.184 baseline; do not silently take #452's unmerged Mage beams as live behavior.
+3. **Optional remedy gate:** only if native tests reproduce unfair pressure under approved rules, prefer a minimal eligibility/selection reconciliation or a narrow response to confirmed distant damage. Proposed range changes require separate director decision. Preserve two-second cadence, telegraph dodgeability, Slow cap, Ranger hawk counterplay, safe towns, finite paths, and save state.
+4. **Release gate:** exact-head focused tests/build, explicit director review before merge/deploy. No automatic full-game/browser/performance matrix.
+
+## Wider live PR assessment
+
+As of this checkpoint, 12 PRs remain open: #454/#455 are **superseded historical feature drafts** included through released #459 (keep traceability, never merge again). Preserve #458 TRUE-form boss patrols separately; its `engine.js` changes could alter how ranged combat is entered. #452 Mage beam travel is also a **draft**, so its prospective charged ranges are not live acceptance evidence. #440 Critical Executions remains staged, not a valid reason to modify Rogue balance. Other drafts (#456, #449, #447, #445, #436, #435, #401) retain their own scope and gates. A follow-up priority review should respect each owner's acceptance/hold status rather than batch-merging all open PRs.
+
+**No merge, deployment, AI retuning, or closure of other PRs in this investigation.**
+
+
+## Phase 2A: native delivered-hit and AI-tick probe
+
+A second focused test, `tests/rogue-ranged-pressure-hitpath.test.cjs`, chooses line-of-sight and collision-clear paths in the game's retained Vale geometry (no replacement of `line`, `route` or `blocked`). For **ordinary Goblins and Ringleaders**, Ranger, Mage, and Archer sources at 350/400/450/480 units, in Normal and Nightmare, and in healthy/wounded conditions (96 cases), it passes a real delivered-hit through `combat.damage`, observes native aggro/threat records, and advances 16 actual enemy ticks. It logs selection, eligibility, encounter movement, tactical phases, warning events, and returning status.
+
+**Critical limitation:** this uses a controlled native **delivered hit**, not the actual Ranger/Mage skill input or the Archer arrow flight; it does not assert that each class can fire its ability at all four tested distances. Nor is it a human playtest. The later projectile/input-specific probe remains necessary before any balance change.
+
+The first matrix has passed exact-head [focused CI #40198253231](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40198253231): 90 controlled tactical gate cells, 27 nominally legal Rogue moves blocked by upstream selection, and preservation of the 2-second cadence. This is **code-level evidence**, not a gameplay dissatisfaction verdict. Phase 2A requires its own new exact-head focused CI check.
+
+
+### Withdrawal geometry reconciliation
+
+The first native delivered-hit run passed 96 cases and produced 64 tactical responses, but showed some wounded 450/480-unit actors entering an `escape` phase without physical movement within 1.6 seconds. The initial fixture certified only the *incoming attack line*, not space for the enemy to retreat. The next exact-head iteration additionally requires a collision-clear 200-unit lane **behind** the enemy and reports the observed motion; do not assert an engine defect from the earlier inconclusive fixture.
+
+
+### Exact movement-collision gate
+
+The retreat-corridor selection now uses the **15-unit radius actually passed by `navigation.move` → `clearSegment`**, rather than the earlier 12-unit position check. This resolves a test-fixture mismatch before drawing conclusions about any 450/480-unit escape immobility. If a valid native 15-unit rear corridor still produces no progress, retain that as a separate AI investigation rather than silently relaxing territory or crowd collision.
+
+
+### Bounded native-collision diagnostic disposition
+
+The stricter 15-unit full-corridor *search* proved inappropriately costly for the narrow 96-case gate. The test now retains the already-passing 12-unit hit/retreat-corridor selection and **records**, but does not require, whether the same rear lane meets the actual 15-unit movement radius. This keeps observation separate from acceptance, while preserving the diagnostic that long-range wounded enemies may enter escape without progressing. A dedicated movement collision/pursuit test, with a smaller fixed native fixture, should resolve this before any AI code change. Do not infer successful physical withdrawal merely from an `escape` phase.
+
+
+## Dev.185 reconciliation (25 October 2026)
+
+**Current audited main:** `fec4b6701b5d2e4487658638752ee1d3504c2f57` / package `0.9.1+snapshot.dev.185`. PR #452 **has now merged** Mage Skill 1 traveling/homing beam and 0.75-second charged beam into live main; the earlier description of #452 as an unmerged draft is historical, not present-tense. Mage tap Skill 1 reaches 400 units (target validation), charged Mage Skill 1 reaches 440 units at rank 1 (450 at rank 2 and above); Ranger tap/charged Skill 1 reaches 450, and the ordinary Archer companion basic shot requires 185 units. A 480-unit start cannot be treated as an immediate Skill 1 or Archer basic launch. Real skill-input and projectile tests must record the legal approach/nonlaunch where appropriate, never inject impossible 480-unit casts to manufacture Rogue findings.
+
+Reconciled branch tree from the exact current dev.185 main while retaining original read-only matrix and native delivered-hit tests. Mage source code remains taken from the released main, not copied from #452's historical branch. The old dev.184 reports remain labeled by their run/commit. The PR remains **audit-only, draft, unmerged**; no combat edits or release permission.
+
+
+## Phase 2B: actual dev.185 hero/companion launches
+
+The new `tests/rogue-ranged-pressure-projectiles.test.cjs` invokes the current `cast(1, enemy.id, charged)` pipeline for Ranger and Mage, advances actual projectile or charged-effect flight, and checks first contact and source-attributed tactical threat. It covers 350/400/450/480 in Normal and Nightmare and uses real companion `companionFight` movement/arrow flight from each distance. **Original limits are part of the acceptance:** Mage tap 400, Mage charged rank-one 440 (rank-two 450), Ranger tap and charged 450; Archer must move into established 280-unit combat range before firing a normal arrow. A queued skill-approach is not counted as a launched shot. The target corridor is a controlled, clear arena; Phase 2A separately covers native Vale terrain. Neither diagnostic authorizes a new 520-unit initiation range.
+
+Require fresh, exact-head focused CI. If a real launch or contact fails, repair the diagnostic expectation first, or isolate a demonstrated original-game defect, before proposing an AI change. No automatic merge or deployment.
+
+
+### Phase 2B fixture correction
+
+A direct call to `companionFight` outside the full `updateParty` controller is a controlled **approach** probe, not a guarantee of a completed arrow contact within 6.5s. The new test records movement, shot acquisition and actual damage for the eight 350–480-unit approach attempts without falsely interpreting the lack of a projectile as a failed game attack. Separately, an Archer launched through real `companionCoverAttack(..., true)` from legal 175-unit reach must produce a physical arrow, native hit and Archer-sourced threat in both difficulty modes. A full squad AI simulation of far Archer shots remains a possible later refinement.
+
+
+## Director decision: minimal targeted Rogue correction (dev.185)
+
+The director chose not to prolong complex end-to-end testing. The existing 90-case gate audit, 96 native delivered-hit observations and 32 real Ranger/Mage Skill 1 attempts already demonstrate that **verified recent ranged damage** can arrive at 400 units while the internal Rogue target-selection cap remains 360. This PR now makes the smallest isolated change: `tacticalHighestThreatTarget` may select a **genuine attacker with an HP-damage record in the past 2.2 seconds** within the corresponding role's already-legal Rogue initiation distance (408 ordinary/guardian/Ringleader, 528 captain, 600 boss). Fortified enemies keep their previously authored longer ranged selection where applicable. Idle attackers, merely selected orders, and expired damage still use the original 360/500 selection. Sightlines, aggro, eligibility, Slow, warning, 2-second cadence, territory, Rift/Treasury healing and original move-range limits are unchanged. At 450 units an ordinary enemy still cannot launch a 408-unit Rogue special: ordinary pursuit and existing retreat AI remain authoritative. No proposed 520-unit universal buff.
+
+Existing audit tests have been updated to assert this *implemented* behavior rather than continuing to enshrine the historical mismatch; a tiny stale-hit control verifies the restriction. This is a scoped code correction based on prior evidence, **not** a broader rebalance or a certification of every physical device encounter. Run only repository-selected focused regression tests and the normal reproducible build. Remain draft; no merge or deploy without the director's release decision.

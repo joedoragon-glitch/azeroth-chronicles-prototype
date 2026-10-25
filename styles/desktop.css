@@ -208,6 +208,39 @@ body[data-experience='desktop'] #cancel-navigation-button {
   }
 }
 
+
+/* Option B (PC): keep the playable world dominant. The full objective,
+   location, and finances remain in their existing menus, not a HUD sidebar.
+   Contextual status, available training, target/Recall and every skill stay. */
+body[data-experience='desktop'] #hud {
+  width: 188px;
+  gap: 4px;
+  padding: 7px;
+  background: #142832dc;
+  box-shadow: 0 3px 10px #07120d66;
+}
+body[data-experience='desktop'] #hud h1,
+body[data-experience='desktop'] #location,
+body[data-experience='desktop'] #objective,
+body[data-experience='desktop'] #hero-stats .wallet {
+  display: none;
+}
+body[data-experience='desktop'] #hud #menu-button {
+  min-height: 36px;
+  font-size: 12px;
+}
+body[data-experience='desktop'] #hero-stats .hero-title {
+  margin: 1px 0 4px;
+}
+body[data-experience='desktop'] #skills {
+  left: calc((100vw - 208px) / 2);
+  max-width: calc(100vw - 220px);
+}
+body[data-experience='desktop'] #cancel-navigation-button {
+  right: 208px;
+  max-width: min(148px, calc(100vw - 232px));
+}
+
 /* Archive readings keep the established reading width over generic menu sizes. */
 body[data-experience='desktop'] #modal[data-view='archive-reading'][data-dialog-size] {
   width: min(590px, calc(100vw - 32px));

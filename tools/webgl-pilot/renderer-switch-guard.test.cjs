@@ -299,6 +299,27 @@ test('reported context loss survives recovery with precise pre-cleanup resources
     'manual switching is not mislabeled as a GPU error');
   f.run.dispose();
 });
+test('late real WebGL context-loss signal refines earlier render exception without a second fallback',async()=>{
+ const f=fixture();
+ await f.run.requestWebGL();f.run.confirm();
+ assert.equal(f.run.webglFailed({type:'render-exception',stage:'scene-render',
+   message:'Failed to draw',resources:{loadedTextures:38,proceduralTextures:30,proceduralBytes:65536}}),true);
+ const before=f.events.length;
+ assert.equal(f.visible,'canvas');
+ assert.equal(f.run.webglFailed({type:'context-loss',stage:'webglcontextlost',
+   message:'WebGL context lost',resources:{loadedTextures:0,proceduralTextures:0}}),false);
+ assert.equal(f.events.length,before,'late diagnosis cannot start another fallback');
+ const state=f.run.status();
+ assert.equal(state.lastFailure.type,'context-loss');
+ assert.equal(state.lastFailure.stage,'webglcontextlost');
+ assert.equal(state.lastFailure.resources.loadedTextures,38,'retain pre-disposal evidence');
+ assert.equal(state.lastFallbackReason,'webgl-context-or-render-failure');
+ assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),'canvas2d');
+ assert.equal(f.run.webglFailed({type:'viewport-changed',stage:'resize'}),false);
+ assert.equal(f.run.status().lastFailure.type,'context-loss',
+   'later unrelated events must not replace the established cause');
+ f.run.dispose();
+});
 test('render, viewport and unexpected wrapper errors keep separate failure categories',async()=>{
   const f=fixture();
   await f.run.requestWebGL();f.run.confirm();
