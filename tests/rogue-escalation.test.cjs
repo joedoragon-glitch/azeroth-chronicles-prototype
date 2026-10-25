@@ -219,6 +219,7 @@ console.log('PASS two-second Rogue cast floor prevents spam without retaining a 
   let approachOrders = 0;
   c.follow = () => { approachOrders++; return false; };
   const originalX = a.x;
+  assert(!a.returning, 'active synthetic Rogue fixture must not start its escape in returning state');
   let resetOrigin = null;
   const disengage = c.disengage.bind(c);
   c.disengage = (...args) => {
