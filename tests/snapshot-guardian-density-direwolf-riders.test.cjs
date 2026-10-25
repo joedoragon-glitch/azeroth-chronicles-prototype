@@ -97,8 +97,12 @@ for (const mode of ['normal', 'nightmare']) {
   assert(game.tacticalRogueMove(mount, game.hero), 'mounted rider can start real Rogue move');
   assert.equal(mount.telegraph.style, 'dash');
   assert(mount.telegraph.mobileRogueCast, 'rider uses the authorized mobile cast bar');
-  assert.equal(mount.telegraph.radius, 165, 'longer-mounted-lunge reach, not extra damage');
   const basic = Campaign.rules.tacticalFoundation.rogueMoves.species.wolf;
+  assert.equal(
+    mount.telegraph.radius,
+    basic.radius,
+    'mounted lance follows the already-scaled canonical Wolf Rogue dash reach',
+  );
   assert.equal(mount.telegraph.coefficient, basic.coefficient,
     'direwolf dash keeps the original guardian damage coefficient');
 
