@@ -874,33 +874,22 @@
           hits,
         });
       }
-      // The corridor is committed at release: target movement never redirects it.
-      // Its visible front and damage both advance through this clipped length.
+      // Direction is committed on release, but its source remains the moving
+      // Mage. The front advances through live terrain-clipped geometry.
+      // No root or movement lock is created by this effect.
       resolveWideArcaneBeam(f) {
         if (!this.heroSkillEffectLive(f)) return;
-        const ux = Math.cos(f.angle),
-          uy = Math.sin(f.angle),
-          step = 8;
-        let limit = f.reach,
-          previous = f.from;
-        for (let d = step; d <= f.reach + step; d += step) {
-          const at = Math.min(d, f.reach),
-            point = { x: f.from.x + ux * at, y: f.from.y + uy * at };
-          if (!this.clearSegment(previous, point, 0)) {
-            limit = Math.max(0, at - step);
-            break;
-          }
-          previous = point;
-        }
-        const end = { x: f.from.x + ux * limit, y: f.from.y + uy * limit };
-        (this._heroSkillEffects ||= []).push({
+        const beam = {
           ...f,
           kind: 'wide-beam',
-          limit,
           traveled: 0,
           hitIds: [],
           hits: 0,
-        });
+          endX: f.from.x,
+          endY: f.from.y,
+          visibleLength: 0,
+        };
+        (this._heroSkillEffects ||= []).push(beam);
         this.event('heroSkillArea', {
           actor: 'hero',
           class: 'mage',
@@ -909,10 +898,12 @@
           phase: 'launch',
           x: f.from.x,
           y: f.from.y,
-          endX: end.x,
-          endY: end.y,
+          endX: f.from.x,
+          endY: f.from.y,
+          angle: f.angle,
+          reach: f.reach,
           halfWidth: f.halfWidth,
-          travelSeconds: 0.75 * (limit / Math.max(1, f.reach)),
+          travelSeconds: 0.75,
           hits: 0,
         });
       }
@@ -927,17 +918,32 @@
             return false;
           }
           if (f.kind === 'wide-beam') {
-            // A single progressing front: one contact per foe, at actual arrival.
-            // Simulated movement, collision checks and the artwork use the same
-            // committed angle and terrain-clipped endpoint.
-            const previous = f.traveled;
-            f.traveled = Math.min(f.limit, previous + (f.reach / 0.75) * dt);
+            // The live Mage position translates the corridor, allowing the
+            // player to sweep it into moving/new enemies. Aim stays fixed.
+            // Clip from the CURRENT caster position to prevent wall piercing.
+            f.traveled = Math.min(f.reach, f.traveled + (f.reach / 0.75) * dt);
             const ux = Math.cos(f.angle),
               uy = Math.sin(f.angle),
-              end = {
-                x: f.from.x + ux * f.traveled,
-                y: f.from.y + uy * f.traveled,
-              };
+              from = { x: this.hero.x, y: this.hero.y };
+            let visibleLength = 0,
+              previous = from;
+            for (let step = 8; step < f.traveled + 8; step += 8) {
+              const at = Math.min(step, f.traveled),
+                point = { x: from.x + ux * at, y: from.y + uy * at };
+              if (!this.clearSegment(previous, point, 0)) break;
+              visibleLength = at;
+              previous = point;
+            }
+            const end = {
+              x: from.x + ux * visibleLength,
+              y: from.y + uy * visibleLength,
+            };
+            // Presentation reads this simulation-owned footprint, rather than
+            // separately guessing how far the corridor should have traveled.
+            f.from = from;
+            f.endX = end.x;
+            f.endY = end.y;
+            f.visibleLength = visibleLength;
             for (const e of this.zone().enemies) {
               if (
                 f.hitIds.includes(e.id) ||
@@ -948,12 +954,12 @@
               )
                 continue;
               const radius = this.actorRadius(e),
-                forward = (e.x - f.from.x) * ux + (e.y - f.from.y) * uy;
+                forward = (e.x - from.x) * ux + (e.y - from.y) * uy;
               if (
                 forward < 0 ||
-                forward > f.traveled + radius ||
-                this.distanceToSegment(e, f.from, end) > f.halfWidth + radius ||
-                !this.line(f.from, e)
+                forward > visibleLength + radius ||
+                this.distanceToSegment(e, from, end) > f.halfWidth + radius ||
+                !this.line(from, e)
               )
                 continue;
               f.hitIds.push(e.id);
@@ -965,15 +971,15 @@
               )
                 f.hits++;
             }
-            if (f.traveled < f.limit) return true;
+            if (f.traveled < f.reach) return true;
             this.event('heroSkillArea', {
               actor: 'hero',
               class: 'mage',
               slot: 1,
               effect: 'wide-arcane-beam',
               phase: 'complete',
-              x: f.from.x,
-              y: f.from.y,
+              x: from.x,
+              y: from.y,
               endX: end.x,
               endY: end.y,
               halfWidth: f.halfWidth,
