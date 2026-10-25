@@ -521,12 +521,7 @@
         return moved;
       }
       roamingBoss(e) {
-        // TRUE field bosses patrol the actual region entrances, so the same
-        // physical interception/reset contract used by Thornfang and Cindermaw
-        // must apply to them as well. Ordinary boss patrols are unchanged.
-        return this.thornPatroller(e) || this.cinderPatroller(e) ||
-          (e?.type === 'boss' && e.form === 'true' && !this.isDungeon() &&
-            this.boss(e.family)?.kind === 'field');
+        return this.thornPatroller(e) || this.cinderPatroller(e);
       }
       attackResetProtected(e) {
         return (
