@@ -427,10 +427,12 @@
         // Render the same advancing front that simulation uses for contact.
         // Reduced motion removes decorative shimmer, never the travel delay.
         progress = Math.min(1, age / Math.max(0.01, f.travelSeconds || 0.75)),
-        to = {
-          x: f.x + (f.endX - f.x) * progress,
-          y: f.y + (f.endY - f.y) * progress,
-        },
+        to = f.simulatedFront
+          ? { x: f.endX, y: f.endY }
+          : {
+              x: f.x + (f.endX - f.x) * progress,
+              y: f.y + (f.endY - f.y) * progress,
+            },
         start = screen(from),
         end = screen(to),
         shift = {
