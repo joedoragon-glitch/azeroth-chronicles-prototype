@@ -119,6 +119,11 @@
   // Scornfang Encapsulation: single original patch, real hit and unchanged
   // persistent hazard pulses. Critical applies only to the initial hit.
   register('world/captain/supply-vale/1', 'world', 'damage');
+  // Physical line charges: commit on lawful flight, never per segment/victim.
+  register('world/captain/supply-vale/0', 'world', 'damage');
+  register('world/captain/supply-march/0', 'world', 'damage');
+  register('world/captain/supply-highlands/0', 'world', 'damage');
+  register('world/captain/frontier-overseer/2', 'world', 'damage');
   Object.freeze(registry);
 
   function validatedLevel(level) {

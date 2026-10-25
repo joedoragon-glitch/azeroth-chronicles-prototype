@@ -2126,7 +2126,15 @@
           a.captainSkill && a.captainProfile === 'supply-vale' && a.index === 1 &&
           a.kind === 'circle' && !!a.persistent && !a.arenaSequential &&
           a.arenaPatches?.length === 1;
-        if (nativeCaptainCone || nativeEncapsulation) {
+        // All four conventional captain charge plans have one physical
+        // movement owner; delegated Dreadmaw and boss charges are excluded.
+        const nativeCaptainCharge =
+          a.captainSkill && a.kind === 'line' && a.charge &&
+          ((a.captainProfile === 'supply-vale' && a.index === 0) ||
+            (a.captainProfile === 'supply-march' && a.index === 0) ||
+            (a.captainProfile === 'supply-highlands' && a.index === 0) ||
+            (a.captainProfile === 'frontier-overseer' && a.index === 2));
+        if (nativeCaptainCone || nativeEncapsulation || nativeCaptainCharge) {
           const receipt = this.worldCriticalAction(
             e, 'world/captain/' + a.captainProfile + '/' + a.index,
           );
@@ -2727,7 +2735,11 @@
               a.hit.push(id);
               const landed = this.hitParty(
                 u,
-                this.weakenedEnemyDamage(e) * a.coefficient,
+                a.captainSkill && a.charge
+                  ? this.worldCriticalDamage(
+                      a.criticalExecution, this.weakenedEnemyDamage(e) * a.coefficient,
+                    )
+                  : this.weakenedEnemyDamage(e) * a.coefficient,
                 a.manaDrain || 0,
                 e.id,
               );

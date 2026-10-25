@@ -48,11 +48,11 @@ assert.throws(() => Levels.createTuning({ modes: { nightmare: { enemy: 3 } } }),
 assert.throws(() => Levels.createTuning({ modes: { normal: { world: 3 } } }), /Normal/);
 
 const ids = Object.keys(Levels.ACTIONS);
-assert.equal(ids.length, 51 + 33 + 9 + 13, '93 party actions + 13 native World keys');
+assert.equal(ids.length, 51 + 33 + 9 + 17, '93 party actions + 17 native World keys');
 assert.equal(ids.filter(k=>k.startsWith('hero/')).length, 51);
 assert.equal(ids.filter(k=>k.startsWith('pet/')).length, 33);
 assert.equal(ids.filter(k=>k.startsWith('troop/')).length, 9);
-assert.equal(ids.filter(k=>k.startsWith('world/')).length, 13);
+assert.equal(ids.filter(k=>k.startsWith('world/')).length, 17);
 assert.equal(Levels.ACTIONS['world/basic/melee'].lever, 'damage');
 assert.equal(Levels.ACTIONS['world/basic/ranged'].lever, 'damage');
 assert.equal(Levels.ACTIONS['world/support/heal'].lever, 'healTempo');
@@ -62,7 +62,9 @@ assert.equal(Levels.ACTIONS['world/rogue/basic'].lever, 'damage');
 assert.equal(Levels.ACTIONS['world/rogue/signature'].lever, 'damage');
 for(const key of ['world/captain/supply-vale/2','world/captain/supply-march/1',
   'world/captain/supply-highlands/2','world/captain/frontier-overseer/0',
-  'world/captain/supply-vale/3','world/captain/supply-vale/1'])
+  'world/captain/supply-vale/3','world/captain/supply-vale/1',
+  'world/captain/supply-vale/0','world/captain/supply-march/0',
+  'world/captain/supply-highlands/0','world/captain/frontier-overseer/2'])
   assert.equal(Levels.ACTIONS[key].lever,'damage',key);
 for (const cls of ['paladin', 'mage', 'ranger']) {
   assert(Levels.ACTIONS['hero/' + cls + '/auto']);
