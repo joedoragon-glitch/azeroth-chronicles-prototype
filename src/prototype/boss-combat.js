@@ -2112,6 +2112,21 @@
           this.tacticalResolveRogueMove(e, a);
           return;
         }
+        // Only these four reviewed native captain cones have a World receipt.
+        // Do not roll at warning creation, nor infer that the other 17
+        // captain special actions and Dreadmaw share this simple release.
+        const nativeCaptainCone =
+          a.captainSkill && a.kind === 'cone' &&
+          ((a.captainProfile === 'supply-vale' && a.index === 2) ||
+            (a.captainProfile === 'supply-march' && a.index === 1) ||
+            (a.captainProfile === 'supply-highlands' && a.index === 2) ||
+            (a.captainProfile === 'frontier-overseer' && a.index === 0));
+        if (nativeCaptainCone) {
+          const receipt = this.worldCriticalAction(
+            e, 'world/captain/' + a.captainProfile + '/' + a.index,
+          );
+          if (receipt) a.criticalExecution = receipt;
+        }
         if (a.bossHeal && e.family === 'abyss') {
           const point = this.abyssGoAroundPoint(e);
           // A blocked retreat can never grant free healing. The next recovery
@@ -2504,6 +2519,10 @@
         }
       }
       resolveArea(e, a) {
+        // Receipt only exists for an explicitly registered, resolved captain
+        // cone. This predicate does not grant coverage to other specials.
+        const nativeCaptainCriticalContact = (action) =>
+          action.captainSkill && action.kind === 'cone' && !!action.criticalExecution;
         const hero = this.hero,
           zone = this.zoneId,
           deaths = this.s.statistics.deaths;
@@ -2565,7 +2584,7 @@
                 ? true
                 : this.hitParty(
                     u,
-                    a.nightSkill === 'pounce'
+                    (a.nightSkill === 'pounce' || nativeCaptainCriticalContact(a))
                       ? this.worldCriticalDamage(
                           a.criticalExecution, this.weakenedEnemyDamage(e) * a.coefficient,
                         )

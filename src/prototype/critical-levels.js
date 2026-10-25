@@ -108,6 +108,12 @@
   // remain distinct from basics; named captains/bosses require their own gates.
   register('world/rogue/basic', 'world', 'damage');
   register('world/rogue/signature', 'world', 'damage');
+  // Four real, non-sequenced captain cone actions. Other captain actions
+  // (tracked salvos, paired zones, charges, summons, Dreadmaw) await review.
+  register('world/captain/supply-vale/2', 'world', 'damage');
+  register('world/captain/supply-march/1', 'world', 'damage');
+  register('world/captain/supply-highlands/2', 'world', 'damage');
+  register('world/captain/frontier-overseer/0', 'world', 'damage');
   Object.freeze(registry);
 
   function validatedLevel(level) {
