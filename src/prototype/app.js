@@ -816,6 +816,8 @@
       'WebGL2 puede acelerar el juego en tu dispositivo. Si va más lento o se ve mal, vuelve a Canvas.',
     'Performance settings updated to recommended defaults. You can change them in Settings.':
       'Ajustes de rendimiento actualizados a los valores recomendados. Puedes cambiarlos en Ajustes.',
+    'Optimization Mode now defaults to Auto. You can change it in Settings.':
+      'El modo de optimización ahora usa Auto por defecto. Puedes cambiarlo en Ajustes.',
     'Local samples are diagnostic estimates, not verified display FPS.':
       'Las muestras locales son estimaciones diagnósticas, no FPS reales verificados.',
     'Towns and camps': 'Pueblos y campamentos',
@@ -6570,9 +6572,11 @@
     if (persistence.loadFailed(profile.activeMode)) savedRunRecoveryMenu();
     else chooseLanguage(developerEnabled ? 'developer' : 'normal');
   } else setLanguage(language);
-  if (loaded && performanceBaselineUpgraded && !recoveredOnStartup)
+  if (loaded && (performanceBaselineUpgraded || optimizationAutoUpgraded) && !recoveredOnStartup)
     status(
-      'Performance settings updated to recommended defaults. You can change them in Settings.',
+      performanceBaselineUpgraded
+        ? 'Performance settings updated to recommended defaults. You can change them in Settings.'
+        : 'Optimization Mode now defaults to Auto. You can change it in Settings.',
     );
   requestAnimationFrame(frame);
   if (writerGuard.pending)
