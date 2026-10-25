@@ -187,13 +187,42 @@ console.log('PASS original boss-victory condition remains required');
   const { c, a } = encounter();
   assert(c.tacticalRogueMove(a, c.hero));
   assert.equal(a.telegraph.name, 'Gang Boss Smoke Trick');
+  const first = c.s.time;
+  assert.equal(c._tacticalRogueNext.get(a.id), first + 2,
+    'decision timer agrees with the two-second cast floor');
   a.telegraph = null;
-  c.s.time += 1.4;
-  assert(!c.tacticalRogueMove(a, c.hero), 'cannot bypass three-second cast cadence');
-  c.s.time += 1.7;
-  assert(c.tacticalRogueMove(a, c.hero), 'later cast permitted');
+  c.s.time = first + 1.99;
+  assert(!c.tacticalRogueMove(a, c.hero), 'no cast before two seconds, even through a new tactical path');
+  c.s.time = first + 2.01;
+  assert(c.tacticalRogueMove(a, c.hero), 'a new cast is available just after two seconds');
+  assert.equal(c._tacticalRogueNext.get(a.id), c.s.time + 2);
 }
-console.log('PASS Rogue cast-to-cast cadence cannot be bypassed');
+console.log('PASS two-second Rogue cast floor prevents spam without retaining a three-second gate');
+
+{
+  const { c, z, a } = encounter();
+  z.enemies = [a]; // No other ally and no distant refuge.
+  a.form = 'normal';
+  assert(c.tacticalAutoRogue(a, c.hero),
+    'isolated eligible monster starts its first Rogue opportunity');
+  assert.equal(c._tacticalRogueNext.get(a.id), c.s.time + 2);
+  c.s.time += 0.31;
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.31));
+  assert(a.telegraph?.rogueMove, 'isolated monster can cast without an ally');
+  const firstCast = c.s.time;
+  a.telegraph = null; // Simulate the completed legal warning.
+  c.s.time = firstCast + 1.99;
+  assert.equal(c.tacticalAutoRogue(a, c.hero), false,
+    'reassessment cannot produce a pre-two-second cast cycle');
+  c.s.time = firstCast + 2.01;
+  assert(c.tacticalAutoRogue(a, c.hero),
+    'the same isolated monster can initiate another Rogue response in two seconds');
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'thinking');
+  assert(c.tacticalAdvanceRogueRegroup(a, c.hero, 0.31));
+  assert(a.telegraph?.rogueMove,
+    'repeated solo Rogue opportunity leads to another actual attack');
+}
+console.log('PASS isolated enemies keep repeatable two-second Rogue decisions and real attacks');
 
 {
   const { c, z, a } = encounter();
