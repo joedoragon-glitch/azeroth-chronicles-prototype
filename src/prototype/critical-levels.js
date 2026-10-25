@@ -135,6 +135,8 @@
   // Dreadmaw is delegated separately: Ensiling's real warned cone initial
   // contact is independent of its native periodic vapor/slow ticks.
   register('world/captain/supply-crown/2', 'world', 'damage');
+  // Dreadmaw Subsoiling is two real warned ground marks, one cast decision.
+  register('world/captain/supply-crown/0', 'world', 'damage');
   Object.freeze(registry);
 
   function validatedLevel(level) {

@@ -281,6 +281,21 @@
           e.dreadClosure = { ...a, age: 0, radius: a.initialRadius, tick: 0 };
           return;
         }
+        // Subsoiling's two separately warned ground marks share the same
+        // immutable receipt. The second beat may inherit but never sample.
+        if (a.dreadMechanic === 'fracture' && a.captainSkill &&
+            a.captainProfile === 'supply-crown' && a.index === 0 &&
+            a.stage === 1 && a.kind === 'circle' && !a.criticalExecution) {
+          const receipt = this.worldCriticalAction(e, 'world/captain/supply-crown/0');
+          if (receipt) {
+            a.criticalExecution = receipt;
+            for (const next of e.sequence || [])
+              if (next.captainSkill && next.captainProfile === 'supply-crown' &&
+                  next.index === 0 && next.dreadMechanic === 'fracture' &&
+                  next.kind === 'circle' && next.stage === 2)
+                next.criticalExecution = receipt;
+          }
+        }
         // Explicit specialist release owner, after the real cone warning.
         // The original direct contact may crit; delegated vapor-over-time
         // and its Slow remain wholly native and never carry this receipt.
