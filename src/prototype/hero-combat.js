@@ -1592,11 +1592,10 @@
                 slot: 2,
                 charged: true,
                 area: true,
-                slow: Math.max(
-                  def.slow || 0,
+                slow: def.slow || 0,
+                rangerVolleySlow:
                   R.heroTactics.ranger.volley.slow +
-                    steps * R.heroTactics.ranger.volley.slowStep,
-                ),
+                  steps * R.heroTactics.ranger.volley.slowStep,
                 ...(encountersAtStart ? { encountersAtStart } : {}),
               });
             }
