@@ -150,6 +150,16 @@ for(const [type,family] of [
   // fixture; inspect its emitted receipts after the combat decision loop.
   for(let tick=0;tick<100;tick++) g.tick(0.05);
   const receipts=[...g.effects];
+  if (!(u.skill1Cd>0)) console.error('STAGE3_FIXTURE',JSON.stringify({
+    type,family, time:g.s.time, challenge:g.s.challenge, enemy:{
+      hp:e.hp,aggro:e.aggro,neutral:e.neutral,returning:e.returning,
+      x:e.x,y:e.y,awaitsHeroAttack:g.awaitsHeroAttack(e),
+    },hero:{x:g.hero.x,y:g.hero.y},unit:{x:u.x,y:u.y,active:u.active,
+      hp:u.hp,skill1Cd:u.skill1Cd,skill2Cd:u.skill2Cd},
+    party:g.s.party.length,engaged:g.s.squadEngagement,
+    distance:Math.hypot(g.hero.x-e.x,g.hero.y-e.y),
+    effects:receipts.length,
+  }));
   assert(u.skill1Cd>0, type+'/'+family+': autonomous first skill (cd='+u.skill1Cd+', effects='+receipts.length+')');
   assert(u.skill2Cd>0, type+'/'+family+': autonomous second skill');
   const rows=observe(receipts),metrics=sum(rows);
