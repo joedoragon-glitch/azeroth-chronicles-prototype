@@ -3,8 +3,17 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const http = require('node:http');
+const cp = require('node:child_process');
 const pw = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = path.resolve(__dirname, '..');
+function installedChromium() {
+  if (process.env.CHROMIUM_EXECUTABLE) return process.env.CHROMIUM_EXECUTABLE;
+  for (const binary of ['google-chrome', 'google-chrome-stable', 'chromium']) {
+    try { return cp.execFileSync('which', [binary], {encoding:'utf8'}).trim(); }
+    catch (_) {}
+  }
+  return null;
+}
 const mime = {
   '.html': 'text/html',
   '.js': 'application/javascript',
@@ -33,7 +42,7 @@ const server = http.createServer((req, res) => {
       engine === 'webkit'
         ? {}
         : {
-            executablePath: process.env.CHROMIUM_EXECUTABLE,
+            ...(installedChromium() ? { executablePath: installedChromium() } : {}),
             args: ['--no-sandbox', '--disable-dev-shm-usage'],
           },
     );
@@ -58,10 +67,9 @@ const server = http.createServer((req, res) => {
         await page.locator('#menu-button').click();
         await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
         await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
-        await page.getByRole('button', { name: 'Frame rate', exact: true }).click();
       };
       await openSettings();
-      for (const [value, label] of [
+      for (const [value] of [
         ['20', '20 FPS'],
         ['30', '30 FPS'],
         ['60', '60 FPS'],
@@ -69,7 +77,7 @@ const server = http.createServer((req, res) => {
         ['auto', 'Auto 20–30 FPS'],
       ]) {
         const before = await page.evaluate(() => JSON.stringify(Prototype.game.snapshot()));
-        await page.getByRole('button', { name: new RegExp('^' + label) }).click();
+        await page.locator('select[aria-label="Frame rate"]').selectOption(value);
         assert.deepEqual(
           await page.evaluate(() => ({
             preference: Prototype.fps.preference,
@@ -84,7 +92,7 @@ const server = http.createServer((req, res) => {
           'Changing rendering preferences cannot mutate a paused campaign',
         );
       }
-      await page.getByRole('button', { name: /^60 FPS/ }).click();
+      await page.locator('select[aria-label="Frame rate"]').selectOption('60');
       await page.reload();
       await page.waitForFunction(() => !!window.Prototype);
       assert.equal(
@@ -94,7 +102,7 @@ const server = http.createServer((req, res) => {
       );
       await page.evaluate(() => Prototype.closeMenu());
       await openSettings();
-      await page.getByRole('button', { name: /^30 FPS/ }).click();
+      await page.locator('select[aria-label="Frame rate"]').selectOption('30');
       await page.evaluate(() => {
         Prototype.closeMenu();
         window.__fpsCounts = { ticks: 0, updates: 0, observations: 0, draws: 0 };
