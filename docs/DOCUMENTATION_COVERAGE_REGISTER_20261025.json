@@ -65,6 +65,10 @@
       "state": "merged"
     },
     {
+      "number": 452,
+      "state": "merged"
+    },
+    {
       "number": 454,
       "state": "closed_unmerged"
     },
@@ -74,6 +78,14 @@
     },
     {
       "number": 459,
+      "state": "merged"
+    },
+    {
+      "number": 466,
+      "state": "merged"
+    },
+    {
+      "number": 467,
       "state": "merged"
     }
   ],
@@ -1131,7 +1143,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_COVERAGE_NOTES_20261025.md",
-      "gitBlobSha": "071813b0b4d1c17fcdf1ed676ba04f7a56c2fec4",
+      "gitBlobSha": "2ed8ffd05199fe8f5a6782748744194be9747c66",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -1988,7 +2000,18 @@
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 452,
+        "integratedByPr": 452,
+        "disposition": "merged_directly",
+        "laterMergedPrs": [
+          466,
+          467
+        ],
+        "caution": "Mage Skill 1 released through #452. #466 superseded original 0.75s charged traversal with 0.625s, normal speed +20%, and original 2.5x visual thickness with 2.0x; #467 added procedural Arcane Lance Helix. Earlier draft/phone-blocker checkpoints do not mean the feature remains unmerged or Pixi phone is fully accepted."
+      }
     },
     {
       "path": "docs/MAGE_HAIR_QUICKFIX_20261020.md",
@@ -2218,7 +2241,14 @@
       "topic": "navigation_and_map",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 421,
+        "integratedByPr": 421,
+        "disposition": "merged_directly",
+        "caution": "Stage 4 solver/source test checkpoint was part of later cumulative merged navigation PR #421. Stage 5 and original stop-before-merge notices in this dated report are historical; verify current navigation source and real-device behavior separately."
+      }
     },
     {
       "path": "docs/NAVIGATION_STAGE5_20261023.md",
@@ -2522,7 +2552,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 407,
+        "integratedByPr": 407,
+        "disposition": "merged_directly",
+        "caution": "Early CDN-only, unbuilt, Step 2 branch state was superseded by merged experimental Pixi PR #407. This is not proof of complete WebGL2 art parity, phone acceptance or present CDN usage."
+      }
     },
     {
       "path": "docs/PIXIJS_PLAYTEST_STEP3_AUDIT_20261022.md",
@@ -2533,7 +2570,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 407,
+        "integratedByPr": 407,
+        "disposition": "merged_directly",
+        "caution": "Step 3 technical loader/controller/asset corrections preceded merged optional renderer #407; its static-only NO-GO status is historical and does not settle generic current Pixi issue #460."
+      }
     },
     {
       "path": "docs/PIXIJS_PRE_STEP4_HANDOFF_20261022.md",
@@ -2544,7 +2588,14 @@
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 407,
+        "integratedByPr": 407,
+        "disposition": "merged_directly",
+        "caution": "Pre-Step-4 and subsequent #407 browser/CI audit recorded date-bound failures and targeted passes. #407 subsequently merged; do not re-open prior Step 5 automatically or infer full-hardware Pixi success."
+      }
     },
     {
       "path": "docs/PLAYTEST_AUDIT.md",
