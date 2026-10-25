@@ -294,6 +294,14 @@
           return;
         }
         if (a.dreadMechanic === 'closure') {
+          // The original warned ring is a single committed activation.
+          // Carry its World receipt into the lawful final center blast, not
+          // its independently timed ring ticks or either advertised gap.
+          if (a.captainSkill && a.captainProfile === 'supply-crown' &&
+              a.index === 4 && a.kind === 'ring' && !a.criticalExecution) {
+            const receipt = this.worldCriticalAction(e, 'world/captain/supply-crown/4');
+            if (receipt) a.criticalExecution = receipt;
+          }
           e.dreadClosure = { ...a, age: 0, radius: a.initialRadius, tick: 0 };
           return;
         }
@@ -510,7 +518,13 @@
             delete e.dreadClosure;
             for (const u of this.combatTargets()) {
               if (u.hp <= 0 || d(u, ring) > ring.finalBlastRadius || !this.line(ring, u)) continue;
-              const landed = this.hitParty(u, e.damage * ring.finalCoefficient, 0, e.id);
+              const landed = this.hitParty(
+                u,
+                this.worldCriticalDamage(
+                  ring.criticalExecution, e.damage * ring.finalCoefficient,
+                ),
+                0, e.id,
+              );
               if (interrupted(this, hero, zone, deaths)) return true;
               if (landed) this.enemyVfxResolvedContact?.(e, ring, u);
             }

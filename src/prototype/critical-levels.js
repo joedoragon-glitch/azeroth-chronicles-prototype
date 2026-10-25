@@ -143,6 +143,9 @@
   // Dreadmaw Transhumance: one legal two-leg rush activation. Preserve
   // two original perpendicular physical paths, clearance and impact owners.
   register('world/captain/supply-crown/1', 'world', 'damage');
+  // Purse-Seine Closure: leave every contracting ring tick, safe gap, and
+  // escape route native; only the original delayed center blast may crit.
+  register('world/captain/supply-crown/4', 'world', 'damage');
   Object.freeze(registry);
 
   function validatedLevel(level) {
