@@ -24,6 +24,18 @@
 
 **Implementation ownership:** `src/prototype/hero-combat.js` (wide corridor and single-contact logic); `src/prototype/combat.js` (ordinary homing travel/contact); `src/prototype/hero-presentation.js` (core/glow/curvature and charged art); `src/prototype/renderer.js` (live hero attachment and gameplay-owned charged geometry); `src/prototype/audio-hero.js` (no double launch sound). New and updated focused checks live under `tests/mage-skill1-beam-flight.test.cjs`, `tests/hero-skill1-stage1.test.cjs`, and `tests/hero-skill1-integration.test.cjs`.
 
+## Extended independent-skill audit (25 October 2026)
+
+The desired attachment applies to a spell **whose beam is meant to remain connected to its caster**. It must not be generalized to every projectile that happens to use a luminous trail. This check covered `hero-combat.js` launch paths, `combat.js` stepwise target contact, and `hero-presentation.js` silhouettes:
+
+- **Paladin:** Skill 1 Radiant Strike is a launched holy bolt. Charged Radiant Cross is a fixed-location two-pulse attack. Other Paladin attacks are melee, area effects, or independent launched effects, not a continuous caster-fed beam. No Paladin tether change belongs in #452.
+- **Ranger:** Skill 1 Rapid Arrows launches three staggered arrows. Hawk Interception owns a moving, finite path; it is not attached to the Ranger once released. Pinning, volleys, repelling and piercing attacks, as well as Hunter's Salvo/Grand Hunt shots, remain independent projectiles or world-space effects. A visual tether would wrongly imply caster-following damage.
+- **Mage Skill 2–5:** Frost Bolt and other launched bolts use independent projectile contact. Frost Burst, Silence Field, Arcane Rupture, Force Pulse/Wave and other shaped attacks use their respective fixed or instantaneous area geometry. These are not continuous Skill 1 beams.
+- **Mage Skill 6:** Normal Magic Shot remains its normal independently launched projectile. **Charged Focused Arcane Beam** is a launched `style: 'beam'` projectile with a fixed `originX/Y`, speed 1000 and its own Slow effect. The current fixed-origin drawn trail can visually lag behind a moving Mage, but the projectile **itself must not inherit** Skill 1 homing, speed, width, contact, or charged-corridor behavior. Any future visual-only moving-tail improvement requires a separate assessment and approval.
+- **Mage Skill 7–8:** Arcane Chain/Chainstorm handle discrete target-to-target chain effects; Astral Detonation/Cataclysm are area effects. Neither represents a launched, caster-connected column.
+
+**Regression ownership:** `tests/mage-skill1-beam-flight.test.cjs` now tests the unchanged Paladin/Ranger Skill 1 projectile, Paladin charged cross, Ranger Hawk and Mage charged Skill 6 distinctions. The Chromium Pixi smoke exercises the Mage's displayed Skill 1 geometry on the real Canvas overlay in both Canvas 2D and WebGL2 operation, on desktop and phone. The browser smoke is a rendered-surface check, **not** physical-device feel, a human visual sign-off, or a replacement for normal simulation regressions.
+
 ## Review gates
 
 1. Native focused gameplay tests: near/far delayed contact, 0.75-second completion, one hit per foe, original world-space aim, movement-induced angle and natural extra hits, no parallel-lane sweep, obstacles, death/zone cancellation, bounded ordinary homing and target loss.
