@@ -33,6 +33,9 @@
   // Per-caster leader-heal cadence is independent of buffed ordinary casts.
   // Runtime-only WeakMap: no additional fields on saved enemy actors.
   const enemyLeaderHealRecovery = new WeakMap();
+  // A healing captain can restore its own HP every ten recovered seconds
+  // independently of its seven-second support spell. Never serialized.
+  const captainSelfHealRecovery = new WeakMap();
   const archiveRepairSites = [
     { x: 1130, y: 560 },
     { x: 790, y: 430 },
@@ -396,7 +399,12 @@
       // A wounded ordinary monster is an eligible patient for any ordinary
       // ranged healer, including one from a different species or pack.
       // Bosses/captains keep their original 75% / regroup 90% threshold.
-      if (healer && !this.enemyHealLeader(healer) && !this.enemyHealLeader(u))
+      if (
+        healer &&
+        !this.enemyHealLeader(u) &&
+        (!this.enemyHealLeader(healer) ||
+          (healer.type !== 'boss' && (healer.captain || healer.roomCaptain)))
+      )
         return u.hp > 0 && u.maxHp > 0 && u.hp < u.maxHp;
       return (
         u.hp / u.maxHp <= (this.tacticalRogueRegroup(u) ? cfg.regroupThreshold : cfg.threshold)
@@ -405,8 +413,14 @@
     enemySupportHeal(e) {
       const cfg = R.enemySupportHealing,
         skill = this.enemyHealProfile(e),
+        captainHealer = !!(skill && e && e.type !== 'boss' && (e.captain || e.roomCaptain)),
         ordinaryHealer = !this.enemyHealLeader(e),
-        leaderRecovery = ordinaryHealer ? enemyLeaderHealRecovery.get(e) || 0 : 0;
+        allyReady = (e?.supportHealCd || 0) <= 0,
+        selfReady = !captainHealer || (captainSelfHealRecovery.get(e) || 0) <= 0,
+        // Leader eligibility is a separate ten-second clock for every caster.
+        // The short ordinary-ally cast never refreshes another leader early.
+        leaderRecovery =
+          ordinaryHealer || captainHealer ? enemyLeaderHealRecovery.get(e) || 0 : 0;
       if (
         !skill ||
         !this.enemyHealingActor(e) ||
@@ -416,7 +430,8 @@
         e.motion ||
         e.telegraph ||
         e.rangedAim ||
-        (e.supportHealCd || 0) > 0
+        (!captainHealer && !allyReady) ||
+        (captainHealer && !allyReady && !selfReady)
       )
         return false;
       const inReach = (u) =>
@@ -425,16 +440,17 @@
           !u.supportHeal &&
           dist(e, u) <= cfg.range &&
           (e === u || this.line(e, u)),
-        injured = this.zone().enemies.filter(
-          (u) =>
-            this.enemyHealTeammate(e, u) &&
-            inReach(u) &&
-            this.enemyNeedsSupportHeal(u, e) &&
-            !(ordinaryHealer && this.enemyHealLeader(u) && leaderRecovery > 0),
-        ),
-        // Do not add a duplicate self-restoration route to a boss that
-        // already has authored recovery, vitality siphon, or self-restoring mud.
-        // Those bosses can still use this skill to treat their living followers.
+        injured = allyReady
+          ? this.zone().enemies.filter(
+              (u) =>
+                this.enemyHealTeammate(e, u) &&
+                inReach(u) &&
+                this.enemyNeedsSupportHeal(u, e) &&
+                !((ordinaryHealer || captainHealer) && this.enemyHealLeader(u) && leaderRecovery > 0),
+            )
+          : [],
+        // Existing boss self-recovery, vitality siphon and mud recovery remain
+        // authoritative: support must never duplicate them.
         establishedBossRecovery =
           e.type === 'boss' &&
           (Boolean(R.bossRecovery[e.family]) ||
@@ -445,18 +461,22 @@
           e.captain ||
           e.roomCaptain ||
           e.form === 'ringleader',
-        self = selfAllowed && inReach(e) && e.hp / e.maxHp <= cfg.threshold ? e : null,
+        self =
+          selfReady && selfAllowed && inReach(e) && e.hp / e.maxHp <= cfg.threshold ? e : null,
         targets = self ? [...injured, self] : injured;
       if (!targets.length) return false;
       const multiplier = this.enemyHealMultiplier(e);
       let healed = 0,
+        allyTreated = false,
+        selfTreated = false,
         leaderTreated = false;
       for (const target of targets) {
         const leader = this.enemyHealLeader(target),
-          buffed = ordinaryHealer && !leader,
+          // Captains are now as effective as ordinary ranged monsters when
+          // healing ordinary allies. Their own HP and other leaders retain
+          // the original 5%-over-five-seconds budget.
+          buffed = !leader && (ordinaryHealer || captainHealer),
           duration = buffed ? cfg.ordinary.duration : cfg.duration,
-          // Full restoration is the missing HP at cast time, delivered over
-          // three seconds. No encounter multiplier reduces the full amount.
           amount = buffed
             ? target.maxHp - target.hp
             : Math.min(target.maxHp - target.hp, target.maxHp * cfg.fraction * multiplier);
@@ -466,11 +486,19 @@
           skill,
           remaining: amount,
           seconds: duration,
-          // Only ordinary-to-ordinary support can finish out of combat.
-          // This is transient and is deliberately never serialized.
-          allowIdle: buffed,
+          // Captain healing never requires engagement: a captain can be
+          // wounded while idle, enter combat, or leave combat mid-treatment.
+          // Captain-origin ordinary healing likewise finishes without aggro.
+          allowIdle:
+            buffed ||
+            captainHealer ||
+            !!(target.captain || target.roomCaptain || target.fieldCaptain),
         };
-        if (ordinaryHealer && leader) leaderTreated = true;
+        if (target === e) selfTreated = true;
+        else {
+          allyTreated = true;
+          if (leader && (ordinaryHealer || captainHealer)) leaderTreated = true;
+        }
         healed++;
         this.event('heal', {
           x: target.x,
@@ -492,13 +520,19 @@
         });
       }
       if (!healed) return false;
-      // Ordinary healing recovers earlier, but the same caster cannot use
-      // that shorter clock to repeatedly refresh a boss or captain.
-      e.supportHealCd = ordinaryHealer ? cfg.ordinary.cooldown : cfg.cooldown;
-      if (leaderTreated) enemyLeaderHealRecovery.set(e, cfg.cooldown);
+      // Treating allies never spends the captain's independent self clock.
+      // Healing only self never spends its ordinary-ally support clock.
+      if (allyTreated) {
+        e.supportHealCd =
+          ordinaryHealer || captainHealer ? cfg.ordinary.cooldown : cfg.cooldown;
+        if (leaderTreated) enemyLeaderHealRecovery.set(e, cfg.cooldown);
+      }
+      if (selfTreated) {
+        if (captainHealer) captainSelfHealRecovery.set(e, cfg.cooldown);
+        else if (!allyTreated)
+          e.supportHealCd = ordinaryHealer ? cfg.ordinary.cooldown : cfg.cooldown;
+      }
       e.noProgress = 0;
-      // Named leaders and Ringleaders announce the skill; ordinary ranged
-      // healers retain the green recovery cue without flooding combat messages.
       if (e.type === 'boss' || e.captain || e.roomCaptain || e.form === 'ringleader')
         this.say(e.name + ' uses ' + skill + ' in an area.');
       return true;
@@ -525,7 +559,10 @@
             !u.supportHeal &&
             this.enemyNeedsSupportHeal(u, e) &&
             !(this.enemyHealLeader(u) && !this.enemyHealLeader(e) && leaderRecovery > 0) &&
-            (e.aggro || !!this.tacticalRogueRegroup(u) || (!this.enemyHealLeader(e) && !this.enemyHealLeader(u))) &&
+            (e.aggro ||
+              !!this.tacticalRogueRegroup(u) ||
+              (!this.enemyHealLeader(e) &&
+                (!this.enemyHealLeader(u) || u.captain || u.roomCaptain || u.fieldCaptain))) &&
             dist(e, u) > cfg.range &&
             dist(e, u) <= cfg.range + 210,
         )
@@ -5958,6 +5995,12 @@
             if (left > 0) enemyLeaderHealRecovery.set(e, left);
             else enemyLeaderHealRecovery.delete(e);
           }
+          const selfHealCd = captainSelfHealRecovery.get(e) || 0;
+          if (selfHealCd > 0) {
+            const left = Math.max(0, selfHealCd - recovery);
+            if (left > 0) captainSelfHealRecovery.set(e, left);
+            else captainSelfHealRecovery.delete(e);
+          }
           if (e.supportHeal) this.advanceEnemySupportHeal(e, dt);
         } else if (e.supportHeal) delete e.supportHeal;
         if (e.hp <= 0) {
@@ -6625,6 +6668,7 @@
     // must retire identical cooldowns, boss phases and summon flags.
     finishDisengage(e) {
       enemyLeaderHealRecovery.delete(e);
+      captainSelfHealRecovery.delete(e);
       e.aggro = false;
       delete e.ashCloud;
       delete e.ashNextAt;
