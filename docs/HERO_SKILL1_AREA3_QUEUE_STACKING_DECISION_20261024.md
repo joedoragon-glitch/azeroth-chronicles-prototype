@@ -1,3 +1,5 @@
+**Implementation status:** The approved contract below is implemented and covered by focused shell/native tests. Historical references to unimplemented single-request storage describe the pre-Area-3 source; see [Area 3 implementation](HERO_SKILL1_AREA3_IMPLEMENTATION_20261024.md) and [current review](HERO_SKILL1_AREA4_FINAL_REVIEW_20261024.md).
+
 # PR #439 — Owner Decision: Stacked Normal and Charged Skill Requests (Area 3)
 
 **24 October 2026 · owner-approved behavior clarification · authoritative Area 3 queue contract.**

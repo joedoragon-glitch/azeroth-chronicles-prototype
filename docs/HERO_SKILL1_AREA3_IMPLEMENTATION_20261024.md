@@ -48,7 +48,7 @@ owner's exact Charged→Normal sequence, four alternating entries, normal-ready
 non-overtaking, other-slot dispatch, stable identities, duplicate forms,
 ambiguous release, touch cancellation, keyboard, blur, menu, capacity feedback,
 and stance lowering. `hero-skill1-stage1` and `hero-skill1-area2` pass locally.
-Dedicated retreat tests and final integrated review remain in progress.
+Dedicated retreat tests and the integrated code review now pass; see the Area 4 final review for current CI and browser/play limitations.
 
 The original CI blockers have been reproduced and repaired: the audio fixture now
 makes a legal hero contact on Thornfang and refreshes earned throne availability;

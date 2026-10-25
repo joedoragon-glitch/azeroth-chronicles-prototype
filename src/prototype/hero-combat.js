@@ -1006,7 +1006,8 @@
             angle: Math.atan2(target.y - f.y, target.x - f.x),
             targetId: f.targetId,
           });
-          if (dist(f, target) <= contact) {
+          // Projection can leave a sub-pixel rounding residue at exact contact.
+          if (dist(f, target) <= contact + 1e-7) {
             // Check active retreat before damage mutates regroup and threat.
             const retreat = this.hawkRetreatKind(target);
             const landed = this.damage(target, f.damage * cfg.damage, 'hero', {

@@ -1,103 +1,70 @@
-# PR #439 — Independent Development Handoff and Four-Area Completion Plan
+# PR #439 — Current independent continuation record
 
-**Azeroth Chronicles · owner-approved staged integration · 24 October 2026 (America/New_York) / 25 October UTC**
+**24 October 2026 · draft/unmerged/unpublished · candidate dev.178**
 **Repository:** `joedoragon-glitch/azeroth-chronicles-prototype`
-**Continuing PR:** [#439 — Self-taught Hero Skill 1 integration](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/439)
-**Continuing branch:** `design/hero-skill1-self-taught-combat-20261024`
-**Default branch:** `main`; as audited, `main` pointed at `e4e8234b5f784ddc9492fe79d956fd0a696b12af` (dev.175). **Always re-fetch live head/base before resuming.**
-**Historical pre-handoff source status:** PR head `7b8ac015d777b8cb60a560e80032bf3705e46f25` immediately **before adding this handoff**; PR was **open, draft, unmerged, unshipped**, with 23 modified files. The head will change with this document and future commits. Do not assume the snapshot SHA remains current.
+**Branch:** `design/hero-skill1-self-taught-combat-20261024`
 
-## Purpose — read this FIRST in a fresh chat or Work session
+This record supersedes the earlier Area 2 CI-blocked / Area 3 unimplemented
+handoff. The original conversation is not needed. Read the current branch and
+[final focused review](HERO_SKILL1_AREA4_FINAL_REVIEW_20261024.md) first.
 
-**READ THIS NEW OWNER DECISION FIRST:** [Area 3 stacked Normal/Charged queue contract](HERO_SKILL1_AREA3_QUEUE_STACKING_DECISION_20261024.md). It is the authoritative owner clarification: **queued requests must coexist in FIFO order for the same skill, never automatically cancel/replace each other**. The previous Tap-precedence/replace suggestion is rejected. Code in `app.js` has **not yet been rewritten** to comply. This is the first Area 3 input requirement for the next Work chat.
+## Current state
 
-**This file and the PR branch are the complete continuation context.** The original chat, its long transcript, personal memory, prior generated attachments and an individual assistant session **are NOT prerequisites**. The user specifically wants to move to a fresh chat, preferably ChatGPT Work, without losing decisions or having to restate the plan.
+- **Area 1:** three Skill 1 forms and independent basic/normal/charged clocks
+  implemented; expanded native checks pass. Slow's debt reaches all positive
+  hero timers. An oblique hawk-contact rounding defect was fixed and tested.
+- **Area 2:** original class effects, offline audio and bilingual game guidance
+  implemented. Both inherited CI blockers were reproduced/repaired. Native Canvas
+  and focused audio/reference tests pass. Actual browser/device acceptance is
+  still unconfirmed; do not claim visual/audio play certification.
+- **Area 3:** owner-approved FIFO multi-entry queue implemented, with 16 pending
+  requests, explicit rejection, stable identities, same-slot ordering and
+  independent dispatch for other slots. Exact Charged→Normal and lifecycle/input
+  tests pass. Hawk optional retreat families/exemptions audited and tested.
+  See [implementation](HERO_SKILL1_AREA3_IMPLEMENTATION_20261024.md).
+- **Area 4:** focused integrated review and deterministic action-economy evidence
+  completed. The 38-file CI checkpoint passed at `6e18a094…`; additional original
+  cooldown/form/opener/companion suites were repaired and passed locally afterward.
+  **Check the live PR for the latest final-head CI status.** See the final review
+  for all evidence boundaries and remaining browser/play acceptance.
+- Published dev.177 main `ae0c0084c90a397738376f851d1d22c902c67279` is integrated,
+  preserving bounded save recovery and audited runtime workload reductions.
+- No merge, main push, deployment, publication, mark-ready or full-game/browser
+  matrix is authorized. Keep this single draft. Do not separately merge #436 or
+  begin unrelated #440.
 
-**Do not re-ask already approved questions.** Read this handoff, PR body, the existing implementation checkpoints and authoritative numerical/cooldown contracts, then inspect the current branch and proceed with the **next unfinished step**. Record discoveries, fixes, tests, and blockers in **this same draft PR**, so subsequent chats can take over equally well. Use the repository and connected GitHub tools (or a Work Git checkout) as the source of truth, not remembered claims.
+## Authoritative contracts
 
-**User authorization and project rules:**
-- **Four stages, in order**: Area 1 gameplay implementation; Area 2 visuals/audio/in-game text; Area 3 input and retreat interaction decisions; Area 4 focused tests, defects and balance. The owner has explicitly authorized proceeding with these areas **one by one**. **Area 1 is implemented**, **Area 2 is implemented as a candidate but has an outstanding focused CI failure**, **Areas 3 and 4 are not complete**.
-- All numerical selections are **approved initial values subject to testing**. Keep working names for now, with literal Spanish localizations; **do not reopen permanent naming or add new lore**.
-- **Do not merge, deploy, publish, push to `main`, mark ready-for-review, alter the released PWA, or run release/publish actions without separate owner authorization**. Changes remain on PR #439's branch. A green test suite would mean *eligible for final owner review*, not permission to merge.
-- Azeroth Chronicles is explicitly a **multi-file GitHub Pages/PWA game**. Source, JS/CSS/audio/visual assets, tests and docs can be separate; **never impose an old single-HTML portability restriction**. Preserve packaging, offline operation, save safety, screen controls, and existing Canvas/Pixi fallback.
-- Prefer the smallest **relevant focused tests**, not a full repository/browser battery by reflex. Maintain regression evidence. Be candid about checks that did not run; do not claim that “passed in a reduced-service harness” equals clean CI or actual browser/device certification.
-- Preserve established story canon, protagonist self-taught Rank 1 (no claim the entire childhood was spent in Greenwood Vale), Drowned Keeper's distinct scholarly voice, and established English/Spanish references. Do not rewrite locked narrative manuscripts to update UI mechanics. Do not replicate third-party Ragnarok or *Frieren* names, protected art, FX or lore.
+1. [FIFO queue owner decision](HERO_SKILL1_AREA3_QUEUE_STACKING_DECISION_20261024.md).
+   Same-slot Charged and Normal requests coexist and never implicitly replace or
+   overtake one another. Other slots remain independent. Pending input is transient.
+2. [Asymmetric cooldowns](ASYMMETRIC_TAP_CHARGED_COOLDOWNS_20261024.md).
+   Charged starts both clocks; Normal starts only normal recovery. Charged needs
+   both ready. Automatic basics are separate. Shield Stance and Silence retain
+   native exceptions.
+3. [Approved numerical design](HERO_SKILL1_FINAL_BALANCE_SPEC_20261024.md).
+   Automatic basics 0.85s; normal Tap 3s; charged Cross 8s / wide Beam 7s / Hawk 8s,
+   all with the existing training/Slow rules and one Skill 1 rank. No retuning was
+   performed. Damage/geometry and all eight-slot details remain in that contract.
+4. [Class/lore contract](HERO_SKILL1_SELF_TAUGHT_COMBAT_DESIGN_20261024.md),
+   [A/V and bilingual scope](HERO_SKILL1_AV_AND_IN_GAME_GUIDANCE_SCOPE_20261024.md),
+   [companion dependencies](HERO_SKILL1_COMPANION_DEPENDENCIES_20261024.md).
+   Keep self-taught Rank 1, temporary names and literal Spanish names; no new lore,
+   training gate, pet roster, ninth skill or copied third-party assets.
 
-## Core gameplay contract (owner decisions already settled)
+## Known limits and exact next action
 
-### Three Skill 1 actions, ONE rank
+Read the latest PR check before rerunning anything. The focused source-to-test
+map is `.github/scripts/focused-ci.cjs`. No whole-game suite is needed by default.
+The final review names browser and human play acceptance limits and inherited
+art-tool/format failures. Playwright Chromium download failed in this environment;
+DOM/native Canvas checks are not a replacement for actual browser play.
 
-**Automatic basic attack:** Independent **0.85-second base cadence** whether moving or standing near a legal foe; the established same-target **100%, 110%, 120%** three-hit combo and **55% third-hit secondary splash**, four-second reset/target-switch protections; rank progression remains `hero.skills[0]` up to 8. Not a ninth active skill or extra training tree, independent of Skill 1 button cooldowns. Rescued specialists refine pre-existing self-taught Skill 1 Rank 1. Stationary basics from the intent of separate, still-unmerged PR [#436](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/436) are integrated into #439; **do not separately merge #436**.
+The deterministic 12-second observations preserve basic-only damage but increase
+combined basic + activated output as intended. Review that during play; do not
+silently change approved numbers or weaken bosses/companions to hide the change.
 
-**Normal Tap Skill 1 (instant, 3s base):** Paladin **Radiant Strike / Golpe radiante**, one focused holy projectile; Mage **Arcane Beam / Rayo arcano**, the prior slim single-target beam; Ranger **Rapid Arrows / Flechas rápidas**, three independently dodgeable quick shots. These were previously charged Skill 1 actions. Automatic basics continue independently.
-
-**New Charged Skill 1 (0.65s preparation; one existing rank):**
-
-| Class / temporary name | Base charged cooldown | Damage, geometry, hit behavior |
-|---|---:|---|
-| Paladin **Radiant Cross / Cruz radiante** | **8s** | Four-armed, position-anchored, target-aimed holy cross, arm reach **190–230**, full width **70–102**, **two** pulses 0.35s apart, each **1.5 × (Power+12) × M(rank)**; up to **8 distinct foes**, one hit per foe per pulse, walls/encounter protection respected, no imported HP cost/root, no added weaken/taunt |
-| Mage **Wide Arcane Beam / Rayo arcano amplio** | **7s** | Straight terrain-limited **440–480** reach, **96–128** full width, **2.4 × (Power+12) × M(rank)** once for **every eligible intersected foe** (no arbitrary target cap); continues through enemy bodies, not through solid obstacles; no extra Slow/silence/defense piercing |
-| Ranger **Hawk Interception / Intercepción del halcón** | **8s** | One tracking hawk, **450** initial acquisition, flight **650 units/sec**, cumulative path **560–620**, lifetime **1.25s**, legal one-target hit **2.25 × (Power+12) × M(rank)**. Normal dodge cannot nullify actual legal contact; terrain/zone/boss protections still apply. **On contact during a genuine interruptible tactical retreat**, cancel the retreat and block reuse of that **same retreat family for 4.0–4.6s**. No blanket stun, permanent pet or scripted safety-return cancellation |
-
-`M(rank)=1+0.15(rank-1)` (max 2.05). Reach/width/flight/lockout milestones increment at ranks **2, 4, 6, 8**. Exact per-rank table and migration plan: [HERO_SKILL1_FINAL_BALANCE_SPEC_20261024.md](HERO_SKILL1_FINAL_BALANCE_SPEC_20261024.md). **Do not silently retune numbers until focused observations justify owner review.**
-
-### NEW cooldown rule applies to **ALL eight numbered skills**
-
-Each hero skill slot has **two recovery clocks**: `hero.cd[i]` (normal/Tap timer) and `hero.chargedCd[i]` (charged-only lock). A successful **charged** use starts **both** the ordinary normal cooldown and the longer charged cooldown. A successful **normal Tap** starts/restarts **only the normal** cooldown and **never extends or resets a still-running charged lock**. Tap is legal as soon as its normal cooldown ends, even if Charged remains locked. Charged requires **both** ready. No universal cooldown across skills. Skill 1's automated basic timer is a **third, separate** `hero.basicCd`. Slow/Cooldown Training and Paladin Shield Stance's unusual normal Skill 3 expiry semantics remain. Precise queue rules, Skills 2–8 base durations, safety rules and legacy v4 migration: [ASYMMETRIC_TAP_CHARGED_COOLDOWNS_20261024.md](ASYMMETRIC_TAP_CHARGED_COOLDOWNS_20261024.md). The older “charged forces Tap to wait the entire charged cooldown” description is **obsolete** even if it survives in an old note.
-
-### Invariants / exclusions
-
-Protect existing Paladin Shield Stance and Mage Silence distinctions, all eight skills, original projectile targeting/LOS, charge interruption, Recall/navigation, the opening Thornfang/captive scene, field-boss safety returns, TRUE boss/arena state, ordinary and pet companions, Ranger Rally, independent Soldier/Archer/pet attack and special timers, training costs and unlocks, prior v4 saves, pause/background timing, optimized rendering and PWA startup. The hawk is **not** a member of the party and must not touch `u.cd`, `u.skill1Cd`, `u.skill2Cd` or `u.skillGlobalCd`.
-
-## Staged progress and exact next work
-
-### Area 1 — Gameplay implementation: **IMPLEMENTED / needs expanded regression**
-
-Completed on PR branch: `src/prototype/rules.js`, `hero-combat.js`, `engine.js`, `boss-combat.js`, `save.js`, `app.js`, and focused `tests/hero-skill1-stage1.test.cjs`. Includes independent stationary/moving basics, promoted instant normal attacks, new Cross/Beam/Hawk simulation, retreat guards, eight-slot asymmetric cooldowns, and migration. Existing implementation details: [HERO_SKILL1_AREA1_IMPLEMENTATION_20261024.md](HERO_SKILL1_AREA1_IMPLEMENTATION_20261024.md).
-
-Not yet certified across all situations. Keep Area 1 mechanics in place; Area 3 will finish nuanced queue and boss movement behavior, and Area 4 will handle deeper regression. Do not claim that the game is published.
-
-### Area 2 — Effects, sounds and player-facing documentation: **IMPLEMENTED / CI not green**
-
-Completed on PR branch: `src/prototype/hero-presentation.js`, `audio-hero.js`, `skill-reference.js`, `menus.js`, `archive.js`, `app.js`, `README.md`, terrain-aware simulation receipts, `tests/hero-skill1-area2.test.cjs`, plus updates to old tests. Cross has two synchronized gold pulses clipped to legal arms; Mage a true broad multi-enemy beam; Ranger a recognizable moving original hawk and real impact/retreat-interruption cues. Sounds are procedural/offline via existing mixer; no copyrighted assets, extra audio engine or crowd-per-foe bursts. In-game Journal, rank/instructor previews, HUD and screen-reader titles, combat controls and Keeper's Archive teach three Skill 1 forms, dual timers and Spanish names. [HERO_SKILL1_AREA2_IMPLEMENTATION_20261024.md](HERO_SKILL1_AREA2_IMPLEMENTATION_20261024.md) gives the source/evidence.
-
-**Important — verified latest CI failure:** At pre-handoff head `7b8ac015…`, GitHub Actions “Focused checks and deploy” run [#40155087046](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40155087046) **FAILED** during focused validation; the publish job was **skipped**, not deployed. **27 focused test files were selected; two failed**, specifically:
-1. `tests/audio-scheduler.test.cjs` at minified **line 8**, assertion **`2.5 !== 1.1`**: the test expects the short battle-music fade after `c.engage(boss)`, but the actual final scheduled gain time was 2.5 rather than 1.1. The recently adjusted “use living encounter target” fixture **did not solve this**. Determine whether engagement actually promotes the correct battle score/cue in this deterministic game state, or whether the fixture does not enter eligible combat. **Do not simply change expected duration** without checking game/audio semantics.
-2. `tests/skill-reference.test.cjs` at **line 57**, assertion **`2.64 != 7.04`**: old test compares **`hero.cd[i]`** to the *charged* form's cooldown. With asymmetric timers, a charged cast correctly sets **`hero.cd[i]` to shorter normal recovery** (here 2.64 with training) and **`hero.chargedCd[i]` to longer charged recovery** (7.04). Fix assertion coverage to explicitly verify **both timers**, including the normal-after-charge independence, while respecting Paladin Shield Stance. Do not conceal a real implementation mismatch if encountered.
-
-**The new Area 1 and Area 2 focused tests PASSED in that same CI run**, as did numerous existing menu, save, pet, slow and native gameplay checks. This does **NOT** make the overall CI green. **First action in the fresh Work session** should be to inspect these exact failures on the latest branch, make narrow justified fixes, rerun the two tests and focused PR workflow, and update the Area 2 checkpoint with actual results. Mark Area 2 as **verified** only after no outstanding CI failures and relevant Canvas/Pixi/reduced-motion/audio/Spanish behavior is checked to the agreed stage standard.
-
-### Area 3 — Interaction refinements and Hawk-vs-retreat lifecycle: **NOT COMPLETE / next main coding stage**
-
-**A. Stacked queued input / per-form cooldown UX (all Skills 1–8) — OWNER DECISION RECORDED:** Follow the [authoritative Area 3 stacking decision](HERO_SKILL1_AREA3_QUEUE_STACKING_DECISION_20261024.md). **Never automatically cancel, replace, merge or skip a queued Charged request when the player subsequently queues a normal Tap.** Example: `[Skill 2 Charged, Skill 2 Normal]` are **two independent FIFO entries for that slot**. Charged executes first when both timers permit and after genuine 0.65s preparation; normal then waits for the normal timer (usually 3s after Charged release), **not** charged-only recovery (usually 6s). If normal becomes ready before the earlier queued Charged, it still does not overtake that older same-slot request. The older assistant proposal for **normal-Tap precedence / replace queued Charged is explicitly rejected** and currently remains in the source as a mismatch; replace `queuedCharges = new Map()` / `set(slot, request)` single-slot storage and that automatic cancellation path with an ordered, per-form backlog, visible queue order and explicit legal cancellation. Audit `app.js`, `hero-combat.js`, UI, keyboard, pointer and touch: quick Tap (<0.20s), ambiguous 0.20–0.25s release, queued hold >=0.25s, 0.65s charge after readiness, repeated presses, targeting, Slow, interrupts, menus, pauses, and Paladin Stance. Preserve independent slots and automatic basics; test owner's exact two-entry sequence and absence of silent queue replacement.
-
-**B. Ranger Hawk retreat classifications (not indiscriminate boss stun):** Source hooks: `tacticalBeginRogueRegroup`, `tacticalAdvanceRogueRegroup`, `tacticalRogueMove`, `enemyBackpedal`, boss `enemyWithdrawalAction`, `enemyWithdrawalCastPosition`, boss special-motion/recovery routines including **Abyss Go-Around**. Current implementation covers Rogue regroup/escape, authored withdraw and ranged backpedal; audit target states individually for safe cancel/lockout of **genuine optional boss/captain tactical withdrawals**. Never destroy committed offensive telegraphs or scripted arena phase, Thornfang captive-preserving retreat, returning/unstick/leash/safety resets, invulnerability, or boss healing-phase requirements. If a bespoke retreat is not safely cancellable, record the exact documented exemption and reason; avoid a blanket “boss immune to hawk” shortcut.
-
-**Area 3 deliverable:** **implement and test the owner-approved FIFO multi-entry queue, not the obsolete replacement route**, plus focused regression tests for queue sequencing and each retreat family/exemption, implementation changes on this same PR branch, a new `docs/HERO_SKILL1_AREA3_IMPLEMENTATION_20261024.md` checkpoint, updated PR checklist, no merge/deploy. If an unresolved choice genuinely changes the owner's intended gameplay, consult the owner rather than assume.
-
-### Area 4 — Focused integration, test-led balancing and release-candidate review: **NOT STARTED**
-
-1. Fix all failing focused CI checks from Area 2 and Area 3 and document pass URLs; syntax/build/package safety; only necessary tests, not an indiscriminate full suite. Native smoke entry points: `node tests/hero-skill1-stage1.test.cjs`, `node tests/hero-skill1-area2.test.cjs`, `node tests/audio-scheduler.test.cjs`, `node tests/skill-reference.test.cjs`, `node tests/slow-cooldown.test.cjs`, `node tests/pet-skill-effects.test.cjs`, `node tests/snapshot-encounter-lifecycle.test.cjs`; expand based on changes and exact observed failures.
-2. **Matrix:** all three heroes, Skills 1–8 normal/charged at ranks 1/4/8, before/after five ranks of Cooldown Training, Slow and accumulated Slow debt, charged-after-Tap and Tap-after-Charged, stationary/moving/charging basics, queued inputs, Paladin stance expiry, Mage Silence, Ranger 3-arrow separate hit/miss, target switch and release. Test save/import v4 with active ordinary, charged, basic and **independent companion** cooldowns.
-3. **Combat/encounter:** cross 2 pulses/8 foes/rotated arms/wall ends; Mage every-enemy corridor no hit cap and no through-wall; hawk moving fast targets, obstacle/zone expiry and actual contact/retreat control, optional boss retreat, Thornfang and TRUE protected phases, pet AI, camp/party/Recall, crowd stress and save/reload. Include the existing companion audit matrix.
-4. **A/V and UI:** native effect event origin, Canvas and PixiJS/WebGL2 fallback, reduced-motion/optimization modes and bounded effect queue, offline/muted sound and headroom, appropriate no-hit hawk expiry, accurate rank-based bilingual Journal, instructor, Keeper, HUD, accessibility and touch. No visuals may hit beyond authoritative geometry.
-5. **Balance:** small deterministic before/after and solo/group/boss snapshots and manual playtest observations; compare tap/charged/basic action economy, combat duration and crowd performance. Initial approved numbers are test-adjustable; report proposed adjustments to owner and update rules, UI projections and tests together. Do not alter boss HP or secretly weaken companions to hide a throughput change.
-6. **Integration:** compare latest draft head with current `main`, investigate overlapping still-open PRs (especially #436), preserve **multi-file** source/PWA packaging and offline cache/version gating. Review final diff and PR-checklist, note any remaining issues. **Stop and request explicit owner authorization before merging/deploying.** Complete an `AREA4_FINAL_REVIEW` document/checklist with test URLs, remaining known risks and proposed release action.
-
-## Reading map — authoritative in this order
-
-1. **This independent handoff** (current stage, known live blockers, next action).
-2. [PR #439 body](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/439) (live status/checklist; update as work proceeds).
-3. [**New owner-approved stacked-queue contract**](HERO_SKILL1_AREA3_QUEUE_STACKING_DECISION_20261024.md) (**overrides previous normal-Tap replace/cancel suggestion**), then [asymmetric cooldown contract](ASYMMETRIC_TAP_CHARGED_COOLDOWNS_20261024.md) (**overrides older shared-cooldown prose**).
-4. [Final initial numerical Skill 1 balance](HERO_SKILL1_FINAL_BALANCE_SPEC_20261024.md) and [class/core design](HERO_SKILL1_SELF_TAUGHT_COMBAT_DESIGN_20261024.md).
-5. [Area 1 source checkpoint](HERO_SKILL1_AREA1_IMPLEMENTATION_20261024.md), [Area 2 source checkpoint](HERO_SKILL1_AREA2_IMPLEMENTATION_20261024.md), [A/V / game UI scope](HERO_SKILL1_AV_AND_IN_GAME_GUIDANCE_SCOPE_20261024.md).
-6. [Companion dependency audit](HERO_SKILL1_COMPANION_DEPENDENCIES_20261024.md) and relevant actual JS/test files.
-7. Fresh GitHub workflow results, not any stale “first focused run passed” language. When conflicting with actual current code/tests, report the mismatch and verify before changing the contract.
-
-## How to resume in a fresh Work chat
-
-The owner can simply provide this PR URL and say: **“Continue PR #439 in its existing draft branch. Read `docs/PR439_INDEPENDENT_WORK_HANDOFF_20261024.md` and the owner-approved `docs/HERO_SKILL1_AREA3_QUEUE_STACKING_DECISION_20261024.md`. Verify outstanding focused CI, implement Area 3 multi-entry FIFO normal/charged queue stacking without silent cancellation, audit Ranger Hawk boss retreat exceptions, then proceed to Area 4 checks. Do not merge or deploy.”**
-
-The new worker should: fetch current PR and branch head; read this handoff and cited contracts; check the latest Actions run; do the smallest appropriate task for the current stage; run relevant tests; commit to `design/hero-skill1-self-taught-combat-20261024`; update handoff and PR checklist with concrete files, tests, open risks and exact latest head; repeat stage-by-stage. **Nothing must be recovered from this original chat.**
-
-**Do not consider this file permission to begin a separate feature (e.g. the independent Critical Executions PR #440). PR #439 stays scoped to Skill 1, related eight-slot cooldown/input behavior and required regressions.**
+Continue on this branch with a bounded browser/play check when available, or
+address specific owner feedback. Do not repeat the old Tap-precedence proposal or
+reimplement the completed queue. Any release still requires separate owner
+approval; a green PR does not authorize publication.

@@ -113,6 +113,68 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
   near(e.hp, before);
   assert.equal(g._heroSkillEffects?.length || 0, 0, 'zone transfer cancels delayed effects');
 }
+// Every pet retains its own ordinary/first/second clocks and Skill 2 gate.
+for (const { id: family } of C.data.bosses) {
+  const { g, e } = arena('mage');
+  g.s.normal[family] = g.s.true[family] = true;
+  g.s.expeditionRank = 6;
+  const u = g.unit('pet', 540, 500, family);
+  g.s.party = [u];
+  g.hero.cd.fill(3);
+  g.hero.chargedCd.fill(8);
+  g.hero.basicCd = 0.5;
+  const first = JSON.stringify(g.petSkillDefinition(u, 1));
+  g.hero.skills[0] = 8;
+  assert.equal(
+    JSON.stringify(g.petSkillDefinition(u, 1)),
+    first,
+    'hero Skill 1 rank does not retrain ' + family,
+  );
+  g.s.companionCombatTraining = 0;
+  g.hero.skills[1] = 0;
+  assert(!g.companionSecondSkillUnlocked());
+  assert(g.usePetSkill(u, e, 1), family + ' first works during hero recovery');
+  near(u.skill1Cd, 8);
+  g.hero.skills[1] = 1;
+  g.s.companionCombatTraining = 2;
+  u.skillGlobalCd = 0;
+  assert(g.companionUseSecondSkill(u, e), family + ' independently starts second');
+  g.advancePartyChargeClock(0.65);
+  g.resolveCompanionCharges();
+  near(u.skill2Cd, 12);
+  near(g.hero.cd[0], 3);
+  near(g.hero.chargedCd[0], 8);
+  near(g.hero.basicCd, 0.5);
+}
+for (const cls of ['paladin', 'mage', 'ranger']) {
+  const { g, e } = arena(cls);
+  assert(g.castMovementBasic());
+  const step = g.basicComboStep;
+  assert(g.cast(1, e.id, false));
+  assert.equal(g.basicComboStep, step, 'Tap preserves automatic combo');
+  g.hero.cd[0] = 0;
+  assert(g.cast(1, e.id, true));
+  assert.equal(g.basicComboStep, step, 'Charged preserves automatic combo');
+  g.hero.basicCd = 0;
+  assert(g.castMovementBasic());
+  assert.equal(g.basicComboStep, step + 1);
+}
+// Oblique contact against a large boss must not hover at a floating-point
+// residue until expiry. The tolerance is far below one world pixel.
+for (const dt of [1 / 60, 1 / 30, 0.1]) {
+  const { g } = arena('ranger');
+  const boss = g.bossEnemy(g.boss('thorn'), 'normal', { x: 584, y: 502 });
+  g.zone().enemies = [boss];
+  assert(g.damage(boss, 1, 'hero'));
+  const before = boss.hp;
+  assert(g.cast(1, boss.id, true));
+  for (let t = 0; t < 1.4 && g._heroSkillEffects.length; t += dt) {
+    g.s.time += dt;
+    g.advanceHeroSkillEffects(dt);
+  }
+  assert(boss.hp < before, 'oblique hawk contact lands at ' + dt);
+  assert(g.effects.some((e) => e.type === 'heroHawk' && e.phase === 'impact'));
+}
 console.log(
   `PASS ${cases} class/rank/training/slot dual-clock cases, Slow debt/recovery, v4 companion timers, crowd caps and effect lifecycle`,
 );

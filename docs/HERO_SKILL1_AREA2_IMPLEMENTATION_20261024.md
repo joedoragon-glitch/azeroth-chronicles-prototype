@@ -1,3 +1,5 @@
+**Current status:** This document preserves the original implementation checkpoint. Later work, repaired CI, completed FIFO input and expanded verification supersede its unfinished-work statements; see [the current final review](HERO_SKILL1_AREA4_FINAL_REVIEW_20261024.md).
+
 # Hero Skill 1 — Area 2 audiovisual and in-game teaching checkpoint
 
 **24 October 2026 · Draft PR #439 · unmerged · not deployed**

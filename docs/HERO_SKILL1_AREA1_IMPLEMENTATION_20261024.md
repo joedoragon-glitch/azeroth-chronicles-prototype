@@ -1,3 +1,5 @@
+**Current status:** This document preserves the original implementation checkpoint. Later work, repaired CI, completed FIFO input and expanded verification supersede its unfinished-work statements; see [the current final review](HERO_SKILL1_AREA4_FINAL_REVIEW_20261024.md).
+
 # Hero Skill 1 integration — Area 1 gameplay implementation checkpoint
 
 **24 October 2026 · Draft PR #439 · AREA 1 only · Not merged or deployed**
