@@ -1251,6 +1251,18 @@
         if (target && requiresTarget) this.s.heroTarget = selected?.id || target.id;
         if (dashTo) this.move(this.hero, dashTo, dist(this.hero, dashTo) + 1, 1);
         const power = this.power();
+        // Native Stage 2 hook: only Skill 1 is wired at this checkpoint.
+        // No hook exists in production until an explicit, tested session is
+        // attached; queued/cancelled attempts return before this commitment.
+        const criticalReceipt =
+          slot === 1 && this._criticalPartyNative
+            ? this._criticalPartyNative.release(
+                this,
+                'hero/' + this.hero.class + '/' +
+                  (automatic ? 'auto' : isCharged ? '1-charged' : '1-tap'),
+                'hero',
+              )
+            : null;
         // Observation only: presentation never authorizes a cast or changes its resolver.
         this.event('heroSkillCast', {
           actor: 'hero',
@@ -1282,7 +1294,10 @@
           );
         if (!isCharged && slot === 1 && !automatic) {
           const d = Math.max(1, dist(this.hero, target)),
-            damage = (power + 12) * scale * R.chargedSkills.basicDamageMultiplier,
+            tapDamage = (power + 12) * scale * R.chargedSkills.basicDamageMultiplier,
+            damage = criticalReceipt?.critical
+              ? this._criticalPartyNative.enhance(criticalReceipt, tapDamage, 'damage')
+              : tapDamage,
             dx = (target.x - this.hero.x) / d,
             dy = (target.y - this.hero.y) / d;
           this.engage(target);
@@ -1303,6 +1318,7 @@
               style: 'beam',
               slot,
               charged: false,
+              ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               ...(encountersAtStart ? { encountersAtStart } : {}),
             });
             this.event('projectileLaunch', {
@@ -1333,7 +1349,8 @@
                 style: 'arrow',
                 slot,
                 charged: false,
-                ...(encountersAtStart ? { encountersAtStart } : {}),
+                ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
+              ...(encountersAtStart ? { encountersAtStart } : {}),
                 rapid: true,
                 chargedBurst: false,
               });
@@ -1365,6 +1382,7 @@
               style: 'holy',
               slot,
               charged: false,
+              ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               ...(encountersAtStart ? { encountersAtStart } : {}),
             });
             this.event('projectileLaunch', {
@@ -1403,7 +1421,12 @@
               from,
               angle,
               targetId: target.id,
-              damage: (power + 12) * scale,
+              damage: criticalReceipt?.critical
+                ? this._criticalPartyNative.enhance(
+                    criticalReceipt, (power + 12) * scale, 'damage',
+                  )
+                : (power + 12) * scale,
+              ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               encountersAtStart,
             };
           this.engage(target);
@@ -1881,7 +1904,10 @@
                     : power * 10) * scale,
             comboState = slot === 1 ? this.nextBasicCombo(target.id) : null,
             combo = comboState?.step || 0,
-            dmg = baseDmg * (comboState?.multiplier || 1);
+            criticalBasicDamage = slot === 1 && criticalReceipt?.critical
+              ? this._criticalPartyNative.enhance(criticalReceipt, baseDmg, 'damage')
+              : baseDmg,
+            dmg = criticalBasicDamage * (comboState?.multiplier || 1);
           if (this.hero.class === 'paladin') {
             const landed = this.damage(
               target,
@@ -1906,7 +1932,7 @@
                 this.basicComboFinisher(
                   target,
                   { x: this.hero.x, y: this.hero.y },
-                  baseDmg,
+                  criticalBasicDamage,
                   'hero',
                   'paladin',
                   automatic,
@@ -1953,6 +1979,7 @@
                       : undefined,
                 combo,
                 ...(automatic ? { automaticBasic: true } : {}),
+                ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
                 slow:
                   this.hero.class === 'mage' && [2, 6].includes(slot)
                     ? slot === 2
@@ -1964,7 +1991,7 @@
                 ...(slot === 1 && combo === 3
                   ? {
                       basicComboFinisher: true,
-                      finisherBaseDamage: baseDmg,
+                      finisherBaseDamage: criticalBasicDamage,
                       finisherFromX: this.hero.x,
                       finisherFromY: this.hero.y,
                       comboClass: this.hero.class,
