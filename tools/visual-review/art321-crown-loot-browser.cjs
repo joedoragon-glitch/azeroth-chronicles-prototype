@@ -69,7 +69,7 @@ async function compareImages(beforePath,afterPath){
     pixelDifference:deltaTotal,alphaChangedPixels:alphaChanged};
 }
 async function capture(page,backend){
-  const info=await page.evaluate(()=>{
+  const info=await page.evaluate((coverMode)=>{
     const g=Prototype.game,r=Prototype.renderer,world=document.getElementById('world'),
       graphics=Prototype.experimentalGraphics,rect=world.getBoundingClientRect();
     if(!world.getContext('2d')||rect.width<300||rect.height<300)
@@ -121,7 +121,7 @@ async function capture(page,backend){
       screen:{x,y},clip,fixture,cover,
       pauseOverlayAlpha:world.getContext('2d').getImageData(12,12,1,1).data[3]
     };
-  });
+  },coverMode);
   assert.equal(info.mode,backend,'Capture must come from the requested actual backend');
   if(backend==='webgl2'){
     assert.equal(info.phase,'confirmed','WebGL must be retained and confirmed');
