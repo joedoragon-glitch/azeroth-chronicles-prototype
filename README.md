@@ -126,7 +126,8 @@ For a new gameplay system, use the [mechanic development workflow](docs/MECHANIC
 
 - [Architecture and module boundaries](docs/ARCHITECTURE.md)
 - [Current work and sequencing](docs/DEVELOPMENT_STATE.md)
-- [Documentation inventory and audit](docs/DOCUMENTATION_AUDIT_20261019.md)
+- [Current documentation index and topic routing](docs/DOCUMENTATION_INDEX.md)
+- [Historical 19 October documentation audit and frozen incoming census](docs/DOCUMENTATION_AUDIT_20261019.md)
 - [Historical 10 October backlog audit](docs/BACKLOG_HOUSEKEEPING_20261010.md)
 - [Archived development notes](docs/DEVELOPMENT_HISTORY_THROUGH_V08133.md)
 - [Historical v0.8.84 engineering audit](docs/HOUSEKEEPING_AUDIT.md)
