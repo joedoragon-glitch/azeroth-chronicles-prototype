@@ -1014,6 +1014,18 @@
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
             continue;
           }
+          if (p.rangerDelayedLaunch && p.source === 'hero' && hero.class === 'ranger') {
+            // Each bow release is a physical event, not a snapshot from the
+            // original button press. Move the REAL projectile to the living
+            // Ranger and aim at the foe's position at this sub-launch only.
+            // Once fired it follows the ordinary independent collision path.
+            const distance = Math.max(1, dist(hero, e));
+            p.x = hero.x;
+            p.y = hero.y;
+            p.dx = (e.x - hero.x) / distance;
+            p.dy = (e.y - hero.y) / distance;
+            delete p.rangerDelayedLaunch;
+          }
           // Additive transient observation, after the existing stagger delay.
           if (p.source === 'hero' && !p.heroFlightPresented) {
             p.heroFlightPresented = true;
