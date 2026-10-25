@@ -1816,6 +1816,22 @@
         group: 'stores',
         name: 'Greenwood treasury guardian',
       },
+      // Additional non-reward ranged posts guard Scornfang's command side
+      // of the stores divider; never alter the first four legacy identities.
+      {
+        x: 705,
+        y: 385,
+        role: 'ranged',
+        group: 'command',
+        name: 'Greenwood command lookout',
+      },
+      {
+        x: 705,
+        y: 735,
+        role: 'ranged',
+        group: 'command',
+        name: 'Greenwood rear lookout',
+      },
     ],
     'supply-march': [
       {
@@ -1856,6 +1872,21 @@
         role: 'melee',
         group: 'stores',
         name: 'Marsh treasury guardian',
+      },
+      // Protect Direjaw on the captain's side of the flood divider.
+      {
+        x: 700,
+        y: 735,
+        role: 'ranged',
+        group: 'command',
+        name: 'Marsh command lookout',
+      },
+      {
+        x: 840,
+        y: 650,
+        role: 'ranged',
+        group: 'command',
+        name: 'Marsh rear lookout',
       },
     ],
     'supply-highlands': [
