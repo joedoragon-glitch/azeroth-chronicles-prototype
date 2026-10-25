@@ -1447,6 +1447,24 @@
   const audio = new PrototypeAudio(profile.audio);
   audio.setOptimizationMode(optimizationMode);
   audio.enableProduction();
+  // Browsers require a user gesture before audible playback. Unlock on that
+  // gesture itself, not on the first movement, attack or skill receipt.
+  // Existing menu/button unlocks remain the click/tap fallback for WebKit.
+  function unlockSoundtrackOnGesture(event) {
+    if (event.type === 'keydown' && (event.repeat || event.isComposing)) return;
+    if (audio.ctx?.state === 'running') {
+      removeEventListener('pointerdown', unlockSoundtrackOnGesture, true);
+      removeEventListener('keydown', unlockSoundtrackOnGesture, true);
+      return;
+    }
+    void audio.unlock().then((ready) => {
+      if (!ready) return;
+      removeEventListener('pointerdown', unlockSoundtrackOnGesture, true);
+      removeEventListener('keydown', unlockSoundtrackOnGesture, true);
+    });
+  }
+  addEventListener('pointerdown', unlockSoundtrackOnGesture, true);
+  addEventListener('keydown', unlockSoundtrackOnGesture, true);
   if (typeof PrototypeMaterials !== 'undefined')
     PrototypeMaterials.setOptimizationMode(optimizationMode);
   const platform = PrototypePlatform.init(window);
