@@ -2,6 +2,10 @@
 
 **25 October 2026. Current status of this report:** independent cross-branch source/selected-regression integration checkpoint, not an integration merge, production deployment, full-game matrix, physical-device approval, or a replacement of the prior art catalog. The approved Canonical Canvas 2D game and multi-file GitHub Pages/PWA remain authoritative. PixiJS/WebGL2 remains opt-in experimental. **All tests described below were executed on transient test trees and the actual draft candidate, never merged into `main`.**
 
+## Subsequent native earned-drop presentation checkpoint
+
+[Chromium earned-loot run #40233872865](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40233872865) **passed** as an additional bounded runtime acceptance, beyond the earlier source-combination tests. It verifies the production `Campaign.kill` death handler creates `Campaign.s.loot`, the candidate Pixi world presents the earned portrait coin in its composed GPU frame (919 changed pixels), and `Campaign.tick(0.01)` collects and credits it once (30 → 53 Crowns). [Nine independently verified PNG hashes and precise limitations](evidence/ART_CATALOG_321_EARNED_LOOT_CHROMIUM_20261025.json). The final hero strike was not simulated; this was a directly invoked **real death/reward/pickup** path in a disposable browser. No other unmerged PR code was modified.
+
 ## 1. Authority preserved; no retroactive art redesign
 
 - [Original Issue #321](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321) was completed as a design-assessment deliverable; [PR #323](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/323) subsequently implemented and published its owner-approved procedural artwork. The historically accepted **513 catalog IDs = 465 improved/rebuilt, 47 kept/protected, one shared effects context**. Historical visual/art approval is **not being reopened**.
