@@ -126,7 +126,7 @@ for (const kind of ['direwolf-kennel','rider-tack-rack','rider-bunk']) {
 for (const ranged of [false, true]) {
   let fills = 0, strokes = 0;
   const canvas = {
-    save() {}, restore() {}, translate() {}, scale() {}, beginPath() {}, closePath() {},
+    save() {}, restore() {}, translate() {}, scale() {}, rotate() {}, beginPath() {}, closePath() {},
     moveTo() {}, lineTo() {}, bezierCurveTo() {}, quadraticCurveTo() {}, ellipse() {}, arc() {},
     fill() { fills++; }, stroke() { strokes++; },
   };
