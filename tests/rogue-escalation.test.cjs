@@ -276,8 +276,22 @@ console.log('PASS isolated Ringleader summons first instead of standing and repe
   assert.equal(c.tacticalRogueRegroup(a).phase, 'escape',
     'Ringleader with no possible refuge or summon follows finite withdrawal');
   assert(!z.enemies.some(u => u.rogueEmergencyReinforcement));
+  assert(a.telegraph?.rogueMove && a.telegraph.mobileRogueCast,
+    'Ringleader still has its original mobile defensive Smoke Trick');
+  let inbound = 0;
+  c.follow = () => { inbound++; return true; };
+  c.move = (actor, destination) => {
+    actor.x += Math.sign(destination.x - actor.x) * 9;
+    return true;
+  };
+  const before = a.x;
+  c.s.time += 0.1;
+  c.updateEnemies(0.1);
+  assert(a.x < before, 'Ringleader physically withdraws during Smoke Trick warning');
+  assert.equal(inbound, 0, 'mobile Smoke Trick does not turn escaping Ringleader toward hero');
+  assert.equal(c.tacticalRogueRegroup(a).phase, 'escape');
 }
-console.log('PASS Ringleader does not fall into a standing Smoke Trick loop when summoning is blocked');
+console.log('PASS blocked Ringleader reinforcement causes moving, not stationary Smoke Trick fallback');
 
 {
   const { c, z, a } = encounter();
