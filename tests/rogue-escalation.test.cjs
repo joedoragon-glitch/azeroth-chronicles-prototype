@@ -8,10 +8,14 @@ function encounter(region = 'vale', roll = 0.25) {
   const z = c.zone();
   z.props = [];
   c.s.time = 30;
+  // Main and side dungeons have smaller maps than the Vale field.
+  const interior = region !== 'vale';
+  const offset = interior ? 850 : 0;
+  const floorY = interior ? 500 : 1300;
   const add = (x, form = 'ringleader') => {
     const u = c.makeEnemy(
       { species: 'goblin', name: 'goblin ' + form, form, level: 3, hp: 250,
-        damage: 15, gold: 0, xp: 0 }, { x, y: 1300 }
+        damage: 15, gold: 0, xp: 0 }, { x: x - offset, y: floorY }
     );
     u.aggro = true;
     u.fightStart = 0;
@@ -20,13 +24,16 @@ function encounter(region = 'vale', roll = 0.25) {
   };
   const a = add(1300), b = add(1340);
   z.enemies = [a, b];
-  c.s.party = [c.unit('soldier', 1390, 1315), c.unit('archer', 1390, 1285)];
+  c.s.party = [
+    c.unit('soldier', 1390 - offset, floorY + 15),
+    c.unit('archer', 1390 - offset, floorY - 15),
+  ];
   for (const u of c.s.party) {
     u.hp = u.maxHp = 10000;
     u.order = null;
   }
   Object.assign(c.hero, {
-    x: 1380, y: 1300, level: 4,
+    x: 1380 - offset, y: floorY, level: 4,
     hp: 10000, maxHp: 10000, immune: 0, order: null,
   });
   c._tacticalPartyTargets = new Map(c.s.party.map(u => [u.id, a.id]));
