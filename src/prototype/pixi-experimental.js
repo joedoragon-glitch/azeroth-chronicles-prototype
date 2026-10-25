@@ -168,6 +168,12 @@
       actorFrameNumber = 0,
       proceduralEvictions = 0,
       proceduralCacheEvictions = 0;
+    // A single stamp-faithful coin texture is shared across all visible loot.
+    // It lives in the GPU actor scene (below world light/atmosphere), not
+    // above the world in the transparent combat-cue overlay.
+    const crownLootTextureId = 'pixi-world-crown-loot';
+    let crownLootTexture = null,
+      crownLootDensity = 0;
     function noteFailure(type, stage, error) {
       const message = String(error?.message || error).slice(0, 240);
       lastError = message;
@@ -314,6 +320,59 @@
       }
       scene.moveBackground(-BG_MARGIN + dx, -BG_MARGIN + dy);
     }
+    function ensureCrownLootTexture(zoom) {
+      const density = Math.max(1, backingRatio * zoom);
+      if (crownLootTexture && crownLootDensity === density) return crownLootTextureId;
+      if (crownLootTexture) {
+        // Do not destroy an image source while an on-screen sprite uses it.
+        // The complete actor list is re-synchronized later this same frame.
+        scene.syncActors([]);
+        scene.unregisterTexture(crownLootTextureId);
+        crownLootTexture.destroy?.(true);
+        crownLootTexture = null;
+      }
+      // Use the already approved portrait-stamped coin painter at the
+      // presentation resolution. This is one tiny reusable image per density,
+      // NOT a new procedural 576x576 bake per loot object.
+      const art = requireValue(root.PrototypeRenderer?.drawCrownLoot,
+        'Original Crown-coin painter unavailable');
+      const stamp = makeCanvas(Math.round(40 * density), Math.round(40 * density)),
+        ctx = requireValue(stamp.getContext('2d'), 'Crown-coin texture canvas unavailable');
+      ctx.setTransform(density, 0, 0, density, 0, 0);
+      art(ctx, { x: 20, y: 20 });
+      const texture = root.PIXI.Texture.from(stamp);
+      texture.source.scaleMode = 'nearest';
+      scene.registerTexture(crownLootTextureId, texture);
+      crownLootTexture = texture;
+      crownLootDensity = density;
+      return crownLootTextureId;
+    }
+    function appendCrownLoot(records, current, zoom) {
+      let ordinal = 0;
+      for (const loot of current.s.loot || []) {
+        ordinal++;
+        if (loot.zone !== current.zoneId ||
+            !Number.isFinite(loot.x) || !Number.isFinite(loot.y)) continue;
+        const point = project(loot);
+        // Keep the same offscreen culling principle as other GPU actors.
+        if (point.x < -40 * zoom || point.x > viewport.width + 40 * zoom ||
+            point.y < -40 * zoom || point.y > viewport.height + 40 * zoom) continue;
+        const textureId = ensureCrownLootTexture(zoom);
+        records.push({
+          key: 'crown-loot:' + (loot.id == null ? ordinal : loot.id),
+          textureId,
+          x: point.x - 20 * zoom,
+          y: point.y - 20 * zoom,
+          width: 40 * zoom,
+          height: 40 * zoom,
+          opacity: 1,
+          flipX: false,
+          // Canonical Canvas draws all Crown loot after the entity pass,
+          // but before the shared day/night grade and scene lighting.
+          depth: Number.MAX_SAFE_INTEGER,
+        });
+      }
+    }
     function actorFrame() {
       const current = game(),
         zoom = platform.cameraZoom || 1;
@@ -414,6 +473,7 @@
           });
         } else throw Error('Missing original game artwork: ' + key);
       }
+      appendCrownLoot(records, current, zoom);
       scene.syncActors(records);
       // At this point all offscreen sprites have been removed; trim their
       // original GPU sources only when above the soft watermark. This keeps
@@ -646,6 +706,9 @@
       deactivate();
       scene?.destroy?.();
       scene = null;
+      crownLootTexture?.destroy?.(true);
+      crownLootTexture = null;
+      crownLootDensity = 0;
       clearBakes();
       backing?.destroy?.(false);
       backing = null;
