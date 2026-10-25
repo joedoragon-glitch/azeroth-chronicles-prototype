@@ -1520,12 +1520,20 @@
             .sort((a, b) => this.idOrder(a, b))) {
             if (this.damage(e, damage, 'hero', { area: true, encountersAtStart })) {
               hits++;
-              if (def.slow) this.applySlow(e, def.slow);
-              if (this.hero.class === 'paladin') this.weakenEnemy(e, rank);
+              if (def.slow)
+                this.applySlow(e, this.criticalHeroValue(
+                  this.hero.class === 'mage' ? criticalReceipt : null,
+                  def.slow, 'slowDuration',
+                ));
+              if (this.hero.class === 'paladin') this.weakenEnemy(e, rank, criticalReceipt);
               if (this.hero.class === 'ranger')
                 this.applySlow(
                   e,
-                  R.heroTactics.ranger.volley.slow + steps * R.heroTactics.ranger.volley.slowStep,
+                  this.criticalHeroValue(
+                    criticalReceipt,
+                    R.heroTactics.ranger.volley.slow + steps * R.heroTactics.ranger.volley.slowStep,
+                    'slowDuration',
+                  ),
                 );
             }
           }
@@ -1571,7 +1579,9 @@
                   ? Math.atan2(facing.y - this.hero.y, facing.x - this.hero.x)
                   : Math.atan2(this.formationHeading?.y || 1, this.formationHeading?.x || 0),
                 reach = cfg.bash.reach + steps * cfg.bash.reachStep,
-                push = cfg.bash.push + steps * cfg.bash.pushStep,
+                push = this.criticalHeroValue(
+                  criticalReceipt, cfg.bash.push + steps * cfg.bash.pushStep, 'pushDistance',
+                ),
                 delta = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
               let hits = 0;
               for (const enemy of this.zone()
@@ -1615,7 +1625,9 @@
                 hits,
               });
             } else {
-              this.hero.shieldStance = cfg.shield.duration;
+              this.hero.shieldStance = this.criticalHeroValue(
+                criticalReceipt, cfg.shield.duration, 'wardDuration',
+              );
               this.hero.shieldRank = rank;
               this.resetBasicCombo();
               this.event('spell', {
@@ -1635,7 +1647,9 @@
                 y: this.hero.y,
                 zone: this.zoneId,
                 radius: cfg.radius + steps * cfg.radiusStep,
-                until: this.s.time + cfg.duration + steps * cfg.durationStep,
+                until: this.s.time + this.criticalHeroValue(
+                  criticalReceipt, cfg.duration + steps * cfg.durationStep, 'silenceDuration',
+                ),
               };
               this.event('chargedArea', {
                 actor: 'hero',
@@ -1658,10 +1672,13 @@
               this.launchTargetedHeroSkill(enemy, 3, 0, 'magic', {
                 effect: 'interrupt',
                 interruptAction: enemy.telegraph || enemy.rangedAim,
+                ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               });
             }
           } else {
-            const amount = (45 + power * 0.5) * scale;
+            const amount = this.criticalHeroValue(
+              criticalReceipt, (45 + power * 0.5) * scale, 'healAmount',
+            );
             if (isCharged) {
               const targets = [this.hero, ...this.activeLivingParty()].filter(
                 (u) => u.hp > 0 && u.hp < u.maxHp,
@@ -1708,7 +1725,9 @@
             if (isCharged) {
               const rally = R.heroTactics.ranger.rally,
                 radius = rally.radius + rally.radiusStep * steps,
-                until = this.s.time + rally.duration + rally.durationStep * steps,
+                until = this.s.time + this.criticalHeroValue(
+                  criticalReceipt, rally.duration + rally.durationStep * steps, 'hasteDuration',
+                ),
                 movement = rally.movementBonus + rally.movementStep * steps,
                 attackSpeed = rally.attackSpeedBonus + rally.attackSpeedStep * steps;
               let allies = 0;
@@ -1743,7 +1762,9 @@
                 hits: allies,
               });
             } else {
-              this.hero.haste = Math.min(6, 4 + 0.25 * (rank - 1));
+              this.hero.haste = Math.min(
+                6, this.criticalHeroValue(criticalReceipt, 4 + 0.25 * (rank - 1), 'hasteDuration'),
+              );
               this.event('spell', {
                 actor: 'hero',
                 class: 'ranger',
@@ -1780,7 +1801,10 @@
               if (!isCharged) {
                 this.launchTargetedHeroSkill(enemy, 4, damage, 'holy', {
                   effect: 'judgment',
-                  tauntDuration: advanced.taunt + steps * advanced.tauntStep,
+                  tauntDuration: this.criticalHeroValue(
+                    criticalReceipt, advanced.taunt + steps * advanced.tauntStep, 'tauntDuration',
+                  ),
+                  ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
                 });
                 continue;
               }
@@ -1789,8 +1813,12 @@
                 // boss basic-target provocation is deliberately short-lived.
                 const tauntDuration =
                   enemy.type === 'boss'
-                    ? Math.min(2.5, advanced.taunt + steps * advanced.tauntStep)
-                    : advanced.taunt + steps * advanced.tauntStep;
+                    ? Math.min(2.5, this.criticalHeroValue(
+                        criticalReceipt, advanced.taunt + steps * advanced.tauntStep, 'tauntDuration',
+                      ))
+                    : this.criticalHeroValue(
+                        criticalReceipt, advanced.taunt + steps * advanced.tauntStep, 'tauntDuration',
+                      );
                 enemy.tauntUntil = Math.max(enemy.tauntUntil || 0, this.s.time + tauntDuration);
                 hits++;
               }
@@ -1839,7 +1867,11 @@
                 this.launchTargetedHeroSkill(enemy, 4, damage, 'magic', {
                   effect: 'arcane-fracture',
                   fractureFraction: advanced.fraction + steps * advanced.fractionStep,
-                  fractureDuration: advanced.duration + steps * advanced.durationStep,
+                  fractureDuration: this.criticalHeroValue(
+                    criticalReceipt, advanced.duration + steps * advanced.durationStep,
+                    'vulnerabilityDuration',
+                  ),
+                  ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
                 });
                 continue;
               }
