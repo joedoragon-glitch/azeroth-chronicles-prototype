@@ -336,7 +336,7 @@
     const receipts = Object.create(null);
     const decisions = { eligibleDraws: 0, fpsLimited: 0, adaptiveSkipped: 0 };
     const stateDraws = { projectiles: 0, telegraphs: 0, motions: 0, hazards: 0, charges: 0 };
-    const frames = [];
+    const frames = [], callbacks = [];
     let drawNumber = 0, eventsSeen = 0, excessIdentityRecords = 0, sceneResets = 0;
     function key(f) {
       if (f.type === 'enemyVfx')
@@ -437,6 +437,24 @@
         else if (skipped) decisions.adaptiveSkipped++;
         else decisions.eligibleDraws++;
       },
+      callback(row, activeEffects = 0) {
+        if (!row || !Number.isFinite(row.frameWorkMs)) return;
+        const rounded = (value) => Math.round((Number.isFinite(value) ? value : 0) * 100) / 100;
+        callbacks.push({
+          gameTime: rounded(row.gameTime),
+          intervalMs: rounded(row.intervalMs),
+          frameWorkMs: rounded(row.frameWorkMs),
+          simulationMs: rounded(row.simulationMs),
+          renderMs: rounded(row.renderMs),
+          effectQueueSize: activeEffects,
+          drawn: !!row.drawn,
+          simulating: !!row.simulating,
+          recovering: !!row.recovering,
+          fpsLimited: !!row.fpsLimited,
+          adaptiveSkipped: !!row.adaptiveSkipped,
+        });
+        if (callbacks.length > 120) callbacks.shift();
+      },
       sceneReset(current) {
         sceneResets++;
         for (const f of current) finish(f, 'filtered');
@@ -447,11 +465,12 @@
           scope: 'Developer Mode opt-in, in-memory, no campaign-save changes',
           proof: 'Painter calls; not nontransparent pixels or player visibility',
           interpretation: 'Direct-state counts are not independently queued effects',
-          limits: { identities: limit, recentDrawFrames: 120 },
+          limits: { identities: limit, recentDrawFrames: 120, recentCallbacks: 120 },
           drawFrames: drawNumber, eventsSeen,
           receipts: { ...receipts }, drawDecisions: { ...decisions },
           directStateAtDraw: { ...stateDraws },
-          recentDrawFrames: frames.slice(), sceneResets, excessIdentityRecords,
+          recentDrawFrames: frames.slice(), recentCallbacks: callbacks.slice(),
+          sceneResets, excessIdentityRecords,
           identities: [...rows.values()].map((row) => ({ ...row })),
         };
       },
@@ -2987,6 +3006,9 @@
         : { version: 1, recording: false, captured: false, identities: [] },
       noteEffectDrawDecision(eligible, skipped) {
         effectRecorder?.decision(eligible, skipped);
+      },
+      noteEffectFrame(row) {
+        effectRecorder?.callback(row, visualFx.length);
       },
       presentEntity,
       // Presentation-only layer split for the opt-in PixiJS experiment.
