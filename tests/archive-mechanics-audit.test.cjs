@@ -523,13 +523,16 @@ for (const manual of [false, true]) {
   assert(g.enemySupportHeal(healer));
   near(
     patient.supportHeal.remaining,
-    patient.maxHp * cfg.fraction * g.enemyHealMultiplier(healer),
+    patient.maxHp * cfg.ordinary.fraction * g.enemyHealMultiplier(healer),
     'Native support amount',
   );
-  near(patient.supportHeal.seconds, cfg.duration, 'Support duration');
-  near(healer.supportHealCd, cfg.cooldown, 'Support cooldown');
+  near(patient.supportHeal.seconds, cfg.ordinary.duration, 'Support duration');
+  near(healer.supportHealCd, cfg.ordinary.cooldown, 'Support cooldown');
   const text = topic(g, 'Healing in battle')[2];
   for (const fragment of [
+    pc(cfg.ordinary.fraction) + '%',
+    cfg.ordinary.duration + ' seconds',
+    cfg.ordinary.cooldown + 's',
     pc(cfg.fraction) + '%',
     cfg.duration + ' seconds',
     cfg.cooldown + 's',

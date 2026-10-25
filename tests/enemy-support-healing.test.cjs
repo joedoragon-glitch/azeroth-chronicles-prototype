@@ -81,15 +81,16 @@ for (const species of [
   // migrates; assert against the recipient's actual post-normalization values.
   const budget = Math.min(
     ally.maxHp - ally.hp,
-    ally.maxHp * R.enemySupportHealing.fraction * g.enemyHealMultiplier(healer),
+    ally.maxHp * R.enemySupportHealing.ordinary.fraction * g.enemyHealMultiplier(healer),
   );
   const before = ally.hp;
-  near(ally.supportHeal.remaining, budget, species + ' 5% of recipient maximum HP');
-  near(healer.supportHealCd, 10, species + ' ten-second cooldown');
+  near(ally.supportHeal.remaining, budget, species + ' 10% ordinary recipient heal');
+  near(ally.supportHeal.seconds, 3, species + ' three-second treatment');
+  near(healer.supportHealCd, 7, species + ' seven-second ordinary cooldown');
   assert(!g.enemySupportHeal(healer), species + ' cannot duplicate the cast');
+  g.advanceEnemySupportHeal(ally, 1);
+  near(ally.hp, before + budget / 3, species + ' partial three-second heal');
   g.advanceEnemySupportHeal(ally, 2);
-  near(ally.hp, before + (budget * 2) / 5, species + ' partial five-second heal');
-  g.advanceEnemySupportHeal(ally, 3);
   near(ally.hp, before + budget, species + ' full heal');
   assert(!ally.supportHeal, species + ' effect completes');
 }

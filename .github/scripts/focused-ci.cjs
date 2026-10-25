@@ -122,6 +122,7 @@ const groups = [
       TEST + 'field-onboarding.test.cjs',
       TEST + 'ranged-pet-support.test.cjs',
       TEST + 'enemy-support-healing.test.cjs',
+      TEST + 'enemy-ordinary-heal-balance.test.cjs',
     ],
   },
   {

@@ -153,15 +153,21 @@
       [
         'Healing in battle',
         'Healing restores living actors; it does not revive fallen companions. Some enemies can heal their allies too.',
-        'Hero skill healing is separate from Ranger support over time. Eligible ranged enemies and selected captains/bosses treat injured living allies in an area, with eligible leaders included. Base enemy support restores ' +
+        'Hero skill healing is separate from Ranger support over time. Ordinary ranged enemies restore ' +
+          percent(heal.ordinary.fraction) +
+          '% of an ordinary monster’s maximum HP over ' +
+          heal.ordinary.duration +
+          ' seconds on a ' +
+          heal.ordinary.cooldown +
+          's cooldown. They can still heal captains and bosses, but those leaders receive the original ' +
           percent(heal.fraction) +
-          '% of the recipient’s maximum HP over ' +
+          '% over ' +
           heal.duration +
-          ' seconds, with their strength varying by encounter, beginning at ' +
-          percent(heal.threshold) +
-          '% HP or less on a ' +
+          ' seconds, with a ' +
           heal.cooldown +
-          's cooldown. Allies arriving to regroup can receive care at ' +
+          's per-healer leader interval. Captains and bosses retain their own original healing strength and cooldowns. Encounter scaling still applies. Treatment begins at ' +
+          percent(heal.threshold) +
+          '% HP or less. Allies arriving to regroup can receive care at ' +
           percent(heal.regroupThreshold) +
           '% HP or less, even before the healer joins combat. Slow delays the next skill, not ongoing healing pulses. Siphon instead heals from HP actually taken; each leader’s own recovery techniques work separately.',
       ],

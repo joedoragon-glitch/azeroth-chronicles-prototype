@@ -180,13 +180,13 @@ test('support healing wins before firing, skills or Rogue; full cooldown and pul
   ally.home = { x: ally.x, y: ally.y };
   step();
   assert(ally.supportHeal);
-  assert.equal(e.supportHealCd, 10);
+  assert.equal(e.supportHealCd, 7);
   assert(!e.rangedAim && !e.telegraph);
   assert.equal(e.x, 1400);
   const hp = ally.hp;
   step(0.1);
   assert(ally.hp > hp);
-  assert(e.supportHealCd < 10);
+  assert(e.supportHealCd < 7);
   assert(e.rangedAim?.withdrawal);
 });
 test('leader self-healing wins over a ready withdrawal special', () => {
