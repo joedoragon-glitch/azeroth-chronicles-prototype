@@ -149,7 +149,37 @@ async function capture(page,backend){
 }
 // Optional end-to-end proof uses the REAL Campaign.kill() and Campaign.tick()
 // paths. The page is disposable; no real user's save is written.
-async function verifyEarnedLoot(page) {
+// A manually paused game suppresses normal world draw cadence. A prior
+// injected texture can remain in the last WebGL composite even after the
+// underlying Campaign loot array has been emptied. Force a *normal gameplay*
+// frame (no internal renderer poking), pause again, then sample a truly empty
+// world frame. This occurs only AFTER the matched, frozen A/B pair is finished.
+async function flushPausedGpu(page, expected, scenario) {
+  assert.equal(await page.evaluate(()=>Prototype.paused),true,
+    'The previous test stage must start paused');
+  await page.keyboard.press('p');
+  try {
+    await page.waitForFunction(expectedState=>{
+      const gpu=Prototype.experimentalGraphics;
+      return gpu.mode==='webgl2' && gpu.phase==='confirmed' &&
+        gpu.sceneMetrics.actors===expectedState.actors &&
+        Prototype.game.s.loot.length===expectedState.loot;
+    },expected,{timeout:12000});
+  }finally{
+    await page.keyboard.press('p');
+    await page.waitForFunction(()=>Prototype.paused,null,{timeout:5000});
+  }
+  const state=await page.evaluate(()=>({
+    mode:Prototype.experimentalGraphics.mode,
+    actors:Prototype.experimentalGraphics.sceneMetrics.actors,
+    loot:Prototype.game.s.loot.length,paused:Prototype.paused,
+    gameTime:Prototype.game.s.time,
+  }));
+  console.log('ART321_EARNED_FLUSH '+JSON.stringify({scenario,...state}));
+  return state;
+}
+
+async function verifyEarnedLoot(page, originalActors) {
   const scene=await page.evaluate(()=>{
     const g=Prototype.game,r=Prototype.renderer,rect=document.getElementById('world').getBoundingClientRect();
     const where=r.world(rect.width*.74,rect.height*.66);
@@ -163,6 +193,7 @@ async function verifyEarnedLoot(page) {
       time:g.s.time,zone:g.zoneId,gold:g.hero.gold,
       gpuActors:Prototype.experimentalGraphics.sceneMetrics.actors};
   });
+  const clean=await flushPausedGpu(page,{actors:originalActors,loot:0},'after synthetic coin cleanup');
   const empty=path.join(out,'earned-loot-before.png'),
     earned=path.join(out,'earned-loot-visible.png'),
     gone=path.join(out,'earned-loot-collected.png');
@@ -194,16 +225,11 @@ async function verifyEarnedLoot(page) {
       previousActors:Prototype.experimentalGraphics.sceneMetrics.actors,
       kills:g.s.statistics.kills,snapshotRetainsCoin:true};
   },scene.where);
-  // A boss/quest death may also remove or add different scene actors.
-  // The count need not be baseline+1; measure the actual page-composited coin
-  // instead, while enforcing a live, retained GPU backend.
-  await page.waitForFunction(()=>
-    Prototype.experimentalGraphics.mode==='webgl2'&&
-    Prototype.experimentalGraphics.phase==='confirmed'&&
-    Prototype.experimentalGraphics.sceneMetrics.actors>0,
-    null,{timeout:15000});
-  // Idle rendering is deliberately throttled while the Campaign is paused.
-  await page.waitForTimeout(1300);
+  // Resume a real scheduled draw once so the new earned coin reaches the
+  // actual WebGL world rather than leaving a stale paused framebuffer.
+  await flushPausedGpu(page,{
+    actors:clean.actors+1,loot:drop.previousLootCount+1,
+  },'native killed enemy with unpaid reward');
   const renderState=await page.evaluate(id=>({
     mode:Prototype.experimentalGraphics.mode,
     phase:Prototype.experimentalGraphics.phase,
@@ -241,7 +267,8 @@ async function verifyEarnedLoot(page) {
   // never use a changed camera to claim before/after pixel parity.
   await page.screenshot({path:gone,animations:'disabled'});
   return {
-    stateBefore:scene,producedBy:'Campaign.kill -> awardEnemyReward',
+    stateBefore:scene,renderFlushesUseNormalGameplayFrames:true,
+    producedBy:'Campaign.kill -> awardEnemyReward',
     collectedBy:'Campaign.tick(.01) proximity pickup',
     coin:drop,visibleCompositeDiff:pixelDiff,pickup:collected,
     pngs:[empty,earned,gone].map(file=>({
@@ -324,7 +351,7 @@ async function start(){
           overrideClock>=570?'sunrise':overrideClock>=330?'sunset':'day');
       }
       const earnedLifecycle=process.env.ART321_EARNED_BROWSER==='1'
-        ?await verifyEarnedLoot(page):null;
+        ?await verifyEarnedLoot(page,pixi.gpuActors):null;
       assert.deepEqual(errors,[],'Uncaught browser page errors');
       const report={
         schema:'art321-real-composed-paired-pixel-capture-v2',
