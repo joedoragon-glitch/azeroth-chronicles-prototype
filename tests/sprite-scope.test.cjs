@@ -47,6 +47,13 @@ assert.throws(
   () => audit({ source: source.replaceAll('#294b36', '#102030') }),
   /Terrain palette lacks current source evidence/,
 );
+for (const color of ['#3e5544', '#4a593b']) {
+  assert.throws(
+    () => audit({ source: source.replaceAll(color, '#102030') }),
+    /Terrain palette lacks current source evidence/,
+    'retained candidate palettes must not conceal changes to current March/Highlands artwork',
+  );
+}
 const Sprites = require('../src/prototype/sprites.js');
 const pureRangedMirelingGuard = {
   renderKind: 'enemy',
