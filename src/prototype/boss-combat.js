@@ -1178,12 +1178,14 @@
       }
       // Stage 3 opt-in: World has its own chance resolver and intensity dial.
       // This source does not auto-install it in any production Campaign.
-      worldCriticalRelease(e, move) {
+      worldCriticalAction(e, key) {
         const session = this._criticalWorldNative;
         if (!session?.enabled || !e?.id) return null;
-        return session.release(
-          this, move === 'heal' ? 'world/support/heal' : 'world/basic/' + move, e.id,
-        );
+        return session.release(this, key, e.id);
+      }
+      worldCriticalRelease(e, move) {
+        return this.worldCriticalAction(e,
+          move === 'heal' ? 'world/support/heal' : 'world/basic/' + move);
       }
       worldCriticalDamage(receipt, value) {
         return receipt?.critical
@@ -2145,6 +2147,8 @@
           return;
         }
         if (a.nightSkill === 'drain') {
+          // Real AoE release after warning: one roll for all native recipients.
+          const criticalReceipt = this.worldCriticalAction(e, 'world/night/wraith-drain');
           const hero = this.hero,
             zone = this.zoneId,
             deaths = this.s.statistics.deaths;
@@ -2153,7 +2157,7 @@
             if (dist(u, e) < a.radius && this.line(e, u)) {
               const landed = this.hitParty(
                 u,
-                this.weakenedEnemyDamage(e) * a.coefficient,
+                this.worldCriticalDamage(criticalReceipt, this.weakenedEnemyDamage(e) * a.coefficient),
                 a.manaDrain || 0,
                 e.id,
               );
@@ -2177,7 +2181,12 @@
           return;
         }
         if (a.nightSkill === 'pounce') {
-          e.motion = { ...a, target: { x: a.x, y: a.y }, hit: [], speed: a.pounceSpeed, life: 2 };
+          // The original physical flight owns the roll, not each impact.
+          const receipt = this.worldCriticalAction(e, 'world/night/stalker-pounce');
+          e.motion = {
+            ...a, target: { x: a.x, y: a.y }, hit: [], speed: a.pounceSpeed, life: 2,
+            ...(receipt ? { criticalExecution: receipt } : {}),
+          };
           return;
         }
         if (e.family === 'darklord' && a.royalTaxation) {
@@ -2556,7 +2565,11 @@
                 ? true
                 : this.hitParty(
                     u,
-                    this.weakenedEnemyDamage(e) * a.coefficient,
+                    a.nightSkill === 'pounce'
+                      ? this.worldCriticalDamage(
+                          a.criticalExecution, this.weakenedEnemyDamage(e) * a.coefficient,
+                        )
+                      : this.weakenedEnemyDamage(e) * a.coefficient,
                     a.manaDrain || 0,
                     e.id,
                   );

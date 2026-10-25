@@ -48,14 +48,16 @@ assert.throws(() => Levels.createTuning({ modes: { nightmare: { enemy: 3 } } }),
 assert.throws(() => Levels.createTuning({ modes: { normal: { world: 3 } } }), /Normal/);
 
 const ids = Object.keys(Levels.ACTIONS);
-assert.equal(ids.length, 51 + 33 + 9 + 3, '93 party actions + 3 native World basics/support keys');
+assert.equal(ids.length, 51 + 33 + 9 + 5, '93 party actions + 5 native World keys');
 assert.equal(ids.filter(k=>k.startsWith('hero/')).length, 51);
 assert.equal(ids.filter(k=>k.startsWith('pet/')).length, 33);
 assert.equal(ids.filter(k=>k.startsWith('troop/')).length, 9);
-assert.equal(ids.filter(k=>k.startsWith('world/')).length, 3);
+assert.equal(ids.filter(k=>k.startsWith('world/')).length, 5);
 assert.equal(Levels.ACTIONS['world/basic/melee'].lever, 'damage');
 assert.equal(Levels.ACTIONS['world/basic/ranged'].lever, 'damage');
 assert.equal(Levels.ACTIONS['world/support/heal'].lever, 'healTempo');
+assert.equal(Levels.ACTIONS['world/night/wraith-drain'].lever, 'damage');
+assert.equal(Levels.ACTIONS['world/night/stalker-pounce'].lever, 'damage');
 for (const cls of ['paladin', 'mage', 'ranger']) {
   assert(Levels.ACTIONS['hero/' + cls + '/auto']);
   for (let slot=1;slot<=8;slot++)

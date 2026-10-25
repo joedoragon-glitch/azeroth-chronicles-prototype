@@ -101,6 +101,9 @@
   register('world/basic/melee', 'world', 'damage');
   register('world/basic/ranged', 'world', 'damage');
   register('world/support/heal', 'world', 'healTempo');
+  // Warned hostile night skills; no rollout to unreviewed special moves.
+  register('world/night/wraith-drain', 'world', 'damage');
+  register('world/night/stalker-pounce', 'world', 'damage');
   Object.freeze(registry);
 
   function validatedLevel(level) {
