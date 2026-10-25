@@ -409,10 +409,15 @@
           : visual.kind === 'keeper'
             ? { ...visual, renderKind: 'enemy', type: 'boss', family: 'archive', form: 'normal' }
             : visual;
+        // Copy Canvas painter's live facing (attack intent > motion > idle
+        // memory), rather than using the GPU adapter's former default of +1.
+        // Never mutate the authoritative Campaign or bake a second art copy.
+        const facing = canvasRenderer.facingFor?.(painted) ?? 1;
         const chosen = adapter.commandFor(
           painted,
           { x: point.x / zoom, y: point.y / zoom },
-          { region: current.regionIndex(), rescued: !!current.s.rescued[entity.family] },
+          { region: current.regionIndex(),
+            rescued: !!current.s.rescued[entity.family], facing },
         );
         if (chosen.supported) {
           if (!scene.hasTexture(chosen.texture.src))
@@ -463,12 +468,16 @@
           records.push({
             key,
             textureId: b.id,
-            x: point.x + b.dx * zoom,
+            // Canvas mirrors the BODY about its projected foot anchor,
+            // never about the center of the cropped baked-image rectangle.
+            x: facing < 0
+              ? point.x - (b.dx + b.logicalWidth) * zoom
+              : point.x + b.dx * zoom,
             y: point.y + b.dy * zoom,
             width: b.logicalWidth * zoom,
             height: b.logicalHeight * zoom,
             opacity: 1,
-            flipX: false,
+            flipX: facing < 0,
             depth: entity.x + entity.y,
           });
         } else throw Error('Missing original game artwork: ' + key);
