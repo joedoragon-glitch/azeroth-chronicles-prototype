@@ -1504,6 +1504,7 @@
             source: u.id,
             speed: 520,
             delay: j * 0.08,
+            ...(j > 0 ? { companionDelayedLaunch: true } : {}),
             style: 'arrow',
             rapid: true,
             companionSkill: 'triple-shot',
