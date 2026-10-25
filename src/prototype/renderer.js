@@ -2831,6 +2831,13 @@
     return {
       draw,
       presentEntity,
+      // Reuse the *exact* Canvas painter's facing decision from the opt-in
+      // Pixi world. This is a presentation-only WeakMap; no combat or save
+      // facing field is added, and the original Canvas body logic is untouched.
+      facingFor: (visual) => {
+        game = getGame();
+        return paintedFacing(visual);
+      },
       // Presentation-only layer split for the opt-in PixiJS experiment.
       setRenderLayer: (layer) => {
         if (layer !== 'full' && layer !== 'overlay' && layer !== 'background')
