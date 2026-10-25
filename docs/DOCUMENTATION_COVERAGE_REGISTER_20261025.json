@@ -12,7 +12,8 @@
     "censusSource": "Old table membership, not commit-creation date",
     "reviewDepth": "Full-body review is not claimed by header_screened or path_only; full_body_pr_disposition_checked means its text and indicated PR disposition were checked, NOT a comprehensive current-runtime or every-claim recertification",
     "authority": "Only current_entrypoint is routing authority; source and owner consent always prevail",
-    "gitBlobSha": "Git blob SHA of the exact candidate document bytes"
+    "gitBlobSha": "Git blob SHA of the exact candidate document bytes",
+    "verifiedPrRouting": "Disposition expresses verified GitHub PR merge path, not current runtime recertification. merged_directly means the source PR merged; merged_via_integration means source PR closed unmerged and selected work was subsequently merged by integratedByPr."
   },
   "verifiedPrStates": [
     {
@@ -292,7 +293,7 @@
         "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
         "sourcePr": 434,
         "integratedByPr": 434,
-        "disposition": "merged_via_integration",
+        "disposition": "merged_directly",
         "caution": "Integrated dev.173 Archive/approved-narrative candidate; #434 merged and published; premerge authorization checklist is historical."
       }
     },
@@ -1003,7 +1004,7 @@
         "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
         "sourcePr": 426,
         "integratedByPr": 426,
-        "disposition": "merged_via_integration",
+        "disposition": "merged_directly",
         "caution": "Published dev.169 performance reference after #426 merge; later dev.185 remains current release; synthetic collision numbers do not establish hardware FPS gain."
       }
     },
@@ -1241,7 +1242,7 @@
         "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
         "sourcePr": 448,
         "integratedByPr": 448,
-        "disposition": "merged_via_integration",
+        "disposition": "merged_directly",
         "caution": "Ordinary cross-species healing implementation record originating on dev.180/181 candidate; PR #448 subsequently merged for dev.182; detailed rates are snapshot-specific and must be checked against present engine."
       }
     },
@@ -2186,7 +2187,7 @@
         "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
         "sourcePr": 421,
         "integratedByPr": 421,
-        "disposition": "merged_via_integration",
+        "disposition": "merged_directly",
         "caution": "Dated Stage 2 navigation ownership/cancel checkpoint; stages 2–5 merged together in #421; Stage 2 TODOs are not currently pending."
       }
     },
@@ -2204,7 +2205,7 @@
         "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
         "sourcePr": 421,
         "integratedByPr": 421,
-        "disposition": "merged_via_integration",
+        "disposition": "merged_directly",
         "caution": "Dated ferry-frontage and representative route probe; merged via #421; 44/44 synthetic route checks do not prove all-device route usability."
       }
     },
@@ -2233,7 +2234,7 @@
         "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
         "sourcePr": 421,
         "integratedByPr": 421,
-        "disposition": "merged_via_integration",
+        "disposition": "merged_directly",
         "caution": "Dated Stage 5 marker/touch/navigation evidence; merged via #421; historical unchecked final-audit and merge items should not be resurrected."
       }
     },
@@ -2867,7 +2868,7 @@
         "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
         "sourcePr": 459,
         "integratedByPr": 459,
-        "disposition": "merged_via_integration",
+        "disposition": "merged_directly",
         "caution": "Premerge integration plan for #454/#455; their selected changes reached main through merged #459, despite source PRs being closed unmerged. Unchecked historical release gates are not present authorization."
       }
     },
