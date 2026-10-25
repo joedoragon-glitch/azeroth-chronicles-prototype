@@ -102,3 +102,10 @@ Continue on draft PR #456 for documentation and Explorer-only work. Check curren
 **Evidence grade:** successful GitHub CI **and deployment workflow** at the exact baseline SHA; **not** a direct visit to the public Pages URL, not a human phone/desktop acceptance, and not proof that the three Explorer-specific test scripts ran. The workflow's “impacted subsystems” step may omit Explorer tests depending on changed files; inspect the exact job log before crediting individual scripts. Existing first-session acceptance entries remain NOT RUN. The current public page's cache/service-worker version is not independently established by workflow success alone.
 
 **Practical result:** No need to request or trigger a new full test run just to establish that the dev.185 focused build/deployment pipeline was green. The next bounded technical evidence task is inspecting the existing workflow step logs to determine whether any Explorer-specific tests were included, then testing the real first-session paths when browser/device access is available.
+
+
+### 9.1 Focused validation log inspection
+
+The existing workflow's **Focused validation** job ID `121214509649` was inspected through its actual GitHub Actions log (551 lines). It reports **`PASS focused validation (4 relevant test files); no full-game CI`** and a successful build check with **`0.9.1+snapshot.dev.185`** and **215 campaign assets + 14 optional historical assets**. The logged passes concern the changed artwork/renderer/Mage-skill paths; there is **no logged successful execution of** `tests/companion-onboarding-ui.test.cjs`, `tests/game-menu-ui.test.cjs`, or `tests/field-onboarding.test.cjs`. Therefore **none** of the three Explorer-specific test rows can be marked PASS from this run. This is a coverage distinction, **not a failure**.
+
+The focused CI and deployment evidence is confirmed at its recorded SHA. Next testing should be narrowly scoped to the Explorer scripts on a runnable checkout, with actual EN/es-419 and device acceptance separately recorded. Do not rerun broad CI simply to cover the missing three tests.
