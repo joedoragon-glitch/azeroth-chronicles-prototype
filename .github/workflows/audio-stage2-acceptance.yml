@@ -1,0 +1,47 @@
+name: Stage 2 audio browser acceptance
+
+# A narrowly scoped, PR-only acceptance check. Never deploys and does not
+# enable the comprehensive game or cross-engine browser matrices.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tests/audio-stage2-start-browser.test.cjs'
+      - 'src/prototype/audio-production.js'
+      - 'src/prototype/audio-environment.js'
+      - 'src/prototype/app.js'
+      - '.github/workflows/audio-stage2-acceptance.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stage2-audio-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  startup-and-recovery:
+    if: github.event.pull_request.head.ref == 'fix/audio-stage2-bounded-recovery-20261025'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked tools
+        run: npm ci --ignore-scripts
+      - name: Install Chromium for narrow browser smoke
+        run: npx playwright install --with-deps chromium
+      - name: Verify startup gesture and MP3 recovery (desktop + phone)
+        run: node tests/audio-stage2-start-browser.test.cjs
+      - name: Existing audio browser regression (desktop + phone)
+        run: node tests/audio-browser.test.cjs
+      - name: Upload failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: audio-stage2-failure-${{ github.run_id }}
+          path: test-results/
+          if-no-files-found: ignore
