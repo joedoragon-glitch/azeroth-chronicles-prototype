@@ -5187,26 +5187,15 @@
           });
           return true;
         }
-        this.tacticalStopRogueRegroup(e);
-        if (this.tacticalRogueMove(e, target, !!state.anchor)) {
-          if (state.anchor) {
-            this._tacticalRegroups.set(e.id, {
-              phase: 'anchored',
-              anchor: state.anchor,
-              holdRemaining: 12,
-              moveUsed: true,
-              recruited: true,
-            });
-          }
-          return true;
-        }
-        // Bosses and captains defend their lairs/command posts. If a lone
-        // defender cannot use its rogue maneuver, normal combat continues:
-        // repeatedly fleeing home would make prepared ranged victories impossible.
+        // Bosses/captains must protect their authored posts, not abandon them.
+        // They retain their established last-resort Rogue action.
         if (e.type === 'boss' || e.captain || e.roomCaptain) {
-          return false;
+          this.tacticalStopRogueRegroup(e);
+          return this.tacticalRogueMove(e, target, !!state.anchor);
         }
-        // Isolated ordinary enemies may refuse the fight and flee quickly.
+        // Out of nearby/distant allies, and unable to summon help: withdraw.
+        // A defensive Rogue cast may cover escape, but never replace escape
+        // with a standing cast/reassessment loop, even at two-second reuse.
         this._tacticalRegroups.set(e.id, {
           phase: 'escape',
           anchor: { x: e.x, y: e.y },
@@ -5214,6 +5203,7 @@
           seekDelay: 0.9,
           stalled: 0,
         });
+        this.tacticalRogueMove(e, target, true);
         return true;
       }
       if (state.phase === 'escape') {
@@ -5222,6 +5212,7 @@
         if (!committed && state.seekDelay <= 0) {
           state.seekDelay = 1;
           if (this.tacticalSeekRogueSupport(e, this.tacticalActiveTargetCount(e))) return true;
+          if (this.tacticalBeginExtendedRetreat(e)) return true;
         }
         const before = { x: e.x, y: e.y },
           d = Math.max(1, dist(e, target)),
@@ -5240,7 +5231,13 @@
         e.noProgress = 0;
         if (dist(target, e) > 480 || state.fleeRemaining <= 0 || state.stalled > 1.8) {
           this.disengage(e, dt);
+          return true;
         }
+        // Covering casts are optional; movement remains authoritative.
+        if (!committed && !e.telegraph && !e.motion && !e.rangedAim &&
+            (this._tacticalRogueNext?.get(e.id) || 0) <= this.s.time &&
+            dist(e, target) <= 320 && this.line(e, target))
+          this.tacticalRogueMove(e, target, true);
         return true;
       }
       if (state.phase === 'travel') {
@@ -6561,15 +6558,16 @@
         if (!this.mageSilenceActive(e) && this.tacticalAutoRogue(e, target)) continue;
         const covering = !!(e.telegraph?.withdrawal || e.rangedAim?.withdrawal),
           regroup = this.tacticalRogueRegroup(e),
-          extendedCover = regroup?.phase === 'extended' && !!e.telegraph?.rogueMove;
+          extendedCover = regroup?.phase === 'extended' && !!e.telegraph?.rogueMove,
+          escapeCover = regroup?.phase === 'escape' && !!e.telegraph?.rogueMove;
         if (regroup && !e.motion &&
-            ((!e.telegraph && !e.rangedAim) || covering || extendedCover)) {
+            ((!e.telegraph && !e.rangedAim) || covering || extendedCover || escapeCover)) {
           const held = regroup.phase === 'extended'
             ? this.tacticalAdvanceExtendedRetreat(e, target, dt)
-            : this.tacticalAdvanceRogueRegroup(e, target, dt, covering);
+            : this.tacticalAdvanceRogueRegroup(e, target, dt, covering || escapeCover);
           if (e.returning || !e.aggro) continue;
-          if (extendedCover) {
-            // Traveling remains authoritative while its cast timer advances.
+          if (extendedCover || escapeCover) {
+            // Defensive casting does not override ongoing outward locomotion.
           } else if (covering) this.enemyWithdrawalCastPosition(e);
           else if (held) {
             if (['travel', 'escape', 'anchored'].includes(this.tacticalRogueRegroup(e)?.phase))
@@ -6586,7 +6584,7 @@
         }
         if (e.telegraph) {
           if (e.telegraph.rogueMove && e.telegraph.mobileRogueCast &&
-              this.tacticalRogueRegroup(e)?.phase !== 'extended') {
+              !['extended', 'escape'].includes(this.tacticalRogueRegroup(e)?.phase)) {
             // Cast preparation does not create an extra strike or freeze the
             // elite actor. Reuse ordinary collision-aware, leash-bounded travel.
             const castTarget =
