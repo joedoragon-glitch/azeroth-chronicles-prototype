@@ -1,0 +1,95 @@
+name: Audio Stages 2-3 ephemeral integration acceptance
+
+# Verification only: locally merge pinned draft heads in a CI runner. No push or deployment.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/audio-stage23-integration-preview.yml'
+      - 'docs/AUDIO_STAGE23_INTEGRATION_PREVIEW_20261025.md'
+permissions:
+  contents: read
+concurrency:
+  group: audio-stage23-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  combined-audio:
+    if: github.event.pull_request.head.ref == 'audit/audio-stage23-compat-ci-20261025'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci --ignore-scripts
+      - name: Ephemerally combine independently reviewed Stage 2 and Stage 3 drafts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+          git merge-base --is-ancestor d64b182b991a02f02aa5f384c12f1960fb559a35 HEAD
+          git fetch origin +refs/pull/470/head:refs/remotes/origin/audio-stage2 +refs/pull/472/head:refs/remotes/origin/audio-stage3
+          test "$(git rev-parse refs/remotes/origin/audio-stage2)" = ed6c2b6be6be67e6cc16f2e627aa7116a8d8289c
+          test "$(git rev-parse refs/remotes/origin/audio-stage3)" = 46a5312d1fb40f5fb8102b1609807770bc744fd0
+          git config user.name 'Audio Integration Preview (CI only)'
+          git config user.email 'audio-preview@users.noreply.github.com'
+          git merge --no-ff -m 'LOCAL ONLY: preview Stage 2 first-gesture and recovery' refs/remotes/origin/audio-stage2
+          git merge --no-ff -m 'LOCAL ONLY: preview Stage 3 source events and pet contact' refs/remotes/origin/audio-stage3
+          echo "Verified ephemeral integration: $(git rev-parse HEAD)"
+          git log -4 --oneline
+          test -f tests/audio-stage1-coverage.test.cjs
+          test -f tests/audio-stage2-recovery.test.cjs
+          test -f tests/audio-stage3-action-audit.test.cjs
+          test -f tests/audio-stage4-mix-matrix.test.cjs
+          test -f tests/audio-stage5-release-preflight.test.cjs
+          git status --porcelain
+      - name: Stages 1 through 5 shared focused audio regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/audio-stage1-coverage.test.cjs
+          node tests/audio-stage2-recovery.test.cjs
+          node tests/audio-stage3-action-audit.test.cjs
+          node tests/audio-stage4-mix-matrix.test.cjs
+          node tests/audio-stage5-release-preflight.test.cjs
+      - name: Historical enemy telegraph plus original combat and soundtrack regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          node tests/enemy-audio.test.cjs
+          node tests/roster-skill-update.test.cjs
+          node tests/hero-skills-consolidation.test.cjs
+          node tests/pt312-audio-integration.test.cjs
+          node tests/audio-production.test.cjs
+          node tests/audio-environment.test.cjs
+          node tests/audio-recordings.test.cjs
+      - name: Offline audio package and update rollback
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/vendor-pixi.cjs --ensure
+          node tests/audio-assets.test.cjs
+          node tests/service-worker.test.cjs
+          node tests/pwa-release-id.test.cjs
+      - name: Reproducible multi-file bundle and offline-ready build
+        run: node scripts/build.cjs --check --site
+      - name: Install narrow Chromium only (no cross-engine full suite)
+        run: npx playwright install --with-deps chromium
+      - name: First gesture and bounded score recovery on phone and desktop emulation
+        run: node tests/audio-stage2-start-browser.test.cjs
+      - name: Stage 4 PCM and recorded MP3 Chromium smoke on phone and desktop emulation
+        run: node tests/audio-stage4-browser-smoke.test.cjs
+      - name: Upload focused failure-only browser evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: audio-stages23-preview-failure-${{ github.run_id }}
+          path: test-results/
+          if-no-files-found: ignore
