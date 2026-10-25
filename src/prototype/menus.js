@@ -375,7 +375,7 @@
       return SkillReference.card(getGame(), slot);
     }
     function skillSections(info) {
-      return [info.tap, info.charge].map((form) => ({
+      return (info.auto ? [info.auto, info.tap, info.charge] : [info.tap, info.charge]).map((form) => ({
         title: form.title,
         text: form.effect,
         rows: form.metrics.map((m) => ({ label: m.label, value: SkillReference.value(m) })),
@@ -391,7 +391,8 @@
           summary:
             'Rank ' +
             info.rank +
-            (info.rank === 8 ? ' · Maximum rank' : ' · Tap and Charged share this rank.'),
+            (info.rank === 8 ? ' · Maximum rank' : ' · Automatic basics, Tap and Charged use this rank.') +
+            (slot === 1 ? ' · Rank 1 is self-taught; rescued specialists refine it.' : ''),
           sections: skillSections(info),
           note: info.note,
         },
@@ -418,11 +419,11 @@
       openMenu(
         'Using skills',
         {
-          summary: 'Tap for the normal form. Hold to prepare the charged form.',
+          summary: 'Automatic Skill 1 basics attack independently. Tap for the normal technique. Hold to prepare the charged technique.',
           sections: [
             {
               title: 'Controls',
-              text: 'Both forms share a cooldown. On cooldown, tap to queue normal; briefly hold to queue charged. A strong hit can interrupt charging.',
+              text: 'Charged starts both recovery timers: short Tap and longer Charged. Tap returns after its own cooldown, even while Charged is still recovering. Tapping does not restart the charged lock. Charged needs both timers ready. On cooldown, tap to queue normal or briefly hold to queue charged. A strong hit can interrupt preparation.',
             },
             {
               title: 'Reading effects',
@@ -500,7 +501,7 @@
                   ? 'Training unavailable here.'
                   : g.hero.gold < cost
                     ? 'Need more crowns.'
-                    : 'Applies to Tap and Charged.',
+                    : slot === 1 ? 'Also improves automatic basics.' : 'Applies to Tap and Charged.',
                 !ready || g.hero.gold < cost,
               ),
             ],
@@ -535,7 +536,7 @@
           });
       openMenu(
         'Skill journal',
-        'Choose a skill. View your current Tap and Charged effects.',
+        'Choose a skill. View automatic Skill 1 basics, Tap and Charged effects with independent recovery.',
         [
           ...choices,
           action(
