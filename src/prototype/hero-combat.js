@@ -787,18 +787,31 @@
       }
       resolveHeroCrossPulse(f, pulse) {
         if (!this.heroSkillEffectLive(f)) return;
-        const cfg = R.chargedSkills.first.paladin, axis = f.angle,
-          sin = Math.sin(axis), cos = Math.cos(axis);
-        const within = (e) => {
-          const x = e.x - f.from.x, y = e.y - f.from.y,
-            along = Math.abs(x * cos + y * sin),
-            across = Math.abs(y * cos - x * sin),
-            radius = this.actorRadius(e);
-          // The luminous arms measure from centerline; an enemy's body
-          // intersects them even when its center stands just outside an edge.
-          return (along <= f.reach + radius && across <= f.halfWidth + radius) ||
-            (across <= f.reach + radius && along <= f.halfWidth + radius);
-        };
+        const cfg = R.chargedSkills.first.paladin,
+          angles = [f.angle, f.angle + Math.PI / 2,
+            f.angle + Math.PI, f.angle + Math.PI * 1.5],
+          // Four independent solid-terrain limits ensure the visible cross
+          // never projects an arm through a wall beyond its legal collision.
+          arms = angles.map(angle => {
+            const dx = Math.cos(angle), dy = Math.sin(angle);
+            let legal = 0, previous = f.from;
+            for (let step = 8; step <= f.reach + 8; step += 8) {
+              const next = Math.min(f.reach, step),
+                point = { x:f.from.x + dx * next, y:f.from.y + dy * next };
+              if (!this.clearSegment(previous,point,0)) break;
+              legal = next; previous = point;
+            }
+            return { angle, length:legal,
+              x:f.from.x + dx * legal, y:f.from.y + dy * legal };
+          });
+        const within = (e) => arms.some(arm => {
+          const dx = e.x-f.from.x,dy = e.y-f.from.y,
+            ca = Math.cos(arm.angle), sa = Math.sin(arm.angle),
+            along = dx*ca + dy*sa,
+            cross = Math.abs(dy*ca-dx*sa), radius = this.actorRadius(e);
+          return along >= -radius && along <= arm.length + radius &&
+            cross <= f.halfWidth + radius;
+        });
         const candidates = this.zone().enemies.filter(e =>
           e.hp > 0 && !e.neutral && !e.returning && !this.attackResetProtected(e) &&
           within(e) && this.line(f.from, e));
@@ -817,6 +830,7 @@
         this.event('heroSkillArea', { actor: 'hero', class: 'paladin',
           slot: 1, effect: 'radiant-cross', x: f.from.x, y: f.from.y,
           angle: f.angle, reach: f.reach, halfWidth: f.halfWidth,
+          arms: arms.map(arm => ({ x:arm.x,y:arm.y })),
           pulse, hits });
       }
       resolveWideArcaneBeam(f) {
