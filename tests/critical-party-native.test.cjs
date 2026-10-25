@@ -67,6 +67,18 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
 for (const cls of ['paladin', 'mage', 'ranger']) {
   const a = arena(cls, cls === 'ranger' ? 1 : 12), b = arena(cls, cls === 'ranger' ? 1 : 12);
   const tally = attach(b.g);
+  // A critical may still miss or hit protected geometry. For the native
+  // Mage beam prove its RELEASE input was strengthened without inventing hits.
+  const beamInput = { original: null, critical: null };
+  if (cls === 'mage') {
+    for (const [name, game] of [['original', a.g], ['critical', b.g]]) {
+      const resolve = game.resolveWideArcaneBeam.bind(game);
+      game.resolveWideArcaneBeam = effect => {
+        beamInput[name] = effect.damage;
+        return resolve(effect);
+      };
+    }
+  }
   assert(a.g.cast(1, a.e.id, true));
   assert(b.g.cast(1, b.e.id, true));
   assert.equal(tally.count(), 1, cls + ' charged release only');
@@ -88,12 +100,13 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
     assert.equal(tally.count(), 1, 'second Cross pulse never rerolls');
     assert(first >= 0);
   } else if (cls === 'mage') {
+    assert(Number.isFinite(beamInput.original) && beamInput.original > 0,
+      'native wide beam must receive a real charged release');
+    near(beamInput.critical, beamInput.original * Levels.LEVERS.damage.values[0]);
     const baselineArea = a.g.effects.filter(x => x.type === 'heroSkillArea' && x.class === 'mage').at(-1);
     const criticalArea = b.g.effects.filter(x => x.type === 'heroSkillArea' && x.class === 'mage').at(-1);
-    assert(baselineArea?.hits > 0, 'ordinary wide beam must land on a legal target');
-    assert.equal(criticalArea?.hits, baselineArea.hits,
-      'critical cannot invent extra beam targets or bypass protections');
-    assert(b.e.hp < a.e.hp, 'critical strengthens the original selected-target beam hit');
+    assert.equal(criticalArea?.hits, baselineArea?.hits,
+      'a critical must not create an extra beam hit or bypass protections');
     assert.equal(tally.count(), 1, 'beam never rerolls per victim');
   } else {
     const f = b.g._heroSkillEffects[0];
