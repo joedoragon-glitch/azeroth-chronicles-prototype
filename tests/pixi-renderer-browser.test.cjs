@@ -439,30 +439,46 @@ async function run() {
           assert.equal(retry.mode,'webgl2','WebGL2 must work after safe restart');
           after = await keepPixiTrial(page, phone, 'post-restart graphics trial');
         }
-        // Exercise both real viewport resize and simulated GL context loss,
-        // without suppressing the existing production resize/UI routines.
+        // A confirmed phone session must handle an ordinary viewport change,
+        // including one that iOS can deliver on app background/foreground.
+        // The 15-second *unconfirmed* trial remains separately guarded.
         if (after.mode === 'webgl2') {
           if (phone) {
             await page.setViewportSize({width: 375, height: 800});
-          } else {
-            await page.evaluate(() => {
-              const node = document.getElementById('world-pixi-experimental');
-              if (!node) throw Error('Confirmed WebGL canvas missing');
-              node.dispatchEvent(new Event('webglcontextlost', {cancelable: true}));
+            await page.waitForFunction(() => {
+              const gpu = document.getElementById('world-pixi-experimental');
+              const canvas = document.getElementById('world');
+              return Prototype.experimentalGraphics.mode === 'webgl2' &&
+                Prototype.experimentalGraphics.phase === 'confirmed' &&
+                gpu && Math.abs(gpu.width / gpu.getBoundingClientRect().width -
+                  canvas.width / canvas.getBoundingClientRect().width) < .02;
             });
+            assert.equal(await page.evaluate(() =>
+              localStorage.getItem('azeroth-renderer-choice-v1')), 'webgl2',
+            'A confirmed viewport resize must not discard the saved graphics choice');
           }
+          // A genuine WebGL context loss must still return to the reliable
+          // independent Canvas scene and clear the saved GPU preference.
+          await page.evaluate(() => {
+            const node = document.getElementById('world-pixi-experimental');
+            if (!node) throw Error('Confirmed WebGL canvas missing');
+            node.dispatchEvent(new Event('webglcontextlost', {cancelable: true}));
+          });
           await page.waitForFunction(() => Prototype.experimentalGraphics.mode === 'canvas2d');
           const failure = await page.evaluate(() => Prototype.experimentalGraphics);
           assert.equal(failure.lastFallbackReason, 'webgl-context-or-render-failure',
             'The original fallback field must remain compatible');
-          assert.equal(failure.lastFailure?.type, phone ? 'viewport-changed' : 'context-loss');
+          assert.equal(failure.lastFailure?.type, 'context-loss');
           assert(failure.lastFailure?.stage && failure.lastFailure?.timestampMs,
             'The precise error cause and timestamp must survive Canvas fallback');
           assert(failure.lastFailure?.resources?.loadedTextures > 0,
             'Pre-teardown texture counts must be retained');
           assert.equal(await page.evaluate(() =>
-            localStorage.getItem('azeroth-renderer-choice-v1')), 'canvas2d',
-          'Graphics failure or viewport resize must restore Canvas and clear the device preference');
+            localStorage.getItem('azeroth-renderer-choice-v1')), 'webgl2',
+          'Canvas must protect the game without erasing the confirmed Pixi preference');
+          assert.equal(failure.preferredRenderer, 'webgl2');
+          assert.equal(failure.recoveryPending, true,
+            'A confirmed GPU failure should schedule a bounded restoration');
           assert.equal(await page.evaluate(() =>
             getComputedStyle(document.getElementById('world')).display !== 'none'), true);
         }

@@ -22,12 +22,14 @@ function pixiFixture(){
   class Graphics {
     constructor(){
       this.position={x:0,y:0,set:(x,y)=>{this.position.x=x;this.position.y=y}};
-      this.blendMode='normal';this.circles=[];this.rects=[];
+      this.blendMode='normal';this.circles=[];this.rects=[];this.ellipses=[];this.strokes=[];this.fills=[];
     }
-    clear(){this.circles=[];this.rects=[];return this;}
+    clear(){this.circles=[];this.rects=[];this.ellipses=[];this.strokes=[];this.fills=[];return this;}
     circle(...args){this.circles.push(args);return this;}
     rect(...args){this.rects.push(args);return this;}
-    fill(g){this.fillStyle=g;calls.glows++;return this;}
+    ellipse(...args){this.ellipses.push(args);return this;}
+    stroke(g){this.strokes.push(g);return this;}
+    fill(g){this.fillStyle=g;this.fills.push(g);calls.glows++;return this;}
     destroy(){}
   }
   class FillGradient {
@@ -261,5 +263,107 @@ test('discarded procedural artwork unregisters after old scene actors are releas
   assert.equal(scene.hasTexture('procedural:vale'),false);
   assert.equal(scene.metrics().textureSources,0,'old GPU resources must not persist');
   assert.equal(scene.unregisterTexture('procedural:vale'),false,'double release is safe');
+  scene.destroy();
+});
+
+test('Pixi atmosphere restores the same bounded daylight motes as Canvas, before vignette',()=>{
+  const Visuals=require('../../src/prototype/visuals.js');
+  const {PIXI,app}=pixiFixture();
+  const scene=Bridge.create({PIXI,app,width:912,height:420});
+  const daylight=Visuals.atmosphereMotes({
+    width:608,height:280,region:0,darkness:0,time:10,
+  });
+  assert.equal(daylight.length,14);
+  scene.setAtmosphere({region:0,darkness:0});
+  scene.syncMotes(daylight,1.5);
+  scene.setVignette({darkness:0,optimized:false});
+  const effects=app.stage.children[0].children[1];
+  const moteGraphic=effects.children.at(-2);
+  assert.equal(moteGraphic.circles.length,14,'one reused GPU batch represents all Canvas motes');
+  assert.deepEqual(moteGraphic.circles[0],[
+    daylight[0].x*1.5,daylight[0].y*1.5,daylight[0].r*1.5,
+  ],'CSS geometry matches Canvas zoom and the shared screen-space motion');
+  assert.equal(moteGraphic.fillStyle.color,0xeadf9e,'Vale daylight palette preserved');
+  assert.equal(moteGraphic.fillStyle.alpha,.18,'Canvas daylight opacity preserved');
+  assert.equal(scene.metrics().atmosphereMotes,14);
+  assert.equal(effects.children.at(-1).fillStyle.options.type,'radial',
+    'vignette must stay in front of motes');
+  scene.syncMotes(Visuals.atmosphereMotes({
+    width:608,height:280,region:0,darkness:1,time:12,
+  }),1.5);
+  assert.equal(effects.children.at(-2),moteGraphic,'motes reuse one GPU node during motion');
+  assert.equal(moteGraphic.fillStyle.color,0xdcefa8,'night palette preserved');
+  assert.equal(moteGraphic.fillStyle.alpha,.24,'Canvas night alpha preserved');
+  scene.syncMotes([],1.5);
+  assert.equal(moteGraphic.visible,false,'active Optimization Mode suppresses GPU motes');
+  assert.equal(scene.metrics().atmosphereMotes,0);
+  scene.destroy();
+});
+
+test('Canvas atmosphere mote contract preserves regional counts, deterministic motion and optimization',()=>{
+  const Visuals=require('../../src/prototype/visuals.js');
+  const options={width:608,height:280,region:0,darkness:0,time:10};
+  const first=Visuals.atmosphereMotes(options);
+  const same=Visuals.atmosphereMotes(options);
+  assert.deepEqual(first,same,'no randomized particle emitter or game state mutation');
+  const moved=Visuals.atmosphereMotes({...options,time:12});
+  assert.notEqual(moved[0].x,first[0].x,'Canvas drift animates without player movement');
+  assert.equal(Visuals.atmosphereMotes({...options,region:3}).length,18);
+  assert.equal(Visuals.atmosphereMotes({...options,region:4}).length,18);
+  assert.equal(Visuals.atmosphereMotes({...options,dungeon:true}).length,8);
+  assert.equal(Visuals.atmosphereMotes({...options,room:true}).length,8);
+  assert.deepEqual(Visuals.atmosphereMotes({...options,optimized:true}),[]);
+  const march=Visuals.atmosphereMotes({...options,region:1});
+  assert.equal(march[0].r,2.5,'approved marsh mist scale remains unchanged');
+  assert.deepEqual(march[0].rgb,[184,216,202]);
+  assert.deepEqual(Visuals.atmosphereMotes({...options,region:0,darkness:1})[0].rgb,
+    [220,239,168],'approved night Vale tint remains unchanged');
+});
+
+test('Canvas-matched hero shadows and ground markers sit below sprite and track movement',()=>{
+  const {PIXI,app}=pixiFixture();
+  const scene=Bridge.create({PIXI,app,width:912,height:420});
+  scene.registerTexture('hero.png',picture());
+  const hero={...actor(),ground:{x:112,y:174,rx:18,ry:5.5,
+    marker:{color:'#f5d992bb',important:true}}};
+  scene.syncActors([hero]);
+  const nodes=app.stage.children[0].children[0].children;
+  assert.equal(nodes.length,2,'one reusable ground graphic and one sprite');
+  const [ground,sprite]=nodes;
+  assert.equal(sprite.texture.source.width,576);
+  assert.equal(ground.position.x,112);
+  assert.deepEqual(ground.ellipses[0],[0,9,28,11],
+    'first ground shape is the Canvas hero selection ring');
+  assert.deepEqual(ground.ellipses.at(-1),[1,11,18,5.5],
+    'dark contact ellipse uses original Canvas radii');
+  assert.equal(ground.strokes[0].color,0xf5d992);
+  assert.equal(ground.strokes[0].alpha,0xbb/255);
+  assert.equal(ground.fills.at(-1).alpha,0x66/255);
+  scene.syncActors([{...hero,x:88,ground:{...hero.ground,x:160,y:199,scale:1.5}}]);
+  assert.deepEqual(ground.ellipses.at(-1),[1.5,16.5,27,8.25],
+    'GPU shadow scales with 150% camera zoom and retains Canvas feet offset');
+  const moved=app.stage.children[0].children[0].children;
+  assert.equal(moved[0],ground,'reuse ground artwork without allocating per frame');
+  assert.equal(moved[1],sprite,'same approved actor sprite remains');
+  assert.equal(ground.position.x,160);
+  assert.equal(ground.position.y,199);
+  scene.syncActors([]);
+  assert.equal(app.stage.children[0].children[0].children.length,0);
+  scene.destroy();
+});
+test('shadows use Canvas prop sizes and share depth ordering with their actor',()=>{
+  const {PIXI,app}=pixiFixture();
+  const scene=Bridge.create({PIXI,app,width:912,height:420});
+  scene.registerTexture('hero.png',picture());
+  const prop={...actor('house',170,5),ground:{x:170,y:180,rx:31,ry:8,marker:null}};
+  const sheep={...actor('sheep',35,2),ground:{x:35,y:155,rx:18,ry:5.5,marker:null}};
+  scene.syncActors([prop,sheep]);
+  const nodes=app.stage.children[0].children[0].children;
+  assert.equal(nodes.length,4);
+  assert.deepEqual(nodes[0].ellipses.at(-1),[1,11,18,5.5]);
+  assert.deepEqual(nodes[2].ellipses.at(-1),[1,11,31,8]);
+  assert.equal(nodes[1].position.x,35);
+  assert.equal(nodes[3].position.x,170);
+  assert.equal(nodes[0].strokes.length,0,'props without rings get only contact shadows');
   scene.destroy();
 });

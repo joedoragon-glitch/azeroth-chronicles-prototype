@@ -86,7 +86,7 @@
    let background=null,grade=null, gradeGradients=[],atmosphereSignature=null,
      vignette=null,vignetteGradient=null,vignetteSignature=null,
      spritesUpdated=0, resources=new Map();
-   let backdropTexture=null, discarded=0;
+   let backdropTexture=null, discarded=0, moteGraphic=null, moteCount=0;
    const keyOf=entity=>String(entity.key);
    function setBackground(texture,x,y,width,height) {
      if(!background) {
@@ -134,6 +134,29 @@
        new PIXI.Texture({source:texture.source,frame:new PIXI.Rectangle(x,y,w,h)}));
      return frameTextures.get(cacheId);
    }
+   // Match the Canvas entityShadow/groundMarker presentation contract.
+   // These GPU graphics live in the same depth-sorted stage immediately below
+   // each sprite; a 2D overlay would incorrectly draw them over actors.
+   function groundGraphic(graphic,ground) {
+     const {rx,ry,marker}=ground;
+     const zoom=ground.scale||1;
+     graphic.clear();
+     if(marker) {
+       const important=!!marker.important;
+       const hex=marker.color;
+       const color=Number.parseInt(hex.slice(1,7),16);
+       const alpha=Number.parseInt(hex.slice(7,9),16)/255;
+       graphic.ellipse(0,9*zoom,(important?28:21)*zoom,(important?11:8)*zoom)
+         .stroke({color,alpha,width:(important?2:1)*zoom});
+       if(important)
+         graphic.ellipse(0,9*zoom,34*zoom,14*zoom)
+           .stroke({color:0xf3e2bb,alpha:0x44/255,width:(important?2:1)*zoom});
+     }
+     graphic.ellipse(4*zoom,13*zoom,rx*1.18*zoom,ry*1.35*zoom)
+       .fill({color:0x05100c,alpha:0x38/255});
+     graphic.ellipse(1*zoom,11*zoom,rx*zoom,ry*zoom)
+       .fill({color:0x020906,alpha:0x66/255});
+   }
    // Each actor moves/animates as a GPU sprite. Canvas never paints a frame.
    // A one-time procedural body bake is allowed as an explicitly counted source.
    function syncActors(list) {
@@ -146,6 +169,14 @@
          'Missing original game actor texture: '+String(item.textureId));
        assert([item.x,item.y,item.width,item.height].every(Number.isFinite)&&
          item.width>0&&item.height>0,'Invalid actor geometry');
+       if(item.ground) {
+         const g=item.ground;
+         assert([g.x,g.y,g.rx,g.ry,g.scale||1].every(Number.isFinite)&&
+           g.rx>0&&g.ry>0&&(g.scale===undefined||g.scale>0),
+           'Canvas-matched GPU contact shadow geometry required');
+         if(g.marker)assert(/^#[0-9a-f]{8}$/i.test(g.marker.color),
+           'Canvas marker RGBA color required');
+       }
        if(item.sourceRect){
          const rect=item.sourceRect,texture=resources.get(item.textureId);
          assert(rect.length===4&&rect.every(Number.isFinite)&&
@@ -159,6 +190,7 @@
      for(const [id,old] of actors) {
        if(!next.has(id)) {
          actorsStage.removeChild(old.sprite);
+         if(old.ground){actorsStage.removeChild(old.ground);old.ground.destroy();}
          old.sprite.destroy();actors.delete(id);discarded++;
        }
      }
@@ -182,6 +214,24 @@
        state.sprite.scale.x=(item.flipX?-1:1)*Math.abs(state.sprite.scale.x);
        state.sprite.position.set(item.x+(item.flipX?item.width:0),item.y);
        state.sprite.alpha=clamp(item.opacity??1,0,1);
+       if(item.ground) {
+         if(!state.ground)state.ground=new PIXI.Graphics();
+         const signature=JSON.stringify({
+           rx:item.ground.rx,ry:item.ground.ry,
+           scale:item.ground.scale,marker:item.ground.marker
+         });
+         if(state.groundSignature!==signature) {
+           groundGraphic(state.ground,item.ground);
+           state.groundSignature=signature;
+         }
+         state.ground.position.set(item.ground.x,item.ground.y);
+         actorsStage.addChild(state.ground);
+       }else if(state.ground){
+         actorsStage.removeChild(state.ground);
+         state.ground.destroy();
+         state.ground=null;
+         state.groundSignature=null;
+       }
        actorsStage.addChild(state.sprite);
        spritesUpdated++;
      }
@@ -266,6 +316,36 @@
      }
      effectsStage.addChildAt(grade,0);
    }
+   // Screen-space pollen, fog motes and sparks share their presentation
+   // recipe with the original Canvas atmosphere. One reusable GPU geometry
+   // handles at most 18 deterministic circles, not an animated emitter.
+   function syncMotes(list,zoom=1) {
+     assert(Array.isArray(list)&&list.length<=18&&Number.isFinite(zoom)&&zoom>0,
+       'Bounded Canvas atmosphere motes and camera zoom required');
+     for(const mote of list)
+       assert(mote&&[mote.x,mote.y,mote.r,mote.alpha].every(Number.isFinite)&&
+         mote.r>0&&mote.alpha>=0&&mote.alpha<=1&&
+         Array.isArray(mote.rgb)&&mote.rgb.length===3&&
+         mote.rgb.every(c=>Number.isFinite(c)&&c>=0&&c<=255),
+         'Invalid original atmosphere mote');
+     if(!list.length) {
+       moteCount=0;
+       if(moteGraphic)moteGraphic.visible=false;
+       return;
+     }
+     if(!moteGraphic) {
+       moteGraphic=new PIXI.Graphics();
+       effectsStage.addChild(moteGraphic);
+     }
+     moteGraphic.visible=true;
+     moteGraphic.clear();
+     for(const mote of list)moteGraphic.circle(mote.x*zoom,mote.y*zoom,mote.r*zoom);
+     moteGraphic.fill({color:hex(list[0].rgb),alpha:list[0].alpha});
+     moteCount=list.length;
+     // The approved Canvas order is atmosphere grade → lamps → motes → vignette.
+     effectsStage.addChild(moteGraphic);
+     if(vignette)effectsStage.addChild(vignette);
+   }
    function setVignette(spec={}) {
      const desc=vignetteDescription(spec,width,height),
        signature=JSON.stringify(desc);
@@ -309,14 +389,19 @@
    function draw() {app.render();}
    function metrics(){return{
      actors:actors.size,lights:glowObjects.size,vignetteActive:!!vignette,
+     atmosphereMotes:moteCount,
      textureSources:resources.size,
      spriteUpdates:spritesUpdated,discarded
    };}
    function destroy(){
-     for(const state of actors.values())state.sprite.destroy();
+     for(const state of actors.values()){
+       state.ground?.destroy();
+       state.sprite.destroy();
+     }
      for(const state of glowObjects.values())state.graphic.destroy();
      if(grade)grade.destroy();
      if(vignette)vignette.destroy();
+     if(moteGraphic){moteGraphic.destroy();moteGraphic=null;}
      if(vignetteGradient)vignetteGradient.destroy?.();
      if(background)background.destroy();
      for(const texture of frameTextures.values())texture.destroy?.(false);
@@ -328,7 +413,7 @@
    }
    return Object.freeze({
      setBackground,moveBackground,registerTexture,hasTexture,unregisterTexture,
-     syncActors,syncLamps,setAtmosphere,setVignette,
+     syncActors,syncLamps,setAtmosphere,syncMotes,setVignette,
      captureBackgroundOnly,captureLightingOnly,draw,metrics,destroy
    });
  }
