@@ -263,3 +263,57 @@ test('discarded procedural artwork unregisters after old scene actors are releas
   assert.equal(scene.unregisterTexture('procedural:vale'),false,'double release is safe');
   scene.destroy();
 });
+
+test('Pixi atmosphere restores the same bounded daylight motes as Canvas, before vignette',()=>{
+  const Visuals=require('../../src/prototype/visuals.js');
+  const {PIXI,app}=pixiFixture();
+  const scene=Bridge.create({PIXI,app,width:912,height:420});
+  const daylight=Visuals.atmosphereMotes({
+    width:608,height:280,region:0,darkness:0,time:10,
+  });
+  assert.equal(daylight.length,14);
+  scene.setAtmosphere({region:0,darkness:0});
+  scene.syncMotes(daylight,1.5);
+  scene.setVignette({darkness:0,optimized:false});
+  const effects=app.stage.children[0].children[1];
+  const moteGraphic=effects.children.at(-2);
+  assert.equal(moteGraphic.circles.length,14,'one reused GPU batch represents all Canvas motes');
+  assert.deepEqual(moteGraphic.circles[0],[
+    daylight[0].x*1.5,daylight[0].y*1.5,daylight[0].r*1.5,
+  ],'CSS geometry matches Canvas zoom and the shared screen-space motion');
+  assert.equal(moteGraphic.fillStyle.color,0xeadf9e,'Vale daylight palette preserved');
+  assert.equal(moteGraphic.fillStyle.alpha,.18,'Canvas daylight opacity preserved');
+  assert.equal(scene.metrics().atmosphereMotes,14);
+  assert.equal(effects.children.at(-1).fillStyle.options.type,'radial',
+    'vignette must stay in front of motes');
+  scene.syncMotes(Visuals.atmosphereMotes({
+    width:608,height:280,region:0,darkness:1,time:12,
+  }),1.5);
+  assert.equal(effects.children.at(-2),moteGraphic,'motes reuse one GPU node during motion');
+  assert.equal(moteGraphic.fillStyle.color,0xdcefa8,'night palette preserved');
+  assert.equal(moteGraphic.fillStyle.alpha,.24,'Canvas night alpha preserved');
+  scene.syncMotes([],1.5);
+  assert.equal(moteGraphic.visible,false,'active Optimization Mode suppresses GPU motes');
+  assert.equal(scene.metrics().atmosphereMotes,0);
+  scene.destroy();
+});
+
+test('Canvas atmosphere mote contract preserves regional counts, deterministic motion and optimization',()=>{
+  const Visuals=require('../../src/prototype/visuals.js');
+  const options={width:608,height:280,region:0,darkness:0,time:10};
+  const first=Visuals.atmosphereMotes(options);
+  const same=Visuals.atmosphereMotes(options);
+  assert.deepEqual(first,same,'no randomized particle emitter or game state mutation');
+  const moved=Visuals.atmosphereMotes({...options,time:12});
+  assert.notEqual(moved[0].x,first[0].x,'Canvas drift animates without player movement');
+  assert.equal(Visuals.atmosphereMotes({...options,region:3}).length,18);
+  assert.equal(Visuals.atmosphereMotes({...options,region:4}).length,18);
+  assert.equal(Visuals.atmosphereMotes({...options,dungeon:true}).length,8);
+  assert.equal(Visuals.atmosphereMotes({...options,room:true}).length,8);
+  assert.deepEqual(Visuals.atmosphereMotes({...options,optimized:true}),[]);
+  const march=Visuals.atmosphereMotes({...options,region:1});
+  assert.equal(march[0].r,2.5,'approved marsh mist scale remains unchanged');
+  assert.deepEqual(march[0].rgb,[184,216,202]);
+  assert.deepEqual(Visuals.atmosphereMotes({...options,region:0,darkness:1})[0].rgb,
+    [220,239,168],'approved night Vale tint remains unchanged');
+});
