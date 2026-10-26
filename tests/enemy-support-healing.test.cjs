@@ -515,6 +515,53 @@ console.log('PASS boss skill independence, support priority, and old v4 save com
   assert.equal(g.hero.hp, heroHp, 'forged hostile healing cannot advance on a player actor');
   assert(!g.hero.supportHeal, 'invalid player-side hostile regeneration is discarded');
 }
+// Every hybrid variant (ordinary, guardian, Ringleader) recovers independently
+// from ranged ally triage. Neither ordering consumes the other effect slot.
+{
+  const cfg = R.enemySupportHealing.hybridSelf;
+  assert.deepEqual(
+    [cfg.fraction, cfg.duration, cfg.cooldown],
+    [0.1, 3, 5],
+    'all hybrid variants have 10% self recovery over 3s with 5s reuse',
+  );
+  for (const form of ['normal', 'ringleader']) {
+    for (const guard of [false, true]) {
+      for (const selfFirst of [true, false]) {
+        const { g, mob } = fixture('vale');
+        const hybrid = mob('skeleton', { ranged: true, hybrid: true, form, guard });
+        const healer = mob('skeleton', { ranged: true });
+        hybrid.hp = hybrid.maxHp * 0.55;
+        const hpBefore = hybrid.hp;
+        const self = () => {
+          assert(g.enemyHybridSelfHeal(hybrid), 'hybrid self heal starts while wounded');
+          assert.equal(hybrid.hybridSelfHealCd, 5, 'self-cooldown is independent');
+          near(hybrid.hybridSelfHeal.remaining, hybrid.maxHp * 0.1, '10% maximum HP budget');
+          near(hybrid.hybridSelfHeal.seconds, 3, 'three-second self recovery');
+        };
+        const ally = () => {
+          assert(g.enemySupportHeal(healer), 'ranged healer must still act');
+          assert(hybrid.supportHeal && hybrid.supportHeal.source === healer.id,
+            'ranged ally heal reaches a hybrid regardless of self-heal state');
+        };
+        if (selfFirst) { self(); ally(); } else { ally(); self(); }
+        assert(hybrid.hybridSelfHeal && hybrid.supportHeal,
+          'self and ally effects coexist without overwriting one another');
+        assert.equal(healer.hybridSelfHealCd || 0, 0,
+          'treating an ally must not spend a separate self recovery cooldown');
+        for (let i = 0; i < 40; i++) {
+          g.advanceHybridSelfHeal(hybrid, 0.1);
+          g.advanceEnemySupportHeal(hybrid, 0.1);
+        }
+        assert(hybrid.hp > hpBefore, 'both sources apply real recovery');
+        assert(hybrid.hp <= hybrid.maxHp, 'combined pulses never overfill maximum HP');
+        assert(!hybrid.hybridSelfHeal && !hybrid.supportHeal,
+          'all finished effects cleanly retire');
+        assert(!g.enemyHybridSelfHeal(hybrid),
+          'active independent self-recovery cooldown blocks immediate recast');
+      }
+    }
+  }
+}
 console.log(
   'PASS combined phone healing particles/status, warning layering and save-pure rendering',
 );
