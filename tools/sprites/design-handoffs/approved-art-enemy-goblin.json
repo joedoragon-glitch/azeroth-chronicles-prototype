@@ -4,11 +4,17 @@
   "designId": "approved-art-enemy-goblin",
   "name": "Goblin",
   "kind": "enemy",
-  "nextAction": "Released dev.91 owner correction. Retain original art and dev.90 performance improvements; no automatic further work.",
+  "nextAction": "Dev.194 owner-authorized procedural fix: hostile Slingers and Ringleaders have hand slings and stone satchels rather than bows/quivers. Preserve the distinct friendly Archer and melee Goblins; validate focused native art and release without generating raster assets.",
   "context": {
     "originConversation": "Conversation URL unavailable. Dated owner instruction is recorded here and in docs/APPROVED_ART_PASS_20261019.md.",
     "decisionSummary": "Joel approved every plan in the 513-entry assessment, including refinements, substantial rebuilds and keep/protect decisions. Approved plan: Build cheeks, brows, eyes, ear cartilage and connected elbows/hands; keep the accepted sprite's mischievous identity.",
     "decisionDate": "2026-10-19",
+    "latestOwnerCorrection": {
+      "date": "2026-10-26",
+      "summary": "Owner explicitly approved recognizable slings and stone bags for hostile Goblin Slingers/Ringleaders after observing mismatched bows/quivers with actual rock projectiles. The friendly companion Archer must retain bow/quiver. Autonomous focused audit and merge authorized.",
+      "document": "docs/GOBLIN_SLINGER_ARROW_GEOMETRY_DEV194.md",
+      "limits": "Procedural-only equipment; do not modify projectile physics, attack stats, faction, existing saves or approved facial identities."
+    },
     "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/321",
     "contentDocuments": [
       "docs/APPROVED_ART_PASS_20261019.md"
