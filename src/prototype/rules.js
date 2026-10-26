@@ -7698,6 +7698,27 @@
         restoreFraction: 0.4,
       },
     },
+    // Greenwood pilot: regular melee enemies and native guardians share a
+    // repeatable interception drill. Its martial foundation is Marshal Veyra's
+    // Crown academy (disciplined advance, target reading and committed strike);
+    // Thornfang, Lifebinder and the Vale captain also inform local tactics.
+    // No authored boss/captain/ringleader attacks or other regions are changed.
+    valeMeleeCounter: Object.freeze({
+      enabled: true,
+      buildupSeconds: 0.35,
+      cooldownSeconds: 4.5,
+      minDistance: 155,
+      maxDistance: 480,
+      warningSeconds: 0.65,
+      predictionSeconds: 1.15,
+      maxLeadDistance: 285,
+      travelSpeed: 1100,
+      travelSeconds: 0.75,
+      arrivalTolerance: 48,
+      impactRadius: 94,
+      damageMultiplier: 0.8,
+      slowSeconds: 0.8,
+    }),
     fieldOnboarding: { spawnLevel: 2, withdrawClearance: 700 },
     thornPatrol: {
       // Start toward the southern crossing, away from the opening woodland.
