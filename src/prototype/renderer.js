@@ -2420,6 +2420,36 @@
       }
       ctx.restore();
     }
+    function drawArenaBoundary() {
+      if (game.s.mode !== 'arena') return;
+      // The arena has a black low-spec floor; its playable perimeter must
+      // remain visible in either Canvas or the transparent Pixi cue layer.
+      // These four edges exactly match Navigation.blocked's 40px inset.
+      const far = game.zoneSize() - 40,
+        corners = [
+          { x: 40, y: 40 }, { x: far, y: 40 },
+          { x: far, y: far }, { x: 40, y: far },
+        ].map(screen);
+      ctx.save();
+      ctx.strokeStyle = '#9dc9df';
+      ctx.lineWidth = 3;
+      ctx.setLineDash?.([13, 9]);
+      ctx.beginPath();
+      for (const [i, corner] of corners.entries()) {
+        if (i === 0) ctx.moveTo(corner.x, corner.y);
+        else ctx.lineTo(corner.x, corner.y);
+      }
+      ctx.closePath();
+      ctx.stroke();
+      ctx.setLineDash?.([]);
+      for (const corner of corners) {
+        ctx.fillStyle = '#d3eaf3';
+        ctx.beginPath();
+        ctx.arc(corner.x, corner.y, 7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
     function render() {
       // Bounded by this one permitted draw. Never cache mutable attack shapes
       // between simulation steps or change warning/damage geometry.
@@ -2429,6 +2459,7 @@
         // above the independent GPU world instead of hiding player warnings.
         // The full normal Canvas path below is unchanged.
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawArenaBoundary();
         const z = game.zone();
         PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000, warningFrameShapes);
         PrototypeCombatVisuals.ground(ctx, screen, game, 'underlay-cue', game.s.time, warningFrameShapes);
@@ -2578,6 +2609,7 @@
         groundCache?.clear();
         finishPhase('floor');
       }
+      drawArenaBoundary();
       // Moving combat warnings cannot be frozen into the PixiJS cached terrain.
       // Their real, current state is drawn by the transparent 2D cue overlay.
       if (renderLayer !== 'background') {
