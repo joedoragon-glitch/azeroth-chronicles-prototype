@@ -35,6 +35,25 @@
   const enemyLeaderHealRecovery = new WeakMap();
   // Per-enemy chase observations are transient: no save migration, RNG or idle scans.
   const valeMeleeChase = new WeakMap();
+  // Greenwood-only combat trial. Keep this out of global rules/artwork hashes
+  // until the director accepts and generalizes the mechanic.
+  const valeMeleeCounter = Object.freeze({
+    enabled: true,
+    buildupSeconds: 0.35,
+    cooldownSeconds: 4.5,
+    minDistance: 155,
+    maxDistance: 480,
+    warningSeconds: 0.65,
+    predictionSeconds: 1.15,
+    maxLeadDistance: 285,
+    travelSpeed: 1100,
+    travelSeconds: 0.75,
+    arrivalTolerance: 48,
+    impactRadius: 94,
+    damageMultiplier: 0.8,
+    slowSeconds: 0.8,
+  });
+
   // A healing captain can restore its own HP every ten recovered seconds
   // independently of its seven-second support spell. Never serialized.
   const captainSelfHealRecovery = new WeakMap();
@@ -6405,7 +6424,7 @@
     // interiors. No ringleaders, boss/captain actors, ranged roles or summons.
     valeMeleeCounterEligible(e) {
       return (
-        R.valeMeleeCounter.enabled &&
+        valeMeleeCounter.enabled &&
         this.regionIndex() === 0 &&
         !this.peace &&
         !!e?.aggro &&
@@ -6429,7 +6448,7 @@
     // melee enemy. One ordinary chase interval is enough to teach the move.
     startValeMeleeCounter(e, target, dt) {
       if (!this.valeMeleeCounterEligible(e) || !target || target.hp <= 0) return false;
-      const cfg = R.valeMeleeCounter,
+      const cfg = valeMeleeCounter,
         gap = dist(e, target),
         targetId = target === this.hero ? 'hero' : target.id,
         validGap = gap >= cfg.minDistance && gap <= cfg.maxDistance;
@@ -6509,20 +6528,20 @@
         valeMeleeCounter: true,
         target: { x: warning.x, y: warning.y },
         targetId: warning.targetId,
-        life: R.valeMeleeCounter.travelSeconds,
+        life: valeMeleeCounter.travelSeconds,
       };
     }
 
     advanceValeMeleeCounter(e, dt) {
       const motion = e.motion,
-        cfg = R.valeMeleeCounter;
+        cfg = valeMeleeCounter;
       if (!motion?.valeMeleeCounter) return;
       if (!this.valeMeleeCounterEligible(e)) {
         e.motion = null;
         return;
       }
       motion.life -= dt;
-      const moved = this.move(e, motion.target, cfg.travelSpeed, dt),
+      const moved = this.move(e, motion.target, cfg.travelSpeed * (e.slow > 0 ? 0.5 : 1), dt),
         arrived = dist(e, motion.target) <= cfg.arrivalTolerance;
       e.noProgress = 0;
       if (moved && !arrived && motion.life > 0) return;
@@ -8067,6 +8086,7 @@
       : require('./enemy-vfx-events.js');
   EnemyVfxEvents.install(Campaign);
   Campaign.rules = R;
+  Campaign.valeMeleeCounter = valeMeleeCounter;
   Campaign.data = D;
   Campaign.classes = classes;
   Campaign.talentProfiles = talentProfiles;
