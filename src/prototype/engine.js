@@ -6487,12 +6487,18 @@
       );
     }
 
-    // Greenwood pure-melee mobs/guardians match Paladin autoattack (120).
-    // Bosses, captains and Ringleaders receive the 90-unit elite floor;
-    // ordinary enemies elsewhere retain their historical 65-unit reach.
-    // Preserve any individually authored reach above those floors.
+    // Native Greenwood pure melee mobs and guardians reach 120, matching
+    // Paladin basics. Bosses, captains and ringleaders get a 90-unit floor;
+    // all other ordinary melee roles keep their previous 65-unit basics.
+    // Individually authored longer contact ranges are never reduced.
     enemyMeleeBasicRange(e) {
-      return Math.max(R.balance.meleeBasicRange, e?.meleeBasicRange || 0);
+      const baseline = this.valeMeleeCounterEligible(e)
+        ? valeMeleeCounter.meleeBasicRange
+        : e?.type === 'boss' || e?.captain || e?.roomCaptain ||
+          e?.fieldCaptain || e?.form === 'ringleader'
+          ? R.balance.eliteMeleeBasicRange
+          : R.balance.meleeBasicRange;
+      return Math.max(baseline, e?.meleeBasicRange || 0);
     }
 
     // Hybrid actors retain both disciplines: native ranged healing/aim and
