@@ -343,6 +343,12 @@
       const records = [];
       let detachedForEviction = false;
       for (const { entity, visual, point, key } of visible) {
+        // The approved Canvas feet treatment is independent of sprite art.
+        // Pixi draws it below each body at the same depth in world space.
+        const ground = {
+          x: point.x, y: point.y,
+          ...canvasRenderer.groundPresentation(visual),
+        };
         // Canvas repaints these identities as their actual in-world objects.
         const painted = visual.kind === 'archive-record'
           ? { ...visual, renderKind: 'prop', structure: 'scroll-stack',
@@ -369,6 +375,7 @@
             height: c.height * zoom,
             opacity: c.opacity,
             flipX: c.flipX,
+            ground,
             depth: entity.x + entity.y,
           });
         } else if (chosen.reason === 'original-game-procedural-art') {
@@ -410,6 +417,7 @@
             height: b.logicalHeight * zoom,
             opacity: 1,
             flipX: false,
+            ground,
             depth: entity.x + entity.y,
           });
         } else throw Error('Missing original game artwork: ' + key);
