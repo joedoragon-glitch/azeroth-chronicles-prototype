@@ -1092,8 +1092,8 @@
           range = this.enemyRangedRange(e);
         if (
           !this.enemyRanged(e) ||
-          e.hybrid ||
-          gap >= range * R.rangedEnemyCombat.retreatFraction ||
+          (e.hybrid && gap <= this.enemyHybridMeleeRange(e)) ||
+          gap >= this.enemyBackpedalThreshold(e) ||
           !this.line(e, target)
         )
           return false;
@@ -1166,7 +1166,7 @@
           this.enemyRanged(e) &&
           !(
             e.hybrid &&
-            gap <= (e.form === 'ringleader' ? R.rangedEnemyCombat.ringleaderHybridMeleeRange : 65)
+            gap <= this.enemyHybridMeleeRange(e)
           );
         if (
           e.cd > 0 ||
