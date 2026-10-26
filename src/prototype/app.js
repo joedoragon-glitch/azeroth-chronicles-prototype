@@ -1827,7 +1827,10 @@
           getOptimizationMode: () => optimizationMode,
           onFailure: (failure) => {
             graphicsController?.webglFailed(failure);
-            status('WebGL2 returned to Canvas: ' + failure.message);
+            const recovery = graphicsController?.status();
+            status(recovery?.recoveryPending
+              ? 'PixiJS issue: Canvas backup active; WebGL2 will retry when safe.'
+              : 'WebGL2 returned to Canvas: ' + failure.message);
           },
         });
   // Fan out presentation events without editing the protected simulation loop.
@@ -1838,7 +1841,13 @@
   };
   function updateGpuTrial(snapshot) {
     const trial = snapshot.phase === 'trial';
-    gpuTrialPanel.hidden = !trial;
+    const preparing = snapshot.phase === 'preparing';
+    gpuTrialPanel.hidden = !trial && !preparing;
+    gpuTrialActions.style.display = trial ? 'grid' : 'none';
+    if (preparing) {
+      gpuTrialMessage.textContent = tr('Preparing PixiJS graphics…');
+      return;
+    }
     if (!trial) {
       // Announce actual transitions rather than silently dismissing the
       // panel. The HUD's role=status announces this to assistive technology.
@@ -3590,8 +3599,20 @@
             if (!ready) status('PixiJS unavailable; Canvas 2D remains active.');
           });
         },
-        'WebGL2 may run faster on some devices. Try it for 15 seconds; keep it or return to Canvas.',
+        graphicsController.status().preferredRenderer === 'webgl2' &&
+          graphicsController.status().mode === 'canvas2d'
+          ? 'WebGL2 remains your choice; Canvas backup is active. Recovery tries when safe.'
+          : 'WebGL2 may run faster on some devices. Try it for 15 seconds; keep it or return to Canvas.',
       ),
+      ...(graphicsController.status().recoveryPaused
+        ? [action('Retry PixiJS WebGL2', () => {
+            closeMenu();
+            status('Preparing PixiJS graphics…');
+            graphicsController.requestWebGL().then((ready) => {
+              if (!ready) status('WebGL2 unavailable. Canvas backup remains active.');
+            });
+          })]
+        : []),
       menuControls.section('Diagnostics'),
       action(
         performanceDetailsExpanded ? 'Hide performance details' : 'Show performance details',
@@ -6533,6 +6554,7 @@
     const frozen =
       !writerGuard.canWrite() ||
       persistence.conflicted(game.s.mode) ||
+      graphicsController?.status().phase === 'preparing' ||
       paused ||
       menu ||
       !focused ||
