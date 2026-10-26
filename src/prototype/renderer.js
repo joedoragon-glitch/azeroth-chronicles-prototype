@@ -364,6 +364,8 @@
       // effects or disappear unseen during normal renderer frame skipping.
       criticalCues = [],
       origin = null;
+    // Skipped first paint is allowed, but off-screen markers have a hard deadline.
+    const criticalCueMaxAgeMs = 1800;
     const heroArt =
       root.PrototypeHeroPresentation ||
       (typeof require === 'function' ? require('./hero-presentation.js') : null);
@@ -1329,7 +1331,10 @@
         // At most ten simultaneous actor cues; retain newest commitments.
         // In-flight source IDs follow the actor instead of locking a cast point.
         criticalCues = criticalCues.filter((c) => c.source !== event.source);
-        criticalCues.push({ source: event.source, life: 0.7, drawn: false });
+        criticalCues.push({
+          source: event.source, life: 0.7, drawn: false,
+          expiresAt: now() + criticalCueMaxAgeMs,
+        });
         if (criticalCues.length > 10) criticalCues.shift();
       }
     }
@@ -1340,9 +1345,18 @@
       // This does not force rendering or add a recurring simulation timer.
       for (const cue of criticalCues)
         if (cue.drawn) cue.life -= Math.max(0, dt);
-      criticalCues = criticalCues.filter((c) => c.life > 0);
+      const timestamp = now();
+      criticalCues = criticalCues.filter(
+        (c) => c.life > 0 && timestamp < c.expiresAt,
+      );
     }
     function drawCriticalCues() {
+      if (!criticalCues.length) return;
+      // Also expire on paint after an idle/paused simulation.
+      const timestamp = now();
+      criticalCues = criticalCues.filter(
+        (c) => c.life > 0 && timestamp < c.expiresAt,
+      );
       if (!criticalCues.length) return;
       const enemies = game.zone().enemies;
       const party = game.s.party;

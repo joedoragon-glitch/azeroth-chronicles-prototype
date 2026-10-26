@@ -1240,6 +1240,7 @@
     // The optional Codices carry author-supplied English and Spanish copy.
     for (const book of Object.values(Campaign.rules.criticalCodices || {})) {
       if (piece === book.name) return book.nameEs;
+      if (piece === book.description) return book.descriptionEs;
       if (piece === book.name + ' has already been studied.')
         return book.nameEs + ' ya se ha estudiado.';
       const prefix = 'Learned ' + book.name + ' · ';
@@ -3634,17 +3635,31 @@
       hero = game.criticalPartyChance('hero'),
       rank = game.expeditionSupportFraction('sharedTraining'),
       companion = 0.10 + (hero - 0.10) * rank,
-      localeEs = language === 'es';
+      localeEs = language === 'es',
+      criticalsActive =
+        game._criticalPartyNative?.enabled === true &&
+        game._criticalWorldNative?.enabled === true;
     const lines = [
       localeEs ? 'Códices aprendidos: ' + count + '/5'
                : 'Codices learned: ' + count + '/5',
-      localeEs ? 'Probabilidad del héroe: ' + (hero * 100).toFixed(1) + '%'
-               : 'Hero chance: ' + (hero * 100).toFixed(1) + '%',
-      localeEs ? 'Compañeros y mascotas: ' + (companion * 100).toFixed(1) + '%'
-               : 'Companions and pets: ' + (companion * 100).toFixed(1) + '%',
+      ...(criticalsActive
+        ? [
+            localeEs ? 'Probabilidad del héroe: ' + (hero * 100).toFixed(1) + '%'
+                     : 'Hero chance: ' + (hero * 100).toFixed(1) + '%',
+            localeEs ? 'Compañeros y mascotas: ' + (companion * 100).toFixed(1) + '%'
+                     : 'Companions and pets: ' + (companion * 100).toFixed(1) + '%',
+          ]
+        : [
+            localeEs
+              ? 'Las ejecuciones críticas están desactivadas. Los códices aprendidos quedan guardados.'
+              : 'Critical Executions are disabled. Learned Codices remain recorded.',
+          ]),
       '',
-      ...Object.entries(books).map(([id, book]) =>
-        (claims[id] ? '✓ ' : '○ ') + (localeEs ? book.nameEs : book.name)),
+      ...Object.entries(books).flatMap(([id, book]) =>
+        claims[id]
+          ? ['✓ ' + (localeEs ? book.nameEs : book.name),
+             '  ' + (localeEs ? book.descriptionEs : book.description)]
+          : ['○ ' + (localeEs ? book.nameEs : book.name)]),
     ];
     openMenu(localeEs ? 'Códices de lo Imprevisto' : 'Codices of the Unforeseen',
       lines.join('\n'), [], openMain);

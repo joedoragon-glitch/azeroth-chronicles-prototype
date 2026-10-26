@@ -3134,11 +3134,13 @@
           this.s.criticalCodices ||= {};
           if (this.s.criticalCodices[side.id] === true) {
             this.say(def.name + ' has already been studied.');
+            this.say(def.description);
             return true;
           }
           this.s.criticalCodices[side.id] = true;
           const learned = this.criticalCodexCount();
           this.say('Learned ' + def.name + ' · ' + learned + '/5 Codices of the Unforeseen.');
+          this.say(def.description);
           this.notice(def.name + ' · critical mastery learned', 5.5);
           this.event('criticalCodex', { id: side.id, count: learned, name: def.name });
           return true;

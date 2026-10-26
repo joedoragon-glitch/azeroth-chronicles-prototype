@@ -21,9 +21,14 @@ for (const side of Campaign.rules.sideDungeons) {
   const before = c.criticalCodexCount();
   Object.assign(c.hero, { x: book.x, y: book.y });
   assert(c.interact(book), 'first book learned');
+  const authored = Campaign.rules.criticalCodices[side.id];
+  assert(c.messages.includes(authored.description), 'book exposes its authored passage');
+  assert(authored.descriptionEs && authored.descriptionEs !== authored.description,
+    'book retains its distinct authored Spanish passage');
   ids.push(side.id);
   assert.equal(c.criticalCodexCount(), before + 1);
   assert(c.interact(book), 'repeat inspect is harmless');
+  assert(c.messages.includes(authored.description), 'learned book may be reread');
   assert.equal(c.criticalCodexCount(), before + 1, 'no re-entry duplicate');
   const saved = c.snapshot();
   assert.equal(saved.version, 4);
