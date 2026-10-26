@@ -170,6 +170,9 @@
       contextEpoch = 0,
       proceduralEvictions = 0,
       proceduralCacheEvictions = 0,
+      proceduralBakes = 0,
+      proceduralCacheHits = 0,
+      backgroundRepaints = 0,
       neighborhoodPrepared = 0,
       neighborhoodWarmupMs = 0;
     function noteFailure(type, stage, error) {
@@ -230,8 +233,9 @@
       createBackgroundPainter();
       drawBackground();
       previous?.destroy?.(false);
-      // Stale procedural images were rasterized for the previous density.
-      clearBakes(true);
+      // Keep the previous density warm: revisionFor includes backingRatio,
+      // so only matching raster sizes are reused. The shared LRU trims memory.
+      // An actual viewport/context reconstruction still clears resources.
     }
     // Confirmed mobile WebGL must survive normal iOS viewport changes after
     // switching apps. Rebuild viewport-sized scene layers in the SAME GPU
@@ -307,6 +311,7 @@
       return freed;
     }
     function drawBackground() {
+      backgroundRepaints++;
       const current = game(),
         zoom = platform.cameraZoom || 1;
       if (!backgroundRenderer || !backdrop || !scene)
@@ -361,7 +366,10 @@
     // onscreen sprites; only the live actor pass may trim scene resources.
     function ensureProcedural(painted, revision, current, zoom,
                               protectedRevisions = null, detach = null) {
-      if (baked.has(revision)) return baked.get(revision);
+      if (baked.has(revision)) {
+        proceduralCacheHits++;
+        return baked.get(revision);
+      }
       const body = bake(painted, current, backingRatio * zoom);
       if (!body) return null;
       const bytes = body.image.width * body.image.height * 4;
@@ -379,6 +387,7 @@
       scene.registerTexture(id, texture);
       imageBytes += bytes;
       baked.set(revision, { ...body, id, bytes, texture, lastUsedFrame: actorFrameNumber });
+      proceduralBakes++;
       return baked.get(revision);
     }
     // On switching to Pixi, the existing live view is loaded first. Then,
@@ -431,10 +440,12 @@
     function actorFrame() {
       const current = game(),
         zoom = platform.cameraZoom || 1;
-      if (bakedZoom !== zoom || (bakeZone !== null && bakeZone !== current.zoneId)) {
-        clearBakes(true);
-        bakedZoom = zoom;
-      }
+      // Keep prior-zone textures warm for dungeon returns and adjacent travel.
+      // The global LRU/byte budget retires them as needed; zoom still invalidates
+      // pixel-density-dependent bakes to prevent blurred/misaligned sprites.
+      // Revision identities include zoom too: changing camera scale never
+      // aliases raster sizes, and revisits can reuse images until LRU trimming.
+      bakedZoom = zoom;
       bakeZone = current.zoneId;
       actorFrameNumber++;
       const visible = candidates(
@@ -459,11 +470,14 @@
       for (const { entity, visual, point, key } of visible) {
         // The approved Canvas feet treatment is independent of sprite art.
         // Pixi draws it below each body at the same depth in world space.
-        const ground = {
-          x: point.x, y: point.y,
-          scale: zoom,
-          ...canvasRenderer.groundPresentation(visual),
-        };
+        const ground =
+          visual.presentation === 'scout-tracks' || visual.kind === 'critical-codex'
+            ? null
+            : {
+                x: point.x, y: point.y,
+                scale: zoom,
+                ...canvasRenderer.groundPresentation(visual),
+              };
         // Canvas repaints these identities as their actual in-world objects.
         const painted = paintedVisual(visual);
         const chosen = adapter.commandFor(
@@ -813,6 +827,9 @@
         proceduralTextures: baked.size,
         proceduralEvictions,
         proceduralCacheEvictions,
+        proceduralBakes,
+        proceduralCacheHits,
+        backgroundRepaints,
         neighborhoodPrepared,
         neighborhoodWarmupMs,
         proceduralBudget,

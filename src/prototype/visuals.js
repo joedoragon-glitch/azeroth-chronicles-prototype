@@ -16791,6 +16791,20 @@
           2,
         );
       }
+    } else if (e.kind === 'critical-codex') {
+      // An authored collectible book, not a humanoid NPC. Keep its existing
+      // interactable identity so historical v4 room instances still work.
+      ctx.save();
+      ctx.rotate(-0.14);
+      softPoly([[-25, -11], [1, -14], [26, -9], [26, 10], [1, 8], [-25, 11]], '#4b322b', 1.2);
+      softPoly([[-22, -11], [-1, -13], [-1, 6], [-22, 8]], '#e6d6ae', 1);
+      softPoly([[1, -13], [23, -10], [23, 8], [1, 6]], '#d5c296', 1);
+      line([[0, -13], [0, 8]], '#7b624b', 2);
+      for (const y of [-7, -3, 1]) {
+        line([[-18, y], [-5, y - 1]], '#917a5b', 0.9);
+        line([[5, y - 1], [19, y]], '#917a5b', 0.9);
+      }
+      ctx.restore();
     } else if (e.kind === 'patrol-report') {
       // A practical trail scout: moss cloak, copper clasp and worn field gear.
       poly(

@@ -189,8 +189,8 @@
       "es": "La Ciudadela de las Cenizas es la academia de la mariscal Veyra y el cuartel general del ejército profesional de la Corona. Sus oficiales instruyen a soldados de distintos pueblos en una misma disciplina. En los aposentos de Veyra, el uniforme de gala y los cosméticos reciben el mismo cuidado."
     },
     "I01": {
-      "en": "These were once fruit cellars. Scornfang’s Goblin workers now have bedrolls, games and nests for their young here, having been displaced by the winter-estate project and the changes at the Crypt. Their preserves were bought with wages, not stolen.",
-      "es": "Aquí se guardaba fruta para el invierno. Ahora duermen y se reúnen las familias goblin que trabajan para Scornfang, desplazadas por las obras de la residencia y los cambios en la Cripta. Hay nidos para sus crías y conservas que pagaron con sus salarios."
+      "en": "These old fruit cellars now shelter Goblin families who came to Greenwood with Scornfang as his paid workforce. As work on the winter estate and changes at the Crypt progressed, the families moved into these old quarters. Here they keep bedrolls, games and nests for their young. Their preserves were bought with wages, not stolen.",
+      "es": "Estas antiguas bodegas de fruta albergan ahora a familias goblin que llegaron a Greenwood con Scornfang como trabajadores asalariados. Al avanzar las obras de la residencia de invierno y los cambios en la Cripta, las familias se trasladaron a estos viejos aposentos. Aquí tienen lechos, juegos y nidos para sus crías. Compraron sus conservas con sus salarios; no las robaron."
     },
     "I02": {
       "en": "The watchhouse is partly flooded. Reed Beasts nest above the waterline, among fish racks and piles of shells. They have made shelter of the old military building.",

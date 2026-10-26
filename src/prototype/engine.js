@@ -931,6 +931,9 @@
         (n) =>
           !n.internalSite &&
           !this.bundleCollected(n) &&
+          // Codices are one-time world pickups; previously earned volumes
+          // remain in the historical zone data without reappearing as loot.
+          (n.kind !== 'critical-codex' || !this.s.criticalCodices?.[n.sideCodex]) &&
           (n.kind !== 'keeper' || this.keeperAvailable()) &&
           (n.id !== 'cage-archive' || !this.s.rescued.archive) &&
           (n.id !== 'archive-restorer' || this.archiveRestorerAvailable()) &&
@@ -2969,7 +2972,12 @@
         this.s.discovered[side.region + ':side-lore:' + side.id] = true;
         if (side.lore) {
           this.say(side.lore);
-          this.notice(side.lore, 8, '', 'narration', { scope: 'region', region: side.region });
+          // Retain the full earned story in Announcements; don't repeat
+          // the in-world inspectable narrative in an oversized toast.
+          this.notice(side.lore, 8, '', 'narration', {
+            scope: 'region', region: side.region,
+            silentWhenInspectable: !!R.narrativeSceneInspections?.[side.id]?.length,
+          });
         }
         this.event('sideInteriorDiscovery', { id: side.id, region: side.region });
       }
@@ -3141,7 +3149,14 @@
           const learned = this.criticalCodexCount();
           this.say('Learned ' + def.name + ' · ' + learned + '/5 Codices of the Unforeseen.');
           this.say(def.description);
-          this.notice(def.name + ' · critical mastery learned', 5.5);
+          const chance = (this.criticalPartyChance('hero') * 100).toFixed(0);
+          this.notice(
+            def.name + ' · +1 percentage point critical chance (' + chance + '%)',
+            4.5, '', 'milestone', {
+              textEs: def.nameEs + ' · +1 punto porcentual de probabilidad crítica (' +
+                chance + '%)',
+            },
+          );
           this.event('criticalCodex', { id: side.id, count: learned, name: def.name });
           return true;
         }

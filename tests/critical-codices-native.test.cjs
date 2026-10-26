@@ -27,6 +27,7 @@ for (const side of Campaign.rules.sideDungeons) {
     'book retains its distinct authored Spanish passage');
   ids.push(side.id);
   assert.equal(c.criticalCodexCount(), before + 1);
+  assert(!c.visibleNPCs().includes(book), 'claimed book disappears from playable interactions');
   assert(c.interact(book), 'repeat inspect is harmless');
   assert(c.messages.includes(authored.description), 'learned book may be reread');
   assert.equal(c.criticalCodexCount(), before + 1, 'no re-entry duplicate');
@@ -35,6 +36,8 @@ for (const side of Campaign.rules.sideDungeons) {
   const restored = Campaign.restore(saved, () => .91);
   assert.equal(restored.criticalCodexCount(), before + 1, 'v4 restore keeps learned book');
   assert(restored.s.criticalCodices[side.id]);
+  assert(!restored.visibleNPCs().some(n => n.id === book.id),
+    'saved learned Codex stays collected after reload');
 }
 assert.equal(new Set(ids).size, 5);
 assert(Math.abs(c.criticalPartyChance('hero') - .15) < 1e-10);

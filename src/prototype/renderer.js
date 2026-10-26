@@ -1575,19 +1575,19 @@
         ctx.globalAlpha = Math.min(1, cue.life / 0.25);
         ctx.fillStyle = '#172b2a';
         ctx.strokeStyle = '#fff2b1';
-        ctx.lineWidth = 1.7;
+        ctx.lineWidth = 0.85;
         ctx.beginPath();
-        ctx.moveTo(x - 10, y - 13);
-        ctx.lineTo(x + 10, y - 13);
-        ctx.lineTo(x + 10, y + 8);
-        ctx.lineTo(x, y + 16);
-        ctx.lineTo(x - 10, y + 8);
+        ctx.moveTo(x - 5, y - 6.5);
+        ctx.lineTo(x + 5, y - 6.5);
+        ctx.lineTo(x + 5, y + 4);
+        ctx.lineTo(x, y + 8);
+        ctx.lineTo(x - 5, y + 4);
         ctx.closePath();
         ctx.fill();
         ctx.stroke();
         ctx.fillStyle = '#fff4bb';
-        ctx.font = 'bold 21px system-ui';
-        ctx.fillText('!', x, y + 7);
+        ctx.font = 'bold 10.5px system-ui';
+        ctx.fillText('!', x, y + 3.5);
         cue.drawn = true;
       }
       ctx.restore();
@@ -2752,9 +2752,11 @@
             ctx.stroke();
             ctx.restore();
           }
-          groundMarker(e, p);
-          entityShadow(e, p);
-          entityAura(e, p);
+          if (e.kind !== 'critical-codex') {
+            groundMarker(e, p);
+            entityShadow(e, p);
+            entityAura(e, p);
+          }
           drawAbyssFlightCues(ctx, e, p, screen);
         }
         ctx.font = (e.renderKind === 'prop' ? 34 : 30) + 'px system-ui';

@@ -940,7 +940,8 @@
           angle: f.angle,
           reach: f.reach,
           halfWidth: f.halfWidth,
-          travelSeconds: 0.625,
+          travelSeconds: Math.min(f.reach, dist(f.from, aim)) / 704,
+          travelSpeed: 704,
           hits: 0,
         });
       }
@@ -959,13 +960,14 @@
             // changes the beam angle, not a translated parallel lane.
             // The normal range limit still applies if the Mage backs away.
             // A changed angle may contact additional foes, once each.
-            f.elapsed = Math.min(0.625, (f.elapsed || 0) + dt);
+            f.elapsed = (f.elapsed || 0) + dt;
             const from = { x: this.hero.x, y: this.hero.y },
               gap = dist(from, f.aim),
               range = Math.min(f.reach, gap),
               ux = gap > 0 ? (f.aim.x - from.x) / gap : Math.cos(f.angle),
               uy = gap > 0 ? (f.aim.y - from.y) / gap : Math.sin(f.angle);
-            f.traveled = range * (f.elapsed / 0.625);
+            // Fixed physical speed, independent of the current target distance.
+            f.traveled = Math.min(f.reach, (f.traveled || 0) + 704 * dt);
             let visibleLength = 0,
               previous = from;
             // Reclip the CURRENT angled corridor to solid terrain. Never
@@ -1014,7 +1016,7 @@
               )
                 f.hits++;
             }
-            if (f.elapsed < 0.625) return true;
+            if (f.traveled + 0.001 < range && f.elapsed < 1.5) return true;
             this.event('heroSkillArea', {
               actor: 'hero',
               class: 'mage',
@@ -1411,9 +1413,9 @@
               target: target.id,
               damage,
               source: 'hero',
-              // Normal Mage Skill 1 travels 10% faster than the prior 1.2x tuning.
-              // A full-range shot is roughly 0.57s; nearer targets remain responsive.
-              speed: 1.32 * Math.max(170, Math.min(535, d / 0.75)),
+              // Constant travel speed: a distant enemy never makes this projectile faster.
+              speed: 1.32 * (280 / 0.75),
+              launchHeading: Math.atan2(dy, dx),
               life: 1.5,
               travelBudget: 540,
               traveled: 0,

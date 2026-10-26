@@ -113,7 +113,7 @@ function advance(g, seconds, step = 0.05) {
   g.hero.x = 470;
   g.updateProjectiles(0.1);
   assert.equal(e.hp, hp, 'normal beam does not impact before physical arrival');
-  e.y = 590; // Move the original target after the shot releases.
+  e.y = 540; // Minor evasive motion stays within limited arcane aim assistance.
   for (let i = 0; i < 28 && g.s.projectiles.includes(p); i++) {
     g.s.time += 0.05;
     g.updateProjectiles(0.05);
@@ -121,6 +121,25 @@ function advance(g, seconds, step = 0.05) {
   assert(p.trailPoints.some(point => point.y > 500), 'the actual path bends to follow its foe');
   assert.equal(p.originX, 500, 'the beam begins at its original caster position');
   assert(e.hp < hp, 'homing normal beam strikes only when it physically arrives');
+}
+{
+  const near = arena([[610, 500]]);
+  const far = arena([[790, 500]]);
+  assert(near.g.cast(1, near.enemies[0].id, false));
+  assert(far.g.cast(1, far.enemies[0].id, false));
+  assert.equal(
+    near.g.s.projectiles.find(p => p.mageSkill1Homing).speed,
+    far.g.s.projectiles.find(p => p.mageSkill1Homing).speed,
+    'normal beam physical speed is independent of target range',
+  );
+}
+{
+  const {g,enemies:[foe]}=arena([[780,500]]);
+  assert(g.cast(1,foe.id,false));
+  const before=foe.hp;
+  foe.y=750; // A substantial dodge cannot be chased by an early basic spell.
+  for(let i=0;i<40;i++){g.s.time+=0.05;g.updateProjectiles(0.05);}
+  assert.equal(foe.hp,before,'a large sideways dodge must defeat limited homing');
 }
 {
   const { g, enemies: [first, extra, missed] } = arena([[620, 500], [820, 565], [820, 650]]);
