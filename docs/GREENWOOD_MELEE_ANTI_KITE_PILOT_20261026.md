@@ -1,4 +1,7 @@
-# Greenwood Vale — ordinary melee anti-kiting pilot (26 October 2026)
+# Greenwood Vale — original anti-kiting pilot (historical, 26 October 2026)
+
+**SUPERSEDED:** The warned 1,400-unit/s Vale Interception rush, separate 4.5-second cooldown, extra hit and Slow described below are **no longer active** after the native Pursuit Burst correction. This file is preserved as historical design evidence, not the current gameplay specification. See [GREENWOOD_NATIVE_PURSUIT_20261026.md](GREENWOOD_NATIVE_PURSUIT_20261026.md) for the authoritative replacement: 1.5× movement for 1.2 seconds, 0.5-second ordinary-speed recovery for eligible Vale melee, no extra warning/damage/Slow.
+
 
 Status: isolated release candidate; owner authorized audit, merge, and live testing on 26 October 2026. Merge is contingent on passing focused validation and production build. This is **the first stage only**. Broader ringleader, boss and captain designs remain proposals for later trials.
 
