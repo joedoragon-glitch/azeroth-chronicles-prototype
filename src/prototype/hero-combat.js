@@ -1601,6 +1601,48 @@
                     ? this.distanceToSegment(e, from, end) <= def.halfWidth
                     : false;
           this.engage(target);
+          if (this.hero.class === 'ranger') {
+            // #464 physical Pinning Volley: preserve selection, original arrow
+            // count and wall/contact checks. No critical status before impact.
+            const foes = this.zone()
+              .enemies.filter((e) => e.hp > 0 && !e.neutral && inside(e) && this.line(this.hero, e))
+              .sort((a, b) => this.idOrder(a, b));
+            for (const foe of foes) {
+              const distance = Math.max(1, dist(from, foe));
+              this.s.projectiles.push({
+                id: 'projectile-' + this.s.nextId++,
+                x: from.x,
+                y: from.y,
+                dx: (foe.x - from.x) / distance,
+                dy: (foe.y - from.y) / distance,
+                target: foe.id,
+                damage,
+                source: 'hero',
+                speed: 650,
+                style: 'arrow',
+                slot: 2,
+                charged: true,
+                area: true,
+                slow: def.slow || 0,
+                rangerVolleySlow: this.criticalHeroValue(
+                  criticalReceipt,
+                  R.heroTactics.ranger.volley.slow +
+                    steps * R.heroTactics.ranger.volley.slowStep,
+                  'slowDuration',
+                ),
+                ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
+                ...(encountersAtStart ? { encountersAtStart } : {}),
+              });
+            }
+            this.event('chargedArea', {
+              slot, class: 'ranger', actor: 'hero', source: 'hero',
+              effect: def.effect, shape: 'line', projectileVolley: true,
+              x: from.x, y: from.y, fromX: from.x, fromY: from.y,
+              angle, range: def.range || 0, halfWidth: def.halfWidth || 0,
+              hits: 0, arrows: foes.length,
+            });
+            return true;
+          }
           let hits = 0;
           for (const e of this.zone()
             .enemies.filter((e) => e.hp > 0 && !e.neutral && inside(e) && this.line(this.hero, e))
@@ -2011,6 +2053,29 @@
                 this.idOrder(a, b),
             )
             .slice(0, areaLimit)) {
+            if (this.hero.class === 'ranger' && slot === 5) {
+              // #464 physical Arrow Volley. The immutable action receipt
+              // follows each original arrow until actual legal contact.
+              const d = Math.max(1, dist(this.hero, e));
+              this.s.projectiles.push({
+                id: 'projectile-' + this.s.nextId++,
+                x: this.hero.x,
+                y: this.hero.y,
+                dx: (e.x - this.hero.x) / d,
+                dy: (e.y - this.hero.y) / d,
+                target: e.id,
+                damage: this.criticalHeroValue(
+                  criticalReceipt, power * 2.3 * scale, 'damage',
+                ),
+                source: 'hero',
+                speed: 650,
+                style: 'arrow',
+                slot: 5,
+                area: true,
+                ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
+              });
+              continue;
+            }
             const landed = this.damage(e, this.criticalHeroValue(
               this.hero.class !== 'mage' ? criticalReceipt : null,
               (slot === 7 ? power * 6 : power * 2.3) * scale, 'damage',
@@ -2028,6 +2093,8 @@
             slot,
             radius: slot === 5 ? 350 : 500,
             contacts,
+            ...(this.hero.class === 'ranger' && slot === 5
+              ? { projectileVolley: true } : {}),
             x: this.hero.x,
             y: this.hero.y,
           });

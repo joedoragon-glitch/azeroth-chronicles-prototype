@@ -1163,6 +1163,7 @@
               victim.tauntUntil = Math.max(victim.tauntUntil || 0, this.s.time + duration);
             }
             if (landed && p.slow) this.applySlow(victim, p.slow);
+            if (landed && p.rangerVolleySlow) this.applySlow(victim, p.rangerVolleySlow);
             if (landed && p.push && victim.hp > 0 && p.source === 'hero')
               this.shieldPush(victim, p.push);
             this.event('projectileImpact', {
