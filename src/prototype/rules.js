@@ -7698,25 +7698,6 @@
         restoreFraction: 0.4,
       },
     },
-    // Greenwood prototype: ordinary melee enemies and melee guardians learn a
-    // repeatable, telegraphed interception inspired by the Vale's field boss,
-    // dungeon boss and captain. Ringleaders and authored elites are excluded.
-    valeMeleeCounter: Object.freeze({
-      enabled: true,
-      buildupSeconds: 0.35,
-      cooldownSeconds: 4.5,
-      minDistance: 155,
-      maxDistance: 480,
-      warningSeconds: 0.65,
-      predictionSeconds: 1.15,
-      maxLeadDistance: 285,
-      travelSpeed: 1100,
-      travelSeconds: 0.75,
-      arrivalTolerance: 48,
-      impactRadius: 94,
-      damageMultiplier: 0.8,
-      slowSeconds: 0.8,
-    }),
     fieldOnboarding: { spawnLevel: 2, withdrawClearance: 700 },
     thornPatrol: {
       // Start toward the southern crossing, away from the opening woodland.
