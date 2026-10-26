@@ -2040,7 +2040,9 @@
           buildings: [], nodes: [], packTimers: {}, clock: 0,
         };
         this.s.zones.arena = z;
-        z.npcs.push({ id: 'arena-guide', kind: 'arena-guide', name: 'Arena Guide', x: 720, y: 790, icon: '🧭' });
+        z.npcs.push({ id: 'arena-guide', kind: 'arena-guide', name: 'Arena Guide',
+          x: stage.kind === 'hub' ? 900 : 520,
+          y: stage.kind === 'hub' ? 1080 : 870, icon: '🧭' });
         const spawn = (def, x, y, options = {}) => {
           const enemy = this.makeEnemy(def, { x, y });
           // Native AI/combat, but no campaign rewards, victories or unlocks.
@@ -2055,23 +2057,24 @@
         const region = D.regions[stage.region], species = D.species[stage.region];
         if (stage.kind === 'hub') {
           for (const [i, boss] of D.bosses.filter((b) => b.captive && b.id !== 'darklord').entries()) {
-            const angle = (i * Math.PI * 2) / (D.bosses.length - 1);
+            // Wide service rows keep names readable and leave a direct walking
+            // corridor from the entry to the Guide, Trainer and recovery.
             z.npcs.push({
               id: 'arena-specialist-' + boss.id,
               kind: R.teachers[boss.id] ? 'teacher' : boss.id === 'archive' ? 'alchemist' : 'smith',
               family: boss.id, name: boss.captive,
-              x: Math.round(720 + Math.cos(angle) * 250),
-              y: Math.round(800 + Math.sin(angle) * 230), icon: '👤',
+              x: 1120 + (i % 4) * 245,
+              y: 640 + Math.floor(i / 4) * 320, icon: '👤',
             });
           }
           z.npcs.push({
             id: 'arena-level-trainer',
             kind: 'arena-level-trainer',
             name: 'Level Trainer',
-            x: 565, y: 755,
+            x: 735, y: 990,
             icon: '⭐',
           });
-          z.npcs.push({ id: 'arena-recovery', kind: 'arena-recovery', name: 'Free recovery', x: 620, y: 960, icon: '💚' });
+          z.npcs.push({ id: 'arena-recovery', kind: 'arena-recovery', name: 'Free recovery', x: 810, y: 1320, icon: '💚' });
         } else if (stage.kind === 'ordinary' || stage.kind === 'guardians') {
           const guardian = stage.kind === 'guardians';
           // Native campaign HP/damage values, not new arena balance math.
@@ -2083,7 +2086,7 @@
               level: stage.region * 3 + 1 + (guardian ? 1 : 0),
               hp, damage,
               gold: 0, xp: 0,
-            }, 1170 + (i % 2) * 120, 630 + Math.floor(i / 2) * 190, {
+            }, 1400 + (i % 2) * 250, 830 + Math.floor(i / 2) * 350, {
               pack: 'arena-' + stage.id + '-' + Math.floor(i / 2),
               ...(guardian ? { guard: true, guardianBalanceVersion: 2 } : {}),
             });
@@ -2099,7 +2102,7 @@
                 level: stage.region * 3 + 2,
                 hp: hp * 2, damage: damage * 1.25,
                 gold: 0, xp: 0,
-              }, 1420, 890, {
+              }, 1900, 1050, {
                 captain: true, captainProfile: id, captainMentor: profile.mentor,
                 captainVisualIdol: profile.visualIdol || profile.mentor,
                 visualScale: profile.visualScale || 1.16, specialCd: 0,
@@ -2122,7 +2125,7 @@
               hp: Math.round((120 + stage.region * 100) * cfg.hp),
               damage: Math.round((12 + stage.region * 7) * cfg.damage),
               gold: 0, xp: 0,
-            }, 1100 + i * 120, 720 + i * 180, {
+            }, 1450 + i * 260, 900 + i * 300, {
               nightOnly: true, nightBalanceVersion: 1, specialCd: 1 + i * 0.35,
             });
             this.configureEnemy(e, i);
@@ -2130,7 +2133,7 @@
         } else if (stage.kind === 'boss') {
           const boss = this.boss(stage.boss);
           if (boss) {
-            const enemy = this.bossEnemy(boss, stage.form || 'normal', { x: 1350, y: 800 });
+            const enemy = this.bossEnemy(boss, stage.form || 'normal', { x: 1770, y: 1080 });
             enemy.arenaFixture = true;
             enemy.pack = 'arena-' + stage.id;
             z.enemies.push(enemy);
@@ -2141,12 +2144,24 @@
                   species: sp[0], name: sp[1] + ' guardian', icon: sp[2],
                   level: Math.max(1, boss.level - 1), hp: 65 + stage.region * 105,
                   damage: 7 + stage.region * 8, gold: 0, xp: 0,
-                }, 1190, 650 + 300 * i, { guard: true, guardianBalanceVersion: 2 });
+                }, 1510, 770 + 600 * i, { guard: true, guardianBalanceVersion: 2 });
                 this.configureEnemy(e, i);
               }
           }
         }
         return z;
+      }
+      arenaContainActors() {
+        if (this.s.mode !== 'arena') return;
+        const size = this.zoneSize(),
+          actors = [this.hero, ...this.s.party, ...this.zone().enemies];
+        for (const actor of actors) {
+          if (!Number.isFinite(actor.x) || !Number.isFinite(actor.y)) continue;
+          const radius = this.actorRadius(actor),
+            low = 40 + radius, high = size - 40 - radius;
+          actor.x = Math.max(low, Math.min(high, actor.x));
+          actor.y = Math.max(low, Math.min(high, actor.y));
+        }
       }
       arenaSelectStage(id) {
         if (this.s.mode !== 'arena' || !this.arenaStages().some((s) => s.id === id)) return false;
@@ -2159,11 +2174,11 @@
         this.s.hazards = [];
         this.s.heroTarget = null;
         this.hero.order = null;
-        this.hero.x = 620;
-        this.hero.y = 800;
+        this.hero.x = id === 'hub' ? 650 : 700;
+        this.hero.y = id === 'hub' ? 1070 : 1060;
         for (const [i, member] of this.s.party.entries()) {
-          member.x = 560 + i * 80;
-          member.y = 870;
+          member.x = 600 + i * 110;
+          member.y = 1170;
           member.order = null;
         }
         delete this.s.zones.arena;
