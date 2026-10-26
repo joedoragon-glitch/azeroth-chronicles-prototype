@@ -106,9 +106,15 @@ function toFinite(n) { return Number.isFinite(n) ? n : 0; }
   e.cd = 0;
   e.telegraph = null;
   e.motion = null;
-  c.updateEnemies(0.1);
-  assert(e.rangedAim || e.cd > 0,
-    'outside close range, hybrid retains a ranged attack or its normal recovery');
+  // Isolate the role choice from unrelated field encounter or Rogue clocks.
+  // Above the switch but inside native projectile reach, a hybrid retains
+  // the same ranged basic release as a pure ranged actor.
+  const gap = Math.hypot(c.hero.x - e.x, c.hero.y - e.y);
+  assert(gap > c.enemyHybridMeleeRange(e) && gap < c.enemyRangedRange(e),
+    'test target is outside melee stance but inside ranged basic reach');
+  c.enemyStartBasic(e, c.hero, true);
+  assert(e.rangedAim,
+    'hybrid retains the native ranged aim and launch above melee threshold');
 }
 
 console.log('PASS dual-role hybrids: ranged healing, recovery-only backstep, elite melee, role switch and no cast conflict');
