@@ -79,6 +79,10 @@ for (const [species, guard] of [
     'a clear native lane allows physical closing distance');
   assert(e.specialCd > 0, 'landing does not erase the independent cooldown');
   assert(!c.startValeMeleeCounter(e, c.hero, 0.1), 'immediate repeat refused');
+  // Re-establish an out-of-reach spacing in the same active encounter;
+  // the first successful lunge has intentionally closed the original gap.
+  Object.assign(e, before);
+  Object.assign(c.hero, committed);
   e.specialCd = 0;
   for (let i = 0; i < 5 && !e.telegraph; i++) c.startValeMeleeCounter(e, c.hero, 0.1);
   assert(e.telegraph?.valeMeleeCounter, 'the same actor can initiate again after recovery');
