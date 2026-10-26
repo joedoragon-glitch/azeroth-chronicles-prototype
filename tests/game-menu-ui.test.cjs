@@ -475,7 +475,11 @@ console.log(
   click('English');
   assert.equal(playtest.elements.get('modal-title').textContent,
     'New Combat Diagnostics adventure');
-  actions()[0].click();
+  // The first child is the optional name input, not a hero choice.
+  // Exercise the real button that starts the selected class.
+  const heroButton = actions().find((node) => /paladin/i.test(node.textContent));
+  assert(heroButton && !heroButton.disabled, 'Paladin class button remains accessible');
+  heroButton.click();
   assert.equal(playtest.scope.Prototype.game.s.mode, 'arena');
   assert(shared.has('azeroth-v4-arena'), 'diagnostic run uses its own v4 save');
   assert.equal(JSON.parse(shared.get('azeroth-v4-profile')).activeMode, 'normal',
