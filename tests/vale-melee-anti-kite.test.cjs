@@ -171,6 +171,44 @@ for (const [species, guard] of [
 }
 
 {
+  // Hybrid Ringleaders retain BOTH strategies. At close range they own the
+  // melee basic/pursuit profile; above 120 they can use ranged aim and its
+  // tactical stand-off, plus ranged-role support regardless of close posture.
+  const { c, e } = scene();
+  Object.assign(e, {
+    ranged: true, hybrid: true, form: 'ringleader', shotRange: 280,
+    shotSpeed: 260, projectileStyle: 'arrow',
+  });
+  assert.equal(c.enemyHybridMeleeRange(e), 120);
+  assert.equal(c.enemyMeleeBasicRange(e), 90);
+  assert(c.enemyHealProfile(e), 'the ranged healing/support profile survives melee posture');
+  assert(!c.valeMeleeCounterEligible(e), 'elite hybrid does not inherit ordinary Vale special');
+  const standoff = c.enemyBackpedalThreshold(e);
+  assert(standoff > 120, 'ranged guard stance has breathing room beyond melee switch');
+  const initial = { x: e.x, y: e.y };
+  const startHero = { x: c.hero.x, y: c.hero.y };
+  const span = Math.hypot(c.hero.x - e.x, c.hero.y - e.y);
+  const ux = (c.hero.x - e.x) / span, uy = (c.hero.y - e.y) / span;
+  const baseLine = c.line, baseSegment = c.clearSegment, baseMove = c.move;
+  c.line = () => true;
+  c.clearSegment = () => true;
+  c.move = (unit, point) => { unit.x = point.x; unit.y = point.y; return true; };
+  c.hero.x = initial.x + ux * (120 + (standoff - 120) / 2);
+  c.hero.y = initial.y + uy * (120 + (standoff - 120) / 2);
+  assert(c.enemyBackpedal(e, c.hero, 0.1, 500),
+    'hybrid Ringleader uses actual ranged backpedal outside melee threshold');
+  Object.assign(e, initial);
+  c.hero.x = initial.x + ux * 110; c.hero.y = initial.y + uy * 110;
+  assert(!c.enemyBackpedal(e, c.hero, 0.1, 500),
+    'inside 120 the hybrid keeps its melee commitment instead of fleeing');
+  e.form = 'normal';
+  assert.equal(c.enemyHybridMeleeRange(e), 65,
+    'ordinary hybrid melee switch stays unchanged');
+  Object.assign(c.hero, startHero);
+  c.move = baseMove; c.line = baseLine; c.clearSegment = baseSegment;
+}
+
+{
   // Verify real updateEnemies dispatch, beyond isolated helper calls.
   const { c, e } = scene();
   let observed = false;
