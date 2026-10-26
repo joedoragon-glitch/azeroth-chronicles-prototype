@@ -152,6 +152,17 @@ for (const [species, guard] of [
 }
 
 {
+  // Live engagements loaded from the old seven-second scheduling contract
+  // must promptly adopt the corrected cadence, not keep an obsolete delay.
+  const { c, e } = scene();
+  e.pursuitBurst = 0;
+  e.pursuitBurstReadyAt = c.s.time + 7;
+  tick(c);
+  assert(e.pursuitBurstReadyAt <= c.s.time + 1.7 + 1e-7,
+    'old-save long readiness is clamped to the native Vale pursuit cadence');
+}
+
+{
   // Existing saves may contain an already-issued old ground warning/motion.
   // On the next simulation tick they must be harmlessly retired, not launched.
   for (const kind of ['telegraph', 'motion']) {
