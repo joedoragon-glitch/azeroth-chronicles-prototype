@@ -28,6 +28,11 @@ const scripts = [
     'enemy-vfx',
     'enemy-vfx-events',
     'engine',
+    // Live critical sessions share the Campaign; independent seeded streams.
+    'critical-executions',
+    'critical-levels',
+    'critical-party-native',
+    'critical-world-native',
     'audio-catalog',
     'audio-contract',
     'audio-library',

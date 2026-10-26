@@ -116,6 +116,11 @@ function shell(language, heroClass = 'paladin', options = {}) {
     PrototypeArchive: 'archive',
     PrototypeArchiveReading: 'archive-reading',
     PrototypeRules: 'rules',
+    // Match the four critical contracts loaded by production site-assets.
+    PrototypeCriticalExecutions: 'critical-executions',
+    PrototypeCriticalLevels: 'critical-levels',
+    PrototypeCriticalPartyNative: 'critical-party-native',
+    PrototypeCriticalWorldNative: 'critical-world-native',
   }))
     scope[name] = require('../../src/prototype/' + file);
   if (options.now) {

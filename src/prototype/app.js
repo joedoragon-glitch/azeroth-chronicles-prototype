@@ -1634,10 +1634,23 @@
   function save() {
     return started && persistence.save(game, profile);
   }
+  // Live game shell only. Standalone Campaign fixtures remain independent.
+  // Bind once after each actual playable Campaign has been created/restored.
+  // Both isolated RNG streams resume from the same v4 save state.
+  function activateLiveCritical(candidate) {
+    if (!candidate) return candidate;
+    if (candidate._criticalPartyNative?.enabled && candidate._criticalWorldNative?.enabled)
+      return candidate;
+    PrototypeCriticalPartyNative.attachCampaign(
+      candidate, PrototypeCriticalExecutions, PrototypeCriticalLevels,
+      PrototypeCriticalWorldNative, { enabled: true },
+    );
+    return candidate;
+  }
   function load(mode) {
     const restored = persistence.load(mode);
     if (!restored) return false;
-    game = restored;
+    game = activateLiveCritical(restored);
     return true;
   }
   let recoveredOnStartup = false;
@@ -1650,10 +1663,11 @@
         ? null
         : persistence.migrateLegacy();
     if (game) {
+      game = activateLiveCritical(game);
       loaded = true;
       started = true;
       save();
-    } else game = new Campaign();
+    } else game = activateLiveCritical(new Campaign());
   }
   // An unclean active-session marker indicates the previous browser stopped
   // before its normal shutdown. Keep validated campaign progress, but never
@@ -1664,7 +1678,7 @@
     const recovered = restartGuard.recover(game);
     if (recovered) {
       recoveredOnStartup = true;
-      game = recovered;
+      game = activateLiveCritical(recovered);
       save();
       status(
         recovered.selectedBarracksRespawn()
@@ -3010,7 +3024,9 @@
   function start(mode, heroClass, succession, heroName = null) {
     if (mode === 'developer' && !developerEnabled) return;
     if (mode === 'nightmare' && !profile.nightmareUnlocked) return;
-    const candidate = new Campaign(mode, heroClass, Math.random, { succession });
+    const candidate = activateLiveCritical(
+      new Campaign(mode, heroClass, Math.random, { succession }),
+    );
     if (heroName) candidate.nameHero(heroName);
     try {
       persistence.writeCandidate(candidate);
@@ -3019,7 +3035,7 @@
       return;
     }
     restartGuard.clean();
-    game = candidate;
+    game = activateLiveCritical(candidate);
     started = true;
     if (typeof Sprint !== 'undefined') Sprint.reset();
     paused = false;
@@ -3862,7 +3878,7 @@
   };
   function resumeSavedRun(candidate) {
     restartGuard.clean();
-    game = candidate;
+    game = activateLiveCritical(candidate);
     loaded = started = true;
     if (game.s.mode !== 'developer') profile.activeMode = game.s.mode;
     if (game.peace && game.s.finalRestCompleted && game.s.mode !== 'developer')
@@ -6896,7 +6912,7 @@
           }
         }
         if (refreshed) {
-          game = refreshed;
+          game = activateLiveCritical(refreshed);
           loaded = started = true;
           recoverLoadedSession();
           if (
@@ -6910,7 +6926,7 @@
           savedRunRecoveryMenu();
         } else {
           loaded = started = false;
-          game = new Campaign();
+          game = activateLiveCritical(new Campaign());
           chooseLanguage(developerEnabled ? 'developer' : 'normal');
         }
         updateHUD();
