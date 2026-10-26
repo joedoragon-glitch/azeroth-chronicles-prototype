@@ -6429,11 +6429,15 @@
       );
     }
 
-    // Do not expand boss, captain, Ringleader, ranged or other-region melee
-    // reach: Greenwood ordinary melee gets the same 120-unit basic reach as
-    // the Paladin's autoattack. This method also owns withdrawal basics.
-    valeMeleeBasicRange(e) {
-      return this.valeMeleeCounterEligible(e) ? valeMeleeCounter.meleeBasicRange : 65;
+    // All three elite tiers get at least 90 basic melee reach. Greenwood
+    // ordinary melee and native guardians instead get 120 for this pilot.
+    // Ranged role switches, specials and other ordinary regions are unchanged.
+    enemyMeleeBasicRange(e) {
+      if (this.valeMeleeCounterEligible(e)) return valeMeleeCounter.meleeBasicRange;
+      return e.type === 'boss' ||
+        e.captain || e.roomCaptain || e.fieldCaptain || e.form === 'ringleader'
+        ? R.balance.eliteMeleeBasicRange
+        : 65;
     }
 
     // Distance pressure, not a fragile class-specific "kiting" classifier:
@@ -7189,7 +7193,7 @@
           ranged =
             (e.ranged ?? ['archer', 'crownguard'].includes(e.species)) &&
             !(e.hybrid && d <= hybridMeleeRange),
-          range = ranged ? this.enemyRangedRange(e) : this.valeMeleeBasicRange(e),
+          range = ranged ? this.enemyRangedRange(e) : this.enemyMeleeBasicRange(e),
           retreatRange = ranged && !e.hybrid ? range * R.rangedEnemyCombat.retreatFraction : 0,
           before = { x: e.x, y: e.y },
           visible = this.line(e, target),
