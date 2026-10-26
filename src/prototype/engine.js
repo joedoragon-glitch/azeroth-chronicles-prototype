@@ -468,7 +468,7 @@
           (e.type === 'boss' && !establishedBossRecovery) ||
           e.captain ||
           e.roomCaptain ||
-          e.form === 'ringleader',
+          (e.form === 'ringleader' && !e.hybrid),
         self =
           selfReady && selfAllowed && inReach(e) && e.hp / e.maxHp <= cfg.threshold ? e : null,
         targets = self ? [...injured, self] : injured;
@@ -559,6 +559,43 @@
       e.noProgress = 0;
       if (e.type === 'boss' || e.captain || e.roomCaptain || e.form === 'ringleader')
         this.say(e.name + ' uses ' + skill + ' in an area.');
+      return true;
+    }
+    // Hybrid AI keeps the ranged healer's ally triage and gains an
+    // independent, bounded self-recovery. The ordinary supportHeal pulse
+    // resolver owns time, capping and cancellation; no second heal stack.
+    enemyHybridSelfHeal(e) {
+      const cfg = R.enemySupportHealing.hybridSelf;
+      if (
+        !cfg ||
+        !e?.hybrid ||
+        !this.enemyHealingActor(e) ||
+        e.type === 'boss' ||
+        e.captain || e.roomCaptain || e.fieldCaptain ||
+        this.peace ||
+        e.returning ||
+        this.mageSilenceActive(e) ||
+        e.motion || e.telegraph || e.rangedAim ||
+        e.supportHeal ||
+        (e.hybridSelfHealCd || 0) > 0 ||
+        !(e.maxHp > 0) ||
+        e.hp / e.maxHp > cfg.threshold
+      ) return false;
+      const amount = Math.min(e.maxHp - e.hp, e.maxHp * cfg.fraction);
+      if (!(amount > 0)) return false;
+      e.supportHeal = {
+        source: e.id,
+        skill: 'Hybrid Recovery',
+        remaining: amount,
+        seconds: cfg.duration,
+        allowIdle: true,
+      };
+      e.hybridSelfHealCd = cfg.cooldown;
+      this.event('heal', {
+        x: e.x, y: e.y, actor: 'enemy', resource: 'health',
+        source: e.id, target: e.id, amount,
+        skill: 'Hybrid Recovery', species: e.species, form: e.form,
+      });
       return true;
     }
     enemySupportApproach(e, dt) {
@@ -6638,6 +6675,8 @@
           // deterministic non-healer simulation: don't create idle cooldown
           // fields for every monster during each ordinary combat tick.
           if ((e.supportHealCd || 0) > 0) e.supportHealCd = Math.max(0, e.supportHealCd - recovery);
+          if ((e.hybridSelfHealCd || 0) > 0)
+            e.hybridSelfHealCd = Math.max(0, e.hybridSelfHealCd - recovery);
           const leaderHealCd = enemyLeaderHealRecovery.get(e) || 0;
           if (leaderHealCd > 0) {
             const left = Math.max(0, leaderHealCd - recovery);
@@ -6888,6 +6927,9 @@
                 dist(e, this.hero) < 700
               ? this.hero
               : candidates.sort((a, b) => dist(e, a) - dist(b, e))[0]);
+        // Hybrid restoration is a self-action, independent of allied support
+        // and available in both active encounters and a wounded idle phase.
+        if (!e.aggro && this.enemyHybridSelfHeal(e)) continue;
         // An arriving wounded ally does not have to drag the healer into combat first.
         if (
           !e.aggro &&
@@ -7004,6 +7046,7 @@
           this.disengage(e, dt, mobilityReset);
           continue;
         }
+        if (this.enemyHybridSelfHeal(e)) continue;
         if (this.enemySupportHeal(e)) continue;
         if (this.enemySupportApproach(e, dt)) continue;
         // Healing wins the next free decision, including a fresh Rogue window.
