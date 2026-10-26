@@ -6781,7 +6781,7 @@
             const attacker =
               alert.source === 'hero'
                 ? this.hero
-                : this.s.party.find((unit) => unit.id === alert.source && unit.hp > 0);
+                : this.activeLivingParty().find((unit) => unit.id === alert.source);
             if (
               attacker?.hp > 0 &&
               this.tacticalRogueLeashAllows(e, attacker, territory) &&
