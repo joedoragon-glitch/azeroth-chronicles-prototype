@@ -3,6 +3,7 @@
 // the enemy 90-unit floor without expanding Archer, ranged-pet or skill ranges.
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine');
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 
 const companion = Campaign.rules.balance.companions;
 const enemyMelee = Campaign.rules.balance.meleeBasicRange;
@@ -12,6 +13,9 @@ assert.equal(companion.petBasicRange, 280, 'ranged pet basic reach remains uncha
 
 function scene(type, distance, family) {
   const g = new Campaign('normal', 'paladin', () => 0.9);
+  // Native Vale opening forbids companion damage until the first hero kill.
+  // Complete it rather than disabling the gameplay safeguard in the test.
+  completeFieldOpening(g);
   const zone = g.zone();
   for (const key of ['props', 'npcs', 'nodes', 'buildings', 'enemies']) zone[key] = [];
   Object.assign(g.hero, { x: 500, y: 500 });
@@ -40,6 +44,11 @@ for (const distance of [85, 95]) {
   const attacked = g.companionCoverAttack(u, enemy, true);
   assert.equal(attacked, distance <= 90, 'Soldier defensive basic at ' + distance);
   assert.equal(enemy.hp < hp, distance <= 90, 'Soldier contact damage at ' + distance);
+  const normal = scene('soldier', distance);
+  const before = normal.enemy.hp;
+  normal.g.companionFight(normal.u, normal.enemy, [normal.u], 0);
+  assert.equal(normal.enemy.hp < before, distance <= 90,
+    'Soldier ordinary sword basic at ' + distance);
 }
 
 // All melee pet families share 90-unit actual defensive and ordinary basic reach.
