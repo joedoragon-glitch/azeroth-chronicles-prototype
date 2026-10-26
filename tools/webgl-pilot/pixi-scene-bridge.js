@@ -96,11 +96,17 @@
        background=new PIXI.Sprite(texture);
        rootStage.addChildAt(background,0);
      } else background.texture=texture;
+     background.tint=0xffffff;
      background.position.set(x,y);
      // The backing raster can be 1.5x high DPI while the world remains CSS-sized.
      if(Number.isFinite(width)&&width>0)background.width=width;
      if(Number.isFinite(height)&&height>0)background.height=height;
      backdropTexture=texture;
+   }
+   function setSolidBackground(color,width,height) {
+     // Reuse Pixi's 1px white texture instead of scenery-sized GPU buffers.
+     setBackground(PIXI.Texture.WHITE,0,0,width,height);
+     background.tint=color;
    }
    function moveBackground(x,y) {
      assert(background,'Static original artwork must be loaded before camera moves');
@@ -331,6 +337,17 @@
    // Screen-space pollen, fog motes and sparks share their presentation
    // recipe with the original Canvas atmosphere. One reusable GPU geometry
    // handles at most 18 deterministic circles, not an animated emitter.
+   function clearAtmosphere() {
+     // Arena has no environmental presentation: destroy/release retained
+     // gradients, grade geometry and vignette, while keeping combat effects.
+     if(grade){effectsStage.removeChild(grade);grade.destroy({children:true});grade=null;}
+     for(const fill of gradeGradients)fill.destroy?.();
+     gradeGradients=[];
+     atmosphereSignature=null;
+     if(vignette){effectsStage.removeChild(vignette);vignette.destroy();vignette=null;}
+     if(vignetteGradient){vignetteGradient.destroy?.();vignetteGradient=null;}
+     vignetteSignature=null;
+   }
    function syncMotes(list,zoom=1) {
      assert(Array.isArray(list)&&list.length<=18&&Number.isFinite(zoom)&&zoom>0,
        'Bounded Canvas atmosphere motes and camera zoom required');
@@ -424,8 +441,8 @@
      rootStage.destroy({children:false});
    }
    return Object.freeze({
-     setBackground,moveBackground,registerTexture,hasTexture,unregisterTexture,
-     syncActors,syncLamps,setAtmosphere,syncMotes,setVignette,
+     setBackground,setSolidBackground,moveBackground,registerTexture,hasTexture,unregisterTexture,
+     syncActors,syncLamps,setAtmosphere,clearAtmosphere,syncMotes,setVignette,
      captureBackgroundOnly,captureLightingOnly,draw,metrics,destroy
    });
  }

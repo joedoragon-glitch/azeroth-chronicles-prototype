@@ -385,6 +385,10 @@ for (const language of ['en', 'es']) {
   click(t('Save and game management', 'Partidas guardadas'));
   short();
   assert.equal(e.get('modal-actions').children.length, 5);
+  assert(
+    !e.get('modal-actions').children.some((node) => /Combat (Arena|Diagnostics)/i.test(node.textContent)),
+    'Normal visitors must not see the unlisted combat test save',
+  );
   click(t('Save backups', 'Copias de seguridad'));
   short();
   assert.equal(e.get('modal-actions').children.length, 2);
@@ -450,3 +454,75 @@ for (const language of ['en', 'es']) {
 console.log(
   'PASS bilingual menus, WASD/right-hand default, keyboard preset switching, no Inventory/Quest shortcuts and unchanged campaign',
 );
+
+
+/* Unlisted diagnostics share the production app and PWA assets, not a fork.
+ * The URL enables only this browser entry; ordinary visitors cannot discover
+ * the mode in menus, load its save or resume it from the active profile.
+ */
+{
+  const shared = new Map();
+  const diagnosticLocation = { protocol: 'file:', hostname: '', search: '?combatDiagnostics=1' };
+  const ordinaryLocation = { protocol: 'file:', hostname: '', search: '' };
+  const playtest = shell('en', 'paladin', { storage: shared, location: diagnosticLocation });
+  const actions = () => playtest.elements.get('modal-actions').children;
+  const click = (label) => {
+    const button = actions().find((item) => item.textContent.startsWith(label));
+    assert(button && !button.disabled, 'Diagnostics selection available: ' + label);
+    button.click();
+  };
+  assert.equal(playtest.elements.get('modal-title').textContent, 'Choose your language');
+  click('English');
+  assert.equal(playtest.elements.get('modal-title').textContent,
+    'New Combat Diagnostics adventure');
+  // The first child is the optional name input, not a hero choice.
+  // Exercise the real button that starts the selected class.
+  const heroButton = actions().find((node) => /paladin/i.test(node.textContent));
+  assert(heroButton && !heroButton.disabled, 'Paladin class button remains accessible');
+  heroButton.click();
+  assert.equal(playtest.scope.Prototype.game.s.mode, 'arena');
+  assert(shared.has('azeroth-v4-arena'), 'diagnostic run uses its own v4 save');
+  assert.equal(JSON.parse(shared.get('azeroth-v4-profile')).activeMode, 'normal',
+    'diagnostic autosaves never hijack the ordinary profile');
+  const resumed = shell('en', 'paladin', { storage: shared, location: diagnosticLocation });
+  assert.equal(resumed.scope.Prototype.game.s.mode, 'arena',
+    'special link resumes the same saved combat mode on the current game build');
+
+  const normal = shell('en', 'paladin', { storage: shared, location: ordinaryLocation });
+  assert.equal(normal.scope.Prototype.game.s.mode, 'normal',
+    'ordinary URL still loads the normal campaign even when an arena save exists');
+  const normalActions = () => normal.elements.get('modal-actions').children;
+  const open = (label) => {
+    const button = normalActions().find((item) => item.textContent.startsWith(label));
+    assert(button, 'Missing ordinary menu: ' + label);
+    button.click();
+  };
+  normal.elements.get('menu-button').click();
+  open('Game and settings');
+  open('Save and game management');
+  assert(!normalActions().some((item) => /Combat (Arena|Diagnostics)/i.test(item.textContent)),
+    'regular Save menu stays free of diagnostic entries');
+  open('New game');
+  assert(!normalActions().some((item) => /Combat (Arena|Diagnostics)/i.test(item.textContent)),
+    'regular New Game menu stays free of diagnostic entries');
+  normal.elements.get('close-button').click();
+
+  const special = resumed.elements;
+  special.get('menu-button').click();
+  const specialOpen = (label) => {
+    const button = special.get('modal-actions').children.find(
+      (item) => item.textContent.startsWith(label),
+    );
+    assert(button && !button.disabled, 'Playtest menu item: ' + label);
+    button.click();
+  };
+  specialOpen('Game and settings');
+  specialOpen('Save and game management');
+  assert(special.get('modal-actions').children.some((item) =>
+    item.textContent.startsWith('Load Combat Diagnostics run') && !item.disabled),
+    'playtest link exposes the separate existing arena save');
+  specialOpen('New game');
+  assert(special.get('modal-actions').children.some((item) =>
+    item.textContent.startsWith('New Combat Diagnostics run')),
+    'playtest link exposes the diagnostic start action');
+}

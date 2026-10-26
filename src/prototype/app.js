@@ -6,7 +6,11 @@
     ctx = canvas.getContext('2d'),
     D = Campaign.data,
     manaEnabled = PrototypeRules.resourceMode.manaEnabled,
-    developerEnabled = /(?:^|[?&])developer=1(?:&|$)/.test(window.location?.search || '');
+    developerEnabled = /(?:^|[?&])developer=1(?:&|$)/.test(window.location?.search || ''),
+    // Unlisted low-spec test route. A query link is not authentication.
+    combatDiagnosticsEnabled = /(?:^|[?&])combatDiagnostics=1(?:&|$)/.test(
+      window.location?.search || '',
+    );
   // Dev.170 is a one-time upgrade to the recommended performance baseline.
   // Deliberately supersede earlier device choices once, before any controllers
   // read them. Never touch campaigns, audio, language, controls or renderer.
@@ -182,6 +186,13 @@
     'New game in Nightmare Mode': 'Nueva partida en modo Nightmare',
     'Load other mode run': 'Cargar partida de otro modo',
     'New Developer Mode run': 'Nueva partida de desarrollo',
+    'New Combat Diagnostics run': 'Nueva partida de Diagnóstico de combate',
+    'Load Combat Diagnostics run': 'Cargar partida de Diagnóstico de combate',
+    'Combat Arena': 'Arena de combate',
+    'Combat Arena · destinations': 'Arena de combate · destinos',
+    'Arena Guide': 'Guía de la arena',
+    'Free recovery': 'Recuperación gratis',
+    'Level Trainer': 'Entrenador de niveles',
     'Install on phone': 'Instalar en el teléfono',
     'Install game': 'Instalar juego',
     'Check for game update': 'Buscar actualización',
@@ -1648,15 +1659,19 @@
     return candidate;
   }
   function load(mode) {
+    if (mode === 'arena' && !combatDiagnosticsEnabled) return false;
     const restored = persistence.load(mode);
     if (!restored) return false;
     game = activateLiveCritical(restored);
     return true;
   }
   let recoveredOnStartup = false;
-  let loaded = (developerEnabled && load('developer')) || load(profile.activeMode);
+  let loaded = combatDiagnosticsEnabled
+    ? load('arena')
+    : (developerEnabled && load('developer')) || load(profile.activeMode);
   if (!loaded) {
     game =
+      combatDiagnosticsEnabled ||
       persistence.loadFailed(profile.activeMode) ||
       persistence.exists('normal') ||
       persistence.exists('nightmare')
@@ -1689,7 +1704,7 @@
     restartGuard.arm(game);
     // Reconcile entitlement after ownership and the fresh campaign load.
     // A pending window cannot persist this during its initial preview load.
-    if (game.peace && game.s.finalRestCompleted && !profile.nightmareUnlocked) {
+    if (game.peace && game.s.mode !== 'arena' && game.s.finalRestCompleted && !profile.nightmareUnlocked) {
       profile.nightmareUnlocked = true;
       persistProfile();
     }
@@ -2147,12 +2162,19 @@
           ),
         );
     renderResolution.configure(maximumRatio);
-    const ratio = renderResolution.ratio;
+    // Arena only: hard-cap world pixels without saving a preference.
+    const ratio = game?.s?.mode === 'arena' ? Math.min(renderResolution.ratio, 0.5) : renderResolution.ratio;
     canvas.width = Math.round(innerWidth * ratio);
     canvas.height = Math.round(innerHeight * ratio);
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
   }
   resize();
+  if (game.s.mode === 'arena') {
+    // A resumed diagnostic save needs the same low-cost Canvas setup as new runs.
+    graphicsController.revert();
+    setOptimizationActive(true);
+    resize();
+  }
   addEventListener('resize', () => {
     releaseJoystick();
     resize();
@@ -3062,6 +3084,7 @@
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   function start(mode, heroClass, succession, heroName = null) {
+    if (mode === 'arena' && !combatDiagnosticsEnabled) return;
     if (mode === 'developer' && !developerEnabled) return;
     if (mode === 'nightmare' && !profile.nightmareUnlocked) return;
     const candidate = activateLiveCritical(
@@ -3076,16 +3099,22 @@
     }
     restartGuard.clean();
     game = activateLiveCritical(candidate);
+    if (game.s.mode === 'arena') {
+      graphicsController.revert();
+      setOptimizationActive(true);
+      resize();
+    } else setOptimizationActive(optimizationPreference === 'on');
     started = true;
     if (typeof Sprint !== 'undefined') Sprint.reset();
     paused = false;
-    if (mode !== 'developer') profile.activeMode = mode;
+    if (!['developer', 'arena'].includes(mode)) profile.activeMode = mode;
     save();
     restartGuard.arm(game);
     closeMenu();
     updateHUD();
   }
   function chooseLanguage(mode) {
+    if (mode === 'arena' && !combatDiagnosticsEnabled) return;
     openMenu(
       'Choose your language',
       'English / Español',
@@ -3237,8 +3266,9 @@
     );
   }
   function chooseClass(mode, succession) {
+    if (mode === 'arena' && !combatDiagnosticsEnabled) return;
     if (mode === 'developer' && !developerEnabled) return;
-    if (mode === 'developer') succession = false;
+    if (mode === 'developer' || mode === 'arena') succession = false;
     if (succession === undefined) {
       openMenu(
         'Challenge condition',
@@ -3252,9 +3282,11 @@
     }
     openMenu(
       'New ' +
-        (mode === 'nightmare' ? 'Nightmare' : mode === 'developer' ? 'Developer' : 'Normal') +
+        (mode === 'nightmare' ? 'Nightmare' : mode === 'developer' ? 'Developer' : mode === 'arena' ? 'Combat Diagnostics' : 'Normal') +
         ' adventure',
-      'Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.',
+      mode === 'arena'
+        ? 'Low-spec combat testing without the campaign. Begin with Basic Attack, learn other skills from hub instructors for free, and choose enemies with the Arena Guide.'
+        : 'Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.',
       Object.entries(Campaign.classes).map(([id, c]) =>
         action(
           c.icon +
@@ -3452,6 +3484,25 @@
           ),
         ),
         action('New game', newGameMenu),
+        ...(combatDiagnosticsEnabled
+          ? [
+              action(
+                'Load Combat Diagnostics run',
+                () => {
+                  if (load('arena')) {
+                    graphicsController.revert();
+                    setOptimizationActive(true);
+                    resize();
+                    save();
+                    closeMenu();
+                    updateHUD();
+                  }
+                },
+                'Continue your separate low-spec combat-testing save.',
+                !persistence.exists('arena'),
+              ),
+            ]
+          : []),
         action('Load other mode run', () => {
           const mode = game.s.mode === 'normal' ? 'nightmare' : 'normal';
           if (load(mode)) {
@@ -3482,6 +3533,15 @@
       'Choose a mode. Export a backup to keep your current run.',
       [
         action('New Normal game', () => chooseLanguage('normal')),
+        ...(combatDiagnosticsEnabled
+          ? [
+              action(
+                'New Combat Diagnostics run',
+                () => chooseLanguage('arena'),
+                'Unlisted low-spec playtest · black battlefield · authentic combat',
+              ),
+            ]
+          : []),
         ...(developerEnabled
           ? [action('New Developer Mode run', () => chooseLanguage('developer'))]
           : []),
@@ -3744,7 +3804,65 @@
       openMain,
     );
   }
+  function arenaTravel(id) {
+    if (!game.arenaSelectStage(id)) return;
+    clearWaypoint();
+    save();
+    closeMenu();
+    updateHUD();
+  }
+  function arenaRegionMenu(index) {
+    if (game.s.mode !== 'arena') return;
+    const region = D.regions[index];
+    openMenu(
+      region.name + ' · Combat Arena',
+      'Native combat with a small number of active enemies. All destinations remain open.',
+      game.arenaStages()
+        .filter((stage) => stage.region === index && stage.kind !== 'hub')
+        .map((stage) => action(stage.label, () => arenaTravel(stage.id))),
+      arenaDestinations,
+    );
+  }
+  function arenaDestinations() {
+    if (game.s.mode !== 'arena') return;
+    openMenu(
+      'Combat Arena · destinations',
+      'Choose any stage. Return to the safe hub at any time, including during combat.',
+      [
+        action('Safe hub · specialists', () => arenaTravel('hub')),
+        ...D.regions.map((region, index) =>
+          action(region.name, () => arenaRegionMenu(index), 'Ordinary · guardians/captain · bosses'),
+        ),
+      ],
+      openMain,
+    );
+  }
   function openMain() {
+    if (game.s.mode === 'arena') {
+      openMenu('Combat Arena', 'Black floor · no scenery · all combat rules preserved. Your arena save is separate.', [
+        action('Choose an enemy encounter', arenaDestinations),
+        ...(game.s.arenaStage === 'hub'
+          ? []
+          : [
+              action('Replay current encounter', () => arenaTravel(game.s.arenaStage)),
+              action('Return to safe hub', () => arenaTravel('hub')),
+            ]),
+        action('Build free Barracks here', () => {
+          const b = game.arenaBuildBarracks();
+          if (b) { save(); barracksMenu(b, openMain); }
+        }, 'Instant, invisible structure. Existing Barracks services remain available.'),
+        action('Free recovery · heal the party', () => {
+          game.arenaRest();
+          save();
+          closeMenu();
+          updateHUD();
+        }),
+        action('Character', characterMenu),
+        action('Skill journal', () => skillBook(openMain)),
+        action('Game and settings', systemMenu),
+      ]);
+      return;
+    }
     const canBuild = !game.isDungeon() && game.availableLabor().length > 0,
       cost = game.barracksBuildCost(),
       costLabel = cost ? cost + ' crowns' : 'FREE';
@@ -3882,6 +4000,8 @@
         candidate = data.version === 2 ? Campaign.migrate(data) : Campaign.restore(data);
       if (candidate.s.mode === 'developer' && !developerEnabled)
         throw Error('Developer import disabled');
+      if (candidate.s.mode === 'arena' && !combatDiagnosticsEnabled)
+        throw Error('Combat Diagnostics import requires the playtest link');
       persistence.writeCandidate(candidate);
       resumeSavedRun(candidate);
       status('Imported successfully.');
@@ -3891,11 +4011,17 @@
     e.target.value = '';
   };
   function resumeSavedRun(candidate) {
+    if (candidate?.s?.mode === 'arena' && !combatDiagnosticsEnabled) return;
     restartGuard.clean();
     game = activateLiveCritical(candidate);
+    if (game.s.mode === 'arena') {
+      graphicsController.revert();
+      setOptimizationActive(true);
+      resize();
+    } else setOptimizationActive(optimizationPreference === 'on');
     loaded = started = true;
-    if (game.s.mode !== 'developer') profile.activeMode = game.s.mode;
-    if (game.peace && game.s.finalRestCompleted && game.s.mode !== 'developer')
+    if (!['developer', 'arena'].includes(game.s.mode)) profile.activeMode = game.s.mode;
+    if (game.peace && game.s.finalRestCompleted && !['developer', 'arena'].includes(game.s.mode))
       profile.nightmareUnlocked = true;
     persistProfile();
     restartGuard.arm(game);
@@ -3981,6 +4107,29 @@
     const n = nearestNPC();
     if (!n) {
       status('Nothing nearby to interact with.');
+      return;
+    }
+    if (game.s.mode === 'arena' && n.kind === 'arena-guide') {
+      arenaDestinations();
+      return;
+    }
+    if (game.s.mode === 'arena' && n.kind === 'arena-level-trainer') {
+      if (game.arenaLevelUp()) {
+        save();
+        updateHUD();
+        status(
+          language === 'es'
+            ? '¡Nivel ' + game.hero.level + '! Has subido un nivel.'
+            : 'Level ' + game.hero.level + '! Gained exactly one level.',
+        );
+      }
+      return;
+    }
+    if (game.s.mode === 'arena' && n.kind === 'arena-recovery') {
+      game.arenaRest();
+      save();
+      updateHUD();
+      status('All active fighters recovered for free.');
       return;
     }
     if (
@@ -4366,6 +4515,7 @@
 
   // prettier-ignore
   function showMap(back = closeMenu) {
+    if (game.s.mode === 'arena') return arenaDestinations();
     const zone = game.zone();
     const room = game.supplyRoom();
     const side = game.sideDungeon();
@@ -6854,7 +7004,9 @@
         preference: optimizationPreference, optimized: optimizationMode,
         intervalMs, workMs: frameWorkMs, adaptiveSkipped, target: fps.target,
       });
-      if (optimizationDecision !== null) setOptimizationActive(optimizationDecision);
+      if (game.s.mode === 'arena') {
+        if (!optimizationMode) setOptimizationActive(true);
+      } else if (optimizationDecision !== null) setOptimizationActive(optimizationDecision);
       const otherSimulationMs = Math.max(
           0,
           stageTimes.simulationMs - stageTimes.companionAIMs - stageTimes.enemyAIMs,
@@ -6907,8 +7059,9 @@
   });
   updateHUD();
   if (!loaded) {
-    if (persistence.loadFailed(profile.activeMode)) savedRunRecoveryMenu();
-    else chooseLanguage(developerEnabled ? 'developer' : 'normal');
+    if (persistence.loadFailed(combatDiagnosticsEnabled ? 'arena' : profile.activeMode))
+      savedRunRecoveryMenu();
+    else chooseLanguage(combatDiagnosticsEnabled ? 'arena' : developerEnabled ? 'developer' : 'normal');
   } else setLanguage(language);
   if (loaded && (performanceBaselineUpgraded || optimizationAutoUpgraded) && !recoveredOnStartup)
     status(
@@ -6927,11 +7080,13 @@
         // Ownership may arrive after a previous window's final save. Read fresh
         // bytes before allowing input, recovery or any automatic write.
         profile = persistence.loadProfile(profile);
-        let refreshed =
-          (developerEnabled && persistence.load('developer')) ||
-          persistence.load(profile.activeMode);
+        let refreshed = combatDiagnosticsEnabled
+          ? persistence.load('arena')
+          : (developerEnabled && persistence.load('developer')) ||
+            persistence.load(profile.activeMode);
         if (
           !refreshed &&
+          !combatDiagnosticsEnabled &&
           !persistence.loadFailed(profile.activeMode) &&
           !persistence.exists('normal') &&
           !persistence.exists('nightmare')
@@ -6944,6 +7099,11 @@
         }
         if (refreshed) {
           game = activateLiveCritical(refreshed);
+          if (game.s.mode === 'arena') {
+            graphicsController.revert();
+            setOptimizationActive(true);
+            resize();
+          }
           loaded = started = true;
           recoverLoadedSession();
           if (
@@ -6952,13 +7112,13 @@
             menu?.title === 'Choose your language'
           )
             closeMenu();
-        } else if (persistence.loadFailed(profile.activeMode)) {
+        } else if (persistence.loadFailed(combatDiagnosticsEnabled ? 'arena' : profile.activeMode)) {
           loaded = started = false;
           savedRunRecoveryMenu();
         } else {
           loaded = started = false;
           game = activateLiveCritical(new Campaign());
-          chooseLanguage(developerEnabled ? 'developer' : 'normal');
+          chooseLanguage(combatDiagnosticsEnabled ? 'arena' : developerEnabled ? 'developer' : 'normal');
         }
         updateHUD();
       })

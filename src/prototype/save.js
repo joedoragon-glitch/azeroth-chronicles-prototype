@@ -125,7 +125,7 @@
               delete n.veraRepairTarget;
             }
           }
-          z.enemies = z.enemies.filter((e) => !e.summon);
+          z.enemies = z.enemies.filter((e) => !e.summon && !e.arenaFixture);
           for (const e of z.enemies) {
             if (e.family === 'thorn' && e.type === 'boss' && (e.aggro || e.returning))
               e.thornReturn = true;
@@ -175,7 +175,7 @@
         if (
           !s ||
           s.version !== 4 ||
-          !['normal', 'nightmare', 'developer'].includes(s.mode) ||
+          !['normal', 'nightmare', 'developer', 'arena'].includes(s.mode) ||
           !['adventure', 'awakening', 'peace'].includes(s.phase) ||
           !classes[s.hero?.class]
         )
@@ -600,7 +600,26 @@
         finite(s.clock, 0, 720);
         finite(s.time, 0, 1e12);
         finite(s.nextId, 1, 1e9);
+        if (s.mode === 'arena') {
+          const stages = new Set([
+            'hub',
+            ...D.regions.flatMap((r) => [
+              r.id + '-ordinary', r.id + '-guardians',
+              ...(['march', 'frontier'].includes(r.id) ? [r.id + '-night'] : []),
+            ]),
+            ...D.bosses.flatMap((b) => ['boss-' + b.id, 'boss-' + b.id + '-true']),
+          ]);
+          if (s.zone !== 'arena') throw Error('Invalid combat arena world');
+          // Content updates can rename or retire encounters. Keep the player's
+          // hero, learned skills, talents, companions and arena save intact.
+          // Only the obsolete location resets to the safe training hub.
+          if (!stages.has(s.arenaStage)) {
+            s.arenaStage = 'hub';
+            s.arenaRegion = 0;
+          }
+        }
         const zones = new Set([
+          ...(s.mode === 'arena' ? ['arena'] : []),
           ...D.regions.map((r) => r.id),
           ...dungeonIds,
           ...R.supplyRooms.map((r) => r.id),
@@ -1190,10 +1209,21 @@
         c.s.hazards = [];
         c.messages = [];
         c.effects = [];
+        if (s.mode === 'arena') {
+          // Arena actors are deliberately transient test fixtures; restore the
+          // selected stage without touching campaign world migrations.
+          // Re-evaluate the stage's region against CURRENT game data on every
+          // reload (a release can reorder/expand regions without an arena fork).
+          c.s.arenaRegion = c.arenaStages().find((stage) => stage.id === c.s.arenaStage)?.region ?? 0;
+          delete c.s.zones.arena;
+          c.zone();
+          c.syncCompanionLevelStats();
+          return c;
+        }
         for (const z of Object.values(c.s.zones)) {
           // Expand before old coordinates are filtered against the new floor.
           c.dungeonSpaceLayout(z);
-          z.enemies = z.enemies.filter((e) => !e.summon);
+          z.enemies = z.enemies.filter((e) => !e.summon && !e.arenaFixture);
           c.crownSceneComposition(z);
           // Relocate complete Ironroot sites before the new shore/ravine can prune old records.
           c.highlandsLandscape(z);

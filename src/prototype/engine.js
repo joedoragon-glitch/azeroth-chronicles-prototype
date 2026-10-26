@@ -45,7 +45,7 @@
   ];
   class Campaign {
     constructor(mode = 'normal', heroClass = 'paladin', random = Math.random, options = {}) {
-      if (!['normal', 'nightmare', 'developer'].includes(mode) || !classes[heroClass])
+      if (!['normal', 'nightmare', 'developer', 'arena'].includes(mode) || !classes[heroClass])
         throw Error('Unknown mode or class');
       this.random = random;
       this.formationHeading = { x: 0, y: 1 };
@@ -75,7 +75,7 @@
         restCooldown: 0,
         thornHeroInitiated: false,
         valeFieldAwakened: false,
-        zone: 'vale',
+        zone: mode === 'arena' ? 'arena' : 'vale',
         refuge: 'vale',
         nextId: 1,
         manaBalanceVersion: 1,
@@ -176,8 +176,23 @@
         pending: false,
         gameOver: false,
       };
-      this.initializeQuests();
+      if (mode !== 'arena') this.initializeQuests();
       this.s.party = [this.unit('soldier', 260, 390), this.unit('archer', 350, 380)];
+      if (mode === 'arena') {
+        this.s.arenaStage = 'hub';
+        this.s.arenaRegion = 0;
+        this.s.rescued = Object.fromEntries(D.bosses.map((boss) => [boss.id, true]));
+        this.s.expeditionRank = 4;
+        // Skills are earned through the real instructors in the arena hub.
+        // The normal class-specific starting basic attack remains learned.
+        this.hero.gold = 50000000;
+        this.hero.x = 620;
+        this.hero.y = 800;
+        this.s.party.forEach((unit, i) => {
+          unit.x = 565 + i * 80;
+          unit.y = 880;
+        });
+      }
       this.zone();
     }
     get hero() {
@@ -190,6 +205,8 @@
       return this.s.phase === 'peace';
     }
     regionIndex(id = this.s.zone) {
+      if (this.s.mode === 'arena' && id === 'arena')
+        return this.s.arenaRegion ?? 0;
       const boss = D.bosses.find((b) => b.id === id),
         room = R.supplyRooms.find((r) => r.id === id),
         side = R.sideDungeons?.find((r) => r.id === id);
@@ -211,6 +228,7 @@
       return R.sideDungeons?.find((r) => r.id === id);
     }
     zoneSize(id = this.s.zone) {
+      if (this.s.mode === 'arena' && id === 'arena') return 2000;
       const room = this.supplyRoom(id),
         side = this.sideDungeon(id);
       return room
@@ -222,13 +240,17 @@
             : D.regions[this.regionIndex(id)]?.size;
     }
     isDungeon() {
+      if (this.s.mode === 'arena') return false;
       return dungeonIds.includes(this.s.zone) || !!this.supplyRoom() || !!this.sideDungeon();
     }
     night() {
+      if (this.s.mode === 'arena') return false;
       if (!this.peace && this.s.mode === 'nightmare') return !(this.s.nightmareIntroRemaining > 0);
       return this.s.clock % R.dayCycle.seconds >= R.dayCycle.nightAt;
     }
     daylightPhase() {
+      if (this.s.mode === 'arena')
+        return { phase: 'day', progress: 1, darkness: 0, warmth: 0 };
       const cfg = R.dayCycle,
         span = cfg.twilightSeconds;
       let phase, progress;
@@ -2234,6 +2256,7 @@
     }
     refreshNPCs() {
       for (const [id, z] of Object.entries(this.s.zones)) {
+        if (id === 'arena') continue; // Keep the separate hub specialists intact.
         if (dungeonIds.includes(id) || this.supplyRoom(id) || this.sideDungeon(id)) continue;
         const i = this.regionIndex(id),
           [x, y] = D.towns[i];
@@ -3497,6 +3520,13 @@
     }
 
     die(cause = null) {
+      if (this.s.mode === 'arena') {
+        this.s.statistics.deaths++;
+        this.arenaSelectStage('hub');
+        this.arenaRest();
+        this.say('Combat Arena: returned to the safe hub after defeat.');
+        return;
+      }
       this.clearPatrolResumes();
       this.clearPartyCharges();
       for (const z of Object.values(this.s.zones)) this.clearVeraRepairs(z);
@@ -3693,6 +3723,13 @@
       e.sequence = [];
       if (e.rogueEmergencyReinforcement) this._tacticalEmergencyCleanupPending = true;
       if (e.form === 'ringleader') this.tacticalRetireEmergencyGuards(e);
+      if (this.s.mode === 'arena' && e.arenaFixture) {
+        // Retain native combat behavior; suppress only campaign reward/progress.
+        this.zone().enemies.forEach((add) => {
+          if (add.summon && add.owner === e.id) add.hp = 0;
+        });
+        return;
+      }
       if (e.summon) {
         if (e.developerSummon)
           this.zone().enemies.forEach((add) => {
@@ -7888,7 +7925,8 @@
           }
     }
     updateNight() {
-      if (this.peace) return;
+      if (this.s.mode === 'arena' || this.peace) return; // Test spawns are menu-controlled.
+
       const i = this.regionIndex();
       if (this.isDungeon() || ![1, 3].includes(i)) return;
       const z = this.zone();

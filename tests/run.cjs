@@ -5,6 +5,7 @@ const fs = require('node:fs'),
 const quick = new Set([
   'architecture',
   'campaign-domains',
+  'combat-arena',
   'platform-runtime',
   'input',
   'game',

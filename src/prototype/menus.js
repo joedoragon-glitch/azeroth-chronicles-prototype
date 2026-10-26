@@ -268,6 +268,7 @@
       const g = getGame(),
         catalog = g.teacherCatalog(n.family),
         cap = catalog.maxRank,
+        arenaFree = g.s.mode === 'arena',
         skills = D.skills.filter((s) =>
           g.hero.skills[s[0] - 1] ? catalog.train.includes(s[0]) : catalog.learn.includes(s[0]),
         ),
@@ -278,7 +279,9 @@
           ? nextSkillInstructor(n.family)
             ? 'Training finished here. Back → Higher ranks for the next instructor.'
             : 'All available skills are at maximum rank.'
-          : 'Choose a skill to preview its training.\nCrowns ' + Math.floor(g.hero.gold),
+          : arenaFree
+            ? 'Choose a skill to preview its training. All arena training is FREE.'
+            : 'Choose a skill to preview its training.\nCrowns ' + Math.floor(g.hero.gold),
         skills.map((s) => {
           const rank = g.hero.skills[s[0] - 1],
             cost = g.skillTrainingCost(s[0], rank),
@@ -287,7 +290,7 @@
           return action(
             capped
               ? card.name + ' · Rank ' + rank + ' · Finished here'
-              : (rank ? 'Train ' : 'Learn ') + card.name + ' · ' + cost + ' crowns',
+              : (rank ? 'Train ' : 'Learn ') + card.name + ' · ' + (arenaFree ? 'FREE' : cost + ' crowns'),
             () => skillUpgrade(s[0], () => teacherSkills(n, back), n),
             'Skill ' +
               s[0] +
@@ -297,7 +300,7 @@
               (capped
                 ? 'Instructor limit: Rank ' + cap
                 : 'Rank ' + rank + ' → ' + (rank + 1) + ' · Preview') +
-              (!capped && g.hero.gold < cost ? '\nNeed more crowns.' : ''),
+              (!capped && !arenaFree && g.hero.gold < cost ? '\nNeed more crowns.' : ''),
             capped,
           );
         }),
@@ -455,6 +458,8 @@
               Campaign.rules.teachers[id].maxRank >= next,
           ),
         cost = g.skillTrainingCost(slot, rank),
+        arenaFree = g.s.mode === 'arena',
+        costLabel = arenaFree ? 'FREE' : cost + ' crowns',
         previewOnly = !instructor,
         ready =
           instructor &&
@@ -465,7 +470,7 @@
         {
           summary: previewOnly
             ? trainer
-              ? 'Next instructor: ' + g.boss(trainer).captive + ' · ' + cost + ' crowns'
+              ? 'Next instructor: ' + g.boss(trainer).captive + ' · ' + costLabel
               : 'No further instructor available.'
             : rank
               ? 'Compare your upgrade before training.'
@@ -486,7 +491,7 @@
           ? []
           : [
               action(
-                (rank ? 'Train ' : 'Learn ') + info.name + ' · ' + cost + ' crowns',
+                (rank ? 'Train ' : 'Learn ') + info.name + ' · ' + costLabel,
                 () => {
                   const current = getGame();
                   // An old quote must never spend money on a different rank or class.
@@ -504,12 +509,12 @@
                 },
                 !ready
                   ? 'Training unavailable here.'
-                  : g.hero.gold < cost
+                  : !arenaFree && g.hero.gold < cost
                     ? 'Need more crowns.'
                     : slot === 1
                       ? 'Also improves automatic basics.'
                       : 'Applies to Tap and Charged.',
-                !ready || g.hero.gold < cost,
+                !ready || (!arenaFree && g.hero.gold < cost),
               ),
             ],
         back,

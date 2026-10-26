@@ -16,7 +16,7 @@
       validatedBytes = new Map();
     let previewSequence = 0,
       backupWarning = false;
-    for (const mode of ['normal', 'nightmare', 'developer']) {
+    for (const mode of ['normal', 'nightmare', 'developer', 'arena']) {
       try {
         expected.set(mode, storage.getItem(saveKey(mode)) ?? null);
       } catch (_) {}
@@ -160,7 +160,7 @@
           return {
             ...defaults,
             nightmareUnlocked: p.nightmareUnlocked === true,
-            activeMode: p.activeMode === 'nightmare' ? 'nightmare' : 'normal',
+            activeMode: ['normal', 'nightmare'].includes(p.activeMode) ? p.activeMode : 'normal',
             audio: p.audio || defaults.audio,
           };
       } catch (_) {}
@@ -179,8 +179,8 @@
     function save(game, profile) {
       try {
         writeSnapshot(game);
-        if (game.s.mode !== 'developer') profile.activeMode = game.s.mode;
-        if (game.peace && game.s.mode !== 'developer') profile.nightmareUnlocked = true;
+        if (!['developer', 'arena'].includes(game.s.mode)) profile.activeMode = game.s.mode;
+        if (game.peace && !['developer', 'arena'].includes(game.s.mode)) profile.nightmareUnlocked = true;
         if (!saveProfile(profile)) return false;
         status(
           backupWarning
@@ -387,7 +387,8 @@
     }
     function arm(game) {
       if (!canWrite()) return false;
-      if (!game?.s || game.s.mode === 'developer') return false;
+      // Arena is an independent combat fixture; never relocate it to campaign refuge.
+      if (!game?.s || ['developer', 'arena'].includes(game.s.mode)) return false;
       try {
         // The live campaign can advance between five-second autosaves.
         // Anchor recovery to the checkpoint actually written to storage,
@@ -441,6 +442,7 @@
       if (
         !marker ||
         !game?.s ||
+        game.s.mode === 'arena' ||
         marker.mode !== game.s.mode ||
         marker.heroClass !== game.hero.class ||
         (Number.isFinite(marker.nextId) && game.s.nextId < marker.nextId) ||
