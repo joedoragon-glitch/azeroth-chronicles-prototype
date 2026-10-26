@@ -192,9 +192,12 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
     'motes originate in the Canvas logical viewport, not the pixel backing');
   gpu.activate();
   gpu.draw();
+  const evictionsBeforeQuality=gpu.status().proceduralEvictions;
   canvasSurface.width=912;canvasSurface.height=420;
   gpu.draw();
   assert.equal(gpu.status().pixelRatio,1);
+  assert.equal(gpu.status().proceduralEvictions,evictionsBeforeQuality,
+    'quality scaling must not discard reusable images from prior densities');
   assert.deepEqual(resizes,[1.5,1],'quality change resizes GPU in place');
   assert.equal(draws.at(-1).ratio,1,'background raster follows changed quality');
   // Mimic a confirmed iPhone returning from another app at a new viewport.
