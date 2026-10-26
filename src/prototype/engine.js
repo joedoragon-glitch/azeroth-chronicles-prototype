@@ -187,7 +187,8 @@
         this.s.arenaRegion = 0;
         this.s.rescued = Object.fromEntries(D.bosses.map((boss) => [boss.id, true]));
         this.s.expeditionRank = 4;
-        this.hero.skills = Array(8).fill(1);
+        // Skills are earned through the real instructors in the arena hub.
+        // The normal class-specific starting basic attack remains learned.
         this.hero.gold = 50000000;
         this.hero.x = 620;
         this.hero.y = 800;

@@ -7,22 +7,46 @@ function verify(classId) {
   assert.equal(arena.s.mode, 'arena');
   assert.equal(arena.zoneId, 'arena');
   assert.equal(arena.s.arenaStage, 'hub');
-  assert.deepEqual(arena.hero.skills, Array(8).fill(1));
+  assert.deepEqual(arena.hero.skills, [1, 0, 0, 0, 0, 0, 0, 0]);
   assert.equal(arena.zone().props.length, 0);
   assert.equal(arena.zone().enemies.length, 0);
   assert.ok(arena.zone().npcs.some((n) => n.kind === 'arena-guide'));
   assert.ok(arena.zone().npcs.some((n) => n.kind === 'teacher'));
+  assert.ok(arena.zone().npcs.some((n) => n.kind === 'arena-level-trainer'));
+  const trainer = arena.zone().npcs.find((n) => n.kind === 'arena-level-trainer');
+  assert.ok(Math.hypot(trainer.x - arena.hero.x, trainer.y - arena.hero.y) < 115,
+    'trainer is reachable at spawn without loading scenery');
+  // Skills stay locked until the correct specialist teaches them. All
+  // learning uses the original progression functions, without arena fees.
+  const goldBeforeTeaching = arena.hero.gold;
+  assert.equal(arena.learn(2, 'mire'), false, 'wrong teacher must not unlock a skill');
+  assert.equal(arena.hero.skills[1], 0);
+  for (const def of Campaign.data.skills.slice(1)) {
+    const family = def[4];
+    assert.ok(arena.zone().npcs.some((n) => n.kind === 'teacher' && n.family === family),
+      'the correct skill instructor must be present for skill ' + def[0]);
+    assert.equal(arena.learn(def[0], family), true, 'learning skill ' + def[0]);
+  }
+  assert.deepEqual(arena.hero.skills, Array(8).fill(1));
+  assert.equal(arena.hero.gold, goldBeforeTeaching, 'all instructor skills are free');
+  assert.equal(arena.s.companionCombatTraining, 2, 'native second-skill unlock is retained');
   assert.equal(arena.night(), false);
   assert.equal(arena.blocked(1200, 900, 'arena'), false);
   assert.equal(arena.blocked(3, 900, 'arena'), true);
   const gold = arena.hero.gold;
-  assert.equal(arena.arenaBoostLevel(5), true);
-  assert.equal(arena.hero.level, 5);
-  assert.ok(arena.hero.talentPoints >= 4);
-  assert.equal(arena.arenaBoostLevel(3), false);
-  assert.equal(arena.arenaBoostLevel(31), false);
+  const baseHp = arena.hero.maxHp;
+  assert.equal(arena.arenaLevelUp(), true);
+  assert.equal(arena.hero.level, 2, 'one NPC interaction grants exactly one level');
+  assert.ok(arena.hero.maxHp > baseHp);
+  assert.equal(arena.hero.talentPoints, 1);
+  // Existing partial XP should complete exactly the current level, not cause a jump.
+  arena.xp(15);
+  assert.equal(arena.arenaLevelUp(), true);
+  assert.equal(arena.hero.level, 3);
+  assert.equal(arena.hero.xp, 0);
+  assert.equal(arena.hero.talentPoints, 2);
   assert.equal(arena.spend(500), true);
-  assert.equal(arena.hero.gold, gold, 'all arena purchases are free');
+  assert.equal(arena.hero.gold, gold, 'all arena purchases and one-level boosts are free');
 
   const available = arena.arenaStages();
   assert.ok(available.some((stage) => stage.id === 'vale-ordinary'));
@@ -69,6 +93,8 @@ function verify(classId) {
   assert.equal(snapshot.mode, 'arena');
   const loaded = Campaign.restore(snapshot, () => 0.5);
   assert.equal(loaded.s.arenaStage, 'boss-darklord-true');
+  assert.equal(loaded.hero.level, 3, 'individual trainer level gains survive save/reload');
+  assert.deepEqual(loaded.hero.skills, Array(8).fill(1), 'instructor-learned skills persist');
   assert.equal(loaded.zone().enemies.filter((e) => e.type === 'boss').length, 1);
   assert.equal(loaded.zone().props.length, 0);
   assert.equal(loaded.arenaSelectStage('hub'), true);
@@ -84,4 +110,6 @@ const campaign = new Campaign('normal', 'paladin', () => 0.5);
 assert.equal(campaign.zoneId, 'vale');
 assert.equal(campaign.s.arenaStage, undefined);
 assert.notEqual(campaign.zoneSize(), 2000);
+assert.deepEqual(campaign.hero.skills, [1, 0, 0, 0, 0, 0, 0, 0]);
+assert.equal(campaign.arenaLevelUp(), false, 'NPC level-up restricted to arena');
 console.log('PASS Combat Arena: isolation, native stages, free services, saves and recovery');

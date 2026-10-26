@@ -2062,6 +2062,13 @@
               y: Math.round(800 + Math.sin(angle) * 230), icon: '👤',
             });
           }
+          z.npcs.push({
+            id: 'arena-level-trainer',
+            kind: 'arena-level-trainer',
+            name: 'Level Trainer',
+            x: 565, y: 755,
+            icon: '⭐',
+          });
           z.npcs.push({ id: 'arena-recovery', kind: 'arena-recovery', name: 'Free recovery', x: 620, y: 960, icon: '💚' });
         } else if (stage.kind === 'ordinary' || stage.kind === 'guardians') {
           const guardian = stage.kind === 'guardians';
@@ -2146,23 +2153,14 @@
         this.say('Arena destination: ' + this.arenaStages().find((s) => s.id === id).label);
         return true;
       }
-      arenaBoostLevel(targetLevel) {
-        if (
-          this.s.mode !== 'arena' ||
-          !Number.isInteger(targetLevel) ||
-          targetLevel <= this.hero.level ||
-          targetLevel > 30
-        ) return false;
-        // Use the original XP and level-up system. No combat stats are bypassed.
-        let xp = -this.hero.xp;
-        for (let level = this.hero.level; level < targetLevel; level++)
-          xp += this.xpRequired(level);
-        const oldNotices = this.notices.length;
-        this.xp(xp);
-        // Avoid displaying 20-plus level-up banners on a low-end testing phone.
-        this.notices.length = oldNotices;
-        this.say('Arena training complete · Level ' + this.hero.level);
-        return this.hero.level === targetLevel;
+      arenaLevelUp() {
+        if (this.s.mode !== 'arena' || this.hero.level >= 10000 || this.hero.hp <= 0)
+          return false;
+        // One interaction = one real XP threshold and exactly one level-up.
+        // The existing progression system awards HP, talent points, and notices.
+        const oldLevel = this.hero.level;
+        this.xp(this.xpRequired() - this.hero.xp);
+        return this.hero.level === oldLevel + 1;
       }
       arenaRest() {
         if (this.s.mode !== 'arena') return false;

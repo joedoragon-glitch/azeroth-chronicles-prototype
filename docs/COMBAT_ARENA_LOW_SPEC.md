@@ -7,15 +7,20 @@ test the real game on low-end phones with almost no environment rendering.
 ## Player flow
 
 1. New game → Combat Arena → choose language and Paladin, Mage or Ranger.
-2. Arrive in a safe, enemy-free, 2000×2000 flat arena. All eight hero skills
-   begin learned at rank 1. A free level selector grants levels 5–30 through
-   the original XP/HP/talent progression. All campaign specialists are present at the hub,
-   with their original training/equipment services. Spending is free.
+2. Arrive in a safe, enemy-free, 2000×2000 flat arena with the ordinary
+   class-specific starting Basic Attack (skill 1); skills 2–8 remain locked.
+   Every appropriate instructor is present at the hub and teaches their original
+   skills and ranks for FREE, using normal training menus and progression rules.
+   There is no automatic full skill unlock and no custom skill progression path.
+   The hub's Level Trainer NPC grants exactly one level per interaction using
+   the native XP threshold, HP growth and talent-point awards. No level
+   selection or multi-level boosting menu exists.
 3. Speak to the Arena Guide (or use the Combat Arena adventure menu) to select
    any region and enemy group. Ordinary packs lead to guardian/captain stages
    and a separate arena for each existing boss. The final Dark Lord stage has
    only its boss. Teleport to the hub without stage unlocking.
-4. Free recovery is near the spawn. The menu can create up to four completed,
+4. Free recovery and the one-level Trainer NPC are near the spawn.
+   The menu can create up to four completed,
    visually invisible Barracks with existing services. Death automatically
    returns the player to the safe hub.
 5. Saves use the existing v4 structure under the new arena slot. Enemy
@@ -41,8 +46,9 @@ test the real game on low-end phones with almost no environment rendering.
 
 ## Verification and release gate
 
-Run: node tests/combat-arena.test.cjs — mode isolation, save/restore,
-native actor population, teleport, free spending and survival. The normal PR
+Run: node tests/combat-arena.test.cjs — mode isolation, one-level-per-interaction
+training, correct-instructor skill unlocking, save/restore, native actor
+population, teleport, free spending and survival. The normal PR
 checks remain focused. Before publishing, inspect the exact draft on a
 low-spec phone in both Canvas and PixiJS, with and without an enemy group:
 check frame-profile render/draw times, memory and player input responsiveness.
