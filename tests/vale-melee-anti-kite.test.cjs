@@ -82,8 +82,8 @@ for (const [species, guard] of [
     'native 175 units/s x 1.5 speed, no 1400-unit/s leap');
   assert.equal(e.pursuitBurstReadyAt, c.s.time + 1.7,
     '1.2-second burst plus 0.5-second recovery, not seven seconds');
-  assert.equal(e.telegraph, null, 'no ground target or warned interception');
-  assert.equal(e.motion, null, 'no separate rush motion');
+  assert(!e.telegraph, 'no ground target or warned interception');
+  assert(!e.motion, 'no separate rush motion');
   assert.equal(c.hero.slow, 0, 'pursuit cannot apply Slow');
   assert.equal(c.hero.hp, hp, 'distant burst has no remote bonus damage');
 
@@ -99,8 +99,8 @@ for (const [species, guard] of [
       burstStarts++;
     if (e.pursuitBurst <= 0) normalSteps++;
     lastBurst = e.pursuitBurst;
-    assert.equal(e.telegraph, null);
-    assert.equal(e.motion, null);
+    assert(!e.telegraph);
+    assert(!e.motion);
     assert.equal(c.hero.hp, hp);
     assert.equal(c.hero.slow, 0);
     assert(Math.hypot(e.x - first.x, e.y - first.y) <= 26.25 + 0.1,
