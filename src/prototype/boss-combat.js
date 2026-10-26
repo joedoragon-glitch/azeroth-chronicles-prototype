@@ -1170,7 +1170,7 @@
           );
         if (
           e.cd > 0 ||
-          gap > (ranged ? this.enemyRangedRange(e) : this.valeMeleeBasicRange(e)) ||
+          gap > (ranged ? this.enemyRangedRange(e) : this.enemyMeleeBasicRange(e)) ||
           !(ranged ? this.enemyRangedLine(e, target) : visible)
         )
           return false;
