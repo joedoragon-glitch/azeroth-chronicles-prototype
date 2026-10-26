@@ -6440,6 +6440,22 @@
         : 65;
     }
 
+    // Hybrid actors retain both disciplines: native ranged healing/aim and
+    // standoff spacing beyond this close-range threshold, ordinary melee
+    // attack/pursuit inside it. These decisions use the same shared boundary
+    // as the withdrawal covering attack path.
+    enemyHybridMeleeRange(e) {
+      return e.form === 'ringleader'
+        ? R.rangedEnemyCombat.ringleaderHybridMeleeRange
+        : 65;
+    }
+    enemyBackpedalThreshold(e) {
+      const band = this.enemyRangedRange(e) * R.rangedEnemyCombat.retreatFraction;
+      // A hybrid's ranged posture has a small defensible buffer outside its
+      // melee switch, avoiding immediate melee/ranged oscillation.
+      return e.hybrid ? Math.max(band, this.enemyHybridMeleeRange(e) + 40) : band;
+    }
+
     // Distance pressure, not a fragile class-specific "kiting" classifier:
     // stationary ranged attackers also deserve a counter from an engaged
     // melee enemy. One ordinary chase interval is enough to teach the move.
@@ -7188,13 +7204,12 @@
           continue;
         }
         const d = dist(e, target),
-          hybridMeleeRange =
-            e.form === 'ringleader' ? R.rangedEnemyCombat.ringleaderHybridMeleeRange : 65,
+          hybridMeleeRange = this.enemyHybridMeleeRange(e),
           ranged =
             (e.ranged ?? ['archer', 'crownguard'].includes(e.species)) &&
             !(e.hybrid && d <= hybridMeleeRange),
           range = ranged ? this.enemyRangedRange(e) : this.enemyMeleeBasicRange(e),
-          retreatRange = ranged && !e.hybrid ? range * R.rangedEnemyCombat.retreatFraction : 0,
+          retreatRange = ranged ? this.enemyBackpedalThreshold(e) : 0,
           before = { x: e.x, y: e.y },
           visible = this.line(e, target),
           firingLine = ranged ? this.enemyRangedLine(e, target) : visible;
