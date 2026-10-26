@@ -232,8 +232,8 @@ for (const [species, guard] of [
   c.hero.class = 'paladin';
   assert.equal(c.heroSkillRange(1, false), 120, 'Paladin basic retains its 120-unit reach');
   const soldier = c.unit('soldier', 250, 250);
-  assert.equal(c.companionCombatReach(soldier), 65, 'Soldier sword basic retains its 65-unit reach');
-  assert.equal(c.companionCombatReach({ type: 'pet' }), 70, 'melee pet basic retains its 70-unit reach');
+  assert.equal(c.companionCombatReach(soldier), 90, 'Soldier sword basic matches 90-unit enemy melee reach');
+  assert.equal(c.companionCombatReach({ type: 'pet' }), 90, 'melee pet basic matches 90-unit enemy melee reach');
 }
 
 {
