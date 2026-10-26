@@ -229,6 +229,36 @@
       // Stale procedural images were rasterized for the previous density.
       clearBakes(true);
     }
+    // Confirmed mobile WebGL must survive normal iOS viewport changes after
+    // switching apps. Rebuild viewport-sized scene layers in the SAME GPU
+    // context; Canvas remains available if any resize or render step fails.
+    function syncViewport() {
+      if (app.screen.width === viewport.width && app.screen.height === viewport.height) return;
+      requireValue(viewport.width > 0 && viewport.height > 0, 'Invalid PixiJS viewport');
+      // Validate cached approved textures before touching the existing scene.
+      const originals = [...loaded].map((src) => {
+        const texture = root.PIXI.Assets.get(src);
+        requireValue(texture?.source, 'Approved artwork unavailable after resize: ' + src);
+        return [src, texture];
+      });
+      // Retired procedural textures must never remain referenced by sprites.
+      clearBakes(true);
+      scene.destroy();
+      scene = null;
+      const previous = backing;
+      backing = null;
+      previous?.destroy?.(false);
+      const ratio = effectiveRatio();
+      app.renderer.resize(viewport.width, viewport.height, ratio);
+      backingRatio = ratio;
+      scene = root.AzerothPixiSceneBridge.create({
+        PIXI: root.PIXI, app, width: viewport.width, height: viewport.height,
+      });
+      for (const [src, texture] of originals) scene.registerTexture(src, texture);
+      createBackgroundPainter();
+      bakedZoom = null;
+      drawBackground();
+    }
     function game() {
       return getGame();
     }
@@ -601,8 +631,7 @@
       try {
         if (!active || !scene) throw Error('Inactive PixiJS renderer');
         stage = 'viewport-check';
-        if (app.screen.width !== viewport.width || app.screen.height !== viewport.height)
-          throw Error('Viewport changed: return to Canvas');
+        syncViewport();
         stage = 'resolution';
         syncResolution();
         stage = 'background';
