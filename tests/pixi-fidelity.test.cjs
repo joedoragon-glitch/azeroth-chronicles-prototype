@@ -295,6 +295,24 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(failures.at(-1).resources.loadedTextures,1);
   assert.equal(lostGpu.failureDetails().type,'context-loss');
   lostGpu.release();
+  // A late contextlost event from a retired GPU canvas must not tear down
+  // the newly prepared replacement after bounded automatic recovery.
+  const replayFailures=[];
+  const replayGpu=runtime.PrototypePixiExperimental.create({
+    ...gpuOptions,onFailure:(detail)=>replayFailures.push(detail)
+  });
+  assert.equal(await replayGpu.prepare(),true);
+  replayGpu.activate();
+  const retiredCanvas=lastApplicationCanvas;
+  replayGpu.release();
+  assert.equal(await replayGpu.prepare(),true);
+  replayGpu.activate();
+  retiredCanvas.handlers.webglcontextlost({preventDefault(){}});
+  assert.equal(replayFailures.length,0,'obsolete context event is ignored after reprepare');
+  assert.equal(replayGpu.status().active,true,'replacement GPU remains active');
+  replayGpu.draw();
+  assert.equal(replayGpu.status().active,true);
+  replayGpu.release();
   rejectWebGLContext=true;
   const startupGpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(await startupGpu.prepare(),false);
