@@ -96,8 +96,8 @@ for (const species of [
   const cfg = R.enemySupportHealing.hybridSelf;
   assert.deepEqual(
     [cfg.fraction, cfg.duration, cfg.cooldown],
-    [0.1, 3, 5],
-    'all hybrid variants recover 10% max HP over 3s with 5s reuse',
+    [0.1, 3, 7],
+    'all hybrid variants recover 10% max HP over 3s with 7s reuse',
   );
   for (const kind of ['ordinary', 'guardian', 'ringleader']) {
     const { g, mob } = fixture();
@@ -567,8 +567,8 @@ console.log('PASS boss skill independence, support priority, and old v4 save com
   const cfg = R.enemySupportHealing.hybridSelf;
   assert.deepEqual(
     [cfg.fraction, cfg.duration, cfg.cooldown],
-    [0.1, 3, 5],
-    'all hybrid variants have 10% self recovery over 3s with 5s reuse',
+    [0.1, 3, 7],
+    'all hybrid variants have 10% self recovery over 3s with 7s reuse',
   );
   for (const form of ['normal', 'ringleader']) {
     for (const guard of [false, true]) {
