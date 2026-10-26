@@ -37,7 +37,7 @@ assert.equal(image.spriteIdentity,cottage);
 const oldImage=painter.presentEntity({structure:'vale-cottage'},'prop');
 assert.equal(oldImage.visualScale,1,'low-density art must not be blindly enlarged');
 
-const inits=[],draws=[],resizes=[],frames=[],resources=new Set();
+const inits=[],draws=[],resizes=[],frames=[],moteFrames=[],resources=new Set();
 let currentActorTextures = new Set(), destroyedProcedural = 0,
   lastApplicationCanvas = null, rejectWebGLContext = false, failSceneDraw = false;
 function canvas() {
@@ -90,7 +90,7 @@ const runtime={
     nightLightKind:()=>null
   },
   PrototypeSprites:{timeMs:()=>1000},
-  PrototypeVisuals:{draw(){}},
+  PrototypeVisuals:{draw(){},atmosphereMotes:Visuals.atmosphereMotes},
   AzerothNativeWebGLCore:{lampGlowCommands:()=>[]},
   AzerothGpuSpriteAdapter:{create:()=>({
     commandFor:(entity,point)=>entity.renderKind==='prop'
@@ -114,7 +114,7 @@ const runtime={
       currentActorTextures=new Set(list.map(actor=>actor.textureId));
       frames.push(list);
     },
-    syncLamps(){},setAtmosphere(){},setVignette(){},
+    syncLamps(){},setAtmosphere(){},syncMotes(motes,zoom){moteFrames.push({motes,zoom});},setVignette(){},
     draw(){if(failSceneDraw)throw Error(failSceneDraw==='context' ? 'WebGL context lost' : 'Synthetic Pixi scene draw error')},
     destroy(){}
   })}
@@ -144,6 +144,14 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(draws[0].ratio,1.5,'background painting must be retina');
   assert.equal(gpu.status().backdropWidth,2028);
   assert.equal(frames[0][0].width,180,'camera zoom applies without double DPI scaling');
+  assert.equal(moteFrames[0].zoom,1.5,'motes follow Canvas physical camera zoom');
+  assert.equal(moteFrames[0].motes.length,14,'Pixi receives the 14 original Vale outdoor motes');
+  assert.equal(moteFrames[0].motes[0].alpha,.18,'daytime Pixi pollen uses original alpha');
+  assert.deepEqual(moteFrames[0].motes[0].rgb,[234,223,158],
+    'approved daylight Vale palette is forwarded unchanged');
+  const regionMote=moteFrames[0].motes[0];
+  assert(regionMote.x>=-40 && regionMote.x<=912/1.5+40,
+    'motes originate in the Canvas logical viewport, not the pixel backing');
   gpu.activate();
   gpu.draw();
   canvasSurface.width=912;canvasSurface.height=420;
