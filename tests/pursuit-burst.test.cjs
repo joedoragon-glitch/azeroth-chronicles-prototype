@@ -7,4 +7,6 @@ e.x=800;e.pursuitBurst=0;c.updateEnemies(.1);assert(Math.abs(e.x-817.5)<.01,'con
 c.disengage(e,1.1);assert(!e.aggro);assert(!e.pursuitBurstUsed);c.engage(e);c.updateEnemies(.1);assert(e.pursuitBurstUsed);assert(Math.abs(e.x-826.25)<.01,'fresh engagement gets one new burst');
 const wall=new C();wall.enter('vale');wall.zone().enemies=[];wall.zone().props=[];wall.s.party=[];Object.assign(wall.hero,{x:1300,y:1200});const blocked=wall.makeEnemy({species:'goblin',name:'Separated',level:1,hp:100,damage:5,gold:1,xp:1},{x:1100,y:1200});wall.zone().enemies.push(blocked);wall.engage(blocked);assert(!wall.line(blocked,wall.hero));wall.updateEnemies(.1);assert(!blocked.pursuitBurstUsed,'no sprint into an unseen target across the river');
 const boss=new C();boss.enter('frontier');boss.zone().props=[];boss.s.party=[];const warlord=boss.zone().enemies.find(x=>x.family==='warlord'&&x.form==='normal');boss.zone().enemies=[warlord];Object.assign(warlord,{x:1900,y:1400,home:{x:1900,y:1400},cd:1});Object.assign(boss.hero,{x:2400,y:1400});boss.engage(warlord);boss.updateEnemies(.1);assert(warlord.pursuitBurstUsed);assert(Math.abs(warlord.x-1921.75)<.01,'boss also bursts at 50% extra speed');
-console.log('PASS one brief chase burst per engagement, visible pursuit, reload persistence and normal chase recovery');
+assert.equal(warlord.pursuitBurstReadyAt, boss.s.time + 5.5,
+  'authored boss pursuit renewal is unchanged');
+console.log('PASS native pursuit burst speed, engagement/reset, collision/LOS, boss cadence and saves');
