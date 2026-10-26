@@ -37,17 +37,17 @@ const slingers=[
   ['Crown',draw({renderKind:'enemy',type:'mob',species:'goblin',ranged:true,crownTroop:true})]
 ];
 for(const [name,acts] of slingers){
-  assert(stroke(acts,'#b99a67'),name+' requires visible two-cord sling');
-  assert(fill(acts,'#735036'),name+' requires spare-stone satchel');
-  assert(fill(acts,'#b4b1a1'),name+' must have a stone in the sling cup');
+  assert(stroke(acts,'#bda174'),name+' requires visible two-cord sling');
+  assert(fill(acts,'#68513b'),name+' requires spare-stone satchel');
+  assert(fill(acts,'#9b9b8d'),name+' must have a stone in the sling cup');
   assert(!stroke(acts,'#ba9562'),name+' must not carry an archer bow');
 }
 const archer=draw({renderKind:'ally',type:'archer'});
 assert(stroke(archer,'#ba9562'),'friendly Archer keeps his bow');
-assert(!stroke(archer,'#b99a67'),'friendly Archer does not inherit hostile sling');
+assert(!stroke(archer,'#bda174'),'friendly Archer does not inherit hostile sling');
 const melee=draw({renderKind:'enemy',type:'mob',species:'goblin',ranged:false});
-assert(!stroke(melee,'#b99a67'),'melee Goblin remains sword-equipped');
-assert(!fill(melee,'#735036'),'melee Goblin has no stone satchel');
+assert(!stroke(melee,'#bda174'),'melee Goblin remains sword-equipped');
+assert(!fill(melee,'#68513b'),'melee Goblin has no stone satchel');
 
 // Auto-attacks (all combo stages) and all three staggered normal Skill 1
 // shots must share one rigid projectile silhouette independent of caster.
