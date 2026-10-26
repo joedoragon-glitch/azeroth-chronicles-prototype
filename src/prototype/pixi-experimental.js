@@ -233,8 +233,9 @@
       createBackgroundPainter();
       drawBackground();
       previous?.destroy?.(false);
-      // Stale procedural images were rasterized for the previous density.
-      clearBakes(true);
+      // Keep the previous density warm: revisionFor includes backingRatio,
+      // so only matching raster sizes are reused. The shared LRU trims memory.
+      // An actual viewport/context reconstruction still clears resources.
     }
     // Confirmed mobile WebGL must survive normal iOS viewport changes after
     // switching apps. Rebuild viewport-sized scene layers in the SAME GPU
@@ -442,10 +443,9 @@
       // Keep prior-zone textures warm for dungeon returns and adjacent travel.
       // The global LRU/byte budget retires them as needed; zoom still invalidates
       // pixel-density-dependent bakes to prevent blurred/misaligned sprites.
-      if (bakedZoom !== zoom) {
-        clearBakes(true);
-        bakedZoom = zoom;
-      }
+      // Revision identities include zoom too: changing camera scale never
+      // aliases raster sizes, and revisits can reuse images until LRU trimming.
+      bakedZoom = zoom;
       bakeZone = current.zoneId;
       actorFrameNumber++;
       const visible = candidates(
