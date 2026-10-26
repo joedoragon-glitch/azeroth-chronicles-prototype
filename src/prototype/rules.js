@@ -6183,7 +6183,7 @@
     ordinary: Object.freeze({ fullRecovery: true, cooldown: 7, duration: 3 }),
     // Hybrid ranged/melee combatants retain allied ranged triage while gaining
     // their own separate, non-stacking restoration over three seconds.
-    hybridSelf: Object.freeze({ fraction: 0.1, duration: 3, cooldown: 5, threshold: 0.9 }),
+    hybridSelf: Object.freeze({ fraction: 0.1, duration: 3, cooldown: 7, threshold: 0.9 }),
     // Captains sit between ordinary monsters and bosses as support patients.
     // Each eligible ranged ally may refill half the missing captain HP over
     // five seconds, on its own ten-second captain-support eligibility.

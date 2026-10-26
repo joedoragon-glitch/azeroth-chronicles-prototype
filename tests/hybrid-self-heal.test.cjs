@@ -7,7 +7,7 @@ const near = (actual, expected, label) =>
 
 assert.deepEqual(
   { fraction: cfg.fraction, duration: cfg.duration, cooldown: cfg.cooldown },
-  { fraction: 0.1, duration: 3, cooldown: 5 },
+  { fraction: 0.1, duration: 3, cooldown: 7 },
   'hybrid self-recovery authorial budget',
 );
 
@@ -66,23 +66,28 @@ for (const [region, species, extra] of [
   assert.equal(e.hybridSelfHeal.allowIdle, true);
   near(e.hybridSelfHeal.remaining, e.maxHp * 0.1, 'full 10% HP healing budget');
   near(e.hybridSelfHeal.seconds, 3, 'three-second duration');
-  near(e.hybridSelfHealCd, 5, 'five-second independent cooldown');
+  near(e.hybridSelfHealCd, 7, 'seven-second independent cooldown');
   assert(!g.enemyHybridSelfHeal(e), 'no stacked duplicate treatment');
   step(1);
   near(e.hp, start + e.maxHp * 0.1 / 3, 'first second applies one-third');
-  near(e.hybridSelfHealCd, 4, 'cooldown recovers while treatment is active');
+  near(e.hybridSelfHealCd, 6, 'cooldown recovers while treatment is active');
   step(2);
   near(e.hp, start + e.maxHp * 0.1, 'complete self-heal after three seconds');
   assert(!e.hybridSelfHeal, 'gradual healing state finishes normally');
-  near(e.hybridSelfHealCd, 2, 'two seconds remain after the three-second heal');
-  assert(!g.enemyHybridSelfHeal(e), 'cannot re-cast until five seconds');
+  near(e.hybridSelfHealCd, 4, 'four seconds remain after the three-second heal');
+  assert(!g.enemyHybridSelfHeal(e), 'cannot re-cast until seven seconds');
   // Keep native idle AI from automatically spending readiness at the expiry
   // frame; restore a wound immediately afterward to test an explicit recast.
   e.hp = e.maxHp;
   step(2);
-  near(e.hybridSelfHealCd, 0, 'five-second independent cooldown expires');
+  near(e.hybridSelfHealCd, 2, 'still cooling down five seconds after cast');
   e.hp = e.maxHp * 0.6;
-  assert(g.enemyHybridSelfHeal(e), 'repeatable after five seconds, no one-use flag');
+  assert(!g.enemyHybridSelfHeal(e), 'five-second recast is not allowed');
+  e.hp = e.maxHp;
+  step(2);
+  near(e.hybridSelfHealCd, 0, 'seven-second independent cooldown expires');
+  e.hp = e.maxHp * 0.6;
+  assert(g.enemyHybridSelfHeal(e), 'repeatable after seven seconds, no one-use flag');
 }
 
 // A hybrid retains its ranged allied support *during its own cooldown*.
@@ -168,4 +173,4 @@ for (const change of [
   step(0.1);
   assert(!e.hybridSelfHeal, 'native encounter return interrupts hybrid treatment');
 }
-console.log('PASS hybrid heal: five species, guard/ringleader, 10%-over-3s, 5s clock, allied support, statuses and resets');
+console.log('PASS hybrid heal: five species, guard/ringleader, 10%-over-3s, 7s clock, allied support, statuses and resets');
