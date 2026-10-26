@@ -561,9 +561,9 @@
         this.say(e.name + ' uses ' + skill + ' in an area.');
       return true;
     }
-    // Hybrid AI keeps the ranged healer's ally triage and gains an
-    // independent, bounded self-recovery. The ordinary supportHeal pulse
-    // resolver owns time, capping and cancellation; no second heal stack.
+    // Hybrid self-recovery is independent of incoming ranged ally healing.
+    // Both may coexist; each pulse independently observes the same HP cap.
+    // This state and its cooldown must not consume the ally-support slot.
     enemyHybridSelfHeal(e) {
       const cfg = R.enemySupportHealing.hybridSelf;
       if (
@@ -576,14 +576,14 @@
         e.returning ||
         this.mageSilenceActive(e) ||
         e.motion || e.telegraph || e.rangedAim ||
-        e.supportHeal ||
+        e.hybridSelfHeal ||
         (e.hybridSelfHealCd || 0) > 0 ||
         !(e.maxHp > 0) ||
         e.hp / e.maxHp > cfg.threshold
       ) return false;
       const amount = Math.min(e.maxHp - e.hp, e.maxHp * cfg.fraction);
       if (!(amount > 0)) return false;
-      e.supportHeal = {
+      e.hybridSelfHeal = {
         source: e.id,
         skill: 'Hybrid Recovery',
         remaining: amount,
@@ -597,6 +597,26 @@
         skill: 'Hybrid Recovery', species: e.species, form: e.form,
       });
       return true;
+    }
+    advanceHybridSelfHeal(e, dt) {
+      const h = e.hybridSelfHeal;
+      if (!h) return;
+      if (
+        this.peace || !this.enemyHealingActor(e) ||
+        e.returning || !Number.isFinite(h.seconds) ||
+        h.seconds <= 0 || !Number.isFinite(h.remaining) ||
+        h.remaining <= 0 || !Number.isFinite(e.hp) || e.hp <= 0
+      ) {
+        delete e.hybridSelfHeal;
+        return;
+      }
+      const step = Math.min(dt, h.seconds),
+        amount = Math.min(e.maxHp - e.hp, (h.remaining * step) / h.seconds);
+      if (amount > 0) e.hp = Math.min(e.maxHp, e.hp + amount);
+      h.remaining = Math.max(0, h.remaining - Math.max(0, amount));
+      h.seconds = Math.max(0, h.seconds - step);
+      if (h.seconds <= 0 || h.remaining <= 0 || e.hp >= e.maxHp)
+        delete e.hybridSelfHeal;
     }
     enemySupportApproach(e, dt) {
       const cfg = R.enemySupportHealing;
@@ -6698,7 +6718,11 @@
             else captainSelfHealRecovery.delete(e);
           }
           if (e.supportHeal) this.advanceEnemySupportHeal(e, dt);
-        } else if (e.supportHeal) delete e.supportHeal;
+          if (e.hybridSelfHeal) this.advanceHybridSelfHeal(e, dt);
+        } else {
+          if (e.supportHeal) delete e.supportHeal;
+          if (e.hybridSelfHeal) delete e.hybridSelfHeal;
+        }
         if (e.hp <= 0) {
           if (e.respawn > 0 && !this.peace) {
             e.respawn -= dt;
@@ -7451,6 +7475,8 @@
       e.hp = e.baseHp;
       e.maxHp = e.baseHp;
       delete e.supportHeal;
+      delete e.hybridSelfHeal;
+      e.hybridSelfHealCd = 0;
       e.supportHealCd = 0;
       e.damage = e.baseDamage;
       e.returning = 0;
