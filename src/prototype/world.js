@@ -64,7 +64,7 @@
         z.npcs.push({
           id, kind: 'critical-codex', sideCodex: z.id,
           name: def.name, nameEs: def.nameEs,
-          x: point.x, y: point.y, icon: '📖',
+          x: point.x, y: point.y, icon: '📖', presentation: 'critical-codex',
         });
         return true;
       }
