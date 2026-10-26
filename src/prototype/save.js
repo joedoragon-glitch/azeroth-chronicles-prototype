@@ -609,8 +609,14 @@
             ]),
             ...D.bosses.flatMap((b) => ['boss-' + b.id, 'boss-' + b.id + '-true']),
           ]);
-          if (s.zone !== 'arena' || !stages.has(s.arenaStage))
-            throw Error('Invalid combat arena stage');
+          if (s.zone !== 'arena') throw Error('Invalid combat arena world');
+          // Content updates can rename or retire encounters. Keep the player's
+          // hero, learned skills, talents, companions and arena save intact.
+          // Only the obsolete location resets to the safe training hub.
+          if (!stages.has(s.arenaStage)) {
+            s.arenaStage = 'hub';
+            s.arenaRegion = 0;
+          }
         }
         const zones = new Set([
           ...(s.mode === 'arena' ? ['arena'] : []),
@@ -1206,6 +1212,9 @@
         if (s.mode === 'arena') {
           // Arena actors are deliberately transient test fixtures; restore the
           // selected stage without touching campaign world migrations.
+          // Re-evaluate the stage's region against CURRENT game data on every
+          // reload (a release can reorder/expand regions without an arena fork).
+          c.s.arenaRegion = c.arenaStages().find((stage) => stage.id === c.s.arenaStage)?.region ?? 0;
           delete c.s.zones.arena;
           c.zone();
           c.syncCompanionLevelStats();

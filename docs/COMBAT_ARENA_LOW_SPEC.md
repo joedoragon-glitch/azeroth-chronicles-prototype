@@ -49,6 +49,29 @@ test the real game on low-end phones with almost no environment rendering.
   bookkeeping, audio, skills or attack warnings. Lower total work is expected;
   **actual phone FPS gains require measurement**, not inference.
 
+
+## Future game releases / PWA compatibility
+
+Combat Arena is a first-class mode **inside the same GitHub Pages PWA**, not a
+standalone bundle or separate install. Every subsequent release uses the current
+shared Campaign AI, combat rules, hero skill definitions, sprite/audio manifests,
+regional species, named captains and boss definitions. The arena deliberately
+keeps no duplicate combat engine or independent version-pinned mechanics.
+Its ordinary/guardian/boss destinations are derived from the current content
+tables on each game launch; existing new-game and continue screens retain the
+mode and its own save slot.
+
+The existing PWA build stamps a **release-commit-specific service worker cache**
+and the in-game Update available button installs a published release safely.
+The player must accept an available update/reload while online (or after the
+release has been downloaded); open offline sessions cannot automatically receive
+new code. The arena saves via the existing version-4 persistence path and uses
+all shared future save migrations. If an encounter ID is retired by an update,
+only the arena location is reset to the hub; hero level, taught skills and party
+remain. The selected stage region is re-derived from the current content tables.
+Future schema migrations must include arena in the common save validator and
+be covered by the arena update-compatibility regression.
+
 ## Verification and release gate
 
 Run: node tests/combat-arena.test.cjs — mode isolation, one-level-per-interaction

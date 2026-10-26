@@ -3268,7 +3268,7 @@
         (mode === 'nightmare' ? 'Nightmare' : mode === 'developer' ? 'Developer' : mode === 'arena' ? 'Combat Arena' : 'Normal') +
         ' adventure',
       mode === 'arena'
-        ? 'Combat testing with no campaign. All eight skills are available immediately. Visit specialists for free training and the Arena Guide for every enemy stage.'
+        ? 'Combat testing without campaign progression. Start with Basic Attack; visit hub instructors to learn other skills for free, and select encounters through the Arena Guide.'
         : 'Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.',
       Object.entries(Campaign.classes).map(([id, c]) =>
         action(
@@ -3809,7 +3809,13 @@
   function openMain() {
     if (game.s.mode === 'arena') {
       openMenu('Combat Arena', 'Black floor · no scenery · all combat rules preserved. Your arena save is separate.', [
-        action('Talk to Arena Guide · choose combat stage', arenaDestinations),
+        action('Choose an enemy encounter', arenaDestinations),
+        ...(game.s.arenaStage === 'hub'
+          ? []
+          : [
+              action('Replay current encounter', () => arenaTravel(game.s.arenaStage)),
+              action('Return to safe hub', () => arenaTravel('hub')),
+            ]),
         action('Build free Barracks here', () => {
           const b = game.arenaBuildBarracks();
           if (b) { save(); barracksMenu(b, openMain); }

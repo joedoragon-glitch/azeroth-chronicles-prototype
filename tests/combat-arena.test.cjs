@@ -122,6 +122,29 @@ function verify(classId) {
   assert.equal(loaded.zone().props.length, 0);
   assert.equal(loaded.arenaSelectStage('hub'), true);
   assert.equal(loaded.zone().enemies.length, 0);
+  // Update compatibility: a retired/renamed encounter is not a destroyed save.
+  // Keep the character, instructor skills and earned one-at-a-time levels.
+  const retired = JSON.parse(JSON.stringify(snapshot));
+  retired.arenaStage = 'boss-retired-in-next-game-update';
+  const recovered = Campaign.restore(retired, () => 0.5);
+  assert.equal(recovered.s.arenaStage, 'hub');
+  assert.equal(recovered.zone().enemies.length, 0);
+  assert.equal(recovered.hero.level, 3);
+  assert.deepEqual(recovered.hero.skills, Array(8).fill(1));
+  assert.equal(recovered.zone().npcs.some((n) => n.kind === 'arena-level-trainer'), true);
+  // A later boss definition is discovered from shared game data automatically,
+  // never a pinned/frozen second enemy catalog.
+  const addition = {
+    ...Campaign.data.bosses.find((b) => b.id === 'thorn'),
+    id: 'future-release-test-only', name: 'Future Game Update Boss',
+  };
+  Campaign.data.bosses.push(addition);
+  try {
+    assert.ok(recovered.arenaStages().some((stage) => stage.id === 'boss-future-release-test-only'));
+    assert.ok(recovered.arenaStages().some((stage) => stage.id === 'boss-future-release-test-only-true'));
+  } finally {
+    Campaign.data.bosses.pop();
+  }
   loaded.hero.hp = 0;
   loaded.die();
   assert.equal(loaded.s.arenaStage, 'hub');
@@ -135,6 +158,14 @@ assert.equal(campaign.s.arenaStage, undefined);
 assert.notEqual(campaign.zoneSize(), 2000);
 assert.deepEqual(campaign.hero.skills, [1, 0, 0, 0, 0, 0, 0, 0]);
 assert.equal(campaign.arenaLevelUp(), false, 'NPC level-up restricted to arena');
+const swTemplate = fs.readFileSync(path.resolve(__dirname, '..', 'templates/service-worker.js'), 'utf8');
+const buildSource = fs.readFileSync(path.resolve(__dirname, '..', 'scripts/build.cjs'), 'utf8');
+const appSource = fs.readFileSync(path.resolve(__dirname, '..', 'src/prototype/app.js'), 'utf8');
+assert.ok(swTemplate.includes('{{CACHE_VERSION}}') &&
+  buildSource.includes('-release-') &&
+  appSource.includes('appRegistration.update()') &&
+  appSource.includes("location.reload()"),
+  'arena reuses the same release-updating PWA; it must not be a separate frozen app');
 for (const [file, needles] of [
   ['src/prototype/renderer.js', [
     "game.s.mode === 'arena' ? '#000000'",
