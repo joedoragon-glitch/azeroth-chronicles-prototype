@@ -7705,6 +7705,8 @@
     // No authored boss/captain/ringleader attacks or other regions are changed.
     valeMeleeCounter: Object.freeze({
       enabled: true,
+      // Paladin auto basics are 120 units; native Vale melee now matches them.
+      meleeBasicRange: 120,
       buildupSeconds: 0.35,
       cooldownSeconds: 4.5,
       minDistance: 155,
