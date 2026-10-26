@@ -7710,14 +7710,17 @@
       buildupSeconds: 0.35,
       cooldownSeconds: 4.5,
       minDistance: 155,
-      maxDistance: 480,
+      // Wider than a Ranger charged shot, but still encounter/leash bound.
+      maxDistance: 610,
       warningSeconds: 0.65,
-      predictionSeconds: 1.15,
-      maxLeadDistance: 285,
-      travelSpeed: 1100,
-      travelSeconds: 0.75,
+      // Predict roughly through warning plus travel; a straight retreat
+      // should be threatened, a lateral dodge should still defeat the mark.
+      predictionSeconds: 1.25,
+      maxLeadDistance: 350,
+      travelSpeed: 1400,
+      travelSeconds: 0.9,
       arrivalTolerance: 48,
-      impactRadius: 94,
+      impactRadius: 100,
       damageMultiplier: 0.8,
       slowSeconds: 0.8,
     }),
