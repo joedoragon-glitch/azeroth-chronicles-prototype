@@ -66,6 +66,37 @@ for (const mode of ['normal', 'nightmare']) {
     'restoring an existing save does not manufacture stale knowledge');
 }
 
+// Being able to see a damaged unit is not the same as having magical sight
+// of its previous attacker: a hidden shooter must not replace a visible threat.
+{
+  const { g, e } = scene('normal');
+  const soldier = g.unit('soldier', 1300, 1700);
+  Object.assign(soldier, { hp: 10000, maxHp: 10000, order: null });
+  g.s.party = [soldier];
+  assert(g.damage(e, 25, 'hero'));
+  const visible = g.enemyRangedLine.bind(g);
+  g.enemyRangedLine = (enemy, actor) => actor !== g.hero && visible(enemy, actor);
+  const beforeX = e.x;
+  tick(g, 1);
+  assert(e.x < beforeX,
+    'hidden recent attacker is not tracked through walls; existing visible threat wins');
+}
+
+// A ranged enemy that is legitimately waiting for its next shot must not be
+// made to dodge or chase solely because it has recently taken damage.
+{
+  const { g, e } = scene('normal');
+  Object.assign(e, { ranged: true, shotRange: 280 });
+  Object.assign(g.hero, { x: e.x + 300, y: e.y });
+  assert(g.damage(e, 25, 'hero'), 'ranged enemy is genuinely wounded in normal shot range');
+  const before = { x: e.x, y: e.y };
+  tick(g, 15);
+  assert.deepEqual({ x: e.x, y: e.y }, before,
+    'normal ranged cooldown holding position is not treated as blocked pursuit');
+  g.s.time += 4.1;
+  assert(!g.enemyUnderFireAlert(e), 'stimulus expires without creating permanent aggression');
+}
+
 // A target behind an obstructed long route is not allowed to leave the
 // wounded monster frozen in place when a small collision-safe dodge exists.
 // Route planning is intentionally unavailable, but short local native moves
