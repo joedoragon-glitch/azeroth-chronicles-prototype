@@ -2149,7 +2149,8 @@
         }
         delete this.s.zones.arena;
         this.zone();
-        this.s.mercyTime = 12;
+        // Stay within the v4 save contract (mercyTime: 0–10 seconds).
+        this.s.mercyTime = 10;
         this.say('Arena destination: ' + this.arenaStages().find((s) => s.id === id).label);
         return true;
       }

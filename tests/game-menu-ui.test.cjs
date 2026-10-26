@@ -384,7 +384,14 @@ for (const language of ['en', 'es']) {
   title('Game and settings', 'Juego y ajustes');
   click(t('Save and game management', 'Partidas guardadas'));
   short();
-  assert.equal(e.get('modal-actions').children.length, 5);
+  assert.equal(e.get('modal-actions').children.length, 6);
+  const arenaRun = e.get('modal-actions').children.find(
+    (node) =>
+      node.textContent.startsWith(
+        t('Load Combat Arena run', 'Cargar partida de Arena de combate'),
+      ),
+  );
+  assert(arenaRun && arenaRun.disabled, 'No arena save: Load Arena remains unavailable');
   click(t('Save backups', 'Copias de seguridad'));
   short();
   assert.equal(e.get('modal-actions').children.length, 2);

@@ -91,6 +91,8 @@ function verify(classId) {
 
   const snapshot = arena.snapshot();
   assert.equal(snapshot.mode, 'arena');
+  assert.equal(snapshot.mercyTime, 10, 'arena destinations respect the v4 save limit');
+  assert.doesNotThrow(() => Campaign.validate(snapshot), 'arena saves must validate');
   const loaded = Campaign.restore(snapshot, () => 0.5);
   assert.equal(loaded.s.arenaStage, 'boss-darklord-true');
   assert.equal(loaded.hero.level, 3, 'individual trainer level gains survive save/reload');
