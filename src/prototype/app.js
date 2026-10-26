@@ -3356,7 +3356,9 @@
         '\nXP ' +
         Math.floor(h.xp) +
         ' / ' +
-        game.xpRequired(h.level),
+        game.xpRequired(h.level) +
+        (language === 'es' ? '\nProbabilidad crítica: ' : '\nCritical chance: ') +
+        (game.criticalPartyChance('hero') * 100).toFixed(0) + '%',
       [
         ...(!h.customName
           ? [action('Name your hero', () => nameHeroMenu(false), 'Optional · choose once')]
@@ -3742,42 +3744,6 @@
       openMain,
     );
   }
-  function codexCollectionMenu() {
-    const books = Campaign.rules.criticalCodices || {},
-      claims = game.s.criticalCodices || {},
-      count = game.criticalCodexCount(),
-      hero = game.criticalPartyChance('hero'),
-      rank = game.expeditionSupportFraction('sharedTraining'),
-      companion = 0.10 + (hero - 0.10) * rank,
-      localeEs = language === 'es',
-      criticalsActive =
-        game._criticalPartyNative?.enabled === true &&
-        game._criticalWorldNative?.enabled === true;
-    const lines = [
-      localeEs ? 'Códices aprendidos: ' + count + '/5'
-               : 'Codices learned: ' + count + '/5',
-      ...(criticalsActive
-        ? [
-            localeEs ? 'Probabilidad del héroe: ' + (hero * 100).toFixed(1) + '%'
-                     : 'Hero chance: ' + (hero * 100).toFixed(1) + '%',
-            localeEs ? 'Compañeros y mascotas: ' + (companion * 100).toFixed(1) + '%'
-                     : 'Companions and pets: ' + (companion * 100).toFixed(1) + '%',
-          ]
-        : [
-            localeEs
-              ? 'Las ejecuciones críticas están desactivadas. Los códices aprendidos quedan guardados.'
-              : 'Critical Executions are disabled. Learned Codices remain recorded.',
-          ]),
-      '',
-      ...Object.entries(books).flatMap(([id, book]) =>
-        claims[id]
-          ? ['✓ ' + (localeEs ? book.nameEs : book.name),
-             '  ' + (localeEs ? book.descriptionEs : book.description)]
-          : ['○ ' + (localeEs ? book.nameEs : book.name)]),
-    ];
-    openMenu(localeEs ? 'Códices de lo Imprevisto' : 'Codices of the Unforeseen',
-      lines.join('\n'), [], openMain);
-  }
   function openMain() {
     const canBuild = !game.isDungeon() && game.availableLabor().length > 0,
       cost = game.barracksBuildCost(),
@@ -3807,11 +3773,6 @@
           : 'Choose a marked destination · Key: ' + mapKeyHint(),
       ),
       action('Quest journal', () => quests(false, openMain)),
-      action(
-        language === 'es' ? 'Códices de lo Imprevisto' : 'Codices of the Unforeseen',
-        codexCollectionMenu,
-        game.criticalCodexCount() + '/5',
-      ),
       action('Character', characterMenu),
       ...(game.s.phase === 'awakening'
         ? [
@@ -4048,6 +4009,7 @@
         'fountain',
         'resource',
         'mini',
+        'critical-codex',
       ].includes(n.kind)
     ) {
       const success = game.interact(n);
@@ -6201,7 +6163,10 @@
         's</small>';
     if (h.slow > 0)
       heroMarkup +=
-        '<small class="restoring" aria-label="Slowed: movement and skill recovery reduced">Slow · movement + recovery ↓</small>';
+        '<span class="hero-ailment" role="status" aria-label="' +
+        (language === 'es' ? 'Ralentizado' : 'Slowed') +
+        '">❄ ' + (language === 'es' ? 'LENTO' : 'SLOW') + ' · ' +
+        h.slow.toFixed(1) + 's</span>';
     setMarkup('hero-stats', heroMarkup);
     if (
       statusUntil &&
