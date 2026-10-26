@@ -6310,7 +6310,7 @@
     retreatFraction: 0.5,
     retreatSpeed: 165,
     ringleaderRetreatMultiplier: 1.2,
-    ringleaderHybridMeleeRange: 100,
+    ringleaderHybridMeleeRange: 120,
     guardianScreenRange: 220,
   };
   const chargedSkills = {
