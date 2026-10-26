@@ -379,7 +379,7 @@
             ' Each volume adds ' + pc(R.criticalCodexBalance.perBook) +
             ' to the hero, up to ' + pc(R.criticalCodexBalance.maxBookBonus) +
             ' total. Companions inherit a fraction through Shared Training.' +
-            '\\nLearned volumes: ' +
+            '\nLearned volumes: ' +
             (Object.entries(R.criticalCodices)
               .filter(([id]) => game.s.criticalCodices?.[id])
               .map(([, book]) => book.name).join(', ') || 'none yet') + '.',
@@ -1039,7 +1039,7 @@
     ' to the hero, up to ': ' al héroe, hasta ',
     ' total. Companions inherit a fraction through Shared Training.':
       ' en total. Los compañeros heredan una parte mediante Entrenamiento compartido.',
-    '\\nLearned volumes: ': '\\nVolúmenes aprendidos: ',
+    '\nLearned volumes: ': '\nVolúmenes aprendidos: ',
     'none yet': 'ninguno todavía',
     'The Art of Misdirection': 'El arte del engaño',
     'The Waterline Gambit': 'La táctica de la línea de agua',
