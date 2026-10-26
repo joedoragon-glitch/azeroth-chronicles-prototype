@@ -371,6 +371,20 @@
             ', including equipment and reforges. Shield Stance and wards then use only the stronger reduction; immunity stops the hit.',
         ],
         [
+          'Codices of the Unforeseen',
+          'Five practical books are hidden in occupied side interiors. Each book you actually study permanently improves your own critical chance by one percentage point. A critical execution enhances an authentic attack or effect; it never creates a hit that missed. The world has its own separate critical rules.',
+          'Hero critical chance: ' + pc(game.criticalPartyChance('hero')) +
+            '. Codices studied: ' + game.criticalCodexCount() + '/5.' +
+            ' Base Party and World chances: 10% each, independently sampled.' +
+            ' Each volume adds ' + pc(R.criticalCodexBalance.perBook) +
+            ' to the hero, up to ' + pc(R.criticalCodexBalance.maxBookBonus) +
+            ' total. Companions inherit a fraction through Shared Training.' +
+            '\\nLearned volumes: ' +
+            (Object.entries(R.criticalCodices)
+              .filter(([id]) => game.s.criticalCodices?.[id])
+              .map(([, book]) => book.name).join(', ') || 'none yet') + '.',
+        ],
+        [
           'Why a great volley loses force',
           'Landing every blow at once gives less damage than you might expect. Your company’s blows are counted together against each foe, so another attacker does not bypass the reduction. Save your strongest volley for an exposed opening.',
           'Hits share a rolling ' +
@@ -1016,6 +1030,9 @@
     'Max targets': 'Máximo de objetivos',
     Arrows: 'Flechas',
     Cooldown: 'Recuperación',
+    'Codices of the Unforeseen': 'Códices de lo Imprevisto',
+    'Five practical books are hidden in occupied side interiors. Each book you actually study permanently improves your own critical chance by one percentage point. A critical execution enhances an authentic attack or effect; it never creates a hit that missed. The world has its own separate critical rules.':
+      'Cinco libros prácticos se encuentran ocultos en interiores secundarios habitados. Cada libro estudiado aumenta de forma permanente en un punto porcentual tu probabilidad de crítico. Una ejecución crítica mejora un ataque o efecto real, pero nunca convierte en impacto un ataque fallido. El mundo aplica sus propias reglas independientes.',
     'Battle and protection': 'Combate y protección',
     'Conditions and recovery': 'Estados y recuperación',
     'Experience and discipline': 'Experiencia y disciplina',
