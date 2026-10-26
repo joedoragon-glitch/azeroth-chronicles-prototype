@@ -2071,7 +2071,7 @@
             id: 'arena-level-trainer',
             kind: 'arena-level-trainer',
             name: 'Level Trainer',
-            x: 735, y: 990,
+            x: 730, y: 995,
             icon: '⭐',
           });
           z.npcs.push({ id: 'arena-recovery', kind: 'arena-recovery', name: 'Free recovery', x: 810, y: 1320, icon: '💚' });
