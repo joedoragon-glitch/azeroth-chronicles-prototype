@@ -54,6 +54,20 @@
       dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y),
       originalDepartureRegion = (id) => ['vale', 'highlands', 'frontier'].includes(id);
     class World {
+      ensureCriticalCodex(z) {
+        // Historical v4 rooms may already exist before this mechanic.
+        // Reconcile only the missing authored book; never rebuild the room.
+        const def = R.criticalCodices?.[z?.id],
+          id = 'critical-codex-' + z?.id;
+        if (!def || z.npcs.some((n) => n.id === id)) return false;
+        const point = this.safe(def.x, def.y, z.id);
+        z.npcs.push({
+          id, kind: 'critical-codex', sideCodex: z.id,
+          name: def.name, nameEs: def.nameEs,
+          x: point.x, y: point.y, icon: '📖',
+        });
+        return true;
+      }
       dungeonSpaceLayout(z) {
         const space = R.dungeonSpace?.[z.id];
         if (!space || z.dungeonSpaceVersion === space.version) return;
@@ -2151,6 +2165,7 @@
             y: 150,
             icon: '🚪',
           });
+          this.ensureCriticalCodex(z);
           for (const [j, [x, y, structure]] of (side.decor || []).entries())
             z.props.push({ id: 'side-decor-' + j, x, y, r: 0, decorative: true, structure });
           for (const [j, [x, y, radius]] of (side.walls || []).entries())

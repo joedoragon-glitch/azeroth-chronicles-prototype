@@ -1,0 +1,45 @@
+'use strict';
+// Dormant explicit opt-in controller with separate saved Party/World RNG.
+const assert = require('node:assert/strict');
+const Campaign = require('../src/prototype/engine.js');
+const Critical = require('../src/prototype/critical-executions.js');
+const Levels = require('../src/prototype/critical-levels.js');
+const Party = require('../src/prototype/critical-party-native.js');
+const World = require('../src/prototype/critical-world-native.js');
+const g = new Campaign('normal', 'paladin', () => .123);
+assert.equal(g._criticalPartyNative, undefined, 'not auto-installed');
+assert.equal(g._criticalWorldNative, undefined);
+assert.equal(g.s.criticalStreams, undefined, 'OFF needs no RNG state');
+assert.equal(Party.attachCampaign(g,Critical,Levels,World,{enabled:false}), null);
+const controller = Party.attachCampaign(g,Critical,Levels,World,{
+  enabled:true, partySeed:0x12345678, worldSeed:0xabcdef01,
+});
+assert(controller.party.enabled && controller.world.enabled);
+const prior = { ...g.s.criticalStreams };
+assert.equal(prior.party, 0x12345678);
+assert.equal(prior.world, 0xabcdef01);
+const partyOne = controller.party.release(g,'hero/paladin/auto','hero');
+assert.equal(partyOne.chance,.1);
+assert.notEqual(g.s.criticalStreams.party,prior.party);
+assert.equal(g.s.criticalStreams.world,prior.world,'Party roll must never advance World');
+controller.world.release(g,'world/basic/melee','enemy-a');
+assert.notEqual(g.s.criticalStreams.world,prior.world);
+const saved = g.snapshot();
+assert.equal(saved.version,4);
+assert.deepEqual(saved.criticalStreams,g.s.criticalStreams);
+const expectedParty = Critical.seededStream(saved.criticalStreams.party);
+const expectedWorld = Critical.seededStream(saved.criticalStreams.world);
+const nextParty = expectedParty.next(),nextWorld = expectedWorld.next();
+const restored = Campaign.restore(saved,()=>.123);
+assert.equal(restored._criticalPartyNative,undefined,'restored game remains OFF');
+const resumed = Party.attachCampaign(restored,Critical,Levels,World,{enabled:true});
+resumed.party.release(restored,'hero/paladin/auto','hero');
+resumed.world.release(restored,'world/basic/melee','enemy-b');
+assert.equal(restored.s.criticalStreams.party,expectedParty.snapshot());
+assert.equal(restored.s.criticalStreams.world,expectedWorld.snapshot());
+assert(Number.isFinite(nextParty) && Number.isFinite(nextWorld));
+assert.throws(()=>Party.attachCampaign(restored,Critical,Levels,World,{enabled:true}),/already attached/);
+const bad = g.snapshot();
+bad.criticalStreams.party = -1;
+assert.throws(()=>Campaign.validate(bad),/critical RNG/);
+console.log('PASS dormant independent critical RNG streams: OFF parity, release separation, v4 continuation and invalid state');

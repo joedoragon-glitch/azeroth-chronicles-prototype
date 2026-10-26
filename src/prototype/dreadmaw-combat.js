@@ -258,6 +258,22 @@
         if (!dread(e) || !a?.dreadMechanic || a.rogueMove)
           return previous.resolveAttack.call(this, e);
         if (a.dreadMechanic === 'rush') {
+          // Only the actual first movement release draws a World decision.
+          // The native second warned perpendicular leg, if lawful, inherits
+          // the frozen cast receipt; collisions remain authoritative.
+          if (a.captainSkill && a.captainProfile === 'supply-crown' &&
+              a.index === 1 && a.dreadLeg === 1 && a.stage === 1 &&
+              !a.criticalExecution) {
+            const receipt = this.worldCriticalAction(e, 'world/captain/supply-crown/1');
+            if (receipt) {
+              a.criticalExecution = receipt;
+              for (const next of e.sequence || [])
+                if (next.captainSkill && next.captainProfile === 'supply-crown' &&
+                    next.index === 1 && next.dreadMechanic === 'rush' &&
+                    next.dreadLeg === 2 && next.stage === 2)
+                  next.criticalExecution = receipt;
+            }
+          }
           e.motion = {
             ...a,
             dreadMotion: true,
@@ -269,23 +285,113 @@
           return;
         }
         if (a.dreadMechanic === 'feeding') {
+          const eligible = this.captainOwnedSummons(e).filter(
+            u => alive(u) && !(u.dreadFeedUntil > this.s.time),
+          );
+          // Roll only when at least one original living servant actually
+          // receives this cast. Keep the source cooldown, recipient count,
+          // movement factor, readiness factor and initial cd unchanged.
+          const receipt =
+            a.captainSkill && a.captainProfile === 'supply-crown' &&
+            a.index === 5 && a.kind === 'circle' && eligible.length
+              ? this.worldCriticalAction(e, 'world/captain/supply-crown/5')
+              : null;
+          const duration = receipt?.critical
+            ? this._criticalWorldNative.enhance(
+                receipt, a.duration, 'hasteDuration', { max: a.cooldown },
+              )
+            : a.duration;
           e.dreadFeedCd = a.cooldown;
-          for (const u of this.captainOwnedSummons(e)) {
-            if (!alive(u) || u.dreadFeedUntil > this.s.time) continue;
-            u.dreadFeedUntil = this.s.time + a.duration;
+          for (const u of eligible) {
+            u.dreadFeedUntil = this.s.time + duration;
             u.cd = Math.min(u.cd, 0.25);
           }
           return;
         }
         if (a.dreadMechanic === 'closure') {
+          // The original warned ring is a single committed activation.
+          // Carry its World receipt into the lawful final center blast, not
+          // its independently timed ring ticks or either advertised gap.
+          if (a.captainSkill && a.captainProfile === 'supply-crown' &&
+              a.index === 4 && a.kind === 'ring' && !a.criticalExecution) {
+            const receipt = this.worldCriticalAction(e, 'world/captain/supply-crown/4');
+            if (receipt) a.criticalExecution = receipt;
+          }
           e.dreadClosure = { ...a, age: 0, radius: a.initialRadius, tick: 0 };
           return;
         }
+        // Subsoiling's two separately warned ground marks share the same
+        // immutable receipt. The second beat may inherit but never sample.
+        if (a.dreadMechanic === 'fracture' && a.captainSkill &&
+            a.captainProfile === 'supply-crown' && a.index === 0 &&
+            a.stage === 1 && a.kind === 'circle' && !a.criticalExecution) {
+          const receipt = this.worldCriticalAction(e, 'world/captain/supply-crown/0');
+          if (receipt) {
+            a.criticalExecution = receipt;
+            for (const next of e.sequence || [])
+              if (next.captainSkill && next.captainProfile === 'supply-crown' &&
+                  next.index === 0 && next.dreadMechanic === 'fracture' &&
+                  next.kind === 'circle' && next.stage === 2)
+                next.criticalExecution = receipt;
+          }
+        }
+        // The original three Evapotranspiration ground warnings are one
+        // activation. Roll at real first impact; later marks inherit the same
+        // frozen level. Steam vapor ticks are separate native consequences.
+        if (a.dreadMechanic === 'steam' && a.captainSkill &&
+            a.captainProfile === 'supply-crown' && a.index === 6 &&
+            a.stage === 1 && a.kind === 'circle' && !a.criticalExecution) {
+          const receipt = this.worldCriticalAction(e, 'world/captain/supply-crown/6');
+          if (receipt) {
+            a.criticalExecution = receipt;
+            for (const next of e.sequence || [])
+              if (next.captainSkill && next.captainProfile === 'supply-crown' &&
+                  next.index === 6 && next.dreadMechanic === 'steam' &&
+                  next.kind === 'circle' && next.stage > 1)
+                next.criticalExecution = receipt;
+          }
+        }
+        // Explicit specialist release owner, after the real cone warning.
+        // The original direct contact may crit; delegated vapor-over-time
+        // and its Slow remain wholly native and never carry this receipt.
+        if (a.dreadMechanic === 'ensiling' && a.captainSkill &&
+            a.captainProfile === 'supply-crown' && a.index === 2 &&
+            a.kind === 'cone' && !a.criticalExecution) {
+          const receipt = this.worldCriticalAction(e, 'world/captain/supply-crown/2');
+          if (receipt) a.criticalExecution = receipt;
+        }
+        // Summon vitality is applied only AFTER the original summon owner
+        // physically admits new broodlings. Never roll on a full summon cap,
+        // warning setup, reused broodling, or a failed spawn attempt.
+        const herdBefore =
+          a.dreadMechanic === 'herd' && a.captainSkill &&
+          a.captainProfile === 'supply-crown' && a.index === 3 &&
+          a.kind === 'summon'
+            ? new Set(this.captainOwnedSummons(e).map(u => u.id))
+            : null;
         const hero = this.hero,
           zone = this.zoneId,
           deaths = this.s.statistics.deaths;
         previous.resolveAttack.call(this, e);
         if (interrupted(this, hero, zone, deaths) || !alive(e) || !e.aggro) return;
+        if (herdBefore) {
+          const born = this.captainOwnedSummons(e).filter(u => !herdBefore.has(u.id));
+          if (born.length) {
+            // All lawful broodlings from ONE Nucleus Herd cast share one World
+            // release. Their base HP, damage, ownership and spawn geometry
+            // remain native on misses and when the opt-in session is absent.
+            const receipt = this.worldCriticalAction(e, 'world/captain/supply-crown/3');
+            if (receipt?.critical)
+              for (const u of born) {
+                const existing = u.maxHp;
+                const vitality = Math.max(existing, Math.round(
+                  this._criticalWorldNative.enhance(receipt, existing, 'summonVitality'),
+                ));
+                u.maxHp = vitality;
+                u.hp = Math.min(vitality, u.hp + vitality - existing);
+              }
+          }
+        }
         if (a.dreadMechanic === 'ensiling' || a.dreadMechanic === 'steam') {
           e.dreadVapors ||= [];
           e.dreadVapors.push({
@@ -353,7 +459,11 @@
           )
             continue;
           m.hits.push(key);
-          this.hitParty(u, e.damage * m.coefficient, 0, e.id);
+          this.hitParty(
+            u,
+            this.worldCriticalDamage(m.criticalExecution, e.damage * m.coefficient),
+            0, e.id,
+          );
           if (interrupted(this, hero, zone, deaths)) return;
         }
         if (distance <= step + 1e-7 || m.life <= 0) {
@@ -450,7 +560,13 @@
             delete e.dreadClosure;
             for (const u of this.combatTargets()) {
               if (u.hp <= 0 || d(u, ring) > ring.finalBlastRadius || !this.line(ring, u)) continue;
-              const landed = this.hitParty(u, e.damage * ring.finalCoefficient, 0, e.id);
+              const landed = this.hitParty(
+                u,
+                this.worldCriticalDamage(
+                  ring.criticalExecution, e.damage * ring.finalCoefficient,
+                ),
+                0, e.id,
+              );
               if (interrupted(this, hero, zone, deaths)) return true;
               if (landed) this.enemyVfxResolvedContact?.(e, ring, u);
             }

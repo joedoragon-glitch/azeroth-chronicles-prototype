@@ -1178,7 +1178,7 @@
             if (guard) e.royalPrerogativeReadyAt = this.s.time + 18;
             const landed =
               p.effect === 'interrupt'
-                ? this.interruptEnemyAction(victim, p.interruptAction)
+                ? this.interruptEnemyAction(victim, p.interruptAction, p.criticalExecution)
                 : this.damage(
                     victim,
                     p.damage,
@@ -1210,10 +1210,7 @@
               const pet = this.s.party.find((unit) => unit.id === p.source && unit.type === 'pet');
               if (pet)
                 this.petSkillContact(
-                  pet,
-                  victim,
-                  p.petSkillSlot,
-                  1,
+                  pet, victim, p.petSkillSlot, 1,
                   p.criticalExecution || null,
                   { x: p.launchX ?? pet.x, y: p.launchY ?? pet.y },
                 );

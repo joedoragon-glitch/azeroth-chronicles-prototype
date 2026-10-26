@@ -195,6 +195,26 @@
         validateName(s.hero.regnalName);
         validateName(s.hero.customWeaponName);
         validateName(s.hero.customArmorName);
+        // Legacy v4 saves simply start with no collected Codices. Claimed
+        // entries cannot be injected for other dungeons or overwritten by bad
+        // types; the original save version remains exactly 4.
+        s.criticalCodices ??= {};
+        if (!s.criticalCodices || typeof s.criticalCodices !== 'object' ||
+            Array.isArray(s.criticalCodices) ||
+            Object.entries(s.criticalCodices).some(([id, claimed]) =>
+              !Object.hasOwn(R.criticalCodices, id) || claimed !== true))
+          throw Error('Invalid critical Codex claims');
+        // Independent Party and World streams are optional until opt-in.
+        // Saving a game mid-combat stores RNG state, not transient receipts.
+        if (s.criticalStreams !== undefined) {
+          const state = s.criticalStreams;
+          if (!state || typeof state !== 'object' || Array.isArray(state) ||
+              Object.keys(state).length !== 2 ||
+              !Object.hasOwn(state, 'party') || !Object.hasOwn(state, 'world') ||
+              Object.values(state).some((v) =>
+                !Number.isInteger(v) || v < 0 || v > 0xffffffff))
+            throw Error('Invalid independent critical RNG state');
+        }
         if (s.hero.regnalName !== undefined && !s.throneClaimed)
           throw Error('Dark Lord name before claiming the throne');
         if (s.talentBalanceVersion === undefined) {
@@ -1230,6 +1250,7 @@
           for (const n of [...z.npcs, ...z.nodes, ...z.buildings])
             if (c.blocked(n.x, n.y, z.id)) Object.assign(n, c.safe(n.x, n.y, z.id));
           c.authoredPlaces(z);
+          c.ensureCriticalCodex(z);
           c.migrateThornPatrol(z);
           c.migrateCinderInspection(z);
           c.clearVeraRepairs(z);

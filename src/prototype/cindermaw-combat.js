@@ -485,6 +485,23 @@
           });
         return result;
       }
+      cinderCriticalAction(e, a) {
+        if (!isMinister(e) || !a || a.index < 0 || a.index > 6 ||
+            a.cinderMechanic !== R.attacks.cindermaw[a.index]?.cinderMechanic ||
+            !this._criticalWorldNative?.enabled) return null;
+        if (a.criticalExecution) return a.criticalExecution;
+        const receipt = this.worldCriticalAction(e, 'world/boss/cindermaw/' + a.index);
+        if (receipt) {
+          a.criticalExecution = receipt;
+          // Repeated warned marks within the same original move inherit the
+          // first release, rather than creating fresh rolls at each impact.
+          for (const next of e.sequence || []) {
+            if (next.index !== a.index || next.cinderMechanic !== a.cinderMechanic) break;
+            next.criticalExecution = receipt;
+          }
+        }
+        return receipt;
+      }
       resolveAttack(e) {
         const a = e.telegraph;
         if (a?.cinderDelegate) {
@@ -492,6 +509,8 @@
           if (!alive(owner) || !owner.cinderDelegation || e.slow > 0) return;
           e.motion = {
             ...a,
+            ...(owner.cinderDelegation.criticalExecution
+              ? { criticalExecution: owner.cinderDelegation.criticalExecution } : {}),
             cinderMotion: 'delegate',
             target: { x: a.x, y: a.y },
             speed: R.attacks.cindermaw[5].rushSpeed,
@@ -501,10 +520,32 @@
           };
           return;
         }
+        if (isMinister(e) && a?.kind === 'summon' && a.index === 6) {
+          // A Ministry responder critical is decided only after real summons
+          // were admitted. The generic boss owner retains the exact plan,
+          // population cap and cooldown; setup summons never consume RNG.
+          const before = new Set(this.bossOwnedSummons(e).map((u) => u.id));
+          const result = previous.resolveAttack.call(this, e);
+          const born = this.bossOwnedSummons(e).filter((u) => !before.has(u.id));
+          if (born.length) {
+            const receipt = this.cinderCriticalAction(e, a);
+            if (receipt?.critical)
+              for (const u of born) {
+                const hp = u.maxHp;
+                const enhanced = Math.max(hp, Math.round(
+                  this._criticalWorldNative.enhance(receipt, hp, 'summonVitality'),
+                ));
+                u.maxHp = enhanced;
+                u.hp = Math.min(enhanced, u.hp + enhanced - hp);
+              }
+          }
+          return result;
+        }
         if (!isMinister(e) || !a?.cinderMechanic || a.rogueMove)
           return previous.resolveAttack.call(this, e);
         if (a.cinderMechanic === 'cordon') {
           if (!Number.isFinite(a.gapAngle) || !Number.isFinite(a.nextGap)) return;
+          this.cinderCriticalAction(e, a);
           e.cinderCordon = {
             ...a,
             elapsed: 0,
@@ -515,6 +556,7 @@
             warning: false,
           };
         } else if (a.cinderMechanic === 'distraint') {
+          this.cinderCriticalAction(e, a);
           e.motion = {
             ...a,
             cinderMotion: 'distraint',
@@ -524,11 +566,15 @@
             hits: [],
           };
         } else if (a.cinderMechanic === 'protection') {
-          e.cinderProtectionCast = { until: this.s.time + a.duration, reactions: 0, last: {} };
+          const protectedAllies = this.cinderAllies(e, a.radius);
+          if (protectedAllies.length) this.cinderCriticalAction(e, a);
+          const duration = this.worldBossEffect(a, a.duration, 'wardDuration');
+          e.cinderProtectionCast = { until: this.s.time + duration, reactions: 0, last: {} };
           e.cinderProtectionCd = a.protectionCooldown;
-          for (const u of this.cinderAllies(e, a.radius))
-            u.cinderGuard = { owner: e.id, until: this.s.time + a.duration };
+          for (const u of protectedAllies)
+            u.cinderGuard = { owner: e.id, until: this.s.time + duration };
         } else if (a.cinderMechanic === 'seals') {
+          this.cinderCriticalAction(e, a);
           return previous.resolveAttack.call(this, e);
         } else if (a.cinderMechanic === 'equalisation') {
           const target =
@@ -540,8 +586,11 @@
             deaths = this.s.statistics.deaths;
           if (!target || target.hp <= 0 || dist(target, a) > a.radius || !this.line(e, target))
             return;
+          this.cinderCriticalAction(e, a);
           const hp = target.hp;
-          this.hitParty(target, e.damage * a.coefficient, 0, e.id);
+          this.hitParty(
+            target, this.worldBossEffect(a, e.damage * a.coefficient, 'damage'), 0, e.id,
+          );
           if (interrupted(this, hero, zone, deaths) || !alive(e) || !e.aggro) return;
           const actual = Math.max(0, hp - target.hp);
           if (!actual) return;
@@ -589,6 +638,8 @@
             unit.path = [];
             unit.routeAge = 0;
           }
+          const receipt = this.cinderCriticalAction(e, a);
+          if (receipt) e.cinderDelegation.criticalExecution = receipt;
         } else if (a.cinderMechanic === 'finisher') {
           if (!this.validCinderDelegation(e)) {
             this.stopCinderDelegation(e);
@@ -596,6 +647,8 @@
           }
           e.motion = {
             ...a,
+            ...(e.cinderDelegation.criticalExecution
+              ? { criticalExecution: e.cinderDelegation.criticalExecution } : {}),
             cinderMotion: 'finisher',
             target: { x: a.x, y: a.y },
             speed: R.attacks.cindermaw[1].speed,
@@ -776,7 +829,9 @@
           c.burns[key] = this.s.time;
           const landed = this.hitParty(
             unit,
-            e.damage * (final ? p.blastCoefficient : p.coefficient),
+            final
+              ? this.worldBossEffect(c, e.damage * p.blastCoefficient, 'damage')
+              : e.damage * p.coefficient,
             0,
             e.id,
           );
@@ -840,7 +895,9 @@
             continue;
           m.hits.push(key);
           if (m.cinderMotion === 'distraint') this.cinderStripTemporaryDefense(unit);
-          this.hitParty(unit, e.damage * m.coefficient, 0, e.id);
+          this.hitParty(
+            unit, this.worldBossEffect(m, e.damage * m.coefficient, 'damage'), 0, e.id,
+          );
           if (interrupted(this, hero, zone, deaths)) return;
         }
         if (dist(e, m.target) <= 8 || m.life <= 0) {
@@ -905,15 +962,18 @@
       summonBossAdds(e, plan, cap) {
         const before = new Set(this.zone().enemies.map((u) => u.id)),
           result = previous.summonBossAdds.call(this, e, plan, cap);
-        if (isMinister(e))
-          for (const u of this.bossOwnedSummons(e))
-            if (!before.has(u.id))
-              u.name =
-                e.form !== 'true'
-                  ? 'Ministry responder'
-                  : u.trueSummonRole === 'captain'
-                    ? 'TRUE Ministry responder Ringleader'
-                    : 'TRUE-bound Ministry responder';
+        if (isMinister(e)) {
+          const born = this.bossOwnedSummons(e).filter((u) => !before.has(u.id));
+          for (const u of born)
+            u.name =
+              e.form !== 'true'
+                ? 'Ministry responder'
+                : u.trueSummonRole === 'captain'
+                  ? 'TRUE Ministry responder Ringleader'
+                  : 'TRUE-bound Ministry responder';
+          // This helper only preserves responder identity. Critical potency
+          // belongs to the original action owner after admitted spawns exist.
+        }
         return result;
       }
     }

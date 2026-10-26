@@ -97,6 +97,9 @@
         treasuryRecovery: {},
         quests: {},
         discovered: {},
+        // Earned optional manuals are permanent campaign knowledge, not items.
+        // Crit chance stays OFF without an explicit native Party session.
+        criticalCodices: {},
         gathered: {},
         tributeRemainder: 0,
         gatheringTarget: null,
@@ -469,6 +472,7 @@
       if (!targets.length) return false;
       const multiplier = this.enemyHealMultiplier(e);
       let healed = 0,
+        criticalReceipt = null,
         allyTreated = false,
         selfTreated = false,
         leaderTreated = false;
@@ -494,11 +498,15 @@
               ? (target.maxHp - target.hp) * cfg.captain.missingFraction
               : Math.min(target.maxHp - target.hp, target.maxHp * cfg.fraction * multiplier);
         if (!(amount > 0) || !Number.isFinite(amount)) continue;
+        // The first actual eligible treatment commits the whole cast.
+        // A single immutable World decision is shared by every original
+        // recipient; neither another recipient nor an HoT tick rerolls.
+        if (healed === 0) criticalReceipt = this.worldCriticalRelease(e, 'heal');
         target.supportHeal = {
           source: e.id,
           skill,
           remaining: amount,
-          seconds: duration,
+          seconds: this.worldCriticalHealSeconds(criticalReceipt, duration),
           // Captain healing never requires engagement: a captain can be
           // wounded while idle, enter combat, or leave combat mid-treatment.
           // Captain-origin ordinary healing likewise finishes without aggro.
@@ -3117,6 +3125,26 @@
             return false;
           }
           return this.rescue(npc.family);
+        case 'critical-codex': {
+          const side = this.sideDungeon();
+          const def = R.criticalCodices?.[npc.sideCodex];
+          if (!side || side.id !== npc.sideCodex || !def ||
+              npc.id !== 'critical-codex-' + side.id ||
+              !this.zone().npcs.includes(npc)) return false;
+          this.s.criticalCodices ||= {};
+          if (this.s.criticalCodices[side.id] === true) {
+            this.say(def.name + ' has already been studied.');
+            this.say(def.description);
+            return true;
+          }
+          this.s.criticalCodices[side.id] = true;
+          const learned = this.criticalCodexCount();
+          this.say('Learned ' + def.name + ' · ' + learned + '/5 Codices of the Unforeseen.');
+          this.say(def.description);
+          this.notice(def.name + ' · critical mastery learned', 5.5);
+          this.event('criticalCodex', { id: side.id, count: learned, name: def.name });
+          return true;
+        }
         case 'supplier':
           return this.unloadCompanyTribute(npc) !== null;
         case 'rest':
@@ -6092,6 +6120,14 @@
           move.y = target.y;
         }
       }
+      // The actual resolved maneuver owns one World decision. Invalid
+      // mobile/reach/LOS casts returned above without sampling. Boss and
+      // captain Rogue specials use separate delegated release owners later.
+      const criticalReceipt =
+        e.type !== 'boss' && !e.captain && !e.roomCaptain
+          ? this.worldCriticalAction(e,
+              move.rogueSignature ? 'world/rogue/signature' : 'world/rogue/basic')
+          : null;
       if (!move.rogueSignature) {
         // The slab is a physical lane: dodging the originally marked target
         // must not cancel contact with other party members still inside it.
@@ -6111,7 +6147,9 @@
             const destination = { x: unit.x + side * 100, y: unit.y };
             const landed = this.hitParty(
               unit,
-              this.weakenedEnemyDamage(e) * move.coefficient,
+              this.worldCriticalDamage(
+                criticalReceipt, this.weakenedEnemyDamage(e) * move.coefficient,
+              ),
               0,
               e.family === 'cindermaw' ? e.id : undefined,
             );
@@ -6152,7 +6190,9 @@
         }
         let landedAny = false;
         for (const victim of victims) {
-          if (!this.hitParty(victim, this.weakenedEnemyDamage(e) * move.coefficient, 0, e.id))
+          if (!this.hitParty(victim, this.worldCriticalDamage(
+            criticalReceipt, this.weakenedEnemyDamage(e) * move.coefficient,
+          ), 0, e.id))
             continue;
           landedAny = true;
           if (
@@ -6221,7 +6261,9 @@
         if (
           !this.hitParty(
             unit,
-            this.weakenedEnemyDamage(e) * move.coefficient,
+            this.worldCriticalDamage(
+              criticalReceipt, this.weakenedEnemyDamage(e) * move.coefficient,
+            ),
             0,
             e.family === 'cindermaw' ? e.id : undefined,
           )
@@ -6863,6 +6905,9 @@
               angle = Math.atan2(a.y - e.y, a.x - e.x),
               pace = R.rangedEnemyCombat;
             if (this.enemyRangedLine(e, a)) {
+              // Aim is not a release. Sample once here, only when the real
+              // ranged shot launches; collision, dodges and armor stay native.
+              const criticalReceipt = this.worldCriticalRelease(e, 'ranged');
               const style = e.projectileStyle || 'arrow';
               const shot = {
                 id: 'projectile-' + this.s.nextId++,
@@ -6872,7 +6917,10 @@
                 dy: Math.sin(angle),
                 speed: (e.shotSpeed || 260) * pace.projectileMultiplier,
                 life: 2.5 / pace.projectileMultiplier,
-                damage: this.weakenedEnemyDamage(e) * (e.hybrid ? 0.85 : 1),
+                damage: this.worldCriticalDamage(
+                  criticalReceipt, this.weakenedEnemyDamage(e) * (e.hybrid ? 0.85 : 1),
+                ),
+                ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
                 style,
                 slow: e.projectileSlow || 0,
                 manaDrain: R.manaBalance.rangedDrain[e.species] || 0,

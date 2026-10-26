@@ -9,6 +9,12 @@
       tacticMilestones(rank) {
         return Math.floor(Math.max(1, rank || 1) / 2);
       }
+      // Opt-in action-specific critical enhancement; unchanged OFF mechanics.
+      criticalHeroValue(receipt, original, lever, bounds) {
+        return receipt?.critical
+          ? this._criticalPartyNative.enhance(receipt, original, lever, bounds)
+          : original;
+      }
       mageSilenceActive(unit) {
         const field = this.hero.silenceField;
         return (
@@ -18,13 +24,13 @@
           dist(unit, field) <= field.radius
         );
       }
-      weakenEnemy(e, rank) {
+      weakenEnemy(e, rank, criticalReceipt = null) {
         const cfg = R.heroTactics.paladin.weaken,
           steps = this.tacticMilestones(rank);
         const stillWeakened = (e.weakenUntil || 0) > this.s.time;
         e.weakenUntil = Math.max(
           stillWeakened ? e.weakenUntil : 0,
-          this.s.time + cfg.duration + steps * cfg.durationStep,
+          this.s.time + this.criticalHeroValue(criticalReceipt, cfg.duration + steps * cfg.durationStep, 'weakenDuration'),
         );
         e.weakenFraction = Math.max(
           stillWeakened ? e.weakenFraction || 0 : 0,
@@ -89,7 +95,7 @@
           .sort((a, b) => dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b));
         return targets.find((e) => e.id === selected?.id) || targets[0] || null;
       }
-      interruptEnemyAction(enemy, action) {
+      interruptEnemyAction(enemy, action, criticalReceipt = null) {
         const cfg = R.heroTactics.mage.interrupt;
         if (!enemy.telegraph && !enemy.rangedAim) return false;
         if (action && enemy.telegraph !== action && enemy.rangedAim !== action) return false;
@@ -109,12 +115,13 @@
                 : { family: enemy.family },
             );
           } else {
-            enemy.cd = Math.max(enemy.cd || 0, cfg.enemyRecovery);
-            enemy.specialCd = Math.max(enemy.specialCd || 0, cfg.enemyRecovery);
+            const recovery = this.criticalHeroValue(criticalReceipt, cfg.enemyRecovery, 'cooldownDebt');
+            enemy.cd = Math.max(enemy.cd || 0, recovery);
+            enemy.specialCd = Math.max(enemy.specialCd || 0, recovery);
           }
         } else if (enemy.rangedAim) {
           enemy.rangedAim = null;
-          enemy.cd = Math.max(enemy.cd || 0, cfg.enemyRecovery);
+          enemy.cd = Math.max(enemy.cd || 0, this.criticalHeroValue(criticalReceipt, cfg.enemyRecovery, 'cooldownDebt'));
         }
         return true;
       }
@@ -149,7 +156,7 @@
       }
       // Ranger ultimates distribute real arrows across a bounded number of
       // enemies rather than recreating the former shared immunity attack.
-      launchHuntArrow(enemy, damage, charged = false, delay = 0, receipt = null) {
+      launchHuntArrow(enemy, damage, charged = false, delay = 0, receipt = null, criticalReceipt = null) {
         const hero = this.hero,
           distance = Math.max(1, dist(hero, enemy));
         this.s.projectiles.push({
@@ -162,6 +169,7 @@
           damage,
           source: 'hero',
           slot: 8,
+          ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
           style: 'arrow',
           speed: 650,
           delay,
@@ -200,7 +208,7 @@
             .sort((a, b) => dist(a, target) - dist(b, target) || this.idOrder(a, b)),
         ].slice(0, count);
       }
-      castMageChain(target, scale, steps, power, charged = false, receipt = null) {
+      castMageChain(target, scale, steps, power, charged = false, receipt = null, criticalReceipt = null) {
         if (!target) return false;
         const cfg = charged ? R.classUltimates.mage.chargedChain : R.classUltimates.mage.chain;
         const radius = cfg.radius + (cfg.radiusStep || 0) * steps;
@@ -215,7 +223,7 @@
                 ? cfg.secondaryDamage
                 : cfg.tertiaryDamage || cfg.extraDamage;
           if (
-            this.damage(enemy, power * coefficient * scale, 'hero', {
+            this.damage(enemy, this.criticalHeroValue(criticalReceipt, power * coefficient * scale, 'damage'), 'hero', {
               area: true,
               ...(receipt ? { encountersAtStart: receipt } : {}),
             })
@@ -255,7 +263,7 @@
           });
         return true;
       }
-      castHeroUltimate(target, scale, steps, power, charged = false, receipt = null) {
+      castHeroUltimate(target, scale, steps, power, charged = false, receipt = null, criticalReceipt = null) {
         const hero = this.hero;
         const cfg = R.classUltimates[hero.class][charged ? 'charged' : 'normal'];
         const radius = cfg.radius + (cfg.radiusStep || 0) * steps;
@@ -270,10 +278,11 @@
             for (let n = 0; n < arrowsPerTarget; n++) {
               this.launchHuntArrow(
                 foe,
-                power * cfg.damagePerArrow * scale,
+                this.criticalHeroValue(criticalReceipt, power * cfg.damagePerArrow * scale, 'damage'),
                 charged,
                 index * 0.04 + n * 0.1,
                 receipt,
+                criticalReceipt,
               );
               hits++;
             }
@@ -308,7 +317,7 @@
                   ? cfg.primaryDamage
                   : cfg.splashDamage;
             if (
-              !this.damage(foe, power * coefficient * scale, 'hero', {
+              !this.damage(foe, this.criticalHeroValue(hero.class === 'mage' && !charged ? criticalReceipt : null, power * coefficient * scale, 'damage'), 'hero', {
                 area: true,
                 ...(receipt ? { encountersAtStart: receipt } : {}),
               })
@@ -318,14 +327,14 @@
               this.fractureEnemy(
                 foe,
                 cfg.fracture + steps * cfg.fractureStep,
-                cfg.fractureDuration,
+                this.criticalHeroValue(criticalReceipt, cfg.fractureDuration, 'vulnerabilityDuration'),
               );
             if (hero.class === 'paladin' && charged && cfg.weaken)
               this.weakenEnemy(foe, hero.skills[7]);
             hits++;
           }
           if (hero.class === 'paladin') {
-            hero.hp = Math.min(hero.maxHp, hero.hp + hero.maxHp * cfg.heal);
+            hero.hp = Math.min(hero.maxHp, hero.hp + this.criticalHeroValue(charged ? null : criticalReceipt, hero.maxHp * cfg.heal, 'healAmount'));
             const living = [
               hero,
               ...this.activeLivingParty().filter(
@@ -333,7 +342,7 @@
               ),
             ];
             for (const ally of living) {
-              const until = this.s.time + cfg.wardDuration + cfg.wardStep * steps;
+              const until = this.s.time + this.criticalHeroValue(charged ? criticalReceipt : null, cfg.wardDuration + cfg.wardStep * steps, 'wardDuration');
               const stillActive = (ally.wardUntil || 0) > this.s.time;
               ally.wardUntil = Math.max(ally.wardUntil || 0, until);
               ally.wardReduction = Math.max(
@@ -383,7 +392,7 @@
           });
         return true;
       }
-      castChargedAdvanced(slot, target, rank, scale, steps, power, encountersAtStart) {
+      castChargedAdvanced(slot, target, rank, scale, steps, power, encountersAtStart, criticalReceipt = null) {
         const cfg = R.advancedCharges?.[slot]?.[this.hero.class];
         if (!cfg) return false;
         const hero = this.hero;
@@ -449,6 +458,7 @@
             speed: style === 'beam' ? 1000 : 620,
             style,
             charged: true,
+            ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             ...(style === 'beam' ? { originX: hero.x, originY: hero.y } : {}),
             ...(encountersAtStart ? { encountersAtStart } : {}),
             ...extra,
@@ -474,13 +484,13 @@
             if (hero.class === 'ranger') {
               launch(enemy, power * cfg.damage * scale, 'arrow', {
                 area: true,
-                slow: cfg.slow + cfg.slowStep * steps,
+                slow: this.criticalHeroValue(criticalReceipt, cfg.slow + cfg.slowStep * steps, 'slowDuration'),
               });
               hits++;
             } else if (deal(enemy, power * cfg.damage * scale, true)) {
-              if (hero.class === 'paladin' && cfg.weaken) this.weakenEnemy(enemy, rank);
+              if (hero.class === 'paladin' && cfg.weaken) this.weakenEnemy(enemy, rank, criticalReceipt);
               if (hero.class === 'mage' && enemy.hp > 0)
-                this.shieldPush(enemy, cfg.push + cfg.pushStep * steps);
+                this.shieldPush(enemy, this.criticalHeroValue(criticalReceipt, cfg.push + cfg.pushStep * steps, 'pushDistance'));
               hits++;
             }
           }
@@ -501,14 +511,14 @@
               .enemies.filter((e) => eligible(e, hero, cfg.radius + cfg.radiusStep * steps))
               .sort((a, b) => this.idOrder(a, b))) {
               if (deal(enemy, power * cfg.damage * scale, true)) {
-                if (enemy.hp > 0) this.shieldPush(enemy, cfg.push + cfg.pushStep * steps);
+                if (enemy.hp > 0) this.shieldPush(enemy, this.criticalHeroValue(criticalReceipt, cfg.push + cfg.pushStep * steps, 'pushDistance'));
                 hits++;
               }
             }
             pulse('vanguard-impact', hits, start.x, start.y, cfg.radius + cfg.radiusStep * steps);
           } else if (hero.class === 'mage') {
             launch(target, power * cfg.damage * scale, 'beam', {
-              slow: cfg.slow + cfg.slowStep * steps,
+              slow: this.criticalHeroValue(criticalReceipt, cfg.slow + cfg.slowStep * steps, 'slowDuration'),
             });
             this.event('charged', {
               actor: 'hero',
@@ -525,7 +535,9 @@
                 delay: j * 0.08,
                 rapid: true,
                 chargedBurst: j === cfg.arrows - 1,
-                push: j === cfg.arrows - 1 ? cfg.push + cfg.pushStep * steps : 0,
+                push: j === cfg.arrows - 1
+                  ? this.criticalHeroValue(criticalReceipt, cfg.push + cfg.pushStep * steps, 'pushDistance')
+                  : 0,
               });
             this.event('charged', {
               actor: 'hero',
@@ -541,17 +553,17 @@
         }
         if (slot === 7) {
           if (hero.class === 'mage')
-            return this.castMageChain(target, scale, steps, power, true, encountersAtStart);
+            return this.castMageChain(target, scale, steps, power, true, encountersAtStart, criticalReceipt);
           if (hero.class === 'ranger') {
             launch(target, power * cfg.damage * scale, 'arrow', {
               piercing: true,
-              slow: cfg.slow + cfg.slowStep * steps,
+              slow: this.criticalHeroValue(criticalReceipt, cfg.slow + cfg.slowStep * steps, 'slowDuration'),
             });
           } else {
             let hits = 0;
             for (const enemy of foes)
               if (deal(enemy, power * cfg.damage * scale, true)) {
-                if (hero.class === 'paladin') this.weakenEnemy(enemy, rank);
+                if (hero.class === 'paladin') this.weakenEnemy(enemy, rank, criticalReceipt);
                 hits++;
               }
             pulse(hero.class === 'paladin' ? 'oath-strike' : 'sigil-storm', hits);
@@ -559,7 +571,7 @@
           return true;
         }
         if (slot === 8)
-          return this.castHeroUltimate(target, scale, steps, power, true, encountersAtStart);
+          return this.castHeroUltimate(target, scale, steps, power, true, encountersAtStart, criticalReceipt);
         return false;
       }
       nextBasicCombo(targetId) {
@@ -1336,6 +1348,18 @@
         if (target && requiresTarget) this.s.heroTarget = selected?.id || target.id;
         if (dashTo) this.move(this.hero, dashTo, dist(this.hero, dashTo) + 1, 1);
         const power = this.power();
+        // Native Stage 2 hook: only Skill 1 is wired at this checkpoint.
+        // No hook exists in production until an explicit, tested session is
+        // attached; queued/cancelled attempts return before this commitment.
+        const criticalReceipt =
+          slot >= 1 && slot <= 8 && this._criticalPartyNative
+            ? this._criticalPartyNative.release(
+                this,
+                'hero/' + this.hero.class + '/' +
+                  (automatic ? 'auto' : slot + (isCharged ? '-charged' : '-tap')),
+                'hero',
+              )
+            : null;
         // Observation only: presentation never authorizes a cast or changes its resolver.
         this.event('heroSkillCast', {
           actor: 'hero',
@@ -1352,9 +1376,9 @@
           targetY: target?.y,
           rank,
         });
-        if (!isCharged && slot === 8) return this.castHeroUltimate(target, scale, steps, power);
+        if (!isCharged && slot === 8) return this.castHeroUltimate(target, scale, steps, power, false, null, criticalReceipt);
         if (!isCharged && slot === 7 && this.hero.class === 'mage')
-          return this.castMageChain(target, scale, steps, power);
+          return this.castMageChain(target, scale, steps, power, false, null, criticalReceipt);
         if (isCharged && slot >= 5 && slot <= 8)
           return this.castChargedAdvanced(
             slot,
@@ -1364,10 +1388,14 @@
             steps,
             power,
             encountersAtStart,
+            criticalReceipt,
           );
         if (!isCharged && slot === 1 && !automatic) {
           const d = Math.max(1, dist(this.hero, target)),
-            damage = (power + 12) * scale * R.chargedSkills.basicDamageMultiplier,
+            tapDamage = (power + 12) * scale * R.chargedSkills.basicDamageMultiplier,
+            damage = criticalReceipt?.critical
+              ? this._criticalPartyNative.enhance(criticalReceipt, tapDamage, 'damage')
+              : tapDamage,
             dx = (target.x - this.hero.x) / d,
             dy = (target.y - this.hero.y) / d;
           this.engage(target);
@@ -1396,6 +1424,7 @@
               style: 'beam',
               slot,
               charged: false,
+              ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               ...(encountersAtStart ? { encountersAtStart } : {}),
             });
             this.event('projectileLaunch', {
@@ -1427,7 +1456,8 @@
                 style: 'arrow',
                 slot,
                 charged: false,
-                ...(encountersAtStart ? { encountersAtStart } : {}),
+                ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
+              ...(encountersAtStart ? { encountersAtStart } : {}),
                 rapid: true,
                 chargedBurst: false,
               });
@@ -1461,6 +1491,7 @@
               style: 'holy',
               slot,
               charged: false,
+              ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               ...(encountersAtStart ? { encountersAtStart } : {}),
             });
             this.event('projectileLaunch', {
@@ -1499,7 +1530,12 @@
               from,
               angle,
               targetId: target.id,
-              damage: (power + 12) * scale,
+              damage: criticalReceipt?.critical
+                ? this._criticalPartyNative.enhance(
+                    criticalReceipt, (power + 12) * scale, 'damage',
+                  )
+                : (power + 12) * scale,
+              ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               encountersAtStart,
             };
           this.engage(target);
@@ -1575,10 +1611,8 @@
                     : false;
           this.engage(target);
           if (this.hero.class === 'ranger') {
-            // Pinning Volley is a bow volley, not a laser. The original
-            // corridor chooses the same eligible foes, but each selected foe
-            // now receives a real arrow which can only hit after traversing
-            // its physical flight and passing ordinary wall/contact checks.
+            // #464 physical Pinning Volley: preserve selection, original arrow
+            // count and wall/contact checks. No critical status before impact.
             const foes = this.zone()
               .enemies.filter((e) => e.hp > 0 && !e.neutral && inside(e) && this.line(this.hero, e))
               .sort((a, b) => this.idOrder(a, b));
@@ -1599,29 +1633,22 @@
                 charged: true,
                 area: true,
                 slow: def.slow || 0,
-                rangerVolleySlow:
+                rangerVolleySlow: this.criticalHeroValue(
+                  criticalReceipt,
                   R.heroTactics.ranger.volley.slow +
-                  steps * R.heroTactics.ranger.volley.slowStep,
+                    steps * R.heroTactics.ranger.volley.slowStep,
+                  'slowDuration',
+                ),
+                ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
                 ...(encountersAtStart ? { encountersAtStart } : {}),
               });
             }
             this.event('chargedArea', {
-              slot,
-              class: 'ranger',
-              actor: 'hero',
-              source: 'hero',
-              effect: def.effect,
-              shape: 'line',
-              projectileVolley: true,
-              x: from.x,
-              y: from.y,
-              fromX: from.x,
-              fromY: from.y,
-              angle,
-              range: def.range || 0,
-              halfWidth: def.halfWidth || 0,
-              hits: 0,
-              arrows: foes.length,
+              slot, class: 'ranger', actor: 'hero', source: 'hero',
+              effect: def.effect, shape: 'line', projectileVolley: true,
+              x: from.x, y: from.y, fromX: from.x, fromY: from.y,
+              angle, range: def.range || 0, halfWidth: def.halfWidth || 0,
+              hits: 0, arrows: foes.length,
             });
             return true;
           }
@@ -1631,12 +1658,20 @@
             .sort((a, b) => this.idOrder(a, b))) {
             if (this.damage(e, damage, 'hero', { area: true, encountersAtStart })) {
               hits++;
-              if (def.slow) this.applySlow(e, def.slow);
-              if (this.hero.class === 'paladin') this.weakenEnemy(e, rank);
+              if (def.slow)
+                this.applySlow(e, this.criticalHeroValue(
+                  this.hero.class === 'mage' ? criticalReceipt : null,
+                  def.slow, 'slowDuration',
+                ));
+              if (this.hero.class === 'paladin') this.weakenEnemy(e, rank, criticalReceipt);
               if (this.hero.class === 'ranger')
                 this.applySlow(
                   e,
-                  R.heroTactics.ranger.volley.slow + steps * R.heroTactics.ranger.volley.slowStep,
+                  this.criticalHeroValue(
+                    criticalReceipt,
+                    R.heroTactics.ranger.volley.slow + steps * R.heroTactics.ranger.volley.slowStep,
+                    'slowDuration',
+                  ),
                 );
             }
           }
@@ -1682,7 +1717,9 @@
                   ? Math.atan2(facing.y - this.hero.y, facing.x - this.hero.x)
                   : Math.atan2(this.formationHeading?.y || 1, this.formationHeading?.x || 0),
                 reach = cfg.bash.reach + steps * cfg.bash.reachStep,
-                push = cfg.bash.push + steps * cfg.bash.pushStep,
+                push = this.criticalHeroValue(
+                  criticalReceipt, cfg.bash.push + steps * cfg.bash.pushStep, 'pushDistance',
+                ),
                 delta = (a, b) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
               let hits = 0;
               for (const enemy of this.zone()
@@ -1726,7 +1763,9 @@
                 hits,
               });
             } else {
-              this.hero.shieldStance = cfg.shield.duration;
+              this.hero.shieldStance = this.criticalHeroValue(
+                criticalReceipt, cfg.shield.duration, 'wardDuration',
+              );
               this.hero.shieldRank = rank;
               this.resetBasicCombo();
               this.event('spell', {
@@ -1746,7 +1785,9 @@
                 y: this.hero.y,
                 zone: this.zoneId,
                 radius: cfg.radius + steps * cfg.radiusStep,
-                until: this.s.time + cfg.duration + steps * cfg.durationStep,
+                until: this.s.time + this.criticalHeroValue(
+                  criticalReceipt, cfg.duration + steps * cfg.durationStep, 'silenceDuration',
+                ),
               };
               this.event('chargedArea', {
                 actor: 'hero',
@@ -1769,10 +1810,13 @@
               this.launchTargetedHeroSkill(enemy, 3, 0, 'magic', {
                 effect: 'interrupt',
                 interruptAction: enemy.telegraph || enemy.rangedAim,
+                ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               });
             }
           } else {
-            const amount = (45 + power * 0.5) * scale;
+            const amount = this.criticalHeroValue(
+              criticalReceipt, (45 + power * 0.5) * scale, 'healAmount',
+            );
             if (isCharged) {
               const targets = [this.hero, ...this.activeLivingParty()].filter(
                 (u) => u.hp > 0 && u.hp < u.maxHp,
@@ -1819,7 +1863,9 @@
             if (isCharged) {
               const rally = R.heroTactics.ranger.rally,
                 radius = rally.radius + rally.radiusStep * steps,
-                until = this.s.time + rally.duration + rally.durationStep * steps,
+                until = this.s.time + this.criticalHeroValue(
+                  criticalReceipt, rally.duration + rally.durationStep * steps, 'hasteDuration',
+                ),
                 movement = rally.movementBonus + rally.movementStep * steps,
                 attackSpeed = rally.attackSpeedBonus + rally.attackSpeedStep * steps;
               let allies = 0;
@@ -1854,7 +1900,9 @@
                 hits: allies,
               });
             } else {
-              this.hero.haste = Math.min(6, 4 + 0.25 * (rank - 1));
+              this.hero.haste = Math.min(
+                6, this.criticalHeroValue(criticalReceipt, 4 + 0.25 * (rank - 1), 'hasteDuration'),
+              );
               this.event('spell', {
                 actor: 'hero',
                 class: 'ranger',
@@ -1891,7 +1939,10 @@
               if (!isCharged) {
                 this.launchTargetedHeroSkill(enemy, 4, damage, 'holy', {
                   effect: 'judgment',
-                  tauntDuration: advanced.taunt + steps * advanced.tauntStep,
+                  tauntDuration: this.criticalHeroValue(
+                    criticalReceipt, advanced.taunt + steps * advanced.tauntStep, 'tauntDuration',
+                  ),
+                  ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
                 });
                 continue;
               }
@@ -1900,8 +1951,12 @@
                 // boss basic-target provocation is deliberately short-lived.
                 const tauntDuration =
                   enemy.type === 'boss'
-                    ? Math.min(2.5, advanced.taunt + steps * advanced.tauntStep)
-                    : advanced.taunt + steps * advanced.tauntStep;
+                    ? Math.min(2.5, this.criticalHeroValue(
+                        criticalReceipt, advanced.taunt + steps * advanced.tauntStep, 'tauntDuration',
+                      ))
+                    : this.criticalHeroValue(
+                        criticalReceipt, advanced.taunt + steps * advanced.tauntStep, 'tauntDuration',
+                      );
                 enemy.tauntUntil = Math.max(enemy.tauntUntil || 0, this.s.time + tauntDuration);
                 hits++;
               }
@@ -1950,7 +2005,11 @@
                 this.launchTargetedHeroSkill(enemy, 4, damage, 'magic', {
                   effect: 'arcane-fracture',
                   fractureFraction: advanced.fraction + steps * advanced.fractionStep,
-                  fractureDuration: advanced.duration + steps * advanced.durationStep,
+                  fractureDuration: this.criticalHeroValue(
+                    criticalReceipt, advanced.duration + steps * advanced.durationStep,
+                    'vulnerabilityDuration',
+                  ),
+                  ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
                 });
                 continue;
               }
@@ -1958,7 +2017,10 @@
                 this.fractureEnemy(
                   enemy,
                   advanced.fraction + steps * advanced.fractionStep,
-                  advanced.duration + steps * advanced.durationStep,
+                  this.criticalHeroValue(
+                    criticalReceipt, advanced.duration + steps * advanced.durationStep,
+                    'vulnerabilityDuration',
+                  ),
                 );
                 hits++;
               }
@@ -2001,9 +2063,8 @@
             )
             .slice(0, areaLimit)) {
             if (this.hero.class === 'ranger' && slot === 5) {
-              // Arrow Volley selects its customary targets immediately but
-              // does not deal phantom pre-flight damage. Every real arrow
-              // starts at the bow and uses the ordinary terrain/hit resolver.
+              // #464 physical Arrow Volley. The immutable action receipt
+              // follows each original arrow until actual legal contact.
               const d = Math.max(1, dist(this.hero, e));
               this.s.projectiles.push({
                 id: 'projectile-' + this.s.nextId++,
@@ -2012,21 +2073,27 @@
                 dx: (e.x - this.hero.x) / d,
                 dy: (e.y - this.hero.y) / d,
                 target: e.id,
-                damage: power * 2.3 * scale,
+                damage: this.criticalHeroValue(
+                  criticalReceipt, power * 2.3 * scale, 'damage',
+                ),
                 source: 'hero',
                 speed: 650,
                 style: 'arrow',
                 slot: 5,
                 area: true,
+                ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               });
               continue;
             }
-            const landed = this.damage(e, (slot === 7 ? power * 6 : power * 2.3) * scale, 'hero', {
+            const landed = this.damage(e, this.criticalHeroValue(
+              this.hero.class !== 'mage' ? criticalReceipt : null,
+              (slot === 7 ? power * 6 : power * 2.3) * scale, 'damage',
+            ), 'hero', {
               area: true,
             });
             if (landed) contacts.push({ x: e.x, y: e.y, target: e.id });
             if (landed && this.hero.class === 'mage' && slot === 5 && e.hp > 0)
-              this.shieldPush(e, 30 + steps * 3);
+              this.shieldPush(e, this.criticalHeroValue(criticalReceipt, 30 + steps * 3, 'pushDistance'));
           }
           this.event('spell', {
             actor: 'hero',
@@ -2036,8 +2103,7 @@
             radius: slot === 5 ? 350 : 500,
             contacts,
             ...(this.hero.class === 'ranger' && slot === 5
-              ? { projectileVolley: true }
-              : {}),
+              ? { projectileVolley: true } : {}),
             x: this.hero.x,
             y: this.hero.y,
           });
@@ -2052,7 +2118,13 @@
                     : power * 10) * scale,
             comboState = slot === 1 ? this.nextBasicCombo(target.id) : null,
             combo = comboState?.step || 0,
-            dmg = baseDmg * (comboState?.multiplier || 1);
+            criticalBasicDamage =
+              (slot === 1 ||
+                (this.hero.class === 'paladin' && slot === 6) ||
+                (this.hero.class === 'ranger' && slot === 7)) && criticalReceipt?.critical
+                ? this._criticalPartyNative.enhance(criticalReceipt, baseDmg, 'damage')
+                : baseDmg,
+            dmg = criticalBasicDamage * (comboState?.multiplier || 1);
           if (this.hero.class === 'paladin') {
             const landed = this.damage(
               target,
@@ -2061,7 +2133,7 @@
               automatic ? { automaticBasic: true } : null,
             );
             if (landed) {
-              if (slot === 2) this.weakenEnemy(target, rank);
+              if (slot === 2) this.weakenEnemy(target, rank, criticalReceipt);
               this.event('melee', {
                 actor: 'hero',
                 class: 'paladin',
@@ -2077,7 +2149,7 @@
                 this.basicComboFinisher(
                   target,
                   { x: this.hero.x, y: this.hero.y },
-                  baseDmg,
+                  criticalBasicDamage,
                   'hero',
                   'paladin',
                   automatic,
@@ -2118,7 +2190,9 @@
                 style: this.hero.class === 'ranger' ? 'arrow' : 'magic',
                 slot,
                 ...(this.hero.class === 'ranger' && slot === 7 ? { piercing: true } : {}),
-                ...(this.hero.class === 'ranger' && slot === 6 ? { push: 45 + 5 * steps } : {}),
+                ...(this.hero.class === 'ranger' && slot === 6
+                  ? { push: this.criticalHeroValue(criticalReceipt, 45 + 5 * steps, 'pushDistance') }
+                  : {}),
                 effect:
                   this.hero.class === 'mage' && slot === 2
                     ? 'frost'
@@ -2127,18 +2201,23 @@
                       : undefined,
                 combo,
                 ...(automatic ? { automaticBasic: true } : {}),
+                ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
                 slow:
                   this.hero.class === 'mage' && [2, 6].includes(slot)
                     ? slot === 2
-                      ? 2 + steps * 0.05
-                      : 2
+                      ? this.criticalHeroValue(criticalReceipt, 2 + steps * 0.05, 'slowDuration')
+                      : this.criticalHeroValue(criticalReceipt, 2, 'slowDuration')
                     : this.hero.class === 'ranger' && slot === 2
-                      ? R.heroTactics.ranger.pin.slow + steps * R.heroTactics.ranger.pin.slowStep
+                      ? this.criticalHeroValue(
+                          criticalReceipt,
+                          R.heroTactics.ranger.pin.slow + steps * R.heroTactics.ranger.pin.slowStep,
+                          'slowDuration',
+                        )
                       : 0,
                 ...(slot === 1 && combo === 3
                   ? {
                       basicComboFinisher: true,
-                      finisherBaseDamage: baseDmg,
+                      finisherBaseDamage: criticalBasicDamage,
                       finisherFromX: this.hero.x,
                       finisherFromY: this.hero.y,
                       comboClass: this.hero.class,

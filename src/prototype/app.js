@@ -1237,6 +1237,17 @@
     const ferryPassage = Campaign.rules.tidalFerryPassage;
     if (ferryPassage && piece.startsWith(ferryPassage))
       return spanishText[ferryPassage] + piece.slice(ferryPassage.length);
+    // The optional Codices carry author-supplied English and Spanish copy.
+    for (const book of Object.values(Campaign.rules.criticalCodices || {})) {
+      if (piece === book.name) return book.nameEs;
+      if (piece === book.description) return book.descriptionEs;
+      if (piece === book.name + ' has already been studied.')
+        return book.nameEs + ' ya se ha estudiado.';
+      const prefix = 'Learned ' + book.name + ' · ';
+      if (piece.startsWith(prefix))
+        return 'Aprendido ' + book.nameEs + ' · ' +
+          piece.slice(prefix.length).replace('Codices of the Unforeseen', 'Códices de lo Imprevisto');
+    }
     if (/^Search /.test(piece)) return piece.replace('Search ', 'Investigar ');
     if (/^(Learn|Train) /.test(piece) && !spanishText[piece])
       return piece
@@ -1623,10 +1634,23 @@
   function save() {
     return started && persistence.save(game, profile);
   }
+  // Live game shell only. Standalone Campaign fixtures remain independent.
+  // Bind once after each actual playable Campaign has been created/restored.
+  // Both isolated RNG streams resume from the same v4 save state.
+  function activateLiveCritical(candidate) {
+    if (!candidate) return candidate;
+    if (candidate._criticalPartyNative?.enabled && candidate._criticalWorldNative?.enabled)
+      return candidate;
+    PrototypeCriticalPartyNative.attachCampaign(
+      candidate, PrototypeCriticalExecutions, PrototypeCriticalLevels,
+      PrototypeCriticalWorldNative, { enabled: true },
+    );
+    return candidate;
+  }
   function load(mode) {
     const restored = persistence.load(mode);
     if (!restored) return false;
-    game = restored;
+    game = activateLiveCritical(restored);
     return true;
   }
   let recoveredOnStartup = false;
@@ -1639,10 +1663,11 @@
         ? null
         : persistence.migrateLegacy();
     if (game) {
+      game = activateLiveCritical(game);
       loaded = true;
       started = true;
       save();
-    } else game = new Campaign();
+    } else game = activateLiveCritical(new Campaign());
   }
   // An unclean active-session marker indicates the previous browser stopped
   // before its normal shutdown. Keep validated campaign progress, but never
@@ -1653,7 +1678,7 @@
     const recovered = restartGuard.recover(game);
     if (recovered) {
       recoveredOnStartup = true;
-      game = recovered;
+      game = activateLiveCritical(recovered);
       save();
       status(
         recovered.selectedBarracksRespawn()
@@ -3039,7 +3064,9 @@
   function start(mode, heroClass, succession, heroName = null) {
     if (mode === 'developer' && !developerEnabled) return;
     if (mode === 'nightmare' && !profile.nightmareUnlocked) return;
-    const candidate = new Campaign(mode, heroClass, Math.random, { succession });
+    const candidate = activateLiveCritical(
+      new Campaign(mode, heroClass, Math.random, { succession }),
+    );
     if (heroName) candidate.nameHero(heroName);
     try {
       persistence.writeCandidate(candidate);
@@ -3048,7 +3075,7 @@
       return;
     }
     restartGuard.clean();
-    game = candidate;
+    game = activateLiveCritical(candidate);
     started = true;
     if (typeof Sprint !== 'undefined') Sprint.reset();
     paused = false;
@@ -3715,6 +3742,42 @@
       openMain,
     );
   }
+  function codexCollectionMenu() {
+    const books = Campaign.rules.criticalCodices || {},
+      claims = game.s.criticalCodices || {},
+      count = game.criticalCodexCount(),
+      hero = game.criticalPartyChance('hero'),
+      rank = game.expeditionSupportFraction('sharedTraining'),
+      companion = 0.10 + (hero - 0.10) * rank,
+      localeEs = language === 'es',
+      criticalsActive =
+        game._criticalPartyNative?.enabled === true &&
+        game._criticalWorldNative?.enabled === true;
+    const lines = [
+      localeEs ? 'Códices aprendidos: ' + count + '/5'
+               : 'Codices learned: ' + count + '/5',
+      ...(criticalsActive
+        ? [
+            localeEs ? 'Probabilidad del héroe: ' + (hero * 100).toFixed(1) + '%'
+                     : 'Hero chance: ' + (hero * 100).toFixed(1) + '%',
+            localeEs ? 'Compañeros y mascotas: ' + (companion * 100).toFixed(1) + '%'
+                     : 'Companions and pets: ' + (companion * 100).toFixed(1) + '%',
+          ]
+        : [
+            localeEs
+              ? 'Las ejecuciones críticas están desactivadas. Los códices aprendidos quedan guardados.'
+              : 'Critical Executions are disabled. Learned Codices remain recorded.',
+          ]),
+      '',
+      ...Object.entries(books).flatMap(([id, book]) =>
+        claims[id]
+          ? ['✓ ' + (localeEs ? book.nameEs : book.name),
+             '  ' + (localeEs ? book.descriptionEs : book.description)]
+          : ['○ ' + (localeEs ? book.nameEs : book.name)]),
+    ];
+    openMenu(localeEs ? 'Códices de lo Imprevisto' : 'Codices of the Unforeseen',
+      lines.join('\n'), [], openMain);
+  }
   function openMain() {
     const canBuild = !game.isDungeon() && game.availableLabor().length > 0,
       cost = game.barracksBuildCost(),
@@ -3744,6 +3807,11 @@
           : 'Choose a marked destination · Key: ' + mapKeyHint(),
       ),
       action('Quest journal', () => quests(false, openMain)),
+      action(
+        language === 'es' ? 'Códices de lo Imprevisto' : 'Codices of the Unforeseen',
+        codexCollectionMenu,
+        game.criticalCodexCount() + '/5',
+      ),
       action('Character', characterMenu),
       ...(game.s.phase === 'awakening'
         ? [
@@ -3863,7 +3931,7 @@
   };
   function resumeSavedRun(candidate) {
     restartGuard.clean();
-    game = candidate;
+    game = activateLiveCritical(candidate);
     loaded = started = true;
     if (game.s.mode !== 'developer') profile.activeMode = game.s.mode;
     if (game.peace && game.s.finalRestCompleted && game.s.mode !== 'developer')
@@ -6908,7 +6976,7 @@
           }
         }
         if (refreshed) {
-          game = refreshed;
+          game = activateLiveCritical(refreshed);
           loaded = started = true;
           recoverLoadedSession();
           if (
@@ -6922,7 +6990,7 @@
           savedRunRecoveryMenu();
         } else {
           loaded = started = false;
-          game = new Campaign();
+          game = activateLiveCritical(new Campaign());
           chooseLanguage(developerEnabled ? 'developer' : 'normal');
         }
         updateHUD();
