@@ -6936,9 +6936,9 @@
       burstMultiplier: 1.5,
       mercyStartRadius: 300,
       // Greenwood ordinary melee reuses its EXISTING burst after a brief
-      // normal-speed interval (1.2s active + 0.5s recovery). No separate
+      // normal-speed interval (1.2s active + 2s recovery). No separate
       // dash, warning, impact damage, Slow, or new cooldown ownership.
-      valeRecoverySeconds: 0.5,
+      valeRecoverySeconds: 2,
     },
     growth: { xpPerLevel: 120, hpPerLevel: 25 },
     barracks: { buildCost: 20, fullUpgradeCost: 100 },
