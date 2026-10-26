@@ -6806,9 +6806,8 @@
     mountedMovementMultiplier: 1.3,
     enemySpecialReachMultiplier: 1.2,
     enemyTargetingMultiplier: 1.1,
-    // Ordinary melee monsters now have a 90-unit basic hit radius worldwide;
-    // elites retain a separately tunable 90-unit floor. Soldier basic melee
-    // remains 65 and melee pets remain 70, independent of hostile balancing.
+    // Hostile melee basics have a 90-unit floor worldwide; companion melee
+    // reach is configured independently under balance.companions.
     meleeBasicRange: 90,
     eliteMeleeBasicRange: 90,
     enemyAcquisitionRange: 260,
@@ -6928,6 +6927,8 @@
       petFirstCooldown: 8,
       petSecondCooldown: 12,
       petBasicInterval: 0.85,
+      // Soldier sword and melee pet basic attacks; independent of enemy melee tuning.
+      meleeBasicRange: 90,
       petFormation: {
         side: 130,
         sidePerRow: 35,
