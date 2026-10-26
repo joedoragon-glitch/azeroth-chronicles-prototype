@@ -95,7 +95,8 @@ for (const [species, guard] of [
     { ranged: true }, { hybrid: true }, { form: 'ringleader' },
     { captain: true }, { roomCaptain: true }, { type: 'boss' },
     { summon: true }, { rogueEmergencyReinforcement: true },
-    { aggro: false }, { hp: 0 },
+    { aggro: false }, { hp: 0 }, { nightOnly: true },
+    { species: 'wraith' }, { species: 'stalker' },
   ]) {
     const original = { ...e };
     Object.assign(e, changes);
