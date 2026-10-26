@@ -134,6 +134,28 @@
        new PIXI.Texture({source:texture.source,frame:new PIXI.Rectangle(x,y,w,h)}));
      return frameTextures.get(cacheId);
    }
+   // Match the Canvas entityShadow/groundMarker presentation contract.
+   // These GPU graphics live in the same depth-sorted stage immediately below
+   // each sprite; a 2D overlay would incorrectly draw them over actors.
+   function groundGraphic(graphic,ground) {
+     const {rx,ry,marker}=ground;
+     graphic.clear();
+     if(marker) {
+       const important=!!marker.important;
+       const hex=marker.color;
+       const color=Number.parseInt(hex.slice(1,7),16);
+       const alpha=Number.parseInt(hex.slice(7,9),16)/255;
+       graphic.ellipse(0,9,important?28:21,important?11:8)
+         .stroke({color,alpha,width:important?2:1});
+       if(important)
+         graphic.ellipse(0,9,34,14)
+           .stroke({color:0xf3e2bb,alpha:0x44/255,width:important?2:1});
+     }
+     graphic.ellipse(4,13,rx*1.18,ry*1.35)
+       .fill({color:0x05100c,alpha:0x38/255});
+     graphic.ellipse(1,11,rx,ry)
+       .fill({color:0x020906,alpha:0x66/255});
+   }
    // Each actor moves/animates as a GPU sprite. Canvas never paints a frame.
    // A one-time procedural body bake is allowed as an explicitly counted source.
    function syncActors(list) {
@@ -146,6 +168,13 @@
          'Missing original game actor texture: '+String(item.textureId));
        assert([item.x,item.y,item.width,item.height].every(Number.isFinite)&&
          item.width>0&&item.height>0,'Invalid actor geometry');
+       if(item.ground) {
+         const g=item.ground;
+         assert([g.x,g.y,g.rx,g.ry].every(Number.isFinite)&&g.rx>0&&g.ry>0,
+           'Canvas-matched GPU contact shadow geometry required');
+         if(g.marker)assert(/^#[0-9a-f]{8}$/i.test(g.marker.color),
+           'Canvas marker RGBA color required');
+       }
        if(item.sourceRect){
          const rect=item.sourceRect,texture=resources.get(item.textureId);
          assert(rect.length===4&&rect.every(Number.isFinite)&&
@@ -159,6 +188,7 @@
      for(const [id,old] of actors) {
        if(!next.has(id)) {
          actorsStage.removeChild(old.sprite);
+         if(old.ground){actorsStage.removeChild(old.ground);old.ground.destroy();}
          old.sprite.destroy();actors.delete(id);discarded++;
        }
      }
@@ -182,6 +212,23 @@
        state.sprite.scale.x=(item.flipX?-1:1)*Math.abs(state.sprite.scale.x);
        state.sprite.position.set(item.x+(item.flipX?item.width:0),item.y);
        state.sprite.alpha=clamp(item.opacity??1,0,1);
+       if(item.ground) {
+         if(!state.ground)state.ground=new PIXI.Graphics();
+         const signature=JSON.stringify({
+           rx:item.ground.rx,ry:item.ground.ry,marker:item.ground.marker
+         });
+         if(state.groundSignature!==signature) {
+           groundGraphic(state.ground,item.ground);
+           state.groundSignature=signature;
+         }
+         state.ground.position.set(item.ground.x,item.ground.y);
+         actorsStage.addChild(state.ground);
+       }else if(state.ground){
+         actorsStage.removeChild(state.ground);
+         state.ground.destroy();
+         state.ground=null;
+         state.groundSignature=null;
+       }
        actorsStage.addChild(state.sprite);
        spritesUpdated++;
      }
@@ -313,7 +360,10 @@
      spriteUpdates:spritesUpdated,discarded
    };}
    function destroy(){
-     for(const state of actors.values())state.sprite.destroy();
+     for(const state of actors.values()){
+       state.ground?.destroy();
+       state.sprite.destroy();
+     }
      for(const state of glowObjects.values())state.graphic.destroy();
      if(grade)grade.destroy();
      if(vignette)vignette.destroy();
