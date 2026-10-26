@@ -2260,6 +2260,7 @@
     }
     refreshNPCs() {
       for (const [id, z] of Object.entries(this.s.zones)) {
+        if (id === 'arena') continue; // Keep the separate hub specialists intact.
         if (dungeonIds.includes(id) || this.supplyRoom(id) || this.sideDungeon(id)) continue;
         const i = this.regionIndex(id),
           [x, y] = D.towns[i];
@@ -3726,6 +3727,13 @@
       e.sequence = [];
       if (e.rogueEmergencyReinforcement) this._tacticalEmergencyCleanupPending = true;
       if (e.form === 'ringleader') this.tacticalRetireEmergencyGuards(e);
+      if (this.s.mode === 'arena' && e.arenaFixture) {
+        // Retain native combat behavior; suppress only campaign reward/progress.
+        this.zone().enemies.forEach((add) => {
+          if (add.summon && add.owner === e.id) add.hp = 0;
+        });
+        return;
+      }
       if (e.summon) {
         if (e.developerSummon)
           this.zone().enemies.forEach((add) => {
@@ -8051,7 +8059,8 @@
           }
     }
     updateNight() {
-      if (this.peace) return;
+      if (this.s.mode === 'arena' || this.peace) return; // Test spawns are menu-controlled.
+
       const i = this.regionIndex();
       if (this.isDungeon() || ![1, 3].includes(i)) return;
       const z = this.zone();

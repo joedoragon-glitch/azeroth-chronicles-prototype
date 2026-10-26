@@ -1,6 +1,8 @@
 'use strict';
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
+const fs = require('node:fs');
+const path = require('node:path');
 
 function verify(classId) {
   const arena = new Campaign('arena', classId, () => 0.5);
@@ -51,13 +53,17 @@ function verify(classId) {
   const available = arena.arenaStages();
   assert.ok(available.some((stage) => stage.id === 'vale-ordinary'));
   assert.ok(available.some((stage) => stage.id === 'vale-guardians'));
+  assert.ok(available.some((stage) => stage.id === 'march-night'));
+  assert.ok(available.some((stage) => stage.id === 'frontier-night'));
   assert.ok(available.some((stage) => stage.id === 'boss-darklord'));
   assert.ok(available.some((stage) => stage.id === 'boss-darklord-true'));
   assert.equal(arena.arenaSelectStage('unknown'), false);
   assert.equal(arena.arenaSelectStage('vale-ordinary'), true);
   let enemies = arena.zone().enemies;
   assert.equal(enemies.length, 4);
-  assert.equal(enemies.every((e) => e.summon && e.developerSummon), true);
+  assert.equal(enemies.every((e) => e.arenaFixture && !e.summon), true);
+  assert.equal(enemies.every((e) => e.hp === e.baseHp && e.damage === e.baseDamage), true);
+  assert.equal(enemies.every((e) => e.level === 1), true);
   assert.equal(arena.zone().props.length, 0);
   assert.equal(arena.zone().buildings.length, 0);
   arena.tick(0.03);
@@ -65,7 +71,17 @@ function verify(classId) {
   enemies = arena.zone().enemies;
   assert.ok(enemies.some((e) => e.guard));
   assert.ok(enemies.some((e) => e.captain));
-  assert.equal(enemies.every((e) => e.developerSummon), true);
+  assert.equal(enemies.every((e) => e.arenaFixture && !e.summon), true);
+  assert.equal(arena.zone().enemies.find((e) => e.captain).damage,
+    (7 + 0 * 8) * 1.25, 'captain uses the native room-guard damage');
+  assert.equal(arena.arenaSelectStage('frontier-ordinary'), true);
+  assert.ok(arena.zone().enemies.some((e) => e.species === 'archer' && e.ranged),
+    'native ranged enemies keep their auto-attack role');
+  assert.equal(arena.arenaSelectStage('march-night'), true);
+  assert.equal(arena.zone().enemies.length, 2);
+  assert.ok(arena.zone().enemies.every((e) => e.nightOnly && e.species === 'wraith'));
+  arena.tick(0.03);
+  assert.equal(arena.zone().enemies.length, 2, 'arena night enemies are not despawned by dawn');
   assert.equal(arena.arenaSelectStage('boss-thorn'), true);
   assert.ok(arena.zone().enemies.some((e) => e.family === 'thorn' && e.type === 'boss'));
   assert.equal(arena.arenaSelectStage('boss-darklord'), true);
@@ -80,6 +96,9 @@ function verify(classId) {
   arenaBoss.hp = 0;
   arena.kill(arenaBoss);
   assert.equal(JSON.stringify(arena.s.victories), victories, 'arena bosses never clear campaign victories');
+  assert.equal(arena.s.statistics.kills, 0, 'arena fixtures do not count campaign kills');
+  assert.ok(!arena.s.true.darklord);
+  assert.ok(!arenaBoss.summon, 'authentic boss identity is not replaced with a summon');
 
   const barracks = arena.arenaBuildBarracks();
   assert.ok(barracks && barracks.progress >= 4);
@@ -91,6 +110,8 @@ function verify(classId) {
 
   const snapshot = arena.snapshot();
   assert.equal(snapshot.mode, 'arena');
+  assert.equal(snapshot.zones.arena.enemies.length, 0,
+    'temporary encounter populations are not serialized into bloated saves');
   assert.equal(snapshot.mercyTime, 10, 'arena destinations respect the v4 save limit');
   assert.doesNotThrow(() => Campaign.validate(snapshot), 'arena saves must validate');
   const loaded = Campaign.restore(snapshot, () => 0.5);
@@ -114,4 +135,23 @@ assert.equal(campaign.s.arenaStage, undefined);
 assert.notEqual(campaign.zoneSize(), 2000);
 assert.deepEqual(campaign.hero.skills, [1, 0, 0, 0, 0, 0, 0, 0]);
 assert.equal(campaign.arenaLevelUp(), false, 'NPC level-up restricted to arena');
-console.log('PASS Combat Arena: isolation, native stages, free services, saves and recovery');
+for (const [file, needles] of [
+  ['src/prototype/renderer.js', [
+    "game.s.mode === 'arena' ? '#000000'",
+    "if (game.s.mode !== 'arena') add(z.buildings, 'building')",
+  ]],
+  ['src/prototype/pixi-experimental.js', [
+    "if (game.s.mode !== 'arena') add(zone.props, 'prop')",
+    "if (game.s.mode !== 'arena') add(zone.buildings, 'building')",
+    "scene.setSolidBackground(0x000000",
+  ]],
+  ['src/prototype/app.js', [
+    "Math.min(renderResolution.ratio, 0.5)",
+    "action('Replay current encounter'",
+  ]],
+]) {
+  const code = fs.readFileSync(path.resolve(__dirname, '..', file), 'utf8');
+  for (const needle of needles) assert.ok(code.includes(needle),
+    'arena low-spec presentation gate missing: ' + file + ' ' + needle);
+}
+console.log('PASS Combat Arena: native combat identities/ranges, free training, saves, black renderers, stage replay and recovery');

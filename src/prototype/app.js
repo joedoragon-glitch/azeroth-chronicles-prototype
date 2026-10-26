@@ -2154,7 +2154,8 @@
           ),
         );
     renderResolution.configure(maximumRatio);
-    const ratio = renderResolution.ratio;
+    // Arena only: hard-cap world pixels without saving a preference.
+    const ratio = game?.s?.mode === 'arena' ? Math.min(renderResolution.ratio, 0.5) : renderResolution.ratio;
     canvas.width = Math.round(innerWidth * ratio);
     canvas.height = Math.round(innerHeight * ratio);
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -3083,6 +3084,11 @@
     }
     restartGuard.clean();
     game = activateLiveCritical(candidate);
+    if (game.s.mode === 'arena') {
+      graphicsController.revert();
+      setOptimizationActive(true);
+      resize();
+    } else setOptimizationActive(optimizationPreference === 'on');
     started = true;
     if (typeof Sprint !== 'undefined') Sprint.reset();
     paused = false;
@@ -3968,6 +3974,11 @@
   function resumeSavedRun(candidate) {
     restartGuard.clean();
     game = activateLiveCritical(candidate);
+    if (game.s.mode === 'arena') {
+      graphicsController.revert();
+      setOptimizationActive(true);
+      resize();
+    } else setOptimizationActive(optimizationPreference === 'on');
     loaded = started = true;
     if (game.s.mode !== 'developer') profile.activeMode = game.s.mode;
     if (game.peace && game.s.finalRestCompleted && !['developer', 'arena'].includes(game.s.mode))
@@ -6953,7 +6964,9 @@
         preference: optimizationPreference, optimized: optimizationMode,
         intervalMs, workMs: frameWorkMs, adaptiveSkipped, target: fps.target,
       });
-      if (optimizationDecision !== null) setOptimizationActive(optimizationDecision);
+      if (game.s.mode === 'arena') {
+        if (!optimizationMode) setOptimizationActive(true);
+      } else if (optimizationDecision !== null) setOptimizationActive(optimizationDecision);
       const otherSimulationMs = Math.max(
           0,
           stageTimes.simulationMs - stageTimes.companionAIMs - stageTimes.enemyAIMs,

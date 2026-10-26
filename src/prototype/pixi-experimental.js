@@ -64,9 +64,9 @@
         result.push({ entity, visual, kind, point, key: count ? stem + '#' + count : stem });
       }
     }
-    add(zone.props, 'prop');
+    if (game.s.mode !== 'arena') add(zone.props, 'prop');
     // Same permanent civic features included by the Canvas depth sorter.
-    if (!game.isDungeon() && !game.supplyRoom?.(game.zoneId) &&
+    if (game.s.mode !== 'arena' && !game.isDungeon() && !game.supplyRoom?.(game.zoneId) &&
         !game.sideDungeon?.(game.zoneId))
       add((root.Campaign?.rules?.terrain?.[game.regionIndex()] || [])
         .filter((p) => ['fountain', 'grain-silo', 'orrery'].includes(p.kind))
@@ -80,7 +80,7 @@
         })), 'prop');
     add(game.visibleNPCs(), 'npc');
     add(game.visibleResourceNodes(), 'node');
-    add(zone.buildings, 'building');
+    if (game.s.mode !== 'arena') add(zone.buildings, 'building');
     add(zone.enemies, 'enemy');
     add(game.activeLivingParty(), 'ally');
     add([game.hero], 'hero');
@@ -230,7 +230,7 @@
       backingRatio = next;
       const previous = backing;
       backing = null;
-      createBackgroundPainter();
+      if (game().s.mode !== 'arena') createBackgroundPainter();
       drawBackground();
       previous?.destroy?.(false);
       // Keep the previous density warm: revisionFor includes backingRatio,
@@ -263,7 +263,7 @@
         PIXI: root.PIXI, app, width: viewport.width, height: viewport.height,
       });
       for (const [src, texture] of originals) scene.registerTexture(src, texture);
-      createBackgroundPainter();
+      if (game().s.mode !== 'arena') createBackgroundPainter();
       bakedZoom = null;
       drawBackground();
     }
@@ -314,6 +314,16 @@
       backgroundRepaints++;
       const current = game(),
         zoom = platform.cameraZoom || 1;
+      if (current.s.mode === 'arena') {
+        if (!scene) throw Error('Missing arena scene');
+        baseGame = current;
+        basePosition = { x: current.hero.x, y: current.hero.y };
+        baseZone = current.zoneId;
+        baseZoom = zoom;
+        baseOptimization = true;
+        scene.setSolidBackground(0x000000, viewport.width, viewport.height);
+        return;
+      }
       if (!backgroundRenderer || !backdrop || !scene)
         throw Error('Missing original terrain painter');
       baseGame = current;
@@ -339,6 +349,7 @@
         zoom = platform.cameraZoom || 1;
       if (baseGame && baseGame !== current)
         throw Error('Campaign changed; reset to Canvas before switching again');
+      if (current.s.mode === 'arena') return; // No scrolling or rebaking black.
       // A presentation-quality transition must invalidate the retained
       // background even when the hero has not moved or changed zoom.
       if (!basePosition || baseZone !== current.zoneId || baseZoom !== zoom ||
@@ -543,6 +554,13 @@
         region = current.regionIndex(),
         z = current.zone();
       const zoom = platform.cameraZoom || 1;
+      if (current.s.mode === 'arena') {
+        scene.syncLamps([]);
+        scene.syncMotes([], zoom);
+        scene.setAtmosphere({ region, darkness: 0, optimized: true, warmth: 0, phase: 'day' });
+        scene.setVignette({ darkness: 0, optimized: true });
+        return;
+      }
       const phase = current.daylightPhase?.() || {};
       const darkness =
         current.isDungeon() || current.supplyRoom()
@@ -681,7 +699,7 @@
             root.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches || false,
         });
         backingRatio = effectiveRatio();
-        createBackgroundPainter();
+        if (game().s.mode !== 'arena') createBackgroundPainter();
         // Warm all canonical sprites once (~46 MiB decoded across 38 files).
         // Otherwise entering any previously unseen neighborhood forces fallback.
         stage = 'sprite-manifest';

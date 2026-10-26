@@ -2020,6 +2020,8 @@
         for (const [region, r] of D.regions.entries()) {
           stages.push({ id: r.id + '-ordinary', label: r.name + ' · ordinary enemies', region, kind: 'ordinary' });
           stages.push({ id: r.id + '-guardians', label: r.name + ' · guardians and captain', region, kind: 'guardians' });
+          if (r.id === 'march' || r.id === 'frontier')
+            stages.push({ id: r.id + '-night', label: r.name + ' · night enemies', region, kind: 'night' });
           for (const boss of D.bosses.filter((b) => b.region === r.id)) {
             stages.push({ id: 'boss-' + boss.id, label: r.name + ' · ' + boss.name + ' · Regular', region, kind: 'boss', boss: boss.id, form: 'normal' });
             stages.push({ id: 'boss-' + boss.id + '-true', label: r.name + ' · ' + boss.name + ' · TRUE', region, kind: 'boss', boss: boss.id, form: 'true' });
@@ -2042,9 +2044,9 @@
         const spawn = (def, x, y, options = {}) => {
           const enemy = this.makeEnemy(def, { x, y });
           // Native AI/combat, but no campaign rewards, victories or unlocks.
-          enemy.developerSummon = true;
-          enemy.summon = true;
-          enemy.summonBalanceVersion = 1;
+          // Temporary encounter fixture, not a "summon": that flag changes
+          // real enemy AI, ranged roles, leashes and tactical support.
+          enemy.arenaFixture = true;
           enemy.pack = options.pack || 'arena-' + stage.id;
           Object.assign(enemy, options);
           z.enemies.push(enemy);
@@ -2072,14 +2074,14 @@
           z.npcs.push({ id: 'arena-recovery', kind: 'arena-recovery', name: 'Free recovery', x: 620, y: 960, icon: '💚' });
         } else if (stage.kind === 'ordinary' || stage.kind === 'guardians') {
           const guardian = stage.kind === 'guardians';
-          const scaling = guardian ? R.guardianScaling[stage.region] : R.ordinaryMeleeScaling[stage.region];
+          // Native campaign HP/damage values, not new arena balance math.
+          const hp = 65 + stage.region * 105, damage = 7 + stage.region * 8;
           for (let i = 0; i < (guardian ? 3 : 4); i++) {
             const sp = species[i % species.length];
             const e = spawn({
               species: sp[0], name: sp[1] + (guardian ? ' guardian' : ''), icon: sp[2],
               level: stage.region * 3 + 1 + (guardian ? 1 : 0),
-              hp: Math.round((65 + stage.region * 105) * (scaling?.hp || 1)),
-              damage: Math.round((7 + stage.region * 8) * (scaling?.damage || 1)),
+              hp, damage,
               gold: 0, xp: 0,
             }, 1170 + (i % 2) * 120, 630 + Math.floor(i / 2) * 190, {
               pack: 'arena-' + stage.id + '-' + Math.floor(i / 2),
@@ -2095,8 +2097,7 @@
               const e = spawn({
                 species: profile.species || sp[0], name: profile.name, icon: sp[2],
                 level: stage.region * 3 + 2,
-                hp: Math.round((65 + stage.region * 105) * (scaling?.hp || 1) * 2),
-                damage: Math.round((7 + stage.region * 8) * (scaling?.damage || 1) * 1.25),
+                hp: hp * 2, damage: damage * 1.25,
                 gold: 0, xp: 0,
               }, 1420, 890, {
                 captain: true, captainProfile: id, captainMentor: profile.mentor,
@@ -2108,13 +2109,29 @@
               this.configureEnemy(e, 3);
             }
           }
+        } else if (stage.kind === 'night') {
+          // Native night-enemy variants, on demand instead of timed world spawns.
+          const id = region.id === 'march' ? 'wraith' : 'stalker';
+          const cfg = R.nightEnemyCombat[id];
+          for (let i = 0; i < 2; i++) {
+            const e = spawn({
+              species: id,
+              name: region.id === 'march' ? 'Lantern wraith' : 'Ash stalker',
+              icon: '👻',
+              level: stage.region * 3 + 2,
+              hp: Math.round((120 + stage.region * 100) * cfg.hp),
+              damage: Math.round((12 + stage.region * 7) * cfg.damage),
+              gold: 0, xp: 0,
+            }, 1100 + i * 120, 720 + i * 180, {
+              nightOnly: true, nightBalanceVersion: 1, specialCd: 1 + i * 0.35,
+            });
+            this.configureEnemy(e, i);
+          }
         } else if (stage.kind === 'boss') {
           const boss = this.boss(stage.boss);
           if (boss) {
             const enemy = this.bossEnemy(boss, stage.form || 'normal', { x: 1350, y: 800 });
-            enemy.developerSummon = true;
-            enemy.summon = true;
-            enemy.summonBalanceVersion = 1;
+            enemy.arenaFixture = true;
             enemy.pack = 'arena-' + stage.id;
             z.enemies.push(enemy);
             if (boss.id !== 'darklord')
@@ -2133,6 +2150,8 @@
       }
       arenaSelectStage(id) {
         if (this.s.mode !== 'arena' || !this.arenaStages().some((s) => s.id === id)) return false;
+        this.clearEncounterUnits();
+        this.clearPartyCharges();
         this.s.arenaStage = id;
         this.s.arenaRegion = this.arenaStages().find((s) => s.id === id).region;
         this.s.pending = {};

@@ -16,7 +16,7 @@ test the real game on low-end phones with almost no environment rendering.
    the native XP threshold, HP growth and talent-point awards. No level
    selection or multi-level boosting menu exists.
 3. Speak to the Arena Guide (or use the Combat Arena adventure menu) to select
-   any region and enemy group. Ordinary packs lead to guardian/captain stages
+   any region and enemy group. Ordinary packs lead to guardian/captain stages and native on-demand night encounters
    and a separate arena for each existing boss. The final Dark Lord stage has
    only its boss. Teleport to the hub without stage unlocking.
 4. Free recovery and the one-level Trainer NPC are near the spawn.
@@ -31,15 +31,20 @@ test the real game on low-end phones with almost no environment rendering.
 ## Performance boundary
 
 - The arena does not execute campaign zone scenery generation.
-- Canvas/Pixi-background rendering does not tile or paint terrain, waterways,
-  roads, ground materials, bridges or decorative assets; black is the floor.
+- Canvas/Pixi rendering skips terrain, roads, bridges, scenery and virtual
+  buildings. Pixi uses the engine's one-pixel WHITE GPU texture tinted black,
+  rather than allocating/uploading a terrain-sized background bitmap.
+- Canvas play starts in Optimization Mode with a temporary 50% world-pixel cap
+  (HUD/controls and stored graphics preferences are not modified). The player
+  can opt into experimental WebGL manually if desired.
 - Buildings are interactive but visually hidden. NPCs, hero/party sprites,
   hostile actors, projectiles, combat telegraphs and combat effects remain
   visible and continue using the established combat simulation.
-- The arena reuses original enemy factories, boss definitions, AI, cooldowns,
-  hit geometry and calculations. Actors are flagged temporary test summons to
-  preserve their combat behavior while preventing campaign XP, Crown rewards,
-  story victories and unlocks. Stage groups are deliberately small.
+- The arena reuses original enemy factories, boss definitions, native ordinary
+  and captain stats, ranged-role configuration, AI, cooldowns, hit geometry and
+  calculations. Actors are marked as arena fixtures, NOT summons, so tactical
+  and ranged behavior stays native. Fixtures do not grant campaign rewards,
+  story victories or unlocks. Save snapshots omit temporary fixture bodies. Stage groups are deliberately small.
 - The mode does not disable AI, collision between combatants, simulation
   bookkeeping, audio, skills or attack warnings. Lower total work is expected;
   **actual phone FPS gains require measurement**, not inference.
@@ -47,13 +52,15 @@ test the real game on low-end phones with almost no environment rendering.
 ## Verification and release gate
 
 Run: node tests/combat-arena.test.cjs — mode isolation, one-level-per-interaction
-training, correct-instructor skill unlocking, save/restore, native actor
-population, teleport, free spending and survival. The normal PR
+training, instructor skill unlocking, save/restore, native summoned-vs-fixture
+identities, ranged enemies and regional stats, optimized Canvas/Pixi exclusions,
+teleport, replay, free spending and survival. The normal PR
 checks remain focused. Before publishing, inspect the exact draft on a
 low-spec phone in both Canvas and PixiJS, with and without an enemy group:
 check frame-profile render/draw times, memory and player input responsiveness.
 Review stage menus, specialist progression, reset/respawn, physical boss
 telegraphs, bilingual copy, storage and reload.
 
-**Status:** isolated draft candidate. No approval to merge, deploy or run a
-comprehensive browser/full-game test matrix is implied.
+**Status:** candidate under regression. Merge only after focused and relevant
+integration checks pass, followed by physical low-end-device FPS measurements.
+Measured performance improvements remain unverified until device testing.

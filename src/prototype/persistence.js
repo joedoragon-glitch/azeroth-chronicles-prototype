@@ -387,7 +387,8 @@
     }
     function arm(game) {
       if (!canWrite()) return false;
-      if (!game?.s || game.s.mode === 'developer') return false;
+      // Arena is an independent combat fixture; never relocate it to campaign refuge.
+      if (!game?.s || ['developer', 'arena'].includes(game.s.mode)) return false;
       try {
         // The live campaign can advance between five-second autosaves.
         // Anchor recovery to the checkpoint actually written to storage,
@@ -441,6 +442,7 @@
       if (
         !marker ||
         !game?.s ||
+        game.s.mode === 'arena' ||
         marker.mode !== game.s.mode ||
         marker.heroClass !== game.hero.class ||
         (Number.isFinite(marker.nextId) && game.s.nextId < marker.nextId) ||

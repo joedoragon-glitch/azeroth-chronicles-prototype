@@ -96,11 +96,17 @@
        background=new PIXI.Sprite(texture);
        rootStage.addChildAt(background,0);
      } else background.texture=texture;
+     background.tint=0xffffff;
      background.position.set(x,y);
      // The backing raster can be 1.5x high DPI while the world remains CSS-sized.
      if(Number.isFinite(width)&&width>0)background.width=width;
      if(Number.isFinite(height)&&height>0)background.height=height;
      backdropTexture=texture;
+   }
+   function setSolidBackground(color,width,height) {
+     // Reuse Pixi's 1px white texture instead of scenery-sized GPU buffers.
+     setBackground(PIXI.Texture.WHITE,0,0,width,height);
+     background.tint=color;
    }
    function moveBackground(x,y) {
      assert(background,'Static original artwork must be loaded before camera moves');
@@ -424,7 +430,7 @@
      rootStage.destroy({children:false});
    }
    return Object.freeze({
-     setBackground,moveBackground,registerTexture,hasTexture,unregisterTexture,
+     setBackground,setSolidBackground,moveBackground,registerTexture,hasTexture,unregisterTexture,
      syncActors,syncLamps,setAtmosphere,syncMotes,setVignette,
      captureBackgroundOnly,captureLightingOnly,draw,metrics,destroy
    });

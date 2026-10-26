@@ -125,7 +125,7 @@
               delete n.veraRepairTarget;
             }
           }
-          z.enemies = z.enemies.filter((e) => !e.summon);
+          z.enemies = z.enemies.filter((e) => !e.summon && !e.arenaFixture);
           for (const e of z.enemies) {
             if (e.family === 'thorn' && e.type === 'boss' && (e.aggro || e.returning))
               e.thornReturn = true;
@@ -603,7 +603,10 @@
         if (s.mode === 'arena') {
           const stages = new Set([
             'hub',
-            ...D.regions.flatMap((r) => [r.id + '-ordinary', r.id + '-guardians']),
+            ...D.regions.flatMap((r) => [
+              r.id + '-ordinary', r.id + '-guardians',
+              ...(['march', 'frontier'].includes(r.id) ? [r.id + '-night'] : []),
+            ]),
             ...D.bosses.flatMap((b) => ['boss-' + b.id, 'boss-' + b.id + '-true']),
           ]);
           if (s.zone !== 'arena' || !stages.has(s.arenaStage))
@@ -1211,7 +1214,7 @@
         for (const z of Object.values(c.s.zones)) {
           // Expand before old coordinates are filtered against the new floor.
           c.dungeonSpaceLayout(z);
-          z.enemies = z.enemies.filter((e) => !e.summon);
+          z.enemies = z.enemies.filter((e) => !e.summon && !e.arenaFixture);
           c.crownSceneComposition(z);
           // Relocate complete Ironroot sites before the new shore/ravine can prune old records.
           c.highlandsLandscape(z);
