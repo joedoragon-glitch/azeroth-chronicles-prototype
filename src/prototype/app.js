@@ -182,6 +182,12 @@
     'New game in Nightmare Mode': 'Nueva partida en modo Nightmare',
     'Load other mode run': 'Cargar partida de otro modo',
     'New Developer Mode run': 'Nueva partida de desarrollo',
+    'New Combat Arena run': 'Nueva partida de Arena de combate',
+    'Load Combat Arena run': 'Cargar partida de Arena de combate',
+    'Combat Arena': 'Arena de combate',
+    'Combat Arena · destinations': 'Arena de combate · destinos',
+    'Arena Guide': 'Guía de la arena',
+    'Free recovery': 'Recuperación gratis',
     'Install on phone': 'Instalar en el teléfono',
     'Install game': 'Instalar juego',
     'Check for game update': 'Buscar actualización',
@@ -1689,7 +1695,7 @@
     restartGuard.arm(game);
     // Reconcile entitlement after ownership and the fresh campaign load.
     // A pending window cannot persist this during its initial preview load.
-    if (game.peace && game.s.finalRestCompleted && !profile.nightmareUnlocked) {
+    if (game.peace && game.s.mode !== 'arena' && game.s.finalRestCompleted && !profile.nightmareUnlocked) {
       profile.nightmareUnlocked = true;
       persistProfile();
     }
@@ -3238,7 +3244,7 @@
   }
   function chooseClass(mode, succession) {
     if (mode === 'developer' && !developerEnabled) return;
-    if (mode === 'developer') succession = false;
+    if (mode === 'developer' || mode === 'arena') succession = false;
     if (succession === undefined) {
       openMenu(
         'Challenge condition',
@@ -3252,9 +3258,11 @@
     }
     openMenu(
       'New ' +
-        (mode === 'nightmare' ? 'Nightmare' : mode === 'developer' ? 'Developer' : 'Normal') +
+        (mode === 'nightmare' ? 'Nightmare' : mode === 'developer' ? 'Developer' : mode === 'arena' ? 'Combat Arena' : 'Normal') +
         ' adventure',
-      'Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.',
+      mode === 'arena'
+        ? 'Combat testing with no campaign. All eight skills are available immediately. Visit specialists for free training and the Arena Guide for every enemy stage.'
+        : 'Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.',
       Object.entries(Campaign.classes).map(([id, c]) =>
         action(
           c.icon +
@@ -3452,6 +3460,19 @@
           ),
         ),
         action('New game', newGameMenu),
+        action(
+          'Load Combat Arena run',
+          () => {
+            if (load('arena')) {
+              profile.activeMode = 'arena';
+              save();
+              closeMenu();
+              updateHUD();
+            }
+          },
+          'Continue a separate combat-testing save.',
+          !persistence.exists('arena'),
+        ),
         action('Load other mode run', () => {
           const mode = game.s.mode === 'normal' ? 'nightmare' : 'normal';
           if (load(mode)) {
@@ -3482,6 +3503,7 @@
       'Choose a mode. Export a backup to keep your current run.',
       [
         action('New Normal game', () => chooseLanguage('normal')),
+        action('New Combat Arena run', () => chooseLanguage('arena'), 'Black battlefield · free specialists · authentic combat'),
         ...(developerEnabled
           ? [action('New Developer Mode run', () => chooseLanguage('developer'))]
           : []),
@@ -3744,7 +3766,59 @@
       openMain,
     );
   }
+  function arenaTravel(id) {
+    if (!game.arenaSelectStage(id)) return;
+    clearWaypoint();
+    save();
+    closeMenu();
+    updateHUD();
+  }
+  function arenaRegionMenu(index) {
+    if (game.s.mode !== 'arena') return;
+    const region = D.regions[index];
+    openMenu(
+      region.name + ' · Combat Arena',
+      'Native combat with a small number of active enemies. All destinations remain open.',
+      game.arenaStages()
+        .filter((stage) => stage.region === index && stage.kind !== 'hub')
+        .map((stage) => action(stage.label, () => arenaTravel(stage.id))),
+      arenaDestinations,
+    );
+  }
+  function arenaDestinations() {
+    if (game.s.mode !== 'arena') return;
+    openMenu(
+      'Combat Arena · destinations',
+      'Choose any stage. Return to the safe hub at any time, including during combat.',
+      [
+        action('Safe hub · specialists', () => arenaTravel('hub')),
+        ...D.regions.map((region, index) =>
+          action(region.name, () => arenaRegionMenu(index), 'Ordinary · guardians/captain · bosses'),
+        ),
+      ],
+      openMain,
+    );
+  }
   function openMain() {
+    if (game.s.mode === 'arena') {
+      openMenu('Combat Arena', 'Black floor · no scenery · all combat rules preserved. Your arena save is separate.', [
+        action('Talk to Arena Guide · choose combat stage', arenaDestinations),
+        action('Build free Barracks here', () => {
+          const b = game.arenaBuildBarracks();
+          if (b) { save(); barracksMenu(b, openMain); }
+        }, 'Instant, invisible structure. Existing Barracks services remain available.'),
+        action('Free recovery · heal the party', () => {
+          game.arenaRest();
+          save();
+          closeMenu();
+          updateHUD();
+        }),
+        action('Character', characterMenu),
+        action('Skill journal', () => skillBook(openMain)),
+        action('Game and settings', systemMenu),
+      ]);
+      return;
+    }
     const canBuild = !game.isDungeon() && game.availableLabor().length > 0,
       cost = game.barracksBuildCost(),
       costLabel = cost ? cost + ' crowns' : 'FREE';
@@ -3895,7 +3969,7 @@
     game = activateLiveCritical(candidate);
     loaded = started = true;
     if (game.s.mode !== 'developer') profile.activeMode = game.s.mode;
-    if (game.peace && game.s.finalRestCompleted && game.s.mode !== 'developer')
+    if (game.peace && game.s.finalRestCompleted && !['developer', 'arena'].includes(game.s.mode))
       profile.nightmareUnlocked = true;
     persistProfile();
     restartGuard.arm(game);
@@ -3981,6 +4055,17 @@
     const n = nearestNPC();
     if (!n) {
       status('Nothing nearby to interact with.');
+      return;
+    }
+    if (game.s.mode === 'arena' && n.kind === 'arena-guide') {
+      arenaDestinations();
+      return;
+    }
+    if (game.s.mode === 'arena' && n.kind === 'arena-recovery') {
+      game.arenaRest();
+      save();
+      updateHUD();
+      status('All active fighters recovered for free.');
       return;
     }
     if (
@@ -4366,6 +4451,7 @@
 
   // prettier-ignore
   function showMap(back = closeMenu) {
+    if (game.s.mode === 'arena') return arenaDestinations();
     const zone = game.zone();
     const room = game.supplyRoom();
     const side = game.sideDungeon();

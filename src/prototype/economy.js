@@ -112,6 +112,7 @@
         return lost;
       }
       spend(amount) {
+        if (this.s.mode === 'arena') return true; // Arena services and upgrades are free.
         if (!Number.isFinite(amount) || amount < 0 || this.hero.gold < amount) {
           this.say('Not enough crowns.');
           if (Number.isFinite(amount) && amount >= 0)

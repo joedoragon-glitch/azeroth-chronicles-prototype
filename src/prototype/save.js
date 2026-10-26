@@ -175,7 +175,7 @@
         if (
           !s ||
           s.version !== 4 ||
-          !['normal', 'nightmare', 'developer'].includes(s.mode) ||
+          !['normal', 'nightmare', 'developer', 'arena'].includes(s.mode) ||
           !['adventure', 'awakening', 'peace'].includes(s.phase) ||
           !classes[s.hero?.class]
         )
@@ -600,7 +600,17 @@
         finite(s.clock, 0, 720);
         finite(s.time, 0, 1e12);
         finite(s.nextId, 1, 1e9);
+        if (s.mode === 'arena') {
+          const stages = new Set([
+            'hub',
+            ...D.regions.flatMap((r) => [r.id + '-ordinary', r.id + '-guardians']),
+            ...D.bosses.flatMap((b) => ['boss-' + b.id, 'boss-' + b.id + '-true']),
+          ]);
+          if (s.zone !== 'arena' || !stages.has(s.arenaStage))
+            throw Error('Invalid combat arena stage');
+        }
         const zones = new Set([
+          ...(s.mode === 'arena' ? ['arena'] : []),
           ...D.regions.map((r) => r.id),
           ...dungeonIds,
           ...R.supplyRooms.map((r) => r.id),
@@ -1190,6 +1200,14 @@
         c.s.hazards = [];
         c.messages = [];
         c.effects = [];
+        if (s.mode === 'arena') {
+          // Arena actors are deliberately transient test fixtures; restore the
+          // selected stage without touching campaign world migrations.
+          delete c.s.zones.arena;
+          c.zone();
+          c.syncCompanionLevelStats();
+          return c;
+        }
         for (const z of Object.values(c.s.zones)) {
           // Expand before old coordinates are filtered against the new floor.
           c.dungeonSpaceLayout(z);

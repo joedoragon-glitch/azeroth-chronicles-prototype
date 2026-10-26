@@ -859,6 +859,9 @@
         return r;
       }
       blocked(x, y, zone = this.s.zone, radius = 15, terrainOnly = false, fort = null) {
+        if (this.s.mode === 'arena' && zone === 'arena')
+          return x < 40 + radius || y < 40 + radius ||
+            x > 1960 - radius || y > 1960 - radius;
         const i = this.regionIndex(zone),
           room = this.supplyRoom(zone),
           side = this.sideDungeon(zone),

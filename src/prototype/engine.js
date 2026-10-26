@@ -49,7 +49,7 @@
   ];
   class Campaign {
     constructor(mode = 'normal', heroClass = 'paladin', random = Math.random, options = {}) {
-      if (!['normal', 'nightmare', 'developer'].includes(mode) || !classes[heroClass])
+      if (!['normal', 'nightmare', 'developer', 'arena'].includes(mode) || !classes[heroClass])
         throw Error('Unknown mode or class');
       this.random = random;
       this.formationHeading = { x: 0, y: 1 };
@@ -79,7 +79,7 @@
         restCooldown: 0,
         thornHeroInitiated: false,
         valeFieldAwakened: false,
-        zone: 'vale',
+        zone: mode === 'arena' ? 'arena' : 'vale',
         refuge: 'vale',
         nextId: 1,
         manaBalanceVersion: 1,
@@ -180,8 +180,21 @@
         pending: false,
         gameOver: false,
       };
-      this.initializeQuests();
+      if (mode !== 'arena') this.initializeQuests();
       this.s.party = [this.unit('soldier', 260, 390), this.unit('archer', 350, 380)];
+      if (mode === 'arena') {
+        this.s.arenaStage = 'hub';
+        this.s.rescued = Object.fromEntries(D.bosses.map((boss) => [boss.id, true]));
+        this.s.expeditionRank = 4;
+        this.hero.skills = Array(8).fill(1);
+        this.hero.gold = 50000000;
+        this.hero.x = 620;
+        this.hero.y = 800;
+        this.s.party.forEach((unit, i) => {
+          unit.x = 565 + i * 80;
+          unit.y = 880;
+        });
+      }
       this.zone();
     }
     get hero() {
@@ -194,6 +207,8 @@
       return this.s.phase === 'peace';
     }
     regionIndex(id = this.s.zone) {
+      if (this.s.mode === 'arena' && id === 'arena')
+        return this.arenaStages().find((stage) => stage.id === this.s.arenaStage)?.region ?? 0;
       const boss = D.bosses.find((b) => b.id === id),
         room = R.supplyRooms.find((r) => r.id === id),
         side = R.sideDungeons?.find((r) => r.id === id);
@@ -215,6 +230,7 @@
       return R.sideDungeons?.find((r) => r.id === id);
     }
     zoneSize(id = this.s.zone) {
+      if (this.s.mode === 'arena' && id === 'arena') return 2000;
       const room = this.supplyRoom(id),
         side = this.sideDungeon(id);
       return room
@@ -226,13 +242,17 @@
             : D.regions[this.regionIndex(id)]?.size;
     }
     isDungeon() {
+      if (this.s.mode === 'arena') return false;
       return dungeonIds.includes(this.s.zone) || !!this.supplyRoom() || !!this.sideDungeon();
     }
     night() {
+      if (this.s.mode === 'arena') return false;
       if (!this.peace && this.s.mode === 'nightmare') return !(this.s.nightmareIntroRemaining > 0);
       return this.s.clock % R.dayCycle.seconds >= R.dayCycle.nightAt;
     }
     daylightPhase() {
+      if (this.s.mode === 'arena')
+        return { phase: 'day', progress: 1, darkness: 0, warmth: 0 };
       const cfg = R.dayCycle,
         span = cfg.twilightSeconds;
       let phase, progress;
@@ -3501,6 +3521,13 @@
     }
 
     die(cause = null) {
+      if (this.s.mode === 'arena') {
+        this.s.statistics.deaths++;
+        this.arenaSelectStage('hub');
+        this.arenaRest();
+        this.say('Combat Arena: returned to the safe hub after defeat.');
+        return;
+      }
       this.clearPatrolResumes();
       this.clearPartyCharges();
       for (const z of Object.values(this.s.zones)) this.clearVeraRepairs(z);

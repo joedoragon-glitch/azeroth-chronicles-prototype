@@ -16,7 +16,7 @@
       validatedBytes = new Map();
     let previewSequence = 0,
       backupWarning = false;
-    for (const mode of ['normal', 'nightmare', 'developer']) {
+    for (const mode of ['normal', 'nightmare', 'developer', 'arena']) {
       try {
         expected.set(mode, storage.getItem(saveKey(mode)) ?? null);
       } catch (_) {}
@@ -160,7 +160,7 @@
           return {
             ...defaults,
             nightmareUnlocked: p.nightmareUnlocked === true,
-            activeMode: p.activeMode === 'nightmare' ? 'nightmare' : 'normal',
+            activeMode: ['normal', 'nightmare', 'arena'].includes(p.activeMode) ? p.activeMode : 'normal',
             audio: p.audio || defaults.audio,
           };
       } catch (_) {}
@@ -180,7 +180,7 @@
       try {
         writeSnapshot(game);
         if (game.s.mode !== 'developer') profile.activeMode = game.s.mode;
-        if (game.peace && game.s.mode !== 'developer') profile.nightmareUnlocked = true;
+        if (game.peace && !['developer', 'arena'].includes(game.s.mode)) profile.nightmareUnlocked = true;
         if (!saveProfile(profile)) return false;
         status(
           backupWarning

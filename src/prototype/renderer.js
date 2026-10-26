@@ -2459,7 +2459,7 @@
         finishPhase('effects');
         return;
       }
-      ctx.fillStyle = '#0c1913';
+      ctx.fillStyle = game.s.mode === 'arena' ? '#000000' : '#0c1913';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       const z = game.zone(),
         room = !!game.supplyRoom(),
@@ -2469,6 +2469,7 @@
         authoredFloor =
           Campaign.dungeonIds.includes(game.zoneId) ||
           !!Campaign.rules?.treasuryArchitecture?.[game.zoneId];
+      if (game.s.mode !== 'arena') {
       ctx.save();
       if (authoredFloor) {
         PrototypeVisuals.dungeonFloorPath(ctx, screen, game.zoneId, size);
@@ -2572,6 +2573,11 @@
       PrototypeVisuals.footpaths(ctx, z.footpaths || [], screen);
       if (!game.isDungeon())
         PrototypeVisuals.bridges(ctx, screen, i, optimized ? null : PrototypeMaterials);
+      } else {
+        // No tile iteration, terrain sprites, road rasterization or scenery compositing.
+        groundCache?.clear();
+        finishPhase('floor');
+      }
       // Moving combat warnings cannot be frozen into the PixiJS cached terrain.
       // Their real, current state is drawn by the transparent 2D cue overlay.
       if (renderLayer !== 'background') {
@@ -2616,7 +2622,7 @@
       }
       add(z.props, 'prop');
       // Authored civic terrain has one fixed, depth-sorted body; no saved duplicate prop.
-      if (!game.isDungeon() && !game.supplyRoom?.(game.zoneId) && !game.sideDungeon?.(game.zoneId))
+      if (game.s.mode !== 'arena' && !game.isDungeon() && !game.supplyRoom?.(game.zoneId) && !game.sideDungeon?.(game.zoneId))
         add(
           (Campaign.rules.terrain[game.regionIndex()] || [])
             .filter((p) => ['fountain', 'grain-silo', 'orrery'].includes(p.kind))
@@ -2642,7 +2648,7 @@
         );
       add(game.visibleNPCs(), 'npc');
       add(game.visibleResourceNodes(), 'node');
-      add(z.buildings, 'building');
+      if (game.s.mode !== 'arena') add(z.buildings, 'building');
       add(z.enemies, 'enemy');
       add(game.activeLivingParty(), 'ally');
       add([game.hero], 'hero');
