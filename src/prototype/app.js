@@ -5833,7 +5833,7 @@
           state.waiting = state.waiting.filter((p) => p.kind !== 'feedback');
           state.active = state.active.filter((p) => p.kind !== 'feedback');
         }
-        state.waiting.push({ ...n, receivedAt: now });
+        if (!n.silentWhenInspectable) state.waiting.push({ ...n, receivedAt: now });
         state.lastId = n.id;
       }
     state.active = state.active.filter((n) => now < n.until);
@@ -6010,7 +6010,7 @@
           const displayedText =
             n.kind === 'narration' || n.kind === 'milestone' ? tr(n.text) : n.text;
           const full = displayedText + (n.detail ? ' ' + n.detail : ''),
-            limit = shortPhone ? 130 : platform.mode === 'phone' ? 170 : 240,
+            limit = shortPhone ? 72 : platform.mode === 'phone' ? 88 : 150,
             compact = full.length > limit;
           card.textContent = compact ? full.slice(0, limit - 1).trimEnd() + '…' : displayedText;
           if (compact) {
