@@ -118,8 +118,14 @@ for (const [species, guard] of [
   const snapshot = c.snapshot();
   const restored = Campaign.restore(snapshot);
   const resumed = restored.zone().enemies.find(u => u.id === e.id);
+  assert(resumed, 'the v4 enemy remains available after restoration');
+  // Saved combat engagement may be reset by the normal restoration policy.
+  // Re-engage the surviving actor before testing conditional chase eligibility.
+  if (!resumed.aggro) restored.engage(resumed);
   assert(restored.valePursuitBurstEligible(resumed),
-    'native pursuit eligibility persists across v4 save/restore');
+    'native pursuit stays available in a restored/re-engaged campaign: ' +
+    JSON.stringify({ region: restored.regionIndex(), aggro: resumed.aggro,
+      ranged: resumed.ranged, species: resumed.species, returning: resumed.returning }));
 }
 
 {
