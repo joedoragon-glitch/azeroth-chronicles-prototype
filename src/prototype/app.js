@@ -1827,7 +1827,10 @@
           getOptimizationMode: () => optimizationMode,
           onFailure: (failure) => {
             graphicsController?.webglFailed(failure);
-            status('WebGL2 returned to Canvas: ' + failure.message);
+            const recovery = graphicsController?.status();
+            status(recovery?.recoveryPending
+              ? 'PixiJS issue: Canvas backup active; WebGL2 will retry when safe.'
+              : 'WebGL2 returned to Canvas: ' + failure.message);
           },
         });
   // Fan out presentation events without editing the protected simulation loop.
@@ -1838,8 +1841,31 @@
   };
   function updateGpuTrial(snapshot) {
     const trial = snapshot.phase === 'trial';
-    gpuTrialPanel.hidden = !trial;
-    if (!trial) return;
+    const preparing = snapshot.phase === 'preparing';
+    gpuTrialPanel.hidden = !trial && !preparing;
+    gpuTrialActions.style.display = trial ? 'grid' : 'none';
+    if (preparing) {
+      gpuTrialMessage.textContent = tr('Preparing PixiJS graphics…');
+      return;
+    }
+    if (!trial) {
+      // Announce actual transitions rather than silently dismissing the
+      // panel. The HUD's role=status announces this to assistive technology.
+      if (snapshot.reason === 'user-confirmed' ||
+          snapshot.reason === 'confirmed-this-session-only')
+        status('PixiJS WebGL2 ready and selected.');
+      else if (snapshot.reason === 'user-chose-canvas')
+        status('Canvas 2D ready and selected.');
+      else if (snapshot.reason === 'webgl-recovery-pending')
+        status('WebGL2 interrupted. Canvas is active; retry when safe.');
+      else if (snapshot.reason === 'webgl-recovery-attempt')
+        status('Canvas is active. Trying to restore WebGL2…');
+      else if (snapshot.reason === 'confirmed-webgl-restored')
+        status('PixiJS WebGL2 restored.');
+      else if (snapshot.reason === 'webgl-recovery-paused')
+        status('Canvas backup active. WebGL2 recovery paused after repeated failures.');
+      return;
+    }
     gpuTrialMessage.textContent =
       tr('PixiJS WebGL2 · Experimental') + ' · ' + snapshot.secondsRemaining + 's';
     gpuKeep.textContent = tr('Keep WebGL2');
@@ -1849,6 +1875,7 @@
     status: () => ({ mode: 'canvas2d', phase: 'canvas', secondsRemaining: 0 }),
     requestWebGL: async () => false,
     resumeConfirmedWebGL: async () => false,
+    maybeRecover: async () => false,
     confirm: () => false,
     revert: () => false,
     webglFailed: () => false,
@@ -1864,6 +1891,18 @@
         storage: localStorage,
         prepareWebGL: () => pixiGame.prepare(),
         getFailureDetails: () => pixiGame.failureDetails?.() || null,
+        // Do not rebuild a GPU scene while the player is moving or enemies
+        // could immediately engage. A recovery happens when the scene is
+        // visible, idle and outside nearby danger.
+        canRecover: () => {
+          if (!started || paused || menu || !focused || document.hidden ||
+              frameSkip.emergency || joy.x || joy.y || game.hero.order ||
+              game.hero.path?.length || game.s.projectiles?.length ||
+              keys.left || keys.right || keys.up || keys.down) return false;
+          return (game.zone()?.enemies || []).every((enemy) =>
+            enemy.hp <= 0 || Math.hypot(enemy.x - game.hero.x, enemy.y - game.hero.y) > 420
+          );
+        },
         showWebGL: () => {
           renderer.setRenderLayer('overlay');
           pixiGame.activate();
@@ -2039,11 +2078,12 @@
     },
   };
   function resize() {
-    // Zoom only changes the live scene projection. Keep the validated GPU
-    // surface; its terrain refreshes when cameraZoom changes. Only a genuine
-    // viewport resize needs the conservative separate-Canvas fallback.
+    // Keep the 15-second *unconfirmed* trial conservative: resizing during
+    // the trial still safely reverts. A confirmed selection instead rebuilds
+    // viewport-sized Pixi scene layers on the next draw. This allows a
+    // backgrounded iPhone PWA to resume after normal viewport changes.
     if (
-      graphicsController?.status().mode === 'webgl2' &&
+      graphicsController?.status().phase === 'trial' &&
       (viewport.width !== innerWidth || viewport.height !== innerHeight)
     ) {
       const gpu = pixiGame.status();
@@ -3541,7 +3581,7 @@
       menuControls.section('Graphics renderer'),
       menuControls.select(
         'Graphics renderer',
-        graphicsController.status().mode,
+        graphicsController.status().preferredRenderer || graphicsController.status().mode,
         choices([
           ['canvas2d', 'Canvas 2D · Default'],
           ['webgl2', 'PixiJS WebGL2 · Experimental'],
@@ -3549,6 +3589,7 @@
         (value) => {
           if (value === 'canvas2d') {
             graphicsController.revert();
+            closeMenu();
             return;
           }
           // The existing independent 15-second Keep/Revert panel must be
@@ -3559,8 +3600,20 @@
             if (!ready) status('PixiJS unavailable; Canvas 2D remains active.');
           });
         },
-        'WebGL2 may run faster on some devices. Try it for 15 seconds; keep it or return to Canvas.',
+        graphicsController.status().preferredRenderer === 'webgl2' &&
+          graphicsController.status().mode === 'canvas2d'
+          ? 'WebGL2 remains your choice; Canvas backup is active. Recovery tries when safe.'
+          : 'WebGL2 may run faster on some devices. Try it for 15 seconds; keep it or return to Canvas.',
       ),
+      ...(graphicsController.status().recoveryPaused
+        ? [action('Retry PixiJS WebGL2', () => {
+            closeMenu();
+            status('Preparing PixiJS graphics…');
+            graphicsController.requestWebGL().then((ready) => {
+              if (!ready) status('WebGL2 unavailable. Canvas backup remains active.');
+            });
+          })]
+        : []),
       menuControls.section('Diagnostics'),
       action(
         performanceDetailsExpanded ? 'Hide performance details' : 'Show performance details',
@@ -6492,6 +6545,9 @@
       requestAnimationFrame(frame);
       return;
     }
+    // A failed confirmed renderer remains the preference, but Canvas draws
+    // until a safe and bounded recovery succeeds.
+    void graphicsController.maybeRecover?.();
     const frameStart = performance.now();
     const intervalMs = now - last;
     const dt = Math.min(0.1, Math.max(0, (now - last) / 1000));
@@ -6499,6 +6555,7 @@
     const frozen =
       !writerGuard.canWrite() ||
       persistence.conflicted(game.s.mode) ||
+      graphicsController?.status().phase === 'preparing' ||
       paused ||
       menu ||
       !focused ||

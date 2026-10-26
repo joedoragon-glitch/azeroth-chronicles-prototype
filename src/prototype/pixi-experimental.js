@@ -7,6 +7,10 @@
 
   const PIXI_SCRIPT = './assets/vendor/pixi-8.22.0.min.js';
   const BG_MARGIN = 220;
+  // Near-camera lookahead is deliberately bounded; no zone-wide texture bake.
+  const WARM_MARGIN = 620;
+  const INITIAL_WARM_LIMIT = 8;
+  const WARM_EVERY_FRAMES = 4;
   const iso = (point) => ({
     x: (point.x - point.y) * 0.76,
     y: (point.x + point.y) * 0.27,
@@ -42,7 +46,7 @@
     }
     return libraryRequest;
   }
-  function candidates(game, project, width, height, presentEntity) {
+  function candidates(game, project, width, height, presentEntity, margin = 270) {
     const zone = game.zone();
     const result = [],
       used = new Map();
@@ -50,7 +54,8 @@
       for (const entity of entities || []) {
         if (kind === 'enemy' && entity.hp <= 0) continue;
         const point = project(entity);
-        if (point.x < -270 || point.x > width + 270 || point.y < -270 || point.y > height + 270)
+        if (point.x < -margin || point.x > width + margin ||
+            point.y < -margin || point.y > height + margin)
           continue;
         const identity =
           entity.id == null
@@ -166,8 +171,13 @@
       baseGame = null,
       bakeZone = null,
       actorFrameNumber = 0,
+      contextEpoch = 0,
       proceduralEvictions = 0,
-      proceduralCacheEvictions = 0;
+      proceduralCacheEvictions = 0,
+      warmupBakes = 0,
+      coldFrameBakes = 0,
+      warmupSkippedBudget = 0,
+      warmupErrors = 0;
     function noteFailure(type, stage, error) {
       const message = String(error?.message || error).slice(0, 240);
       lastError = message;
@@ -229,10 +239,41 @@
       // Stale procedural images were rasterized for the previous density.
       clearBakes(true);
     }
+    // Confirmed mobile WebGL must survive normal iOS viewport changes after
+    // switching apps. Rebuild viewport-sized scene layers in the SAME GPU
+    // context; Canvas remains available if any resize or render step fails.
+    function syncViewport() {
+      if (app.screen.width === viewport.width && app.screen.height === viewport.height) return;
+      requireValue(viewport.width > 0 && viewport.height > 0, 'Invalid PixiJS viewport');
+      // Validate cached approved textures before touching the existing scene.
+      const originals = [...loaded].map((src) => {
+        const texture = root.PIXI.Assets.get(src);
+        requireValue(texture?.source, 'Approved artwork unavailable after resize: ' + src);
+        return [src, texture];
+      });
+      // Retired procedural textures must never remain referenced by sprites.
+      clearBakes(true);
+      scene.destroy();
+      scene = null;
+      const previous = backing;
+      backing = null;
+      previous?.destroy?.(false);
+      const ratio = effectiveRatio();
+      app.renderer.resize(viewport.width, viewport.height, ratio);
+      backingRatio = ratio;
+      scene = root.AzerothPixiSceneBridge.create({
+        PIXI: root.PIXI, app, width: viewport.width, height: viewport.height,
+      });
+      for (const [src, texture] of originals) scene.registerTexture(src, texture);
+      createBackgroundPainter();
+      bakedZoom = null;
+      drawBackground();
+    }
     function game() {
       return getGame();
     }
     function clearBakes(keepLoaded = false) {
+      resetLookahead();
       // Remove actor references before destroying their GPU source textures.
       if (scene && baked.size) {
         scene.syncActors([]);
@@ -314,6 +355,97 @@
       }
       scene.moveBackground(-BG_MARGIN + dx, -BG_MARGIN + dy);
     }
+    function paintedEntity(visual) {
+      return visual.kind === 'archive-record'
+        ? { ...visual, renderKind: 'prop', structure: 'scroll-stack',
+            decorative: true, sceneRole: 'dry-stacks' }
+        : visual.kind === 'keeper'
+          ? { ...visual, renderKind: 'enemy', type: 'boss', family: 'archive', form: 'normal' }
+          : visual;
+    }
+    // Read ahead only within a narrow ring just beyond normal view culling.
+    // The same identity/revision contract as the actual frame is essential:
+    // prepared textures must be reusable when the player walks toward them.
+    function lookaheadCandidates(current) {
+      return candidates(current, project, viewport.width, viewport.height,
+        canvasRenderer.presentEntity, WARM_MARGIN)
+        .filter(({entity,point}) => {
+          if(entity.interactionOnly ||
+              (entity.kind === 'landmark' && String(entity.id || '').startsWith('bridge-')))
+            return false;
+          return point.x < -270 || point.x > viewport.width + 270 ||
+            point.y < -270 || point.y > viewport.height + 270;
+        })
+        .sort((a,b) => {
+          const d=p=>Math.pow(Math.max(0,-270-p.x,p.x-viewport.width-270),2)+
+            Math.pow(Math.max(0,-270-p.y,p.y-viewport.height-270),2);
+          return d(a.point)-d(b.point);
+        });
+    }
+    function warmOne(current, entries) {
+      if (!scene || imageBytes >= trimAt || !entries.length) return false;
+      const zoom = platform.cameraZoom || 1;
+      while (entries.length) {
+        const {entity,visual,point,key} = entries.shift();
+        const revision = revisionFor(entity,visual,key,current,zoom);
+        if (baked.has(revision)) continue;
+        const painted=paintedEntity(visual);
+        const chosen=adapter.commandFor(painted,
+          {x:point.x/zoom,y:point.y/zoom},
+          {region:current.regionIndex(),rescued:!!current.s.rescued[entity.family]});
+        // Canonical sprite atlases were already preloaded at startup.
+        if(chosen.supported || chosen.reason!=='original-game-procedural-art') continue;
+        const body=bake(painted,current,backingRatio*zoom);
+        if(!body)continue;
+        const bytes=body.image.width*body.image.height*4;
+        // Never evict visible actors, or push the soft watermark, for lookahead.
+        if(imageBytes+bytes>trimAt) {
+          warmupSkippedBudget++;
+          return false;
+        }
+        const id='pixi-procedural:'+revision;
+        const texture=root.PIXI.Texture.from(body.image);
+        texture.source.scaleMode='nearest';
+        scene.registerTexture(id,texture);
+        imageBytes+=bytes;
+        baked.set(revision,{...body,id,bytes,texture,lastUsedFrame:actorFrameNumber});
+        warmupBakes++;
+        return true;
+      }
+      return false;
+    }
+    let lookaheadQueue=[],lookaheadZone=null,lookaheadZoom=null,
+      lookaheadRatio=null,lookaheadOrigin=null;
+    function resetLookahead() {
+      lookaheadQueue=[];lookaheadZone=null;lookaheadOrigin=null;
+    }
+    function warmAhead(limit=1) {
+      const current=game(),zoom=platform.cameraZoom||1;
+      if(!scene || !current || imageBytes>=trimAt || root.document?.hidden)return 0;
+      if(lookaheadZone!==current.zoneId || lookaheadZoom!==zoom ||
+        lookaheadRatio!==backingRatio || !lookaheadOrigin ||
+        Math.hypot(current.hero.x-lookaheadOrigin.x,
+          current.hero.y-lookaheadOrigin.y)>55) {
+        lookaheadQueue=lookaheadCandidates(current);
+        lookaheadZone=current.zoneId;
+        lookaheadZoom=zoom;lookaheadRatio=backingRatio;
+        lookaheadOrigin={x:current.hero.x,y:current.hero.y};
+      }
+      let warmed=0;
+      for(let i=0;i<limit&&lookaheadQueue.length;i++){
+        try{
+          if(warmOne(current,lookaheadQueue))warmed++;
+        }catch(_){
+          // Speculative prerendering must not take down a playable GPU scene.
+          // If the actual visible draw encounters the same fault, the normal
+          // typed failure and reliable Canvas fallback still apply.
+          warmupErrors++;
+          resetLookahead();
+          break;
+        }
+      }
+      return warmed;
+    }
     function actorFrame() {
       const current = game(),
         zoom = platform.cameraZoom || 1;
@@ -344,12 +476,7 @@
       let detachedForEviction = false;
       for (const { entity, visual, point, key } of visible) {
         // Canvas repaints these identities as their actual in-world objects.
-        const painted = visual.kind === 'archive-record'
-          ? { ...visual, renderKind: 'prop', structure: 'scroll-stack',
-              decorative: true, sceneRole: 'dry-stacks' }
-          : visual.kind === 'keeper'
-            ? { ...visual, renderKind: 'enemy', type: 'boss', family: 'archive', form: 'normal' }
-            : visual;
+        const painted = paintedEntity(visual);
         const chosen = adapter.commandFor(
           painted,
           { x: point.x / zoom, y: point.y / zoom },
@@ -374,6 +501,7 @@
         } else if (chosen.reason === 'original-game-procedural-art') {
           const revision = revisionFor(entity, visual, key, current, zoom);
           if (!baked.has(revision)) {
+            coldFrameBakes++;
             const body = bake(painted, current, backingRatio * zoom);
             if (!body) {
               if (entity.renderKind === 'landmark' || entity.kind === 'landmark') continue;
@@ -496,6 +624,10 @@
     }
     async function prepare() {
       if (disposed) throw Error('Experimental renderer disposed');
+      // A previous WebGL context can dispatch an asynchronous contextlost
+      // event after its Canvas fallback. Once a new attempt begins, signals
+      // from the old context must not take down the new confirmed session.
+      const thisEpoch = ++contextEpoch;
       // A second opt-in trial must release the previous GPU context and scene.
       if (app) disposeResources();
       let stage = 'library-load';
@@ -529,6 +661,7 @@
         worldCanvas.parentNode.insertBefore(app.canvas, worldCanvas);
         app.canvas.addEventListener('webglcontextlost', (event) => {
           event.preventDefault();
+          if (thisEpoch !== contextEpoch) return;
           active = false;
           options.onFailure(noteFailure('context-loss', 'webglcontextlost', 'WebGL context lost'));
         });
@@ -585,6 +718,16 @@
         actorFrame();
         syncAtmosphere();
         scene.draw();
+        // Permit a short movement-safe preparation phase, but never rasterize
+        // the entire zone or grow beyond existing cache watermarks.
+        stage = 'nearby-art-warmup';
+        for(let i=0;i<INITIAL_WARM_LIMIT;i++){
+          // On real devices let the UI thread breathe between small batches.
+          if(i%2===0 && typeof root.requestAnimationFrame==='function')
+            await new Promise(resolve=>root.requestAnimationFrame(resolve));
+          if(!scene || !app || thisEpoch!==contextEpoch || disposed) return false;
+          if(!warmAhead(1))break;
+        }
         return true;
       } catch (error) {
         noteFailure(stage === 'webgl2-context' ? 'context-unavailable' : 'preparation-failed',
@@ -598,11 +741,12 @@
       // late callback must not replace that precise failure with "inactive".
       if (!active && lastFailure?.type === 'context-loss') return;
       let stage = 'active-check';
+      const drawStarted=root.performance?.now?.();
+      let frameWorkMs=NaN;
       try {
         if (!active || !scene) throw Error('Inactive PixiJS renderer');
         stage = 'viewport-check';
-        if (app.screen.width !== viewport.width || app.screen.height !== viewport.height)
-          throw Error('Viewport changed: return to Canvas');
+        syncViewport();
         stage = 'resolution';
         syncResolution();
         stage = 'background';
@@ -613,6 +757,14 @@
         syncAtmosphere();
         stage = 'scene-render';
         scene.draw();
+        frameWorkMs=Number.isFinite(drawStarted)
+          ? root.performance.now()-drawStarted : NaN;
+        // Progressive nearby texture bakes run only on sparse, healthy draw
+        // frames. This prevents an entire unseen crowd arriving on one frame.
+        // CPU draw timing is only a heuristic, NOT measured GPU execution.
+        if(actorFrameNumber%WARM_EVERY_FRAMES===0 && imageBytes<trimAt &&
+          (!Number.isFinite(frameWorkMs) || frameWorkMs<12))
+          warmAhead(1);
       } catch (error) {
         // Pixi/ANGLE can signal context loss through its draw exception
         // BEFORE the browser fires webglcontextlost. Preserve that cause
@@ -690,6 +842,8 @@
         proceduralTextures: baked.size,
         proceduralEvictions,
         proceduralCacheEvictions,
+        warmupBakes,coldFrameBakes,warmupSkippedBudget,warmupErrors,
+        lookaheadPending:lookaheadQueue.length,
         proceduralBudget,
         proceduralTrimAt: trimAt,
         pixelRatio: backingRatio,

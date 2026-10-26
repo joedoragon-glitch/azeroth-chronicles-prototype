@@ -37,7 +37,7 @@ assert.equal(image.spriteIdentity,cottage);
 const oldImage=painter.presentEntity({structure:'vale-cottage'},'prop');
 assert.equal(oldImage.visualScale,1,'low-density art must not be blindly enlarged');
 
-const inits=[],draws=[],resizes=[],frames=[],resources=new Set();
+const inits=[],draws=[],resizes=[],frames=[],resources=new Set(), approvedTextures=new Map();
 let currentActorTextures = new Set(), destroyedProcedural = 0,
   lastApplicationCanvas = null, rejectWebGLContext = false, failSceneDraw = false;
 function canvas() {
@@ -81,7 +81,14 @@ const runtime={
   Campaign:{rules:{terrain:[]}},
   PIXI:{
     Application,Texture:{from:textureFrom},
-    Assets:{load:async()=>({source:{width:816,height:816}})}
+    Assets:{
+      load:async(src)=>{
+        const texture={source:{width:816,height:816}};
+        approvedTextures.set(src,texture);
+        return texture;
+      },
+      get:src=>approvedTextures.get(src)
+    }
   },
   PrototypeRenderer:{
     create:({canvas,ctx})=>({setOptimizationMode(){},draw(){
@@ -135,9 +142,28 @@ const gpuOptions={
   },
   getRendererOptions:()=>({}),getOptimizationMode:()=>false,onFailure:()=>{}
 };
+// The westward Millhaven route reveals previously unseen procedural props.
+// Warm one just outside the current viewport before the player can run there.
+const upcoming={id:'western-approach',x:game.hero.x-650,y:game.hero.y,
+  structure:'lumber-pile'};
+game.props=[upcoming];
 const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
 (async()=>{
   assert.equal(await gpu.prepare(),true,'retina Pixi scene must prepare');
+  assert.equal(gpu.status().warmupBakes,1,
+    'switch preparation should bake the immediately adjacent western approach');
+  assert.equal(gpu.status().coldFrameBakes,0,
+    'initial hero/canonical sprite should not need procedural baking');
+  assert(gpu.status().proceduralBytes>0 &&
+    gpu.status().proceduralBytes<gpu.status().proceduralTrimAt,
+    'nearby art is retained strictly below the original soft watermark');
+  upcoming.x=game.hero.x-40;
+  gpu.activate();
+  gpu.draw();
+  assert.equal(gpu.status().coldFrameBakes,0,
+    'moving the same cold prop into view must reuse its prewarmed texture');
+  // Remove the test-only western prop before the existing independent checks.
+  game.props=[];
   assert.equal(inits[0].resolution,1.5,'Pixi must use Canvas output ratio');
   assert.equal(draws[0].width,1352,'CSS-space terrain dimensions stay unchanged');
   assert.equal(draws[0].height,860);
@@ -151,6 +177,23 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(gpu.status().pixelRatio,1);
   assert.deepEqual(resizes,[1.5,1],'quality change resizes GPU in place');
   assert.equal(draws.at(-1).ratio,1,'background raster follows changed quality');
+  // Mimic a confirmed iPhone returning from another app at a new viewport.
+  // The renderer must rebuild its viewport-dependent layers without a new
+  // graphics trial or a fall back to Canvas.
+  view.width=844;view.height=390;
+  canvasSurface.width=844;canvasSurface.height=390;
+  assert.doesNotThrow(()=>gpu.draw(),'confirmed viewport change must remain usable');
+  assert.equal(gpu.status().active,true);
+  assert.equal(draws.at(-1).width,844+440,'terrain painter must use new logical width');
+  assert.equal(draws.at(-1).height,390+440,'terrain painter must use new logical height');
+  assert.equal(inits.length,1,'resize must reuse the same GPU application/context');
+  assert.equal(resizes.at(-1),1,'resized GPU must match Canvas density');
+  assert.equal(gpu.status().loadedTextures,1,'approved sprites must survive viewport rebuild');
+  // Normalizing back to the original landscape viewport is also safe.
+  view.width=912;view.height=420;
+  canvasSurface.width=912;canvasSurface.height=420;
+  gpu.draw();
+  assert.equal(gpu.status().active,true);
   // Simulate region travel without altering saved combat state. Procedural
   // GPU textures from the previous region must be released before rebuilding.
   game.props=[{id:'post',x:game.hero.x+10,y:game.hero.y+5,structure:'lumber-pile'}];
@@ -271,6 +314,24 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(failures.at(-1).resources.loadedTextures,1);
   assert.equal(lostGpu.failureDetails().type,'context-loss');
   lostGpu.release();
+  // A late contextlost event from a retired GPU canvas must not tear down
+  // the newly prepared replacement after bounded automatic recovery.
+  const replayFailures=[];
+  const replayGpu=runtime.PrototypePixiExperimental.create({
+    ...gpuOptions,onFailure:(detail)=>replayFailures.push(detail)
+  });
+  assert.equal(await replayGpu.prepare(),true);
+  replayGpu.activate();
+  const retiredCanvas=lastApplicationCanvas;
+  replayGpu.release();
+  assert.equal(await replayGpu.prepare(),true);
+  replayGpu.activate();
+  retiredCanvas.handlers.webglcontextlost({preventDefault(){}});
+  assert.equal(replayFailures.length,0,'obsolete context event is ignored after reprepare');
+  assert.equal(replayGpu.status().active,true,'replacement GPU remains active');
+  replayGpu.draw();
+  assert.equal(replayGpu.status().active,true);
+  replayGpu.release();
   rejectWebGLContext=true;
   const startupGpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(await startupGpu.prepare(),false);

@@ -8,6 +8,8 @@
   const PREFERENCE_KEY='azeroth-renderer-choice-v1';
   const PENDING_KEY='azeroth-renderer-trial-pending-v1';
   const DURATION_MS=15000;
+  const RECOVERY_HOLD_KEY='azeroth-webgl2-recovery-hold-v1';
+  const RECOVERY_BACKOFF_MS=[5000,20000];
   const defaultMode='canvas2d';
   const read=(storage,key)=>{
     try{return storage?.getItem(key)??null;}catch(_){return null;}
@@ -22,14 +24,24 @@
     // Interrupted trial or crash: discard WebGL preference before initializing
     // ANY graphics contexts. A failed trial can never strand a player.
     if(read(storage,PENDING_KEY)==='pending'){
+      // A confirmed restoration can crash while preparing. Quarantine that
+      // automatic boot without erasing the owner's previously saved choice.
+      if(read(storage,PREFERENCE_KEY)==='webgl2'){
+        write(storage,RECOVERY_HOLD_KEY,'interrupted-restore');
+        remove(storage,PENDING_KEY);
+        return {renderer:defaultMode,reason:'confirmed-recovery-quarantined'};
+      }
       write(storage,PREFERENCE_KEY,defaultMode);
       remove(storage,PENDING_KEY);
       return {renderer:defaultMode,reason:'interrupted-trial'};
     }
     const saved=read(storage,PREFERENCE_KEY);
+    const quarantined=read(storage,RECOVERY_HOLD_KEY);
     return {
-      renderer:saved==='webgl2'?'webgl2':defaultMode,
-      reason:saved==='webgl2'?'confirmed-preference':'canvas-default'
+      renderer:saved==='webgl2'&&!quarantined?'webgl2':defaultMode,
+      reason:saved==='webgl2'
+        ? quarantined?'confirmed-recovery-quarantined':'confirmed-preference'
+        : 'canvas-default'
     };
   }
   function armConfirmedBoot(storage) {
@@ -53,6 +65,7 @@
     showCanvas,
     notify=()=>{},
     getFailureDetails=()=>null,
+    canRecover=()=>true,
     now=()=>performance.now(),
     schedule=(callback,ms)=>setTimeout(callback,ms),
     unschedule=timer=>clearTimeout(timer)
@@ -62,6 +75,9 @@
       throw Error('WebGL preparation, atomic reveal, and reliable Canvas fallback hooks are required');
     let mode='canvas2d',phase='canvas',deadline=0,timer=null,serial=0,closed=false;
     let lastFallbackReason='',lastFailure=null;
+    let hidden=false,restoringConfirmed=false,recoveryPending=false,
+      recoveryAttempts=0,recoveryDue=0,
+      recoveryPaused=!!read(storage,RECOVERY_HOLD_KEY);
     const failures=new Set([
       'webgl-preparation-failed','confirmed-webgl-preparation-failed',
       'webgl-error','confirmed-webgl-error','webgl-context-or-render-failure',
@@ -95,7 +111,11 @@
       return phase==='trial'?Math.max(0,Math.ceil((deadline-now())/1000)):0;
     }
     function snapshot(reason=''){
-      return Object.freeze({mode,phase,secondsRemaining:remaining(),reason,lastFallbackReason,lastFailure});
+      return Object.freeze({
+        mode,phase,secondsRemaining:remaining(),reason,lastFallbackReason,lastFailure,
+        preferredRenderer:read(storage,PREFERENCE_KEY)==='webgl2'?'webgl2':defaultMode,
+        recoveryPending,recoveryAttempts,recoveryPaused
+      });
     }
     function announce(reason=''){notify(snapshot(reason));}
     function clearTimer(){
@@ -104,18 +124,39 @@
     function persistCanvas(){
       write(storage,PREFERENCE_KEY,defaultMode);
       remove(storage,PENDING_KEY);
+      remove(storage,RECOVERY_HOLD_KEY);
+      recoveryPending=false;recoveryPaused=false;recoveryAttempts=0;
     }
     function fallback(reason='manual-revert',details=null){
       if(closed) return false;
+      // The player has already explicitly confirmed PixiJS. A transient
+      // renderer failure changes the ACTIVE renderer, not that preference.
+      const keepChoice=(
+        (phase==='confirmed' && mode==='webgl2') || restoringConfirmed
+      ) && read(storage,PREFERENCE_KEY)==='webgl2' &&
+        reason!=='user-chose-canvas';
       recordFailure(reason,details);
       ++serial;clearTimer();
       // Canvas owns an independent 2D surface. The integration hook MUST
       // expose it before destroying/hiding the failing GPU canvas.
       try{showCanvas(reason);}finally{
-        persistCanvas();
+        if(keepChoice){
+          remove(storage,PENDING_KEY);
+          if(recoveryAttempts>=RECOVERY_BACKOFF_MS.length){
+            recoveryPending=false;recoveryPaused=true;
+            // A subsequent reload must not start another automatic boot loop.
+            write(storage,RECOVERY_HOLD_KEY,'repeated-failures');
+          }else{
+            recoveryPending=true;recoveryPaused=false;
+            recoveryDue=now()+RECOVERY_BACKOFF_MS[recoveryAttempts];
+          }
+        }else persistCanvas();
+        restoringConfirmed=false;
         phase='canvas';mode=defaultMode;deadline=0;
         lastFallbackReason=reason;
-        announce(reason);
+        announce(keepChoice
+          ? recoveryPaused?'webgl-recovery-paused':'webgl-recovery-pending'
+          : reason);
       }
       return true;
     }
@@ -128,6 +169,8 @@
     }
     async function requestWebGL(){
       if(closed||phase!=='canvas')return false;
+      recoveryPending=false;recoveryPaused=false;recoveryAttempts=0;
+      remove(storage,RECOVERY_HOLD_KEY);
       const own=++serial;
       phase='preparing';mode='canvas2d';
       // Written BEFORE trying any GPU work. A reload or crash before
@@ -157,9 +200,10 @@
 
     // Only a PREVIOUSLY confirmed choice can resume without a new countdown.
     // Keep Canvas live until its first completed GPU scene and visible controls.
-    async function resumeConfirmedWebGL(){
-      if(closed||phase!=='canvas'||!armConfirmedBoot(storage))return false;
+    async function resumeConfirmedWebGL(fromRecovery=false){
+      if(closed||phase!=='canvas'||hidden||!armConfirmedBoot(storage))return false;
       const own=++serial;
+      restoringConfirmed=true;
       phase='preparing';mode=defaultMode;
       announce('restoring-confirmed-webgl');
       let stage='preparation';
@@ -170,6 +214,17 @@
           return false;
         }
         if(closed||own!==serial||phase!=='preparing')return false;
+        // Async GPU initialization must not suddenly return the game to
+        // WebGL while the player has begun moving or combat has approached.
+        if(fromRecovery){
+          let safe=false;
+          try{safe=canRecover()===true;}catch(_){}
+          if(!safe){
+            recoveryAttempts=Math.max(0,recoveryAttempts-1);
+            fallback('confirmed-recovery-deferred');
+            return false;
+          }
+        }
         stage='reveal';
         showWebGL();
         // Setting mode before committing allows the usual fallback on failure.
@@ -178,7 +233,12 @@
           fallback('confirmed-webgl-boot-not-acknowledged');
           return false;
         }
-        phase='confirmed';announce('confirmed-webgl-restored');
+        phase='confirmed';
+        restoringConfirmed=false;recoveryPending=false;recoveryPaused=false;
+        // Keep the recovery count across brief successful restores: otherwise
+        // a flaky GPU can oscillate between Canvas and WebGL indefinitely.
+        remove(storage,RECOVERY_HOLD_KEY);
+        announce('confirmed-webgl-restored');
         return true;
       }catch(error){
         if(!closed&&own===serial)fallback('confirmed-webgl-error',{
@@ -208,10 +268,26 @@
         fallback('confirmation-timeout');
       return snapshot();
     }
-    function visibilityChanged(hidden){
-      if(hidden&&(phase==='preparing'||phase==='trial'))
-        fallback('trial-interrupted');
+    function visibilityChanged(nextHidden){
+      hidden=!!nextHidden;
+      if(hidden && phase==='trial')fallback('trial-interrupted');
+      else if(hidden && phase==='preparing')
+        fallback(restoringConfirmed?'confirmed-recovery-interrupted':'trial-interrupted');
       else check();
+    }
+    // Called from the live game's frame loop, not from a setInterval. No
+    // timer can bring WebGL back while the app is hidden or the player is in
+    // combat. A failed recovery receives at most one additional backoff.
+    async function maybeRecover(){
+      if(closed||hidden||!recoveryPending||recoveryPaused||phase!=='canvas'||
+         now()<recoveryDue)return false;
+      let safe=false;
+      try{safe=canRecover()===true;}catch(_){return false;}
+      if(!safe)return false;
+      recoveryPending=false;
+      recoveryAttempts++;
+      announce('webgl-recovery-attempt');
+      return resumeConfirmedWebGL(true);
     }
     function webglFailed(details=null){
       if(closed)return false;
@@ -240,13 +316,14 @@
     }
     announce('canvas-default');
     return Object.freeze({
-      requestWebGL,resumeConfirmedWebGL,confirm,revert:()=>fallback('user-chose-canvas'),
+      requestWebGL,resumeConfirmedWebGL,maybeRecover,confirm,
+      revert:()=>fallback('user-chose-canvas'),
       check,visibilityChanged,webglFailed,dispose,status:()=>snapshot()
     });
   }
   const api=Object.freeze({
     create,startupChoice,armConfirmedBoot,finishConfirmedBoot,
-    PREFERENCE_KEY,PENDING_KEY,DURATION_MS
+    PREFERENCE_KEY,PENDING_KEY,RECOVERY_HOLD_KEY,DURATION_MS
   });
   if(typeof module!=='undefined'&&module.exports)module.exports=api;
   else root.AzerothRendererSwitchGuard=api;
