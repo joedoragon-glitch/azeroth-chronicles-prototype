@@ -901,7 +901,9 @@
         ctx.restore();
       }
     }
-    function entityShadow(e, p) {
+    // Shared Canvas/Pixi presentation geometry. A GPU actor uses these same
+    // accepted feet/ground sizes rather than estimating shadows from sprites.
+    function groundPresentation(e) {
       let rx = 18,
         ry = 5.5;
       if (e.type === 'boss') {
@@ -923,6 +925,22 @@
       const scale = (PrototypeVisuals.featureScale?.(e) || 1) > 1 ? e.visualScale || 1 : 1;
       rx *= scale;
       ry *= scale;
+      const type = e.renderKind,
+        important = type === 'hero' || e.type === 'boss' ||
+          e.captain || e.roomCaptain || e.kind === 'quests';
+      const marker = ['hero', 'ally', 'enemy', 'npc', 'node'].includes(type)
+        ? {
+            color: type === 'hero' ? '#f5d992bb'
+              : type === 'ally' ? '#a7d3a77d'
+              : type === 'enemy'
+                ? e.neutral ? '#b9d8b177' : e.type === 'boss' ? '#ec8b76aa' : '#b8786870'
+                : e.kind === 'quests' ? '#f5d18cbb' : '#d5ca9b66',
+            important,
+          } : null;
+      return {rx, ry, marker};
+    }
+    function entityShadow(e, p) {
+      const {rx, ry} = groundPresentation(e);
       ctx.save();
       ctx.fillStyle = '#05100c38';
       ctx.beginPath();
@@ -935,24 +953,10 @@
       ctx.restore();
     }
     function groundMarker(e, p) {
-      const type = e.renderKind,
-        important =
-          type === 'hero' || e.type === 'boss' || e.captain || e.roomCaptain || e.kind === 'quests';
-      if (!['hero', 'ally', 'enemy', 'npc', 'node'].includes(type)) return;
-      ctx.strokeStyle =
-        type === 'hero'
-          ? '#f5d992bb'
-          : type === 'ally'
-            ? '#a7d3a77d'
-            : type === 'enemy'
-              ? e.neutral
-                ? '#b9d8b177'
-                : e.type === 'boss'
-                  ? '#ec8b76aa'
-                  : '#b8786870'
-              : e.kind === 'quests'
-                ? '#f5d18cbb'
-                : '#d5ca9b66';
+      const {marker} = groundPresentation(e);
+      if (!marker) return;
+      const {important} = marker;
+      ctx.strokeStyle = marker.color;
       ctx.lineWidth = important ? 2 : 1;
       ctx.beginPath();
       ctx.ellipse(p.x, p.y + 9, important ? 28 : 21, important ? 11 : 8, 0, 0, Math.PI * 2);
@@ -3058,6 +3062,7 @@
         effectRecorder?.callback(row, visualFx.length);
       },
       presentEntity,
+      groundPresentation,
       // Presentation-only layer split for the opt-in PixiJS experiment.
       setRenderLayer: (layer) => {
         if (layer !== 'full' && layer !== 'overlay' && layer !== 'background')

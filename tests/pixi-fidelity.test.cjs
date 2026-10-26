@@ -37,7 +37,8 @@ assert.equal(image.spriteIdentity,cottage);
 const oldImage=painter.presentEntity({structure:'vale-cottage'},'prop');
 assert.equal(oldImage.visualScale,1,'low-density art must not be blindly enlarged');
 
-const inits=[],draws=[],resizes=[],frames=[],resources=new Set();
+const inits=[],draws=[],resizes=[],frames=[],moteFrames=[],resources=new Set(), approvedTextures=new Map();
+let holdWarmFrames=false, deferredWarmFrame=null;
 let currentActorTextures = new Set(), destroyedProcedural = 0,
   lastApplicationCanvas = null, rejectWebGLContext = false, failSceneDraw = false;
 function canvas() {
@@ -81,7 +82,14 @@ const runtime={
   Campaign:{rules:{terrain:[]}},
   PIXI:{
     Application,Texture:{from:textureFrom},
-    Assets:{load:async()=>({source:{width:816,height:816}})}
+    Assets:{
+      load:async(src)=>{
+        const texture={source:{width:816,height:816}};
+        approvedTextures.set(src,texture);
+        return texture;
+      },
+      get:src=>approvedTextures.get(src)
+    }
   },
   PrototypeRenderer:{
     create:({canvas,ctx})=>({setOptimizationMode(){},draw(){
@@ -90,7 +98,7 @@ const runtime={
     nightLightKind:()=>null
   },
   PrototypeSprites:{timeMs:()=>1000},
-  PrototypeVisuals:{draw(){}},
+  PrototypeVisuals:{draw(){},atmosphereMotes:Visuals.atmosphereMotes},
   AzerothNativeWebGLCore:{lampGlowCommands:()=>[]},
   AzerothGpuSpriteAdapter:{create:()=>({
     commandFor:(entity,point)=>entity.renderKind==='prop'
@@ -114,7 +122,7 @@ const runtime={
       currentActorTextures=new Set(list.map(actor=>actor.textureId));
       frames.push(list);
     },
-    syncLamps(){},setAtmosphere(){},setVignette(){},
+    syncLamps(){},setAtmosphere(){},syncMotes(motes,zoom){moteFrames.push({motes,zoom});},setVignette(){},
     draw(){if(failSceneDraw)throw Error(failSceneDraw==='context' ? 'WebGL context lost' : 'Synthetic Pixi scene draw error')},
     destroy(){}
   })}
@@ -124,6 +132,10 @@ const manifest={sprites:{hero:{src:'./assets/sprites/test.png'}}};
 const pixiSource=fs.readFileSync(path.join(__dirname,'../src/prototype/pixi-experimental.js'),'utf8');
 vm.runInNewContext(pixiSource,{
   window:runtime,document:mockDocument,
+  requestAnimationFrame:(done)=>{
+    if(holdWarmFrames)deferredWarmFrame=done;
+    else done();
+  },
   fetch:async()=>({ok:true,json:async()=>manifest})
 }, {filename:'pixi-experimental.js'});
 const canvasSurface={width:1368,height:630,parentNode:{insertBefore(){}}};
@@ -131,19 +143,53 @@ const gpuOptions={
   worldCanvas:canvasSurface,viewport:view,platform,getGame:()=>game,
   canvasRenderer:{
     screen:e=>({x:456+(e.x-game.hero.x)*1.5,y:210+(e.y-game.hero.y)*1.5}),
-    presentEntity:painter.presentEntity
+    presentEntity:painter.presentEntity,
+    groundPresentation:painter.groundPresentation
   },
   getRendererOptions:()=>({}),getOptimizationMode:()=>false,onFailure:()=>{}
 };
+// One offscreen procedural actor represents the first unseen scenery while
+// stepping west from Millhaven. It must be cached before the Pixi trial opens.
+game.props=[{
+  id:'cold-west-fringe',x:game.hero.x-580,y:game.hero.y,
+  structure:'lumber-pile'
+}];
 const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
 (async()=>{
   assert.equal(await gpu.prepare(),true,'retina Pixi scene must prepare');
+  assert.equal(gpu.status().neighborhoodPrepared,1,
+    'near-west fringe is prepared while simulation remains frozen');
+  assert.equal(gpu.status().proceduralTextures,1,
+    'offscreen procedural image is cached without drawing it in the live scene');
+  assert(gpu.status().neighborhoodWarmupMs>=0);
+  assert.equal(frames[0].length,1,'prewarming must not add offscreen actors to the world');
+  const heroStartX=game.hero.x;
+  game.hero.x-=470;
+  gpu.activate();
+  gpu.draw();
+  assert.equal(gpu.status().proceduralTextures,1,
+    'westward first visit must reuse the prewarmed identity instead of baking again');
+  game.hero.x=heroStartX;
+  game.props=[];
   assert.equal(inits[0].resolution,1.5,'Pixi must use Canvas output ratio');
   assert.equal(draws[0].width,1352,'CSS-space terrain dimensions stay unchanged');
   assert.equal(draws[0].height,860);
   assert.equal(draws[0].ratio,1.5,'background painting must be retina');
   assert.equal(gpu.status().backdropWidth,2028);
   assert.equal(frames[0][0].width,180,'camera zoom applies without double DPI scaling');
+  assert.equal(frames[0][0].ground.rx,18,'Pixi uses the same hero shadow footprint as Canvas');
+  assert.equal(frames[0][0].ground.scale,1.5,'contact shadow scales with physical camera zoom');
+  assert.equal(frames[0][0].ground.marker.color,'#f5d992bb',
+    'hero ground ring must have the original approved Canvas color');
+  assert.equal(frames[0][0].ground.x,456,'shadow tracks camera projection, not sprite crop');
+  assert.equal(moteFrames[0].zoom,1.5,'motes follow Canvas physical camera zoom');
+  assert.equal(moteFrames[0].motes.length,14,'Pixi receives the 14 original Vale outdoor motes');
+  assert.equal(moteFrames[0].motes[0].alpha,.18,'daytime Pixi pollen uses original alpha');
+  assert.deepEqual(moteFrames[0].motes[0].rgb,[234,223,158],
+    'approved daylight Vale palette is forwarded unchanged');
+  const regionMote=moteFrames[0].motes[0];
+  assert(regionMote.x>=-40 && regionMote.x<=912/1.5+40,
+    'motes originate in the Canvas logical viewport, not the pixel backing');
   gpu.activate();
   gpu.draw();
   canvasSurface.width=912;canvasSurface.height=420;
@@ -151,6 +197,23 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(gpu.status().pixelRatio,1);
   assert.deepEqual(resizes,[1.5,1],'quality change resizes GPU in place');
   assert.equal(draws.at(-1).ratio,1,'background raster follows changed quality');
+  // Mimic a confirmed iPhone returning from another app at a new viewport.
+  // The renderer must rebuild its viewport-dependent layers without a new
+  // graphics trial or a fall back to Canvas.
+  view.width=844;view.height=390;
+  canvasSurface.width=844;canvasSurface.height=390;
+  assert.doesNotThrow(()=>gpu.draw(),'confirmed viewport change must remain usable');
+  assert.equal(gpu.status().active,true);
+  assert.equal(draws.at(-1).width,844+440,'terrain painter must use new logical width');
+  assert.equal(draws.at(-1).height,390+440,'terrain painter must use new logical height');
+  assert.equal(inits.length,1,'resize must reuse the same GPU application/context');
+  assert.equal(resizes.at(-1),1,'resized GPU must match Canvas density');
+  assert.equal(gpu.status().loadedTextures,1,'approved sprites must survive viewport rebuild');
+  // Normalizing back to the original landscape viewport is also safe.
+  view.width=912;view.height=420;
+  canvasSurface.width=912;canvasSurface.height=420;
+  gpu.draw();
+  assert.equal(gpu.status().active,true);
   // Simulate region travel without altering saved combat state. Procedural
   // GPU textures from the previous region must be released before rebuilding.
   game.props=[{id:'post',x:game.hero.x+10,y:game.hero.y+5,structure:'lumber-pile'}];
@@ -216,6 +279,27 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(tinyGpu.status().proceduralTextures,2,
     'zone switching must preserve only the freshly visible scene');
   tinyGpu.release();
+  // If iOS backgrounds the PWA during the short two-per-frame warmup,
+  // the removed GPU scene may never be rebuilt by a stale async callback.
+  resources.clear();currentActorTextures.clear();
+  game.zoneId='vale';
+  game.props=[
+    {id:'fringe-a',x:game.hero.x-580,y:game.hero.y,structure:'lumber-pile'},
+    {id:'fringe-b',x:game.hero.x-600,y:game.hero.y,structure:'lumber-pile'},
+  ];
+  holdWarmFrames=true;
+  const interruptedGpu=runtime.PrototypePixiExperimental.create(gpuOptions);
+  const pendingWarm=interruptedGpu.prepare();
+  for(let j=0;j<30 && !deferredWarmFrame;j++)await Promise.resolve();
+  assert.equal(typeof deferredWarmFrame,'function',
+    'two nearby procedural bakes yield before a trial can be revealed');
+  interruptedGpu.release();
+  const resumeFrame=deferredWarmFrame;
+  holdWarmFrames=false;deferredWarmFrame=null;
+  resumeFrame();
+  assert.equal(await pendingWarm,false,'released GPU rejects stale neighborhood preparation');
+  assert.equal(interruptedGpu.status().active,false);
+  game.props=[];
   const failures=[];
   const failedDrawGpu=runtime.PrototypePixiExperimental.create({
     ...gpuOptions,onFailure:(detail)=>failures.push(detail)
@@ -271,6 +355,24 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(failures.at(-1).resources.loadedTextures,1);
   assert.equal(lostGpu.failureDetails().type,'context-loss');
   lostGpu.release();
+  // A late contextlost event from a retired GPU canvas must not tear down
+  // the newly prepared replacement after bounded automatic recovery.
+  const replayFailures=[];
+  const replayGpu=runtime.PrototypePixiExperimental.create({
+    ...gpuOptions,onFailure:(detail)=>replayFailures.push(detail)
+  });
+  assert.equal(await replayGpu.prepare(),true);
+  replayGpu.activate();
+  const retiredCanvas=lastApplicationCanvas;
+  replayGpu.release();
+  assert.equal(await replayGpu.prepare(),true);
+  replayGpu.activate();
+  retiredCanvas.handlers.webglcontextlost({preventDefault(){}});
+  assert.equal(replayFailures.length,0,'obsolete context event is ignored after reprepare');
+  assert.equal(replayGpu.status().active,true,'replacement GPU remains active');
+  replayGpu.draw();
+  assert.equal(replayGpu.status().active,true);
+  replayGpu.release();
   rejectWebGLContext=true;
   const startupGpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(await startupGpu.prepare(),false);

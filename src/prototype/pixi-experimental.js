@@ -42,7 +42,7 @@
     }
     return libraryRequest;
   }
-  function candidates(game, project, width, height, presentEntity) {
+  function candidates(game, project, width, height, presentEntity, margin = 270) {
     const zone = game.zone();
     const result = [],
       used = new Map();
@@ -50,7 +50,8 @@
       for (const entity of entities || []) {
         if (kind === 'enemy' && entity.hp <= 0) continue;
         const point = project(entity);
-        if (point.x < -270 || point.x > width + 270 || point.y < -270 || point.y > height + 270)
+        if (point.x < -margin || point.x > width + margin ||
+            point.y < -margin || point.y > height + margin)
           continue;
         const identity =
           entity.id == null
@@ -166,8 +167,11 @@
       baseGame = null,
       bakeZone = null,
       actorFrameNumber = 0,
+      contextEpoch = 0,
       proceduralEvictions = 0,
-      proceduralCacheEvictions = 0;
+      proceduralCacheEvictions = 0,
+      neighborhoodPrepared = 0,
+      neighborhoodWarmupMs = 0;
     function noteFailure(type, stage, error) {
       const message = String(error?.message || error).slice(0, 240);
       lastError = message;
@@ -228,6 +232,36 @@
       previous?.destroy?.(false);
       // Stale procedural images were rasterized for the previous density.
       clearBakes(true);
+    }
+    // Confirmed mobile WebGL must survive normal iOS viewport changes after
+    // switching apps. Rebuild viewport-sized scene layers in the SAME GPU
+    // context; Canvas remains available if any resize or render step fails.
+    function syncViewport() {
+      if (app.screen.width === viewport.width && app.screen.height === viewport.height) return;
+      requireValue(viewport.width > 0 && viewport.height > 0, 'Invalid PixiJS viewport');
+      // Validate cached approved textures before touching the existing scene.
+      const originals = [...loaded].map((src) => {
+        const texture = root.PIXI.Assets.get(src);
+        requireValue(texture?.source, 'Approved artwork unavailable after resize: ' + src);
+        return [src, texture];
+      });
+      // Retired procedural textures must never remain referenced by sprites.
+      clearBakes(true);
+      scene.destroy();
+      scene = null;
+      const previous = backing;
+      backing = null;
+      previous?.destroy?.(false);
+      const ratio = effectiveRatio();
+      app.renderer.resize(viewport.width, viewport.height, ratio);
+      backingRatio = ratio;
+      scene = root.AzerothPixiSceneBridge.create({
+        PIXI: root.PIXI, app, width: viewport.width, height: viewport.height,
+      });
+      for (const [src, texture] of originals) scene.registerTexture(src, texture);
+      createBackgroundPainter();
+      bakedZoom = null;
+      drawBackground();
     }
     function game() {
       return getGame();
@@ -314,6 +348,86 @@
       }
       scene.moveBackground(-BG_MARGIN + dx, -BG_MARGIN + dy);
     }
+    function paintedVisual(visual) {
+      return visual.kind === 'archive-record'
+        ? { ...visual, renderKind: 'prop', structure: 'scroll-stack',
+            decorative: true, sceneRole: 'dry-stacks' }
+        : visual.kind === 'keeper'
+          ? { ...visual, renderKind: 'enemy', type: 'boss', family: 'archive', form: 'normal' }
+          : visual;
+    }
+    // First-time procedural art is drawn on a temporary 2D bitmap before
+    // being usable as a Pixi texture. A bounded prewarm cannot evict current
+    // onscreen sprites; only the live actor pass may trim scene resources.
+    function ensureProcedural(painted, revision, current, zoom,
+                              protectedRevisions = null, detach = null) {
+      if (baked.has(revision)) return baked.get(revision);
+      const body = bake(painted, current, backingRatio * zoom);
+      if (!body) return null;
+      const bytes = body.image.width * body.image.height * 4;
+      if (imageBytes + bytes > proceduralBudget && detach) {
+        detach();
+        evictUnused(protectedRevisions, imageBytes + bytes - trimTo);
+      }
+      if (imageBytes + bytes > proceduralBudget) {
+        if (!detach) return null;
+        throw Error('Visible procedural artwork exceeds Pixi image budget');
+      }
+      const id = 'pixi-procedural:' + revision;
+      const texture = root.PIXI.Texture.from(body.image);
+      texture.source.scaleMode = 'nearest';
+      scene.registerTexture(id, texture);
+      imageBytes += bytes;
+      baked.set(revision, { ...body, id, bytes, texture, lastUsedFrame: actorFrameNumber });
+      return baked.get(revision);
+    }
+    // On switching to Pixi, the existing live view is loaded first. Then,
+    // prepare a limited fringe just beyond the camera so a quick step from
+    // Millhaven toward its goblins doesn't require every first bake in combat.
+    // Yield between batches while the full game simulation is held still by
+    // the renderer preparation guard; never run this as an unbounded emitter.
+    async function warmNeighborhood(epoch) {
+      const started = (typeof performance !== 'undefined' ? performance.now() : Date.now());
+      const current = game(), zoom = platform.cameraZoom || 1;
+      const width = viewport.width, height = viewport.height;
+      const fringe = candidates(current, project, width, height,
+        canvasRenderer.presentEntity, 650)
+        .filter(({entity,point}) =>
+          !entity.interactionOnly &&
+          !(entity.kind === 'landmark' && String(entity.id || '').startsWith('bridge-')) &&
+          (point.x < -270 || point.x > width + 270 ||
+            point.y < -270 || point.y > height + 270))
+        .sort((a,b) => {
+          const distance = (p) => Math.hypot(
+            Math.max(0,-p.x,p.x-width),Math.max(0,-p.y,p.y-height));
+          return distance(a.point)-distance(b.point);
+        });
+      let prepared = 0,steps=0;
+      for(const {entity,visual,point,key} of fringe) {
+        if(epoch!==contextEpoch || !scene || !app || game()!==current ||
+           platform.cameraZoom!==zoom) return false;
+        const elapsed=(typeof performance !== 'undefined' ? performance.now() : Date.now())-started;
+        if(prepared>=18 || elapsed>600 || imageBytes>=trimAt) break;
+        const painted=paintedVisual(visual);
+        const chosen=adapter.commandFor(painted,
+          {x:point.x/zoom,y:point.y/zoom},
+          {region:current.regionIndex(),rescued:!!current.s.rescued[entity.family]});
+        if(chosen.supported)continue; // Canonical sprites already preloaded.
+        if(chosen.reason!=='original-game-procedural-art')continue;
+        const revision=revisionFor(entity,visual,key,current,zoom);
+        if(baked.has(revision))continue;
+        // The warm-up never evicts current-frame art to make room.
+        const cached=ensureProcedural(painted,revision,current,zoom);
+        if(!cached)continue;
+        prepared++;
+        if(++steps%2===0 && typeof requestAnimationFrame==='function')
+          await new Promise(resolve=>requestAnimationFrame(resolve));
+      }
+      neighborhoodPrepared += prepared;
+      neighborhoodWarmupMs +=
+        (typeof performance !== 'undefined' ? performance.now() : Date.now())-started;
+      return epoch===contextEpoch;
+    }
     function actorFrame() {
       const current = game(),
         zoom = platform.cameraZoom || 1;
@@ -343,13 +457,15 @@
       const records = [];
       let detachedForEviction = false;
       for (const { entity, visual, point, key } of visible) {
+        // The approved Canvas feet treatment is independent of sprite art.
+        // Pixi draws it below each body at the same depth in world space.
+        const ground = {
+          x: point.x, y: point.y,
+          scale: zoom,
+          ...canvasRenderer.groundPresentation(visual),
+        };
         // Canvas repaints these identities as their actual in-world objects.
-        const painted = visual.kind === 'archive-record'
-          ? { ...visual, renderKind: 'prop', structure: 'scroll-stack',
-              decorative: true, sceneRole: 'dry-stacks' }
-          : visual.kind === 'keeper'
-            ? { ...visual, renderKind: 'enemy', type: 'boss', family: 'archive', form: 'normal' }
-            : visual;
+        const painted = paintedVisual(visual);
         const chosen = adapter.commandFor(
           painted,
           { x: point.x / zoom, y: point.y / zoom },
@@ -369,37 +485,23 @@
             height: c.height * zoom,
             opacity: c.opacity,
             flipX: c.flipX,
+            ground,
             depth: entity.x + entity.y,
           });
         } else if (chosen.reason === 'original-game-procedural-art') {
           const revision = revisionFor(entity, visual, key, current, zoom);
-          if (!baked.has(revision)) {
-            const body = bake(painted, current, backingRatio * zoom);
-            if (!body) {
-              if (entity.renderKind === 'landmark' || entity.kind === 'landmark') continue;
-              throw Error('Unrendered procedural entity: ' + key);
-            }
-            const bytes = body.image.width * body.image.height * 4;
-            if (imageBytes + bytes > proceduralBudget) {
-              // Previously drawn actors may still point to offscreen GPU art.
-              // Drop those sprites before releasing texture sources. The full
-              // current scene will be rebuilt at the end of this same frame.
+          const b = ensureProcedural(painted, revision, current, zoom,
+            protectedRevisions, () => {
+              // Old actors must release retired textures before a budget trim.
               if (!detachedForEviction) {
                 scene.syncActors([]);
                 detachedForEviction = true;
               }
-              evictUnused(protectedRevisions, imageBytes + bytes - trimTo);
-            }
-            if (imageBytes + bytes > proceduralBudget)
-              throw Error('Visible procedural artwork exceeds Pixi image budget');
-            const id = 'pixi-procedural:' + revision;
-            const texture = root.PIXI.Texture.from(body.image);
-            texture.source.scaleMode = 'nearest';
-            scene.registerTexture(id, texture);
-            imageBytes += bytes;
-            baked.set(revision, { ...body, id, bytes, texture, lastUsedFrame: actorFrameNumber });
+            });
+          if (!b) {
+            if (entity.renderKind === 'landmark' || entity.kind === 'landmark') continue;
+            throw Error('Unrendered procedural entity: ' + key);
           }
-          const b = baked.get(revision);
           b.lastUsedFrame = actorFrameNumber;
           records.push({
             key,
@@ -410,6 +512,7 @@
             height: b.logicalHeight * zoom,
             opacity: 1,
             flipX: false,
+            ground,
             depth: entity.x + entity.y,
           });
         } else throw Error('Missing original game artwork: ' + key);
@@ -492,12 +595,28 @@
         warmth: phase.warmth || 0,
         phase: phase.phase || 'day',
       });
+      // Canvas's atmospheric motes use logical world-viewport dimensions,
+      // then get enlarged by the current camera zoom on the final surface.
+      // They continue drifting even when the player/camera is stationary.
+      const zoomedWidth = viewport.width / zoom,
+        zoomedHeight = viewport.height / zoom;
+      const motes = root.PrototypeVisuals.atmosphereMotes({
+        width: zoomedWidth, height: zoomedHeight, region, darkness,
+        dungeon: !!current.isDungeon(), room: !!current.supplyRoom(),
+        optimized: !!options.getOptimizationMode(),
+        time: (typeof performance !== 'undefined' ? performance.now() : 0) / 1000,
+      });
+      scene.syncMotes(motes, zoom);
       scene.setVignette({ darkness, optimized: !!options.getOptimizationMode() });
     }
     async function prepare() {
       if (disposed) throw Error('Experimental renderer disposed');
+      // A previous WebGL context can dispatch an asynchronous contextlost
+      // event after its Canvas fallback. Once a new attempt begins, signals
+      // from the old context must not take down the new confirmed session.
       // A second opt-in trial must release the previous GPU context and scene.
       if (app) disposeResources();
+      const thisEpoch = ++contextEpoch;
       let stage = 'library-load';
       try {
         const PIXI = await loadPixi();
@@ -529,6 +648,7 @@
         worldCanvas.parentNode.insertBefore(app.canvas, worldCanvas);
         app.canvas.addEventListener('webglcontextlost', (event) => {
           event.preventDefault();
+          if (thisEpoch !== contextEpoch) return;
           active = false;
           options.onFailure(noteFailure('context-loss', 'webglcontextlost', 'WebGL context lost'));
         });
@@ -585,6 +705,9 @@
         actorFrame();
         syncAtmosphere();
         scene.draw();
+        stage = 'nearby-art-preparation';
+        if(!await warmNeighborhood(thisEpoch))return false;
+        if(thisEpoch!==contextEpoch)return false;
         return true;
       } catch (error) {
         noteFailure(stage === 'webgl2-context' ? 'context-unavailable' : 'preparation-failed',
@@ -601,8 +724,7 @@
       try {
         if (!active || !scene) throw Error('Inactive PixiJS renderer');
         stage = 'viewport-check';
-        if (app.screen.width !== viewport.width || app.screen.height !== viewport.height)
-          throw Error('Viewport changed: return to Canvas');
+        syncViewport();
         stage = 'resolution';
         syncResolution();
         stage = 'background';
@@ -643,6 +765,7 @@
       if (app?.canvas) app.canvas.style.display = 'none';
     }
     function disposeResources() {
+      ++contextEpoch; // Cancel any asynchronous neighborhood preparation.
       deactivate();
       scene?.destroy?.();
       scene = null;
@@ -690,6 +813,8 @@
         proceduralTextures: baked.size,
         proceduralEvictions,
         proceduralCacheEvictions,
+        neighborhoodPrepared,
+        neighborhoodWarmupMs,
         proceduralBudget,
         proceduralTrimAt: trimAt,
         pixelRatio: backingRatio,
