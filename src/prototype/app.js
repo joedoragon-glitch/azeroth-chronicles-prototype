@@ -6008,7 +6008,9 @@
           }
           if (n.kind === 'warning') card.setAttribute('role', 'alert');
           const displayedText =
-            n.kind === 'narration' || n.kind === 'milestone' ? tr(n.text) : n.text;
+            language === 'es' && n.textEs
+              ? n.textEs
+              : n.kind === 'narration' || n.kind === 'milestone' ? tr(n.text) : n.text;
           const full = displayedText + (n.detail ? ' ' + n.detail : ''),
             limit = shortPhone ? 72 : platform.mode === 'phone' ? 88 : 150,
             compact = full.length > limit;
