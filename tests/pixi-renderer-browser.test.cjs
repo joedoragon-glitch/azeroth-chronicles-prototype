@@ -474,8 +474,11 @@ async function run() {
           assert(failure.lastFailure?.resources?.loadedTextures > 0,
             'Pre-teardown texture counts must be retained');
           assert.equal(await page.evaluate(() =>
-            localStorage.getItem('azeroth-renderer-choice-v1')), 'canvas2d',
-          'A genuine graphics failure must restore Canvas and clear the device preference');
+            localStorage.getItem('azeroth-renderer-choice-v1')), 'webgl2',
+          'Canvas must protect the game without erasing the confirmed Pixi preference');
+          assert.equal(failure.preferredRenderer, 'webgl2');
+          assert.equal(failure.recoveryPending, true,
+            'A confirmed GPU failure should schedule a bounded restoration');
           assert.equal(await page.evaluate(() =>
             getComputedStyle(document.getElementById('world')).display !== 'none'), true);
         }
