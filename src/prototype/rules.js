@@ -6808,6 +6808,7 @@
     enemyTargetingMultiplier: 1.1,
     // One coherent melee basic reach for ordinary, guardian and elite foes,
     // plus Soldiers and melee pets. Ranged basics and authored skills are separate.
+    meleeBasicRange: 90,
     eliteMeleeBasicRange: 90,
     enemyAcquisitionRange: 260,
     fortifications: {
@@ -7716,7 +7717,7 @@
     valeMeleeCounter: Object.freeze({
       enabled: true,
       // Vale ordinary melee uses the same 90-unit basic reach as other melee.
-        meleeBasicRange: 120,
+      meleeBasicRange: 90,
       buildupSeconds: 0.35,
       cooldownSeconds: 4.5,
       // Counter a Paladin stalling between the new 90-unit melee reach
