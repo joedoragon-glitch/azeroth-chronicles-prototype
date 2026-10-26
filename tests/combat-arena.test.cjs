@@ -10,6 +10,7 @@ function verify(classId) {
   assert.equal(arena.zoneId, 'arena');
   assert.equal(arena.s.arenaStage, 'hub');
   assert.deepEqual(arena.hero.skills, [1, 0, 0, 0, 0, 0, 0, 0]);
+  assert.equal(arena.zoneSize(), 2400, 'combat rooms have room for both ranged and melee approaches');
   assert.equal(arena.zone().props.length, 0);
   assert.equal(arena.zone().enemies.length, 0);
   assert.ok(arena.zone().npcs.some((n) => n.kind === 'arena-guide'));
@@ -18,6 +19,14 @@ function verify(classId) {
   const trainer = arena.zone().npcs.find((n) => n.kind === 'arena-level-trainer');
   assert.ok(Math.hypot(trainer.x - arena.hero.x, trainer.y - arena.hero.y) < 115,
     'trainer is reachable at spawn without loading scenery');
+  const npcs = arena.zone().npcs;
+  for (let i = 0; i < npcs.length; i++) {
+    assert.equal(arena.blocked(npcs[i].x, npcs[i].y, 'arena', 15), false,
+      'hub service must be inside the walkable area: ' + npcs[i].name);
+    for (let j = 0; j < i; j++)
+      assert.ok(Math.hypot(npcs[i].x - npcs[j].x, npcs[i].y - npcs[j].y) > 125,
+        'NPC service stations must not crowd each other: ' + npcs[i].name + '/' + npcs[j].name);
+  }
   // Skills stay locked until the correct specialist teaches them. All
   // learning uses the original progression functions, without arena fees.
   const goldBeforeTeaching = arena.hero.gold;
@@ -35,6 +44,9 @@ function verify(classId) {
   assert.equal(arena.night(), false);
   assert.equal(arena.blocked(1200, 900, 'arena'), false);
   assert.equal(arena.blocked(3, 900, 'arena'), true);
+  assert.equal(arena.blocked(2350, 1200, 'arena', 15), true,
+    'outward boundary rejects a body that intersects the wall');
+  assert.equal(arena.blocked(2310, 1200, 'arena', 15), false);
   const gold = arena.hero.gold;
   const baseHp = arena.hero.maxHp;
   assert.equal(arena.arenaLevelUp(), true);
@@ -61,6 +73,8 @@ function verify(classId) {
   assert.equal(arena.arenaSelectStage('vale-ordinary'), true);
   let enemies = arena.zone().enemies;
   assert.equal(enemies.length, 4);
+  assert.equal(enemies.every((e) => !arena.blocked(e.x, e.y, 'arena', arena.actorRadius(e))), true,
+    'all enemies begin inside the physical arena');
   assert.equal(enemies.every((e) => e.arenaFixture && !e.summon), true);
   assert.equal(enemies.every((e) => e.hp === e.baseHp && e.damage === e.baseDamage), true);
   assert.equal(enemies.every((e) => e.level === 1), true);
@@ -158,6 +172,36 @@ assert.equal(campaign.s.arenaStage, undefined);
 assert.notEqual(campaign.zoneSize(), 2000);
 assert.deepEqual(campaign.hero.skills, [1, 0, 0, 0, 0, 0, 0, 0]);
 assert.equal(campaign.arenaLevelUp(), false, 'NPC level-up restricted to arena');
+// PR #500 previously ticked enemies once. Exercise movement for several seconds
+// while real melee, ranged, guardian, night and boss AI are active: the black
+// backdrop must not be mistaken for infinite, non-walkable terrain.
+for (const classId of ['paladin', 'mage', 'ranger']) {
+  const moving = new Campaign('arena', classId, () => 0.5);
+  for (const stage of ['vale-ordinary', 'vale-guardians', 'march-night', 'boss-thorn', 'boss-darklord']) {
+    assert.equal(moving.arenaSelectStage(stage), true);
+    const startX = moving.hero.x;
+    for (let frame = 0; frame < 45; frame++) moving.tick(0.04, { x: 1, y: 0 });
+    assert.ok(moving.hero.x > startX + 80,
+      classId + ' must continue walking during ' + stage + ', not stall after one tick');
+    for (const enemy of moving.zone().enemies)
+      if (enemy.hp > 0) assert.equal(moving.blocked(enemy.x, enemy.y, 'arena', moving.actorRadius(enemy)), false,
+        stage + ' enemy must remain inside the room');
+  }
+  moving.arenaSelectStage('hub');
+  const upper = moving.zoneSize() - 40 - moving.actorRadius(moving.hero);
+  moving.hero.x = upper;
+  moving.hero.y = 900;
+  moving.tick(0.04, { x: 1, y: 0 });
+  assert.ok(moving.hero.x <= upper, 'player stops at marked perimeter');
+  moving.tick(0.04, { x: -1, y: 0 });
+  assert.ok(moving.hero.x < upper, 'player can immediately walk back from the perimeter');
+  const fixture = moving.zone().enemies[0] || { ...moving.hero, type: 'boss' };
+  fixture.x = 9999; fixture.y = -9999;
+  moving.zone().enemies.push(fixture);
+  moving.arenaContainActors();
+  assert.equal(moving.blocked(fixture.x, fixture.y, 'arena', moving.actorRadius(fixture)), false,
+    'scripted displacement cannot leave a combatant beyond room walls');
+}
 const swTemplate = fs.readFileSync(path.resolve(__dirname, '..', 'templates/service-worker.js'), 'utf8');
 const buildSource = fs.readFileSync(path.resolve(__dirname, '..', 'scripts/build.cjs'), 'utf8');
 const appSource = fs.readFileSync(path.resolve(__dirname, '..', 'src/prototype/app.js'), 'utf8');
@@ -170,6 +214,7 @@ for (const [file, needles] of [
   ['src/prototype/renderer.js', [
     "game.s.mode === 'arena' ? '#000000'",
     "if (game.s.mode !== 'arena') add(z.buildings, 'building')",
+    'drawArenaBoundary();',
   ]],
   ['src/prototype/pixi-experimental.js', [
     "if (game.s.mode !== 'arena') add(zone.props, 'prop')",
