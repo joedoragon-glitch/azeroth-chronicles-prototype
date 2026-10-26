@@ -92,6 +92,9 @@ for (const form of ['normal','true']) for (const level of [1,2,3]) {
 }
 {
   const {g,e}=scene(),t=attach(g);
+  // A fixture/setup summon is not the boss's warned Ministry release.
+  g.summonBossAdds(e,g.trueSummonPlan(e),3);
+  assert.equal(t.count(),0,'direct setup summons cannot trigger a critical release');
   e.telegraph=null;g.resolveAttack(e);
   assert.equal(t.count(),0,'cancelled specialist action cannot sample');
 }

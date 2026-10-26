@@ -39,7 +39,7 @@ function observe(game) {
     enemy: [enemy.hp, enemy.x, enemy.y, enemy.cd, enemy.specialCd, enemy.weakenUntil,
       enemy.slow, enemy.slowStacks, enemy.tauntUntil, enemy.fractureUntil],
     shots: game.s.projectiles.map(p => [
-      p.slot, p.damage, p.slow, p.push, p.tauntDuration, p.fractureDuration
+      p.slot, p.damage, p.slow, p.rangerVolleySlow, p.push, p.tauntDuration, p.fractureDuration
     ])
   });
 }

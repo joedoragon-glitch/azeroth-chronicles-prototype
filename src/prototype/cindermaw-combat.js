@@ -520,6 +520,27 @@
           };
           return;
         }
+        if (isMinister(e) && a?.kind === 'summon' && a.index === 6) {
+          // A Ministry responder critical is decided only after real summons
+          // were admitted. The generic boss owner retains the exact plan,
+          // population cap and cooldown; setup summons never consume RNG.
+          const before = new Set(this.bossOwnedSummons(e).map((u) => u.id));
+          const result = previous.resolveAttack.call(this, e);
+          const born = this.bossOwnedSummons(e).filter((u) => !before.has(u.id));
+          if (born.length) {
+            const receipt = this.cinderCriticalAction(e, a);
+            if (receipt?.critical)
+              for (const u of born) {
+                const hp = u.maxHp;
+                const enhanced = Math.max(hp, Math.round(
+                  this._criticalWorldNative.enhance(receipt, hp, 'summonVitality'),
+                ));
+                u.maxHp = enhanced;
+                u.hp = Math.min(enhanced, u.hp + enhanced - hp);
+              }
+          }
+          return result;
+        }
         if (!isMinister(e) || !a?.cinderMechanic || a.rogueMove)
           return previous.resolveAttack.call(this, e);
         if (a.cinderMechanic === 'cordon') {
@@ -950,22 +971,8 @@
                 : u.trueSummonRole === 'captain'
                   ? 'TRUE Ministry responder Ringleader'
                   : 'TRUE-bound Ministry responder';
-          // Admission must come from the actual authored summon release.
-          // Setup helpers and full caps never sample the World RNG.
-          const a = e.telegraph;
-          if (born.length && a?.kind === 'summon' && a.index === 6 &&
-              a.family === 'cindermaw') {
-            const receipt = this.cinderCriticalAction(e, a);
-            if (receipt?.critical)
-              for (const u of born) {
-                const hp = u.maxHp;
-                const enhanced = Math.max(hp, Math.round(
-                  this._criticalWorldNative.enhance(receipt, hp, 'summonVitality'),
-                ));
-                u.maxHp = enhanced;
-                u.hp = Math.min(enhanced, u.hp + enhanced - hp);
-              }
-          }
+          // This helper only preserves responder identity. Critical potency
+          // belongs to the original action owner after admitted spawns exist.
         }
         return result;
       }

@@ -16,8 +16,9 @@ for (const language of ['en', 'es']) {
   const short = () =>
     assert(e.get('modal-description').textContent.trim().split(/\s+/).length <= 45);
   e.get('menu-button').click();
-  assert.equal(e.get('modal-actions').children.length, 5);
+  assert.equal(e.get('modal-actions').children.length, 6);
   for (const label of [
+    t('Codices of the Unforeseen', 'Códices de lo Imprevisto'),
     t('Character', 'Personaje'),
     t('Quest journal', 'Diario de misiones'),
     t('Game and settings', 'Juego y ajustes'),
