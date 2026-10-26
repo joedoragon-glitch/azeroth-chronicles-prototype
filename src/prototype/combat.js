@@ -1110,8 +1110,13 @@
             const desired = Math.atan2(e.y - p.y, e.x - p.x),
               current = Math.atan2(p.dy, p.dx),
               delta = Math.atan2(Math.sin(desired - current), Math.cos(desired - current)),
-              turn = Math.max(-8 * dt, Math.min(8 * dt, delta)),
-              heading = current + turn;
+              turn = Math.max(-1.6 * dt, Math.min(1.6 * dt, delta)),
+              launch = p.launchHeading ?? current,
+              attempted = current + turn,
+              deviation = Math.atan2(Math.sin(attempted - launch),
+                Math.cos(attempted - launch)),
+              heading = launch + Math.max(-Math.PI / 10,
+                Math.min(Math.PI / 10, deviation));
             p.dx = Math.cos(heading);
             p.dy = Math.sin(heading);
           }
