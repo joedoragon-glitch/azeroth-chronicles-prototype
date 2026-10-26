@@ -733,3 +733,10 @@ body[data-experience='phone'] #modal-description.archive-reference dd {
 body[data-experience='phone'] #modal-description.archive-reference dd {
   text-align: left;
 }
+
+body[data-experience='phone'] #hero-stats .hero-ailment {
+  grid-column: 1 / -1;
+  color: #cceaff;
+  font-size: 10px;
+  font-weight: 700;
+}
