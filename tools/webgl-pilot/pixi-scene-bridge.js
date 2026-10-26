@@ -86,7 +86,7 @@
    let background=null,grade=null, gradeGradients=[],atmosphereSignature=null,
      vignette=null,vignetteGradient=null,vignetteSignature=null,
      spritesUpdated=0, resources=new Map();
-   let backdropTexture=null, discarded=0;
+   let backdropTexture=null, discarded=0, moteGraphic=null, moteCount=0;
    const keyOf=entity=>String(entity.key);
    function setBackground(texture,x,y,width,height) {
      if(!background) {
@@ -266,6 +266,36 @@
      }
      effectsStage.addChildAt(grade,0);
    }
+   // Screen-space pollen, fog motes and sparks share their presentation
+   // recipe with the original Canvas atmosphere. One reusable GPU geometry
+   // handles at most 18 deterministic circles, not an animated emitter.
+   function syncMotes(list,zoom=1) {
+     assert(Array.isArray(list)&&list.length<=18&&Number.isFinite(zoom)&&zoom>0,
+       'Bounded Canvas atmosphere motes and camera zoom required');
+     for(const mote of list)
+       assert(mote&&[mote.x,mote.y,mote.r,mote.alpha].every(Number.isFinite)&&
+         mote.r>0&&mote.alpha>=0&&mote.alpha<=1&&
+         Array.isArray(mote.rgb)&&mote.rgb.length===3&&
+         mote.rgb.every(c=>Number.isFinite(c)&&c>=0&&c<=255),
+         'Invalid original atmosphere mote');
+     if(!list.length) {
+       moteCount=0;
+       if(moteGraphic)moteGraphic.visible=false;
+       return;
+     }
+     if(!moteGraphic) {
+       moteGraphic=new PIXI.Graphics();
+       effectsStage.addChild(moteGraphic);
+     }
+     moteGraphic.visible=true;
+     moteGraphic.clear();
+     for(const mote of list)moteGraphic.circle(mote.x*zoom,mote.y*zoom,mote.r*zoom);
+     moteGraphic.fill({color:hex(list[0].rgb),alpha:list[0].alpha});
+     moteCount=list.length;
+     // The approved Canvas order is atmosphere grade → lamps → motes → vignette.
+     effectsStage.addChild(moteGraphic);
+     if(vignette)effectsStage.addChild(vignette);
+   }
    function setVignette(spec={}) {
      const desc=vignetteDescription(spec,width,height),
        signature=JSON.stringify(desc);
@@ -309,6 +339,7 @@
    function draw() {app.render();}
    function metrics(){return{
      actors:actors.size,lights:glowObjects.size,vignetteActive:!!vignette,
+     atmosphereMotes:moteCount,
      textureSources:resources.size,
      spriteUpdates:spritesUpdated,discarded
    };}
@@ -317,6 +348,7 @@
      for(const state of glowObjects.values())state.graphic.destroy();
      if(grade)grade.destroy();
      if(vignette)vignette.destroy();
+     if(moteGraphic){moteGraphic.destroy();moteGraphic=null;}
      if(vignetteGradient)vignetteGradient.destroy?.();
      if(background)background.destroy();
      for(const texture of frameTextures.values())texture.destroy?.(false);
@@ -328,7 +360,7 @@
    }
    return Object.freeze({
      setBackground,moveBackground,registerTexture,hasTexture,unregisterTexture,
-     syncActors,syncLamps,setAtmosphere,setVignette,
+     syncActors,syncLamps,setAtmosphere,syncMotes,setVignette,
      captureBackgroundOnly,captureLightingOnly,draw,metrics,destroy
    });
  }
