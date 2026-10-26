@@ -2143,6 +2143,24 @@
         this.say('Arena destination: ' + this.arenaStages().find((s) => s.id === id).label);
         return true;
       }
+      arenaBoostLevel(targetLevel) {
+        if (
+          this.s.mode !== 'arena' ||
+          !Number.isInteger(targetLevel) ||
+          targetLevel <= this.hero.level ||
+          targetLevel > 30
+        ) return false;
+        // Use the original XP and level-up system. No combat stats are bypassed.
+        let xp = -this.hero.xp;
+        for (let level = this.hero.level; level < targetLevel; level++)
+          xp += this.xpRequired(level);
+        const oldNotices = this.notices.length;
+        this.xp(xp);
+        // Avoid displaying 20-plus level-up banners on a low-end testing phone.
+        this.notices.length = oldNotices;
+        this.say('Arena training complete · Level ' + this.hero.level);
+        return this.hero.level === targetLevel;
+      }
       arenaRest() {
         if (this.s.mode !== 'arena') return false;
         this.clearTonic();

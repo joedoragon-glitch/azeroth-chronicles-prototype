@@ -3766,6 +3766,28 @@
       openMain,
     );
   }
+  function arenaLevelMenu() {
+    if (game.s.mode !== 'arena') return;
+    openMenu(
+      'Free hero training',
+      'Increase hero level with the native leveling rules. Talents and HP grow normally.',
+      [5, 10, 15, 20, 25, 30].map((level) =>
+        action(
+          'Train to Level ' + level + (game.hero.level === level ? ' ✓' : ''),
+          () => {
+            if (game.arenaBoostLevel(level)) {
+              save();
+              updateHUD();
+            }
+            arenaLevelMenu();
+          },
+          game.hero.level >= level ? 'Already trained' : 'FREE · no campaign XP',
+          game.hero.level >= level,
+        ),
+      ),
+      openMain,
+    );
+  }
   function arenaTravel(id) {
     if (!game.arenaSelectStage(id)) return;
     clearWaypoint();
@@ -3807,6 +3829,7 @@
           const b = game.arenaBuildBarracks();
           if (b) { save(); barracksMenu(b, openMain); }
         }, 'Instant, invisible structure. Existing Barracks services remain available.'),
+        action('Free hero training · choose level', arenaLevelMenu, 'Level 1–30 · native HP, XP and talent growth'),
         action('Free recovery · heal the party', () => {
           game.arenaRest();
           save();

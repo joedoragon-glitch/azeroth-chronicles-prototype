@@ -16,6 +16,11 @@ function verify(classId) {
   assert.equal(arena.blocked(1200, 900, 'arena'), false);
   assert.equal(arena.blocked(3, 900, 'arena'), true);
   const gold = arena.hero.gold;
+  assert.equal(arena.arenaBoostLevel(5), true);
+  assert.equal(arena.hero.level, 5);
+  assert.ok(arena.hero.talentPoints >= 4);
+  assert.equal(arena.arenaBoostLevel(3), false);
+  assert.equal(arena.arenaBoostLevel(31), false);
   assert.equal(arena.spend(500), true);
   assert.equal(arena.hero.gold, gold, 'all arena purchases are free');
 

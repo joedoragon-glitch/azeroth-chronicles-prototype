@@ -8,7 +8,8 @@ test the real game on low-end phones with almost no environment rendering.
 
 1. New game → Combat Arena → choose language and Paladin, Mage or Ranger.
 2. Arrive in a safe, enemy-free, 2000×2000 flat arena. All eight hero skills
-   begin learned at rank 1. All campaign specialists are present at the hub,
+   begin learned at rank 1. A free level selector grants levels 5–30 through
+   the original XP/HP/talent progression. All campaign specialists are present at the hub,
    with their original training/equipment services. Spending is free.
 3. Speak to the Arena Guide (or use the Combat Arena adventure menu) to select
    any region and enemy group. Ordinary packs lead to guardian/captain stages
