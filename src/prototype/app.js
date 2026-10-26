@@ -5769,7 +5769,14 @@
     writerGuard.release();
   });
   addEventListener('pageshow', (event) => {
-    if (event.persisted) location.reload();
+    if (event.persisted) {
+      location.reload();
+      return;
+    }
+    // Some iOS Home Screen returns dispatch pageshow without another
+    // visibilitychange. Re-arm recovery eligibility from the actual document
+    // state instead of leaving the renderer controller marked backgrounded.
+    graphicsController.visibilityChanged(document.hidden);
   });
   function updateCriticalNotice() {
     const host = $('message'),
