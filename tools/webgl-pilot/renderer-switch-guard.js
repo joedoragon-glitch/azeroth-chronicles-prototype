@@ -76,7 +76,8 @@
     let mode='canvas2d',phase='canvas',deadline=0,timer=null,serial=0,closed=false;
     let lastFallbackReason='',lastFailure=null;
     let hidden=false,restoringConfirmed=false,recoveryPending=false,
-      recoveryAttempts=0,recoveryDue=0,recoveryPaused=false;
+      recoveryAttempts=0,recoveryDue=0,
+      recoveryPaused=!!read(storage,RECOVERY_HOLD_KEY);
     const failures=new Set([
       'webgl-preparation-failed','confirmed-webgl-preparation-failed',
       'webgl-error','confirmed-webgl-error','webgl-context-or-render-failure',
@@ -132,7 +133,8 @@
       // renderer failure changes the ACTIVE renderer, not that preference.
       const keepChoice=(
         (phase==='confirmed' && mode==='webgl2') || restoringConfirmed
-      ) && reason!=='user-chose-canvas';
+      ) && read(storage,PREFERENCE_KEY)==='webgl2' &&
+        reason!=='user-chose-canvas';
       recordFailure(reason,details);
       ++serial;clearTimer();
       // Canvas owns an independent 2D surface. The integration hook MUST
@@ -196,7 +198,7 @@
 
     // Only a PREVIOUSLY confirmed choice can resume without a new countdown.
     // Keep Canvas live until its first completed GPU scene and visible controls.
-    async function resumeConfirmedWebGL(){
+    async function resumeConfirmedWebGL(fromRecovery=false){
       if(closed||phase!=='canvas'||hidden||!armConfirmedBoot(storage))return false;
       const own=++serial;
       restoringConfirmed=true;
@@ -210,6 +212,17 @@
           return false;
         }
         if(closed||own!==serial||phase!=='preparing')return false;
+        // Async GPU initialization must not suddenly return the game to
+        // WebGL while the player has begun moving or combat has approached.
+        if(fromRecovery){
+          let safe=false;
+          try{safe=canRecover()===true;}catch(_){}
+          if(!safe){
+            recoveryAttempts=Math.max(0,recoveryAttempts-1);
+            fallback('confirmed-recovery-deferred');
+            return false;
+          }
+        }
         stage='reveal';
         showWebGL();
         // Setting mode before committing allows the usual fallback on failure.
@@ -272,7 +285,7 @@
       recoveryPending=false;
       recoveryAttempts++;
       announce('webgl-recovery-attempt');
-      return resumeConfirmedWebGL();
+      return resumeConfirmedWebGL(true);
     }
     function webglFailed(details=null){
       if(closed)return false;
