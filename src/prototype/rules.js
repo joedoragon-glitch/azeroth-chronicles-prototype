@@ -6912,7 +6912,15 @@
       costs: [0, 0, 15, 10, 25, 40, 20, 45, 60],
       cooldowns: [0, 0.85, 3, 8, 14, 9, 4, 15, 24],
     },
-    pursuit: { burstSeconds: 1.2, burstMultiplier: 1.5, mercyStartRadius: 300 },
+    pursuit: {
+      burstSeconds: 1.2,
+      burstMultiplier: 1.5,
+      mercyStartRadius: 300,
+      // Greenwood ordinary melee reuses its EXISTING burst after a brief
+      // normal-speed interval (1.2s active + 0.5s recovery). No separate
+      // dash, warning, impact damage, Slow, or new cooldown ownership.
+      valeRecoverySeconds: 0.5,
+    },
     growth: { xpPerLevel: 120, hpPerLevel: 25 },
     barracks: { buildCost: 20, fullUpgradeCost: 100 },
     equipment: {
@@ -7710,35 +7718,6 @@
         restoreFraction: 0.4,
       },
     },
-    // Greenwood pilot: regular melee enemies and native guardians share a
-    // repeatable interception drill. Its martial foundation is Marshal Veyra's
-    // Crown academy (disciplined advance, target reading and committed strike);
-    // Thornfang, Lifebinder and the Vale captain also inform local tactics.
-    // No authored boss/captain/ringleader attacks or other regions are changed.
-    valeMeleeCounter: Object.freeze({
-      enabled: true,
-      // Greenwood ordinary melee uses 90 basic reach and a repeatable
-      // intercept to contest the Paladin's remaining 30-unit advantage.
-      meleeBasicRange: 90,
-      buildupSeconds: 0.35,
-      cooldownSeconds: 4.5,
-      // Intercept triggers outside the ordinary 90-unit melee basic hit
-      // and catches repeatable 100–120-unit Paladin spacing.
-      minDistance: 100,
-      // Wider than a Ranger charged shot, but still encounter/leash bound.
-      maxDistance: 610,
-      warningSeconds: 0.65,
-      // Predict roughly through warning plus travel; a straight retreat
-      // should be threatened, a lateral dodge should still defeat the mark.
-      predictionSeconds: 1.25,
-      maxLeadDistance: 350,
-      travelSpeed: 1400,
-      travelSeconds: 0.9,
-      arrivalTolerance: 48,
-      impactRadius: 100,
-      damageMultiplier: 0.8,
-      slowSeconds: 0.8,
-    }),
     fieldOnboarding: { spawnLevel: 2, withdrawClearance: 700 },
     thornPatrol: {
       // Start toward the southern crossing, away from the opening woodland.
